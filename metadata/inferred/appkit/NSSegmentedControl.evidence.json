@@ -1,0 +1,247 @@
+{
+ "bindings:double-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "delivered": true,
+   "prop": {
+    "attempts": 2,
+    "default": -1.0,
+    "events": [],
+    "inherited": true,
+    "kvo": true,
+    "outcome": "exact",
+    "read": 2.0,
+    "sample": {
+     "t": "f64",
+     "v": 2.0
+    }
+   }
+  }
+ },
+ "bindings:float-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "delivered": true,
+   "prop": {
+    "attempts": 2,
+    "default": -1.0,
+    "events": [],
+    "inherited": true,
+    "kvo": true,
+    "outcome": "exact",
+    "read": 2.0,
+    "sample": {
+     "t": "f64",
+     "v": 2.0
+    }
+   }
+  }
+ },
+ "bindings:int-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "delivered": true,
+   "prop": {
+    "attempts": 1,
+    "default": -1,
+    "events": [],
+    "inherited": true,
+    "kvo": true,
+    "outcome": "exact",
+    "read": 3,
+    "sample": {
+     "t": "i64",
+     "v": 3
+    }
+   }
+  }
+ },
+ "bindings:integer-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "delivered": true,
+   "prop": {
+    "attempts": 1,
+    "default": -1,
+    "events": [],
+    "inherited": true,
+    "kvo": true,
+    "outcome": "exact",
+    "read": 3,
+    "sample": {
+     "t": "i64",
+     "v": 3
+    }
+   }
+  }
+ },
+ "props:border-shape": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "automatic",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "capsule",
+   "sample": {
+    "t": "str",
+    "v": "capsule"
+   }
+  }
+ },
+ "props:double-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 2,
+   "default": -1.0,
+   "events": [],
+   "inherited": true,
+   "kvo": true,
+   "outcome": "exact",
+   "read": 2.0,
+   "sample": {
+    "t": "f64",
+    "v": 2.0
+   }
+  }
+ },
+ "props:float-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 2,
+   "default": -1.0,
+   "events": [],
+   "inherited": true,
+   "kvo": true,
+   "outcome": "exact",
+   "read": 2.0,
+   "sample": {
+    "t": "f64",
+    "v": 2.0
+   }
+  }
+ },
+ "props:int-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": -1,
+   "events": [],
+   "inherited": true,
+   "kvo": true,
+   "outcome": "exact",
+   "read": 3,
+   "sample": {
+    "t": "i64",
+    "v": 3
+   }
+  }
+ },
+ "props:integer-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": -1,
+   "events": [],
+   "inherited": true,
+   "kvo": true,
+   "outcome": "exact",
+   "read": 3,
+   "sample": {
+    "t": "i64",
+    "v": 3
+   }
+  }
+ },
+ "props:segment-count": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 3,
+   "sample": {
+    "t": "i64",
+    "v": 3
+   }
+  }
+ },
+ "props:segment-distribution": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "fill",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "fit",
+   "sample": {
+    "t": "str",
+    "v": "fit"
+   }
+  }
+ },
+ "props:segment-style": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "automatic",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "rounded",
+   "sample": {
+    "t": "str",
+    "v": "rounded"
+   }
+  }
+ },
+ "props:selected-segment": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": -1,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 3,
+   "sample": {
+    "t": "i64",
+    "v": 3
+   }
+  }
+ },
+ "props:spring-loaded": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:tracking-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "select-one",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "select-any",
+   "sample": {
+    "t": "str",
+    "v": "select-any"
+   }
+  }
+ }
+}

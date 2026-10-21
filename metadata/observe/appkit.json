@@ -710,17 +710,22 @@
     ]
    },
    "color-well-style": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSColorWell:prop:color-well-style:observe",
     "layer": "inferred",
     "prop": "color-well-style",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `colorWellStyle` fired on a programmatic set"
      }
     ],
-    "record_fp": "96a89ebc95fd6409"
+    "record_fp": "1d0d5678d8118cf9",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "image": {
     "class": "set_only",
@@ -736,17 +741,22 @@
     "record_fp": "ce2cfb10f4ca94e2"
    },
    "maximum-linear-exposure": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSColorWell:prop:maximum-linear-exposure:observe",
     "layer": "inferred",
     "prop": "maximum-linear-exposure",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `maximumLinearExposure` fired on a programmatic set"
      }
     ],
-    "record_fp": "9a5b542fba6da631"
+    "record_fp": "7aceefa8def33212",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "pulldown-action": {
     "class": "set_only",
@@ -775,45 +785,60 @@
     "record_fp": "6d3ae2770149ae85"
    },
    "supports-alpha": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSColorWell:prop:supports-alpha:observe",
     "layer": "inferred",
     "prop": "supports-alpha",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `supportsAlpha` fired on a programmatic set"
      }
     ],
-    "record_fp": "3c60d4ae977544a3"
+    "record_fp": "1ec6cdffa5974f9b",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    }
   },
   "AppKit:NSComboBox": {
    "button-bordered": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSComboBox:prop:button-bordered:observe",
     "layer": "inferred",
     "prop": "button-bordered",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `buttonBordered` fired on a programmatic set"
      }
     ],
-    "record_fp": "a4c4066b83323151"
+    "record_fp": "b8a714c4941ee11f",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "completes": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSComboBox:prop:completes:observe",
     "layer": "inferred",
     "prop": "completes",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `completes` fired on a programmatic set"
      }
     ],
-    "record_fp": "23cfe655348774c8"
+    "record_fp": "466deda685301956",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "data-source": {
     "class": "set_only",
@@ -842,17 +867,22 @@
     "record_fp": "ebdc3bdcd4c205cc"
    },
    "has-vertical-scroller": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSComboBox:prop:has-vertical-scroller:observe",
     "layer": "inferred",
     "prop": "has-vertical-scroller",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `hasVerticalScroller` fired on a programmatic set"
      }
     ],
-    "record_fp": "b9bacf356f6c377b"
+    "record_fp": "ed730046b8a7d2e7",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "index-of-selected-item": {
     "class": "partial",
@@ -877,30 +907,40 @@
     ]
    },
    "intercell-spacing": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSComboBox:prop:intercell-spacing:observe",
     "layer": "inferred",
     "prop": "intercell-spacing",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `intercellSpacing` fired on a programmatic set"
      }
     ],
-    "record_fp": "df693065a87d444a"
+    "record_fp": "afb3cb1217e38abe",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "item-height": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSComboBox:prop:item-height:observe",
     "layer": "inferred",
     "prop": "item-height",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `itemHeight` fired on a programmatic set"
      }
     ],
-    "record_fp": "6683092301965e3d"
+    "record_fp": "ef3408fae21045ea",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "number-of-items": {
     "class": "none",
@@ -916,17 +956,22 @@
     "record_fp": "498576ed84ee11da"
    },
    "number-of-visible-items": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSComboBox:prop:number-of-visible-items:observe",
     "layer": "inferred",
     "prop": "number-of-visible-items",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `numberOfVisibleItems` fired on a programmatic set"
      }
     ],
-    "record_fp": "f20ddcd5aab35595"
+    "record_fp": "43261567c77d1da3",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "object-value-of-selected-item": {
     "class": "none",
@@ -955,17 +1000,22 @@
     "record_fp": "7b7a68bf5e80c2d8"
    },
    "uses-data-source": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSComboBox:prop:uses-data-source:observe",
     "layer": "inferred",
     "prop": "uses-data-source",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `usesDataSource` fired on a programmatic set"
      }
     ],
-    "record_fp": "c84594e249645198"
+    "record_fp": "d65cd000562739f1",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    }
   },
   "AppKit:NSControl": {
@@ -1417,30 +1467,40 @@
     "record_fp": "cbd6fe96001ab25d"
    },
    "bezeled": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSDatePicker:prop:bezeled:observe",
     "layer": "inferred",
     "prop": "bezeled",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `bezeled` fired on a programmatic set"
      }
     ],
-    "record_fp": "28ae9b924461a7bb"
+    "record_fp": "a0632597490beca3",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "bordered": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSDatePicker:prop:bordered:observe",
     "layer": "inferred",
     "prop": "bordered",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `bordered` fired on a programmatic set"
      }
     ],
-    "record_fp": "b6af3e5db8a12f23"
+    "record_fp": "dd6585bd8b64ac78",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "calendar": {
     "class": "set_only",
@@ -1456,43 +1516,58 @@
     "record_fp": "96e08e3b9e818a0d"
    },
    "date-picker-elements": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSDatePicker:prop:date-picker-elements:observe",
     "layer": "inferred",
     "prop": "date-picker-elements",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `datePickerElements` fired on a programmatic set"
      }
     ],
-    "record_fp": "64cbad28ca2f10e3"
+    "record_fp": "b4f5e1f2a15b9b7c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "date-picker-mode": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSDatePicker:prop:date-picker-mode:observe",
     "layer": "inferred",
     "prop": "date-picker-mode",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `datePickerMode` fired on a programmatic set"
      }
     ],
-    "record_fp": "fbbab22ddec0321b"
+    "record_fp": "0693a497f0672923",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "date-picker-style": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSDatePicker:prop:date-picker-style:observe",
     "layer": "inferred",
     "prop": "date-picker-style",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `datePickerStyle` fired on a programmatic set"
      }
     ],
-    "record_fp": "8386b61614ca6196"
+    "record_fp": "49bc11408e30ea7d",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "date-value": {
     "class": "partial",
@@ -1529,17 +1604,22 @@
     "record_fp": "ebdc3bdcd4c205cc"
    },
    "draws-background": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSDatePicker:prop:draws-background:observe",
     "layer": "inferred",
     "prop": "draws-background",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `drawsBackground` fired on a programmatic set"
      }
     ],
-    "record_fp": "a7b3d887b7b2b30d"
+    "record_fp": "e79a6fce75f0879c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "locale": {
     "class": "set_only",
@@ -1581,17 +1661,22 @@
     "record_fp": "cf90f73c4756b01f"
    },
    "presents-calendar-overlay": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSDatePicker:prop:presents-calendar-overlay:observe",
     "layer": "inferred",
     "prop": "presents-calendar-overlay",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `presentsCalendarOverlay` fired on a programmatic set"
      }
     ],
-    "record_fp": "24ea054ec7e3a1c5"
+    "record_fp": "70cc93d644086284",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "text-color": {
     "class": "set_only",
@@ -1607,17 +1692,22 @@
     "record_fp": "7e5dd94407c738b9"
    },
    "time-interval": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSDatePicker:prop:time-interval:observe",
     "layer": "inferred",
     "prop": "time-interval",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `timeInterval` fired on a programmatic set"
      }
     ],
-    "record_fp": "938838bcd3241df1"
+    "record_fp": "6962775c31932cde",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "time-zone": {
     "class": "set_only",
@@ -1635,30 +1725,40 @@
   },
   "AppKit:NSImageView": {
    "allows-cut-copy-paste": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSImageView:prop:allows-cut-copy-paste:observe",
     "layer": "inferred",
     "prop": "allows-cut-copy-paste",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `allowsCutCopyPaste` fired on a programmatic set"
      }
     ],
-    "record_fp": "92d8729ba54c4798"
+    "record_fp": "8d3ab0c522765cc5",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "animates": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSImageView:prop:animates:observe",
     "layer": "inferred",
     "prop": "animates",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `animates` fired on a programmatic set"
      }
     ],
-    "record_fp": "b2ec3526743749c3"
+    "record_fp": "baad33bedc7d1d62",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "content-tint-color": {
     "class": "set_only",
@@ -1674,17 +1774,22 @@
     "record_fp": "a5b744438b26dc8b"
    },
    "editable": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSImageView:prop:editable:observe",
     "layer": "inferred",
     "prop": "editable",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `editable` fired on a programmatic set"
      }
     ],
-    "record_fp": "d6255fafafeadf7f"
+    "record_fp": "a2ff335df336b197",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "image": {
     "class": "set_only",
@@ -1700,17 +1805,22 @@
     "record_fp": "ce2cfb10f4ca94e2"
    },
    "image-alignment": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSImageView:prop:image-alignment:observe",
     "layer": "inferred",
     "prop": "image-alignment",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `imageAlignment` fired on a programmatic set"
      }
     ],
-    "record_fp": "1dfe9540fecb2fac"
+    "record_fp": "d0af6e67cce26fd8",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "image-dynamic-range": {
     "class": "none",
@@ -1726,43 +1836,58 @@
     "record_fp": "cc6089c1cdc4a2d5"
    },
    "image-frame-style": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSImageView:prop:image-frame-style:observe",
     "layer": "inferred",
     "prop": "image-frame-style",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `imageFrameStyle` fired on a programmatic set"
      }
     ],
-    "record_fp": "5fd44c6a4d267161"
+    "record_fp": "dc1ecdf4adfb5791",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "image-scaling": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSImageView:prop:image-scaling:observe",
     "layer": "inferred",
     "prop": "image-scaling",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `imageScaling` fired on a programmatic set"
      }
     ],
-    "record_fp": "091e251e8aca4c11"
+    "record_fp": "20c9f3404bd2acd1",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "preferred-image-dynamic-range": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSImageView:prop:preferred-image-dynamic-range:observe",
     "layer": "inferred",
     "prop": "preferred-image-dynamic-range",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `preferredImageDynamicRange` fired on a programmatic set"
      }
     ],
-    "record_fp": "938f54179ea85009"
+    "record_fp": "31dbc02ad0c7156f",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "symbol-configuration": {
     "class": "set_only",
@@ -1793,43 +1918,58 @@
     "record_fp": "9e174060f7358660"
    },
    "critical-value": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSLevelIndicator:prop:critical-value:observe",
     "layer": "inferred",
     "prop": "critical-value",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `criticalValue` fired on a programmatic set"
      }
     ],
-    "record_fp": "f981f026f876b3bf"
+    "record_fp": "183f477304b0da06",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "draws-tiered-capacity-levels": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSLevelIndicator:prop:draws-tiered-capacity-levels:observe",
     "layer": "inferred",
     "prop": "draws-tiered-capacity-levels",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `drawsTieredCapacityLevels` fired on a programmatic set"
      }
     ],
-    "record_fp": "1c3fd26547324016"
+    "record_fp": "b5988293c7c2dd53",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "editable": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSLevelIndicator:prop:editable:observe",
     "layer": "inferred",
     "prop": "editable",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `editable` fired on a programmatic set"
      }
     ],
-    "record_fp": "d6255fafafeadf7f"
+    "record_fp": "a2ff335df336b197",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "fill-color": {
     "class": "set_only",
@@ -1845,82 +1985,112 @@
     "record_fp": "aa1a60540d4eb036"
    },
    "level-indicator-style": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSLevelIndicator:prop:level-indicator-style:observe",
     "layer": "inferred",
     "prop": "level-indicator-style",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `levelIndicatorStyle` fired on a programmatic set"
      }
     ],
-    "record_fp": "cece8fbc104bf43e"
+    "record_fp": "fe85c8eee9669a18",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "max-value": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSLevelIndicator:prop:max-value:observe",
     "layer": "inferred",
     "prop": "max-value",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `maxValue` fired on a programmatic set"
      }
     ],
-    "record_fp": "f453ea039478bbdc"
+    "record_fp": "c99bc0dc8371ddf7",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "min-value": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSLevelIndicator:prop:min-value:observe",
     "layer": "inferred",
     "prop": "min-value",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `minValue` fired on a programmatic set"
      }
     ],
-    "record_fp": "c1f143ea09310b97"
+    "record_fp": "61508014634867ca",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "number-of-major-tick-marks": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSLevelIndicator:prop:number-of-major-tick-marks:observe",
     "layer": "inferred",
     "prop": "number-of-major-tick-marks",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `numberOfMajorTickMarks` fired on a programmatic set"
      }
     ],
-    "record_fp": "e55775552ef0f2bb"
+    "record_fp": "185c132587e48951",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "number-of-tick-marks": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSLevelIndicator:prop:number-of-tick-marks:observe",
     "layer": "inferred",
     "prop": "number-of-tick-marks",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `numberOfTickMarks` fired on a programmatic set"
      }
     ],
-    "record_fp": "183544f441402926"
+    "record_fp": "2cdec702d8a3825d",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "placeholder-visibility": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSLevelIndicator:prop:placeholder-visibility:observe",
     "layer": "inferred",
     "prop": "placeholder-visibility",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `placeholderVisibility` fired on a programmatic set"
      }
     ],
-    "record_fp": "1f4b12c54cf6cf29"
+    "record_fp": "9fb0de686cba95ed",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "rating-image": {
     "class": "set_only",
@@ -1949,17 +2119,22 @@
     "record_fp": "a0a0f59f040853aa"
    },
    "tick-mark-position": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSLevelIndicator:prop:tick-mark-position:observe",
     "layer": "inferred",
     "prop": "tick-mark-position",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `tickMarkPosition` fired on a programmatic set"
      }
     ],
-    "record_fp": "5c2db83d57d8c678"
+    "record_fp": "4ca8e1cc47925536",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "warning-fill-color": {
     "class": "set_only",
@@ -1975,58 +2150,78 @@
     "record_fp": "5eb324e020e2e376"
    },
    "warning-value": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSLevelIndicator:prop:warning-value:observe",
     "layer": "inferred",
     "prop": "warning-value",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `warningValue` fired on a programmatic set"
      }
     ],
-    "record_fp": "859d3c7e230eff89"
+    "record_fp": "48b8c6beadfa7117",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    }
   },
   "AppKit:NSMenu": {
    "allows-context-menu-plug-ins": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenu:prop:allows-context-menu-plug-ins:observe",
     "layer": "inferred",
     "prop": "allows-context-menu-plug-ins",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `allowsContextMenuPlugIns` fired on a programmatic set"
      }
     ],
-    "record_fp": "78897cae23981bfb"
+    "record_fp": "f5381465dd1a06e2",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "autoenables-items": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenu:prop:autoenables-items:observe",
     "layer": "inferred",
     "prop": "autoenables-items",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `autoenablesItems` fired on a programmatic set"
      }
     ],
-    "record_fp": "f01367982c6022b2"
+    "record_fp": "4e421cad72105ebc",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "automatically-inserts-writing-tools-items": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenu:prop:automatically-inserts-writing-tools-items:observe",
     "layer": "inferred",
     "prop": "automatically-inserts-writing-tools-items",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `automaticallyInsertsWritingToolsItems` fired on a programmatic set"
      }
     ],
-    "record_fp": "6c8140dd8b726a37"
+    "record_fp": "fbcbd6cdb6357b60",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "delegate": {
     "class": "set_only",
@@ -2094,17 +2289,22 @@
     "record_fp": "e6f8c1dd4572e3d1"
    },
    "minimum-width": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenu:prop:minimum-width:observe",
     "layer": "inferred",
     "prop": "minimum-width",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `minimumWidth` fired on a programmatic set"
      }
     ],
-    "record_fp": "c096a0a9743b3d29"
+    "record_fp": "7a7118f0840c6fff",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "number-of-items": {
     "class": "none",
@@ -2120,17 +2320,22 @@
     "record_fp": "498576ed84ee11da"
    },
    "presentation-style": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenu:prop:presentation-style:observe",
     "layer": "inferred",
     "prop": "presentation-style",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `presentationStyle` fired on a programmatic set"
      }
     ],
-    "record_fp": "962da903acaadf0b"
+    "record_fp": "c6e521dc6f9d50c5",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "properties-to-update": {
     "class": "none",
@@ -2159,30 +2364,40 @@
     "record_fp": "e4d7edd31cfcbe5b"
    },
    "selection-mode": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenu:prop:selection-mode:observe",
     "layer": "inferred",
     "prop": "selection-mode",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `selectionMode` fired on a programmatic set"
      }
     ],
-    "record_fp": "e58ccaee7144f8b4"
+    "record_fp": "36a20c33e781126f",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "shows-state-column": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenu:prop:shows-state-column:observe",
     "layer": "inferred",
     "prop": "shows-state-column",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `showsStateColumn` fired on a programmatic set"
      }
     ],
-    "record_fp": "e7da355a46c395f1"
+    "record_fp": "5c1bf1bc145d7830",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "size": {
     "class": "none",
@@ -2211,30 +2426,40 @@
     "record_fp": "90cb8c37768db078"
    },
    "title": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenu:prop:title:observe",
     "layer": "inferred",
     "prop": "title",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `title` fired on a programmatic set"
      }
     ],
-    "record_fp": "29ee5a20a3a57c3b"
+    "record_fp": "2209849be360204a",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "user-interface-layout-direction": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenu:prop:user-interface-layout-direction:observe",
     "layer": "inferred",
     "prop": "user-interface-layout-direction",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `userInterfaceLayoutDirection` fired on a programmatic set"
      }
     ],
-    "record_fp": "d300b9ccaa23a6c0"
+    "record_fp": "11900bcbe85bec80",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    }
   },
   "AppKit:NSMenuItem": {
@@ -2252,56 +2477,76 @@
     "record_fp": "550ec31e0534e908"
    },
    "allows-automatic-key-equivalent-localization": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenuItem:prop:allows-automatic-key-equivalent-localization:observe",
     "layer": "inferred",
     "prop": "allows-automatic-key-equivalent-localization",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `allowsAutomaticKeyEquivalentLocalization` fired on a programmatic set"
      }
     ],
-    "record_fp": "f7ede801cc672747"
+    "record_fp": "0ded48065eef280a",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "allows-automatic-key-equivalent-mirroring": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenuItem:prop:allows-automatic-key-equivalent-mirroring:observe",
     "layer": "inferred",
     "prop": "allows-automatic-key-equivalent-mirroring",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `allowsAutomaticKeyEquivalentMirroring` fired on a programmatic set"
      }
     ],
-    "record_fp": "a8006a945434edfc"
+    "record_fp": "1f83791ee25ad11f",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "allows-key-equivalent-when-hidden": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenuItem:prop:allows-key-equivalent-when-hidden:observe",
     "layer": "inferred",
     "prop": "allows-key-equivalent-when-hidden",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `allowsKeyEquivalentWhenHidden` fired on a programmatic set"
      }
     ],
-    "record_fp": "72d9b26d932dda73"
+    "record_fp": "492bb51f1259171b",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "alternate": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenuItem:prop:alternate:observe",
     "layer": "inferred",
     "prop": "alternate",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `alternate` fired on a programmatic set"
      }
     ],
-    "record_fp": "e91486f3593e6347"
+    "record_fp": "f4ea19be5d11f6dd",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "attributed-title": {
     "class": "set_only",
@@ -2330,17 +2575,22 @@
     "record_fp": "f812e310beae396a"
    },
    "enabled": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenuItem:prop:enabled:observe",
     "layer": "inferred",
     "prop": "enabled",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `enabled` fired on a programmatic set"
      }
     ],
-    "record_fp": "ab0b042c83384402"
+    "record_fp": "0a185045ec5ee1ee",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "has-submenu": {
     "class": "none",
@@ -2356,17 +2606,22 @@
     "record_fp": "37e130223bee215f"
    },
    "hidden": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenuItem:prop:hidden:observe",
     "layer": "inferred",
     "prop": "hidden",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `hidden` fired on a programmatic set"
      }
     ],
-    "record_fp": "c1077ab1042afeb8"
+    "record_fp": "8ec6594d22fde78b",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "hidden-or-has-hidden-ancestor": {
     "class": "none",
@@ -2408,43 +2663,58 @@
     "record_fp": "ce2cfb10f4ca94e2"
    },
    "indentation-level": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenuItem:prop:indentation-level:observe",
     "layer": "inferred",
     "prop": "indentation-level",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `indentationLevel` fired on a programmatic set"
      }
     ],
-    "record_fp": "d5f06cfbbe8ca7e2"
+    "record_fp": "265552cb76686849",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "key-equivalent": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenuItem:prop:key-equivalent:observe",
     "layer": "inferred",
     "prop": "key-equivalent",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `keyEquivalent` fired on a programmatic set"
      }
     ],
-    "record_fp": "274ed7f4a7de17b7"
+    "record_fp": "64618bd7c8d7f8c2",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "key-equivalent-modifier-mask": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenuItem:prop:key-equivalent-modifier-mask:observe",
     "layer": "inferred",
     "prop": "key-equivalent-modifier-mask",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `keyEquivalentModifierMask` fired on a programmatic set"
      }
     ],
-    "record_fp": "2b5e5bbdbed8f64a"
+    "record_fp": "c07f8c2cb718a037",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "menu": {
     "class": "set_only",
@@ -2551,17 +2821,22 @@
     "record_fp": "5ee6fc35c9adf469"
    },
    "state": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenuItem:prop:state:observe",
     "layer": "inferred",
     "prop": "state",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `state` fired on a programmatic set"
      }
     ],
-    "record_fp": "f7cdbc49fe7ba87f"
+    "record_fp": "0bff8453ad4ef7dd",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "submenu": {
     "class": "set_only",
@@ -2577,30 +2852,40 @@
     "record_fp": "ef89231403279e01"
    },
    "subtitle": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenuItem:prop:subtitle:observe",
     "layer": "inferred",
     "prop": "subtitle",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `subtitle` fired on a programmatic set"
      }
     ],
-    "record_fp": "40a02985d9891030"
+    "record_fp": "bd987d249bd3fefb",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "tag": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenuItem:prop:tag:observe",
     "layer": "inferred",
     "prop": "tag",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `tag` fired on a programmatic set"
      }
     ],
-    "record_fp": "ebafa9023055b2e5"
+    "record_fp": "f83eb7682e6d9558",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "target": {
     "class": "set_only",
@@ -2616,30 +2901,40 @@
     "record_fp": "76c9d30f845cae0d"
    },
    "title": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenuItem:prop:title:observe",
     "layer": "inferred",
     "prop": "title",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `title` fired on a programmatic set"
      }
     ],
-    "record_fp": "29ee5a20a3a57c3b"
+    "record_fp": "2209849be360204a",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "tool-tip": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSMenuItem:prop:tool-tip:observe",
     "layer": "inferred",
     "prop": "tool-tip",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `toolTip` fired on a programmatic set"
      }
     ],
-    "record_fp": "e63eaec55c52bc28"
+    "record_fp": "b7d5c23d1cdc1b86",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "user-key-equivalent": {
     "class": "none",
@@ -2670,43 +2965,58 @@
   },
   "AppKit:NSPanel": {
    "becomes-key-only-if-needed": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSPanel:prop:becomes-key-only-if-needed:observe",
     "layer": "inferred",
     "prop": "becomes-key-only-if-needed",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `becomesKeyOnlyIfNeeded` fired on a programmatic set"
      }
     ],
-    "record_fp": "540f9acb0f4b6d35"
+    "record_fp": "57d507a7908cb198",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "floating-panel": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSPanel:prop:floating-panel:observe",
     "layer": "inferred",
     "prop": "floating-panel",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `floatingPanel` fired on a programmatic set"
      }
     ],
-    "record_fp": "04586f5e778409df"
+    "record_fp": "3e6d41ca405965af",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "works-when-modal": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSPanel:prop:works-when-modal:observe",
     "layer": "inferred",
     "prop": "works-when-modal",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `worksWhenModal` fired on a programmatic set"
      }
     ],
-    "record_fp": "6d7a43f65b9abfae"
+    "record_fp": "2b659c205d4c8ad2",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    }
   },
   "AppKit:NSPathControl": {
@@ -2776,17 +3086,22 @@
     "record_fp": "e8ce848453e4d274"
    },
    "editable": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSPathControl:prop:editable:observe",
     "layer": "inferred",
     "prop": "editable",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `editable` fired on a programmatic set"
      }
     ],
-    "record_fp": "d6255fafafeadf7f"
+    "record_fp": "a2ff335df336b197",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "menu": {
     "class": "set_only",
@@ -2815,17 +3130,22 @@
     "record_fp": "0c9a892524d97cb7"
    },
    "path-style": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSPathControl:prop:path-style:observe",
     "layer": "inferred",
     "prop": "path-style",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `pathStyle` fired on a programmatic set"
      }
     ],
-    "record_fp": "4c6d3ced527a0079"
+    "record_fp": "b4a44a30f19d4361",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "placeholder-attributed-string": {
     "class": "set_only",
@@ -2841,17 +3161,22 @@
     "record_fp": "e782a8da807bfd8b"
    },
    "placeholder-string": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSPathControl:prop:placeholder-string:observe",
     "layer": "inferred",
     "prop": "placeholder-string",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `placeholderString` fired on a programmatic set"
      }
     ],
-    "record_fp": "19347720cf48dfe3"
+    "record_fp": "cde254adcacd9465",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "url": {
     "class": "partial",
@@ -2877,30 +3202,40 @@
   },
   "AppKit:NSPopUpButton": {
    "alters-state-of-selected-item": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSPopUpButton:prop:alters-state-of-selected-item:observe",
     "layer": "inferred",
     "prop": "alters-state-of-selected-item",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `altersStateOfSelectedItem` fired on a programmatic set"
      }
     ],
-    "record_fp": "827818b63ae73658"
+    "record_fp": "e293b230c732521d",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "autoenables-items": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSPopUpButton:prop:autoenables-items:observe",
     "layer": "inferred",
     "prop": "autoenables-items",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `autoenablesItems` fired on a programmatic set"
      }
     ],
-    "record_fp": "f01367982c6022b2"
+    "record_fp": "4e421cad72105ebc",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "index-of-selected-item": {
     "class": "partial",
@@ -2989,30 +3324,40 @@
     "record_fp": "498576ed84ee11da"
    },
    "preferred-edge": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSPopUpButton:prop:preferred-edge:observe",
     "layer": "inferred",
     "prop": "preferred-edge",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `preferredEdge` fired on a programmatic set"
      }
     ],
-    "record_fp": "0d4f9568f1ad8d3b"
+    "record_fp": "11f23e3f9b04e70e",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "pulls-down": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSPopUpButton:prop:pulls-down:observe",
     "layer": "inferred",
     "prop": "pulls-down",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `pullsDown` fired on a programmatic set"
      }
     ],
-    "record_fp": "f5df6128e073cdeb"
+    "record_fp": "9c1384348253443b",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "selected-item": {
     "class": "none",
@@ -3054,17 +3399,22 @@
     "record_fp": "ea9bc069ab9e6c27"
    },
    "uses-item-from-menu": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSPopUpButton:prop:uses-item-from-menu:observe",
     "layer": "inferred",
     "prop": "uses-item-from-menu",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `usesItemFromMenu` fired on a programmatic set"
      }
     ],
-    "record_fp": "4da0a8284a626d39"
+    "record_fp": "6dfe4bc90a9dbc08",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    }
   },
   "AppKit:NSProgressIndicator": {
@@ -3228,43 +3578,58 @@
   },
   "AppKit:NSScrollView": {
    "allows-magnification": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:allows-magnification:observe",
     "layer": "inferred",
     "prop": "allows-magnification",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `allowsMagnification` fired on a programmatic set"
      }
     ],
-    "record_fp": "62adace23c65a793"
+    "record_fp": "209b8ac2e0499cf6",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "autohides-scrollers": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:autohides-scrollers:observe",
     "layer": "inferred",
     "prop": "autohides-scrollers",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `autohidesScrollers` fired on a programmatic set"
      }
     ],
-    "record_fp": "773d792da184eaef"
+    "record_fp": "07f7733a958e6edd",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "automatically-adjusts-content-insets": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:automatically-adjusts-content-insets:observe",
     "layer": "inferred",
     "prop": "automatically-adjusts-content-insets",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `automaticallyAdjustsContentInsets` fired on a programmatic set"
      }
     ],
-    "record_fp": "4bfce1f9a93cb0a4"
+    "record_fp": "3eb1f423e7324f73",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "background-color": {
     "class": "set_only",
@@ -3280,30 +3645,40 @@
     "record_fp": "cbd6fe96001ab25d"
    },
    "border-type": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:border-type:observe",
     "layer": "inferred",
     "prop": "border-type",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `borderType` fired on a programmatic set"
      }
     ],
-    "record_fp": "165990f332863135"
+    "record_fp": "0e769735a2db2415",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "content-insets": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:content-insets:observe",
     "layer": "inferred",
     "prop": "content-insets",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `contentInsets` fired on a programmatic set"
      }
     ],
-    "record_fp": "a26b36ee3d175e24"
+    "record_fp": "6d2239d47e697791",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "content-size": {
     "class": "none",
@@ -3371,108 +3746,148 @@
     "record_fp": "15d79f39da8b0ccb"
    },
    "draws-background": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:draws-background:observe",
     "layer": "inferred",
     "prop": "draws-background",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `drawsBackground` fired on a programmatic set"
      }
     ],
-    "record_fp": "a7b3d887b7b2b30d"
+    "record_fp": "e79a6fce75f0879c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "find-bar-position": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:find-bar-position:observe",
     "layer": "inferred",
     "prop": "find-bar-position",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `findBarPosition` fired on a programmatic set"
      }
     ],
-    "record_fp": "78e82a944695feef"
+    "record_fp": "26aef756d2ce0073",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "has-horizontal-ruler": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:has-horizontal-ruler:observe",
     "layer": "inferred",
     "prop": "has-horizontal-ruler",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `hasHorizontalRuler` fired on a programmatic set"
      }
     ],
-    "record_fp": "190478303826cc35"
+    "record_fp": "3c3e35d21f94ac3f",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "has-horizontal-scroller": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:has-horizontal-scroller:observe",
     "layer": "inferred",
     "prop": "has-horizontal-scroller",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `hasHorizontalScroller` fired on a programmatic set"
      }
     ],
-    "record_fp": "7eb8118cd42e0d22"
+    "record_fp": "55f19a00dbd2bb18",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "has-vertical-ruler": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:has-vertical-ruler:observe",
     "layer": "inferred",
     "prop": "has-vertical-ruler",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `hasVerticalRuler` fired on a programmatic set"
      }
     ],
-    "record_fp": "7dc3c6922f3db7fd"
+    "record_fp": "31ef161996ae4801",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "has-vertical-scroller": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:has-vertical-scroller:observe",
     "layer": "inferred",
     "prop": "has-vertical-scroller",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `hasVerticalScroller` fired on a programmatic set"
      }
     ],
-    "record_fp": "b9bacf356f6c377b"
+    "record_fp": "ed730046b8a7d2e7",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "horizontal-line-scroll": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:horizontal-line-scroll:observe",
     "layer": "inferred",
     "prop": "horizontal-line-scroll",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `horizontalLineScroll` fired on a programmatic set"
      }
     ],
-    "record_fp": "0989e80a240513d7"
+    "record_fp": "d4e4514f18b35e1a",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "horizontal-page-scroll": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:horizontal-page-scroll:observe",
     "layer": "inferred",
     "prop": "horizontal-page-scroll",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `horizontalPageScroll` fired on a programmatic set"
      }
     ],
-    "record_fp": "6051ed3ef7e187bd"
+    "record_fp": "acd67808c862f4ba",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "horizontal-ruler-view": {
     "class": "set_only",
@@ -3488,17 +3903,22 @@
     "record_fp": "eb81580e050eca64"
    },
    "horizontal-scroll-elasticity": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:horizontal-scroll-elasticity:observe",
     "layer": "inferred",
     "prop": "horizontal-scroll-elasticity",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `horizontalScrollElasticity` fired on a programmatic set"
      }
     ],
-    "record_fp": "70cd782e59ed3dff"
+    "record_fp": "954edf0b5ef8cf1d",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "horizontal-scroller": {
     "class": "set_only",
@@ -3514,173 +3934,238 @@
     "record_fp": "1a1b309278a03a85"
    },
    "line-scroll": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:line-scroll:observe",
     "layer": "inferred",
     "prop": "line-scroll",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `lineScroll` fired on a programmatic set"
      }
     ],
-    "record_fp": "335b04b4e086648f"
+    "record_fp": "163c06b1a4150c4f",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "magnification": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:magnification:observe",
     "layer": "inferred",
     "prop": "magnification",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `magnification` fired on a programmatic set"
      }
     ],
-    "record_fp": "61e8b7eae34dc3f0"
+    "record_fp": "166678869a3fb2dd",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "max-magnification": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:max-magnification:observe",
     "layer": "inferred",
     "prop": "max-magnification",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `maxMagnification` fired on a programmatic set"
      }
     ],
-    "record_fp": "30b9f0da3d420c1f"
+    "record_fp": "17b9347b0eb7b4d1",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "min-magnification": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:min-magnification:observe",
     "layer": "inferred",
     "prop": "min-magnification",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `minMagnification` fired on a programmatic set"
      }
     ],
-    "record_fp": "b89dce426a77bc54"
+    "record_fp": "d87628b1ea1ccc26",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "page-scroll": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:page-scroll:observe",
     "layer": "inferred",
     "prop": "page-scroll",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `pageScroll` fired on a programmatic set"
      }
     ],
-    "record_fp": "0c0955512375e3ce"
+    "record_fp": "573e841ebd9111bb",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "rulers-visible": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:rulers-visible:observe",
     "layer": "inferred",
     "prop": "rulers-visible",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `rulersVisible` fired on a programmatic set"
      }
     ],
-    "record_fp": "a5aaf284391f1bfd"
+    "record_fp": "a4cfc3dc3f7463cb",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "scroller-insets": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:scroller-insets:observe",
     "layer": "inferred",
     "prop": "scroller-insets",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `scrollerInsets` fired on a programmatic set"
      }
     ],
-    "record_fp": "9b352cb2a32bceb1"
+    "record_fp": "32b480cee8ebdf8f",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "scroller-knob-style": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:scroller-knob-style:observe",
     "layer": "inferred",
     "prop": "scroller-knob-style",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `scrollerKnobStyle` fired on a programmatic set"
      }
     ],
-    "record_fp": "ddcdcd6bd7d77f73"
+    "record_fp": "707fa80af3cea02c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "scroller-style": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:scroller-style:observe",
     "layer": "inferred",
     "prop": "scroller-style",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `scrollerStyle` fired on a programmatic set"
      }
     ],
-    "record_fp": "701bcebfb7e837f4"
+    "record_fp": "6fdb980cd9d5b1eb",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "scrolls-dynamically": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:scrolls-dynamically:observe",
     "layer": "inferred",
     "prop": "scrolls-dynamically",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `scrollsDynamically` fired on a programmatic set"
      }
     ],
-    "record_fp": "94363dd217144954"
+    "record_fp": "35f3520fb6fac3e0",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "uses-predominant-axis-scrolling": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:uses-predominant-axis-scrolling:observe",
     "layer": "inferred",
     "prop": "uses-predominant-axis-scrolling",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `usesPredominantAxisScrolling` fired on a programmatic set"
      }
     ],
-    "record_fp": "c8f3ed98e83dfee6"
+    "record_fp": "4e15ee9deecbe6b4",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "vertical-line-scroll": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:vertical-line-scroll:observe",
     "layer": "inferred",
     "prop": "vertical-line-scroll",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `verticalLineScroll` fired on a programmatic set"
      }
     ],
-    "record_fp": "6a20777fec721385"
+    "record_fp": "557a89c63c9502d1",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "vertical-page-scroll": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:vertical-page-scroll:observe",
     "layer": "inferred",
     "prop": "vertical-page-scroll",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `verticalPageScroll` fired on a programmatic set"
      }
     ],
-    "record_fp": "4af1ba87a5010cea"
+    "record_fp": "6434034725ed6e80",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "vertical-ruler-view": {
     "class": "set_only",
@@ -3696,17 +4181,22 @@
     "record_fp": "1c5f196ad453054b"
    },
    "vertical-scroll-elasticity": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:prop:vertical-scroll-elasticity:observe",
     "layer": "inferred",
     "prop": "vertical-scroll-elasticity",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `verticalScrollElasticity` fired on a programmatic set"
      }
     ],
-    "record_fp": "664905d2934af542"
+    "record_fp": "815a4510306d74e1",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "vertical-scroller": {
     "class": "set_only",
@@ -3750,17 +4240,22 @@
     "record_fp": "ebdc3bdcd4c205cc"
    },
    "maximum-recents": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSSearchField:prop:maximum-recents:observe",
     "layer": "inferred",
     "prop": "maximum-recents",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `maximumRecents` fired on a programmatic set"
      }
     ],
-    "record_fp": "dbf37517dab83cb4"
+    "record_fp": "3a0df996c6131cb7",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "recent-searches": {
     "class": "set_only",
@@ -3828,30 +4323,40 @@
     "record_fp": "c5379d08e1eb6220"
    },
    "sends-search-string-immediately": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSSearchField:prop:sends-search-string-immediately:observe",
     "layer": "inferred",
     "prop": "sends-search-string-immediately",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `sendsSearchStringImmediately` fired on a programmatic set"
      }
     ],
-    "record_fp": "74c9421bea56fe73"
+    "record_fp": "3f24fc8ac7cd25cb",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "sends-whole-search-string": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSSearchField:prop:sends-whole-search-string:observe",
     "layer": "inferred",
     "prop": "sends-whole-search-string",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `sendsWholeSearchString` fired on a programmatic set"
      }
     ],
-    "record_fp": "a0c55704a32a5043"
+    "record_fp": "5f14880e70008df8",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    }
   },
   "AppKit:NSSegmentedControl": {
@@ -3869,17 +4374,22 @@
     "record_fp": "eb78351b0eddeb2f"
    },
    "border-shape": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSSegmentedControl:prop:border-shape:observe",
     "layer": "inferred",
     "prop": "border-shape",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `borderShape` fired on a programmatic set"
      }
     ],
-    "record_fp": "9b545e59cc7700e6"
+    "record_fp": "cc30549686cdff65",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "double-value-for-selected-segment": {
     "class": "none",
@@ -3908,60 +4418,79 @@
     "record_fp": "f948059238b23b81"
    },
    "segment-count": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSSegmentedControl:prop:segment-count:observe",
     "layer": "inferred",
     "prop": "segment-count",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `segmentCount` fired on a programmatic set"
      }
     ],
-    "record_fp": "6b9df5079b0e5165"
+    "record_fp": "511aaa4775f0d6ab",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "segment-distribution": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSSegmentedControl:prop:segment-distribution:observe",
     "layer": "inferred",
     "prop": "segment-distribution",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `segmentDistribution` fired on a programmatic set"
      }
     ],
-    "record_fp": "88706744b241b51d"
+    "record_fp": "bbc35a4f4a8b32b7",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "segment-style": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSSegmentedControl:prop:segment-style:observe",
     "layer": "inferred",
     "prop": "segment-style",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `segmentStyle` fired on a programmatic set"
      }
     ],
-    "record_fp": "c82963d013ff5e93"
+    "record_fp": "6deb8cd2a5fb3539",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "selected-segment": {
-    "class": "partial",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSSegmentedControl:prop:selected-segment:observe",
     "layer": "inferred",
-    "missed": [
-     "programmatic"
-    ],
     "prop": "selected-segment",
     "provenance": [
      {
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `selectedSegment` fired on a programmatic set"
+     },
+     {
       "origin": "rule",
-      "ref": "O7: not probed for KVO; the fallback reports user changes only"
+      "ref": "O7: user edits reach the value through target_action"
      }
     ],
-    "record_fp": "96f6fc9047df7030",
+    "record_fp": "a2cf6449dcc6abd4",
     "via": [
+     {
+      "mechanism": "notify"
+     },
      {
       "mechanism": "target_action"
      }
@@ -3981,30 +4510,40 @@
     "record_fp": "a5804fc9b7ff9d2a"
    },
    "spring-loaded": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSSegmentedControl:prop:spring-loaded:observe",
     "layer": "inferred",
     "prop": "spring-loaded",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `springLoaded` fired on a programmatic set"
      }
     ],
-    "record_fp": "de9381963fd97215"
+    "record_fp": "34d2f8ff71fb12fb",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "tracking-mode": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSSegmentedControl:prop:tracking-mode:observe",
     "layer": "inferred",
     "prop": "tracking-mode",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `trackingMode` fired on a programmatic set"
      }
     ],
-    "record_fp": "f72dd98fe64f2165"
+    "record_fp": "84516cd8412d59c8",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    }
   },
   "AppKit:NSSlider": {
@@ -4351,17 +4890,22 @@
     "record_fp": "378152da4e3f9db4"
    },
    "arranges-all-subviews": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSSplitView:prop:arranges-all-subviews:observe",
     "layer": "inferred",
     "prop": "arranges-all-subviews",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `arrangesAllSubviews` fired on a programmatic set"
      }
     ],
-    "record_fp": "922cf79e2e451820"
+    "record_fp": "0bd1fcf052049d11",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "autosave-name": {
     "class": "set_only",
@@ -4403,17 +4947,22 @@
     "record_fp": "ec1645bd1daa483f"
    },
    "divider-style": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSSplitView:prop:divider-style:observe",
     "layer": "inferred",
     "prop": "divider-style",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `dividerStyle` fired on a programmatic set"
      }
     ],
-    "record_fp": "a8419926e5191470"
+    "record_fp": "bd5c7c28eba90646",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "divider-thickness": {
     "class": "none",
@@ -4429,17 +4978,22 @@
     "record_fp": "0c60d079838c2aba"
    },
    "vertical": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSSplitView:prop:vertical:observe",
     "layer": "inferred",
     "prop": "vertical",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `vertical` fired on a programmatic set"
      }
     ],
-    "record_fp": "6327ad3204663f2e"
+    "record_fp": "7c7513e6d661b2d7",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    }
   },
   "AppKit:NSStackView": {
@@ -4606,172 +5160,217 @@
   },
   "AppKit:NSStepper": {
    "autorepeat": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSStepper:prop:autorepeat:observe",
     "layer": "inferred",
     "prop": "autorepeat",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `autorepeat` fired on a programmatic set"
      }
     ],
-    "record_fp": "87693e37d8d53c45"
+    "record_fp": "2925bc6608f90675",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "double-value": {
-    "class": "partial",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSStepper:prop:double-value:observe",
     "layer": "inferred",
-    "missed": [
-     "programmatic"
-    ],
     "prop": "double-value",
     "provenance": [
      {
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `doubleValue` fired on a programmatic set"
+     },
+     {
       "origin": "rule",
-      "ref": "O7: not probed for KVO; the fallback reports user changes only"
+      "ref": "O7: user edits reach the value through target_action"
      }
     ],
-    "record_fp": "9eb1fa6b8438c86c",
+    "record_fp": "83f93b9c3bb9ecba",
     "via": [
+     {
+      "mechanism": "notify"
+     },
      {
       "mechanism": "target_action"
      }
     ]
    },
    "float-value": {
-    "class": "partial",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSStepper:prop:float-value:observe",
     "layer": "inferred",
-    "missed": [
-     "programmatic"
-    ],
     "prop": "float-value",
     "provenance": [
      {
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `floatValue` fired on a programmatic set"
+     },
+     {
       "origin": "rule",
-      "ref": "O7: not probed for KVO; the fallback reports user changes only"
+      "ref": "O7: user edits reach the value through target_action"
      }
     ],
-    "record_fp": "92e7a800c544198a",
+    "record_fp": "ffe7dd5b57517bf9",
     "via": [
+     {
+      "mechanism": "notify"
+     },
      {
       "mechanism": "target_action"
      }
     ]
    },
    "increment": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSStepper:prop:increment:observe",
     "layer": "inferred",
     "prop": "increment",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `increment` fired on a programmatic set"
      }
     ],
-    "record_fp": "2cd0e3c2778a2b95"
+    "record_fp": "359d4c5a7e755759",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "int-value": {
-    "class": "partial",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSStepper:prop:int-value:observe",
     "layer": "inferred",
-    "missed": [
-     "programmatic"
-    ],
     "prop": "int-value",
     "provenance": [
      {
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `intValue` fired on a programmatic set"
+     },
+     {
       "origin": "rule",
-      "ref": "O7: not probed for KVO; the fallback reports user changes only"
+      "ref": "O7: user edits reach the value through target_action"
      }
     ],
-    "record_fp": "37163412506f2642",
+    "record_fp": "376a9fbad8c3f587",
     "via": [
+     {
+      "mechanism": "notify"
+     },
      {
       "mechanism": "target_action"
      }
     ]
    },
    "integer-value": {
-    "class": "partial",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSStepper:prop:integer-value:observe",
     "layer": "inferred",
-    "missed": [
-     "programmatic"
-    ],
     "prop": "integer-value",
     "provenance": [
      {
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `integerValue` fired on a programmatic set"
+     },
+     {
       "origin": "rule",
-      "ref": "O7: not probed for KVO; the fallback reports user changes only"
+      "ref": "O7: user edits reach the value through target_action"
      }
     ],
-    "record_fp": "701ee23cd1b3443f",
+    "record_fp": "dc52e12881e3d312",
     "via": [
+     {
+      "mechanism": "notify"
+     },
      {
       "mechanism": "target_action"
      }
     ]
    },
    "max-value": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSStepper:prop:max-value:observe",
     "layer": "inferred",
     "prop": "max-value",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `maxValue` fired on a programmatic set"
      }
     ],
-    "record_fp": "f453ea039478bbdc"
+    "record_fp": "c99bc0dc8371ddf7",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "min-value": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSStepper:prop:min-value:observe",
     "layer": "inferred",
     "prop": "min-value",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `minValue` fired on a programmatic set"
      }
     ],
-    "record_fp": "c1f143ea09310b97"
+    "record_fp": "61508014634867ca",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "value-wraps": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSStepper:prop:value-wraps:observe",
     "layer": "inferred",
     "prop": "value-wraps",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `valueWraps` fired on a programmatic set"
      }
     ],
-    "record_fp": "4ee81f811d5e02ba"
+    "record_fp": "d3b33cf9bf617bab",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    }
   },
   "AppKit:NSSwitch": {
    "state": {
-    "class": "partial",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSSwitch:prop:state:observe",
     "layer": "inferred",
-    "missed": [
-     "programmatic"
-    ],
     "prop": "state",
     "provenance": [
      {
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `state` fired on a programmatic set"
+     },
+     {
       "origin": "rule",
-      "ref": "O7: not probed for KVO; the fallback reports user changes only"
+      "ref": "O7: user edits reach the value through target_action"
      }
     ],
-    "record_fp": "bc6b9affc7fa3879",
+    "record_fp": "6f119054f5d471e4",
     "via": [
+     {
+      "mechanism": "notify"
+     },
      {
       "mechanism": "target_action"
      }
@@ -4780,17 +5379,22 @@
   },
   "AppKit:NSTabView": {
    "allows-truncated-labels": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTabView:prop:allows-truncated-labels:observe",
     "layer": "inferred",
     "prop": "allows-truncated-labels",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `allowsTruncatedLabels` fired on a programmatic set"
      }
     ],
-    "record_fp": "6aac6f19b8133df3"
+    "record_fp": "b1404f483499e657",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "content-rect": {
     "class": "none",
@@ -4806,17 +5410,22 @@
     "record_fp": "39369390305abad3"
    },
    "control-size": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTabView:prop:control-size:observe",
     "layer": "inferred",
     "prop": "control-size",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `controlSize` fired on a programmatic set"
      }
     ],
-    "record_fp": "7847673937ff5771"
+    "record_fp": "41d36356683439f5",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "delegate": {
     "class": "set_only",
@@ -4832,17 +5441,22 @@
     "record_fp": "ebdc3bdcd4c205cc"
    },
    "draws-background": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTabView:prop:draws-background:observe",
     "layer": "inferred",
     "prop": "draws-background",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `drawsBackground` fired on a programmatic set"
      }
     ],
-    "record_fp": "a7b3d887b7b2b30d"
+    "record_fp": "e79a6fce75f0879c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "font": {
     "class": "set_only",
@@ -4897,30 +5511,40 @@
     "record_fp": "b371bbf7fafda7c6"
    },
    "tab-position": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTabView:prop:tab-position:observe",
     "layer": "inferred",
     "prop": "tab-position",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `tabPosition` fired on a programmatic set"
      }
     ],
-    "record_fp": "a8b5e3f0b06f4c64"
+    "record_fp": "a71eeada02e6527a",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "tab-view-border-type": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTabView:prop:tab-view-border-type:observe",
     "layer": "inferred",
     "prop": "tab-view-border-type",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `tabViewBorderType` fired on a programmatic set"
      }
     ],
-    "record_fp": "f13eb22b0e394045"
+    "record_fp": "1f7a31623708c2f5",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "tab-view-items": {
     "class": "set_only",
@@ -4936,17 +5560,22 @@
     "record_fp": "a588c47089559446"
    },
    "tab-view-type": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTabView:prop:tab-view-type:observe",
     "layer": "inferred",
     "prop": "tab-view-type",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `tabViewType` fired on a programmatic set"
      }
     ],
-    "record_fp": "a0ee270c188a1ed0"
+    "record_fp": "b37203c71865e39f",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    }
   },
   "AppKit:NSTabViewItem": {
@@ -5003,17 +5632,22 @@
     "record_fp": "3a051023b7b136fe"
    },
    "label": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTabViewItem:prop:label:observe",
     "layer": "inferred",
     "prop": "label",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `label` fired on a programmatic set"
      }
     ],
-    "record_fp": "e95074dfda139ca5"
+    "record_fp": "2a9e2ddfa917b8e3",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "tab-state": {
     "class": "none",
@@ -5042,17 +5676,22 @@
     "record_fp": "369cc5d21819424e"
    },
    "tool-tip": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTabViewItem:prop:tool-tip:observe",
     "layer": "inferred",
     "prop": "tool-tip",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `toolTip` fired on a programmatic set"
      }
     ],
-    "record_fp": "e63eaec55c52bc28"
+    "record_fp": "b7d5c23d1cdc1b86",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "view": {
     "class": "set_only",
@@ -5083,17 +5722,22 @@
   },
   "AppKit:NSText": {
    "alignment": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSText:prop:alignment:observe",
     "layer": "inferred",
     "prop": "alignment",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `alignment` fired on a programmatic set"
      }
     ],
-    "record_fp": "f7568b7c46da4700"
+    "record_fp": "d0295007675d27bf",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "background-color": {
     "class": "set_only",
@@ -5109,17 +5753,22 @@
     "record_fp": "cbd6fe96001ab25d"
    },
    "base-writing-direction": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSText:prop:base-writing-direction:observe",
     "layer": "inferred",
     "prop": "base-writing-direction",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `baseWritingDirection` fired on a programmatic set"
      }
     ],
-    "record_fp": "71975469b11a792f"
+    "record_fp": "f1a968c4e7539ee1",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "delegate": {
     "class": "set_only",
@@ -5135,43 +5784,58 @@
     "record_fp": "ebdc3bdcd4c205cc"
    },
    "draws-background": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSText:prop:draws-background:observe",
     "layer": "inferred",
     "prop": "draws-background",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `drawsBackground` fired on a programmatic set"
      }
     ],
-    "record_fp": "a7b3d887b7b2b30d"
+    "record_fp": "e79a6fce75f0879c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "editable": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSText:prop:editable:observe",
     "layer": "inferred",
     "prop": "editable",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `editable` fired on a programmatic set"
      }
     ],
-    "record_fp": "d6255fafafeadf7f"
+    "record_fp": "a2ff335df336b197",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "field-editor": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSText:prop:field-editor:observe",
     "layer": "inferred",
     "prop": "field-editor",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `fieldEditor` fired on a programmatic set"
      }
     ],
-    "record_fp": "9cd624f0ac145b8d"
+    "record_fp": "872ccefb8476b812",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "font": {
     "class": "set_only",
@@ -5187,43 +5851,58 @@
     "record_fp": "94caa984c88e474e"
    },
    "horizontally-resizable": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSText:prop:horizontally-resizable:observe",
     "layer": "inferred",
     "prop": "horizontally-resizable",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `horizontallyResizable` fired on a programmatic set"
      }
     ],
-    "record_fp": "87e6ddaee0390f01"
+    "record_fp": "d2fd835e531b82d1",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "imports-graphics": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSText:prop:imports-graphics:observe",
     "layer": "inferred",
     "prop": "imports-graphics",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `importsGraphics` fired on a programmatic set"
      }
     ],
-    "record_fp": "8f66916618579e4f"
+    "record_fp": "49ed7faa09afd5e5",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "max-size": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSText:prop:max-size:observe",
     "layer": "inferred",
     "prop": "max-size",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `maxSize` fired on a programmatic set"
      }
     ],
-    "record_fp": "e2807e907ca53f26"
+    "record_fp": "980db100800c939c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "min-size": {
     "class": "set_only",
@@ -5239,43 +5918,58 @@
     "record_fp": "3f8d95d2b157b11f"
    },
    "rich-text": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSText:prop:rich-text:observe",
     "layer": "inferred",
     "prop": "rich-text",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `richText` fired on a programmatic set"
      }
     ],
-    "record_fp": "a7249a75a1240331"
+    "record_fp": "bd5c43bfb3209904",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "ruler-visible": {
-    "class": "none",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSText:prop:ruler-visible:observe",
     "layer": "inferred",
     "prop": "ruler-visible",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "a read-only property, not probed; KVO-compliant only if documented"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `rulerVisible` fired on a programmatic set"
      }
     ],
-    "record_fp": "53d17d5104725ddd"
+    "record_fp": "69f6fd3cf09f2480",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "selectable": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSText:prop:selectable:observe",
     "layer": "inferred",
     "prop": "selectable",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `selectable` fired on a programmatic set"
      }
     ],
-    "record_fp": "32ee5549970a24b6"
+    "record_fp": "aa9e6af2f9346234",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "selected-range": {
     "class": "set_only",
@@ -5291,17 +5985,30 @@
     "record_fp": "bd65df291de043b0"
    },
    "string": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSText:prop:string:observe",
     "layer": "inferred",
     "prop": "string",
     "provenance": [
      {
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `string` fired on a programmatic set"
+     },
+     {
       "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "ref": "O7: user edits reach the value through NSTextDidChangeNotification"
      }
     ],
-    "record_fp": "c188b63e8a381a2a"
+    "record_fp": "1e634f6324f5d141",
+    "via": [
+     {
+      "mechanism": "notify"
+     },
+     {
+      "mechanism": "notification",
+      "name": "NSTextDidChangeNotification"
+     }
+    ]
    },
    "text-color": {
     "class": "set_only",
@@ -5317,30 +6024,40 @@
     "record_fp": "7e5dd94407c738b9"
    },
    "uses-font-panel": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSText:prop:uses-font-panel:observe",
     "layer": "inferred",
     "prop": "uses-font-panel",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `usesFontPanel` fired on a programmatic set"
      }
     ],
-    "record_fp": "7beb3bbeac03ca78"
+    "record_fp": "1280b60c5fa9f20a",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "vertically-resizable": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSText:prop:vertically-resizable:observe",
     "layer": "inferred",
     "prop": "vertically-resizable",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `verticallyResizable` fired on a programmatic set"
      }
     ],
-    "record_fp": "02d395ea1ae0666d"
+    "record_fp": "8fb352f4b4bc61fc",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    }
   },
   "AppKit:NSTextField": {
@@ -5845,17 +6562,22 @@
     "record_fp": "ea33317666c8cdc6"
    },
    "accepts-glyph-info": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:accepts-glyph-info:observe",
     "layer": "inferred",
     "prop": "accepts-glyph-info",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `acceptsGlyphInfo` fired on a programmatic set"
      }
     ],
-    "record_fp": "8d06f31f8b2f9dc1"
+    "record_fp": "8b7c8c4948866825",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "allowed-input-source-locales": {
     "class": "set_only",
@@ -5871,160 +6593,220 @@
     "record_fp": "338fa0298f6d29e4"
    },
    "allowed-writing-tools-result-options": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:allowed-writing-tools-result-options:observe",
     "layer": "inferred",
     "prop": "allowed-writing-tools-result-options",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `allowedWritingToolsResultOptions` fired on a programmatic set"
      }
     ],
-    "record_fp": "3307727dd15e301b"
+    "record_fp": "70a63e054092e063",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "allows-character-picker-touch-bar-item": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:allows-character-picker-touch-bar-item:observe",
     "layer": "inferred",
     "prop": "allows-character-picker-touch-bar-item",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `allowsCharacterPickerTouchBarItem` fired on a programmatic set"
      }
     ],
-    "record_fp": "76e42a083cbcda91"
+    "record_fp": "a0bf2e184d6a64bd",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "allows-document-background-color-change": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:allows-document-background-color-change:observe",
     "layer": "inferred",
     "prop": "allows-document-background-color-change",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `allowsDocumentBackgroundColorChange` fired on a programmatic set"
      }
     ],
-    "record_fp": "d81e70558a51381a"
+    "record_fp": "71c6cef10fdda5a4",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "allows-image-editing": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:allows-image-editing:observe",
     "layer": "inferred",
     "prop": "allows-image-editing",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `allowsImageEditing` fired on a programmatic set"
      }
     ],
-    "record_fp": "cc7947c08687983a"
+    "record_fp": "bb26b6c6a94a940b",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "allows-undo": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:allows-undo:observe",
     "layer": "inferred",
     "prop": "allows-undo",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `allowsUndo` fired on a programmatic set"
      }
     ],
-    "record_fp": "d442eca18b736875"
+    "record_fp": "b8f54fafd5962021",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "automatic-dash-substitution-enabled": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:automatic-dash-substitution-enabled:observe",
     "layer": "inferred",
     "prop": "automatic-dash-substitution-enabled",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `automaticDashSubstitutionEnabled` fired on a programmatic set"
      }
     ],
-    "record_fp": "60019a6a1bcb962a"
+    "record_fp": "bb5fc8e3ff0582df",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "automatic-data-detection-enabled": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:automatic-data-detection-enabled:observe",
     "layer": "inferred",
     "prop": "automatic-data-detection-enabled",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `automaticDataDetectionEnabled` fired on a programmatic set"
      }
     ],
-    "record_fp": "efefc8224cfcd48e"
+    "record_fp": "77cae9b42dbb41f8",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "automatic-link-detection-enabled": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:automatic-link-detection-enabled:observe",
     "layer": "inferred",
     "prop": "automatic-link-detection-enabled",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `automaticLinkDetectionEnabled` fired on a programmatic set"
      }
     ],
-    "record_fp": "8f3366dc3915ead2"
+    "record_fp": "a810bfd327aa2302",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "automatic-quote-substitution-enabled": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:automatic-quote-substitution-enabled:observe",
     "layer": "inferred",
     "prop": "automatic-quote-substitution-enabled",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `automaticQuoteSubstitutionEnabled` fired on a programmatic set"
      }
     ],
-    "record_fp": "40569e5fca095c8a"
+    "record_fp": "b38ce582c39b3565",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "automatic-spelling-correction-enabled": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:automatic-spelling-correction-enabled:observe",
     "layer": "inferred",
     "prop": "automatic-spelling-correction-enabled",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `automaticSpellingCorrectionEnabled` fired on a programmatic set"
      }
     ],
-    "record_fp": "ab6a59a77e08a756"
+    "record_fp": "c1ccd3f4385710f2",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "automatic-text-completion-enabled": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:automatic-text-completion-enabled:observe",
     "layer": "inferred",
     "prop": "automatic-text-completion-enabled",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `automaticTextCompletionEnabled` fired on a programmatic set"
      }
     ],
-    "record_fp": "846be805ca146a1a"
+    "record_fp": "1eb3ddc66d162825",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "automatic-text-replacement-enabled": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:automatic-text-replacement-enabled:observe",
     "layer": "inferred",
     "prop": "automatic-text-replacement-enabled",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `automaticTextReplacementEnabled` fired on a programmatic set"
      }
     ],
-    "record_fp": "52751fabcc65ee61"
+    "record_fp": "585c03578a7419c7",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "background-color": {
     "class": "set_only",
@@ -6066,17 +6848,22 @@
     "record_fp": "7e4600c7c8331ead"
    },
    "continuous-spell-checking-enabled": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:continuous-spell-checking-enabled:observe",
     "layer": "inferred",
     "prop": "continuous-spell-checking-enabled",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `continuousSpellCheckingEnabled` fired on a programmatic set"
      }
     ],
-    "record_fp": "6fc0f23663a290a7"
+    "record_fp": "e4538789513dfb9f",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "default-paragraph-style": {
     "class": "set_only",
@@ -6105,121 +6892,166 @@
     "record_fp": "ebdc3bdcd4c205cc"
    },
    "displays-link-tool-tips": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:displays-link-tool-tips:observe",
     "layer": "inferred",
     "prop": "displays-link-tool-tips",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `displaysLinkToolTips` fired on a programmatic set"
      }
     ],
-    "record_fp": "a41c59e4a8e13ec3"
+    "record_fp": "4c95818947ca9b42",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "draws-background": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:draws-background:observe",
     "layer": "inferred",
     "prop": "draws-background",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `drawsBackground` fired on a programmatic set"
      }
     ],
-    "record_fp": "a7b3d887b7b2b30d"
+    "record_fp": "e79a6fce75f0879c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "editable": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:editable:observe",
     "layer": "inferred",
     "prop": "editable",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `editable` fired on a programmatic set"
      }
     ],
-    "record_fp": "d6255fafafeadf7f"
+    "record_fp": "a2ff335df336b197",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "enabled-text-checking-types": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:enabled-text-checking-types:observe",
     "layer": "inferred",
     "prop": "enabled-text-checking-types",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `enabledTextCheckingTypes` fired on a programmatic set"
      }
     ],
-    "record_fp": "c5ec2327548b6e88"
+    "record_fp": "56e17b30443212de",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "field-editor": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:field-editor:observe",
     "layer": "inferred",
     "prop": "field-editor",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `fieldEditor` fired on a programmatic set"
      }
     ],
-    "record_fp": "9cd624f0ac145b8d"
+    "record_fp": "872ccefb8476b812",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "grammar-checking-enabled": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:grammar-checking-enabled:observe",
     "layer": "inferred",
     "prop": "grammar-checking-enabled",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `grammarCheckingEnabled` fired on a programmatic set"
      }
     ],
-    "record_fp": "3a27292e699b6c87"
+    "record_fp": "e2b3a544fac0aa52",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "imports-graphics": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:imports-graphics:observe",
     "layer": "inferred",
     "prop": "imports-graphics",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `importsGraphics` fired on a programmatic set"
      }
     ],
-    "record_fp": "8f66916618579e4f"
+    "record_fp": "49ed7faa09afd5e5",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "incremental-searching-enabled": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:incremental-searching-enabled:observe",
     "layer": "inferred",
     "prop": "incremental-searching-enabled",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `incrementalSearchingEnabled` fired on a programmatic set"
      }
     ],
-    "record_fp": "d9d0339f5ebc4e97"
+    "record_fp": "3f7bb6b8a0f25223",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "inline-prediction-type": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:inline-prediction-type:observe",
     "layer": "inferred",
     "prop": "inline-prediction-type",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `inlinePredictionType` fired on a programmatic set"
      }
     ],
-    "record_fp": "5a12fa942565dbf7"
+    "record_fp": "dc18824ad6210998",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "insertion-point-color": {
     "class": "set_only",
@@ -6274,17 +7106,22 @@
     "record_fp": "e92d76fe08dd24de"
    },
    "math-expression-completion-type": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:math-expression-completion-type:observe",
     "layer": "inferred",
     "prop": "math-expression-completion-type",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `mathExpressionCompletionType` fired on a programmatic set"
      }
     ],
-    "record_fp": "704610c4360210be"
+    "record_fp": "55ed55216e777da3",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "range-for-user-character-attribute-change": {
     "class": "none",
@@ -6391,43 +7228,58 @@
     "record_fp": "ef02b938713c26c5"
    },
    "rich-text": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:rich-text:observe",
     "layer": "inferred",
     "prop": "rich-text",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `richText` fired on a programmatic set"
      }
     ],
-    "record_fp": "a7249a75a1240331"
+    "record_fp": "bd5c43bfb3209904",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "ruler-visible": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:ruler-visible:observe",
     "layer": "inferred",
     "prop": "ruler-visible",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `rulerVisible` fired on a programmatic set"
      }
     ],
-    "record_fp": "b99c6ea2a62974dd"
+    "record_fp": "69f6fd3cf09f2480",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "selectable": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:selectable:observe",
     "layer": "inferred",
     "prop": "selectable",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `selectable` fired on a programmatic set"
      }
     ],
-    "record_fp": "32ee5549970a24b6"
+    "record_fp": "aa9e6af2f9346234",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "selected-ranges": {
     "class": "set_only",
@@ -6469,17 +7321,22 @@
     "record_fp": "a13098e57e2c1811"
    },
    "selection-granularity": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:selection-granularity:observe",
     "layer": "inferred",
     "prop": "selection-granularity",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `selectionGranularity` fired on a programmatic set"
      }
     ],
-    "record_fp": "f0ee1c902c980802"
+    "record_fp": "a52564334dbdef3c",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "should-draw-insertion-point": {
     "class": "none",
@@ -6495,17 +7352,22 @@
     "record_fp": "f07b76d9a9452b50"
    },
    "smart-insert-delete-enabled": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:smart-insert-delete-enabled:observe",
     "layer": "inferred",
     "prop": "smart-insert-delete-enabled",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `smartInsertDeleteEnabled` fired on a programmatic set"
      }
     ],
-    "record_fp": "873faca58c50e1d2"
+    "record_fp": "9d3619b7b8a65cd8",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "spell-checker-document-tag": {
     "class": "none",
@@ -6556,17 +7418,22 @@
     "record_fp": "613bc97ff9f8d37c"
    },
    "text-container-inset": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:text-container-inset:observe",
     "layer": "inferred",
     "prop": "text-container-inset",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `textContainerInset` fired on a programmatic set"
      }
     ],
-    "record_fp": "7ec6bb775b3f11ca"
+    "record_fp": "b5c0ebba2942a6a9",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "text-container-origin": {
     "class": "none",
@@ -6647,95 +7514,130 @@
     "record_fp": "830cfc7de6c21ea8"
    },
    "uses-adaptive-color-mapping-for-dark-appearance": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:uses-adaptive-color-mapping-for-dark-appearance:observe",
     "layer": "inferred",
     "prop": "uses-adaptive-color-mapping-for-dark-appearance",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `usesAdaptiveColorMappingForDarkAppearance` fired on a programmatic set"
      }
     ],
-    "record_fp": "5e813e388e06bb0b"
+    "record_fp": "1f1dad5a0eaff034",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "uses-find-bar": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:uses-find-bar:observe",
     "layer": "inferred",
     "prop": "uses-find-bar",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `usesFindBar` fired on a programmatic set"
      }
     ],
-    "record_fp": "9a286de19c1a8685"
+    "record_fp": "ed9466f5bd126908",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "uses-find-panel": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:uses-find-panel:observe",
     "layer": "inferred",
     "prop": "uses-find-panel",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `usesFindPanel` fired on a programmatic set"
      }
     ],
-    "record_fp": "dd115fde083abde5"
+    "record_fp": "f387bdb70288d768",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "uses-font-panel": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:uses-font-panel:observe",
     "layer": "inferred",
     "prop": "uses-font-panel",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `usesFontPanel` fired on a programmatic set"
      }
     ],
-    "record_fp": "7beb3bbeac03ca78"
+    "record_fp": "1280b60c5fa9f20a",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "uses-inspector-bar": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:uses-inspector-bar:observe",
     "layer": "inferred",
     "prop": "uses-inspector-bar",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `usesInspectorBar` fired on a programmatic set"
      }
     ],
-    "record_fp": "44e32824a76d1f86"
+    "record_fp": "62a5e52784a0c4b1",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "uses-rollover-button-for-selection": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:uses-rollover-button-for-selection:observe",
     "layer": "inferred",
     "prop": "uses-rollover-button-for-selection",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `usesRolloverButtonForSelection` fired on a programmatic set"
      }
     ],
-    "record_fp": "9caf91458252c014"
+    "record_fp": "5ef68dc35d624ccf",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "uses-ruler": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:uses-ruler:observe",
     "layer": "inferred",
     "prop": "uses-ruler",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `usesRuler` fired on a programmatic set"
      }
     ],
-    "record_fp": "21afbcd7ee8b920e"
+    "record_fp": "98f29ba6d08c24f0",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "writable-pasteboard-types": {
     "class": "none",
@@ -6764,32 +7666,42 @@
     "record_fp": "afdda03bf271058e"
    },
    "writing-tools-behavior": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:prop:writing-tools-behavior:observe",
     "layer": "inferred",
     "prop": "writing-tools-behavior",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `writingToolsBehavior` fired on a programmatic set"
      }
     ],
-    "record_fp": "f990d52610ce0756"
+    "record_fp": "5a8981debe325c5d",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    }
   },
   "AppKit:NSTokenField": {
    "completion-delay": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTokenField:prop:completion-delay:observe",
     "layer": "inferred",
     "prop": "completion-delay",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `completionDelay` fired on a programmatic set"
      }
     ],
-    "record_fp": "6ca11af25c55b68a"
+    "record_fp": "3700e03cef41421d",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "delegate": {
     "class": "set_only",
@@ -6805,17 +7717,22 @@
     "record_fp": "ebdc3bdcd4c205cc"
    },
    "token-style": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSTokenField:prop:token-style:observe",
     "layer": "inferred",
     "prop": "token-style",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `tokenStyle` fired on a programmatic set"
      }
     ],
-    "record_fp": "81654b95a6171ba0"
+    "record_fp": "456745810f6ca4b9",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "tokenizing-character-set": {
     "class": "set_only",
@@ -8319,30 +9236,40 @@
   },
   "AppKit:NSVisualEffectView": {
    "blending-mode": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSVisualEffectView:prop:blending-mode:observe",
     "layer": "inferred",
     "prop": "blending-mode",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `blendingMode` fired on a programmatic set"
      }
     ],
-    "record_fp": "c6a11092421b6275"
+    "record_fp": "c4dfdfb1c244847a",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "emphasized": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSVisualEffectView:prop:emphasized:observe",
     "layer": "inferred",
     "prop": "emphasized",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `emphasized` fired on a programmatic set"
      }
     ],
-    "record_fp": "1c01ce77cfcec95e"
+    "record_fp": "6fa9e1b07ecbf6c6",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "interior-background-style": {
     "class": "none",
@@ -8371,30 +9298,40 @@
     "record_fp": "b9bc59baf50ef1f7"
    },
    "material": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSVisualEffectView:prop:material:observe",
     "layer": "inferred",
     "prop": "material",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `material` fired on a programmatic set"
      }
     ],
-    "record_fp": "0194d224be37f46d"
+    "record_fp": "0c25fb27947d44d9",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "state": {
-    "class": "set_only",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSVisualEffectView:prop:state:observe",
     "layer": "inferred",
     "prop": "state",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "O8: not probed; AppKit properties are KVO-compliant only if documented: configuration"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `state` fired on a programmatic set"
      }
     ],
-    "record_fp": "f7cdbc49fe7ba87f"
+    "record_fp": "0bff8453ad4ef7dd",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    }
   },
   "AppKit:NSWindow": {
@@ -9002,17 +9939,22 @@
     "record_fp": "bc21933ec1a59ce7"
    },
    "floating-panel": {
-    "class": "none",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:floating-panel:observe",
     "layer": "inferred",
     "prop": "floating-panel",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "a read-only property, not probed; KVO-compliant only if documented"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `floatingPanel` fired on a programmatic set"
      }
     ],
-    "record_fp": "23b87d15234fb2b7"
+    "record_fp": "3e6d41ca405965af",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "frame": {
     "class": "exact",
@@ -10006,17 +10948,22 @@
     "record_fp": "bb2d99a2a633d3a0"
    },
    "works-when-modal": {
-    "class": "none",
+    "class": "exact",
     "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:prop:works-when-modal:observe",
     "layer": "inferred",
     "prop": "works-when-modal",
     "provenance": [
      {
-      "origin": "rule",
-      "ref": "a read-only property, not probed; KVO-compliant only if documented"
+      "origin": "probe",
+      "ref": "AppKit probe (SDK 26.1): a KVO observer on `worksWhenModal` fired on a programmatic set"
      }
     ],
-    "record_fp": "7901fe5bacd79ae6"
+    "record_fp": "2b659c205d4c8ad2",
+    "via": [
+     {
+      "mechanism": "notify"
+     }
+    ]
    },
    "zoomable": {
     "class": "none",

@@ -3,16 +3,20 @@ toolkit: appkit
 owner: AppKit:NSVisualEffectView
 observe:
 - prop: blending-mode
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `blendingMode` fired on a programmatic set'
   confidence: 0.9
 - prop: emphasized
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `emphasized` fired on a programmatic set'
   confidence: 0.9
 - prop: interior-background-style
   class: none
@@ -27,14 +31,18 @@ observe:
     ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
   confidence: 0.9
 - prop: material
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `material` fired on a programmatic set'
   confidence: 0.9
 - prop: state
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `state` fired on a programmatic set'
   confidence: 0.9

@@ -1,0 +1,82 @@
+{
+ "bindings:string-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "delivered": true,
+   "prop": {
+    "attempts": 1,
+    "default": "",
+    "events": [],
+    "inherited": true,
+    "kvo": true,
+    "outcome": "exact",
+    "read": "svl probe",
+    "sample": {
+     "t": "str",
+     "v": "svl probe"
+    }
+   }
+  }
+ },
+ "props:editable": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:path-style": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "standard",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "pop-up",
+   "sample": {
+    "t": "str",
+    "v": "pop-up"
+   }
+  }
+ },
+ "props:placeholder-string": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": null,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "sample": {
+    "t": "str",
+    "v": "svl probe"
+   }
+  }
+ },
+ "props:string-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "",
+   "events": [],
+   "inherited": true,
+   "kvo": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "sample": {
+    "t": "str",
+    "v": "svl probe"
+   }
+  }
+ }
+}

@@ -6,7 +6,7 @@
   "svelters": { "toolkit": "appkit" },
   "scripts": {
     "build": "vite build",
-    "test": "vite build",
+    "test": "vite build && node --experimental-vm-modules --no-warnings ../gallery-common/check-pages.mjs .",
     "watch": "svelters-build --watch"
   },
   "dependencies": {

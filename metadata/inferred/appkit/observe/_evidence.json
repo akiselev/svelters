@@ -303,9 +303,9 @@
  "AppKit:NSColorWell:color-well-style": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSColorWell:image": {
   "confidence": 0.9,
@@ -317,9 +317,9 @@
  "AppKit:NSColorWell:maximum-linear-exposure": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSColorWell:pulldown-action": {
   "confidence": 0.9,
@@ -338,23 +338,23 @@
  "AppKit:NSColorWell:supports-alpha": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSComboBox:button-bordered": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSComboBox:completes": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSComboBox:data-source": {
   "confidence": 0.9,
@@ -373,9 +373,9 @@
  "AppKit:NSComboBox:has-vertical-scroller": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSComboBox:index-of-selected-item": {
   "confidence": 0.9,
@@ -387,16 +387,16 @@
  "AppKit:NSComboBox:intercell-spacing": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSComboBox:item-height": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSComboBox:number-of-items": {
   "confidence": 0.9,
@@ -408,9 +408,9 @@
  "AppKit:NSComboBox:number-of-visible-items": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSComboBox:object-value-of-selected-item": {
   "confidence": 0.9,
@@ -429,9 +429,9 @@
  "AppKit:NSComboBox:uses-data-source": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSControl:action": {
   "confidence": 0.9,
@@ -611,16 +611,16 @@
  "AppKit:NSDatePicker:bezeled": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSDatePicker:bordered": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSDatePicker:calendar": {
   "confidence": 0.9,
@@ -632,23 +632,23 @@
  "AppKit:NSDatePicker:date-picker-elements": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSDatePicker:date-picker-mode": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSDatePicker:date-picker-style": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSDatePicker:date-value": {
   "confidence": 0.9,
@@ -667,9 +667,9 @@
  "AppKit:NSDatePicker:draws-background": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSDatePicker:locale": {
   "confidence": 0.9,
@@ -695,9 +695,9 @@
  "AppKit:NSDatePicker:presents-calendar-overlay": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSDatePicker:text-color": {
   "confidence": 0.9,
@@ -709,9 +709,9 @@
  "AppKit:NSDatePicker:time-interval": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSDatePicker:time-zone": {
   "confidence": 0.9,
@@ -723,16 +723,16 @@
  "AppKit:NSImageView:allows-cut-copy-paste": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSImageView:animates": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSImageView:content-tint-color": {
   "confidence": 0.9,
@@ -744,9 +744,9 @@
  "AppKit:NSImageView:editable": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSImageView:image": {
   "confidence": 0.9,
@@ -758,9 +758,9 @@
  "AppKit:NSImageView:image-alignment": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSImageView:image-dynamic-range": {
   "confidence": 0.9,
@@ -772,23 +772,23 @@
  "AppKit:NSImageView:image-frame-style": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSImageView:image-scaling": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSImageView:preferred-image-dynamic-range": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSImageView:symbol-configuration": {
   "confidence": 0.9,
@@ -807,23 +807,23 @@
  "AppKit:NSLevelIndicator:critical-value": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSLevelIndicator:draws-tiered-capacity-levels": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSLevelIndicator:editable": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSLevelIndicator:fill-color": {
   "confidence": 0.9,
@@ -835,44 +835,44 @@
  "AppKit:NSLevelIndicator:level-indicator-style": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSLevelIndicator:max-value": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSLevelIndicator:min-value": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSLevelIndicator:number-of-major-tick-marks": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSLevelIndicator:number-of-tick-marks": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSLevelIndicator:placeholder-visibility": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSLevelIndicator:rating-image": {
   "confidence": 0.9,
@@ -891,9 +891,9 @@
  "AppKit:NSLevelIndicator:tick-mark-position": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSLevelIndicator:warning-fill-color": {
   "confidence": 0.9,
@@ -905,30 +905,30 @@
  "AppKit:NSLevelIndicator:warning-value": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenu:allows-context-menu-plug-ins": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenu:autoenables-items": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenu:automatically-inserts-writing-tools-items": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenu:delegate": {
   "confidence": 0.9,
@@ -968,9 +968,9 @@
  "AppKit:NSMenu:minimum-width": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenu:number-of-items": {
   "confidence": 0.9,
@@ -982,9 +982,9 @@
  "AppKit:NSMenu:presentation-style": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenu:properties-to-update": {
   "confidence": 0.9,
@@ -1003,16 +1003,16 @@
  "AppKit:NSMenu:selection-mode": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenu:shows-state-column": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenu:size": {
   "confidence": 0.9,
@@ -1031,16 +1031,16 @@
  "AppKit:NSMenu:title": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenu:user-interface-layout-direction": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenuItem:action": {
   "confidence": 0.9,
@@ -1052,30 +1052,30 @@
  "AppKit:NSMenuItem:allows-automatic-key-equivalent-localization": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenuItem:allows-automatic-key-equivalent-mirroring": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenuItem:allows-key-equivalent-when-hidden": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenuItem:alternate": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenuItem:attributed-title": {
   "confidence": 0.9,
@@ -1094,9 +1094,9 @@
  "AppKit:NSMenuItem:enabled": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenuItem:has-submenu": {
   "confidence": 0.9,
@@ -1108,9 +1108,9 @@
  "AppKit:NSMenuItem:hidden": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenuItem:hidden-or-has-hidden-ancestor": {
   "confidence": 0.9,
@@ -1136,23 +1136,23 @@
  "AppKit:NSMenuItem:indentation-level": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenuItem:key-equivalent": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenuItem:key-equivalent-modifier-mask": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenuItem:menu": {
   "confidence": 0.9,
@@ -1213,9 +1213,9 @@
  "AppKit:NSMenuItem:state": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenuItem:submenu": {
   "confidence": 0.9,
@@ -1227,16 +1227,16 @@
  "AppKit:NSMenuItem:subtitle": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenuItem:tag": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenuItem:target": {
   "confidence": 0.9,
@@ -1248,16 +1248,16 @@
  "AppKit:NSMenuItem:title": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenuItem:tool-tip": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSMenuItem:user-key-equivalent": {
   "confidence": 0.9,
@@ -1276,23 +1276,23 @@
  "AppKit:NSPanel:becomes-key-only-if-needed": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSPanel:floating-panel": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSPanel:works-when-modal": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSPathControl:allowed-types": {
   "confidence": 0.9,
@@ -1332,9 +1332,9 @@
  "AppKit:NSPathControl:editable": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSPathControl:menu": {
   "confidence": 0.9,
@@ -1353,9 +1353,9 @@
  "AppKit:NSPathControl:path-style": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSPathControl:placeholder-attributed-string": {
   "confidence": 0.9,
@@ -1367,9 +1367,9 @@
  "AppKit:NSPathControl:placeholder-string": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSPathControl:url": {
   "confidence": 0.9,
@@ -1381,16 +1381,16 @@
  "AppKit:NSPopUpButton:alters-state-of-selected-item": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSPopUpButton:autoenables-items": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSPopUpButton:index-of-selected-item": {
   "confidence": 0.9,
@@ -1437,16 +1437,16 @@
  "AppKit:NSPopUpButton:preferred-edge": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSPopUpButton:pulls-down": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSPopUpButton:selected-item": {
   "confidence": 0.9,
@@ -1472,9 +1472,9 @@
  "AppKit:NSPopUpButton:uses-item-from-menu": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSProgressIndicator:control-size": {
   "confidence": 0.9,
@@ -1542,23 +1542,23 @@
  "AppKit:NSScrollView:allows-magnification": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:autohides-scrollers": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:automatically-adjusts-content-insets": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:background-color": {
   "confidence": 0.9,
@@ -1570,16 +1570,16 @@
  "AppKit:NSScrollView:border-type": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:content-insets": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:content-size": {
   "confidence": 0.9,
@@ -1619,58 +1619,58 @@
  "AppKit:NSScrollView:draws-background": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:find-bar-position": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:has-horizontal-ruler": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:has-horizontal-scroller": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:has-vertical-ruler": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:has-vertical-scroller": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:horizontal-line-scroll": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:horizontal-page-scroll": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:horizontal-ruler-view": {
   "confidence": 0.9,
@@ -1682,9 +1682,9 @@
  "AppKit:NSScrollView:horizontal-scroll-elasticity": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:horizontal-scroller": {
   "confidence": 0.9,
@@ -1696,93 +1696,93 @@
  "AppKit:NSScrollView:line-scroll": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:magnification": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:max-magnification": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:min-magnification": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:page-scroll": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:rulers-visible": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:scroller-insets": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:scroller-knob-style": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:scroller-style": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:scrolls-dynamically": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:uses-predominant-axis-scrolling": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:vertical-line-scroll": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:vertical-page-scroll": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:vertical-ruler-view": {
   "confidence": 0.9,
@@ -1794,9 +1794,9 @@
  "AppKit:NSScrollView:vertical-scroll-elasticity": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSScrollView:vertical-scroller": {
   "confidence": 0.9,
@@ -1822,9 +1822,9 @@
  "AppKit:NSSearchField:maximum-recents": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSSearchField:recent-searches": {
   "confidence": 0.9,
@@ -1864,16 +1864,16 @@
  "AppKit:NSSearchField:sends-search-string-immediately": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSSearchField:sends-whole-search-string": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSSegmentedControl:active-compression-options": {
   "confidence": 0.9,
@@ -1885,9 +1885,9 @@
  "AppKit:NSSegmentedControl:border-shape": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSSegmentedControl:double-value-for-selected-segment": {
   "confidence": 0.9,
@@ -1906,30 +1906,30 @@
  "AppKit:NSSegmentedControl:segment-count": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSSegmentedControl:segment-distribution": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSSegmentedControl:segment-style": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSSegmentedControl:selected-segment": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:fallback-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSSegmentedControl:selected-segment-bezel-color": {
   "confidence": 0.9,
@@ -1941,16 +1941,16 @@
  "AppKit:NSSegmentedControl:spring-loaded": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSSegmentedControl:tracking-mode": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSSlider:allows-tick-mark-values-only": {
   "confidence": 0.9,
@@ -2081,9 +2081,9 @@
  "AppKit:NSSplitView:arranges-all-subviews": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSSplitView:autosave-name": {
   "confidence": 0.9,
@@ -2109,9 +2109,9 @@
  "AppKit:NSSplitView:divider-style": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSSplitView:divider-thickness": {
   "confidence": 0.9,
@@ -2123,9 +2123,9 @@
  "AppKit:NSSplitView:vertical": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSStackView:alignment": {
   "confidence": 0.9,
@@ -2200,79 +2200,79 @@
  "AppKit:NSStepper:autorepeat": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSStepper:double-value": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:fallback-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSStepper:float-value": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:fallback-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSStepper:increment": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSStepper:int-value": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:fallback-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSStepper:integer-value": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:fallback-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSStepper:max-value": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSStepper:min-value": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSStepper:value-wraps": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSSwitch:state": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:fallback-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTabView:allows-truncated-labels": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTabView:content-rect": {
   "confidence": 0.9,
@@ -2284,9 +2284,9 @@
  "AppKit:NSTabView:control-size": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTabView:delegate": {
   "confidence": 0.9,
@@ -2298,9 +2298,9 @@
  "AppKit:NSTabView:draws-background": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTabView:font": {
   "confidence": 0.9,
@@ -2333,16 +2333,16 @@
  "AppKit:NSTabView:tab-position": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTabView:tab-view-border-type": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTabView:tab-view-items": {
   "confidence": 0.9,
@@ -2354,9 +2354,9 @@
  "AppKit:NSTabView:tab-view-type": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTabViewItem:color": {
   "confidence": 0.9,
@@ -2389,9 +2389,9 @@
  "AppKit:NSTabViewItem:label": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTabViewItem:tab-state": {
   "confidence": 0.9,
@@ -2410,9 +2410,9 @@
  "AppKit:NSTabViewItem:tool-tip": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTabViewItem:view": {
   "confidence": 0.9,
@@ -2431,9 +2431,9 @@
  "AppKit:NSText:alignment": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSText:background-color": {
   "confidence": 0.9,
@@ -2445,9 +2445,9 @@
  "AppKit:NSText:base-writing-direction": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSText:delegate": {
   "confidence": 0.9,
@@ -2459,23 +2459,23 @@
  "AppKit:NSText:draws-background": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSText:editable": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSText:field-editor": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSText:font": {
   "confidence": 0.9,
@@ -2487,23 +2487,23 @@
  "AppKit:NSText:horizontally-resizable": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSText:imports-graphics": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSText:max-size": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSText:min-size": {
   "confidence": 0.9,
@@ -2515,23 +2515,23 @@
  "AppKit:NSText:rich-text": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSText:ruler-visible": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:none-rule"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSText:selectable": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSText:selected-range": {
   "confidence": 0.9,
@@ -2543,9 +2543,9 @@
  "AppKit:NSText:string": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSText:text-color": {
   "confidence": 0.9,
@@ -2557,16 +2557,16 @@
  "AppKit:NSText:uses-font-panel": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSText:vertically-resizable": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextField:accepts-first-responder": {
   "confidence": 0.9,
@@ -2774,9 +2774,9 @@
  "AppKit:NSTextView:accepts-glyph-info": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:allowed-input-source-locales": {
   "confidence": 0.9,
@@ -2788,86 +2788,86 @@
  "AppKit:NSTextView:allowed-writing-tools-result-options": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:allows-character-picker-touch-bar-item": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:allows-document-background-color-change": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:allows-image-editing": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:allows-undo": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:automatic-dash-substitution-enabled": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:automatic-data-detection-enabled": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:automatic-link-detection-enabled": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:automatic-quote-substitution-enabled": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:automatic-spelling-correction-enabled": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:automatic-text-completion-enabled": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:automatic-text-replacement-enabled": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:background-color": {
   "confidence": 0.9,
@@ -2893,9 +2893,9 @@
  "AppKit:NSTextView:continuous-spell-checking-enabled": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:default-paragraph-style": {
   "confidence": 0.9,
@@ -2914,65 +2914,65 @@
  "AppKit:NSTextView:displays-link-tool-tips": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:draws-background": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:editable": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:enabled-text-checking-types": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:field-editor": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:grammar-checking-enabled": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:imports-graphics": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:incremental-searching-enabled": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:inline-prediction-type": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:insertion-point-color": {
   "confidence": 0.9,
@@ -3005,9 +3005,9 @@
  "AppKit:NSTextView:math-expression-completion-type": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:range-for-user-character-attribute-change": {
   "confidence": 0.9,
@@ -3068,23 +3068,23 @@
  "AppKit:NSTextView:rich-text": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:ruler-visible": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:selectable": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:selected-ranges": {
   "confidence": 0.9,
@@ -3110,9 +3110,9 @@
  "AppKit:NSTextView:selection-granularity": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:should-draw-insertion-point": {
   "confidence": 0.9,
@@ -3124,9 +3124,9 @@
  "AppKit:NSTextView:smart-insert-delete-enabled": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:spell-checker-document-tag": {
   "confidence": 0.9,
@@ -3152,9 +3152,9 @@
  "AppKit:NSTextView:text-container-inset": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:text-container-origin": {
   "confidence": 0.9,
@@ -3201,51 +3201,51 @@
  "AppKit:NSTextView:uses-adaptive-color-mapping-for-dark-appearance": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:uses-find-bar": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:uses-find-panel": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:uses-font-panel": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:uses-inspector-bar": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:uses-rollover-button-for-selection": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:uses-ruler": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTextView:writable-pasteboard-types": {
   "confidence": 0.9,
@@ -3264,16 +3264,16 @@
  "AppKit:NSTextView:writing-tools-behavior": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTokenField:completion-delay": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTokenField:delegate": {
   "confidence": 0.9,
@@ -3285,9 +3285,9 @@
  "AppKit:NSTokenField:token-style": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSTokenField:tokenizing-character-set": {
   "confidence": 0.9,
@@ -4020,16 +4020,16 @@
  "AppKit:NSVisualEffectView:blending-mode": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSVisualEffectView:emphasized": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSVisualEffectView:interior-background-style": {
   "confidence": 0.9,
@@ -4048,16 +4048,16 @@
  "AppKit:NSVisualEffectView:material": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSVisualEffectView:state": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:set-only"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSWindow:accepts-mouse-moved-events": {
   "confidence": 0.9,
@@ -4349,9 +4349,9 @@
  "AppKit:NSWindow:floating-panel": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:none-rule"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSWindow:frame": {
   "confidence": 0.9,
@@ -4825,9 +4825,9 @@
  "AppKit:NSWindow:works-when-modal": {
   "confidence": 0.9,
   "evidence": {
-   "kvo": null
+   "kvo": true
   },
-  "pattern": "observe:none-rule"
+  "pattern": "observe:kvo-probe"
  },
  "AppKit:NSWindow:zoomable": {
   "confidence": 0.9,

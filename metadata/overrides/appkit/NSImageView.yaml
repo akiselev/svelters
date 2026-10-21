@@ -6,10 +6,10 @@ element:
   provenance: "NSImageView.h: -init gives an empty, non-editable image view. `image` takes an NSImage handle, or a string: an image name, else an SF Symbol name."
 props:
   - name: image-scaling
-    sample: scale-axes-independently
+    sample: image-scale-axes-independently
     provenance: "NSImageView.imageScaling (NSImageScaling)"
   - name: image-alignment
-    sample: align-top
+    sample: top
     provenance: "NSImageView.imageAlignment (NSImageAlignment)"
   - name: image-frame-style
     sample: photo

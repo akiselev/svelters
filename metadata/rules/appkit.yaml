@@ -37,6 +37,9 @@ deny_props:
   - class: NSWindow
     pattern: '^style-mask$'
     reason: manual (metadata/overrides/appkit/NSWindow.yaml); a probe that drops `titled` can leave the window without a frame view
+  - class: NSComboBox
+    pattern: '^uses-data-source$'
+    reason: dangerous (metadata/overrides/appkit/NSComboBox.yaml); YES makes the item methods raise without a data source, which JS cannot provide
 
 # B: change sources for a generic `bind:<prop>` (REACTIVITY.md 3.3: KVO is only documented for a few AppKit
 # properties and never fires for typing, so no binding uses bare KVO). The nearest source in an element class's
@@ -98,6 +101,8 @@ observe:
     "NSWindow:frame": [{mechanism: notification, name: NSWindowDidResizeNotification}, {mechanism: notification, name: NSWindowDidMoveNotification}]
     # WP-A: the value a user edits on the newer controls is reported by their action (or the text system's notification).
     "NSTextView:string": [{mechanism: notification, name: NSTextDidChangeNotification}]
+    # NSText declares `string`; its row is tested on <text-view>, where the backend resolves the NSTextView fallback.
+    "NSText:string": [{mechanism: notification, name: NSTextDidChangeNotification}]
     "NSSegmentedControl:selected-segment": [{mechanism: target_action}]
     "NSStepper:double-value": [{mechanism: target_action}]
     "NSStepper:float-value": [{mechanism: target_action}]

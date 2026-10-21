@@ -127,6 +127,11 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: cargo test -p counter-mac --test counter
+      # WP-A: every gallery page clicked natively; screenshots in target/gallery (uploaded below).
+      - name: counter-mac gallery
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: cargo test -p counter-mac --test gallery
       - name: counter-mac run with screenshot
         if: ${{ !cancelled() }}
         timeout-minutes: 5

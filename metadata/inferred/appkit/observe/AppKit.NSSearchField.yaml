@@ -15,10 +15,12 @@ observe:
     ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
   confidence: 0.9
 - prop: maximum-recents
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `maximumRecents` fired on a programmatic set'
   confidence: 0.9
 - prop: recent-searches
   class: set_only
@@ -51,14 +53,18 @@ observe:
     ref: a read-only property, not probed; KVO-compliant only if documented
   confidence: 0.9
 - prop: sends-search-string-immediately
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `sendsSearchStringImmediately` fired on a programmatic set'
   confidence: 0.9
 - prop: sends-whole-search-string
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `sendsWholeSearchString` fired on a programmatic set'
   confidence: 0.9

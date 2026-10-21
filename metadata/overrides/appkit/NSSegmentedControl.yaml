@@ -5,6 +5,9 @@ element:
   construct: new
   test_setup:
     - {name: labels, value: ["Day", "Week", "Month"]}
+  read_errors:
+    - name: double-value-for-selected-segment
+      reason: "NSSegmentedControl.h: -doubleValueForSelectedSegment is valid only with trackingMode NSSegmentSwitchTrackingMomentaryAccelerator (raises otherwise; CI run 39676947193)"
   provenance: "NSSegmentedControl.h: -init gives a control with no segments; `labels` sets the segment count and one label per segment"
 props:
   - name: segment-count

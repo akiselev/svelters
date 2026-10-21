@@ -33,10 +33,12 @@ observe:
     ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
   confidence: 0.9
 - prop: editable
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `editable` fired on a programmatic set'
   confidence: 0.9
 - prop: menu
   class: set_only
@@ -51,10 +53,12 @@ observe:
     ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
   confidence: 0.9
 - prop: path-style
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `pathStyle` fired on a programmatic set'
   confidence: 0.9
 - prop: placeholder-attributed-string
   class: set_only
@@ -63,10 +67,12 @@ observe:
     ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
   confidence: 0.9
 - prop: placeholder-string
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `placeholderString` fired on a programmatic set'
   confidence: 0.9
 - prop: url
   class: partial

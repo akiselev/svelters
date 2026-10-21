@@ -3,16 +3,20 @@ toolkit: appkit
 owner: AppKit:NSComboBox
 observe:
 - prop: button-bordered
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `buttonBordered` fired on a programmatic set'
   confidence: 0.9
 - prop: completes
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `completes` fired on a programmatic set'
   confidence: 0.9
 - prop: data-source
   class: set_only
@@ -27,10 +31,12 @@ observe:
     ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
   confidence: 0.9
 - prop: has-vertical-scroller
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `hasVerticalScroller` fired on a programmatic set'
   confidence: 0.9
 - prop: index-of-selected-item
   class: partial
@@ -44,16 +50,20 @@ observe:
     ref: 'O7: not probed for KVO; the fallback reports user changes only'
   confidence: 0.9
 - prop: intercell-spacing
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `intercellSpacing` fired on a programmatic set'
   confidence: 0.9
 - prop: item-height
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `itemHeight` fired on a programmatic set'
   confidence: 0.9
 - prop: number-of-items
   class: none
@@ -62,10 +72,12 @@ observe:
     ref: a read-only property, not probed; KVO-compliant only if documented
   confidence: 0.9
 - prop: number-of-visible-items
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `numberOfVisibleItems` fired on a programmatic set'
   confidence: 0.9
 - prop: object-value-of-selected-item
   class: none
@@ -80,8 +92,10 @@ observe:
     ref: a read-only property, not probed; KVO-compliant only if documented
   confidence: 0.9
 - prop: uses-data-source
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `usesDataSource` fired on a programmatic set'
   confidence: 0.9

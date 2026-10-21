@@ -3,72 +3,86 @@ toolkit: appkit
 owner: AppKit:NSStepper
 observe:
 - prop: autorepeat
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `autorepeat` fired on a programmatic set'
   confidence: 0.9
 - prop: double-value
-  class: partial
+  class: exact
   via:
+  - mechanism: notify
   - mechanism: target_action
-  missed:
-  - programmatic
   provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `doubleValue` fired on a programmatic set'
   - origin: rule
-    ref: 'O7: not probed for KVO; the fallback reports user changes only'
+    ref: 'O7: user edits reach the value through target_action'
   confidence: 0.9
 - prop: float-value
-  class: partial
+  class: exact
   via:
+  - mechanism: notify
   - mechanism: target_action
-  missed:
-  - programmatic
   provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `floatValue` fired on a programmatic set'
   - origin: rule
-    ref: 'O7: not probed for KVO; the fallback reports user changes only'
+    ref: 'O7: user edits reach the value through target_action'
   confidence: 0.9
 - prop: increment
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `increment` fired on a programmatic set'
   confidence: 0.9
 - prop: int-value
-  class: partial
+  class: exact
   via:
+  - mechanism: notify
   - mechanism: target_action
-  missed:
-  - programmatic
   provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `intValue` fired on a programmatic set'
   - origin: rule
-    ref: 'O7: not probed for KVO; the fallback reports user changes only'
+    ref: 'O7: user edits reach the value through target_action'
   confidence: 0.9
 - prop: integer-value
-  class: partial
+  class: exact
   via:
+  - mechanism: notify
   - mechanism: target_action
-  missed:
-  - programmatic
   provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `integerValue` fired on a programmatic set'
   - origin: rule
-    ref: 'O7: not probed for KVO; the fallback reports user changes only'
+    ref: 'O7: user edits reach the value through target_action'
   confidence: 0.9
 - prop: max-value
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `maxValue` fired on a programmatic set'
   confidence: 0.9
 - prop: min-value
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `minValue` fired on a programmatic set'
   confidence: 0.9
 - prop: value-wraps
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `valueWraps` fired on a programmatic set'
   confidence: 0.9

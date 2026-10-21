@@ -42,3 +42,8 @@ harness = false
 [[test]]
 name = "types_core"
 harness = false
+
+# WP-A: the AppKit widget gallery (fixtures/gallery-appkit), one case per page, with screenshots.
+[[test]]
+name = "gallery"
+harness = false

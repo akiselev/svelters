@@ -25,9 +25,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("box");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("box") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -94,9 +97,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("button");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("button") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -202,9 +208,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("color-well");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("color-well") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -242,9 +251,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("combo-box");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("combo-box") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -443,9 +455,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("date-picker");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("date-picker") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -520,9 +535,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("image-view");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("image-view") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -533,8 +551,8 @@ mod cases {
     pub fn prop_nsimageview_image_scaling() {
         let h = Harness::shared();
         let o = h.create("image-view");
-        h.set(o, "image-scaling", V::Str("scale-axes-independently".into())).unwrap();
-        assert_eq!(h.get(o, "image-scaling").unwrap(), V::Str("scale-axes-independently".into()));
+        h.set(o, "image-scaling", V::Str("image-scale-axes-independently".into())).unwrap();
+        assert_eq!(h.get(o, "image-scaling").unwrap(), V::Str("image-scale-axes-independently".into()));
         h.destroy(o);
     }
 
@@ -542,8 +560,8 @@ mod cases {
     pub fn prop_nsimageview_image_alignment() {
         let h = Harness::shared();
         let o = h.create("image-view");
-        h.set(o, "image-alignment", V::Str("align-top".into())).unwrap();
-        assert_eq!(h.get(o, "image-alignment").unwrap(), V::Str("align-top".into()));
+        h.set(o, "image-alignment", V::Str("top".into())).unwrap();
+        assert_eq!(h.get(o, "image-alignment").unwrap(), V::Str("top".into()));
         h.destroy(o);
     }
 
@@ -588,9 +606,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("level-indicator");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("level-indicator") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -660,14 +681,17 @@ mod cases {
         h.destroy(o);
     }
 
-    /// every readable table prop of <menu> reads back without an error
+    /// every readable table prop of <menu> reads back without an error (an error from properties-to-update)
     pub fn readable_nsmenu() {
         let h = Harness::shared();
         let o = h.create("menu");
         let mut bad = Vec::new();
+        let errs: &[&str] = &["properties-to-update"];
         for name in h.readable_props("menu") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -804,9 +828,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("menu-item");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("menu-item") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -961,9 +988,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("panel");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("panel") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -1011,9 +1041,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("path-control");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("path-control") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -1061,9 +1094,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("pop-up-button");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("pop-up-button") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -1170,9 +1206,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("progress-indicator");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("progress-indicator") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -1254,9 +1293,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("scroll-view");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("scroll-view") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -1339,9 +1381,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("search-field");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("search-field") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -1389,9 +1434,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("secure-text-field");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("secure-text-field") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -1416,14 +1464,17 @@ mod cases {
         h.destroy(o);
     }
 
-    /// every readable table prop of <segmented-control> reads back without an error
+    /// every readable table prop of <segmented-control> reads back without an error (an error from double-value-for-selected-segment)
     pub fn readable_nssegmentedcontrol() {
         let h = Harness::shared();
         let o = h.create("segmented-control");
         let mut bad = Vec::new();
+        let errs: &[&str] = &["double-value-for-selected-segment"];
         for name in h.readable_props("segmented-control") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -1489,9 +1540,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("slider");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("slider") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -1566,9 +1620,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("split-view");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("split-view") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -1666,9 +1723,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("stack-view");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("stack-view") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -1755,9 +1815,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("stepper");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("stepper") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -1823,9 +1886,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("switch");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("switch") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -1870,9 +1936,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("tab-view");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("tab-view") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -2069,9 +2138,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("tab-view-item");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("tab-view-item") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -2138,9 +2210,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("text-field");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("text-field") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -2254,9 +2329,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("text-view");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("text-view") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -2425,9 +2503,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("token-field");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("token-field") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -2438,8 +2519,8 @@ mod cases {
     pub fn prop_nstokenfield_token_style() {
         let h = Harness::shared();
         let o = h.create("token-field");
-        h.set(o, "token-style", V::Str("square".into())).unwrap();
-        assert_eq!(h.get(o, "token-style").unwrap(), V::Str("square".into()));
+        h.set(o, "token-style", V::Str("squared".into())).unwrap();
+        assert_eq!(h.get(o, "token-style").unwrap(), V::Str("squared".into()));
         h.destroy(o);
     }
 
@@ -2466,9 +2547,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("view");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("view") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -2589,9 +2673,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("visual-effect-view");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("visual-effect-view") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -2648,9 +2735,12 @@ mod cases {
         let h = Harness::shared();
         let o = h.create("window");
         let mut bad = Vec::new();
+        let errs: &[&str] = &[];
         for name in h.readable_props("window") {
-            if let Err(e) = h.get(o, name) {
-                bad.push(format!("{name}: {e}"));
+            match (h.get(o, name), errs.contains(&name)) {
+                (Err(e), false) => bad.push(format!("{name}: {e}")),
+                (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
+                _ => {}
             }
         }
         h.destroy(o);
@@ -3169,6 +3259,36 @@ mod cases {
         PropRow { tag: "button", name: "tint-prominence", setter: "setTintProminence:", sample: S::Str("none"), expect: S::Str("none") },
         // prop_nsbutton_transparent: prop NSButton.transparent: inferred from the probe on <button>: BOOL, assign; round trip exact; KVO fired on the programmatic set
         PropRow { tag: "button", name: "transparent", setter: "setTransparent:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nscolorwell_double_value: prop NSColorWell.double-value: inferred from the probe on <color-well>: double, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "color-well", name: "double-value", setter: "setDoubleValue:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nscolorwell_float_value: prop NSColorWell.float-value: inferred from the probe on <color-well>: float, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "color-well", name: "float-value", setter: "setFloatValue:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nscolorwell_int_value: prop NSColorWell.int-value: inferred from the probe on <color-well>: int, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "color-well", name: "int-value", setter: "setIntValue:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nscolorwell_integer_value: prop NSColorWell.integer-value: inferred from the probe on <color-well>: NSInteger, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "color-well", name: "integer-value", setter: "setIntegerValue:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nscolorwell_maximum_linear_exposure: prop NSColorWell.maximum-linear-exposure: inferred from the probe on <color-well>: CGFloat, assign, since macOS 26.0; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "color-well", name: "maximum-linear-exposure", setter: "setMaximumLinearExposure:", sample: S::F64(2.0), expect: S::F64(2.0) },
+        // prop_nscolorwell_string_value: prop NSColorWell.string-value: inferred from the probe on <color-well>: NSString *, copy; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "color-well", name: "string-value", setter: "setStringValue:", sample: S::Str("svl probe"), expect: S::Str("svl probe") },
+        // prop_nscolorwell_supports_alpha: prop NSColorWell.supports-alpha: inferred from the probe on <color-well>: BOOL, assign, since macOS 14.0; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "color-well", name: "supports-alpha", setter: "setSupportsAlpha:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nscombobox_button_bordered: prop NSComboBox.button-bordered: inferred from the probe on <combo-box>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "combo-box", name: "button-bordered", setter: "setButtonBordered:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nscombobox_double_value: prop NSComboBox.double-value: inferred from the probe on <combo-box>: double, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "combo-box", name: "double-value", setter: "setDoubleValue:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nscombobox_float_value: prop NSComboBox.float-value: inferred from the probe on <combo-box>: float, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "combo-box", name: "float-value", setter: "setFloatValue:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nscombobox_int_value: prop NSComboBox.int-value: inferred from the probe on <combo-box>: int, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "combo-box", name: "int-value", setter: "setIntValue:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nscombobox_integer_value: prop NSComboBox.integer-value: inferred from the probe on <combo-box>: NSInteger, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "combo-box", name: "integer-value", setter: "setIntegerValue:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nscombobox_intercell_spacing: prop NSComboBox.intercell-spacing: inferred from the probe on <combo-box>: NSSize, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "combo-box", name: "intercell-spacing", setter: "setIntercellSpacing:", sample: S::Rec(SVL_T_SIZE, &[120.0, 40.0]), expect: S::Rec(SVL_T_SIZE, &[120.0, 40.0]) },
+        // prop_nscombobox_item_height: prop NSComboBox.item-height: inferred from the probe on <combo-box>: CGFloat, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "combo-box", name: "item-height", setter: "setItemHeight:", sample: S::F64(2.0), expect: S::F64(2.0) },
+        // prop_nscombobox_string_value: prop NSComboBox.string-value: inferred from the probe on <combo-box>: NSString *, copy; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "combo-box", name: "string-value", setter: "setStringValue:", sample: S::Str("svl probe"), expect: S::Str("svl probe") },
         // prop_nscontrol_alignment: prop NSControl.alignment: inferred from the probe on <button>: NSTextAlignment, assign; round trip exact; KVO fired on the programmatic set
         PropRow { tag: "button", name: "alignment", setter: "setAlignment:", sample: S::Str("left"), expect: S::Str("left") },
         // prop_nscontrol_allows_expansion_tool_tips: prop NSControl.allows-expansion-tool-tips: inferred from the probe on <button>: BOOL, assign, since macOS 10.8; round trip exact; KVO fired on the programmatic set
@@ -3193,6 +3313,60 @@ mod cases {
         PropRow { tag: "button", name: "tag", setter: "setTag:", sample: S::I64(3), expect: S::I64(3) },
         // prop_nscontrol_uses_single_line_mode: prop NSControl.uses-single-line-mode: inferred from the probe on <button>: BOOL, assign, since macOS 10.10; round trip exact; KVO fired on the programmatic set
         PropRow { tag: "button", name: "uses-single-line-mode", setter: "setUsesSingleLineMode:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nsdatepicker_bordered: prop NSDatePicker.bordered: inferred from the probe on <date-picker>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "date-picker", name: "bordered", setter: "setBordered:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nsdatepicker_presents_calendar_overlay: prop NSDatePicker.presents-calendar-overlay: inferred from the probe on <date-picker>: BOOL, assign, since macOS 10.15.4; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "date-picker", name: "presents-calendar-overlay", setter: "setPresentsCalendarOverlay:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nsimageview_allows_cut_copy_paste: prop NSImageView.allows-cut-copy-paste: inferred from the probe on <image-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "image-view", name: "allows-cut-copy-paste", setter: "setAllowsCutCopyPaste:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nsimageview_preferred_image_dynamic_range: prop NSImageView.preferred-image-dynamic-range: inferred from the probe on <image-view>: NSImageDynamicRange, assign, since macOS 14.0; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "image-view", name: "preferred-image-dynamic-range", setter: "setPreferredImageDynamicRange:", sample: S::Str("unspecified"), expect: S::Str("unspecified") },
+        // prop_nslevelindicator_double_value: prop NSLevelIndicator.double-value: inferred from the probe on <level-indicator>: double, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "level-indicator", name: "double-value", setter: "setDoubleValue:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nslevelindicator_draws_tiered_capacity_levels: prop NSLevelIndicator.draws-tiered-capacity-levels: inferred from the probe on <level-indicator>: BOOL, assign, since macOS 10.13; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "level-indicator", name: "draws-tiered-capacity-levels", setter: "setDrawsTieredCapacityLevels:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nslevelindicator_float_value: prop NSLevelIndicator.float-value: inferred from the probe on <level-indicator>: float, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "level-indicator", name: "float-value", setter: "setFloatValue:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nslevelindicator_int_value: prop NSLevelIndicator.int-value: inferred from the probe on <level-indicator>: int, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "level-indicator", name: "int-value", setter: "setIntValue:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nslevelindicator_integer_value: prop NSLevelIndicator.integer-value: inferred from the probe on <level-indicator>: NSInteger, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "level-indicator", name: "integer-value", setter: "setIntegerValue:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nslevelindicator_number_of_major_tick_marks: prop NSLevelIndicator.number-of-major-tick-marks: inferred from the probe on <level-indicator>: NSInteger, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "level-indicator", name: "number-of-major-tick-marks", setter: "setNumberOfMajorTickMarks:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nslevelindicator_number_of_tick_marks: prop NSLevelIndicator.number-of-tick-marks: inferred from the probe on <level-indicator>: NSInteger, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "level-indicator", name: "number-of-tick-marks", setter: "setNumberOfTickMarks:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nslevelindicator_placeholder_visibility: prop NSLevelIndicator.placeholder-visibility: inferred from the probe on <level-indicator>: NSLevelIndicatorPlaceholderVisibility, assign, since macOS 10.13; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "level-indicator", name: "placeholder-visibility", setter: "setPlaceholderVisibility:", sample: S::Str("always"), expect: S::Str("always") },
+        // prop_nslevelindicator_tick_mark_position: prop NSLevelIndicator.tick-mark-position: inferred from the probe on <level-indicator>: NSTickMarkPosition, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "level-indicator", name: "tick-mark-position", setter: "setTickMarkPosition:", sample: S::Str("above"), expect: S::Str("above") },
+        // prop_nsmenu_allows_context_menu_plug_ins: prop NSMenu.allows-context-menu-plug-ins: inferred from the probe on <menu>: BOOL, assign, since macOS 10.6; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "menu", name: "allows-context-menu-plug-ins", setter: "setAllowsContextMenuPlugIns:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nsmenu_automatically_inserts_writing_tools_items: prop NSMenu.automatically-inserts-writing-tools-items: inferred from the probe on <menu>: BOOL, assign, since macOS 15.2; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "menu", name: "automatically-inserts-writing-tools-items", setter: "setAutomaticallyInsertsWritingToolsItems:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nsmenu_presentation_style: prop NSMenu.presentation-style: inferred from the probe on <menu>: NSMenuPresentationStyle, assign, since macOS 14.0; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "menu", name: "presentation-style", setter: "setPresentationStyle:", sample: S::Str("palette"), expect: S::Str("palette") },
+        // prop_nsmenu_selection_mode: prop NSMenu.selection-mode: inferred from the probe on <menu>: NSMenuSelectionMode, assign, since macOS 14.0; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "menu", name: "selection-mode", setter: "setSelectionMode:", sample: S::Str("select-one"), expect: S::Str("select-one") },
+        // prop_nsmenu_user_interface_layout_direction: prop NSMenu.user-interface-layout-direction: inferred from the probe on <menu>: NSUserInterfaceLayoutDirection, assign, since macOS 10.11; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "menu", name: "user-interface-layout-direction", setter: "setUserInterfaceLayoutDirection:", sample: S::Str("right-to-left"), expect: S::Str("right-to-left") },
+        // prop_nsmenuitem_allows_automatic_key_equivalent_localization: prop NSMenuItem.allows-automatic-key-equivalent-localization: inferred from the probe on <menu-item>: BOOL, assign, since macOS 12.0; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "menu-item", name: "allows-automatic-key-equivalent-localization", setter: "setAllowsAutomaticKeyEquivalentLocalization:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nsmenuitem_allows_automatic_key_equivalent_mirroring: prop NSMenuItem.allows-automatic-key-equivalent-mirroring: inferred from the probe on <menu-item>: BOOL, assign, since macOS 12.0; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "menu-item", name: "allows-automatic-key-equivalent-mirroring", setter: "setAllowsAutomaticKeyEquivalentMirroring:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nsmenuitem_allows_key_equivalent_when_hidden: prop NSMenuItem.allows-key-equivalent-when-hidden: inferred from the probe on <menu-item>: BOOL, assign, since macOS 10.13; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "menu-item", name: "allows-key-equivalent-when-hidden", setter: "setAllowsKeyEquivalentWhenHidden:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nsmenuitem_alternate: prop NSMenuItem.alternate: inferred from the probe on <menu-item>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "menu-item", name: "alternate", setter: "setAlternate:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nsmenuitem_subtitle: prop NSMenuItem.subtitle: inferred from the probe on <menu-item>: NSString *, copy, since macOS 14.4; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "menu-item", name: "subtitle", setter: "setSubtitle:", sample: S::Str("svl probe"), expect: S::Str("svl probe") },
+        // prop_nspathcontrol_string_value: prop NSPathControl.string-value: inferred from the probe on <path-control>: NSString *, copy; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "path-control", name: "string-value", setter: "setStringValue:", sample: S::Str("svl probe"), expect: S::Str("svl probe") },
+        // prop_nspopupbutton_alters_state_of_selected_item: prop NSPopUpButton.alters-state-of-selected-item: inferred from the probe on <pop-up-button>: BOOL, assign, since macOS 15.0; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "pop-up-button", name: "alters-state-of-selected-item", setter: "setAltersStateOfSelectedItem:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nspopupbutton_preferred_edge: prop NSPopUpButton.preferred-edge: inferred from the probe on <pop-up-button>: NSRectEdge, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "pop-up-button", name: "preferred-edge", setter: "setPreferredEdge:", sample: S::Str("rect-edge-min-x"), expect: S::Str("rect-edge-min-x") },
+        // prop_nspopupbutton_uses_item_from_menu: prop NSPopUpButton.uses-item-from-menu: inferred from the probe on <pop-up-button>: BOOL, assign, since macOS 15.0; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "pop-up-button", name: "uses-item-from-menu", setter: "setUsesItemFromMenu:", sample: S::Bool(false), expect: S::Bool(false) },
         // prop_nsprogressindicator_control_size: prop NSProgressIndicator.control-size: inferred from the probe on <progress-indicator>: NSControlSize, assign; round trip exact; KVO fired on the programmatic set
         PropRow { tag: "progress-indicator", name: "control-size", setter: "setControlSize:", sample: S::Str("small"), expect: S::Str("small") },
         // prop_nsprogressindicator_displayed_when_stopped: prop NSProgressIndicator.displayed-when-stopped: inferred from the probe on <progress-indicator>: BOOL, assign; round trip exact; KVO fired on the programmatic set
@@ -3201,6 +3375,66 @@ mod cases {
         PropRow { tag: "progress-indicator", name: "min-value", setter: "setMinValue:", sample: S::F64(0.5), expect: S::F64(0.5) },
         // prop_nsprogressindicator_uses_threaded_animation: prop NSProgressIndicator.uses-threaded-animation: inferred from the probe on <progress-indicator>: BOOL, assign; round trip exact; KVO fired on the programmatic set
         PropRow { tag: "progress-indicator", name: "uses-threaded-animation", setter: "setUsesThreadedAnimation:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nsscrollview_allows_magnification: prop NSScrollView.allows-magnification: inferred from the probe on <scroll-view>: BOOL, assign, since macOS 10.8; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "allows-magnification", setter: "setAllowsMagnification:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nsscrollview_autohides_scrollers: prop NSScrollView.autohides-scrollers: inferred from the probe on <scroll-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "autohides-scrollers", setter: "setAutohidesScrollers:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nsscrollview_automatically_adjusts_content_insets: prop NSScrollView.automatically-adjusts-content-insets: inferred from the probe on <scroll-view>: BOOL, assign, since macOS 10.10; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "automatically-adjusts-content-insets", setter: "setAutomaticallyAdjustsContentInsets:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nsscrollview_content_insets: prop NSScrollView.content-insets: inferred from the probe on <scroll-view>: NSEdgeInsets, assign, since macOS 10.10; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "content-insets", setter: "setContentInsets:", sample: S::Rec(SVL_T_INSETS, &[1.0, 2.0, 3.0, 4.0]), expect: S::Rec(SVL_T_INSETS, &[1.0, 2.0, 3.0, 4.0]) },
+        // prop_nsscrollview_draws_background: prop NSScrollView.draws-background: inferred from the probe on <scroll-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "draws-background", setter: "setDrawsBackground:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nsscrollview_find_bar_position: prop NSScrollView.find-bar-position: inferred from the probe on <scroll-view>: NSScrollViewFindBarPosition, assign, since macOS 10.7; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "find-bar-position", setter: "setFindBarPosition:", sample: S::Str("above-horizontal-ruler"), expect: S::Str("above-horizontal-ruler") },
+        // prop_nsscrollview_has_horizontal_ruler: prop NSScrollView.has-horizontal-ruler: inferred from the probe on <scroll-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "has-horizontal-ruler", setter: "setHasHorizontalRuler:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nsscrollview_has_vertical_ruler: prop NSScrollView.has-vertical-ruler: inferred from the probe on <scroll-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "has-vertical-ruler", setter: "setHasVerticalRuler:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nsscrollview_horizontal_line_scroll: prop NSScrollView.horizontal-line-scroll: inferred from the probe on <scroll-view>: CGFloat, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "horizontal-line-scroll", setter: "setHorizontalLineScroll:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nsscrollview_horizontal_page_scroll: prop NSScrollView.horizontal-page-scroll: inferred from the probe on <scroll-view>: CGFloat, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "horizontal-page-scroll", setter: "setHorizontalPageScroll:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nsscrollview_horizontal_scroll_elasticity: prop NSScrollView.horizontal-scroll-elasticity: inferred from the probe on <scroll-view>: NSScrollElasticity, assign, since macOS 10.7; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "horizontal-scroll-elasticity", setter: "setHorizontalScrollElasticity:", sample: S::Str("none"), expect: S::Str("none") },
+        // prop_nsscrollview_line_scroll: prop NSScrollView.line-scroll: inferred from the probe on <scroll-view>: CGFloat, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "line-scroll", setter: "setLineScroll:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nsscrollview_magnification: prop NSScrollView.magnification: inferred from the probe on <scroll-view>: CGFloat, assign, since macOS 10.8; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "magnification", setter: "setMagnification:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nsscrollview_max_magnification: prop NSScrollView.max-magnification: inferred from the probe on <scroll-view>: CGFloat, assign, since macOS 10.8; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "max-magnification", setter: "setMaxMagnification:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nsscrollview_min_magnification: prop NSScrollView.min-magnification: inferred from the probe on <scroll-view>: CGFloat, assign, since macOS 10.8; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "min-magnification", setter: "setMinMagnification:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nsscrollview_page_scroll: prop NSScrollView.page-scroll: inferred from the probe on <scroll-view>: CGFloat, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "page-scroll", setter: "setPageScroll:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nsscrollview_rulers_visible: prop NSScrollView.rulers-visible: inferred from the probe on <scroll-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "rulers-visible", setter: "setRulersVisible:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nsscrollview_scroller_insets: prop NSScrollView.scroller-insets: inferred from the probe on <scroll-view>: NSEdgeInsets, assign, since macOS 10.10; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "scroller-insets", setter: "setScrollerInsets:", sample: S::Rec(SVL_T_INSETS, &[1.0, 2.0, 3.0, 4.0]), expect: S::Rec(SVL_T_INSETS, &[1.0, 2.0, 3.0, 4.0]) },
+        // prop_nsscrollview_scroller_knob_style: prop NSScrollView.scroller-knob-style: inferred from the probe on <scroll-view>: NSScrollerKnobStyle, assign, since macOS 10.7; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "scroller-knob-style", setter: "setScrollerKnobStyle:", sample: S::Str("dark"), expect: S::Str("dark") },
+        // prop_nsscrollview_scroller_style: prop NSScrollView.scroller-style: inferred from the probe on <scroll-view>: NSScrollerStyle, assign, since macOS 10.7; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "scroller-style", setter: "setScrollerStyle:", sample: S::Str("overlay"), expect: S::Str("overlay") },
+        // prop_nsscrollview_scrolls_dynamically: prop NSScrollView.scrolls-dynamically: inferred from the probe on <scroll-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "scrolls-dynamically", setter: "setScrollsDynamically:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nsscrollview_uses_predominant_axis_scrolling: prop NSScrollView.uses-predominant-axis-scrolling: inferred from the probe on <scroll-view>: BOOL, assign, since macOS 10.7; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "uses-predominant-axis-scrolling", setter: "setUsesPredominantAxisScrolling:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nsscrollview_vertical_line_scroll: prop NSScrollView.vertical-line-scroll: inferred from the probe on <scroll-view>: CGFloat, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "vertical-line-scroll", setter: "setVerticalLineScroll:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nsscrollview_vertical_page_scroll: prop NSScrollView.vertical-page-scroll: inferred from the probe on <scroll-view>: CGFloat, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "vertical-page-scroll", setter: "setVerticalPageScroll:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nsscrollview_vertical_scroll_elasticity: prop NSScrollView.vertical-scroll-elasticity: inferred from the probe on <scroll-view>: NSScrollElasticity, assign, since macOS 10.7; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "scroll-view", name: "vertical-scroll-elasticity", setter: "setVerticalScrollElasticity:", sample: S::Str("none"), expect: S::Str("none") },
+        // prop_nssearchfield_double_value: prop NSSearchField.double-value: inferred from the probe on <search-field>: double, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "search-field", name: "double-value", setter: "setDoubleValue:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nssearchfield_float_value: prop NSSearchField.float-value: inferred from the probe on <search-field>: float, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "search-field", name: "float-value", setter: "setFloatValue:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nssearchfield_int_value: prop NSSearchField.int-value: inferred from the probe on <search-field>: int, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "search-field", name: "int-value", setter: "setIntValue:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nssearchfield_integer_value: prop NSSearchField.integer-value: inferred from the probe on <search-field>: NSInteger, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "search-field", name: "integer-value", setter: "setIntegerValue:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nssearchfield_string_value: prop NSSearchField.string-value: inferred from the probe on <search-field>: NSString *, copy; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "search-field", name: "string-value", setter: "setStringValue:", sample: S::Str("svl probe"), expect: S::Str("svl probe") },
         // prop_nssecuretextfield_double_value: prop NSSecureTextField.double-value: inferred from the probe on <secure-text-field>: double, assign; round trip exact; KVO fired on the programmatic set
         PropRow { tag: "secure-text-field", name: "double-value", setter: "setDoubleValue:", sample: S::F64(0.5), expect: S::F64(0.5) },
         // prop_nssecuretextfield_float_value: prop NSSecureTextField.float-value: inferred from the probe on <secure-text-field>: float, assign; round trip exact; KVO fired on the programmatic set
@@ -3209,6 +3443,20 @@ mod cases {
         PropRow { tag: "secure-text-field", name: "int-value", setter: "setIntValue:", sample: S::I64(3), expect: S::I64(3) },
         // prop_nssecuretextfield_integer_value: prop NSSecureTextField.integer-value: inferred from the probe on <secure-text-field>: NSInteger, assign; round trip exact; KVO fired on the programmatic set
         PropRow { tag: "secure-text-field", name: "integer-value", setter: "setIntegerValue:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nssegmentedcontrol_border_shape: prop NSSegmentedControl.border-shape: inferred from the probe on <segmented-control>: NSControlBorderShape, assign, since macOS 26.0; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "segmented-control", name: "border-shape", setter: "setBorderShape:", sample: S::Str("capsule"), expect: S::Str("capsule") },
+        // prop_nssegmentedcontrol_double_value: prop NSSegmentedControl.double-value: inferred from the probe on <segmented-control>: double, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "segmented-control", name: "double-value", setter: "setDoubleValue:", sample: S::F64(2.0), expect: S::F64(2.0) },
+        // prop_nssegmentedcontrol_float_value: prop NSSegmentedControl.float-value: inferred from the probe on <segmented-control>: float, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "segmented-control", name: "float-value", setter: "setFloatValue:", sample: S::F64(2.0), expect: S::F64(2.0) },
+        // prop_nssegmentedcontrol_int_value: prop NSSegmentedControl.int-value: inferred from the probe on <segmented-control>: int, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "segmented-control", name: "int-value", setter: "setIntValue:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nssegmentedcontrol_integer_value: prop NSSegmentedControl.integer-value: inferred from the probe on <segmented-control>: NSInteger, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "segmented-control", name: "integer-value", setter: "setIntegerValue:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nssegmentedcontrol_segment_distribution: prop NSSegmentedControl.segment-distribution: inferred from the probe on <segmented-control>: NSSegmentDistribution, assign, since macOS 10.13; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "segmented-control", name: "segment-distribution", setter: "setSegmentDistribution:", sample: S::Str("fit"), expect: S::Str("fit") },
+        // prop_nssegmentedcontrol_spring_loaded: prop NSSegmentedControl.spring-loaded: inferred from the probe on <segmented-control>: BOOL, assign, since macOS 10.10.3; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "segmented-control", name: "spring-loaded", setter: "setSpringLoaded:", sample: S::Bool(true), expect: S::Bool(true) },
         // prop_nsslider_alt_increment_value: prop NSSlider.alt-increment-value: inferred from the probe on <slider>: double, assign; round trip exact; KVO fired on the programmatic set
         PropRow { tag: "slider", name: "alt-increment-value", setter: "setAltIncrementValue:", sample: S::F64(0.5), expect: S::F64(0.5) },
         // prop_nsslider_float_value: prop NSSlider.float-value: inferred from the probe on <slider>: float, assign; round trip exact; KVO fired on the programmatic set
@@ -3225,8 +3473,60 @@ mod cases {
         PropRow { tag: "slider", name: "tick-mark-position", setter: "setTickMarkPosition:", sample: S::Str("above"), expect: S::Str("above") },
         // prop_nsslider_tint_prominence: prop NSSlider.tint-prominence: inferred from the probe on <slider>: NSTintProminence, assign, since macOS 26.0; round trip exact; KVO fired on the programmatic set
         PropRow { tag: "slider", name: "tint-prominence", setter: "setTintProminence:", sample: S::Str("none"), expect: S::Str("none") },
+        // prop_nssplitview_arranges_all_subviews: prop NSSplitView.arranges-all-subviews: inferred from the probe on <split-view>: BOOL, assign, since macOS 10.11; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "split-view", name: "arranges-all-subviews", setter: "setArrangesAllSubviews:", sample: S::Bool(false), expect: S::Bool(false) },
         // prop_nsstackview_detaches_hidden_views: prop NSStackView.detaches-hidden-views: inferred from the probe on <stack-view>: BOOL, assign, since macOS 10.11; round trip exact; KVO fired on the programmatic set
         PropRow { tag: "stack-view", name: "detaches-hidden-views", setter: "setDetachesHiddenViews:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nsstepper_double_value: prop NSStepper.double-value: inferred from the probe on <stepper>: double, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "stepper", name: "double-value", setter: "setDoubleValue:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nsstepper_float_value: prop NSStepper.float-value: inferred from the probe on <stepper>: float, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "stepper", name: "float-value", setter: "setFloatValue:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nsstepper_int_value: prop NSStepper.int-value: inferred from the probe on <stepper>: int, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "stepper", name: "int-value", setter: "setIntValue:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nsstepper_integer_value: prop NSStepper.integer-value: inferred from the probe on <stepper>: NSInteger, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "stepper", name: "integer-value", setter: "setIntegerValue:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nsswitch_double_value: prop NSSwitch.double-value: inferred from the probe on <switch>: double, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "switch", name: "double-value", setter: "setDoubleValue:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nsswitch_float_value: prop NSSwitch.float-value: inferred from the probe on <switch>: float, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "switch", name: "float-value", setter: "setFloatValue:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nsswitch_int_value: prop NSSwitch.int-value: inferred from the probe on <switch>: int, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "switch", name: "int-value", setter: "setIntValue:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nsswitch_integer_value: prop NSSwitch.integer-value: inferred from the probe on <switch>: NSInteger, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "switch", name: "integer-value", setter: "setIntegerValue:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nsswitch_string_value: prop NSSwitch.string-value: inferred from the probe on <switch>: NSString *, copy; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "switch", name: "string-value", setter: "setStringValue:", sample: S::Str("svl probe"), expect: S::Str("svl probe") },
+        // prop_nstabview_control_size: prop NSTabView.control-size: inferred from the probe on <tab-view>: NSControlSize, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "tab-view", name: "control-size", setter: "setControlSize:", sample: S::Str("small"), expect: S::Str("small") },
+        // prop_nstabview_tab_position: prop NSTabView.tab-position: inferred from the probe on <tab-view>: NSTabPosition, assign, since macOS 10.12; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "tab-view", name: "tab-position", setter: "setTabPosition:", sample: S::Str("none"), expect: S::Str("none") },
+        // prop_nstabview_tab_view_border_type: prop NSTabView.tab-view-border-type: inferred from the probe on <tab-view>: NSTabViewBorderType, assign, since macOS 10.12; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "tab-view", name: "tab-view-border-type", setter: "setTabViewBorderType:", sample: S::Str("none"), expect: S::Str("none") },
+        // prop_nstext_alignment: prop NSText.alignment: inferred from the probe on <text-view>: NSTextAlignment, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "alignment", setter: "setAlignment:", sample: S::Str("left"), expect: S::Str("left") },
+        // prop_nstext_base_writing_direction: prop NSText.base-writing-direction: inferred from the probe on <text-view>: NSWritingDirection, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "base-writing-direction", setter: "setBaseWritingDirection:", sample: S::Str("left-to-right"), expect: S::Str("left-to-right") },
+        // prop_nstext_draws_background: prop NSText.draws-background: inferred from the probe on <text-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "draws-background", setter: "setDrawsBackground:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nstext_editable: prop NSText.editable: inferred from the probe on <text-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "editable", setter: "setEditable:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nstext_field_editor: prop NSText.field-editor: inferred from the probe on <text-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "field-editor", setter: "setFieldEditor:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nstext_horizontally_resizable: prop NSText.horizontally-resizable: inferred from the probe on <text-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "horizontally-resizable", setter: "setHorizontallyResizable:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nstext_imports_graphics: prop NSText.imports-graphics: inferred from the probe on <text-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "imports-graphics", setter: "setImportsGraphics:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nstext_max_size: prop NSText.max-size: inferred from the probe on <text-view>: NSSize, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "max-size", setter: "setMaxSize:", sample: S::Rec(SVL_T_SIZE, &[120.0, 40.0]), expect: S::Rec(SVL_T_SIZE, &[120.0, 40.0]) },
+        // prop_nstext_rich_text: prop NSText.rich-text: inferred from the probe on <text-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "rich-text", setter: "setRichText:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nstext_selectable: prop NSText.selectable: inferred from the probe on <text-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "selectable", setter: "setSelectable:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nstext_string: prop NSText.string: inferred from the probe on <text-view>: NSString *, copy; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "string", setter: "setString:", sample: S::Str("svl probe"), expect: S::Str("svl probe") },
+        // prop_nstext_uses_font_panel: prop NSText.uses-font-panel: inferred from the probe on <text-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "uses-font-panel", setter: "setUsesFontPanel:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nstext_vertically_resizable: prop NSText.vertically-resizable: inferred from the probe on <text-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "vertically-resizable", setter: "setVerticallyResizable:", sample: S::Bool(false), expect: S::Bool(false) },
         // prop_nstextfield_allows_character_picker_touch_bar_item: prop NSTextField.allows-character-picker-touch-bar-item: inferred from the probe on <text-field>: BOOL, assign, since macOS 10.12.2; round trip exact; KVO fired on the programmatic set
         PropRow { tag: "text-field", name: "allows-character-picker-touch-bar-item", setter: "setAllowsCharacterPickerTouchBarItem:", sample: S::Bool(true), expect: S::Bool(true) },
         // prop_nstextfield_allows_default_tightening_for_truncation: prop NSTextField.allows-default-tightening-for-truncation: inferred from the probe on <text-field>: BOOL, assign, since macOS 10.11; round trip exact; KVO fired on the programmatic set
@@ -3261,6 +3561,80 @@ mod cases {
         PropRow { tag: "text-field", name: "preferred-max-layout-width", setter: "setPreferredMaxLayoutWidth:", sample: S::F64(0.5), expect: S::F64(0.5) },
         // prop_nstextfield_resolves_natural_alignment_with_base_writing_direction: prop NSTextField.resolves-natural-alignment-with-base-writing-direction: inferred from the probe on <text-field>: BOOL, assign, since macOS 26.0; round trip exact; KVO fired on the programmatic set
         PropRow { tag: "text-field", name: "resolves-natural-alignment-with-base-writing-direction", setter: "setResolvesNaturalAlignmentWithBaseWritingDirection:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nstextview_accepts_glyph_info: prop NSTextView.accepts-glyph-info: inferred from the probe on <text-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "accepts-glyph-info", setter: "setAcceptsGlyphInfo:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nstextview_allowed_writing_tools_result_options: prop NSTextView.allowed-writing-tools-result-options: inferred from the probe on <text-view>: NSWritingToolsResultOptions, assign, since macOS 15.0; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "allowed-writing-tools-result-options", setter: "setAllowedWritingToolsResultOptions:", sample: S::Names(&["plain-text"]), expect: S::I64(1) },
+        // prop_nstextview_allows_character_picker_touch_bar_item: prop NSTextView.allows-character-picker-touch-bar-item: inferred from the probe on <text-view>: BOOL, assign, since macOS 10.12.2; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "allows-character-picker-touch-bar-item", setter: "setAllowsCharacterPickerTouchBarItem:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nstextview_allows_document_background_color_change: prop NSTextView.allows-document-background-color-change: inferred from the probe on <text-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "allows-document-background-color-change", setter: "setAllowsDocumentBackgroundColorChange:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nstextview_allows_image_editing: prop NSTextView.allows-image-editing: inferred from the probe on <text-view>: BOOL, assign, since macOS 10.5; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "allows-image-editing", setter: "setAllowsImageEditing:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nstextview_automatic_dash_substitution_enabled: prop NSTextView.automatic-dash-substitution-enabled: inferred from the probe on <text-view>: BOOL, assign, since macOS 10.6; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "automatic-dash-substitution-enabled", setter: "setAutomaticDashSubstitutionEnabled:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nstextview_automatic_data_detection_enabled: prop NSTextView.automatic-data-detection-enabled: inferred from the probe on <text-view>: BOOL, assign, since macOS 10.6; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "automatic-data-detection-enabled", setter: "setAutomaticDataDetectionEnabled:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nstextview_automatic_link_detection_enabled: prop NSTextView.automatic-link-detection-enabled: inferred from the probe on <text-view>: BOOL, assign, since macOS 10.5; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "automatic-link-detection-enabled", setter: "setAutomaticLinkDetectionEnabled:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nstextview_automatic_quote_substitution_enabled: prop NSTextView.automatic-quote-substitution-enabled: inferred from the probe on <text-view>: BOOL, assign, since macOS 10.5; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "automatic-quote-substitution-enabled", setter: "setAutomaticQuoteSubstitutionEnabled:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nstextview_automatic_spelling_correction_enabled: prop NSTextView.automatic-spelling-correction-enabled: inferred from the probe on <text-view>: BOOL, assign, since macOS 10.6; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "automatic-spelling-correction-enabled", setter: "setAutomaticSpellingCorrectionEnabled:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nstextview_automatic_text_completion_enabled: prop NSTextView.automatic-text-completion-enabled: inferred from the probe on <text-view>: BOOL, assign, since macOS 10.12.2; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "automatic-text-completion-enabled", setter: "setAutomaticTextCompletionEnabled:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nstextview_automatic_text_replacement_enabled: prop NSTextView.automatic-text-replacement-enabled: inferred from the probe on <text-view>: BOOL, assign, since macOS 10.6; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "automatic-text-replacement-enabled", setter: "setAutomaticTextReplacementEnabled:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nstextview_continuous_spell_checking_enabled: prop NSTextView.continuous-spell-checking-enabled: inferred from the probe on <text-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "continuous-spell-checking-enabled", setter: "setContinuousSpellCheckingEnabled:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nstextview_displays_link_tool_tips: prop NSTextView.displays-link-tool-tips: inferred from the probe on <text-view>: BOOL, assign, since macOS 10.5; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "displays-link-tool-tips", setter: "setDisplaysLinkToolTips:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nstextview_enabled_text_checking_types: prop NSTextView.enabled-text-checking-types: inferred from the probe on <text-view>: NSTextCheckingTypes, assign, since macOS 10.6; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "enabled-text-checking-types", setter: "setEnabledTextCheckingTypes:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nstextview_field_editor: prop NSTextView.field-editor: inferred from the probe on <text-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "field-editor", setter: "setFieldEditor:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nstextview_grammar_checking_enabled: prop NSTextView.grammar-checking-enabled: inferred from the probe on <text-view>: BOOL, assign, since macOS 10.5; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "grammar-checking-enabled", setter: "setGrammarCheckingEnabled:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nstextview_imports_graphics: prop NSTextView.imports-graphics: inferred from the probe on <text-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "imports-graphics", setter: "setImportsGraphics:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nstextview_incremental_searching_enabled: prop NSTextView.incremental-searching-enabled: inferred from the probe on <text-view>: BOOL, assign, since macOS 10.7; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "incremental-searching-enabled", setter: "setIncrementalSearchingEnabled:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nstextview_inline_prediction_type: prop NSTextView.inline-prediction-type: inferred from the probe on <text-view>: NSTextInputTraitType, assign, since macOS 14.0; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "inline-prediction-type", setter: "setInlinePredictionType:", sample: S::Str("no"), expect: S::Str("no") },
+        // prop_nstextview_math_expression_completion_type: prop NSTextView.math-expression-completion-type: inferred from the probe on <text-view>: NSTextInputTraitType, assign, since macOS 15.0; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "math-expression-completion-type", setter: "setMathExpressionCompletionType:", sample: S::Str("no"), expect: S::Str("no") },
+        // prop_nstextview_ruler_visible: prop NSTextView.ruler-visible: inferred from the probe on <text-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "ruler-visible", setter: "setRulerVisible:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nstextview_selection_granularity: prop NSTextView.selection-granularity: inferred from the probe on <text-view>: NSSelectionGranularity, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "selection-granularity", setter: "setSelectionGranularity:", sample: S::Str("word"), expect: S::Str("word") },
+        // prop_nstextview_smart_insert_delete_enabled: prop NSTextView.smart-insert-delete-enabled: inferred from the probe on <text-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "smart-insert-delete-enabled", setter: "setSmartInsertDeleteEnabled:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nstextview_uses_adaptive_color_mapping_for_dark_appearance: prop NSTextView.uses-adaptive-color-mapping-for-dark-appearance: inferred from the probe on <text-view>: BOOL, assign, since macOS 10.14; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "uses-adaptive-color-mapping-for-dark-appearance", setter: "setUsesAdaptiveColorMappingForDarkAppearance:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nstextview_uses_find_bar: prop NSTextView.uses-find-bar: inferred from the probe on <text-view>: BOOL, assign, since macOS 10.7; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "uses-find-bar", setter: "setUsesFindBar:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nstextview_uses_find_panel: prop NSTextView.uses-find-panel: inferred from the probe on <text-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "uses-find-panel", setter: "setUsesFindPanel:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nstextview_uses_font_panel: prop NSTextView.uses-font-panel: inferred from the probe on <text-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "uses-font-panel", setter: "setUsesFontPanel:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nstextview_uses_inspector_bar: prop NSTextView.uses-inspector-bar: inferred from the probe on <text-view>: BOOL, assign, since macOS 10.7; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "uses-inspector-bar", setter: "setUsesInspectorBar:", sample: S::Bool(true), expect: S::Bool(true) },
+        // prop_nstextview_uses_rollover_button_for_selection: prop NSTextView.uses-rollover-button-for-selection: inferred from the probe on <text-view>: BOOL, assign, since macOS 10.10; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "uses-rollover-button-for-selection", setter: "setUsesRolloverButtonForSelection:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nstextview_uses_ruler: prop NSTextView.uses-ruler: inferred from the probe on <text-view>: BOOL, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "uses-ruler", setter: "setUsesRuler:", sample: S::Bool(false), expect: S::Bool(false) },
+        // prop_nstextview_writing_tools_behavior: prop NSTextView.writing-tools-behavior: inferred from the probe on <text-view>: NSWritingToolsBehavior, assign, since macOS 15.0; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "text-view", name: "writing-tools-behavior", setter: "setWritingToolsBehavior:", sample: S::Str("none"), expect: S::Str("none") },
+        // prop_nstokenfield_double_value: prop NSTokenField.double-value: inferred from the probe on <token-field>: double, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "token-field", name: "double-value", setter: "setDoubleValue:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nstokenfield_float_value: prop NSTokenField.float-value: inferred from the probe on <token-field>: float, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "token-field", name: "float-value", setter: "setFloatValue:", sample: S::F64(0.5), expect: S::F64(0.5) },
+        // prop_nstokenfield_int_value: prop NSTokenField.int-value: inferred from the probe on <token-field>: int, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "token-field", name: "int-value", setter: "setIntValue:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nstokenfield_integer_value: prop NSTokenField.integer-value: inferred from the probe on <token-field>: NSInteger, assign; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "token-field", name: "integer-value", setter: "setIntegerValue:", sample: S::I64(3), expect: S::I64(3) },
+        // prop_nstokenfield_string_value: prop NSTokenField.string-value: inferred from the probe on <token-field>: NSString *, copy; round trip exact; KVO fired on the programmatic set
+        PropRow { tag: "token-field", name: "string-value", setter: "setStringValue:", sample: S::Str("svl probe"), expect: S::Str("svl probe") },
         // prop_nsview_additional_safe_area_insets: prop NSView.additional-safe-area-insets: inferred from the probe on <view>: NSEdgeInsets, assign, since macOS 11.0; round trip exact; KVO fired on the programmatic set
         PropRow { tag: "view", name: "additional-safe-area-insets", setter: "setAdditionalSafeAreaInsets:", sample: S::Rec(SVL_T_INSETS, &[1.0, 2.0, 3.0, 4.0]), expect: S::Rec(SVL_T_INSETS, &[1.0, 2.0, 3.0, 4.0]) },
         // prop_nsview_allowed_touch_types: prop NSView.allowed-touch-types: inferred from the probe on <view>: NSTouchTypeMask, assign, since macOS 10.12.2; round trip exact; KVO fired on the programmatic set
@@ -3451,12 +3825,40 @@ mod cases {
         BindRow { tag: "button", prop: "int-value", signal: "action", trigger: "", sample: S::I64(1), expect: S::I64(1), arg0: false, echo_none: true },
         // bind_nsbutton_integer_value: bind:integer-value on NSButton via action: inferred (rules binding_sources NSControl): two-way bind:integer-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <button>: round trip exact, the programmatic set did not emit action; delivery seen
         BindRow { tag: "button", prop: "integer-value", signal: "action", trigger: "", sample: S::I64(1), expect: S::I64(1), arg0: false, echo_none: true },
+        // bind_nscolorwell_double_value: bind:double-value on NSColorWell via action: inferred (rules binding_sources NSControl): two-way bind:double-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <color-well>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "color-well", prop: "double-value", signal: "action", trigger: "", sample: S::F64(0.5), expect: S::F64(0.5), arg0: false, echo_none: true },
+        // bind_nscolorwell_float_value: bind:float-value on NSColorWell via action: inferred (rules binding_sources NSControl): two-way bind:float-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <color-well>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "color-well", prop: "float-value", signal: "action", trigger: "", sample: S::F64(0.5), expect: S::F64(0.5), arg0: false, echo_none: true },
+        // bind_nscolorwell_int_value: bind:int-value on NSColorWell via action: inferred (rules binding_sources NSControl): two-way bind:int-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <color-well>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "color-well", prop: "int-value", signal: "action", trigger: "", sample: S::I64(3), expect: S::I64(3), arg0: false, echo_none: true },
+        // bind_nscolorwell_integer_value: bind:integer-value on NSColorWell via action: inferred (rules binding_sources NSControl): two-way bind:integer-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <color-well>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "color-well", prop: "integer-value", signal: "action", trigger: "", sample: S::I64(3), expect: S::I64(3), arg0: false, echo_none: true },
+        // bind_nscolorwell_string_value: bind:string-value on NSColorWell via action: inferred (rules binding_sources NSControl): two-way bind:string-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <color-well>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "color-well", prop: "string-value", signal: "action", trigger: "", sample: S::Str("svl probe"), expect: S::Str("svl probe"), arg0: false, echo_none: true },
         // bind_nscombobox_index_of_selected_item: bind:index-of-selected-item on NSComboBox via combo-box-selection-did-change: two-way bind:index-of-selected-item: NSComboBoxSelectionDidChangeNotification is posted for a pick from the list and carries the index as argument 0. Whether -selectItemAtIndex: posts it too is not documented, so the echo strategy is compare (the host compares with the value it wrote)
         BindRow { tag: "combo-box", prop: "index-of-selected-item", signal: "combo-box-selection-did-change", trigger: "NSComboBoxSelectionDidChangeNotification", sample: S::I64(1), expect: S::I64(1), arg0: true, echo_none: false },
+        // bind_nslevelindicator_double_value: bind:double-value on NSLevelIndicator via action: inferred (rules binding_sources NSControl): two-way bind:double-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <level-indicator>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "level-indicator", prop: "double-value", signal: "action", trigger: "", sample: S::F64(0.5), expect: S::F64(0.5), arg0: false, echo_none: true },
+        // bind_nslevelindicator_float_value: bind:float-value on NSLevelIndicator via action: inferred (rules binding_sources NSControl): two-way bind:float-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <level-indicator>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "level-indicator", prop: "float-value", signal: "action", trigger: "", sample: S::F64(0.5), expect: S::F64(0.5), arg0: false, echo_none: true },
+        // bind_nslevelindicator_int_value: bind:int-value on NSLevelIndicator via action: inferred (rules binding_sources NSControl): two-way bind:int-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <level-indicator>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "level-indicator", prop: "int-value", signal: "action", trigger: "", sample: S::I64(3), expect: S::I64(3), arg0: false, echo_none: true },
+        // bind_nslevelindicator_integer_value: bind:integer-value on NSLevelIndicator via action: inferred (rules binding_sources NSControl): two-way bind:integer-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <level-indicator>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "level-indicator", prop: "integer-value", signal: "action", trigger: "", sample: S::I64(3), expect: S::I64(3), arg0: false, echo_none: true },
+        // bind_nspathcontrol_string_value: bind:string-value on NSPathControl via action: inferred (rules binding_sources NSControl): two-way bind:string-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <path-control>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "path-control", prop: "string-value", signal: "action", trigger: "", sample: S::Str("svl probe"), expect: S::Str("svl probe"), arg0: false, echo_none: true },
         // bind_nspopupbutton_index_of_selected_item: bind:index-of-selected-item on NSPopUpButton via action: two-way bind:index-of-selected-item: the button sends its action after the user picked an item (the index is read back); -selectItemAtIndex: never sends it. Set item-titles before the binding (attribute order) so the index exists.
         BindRow { tag: "pop-up-button", prop: "index-of-selected-item", signal: "action", trigger: "", sample: S::I64(2), expect: S::I64(2), arg0: false, echo_none: true },
         // bind_nssegmentedcontrol_selected_segment: bind:selected-segment on NSSegmentedControl via action: two-way bind:selected-segment: the control sends its action after a click on a segment (the index is read back); setting selectedSegment never sends it. Set labels first (attribute order) so the segment exists.
         BindRow { tag: "segmented-control", prop: "selected-segment", signal: "action", trigger: "", sample: S::I64(2), expect: S::I64(2), arg0: false, echo_none: true },
+        // bind_nssegmentedcontrol_double_value: bind:double-value on NSSegmentedControl via action: inferred (rules binding_sources NSControl): two-way bind:double-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <segmented-control>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "segmented-control", prop: "double-value", signal: "action", trigger: "", sample: S::F64(2.0), expect: S::F64(2.0), arg0: false, echo_none: true },
+        // bind_nssegmentedcontrol_float_value: bind:float-value on NSSegmentedControl via action: inferred (rules binding_sources NSControl): two-way bind:float-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <segmented-control>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "segmented-control", prop: "float-value", signal: "action", trigger: "", sample: S::F64(2.0), expect: S::F64(2.0), arg0: false, echo_none: true },
+        // bind_nssegmentedcontrol_int_value: bind:int-value on NSSegmentedControl via action: inferred (rules binding_sources NSControl): two-way bind:int-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <segmented-control>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "segmented-control", prop: "int-value", signal: "action", trigger: "", sample: S::I64(3), expect: S::I64(3), arg0: false, echo_none: true },
+        // bind_nssegmentedcontrol_integer_value: bind:integer-value on NSSegmentedControl via action: inferred (rules binding_sources NSControl): two-way bind:integer-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <segmented-control>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "segmented-control", prop: "integer-value", signal: "action", trigger: "", sample: S::I64(3), expect: S::I64(3), arg0: false, echo_none: true },
         // bind_nsslider_double_value: bind:double-value on NSSlider via action: two-way bind:double-value; continuous sliders send the action while dragging (no value: read back); programmatic sets never send it
         BindRow { tag: "slider", prop: "double-value", signal: "action", trigger: "", sample: S::F64(0.25), expect: S::F64(0.25), arg0: false, echo_none: true },
         // bind_nsslider_float_value: bind:float-value on NSSlider via action: inferred (rules binding_sources NSControl): two-way bind:float-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <slider>: round trip exact, the programmatic set did not emit action; delivery seen
@@ -3465,8 +3867,26 @@ mod cases {
         BindRow { tag: "slider", prop: "int-value", signal: "action", trigger: "", sample: S::I64(1), expect: S::I64(1), arg0: false, echo_none: true },
         // bind_nsslider_integer_value: bind:integer-value on NSSlider via action: inferred (rules binding_sources NSControl): two-way bind:integer-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <slider>: round trip exact, the programmatic set did not emit action; delivery seen
         BindRow { tag: "slider", prop: "integer-value", signal: "action", trigger: "", sample: S::I64(1), expect: S::I64(1), arg0: false, echo_none: true },
+        // bind_nsstepper_double_value: bind:double-value on NSStepper via action: two-way bind:double-value: the stepper sends its action per step (the value is read back); programmatic sets never send it, min/max changes clamp silently
+        BindRow { tag: "stepper", prop: "double-value", signal: "action", trigger: "", sample: S::F64(0.5), expect: S::F64(0.5), arg0: false, echo_none: true },
+        // bind_nsstepper_float_value: bind:float-value on NSStepper via action: inferred (rules binding_sources NSControl): two-way bind:float-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <stepper>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "stepper", prop: "float-value", signal: "action", trigger: "", sample: S::F64(0.5), expect: S::F64(0.5), arg0: false, echo_none: true },
+        // bind_nsstepper_int_value: bind:int-value on NSStepper via action: inferred (rules binding_sources NSControl): two-way bind:int-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <stepper>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "stepper", prop: "int-value", signal: "action", trigger: "", sample: S::I64(3), expect: S::I64(3), arg0: false, echo_none: true },
+        // bind_nsstepper_integer_value: bind:integer-value on NSStepper via action: inferred (rules binding_sources NSControl): two-way bind:integer-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <stepper>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "stepper", prop: "integer-value", signal: "action", trigger: "", sample: S::I64(3), expect: S::I64(3), arg0: false, echo_none: true },
         // bind_nsswitch_state: bind:state on NSSwitch via action: two-way bind:state: the switch sends its action after the user toggled it (the state is read back); setting state never sends it
         BindRow { tag: "switch", prop: "state", signal: "action", trigger: "", sample: S::Str("on"), expect: S::Str("on"), arg0: false, echo_none: true },
+        // bind_nsswitch_double_value: bind:double-value on NSSwitch via action: inferred (rules binding_sources NSControl): two-way bind:double-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <switch>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "switch", prop: "double-value", signal: "action", trigger: "", sample: S::F64(0.5), expect: S::F64(0.5), arg0: false, echo_none: true },
+        // bind_nsswitch_float_value: bind:float-value on NSSwitch via action: inferred (rules binding_sources NSControl): two-way bind:float-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <switch>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "switch", prop: "float-value", signal: "action", trigger: "", sample: S::F64(0.5), expect: S::F64(0.5), arg0: false, echo_none: true },
+        // bind_nsswitch_int_value: bind:int-value on NSSwitch via action: inferred (rules binding_sources NSControl): two-way bind:int-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <switch>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "switch", prop: "int-value", signal: "action", trigger: "", sample: S::I64(3), expect: S::I64(3), arg0: false, echo_none: true },
+        // bind_nsswitch_integer_value: bind:integer-value on NSSwitch via action: inferred (rules binding_sources NSControl): two-way bind:integer-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <switch>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "switch", prop: "integer-value", signal: "action", trigger: "", sample: S::I64(3), expect: S::I64(3), arg0: false, echo_none: true },
+        // bind_nsswitch_string_value: bind:string-value on NSSwitch via action: inferred (rules binding_sources NSControl): two-way bind:string-value through the control's action, value read back. NSControl target-action: the control sends its action after a user change (click, drag, keyboard; continuously while tracking when `continuous`); the value is read back. Programmatic sets and native clamping (min/max changes) send nothing. Probe on <switch>: round trip exact, the programmatic set did not emit action; delivery seen
+        BindRow { tag: "switch", prop: "string-value", signal: "action", trigger: "", sample: S::Str("svl probe"), expect: S::Str("svl probe"), arg0: false, echo_none: true },
         // bind_nstextfield_string_value: bind:string-value on NSTextField via control-text-did-change: two-way bind:string-value; the notification delivers the new text as its first argument and is never posted for programmatic sets, so there is no echo
         BindRow { tag: "text-field", prop: "string-value", signal: "control-text-did-change", trigger: "NSControlTextDidChangeNotification", sample: S::Str("hello"), expect: S::Str("hello"), arg0: true, echo_none: true },
         // bind_nstextfield_double_value: bind:double-value on NSTextField via control-text-did-change: inferred (rules binding_sources NSTextField): two-way bind:double-value through the NSControlTextDidChangeNotification notification, value read back. NSControlTextDidChangeNotification is posted by the field editor for every user edit of the text (NSControl.h); a value prop read in the handler reflects the edit. Programmatic sets and native normalization (formatters) post nothing. Probe on <text-field>: round trip exact, the programmatic set did not emit control-text-did-change; delivery seen
@@ -3605,44 +4025,44 @@ mod cases {
         ObserveRow { tag: "color-well", prop: "active", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isActive" },
         // observe_nscolorwell_color: observe NSColorWell.color: partial
         ObserveRow { tag: "color-well", prop: "color", kvo: "", check: ObsCheck::Connect, sample: None, user: User::None, requires: "color" },
-        // observe_nscolorwell_color_well_style: observe NSColorWell.color-well-style: set_only
-        ObserveRow { tag: "color-well", prop: "color-well-style", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "colorWellStyle" },
+        // observe_nscolorwell_color_well_style: observe NSColorWell.color-well-style: exact
+        ObserveRow { tag: "color-well", prop: "color-well-style", kvo: "colorWellStyle", check: ObsCheck::Change, sample: Some(S::Str("minimal")), user: User::None, requires: "setColorWellStyle:" },
         // observe_nscolorwell_image: observe NSColorWell.image: set_only
         ObserveRow { tag: "color-well", prop: "image", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "image" },
-        // observe_nscolorwell_maximum_linear_exposure: observe NSColorWell.maximum-linear-exposure: set_only
-        ObserveRow { tag: "color-well", prop: "maximum-linear-exposure", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "maximumLinearExposure" },
+        // observe_nscolorwell_maximum_linear_exposure: observe NSColorWell.maximum-linear-exposure: exact
+        ObserveRow { tag: "color-well", prop: "maximum-linear-exposure", kvo: "maximumLinearExposure", check: ObsCheck::Change, sample: Some(S::F64(2.0)), user: User::None, requires: "setMaximumLinearExposure:" },
         // observe_nscolorwell_pulldown_action: observe NSColorWell.pulldown-action: set_only
         ObserveRow { tag: "color-well", prop: "pulldown-action", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "pulldownAction" },
         // observe_nscolorwell_pulldown_target: observe NSColorWell.pulldown-target: set_only
         ObserveRow { tag: "color-well", prop: "pulldown-target", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "pulldownTarget" },
-        // observe_nscolorwell_supports_alpha: observe NSColorWell.supports-alpha: set_only
-        ObserveRow { tag: "color-well", prop: "supports-alpha", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "supportsAlpha" },
-        // observe_nscombobox_button_bordered: observe NSComboBox.button-bordered: set_only
-        ObserveRow { tag: "combo-box", prop: "button-bordered", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isButtonBordered" },
-        // observe_nscombobox_completes: observe NSComboBox.completes: set_only
-        ObserveRow { tag: "combo-box", prop: "completes", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "completes" },
+        // observe_nscolorwell_supports_alpha: observe NSColorWell.supports-alpha: exact
+        ObserveRow { tag: "color-well", prop: "supports-alpha", kvo: "supportsAlpha", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setSupportsAlpha:" },
+        // observe_nscombobox_button_bordered: observe NSComboBox.button-bordered: exact
+        ObserveRow { tag: "combo-box", prop: "button-bordered", kvo: "buttonBordered", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setButtonBordered:" },
+        // observe_nscombobox_completes: observe NSComboBox.completes: exact
+        ObserveRow { tag: "combo-box", prop: "completes", kvo: "completes", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setCompletes:" },
         // observe_nscombobox_data_source: observe NSComboBox.data-source: set_only
         ObserveRow { tag: "combo-box", prop: "data-source", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "dataSource" },
         // observe_nscombobox_delegate: observe NSComboBox.delegate: set_only
         ObserveRow { tag: "combo-box", prop: "delegate", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "delegate" },
-        // observe_nscombobox_has_vertical_scroller: observe NSComboBox.has-vertical-scroller: set_only
-        ObserveRow { tag: "combo-box", prop: "has-vertical-scroller", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "hasVerticalScroller" },
+        // observe_nscombobox_has_vertical_scroller: observe NSComboBox.has-vertical-scroller: exact
+        ObserveRow { tag: "combo-box", prop: "has-vertical-scroller", kvo: "hasVerticalScroller", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setHasVerticalScroller:" },
         // observe_nscombobox_index_of_selected_item: observe NSComboBox.index-of-selected-item: partial
         ObserveRow { tag: "combo-box", prop: "index-of-selected-item", kvo: "", check: ObsCheck::Connect, sample: None, user: User::None, requires: "indexOfSelectedItem" },
-        // observe_nscombobox_intercell_spacing: observe NSComboBox.intercell-spacing: set_only
-        ObserveRow { tag: "combo-box", prop: "intercell-spacing", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "intercellSpacing" },
-        // observe_nscombobox_item_height: observe NSComboBox.item-height: set_only
-        ObserveRow { tag: "combo-box", prop: "item-height", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "itemHeight" },
+        // observe_nscombobox_intercell_spacing: observe NSComboBox.intercell-spacing: exact
+        ObserveRow { tag: "combo-box", prop: "intercell-spacing", kvo: "intercellSpacing", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_SIZE, &[120.0, 40.0])), user: User::None, requires: "setIntercellSpacing:" },
+        // observe_nscombobox_item_height: observe NSComboBox.item-height: exact
+        ObserveRow { tag: "combo-box", prop: "item-height", kvo: "itemHeight", check: ObsCheck::Change, sample: Some(S::F64(2.0)), user: User::None, requires: "setItemHeight:" },
         // observe_nscombobox_number_of_items: observe NSComboBox.number-of-items: none
         ObserveRow { tag: "combo-box", prop: "number-of-items", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "numberOfItems" },
-        // observe_nscombobox_number_of_visible_items: observe NSComboBox.number-of-visible-items: set_only
-        ObserveRow { tag: "combo-box", prop: "number-of-visible-items", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "numberOfVisibleItems" },
+        // observe_nscombobox_number_of_visible_items: observe NSComboBox.number-of-visible-items: exact
+        ObserveRow { tag: "combo-box", prop: "number-of-visible-items", kvo: "numberOfVisibleItems", check: ObsCheck::Change, sample: Some(S::I64(3)), user: User::None, requires: "setNumberOfVisibleItems:" },
         // observe_nscombobox_object_value_of_selected_item: observe NSComboBox.object-value-of-selected-item: none
         ObserveRow { tag: "combo-box", prop: "object-value-of-selected-item", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "objectValueOfSelectedItem" },
         // observe_nscombobox_object_values: observe NSComboBox.object-values: none
         ObserveRow { tag: "combo-box", prop: "object-values", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "objectValues" },
-        // observe_nscombobox_uses_data_source: observe NSComboBox.uses-data-source: set_only
-        ObserveRow { tag: "combo-box", prop: "uses-data-source", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "usesDataSource" },
+        // observe_nscombobox_uses_data_source: observe NSComboBox.uses-data-source: exact
+        ObserveRow { tag: "combo-box", prop: "uses-data-source", kvo: "usesDataSource", check: ObsCheck::Connect, sample: None, user: User::None, requires: "usesDataSource" },
         // observe_nscontrol_action: observe NSControl.action: set_only
         ObserveRow { tag: "button", prop: "action", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "action" },
         // observe_nscontrol_alignment: observe NSControl.alignment: exact
@@ -3693,98 +4113,98 @@ mod cases {
         ObserveRow { tag: "button", prop: "uses-single-line-mode", kvo: "usesSingleLineMode", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setUsesSingleLineMode:" },
         // observe_nsdatepicker_background_color: observe NSDatePicker.background-color: set_only
         ObserveRow { tag: "date-picker", prop: "background-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "backgroundColor" },
-        // observe_nsdatepicker_bezeled: observe NSDatePicker.bezeled: set_only
-        ObserveRow { tag: "date-picker", prop: "bezeled", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isBezeled" },
-        // observe_nsdatepicker_bordered: observe NSDatePicker.bordered: set_only
-        ObserveRow { tag: "date-picker", prop: "bordered", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isBordered" },
+        // observe_nsdatepicker_bezeled: observe NSDatePicker.bezeled: exact
+        ObserveRow { tag: "date-picker", prop: "bezeled", kvo: "bezeled", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setBezeled:" },
+        // observe_nsdatepicker_bordered: observe NSDatePicker.bordered: exact
+        ObserveRow { tag: "date-picker", prop: "bordered", kvo: "bordered", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setBordered:" },
         // observe_nsdatepicker_calendar: observe NSDatePicker.calendar: set_only
         ObserveRow { tag: "date-picker", prop: "calendar", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "calendar" },
-        // observe_nsdatepicker_date_picker_elements: observe NSDatePicker.date-picker-elements: set_only
-        ObserveRow { tag: "date-picker", prop: "date-picker-elements", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "datePickerElements" },
-        // observe_nsdatepicker_date_picker_mode: observe NSDatePicker.date-picker-mode: set_only
-        ObserveRow { tag: "date-picker", prop: "date-picker-mode", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "datePickerMode" },
-        // observe_nsdatepicker_date_picker_style: observe NSDatePicker.date-picker-style: set_only
-        ObserveRow { tag: "date-picker", prop: "date-picker-style", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "datePickerStyle" },
+        // observe_nsdatepicker_date_picker_elements: observe NSDatePicker.date-picker-elements: exact
+        ObserveRow { tag: "date-picker", prop: "date-picker-elements", kvo: "datePickerElements", check: ObsCheck::Change, sample: Some(S::Names(&["year-month-day"])), user: User::None, requires: "setDatePickerElements:" },
+        // observe_nsdatepicker_date_picker_mode: observe NSDatePicker.date-picker-mode: exact
+        ObserveRow { tag: "date-picker", prop: "date-picker-mode", kvo: "datePickerMode", check: ObsCheck::Change, sample: Some(S::Str("range")), user: User::None, requires: "setDatePickerMode:" },
+        // observe_nsdatepicker_date_picker_style: observe NSDatePicker.date-picker-style: exact
+        ObserveRow { tag: "date-picker", prop: "date-picker-style", kvo: "datePickerStyle", check: ObsCheck::Change, sample: Some(S::Str("clock-and-calendar")), user: User::None, requires: "setDatePickerStyle:" },
         // observe_nsdatepicker_date_value: observe NSDatePicker.date-value: partial
         ObserveRow { tag: "date-picker", prop: "date-value", kvo: "", check: ObsCheck::Connect, sample: None, user: User::None, requires: "dateValue" },
         // observe_nsdatepicker_delegate: observe NSDatePicker.delegate: set_only
         ObserveRow { tag: "date-picker", prop: "delegate", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "delegate" },
-        // observe_nsdatepicker_draws_background: observe NSDatePicker.draws-background: set_only
-        ObserveRow { tag: "date-picker", prop: "draws-background", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "drawsBackground" },
+        // observe_nsdatepicker_draws_background: observe NSDatePicker.draws-background: exact
+        ObserveRow { tag: "date-picker", prop: "draws-background", kvo: "drawsBackground", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setDrawsBackground:" },
         // observe_nsdatepicker_locale: observe NSDatePicker.locale: set_only
         ObserveRow { tag: "date-picker", prop: "locale", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "locale" },
         // observe_nsdatepicker_max_date: observe NSDatePicker.max-date: set_only
         ObserveRow { tag: "date-picker", prop: "max-date", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "maxDate" },
         // observe_nsdatepicker_min_date: observe NSDatePicker.min-date: set_only
         ObserveRow { tag: "date-picker", prop: "min-date", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "minDate" },
-        // observe_nsdatepicker_presents_calendar_overlay: observe NSDatePicker.presents-calendar-overlay: set_only
-        ObserveRow { tag: "date-picker", prop: "presents-calendar-overlay", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "presentsCalendarOverlay" },
+        // observe_nsdatepicker_presents_calendar_overlay: observe NSDatePicker.presents-calendar-overlay: exact
+        ObserveRow { tag: "date-picker", prop: "presents-calendar-overlay", kvo: "presentsCalendarOverlay", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setPresentsCalendarOverlay:" },
         // observe_nsdatepicker_text_color: observe NSDatePicker.text-color: set_only
         ObserveRow { tag: "date-picker", prop: "text-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "textColor" },
-        // observe_nsdatepicker_time_interval: observe NSDatePicker.time-interval: set_only
-        ObserveRow { tag: "date-picker", prop: "time-interval", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "timeInterval" },
+        // observe_nsdatepicker_time_interval: observe NSDatePicker.time-interval: exact
+        ObserveRow { tag: "date-picker", prop: "time-interval", kvo: "timeInterval", check: ObsCheck::Change, sample: Some(S::F64(3600.0)), user: User::None, requires: "setTimeInterval:" },
         // observe_nsdatepicker_time_zone: observe NSDatePicker.time-zone: set_only
         ObserveRow { tag: "date-picker", prop: "time-zone", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "timeZone" },
-        // observe_nsimageview_allows_cut_copy_paste: observe NSImageView.allows-cut-copy-paste: set_only
-        ObserveRow { tag: "image-view", prop: "allows-cut-copy-paste", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "allowsCutCopyPaste" },
-        // observe_nsimageview_animates: observe NSImageView.animates: set_only
-        ObserveRow { tag: "image-view", prop: "animates", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "animates" },
+        // observe_nsimageview_allows_cut_copy_paste: observe NSImageView.allows-cut-copy-paste: exact
+        ObserveRow { tag: "image-view", prop: "allows-cut-copy-paste", kvo: "allowsCutCopyPaste", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAllowsCutCopyPaste:" },
+        // observe_nsimageview_animates: observe NSImageView.animates: exact
+        ObserveRow { tag: "image-view", prop: "animates", kvo: "animates", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAnimates:" },
         // observe_nsimageview_content_tint_color: observe NSImageView.content-tint-color: set_only
         ObserveRow { tag: "image-view", prop: "content-tint-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "contentTintColor" },
-        // observe_nsimageview_editable: observe NSImageView.editable: set_only
-        ObserveRow { tag: "image-view", prop: "editable", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isEditable" },
+        // observe_nsimageview_editable: observe NSImageView.editable: exact
+        ObserveRow { tag: "image-view", prop: "editable", kvo: "editable", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setEditable:" },
         // observe_nsimageview_image: observe NSImageView.image: set_only
         ObserveRow { tag: "image-view", prop: "image", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "image" },
-        // observe_nsimageview_image_alignment: observe NSImageView.image-alignment: set_only
-        ObserveRow { tag: "image-view", prop: "image-alignment", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "imageAlignment" },
+        // observe_nsimageview_image_alignment: observe NSImageView.image-alignment: exact
+        ObserveRow { tag: "image-view", prop: "image-alignment", kvo: "imageAlignment", check: ObsCheck::Change, sample: Some(S::Str("top")), user: User::None, requires: "setImageAlignment:" },
         // observe_nsimageview_image_dynamic_range: observe NSImageView.image-dynamic-range: none
         ObserveRow { tag: "image-view", prop: "image-dynamic-range", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "imageDynamicRange" },
-        // observe_nsimageview_image_frame_style: observe NSImageView.image-frame-style: set_only
-        ObserveRow { tag: "image-view", prop: "image-frame-style", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "imageFrameStyle" },
-        // observe_nsimageview_image_scaling: observe NSImageView.image-scaling: set_only
-        ObserveRow { tag: "image-view", prop: "image-scaling", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "imageScaling" },
-        // observe_nsimageview_preferred_image_dynamic_range: observe NSImageView.preferred-image-dynamic-range: set_only
-        ObserveRow { tag: "image-view", prop: "preferred-image-dynamic-range", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "preferredImageDynamicRange" },
+        // observe_nsimageview_image_frame_style: observe NSImageView.image-frame-style: exact
+        ObserveRow { tag: "image-view", prop: "image-frame-style", kvo: "imageFrameStyle", check: ObsCheck::Change, sample: Some(S::Str("photo")), user: User::None, requires: "setImageFrameStyle:" },
+        // observe_nsimageview_image_scaling: observe NSImageView.image-scaling: exact
+        ObserveRow { tag: "image-view", prop: "image-scaling", kvo: "imageScaling", check: ObsCheck::Change, sample: Some(S::Str("image-scale-axes-independently")), user: User::None, requires: "setImageScaling:" },
+        // observe_nsimageview_preferred_image_dynamic_range: observe NSImageView.preferred-image-dynamic-range: exact
+        ObserveRow { tag: "image-view", prop: "preferred-image-dynamic-range", kvo: "preferredImageDynamicRange", check: ObsCheck::Change, sample: Some(S::Str("unspecified")), user: User::None, requires: "setPreferredImageDynamicRange:" },
         // observe_nsimageview_symbol_configuration: observe NSImageView.symbol-configuration: set_only
         ObserveRow { tag: "image-view", prop: "symbol-configuration", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "symbolConfiguration" },
         // observe_nslevelindicator_critical_fill_color: observe NSLevelIndicator.critical-fill-color: set_only
         ObserveRow { tag: "level-indicator", prop: "critical-fill-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "criticalFillColor" },
-        // observe_nslevelindicator_critical_value: observe NSLevelIndicator.critical-value: set_only
-        ObserveRow { tag: "level-indicator", prop: "critical-value", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "criticalValue" },
-        // observe_nslevelindicator_draws_tiered_capacity_levels: observe NSLevelIndicator.draws-tiered-capacity-levels: set_only
-        ObserveRow { tag: "level-indicator", prop: "draws-tiered-capacity-levels", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "drawsTieredCapacityLevels" },
-        // observe_nslevelindicator_editable: observe NSLevelIndicator.editable: set_only
-        ObserveRow { tag: "level-indicator", prop: "editable", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isEditable" },
+        // observe_nslevelindicator_critical_value: observe NSLevelIndicator.critical-value: exact
+        ObserveRow { tag: "level-indicator", prop: "critical-value", kvo: "criticalValue", check: ObsCheck::Change, sample: Some(S::F64(4.0)), user: User::None, requires: "setCriticalValue:" },
+        // observe_nslevelindicator_draws_tiered_capacity_levels: observe NSLevelIndicator.draws-tiered-capacity-levels: exact
+        ObserveRow { tag: "level-indicator", prop: "draws-tiered-capacity-levels", kvo: "drawsTieredCapacityLevels", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setDrawsTieredCapacityLevels:" },
+        // observe_nslevelindicator_editable: observe NSLevelIndicator.editable: exact
+        ObserveRow { tag: "level-indicator", prop: "editable", kvo: "editable", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setEditable:" },
         // observe_nslevelindicator_fill_color: observe NSLevelIndicator.fill-color: set_only
         ObserveRow { tag: "level-indicator", prop: "fill-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "fillColor" },
-        // observe_nslevelindicator_level_indicator_style: observe NSLevelIndicator.level-indicator-style: set_only
-        ObserveRow { tag: "level-indicator", prop: "level-indicator-style", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "levelIndicatorStyle" },
-        // observe_nslevelindicator_max_value: observe NSLevelIndicator.max-value: set_only
-        ObserveRow { tag: "level-indicator", prop: "max-value", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "maxValue" },
-        // observe_nslevelindicator_min_value: observe NSLevelIndicator.min-value: set_only
-        ObserveRow { tag: "level-indicator", prop: "min-value", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "minValue" },
-        // observe_nslevelindicator_number_of_major_tick_marks: observe NSLevelIndicator.number-of-major-tick-marks: set_only
-        ObserveRow { tag: "level-indicator", prop: "number-of-major-tick-marks", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "numberOfMajorTickMarks" },
-        // observe_nslevelindicator_number_of_tick_marks: observe NSLevelIndicator.number-of-tick-marks: set_only
-        ObserveRow { tag: "level-indicator", prop: "number-of-tick-marks", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "numberOfTickMarks" },
-        // observe_nslevelindicator_placeholder_visibility: observe NSLevelIndicator.placeholder-visibility: set_only
-        ObserveRow { tag: "level-indicator", prop: "placeholder-visibility", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "placeholderVisibility" },
+        // observe_nslevelindicator_level_indicator_style: observe NSLevelIndicator.level-indicator-style: exact
+        ObserveRow { tag: "level-indicator", prop: "level-indicator-style", kvo: "levelIndicatorStyle", check: ObsCheck::Change, sample: Some(S::Str("rating")), user: User::None, requires: "setLevelIndicatorStyle:" },
+        // observe_nslevelindicator_max_value: observe NSLevelIndicator.max-value: exact
+        ObserveRow { tag: "level-indicator", prop: "max-value", kvo: "maxValue", check: ObsCheck::Change, sample: Some(S::F64(5.0)), user: User::None, requires: "setMaxValue:" },
+        // observe_nslevelindicator_min_value: observe NSLevelIndicator.min-value: exact
+        ObserveRow { tag: "level-indicator", prop: "min-value", kvo: "minValue", check: ObsCheck::Change, sample: Some(S::F64(0.0)), user: User::None, requires: "setMinValue:" },
+        // observe_nslevelindicator_number_of_major_tick_marks: observe NSLevelIndicator.number-of-major-tick-marks: exact
+        ObserveRow { tag: "level-indicator", prop: "number-of-major-tick-marks", kvo: "numberOfMajorTickMarks", check: ObsCheck::Change, sample: Some(S::I64(3)), user: User::None, requires: "setNumberOfMajorTickMarks:" },
+        // observe_nslevelindicator_number_of_tick_marks: observe NSLevelIndicator.number-of-tick-marks: exact
+        ObserveRow { tag: "level-indicator", prop: "number-of-tick-marks", kvo: "numberOfTickMarks", check: ObsCheck::Change, sample: Some(S::I64(3)), user: User::None, requires: "setNumberOfTickMarks:" },
+        // observe_nslevelindicator_placeholder_visibility: observe NSLevelIndicator.placeholder-visibility: exact
+        ObserveRow { tag: "level-indicator", prop: "placeholder-visibility", kvo: "placeholderVisibility", check: ObsCheck::Change, sample: Some(S::Str("always")), user: User::None, requires: "setPlaceholderVisibility:" },
         // observe_nslevelindicator_rating_image: observe NSLevelIndicator.rating-image: set_only
         ObserveRow { tag: "level-indicator", prop: "rating-image", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "ratingImage" },
         // observe_nslevelindicator_rating_placeholder_image: observe NSLevelIndicator.rating-placeholder-image: set_only
         ObserveRow { tag: "level-indicator", prop: "rating-placeholder-image", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "ratingPlaceholderImage" },
-        // observe_nslevelindicator_tick_mark_position: observe NSLevelIndicator.tick-mark-position: set_only
-        ObserveRow { tag: "level-indicator", prop: "tick-mark-position", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "tickMarkPosition" },
+        // observe_nslevelindicator_tick_mark_position: observe NSLevelIndicator.tick-mark-position: exact
+        ObserveRow { tag: "level-indicator", prop: "tick-mark-position", kvo: "tickMarkPosition", check: ObsCheck::Change, sample: Some(S::Str("above")), user: User::None, requires: "setTickMarkPosition:" },
         // observe_nslevelindicator_warning_fill_color: observe NSLevelIndicator.warning-fill-color: set_only
         ObserveRow { tag: "level-indicator", prop: "warning-fill-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "warningFillColor" },
-        // observe_nslevelindicator_warning_value: observe NSLevelIndicator.warning-value: set_only
-        ObserveRow { tag: "level-indicator", prop: "warning-value", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "warningValue" },
-        // observe_nsmenu_allows_context_menu_plug_ins: observe NSMenu.allows-context-menu-plug-ins: set_only
-        ObserveRow { tag: "menu", prop: "allows-context-menu-plug-ins", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "allowsContextMenuPlugIns" },
-        // observe_nsmenu_autoenables_items: observe NSMenu.autoenables-items: set_only
-        ObserveRow { tag: "menu", prop: "autoenables-items", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "autoenablesItems" },
-        // observe_nsmenu_automatically_inserts_writing_tools_items: observe NSMenu.automatically-inserts-writing-tools-items: set_only
-        ObserveRow { tag: "menu", prop: "automatically-inserts-writing-tools-items", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "automaticallyInsertsWritingToolsItems" },
+        // observe_nslevelindicator_warning_value: observe NSLevelIndicator.warning-value: exact
+        ObserveRow { tag: "level-indicator", prop: "warning-value", kvo: "warningValue", check: ObsCheck::Change, sample: Some(S::F64(3.0)), user: User::None, requires: "setWarningValue:" },
+        // observe_nsmenu_allows_context_menu_plug_ins: observe NSMenu.allows-context-menu-plug-ins: exact
+        ObserveRow { tag: "menu", prop: "allows-context-menu-plug-ins", kvo: "allowsContextMenuPlugIns", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAllowsContextMenuPlugIns:" },
+        // observe_nsmenu_autoenables_items: observe NSMenu.autoenables-items: exact
+        ObserveRow { tag: "menu", prop: "autoenables-items", kvo: "autoenablesItems", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAutoenablesItems:" },
+        // observe_nsmenu_automatically_inserts_writing_tools_items: observe NSMenu.automatically-inserts-writing-tools-items: exact
+        ObserveRow { tag: "menu", prop: "automatically-inserts-writing-tools-items", kvo: "automaticallyInsertsWritingToolsItems", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAutomaticallyInsertsWritingToolsItems:" },
         // observe_nsmenu_delegate: observe NSMenu.delegate: set_only
         ObserveRow { tag: "menu", prop: "delegate", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "delegate" },
         // observe_nsmenu_font: observe NSMenu.font: set_only
@@ -3795,60 +4215,60 @@ mod cases {
         ObserveRow { tag: "menu", prop: "item-array", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "itemArray" },
         // observe_nsmenu_menu_bar_height: observe NSMenu.menu-bar-height: none
         ObserveRow { tag: "menu", prop: "menu-bar-height", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "menuBarHeight" },
-        // observe_nsmenu_minimum_width: observe NSMenu.minimum-width: set_only
-        ObserveRow { tag: "menu", prop: "minimum-width", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "minimumWidth" },
+        // observe_nsmenu_minimum_width: observe NSMenu.minimum-width: exact
+        ObserveRow { tag: "menu", prop: "minimum-width", kvo: "minimumWidth", check: ObsCheck::Change, sample: Some(S::F64(200.0)), user: User::None, requires: "setMinimumWidth:" },
         // observe_nsmenu_number_of_items: observe NSMenu.number-of-items: none
         ObserveRow { tag: "menu", prop: "number-of-items", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "numberOfItems" },
-        // observe_nsmenu_presentation_style: observe NSMenu.presentation-style: set_only
-        ObserveRow { tag: "menu", prop: "presentation-style", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "presentationStyle" },
+        // observe_nsmenu_presentation_style: observe NSMenu.presentation-style: exact
+        ObserveRow { tag: "menu", prop: "presentation-style", kvo: "presentationStyle", check: ObsCheck::Change, sample: Some(S::Str("palette")), user: User::None, requires: "setPresentationStyle:" },
         // observe_nsmenu_properties_to_update: observe NSMenu.properties-to-update: none
         ObserveRow { tag: "menu", prop: "properties-to-update", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "propertiesToUpdate" },
         // observe_nsmenu_selected_items: observe NSMenu.selected-items: set_only
         ObserveRow { tag: "menu", prop: "selected-items", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "selectedItems" },
-        // observe_nsmenu_selection_mode: observe NSMenu.selection-mode: set_only
-        ObserveRow { tag: "menu", prop: "selection-mode", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "selectionMode" },
-        // observe_nsmenu_shows_state_column: observe NSMenu.shows-state-column: set_only
-        ObserveRow { tag: "menu", prop: "shows-state-column", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "showsStateColumn" },
+        // observe_nsmenu_selection_mode: observe NSMenu.selection-mode: exact
+        ObserveRow { tag: "menu", prop: "selection-mode", kvo: "selectionMode", check: ObsCheck::Change, sample: Some(S::Str("select-one")), user: User::None, requires: "setSelectionMode:" },
+        // observe_nsmenu_shows_state_column: observe NSMenu.shows-state-column: exact
+        ObserveRow { tag: "menu", prop: "shows-state-column", kvo: "showsStateColumn", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setShowsStateColumn:" },
         // observe_nsmenu_size: observe NSMenu.size: none
         ObserveRow { tag: "menu", prop: "size", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "size" },
         // observe_nsmenu_supermenu: observe NSMenu.supermenu: set_only
         ObserveRow { tag: "menu", prop: "supermenu", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "supermenu" },
-        // observe_nsmenu_title: observe NSMenu.title: set_only
-        ObserveRow { tag: "menu", prop: "title", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "title" },
-        // observe_nsmenu_user_interface_layout_direction: observe NSMenu.user-interface-layout-direction: set_only
-        ObserveRow { tag: "menu", prop: "user-interface-layout-direction", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "userInterfaceLayoutDirection" },
+        // observe_nsmenu_title: observe NSMenu.title: exact
+        ObserveRow { tag: "menu", prop: "title", kvo: "title", check: ObsCheck::Change, sample: Some(S::Str("File")), user: User::None, requires: "setTitle:" },
+        // observe_nsmenu_user_interface_layout_direction: observe NSMenu.user-interface-layout-direction: exact
+        ObserveRow { tag: "menu", prop: "user-interface-layout-direction", kvo: "userInterfaceLayoutDirection", check: ObsCheck::Change, sample: Some(S::Str("right-to-left")), user: User::None, requires: "setUserInterfaceLayoutDirection:" },
         // observe_nsmenuitem_action: observe NSMenuItem.action: set_only
         ObserveRow { tag: "menu-item", prop: "action", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "action" },
-        // observe_nsmenuitem_allows_automatic_key_equivalent_localization: observe NSMenuItem.allows-automatic-key-equivalent-localization: set_only
-        ObserveRow { tag: "menu-item", prop: "allows-automatic-key-equivalent-localization", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "allowsAutomaticKeyEquivalentLocalization" },
-        // observe_nsmenuitem_allows_automatic_key_equivalent_mirroring: observe NSMenuItem.allows-automatic-key-equivalent-mirroring: set_only
-        ObserveRow { tag: "menu-item", prop: "allows-automatic-key-equivalent-mirroring", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "allowsAutomaticKeyEquivalentMirroring" },
-        // observe_nsmenuitem_allows_key_equivalent_when_hidden: observe NSMenuItem.allows-key-equivalent-when-hidden: set_only
-        ObserveRow { tag: "menu-item", prop: "allows-key-equivalent-when-hidden", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "allowsKeyEquivalentWhenHidden" },
-        // observe_nsmenuitem_alternate: observe NSMenuItem.alternate: set_only
-        ObserveRow { tag: "menu-item", prop: "alternate", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isAlternate" },
+        // observe_nsmenuitem_allows_automatic_key_equivalent_localization: observe NSMenuItem.allows-automatic-key-equivalent-localization: exact
+        ObserveRow { tag: "menu-item", prop: "allows-automatic-key-equivalent-localization", kvo: "allowsAutomaticKeyEquivalentLocalization", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAllowsAutomaticKeyEquivalentLocalization:" },
+        // observe_nsmenuitem_allows_automatic_key_equivalent_mirroring: observe NSMenuItem.allows-automatic-key-equivalent-mirroring: exact
+        ObserveRow { tag: "menu-item", prop: "allows-automatic-key-equivalent-mirroring", kvo: "allowsAutomaticKeyEquivalentMirroring", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAllowsAutomaticKeyEquivalentMirroring:" },
+        // observe_nsmenuitem_allows_key_equivalent_when_hidden: observe NSMenuItem.allows-key-equivalent-when-hidden: exact
+        ObserveRow { tag: "menu-item", prop: "allows-key-equivalent-when-hidden", kvo: "allowsKeyEquivalentWhenHidden", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAllowsKeyEquivalentWhenHidden:" },
+        // observe_nsmenuitem_alternate: observe NSMenuItem.alternate: exact
+        ObserveRow { tag: "menu-item", prop: "alternate", kvo: "alternate", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAlternate:" },
         // observe_nsmenuitem_attributed_title: observe NSMenuItem.attributed-title: set_only
         ObserveRow { tag: "menu-item", prop: "attributed-title", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "attributedTitle" },
         // observe_nsmenuitem_badge: observe NSMenuItem.badge: set_only
         ObserveRow { tag: "menu-item", prop: "badge", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "badge" },
-        // observe_nsmenuitem_enabled: observe NSMenuItem.enabled: set_only
-        ObserveRow { tag: "menu-item", prop: "enabled", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isEnabled" },
+        // observe_nsmenuitem_enabled: observe NSMenuItem.enabled: exact
+        ObserveRow { tag: "menu-item", prop: "enabled", kvo: "enabled", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setEnabled:" },
         // observe_nsmenuitem_has_submenu: observe NSMenuItem.has-submenu: none
         ObserveRow { tag: "menu-item", prop: "has-submenu", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "hasSubmenu" },
-        // observe_nsmenuitem_hidden: observe NSMenuItem.hidden: set_only
-        ObserveRow { tag: "menu-item", prop: "hidden", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isHidden" },
+        // observe_nsmenuitem_hidden: observe NSMenuItem.hidden: exact
+        ObserveRow { tag: "menu-item", prop: "hidden", kvo: "hidden", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setHidden:" },
         // observe_nsmenuitem_hidden_or_has_hidden_ancestor: observe NSMenuItem.hidden-or-has-hidden-ancestor: none
         ObserveRow { tag: "menu-item", prop: "hidden-or-has-hidden-ancestor", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isHiddenOrHasHiddenAncestor" },
         // observe_nsmenuitem_highlighted: observe NSMenuItem.highlighted: none
         ObserveRow { tag: "menu-item", prop: "highlighted", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isHighlighted" },
         // observe_nsmenuitem_image: observe NSMenuItem.image: set_only
         ObserveRow { tag: "menu-item", prop: "image", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "image" },
-        // observe_nsmenuitem_indentation_level: observe NSMenuItem.indentation-level: set_only
-        ObserveRow { tag: "menu-item", prop: "indentation-level", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "indentationLevel" },
-        // observe_nsmenuitem_key_equivalent: observe NSMenuItem.key-equivalent: set_only
-        ObserveRow { tag: "menu-item", prop: "key-equivalent", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "keyEquivalent" },
-        // observe_nsmenuitem_key_equivalent_modifier_mask: observe NSMenuItem.key-equivalent-modifier-mask: set_only
-        ObserveRow { tag: "menu-item", prop: "key-equivalent-modifier-mask", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "keyEquivalentModifierMask" },
+        // observe_nsmenuitem_indentation_level: observe NSMenuItem.indentation-level: exact
+        ObserveRow { tag: "menu-item", prop: "indentation-level", kvo: "indentationLevel", check: ObsCheck::Change, sample: Some(S::I64(2)), user: User::None, requires: "setIndentationLevel:" },
+        // observe_nsmenuitem_key_equivalent: observe NSMenuItem.key-equivalent: exact
+        ObserveRow { tag: "menu-item", prop: "key-equivalent", kvo: "keyEquivalent", check: ObsCheck::Change, sample: Some(S::Str("o")), user: User::None, requires: "setKeyEquivalent:" },
+        // observe_nsmenuitem_key_equivalent_modifier_mask: observe NSMenuItem.key-equivalent-modifier-mask: exact
+        ObserveRow { tag: "menu-item", prop: "key-equivalent-modifier-mask", kvo: "keyEquivalentModifierMask", check: ObsCheck::Change, sample: Some(S::Names(&["command", "shift"])), user: User::None, requires: "setKeyEquivalentModifierMask:" },
         // observe_nsmenuitem_menu: observe NSMenuItem.menu: set_only
         ObserveRow { tag: "menu-item", prop: "menu", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "menu" },
         // observe_nsmenuitem_mixed_state_image: observe NSMenuItem.mixed-state-image: set_only
@@ -3865,30 +4285,30 @@ mod cases {
         ObserveRow { tag: "menu-item", prop: "section-header", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isSectionHeader" },
         // observe_nsmenuitem_separator_item: observe NSMenuItem.separator-item: none
         ObserveRow { tag: "menu-item", prop: "separator-item", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isSeparatorItem" },
-        // observe_nsmenuitem_state: observe NSMenuItem.state: set_only
-        ObserveRow { tag: "menu-item", prop: "state", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "state" },
+        // observe_nsmenuitem_state: observe NSMenuItem.state: exact
+        ObserveRow { tag: "menu-item", prop: "state", kvo: "state", check: ObsCheck::Change, sample: Some(S::Str("on")), user: User::None, requires: "setState:" },
         // observe_nsmenuitem_submenu: observe NSMenuItem.submenu: set_only
         ObserveRow { tag: "menu-item", prop: "submenu", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "submenu" },
-        // observe_nsmenuitem_subtitle: observe NSMenuItem.subtitle: set_only
-        ObserveRow { tag: "menu-item", prop: "subtitle", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "subtitle" },
-        // observe_nsmenuitem_tag: observe NSMenuItem.tag: set_only
-        ObserveRow { tag: "menu-item", prop: "tag", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "tag" },
+        // observe_nsmenuitem_subtitle: observe NSMenuItem.subtitle: exact
+        ObserveRow { tag: "menu-item", prop: "subtitle", kvo: "subtitle", check: ObsCheck::Change, sample: Some(S::Str("svl probe")), user: User::None, requires: "setSubtitle:" },
+        // observe_nsmenuitem_tag: observe NSMenuItem.tag: exact
+        ObserveRow { tag: "menu-item", prop: "tag", kvo: "tag", check: ObsCheck::Change, sample: Some(S::I64(7)), user: User::None, requires: "setTag:" },
         // observe_nsmenuitem_target: observe NSMenuItem.target: set_only
         ObserveRow { tag: "menu-item", prop: "target", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "target" },
-        // observe_nsmenuitem_title: observe NSMenuItem.title: set_only
-        ObserveRow { tag: "menu-item", prop: "title", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "title" },
-        // observe_nsmenuitem_tool_tip: observe NSMenuItem.tool-tip: set_only
-        ObserveRow { tag: "menu-item", prop: "tool-tip", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "toolTip" },
+        // observe_nsmenuitem_title: observe NSMenuItem.title: exact
+        ObserveRow { tag: "menu-item", prop: "title", kvo: "title", check: ObsCheck::Change, sample: Some(S::Str("Open")), user: User::None, requires: "setTitle:" },
+        // observe_nsmenuitem_tool_tip: observe NSMenuItem.tool-tip: exact
+        ObserveRow { tag: "menu-item", prop: "tool-tip", kvo: "toolTip", check: ObsCheck::Change, sample: Some(S::Str("tip")), user: User::None, requires: "setToolTip:" },
         // observe_nsmenuitem_user_key_equivalent: observe NSMenuItem.user-key-equivalent: none
         ObserveRow { tag: "menu-item", prop: "user-key-equivalent", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "userKeyEquivalent" },
         // observe_nsmenuitem_view: observe NSMenuItem.view: set_only
         ObserveRow { tag: "menu-item", prop: "view", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "view" },
-        // observe_nspanel_becomes_key_only_if_needed: observe NSPanel.becomes-key-only-if-needed: set_only
-        ObserveRow { tag: "panel", prop: "becomes-key-only-if-needed", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "becomesKeyOnlyIfNeeded" },
-        // observe_nspanel_floating_panel: observe NSPanel.floating-panel: set_only
-        ObserveRow { tag: "panel", prop: "floating-panel", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isFloatingPanel" },
-        // observe_nspanel_works_when_modal: observe NSPanel.works-when-modal: set_only
-        ObserveRow { tag: "panel", prop: "works-when-modal", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "worksWhenModal" },
+        // observe_nspanel_becomes_key_only_if_needed: observe NSPanel.becomes-key-only-if-needed: exact
+        ObserveRow { tag: "panel", prop: "becomes-key-only-if-needed", kvo: "becomesKeyOnlyIfNeeded", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setBecomesKeyOnlyIfNeeded:" },
+        // observe_nspanel_floating_panel: observe NSPanel.floating-panel: exact
+        ObserveRow { tag: "panel", prop: "floating-panel", kvo: "floatingPanel", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setFloatingPanel:" },
+        // observe_nspanel_works_when_modal: observe NSPanel.works-when-modal: exact
+        ObserveRow { tag: "panel", prop: "works-when-modal", kvo: "worksWhenModal", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setWorksWhenModal:" },
         // observe_nspathcontrol_allowed_types: observe NSPathControl.allowed-types: set_only
         ObserveRow { tag: "path-control", prop: "allowed-types", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "allowedTypes" },
         // observe_nspathcontrol_background_color: observe NSPathControl.background-color: set_only
@@ -3899,24 +4319,24 @@ mod cases {
         ObserveRow { tag: "path-control", prop: "delegate", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "delegate" },
         // observe_nspathcontrol_double_action: observe NSPathControl.double-action: set_only
         ObserveRow { tag: "path-control", prop: "double-action", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "doubleAction" },
-        // observe_nspathcontrol_editable: observe NSPathControl.editable: set_only
-        ObserveRow { tag: "path-control", prop: "editable", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isEditable" },
+        // observe_nspathcontrol_editable: observe NSPathControl.editable: exact
+        ObserveRow { tag: "path-control", prop: "editable", kvo: "editable", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setEditable:" },
         // observe_nspathcontrol_menu: observe NSPathControl.menu: set_only
         ObserveRow { tag: "path-control", prop: "menu", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "menu" },
         // observe_nspathcontrol_path_items: observe NSPathControl.path-items: set_only
         ObserveRow { tag: "path-control", prop: "path-items", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "pathItems" },
-        // observe_nspathcontrol_path_style: observe NSPathControl.path-style: set_only
-        ObserveRow { tag: "path-control", prop: "path-style", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "pathStyle" },
+        // observe_nspathcontrol_path_style: observe NSPathControl.path-style: exact
+        ObserveRow { tag: "path-control", prop: "path-style", kvo: "pathStyle", check: ObsCheck::Change, sample: Some(S::Str("pop-up")), user: User::None, requires: "setPathStyle:" },
         // observe_nspathcontrol_placeholder_attributed_string: observe NSPathControl.placeholder-attributed-string: set_only
         ObserveRow { tag: "path-control", prop: "placeholder-attributed-string", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "placeholderAttributedString" },
-        // observe_nspathcontrol_placeholder_string: observe NSPathControl.placeholder-string: set_only
-        ObserveRow { tag: "path-control", prop: "placeholder-string", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "placeholderString" },
+        // observe_nspathcontrol_placeholder_string: observe NSPathControl.placeholder-string: exact
+        ObserveRow { tag: "path-control", prop: "placeholder-string", kvo: "placeholderString", check: ObsCheck::Change, sample: Some(S::Str("No folder")), user: User::None, requires: "setPlaceholderString:" },
         // observe_nspathcontrol_url: observe NSPathControl.url: partial
         ObserveRow { tag: "path-control", prop: "url", kvo: "", check: ObsCheck::Connect, sample: None, user: User::None, requires: "URL" },
-        // observe_nspopupbutton_alters_state_of_selected_item: observe NSPopUpButton.alters-state-of-selected-item: set_only
-        ObserveRow { tag: "pop-up-button", prop: "alters-state-of-selected-item", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "altersStateOfSelectedItem" },
-        // observe_nspopupbutton_autoenables_items: observe NSPopUpButton.autoenables-items: set_only
-        ObserveRow { tag: "pop-up-button", prop: "autoenables-items", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "autoenablesItems" },
+        // observe_nspopupbutton_alters_state_of_selected_item: observe NSPopUpButton.alters-state-of-selected-item: exact
+        ObserveRow { tag: "pop-up-button", prop: "alters-state-of-selected-item", kvo: "altersStateOfSelectedItem", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAltersStateOfSelectedItem:" },
+        // observe_nspopupbutton_autoenables_items: observe NSPopUpButton.autoenables-items: exact
+        ObserveRow { tag: "pop-up-button", prop: "autoenables-items", kvo: "autoenablesItems", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAutoenablesItems:" },
         // observe_nspopupbutton_index_of_selected_item: observe NSPopUpButton.index-of-selected-item: partial
         ObserveRow { tag: "pop-up-button", prop: "index-of-selected-item", kvo: "", check: ObsCheck::Connect, sample: None, user: User::None, requires: "indexOfSelectedItem" },
         // observe_nspopupbutton_item_array: observe NSPopUpButton.item-array: none
@@ -3929,18 +4349,18 @@ mod cases {
         ObserveRow { tag: "pop-up-button", prop: "menu", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "menu" },
         // observe_nspopupbutton_number_of_items: observe NSPopUpButton.number-of-items: none
         ObserveRow { tag: "pop-up-button", prop: "number-of-items", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "numberOfItems" },
-        // observe_nspopupbutton_preferred_edge: observe NSPopUpButton.preferred-edge: set_only
-        ObserveRow { tag: "pop-up-button", prop: "preferred-edge", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "preferredEdge" },
-        // observe_nspopupbutton_pulls_down: observe NSPopUpButton.pulls-down: set_only
-        ObserveRow { tag: "pop-up-button", prop: "pulls-down", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "pullsDown" },
+        // observe_nspopupbutton_preferred_edge: observe NSPopUpButton.preferred-edge: exact
+        ObserveRow { tag: "pop-up-button", prop: "preferred-edge", kvo: "preferredEdge", check: ObsCheck::Change, sample: Some(S::Str("rect-edge-min-x")), user: User::None, requires: "setPreferredEdge:" },
+        // observe_nspopupbutton_pulls_down: observe NSPopUpButton.pulls-down: exact
+        ObserveRow { tag: "pop-up-button", prop: "pulls-down", kvo: "pullsDown", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setPullsDown:" },
         // observe_nspopupbutton_selected_item: observe NSPopUpButton.selected-item: none
         ObserveRow { tag: "pop-up-button", prop: "selected-item", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "selectedItem" },
         // observe_nspopupbutton_selected_tag: observe NSPopUpButton.selected-tag: none
         ObserveRow { tag: "pop-up-button", prop: "selected-tag", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "selectedTag" },
         // observe_nspopupbutton_title_of_selected_item: observe NSPopUpButton.title-of-selected-item: none
         ObserveRow { tag: "pop-up-button", prop: "title-of-selected-item", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "titleOfSelectedItem" },
-        // observe_nspopupbutton_uses_item_from_menu: observe NSPopUpButton.uses-item-from-menu: set_only
-        ObserveRow { tag: "pop-up-button", prop: "uses-item-from-menu", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "usesItemFromMenu" },
+        // observe_nspopupbutton_uses_item_from_menu: observe NSPopUpButton.uses-item-from-menu: exact
+        ObserveRow { tag: "pop-up-button", prop: "uses-item-from-menu", kvo: "usesItemFromMenu", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setUsesItemFromMenu:" },
         // observe_nsprogressindicator_control_size: observe NSProgressIndicator.control-size: exact
         ObserveRow { tag: "progress-indicator", prop: "control-size", kvo: "controlSize", check: ObsCheck::Change, sample: Some(S::Str("small")), user: User::None, requires: "setControlSize:" },
         // observe_nsprogressindicator_displayed_when_stopped: observe NSProgressIndicator.displayed-when-stopped: exact
@@ -3959,18 +4379,18 @@ mod cases {
         ObserveRow { tag: "progress-indicator", prop: "style", kvo: "style", check: ObsCheck::Change, sample: Some(S::Str("spinning")), user: User::None, requires: "setStyle:" },
         // observe_nsprogressindicator_uses_threaded_animation: observe NSProgressIndicator.uses-threaded-animation: exact
         ObserveRow { tag: "progress-indicator", prop: "uses-threaded-animation", kvo: "usesThreadedAnimation", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setUsesThreadedAnimation:" },
-        // observe_nsscrollview_allows_magnification: observe NSScrollView.allows-magnification: set_only
-        ObserveRow { tag: "scroll-view", prop: "allows-magnification", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "allowsMagnification" },
-        // observe_nsscrollview_autohides_scrollers: observe NSScrollView.autohides-scrollers: set_only
-        ObserveRow { tag: "scroll-view", prop: "autohides-scrollers", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "autohidesScrollers" },
-        // observe_nsscrollview_automatically_adjusts_content_insets: observe NSScrollView.automatically-adjusts-content-insets: set_only
-        ObserveRow { tag: "scroll-view", prop: "automatically-adjusts-content-insets", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "automaticallyAdjustsContentInsets" },
+        // observe_nsscrollview_allows_magnification: observe NSScrollView.allows-magnification: exact
+        ObserveRow { tag: "scroll-view", prop: "allows-magnification", kvo: "allowsMagnification", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAllowsMagnification:" },
+        // observe_nsscrollview_autohides_scrollers: observe NSScrollView.autohides-scrollers: exact
+        ObserveRow { tag: "scroll-view", prop: "autohides-scrollers", kvo: "autohidesScrollers", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAutohidesScrollers:" },
+        // observe_nsscrollview_automatically_adjusts_content_insets: observe NSScrollView.automatically-adjusts-content-insets: exact
+        ObserveRow { tag: "scroll-view", prop: "automatically-adjusts-content-insets", kvo: "automaticallyAdjustsContentInsets", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAutomaticallyAdjustsContentInsets:" },
         // observe_nsscrollview_background_color: observe NSScrollView.background-color: set_only
         ObserveRow { tag: "scroll-view", prop: "background-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "backgroundColor" },
-        // observe_nsscrollview_border_type: observe NSScrollView.border-type: set_only
-        ObserveRow { tag: "scroll-view", prop: "border-type", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "borderType" },
-        // observe_nsscrollview_content_insets: observe NSScrollView.content-insets: set_only
-        ObserveRow { tag: "scroll-view", prop: "content-insets", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "contentInsets" },
+        // observe_nsscrollview_border_type: observe NSScrollView.border-type: exact
+        ObserveRow { tag: "scroll-view", prop: "border-type", kvo: "borderType", check: ObsCheck::Change, sample: Some(S::Str("bezel-border")), user: User::None, requires: "setBorderType:" },
+        // observe_nsscrollview_content_insets: observe NSScrollView.content-insets: exact
+        ObserveRow { tag: "scroll-view", prop: "content-insets", kvo: "contentInsets", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_INSETS, &[1.0, 2.0, 3.0, 4.0])), user: User::None, requires: "setContentInsets:" },
         // observe_nsscrollview_content_size: observe NSScrollView.content-size: none
         ObserveRow { tag: "scroll-view", prop: "content-size", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "contentSize" },
         // observe_nsscrollview_content_view: observe NSScrollView.content-view: set_only
@@ -3981,66 +4401,66 @@ mod cases {
         ObserveRow { tag: "scroll-view", prop: "document-view", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "documentView" },
         // observe_nsscrollview_document_visible_rect: observe NSScrollView.document-visible-rect: none
         ObserveRow { tag: "scroll-view", prop: "document-visible-rect", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "documentVisibleRect" },
-        // observe_nsscrollview_draws_background: observe NSScrollView.draws-background: set_only
-        ObserveRow { tag: "scroll-view", prop: "draws-background", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "drawsBackground" },
-        // observe_nsscrollview_find_bar_position: observe NSScrollView.find-bar-position: set_only
-        ObserveRow { tag: "scroll-view", prop: "find-bar-position", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "findBarPosition" },
-        // observe_nsscrollview_has_horizontal_ruler: observe NSScrollView.has-horizontal-ruler: set_only
-        ObserveRow { tag: "scroll-view", prop: "has-horizontal-ruler", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "hasHorizontalRuler" },
-        // observe_nsscrollview_has_horizontal_scroller: observe NSScrollView.has-horizontal-scroller: set_only
-        ObserveRow { tag: "scroll-view", prop: "has-horizontal-scroller", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "hasHorizontalScroller" },
-        // observe_nsscrollview_has_vertical_ruler: observe NSScrollView.has-vertical-ruler: set_only
-        ObserveRow { tag: "scroll-view", prop: "has-vertical-ruler", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "hasVerticalRuler" },
-        // observe_nsscrollview_has_vertical_scroller: observe NSScrollView.has-vertical-scroller: set_only
-        ObserveRow { tag: "scroll-view", prop: "has-vertical-scroller", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "hasVerticalScroller" },
-        // observe_nsscrollview_horizontal_line_scroll: observe NSScrollView.horizontal-line-scroll: set_only
-        ObserveRow { tag: "scroll-view", prop: "horizontal-line-scroll", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "horizontalLineScroll" },
-        // observe_nsscrollview_horizontal_page_scroll: observe NSScrollView.horizontal-page-scroll: set_only
-        ObserveRow { tag: "scroll-view", prop: "horizontal-page-scroll", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "horizontalPageScroll" },
+        // observe_nsscrollview_draws_background: observe NSScrollView.draws-background: exact
+        ObserveRow { tag: "scroll-view", prop: "draws-background", kvo: "drawsBackground", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setDrawsBackground:" },
+        // observe_nsscrollview_find_bar_position: observe NSScrollView.find-bar-position: exact
+        ObserveRow { tag: "scroll-view", prop: "find-bar-position", kvo: "findBarPosition", check: ObsCheck::Change, sample: Some(S::Str("above-horizontal-ruler")), user: User::None, requires: "setFindBarPosition:" },
+        // observe_nsscrollview_has_horizontal_ruler: observe NSScrollView.has-horizontal-ruler: exact
+        ObserveRow { tag: "scroll-view", prop: "has-horizontal-ruler", kvo: "hasHorizontalRuler", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setHasHorizontalRuler:" },
+        // observe_nsscrollview_has_horizontal_scroller: observe NSScrollView.has-horizontal-scroller: exact
+        ObserveRow { tag: "scroll-view", prop: "has-horizontal-scroller", kvo: "hasHorizontalScroller", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setHasHorizontalScroller:" },
+        // observe_nsscrollview_has_vertical_ruler: observe NSScrollView.has-vertical-ruler: exact
+        ObserveRow { tag: "scroll-view", prop: "has-vertical-ruler", kvo: "hasVerticalRuler", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setHasVerticalRuler:" },
+        // observe_nsscrollview_has_vertical_scroller: observe NSScrollView.has-vertical-scroller: exact
+        ObserveRow { tag: "scroll-view", prop: "has-vertical-scroller", kvo: "hasVerticalScroller", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setHasVerticalScroller:" },
+        // observe_nsscrollview_horizontal_line_scroll: observe NSScrollView.horizontal-line-scroll: exact
+        ObserveRow { tag: "scroll-view", prop: "horizontal-line-scroll", kvo: "horizontalLineScroll", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setHorizontalLineScroll:" },
+        // observe_nsscrollview_horizontal_page_scroll: observe NSScrollView.horizontal-page-scroll: exact
+        ObserveRow { tag: "scroll-view", prop: "horizontal-page-scroll", kvo: "horizontalPageScroll", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setHorizontalPageScroll:" },
         // observe_nsscrollview_horizontal_ruler_view: observe NSScrollView.horizontal-ruler-view: set_only
         ObserveRow { tag: "scroll-view", prop: "horizontal-ruler-view", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "horizontalRulerView" },
-        // observe_nsscrollview_horizontal_scroll_elasticity: observe NSScrollView.horizontal-scroll-elasticity: set_only
-        ObserveRow { tag: "scroll-view", prop: "horizontal-scroll-elasticity", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "horizontalScrollElasticity" },
+        // observe_nsscrollview_horizontal_scroll_elasticity: observe NSScrollView.horizontal-scroll-elasticity: exact
+        ObserveRow { tag: "scroll-view", prop: "horizontal-scroll-elasticity", kvo: "horizontalScrollElasticity", check: ObsCheck::Change, sample: Some(S::Str("none")), user: User::None, requires: "setHorizontalScrollElasticity:" },
         // observe_nsscrollview_horizontal_scroller: observe NSScrollView.horizontal-scroller: set_only
         ObserveRow { tag: "scroll-view", prop: "horizontal-scroller", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "horizontalScroller" },
-        // observe_nsscrollview_line_scroll: observe NSScrollView.line-scroll: set_only
-        ObserveRow { tag: "scroll-view", prop: "line-scroll", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "lineScroll" },
-        // observe_nsscrollview_magnification: observe NSScrollView.magnification: set_only
-        ObserveRow { tag: "scroll-view", prop: "magnification", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "magnification" },
-        // observe_nsscrollview_max_magnification: observe NSScrollView.max-magnification: set_only
-        ObserveRow { tag: "scroll-view", prop: "max-magnification", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "maxMagnification" },
-        // observe_nsscrollview_min_magnification: observe NSScrollView.min-magnification: set_only
-        ObserveRow { tag: "scroll-view", prop: "min-magnification", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "minMagnification" },
-        // observe_nsscrollview_page_scroll: observe NSScrollView.page-scroll: set_only
-        ObserveRow { tag: "scroll-view", prop: "page-scroll", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "pageScroll" },
-        // observe_nsscrollview_rulers_visible: observe NSScrollView.rulers-visible: set_only
-        ObserveRow { tag: "scroll-view", prop: "rulers-visible", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "rulersVisible" },
-        // observe_nsscrollview_scroller_insets: observe NSScrollView.scroller-insets: set_only
-        ObserveRow { tag: "scroll-view", prop: "scroller-insets", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "scrollerInsets" },
-        // observe_nsscrollview_scroller_knob_style: observe NSScrollView.scroller-knob-style: set_only
-        ObserveRow { tag: "scroll-view", prop: "scroller-knob-style", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "scrollerKnobStyle" },
-        // observe_nsscrollview_scroller_style: observe NSScrollView.scroller-style: set_only
-        ObserveRow { tag: "scroll-view", prop: "scroller-style", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "scrollerStyle" },
-        // observe_nsscrollview_scrolls_dynamically: observe NSScrollView.scrolls-dynamically: set_only
-        ObserveRow { tag: "scroll-view", prop: "scrolls-dynamically", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "scrollsDynamically" },
-        // observe_nsscrollview_uses_predominant_axis_scrolling: observe NSScrollView.uses-predominant-axis-scrolling: set_only
-        ObserveRow { tag: "scroll-view", prop: "uses-predominant-axis-scrolling", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "usesPredominantAxisScrolling" },
-        // observe_nsscrollview_vertical_line_scroll: observe NSScrollView.vertical-line-scroll: set_only
-        ObserveRow { tag: "scroll-view", prop: "vertical-line-scroll", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "verticalLineScroll" },
-        // observe_nsscrollview_vertical_page_scroll: observe NSScrollView.vertical-page-scroll: set_only
-        ObserveRow { tag: "scroll-view", prop: "vertical-page-scroll", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "verticalPageScroll" },
+        // observe_nsscrollview_line_scroll: observe NSScrollView.line-scroll: exact
+        ObserveRow { tag: "scroll-view", prop: "line-scroll", kvo: "lineScroll", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setLineScroll:" },
+        // observe_nsscrollview_magnification: observe NSScrollView.magnification: exact
+        ObserveRow { tag: "scroll-view", prop: "magnification", kvo: "magnification", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setMagnification:" },
+        // observe_nsscrollview_max_magnification: observe NSScrollView.max-magnification: exact
+        ObserveRow { tag: "scroll-view", prop: "max-magnification", kvo: "maxMagnification", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setMaxMagnification:" },
+        // observe_nsscrollview_min_magnification: observe NSScrollView.min-magnification: exact
+        ObserveRow { tag: "scroll-view", prop: "min-magnification", kvo: "minMagnification", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setMinMagnification:" },
+        // observe_nsscrollview_page_scroll: observe NSScrollView.page-scroll: exact
+        ObserveRow { tag: "scroll-view", prop: "page-scroll", kvo: "pageScroll", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setPageScroll:" },
+        // observe_nsscrollview_rulers_visible: observe NSScrollView.rulers-visible: exact
+        ObserveRow { tag: "scroll-view", prop: "rulers-visible", kvo: "rulersVisible", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setRulersVisible:" },
+        // observe_nsscrollview_scroller_insets: observe NSScrollView.scroller-insets: exact
+        ObserveRow { tag: "scroll-view", prop: "scroller-insets", kvo: "scrollerInsets", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_INSETS, &[1.0, 2.0, 3.0, 4.0])), user: User::None, requires: "setScrollerInsets:" },
+        // observe_nsscrollview_scroller_knob_style: observe NSScrollView.scroller-knob-style: exact
+        ObserveRow { tag: "scroll-view", prop: "scroller-knob-style", kvo: "scrollerKnobStyle", check: ObsCheck::Change, sample: Some(S::Str("dark")), user: User::None, requires: "setScrollerKnobStyle:" },
+        // observe_nsscrollview_scroller_style: observe NSScrollView.scroller-style: exact
+        ObserveRow { tag: "scroll-view", prop: "scroller-style", kvo: "scrollerStyle", check: ObsCheck::Change, sample: Some(S::Str("overlay")), user: User::None, requires: "setScrollerStyle:" },
+        // observe_nsscrollview_scrolls_dynamically: observe NSScrollView.scrolls-dynamically: exact
+        ObserveRow { tag: "scroll-view", prop: "scrolls-dynamically", kvo: "scrollsDynamically", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setScrollsDynamically:" },
+        // observe_nsscrollview_uses_predominant_axis_scrolling: observe NSScrollView.uses-predominant-axis-scrolling: exact
+        ObserveRow { tag: "scroll-view", prop: "uses-predominant-axis-scrolling", kvo: "usesPredominantAxisScrolling", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setUsesPredominantAxisScrolling:" },
+        // observe_nsscrollview_vertical_line_scroll: observe NSScrollView.vertical-line-scroll: exact
+        ObserveRow { tag: "scroll-view", prop: "vertical-line-scroll", kvo: "verticalLineScroll", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setVerticalLineScroll:" },
+        // observe_nsscrollview_vertical_page_scroll: observe NSScrollView.vertical-page-scroll: exact
+        ObserveRow { tag: "scroll-view", prop: "vertical-page-scroll", kvo: "verticalPageScroll", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setVerticalPageScroll:" },
         // observe_nsscrollview_vertical_ruler_view: observe NSScrollView.vertical-ruler-view: set_only
         ObserveRow { tag: "scroll-view", prop: "vertical-ruler-view", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "verticalRulerView" },
-        // observe_nsscrollview_vertical_scroll_elasticity: observe NSScrollView.vertical-scroll-elasticity: set_only
-        ObserveRow { tag: "scroll-view", prop: "vertical-scroll-elasticity", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "verticalScrollElasticity" },
+        // observe_nsscrollview_vertical_scroll_elasticity: observe NSScrollView.vertical-scroll-elasticity: exact
+        ObserveRow { tag: "scroll-view", prop: "vertical-scroll-elasticity", kvo: "verticalScrollElasticity", check: ObsCheck::Change, sample: Some(S::Str("none")), user: User::None, requires: "setVerticalScrollElasticity:" },
         // observe_nsscrollview_vertical_scroller: observe NSScrollView.vertical-scroller: set_only
         ObserveRow { tag: "scroll-view", prop: "vertical-scroller", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "verticalScroller" },
         // observe_nssearchfield_cancel_button_bounds: observe NSSearchField.cancel-button-bounds: none
         ObserveRow { tag: "search-field", prop: "cancel-button-bounds", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "cancelButtonBounds" },
         // observe_nssearchfield_delegate: observe NSSearchField.delegate: set_only
         ObserveRow { tag: "search-field", prop: "delegate", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "delegate" },
-        // observe_nssearchfield_maximum_recents: observe NSSearchField.maximum-recents: set_only
-        ObserveRow { tag: "search-field", prop: "maximum-recents", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "maximumRecents" },
+        // observe_nssearchfield_maximum_recents: observe NSSearchField.maximum-recents: exact
+        ObserveRow { tag: "search-field", prop: "maximum-recents", kvo: "maximumRecents", check: ObsCheck::Change, sample: Some(S::I64(5)), user: User::None, requires: "setMaximumRecents:" },
         // observe_nssearchfield_recent_searches: observe NSSearchField.recent-searches: set_only
         ObserveRow { tag: "search-field", prop: "recent-searches", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "recentSearches" },
         // observe_nssearchfield_recents_autosave_name: observe NSSearchField.recents-autosave-name: set_only
@@ -4051,32 +4471,32 @@ mod cases {
         ObserveRow { tag: "search-field", prop: "search-menu-template", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "searchMenuTemplate" },
         // observe_nssearchfield_search_text_bounds: observe NSSearchField.search-text-bounds: none
         ObserveRow { tag: "search-field", prop: "search-text-bounds", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "searchTextBounds" },
-        // observe_nssearchfield_sends_search_string_immediately: observe NSSearchField.sends-search-string-immediately: set_only
-        ObserveRow { tag: "search-field", prop: "sends-search-string-immediately", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "sendsSearchStringImmediately" },
-        // observe_nssearchfield_sends_whole_search_string: observe NSSearchField.sends-whole-search-string: set_only
-        ObserveRow { tag: "search-field", prop: "sends-whole-search-string", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "sendsWholeSearchString" },
+        // observe_nssearchfield_sends_search_string_immediately: observe NSSearchField.sends-search-string-immediately: exact
+        ObserveRow { tag: "search-field", prop: "sends-search-string-immediately", kvo: "sendsSearchStringImmediately", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setSendsSearchStringImmediately:" },
+        // observe_nssearchfield_sends_whole_search_string: observe NSSearchField.sends-whole-search-string: exact
+        ObserveRow { tag: "search-field", prop: "sends-whole-search-string", kvo: "sendsWholeSearchString", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setSendsWholeSearchString:" },
         // observe_nssegmentedcontrol_active_compression_options: observe NSSegmentedControl.active-compression-options: none
         ObserveRow { tag: "segmented-control", prop: "active-compression-options", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "activeCompressionOptions" },
-        // observe_nssegmentedcontrol_border_shape: observe NSSegmentedControl.border-shape: set_only
-        ObserveRow { tag: "segmented-control", prop: "border-shape", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "borderShape" },
+        // observe_nssegmentedcontrol_border_shape: observe NSSegmentedControl.border-shape: exact
+        ObserveRow { tag: "segmented-control", prop: "border-shape", kvo: "borderShape", check: ObsCheck::Change, sample: Some(S::Str("capsule")), user: User::None, requires: "setBorderShape:" },
         // observe_nssegmentedcontrol_double_value_for_selected_segment: observe NSSegmentedControl.double-value-for-selected-segment: none
         ObserveRow { tag: "segmented-control", prop: "double-value-for-selected-segment", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "doubleValueForSelectedSegment" },
         // observe_nssegmentedcontrol_index_of_selected_item: observe NSSegmentedControl.index-of-selected-item: none
         ObserveRow { tag: "segmented-control", prop: "index-of-selected-item", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "indexOfSelectedItem" },
-        // observe_nssegmentedcontrol_segment_count: observe NSSegmentedControl.segment-count: set_only
-        ObserveRow { tag: "segmented-control", prop: "segment-count", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "segmentCount" },
-        // observe_nssegmentedcontrol_segment_distribution: observe NSSegmentedControl.segment-distribution: set_only
-        ObserveRow { tag: "segmented-control", prop: "segment-distribution", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "segmentDistribution" },
-        // observe_nssegmentedcontrol_segment_style: observe NSSegmentedControl.segment-style: set_only
-        ObserveRow { tag: "segmented-control", prop: "segment-style", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "segmentStyle" },
-        // observe_nssegmentedcontrol_selected_segment: observe NSSegmentedControl.selected-segment: partial
-        ObserveRow { tag: "segmented-control", prop: "selected-segment", kvo: "", check: ObsCheck::Connect, sample: None, user: User::None, requires: "selectedSegment" },
+        // observe_nssegmentedcontrol_segment_count: observe NSSegmentedControl.segment-count: exact
+        ObserveRow { tag: "segmented-control", prop: "segment-count", kvo: "segmentCount", check: ObsCheck::Change, sample: Some(S::I64(4)), user: User::None, requires: "setSegmentCount:" },
+        // observe_nssegmentedcontrol_segment_distribution: observe NSSegmentedControl.segment-distribution: exact
+        ObserveRow { tag: "segmented-control", prop: "segment-distribution", kvo: "segmentDistribution", check: ObsCheck::Change, sample: Some(S::Str("fit")), user: User::None, requires: "setSegmentDistribution:" },
+        // observe_nssegmentedcontrol_segment_style: observe NSSegmentedControl.segment-style: exact
+        ObserveRow { tag: "segmented-control", prop: "segment-style", kvo: "segmentStyle", check: ObsCheck::Change, sample: Some(S::Str("rounded")), user: User::None, requires: "setSegmentStyle:" },
+        // observe_nssegmentedcontrol_selected_segment: observe NSSegmentedControl.selected-segment: exact
+        ObserveRow { tag: "segmented-control", prop: "selected-segment", kvo: "selectedSegment", check: ObsCheck::Change, sample: Some(S::I64(2)), user: User::None, requires: "setSelectedSegment:" },
         // observe_nssegmentedcontrol_selected_segment_bezel_color: observe NSSegmentedControl.selected-segment-bezel-color: set_only
         ObserveRow { tag: "segmented-control", prop: "selected-segment-bezel-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "selectedSegmentBezelColor" },
-        // observe_nssegmentedcontrol_spring_loaded: observe NSSegmentedControl.spring-loaded: set_only
-        ObserveRow { tag: "segmented-control", prop: "spring-loaded", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isSpringLoaded" },
-        // observe_nssegmentedcontrol_tracking_mode: observe NSSegmentedControl.tracking-mode: set_only
-        ObserveRow { tag: "segmented-control", prop: "tracking-mode", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "trackingMode" },
+        // observe_nssegmentedcontrol_spring_loaded: observe NSSegmentedControl.spring-loaded: exact
+        ObserveRow { tag: "segmented-control", prop: "spring-loaded", kvo: "springLoaded", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setSpringLoaded:" },
+        // observe_nssegmentedcontrol_tracking_mode: observe NSSegmentedControl.tracking-mode: exact
+        ObserveRow { tag: "segmented-control", prop: "tracking-mode", kvo: "trackingMode", check: ObsCheck::Change, sample: Some(S::Str("select-any")), user: User::None, requires: "setTrackingMode:" },
         // observe_nsslider_allows_tick_mark_values_only: observe NSSlider.allows-tick-mark-values-only: exact
         ObserveRow { tag: "slider", prop: "allows-tick-mark-values-only", kvo: "allowsTickMarkValuesOnly", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAllowsTickMarkValuesOnly:" },
         // observe_nsslider_alt_increment_value: observe NSSlider.alt-increment-value: exact
@@ -4113,20 +4533,20 @@ mod cases {
         ObserveRow { tag: "slider", prop: "vertical", kvo: "vertical", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setVertical:" },
         // observe_nssplitview_arranged_subviews: observe NSSplitView.arranged-subviews: none
         ObserveRow { tag: "split-view", prop: "arranged-subviews", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "arrangedSubviews" },
-        // observe_nssplitview_arranges_all_subviews: observe NSSplitView.arranges-all-subviews: set_only
-        ObserveRow { tag: "split-view", prop: "arranges-all-subviews", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "arrangesAllSubviews" },
+        // observe_nssplitview_arranges_all_subviews: observe NSSplitView.arranges-all-subviews: exact
+        ObserveRow { tag: "split-view", prop: "arranges-all-subviews", kvo: "arrangesAllSubviews", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setArrangesAllSubviews:" },
         // observe_nssplitview_autosave_name: observe NSSplitView.autosave-name: set_only
         ObserveRow { tag: "split-view", prop: "autosave-name", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "autosaveName" },
         // observe_nssplitview_delegate: observe NSSplitView.delegate: set_only
         ObserveRow { tag: "split-view", prop: "delegate", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "delegate" },
         // observe_nssplitview_divider_color: observe NSSplitView.divider-color: none
         ObserveRow { tag: "split-view", prop: "divider-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "dividerColor" },
-        // observe_nssplitview_divider_style: observe NSSplitView.divider-style: set_only
-        ObserveRow { tag: "split-view", prop: "divider-style", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "dividerStyle" },
+        // observe_nssplitview_divider_style: observe NSSplitView.divider-style: exact
+        ObserveRow { tag: "split-view", prop: "divider-style", kvo: "dividerStyle", check: ObsCheck::Change, sample: Some(S::Str("pane-splitter")), user: User::None, requires: "setDividerStyle:" },
         // observe_nssplitview_divider_thickness: observe NSSplitView.divider-thickness: none
         ObserveRow { tag: "split-view", prop: "divider-thickness", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "dividerThickness" },
-        // observe_nssplitview_vertical: observe NSSplitView.vertical: set_only
-        ObserveRow { tag: "split-view", prop: "vertical", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isVertical" },
+        // observe_nssplitview_vertical: observe NSSplitView.vertical: exact
+        ObserveRow { tag: "split-view", prop: "vertical", kvo: "vertical", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setVertical:" },
         // observe_nsstackview_alignment: observe NSStackView.alignment: exact
         ObserveRow { tag: "stack-view", prop: "alignment", kvo: "alignment", check: ObsCheck::Change, sample: Some(S::Str("center-x")), user: User::None, requires: "setAlignment:" },
         // observe_nsstackview_arranged_subviews: observe NSStackView.arranged-subviews: none
@@ -4147,36 +4567,36 @@ mod cases {
         ObserveRow { tag: "stack-view", prop: "spacing", kvo: "spacing", check: ObsCheck::Change, sample: Some(S::F64(12.0)), user: User::None, requires: "setSpacing:" },
         // observe_nsstackview_views: observe NSStackView.views: none
         ObserveRow { tag: "stack-view", prop: "views", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "views" },
-        // observe_nsstepper_autorepeat: observe NSStepper.autorepeat: set_only
-        ObserveRow { tag: "stepper", prop: "autorepeat", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "autorepeat" },
-        // observe_nsstepper_double_value: observe NSStepper.double-value: partial
-        ObserveRow { tag: "stepper", prop: "double-value", kvo: "", check: ObsCheck::Connect, sample: None, user: User::None, requires: "doubleValue" },
-        // observe_nsstepper_float_value: observe NSStepper.float-value: partial
-        ObserveRow { tag: "stepper", prop: "float-value", kvo: "", check: ObsCheck::Connect, sample: None, user: User::None, requires: "floatValue" },
-        // observe_nsstepper_increment: observe NSStepper.increment: set_only
-        ObserveRow { tag: "stepper", prop: "increment", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "increment" },
-        // observe_nsstepper_int_value: observe NSStepper.int-value: partial
-        ObserveRow { tag: "stepper", prop: "int-value", kvo: "", check: ObsCheck::Connect, sample: None, user: User::None, requires: "intValue" },
-        // observe_nsstepper_integer_value: observe NSStepper.integer-value: partial
-        ObserveRow { tag: "stepper", prop: "integer-value", kvo: "", check: ObsCheck::Connect, sample: None, user: User::None, requires: "integerValue" },
-        // observe_nsstepper_max_value: observe NSStepper.max-value: set_only
-        ObserveRow { tag: "stepper", prop: "max-value", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "maxValue" },
-        // observe_nsstepper_min_value: observe NSStepper.min-value: set_only
-        ObserveRow { tag: "stepper", prop: "min-value", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "minValue" },
-        // observe_nsstepper_value_wraps: observe NSStepper.value-wraps: set_only
-        ObserveRow { tag: "stepper", prop: "value-wraps", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "valueWraps" },
-        // observe_nsswitch_state: observe NSSwitch.state: partial
-        ObserveRow { tag: "switch", prop: "state", kvo: "", check: ObsCheck::Connect, sample: None, user: User::Click, requires: "state" },
-        // observe_nstabview_allows_truncated_labels: observe NSTabView.allows-truncated-labels: set_only
-        ObserveRow { tag: "tab-view", prop: "allows-truncated-labels", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "allowsTruncatedLabels" },
+        // observe_nsstepper_autorepeat: observe NSStepper.autorepeat: exact
+        ObserveRow { tag: "stepper", prop: "autorepeat", kvo: "autorepeat", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAutorepeat:" },
+        // observe_nsstepper_double_value: observe NSStepper.double-value: exact
+        ObserveRow { tag: "stepper", prop: "double-value", kvo: "doubleValue", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setDoubleValue:" },
+        // observe_nsstepper_float_value: observe NSStepper.float-value: exact
+        ObserveRow { tag: "stepper", prop: "float-value", kvo: "floatValue", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setFloatValue:" },
+        // observe_nsstepper_increment: observe NSStepper.increment: exact
+        ObserveRow { tag: "stepper", prop: "increment", kvo: "increment", check: ObsCheck::Change, sample: Some(S::F64(2.5)), user: User::None, requires: "setIncrement:" },
+        // observe_nsstepper_int_value: observe NSStepper.int-value: exact
+        ObserveRow { tag: "stepper", prop: "int-value", kvo: "intValue", check: ObsCheck::Change, sample: Some(S::I64(3)), user: User::None, requires: "setIntValue:" },
+        // observe_nsstepper_integer_value: observe NSStepper.integer-value: exact
+        ObserveRow { tag: "stepper", prop: "integer-value", kvo: "integerValue", check: ObsCheck::Change, sample: Some(S::I64(3)), user: User::None, requires: "setIntegerValue:" },
+        // observe_nsstepper_max_value: observe NSStepper.max-value: exact
+        ObserveRow { tag: "stepper", prop: "max-value", kvo: "maxValue", check: ObsCheck::Change, sample: Some(S::F64(10.0)), user: User::None, requires: "setMaxValue:" },
+        // observe_nsstepper_min_value: observe NSStepper.min-value: exact
+        ObserveRow { tag: "stepper", prop: "min-value", kvo: "minValue", check: ObsCheck::Change, sample: Some(S::F64(-10.0)), user: User::None, requires: "setMinValue:" },
+        // observe_nsstepper_value_wraps: observe NSStepper.value-wraps: exact
+        ObserveRow { tag: "stepper", prop: "value-wraps", kvo: "valueWraps", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setValueWraps:" },
+        // observe_nsswitch_state: observe NSSwitch.state: exact
+        ObserveRow { tag: "switch", prop: "state", kvo: "state", check: ObsCheck::Change, sample: Some(S::Str("on")), user: User::Click, requires: "setState:" },
+        // observe_nstabview_allows_truncated_labels: observe NSTabView.allows-truncated-labels: exact
+        ObserveRow { tag: "tab-view", prop: "allows-truncated-labels", kvo: "allowsTruncatedLabels", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAllowsTruncatedLabels:" },
         // observe_nstabview_content_rect: observe NSTabView.content-rect: none
         ObserveRow { tag: "tab-view", prop: "content-rect", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "contentRect" },
-        // observe_nstabview_control_size: observe NSTabView.control-size: set_only
-        ObserveRow { tag: "tab-view", prop: "control-size", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "controlSize" },
+        // observe_nstabview_control_size: observe NSTabView.control-size: exact
+        ObserveRow { tag: "tab-view", prop: "control-size", kvo: "controlSize", check: ObsCheck::Change, sample: Some(S::Str("small")), user: User::None, requires: "setControlSize:" },
         // observe_nstabview_delegate: observe NSTabView.delegate: set_only
         ObserveRow { tag: "tab-view", prop: "delegate", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "delegate" },
-        // observe_nstabview_draws_background: observe NSTabView.draws-background: set_only
-        ObserveRow { tag: "tab-view", prop: "draws-background", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "drawsBackground" },
+        // observe_nstabview_draws_background: observe NSTabView.draws-background: exact
+        ObserveRow { tag: "tab-view", prop: "draws-background", kvo: "drawsBackground", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setDrawsBackground:" },
         // observe_nstabview_font: observe NSTabView.font: set_only
         ObserveRow { tag: "tab-view", prop: "font", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "font" },
         // observe_nstabview_minimum_size: observe NSTabView.minimum-size: none
@@ -4185,14 +4605,14 @@ mod cases {
         ObserveRow { tag: "tab-view", prop: "number-of-tab-view-items", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "numberOfTabViewItems" },
         // observe_nstabview_selected_tab_view_item: observe NSTabView.selected-tab-view-item: none
         ObserveRow { tag: "tab-view", prop: "selected-tab-view-item", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "selectedTabViewItem" },
-        // observe_nstabview_tab_position: observe NSTabView.tab-position: set_only
-        ObserveRow { tag: "tab-view", prop: "tab-position", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "tabPosition" },
-        // observe_nstabview_tab_view_border_type: observe NSTabView.tab-view-border-type: set_only
-        ObserveRow { tag: "tab-view", prop: "tab-view-border-type", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "tabViewBorderType" },
+        // observe_nstabview_tab_position: observe NSTabView.tab-position: exact
+        ObserveRow { tag: "tab-view", prop: "tab-position", kvo: "tabPosition", check: ObsCheck::Change, sample: Some(S::Str("none")), user: User::None, requires: "setTabPosition:" },
+        // observe_nstabview_tab_view_border_type: observe NSTabView.tab-view-border-type: exact
+        ObserveRow { tag: "tab-view", prop: "tab-view-border-type", kvo: "tabViewBorderType", check: ObsCheck::Change, sample: Some(S::Str("none")), user: User::None, requires: "setTabViewBorderType:" },
         // observe_nstabview_tab_view_items: observe NSTabView.tab-view-items: set_only
         ObserveRow { tag: "tab-view", prop: "tab-view-items", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "tabViewItems" },
-        // observe_nstabview_tab_view_type: observe NSTabView.tab-view-type: set_only
-        ObserveRow { tag: "tab-view", prop: "tab-view-type", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "tabViewType" },
+        // observe_nstabview_tab_view_type: observe NSTabView.tab-view-type: exact
+        ObserveRow { tag: "tab-view", prop: "tab-view-type", kvo: "tabViewType", check: ObsCheck::Change, sample: Some(S::Str("no-tabs-no-border")), user: User::None, requires: "setTabViewType:" },
         // observe_nstabviewitem_color: observe NSTabViewItem.color: set_only
         ObserveRow { tag: "tab-view-item", prop: "color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "color" },
         // observe_nstabviewitem_identifier: observe NSTabViewItem.identifier: set_only
@@ -4201,58 +4621,58 @@ mod cases {
         ObserveRow { tag: "tab-view-item", prop: "image", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "image" },
         // observe_nstabviewitem_initial_first_responder: observe NSTabViewItem.initial-first-responder: set_only
         ObserveRow { tag: "tab-view-item", prop: "initial-first-responder", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "initialFirstResponder" },
-        // observe_nstabviewitem_label: observe NSTabViewItem.label: set_only
-        ObserveRow { tag: "tab-view-item", prop: "label", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "label" },
+        // observe_nstabviewitem_label: observe NSTabViewItem.label: exact
+        ObserveRow { tag: "tab-view-item", prop: "label", kvo: "label", check: ObsCheck::Change, sample: Some(S::Str("General")), user: User::None, requires: "setLabel:" },
         // observe_nstabviewitem_tab_state: observe NSTabViewItem.tab-state: none
         ObserveRow { tag: "tab-view-item", prop: "tab-state", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "tabState" },
         // observe_nstabviewitem_tab_view: observe NSTabViewItem.tab-view: none
         ObserveRow { tag: "tab-view-item", prop: "tab-view", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "tabView" },
-        // observe_nstabviewitem_tool_tip: observe NSTabViewItem.tool-tip: set_only
-        ObserveRow { tag: "tab-view-item", prop: "tool-tip", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "toolTip" },
+        // observe_nstabviewitem_tool_tip: observe NSTabViewItem.tool-tip: exact
+        ObserveRow { tag: "tab-view-item", prop: "tool-tip", kvo: "toolTip", check: ObsCheck::Change, sample: Some(S::Str("tip")), user: User::None, requires: "setToolTip:" },
         // observe_nstabviewitem_view: observe NSTabViewItem.view: set_only
         ObserveRow { tag: "tab-view-item", prop: "view", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "view" },
         // observe_nstabviewitem_view_controller: observe NSTabViewItem.view-controller: set_only
         ObserveRow { tag: "tab-view-item", prop: "view-controller", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "viewController" },
-        // observe_nstext_alignment: observe NSText.alignment: set_only
-        ObserveRow { tag: "text-view", prop: "alignment", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "alignment" },
+        // observe_nstext_alignment: observe NSText.alignment: exact
+        ObserveRow { tag: "text-view", prop: "alignment", kvo: "alignment", check: ObsCheck::Change, sample: Some(S::Str("left")), user: User::None, requires: "setAlignment:" },
         // observe_nstext_background_color: observe NSText.background-color: set_only
         ObserveRow { tag: "text-view", prop: "background-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "backgroundColor" },
-        // observe_nstext_base_writing_direction: observe NSText.base-writing-direction: set_only
-        ObserveRow { tag: "text-view", prop: "base-writing-direction", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "baseWritingDirection" },
+        // observe_nstext_base_writing_direction: observe NSText.base-writing-direction: exact
+        ObserveRow { tag: "text-view", prop: "base-writing-direction", kvo: "baseWritingDirection", check: ObsCheck::Change, sample: Some(S::Str("left-to-right")), user: User::None, requires: "setBaseWritingDirection:" },
         // observe_nstext_delegate: observe NSText.delegate: set_only
         ObserveRow { tag: "text-view", prop: "delegate", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "delegate" },
-        // observe_nstext_draws_background: observe NSText.draws-background: set_only
-        ObserveRow { tag: "text-view", prop: "draws-background", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "drawsBackground" },
-        // observe_nstext_editable: observe NSText.editable: set_only
-        ObserveRow { tag: "text-view", prop: "editable", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isEditable" },
-        // observe_nstext_field_editor: observe NSText.field-editor: set_only
-        ObserveRow { tag: "text-view", prop: "field-editor", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isFieldEditor" },
+        // observe_nstext_draws_background: observe NSText.draws-background: exact
+        ObserveRow { tag: "text-view", prop: "draws-background", kvo: "drawsBackground", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setDrawsBackground:" },
+        // observe_nstext_editable: observe NSText.editable: exact
+        ObserveRow { tag: "text-view", prop: "editable", kvo: "editable", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setEditable:" },
+        // observe_nstext_field_editor: observe NSText.field-editor: exact
+        ObserveRow { tag: "text-view", prop: "field-editor", kvo: "fieldEditor", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setFieldEditor:" },
         // observe_nstext_font: observe NSText.font: set_only
         ObserveRow { tag: "text-view", prop: "font", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "font" },
-        // observe_nstext_horizontally_resizable: observe NSText.horizontally-resizable: set_only
-        ObserveRow { tag: "text-view", prop: "horizontally-resizable", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isHorizontallyResizable" },
-        // observe_nstext_imports_graphics: observe NSText.imports-graphics: set_only
-        ObserveRow { tag: "text-view", prop: "imports-graphics", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "importsGraphics" },
-        // observe_nstext_max_size: observe NSText.max-size: set_only
-        ObserveRow { tag: "text-view", prop: "max-size", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "maxSize" },
+        // observe_nstext_horizontally_resizable: observe NSText.horizontally-resizable: exact
+        ObserveRow { tag: "text-view", prop: "horizontally-resizable", kvo: "horizontallyResizable", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setHorizontallyResizable:" },
+        // observe_nstext_imports_graphics: observe NSText.imports-graphics: exact
+        ObserveRow { tag: "text-view", prop: "imports-graphics", kvo: "importsGraphics", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setImportsGraphics:" },
+        // observe_nstext_max_size: observe NSText.max-size: exact
+        ObserveRow { tag: "text-view", prop: "max-size", kvo: "maxSize", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_SIZE, &[120.0, 40.0])), user: User::None, requires: "setMaxSize:" },
         // observe_nstext_min_size: observe NSText.min-size: set_only
         ObserveRow { tag: "text-view", prop: "min-size", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "minSize" },
-        // observe_nstext_rich_text: observe NSText.rich-text: set_only
-        ObserveRow { tag: "text-view", prop: "rich-text", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isRichText" },
-        // observe_nstext_ruler_visible: observe NSText.ruler-visible: none
-        ObserveRow { tag: "text-view", prop: "ruler-visible", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isRulerVisible" },
-        // observe_nstext_selectable: observe NSText.selectable: set_only
-        ObserveRow { tag: "text-view", prop: "selectable", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isSelectable" },
+        // observe_nstext_rich_text: observe NSText.rich-text: exact
+        ObserveRow { tag: "text-view", prop: "rich-text", kvo: "richText", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setRichText:" },
+        // observe_nstext_ruler_visible: observe NSText.ruler-visible: exact
+        ObserveRow { tag: "text-view", prop: "ruler-visible", kvo: "rulerVisible", check: ObsCheck::Connect, sample: None, user: User::None, requires: "isRulerVisible" },
+        // observe_nstext_selectable: observe NSText.selectable: exact
+        ObserveRow { tag: "text-view", prop: "selectable", kvo: "selectable", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setSelectable:" },
         // observe_nstext_selected_range: observe NSText.selected-range: set_only
         ObserveRow { tag: "text-view", prop: "selected-range", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "selectedRange" },
-        // observe_nstext_string: observe NSText.string: set_only
-        ObserveRow { tag: "text-view", prop: "string", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "string" },
+        // observe_nstext_string: observe NSText.string: exact
+        ObserveRow { tag: "text-view", prop: "string", kvo: "string", check: ObsCheck::Change, sample: Some(S::Str("svl probe")), user: User::Type, requires: "setString:" },
         // observe_nstext_text_color: observe NSText.text-color: set_only
         ObserveRow { tag: "text-view", prop: "text-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "textColor" },
-        // observe_nstext_uses_font_panel: observe NSText.uses-font-panel: set_only
-        ObserveRow { tag: "text-view", prop: "uses-font-panel", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "usesFontPanel" },
-        // observe_nstext_vertically_resizable: observe NSText.vertically-resizable: set_only
-        ObserveRow { tag: "text-view", prop: "vertically-resizable", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isVerticallyResizable" },
+        // observe_nstext_uses_font_panel: observe NSText.uses-font-panel: exact
+        ObserveRow { tag: "text-view", prop: "uses-font-panel", kvo: "usesFontPanel", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setUsesFontPanel:" },
+        // observe_nstext_vertically_resizable: observe NSText.vertically-resizable: exact
+        ObserveRow { tag: "text-view", prop: "vertically-resizable", kvo: "verticallyResizable", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setVerticallyResizable:" },
         // observe_nstextfield_accepts_first_responder: observe NSTextField.accepts-first-responder: none
         ObserveRow { tag: "text-field", prop: "accepts-first-responder", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "acceptsFirstResponder" },
         // observe_nstextfield_allows_character_picker_touch_bar_item: observe NSTextField.allows-character-picker-touch-bar-item: exact
@@ -4311,64 +4731,64 @@ mod cases {
         ObserveRow { tag: "text-field", prop: "text-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "textColor" },
         // observe_nstextview_acceptable_drag_types: observe NSTextView.acceptable-drag-types: none
         ObserveRow { tag: "text-view", prop: "acceptable-drag-types", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "acceptableDragTypes" },
-        // observe_nstextview_accepts_glyph_info: observe NSTextView.accepts-glyph-info: set_only
-        ObserveRow { tag: "text-view", prop: "accepts-glyph-info", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "acceptsGlyphInfo" },
+        // observe_nstextview_accepts_glyph_info: observe NSTextView.accepts-glyph-info: exact
+        ObserveRow { tag: "text-view", prop: "accepts-glyph-info", kvo: "acceptsGlyphInfo", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAcceptsGlyphInfo:" },
         // observe_nstextview_allowed_input_source_locales: observe NSTextView.allowed-input-source-locales: set_only
         ObserveRow { tag: "text-view", prop: "allowed-input-source-locales", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "allowedInputSourceLocales" },
-        // observe_nstextview_allowed_writing_tools_result_options: observe NSTextView.allowed-writing-tools-result-options: set_only
-        ObserveRow { tag: "text-view", prop: "allowed-writing-tools-result-options", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "allowedWritingToolsResultOptions" },
-        // observe_nstextview_allows_character_picker_touch_bar_item: observe NSTextView.allows-character-picker-touch-bar-item: set_only
-        ObserveRow { tag: "text-view", prop: "allows-character-picker-touch-bar-item", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "allowsCharacterPickerTouchBarItem" },
-        // observe_nstextview_allows_document_background_color_change: observe NSTextView.allows-document-background-color-change: set_only
-        ObserveRow { tag: "text-view", prop: "allows-document-background-color-change", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "allowsDocumentBackgroundColorChange" },
-        // observe_nstextview_allows_image_editing: observe NSTextView.allows-image-editing: set_only
-        ObserveRow { tag: "text-view", prop: "allows-image-editing", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "allowsImageEditing" },
-        // observe_nstextview_allows_undo: observe NSTextView.allows-undo: set_only
-        ObserveRow { tag: "text-view", prop: "allows-undo", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "allowsUndo" },
-        // observe_nstextview_automatic_dash_substitution_enabled: observe NSTextView.automatic-dash-substitution-enabled: set_only
-        ObserveRow { tag: "text-view", prop: "automatic-dash-substitution-enabled", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isAutomaticDashSubstitutionEnabled" },
-        // observe_nstextview_automatic_data_detection_enabled: observe NSTextView.automatic-data-detection-enabled: set_only
-        ObserveRow { tag: "text-view", prop: "automatic-data-detection-enabled", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isAutomaticDataDetectionEnabled" },
-        // observe_nstextview_automatic_link_detection_enabled: observe NSTextView.automatic-link-detection-enabled: set_only
-        ObserveRow { tag: "text-view", prop: "automatic-link-detection-enabled", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isAutomaticLinkDetectionEnabled" },
-        // observe_nstextview_automatic_quote_substitution_enabled: observe NSTextView.automatic-quote-substitution-enabled: set_only
-        ObserveRow { tag: "text-view", prop: "automatic-quote-substitution-enabled", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isAutomaticQuoteSubstitutionEnabled" },
-        // observe_nstextview_automatic_spelling_correction_enabled: observe NSTextView.automatic-spelling-correction-enabled: set_only
-        ObserveRow { tag: "text-view", prop: "automatic-spelling-correction-enabled", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isAutomaticSpellingCorrectionEnabled" },
-        // observe_nstextview_automatic_text_completion_enabled: observe NSTextView.automatic-text-completion-enabled: set_only
-        ObserveRow { tag: "text-view", prop: "automatic-text-completion-enabled", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isAutomaticTextCompletionEnabled" },
-        // observe_nstextview_automatic_text_replacement_enabled: observe NSTextView.automatic-text-replacement-enabled: set_only
-        ObserveRow { tag: "text-view", prop: "automatic-text-replacement-enabled", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isAutomaticTextReplacementEnabled" },
+        // observe_nstextview_allowed_writing_tools_result_options: observe NSTextView.allowed-writing-tools-result-options: exact
+        ObserveRow { tag: "text-view", prop: "allowed-writing-tools-result-options", kvo: "allowedWritingToolsResultOptions", check: ObsCheck::Change, sample: Some(S::Names(&["plain-text"])), user: User::None, requires: "setAllowedWritingToolsResultOptions:" },
+        // observe_nstextview_allows_character_picker_touch_bar_item: observe NSTextView.allows-character-picker-touch-bar-item: exact
+        ObserveRow { tag: "text-view", prop: "allows-character-picker-touch-bar-item", kvo: "allowsCharacterPickerTouchBarItem", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAllowsCharacterPickerTouchBarItem:" },
+        // observe_nstextview_allows_document_background_color_change: observe NSTextView.allows-document-background-color-change: exact
+        ObserveRow { tag: "text-view", prop: "allows-document-background-color-change", kvo: "allowsDocumentBackgroundColorChange", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAllowsDocumentBackgroundColorChange:" },
+        // observe_nstextview_allows_image_editing: observe NSTextView.allows-image-editing: exact
+        ObserveRow { tag: "text-view", prop: "allows-image-editing", kvo: "allowsImageEditing", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAllowsImageEditing:" },
+        // observe_nstextview_allows_undo: observe NSTextView.allows-undo: exact
+        ObserveRow { tag: "text-view", prop: "allows-undo", kvo: "allowsUndo", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAllowsUndo:" },
+        // observe_nstextview_automatic_dash_substitution_enabled: observe NSTextView.automatic-dash-substitution-enabled: exact
+        ObserveRow { tag: "text-view", prop: "automatic-dash-substitution-enabled", kvo: "automaticDashSubstitutionEnabled", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAutomaticDashSubstitutionEnabled:" },
+        // observe_nstextview_automatic_data_detection_enabled: observe NSTextView.automatic-data-detection-enabled: exact
+        ObserveRow { tag: "text-view", prop: "automatic-data-detection-enabled", kvo: "automaticDataDetectionEnabled", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAutomaticDataDetectionEnabled:" },
+        // observe_nstextview_automatic_link_detection_enabled: observe NSTextView.automatic-link-detection-enabled: exact
+        ObserveRow { tag: "text-view", prop: "automatic-link-detection-enabled", kvo: "automaticLinkDetectionEnabled", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAutomaticLinkDetectionEnabled:" },
+        // observe_nstextview_automatic_quote_substitution_enabled: observe NSTextView.automatic-quote-substitution-enabled: exact
+        ObserveRow { tag: "text-view", prop: "automatic-quote-substitution-enabled", kvo: "automaticQuoteSubstitutionEnabled", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAutomaticQuoteSubstitutionEnabled:" },
+        // observe_nstextview_automatic_spelling_correction_enabled: observe NSTextView.automatic-spelling-correction-enabled: exact
+        ObserveRow { tag: "text-view", prop: "automatic-spelling-correction-enabled", kvo: "automaticSpellingCorrectionEnabled", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAutomaticSpellingCorrectionEnabled:" },
+        // observe_nstextview_automatic_text_completion_enabled: observe NSTextView.automatic-text-completion-enabled: exact
+        ObserveRow { tag: "text-view", prop: "automatic-text-completion-enabled", kvo: "automaticTextCompletionEnabled", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAutomaticTextCompletionEnabled:" },
+        // observe_nstextview_automatic_text_replacement_enabled: observe NSTextView.automatic-text-replacement-enabled: exact
+        ObserveRow { tag: "text-view", prop: "automatic-text-replacement-enabled", kvo: "automaticTextReplacementEnabled", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setAutomaticTextReplacementEnabled:" },
         // observe_nstextview_background_color: observe NSTextView.background-color: set_only
         ObserveRow { tag: "text-view", prop: "background-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "backgroundColor" },
         // observe_nstextview_candidate_list_touch_bar_item: observe NSTextView.candidate-list-touch-bar-item: none
         ObserveRow { tag: "text-view", prop: "candidate-list-touch-bar-item", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "candidateListTouchBarItem" },
         // observe_nstextview_coalescing_undo: observe NSTextView.coalescing-undo: none
         ObserveRow { tag: "text-view", prop: "coalescing-undo", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isCoalescingUndo" },
-        // observe_nstextview_continuous_spell_checking_enabled: observe NSTextView.continuous-spell-checking-enabled: set_only
-        ObserveRow { tag: "text-view", prop: "continuous-spell-checking-enabled", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isContinuousSpellCheckingEnabled" },
+        // observe_nstextview_continuous_spell_checking_enabled: observe NSTextView.continuous-spell-checking-enabled: exact
+        ObserveRow { tag: "text-view", prop: "continuous-spell-checking-enabled", kvo: "continuousSpellCheckingEnabled", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setContinuousSpellCheckingEnabled:" },
         // observe_nstextview_default_paragraph_style: observe NSTextView.default-paragraph-style: set_only
         ObserveRow { tag: "text-view", prop: "default-paragraph-style", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "defaultParagraphStyle" },
         // observe_nstextview_delegate: observe NSTextView.delegate: set_only
         ObserveRow { tag: "text-view", prop: "delegate", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "delegate" },
-        // observe_nstextview_displays_link_tool_tips: observe NSTextView.displays-link-tool-tips: set_only
-        ObserveRow { tag: "text-view", prop: "displays-link-tool-tips", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "displaysLinkToolTips" },
-        // observe_nstextview_draws_background: observe NSTextView.draws-background: set_only
-        ObserveRow { tag: "text-view", prop: "draws-background", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "drawsBackground" },
-        // observe_nstextview_editable: observe NSTextView.editable: set_only
-        ObserveRow { tag: "text-view", prop: "editable", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isEditable" },
-        // observe_nstextview_enabled_text_checking_types: observe NSTextView.enabled-text-checking-types: set_only
-        ObserveRow { tag: "text-view", prop: "enabled-text-checking-types", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "enabledTextCheckingTypes" },
-        // observe_nstextview_field_editor: observe NSTextView.field-editor: set_only
-        ObserveRow { tag: "text-view", prop: "field-editor", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isFieldEditor" },
-        // observe_nstextview_grammar_checking_enabled: observe NSTextView.grammar-checking-enabled: set_only
-        ObserveRow { tag: "text-view", prop: "grammar-checking-enabled", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isGrammarCheckingEnabled" },
-        // observe_nstextview_imports_graphics: observe NSTextView.imports-graphics: set_only
-        ObserveRow { tag: "text-view", prop: "imports-graphics", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "importsGraphics" },
-        // observe_nstextview_incremental_searching_enabled: observe NSTextView.incremental-searching-enabled: set_only
-        ObserveRow { tag: "text-view", prop: "incremental-searching-enabled", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isIncrementalSearchingEnabled" },
-        // observe_nstextview_inline_prediction_type: observe NSTextView.inline-prediction-type: set_only
-        ObserveRow { tag: "text-view", prop: "inline-prediction-type", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "inlinePredictionType" },
+        // observe_nstextview_displays_link_tool_tips: observe NSTextView.displays-link-tool-tips: exact
+        ObserveRow { tag: "text-view", prop: "displays-link-tool-tips", kvo: "displaysLinkToolTips", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setDisplaysLinkToolTips:" },
+        // observe_nstextview_draws_background: observe NSTextView.draws-background: exact
+        ObserveRow { tag: "text-view", prop: "draws-background", kvo: "drawsBackground", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setDrawsBackground:" },
+        // observe_nstextview_editable: observe NSTextView.editable: exact
+        ObserveRow { tag: "text-view", prop: "editable", kvo: "editable", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setEditable:" },
+        // observe_nstextview_enabled_text_checking_types: observe NSTextView.enabled-text-checking-types: exact
+        ObserveRow { tag: "text-view", prop: "enabled-text-checking-types", kvo: "enabledTextCheckingTypes", check: ObsCheck::Change, sample: Some(S::I64(3)), user: User::None, requires: "setEnabledTextCheckingTypes:" },
+        // observe_nstextview_field_editor: observe NSTextView.field-editor: exact
+        ObserveRow { tag: "text-view", prop: "field-editor", kvo: "fieldEditor", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setFieldEditor:" },
+        // observe_nstextview_grammar_checking_enabled: observe NSTextView.grammar-checking-enabled: exact
+        ObserveRow { tag: "text-view", prop: "grammar-checking-enabled", kvo: "grammarCheckingEnabled", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setGrammarCheckingEnabled:" },
+        // observe_nstextview_imports_graphics: observe NSTextView.imports-graphics: exact
+        ObserveRow { tag: "text-view", prop: "imports-graphics", kvo: "importsGraphics", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setImportsGraphics:" },
+        // observe_nstextview_incremental_searching_enabled: observe NSTextView.incremental-searching-enabled: exact
+        ObserveRow { tag: "text-view", prop: "incremental-searching-enabled", kvo: "incrementalSearchingEnabled", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setIncrementalSearchingEnabled:" },
+        // observe_nstextview_inline_prediction_type: observe NSTextView.inline-prediction-type: exact
+        ObserveRow { tag: "text-view", prop: "inline-prediction-type", kvo: "inlinePredictionType", check: ObsCheck::Change, sample: Some(S::Str("no")), user: User::None, requires: "setInlinePredictionType:" },
         // observe_nstextview_insertion_point_color: observe NSTextView.insertion-point-color: set_only
         ObserveRow { tag: "text-view", prop: "insertion-point-color", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "insertionPointColor" },
         // observe_nstextview_layout_manager: observe NSTextView.layout-manager: none
@@ -4377,8 +4797,8 @@ mod cases {
         ObserveRow { tag: "text-view", prop: "link-text-attributes", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "linkTextAttributes" },
         // observe_nstextview_marked_text_attributes: observe NSTextView.marked-text-attributes: set_only
         ObserveRow { tag: "text-view", prop: "marked-text-attributes", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "markedTextAttributes" },
-        // observe_nstextview_math_expression_completion_type: observe NSTextView.math-expression-completion-type: set_only
-        ObserveRow { tag: "text-view", prop: "math-expression-completion-type", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "mathExpressionCompletionType" },
+        // observe_nstextview_math_expression_completion_type: observe NSTextView.math-expression-completion-type: exact
+        ObserveRow { tag: "text-view", prop: "math-expression-completion-type", kvo: "mathExpressionCompletionType", check: ObsCheck::Change, sample: Some(S::Str("no")), user: User::None, requires: "setMathExpressionCompletionType:" },
         // observe_nstextview_range_for_user_character_attribute_change: observe NSTextView.range-for-user-character-attribute-change: none
         ObserveRow { tag: "text-view", prop: "range-for-user-character-attribute-change", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "rangeForUserCharacterAttributeChange" },
         // observe_nstextview_range_for_user_completion: observe NSTextView.range-for-user-completion: none
@@ -4395,32 +4815,32 @@ mod cases {
         ObserveRow { tag: "text-view", prop: "ranges-for-user-text-change", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "rangesForUserTextChange" },
         // observe_nstextview_readable_pasteboard_types: observe NSTextView.readable-pasteboard-types: none
         ObserveRow { tag: "text-view", prop: "readable-pasteboard-types", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "readablePasteboardTypes" },
-        // observe_nstextview_rich_text: observe NSTextView.rich-text: set_only
-        ObserveRow { tag: "text-view", prop: "rich-text", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isRichText" },
-        // observe_nstextview_ruler_visible: observe NSTextView.ruler-visible: set_only
-        ObserveRow { tag: "text-view", prop: "ruler-visible", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isRulerVisible" },
-        // observe_nstextview_selectable: observe NSTextView.selectable: set_only
-        ObserveRow { tag: "text-view", prop: "selectable", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isSelectable" },
+        // observe_nstextview_rich_text: observe NSTextView.rich-text: exact
+        ObserveRow { tag: "text-view", prop: "rich-text", kvo: "richText", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setRichText:" },
+        // observe_nstextview_ruler_visible: observe NSTextView.ruler-visible: exact
+        ObserveRow { tag: "text-view", prop: "ruler-visible", kvo: "rulerVisible", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setRulerVisible:" },
+        // observe_nstextview_selectable: observe NSTextView.selectable: exact
+        ObserveRow { tag: "text-view", prop: "selectable", kvo: "selectable", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setSelectable:" },
         // observe_nstextview_selected_ranges: observe NSTextView.selected-ranges: set_only
         ObserveRow { tag: "text-view", prop: "selected-ranges", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "selectedRanges" },
         // observe_nstextview_selected_text_attributes: observe NSTextView.selected-text-attributes: set_only
         ObserveRow { tag: "text-view", prop: "selected-text-attributes", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "selectedTextAttributes" },
         // observe_nstextview_selection_affinity: observe NSTextView.selection-affinity: none
         ObserveRow { tag: "text-view", prop: "selection-affinity", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "selectionAffinity" },
-        // observe_nstextview_selection_granularity: observe NSTextView.selection-granularity: set_only
-        ObserveRow { tag: "text-view", prop: "selection-granularity", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "selectionGranularity" },
+        // observe_nstextview_selection_granularity: observe NSTextView.selection-granularity: exact
+        ObserveRow { tag: "text-view", prop: "selection-granularity", kvo: "selectionGranularity", check: ObsCheck::Change, sample: Some(S::Str("word")), user: User::None, requires: "setSelectionGranularity:" },
         // observe_nstextview_should_draw_insertion_point: observe NSTextView.should-draw-insertion-point: none
         ObserveRow { tag: "text-view", prop: "should-draw-insertion-point", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "shouldDrawInsertionPoint" },
-        // observe_nstextview_smart_insert_delete_enabled: observe NSTextView.smart-insert-delete-enabled: set_only
-        ObserveRow { tag: "text-view", prop: "smart-insert-delete-enabled", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "smartInsertDeleteEnabled" },
+        // observe_nstextview_smart_insert_delete_enabled: observe NSTextView.smart-insert-delete-enabled: exact
+        ObserveRow { tag: "text-view", prop: "smart-insert-delete-enabled", kvo: "smartInsertDeleteEnabled", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setSmartInsertDeleteEnabled:" },
         // observe_nstextview_spell_checker_document_tag: observe NSTextView.spell-checker-document-tag: none
         ObserveRow { tag: "text-view", prop: "spell-checker-document-tag", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "spellCheckerDocumentTag" },
         // observe_nstextview_string: observe NSTextView.string: partial
         ObserveRow { tag: "text-view", prop: "string", kvo: "", check: ObsCheck::Connect, sample: None, user: User::Type, requires: "string" },
         // observe_nstextview_text_container: observe NSTextView.text-container: set_only
         ObserveRow { tag: "text-view", prop: "text-container", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "textContainer" },
-        // observe_nstextview_text_container_inset: observe NSTextView.text-container-inset: set_only
-        ObserveRow { tag: "text-view", prop: "text-container-inset", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "textContainerInset" },
+        // observe_nstextview_text_container_inset: observe NSTextView.text-container-inset: exact
+        ObserveRow { tag: "text-view", prop: "text-container-inset", kvo: "textContainerInset", check: ObsCheck::Change, sample: Some(S::Rec(SVL_T_SIZE, &[8.0, 6.0])), user: User::None, requires: "setTextContainerInset:" },
         // observe_nstextview_text_container_origin: observe NSTextView.text-container-origin: none
         ObserveRow { tag: "text-view", prop: "text-container-origin", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "textContainerOrigin" },
         // observe_nstextview_text_content_storage: observe NSTextView.text-content-storage: none
@@ -4433,32 +4853,32 @@ mod cases {
         ObserveRow { tag: "text-view", prop: "text-storage", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "textStorage" },
         // observe_nstextview_typing_attributes: observe NSTextView.typing-attributes: set_only
         ObserveRow { tag: "text-view", prop: "typing-attributes", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "typingAttributes" },
-        // observe_nstextview_uses_adaptive_color_mapping_for_dark_appearance: observe NSTextView.uses-adaptive-color-mapping-for-dark-appearance: set_only
-        ObserveRow { tag: "text-view", prop: "uses-adaptive-color-mapping-for-dark-appearance", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "usesAdaptiveColorMappingForDarkAppearance" },
-        // observe_nstextview_uses_find_bar: observe NSTextView.uses-find-bar: set_only
-        ObserveRow { tag: "text-view", prop: "uses-find-bar", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "usesFindBar" },
-        // observe_nstextview_uses_find_panel: observe NSTextView.uses-find-panel: set_only
-        ObserveRow { tag: "text-view", prop: "uses-find-panel", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "usesFindPanel" },
-        // observe_nstextview_uses_font_panel: observe NSTextView.uses-font-panel: set_only
-        ObserveRow { tag: "text-view", prop: "uses-font-panel", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "usesFontPanel" },
-        // observe_nstextview_uses_inspector_bar: observe NSTextView.uses-inspector-bar: set_only
-        ObserveRow { tag: "text-view", prop: "uses-inspector-bar", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "usesInspectorBar" },
-        // observe_nstextview_uses_rollover_button_for_selection: observe NSTextView.uses-rollover-button-for-selection: set_only
-        ObserveRow { tag: "text-view", prop: "uses-rollover-button-for-selection", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "usesRolloverButtonForSelection" },
-        // observe_nstextview_uses_ruler: observe NSTextView.uses-ruler: set_only
-        ObserveRow { tag: "text-view", prop: "uses-ruler", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "usesRuler" },
+        // observe_nstextview_uses_adaptive_color_mapping_for_dark_appearance: observe NSTextView.uses-adaptive-color-mapping-for-dark-appearance: exact
+        ObserveRow { tag: "text-view", prop: "uses-adaptive-color-mapping-for-dark-appearance", kvo: "usesAdaptiveColorMappingForDarkAppearance", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setUsesAdaptiveColorMappingForDarkAppearance:" },
+        // observe_nstextview_uses_find_bar: observe NSTextView.uses-find-bar: exact
+        ObserveRow { tag: "text-view", prop: "uses-find-bar", kvo: "usesFindBar", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setUsesFindBar:" },
+        // observe_nstextview_uses_find_panel: observe NSTextView.uses-find-panel: exact
+        ObserveRow { tag: "text-view", prop: "uses-find-panel", kvo: "usesFindPanel", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setUsesFindPanel:" },
+        // observe_nstextview_uses_font_panel: observe NSTextView.uses-font-panel: exact
+        ObserveRow { tag: "text-view", prop: "uses-font-panel", kvo: "usesFontPanel", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setUsesFontPanel:" },
+        // observe_nstextview_uses_inspector_bar: observe NSTextView.uses-inspector-bar: exact
+        ObserveRow { tag: "text-view", prop: "uses-inspector-bar", kvo: "usesInspectorBar", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setUsesInspectorBar:" },
+        // observe_nstextview_uses_rollover_button_for_selection: observe NSTextView.uses-rollover-button-for-selection: exact
+        ObserveRow { tag: "text-view", prop: "uses-rollover-button-for-selection", kvo: "usesRolloverButtonForSelection", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setUsesRolloverButtonForSelection:" },
+        // observe_nstextview_uses_ruler: observe NSTextView.uses-ruler: exact
+        ObserveRow { tag: "text-view", prop: "uses-ruler", kvo: "usesRuler", check: ObsCheck::Change, sample: Some(S::Bool(false)), user: User::None, requires: "setUsesRuler:" },
         // observe_nstextview_writable_pasteboard_types: observe NSTextView.writable-pasteboard-types: none
         ObserveRow { tag: "text-view", prop: "writable-pasteboard-types", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "writablePasteboardTypes" },
         // observe_nstextview_writing_tools_active: observe NSTextView.writing-tools-active: none
         ObserveRow { tag: "text-view", prop: "writing-tools-active", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isWritingToolsActive" },
-        // observe_nstextview_writing_tools_behavior: observe NSTextView.writing-tools-behavior: set_only
-        ObserveRow { tag: "text-view", prop: "writing-tools-behavior", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "writingToolsBehavior" },
-        // observe_nstokenfield_completion_delay: observe NSTokenField.completion-delay: set_only
-        ObserveRow { tag: "token-field", prop: "completion-delay", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "completionDelay" },
+        // observe_nstextview_writing_tools_behavior: observe NSTextView.writing-tools-behavior: exact
+        ObserveRow { tag: "text-view", prop: "writing-tools-behavior", kvo: "writingToolsBehavior", check: ObsCheck::Change, sample: Some(S::Str("none")), user: User::None, requires: "setWritingToolsBehavior:" },
+        // observe_nstokenfield_completion_delay: observe NSTokenField.completion-delay: exact
+        ObserveRow { tag: "token-field", prop: "completion-delay", kvo: "completionDelay", check: ObsCheck::Change, sample: Some(S::F64(0.5)), user: User::None, requires: "setCompletionDelay:" },
         // observe_nstokenfield_delegate: observe NSTokenField.delegate: set_only
         ObserveRow { tag: "token-field", prop: "delegate", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "delegate" },
-        // observe_nstokenfield_token_style: observe NSTokenField.token-style: set_only
-        ObserveRow { tag: "token-field", prop: "token-style", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "tokenStyle" },
+        // observe_nstokenfield_token_style: observe NSTokenField.token-style: exact
+        ObserveRow { tag: "token-field", prop: "token-style", kvo: "tokenStyle", check: ObsCheck::Change, sample: Some(S::Str("squared")), user: User::None, requires: "setTokenStyle:" },
         // observe_nstokenfield_tokenizing_character_set: observe NSTokenField.tokenizing-character-set: set_only
         ObserveRow { tag: "token-field", prop: "tokenizing-character-set", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "tokenizingCharacterSet" },
         // observe_nsview_additional_safe_area_insets: observe NSView.additional-safe-area-insets: exact
@@ -4667,18 +5087,18 @@ mod cases {
         ObserveRow { tag: "view", prop: "window", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "window" },
         // observe_nsview_writing_tools_coordinator: observe NSView.writing-tools-coordinator: set_only
         ObserveRow { tag: "view", prop: "writing-tools-coordinator", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "writingToolsCoordinator" },
-        // observe_nsvisualeffectview_blending_mode: observe NSVisualEffectView.blending-mode: set_only
-        ObserveRow { tag: "visual-effect-view", prop: "blending-mode", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "blendingMode" },
-        // observe_nsvisualeffectview_emphasized: observe NSVisualEffectView.emphasized: set_only
-        ObserveRow { tag: "visual-effect-view", prop: "emphasized", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isEmphasized" },
+        // observe_nsvisualeffectview_blending_mode: observe NSVisualEffectView.blending-mode: exact
+        ObserveRow { tag: "visual-effect-view", prop: "blending-mode", kvo: "blendingMode", check: ObsCheck::Change, sample: Some(S::Str("within-window")), user: User::None, requires: "setBlendingMode:" },
+        // observe_nsvisualeffectview_emphasized: observe NSVisualEffectView.emphasized: exact
+        ObserveRow { tag: "visual-effect-view", prop: "emphasized", kvo: "emphasized", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setEmphasized:" },
         // observe_nsvisualeffectview_interior_background_style: observe NSVisualEffectView.interior-background-style: none
         ObserveRow { tag: "visual-effect-view", prop: "interior-background-style", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "interiorBackgroundStyle" },
         // observe_nsvisualeffectview_mask_image: observe NSVisualEffectView.mask-image: set_only
         ObserveRow { tag: "visual-effect-view", prop: "mask-image", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "maskImage" },
-        // observe_nsvisualeffectview_material: observe NSVisualEffectView.material: set_only
-        ObserveRow { tag: "visual-effect-view", prop: "material", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "material" },
-        // observe_nsvisualeffectview_state: observe NSVisualEffectView.state: set_only
-        ObserveRow { tag: "visual-effect-view", prop: "state", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "state" },
+        // observe_nsvisualeffectview_material: observe NSVisualEffectView.material: exact
+        ObserveRow { tag: "visual-effect-view", prop: "material", kvo: "material", check: ObsCheck::Change, sample: Some(S::Str("sidebar")), user: User::None, requires: "setMaterial:" },
+        // observe_nsvisualeffectview_state: observe NSVisualEffectView.state: exact
+        ObserveRow { tag: "visual-effect-view", prop: "state", kvo: "state", check: ObsCheck::Change, sample: Some(S::Str("active")), user: User::None, requires: "setState:" },
         // observe_nswindow_accepts_mouse_moved_events: observe NSWindow.accepts-mouse-moved-events: exact
         ObserveRow { tag: "window", prop: "accepts-mouse-moved-events", kvo: "acceptsMouseMovedEvents", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setAcceptsMouseMovedEvents:" },
         // observe_nswindow_allows_concurrent_view_drawing: observe NSWindow.allows-concurrent-view-drawing: set_only
@@ -4761,8 +5181,8 @@ mod cases {
         ObserveRow { tag: "window", prop: "excluded-from-windows-menu", kvo: "excludedFromWindowsMenu", check: ObsCheck::Change, sample: Some(S::Bool(true)), user: User::None, requires: "setExcludedFromWindowsMenu:" },
         // observe_nswindow_first_responder: observe NSWindow.first-responder: none
         ObserveRow { tag: "window", prop: "first-responder", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "firstResponder" },
-        // observe_nswindow_floating_panel: observe NSWindow.floating-panel: none
-        ObserveRow { tag: "window", prop: "floating-panel", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isFloatingPanel" },
+        // observe_nswindow_floating_panel: observe NSWindow.floating-panel: exact
+        ObserveRow { tag: "window", prop: "floating-panel", kvo: "floatingPanel", check: ObsCheck::Connect, sample: None, user: User::None, requires: "isFloatingPanel" },
         // observe_nswindow_frame: observe NSWindow.frame: exact
         ObserveRow { tag: "window", prop: "frame", kvo: "", check: ObsCheck::Cross(Trig::SetFrame), sample: None, user: User::None, requires: "frame" },
         // observe_nswindow_frame_autosave_name: observe NSWindow.frame-autosave-name: none
@@ -4897,8 +5317,8 @@ mod cases {
         ObserveRow { tag: "window", prop: "window-number", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "windowNumber" },
         // observe_nswindow_window_titlebar_layout_direction: observe NSWindow.window-titlebar-layout-direction: none
         ObserveRow { tag: "window", prop: "window-titlebar-layout-direction", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "windowTitlebarLayoutDirection" },
-        // observe_nswindow_works_when_modal: observe NSWindow.works-when-modal: none
-        ObserveRow { tag: "window", prop: "works-when-modal", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "worksWhenModal" },
+        // observe_nswindow_works_when_modal: observe NSWindow.works-when-modal: exact
+        ObserveRow { tag: "window", prop: "works-when-modal", kvo: "worksWhenModal", check: ObsCheck::Connect, sample: None, user: User::None, requires: "worksWhenModal" },
         // observe_nswindow_zoomable: observe NSWindow.zoomable: none
         ObserveRow { tag: "window", prop: "zoomable", kvo: "", check: ObsCheck::Unsupported, sample: None, user: User::None, requires: "isZoomable" },
         // observe_nswindow_zoomed: observe NSWindow.zoomed: none
@@ -4931,108 +5351,250 @@ mod cases {
         ("prop_nsbutton_spring_loaded", prop_row, 17),
         ("prop_nsbutton_tint_prominence", prop_row, 18),
         ("prop_nsbutton_transparent", prop_row, 19),
-        ("prop_nscontrol_alignment", prop_row, 20),
-        ("prop_nscontrol_allows_expansion_tool_tips", prop_row, 21),
-        ("prop_nscontrol_base_writing_direction", prop_row, 22),
-        ("prop_nscontrol_control_size", prop_row, 23),
-        ("prop_nscontrol_highlighted", prop_row, 24),
-        ("prop_nscontrol_ignores_multi_click", prop_row, 25),
-        ("prop_nscontrol_int_value", prop_row, 26),
-        ("prop_nscontrol_integer_value", prop_row, 27),
-        ("prop_nscontrol_line_break_mode", prop_row, 28),
-        ("prop_nscontrol_refuses_first_responder", prop_row, 29),
-        ("prop_nscontrol_tag", prop_row, 30),
-        ("prop_nscontrol_uses_single_line_mode", prop_row, 31),
-        ("prop_nsprogressindicator_control_size", prop_row, 32),
-        ("prop_nsprogressindicator_displayed_when_stopped", prop_row, 33),
-        ("prop_nsprogressindicator_min_value", prop_row, 34),
-        ("prop_nsprogressindicator_uses_threaded_animation", prop_row, 35),
-        ("prop_nssecuretextfield_double_value", prop_row, 36),
-        ("prop_nssecuretextfield_float_value", prop_row, 37),
-        ("prop_nssecuretextfield_int_value", prop_row, 38),
-        ("prop_nssecuretextfield_integer_value", prop_row, 39),
-        ("prop_nsslider_alt_increment_value", prop_row, 40),
-        ("prop_nsslider_float_value", prop_row, 41),
-        ("prop_nsslider_int_value", prop_row, 42),
-        ("prop_nsslider_integer_value", prop_row, 43),
-        ("prop_nsslider_neutral_value", prop_row, 44),
-        ("prop_nsslider_slider_type", prop_row, 45),
-        ("prop_nsslider_tick_mark_position", prop_row, 46),
-        ("prop_nsslider_tint_prominence", prop_row, 47),
-        ("prop_nsstackview_detaches_hidden_views", prop_row, 48),
-        ("prop_nstextfield_allows_character_picker_touch_bar_item", prop_row, 49),
-        ("prop_nstextfield_allows_default_tightening_for_truncation", prop_row, 50),
-        ("prop_nstextfield_allows_editing_text_attributes", prop_row, 51),
-        ("prop_nstextfield_allows_writing_tools", prop_row, 52),
-        ("prop_nstextfield_allows_writing_tools_affordance", prop_row, 53),
-        ("prop_nstextfield_automatic_text_completion_enabled", prop_row, 54),
-        ("prop_nstextfield_bezel_style", prop_row, 55),
-        ("prop_nstextfield_bordered", prop_row, 56),
-        ("prop_nstextfield_double_value", prop_row, 57),
-        ("prop_nstextfield_float_value", prop_row, 58),
-        ("prop_nstextfield_imports_graphics", prop_row, 59),
-        ("prop_nstextfield_int_value", prop_row, 60),
-        ("prop_nstextfield_integer_value", prop_row, 61),
-        ("prop_nstextfield_line_break_strategy", prop_row, 62),
-        ("prop_nstextfield_maximum_number_of_lines", prop_row, 63),
-        ("prop_nstextfield_preferred_max_layout_width", prop_row, 64),
-        ("prop_nstextfield_resolves_natural_alignment_with_base_writing_direction", prop_row, 65),
-        ("prop_nsview_additional_safe_area_insets", prop_row, 66),
-        ("prop_nsview_allowed_touch_types", prop_row, 67),
-        ("prop_nsview_autoresizes_subviews", prop_row, 68),
-        ("prop_nsview_autoresizing_mask", prop_row, 69),
-        ("prop_nsview_bounds_rotation", prop_row, 70),
-        ("prop_nsview_can_draw_concurrently", prop_row, 71),
-        ("prop_nsview_can_draw_subviews_into_layer", prop_row, 72),
-        ("prop_nsview_clips_to_bounds", prop_row, 73),
-        ("prop_nsview_focus_ring_type", prop_row, 74),
-        ("prop_nsview_frame_center_rotation", prop_row, 75),
-        ("prop_nsview_frame_rotation", prop_row, 76),
-        ("prop_nsview_horizontal_content_size_constraint_active", prop_row, 77),
-        ("prop_nsview_layer_contents_placement", prop_row, 78),
-        ("prop_nsview_layer_contents_redraw_policy", prop_row, 79),
-        ("prop_nsview_layer_uses_core_image_filters", prop_row, 80),
-        ("prop_nsview_posts_bounds_changed_notifications", prop_row, 81),
-        ("prop_nsview_posts_frame_changed_notifications", prop_row, 82),
-        ("prop_nsview_prefers_compact_control_size_metrics", prop_row, 83),
-        ("prop_nsview_prepared_content_rect", prop_row, 84),
-        ("prop_nsview_translates_autoresizing_mask_into_constraints", prop_row, 85),
-        ("prop_nsview_user_interface_layout_direction", prop_row, 86),
-        ("prop_nsview_vertical_content_size_constraint_active", prop_row, 87),
-        ("prop_nsview_wants_layer", prop_row, 88),
-        ("prop_nsview_wants_resting_touches", prop_row, 89),
-        ("prop_nswindow_accepts_mouse_moved_events", prop_row, 90),
-        ("prop_nswindow_allows_tool_tips_when_application_is_inactive", prop_row, 91),
-        ("prop_nswindow_alpha_value", prop_row, 92),
-        ("prop_nswindow_aspect_ratio", prop_row, 93),
-        ("prop_nswindow_autorecalculates_key_view_loop", prop_row, 94),
-        ("prop_nswindow_can_become_visible_without_login", prop_row, 95),
-        ("prop_nswindow_can_hide", prop_row, 96),
-        ("prop_nswindow_content_aspect_ratio", prop_row, 97),
-        ("prop_nswindow_content_max_size", prop_row, 98),
-        ("prop_nswindow_content_min_size", prop_row, 99),
-        ("prop_nswindow_content_resize_increments", prop_row, 100),
-        ("prop_nswindow_displays_when_screen_profile_changes", prop_row, 101),
-        ("prop_nswindow_document_edited", prop_row, 102),
-        ("prop_nswindow_excluded_from_windows_menu", prop_row, 103),
-        ("prop_nswindow_has_shadow", prop_row, 104),
-        ("prop_nswindow_hides_on_deactivate", prop_row, 105),
-        ("prop_nswindow_max_full_screen_content_size", prop_row, 106),
-        ("prop_nswindow_max_size", prop_row, 107),
-        ("prop_nswindow_min_full_screen_content_size", prop_row, 108),
-        ("prop_nswindow_min_size", prop_row, 109),
-        ("prop_nswindow_miniwindow_title", prop_row, 110),
-        ("prop_nswindow_movable", prop_row, 111),
-        ("prop_nswindow_ordered_index", prop_row, 112),
-        ("prop_nswindow_preserves_content_during_live_resize", prop_row, 113),
-        ("prop_nswindow_prevents_application_termination_when_modal", prop_row, 114),
-        ("prop_nswindow_resize_increments", prop_row, 115),
-        ("prop_nswindow_subtitle", prop_row, 116),
-        ("prop_nswindow_title_visibility", prop_row, 117),
-        ("prop_nswindow_titlebar_appears_transparent", prop_row, 118),
-        ("prop_nswindow_titlebar_separator_style", prop_row, 119),
-        ("prop_nswindow_toolbar_style", prop_row, 120),
-        ("prop_nswindow_views_need_display", prop_row, 121),
+        ("prop_nscolorwell_double_value", prop_row, 20),
+        ("prop_nscolorwell_float_value", prop_row, 21),
+        ("prop_nscolorwell_int_value", prop_row, 22),
+        ("prop_nscolorwell_integer_value", prop_row, 23),
+        ("prop_nscolorwell_maximum_linear_exposure", prop_row, 24),
+        ("prop_nscolorwell_string_value", prop_row, 25),
+        ("prop_nscolorwell_supports_alpha", prop_row, 26),
+        ("prop_nscombobox_button_bordered", prop_row, 27),
+        ("prop_nscombobox_double_value", prop_row, 28),
+        ("prop_nscombobox_float_value", prop_row, 29),
+        ("prop_nscombobox_int_value", prop_row, 30),
+        ("prop_nscombobox_integer_value", prop_row, 31),
+        ("prop_nscombobox_intercell_spacing", prop_row, 32),
+        ("prop_nscombobox_item_height", prop_row, 33),
+        ("prop_nscombobox_string_value", prop_row, 34),
+        ("prop_nscontrol_alignment", prop_row, 35),
+        ("prop_nscontrol_allows_expansion_tool_tips", prop_row, 36),
+        ("prop_nscontrol_base_writing_direction", prop_row, 37),
+        ("prop_nscontrol_control_size", prop_row, 38),
+        ("prop_nscontrol_highlighted", prop_row, 39),
+        ("prop_nscontrol_ignores_multi_click", prop_row, 40),
+        ("prop_nscontrol_int_value", prop_row, 41),
+        ("prop_nscontrol_integer_value", prop_row, 42),
+        ("prop_nscontrol_line_break_mode", prop_row, 43),
+        ("prop_nscontrol_refuses_first_responder", prop_row, 44),
+        ("prop_nscontrol_tag", prop_row, 45),
+        ("prop_nscontrol_uses_single_line_mode", prop_row, 46),
+        ("prop_nsdatepicker_bordered", prop_row, 47),
+        ("prop_nsdatepicker_presents_calendar_overlay", prop_row, 48),
+        ("prop_nsimageview_allows_cut_copy_paste", prop_row, 49),
+        ("prop_nsimageview_preferred_image_dynamic_range", prop_row, 50),
+        ("prop_nslevelindicator_double_value", prop_row, 51),
+        ("prop_nslevelindicator_draws_tiered_capacity_levels", prop_row, 52),
+        ("prop_nslevelindicator_float_value", prop_row, 53),
+        ("prop_nslevelindicator_int_value", prop_row, 54),
+        ("prop_nslevelindicator_integer_value", prop_row, 55),
+        ("prop_nslevelindicator_number_of_major_tick_marks", prop_row, 56),
+        ("prop_nslevelindicator_number_of_tick_marks", prop_row, 57),
+        ("prop_nslevelindicator_placeholder_visibility", prop_row, 58),
+        ("prop_nslevelindicator_tick_mark_position", prop_row, 59),
+        ("prop_nsmenu_allows_context_menu_plug_ins", prop_row, 60),
+        ("prop_nsmenu_automatically_inserts_writing_tools_items", prop_row, 61),
+        ("prop_nsmenu_presentation_style", prop_row, 62),
+        ("prop_nsmenu_selection_mode", prop_row, 63),
+        ("prop_nsmenu_user_interface_layout_direction", prop_row, 64),
+        ("prop_nsmenuitem_allows_automatic_key_equivalent_localization", prop_row, 65),
+        ("prop_nsmenuitem_allows_automatic_key_equivalent_mirroring", prop_row, 66),
+        ("prop_nsmenuitem_allows_key_equivalent_when_hidden", prop_row, 67),
+        ("prop_nsmenuitem_alternate", prop_row, 68),
+        ("prop_nsmenuitem_subtitle", prop_row, 69),
+        ("prop_nspathcontrol_string_value", prop_row, 70),
+        ("prop_nspopupbutton_alters_state_of_selected_item", prop_row, 71),
+        ("prop_nspopupbutton_preferred_edge", prop_row, 72),
+        ("prop_nspopupbutton_uses_item_from_menu", prop_row, 73),
+        ("prop_nsprogressindicator_control_size", prop_row, 74),
+        ("prop_nsprogressindicator_displayed_when_stopped", prop_row, 75),
+        ("prop_nsprogressindicator_min_value", prop_row, 76),
+        ("prop_nsprogressindicator_uses_threaded_animation", prop_row, 77),
+        ("prop_nsscrollview_allows_magnification", prop_row, 78),
+        ("prop_nsscrollview_autohides_scrollers", prop_row, 79),
+        ("prop_nsscrollview_automatically_adjusts_content_insets", prop_row, 80),
+        ("prop_nsscrollview_content_insets", prop_row, 81),
+        ("prop_nsscrollview_draws_background", prop_row, 82),
+        ("prop_nsscrollview_find_bar_position", prop_row, 83),
+        ("prop_nsscrollview_has_horizontal_ruler", prop_row, 84),
+        ("prop_nsscrollview_has_vertical_ruler", prop_row, 85),
+        ("prop_nsscrollview_horizontal_line_scroll", prop_row, 86),
+        ("prop_nsscrollview_horizontal_page_scroll", prop_row, 87),
+        ("prop_nsscrollview_horizontal_scroll_elasticity", prop_row, 88),
+        ("prop_nsscrollview_line_scroll", prop_row, 89),
+        ("prop_nsscrollview_magnification", prop_row, 90),
+        ("prop_nsscrollview_max_magnification", prop_row, 91),
+        ("prop_nsscrollview_min_magnification", prop_row, 92),
+        ("prop_nsscrollview_page_scroll", prop_row, 93),
+        ("prop_nsscrollview_rulers_visible", prop_row, 94),
+        ("prop_nsscrollview_scroller_insets", prop_row, 95),
+        ("prop_nsscrollview_scroller_knob_style", prop_row, 96),
+        ("prop_nsscrollview_scroller_style", prop_row, 97),
+        ("prop_nsscrollview_scrolls_dynamically", prop_row, 98),
+        ("prop_nsscrollview_uses_predominant_axis_scrolling", prop_row, 99),
+        ("prop_nsscrollview_vertical_line_scroll", prop_row, 100),
+        ("prop_nsscrollview_vertical_page_scroll", prop_row, 101),
+        ("prop_nsscrollview_vertical_scroll_elasticity", prop_row, 102),
+        ("prop_nssearchfield_double_value", prop_row, 103),
+        ("prop_nssearchfield_float_value", prop_row, 104),
+        ("prop_nssearchfield_int_value", prop_row, 105),
+        ("prop_nssearchfield_integer_value", prop_row, 106),
+        ("prop_nssearchfield_string_value", prop_row, 107),
+        ("prop_nssecuretextfield_double_value", prop_row, 108),
+        ("prop_nssecuretextfield_float_value", prop_row, 109),
+        ("prop_nssecuretextfield_int_value", prop_row, 110),
+        ("prop_nssecuretextfield_integer_value", prop_row, 111),
+        ("prop_nssegmentedcontrol_border_shape", prop_row, 112),
+        ("prop_nssegmentedcontrol_double_value", prop_row, 113),
+        ("prop_nssegmentedcontrol_float_value", prop_row, 114),
+        ("prop_nssegmentedcontrol_int_value", prop_row, 115),
+        ("prop_nssegmentedcontrol_integer_value", prop_row, 116),
+        ("prop_nssegmentedcontrol_segment_distribution", prop_row, 117),
+        ("prop_nssegmentedcontrol_spring_loaded", prop_row, 118),
+        ("prop_nsslider_alt_increment_value", prop_row, 119),
+        ("prop_nsslider_float_value", prop_row, 120),
+        ("prop_nsslider_int_value", prop_row, 121),
+        ("prop_nsslider_integer_value", prop_row, 122),
+        ("prop_nsslider_neutral_value", prop_row, 123),
+        ("prop_nsslider_slider_type", prop_row, 124),
+        ("prop_nsslider_tick_mark_position", prop_row, 125),
+        ("prop_nsslider_tint_prominence", prop_row, 126),
+        ("prop_nssplitview_arranges_all_subviews", prop_row, 127),
+        ("prop_nsstackview_detaches_hidden_views", prop_row, 128),
+        ("prop_nsstepper_double_value", prop_row, 129),
+        ("prop_nsstepper_float_value", prop_row, 130),
+        ("prop_nsstepper_int_value", prop_row, 131),
+        ("prop_nsstepper_integer_value", prop_row, 132),
+        ("prop_nsswitch_double_value", prop_row, 133),
+        ("prop_nsswitch_float_value", prop_row, 134),
+        ("prop_nsswitch_int_value", prop_row, 135),
+        ("prop_nsswitch_integer_value", prop_row, 136),
+        ("prop_nsswitch_string_value", prop_row, 137),
+        ("prop_nstabview_control_size", prop_row, 138),
+        ("prop_nstabview_tab_position", prop_row, 139),
+        ("prop_nstabview_tab_view_border_type", prop_row, 140),
+        ("prop_nstext_alignment", prop_row, 141),
+        ("prop_nstext_base_writing_direction", prop_row, 142),
+        ("prop_nstext_draws_background", prop_row, 143),
+        ("prop_nstext_editable", prop_row, 144),
+        ("prop_nstext_field_editor", prop_row, 145),
+        ("prop_nstext_horizontally_resizable", prop_row, 146),
+        ("prop_nstext_imports_graphics", prop_row, 147),
+        ("prop_nstext_max_size", prop_row, 148),
+        ("prop_nstext_rich_text", prop_row, 149),
+        ("prop_nstext_selectable", prop_row, 150),
+        ("prop_nstext_string", prop_row, 151),
+        ("prop_nstext_uses_font_panel", prop_row, 152),
+        ("prop_nstext_vertically_resizable", prop_row, 153),
+        ("prop_nstextfield_allows_character_picker_touch_bar_item", prop_row, 154),
+        ("prop_nstextfield_allows_default_tightening_for_truncation", prop_row, 155),
+        ("prop_nstextfield_allows_editing_text_attributes", prop_row, 156),
+        ("prop_nstextfield_allows_writing_tools", prop_row, 157),
+        ("prop_nstextfield_allows_writing_tools_affordance", prop_row, 158),
+        ("prop_nstextfield_automatic_text_completion_enabled", prop_row, 159),
+        ("prop_nstextfield_bezel_style", prop_row, 160),
+        ("prop_nstextfield_bordered", prop_row, 161),
+        ("prop_nstextfield_double_value", prop_row, 162),
+        ("prop_nstextfield_float_value", prop_row, 163),
+        ("prop_nstextfield_imports_graphics", prop_row, 164),
+        ("prop_nstextfield_int_value", prop_row, 165),
+        ("prop_nstextfield_integer_value", prop_row, 166),
+        ("prop_nstextfield_line_break_strategy", prop_row, 167),
+        ("prop_nstextfield_maximum_number_of_lines", prop_row, 168),
+        ("prop_nstextfield_preferred_max_layout_width", prop_row, 169),
+        ("prop_nstextfield_resolves_natural_alignment_with_base_writing_direction", prop_row, 170),
+        ("prop_nstextview_accepts_glyph_info", prop_row, 171),
+        ("prop_nstextview_allowed_writing_tools_result_options", prop_row, 172),
+        ("prop_nstextview_allows_character_picker_touch_bar_item", prop_row, 173),
+        ("prop_nstextview_allows_document_background_color_change", prop_row, 174),
+        ("prop_nstextview_allows_image_editing", prop_row, 175),
+        ("prop_nstextview_automatic_dash_substitution_enabled", prop_row, 176),
+        ("prop_nstextview_automatic_data_detection_enabled", prop_row, 177),
+        ("prop_nstextview_automatic_link_detection_enabled", prop_row, 178),
+        ("prop_nstextview_automatic_quote_substitution_enabled", prop_row, 179),
+        ("prop_nstextview_automatic_spelling_correction_enabled", prop_row, 180),
+        ("prop_nstextview_automatic_text_completion_enabled", prop_row, 181),
+        ("prop_nstextview_automatic_text_replacement_enabled", prop_row, 182),
+        ("prop_nstextview_continuous_spell_checking_enabled", prop_row, 183),
+        ("prop_nstextview_displays_link_tool_tips", prop_row, 184),
+        ("prop_nstextview_enabled_text_checking_types", prop_row, 185),
+        ("prop_nstextview_field_editor", prop_row, 186),
+        ("prop_nstextview_grammar_checking_enabled", prop_row, 187),
+        ("prop_nstextview_imports_graphics", prop_row, 188),
+        ("prop_nstextview_incremental_searching_enabled", prop_row, 189),
+        ("prop_nstextview_inline_prediction_type", prop_row, 190),
+        ("prop_nstextview_math_expression_completion_type", prop_row, 191),
+        ("prop_nstextview_ruler_visible", prop_row, 192),
+        ("prop_nstextview_selection_granularity", prop_row, 193),
+        ("prop_nstextview_smart_insert_delete_enabled", prop_row, 194),
+        ("prop_nstextview_uses_adaptive_color_mapping_for_dark_appearance", prop_row, 195),
+        ("prop_nstextview_uses_find_bar", prop_row, 196),
+        ("prop_nstextview_uses_find_panel", prop_row, 197),
+        ("prop_nstextview_uses_font_panel", prop_row, 198),
+        ("prop_nstextview_uses_inspector_bar", prop_row, 199),
+        ("prop_nstextview_uses_rollover_button_for_selection", prop_row, 200),
+        ("prop_nstextview_uses_ruler", prop_row, 201),
+        ("prop_nstextview_writing_tools_behavior", prop_row, 202),
+        ("prop_nstokenfield_double_value", prop_row, 203),
+        ("prop_nstokenfield_float_value", prop_row, 204),
+        ("prop_nstokenfield_int_value", prop_row, 205),
+        ("prop_nstokenfield_integer_value", prop_row, 206),
+        ("prop_nstokenfield_string_value", prop_row, 207),
+        ("prop_nsview_additional_safe_area_insets", prop_row, 208),
+        ("prop_nsview_allowed_touch_types", prop_row, 209),
+        ("prop_nsview_autoresizes_subviews", prop_row, 210),
+        ("prop_nsview_autoresizing_mask", prop_row, 211),
+        ("prop_nsview_bounds_rotation", prop_row, 212),
+        ("prop_nsview_can_draw_concurrently", prop_row, 213),
+        ("prop_nsview_can_draw_subviews_into_layer", prop_row, 214),
+        ("prop_nsview_clips_to_bounds", prop_row, 215),
+        ("prop_nsview_focus_ring_type", prop_row, 216),
+        ("prop_nsview_frame_center_rotation", prop_row, 217),
+        ("prop_nsview_frame_rotation", prop_row, 218),
+        ("prop_nsview_horizontal_content_size_constraint_active", prop_row, 219),
+        ("prop_nsview_layer_contents_placement", prop_row, 220),
+        ("prop_nsview_layer_contents_redraw_policy", prop_row, 221),
+        ("prop_nsview_layer_uses_core_image_filters", prop_row, 222),
+        ("prop_nsview_posts_bounds_changed_notifications", prop_row, 223),
+        ("prop_nsview_posts_frame_changed_notifications", prop_row, 224),
+        ("prop_nsview_prefers_compact_control_size_metrics", prop_row, 225),
+        ("prop_nsview_prepared_content_rect", prop_row, 226),
+        ("prop_nsview_translates_autoresizing_mask_into_constraints", prop_row, 227),
+        ("prop_nsview_user_interface_layout_direction", prop_row, 228),
+        ("prop_nsview_vertical_content_size_constraint_active", prop_row, 229),
+        ("prop_nsview_wants_layer", prop_row, 230),
+        ("prop_nsview_wants_resting_touches", prop_row, 231),
+        ("prop_nswindow_accepts_mouse_moved_events", prop_row, 232),
+        ("prop_nswindow_allows_tool_tips_when_application_is_inactive", prop_row, 233),
+        ("prop_nswindow_alpha_value", prop_row, 234),
+        ("prop_nswindow_aspect_ratio", prop_row, 235),
+        ("prop_nswindow_autorecalculates_key_view_loop", prop_row, 236),
+        ("prop_nswindow_can_become_visible_without_login", prop_row, 237),
+        ("prop_nswindow_can_hide", prop_row, 238),
+        ("prop_nswindow_content_aspect_ratio", prop_row, 239),
+        ("prop_nswindow_content_max_size", prop_row, 240),
+        ("prop_nswindow_content_min_size", prop_row, 241),
+        ("prop_nswindow_content_resize_increments", prop_row, 242),
+        ("prop_nswindow_displays_when_screen_profile_changes", prop_row, 243),
+        ("prop_nswindow_document_edited", prop_row, 244),
+        ("prop_nswindow_excluded_from_windows_menu", prop_row, 245),
+        ("prop_nswindow_has_shadow", prop_row, 246),
+        ("prop_nswindow_hides_on_deactivate", prop_row, 247),
+        ("prop_nswindow_max_full_screen_content_size", prop_row, 248),
+        ("prop_nswindow_max_size", prop_row, 249),
+        ("prop_nswindow_min_full_screen_content_size", prop_row, 250),
+        ("prop_nswindow_min_size", prop_row, 251),
+        ("prop_nswindow_miniwindow_title", prop_row, 252),
+        ("prop_nswindow_movable", prop_row, 253),
+        ("prop_nswindow_ordered_index", prop_row, 254),
+        ("prop_nswindow_preserves_content_during_live_resize", prop_row, 255),
+        ("prop_nswindow_prevents_application_termination_when_modal", prop_row, 256),
+        ("prop_nswindow_resize_increments", prop_row, 257),
+        ("prop_nswindow_subtitle", prop_row, 258),
+        ("prop_nswindow_title_visibility", prop_row, 259),
+        ("prop_nswindow_titlebar_appears_transparent", prop_row, 260),
+        ("prop_nswindow_titlebar_separator_style", prop_row, 261),
+        ("prop_nswindow_toolbar_style", prop_row, 262),
+        ("prop_nswindow_views_need_display", prop_row, 263),
         ("signal_nstextfield_control_text_did_begin_editing", signal_row, 0),
         ("signal_nsview_view_bounds_did_change", signal_row, 1),
         ("signal_nsview_view_frame_did_change", signal_row, 2),
@@ -5052,20 +5614,43 @@ mod cases {
         ("bind_nsbutton_state", bind_row, 0),
         ("bind_nsbutton_int_value", bind_row, 1),
         ("bind_nsbutton_integer_value", bind_row, 2),
-        ("bind_nscombobox_index_of_selected_item", bind_row, 3),
-        ("bind_nspopupbutton_index_of_selected_item", bind_row, 4),
-        ("bind_nssegmentedcontrol_selected_segment", bind_row, 5),
-        ("bind_nsslider_double_value", bind_row, 6),
-        ("bind_nsslider_float_value", bind_row, 7),
-        ("bind_nsslider_int_value", bind_row, 8),
-        ("bind_nsslider_integer_value", bind_row, 9),
-        ("bind_nsswitch_state", bind_row, 10),
-        ("bind_nstextfield_string_value", bind_row, 11),
-        ("bind_nstextfield_double_value", bind_row, 12),
-        ("bind_nstextfield_float_value", bind_row, 13),
-        ("bind_nstextfield_int_value", bind_row, 14),
-        ("bind_nstextfield_integer_value", bind_row, 15),
-        ("bind_nstextview_string", bind_row, 16),
+        ("bind_nscolorwell_double_value", bind_row, 3),
+        ("bind_nscolorwell_float_value", bind_row, 4),
+        ("bind_nscolorwell_int_value", bind_row, 5),
+        ("bind_nscolorwell_integer_value", bind_row, 6),
+        ("bind_nscolorwell_string_value", bind_row, 7),
+        ("bind_nscombobox_index_of_selected_item", bind_row, 8),
+        ("bind_nslevelindicator_double_value", bind_row, 9),
+        ("bind_nslevelindicator_float_value", bind_row, 10),
+        ("bind_nslevelindicator_int_value", bind_row, 11),
+        ("bind_nslevelindicator_integer_value", bind_row, 12),
+        ("bind_nspathcontrol_string_value", bind_row, 13),
+        ("bind_nspopupbutton_index_of_selected_item", bind_row, 14),
+        ("bind_nssegmentedcontrol_selected_segment", bind_row, 15),
+        ("bind_nssegmentedcontrol_double_value", bind_row, 16),
+        ("bind_nssegmentedcontrol_float_value", bind_row, 17),
+        ("bind_nssegmentedcontrol_int_value", bind_row, 18),
+        ("bind_nssegmentedcontrol_integer_value", bind_row, 19),
+        ("bind_nsslider_double_value", bind_row, 20),
+        ("bind_nsslider_float_value", bind_row, 21),
+        ("bind_nsslider_int_value", bind_row, 22),
+        ("bind_nsslider_integer_value", bind_row, 23),
+        ("bind_nsstepper_double_value", bind_row, 24),
+        ("bind_nsstepper_float_value", bind_row, 25),
+        ("bind_nsstepper_int_value", bind_row, 26),
+        ("bind_nsstepper_integer_value", bind_row, 27),
+        ("bind_nsswitch_state", bind_row, 28),
+        ("bind_nsswitch_double_value", bind_row, 29),
+        ("bind_nsswitch_float_value", bind_row, 30),
+        ("bind_nsswitch_int_value", bind_row, 31),
+        ("bind_nsswitch_integer_value", bind_row, 32),
+        ("bind_nsswitch_string_value", bind_row, 33),
+        ("bind_nstextfield_string_value", bind_row, 34),
+        ("bind_nstextfield_double_value", bind_row, 35),
+        ("bind_nstextfield_float_value", bind_row, 36),
+        ("bind_nstextfield_int_value", bind_row, 37),
+        ("bind_nstextfield_integer_value", bind_row, 38),
+        ("bind_nstextview_string", bind_row, 39),
         ("observe_nsbox_border_color", observe_row, 0),
         ("observe_nsbox_border_rect", observe_row, 1),
         ("observe_nsbox_border_width", observe_row, 2),

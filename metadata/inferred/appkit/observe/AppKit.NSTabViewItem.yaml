@@ -27,10 +27,12 @@ observe:
     ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
   confidence: 0.9
 - prop: label
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `label` fired on a programmatic set'
   confidence: 0.9
 - prop: tab-state
   class: none
@@ -45,10 +47,12 @@ observe:
     ref: a read-only property, not probed; KVO-compliant only if documented
   confidence: 0.9
 - prop: tool-tip
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `toolTip` fired on a programmatic set'
   confidence: 0.9
 - prop: view
   class: set_only

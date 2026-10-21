@@ -6,7 +6,7 @@ element:
   provenance: "NSTokenField.h: a text field (NSTextField subclass) that turns comma-separated text into tokens; object-value is the token list"
 props:
   - name: token-style
-    sample: square
+    sample: squared
     provenance: "NSTokenField.tokenStyle (NSTokenStyle)"
   - name: completion-delay
     sample: 0.5

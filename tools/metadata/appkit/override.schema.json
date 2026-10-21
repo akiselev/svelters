@@ -63,6 +63,11 @@
           "type": "array",
           "items": {"type": "object", "additionalProperties": false, "required": ["name", "value"], "properties": {"name": {"type": "string"}, "value": {"$ref": "#/$defs/sample"}}}
         },
+        "read_errors": {
+          "description": "Native properties whose getter raises outside a context the header names (an NSMenu delegate callback, a tracking mode): the generated readable test expects an error from these instead of a value",
+          "type": "array",
+          "items": {"type": "object", "additionalProperties": false, "required": ["name", "reason"], "properties": {"name": {"type": "string", "description": "kebab-case property name"}, "reason": {"type": "string", "minLength": 10}}}
+        },
         "provenance": {"$ref": "#/$defs/provenance"}
       }
     },

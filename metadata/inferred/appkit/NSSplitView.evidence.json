@@ -1,0 +1,47 @@
+{
+ "props:arranges-all-subviews": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:divider-style": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "thick",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "thin",
+   "sample": {
+    "t": "str",
+    "v": "thin"
+   }
+  }
+ },
+ "props:vertical": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ }
+}

@@ -3,22 +3,28 @@ toolkit: appkit
 owner: AppKit:NSMenu
 observe:
 - prop: allows-context-menu-plug-ins
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `allowsContextMenuPlugIns` fired on a programmatic set'
   confidence: 0.9
 - prop: autoenables-items
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `autoenablesItems` fired on a programmatic set'
   confidence: 0.9
 - prop: automatically-inserts-writing-tools-items
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `automaticallyInsertsWritingToolsItems` fired on a programmatic set'
   confidence: 0.9
 - prop: delegate
   class: set_only
@@ -51,10 +57,12 @@ observe:
     ref: a read-only property, not probed; KVO-compliant only if documented
   confidence: 0.9
 - prop: minimum-width
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `minimumWidth` fired on a programmatic set'
   confidence: 0.9
 - prop: number-of-items
   class: none
@@ -63,10 +71,12 @@ observe:
     ref: a read-only property, not probed; KVO-compliant only if documented
   confidence: 0.9
 - prop: presentation-style
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `presentationStyle` fired on a programmatic set'
   confidence: 0.9
 - prop: properties-to-update
   class: none
@@ -81,16 +91,20 @@ observe:
     ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
   confidence: 0.9
 - prop: selection-mode
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `selectionMode` fired on a programmatic set'
   confidence: 0.9
 - prop: shows-state-column
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `showsStateColumn` fired on a programmatic set'
   confidence: 0.9
 - prop: size
   class: none
@@ -105,14 +119,18 @@ observe:
     ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
   confidence: 0.9
 - prop: title
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `title` fired on a programmatic set'
   confidence: 0.9
 - prop: user-interface-layout-direction
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `userInterfaceLayoutDirection` fired on a programmatic set'
   confidence: 0.9

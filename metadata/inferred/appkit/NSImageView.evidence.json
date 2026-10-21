@@ -1,0 +1,107 @@
+{
+ "props:allows-cut-copy-paste": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:animates": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:editable": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:image-alignment": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "center",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "top",
+   "sample": {
+    "t": "str",
+    "v": "top"
+   }
+  }
+ },
+ "props:image-frame-style": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "none",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "photo",
+   "sample": {
+    "t": "str",
+    "v": "photo"
+   }
+  }
+ },
+ "props:image-scaling": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "image-scale-proportionally-down",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "image-scale-axes-independently",
+   "sample": {
+    "t": "str",
+    "v": "image-scale-axes-independently"
+   }
+  }
+ },
+ "props:preferred-image-dynamic-range": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "constrained-high",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "unspecified",
+   "sample": {
+    "t": "str",
+    "v": "unspecified"
+   }
+  }
+ }
+}

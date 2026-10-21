@@ -3,12 +3,13 @@ toolkit: appkit
 owner: AppKit:NSSwitch
 observe:
 - prop: state
-  class: partial
+  class: exact
   via:
+  - mechanism: notify
   - mechanism: target_action
-  missed:
-  - programmatic
   provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `state` fired on a programmatic set'
   - origin: rule
-    ref: 'O7: not probed for KVO; the fallback reports user changes only'
+    ref: 'O7: user edits reach the value through target_action'
   confidence: 0.9

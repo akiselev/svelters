@@ -277,10 +277,12 @@ observe:
     ref: a read-only property, not probed; KVO-compliant only if documented
   confidence: 0.9
 - prop: floating-panel
-  class: none
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: a read-only property, not probed; KVO-compliant only if documented
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `floatingPanel` fired on a programmatic set'
   confidence: 0.9
 - prop: frame
   class: exact
@@ -736,10 +738,12 @@ observe:
     ref: a read-only property, not probed; KVO-compliant only if documented
   confidence: 0.9
 - prop: works-when-modal
-  class: none
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: a read-only property, not probed; KVO-compliant only if documented
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `worksWhenModal` fired on a programmatic set'
   confidence: 0.9
 - prop: zoomable
   class: none

@@ -3,10 +3,12 @@ toolkit: appkit
 owner: AppKit:NSTokenField
 observe:
 - prop: completion-delay
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `completionDelay` fired on a programmatic set'
   confidence: 0.9
 - prop: delegate
   class: set_only
@@ -15,10 +17,12 @@ observe:
     ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
   confidence: 0.9
 - prop: token-style
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `tokenStyle` fired on a programmatic set'
   confidence: 0.9
 - prop: tokenizing-character-set
   class: set_only

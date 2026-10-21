@@ -564,11 +564,23 @@ def tests(m: Model) -> tuple[str, list[dict], list[dict]]:
                 f'    let o = h.create({rs(el["tag"])});\n    assert!(h.is_kind(o, {rs(cls)}), "is a {cls}");\n'
                 f'    assert_eq!(h.lifetime(o), {2 if el["lifetime"] == "toplevel" else 1});\n    h.destroy(o);\n',
                 (cls, "element", "kind", el))
-            add(f"readable_{ident(cls)}", f"every readable table prop of <{el['tag']}> reads back without an error",
-                f'    let o = h.create({rs(el["tag"])});\n    let mut bad = Vec::new();\n'
-                f'    for name in h.readable_props({rs(el["tag"])}) {{\n        if let Err(e) = h.get(o, name) {{\n            bad.push(format!("{{name}}: {{e}}"));\n        }}\n    }}\n'
+            # `read_errors`: getters that raise out of context (documented); they must answer an error, not crash.
+            errs = sorted(r["name"] for r in el.get("read_errors", []))
+            readable = {p["js_name"] for c in m.chain(cls) for p in m.meta[c]["properties"]}
+            for n in errs:
+                if n not in readable:
+                    raise GenError(f"{cls}: element.read_errors: unknown property {n}")
+            errs_rs = "&[" + ", ".join(rs(n) for n in errs) + "]"
+            add(f"readable_{ident(cls)}", f"every readable table prop of <{el['tag']}> reads back without an error"
+                + (f" (an error from {', '.join(errs)})" if errs else ""),
+                f'    let o = h.create({rs(el["tag"])});\n    let mut bad = Vec::new();\n    let errs: &[&str] = {errs_rs};\n'
+                f'    for name in h.readable_props({rs(el["tag"])}) {{\n        match (h.get(o, name), errs.contains(&name)) {{\n'
+                f'            (Err(e), false) => bad.push(format!("{{name}}: {{e}}")),\n'
+                f'            (Ok(v), true) => bad.push(format!("{{name}}: read {{v:?}}, want an error (read_errors)")),\n'
+                f'            _ => {{}}\n        }}\n    }}\n'
                 f'    h.destroy(o);\n    assert!(bad.is_empty(), "unreadable props: {{bad:#?}}");\n',
-                (cls, "element", "readable", {"props": sorted(p["name"] for c in m.chain(cls) for p in m.meta[c]["properties"])}))
+                (cls, "element", "readable", {"props": sorted(p["name"] for c in m.chain(cls) for p in m.meta[c]["properties"])}
+                 | ({"read_errors": errs} if errs else {})))
         if tag is None:
             for sec in ("props", "setters", "signals", "methods", "bindings", "slots"):
                 for r in ov.get(sec, []):

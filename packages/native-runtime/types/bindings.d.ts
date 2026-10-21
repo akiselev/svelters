@@ -89,6 +89,13 @@ export interface BindableProps {
     inconsistent: boolean; // gtk
     "use-underline": boolean; // gtk
   };
+  "color-well": {
+    "double-value": number; // appkit
+    "float-value": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
+    "string-value": string; // appkit
+  };
   "combo-box": {
     "current-index": number; // qt
     "double-value": number; // appkit
@@ -222,6 +229,12 @@ export interface BindableProps {
     mode: string; // gtk
     value: number; // gtk
   };
+  "level-indicator": {
+    "double-value": number; // appkit
+    "float-value": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
+  };
   "line-edit": {
     text: string; // qt
   };
@@ -280,6 +293,9 @@ export interface BindableProps {
     "activates-default": boolean; // gtk
     "show-peek-icon": boolean; // gtk
     text: string; // gtk
+  };
+  "path-control": {
+    "string-value": string; // appkit
   };
   picture: {
     "can-shrink": boolean; // gtk
@@ -390,6 +406,10 @@ export interface BindableProps {
     "string-value": string; // appkit
   };
   "segmented-control": {
+    "double-value": number; // appkit
+    "float-value": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
     "selected-segment": number; // appkit
   };
   slider: {
@@ -441,10 +461,18 @@ export interface BindableProps {
   };
   stepper: {
     "double-value": number; // appkit
+    "float-value": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
   };
   switch: {
     active: boolean; // gtk
+    "double-value": number; // appkit
+    "float-value": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
     state: boolean | string; // gtk/appkit
+    "string-value": string; // appkit
   };
   "tab-bar": {
     "current-index": number; // qt

@@ -2682,26 +2682,36 @@ interface AppkitObs_NSColorWell {
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:active|nonreactive"?: boolean;
   /** @observable partial on appkit: misses programmatic changes (target_action) */ "bind:color"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:color|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:color-well-style"?: "default" | "minimal" | "expanded";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:color-well-style|nonreactive"?: "default" | "minimal" | "expanded";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:image|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:maximum-linear-exposure"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:maximum-linear-exposure|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:pulldown-target|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:supports-alpha"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:supports-alpha|nonreactive"?: boolean;
 }
 interface AppkitObs_NSComboBox {
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:button-bordered"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:button-bordered|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:completes"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:completes|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:data-source|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:delegate|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:has-vertical-scroller"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:has-vertical-scroller|nonreactive"?: boolean;
   /** @observable partial on appkit: misses programmatic changes (notification:NSComboBoxSelectionDidChangeNotification) */ "bind:index-of-selected-item"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:index-of-selected-item|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:intercell-spacing"?: Size;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:intercell-spacing|nonreactive"?: Size;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:item-height"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:item-height|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:number-of-items|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:number-of-visible-items"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:number-of-visible-items|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:object-value-of-selected-item|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only; native changes are not announced on appkit */ "bind:object-values|nonreactive"?: unknown[];
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:uses-data-source"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:uses-data-source|nonreactive"?: boolean;
 }
 interface AppkitObs_NSControl {
@@ -2748,91 +2758,135 @@ interface AppkitObs_NSControl {
 }
 interface AppkitObs_NSDatePicker {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:background-color|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:bezeled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:bezeled|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:bordered"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:bordered|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:calendar|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:date-picker-elements"?: Array<"hour-minute" | "hour-minute-second" | "time-zone" | "year-month" | "year-month-day" | "era">;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:date-picker-elements|nonreactive"?: Array<"hour-minute" | "hour-minute-second" | "time-zone" | "year-month" | "year-month-day" | "era">;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:date-picker-mode"?: "single" | "range";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:date-picker-mode|nonreactive"?: "single" | "range";
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:date-picker-style"?: "text-field-and-stepper" | "clock-and-calendar" | "text-field";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:date-picker-style|nonreactive"?: "text-field-and-stepper" | "clock-and-calendar" | "text-field";
   /** @observable partial on appkit: misses programmatic changes (target_action) */ "bind:date-value"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:date-value|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:delegate|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:draws-background"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:draws-background|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:locale|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:max-date|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:min-date|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:presents-calendar-overlay"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:presents-calendar-overlay|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text-color|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:time-interval"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:time-interval|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:time-zone|nonreactive"?: number | null;
 }
 interface AppkitObs_NSImageView {
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:allows-cut-copy-paste"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:allows-cut-copy-paste|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:animates"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:animates|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:content-tint-color|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:editable"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:editable|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:image|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:image-alignment"?: "center" | "top" | "top-left" | "top-right" | "left" | "bottom" | "bottom-left" | "bottom-right" | "right";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:image-alignment|nonreactive"?: "center" | "top" | "top-left" | "top-right" | "left" | "bottom" | "bottom-left" | "bottom-right" | "right";
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:image-dynamic-range|nonreactive"?: "unspecified" | "standard" | "constrained-high" | "high";
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:image-frame-style"?: "none" | "photo" | "gray-bezel" | "groove" | "button";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:image-frame-style|nonreactive"?: "none" | "photo" | "gray-bezel" | "groove" | "button";
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:image-scaling"?: "image-scale-proportionally-down" | "image-scale-axes-independently" | "image-scale-none" | "image-scale-proportionally-up-or-down" | "scale-to-fit" | "scale-none";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:image-scaling|nonreactive"?: "image-scale-proportionally-down" | "image-scale-axes-independently" | "image-scale-none" | "image-scale-proportionally-up-or-down" | "scale-to-fit" | "scale-none";
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:preferred-image-dynamic-range"?: "unspecified" | "standard" | "constrained-high" | "high";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:preferred-image-dynamic-range|nonreactive"?: "unspecified" | "standard" | "constrained-high" | "high";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:symbol-configuration|nonreactive"?: number | null;
 }
 interface AppkitObs_NSLevelIndicator {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:critical-fill-color|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:critical-value"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:critical-value|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:draws-tiered-capacity-levels"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:draws-tiered-capacity-levels|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:editable"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:editable|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:fill-color|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:level-indicator-style"?: "relevancy" | "continuous-capacity" | "discrete-capacity" | "rating";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:level-indicator-style|nonreactive"?: "relevancy" | "continuous-capacity" | "discrete-capacity" | "rating";
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:max-value"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:max-value|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:min-value"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:min-value|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:number-of-major-tick-marks"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:number-of-major-tick-marks|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:number-of-tick-marks"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:number-of-tick-marks|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:placeholder-visibility"?: "automatic" | "always" | "while-editing";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:placeholder-visibility|nonreactive"?: "automatic" | "always" | "while-editing";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:rating-image|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:rating-placeholder-image|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:tick-mark-position"?: "below" | "above" | "leading" | "trailing";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tick-mark-position|nonreactive"?: "below" | "above" | "leading" | "trailing";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:warning-fill-color|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:warning-value"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:warning-value|nonreactive"?: number;
 }
 interface AppkitObs_NSMenu {
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:allows-context-menu-plug-ins"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:allows-context-menu-plug-ins|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:autoenables-items"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:autoenables-items|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:automatically-inserts-writing-tools-items"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:automatically-inserts-writing-tools-items|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:delegate|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:font|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:highlighted-item|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:item-array|nonreactive"?: unknown[];
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:menu-bar-height|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:minimum-width"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:minimum-width|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:number-of-items|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:presentation-style"?: "regular" | "palette";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:presentation-style|nonreactive"?: "regular" | "palette";
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:properties-to-update|nonreactive"?: Array<"title" | "attributed-title" | "key-equivalent" | "image" | "enabled" | "accessibility-description">;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selected-items|nonreactive"?: unknown[];
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:selection-mode"?: "automatic" | "select-one" | "select-any";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selection-mode|nonreactive"?: "automatic" | "select-one" | "select-any";
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:shows-state-column"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:shows-state-column|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:size|nonreactive"?: Size;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:supermenu|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:title"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:title|nonreactive"?: string | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:user-interface-layout-direction"?: "left-to-right" | "right-to-left";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:user-interface-layout-direction|nonreactive"?: "left-to-right" | "right-to-left";
 }
 interface AppkitObs_NSMenuItem {
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:allows-automatic-key-equivalent-localization"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:allows-automatic-key-equivalent-localization|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:allows-automatic-key-equivalent-mirroring"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:allows-automatic-key-equivalent-mirroring|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:allows-key-equivalent-when-hidden"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:allows-key-equivalent-when-hidden|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:alternate"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:alternate|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:attributed-title|nonreactive"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:badge|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:enabled|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:has-submenu|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:hidden"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:hidden|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:hidden-or-has-hidden-ancestor|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:highlighted|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:image|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:indentation-level"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:indentation-level|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:key-equivalent"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:key-equivalent|nonreactive"?: string | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:key-equivalent-modifier-mask"?: Array<"caps-lock" | "shift" | "control" | "option" | "command" | "numeric-pad" | "help" | "function" | "device-independent-flags-mask">;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:key-equivalent-modifier-mask|nonreactive"?: Array<"caps-lock" | "shift" | "control" | "option" | "command" | "numeric-pad" | "help" | "function" | "device-independent-flags-mask">;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:menu|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:mixed-state-image|nonreactive"?: number | null;
@@ -2842,19 +2896,27 @@ interface AppkitObs_NSMenuItem {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:represented-object|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:section-header|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:separator-item|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:state"?: "mixed" | "off" | "on";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:state|nonreactive"?: "mixed" | "off" | "on";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:submenu|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:subtitle"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:subtitle|nonreactive"?: string | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:tag"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tag|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:target|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:title"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:title|nonreactive"?: string | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:tool-tip"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tool-tip|nonreactive"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:user-key-equivalent|nonreactive"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:view|nonreactive"?: number | null;
 }
 interface AppkitObs_NSPanel {
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:becomes-key-only-if-needed"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:becomes-key-only-if-needed|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:floating-panel"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:floating-panel|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:works-when-modal"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:works-when-modal|nonreactive"?: boolean;
 }
 interface AppkitObs_NSPathControl {
@@ -2862,17 +2924,22 @@ interface AppkitObs_NSPathControl {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:background-color|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:clicked-path-item|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:delegate|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:editable"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:editable|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:menu|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:path-items|nonreactive"?: unknown[];
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:path-style"?: "standard" | "pop-up";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:path-style|nonreactive"?: "standard" | "pop-up";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:placeholder-attributed-string|nonreactive"?: string | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:placeholder-string"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:placeholder-string|nonreactive"?: string | null;
   /** @observable partial on appkit: misses programmatic changes (target_action) */ "bind:url"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:url|nonreactive"?: number | null;
 }
 interface AppkitObs_NSPopUpButton {
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:alters-state-of-selected-item"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:alters-state-of-selected-item|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:autoenables-items"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:autoenables-items|nonreactive"?: boolean;
   /** @observable partial on appkit: misses programmatic changes (target_action) */ "bind:index-of-selected-item"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:index-of-selected-item|nonreactive"?: number;
@@ -2881,11 +2948,14 @@ interface AppkitObs_NSPopUpButton {
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:last-item|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:menu|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:number-of-items|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:preferred-edge"?: "rect-edge-min-x" | "rect-edge-min-y" | "rect-edge-max-x" | "rect-edge-max-y" | "min-x-edge" | "min-y-edge" | "max-x-edge" | "max-y-edge";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:preferred-edge|nonreactive"?: "rect-edge-min-x" | "rect-edge-min-y" | "rect-edge-max-x" | "rect-edge-max-y" | "min-x-edge" | "min-y-edge" | "max-x-edge" | "max-y-edge";
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:pulls-down"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:pulls-down|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:selected-item|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:selected-tag|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:title-of-selected-item|nonreactive"?: string | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:uses-item-from-menu"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:uses-item-from-menu|nonreactive"?: boolean;
 }
 interface AppkitObs_NSProgressIndicator {
@@ -2908,68 +2978,105 @@ interface AppkitObs_NSProgressIndicator {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:uses-threaded-animation|nonreactive"?: boolean;
 }
 interface AppkitObs_NSScrollView {
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:allows-magnification"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:allows-magnification|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:autohides-scrollers"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:autohides-scrollers|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:automatically-adjusts-content-insets"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:automatically-adjusts-content-insets|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:background-color|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:border-type"?: "no-border" | "line-border" | "bezel-border" | "groove-border";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:border-type|nonreactive"?: "no-border" | "line-border" | "bezel-border" | "groove-border";
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:content-insets"?: Insets;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:content-insets|nonreactive"?: Insets;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:content-size|nonreactive"?: Size;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:content-view|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:document-cursor|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:document-view|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:document-visible-rect|nonreactive"?: Rect;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:draws-background"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:draws-background|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:find-bar-position"?: "above-horizontal-ruler" | "above-content" | "below-content";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:find-bar-position|nonreactive"?: "above-horizontal-ruler" | "above-content" | "below-content";
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:has-horizontal-ruler"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:has-horizontal-ruler|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:has-horizontal-scroller"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:has-horizontal-scroller|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:has-vertical-ruler"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:has-vertical-ruler|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:has-vertical-scroller"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:has-vertical-scroller|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:horizontal-line-scroll"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:horizontal-line-scroll|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:horizontal-page-scroll"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:horizontal-page-scroll|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:horizontal-ruler-view|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:horizontal-scroll-elasticity"?: "automatic" | "none" | "allowed";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:horizontal-scroll-elasticity|nonreactive"?: "automatic" | "none" | "allowed";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:horizontal-scroller|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:line-scroll"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:line-scroll|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:magnification"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:magnification|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:max-magnification"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:max-magnification|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:min-magnification"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:min-magnification|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:page-scroll"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:page-scroll|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:rulers-visible"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:rulers-visible|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:scroller-insets"?: Insets;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:scroller-insets|nonreactive"?: Insets;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:scroller-knob-style"?: "default" | "dark" | "light";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:scroller-knob-style|nonreactive"?: "default" | "dark" | "light";
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:scroller-style"?: "legacy" | "overlay";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:scroller-style|nonreactive"?: "legacy" | "overlay";
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:scrolls-dynamically"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:scrolls-dynamically|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:uses-predominant-axis-scrolling"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:uses-predominant-axis-scrolling|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:vertical-line-scroll"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:vertical-line-scroll|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:vertical-page-scroll"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:vertical-page-scroll|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:vertical-ruler-view|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:vertical-scroll-elasticity"?: "automatic" | "none" | "allowed";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:vertical-scroll-elasticity|nonreactive"?: "automatic" | "none" | "allowed";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:vertical-scroller|nonreactive"?: number | null;
 }
 interface AppkitObs_NSSearchField {
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:cancel-button-bounds|nonreactive"?: Rect;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:delegate|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:maximum-recents"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:maximum-recents|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:recent-searches|nonreactive"?: unknown[];
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:search-button-bounds|nonreactive"?: Rect;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:search-menu-template|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:search-text-bounds|nonreactive"?: Rect;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:sends-search-string-immediately"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:sends-search-string-immediately|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:sends-whole-search-string"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:sends-whole-search-string|nonreactive"?: boolean;
 }
 interface AppkitObs_NSSegmentedControl {
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:active-compression-options|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:border-shape"?: "automatic" | "capsule" | "rounded-rectangle" | "circle";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:border-shape|nonreactive"?: "automatic" | "capsule" | "rounded-rectangle" | "circle";
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:double-value-for-selected-segment|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:index-of-selected-item|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:segment-count"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:segment-count|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:segment-distribution"?: "fit" | "fill" | "fill-equally" | "fill-proportionally";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:segment-distribution|nonreactive"?: "fit" | "fill" | "fill-equally" | "fill-proportionally";
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:segment-style"?: "automatic" | "rounded" | "round-rect" | "textured-square" | "small-square" | "separated" | "textured-rounded" | "capsule";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:segment-style|nonreactive"?: "automatic" | "rounded" | "round-rect" | "textured-square" | "small-square" | "separated" | "textured-rounded" | "capsule";
-  /** @observable partial on appkit: misses programmatic changes (target_action) */ "bind:selected-segment"?: number;
+  /** @observable exact on appkit (notify+target_action), delivery not verified (none): bound through its change signal */ "bind:selected-segment"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selected-segment|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selected-segment-bezel-color|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:spring-loaded"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:spring-loaded|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:tracking-mode"?: "select-one" | "select-any" | "momentary" | "momentary-accelerator";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tracking-mode|nonreactive"?: "select-one" | "select-any" | "momentary" | "momentary-accelerator";
 }
 interface AppkitObs_NSSlider {
@@ -3008,11 +3115,14 @@ interface AppkitObs_NSSlider {
 }
 interface AppkitObs_NSSplitView {
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:arranged-subviews|nonreactive"?: unknown[];
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:arranges-all-subviews"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:arranges-all-subviews|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:delegate|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:divider-color|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:divider-style"?: "thick" | "thin" | "pane-splitter";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:divider-style|nonreactive"?: "thick" | "thin" | "pane-splitter";
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:divider-thickness|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:vertical"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:vertical|nonreactive"?: boolean;
 }
 interface AppkitObs_NSStackView {
@@ -3034,37 +3144,48 @@ interface AppkitObs_NSStackView {
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:views|nonreactive"?: unknown[];
 }
 interface AppkitObs_NSStepper {
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:autorepeat"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:autorepeat|nonreactive"?: boolean;
-  /** @observable partial on appkit: misses programmatic changes (target_action) */ "bind:double-value"?: number;
+  /** @observable exact on appkit (notify+target_action), delivery not verified (none): bound through its change signal */ "bind:double-value"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:double-value|nonreactive"?: number;
-  /** @observable partial on appkit: misses programmatic changes (target_action) */ "bind:float-value"?: number;
+  /** @observable exact on appkit (notify+target_action), delivery not verified (none): bound through its change signal */ "bind:float-value"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:float-value|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:increment"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:increment|nonreactive"?: number;
-  /** @observable partial on appkit: misses programmatic changes (target_action) */ "bind:int-value"?: number;
+  /** @observable exact on appkit (notify+target_action), delivery not verified (none): bound through its change signal */ "bind:int-value"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:int-value|nonreactive"?: number;
-  /** @observable partial on appkit: misses programmatic changes (target_action) */ "bind:integer-value"?: number;
+  /** @observable exact on appkit (notify+target_action), delivery not verified (none): bound through its change signal */ "bind:integer-value"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:integer-value|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:max-value"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:max-value|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:min-value"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:min-value|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:value-wraps"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:value-wraps|nonreactive"?: boolean;
 }
 interface AppkitObs_NSSwitch {
-  /** @observable partial on appkit: misses programmatic changes (target_action) */ "bind:state"?: "off" | "on";
+  /** @observable exact on appkit (notify+target_action), delivery not verified (none): bound through its change signal */ "bind:state"?: "off" | "on";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:state|nonreactive"?: "off" | "on";
 }
 interface AppkitObs_NSTabView {
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:allows-truncated-labels"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:allows-truncated-labels|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:content-rect|nonreactive"?: Rect;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:control-size"?: "regular" | "small" | "mini" | "large" | "extra-large";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:control-size|nonreactive"?: "regular" | "small" | "mini" | "large" | "extra-large";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:delegate|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:draws-background"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:draws-background|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:font|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:minimum-size|nonreactive"?: Size;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:number-of-tab-view-items|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only; native changes are not announced on appkit */ "bind:selected-tab-view-item|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:tab-position"?: "none" | "top" | "left" | "bottom" | "right";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tab-position|nonreactive"?: "none" | "top" | "left" | "bottom" | "right";
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:tab-view-border-type"?: "none" | "line" | "bezel";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tab-view-border-type|nonreactive"?: "none" | "line" | "bezel";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tab-view-items|nonreactive"?: unknown[];
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:tab-view-type"?: "top-tabs-bezel-border" | "left-tabs-bezel-border" | "bottom-tabs-bezel-border" | "right-tabs-bezel-border" | "no-tabs-bezel-border" | "no-tabs-line-border" | "no-tabs-no-border";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tab-view-type|nonreactive"?: "top-tabs-bezel-border" | "left-tabs-bezel-border" | "bottom-tabs-bezel-border" | "right-tabs-bezel-border" | "no-tabs-bezel-border" | "no-tabs-line-border" | "no-tabs-no-border";
 }
 interface AppkitObs_NSTabViewItem {
@@ -3072,33 +3193,49 @@ interface AppkitObs_NSTabViewItem {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:identifier|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:image|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:initial-first-responder|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:label"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:label|nonreactive"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:tab-state|nonreactive"?: "selected-tab" | "background-tab" | "pressed-tab";
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:tab-view|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:tool-tip"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tool-tip|nonreactive"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:view|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:view-controller|nonreactive"?: number | null;
 }
 interface AppkitObs_NSText {
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:alignment"?: "left" | "center" | "right" | "justified" | "natural";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:alignment|nonreactive"?: "left" | "center" | "right" | "justified" | "natural";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:background-color|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:base-writing-direction"?: "natural" | "left-to-right" | "right-to-left";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:base-writing-direction|nonreactive"?: "natural" | "left-to-right" | "right-to-left";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:delegate|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:draws-background"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:draws-background|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:editable"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:editable|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:field-editor"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:field-editor|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:font|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:horizontally-resizable"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:horizontally-resizable|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:imports-graphics"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:imports-graphics|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:max-size"?: Size;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:max-size|nonreactive"?: Size;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:min-size|nonreactive"?: Size;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:rich-text"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:rich-text|nonreactive"?: boolean;
-  /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:ruler-visible|nonreactive"?: boolean;
+  /** Read-only. @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:ruler-visible"?: boolean;
+  /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:ruler-visible|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:selectable"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selectable|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selected-range|nonreactive"?: unknown;
+  /** @observable exact on appkit (notify+notification:NSTextDidChangeNotification), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:string"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:string|nonreactive"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text-color|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:uses-font-panel"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:uses-font-panel|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:vertically-resizable"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:vertically-resizable|nonreactive"?: boolean;
 }
 interface AppkitObs_NSTextField {
@@ -3154,37 +3291,61 @@ interface AppkitObs_NSTextField {
 }
 interface AppkitObs_NSTextView {
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:acceptable-drag-types|nonreactive"?: unknown[];
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:accepts-glyph-info"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:accepts-glyph-info|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:allowed-input-source-locales|nonreactive"?: unknown[];
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:allowed-writing-tools-result-options"?: Array<"default" | "plain-text" | "rich-text" | "list" | "table" | "presentation-intent">;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:allowed-writing-tools-result-options|nonreactive"?: Array<"default" | "plain-text" | "rich-text" | "list" | "table" | "presentation-intent">;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:allows-character-picker-touch-bar-item"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:allows-character-picker-touch-bar-item|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:allows-document-background-color-change"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:allows-document-background-color-change|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:allows-image-editing"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:allows-image-editing|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:allows-undo"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:allows-undo|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:automatic-dash-substitution-enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:automatic-dash-substitution-enabled|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:automatic-data-detection-enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:automatic-data-detection-enabled|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:automatic-link-detection-enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:automatic-link-detection-enabled|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:automatic-quote-substitution-enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:automatic-quote-substitution-enabled|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:automatic-spelling-correction-enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:automatic-spelling-correction-enabled|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:automatic-text-completion-enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:automatic-text-completion-enabled|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:automatic-text-replacement-enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:automatic-text-replacement-enabled|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:background-color|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:candidate-list-touch-bar-item|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:coalescing-undo|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:continuous-spell-checking-enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:continuous-spell-checking-enabled|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:default-paragraph-style|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:delegate|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:displays-link-tool-tips"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:displays-link-tool-tips|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:draws-background"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:draws-background|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:editable"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:editable|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:enabled-text-checking-types"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:enabled-text-checking-types|nonreactive"?: number;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:field-editor"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:field-editor|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:grammar-checking-enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:grammar-checking-enabled|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:imports-graphics"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:imports-graphics|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:incremental-searching-enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:incremental-searching-enabled|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:inline-prediction-type"?: "default" | "no" | "yes";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:inline-prediction-type|nonreactive"?: "default" | "no" | "yes";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:insertion-point-color|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:layout-manager|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:math-expression-completion-type"?: "default" | "no" | "yes";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:math-expression-completion-type|nonreactive"?: "default" | "no" | "yes";
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:range-for-user-character-attribute-change|nonreactive"?: unknown;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:range-for-user-completion|nonreactive"?: unknown;
@@ -3194,37 +3355,53 @@ interface AppkitObs_NSTextView {
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:ranges-for-user-paragraph-attribute-change|nonreactive"?: unknown[];
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:ranges-for-user-text-change|nonreactive"?: unknown[];
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:readable-pasteboard-types|nonreactive"?: unknown[];
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:rich-text"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:rich-text|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:ruler-visible"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:ruler-visible|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:selectable"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selectable|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selected-ranges|nonreactive"?: unknown[];
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:selection-affinity|nonreactive"?: "upstream" | "downstream";
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:selection-granularity"?: "character" | "word" | "paragraph";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:selection-granularity|nonreactive"?: "character" | "word" | "paragraph";
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:should-draw-insertion-point|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:smart-insert-delete-enabled"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:smart-insert-delete-enabled|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:spell-checker-document-tag|nonreactive"?: number;
   /** @observable partial on appkit: misses programmatic changes (notification:NSTextDidChangeNotification) */ "bind:string"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:string|nonreactive"?: string | null;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text-container|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:text-container-inset"?: Size;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:text-container-inset|nonreactive"?: Size;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:text-container-origin|nonreactive"?: Point;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:text-content-storage|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:text-layout-manager|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:text-storage|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:uses-adaptive-color-mapping-for-dark-appearance"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:uses-adaptive-color-mapping-for-dark-appearance|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:uses-find-bar"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:uses-find-bar|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:uses-find-panel"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:uses-find-panel|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:uses-font-panel"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:uses-font-panel|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:uses-inspector-bar"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:uses-inspector-bar|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:uses-rollover-button-for-selection"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:uses-rollover-button-for-selection|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:uses-ruler"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:uses-ruler|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:writable-pasteboard-types|nonreactive"?: unknown[];
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:writing-tools-active|nonreactive"?: boolean;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:writing-tools-behavior"?: "none" | "default" | "complete" | "limited";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:writing-tools-behavior|nonreactive"?: "none" | "default" | "complete" | "limited";
 }
 interface AppkitObs_NSTokenField {
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:completion-delay"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:completion-delay|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:delegate|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:token-style"?: "default" | "none" | "rounded" | "squared" | "plain-squared";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:token-style|nonreactive"?: "default" | "none" | "rounded" | "squared" | "plain-squared";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:tokenizing-character-set|nonreactive"?: number | null;
 }
@@ -3362,11 +3539,15 @@ interface AppkitObs_NSView {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:writing-tools-coordinator|nonreactive"?: number | null;
 }
 interface AppkitObs_NSVisualEffectView {
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:blending-mode"?: "behind-window" | "within-window";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:blending-mode|nonreactive"?: "behind-window" | "within-window";
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:emphasized"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:emphasized|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:interior-background-style|nonreactive"?: "normal" | "emphasized" | "raised" | "lowered";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:mask-image|nonreactive"?: number | null;
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:material"?: "titlebar" | "selection" | "menu" | "popover" | "sidebar" | "header-view" | "sheet" | "window-background" | "hud-window" | "full-screen-ui" | "tool-tip" | "content-background" | "under-window-background" | "under-page-background";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:material|nonreactive"?: "titlebar" | "selection" | "menu" | "popover" | "sidebar" | "header-view" | "sheet" | "window-background" | "hud-window" | "full-screen-ui" | "tool-tip" | "content-background" | "under-window-background" | "under-page-background";
+  /** @observable exact on appkit (notify), delivery not verified (none): observed with a bind_observation_unverified warning */ "bind:state"?: "follows-window-active-state" | "active" | "inactive";
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:state|nonreactive"?: "follows-window-active-state" | "active" | "inactive";
 }
 interface AppkitObs_NSWindow {
@@ -3424,7 +3605,8 @@ interface AppkitObs_NSWindow {
   /** @observable exact on appkit (notify) */ "bind:excluded-from-windows-menu"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:excluded-from-windows-menu|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:first-responder|nonreactive"?: number | null;
-  /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:floating-panel|nonreactive"?: boolean;
+  /** Read-only. @observable exact on appkit (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:floating-panel"?: boolean;
+  /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:floating-panel|nonreactive"?: boolean;
   /** Read-only. @observable exact on appkit (notification:NSWindowDidResizeNotification+notification:NSWindowDidMoveNotification) */ "bind:frame"?: Rect;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:frame|nonreactive"?: Rect;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:has-active-window-sharing-session|nonreactive"?: boolean;
@@ -3510,7 +3692,8 @@ interface AppkitObs_NSWindow {
   /** @remarks Snapshot: not reactive. Read once after creation, then write-only */ "bind:window-controller|nonreactive"?: number | null;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:window-number|nonreactive"?: number;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:window-titlebar-layout-direction|nonreactive"?: "left-to-right" | "right-to-left";
-  /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:works-when-modal|nonreactive"?: boolean;
+  /** Read-only. @observable exact on appkit (notify), delivery not verified (weak): observed with a bind_observation_unverified warning */ "bind:works-when-modal"?: boolean;
+  /** @remarks Snapshot: not reactive. Read once after the first layout pass */ "bind:works-when-modal|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:zoomable|nonreactive"?: boolean;
   /** @remarks Snapshot: not reactive. Read once after the first layout pass; native changes are not announced on appkit */ "bind:zoomed|nonreactive"?: boolean;
 }
@@ -3524,7 +3707,7 @@ export interface AppkitObservedBindings {
   "level-indicator": AppkitObs_NSLevelIndicator & AppkitObs_NSControl & Omit<AppkitObs_NSView, "bind:tag" | "bind:tag|nonreactive">;
   "menu": AppkitObs_NSMenu;
   "menu-item": AppkitObs_NSMenuItem;
-  "panel": AppkitObs_NSPanel & Omit<AppkitObs_NSWindow, "bind:floating-panel|nonreactive" | "bind:works-when-modal|nonreactive">;
+  "panel": AppkitObs_NSPanel & Omit<AppkitObs_NSWindow, "bind:floating-panel" | "bind:floating-panel|nonreactive" | "bind:works-when-modal" | "bind:works-when-modal|nonreactive">;
   "path-control": AppkitObs_NSPathControl & AppkitObs_NSControl & Omit<AppkitObs_NSView, "bind:tag" | "bind:tag|nonreactive">;
   "pop-up-button": AppkitObs_NSPopUpButton & AppkitObs_NSButton & AppkitObs_NSControl & Omit<AppkitObs_NSView, "bind:tag" | "bind:tag|nonreactive">;
   "progress-indicator": AppkitObs_NSProgressIndicator & AppkitObs_NSView;
@@ -3540,7 +3723,7 @@ export interface AppkitObservedBindings {
   "tab-view": AppkitObs_NSTabView & AppkitObs_NSView;
   "tab-view-item": AppkitObs_NSTabViewItem;
   "text-field": AppkitObs_NSTextField & Omit<AppkitObs_NSControl, "bind:attributed-string-value|nonreactive" | "bind:object-value|nonreactive" | "bind:string-value" | "bind:string-value|nonreactive"> & Omit<AppkitObs_NSView, "bind:tag" | "bind:tag|nonreactive">;
-  "text-view": AppkitObs_NSTextView & Omit<AppkitObs_NSText, "bind:background-color|nonreactive" | "bind:delegate|nonreactive" | "bind:draws-background|nonreactive" | "bind:editable|nonreactive" | "bind:field-editor|nonreactive" | "bind:imports-graphics|nonreactive" | "bind:rich-text|nonreactive" | "bind:ruler-visible|nonreactive" | "bind:selectable|nonreactive" | "bind:string|nonreactive" | "bind:uses-font-panel|nonreactive"> & Omit<AppkitObs_NSView, "bind:candidate-list-touch-bar-item|nonreactive">;
+  "text-view": AppkitObs_NSTextView & Omit<AppkitObs_NSText, "bind:background-color|nonreactive" | "bind:delegate|nonreactive" | "bind:draws-background" | "bind:draws-background|nonreactive" | "bind:editable" | "bind:editable|nonreactive" | "bind:field-editor" | "bind:field-editor|nonreactive" | "bind:imports-graphics" | "bind:imports-graphics|nonreactive" | "bind:rich-text" | "bind:rich-text|nonreactive" | "bind:ruler-visible" | "bind:ruler-visible|nonreactive" | "bind:selectable" | "bind:selectable|nonreactive" | "bind:string" | "bind:string|nonreactive" | "bind:uses-font-panel" | "bind:uses-font-panel|nonreactive"> & Omit<AppkitObs_NSView, "bind:candidate-list-touch-bar-item|nonreactive">;
   "token-field": AppkitObs_NSTokenField & Omit<AppkitObs_NSTextField, "bind:delegate|nonreactive"> & Omit<AppkitObs_NSControl, "bind:attributed-string-value|nonreactive" | "bind:object-value|nonreactive" | "bind:string-value" | "bind:string-value|nonreactive"> & Omit<AppkitObs_NSView, "bind:tag" | "bind:tag|nonreactive">;
   "view": AppkitObs_NSView;
   "visual-effect-view": AppkitObs_NSVisualEffectView & AppkitObs_NSView;

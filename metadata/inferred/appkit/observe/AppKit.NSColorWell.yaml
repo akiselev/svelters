@@ -19,10 +19,12 @@ observe:
     ref: 'O7: not probed for KVO; the fallback reports user changes only'
   confidence: 0.9
 - prop: color-well-style
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `colorWellStyle` fired on a programmatic set'
   confidence: 0.9
 - prop: image
   class: set_only
@@ -31,10 +33,12 @@ observe:
     ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
   confidence: 0.9
 - prop: maximum-linear-exposure
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `maximumLinearExposure` fired on a programmatic set'
   confidence: 0.9
 - prop: pulldown-action
   class: set_only
@@ -49,8 +53,10 @@ observe:
     ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
   confidence: 0.9
 - prop: supports-alpha
-  class: set_only
+  class: exact
+  via:
+  - mechanism: notify
   provenance:
-  - origin: rule
-    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `supportsAlpha` fired on a programmatic set'
   confidence: 0.9

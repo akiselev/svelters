@@ -1,0 +1,92 @@
+{
+ "props:allows-truncated-labels": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:control-size": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "regular",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "small",
+   "sample": {
+    "t": "str",
+    "v": "small"
+   }
+  }
+ },
+ "props:draws-background": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:tab-position": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "top",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "none",
+   "sample": {
+    "t": "str",
+    "v": "none"
+   }
+  }
+ },
+ "props:tab-view-border-type": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "bezel",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "none",
+   "sample": {
+    "t": "str",
+    "v": "none"
+   }
+  }
+ },
+ "props:tab-view-type": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "top-tabs-bezel-border",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "left-tabs-bezel-border",
+   "sample": {
+    "t": "str",
+    "v": "left-tabs-bezel-border"
+   }
+  }
+ }
+}

@@ -4,6 +4,9 @@ element:
   lifetime: owned
   construct: new
   provenance: "NSMenu.h: -init gives an empty, untitled menu that autoenables its items. Not a view: a menu is a submenu of a menu-item, the items of a pop-up-button, or a view's context menu (its `menu` slot)."
+  read_errors:
+    - name: properties-to-update
+      reason: "NSMenu.h: propertiesToUpdate may only be called from within -menuNeedsUpdate: (raises NSInternalInconsistencyException elsewhere; CI run 39676947193)"
 props:
   - name: title
     sample: "File"
