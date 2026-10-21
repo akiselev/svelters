@@ -115,6 +115,12 @@ class Model:
     def has_method(self, cls: str, sel: str) -> bool:
         return any(m["selector"] == sel for c in self.chain(cls) for m in self.meta[c]["methods"])
 
+    def class_of_tag(self, tag: str) -> str | None:
+        return next((c for c, ov in self.ov.items() if (ov.get("element") or {}).get("tag") == tag), None)
+
+    def is_view(self, cls: str) -> bool:
+        return "NSView" in self.chain(cls)
+
     def element_for(self, cls: str) -> str | None:
         """The tag to test a class's facts on: its own, else the first element (by tag) deriving from it."""
         own = (self.ov.get(cls, {}).get("element") or {}).get("tag")
@@ -156,7 +162,7 @@ def build(m: Model):
             return f"Ty::Object({rs(ref[7:-1])})"
         return None
 
-    kinds, props, signals, methods, slots = [], [], [], [], []
+    kinds, props, signals, methods, slots, writes = [], [], [], [], [], []
     for cls in m.classes:
         ov = m.ov.get(cls, {})
         el = ov.get("element") or {}
@@ -177,25 +183,51 @@ def build(m: Model):
             ctor = f"Ctor::Window {{ width: {float(w['width'])!r}, height: {float(w['height'])!r}, style_mask: {mask} }}"
         kinds.append(f"    KindInfo {{ class: {rs(cls)}, tag: {rs(el.get('tag', ''))}, parent: {parent}, toplevel: {str(el.get('lifetime') == 'toplevel').lower()}, ctor: {ctor} }},\n")
         k = m.kid[cls]
-        for p in m.meta[cls]["properties"]:
+        # A read-only property written through methods (`write: {selector, clear}`): writable, plus a PROP_WRITES row.
+        own_writes = {p["name"]: p["write"] for p in ov.get("props", []) if p.get("write")}
+        for js, w in own_writes.items():
+            if not m.has_method(cls, w["selector"]) or names.selector_arity(w["selector"]) != 1:
+                raise GenError(f"{cls}: props: {js}: write selector {w['selector']} must be an ingested one-argument method")
+            if w.get("clear") and (not m.has_method(cls, w["clear"]) or names.selector_arity(w["clear"]) != 0):
+                raise GenError(f"{cls}: props: {js}: clear selector {w['clear']} must be an ingested method without arguments")
+
+        def prop_row(p: dict, write: dict | None) -> None:
             t = ty_of(cls, p)
             if t is None:
-                continue
-            props.append(f"    PropInfo {{ kind: {k}, name: {rs(p['js_name'])}, key: {rs(p['name'])}, ty: {t}, writable: {str(p['access']['write']).lower()}, setter: \"\" }},\n")
+                if write:
+                    raise GenError(f"{cls}: props: {p['js_name']}: write on a property of an unsupported type")
+                return
+            writable = p["access"]["write"] or bool(write)
+            props.append(f"    PropInfo {{ kind: {k}, name: {rs(p['js_name'])}, key: {rs(p['name'])}, ty: {t}, writable: {str(writable).lower()}, setter: \"\" }},\n")
+            if write:
+                writes.append((len(props), write["selector"], write.get("clear", ""), ""))
+
+        for p in m.meta[cls]["properties"]:
+            prop_row(p, own_writes.get(p["js_name"]))
         # props named in overrides of a subclass resolve along the chain; check they exist
         for p in ov.get("props", []):
-            if m.find_prop(cls, p["name"])[1] is None:
+            owner, meta = m.find_prop(cls, p["name"])
+            if meta is None:
                 raise GenError(f"{cls}: props: unknown property {p['name']}")
+            if p.get("write") and owner != cls:
+                prop_row(meta, p["write"])  # an inherited property, written differently on this class: a row of its own
         for s in ov.get("setters", []):
             if not m.has_method(cls, s["selector"]):
                 raise GenError(f"{cls}: setters: {s['selector']} is not an ingested method")
-            if names.selector_arity(s["selector"]) != 1:
-                raise GenError(f"{cls}: setters: {s['selector']} must take one argument")
+            want = 2 if s.get("count") else 1
+            if names.selector_arity(s["selector"]) != want:
+                raise GenError(f"{cls}: setters: {s['selector']} must take {want} argument(s)")
+            if s.get("count") and (not m.has_method(cls, s["count"]) or names.selector_arity(s["count"]) != 1):
+                raise GenError(f"{cls}: setters: count selector {s['count']} must be an ingested one-argument method")
             ref = s["type"]
+            if s.get("count") and ref != "list":
+                raise GenError(f"{cls}: setters: an indexed setter ({s['name']}) takes a list")
             t = ty_of(cls, {"js_name": s["name"], "type": {"ref": ref}})
             if t is None:
                 raise GenError(f"{cls}: setters: unsupported type {ref}")
             props.append(f"    PropInfo {{ kind: {k}, name: {rs(s['name'])}, key: \"\", ty: {t}, writable: true, setter: {rs(s['selector'])} }},\n")
+            if s.get("count"):
+                writes.append((len(props), s["selector"], "", s["count"]))
         for s in ov.get("signals", []):
             via = s["via"]
             if via == "target_action":
@@ -227,14 +259,20 @@ def build(m: Model):
             methods.append(f"    MethodInfo {{ kind: {k}, name: {rs(meth['name'])}, selector: {rs(meth['selector'])} }},\n")
         for sl in ov.get("slots", []):
             ops = sl["ops"]
+            if sl.get("child") and m.class_of_tag(sl["child"]) is None:
+                raise GenError(f"{cls}: slot {sl['name']}: child <{sl['child']}> is not an element")
+            # `declared_on`: the selectors live above the ingested chain (NSResponder.menu); the backend checks them at run time.
+            if sl.get("declared_on") and sl["declared_on"] in m.chain(cls):
+                raise GenError(f"{cls}: slot {sl['name']}: declared_on {sl['declared_on']} is ingested: drop declared_on")
+            checked = not sl.get("declared_on")
             for key in ("set", "append", "insert_at", "insert_relative"):
-                if key in ops and not m.has_method(cls, ops[key]):
+                if checked and key in ops and not m.has_method(cls, ops[key]):
                     raise GenError(f"{cls}: slot {sl['name']}: {ops[key]} is not an ingested method")
             for sel in ops.get("remove", []) + ops.get("detach", []):
-                if not any(m.has_method(c, sel) for c in m.classes):
+                if checked and not any(m.has_method(c, sel) for c in m.classes):
                     raise GenError(f"{cls}: slot {sl['name']}: {sel} is not an ingested method")
             for key in ("get", "list"):
-                if key in ops and m.find_prop(cls, names.kebab(ops[key]))[1] is None:
+                if checked and key in ops and m.find_prop(cls, names.kebab(ops[key]))[1] is None:
                     raise GenError(f"{cls}: slot {sl['name']}: {ops[key]} is not a property")
             many = sl["cardinality"] == "many"
             if many and not (ops.get("append") or ops.get("insert_at") or ops.get("insert_relative")):
@@ -261,6 +299,11 @@ def build(m: Model):
     o.append(f"pub static SIGNALS: &[SignalInfo] = &[\n{''.join(signals)}];\n\n")
     o.append(f"pub static METHODS: &[MethodInfo] = &[\n{''.join(methods)}];\n\n")
     o.append(f"pub static SLOTS: &[SlotInfo] = &[\n{''.join(slots)}];\n\n")
+    # Props written through methods (`write:` on a read-only property, indexed setters with `count`), by PROPS id.
+    o.append("pub static PROP_WRITES: &[PropWrite] = &[\n")
+    for pid, sel, clear, count in writes:
+        o.append(f"    PropWrite {{ prop: {pid}, selector: {rs(sel)}, clear: {rs(clear)}, count: {rs(count)} }},\n")
+    o.append("];\n\n")
     # ABI v2.6 observe facts: one row per fact, on the class the fact is written on.
     cls_rs = {"constant": "Constant", "set_only": "SetOnly", "exact": "Exact", "partial": "Partial", "none": "None"}
     o.append("pub static OBSERVE: &[ObserveInfo] = &[\n")
@@ -467,6 +510,38 @@ def find_signal(m: Model, cls: str, name: str) -> dict | None:
     return None
 
 
+def select_tab_body(tag: str, s: dict) -> str:
+    """A tab view delegate signal (`verify: select_tab`): two items, then a native selection (or a third item for the
+    number-of-items signal) is delivered while listened and not after listen off; a vetoing signal keeps the selection
+    when JS answers true and lets it move when JS answers null."""
+    n = rs(s["name"])
+    nargs = len(s.get("args", []))
+    head = (f'    let o = h.create({rs(tag)});\n    let a = h.create("tab-view-item");\n    let b = h.create("tab-view-item");\n'
+            f'    h.insert(o, a, None, None).unwrap();\n    h.insert(o, b, None, None).unwrap();\n'
+            f'    assert_eq!(h.get(o, "selected-tab-view-item").unwrap(), V::Handle(a), "the first item is selected");\n'
+            f'    h.take_events();\n    h.listen(o, {n}, true).unwrap();\n')
+    delivered = f'    let ev = h.take_events();\n    assert!(ev.iter().any(|e| e.0 == o && e.1 == {n} && e.2.len() == {nargs}), "delivered: {{ev:?}}");\n'
+    tail = f'    h.destroy(o);\n    h.destroy(a);\n    h.destroy(b);\n'
+    if "number-of" in s["name"]:
+        c = '    let c = h.create("tab-view-item");\n'
+        return (head + c + f'    h.insert(o, c, None, None).unwrap();\n' + delivered +
+                f'    h.listen(o, {n}, false).unwrap();\n    h.remove(o, c).unwrap();\n'
+                f'    assert!(h.take_events().iter().all(|e| e.1 != {n}), "not delivered after listen off");\n'
+                + tail + '    h.destroy(c);\n')
+    if s.get("result") == "veto_bool":
+        return (head + '    h.set_sync_reply(V::Bool(true));\n    h.call(o, "select-next-tab-view-item", vec![]).unwrap();\n' + delivered +
+                '    assert_eq!(h.get(o, "selected-tab-view-item").unwrap(), V::Handle(a), "a true result (preventDefault) keeps the selection");\n'
+                '    h.set_sync_reply(V::Null);\n    h.call(o, "select-next-tab-view-item", vec![]).unwrap();\n'
+                '    assert_eq!(h.get(o, "selected-tab-view-item").unwrap(), V::Handle(b), "no decision lets the selection move");\n'
+                f'    h.listen(o, {n}, false).unwrap();\n    h.take_events();\n    h.set_sync_reply(V::Bool(true));\n'
+                '    h.call(o, "select-previous-tab-view-item", vec![]).unwrap();\n'
+                '    assert_eq!(h.get(o, "selected-tab-view-item").unwrap(), V::Handle(a), "not asked after listen off");\n'
+                '    h.set_sync_reply(V::Null);\n' + tail)
+    return (head + '    h.call(o, "select-next-tab-view-item", vec![]).unwrap();\n' + delivered +
+            f'    h.listen(o, {n}, false).unwrap();\n    h.call(o, "select-previous-tab-view-item", vec![]).unwrap();\n'
+            f'    assert!(h.take_events().iter().all(|e| e.1 != {n}), "not delivered after listen off");\n' + tail)
+
+
 def find_sample(m: Model, cls: str, prop: str):
     """(sample, expect) of the nearest prop record with a sample along the chain, else None."""
     for c in m.chain(cls):
@@ -530,12 +605,17 @@ def tests(m: Model) -> tuple[str, list[dict], list[dict]]:
         for sl in ov.get("slots", []):
             ops = sl["ops"]
             name = sl["name"]
+            child = sl.get("child", "view")
+            child_view = m.is_view(m.class_of_tag(child))
             if sl["cardinality"] == "many":
-                body = (f'    let p = h.create({rs(tag)});\n    let a = h.create("view");\n    let b = h.create("view");\n'
+                # Children that are not views (tab-view-item, menu-item) have no superview: the list is the check.
+                attached = f'    assert!(h.superview(a) == Some(h.obj(p)), "a is a subview");\n' if child_view else ""
+                detached = f'    assert!(h.superview(b).is_none(), "removed child is detached");\n' if child_view else ""
+                body = (f'    let p = h.create({rs(tag)});\n    let a = h.create({rs(child)});\n    let b = h.create({rs(child)});\n'
                         f'    h.insert(p, a, None, Some({rs(name)})).unwrap();\n    h.insert(p, b, Some(a), Some({rs(name)})).unwrap();\n'
                         f'    assert_eq!(h.native_list(p, {rs(ops["list"])}), vec![h.obj(b), h.obj(a)], "b inserted before a");\n'
-                        f'    assert!(h.superview(a) == Some(h.obj(p)), "a is a subview");\n'
-                        f'    h.remove(p, b).unwrap();\n    assert!(h.superview(b).is_none(), "removed child is detached");\n'
+                        f'{attached}'
+                        f'    h.remove(p, b).unwrap();\n{detached}'
                         f'    assert_eq!(h.native_list(p, {rs(ops["list"])}), vec![h.obj(a)]);\n'
                         f'    h.remove(p, b).unwrap_err();\n    h.insert(p, b, None, Some({rs(name)})).unwrap();\n'
                         f'    assert_eq!(h.native_list(p, {rs(ops["list"])}), vec![h.obj(a), h.obj(b)], "re-inserted at the end");\n'
@@ -543,7 +623,7 @@ def tests(m: Model) -> tuple[str, list[dict], list[dict]]:
             else:
                 clear = ('    assert!(h.native_get(p, {g}).is_some_and(|v| v != h.obj(b)), "cleared to a fresh view");\n'
                          if ops.get("clear") == "empty_view" else '    assert!(h.native_get(p, {g}).is_none(), "cleared");\n').format(g=rs(ops["get"]))
-                body = (f'    let p = h.create({rs(tag)});\n    let a = h.create("view");\n    let b = h.create("view");\n'
+                body = (f'    let p = h.create({rs(tag)});\n    let a = h.create({rs(child)});\n    let b = h.create({rs(child)});\n'
                         f'    h.insert(p, a, None, Some({rs(name)})).unwrap();\n    assert!(h.native_get(p, {rs(ops["get"])}) == Some(h.obj(a)), "a set");\n'
                         f'    h.insert(p, b, None, Some({rs(name)})).unwrap();\n    assert!(h.native_get(p, {rs(ops["get"])}) == Some(h.obj(b)), "b replaces a");\n'
                         f'    assert!(h.alive(a), "the replaced child stays alive (handle)");\n    h.remove(p, a).unwrap_err();\n'
@@ -559,7 +639,9 @@ def tests(m: Model) -> tuple[str, list[dict], list[dict]]:
                 else:
                     t.cannot(cls, "signals", s["name"], f"no generated test for {s['via']} signals with verify {verify}")
                 continue
-            if s["via"] == "delegate" and s.get("result") == "veto_bool":
+            if s["via"] == "delegate" and verify == "select_tab":
+                body = select_tab_body(tag, s)
+            elif s["via"] == "delegate" and s.get("result") == "veto_bool":
                 body = (f'    let w = h.create({rs(tag)});\n    h.call(w, "make-key-and-order-front", vec![]).unwrap();\n'
                         f'    h.listen(w, {rs(s["name"])}, true).unwrap();\n    h.set_sync_reply(V::Bool(true));\n    h.perform_close(w);\n'
                         f'    assert!(h.alive(w) && h.is_visible(w), "a true result (preventDefault) vetoes the close");\n'
@@ -572,8 +654,8 @@ def tests(m: Model) -> tuple[str, list[dict], list[dict]]:
                         f'    h.listen(w, {rs(s["name"])}, true).unwrap();\n    h.close_window(w);\n    h.pump(50);\n'
                         f'    assert!(h.take_events().iter().any(|e| e.0 == w && e.1 == {rs(s["name"])}), "posted");\n'
                         f'    assert!(h.take_gone().contains(&(w, svelters_abi::SVL_GONE_CLOSED)), "reported closed");\n')
-            elif verify in ("send_action", "perform_click", "post"):
-                trig = {"send_action": "h.send_action(o)", "perform_click": "h.perform_click(o)",
+            elif verify in ("send_action", "perform_click", "post", "app_send_action"):
+                trig = {"send_action": "h.send_action(o)", "perform_click": "h.perform_click(o)", "app_send_action": "h.app_send_action(o)",
                         "post": f'h.post_notification(o, {rs(s.get("notification", ""))})'}[verify]
                 nargs = len(s.get("args", []))
                 body = (f'    let o = h.create({rs(tag)});\n    h.take_events();\n    h.listen(o, {rs(s["name"])}, true).unwrap();\n    {trig};\n'
@@ -587,9 +669,14 @@ def tests(m: Model) -> tuple[str, list[dict], list[dict]]:
             if meth.get("test") is False:
                 t.cannot(cls, "methods", meth["name"], "test: false")
                 continue
-            exp = meth.get("expect")
-            check = (f'    assert_eq!(h.get(o, {rs(exp["get"])}).unwrap(), {value(exp["value"])});\n' if exp else "")
-            body = (f'    let o = h.create({rs(tag)});\n    h.call(o, {rs(meth["name"])}, vec![]).unwrap();\n{check}    h.destroy(o);\n')
+            exp = meth.get("expect") or {}
+            check = (f'    assert_eq!(h.get(o, {rs(exp["get"])}).unwrap(), {value(exp["value"])});\n' if "get" in exp else "")
+            args = ", ".join(value(a) for a in meth.get("args", []))
+            if "returns" in exp:
+                call = f'    let r = h.call(o, {rs(meth["name"])}, vec![{args}]).unwrap();\n    assert_eq!(r, {value(exp["returns"])}, "returned");\n'
+            else:
+                call = f'    h.call(o, {rs(meth["name"])}, vec![{args}]).unwrap();\n'
+            body = (f'    let o = h.create({rs(tag)});\n{call}{check}    h.destroy(o);\n')
             add(f"method_{ident(cls, meth['name'])}", f"method {cls}.{meth['name']} ({meth['selector']}): {meth['provenance']}", body,
                 (cls, "methods", meth["name"], meth))
         for b in ov.get("bindings", []):
@@ -631,6 +718,23 @@ def tests(m: Model) -> tuple[str, list[dict], list[dict]]:
         o.append(f"\n    /// {doc}\n    pub fn {name}() {{\n        let h = Harness::shared();\n")
         o.append("".join("    " + line + "\n" if line else "\n" for line in body.rstrip("\n").split("\n")))
         o.append("    }\n")
+    # `test_setup` of the elements: props the harness sets on every create of the tag (Harness::set_setup).
+    setup = []
+    for cls in m.classes:
+        el = m.ov.get(cls, {}).get("element") or {}
+        for s in el.get("test_setup", []):
+            owner, meta = m.find_prop(cls, s["name"])
+            setter = next((x for c in m.chain(cls) for x in m.ov.get(c, {}).get("setters", []) if x["name"] == s["name"]), None)
+            ref = meta["type"]["ref"] if meta else setter["type"] if setter else None
+            if ref is None:
+                raise GenError(f"{cls}: test_setup: unknown prop {s['name']}")
+            sv = s_value(s["value"], ref)
+            if sv is None:
+                raise GenError(f"{cls}: test_setup: {s['name']}: value {s['value']!r} has no row value")
+            setup.append(f"        ({rs(el['tag'])}, {rs(s['name'])}, {sv}),\n")
+    if setup:
+        o.append("\n    /// `test_setup` of the element overrides: set right after every create of the tag.\n")
+        o.append(f"    pub static SETUP: &[(&str, &str, S)] = &[\n{''.join(setup)}    ];\n")
     o.append("\n    pub static CASES: &[(&str, fn())] = &[\n")
     for name, _, _ in t.cases:
         o.append(f"        ({rs(name)}, {name}),\n")
@@ -649,7 +753,10 @@ def tests(m: Model) -> tuple[str, list[dict], list[dict]]:
         for i, (name, _, _) in enumerate(t.rows[table]):
             o.append(f"        ({rs(name)}, {table}_row, {i}),\n")
     o.append("    ];\n}\n\n")
-    o.append('fn main() {\n    #[cfg(target_os = "macos")]\n    svelters_apple::testing::run_table_cases(true, cases::CASES, cases::ROWS);\n'
+    o.append('fn main() {\n    #[cfg(target_os = "macos")]\n    {\n')
+    if setup:
+        o.append('        svelters_appkit::testing::Harness::shared().set_setup(cases::SETUP);\n')
+    o.append('        svelters_apple::testing::run_table_cases(true, cases::CASES, cases::ROWS);\n    }\n'
              '    #[cfg(not(target_os = "macos"))]\n    svelters_apple::testing::run_cases(false, &[]);\n}\n')
     facts = sorted(t.facts, key=lambda f: f["fact"])
     untestable = sorted(t.untestable, key=lambda f: f["fact"])
@@ -676,10 +783,13 @@ def observe_rows(m: Model, t: Tests) -> None:
             sv = s_value(smp[0], meta["type"]["ref"]) if smp else None
             verify = rec.get("verify") or {}
             user = "None"
-            if any(v["mechanism"] == "notification" and v["name"] == "NSControlTextDidChangeNotification" for v in via):
+            chain = m.chain(cls)
+            if any(v["mechanism"] == "notification" and v["name"] in ("NSControlTextDidChangeNotification", "NSTextDidChangeNotification") for v in via):
                 user = "Type"
             elif any(v["mechanism"] == "target_action" for v in via):
-                user = "Click" if "NSButton" in m.chain(cls) else "Key" if "NSSlider" in m.chain(cls) else "None"
+                # A click on a pop-up button opens its menu (a modal tracking loop): never synthesized.
+                clickable = ("NSButton" in chain and "NSPopUpButton" not in chain) or "NSSwitch" in chain
+                user = "Click" if clickable else "Key" if "NSSlider" in chain else "None"
             if rec["class"] in ("none", "set_only"):
                 check, strength, user = "ObsCheck::Unsupported", "unsupported", "None"
             elif rec["class"] == "constant":

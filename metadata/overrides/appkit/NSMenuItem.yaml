@@ -7,7 +7,7 @@ element:
   provenance: "NSMenuItem.h: -init gives an enabled item with an empty title and no action (autoenabling disables an item without an action, so listening to `action` enables it)"
 props:
   - name: title
-    sample: "Open…"
+    sample: "Open"
     provenance: "NSMenuItem.title (NSString, copy)"
   - name: key-equivalent
     sample: "o"

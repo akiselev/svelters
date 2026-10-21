@@ -30,6 +30,25 @@
       "selector": "addItemWithTitle:"
     },
     {
+      "name": "add-items-with-titles",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "itemTitles",
+          "type": {
+            "native": "NSArray<NSString *> *",
+            "ref": "list"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "addItemsWithTitles:"
+    },
+    {
       "name": "index-of-item-with-title",
       "origin": "sdk",
       "params": [
@@ -124,6 +143,25 @@
         }
       },
       "selector": "removeItemAtIndex:"
+    },
+    {
+      "name": "select-item-at-index",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "index",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "selectItemAtIndex:"
     },
     {
       "name": "select-item-with-tag",

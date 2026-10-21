@@ -30,6 +30,25 @@
       "selector": "addItemWithObjectValue:"
     },
     {
+      "name": "add-items-with-object-values",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "objects",
+          "type": {
+            "native": "NSArray *",
+            "ref": "list"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "addItemsWithObjectValues:"
+    },
+    {
       "name": "deselect-item-at-index",
       "origin": "sdk",
       "params": [
@@ -173,6 +192,25 @@
         }
       },
       "selector": "scrollItemAtIndexToVisible:"
+    },
+    {
+      "name": "select-item-at-index",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "index",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "selectItemAtIndex:"
     }
   ],
   "native": {

@@ -1,0 +1,14 @@
+schema: svelters-observe-layer/v1
+toolkit: appkit
+owner: AppKit:NSSwitch
+observe:
+- prop: state
+  class: partial
+  via:
+  - mechanism: target_action
+  missed:
+  - programmatic
+  provenance:
+  - origin: rule
+    ref: 'O7: not probed for KVO; the fallback reports user changes only'
+  confidence: 0.9

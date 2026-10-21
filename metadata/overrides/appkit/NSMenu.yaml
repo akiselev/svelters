@@ -58,7 +58,7 @@ signals:
     provenance: "NSMenu.h: NSMenuDidEndTrackingNotification, object = the menu"
 dangerous:
   methods:
-    removeAllItems:
+    remove-all-items:
       severity: corrupts-tree
       reason: >-
         Removes every native item behind the renderer; the menu-item handles in the `items` slot

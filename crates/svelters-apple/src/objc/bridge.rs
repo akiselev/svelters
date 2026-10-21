@@ -225,6 +225,16 @@ pub fn object_in(v: &Value, cls: Option<&str>, objs: &dyn Objects) -> Result<Opt
                     }
                 }
             }
+            Some("NSURL") => {
+                // A path (`/…`, `~…`) is a file URL; anything else must parse as a URL.
+                let url: Option<Retained<AnyObject>> = if s.starts_with('/') || s.starts_with('~') {
+                    let p: Retained<NSString> = unsafe { msg_send![&*nsstring(s), stringByExpandingTildeInPath] };
+                    unsafe { msg_send![class!(NSURL), fileURLWithPath: &*p] }
+                } else {
+                    unsafe { msg_send![class!(NSURL), URLWithString: &*nsstring(s)] }
+                };
+                url.map(Some).ok_or_else(|| format!("\"{s}\" is not a URL"))
+            }
             Some(c) => Err(format!("a string cannot be converted to {c}")),
         },
         Value::Bool(b) => Ok(Some(erase(NSNumber::new_bool(*b)))),

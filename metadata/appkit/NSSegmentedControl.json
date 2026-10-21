@@ -173,6 +173,25 @@
       "selector": "setLabel:forSegment:"
     },
     {
+      "name": "set-segment-count",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "segmentCount",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setSegmentCount:"
+    },
+    {
       "name": "set-selected-for-segment",
       "origin": "sdk",
       "params": [

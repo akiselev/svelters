@@ -64,6 +64,46 @@
    "section": "props"
   },
   {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSColorWell",
+   "name": "double-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSColorWell",
+   "name": "float-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSColorWell",
+   "name": "int-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSColorWell",
+   "name": "integer-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSColorWell",
+   "name": "string-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
    "band": "low",
    "confidence": 0.5,
    "kind": "NSControl",
@@ -96,6 +136,206 @@
    "section": "props"
   },
   {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSDatePicker",
+   "name": "double-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSDatePicker",
+   "name": "float-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSDatePicker",
+   "name": "int-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSDatePicker",
+   "name": "integer-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSDatePicker",
+   "name": "string-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSImageView",
+   "name": "double-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSImageView",
+   "name": "float-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSImageView",
+   "name": "int-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSImageView",
+   "name": "integer-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSImageView",
+   "name": "string-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSLevelIndicator",
+   "name": "double-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSLevelIndicator",
+   "name": "float-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSLevelIndicator",
+   "name": "int-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSLevelIndicator",
+   "name": "integer-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSLevelIndicator",
+   "name": "string-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSPathControl",
+   "name": "double-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSPathControl",
+   "name": "float-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSPathControl",
+   "name": "int-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSPathControl",
+   "name": "integer-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSPathControl",
+   "name": "string-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSSegmentedControl",
+   "name": "double-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSSegmentedControl",
+   "name": "float-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSSegmentedControl",
+   "name": "int-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSSegmentedControl",
+   "name": "integer-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSSegmentedControl",
+   "name": "string-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
    "band": "low",
    "confidence": 0.5,
    "kind": "NSSlider",
@@ -110,6 +350,86 @@
    "name": "string-value",
    "pattern": "prop:ignored",
    "section": "props"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSStepper",
+   "name": "double-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSStepper",
+   "name": "float-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSStepper",
+   "name": "int-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSStepper",
+   "name": "integer-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSStepper",
+   "name": "string-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSSwitch",
+   "name": "double-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSSwitch",
+   "name": "float-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSSwitch",
+   "name": "int-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSSwitch",
+   "name": "integer-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
+  },
+  {
+   "band": "middle",
+   "confidence": 0.6,
+   "kind": "NSSwitch",
+   "name": "string-value",
+   "pattern": "binding:no-probe",
+   "section": "bindings"
   },
   {
    "band": "low",
@@ -154,8 +474,8 @@
  ],
  "schema": "svelters-inferred-review/v1",
  "skipped": {
-  "binding:enum-prop": 1,
-  "binding:inherited": 1
+  "binding:enum-prop": 2,
+  "binding:inherited": 5
  },
  "toolkit": "appkit",
  "unreviewed": {
@@ -164,10 +484,11 @@
    "low:binding:prop-normalized": 1,
    "low:prop:error": 2,
    "low:prop:ignored": 9,
-   "low:prop:normalized": 3
+   "low:prop:normalized": 3,
+   "middle:binding:no-probe": 40
   },
   "low": 18,
-  "middle": 0
+  "middle": 40
  },
  "version": "26.1"
 }

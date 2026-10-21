@@ -196,6 +196,26 @@
       "selector": "selectPreviousTabViewItem:"
     },
     {
+      "name": "select-tab-view-item",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "tabViewItem",
+          "type": {
+            "native": "NSTabViewItem *",
+            "nullable": true,
+            "ref": "object<NSTabViewItem>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "selectTabViewItem:"
+    },
+    {
       "name": "select-tab-view-item-at-index",
       "origin": "sdk",
       "params": [

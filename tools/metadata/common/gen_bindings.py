@@ -253,6 +253,8 @@ def appkit_bindings() -> dict[str, dict[str, dict]]:
                 props.setdefault(p["name"], True)
             for s in ov.get(c, {}).get("signals", []):
                 signals.setdefault(s["name"], len(s.get("args", [])))
+        # read-only properties written through methods (`write:` in the overrides)
+        props.update({p["name"]: True for c in chain(el_cls) for p in ov.get(c, {}).get("props", []) if p.get("write")})
         for c in chain(el_cls):
             for b in ov.get(c, {}).get("bindings", []):
                 _add_binding(out, tag, b, "appkit", props, signals)

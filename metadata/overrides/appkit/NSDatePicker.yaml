@@ -3,7 +3,7 @@ element:
   tag: date-picker
   lifetime: owned
   construct: new
-  provenance: "NSDatePicker.h: -init gives a text-field-and-stepper picker for year, month, day, hour, minute and second, set to now"
+  provenance: "NSDatePicker.h: -init gives a text-field-and-stepper picker for year, month, day, hour, minute and second, set to now. date-value takes and gives a JS Date (NSDate); the picker sends its action after a user edit (no bind: yet: the renderer has no binding type for object-typed props)."
 props:
   - name: date-picker-style
     sample: clock-and-calendar
@@ -24,14 +24,3 @@ props:
   - name: draws-background
     sample: true
     provenance: "NSDatePicker.drawsBackground (BOOL)"
-bindings:
-  - name: date-value
-    direction: two_way
-    property: date-value
-    type: { ref: "object<NSDate>", nullable: false }
-    change: { signal: action, role: user_edit, value: prop }
-    write: { natively_normalizes: true }
-    echo: { strategy: none, compare_before_set: true, read_back: false }
-    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
-    observability: { class: partial, missed: [programmatic] }
-    provenance: "two-way bind:date-value (a JS Date; NSDate crosses as a Date): the picker sends its action after a user edit (the date is read back); setting dateValue never sends it; min-date/max-date clamp silently"

@@ -3,7 +3,7 @@ element:
   tag: path-control
   lifetime: owned
   construct: new
-  provenance: "NSPathControl.h: -init gives a standard-style path control with no URL; `url` takes an NSURL handle or a string (a path starting with / or ~ becomes a file URL, anything else goes through URLWithString:)"
+  provenance: "NSPathControl.h: -init gives a standard-style path control with no URL; `url` takes an NSURL handle or a string (a path starting with / or ~ becomes a file URL, anything else goes through URLWithString:). An editable control sends its action after the user picked a path (no bind: yet: the renderer has no binding type for object-typed props)."
 props:
   - name: path-style
     sample: pop-up
@@ -14,14 +14,3 @@ props:
   - name: placeholder-string
     sample: "No folder"
     provenance: "NSPathControl.placeholderString (NSString, copy, 10.10+)"
-bindings:
-  - name: url
-    direction: two_way
-    property: url
-    type: { ref: "object<NSURL>", nullable: true }
-    change: { signal: action, role: user_edit, value: prop }
-    write: { natively_normalizes: false }
-    echo: { strategy: none, compare_before_set: true, read_back: false }
-    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
-    observability: { class: partial, missed: [programmatic] }
-    provenance: "two-way bind:url: an editable path control sends its action after the user chose a path component or dropped a file (the URL is read back as an NSURL handle); setting URL never sends it"

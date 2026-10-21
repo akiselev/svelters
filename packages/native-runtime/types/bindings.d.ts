@@ -91,6 +91,12 @@ export interface BindableProps {
   };
   "combo-box": {
     "current-index": number; // qt
+    "double-value": number; // appkit
+    "float-value": number; // appkit
+    "index-of-selected-item": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
+    "string-value": string; // appkit
   };
   "date-edit": {
     date: { year: number; month: number; day: number }; // qt
@@ -283,6 +289,12 @@ export interface BindableProps {
   "plain-text-edit": {
     "plain-text": string; // qt
   };
+  "pop-up-button": {
+    "index-of-selected-item": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
+    state: string; // appkit
+  };
   popover: {
     autohide: boolean; // gtk
     "cascade-popdown": boolean; // gtk
@@ -363,12 +375,22 @@ export interface BindableProps {
     "search-delay": number; // gtk
     text: string; // gtk
   };
+  "search-field": {
+    "double-value": number; // appkit
+    "float-value": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
+    "string-value": string; // appkit
+  };
   "secure-text-field": {
     "double-value": number; // appkit
     "float-value": number; // appkit
     "int-value": number; // appkit
     "integer-value": number; // appkit
     "string-value": string; // appkit
+  };
+  "segmented-control": {
+    "selected-segment": number; // appkit
   };
   slider: {
     "double-value": number; // appkit
@@ -417,9 +439,12 @@ export interface BindableProps {
   "stacked-widget": {
     "current-index": number; // qt
   };
+  stepper: {
+    "double-value": number; // appkit
+  };
   switch: {
     active: boolean; // gtk
-    state: boolean; // gtk
+    state: boolean | string; // gtk/appkit
   };
   "tab-bar": {
     "current-index": number; // qt
@@ -499,6 +524,7 @@ export interface BindableProps {
     "pixels-below-lines": number; // gtk
     "pixels-inside-wrap": number; // gtk
     "right-margin": number; // gtk
+    string: string; // appkit
     text: string; // gtk
     "top-margin": number; // gtk
     "wrap-mode": string; // gtk
@@ -511,6 +537,13 @@ export interface BindableProps {
     "can-shrink": boolean; // gtk
     "has-frame": boolean; // gtk
     "use-underline": boolean; // gtk
+  };
+  "token-field": {
+    "double-value": number; // appkit
+    "float-value": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
+    "string-value": string; // appkit
   };
   "tool-bar": {
     movable: boolean; // qt
@@ -560,4 +593,4 @@ export interface ToplevelAttrs {
   /** modal (dialogs: the default), modeless (windows: the default), or none (created hidden; open it through bind:this) */
   show?: ToplevelShow;
 }
-export type ToplevelTag = "about-dialog" | "application-window" | "color-dialog" | "dialog" | "error-message" | "file-dialog" | "font-dialog" | "input-dialog" | "main-window" | "message-box" | "progress-dialog" | "window" | "wizard";
+export type ToplevelTag = "about-dialog" | "application-window" | "color-dialog" | "dialog" | "error-message" | "file-dialog" | "font-dialog" | "input-dialog" | "main-window" | "message-box" | "panel" | "progress-dialog" | "window" | "wizard";

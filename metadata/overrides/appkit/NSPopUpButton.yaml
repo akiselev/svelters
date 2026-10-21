@@ -85,7 +85,7 @@ bindings:
     provenance: "two-way bind:index-of-selected-item: the button sends its action after the user picked an item (the index is read back); -selectItemAtIndex: never sends it. Set item-titles before the binding (attribute order) so the index exists."
 dangerous:
   methods:
-    removeAllItems:
+    remove-all-items:
       severity: corrupts-tree
       reason: >-
         Removes the native menu items behind the renderer when the items are menu-item children of a `menu` child

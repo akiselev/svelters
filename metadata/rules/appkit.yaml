@@ -96,6 +96,19 @@ observe:
     "NSSlider:object-value": [{mechanism: target_action}]
     "NSButton:state": [{mechanism: target_action}]
     "NSWindow:frame": [{mechanism: notification, name: NSWindowDidResizeNotification}, {mechanism: notification, name: NSWindowDidMoveNotification}]
+    # WP-A: the value a user edits on the newer controls is reported by their action (or the text system's notification).
+    "NSTextView:string": [{mechanism: notification, name: NSTextDidChangeNotification}]
+    "NSSegmentedControl:selected-segment": [{mechanism: target_action}]
+    "NSStepper:double-value": [{mechanism: target_action}]
+    "NSStepper:float-value": [{mechanism: target_action}]
+    "NSStepper:int-value": [{mechanism: target_action}]
+    "NSStepper:integer-value": [{mechanism: target_action}]
+    "NSSwitch:state": [{mechanism: target_action}]
+    "NSDatePicker:date-value": [{mechanism: target_action}]
+    "NSColorWell:color": [{mechanism: target_action}]
+    "NSPathControl:url": [{mechanism: target_action}]
+    "NSPopUpButton:index-of-selected-item": [{mechanism: target_action}]
+    "NSComboBox:index-of-selected-item": [{mechanism: notification, name: NSComboBoxSelectionDidChangeNotification}]
   # Fallbacks that also report programmatic changes (-[NSWindow setFrame:display:] posts DidResize/DidMove).
   fallback_complete: ["NSWindow:frame"]
   # The native trigger of the generated observe row (milestone R4) for props KVC cannot set:

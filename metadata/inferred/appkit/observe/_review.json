@@ -2,9 +2,9 @@
  "inferred": {
   "constant": 0,
   "exact": 150,
-  "none": 116,
-  "partial": 8,
-  "set_only": 70
+  "none": 181,
+  "partial": 20,
+  "set_only": 341
  },
  "rows": [],
  "schema": "svelters-observe-review/v1",
