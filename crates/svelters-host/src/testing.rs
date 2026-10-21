@@ -32,6 +32,9 @@ pub fn run_bundle(
 fn run_on(log: LogBackend, bundle: &Path, cfg: HostConfig) -> Result<RunReport, String> {
     let vt = log.vtable();
     let host = Host::new(vt.backend_ref(), cfg).map_err(|e| e.to_string())?;
+    // App-export calls (E0) join the backend's op log in order.
+    let sink = log.clone();
+    host.set_op_log(move |line| sink.append_line(line));
     host.load_bundle(bundle).map_err(|e| e.to_string())?;
     host.run().map_err(|e| e.to_string())?;
     host.drain_jobs();

@@ -1324,6 +1324,21 @@ void b_wake(void *) {
   QMetaObject::invokeMethod(w, [] { run_checkpoint(); }, Qt::QueuedConnection);
 }
 
+// ABI v2.7: attaches the host without running the loop (the caller pumps Qt's events, or `run` follows);
+// creates the QApplication. A wake that came before the waker existed is delivered now. NULL detaches:
+// queued checkpoints and timers then skip the host (`run_checkpoint` reads g.host).
+int b_start(void *, const svl_host *host) {
+  g.host = host;
+  if (!host) return 0;
+  try {
+    ensure_app();
+  } catch (...) {
+    return fail("start: unknown C++ exception");
+  }
+  if (g.wake_pending.exchange(false)) b_wake(nullptr);
+  return 0;
+}
+
 void b_quit(void *) {
   QObject *w = g.waker.load();
   if (w)
@@ -1592,7 +1607,8 @@ const svl_backend kBackend = {SVL_ABI_VERSION, &g, b_resolve, b_create, b_insert
                               b_last_error, SVL_CAP_UTF16_IN | SVL_CAP_UTF16_OUT, b_describe, b_describe_type, b_cancel, b_request_frame,
                               b_set_child_attr, b_get_child_attr, b_listen_ex, b_style,
                               /* ABI v2.5 (N2) */ b_construct, b_call_static,
-                              /* ABI v2.6 */ b_observe};
+                              /* ABI v2.6 */ b_observe,
+                              /* ABI v2.7 */ b_start};
 
 }  // namespace
 

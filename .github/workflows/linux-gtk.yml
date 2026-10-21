@@ -57,7 +57,7 @@ jobs:
       - name: Build tests
         run: >
           cargo nextest run --no-run
-          -p svelters-abi -p svelters-backend-log -p svelters-host -p svelters-compiler -p svelters-gtk
+          -p svelters-abi -p svelters-backend-log -p svelters-host -p svelters-compiler -p svelters-gtk -p svelters -p exports-example
           -p counter --no-default-features --features counter/gtk
 
       - name: nextest (GTK, host, compiler)
@@ -65,7 +65,7 @@ jobs:
         run: >
           xvfb-run -a -s "-screen 0 1920x1080x24" dbus-run-session --
           cargo nextest run --no-fail-fast
-          -p svelters-abi -p svelters-backend-log -p svelters-host -p svelters-compiler -p svelters-gtk
+          -p svelters-abi -p svelters-backend-log -p svelters-host -p svelters-compiler -p svelters-gtk -p svelters -p exports-example
           -p counter --no-default-features --features counter/gtk
           -E 'not (package(counter) & test(/qt/))'
 

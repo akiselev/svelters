@@ -193,6 +193,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "00d174d5400e5e8fd687ad1049e2f578285fa914201b1af7e8b112a4546bd826"
 
 [[package]]
+name = "exports-example"
+version = "0.0.0"
+dependencies = [
+ "gtk4",
+ "svelters",
+ "svelters-abi",
+ "svelters-backend-log",
+ "svelters-gtk",
+ "svelters-host",
+]
+
+[[package]]
 name = "field-offset"
 version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -703,6 +715,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "inventory"
+version = "0.3.25"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6928282826c822ad91bf1c9a1cb90a30ba1c26770749929b4656cd6be829cd7c"
+dependencies = [
+ "rustversion",
+]
+
+[[package]]
 name = "itoa"
 version = "1.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1142,6 +1163,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6ce2be8dc25455e1f91df71bfa12ad37d7af1092ae736f3a6cd0e37bc7810596"
 
 [[package]]
+name = "svelters"
+version = "0.0.0"
+dependencies = [
+ "serde_json",
+ "svelters-abi",
+ "svelters-backend-log",
+ "svelters-host",
+ "svelters-macros",
+]
+
+[[package]]
 name = "svelters-abi"
 version = "0.0.0"
 
@@ -1209,12 +1241,22 @@ dependencies = [
 name = "svelters-host"
 version = "0.0.0"
 dependencies = [
+ "inventory",
  "notify",
  "rquickjs",
  "serde_json",
  "sourcemap",
  "svelters-abi",
  "svelters-backend-log",
+]
+
+[[package]]
+name = "svelters-macros"
+version = "0.0.0"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
 ]
 
 [[package]]

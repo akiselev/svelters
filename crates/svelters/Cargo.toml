@@ -1,0 +1,16 @@
+[package]
+name = "svelters"
+description = "Expose an app's Rust types and functions to Svelte (svelters:app/<module>): the macros plus the host's export runtime"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+
+[dependencies]
+svelters-macros = { path = "../svelters-macros" }
+svelters-host.workspace = true
+
+[dev-dependencies]
+svelters-abi.workspace = true
+svelters-backend-log.workspace = true
+serde_json.workspace = true

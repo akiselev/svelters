@@ -1634,6 +1634,7 @@ impl GtkBackend {
             construct: Some(b_construct),
             call_static: Some(b_call_static),
             observe: Some(b_observe),
+            start: Some(b_start),
         });
         Ok(GtkBackend { vtable, ctl })
     }
@@ -2007,15 +2008,29 @@ unsafe extern "C" fn b_run(p: *mut c_void, host: *const svl_host) -> c_int {
     rc
 }
 
+/// ABI v2.7: attaches the host without running the loop (GTK is initialised by `GtkBackend::new`);
+/// the caller iterates the default main context. NULL detaches: queued wakes and timers then skip
+/// the host.
+unsafe extern "C" fn b_start(p: *mut c_void, host: *const svl_host) -> c_int {
+    let c = unsafe { ctl(p) };
+    c.host.store(host as *mut svl_host, Ordering::Release);
+    0
+}
+
 /// Thread-safe: schedules a host checkpoint on the default main context.
 unsafe extern "C" fn b_wake(p: *mut c_void) {
-    let host = unsafe { &(*(p as *const Ctl)).host }.load(Ordering::Acquire) as usize;
-    if host == 0 {
+    let slot = unsafe { &(*(p as *const Ctl)).host };
+    if slot.load(Ordering::Acquire).is_null() {
         return;
     }
+    let slot = slot.clone();
     glib::idle_add_once(move || {
-        let h = host as *const svl_host;
-        unsafe { ((*h).checkpoint)((*h).self_) };
+        // Re-read at dispatch: a host detached (`start(NULL)`, or `run` returned) since the wake
+        // must not be called.
+        let h = slot.load(Ordering::Acquire);
+        if !h.is_null() {
+            unsafe { ((*h).checkpoint)((*h).self_) };
+        }
     });
 }
 

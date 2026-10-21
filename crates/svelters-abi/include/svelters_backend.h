@@ -1,4 +1,4 @@
-/* svelters backend ABI, version 3 (draft; additive tail members: 2.1 request_frame, frame; 2.2 set_child_attr, get_child_attr, listen_ex; 2.5 construct, call_static, SVL_LIFE_SHARED, SVL_T_TYPE; 2.6 observe, prop_changed, SVL_M_OBSERVABLE, SVL_M_PROPORTIONAL). Source of truth: plans/architecture/backend-abi.md
+/* svelters backend ABI, version 3 (draft; additive tail members: 2.1 request_frame, frame; 2.2 set_child_attr, get_child_attr, listen_ex; 2.5 construct, call_static, SVL_LIFE_SHARED, SVL_T_TYPE; 2.6 observe, prop_changed, SVL_M_OBSERVABLE, SVL_M_PROPORTIONAL; 2.7 start). Source of truth: plans/architecture/backend-abi.md
  *
  * v3 = the value model from docs/notes/js-native-serdes.md section 5.1 on top of v2 (timers, handle
  * lifetime). */
@@ -337,6 +337,15 @@ typedef struct svl_backend {
    * Returns 0; SVL_OBSERVE_UNSUPPORTED when the property has no change notification on this backend;
    * -1 (last_error) for a dead handle or an unknown, write-only or constant property. */
   int (*observe)(void *self, svl_handle h, svl_id prop, bool on);
+
+  /* ABI v2.7 (may be NULL: only the blocking `run` is supported). Attaches the host and brings the
+   * toolkit up without running the loop; returns at once (0 = ok, < 0 with last_error = failure). The
+   * caller (an embedder, a test harness, a platform that owns main) then drives the loop, and the
+   * backend calls host callbacks exactly as it would from `run` (checkpoint on wake, frame,
+   * post_event...). `start(self, NULL)` detaches the host: no host callback afterwards, and it is 0
+   * when nothing is attached. The host treats its first callback (or the return of `start`) as
+   * "toolkit up". */
+  int (*start)(void *self, const svl_host *host);
 } svl_backend;
 
 /* Values written to `out` by a backend stay valid until the backend's next call. A backend returning an

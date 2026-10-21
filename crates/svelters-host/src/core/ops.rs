@@ -50,6 +50,11 @@ impl TypeSource for Core {
         if let Some(t) = self.st.borrow().types.get(&id) {
             return t.clone();
         }
+        if crate::exports::is_app_id(id) {
+            let t = crate::exports::schema().type_desc(id).map(|d| Rc::new(TypeInfo::new(d.clone())));
+            self.st.borrow_mut().types.insert(id, t.clone());
+            return t;
+        }
         let t = self.backend.describe_type(id).map(|d| Rc::new(TypeInfo::new(d)));
         self.st.borrow_mut().types.insert(id, t.clone());
         t
@@ -71,7 +76,11 @@ impl Core {
         {
             return Ok(*id);
         }
-        let id = self.backend.resolve(what, kind, name);
+        let id = if crate::exports::is_app_id(kind) {
+            crate::exports::schema().resolve(what, kind, name)
+        } else {
+            self.backend.resolve(what, kind, name)
+        };
         if id == 0 {
             return Err(format!("unknown {what:?} '{name}'"));
         }
@@ -131,7 +140,11 @@ impl Core {
         if let Some(m) = self.st.borrow().members.get(&key) {
             return m.clone();
         }
-        let m = self.backend.describe(what, kind, id).map(Rc::new);
+        let m = if crate::exports::is_app_id(kind) {
+            crate::exports::schema().member(what, kind, id).map(|m| Rc::new(m.desc.clone()))
+        } else {
+            self.backend.describe(what, kind, id).map(Rc::new)
+        };
         self.st.borrow_mut().members.insert(key, m.clone());
         m
     }
@@ -176,7 +189,7 @@ impl Core {
         if let Some(k) = cached {
             return Ok(k);
         }
-        let k = self.backend.resolve(NameKind::Kind, 0, kind);
+        let k = if kind.starts_with("app:") { self.app_kind(kind)? } else { self.backend.resolve(NameKind::Kind, 0, kind) };
         if k == 0 {
             return Err(format!("unknown kind '{kind}'"));
         }
@@ -349,6 +362,10 @@ impl Core {
 
     pub(crate) fn op_destroy(&self, h: svl_handle) -> Result<(), OpError> {
         self.timed(|| {
+            if crate::exports::is_app_handle(h) {
+                self.app_destroy(h);
+                return Ok(());
+            }
             self.tree_ops_allowed()?;
             // Idempotent: destroying a dead handle (already destroyed, or died natively) is a no-op.
             if self.live_kind(h)?.is_none() {
@@ -380,6 +397,9 @@ impl Core {
         v: &R::V,
     ) -> Result<(), OpError> {
         self.timed(|| {
+            if crate::exports::is_app_handle(h) {
+                return self.app_set_prop(r, h, prop, v);
+            }
             let Some(k) = self.live_kind(h)? else {
                 return Ok(());
             };
@@ -435,6 +455,9 @@ impl Core {
 
     pub(crate) fn op_get_prop<W: JsWriter>(&self, w: &W, h: svl_handle, prop: Name<'_>) -> Result<W::V, OpError> {
         self.timed(|| {
+            if crate::exports::is_app_handle(h) {
+                return self.app_get_prop(w, h, prop);
+            }
             let k = self.kind_of(h)?;
             let p = self.resolve_name(NameKind::Prop, k, prop)?;
             let raw = self.backend.get_prop_raw(h, p).map_err(|e| self.backend_err(e))?;
@@ -454,6 +477,9 @@ impl Core {
         E: JsReader + JsWriter<V = <E as JsReader>::V> + JsPromises,
     {
         self.timed(|| {
+            if crate::exports::is_app_handle(h) {
+                return self.app_call(e, h, method, args);
+            }
             let k = self.kind_of(h)?;
             let m = self.resolve_name(NameKind::Method, k, method)?;
             let desc = self.member(NameKind::Method, k, m);
@@ -591,7 +617,7 @@ impl Core {
     pub(super) fn adopt_handles(&self, v: &Value) {
         match v {
             Value::Handle(h) => {
-                if self.st.borrow().handles.contains_key(h) || *h >= MAX_HANDLE {
+                if self.st.borrow().handles.contains_key(h) || *h >= MAX_HANDLE || crate::exports::is_app_handle(*h) {
                     return;
                 }
                 if let Ok(info) = self.backend.handle_info(*h) {
@@ -635,6 +661,10 @@ impl Core {
 
     pub(crate) fn op_listen(&self, h: svl_handle, signal: Name<'_>, on: bool, flags: u32) -> Result<(), OpError> {
         self.timed(|| {
+            if crate::exports::is_app_handle(h) {
+                // E0 exports have no events (Emitter is E3): nothing to connect, nothing to disconnect.
+                return if on { Err(format!("app objects have no signals yet (listen '{}')", match signal { Name::Str(s) => s.to_string(), Name::Id(i) => format!("#{i}") }).into()) } else { Ok(()) };
+            }
             let k = match self.live_kind(h)? {
                 Some(k) => k,
                 None if !on => return Ok(()),
@@ -662,6 +692,10 @@ impl Core {
     /// or a backend failure.
     pub(crate) fn op_observe(&self, h: svl_handle, prop: Name<'_>, on: bool) -> Result<bool, OpError> {
         self.timed(|| {
+            if crate::exports::is_app_handle(h) {
+                // Getters of E0 exports are plain reads (stores are E3): never observable.
+                return Ok(false);
+            }
             let k = match self.live_kind(h)? {
                 Some(k) => k,
                 None if !on => return Ok(false),

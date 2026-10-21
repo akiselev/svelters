@@ -258,7 +258,8 @@ fn write_json(v: &Value, out: &mut String) {
     }
 }
 
-fn json_string(v: &Value) -> String {
+/// Compact JSON of a value, as op-log lines print it.
+pub fn json_string(v: &Value) -> String {
     let mut s = String::new();
     write_json(v, &mut s);
     s
@@ -342,6 +343,8 @@ struct State {
     frame_pending: bool,
     frames_requested: u64,
     frames_delivered: u64,
+    /// ABI v2.7: a host is attached through `start` (not `run`).
+    attached: bool,
 }
 
 struct Shared {
@@ -408,6 +411,7 @@ impl LogBackend {
                     frame_pending: false,
                     frames_requested: 0,
                     frames_delivered: 0,
+                    attached: false,
                 }),
                 cv: Condvar::new(),
                 wakes: AtomicU64::new(0),
@@ -421,6 +425,11 @@ impl LogBackend {
     /// Builds the vtable, keeping `self` as an inspection handle.
     pub fn vtable(&self) -> BackendVtable {
         BackendVtable::new(self.clone())
+    }
+
+    /// Appends a line the host logs itself (app-export ops, E0) to the op log.
+    pub fn append_line(&self, line: &str) {
+        self.append(format_args!("{line}"));
     }
 
     /// The op log so far: one op per line, each line newline-terminated.
@@ -451,6 +460,11 @@ impl LogBackend {
     /// Number of virtual frames delivered to the host.
     pub fn frames_delivered(&self) -> u64 {
         self.shared.lock().frames_delivered
+    }
+
+    /// ABI v2.7: whether a host is attached through `start` (cleared by `start(NULL)`).
+    pub fn is_attached(&self) -> bool {
+        self.shared.lock().attached
     }
 
     /// Number of checkpoints the fake loop has requested.
@@ -855,6 +869,17 @@ impl Backend for LogBackend {
         st.frame_pending = true;
         drop(st);
         self.shared.cv.notify_all();
+    }
+
+    fn supports_start(&self) -> bool {
+        true
+    }
+
+    /// ABI v2.7: nothing to bring up and no loop to drive: in start mode the script is not played
+    /// and the embedder calls `host.checkpoint` itself. Only records the attachment (no op logged).
+    fn start(&self, host: Option<&HostRef<'_>>) -> Result<(), String> {
+        self.shared.lock().attached = host.is_some();
+        Ok(())
     }
 
     fn run(&self, host: &HostRef<'_>) -> Result<(), String> {

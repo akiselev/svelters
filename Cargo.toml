@@ -11,10 +11,13 @@ members = [
     "crates/svelters-winui",
     "crates/svelters-compiler",
     "crates/svelters-cli",
+    "crates/svelters-macros",
+    "crates/svelters",
     "examples/counter",
     "examples/counter-qt",
     "examples/counter-mac",
     "examples/counter-win",
+    "examples/exports",
 ]
 
 [workspace.package]

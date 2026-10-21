@@ -1,0 +1,269 @@
+{
+  "modules": [
+    {
+      "classes": [
+        {
+          "constructor": null,
+          "docs": "A note shared with worker threads later (E1): `Arc<Self>`.",
+          "methods": [],
+          "name": "Note",
+          "native": "app:demo.Note",
+          "props": [
+            {
+              "docs": "",
+              "name": "text",
+              "observability": "none",
+              "readonly": true,
+              "type": "string"
+            }
+          ],
+          "rust": "Note",
+          "shared": true,
+          "statics": []
+        },
+        {
+          "constructor": {
+            "docs": "",
+            "kind": "constructor",
+            "name": "new",
+            "params": [],
+            "readonly": false,
+            "returns": "Notebook",
+            "runsOn": "ui",
+            "rust": "new",
+            "throws": [],
+            "writeonly": false
+          },
+          "docs": "A notebook of shared notes.",
+          "methods": [
+            {
+              "docs": "Adds a note and returns it.",
+              "kind": "method",
+              "name": "add",
+              "params": [
+                {
+                  "name": "text",
+                  "optional": false,
+                  "type": "string"
+                }
+              ],
+              "readonly": false,
+              "returns": "Note",
+              "runsOn": "ui",
+              "rust": "add",
+              "throws": [],
+              "writeonly": false
+            },
+            {
+              "docs": "The note at `i` (the same JS object as the one `add` returned).",
+              "kind": "method",
+              "name": "get",
+              "params": [
+                {
+                  "name": "i",
+                  "optional": false,
+                  "type": "number"
+                }
+              ],
+              "readonly": false,
+              "returns": "Note | null",
+              "runsOn": "ui",
+              "rust": "get",
+              "throws": [],
+              "writeonly": false
+            }
+          ],
+          "name": "Notebook",
+          "native": "app:demo.Notebook",
+          "props": [
+            {
+              "docs": "",
+              "name": "len",
+              "observability": "none",
+              "readonly": true,
+              "type": "number"
+            }
+          ],
+          "rust": "Notebook",
+          "shared": true,
+          "statics": []
+        },
+        {
+          "constructor": {
+            "docs": "A tally starting at `start`.",
+            "kind": "constructor",
+            "name": "new",
+            "params": [
+              {
+                "name": "start",
+                "optional": false,
+                "type": "number"
+              }
+            ],
+            "readonly": false,
+            "returns": "Tally",
+            "runsOn": "ui",
+            "rust": "new",
+            "throws": [],
+            "writeonly": false
+          },
+          "docs": "A counter that lives on the UI thread (`&mut self`).",
+          "methods": [
+            {
+              "docs": "Adds one step; fails outside -1000..=1000.",
+              "kind": "method",
+              "name": "bump",
+              "params": [],
+              "readonly": false,
+              "returns": "number",
+              "runsOn": "ui",
+              "rust": "bump",
+              "throws": [
+                "out-of-range"
+              ],
+              "writeonly": false
+            },
+            {
+              "docs": "",
+              "kind": "method",
+              "name": "summary",
+              "params": [
+                {
+                  "name": "note",
+                  "optional": true,
+                  "type": "string | null"
+                }
+              ],
+              "readonly": false,
+              "returns": "Summary",
+              "runsOn": "ui",
+              "rust": "summary",
+              "throws": [],
+              "writeonly": false
+            }
+          ],
+          "name": "Tally",
+          "native": "app:demo.Tally",
+          "props": [
+            {
+              "docs": "The current count.",
+              "name": "count",
+              "observability": "none",
+              "readonly": true,
+              "type": "number"
+            },
+            {
+              "docs": "One bump (by the current step).",
+              "name": "step",
+              "observability": "none",
+              "readonly": false,
+              "type": "Step"
+            }
+          ],
+          "rust": "Tally",
+          "shared": false,
+          "statics": []
+        }
+      ],
+      "functions": [
+        {
+          "docs": "The n-th Fibonacci number (a checked JS number).",
+          "kind": "static",
+          "name": "fib",
+          "params": [
+            {
+              "name": "n",
+              "optional": false,
+              "type": "number"
+            }
+          ],
+          "readonly": false,
+          "returns": "number",
+          "runsOn": "ui",
+          "rust": "fib",
+          "throws": [],
+          "writeonly": false
+        },
+        {
+          "docs": "A greeting from Rust.",
+          "kind": "static",
+          "name": "greet",
+          "params": [
+            {
+              "name": "name",
+              "optional": false,
+              "type": "string"
+            }
+          ],
+          "readonly": false,
+          "returns": "string",
+          "runsOn": "ui",
+          "rust": "greet",
+          "throws": [],
+          "writeonly": false
+        },
+        {
+          "docs": "A no-op, for measuring the per-call cost of the registry path.",
+          "kind": "static",
+          "name": "noop",
+          "params": [
+            {
+              "name": "x",
+              "optional": false,
+              "type": "number"
+            }
+          ],
+          "readonly": false,
+          "returns": "number",
+          "runsOn": "ui",
+          "rust": "noop",
+          "throws": [],
+          "writeonly": false
+        }
+      ],
+      "name": "demo",
+      "specifier": "svelters:app/demo",
+      "types": [
+        {
+          "docs": "How a tally counts.",
+          "fields": [],
+          "kind": "enum",
+          "name": "Step",
+          "values": [
+            "one",
+            "ten"
+          ]
+        },
+        {
+          "docs": "A summary of a tally.",
+          "fields": [
+            {
+              "name": "count",
+              "optional": false,
+              "type": "number"
+            },
+            {
+              "name": "bumps",
+              "optional": false,
+              "type": "number"
+            },
+            {
+              "name": "step",
+              "optional": false,
+              "type": "Step"
+            },
+            {
+              "name": "note",
+              "optional": true,
+              "type": "string | null"
+            }
+          ],
+          "kind": "record",
+          "name": "Summary",
+          "values": []
+        }
+      ]
+    }
+  ],
+  "schema": "svelters-exports/1"
+}

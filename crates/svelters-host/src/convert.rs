@@ -107,6 +107,16 @@ pub(crate) trait JsWriter {
     /// A native object handle: the renderer's node for it when one is installed, else the number.
     fn handle(&self, h: svl_handle) -> Result<Self::V, String>;
     fn native_error(&self, domain: &str, code: Self::V, message: &str) -> Result<Self::V, String>;
+    /// A JS `bigint` (members marked `SVL_D_BIGINT`, e.g. `#[js(bigint)]` app exports).
+    fn bigint(&self, i: i64) -> Result<Self::V, String> {
+        Err(format!("RangeError: value {i} needs a bigint, which this engine does not support"))
+    }
+    fn bigint_u(&self, u: u64) -> Result<Self::V, String> {
+        match i64::try_from(u) {
+            Ok(i) => self.bigint(i),
+            Err(_) => Err(format!("RangeError: value {u} needs a bigint, which this engine does not support")),
+        }
+    }
 }
 
 /// Descriptor access for the converter.
@@ -693,6 +703,11 @@ fn encode_record<R: JsReader>(
     for f in &ti.desc.fields {
         let name = f.name.as_deref().unwrap_or("");
         if !r.has_field(v, name)? {
+            // An optional field (an app export's `Option<T>` / `#[js(default)]`) may be left out.
+            if f.has(SVL_D_OPTIONAL) {
+                fields.push(svl_value::null());
+                continue;
+            }
             return Err(ConvError::type_(format!("missing field '{name}' in {}", ti.desc.name)));
         }
         let fv = r.field(v, name)?;
@@ -955,5 +970,42 @@ fn decode_at<W: JsWriter>(w: &W, v: &Value, types: &dyn TypeSource, depth: u32) 
             let code = decode_at(w, &e.code, types, depth + 1)?;
             w.native_error(&e.domain, code, &e.message)
         }
+    }
+}
+
+/// Like [`decode`], but shaped by the slot the value was declared with: `SVL_D_BIGINT` integers become
+/// `bigint`s, also inside records and lists (app exports, whose results are typed by their member).
+pub(crate) fn decode_slot<W: JsWriter>(w: &W, v: &Value, slot: &SlotDesc, types: &dyn TypeSource) -> Result<W::V, String> {
+    decode_slot_at(w, v, slot, types, 0)
+}
+
+fn decode_slot_at<W: JsWriter>(w: &W, v: &Value, slot: &SlotDesc, types: &dyn TypeSource, depth: u32) -> Result<W::V, String> {
+    if depth > MAX_DEPTH {
+        return Err("value nested too deeply".into());
+    }
+    if slot.has(SVL_D_BIGINT) {
+        match v {
+            Value::I64(i) => return w.bigint(*i),
+            Value::U64(u) => return w.bigint_u(*u),
+            _ => {}
+        }
+    }
+    match (v, slot.tag) {
+        (Value::Record { ty, fields }, SVL_RECORD) => match types.type_info(*ty) {
+            Some(ti) if ti.desc.fields.len() == fields.len() => {
+                let mut entries = Vec::with_capacity(fields.len());
+                for (f, x) in ti.desc.fields.iter().zip(fields) {
+                    entries.push((f.name.clone().unwrap_or_default(), decode_slot_at(w, x, f, types, depth + 1)?));
+                }
+                w.object(entries)
+            }
+            _ => decode_at(w, v, types, depth),
+        },
+        (Value::List(items), SVL_LIST) if slot.ty != 0 => {
+            let elem = types.type_info(slot.ty).and_then(|t| t.desc.fields.first().cloned()).unwrap_or_else(|| SlotDesc::new(SVL_NULL));
+            let vs = items.iter().map(|x| decode_slot_at(w, x, &elem, types, depth + 1)).collect::<Result<Vec<_>, _>>()?;
+            w.array(vs)
+        }
+        _ => decode_at(w, v, types, depth),
     }
 }

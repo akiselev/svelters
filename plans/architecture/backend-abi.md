@@ -635,6 +635,47 @@ the compared state and treats `changed` as a boundary.
   (REACTIVITY.md §5.4); cheap props are reported and the host's compare drops the echo. They do not set
   `SVL_M_PROPORTIONAL` yet (no AppKit/WinUI fact is proportional today).
 
+### ABI v2.7 additive (G0): non-blocking start and the started hook
+
+Status: G0 (2026-10-21). One nullable member at the end of `svl_backend`; `svl_host` is unchanged.
+
+```c
+/* backend, after observe. NULL = only the blocking `run` is supported. */
+int (*start)(void *self, const svl_host *host);
+```
+
+- **`start(self, host)`** attaches the host and brings the toolkit up (initialises it, creates the
+  application object) **without running the loop**, and returns at once: `0`, or `< 0` with
+  `last_error`. The caller (an embedder, a test harness, a platform that owns `main`) then drives the
+  loop, and the backend calls the host exactly as it would from `run` (checkpoint on `wake`, timers,
+  frames, events). `start(self, NULL)` detaches: no host callback afterwards (queued wakes and timers
+  skip the host); it is `0` when nothing is attached. `run` after `start` stores the same host again.
+- **Started** is the host's notion, not a callback: the toolkit is up at the first host callback the
+  backend delivers from `run`/`start` (checkpoint, frame, post_event, call_sync, prop_changed,
+  on_destroyed, invoke_callback; not release_callback), or when `start` returns if none came during it.
+  `Host::on_started(f)` fires `f` once at that point, before the callback is handled (a callback made
+  while JS runs defers it to the next one), so `f` may load the bundle. Every desktop `run` already
+  checkpoints once when its loop starts; with a hook pending, `Host::run` also calls `wake` just
+  before `run`, for loops that only checkpoint on a pending wake (the log backend).
+- **Two host orders.** Desktop: `load_bundle` then `run` (unchanged). Platforms that own `main`,
+  embedders and kittest-style harnesses: `run_with(|h| h.load_bundle(..))` (blocking) or
+  `start_with(|h| h.load_bundle(..))` (non-blocking; the caller pumps the toolkit and/or calls
+  `Host::checkpoint`/`Host::frame`), then `Host::stop` (also done by `Drop`). `Host::is_started`.
+- **Attach before mount.** On a backend with `start`, `Host::load_bundle` on a host that is not
+  running first calls `start(host)` (once), so callbacks made during the desktop-order mount (a GTK
+  `CustomFilter`/`CustomSorter` calling `invoke_callback` while a model is built, a wake) reach the
+  host; that pre-attach does not count as started. `Drop` detaches.
+- **Backward compatibility:** a NULL `start` means unsupported (`Host::start` errors; the
+  backend-specific `attach_host`/`set_host` hooks keep working); `run` without a hook is unchanged.
+- **Backends:** GTK stores the host pointer (GTK is initialised by `GtkBackend::new`; the caller
+  iterates the default main context), and `wake` re-reads the pointer at dispatch. Qt sets `g.host`
+  and creates the `QApplication` (`ensure_app`), delivering a wake that came before the waker existed.
+  The log backend records the attachment only (no op logged; in start mode its script is not played
+  and the embedder checkpoints). AppKit and WinUI leave it NULL for now (`attach_host`). The iOS and
+  Android backends implement `start` and checkpoint once the platform has brought the UI up
+  (docs/notes/ios-uikit-backend.md §2.2 decision I1, docs/notes/android-backend.md A2); egui
+  embedding uses it as plans/research/EGUI.md §8 D1 describes.
+
 ## ABI v3: value model (M3)
 
 **Status: implemented (S1, S2).** The text below is the original plan; "As implemented" at the end of this section records what was built and the additions made later.

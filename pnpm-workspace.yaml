@@ -3,6 +3,7 @@ packages:
   - "fixtures/*"
   - "bench/*"
   - "tests/*"
+  - "examples/exports/app"
   - "docs/site"
   - "experiments/native-compiler/handwritten"
   - "experiments/native-compiler/compiled"

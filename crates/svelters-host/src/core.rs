@@ -31,6 +31,7 @@ use svelters_abi::{
     svl_id,
 };
 
+mod apps;
 mod asyncs;
 mod callbacks;
 mod ops;
@@ -319,6 +320,10 @@ pub(crate) struct Core {
     /// Depth of native-callback invocations in progress (see `callbacks.rs`).
     cb_depth: Cell<u32>,
     maps: RefCell<SourceMaps>,
+    /// App exports (E0): this host's exported Rust objects.
+    pub(crate) apps: crate::exports::objects::AppObjects,
+    /// Where app-export calls are logged (the op log of a test harness), if anywhere.
+    pub(crate) op_log: RefCell<Option<Rc<dyn Fn(&str)>>>,
 }
 
 /// Held while JS runs. See the module docs on re-entrancy.
@@ -357,6 +362,8 @@ impl Core {
             cb_engine: RefCell::new(None),
             cb_depth: Cell::new(0),
             maps: RefCell::default(),
+            apps: Default::default(),
+            op_log: RefCell::new(None),
         }
     }
 

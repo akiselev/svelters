@@ -891,6 +891,10 @@ impl Resolver for BundleResolver {
         name: &str,
         _attrs: Option<ImportAttributes<'js>>,
     ) -> Res<String> {
+        // Host built-in modules: the app's Rust exports and the object core they import.
+        if name == "svelters:core" || name.starts_with("svelters:app/") {
+            return Ok(name.to_string());
+        }
         if !(name.starts_with("./") || name.starts_with("../")) {
             return Err(rquickjs::Error::new_resolving_message(
                 base,
@@ -931,6 +935,11 @@ impl Loader for BundleLoader {
         name: &str,
         _attrs: Option<ImportAttributes<'js>>,
     ) -> Res<Module<'js, Declared>> {
+        if name.starts_with("svelters:") {
+            let source = crate::exports::builtin_module(name)
+                .ok_or_else(|| rquickjs::Error::new_loading_message(name, "no such module: this binary exports no such svelters:app module"))?;
+            return Module::declare(ctx.clone(), name, source);
+        }
         let path = self
             .root
             .join(name)

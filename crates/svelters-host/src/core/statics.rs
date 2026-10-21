@@ -23,6 +23,17 @@ impl Core {
         E: JsReader + JsWriter<V = <E as JsReader>::V>,
     {
         self.timed(|| {
+            if let Name::Str(s) = kind {
+                if s.starts_with("app:") {
+                    let k = self.op_kind_id(s)?;
+                    return self.app_construct(e, k, props);
+                }
+            }
+            if let Name::Id(k) = kind {
+                if crate::exports::is_app_id(k) {
+                    return self.app_construct(e, k, props);
+                }
+            }
             self.tree_ops_allowed()?;
             if !self.backend.has_construct() {
                 return Err("this backend does not implement construct".to_string().into());
@@ -95,6 +106,14 @@ impl Core {
         E: JsReader + JsWriter<V = <E as JsReader>::V> + crate::convert::JsPromises,
     {
         self.timed(|| {
+            let app = match kind {
+                Name::Str(s) if s.starts_with("app:") => Some(self.op_kind_id(s)?),
+                Name::Id(k) if crate::exports::is_app_id(k) => Some(k),
+                _ => None,
+            };
+            if let Some(k) = app {
+                return self.app_call_static(e, k, method, args);
+            }
             if !self.backend.has_call_static() {
                 return Err("this backend does not implement call_static".to_string().into());
             }
@@ -176,6 +195,10 @@ impl Core {
     /// The qualified native type names of a live handle, most derived first, as far as the backend
     /// names its kinds (`describe(SVL_KIND, 0, kind)`). Empty when the backend does not say.
     pub(crate) fn op_type_chain(&self, h: svl_handle) -> Result<Vec<String>, OpError> {
+        if crate::exports::is_app_handle(h) {
+            let k = self.apps.kind(h).ok_or_else(|| OpError::from(format!("app object #a{} was disposed", h & !crate::exports::APP_HANDLE_BIT)))?;
+            return Ok(crate::exports::schema().kind_name(k).into_iter().collect());
+        }
         let mut k = self.kind_of(h)?;
         let mut out = Vec::new();
         for _ in 0..64 {

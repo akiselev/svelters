@@ -1,0 +1,25 @@
+[package]
+name = "exports-example"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "E0: an app's Rust objects and functions called from Svelte (svelters:app/demo) on GTK"
+
+[lib]
+name = "exports_demo"
+path = "src/lib.rs"
+
+[[bin]]
+name = "exports"
+path = "src/main.rs"
+
+[dependencies]
+svelters = { path = "../../crates/svelters" }
+svelters-abi.workspace = true
+svelters-host.workspace = true
+svelters-gtk.workspace = true
+gtk.workspace = true
+
+[dev-dependencies]
+svelters-backend-log.workspace = true
