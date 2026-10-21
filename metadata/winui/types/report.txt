@@ -1,0 +1,79 @@
+== types by category (all types of the ingested namespaces; winmd: Windows App SDK 2.5.1 + Windows.winmd 0.100)
+namespace                                  record     enum    flags callback   object    model  statics     args interfac  cls-ifc  collect    async      ref  generic   widget internal excluded  unclass    total
+Microsoft.UI                                    3        0        0        1        0        0        2        0        1        5        0        0        0        0        0        0        0        0       12
+Microsoft.UI.Composition                        0       21        1        0       95        5        2        2        7      170        0        0        0        0        0        0        0        0      303
+Microsoft.UI.Dispatching                        0        1        1        1        3        0        0        1        0       10        0        0        0        0        0        0        1        0       18
+Microsoft.UI.Windowing                          0        8        0        0        8        0        0        2        0       28        0        0        0        0        0        0        0        0       46
+Microsoft.UI.Xaml                               6       34        3       15       30        6       11       21        3      143        0        0        0        0        2        0        9        0      283
+Microsoft.UI.Xaml.Data                          1        3        0        2        7        0        1        3       11       22        0        0        0        0        0        0        0        0       50
+Microsoft.UI.Xaml.Documents                     1        2        0        0       15        2        1        1        0       33        0        0        0        0        1        0        0        0       56
+Microsoft.UI.Xaml.Input                         0       10        1       11       12        0        2       25        1       51        0        0        0        0        0        0        0        0      113
+Microsoft.UI.Xaml.Media                         1       14        0        0       48        8        1        4        0      126        0        0        0        0        0        0        2        0      204
+Microsoft.UI.Xaml.Media.Animation               2        6        0        0       79        6        2        0        0      150        0        0        0        0        0        0        0        0      245
+Microsoft.UI.Xaml.Media.Imaging                 0        2        1        1        8        0        2        2        0       24        0        0        0        0        0        0        0        0       40
+Windows.ApplicationModel.DataTransfer           0        3        1        2       19        1        5        6        0       56        0        0        0        0        0        0        0        0       93
+Windows.Data.Json                               0        2        0        0        1        2        1        0        1        8        0        0        0        0        0        0        0        0       15
+Windows.Foundation                              7        2        0        9        5        0        2        0        7       11        0        5        2        0        0        2        0        0       52
+Windows.Foundation.Collections                  0        1        0        2        0        3        0        0        2        0       10        0        0        0        0        0        0        0       18
+Windows.Foundation.Numerics                     8        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        0        8
+Windows.Storage                                 0       11        3        2       24        2        7        0       11       55        0        0        0        0        0        0        0        0      115
+Windows.Storage.FileProperties                  0        4        2        0        7        0        1        0        1        8        0        0        0        0        0        0        0        0       23
+Windows.Storage.Search                          1        6        0        0       10        1        0        0        3       15        0        0        0        0        0        0        0        0       36
+Windows.Storage.Streams                         0        3        1        0       13        0        1        0       11        8        0        0        0        0        0        0        0        0       37
+Windows.UI                                      2        0        0        0        1        0        3        0        0        7        0        0        0        0        0        0        0        0       13
+total                                          32      133       14       46      385       36       44       67       59      930       10        5        2        0        3        2       12        0     1780
+
+== bound scope (roots + signature closure within the scope namespaces + bases), by namespace
+  Microsoft.UI                                2  statics 2
+  Microsoft.UI.Composition                    1  object 1
+  Microsoft.UI.Dispatching                    3  args 1, object 2
+  Microsoft.UI.Xaml                           7  args 2, object 2, statics 3
+  Microsoft.UI.Xaml.Media                    10  model 1, object 9
+  Microsoft.UI.Xaml.Media.Imaging             3  args 1, object 2
+  Windows.ApplicationModel.DataTransfer      12  args 2, model 1, object 8, statics 1
+  Windows.Data.Json                           4  interface 1, model 2, object 1
+  Windows.Foundation                          5  interface 1, object 3, statics 1
+  Windows.Foundation.Collections              8  collection 5, model 3
+  Windows.Storage                            13  interface 3, object 8, statics 2
+  Windows.Storage.FileProperties              7  object 7
+  Windows.Storage.Streams                     7  interface 6, object 1
+  Windows.UI                                  2  statics 2
+  total                                      84  (roots 30, generic instances 5)
+  thread classes (section 4.1): any 63, dispatcher 12, ui 9
+
+== members of bound kinds: bound / blocked (by namespace)
+  Microsoft.UI                             members   143  bound   143 (100%)  blocked    0
+  Microsoft.UI.Composition                 members    80  bound     8 ( 10%)  blocked   72
+  Microsoft.UI.Dispatching                 members    17  bound    15 ( 88%)  blocked    2
+  Microsoft.UI.Xaml                        members    26  bound    22 ( 84%)  blocked    4
+  Microsoft.UI.Xaml.Media                  members    39  bound    35 ( 89%)  blocked    4
+  Microsoft.UI.Xaml.Media.Imaging          members    20  bound    20 (100%)  blocked    0
+  Windows.ApplicationModel.DataTransfer    members   112  bound   102 ( 91%)  blocked   10
+  Windows.Data.Json                        members    82  bound    78 ( 95%)  blocked    4
+  Windows.Foundation                       members    75  bound    53 ( 70%)  blocked   22
+  Windows.Foundation.Collections           members    71  bound    62 ( 87%)  blocked    9
+  Windows.Storage                          members   206  bound   183 ( 88%)  blocked   23
+  Windows.Storage.FileProperties           members    90  bound    78 ( 86%)  blocked   12
+  Windows.Storage.Streams                  members    37  bound    37 (100%)  blocked    0
+  Windows.UI                               members   143  bound   143 (100%)  blocked    0
+  total                                    members  1141  bound   979 ( 85%)  blocked  162
+  excluded by rule: deprecated 3, override 3
+  hidden (DependencyProperty statics; the instance property carries `dp`): 22
+  blocking reasons: out-of-scope 84, array 28, collection-argument 22, transient:Windows.Foundation.Collections.IIterator 13, delegate-parameter 8, static-event 4, record-field:Windows.UI.Xaml.Interop.TypeName.Name 3
+
+== overloads (runtime dispatch by argument count; DefaultOverload keeps the name)
+  JS method names 649, overloaded (by arity) 44, renamed from the Overload attribute 0
+
+== curated set
+  Microsoft.UI.ColorHelper                             statics  any        bound    2 blocked   0
+  Microsoft.UI.Dispatching.DispatcherQueueTimer        object   any        bound    6 blocked   0
+  Microsoft.UI.Xaml.CornerRadiusHelper                 statics  ui         bound    2 blocked   0
+  Microsoft.UI.Xaml.Media.FontFamily                   object   ui         bound    3 blocked   0
+  Microsoft.UI.Xaml.Media.SolidColorBrush              object   dispatcher bound    3 blocked   0
+  Microsoft.UI.Xaml.ThicknessHelper                    statics  ui         bound    2 blocked   0
+  Windows.ApplicationModel.DataTransfer.DataPackage    object   any        bound   16 blocked   3
+  Windows.Data.Json.JsonObject                         model    any        bound   31 blocked   1
+  Windows.Foundation.Collections.PropertySet           model    any        bound    9 blocked   1
+  Windows.Foundation.Uri                               object   any        bound   24 blocked   0
+  Windows.Storage.FileIO                               statics  any        bound   10 blocked   5
+  Windows.Storage.StorageFolder                        object   any        bound   44 blocked  10

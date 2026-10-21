@@ -16,11 +16,15 @@ export const qtDir = path.join(here, 'qt');
 /** Absolute directory of the generated AppKit modules (`svelters:appkit/foundation`, `svelters:appkit/appkit`). */
 export const appkitDir = path.join(here, 'appkit');
 
+/** Absolute directory of the generated WinUI modules (`svelters:winui/windows.foundation`, ...: lower-case namespaces). */
+export const winuiDir = path.join(here, 'winui');
+
 /** `resolve.alias` entries (array form) for every `svelters:<toolkit>/<ns>` module. */
 export function typesAliases() {
   return [
     { find: /^svelters:gtk\/([a-z]+)$/, replacement: path.join(gtkDir, '$1/index.js') },
     { find: /^svelters:qt\/([a-z]+)$/, replacement: path.join(qtDir, '$1/index.js') },
     { find: /^svelters:appkit\/([a-z]+)$/, replacement: path.join(appkitDir, '$1/index.js') },
+    { find: /^svelters:winui\/([a-z.]+)$/, replacement: path.join(winuiDir, '$1/index.js') },
   ];
 }

@@ -1,0 +1,2794 @@
+{
+ "namespace": "Windows.Foundation",
+ "schema": "svelters-winui-types-ingested/v1",
+ "sources": {
+  "windows-app-sdk": {
+   "microsoft.web.webview2": "1.0.3719.77",
+   "microsoft.windowsappsdk.foundation": "2.3.12",
+   "microsoft.windowsappsdk.interactiveexperiences": "2.1.9",
+   "microsoft.windowsappsdk.winui": "2.3.9"
+  },
+  "windows-default": "0.100.0"
+ },
+ "types": {
+  "Windows.Foundation.AsyncActionCompletedHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "delegate",
+   "guid": "a4ed5c81-76c9-40bd-8be6-b1d90fb20ae7",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "asyncInfo",
+      "out": false,
+      "type": "Windows.Foundation.IAsyncAction"
+     },
+     {
+      "name": "asyncStatus",
+      "out": false,
+      "type": "Windows.Foundation.AsyncStatus"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Windows.Foundation.AsyncActionCompletedHandler",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.AsyncActionProgressHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "delegate",
+   "generics": [
+    "TProgress"
+   ],
+   "guid": "6d844858-0cff-4590-ae89-95a5a5c8b4b8",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "asyncInfo",
+      "out": false,
+      "type": "Windows.Foundation.IAsyncActionWithProgress<TProgress>"
+     },
+     {
+      "name": "progressInfo",
+      "out": false,
+      "type": "TProgress"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Windows.Foundation.AsyncActionProgressHandler",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.AsyncActionWithProgressCompletedHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "delegate",
+   "generics": [
+    "TProgress"
+   ],
+   "guid": "9c029f91-cc84-44fd-ac26-0a6c4e555281",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "asyncInfo",
+      "out": false,
+      "type": "Windows.Foundation.IAsyncActionWithProgress<TProgress>"
+     },
+     {
+      "name": "asyncStatus",
+      "out": false,
+      "type": "Windows.Foundation.AsyncStatus"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Windows.Foundation.AsyncActionWithProgressCompletedHandler",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.AsyncOperationCompletedHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "delegate",
+   "generics": [
+    "TResult"
+   ],
+   "guid": "fcdcf02c-e5d8-4478-915a-4d90b74b83a5",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "asyncInfo",
+      "out": false,
+      "type": "Windows.Foundation.IAsyncOperation<TResult>"
+     },
+     {
+      "name": "asyncStatus",
+      "out": false,
+      "type": "Windows.Foundation.AsyncStatus"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Windows.Foundation.AsyncOperationCompletedHandler",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.AsyncOperationProgressHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "delegate",
+   "generics": [
+    "TResult",
+    "TProgress"
+   ],
+   "guid": "55690902-0aab-421a-8778-f8ce5026d758",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "asyncInfo",
+      "out": false,
+      "type": "Windows.Foundation.IAsyncOperationWithProgress<TResult, TProgress>"
+     },
+     {
+      "name": "progressInfo",
+      "out": false,
+      "type": "TProgress"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Windows.Foundation.AsyncOperationProgressHandler",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.AsyncOperationWithProgressCompletedHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "delegate",
+   "generics": [
+    "TResult",
+    "TProgress"
+   ],
+   "guid": "e85df41d-6aa7-46e3-a8e2-f009d840c627",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "asyncInfo",
+      "out": false,
+      "type": "Windows.Foundation.IAsyncOperationWithProgress<TResult, TProgress>"
+     },
+     {
+      "name": "asyncStatus",
+      "out": false,
+      "type": "Windows.Foundation.AsyncStatus"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Windows.Foundation.AsyncOperationWithProgressCompletedHandler",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.AsyncStatus": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Canceled",
+     2
+    ],
+    [
+     "Completed",
+     1
+    ],
+    [
+     "Error",
+     3
+    ],
+    [
+     "Started",
+     0
+    ]
+   ],
+   "name": "Windows.Foundation.AsyncStatus",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Foundation.DateTime": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "UniversalTime",
+     "type": "i64"
+    }
+   ],
+   "name": "Windows.Foundation.DateTime",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.Deferral": {
+   "attributes": {
+    "Activatable": [
+     [
+      "Windows.Foundation.IDeferralFactory",
+      65536,
+      "Windows.Foundation.FoundationContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Foundation.IDeferral",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IClosable",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Foundation.Deferral",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Foundation.DeferralCompletedHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "delegate",
+   "guid": "ed32a372-f3c8-4faa-9cfb-470148da3888",
+   "invoke": {
+    "name": "Invoke",
+    "params": [],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Windows.Foundation.DeferralCompletedHandler",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.EventHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "delegate",
+   "generics": [
+    "T"
+   ],
+   "guid": "9de1c535-6ae1-11e0-84e1-18a905bcc53f",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "sender",
+      "out": false,
+      "type": "object"
+     },
+     {
+      "name": "args",
+      "out": false,
+      "type": "T"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Windows.Foundation.EventHandler",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.EventRegistrationToken": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "Value",
+     "type": "i64"
+    }
+   ],
+   "name": "Windows.Foundation.EventRegistrationToken",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.FoundationContract": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      262144
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [],
+   "name": "Windows.Foundation.FoundationContract",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.GuidHelper": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      458752
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Foundation.IGuidHelperStatics",
+      458752,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [],
+   "name": "Windows.Foundation.GuidHelper",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Foundation.HResult": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "Value",
+     "type": "i32"
+    }
+   ],
+   "name": "Windows.Foundation.HResult",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.IAsyncAction": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "5a648006-843a-4da9-865b-9d26e5dfad7b",
+   "methods": [
+    {
+     "name": "put_Completed",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.AsyncActionCompletedHandler"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Completed",
+     "params": [],
+     "ret": "Windows.Foundation.AsyncActionCompletedHandler",
+     "special": true
+    },
+    {
+     "name": "GetResults",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.Foundation.IAsyncAction",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.IAsyncInfo"
+   ]
+  },
+  "Windows.Foundation.IAsyncActionWithProgress": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "generics": [
+    "TProgress"
+   ],
+   "guid": "1f6db258-e803-48a1-9546-eb7353398884",
+   "methods": [
+    {
+     "name": "put_Progress",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.AsyncActionProgressHandler<TProgress>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Progress",
+     "params": [],
+     "ret": "Windows.Foundation.AsyncActionProgressHandler<TProgress>",
+     "special": true
+    },
+    {
+     "name": "put_Completed",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.AsyncActionWithProgressCompletedHandler<TProgress>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Completed",
+     "params": [],
+     "ret": "Windows.Foundation.AsyncActionWithProgressCompletedHandler<TProgress>",
+     "special": true
+    },
+    {
+     "name": "GetResults",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.Foundation.IAsyncActionWithProgress",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.IAsyncInfo"
+   ]
+  },
+  "Windows.Foundation.IAsyncInfo": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "00000036-0000-0000-c000-000000000046",
+   "methods": [
+    {
+     "name": "get_Id",
+     "params": [],
+     "ret": "u32",
+     "special": true
+    },
+    {
+     "name": "get_Status",
+     "params": [],
+     "ret": "Windows.Foundation.AsyncStatus",
+     "special": true
+    },
+    {
+     "name": "get_ErrorCode",
+     "params": [],
+     "ret": "Windows.Foundation.HResult",
+     "special": true
+    },
+    {
+     "name": "Cancel",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "Close",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.Foundation.IAsyncInfo",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.IAsyncOperation": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "generics": [
+    "TResult"
+   ],
+   "guid": "9fc2b0bb-e446-44e2-aa61-9cab8f636af2",
+   "methods": [
+    {
+     "name": "put_Completed",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.AsyncOperationCompletedHandler<TResult>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Completed",
+     "params": [],
+     "ret": "Windows.Foundation.AsyncOperationCompletedHandler<TResult>",
+     "special": true
+    },
+    {
+     "name": "GetResults",
+     "params": [],
+     "ret": "TResult"
+    }
+   ],
+   "name": "Windows.Foundation.IAsyncOperation",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.IAsyncInfo"
+   ]
+  },
+  "Windows.Foundation.IAsyncOperationWithProgress": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "generics": [
+    "TResult",
+    "TProgress"
+   ],
+   "guid": "b5d036d7-e297-498f-ba60-0289e76e23dd",
+   "methods": [
+    {
+     "name": "put_Progress",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.AsyncOperationProgressHandler<TResult, TProgress>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Progress",
+     "params": [],
+     "ret": "Windows.Foundation.AsyncOperationProgressHandler<TResult, TProgress>",
+     "special": true
+    },
+    {
+     "name": "put_Completed",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.AsyncOperationWithProgressCompletedHandler<TResult, TProgress>"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_Completed",
+     "params": [],
+     "ret": "Windows.Foundation.AsyncOperationWithProgressCompletedHandler<TResult, TProgress>",
+     "special": true
+    },
+    {
+     "name": "GetResults",
+     "params": [],
+     "ret": "TResult"
+    }
+   ],
+   "name": "Windows.Foundation.IAsyncOperationWithProgress",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.IAsyncInfo"
+   ]
+  },
+  "Windows.Foundation.IClosable": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "30d5a829-7fa4-4026-83bb-d75bae4ea99e",
+   "methods": [
+    {
+     "name": "Close",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.Foundation.IClosable",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.IDeferral": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Foundation.Deferral"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "d6269732-3b7f-46a7-b40b-4fdca2a2c693",
+   "methods": [
+    {
+     "name": "Complete",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.Foundation.IDeferral",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.IClosable"
+   ]
+  },
+  "Windows.Foundation.IDeferralFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Foundation.Deferral"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "65a1ecc5-3fb5-4832-8ca9-f061b281d13a",
+   "methods": [
+    {
+     "name": "Create",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.DeferralCompletedHandler"
+      }
+     ],
+     "ret": "Windows.Foundation.Deferral"
+    }
+   ],
+   "name": "Windows.Foundation.IDeferralFactory",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.IGetActivationFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "4edb8ee2-96dd-49a7-94f7-4607ddab8e3c",
+   "methods": [
+    {
+     "name": "GetActivationFactory",
+     "params": [
+      {
+       "name": "activatableClassId",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "object"
+    }
+   ],
+   "name": "Windows.Foundation.IGetActivationFactory",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.IGuidHelperStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      458752
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Foundation.GuidHelper"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "59c7966b-ae52-5283-ad7f-a1b9e9678add",
+   "methods": [
+    {
+     "name": "CreateNewGuid",
+     "params": [],
+     "ret": "System.Guid"
+    },
+    {
+     "name": "get_Empty",
+     "params": [],
+     "ret": "System.Guid",
+     "special": true
+    },
+    {
+     "name": "Equals",
+     "params": [
+      {
+       "name": "target",
+       "out": false,
+       "type": "System.Guid"
+      },
+      {
+       "name": "value",
+       "out": false,
+       "type": "System.Guid"
+      }
+     ],
+     "ret": "bool"
+    }
+   ],
+   "name": "Windows.Foundation.IGuidHelperStatics",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.IMemoryBuffer": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "fbc4dd2a-245b-11e4-af98-689423260cf8",
+   "methods": [
+    {
+     "name": "CreateReference",
+     "params": [],
+     "ret": "Windows.Foundation.IMemoryBufferReference"
+    }
+   ],
+   "name": "Windows.Foundation.IMemoryBuffer",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.IClosable"
+   ]
+  },
+  "Windows.Foundation.IMemoryBufferFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Foundation.MemoryBuffer"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "fbc4dd2b-245b-11e4-af98-689423260cf8",
+   "methods": [
+    {
+     "name": "Create",
+     "params": [
+      {
+       "name": "capacity",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "Windows.Foundation.MemoryBuffer"
+    }
+   ],
+   "name": "Windows.Foundation.IMemoryBufferFactory",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.IMemoryBufferReference": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "fbc4dd29-245b-11e4-af98-689423260cf8",
+   "methods": [
+    {
+     "name": "get_Capacity",
+     "params": [],
+     "ret": "u32",
+     "special": true
+    },
+    {
+     "name": "add_Closed",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Windows.Foundation.IMemoryBufferReference, object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_Closed",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Windows.Foundation.IMemoryBufferReference",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.IClosable"
+   ]
+  },
+  "Windows.Foundation.IPropertyValue": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "4bd682dd-7554-40e9-9a9b-82654ede7e62",
+   "methods": [
+    {
+     "name": "get_Type",
+     "params": [],
+     "ret": "Windows.Foundation.PropertyType",
+     "special": true
+    },
+    {
+     "name": "get_IsNumericScalar",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "GetUInt8",
+     "params": [],
+     "ret": "u8"
+    },
+    {
+     "name": "GetInt16",
+     "params": [],
+     "ret": "i16"
+    },
+    {
+     "name": "GetUInt16",
+     "params": [],
+     "ret": "u16"
+    },
+    {
+     "name": "GetInt32",
+     "params": [],
+     "ret": "i32"
+    },
+    {
+     "name": "GetUInt32",
+     "params": [],
+     "ret": "u32"
+    },
+    {
+     "name": "GetInt64",
+     "params": [],
+     "ret": "i64"
+    },
+    {
+     "name": "GetUInt64",
+     "params": [],
+     "ret": "u64"
+    },
+    {
+     "name": "GetSingle",
+     "params": [],
+     "ret": "f32"
+    },
+    {
+     "name": "GetDouble",
+     "params": [],
+     "ret": "f64"
+    },
+    {
+     "name": "GetChar16",
+     "params": [],
+     "ret": "char16"
+    },
+    {
+     "name": "GetBoolean",
+     "params": [],
+     "ret": "bool"
+    },
+    {
+     "name": "GetString",
+     "params": [],
+     "ret": "string"
+    },
+    {
+     "name": "GetGuid",
+     "params": [],
+     "ret": "System.Guid"
+    },
+    {
+     "name": "GetDateTime",
+     "params": [],
+     "ret": "Windows.Foundation.DateTime"
+    },
+    {
+     "name": "GetTimeSpan",
+     "params": [],
+     "ret": "Windows.Foundation.TimeSpan"
+    },
+    {
+     "name": "GetPoint",
+     "params": [],
+     "ret": "Windows.Foundation.Point"
+    },
+    {
+     "name": "GetSize",
+     "params": [],
+     "ret": "Windows.Foundation.Size"
+    },
+    {
+     "name": "GetRect",
+     "params": [],
+     "ret": "Windows.Foundation.Rect"
+    },
+    {
+     "name": "GetUInt8Array",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "out u8[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetInt16Array",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "out i16[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetUInt16Array",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "out u16[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetInt32Array",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "out i32[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetUInt32Array",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "out u32[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetInt64Array",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "out i64[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetUInt64Array",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "out u64[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetSingleArray",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "out f32[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetDoubleArray",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "out f64[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetChar16Array",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "out char16[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetBooleanArray",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "out bool[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetStringArray",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "out string[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetInspectableArray",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "out object[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetGuidArray",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "out System.Guid[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetDateTimeArray",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "out Windows.Foundation.DateTime[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetTimeSpanArray",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "out Windows.Foundation.TimeSpan[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetPointArray",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "out Windows.Foundation.Point[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetSizeArray",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "out Windows.Foundation.Size[]"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "GetRectArray",
+     "params": [
+      {
+       "name": "value",
+       "out": true,
+       "type": "out Windows.Foundation.Rect[]"
+      }
+     ],
+     "ret": "void"
+    }
+   ],
+   "name": "Windows.Foundation.IPropertyValue",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.IPropertyValueStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Foundation.PropertyValue"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "interface",
+   "guid": "629bdbc8-d932-4ff4-96b9-8d96c5c1e858",
+   "methods": [
+    {
+     "name": "CreateEmpty",
+     "params": [],
+     "ret": "object"
+    },
+    {
+     "name": "CreateUInt8",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "u8"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateInt16",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "i16"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateUInt16",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "u16"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateInt32",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "i32"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateUInt32",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "u32"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateInt64",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "i64"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateUInt64",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "u64"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateSingle",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f32"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateDouble",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateChar16",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "char16"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateBoolean",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateString",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateInspectable",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "object"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateGuid",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "System.Guid"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateDateTime",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.DateTime"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateTimeSpan",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.TimeSpan"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreatePoint",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Point"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateSize",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Size"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateRect",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Rect"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateUInt8Array",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "u8[]"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateInt16Array",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "i16[]"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateUInt16Array",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "u16[]"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateInt32Array",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "i32[]"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateUInt32Array",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "u32[]"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateInt64Array",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "i64[]"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateUInt64Array",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "u64[]"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateSingleArray",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f32[]"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateDoubleArray",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "f64[]"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateChar16Array",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "char16[]"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateBooleanArray",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool[]"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateStringArray",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "string[]"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateInspectableArray",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "object[]"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateGuidArray",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "System.Guid[]"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateDateTimeArray",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.DateTime[]"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateTimeSpanArray",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.TimeSpan[]"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreatePointArray",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Point[]"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateSizeArray",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Size[]"
+      }
+     ],
+     "ret": "object"
+    },
+    {
+     "name": "CreateRectArray",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.Rect[]"
+      }
+     ],
+     "ret": "object"
+    }
+   ],
+   "name": "Windows.Foundation.IPropertyValueStatics",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.IReference": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "generics": [
+    "T"
+   ],
+   "guid": "61c17706-2d65-11e0-9ae8-d48564015472",
+   "methods": [
+    {
+     "name": "get_Value",
+     "params": [],
+     "ret": "T",
+     "special": true
+    }
+   ],
+   "name": "Windows.Foundation.IReference",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.IPropertyValue"
+   ]
+  },
+  "Windows.Foundation.IReferenceArray": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "generics": [
+    "T"
+   ],
+   "guid": "61c17707-2d65-11e0-9ae8-d48564015472",
+   "methods": [
+    {
+     "name": "get_Value",
+     "params": [],
+     "ret": "T[]",
+     "special": true
+    }
+   ],
+   "name": "Windows.Foundation.IReferenceArray",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.IPropertyValue"
+   ]
+  },
+  "Windows.Foundation.IStringable": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "96369f54-8eb6-48f0-abce-c1b211e627c3",
+   "methods": [
+    {
+     "name": "ToString",
+     "params": [],
+     "ret": "string"
+    }
+   ],
+   "name": "Windows.Foundation.IStringable",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.IUriEscapeStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Foundation.Uri"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "c1d432ba-c824-4452-a7fd-512bc3bbe9a1",
+   "methods": [
+    {
+     "name": "UnescapeComponent",
+     "params": [
+      {
+       "name": "toUnescape",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "string"
+    },
+    {
+     "name": "EscapeComponent",
+     "params": [
+      {
+       "name": "toEscape",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "string"
+    }
+   ],
+   "name": "Windows.Foundation.IUriEscapeStatics",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.IUriRuntimeClass": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Foundation.Uri"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "9e365e57-48b2-4160-956f-c7385120bbfc",
+   "methods": [
+    {
+     "name": "get_AbsoluteUri",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_DisplayUri",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Domain",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Extension",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Fragment",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Host",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Password",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Path",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Query",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_QueryParsed",
+     "params": [],
+     "ret": "Windows.Foundation.WwwFormUrlDecoder",
+     "special": true
+    },
+    {
+     "name": "get_RawUri",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_SchemeName",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_UserName",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Port",
+     "params": [],
+     "ret": "i32",
+     "special": true
+    },
+    {
+     "name": "get_Suspicious",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "Equals",
+     "params": [
+      {
+       "name": "pUri",
+       "out": false,
+       "type": "Windows.Foundation.Uri"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "CombineUri",
+     "params": [
+      {
+       "name": "relativeUri",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.Uri"
+    }
+   ],
+   "name": "Windows.Foundation.IUriRuntimeClass",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.IUriRuntimeClassFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Foundation.Uri"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "44a9796f-723e-4fdf-a218-033e75b0c084",
+   "methods": [
+    {
+     "name": "CreateUri",
+     "params": [
+      {
+       "name": "uri",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.Uri"
+    },
+    {
+     "name": "CreateWithRelativeUri",
+     "params": [
+      {
+       "name": "baseUri",
+       "out": false,
+       "type": "string"
+      },
+      {
+       "name": "relativeUri",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.Uri"
+    }
+   ],
+   "name": "Windows.Foundation.IUriRuntimeClassFactory",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.IUriRuntimeClassWithAbsoluteCanonicalUri": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Foundation.Uri"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "758d9661-221c-480f-a339-50656673f46f",
+   "methods": [
+    {
+     "name": "get_AbsoluteCanonicalUri",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_DisplayIri",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.Foundation.IUriRuntimeClassWithAbsoluteCanonicalUri",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.IWwwFormUrlDecoderEntry": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "125e7431-f678-4e8e-b670-20a9b06c512d",
+   "methods": [
+    {
+     "name": "get_Name",
+     "params": [],
+     "ret": "string",
+     "special": true
+    },
+    {
+     "name": "get_Value",
+     "params": [],
+     "ret": "string",
+     "special": true
+    }
+   ],
+   "name": "Windows.Foundation.IWwwFormUrlDecoderEntry",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.IWwwFormUrlDecoderRuntimeClass": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Foundation.WwwFormUrlDecoder"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "d45a0451-f225-4542-9296-0e1df5d254df",
+   "methods": [
+    {
+     "name": "GetFirstValueByName",
+     "params": [
+      {
+       "name": "name",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "string"
+    }
+   ],
+   "name": "Windows.Foundation.IWwwFormUrlDecoderRuntimeClass",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": [
+    "Windows.Foundation.Collections.IIterable<Windows.Foundation.IWwwFormUrlDecoderEntry>",
+    "Windows.Foundation.Collections.IVectorView<Windows.Foundation.IWwwFormUrlDecoderEntry>"
+   ]
+  },
+  "Windows.Foundation.IWwwFormUrlDecoderRuntimeClassFactory": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Windows.Foundation.WwwFormUrlDecoder"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "5b8c6b3d-24ae-41b5-a1bf-f0c3d544845b",
+   "methods": [
+    {
+     "name": "CreateWwwFormUrlDecoder",
+     "params": [
+      {
+       "name": "query",
+       "out": false,
+       "type": "string"
+      }
+     ],
+     "ret": "Windows.Foundation.WwwFormUrlDecoder"
+    }
+   ],
+   "name": "Windows.Foundation.IWwwFormUrlDecoderRuntimeClassFactory",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Windows.Foundation.MemoryBuffer": {
+   "attributes": {
+    "Activatable": [
+     [
+      "Windows.Foundation.IMemoryBufferFactory",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Foundation.IMemoryBuffer",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IClosable",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Foundation.MemoryBuffer",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Foundation.Point": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "X",
+     "type": "f32"
+    },
+    {
+     "name": "Y",
+     "type": "f32"
+    }
+   ],
+   "name": "Windows.Foundation.Point",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.PropertyType": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Empty",
+     0
+    ],
+    [
+     "UInt8",
+     1
+    ],
+    [
+     "Int16",
+     2
+    ],
+    [
+     "UInt16",
+     3
+    ],
+    [
+     "Int32",
+     4
+    ],
+    [
+     "UInt32",
+     5
+    ],
+    [
+     "Int64",
+     6
+    ],
+    [
+     "UInt64",
+     7
+    ],
+    [
+     "Single",
+     8
+    ],
+    [
+     "Double",
+     9
+    ],
+    [
+     "Char16",
+     10
+    ],
+    [
+     "Boolean",
+     11
+    ],
+    [
+     "String",
+     12
+    ],
+    [
+     "Inspectable",
+     13
+    ],
+    [
+     "DateTime",
+     14
+    ],
+    [
+     "TimeSpan",
+     15
+    ],
+    [
+     "Guid",
+     16
+    ],
+    [
+     "Point",
+     17
+    ],
+    [
+     "Size",
+     18
+    ],
+    [
+     "Rect",
+     19
+    ],
+    [
+     "OtherType",
+     20
+    ],
+    [
+     "UInt8Array",
+     1025
+    ],
+    [
+     "Int16Array",
+     1026
+    ],
+    [
+     "UInt16Array",
+     1027
+    ],
+    [
+     "Int32Array",
+     1028
+    ],
+    [
+     "UInt32Array",
+     1029
+    ],
+    [
+     "Int64Array",
+     1030
+    ],
+    [
+     "UInt64Array",
+     1031
+    ],
+    [
+     "SingleArray",
+     1032
+    ],
+    [
+     "DoubleArray",
+     1033
+    ],
+    [
+     "Char16Array",
+     1034
+    ],
+    [
+     "BooleanArray",
+     1035
+    ],
+    [
+     "StringArray",
+     1036
+    ],
+    [
+     "InspectableArray",
+     1037
+    ],
+    [
+     "DateTimeArray",
+     1038
+    ],
+    [
+     "TimeSpanArray",
+     1039
+    ],
+    [
+     "GuidArray",
+     1040
+    ],
+    [
+     "PointArray",
+     1041
+    ],
+    [
+     "SizeArray",
+     1042
+    ],
+    [
+     "RectArray",
+     1043
+    ],
+    [
+     "OtherTypeArray",
+     1044
+    ]
+   ],
+   "name": "Windows.Foundation.PropertyType",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Windows.Foundation.PropertyValue": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Foundation.IPropertyValueStatics",
+      65536,
+      "Windows.Foundation.FoundationContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ],
+    "WebHostHidden": [
+     []
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [],
+   "name": "Windows.Foundation.PropertyValue",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Foundation.Rect": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "X",
+     "type": "f32"
+    },
+    {
+     "name": "Y",
+     "type": "f32"
+    },
+    {
+     "name": "Width",
+     "type": "f32"
+    },
+    {
+     "name": "Height",
+     "type": "f32"
+    }
+   ],
+   "name": "Windows.Foundation.Rect",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.Size": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "Width",
+     "type": "f32"
+    },
+    {
+     "name": "Height",
+     "type": "f32"
+    }
+   ],
+   "name": "Windows.Foundation.Size",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.TimeSpan": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "Duration",
+     "type": "i64"
+    }
+   ],
+   "name": "Windows.Foundation.TimeSpan",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.TypedEventHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.FoundationContract",
+      65536
+     ]
+    ]
+   },
+   "category": "delegate",
+   "generics": [
+    "TSender",
+    "TResult"
+   ],
+   "guid": "9de1c534-6ae1-11e0-84e1-18a905bcc53f",
+   "invoke": {
+    "name": "Invoke",
+    "params": [
+     {
+      "name": "sender",
+      "out": false,
+      "type": "TSender"
+     },
+     {
+      "name": "args",
+      "out": false,
+      "type": "TResult"
+     }
+    ],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Windows.Foundation.TypedEventHandler",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.UniversalApiContract": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      1310720
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [],
+   "name": "Windows.Foundation.UniversalApiContract",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd"
+  },
+  "Windows.Foundation.Uri": {
+   "attributes": {
+    "Activatable": [
+     [
+      "Windows.Foundation.IUriRuntimeClassFactory",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Windows.Foundation.IUriEscapeStatics",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Foundation.IUriRuntimeClass",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IUriRuntimeClassWithAbsoluteCanonicalUri",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.IStringable",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Foundation.Uri",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Foundation.WwwFormUrlDecoder": {
+   "attributes": {
+    "Activatable": [
+     [
+      "Windows.Foundation.IWwwFormUrlDecoderRuntimeClassFactory",
+      65536,
+      "Windows.Foundation.UniversalApiContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Foundation.IWwwFormUrlDecoderRuntimeClass",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IVectorView<Windows.Foundation.IWwwFormUrlDecoderEntry>",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Windows.Foundation.Collections.IIterable<Windows.Foundation.IWwwFormUrlDecoderEntry>",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Foundation.WwwFormUrlDecoder",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Windows.Foundation.WwwFormUrlDecoderEntry": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Windows.Foundation.UniversalApiContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Windows.Foundation.IWwwFormUrlDecoderEntry",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Windows.Foundation.WwwFormUrlDecoderEntry",
+   "namespace": "Windows.Foundation",
+   "origin": "winmd",
+   "sealed": true
+  }
+ }
+}

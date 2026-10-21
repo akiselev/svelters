@@ -1,0 +1,1251 @@
+{
+ "namespace": "Microsoft.UI",
+ "schema": "svelters-winui-types-ingested/v1",
+ "sources": {
+  "windows-app-sdk": {
+   "microsoft.web.webview2": "1.0.3719.77",
+   "microsoft.windowsappsdk.foundation": "2.3.12",
+   "microsoft.windowsappsdk.interactiveexperiences": "2.1.9",
+   "microsoft.windowsappsdk.winui": "2.3.9"
+  },
+  "windows-default": "0.100.0"
+ },
+ "types": {
+  "Microsoft.UI.ClosableNotifierHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65540
+     ]
+    ]
+   },
+   "category": "delegate",
+   "guid": "478cec68-ea8e-52fc-87e2-c819de000f92",
+   "invoke": {
+    "name": "Invoke",
+    "params": [],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Microsoft.UI.ClosableNotifierHandler",
+   "namespace": "Microsoft.UI",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.ColorHelper": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.IColorHelperStatics",
+      65536,
+      "Microsoft.Foundation.WindowsAppSDKContract"
+     ],
+     [
+      "Microsoft.UI.IColorHelperStatics2",
+      65542,
+      "Microsoft.Foundation.WindowsAppSDKContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.IColorHelper",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.ColorHelper",
+   "namespace": "Microsoft.UI",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Colors": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.IColorsStatics",
+      65536,
+      "Microsoft.Foundation.WindowsAppSDKContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.IColors",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Colors",
+   "namespace": "Microsoft.UI",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.DisplayId": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "Value",
+     "type": "u64"
+    }
+   ],
+   "name": "Microsoft.UI.DisplayId",
+   "namespace": "Microsoft.UI",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.IClosableNotifier": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65540
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "2989e93b-ed0f-5e79-90f2-eac592fc6e6a",
+   "methods": [
+    {
+     "name": "get_IsClosed",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "add_Closed",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Microsoft.UI.ClosableNotifierHandler"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_Closed",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_FrameworkClosed",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Microsoft.UI.ClosableNotifierHandler"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_FrameworkClosed",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.IClosableNotifier",
+   "namespace": "Microsoft.UI",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.IColorHelper": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.ColorHelper"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "3adddccd-3949-585b-a566-ccb8350dd221",
+   "methods": [],
+   "name": "Microsoft.UI.IColorHelper",
+   "namespace": "Microsoft.UI",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.IColorHelperStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.ColorHelper"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "1d1d85a1-eb63-538a-84f0-019210bc406b",
+   "methods": [
+    {
+     "name": "FromArgb",
+     "params": [
+      {
+       "name": "a",
+       "out": false,
+       "type": "u8"
+      },
+      {
+       "name": "r",
+       "out": false,
+       "type": "u8"
+      },
+      {
+       "name": "g",
+       "out": false,
+       "type": "u8"
+      },
+      {
+       "name": "b",
+       "out": false,
+       "type": "u8"
+      }
+     ],
+     "ret": "Windows.UI.Color"
+    }
+   ],
+   "name": "Microsoft.UI.IColorHelperStatics",
+   "namespace": "Microsoft.UI",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.IColorHelperStatics2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65542
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.ColorHelper"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "982a2d93-0ec4-56b7-9c20-0b5c77949066",
+   "methods": [
+    {
+     "name": "ToDisplayName",
+     "params": [
+      {
+       "name": "color",
+       "out": false,
+       "type": "Windows.UI.Color"
+      }
+     ],
+     "ret": "string"
+    }
+   ],
+   "name": "Microsoft.UI.IColorHelperStatics2",
+   "namespace": "Microsoft.UI",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.IColors": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Colors"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "8cf15863-8411-5afd-946c-328e04da2f2f",
+   "methods": [],
+   "name": "Microsoft.UI.IColors",
+   "namespace": "Microsoft.UI",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.IColorsStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Colors"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "8620a5b0-015a-57ac-a3f3-895d0b1269ae",
+   "methods": [
+    {
+     "name": "get_AliceBlue",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_AntiqueWhite",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Aqua",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Aquamarine",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Azure",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Beige",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Bisque",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Black",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_BlanchedAlmond",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Blue",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_BlueViolet",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Brown",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_BurlyWood",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_CadetBlue",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Chartreuse",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Chocolate",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Coral",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_CornflowerBlue",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Cornsilk",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Crimson",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Cyan",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DarkBlue",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DarkCyan",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DarkGoldenrod",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DarkGray",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DarkGreen",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DarkKhaki",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DarkMagenta",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DarkOliveGreen",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DarkOrange",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DarkOrchid",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DarkRed",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DarkSalmon",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DarkSeaGreen",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DarkSlateBlue",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DarkSlateGray",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DarkTurquoise",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DarkViolet",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DeepPink",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DeepSkyBlue",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DimGray",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_DodgerBlue",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Firebrick",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_FloralWhite",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_ForestGreen",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Fuchsia",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Gainsboro",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_GhostWhite",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Gold",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Goldenrod",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Gray",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Green",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_GreenYellow",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Honeydew",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_HotPink",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_IndianRed",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Indigo",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Ivory",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Khaki",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Lavender",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_LavenderBlush",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_LawnGreen",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_LemonChiffon",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_LightBlue",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_LightCoral",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_LightCyan",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_LightGoldenrodYellow",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_LightGreen",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_LightGray",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_LightPink",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_LightSalmon",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_LightSeaGreen",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_LightSkyBlue",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_LightSlateGray",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_LightSteelBlue",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_LightYellow",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Lime",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_LimeGreen",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Linen",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Magenta",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Maroon",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_MediumAquamarine",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_MediumBlue",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_MediumOrchid",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_MediumPurple",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_MediumSeaGreen",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_MediumSlateBlue",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_MediumSpringGreen",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_MediumTurquoise",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_MediumVioletRed",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_MidnightBlue",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_MintCream",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_MistyRose",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Moccasin",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_NavajoWhite",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Navy",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_OldLace",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Olive",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_OliveDrab",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Orange",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_OrangeRed",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Orchid",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_PaleGoldenrod",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_PaleGreen",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_PaleTurquoise",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_PaleVioletRed",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_PapayaWhip",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_PeachPuff",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Peru",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Pink",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Plum",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_PowderBlue",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Purple",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Red",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_RosyBrown",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_RoyalBlue",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_SaddleBrown",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Salmon",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_SandyBrown",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_SeaGreen",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_SeaShell",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Sienna",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Silver",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_SkyBlue",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_SlateBlue",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_SlateGray",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Snow",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_SpringGreen",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_SteelBlue",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Tan",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Teal",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Thistle",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Tomato",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Transparent",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Turquoise",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Violet",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Wheat",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_White",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_WhiteSmoke",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_Yellow",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    },
+    {
+     "name": "get_YellowGreen",
+     "params": [],
+     "ret": "Windows.UI.Color",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.IColorsStatics",
+   "namespace": "Microsoft.UI",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.IconId": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "Value",
+     "type": "u64"
+    }
+   ],
+   "name": "Microsoft.UI.IconId",
+   "namespace": "Microsoft.UI",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.WindowId": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ]
+   },
+   "category": "struct",
+   "fields": [
+    {
+     "name": "Value",
+     "type": "u64"
+    }
+   ],
+   "name": "Microsoft.UI.WindowId",
+   "namespace": "Microsoft.UI",
+   "origin": "winmd"
+  }
+ }
+}

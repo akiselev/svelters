@@ -5,7 +5,7 @@
 //! ```
 //!
 //! Without `--selftest` it opens the window and runs until the user closes it. `--selftest`
-//! (counter-win fixture only) drives the app through the real toolkit: clicks the button three
+//! (counter-win fixture; `--fixture winui-types` has its own checks, N4) drives the app through the real toolkit: clicks the button three
 //! times through UI Automation, types a name, moves the slider, checks the box, then reads the
 //! native widgets back and prints a JSON report (also written to `--report`). Exit code 0 = pass.
 //!
@@ -133,14 +133,22 @@ mod win {
         }
         let load_ms = start.elapsed().as_secs_f64() * 1e3;
         let report: Rc<RefCell<Json>> = Rc::new(RefCell::new(json!({ "ok": false, "failures": ["selftest did not finish"] })));
+        let types = args.fixture == "winui-types";
         if args.selftest {
             let (b, h, r) = (driver.clone(), host.clone(), report.clone());
             let steps = move || -> Result<(), String> {
-                let root = *h.toplevels().first().ok_or("no window")?;
+                let root = *h.toplevel_handles().first().ok_or("no window")?;
                 let mut all = Vec::new();
                 walk(&b, root, &mut all);
                 let find = |tag: &str, n: usize| all.iter().filter(|(_, t)| *t == tag).nth(n).map(|(h, _)| *h).ok_or(format!("no <{tag}> #{n}"));
                 let button = find("button", 0)?;
+                if types {
+                    // fixtures/winui-types: one click inserts into the PropertySet and recolors the brush.
+                    b.invoke(button)?;
+                    let tree: Vec<Json> = all.iter().map(|(h, t)| json!([h, t])).collect();
+                    *r.borrow_mut() = json!({ "tree": tree });
+                    return Ok(());
+                }
                 for _ in 0..3 {
                     b.invoke(button)?;
                 }
@@ -155,25 +163,43 @@ mod win {
             let check = move || {
                 let mut failures: Vec<String> = Vec::new();
                 let mut all = Vec::new();
-                if let Some(root) = h2.toplevels().first() {
+                if let Some(root) = h2.toplevel_handles().first() {
                     walk(&b2, *root, &mut all);
                 }
                 let find = |tag: &str, n: usize| all.iter().filter(|(_, t)| *t == tag).nth(n).map(|(h, _)| *h);
                 let read = |tag: &str, n: usize, p: &str| find(tag, n).map(|h| text(prop(&b2, h, p))).unwrap_or(Json::Null);
-                let got = json!({
-                    "count": read("text-block", 0, "text"),
-                    "hello": read("text-block", 1, "text"),
-                    "button": read("button", 0, "content"),
-                    "check": read("check-box", 0, "content"),
-                    "title": read("window", 0, "title"),
-                });
-                let want = json!({
-                    "count": "Count: 3",
-                    "hello": "Hello Ada",
-                    "button": "Increment",
-                    "check": "Level 42, agree: yes",
-                    "title": "Counter",
-                });
+                let (got, want) = if types {
+                    // fixtures/winui-types (N4): non-GUI WinRT types used from Svelte.
+                    let got = json!({
+                        "uri": read("text-block", 0, "text"),
+                        "map": read("text-block", 1, "text"),
+                        "brush": read("text-block", 2, "text"),
+                        "async": read("text-block", 3, "text"),
+                    });
+                    let want = json!({
+                        "uri": "example.com:8080/docs",
+                        "map": "size 3, changes 3",
+                        "brush": "brush 0,0,255 @ 0.5",
+                        "async": "pasted copied",
+                    });
+                    (got, want)
+                } else {
+                    let got = json!({
+                        "count": read("text-block", 0, "text"),
+                        "hello": read("text-block", 1, "text"),
+                        "button": read("button", 0, "content"),
+                        "check": read("check-box", 0, "content"),
+                        "title": read("window", 0, "title"),
+                    });
+                    let want = json!({
+                        "count": "Count: 3",
+                        "hello": "Hello Ada",
+                        "button": "Increment",
+                        "check": "Level 42, agree: yes",
+                        "title": "Counter",
+                    });
+                    (got, want)
+                };
                 for (k, v) in want.as_object().unwrap() {
                     if got[k] != *v {
                         failures.push(format!("{k}: expected {v}, got {}", got[k]));

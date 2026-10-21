@@ -4,6 +4,10 @@
 //! winmd-tool dump <Namespace.Class>... -- <winmd files or dirs>...
 //!     JSON on stdout: each class with its base chain, plus the closure of what their members
 //!     refer to (event delegates, event-args classes, enums, structs). Read by ingest.py.
+//! winmd-tool types <Namespace>... -- <winmd files or dirs>...
+//!     JSON on stdout: every type of the given namespaces at the ABI level (interfaces with their
+//!     methods in vtable order, GUIDs, generics, struct fields, delegate signatures), plus what they
+//!     mention outside them. Read by types_winui_ingest.py (N4 non-GUI types).
 //! winmd-tool bindgen --out <file.rs> --filter-file <filter.txt> -- <winmd files or dirs>...
 //!     windows-bindgen over the given metadata (plus the bundled Windows SDK metadata), restricted
 //!     to the member-level filter written by gen_backend.py.
@@ -352,6 +356,202 @@ fn dump(idx: &Index, roots: &[String]) -> Json {
     json!({"schema": "svelters-winmd-dump/v0", "types": out})
 }
 
+// ---- `types`: every type of whole namespaces, at the ABI level (N4 non-GUI types) ----
+
+/// `GuidAttribute(u32, u16, u16, u8 x 8)` as the usual `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx` text.
+fn guid_of<'a, T: HasAttributes<'a>>(row: &T) -> Option<String> {
+    let a = row.find_attribute("GuidAttribute")?;
+    let v: Vec<u64> = a
+        .value()
+        .iter()
+        .map(|(_, v)| match v {
+            Value::U32(x) => *x as u64,
+            Value::U16(x) => *x as u64,
+            Value::U8(x) => *x as u64,
+            Value::I32(x) => *x as u32 as u64,
+            Value::I16(x) => *x as u16 as u64,
+            Value::I8(x) => *x as u8 as u64,
+            _ => 0,
+        })
+        .collect();
+    if v.len() != 11 {
+        return None;
+    }
+    Some(format!(
+        "{:08x}-{:04x}-{:04x}-{:02x}{:02x}-{:02x}{:02x}{:02x}{:02x}{:02x}{:02x}",
+        v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9], v[10]
+    ))
+}
+
+/// The attributes the classifier reads, as `{Name: [[values]...]}` (others are dropped to keep the dump small).
+fn type_attrs<'a, T: HasAttributes<'a>>(row: &T) -> Map<String, Json> {
+    const KEEP: &[&str] = &[
+        "Activatable", "Static", "Composable", "Deprecated", "Threading", "MarshalingBehavior", "ContractVersion", "ExclusiveTo",
+        "Overload", "DefaultOverload", "Experimental", "WebHostHidden", "Flags", "Version", "Protected", "Overridable", "Default",
+        "NoException", "RemoteAsync", "AllowForWeb", "Muse", "VariantAttribute", "Variant", "LengthIs", "RangeAttribute",
+    ];
+    attrs(row).into_iter().filter(|(k, _)| KEEP.contains(&k.as_str())).collect()
+}
+
+fn method_abi(m: &MethodDef, generics: &[Type]) -> Json {
+    let sig = m.signature(generics);
+    let rows: Vec<MethodParam> = m.params().filter(|p| p.sequence() > 0).collect();
+    let ps: Vec<Json> = sig
+        .types
+        .iter()
+        .enumerate()
+        .map(|(i, t)| {
+            let row = rows.get(i);
+            let out = row.is_some_and(|p| p.flags().contains(ParamAttributes::Out));
+            json!({"name": row.map(|p| p.name().to_string()).unwrap_or_default(), "type": tn(t), "out": out})
+        })
+        .collect();
+    let special = m.flags().contains(MethodAttributes::SpecialName);
+    let mut j = json!({"name": m.name(), "params": ps, "ret": tn(&sig.return_type)});
+    if special {
+        j["special"] = json!(true);
+    }
+    let a = type_attrs(m);
+    if !a.is_empty() {
+        j["attributes"] = Json::Object(a);
+    }
+    j
+}
+
+fn abi_type_json(idx: &Index, def: TypeDef) -> Option<Json> {
+    let full = format!("{}.{}", def.namespace(), trim_tick(def.name()));
+    let gens: Vec<Type> = def.generic_params().enumerate().map(|(i, g)| Type::Generic(g.name().to_string(), i as u16)).collect();
+    let gen_names: Vec<String> = def.generic_params().map(|g| g.name().to_string()).collect();
+    let _ = idx;
+    let mut j = match def.category() {
+        TypeCategory::Class => {
+            let ifaces: Vec<Json> = def
+                .interface_impls()
+                .map(|ii| {
+                    let ia = attrs(&ii);
+                    json!({"name": tn(&ii.interface(&gens)), "default": ia.contains_key("Default"),
+                           "overridable": ia.contains_key("Overridable"), "protected": ia.contains_key("Protected")})
+                })
+                .collect();
+            json!({"category": "class", "extends": def.extends().map(|e| format!("{}.{}", e.namespace(), e.name())),
+                   "sealed": def.flags().contains(TypeAttributes::Sealed), "interfaces": ifaces})
+        }
+        TypeCategory::Interface => {
+            let req: Vec<String> = def.interface_impls().map(|ii| tn(&ii.interface(&gens))).collect();
+            let methods: Vec<Json> = def.methods().map(|m| method_abi(&m, &gens)).collect();
+            json!({"category": "interface", "requires": req, "methods": methods})
+        }
+        TypeCategory::Struct => {
+            let fields: Vec<Json> = def.fields().map(|f| json!({"name": f.name(), "type": tn(&f.ty())})).collect();
+            json!({"category": "struct", "fields": fields})
+        }
+        TypeCategory::Enum => {
+            let mut j = enum_json(def);
+            j["underlying"] = json!(def.underlying_type().map(|t| tn(&t)).unwrap_or_else(|| "i32".into()));
+            j
+        }
+        TypeCategory::Delegate => {
+            let invoke = def.methods().find(|m| m.name() == "Invoke").map(|m| method_abi(&m, &gens));
+            json!({"category": "delegate", "invoke": invoke})
+        }
+        TypeCategory::Attribute => return None,
+    };
+    j["name"] = json!(full);
+    j["namespace"] = json!(def.namespace());
+    if !gen_names.is_empty() {
+        j["generics"] = json!(gen_names);
+    }
+    if let Some(g) = guid_of(&def) {
+        j["guid"] = json!(g);
+    }
+    let a = type_attrs(&def);
+    if !a.is_empty() {
+        j["attributes"] = Json::Object(a);
+    }
+    Some(j)
+}
+
+/// Every type of the given namespaces (exact names), plus every type outside them that their
+/// signatures, bases and required interfaces mention (`"outside": true`, so the classifier can
+/// name what blocks a member), transitively for bases and required interfaces only.
+fn dump_types(idx: &Index, namespaces: &[String]) -> Json {
+    let mut out = BTreeMap::<String, Json>::new();
+    let mut queue: VecDeque<String> = VecDeque::new();
+    for (ns, name, _) in idx.iter() {
+        if namespaces.iter().any(|n| n == ns) {
+            queue.push_back(format!("{ns}.{}", trim_tick(name)));
+        }
+    }
+    let mut seen = BTreeSet::new();
+    while let Some(full) = queue.pop_front() {
+        let base = full.split('<').next().unwrap_or(&full).to_string();
+        if !seen.insert(base.clone()) || base.starts_with("System.") {
+            continue;
+        }
+        let Some(def) = find(idx, &base) else {
+            out.insert(base.clone(), json!({"category": "unresolved", "name": base}));
+            continue;
+        };
+        let Some(mut j) = abi_type_json(idx, def) else { continue };
+        let inside = namespaces.iter().any(|n| n == def.namespace());
+        if !inside {
+            j["outside"] = json!(true);
+        }
+        let gens: Vec<Type> = def.generic_params().enumerate().map(|(i, g)| Type::Generic(g.name().to_string(), i as u16)).collect();
+        let mut refs = Vec::new();
+        match def.category() {
+            TypeCategory::Class => {
+                if let Some(e) = j["extends"].as_str() {
+                    refs.push(e.to_string());
+                }
+                for ii in def.interface_impls() {
+                    named(&ii.interface(&gens), &mut refs);
+                }
+                for at in def.attributes() {
+                    for (_, v) in at.value() {
+                        if let Value::TypeName(t) = v {
+                            refs.push(format!("{}.{}", t.namespace, t.name));
+                        }
+                    }
+                }
+            }
+            TypeCategory::Interface => {
+                for ii in def.interface_impls() {
+                    named(&ii.interface(&gens), &mut refs);
+                }
+                if inside {
+                    for m in def.methods() {
+                        let sig = m.signature(&gens);
+                        for t in &sig.types {
+                            named(t, &mut refs);
+                        }
+                        named(&sig.return_type, &mut refs);
+                    }
+                }
+            }
+            TypeCategory::Struct => {
+                for f in def.fields() {
+                    named(&f.ty(), &mut refs);
+                }
+            }
+            TypeCategory::Delegate => {
+                if let Some(m) = def.methods().find(|m| m.name() == "Invoke") {
+                    let sig = m.signature(&gens);
+                    for t in &sig.types {
+                        named(t, &mut refs);
+                    }
+                }
+            }
+            _ => {}
+        }
+        for r in refs {
+            queue.push_back(r);
+        }
+        out.insert(base, j);
+    }
+    json!({"schema": "svelters-winmd-types/v1", "namespaces": namespaces, "types": out})
+}
+
 /// Input paths with `@list.txt` expanded (one path per line, as `fetch.py --winmds` prints) and
 /// directories expanded to their `.winmd` files, sorted.
 fn inputs_paths(paths: &[String]) -> Vec<String> {
@@ -491,6 +691,11 @@ fn main() {
             let idx = Index::new(inputs(winmds));
             let j = dump(&idx, head);
             println!("{}", serde_json::to_string_pretty(&j).unwrap());
+        }
+        "types" => {
+            let idx = Index::new(inputs(winmds));
+            let j = dump_types(&idx, head);
+            println!("{}", serde_json::to_string(&j).unwrap());
         }
         "bindgen" => {
             let mut a: Vec<String> = vec!["--in".into(), "default".into()];

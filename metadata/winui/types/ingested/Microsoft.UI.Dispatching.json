@@ -1,0 +1,842 @@
+{
+ "namespace": "Microsoft.UI.Dispatching",
+ "schema": "svelters-winui-types-ingested/v1",
+ "sources": {
+  "windows-app-sdk": {
+   "microsoft.web.webview2": "1.0.3719.77",
+   "microsoft.windowsappsdk.foundation": "2.3.12",
+   "microsoft.windowsappsdk.interactiveexperiences": "2.1.9",
+   "microsoft.windowsappsdk.winui": "2.3.9"
+  },
+  "windows-default": "0.100.0"
+ },
+ "types": {
+  "Microsoft.UI.Dispatching.DispatcherExitDeferral": {
+   "attributes": {
+    "Activatable": [
+     [
+      65540,
+      "Microsoft.Foundation.WindowsAppSDKContract"
+     ]
+    ],
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65540
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Dispatching.IDispatcherExitDeferral",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Dispatching.DispatcherExitDeferral",
+   "namespace": "Microsoft.UI.Dispatching",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Dispatching.DispatcherQueue": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Dispatching.IDispatcherQueueStatics",
+      65536,
+      "Microsoft.Foundation.WindowsAppSDKContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Dispatching.IDispatcherQueue",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Microsoft.UI.Dispatching.IDispatcherQueue2",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Microsoft.UI.Dispatching.IDispatcherQueue3",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Dispatching.DispatcherQueue",
+   "namespace": "Microsoft.UI.Dispatching",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Dispatching.DispatcherQueueController": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ],
+    "Static": [
+     [
+      "Microsoft.UI.Dispatching.IDispatcherQueueControllerStatics",
+      65536,
+      "Microsoft.Foundation.WindowsAppSDKContract"
+     ]
+    ],
+    "Threading": [
+     [
+      "ThreadingModel.3"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Dispatching.IDispatcherQueueController",
+     "overridable": false,
+     "protected": false
+    },
+    {
+     "default": false,
+     "name": "Microsoft.UI.Dispatching.IDispatcherQueueController2",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Dispatching.DispatcherQueueController",
+   "namespace": "Microsoft.UI.Dispatching",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Dispatching.DispatcherQueueHandler": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ]
+   },
+   "category": "delegate",
+   "guid": "2e0872a9-4e29-5f14-b688-fb96d5f9d5f8",
+   "invoke": {
+    "name": "Invoke",
+    "params": [],
+    "ret": "void",
+    "special": true
+   },
+   "name": "Microsoft.UI.Dispatching.DispatcherQueueHandler",
+   "namespace": "Microsoft.UI.Dispatching",
+   "origin": "winmd"
+  },
+  "Microsoft.UI.Dispatching.DispatcherQueuePriority": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ]
+   },
+   "category": "enum",
+   "flags": false,
+   "members": [
+    [
+     "Low",
+     -10
+    ],
+    [
+     "Normal",
+     0
+    ],
+    [
+     "High",
+     10
+    ]
+   ],
+   "name": "Microsoft.UI.Dispatching.DispatcherQueuePriority",
+   "namespace": "Microsoft.UI.Dispatching",
+   "origin": "winmd",
+   "underlying": "i32"
+  },
+  "Microsoft.UI.Dispatching.DispatcherQueueShutdownStartingEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Dispatching.IDispatcherQueueShutdownStartingEventArgs",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Dispatching.DispatcherQueueShutdownStartingEventArgs",
+   "namespace": "Microsoft.UI.Dispatching",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Dispatching.DispatcherQueueTimer": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "MarshalingBehavior": [
+     [
+      "MarshalingType.2"
+     ]
+    ]
+   },
+   "category": "class",
+   "extends": "System.Object",
+   "interfaces": [
+    {
+     "default": true,
+     "name": "Microsoft.UI.Dispatching.IDispatcherQueueTimer",
+     "overridable": false,
+     "protected": false
+    }
+   ],
+   "name": "Microsoft.UI.Dispatching.DispatcherQueueTimer",
+   "namespace": "Microsoft.UI.Dispatching",
+   "origin": "winmd",
+   "sealed": true
+  },
+  "Microsoft.UI.Dispatching.DispatcherRunOptions": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65540
+     ]
+    ],
+    "Flags": [
+     []
+    ]
+   },
+   "category": "enum",
+   "flags": true,
+   "members": [
+    [
+     "None",
+     0
+    ],
+    [
+     "ContinueOnQuit",
+     1
+    ],
+    [
+     "QuitOnlyLocalLoop",
+     2
+    ]
+   ],
+   "name": "Microsoft.UI.Dispatching.DispatcherRunOptions",
+   "namespace": "Microsoft.UI.Dispatching",
+   "origin": "winmd",
+   "underlying": "u32"
+  },
+  "Microsoft.UI.Dispatching.IDispatcherExitDeferral": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65540
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Dispatching.DispatcherExitDeferral"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "910b5aac-3310-563e-8418-f3005579729e",
+   "methods": [
+    {
+     "name": "Complete",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Dispatching.IDispatcherExitDeferral",
+   "namespace": "Microsoft.UI.Dispatching",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Dispatching.IDispatcherQueue": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Dispatching.DispatcherQueue"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "f6ebf8fa-be1c-5bf6-a467-73da28738ae8",
+   "methods": [
+    {
+     "name": "CreateTimer",
+     "params": [],
+     "ret": "Microsoft.UI.Dispatching.DispatcherQueueTimer"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "TryEnqueue"
+       ]
+      ]
+     },
+     "name": "TryEnqueue",
+     "params": [
+      {
+       "name": "callback",
+       "out": false,
+       "type": "Microsoft.UI.Dispatching.DispatcherQueueHandler"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "TryEnqueueWithPriority"
+       ]
+      ]
+     },
+     "name": "TryEnqueue",
+     "params": [
+      {
+       "name": "priority",
+       "out": false,
+       "type": "Microsoft.UI.Dispatching.DispatcherQueuePriority"
+      },
+      {
+       "name": "callback",
+       "out": false,
+       "type": "Microsoft.UI.Dispatching.DispatcherQueueHandler"
+      }
+     ],
+     "ret": "bool"
+    },
+    {
+     "name": "add_ShutdownStarting",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Dispatching.DispatcherQueue, Microsoft.UI.Dispatching.DispatcherQueueShutdownStartingEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_ShutdownStarting",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_ShutdownCompleted",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Dispatching.DispatcherQueue, object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_ShutdownCompleted",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Dispatching.IDispatcherQueue",
+   "namespace": "Microsoft.UI.Dispatching",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Dispatching.IDispatcherQueue2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Dispatching.DispatcherQueue"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "0cf48751-f1ac-59b8-ba52-6ce7a1444d6f",
+   "methods": [
+    {
+     "name": "get_HasThreadAccess",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Dispatching.IDispatcherQueue2",
+   "namespace": "Microsoft.UI.Dispatching",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Dispatching.IDispatcherQueue3": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65540
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Dispatching.DispatcherQueue"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "14a7a175-5c27-5a35-b079-21960cf764a8",
+   "methods": [
+    {
+     "name": "EnqueueEventLoopExit",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "EnsureSystemDispatcherQueue",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "RunEventLoop"
+       ]
+      ]
+     },
+     "name": "RunEventLoop",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "attributes": {
+      "Overload": [
+       [
+        "RunEventLoopWithOptions"
+       ]
+      ]
+     },
+     "name": "RunEventLoop",
+     "params": [
+      {
+       "name": "options",
+       "out": false,
+       "type": "Microsoft.UI.Dispatching.DispatcherRunOptions"
+      },
+      {
+       "name": "deferral",
+       "out": false,
+       "type": "Microsoft.UI.Dispatching.DispatcherExitDeferral"
+      }
+     ],
+     "ret": "void"
+    },
+    {
+     "name": "add_FrameworkShutdownStarting",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Dispatching.DispatcherQueue, Microsoft.UI.Dispatching.DispatcherQueueShutdownStartingEventArgs>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_FrameworkShutdownStarting",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "add_FrameworkShutdownCompleted",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Dispatching.DispatcherQueue, object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_FrameworkShutdownCompleted",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Dispatching.IDispatcherQueue3",
+   "namespace": "Microsoft.UI.Dispatching",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Dispatching.IDispatcherQueueController": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Dispatching.DispatcherQueueController"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "bce8178d-2183-584c-9e5b-f9366f6ae484",
+   "methods": [
+    {
+     "name": "get_DispatcherQueue",
+     "params": [],
+     "ret": "Microsoft.UI.Dispatching.DispatcherQueue",
+     "special": true
+    },
+    {
+     "attributes": {
+      "RemoteAsync": [
+       []
+      ]
+     },
+     "name": "ShutdownQueueAsync",
+     "params": [],
+     "ret": "Windows.Foundation.IAsyncAction"
+    }
+   ],
+   "name": "Microsoft.UI.Dispatching.IDispatcherQueueController",
+   "namespace": "Microsoft.UI.Dispatching",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Dispatching.IDispatcherQueueController2": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65540
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Dispatching.DispatcherQueueController"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "4c68ee2a-1cb1-5591-a3a2-9b590b8f8b9a",
+   "methods": [
+    {
+     "name": "ShutdownQueue",
+     "params": [],
+     "ret": "void"
+    }
+   ],
+   "name": "Microsoft.UI.Dispatching.IDispatcherQueueController2",
+   "namespace": "Microsoft.UI.Dispatching",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Dispatching.IDispatcherQueueControllerStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Dispatching.DispatcherQueueController"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "f18d6145-722b-593d-bcf2-a61e713f0037",
+   "methods": [
+    {
+     "name": "CreateOnDedicatedThread",
+     "params": [],
+     "ret": "Microsoft.UI.Dispatching.DispatcherQueueController"
+    },
+    {
+     "name": "CreateOnCurrentThread",
+     "params": [],
+     "ret": "Microsoft.UI.Dispatching.DispatcherQueueController"
+    }
+   ],
+   "name": "Microsoft.UI.Dispatching.IDispatcherQueueControllerStatics",
+   "namespace": "Microsoft.UI.Dispatching",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Dispatching.IDispatcherQueueShutdownStartingEventArgs": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Dispatching.DispatcherQueueShutdownStartingEventArgs"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "32519be5-072b-5660-a70e-8835c9b8157d",
+   "methods": [
+    {
+     "name": "GetDeferral",
+     "params": [],
+     "ret": "Windows.Foundation.Deferral"
+    }
+   ],
+   "name": "Microsoft.UI.Dispatching.IDispatcherQueueShutdownStartingEventArgs",
+   "namespace": "Microsoft.UI.Dispatching",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Dispatching.IDispatcherQueueStatics": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Dispatching.DispatcherQueue"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "cd3382ea-a455-5124-b63a-ca40d34ca23c",
+   "methods": [
+    {
+     "name": "GetForCurrentThread",
+     "params": [],
+     "ret": "Microsoft.UI.Dispatching.DispatcherQueue"
+    }
+   ],
+   "name": "Microsoft.UI.Dispatching.IDispatcherQueueStatics",
+   "namespace": "Microsoft.UI.Dispatching",
+   "origin": "winmd",
+   "requires": []
+  },
+  "Microsoft.UI.Dispatching.IDispatcherQueueTimer": {
+   "attributes": {
+    "ContractVersion": [
+     [
+      "Microsoft.Foundation.WindowsAppSDKContract",
+      65536
+     ]
+    ],
+    "ExclusiveTo": [
+     [
+      "Microsoft.UI.Dispatching.DispatcherQueueTimer"
+     ]
+    ]
+   },
+   "category": "interface",
+   "guid": "ad4d63fd-88fe-541f-ac11-bf2dc1ed2ce5",
+   "methods": [
+    {
+     "name": "get_Interval",
+     "params": [],
+     "ret": "Windows.Foundation.TimeSpan",
+     "special": true
+    },
+    {
+     "name": "put_Interval",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "Windows.Foundation.TimeSpan"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "get_IsRunning",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "get_IsRepeating",
+     "params": [],
+     "ret": "bool",
+     "special": true
+    },
+    {
+     "name": "put_IsRepeating",
+     "params": [
+      {
+       "name": "value",
+       "out": false,
+       "type": "bool"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    },
+    {
+     "name": "Start",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "Stop",
+     "params": [],
+     "ret": "void"
+    },
+    {
+     "name": "add_Tick",
+     "params": [
+      {
+       "name": "handler",
+       "out": false,
+       "type": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Dispatching.DispatcherQueueTimer, object>"
+      }
+     ],
+     "ret": "Windows.Foundation.EventRegistrationToken",
+     "special": true
+    },
+    {
+     "name": "remove_Tick",
+     "params": [
+      {
+       "name": "token",
+       "out": false,
+       "type": "Windows.Foundation.EventRegistrationToken"
+      }
+     ],
+     "ret": "void",
+     "special": true
+    }
+   ],
+   "name": "Microsoft.UI.Dispatching.IDispatcherQueueTimer",
+   "namespace": "Microsoft.UI.Dispatching",
+   "origin": "winmd",
+   "requires": []
+  }
+ }
+}

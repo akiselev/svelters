@@ -22,6 +22,8 @@ struct Record {
     reply: Option<Value>,
     /// ABI v2.6 `prop_changed` calls, in order.
     changed: Vec<(u64, u32)>,
+    /// `invoke_callback` calls (async completions, N4), in order.
+    invoked: Vec<(u64, Vec<Value>)>,
 }
 
 struct Recorder(Rc<RefCell<Record>>);
@@ -42,6 +44,10 @@ impl HostCallbacks for Recorder {
     fn frame(&self) {}
     fn prop_changed(&self, h: svl_handle, prop: svl_id) {
         self.0.borrow_mut().changed.push((h, prop));
+    }
+    fn invoke_callback(&self, callback: u64, args: &[Value]) -> StrResult<Value> {
+        self.0.borrow_mut().invoked.push((callback, args.to_vec()));
+        Ok(Value::Null)
     }
 }
 
@@ -223,6 +229,249 @@ impl Harness {
     pub fn gone(&self, h: u64) -> Option<u32> {
         self.s.record.borrow().gone.iter().find(|(g, _)| *g == h).map(|g| g.1)
     }
+}
+
+// ---- non-GUI types (N4) ----------------------------------------------------------------------------------------
+
+static NEXT_CALLBACK: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1 << 40);
+
+impl Harness {
+    /// The kind id of a native type name (`Windows.Foundation.Uri`); panics when unbound.
+    pub fn kind(&self, name: &str) -> u32 {
+        let k = self.s.backend.resolve(NameKind::Kind, 0, name);
+        assert!(k != 0, "unknown type {name}");
+        k
+    }
+
+    fn keep(&mut self, v: &Value) {
+        if let Value::Handle(h) = v
+            && !self.created.contains(h)
+        {
+            self.created.push(*h);
+        }
+    }
+
+    /// `construct(kind, props)`: the default constructor, then each prop (ABI v2.5).
+    pub fn construct(&mut self, name: &str, props: &[(&str, Value)]) -> Result<u64, String> {
+        let k = self.kind(name);
+        let ids: Vec<u32> = props.iter().map(|(p, _)| self.s.backend.resolve(NameKind::Prop, k, p)).collect();
+        if let Some(i) = ids.iter().position(|id| *id == 0) {
+            return Err(format!("{name} has no prop {:?}", props[i].0));
+        }
+        let vals: Vec<Value> = props.iter().map(|(_, v)| v.clone()).collect();
+        let v = self.s.backend.construct(k, &ids, &vals)?;
+        self.keep(&v);
+        match v {
+            Value::Handle(h) => Ok(h),
+            other => Err(format!("construct {name}: {other:?}")),
+        }
+    }
+
+    /// `call_static(kind, method, args)`; handles in the result are destroyed with the harness.
+    pub fn call_static(&mut self, name: &str, method: &str, args: &[Value]) -> Result<Value, String> {
+        let k = self.kind(name);
+        let m = self.s.backend.resolve(NameKind::Method, k, method);
+        if m == 0 {
+            return Err(format!("{name} has no static {method:?}"));
+        }
+        let v = self.s.backend.call_static(k, m, args)?;
+        self.keep(&v);
+        Ok(v)
+    }
+
+    /// A constructor with arguments (`call_static(kind, "new", args)`).
+    pub fn new_object(&mut self, name: &str, args: &[Value]) -> Result<u64, String> {
+        match self.call_static(name, "new", args)? {
+            Value::Handle(h) => Ok(h),
+            other => Err(format!("new {name}: {other:?}")),
+        }
+    }
+
+    /// `call` that keeps returned handles for cleanup.
+    pub fn call_keep(&mut self, h: u64, method: &str, args: &[Value]) -> Result<Value, String> {
+        let v = self.call(h, method, args)?;
+        self.keep(&v);
+        Ok(v)
+    }
+
+    /// The descriptor of a member of a kind (`what`: method, prop or signal), if it resolves.
+    pub fn describe_member(&self, kind: u32, what: NameKind, name: &str) -> Option<MemberDesc> {
+        let id = self.s.backend.resolve(what, kind, name);
+        if id == 0 {
+            return None;
+        }
+        self.s.backend.describe(what, kind, id)
+    }
+
+    /// `describe(SVL_KIND, 0, kind)`: (qualified name, parent kind id).
+    pub fn describe_kind(&self, kind: u32) -> Option<(String, u32)> {
+        self.s.backend.describe(NameKind::Kind, 0, kind).map(|d| (d.name, d.ret.ty))
+    }
+
+    pub fn info(&self, h: u64) -> Result<svl_handle_info, String> {
+        self.s.backend.handle_info(h)
+    }
+
+    /// Live handles of the backend (elements and type objects): the lifetime tests' baseline.
+    pub fn live_handles(&self) -> usize {
+        self.s.backend.inner().handles.borrow().len()
+    }
+
+    pub fn destroy(&mut self, h: u64) {
+        self.created.retain(|c| *c != h);
+        self.s.backend.destroy(h);
+    }
+
+    fn start(&mut self, recv: Result<u64, &str>, method: &str, args: &[Value]) -> Result<u64, String> {
+        let (k, id) = match recv {
+            Ok(h) => {
+                let k = self.kind_of(h);
+                (k, self.s.backend.resolve(NameKind::Method, k, method))
+            }
+            Err(name) => {
+                let k = self.kind(name);
+                (k, self.s.backend.resolve(NameKind::Method, k, method))
+            }
+        };
+        if id == 0 {
+            return Err(format!("unknown method {method}"));
+        }
+        let desc = self.s.backend.describe(NameKind::Method, k, id).ok_or("no descriptor")?;
+        if desc.flags & SVL_M_ASYNC == 0 {
+            return Err(format!("{method} is not async"));
+        }
+        let done = desc.params.last().filter(|p| p.tag == SVL_CALLBACK).ok_or("no completion slot")?.ty;
+        let cb = NEXT_CALLBACK.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        let mut vals = args.to_vec();
+        vals.push(Value::Callback { id: cb, ty: done });
+        let r = match recv {
+            Ok(h) => self.s.backend.call(h, id, &vals)?,
+            Err(_) => self.s.backend.call_static(k, id, &vals)?,
+        };
+        if let Value::Error(e) = r {
+            return Err(format!("{method}: {e:?}"));
+        }
+        Ok(cb)
+    }
+
+    /// Starts an async method (`SVL_M_ASYNC`) of a handle; the completion is recorded under the returned id.
+    pub fn call_async(&mut self, h: u64, method: &str, args: &[Value]) -> Result<u64, String> {
+        self.start(Ok(h), method, args)
+    }
+
+    /// Starts an async static.
+    pub fn call_static_async(&mut self, name: &str, method: &str, args: &[Value]) -> Result<u64, String> {
+        self.start(Err(name), method, args)
+    }
+
+    /// Pumps until the completion `cb` arrives (or `ms` pass): its value (a handle in it is kept for cleanup).
+    pub fn wait(&mut self, cb: u64, ms: u64) -> Option<Value> {
+        let end = std::time::Instant::now() + std::time::Duration::from_millis(ms);
+        loop {
+            let found = {
+                let mut r = self.s.record.borrow_mut();
+                let i = r.invoked.iter().position(|(id, _)| *id == cb);
+                i.map(|i| r.invoked.remove(i).1.into_iter().next().unwrap_or(Value::Null))
+            };
+            if let Some(v) = found {
+                self.keep(&v);
+                return Some(v);
+            }
+            if std::time::Instant::now() > end {
+                return None;
+            }
+            self.pump(10);
+        }
+    }
+
+    /// Starts and awaits an async member: `Ok(value)`, or `Err` for a rejection or a timeout.
+    pub fn await_call(&mut self, h: u64, method: &str, args: &[Value]) -> Result<Value, String> {
+        let cb = self.call_async(h, method, args)?;
+        match self.wait(cb, 10_000) {
+            Some(Value::Error(e)) => Err(format!("{method} rejected: {e:?}")),
+            Some(v) => Ok(v),
+            None => Err(format!("{method}: no completion in 10 s")),
+        }
+    }
+
+    pub fn await_static(&mut self, name: &str, method: &str, args: &[Value]) -> Result<Value, String> {
+        let cb = self.call_static_async(name, method, args)?;
+        match self.wait(cb, 10_000) {
+            Some(Value::Error(e)) => Err(format!("{name}.{method} rejected: {e:?}")),
+            Some(v) => Ok(v),
+            None => Err(format!("{name}.{method}: no completion in 10 s")),
+        }
+    }
+
+    pub fn cancel(&self, cb: u64) -> bool {
+        self.s.backend.cancel(cb)
+    }
+
+    /// Events of `h` since the harness was made, by event name: their argument lists.
+    pub fn event_args(&self, h: u64, event: &str) -> Vec<Vec<Value>> {
+        let id = self.id(NameKind::Signal, h, event);
+        self.s.record.borrow().events.iter().filter(|(eh, ev, _)| *eh == h && ev & SVL_SIGNAL_ID_MASK == id).map(|e| e.2.clone()).collect()
+    }
+
+    /// `prop_changed` calls for (h, prop name) since the last take.
+    pub fn take_changed_named(&self, h: u64, prop: &str) -> usize {
+        let id = self.id(NameKind::Prop, h, prop);
+        self.take_changed(h, id)
+    }
+
+    /// A fresh temporary directory (removed at process exit is not attempted: CI runners are discarded).
+    pub fn temp_dir(tag: &str) -> String {
+        let n = NEXT_CALLBACK.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        let p = std::env::temp_dir().join(format!("svelters-n4-{tag}-{}-{n}", std::process::id()));
+        std::fs::create_dir_all(&p).expect("temp dir");
+        p.display().to_string()
+    }
+}
+
+impl Harness {
+    /// Section 4.1 rule 3: an object whose DispatcherQueue belongs to another thread is refused at minting. Makes a
+    /// `Microsoft.UI.Composition.Compositor` on a second thread with its own dispatcher queue, then asks the
+    /// backend for its handle here. Returns the minting result.
+    pub fn mint_foreign_compositor(&mut self) -> Result<u64, String> {
+        use crate::bindings::Microsoft::UI::Dispatching::DispatcherQueueController;
+        use crate::bindings::Windows::Win32::{RO_INIT_SINGLETHREADED, RoInitialize};
+        use windows_core::Interface;
+        struct Raw(usize);
+        unsafe impl Send for Raw {}
+        let (tx, rx) = std::sync::mpsc::channel::<Result<Raw, String>>();
+        let (stop_tx, stop_rx) = std::sync::mpsc::channel::<()>();
+        let worker = std::thread::spawn(move || {
+            let r = (|| -> Result<Raw, String> {
+                unsafe { RoInitialize(RO_INIT_SINGLETHREADED) }.ok().map_err(crate::conv::err)?;
+                let controller = DispatcherQueueController::CreateOnCurrentThread().map_err(crate::conv::err)?;
+                let f = crate::types::rt::factory("Microsoft.UI.Composition.Compositor", &crate::types::rt::iid(activation_iid()))
+                    .map_err(|e| crate::types::rt::err_text(&e))?;
+                let mut out: *mut std::ffi::c_void = std::ptr::null_mut();
+                unsafe { crate::types::rt::vcall(&f, 6, &[crate::types::invoke::Word::ptr(&mut out)]) }.map_err(|e| crate::types::rt::err_text(&e))?;
+                std::mem::forget(controller);
+                Ok(Raw(out as usize))
+            })();
+            let _ = tx.send(r);
+            let _ = stop_rx.recv();
+        });
+        let raw = rx.recv().map_err(|e| e.to_string())??;
+        // SAFETY: an owned IInspectable of the Compositor (agile), handed over by the worker.
+        let obj = unsafe { windows_core::IUnknown::from_raw(raw.0 as *mut std::ffi::c_void) };
+        let r = crate::types::ops::mint(self.s.backend.inner(), obj.clone(), 0);
+        if let Ok(h) = r {
+            self.created.push(h);
+        }
+        drop(obj);
+        let _ = stop_tx.send(());
+        let _ = worker.join();
+        r
+    }
+}
+
+/// Index of IActivationFactory in the IID table.
+fn activation_iid() -> u16 {
+    let want = 0x00000035_0000_0000_c000_000000000046u128;
+    crate::types::tables::IIDS.iter().position(|g| *g == want).expect("IActivationFactory in IIDS") as u16
 }
 
 impl Drop for Harness {

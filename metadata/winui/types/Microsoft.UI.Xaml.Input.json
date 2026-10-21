@@ -1,0 +1,349 @@
+{
+ "enums": {},
+ "generic_kinds": {},
+ "js_module": "svelters:winui/microsoft.ui.xaml.input",
+ "namespace": "Microsoft.UI.Xaml.Input",
+ "schema": "svelters-winui-types/v1",
+ "structs": {},
+ "types": {
+  "Microsoft.UI.Xaml.Input.AccessKeyDisplayDismissedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.AccessKeyDisplayRequestedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.AccessKeyInvokedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.AccessKeyManager": {
+   "category": "statics"
+  },
+  "Microsoft.UI.Xaml.Input.CanExecuteRequestedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.CharacterReceivedRoutedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.ContextRequestedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.DoubleTappedEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.Input.DoubleTappedRoutedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.ExecuteRequestedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.FindNextElementOptions": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Input.FocusInputDeviceKind": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Input.FocusManager": {
+   "category": "statics"
+  },
+  "Microsoft.UI.Xaml.Input.FocusManagerGotFocusEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.FocusManagerLostFocusEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.FocusMovementResult": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Input.FocusNavigationDirection": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Input.GettingFocusEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.HoldingEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.Input.HoldingRoutedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.IAccessKeyDisplayDismissedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IAccessKeyDisplayRequestedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IAccessKeyInvokedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IAccessKeyManager": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IAccessKeyManagerStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IAccessKeyManagerStatics2": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.ICanExecuteRequestedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.ICharacterReceivedRoutedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.ICommand": {
+   "category": "interface"
+  },
+  "Microsoft.UI.Xaml.Input.IContextRequestedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IDoubleTappedRoutedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IExecuteRequestedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IFindNextElementOptions": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IFocusManager": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IFocusManagerGotFocusEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IFocusManagerLostFocusEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IFocusManagerStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IFocusMovementResult": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IGettingFocusEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IHoldingRoutedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IInertiaExpansionBehavior": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IInertiaRotationBehavior": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IInertiaTranslationBehavior": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IInputScope": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IInputScopeName": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IInputScopeNameFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IKeyRoutedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IKeyboardAccelerator": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IKeyboardAcceleratorFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IKeyboardAcceleratorInvokedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IKeyboardAcceleratorStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.ILosingFocusEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IManipulationCompletedRoutedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IManipulationDeltaRoutedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IManipulationInertiaStartingRoutedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IManipulationPivot": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IManipulationPivotFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IManipulationStartedRoutedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IManipulationStartedRoutedEventArgsFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IManipulationStartingRoutedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.INoFocusCandidateFoundEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IPointer": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IPointerRoutedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IProcessKeyboardAcceleratorEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IRightTappedRoutedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IStandardUICommand": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IStandardUICommandFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IStandardUICommandStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.ITappedRoutedEventArgs": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IXamlUICommand": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IXamlUICommandFactory": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.IXamlUICommandStatics": {
+   "category": "class-interface"
+  },
+  "Microsoft.UI.Xaml.Input.InertiaExpansionBehavior": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Input.InertiaRotationBehavior": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Input.InertiaTranslationBehavior": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Input.InputScope": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Input.InputScopeName": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Input.InputScopeNameValue": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Input.KeyEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.Input.KeyRoutedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.KeyTipPlacementMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Input.KeyboardAccelerator": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Input.KeyboardAcceleratorInvokedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.KeyboardAcceleratorPlacementMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Input.KeyboardNavigationMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Input.LosingFocusEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationCompletedEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationCompletedRoutedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationDeltaEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationDeltaRoutedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationInertiaStartingRoutedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationModes": {
+   "category": "flags"
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationPivot": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationStartedEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationStartedRoutedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationStartingEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.Input.ManipulationStartingRoutedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.NoFocusCandidateFoundEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.Pointer": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Input.PointerEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.Input.PointerRoutedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.ProcessKeyboardAcceleratorEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.RightTappedEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.Input.RightTappedRoutedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.StandardUICommand": {
+   "category": "object"
+  },
+  "Microsoft.UI.Xaml.Input.StandardUICommandKind": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Input.TappedEventHandler": {
+   "category": "callback"
+  },
+  "Microsoft.UI.Xaml.Input.TappedRoutedEventArgs": {
+   "category": "args"
+  },
+  "Microsoft.UI.Xaml.Input.XYFocusKeyboardNavigationMode": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategy": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Input.XYFocusNavigationStrategyOverride": {
+   "category": "enum"
+  },
+  "Microsoft.UI.Xaml.Input.XamlUICommand": {
+   "category": "object"
+  }
+ }
+}

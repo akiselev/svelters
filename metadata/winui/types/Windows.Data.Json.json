@@ -1,0 +1,1716 @@
+{
+ "enums": {
+  "Windows.Data.Json.JsonValueType": {
+   "flags": false,
+   "members": [
+    [
+     "null",
+     0
+    ],
+    [
+     "boolean",
+     1
+    ],
+    [
+     "number",
+     2
+    ],
+    [
+     "string",
+     3
+    ],
+    [
+     "array",
+     4
+    ],
+    [
+     "object",
+     5
+    ]
+   ],
+   "native": [
+    "Null",
+    "Boolean",
+    "Number",
+    "String",
+    "Array",
+    "Object"
+   ],
+   "unsigned": false,
+   "used": true
+  }
+ },
+ "generic_kinds": {},
+ "js_module": "svelters:winui/windows.data.json",
+ "namespace": "Windows.Data.Json",
+ "schema": "svelters-winui-types/v1",
+ "structs": {},
+ "types": {
+  "Windows.Data.Json.IJsonArray": {
+   "category": "class-interface"
+  },
+  "Windows.Data.Json.IJsonArrayStatics": {
+   "category": "class-interface"
+  },
+  "Windows.Data.Json.IJsonErrorStatics2": {
+   "category": "class-interface"
+  },
+  "Windows.Data.Json.IJsonObject": {
+   "category": "class-interface"
+  },
+  "Windows.Data.Json.IJsonObjectStatics": {
+   "category": "class-interface"
+  },
+  "Windows.Data.Json.IJsonObjectWithDefaultValues": {
+   "category": "class-interface"
+  },
+  "Windows.Data.Json.IJsonValue": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "interface",
+   "constructors": [],
+   "curated": false,
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Data.Json.IJsonValue",
+   "hidden": [],
+   "iid": "a3219ecb-f0b3-4dcd-beee-19d48cd3ed1e",
+   "implements": [],
+   "js_module": "svelters:winui/windows.data.json",
+   "kind": "interface",
+   "lifetime": "shared",
+   "methods": {
+    "getArray": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetArray",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonArray"
+      },
+      "ret_native": "Windows.Data.Json.JsonArray",
+      "slot": 11
+     }
+    ],
+    "getBoolean": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetBoolean",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 10
+     }
+    ],
+    "getNumber": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetNumber",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "float",
+       "t": "f64"
+      },
+      "ret_native": "f64",
+      "slot": 9
+     }
+    ],
+    "getObject": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetObject",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonObject"
+      },
+      "ret_native": "Windows.Data.Json.JsonObject",
+      "slot": 12
+     }
+    ],
+    "getString": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetString",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 8
+     }
+    ],
+    "stringify": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "Stringify",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 7
+     }
+    ]
+   },
+   "name": "IJsonValue",
+   "namespace": "Windows.Data.Json",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "slot": 6
+     },
+     "name": "valueType",
+     "native": "ValueType",
+     "set": null,
+     "slot": {
+      "k": "enum",
+      "t": "Windows.Data.Json.JsonValueType"
+     },
+     "type": "Windows.Data.Json.JsonValueType"
+    }
+   ],
+   "refs": [
+    "Windows.Data.Json.JsonArray",
+    "Windows.Data.Json.JsonObject",
+    "Windows.Data.Json.JsonValueType"
+   ],
+   "root": false,
+   "statics": {},
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Data.Json.IJsonValueStatics": {
+   "category": "class-interface"
+  },
+  "Windows.Data.Json.IJsonValueStatics2": {
+   "category": "class-interface"
+  },
+  "Windows.Data.Json.JsonArray": {
+   "abstract": false,
+   "blocked": {
+    "First/0": "transient:Windows.Foundation.Collections.IIterator",
+    "GetMany/2": "array",
+    "ReplaceAll/1": "array"
+   },
+   "bound": true,
+   "category": "model",
+   "constructors": [
+    {
+     "composable": false,
+     "iface": null,
+     "params": [],
+     "slot": 6
+    }
+   ],
+   "curated": false,
+   "default_interface": "Windows.Data.Json.IJsonArray",
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Data.Json.JsonArray",
+   "hidden": [],
+   "iid": "08c1ddb6-0cbd-4a9a-b5d3-2f852dc37e81",
+   "implements": [
+    "Windows.Data.Json.IJsonValue"
+   ],
+   "js_module": "svelters:winui/windows.data.json",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "append": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<Windows.Data.Json.IJsonValue>",
+      "native": "Append",
+      "outs": [],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "interface": true,
+         "k": "object",
+         "t": "Windows.Data.Json.IJsonValue"
+        },
+        "type": "Windows.Data.Json.IJsonValue"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 13
+     }
+    ],
+    "clear": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<Windows.Data.Json.IJsonValue>",
+      "native": "Clear",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 15
+     }
+    ],
+    "getArray": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetArray",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonArray"
+      },
+      "ret_native": "Windows.Data.Json.JsonArray",
+      "slot": 11
+     }
+    ],
+    "getArrayAt": [
+     {
+      "iface": "Windows.Data.Json.IJsonArray",
+      "native": "GetArrayAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonArray"
+      },
+      "ret_native": "Windows.Data.Json.JsonArray",
+      "slot": 7
+     }
+    ],
+    "getAt": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<Windows.Data.Json.IJsonValue>",
+      "native": "GetAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       }
+      ],
+      "ret": {
+       "interface": true,
+       "k": "object",
+       "t": "Windows.Data.Json.IJsonValue"
+      },
+      "ret_native": "Windows.Data.Json.IJsonValue",
+      "slot": 6
+     }
+    ],
+    "getBoolean": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetBoolean",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 10
+     }
+    ],
+    "getBooleanAt": [
+     {
+      "iface": "Windows.Data.Json.IJsonArray",
+      "native": "GetBooleanAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 10
+     }
+    ],
+    "getNumber": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetNumber",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "float",
+       "t": "f64"
+      },
+      "ret_native": "f64",
+      "slot": 9
+     }
+    ],
+    "getNumberAt": [
+     {
+      "iface": "Windows.Data.Json.IJsonArray",
+      "native": "GetNumberAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       }
+      ],
+      "ret": {
+       "k": "float",
+       "t": "f64"
+      },
+      "ret_native": "f64",
+      "slot": 9
+     }
+    ],
+    "getObject": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetObject",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonObject"
+      },
+      "ret_native": "Windows.Data.Json.JsonObject",
+      "slot": 12
+     }
+    ],
+    "getObjectAt": [
+     {
+      "iface": "Windows.Data.Json.IJsonArray",
+      "native": "GetObjectAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonObject"
+      },
+      "ret_native": "Windows.Data.Json.JsonObject",
+      "slot": 6
+     }
+    ],
+    "getString": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetString",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 8
+     }
+    ],
+    "getStringAt": [
+     {
+      "iface": "Windows.Data.Json.IJsonArray",
+      "native": "GetStringAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       }
+      ],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 8
+     }
+    ],
+    "getView": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<Windows.Data.Json.IJsonValue>",
+      "native": "GetView",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "list",
+       "of": {
+        "interface": true,
+        "k": "object",
+        "t": "Windows.Data.Json.IJsonValue"
+       },
+       "t": "Windows.Foundation.Collections.IVectorView<Windows.Data.Json.IJsonValue>"
+      },
+      "ret_native": "Windows.Foundation.Collections.IVectorView<Windows.Data.Json.IJsonValue>",
+      "slot": 8
+     }
+    ],
+    "indexOf": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<Windows.Data.Json.IJsonValue>",
+      "native": "IndexOf",
+      "outs": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       }
+      ],
+      "params": [
+       {
+        "name": "value",
+        "slot": {
+         "interface": true,
+         "k": "object",
+         "t": "Windows.Data.Json.IJsonValue"
+        },
+        "type": "Windows.Data.Json.IJsonValue"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 9
+     }
+    ],
+    "insertAt": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<Windows.Data.Json.IJsonValue>",
+      "native": "InsertAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       },
+       {
+        "name": "value",
+        "slot": {
+         "interface": true,
+         "k": "object",
+         "t": "Windows.Data.Json.IJsonValue"
+        },
+        "type": "Windows.Data.Json.IJsonValue"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 11
+     }
+    ],
+    "removeAt": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<Windows.Data.Json.IJsonValue>",
+      "native": "RemoveAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 12
+     }
+    ],
+    "removeAtEnd": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<Windows.Data.Json.IJsonValue>",
+      "native": "RemoveAtEnd",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 14
+     }
+    ],
+    "setAt": [
+     {
+      "iface": "Windows.Foundation.Collections.IVector<Windows.Data.Json.IJsonValue>",
+      "native": "SetAt",
+      "outs": [],
+      "params": [
+       {
+        "name": "index",
+        "slot": {
+         "k": "int",
+         "t": "u32"
+        },
+        "type": "u32"
+       },
+       {
+        "name": "value",
+        "slot": {
+         "interface": true,
+         "k": "object",
+         "t": "Windows.Data.Json.IJsonValue"
+        },
+        "type": "Windows.Data.Json.IJsonValue"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 10
+     }
+    ],
+    "stringify": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "Stringify",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 7
+     }
+    ],
+    "toString": [
+     {
+      "iface": "Windows.Foundation.IStringable",
+      "native": "ToString",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 6
+     }
+    ]
+   },
+   "name": "JsonArray",
+   "namespace": "Windows.Data.Json",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.Collections.IVector<Windows.Data.Json.IJsonValue>",
+      "slot": 7
+     },
+     "name": "size",
+     "native": "Size",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "slot": 6
+     },
+     "name": "valueType",
+     "native": "ValueType",
+     "set": null,
+     "slot": {
+      "k": "enum",
+      "t": "Windows.Data.Json.JsonValueType"
+     },
+     "type": "Windows.Data.Json.JsonValueType"
+    }
+   ],
+   "refs": [
+    "Windows.Data.Json.IJsonValue",
+    "Windows.Data.Json.JsonObject",
+    "Windows.Data.Json.JsonValueType"
+   ],
+   "root": true,
+   "statics": {
+    "parse": [
+     {
+      "iface": "Windows.Data.Json.IJsonArrayStatics",
+      "native": "Parse",
+      "outs": [],
+      "params": [
+       {
+        "name": "input",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonArray"
+      },
+      "ret_native": "Windows.Data.Json.JsonArray",
+      "slot": 6
+     }
+    ],
+    "tryParse": [
+     {
+      "iface": "Windows.Data.Json.IJsonArrayStatics",
+      "native": "TryParse",
+      "outs": [
+       {
+        "name": "result",
+        "slot": {
+         "k": "object",
+         "t": "Windows.Data.Json.JsonArray"
+        },
+        "type": "Windows.Data.Json.JsonArray"
+       }
+      ],
+      "params": [
+       {
+        "name": "input",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 7
+     }
+    ]
+   },
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Data.Json.JsonError": {
+   "category": "statics"
+  },
+  "Windows.Data.Json.JsonErrorStatus": {
+   "category": "enum"
+  },
+  "Windows.Data.Json.JsonObject": {
+   "abstract": false,
+   "blocked": {
+    "First/0": "transient:Windows.Foundation.Collections.IIterator"
+   },
+   "bound": true,
+   "category": "model",
+   "constructors": [
+    {
+     "composable": false,
+     "iface": null,
+     "params": [],
+     "slot": 6
+    }
+   ],
+   "curated": true,
+   "default_interface": "Windows.Data.Json.IJsonObject",
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Data.Json.JsonObject",
+   "hidden": [],
+   "iid": "064e24dd-29c2-4f83-9ac1-9ee11578beb3",
+   "implements": [
+    "Windows.Data.Json.IJsonValue"
+   ],
+   "js_module": "svelters:winui/windows.data.json",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "clear": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, Windows.Data.Json.IJsonValue>",
+      "native": "Clear",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 12
+     }
+    ],
+    "getArray": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetArray",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonArray"
+      },
+      "ret_native": "Windows.Data.Json.JsonArray",
+      "slot": 11
+     }
+    ],
+    "getBoolean": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetBoolean",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 10
+     }
+    ],
+    "getNamedArray": [
+     {
+      "iface": "Windows.Data.Json.IJsonObject",
+      "native": "GetNamedArray",
+      "outs": [],
+      "params": [
+       {
+        "name": "name",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonArray"
+      },
+      "ret_native": "Windows.Data.Json.JsonArray",
+      "slot": 9
+     },
+     {
+      "iface": "Windows.Data.Json.IJsonObjectWithDefaultValues",
+      "native": "GetNamedArray",
+      "outs": [],
+      "params": [
+       {
+        "name": "name",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       },
+       {
+        "name": "defaultValue",
+        "slot": {
+         "k": "object",
+         "t": "Windows.Data.Json.JsonArray"
+        },
+        "type": "Windows.Data.Json.JsonArray"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonArray"
+      },
+      "ret_native": "Windows.Data.Json.JsonArray",
+      "slot": 9
+     }
+    ],
+    "getNamedBoolean": [
+     {
+      "iface": "Windows.Data.Json.IJsonObject",
+      "native": "GetNamedBoolean",
+      "outs": [],
+      "params": [
+       {
+        "name": "name",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 12
+     },
+     {
+      "iface": "Windows.Data.Json.IJsonObjectWithDefaultValues",
+      "native": "GetNamedBoolean",
+      "outs": [],
+      "params": [
+       {
+        "name": "name",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       },
+       {
+        "name": "defaultValue",
+        "slot": {
+         "k": "bool"
+        },
+        "type": "bool"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 11
+     }
+    ],
+    "getNamedNumber": [
+     {
+      "iface": "Windows.Data.Json.IJsonObject",
+      "native": "GetNamedNumber",
+      "outs": [],
+      "params": [
+       {
+        "name": "name",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "float",
+       "t": "f64"
+      },
+      "ret_native": "f64",
+      "slot": 11
+     },
+     {
+      "iface": "Windows.Data.Json.IJsonObjectWithDefaultValues",
+      "native": "GetNamedNumber",
+      "outs": [],
+      "params": [
+       {
+        "name": "name",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       },
+       {
+        "name": "defaultValue",
+        "slot": {
+         "k": "float",
+         "t": "f64"
+        },
+        "type": "f64"
+       }
+      ],
+      "ret": {
+       "k": "float",
+       "t": "f64"
+      },
+      "ret_native": "f64",
+      "slot": 10
+     }
+    ],
+    "getNamedObject": [
+     {
+      "iface": "Windows.Data.Json.IJsonObject",
+      "native": "GetNamedObject",
+      "outs": [],
+      "params": [
+       {
+        "name": "name",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonObject"
+      },
+      "ret_native": "Windows.Data.Json.JsonObject",
+      "slot": 8
+     },
+     {
+      "iface": "Windows.Data.Json.IJsonObjectWithDefaultValues",
+      "native": "GetNamedObject",
+      "outs": [],
+      "params": [
+       {
+        "name": "name",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       },
+       {
+        "name": "defaultValue",
+        "slot": {
+         "k": "object",
+         "t": "Windows.Data.Json.JsonObject"
+        },
+        "type": "Windows.Data.Json.JsonObject"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonObject"
+      },
+      "ret_native": "Windows.Data.Json.JsonObject",
+      "slot": 7
+     }
+    ],
+    "getNamedString": [
+     {
+      "iface": "Windows.Data.Json.IJsonObject",
+      "native": "GetNamedString",
+      "outs": [],
+      "params": [
+       {
+        "name": "name",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 10
+     },
+     {
+      "iface": "Windows.Data.Json.IJsonObjectWithDefaultValues",
+      "native": "GetNamedString",
+      "outs": [],
+      "params": [
+       {
+        "name": "name",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       },
+       {
+        "name": "defaultValue",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 8
+     }
+    ],
+    "getNamedValue": [
+     {
+      "iface": "Windows.Data.Json.IJsonObject",
+      "native": "GetNamedValue",
+      "outs": [],
+      "params": [
+       {
+        "name": "name",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonValue"
+      },
+      "ret_native": "Windows.Data.Json.JsonValue",
+      "slot": 6
+     },
+     {
+      "iface": "Windows.Data.Json.IJsonObjectWithDefaultValues",
+      "native": "GetNamedValue",
+      "outs": [],
+      "params": [
+       {
+        "name": "name",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       },
+       {
+        "name": "defaultValue",
+        "slot": {
+         "k": "object",
+         "t": "Windows.Data.Json.JsonValue"
+        },
+        "type": "Windows.Data.Json.JsonValue"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonValue"
+      },
+      "ret_native": "Windows.Data.Json.JsonValue",
+      "slot": 6
+     }
+    ],
+    "getNumber": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetNumber",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "float",
+       "t": "f64"
+      },
+      "ret_native": "f64",
+      "slot": 9
+     }
+    ],
+    "getObject": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetObject",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonObject"
+      },
+      "ret_native": "Windows.Data.Json.JsonObject",
+      "slot": 12
+     }
+    ],
+    "getString": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetString",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 8
+     }
+    ],
+    "getView": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, Windows.Data.Json.IJsonValue>",
+      "native": "GetView",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "map",
+       "of": {
+        "interface": true,
+        "k": "object",
+        "t": "Windows.Data.Json.IJsonValue"
+       },
+       "t": "Windows.Foundation.Collections.IMapView<string, Windows.Data.Json.IJsonValue>"
+      },
+      "ret_native": "Windows.Foundation.Collections.IMapView<string, Windows.Data.Json.IJsonValue>",
+      "slot": 9
+     }
+    ],
+    "hasKey": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, Windows.Data.Json.IJsonValue>",
+      "native": "HasKey",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 8
+     }
+    ],
+    "insert": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, Windows.Data.Json.IJsonValue>",
+      "native": "Insert",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       },
+       {
+        "name": "value",
+        "slot": {
+         "interface": true,
+         "k": "object",
+         "t": "Windows.Data.Json.IJsonValue"
+        },
+        "type": "Windows.Data.Json.IJsonValue"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 10
+     }
+    ],
+    "lookup": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, Windows.Data.Json.IJsonValue>",
+      "native": "Lookup",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "interface": true,
+       "k": "object",
+       "t": "Windows.Data.Json.IJsonValue"
+      },
+      "ret_native": "Windows.Data.Json.IJsonValue",
+      "slot": 6
+     }
+    ],
+    "remove": [
+     {
+      "iface": "Windows.Foundation.Collections.IMap<string, Windows.Data.Json.IJsonValue>",
+      "native": "Remove",
+      "outs": [],
+      "params": [
+       {
+        "name": "key",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 11
+     }
+    ],
+    "setNamedValue": [
+     {
+      "iface": "Windows.Data.Json.IJsonObject",
+      "native": "SetNamedValue",
+      "outs": [],
+      "params": [
+       {
+        "name": "name",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       },
+       {
+        "name": "value",
+        "slot": {
+         "interface": true,
+         "k": "object",
+         "t": "Windows.Data.Json.IJsonValue"
+        },
+        "type": "Windows.Data.Json.IJsonValue"
+       }
+      ],
+      "ret": {
+       "k": "void"
+      },
+      "ret_native": "void",
+      "slot": 7
+     }
+    ],
+    "stringify": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "Stringify",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 7
+     }
+    ],
+    "toString": [
+     {
+      "iface": "Windows.Foundation.IStringable",
+      "native": "ToString",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 6
+     }
+    ]
+   },
+   "name": "JsonObject",
+   "namespace": "Windows.Data.Json",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Foundation.Collections.IMap<string, Windows.Data.Json.IJsonValue>",
+      "slot": 7
+     },
+     "name": "size",
+     "native": "Size",
+     "set": null,
+     "slot": {
+      "k": "int",
+      "t": "u32"
+     },
+     "type": "u32"
+    },
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "slot": 6
+     },
+     "name": "valueType",
+     "native": "ValueType",
+     "set": null,
+     "slot": {
+      "k": "enum",
+      "t": "Windows.Data.Json.JsonValueType"
+     },
+     "type": "Windows.Data.Json.JsonValueType"
+    }
+   ],
+   "refs": [
+    "Windows.Data.Json.IJsonValue",
+    "Windows.Data.Json.JsonArray",
+    "Windows.Data.Json.JsonValue",
+    "Windows.Data.Json.JsonValueType"
+   ],
+   "root": true,
+   "statics": {
+    "parse": [
+     {
+      "iface": "Windows.Data.Json.IJsonObjectStatics",
+      "native": "Parse",
+      "outs": [],
+      "params": [
+       {
+        "name": "input",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonObject"
+      },
+      "ret_native": "Windows.Data.Json.JsonObject",
+      "slot": 6
+     }
+    ],
+    "tryParse": [
+     {
+      "iface": "Windows.Data.Json.IJsonObjectStatics",
+      "native": "TryParse",
+      "outs": [
+       {
+        "name": "result",
+        "slot": {
+         "k": "object",
+         "t": "Windows.Data.Json.JsonObject"
+        },
+        "type": "Windows.Data.Json.JsonObject"
+       }
+      ],
+      "params": [
+       {
+        "name": "input",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 7
+     }
+    ]
+   },
+   "subject": {
+    "static": [
+     "parse",
+     "{\"a\": 1, \"b\": \"two\"}"
+    ]
+   },
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Data.Json.JsonValue": {
+   "abstract": true,
+   "blocked": {},
+   "bound": true,
+   "category": "object",
+   "constructors": [],
+   "curated": false,
+   "default_interface": "Windows.Data.Json.IJsonValue",
+   "events": [],
+   "excluded": {},
+   "full": "Windows.Data.Json.JsonValue",
+   "hidden": [],
+   "iid": "a3219ecb-f0b3-4dcd-beee-19d48cd3ed1e",
+   "implements": [
+    "Windows.Data.Json.IJsonValue"
+   ],
+   "js_module": "svelters:winui/windows.data.json",
+   "kind": "class",
+   "lifetime": "shared",
+   "methods": {
+    "getArray": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetArray",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonArray"
+      },
+      "ret_native": "Windows.Data.Json.JsonArray",
+      "slot": 11
+     }
+    ],
+    "getBoolean": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetBoolean",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 10
+     }
+    ],
+    "getNumber": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetNumber",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "float",
+       "t": "f64"
+      },
+      "ret_native": "f64",
+      "slot": 9
+     }
+    ],
+    "getObject": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetObject",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonObject"
+      },
+      "ret_native": "Windows.Data.Json.JsonObject",
+      "slot": 12
+     }
+    ],
+    "getString": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "GetString",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 8
+     }
+    ],
+    "stringify": [
+     {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "native": "Stringify",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 7
+     }
+    ],
+    "toString": [
+     {
+      "iface": "Windows.Foundation.IStringable",
+      "native": "ToString",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "string"
+      },
+      "ret_native": "string",
+      "slot": 6
+     }
+    ]
+   },
+   "name": "JsonValue",
+   "namespace": "Windows.Data.Json",
+   "parent": null,
+   "props": [
+    {
+     "dp": null,
+     "get": {
+      "iface": "Windows.Data.Json.IJsonValue",
+      "slot": 6
+     },
+     "name": "valueType",
+     "native": "ValueType",
+     "set": null,
+     "slot": {
+      "k": "enum",
+      "t": "Windows.Data.Json.JsonValueType"
+     },
+     "type": "Windows.Data.Json.JsonValueType"
+    }
+   ],
+   "refs": [
+    "Windows.Data.Json.JsonArray",
+    "Windows.Data.Json.JsonObject",
+    "Windows.Data.Json.JsonValueType"
+   ],
+   "root": true,
+   "statics": {
+    "createBooleanValue": [
+     {
+      "iface": "Windows.Data.Json.IJsonValueStatics",
+      "native": "CreateBooleanValue",
+      "outs": [],
+      "params": [
+       {
+        "name": "input",
+        "slot": {
+         "k": "bool"
+        },
+        "type": "bool"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonValue"
+      },
+      "ret_native": "Windows.Data.Json.JsonValue",
+      "slot": 8
+     }
+    ],
+    "createNullValue": [
+     {
+      "iface": "Windows.Data.Json.IJsonValueStatics2",
+      "native": "CreateNullValue",
+      "outs": [],
+      "params": [],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonValue"
+      },
+      "ret_native": "Windows.Data.Json.JsonValue",
+      "slot": 6
+     }
+    ],
+    "createNumberValue": [
+     {
+      "iface": "Windows.Data.Json.IJsonValueStatics",
+      "native": "CreateNumberValue",
+      "outs": [],
+      "params": [
+       {
+        "name": "input",
+        "slot": {
+         "k": "float",
+         "t": "f64"
+        },
+        "type": "f64"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonValue"
+      },
+      "ret_native": "Windows.Data.Json.JsonValue",
+      "slot": 9
+     }
+    ],
+    "createStringValue": [
+     {
+      "iface": "Windows.Data.Json.IJsonValueStatics",
+      "native": "CreateStringValue",
+      "outs": [],
+      "params": [
+       {
+        "name": "input",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonValue"
+      },
+      "ret_native": "Windows.Data.Json.JsonValue",
+      "slot": 10
+     }
+    ],
+    "parse": [
+     {
+      "iface": "Windows.Data.Json.IJsonValueStatics",
+      "native": "Parse",
+      "outs": [],
+      "params": [
+       {
+        "name": "input",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "object",
+       "t": "Windows.Data.Json.JsonValue"
+      },
+      "ret_native": "Windows.Data.Json.JsonValue",
+      "slot": 6
+     }
+    ],
+    "tryParse": [
+     {
+      "iface": "Windows.Data.Json.IJsonValueStatics",
+      "native": "TryParse",
+      "outs": [
+       {
+        "name": "result",
+        "slot": {
+         "k": "object",
+         "t": "Windows.Data.Json.JsonValue"
+        },
+        "type": "Windows.Data.Json.JsonValue"
+       }
+      ],
+      "params": [
+       {
+        "name": "input",
+        "slot": {
+         "k": "string"
+        },
+        "type": "string"
+       }
+      ],
+      "ret": {
+       "k": "bool"
+      },
+      "ret_native": "bool",
+      "slot": 7
+     }
+    ]
+   },
+   "thread": "any",
+   "thread_getter": null
+  },
+  "Windows.Data.Json.JsonValueType": {
+   "category": "enum"
+  }
+ }
+}

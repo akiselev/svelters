@@ -542,6 +542,35 @@ The AppKit backend now implements the v2.5 members (`construct`, `call_static`, 
   `NSCocoaErrorDomain` 3072; destroying the owner drops its operations.
 - **Op-log hosts.** The TestHost answers `callStatic(kind, "init…:")` with a fresh handle, like `new`.
 
+### WinUI non-GUI types (N4, no ABI change)
+
+The WinUI backend implements the v2.5 members (`construct`, `call_static`, `describe(SVL_KIND)`) and `cancel`;
+`plans/milestones/N4-winui-types.md` has the design.
+
+- **Kinds.** Every bound Windows Runtime class or interface (`metadata/winui/types/`) is a kind named by its full
+  native name (`Windows.Foundation.Uri`), ids from `0x20000`; a used generic collection instance is a kind too
+  (`Windows.Foundation.Collections.IVector<string>`). Kind id `0x20000` is `Windows.Foundation.IInspectable`, the
+  root an object of an unbound class wraps as. `describe(SVL_KIND, 0, k)` answers the name and the nearest bound
+  base. Element tags resolve first, so a tag never collides with a type name.
+- **Lifetime.** Every runtime class object is `SHARED` (one COM reference, identity by IUnknown pointer in the same
+  table as the elements, so an element passed back is its element handle). `destroy` drops our reference and never
+  calls `Close()`; `IClosable.Close` is a method (`close`).
+- **Members.** Methods and props are camelCase JS names, events kebab-case; a static that shares its name with an
+  instance method is `static:<name>`; constructors are the static `new`. Every member describes dynamic parameter
+  slots (`SVL_NULL` typed `SVL_T_VARIANT`, optional beyond the narrowest overload), so the host encodes arguments
+  by their JS type, and the backend picks the overload by argument count (trailing nulls, which the host pads,
+  select the narrowest overload that takes every non-null argument). Records are `MAP`s by camelCase field name,
+  enums kebab-case names (native and camelCase names and numbers are accepted), flags lists of names, `DateTime`
+  `SVL_T_DATETIME`, `TimeSpan` milliseconds.
+- **Async.** `IAsyncOperation<T>` / `IAsyncAction` (and the `WithProgress` variants) are `SVL_M_ASYNC`; the
+  completion handler hops to the UI dispatcher queue before anything is converted, then settles the callback with
+  `GetResults` or a `NativeError { domain: 'winrt', code }` (`file-not-found`, `cancelled`, or `0x8xxxxxxx`).
+  `cancel(id)` is `IAsyncInfo.Cancel`; destroying the owner cancels its operations.
+- **Errors.** A failing WinRT call answers `rc -1` with an `ERROR` value in the same shape (`SVL_M_THROWS` on every
+  member).
+- **Threads.** `dispatcher`-class objects (a `DispatcherQueue` property on the class or a base) are refused at
+  minting unless their queue has thread access on the UI thread, and checked on every call in debug builds.
+
 ### ABI v2.6 additive (property observation)
 
 Status: R1a (2026-10-19) added the members; R1 (2026-10-20) implemented the host contract of
