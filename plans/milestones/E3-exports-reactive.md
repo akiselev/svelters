@@ -224,6 +224,10 @@ running meanwhile; 3 runs):
 | store (`BURST.write(..)` × 10k) | coalesced per checkpoint | 3–4 over 7–8 checkpoints (this count includes the telemetry service's own ticks) | **2–3** | **1.7–5.9 ms** |
 | `Emitter` events (`emit(Value(i))` × 10k) | one event each | n/a | **10000** | **1174–1338 ms** |
 
+Re-measured on the tree merged with E2 and FU2 (GTK wake at default priority), load average ~24, 3 runs:
+store burst 2–3 batches over 3–4 checkpoints, **1 effect run, 3.0–3.8 ms**; event burst **10000 effect runs,
+1599–1980 ms**; the log-backend 10k-writes checkpoint 0.30 ms.
+
 So the store path is 200–700x faster end to end, and runs the dependent effect 2–3 times instead of 10000.
 R1 measured the same shape for native props (10k changes: 1 batch, 0.2 ms; per-event 0.84–1.0 s). Debug build,
 2000 updates: store 1 effect run, 7.5 ms; events 2000 effect runs, 358 ms.
