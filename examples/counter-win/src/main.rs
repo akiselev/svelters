@@ -156,60 +156,105 @@ mod win {
         Ok(b.children(panel, 0).into_iter().filter(|h| tag(*h) == "button").collect())
     }
 
-    /// `--fixture gallery-winui --selftest`: click page i at 800 + 900 i ms, record the tags under the window 700 ms
-    /// later, then check every page's header kinds were created.
+    /// The gallery selftest's state, shared by its timer steps.
+    struct Gallery {
+        b: WinUiBackend,
+        host: Rc<Host<'static>>,
+        pages: Vec<(String, Vec<String>)>,
+        seen: RefCell<Vec<Vec<String>>>,
+        errors: RefCell<Vec<String>>,
+        report: Rc<RefCell<Json>>,
+        path: Option<PathBuf>,
+    }
+
+    /// The tags under the window, depth first.
+    fn gallery_tags(g: &Gallery) -> Vec<String> {
+        let mut all = Vec::new();
+        if let Some(root) = g.host.toplevel_handles().first() {
+            walk(&g.b, *root, &mut all);
+        }
+        all.iter().map(|(_, t)| t.to_string()).collect()
+    }
+
+    /// Click sidebar button `i`, then poll for its page.
+    fn gallery_click(g: Rc<Gallery>, i: usize) {
+        let r = sidebar(&g.b, &g.host).and_then(|s| s.get(i).copied().ok_or(format!("no sidebar button #{i}"))).and_then(|btn| g.b.invoke(btn));
+        if let Err(e) = r {
+            g.errors.borrow_mut().push(format!("page {i}: click: {e}"));
+        }
+        let g2 = g.clone();
+        if let Err(e) = g.b.after(200, move || gallery_poll(g2, i, 0)) {
+            g.errors.borrow_mut().push(format!("page {i}: timer: {e}"));
+        }
+    }
+
+    /// Every 200 ms until page `i` shows all its header kinds (at most 8 s: a slow page is still checked), then the
+    /// next page or the report.
+    fn gallery_poll(g: Rc<Gallery>, i: usize, n: u32) {
+        let tags = gallery_tags(&g);
+        let done = g.pages[i].1.iter().all(|k| tags.contains(k));
+        if !done && n < 40 {
+            let g2 = g.clone();
+            if g.b.after(200, move || gallery_poll(g2, i, n + 1)).is_ok() {
+                return;
+            }
+        }
+        g.seen.borrow_mut()[i] = tags;
+        if i + 1 < g.pages.len() {
+            gallery_click(g, i + 1);
+        } else {
+            gallery_finish(&g);
+        }
+    }
+
+    fn gallery_finish(g: &Gallery) {
+        let mut failures: Vec<String> = g.errors.borrow().clone();
+        let seen = g.seen.borrow();
+        let mut shown = serde_json::Map::new();
+        for (i, (name, kinds)) in g.pages.iter().enumerate() {
+            let missing: Vec<&String> = kinds.iter().filter(|k| !seen[i].contains(k)).collect();
+            if !missing.is_empty() {
+                failures.push(format!("{name}: not created: {missing:?}"));
+            }
+            shown.insert(name.clone(), json!({ "kinds": kinds.len(), "missing": missing, "handles": seen[i].len() }));
+        }
+        if sidebar(&g.b, &g.host).map(|s| s.len()).unwrap_or(0) != g.pages.len() {
+            failures.push(format!("the sidebar does not have {} buttons", g.pages.len()));
+        }
+        failures.extend(g.host.take_errors().iter().map(|e| format!("js error: {e}")));
+        let mut rep = g.report.borrow_mut();
+        *rep = json!({
+            "backend": "winui",
+            "fixture": "gallery-winui",
+            "ok": failures.is_empty(),
+            "failures": failures,
+            "pages": shown,
+            "console": g.host.take_console().iter().map(|l| format!("[{}] {}", l.level, l.text)).collect::<Vec<_>>(),
+        });
+        if let Some(p) = &g.path {
+            let _ = std::fs::write(p, serde_json::to_string_pretty(&*rep).unwrap());
+        }
+        g.b.quit();
+    }
+
+    /// `--fixture gallery-winui --selftest`: from 800 ms on, click each sidebar button in turn; after each click, wait
+    /// until the page's `<!-- kinds -->` exist under the window, then the next. The report lists what each page created.
     fn gallery_selftest(b: &WinUiBackend, host: &Rc<Host<'static>>, report: Rc<RefCell<Json>>, path: Option<PathBuf>) -> Result<(), String> {
         let pages = gallery_pages()?;
-        let seen: Rc<RefCell<Vec<Vec<String>>>> = Rc::new(RefCell::new(vec![Vec::new(); pages.len()]));
-        let errors: Rc<RefCell<Vec<String>>> = Rc::new(RefCell::new(Vec::new()));
-        for i in 0..pages.len() {
-            let t = 800 + 900 * i as u64;
-            let (b1, h1, e1) = (b.clone(), host.clone(), errors.clone());
-            b.after(t, move || {
-                let r = sidebar(&b1, &h1).and_then(|s| s.get(i).copied().ok_or(format!("no sidebar button #{i}"))).and_then(|btn| b1.invoke(btn));
-                if let Err(e) = r {
-                    e1.borrow_mut().push(format!("page {i}: click: {e}"));
-                }
-            })?;
-            let (b2, h2, s2) = (b.clone(), host.clone(), seen.clone());
-            b.after(t + 700, move || {
-                let mut all = Vec::new();
-                if let Some(root) = h2.toplevel_handles().first() {
-                    walk(&b2, *root, &mut all);
-                }
-                s2.borrow_mut()[i] = all.iter().map(|(_, t)| t.to_string()).collect();
-            })?;
+        if pages.is_empty() {
+            return Err("no gallery pages".into());
         }
-        let (b3, h3) = (b.clone(), host.clone());
-        b.after(800 + 900 * pages.len() as u64 + 200, move || {
-            let mut failures: Vec<String> = errors.borrow().clone();
-            let seen = seen.borrow();
-            let mut shown = serde_json::Map::new();
-            for (i, (name, kinds)) in pages.iter().enumerate() {
-                let missing: Vec<&String> = kinds.iter().filter(|k| !seen[i].contains(k)).collect();
-                if !missing.is_empty() {
-                    failures.push(format!("{name}: not created: {missing:?}"));
-                }
-                shown.insert(name.clone(), json!({ "kinds": kinds.len(), "missing": missing, "handles": seen[i].len() }));
-            }
-            if sidebar(&b3, &h3).map(|s| s.len()).unwrap_or(0) != pages.len() {
-                failures.push(format!("the sidebar does not have {} buttons", pages.len()));
-            }
-            failures.extend(h3.take_errors().iter().map(|e| format!("js error: {e}")));
-            let mut rep = report.borrow_mut();
-            *rep = json!({
-                "backend": "winui",
-                "fixture": "gallery-winui",
-                "ok": failures.is_empty(),
-                "failures": failures,
-                "pages": shown,
-                "console": h3.take_console().iter().map(|l| format!("[{}] {}", l.level, l.text)).collect::<Vec<_>>(),
-            });
-            if let Some(p) = &path {
-                let _ = std::fs::write(p, serde_json::to_string_pretty(&*rep).unwrap());
-            }
-            b3.quit();
-        })
+        let n = pages.len();
+        let g = Rc::new(Gallery {
+            b: b.clone(),
+            host: host.clone(),
+            pages,
+            seen: RefCell::new(vec![Vec::new(); n]),
+            errors: RefCell::new(Vec::new()),
+            report,
+            path,
+        });
+        b.after(800, move || gallery_click(g, 0))
     }
 
     /// `--start-test <mode>` (G0): one host order on the counter-win bundle; a JSON report like `--selftest`.
