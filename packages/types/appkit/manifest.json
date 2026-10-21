@@ -1,0 +1,1166 @@
+{
+ "modules": {
+  "svelters:appkit/appkit": {
+   "dir": "appkit",
+   "exports": {
+    "NSAdaptiveImageGlyph": {
+     "category": "value",
+     "extends": null,
+     "file": "appkit/NSAdaptiveImageGlyph.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSAdaptiveImageGlyph",
+     "signature": []
+    },
+    "NSBezierPath": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSBezierPath.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSBezierPath",
+     "signature": [
+      "NSAffineTransform",
+      "NSBezierPathElement",
+      "NSFont",
+      "NSLineCapStyle",
+      "NSLineJoinStyle",
+      "NSWindingRule"
+     ]
+    },
+    "NSBitmapImageRep": {
+     "category": "value",
+     "extends": null,
+     "file": "appkit/NSBitmapImageRep.js",
+     "implements": [],
+     "imports": [
+      "NSColor",
+      "NSColorSpace",
+      "NSImageRep"
+     ],
+     "native": "NSBitmapImageRep",
+     "signature": [
+      "NSBitmapFormat",
+      "NSBitmapImageFileType",
+      "NSColor",
+      "NSColorRenderingIntent",
+      "NSColorSpace",
+      "NSCompositingOperation",
+      "NSImageLayoutDirection",
+      "NSImageRep",
+      "NSPasteboard",
+      "NSTIFFCompression",
+      "NSURL"
+     ]
+    },
+    "NSColor": {
+     "category": "value",
+     "extends": null,
+     "file": "appkit/NSColor.js",
+     "implements": [],
+     "imports": [
+      "NSColorSpace",
+      "NSImage"
+     ],
+     "native": "NSColor",
+     "signature": [
+      "NSBundle",
+      "NSColorSpace",
+      "NSColorSystemEffect",
+      "NSColorType",
+      "NSControlTint",
+      "NSImage",
+      "NSPasteboard"
+     ]
+    },
+    "NSColorSpace": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSColorSpace.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSColorSpace",
+     "signature": [
+      "NSColorSpaceModel"
+     ]
+    },
+    "NSFont": {
+     "category": "value",
+     "extends": null,
+     "file": "appkit/NSFont.js",
+     "implements": [],
+     "imports": [
+      "NSAffineTransform",
+      "NSCharacterSet",
+      "NSFontDescriptor"
+     ],
+     "native": "NSFont",
+     "signature": [
+      "NSAffineTransform",
+      "NSCharacterSet",
+      "NSControlSize",
+      "NSFontDescriptor",
+      "NSFontRenderingMode"
+     ]
+    },
+    "NSFontDescriptor": {
+     "category": "value",
+     "extends": null,
+     "file": "appkit/NSFontDescriptor.js",
+     "implements": [],
+     "imports": [
+      "NSAffineTransform"
+     ],
+     "native": "NSFontDescriptor",
+     "signature": [
+      "NSAffineTransform",
+      "NSFontDescriptorSymbolicTraits"
+     ]
+    },
+    "NSGlyphGenerator": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSGlyphGenerator.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSGlyphGenerator",
+     "signature": []
+    },
+    "NSGraphicsContext": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSGraphicsContext.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSGraphicsContext",
+     "signature": [
+      "NSBitmapImageRep",
+      "NSColorRenderingIntent",
+      "NSCompositingOperation",
+      "NSImageInterpolation"
+     ]
+    },
+    "NSImage": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSImage.js",
+     "implements": [],
+     "imports": [
+      "NSColor",
+      "NSImageRep",
+      "NSImageSymbolConfiguration",
+      "NSLocale"
+     ],
+     "native": "NSImage",
+     "signature": [
+      "NSBundle",
+      "NSColor",
+      "NSCompositingOperation",
+      "NSGraphicsContext",
+      "NSImageCacheMode",
+      "NSImageRep",
+      "NSImageResizingMode",
+      "NSImageSymbolConfiguration",
+      "NSLocale",
+      "NSPasteboard",
+      "NSTIFFCompression",
+      "NSURL"
+     ]
+    },
+    "NSImageRep": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSImageRep.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSImageRep",
+     "signature": [
+      "NSCompositingOperation",
+      "NSImageLayoutDirection",
+      "NSPasteboard",
+      "NSURL"
+     ]
+    },
+    "NSImageSymbolConfiguration": {
+     "category": "value",
+     "extends": null,
+     "file": "appkit/NSImageSymbolConfiguration.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSImageSymbolConfiguration",
+     "signature": [
+      "NSColor",
+      "NSImageSymbolColorRenderingMode",
+      "NSImageSymbolScale",
+      "NSImageSymbolVariableValueMode"
+     ]
+    },
+    "NSLayoutManager": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSLayoutManager.js",
+     "implements": [],
+     "imports": [
+      "NSGlyphGenerator",
+      "NSTextContainer",
+      "NSTypesetter"
+     ],
+     "native": "NSLayoutManager",
+     "signature": [
+      "NSFont",
+      "NSGlyphGenerator",
+      "NSGlyphProperty",
+      "NSImageScaling",
+      "NSTextBlock",
+      "NSTextContainer",
+      "NSTextStorage",
+      "NSTextStorageEditActions",
+      "NSTypesetter",
+      "NSTypesetterBehavior",
+      "NSUnderlineStyle"
+     ]
+    },
+    "NSMutableParagraphStyle": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSMutableParagraphStyle.js",
+     "implements": [],
+     "imports": [
+      "NSParagraphStyle",
+      "NSTextBlock",
+      "NSTextList",
+      "NSTextTab"
+     ],
+     "native": "NSMutableParagraphStyle",
+     "signature": [
+      "NSLineBreakMode",
+      "NSLineBreakStrategy",
+      "NSParagraphStyle",
+      "NSTextAlignment",
+      "NSTextBlock",
+      "NSTextList",
+      "NSTextTab",
+      "NSWritingDirection"
+     ]
+    },
+    "NSParagraphStyle": {
+     "category": "value",
+     "extends": null,
+     "file": "appkit/NSParagraphStyle.js",
+     "implements": [],
+     "imports": [
+      "NSTextBlock",
+      "NSTextList",
+      "NSTextTab"
+     ],
+     "native": "NSParagraphStyle",
+     "signature": [
+      "NSLineBreakMode",
+      "NSLineBreakStrategy",
+      "NSTextAlignment",
+      "NSTextBlock",
+      "NSTextList",
+      "NSTextTab",
+      "NSWritingDirection"
+     ]
+    },
+    "NSPasteboard": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSPasteboard.js",
+     "implements": [],
+     "imports": [
+      "NSFileWrapper",
+      "NSPasteboardItem"
+     ],
+     "native": "NSPasteboard",
+     "signature": [
+      "NSFileWrapper",
+      "NSPasteboardAccessBehavior",
+      "NSPasteboardContentsOptions",
+      "NSPasteboardItem"
+     ]
+    },
+    "NSPasteboardItem": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSPasteboardItem.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSPasteboardItem",
+     "signature": []
+    },
+    "NSRunningApplication": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSRunningApplication.js",
+     "implements": [],
+     "imports": [
+      "NSImage",
+      "NSURL"
+     ],
+     "native": "NSRunningApplication",
+     "signature": [
+      "NSApplicationActivationOptions",
+      "NSApplicationActivationPolicy",
+      "NSImage",
+      "NSURL"
+     ]
+    },
+    "NSScreen": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSScreen.js",
+     "implements": [],
+     "imports": [
+      "NSColorSpace"
+     ],
+     "native": "NSScreen",
+     "signature": [
+      "NSAlignmentOptions",
+      "NSColorSpace",
+      "NSDisplayGamut",
+      "NSWindowDepth"
+     ]
+    },
+    "NSShadow": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSShadow.js",
+     "implements": [],
+     "imports": [
+      "NSColor"
+     ],
+     "native": "NSShadow",
+     "signature": [
+      "NSColor"
+     ]
+    },
+    "NSSound": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSSound.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSSound",
+     "signature": [
+      "NSPasteboard",
+      "NSURL"
+     ]
+    },
+    "NSStringDrawingContext": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSStringDrawingContext.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSStringDrawingContext",
+     "signature": []
+    },
+    "NSTextAttachment": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSTextAttachment.js",
+     "implements": [],
+     "imports": [
+      "NSFileWrapper",
+      "NSImage"
+     ],
+     "native": "NSTextAttachment",
+     "signature": [
+      "NSFileWrapper",
+      "NSImage"
+     ]
+    },
+    "NSTextAttachmentViewProvider": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSTextAttachmentViewProvider.js",
+     "implements": [],
+     "imports": [
+      "NSTextAttachment",
+      "NSTextLayoutManager"
+     ],
+     "native": "NSTextAttachmentViewProvider",
+     "signature": [
+      "NSTextAttachment",
+      "NSTextContainer",
+      "NSTextLayoutManager"
+     ]
+    },
+    "NSTextBlock": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSTextBlock.js",
+     "implements": [],
+     "imports": [
+      "NSColor"
+     ],
+     "native": "NSTextBlock",
+     "signature": [
+      "NSColor",
+      "NSTextBlockDimension",
+      "NSTextBlockLayer",
+      "NSTextBlockValueType",
+      "NSTextBlockVerticalAlignment",
+      "NSTextContainer"
+     ]
+    },
+    "NSTextContainer": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSTextContainer.js",
+     "implements": [],
+     "imports": [
+      "NSBezierPath",
+      "NSTextLayoutManager"
+     ],
+     "native": "NSTextContainer",
+     "signature": [
+      "NSBezierPath",
+      "NSLayoutManager",
+      "NSLineBreakMode",
+      "NSTextLayoutManager"
+     ]
+    },
+    "NSTextContentManager": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSTextContentManager.js",
+     "implements": [],
+     "imports": [
+      "NSTextElement",
+      "NSTextLayoutManager"
+     ],
+     "native": "NSTextContentManager",
+     "signature": [
+      "NSTextElement",
+      "NSTextLayoutManager",
+      "NSTextRange"
+     ]
+    },
+    "NSTextElement": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSTextElement.js",
+     "implements": [],
+     "imports": [
+      "NSTextContentManager",
+      "NSTextRange"
+     ],
+     "native": "NSTextElement",
+     "signature": [
+      "NSTextContentManager",
+      "NSTextRange"
+     ]
+    },
+    "NSTextLayoutFragment": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSTextLayoutFragment.js",
+     "implements": [],
+     "imports": [
+      "NSTextAttachmentViewProvider",
+      "NSTextElement",
+      "NSTextLayoutManager",
+      "NSTextLineFragment",
+      "NSTextRange"
+     ],
+     "native": "NSTextLayoutFragment",
+     "signature": [
+      "NSTextAttachmentViewProvider",
+      "NSTextElement",
+      "NSTextLayoutFragmentState",
+      "NSTextLayoutManager",
+      "NSTextLineFragment",
+      "NSTextRange"
+     ]
+    },
+    "NSTextLayoutManager": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSTextLayoutManager.js",
+     "implements": [],
+     "imports": [
+      "NSTextContainer",
+      "NSTextContentManager",
+      "NSTextLayoutFragment",
+      "NSTextSelection",
+      "NSTextSelectionNavigation",
+      "NSTextViewportLayoutController"
+     ],
+     "native": "NSTextLayoutManager",
+     "signature": [
+      "NSAttributedString",
+      "NSTextContainer",
+      "NSTextContentManager",
+      "NSTextElement",
+      "NSTextLayoutFragment",
+      "NSTextRange",
+      "NSTextSelection",
+      "NSTextSelectionNavigation",
+      "NSTextViewportLayoutController"
+     ]
+    },
+    "NSTextLineFragment": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSTextLineFragment.js",
+     "implements": [],
+     "imports": [
+      "NSAttributedString"
+     ],
+     "native": "NSTextLineFragment",
+     "signature": [
+      "NSAttributedString"
+     ]
+    },
+    "NSTextList": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSTextList.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSTextList",
+     "signature": [
+      "NSTextListOptions"
+     ]
+    },
+    "NSTextRange": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSTextRange.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSTextRange",
+     "signature": []
+    },
+    "NSTextSelection": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSTextSelection.js",
+     "implements": [],
+     "imports": [
+      "NSTextRange"
+     ],
+     "native": "NSTextSelection",
+     "signature": [
+      "NSTextRange",
+      "NSTextSelectionAffinity",
+      "NSTextSelectionGranularity"
+     ]
+    },
+    "NSTextSelectionNavigation": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSTextSelectionNavigation.js",
+     "implements": [],
+     "imports": [
+      "NSTextRange",
+      "NSTextSelection"
+     ],
+     "native": "NSTextSelectionNavigation",
+     "signature": [
+      "NSTextRange",
+      "NSTextSelection",
+      "NSTextSelectionGranularity",
+      "NSTextSelectionNavigationDestination",
+      "NSTextSelectionNavigationDirection",
+      "NSTextSelectionNavigationModifier",
+      "NSTextSelectionNavigationWritingDirection"
+     ]
+    },
+    "NSTextStorage": {
+     "category": "object",
+     "extends": "NSMutableAttributedString",
+     "file": "appkit/NSTextStorage.js",
+     "implements": [],
+     "imports": [
+      "NSMutableAttributedString",
+      "NSColor",
+      "NSFont",
+      "NSLayoutManager"
+     ],
+     "native": "NSTextStorage",
+     "signature": [
+      "NSColor",
+      "NSFont",
+      "NSLayoutManager",
+      "NSMutableAttributedString",
+      "NSTextStorageEditActions"
+     ]
+    },
+    "NSTextTab": {
+     "category": "value",
+     "extends": null,
+     "file": "appkit/NSTextTab.js",
+     "implements": [],
+     "imports": [
+      "NSCharacterSet"
+     ],
+     "native": "NSTextTab",
+     "signature": [
+      "NSCharacterSet",
+      "NSLocale",
+      "NSTextAlignment",
+      "NSTextTabType"
+     ]
+    },
+    "NSTextTable": {
+     "category": "object",
+     "extends": "NSTextBlock",
+     "file": "appkit/NSTextTable.js",
+     "implements": [],
+     "imports": [
+      "NSTextBlock"
+     ],
+     "native": "NSTextTable",
+     "signature": [
+      "NSTextBlock",
+      "NSTextContainer",
+      "NSTextTableBlock",
+      "NSTextTableLayoutAlgorithm"
+     ]
+    },
+    "NSTextTableBlock": {
+     "category": "value",
+     "extends": null,
+     "file": "appkit/NSTextTableBlock.js",
+     "implements": [],
+     "imports": [
+      "NSColor",
+      "NSTextTable"
+     ],
+     "native": "NSTextTableBlock",
+     "signature": [
+      "NSColor",
+      "NSTextBlockDimension",
+      "NSTextBlockLayer",
+      "NSTextBlockValueType",
+      "NSTextBlockVerticalAlignment",
+      "NSTextContainer",
+      "NSTextTable"
+     ]
+    },
+    "NSTextViewportLayoutController": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSTextViewportLayoutController.js",
+     "implements": [],
+     "imports": [
+      "NSTextLayoutManager",
+      "NSTextRange"
+     ],
+     "native": "NSTextViewportLayoutController",
+     "signature": [
+      "NSTextLayoutManager",
+      "NSTextRange"
+     ]
+    },
+    "NSTypesetter": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSTypesetter.js",
+     "implements": [],
+     "imports": [
+      "NSFont",
+      "NSParagraphStyle",
+      "NSTextTab"
+     ],
+     "native": "NSTypesetter",
+     "signature": [
+      "NSFont",
+      "NSLayoutManager",
+      "NSParagraphStyle",
+      "NSTextTab",
+      "NSTypesetterBehavior",
+      "NSTypesetterControlCharacterAction",
+      "NSWritingDirection"
+     ]
+    },
+    "NSWorkspace": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSWorkspace.js",
+     "implements": [],
+     "imports": [
+      "NSColor",
+      "NSImage",
+      "NSRunningApplication",
+      "NSURL",
+      "NSWorkspaceAuthorization"
+     ],
+     "native": "NSWorkspace",
+     "signature": [
+      "NSColor",
+      "NSImage",
+      "NSRunningApplication",
+      "NSScreen",
+      "NSURL",
+      "NSWorkspaceAuthorization",
+      "NSWorkspaceAuthorizationType",
+      "NSWorkspaceIconCreationOptions",
+      "NSWorkspaceOpenConfiguration"
+     ]
+    },
+    "NSWorkspaceAuthorization": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSWorkspaceAuthorization.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSWorkspaceAuthorization",
+     "signature": []
+    },
+    "NSWorkspaceOpenConfiguration": {
+     "category": "object",
+     "extends": null,
+     "file": "appkit/NSWorkspaceOpenConfiguration.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSWorkspaceOpenConfiguration",
+     "signature": []
+    }
+   }
+  },
+  "svelters:appkit/foundation": {
+   "dir": "foundation",
+   "exports": {
+    "NSAffineTransform": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSAffineTransform.js",
+     "implements": [],
+     "imports": [
+      "NSBezierPath"
+     ],
+     "native": "NSAffineTransform",
+     "signature": [
+      "NSBezierPath"
+     ]
+    },
+    "NSAttributedString": {
+     "category": "value",
+     "extends": null,
+     "file": "foundation/NSAttributedString.js",
+     "implements": [],
+     "imports": [
+      "NSFileWrapper"
+     ],
+     "native": "NSAttributedString",
+     "signature": [
+      "NSAdaptiveImageGlyph",
+      "NSAttributedStringMarkdownParsingOptions",
+      "NSFileWrapper",
+      "NSStringDrawingContext",
+      "NSStringDrawingOptions",
+      "NSTextAttachment",
+      "NSTextBlock",
+      "NSTextList",
+      "NSTextTable",
+      "NSURL"
+     ]
+    },
+    "NSAttributedStringMarkdownParsingOptions": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSAttributedStringMarkdownParsingOptions.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSAttributedStringMarkdownParsingOptions",
+     "signature": [
+      "NSAttributedStringMarkdownInterpretedSyntax",
+      "NSAttributedStringMarkdownParsingFailurePolicy"
+     ]
+    },
+    "NSBundle": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSBundle.js",
+     "implements": [],
+     "imports": [
+      "NSAttributedString",
+      "NSImage",
+      "NSURL"
+     ],
+     "native": "NSBundle",
+     "signature": [
+      "NSAttributedString",
+      "NSImage",
+      "NSURL"
+     ]
+    },
+    "NSByteCountFormatter": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSByteCountFormatter.js",
+     "implements": [],
+     "imports": [
+      "NSAttributedString"
+     ],
+     "native": "NSByteCountFormatter",
+     "signature": [
+      "NSAttributedString",
+      "NSByteCountFormatterCountStyle",
+      "NSByteCountFormatterUnits",
+      "NSFormattingContext"
+     ]
+    },
+    "NSCalendar": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSCalendar.js",
+     "implements": [],
+     "imports": [
+      "NSDateComponents",
+      "NSLocale",
+      "NSTimeZone"
+     ],
+     "native": "NSCalendar",
+     "signature": [
+      "NSCalendarOptions",
+      "NSCalendarUnit",
+      "NSDateComponents",
+      "NSLocale",
+      "NSTimeZone"
+     ]
+    },
+    "NSCharacterSet": {
+     "category": "value",
+     "extends": null,
+     "file": "foundation/NSCharacterSet.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSCharacterSet",
+     "signature": []
+    },
+    "NSDateComponents": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSDateComponents.js",
+     "implements": [],
+     "imports": [
+      "NSCalendar",
+      "NSTimeZone"
+     ],
+     "native": "NSDateComponents",
+     "signature": [
+      "NSCalendar",
+      "NSCalendarUnit",
+      "NSTimeZone"
+     ]
+    },
+    "NSDateFormatter": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSDateFormatter.js",
+     "implements": [],
+     "imports": [
+      "NSAttributedString",
+      "NSCalendar",
+      "NSLocale",
+      "NSTimeZone"
+     ],
+     "native": "NSDateFormatter",
+     "signature": [
+      "NSAttributedString",
+      "NSCalendar",
+      "NSDateFormatterBehavior",
+      "NSDateFormatterStyle",
+      "NSFormattingContext",
+      "NSLocale",
+      "NSTimeZone"
+     ]
+    },
+    "NSDecimalNumberHandler": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSDecimalNumberHandler.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSDecimalNumberHandler",
+     "signature": [
+      "NSRoundingMode"
+     ]
+    },
+    "NSFileManager": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSFileManager.js",
+     "implements": [],
+     "imports": [
+      "NSFileProviderService",
+      "NSFileVersion",
+      "NSURL"
+     ],
+     "native": "NSFileManager",
+     "signature": [
+      "NSDirectoryEnumerationOptions",
+      "NSFileManagerResumeSyncBehavior",
+      "NSFileManagerUnmountOptions",
+      "NSFileManagerUploadLocalVersionConflictPolicy",
+      "NSFileProviderService",
+      "NSFileVersion",
+      "NSSearchPathDirectory",
+      "NSSearchPathDomainMask",
+      "NSURL",
+      "NSVolumeEnumerationOptions",
+      "NSWorkspaceAuthorization"
+     ]
+    },
+    "NSFileProviderService": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSFileProviderService.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSFileProviderService",
+     "signature": []
+    },
+    "NSFileVersion": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSFileVersion.js",
+     "implements": [],
+     "imports": [
+      "NSPersonNameComponents",
+      "NSURL"
+     ],
+     "native": "NSFileVersion",
+     "signature": [
+      "NSFileVersionAddingOptions",
+      "NSFileVersionReplacingOptions",
+      "NSPersonNameComponents",
+      "NSURL"
+     ]
+    },
+    "NSFileWrapper": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSFileWrapper.js",
+     "implements": [],
+     "imports": [
+      "NSImage",
+      "NSURL"
+     ],
+     "native": "NSFileWrapper",
+     "signature": [
+      "NSFileWrapperReadingOptions",
+      "NSFileWrapperWritingOptions",
+      "NSImage",
+      "NSURL"
+     ]
+    },
+    "NSFormatter": {
+     "category": "value",
+     "extends": null,
+     "file": "foundation/NSFormatter.js",
+     "implements": [],
+     "imports": [
+      "NSAttributedString"
+     ],
+     "native": "NSFormatter",
+     "signature": [
+      "NSAttributedString"
+     ]
+    },
+    "NSItemProvider": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSItemProvider.js",
+     "implements": [],
+     "imports": [
+      "NSProgress",
+      "NSURL"
+     ],
+     "native": "NSItemProvider",
+     "signature": [
+      "NSItemProviderFileOptions",
+      "NSItemProviderRepresentationVisibility",
+      "NSProgress",
+      "NSURL"
+     ]
+    },
+    "NSLocale": {
+     "category": "value",
+     "extends": null,
+     "file": "foundation/NSLocale.js",
+     "implements": [],
+     "imports": [
+      "NSCharacterSet"
+     ],
+     "native": "NSLocale",
+     "signature": [
+      "NSCharacterSet",
+      "NSLocaleLanguageDirection"
+     ]
+    },
+    "NSMutableAttributedString": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSMutableAttributedString.js",
+     "implements": [],
+     "imports": [
+      "NSAttributedString",
+      "NSFileWrapper"
+     ],
+     "native": "NSMutableAttributedString",
+     "signature": [
+      "NSAdaptiveImageGlyph",
+      "NSAttributedString",
+      "NSAttributedStringMarkdownParsingOptions",
+      "NSFileWrapper",
+      "NSFontTraitMask",
+      "NSStringDrawingContext",
+      "NSStringDrawingOptions",
+      "NSTextAlignment",
+      "NSTextAttachment",
+      "NSTextBlock",
+      "NSTextList",
+      "NSTextTable",
+      "NSURL",
+      "NSWritingDirection"
+     ]
+    },
+    "NSNumberFormatter": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSNumberFormatter.js",
+     "implements": [],
+     "imports": [
+      "NSAttributedString",
+      "NSDecimalNumberHandler",
+      "NSLocale"
+     ],
+     "native": "NSNumberFormatter",
+     "signature": [
+      "NSAttributedString",
+      "NSDecimalNumberHandler",
+      "NSFormattingContext",
+      "NSLocale",
+      "NSNumberFormatterBehavior",
+      "NSNumberFormatterPadPosition",
+      "NSNumberFormatterRoundingMode",
+      "NSNumberFormatterStyle"
+     ]
+    },
+    "NSPersonNameComponents": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSPersonNameComponents.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSPersonNameComponents",
+     "signature": []
+    },
+    "NSProcessInfo": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSProcessInfo.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSProcessInfo",
+     "signature": [
+      "NSActivityOptions",
+      "NSProcessInfoThermalState"
+     ]
+    },
+    "NSProgress": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSProgress.js",
+     "implements": [],
+     "imports": [
+      "NSURL"
+     ],
+     "native": "NSProgress",
+     "signature": [
+      "NSURL"
+     ]
+    },
+    "NSTimeZone": {
+     "category": "value",
+     "extends": null,
+     "file": "foundation/NSTimeZone.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSTimeZone",
+     "signature": [
+      "NSLocale",
+      "NSTimeZoneNameStyle"
+     ]
+    },
+    "NSURL": {
+     "category": "value",
+     "extends": null,
+     "file": "foundation/NSURL.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSURL",
+     "signature": [
+      "NSPasteboard",
+      "NSURLBookmarkCreationOptions",
+      "NSURLBookmarkResolutionOptions"
+     ]
+    },
+    "NSURLComponents": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSURLComponents.js",
+     "implements": [],
+     "imports": [
+      "NSURL",
+      "NSURLQueryItem"
+     ],
+     "native": "NSURLComponents",
+     "signature": [
+      "NSURL",
+      "NSURLQueryItem"
+     ]
+    },
+    "NSURLQueryItem": {
+     "category": "value",
+     "extends": null,
+     "file": "foundation/NSURLQueryItem.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSURLQueryItem",
+     "signature": []
+    },
+    "NSUUID": {
+     "category": "value",
+     "extends": null,
+     "file": "foundation/NSUUID.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSUUID",
+     "signature": []
+    },
+    "NSUndoManager": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSUndoManager.js",
+     "implements": [],
+     "imports": [],
+     "native": "NSUndoManager",
+     "signature": []
+    },
+    "NSUserDefaults": {
+     "category": "object",
+     "extends": null,
+     "file": "foundation/NSUserDefaults.js",
+     "implements": [],
+     "imports": [
+      "NSURL"
+     ],
+     "native": "NSUserDefaults",
+     "signature": [
+      "NSURL"
+     ]
+    }
+   }
+  }
+ },
+ "schema": "svelters-types-manifest/v1",
+ "toolkit": "appkit"
+}

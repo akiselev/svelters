@@ -171,6 +171,11 @@ pub(super) fn set_waker(w: svelters_apple::objc::runloop::Waker) {
     *WAKER.lock().unwrap_or_else(|e| e.into_inner()) = Some(w);
 }
 
+/// Wakes the run loop from any thread (the next wake runs `observe_hops` and `type_hops`).
+pub(super) fn wake_loop() {
+    wake();
+}
+
 fn wake() {
     if let Some(w) = WAKER.lock().unwrap_or_else(|e| e.into_inner()).as_ref() {
         w.wake();

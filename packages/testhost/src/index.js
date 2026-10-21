@@ -142,8 +142,8 @@ export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
       const kind = typeof kindRef === 'number' ? kindNames[kindRef] : kindRef;
       const method = typeof methodRef === 'number' ? `#${methodRef}` : methodRef;
       const line = `static ${kind}.${method} ${json(args)}`;
-      // A constructor-shaped name answers a fresh handle (the log backend does the same); the rest null.
-      if (method === 'new' || method.startsWith('new_') || method.startsWith('from_')) {
+      // A constructor-shaped name (an ObjC `init…:` too) answers a fresh handle (the log backend does the same); the rest null.
+      if (method === 'new' || method.startsWith('new_') || method.startsWith('from_') || (method.startsWith('init') && method.endsWith(':'))) {
         const h = next++;
         widgets.set(h, { kind, kid: null, parent: null, children: [], props: new Map() });
         lines.push(`${line} #${h}`);

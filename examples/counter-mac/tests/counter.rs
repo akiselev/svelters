@@ -4,7 +4,7 @@
 
 fn main() {
     #[cfg(target_os = "macos")]
-    svelters_apple::testing::run_cases(true, &[("counter_e2e", mac::counter_e2e)]);
+    svelters_apple::testing::run_cases(true, &[("counter_e2e", mac::counter_e2e), ("appkit_types_e2e", mac::appkit_types_e2e)]);
     #[cfg(not(target_os = "macos"))]
     svelters_apple::testing::run_cases(false, &[]);
 }
@@ -71,5 +71,50 @@ mod mac {
         assert!(errors.is_empty(), "JS errors: {errors:?}");
         let console = host.take_console();
         eprintln!("console: {:?}", console.iter().map(|l| l.text.clone()).collect::<Vec<_>>());
+    }
+
+    /// N4: fixtures/appkit-types on the real host. Non-GUI types from `svelters:appkit/*` (a string-made
+    /// NSURL value, a constructed NSUndoManager, NSColor/NSFont factories into element props, an
+    /// NSItemProvider completion handler as a Promise that completes on a background queue).
+    pub fn appkit_types_e2e() {
+        let bundle = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/appkit-types/dist/app.js");
+        assert!(bundle.is_file(), "{} is missing: run `pnpm install && pnpm -r build` first", bundle.display());
+        let backend = AppKitBackend::new().unwrap();
+        let vt = backend.vtable();
+        let bref = unsafe { BackendRef::from_raw(vt.as_raw()) }.unwrap();
+        let host = Host::new(bref, HostConfig::default()).unwrap();
+        backend.attach_host(host.host_callbacks());
+        host.load_bundle(&bundle).unwrap();
+        let fields = || -> Vec<Retained<AnyObject>> {
+            let wins = backend.toplevels();
+            let win = backend.object(*wins.last().expect("a window")).unwrap();
+            let stack: Retained<AnyObject> = unsafe { msg_send![&*win, contentView] };
+            let items: Retained<AnyObject> = unsafe { msg_send![&*stack, arrangedSubviews] };
+            let n: usize = unsafe { msg_send![&*items, count] };
+            (0..n).map(|i| unsafe { msg_send![&*items, objectAtIndex: i] }).collect()
+        };
+        let mut tries = 0;
+        while tries < 100 {
+            pump(30);
+            let f = fields();
+            if f.len() == 3 && text_of(&f[2]) != "loading" {
+                break;
+            }
+            tries += 1;
+        }
+        let errors = host.take_errors();
+        assert!(errors.is_empty(), "JS errors: {errors:?}");
+        let f = fields();
+        assert_eq!(f.len(), 3, "three text fields");
+        assert_eq!(text_of(&f[0]), "example.com", "NSURL(string).host()");
+        assert_eq!(text_of(&f[1]), "undo levels 5", "construct-time KVC prop read back");
+        assert_eq!(text_of(&f[2]), "from a provider", "the completion block resolved the Promise with the NSData");
+        let color: Retained<AnyObject> = unsafe { msg_send![&*f[0], textColor] };
+        let red: f64 = unsafe { msg_send![&*color, redComponent] };
+        assert!((red - 0.8).abs() < 0.01, "text-color from NSColor.colorWithSRGBRedGreenBlueAlpha: red {red}");
+        let font: Retained<AnyObject> = unsafe { msg_send![&*f[0], font] };
+        let size: f64 = unsafe { msg_send![&*font, pointSize] };
+        assert_eq!(size, 15.0, "font from NSFont.boldSystemFontOfSize");
+        eprintln!("console: {:?}", host.take_console().iter().map(|l| l.text.clone()).collect::<Vec<_>>());
     }
 }

@@ -1,0 +1,93 @@
+# Overrides of the AppKit non-GUI type pipeline (tools/metadata/appkit/types_appkit_classify.py). Everything else is
+# classified by rules from objc2's header-translator output (plans/research/NON-GUI-TYPES.md sections 3.1, 3.4).
+# Strict: every class and selector named here must exist in metadata/appkit/types/ingested/ (the classifier fails otherwise).
+
+# The N4 curated set: every bound member of these types has a generated, ledger-verified test (macOS CI).
+curated:
+  - NSColor
+  - NSImage
+  - NSFont
+  - NSAttributedString
+  - NSURL
+  - NSFileManager
+  - NSPasteboard
+  - NSUserDefaults
+  - NSUndoManager
+  - NSItemProvider
+
+# Types bound beyond the signature closure of these roots (Foundation/AppKit roots, section 3.4). NSTimer and
+# NSRunLoop are not roots: JS timers stay authoritative (PLAN rule 6); `excluded` below keeps them out of closures.
+roots:
+  - NSColor
+  - NSImage
+  - NSFont
+  - NSAttributedString
+  - NSMutableAttributedString
+  - NSURL
+  - NSURLComponents
+  - NSFileManager
+  - NSPasteboard
+  - NSUserDefaults
+  - NSUndoManager
+  - NSItemProvider
+  - NSUUID
+  - NSLocale
+  - NSProcessInfo
+  - NSBundle
+  - NSWorkspace
+  - NSSound
+  - NSParagraphStyle
+  - NSMutableParagraphStyle
+  - NSShadow
+  - NSDateFormatter
+  - NSNumberFormatter
+  - NSByteCountFormatter
+
+# Taxonomy corrections (section 3.3 "misclassifications seen"): the rule's verdict is in the comment.
+class:
+  NSColor: value          # object: one deprecated class-property setter (`setIgnoresAlpha:`)
+  NSFont: value           # value already (NSCopying, no setters); stated because the docs rely on it
+  NSURLSessionTask: object  # value: NSCopying with no setters, but a live task
+  NSImage: object         # object (setters); stated: NSImage is mutable (size, template)
+
+# How a value class is made from one string (`new NSURL('https://...')`, the SVL_D_STRING_FORM idea): the
+# initializer `new X(s)` calls. Other initializers stay statics (`NSURL.newWithStringRelativeToURL(...)`).
+string_ctor:
+  NSURL: "initWithString:"
+  NSAttributedString: "initWithString:"
+  NSMutableAttributedString: "initWithString:"
+  NSUUID: "initWithUUIDString:"
+  NSLocale: "initWithLocaleIdentifier:"
+  NSURLComponents: "initWithString:"
+
+# Classes `[[X alloc] init]` cannot make although objc2 lists `init` (seen on the macOS runner): no `new X(props)`.
+no_construct:
+  - NSPasteboard      # +[NSPasteboard alloc]: unrecognized selector (CI run 39571473898)
+
+# Members objc2 declares that the class itself does not implement at run time (abstract classes whose concrete
+# subclass implements them; seen on the macOS runner, CI run 39571473898): blocked with this reason.
+runtime_missing:
+  NSTypesetter:
+    - "boundingBoxForControlGlyphAtIndex:forTextContainer:proposedLineFragment:glyphPosition:characterIndex:"
+    - "hyphenCharacterForGlyphAtIndex:"
+    - "hyphenationFactorForGlyphAtIndex:"
+    - "shouldBreakLineByHyphenatingBeforeCharacterAtIndex:"
+    - "shouldBreakLineByWordBeforeCharacterAtIndex:"
+
+# How the generated ledger tests make a subject of a curated type that `construct` (alloc/init) cannot make
+# usefully: a static selector and its JSON arguments.
+subjects:
+  NSColor: ["colorWithSRGBRed:green:blue:alpha:", [0.2, 0.4, 0.6, 1.0]]
+  NSFont: ["systemFontOfSize:", [13]]
+  NSImage: ["imageWithSystemSymbolName:accessibilityDescription:", ["star", null]]
+  NSAttributedString: ["initWithString:", ["Hello"]]
+  NSURL: ["URLWithString:", ["https://example.com/a/b?x=1#top"]]
+  NSFileManager: ["defaultManager", []]
+  NSPasteboard: ["pasteboardWithUniqueName", []]
+  NSUserDefaults: ["standardUserDefaults", []]
+  NSUndoManager: ["new", []]
+  NSItemProvider: ["new", []]
+
+# Classes never bound, beyond the rules (deprecated, widget, private, objc2-skipped): run-loop and threading
+# machinery (JS timers and the host loop stay authoritative), coders, proxies, scripting, XPC.
+exclude_regex: "^NS(Timer|RunLoop|Thread|Lock|RecursiveLock|Condition|ConditionLock|DistributedLock|Port|MachPort|MessagePort|SocketPort|PortMessage|PortCoder|PortNameServer|.*PortNameServer|AutoreleasePool|Invocation|MethodSignature|Coder|Archiver|Unarchiver|KeyedArchiver|KeyedUnarchiver|.*Enumerator|Proxy|DistantObject|Protocol|Connection|XPC.*|Script.*|AppleEvent.*|AppleScript.*|.*Operation|OperationQueue|BlockOperation|InvocationOperation|NotificationQueue|NotificationCenter|DistributedNotificationCenter|Pipe|FileHandle|Stream|InputStream|OutputStream|Host|NetService.*|Spell.*|Accessibility.*|ObjectSpecifier|.*Specifier|Exception|Zone|Unit.*|Dimension|Measurement.*|Expression|Predicate|.*Predicate|Ubiquitous.*|Metadata.*|URLHandle|URLDownload|URLConnection|HTTPCookieStorage|URLCache|URLCredentialStorage|URLProtocol|.*Coordinator|FilePresenter)$"

@@ -12,6 +12,7 @@
 pub mod generated;
 pub mod lookup;
 pub mod tables;
+pub mod types_table;
 
 #[cfg(target_os = "macos")]
 mod backend;

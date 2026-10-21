@@ -3,6 +3,10 @@
 //! its `Backend` implementation with a recording host, on the main thread, without `[NSApp run]`.
 
 use crate::AppKitBackend;
+
+/// Helpers of the non-GUI type tests (N4): `examples/counter-mac/tests/types.rs` (generated) and `types_core.rs`.
+#[path = "testing_types.rs"]
+pub mod types;
 use crate::lookup;
 use objc2::rc::Retained;
 use objc2::runtime::{AnyObject, Sel};
@@ -57,6 +61,8 @@ struct Rec {
     on_checkpoint: RefCell<Option<Box<dyn Fn()>>>,
     /// ABI v2.6 `prop_changed` calls, in order.
     changed: RefCell<Vec<(u64, u32)>>,
+    /// `invoke_callback` calls (completions of async type members, N4), in order.
+    completions: RefCell<Vec<(u64, Vec<Value>)>>,
 }
 
 struct TestHost(Rc<Rec>);
@@ -88,6 +94,10 @@ impl HostCallbacks for TestHost {
     }
     fn prop_changed(&self, h: svl_handle, prop: svl_id) {
         self.0.changed.borrow_mut().push((h, prop));
+    }
+    fn invoke_callback(&self, callback: u64, args: &[Value]) -> StrResult<Value> {
+        self.0.completions.borrow_mut().push((callback, args.to_vec()));
+        Ok(Value::Null)
     }
 }
 
@@ -132,6 +142,7 @@ impl Harness {
             checkpoints: RefCell::new(0),
             on_checkpoint: RefCell::new(None),
             changed: RefCell::new(Vec::new()),
+            completions: RefCell::new(Vec::new()),
         });
         let host: &'static HostVtable = Box::leak(Box::new(HostVtable::new(TestHost(rec.clone()))));
         backend.attach_host(host.as_raw());
@@ -150,11 +161,16 @@ impl Harness {
         HARNESS.with(|h| *h)
     }
 
+    /// Completions the backend delivered (`invoke_callback`), drained.
+    pub fn take_completions(&self) -> Vec<(u64, Vec<Value>)> {
+        std::mem::take(&mut *self.rec.completions.borrow_mut())
+    }
+
     fn b(&self) -> &dyn Backend {
         &self.backend
     }
 
-    fn kind_of(&self, h: u64) -> u32 {
+    pub fn kind_of(&self, h: u64) -> u32 {
         self.b().handle_info(h).map(|i| i.kind).unwrap_or(0)
     }
 

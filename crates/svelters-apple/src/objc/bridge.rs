@@ -160,6 +160,11 @@ pub trait Objects {
     fn object(&self, h: u64) -> Option<Retained<AnyObject>>;
     /// The handle of an object read from native code: its existing handle, or a new borrowed one.
     fn handle_of(&self, obj: &AnyObject) -> u64;
+    /// Whether an `NSAttributedString` crosses as a handle (the non-GUI type layer, N4) instead of its
+    /// plain string (element props, where the text is what matters).
+    fn attributed_as_handle(&self) -> bool {
+        false
+    }
 }
 
 /// Boxes a JS value as the object KVC (or an object argument) expects for type `ty`.
@@ -224,8 +229,54 @@ pub fn object_in(v: &Value, cls: Option<&str>, objs: &dyn Objects) -> Result<Opt
         },
         Value::Bool(b) => Ok(Some(erase(NSNumber::new_bool(*b)))),
         Value::I64(i) => Ok(Some(erase(NSNumber::new_i64(*i)))),
+        Value::U64(u) => Ok(Some(erase(NSNumber::new_u64(*u)))),
         Value::F64(f) => Ok(Some(erase(NSNumber::new_f64(*f)))),
+        Value::Str16(w) => object_in(&Value::Str(String::from_utf16_lossy(w)), cls, objs),
+        Value::Boxed { handle, .. } => objs.object(*handle).map(Some).ok_or_else(|| format!("stale or foreign value {handle}")),
+        // NON-GUI types (N4): lists, maps, bytes and dates cross as Foundation collections and values.
+        Value::List(items) => {
+            let arr: Retained<AnyObject> = unsafe { msg_send![class!(NSMutableArray), arrayWithCapacity: items.len()] };
+            for it in items {
+                let o = match object_in(it, None, objs)? {
+                    Some(o) => o,
+                    None => unsafe { msg_send![class!(NSNull), null] },
+                };
+                let _: () = unsafe { msg_send![&*arr, addObject: &*o] };
+            }
+            Ok(Some(arr))
+        }
+        Value::Map(kv) => {
+            let dict: Retained<AnyObject> = unsafe { msg_send![class!(NSMutableDictionary), dictionaryWithCapacity: kv.len()] };
+            for (k, v) in kv {
+                let o = match object_in(v, None, objs)? {
+                    Some(o) => o,
+                    None => unsafe { msg_send![class!(NSNull), null] },
+                };
+                let _: () = unsafe { msg_send![&*dict, setObject: &*o, forKey: &*nsstring(k)] };
+            }
+            Ok(Some(dict))
+        }
+        Value::Bytes(b) => {
+            let d: Retained<AnyObject> = unsafe { msg_send![class!(NSData), dataWithBytes: b.as_ptr() as *const c_void, length: b.len()] };
+            Ok(Some(d))
+        }
+        Value::DateTime(ms) => {
+            let d: Retained<AnyObject> = unsafe { msg_send![class!(NSDate), dateWithTimeIntervalSince1970: *ms / 1000.0] };
+            Ok(Some(d))
+        }
         other => Err(format!("cannot convert {} to an object", enc::value_kind(other))),
+    }
+}
+
+/// An `NSError` as the ABI's native error: its domain, its code and `localizedDescription`.
+pub fn native_error(err: &AnyObject) -> svelters_abi::NativeError {
+    let domain: Option<Retained<NSString>> = unsafe { msg_send![err, domain] };
+    let code: isize = unsafe { msg_send![err, code] };
+    let msg: Option<Retained<NSString>> = unsafe { msg_send![err, localizedDescription] };
+    svelters_abi::NativeError {
+        domain: domain.map(|d| d.to_string()).unwrap_or_default(),
+        code: Value::I64(code as i64),
+        message: msg.map(|m| m.to_string()).unwrap_or_default(),
     }
 }
 
@@ -236,11 +287,15 @@ pub fn object_out(obj: Option<&AnyObject>, objs: &dyn Objects) -> Value {
     if let Some(s) = obj.downcast_ref::<NSString>() {
         return Value::Str(s.to_string());
     }
-    if is_kind(obj, class!(NSAttributedString)) {
+    if is_kind(obj, class!(NSAttributedString)) && !objs.attributed_as_handle() {
         let s: Option<Retained<NSString>> = unsafe { msg_send![obj, string] };
         return Value::Str(s.map(|s| s.to_string()).unwrap_or_default());
     }
     if let Some(n) = obj.downcast_ref::<NSNumber>() {
+        // A CFBoolean (`@YES`, a BOOL from NSUserDefaults) encodes as `c`: tell it by its class.
+        if std::ptr::eq(n.class(), NSNumber::new_bool(true).class()) {
+            return Value::Bool(n.as_bool());
+        }
         let t: *const c_char = unsafe { msg_send![n, objCType] };
         let t = if t.is_null() { String::new() } else { unsafe { CStr::from_ptr(t) }.to_string_lossy().into_owned() };
         return match enc::parse_type(&t).0 {
@@ -258,6 +313,37 @@ pub fn object_out(obj: Option<&AnyObject>, objs: &dyn Objects) -> Value {
             out.push(object_out(it.as_deref(), objs));
         }
         return Value::List(out);
+    }
+    if is_kind(obj, class!(NSDictionary)) {
+        let keys: Retained<AnyObject> = unsafe { msg_send![obj, allKeys] };
+        let count: usize = unsafe { msg_send![&*keys, count] };
+        let mut out = Vec::with_capacity(count);
+        for i in 0..count {
+            let k: Retained<AnyObject> = unsafe { msg_send![&*keys, objectAtIndex: i] };
+            let v: Option<Retained<AnyObject>> = unsafe { msg_send![obj, objectForKey: &*k] };
+            let ks: Retained<NSString> = unsafe { msg_send![&*k, description] };
+            out.push((ks.to_string(), object_out(v.as_deref(), objs)));
+        }
+        out.sort_by(|a, b| a.0.cmp(&b.0));
+        return Value::Map(out);
+    }
+    if is_kind(obj, class!(NSSet)) || is_kind(obj, class!(NSOrderedSet)) {
+        let arr: Retained<AnyObject> =
+            if is_kind(obj, class!(NSSet)) { unsafe { msg_send![obj, allObjects] } } else { unsafe { msg_send![obj, array] } };
+        return object_out(Some(&arr), objs);
+    }
+    if is_kind(obj, class!(NSData)) {
+        let len: usize = unsafe { msg_send![obj, length] };
+        let p: *const c_void = unsafe { msg_send![obj, bytes] };
+        let b = if p.is_null() || len == 0 { Vec::new() } else { unsafe { std::slice::from_raw_parts(p as *const u8, len) }.to_vec() };
+        return Value::Bytes(b);
+    }
+    if is_kind(obj, class!(NSDate)) {
+        let t: f64 = unsafe { msg_send![obj, timeIntervalSince1970] };
+        return Value::DateTime(t * 1000.0);
+    }
+    if is_kind(obj, class!(NSNull)) {
+        return Value::Null;
     }
     if is_kind(obj, class!(NSValue)) {
         let t: *const c_char = unsafe { msg_send![obj, objCType] };
@@ -345,42 +431,105 @@ pub fn invoke(obj: &AnyObject, s: Sel, args: &[Value], objs: &dyn Objects) -> Re
     if names::owning_family(&sname) {
         return Err(format!("{sname}: methods of the alloc/new/copy/init families are not callable (use create)"));
     }
-    if !responds(obj, s) {
-        return Err(format!("{} does not respond to {sname}", class_name_of(obj)));
+    match invoke_ex(obj, s, args, objs, &Invoke::default()) {
+        Ok(o) => Ok(o.value),
+        Err(Failed::Msg(m)) => Err(m),
+        Err(Failed::Native(e)) => Err(format!("{sname}: {}", e.message)),
     }
-    let sig: Option<Retained<AnyObject>> = unsafe { msg_send![obj, methodSignatureForSelector: s] };
+}
+
+/// How [`invoke_ex`] treats the special arguments and the result.
+#[derive(Default)]
+pub struct Invoke {
+    /// A built block (`blocks::completion`) for the argument at this index (`@?`); not a JS argument.
+    pub block: Option<(usize, *mut c_void)>,
+    /// The method ends in an `NSError **` out parameter (objc2's `Result`): the caller does not pass it,
+    /// and a failure (NO / nil / a set error with a void result) is [`Failed::Native`].
+    pub error_out: bool,
+    /// The target is a freshly allocated object (`+alloc`) and the selector an initializer: the result
+    /// is the initialized object (+1); the allocated one was consumed.
+    pub init: bool,
+}
+
+/// A failed [`invoke_ex`]: a plain message, or the `NSError` the method reported.
+pub enum Failed {
+    Msg(String),
+    Native(svelters_abi::NativeError),
+}
+
+impl From<String> for Failed {
+    fn from(m: String) -> Failed {
+        Failed::Msg(m)
+    }
+}
+
+/// The result of [`invoke_ex`]: the converted value and, for an object result, the object itself.
+pub struct Invoked {
+    pub value: Value,
+    pub obj: Option<Retained<AnyObject>>,
+}
+
+/// `NSInvocation` with blocks, `NSError **` outs and owning-family results (NON-GUI types, N4). `target`
+/// may be a class object (class methods). Results of the new/copy/mutableCopy/init families are +1.
+pub fn invoke_ex(target: &AnyObject, s: Sel, args: &[Value], objs: &dyn Objects, how: &Invoke) -> Result<Invoked, Failed> {
+    let sname = s.name().to_string_lossy().into_owned();
+    if !responds(target, s) {
+        return Err(format!("{} does not respond to {sname}", class_name_of(target)).into());
+    }
+    let sig: Option<Retained<AnyObject>> = unsafe { msg_send![target, methodSignatureForSelector: s] };
     let sig = sig.ok_or_else(|| format!("{sname}: no method signature"))?;
     let nargs: usize = unsafe { msg_send![&*sig, numberOfArguments] };
     let user = nargs.saturating_sub(2);
-    if args.len() > user {
-        return Err(format!("{sname} takes {user} argument(s), got {}", args.len()));
+    let hidden = usize::from(how.error_out) + usize::from(how.block.is_some());
+    let visible = user.saturating_sub(hidden);
+    if args.len() > visible {
+        return Err(format!("{sname} takes {visible} argument(s), got {}", args.len()).into());
     }
     let inv: Retained<AnyObject> = unsafe { msg_send![class!(NSInvocation), invocationWithMethodSignature: &*sig] };
     let _: () = unsafe { msg_send![&*inv, setSelector: s] };
-    let _: () = unsafe { msg_send![&*inv, setTarget: obj] };
+    let _: () = unsafe { msg_send![&*inv, setTarget: target] };
     // Buffers and boxed objects stay alive until the invocation returns.
     let mut keep: Vec<Option<Retained<AnyObject>>> = Vec::new();
     let mut bufs: Vec<Vec<u8>> = Vec::new();
+    let mut err: *mut AnyObject = std::ptr::null_mut();
+    let err_slot: *mut *mut AnyObject = &mut err;
+    let mut next = 0usize;
     for i in 0..user {
         let t: *const c_char = unsafe { msg_send![&*sig, getArgumentTypeAtIndex: i + 2] };
         let t = unsafe { CStr::from_ptr(t) }.to_string_lossy().into_owned();
         let ty = enc::parse_type(&t).0;
-        let bytes = match (args.get(i), &ty) {
-            (None, Ty::Object(_)) => (0usize).to_le_bytes().to_vec(),
-            (None, _) => return Err(format!("{sname}: missing argument {} ({t})", i + 1)),
-            (Some(v), Ty::Object(cls)) => {
-                let o = object_in(v, cls.as_deref(), objs)?;
-                let p = o.as_deref().map_or(std::ptr::null(), |o| o as *const AnyObject) as usize;
-                keep.push(o);
-                p.to_le_bytes().to_vec()
+        let bytes = if let Some((_, b)) = how.block.filter(|(at, _)| *at == i) {
+            (b as usize).to_le_bytes().to_vec()
+        } else if how.error_out && i + 1 == user {
+            if ty != Ty::Pointer {
+                return Err(format!("{sname}: the last argument is not an NSError ** out parameter ({t})").into());
             }
-            (Some(v), Ty::Struct(st)) => enc::struct_bytes(st, &enc::struct_in(v, st)?),
-            (Some(Value::Str(name)), Ty::Sel) => {
-                let s = sel(name);
-                (unsafe { std::mem::transmute::<Sel, usize>(s) }).to_le_bytes().to_vec()
+            (err_slot as usize).to_le_bytes().to_vec()
+        } else {
+            let a = args.get(next);
+            next += 1;
+            match (a, &ty) {
+                (None, Ty::Object(_) | Ty::Block | Ty::Class) => (0usize).to_le_bytes().to_vec(),
+                (None, _) => return Err(format!("{sname}: missing argument {} ({t})", i + 1).into()),
+                (Some(v), Ty::Object(cls)) => {
+                    let o = object_in(v, cls.as_deref(), objs)?;
+                    let p = o.as_deref().map_or(std::ptr::null(), |o| o as *const AnyObject) as usize;
+                    keep.push(o);
+                    p.to_le_bytes().to_vec()
+                }
+                (Some(Value::Null), Ty::Class) => (0usize).to_le_bytes().to_vec(),
+                (Some(Value::Str(name)), Ty::Class) => {
+                    let c = class_named(name).ok_or_else(|| format!("{sname}: no class named {name}"))?;
+                    (c as *const AnyClass as usize).to_le_bytes().to_vec()
+                }
+                (Some(v), Ty::Struct(st)) => enc::struct_bytes(st, &enc::struct_in(v, st)?),
+                (Some(Value::Str(name)), Ty::Sel) => {
+                    let s = sel(name);
+                    (unsafe { std::mem::transmute::<Sel, usize>(s) }).to_le_bytes().to_vec()
+                }
+                (Some(v), Ty::Bool | Ty::I(_) | Ty::U(_) | Ty::F32 | Ty::F64) => enc::scalar_in(v, &ty, &[], false)?.bytes_for(&ty),
+                (Some(_), other) => return Err(format!("{sname}: argument {} of type {other:?} is not supported", i + 1).into()),
             }
-            (Some(v), Ty::Bool | Ty::I(_) | Ty::U(_) | Ty::F32 | Ty::F64) => enc::scalar_in(v, &ty, &[], false)?.bytes_for(&ty),
-            (Some(_), other) => return Err(format!("{sname}: argument {} of type {other:?} is not supported", i + 1)),
         };
         let mut b = bytes;
         b.resize(b.len().max(16), 0);
@@ -395,28 +544,60 @@ pub fn invoke(obj: &AnyObject, s: Sel, args: &[Value], objs: &dyn Objects) -> Re
     let rt = unsafe { CStr::from_ptr(rt) }.to_string_lossy().into_owned();
     let rlen: usize = unsafe { msg_send![&*sig, methodReturnLength] };
     let ty = enc::parse_type(&rt).0;
-    if ty == Ty::Void || rlen == 0 {
-        return Ok(Value::Null);
-    }
     let mut ret = vec![0u8; rlen.max(16)];
-    let _: () = unsafe { msg_send![&*inv, getReturnValue: ret.as_mut_ptr() as *mut c_void] };
+    if ty != Ty::Void && rlen > 0 {
+        let _: () = unsafe { msg_send![&*inv, getReturnValue: ret.as_mut_ptr() as *mut c_void] };
+    }
     drop(keep);
+    let owned = how.init || names::owning_family(&sname);
+    let ptr = usize::from_le_bytes(ret[..8].try_into().unwrap()) as *mut AnyObject;
+    let boolish = matches!(ty, Ty::Bool | Ty::I(1));
+    if how.error_out {
+        let failed = match &ty {
+            Ty::Void => !err.is_null(),
+            _ if boolish => ret[0] == 0,
+            Ty::Object(_) => ptr.is_null(),
+            _ => false,
+        };
+        if failed {
+            // The error is autoreleased (+0): retain it while converting.
+            return Err(match unsafe { Retained::retain(err) } {
+                Some(e) => Failed::Native(native_error(&e)),
+                None => Failed::Msg(format!("{sname} failed")),
+            });
+        }
+        if boolish {
+            // objc2's `Result<(), NSError>`: YES is success with no value.
+            return Ok(Invoked { value: Value::Null, obj: None });
+        }
+    }
+    if ty == Ty::Void || rlen == 0 {
+        return Ok(Invoked { value: Value::Null, obj: None });
+    }
     Ok(match &ty {
         Ty::Object(_) => {
-            let p = usize::from_le_bytes(ret[..8].try_into().unwrap()) as *mut AnyObject;
-            // +0 result (owning families are refused above): retain while converting.
-            let o = unsafe { Retained::retain(p) };
-            object_out(o.as_deref(), objs)
+            // +1 for the owning families, else +0 (retained while converting).
+            let o = if owned { unsafe { Retained::from_raw(ptr) } } else { unsafe { Retained::retain(ptr) } };
+            Invoked { value: object_out(o.as_deref(), objs), obj: o }
         }
-        Ty::Struct(st) if st.fields() > 0 => enc::struct_out(st, &enc::struct_from_bytes(st, &ret)),
-        Ty::Bool | Ty::I(_) | Ty::U(_) | Ty::F32 | Ty::F64 => match enc::scalar_from_bytes(&ty, &ret) {
-            Some(s) => enc::scalar_out(s, &ty, &[], false),
-            None => Value::Null,
+        Ty::Struct(st) if st.fields() > 0 => Invoked { value: enc::struct_out(st, &enc::struct_from_bytes(st, &ret)), obj: None },
+        Ty::Bool | Ty::I(_) | Ty::U(_) | Ty::F32 | Ty::F64 => Invoked {
+            value: match enc::scalar_from_bytes(&ty, &ret) {
+                Some(s) => enc::scalar_out(s, &ty, &[], false),
+                None => Value::Null,
+            },
+            obj: None,
         },
-        Ty::CStr => {
-            let p = usize::from_le_bytes(ret[..8].try_into().unwrap()) as *const c_char;
-            if p.is_null() { Value::Null } else { Value::Str(unsafe { CStr::from_ptr(p) }.to_string_lossy().into_owned()) }
+        Ty::Class => {
+            let c = ptr as *const AnyClass;
+            let v = if c.is_null() { Value::Null } else { Value::Str(unsafe { &*c }.name().to_string_lossy().into_owned()) };
+            Invoked { value: v, obj: None }
         }
-        other => return Err(format!("{sname}: result type {other:?} is not supported")),
+        Ty::CStr => {
+            let p = ptr as *const c_char;
+            let v = if p.is_null() { Value::Null } else { Value::Str(unsafe { CStr::from_ptr(p) }.to_string_lossy().into_owned()) };
+            Invoked { value: v, obj: None }
+        }
+        other => return Err(format!("{sname}: result type {other:?} is not supported").into()),
     })
 }
