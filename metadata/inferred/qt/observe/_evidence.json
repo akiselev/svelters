@@ -2352,6 +2352,13 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [
+    "ReadOnlyChange"
+   ],
+   "probe": null,
+   "verdict": "probe never saw it change: hand table kept"
+  },
   "pattern": "observe:exact-probe"
  },
  "QtWidgets:QAbstractSpinBox:showGroupSeparator": {
@@ -2531,6 +2538,20 @@
      ]
     }
    ]
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QSpinBox/set:QSpinBox:minimum",
+    "QSpinBox/set:QSpinBox:prefix",
+    "QSpinBox/set:QSpinBox:prefix:back",
+    "QSpinBox/set:QSpinBox:suffix",
+    "QSpinBox/set:QSpinBox:suffix:back",
+    "QSpinBox/set:QSpinBox:value",
+    "QSpinBox/set:QSpinBox:value:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:none-probe"
  },
@@ -5415,7 +5436,7 @@
   "pattern": "observe:none-probe"
  },
  "QtWidgets:QComboBox:currentData": {
-  "confidence": 0.8,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -5426,7 +5447,39 @@
     "writable": false
    }
   },
-  "pattern": "observe:exact-signal-pair-unprobed"
+  "pairs": [
+   {
+    "cause": "setCurrentIndex",
+    "changed": true,
+    "signals": [
+     "currentIndexChanged",
+     "currentTextChanged",
+     "highlighted",
+     "textHighlighted"
+    ]
+   },
+   {
+    "cause": "setItemData(current)",
+    "changed": true,
+    "signals": []
+   },
+   {
+    "cause": "removeItem(current)",
+    "changed": true,
+    "signals": [
+     "currentIndexChanged",
+     "currentTextChanged",
+     "highlighted",
+     "textHighlighted"
+    ]
+   },
+   {
+    "cause": "setCurrentText",
+    "changed": false,
+    "signals": []
+   }
+  ],
+  "pattern": "observe:partial-probe"
  },
  "QtWidgets:QComboBox:currentIndex": {
   "confidence": 0.95,
@@ -6592,7 +6645,7 @@
   "pattern": "observe:exact-rule"
  },
  "QtWidgets:QDockWidget:windowTitle": {
-  "confidence": 0.9,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -6603,7 +6656,28 @@
     "writable": true
    }
   },
-  "pattern": "observe:set-only"
+  "o4": {
+   "hand": [],
+   "probe": [
+    "WindowTitleChange"
+   ],
+   "uncovered": [
+    "QLineEdit/set:QWidget:windowFilePath",
+    "QLineEdit/set:QWidget:windowFilePath:back",
+    "QPlainTextEdit/set:QWidget:windowFilePath",
+    "QPlainTextEdit/set:QWidget:windowFilePath:back",
+    "QSpinBox/set:QWidget:windowFilePath",
+    "QSpinBox/set:QWidget:windowFilePath:back",
+    "QTextEdit/set:QWidget:windowFilePath",
+    "QTextEdit/set:QWidget:windowFilePath:back",
+    "QWidget(child)/set:QWidget:windowFilePath",
+    "QWidget(child)/set:QWidget:windowFilePath:back",
+    "QWidget/set:QWidget:windowFilePath",
+    "QWidget/set:QWidget:windowFilePath:back"
+   ],
+   "verdict": "probe: changes no event covered: QLineEdit/set:QWidget:windowFilePath, QLineEdit/set:QWidget:windowFilePath:back, QPlainTextEdit/set:QWidget:windowFilePath"
+  },
+  "pattern": "observe:partial-probe"
  },
  "QtWidgets:QDoubleSpinBox:cleanText": {
   "confidence": 0.95,
@@ -8284,7 +8358,7 @@
   "pattern": "observe:set-only"
  },
  "QtWidgets:QGraphicsScene:sceneRect": {
-  "confidence": 0.8,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -8295,7 +8369,31 @@
     "writable": true
    }
   },
-  "pattern": "observe:exact-signal-pair-unprobed"
+  "pairs": [
+   {
+    "cause": "addRect (grows the unset rect)",
+    "changed": true,
+    "signals": [
+     "changed",
+     "sceneRectChanged"
+    ]
+   },
+   {
+    "cause": "setSceneRect",
+    "changed": true,
+    "signals": [
+     "sceneRectChanged"
+    ]
+   },
+   {
+    "cause": "addRect (fixed rect)",
+    "changed": false,
+    "signals": [
+     "changed"
+    ]
+   }
+  ],
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QGraphicsScene:stickyFocus": {
   "confidence": 0.9,
@@ -9258,9 +9356,32 @@
   "pattern": "observe:set-only"
  },
  "QtWidgets:QInputDialog:doubleValue": {
-  "confidence": 0.8,
+  "confidence": 0.95,
   "evidence": {},
-  "pattern": "observe:exact-signal-pair-unprobed"
+  "pairs": [
+   {
+    "cause": "setDoubleValue",
+    "changed": true,
+    "signals": [
+     "doubleValueChanged"
+    ]
+   },
+   {
+    "cause": "setDoubleMaximum below value",
+    "changed": true,
+    "signals": [
+     "doubleValueChanged"
+    ]
+   },
+   {
+    "cause": "keyClicks",
+    "changed": true,
+    "signals": [
+     "doubleValueChanged"
+    ]
+   }
+  ],
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QInputDialog:inputMode": {
   "confidence": 0.9,
@@ -9283,9 +9404,32 @@
   "pattern": "observe:set-only"
  },
  "QtWidgets:QInputDialog:intValue": {
-  "confidence": 0.8,
+  "confidence": 0.95,
   "evidence": {},
-  "pattern": "observe:exact-signal-pair-unprobed"
+  "pairs": [
+   {
+    "cause": "setIntValue",
+    "changed": true,
+    "signals": [
+     "intValueChanged"
+    ]
+   },
+   {
+    "cause": "setIntMaximum below value",
+    "changed": true,
+    "signals": [
+     "intValueChanged"
+    ]
+   },
+   {
+    "cause": "keyClicks",
+    "changed": true,
+    "signals": [
+     "intValueChanged"
+    ]
+   }
+  ],
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QInputDialog:labelText": {
   "confidence": 0.9,
@@ -9308,9 +9452,25 @@
   "pattern": "observe:set-only"
  },
  "QtWidgets:QInputDialog:textValue": {
-  "confidence": 0.8,
+  "confidence": 0.95,
   "evidence": {},
-  "pattern": "observe:exact-signal-pair-unprobed"
+  "pairs": [
+   {
+    "cause": "setTextValue",
+    "changed": true,
+    "signals": [
+     "textValueChanged"
+    ]
+   },
+   {
+    "cause": "keyClicks",
+    "changed": true,
+    "signals": [
+     "textValueChanged"
+    ]
+   }
+  ],
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QItemDelegate:clipping": {
   "confidence": 0.9,
@@ -9965,6 +10125,15 @@
     "writable": true
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:alignment",
+    "QLineEdit/set:QLineEdit:alignment:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QLineEdit:clearButtonEnabled": {
@@ -9988,6 +10157,15 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:clearButtonEnabled",
+    "QLineEdit/set:QLineEdit:clearButtonEnabled:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QLineEdit:cursorMoveStyle": {
@@ -10010,6 +10188,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:cursorMoveStyle",
+    "QLineEdit/set:QLineEdit:cursorMoveStyle:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -10158,6 +10345,17 @@
     }
    ]
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:inputMask",
+    "QLineEdit/set:QLineEdit:inputMask:back",
+    "QLineEdit/set:QLineEdit:text",
+    "QLineEdit/set:QLineEdit:text:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:exact-probe"
  },
  "QtWidgets:QLineEdit:dragEnabled": {
@@ -10180,6 +10378,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:dragEnabled",
+    "QLineEdit/set:QLineEdit:dragEnabled:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -10204,6 +10411,15 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:echoMode",
+    "QLineEdit/set:QLineEdit:echoMode:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QLineEdit:frame": {
@@ -10227,10 +10443,19 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:frame",
+    "QLineEdit/set:QLineEdit:frame:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QLineEdit:hasSelectedText": {
-  "confidence": 0.8,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -10241,7 +10466,36 @@
     "writable": false
    }
   },
-  "pattern": "observe:exact-signal-pair-unprobed"
+  "pairs": [
+   {
+    "cause": "setSelection",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "selectionChanged"
+    ]
+   },
+   {
+    "cause": "setText clears the selection",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "selectionChanged",
+     "textChanged"
+    ]
+   },
+   {
+    "cause": "typing over the selection (user)",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "selectionChanged",
+     "textChanged",
+     "textEdited"
+    ]
+   }
+  ],
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QLineEdit:inputMask": {
   "confidence": 0.9,
@@ -10268,6 +10522,15 @@
      "textChanged"
     ]
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:inputMask",
+    "QLineEdit/set:QLineEdit:inputMask:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -10311,6 +10574,17 @@
      "cursorPositionChanged"
     ]
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:inputMask",
+    "QLineEdit/set:QLineEdit:inputMask:back",
+    "QLineEdit/set:QLineEdit:maxLength",
+    "QLineEdit/set:QLineEdit:maxLength:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:none-probe"
  },
@@ -10369,6 +10643,15 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:modified",
+    "QLineEdit/set:QLineEdit:modified:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:partial-probe"
  },
  "QtWidgets:QLineEdit:placeholderText": {
@@ -10391,6 +10674,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:placeholderText",
+    "QLineEdit/set:QLineEdit:placeholderText:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -10419,10 +10711,19 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [
+    "ReadOnlyChange"
+   ],
+   "probe": [
+    "ReadOnlyChange"
+   ],
+   "verdict": "agree"
+  },
   "pattern": "observe:exact-probe"
  },
  "QtWidgets:QLineEdit:redoAvailable": {
-  "confidence": 0.8,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -10433,10 +10734,51 @@
     "writable": false
    }
   },
-  "pattern": "observe:exact-signal-pair-unprobed"
+  "pairs": [
+   {
+    "cause": "undo",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "textChanged",
+     "textEdited"
+    ]
+   },
+   {
+    "cause": "redo",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "selectionChanged",
+     "textChanged",
+     "textEdited"
+    ]
+   },
+   {
+    "cause": "undo (user ctrl+z)",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "selectionChanged",
+     "textChanged",
+     "textEdited"
+    ]
+   },
+   {
+    "cause": "typing (user)",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "selectionChanged",
+     "textChanged",
+     "textEdited"
+    ]
+   }
+  ],
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QLineEdit:selectedText": {
-  "confidence": 0.8,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -10447,7 +10789,40 @@
     "writable": false
    }
   },
-  "pattern": "observe:exact-signal-pair-unprobed"
+  "pairs": [
+   {
+    "cause": "setSelection",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "selectionChanged"
+    ]
+   },
+   {
+    "cause": "selectAll",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "selectionChanged"
+    ]
+   },
+   {
+    "cause": "deselect",
+    "changed": true,
+    "signals": [
+     "selectionChanged"
+    ]
+   },
+   {
+    "cause": "shift+left (user)",
+    "changed": true,
+    "signals": [
+     "cursorPositionChanged",
+     "selectionChanged"
+    ]
+   }
+  ],
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QLineEdit:text": {
   "confidence": 0.95,
@@ -11108,7 +11483,7 @@
   "pattern": "observe:set-only"
  },
  "QtWidgets:QMainWindow:iconSize": {
-  "confidence": 0.8,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -11119,7 +11494,23 @@
     "writable": true
    }
   },
-  "pattern": "observe:exact-signal-pair-unprobed"
+  "pairs": [
+   {
+    "cause": "setIconSize",
+    "changed": true,
+    "signals": [
+     "iconSizeChanged"
+    ]
+   },
+   {
+    "cause": "setIconSize(invalid): back to the style's",
+    "changed": true,
+    "signals": [
+     "iconSizeChanged"
+    ]
+   }
+  ],
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QMainWindow:tabShape": {
   "confidence": 0.9,
@@ -12045,10 +12436,19 @@
     ]
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:backgroundVisible",
+    "QPlainTextEdit/set:QPlainTextEdit:backgroundVisible:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QPlainTextEdit:blockCount": {
-  "confidence": 0.8,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -12059,7 +12459,56 @@
     "writable": false
    }
   },
-  "pattern": "observe:exact-signal-pair-unprobed"
+  "pairs": [
+   {
+    "cause": "appendPlainText",
+    "changed": false,
+    "signals": [
+     "cursorPositionChanged",
+     "modificationChanged",
+     "textChanged",
+     "undoAvailable",
+     "updateRequest"
+    ]
+   },
+   {
+    "cause": "setPlainText",
+    "changed": true,
+    "signals": [
+     "blockCountChanged",
+     "cursorPositionChanged",
+     "modificationChanged",
+     "textChanged",
+     "undoAvailable",
+     "updateRequest"
+    ]
+   },
+   {
+    "cause": "Return (user)",
+    "changed": true,
+    "signals": [
+     "blockCountChanged",
+     "cursorPositionChanged",
+     "modificationChanged",
+     "textChanged",
+     "undoAvailable",
+     "updateRequest"
+    ]
+   },
+   {
+    "cause": "clear",
+    "changed": true,
+    "signals": [
+     "blockCountChanged",
+     "cursorPositionChanged",
+     "modificationChanged",
+     "textChanged",
+     "undoAvailable",
+     "updateRequest"
+    ]
+   }
+  ],
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QPlainTextEdit:centerOnScroll": {
   "confidence": 0.9,
@@ -12081,6 +12530,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:centerOnScroll",
+    "QPlainTextEdit/set:QPlainTextEdit:centerOnScroll:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -12107,6 +12565,15 @@
     ]
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:cursorWidth",
+    "QPlainTextEdit/set:QPlainTextEdit:cursorWidth:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QPlainTextEdit:documentTitle": {
@@ -12129,6 +12596,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:documentTitle",
+    "QPlainTextEdit/set:QPlainTextEdit:documentTitle:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -12155,6 +12631,15 @@
     ]
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:lineWrapMode",
+    "QPlainTextEdit/set:QPlainTextEdit:lineWrapMode:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QPlainTextEdit:maximumBlockCount": {
@@ -12177,6 +12662,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:maximumBlockCount",
+    "QPlainTextEdit/set:QPlainTextEdit:maximumBlockCount:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -12201,6 +12695,15 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:overwriteMode",
+    "QPlainTextEdit/set:QPlainTextEdit:overwriteMode:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QPlainTextEdit:placeholderText": {
@@ -12223,6 +12726,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:placeholderText",
+    "QPlainTextEdit/set:QPlainTextEdit:placeholderText:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -12303,6 +12815,15 @@
     ]
    }
   },
+  "o4": {
+   "hand": [
+    "ReadOnlyChange"
+   ],
+   "probe": [
+    "ReadOnlyChange"
+   ],
+   "verdict": "agree"
+  },
   "pattern": "observe:exact-probe"
  },
  "QtWidgets:QPlainTextEdit:tabChangesFocus": {
@@ -12325,6 +12846,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:tabChangesFocus",
+    "QPlainTextEdit/set:QPlainTextEdit:tabChangesFocus:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -12350,6 +12880,15 @@
      "updateRequest"
     ]
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:tabStopDistance",
+    "QPlainTextEdit/set:QPlainTextEdit:tabStopDistance:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -12381,7 +12920,18 @@
     }
    ]
   },
-  "pattern": "observe:none-probe"
+  "o4": {
+   "hand": [],
+   "probe": [
+    "ReadOnlyChange"
+   ],
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:textInteractionFlags",
+    "QPlainTextEdit/set:QPlainTextEdit:textInteractionFlags:back"
+   ],
+   "verdict": "probe: changes no event covered: QPlainTextEdit/set:QPlainTextEdit:textInteractionFlags, QPlainTextEdit/set:QPlainTextEdit:textInteractionFlags:back"
+  },
+  "pattern": "observe:partial-probe"
  },
  "QtWidgets:QPlainTextEdit:undoRedoEnabled": {
   "confidence": 0.95,
@@ -12414,6 +12964,16 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QPlainTextEdit/set:QPlainTextEdit:maximumBlockCount",
+    "QPlainTextEdit/set:QPlainTextEdit:undoRedoEnabled",
+    "QPlainTextEdit/set:QPlainTextEdit:undoRedoEnabled:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:none-probe"
  },
@@ -13183,6 +13743,16 @@
     }
    ]
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QSpinBox/set:QSpinBox:minimum",
+    "QSpinBox/set:QSpinBox:value",
+    "QSpinBox/set:QSpinBox:value:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:none-probe"
  },
  "QtWidgets:QSpinBox:displayIntegerBase": {
@@ -13206,6 +13776,15 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QSpinBox/set:QSpinBox:displayIntegerBase",
+    "QSpinBox/set:QSpinBox:displayIntegerBase:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QSpinBox:maximum": {
@@ -13228,6 +13807,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QSpinBox/set:QSpinBox:maximum",
+    "QSpinBox/set:QSpinBox:maximum:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -13255,6 +13843,15 @@
     ]
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QSpinBox/set:QSpinBox:minimum",
+    "QSpinBox/set:QSpinBox:minimum:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QSpinBox:prefix": {
@@ -13277,6 +13874,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QSpinBox/set:QSpinBox:prefix",
+    "QSpinBox/set:QSpinBox:prefix:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -13301,6 +13907,15 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QSpinBox/set:QSpinBox:singleStep",
+    "QSpinBox/set:QSpinBox:singleStep:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QSpinBox:stepType": {
@@ -13324,6 +13939,15 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QSpinBox/set:QSpinBox:stepType",
+    "QSpinBox/set:QSpinBox:stepType:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QSpinBox:suffix": {
@@ -13346,6 +13970,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QSpinBox/set:QSpinBox:suffix",
+    "QSpinBox/set:QSpinBox:suffix:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -14557,7 +15190,7 @@
   "pattern": "observe:set-only"
  },
  "QtWidgets:QTextBrowser:source": {
-  "confidence": 0.8,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -14568,7 +15201,53 @@
     "writable": true
    }
   },
-  "pattern": "observe:exact-signal-pair-unprobed"
+  "pairs": [
+   {
+    "cause": "setSource",
+    "changed": true,
+    "signals": [
+     "backwardAvailable",
+     "cursorPositionChanged",
+     "forwardAvailable",
+     "historyChanged",
+     "sourceChanged",
+     "textChanged"
+    ]
+   },
+   {
+    "cause": "setSource (another)",
+    "changed": true,
+    "signals": [
+     "backwardAvailable",
+     "cursorPositionChanged",
+     "forwardAvailable",
+     "historyChanged",
+     "sourceChanged",
+     "textChanged"
+    ]
+   },
+   {
+    "cause": "backward",
+    "changed": true,
+    "signals": [
+     "backwardAvailable",
+     "cursorPositionChanged",
+     "forwardAvailable",
+     "historyChanged",
+     "sourceChanged",
+     "textChanged"
+    ]
+   },
+   {
+    "cause": "clear",
+    "changed": false,
+    "signals": [
+     "cursorPositionChanged",
+     "textChanged"
+    ]
+   }
+  ],
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QTextBrowser:sourceType": {
   "confidence": 0.9,
@@ -14604,7 +15283,7 @@
   "pattern": "observe:exact-rule"
  },
  "QtWidgets:QTextDocument:blockCount": {
-  "confidence": 0.8,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -14615,7 +15294,44 @@
     "writable": false
    }
   },
-  "pattern": "observe:exact-signal-pair-unprobed"
+  "pairs": [
+   {
+    "cause": "setPlainText",
+    "changed": true,
+    "signals": [
+     "blockCountChanged",
+     "contentsChange",
+     "contentsChanged",
+     "cursorPositionChanged",
+     "modificationChanged"
+    ]
+   },
+   {
+    "cause": "Return in its editor (user)",
+    "changed": true,
+    "signals": [
+     "blockCountChanged",
+     "contentsChange",
+     "contentsChanged",
+     "cursorPositionChanged",
+     "undoAvailable",
+     "undoCommandAdded"
+    ]
+   },
+   {
+    "cause": "undo",
+    "changed": true,
+    "signals": [
+     "blockCountChanged",
+     "contentsChange",
+     "contentsChanged",
+     "cursorPositionChanged",
+     "redoAvailable",
+     "undoAvailable"
+    ]
+   }
+  ],
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QTextDocument:defaultFont": {
   "confidence": 0.9,
@@ -15001,6 +15717,15 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:acceptRichText",
+    "QTextEdit/set:QTextEdit:acceptRichText:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QTextEdit:autoFormatting": {
@@ -15014,6 +15739,15 @@
     "user": false,
     "writable": true
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:autoFormatting",
+    "QTextEdit/set:QTextEdit:autoFormatting:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -15037,6 +15771,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:cursorWidth",
+    "QTextEdit/set:QTextEdit:cursorWidth:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -15074,6 +15817,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:documentTitle",
+    "QTextEdit/set:QTextEdit:documentTitle:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -15182,6 +15934,15 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:lineWrapColumnOrWidth",
+    "QTextEdit/set:QTextEdit:lineWrapColumnOrWidth:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QTextEdit:lineWrapMode": {
@@ -15204,6 +15965,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:lineWrapMode",
+    "QTextEdit/set:QTextEdit:lineWrapMode:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -15303,6 +16073,15 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:overwriteMode",
+    "QTextEdit/set:QTextEdit:overwriteMode:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QTextEdit:placeholderText": {
@@ -15325,6 +16104,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:placeholderText",
+    "QTextEdit/set:QTextEdit:placeholderText:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -15402,6 +16190,19 @@
     ]
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:html",
+    "QTextEdit/set:QTextEdit:html:back",
+    "QTextEdit/set:QTextEdit:markdown",
+    "QTextEdit/set:QTextEdit:markdown:back",
+    "QTextEdit/set:QTextEdit:plainText",
+    "QTextEdit/set:QTextEdit:plainText:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:exact-probe"
  },
  "QtWidgets:QTextEdit:readOnly": {
@@ -15428,6 +16229,15 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [
+    "ReadOnlyChange"
+   ],
+   "probe": [
+    "ReadOnlyChange"
+   ],
+   "verdict": "agree"
+  },
   "pattern": "observe:exact-probe"
  },
  "QtWidgets:QTextEdit:tabChangesFocus": {
@@ -15451,6 +16261,15 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:tabChangesFocus",
+    "QTextEdit/set:QTextEdit:tabChangesFocus:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QTextEdit:tabStopDistance": {
@@ -15473,6 +16292,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:tabStopDistance",
+    "QTextEdit/set:QTextEdit:tabStopDistance:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -15502,7 +16330,18 @@
     }
    ]
   },
-  "pattern": "observe:none-probe"
+  "o4": {
+   "hand": [],
+   "probe": [
+    "ReadOnlyChange"
+   ],
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:textInteractionFlags",
+    "QTextEdit/set:QTextEdit:textInteractionFlags:back"
+   ],
+   "verdict": "probe: changes no event covered: QTextEdit/set:QTextEdit:textInteractionFlags, QTextEdit/set:QTextEdit:textInteractionFlags:back"
+  },
+  "pattern": "observe:partial-probe"
  },
  "QtWidgets:QTextEdit:undoRedoEnabled": {
   "confidence": 0.9,
@@ -15524,6 +16363,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QTextEdit/set:QTextEdit:undoRedoEnabled",
+    "QTextEdit/set:QTextEdit:undoRedoEnabled:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -16172,6 +17020,15 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [
+    "AcceptDropsChange"
+   ],
+   "probe": [
+    "AcceptDropsChange"
+   ],
+   "verdict": "agree"
+  },
   "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:accessibleDescription": {
@@ -16194,6 +17051,25 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QWidget:accessibleDescription",
+    "QLineEdit/set:QWidget:accessibleDescription:back",
+    "QPlainTextEdit/set:QWidget:accessibleDescription",
+    "QPlainTextEdit/set:QWidget:accessibleDescription:back",
+    "QSpinBox/set:QWidget:accessibleDescription",
+    "QSpinBox/set:QWidget:accessibleDescription:back",
+    "QTextEdit/set:QWidget:accessibleDescription",
+    "QTextEdit/set:QWidget:accessibleDescription:back",
+    "QWidget(child)/set:QWidget:accessibleDescription",
+    "QWidget(child)/set:QWidget:accessibleDescription:back",
+    "QWidget/set:QWidget:accessibleDescription",
+    "QWidget/set:QWidget:accessibleDescription:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -16218,6 +17094,25 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QWidget:accessibleIdentifier",
+    "QLineEdit/set:QWidget:accessibleIdentifier:back",
+    "QPlainTextEdit/set:QWidget:accessibleIdentifier",
+    "QPlainTextEdit/set:QWidget:accessibleIdentifier:back",
+    "QSpinBox/set:QWidget:accessibleIdentifier",
+    "QSpinBox/set:QWidget:accessibleIdentifier:back",
+    "QTextEdit/set:QWidget:accessibleIdentifier",
+    "QTextEdit/set:QWidget:accessibleIdentifier:back",
+    "QWidget(child)/set:QWidget:accessibleIdentifier",
+    "QWidget(child)/set:QWidget:accessibleIdentifier:back",
+    "QWidget/set:QWidget:accessibleIdentifier",
+    "QWidget/set:QWidget:accessibleIdentifier:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QWidget:accessibleName": {
@@ -16240,6 +17135,25 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QWidget:accessibleName",
+    "QLineEdit/set:QWidget:accessibleName:back",
+    "QPlainTextEdit/set:QWidget:accessibleName",
+    "QPlainTextEdit/set:QWidget:accessibleName:back",
+    "QSpinBox/set:QWidget:accessibleName",
+    "QSpinBox/set:QWidget:accessibleName:back",
+    "QTextEdit/set:QWidget:accessibleName",
+    "QTextEdit/set:QWidget:accessibleName:back",
+    "QWidget(child)/set:QWidget:accessibleName",
+    "QWidget(child)/set:QWidget:accessibleName:back",
+    "QWidget/set:QWidget:accessibleName",
+    "QWidget/set:QWidget:accessibleName:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -16264,6 +17178,25 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QWidget:autoFillBackground",
+    "QLineEdit/set:QWidget:autoFillBackground:back",
+    "QPlainTextEdit/set:QWidget:autoFillBackground",
+    "QPlainTextEdit/set:QWidget:autoFillBackground:back",
+    "QSpinBox/set:QWidget:autoFillBackground",
+    "QSpinBox/set:QWidget:autoFillBackground:back",
+    "QTextEdit/set:QWidget:autoFillBackground",
+    "QTextEdit/set:QWidget:autoFillBackground:back",
+    "QWidget(child)/set:QWidget:autoFillBackground",
+    "QWidget(child)/set:QWidget:autoFillBackground:back",
+    "QWidget/set:QWidget:autoFillBackground",
+    "QWidget/set:QWidget:autoFillBackground:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QWidget:baseSize": {
@@ -16277,6 +17210,25 @@
     "user": false,
     "writable": true
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QWidget:baseSize",
+    "QLineEdit/set:QWidget:baseSize:back",
+    "QPlainTextEdit/set:QWidget:baseSize",
+    "QPlainTextEdit/set:QWidget:baseSize:back",
+    "QSpinBox/set:QWidget:baseSize",
+    "QSpinBox/set:QWidget:baseSize:back",
+    "QTextEdit/set:QWidget:baseSize",
+    "QTextEdit/set:QWidget:baseSize:back",
+    "QWidget(child)/set:QWidget:baseSize",
+    "QWidget(child)/set:QWidget:baseSize:back",
+    "QWidget/set:QWidget:baseSize",
+    "QWidget/set:QWidget:baseSize:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -16372,7 +17324,18 @@
     }
    ]
   },
-  "pattern": "observe:none-probe"
+  "o4": {
+   "hand": [],
+   "probe": [
+    "Resize"
+   ],
+   "uncovered": [
+    "QSpinBox/set:QWidget:layoutDirection",
+    "QSpinBox/set:QWidget:layoutDirection:back"
+   ],
+   "verdict": "probe: changes no event covered: QSpinBox/set:QWidget:layoutDirection, QSpinBox/set:QWidget:layoutDirection:back"
+  },
+  "pattern": "observe:partial-probe"
  },
  "QtWidgets:QWidget:childrenRegion": {
   "confidence": 0.95,
@@ -16466,7 +17429,18 @@
     }
    ]
   },
-  "pattern": "observe:none-probe"
+  "o4": {
+   "hand": [],
+   "probe": [
+    "Resize"
+   ],
+   "uncovered": [
+    "QSpinBox/set:QWidget:layoutDirection",
+    "QSpinBox/set:QWidget:layoutDirection:back"
+   ],
+   "verdict": "probe: changes no event covered: QSpinBox/set:QWidget:layoutDirection, QSpinBox/set:QWidget:layoutDirection:back"
+  },
+  "pattern": "observe:partial-probe"
  },
  "QtWidgets:QWidget:contextMenuPolicy": {
   "confidence": 0.9,
@@ -16489,10 +17463,29 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QWidget:contextMenuPolicy",
+    "QLineEdit/set:QWidget:contextMenuPolicy:back",
+    "QPlainTextEdit/set:QWidget:contextMenuPolicy",
+    "QPlainTextEdit/set:QWidget:contextMenuPolicy:back",
+    "QSpinBox/set:QWidget:contextMenuPolicy",
+    "QSpinBox/set:QWidget:contextMenuPolicy:back",
+    "QTextEdit/set:QWidget:contextMenuPolicy",
+    "QTextEdit/set:QWidget:contextMenuPolicy:back",
+    "QWidget(child)/set:QWidget:contextMenuPolicy",
+    "QWidget(child)/set:QWidget:contextMenuPolicy:back",
+    "QWidget/set:QWidget:contextMenuPolicy",
+    "QWidget/set:QWidget:contextMenuPolicy:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QWidget:cursor": {
-  "confidence": 0.9,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -16503,7 +17496,16 @@
     "writable": true
    }
   },
-  "pattern": "observe:exact-rule"
+  "o4": {
+   "hand": [
+    "CursorChange"
+   ],
+   "probe": [
+    "CursorChange"
+   ],
+   "verdict": "agree"
+  },
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:enabled": {
   "confidence": 0.95,
@@ -16542,6 +17544,15 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [
+    "EnabledChange"
+   ],
+   "probe": [
+    "EnabledChange"
+   ],
+   "verdict": "agree"
+  },
   "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:focus": {
@@ -16573,6 +17584,17 @@
      "signals": []
     }
    ]
+  },
+  "o4": {
+   "hand": [
+    "FocusIn",
+    "FocusOut"
+   ],
+   "probe": [
+    "FocusIn",
+    "FocusOut"
+   ],
+   "verdict": "agree"
   },
   "pattern": "observe:exact-probe"
  },
@@ -16611,10 +17633,29 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QWidget:focusPolicy",
+    "QLineEdit/set:QWidget:focusPolicy:back",
+    "QPlainTextEdit/set:QWidget:focusPolicy",
+    "QPlainTextEdit/set:QWidget:focusPolicy:back",
+    "QSpinBox/set:QWidget:focusPolicy",
+    "QSpinBox/set:QWidget:focusPolicy:back",
+    "QTextEdit/set:QWidget:focusPolicy",
+    "QTextEdit/set:QWidget:focusPolicy:back",
+    "QWidget(child)/set:QWidget:focusPolicy",
+    "QWidget(child)/set:QWidget:focusPolicy:back",
+    "QWidget/set:QWidget:focusPolicy",
+    "QWidget/set:QWidget:focusPolicy:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:none-probe"
  },
  "QtWidgets:QWidget:font": {
-  "confidence": 0.9,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -16625,7 +17666,16 @@
     "writable": true
    }
   },
-  "pattern": "observe:exact-rule"
+  "o4": {
+   "hand": [
+    "FontChange"
+   ],
+   "probe": [
+    "FontChange"
+   ],
+   "verdict": "agree"
+  },
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:frameGeometry": {
   "confidence": 0.95,
@@ -16693,6 +17743,17 @@
      "signals": []
     }
    ]
+  },
+  "o4": {
+   "hand": [
+    "Move",
+    "Resize"
+   ],
+   "probe": [
+    "Move",
+    "Resize"
+   ],
+   "verdict": "agree"
   },
   "pattern": "observe:exact-probe"
  },
@@ -16763,10 +17824,19 @@
     }
    ]
   },
+  "o4": {
+   "hand": [
+    "Resize"
+   ],
+   "probe": [
+    "Resize"
+   ],
+   "verdict": "agree"
+  },
   "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:fullScreen": {
-  "confidence": 0.9,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -16777,7 +17847,16 @@
     "writable": false
    }
   },
-  "pattern": "observe:exact-rule"
+  "o4": {
+   "hand": [
+    "WindowStateChange"
+   ],
+   "probe": [
+    "WindowStateChange"
+   ],
+   "verdict": "agree"
+  },
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:geometry": {
   "confidence": 0.95,
@@ -16846,6 +17925,17 @@
     }
    ]
   },
+  "o4": {
+   "hand": [
+    "Move",
+    "Resize"
+   ],
+   "probe": [
+    "Move",
+    "Resize"
+   ],
+   "verdict": "agree"
+  },
   "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:height": {
@@ -16904,6 +17994,15 @@
     }
    ]
   },
+  "o4": {
+   "hand": [
+    "Resize"
+   ],
+   "probe": [
+    "Resize"
+   ],
+   "verdict": "agree"
+  },
   "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:inputMethodHints": {
@@ -16928,6 +18027,27 @@
      "signals": []
     }
    ]
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:echoMode",
+    "QLineEdit/set:QLineEdit:echoMode:back",
+    "QLineEdit/set:QWidget:inputMethodHints",
+    "QLineEdit/set:QWidget:inputMethodHints:back",
+    "QPlainTextEdit/set:QWidget:inputMethodHints",
+    "QPlainTextEdit/set:QWidget:inputMethodHints:back",
+    "QSpinBox/set:QWidget:inputMethodHints",
+    "QSpinBox/set:QWidget:inputMethodHints:back",
+    "QTextEdit/set:QWidget:inputMethodHints",
+    "QTextEdit/set:QWidget:inputMethodHints:back",
+    "QWidget(child)/set:QWidget:inputMethodHints",
+    "QWidget(child)/set:QWidget:inputMethodHints:back",
+    "QWidget/set:QWidget:inputMethodHints",
+    "QWidget/set:QWidget:inputMethodHints:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:none-probe"
  },
@@ -16973,6 +18093,19 @@
     }
    ]
   },
+  "o4": {
+   "hand": [
+    "ActivationChange",
+    "WindowActivate",
+    "WindowDeactivate"
+   ],
+   "probe": [
+    "ActivationChange",
+    "WindowActivate",
+    "WindowDeactivate"
+   ],
+   "verdict": "agree"
+  },
   "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:layoutDirection": {
@@ -16998,10 +18131,19 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [
+    "LayoutDirectionChange"
+   ],
+   "probe": [
+    "LayoutDirectionChange"
+   ],
+   "verdict": "agree"
+  },
   "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:locale": {
-  "confidence": 0.9,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -17012,10 +18154,19 @@
     "writable": true
    }
   },
-  "pattern": "observe:exact-rule"
+  "o4": {
+   "hand": [
+    "LocaleChange"
+   ],
+   "probe": [
+    "LocaleChange"
+   ],
+   "verdict": "agree"
+  },
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:maximized": {
-  "confidence": 0.9,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -17026,7 +18177,16 @@
     "writable": false
    }
   },
-  "pattern": "observe:exact-rule"
+  "o4": {
+   "hand": [
+    "WindowStateChange"
+   ],
+   "probe": [
+    "WindowStateChange"
+   ],
+   "verdict": "agree"
+  },
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:maximumHeight": {
   "confidence": 0.95,
@@ -17122,6 +18282,25 @@
     }
    ]
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QWidget:maximumSize",
+    "QLineEdit/set:QWidget:maximumSize:back",
+    "QPlainTextEdit/set:QWidget:maximumSize",
+    "QPlainTextEdit/set:QWidget:maximumSize:back",
+    "QSpinBox/set:QWidget:maximumSize",
+    "QSpinBox/set:QWidget:maximumSize:back",
+    "QTextEdit/set:QWidget:maximumSize",
+    "QTextEdit/set:QWidget:maximumSize:back",
+    "QWidget(child)/set:QWidget:maximumSize",
+    "QWidget(child)/set:QWidget:maximumSize:back",
+    "QWidget/set:QWidget:maximumSize",
+    "QWidget/set:QWidget:maximumSize:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:none-probe"
  },
  "QtWidgets:QWidget:maximumWidth": {
@@ -17161,7 +18340,7 @@
   "pattern": "observe:none-probe"
  },
  "QtWidgets:QWidget:minimized": {
-  "confidence": 0.9,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -17172,7 +18351,16 @@
     "writable": false
    }
   },
-  "pattern": "observe:exact-rule"
+  "o4": {
+   "hand": [
+    "WindowStateChange"
+   ],
+   "probe": [
+    "WindowStateChange"
+   ],
+   "verdict": "agree"
+  },
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:minimumHeight": {
   "confidence": 0.95,
@@ -17267,6 +18455,37 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QWidget:minimumHeight",
+    "QLineEdit/set:QWidget:minimumHeight:back",
+    "QLineEdit/set:QWidget:minimumSize",
+    "QLineEdit/set:QWidget:minimumSize:back",
+    "QPlainTextEdit/set:QWidget:minimumHeight",
+    "QPlainTextEdit/set:QWidget:minimumHeight:back",
+    "QPlainTextEdit/set:QWidget:minimumSize",
+    "QPlainTextEdit/set:QWidget:minimumSize:back",
+    "QSpinBox/set:QWidget:minimumHeight",
+    "QSpinBox/set:QWidget:minimumHeight:back",
+    "QSpinBox/set:QWidget:minimumSize",
+    "QSpinBox/set:QWidget:minimumSize:back",
+    "QTextEdit/set:QWidget:minimumHeight",
+    "QTextEdit/set:QWidget:minimumHeight:back",
+    "QTextEdit/set:QWidget:minimumSize",
+    "QTextEdit/set:QWidget:minimumSize:back",
+    "QWidget(child)/set:QWidget:minimumHeight",
+    "QWidget(child)/set:QWidget:minimumHeight:back",
+    "QWidget(child)/set:QWidget:minimumSize",
+    "QWidget(child)/set:QWidget:minimumSize:back",
+    "QWidget/set:QWidget:minimumHeight",
+    "QWidget/set:QWidget:minimumHeight:back",
+    "QWidget/set:QWidget:minimumSize",
+    "QWidget/set:QWidget:minimumSize:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:none-probe"
  },
@@ -17383,6 +18602,49 @@
      "signals": []
     }
    ]
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QWidget:minimumHeight",
+    "QLineEdit/set:QWidget:minimumHeight:back",
+    "QLineEdit/set:QWidget:minimumSize",
+    "QLineEdit/set:QWidget:minimumSize:back",
+    "QLineEdit/set:QWidget:minimumWidth",
+    "QLineEdit/set:QWidget:minimumWidth:back",
+    "QPlainTextEdit/set:QWidget:minimumHeight",
+    "QPlainTextEdit/set:QWidget:minimumHeight:back",
+    "QPlainTextEdit/set:QWidget:minimumSize",
+    "QPlainTextEdit/set:QWidget:minimumSize:back",
+    "QPlainTextEdit/set:QWidget:minimumWidth",
+    "QPlainTextEdit/set:QWidget:minimumWidth:back",
+    "QSpinBox/set:QWidget:minimumHeight",
+    "QSpinBox/set:QWidget:minimumHeight:back",
+    "QSpinBox/set:QWidget:minimumSize",
+    "QSpinBox/set:QWidget:minimumSize:back",
+    "QSpinBox/set:QWidget:minimumWidth",
+    "QSpinBox/set:QWidget:minimumWidth:back",
+    "QTextEdit/set:QWidget:minimumHeight",
+    "QTextEdit/set:QWidget:minimumHeight:back",
+    "QTextEdit/set:QWidget:minimumSize",
+    "QTextEdit/set:QWidget:minimumSize:back",
+    "QTextEdit/set:QWidget:minimumWidth",
+    "QTextEdit/set:QWidget:minimumWidth:back",
+    "QWidget(child)/set:QWidget:minimumHeight",
+    "QWidget(child)/set:QWidget:minimumHeight:back",
+    "QWidget(child)/set:QWidget:minimumSize",
+    "QWidget(child)/set:QWidget:minimumSize:back",
+    "QWidget(child)/set:QWidget:minimumWidth",
+    "QWidget(child)/set:QWidget:minimumWidth:back",
+    "QWidget/set:QWidget:minimumHeight",
+    "QWidget/set:QWidget:minimumHeight:back",
+    "QWidget/set:QWidget:minimumSize",
+    "QWidget/set:QWidget:minimumSize:back",
+    "QWidget/set:QWidget:minimumWidth",
+    "QWidget/set:QWidget:minimumWidth:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:none-probe"
  },
@@ -17514,7 +18776,24 @@
     }
    ]
   },
-  "pattern": "observe:none-probe"
+  "o4": {
+   "hand": [],
+   "probe": [
+    "FontChange"
+   ],
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:frame",
+    "QLineEdit/set:QLineEdit:frame:back",
+    "QSpinBox/set:QSpinBox:maximum",
+    "QSpinBox/set:QSpinBox:maximum:back",
+    "QSpinBox/set:QSpinBox:prefix",
+    "QSpinBox/set:QSpinBox:prefix:back",
+    "QSpinBox/set:QWidget:styleSheet",
+    "QSpinBox/set:QWidget:styleSheet:back"
+   ],
+   "verdict": "probe: changes no event covered: QLineEdit/set:QLineEdit:frame, QLineEdit/set:QLineEdit:frame:back, QSpinBox/set:QSpinBox:maximum"
+  },
+  "pattern": "observe:partial-probe"
  },
  "QtWidgets:QWidget:minimumWidth": {
   "confidence": 0.95,
@@ -17590,6 +18869,37 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QWidget:minimumSize",
+    "QLineEdit/set:QWidget:minimumSize:back",
+    "QLineEdit/set:QWidget:minimumWidth",
+    "QLineEdit/set:QWidget:minimumWidth:back",
+    "QPlainTextEdit/set:QWidget:minimumSize",
+    "QPlainTextEdit/set:QWidget:minimumSize:back",
+    "QPlainTextEdit/set:QWidget:minimumWidth",
+    "QPlainTextEdit/set:QWidget:minimumWidth:back",
+    "QSpinBox/set:QWidget:minimumSize",
+    "QSpinBox/set:QWidget:minimumSize:back",
+    "QSpinBox/set:QWidget:minimumWidth",
+    "QSpinBox/set:QWidget:minimumWidth:back",
+    "QTextEdit/set:QWidget:minimumSize",
+    "QTextEdit/set:QWidget:minimumSize:back",
+    "QTextEdit/set:QWidget:minimumWidth",
+    "QTextEdit/set:QWidget:minimumWidth:back",
+    "QWidget(child)/set:QWidget:minimumSize",
+    "QWidget(child)/set:QWidget:minimumSize:back",
+    "QWidget(child)/set:QWidget:minimumWidth",
+    "QWidget(child)/set:QWidget:minimumWidth:back",
+    "QWidget/set:QWidget:minimumSize",
+    "QWidget/set:QWidget:minimumSize:back",
+    "QWidget/set:QWidget:minimumWidth",
+    "QWidget/set:QWidget:minimumWidth:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:none-probe"
  },
  "QtWidgets:QWidget:modal": {
@@ -17639,6 +18949,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [
+    "MouseTrackingChange"
+   ],
+   "probe": [
+    "MouseTrackingChange"
+   ],
+   "verdict": "agree"
   },
   "pattern": "observe:exact-probe"
  },
@@ -17709,10 +19028,21 @@
     }
    ]
   },
+  "o4": {
+   "hand": [
+    "Move",
+    "Resize"
+   ],
+   "probe": [
+    "Move",
+    "Resize"
+   ],
+   "verdict": "agree"
+  },
   "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:palette": {
-  "confidence": 0.9,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -17723,10 +19053,19 @@
     "writable": true
    }
   },
-  "pattern": "observe:exact-rule"
+  "o4": {
+   "hand": [
+    "PaletteChange"
+   ],
+   "probe": [
+    "PaletteChange"
+   ],
+   "verdict": "agree"
+  },
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:pos": {
-  "confidence": 0.9,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -17737,7 +19076,16 @@
     "writable": true
    }
   },
-  "pattern": "observe:exact-rule"
+  "o4": {
+   "hand": [
+    "Move"
+   ],
+   "probe": [
+    "Move"
+   ],
+   "verdict": "agree"
+  },
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:rect": {
   "confidence": 0.95,
@@ -17805,6 +19153,15 @@
      "signals": []
     }
    ]
+  },
+  "o4": {
+   "hand": [
+    "Resize"
+   ],
+   "probe": [
+    "Resize"
+   ],
+   "verdict": "agree"
   },
   "pattern": "observe:exact-probe"
  },
@@ -17874,6 +19231,15 @@
      "signals": []
     }
    ]
+  },
+  "o4": {
+   "hand": [
+    "Resize"
+   ],
+   "probe": [
+    "Resize"
+   ],
+   "verdict": "agree"
   },
   "pattern": "observe:exact-probe"
  },
@@ -18001,7 +19367,26 @@
     }
    ]
   },
-  "pattern": "observe:none-probe"
+  "o4": {
+   "hand": [],
+   "probe": [
+    "FontChange"
+   ],
+   "uncovered": [
+    "QLineEdit/set:QLineEdit:frame",
+    "QLineEdit/set:QLineEdit:frame:back",
+    "QSpinBox/set:QSpinBox:maximum",
+    "QSpinBox/set:QSpinBox:maximum:back",
+    "QSpinBox/set:QSpinBox:prefix",
+    "QSpinBox/set:QSpinBox:prefix:back",
+    "QSpinBox/set:QSpinBox:suffix",
+    "QSpinBox/set:QSpinBox:suffix:back",
+    "QSpinBox/set:QWidget:styleSheet",
+    "QSpinBox/set:QWidget:styleSheet:back"
+   ],
+   "verdict": "probe: changes no event covered: QLineEdit/set:QLineEdit:frame, QLineEdit/set:QLineEdit:frame:back, QSpinBox/set:QSpinBox:maximum"
+  },
+  "pattern": "observe:partial-probe"
  },
  "QtWidgets:QWidget:sizeIncrement": {
   "confidence": 0.9,
@@ -18014,6 +19399,25 @@
     "user": false,
     "writable": true
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QWidget:sizeIncrement",
+    "QLineEdit/set:QWidget:sizeIncrement:back",
+    "QPlainTextEdit/set:QWidget:sizeIncrement",
+    "QPlainTextEdit/set:QWidget:sizeIncrement:back",
+    "QSpinBox/set:QWidget:sizeIncrement",
+    "QSpinBox/set:QWidget:sizeIncrement:back",
+    "QTextEdit/set:QWidget:sizeIncrement",
+    "QTextEdit/set:QWidget:sizeIncrement:back",
+    "QWidget(child)/set:QWidget:sizeIncrement",
+    "QWidget(child)/set:QWidget:sizeIncrement:back",
+    "QWidget/set:QWidget:sizeIncrement",
+    "QWidget/set:QWidget:sizeIncrement:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -18090,6 +19494,25 @@
     }
    ]
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QWidget:sizePolicy",
+    "QLineEdit/set:QWidget:sizePolicy:back",
+    "QPlainTextEdit/set:QWidget:sizePolicy",
+    "QPlainTextEdit/set:QWidget:sizePolicy:back",
+    "QSpinBox/set:QWidget:sizePolicy",
+    "QSpinBox/set:QWidget:sizePolicy:back",
+    "QTextEdit/set:QWidget:sizePolicy",
+    "QTextEdit/set:QWidget:sizePolicy:back",
+    "QWidget(child)/set:QWidget:sizePolicy",
+    "QWidget(child)/set:QWidget:sizePolicy:back",
+    "QWidget/set:QWidget:sizePolicy",
+    "QWidget/set:QWidget:sizePolicy:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:none-probe"
  },
  "QtWidgets:QWidget:statusTip": {
@@ -18112,6 +19535,25 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QWidget:statusTip",
+    "QLineEdit/set:QWidget:statusTip:back",
+    "QPlainTextEdit/set:QWidget:statusTip",
+    "QPlainTextEdit/set:QWidget:statusTip:back",
+    "QSpinBox/set:QWidget:statusTip",
+    "QSpinBox/set:QWidget:statusTip:back",
+    "QTextEdit/set:QWidget:statusTip",
+    "QTextEdit/set:QWidget:statusTip:back",
+    "QWidget(child)/set:QWidget:statusTip",
+    "QWidget(child)/set:QWidget:statusTip:back",
+    "QWidget/set:QWidget:statusTip",
+    "QWidget/set:QWidget:statusTip:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -18138,6 +19580,15 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [
+    "StyleChange"
+   ],
+   "probe": [
+    "StyleChange"
+   ],
+   "verdict": "agree"
+  },
   "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:tabletTracking": {
@@ -18162,6 +19613,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [
+    "TabletTrackingChange"
+   ],
+   "probe": [
+    "TabletTrackingChange"
+   ],
+   "verdict": "agree"
   },
   "pattern": "observe:exact-probe"
  },
@@ -18188,6 +19648,15 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [
+    "ToolTipChange"
+   ],
+   "probe": [
+    "ToolTipChange"
+   ],
+   "verdict": "agree"
+  },
   "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:toolTipDuration": {
@@ -18211,6 +19680,25 @@
     "signals": []
    }
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QWidget:toolTipDuration",
+    "QLineEdit/set:QWidget:toolTipDuration:back",
+    "QPlainTextEdit/set:QWidget:toolTipDuration",
+    "QPlainTextEdit/set:QWidget:toolTipDuration:back",
+    "QSpinBox/set:QWidget:toolTipDuration",
+    "QSpinBox/set:QWidget:toolTipDuration:back",
+    "QTextEdit/set:QWidget:toolTipDuration",
+    "QTextEdit/set:QWidget:toolTipDuration:back",
+    "QWidget(child)/set:QWidget:toolTipDuration",
+    "QWidget(child)/set:QWidget:toolTipDuration:back",
+    "QWidget/set:QWidget:toolTipDuration",
+    "QWidget/set:QWidget:toolTipDuration:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:set-only"
  },
  "QtWidgets:QWidget:updatesEnabled": {
@@ -18233,6 +19721,25 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QWidget:updatesEnabled",
+    "QLineEdit/set:QWidget:updatesEnabled:back",
+    "QPlainTextEdit/set:QWidget:updatesEnabled",
+    "QPlainTextEdit/set:QWidget:updatesEnabled:back",
+    "QSpinBox/set:QWidget:updatesEnabled",
+    "QSpinBox/set:QWidget:updatesEnabled:back",
+    "QTextEdit/set:QWidget:updatesEnabled",
+    "QTextEdit/set:QWidget:updatesEnabled:back",
+    "QWidget(child)/set:QWidget:updatesEnabled",
+    "QWidget(child)/set:QWidget:updatesEnabled:back",
+    "QWidget/set:QWidget:updatesEnabled",
+    "QWidget/set:QWidget:updatesEnabled:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -18278,6 +19785,20 @@
     }
    ]
   },
+  "o4": {
+   "hand": [
+    "Hide",
+    "HideToParent",
+    "Show",
+    "ShowToParent"
+   ],
+   "probe": [
+    "Hide",
+    "HideToParent",
+    "ShowToParent"
+   ],
+   "verdict": "differ"
+  },
   "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:whatsThis": {
@@ -18300,6 +19821,25 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QWidget:whatsThis",
+    "QLineEdit/set:QWidget:whatsThis:back",
+    "QPlainTextEdit/set:QWidget:whatsThis",
+    "QPlainTextEdit/set:QWidget:whatsThis:back",
+    "QSpinBox/set:QWidget:whatsThis",
+    "QSpinBox/set:QWidget:whatsThis:back",
+    "QTextEdit/set:QWidget:whatsThis",
+    "QTextEdit/set:QWidget:whatsThis:back",
+    "QWidget(child)/set:QWidget:whatsThis",
+    "QWidget(child)/set:QWidget:whatsThis:back",
+    "QWidget/set:QWidget:whatsThis",
+    "QWidget/set:QWidget:whatsThis:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -18348,6 +19888,15 @@
     }
    ]
   },
+  "o4": {
+   "hand": [
+    "Resize"
+   ],
+   "probe": [
+    "Resize"
+   ],
+   "verdict": "agree"
+  },
   "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:windowFilePath": {
@@ -18370,6 +19919,25 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QWidget:windowFilePath",
+    "QLineEdit/set:QWidget:windowFilePath:back",
+    "QPlainTextEdit/set:QWidget:windowFilePath",
+    "QPlainTextEdit/set:QWidget:windowFilePath:back",
+    "QSpinBox/set:QWidget:windowFilePath",
+    "QSpinBox/set:QWidget:windowFilePath:back",
+    "QTextEdit/set:QWidget:windowFilePath",
+    "QTextEdit/set:QWidget:windowFilePath:back",
+    "QWidget(child)/set:QWidget:windowFilePath",
+    "QWidget(child)/set:QWidget:windowFilePath:back",
+    "QWidget/set:QWidget:windowFilePath",
+    "QWidget/set:QWidget:windowFilePath:back"
+   ],
+   "verdict": "probe: no event announces it"
   },
   "pattern": "observe:set-only"
  },
@@ -18440,6 +20008,25 @@
     }
    ]
   },
+  "o4": {
+   "hand": [],
+   "probe": [],
+   "uncovered": [
+    "QLineEdit/set:QWidget:windowModality",
+    "QLineEdit/set:QWidget:windowModality:back",
+    "QPlainTextEdit/set:QWidget:windowModality",
+    "QPlainTextEdit/set:QWidget:windowModality:back",
+    "QSpinBox/set:QWidget:windowModality",
+    "QSpinBox/set:QWidget:windowModality:back",
+    "QTextEdit/set:QWidget:windowModality",
+    "QTextEdit/set:QWidget:windowModality:back",
+    "QWidget(child)/set:QWidget:windowModality",
+    "QWidget(child)/set:QWidget:windowModality:back",
+    "QWidget/set:QWidget:windowModality",
+    "QWidget/set:QWidget:windowModality:back"
+   ],
+   "verdict": "probe: no event announces it"
+  },
   "pattern": "observe:none-probe"
  },
  "QtWidgets:QWidget:windowModified": {
@@ -18464,6 +20051,15 @@
     "readback": "exact",
     "signals": []
    }
+  },
+  "o4": {
+   "hand": [
+    "ModifiedChange"
+   ],
+   "probe": [
+    "ModifiedChange"
+   ],
+   "verdict": "agree"
   },
   "pattern": "observe:exact-probe"
  },
@@ -18540,7 +20136,7 @@
   "pattern": "observe:partial-probe"
  },
  "QtWidgets:QWidget:x": {
-  "confidence": 0.9,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -18551,10 +20147,19 @@
     "writable": false
    }
   },
-  "pattern": "observe:exact-rule"
+  "o4": {
+   "hand": [
+    "Move"
+   ],
+   "probe": [
+    "Move"
+   ],
+   "verdict": "agree"
+  },
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWidget:y": {
-  "confidence": 0.9,
+  "confidence": 0.95,
   "evidence": {
    "flags": {
     "bindable": false,
@@ -18565,7 +20170,16 @@
     "writable": false
    }
   },
-  "pattern": "observe:exact-rule"
+  "o4": {
+   "hand": [
+    "Move"
+   ],
+   "probe": [
+    "Move"
+   ],
+   "verdict": "agree"
+  },
+  "pattern": "observe:exact-probe"
  },
  "QtWidgets:QWizard:currentId": {
   "confidence": 0.9,

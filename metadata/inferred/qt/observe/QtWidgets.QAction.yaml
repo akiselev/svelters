@@ -43,7 +43,9 @@ observe:
     ref: 'O3: NOTIFY toggled(bool)'
   verify:
     'on': QtWidgets:QAction
-    check: connect
+    check: cross
+    native: o->setChecked(!o->isChecked())
+    setup: o->setCheckable(true)
   confidence: 0.9
 - prop: enabled
   class: exact
@@ -72,7 +74,7 @@ observe:
     ref: 'O3: NOTIFY changed() (shared by 14 properties)'
   verify:
     'on': QtWidgets:QAction
-    check: connect
+    check: change
   confidence: 0.9
 - prop: icon
   class: exact
@@ -86,7 +88,8 @@ observe:
     ref: 'O3: NOTIFY changed() (shared by 14 properties)'
   verify:
     'on': QtWidgets:QAction
-    check: connect
+    check: cross
+    native: QPixmap px(4, 4); px.fill(Qt::red); o->setIcon(QIcon(px))
   confidence: 0.9
 - prop: iconText
   class: exact
@@ -167,7 +170,7 @@ observe:
     ref: 'O3: NOTIFY changed() (shared by 14 properties)'
   verify:
     'on': QtWidgets:QAction
-    check: connect
+    check: change
   confidence: 0.9
 - prop: shortcutContext
   class: exact

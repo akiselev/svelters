@@ -21,17 +21,25 @@ observe:
     ref: 'O3: NOTIFY currentRowChanged(int)'
   verify:
     'on': QtWidgets:QListWidget
-    check: connect
+    check: cross
+    native: 'o->setCurrentRow(o->currentRow() == 1 ? 0 : 1)'
+    setup: o->addItem("a"); o->addItem("b")
   confidence: 0.9
 - prop: sortingEnabled
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QListWidget
+    check: unsupported
   confidence: 0.9
 - prop: supportedDragActions
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QListWidget
+    check: unsupported
   confidence: 0.9

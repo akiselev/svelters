@@ -11,4 +11,7 @@ observe:
     ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
   - origin: probe
     ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QPauseAnimation:duration)'
+  verify:
+    'on': QtCore:QPauseAnimation
+    check: change
   confidence: 0.95

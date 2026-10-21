@@ -29,6 +29,9 @@ observe:
     ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
   - origin: probe
     ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QSortFilterProxyModel:dynamicSortFilter)'
+  verify:
+    'on': QtCore:QSortFilterProxyModel
+    check: change
   confidence: 0.95
 - prop: filterCaseSensitivity
   class: exact
@@ -57,6 +60,9 @@ observe:
     ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
   - origin: probe
     ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QSortFilterProxyModel:filterKeyColumn)'
+  verify:
+    'on': QtCore:QSortFilterProxyModel
+    check: change
   confidence: 0.95
 - prop: filterRegularExpression
   class: exact
@@ -67,6 +73,9 @@ observe:
     ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
   - origin: probe
     ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QSortFilterProxyModel:filterCaseSensitivity)'
+  verify:
+    'on': QtCore:QSortFilterProxyModel
+    check: connect
   confidence: 0.95
 - prop: filterRole
   class: exact

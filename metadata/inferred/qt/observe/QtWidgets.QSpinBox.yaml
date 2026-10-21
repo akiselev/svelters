@@ -16,42 +16,63 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QSpinBox
+    check: unsupported
   confidence: 0.9
 - prop: maximum
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QSpinBox
+    check: unsupported
   confidence: 0.9
 - prop: minimum
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QSpinBox
+    check: unsupported
   confidence: 0.9
 - prop: prefix
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QSpinBox
+    check: unsupported
   confidence: 0.9
 - prop: singleStep
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QSpinBox
+    check: unsupported
   confidence: 0.9
 - prop: stepType
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QSpinBox
+    check: unsupported
   confidence: 0.9
 - prop: suffix
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QSpinBox
+    check: unsupported
   confidence: 0.9
 - prop: value
   class: exact
@@ -67,4 +88,5 @@ observe:
   verify:
     'on': QtWidgets:QSpinBox
     check: change
+    user: ut_key(o, Qt::Key_Up)
   confidence: 0.95

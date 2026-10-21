@@ -7,6 +7,9 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QAbstractSpinBox
+    check: unsupported
   confidence: 0.9
 - prop: acceptableInput
   class: none
@@ -22,30 +25,45 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QAbstractSpinBox
+    check: unsupported
   confidence: 0.9
 - prop: buttonSymbols
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QAbstractSpinBox
+    check: unsupported
   confidence: 0.9
 - prop: correctionMode
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QAbstractSpinBox
+    check: unsupported
   confidence: 0.9
 - prop: frame
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QAbstractSpinBox
+    check: unsupported
   confidence: 0.9
 - prop: keyboardTracking
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QAbstractSpinBox
+    check: unsupported
   confidence: 0.9
 - prop: readOnly
   class: exact
@@ -55,21 +73,30 @@ observe:
     - ReadOnlyChange
   provenance:
   - origin: rule
-    ref: 'O4: QEvent table: ReadOnlyChange'
+    ref: 'O4: QEvent table of the rules: ReadOnlyChange'
   - origin: probe
     ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtWidgets:QAbstractSpinBox:readOnly)'
+  verify:
+    'on': QtWidgets:QAbstractSpinBox
+    check: change
   confidence: 0.95
 - prop: showGroupSeparator
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QAbstractSpinBox
+    check: unsupported
   confidence: 0.9
 - prop: specialValueText
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QAbstractSpinBox
+    check: unsupported
   confidence: 0.9
 - prop: text
   class: none
@@ -85,4 +112,7 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QAbstractSpinBox
+    check: unsupported
   confidence: 0.9

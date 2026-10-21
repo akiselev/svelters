@@ -18,11 +18,16 @@ observe:
     ref: 'O3: NOTIFY currentChanged(int)'
   verify:
     'on': QtWidgets:QStackedLayout
-    check: connect
+    check: cross
+    native: 'o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)'
+    setup: o->addWidget(new QWidget); o->addWidget(new QWidget)
   confidence: 0.9
 - prop: stackingMode
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QStackedLayout
+    check: unsupported
   confidence: 0.9

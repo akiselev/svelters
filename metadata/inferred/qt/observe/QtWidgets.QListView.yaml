@@ -7,6 +7,9 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QListView
+    check: unsupported
   confidence: 0.9
 - prop: flow
   class: none
@@ -16,12 +19,16 @@ observe:
   verify:
     'on': QtWidgets:QListView
     check: unsupported
+    trigger: flow
   confidence: 0.95
 - prop: gridSize
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QListView
+    check: unsupported
   confidence: 0.9
 - prop: isWrapping
   class: none
@@ -31,24 +38,34 @@ observe:
   verify:
     'on': QtWidgets:QListView
     check: unsupported
+    trigger: isWrapping
   confidence: 0.95
 - prop: itemAlignment
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QListView
+    check: unsupported
   confidence: 0.9
 - prop: layoutMode
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QListView
+    check: unsupported
   confidence: 0.9
 - prop: modelColumn
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QListView
+    check: unsupported
   confidence: 0.9
 - prop: movement
   class: none
@@ -58,12 +75,16 @@ observe:
   verify:
     'on': QtWidgets:QListView
     check: unsupported
+    trigger: movement
   confidence: 0.95
 - prop: resizeMode
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QListView
+    check: unsupported
   confidence: 0.9
 - prop: selectionRectVisible
   class: none
@@ -73,28 +94,41 @@ observe:
   verify:
     'on': QtWidgets:QListView
     check: unsupported
+    trigger: selectionRectVisible
   confidence: 0.95
 - prop: spacing
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QListView
+    check: unsupported
   confidence: 0.9
 - prop: uniformItemSizes
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QListView
+    check: unsupported
   confidence: 0.9
 - prop: viewMode
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QListView
+    check: unsupported
   confidence: 0.9
 - prop: wordWrap
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QListView
+    check: unsupported
   confidence: 0.9

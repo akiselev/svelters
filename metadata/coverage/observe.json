@@ -151,44 +151,42 @@
    },
    "exact": {
     "manual": 0,
-    "no_test": 105,
+    "no_test": 45,
     "pending": 0,
-    "total": 169,
-    "verified": 36,
-    "verified_weak": 28
+    "total": 180,
+    "verified": 121,
+    "verified_weak": 14
    },
    "none": {
     "manual": 0,
-    "no_test": 51,
+    "no_test": 16,
     "pending": 0,
-    "total": 77,
-    "verified": 0,
-    "verified_weak": 26
+    "total": 71,
+    "verified": 23,
+    "verified_weak": 32
    },
    "partial": {
     "manual": 0,
-    "no_test": 4,
+    "no_test": 1,
     "pending": 0,
-    "total": 10,
-    "verified": 4,
-    "verified_weak": 2
+    "total": 18,
+    "verified": 11,
+    "verified_weak": 6
    },
    "set_only": {
     "manual": 0,
-    "no_test": 452,
+    "no_test": 155,
     "pending": 0,
-    "total": 452,
+    "total": 451,
     "verified": 0,
-    "verified_weak": 0
+    "verified_weak": 296
    }
   },
   "parked": 0,
   "unreviewed": {
-   "by_pattern": {
-    "middle:observe:exact-signal-pair-unprobed": 12
-   },
+   "by_pattern": {},
    "low": 0,
-   "middle": 12
+   "middle": 0
   }
  },
  "winui": {

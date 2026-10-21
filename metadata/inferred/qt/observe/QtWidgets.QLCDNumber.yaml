@@ -7,6 +7,9 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLCDNumber
+    check: unsupported
   confidence: 0.9
 - prop: intValue
   class: none
@@ -16,24 +19,34 @@ observe:
   verify:
     'on': QtWidgets:QLCDNumber
     check: unsupported
+    trigger: intValue
   confidence: 0.95
 - prop: mode
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLCDNumber
+    check: unsupported
   confidence: 0.9
 - prop: segmentStyle
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLCDNumber
+    check: unsupported
   confidence: 0.9
 - prop: smallDecimalPoint
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QLCDNumber
+    check: unsupported
   confidence: 0.9
 - prop: value
   class: none
@@ -43,4 +56,5 @@ observe:
   verify:
     'on': QtWidgets:QLCDNumber
     check: unsupported
+    trigger: value
   confidence: 0.95

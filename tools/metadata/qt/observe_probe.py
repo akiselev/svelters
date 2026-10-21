@@ -76,6 +76,9 @@ def parse(text: str, owner_of: dict[str, str]) -> dict:
     types: dict[str, dict] = {}
     props: dict[str, dict] = {}
     notes = []
+    o4_rows: list[dict] = []      # X: {inst, cause, events}
+    o4_changes: list[dict] = []   # W: {inst, cause, prop: <owner class>:<prop>, events}
+    pair_rows: list[dict] = []    # P: {owner, prop, cause, changed, signals}
 
     def own(cls: str) -> str | None:
         return owner_of.get(cls)
@@ -109,13 +112,81 @@ def parse(text: str, owner_of: dict[str, str]) -> dict:
                    "events": lst(f[8]), "signals": lst(f[9] if len(f) > 9 else "")}
             if rec not in seen:
                 seen.append(rec)
+        elif f[0] == "X":
+            o4_rows.append({"inst": f[1], "cause": f[2], "events": lst(f[3] if len(f) > 3 else "")})
+        elif f[0] == "W":
+            o4_changes.append({"inst": f[1], "cause": f[2], "prop": f"{f[3]}:{f[4]}", "events": lst(f[5] if len(f) > 5 else "")})
+        elif f[0] == "P":
+            pair_rows.append({"owner": own(f[1]) or f[1], "prop": f[2], "cause": f[3], "changed": f[4] == "1",
+                              "signals": lst(f[5] if len(f) > 5 else "")})
         elif f[0] == "C":
             notes.append({"scenario": f[1], "note": f[2]})
     for r in props.values():
         if "seen" in r:
             r["seen"] = sorted(r["seen"], key=lambda s: (not (s["changed"] and s["notify"] <= 0 and s["bindable"] <= 0),
                                                          s["cause"], s["on"]))[:MAX_SEEN]
-    return {"version": version, "types": types, "props": props, "notes": notes}
+    return {"version": version, "types": types, "props": props, "notes": notes, "o4": derive_o4(o4_rows, o4_changes),
+            "pairs": pair_evidence(pair_rows)}
+
+
+O4_MIN_SPECIFICITY = 0.25
+# Only change notifications can announce a property; queries and requests that come along (InputMethodQuery,
+# FocusAboutToChange, which is sent before the change) are never taken.
+O4_NOTIFICATIONS = {"Show", "Hide", "ShowToParent", "HideToParent", "Move", "Resize", "FocusIn", "FocusOut",
+                    "WindowActivate", "WindowDeactivate"}
+
+
+def o4_candidate(event: str) -> bool:
+    return event in O4_NOTIFICATIONS or (event.endswith("Change") and event != "FocusAboutToChange")
+
+
+def derive_o4(rows: list[dict], changes: list[dict]) -> dict:
+    """Rule O4 from the probe: for each QWidget-family property the O4 section saw change, the QEvent types that
+    announce it. Greedy cover: events by specificity (the share of the causes carrying the event in which the
+    property changed), taken until every observed change of the property carried one of them. A change no event
+    covers is listed as `uncovered` (the rules then give the property no event mechanism), and an event below
+    O4_MIN_SPECIFICITY is never taken: one that comes with many unrelated causes (InputMethodQuery) is not this
+    property's announcement."""
+    with_ev: dict[str, int] = {}
+    for r in rows:
+        for e in r["events"]:
+            with_ev[e] = with_ev.get(e, 0) + 1
+    by_prop: dict[str, list[dict]] = {}
+    for c in changes:
+        by_prop.setdefault(c["prop"], []).append(c)
+    out: dict[str, dict] = {}
+    for prop, cs in sorted(by_prop.items()):
+        cnt: dict[str, int] = {}
+        for c in cs:
+            for e in c["events"]:
+                if o4_candidate(e):
+                    cnt[e] = cnt.get(e, 0) + 1
+        spec ={e: n / with_ev[e] for e, n in cnt.items()}
+        left = list(range(len(cs)))
+        chosen: list[str] = []
+        for e in sorted(spec, key=lambda e: (-spec[e], -cnt[e], e)):
+            if not left or spec[e] < O4_MIN_SPECIFICITY:
+                break
+            hit = [i for i in left if e in cs[i]["events"]]
+            if hit:
+                chosen.append(e)
+                left = [i for i in left if i not in hit]
+        causes = sorted({f"{c['inst']}/{c['cause']}" for c in cs})
+        rec = {"events": sorted(chosen), "changes": len(cs), "causes": causes[:10],
+               "driven": any(c["cause"].removesuffix(":back") == f"set:{prop}" for c in cs),
+               "specificity": {e: round(spec[e], 3) for e in sorted(chosen)}}
+        if left:
+            rec["uncovered"] = sorted({f"{cs[i]['inst']}/{cs[i]['cause']}" for i in left})
+        out[prop] = rec
+    return out
+
+
+def pair_evidence(rows: list[dict]) -> dict:
+    """`<owner>:<prop>` -> the pair scenarios: cause, whether the property changed, the signals emitted."""
+    out: dict[str, list[dict]] = {}
+    for r in rows:
+        out.setdefault(f"{r['owner']}:{r['prop']}", []).append({k: r[k] for k in ("cause", "changed", "signals")})
+    return dict(sorted(out.items()))
 
 
 def main(args) -> int:
@@ -143,7 +214,8 @@ def main(args) -> int:
             raise SystemExit("observe probe: too many crashes")
     doc = parse(out, owner_of)
     doc = {"schema": "svelters-probe-observe/v1", "toolkit": "qt", "version": doc["version"],
-           "crashed": sorted(owner_of.get(s, s) for s in skip), "types": doc["types"], "props": doc["props"], "notes": doc["notes"]}
+           "crashed": sorted(owner_of.get(s, s) for s in skip), "types": doc["types"], "props": doc["props"], "notes": doc["notes"],
+           "o4": doc["o4"], "pairs": doc["pairs"]}
     path = Path(args.out) if args.out else OUT_DIR / f"{doc['version']}.json"
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(doc, indent=1, sort_keys=True) + "\n")

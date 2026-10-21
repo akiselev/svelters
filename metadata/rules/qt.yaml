@@ -112,5 +112,66 @@ observe:
     "parent setEnabled(false)": parent
     "parent hide()": parent
     "hidden QWidget resize": layout
+    "setItemData(current)": programmatic
   # Scenarios whose changes Qt announces later rather than never (a hidden widget gets Resize/Move at show()).
   deferred_scenarios: ["hidden QWidget resize"]
+  # The same for the probe's O4 section (milestone R3), whose table replaces `events` above as the source of O4:
+  # `events` stays as the cross-check and fills in for properties the probe never saw change.
+  o4_deferred: ["scenario:hidden resize", "scenario:hidden move"]
+  # Milestone R3: how the generated test changes a property it cannot simply write (read-only, not a Q_PROPERTY),
+  # and how a user changes it. C++ statements on `o`, a pointer to the fact's `verify.on` class:
+  #   check    overrides the check (silent: the change `native` makes must not be announced)
+  #   trigger  another Q_PROPERTY written natively (its next value); native: a statement; setup: run before observing
+  #   user     a user-path synthesizer (ut_keys/ut_key/ut_click/ut_press of verify.cpp.in): its change is announced
+  triggers:
+    "QWidget:x": {trigger: geometry}
+    "QWidget:y": {trigger: geometry}
+    "QWidget:width": {trigger: geometry}
+    "QWidget:height": {trigger: geometry}
+    "QWidget:rect": {trigger: geometry}
+    "QWidget:frameGeometry": {trigger: geometry}
+    "QWidget:frameSize": {trigger: geometry}
+    "QWidget:normalGeometry": {trigger: geometry}
+    "QWidget:minimized": {native: "o->showMinimized()"}
+    "QWidget:maximized": {native: "o->showMaximized()"}
+    "QWidget:fullScreen": {native: "o->showFullScreen()"}
+    "QLineEdit:cursorPosition": {setup: "o->setText(\"hello\")", native: "o->setCursorPosition(2)", user: "ut_keys(o, \"ab\")"}
+    "QAction:checked": {setup: "o->setCheckable(true)", native: "o->setChecked(!o->isChecked())"}
+    "QLineEdit:text": {user: "ut_keys(o, \"ab\")"}
+    "QLineEdit:displayText": {native: "o->setText(o->text() + \"x\")", user: "ut_keys(o, \"ab\")"}
+    "QLineEdit:undoAvailable": {native: "o->insert(\"b\")", user: "ut_keys(o, \"ab\")"}
+    "QLineEdit:redoAvailable": {setup: "o->insert(\"ab\")", native: "o->undo()", user: "ut_key(o, Qt::Key_Z, Qt::ControlModifier)"}
+    "QLineEdit:selectedText": {setup: "o->setText(\"hello\")", native: "o->setSelection(0, 3)", user: "ut_key(o, Qt::Key_Left, Qt::ShiftModifier)"}
+    "QLineEdit:hasSelectedText": {setup: "o->setText(\"hello\")", native: "o->setSelection(0, 3)", user: "ut_key(o, Qt::Key_Left, Qt::ShiftModifier)"}
+    "QLineEdit:modified": {user: "ut_keys(o, \"ab\")"}
+    "QTextEdit:plainText": {user: "ut_keys(o, \"ab\")"}
+    "QPlainTextEdit:plainText": {user: "ut_keys(o, \"ab\")"}
+    "QPlainTextEdit:blockCount": {native: "o->setPlainText(\"a\\nb\")", user: "ut_key(o, Qt::Key_Return)"}
+    "QTextDocument:blockCount": {native: "o->setPlainText(\"a\\nb\")"}
+    "QComboBox:currentData": {check: silent, setup: "auto *m = new QStandardItemModel(o); m->appendRow(new QStandardItem(\"a\")); m->appendRow(new QStandardItem(\"b\")); o->setModel(m); o->setCurrentIndex(0); o->setItemData(0, 1)", native: "o->setItemData(o->currentIndex(), o->currentData().toInt() + 7)"}
+    "QAbstractButton:down": {user: "ut_press(o)"}
+    "QAbstractButton:checked": {user: "ut_click(o)"}
+    "QAbstractSlider:value": {user: "ut_key(o, Qt::Key_Up)"}
+    "QSpinBox:value": {user: "ut_key(o, Qt::Key_Up)"}
+    "QInputDialog:intValue": {native: "o->setIntValue(o->intValue() + 1)"}
+    "QInputDialog:doubleValue": {native: "o->setDoubleValue(o->doubleValue() + 1)"}
+    "QInputDialog:textValue": {native: "o->setTextValue(o->textValue() + \"x\")"}
+    "QTimer:active": {native: "o->start(100000)"}
+    # Bindings R2 lowers onto observation (their exact facts were only `connect`-checked): a real native change.
+    "QDateTimeEdit:date": {native: "o->setDate(o->date().addDays(1))"}
+    "QDateTimeEdit:dateTime": {native: "o->setDateTime(o->dateTime().addSecs(3600))"}
+    "QListWidget:currentRow": {setup: "o->addItem(\"a\"); o->addItem(\"b\")", native: "o->setCurrentRow(o->currentRow() == 1 ? 0 : 1)"}
+    "QStackedWidget:currentIndex": {setup: "o->addWidget(new QWidget); o->addWidget(new QWidget)", native: "o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)"}
+    "QTabBar:currentIndex": {setup: "o->addTab(\"a\"); o->addTab(\"b\")", native: "o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)"}
+    "QTabWidget:currentIndex": {setup: "o->addTab(new QWidget, \"a\"); o->addTab(new QWidget, \"b\")", native: "o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)"}
+    "QUndoStack:canUndo": {native: "o->push(new QUndoCommand(\"a\"))"}
+    "QUndoStack:clean": {native: "o->push(new QUndoCommand(\"a\"))"}
+    "QUndoStack:undoText": {native: "o->push(new QUndoCommand(\"a\"))"}
+    "QUndoStack:canRedo": {setup: "o->push(new QUndoCommand(\"a\"))", native: "o->undo()"}
+    "QUndoStack:redoText": {setup: "o->push(new QUndoCommand(\"a\"))", native: "o->undo()"}
+    "QStackedLayout:currentIndex": {setup: "o->addWidget(new QWidget); o->addWidget(new QWidget)", native: "o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)"}
+    "QDataWidgetMapper:currentIndex": {setup: "o->setModel(new QStandardItemModel(2, 1, o))", native: "o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)"}
+    "QWizard:currentId": {setup: "o->addPage(new QWizardPage); o->addPage(new QWizardPage); o->restart()", native: "o->next()"}
+    "QAction:icon": {native: "QPixmap px(4, 4); px.fill(Qt::red); o->setIcon(QIcon(px))"}
+    "QWidget:windowIcon": {native: "QPixmap px(4, 4); px.fill(Qt::red); o->setWindowIcon(QIcon(px))"}
+    "QToolBox:currentIndex": {setup: "o->addItem(new QWidget, \"a\"); o->addItem(new QWidget, \"b\")", native: "o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)"}
