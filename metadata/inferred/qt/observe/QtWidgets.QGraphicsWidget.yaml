@@ -7,18 +7,27 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QGraphicsWidget
+    check: unsupported
   confidence: 0.9
 - prop: focusPolicy
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QGraphicsWidget
+    check: unsupported
   confidence: 0.9
 - prop: font
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QGraphicsWidget
+    check: unsupported
   confidence: 0.9
 - prop: geometry
   class: exact
@@ -35,7 +44,7 @@ observe:
       set:QtWidgets:QGraphicsObject:x)'
   verify:
     'on': QtWidgets:QGraphicsWidget
-    check: connect
+    check: change
   confidence: 0.95
 - prop: layout
   class: exact
@@ -54,30 +63,45 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QGraphicsWidget
+    check: unsupported
   confidence: 0.9
 - prop: maximumSize
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QGraphicsWidget
+    check: unsupported
   confidence: 0.9
 - prop: minimumSize
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QGraphicsWidget
+    check: unsupported
   confidence: 0.9
 - prop: palette
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QGraphicsWidget
+    check: unsupported
   confidence: 0.9
 - prop: preferredSize
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QGraphicsWidget
+    check: unsupported
   confidence: 0.9
 - prop: size
   class: exact
@@ -100,16 +124,25 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QGraphicsWidget
+    check: unsupported
   confidence: 0.9
 - prop: windowFlags
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QGraphicsWidget
+    check: unsupported
   confidence: 0.9
 - prop: windowTitle
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QGraphicsWidget
+    check: unsupported
   confidence: 0.9

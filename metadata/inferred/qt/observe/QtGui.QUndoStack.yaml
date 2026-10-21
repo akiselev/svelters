@@ -7,6 +7,9 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtGui:QUndoStack
+    check: unsupported
   confidence: 0.9
 - prop: canRedo
   class: exact
@@ -18,7 +21,9 @@ observe:
     ref: 'O3: NOTIFY canRedoChanged'
   verify:
     'on': QtGui:QUndoStack
-    check: connect
+    check: cross
+    native: o->undo()
+    setup: o->push(new QUndoCommand("a"))
   confidence: 0.9
 - prop: canUndo
   class: exact
@@ -30,7 +35,8 @@ observe:
     ref: 'O3: NOTIFY canUndoChanged'
   verify:
     'on': QtGui:QUndoStack
-    check: connect
+    check: cross
+    native: o->push(new QUndoCommand("a"))
   confidence: 0.9
 - prop: clean
   class: exact
@@ -42,7 +48,8 @@ observe:
     ref: 'O3: NOTIFY cleanChanged'
   verify:
     'on': QtGui:QUndoStack
-    check: connect
+    check: cross
+    native: o->push(new QUndoCommand("a"))
   confidence: 0.9
 - prop: redoText
   class: exact
@@ -54,13 +61,18 @@ observe:
     ref: 'O3: NOTIFY redoTextChanged'
   verify:
     'on': QtGui:QUndoStack
-    check: connect
+    check: cross
+    native: o->undo()
+    setup: o->push(new QUndoCommand("a"))
   confidence: 0.9
 - prop: undoLimit
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtGui:QUndoStack
+    check: unsupported
   confidence: 0.9
 - prop: undoText
   class: exact
@@ -72,5 +84,6 @@ observe:
     ref: 'O3: NOTIFY undoTextChanged'
   verify:
     'on': QtGui:QUndoStack
-    check: connect
+    check: cross
+    native: o->push(new QUndoCommand("a"))
   confidence: 0.9

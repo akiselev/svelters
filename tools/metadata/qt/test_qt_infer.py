@@ -162,9 +162,12 @@ def test_checked_in_inferred_layer_becomes_table_rows_not_functions():
     inferred = [f for f in man["facts"] if f.get("origin") == "inferred"]
     assert inferred and all(f["record_fp"] and f["kind"] for f in inferred)
     for f in inferred:
-        (t,) = f["tests"]
-        assert f'{{"{t}", ' in src                                      # a row ...
-        assert "bool t_" + gen_cpp.cident(t) + "(" not in src            # ... and no function
+        t, *extra = f["tests"]
+        # a binding promoted through its exact observe fact (milestone R3) is verified by that row too
+        assert all(x.startswith("observe/") for x in extra)
+        for x in [t] + extra:
+            assert f'{{"{x}", ' in src                                  # a row ...
+            assert "bool t_" + gen_cpp.cident(x) + "(" not in src        # ... and no function
     assert {f["section"] for f in inferred} >= {"props", "methods", "signals", "bindings"}
     assert any(f.get("strength") == "delivery" for f in inferred)
 

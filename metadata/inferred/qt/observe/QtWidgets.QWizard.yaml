@@ -12,35 +12,52 @@ observe:
     ref: 'O3: NOTIFY currentIdChanged(int)'
   verify:
     'on': QtWidgets:QWizard
-    check: connect
+    check: cross
+    native: o->next()
+    setup: o->addPage(new QWizardPage); o->addPage(new QWizardPage); o->restart()
   confidence: 0.9
 - prop: options
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QWizard
+    check: unsupported
   confidence: 0.9
 - prop: startId
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QWizard
+    check: unsupported
   confidence: 0.9
 - prop: subTitleFormat
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QWizard
+    check: unsupported
   confidence: 0.9
 - prop: titleFormat
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QWizard
+    check: unsupported
   confidence: 0.9
 - prop: wizardStyle
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QWizard
+    check: unsupported
   confidence: 0.9

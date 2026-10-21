@@ -23,59 +23,88 @@ observe:
     ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:QTabWidget remove the current tab)'
   verify:
     'on': QtWidgets:QTabWidget
-    check: connect
+    check: cross
+    native: 'o->setCurrentIndex(o->currentIndex() == 1 ? 0 : 1)'
+    setup: o->addTab(new QWidget, "a"); o->addTab(new QWidget, "b")
   confidence: 0.95
 - prop: documentMode
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabWidget
+    check: unsupported
   confidence: 0.9
 - prop: elideMode
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabWidget
+    check: unsupported
   confidence: 0.9
 - prop: iconSize
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabWidget
+    check: unsupported
   confidence: 0.9
 - prop: movable
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabWidget
+    check: unsupported
   confidence: 0.9
 - prop: tabBarAutoHide
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabWidget
+    check: unsupported
   confidence: 0.9
 - prop: tabPosition
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabWidget
+    check: unsupported
   confidence: 0.9
 - prop: tabShape
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabWidget
+    check: unsupported
   confidence: 0.9
 - prop: tabsClosable
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabWidget
+    check: unsupported
   confidence: 0.9
 - prop: usesScrollButtons
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTabWidget
+    check: unsupported
   confidence: 0.9

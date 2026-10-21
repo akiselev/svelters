@@ -44,6 +44,21 @@ observe:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
   confidence: 0.9
+- prop: doubleValue
+  class: exact
+  via:
+  - mechanism: signal
+    signal: doubleValueChanged
+  provenance:
+  - origin: rule
+    ref: 'O5: name-paired signal doubleValueChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:keyClicks, scenario:setDoubleMaximum below value, scenario:setDoubleValue)'
+  verify:
+    'on': QtWidgets:QInputDialog
+    check: cross
+    native: o->setDoubleValue(o->doubleValue() + 1)
+  confidence: 0.95
 - prop: inputMode
   class: set_only
   provenance:
@@ -68,6 +83,21 @@ observe:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
   confidence: 0.9
+- prop: intValue
+  class: exact
+  via:
+  - mechanism: signal
+    signal: intValueChanged
+  provenance:
+  - origin: rule
+    ref: 'O5: name-paired signal intValueChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:keyClicks, scenario:setIntMaximum below value, scenario:setIntValue)'
+  verify:
+    'on': QtWidgets:QInputDialog
+    check: cross
+    native: o->setIntValue(o->intValue() + 1)
+  confidence: 0.95
 - prop: labelText
   class: set_only
   provenance:
@@ -92,3 +122,18 @@ observe:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
   confidence: 0.9
+- prop: textValue
+  class: exact
+  via:
+  - mechanism: signal
+    signal: textValueChanged
+  provenance:
+  - origin: rule
+    ref: 'O5: name-paired signal textValueChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:keyClicks, scenario:setTextValue)'
+  verify:
+    'on': QtWidgets:QInputDialog
+    check: cross
+    native: o->setTextValue(o->textValue() + "x")
+  confidence: 0.95

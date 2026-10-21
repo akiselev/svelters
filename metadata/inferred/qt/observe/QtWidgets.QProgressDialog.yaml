@@ -7,36 +7,54 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QProgressDialog
+    check: unsupported
   confidence: 0.9
 - prop: autoReset
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QProgressDialog
+    check: unsupported
   confidence: 0.9
 - prop: labelText
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QProgressDialog
+    check: unsupported
   confidence: 0.9
 - prop: maximum
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QProgressDialog
+    check: unsupported
   confidence: 0.9
 - prop: minimum
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QProgressDialog
+    check: unsupported
   confidence: 0.9
 - prop: minimumDuration
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QProgressDialog
+    check: unsupported
   confidence: 0.9
 - prop: value
   class: none
@@ -46,6 +64,7 @@ observe:
   verify:
     'on': QtWidgets:QProgressDialog
     check: unsupported
+    trigger: value
   confidence: 0.95
 - prop: wasCanceled
   class: none

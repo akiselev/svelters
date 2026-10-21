@@ -13,12 +13,18 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTextBrowser
+    check: unsupported
   confidence: 0.9
 - prop: openLinks
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTextBrowser
+    check: unsupported
   confidence: 0.9
 - prop: readOnly
   class: set_only
@@ -31,7 +37,24 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QTextBrowser
+    check: unsupported
   confidence: 0.9
+- prop: source
+  class: exact
+  via:
+  - mechanism: signal
+    signal: sourceChanged
+  provenance:
+  - origin: rule
+    ref: 'O5: name-paired signal sourceChanged'
+  - origin: probe
+    ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:backward, scenario:setSource, scenario:setSource (another))'
+  verify:
+    'on': QtWidgets:QTextBrowser
+    check: change
+  confidence: 0.95
 - prop: sourceType
   class: none
   provenance:

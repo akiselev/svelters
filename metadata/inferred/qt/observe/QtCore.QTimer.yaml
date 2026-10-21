@@ -11,6 +11,10 @@ observe:
     ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
   - origin: probe
     ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:QTimer start, scenario:QTimer stop)'
+  verify:
+    'on': QtCore:QTimer
+    check: cross
+    native: o->start(100000)
   confidence: 0.95
 - prop: interval
   class: exact
@@ -21,6 +25,9 @@ observe:
     ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
   - origin: probe
     ref: 'observe probe Qt 6.11.3: announced every observed change (scenario:QTimer start, set:QtCore:QTimer:interval)'
+  verify:
+    'on': QtCore:QTimer
+    check: change
   confidence: 0.95
 - prop: remainingTime
   class: none
@@ -40,6 +47,9 @@ observe:
     ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
   - origin: probe
     ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QTimer:singleShot)'
+  verify:
+    'on': QtCore:QTimer
+    check: change
   confidence: 0.95
 - prop: timerType
   class: exact
@@ -50,4 +60,7 @@ observe:
     ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
   - origin: probe
     ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QTimer:timerType)'
+  verify:
+    'on': QtCore:QTimer
+    check: change
   confidence: 0.95

@@ -12,7 +12,7 @@ observe:
     ref: 'O3: NOTIFY colorChanged(QColor)'
   verify:
     'on': QtWidgets:QGraphicsColorizeEffect
-    check: connect
+    check: change
   confidence: 0.9
 - prop: strength
   class: exact

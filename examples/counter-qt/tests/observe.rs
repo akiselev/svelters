@@ -168,6 +168,47 @@ fn qt_a_coarse_notify_reports_each_observed_property() {
     })]);
 }
 
+fn construct(type_name: &str) -> (svl_handle, svl_id) {
+    let k = id(SVL_KIND, 0, type_name);
+    assert_ne!(k, 0, "unknown type {type_name}");
+    let mut out = svl_value::null();
+    let f = be().construct.expect("the Qt backend implements construct");
+    let rc = unsafe { f(be().self_, k, std::ptr::null(), std::ptr::null(), 0, &mut out) };
+    assert_eq!(rc, 0, "construct {type_name}: {}", err());
+    assert_eq!(out.tag, SVL_HANDLE);
+    (unsafe { out.u.h }, k)
+}
+
+// Milestone R3 acceptance (REACTIVITY.md §10): a QBindable-only property (QTimer::interval has no NOTIFY) and an
+// event-announced one (QWidget::enabled -> QEvent::EnabledChange) are observed; off removes the notifier and the
+// event filter.
+#[test]
+fn qt_bindable_and_event_properties_are_observed() {
+    run_steps(vec![Box::new(|| {
+        let (t, k) = construct("QTimer");
+        let interval = id(SVL_PROP, k, "interval");
+        assert_ne!(interval, 0);
+        observe(t, interval, true).unwrap();
+        set(t, interval, Value::I64(250));
+        assert_eq!(take_changed(), vec![(t, interval)], "the QPropertyNotifier on QTimer::interval");
+        set(t, interval, Value::I64(250));
+        assert!(take_changed().is_empty(), "an identical set does not notify a bindable");
+        observe(t, interval, false).unwrap();
+        set(t, interval, Value::I64(300));
+        assert!(take_changed().is_empty(), "off destroys the notifier");
+
+        let s = create("slider");
+        let enabled = prop("slider", "enabled");
+        observe(s, enabled, true).unwrap();
+        set(s, enabled, Value::Bool(false));
+        assert_eq!(take_changed(), vec![(s, enabled)], "QEvent::EnabledChange through the event filter");
+        observe(s, enabled, false).unwrap();
+        set(s, enabled, Value::Bool(true));
+        assert!(take_changed().is_empty(), "the filter went with the last event-based observation");
+        unsafe { (be().destroy)(be().self_, s) };
+    })]);
+}
+
 #[test]
 fn qt_a_property_without_notify_is_refused_and_teardown_drops_observations() {
     let slider = std::rc::Rc::new(std::cell::Cell::new(0));

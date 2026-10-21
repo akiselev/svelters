@@ -23,6 +23,9 @@ observe:
     ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
   - origin: probe
     ref: 'observe probe Qt 6.11.3: announced every observed change (set:QtCore:QVariantAnimation:duration)'
+  verify:
+    'on': QtCore:QVariantAnimation
+    check: change
   confidence: 0.95
 - prop: easingCurve
   class: exact
@@ -31,16 +34,25 @@ observe:
   provenance:
   - origin: moc
     ref: 'O3: BINDABLE (QUntypedBindable::addNotifier)'
+  verify:
+    'on': QtCore:QVariantAnimation
+    check: connect
   confidence: 0.9
 - prop: endValue
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtCore:QVariantAnimation
+    check: unsupported
   confidence: 0.9
 - prop: startValue
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtCore:QVariantAnimation
+    check: unsupported
   confidence: 0.9

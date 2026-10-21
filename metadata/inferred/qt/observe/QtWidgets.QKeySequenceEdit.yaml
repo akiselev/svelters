@@ -7,12 +7,18 @@ observe:
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QKeySequenceEdit
+    check: unsupported
   confidence: 0.9
 - prop: finishingKeyCombinations
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QKeySequenceEdit
+    check: unsupported
   confidence: 0.9
 - prop: keySequence
   class: exact
@@ -24,11 +30,14 @@ observe:
     ref: 'O3: NOTIFY keySequenceChanged(QKeySequence)'
   verify:
     'on': QtWidgets:QKeySequenceEdit
-    check: connect
+    check: change
   confidence: 0.9
 - prop: maximumSequenceLength
   class: set_only
   provenance:
   - origin: rule
     ref: 'O8: writable, no NOTIFY, BINDABLE, event or paired signal, not USER; the probe saw nothing but our setter change it'
+  verify:
+    'on': QtWidgets:QKeySequenceEdit
+    check: unsupported
   confidence: 0.9

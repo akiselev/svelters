@@ -12,6 +12,17 @@
 #include <QtCore/QString>
 #include <QtCore/QMetaMethod>
 #include <QtCore/QVariant>
+#include <QtCore/QLocale>
+#include <QtCore/QProperty>
+#include <QtCore/QTimer>
+#include <QtGui/QStandardItemModel>
+#include <QtGui/QCursor>
+#include <QtGui/QColor>
+#include <QtGui/QKeySequence>
+#include <QtCore/QUrl>
+#include <QtGui/QFont>
+#include <QtGui/QPalette>
+#include <QtWidgets/QSizePolicy>
 #include <QtGui/QAction>
 #include <QtGui/QActionGroup>
 #include <QtGui/QKeyEvent>
@@ -30,6 +41,7 @@
 //@@INCLUDES@@
 
 #include <algorithm>
+#include <memory>
 #include <cmath>
 #include <chrono>
 #include <cstdio>
@@ -42,6 +54,8 @@ extern "C" const svl_backend *svl_qt_backend(void);
 extern "C" unsigned svl_qt_frames_by_update();
 extern "C" void svl_qt_set_host(const svl_host *host);
 extern "C" void *svl_qt_debug_object(svl_handle h);
+extern "C" svl_id svl_qt_meta_prop_id(const char *native);
+extern "C" size_t svl_qt_observations(size_t *filters);
 
 namespace {
 
@@ -911,28 +925,77 @@ bool tt_binding(const BindingRow &r, std::string &why) {
   return true;
 }
 
-// Observe facts (metadata/observe/qt.json, milestone R0): one row per fact. The R1a backend observes through
-// NOTIFY only, so rows exist for NOTIFY facts (change: a native QMetaProperty::write of a new value is announced;
-// silent: the probe saw this NOTIFY miss it), constants (refused: -1) and properties without a mechanism
-// (unsupported: SVL_OBSERVE_UNSUPPORTED). Bindable, event and signal mechanisms wait for the R3 backend.
-enum ObsCheck : int { OC_CHANGE, OC_SILENT, OC_REFUSED, OC_UNSUPPORTED, OC_CONNECT };
+// Observe facts (metadata/observe/qt.json; milestones R0 and R3): one row per fact with a `verify` block, through the
+// backend's ABI v2.6 observe (NOTIFY, QBindable notifier, event filter, other signals), per REACTIVITY.md §4.5:
+//   OC_CHANGE   write the property natively (QMetaProperty::write of a new value): announced; an identical write
+//               then follows `fires`; 10 changes leave one dirty (handle, prop); unobserved: silent
+//   OC_CROSS    the same through `trigger` (another property written natively) or `act` (a C++ statement)
+//   OC_SILENT   the change happens and is not announced (a `partial` fact's missed cause)
+//   OC_CONNECT  observe installs and uninstalls (no native trigger known)
+//   OC_REFUSED  -1 (constant); OC_UNSUPPORTED SVL_OBSERVE_UNSUPPORTED (set_only, none); with a trigger the native
+//               change happens too, and the metaobject has neither NOTIFY nor bindable: a verified `none`
+// Every observing row also runs the user path (`user`, key/mouse events) when it has one, checks that a
+// proportional property's own set_prop is not reported (echo, §5.4), that a deferred (geometry) change of a hidden
+// widget is announced at show(), and teardown: off, then destroy while observed; the backend's observation and
+// event-filter counts return to where they were.
+enum ObsCheck : int { OC_CHANGE, OC_SILENT, OC_REFUSED, OC_UNSUPPORTED, OC_CONNECT, OC_CROSS };
 enum ObsFires : int { OF_ANY, OF_ON_CHANGE, OF_ON_SET };
+enum ObsFlags : unsigned { OB_META = 1, OB_DEFERRED = 2, OB_PROPORTIONAL = 4 };
 struct ObserveRow {
   const char *name;
   const char *kind;  // element tag, or the class of a constructible type (`type`)
   bool type;
   const char *js, *native;
   int check, fires;
+  const char *trigger;          // OC_CROSS / OC_SILENT / OC_UNSUPPORTED: the Q_PROPERTY written natively instead
+  void (*setup)(QObject *);     // run before observing
+  void (*act)(QObject *);       // the native change, when it is not a property write
+  void (*user)(QObject *);      // the user path (a synthesizer): its change must be announced
+  unsigned flags;
 };
-// A different value of a scalar or enum property (the probe's rule, tools/metadata/qt/observe_probe.cpp).
+
+// User-path synthesizers for the `user` statements (what QTest::keyClicks / mouseClick send, without QtTest).
+void ut_key(QObject *o, int key, Qt::KeyboardModifiers mods = Qt::NoModifier, const QString &text = QString()) {
+  QKeyEvent press(QEvent::KeyPress, key, mods, text);
+  QCoreApplication::sendEvent(o, &press);
+  QKeyEvent release(QEvent::KeyRelease, key, mods, text);
+  QCoreApplication::sendEvent(o, &release);
+}
+void ut_keys(QObject *o, const char *utf8) {
+  for (const QChar c : QString::fromUtf8(utf8)) ut_key(o, 0, Qt::NoModifier, QString(c));
+}
+void ut_mouse(QObject *o, QEvent::Type t) {
+  auto *w = qobject_cast<QWidget *>(o);
+  const QPointF pos = w ? QPointF(w->rect().center()) : QPointF(1, 1);
+  QMouseEvent ev(t, pos, w ? QPointF(w->mapToGlobal(pos)) : pos, Qt::LeftButton,
+                 t == QEvent::MouseButtonRelease ? Qt::NoButton : Qt::LeftButton, Qt::NoModifier);
+  QCoreApplication::sendEvent(o, &ev);
+}
+void ut_press(QObject *o) { ut_mouse(o, QEvent::MouseButtonPress); }
+void ut_click(QObject *o) {
+  ut_mouse(o, QEvent::MouseButtonPress);
+  ut_mouse(o, QEvent::MouseButtonRelease);
+}
+
+// A different value of a property (the probe's rule, tools/metadata/qt/observe_probe.cpp next_any).
 bool next_qvalue(const QMetaProperty &p, const QVariant &cur, QVariant &out) {
   if (p.isEnumType()) {
-    if (p.isFlagType()) return false;
     QMetaEnum me = p.enumerator();
+    if (p.isFlagType()) {  // toggle the first non-zero flag
+      for (int i = 0; i < me.keyCount(); i++)
+        if (me.value(i) != 0) {
+          QVariant v(cur.toInt() ^ me.value(i));
+          if (!v.convert(cur.metaType())) return false;
+          out = v;
+          return true;
+        }
+      return false;
+    }
     for (int i = 0; i < me.keyCount(); i++)
       if (me.value(i) != cur.toInt()) { out = QVariant(me.value(i)); return true; }
     return false;
   }
+  const auto bump = [](int v) { return v > 1000 ? v - 11 : v + 11; };
   switch (p.metaType().id()) {
     case QMetaType::Bool: out = !cur.toBool(); return true;
     case QMetaType::Int: out = cur.toInt() + 1; return true;
@@ -950,69 +1013,233 @@ bool next_qvalue(const QMetaProperty &p, const QVariant &cur, QVariant &out) {
       return false;
     }
     case QMetaType::QString: out = cur.toString() + "x"; return true;
+    case QMetaType::QColor: {
+      const QColor c = cur.value<QColor>();
+      out = c == QColor(10, 20, 30) ? QColor(40, 50, 60) : QColor(10, 20, 30);
+      return true;
+    }
+    case QMetaType::QPointF: out = cur.toPointF() + QPointF(7, 5); return true;
+    case QMetaType::QUrl: out = QUrl(cur.toUrl().toString() == "file:///a" ? "file:///b" : "file:///a"); return true;
+    case QMetaType::QKeySequence:
+      out = QKeySequence(cur.value<QKeySequence>() == QKeySequence("Ctrl+K") ? "Ctrl+J" : "Ctrl+K");
+      return true;
+    case QMetaType::QRect: {
+      const QRect r = cur.toRect();
+      out = QRect(r.x() + 7, r.y() + 5, bump(r.width()), bump(r.height()));
+      return true;
+    }
+    case QMetaType::QRectF: {
+      const QRectF r = cur.toRectF();
+      out = QRectF(r.x() + 7, r.y() + 5, r.width() + 11, r.height() + 13);
+      return true;
+    }
+    case QMetaType::QSize: {
+      const QSize s = cur.toSize();
+      out = QSize(bump(s.width()), bump(s.height()));
+      return true;
+    }
+    case QMetaType::QPoint: out = cur.toPoint() + QPoint(7, 5); return true;
+    case QMetaType::QFont: {
+      QFont f = cur.value<QFont>();
+      f.setPointSize(f.pointSize() > 0 ? f.pointSize() + 3 : 15);
+      out = f;
+      return true;
+    }
+    case QMetaType::QPalette: {
+      QPalette pl = cur.value<QPalette>();
+      pl.setColor(QPalette::Window, pl.color(QPalette::Window) == QColor(1, 2, 3) ? QColor(4, 5, 6) : QColor(1, 2, 3));
+      out = pl;
+      return true;
+    }
+    case QMetaType::QCursor:
+      out = QCursor(cur.value<QCursor>().shape() == Qt::CrossCursor ? Qt::ArrowCursor : Qt::CrossCursor);
+      return true;
+    case QMetaType::QLocale:
+      out = QLocale(cur.toLocale().language() == QLocale::German ? QLocale::French : QLocale::German);
+      return true;
+    case QMetaType::QSizePolicy: {
+      QSizePolicy sp = cur.value<QSizePolicy>();
+      sp.setHorizontalPolicy(sp.horizontalPolicy() == QSizePolicy::Fixed ? QSizePolicy::Expanding : QSizePolicy::Fixed);
+      out = QVariant::fromValue(sp);
+      return true;
+    }
     default: return false;
   }
 }
 int changed_count(svl_handle h, svl_id p) {
   return static_cast<int>(std::count(changed.begin(), changed.end(), std::make_pair(h, p)));
 }
-bool tt_observe(const ObserveRow &r, std::string &why) {
+QMetaProperty qprop(QObject *o, const char *name) {
+  const int i = name ? o->metaObject()->indexOfProperty(name) : -1;
+  return i < 0 ? QMetaProperty() : o->metaObject()->property(i);
+}
+// One native change: write the next value of `name`, or run `act`. False when neither is possible.
+bool native_change(QObject *o, const char *name, void (*act)(QObject *)) {
+  if (act) {
+    act(o);
+  } else {
+    const QMetaProperty mp = qprop(o, name);
+    QVariant nv;
+    if (!mp.isValid() || !next_qvalue(mp, mp.read(o), nv) || !mp.write(o, nv)) return false;
+  }
+  QCoreApplication::processEvents();
+  return true;
+}
+// A fresh subject of an observe row (an element or a constructed type), with the row's setup run on it.
+svl_handle obs_subject(const ObserveRow &r) {
   svl_handle h = 0;
   if (r.type) {
     svl_value out{};
-    CHECK(K(r.kind) != 0);
-    CHECK(B->construct(B->self, K(r.kind), nullptr, nullptr, 0, &out) == 0 && out.tag == SVL_HANDLE);
+    if (!K(r.kind) || B->construct(B->self, K(r.kind), nullptr, nullptr, 0, &out) != 0 || out.tag != SVL_HANDLE) return 0;
     h = out.u.h;
   } else {
     h = mk(r.kind);
   }
+  if (h && r.setup && O(h)) {
+    r.setup(O(h));
+    QCoreApplication::processEvents();
+  }
+  return h;
+}
+bool tt_observe(const ObserveRow &r, std::string &why) {
+  const svl_handle h = obs_subject(r);
   CHECK(h != 0);
-  svl_id p = P(r.kind, r.js);
+  const svl_id p = (r.flags & OB_META) ? svl_qt_meta_prop_id(r.native) : P(r.kind, r.js);
   CHECK(p != 0);
+  QObject *o = O(h);
+  CHECK(o);
+  size_t filters0 = 0;
+  const size_t obs0 = svl_qt_observations(&filters0);
   changed.clear();
   const int rc = B->observe(B->self, h, p, true);
   if (r.check == OC_REFUSED || r.check == OC_UNSUPPORTED) {
     CHECK(rc == (r.check == OC_REFUSED ? -1 : SVL_OBSERVE_UNSUPPORTED));
+    if (r.trigger) {  // a verified `none`: the change happens, and nothing on the metaobject could announce it
+      const QMetaProperty mp = qprop(o, r.native);
+      CHECK(mp.isValid() && !mp.hasNotifySignal() && !mp.isBindable());
+      const QVariant before = mp.read(o);
+      CHECK(native_change(o, r.trigger, nullptr));
+      CHECK(mp.read(o) != before);
+      CHECK(changed_count(h, p) == 0);
+    }
     B->destroy(B->self, h);
     return true;
   }
   CHECK(rc == 0);
+  CHECK(svl_qt_observations(nullptr) == obs0 + 1);
   if (r.check == OC_CONNECT) {
     CHECK(B->observe(B->self, h, p, false) == 0);
+    CHECK(svl_qt_observations(nullptr) == obs0);
     B->destroy(B->self, h);
     return true;
   }
-  QObject *o = O(h);
-  const QMetaProperty mp = o->metaObject()->property(o->metaObject()->indexOfProperty(r.native));
-  CHECK(mp.isValid());
-  QVariant cur = mp.read(o), nv;
-  CHECK(next_qvalue(mp, cur, nv));
-  CHECK(mp.write(o, nv));
-  QCoreApplication::processEvents();
-  CHECK(mp.read(o) != cur);  // the native write changed it
+  const QMetaProperty mp = qprop(o, r.native);
+  auto *w = qobject_cast<QWidget *>(o);
+  const char *wname = r.check == OC_CHANGE ? r.native : r.trigger;
+  changed.clear();
+  QVariant before = mp.isValid() ? mp.read(o) : QVariant();
+  if (r.flags & OB_DEFERRED) {
+    // Qt sends Resize/Move to a hidden widget only when it is shown: the change is announced then (timing deferred).
+    CHECK(w && !w->isVisible());
+    CHECK(native_change(o, wname, r.act));
+    CHECK(changed_count(h, p) == 0);
+    w->show();
+    QCoreApplication::processEvents();
+    CHECK(changed_count(h, p) >= 1);
+    changed.clear();
+    before = mp.isValid() ? mp.read(o) : QVariant();
+  }
+  CHECK(native_change(o, wname, r.act));
+  if (mp.isValid() && mp.isReadable()) CHECK(mp.read(o) != before);  // the native change changed it
   const int n = changed_count(h, p);
   if (r.check == OC_SILENT) {
     CHECK(n == 0);  // the fact: this change is not announced
-    CHECK(B->observe(B->self, h, p, false) == 0);
-    B->destroy(B->self, h);
-    return true;
+  } else {
+    CHECK(n >= 1);  // announced
+    if (r.check == OC_CHANGE) {
+      changed.clear();
+      CHECK(mp.write(o, mp.read(o)));  // an identical set
+      QCoreApplication::processEvents();
+      const int same = changed_count(h, p);
+      if (r.fires == OF_ON_CHANGE) CHECK(same == 0);
+      if (r.fires == OF_ON_SET) CHECK(same > 0);
+    }
+    if (!r.act || r.check == OC_CHANGE) {
+      // Coalescing (backend side): 10 native changes between two checkpoints leave one dirty (handle, prop).
+      changed.clear();
+      for (int i = 0; i < 10; i++) CHECK(native_change(o, wname, nullptr));
+      CHECK(!changed.empty());
+      for (const auto &c : changed) CHECK(c == std::make_pair(h, p));
+    }
   }
-  CHECK(n >= 1);  // announced
-  changed.clear();
-  CHECK(mp.write(o, mp.read(o)));  // an identical set
-  QCoreApplication::processEvents();
-  const int same = changed_count(h, p);
-  if (r.fires == OF_ON_CHANGE) CHECK(same == 0);
-  if (r.fires == OF_ON_SET) CHECK(same > 0);
+  if (r.user) {
+    // The user path, on a fresh instance: what a user does (key or mouse events) is announced as well.
+    const svl_handle hu = obs_subject(r);
+    CHECK(hu != 0);
+    QObject *ou = O(hu);
+    if (auto *wu = qobject_cast<QWidget *>(ou)) {
+      wu->show();
+      QCoreApplication::processEvents();
+    }
+    CHECK(B->observe(B->self, hu, p, true) == 0);
+    const QVariant u0 = mp.isValid() ? mp.read(ou) : QVariant();
+    changed.clear();
+    r.user(ou);
+    QCoreApplication::processEvents();
+    if (mp.isValid()) CHECK(mp.read(ou) != u0);
+    CHECK(changed_count(hu, p) >= 1);
+    CHECK(B->observe(B->self, hu, p, false) == 0);
+    B->destroy(B->self, hu);
+    flush();
+  }
+  if ((r.flags & OB_PROPORTIONAL) && !r.type && r.js[0]) {
+    // Echo of a proportional (whole-text) property: our own set_prop is not reported (§5.4).
+    changed.clear();
+    svl_value v{};
+    v.tag = SVL_STR;
+    v.u.s.ptr = "echo";
+    v.u.s.len = 4;
+    CHECK(B->set_prop(B->self, h, p, &v) == 0);
+    QCoreApplication::processEvents();
+    CHECK(changed_count(h, p) == 0);
+  }
   CHECK(B->observe(B->self, h, p, false) == 0);
+  size_t filters1 = 0;
+  CHECK(svl_qt_observations(&filters1) == obs0);
+  CHECK(filters1 == filters0);  // the event filter went with the last event-based observation
   changed.clear();
-  QVariant v2;
-  CHECK(next_qvalue(mp, mp.read(o), v2));
-  mp.write(o, v2);
-  QCoreApplication::processEvents();
+  native_change(o, wname, r.act);
   CHECK(changed_count(h, p) == 0);  // unobserved: silent
   CHECK(B->observe(B->self, h, p, true) == 0);
   B->destroy(B->self, h);  // destroyed while observed: the observation goes with it
+  flush();
+  CHECK(svl_qt_observations(nullptr) == obs0);
+  CHECK(B->observe(B->self, h, p, true) < 0);
+  return true;
+}
+
+// Pins REACTIVITY.md §5.5: a QPropertyNotifier may be destroyed after the object whose property it watches (the
+// backend's order on native death). The property's binding data unlinks its observers when it is destroyed.
+bool t_observe_runtime_bindable_notifier_outlives_object(std::string &why) {
+  int calls = 0;
+  auto *t = new QTimer;
+  QUntypedBindable b = t->metaObject()->property(t->metaObject()->indexOfProperty("interval")).bindable(t);
+  CHECK(b.isValid());
+  auto n = std::make_unique<QPropertyNotifier>(b.addNotifier([&calls] { calls++; }));
+  t->setInterval(5);
+  CHECK(calls == 1);
+  delete t;
+  n.reset();  // after its object: must not touch freed memory (run under ASan in the R3 record)
+  // And through the backend: a QTimer handle observed by its bindable, destroyed while observed.
+  svl_value out{};
+  CHECK(B->construct(B->self, K("QTimer"), nullptr, nullptr, 0, &out) == 0 && out.tag == SVL_HANDLE);
+  const svl_handle h = out.u.h;
+  const svl_id p = P("QTimer", "interval");
+  CHECK(B->observe(B->self, h, p, true) == 0);
+  changed.clear();
+  static_cast<QTimer *>(O(h))->setInterval(7);
+  CHECK(changed_count(h, p) == 1);
+  delete O(h);  // native death: the backend drops the notifier in the `destroyed` slot
   flush();
   CHECK(B->observe(B->self, h, p, true) < 0);
   return true;
@@ -1046,6 +1273,7 @@ int run_rows(const Row *rows, bool (*fn)(const Row &, std::string &), int &count
 
 const TestCase kTests[] = {
     {"runtime/stale_handles_error", t_runtime_stale_handles_error},
+    {"observe_runtime/bindable_notifier_outlives_object", t_observe_runtime_bindable_notifier_outlives_object},
     {"runtime/host_destroy_is_silent", t_runtime_host_destroy_is_silent},
     {"runtime/native_destroy_notifies_host", t_runtime_native_destroy_notifies_host},
     {"runtime/parent_destroy_notifies_children", t_runtime_parent_destroy_notifies_children},
