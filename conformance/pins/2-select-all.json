@@ -1,0 +1,21 @@
+{
+  "id": "select-all",
+  "pin": 2,
+  "title": "Select all, then extend or collapse it",
+  "setup": {
+    "fields": { "a": { "text": "hello brave new world", "sel": [3, 3] }, "b": { "text": "second" } },
+    "focus": "a"
+  },
+  "steps": [
+    { "key": "select-all" },
+    { "key": "left", "shift": true },
+    { "key": "select-all" },
+    { "key": "left" },
+    { "key": "select-all" },
+    { "key": "right" },
+    { "key": "select-all" },
+    { "key": "line-start" },
+    { "key": "select-all" },
+    { "key": "word-prev", "shift": true }
+  ]
+}

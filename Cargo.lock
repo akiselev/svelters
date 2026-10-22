@@ -738,6 +738,7 @@ version = "0.0.0"
 dependencies = [
  "serde_json",
  "svelters-abi",
+ "svelters-conformance",
  "svelters-host",
  "svelters-qt-build",
 ]
@@ -3867,6 +3868,20 @@ dependencies = [
  "sourcemap",
  "svelters-backend-log",
  "svelters-host",
+]
+
+[[package]]
+name = "svelters-conformance"
+version = "0.0.0"
+dependencies = [
+ "egui",
+ "egui_kittest",
+ "gtk4",
+ "serde_json",
+ "svelters-abi",
+ "svelters-egui",
+ "svelters-gtk",
+ "x11rb",
 ]
 
 [[package]]

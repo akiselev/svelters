@@ -1,0 +1,54 @@
+{
+  "schema": "svelters-na-keys/v1",
+  "note": "Platform-neutral key intents of the pin scripts (widget survey §5.2), resolved per platform. Chords are X keysym names joined with +; Cmd is the macOS command key. A step with \"shift\": true adds Shift.",
+  "platforms": {
+    "linux": {
+      "left": "Left",
+      "right": "Right",
+      "word-prev": "Ctrl+Left",
+      "word-next": "Ctrl+Right",
+      "line-start": "Home",
+      "line-end": "End",
+      "delete-word-back": "Ctrl+BackSpace",
+      "delete-word-fwd": "Ctrl+Delete",
+      "backspace": "BackSpace",
+      "delete": "Delete",
+      "select-all": "Ctrl+a",
+      "tab": "Tab",
+      "backtab": "Shift+Tab",
+      "escape": "Escape"
+    },
+    "windows": {
+      "left": "Left",
+      "right": "Right",
+      "word-prev": "Ctrl+Left",
+      "word-next": "Ctrl+Right",
+      "line-start": "Home",
+      "line-end": "End",
+      "delete-word-back": "Ctrl+BackSpace",
+      "delete-word-fwd": "Ctrl+Delete",
+      "backspace": "BackSpace",
+      "delete": "Delete",
+      "select-all": "Ctrl+a",
+      "tab": "Tab",
+      "backtab": "Shift+Tab",
+      "escape": "Escape"
+    },
+    "macos": {
+      "left": "Left",
+      "right": "Right",
+      "word-prev": "Alt+Left",
+      "word-next": "Alt+Right",
+      "line-start": "Cmd+Left",
+      "line-end": "Cmd+Right",
+      "delete-word-back": "Alt+BackSpace",
+      "delete-word-fwd": "Alt+Delete",
+      "backspace": "BackSpace",
+      "delete": "Delete",
+      "select-all": "Cmd+a",
+      "tab": "Tab",
+      "backtab": "Shift+Tab",
+      "escape": "Escape"
+    }
+  }
+}
