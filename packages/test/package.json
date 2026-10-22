@@ -1,0 +1,17 @@
+{
+  "name": "@svelters/test",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "description": "AU2: the TypeScript client of svelters-automation's socket transport (launch an app under automation, locators, web-first expect, scene snapshots)",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    }
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  }
+}

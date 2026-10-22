@@ -1,6 +1,6 @@
 [package]
 name = "svelters-automation"
-description = "AU1: the automation protocol core (query, read, act, wait, capture, journal) over the egui scene, in process"
+description = "AU1: the automation protocol core (query, read, act, wait, capture, journal) over the egui scene, in process, and AU2: its NDJSON JSON-RPC transport over a local socket"
 edition.workspace = true
 version.workspace = true
 license.workspace = true
@@ -10,14 +10,24 @@ publish.workspace = true
 default = []
 # `Driver` for svelters-egui's kittest harnesses (`TestApp`, `EmbedHarness`). Test builds turn it on.
 kittest = ["dep:egui_kittest", "svelters-egui/kittest"]
+# AU2's reference host `svelters-run` (headless, apps compiled live from source), and AU1b's
+# `#[svelters_automation::test]` with its `e2e` module.
+run = ["kittest", "svelters-egui/source", "dep:svelters-macros"]
+
+[[bin]]
+name = "svelters-run"
+path = "src/bin/svelters-run.rs"
+required-features = ["run"]
 
 [dependencies]
 svelters-egui = { path = "../svelters-egui", default-features = false }
 svelters-style.workspace = true
+svelters-host.workspace = true
+svelters-macros = { path = "../svelters-macros", optional = true }
 serde_json.workspace = true
 egui = { version = "=0.37.0", default-features = false }
 egui_kittest = { version = "=0.37.0", optional = true }
 
 [dev-dependencies]
-svelters-automation = { path = ".", features = ["kittest"] }
+svelters-automation = { path = ".", features = ["kittest", "run"] }
 svelters-egui = { path = "../svelters-egui", features = ["kittest", "source"] }

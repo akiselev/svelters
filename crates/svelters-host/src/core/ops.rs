@@ -387,6 +387,7 @@ impl Core {
                 st.dead.push(h, Death::Destroyed);
             }
             self.cb_release_owner(h);
+            self.links_gone(h); // CX3
             self.backend.destroy(h);
             Ok(())
         })
@@ -738,7 +739,7 @@ impl Core {
                         // and vanish. So the first announcement is always delivered (at worst once more
                         // than needed: Svelte drops an equal primitive), and from then on `last` is what
                         // JS was told, or what our own write read back.
-                        let o = Observed { count: 1, name, proportional, last: None, force: false };
+                        let o = Observed { count: 1, name, proportional, last: None, force: false, links: 0 };
                         self.st.borrow_mut().observed.insert((h, p), o);
                         Ok(true)
                     }

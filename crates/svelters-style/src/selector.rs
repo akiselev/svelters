@@ -3,7 +3,8 @@
 //! Supported: type, class, id and attribute selectors, all four combinators, `:is/:where/:not/:has`,
 //! `:nth-child(… of S)` and the other structural pseudo-classes (from `selectors`), the state
 //! pseudo-classes of [`STATE_PSEUDO_CLASSES`](crate::state::STATE_PSEUDO_CLASSES), `:focus-visible`,
-//! provider states as `:state(ns.name)`, and `&` inside nested rules. There are no pseudo-elements.
+//! provider states as `:state(ns.name)`, `&` inside nested rules, and the pseudo-elements
+//! `::part(name)`, `::placeholder` and `::selection` ([`PseudoElement`]).
 
 use crate::atom::{Atom, AttrValue};
 use crate::state::{STATE_PSEUDO_CLASSES, StateMask, StateNames};
@@ -48,7 +49,7 @@ impl PseudoClass {
     pub fn bits(&self) -> StateMask {
         match self {
             PseudoClass::State { bit, .. } | PseudoClass::Provider { bit, .. } => *bit,
-            PseudoClass::FocusVisible => StateMask::FOCUSED,
+            PseudoClass::FocusVisible => StateMask(StateMask::FOCUSED.0 | StateMask::FOCUS_VISIBLE.0),
         }
     }
 }
@@ -73,13 +74,63 @@ impl selectors::parser::NonTSPseudoClass for PseudoClass {
     }
 }
 
-/// svelters sheets have no pseudo-elements; the type is uninhabited.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub enum PseudoElement {}
+/// A pseudo-element (ARCH-WIDGETS W3): a styled piece of an element that is not a light-tree node.
+///
+/// Its style is computed on the host element with [`Stylist::compute_pseudo`](crate::Stylist::compute_pseudo),
+/// inheriting from the host's style. State pseudo-classes go on the host (`button:hover::part(label)`);
+/// none may follow the pseudo-element, as in CSS for `::part()` of a paint part.
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+pub enum PseudoElement {
+    /// `::part(name …)`: a named part of a widget, either a shadow node or paint-only. A part
+    /// carries one or more names (WIDGET-PARITY P10: `day today`); a selector's names must all be
+    /// among the part's. Kept sorted and deduplicated.
+    Part(Box<[Atom]>),
+    /// `::placeholder`: a text field's placeholder text.
+    Placeholder,
+    /// `::selection`: selected text (`color`, `background-color`).
+    Selection,
+}
+
+impl PseudoElement {
+    /// `::part(name)`.
+    pub fn part(name: &str) -> PseudoElement {
+        PseudoElement::Part(Box::new([Atom::new(name)]))
+    }
+
+    /// A part with several names (`::part(day today weekend)` matches rules for any subset).
+    pub fn parts(names: &[&str]) -> PseudoElement {
+        let mut v: Vec<Atom> = names.iter().map(|n| Atom::new(n)).collect();
+        v.sort();
+        v.dedup();
+        PseudoElement::Part(v.into())
+    }
+
+    /// Whether a selector's pseudo-element `sel` matches this one (the element's): the same kind,
+    /// and for parts, every name of `sel` among this part's names.
+    pub fn matched_by(&self, sel: &PseudoElement) -> bool {
+        match (self, sel) {
+            (PseudoElement::Part(mine), PseudoElement::Part(want)) => want.iter().all(|w| mine.contains(w)),
+            (a, b) => a == b,
+        }
+    }
+}
 
 impl ToCss for PseudoElement {
-    fn to_css<W: fmt::Write>(&self, _dest: &mut W) -> fmt::Result {
-        match *self {}
+    fn to_css<W: fmt::Write>(&self, dest: &mut W) -> fmt::Result {
+        match self {
+            PseudoElement::Part(n) => {
+                dest.write_str("::part(")?;
+                for (i, a) in n.iter().enumerate() {
+                    if i > 0 {
+                        dest.write_str(" ")?;
+                    }
+                    write!(dest, "{a}")?;
+                }
+                dest.write_str(")")
+            }
+            PseudoElement::Placeholder => dest.write_str("::placeholder"),
+            PseudoElement::Selection => dest.write_str("::selection"),
+        }
     }
 }
 
@@ -169,7 +220,24 @@ impl<'i> selectors::Parser<'i> for SelectorParser<'_> {
     }
 
     fn parse_pseudo_element(&self, name: CowRcStr<'i>) -> Result<PseudoElement, ParseError<StyleParseError>> {
-        Err(ParseError::custom(StyleParseError::UnknownPseudo(format!("::{name}"))))
+        match &*name.to_ascii_lowercase() {
+            "placeholder" => Ok(PseudoElement::Placeholder),
+            "selection" => Ok(PseudoElement::Selection),
+            _ => Err(ParseError::custom(StyleParseError::UnknownPseudo(format!("::{name}")))),
+        }
+    }
+
+    fn parse_functional_pseudo_element(&self, name: CowRcStr<'i>, input: &mut CssParser<'i>) -> Result<PseudoElement, ParseError<StyleParseError>> {
+        if !name.eq_ignore_ascii_case("part") {
+            return Err(ParseError::custom(StyleParseError::UnknownPseudo(format!("::{name}()"))));
+        }
+        // one or more names: the part must have all of them (P10)
+        let mut names = vec![input.expect_ident()?.to_string()];
+        while let Ok(n) = input.try_parse(|i| i.expect_ident_cloned()) {
+            names.push(n.to_string());
+        }
+        let names: Vec<&str> = names.iter().map(String::as_str).collect();
+        Ok(PseudoElement::parts(&names))
     }
 }
 

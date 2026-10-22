@@ -101,6 +101,10 @@ pub enum BindLowering {
     /// `$n.bind(node, prop, signal, arg, get, set)`: the spec's signal plan, kept where the prop is not
     /// `exact` on this platform, or has no observe fact (decision 13 #8).
     Signal { signal: String, arg: i64 },
+    /// CX3 `bind:prop|commit`: `$n.bind_commit(node, prop, get, set, signal, arg)`. State -> native
+    /// as usual; native -> state only when the kind's commit event `signal` fires, with its
+    /// `args[arg]`. No observation, so edits between commits run no JS.
+    Commit { signal: String, arg: i64 },
 }
 
 /// The plan of one `bind:`: the JS prop name, the lowering, the fact it came from and warnings.
@@ -112,6 +116,35 @@ pub struct BindPlan {
     /// `bind_partially_observed`, `bind_observation_unverified`, `nonreactive_redundant` (errors under
     /// `--strict-native`).
     pub warnings: Vec<Unresolved>,
+}
+
+/// CX3: the plan of `bind:<name>|commit`: the kind's binding for `name` must declare a commit
+/// event (`bindings.<prop>.commit` in the spec: egui's `commit` signal). Observability does not
+/// matter: the commit event carries the value. A kind without one is `bind_commit_unsupported`.
+pub fn plan_bind_commit<S: PlatformSemantics + ?Sized>(sem: &S, el: &ElementRef, name: &str) -> Result<BindPlan, Unresolved> {
+    let platform = sem.backend().to_string();
+    let tag = &el.tag;
+    let plan = match sem.plan_binding(el, name) {
+        Ok(p) => Some(p),
+        Err(u) if matches!(u.code, codes::UNKNOWN_PROPERTY | codes::READ_ONLY_PROPERTY) => return Err(u),
+        Err(_) => None,
+    };
+    let prop_name = plan.as_ref().map_or(name.to_string(), |p| p.prop.clone());
+    let p = sem.property(el, &prop_name)?;
+    let js = p.js.clone();
+    if !p.readable || !p.writable {
+        return Err(Unresolved::new(codes::READ_ONLY_PROPERTY, format!("bind:{name}|commit: `{js}` of <{tag}> is not readable and writable on {platform}"))
+            .help(format!("set it one way with `{js}={{...}}`")));
+    }
+    let Some((signal, arg)) = plan.and_then(|p| p.commit) else {
+        return Err(Unresolved::new(
+            codes::BIND_COMMIT_UNSUPPORTED,
+            format!("bind:{name}|commit on <{tag}>: <{tag}> has no commit event for `{js}` on {platform}, so there is no moment to commit at"),
+        )
+        .help(format!("bind it without `|commit` (every change), or set `{js}` one way and write your state from the kind's own event")));
+    };
+    let obs = sem.observability(el, p);
+    Ok(BindPlan { prop: js, lowering: BindLowering::Commit { signal, arg: arg as i64 }, observability: obs, warnings: Vec::new() })
 }
 
 /// The `bind:<name>` policy (sections 8.2-8.4, decisions 13 #4-#9), shared by every

@@ -89,6 +89,10 @@ impl Caps {
     pub const EDITABLE: Caps = Caps(1 << 1);
     /// Height depends on width: layout measures it again at the width it gets.
     pub const HEIGHT_FOR_WIDTH: Caps = Caps(1 << 2);
+    /// OW0 (ARCH-WIDGETS §1): draws itself entirely with the paint primitives (`crate::paint`):
+    /// the walk paints no box behind it, and its behaviour units own `hovered`, `pressed`,
+    /// `focused` and `focus-visible` (the walk sets only the prop-derived bits).
+    pub const PAINTS_BOX: Caps = Caps(1 << 3);
     // Reserved for RA3/SG4 (containers, custom layout, prepare, virtual, hit-test).
     pub const CONTAINER: Caps = Caps(1 << 8);
     pub const CUSTOM_LAYOUT: Caps = Caps(1 << 9);
@@ -109,6 +113,7 @@ impl Caps {
             (Self::FOCUSABLE, "focusable"),
             (Self::EDITABLE, "editable"),
             (Self::HEIGHT_FOR_WIDTH, "height-for-width"),
+            (Self::PAINTS_BOX, "paints-box"),
             (Self::CONTAINER, "container"),
             (Self::CUSTOM_LAYOUT, "custom-layout"),
             (Self::PREPARE, "prepare"),
@@ -131,6 +136,21 @@ impl std::ops::BitOr for Caps {
 
 // ---- registration (what the macro emits) ----
 
+/// OW0: the kind-table type of a prop or event payload (from the Rust type; `#[prop(enumeration =
+/// "a|b")]` for an enum). An own widget's prop that its built-in row lacks is added to the built-in
+/// kind with this type (`KindRegistry::replacement`); provider kinds describe theirs through the
+/// export schema instead.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum RowTy {
+    Bool,
+    I64,
+    F64,
+    Str,
+    Enum(&'static [&'static str]),
+    /// Not a kind-table type (records, lists): not allowed as an extra prop of a built-in kind.
+    Other,
+}
+
 /// One `#[prop]` of a kind.
 pub struct PropEntry {
     /// The JS name: the field name in kebab-case (`units_shown` → `units-shown`).
@@ -144,6 +164,9 @@ pub struct PropEntry {
     pub measure: bool,
     /// `offset_of!` the field (how [`WidgetCx::set`] finds the prop a write is for).
     pub offset: usize,
+    /// OW0: its kind-table type and nullability (an `Option`).
+    pub row_ty: RowTy,
+    pub nullable: bool,
 }
 
 /// One `#[event]` of a kind (`Event<T>`, `on<name>` in Svelte).
@@ -151,6 +174,26 @@ pub struct EventEntry {
     /// The JS event name: the field name in kebab-case.
     pub name: &'static str,
     pub docs: &'static str,
+    /// OW0: the payload's kind-table type (`None` for `Event<()>`).
+    pub arg: Option<RowTy>,
+}
+
+/// One `#[part]` of a kind (ARCH-WIDGETS §1.3): `::part(name)` in CSS.
+pub struct PartEntry {
+    /// The part name, the field name in kebab-case.
+    pub name: &'static str,
+    pub docs: &'static str,
+    /// `#[part(node)]`: a shadow child with its own rect, states and hit-list entry; otherwise a
+    /// paint part (styled as a pseudo-element of the host, no node).
+    pub node: bool,
+}
+
+/// A `#[part]` field of an own widget (ARCH-WIDGETS §1.3). A paint part is only a name (the
+/// widget paints it with the part's style); a node part holds its shadow child once created
+/// (OW1b and later create them through `insert_shadow` in `prepare`).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct Part {
+    pub node: Option<crate::scene::NodeId>,
 }
 
 /// A provider kind, as `#[svelters::widget]` registers it.
@@ -176,6 +219,16 @@ pub struct KindEntry {
     /// which no template can write, and Svelte uses it through `use:<name>` from
     /// `svelters:behaviors/<namespace>`.
     pub attaches_to: Option<&'static str>,
+    /// OW0 (ARCH-WIDGETS §6.2): the built-in tag this own widget implements (crate-private to
+    /// svelters-egui). Not an element of its own: the built-in row (tag, prop and signal ids)
+    /// stays, and the own-widget switch (`crate::widgets`) picks this struct for new nodes.
+    pub replaces: Option<&'static str>,
+    /// OW0 (WIDGET-PARITY §4.3): the built-in tag whose type selectors and part names also style
+    /// this kind (`style_as = "slider"` on `cad-slider`): the theme styles it as that built-in and
+    /// the app's CSS adds only its differences.
+    pub style_as: Option<&'static str>,
+    /// Its `#[part]`s, in declaration order.
+    pub parts: &'static [PartEntry],
 }
 
 impl KindEntry {
@@ -194,6 +247,36 @@ impl KindEntry {
 pub struct KindRef(pub &'static KindEntry);
 
 inventory::collect!(KindRef);
+
+/// CX3 (CADATOMIC.md SV3): a draft bind source a provider crate declares, as data. It goes into the
+/// spec fragment (`bind_sources`), and the compiler lowers `bind:prop={export(...args)}` (with
+/// `export` imported from `module`) to a binding whose value is `get(...args)` and whose changes, or
+/// commits with `|commit`, call `set(...args, value)`; `get` and `set` are exports of `module`
+/// (Rust `#[svelters::export]`s or a JS module). For the node to follow the source, `get` must read
+/// reactive state (a store getter); a plain function export is read when the binding's effect runs.
+///
+/// ```ignore
+/// inventory::submit! { svelters_egui::provider::BindSourceDef::draft("svelters:app/task", "slot", "draftValue", "setDraft") }
+/// ```
+pub struct BindSourceDef {
+    pub module: &'static str,
+    pub export: &'static str,
+    pub get: &'static str,
+    pub set: &'static str,
+    pub doc: &'static str,
+}
+
+impl BindSourceDef {
+    pub const fn draft(module: &'static str, export: &'static str, get: &'static str, set: &'static str) -> BindSourceDef {
+        BindSourceDef { module, export, get, set, doc: "" }
+    }
+
+    pub const fn doc(self, doc: &'static str) -> BindSourceDef {
+        BindSourceDef { doc, ..self }
+    }
+}
+
+inventory::collect!(BindSourceDef);
 
 /// Implemented by `#[svelters::widget]`: the struct's entry and its typed prop table.
 pub trait KindDecl: Sized + 'static {
@@ -314,9 +397,24 @@ impl<T> std::fmt::Debug for Event<T> {
 pub struct MeasureCx<'a> {
     pub ctx: &'a egui::Context,
     pub style: &'a egui::Style,
+    /// OW0: the node's computed style (CSS), if the cascade reaches it.
+    pub(crate) css: Option<&'a svelters_style::ComputedStyle>,
+    /// OW0: its parts' computed styles (`::part(name)`).
+    pub(crate) parts: &'a [(Box<str>, std::sync::Arc<svelters_style::ComputedStyle>)],
 }
 
 impl MeasureCx<'_> {
+    /// OW0: the node's style over the widget's UA table `ua`, at rest (what own widgets measure
+    /// with: font, padding, border).
+    pub fn style(&self, ua: crate::paint::Ua) -> crate::paint::StyleView<'_> {
+        crate::paint::StyleView::new(self.css, ua, StateBits::NONE, self.ctx.theme() == egui::Theme::Dark)
+    }
+
+    /// OW0: the computed style of part `name` (`::part(name)`), if a rule reaches it.
+    pub fn part_css(&self, name: &str) -> Option<&svelters_style::ComputedStyle> {
+        self.parts.iter().find(|(n, _)| &**n == name).map(|(_, c)| &**c)
+    }
+
     fn font(&self) -> egui::FontId {
         egui::TextStyle::Body.resolve(self.style)
     }
@@ -371,9 +469,82 @@ pub struct WidgetCx<'a> {
     emits: Vec<(usize, Value)>,
     remeasure: bool,
     errors: Vec<String>,
+    /// OW0: UA tokens resolve in the dark scheme.
+    dark: bool,
+    /// EV1: the pass's context (repaints asked by behaviours' filters during `dispatch`).
+    ctx: egui::Context,
 }
 
+/// What [`WidgetCx::dispatch`] reports (OW0's name for EV1's [`Outcome`](crate::events::Outcome)):
+/// `prevented` skips the widget's default action, `stopped` means a filter stopped propagation.
+pub type Dispatched = crate::events::Outcome;
+
 impl WidgetCx<'_> {
+    // ---- OW0: own widgets (ARCH-WIDGETS §1.3, §2.3) ----
+
+    /// `ui.interact` at the node's rect with its id and `sense` (the units' merged sense): egui's
+    /// picking, capture and focus memory under the units (Q2).
+    pub fn interact(&self, ui: &mut egui::Ui, sense: egui::Sense) -> egui::Response {
+        ui.interact(self.rect, self.id, sense)
+    }
+
+    /// Runs behaviour units on the node's response (`#[svelters::widget]`'s generated
+    /// `run_units` calls it): `f` runs each unit's `input` with the node's state bits, focus
+    /// requests are applied after, then [`WidgetCx::commit_state`] restyles in the same frame.
+    pub fn run_units(&mut self, ui: &egui::Ui, resp: &egui::Response, f: impl FnOnce(&mut crate::interact::InputCx<'_>)) -> crate::interact::FocusCx {
+        let parts = crate::interact::PartResponses::default();
+        // the prop-mirror bit the units' rules depend on, also when no sheet runs the cascade
+        self.state.set(StateBits::DISABLED, !self.enabled);
+        let fc = crate::interact::run(ui, resp, &mut self.state, &parts, f);
+        self.commit_state();
+        fc
+    }
+
+    /// Writes the bits set so far to the node now (journaled) and restyles what the change
+    /// reaches, so this pass paints the new state (`:hover`, `:active`, `:focus-visible` never
+    /// lag; §2.3). Also moves `:focus-within` with `focused`.
+    pub fn commit_state(&mut self) {
+        crate::style::set_own_state(self.s, self.i, self.state);
+    }
+
+    /// OW0: the computed style of the node's part `name` (`::part(name)`), if a rule reaches it;
+    /// build its view with `cx.style(UA).part(cx.part_css("label"), LABEL_UA)`.
+    pub fn part_css(&self, name: &str) -> Option<&svelters_style::ComputedStyle> {
+        self.s.style.part_computed(self.node, name).map(|c| &**c)
+    }
+
+    /// The node's style over `ua` in its current state: what the paint primitives read.
+    pub fn style(&self, ua: crate::paint::Ua) -> crate::paint::StyleView<'_> {
+        let css = self.s.style.computed(self.node).map(|c| &**c);
+        crate::paint::StyleView::new(css, ua, self.state, self.dark)
+    }
+
+    /// A paint context on `ui`'s painter for this node (traced when the pass traces).
+    pub fn paint_cx<'p>(&self, ui: &'p egui::Ui) -> crate::paint::PaintCx<'p> {
+        let mut p = crate::paint::PaintCx::for_node(ui.painter(), self.node.to_raw());
+        p.tag = self.entry.replaces.unwrap_or(self.entry.tag);
+        p
+    }
+
+    /// Paints the node's box (shadows, background, border) at its rect; returns its geometry.
+    pub fn paint_box(&self, ui: &egui::Ui, ua: crate::paint::Ua) -> crate::paint::BoxGeom {
+        let s = self.style(ua);
+        crate::paint::paint_box(&mut self.paint_cx(ui), &s, self.rect)
+    }
+
+    /// Paints the node's outline (the focus ring from `:focus-visible` rules), last.
+    pub fn paint_outline(&self, ui: &egui::Ui, ua: crate::paint::Ua) {
+        let s = self.style(ua);
+        crate::paint::paint_outline(&mut self.paint_cx(ui), &s, self.rect);
+    }
+
+    /// Paints `text` in `content` under the node's style (`weight`: a `font-weight` prop).
+    pub fn paint_text(&self, ui: &egui::Ui, ua: crate::paint::Ua, text: &str, content: egui::Rect, weight: Option<i64>, align: crate::paint::Align) {
+        let s = self.style(ua).with_font_weight(weight);
+        let g = crate::paint::text_galley(ui.ctx(), &s, text, None);
+        crate::paint::paint_text(&mut self.paint_cx(ui), &s, &g, content, crate::paint::Align::of(&s, align));
+    }
+
     /// The node's egui id (use it for the widget's own id: focus and memory follow the node).
     pub fn id(&self) -> egui::Id {
         self.id
@@ -444,6 +615,36 @@ impl WidgetCx<'_> {
     /// Queues `payload` for the event's JS listeners (delivered after the pass, in order).
     pub fn emit<T: IntoJs>(&mut self, event: &Event<T>, payload: T) {
         queue_emit(self.entry, event, payload, &mut self.emits, &mut self.errors);
+    }
+
+    /// EV1 (ARCH-WIDGETS §1.2, §2.3): dispatches a user-visible event of this widget (a unit's
+    /// intent: a press, a toggle, a selection change) along the node's path through the scene's
+    /// Rust filters (SV6: registered [`EventFilter`](crate::events::EventFilter)s and the
+    /// behaviours' [`Behavior::filter`], capture, target, bubble) **before** the default action,
+    /// then queues `payload` for the event's JS listener (as [`WidgetCx::emit`], delivered after
+    /// the pass) unless a filter stopped it. Apply the default action only when the outcome is not
+    /// [`prevented`](crate::events::Outcome::prevented):
+    ///
+    /// ```ignore
+    /// if !cx.dispatch(&self.clicked, ()).prevented() { self.activate(cx) }
+    /// ```
+    pub fn dispatch<T: IntoJs>(&mut self, event: &Event<T>, payload: T) -> Dispatched {
+        let name = self.entry.events.get(event.index()).map_or("?", |e| e.name);
+        let (o, runs) = crate::events::dispatch_signal(self.s, self.node, name);
+        if !runs.is_empty() {
+            // behaviours on this node may change its bits: keep them in this cx's copy
+            let before = self.s.core[self.i].state;
+            for r in runs {
+                behavior::apply(self.s, r, Some(&self.ctx), self.out);
+            }
+            let after = self.s.core[self.i].state;
+            let changed = before.0 ^ after.0;
+            self.state = StateBits((self.state.0 & !changed) | (after.0 & changed));
+        }
+        if !o.stopped {
+            self.emit(event, payload);
+        }
+        o
     }
 
     /// The node's provider data for `key` (ARCH-EMBED §8.4).
@@ -607,11 +808,17 @@ impl<T: Widget + KindDecl> ErasedWidget for T {
 }
 
 /// The payload of a provider node (`W::Ext`). A `RefCell` so layout can measure through `&W`.
-pub struct ExtWidget(pub RefCell<Box<dyn ErasedWidget>>);
+pub struct ExtWidget(pub RefCell<Box<dyn ErasedWidget>>, String);
 
 impl ExtWidget {
     pub fn new(w: Box<dyn ErasedWidget>) -> ExtWidget {
-        ExtWidget(RefCell::new(w))
+        ExtWidget(RefCell::new(w), String::new())
+    }
+    /// OW0: the text an own widget replacing a built-in kind shows (its `text` prop, mirrored when
+    /// set so `Node::text`, queries and a11y read it without borrowing the widget); empty for
+    /// provider kinds.
+    pub fn text(&self) -> &str {
+        &self.1
     }
     pub fn entry(&self) -> &'static KindEntry {
         self.0.borrow().entry()
@@ -626,8 +833,8 @@ impl ExtWidget {
         let mut b = self.0.try_borrow_mut().ok()?;
         b.as_any_mut().downcast_mut::<W>().map(f)
     }
-    pub(crate) fn measure(&self, m: &crate::layout::Metrics, avail: AvailableSpace) -> egui::Vec2 {
-        let mut cx = MeasureCx { ctx: &m.ctx, style: &m.style };
+    pub(crate) fn measure(&self, m: &crate::layout::Metrics, avail: AvailableSpace, css: Option<&svelters_style::ComputedStyle>, parts: &[(Box<str>, std::sync::Arc<svelters_style::ComputedStyle>)]) -> egui::Vec2 {
+        let mut cx = MeasureCx { ctx: &m.ctx, style: &m.style, css, parts };
         self.0.borrow_mut().measure(&mut cx, avail)
     }
 }
@@ -677,6 +884,40 @@ pub(crate) fn set_prop(w: &W, i: usize, v: &Value) -> Result<crate::scene::Dirty
         svelters_host::exports::__private::with_cx(entry.namespace, |cx| w.set_prop(i, v.clone(), cx)).map_err(|e| e.message)?;
     }
     Ok(if p.measure { crate::scene::Dirty::MEASURE } else { crate::scene::Dirty::EMPTY })
+}
+
+/// OW0: a write of built-in prop `def` to an own widget that replaces the kind (§6.2): routed by
+/// name to the struct's prop (`Null` resets to the row's default), `text` mirrored for
+/// `Node::text`.
+pub(crate) fn set_replaced_prop(w: &mut W, def: &crate::kinds::PropDef, v: &Value) -> Result<crate::scene::Dirty, String> {
+    let W::Ext(x) = w else { return Err("not an own widget".into()) };
+    let v = if matches!(v, Value::Null) && !def.nullable { crate::scene::props::default_value(def) } else { v.clone() };
+    let mut d = {
+        let mut b = x.0.borrow_mut();
+        let entry = b.entry();
+        let i = entry.props.iter().position(|p| p.name == def.name).ok_or_else(|| format!("<{}> has no prop {}", entry.tag, def.name))?;
+        svelters_host::exports::__private::with_cx(entry.namespace, |cx| b.set_prop(i, v.clone(), cx)).map_err(|e| e.message)?;
+        if entry.props[i].measure { crate::scene::Dirty::MEASURE } else { crate::scene::Dirty::EMPTY }
+    };
+    if def.key == crate::kinds::P::Text {
+        x.1 = match v {
+            Value::Str(t) => t,
+            _ => String::new(),
+        };
+        d.insert(crate::scene::Dirty::MEASURE);
+    }
+    if def.layout {
+        d.insert(crate::scene::Dirty::LAYOUT);
+    }
+    Ok(d)
+}
+
+/// OW0: a read of built-in prop `def` from an own widget that replaces the kind.
+pub(crate) fn get_replaced_prop(x: &ExtWidget, def: &crate::kinds::PropDef) -> Result<Value, String> {
+    let w = x.0.borrow();
+    let entry = w.entry();
+    let i = entry.props.iter().position(|p| p.name == def.name).ok_or_else(|| format!("<{}> has no prop {}", entry.tag, def.name))?;
+    svelters_host::exports::__private::with_cx(entry.namespace, |cx| w.get_prop(i, cx)).map_err(|e| e.message)
 }
 
 fn nullable(entry: &KindEntry, i: usize) -> bool {
@@ -737,6 +978,7 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
     let enabled = arena.common(i).enabled;
     let id = arena.core[i].egui_id;
     let state0 = arena.core[i].state;
+    let dark = ui.ctx().theme() == egui::Theme::Dark;
     let ran = with_taken(arena, i, |w, s| {
         let mut cx = WidgetCx {
             s,
@@ -754,6 +996,8 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
             emits: Vec::new(),
             remeasure: false,
             errors: Vec::new(),
+            dark,
+            ctx: ui.ctx().clone(),
         };
         let resp = w.ui(ui, &mut cx);
         let WidgetCx { state, changed, emits, remeasure, errors, .. } = cx;
@@ -764,8 +1008,10 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
     resp = crate::a11y::decorate(resp, &arena.n(h));
     let c = arena.common(i);
     if !c.tooltip.is_empty() {
-        resp = resp.on_hover_text(c.tooltip.clone());
+        // OW0 (DESIGN R9): an own widget shows its tooltip while disabled too (the reason)
+        resp = if !resp.enabled() && crate::style::is_own(arena.w(i)) { resp.on_disabled_hover_text(c.tooltip.clone()) } else { resp.on_hover_text(c.tooltip.clone()) };
     }
+    let c = arena.common(i);
     {
         let name = (!c.accessible_name.is_empty()).then_some(c.accessible_name.as_str());
         let acx = A11yCx { id: resp.id, state, name };
@@ -815,16 +1061,18 @@ fn flush_writes(
         arena.core[i].changed = t;
     }
     for p in changed {
-        let prop = reg.provider_prop_id(kind, p);
+        let prop = reg.ext_prop_id(kind, p);
         arena.record(crate::scene::Change::Prop { node, prop: crate::scene::PropId(prop), origin: crate::scene::Origin::Widget }, crate::scene::Origin::Widget);
         if arena.observes(i, prop) {
             out.push(Out::Changed(h, prop));
         }
     }
     for (e, v) in emits {
-        let sig = reg.provider_signal_id(kind, e);
+        let sig = reg.ext_signal_id(kind, e);
         if arena.listens(i, sig) {
-            out.push(Out::Event(h, sig, vec![v]));
+            // OW0: an own widget's event keeps the built-in signal's arity (no args: no payload)
+            let args = if reg.provider(kind).is_none() && reg.signal_def(kind, sig).is_some_and(|d| d.args.is_empty()) { vec![] } else { vec![v] };
+            out.push(Out::Event(h, sig, args));
         }
     }
     for e in errors {

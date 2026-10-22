@@ -25,6 +25,7 @@ mod dylib;
 mod native;
 #[cfg(feature = "source")]
 mod source;
+pub mod svb;
 
 pub use assets::{AssetBytes, AssetError, AssetInfo, AssetRef, AssetSource, Assets, Subscription};
 pub use bundle::BundleProvider;
@@ -34,6 +35,7 @@ pub use dylib::DylibModules;
 pub use native::{NativeModules, NativeRegistry, StaticModules, APP_PREFIX, CORE_ID};
 #[cfg(feature = "source")]
 pub use source::{Check, Entry, Overlay, SourceConfig, SourceProvider};
+pub use svb::{Svb, SvbProvider};
 
 /// A module's name in the engine: what [`ModuleProvider::resolve`] returns and
 /// [`ModuleProvider::load`] takes. Source modules use their absolute path.

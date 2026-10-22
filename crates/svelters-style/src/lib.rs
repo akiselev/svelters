@@ -20,13 +20,16 @@ mod invalidation;
 mod media;
 mod selector;
 mod sheet;
+mod shorthand;
 mod state;
 mod table;
+mod transition;
 /// The generated style tables of the five toolkits.
 #[path = "tables.generated.rs"]
 pub mod tables;
 mod values;
 mod var;
+mod view;
 
 pub use atom::Atom;
 pub use cascade::{MatchCaches, MatchedRule, Origin, RuleId, SheetId, Stylist, matches, select};
@@ -35,8 +38,11 @@ pub use diag::{Diagnostic, Severity};
 pub use element::Element;
 pub use invalidation::{Invalidation, Reach, for_each_reached};
 pub use media::{ColorScheme, Contrast, MediaEnv, MediaList};
-pub use selector::{Impl, PseudoClass, Selector, SelectorList, SelectorParser, parse_selector_list};
+pub use selector::{Impl, PseudoClass, PseudoElement, Selector, SelectorList, SelectorParser, parse_selector_list};
 pub use sheet::{DeclBlock, Declaration, ParseOptions, Rule, Stylesheet};
 pub use state::{STATE_PSEUDO_CLASSES, StateMask, StateNames};
+pub use shorthand::LINE_STYLES;
 pub use table::{Dialect, Prop, Table, ValueType, Via};
-pub use values::{Color, ComputedValue, Length, Shadow};
+pub use transition::Transitions;
+pub use view::{BorderSide, Outline, Side, StyleView, TextSettings};
+pub use values::{Color, ComputedValue, Content, GradientStop, Length, LinearGradient, Shadow, TimingFunction, Transition};

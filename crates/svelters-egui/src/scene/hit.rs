@@ -61,6 +61,9 @@ struct Entry {
     rect: egui::Rect,
     clip: egui::Rect,
     order: egui::Order,
+    /// EV1: a container box (recorded by [`record_box`] before its children): never reported by
+    /// [`SceneRef::hit_test`], only by the event dispatch's [`SceneRef::event_target`].
+    container: bool,
 }
 
 #[derive(Default)]
@@ -82,9 +85,9 @@ impl HitLists {
         self.lists.iter().find(|l| l.vp == Some(vp))
     }
 
-    /// Entries in all lists (stats).
+    /// Leaf entries in all lists (stats; EV1's container entries are not counted).
     pub fn len(&self) -> usize {
-        self.lists.iter().map(|l| l.entries.len()).sum()
+        self.lists.iter().map(|l| l.entries.iter().filter(|e| !e.container).count()).sum()
     }
 }
 
@@ -92,6 +95,17 @@ impl HitLists {
 /// hit list, starting the list over if this is a new pass of that viewport.
 pub(crate) fn record(s: &mut Scene, i: usize, ui: &egui::Ui) {
     let rect = s.core[i].drawn;
+    push(s, i, rect, ui, false);
+}
+
+/// EV1: the walk is about to draw container `i` at `rect` (screen) in `ui`: appends it to the
+/// viewport's hit list as a container entry, under the children drawn after it. Events whose point
+/// hits no leaf go to the innermost box under it (a click on a box's padding targets the box).
+pub(crate) fn record_box(s: &mut Scene, i: usize, rect: egui::Rect, ui: &egui::Ui) {
+    push(s, i, rect, ui, true);
+}
+
+fn push(s: &mut Scene, i: usize, rect: egui::Rect, ui: &egui::Ui, container: bool) {
     let Some(node) = s.slots.id_at(i) else { return };
     if rect == egui::Rect::NOTHING || !rect.is_positive() {
         return;
@@ -112,7 +126,7 @@ pub(crate) fn record(s: &mut Scene, i: usize, ui: &egui::Ui) {
         l.pass = pass;
         l.entries.clear();
     }
-    l.entries.push(Entry { node, root: s.core[i].root, rect, clip: ui.clip_rect(), order: ui.layer_id().order });
+    l.entries.push(Entry { node, root: s.core[i].root, rect, clip: ui.clip_rect(), order: ui.layer_id().order, container });
 }
 
 impl<'a> SceneRef<'a> {
@@ -123,7 +137,7 @@ impl<'a> SceneRef<'a> {
     pub fn hit_test(self, viewport: egui::ViewportId, pos: egui::Pos2) -> Vec<Target> {
         let s = self.s;
         let Some(l) = s.hits.list(viewport) else { return Vec::new() };
-        let mut cands: Vec<&Entry> = l.entries.iter().rev().filter(|e| e.rect.contains(pos) && e.clip.contains(pos)).collect();
+        let mut cands: Vec<&Entry> = l.entries.iter().rev().filter(|e| !e.container && e.rect.contains(pos) && e.clip.contains(pos)).collect();
         // topmost first: higher layer order, then later drawn (stable over the reversed list)
         cands.sort_by(|a, b| b.order.cmp(&a.order));
         let mut out: Vec<Target> = Vec::new();
@@ -154,6 +168,50 @@ impl<'a> SceneRef<'a> {
         })
     }
 
+    /// EV1: the target of a pointer event at `pos` in `viewport`: the topmost leaf or provider node
+    /// as [`SceneRef::hit_test`] finds it, or the innermost container box drawn under the point
+    /// when it is above every leaf there (a box's padding, an empty box over content). The same
+    /// skips apply (freed, hidden, other viewport, `HIT_TRANSPARENT`, exiting). A provider part is
+    /// reported as `Target::Virtual`.
+    pub fn event_target(self, viewport: egui::ViewportId, pos: egui::Pos2) -> Option<Target> {
+        let s = self.s;
+        let l = s.hits.list(viewport)?;
+        // topmost first: higher layer order, then later drawn (stable sort over the reversed list)
+        let mut cands: Vec<&Entry> = l.entries.iter().rev().filter(|e| e.rect.contains(pos) && e.clip.contains(pos)).collect();
+        cands.sort_by(|a, b| b.order.cmp(&a.order));
+        let mut hits: Vec<(Target, egui::Order)> = Vec::new();
+        for e in cands {
+            let Some(i) = s.idx(e.node) else { continue };
+            if s.core[i].root != e.root || !self.live_in(e.root, viewport) || hit_transparent(s, i) || exiting(s, i) {
+                continue;
+            }
+            let t = if e.container {
+                Target::Node(e.node)
+            } else {
+                match ask_provider(s, i, e, pos) {
+                    Hit::Node => Target::Node(e.node),
+                    Hit::Part(key) => Target::Virtual(VNodeId { host: e.node, key }),
+                    Hit::Miss => continue,
+                }
+            };
+            hits.push((t, e.order));
+        }
+        // a node recorded after its own children (a provider that draws its shadow children in its
+        // `ui` is recorded when it returns) is under them: the innermost node of the top layer wins
+        let (mut best, order) = *hits.first()?;
+        while let Some(&(t, _)) = hits.iter().find(|(t, o)| *o == order && t.node() != best.node() && is_ancestor(s, best.node(), t.node())) {
+            best = t;
+        }
+        Some(best)
+    }
+
+    /// EV1: where container `node` was drawn last pass in `viewport` (its layout rect on screen),
+    /// from the hit list; for overlays (SV7) when the node has no widget rect of its own.
+    pub fn box_rect(self, viewport: egui::ViewportId, node: NodeId) -> Option<egui::Rect> {
+        let l = self.s.hits.list(viewport)?;
+        l.entries.iter().find(|e| e.container && e.node == node).map(|e| e.rect)
+    }
+
     /// Root `r` is shown and, for a slot root, drawn in `vp` now (R20).
     fn live_in(self, r: RootIx, vp: egui::ViewportId) -> bool {
         match self.s.roots.get(r) {
@@ -161,6 +219,18 @@ impl<'a> SceneRef<'a> {
             None => false,
         }
     }
+}
+
+/// Whether `a` is a strict ancestor of `n`.
+fn is_ancestor(s: &Scene, a: NodeId, n: NodeId) -> bool {
+    let mut x = s.idx(n).and_then(|i| s.core[i].parent);
+    while let Some(p) = x {
+        if p == a {
+            return true;
+        }
+        x = s.idx(p).and_then(|i| s.core[i].parent);
+    }
+    false
 }
 
 /// `HIT_TRANSPARENT` on node `i` or an ancestor.

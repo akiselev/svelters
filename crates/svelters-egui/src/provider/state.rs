@@ -36,6 +36,18 @@ impl StateBits {
     pub const DRAGGING: StateBits = StateBits(1 << 11);
     pub const EXITING: StateBits = StateBits(1 << 12);
     pub const BUSY: StateBits = StateBits(1 << 13);
+    // ARCH-WIDGETS §2.2 (OW-CSS): bits 14–22.
+    pub const FOCUS_VISIBLE: StateBits = StateBits(1 << 14);
+    pub const INDETERMINATE: StateBits = StateBits(1 << 15);
+    pub const PLACEHOLDER_SHOWN: StateBits = StateBits(1 << 16);
+    pub const DEFAULT: StateBits = StateBits(1 << 17);
+    pub const DROP_TARGET: StateBits = StateBits(1 << 18);
+    pub const CURRENT: StateBits = StateBits(1 << 19);
+    pub const BACKDROP: StateBits = StateBits(1 << 20);
+    pub const REQUIRED: StateBits = StateBits(1 << 21);
+    pub const USER_INVALID: StateBits = StateBits(1 << 22);
+    // WIDGET-PARITY P5 (OW-CSS): tree rows with children; 24–31 stay free.
+    pub const HAS_CHILDREN: StateBits = StateBits(1 << 23);
 
     /// The built-in names, by bit.
     pub const BUILTIN: &'static [(&'static str, StateBits)] = &[
@@ -53,6 +65,16 @@ impl StateBits {
         ("dragging", Self::DRAGGING),
         ("exiting", Self::EXITING),
         ("busy", Self::BUSY),
+        ("focus-visible", Self::FOCUS_VISIBLE),
+        ("indeterminate", Self::INDETERMINATE),
+        ("placeholder-shown", Self::PLACEHOLDER_SHOWN),
+        ("default", Self::DEFAULT),
+        ("drop-target", Self::DROP_TARGET),
+        ("current", Self::CURRENT),
+        ("backdrop", Self::BACKDROP),
+        ("required", Self::REQUIRED),
+        ("user-invalid", Self::USER_INVALID),
+        ("has-children", Self::HAS_CHILDREN),
     ];
 
     pub const fn contains(self, other: StateBits) -> bool {
@@ -91,6 +113,12 @@ impl std::ops::BitOr for StateBits {
     type Output = StateBits;
     fn bitor(self, rhs: StateBits) -> StateBits {
         StateBits(self.0 | rhs.0)
+    }
+}
+
+impl std::ops::BitOrAssign for StateBits {
+    fn bitor_assign(&mut self, rhs: StateBits) {
+        self.0 |= rhs.0;
     }
 }
 

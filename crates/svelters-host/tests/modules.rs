@@ -12,7 +12,7 @@ use std::time::Duration;
 use svelters_abi::Backend;
 use svelters_backend_log::{LogBackend, LogOptions};
 use svelters_host::modules::{SourceConfig, SourceProvider};
-use svelters_host::{ErrorKind, Host, HostConfig, ModuleProvider, ReloadReport};
+use svelters_host::{ErrorKind, Host, HostConfig, ModuleCode, ModuleProvider, ReloadReport};
 
 fn repo() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../..").canonicalize().unwrap()
@@ -215,7 +215,52 @@ fn styles_are_reported_not_silently_dropped() {
     let (_log, host) = log_host(Duration::from_millis(100));
     host.load_from(provider.clone()).unwrap();
     let warnings: Vec<String> = host.take_console().into_iter().filter(|l| l.level == "warn").map(|l| l.text).collect();
-    assert!(warnings.iter().any(|w| w.contains("<style> is not applied")), "{warnings:?}");
+    // LD2: the live path applies `<style>` on egui; the other backends' sheets come from the Vite build
+    assert!(warnings.iter().any(|w| w.contains("<style> is applied from source on egui only")), "{warnings:?}");
+}
+
+/// LD2: on egui a component's scoped sheet is its own `svelters-style:` module (`registerStyles(id,
+/// { css })`, the sheet as text). A `<style>`-only edit selects that module alone for the in-place
+/// update; a markup edit selects the component alone.
+#[test]
+fn a_style_only_edit_reruns_only_the_sheet_module() {
+    let text = "<window><label>x</label></window>\n<style>\n  label { color: red; }\n</style>\n";
+    let app = App::new("ld2-sheet", text);
+    let mut cfg = SourceConfig::for_path(&app.dir).unwrap();
+    cfg.backend = "egui".into();
+    cfg.dev = true;
+    cfg.hmr = true;
+    let provider = Rc::new(SourceProvider::new(cfg).unwrap());
+    let (_log, host) = log_host(Duration::from_millis(100));
+    host.load_from(provider.clone()).unwrap();
+    let svelte = app.path("src/App.svelte");
+    let id = svelte.to_string_lossy().into_owned();
+    let sheet_id = format!("svelters-style:{id}");
+    let ModuleCode::Source { js, .. } = provider.load(&id).unwrap() else { panic!("source") };
+    assert!(js.contains(&format!("import {};", serde_json::Value::String(sheet_id.clone()))), "{js}");
+    let ModuleCode::Source { js: sheet, .. } = provider.load(&sheet_id).unwrap() else { panic!("source") };
+    assert!(sheet.contains("registerStyles(") && sheet.contains("color: red") && sheet.contains("svelte-"), "{sheet}");
+    assert!(sheet.contains("import.meta.hot.accept()"), "{sheet}");
+    // nothing else may import a component's sheet
+    assert!(provider.resolve(&app.path("src/other.js").to_string_lossy(), &sheet_id).is_err());
+
+    app.write("src/App.svelte", &text.replace("red", "blue"));
+    assert!(provider.invalidate(std::slice::from_ref(&svelte)));
+    assert_eq!(provider.modules_at(std::slice::from_ref(&svelte)), vec![sheet_id.clone()]);
+
+    app.write("src/App.svelte", &text.replace("red", "blue").replace(">x<", ">y<"));
+    assert!(provider.invalidate(std::slice::from_ref(&svelte)));
+    assert_eq!(provider.modules_at(std::slice::from_ref(&svelte)), vec![id.clone()]);
+    let warnings: Vec<String> = host.take_console().into_iter().filter(|l| l.level == "warn").map(|l| l.text).collect();
+    assert!(!warnings.iter().any(|w| w.contains("<style>")), "{warnings:?}");
+
+    // Q4: a release bundle names the sheet module after its component's logical id
+    use svelters_host::modules::svb::{self, BuildOptions, Svb};
+    let mut bcfg = SourceConfig::for_path(&app.dir).unwrap();
+    bcfg.backend = "egui".into();
+    let bundle = Svb::from_bytes(svb::build(bcfg, &BuildOptions::default()).unwrap()).unwrap();
+    let keys: Vec<&String> = bundle.index().modules.keys().collect();
+    assert!(keys.iter().any(|k| *k == "svelters-style:app/src/App.svelte"), "{keys:?}");
 }
 
 /// Q2: a `lang="ts"` component importing a `.ts` module (as `./util.js`, TypeScript's convention, and
@@ -442,4 +487,73 @@ fn a_locale_switch_re_renders_components_reading_locale() {
     host.drain_jobs();
     assert!(log.log().contains("\"de-DE: 1.234,5\""), "{}", log.log());
     assert!(host.take_errors().is_empty());
+}
+
+/// Q4: an app built into a release bundle (`.svb`) loads from the bundle alone, with its source
+/// tree deleted: JS, import tables, assets (`icon.text()` reads the bundle) and the dumped
+/// behaviours module. The first launch fills the bytecode cache (AS-O2 (a)); a precompiled bundle
+/// is read as bytecode and compiles nothing. A bundle without sources loads the same.
+#[test]
+fn an_app_loads_from_its_release_bundle_without_its_sources() {
+    use std::sync::Arc;
+    use svelters_host::modules::svb::{self, BuildOptions, FileRole, Svb};
+    let app = counter_app("svb");
+    let build = |sources: bool| svb::build(SourceConfig::for_path(&app.dir).unwrap(), &BuildOptions { sources, ..BuildOptions::default() }).unwrap();
+    let (full, lean) = (build(true), build(false));
+    let out = repo().join("target/q4");
+    let _ = std::fs::remove_dir_all(&out);
+    std::fs::create_dir_all(&out).unwrap();
+    std::fs::write(out.join("app.svb"), &full).unwrap();
+    std::fs::remove_dir_all(&app.dir).unwrap();
+
+    let svb = Arc::new(Svb::open(&out.join("app.svb")).unwrap());
+    let ix = svb.index();
+    assert_eq!(ix.entry, "svelters:entry");
+    assert!(ix.modules["app/src/App.svelte"].imports.contains_key("./state.svelte.js"));
+    assert!(ix.modules.keys().any(|k| k.starts_with("app/node_modules/svelte/src/")), "{:#?}", ix.modules.keys());
+    assert!(ix.modules.keys().any(|k| k.starts_with("app/node_modules/@svelters/native-runtime/")), "{:#?}", ix.modules.keys());
+    assert_eq!(svb.file("src/icon.png"), Some(&b"not really a png"[..]));
+    assert_eq!(svb.file("src/App.svelte"), Some(COUNTER.as_bytes()));
+    assert_eq!(ix.files["package.json"].role, FileRole::Manifest);
+    let lean_svb = Svb::from_bytes(lean.clone()).unwrap();
+    assert!(lean_svb.index().files.values().all(|f| f.role != FileRole::Source));
+    assert_eq!(lean_svb.index().modules.keys().collect::<Vec<_>>(), ix.modules.keys().collect::<Vec<_>>());
+
+    let cache_dir = out.join("bytecode-cache");
+    let launch = |svb: Arc<Svb>| {
+        let (log, host) = log_host(Duration::from_millis(200));
+        host.set_bytecode_cache(Some(&cache_dir)).unwrap();
+        let p = host.load_svb(svb).unwrap();
+        host.run().unwrap();
+        (log.log(), p.bytecode_loads(), host.bytecode_cache().unwrap().writes())
+    };
+    let check = |oplog: &str| {
+        assert!(oplog.contains("\"Count: 41\""), "{oplog}");
+        assert!(oplog.contains("\"asset\""), "{oplog}");
+    };
+    let (oplog, loads, writes) = launch(svb.clone());
+    check(&oplog);
+    assert_eq!(loads, 0);
+    assert!(writes > 10, "the first launch fills the bytecode cache ({writes})");
+
+    let pre = svelters_host::bytecode::precompile(&svb).unwrap();
+    let pre_svb = Arc::new(Svb::from_bytes(pre.clone()).unwrap());
+    assert_eq!(pre_svb.index().stamp.engine_build.as_deref(), Some(svelters_host::bytecode::stamp().as_str()));
+    let _ = std::fs::remove_dir_all(&cache_dir);
+    let (oplog, loads, writes) = launch(pre_svb.clone());
+    check(&oplog);
+    assert_eq!(loads as usize, pre_svb.index().modules.len(), "every module is read as bundle bytecode");
+    // Only host-served JS (`svelters:assets`) is not in the bundle and goes through the cache.
+    assert!(writes <= 1, "no bundle module is compiled ({writes} cache writes)");
+
+    let _ = std::fs::remove_dir_all(&cache_dir);
+    let (oplog, _, _) = launch(Arc::new(lean_svb));
+    check(&oplog);
+    eprintln!(
+        "Q4 sizes: {} modules; with sources {} B, without {} B, precompiled {} B",
+        ix.modules.len(),
+        full.len(),
+        lean.len(),
+        pre.len()
+    );
 }

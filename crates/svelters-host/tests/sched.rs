@@ -140,3 +140,41 @@ fn a_wake_still_queued_when_the_host_goes_reaches_nobody() {
         assert!(s.is_idle());
     });
 }
+
+/// AU1b: `HostSched::seed` makes `Math.random` replayable; without it QuickJS's own generator stays.
+fn random_line(seed: Option<u64>, tag: &str) -> String {
+    let dir = std::env::temp_dir().join(format!("svelters-seeded-random-{}-{tag}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(dir.join("src")).unwrap();
+    std::fs::write(dir.join("package.json"), "{\"name\": \"seeded-random\", \"private\": true}\n").unwrap();
+    std::fs::write(
+        dir.join("src/main.js"),
+        "const xs = Array.from({ length: 4 }, () => Math.random());\nif (!xs.every((x) => x >= 0 && x < 1)) throw new Error('out of range');\nconsole.log(`${String(Math.random).includes('native code')} ${xs.join(',')}`);\n",
+    )
+    .unwrap();
+    let src = SourceConfig::for_path(&dir.canonicalize().unwrap().join("src/main.js")).unwrap();
+    let provider = Rc::new(SourceProvider::new(src).unwrap());
+    let sched = match seed {
+        Some(s) => HostSched::default().seed(s),
+        None => HostSched::default(),
+    };
+    let log = svelters_backend_log::LogBackend::new(Vec::new());
+    let host = svelters_host::Host::new_owned(log, HostConfig { sched, ..quiet() }).unwrap();
+    host.load_from(provider).unwrap();
+    let errors: Vec<String> = host.take_errors().into_iter().map(|e| e.to_string()).collect();
+    assert!(errors.is_empty(), "{errors:#?}");
+    let lines: Vec<String> = host.take_console().into_iter().map(|l| l.text).collect();
+    let _ = std::fs::remove_dir_all(&dir);
+    assert_eq!(lines.len(), 1, "{lines:#?}");
+    lines[0].clone()
+}
+
+#[test]
+fn a_seed_makes_math_random_replayable() {
+    let (a, b, c) = (random_line(Some(7), "a"), random_line(Some(7), "b"), random_line(Some(8), "c"));
+    assert!(a.starts_with("false "), "seeded Math.random is ours: {a}");
+    assert_eq!(a, b, "same seed, same sequence");
+    assert_ne!(a, c, "another seed, another sequence");
+    let native = random_line(None, "d");
+    assert!(native.starts_with("true "), "no seed: QuickJS's own Math.random: {native}");
+}

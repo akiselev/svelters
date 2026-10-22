@@ -12,6 +12,10 @@
 //! - [`dump`]: writes the exports (`exports.json`, `app.d.ts`, stubs), `kinds.json`, `kinds.d.ts`,
 //!   `behaviors.d.ts` and `behaviors/<namespace>.js`.
 //!
+//! Each element kind also carries the docs fields `category`, `states`, `a11y`, `paint`,
+//! `css_hidden` and `css_note` ([`kinds::docs`], DOC1), which `tools/docs/egui/gen_reference.py` renders into the
+//! widget reference; the compiler ignores them.
+//!
 //! `tests/spec.rs` fails when `egui.json` or `egui.d.ts` is stale
 //! (`SVELTERS_UPDATE=1 cargo test -p svelters-egui --test spec` rewrites them). Writer lane: RUSTAPI.
 
@@ -132,7 +136,8 @@ fn kind_json(k: &KindDef) -> J {
                     "handler_result": if s.sync { "bool_stop" } else { "none" },
                     "js_event": s.name,
                     "name": s.name,
-                    "phases": [],
+                    // EV1: the DOM-style events propagate along the scene and take capture listeners
+                    "phases": if kinds::is_dom_event(s.name) { json!(["capture"]) } else { json!([]) },
                     "sync": s.sync,
                     "sync_required": false,
                 }),
@@ -173,9 +178,7 @@ fn kind_json(k: &KindDef) -> J {
                 // `value` derives `checked` from `group`
                 || matches!(p.key, kinds::P::Low | kinds::P::High)
                 || (k.id == "RadioButton" && p.key == kinds::P::Checked);
-            (
-                p.name.to_string(),
-                json!({
+            let mut b = json!({
                     "compare_before_set": true,
                     "direction": "two_way",
                     "echo": "none",
@@ -187,8 +190,17 @@ fn kind_json(k: &KindDef) -> J {
                     "read_back": normalizes,
                     "sync_signals_on_set": [],
                     "value": {"arg": arg},
-                }),
-            )
+                });
+            // CX3: `bind:<prop>|commit` updates its source on the kind's `commit` signal when it has
+            // the change event's shape (the coordinator's seam: the committed value where the change
+            // event carries the live one). A `commit` of another shape (a table's cell edit) is not
+            // a commit of this prop.
+            if let (Some(c), Some(s)) = (k.signals.iter().find(|s| s.name == "commit"), sig)
+                && c.args == s.args
+            {
+                b["commit"] = json!({"event": "commit", "arg": arg});
+            }
+            (p.name.to_string(), b)
         })
         .collect();
     let children = k.slot.map(|slot| {
@@ -219,6 +231,91 @@ fn kind_json(k: &KindDef) -> J {
         kj.as_object_mut().expect("kind object").insert("attaches_to".into(), json!(t));
     }
     kj
+}
+
+// ---- DOC1: the docs fields (`kinds/docs.rs`) ----
+
+/// The pseudo-classes that match built-in state `name` (`StateBits::BUILTIN`): `(name, negated)`.
+fn pseudo_classes(name: &str) -> Vec<(&'static str, bool)> {
+    let Some((_, bit)) = crate::scene::StateBits::BUILTIN.iter().find(|(n, _)| *n == name) else {
+        panic!("svelters-egui: kinds/docs.rs names unknown state {name}");
+    };
+    svelters_style::STATE_PSEUDO_CLASSES.iter().filter(|(_, m, _)| m.0 == bit.0).map(|(n, _, neg)| (*n, *neg)).collect()
+}
+
+fn state_json(name: &str, source: kinds::docs::Source, when: &str) -> J {
+    let pc = pseudo_classes(name);
+    let pick = |neg: bool| pc.iter().filter(|(_, n)| *n == neg).map(|(p, _)| format!(":{p}")).collect::<Vec<_>>();
+    json!({"name": name, "pseudo": pick(false), "negated": pick(true), "source": source.name(), "when": when})
+}
+
+/// The built-in states a kind gets: its walk's (`style.rs`), then its own.
+fn states_json(d: &kinds::docs::KindDoc, has_enabled: bool) -> J {
+    use kinds::docs::{Focus, Source, Walk};
+    let mut v: Vec<J> = Vec::new();
+    match d.walk {
+        Walk::Leaf(focus) => {
+            v.push(state_json("hovered", Source::Response, "the pointer is over it"));
+            v.push(state_json("pressed", Source::Response, "the primary button is down on it"));
+            match focus {
+                Focus::Yes => v.push(state_json("focused", Source::Response, "it has keyboard focus")),
+                Focus::Clickable => v.push(state_json("focused", Source::Response, "it takes clicks (`onclicked` is set) and has keyboard focus")),
+                Focus::Never => {}
+            }
+            v.push(state_json("focus-within", Source::Scene, "it, or an element inside it, has keyboard focus"));
+        }
+        Walk::Container => {
+            v.push(state_json("hovered", Source::Response, "the pointer is over its box"));
+            v.push(state_json("pressed", Source::Response, "the primary button is down over its box"));
+            v.push(state_json("focus-within", Source::Scene, "an element inside it has keyboard focus"));
+        }
+        Walk::None => {}
+    }
+    if d.walk != Walk::None {
+        if has_enabled {
+            v.push(state_json("disabled", Source::Prop, "`enabled` is false"));
+        }
+        v.push(state_json("exiting", Source::Scene, "it plays an out transition before it is removed"));
+    }
+    for s in d.states {
+        v.push(state_json(s.name, s.source, s.when));
+    }
+    J::Array(v)
+}
+
+fn a11y_json(a: &kinds::docs::A11yDoc) -> J {
+    let variants: Vec<J> = a.variants.iter().map(|(role, when)| json!({"role": role, "when": when})).collect();
+    json!({
+        "actions": a.actions,
+        "author_id": if a.decorated { Some("anchor") } else { None },
+        "invalid": a.decorated,
+        "name_from": a.name_from,
+        "note": a.note,
+        "role": a.role,
+        "value": a.value,
+        "variants": variants,
+    })
+}
+
+/// Adds the docs fields of kind `k` to its spec object `kj`.
+fn add_docs(kj: &mut J, k: &KindDef, provider: Option<&ProviderKind>) {
+    let own;
+    let d = match provider {
+        Some(pk) => {
+            own = kinds::docs::provider_doc(pk.entry.caps.contains(crate::provider::Caps::FOCUSABLE));
+            &own
+        }
+        None => kinds::docs::kind_doc(k.id).unwrap_or_else(|| panic!("svelters-egui: kind {} has no row in kinds/docs.rs", k.id)),
+    };
+    // `:disabled` follows `enabled`, which only kinds under `Widget` have (not `window`)
+    let has_enabled = kinds::kind_index(k.id).is_none_or(|i| kinds::find_prop(i, "enabled").is_some());
+    let m = kj.as_object_mut().expect("kind object");
+    m.insert("a11y".into(), a11y_json(&d.a11y));
+    m.insert("category".into(), json!(d.category.name()));
+    m.insert("css_hidden".into(), json!(kinds::docs::css_hidden(k.id)));
+    m.insert("css_note".into(), json!(d.css_note));
+    m.insert("paint".into(), json!(d.paint.name()));
+    m.insert("states".into(), states_json(d, has_enabled));
 }
 
 /// The style table (D3): every layout prop is a setter, so `<style>` rules can use the CSS names
@@ -285,6 +382,15 @@ fn style_json() -> J {
         // CS5e: the backend runs the CSS engine; `<style>` reaches it as CSS (D9 on egui)
         "engine": "backend",
         "properties": props,
+        // DOC1: the state pseudo-classes and the built-in state each reads (`:enabled` is
+        // `:disabled` negated)
+        "pseudo_classes": svelters_style::STATE_PSEUDO_CLASSES
+            .iter()
+            .map(|(n, m, neg)| {
+                let state = crate::scene::StateBits::BUILTIN.iter().find(|(_, b)| b.0 == m.0).map(|(s, _)| *s);
+                json!({"name": n, "negated": neg, "state": state})
+            })
+            .collect::<Vec<_>>(),
         "setter_selectors": ["type", "class", "id"],
         "units": {"px": {"provenance": "egui points: 1px in a style sheet is one point", "scale": 1.0}},
     })
@@ -292,10 +398,28 @@ fn style_json() -> J {
 
 /// The whole spec.
 pub fn semantics() -> J {
-    let kinds: Map<String, J> = KINDS.iter().map(|k| (k.id.to_string(), kind_json(k))).collect();
+    // OW0: a kind with an own widget lists the widget's extra props and signals too
+    let reg = KindRegistry::global();
+    let kinds: Map<String, J> = KINDS
+        .iter()
+        .enumerate()
+        .map(|(i, k)| {
+            let mut j = kind_json(reg.spec_kind(i));
+            add_docs(&mut j, k, None);
+            (k.id.to_string(), j)
+        })
+        .collect();
     let tags: Map<String, J> = KINDS.iter().filter_map(|k| k.tag.map(|t| (t.to_string(), json!(k.id)))).collect();
     json!({
         "backend": "egui",
+        // CX3: the lowering table. `bind:prop={store.field}` on a Rust store (E3) is a native link in
+        // the host (`host.link`): no JS per change. Draft sources come from provider fragments.
+        "bind_sources": [{
+            "doc": "A writable field of a Rust store (#[svelters::store]) bound to a native prop: linked in the host, both ways, with no JS per change.",
+            "export": "*",
+            "lowering": "link",
+            "module": "svelters:app/*",
+        }],
         "event_aliases": {},
         "framework": "egui 0.37 (svelters-egui; taffy 0.15 layout)",
         "kinds": kinds,
@@ -389,7 +513,11 @@ pub fn fragment() -> J {
     let reg = KindRegistry::global();
     let kinds: Map<String, J> = reg
         .elements()
-        .map(|p| (p.entry.id.to_string(), kind_json(p.def)))
+        .map(|p| {
+            let mut j = kind_json(p.def);
+            add_docs(&mut j, p.def, Some(p));
+            (p.entry.id.to_string(), j)
+        })
         .collect();
     let tags: Map<String, J> = reg
         .elements()
@@ -414,7 +542,7 @@ pub fn fragment() -> J {
             (p.entry.id.to_string(), j)
         })
         .collect();
-    json!({
+    let mut f = json!({
         "backend": "egui",
         "behaviors": behaviors,
         "caps": caps,
@@ -423,7 +551,18 @@ pub fn fragment() -> J {
         "schema": "svelters-semantics/v0",
         "source": {"generator": "crates/svelters-egui/src/spec.rs (svelters_egui::dump)"},
         "tags": tags,
-    })
+    });
+    // CX3: draft bind sources the app's crates declare (only when there are any, so a fragment of
+    // kinds alone is unchanged)
+    let mut sources: Vec<&crate::provider::BindSourceDef> = inventory::iter::<crate::provider::BindSourceDef>.into_iter().collect();
+    sources.sort_by_key(|b| (b.module, b.export));
+    if !sources.is_empty() {
+        f["bind_sources"] = sources
+            .iter()
+            .map(|b| json!({"doc": b.doc, "export": b.export, "get": b.get, "lowering": "draft", "module": b.module, "set": b.set}))
+            .collect();
+    }
+    f
 }
 
 /// [`fragment`] as written to `kinds.json`.
@@ -490,6 +629,12 @@ fn ts_members(out: &mut String, indent: &str, k: &KindDef, provider: Option<&Pro
             None => s.args.iter().map(|(n, _)| n.replace('-', "_")).collect(),
         };
         let params: Vec<String> = names.iter().zip(&args).map(|(n, t)| format!("{n}: {t}")).collect();
+        // EV1: the DOM-style events get a `SvlUiEvent` (target, phase, point, key) and a capture form
+        if kinds::is_dom_event(s.name) {
+            let _ = writeln!(out, "{indent}{}?: (e: SvlUiEvent) => void;", ts_key(&format!("on{}", s.name)));
+            let _ = writeln!(out, "{indent}{}?: (e: SvlUiEvent) => void;", ts_key(&format!("on{}capture", s.name)));
+            continue;
+        }
         let params = if s.sync { std::iter::once(format!("e: SvlEvent<[{}]>", args.join(", "))).chain(params).collect::<Vec<_>>().join(", ") } else { params.join(", ") };
         let _ = writeln!(out, "{indent}{}?: ({params}) => void;", ts_key(&format!("on{}", s.name)));
     }
@@ -509,6 +654,39 @@ export interface SvlEvent<A extends unknown[] = unknown[]> {
   args: A;
   preventDefault(): void;
   stopPropagation(): void;
+}
+
+/** EV1: what a DOM-style event's handler gets (`pointerdown`, `click`, `wheel`, `keydown`, `focusin`, ...):
+ * dispatched along the scene in capture, target and bubble order. */
+export interface SvlUiEvent extends SvlEvent {
+  /** The node the event is for; `currentTarget` is the node whose listener runs. */
+  target: unknown;
+  currentTarget: unknown;
+  /** 1 capture, 2 at the target, 3 bubble. */
+  eventPhase: 1 | 2 | 3;
+  bubbles: true;
+  cancelable: boolean;
+  defaultPrevented: boolean;
+  stopImmediatePropagation(): void;
+  /** Pointer events and `wheel`: the point in the window's (or slot's viewport's) points. */
+  x?: number;
+  y?: number;
+  clientX?: number;
+  clientY?: number;
+  /** Pointer events: 0 primary, 1 middle, 2 secondary, 3 back, 4 forward. */
+  button?: number;
+  /** `wheel`: the scroll in points. */
+  deltaX?: number;
+  deltaY?: number;
+  /** Key events: egui's key name (`A`, `Enter`, `ArrowDown`), and whether it is an auto-repeat. */
+  key?: string;
+  repeat?: boolean;
+  /** Focus events: the node focus came from (`focusin`) or went to (`focusout`). */
+  relatedTarget?: unknown;
+  shiftKey: boolean;
+  ctrlKey: boolean;
+  altKey: boolean;
+  metaKey: boolean;
 }
 
 type ClassValue = string | null | undefined | false | ClassValue[] | { [name: string]: unknown };
@@ -572,7 +750,7 @@ pub fn builtin_typings() -> String {
         for b in bases.iter().rev().filter(|b| b.id != "Widget") {
             ts_members(&mut s, "    ", b, None);
         }
-        ts_members(&mut s, "    ", k, None);
+        ts_members(&mut s, "    ", KindRegistry::global().spec_kind(i), None);
         s.push_str("  };\n");
     }
     s.push_str("}\n");
