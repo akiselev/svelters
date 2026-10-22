@@ -224,6 +224,36 @@ pub struct KindRef(pub &'static KindEntry);
 
 inventory::collect!(KindRef);
 
+/// CX3 (CADATOMIC.md SV3): a draft bind source a provider crate declares, as data. It goes into the
+/// spec fragment (`bind_sources`), and the compiler lowers `bind:prop={export(...args)}` (with
+/// `export` imported from `module`) to a binding whose value is `get(...args)` and whose changes, or
+/// commits with `|commit`, call `set(...args, value)`; `get` and `set` are exports of `module`
+/// (Rust `#[svelters::export]`s or a JS module). For the node to follow the source, `get` must read
+/// reactive state (a store getter); a plain function export is read when the binding's effect runs.
+///
+/// ```ignore
+/// inventory::submit! { svelters_egui::provider::BindSourceDef::draft("svelters:app/task", "slot", "draftValue", "setDraft") }
+/// ```
+pub struct BindSourceDef {
+    pub module: &'static str,
+    pub export: &'static str,
+    pub get: &'static str,
+    pub set: &'static str,
+    pub doc: &'static str,
+}
+
+impl BindSourceDef {
+    pub const fn draft(module: &'static str, export: &'static str, get: &'static str, set: &'static str) -> BindSourceDef {
+        BindSourceDef { module, export, get, set, doc: "" }
+    }
+
+    pub const fn doc(self, doc: &'static str) -> BindSourceDef {
+        BindSourceDef { doc, ..self }
+    }
+}
+
+inventory::collect!(BindSourceDef);
+
 /// Implemented by `#[svelters::widget]`: the struct's entry and its typed prop table.
 pub trait KindDecl: Sized + 'static {
     const KIND: &'static KindEntry;
