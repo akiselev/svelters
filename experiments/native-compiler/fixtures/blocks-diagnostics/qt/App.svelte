@@ -1,5 +1,5 @@
 <!-- Qt-vocabulary copy of ../App.svelte (the qt compile target). -->
-<!-- Deliberately invalid: snippet/block/spread validations (each line exercises one). -->
+<!-- Deliberately invalid: snippet/block/spread validations (each line exercises one; the spread compiles since SP1 and stays as a positive case). -->
 <script>
   let props = $state({ label: 'x' });
   let items = $state([1, 2]);

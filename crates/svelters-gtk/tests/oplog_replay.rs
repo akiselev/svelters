@@ -115,7 +115,9 @@ fn replay(name: &str, log: String) {
                         Val::Str(s) => h.set_str(o, prop, &s),
                         Val::Int(i) => h.set_i64(o, prop, i),
                         Val::Bool(b) => h.set_bool(o, prop, b),
-                        Val::Float(_) | Val::Null => panic!("{ctx}: unsupported value"),
+                        // a nullable prop reset to null (a spread key that went away, SP1)
+                        Val::Null => h.set_value(o, prop, &svelters_abi::Value::Null),
+                        Val::Float(_) => panic!("{ctx}: unsupported value"),
                     };
                     r.unwrap_or_else(|e| panic!("{ctx}: {e}"));
                 }
