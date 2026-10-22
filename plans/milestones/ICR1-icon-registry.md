@@ -130,12 +130,13 @@ VIS1:
 
 ## Not done (later lanes)
 
-- **Built-in sets.** No built-in icons are registered by default; the coordinator was told. Vendoring codicons
-  as SVG built-ins (the STATUS row's "absorbs DS5 icon part") needs a fetch of about 500 CC-BY files and is left
-  for DS5 or IC2. IC0's samples are unapproved and stay test data. Embedding works today through
-  `Icon::svg(16, include_bytes!(…))`.
-- **The JS registration module `svelters:icons`** (extensions passing `Asset` handles): registration is Rust-only
-  for now. Lookup from Svelte works by key.
+- **Built-in sets** (decided, coordinator 2026-10-22): ICR1 ships the mechanism only. No built-in icons are
+  registered by default, and unknown keys fall back to the font-glyph path, so today's interim icons keep
+  working. **Vendoring codicons as SVG built-ins moves to DS5/IC2.** That lane keeps codicons' own CC-BY notice
+  with the vendored files and adds no LICENSE file or licence field for svelters' code. IC0's samples are
+  unapproved and stay test data. Embedding works today through `Icon::svg(16, include_bytes!(…))`.
+- **Follow-up: the JS registration module `svelters:icons`** (extensions passing `Asset` handles). Registration
+  is Rust-only in this lane; lookup from Svelte works by key.
 - **High Contrast detection**: the theme's contrast does not reach `IconStyle::high_contrast` from the kind or
   the primitive (there is no context accessor for the theme yet). Embedders pass it in `icons::paint`.
 - **`content: icon(a.b+badge)` and `icon(family:name)`**: svelters-style's `dotted_fn` parses only dotted idents,
