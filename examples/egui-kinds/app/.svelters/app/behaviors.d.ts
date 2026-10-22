@@ -2,7 +2,7 @@
 
 declare module 'svelters:behaviors/cad' {
   import type { Action } from 'svelte/action';
-  import type { PickRef, Dim } from 'svelters:app/cad';
+  import type { PickRef, Dim, Position } from 'svelters:app/cad';
 
   /** The params of `use:pick`: its props and its events' callbacks. */
   export interface PickParams {
