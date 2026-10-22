@@ -13,7 +13,7 @@
 //!
 //! EM1 rebuilds the runners on `Embed` (`embed/`), which takes over this state per root and slot.
 
-use crate::scene::{Handle, SceneHandle};
+use crate::scene::{Handle, RootIx, SceneHandle};
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
@@ -28,6 +28,11 @@ pub(crate) struct Shared {
     /// Frames drawn, readable from any thread (idle measurements).
     pub frames: AtomicU64,
     pub ctx: Mutex<Option<egui::Context>>,
+    /// Where pending JS work (events in the outbox, rAF, wakes, deferred writes) asks for a repaint
+    /// (EM2): the viewport whose pass runs `logic` next. The root viewport, or a deferred
+    /// viewport's own while its pass runs with the embed's begin-pass plugin (`embed/current.rs`).
+    /// Shared with the waker, which may run on any thread.
+    pub logic_vp: Mutex<Option<egui::ViewportId>>,
 }
 
 /// Counters for tests and measurements.
@@ -67,6 +72,12 @@ pub(crate) struct Inner {
     /// Title last sent per window viewport.
     pub titles: RefCell<std::collections::HashMap<Handle, String>>,
     pub stats: Cell<Stats>,
+    /// EM2 repaint routing (ARCH-EMBED §5.2, §5.5): scene roots changed by host ops during a frame,
+    /// drained by `route_repaints` at the end of `Embed::logic`.
+    pub touched: RefCell<Vec<RootIx>>,
+    /// The viewport each embed slot's root is drawn in (`None`: hidden); roots not listed (windows)
+    /// are drawn in the root viewport. Kept by `Embed` (`create_slot`, `set_viewport`, `set_visible`).
+    pub root_vp: RefCell<std::collections::HashMap<RootIx, Option<egui::ViewportId>>>,
 }
 
 /// The egui backend. Cheap to clone (one shared state); the clone given to [`BackendVtable::new`]
@@ -87,8 +98,9 @@ impl EguiBackend {
         // Rust writes, deferred writes and their announcements need a logic pass: ask for a frame.
         let wake = shared.clone();
         scene.set_wake(move || {
+            // the next logic runs them: the root viewport's (deferred viewports may not run logic)
             if let Some(ctx) = wake.ctx.lock().unwrap().as_ref() {
-                ctx.request_repaint();
+                ctx.request_repaint_of(egui::ViewportId::ROOT);
             }
         });
         EguiBackend(Rc::new(Inner {
@@ -107,6 +119,8 @@ impl EguiBackend {
             closes: RefCell::new(Vec::new()),
             titles: RefCell::new(Default::default()),
             stats: Cell::new(Stats::default()),
+            touched: RefCell::new(Vec::new()),
+            root_vp: RefCell::new(Default::default()),
         }))
     }
 
@@ -136,6 +150,15 @@ impl EguiBackend {
         // SAFETY: the host attached through `run`/`start` outlives its attachment (it detaches
         // with `start(NULL)` before it is dropped).
         (!p.is_null()).then(|| unsafe { HostRef::from_raw(p) })
+    }
+
+    /// See `Shared::logic_vp`.
+    pub(crate) fn logic_vp(&self) -> egui::ViewportId {
+        self.0.shared.logic_vp.lock().unwrap().unwrap_or(egui::ViewportId::ROOT)
+    }
+
+    pub(crate) fn set_logic_vp(&self, vp: egui::ViewportId) {
+        *self.0.shared.logic_vp.lock().unwrap() = Some(vp);
     }
 
     pub(crate) fn ctx(&self) -> Option<egui::Context> {

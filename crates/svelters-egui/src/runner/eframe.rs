@@ -42,12 +42,22 @@ pub(crate) fn run_eframe(b: &EguiBackend) -> Result<(), String> {
 
 #[cfg(feature = "eframe")]
 fn run_native(title: String, size: egui::Vec2, app: Box<dyn ::eframe::App>) -> Result<(), String> {
+    run_native_with(title, size, move |_ctx| app)
+}
+
+/// `make` gets eframe's context before the first frame (an embed attaches to it there).
+#[cfg(feature = "eframe")]
+fn run_native_with(
+    title: String,
+    size: egui::Vec2,
+    make: impl FnOnce(&egui::Context) -> Box<dyn ::eframe::App> + 'static,
+) -> Result<(), String> {
     let opts = ::eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default().with_title(title.clone()).with_inner_size(size),
         renderer: ::eframe::Renderer::Glow,
         ..Default::default()
     };
-    ::eframe::run_native(&title, opts, Box::new(move |_cc| Ok(app))).map_err(|e| format!("eframe: {e}"))
+    ::eframe::run_native(&title, opts, Box::new(move |cc| Ok(make(&cc.egui_ctx)))).map_err(|e| format!("eframe: {e}"))
 }
 
 /// The desktop app on an [`Embed`]: `logic` from `App::logic`, the presented windows from `App::ui`.
@@ -71,7 +81,11 @@ impl ::eframe::App for DesktopApp {
 #[cfg(feature = "eframe")]
 pub(crate) fn run_desktop(embed: Embed) -> Result<(), String> {
     let (title, size) = root_props(embed.backend());
-    run_native(title, size, Box::new(DesktopApp { embed }))
+    // the pass callbacks (R17 phases, the begin-pass plugin) are on eframe's context from frame 1
+    run_native_with(title, size, move |ctx| {
+        embed.attach(ctx);
+        Box::new(DesktopApp { embed })
+    })
 }
 
 #[cfg(not(feature = "eframe"))]

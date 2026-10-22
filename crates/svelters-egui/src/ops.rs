@@ -48,8 +48,9 @@ impl EguiBackend {
         if !scene.set_visual(id, vis) {
             return Ok(());
         }
+        let r = scene.core[scene.ix(id)].root;
         drop(scene);
-        self.touched();
+        self.touched(Some(r));
         Ok(())
     }
 
@@ -98,7 +99,7 @@ impl Backend for EguiBackend {
         if !changed {
             return Ok(()); // already in place
         }
-        self.touched();
+        self.touched(self.root_of(parent));
         Ok(())
     }
 
@@ -110,12 +111,13 @@ impl Backend for EguiBackend {
             };
             scene.remove(p, c, Origin::Js).map_err(|e| e.to_string())?;
         }
-        self.touched();
+        self.touched(self.root_of(parent));
         Ok(())
     }
 
     fn destroy(&self, h: svl_handle) {
         // Children still attached are orphaned: the host destroys them itself.
+        let r = self.root_of(h);
         let d = {
             let mut scene = self.0.scene.borrow_mut();
             let Ok(id) = scene.live(h) else { return };
@@ -131,7 +133,7 @@ impl Backend for EguiBackend {
         if d.was_window {
             self.0.windows.borrow_mut().retain(|&w| w != h);
         }
-        self.touched();
+        self.touched(r);
     }
 
     fn set_prop(&self, h: svl_handle, prop: svl_id, v: &Value) -> StrResult<()> {
@@ -141,7 +143,7 @@ impl Backend for EguiBackend {
             // Host writes never announce a change: there is no echo to suppress (EGUI.md §1.4).
             scene.set_value(id, prop, v, Origin::Js).map_err(|e| e.to_string())?;
         }
-        self.touched();
+        self.touched(self.root_of(h));
         Ok(())
     }
 
@@ -178,7 +180,7 @@ impl Backend for EguiBackend {
             }
             other => return Err(format!("method {other} is not implemented")),
         }
-        self.touched();
+        self.touched(self.root_of(h));
         Ok(Value::Null)
     }
 
@@ -188,8 +190,9 @@ impl Backend for EguiBackend {
         let kind = scene.core[i].kind as usize;
         kinds::signal_def(kind, signal).ok_or_else(|| format!("unknown signal id {signal} on <{}>", scene.tag_at(i)))?;
         scene.set_listen(i, signal, on);
+        let r = scene.core[i].root;
         drop(scene);
-        self.touched(); // a listener can change a widget's sense
+        self.touched(Some(r)); // a listener can change a widget's sense
         Ok(())
     }
 
@@ -223,8 +226,11 @@ impl Backend for EguiBackend {
         let shared = self.0.shared.clone();
         Arc::new(move || {
             shared.wake.store(true, Ordering::Release);
+            // a wake does not know its viewport: the one that runs logic next (the root viewport,
+            // whose logic routes repaints, §5.2; or the deferred viewport whose pass runs now)
+            let vp = shared.logic_vp.lock().unwrap().unwrap_or(egui::ViewportId::ROOT);
             if let Some(ctx) = shared.ctx.lock().unwrap().as_ref() {
-                ctx.request_repaint();
+                ctx.request_repaint_of(vp);
             }
         })
     }
@@ -246,14 +252,14 @@ impl Backend for EguiBackend {
         if !self.0.in_frame.get()
             && let Some(ctx) = self.ctx()
         {
-            ctx.request_repaint_after(Duration::from_millis(ms as u64));
+            ctx.request_repaint_after_for(Duration::from_millis(ms as u64), egui::ViewportId::ROOT);
         }
     }
 
     fn request_frame(&self) {
         self.0.frame_pending.set(true);
         if let Some(ctx) = self.ctx() {
-            ctx.request_repaint();
+            ctx.request_repaint_of(self.logic_vp());
         }
     }
 

@@ -24,17 +24,24 @@
 //! - **Idle** is 0 frames: nothing requests a repaint unless work is pending, and
 //!   [`Embed::settled`] / [`BusyProbe`] say why it is not idle.
 //!
-//! EM2 adds deferred viewports (`current.rs`: `SlotPainter`, the begin-pass plugin), per-viewport
-//! repaint routing, focus restore on `set_viewport`, and `move_root`. Writer lane: EMBED.
+//! - **Viewports** (EM2, §5.2): a slot is drawn in whichever viewport the host says
+//!   ([`Embed::set_viewport`]); repaints are routed per viewport (a change in window 2 repaints window
+//!   2 only), focus follows the slot, and a deferred viewport's closure draws through a
+//!   [`SlotPainter`] or [`with_current`] (`current.rs`, with the begin-pass plugin that runs `logic`
+//!   before a deferred viewport's pass). [`Embed::move_root`] moves a root into another slot without
+//!   a remount.
+//!
+//! Writer lane: EMBED.
 
 mod current;
 mod roots;
 mod settle;
 mod slots;
 
+pub use current::{EmbedId, SlotPainter, with_current, with_embed};
 pub use roots::{FaultCause, RootError, RootId, RootInfo, RootOwner, RootState};
 pub use settle::{Busy, BusyProbe, Settle};
-pub use slots::{FaultUi, SlotId, SlotOptions, SlotResponse, SlotSizing};
+pub use slots::{FaultUi, SlotId, SlotOptions, SlotResponse, SlotSizing, SlotWarning};
 
 use crate::backend::EguiBackend;
 use crate::scene::{Handle, NodeId, Owner, Phase, TreeRoot};
@@ -94,7 +101,10 @@ pub struct EmbedConfig {
     /// A timer due within this counts as busy (`Busy::TIMER_SOON`); longer ones do not, or a clock
     /// would never settle.
     pub timer_horizon: Duration,
-    /// Run `logic` from an egui begin-pass plugin for deferred viewports (§5.2). EM2: ignored by EM1.
+    /// Run `logic` from an egui begin-pass plugin before each pass of a deferred viewport (§5.2): input
+    /// in that window is handled in its own next pass, with no root-viewport frame. `false` (a host
+    /// that owns the per-frame order, cadatomic's seam 4): only the root viewport's `logic` runs JS,
+    /// so input in a deferred window costs one root frame, whose logic routes the repaint back.
     pub prepass_plugin: bool,
 }
 
@@ -350,6 +360,8 @@ pub struct EmbedStats {
     pub mounts: u64,
     pub unmounts: u64,
     pub faults: u64,
+    /// `move_root`s applied.
+    pub moves: u64,
     /// Wall time of the last `logic` and the longest one so far.
     pub last_logic: Duration,
     pub max_logic: Duration,
@@ -364,6 +376,8 @@ enum Command {
     /// A fault found outside `logic` (a panic in `show_slot`): dispose the root's JS.
     Dispose(RootId),
     DestroySlot(SlotId),
+    /// `move_root`: the root's nodes go under `to` (reserved for it when queued).
+    Move(RootId, SlotId),
 }
 
 #[derive(Default)]
@@ -375,11 +389,16 @@ struct State {
     entries: u32,
     commands: VecDeque<Command>,
     events: Vec<EmbedEvent>,
-    last_pass: Option<u64>,
+    /// The pass whose logic ran (viewport, its cumulative pass number): once per pass.
+    last_pass: Option<(egui::ViewportId, u64)>,
     stats: EmbedStats,
+    warnings: Vec<SlotWarning>,
+    /// The viewports with a pass in the current outermost pass (it and its immediate children).
+    pass_vps: Vec<egui::ViewportId>,
 }
 
 struct EmbedInner {
+    id: EmbedId,
     // `host` first: it detaches from (and drops) its vtable before the backend handle below goes.
     host: Host<'static>,
     backend: EguiBackend,
@@ -406,6 +425,7 @@ fn salts_id() -> egui::Id {
 
 impl Drop for EmbedInner {
     fn drop(&mut self) {
+        current::unregister(self.id);
         let salt = self.cfg.id_salt;
         self.salt_ctx.data_mut(|d| {
             if let Some(s) = d.get_temp_mut_or_default::<Salts>(salts_id()).0.iter().position(|x| x == salt) {
@@ -428,20 +448,53 @@ impl Embed {
         debug_assert!(!clash, "svelters-egui: two embeds with the id salt '{}' in one egui Context", cfg.id_salt);
         let backend = EguiBackend::new();
         backend.bind_ctx(ctx);
-        backend.0.scene.hook_passes(ctx);
         let host = Host::new_owned(backend.clone(), cfg.host.clone()).map_err(EmbedError::Host)?;
         host.start().map_err(|e| EmbedError::Host(JsError::new(ErrorKind::Host, e.to_string())))?;
         host.set_turn_budget(Some(cfg.budgets.interrupt));
-        Ok(Embed {
-            inner: Rc::new(EmbedInner {
-                host,
-                backend,
-                cfg,
-                st: RefCell::new(State { next_root: 1, ..State::default() }),
-                probe: BusyProbe::default(),
-                salt_ctx: ctx.clone(),
-            }),
-        })
+        let id = EmbedId::next();
+        let inner = Rc::new(EmbedInner {
+            id,
+            host,
+            backend,
+            cfg,
+            st: RefCell::new(State { next_root: 1, ..State::default() }),
+            probe: BusyProbe::default(),
+            salt_ctx: ctx.clone(),
+        });
+        current::register(id, &inner);
+        let e = Embed { inner };
+        e.attach(ctx);
+        Ok(e)
+    }
+
+    /// Binds `ctx` (wakes and host ops repaint it) and registers the embed's pass callbacks on it:
+    /// R17's phases and the begin-pass plugin (§5.2). `new` and every `logic` do it; call it yourself
+    /// when the embed was created before the context it is drawn in exists (eframe's creation
+    /// callback, a kittest harness's context setup), so that the first frame has them too.
+    pub fn attach(&self, ctx: &egui::Context) {
+        let b = &self.inner.backend;
+        b.bind_ctx(ctx);
+        b.0.scene.hook_passes(ctx);
+        current::install(self, ctx);
+    }
+
+    /// This embed's id in its thread's registry ([`with_embed`]).
+    pub fn id(&self) -> EmbedId {
+        self.inner.id
+    }
+
+    /// Makes this embed the one [`with_current`] resolves on this thread (default: the oldest live).
+    pub fn make_current(&self) {
+        current::make_current(self.inner.id);
+    }
+
+    /// A `Copy + Send + Sync` painter of `slot` for a deferred viewport's closure (§5.2).
+    pub fn painter(&self, slot: SlotId) -> SlotPainter {
+        SlotPainter::new(self.inner.id, slot)
+    }
+
+    pub fn has_slot(&self, slot: SlotId) -> bool {
+        self.inner.st.borrow().slots.contains_key(&slot)
     }
 
     fn salt(&self) -> &'static str {
@@ -483,21 +536,20 @@ impl Embed {
         let id = crate::ids::slot_id(self.salt(), &key);
         let box_kind = crate::kinds::tag_index("box").expect("the box kind");
         // A host-owned box (JS sees it borrowed), the top of its own scene root (ARCH-SCENE §4.5).
-        let h = {
+        let (h, rix) = {
             let mut scene = self.inner.backend.0.scene.borrow_mut();
             let n = scene.create(box_kind, Owner::Host).expect("a box");
             let i = scene.ix(n);
             scene.core[i].egui_id = id;
-            scene.add_root(TreeRoot::Slot { node: n }, n);
-            n.to_raw()
+            let rix = scene.add_root(TreeRoot::Slot { node: n }, n);
+            (n.to_raw(), rix)
         };
         let slot = SlotId(h);
+        self.inner.backend.0.root_vp.borrow_mut().insert(rix, Some(egui::ViewportId::ROOT));
+        let scale = self.inner.backend.ctx().map(|c| c.pixels_per_point()).unwrap_or(1.0);
         let mut st = self.inner.st.borrow_mut();
         st.slot_keys.insert(key.clone(), slot);
-        st.slots.insert(
-            slot,
-            Slot { key, opts, root: None, visible: true, viewport: egui::ViewportId::ROOT, rect: None, content: egui::Vec2::ZERO },
-        );
+        st.slots.insert(slot, Slot::new(key, opts, rix, scale));
         slot
     }
 
@@ -514,29 +566,49 @@ impl Embed {
         self.queue(Command::DestroySlot(slot));
     }
 
-    /// Hidden: no layout or walk, its animation frames wait, and JS sees `visible = false`.
+    /// Visibility comes from the host (the dock knows it exactly; D7). Hidden: no layout, walk or
+    /// repaint, its animation frames wait (also those requested from its event handlers), and JS
+    /// sees `root().visible = false` at the next logic. Timers, effects and store deliveries keep
+    /// running (§5.3).
     pub fn set_visible(&self, slot: SlotId, visible: bool) {
         let mut st = self.inner.st.borrow_mut();
-        if let Some(s) = st.slots.get_mut(&slot)
-            && s.visible != visible
-        {
-            s.visible = visible;
-            drop(st);
-            self.repaint();
+        let Some(s) = st.slots.get_mut(&slot) else { return };
+        if s.visible == visible {
+            return;
         }
+        s.visible = visible;
+        s.undrawn = 0;
+        let (vp, rix) = (s.viewport, s.rix);
+        drop(st);
+        self.inner.backend.0.root_vp.borrow_mut().insert(rix, visible.then_some(vp));
+        self.wake_viewport(vp);
     }
 
-    /// The viewport the slot is drawn in from now on (`root().viewport`). EM2 adds per-viewport
-    /// repaint routing and focus restore.
+    /// The slot is drawn in `viewport` from now on (§7.1): (a) its root's changes repaint that
+    /// viewport only, (b) the node that had keyboard focus inside the slot gets it again at the
+    /// slot's next draw (egui keeps focus per viewport), (c) `root().viewport` and `root().scale`
+    /// follow (the layout event, SV18). Nothing moves in the scene: ids, egui memory (caret,
+    /// scroll), JS instances and `$state` are untouched.
     pub fn set_viewport(&self, slot: SlotId, viewport: egui::ViewportId) {
         let mut st = self.inner.st.borrow_mut();
-        if let Some(s) = st.slots.get_mut(&slot)
-            && s.viewport != viewport
-        {
-            s.viewport = viewport;
-            drop(st);
-            self.repaint();
+        let Some(s) = st.slots.get_mut(&slot) else { return };
+        if s.viewport == viewport {
+            return;
         }
+        let old = s.viewport;
+        s.viewport = viewport;
+        s.undrawn = 0;
+        s.warned &= !slots::WARN_VIEWPORT;
+        if s.focus.is_some() {
+            s.pending_focus = s.focus;
+        }
+        let (visible, rix) = (s.visible, s.rix);
+        drop(st);
+        self.inner.backend.0.root_vp.borrow_mut().insert(rix, visible.then_some(viewport));
+        if let Some(ctx) = self.inner.backend.ctx() {
+            ctx.request_repaint_of(old);
+        }
+        self.wake_viewport(viewport);
     }
 
     // ---- roots (queued; JS runs in the next `logic`) ----
@@ -591,6 +663,27 @@ impl Embed {
         self.repaint();
     }
 
+    /// Moves a root into another, empty slot without a remount (§7.1: a pane body ↔ an extension
+    /// window): at the next logic its nodes are reparented under `to` (same egui ids, so caret,
+    /// scroll and focus stay; same JS instances) and the runtime appends to `to` from then on. `to`
+    /// is reserved for the root now; the old slot is empty after the move.
+    pub fn move_root(&self, root: RootId, to: SlotId) -> Result<(), EmbedError> {
+        let mut st = self.inner.st.borrow_mut();
+        let from = st.roots.get(&root).ok_or(EmbedError::UnknownRoot)?.slot;
+        if from == to {
+            return Ok(());
+        }
+        let t = st.slots.get_mut(&to).ok_or(EmbedError::UnknownSlot)?;
+        if t.root.is_some() {
+            return Err(EmbedError::SlotOccupied);
+        }
+        t.root = Some(root);
+        st.commands.push_back(Command::Move(root, to));
+        drop(st);
+        self.repaint();
+        Ok(())
+    }
+
     /// Asks the root's `onCloseRequest` handlers (in the next `logic`); the answer comes as
     /// [`EmbedEvent::CloseDecided`].
     pub fn request_close(&self, root: RootId) {
@@ -607,9 +700,21 @@ impl Embed {
         self.repaint();
     }
 
+    /// Queued work: a pass of the viewport that runs logic next (the root viewport, or the deferred
+    /// viewport whose pass is running with the begin-pass plugin).
     fn repaint(&self) {
         if let Some(ctx) = self.inner.backend.ctx() {
-            ctx.request_repaint();
+            ctx.request_repaint_of(self.inner.backend.logic_vp());
+        }
+    }
+
+    /// A slot of `vp` changed in a way its next draw and the next logic both see (visibility,
+    /// viewport): a pass of `vp`, and of the root viewport too when `vp`'s passes run no logic.
+    fn wake_viewport(&self, vp: egui::ViewportId) {
+        let Some(ctx) = self.inner.backend.ctx() else { return };
+        ctx.request_repaint_of(vp);
+        if vp != egui::ViewportId::ROOT && !self.inner.cfg.prepass_plugin {
+            ctx.request_repaint_of(egui::ViewportId::ROOT);
         }
     }
 
@@ -625,7 +730,8 @@ impl Embed {
             b.0.scene.set_phase(Phase::Ui);
             return;
         }
-        let pass = ctx.cumulative_pass_nr();
+        // pass numbers are per viewport: a deferred viewport's pass N is not the root's pass N
+        let pass = (ctx.viewport_id(), ctx.cumulative_pass_nr());
         {
             let mut st = self.inner.st.borrow_mut();
             if st.last_pass == Some(pass) {
@@ -635,8 +741,7 @@ impl Embed {
             st.last_pass = Some(pass);
         }
         let t0 = Instant::now();
-        b.bind_ctx(ctx);
-        b.0.scene.hook_passes(ctx);
+        self.attach(ctx);
         b.0.scene.set_phase(Phase::Logic);
         b.0.in_frame.set(true);
         self.apply_commands();
@@ -651,8 +756,12 @@ impl Embed {
         b.0.in_frame.set(false);
         b.after_pass(ctx, Vec::new());
         if !self.inner.st.borrow().commands.is_empty() {
-            ctx.request_repaint();
+            self.repaint();
         }
+        // step 7: every viewport showing a root that changed, except the one this pass draws
+        // (a logic-only frame draws none)
+        let drawing = b.0.scene.in_pass().then(|| ctx.viewport_id());
+        b.route_repaints(ctx, drawing);
         // R17: `write` fails from here to the end of the egui pass (the pass hooks return the scene
         // to `Idle`); `defer` runs at the next logic. A logic-only frame (no pass) ends in `Idle`.
         b.0.scene.set_phase(if b.0.scene.in_pass() { Phase::Ui } else { Phase::Idle });
@@ -684,8 +793,10 @@ impl Embed {
         };
         let state = root.and_then(|r| self.inner.st.borrow().roots.get(&r).map(|r| r.state.clone())).unwrap_or(RootState::Empty);
         if !visible {
+            self.warn_once(slot, slots::WARN_HIDDEN, |key| SlotWarning::DrawnWhileHidden { slot, key });
             return SlotResponse { rect: egui::Rect::NOTHING, content_size: egui::Vec2::ZERO, state: RootState::Hidden };
         }
+        let pending_focus = self.note_drawn(ui, slot);
         let rect = ui.available_rect_before_wrap();
         if let (RootState::Faulted(err), Some(r)) = (&state, root) {
             let mut child = ui.new_child(egui::UiBuilder::new().max_rect(rect).scope_id(crate::ids::slot_id(self.salt(), &key).with("fault")));
@@ -712,6 +823,10 @@ impl Embed {
         }
         let mut child = ui.new_child(builder);
         crate::a11y::slot_group(ui.ctx(), child.unique_id(), &key);
+        // focus restore after a viewport change: before the walk, so the widget draws focused
+        if let Some(id) = pending_focus {
+            ui.memory_mut(|m| m.request_focus(id));
+        }
         b.0.in_frame.set(true);
         b.0.pass_active.set(true);
         let mut out = Vec::new();
@@ -742,12 +857,160 @@ impl Embed {
         };
         b.after_pass(ui.ctx(), out);
         b.0.in_frame.set(false);
+        self.note_focus(ui, slot);
         if resized && root.is_some() {
             // `root().width/height` follow at the next logic
-            ui.ctx().request_repaint();
+            self.repaint();
         }
         self.publish();
         SlotResponse { rect: drawn, content_size: content, state }
+    }
+
+    /// The debug checks and the per-viewport fields of a slot being drawn in `ui` (visible): marks it
+    /// drawn this pass, checks its viewport, follows a scale change (`root().scale`, one relayout of
+    /// this slot only). Returns the focus to restore, if any.
+    fn note_drawn(&self, ui: &egui::Ui, slot: SlotId) -> Option<egui::Id> {
+        let vp = ui.ctx().viewport_id();
+        let ppp = ui.ctx().pixels_per_point();
+        let (wrong, rescaled, focus, rix) = {
+            let mut st = self.inner.st.borrow_mut();
+            let s = st.slots.get_mut(&slot)?;
+            s.drawn = true;
+            s.undrawn = 0;
+            s.warned &= !(slots::WARN_UNDRAWN | slots::WARN_HIDDEN);
+            let rescaled = s.scale != ppp;
+            s.scale = ppp;
+            ((s.viewport != vp).then_some(s.viewport), rescaled, s.pending_focus.take(), s.rix)
+        };
+        if let Some(set) = wrong {
+            self.warn_once(slot, slots::WARN_VIEWPORT, |key| SlotWarning::WrongViewport { slot, key, set, drawn: vp });
+        }
+        if rescaled {
+            self.inner.backend.0.scene.borrow_mut().mark_full(rix);
+            self.repaint();
+        }
+        focus
+    }
+
+    /// After a draw: which node inside the slot has keyboard focus in this viewport (for focus
+    /// restore and `root().focused`). Looks the focused id up only when it changed.
+    fn note_focus(&self, ui: &egui::Ui, slot: SlotId) {
+        let f = ui.memory(|m| m.focused());
+        let rix = {
+            let st = self.inner.st.borrow();
+            let Some(s) = st.slots.get(&slot) else { return };
+            if s.focus_seen == f {
+                return;
+            }
+            s.rix
+        };
+        let inside = f.filter(|&id| {
+            let scene = self.inner.backend.0.scene.borrow();
+            scene.ids().any(|n| {
+                let i = scene.ix(n);
+                scene.core[i].root == rix && scene.core[i].egui_id == id
+            })
+        });
+        let changed = match self.inner.st.borrow_mut().slots.get_mut(&slot) {
+            Some(s) => {
+                s.focus_seen = f;
+                let changed = s.focus.is_some() != inside.is_some();
+                s.focus = inside;
+                changed && s.root.is_some()
+            }
+            None => false,
+        };
+        if changed {
+            self.repaint(); // `root().focused` follows at the next logic
+        }
+    }
+
+    /// Records a debug-check warning once per slot and kind (until the slot behaves again).
+    fn warn_once(&self, slot: SlotId, bit: u8, w: impl FnOnce(String) -> SlotWarning) {
+        let mut st = self.inner.st.borrow_mut();
+        let Some(s) = st.slots.get_mut(&slot) else { return };
+        if s.warned & bit != 0 {
+            return;
+        }
+        s.warned |= bit;
+        let w = w(s.key.clone());
+        #[cfg(debug_assertions)]
+        if self.inner.cfg.host.echo_errors {
+            eprintln!("[svelters-egui] slot check: {w:?}");
+        }
+        st.warnings.push(w);
+    }
+
+    /// What the debug checks found since the last call (ARCH-EMBED §5.3): a slot drawn while set
+    /// hidden, a visible slot not drawn for 60 passes of its viewport, a slot drawn in a viewport
+    /// other than the one set.
+    pub fn take_warnings(&self) -> Vec<SlotWarning> {
+        std::mem::take(&mut self.inner.st.borrow_mut().warnings)
+    }
+
+    // ---- the pass plugin (current.rs) ----
+
+    /// Every pass of every viewport, before the host's ui (`outer`: not an immediate viewport
+    /// nested in another pass). A deferred viewport's outermost pass runs `logic` first when the
+    /// prepass plugin is on, and pending work then asks for that viewport's next pass.
+    pub(super) fn begin_pass(&self, ctx: &egui::Context, outer: bool) {
+        let vp = ctx.viewport_id();
+        {
+            let mut st = self.inner.st.borrow_mut();
+            if outer {
+                st.pass_vps.clear();
+            }
+            if !st.pass_vps.contains(&vp) {
+                st.pass_vps.push(vp);
+            }
+        }
+        if !outer {
+            return;
+        }
+        let deferred = vp != egui::ViewportId::ROOT;
+        let logic_here = deferred && self.inner.cfg.prepass_plugin;
+        self.inner.backend.set_logic_vp(if logic_here { vp } else { egui::ViewportId::ROOT });
+        if logic_here {
+            self.logic(ctx);
+        }
+    }
+
+    /// The end of every pass (`outer` as above): the "not drawn" check for the slots of the
+    /// viewports that had a pass, then pending work goes back to the root viewport.
+    pub(super) fn end_pass(&self, _ctx: &egui::Context, outer: bool) {
+        if !outer {
+            return;
+        }
+        let mut late = Vec::new();
+        {
+            let mut st = self.inner.st.borrow_mut();
+            let vps = std::mem::take(&mut st.pass_vps);
+            for (&id, s) in st.slots.iter_mut() {
+                if !vps.contains(&s.viewport) {
+                    continue;
+                }
+                if s.visible && s.root.is_some() && !s.drawn {
+                    s.undrawn += 1;
+                    if s.undrawn >= slots::UNDRAWN_PASSES {
+                        late.push((id, s.undrawn));
+                    }
+                }
+                s.drawn = false;
+            }
+        }
+        for (slot, passes) in late {
+            self.warn_once(slot, slots::WARN_UNDRAWN, |key| SlotWarning::NotDrawn { slot, key, passes });
+        }
+        self.inner.backend.set_logic_vp(egui::ViewportId::ROOT);
+    }
+
+    /// ARCH-SCENE R21: the host calls this at the end of each viewport's ui (the root viewport's
+    /// `App::ui` and every deferred viewport's closure), after berth drew its panes, so that
+    /// `PassScope::Viewport`/`AllViewports` scene passes (overlays over every pane of the window)
+    /// run once per viewport. EM2 lands the call site; the passes themselves are SG4's
+    /// (`provider/pass.rs`): until then it only publishes the busy probe.
+    pub fn show_viewport_passes(&self, _ui: &mut egui::Ui) {
+        self.publish();
     }
 
     /// The desktop runners' walk: presented `<window>`s (the root one in `ui`, the others as
@@ -877,14 +1140,15 @@ impl Embed {
     fn info_of(&self, st: &State, r: &Root) -> SentInfo {
         let s = st.slots.get(&r.slot);
         let size = s.and_then(|s| s.rect).map(|x| x.size()).unwrap_or(egui::Vec2::ZERO);
-        let ppp = self.inner.backend.ctx().map(|c| c.pixels_per_point()).unwrap_or(1.0);
         SentInfo {
             key: r.key.0.clone(),
             visible: s.is_some_and(|s| s.visible),
             width: size.x as f64,
             height: size.y as f64,
-            scale: ppp as f64,
+            // the scale of the viewport the slot was last drawn in (EM2: per viewport)
+            scale: s.map(|s| s.scale).unwrap_or(1.0) as f64,
             viewport: s.map(|s| viewport_name(s.viewport)).unwrap_or_default(),
+            focused: s.is_some_and(|s| s.focus.is_some()),
         }
     }
 
@@ -950,6 +1214,7 @@ impl Embed {
                 }
                 Command::Dispose(id) => self.dispose(id),
                 Command::DestroySlot(slot) => self.do_destroy_slot(slot),
+                Command::Move(id, to) => self.do_move(id, to),
             }
         }
     }
@@ -1043,9 +1308,71 @@ impl Embed {
         }
     }
 
+    /// `move_root` (queued): the root's nodes go under `to` with the same egui ids (the root's id
+    /// base moves with them), the runtime's mount target follows (`__svelters_embed.retarget`), the
+    /// focus inside it is restored at `to`'s next draw.
+    fn do_move(&self, id: RootId, to: SlotId) {
+        let (from, key, live) = {
+            let mut st = self.inner.st.borrow_mut();
+            let Some(r) = st.roots.get(&id) else {
+                // unmounted meanwhile: free the reservation
+                if let Some(t) = st.slots.get_mut(&to).filter(|t| t.root == Some(id)) {
+                    t.root = None;
+                }
+                return;
+            };
+            let (from, key, live) = (r.slot, r.key.0.clone(), r.state.is_live());
+            if from == to || st.slots.get(&to).is_none_or(|t| t.root != Some(id)) {
+                return; // `to` was destroyed (or the move is stale)
+            }
+            (from, key, live)
+        };
+        self.set_slot_base(to, Some(crate::ids::root_base(self.salt(), &key)));
+        {
+            let mut scene = self.inner.backend.0.scene.borrow_mut();
+            if let (Ok(f), Ok(t)) = (scene.live(from.0), scene.live(to.0)) {
+                let kids = scene.children[scene.ix(f)].clone();
+                for k in kids {
+                    // on the runtime's behalf: it is told below (its nodes are runtime-owned)
+                    let _ = scene.insert(t, k, None, crate::scene::Origin::Js);
+                }
+            }
+        }
+        self.set_slot_base(from, None);
+        if live && let Err(e) = self.inner.host.retarget_root(id.0, to.0) {
+            self.on_call_error(id, e);
+        }
+        let vps = {
+            let mut st = self.inner.st.borrow_mut();
+            if let Some(r) = st.roots.get_mut(&id) {
+                r.slot = to;
+            }
+            st.stats.moves += 1;
+            let (old_vp, focus) = match st.slots.get_mut(&from) {
+                Some(f) => {
+                    f.root = None;
+                    let focus = f.focus.take();
+                    f.focus_seen = None;
+                    (f.viewport, focus)
+                }
+                None => (egui::ViewportId::ROOT, None),
+            };
+            let t = st.slots.get_mut(&to).unwrap();
+            t.pending_focus = focus.or(t.pending_focus);
+            t.rect = None; // laid out at its next draw
+            [old_vp, t.viewport]
+        };
+        if let Some(ctx) = self.inner.backend.ctx() {
+            for vp in vps {
+                ctx.request_repaint_of(vp);
+            }
+        }
+    }
+
     fn do_destroy_slot(&self, slot: SlotId) {
         let Some(s) = self.inner.st.borrow_mut().slots.remove(&slot) else { return };
         self.inner.st.borrow_mut().slot_keys.remove(&s.key);
+        self.inner.backend.0.root_vp.borrow_mut().remove(&s.rix);
         if let Some(r) = s.root {
             self.do_unmount(r);
         }

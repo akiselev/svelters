@@ -19,6 +19,8 @@ use std::path::Path;
 use std::rc::Rc;
 use svelters_host::{Host, HostConfig};
 
+pub use crate::runner::dock;
+pub use crate::runner::viewports::Viewports;
 pub use egui_kittest;
 pub use egui_kittest::kittest::{NodeT, Queryable};
 
@@ -48,7 +50,9 @@ impl TestApp {
                 _ => None,
             })
             .unwrap_or(egui::vec2(480.0, 360.0));
-        let harness = Harness::builder().with_size(size).build_ui_state(
+        // EM2 (the SG1 gap): the pass callbacks are on the harness's context before its first frame
+        let attach = embed.clone();
+        let harness = Harness::builder().with_size(size).with_context_setup(move |ctx| attach.attach(ctx)).build_ui_state(
             |ui, e: &mut Embed| {
                 e.logic(ui.ctx());
                 e.show_windows(ui);

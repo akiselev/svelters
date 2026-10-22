@@ -9,21 +9,25 @@
 //                                                   (`patch.$$delete`: keys to remove)
 //   info(rootId, patch)                             the root's host fields (visible, size, viewport…)
 //   unmount(rootId)                                 dispose; the target itself stays
+//   retarget(rootId, { target })                    EM2 `move_root`: the host moved the root's natives
+//                                                   under `target`; new ones go there too
 //   close(rootId) -> boolean                        the root's onCloseRequest handlers decide
 //
 // Each root has
 // - its own error boundary: render and effect errors no <svelte:boundary> handled are reported with
 //   `__svelters_host.rootFault(rootId, …)` (the host disposes that root only) instead of being thrown
 //   into whatever flush ran them;
-// - its own animation-frame queue: `requestAnimationFrame` called from the root's effects (or while the
-//   host is inside one of the calls above for it) is queued per root, and a hidden root's callbacks
-//   wait until it is shown again (SV19); calls with no root context use the global queue;
+// - its own animation-frame queue: `requestAnimationFrame` called from the root's effects, from its
+//   event handlers (EM2: dispatches to its nodes run in its context) or while the host is inside one
+//   of the calls above for it is queued per root, and a hidden root's callbacks wait until it is shown
+//   again (SV19); calls with no root context (a timer, a shared microtask) use the global queue;
 // - a `RootHandle` (`import { root } from 'svelters:embed'`), whose fields are reactive: the host's
 //   fields arrive through `info` only when they changed (no JS per frame), and `title`/`dirty` written
 //   by components go back to the host (`__svelters_host.rootInfo`), as does `emit`.
 import * as $ from './core/index.js';
 import { active } from './core/svelte.js';
 import { flushSync, getContext, mount, onDestroy, unmount } from './svelte.js';
+import { setDispatchHook, targetNode } from './index.js';
 
 const host = () => globalThis.__svelters_host;
 
@@ -34,6 +38,8 @@ export const ROOT_KEY = Symbol('svelters:embed root');
 const roots = new Map();
 /** A root's top effect -> its record (per-root rAF tagging). */
 const effectRoots = new WeakMap();
+/** A root's mount target node -> its record (per-root dispatch tagging, EM2). */
+const targetRoots = new WeakMap();
 /** The root the host is calling into right now. */
 let current = null;
 
@@ -135,6 +141,15 @@ function fault(r, e) {
   host().rootFault(r.id, message, e instanceof Error ? (e.stack ?? null) : null);
 }
 
+/** The root whose target `node` is inserted under (its native parents up to a mount target). */
+function rootOfNode(node) {
+  for (let n = node; n; n = n.np) {
+    const r = targetRoots.get(n);
+    if (r) return r;
+  }
+  return null;
+}
+
 function within(r, fn) {
   const prev = current;
   current = r;
@@ -215,6 +230,9 @@ const api = {
       faulted: false,
     };
     r.handle = new RootHandle(r);
+    // our own target node, so `retarget` can move it (index.js's mount uses a Native as is)
+    r.target = targetNode(target);
+    targetRoots.set(r.target, r);
     roots.set(id, r);
     const Tagged = ($$anchor, p) => {
       const e = active();
@@ -224,7 +242,7 @@ const api = {
     try {
       within(r, () => {
         r.exports = mount(Tagged, {
-          target,
+          target: r.target,
           props: r.props,
           context: new Map([[ROOT_KEY, r.handle]]),
           onerror: (e) => fault(r, e),
@@ -277,6 +295,12 @@ const api = {
     });
   },
 
+  retarget(id, patch) {
+    const r = roots.get(id);
+    if (!r) return;
+    r.target.h = patch.target;
+  },
+
   close(id) {
     const r = roots.get(id);
     if (!r) return true;
@@ -296,5 +320,10 @@ const api = {
 
 if (!globalThis.__svelters_embed) {
   installRaf();
+  // EM2: an event handler of a root's node runs in that root's context (root(), per-root rAF)
+  setDispatchHook((node, run) => {
+    const r = current ?? rootOfNode(node);
+    return r ? within(r, run) : run();
+  });
   globalThis.__svelters_embed = api;
 }

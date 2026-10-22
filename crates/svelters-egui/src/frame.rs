@@ -23,20 +23,59 @@
 use crate::backend::EguiBackend;
 use crate::kinds;
 use crate::layout;
-use crate::scene::{Handle, Phase};
+use crate::scene::{Handle, Phase, RootIx};
 use crate::walk::Out;
 use std::sync::atomic::Ordering;
 use std::time::Instant;
 use svelters_abi::*;
 
 impl EguiBackend {
-    /// Something changed outside a frame: draw again.
-    pub(crate) fn touched(&self) {
-        if !self.0.in_frame.get()
+    /// A host op changed scene root `r` (EM2, ARCH-EMBED §5.5). During a frame the root is recorded
+    /// and `route_repaints` asks for its viewport after logic; outside one, its viewport is asked
+    /// now. A hidden slot's root asks for nothing (it is not drawn); a detached node neither.
+    pub(crate) fn touched(&self, r: Option<RootIx>) {
+        let Some(r) = r.filter(|r| !r.is_detached()) else { return };
+        if self.0.in_frame.get() {
+            let mut t = self.0.touched.borrow_mut();
+            if !t.contains(&r) {
+                t.push(r);
+            }
+        } else if let Some(vp) = self.viewport_of(r)
             && let Some(ctx) = self.ctx()
         {
-            ctx.request_repaint();
+            ctx.request_repaint_of(vp);
         }
+    }
+
+    /// The scene root of handle `h`, for `touched`.
+    pub(crate) fn root_of(&self, h: Handle) -> Option<RootIx> {
+        let scene = self.0.scene.borrow();
+        scene.live(h).ok().map(|id| scene.core[scene.ix(id)].root)
+    }
+
+    /// The viewport root `r` is drawn in: its slot's (`None` while hidden), else the root viewport.
+    pub(crate) fn viewport_of(&self, r: RootIx) -> Option<egui::ViewportId> {
+        self.0.root_vp.borrow().get(&r).copied().unwrap_or(Some(egui::ViewportId::ROOT))
+    }
+
+    /// Step 7 of `logic` (ARCH-EMBED §5.1): every viewport showing a root that host ops changed
+    /// since the last call gets a repaint, except `drawing` (the viewport whose pass runs now: its
+    /// ui draws the change in this pass). Returns the viewports asked.
+    pub(crate) fn route_repaints(&self, ctx: &egui::Context, drawing: Option<egui::ViewportId>) -> Vec<egui::ViewportId> {
+        let touched = std::mem::take(&mut *self.0.touched.borrow_mut());
+        let mut vps: Vec<egui::ViewportId> = Vec::new();
+        for r in touched {
+            if let Some(vp) = self.viewport_of(r)
+                && Some(vp) != drawing
+                && !vps.contains(&vp)
+            {
+                vps.push(vp);
+            }
+        }
+        for &vp in &vps {
+            ctx.request_repaint_of(vp);
+        }
+        vps
     }
 
     pub(crate) fn checkpoint(&self) {
@@ -102,6 +141,8 @@ impl EguiBackend {
         if ctx.current_pass_index() == 0 {
             self.logic_pass(&ctx);
         }
+        // the presented windows are all drawn in this pass (root and immediate viewports)
+        self.0.touched.borrow_mut().clear();
         // R17: from the end of logic to the end of the pass, Rust writes are deferred.
         self.0.scene.set_phase(Phase::Ui);
         self.show_windows(ui);
@@ -163,7 +204,10 @@ impl EguiBackend {
         }
         let wake = self.0.shared.wake.swap(false, Ordering::AcqRel);
         let first = !self.0.first_frame_done.replace(true);
-        if first || wake || due || self.0.checkpoint_pending.replace(false) {
+        // all four are consumed (a short-circuit left `checkpoint_pending` set after a wake: one
+        // more frame per interaction)
+        let pending = self.0.checkpoint_pending.replace(false);
+        if first || wake || due || pending {
             self.checkpoint();
         }
         if self.0.frame_pending.replace(false)
@@ -243,18 +287,23 @@ impl EguiBackend {
             }
             self.0.checkpoint_pending.set(true);
         }
+        // EM2: pending JS work asks for a pass of the viewport that runs logic next (`logic_vp`:
+        // the root viewport, or this deferred viewport with the begin-pass plugin), never the
+        // viewport that merely drew it (ARCH-EMBED §5.2).
+        let vp = self.logic_vp();
         if self.0.checkpoint_pending.get() || self.0.frame_pending.get() || self.0.shared.wake.load(Ordering::Acquire) {
-            ctx.request_repaint();
+            ctx.request_repaint_of(vp);
         }
         if !self.0.close_requests.borrow().is_empty() || !self.0.closes.borrow().is_empty() {
-            ctx.request_repaint();
+            ctx.request_repaint_of(egui::ViewportId::ROOT);
         }
         // R16: deferred scene writes are pending work; the next logic runs them.
         if self.0.scene.deferred_len() > 0 {
-            ctx.request_repaint();
+            ctx.request_repaint_of(vp);
         }
+        // timers: the root viewport, which always runs logic
         if let Some(d) = self.0.deadline.get() {
-            ctx.request_repaint_after(d.saturating_duration_since(Instant::now()));
+            ctx.request_repaint_after_for(d.saturating_duration_since(Instant::now()), egui::ViewportId::ROOT);
         }
     }
 }

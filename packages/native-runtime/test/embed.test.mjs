@@ -125,3 +125,52 @@ test('roots: animation frames are per root and wait while it is hidden', () => {
   assert.equal(ticks, 2, 'runs once shown');
   api.unmount(10);
 });
+
+test('roots: a handler runs in its root: root() and animation frames held while hidden (EM2)', () => {
+  const target = th.host.create('box');
+  let ticks = 0;
+  let btn;
+  let seenRoot;
+  const Comp = ($$anchor, $$props) => {
+    $.push($$props, true);
+    btn = $n.element('button');
+    $n.on(btn, 'clicked', () => {
+      seenRoot = root().id;
+      requestAnimationFrame(() => ticks++);
+    });
+    $n.append($$anchor, btn);
+    $.pop();
+  };
+  api.mount(Comp, 11, target, {});
+  runFrame();
+  globalThis.__svelters_dispatch(btn.h, 'clicked', []);
+  assert.equal(seenRoot, 11, 'root() inside a handler is its root');
+  runFrame();
+  assert.equal(ticks, 1, 'a handler frame runs while shown');
+  api.info(11, { visible: false });
+  globalThis.__svelters_dispatch(btn.h, 'clicked', []);
+  runFrame();
+  assert.equal(ticks, 1, "a hidden root's handler frame waits");
+  api.info(11, { visible: true });
+  runFrame();
+  assert.equal(ticks, 2, 'and runs once shown');
+  api.unmount(11);
+});
+
+test('roots: retarget moves where new natives go (EM2 move_root)', () => {
+  const a = th.host.create('box');
+  const b = th.host.create('box');
+  const Comp = ($$anchor, $$props) => {
+    $.push($$props, true);
+    $n.if_block($$anchor, () => $$props.more, ($$anchor) => label($$anchor, () => 'more'));
+    $.pop();
+  };
+  api.mount(Comp, 12, a, { more: false });
+  take();
+  api.retarget(12, { target: b });
+  api.props(12, { more: true });
+  const lines = take();
+  assert.ok(lines.some((l) => l.startsWith(`insert #${b} `)), lines.join('\n'));
+  assert.ok(!lines.some((l) => l.startsWith(`insert #${a} `)), lines.join('\n'));
+  api.unmount(12);
+});

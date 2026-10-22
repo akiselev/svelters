@@ -10,6 +10,10 @@ export default defineConfig(
       Fragile: 'src/Fragile.svelte',
       Spinner: 'src/Spinner.svelte',
       Ticker: 'src/Ticker.svelte',
+      // EM2 (crates/svelters-egui/tests/viewports.rs)
+      Pane: 'src/Pane.svelte',
+      Editor: 'src/Editor.svelte',
+      Animator: 'src/Animator.svelte',
     },
   }),
 );

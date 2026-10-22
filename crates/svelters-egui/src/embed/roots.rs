@@ -97,6 +97,8 @@ pub(crate) struct SentInfo {
     pub height: f64,
     pub scale: f64,
     pub viewport: String,
+    /// Keyboard focus is inside the root (EM2).
+    pub focused: bool,
 }
 
 impl SentInfo {
@@ -114,6 +116,7 @@ impl SentInfo {
         put("height", old.is_none_or(|o| o.height != self.height), Value::F64(self.height));
         put("scale", old.is_none_or(|o| o.scale != self.scale), Value::F64(self.scale));
         put("viewport", old.is_none_or(|o| o.viewport != self.viewport), Value::Str(self.viewport.clone()));
+        put("focused", old.is_none_or(|o| o.focused != self.focused), Value::Bool(self.focused));
         p
     }
 }
