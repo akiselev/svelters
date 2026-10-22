@@ -129,6 +129,9 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         _ => None,
     };
     if let Some((key, v)) = changed {
+        // a user edit is a change of the node (ticks, ARCH-SCENE §6.5)
+        let t = arena.stamp();
+        arena.core[i].changed = t;
         let prop = kinds::prop_id(kind, key);
         let s = sig("changed");
         if arena.observes(i, prop) {
