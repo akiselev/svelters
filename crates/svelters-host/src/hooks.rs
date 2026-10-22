@@ -37,6 +37,14 @@ impl Default for ModuleHooks {
 }
 
 impl ModuleHooks {
+    /// The hooks of an isolate or extension host: the same natives, but fail closed. No
+    /// `svelters:app/*` module is visible until [`ModuleHooks::visibility`] allows some, so a host
+    /// nobody configured does not see every export of the app. `ModuleHooks::default()` is the
+    /// primary host: everything visible.
+    pub fn isolate() -> ModuleHooks {
+        ModuleHooks::default().visibility(Visibility::Allow(Vec::new()))
+    }
+
     /// Serves `scheme:` imports through `hook` (SV22). `svelters` is reserved.
     pub fn scheme(mut self, hook: Rc<dyn SchemeHook>) -> Self {
         self.schemes.push(hook);

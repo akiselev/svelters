@@ -97,3 +97,20 @@ fn a_reserved_scheme_is_refused() {
     let err = h.load_from(Rc::new(Mem("".into()))).expect_err("reserved");
     assert_eq!(err.kind, ErrorKind::Host);
 }
+
+#[test]
+fn the_primary_host_sees_every_app_module_and_an_isolate_sees_none_until_allowed() {
+    let entry = Rc::new(Mem("import { v } from 'svelters:app/extra';\nif (v !== 7) throw new Error('wrong');\n".into()));
+    let primary = host();
+    primary.set_module_hooks(ModuleHooks::default().natives(extra()));
+    primary.load_from(entry.clone()).unwrap();
+
+    let isolate = host();
+    isolate.set_module_hooks(ModuleHooks::isolate().natives(extra()));
+    let err = isolate.load_from(entry.clone()).expect_err("an unconfigured isolate sees no app module");
+    assert!(err.to_string().contains("no such module"), "{err}");
+
+    let allowed = host();
+    allowed.set_module_hooks(ModuleHooks::isolate().natives(extra()).visibility(Visibility::Allow(vec!["extra".into()])));
+    allowed.load_from(entry).unwrap();
+}

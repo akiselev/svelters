@@ -16,10 +16,16 @@ Spec: `plans/research/TRACKS.md` §2.1 (LOADER, row LD1), `plans/research/QUICKJ
 | `quickjs.rs` | `svelters-host/src/quickjs.rs` | The `is_builtin` short-circuit in the resolver and loader is gone: QuickJS asks the provider for everything. |
 | `DylibModules` | `svelters-modules/src/dylib.rs`, feature `dlopen` (default off) | `DylibModules::open(path)` dlopens a library that exports `svl_modules_v1() -> *const c_char`, a static NUL-terminated JSON object `{ "svelters:app/<name>": "<ES module source>" }`. Ids outside `svelters:app/` are refused. Register it with `ModuleHooks::natives`. |
 
-## Decided
+## Decided (coordinator, 2026-10-22)
+
+- Native ops from dlopen'd libraries (kinds, handles, calls) are a separate later milestone on the `svl_pack` ABI (CUSTOM-WIDGETS). LD1 stays a loader with hooks only; `DylibModules` loads JS modules only.
+- `svelters:app/*` visibility defaults to `All` for the primary host (`ModuleHooks::default()`); cadatomic sets `Allow` for its own hosts.
+- Amendment (main-cadatomic, accepted): visibility fails closed for isolates. Any extension or isolate host uses `ModuleHooks::isolate()`, which defaults to `Allow([])`: an isolate host nobody configured must not see every app export. The host has no isolate concept yet, so the flag is this constructor; the code that creates an isolate host calls it.
+
+## Decided (LD1)
 
 - Q3 option (b), as recommended in TRACKS §6: static modules always, dlopen behind the `dlopen` feature, which cadatomic leaves off. The feature adds `libloading` (already in the lockfile).
-- The default `ModuleHooks` serves every export with no filter, so existing apps behave as before. A stricter default is a caller's choice.
+- The default `ModuleHooks` serves every export with no filter, so existing apps behave as before.
 - Hidden and absent `svelters:app/*` modules give one error text (`no such module: `id``).
 
 ## Not in LD1
@@ -31,5 +37,5 @@ Spec: `plans/research/TRACKS.md` §2.1 (LOADER, row LD1), `plans/research/QUICKJ
 ## Tests
 
 - `svelters-modules`: `compose::tests` (routing, visibility, hidden-looks-absent, reserved/duplicate schemes).
-- `crates/svelters-host/tests/hooks.rs`: a scheme and an extra native module load through a `Host`; an unregistered scheme is a load error; the filter hides a module; a reserved scheme is refused.
+- `crates/svelters-host/tests/hooks.rs`: both visibility defaults (primary sees all, `isolate()` sees none until allowed); a scheme and an extra native module load through a `Host`; an unregistered scheme is a load error; the filter hides a module; a reserved scheme is refused.
 - Not tested: `DylibModules` (needs a built cdylib fixture; checked with `cargo check --features dlopen` only).
