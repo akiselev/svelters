@@ -27,10 +27,15 @@ cadatomic's CH2 task panels (commit on Enter). Branch `ci/cx3`.
   losing focus after an edit since the last commit, as Qt's `editingFinished`) and `submit(text)`
   (Enter only, after `commit`). Enter that the focus scope's default button takes
   (`focus.rs`, `State::entered`) still commits the field first, so the button's handler reads the
-  committed value. `spec.rs` writes the `commit` entry for every binding whose kind has a `commit`
-  signal (only `text-edit` now; the own-widget lanes add theirs, and the compiler picks them up
-  from `egui.json` with no change). `NodeFlags::EDITED` (bit 17) tracks "edited since the last
-  commit".
+  committed value. `drag-value` got `commit(value)` too (coordinator, FM1 staying spec): minimal
+  until OW4, a drag commits when it ends and any other change (arrow keys, a typed value applied on
+  Enter or blur) commits at once. `spec.rs` writes `bindings.<prop>.commit = {"event": "commit",
+  "arg": n}` for every binding whose kind has a `commit` signal with the same arguments as its
+  change event (so `text-edit`'s `text` and `drag-value`'s `value`; a table's cell-edit `commit`,
+  of another shape, is not a commit of `current`/`selected`). The own-widget lanes (OW1b, OW4)
+  raise the signal from their widgets; the compiler reads only the metadata. `NodeFlags::EDITED`
+  (bit 17) tracks "edited since the last commit". Note: `text-edit`'s bound prop is `text`, so its
+  entry is `bindings.text.commit` (the request said `bindings.value`).
 
 ### 2. The lowering table (`bind_sources`)
 
@@ -110,7 +115,7 @@ cadatomic's CH2 task panels (commit on Enter). Branch `ci/cx3`.
   nested package that is not a workspace member): `text-edit bind:text|commit` updates `$state` on
   Enter and on blur after an edit only (not while typing, not on blur without an edit), and through
   a default button's Enter; a JS draft source logs only commits with `|commit` and every change
-  without; a Rust store (`svelters:app/cx3`, with an uppercasing `on_write`) linked to a text field
+  without; a `drag-value bind:value|commit` takes a typed value when it is applied; a Rust store (`svelters:app/cx3`, with an uppercasing `on_write`) linked to a text field
   and a slider: typing reaches the store and its normalized value comes back, Rust writes reach the
   node, and `ReactiveStats` shows link writes with no store batch delivered to JS.
 - `packages/native-runtime/test/bind-observe.test.mjs`: `bind_commit`, `bind_link` (linked, refused,

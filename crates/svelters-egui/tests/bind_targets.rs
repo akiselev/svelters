@@ -74,6 +74,11 @@ fn commit_updates_state_on_enter_or_blur_only() {
     assert_eq!(label(&app, "Result:"), "Result: none");
     enter(&mut app);
     assert_eq!(label(&app, "Result:"), "Result: ok:X", "{:?}", app.errors());
+    // drag-value: a typed value is committed when it is applied (Enter)
+    assert_eq!(label(&app, "Amount:"), "Amount: 1");
+    type_into(&mut app, "amount", "42");
+    enter(&mut app);
+    assert_eq!(label(&app, "Amount:"), "Amount: 42");
     assert!(app.errors().is_empty(), "{:?}", app.errors());
 }
 

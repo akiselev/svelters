@@ -92,6 +92,8 @@ static DRAG_VALUE_SIGNALS: &[SignalDef] = &[
     signal("changed", &[("value", Ty::F64)], "The user changed it; carries the new value."),
     signal("drag-started", NONE, "A drag on it began."),
     signal("drag-stopped", NONE, "A drag on it ended."),
+    // CX3: `bind:value|commit` updates its source on this event (egui.json `bindings.value.commit`)
+    signal("commit", &[("value", Ty::F64)], "The user committed a value: a drag ended, or a change made otherwise (arrow keys, a typed value applied on Enter or blur); carries the value."),
 ];
 
 pub(super) const HYPERLINK: KindDef = KindDef {

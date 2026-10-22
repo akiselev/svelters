@@ -186,10 +186,13 @@ fn kind_json(k: &KindDef) -> J {
                     "sync_signals_on_set": [],
                     "value": {"arg": arg},
                 });
-            // CX3: `bind:<prop>|commit` updates its source on the kind's `commit` signal (arg: the one
-            // named like the prop, else 0), the same shape as the change event
-            if let Some(c) = k.signals.iter().find(|s| s.name == "commit") {
-                let arg = c.args.iter().position(|(n, _)| *n == p.name).unwrap_or(0);
+            // CX3: `bind:<prop>|commit` updates its source on the kind's `commit` signal when it has
+            // the change event's shape (the coordinator's seam: the committed value where the change
+            // event carries the live one). A `commit` of another shape (a table's cell edit) is not
+            // a commit of this prop.
+            if let (Some(c), Some(s)) = (k.signals.iter().find(|s| s.name == "commit"), sig)
+                && c.args == s.args
+            {
                 b["commit"] = json!({"event": "commit", "arg": arg});
             }
             (p.name.to_string(), b)

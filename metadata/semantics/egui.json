@@ -1265,6 +1265,10 @@
       "abstract": false,
       "bindings": {
         "value": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
           "compare_before_set": true,
           "direction": "two_way",
           "echo": "none",
@@ -1432,6 +1436,22 @@
           "handler_result": "none",
           "js_event": "changed",
           "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user committed a value: a drag ended, or a change made otherwise (arrow keys, a typed value applied on Enter or blur); carries the value.",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
           "phases": [],
           "sync": false,
           "sync_required": false

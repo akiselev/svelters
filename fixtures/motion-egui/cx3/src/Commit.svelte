@@ -6,6 +6,7 @@
   let commits = $state(0);
   let title = $state('T');
   let result = $state('none');
+  let amount = $state(1);
 </script>
 
 <window title="Commit" default-width={400} default-height={300}>
@@ -17,5 +18,7 @@
       <button default onclicked={() => (result = 'ok:' + title)}>OK</button>
     </box>
     <label>Result: {result}</label>
+    <drag-value bind:value|commit={amount} accessible-name="amount" />
+    <label>Amount: {amount}</label>
   </box>
 </window>
