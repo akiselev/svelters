@@ -1,0 +1,218 @@
+//! The built-in kind table [`KINDS`] (its order is the kind ids: index + 1), with the tables of the
+//! `Widget` base and the leaves. The `window` and `box` tables are in `containers.rs`.
+//!
+//! The spec still names `crates/svelters-egui/src/kinds.rs` as its provenance: `egui.json` stays
+//! byte-identical across EG0 (`spec.rs`).
+
+use super::containers::{BOX_PROPS, WINDOW_METHODS, WINDOW_PROPS, WINDOW_SIGNALS};
+use super::{Def, KindDef, MethodDef, P, PropDef, SignalDef, Ty, input, layout, length, prop, signal};
+
+pub const ALIGN: &[&str] = &["start", "end", "center", "stretch", "baseline"];
+pub const ALIGN_SELF: &[&str] = &["auto", "start", "end", "center", "stretch", "baseline"];
+pub const JUSTIFY: &[&str] = &["start", "end", "center", "space-between", "space-around", "space-evenly"];
+pub const DIRECTION: &[&str] = &["column", "row", "column-reverse", "row-reverse"];
+pub const WRAP: &[&str] = &["nowrap", "wrap", "wrap-reverse"];
+pub const WRAP_MODE: &[&str] = &["wrap", "truncate", "extend"];
+
+static WIDGET_PROPS: &[PropDef] = &[
+    prop("enabled", P::Enabled, Ty::Bool, Def::Bool(true), "Takes input when true; drawn greyed out otherwise (`Ui::add_enabled`)."),
+    layout("visible", P::Visible, Ty::Bool, Def::Bool(true), "Shown and laid out when true (`display: none` otherwise)."),
+    prop("tooltip", P::Tooltip, Ty::Str, Def::Str(""), "Hover text (`Response::on_hover_text`); empty for none."),
+    prop(
+        "accessible-name",
+        P::AccessibleName,
+        Ty::Str,
+        Def::Str(""),
+        "AccessKit name (`Response::accessible_name`); inputs default to their hint or text.",
+    ),
+    length("width", P::Width, "Width in points; null for auto."),
+    length("height", P::Height, "Height in points; null for auto."),
+    length("min-width", P::MinWidth, "Minimum width in points; null for auto."),
+    length("min-height", P::MinHeight, "Minimum height in points; null for auto."),
+    length("max-width", P::MaxWidth, "Maximum width in points; null for none."),
+    length("max-height", P::MaxHeight, "Maximum height in points; null for none."),
+    layout("flex-grow", P::FlexGrow, Ty::F64, Def::F64(0.0), "Share of the parent's free main-axis space."),
+    layout("flex-shrink", P::FlexShrink, Ty::F64, Def::F64(1.0), "Share of the parent's main-axis overflow to give up."),
+    length("flex-basis", P::FlexBasis, "Main-axis size before growing or shrinking; null for auto."),
+    layout("align-self", P::AlignSelf, Ty::Enum(ALIGN_SELF), Def::Str("auto"), "Cross-axis alignment in the parent box, overriding its `align-items`."),
+    layout("margin", P::Margin, Ty::F64, Def::F64(0.0), "Outer spacing on all four sides, in points."),
+];
+
+static LABEL_PROPS: &[PropDef] = &[
+    prop("text", P::Text, Ty::Str, Def::Str(""), "The text."),
+    prop("wrap-mode", P::WrapMode, Ty::Enum(WRAP_MODE), Def::Str("wrap"), "What a line longer than the width does (`egui::TextWrapMode`)."),
+    prop("selectable", P::Selectable, Ty::Bool, Def::Bool(false), "The text can be selected and copied."),
+];
+
+static BUTTON_PROPS: &[PropDef] = &[
+    prop("text", P::Text, Ty::Str, Def::Str(""), "The caption."),
+    prop("selected", P::Selected, Ty::Bool, Def::Bool(false), "Drawn as selected (a toggle look); clicking does not change it."),
+    prop("frame", P::Frame, Ty::Bool, Def::Bool(true), "Draws the button background and border."),
+    prop("small", P::Small, Ty::Bool, Def::Bool(false), "No vertical padding (`Button::small`)."),
+];
+
+static CHECKBOX_PROPS: &[PropDef] = &[
+    prop("text", P::Text, Ty::Str, Def::Str(""), "The caption."),
+    input("checked", P::Checked, Ty::Bool, Def::Bool(false), "Checked state; clicking toggles it."),
+];
+
+static TEXT_EDIT_PROPS: &[PropDef] = &[
+    input("text", P::Text, Ty::Str, Def::Str(""), "The edited text; typing changes it."),
+    prop("hint-text", P::HintText, Ty::Str, Def::Str(""), "Shown while the text is empty; also the default accessible name."),
+    prop("multiline", P::Multiline, Ty::Bool, Def::Bool(false), "Several lines (`TextEdit::multiline`); Enter inserts a newline."),
+    prop("password", P::Password, Ty::Bool, Def::Bool(false), "Hides the characters."),
+    prop("char-limit", P::CharLimit, Ty::I64, Def::I64(0), "Maximum number of characters; 0 for none."),
+];
+
+static SLIDER_PROPS: &[PropDef] = &[
+    input("value", P::Value, Ty::F64, Def::F64(0.0), "The value; dragging or the arrow keys change it."),
+    prop("min", P::Min, Ty::F64, Def::F64(0.0), "Lower bound."),
+    prop("max", P::Max, Ty::F64, Def::F64(100.0), "Upper bound."),
+    prop("step", P::Step, Ty::F64, Def::F64(0.0), "Value granularity; 0 for continuous."),
+    prop("text", P::Text, Ty::Str, Def::Str(""), "Caption after the slider."),
+    prop("show-value", P::ShowValue, Ty::Bool, Def::Bool(true), "Shows the value box next to the slider."),
+];
+
+pub(super) const NONE: &[(&str, Ty)] = &[];
+
+static CLICK_SIGNALS: &[SignalDef] = &[signal("clicked", NONE, "Pressed and released (`Response::clicked`).")];
+
+static BUTTON_SIGNALS: &[SignalDef] = &[
+    signal("clicked", NONE, "Pressed and released (`Response::clicked`)."),
+    signal("double-clicked", NONE, "Double click (`Response::double_clicked`)."),
+    signal("secondary-clicked", NONE, "Right click (`Response::secondary_clicked`)."),
+];
+
+static CHECKBOX_SIGNALS: &[SignalDef] = &[
+    signal("changed", &[("checked", Ty::Bool)], "The user toggled it; carries the new state."),
+    signal("clicked", NONE, "Pressed and released."),
+];
+
+static TEXT_EDIT_SIGNALS: &[SignalDef] = &[
+    signal("changed", &[("text", Ty::Str)], "The user edited the text; carries the new text (once per frame)."),
+    signal("gained-focus", NONE, "Took keyboard focus."),
+    signal("lost-focus", NONE, "Lost keyboard focus."),
+];
+
+static SLIDER_SIGNALS: &[SignalDef] = &[
+    signal("changed", &[("value", Ty::F64)], "The user moved it; carries the new value."),
+    signal("drag-started", NONE, "A drag on the slider began."),
+    signal("drag-stopped", NONE, "A drag on the slider ended."),
+];
+
+static TEXT_EDIT_METHODS: &[MethodDef] = &[MethodDef { name: "request-focus", doc: "Moves keyboard focus here on the next frame." }];
+
+pub static KINDS: &[KindDef] = &[
+    KindDef {
+        id: "Widget",
+        tag: None,
+        native: "egui::Widget",
+        base: None,
+        toplevel: false,
+        slot: None,
+        text_content: None,
+        present: None,
+        props: WIDGET_PROPS,
+        signals: &[],
+        methods: &[],
+        doc: "Common properties of everything placed in a window: state, tooltip, accessibility and its taffy item style.",
+    },
+    KindDef {
+        id: "Window",
+        tag: Some("window"),
+        native: "egui::ViewportBuilder",
+        base: None,
+        toplevel: true,
+        slot: Some("content"),
+        text_content: None,
+        present: Some("present"),
+        props: WINDOW_PROPS,
+        signals: WINDOW_SIGNALS,
+        methods: WINDOW_METHODS,
+        doc: "A native window (the root viewport, or an immediate viewport); its children are laid out as a flex column.",
+    },
+    KindDef {
+        id: "Box",
+        tag: Some("box"),
+        native: "taffy::Style (flexbox)",
+        base: Some("Widget"),
+        toplevel: false,
+        slot: Some("children"),
+        text_content: None,
+        present: None,
+        props: BOX_PROPS,
+        signals: &[],
+        methods: &[],
+        doc: "A flexbox container laid out by taffy; draws nothing itself.",
+    },
+    KindDef {
+        id: "Label",
+        tag: Some("label"),
+        native: "egui::Label",
+        base: Some("Widget"),
+        toplevel: false,
+        slot: None,
+        text_content: Some("text"),
+        present: None,
+        props: LABEL_PROPS,
+        signals: CLICK_SIGNALS,
+        methods: &[],
+        doc: "Static text.",
+    },
+    KindDef {
+        id: "Button",
+        tag: Some("button"),
+        native: "egui::Button",
+        base: Some("Widget"),
+        toplevel: false,
+        slot: None,
+        text_content: Some("text"),
+        present: None,
+        props: BUTTON_PROPS,
+        signals: BUTTON_SIGNALS,
+        methods: &[],
+        doc: "A push button.",
+    },
+    KindDef {
+        id: "Checkbox",
+        tag: Some("checkbox"),
+        native: "egui::Checkbox",
+        base: Some("Widget"),
+        toplevel: false,
+        slot: None,
+        text_content: Some("text"),
+        present: None,
+        props: CHECKBOX_PROPS,
+        signals: CHECKBOX_SIGNALS,
+        methods: &[],
+        doc: "A check box with a caption.",
+    },
+    KindDef {
+        id: "TextEdit",
+        tag: Some("text-edit"),
+        native: "egui::TextEdit",
+        base: Some("Widget"),
+        toplevel: false,
+        slot: None,
+        text_content: None,
+        present: None,
+        props: TEXT_EDIT_PROPS,
+        signals: TEXT_EDIT_SIGNALS,
+        methods: TEXT_EDIT_METHODS,
+        doc: "A single- or multi-line text field.",
+    },
+    KindDef {
+        id: "Slider",
+        tag: Some("slider"),
+        native: "egui::Slider",
+        base: Some("Widget"),
+        toplevel: false,
+        slot: None,
+        text_content: None,
+        present: None,
+        props: SLIDER_PROPS,
+        signals: SLIDER_SIGNALS,
+        methods: &[],
+        doc: "A horizontal slider with an optional value box.",
+    },
+];
