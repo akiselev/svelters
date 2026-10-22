@@ -4,7 +4,8 @@
 
 use crate::convert;
 use crate::core::{Core, Name, OpError, OpKind};
-use crate::engine::{ChangedProp, ErrorKind, JobStatus, JsEngine, JsError, ModuleProvider};
+use crate::engine::{ChangedProp, ErrorKind, HotOutcome, JobStatus, JsEngine, JsError, ModuleProvider};
+use std::collections::{HashMap, HashSet};
 use svelters_modules::ModuleCode;
 use rquickjs::function::Opt;
 use rquickjs::loader::{ImportAttributes, Loader, Resolver};
@@ -136,7 +137,15 @@ pub(crate) struct QjsEngine {
     callbacks: Rc<QjsCallbacks>,
     /// EM1: module namespaces of the entries loaded with `load_entry`.
     entries: Vec<rquickjs::Persistent<Object<'static>>>,
+    /// H1: the module versions the resolver hands out (`<id>?v=<n>`), the provider of the last
+    /// load and the swaps applied since.
+    versions: Versions,
+    provider: Option<Rc<dyn ModuleProvider>>,
+    swaps: u32,
 }
+
+/// The latest `?v=<n>` of each module that was swapped in place.
+type Versions = Rc<RefCell<HashMap<String, u32>>>;
 
 /// A plain object from `(key, value)` pairs (EM1 props and info patches).
 fn plain_object<'js>(ctx: &Ctx<'js>, core: &Rc<Core>, pairs: &[(String, AV)]) -> Res<Object<'js>> {
@@ -219,6 +228,9 @@ impl QjsEngine {
             core: core.clone(),
             callbacks,
             entries: Vec::new(),
+            versions: Versions::default(),
+            provider: None,
+            swaps: 0,
         })
     }
 
@@ -260,9 +272,19 @@ impl QjsEngine {
         let entry = provider.entry();
         let code = provider.load(&entry).map_err(|m| JsError::new(ErrorKind::Load, m))?;
         let core = Rc::downgrade(&self.core);
-        self.rt.set_loader(ProviderResolver(provider.clone()), ProviderLoader { provider, core: core.clone() });
+        let hot = provider.hmr();
+        self.versions.borrow_mut().clear();
+        self.swaps = 0;
+        self.provider = Some(provider.clone());
+        self.rt.set_loader(
+            ProviderResolver { provider: provider.clone(), versions: self.versions.clone() },
+            ProviderLoader { provider, core: core.clone(), hot },
+        );
         let res = self.call_guarded(|ctx| {
-            let (m, promise) = declare(ctx, &entry, code, &core)?.eval()?;
+            if hot {
+                ensure_hot(ctx)?;
+            }
+            let (m, promise) = declare(ctx, &entry, code, &core, hot)?.eval()?;
             if let Some(Err(e)) = promise.result::<Value>() {
                 return Err(e);
             }
@@ -286,6 +308,112 @@ impl QjsEngine {
 }
 
 impl JsEngine for QjsEngine {
+    fn hot_update(&mut self, provider: Rc<dyn ModuleProvider>, changed: &[String]) -> Result<HotOutcome, JsError> {
+        if !provider.hmr() {
+            return Ok(HotOutcome::Reload("the app is not compiled for HMR".into()));
+        }
+        let cfg = &self.core.cfg;
+        if cfg.hmr_max_swaps > 0 && self.swaps >= cfg.hmr_max_swaps {
+            return Ok(HotOutcome::Reload(format!("swap budget: {} in-place updates since the last full load", self.swaps)));
+        }
+        let usage = self.rt.memory_usage();
+        if cfg.memory_limit > 0 && usage.malloc_size as f64 > cfg.memory_limit as f64 * cfg.hmr_memory_fraction as f64 {
+            return Ok(HotOutcome::Reload(format!("memory budget: heap at {} KiB", usage.malloc_size / 1024)));
+        }
+        // Boundaries: walk up from each changed module through the importers to the first
+        // self-accepting module. `redo` are the modules to re-evaluate, `boundaries` the accepting
+        // ones among them (their accept callbacks run).
+        let accepts = |id: &str| -> Result<bool, JsError> {
+            self.call_guarded(|ctx| {
+                let hot: Object = ctx.globals().get("__svelters_hot")?;
+                let f: Function = hot.get("accepts")?;
+                f.call((id,))
+            })
+        };
+        let mut redo: Vec<String> = Vec::new();
+        let mut boundaries: Vec<String> = Vec::new();
+        let mut seen: HashSet<String> = HashSet::new();
+        let mut queue: Vec<String> = changed.to_vec();
+        while let Some(m) = queue.pop() {
+            if !seen.insert(m.clone()) {
+                continue;
+            }
+            redo.push(m.clone());
+            if accepts(&m)? {
+                boundaries.push(m);
+                continue;
+            }
+            let importers = provider.importers(&m);
+            if importers.is_empty() {
+                return Ok(HotOutcome::Reload(format!("{m} is not accepted by it or by any importer")));
+            }
+            queue.extend(importers);
+        }
+        // New versions: the resolver now hands out `<id>?v=<n>` for every re-evaluated module, so
+        // the boundaries' imports reach the new code. A failure restores the previous versions.
+        let saved = self.versions.borrow().clone();
+        {
+            let mut v = self.versions.borrow_mut();
+            for id in &redo {
+                *v.entry(id.clone()).or_insert(0) += 1;
+            }
+        }
+        let core = Rc::downgrade(&self.core);
+        let versions = self.versions.clone();
+        let res = (|| -> Result<Option<String>, JsError> {
+            let mut loaded = Vec::new();
+            for id in &boundaries {
+                let name = versioned(id, &versions);
+                let code = provider.load(id).map_err(|m| JsError::new(ErrorKind::Load, m))?;
+                let ns = self.call_guarded(|ctx| {
+                    let (m, promise) = declare(ctx, &name, code, &core, true)?.eval()?;
+                    if let Some(Err(e)) = promise.result::<Value>() {
+                        return Err(e);
+                    }
+                    Ok(rquickjs::Persistent::save(ctx, m.namespace()?))
+                })?;
+                loaded.push((id.clone(), ns));
+            }
+            for (id, ns) in &loaded {
+                let reason: Option<String> = self.call_guarded(|ctx| {
+                    let hot: Object = ctx.globals().get("__svelters_hot")?;
+                    let f: Function = hot.get("check")?;
+                    f.call((id.as_str(), ns.clone().restore(ctx)?))
+                })?;
+                if reason.is_some() {
+                    return Ok(reason);
+                }
+            }
+            for (id, ns) in loaded {
+                let reason: Option<String> = self.call_guarded(|ctx| {
+                    let hot: Object = ctx.globals().get("__svelters_hot")?;
+                    let f: Function = hot.get("update")?;
+                    f.call((id.as_str(), ns.restore(ctx)?))
+                })?;
+                if reason.is_some() {
+                    return Ok(reason);
+                }
+            }
+            Ok(None)
+        })();
+        match res {
+            Ok(None) => {
+                self.swaps += 1;
+                self.async_errors.borrow_mut().clear();
+                Ok(HotOutcome::Applied { modules: redo })
+            }
+            Ok(Some(reason)) => Ok(HotOutcome::Reload(reason)),
+            Err(mut e) => {
+                *self.versions.borrow_mut() = saved;
+                self.async_errors.borrow_mut().clear();
+                if e.kind == ErrorKind::Exception {
+                    e.kind = ErrorKind::Load;
+                }
+                Err(e)
+            }
+        }
+    }
+
     fn load_module(&mut self, provider: Rc<dyn ModuleProvider>) -> Result<(), JsError> {
         self.eval_entry(provider).map(|_| ())
     }
@@ -1152,11 +1280,28 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
 // ---- module loading ----
 
 /// The QuickJS side of a [`ModuleProvider`]: resolution.
-struct ProviderResolver(Rc<dyn ModuleProvider>);
+struct ProviderResolver {
+    provider: Rc<dyn ModuleProvider>,
+    versions: Versions,
+}
+
+/// A module's id without the `?v=<n>` of an in-place update.
+fn unversioned(name: &str) -> &str {
+    name.split_once("?v=").map_or(name, |(id, _)| id)
+}
+
+/// `id` as the engine knows it now: `id?v=<n>` once it was swapped in place.
+fn versioned(id: &str, versions: &Versions) -> String {
+    match versions.borrow().get(id) {
+        Some(n) => format!("{id}?v={n}"),
+        None => id.to_string(),
+    }
+}
 
 impl Resolver for ProviderResolver {
     fn resolve<'js>(&mut self, _ctx: &Ctx<'js>, base: &str, name: &str, _attrs: Option<ImportAttributes<'js>>) -> Res<String> {
-        self.0.resolve(base, name).map_err(|m| rquickjs::Error::new_resolving_message(base, name, m))
+        let id = self.provider.resolve(unversioned(base), name).map_err(|m| rquickjs::Error::new_resolving_message(base, name, m))?;
+        Ok(versioned(&id, &self.versions))
     }
 }
 
@@ -1164,19 +1309,42 @@ impl Resolver for ProviderResolver {
 struct ProviderLoader {
     provider: Rc<dyn ModuleProvider>,
     core: Weak<Core>,
+    /// Modules get `import.meta.hot` (the provider compiles for HMR).
+    hot: bool,
 }
 
 impl Loader for ProviderLoader {
     fn load<'js>(&mut self, ctx: &Ctx<'js>, name: &str, _attrs: Option<ImportAttributes<'js>>) -> Res<Module<'js, Declared>> {
-        let code = self.provider.load(name).map_err(|m| rquickjs::Error::new_loading_message(name, m))?;
-        declare(ctx, name, code, &self.core)
+        let code = self.provider.load(unversioned(name)).map_err(|m| rquickjs::Error::new_loading_message(name, m))?;
+        declare(ctx, name, code, &self.core, self.hot)
     }
 }
 
 /// The engine tag of [`ModuleCode::Cached`] bytecode this engine reads.
 const BYTECODE_TAG: &str = "quickjs-ng";
 
-fn declare<'js>(ctx: &Ctx<'js>, name: &str, code: ModuleCode, core: &Weak<Core>) -> Res<Module<'js, Declared>> {
+/// The JS side of `import.meta.hot` (hot.js).
+const HOT_JS: &str = include_str!("hot.js");
+
+fn ensure_hot(ctx: &Ctx<'_>) -> Res<()> {
+    if ctx.globals().get::<_, Value>("__svelters_hot")?.is_undefined() {
+        ctx.eval::<(), _>(HOT_JS)?;
+    }
+    Ok(())
+}
+
+fn declare<'js>(ctx: &Ctx<'js>, name: &str, code: ModuleCode, core: &Weak<Core>, hot: bool) -> Res<Module<'js, Declared>> {
+    let m = declare_code(ctx, name, code, core)?;
+    if hot {
+        // `import.meta.hot` of module `<id>[?v=n]` is the context of `<id>`
+        let hot_obj: Object = ctx.globals().get("__svelters_hot")?;
+        let make: Function = hot_obj.get("ctx")?;
+        m.meta()?.set("hot", make.call::<_, Value>((unversioned(name),))?)?;
+    }
+    Ok(m)
+}
+
+fn declare_code<'js>(ctx: &Ctx<'js>, name: &str, code: ModuleCode, core: &Weak<Core>) -> Res<Module<'js, Declared>> {
     match code {
         ModuleCode::Source { js, map } => {
             if let (Some(map), Some(core)) = (map, core.upgrade()) {

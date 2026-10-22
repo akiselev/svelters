@@ -48,6 +48,8 @@ impl Kind {
 pub(crate) struct Compiler {
     pub(crate) sem: SpecBackend,
     pub(crate) dev: bool,
+    /// Components get the `--hmr` wrapper (needs `dev`).
+    pub(crate) hmr: bool,
 }
 
 /// A transformed module: its code, map and warnings, or the error that stops the load.
@@ -67,6 +69,7 @@ impl Compiler {
             Kind::Component => {
                 let mut opts = CompileOptions::new(filename, &self.sem);
                 opts.dev = self.dev;
+                opts.hmr = self.hmr;
                 Some(compile(src, &opts))
             }
             Kind::RunesModule => Some(compile_module(src, &ModuleOptions { filename, dev: self.dev })),
@@ -150,7 +153,7 @@ mod tests {
 
     #[test]
     fn json_and_assets() {
-        let c = Compiler { sem: SpecBackend::builtin("gtk").unwrap(), dev: false };
+        let c = Compiler { sem: SpecBackend::builtin("gtk").unwrap(), dev: false, hmr: false };
         let out = c.transform(Path::new("/a/d.json"), "{\"n\": 1}\n".into()).unwrap();
         assert_eq!(out.js, "export default {\"n\": 1};\n");
         assert!(c.transform(Path::new("/a/d.json"), "{n: 1}".into()).unwrap_err().contains("invalid JSON"));

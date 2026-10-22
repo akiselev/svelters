@@ -239,6 +239,18 @@ impl ModuleProvider for ComposedProvider {
         self.inner.invalidate(changed)
     }
 
+    fn hmr(&self) -> bool {
+        self.inner.hmr()
+    }
+
+    fn modules_at(&self, changed: &[PathBuf]) -> Vec<ModuleId> {
+        self.inner.modules_at(changed)
+    }
+
+    fn importers(&self, id: &str) -> Vec<ModuleId> {
+        self.inner.importers(id)
+    }
+
     fn take_warnings(&self) -> Vec<String> {
         self.inner.take_warnings()
     }

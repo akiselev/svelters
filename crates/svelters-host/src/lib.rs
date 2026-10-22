@@ -35,6 +35,7 @@ pub use crate::core::{ConsoleLine, HostConfig, OffloadStats, ReactiveStats, Timi
 pub use crate::engine::{
     BufferStats, ChangedProp, ErrorKind, HostBusy, JobStatus, JsEngine, JsError, OpOutcome, OpSettle, RootMessage,
 };
+pub use crate::engine::HotOutcome;
 pub use crate::reload::ReloadReport;
 /// Q1: the module loader (providers; `SourceProvider` with its `source` feature).
 pub use svelters_modules as modules;
@@ -50,7 +51,7 @@ use crate::core::Core;
 use crate::reload::{MakeEngine, Reloader};
 use std::cell::{Cell, RefCell};
 use std::marker::PhantomData;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
@@ -298,6 +299,19 @@ impl<'a> Host<'a> {
     /// called from another thread, and a running loop (`run`) to deliver the reload.
     pub fn watch(&self) -> Result<(), JsError> {
         self.reloader.start_watch(self.core.backend().wake_handle())
+    }
+
+    /// Applies edits to source files now, as the watcher would after its debounce: swaps the
+    /// changed modules in place when the app accepts them, else (and when nothing accepts) reloads
+    /// the whole app. For embedders and editors that know which files they saved (H1). `None`
+    /// when JS is running, no app is loaded or the files do not affect it. An embedder's entries
+    /// do not survive the full-reload fallback; its apps must accept their changes.
+    pub fn apply_changes(&self, changed: Vec<PathBuf>) -> Option<ReloadReport> {
+        if self.core.js_running() {
+            return None;
+        }
+        self.reloader.note_changed(changed);
+        self.reloader.reload(&self.core, &self.engine)
     }
 
     /// Reloads at the next checkpoint, as if the watcher had fired (also wakes the backend).
@@ -581,6 +595,8 @@ impl<'a> Host<'a> {
     pub fn load_entry_from(&self, provider: Rc<dyn ModuleProvider>) -> Result<u32, JsError> {
         self.ensure_attached();
         let provider = self.compose_modules(provider)?;
+        self.reloader.set_provider(provider.clone());
+        self.reloader.set_embedded();
         core::load_entry(&self.core, &self.engine, &provider).map_err(|e| self.core.map_error(e))
     }
 
