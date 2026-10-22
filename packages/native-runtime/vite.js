@@ -137,6 +137,10 @@ export function nativeConfig(root, { entry = 'main.js', outDir = 'dist', plugins
         // app binary dumped into <root>/.svelters/app (svelters::exports::dump); the QuickJS host also
         // serves the same module itself when a bundle leaves the import external
         { find: /^svelters:app\/([a-z0-9_-]+)$/, replacement: path.join(path.resolve(root), '.svelters/app/$1.js') },
+        // EV2b: the app's native behaviours (`#[svelters::behavior]`): `import { pick } from
+        // 'svelters:behaviors/cad'` gets the module of Svelte actions the app binary dumped
+        // (svelters_egui::dump: .svelters/app/behaviors/<ns>.js)
+        { find: /^svelters:behaviors\/([a-z0-9_-]+)$/, replacement: path.join(path.resolve(root), '.svelters/app/behaviors/$1.js') },
       ],
       dedupe: ['svelte'],
     },
