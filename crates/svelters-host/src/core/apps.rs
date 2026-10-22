@@ -279,6 +279,32 @@ impl Core {
         Ok(())
     }
 
+    /// CX3: whether prop `p` of app object `h` is a writable store field (a link target).
+    pub(crate) fn app_store_field_writable(&self, h: svl_handle, p: svl_id) -> bool {
+        let Some(kind) = self.apps.kind(h) else { return false };
+        let Some(store) = schema().class(kind).and_then(|c| c.store.as_ref()) else { return false };
+        store.field_of_prop(p).is_some() && schema().member(NameKind::Prop, kind, p).is_some_and(|m| m.setter.is_some())
+    }
+
+    /// CX3: a native link writes store field `p` of `h` from Rust (no JS): the generated setter
+    /// (`on_write` included), then R1's read-back, so the echo is dropped and a normalized value is
+    /// delivered (and linked back) once.
+    pub(crate) fn app_set_value(&self, h: svl_handle, p: svl_id, value: Value) -> Result<(), OpError> {
+        let kind = self.app_live(h)?;
+        let m = self.app_resolve(NameKind::Prop, kind, Name::Id(p))?;
+        let Some((set, recv)) = m.setter else {
+            return Err(type_err(format!("{}.{}: property is read-only", self.app_kind_name(kind), m.name)));
+        };
+        self.note_op(|| format!("link set {} {}.{} {}", tag(h), self.app_kind_name(kind), m.name, svelters_backend_log::json_string(&value)));
+        let observed = self.st.borrow().observed.contains_key(&(h, p));
+        let written = observed.then(|| value.clone());
+        self.app_invoke(Some(h), kind, set, recv, vec![value])?;
+        if observed {
+            self.after_set(h, p, written);
+        }
+        Ok(())
+    }
+
     /// `host.destroy(h)` (`dispose()`, or a collected wrapper): drops our reference. Idempotent.
     /// Not logged: a release by the garbage collector is not deterministic.
     pub(crate) fn app_destroy(&self, h: svl_handle) {

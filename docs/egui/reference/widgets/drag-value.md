@@ -47,6 +47,7 @@ Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessib
 | Attribute | Handler | When |
 |---|---|---|
 | `onchanged` | `(value: number) => void` | The user changed it; carries the new value. |
+| `oncommit` | `(value: number) => void` | The user committed a value: a drag ended, or a change made otherwise (arrow keys, a typed value applied on Enter or blur); carries the value. |
 | `ondrag-started` | `() => void` | A drag on it began. |
 | `ondrag-stopped` | `() => void` | A drag on it ended. |
 

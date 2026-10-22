@@ -55,6 +55,8 @@ pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
     }
     // the props the widget changed and the `changed` arguments, announced after the borrow
     let mut pending: Option<(Vec<P>, Vec<Value>)> = None;
+    // CX3: a drag-value's committed value (`commit`)
+    let mut commit: Option<f64> = None;
     let resp = match arena.w_mut(i) {
         W::Hyperlink { text, url, new_tab } => {
             let shown = if text.is_empty() { url.clone() } else { text.clone() };
@@ -143,12 +145,24 @@ pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
                 *value = v;
                 pending = Some((vec![P::Value], vec![Value::F64(v)]));
             }
+            // CX3 (minimal, until OW4's own widget): a drag commits when it ends; a change made
+            // otherwise (arrow keys, a typed value applied on Enter or blur) commits at once
+            if r.drag_stopped() || (v != before && !r.dragged()) {
+                commit = Some(v);
+            }
             r
         }
         _ => unreachable!("not an input kind"),
     };
     if let Some((keys, args)) = pending {
         changed(arena, i, &keys, args, out);
+    }
+    if let Some(v) = commit {
+        let s = crate::kinds::signal_id(arena.core[i].kind as usize, "commit");
+        if arena.listens(i, s) {
+            let h = arena.slots.id_at(i).expect("live leaf").to_raw();
+            out.push(Out::Event(h, s, vec![Value::F64(v)]));
+        }
     }
     Painted { resp }
 }
