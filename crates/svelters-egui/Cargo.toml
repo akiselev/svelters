@@ -56,6 +56,15 @@ resvg = { version = "=0.45.1", default-features = false }
 # WG2b: `image` decodes PNG (the version arboard locks).
 image = { version = "0.25", default-features = false, features = ["png"] }
 
+# CB1: egui's text fields copy, cut and paste through egui-winit's clipboard, which is the OS clipboard
+# (arboard) only with egui-winit's `clipboard` feature. eframe turns it on through its default
+# `clipboard` feature, which svelters-egui and its embedders (cadatomic: eframe and svelters-egui
+# without default features) leave off, so Cmd/Ctrl+C/V in a field used an in-process string. This
+# dependency turns the feature on for every app that links svelters-egui (features unify), so
+# `text-edit`, `svelters:clipboard` (DX2) and other apps see one clipboard.
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+egui-winit = { version = "=0.37.0", default-features = false, features = ["clipboard"] }
+
 [target.'cfg(target_os = "linux")'.dependencies]
 # W5: the system primary selection (`primary::use_system`), the arboard egui-winit already locks.
 arboard = { version = "3.7", default-features = false, features = ["wayland-data-control"] }
