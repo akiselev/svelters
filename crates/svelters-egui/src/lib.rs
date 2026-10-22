@@ -30,6 +30,7 @@ mod events;
 mod frame;
 mod ids;
 mod leaf;
+pub mod numeric;
 mod ops;
 mod walk;
 mod windows;

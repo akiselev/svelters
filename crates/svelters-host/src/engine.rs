@@ -212,6 +212,12 @@ pub trait JsEngine {
     /// native object behind `handle` died (`reason` is a `gone_name`).
     fn dispatch_gone(&mut self, handle: u64, reason: &str) -> Result<(), JsError>;
 
+    /// IN1: the host's locale changed to `tag` (`Host::set_locale`); JS updates its default
+    /// locale and runs the `__svelters_intl` subscribers.
+    fn locale_changed(&mut self, _tag: &str) -> Result<(), JsError> {
+        Ok(())
+    }
+
     /// ABI v2.6: calls `globalThis.__svelters_changed([h, prop, value, h, prop, value, ...])` once
     /// with the whole batch, if the runtime installed it (REACTIVITY.md §5.2). `value` is
     /// `undefined` for a proportional property.

@@ -23,9 +23,18 @@ rayon = "1.12"
 # E1: `#[js(tokio)] async fn` exports (feature `tokio`).
 tokio = { version = "1.47", optional = true, default-features = false, features = ["rt", "rt-multi-thread"] }
 
+# IN1: `Intl` over ICU4X (feature `intl`).
+svelters-intl = { workspace = true, optional = true }
+
 [dev-dependencies]
 # Q1 tests load apps from source.
 svelters-modules = { workspace = true, features = ["source"] }
 
 [features]
+default = ["intl"]
 tokio = ["dep:tokio"]
+# IN1: `Intl` (NumberFormat, PluralRules, Collator, DateTimeFormat), `toLocaleString`/`localeCompare`
+# and `Host::set_locale`, over ICU4X data for a locale subset (svelters-intl). On by default: stock
+# Svelte code and libraries call `toLocaleString`, and cadatomic needs it; the size cost is in
+# plans/milestones/IN1-intl.md.
+intl = ["dep:svelters-intl"]

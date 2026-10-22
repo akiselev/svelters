@@ -71,7 +71,8 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             }
             // 4 points of slack: the value box can come out slightly wider than interact_size.x.
             ui.spacing_mut().slider_width = (size.x - extra - 4.0).max(sp.interact_size.x);
-            let mut s = egui::Slider::new(value, *min..=*max).show_value(*show_value);
+            // IN1: the value box shows and reads numbers in the host's locale
+            let mut s = crate::numeric::slider(egui::Slider::new(value, *min..=*max).show_value(*show_value));
             if *step > 0.0 {
                 s = s.step_by(*step);
             }

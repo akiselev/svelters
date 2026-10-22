@@ -22,6 +22,8 @@ use svelters_abi::{NameKind, Value as AV};
 
 mod buffers;
 mod conv;
+#[cfg(feature = "intl")]
+mod intl;
 use conv::QjsConv;
 
 /// Runtimes leaked on this thread because Rust still held one of their transferred buffers (E2).
@@ -341,6 +343,11 @@ impl JsEngine for QjsEngine {
             let frame: Function = internal.get("frame")?;
             frame.call::<_, ()>(())
         })
+    }
+
+    #[cfg(feature = "intl")]
+    fn locale_changed(&mut self, tag: &str) -> Result<(), JsError> {
+        self.call_guarded(|ctx| intl::changed(ctx, tag))
     }
 
     fn dispatch_gone(&mut self, handle: u64, reason: &str) -> Result<(), JsError> {
@@ -1137,7 +1144,11 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
     globals.set("__svelters_host", host)?;
 
     let prelude: Function = ctx.eval(PRELUDE)?;
-    prelude.call::<_, ()>((native, globals))
+    prelude.call::<_, ()>((native, globals))?;
+    // IN1: `Intl` and the locale-sensitive built-ins over svelters-intl.
+    #[cfg(feature = "intl")]
+    intl::install(ctx)?;
+    Ok(())
 }
 
 // ---- module loading ----
