@@ -23,7 +23,7 @@ needs no scene node. A paint-only seam covers chrome that keeps its own interact
 | Same paint | Each OW1a kind's paint (and measure) moved, unchanged, into a function the kind and `imm` both call: `widgets::{button,checkbox,switch,toggle_button,label,separator}::paint` (+ `measure`, `Look`). Kinds without `PAINTS_BOX` (checkbox, switch, label, separator) also get the CSS host box the walk paints behind them (`Ran::host_box`, as `style::before_leaf`). |
 | EV3 without a node | `focus::record_foreign`. An `imm` widget is in egui's Tab order in paint order with the scene's widgets, outside every focus scope (`Entry.node` is now `Option<NodeId>`). While it has focus, the keys its role claims (Space, Enter) leave the pass's input (R11), and `EguiBackend::shortcut_override` answers for it. |
 | AccessKit | `widget_info` as the kind, then the kind's role and the units' `a11y` (toggled, Click, Focus), `accessible_name` (EM1). |
-| `imm::chrome` (paint-only seam) | `chrome::state(ui, &resp, props)` runs Hoverable, Pressable and (when the sense is focusable) Focusable on **the caller's own response** (any sense, such as berth's draggable tab). `sv.chrome(ui, &resp, &el, ua, props)` returns the `Styled` in that state. `chrome::surface` / `label` / `ring` paint box, text and focus ring through the primitives, traced under the caller's id. |
+| `imm::chrome` (paint-only seam, berth BD7) | `chrome::state(ui, &resp, props)` runs Hoverable, Pressable and (when the sense is focusable) Focusable as observers (`interact::observe`, new: nothing is applied to egui) on **the caller's own response**. `props` carry the caller's bits, `DISABLED` included (a disabled control on an enabled `Ui`). `sv.chrome(ui, &resp, &el, ua, props)` returns the `Styled` in that state. `chrome::surface` / `ring` / `icon` / `label` / `galley` paint through the primitives, traced under the caller's id, and `chrome::text_color` / `font` serve the caller's own text layout. `chrome::BUTTON_UA` is the push button's table. |
 
 Shared code changed (pure moves, no behaviour change; the OW1a, own_widgets and focus_keys tests
 pass unchanged): `widgets/{button,checkbox,switch,toggle_button,label,separator}.rs` (paint and
@@ -100,55 +100,62 @@ two PaintTraces relative to their rects:
 - `owrust_focus_tab_order_focus_visible_and_key_claims`: Tab goes from the scene button to the
   `imm` one, the ring paint is equal, Space activates and is claimed (`shortcut_override`), a click
   focuses without a ring
-- `owrust_chrome_paints_a_foreign_element_on_the_callers_response`: a berth-like draggable tab on
-  its own response, `tab:selected` / `tab:selected:hover` from author CSS
+- `owrust_chrome_hover_press_and_focus_from_the_callers_response`,
+  `owrust_chrome_disabled_on_an_enabled_ui`, `owrust_chrome_galley_in_the_style_colour_and_font`:
+  berth's BD7 cases (§4), on a berth-like painter that makes its own responses
 
 Run locally (filtered): `--test imm --test ow1a --test own_widgets --test focus_keys`, 49 tests,
 all passing on the final code.
 
-## 4. The cadatomic seam (proposal; the coordinator settles it with main-cadatomic)
+## 4. The cadatomic seam (berth BD7, approved by main-cadatomic)
 
-berth stays free of svelters (cadatomic decision O9). The seam therefore has a berth half (an
-egui-only trait, berth's package, API reviewed by main-cadatomic) and a cadatomic half (an
-implementation of that trait on `svelters_egui::imm`).
+berth stays free of svelters (cadatomic decision O9). The seam therefore has two halves: berth's
+egui-only `ChromePainter` trait (berth BD7, `docs/BD7-chrome-painter.md`, approved in cadatomic
+register 5f17ecd) and cadatomic's implementation of it on `svelters_egui::imm`. This lane's first
+proposal (a `button` method that owned its interaction, `tab() -> Rect`, `metrics(&Ui)`, pinned tabs,
+seven methods) was superseded by BD7's shape. BD7 §5 lists every difference.
 
-**svelters side (this lane, on master after merge).** cadatomic needs nothing more than §1:
-- plain controls inside the chrome (tab close, strip scroll arrows, pin, float, maximize, overflow):
-  `imm::Button::new("").icon("codicons:close").class("tab-close").accessible_name("Close")
-  .frame(false).id(id).show_at(ui, rect, &sv)`. These are full widgets: units, focus, AccessKit, R-rules;
-- surfaces berth interacts with itself (tabs, which drag; strips; title bands; sashes; drop
-  previews): `let st = sv.chrome(ui, &resp, &El::new("tab").class("dirty"), Ua::NONE,
-  StateBits::SELECTED)`, then `imm::chrome::surface` / `label` / `ring`. The look comes from
-  cadatomic's theme CSS (`tab`, `tab:selected`, `tab-strip`, `title-band`, …) until OW5's `tab` kind
-  brings UA tables (R13). Then the same calls take `widgets::tab::UA`.
-
-**berth side (proposed shape for berth's `ChromePainter`, for main-cadatomic to review).** Every
-method gets the `Ui`, the rect berth laid out and the response berth made. The painter only paints,
-except `button`, which owns its interaction:
+**berth's trait (BD7).** It is paint only. berth makes every `Response` (ids, senses, input,
+cursors, focus, the whole AccessKit tree, DockText labels), including those of its own buttons: tab
+close, scroll arrows, group close and float, region pin and collapse, float dock and close, window
+maximize and close. Methods take `&Ui` or `&Painter`, return nothing and are all defaulted (an empty
+impl is `EguiChrome`). Containers are called twice (`Stage::Under`, `Stage::Over`):
 
 ```rust
-pub trait ChromePainter {
-    /// Sizes berth lays out with (tab height, paddings, strip and title-band heights, sash hit width).
-    fn metrics(&self, ui: &egui::Ui) -> ChromeMetrics;
-    fn strip(&mut self, ui: &mut egui::Ui, rect: egui::Rect, s: &StripInfo);           // focused group, overflow
-    fn tab(&mut self, ui: &mut egui::Ui, resp: &egui::Response, rect: egui::Rect, t: &TabInfo) -> egui::Rect; // returns the content rect (title)
-    fn button(&mut self, ui: &mut egui::Ui, id: egui::Id, rect: egui::Rect, b: ChromeButton, enabled: bool) -> egui::Response; // Close, ScrollLeft/Right, Pin/Unpin, Float/Dock, Maximize/Restore, Collapse
-    fn title_band(&mut self, ui: &mut egui::Ui, resp: &egui::Response, rect: egui::Rect, title: &str, active: bool);
-    fn sash(&mut self, ui: &mut egui::Ui, resp: &egui::Response, rect: egui::Rect, vertical: bool);
-    fn drop_preview(&mut self, painter: &egui::Painter, rect: egui::Rect, kind: DropKind);
-}
-// TabInfo { title, active, focused_group, dirty, pinned, closable, dragging }
+fn metrics(&self, ctx: &Context, style: &DockStyle) -> ChromeMetrics;   // no Ui; cached per frame
+fn frame(&mut self, ui: &Ui, rect: Rect, f: &FrameInfo);
+fn group(&mut self, ui: &Ui, rect: Rect, g: &GroupInfo);
+fn strip(&mut self, ui: &Ui, resp: &Response, rect: Rect, s: &StripInfo);
+fn tab(&mut self, ui: &Ui, resp: &Response, t: &TabInfo);            // label: berth's Galley in tab_font, label_pos, visible, icon_rect, closable, dirty
+fn button(&mut self, ui: &Ui, resp: &Response, b: &ButtonInfo);      // ButtonKind, place, enabled
+fn title_band(&mut self, ui: &Ui, resp: Option<&Response>, rect: Rect, t: &TitleBandInfo);
+fn stripe(&mut self, ui: &Ui, rect: Rect, s: &StripeInfo);
+fn stripe_button(&mut self, ui: &Ui, resp: &Response, b: &StripeButtonInfo);
+fn sash(&mut self, ui: &Ui, resp: &Response, rect: Rect, s: &SashInfo);
+fn drop_preview(&mut self, painter: &Painter, rect: Rect, d: &DropPreviewInfo);
+fn drag_ghost(&mut self, painter: &Painter, pointer: Pos2, g: &GhostInfo);
+fn carry_badge(&mut self, ui: &Ui, resp: &Response, b: &BadgeInfo);
 ```
 
-berth's default painter keeps today's egui-only drawing (`draw.rs`: `colors()`, `icon()`).
-cadatomic's painter maps `TabInfo` to classes and bits: `active` → `SELECTED`, `focused_group` →
-`.focused` on the strip, `dirty`/`pinned` → classes, `dragging` → `DRAGGING`. It calls `imm` as
-above. `ChromeMetrics` comes from the same CSS (`Sv::computed` → `padding`, `height`), so berth's
-layout and the paint agree.
+There are no pinned tabs.
 
-Proposed for STATUS.md's "Requests from cadatomic" (svelters' side): **OW-RUST seam: svelters
-ready (`svelters_egui::imm`, `imm::chrome`); berth's `ChromePainter` shape proposed in
-OW-RUST-immediate.md §4 for main-cadatomic's review.**
+**svelters' half (`imm::chrome`, this lane).** Each of BD7's four cases has a kittest:
+
+| BD7 need | svelters call | Test |
+|---|---|---|
+| 1. hover, pressed and focused with the R8 ring, read from berth's `Response` | `sv.chrome(ui, resp, &El::new("chrome-button").class("tab-close"), chrome::BUTTON_UA, props)`. The units only *observe* (`interact::observe`: no focus request, no Escape rule, nothing changed in egui). Then `chrome::surface` and `chrome::ring` | `owrust_chrome_hover_press_and_focus_from_the_callers_response`: `:selected` from props and `:hover` from the response on a draggable tab; hover and pressed fills on the close button; a click changes no focus and shows no ring; Tab (berth's ids) gives `:focus-visible` and the ring |
+| 2. disabled (the non-closable close: hover-only sense, disabled, on an enabled `Ui`) | `props` holds `StateBits::DISABLED`: no press and no focus, still hoverable (R9), `opacity` from the UA table (the painter is faded) | `owrust_chrome_disabled_on_an_enabled_ui` |
+| 3. a paint-only icon by key in a rect | `chrome::icon(painter, id, &st, key, rect)`: tinted by `color`, sized by `font-size`, traced as part `icon`. It goes through `imm::paint_icon_key`, the one function that ICR1's merge re-points at `icons::paint(painter, &icons::registry(ctx), key, rect, &IconStyle{…})`, with the glyph fallback on `None` | checked in `owrust_chrome_galley_in_the_style_colour_and_font` (on today's icon path). The registry test lands with the ICR1 re-point |
+| 4. text in a rect with a part's text style; berth lays out with its `tab_font` | `chrome::galley(painter, id, &st, &galley, pos)` paints berth's galley in the style's `color`. `chrome::text_color(&st)` and `chrome::font(ctx, &st)` (CSS `font-*` as an egui `FontId`, for `ChromeMetrics::tab_font`). `chrome::label` lays out and paints a string | `owrust_chrome_galley_in_the_style_colour_and_font` |
+
+cadatomic's painter maps berth's infos to virtual elements and bits. Each of `tab`, `strip`,
+`title_band`, `stripe`, `sash` and `drop_preview` becomes a tag (`El::new("tab")`, …). The flags
+become bits or classes: `active` → `SELECTED`, `group_focused` → `.focused` on the strip, `dirty` →
+`.dirty`, dragging → `DRAGGING`, `!enabled` → `DISABLED`. Painting goes through
+`chrome::surface`/`galley`/`icon`/`ring`. `metrics` reads sizes from `Sv::computed` (`height`,
+`padding`) and the tab font from `chrome::font`, so berth's layout and the paint agree. Until OW5's
+`tab` kind brings UA tables (R13), the look of `tab`/`strip`/`title-band` is cadatomic's theme CSS
+(`Ua::NONE`). Chrome buttons use `chrome::BUTTON_UA`, the push button's table.
 
 ## 5. Deviations, findings and notes
 
