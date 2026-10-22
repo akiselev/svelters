@@ -270,6 +270,10 @@ export interface EguiElements {
     size?: number | null;
     /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
     'font-weight'?: number;
+    /** An image instead of the glyph: an `asset://` ref (an imported SVG or PNG), a file path or any uri an egui loader serves. Measured `size` (else the body size) square and fitted inside; when it does not load the placeholder box is drawn. */
+    source?: string | null;
+    /** With `source`: tints the image with the text colour (SVG `currentColor` icons render white, then tint like a glyph); false keeps its own colours. */
+    tint?: boolean;
     /** Draws it as a button (an icon button: role `Button`, takes focus). */
     frame?: boolean;
     /** With `frame`: drawn as selected (a toggle look). */
@@ -926,6 +930,39 @@ export interface EguiElements {
     onselect?: (pos: number) => void;
     /** The user changed the selection; carries the selected ids. */
     onselectionchange?: (ids: number[]) => void;
+  };
+  /** A virtualized tree: JS keeps the tree and flattens its visible rows into the list; children load when a node expands. */
+  'tree-view': EguiWidgetProps & {
+    /** `single` or `multi` (Shift ranges, Ctrl toggles); `none`: rows are not selectable. */
+    selection?: 'none' | 'single' | 'multi';
+    /** The height a row is assumed to have before it is measured, and its minimum, in points. */
+    'row-height'?: number;
+    /** Points per level; the disclosure triangle sits in the last one. */
+    indent?: number;
+    /** Non-empty: rows drag, as a payload of this type (their `data`) plus `text/plain` (their labels). */
+    'row-drag-type'?: string;
+    /** Non-empty: rows take drops of these types (WG4b patterns) and raise `drop-row`. */
+    'row-drop-types'?: string;
+    /** Row slot `row` was created: give it content with `setRow`. */
+    onsetup?: (e: SvlEvent<[number]>, row: number) => void;
+    /** Slot `row` now shows item `id` at `pos`; `gen` counts the binds of the slot. */
+    onbind?: (e: SvlEvent<[number, number, number, number]>, row: number, pos: number, id: number, gen: number) => void;
+    /** Slot `row` no longer shows binding `gen`. */
+    onunbind?: (e: SvlEvent<[number, number]>, row: number, gen: number) => void;
+    /** Slot `row` is gone: release its widget. */
+    onteardown?: (e: SvlEvent<[number]>, row: number) => void;
+    /** The user activated the row at `pos` (double click, Enter). */
+    onactivate?: (pos: number) => void;
+    /** The user expanded node `id` (disclosure click, Right): splice its children in. */
+    onexpand?: (id: number) => void;
+    /** The user collapsed node `id` (disclosure click, Left): splice its children out. */
+    oncollapse?: (id: number) => void;
+    /** The user changed the selection: read it with `selection()`. */
+    'onselection-changed'?: () => void;
+    /** Ctrl+C on the focused tree: copy the selected rows. */
+    oncopy?: () => void;
+    /** A drag was dropped `before`, `after` or `into` row `id` (-1: below the last row), as the entry of `type` it took. */
+    'ondrop-row'?: (id: number, where: string, type: string, data: string) => void;
   };
 }
 

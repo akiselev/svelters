@@ -142,7 +142,7 @@ export function runtimeAliases() {
 export function nativeConfig(root, { entry = 'main.js', outDir = 'dist', plugins = [] } = {}) {
   return {
     root,
-    plugins,
+    plugins: [sveltersAssets(root), ...plugins],
     configFile: false,
     logLevel: 'warn',
     resolve: {
@@ -173,6 +173,73 @@ export function nativeConfig(root, { entry = 'main.js', outDir = 'dist', plugins
       emptyOutDir: true,
       outDir: path.resolve(root, outDir),
       lib: { entry: path.resolve(root, entry), formats: ['es'], fileName: () => 'app.js' },
+    },
+  };
+}
+
+/** AS1: the asset module, served by the host (`svelters:assets`); a bundle leaves it external. */
+export const ASSETS_ID = 'svelters:assets';
+
+// The files that are code, not assets (the Rust loader's rule, `transform.rs` `Kind::of`).
+const CODE_FILE = /\.(svelte|m?js|cjs|json|tsx?|mts|css)$/;
+const VIRTUAL = '\0svelters-asset:';
+
+/**
+ * AS1 (plans/research/ASSETS.md §1.4): asset imports give the same value as under the Rust module
+ * loader. `import icon from './icon.svg'` (and `?url`) is the `Asset` handle of
+ * `asset://app/<logical path>`; `?bytes` is a `Uint8Array` read through the host; `?raw` and
+ * `?inline` stay Vite's (the same values). The logical path is relative to `root`, or
+ * `node_modules/<package name>/<path in package>` for a dependency's file. `vite build` copies every
+ * referenced asset to `<outDir>/assets/<logical path>`, which the runner mounts as root `app`.
+ */
+export function sveltersAssets(root) {
+  const appRoot = fs.realpathSync(path.resolve(root));
+  const files = new Map(); // logical path -> file
+  const logical = (file) => {
+    const real = fs.realpathSync(file);
+    const rel = path.relative(appRoot, real);
+    if (!rel.startsWith('..') && !path.isAbsolute(rel)) return rel.split(path.sep).join('/');
+    for (let d = path.dirname(real); d !== path.dirname(d); d = path.dirname(d)) {
+      const pj = path.join(d, 'package.json');
+      if (fs.existsSync(pj)) {
+        const name = JSON.parse(fs.readFileSync(pj, 'utf8')).name;
+        if (name) return `node_modules/${name}/${path.relative(d, real).split(path.sep).join('/')}`;
+      }
+    }
+    throw new Error(`${file}: outside the app root and in no package`);
+  };
+  return {
+    name: 'svelters:assets',
+    enforce: 'pre',
+    async resolveId(source, importer, opts) {
+      if (source === ASSETS_ID) return { id: ASSETS_ID, external: true };
+      if (source.startsWith(VIRTUAL)) return source;
+      const [spec, query] = source.split('?', 2);
+      if (query !== undefined && query !== 'url' && query !== 'bytes') return null;
+      if (query === undefined && CODE_FILE.test(spec)) return null;
+      if (query === undefined && opts?.attributes?.type !== 'bytes' && !/\.[A-Za-z0-9]+$/.test(spec)) return null;
+      const r = await this.resolve(spec, importer, { ...opts, skipSelf: true });
+      if (!r || r.external || r.id.startsWith('\0')) return null;
+      const file = r.id.split('?')[0];
+      if (query === undefined && CODE_FILE.test(file) && opts?.attributes?.type !== 'bytes') return null;
+      const kind = query === 'bytes' || opts?.attributes?.type === 'bytes' ? 'bytes' : 'url';
+      return `${VIRTUAL}${kind}:${file}`;
+    },
+    load(id) {
+      if (!id.startsWith(VIRTUAL)) return null;
+      const rest = id.slice(VIRTUAL.length);
+      const kind = rest.slice(0, rest.indexOf(':'));
+      const file = rest.slice(kind.length + 1);
+      const lp = logical(file);
+      files.set(lp, file);
+      this.addWatchFile(file);
+      const ref = JSON.stringify(`asset://app/${lp}`);
+      return kind === 'bytes'
+        ? `import { bytes } from '${ASSETS_ID}';\nexport default bytes(${ref});\n`
+        : `import { asset } from '${ASSETS_ID}';\nexport default asset(${ref});\n`;
+    },
+    generateBundle() {
+      for (const [lp, file] of files) this.emitFile({ type: 'asset', fileName: `assets/${lp}`, source: fs.readFileSync(file) });
     },
   };
 }

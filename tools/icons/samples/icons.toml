@@ -1,0 +1,131 @@
+# IC0's 24 style samples (plans/research/ICON-STYLE.md §11), drawn by plans/research/icon-style/src.py and kept
+# here as the toolchain's reference set: the lint must pass them, the sheet lays them out, and a few feed the
+# svelters-egui loader snapshot (crates/svelters-egui/tests/icon_loader.rs). Not approved: cadatomic's IC2-IC4
+# draw the real set in cadatomic, and the user approves each batch at contact-sheet level. Keys: tools/icons/SPEC.md.
+
+[set]
+name = "icon-style samples (IC0)"
+licence = "CC-BY-4.0"
+domains = ["chrome", "vcs", "status", "doc", "mcad", "ecad", "sim", "select"]
+allow = [
+  { rule = "L12", size = 20, ids = ["chrome.*"], reason = "IC0 drew 20 masters for file, search and warning only; the rest of chrome gets them in IC2" },
+]
+
+# ---- chrome
+[icons."chrome.file"]
+metaphor = "portrait page with the T2 cut"
+codicon = "file"
+badges = ["add", "lock"]
+
+[icons."chrome.folder"]
+metaphor = "tab top left, body with the T2 cut"
+codicon = "folder"
+badges = ["add"]
+
+[icons."chrome.search"]
+metaphor = "lens and a 45-degree handle"
+codicon = "search"
+
+[icons."chrome.settings"]
+metaphor = "six-tooth gear: ring, hub, butt teeth"
+allow = [{ rule = "L10", size = 24, reason = "IC0 sample: the hub (r 2) leaves a 2.5px counter where 24 keeps 3; IC2 redraws it" }]
+codicon = "settings-gear"
+free_angles = true
+
+[icons."chrome.close"]
+metaphor = "45-degree X"
+codicon = "close"
+
+[icons."chrome.chevron"]
+metaphor = "open 90-degree V (navigation)"
+codicon = "chevron-right"
+
+[icons."chrome.add"]
+metaphor = "plus"
+codicon = "add"
+
+[icons."chrome.run"]
+metaphor = "solid 1:2 triangle, accent"
+codicon = "play"
+
+[icons."chrome.debug"]
+metaphor = "bug: round body, arc head, six legs"
+codicon = "debug-alt"
+
+[icons."chrome.save"]
+metaphor = "floppy, whose own cut is T2"
+codicon = "save"
+
+[icons."chrome.undo"]
+metaphor = "U-turn shaft with a solid head"
+codicon = "discard"
+
+[icons."chrome.warning"]
+metaphor = "triangle with a mark; solid at 12 and 14; accent"
+codicon = "warning"
+
+# ---- MCAD
+[icons."mcad.sketch"]
+metaphor = "flat profile, hollow square points, pencil"
+allow = [
+  { rule = "L10", size = 16, reason = "sketch points are hollow 3x3 squares (ICON-STYLE §8), so their counter is 1px, under §5.1's 2x2; open with IC0" },
+  { rule = "L10", size = 24, reason = "the same at 24: 4-span points leave 2.5px against 3" },
+]
+uses = ["strip"]
+badges = ["warning"]
+
+[icons."mcad.extrude"]
+metaphor = "iso slab, top face in the tone, solid arrow up"
+uses = ["strip", "toolbar", "status", "inline"]
+badges = ["remove"]
+
+[icons."mcad.fillet"]
+metaphor = "block with the one rounded corner, radius leader"
+uses = ["strip"]
+
+[icons."mcad.mate"]
+metaphor = "peg (in the tone) over a slot"
+uses = ["strip"]
+
+[icons."mcad.section"]
+metaphor = "iso box with the cut face hatched"
+uses = ["strip"]
+
+# ---- ECAD
+[icons."ecad.trace"]
+metaphor = "two pads joined by a 2px 45-degree trace"
+uses = ["strip"]
+
+[icons."ecad.via"]
+metaphor = "solid ring with a trace entering"
+codicon = "circuit-board"
+uses = ["strip"]
+
+[icons."ecad.footprint"]
+metaphor = "body with pad rows, pin-1 dot at 16 and up"
+allow = [{ rule = "L6", size = 14, reason = "IC0 sample: the 14 master's 2.5px pads end on half pixels; IC2 redraws them 2 or 3px" }]
+uses = ["strip", "toolbar", "status", "inline"]
+badges = ["link"]
+
+[icons."ecad.net"]
+metaphor = "three hollow pin rings, wires, a solid junction"
+uses = ["strip"]
+
+# ---- simulation
+[icons."sim.mesh"]
+metaphor = "square domain, 2x2 structured triangles"
+uses = ["strip"]
+
+[icons."sim.load"]
+metaphor = "body in the tone, solid arrow onto it"
+allow = [{ rule = "L6", size = 12, reason = "IC0 sample: the 12 head's base sits at y=5.5, not on a whole pixel (§2 T3); IC2 moves it" }]
+codicon = "arrow-down"
+uses = ["strip", "toolbar", "status", "inline"]
+
+[icons."sim.result"]
+metaphor = "banded fringe from one corner (.2/.45/1)"
+uses = ["strip"]
+
+[icons."sim.solve"]
+codicon = "run-all"
+compose = { base = "sim.mesh", badge = "run", base_tone = true }

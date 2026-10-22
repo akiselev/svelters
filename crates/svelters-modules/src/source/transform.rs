@@ -17,7 +17,8 @@ pub(crate) enum Kind {
     Js,
     /// `.json`: `export default <the JSON>`.
     Json,
-    /// Anything else: `export default "<absolute path>"`.
+    /// Anything else: an asset, served by the loader as a generated module (AS1, `asset_module` in
+    /// `mod.rs`), never transformed here.
     Asset,
     /// A kind this loader does not load yet; the message says why.
     Unsupported(&'static str),
@@ -108,15 +109,11 @@ impl Compiler {
                 serde_json::from_str::<serde_json::Value>(&src).map_err(|e| format!("{shown}: invalid JSON: {e}"))?;
                 Ok(Output { js: format!("export default {};\n", src.trim()), map: None, warnings: Vec::new() })
             }
-            Kind::Asset => Ok(Output { js: asset_module(path), map: None, warnings: Vec::new() }),
+            // `SourceProvider::check` of an asset file: nothing to compile.
+            Kind::Asset => Ok(Output { js: String::new(), map: None, warnings: Vec::new() }),
             Kind::Unsupported(why) => Err(format!("{shown}: {why}")),
         }
     }
-}
-
-/// An asset imports as its absolute path (dev); release builds serve an asset table instead (Q4).
-pub(crate) fn asset_module(path: &Path) -> String {
-    format!("export default {};\n", serde_json::Value::String(path.to_string_lossy().into_owned()))
 }
 
 /// The component has a `<style>` with something in it.
@@ -168,6 +165,6 @@ mod tests {
         let out = c.transform(Path::new("/a/d.json"), "{\"n\": 1}\n".into()).unwrap();
         assert_eq!(out.js, "export default {\"n\": 1};\n");
         assert!(c.transform(Path::new("/a/d.json"), "{n: 1}".into()).unwrap_err().contains("invalid JSON"));
-        assert_eq!(c.transform(Path::new("/a/i.png"), String::new()).unwrap().js, "export default \"/a/i.png\";\n");
+        assert_eq!(c.transform(Path::new("/a/i.png"), String::new()).unwrap().js, "");
     }
 }

@@ -37,7 +37,7 @@ struct PngLoader {
 /// Decodes a PNG. An empty image is an error (a zero-sized texture is not drawable); one with a
 /// side over `max_side` (the renderer's `max_texture_side`, which egui asserts and a GPU backend
 /// refuses) is scaled down to fit, keeping its aspect ratio.
-fn decode(bytes: &[u8], max_side: usize) -> Entry {
+pub(crate) fn decode(bytes: &[u8], max_side: usize) -> Entry {
     let img = image::load_from_memory_with_format(bytes, image::ImageFormat::Png).map_err(|e| e.to_string())?;
     let (w, h) = (img.width(), img.height());
     if w == 0 || h == 0 {
@@ -55,6 +55,8 @@ impl ImageLoader for PngLoader {
         LOADER_ID
     }
 
+    // ZU3: debt: file:// PNGs are read on the UI thread in egui's ImageLoader::load (first load per uri; AS1's loaders own the fix).
+    #[allow(clippy::disallowed_methods)]
     fn load(&self, ctx: &Context, uri: &str, _size_hint: SizeHint) -> ImageLoadResult {
         if let Some(e) = self.cache.lock().unwrap_or_else(|p| p.into_inner()).get(uri) {
             return e.clone().map(|image| ImagePoll::Ready { image }).map_err(LoadError::Loading);

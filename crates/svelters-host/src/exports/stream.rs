@@ -240,6 +240,8 @@ impl<T> std::fmt::Debug for Sink<T> {
 }
 
 impl<T: Send + 'static> Sink<T> {
+    // ZU3: the producer side runs on worker or service threads; it waits for room (backpressure).
+    #[allow(clippy::disallowed_methods)]
     /// Queues `item`, blocking while `buffer` items are unread. `Err(Closed)` once the reader is gone.
     /// Never call it on the JS thread (a JS-thread `async fn` uses [`Sink::feed`]): the reader runs there.
     pub fn send(&self, item: T) -> Result<(), Closed> {
