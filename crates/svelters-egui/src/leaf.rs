@@ -31,6 +31,17 @@ pub(crate) fn invalid_outline(ui: &Ui, rect: Rect) {
 /// A widget-side change of props `keys` of node `i`: stamped and journaled, `prop_changed` when
 /// observed, then the kind's `changed` event with `args` when listened.
 pub(crate) fn widget_changed(arena: &mut Arena, i: usize, keys: &[kinds::P], args: Vec<Value>, out: &mut Vec<Out>) {
+    props_changed(arena, i, keys, out);
+    let h = arena.slots.id_at(i).expect("live node").to_raw();
+    let s = kinds::signal_id(arena.core[i].kind as usize, "changed");
+    if arena.listens(i, s) {
+        out.push(Out::Event(h, s, args));
+    }
+}
+
+/// WG5a: the stamp, journal and `prop_changed` half of [`widget_changed`], without the `changed`
+/// signal (a prop the user changed that `changed` does not carry: a table's cursor).
+pub(crate) fn props_changed(arena: &mut Arena, i: usize, keys: &[kinds::P], out: &mut Vec<Out>) {
     let node = arena.slots.id_at(i).expect("live node");
     let h = node.to_raw();
     let kind = arena.core[i].kind as usize;
@@ -42,10 +53,6 @@ pub(crate) fn widget_changed(arena: &mut Arena, i: usize, keys: &[kinds::P], arg
         if arena.observes(i, prop) {
             out.push(Out::Changed(h, prop));
         }
-    }
-    let s = kinds::signal_id(kind, "changed");
-    if arena.listens(i, s) {
-        out.push(Out::Event(h, s, args));
     }
 }
 
@@ -137,6 +144,7 @@ fn collapsing(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, o
     }
 }
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW2
 /// `scroll-area`: an `egui::ScrollArea` at its rect, the children (laid out by taffy at their full
 /// size) drawn in its content `Ui`; a host write of `scroll-x`/`scroll-y` scrolls, a user scroll
 /// (or egui clamping a write) writes them back.
@@ -209,6 +217,7 @@ fn scroll(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, out: 
     }
 }
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW0 (the `button` wrapper, behind the switch), OW1a (toggle-button, icon), OW1a, OW1b, OW3, OW4
 /// Paints the leaf in slot `i` (the walk's index into the scene's columns); returns its response
 /// (EV2b: the host response of its behaviours).
 pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> egui::Response {
@@ -229,6 +238,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     let click_sense = arena.listens(i, sig("clicked"));
     let mut text_changed = None;
     let mut text_focus = None; // FX1: the field's focus and selection before it ran
+    let mut text_enter = false; // CX3: Enter in a focused one-line field (commit and submit)
     let before = match arena.w(i) {
         W::Checkbox { checked, .. } | W::ToggleButton { checked, .. } => Some(Value::Bool(*checked)),
         W::Slider { value, .. } => Some(Value::F64(*value)),
@@ -265,6 +275,10 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         W::TextEdit { text, hint, multiline, password, char_limit } => {
             // FX1: native Escape and word keys before egui's TextEdit runs (crate::native)
             crate::native::keep_focus_on_escape(ui, node_id);
+            // CX3: Enter in the focused one-line field, read before egui's TextEdit ends its input on
+            // it; or taken by the default button (`crate::focus`), where the field still commits
+            text_enter = crate::focus::take_entered(ui, node_id)
+                || (!*multiline && ui.memory(|m| m.has_focus(node_id)) && ui.input(|i| i.key_pressed(egui::Key::Enter)));
             crate::focus::before_text(ui, node_id); // EV3: a pending edit command
             text_focus = Some(crate::native::TextFocus::before(ui, node_id));
             if crate::native::text_keys(ui, node_id, text, *password) {
@@ -275,6 +289,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             if *char_limit > 0 {
                 te = te.char_limit(*char_limit as usize);
             }
+            crate::primary::note_egui_paste(ui.ctx()); // W5: egui pastes MiddleClickPaste itself
             let o = te.show(ui);
             crate::focus::after_text(ui, node_id); // EV3: a Cut or Copy command to the host's clipboard
             // W5: the Linux primary selection (select-to-copy, middle-click paste)
@@ -299,7 +314,8 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             }
             // 4 points of slack: the value box can come out slightly wider than interact_size.x.
             ui.spacing_mut().slider_width = (size.x - extra - 4.0).max(sp.interact_size.x);
-            let mut s = egui::Slider::new(value, *min..=*max).show_value(*show_value);
+            // IN1: the value box shows and reads numbers in the host's locale
+            let mut s = crate::numeric::slider(egui::Slider::new(value, *min..=*max).show_value(*show_value));
             if *step > 0.0 {
                 s = s.step_by(*step);
             }
@@ -337,7 +353,8 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             r
         }
         W::Separator { vertical } => ui.add(if *vertical { egui::Separator::default().vertical() } else { egui::Separator::default().horizontal() }),
-        W::Icon { name, glyph, family, size: pt, weight, frame, selected } => {
+        W::Icon { source, tint, frame, selected, .. } if !source.is_empty() => icon_image(ui, source, *tint, *frame, *selected, size, click_sense),
+        W::Icon { name, glyph, family, size: pt, weight, frame, selected, .. } => {
             use crate::fonts::IconLook;
             // a family, name or glyph the fonts cannot draw: an outlined box instead (never egui's
             // missing-glyph panic, `crate::fonts`)
@@ -448,7 +465,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         W::Checkbox { checked, .. } | W::ToggleButton { checked, .. } if Some(Value::Bool(*checked)) != before => Some((kinds::P::Checked, Value::Bool(*checked))),
         W::ComboBox { selected, .. } if Some(Value::I64(*selected)) != before => Some((kinds::P::SelectedIndex, Value::I64(*selected))),
         W::Slider { value, .. } if Some(Value::F64(*value)) != before => Some((kinds::P::Value, Value::F64(*value))),
-        W::TextEdit { .. } => text_changed.map(|t| (kinds::P::Text, Value::Str(t))),
+        W::TextEdit { .. } => text_changed.clone().map(|t| (kinds::P::Text, Value::Str(t))),
         W::Picker(p) if Some(p.value()) != before => Some((kinds::P::Value, p.value())), // WG4b
         _ => None,
     };
@@ -468,5 +485,60 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             out.push(Out::Event(h, s, vec![v]));
         }
     }
+    // CX3: a text field commits on Enter (one-line), or on losing focus after an edit since its
+    // last commit (as Qt's `editingFinished`); `submit` follows on Enter. `bind:text|commit` listens
+    // to `commit` only, so typing runs no JS.
+    if let W::TextEdit { text, .. } = arena.w(i) {
+        let text = text.clone();
+        let flags = &mut arena.core[i].flags;
+        if text_changed.is_some() {
+            flags.insert(NodeFlags::EDITED);
+        }
+        let commit = text_enter || (had_focus && !focused && flags.contains(NodeFlags::EDITED));
+        if commit {
+            flags.remove(NodeFlags::EDITED);
+        }
+        for (yes, name) in [(commit, "commit"), (text_enter, "submit")] {
+            let s = sig(name);
+            if yes && arena.listens(i, s) {
+                out.push(Out::Event(h, s, vec![Value::Str(text.clone())]));
+            }
+        }
+    }
     resp
+}
+
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW0 (the `button` wrapper, behind the switch), OW1a (toggle-button, icon)
+/// AS1: an `icon` with a `source`: the image fitted inside the leaf's square (inside the padding of
+/// a framed one, whose button draws the state visuals), tinted with the text colour of its state;
+/// the placeholder box when the source does not load.
+fn icon_image(ui: &mut Ui, source: &str, tint: bool, frame: bool, selected: bool, size: Vec2, click_sense: bool) -> egui::Response {
+    use egui::load::TexturePoll;
+    let sense = if click_sense { Sense::click() } else { Sense::hover() };
+    let r = if frame { ui.add(egui::Button::new("").selected(selected).min_size(size)) } else { ui.allocate_exact_size(size, sense).1 };
+    let inner = if frame { r.rect.shrink2(ui.spacing().button_padding) } else { r.rect };
+    let color = if !tint {
+        egui::Color32::WHITE
+    } else if frame {
+        ui.visuals().override_text_color.unwrap_or_else(|| ui.style().interact_selectable(&r, selected).fg_stroke.color)
+    } else {
+        ui.visuals().text_color()
+    };
+    if inner.width() < 1.0 || inner.height() < 1.0 || !ui.is_rect_visible(r.rect) {
+        return r;
+    }
+    let img = egui::Image::new(crate::elements::images::uri_of(source)).fit_to_exact_size(inner.size());
+    match img.load_for_size(ui.ctx(), inner.size()) {
+        Ok(TexturePoll::Ready { texture }) => {
+            let (dest, uv) = crate::elements::media::fit_rect("contain", inner, texture.size);
+            ui.painter().with_clip_rect(r.rect.intersect(ui.clip_rect())).image(texture.id, dest, uv, color);
+        }
+        Ok(TexturePoll::Pending { .. }) => {}
+        Err(_) => {
+            let side = inner.width().min(inner.height());
+            let rect = Rect::from_center_size(inner.center(), Vec2::splat(side));
+            ui.painter().rect_stroke(rect, 1.0, egui::Stroke::new(1.0, ui.visuals().text_color()), egui::StrokeKind::Inside);
+        }
+    }
+    r
 }

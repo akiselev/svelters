@@ -17,8 +17,16 @@
 //!
 //! Threading: a `Host` is pinned to the thread that created it (the toolkit's main thread).
 //! The host starts no threads. Timers run on the toolkit: after each checkpoint the host arms the
-//! backend's one-shot `schedule_wake` for the earliest deadline.
+//! backend's one-shot `schedule_wake` for the earliest deadline. SCHED1: `HostConfig::sched`
+//! ([`HostSched`]) moves offloaded jobs to a `Spawner`, time and the timer wakeup to a `Clock`, and
+//! copies every wake to a `Waker`; `svelters_sched::TestScheduler` provides all three for
+//! deterministic tests (`testing::SchedHost`).
 
+// ZU3: no blocking file, process or wait calls on the UI thread (list in clippy.toml). Unit tests
+// are exempt; the legitimate I/O sites carry `#[allow(clippy::disallowed_methods)]` with a reason.
+#![cfg_attr(not(test), deny(clippy::disallowed_methods))]
+
+pub mod bytecode;
 mod convert;
 mod core;
 pub mod crash;
@@ -29,6 +37,7 @@ pub mod exports;
 pub mod platform;
 mod quickjs;
 mod reload;
+pub mod sched;
 mod sourcemap;
 pub mod testing;
 
@@ -38,11 +47,17 @@ pub use crate::engine::{
 };
 pub use crate::engine::HotOutcome;
 pub use crate::reload::ReloadReport;
+pub use crate::sched::HostSched;
+/// SCHED1: the `Spawner`/`Clock` seams and the deterministic `TestScheduler`.
+pub use svelters_sched;
 /// Q1: the module loader (providers; `SourceProvider` with its `source` feature).
 pub use svelters_modules as modules;
 pub use hooks::ModuleHooks;
 pub use platform::{ClipboardBackend, ClipboardKind, MimeData, Platform, ShellBackend};
 pub use svelters_modules::{BundleProvider, ModuleCode, ModuleProvider};
+/// IN1: locale-aware formatting and parsing (ICU4X), the same the host's `Intl` uses.
+#[cfg(feature = "intl")]
+pub use svelters_intl as intl;
 
 /// The provider of a built bundle; a missing entry is a load error.
 fn bundle_provider(path: &Path) -> Result<Rc<dyn ModuleProvider>, JsError> {
@@ -112,7 +127,7 @@ impl HostCallbacks for Callbacks {
         // A live backend reports a native event from its loop and expects the host to schedule
         // the checkpoint that delivers it. Scripted backends call `checkpoint` themselves.
         if !self.core.cfg.scripted {
-            self.core.backend().wake();
+            self.core.wake();
         }
     }
 
@@ -141,7 +156,7 @@ impl HostCallbacks for Callbacks {
         // Marks (h, prop) dirty; the next checkpoint reads, compares and delivers it in one batch.
         // A live backend gets one wake per turn: on the first insert into an empty dirty set.
         if self.core.prop_changed(h, prop) && !self.core.cfg.scripted {
-            self.core.backend().wake();
+            self.core.wake();
         }
     }
 
@@ -160,7 +175,7 @@ impl HostCallbacks for Callbacks {
         self.core.native_gone(h, reason);
         // Delivering the death is a checkpoint's job; a live backend needs one scheduled.
         if !self.core.cfg.scripted {
-            self.core.backend().wake();
+            self.core.wake();
         }
     }
 }
@@ -223,8 +238,16 @@ impl<'a> Host<'a> {
         cfg: HostConfig,
         make: MakeEngine,
     ) -> Result<Host<'a>, JsError> {
+        if cfg.scripted && cfg.sched.clock.is_some() {
+            return Err(JsError::new(ErrorKind::Host, "HostConfig: `scripted` has its own virtual clock; a `sched.clock` needs scripted: false"));
+        }
         // E3: the app's services start with its first host (once per process; later hosts find them running).
         crate::exports::start_services();
+        // IN1: the configured locale is the thread's current one before JS starts.
+        #[cfg(feature = "intl")]
+        if let Some(tag) = &cfg.locale {
+            svelters_intl::set_current(tag).map_err(|e| JsError::new(ErrorKind::Host, e.to_string()))?;
+        }
         // SAFETY: `'a` ties the host to the backend borrow, so the erased reference cannot outlive it.
         let backend_static = unsafe { backend.erase_lifetime() };
         let core = Rc::new(Core::new(backend_static, cfg));
@@ -266,10 +289,45 @@ impl<'a> Host<'a> {
         self.load_from(bundle_provider(path.as_ref())?)
     }
 
+    /// Q4: loads an app from a release bundle (`.svb`, [`svelters_modules::Svb`]). Its bytecode is
+    /// read when this engine wrote it ([`bytecode::precompile`]); otherwise its JavaScript is
+    /// compiled through the bytecode cache, as for any provider. No file system is needed besides
+    /// that cache.
+    pub fn load_svb(&self, svb: Arc<svelters_modules::Svb>) -> Result<Rc<svelters_modules::SvbProvider>, JsError> {
+        let provider = Rc::new(svelters_modules::SvbProvider::new(svb).map_err(|m| JsError::new(ErrorKind::Load, m))?.engine_build(bytecode::stamp()));
+        self.load_from(provider.clone())?;
+        Ok(provider)
+    }
+
     /// DX1: supplies the settings backend, UI-state backend and paths that `svelters:settings`,
     /// `svelters:paths` and `svelters:log` use. Without it those modules load but their calls fail.
+    ///
+    /// Q2: unless [`Host::set_bytecode_cache`] was called, it also opens the bytecode cache under
+    /// `dx.paths.cache()/bytecode` (a cache that cannot be opened is logged and skipped).
     pub fn set_dx(&self, dx: dx::Dx) {
+        if !self.core.bytecode_explicit.get() {
+            let dir = dx.paths.cache().join("bytecode");
+            match bytecode::BytecodeCache::open(&dir) {
+                Ok(c) => *self.core.bytecode.borrow_mut() = Some(Rc::new(c)),
+                Err(e) => tracing::warn!(target: "svelters::host", "bytecode cache {} not opened: {e}", dir.display()),
+            }
+        }
         *self.core.dx.borrow_mut() = Some(Rc::new(dx));
+    }
+
+    /// Q2: source modules (JavaScript from the provider) are compiled through the bytecode cache in
+    /// `dir`, or not cached (`None`). Overrides the cache [`Host::set_dx`] opens; applies to the next
+    /// module load. Modules re-imported for HMR (`?v=n`) are never cached.
+    pub fn set_bytecode_cache(&self, dir: Option<&Path>) -> std::io::Result<()> {
+        let cache = dir.map(bytecode::BytecodeCache::open).transpose()?;
+        *self.core.bytecode.borrow_mut() = cache.map(Rc::new);
+        self.core.bytecode_explicit.set(true);
+        Ok(())
+    }
+
+    /// Q2: the bytecode cache in use, if any.
+    pub fn bytecode_cache(&self) -> Option<Rc<bytecode::BytecodeCache>> {
+        self.core.bytecode.borrow().clone()
     }
 
     /// LD1: sets the extra schemes, native modules and `svelters:app/*` visibility that apply to the
@@ -325,7 +383,7 @@ impl<'a> Host<'a> {
     /// Reloads at the next checkpoint, as if the watcher had fired (also wakes the backend).
     pub fn request_reload(&self) {
         self.reloader.request();
-        self.core.backend().wake();
+        self.core.wake();
     }
 
     /// Called after every reload attempt, successful or not, on the toolkit thread.
@@ -352,7 +410,7 @@ impl<'a> Host<'a> {
     pub fn run(&self) -> Result<(), AbiError> {
         let _disarm = DisarmStarted(&self.started);
         if self.arm_started() {
-            self.core.backend().wake();
+            self.core.wake();
         }
         self.started.active.set(true);
         let res = self.core.backend().run(&self.vt);
@@ -664,6 +722,31 @@ impl<'a> Host<'a> {
     pub fn interrupt_flag(&self) -> Arc<AtomicBool> {
         self.core.interrupt.clone()
     }
+
+    /// IN1: switches the locale at runtime. The host owns the locale (svelters ships no catalog):
+    /// this sets the thread's current locale ([`intl::set_current`], read by `Intl` defaults,
+    /// `toLocaleString` and the egui numeric widgets) and tells JS, whose `svelters:intl` `locale`
+    /// store (`__svelters_intl.subscribe`) re-renders the components that read it. Delivered now
+    /// (one entry into JS, then a job drain), or by the next checkpoint when called while JS runs
+    /// (from a Rust export). Takes BCP 47 tags and POSIX names; returns the canonical tag.
+    #[cfg(feature = "intl")]
+    pub fn set_locale(&self, tag: &str) -> Result<String, JsError> {
+        let l = svelters_intl::set_current(tag).map_err(|e| JsError::new(ErrorKind::Host, e.to_string()))?;
+        let tag = l.tag().to_string();
+        if self.core.js_running() {
+            *self.core.pending_locale.borrow_mut() = Some(tag.clone());
+            self.core.backend().wake();
+            return Ok(tag);
+        }
+        core::root_call(&self.core, &self.engine, None, |e| e.locale_changed(&tag)).map_err(|e| self.core.map_error(e))?;
+        Ok(tag)
+    }
+
+    /// IN1: the current locale's canonical tag (the thread's, see [`Host::set_locale`]).
+    #[cfg(feature = "intl")]
+    pub fn locale(&self) -> String {
+        svelters_intl::current().tag().to_string()
+    }
 }
 
 impl Host<'static> {
@@ -696,5 +779,7 @@ impl Drop for Host<'_> {
         self.stop();
         // A pending backend wakeup would call back into a vtable that is about to be freed.
         self.core.disarm();
+        // SCHED1: so would a wake a scheduler still holds.
+        self.core.detach_waker();
     }
 }

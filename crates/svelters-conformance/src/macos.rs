@@ -356,6 +356,8 @@ const LEFT_DOWN: u32 = 1;
 const LEFT_UP: u32 = 2;
 const MOUSE_MOVED: u32 = 5;
 const LEFT_DRAGGED: u32 = 6;
+const OTHER_DOWN: u32 = 25;
+const OTHER_UP: u32 = 26;
 // CGEventField kCGMouseEventClickState
 const CLICK_STATE: u32 = 1;
 /// kCGSessionEventTap
@@ -525,7 +527,13 @@ impl Input {
     }
 
     fn mouse(&mut self, ty: u32, at: CGPoint, clicks: u32) {
-        let e = Cf(unsafe { CGEventCreateMouseEvent(self.src.0, ty, at, 0) });
+        // kCGMouseButtonLeft, or kCGMouseButtonCenter for the "other" button events
+        let button = if matches!(ty, OTHER_DOWN | OTHER_UP) {
+            2
+        } else {
+            0
+        };
+        let e = Cf(unsafe { CGEventCreateMouseEvent(self.src.0, ty, at, button) });
         unsafe {
             CGEventSetIntegerValueField(e.0, CLICK_STATE, clicks as i64);
             // no modifiers: a mouse event otherwise takes the source's, and a click that carries a
@@ -557,14 +565,19 @@ impl Input {
         Ok(())
     }
 
-    /// `count` clicks of the left button at `at` (screen coordinates, origin top left). Waits
-    /// 0.7 s first, so a sequence never joins the previous one (the GTK and Qt captures do too).
-    pub fn click(&mut self, at: CGPoint, count: u32) -> Result<(), String> {
+    /// `count` clicks of `button` (1 left, 2 middle) at `at` (screen coordinates, origin top left).
+    /// Waits 0.7 s first, so a sequence never joins the previous one (the GTK and Qt captures do too).
+    pub fn click(&mut self, at: CGPoint, count: u32, button: u32) -> Result<(), String> {
+        let (down, up) = if button == 2 {
+            (OTHER_DOWN, OTHER_UP)
+        } else {
+            (LEFT_DOWN, LEFT_UP)
+        };
         self.pump(700);
         self.mouse(MOUSE_MOVED, at, 0);
         for i in 1..=count {
-            self.mouse(LEFT_DOWN, at, i);
-            self.mouse(LEFT_UP, at, i);
+            self.mouse(down, at, i);
+            self.mouse(up, at, i);
             // each press and release is dispatched before the next press (the click count is
             // explicit, so this does not break a multi-click)
             self.barrier(true)?;

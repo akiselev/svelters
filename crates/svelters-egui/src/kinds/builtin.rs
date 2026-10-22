@@ -128,7 +128,7 @@ static SLIDER_PROPS: &[PropDef] = &[
 
 pub(super) const NONE: &[(&str, Ty)] = &[];
 
-static WIDGET_SIGNALS: &[SignalDef] = &[
+static WIDGET_SIGNALS: &[SignalDef] = dom_signals![
     signal("animationend", &[("id", Ty::I64)], "A native animation (TR2) finished; carries its id. The runtime listens to it itself."),
     // WG4b: drag and drop on any node (`kinds/dnd.rs`)
     signal("drag-begin", NONE, "Drag source: the user started dragging this node (`drag-type` set)."),
@@ -139,7 +139,7 @@ static WIDGET_SIGNALS: &[SignalDef] = &[
         "drop",
         &[("type", Ty::Str), ("data", Ty::Str), ("x", Ty::F64), ("y", Ty::F64)],
         "Drop target: a drag it accepts was released over it; carries the type, the data and the point in the node's own points.",
-    ),
+    )
 ];
 
 static CLICK_SIGNALS: &[SignalDef] = &[signal("clicked", NONE, "Pressed and released (`Response::clicked`).")];
@@ -159,6 +159,13 @@ static TEXT_EDIT_SIGNALS: &[SignalDef] = &[
     signal("changed", &[("text", Ty::Str)], "The user edited the text; carries the new text (once per frame)."),
     signal("gained-focus", NONE, "Took keyboard focus."),
     signal("lost-focus", NONE, "Lost keyboard focus."),
+    // CX3: `bind:text|commit` updates its source on this event (egui.json `bindings.text.commit`)
+    signal(
+        "commit",
+        &[("text", Ty::Str)],
+        "The user committed the text: Enter in a one-line field (also when a default button takes it), or losing focus after an edit since the last commit; carries the text.",
+    ),
+    signal("submit", &[("text", Ty::Str)], "Enter in a one-line field (also when a default button takes it); carries the text. Fires after `commit`."),
 ];
 
 static SLIDER_SIGNALS: &[SignalDef] = &[
@@ -329,4 +336,6 @@ pub static KINDS: &[KindDef] = &[
     super::pickers::COLOR_PICKER,
     // ---- LS1: appended after INT1's kinds (`virtuallist.rs`) ----
     super::virtuallist::DEF,
+    // ---- WG5b: appended (`treeview.rs`) ----
+    super::treeview::DEF,
 ];

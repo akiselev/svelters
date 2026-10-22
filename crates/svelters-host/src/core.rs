@@ -34,6 +34,7 @@ use svelters_abi::{
 mod apps;
 mod asyncs;
 mod callbacks;
+mod links;
 mod offload;
 mod ops;
 mod reactive;
@@ -70,6 +71,10 @@ pub struct HostConfig {
     /// Ask the backend to quit once the last toplevel handle is gone (after the first one was
     /// created). The host, not the toolkit, decides when the app ends. Ignored in scripted mode.
     pub quit_on_last_window: bool,
+    /// IN1: the locale `Intl` and the numeric widgets start with (BCP 47, POSIX names accepted),
+    /// set as the thread's current locale when the host is created; `None` keeps the thread's
+    /// (by default the environment's). Change it later with `Host::set_locale`.
+    pub locale: Option<String>,
     /// H1: a runtime that applied this many in-place module swaps is replaced by a full reload at
     /// the next change (replaced module versions are not freed while the runtime lives). 0: no limit.
     pub hmr_max_swaps: u32,
@@ -79,11 +84,16 @@ pub struct HostConfig {
     /// ([`crate::platform::Platform::headless`]) touches nothing of the system; a desktop runner
     /// installs the system ones (svelters-egui's `platform::system()`).
     pub platform: crate::platform::Platform,
+    /// SCHED1: where offloaded jobs run, what time it is, and who else hears the host's wakes
+    /// ([`crate::HostSched`]; empty: rayon, the wall clock, the backend). A clock excludes `scripted`
+    /// (which has its own virtual clock): `Host::new` refuses both.
+    pub sched: crate::sched::HostSched,
 }
 
 impl Default for HostConfig {
     fn default() -> Self {
         HostConfig {
+            sched: crate::sched::HostSched::default(),
             hmr_max_swaps: 200,
             hmr_memory_fraction: 0.5,
             platform: crate::platform::Platform::default(),
@@ -97,6 +107,7 @@ impl Default for HostConfig {
             max_virtual_timer_fires: 10_000,
             timing: false,
             quit_on_last_window: true,
+            locale: None,
         }
     }
 }
@@ -166,6 +177,9 @@ pub(crate) struct Observed {
     /// Deliver at the next checkpoint even if equal to `last`: our own write was normalized by the
     /// toolkit (the read-back differs from what JS wrote), so JS must see the value once.
     pub force: bool,
+    /// CX3: how many of `count` are native links (`host.link`), not JS. A pair only links observe is
+    /// propagated at the checkpoint but never delivered to JS.
+    pub links: u32,
 }
 
 /// Why a handle is no longer live.
@@ -312,6 +326,9 @@ struct CoreState {
     dirty: Vec<(svl_handle, svl_id)>,
     dirty_set: HashSet<(svl_handle, svl_id)>,
     events: VecDeque<Event>,
+    /// CX3: native links (`host.link`), and the last id handed out.
+    links: Vec<links::Link>,
+    next_link: u32,
     /// Handles carried in the arguments of queued events (a list item in a deferred `bind`, N3), with
     /// a count: `destroy` leaves a pinned handle alive, so a wrapper collected while its event waits
     /// cannot kill the handle the event is about to deliver. Unpinned when the event is delivered.
@@ -342,6 +359,12 @@ pub(crate) struct Core {
     pub(crate) maps: RefCell<SourceMaps>,
     /// DX1: the app's settings, UI state and paths (`Host::set_dx`).
     pub(crate) dx: RefCell<Option<Rc<crate::dx::Dx>>>,
+    /// AS1: the loaded provider's asset registry (`svelters:assets` reads through it).
+    pub(crate) assets: RefCell<Option<std::sync::Arc<svelters_modules::Assets>>>,
+    /// Q2: the on-disk bytecode cache source modules are compiled through (`Host::set_bytecode_cache`;
+    /// `Host::set_dx` opens one under `Paths::cache()` unless it was set explicitly).
+    pub(crate) bytecode: RefCell<Option<Rc<crate::bytecode::BytecodeCache>>>,
+    pub(crate) bytecode_explicit: Cell<bool>,
     /// App exports (E0): this host's exported Rust objects.
     pub(crate) apps: crate::exports::objects::AppObjects,
     /// LD1: whether an `svelters:app/<module>` export is reachable by `construct` and `callStatic`,
@@ -358,10 +381,18 @@ pub(crate) struct Core {
     pub(crate) budget: Cell<Option<Duration>>,
     /// EM1: what mounted roots reported (`__svelters_host.rootFault`/`rootInfo`/`rootEmit`).
     pub(crate) root_msgs: RefCell<Vec<RootMessage>>,
+    /// IN1: a locale change made while JS was running, delivered by the next checkpoint.
+    pub(crate) pending_locale: RefCell<Option<String>>,
+    /// SCHED1: the backend's wake plus `cfg.sched.wake` (see `sched.rs`); every host wake goes here.
+    waker: std::task::Waker,
+    wake_state: Arc<crate::sched::HostWake>,
+    /// SCHED1: this host's key for `Clock::wake_at`.
+    wake_key: u64,
 }
 
-/// Held while JS runs. See the module docs on re-entrancy.
-pub(crate) struct JsGuard<'a>(&'a Core, Option<Instant>);
+/// Held while JS runs. See the module docs on re-entrancy. The third field is the spawner this
+/// thread had before the entry (SCHED1: `exports::worker()` futures polled in JS use the host's).
+pub(crate) struct JsGuard<'a>(&'a Core, Option<Instant>, Option<Option<Arc<dyn svelters_sched::Spawner>>>);
 
 impl Drop for JsGuard<'_> {
     fn drop(&mut self) {
@@ -371,9 +402,12 @@ impl Drop for JsGuard<'_> {
             t.js_ns += t0.elapsed().as_nanos() as u64;
             c.timing.set(t);
         }
+        if let Some(prev) = self.2.take() {
+            crate::exports::offload::swap_thread_spawner(prev);
+        }
         c.busy.set(c.busy.get() - 1);
         if c.busy.get() == 0 && c.deferred.replace(false) {
-            c.backend.wake();
+            c.wake();
         }
     }
 }
@@ -381,6 +415,7 @@ impl Drop for JsGuard<'_> {
 impl Core {
     pub(crate) fn new(backend: BackendRef<'static>, cfg: HostConfig) -> Core {
         let turn_budget = cfg.turn_budget;
+        let (waker, wake_state) = crate::sched::host_waker(backend.wake_handle(), cfg.sched.wake.clone());
         Core {
             backend,
             cfg,
@@ -400,12 +435,34 @@ impl Core {
             apps: Default::default(),
             app_gate: RefCell::new(None),
             dx: RefCell::new(None),
+            assets: RefCell::new(None),
+            bytecode: RefCell::new(None),
+            bytecode_explicit: Cell::new(false),
             op_log: RefCell::new(None),
-            ops: offload::OpTable::new(crate::exports::offload::Completions::new(backend.wake_handle())),
-            reactive: reactive::Reactive::new(crate::exports::reactive::Hub::new(backend.wake_handle())),
+            ops: offload::OpTable::new(crate::exports::offload::Completions::new(waker.clone())),
+            reactive: reactive::Reactive::new(crate::exports::reactive::Hub::new(waker.clone())),
             budget: Cell::new(turn_budget),
             root_msgs: RefCell::new(Vec::new()),
+            pending_locale: RefCell::new(None),
+            waker,
+            wake_state,
+            wake_key: svelters_sched::wake_key(),
         }
+    }
+
+    /// The host is going away: its waker (clones of which a scheduler may still hold) reaches nobody.
+    pub(crate) fn detach_waker(&self) {
+        self.wake_state.detach();
+    }
+
+    /// Asks for a checkpoint: the backend's `wake`, and the scheduler's when one drives this host.
+    pub(crate) fn wake(&self) {
+        self.waker.wake_by_ref();
+    }
+
+    /// SCHED1: the spawner offloaded jobs go to, if the embedder or a test set one.
+    pub(crate) fn spawner(&self) -> Option<&Arc<dyn svelters_sched::Spawner>> {
+        self.cfg.sched.spawner.as_ref()
     }
 
     pub(crate) fn take_timing(&self) -> Timing {
@@ -468,7 +525,9 @@ impl Core {
 
     /// The timer clock: wall time, or the virtual clock in scripted mode.
     pub(crate) fn now(&self) -> Instant {
-        if self.cfg.scripted {
+        if let Some(c) = &self.cfg.sched.clock {
+            self.epoch + c.now()
+        } else if self.cfg.scripted {
             self.epoch + self.vnow.get()
         } else {
             Instant::now()
@@ -479,6 +538,9 @@ impl Core {
     /// (TR1) advance with the virtual 16 ms frames instead of the wall clock and end after a fixed
     /// number of frames. `None` outside scripted mode (wall time).
     pub(crate) fn virtual_ms(&self) -> Option<f64> {
+        if let Some(c) = &self.cfg.sched.clock {
+            return Some(c.now().as_secs_f64() * 1000.0);
+        }
         self.cfg.scripted.then(|| self.vnow.get().as_secs_f64() * 1000.0)
     }
 
@@ -494,7 +556,8 @@ impl Core {
             return None;
         }
         self.busy.set(1);
-        Some(JsGuard(self, self.cfg.timing.then(Instant::now)))
+        let prev = self.spawner().map(|s| crate::exports::offload::swap_thread_spawner(Some(s.clone())));
+        Some(JsGuard(self, self.cfg.timing.then(Instant::now), prev))
     }
 
     // ---- sinks ----
@@ -547,6 +610,35 @@ impl Core {
     }
 
     /// DX1: the `__svelters_host.dx` op. Errors are `(code, message)`.
+    /// AS1: `svelters:assets` reads: `text` (UTF-8), `info` (JSON) of an `asset://` ref.
+    pub(crate) fn asset_op(&self, op: &str, uri: &str) -> Result<String, String> {
+        let a = self.asset_read(uri)?;
+        let (assets, r) = (a.0, a.1);
+        match op {
+            "text" => {
+                let b = assets.bytes(&r).map_err(|e| e.to_string())?;
+                String::from_utf8(b.to_vec()).map_err(|_| format!("{r}: not UTF-8 text (import it with ?bytes)"))
+            }
+            "info" => {
+                let i = assets.info(&r).map_err(|e| e.to_string())?;
+                Ok(serde_json::json!({ "mime": i.mime, "len": i.len, "hash": format!("{:016x}", i.hash), "version": i.version }).to_string())
+            }
+            _ => Err(format!("unknown assets op {op}")),
+        }
+    }
+
+    /// AS1: the bytes of an `asset://` ref.
+    pub(crate) fn asset_bytes(&self, uri: &str) -> Result<Vec<u8>, String> {
+        let (assets, r) = self.asset_read(uri)?;
+        assets.bytes(&r).map(|b| b.to_vec()).map_err(|e| e.to_string())
+    }
+
+    fn asset_read(&self, uri: &str) -> Result<(std::sync::Arc<svelters_modules::Assets>, svelters_modules::AssetRef), String> {
+        let r = svelters_modules::AssetRef::parse(uri).map_err(|e| e.to_string())?;
+        let assets = self.assets.borrow().clone().ok_or("svelters:assets: the loaded app has no asset registry")?;
+        Ok((assets, r))
+    }
+
     pub(crate) fn dx_op(&self, op: &str, a: &str, b: &str) -> Result<String, (&'static str, String)> {
         if op == "log" {
             let (level, cat) = a.split_once('\n').unwrap_or((a, ""));
@@ -672,8 +764,12 @@ impl Core {
                     }
                     changed
                 };
-                self.note_store_change(changed);
                 if changed {
+                    self.link_propagate(key, &v);
+                }
+                let js = changed && self.js_observes(key);
+                self.note_store_change(js);
+                if js {
                     out.push(ChangedProp { handle: key.0, prop: name, value: Some(v) });
                 }
                 continue;
@@ -690,7 +786,11 @@ impl Core {
                 }
                 changed
             };
-            if changed {
+            // CX3: a linked prop goes to its store (no boxed values: those always compare changed)
+            if changed && !has_boxed(&v) {
+                self.link_propagate(key, &v);
+            }
+            if changed && self.js_observes(key) {
                 out.push(ChangedProp { handle: key.0, prop: name, value: Some(v) });
             } else {
                 // Dropped: a read that minted VALUE handles must not leak them.
@@ -742,7 +842,7 @@ impl Core {
             }
         };
         if wake && !self.cfg.scripted {
-            self.backend.wake();
+            self.wake();
         }
     }
 
@@ -873,6 +973,11 @@ impl Core {
             return;
         }
         self.armed.set(deadline);
+        // SCHED1: the clock's own wakeup (the backend's would count wall time).
+        if let Some(c) = &self.cfg.sched.clock {
+            c.wake_at(self.wake_key, deadline.map(|d| d.saturating_duration_since(self.epoch)), &self.waker);
+            return;
+        }
         let ms = match deadline {
             Some(d) => {
                 let left = d.saturating_duration_since(Instant::now());
@@ -887,7 +992,10 @@ impl Core {
     /// Cancels any pending backend wakeup. Called when the host goes away.
     pub(crate) fn disarm(&self) {
         if self.armed.replace(None).is_some() {
-            self.backend.schedule_wake(-1);
+            match &self.cfg.sched.clock {
+                Some(c) => c.wake_at(self.wake_key, None, &self.waker),
+                None => self.backend.schedule_wake(-1),
+            }
         }
     }
 
@@ -925,13 +1033,17 @@ impl Core {
     }
 }
 
-/// Runs one checkpoint (see "Checkpoint semantics" in `backend-abi.md`):
-/// 0. read, compare and deliver the dirty observed properties as one `__svelters_changed` batch
+/// Runs one checkpoint (see "Checkpoint semantics" in `backend-abi.md`). Each task (a settle batch,
+/// an event, a timer callback) is followed by a job drain (a microtask checkpoint, as in the HTML
+/// event loop), except the change batch, which shares one drain with the first event:
+/// 1. settle offloaded calls (`offload::drain`: progress, results) and, if any settled, drain jobs;
+/// 2. read, compare and deliver the dirty observed properties as one `__svelters_changed` batch
 ///    (ABI v2.6), with no drain before the first event;
-/// 1. deliver queued events to JS, draining jobs after each;
-/// 2. fire due timers, draining jobs after each;
-/// 3. drain remaining jobs, up to `max_jobs_per_checkpoint` in total;
-/// 4. `wake` if jobs or events remain, and arm the backend's one-shot wakeup for the earliest
+/// 3. deliver queued events to JS, draining jobs after each;
+/// 4. fire due timers, draining jobs before the first (a timer starts on an empty microtask queue)
+///    and after each;
+/// 5. drain remaining jobs, up to `max_jobs_per_checkpoint` in total;
+/// 6. `wake` if jobs or events remain, and arm the backend's one-shot wakeup for the earliest
 ///    timer deadline (`schedule_wake`).
 ///
 /// Ops reach the backend directly while JS runs (no batching in P). Scripted mode has its own
@@ -945,17 +1057,6 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
         core.timing.set(t);
     }
     let mut eng = engine.borrow_mut();
-    // E1 (egui-rust-exports.md §6.2): offloaded export calls settle first, so the changes, events
-    // and the one job drain below see their results in the same checkpoint.
-    offload::drain(core, &mut eng);
-    // E3 (§6.4): dirty store fields join the dirty set, queued `Emitter` events the event queue, so the
-    // change batch and the events below carry them.
-    reactive::collect(core);
-    if core.cfg.scripted {
-        checkpoint_scripted(core, &mut eng);
-        core.process_releases();
-        return;
-    }
     let mut budget = core.cfg.max_jobs_per_checkpoint;
     let mut pending = false;
 
@@ -965,6 +1066,31 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
         core.report_all(eng.take_errors());
         st.pending
     };
+
+    // E1 (egui-rust-exports.md §6.2): offloaded export calls settle first, so the changes, events
+    // and timers below see their results in the same checkpoint. A non-empty settle batch is a task
+    // of its own (REACTIVITY §5.3): its microtasks (`onProgress` reactions, resolutions) run before
+    // the first event or timer. SCHED1b's randomized schedules found an event handler running between
+    // a worker's `onProgress` and the microtask it queued, whenever a completion and a queued event met
+    // in one checkpoint. Scripted mode keeps its own stepping (an event step drains nothing).
+    if offload::drain(core, &mut eng) && !core.cfg.scripted {
+        pending |= drain(&mut eng, &mut budget);
+    }
+    // E3 (§6.4): dirty store fields join the dirty set, queued `Emitter` events the event queue, so the
+    // change batch and the events below carry them.
+    reactive::collect(core);
+    // IN1: a locale change `Host::set_locale` could not deliver while JS was running.
+    let locale = core.pending_locale.borrow_mut().take();
+    if let Some(tag) = locale
+        && let Err(e) = eng.locale_changed(&tag)
+    {
+        core.report(e);
+    }
+    if core.cfg.scripted {
+        checkpoint_scripted(core, &mut eng);
+        core.process_releases();
+        return;
+    }
 
     // REACTIVITY.md §5.3: the batch of changed properties first, then the queued signal events,
     // with no job drain in between (handlers see the new state; Svelte flushes once after them).
@@ -977,6 +1103,12 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     }
 
     let now = core.now();
+    // A timer callback is a new task: the microtasks of what this checkpoint delivered before it (a
+    // change batch with no event after it) run first, as in scripted mode. SCHED1's randomized schedules found a timer running between a worker's `onProgress` and
+    // the microtasks it queued, whenever a completion and a due timer met in one checkpoint.
+    if core.next_timer_deadline().is_some_and(|d| d <= now) {
+        pending |= drain(&mut eng, &mut budget);
+    }
     for (id, seq) in core.timers_take_due(now) {
         if !core.timer_begin_fire(id, seq, now) {
             continue;
@@ -995,7 +1127,7 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     core.process_releases();
     core.sync_sched();
     if pending || core.has_events() {
-        core.backend.wake();
+        core.wake();
     }
     core.quit_if_last_window_gone();
 }
@@ -1036,7 +1168,7 @@ pub(crate) fn frame(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     drop(eng);
     core.sync_sched();
     if st.pending || core.has_events() {
-        core.backend.wake();
+        core.wake();
     }
     core.quit_if_last_window_gone();
 }
@@ -1073,7 +1205,7 @@ pub(crate) fn call_sync(
             flags,
         });
         if !core.cfg.scripted {
-            core.backend.wake();
+            core.wake();
         }
         return Err(SyncError::Busy);
     }
@@ -1101,7 +1233,7 @@ pub(crate) fn call_sync(
     let pending = eng.run_jobs(0).pending;
     drop(eng);
     if pending && !core.cfg.scripted {
-        core.backend.wake();
+        core.wake();
     }
     Ok(result)
 }
@@ -1284,6 +1416,7 @@ pub(crate) fn load_bundle(
         ));
     };
     core.maps.borrow_mut().begin(provider.map_dir(), &provider.entry());
+    *core.assets.borrow_mut() = provider.assets();
     let mut eng = engine.borrow_mut();
     let res = eng.load_module(provider.clone());
     for w in provider.take_warnings() {
@@ -1298,7 +1431,7 @@ pub(crate) fn load_bundle(
     drop(eng);
     core.sync_sched();
     if !core.cfg.scripted && (pending || core.has_events()) {
-        core.backend.wake();
+        core.wake();
     }
     res
 }
@@ -1327,9 +1460,22 @@ pub(crate) fn hot_update(
     drop(eng);
     core.sync_sched();
     if !core.cfg.scripted && (pending || core.has_events()) {
-        core.backend.wake();
+        core.wake();
     }
     res
+}
+
+/// AS1: runs the `Asset.onChange` listeners for changed asset files (no module re-runs).
+pub(crate) fn assets_changed(core: &Core, engine: &RefCell<Box<dyn JsEngine>>, refs: &[svelters_modules::AssetRef]) {
+    let Some(_guard) = core.enter() else { return };
+    let uris: Vec<String> = refs.iter().map(|r| r.as_uri().to_string()).collect();
+    let mut eng = engine.borrow_mut();
+    if let Err(e) = eng.assets_changed(&uris) {
+        core.report(core.map_error(e));
+    }
+    // the listeners' state changes flush like any event's
+    eng.run_jobs(core.cfg.max_jobs_per_checkpoint);
+    core.report_all(eng.take_errors());
 }
 
 /// EM1: loads an entry and keeps its namespace (see [`load_bundle`]).
@@ -1342,6 +1488,7 @@ pub(crate) fn load_entry(
         return Err(JsError::new(ErrorKind::Host, "load_entry called while JS is running"));
     };
     core.maps.borrow_mut().begin(provider.map_dir(), &provider.entry());
+    *core.assets.borrow_mut() = provider.assets();
     let mut eng = engine.borrow_mut();
     let res = eng.load_entry(provider.clone());
     for w in provider.take_warnings() {
@@ -1352,7 +1499,7 @@ pub(crate) fn load_entry(
     drop(eng);
     core.sync_sched();
     if st.pending || core.has_events() {
-        core.backend.wake();
+        core.wake();
     }
     res
 }
@@ -1384,7 +1531,7 @@ pub(crate) fn root_call<R>(
     core.process_releases();
     core.sync_sched();
     if st.pending || core.has_events() {
-        core.backend.wake();
+        core.wake();
     }
     res
 }

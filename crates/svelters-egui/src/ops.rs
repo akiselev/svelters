@@ -192,7 +192,7 @@ impl Backend for EguiBackend {
     fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value> {
         let k = self.kind_of(h)?;
         let def = kinds::method_def(k, method).ok_or_else(|| format!("unknown method id {method}"))?;
-        if kinds::kind(k).tag == Some("virtual-list") {
+        if matches!(kinds::kind(k).tag, Some("virtual-list" | "tree-view")) {
             return Ok(self.vlist_call(h, def.name, args)?);
         }
         // WG4a: the views' methods take arguments (`crate::views::call`)
@@ -241,6 +241,23 @@ impl Backend for EguiBackend {
         let r = scene.core[i].root;
         drop(scene);
         self.touched(Some(r)); // a listener can change a widget's sense
+        Ok(())
+    }
+
+    /// EV1: `listen_ex` with `SVL_LISTEN_CAPTURE` on the DOM-style events (`on<event>capture`);
+    /// they are dispatched along the scene (`crate::events`). No other phase has a meaning here.
+    fn listen_ex(&self, h: svl_handle, signal: svl_id, on: bool, flags: u32) -> StrResult<()> {
+        let mut scene = self.0.scene.borrow_mut();
+        let i = scene.ix(scene.live(h)?);
+        let kind = scene.core[i].kind as usize;
+        let def = kinds::signal_def(kind, signal).ok_or_else(|| format!("unknown signal id {signal} on <{}>", scene.tag_at(i)))?;
+        if flags != SVL_LISTEN_CAPTURE {
+            return Err(format!("`{}` of <{}>: egui has no listen phase {flags:#x} (only capture, on the DOM-style events)", def.name, scene.tag_at(i)));
+        }
+        if !kinds::is_dom_event(def.name) {
+            return Err(format!("`{}` of <{}> has no capture phase on egui: only the DOM-style events ({}) propagate", def.name, scene.tag_at(i), kinds::DOM_EVENTS.join(", ")));
+        }
+        scene.set_listen_capture(i, signal, on);
         Ok(())
     }
 

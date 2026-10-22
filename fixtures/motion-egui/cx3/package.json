@@ -1,0 +1,14 @@
+{
+  "name": "@svelters-fixtures/cx3-bind-targets",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "CX3 (plans/milestones/CX3-bind-targets.md): bind targets, loaded from source by crates/svelters-egui/tests/bind_targets.rs only (not a workspace package).",
+  "imports": {
+    "#drafts": "./src/drafts.svelte.js"
+  },
+  "svelters": {
+    "toolkit": "egui",
+    "specFragments": ["bind-sources.json"]
+  }
+}

@@ -13,6 +13,39 @@ export interface SvlEvent<A extends unknown[] = unknown[]> {
   stopPropagation(): void;
 }
 
+/** EV1: what a DOM-style event's handler gets (`pointerdown`, `click`, `wheel`, `keydown`, `focusin`, ...):
+ * dispatched along the scene in capture, target and bubble order. */
+export interface SvlUiEvent extends SvlEvent {
+  /** The node the event is for; `currentTarget` is the node whose listener runs. */
+  target: unknown;
+  currentTarget: unknown;
+  /** 1 capture, 2 at the target, 3 bubble. */
+  eventPhase: 1 | 2 | 3;
+  bubbles: true;
+  cancelable: boolean;
+  defaultPrevented: boolean;
+  stopImmediatePropagation(): void;
+  /** Pointer events and `wheel`: the point in the window's (or slot's viewport's) points. */
+  x?: number;
+  y?: number;
+  clientX?: number;
+  clientY?: number;
+  /** Pointer events: 0 primary, 1 middle, 2 secondary, 3 back, 4 forward. */
+  button?: number;
+  /** `wheel`: the scroll in points. */
+  deltaX?: number;
+  deltaY?: number;
+  /** Key events: egui's key name (`A`, `Enter`, `ArrowDown`), and whether it is an auto-repeat. */
+  key?: string;
+  repeat?: boolean;
+  /** Focus events: the node focus came from (`focusin`) or went to (`focusout`). */
+  relatedTarget?: unknown;
+  shiftKey: boolean;
+  ctrlKey: boolean;
+  altKey: boolean;
+  metaKey: boolean;
+}
+
 type ClassValue = string | null | undefined | false | ClassValue[] | { [name: string]: unknown };
 /** Styling attributes every native element takes. */
 export type StyleAttrs = {
@@ -93,6 +126,36 @@ export interface EguiWidgetProps {
   'ondrag-leave'?: () => void;
   /** Drop target: a drag it accepts was released over it; carries the type, the data and the point in the node's own points. */
   ondrop?: (type: string, data: string, x: number, y: number) => void;
+  /** A pointer button went down over this node or a descendant (EV1: capture, target, bubble). `preventDefault` keeps the press from egui (no click, drag or focus). */
+  onpointerdown?: (e: SvlUiEvent) => void;
+  onpointerdowncapture?: (e: SvlUiEvent) => void;
+  /** A pointer button went up over this node or a descendant (EV1). `preventDefault` cancels the click. */
+  onpointerup?: (e: SvlUiEvent) => void;
+  onpointerupcapture?: (e: SvlUiEvent) => void;
+  /** The primary button was pressed and released; targets the innermost node that holds both points (EV1). `preventDefault` keeps the click from the widget. */
+  onclick?: (e: SvlUiEvent) => void;
+  onclickcapture?: (e: SvlUiEvent) => void;
+  /** A second click on the same node in a short time, after its `click` (EV1). */
+  ondblclick?: (e: SvlUiEvent) => void;
+  ondblclickcapture?: (e: SvlUiEvent) => void;
+  /** The secondary button went down (EV1), after `pointerdown`. `preventDefault` keeps the press from egui (no context menu). */
+  oncontextmenu?: (e: SvlUiEvent) => void;
+  oncontextmenucapture?: (e: SvlUiEvent) => void;
+  /** The mouse wheel or a trackpad scrolled over this node (EV1); `dx`, `dy` in points. `preventDefault` keeps it from scrolling. */
+  onwheel?: (e: SvlUiEvent) => void;
+  onwheelcapture?: (e: SvlUiEvent) => void;
+  /** A key went down while this node or a descendant had focus (EV1); `key` is egui's key name. `preventDefault` keeps the key (and the text it types) from the focused widget. */
+  onkeydown?: (e: SvlUiEvent) => void;
+  onkeydowncapture?: (e: SvlUiEvent) => void;
+  /** A key went up while this node or a descendant had focus (EV1). */
+  onkeyup?: (e: SvlUiEvent) => void;
+  onkeyupcapture?: (e: SvlUiEvent) => void;
+  /** This node or a descendant took keyboard focus (EV1; after the frame that moved it). `related` is the node that lost it, 0 for none. */
+  onfocusin?: (e: SvlUiEvent) => void;
+  onfocusincapture?: (e: SvlUiEvent) => void;
+  /** This node or a descendant lost keyboard focus (EV1). `related` is the node that took it, 0 for none. */
+  onfocusout?: (e: SvlUiEvent) => void;
+  onfocusoutcapture?: (e: SvlUiEvent) => void;
 }
 
 /** The built-in egui elements, by tag. */
@@ -111,6 +174,36 @@ export interface EguiElements {
     gap?: number;
     /** The user asked to close the window; return true to keep it open. Runs before the frame's pass. */
     'onclose-request'?: (e: SvlEvent<[]>) => void;
+    /** A pointer button went down over this node or a descendant (EV1: capture, target, bubble). `preventDefault` keeps the press from egui (no click, drag or focus). */
+    onpointerdown?: (e: SvlUiEvent) => void;
+    onpointerdowncapture?: (e: SvlUiEvent) => void;
+    /** A pointer button went up over this node or a descendant (EV1). `preventDefault` cancels the click. */
+    onpointerup?: (e: SvlUiEvent) => void;
+    onpointerupcapture?: (e: SvlUiEvent) => void;
+    /** The primary button was pressed and released; targets the innermost node that holds both points (EV1). `preventDefault` keeps the click from the widget. */
+    onclick?: (e: SvlUiEvent) => void;
+    onclickcapture?: (e: SvlUiEvent) => void;
+    /** A second click on the same node in a short time, after its `click` (EV1). */
+    ondblclick?: (e: SvlUiEvent) => void;
+    ondblclickcapture?: (e: SvlUiEvent) => void;
+    /** The secondary button went down (EV1), after `pointerdown`. `preventDefault` keeps the press from egui (no context menu). */
+    oncontextmenu?: (e: SvlUiEvent) => void;
+    oncontextmenucapture?: (e: SvlUiEvent) => void;
+    /** The mouse wheel or a trackpad scrolled over this node (EV1); `dx`, `dy` in points. `preventDefault` keeps it from scrolling. */
+    onwheel?: (e: SvlUiEvent) => void;
+    onwheelcapture?: (e: SvlUiEvent) => void;
+    /** A key went down while this node or a descendant had focus (EV1); `key` is egui's key name. `preventDefault` keeps the key (and the text it types) from the focused widget. */
+    onkeydown?: (e: SvlUiEvent) => void;
+    onkeydowncapture?: (e: SvlUiEvent) => void;
+    /** A key went up while this node or a descendant had focus (EV1). */
+    onkeyup?: (e: SvlUiEvent) => void;
+    onkeyupcapture?: (e: SvlUiEvent) => void;
+    /** This node or a descendant took keyboard focus (EV1; after the frame that moved it). `related` is the node that lost it, 0 for none. */
+    onfocusin?: (e: SvlUiEvent) => void;
+    onfocusincapture?: (e: SvlUiEvent) => void;
+    /** This node or a descendant lost keyboard focus (EV1). `related` is the node that took it, 0 for none. */
+    onfocusout?: (e: SvlUiEvent) => void;
+    onfocusoutcapture?: (e: SvlUiEvent) => void;
   };
   /** A flexbox container laid out by taffy; draws nothing itself. */
   box: EguiWidgetProps & {
@@ -162,12 +255,20 @@ export interface EguiElements {
     default?: boolean;
     /** Escape activates it while focus is in its focus scope (or root). */
     cancel?: boolean;
+    /** An icon before the caption: an icon key (`name` in the `icons` family, or `family:name`). Its size, place and visibility are CSS on `::part(icon)` (P3). */
+    icon?: string;
+    /** Held down, it activates again and again (`clicked` after 300 ms, then every 100 ms; QAbstractButton `autoRepeat`). */
+    repeat?: boolean;
     /** Pressed and released (`Response::clicked`). */
     onclicked?: () => void;
     /** Double click (`Response::double_clicked`). */
     'ondouble-clicked'?: () => void;
     /** Right click (`Response::secondary_clicked`). */
     'onsecondary-clicked'?: () => void;
+    /** The primary button went down on it (QAbstractButton `pressed`). */
+    onpress?: () => void;
+    /** It came up again, over the button or not (`released`). */
+    onrelease?: () => void;
   };
   /** A check box with a caption. */
   checkbox: EguiWidgetProps & {
@@ -200,6 +301,10 @@ export interface EguiElements {
     'ongained-focus'?: () => void;
     /** Lost keyboard focus. */
     'onlost-focus'?: () => void;
+    /** The user committed the text: Enter in a one-line field (also when a default button takes it), or losing focus after an edit since the last commit; carries the text. */
+    oncommit?: (text: string) => void;
+    /** Enter in a one-line field (also when a default button takes it); carries the text. Fires after `commit`. */
+    onsubmit?: (text: string) => void;
   };
   /** A horizontal slider with an optional value box. */
   slider: EguiWidgetProps & {
@@ -270,6 +375,10 @@ export interface EguiElements {
     size?: number | null;
     /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
     'font-weight'?: number;
+    /** An image instead of the glyph: an `asset://` ref (an imported SVG or PNG), a file path or any uri an egui loader serves. Measured `size` (else the body size) square and fitted inside; when it does not load the placeholder box is drawn. */
+    source?: string | null;
+    /** With `source`: tints the image with the text colour (SVG `currentColor` icons render white, then tint like a glyph); false keeps its own colours. */
+    tint?: boolean;
     /** Draws it as a button (an icon button: role `Button`, takes focus). */
     frame?: boolean;
     /** With `frame`: drawn as selected (a toggle look). */
@@ -447,6 +556,8 @@ export interface EguiElements {
     'ondrag-started'?: () => void;
     /** A drag on it ended. */
     'ondrag-stopped'?: () => void;
+    /** The user committed a value: a drag ended, or a change made otherwise (arrow keys, a typed value applied on Enter or blur); carries the value. */
+    oncommit?: (value: number) => void;
   };
   /** A side or top/bottom panel: a flex box with the panel background and a separator on its inner edge, optionally resizable. Place it at the edge of a row (left/right) or column (top/bottom). */
   panel: EguiWidgetProps & {
@@ -755,7 +866,7 @@ export interface EguiElements {
     /** The user (or `popdown`) closed it. */
     onclosed?: () => void;
   };
-  /** A virtual table (`egui_table`): only the visible rows and columns are drawn. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers). Give it a size or let flex-grow size it. */
+  /** A virtual table (`egui_table`): only the visible rows and columns are drawn. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`. Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it. */
   table: EguiWidgetProps & {
     /** Number of rows (the scroll extent). Rows without data yet are drawn empty. */
     'row-count'?: number;
@@ -767,15 +878,27 @@ export interface EguiElements {
     striped?: boolean;
     /** Rows beyond the visible ones that `range` asks for on each side (data ready before it scrolls into view). */
     overscan?: number;
-    /** The selected row, -1 for none; a click on a row (or the arrow keys) changes it. */
-    selected?: number;
-    'bind:selected'?: number;
+    /** The selected row ids (`bind:selected`); clicks (Ctrl/Shift with `selection="multi"`) and the keyboard change it. Kept by id across `set-ids` (sorts, filters). */
+    selected?: number[];
+    'bind:selected'?: number[];
+    /** `single`, `multi` (Ctrl/Shift clicks and keys, ranges) or `none` (a cursor only). */
+    selection?: 'none' | 'single' | 'multi';
+    /** The cursor row's id (keyboard focus inside the table), -1 for none. */
+    current?: number;
+    'bind:current'?: number;
+    /** The cursor column (Left/Right move it; F2 and typing edit that cell). */
+    'current-column'?: number;
+    'bind:current-column'?: number;
     /** The rows the table needs data for changed: `first..=last` (the visible rows plus `overscan`); answer with `set-rows`. */
     onrange?: (first: number, last: number) => void;
-    /** The user selected a row; carries its index. */
-    onchanged?: (selected: number) => void;
-    /** A row was double-clicked (or Enter pressed on the selection). */
+    /** The user changed the selection; carries the selected row ids (`bind:selected`). */
+    onchanged?: (selected: number[]) => void;
+    /** The user changed the selection; carries the selected row ids. */
+    onselectionchange?: (ids: number[]) => void;
+    /** A row was double-clicked (a cell of a column that is not `editable`) or Enter pressed on the cursor row; carries its position. */
     onactivated?: (row: number) => void;
+    /** An edit is committed: row id, column index, the editor's value. Accept by returning nothing; reject with `e.result = 'reason'` (shown under the cell) or `e.preventDefault()`: the cell reverts. */
+    oncommit?: (e: SvlEvent<[number, number, unknown]>, row: number, column: number, value: unknown) => void;
     /** A column header was clicked (sort on it in JS and set the column's `sort`). */
     'onheader-clicked'?: (column: number) => void;
   };
@@ -789,6 +912,16 @@ export interface EguiElements {
     align?: 'start' | 'center' | 'end';
     /** The sort arrow its header shows (the data is sorted by JS). */
     sort?: 'none' | 'ascending' | 'descending';
+    /** Its cells can be edited (F2, typing, double click); the editor is `editor`, else a text field. */
+    editable?: boolean;
+    /** The cell editor, a snippet taking the edit (`{ row, column, value (bindable), typed, commit(), cancel() }`); realised once and rebound per edit. */
+    editor?: ((...args: any[]) => any) | null;
+    /** Runtime protocol: an edit of this column's cell starts (the editor snippet's outlet is `set-editor`). */
+    'oneditor-bind'?: (e: SvlEvent<[number, string, string]>, row: number, value: string, typed: string) => void;
+    /** Runtime protocol: the editor's value to commit (the handler sets `e.result`). */
+    'oneditor-value'?: (e: SvlEvent<[]>) => void;
+    /** Runtime protocol: the edit ended; the editor stays realised for the next one. */
+    'oneditor-unbind'?: (e: SvlEvent<[]>) => void;
   };
   /** Pages under a tab bar: each child (a `tab`) is a page titled by its `title`; only the `selected` one is laid out and drawn. */
   'tab-view': EguiWidgetProps & {
@@ -881,8 +1014,11 @@ export interface EguiElements {
     /** The selected position, -1 for none. Setting it never raises `select`. */
     selected?: number;
     'bind:selected'?: number;
-    /** `single`: a click selects a row (`select`); `none`: rows are not selectable. */
-    selection?: 'none' | 'single';
+    /** `single`: a click or the keyboard selects a row (`select`); `multi`: Ctrl/Shift clicks and keys select several (`selectionchange`); `none`: rows are not selectable. */
+    selection?: 'none' | 'single' | 'multi';
+    /** The selected item ids (`bind:selected-ids`); kept by id across splices, sorts and filters. */
+    'selected-ids'?: number[];
+    'bind:selected-ids'?: number[];
     /** `list` (egui draws `grid` as a list for now). */
     layout?: 'list' | 'grid';
     /** The height a row is assumed to have before it is measured, and its minimum, in points. */
@@ -899,6 +1035,41 @@ export interface EguiElements {
     onactivate?: (pos: number) => void;
     /** The user selected the item at `pos`. */
     onselect?: (pos: number) => void;
+    /** The user changed the selection; carries the selected ids. */
+    onselectionchange?: (ids: number[]) => void;
+  };
+  /** A virtualized tree: JS keeps the tree and flattens its visible rows into the list; children load when a node expands. */
+  'tree-view': EguiWidgetProps & {
+    /** `single` or `multi` (Shift ranges, Ctrl toggles); `none`: rows are not selectable. */
+    selection?: 'none' | 'single' | 'multi';
+    /** The height a row is assumed to have before it is measured, and its minimum, in points. */
+    'row-height'?: number;
+    /** Points per level; the disclosure triangle sits in the last one. */
+    indent?: number;
+    /** Non-empty: rows drag, as a payload of this type (their `data`) plus `text/plain` (their labels). */
+    'row-drag-type'?: string;
+    /** Non-empty: rows take drops of these types (WG4b patterns) and raise `drop-row`. */
+    'row-drop-types'?: string;
+    /** Row slot `row` was created: give it content with `setRow`. */
+    onsetup?: (e: SvlEvent<[number]>, row: number) => void;
+    /** Slot `row` now shows item `id` at `pos`; `gen` counts the binds of the slot. */
+    onbind?: (e: SvlEvent<[number, number, number, number]>, row: number, pos: number, id: number, gen: number) => void;
+    /** Slot `row` no longer shows binding `gen`. */
+    onunbind?: (e: SvlEvent<[number, number]>, row: number, gen: number) => void;
+    /** Slot `row` is gone: release its widget. */
+    onteardown?: (e: SvlEvent<[number]>, row: number) => void;
+    /** The user activated the row at `pos` (double click, Enter). */
+    onactivate?: (pos: number) => void;
+    /** The user expanded node `id` (disclosure click, Right): splice its children in. */
+    onexpand?: (id: number) => void;
+    /** The user collapsed node `id` (disclosure click, Left): splice its children out. */
+    oncollapse?: (id: number) => void;
+    /** The user changed the selection: read it with `selection()`. */
+    'onselection-changed'?: () => void;
+    /** Ctrl+C on the focused tree: copy the selected rows. */
+    oncopy?: () => void;
+    /** A drag was dropped `before`, `after` or `into` row `id` (-1: below the last row), as the entry of `type` it took. */
+    'ondrop-row'?: (id: number, where: string, type: string, data: string) => void;
   };
 }
 

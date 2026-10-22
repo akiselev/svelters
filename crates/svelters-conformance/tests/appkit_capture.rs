@@ -1,5 +1,6 @@
 //! NA1 capture on AppKit (WG3m, `plans/milestones/WG3m-macos-references.md`): every pin of
-//! `conformance/pins/` that can run on macOS, on two `NSTextField`s and an `NSButton`, then on two
+//! `conformance/pins/` (an intent without a macOS chord is a step without input, `run_pin`; there is
+//! no primary selection, so `primary` reads ""), on two `NSTextField`s and an `NSButton`, then on two
 //! `NSTextView`s and the button, in a tiny AppKit fixture (a window and the standard Edit menu, as
 //! every AppKit app has; without it Cmd+Z/X/C/V/A do nothing). Input is the user path through
 //! `svelters_conformance::macos` (CGEvent: keys to this process, the mouse through the session
@@ -31,7 +32,7 @@ mod mac {
     use svelters_conformance::golden::{Capture, checkpoint_json, finish};
     use svelters_conformance::macos::{self, Ax, CGPoint, Cf, Input};
     use svelters_conformance::pins::{
-        BUTTON, BUTTON_LABEL, CLIPBOARD, Chord, FIELDS, Keys, Pin, load_pins, not_applicable,
+        BUTTON, BUTTON_LABEL, CLIPBOARD, Chord, FIELDS, Keys, Pin, load_pins,
     };
     use svelters_conformance::trace::{Checkpoint, State, Trace, scalar_to_utf16, utf16_to_scalar};
     use svelters_conformance::{Driver, run_pin, selection_handle};
@@ -475,11 +476,8 @@ mod mac {
             count: u32,
             button: u32,
         ) -> Result<(), String> {
-            if button != 1 {
-                return Err("only the primary button exists on macOS".into());
-            }
             let p = self.point(target, at)?;
-            self.input.click(p, count)
+            self.input.click(p, count, button)
         }
 
         fn type_text(&mut self, text: &str) -> Result<(), String> {
@@ -580,10 +578,13 @@ mod mac {
             self.trace.state(h_of(BUTTON), &st);
             cp.push((BUTTON.to_string(), st));
             for name in self.selections.clone() {
-                if name != CLIPBOARD {
-                    return Err(format!("{name}: not observable on macOS"));
-                }
-                let st = State::selection(clipboard_get().unwrap_or_default());
+                // macOS has no primary selection: `primary` is always "" (as on Windows, WG3w)
+                let text = if name == CLIPBOARD {
+                    clipboard_get().unwrap_or_default()
+                } else {
+                    String::new()
+                };
+                let st = State::selection(text);
                 self.trace.state(selection_handle(&name), &st);
                 cp.push((name, st));
             }
@@ -608,12 +609,8 @@ mod mac {
 
     fn run_kind(kind: Kind, pins: &[Pin], keys: &Keys, only: &Option<Vec<String>>) {
         let mut d = Mac::new(kind);
-        let (mut results, mut traces, mut na) = (vec![], vec![], vec![]);
+        let (mut results, mut traces) = (vec![], vec![]);
         for pin in pins {
-            if let Some(why) = not_applicable(pin, keys) {
-                na.push((pin.id.clone(), why));
-                continue;
-            }
             if only.as_ref().is_some_and(|o| !o.contains(&pin.id)) {
                 continue;
             }
@@ -655,7 +652,6 @@ mod mac {
             injector: "cgevent".into(),
             settings: d.settings.clone().into_iter().collect(),
             observe,
-            not_applicable: na,
             pins: results,
         };
         finish(&cap, &traces).unwrap_or_else(|e| panic!("{e}"));

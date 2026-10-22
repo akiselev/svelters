@@ -1,0 +1,89 @@
+# ZU3 (plans/milestones/ZU3-ui-thread.md, ZED-LESSONS §9 #3 and §1.9): the UI thread never blocks.
+# Blocking file system, process and channel calls are denied in this crate (`#![deny]` in lib.rs);
+# the legitimate I/O sites (loaders, the watcher, file backends, workers) carry `#[allow]` with a
+# reason. Keep this file identical to crates/svelters-egui/clippy.toml.
+disallowed-methods = [
+  # std::fs: file system I/O blocks on the disk (and on network mounts, for seconds).
+  { path = "std::fs::read", reason = "blocking file I/O on the UI thread" },
+  { path = "std::fs::read_to_string", reason = "blocking file I/O on the UI thread" },
+  { path = "std::fs::write", reason = "blocking file I/O on the UI thread" },
+  { path = "std::fs::read_dir", reason = "blocking file I/O on the UI thread" },
+  { path = "std::fs::metadata", reason = "blocking file I/O on the UI thread" },
+  { path = "std::fs::symlink_metadata", reason = "blocking file I/O on the UI thread" },
+  { path = "std::fs::canonicalize", reason = "blocking file I/O on the UI thread" },
+  { path = "std::fs::create_dir", reason = "blocking file I/O on the UI thread" },
+  { path = "std::fs::create_dir_all", reason = "blocking file I/O on the UI thread" },
+  { path = "std::fs::remove_file", reason = "blocking file I/O on the UI thread" },
+  { path = "std::fs::remove_dir", reason = "blocking file I/O on the UI thread" },
+  { path = "std::fs::remove_dir_all", reason = "blocking file I/O on the UI thread" },
+  { path = "std::fs::rename", reason = "blocking file I/O on the UI thread" },
+  { path = "std::fs::copy", reason = "blocking file I/O on the UI thread" },
+  { path = "std::fs::File::open", reason = "blocking file I/O on the UI thread" },
+  { path = "std::fs::File::create", reason = "blocking file I/O on the UI thread" },
+  { path = "std::fs::OpenOptions::open", reason = "blocking file I/O on the UI thread" },
+  { path = "std::path::Path::exists", reason = "blocking file I/O on the UI thread" },
+  { path = "std::path::Path::is_file", reason = "blocking file I/O on the UI thread" },
+  { path = "std::path::Path::is_dir", reason = "blocking file I/O on the UI thread" },
+  { path = "std::path::Path::canonicalize", reason = "blocking file I/O on the UI thread" },
+  { path = "std::path::Path::metadata", reason = "blocking file I/O on the UI thread" },
+  { path = "std::path::Path::read_dir", reason = "blocking file I/O on the UI thread" },
+  # std::process: spawning and waiting on processes blocks (fork/exec, pipes).
+  { path = "std::process::Command::output", reason = "blocks on a child process" },
+  { path = "std::process::Command::status", reason = "blocks on a child process" },
+  { path = "std::process::Command::spawn", reason = "process launch on the UI thread" },
+  { path = "std::process::Child::wait", reason = "blocks on a child process" },
+  { path = "std::process::Child::wait_with_output", reason = "blocks on a child process" },
+  # Blocking waits: the UI thread never waits on other threads (ZED-LESSONS §1.10).
+  { path = "std::sync::mpsc::Receiver::recv", reason = "blocking wait on the UI thread; use try_recv" },
+  { path = "std::sync::mpsc::Receiver::recv_timeout", reason = "blocking wait on the UI thread; use try_recv" },
+  { path = "std::sync::mpsc::Receiver::iter", reason = "blocking wait on the UI thread; use try_iter" },
+  { path = "std::sync::Condvar::wait", reason = "blocking wait on the UI thread" },
+  { path = "std::sync::Condvar::wait_while", reason = "blocking wait on the UI thread" },
+  { path = "std::sync::Condvar::wait_timeout", reason = "blocking wait on the UI thread" },
+  { path = "std::thread::JoinHandle::join", reason = "blocking wait on the UI thread" },
+  { path = "std::thread::sleep", reason = "sleeps the UI thread" },
+  { path = "tokio::runtime::Runtime::block_on", reason = "blocking wait on the UI thread", allow-invalid = true },
+  { path = "tokio::runtime::Handle::block_on", reason = "blocking wait on the UI thread", allow-invalid = true },
+  { path = "futures::executor::block_on", reason = "blocking wait on the UI thread", allow-invalid = true },
+  { path = "pollster::block_on", reason = "blocking wait on the UI thread", allow-invalid = true },
+  { path = "rayon::ThreadPool::install", reason = "blocks until the pool finishes; use spawn", allow-invalid = true },
+  # Synchronous native dialogs run a modal loop on the calling thread; use the Async* dialogs.
+  { path = "rfd::FileDialog::pick_file", reason = "modal dialog blocks the UI thread; use AsyncFileDialog", allow-invalid = true },
+  { path = "rfd::FileDialog::pick_files", reason = "modal dialog blocks the UI thread; use AsyncFileDialog", allow-invalid = true },
+  { path = "rfd::FileDialog::pick_folder", reason = "modal dialog blocks the UI thread; use AsyncFileDialog", allow-invalid = true },
+  { path = "rfd::FileDialog::pick_folders", reason = "modal dialog blocks the UI thread; use AsyncFileDialog", allow-invalid = true },
+  { path = "rfd::FileDialog::save_file", reason = "modal dialog blocks the UI thread; use AsyncFileDialog", allow-invalid = true },
+  { path = "rfd::MessageDialog::show", reason = "modal dialog blocks the UI thread; use AsyncMessageDialog", allow-invalid = true },
+]
+
+# OW0 (ARCH-WIDGETS §3.1, plans/milestones/OW0-widget-foundation.md): svelters draws every widget
+# itself; egui is only the engine. Each egui widget wrapper still in use carries
+# `#[allow(clippy::disallowed_types)] // OW: wrapper until <lane>`; the count of those lines is the
+# migration's burn-down and reaches zero at OW-DONE. This list is svelters-egui's own
+# (crates/svelters-host has no widgets). Denied in the library (lib.rs).
+disallowed-types = [
+  { path = "egui::Button", reason = "OW: svelters draws its own widgets (own `button` (OW0))" },
+  { path = "egui::TextEdit", reason = "OW: svelters draws its own widgets (OW4)" },
+  { path = "egui::Checkbox", reason = "OW: svelters draws its own widgets (OW1a)" },
+  { path = "egui::RadioButton", reason = "OW: svelters draws its own widgets (OW1a)" },
+  { path = "egui::Slider", reason = "OW: svelters draws its own widgets (OW1b)" },
+  { path = "egui::DragValue", reason = "OW: svelters draws its own widgets (OW1b)" },
+  { path = "egui::ComboBox", reason = "OW: svelters draws its own widgets (OW3)" },
+  { path = "egui::ScrollArea", reason = "OW: svelters draws its own widgets (OW2)" },
+  { path = "egui::CollapsingHeader", reason = "OW: svelters draws its own widgets (OW1a)" },
+  { path = "egui::Popup", reason = "OW: svelters draws its own widgets (OW3)" },
+  { path = "egui::Modal", reason = "OW: svelters draws its own widgets (OW7)" },
+  { path = "egui::Window", reason = "OW: svelters draws its own widgets (OW7)" },
+  { path = "egui::ProgressBar", reason = "OW: svelters draws its own widgets (OW1a)" },
+  { path = "egui::Spinner", reason = "OW: svelters draws its own widgets (OW1a)" },
+  { path = "egui::Link", reason = "OW: svelters draws its own widgets (OW1a)" },
+  { path = "egui::Hyperlink", reason = "OW: svelters draws its own widgets (OW1a)" },
+  { path = "egui::Label", reason = "OW: svelters draws its own widgets (OW1a)" },
+  { path = "egui::Separator", reason = "OW: svelters draws its own widgets (OW1a)" },
+  { path = "egui::MenuBar", reason = "OW: svelters draws its own widgets (OW3)" },
+  { path = "egui::containers::menu::MenuButton", reason = "OW: svelters draws its own widgets (OW3)" },
+  { path = "egui::containers::menu::SubMenuButton", reason = "OW: svelters draws its own widgets (OW3)" },
+  { path = "egui::containers::menu::SubMenu", reason = "OW: svelters draws its own widgets (OW3)" },
+  { path = "egui_extras::DatePickerButton", reason = "OW: svelters draws its own widgets (OW6)" },
+  { path = "egui_table::Table", reason = "OW: svelters draws its own widgets (OW5b)" },
+]

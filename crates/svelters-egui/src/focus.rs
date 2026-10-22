@@ -79,6 +79,8 @@ pub(crate) enum Role {
     Slider,
     /// LS1: a selectable `virtual-list` row (the list's tab stop is its selected row).
     List,
+    /// WG5b: a `tree-view` (one tab stop, the list; its claims are `kinds::treeview::claims`).
+    Tree,
     /// A provider kind (its claims are asked through `Widget::consume_key`).
     Ext { enter: bool, escape: bool },
     Other,
@@ -143,6 +145,9 @@ struct State {
     autofocused: Vec<Id>,
     /// A default or cancel button to activate at its next paint (its node id).
     activate: Option<Id>,
+    /// CX3: a one-line text field (its widget id) whose Enter went to the default button: it still
+    /// commits at its next paint.
+    entered: Option<Id>,
     /// An edit command for a text field (its id) at its next paint, with the host's clipboard.
     cmd: Option<(Id, TextCommand, Option<Clip>)>,
     /// A Cut or Copy fed to field `id`: what it copies goes to this clipboard after it ran.
@@ -228,6 +233,7 @@ pub(crate) fn claims(role: Role, key: Key, m: Modifiers, mac: bool) -> bool {
         }
         Role::Slider => !command && !m.alt && nav,
         Role::List => !command && !m.alt && (nav || (!m.shift && matches!(key, Key::Space | Key::Enter))),
+        Role::Tree => crate::kinds::treeview::claims(key, m),
         Role::Button { .. } | Role::Toggle => !command && !m.alt && !m.shift && matches!(key, Key::Space | Key::Enter),
         Role::Ext { .. } | Role::Other => false,
     }
@@ -383,6 +389,9 @@ fn route(st: &mut State, focus: Option<Id>, keys: &[(Key, Modifiers)], ime: &[bo
             });
             if let Some(b) = button {
                 st.activate = Some(b.node_eid);
+                if let Some(e) = focused.filter(|e| enter && matches!(e.role, Role::Text { multiline: false })) {
+                    st.entered = Some(e.id);
+                }
                 plan.eat.push(key);
                 plan.repaint = true;
                 if focus.is_none() && plan.focus.is_none() {
@@ -538,6 +547,8 @@ pub(crate) fn record(arena: &Arena, i: usize, ui: &Ui, resp: &egui::Response) {
     let role = match arena.w(i) {
         W::TextEdit { multiline, .. } => Role::Text { multiline: *multiline },
         W::Button { .. } => Role::Button { default: c.default_button, cancel: c.cancel_button },
+        // OW0: an own widget replacing `button` keeps its EV3 role (default and cancel keys)
+        W::Ext(x) if x.entry().replaces == Some("button") => Role::Button { default: c.default_button, cancel: c.cancel_button },
         W::Slider { .. } | W::RangeSlider { .. } | W::DragValue { .. } => Role::Slider,
         W::Ext(x) => {
             let w = x.0.try_borrow();
@@ -685,6 +696,18 @@ pub(crate) fn take_activation(ui: &Ui, node_eid: Id) -> bool {
         let hit = st.activate == Some(node_eid);
         if hit {
             st.activate = None;
+        }
+        hit
+    })
+}
+
+/// CX3: for a one-line text field with widget id `id`: whether its Enter went to the default
+/// button this pass (the field still commits).
+pub(crate) fn take_entered(ui: &Ui, id: Id) -> bool {
+    with(ui.ctx(), |st| {
+        let hit = st.entered == Some(id);
+        if hit {
+            st.entered = None;
         }
         hit
     })

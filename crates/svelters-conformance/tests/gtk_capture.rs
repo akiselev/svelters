@@ -10,6 +10,7 @@
 //!
 //! Writes `target/na/linux/gtk-<version>.json` and the per-pin traces; compares with
 //! `conformance/golden/linux/gtk-<version>.json` when it exists; `NA_UPDATE=1` rewrites it.
+
 #![cfg(target_os = "linux")]
 
 use gtk::prelude::*;
@@ -411,7 +412,6 @@ fn capture() {
         injector: "xtest".into(),
         settings,
         observe,
-        not_applicable: vec![],
         pins: results,
     };
     finish(&cap, &traces).unwrap_or_else(|e| panic!("{e}"));

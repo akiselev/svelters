@@ -43,6 +43,8 @@ impl StopToken {
         *lock(&self.inner.0)
     }
 
+    // ZU3: called by service loops on their own threads, never the UI thread.
+    #[allow(clippy::disallowed_methods)]
     /// Sleeps for `d` or until the stop, whichever comes first: true if stopped (a service loop's tick).
     pub fn wait(&self, d: Duration) -> bool {
         let end = Instant::now() + d;
@@ -199,6 +201,8 @@ pub struct ShutdownReport {
     pub timed_out: Vec<String>,
 }
 
+// ZU3: app shutdown: joins the service threads with a bounded timeout after the last frame.
+#[allow(clippy::disallowed_methods)]
 /// Stops every started service: fires the stop tokens, runs the `on_stop` hooks (tokio tasks are
 /// aborted), and joins the service threads, waiting at most `timeout` in all. Services never stop at a
 /// hot reload; call this when the app shuts down, after the toolkit loop returned.

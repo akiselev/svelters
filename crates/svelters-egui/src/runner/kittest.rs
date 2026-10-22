@@ -43,6 +43,11 @@ impl TestApp {
         TestApp::loading(HostConfig { echo_console: false, echo_errors: false, ..HostConfig::default() }, Some(step_dt), |embed| embed.load_app(bundle))
     }
 
+    /// AU1b: [`TestApp::load_stepped`] with a host config of the caller's (a virtual clock's hooks).
+    pub fn load_with(bundle: impl AsRef<Path>, step_dt: f32, cfg: HostConfig) -> Result<TestApp, String> {
+        TestApp::loading(cfg, Some(step_dt), |embed| embed.load_app(bundle))
+    }
+
     pub fn with_config(bundle: impl AsRef<Path>, cfg: HostConfig) -> Result<TestApp, String> {
         TestApp::loading(cfg, None, |embed| embed.load_app(bundle))
     }
@@ -75,6 +80,12 @@ impl TestApp {
         src.backend = "egui".into();
         let provider = std::rc::Rc::new(svelters_modules::SourceProvider::new(src)?);
         TestApp::loading(cfg, Some(step_dt), |embed| embed.load_app_from(provider))
+    }
+
+    /// Q4b: an app loaded by `load`, which gets the [`Embed`] before anything is loaded (to set a
+    /// bytecode cache, load a `.svb` through [`Embed::load_app_from`], time the load).
+    pub fn with_loader(cfg: HostConfig, load: impl FnOnce(&Embed) -> Result<(), svelters_host::JsError>) -> Result<TestApp, String> {
+        TestApp::loading(cfg, None, load)
     }
 
     fn loading(cfg: HostConfig, step_dt: Option<f32>, load: impl FnOnce(&Embed) -> Result<(), svelters_host::JsError>) -> Result<TestApp, String> {

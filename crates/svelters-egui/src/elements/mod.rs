@@ -16,7 +16,7 @@
 pub mod canvas;
 pub mod images;
 mod inputs;
-mod media;
+pub(crate) mod media;
 pub use media::fit_rect;
 pub(crate) mod panes;
 

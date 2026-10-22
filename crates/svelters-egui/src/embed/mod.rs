@@ -106,6 +106,25 @@ pub struct EmbedConfig {
     /// that owns the per-frame order, cadatomic's seam 4): only the root viewport's `logic` runs JS,
     /// so input in a deferred window costs one root frame, whose logic routes the repaint back.
     pub prepass_plugin: bool,
+    /// OW0: an app's change to the native behaviour policy ([`EmbedConfig::with_policy`]).
+    pub policy: Option<fn(&mut crate::native::Policy)>,
+}
+
+impl EmbedConfig {
+    /// OW0 (WIDGET-PARITY §4.3): changes fields of the native behaviour policy of the embed's
+    /// context (tooltip delay, drag threshold, button order…): `cfg.with_policy(|p|
+    /// p.tooltip_delay_ms = 400)`. Applied by [`Embed::new`].
+    pub fn with_policy(mut self, f: fn(&mut crate::native::Policy)) -> EmbedConfig {
+        self.policy = Some(f);
+        self
+    }
+
+    /// OW0 (WIDGET-PARITY §4.3, Q1): registers part painter `name` (CSS selects it with
+    /// `background-image: paint(name)` or `content: paint(name)`). Painters are process-wide.
+    pub fn painter(self, name: &str, p: impl crate::paint::PartPainter) -> EmbedConfig {
+        crate::paint::register_painter(name, p);
+        self
+    }
 }
 
 impl Default for EmbedConfig {
@@ -117,6 +136,7 @@ impl Default for EmbedConfig {
             faults: FaultPolicy::default(),
             timer_horizon: Duration::from_millis(50),
             prepass_plugin: true,
+            policy: None,
         }
     }
 }
@@ -407,6 +427,8 @@ struct EmbedInner {
     probe: BusyProbe,
     /// The context the salt was registered in (debug check), for `Drop`.
     salt_ctx: egui::Context,
+    /// AS1: the asset registry of the provider loaded last.
+    assets: RefCell<Option<std::sync::Arc<svelters_modules::Assets>>>,
 }
 
 /// The embedded svelters-egui: one backend, one host (one QuickJS runtime), its slots and roots.
@@ -446,6 +468,9 @@ impl Embed {
             clash
         });
         debug_assert!(!clash, "svelters-egui: two embeds with the id salt '{}' in one egui Context", cfg.id_salt);
+        if let Some(f) = cfg.policy {
+            crate::native::override_policy(ctx, f);
+        }
         let backend = EguiBackend::new();
         backend.bind_ctx(ctx);
         let host = Host::new_owned(backend.clone(), cfg.host.clone()).map_err(EmbedError::Host)?;
@@ -460,6 +485,7 @@ impl Embed {
             st: RefCell::new(State { next_root: 1, ..State::default() }),
             probe: BusyProbe::default(),
             salt_ctx: ctx.clone(),
+            assets: RefCell::new(None),
         });
         current::register(id, &inner);
         let e = Embed { inner };
@@ -476,6 +502,23 @@ impl Embed {
         b.bind_ctx(ctx);
         b.0.scene.hook_passes(ctx);
         current::install(self, ctx);
+        if let Some(a) = self.assets() {
+            crate::assets::install(ctx, a);
+        }
+    }
+
+    /// AS1: the asset registry of the module provider [`Embed::load_from`] / [`Embed::load_app_from`]
+    /// loaded (`ModuleProvider::assets`), if it has one. Its loaders are installed on the embed's
+    /// contexts (the one it was created in, and every one passed to [`Embed::attach`]).
+    pub fn assets(&self) -> Option<std::sync::Arc<svelters_modules::Assets>> {
+        self.inner.assets.borrow().clone()
+    }
+
+    fn adopt_assets(&self, provider: &dyn svelters_host::ModuleProvider) {
+        if let Some(a) = provider.assets() {
+            crate::assets::install(&self.inner.salt_ctx, a.clone());
+            *self.inner.assets.borrow_mut() = Some(a);
+        }
     }
 
     /// This embed's id in its thread's registry ([`with_embed`]).
@@ -516,6 +559,7 @@ impl Embed {
     /// (`svelters_host::modules::SourceProvider`).
     pub fn load_from(&self, provider: std::rc::Rc<dyn svelters_host::ModuleProvider>) -> Result<EntryId, JsError> {
         let host = &self.inner.host;
+        self.adopt_assets(&*provider);
         host.set_turn_budget(self.inner.cfg.host.turn_budget);
         let r = host.load_entry_from(provider);
         self.loaded(r)
@@ -542,6 +586,7 @@ impl Embed {
     /// [`Embed::load_app`] from a module provider (Q1): an app compiled from source.
     pub fn load_app_from(&self, provider: std::rc::Rc<dyn svelters_host::ModuleProvider>) -> Result<(), JsError> {
         let host = &self.inner.host;
+        self.adopt_assets(&*provider);
         host.set_turn_budget(self.inner.cfg.host.turn_budget);
         let r = host.load_from(provider);
         host.set_turn_budget(Some(self.inner.cfg.budgets.interrupt));
@@ -1073,6 +1118,16 @@ impl Embed {
     /// SG4: registers a scene pass (`SceneHandle::register_pass`).
     pub fn register_pass<P: crate::provider::ScenePass>(&self, p: P) -> crate::provider::PassHandle<P> {
         self.inner.backend.0.scene.register_pass(p)
+    }
+
+    /// EV1 (SV6): a Rust event filter on this embed's scene ([`crate::events::EventFilter`]).
+    pub fn register_filter(&self, scope: crate::events::FilterScope, f: impl crate::events::EventFilter) -> crate::events::FilterHandle {
+        self.inner.backend.0.scene.register_filter(scope, f)
+    }
+
+    /// EV1 (SV7): an overlay painted after the walk ([`crate::events::Overlay`]).
+    pub fn register_overlay<O: crate::events::Overlay>(&self, o: O) -> crate::events::OverlayHandle<O> {
+        self.inner.backend.0.scene.register_overlay(o)
     }
 
     /// SG4 (ARCH-SCENE §7.5): an overlay root, a slot drawn with [`Embed::show_overlay`] in an

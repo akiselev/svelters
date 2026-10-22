@@ -4,6 +4,7 @@
 //! - [`trace`]: the `state #h {…}` trace writer for `tools/oplog-compare.mjs`.
 //! - [`golden`]: `conformance/golden/<platform>/<toolkit>-<version>.json`, capture and compare.
 //! - [`xtest`]: the XTEST user-path injector the GTK and Qt captures use.
+//! - [`win`]: the Windows user path (WG3w): `SendInput` and UI Automation, one driver for every fixture.
 //! - [`macos`]: the CGEvent and accessibility user path of the AppKit captures (WG3m).
 //! - [`run_pin`]: drives one pin through a [`Driver`] (one per toolkit, in the tests of this crate,
 //!   `examples/counter-qt/tests/na_capture.rs` and this crate's egui measurement).
@@ -13,6 +14,8 @@ pub mod pins;
 pub mod trace;
 #[cfg(target_os = "macos")]
 pub mod macos;
+#[cfg(windows)]
+pub mod win;
 #[cfg(target_os = "linux")]
 pub mod xtest;
 
@@ -51,6 +54,9 @@ pub fn run_pin(d: &mut dyn Driver, pin: &Pin, keys: &Keys) -> Result<(PinResult,
     let mut checkpoints = vec![("setup".to_string(), d.observe().map_err(ctx)?)];
     for a in &pin.actions {
         match a {
+            // An intent the platform has no chord for (`unicode-entry` off Linux) is a step without input: its
+            // checkpoint records that nothing happened (WG3w).
+            Action::Key { intent, .. } if !keys.map.contains_key(intent) => Ok(()),
             Action::Key { intent, shift } => d.key(&keys.chord(intent, *shift).map_err(ctx)?),
             Action::Click {
                 target,

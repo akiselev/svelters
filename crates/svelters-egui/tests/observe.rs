@@ -42,6 +42,8 @@ fn every_prop_is_observable_and_host_writes_never_echo() {
                     kinds::Ty::Str => Value::Str("x".into()),
                     kinds::Ty::Enum(vals) => Value::Str(vals[vals.len() - 1].into()),
                     kinds::Ty::StrList => Value::List(vec![Value::Str("x".into())]),
+                    kinds::Ty::IdList => Value::List(vec![Value::I64(3)]),
+                    kinds::Ty::Snippet => Value::Bool(true),
                     kinds::Ty::Provider => continue, // RA1: no provider kinds in this binary
                 };
                 br.set_prop(h, id, &v).unwrap();

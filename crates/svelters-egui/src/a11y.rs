@@ -9,23 +9,34 @@
 //!
 //! Writer lane: EMBED.
 
-use crate::scene::{Node, W};
+use crate::scene::{Common, Node, NodeRef, W};
 
 /// The accessible name a leaf's response gets (`None`: the widget's own, from its text).
 pub(crate) fn name(n: &Node) -> Option<String> {
+    name_of(&n.c, &n.w, n.text())
+}
+
+/// AU1: a node's accessible name as AccessKit gets it: [`name`], else the node's own text. The
+/// automation selectors (`role=…[name=…]`, `label=`) read it, so tests and screen readers agree.
+pub fn accessible_name(n: NodeRef<'_>) -> String {
+    name_of(n.common(), n.builtin(), n.text()).unwrap_or_else(|| n.text().to_string())
+}
+
+fn name_of(c: &Common, w: &W, text: &str) -> Option<String> {
     let some = |s: &str| (!s.is_empty()).then(|| s.to_string());
-    if !n.c.accessible_name.is_empty() {
-        return Some(n.c.accessible_name.clone());
+    if !c.accessible_name.is_empty() {
+        return Some(c.accessible_name.clone());
     }
-    let own = match &n.w {
+    let own = match w {
         W::TextEdit { hint, .. } => some(hint),
         W::Slider { text, .. } => some(text),
-        W::Icon { name, .. } => some(&n.c.tooltip).or_else(|| some(name)),
+        W::Icon { name, .. } => some(&c.tooltip).or_else(|| some(name)),
         _ => None,
     };
     // a node without text of its own (a combo box, a frameless icon button, a provider kind) is
     // named by its tooltip, as a `title` names an unlabelled HTML control
-    own.or_else(|| if n.text().is_empty() || matches!(n.w, W::ComboBox { .. } | W::Ext(_)) { some(&n.c.tooltip) } else { None })
+    // (a provider kind shows no text of its own: OW0's own widgets that replace a built-in do)
+    own.or_else(|| if text.is_empty() || matches!(w, W::ComboBox { .. }) { some(&c.tooltip) } else { None })
 }
 
 /// Everything AccessKit gets for leaf `n` on top of the widget's own node: its name and, when it

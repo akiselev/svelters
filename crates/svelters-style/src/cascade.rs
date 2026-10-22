@@ -15,6 +15,7 @@ use crate::diag::{Diagnostic, Severity};
 use crate::element::{Element, Node};
 use crate::invalidation::Invalidation;
 use crate::media::MediaEnv;
+use crate::selector::PseudoElement;
 use crate::sheet::{DeclBlock, Declaration, Rule, Stylesheet};
 use crate::table::{Table, ValueType};
 use crate::values::{ValueCx, parse_value};
@@ -90,6 +91,9 @@ struct RuleIndex {
     classes: HashMap<Atom, Vec<(u32, u16)>>,
     tags: HashMap<Atom, Vec<(u32, u16)>>,
     universal: Vec<(u32, u16)>,
+    /// Selectors ending in a pseudo-element (`x::part(thumb)`), matched only by
+    /// [`Stylist::compute_pseudo`]; never candidates for the element itself.
+    pseudo: Vec<(u32, u16)>,
 }
 
 impl Stylist {
@@ -214,18 +218,34 @@ impl Stylist {
         if let Some(v) = self.index.tags.get(el.tag()) {
             candidates.extend_from_slice(v);
         }
+        if let Some(v) = el.style_as().and_then(|t| self.index.tags.get(t)) {
+            candidates.extend_from_slice(v);
+        }
         candidates.extend_from_slice(&self.index.universal);
         candidates.sort_unstable();
         candidates.dedup();
+        self.match_candidates(el, candidates, None, caches)
+    }
 
+    /// Whether any registered rule has a selector ending in a pseudo-element that `pseudo` matches
+    /// (a widget skips computing a part's style when none does).
+    pub fn has_pseudo_rules(&self, pseudo: &PseudoElement) -> bool {
+        self.index.pseudo.iter().any(|&(r, s)| self.entries[r as usize].rule.selectors.slice()[s as usize].pseudo_element().is_some_and(|p| pseudo.matched_by(p)))
+    }
+
+    fn match_candidates<E: Element>(&self, el: E, candidates: Vec<(u32, u16)>, pseudo: Option<&PseudoElement>, caches: &mut MatchCaches) -> Vec<MatchedRule> {
+        let wanted = |p: &PseudoElement| pseudo.is_some_and(|mine| mine.matched_by(p));
         let mut cx = MatchingContext::new(
-            MatchingMode::Normal,
+            if pseudo.is_some() { MatchingMode::ForStatelessPseudoElement } else { MatchingMode::Normal },
             None,
             &mut caches.0,
             QuirksMode::NoQuirks,
             NeedsSelectorFlags::No,
             MatchingForInvalidation::No,
         );
+        if pseudo.is_some() {
+            cx.pseudo_element_matching_fn = Some(&wanted);
+        }
         let node = Node(el);
         let mut out: Vec<MatchedRule> = Vec::new();
         for (r, s) in candidates {
@@ -234,6 +254,11 @@ impl Stylist {
                 continue;
             }
             let sel = &e.rule.selectors.slice()[s as usize];
+            if let Some(mine) = pseudo
+                && !sel.pseudo_element().is_some_and(|p| mine.matched_by(p))
+            {
+                continue;
+            }
             if selectors::matching::matches_selector(sel, 0, None, &node, &mut cx) {
                 let spec = sel.specificity();
                 match out.last_mut() {
@@ -253,10 +278,31 @@ impl Stylist {
     /// declaration of a property wins.
     pub fn cascaded<'s, E: Element>(&'s self, el: E, inline: Option<&'s DeclBlock>, caches: &mut MatchCaches) -> Vec<&'s Declaration> {
         let matched = self.matched_rules(el, caches);
+        self.order_decls(&matched, inline)
+    }
+
+    /// The rules whose selector ends in `pseudo` and whose host part matches `el`, in cascade
+    /// order.
+    pub fn matched_pseudo_rules<E: Element>(&self, el: E, pseudo: &PseudoElement, caches: &mut MatchCaches) -> Vec<MatchedRule> {
+        let candidates = self.index.pseudo.clone();
+        self.match_candidates(el, candidates, Some(pseudo), caches)
+    }
+
+    /// Computes the style of `el`'s pseudo-element `pseudo` (`::part(name)`, `::placeholder`,
+    /// `::selection`; ARCH-WIDGETS W3): the rules ending in that pseudo-element whose host part
+    /// matches `el`, inheriting from `host`, the element's own computed style. With no such rule
+    /// the result is `host`'s inherited properties only (as a child with no rules).
+    pub fn compute_pseudo<E: Element>(&self, el: E, pseudo: &PseudoElement, host: &ComputedStyle, cx: &ComputeContext, caches: &mut MatchCaches) -> ComputedStyle {
+        let matched = self.matched_pseudo_rules(el, pseudo, caches);
+        let decls = self.order_decls(&matched, None);
+        compute(self.table, &decls, Some(host), cx)
+    }
+
+    fn order_decls<'s>(&'s self, matched: &[MatchedRule], inline: Option<&'s DeclBlock>) -> Vec<&'s Declaration> {
         // (origin and importance, layer, specificity, source order)
         type Key = (u8, u32, u32, u32);
         let mut keyed: Vec<(Key, &Declaration)> = Vec::new();
-        for m in &matched {
+        for m in matched {
             let e = &self.entries[m.rule.0 as usize];
             for d in &e.rule.block.decls {
                 if self.table.get(&d.name).is_some_and(|p| p.inline_only) {
@@ -299,6 +345,10 @@ impl RuleIndex {
     /// Buckets a selector by its subject compound's id, else a class, else its tag (Stylo's
     /// `SelectorMap`), so an element only tries rules that could match it.
     fn insert(&mut self, rule: u32, sel: u16, selector: &crate::selector::Selector) {
+        if selector.has_pseudo_element() {
+            self.pseudo.push((rule, sel));
+            return;
+        }
         let (mut id, mut class, mut tag) = (None, None, None);
         for c in selector.iter() {
             match c {
@@ -349,6 +399,26 @@ fn check_decl(table: &'static Table, d: &Declaration, inline: bool) -> Option<Di
         return None;
     }
     let loc = cssparser::SourceLocation { line: d.line.saturating_sub(1), column: d.column };
+    if crate::shorthand::longhands_in(table, &d.name).is_some() {
+        if d.has_var {
+            return None;
+        }
+        let cx = ValueCx { table, em: 16.0, rem: 16.0, current_color: Some(crate::Color::TRANSPARENT), parent_weight: 400, percent_base: None };
+        let longs = match crate::shorthand::expand(&d.name, &d.value) {
+            Ok(l) => l,
+            Err(e) => return Some(Diagnostic::error(loc, e)),
+        };
+        for (l, text) in longs {
+            let Some(prop) = table.get(l) else { continue };
+            if prop.ty == ValueType::Raw || CSS_WIDE.contains(&text.to_ascii_lowercase().as_str()) {
+                continue;
+            }
+            if let Err(e) = parse_value(prop, &text, &cx) {
+                return Some(Diagnostic::error(loc, format!("{}: {e}", d.name)));
+            }
+        }
+        return None;
+    }
     let Some(prop) = table.get(&d.name) else {
         let article = if table.toolkit.starts_with(['a', 'e', 'i', 'o', 'u']) { "an" } else { "a" };
         let mut msg = format!("`{}` is not {article} {} style property", d.name, table.toolkit);

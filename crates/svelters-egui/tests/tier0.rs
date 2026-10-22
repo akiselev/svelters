@@ -569,3 +569,33 @@ fn text_edit_uses_the_primary_selection() {
     assert_eq!(events(&rig, &log, t, "changed").last(), Some(&vec![s("PASTEhello")]));
     svelters_egui::primary::uninstall();
 }
+
+/// FX3s (from FX3): under eframe, egui-winit sends `MiddleClickPaste` with the middle press and
+/// egui 0.37's `TextEdit` pastes it; W5 must not paste PRIMARY a second time on the release.
+#[cfg(target_os = "linux")]
+#[test]
+fn text_edit_middle_click_pastes_once() {
+    struct Fake;
+    impl svelters_egui::primary::PrimarySelection for Fake {
+        fn set(&self, _: &str) {}
+        fn get(&self) -> Option<String> {
+            Some("P".into())
+        }
+    }
+    svelters_egui::primary::install(Fake);
+    let mut rig = Rig::new();
+    let (_w, col) = rig.window();
+    let t = rig.leaf(col, "text-edit", &[("text", s("hello")), ("accessible-name", s("field"))]);
+    rig.run();
+    rig.click(t);
+    rig.run();
+    let at = rig.drawn(t).left_center() + vec2(5.0, 0.0);
+    rig.harness.hover_at(at);
+    // egui-winit sends MiddleClickPaste with the press
+    press(&mut rig, at, PointerButton::Middle, true);
+    rig.harness.event(egui::Event::MiddleClickPaste { pos: at, text: "P".into() });
+    press(&mut rig, at, PointerButton::Middle, false);
+    rig.run();
+    assert_eq!(rig.get(t, "text"), s("Phello"));
+    svelters_egui::primary::uninstall();
+}

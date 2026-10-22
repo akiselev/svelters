@@ -329,6 +329,12 @@ impl Metrics {
 
     /// The size the widget of `w` asks for with no wrapping (content + chrome).
     pub fn intrinsic(&self, w: &W) -> Vec2 {
+        self.intrinsic_with(w, None, &[])
+    }
+
+    /// [`Self::intrinsic`] with the node's computed style (OW0: own widgets measure content +
+    /// padding + border from it).
+    pub(crate) fn intrinsic_with(&self, w: &W, css: Option<&svelters_style::ComputedStyle>, parts: &[(Box<str>, std::sync::Arc<svelters_style::ComputedStyle>)]) -> Vec2 {
         let sp = &self.style.spacing;
         let interact = sp.interact_size;
         match w {
@@ -363,7 +369,7 @@ impl Metrics {
             // ---- WG2a ----
             W::Menu(x) => crate::menus::measure(self, x),
             W::Overlay(_) => Vec2::ZERO,
-            W::Ext(x) => x.measure(self, crate::provider::AvailableSpace::MaxContent),
+            W::Ext(x) => x.measure(self, crate::provider::AvailableSpace::MaxContent, css, parts),
             // ---- WG2b (`crate::elements`) ----
             W::Hyperlink { .. }
             | W::RadioButton { .. }
@@ -395,10 +401,15 @@ impl Metrics {
             // egui's `Separator::default()` spacing
             W::Separator { vertical: false } => vec2(0.0, 6.0),
             W::Separator { vertical: true } => vec2(6.0, 0.0),
-            W::Icon { name, glyph, family, size, weight, frame, .. } => {
-                let t = match crate::fonts::icon_look(&self.ctx, &self.style, family, name, glyph, *weight, *size) {
+            W::Icon { name, glyph, family, size, weight, frame, source, .. } => {
+                let t = if !source.is_empty() {
+                    // AS1: an image icon is a square of `size` (else the body size)
+                    Vec2::splat(size.map_or_else(|| egui::TextStyle::Body.resolve(&self.style).size, |s| s as f32))
+                } else {
+                    match crate::fonts::icon_look(&self.ctx, &self.style, family, name, glyph, *weight, *size) {
                     crate::fonts::IconLook::Glyph(font, text) => self.text_size_in(&text, font, None),
                     crate::fonts::IconLook::Placeholder(side) => Vec2::splat(side),
+                    }
                 };
                 if *frame { vec2(t.x + 2.0 * sp.button_padding.x, (t.y + 2.0 * sp.button_padding.y).max(interact.y)) } else { t }
             }
@@ -415,7 +426,7 @@ impl Metrics {
         match w {
             W::Label { text, wrap: "wrap", weight, .. } => Some(self.text_size_in(text, self.weighted(text, *weight), Some(width))),
             W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::HEIGHT_FOR_WIDTH) => {
-                Some(x.measure(self, crate::provider::AvailableSpace::Definite(width)))
+                Some(x.measure(self, crate::provider::AvailableSpace::Definite(width), None, &[]))
             }
             _ => None,
         }
@@ -511,7 +522,9 @@ impl LayoutPartialTree for Tree<'_> {
             }
             // SG4: a provider with children (shadow children) or its own layout is a container
             let custom = provider_caps(tree.s, i).is_some_and(|c| c.contains(crate::provider::Caps::CUSTOM_LAYOUT));
-            let provider_box = custom || (matches!(tree.s.w(i), W::Ext(_)) && !tree.s.children[i].is_empty());
+            // (OW0: an own widget replacing a built-in leaf stays a leaf: its children are attached
+            // overlays, as on the built-in)
+            let provider_box = custom || (matches!(tree.s.w(i), W::Ext(x) if x.entry().replaces.is_none()) && !tree.s.children[i].is_empty());
             if tree.s.w(i).is_container() || provider_box {
                 let mut out = if custom {
                     tree.custom_layout(id, inputs)
@@ -537,11 +550,13 @@ impl LayoutPartialTree for Tree<'_> {
                 Payload::Builtin(w) => w,
                 Payload::Vacant => unreachable!("vacant payload in layout"),
             };
+            let css = s.slots.id_at(i).and_then(|id| s.style.computed(id)).cloned();
+            let parts = s.slots.id_at(i).map(|id| s.style.part_styles(id)).unwrap_or_default();
             let lb = &mut s.layout[i];
             let mut fonts = 0;
             let intrinsic = *lb.intrinsic.get_or_insert_with(|| {
                 fonts += 1;
-                m.intrinsic(w)
+                m.intrinsic_with(w, css.as_deref(), &parts)
             });
             let out = compute_leaf_layout(inputs, &lb.style, |_, _| 0.0, |known, avail| {
                 if let Size { width: Some(w), height: Some(hh) } = known {
@@ -583,16 +598,18 @@ fn vlist_layout(tree: &mut Tree<'_>, id: NodeId, inputs: LayoutInput) -> LayoutO
     let (w, h) = (out.size.width, out.size.height);
     let (placed, fixed, min_h) = {
         let W::VirtualList(v) = tree.s.w(i) else { unreachable!("a virtual-list") };
-        (v.placed(tree.s), virtuallist::uniform_height(v), v.heights().estimate().min(v.row_height_points()))
+        let placed: Vec<_> = v.placed(tree.s).into_iter().map(|(n, p)| (n, p, v.row_inset(p).min(w))).collect();
+        (placed, virtuallist::uniform_height(v), v.heights().estimate().min(v.row_height_points()))
     };
     for k in 0..tree.s.children[i].len() {
         let c = tree.s.children[i][k];
-        if !placed.iter().any(|&(n, _)| n == c) {
+        if !placed.iter().any(|&(n, _, _)| n == c) {
             compute_hidden_layout(tree, tid(c));
         }
     }
     let mut measured = Vec::with_capacity(placed.len());
-    for (c, pos) in placed {
+    for (c, pos, inset) in placed {
+        let w = w - inset;
         let r = tree.compute_child_layout(
             tid(c),
             LayoutInput {
@@ -1182,7 +1199,9 @@ pub(crate) fn remeasure(s: &mut Scene, m: &Metrics, r: RootIx) -> bool {
         s.core[i].flags.remove(NodeFlags::IN_REMEASURE);
         s.core[i].dirty.remove(Dirty::MEASURE);
         let old = s.layout[i].intrinsic.take();
-        let new = m.intrinsic(s.w(i));
+        let css = s.slots.id_at(i).and_then(|id| s.style.computed(id)).cloned();
+        let parts = s.slots.id_at(i).map(|id| s.style.part_styles(id)).unwrap_or_default();
+        let new = m.intrinsic_with(s.w(i), css.as_deref(), &parts);
         s.counters.leaves_measured += 1;
         s.layout[i].intrinsic = Some(new);
         // A wrapping label that does not fit its last width may wrap differently with new text.

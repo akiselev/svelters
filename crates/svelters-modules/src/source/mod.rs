@@ -1,9 +1,11 @@
 //! [`SourceProvider`]: an app loaded from its sources, compiled live (Q1).
 
 mod aliases;
+pub(crate) mod build;
 mod resolve;
 mod transform;
 
+use crate::assets::{self, APP_ROOT, Assets};
 use crate::{ModuleCode, ModuleId, ModuleProvider, normalize};
 use aliases::{Aliases, package_dir};
 use resolve::Resolver;
@@ -21,6 +23,10 @@ const ENTRY_ID: &str = "svelters:entry";
 /// What a component that resolves attributes at run time imports (spreads, `<svelte:element>`).
 const KINDS_SPECIFIER: &str = "@svelters/native-runtime/kinds";
 const KINDS_ID: &str = "svelters:kinds";
+/// LD2: the prefix of a component's sheet module (`svelters-style:<component id>`), which its
+/// compiled code imports. Its own module, so a `<style>`-only edit re-runs it alone (H2's
+/// self-accepting style module): the sheet is replaced by id and the backend restyles, no remount.
+const STYLE_PREFIX: &str = "svelters-style:";
 
 /// What to evaluate first.
 #[derive(Clone, Debug)]
@@ -183,11 +189,24 @@ struct Cached {
     hash: u64,
     js: String,
     map: Option<String>,
+    /// LD2: the component's scoped sheet (its `svelters-style:` module registers it).
+    css: Option<String>,
+}
+
+/// LD2: what an edit of a component changed, by file (`invalidate`), so `modules_at` re-runs only
+/// that part: a `<style>`-only edit re-runs the sheet module alone.
+#[derive(Clone, Copy)]
+struct Changed {
+    js: bool,
+    css: bool,
 }
 
 struct Node {
     path: Option<PathBuf>,
     deps: BTreeSet<ModuleId>,
+    /// AS1: an asset ref module (`./icon.svg`, `?url`): constant, so a change of its file is the
+    /// asset registry's (no JS runs) and neither `invalidate` nor `modules_at` reports it.
+    asset_ref: bool,
 }
 
 struct Inner {
@@ -201,6 +220,10 @@ struct Inner {
     /// The module graph of the current load: id -> its file and its imports.
     nodes: BTreeMap<ModuleId, Node>,
     warnings: Vec<String>,
+    /// LD2: the components of the last `invalidate` and what changed in them.
+    changed: HashMap<PathBuf, Changed>,
+    /// AS1: the registry behind `asset://app/…` (`app` is the app root).
+    assets: Arc<Assets>,
 }
 
 /// An app loaded from source: resolves with Node's ESM rules (`resolve.rs`) and the runtime's alias table, compiles
@@ -209,23 +232,33 @@ struct Inner {
 pub struct SourceProvider {
     inner: RefCell<Inner>,
     overlay: Overlay,
+    assets: Arc<Assets>,
 }
 
 impl SourceProvider {
     pub fn new(cfg: SourceConfig) -> Result<SourceProvider, String> {
         let runtime_dir = cfg.find_runtime()?;
         let aliases = Aliases::load(&runtime_dir)?;
-        let compiler = Compiler { sem: spec_backend(&cfg)?, dev: cfg.dev, hmr: cfg.hmr && cfg.dev };
+        let compiler = Compiler { sem: spec_backend(&cfg)?, dev: cfg.dev, hmr: cfg.hmr && cfg.dev, root: cfg.root.clone() };
         let resolver = resolver(cfg.dev);
-        Ok(SourceProvider {
-            inner: RefCell::new(Inner { cfg, runtime_dir, compiler, resolver, aliases, cache: HashMap::new(), nodes: BTreeMap::new(), warnings: Vec::new() }),
+        let p = SourceProvider {
+            assets: Assets::for_app(&cfg.root),
+            inner: RefCell::new(Inner { cfg, runtime_dir, compiler, resolver, aliases, cache: HashMap::new(), nodes: BTreeMap::new(), warnings: Vec::new(), changed: HashMap::new(), assets: Assets::new() }),
             overlay: Overlay::default(),
-        })
+        };
+        p.inner.borrow_mut().assets = p.assets.clone();
+        Ok(p)
     }
 
     /// [`SourceConfig::for_path`] then [`SourceProvider::new`].
     pub fn for_path(path: &Path) -> Result<SourceProvider, String> {
         SourceProvider::new(SourceConfig::for_path(path)?)
+    }
+
+    /// AS1: the asset registry (`app` mounted at the app root). Share it with the backend
+    /// (`svelters_egui::assets::install`); the host reads it through [`ModuleProvider::assets`].
+    pub fn assets(&self) -> &Arc<Assets> {
+        &self.assets
     }
 
     /// The buffers read before the disk. Clone it to share it with an editor.
@@ -274,7 +307,7 @@ fn spec_backend(cfg: &SourceConfig) -> Result<SpecBackend, String> {
 
 /// Node ESM resolution with Vite's conditions for a client build (`browser`, then the defaults).
 fn resolver(dev: bool) -> Resolver {
-    Resolver::new(&["browser", "import", "module", if dev { "development" } else { "production" }, "default"], &[".mjs", ".js", ".json"], &["module", "main"])
+    Resolver::new(&["browser", "import", "module", if dev { "development" } else { "production" }, "default"], &[".mjs", ".js", ".mts", ".ts", ".json"], &["module", "main"])
 }
 
 fn hash_of(parts: &[&str]) -> u64 {
@@ -285,7 +318,8 @@ fn hash_of(parts: &[&str]) -> u64 {
 
 impl Inner {
     fn record(&mut self, id: &str, path: Option<PathBuf>) {
-        self.nodes.entry(id.to_string()).or_insert_with(|| Node { path, deps: BTreeSet::new() });
+        let asset_ref = path.is_some() && matches!(asset_kind(id), Some(AssetKind::Ref));
+        self.nodes.entry(id.to_string()).or_insert_with(|| Node { path, deps: BTreeSet::new(), asset_ref });
     }
 
     fn entry_source(&self) -> String {
@@ -315,6 +349,12 @@ impl Inner {
             let p = self.cfg.root.join(".svelters/app/behaviors").join(format!("{ns}.js"));
             let p = p.canonicalize().map_err(|e| format!("{specifier:?} -> {}: {e} (run the app binary's dump)", p.display()))?;
             (p.to_string_lossy().into_owned(), Some(p))
+        } else if let Some(file) = specifier.strip_prefix(STYLE_PREFIX) {
+            // LD2: only the component itself imports its sheet (its compiled code ends with the import).
+            if unversioned_base(base) != file {
+                return Err(format!("cannot find module {specifier:?}: a component's sheet is imported by that component only"));
+            }
+            (specifier.to_string(), Some(PathBuf::from(file)))
         } else if let Some(p) = self.aliases.get(specifier) {
             let p = p.canonicalize().map_err(|e| format!("alias of {specifier:?} -> {}: {e}", p.display()))?;
             (p.to_string_lossy().into_owned(), Some(p))
@@ -327,6 +367,8 @@ impl Inner {
             if self.cfg.confine && base != ENTRY_ID && Path::new(specifier).is_absolute() {
                 return Err(format!("cannot find module {specifier:?}: absolute imports are refused for extensions"));
             }
+            // AS1: Vite's query suffixes on files (`?url`, `?raw`, `?inline`, `?bytes`).
+            let (specifier, query) = split_query(specifier)?;
             let p = self.resolver.resolve(&dir, specifier)?;
             if self.cfg.confine && (specifier.starts_with("./") || specifier.starts_with("../")) {
                 let scope = dir.ancestors().find(|d| d.join("package.json").is_file()).unwrap_or(&self.cfg.root);
@@ -334,7 +376,12 @@ impl Inner {
                     return Err(format!("cannot find module {specifier:?}: outside the importing package ({})", scope.display()));
                 }
             }
-            (p.to_string_lossy().into_owned(), Some(p))
+            let mut id = p.to_string_lossy().into_owned();
+            if let Some(q) = query.filter(|q| !(*q == "url" && Kind::of(&p) == Kind::Asset)) {
+                id.push('?');
+                id.push_str(q);
+            }
+            (id, Some(p))
         };
         self.record(&id, path);
         if let Some(n) = self.nodes.get_mut(base) {
@@ -350,19 +397,53 @@ impl Inner {
         if id == KINDS_ID {
             return Ok(ModuleCode::Source { js: kinds_module(self.compiler.sem.spec()), map: None });
         }
-        let path = PathBuf::from(id);
-        if Kind::of(&path) == Kind::Asset {
-            return Ok(ModuleCode::Source { js: transform::asset_module(&path), map: None });
+        if let Some(kind) = asset_kind(id) {
+            let path = Path::new(id.split_once('?').map_or(id, |(p, _)| p));
+            return Ok(ModuleCode::Source { js: self.asset_module(kind, path)?, map: None });
         }
-        let src = overlay.read(&path)?;
+        if let Some(file) = id.strip_prefix(STYLE_PREFIX) {
+            let key = build::logical_id(&self.cfg.root, Path::new(file));
+            let c = self.compiled(Path::new(file), overlay)?;
+            return Ok(ModuleCode::Source { js: style_module(&key, c.css.as_deref().unwrap_or("")), map: None });
+        }
+        let c = self.compiled(Path::new(id), overlay)?;
+        Ok(ModuleCode::Source { js: c.js.clone(), map: c.map.clone() })
+    }
+
+    /// The transform output of `path` (from the cache when its text is unchanged). A component with
+    /// a sheet ends with the import of its `svelters-style:` module.
+    fn compiled(&mut self, path: &Path, overlay: &Overlay) -> Result<&Cached, String> {
+        let src = overlay.read(path)?;
         let hash = hash_of(&[&src]);
-        if let Some(c) = self.cache.get(&path).filter(|c| c.hash == hash) {
-            return Ok(ModuleCode::Source { js: c.js.clone(), map: c.map.clone() });
+        if self.cache.get(path).is_some_and(|c| c.hash == hash) {
+            return Ok(&self.cache[path]);
         }
-        let Output { js, map, warnings } = self.compiler.transform(&path, src)?;
+        let Output { mut js, map, warnings, css } = self.compiler.transform(path, src)?;
         self.warnings.extend(warnings);
-        self.cache.insert(path, Cached { hash, js: js.clone(), map: map.clone() });
-        Ok(ModuleCode::Source { js, map })
+        let css = css.map(|c| c.code);
+        if css.is_some() {
+            let spec = serde_json::Value::String(format!("{STYLE_PREFIX}{}", path.to_string_lossy())).to_string();
+            js.push_str(&format!("\nimport {spec};\n"));
+        }
+        self.cache.insert(path.to_path_buf(), Cached { hash, js, map, css });
+        Ok(&self.cache[path])
+    }
+
+    /// AS1: the module of an asset import. A ref module is constant (`asset(ref)`, the handle);
+    /// a value module reads the file when it is evaluated, so H1 re-evaluating it after a change
+    /// gives the new value.
+    fn asset_module(&self, kind: AssetKind, path: &Path) -> Result<String, String> {
+        let r = self.assets.register(APP_ROOT, path).map_err(|e| e.to_string())?;
+        let lit = |s: &str| serde_json::Value::String(s.to_string()).to_string();
+        Ok(match kind {
+            AssetKind::Ref => format!("import {{ asset }} from \"{}\";\nexport default asset({});\n", assets::MODULE_ID, lit(r.as_uri())),
+            AssetKind::Raw => format!("import {{ text }} from \"{}\";\nexport default text({});\n", assets::MODULE_ID, lit(r.as_uri())),
+            AssetKind::Bytes => format!("import {{ bytes }} from \"{}\";\nexport default bytes({});\n", assets::MODULE_ID, lit(r.as_uri())),
+            AssetKind::Inline => {
+                let b = self.assets.bytes(&r).map_err(|e| e.to_string())?;
+                format!("export default {};\n", lit(&assets::data_url(r.mime(), &b)))
+            }
+        })
     }
 
     /// Package manifests and spec files whose change reloads (and resets) the loader.
@@ -431,7 +512,22 @@ impl ModuleProvider for SourceProvider {
             inner.cache.clear();
             return true;
         }
-        changed.iter().any(|p| inner.nodes.values().any(|n| n.path.as_ref() == Some(p)))
+        // LD2: a component edit is compiled now, to tell a `<style>`-only change (its sheet module
+        // re-runs, no remount) from one to its code (H1's component swap).
+        inner.changed.clear();
+        let components: Vec<PathBuf> = changed.iter().filter(|p| inner.nodes.contains_key(&*p.to_string_lossy()) && Kind::of(p) == Kind::Component).cloned().collect();
+        for p in components {
+            let before = inner.cache.get(&p).map(|c| (c.js.clone(), c.css.clone()));
+            if let (Some((js, css)), Ok(c)) = (before, inner.compiled(&p, &self.overlay)) {
+                let parts = Changed { js: c.js != js, css: c.css != css };
+                inner.changed.insert(p, parts);
+            }
+        }
+        changed.iter().any(|p| inner.nodes.values().any(|n| !n.asset_ref && n.path.as_ref() == Some(p)))
+    }
+
+    fn assets(&self) -> Option<Arc<Assets>> {
+        Some(self.assets.clone())
     }
 
     fn hmr(&self) -> bool {
@@ -441,7 +537,18 @@ impl ModuleProvider for SourceProvider {
     fn modules_at(&self, changed: &[PathBuf]) -> Vec<ModuleId> {
         let inner = self.inner.borrow();
         let changed: Vec<PathBuf> = changed.iter().map(|p| key(p)).collect();
-        inner.nodes.iter().filter(|(_, n)| n.path.as_ref().is_some_and(|p| changed.contains(p))).map(|(id, _)| id.clone()).collect()
+        inner
+            .nodes
+            .iter()
+            .filter(|(_, n)| !n.asset_ref && n.path.as_ref().is_some_and(|p| changed.contains(p)))
+            .filter(|(id, n)| {
+                // LD2: the sheet module re-runs when its sheet changed; the component when its code
+                // did, or when nothing did (as before LD2).
+                let parts = n.path.as_ref().and_then(|p| inner.changed.get(p)).copied().unwrap_or(Changed { js: true, css: true });
+                if id.starts_with(STYLE_PREFIX) { parts.css } else { parts.js || !parts.css }
+            })
+            .map(|(id, _)| id.clone())
+            .collect()
     }
 
     fn importers(&self, id: &str) -> Vec<ModuleId> {
@@ -459,5 +566,59 @@ impl ModuleProvider for SourceProvider {
             Entry::Module(p) | Entry::App(p) => show(p),
             Entry::Embed(list) => list.iter().map(|(_, p)| show(p)).collect::<Vec<_>>().join(", "),
         }
+    }
+}
+
+/// LD2: a component's sheet module: registers its scoped sheet as text (what the Vite plugin emits
+/// for egui, `registerStyles(id, { css })`; the backend's style engine parses and installs it, `:state()`
+/// resolved against the host's registry) and accepts its own updates, so an edit replaces the sheet by
+/// id and the backend restyles. Q4b: the id is the component's logical id (`app/src/App.svelte`).
+fn style_module(file: &str, css: &str) -> String {
+    let lit = |s: &str| serde_json::Value::String(s.to_string()).to_string();
+    format!(
+        "import {{ registerStyles }} from \"@svelters/native-runtime/style\";\nregisterStyles({}, {{ css: {} }});\nif (import.meta.hot) import.meta.hot.accept();\n",
+        lit(file),
+        lit(css)
+    )
+}
+
+/// A module id without the `?v=<n>` the host adds to re-evaluated modules (H1).
+fn unversioned_base(base: &str) -> &str {
+    base.split_once("?v=").map_or(base, |(b, _)| b)
+}
+
+/// What an asset import gives (ASSETS.md §1.1).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum AssetKind {
+    /// The `Asset` handle (an asset file, `?url`).
+    Ref,
+    /// `?raw`: the text.
+    Raw,
+    /// `?inline`: a `data:` URL.
+    Inline,
+    /// `?bytes`: a `Uint8Array`.
+    Bytes,
+}
+
+/// The asset kind of module `id` (a file path, maybe with a query suffix), or `None` for code.
+fn asset_kind(id: &str) -> Option<AssetKind> {
+    match id.split_once('?') {
+        Some((_, "url")) => Some(AssetKind::Ref),
+        Some((_, "raw")) => Some(AssetKind::Raw),
+        Some((_, "inline")) => Some(AssetKind::Inline),
+        Some((_, "bytes")) => Some(AssetKind::Bytes),
+        Some(_) => None,
+        None => (Path::new(id).is_absolute() && Kind::of(Path::new(id)) == Kind::Asset).then_some(AssetKind::Ref),
+    }
+}
+
+/// `./a.svg?raw` -> (`./a.svg`, `Some("raw")`). Other queries are refused.
+fn split_query(specifier: &str) -> Result<(&str, Option<&str>), String> {
+    match specifier.split_once('?') {
+        None => Ok((specifier, None)),
+        Some((p, q @ ("url" | "raw" | "inline" | "bytes"))) => Ok((p, Some(q))),
+        Some((_, q)) => Err(format!(
+            "cannot import {specifier:?}: the module loader supports the query suffixes ?url, ?raw, ?inline and ?bytes, not ?{q} (no ?worker, no ?sharedworker)"
+        )),
     }
 }

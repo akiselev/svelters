@@ -171,6 +171,11 @@ impl<'a> SceneRef<'a> {
         self.s.roots.iter().find(|(_, e)| e.key.as_deref() == Some(key)).map(|(r, _)| r)
     }
 
+    /// The key of the root mounted at `r` (AU1: the inverse of [`SceneRef::root_by_key`]).
+    pub fn root_key(self, r: RootIx) -> Option<&'a str> {
+        self.s.roots.get(r).and_then(|e| e.key.as_deref())
+    }
+
     /// A node by id path: `"<root key>/<anchor>"`, e.g. `"panel.task/slot/extents[0]"` (the anchor
     /// may itself contain `/`). Painted rows (`"<root key>/<host anchor>/row[…]"`) are targets, not
     /// nodes: [`SceneRef::target_by_path`] (SG5).

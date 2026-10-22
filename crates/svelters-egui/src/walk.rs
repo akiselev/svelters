@@ -162,7 +162,7 @@ fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut 
 /// host gets a response of its own at its rect, registered under its children.
 fn paint_host(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
     let r = arena.core[i].rect.translate(origin);
-    if !ui.is_rect_visible(r) {
+    if !ui.is_rect_visible(crate::style::paint_bounds(arena, i, r)) {
         return;
     }
     let container = arena.w(i).is_container();
@@ -195,13 +195,14 @@ fn paint_own(
         return crate::kinds::virtuallist::paint(arena, i, origin, ui, out);
     }
     if arena.w(i).is_container() {
-        // Cull whole subtrees outside the clip rect.
-        if !ui.is_rect_visible(r) {
+        // Cull whole subtrees outside the clip rect (CS5g: grown by the node's own shadows).
+        if !ui.is_rect_visible(crate::style::paint_bounds(arena, i, r)) {
             return None;
         }
         if !matches!(arena.w(i), crate::scene::W::Overlay(_)) {
             crate::focus::record_scope(arena, i, ui); // EV3 (an overlay records itself when open)
         }
+        crate::scene::hit::record_box(arena, i, r, ui); // EV1: a click on the box itself targets it
         // CS5e: its state and box (background, border), and the opacity of its subtree
         let opacity = crate::style::before_container(arena, i, r, ui);
         let mut faded;
@@ -219,7 +220,7 @@ fn paint_own(
         crate::leaf::container(arena, i, r, origin, ui, out);
         return None;
     }
-    if !ui.is_rect_visible(r) {
+    if !ui.is_rect_visible(crate::style::paint_bounds(arena, i, r)) {
         return None;
     }
     let mut b = UiBuilder::new()

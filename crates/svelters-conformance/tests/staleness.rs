@@ -1,14 +1,10 @@
 //! NA5: no stale goldens. Every golden under `conformance/golden/<platform>/` must hold every pin of
 //! `conformance/pins/`, each with the fingerprint the pin has today (harness version, pin file and
 //! the chords of the platform's key table); a changed pin or key table needs a re-capture
-//! (`NA_UPDATE=1`, see plans/milestones/WG3-native-references.md). A pin that cannot run on the
-//! platform (`pins::not_applicable`, WG3m) must be absent and listed under `not_applicable` with
-//! today's reason. Runs anywhere: no toolkit.
+//! (`NA_UPDATE=1`, see plans/milestones/WG3-native-references.md). Runs anywhere: no toolkit.
 
 use svelters_conformance::golden::{goldens, read_golden};
-use svelters_conformance::pins::{
-    Chord, Keys, conformance_dir, fingerprint, load_pins, not_applicable, parse_pin,
-};
+use svelters_conformance::pins::{Chord, Keys, conformance_dir, fingerprint, load_pins, parse_pin};
 use svelters_conformance::trace::{State, scalar_to_utf16, utf16_to_scalar};
 
 #[test]
@@ -33,28 +29,6 @@ fn goldens_are_current() {
                 "golden file name"
             );
             for p in &pins {
-                let listed = g.not_applicable.iter().find(|(id, _)| *id == p.id);
-                if let Some(why) = not_applicable(p, &keys) {
-                    if g.pin(&p.id).is_some() {
-                        problems.push(format!(
-                            "{platform}/{name}: pin {} cannot run there ({why}) but is captured",
-                            p.id
-                        ));
-                    }
-                    if listed.map(|(_, r)| r) != Some(&why) {
-                        problems.push(format!(
-                            "{platform}/{name}: pin {} not listed as not applicable ({why})",
-                            p.id
-                        ));
-                    }
-                    continue;
-                }
-                if listed.is_some() {
-                    problems.push(format!(
-                        "{platform}/{name}: pin {} is listed as not applicable but runs",
-                        p.id
-                    ));
-                }
                 match g.pin(&p.id) {
                     None => problems.push(format!("{platform}/{name}: pin {} not captured", p.id)),
                     Some(r) if r.fingerprint != fingerprint(p, &keys) => {
@@ -87,35 +61,12 @@ fn goldens_are_current() {
 
 #[test]
 fn golden_files_round_trip() {
-    for platform in ["linux", "macos"] {
+    for platform in ["linux", "macos", "windows"] {
         for g in goldens(platform).unwrap() {
             let again = read_golden(&g.path).unwrap();
             assert_eq!(again.pins.len(), g.pins.len());
         }
     }
-}
-
-/// WG3m: every pin runs on Linux; on macOS the CUA chords, the second redo chord, Ctrl+Shift+U and
-/// the primary selection do not exist, so those four scripts do not apply.
-#[test]
-fn pins_not_applicable_per_platform() {
-    let pins = load_pins().unwrap();
-    let na = |platform: &str| {
-        let keys = Keys::load(platform).unwrap();
-        pins.iter()
-            .filter_map(|p| not_applicable(p, &keys).map(|r| format!("{}: {r}", p.id)))
-            .collect::<Vec<_>>()
-    };
-    assert_eq!(na("linux"), Vec::<String>::new());
-    assert_eq!(
-        na("macos"),
-        [
-            "undo-typing: no chord on macos for redo-alt",
-            "clipboard-keys: no chord on macos for copy-alt, cut-alt, paste-alt",
-            "primary: no primary selection on macos",
-            "unicode-entry: no chord on macos for unicode-entry",
-        ]
-    );
 }
 
 #[test]

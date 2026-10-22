@@ -12,7 +12,7 @@ use std::time::Duration;
 use svelters_abi::Backend;
 use svelters_backend_log::{LogBackend, LogOptions};
 use svelters_host::modules::{SourceConfig, SourceProvider};
-use svelters_host::{ErrorKind, Host, HostConfig, ModuleProvider, ReloadReport};
+use svelters_host::{ErrorKind, Host, HostConfig, ModuleCode, ModuleProvider, ReloadReport};
 
 fn repo() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../..").canonicalize().unwrap()
@@ -72,7 +72,7 @@ const COUNTER: &str = r#"<script>
   let count = $state(data.start + tag);
 </script>
 
-<window title={icon.endsWith('/src/icon.png') ? 'asset' : 'no asset'}>
+<window title={String(icon) === 'asset://app/src/icon.png' && icon.text() === 'not really a png' ? 'asset' : 'no asset'}>
   <box orientation="vertical" spacing="8">
     <label>{label.text}: {count}</label>
     <button onclicked={() => count++}>Increment</button>
@@ -117,6 +117,56 @@ fn an_app_loads_from_source_with_json_assets_and_runes_modules() {
     assert!(provider.importers(&app_id).contains(&"svelters:entry".to_string()));
 }
 
+const ASSETS: &str = r#"<script>
+  import icon from './icon.svg';
+  import again from './icon.svg?url';
+  import note from './note.txt?raw';
+  import inline from './note.txt?inline';
+  import bytes from './note.txt?bytes';
+  import { asset } from 'svelters:assets';
+  globalThis.__evals = (globalThis.__evals ?? 0) + 1;
+  let changes = $state(0);
+  icon.onChange(() => changes++);
+</script>
+
+<window title={[icon === again && icon === asset('src/icon.svg'), note, inline, bytes.length, JSON.stringify({ icon }), icon.size].join('|')}>
+  <label tooltip-text={icon}>changes {changes} evals {globalThis.__evals}</label>
+</window>
+"#;
+
+/// AS1: asset imports give one `Asset` handle per ref; a handle crosses into a native prop as its
+/// ref; value imports read the file; an asset change runs no module, only `onChange` listeners.
+#[test]
+fn asset_imports_are_handles_and_their_changes_run_no_modules() {
+    let app = App::new("assets", ASSETS);
+    app.write("src/icon.svg", "<svg/>");
+    app.write("src/note.txt", "hi");
+    let provider = app.provider();
+    let (log, host) = log_host(Duration::from_millis(100));
+    host.load_from(provider.clone()).unwrap();
+    let report = host.apply_changes(vec![app.path("src/icon.svg")]).expect("an asset change is reported");
+    assert!(report.ok, "{:?}", report.error);
+    assert_eq!(report.hot, Some(Vec::new()));
+    assert_eq!(report.assets.iter().map(|r| r.as_uri()).collect::<Vec<_>>(), ["asset://app/src/icon.svg"]);
+    host.run().unwrap();
+    let oplog = log.log();
+    assert!(oplog.contains("true|hi|data:text/plain;base64,aGk=|2|{"), "{oplog}");
+    assert!(oplog.contains("asset://app/src/icon.svg") && oplog.contains("}|6"), "toJSON gives the ref: {oplog}");
+    assert!(oplog.contains("\"asset://app/src/icon.svg\""), "the handle crossed into tooltip-text as its ref: {oplog}");
+    assert!(oplog.contains("\"changes 1 evals 1\""), "{oplog}");
+    // the ref module is not a hot-update target; the `?raw` module is
+    let icon = app.path("src/icon.svg");
+    assert!(provider.modules_at(std::slice::from_ref(&icon)).is_empty());
+    assert!(!provider.invalidate(std::slice::from_ref(&icon)));
+    let note = provider.modules_at(&[app.path("src/note.txt")]);
+    assert_eq!(note.len(), 3, "{note:?}");
+    let assets = provider.assets();
+    assert!(assets.watch_files().contains(&icon));
+    assert_eq!(assets.version(&"asset://app/src/icon.svg".parse().unwrap()), 1);
+    let err = SourceProvider::for_path(&app.dir).unwrap().resolve(&app.path("src/App.svelte").to_string_lossy(), "./icon.svg?worker").unwrap_err();
+    assert!(err.contains("?worker"), "{err}");
+}
+
 #[test]
 fn runtime_errors_map_to_the_svelte_source() {
     let app = App::new("source-map", "<script>\n  const a = 1;\n  throw new Error('boom at mount');\n</script>\n<window><label>x</label></window>\n");
@@ -159,19 +209,168 @@ fn the_overlay_is_read_before_the_disk() {
 }
 
 #[test]
-fn styles_and_typescript_are_reported_not_silently_dropped() {
+fn styles_are_reported_not_silently_dropped() {
     let app = App::new("unsupported", "<window><label>x</label></window>\n<style>\n  label { color: red; }\n</style>\n");
     let provider = app.provider();
     let (_log, host) = log_host(Duration::from_millis(100));
     host.load_from(provider.clone()).unwrap();
     let warnings: Vec<String> = host.take_console().into_iter().filter(|l| l.level == "warn").map(|l| l.text).collect();
-    assert!(warnings.iter().any(|w| w.contains("<style> is not applied")), "{warnings:?}");
+    // LD2: the live path applies `<style>` on egui; the other backends' sheets come from the Vite build
+    assert!(warnings.iter().any(|w| w.contains("<style> is applied from source on egui only")), "{warnings:?}");
+}
 
-    let ts = App::new("typescript", "<script>\n  import { n } from './n.ts';\n</script>\n<window><label>{n}</label></window>\n");
-    ts.write("src/n.ts", "export const n: number = 1;\n");
+/// LD2: on egui a component's scoped sheet is its own `svelters-style:` module (`registerStyles(id,
+/// { css })`, the sheet as text). A `<style>`-only edit selects that module alone for the in-place
+/// update; a markup edit selects the component alone.
+#[test]
+fn a_style_only_edit_reruns_only_the_sheet_module() {
+    let text = "<window><label>x</label></window>\n<style>\n  label { color: red; }\n</style>\n";
+    let app = App::new("ld2-sheet", text);
+    let mut cfg = SourceConfig::for_path(&app.dir).unwrap();
+    cfg.backend = "egui".into();
+    cfg.dev = true;
+    cfg.hmr = true;
+    let provider = Rc::new(SourceProvider::new(cfg).unwrap());
     let (_log, host) = log_host(Duration::from_millis(100));
-    let err = host.load_from(ts.provider()).expect_err("TypeScript is Q2");
-    assert!(err.message.contains("TypeScript"), "{err}");
+    host.load_from(provider.clone()).unwrap();
+    let svelte = app.path("src/App.svelte");
+    let id = svelte.to_string_lossy().into_owned();
+    let sheet_id = format!("svelters-style:{id}");
+    let ModuleCode::Source { js, .. } = provider.load(&id).unwrap() else { panic!("source") };
+    assert!(js.contains(&format!("import {};", serde_json::Value::String(sheet_id.clone()))), "{js}");
+    let ModuleCode::Source { js: sheet, .. } = provider.load(&sheet_id).unwrap() else { panic!("source") };
+    assert!(sheet.contains("registerStyles(") && sheet.contains("color: red") && sheet.contains("svelte-"), "{sheet}");
+    assert!(sheet.contains("import.meta.hot.accept()"), "{sheet}");
+    // nothing else may import a component's sheet
+    assert!(provider.resolve(&app.path("src/other.js").to_string_lossy(), &sheet_id).is_err());
+
+    app.write("src/App.svelte", &text.replace("red", "blue"));
+    assert!(provider.invalidate(std::slice::from_ref(&svelte)));
+    assert_eq!(provider.modules_at(std::slice::from_ref(&svelte)), vec![sheet_id.clone()]);
+
+    app.write("src/App.svelte", &text.replace("red", "blue").replace(">x<", ">y<"));
+    assert!(provider.invalidate(std::slice::from_ref(&svelte)));
+    assert_eq!(provider.modules_at(std::slice::from_ref(&svelte)), vec![id.clone()]);
+    let warnings: Vec<String> = host.take_console().into_iter().filter(|l| l.level == "warn").map(|l| l.text).collect();
+    assert!(!warnings.iter().any(|w| w.contains("<style>")), "{warnings:?}");
+
+    // Q4: a release bundle names the sheet module after its component's logical id
+    use svelters_host::modules::svb::{self, BuildOptions, Svb};
+    let mut bcfg = SourceConfig::for_path(&app.dir).unwrap();
+    bcfg.backend = "egui".into();
+    let bundle = Svb::from_bytes(svb::build(bcfg, &BuildOptions::default()).unwrap()).unwrap();
+    let keys: Vec<&String> = bundle.index().modules.keys().collect();
+    assert!(keys.iter().any(|k| *k == "svelters-style:app/src/App.svelte"), "{keys:?}");
+}
+
+/// Q2: a `lang="ts"` component importing a `.ts` module (as `./util.js`, TypeScript's convention, and
+/// extensionless) and a `.svelte.ts` runes module.
+const TS_APP: &str = r#"<script lang="ts">
+  import { twice, type Pair } from './util.js';
+  import { start } from './start';
+  import { label } from './state.svelte.ts';
+  interface Props { step?: number }
+  let { step = 1 }: Props = $props();
+  let count = $state<number>(twice(start) as number);
+  const p: Pair = [1, 2];
+</script>
+
+<window title="ts">
+  <box orientation="vertical" spacing="8">
+    <label>{label.text}: {count + p.length - 2}</label>
+    <button onclicked={() => (count += step!)}>Increment</button>
+  </box>
+</window>
+"#;
+
+#[test]
+fn typescript_modules_components_and_runes_modules_load_from_source() {
+    let app = App::new("typescript", TS_APP);
+    app.write("src/util.ts", "export type Pair = [number, number];\nexport function twice<T extends number>(n: T): number {\n  return (n as number) * 2;\n}\n");
+    app.write("src/start.mts", "declare const unused: string;\nexport const start: number = 21;\n");
+    app.write("src/state.svelte.ts", "type Label = { text: string };\nexport const label: Label = $state<Label>({ text: 'Count' });\n");
+    let provider = app.provider();
+    let (log, host) = log_host(Duration::from_millis(200));
+    host.load_from(provider.clone()).unwrap();
+    host.run().unwrap();
+    let oplog = log.log();
+    assert!(oplog.contains("\"Count: 42\""), "{oplog}");
+    let files = provider.graph_files();
+    for f in ["src/util.ts", "src/start.mts", "src/state.svelte.ts"] {
+        assert!(files.iter().any(|p| p.to_string_lossy().ends_with(f)), "{f} not in the graph: {files:#?}");
+    }
+}
+
+#[test]
+fn typescript_errors_are_load_errors() {
+    let app = App::new("typescript-enum", "<script>\n  import { E } from './e.ts';\n</script>\n<window><label>{E.A}</label></window>\n");
+    app.write("src/e.ts", "export enum E { A, B }\n");
+    let (_log, host) = log_host(Duration::from_millis(100));
+    let err = host.load_from(app.provider()).expect_err("enums are not stripped");
+    assert_eq!(err.kind, ErrorKind::Load);
+    assert!(err.message.contains("e.ts") && err.message.contains("enum"), "{err}");
+
+    let jsx = App::new("typescript-tsx", "<script>\n  import x from './x.tsx';\n</script>\n<window><label>{x}</label></window>\n");
+    jsx.write("src/x.tsx", "export default <div/>;\n");
+    let (_log, host) = log_host(Duration::from_millis(100));
+    let err = host.load_from(jsx.provider()).expect_err("no JSX");
+    assert!(err.message.contains("JSX"), "{err}");
+}
+
+/// Q2: the first launch writes the bytecode of every source module; the next one reads it all; a
+/// changed file is recompiled alone; damaged entries are recompiled and rewritten.
+#[test]
+fn the_bytecode_cache_is_written_at_first_launch_and_read_after() {
+    let app = counter_app("bytecode-cache");
+    let cache_dir = app.path(".cache/bytecode");
+    let launch = || {
+        let (log, host) = log_host(Duration::from_millis(200));
+        host.set_bytecode_cache(Some(&cache_dir)).unwrap();
+        host.load_from(app.provider()).unwrap();
+        host.run().unwrap();
+        let cache = host.bytecode_cache().unwrap();
+        (log.log(), cache.hits(), cache.writes(), cache.dir().to_path_buf())
+    };
+    let (oplog, hits, writes, dir) = launch();
+    assert!(oplog.contains("\"Count: 41\""), "{oplog}");
+    assert_eq!(hits, 0);
+    assert!(writes > 10, "every source module is written ({writes})");
+    let entries = || std::fs::read_dir(&dir).unwrap().flatten().filter(|e| e.path().extension().is_some_and(|x| x == "qbc")).map(|e| e.path()).collect::<Vec<_>>();
+    assert_eq!(entries().len() as u64, writes);
+    assert!(std::fs::read_to_string(dir.join("STAMP")).unwrap().starts_with("quickjs-ng "));
+
+    let (oplog, hits2, writes2, _) = launch();
+    assert!(oplog.contains("\"Count: 41\""), "{oplog}");
+    assert_eq!((hits2, writes2), (writes, 0), "a warm launch reads every module from the cache");
+
+    app.write("src/state.svelte.js", "export const label = $state({ text: 'Total' });\n");
+    let (oplog, hits3, writes3, _) = launch();
+    assert!(oplog.contains("\"Total: 41\""), "{oplog}");
+    assert_eq!((hits3, writes3), (writes - 1, 1), "only the changed module is recompiled");
+
+    for e in entries() {
+        std::fs::write(&e, b"damaged").unwrap();
+    }
+    let (oplog, hits4, writes4, _) = launch();
+    assert!(oplog.contains("\"Total: 41\""), "{oplog}");
+    assert_eq!(hits4, 0);
+    assert_eq!(writes4, writes, "damaged entries are misses, recompiled and rewritten");
+}
+
+#[test]
+fn set_dx_opens_the_bytecode_cache_under_the_apps_cache_dir() {
+    let app = App::new("bytecode-dx", "<window><label>dx</label></window>\n");
+    let (_log, host) = log_host(Duration::from_millis(100));
+    host.set_dx(svelters_host::dx::Dx::in_memory(svelters_host::dx::AppId::new("dev", "svelters", "q2"), app.path(".dx")));
+    let cache = host.bytecode_cache().expect("set_dx opens the cache");
+    assert!(cache.dir().starts_with(app.path(".dx/cache/bytecode")), "{}", cache.dir().display());
+    host.load_from(app.provider()).unwrap();
+    assert!(cache.writes() > 0);
+
+    let (_log, host) = log_host(Duration::from_millis(100));
+    host.set_bytecode_cache(None).unwrap();
+    host.set_dx(svelters_host::dx::Dx::in_memory(svelters_host::dx::AppId::new("dev", "svelters", "q2"), app.path(".dx2")));
+    assert!(host.bytecode_cache().is_none(), "an explicit `None` stays");
 }
 
 /// Runs the loop with `watch()` on; `edit` runs on a helper thread once the loop is up; quits after
@@ -269,4 +468,138 @@ fn an_extension_cannot_import_files_outside_its_package() {
     host.load_from(ext).unwrap();
     host.run().unwrap();
     assert!(log.log().contains("\"own\""), "{}", log.log());
+}
+
+/// IN1: a component reading `$locale` (`svelters:intl`) re-renders when the host switches language.
+#[cfg(feature = "intl")]
+#[test]
+fn a_locale_switch_re_renders_components_reading_locale() {
+    let app = App::new(
+        "intl-locale",
+        "<script>\n  import { locale } from 'svelters:intl';\n  const n = 1234.5;\n</script>\n<window><label>{$locale}: {n.toLocaleString($locale)}</label></window>\n",
+    );
+    let (log, host) = log_host(Duration::from_millis(100));
+    host.set_locale("en-US").unwrap();
+    host.load_from(app.provider()).unwrap();
+    host.run().unwrap();
+    assert!(log.log().contains("\"en-US: 1,234.5\""), "{}", log.log());
+    host.set_locale("de-DE").unwrap();
+    host.drain_jobs();
+    assert!(log.log().contains("\"de-DE: 1.234,5\""), "{}", log.log());
+    assert!(host.take_errors().is_empty());
+}
+
+/// Q4: an app built into a release bundle (`.svb`) loads from the bundle alone, with its source
+/// tree deleted: JS, import tables, assets (`icon.text()` reads the bundle) and the dumped
+/// behaviours module. The first launch fills the bytecode cache (AS-O2 (a)); a precompiled bundle
+/// is read as bytecode and compiles nothing. A bundle without sources loads the same.
+#[test]
+fn an_app_loads_from_its_release_bundle_without_its_sources() {
+    use std::sync::Arc;
+    use svelters_host::modules::svb::{self, BuildOptions, FileRole, Svb};
+    let app = counter_app("svb");
+    let build = |sources: bool| svb::build(SourceConfig::for_path(&app.dir).unwrap(), &BuildOptions { sources, ..BuildOptions::default() }).unwrap();
+    let (full, lean) = (build(true), build(false));
+    let out = repo().join("target/q4");
+    let _ = std::fs::remove_dir_all(&out);
+    std::fs::create_dir_all(&out).unwrap();
+    std::fs::write(out.join("app.svb"), &full).unwrap();
+    std::fs::remove_dir_all(&app.dir).unwrap();
+
+    let svb = Arc::new(Svb::open(&out.join("app.svb")).unwrap());
+    let ix = svb.index();
+    assert_eq!(ix.entry, "svelters:entry");
+    assert!(ix.modules["app/src/App.svelte"].imports.contains_key("./state.svelte.js"));
+    assert!(ix.modules.keys().any(|k| k.starts_with("app/node_modules/svelte/src/")), "{:#?}", ix.modules.keys());
+    assert!(ix.modules.keys().any(|k| k.starts_with("app/node_modules/@svelters/native-runtime/")), "{:#?}", ix.modules.keys());
+    assert_eq!(svb.file("src/icon.png"), Some(&b"not really a png"[..]));
+    assert_eq!(svb.file("src/App.svelte"), Some(COUNTER.as_bytes()));
+    assert_eq!(ix.files["package.json"].role, FileRole::Manifest);
+    let lean_svb = Svb::from_bytes(lean.clone()).unwrap();
+    assert!(lean_svb.index().files.values().all(|f| f.role != FileRole::Source));
+    assert_eq!(lean_svb.index().modules.keys().collect::<Vec<_>>(), ix.modules.keys().collect::<Vec<_>>());
+
+    let cache_dir = out.join("bytecode-cache");
+    let launch = |svb: Arc<Svb>| {
+        let (log, host) = log_host(Duration::from_millis(200));
+        host.set_bytecode_cache(Some(&cache_dir)).unwrap();
+        let p = host.load_svb(svb).unwrap();
+        host.run().unwrap();
+        (log.log(), p.bytecode_loads(), host.bytecode_cache().unwrap().writes())
+    };
+    let check = |oplog: &str| {
+        assert!(oplog.contains("\"Count: 41\""), "{oplog}");
+        assert!(oplog.contains("\"asset\""), "{oplog}");
+    };
+    let (oplog, loads, writes) = launch(svb.clone());
+    check(&oplog);
+    assert_eq!(loads, 0);
+    assert!(writes > 10, "the first launch fills the bytecode cache ({writes})");
+
+    let pre = svelters_host::bytecode::precompile(&svb).unwrap();
+    let pre_svb = Arc::new(Svb::from_bytes(pre.clone()).unwrap());
+    assert_eq!(pre_svb.index().stamp.engine_build.as_deref(), Some(svelters_host::bytecode::stamp().as_str()));
+    let _ = std::fs::remove_dir_all(&cache_dir);
+    let (oplog, loads, writes) = launch(pre_svb.clone());
+    check(&oplog);
+    assert_eq!(loads as usize, pre_svb.index().modules.len(), "every module is read as bundle bytecode");
+    // Only host-served JS (`svelters:assets`) is not in the bundle and goes through the cache.
+    assert!(writes <= 1, "no bundle module is compiled ({writes} cache writes)");
+
+    let _ = std::fs::remove_dir_all(&cache_dir);
+    let (oplog, _, _) = launch(Arc::new(lean_svb));
+    check(&oplog);
+    eprintln!(
+        "Q4 sizes: {} modules; with sources {} B, without {} B, precompiled {} B",
+        ix.modules.len(),
+        full.len(),
+        lean.len(),
+        pre.len()
+    );
+}
+
+/// Q4b: a bundle names nothing of the machine that built it. The same app built from two
+/// checkouts at different paths gives the same bytes, so the same build id; neither names the
+/// checkout (the apps and their packages are under the repo).
+#[test]
+fn a_bundle_does_not_depend_on_the_checkout_path() {
+    use svelters_host::modules::svb::{self, BuildOptions, Svb};
+    // Builds the app twice, from `a` and `b`: the same bytes, neither naming the checkout.
+    let same = |a: &App, b: &App, backend: Option<&str>| -> Svb {
+        let build = |app: &App| {
+            let mut cfg = SourceConfig::for_path(&app.dir).unwrap();
+            if let Some(be) = backend {
+                cfg.backend = be.into();
+            }
+            svb::build(cfg, &BuildOptions::default()).unwrap()
+        };
+        let (x, y) = (build(a), build(b));
+        let root = repo();
+        let root = root.to_string_lossy();
+        for bytes in [&x, &y] {
+            let text = String::from_utf8_lossy(bytes);
+            if let Some(at) = text.find(&*root) {
+                panic!("the bundle names the checkout {root}: …{}…", &text[at.saturating_sub(200)..(at + 200).min(text.len())]);
+            }
+        }
+        let (sx, sy) = (Svb::from_bytes(x.clone()).unwrap(), Svb::from_bytes(y.clone()).unwrap());
+        assert_eq!(sx.index().build, sy.index().build);
+        assert!(x == y, "the bundle bytes differ");
+        sx
+    };
+
+    // The counter: assets, JSON, a runes module, a behaviours module, the packages' source maps.
+    let sx = same(&counter_app("svb-path-a"), &counter_app("svb-path-b-longer"), None);
+    let entry = sx.module_js("svelters:entry").unwrap();
+    assert!(entry.contains("\"app/src/App.svelte\""), "{entry}");
+    assert_eq!(sx.index().modules["svelters:entry"].imports["app/src/App.svelte"], "app/src/App.svelte");
+
+    // LD2: a `<style>` on egui. The scope class and the sheet's key come from the logical id.
+    let styled = "<window><label>x</label></window>\n<style>\n  label { color: red; }\n</style>\n";
+    let sx = same(&App::new("svb-style-a", styled), &App::new("svb-style-b-longer", styled), Some("egui"));
+    let sheet_id = "svelters-style:app/src/App.svelte";
+    assert_eq!(sx.index().modules["app/src/App.svelte"].imports[sheet_id], sheet_id);
+    assert!(sx.module_js("app/src/App.svelte").unwrap().contains(&format!("import \"{sheet_id}\";")));
+    let sheet = sx.module_js(sheet_id).unwrap();
+    assert!(sheet.contains("registerStyles(\"app/src/App.svelte\"") && sheet.contains("svelte-") && sheet.contains("color: red"), "{sheet}");
 }

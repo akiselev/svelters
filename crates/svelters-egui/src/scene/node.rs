@@ -32,7 +32,7 @@ pub enum W {
     ToggleButton { text: String, checked: bool, radio: bool, frame: bool, weight: i64 },
     ComboBox { options: Vec<String>, selected: i64, hint: String },
     Separator { vertical: bool },
-    Icon { name: String, glyph: String, family: String, size: Option<f64>, weight: i64, frame: bool, selected: bool },
+    Icon { name: String, glyph: String, family: String, size: Option<f64>, weight: i64, frame: bool, selected: bool, source: String, tint: bool },
     /// A CSS grid container (`columns` is `grid-template-columns`, validated on write).
     Grid { columns: String, justify_items: &'static str },
     CollapsingHeader { text: String, open: bool },
@@ -61,7 +61,7 @@ pub enum W {
     // ---- WG4a (plans/milestones/WG4a-tier1-views.md; state and paint in `crate::views`) ----
     /// `table`: props, the JS data window and what the last frame asked for.
     Table(std::boxed::Box<crate::views::table::TableState>),
-    TableColumn { title: String, resizable: bool, align: &'static str, sort: &'static str },
+    TableColumn { title: String, resizable: bool, align: &'static str, sort: &'static str, editable: bool, editor: bool },
     TabView { selected: i64 },
     Tab { title: String, closable: bool },
     /// `vertical`: `orientation="vertical"` (panes stacked).
@@ -260,6 +260,8 @@ bits! {
         const ATTACHED = 1 << 15;
         /// Has attached nodes (`NodeCold::attached` is not empty): the walk runs their hooks.
         const HAS_ATTACHED = 1 << 16;
+        /// CX3: a text field the user edited since its last `commit` (blur then commits).
+        const EDITED = 1 << 17;
         /// SG4: the top of a provider's shadow subtree (ARCH-SCENE §4.4): its parent is the host
         /// provider node, which lays it out and draws it (`WidgetCx::children`); JS never sees it.
         const SHADOW = 1 << 20;
@@ -399,10 +401,12 @@ pub(crate) struct NodeCold {
     /// SG4: the out-of-flow (`position: absolute`) boxes this node is the containing block of, as
     /// taffy's last layout recorded them (`layout.rs`, `LayoutContainingBlock`).
     pub hoisted: Vec<NodeId>,
+    /// EV1: signals listened in the capture phase (`listen_ex` with `SVL_LISTEN_CAPTURE`).
+    pub listen_capture: Vec<u32>,
 }
 
 impl NodeCold {
-    pub const DEFAULT: NodeCold = NodeCold { common: Common::DEFAULT, vis: Visual::IDENTITY, observe: Vec::new(), listen_overflow: Vec::new(), attached: Vec::new(), hoisted: Vec::new() };
+    pub const DEFAULT: NodeCold = NodeCold { common: Common::DEFAULT, vis: Visual::IDENTITY, observe: Vec::new(), listen_overflow: Vec::new(), attached: Vec::new(), hoisted: Vec::new(), listen_capture: Vec::new() };
 
     pub fn observes(&self, prop: u32) -> bool {
         prop != 0 && self.observe.iter().any(|&(p, c)| p == prop && c > 0)
@@ -462,7 +466,9 @@ pub fn text_of(w: &W) -> &str {
         W::Icon { name, .. } => name,
         W::Menu(m) => m.label(),
         W::Overlay(o) => &o.title,
-        W::Box | W::Ext(_) | W::Separator { .. } | W::Grid { .. } | W::ScrollArea { .. } | W::VirtualList(_) => "",
+        // OW0: an own widget replacing a built-in kind shows its text prop (a mirror kept by `set_prop`)
+        W::Ext(x) => x.text(),
+        W::Box | W::Separator { .. } | W::Grid { .. } | W::ScrollArea { .. } | W::VirtualList(_) => "",
         // WG2b
         W::Hyperlink { text, .. } | W::RadioButton { text, .. } | W::Switch { text, .. } | W::RangeSlider { text, .. } | W::ProgressBar { text, .. } => text,
         W::Frame { label, .. } => label,

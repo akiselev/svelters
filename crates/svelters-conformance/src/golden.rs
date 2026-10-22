@@ -29,9 +29,6 @@ pub struct Capture {
     /// Observation evidence: per observed prop, how many changes the checkpoints saw and how many
     /// of them the backend announced through `prop_changed` (ABI v2.6) on the user path.
     pub observe: Vec<(String, String)>,
-    /// Pins that cannot run on the platform, with the reason ([`crate::pins::not_applicable`]).
-    /// Written only when there are any, so the Linux goldens are unchanged.
-    pub not_applicable: Vec<(String, String)>,
     pub pins: Vec<PinResult>,
 }
 
@@ -82,14 +79,6 @@ impl Capture {
         s += &kv("offsets", "unicode-scalar");
         s += &format!("  \"settings\": {},\n", obj(&self.settings));
         s += &format!("  \"observe\": {},\n", obj(&self.observe));
-        if !self.not_applicable.is_empty() {
-            let na: Vec<(String, String)> = self
-                .not_applicable
-                .iter()
-                .map(|(k, v)| (k.clone(), serde_json::to_string(v).unwrap()))
-                .collect();
-            s += &format!("  \"not_applicable\": {},\n", obj(&na));
-        }
         s += "  \"pins\": {\n";
         for (i, p) in self.pins.iter().enumerate() {
             s += &format!("    {}: {{\n", serde_json::to_string(&p.id).unwrap());
@@ -120,8 +109,6 @@ pub struct Golden {
     pub path: PathBuf,
     pub toolkit: String,
     pub version: String,
-    /// `(pin id, reason)` of the pins the golden does not hold because they cannot run there.
-    pub not_applicable: Vec<(String, String)>,
     pub pins: Vec<PinResult>,
 }
 
@@ -167,12 +154,6 @@ pub fn read_golden(path: &std::path::Path) -> Result<Golden, String> {
         path: path.to_path_buf(),
         toolkit: v["toolkit"].as_str().unwrap_or_default().to_string(),
         version: v["version"].as_str().unwrap_or_default().to_string(),
-        not_applicable: v["not_applicable"]
-            .as_object()
-            .into_iter()
-            .flatten()
-            .map(|(k, r)| (k.clone(), r.as_str().unwrap_or_default().to_string()))
-            .collect(),
         pins,
     })
 }

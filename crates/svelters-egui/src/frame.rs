@@ -138,6 +138,7 @@ impl EguiBackend {
                 *slot = Some(ctx.clone());
             }
         }
+        crate::events::install(self, &ctx); // EV1: the input hook (once per context)
         if ctx.current_pass_index() == 0 {
             self.logic_pass(&ctx);
         }
@@ -177,12 +178,18 @@ impl EguiBackend {
     /// before the context it is drawn in exists).
     pub(crate) fn bind_ctx(&self, ctx: &egui::Context) {
         *self.0.shared.ctx.lock().unwrap() = Some(ctx.clone());
+        crate::events::install(self, ctx); // EV1: the input hook (once per context)
     }
 
     fn before_pass(&self, ctx: &egui::Context) {
         // ARCH-SCENE §7.2 step 2b: mutations deferred during the last frame (the runtime sees them
         // in this logic's checkpoint), then the prop changes Rust writes announced.
         self.0.scene.run_deferred();
+        // AS1: images whose asset changed (no JS ran): their nodes remeasure below
+        let changed = crate::assets::take_changed(ctx);
+        if !changed.is_empty() {
+            crate::assets::mark_nodes(&mut self.0.scene.borrow_mut(), &changed);
+        }
         self.flush_announcements();
         // Native closes: user requests (sync close-request decides) and `close` calls.
         let requests: Vec<Handle> = std::mem::take(&mut *self.0.close_requests.borrow_mut());
@@ -217,6 +224,8 @@ impl EguiBackend {
         }
         // LS1: lists bind the rows this frame draws (call_sync), at this frame's offset (R22)
         self.realize_lists(ctx);
+        // WG5a: table cell editors bind and commit (call_sync), outside the pass
+        self.realize_edits();
         // ARCH-SCENE §7.2 step 6 (SG4): state providers that want to run, each one batch. What they
         // changed repaints the visible roots once (route_repaints); one still wanting asks for
         // another logic (R16).

@@ -10,23 +10,20 @@ capture and publishes the goldens as files), W4 (measure egui `TextEdit` first).
 | Piece | Where | What |
 |---|---|---|
 | macOS user path | `crates/svelters-conformance/src/macos.rs` (macOS only) | CGEvent input, AX reads, the fixture's run loop with an event barrier, AppKit's selection direction, the settings readers. |
-| AppKit capture | `crates/svelters-conformance/tests/appkit_capture.rs` (`harness = false`, macOS only, opt-in) | Every pin that applies on macOS, on two `NSTextField`s + an `NSButton`, then on two `NSTextView`s + the button. |
-| Goldens | `conformance/golden/macos/nstextfield-15.7.5.json`, `nstextview-15.7.5.json` | Same format as the Linux goldens, plus `not_applicable`. |
-| Applicability | `pins::not_applicable` | A pin runs on a platform only if every intent it uses has a chord in that platform's `keys.json` table and, for the X11 primary selection (middle click, observing `primary`), the platform is Linux. |
-| Staleness | `tests/staleness.rs` | Every golden holds every applicable pin with today's fingerprint; a pin that cannot apply must be absent and listed under `not_applicable` with today's reason. |
-| egui on macOS | `tests/egui_measure.rs` `egui_text_edit_against_macos_goldens` | The applicable pins on egui `TextEdit` as egui-winit delivers macOS input, against both AppKit goldens. A report, not gated. |
+| AppKit capture | `crates/svelters-conformance/tests/appkit_capture.rs` (`harness = false`, macOS only, opt-in) | Every pin on two `NSTextField`s + an `NSButton`, then on two `NSTextView`s + the button. |
+| Goldens | `conformance/golden/macos/nstextfield-15.7.5.json`, `nstextview-15.7.5.json` | Same format as the Linux and Windows goldens; `staleness.rs` checks them unchanged. |
+| egui on macOS | `tests/egui_measure.rs` `egui_text_edit_against_macos_goldens` | Every pin on egui `TextEdit` as egui-winit delivers macOS input, against both AppKit goldens. A report, not gated. |
 | CI | `.github/workflows/macos-appkit.yml`, step "svelters-conformance (macOS)" | Builds and runs the macOS unit tests, staleness and the capture binary (which skips without `NA_MACOS=1`). |
 
-`gtk_capture.rs` is now `#![cfg(target_os = "linux")]` and its `gtk`/`svelters-gtk` dev-dependencies are
-Linux-only, so the crate's tests also build on macOS (the GTK capture never compiled there: it uses XTEST).
+### Pins without a macOS equivalent
 
-### Which pins run on macOS
-
-14 of the 18 scripts (191 checkpoints). The other four have no macOS equivalent and are listed in each golden's
-`not_applicable`: `undo-typing` (no second redo chord), `clipboard-keys` (no CUA chords Ctrl+Insert/Shift+Insert/
-Shift+Delete), `primary` (no primary selection), `unicode-entry` (no Ctrl+Shift+U hex entry). The macOS chords
-come from `conformance/keys.json` (Option+arrows for words, Cmd+arrows for line ends, Option+Delete for word
-deletion, Cmd+Z/Shift+Cmd+Z, Option+E/Option+U dead keys).
+All 18 scripts run, with WG3w's convention (`run_pin`): an intent the platform's `keys.json` table has no chord for
+is a step without input, and its checkpoint records that nothing happened. On macOS that is `redo-alt`
+(`undo-typing`), the CUA chords `copy-alt`/`cut-alt`/`paste-alt` (`clipboard-keys`) and `unicode-entry`. macOS
+has no primary selection, so `primary` always reads `""`, as on Windows. The middle clicks of the `primary` pin are
+real middle-button events (AppKit's text fields ignore them). The macOS chords come from `conformance/keys.json`
+(Option+arrows for words, Cmd+arrows for line ends, Option+Delete for word deletion, Cmd+Z and Shift+Cmd+Z,
+Option+E and Option+U dead keys).
 
 ### The fixture
 
@@ -113,14 +110,14 @@ and passes (CI).
 
 | Golden | Pins | Checkpoints | Deterministic |
 |---|---|---|---|
-| `conformance/golden/macos/nstextfield-15.7.5.json` | 14 (4 not applicable) | 191 | yes: a second capture reproduced the file byte for byte |
-| `conformance/golden/macos/nstextview-15.7.5.json` | 14 (4 not applicable) | 191 | yes: a second capture reproduced the file byte for byte |
+| `conformance/golden/macos/nstextfield-15.7.5.json` | 18 | 243 | yes: a second capture reproduced the file byte for byte |
+| `conformance/golden/macos/nstextview-15.7.5.json` | 18 | 243 | yes: a second capture reproduced the file byte for byte |
 
 ### Findings on the native side
 
-NSTextField and NSTextView agree on 173 of 191 checkpoints: everything except focus and Tab (pin 7) and a click
-into the other field (pin 3). NSTextField agrees with GTK 4.24.1 on 97 and with Qt 6.12.0 on 91 (the anchors both
-have; macOS has no `primary`).
+NSTextField and NSTextView agree on 218 of 243 checkpoints: everything except focus and Tab (pin 7), Return, and
+a click into the other field (pin 3). NSTextField agrees with GTK 4.24.1 on 118 and with Qt 6.12.0 on 126 (the steps
+without input on macOS count where the Linux toolkits also did nothing).
 
 1. **Word stops (pin 1).** Option+Right stops at word ends (like GTK, unlike Qt's word starts) and Option+Left at
    word starts. `.` and `_` between letters and digits do not split a word (`baz.qux`, `snake_case`, `3.14` are one
@@ -145,12 +142,14 @@ have; macOS has no `primary`).
    restored text with the anchor at its start (`[11,16]`; Qt `[16,11]`). Redo restores the caret, not the
    selection. NSTextField and NSTextView (with `allowsUndo`) behave the same.
 5. **Paste (pin 5).** Multi-line paste keeps LF, CRLF and the tab verbatim in a single-line NSTextField, as GTK and
-   Qt do.
+   Qt do. Cmd+C/X/V behave as Ctrl+C/X/V on Linux. A middle click does nothing at all (no focus, no paste).
 6. **Dead keys (pin 6, US layout).** The composition is visible: Option+E shows the marked `´` in the field, and AX
    reports it in `AXValue` with the caret after it (GTK and Qt show nothing until it commits). Space commits `´`
    (the macOS spacing accent; X11's compose table gives `'`). A letter that does not compose commits the accent
    and the letter (`´x`; GTK `x́`, Qt `x`). Backspace removes only the marked accent.
-7. **Focus (pin 7).**
+7. **Return.** In an NSTextField, Return ends editing and selects all of the text (`[0,len]`; the field sends its
+   action), so the next typed key replaces it. In an NSTextView it inserts a line break.
+8. **Focus (pin 7).**
    - NSTextField: Tab and Shift+Tab alternate between the two fields and skip the button (full keyboard access is
      off by default). Keyboard focus into a field selects all of it (`[0,len]`), as on GTK and Qt. Clicking the
      button does not focus it (GTK and Qt focus it). Escape keeps focus.
@@ -176,11 +175,15 @@ equal, and later checkpoints build on earlier ones.
 | 3 | multi-click | 14 | 6 (#3 `click a@7 x2`) | 6 (#3 `click a@7 x2`) |
 | 4 | undo-edits | 21 | 10 (#10 `undo`) | 10 (#10 `undo`) |
 | 4 | undo-paste | 10 | 6 (#4 `undo`) | 6 (#4 `undo`) |
+| 4 | undo-typing | 11 | **11** | **11** |
+| 5 | clipboard-keys | 20 | **20** | **20** |
 | 5 | paste-multiline | 4 | 1 (#1 `paste`) | 1 (#1 `paste`) |
+| 5 | primary | 8 | 2 (#2 `middle-click b@2 x1`) | 2 (#2 `middle-click b@2 x1`) |
 | 6 | dead-keys [model] | 12 | 7 (#1 `dead-acute`) | 7 (#1 `dead-acute`) |
+| 6 | unicode-entry | 13 | 6 (#6 `escape`) | 6 (#6 `escape`) |
 | 7 | focus-click | 7 | 0 (#0 `setup`) | 2 (#2 `click c x1`) |
 | 7 | focus-tab | 9 | 0 (#0 `setup`) | 1 (#1 `tab`) |
-| | **total** | **191** | **103** | **106** |
+| | **total** | **243** | **142** | **145** |
 
 The gap, per pin:
 
@@ -195,7 +198,11 @@ The gap, per pin:
   neighbouring word in egui (as on Linux).
 - **Pin 4, undo.** egui's `Undoer` groups by time (one second of stability), so one undo returns to the setup
   text. AppKit splits at deletions, caret moves and pastes. This is the undo-point policy gap of WG3b.
-- **Pin 5, paste.** A single-line `TextEdit` turns line breaks into spaces; AppKit keeps them (as GTK and Qt).
+- **Pin 5, clipboard.** Cmd+C/X/V and the steps without input match. A single-line `TextEdit` turns line breaks
+  into spaces; AppKit keeps them (as GTK and Qt). A middle click focuses the field in egui and does nothing in
+  AppKit.
+- **Return and Escape (pin 6, `unicode-entry`).** The hex digits are typed literally on both. Escape drops keyboard
+  focus in egui (AppKit keeps it), so the rest of the script types into nothing.
 - **Pin 6, dead keys [model].** The committed text matches AppKit at every step. The differences are the visible
   marked text: macOS shows `´` while composing, and egui under winit gets it as an IME preedit, which the model
   does not show. Not measured on winit.
@@ -204,10 +211,12 @@ The gap, per pin:
   from the field in egui with nothing focused afterwards; in AppKit the field keeps it (the button does not take
   focus). Against NSTextView the Tab rows differ by nature (a text view takes the Tab).
 
-**Reading for W4 (numbers, not a decision).** On macOS, egui matches NSTextField on 103 of 191 checkpoints.
+**Reading for W4 (numbers, not a decision).** On macOS, egui matches NSTextField on 142 of 243 checkpoints
+(NSTextView 145).
 Selection mechanics and click selection are close. The gaps are word rules (a rule set like GTK's with `.` and
 `_` inside words), focus policy (Tab selects all, an unfocused field drops its selection, a click on a button
-leaves keyboard focus in the field), undo points, and multi-line paste. They are the same kinds of gaps WG3 found against GTK and Qt,
+leaves keyboard focus in the field, Escape keeps focus, a middle click does nothing), undo points, and multi-line
+paste. They are the same kinds of gaps WG3 found against GTK and Qt,
 so an `AppKit` entry in FX1's policy table, rather than a different editing core, would close most of them.
 
 ## Not done / follow-ups
@@ -215,9 +224,9 @@ so an `AppKit` entry in FX1's policy table, rather than a different editing core
 - **TextKit 2.** These goldens are TextKit 1 (see above). A capture built with `MACOSX_DEPLOYMENT_TARGET>=12`
   would record TextKit 2's behaviour under its own name. Word rules and undo are the likely differences
   [unverified].
-- **Mac-only scripts for the four inapplicable pins.** Undo/redo with Cmd+Shift+Z only, Cmd+C/X/V with the
-  pasteboard observed, and the macOS input methods (the press-and-hold accent menu, the Unicode Hex Input
-  source) would cover pins 4–6 on macOS the way `undo-typing`, `clipboard-keys` and `unicode-entry` do on Linux.
+- **macOS equivalents of the steps without input.** The macOS input methods (the press-and-hold accent menu, the
+  Unicode Hex Input source) would give `unicode-entry` a macOS meaning. The other no-input steps (`redo-alt`, the
+  CUA chords) have no macOS counterpart.
 - **Full keyboard access.** With `AppleKeyboardUIMode` 2 (System Settings → Keyboard → Keyboard navigation), Tab
   reaches the button. The goldens record mode 0, the default. A second capture under mode 2 would pin that.
 - **The `svelters_egui::native` policy for macOS.** FX1 keeps egui's behaviour on macOS. The table above is the

@@ -9,7 +9,8 @@
   const keys = ['name', 'value', 'footprint'];
   let table = $state();
   let range = $state([0, -1]);
-  let selected = $state(-1);
+  // WG5a: `selected` is a list of row ids (a row's id is its position until `set-ids`)
+  let selected = $state([]);
   let sortBy = $state(-1);
   let activated = $state(-1);
 

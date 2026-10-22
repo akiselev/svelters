@@ -58,6 +58,27 @@ export function bind_prop(node, prop, get, setv, signal, arg = -1) {
 }
 
 /**
+ * CX3 native link: `bind:prop={store.field}` where `store` is a Rust store (`svelters:app/*`) and
+ * the spec declares the `link` bind source. The host ties (store, field) to (node, prop) in Rust
+ * (`host.link`): the node starts with the store's value, and changes on either side cross in the
+ * host at the checkpoint, so typing, dragging and Rust writes run no JS. When the host refuses
+ * (not a writable store field, a prop it cannot observe, an older host), `fallback` installs the
+ * ordinary JS binding the compiler planned.
+ */
+export function bind_link(node, prop, obj, field, fallback) {
+  const hs = node.host;
+  const h = $.untrack(obj)?.svlHandle;
+  if (alive(node) && h != null && typeof hs.link === 'function') {
+    const id = hs.link(h, field, node.h, prop);
+    if (id) {
+      $.user_pre_effect(() => () => hs.unlink(id));
+      return;
+    }
+  }
+  fallback();
+}
+
+/**
  * Read-only observable binding: `setv` gets the value at creation, again after the first layout
  * pass (sizes are not known before it, fork-bindings section 6.4) if it changed, and then every
  * observed change.

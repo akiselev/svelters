@@ -23,6 +23,8 @@ use svelters_abi::{NameKind, Value as AV};
 
 mod buffers;
 mod conv;
+#[cfg(feature = "intl")]
+mod intl;
 mod platform;
 use conv::QjsConv;
 
@@ -36,6 +38,27 @@ pub(crate) fn leaked_runtimes() -> u64 {
 const TRANSFER_GRACE: Duration = Duration::from_secs(1);
 
 const PRELUDE: &str = include_str!("prelude.js");
+
+/// AU1b (`HostSched::seed`): replaces `Math.random` with sfc32 seeded from the two 32-bit halves of
+/// the seed, warmed up, giving 53-bit doubles. Installed only when a seed is set.
+const SEEDED_RANDOM: &str = r#"(function (g, lo, hi) {
+  'use strict';
+  let a = lo >>> 0, b = hi >>> 0, c = 0x9e3779b9, d = (lo ^ hi ^ 0x85ebca6b) >>> 0;
+  const next = () => {
+    const t = (((a + b) | 0) + d) | 0;
+    d = (d + 1) | 0;
+    a = b ^ (b >>> 9);
+    b = (c + (c << 3)) | 0;
+    c = (c << 21) | (c >>> 11);
+    c = (c + t) | 0;
+    return t >>> 0;
+  };
+  for (let i = 0; i < 15; i++) next();
+  const random = function random() {
+    return ((next() >>> 5) * 67108864 + (next() >>> 6)) / 9007199254740992;
+  };
+  Object.defineProperty(g.Math, 'random', { value: random, writable: true, configurable: true, enumerable: false });
+})"#;
 
 type Res<T> = rquickjs::Result<T>;
 
@@ -128,6 +151,9 @@ impl crate::core::CallbackEngine for QjsCallbacks {
 }
 
 pub(crate) struct QjsEngine {
+    /// IN1: the `Intl` shim's private locale-change notifier (first: released before `ctx`).
+    #[cfg(feature = "intl")]
+    intl_changed: intl::Changed,
     // `ctx` before `rt`: the context is released first.
     ctx: Context,
     rt: Runtime,
@@ -219,8 +245,17 @@ impl QjsEngine {
                 .catch(&ctx)
                 .map_err(|e| JsError::new(ErrorKind::Host, format!("install host bindings: {e}")))
         })?;
+        // IN1: `Intl` and the locale-sensitive built-ins over svelters-intl.
+        #[cfg(feature = "intl")]
+        let intl_changed = ctx.with(|ctx| {
+            intl::install(&ctx)
+                .catch(&ctx)
+                .map_err(|e| JsError::new(ErrorKind::Host, format!("install Intl: {e}")))
+        })?;
 
         Ok(QjsEngine {
+            #[cfg(feature = "intl")]
+            intl_changed,
             ctx,
             rt,
             base,
@@ -484,6 +519,11 @@ impl JsEngine for QjsEngine {
         })
     }
 
+    #[cfg(feature = "intl")]
+    fn locale_changed(&mut self, tag: &str) -> Result<(), JsError> {
+        self.call_guarded(|ctx| intl::changed(ctx, &self.intl_changed, tag))
+    }
+
     fn dispatch_gone(&mut self, handle: u64, reason: &str) -> Result<(), JsError> {
         self.call_guarded(|ctx| {
             let f: Value = ctx.globals().get("__svelters_gone")?;
@@ -491,6 +531,16 @@ impl JsEngine for QjsEngine {
                 return Ok(());
             };
             f.call::<_, Value>((handle as f64, reason)).map(|_| ())
+        })
+    }
+
+    fn assets_changed(&mut self, refs: &[String]) -> Result<(), JsError> {
+        self.call_guarded(|ctx| {
+            let f: Value = ctx.globals().get("__svelters_assets_changed")?;
+            let Some(f) = f.as_function() else {
+                return Ok(());
+            };
+            f.call::<_, Value>((refs.to_vec(),)).map(|_| ())
         })
     }
 
@@ -634,6 +684,8 @@ impl JsEngine for QjsEngine {
 }
 
 impl Drop for QjsEngine {
+    // ZU3: host teardown: waits up to TRANSFER_GRACE for workers to hand back buffers, after the last frame.
+    #[allow(clippy::disallowed_methods)]
     fn drop(&mut self) {
         // E2: a worker may still use a transferred buffer of this runtime (its call was cancelled, but
         // it has not looked yet). Wait a little; past that, leak the runtime rather than free memory
@@ -1187,6 +1239,28 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
                 },
             )?,
         )?;
+        // CX3: native links between a store field and a native prop (`core/links.rs`)
+        let w = core.clone();
+        host.set(
+            "link",
+            Function::new(
+                ctx.clone(),
+                move |ctx: Ctx<'js>, store: f64, field: String, node: f64, prop: String| -> Res<u32> {
+                    let c = core_of(&ctx, &w)?;
+                    let store = handle_of(&ctx, store)?;
+                    let node = handle_of(&ctx, node)?;
+                    op(&ctx, c.op_link(store, &field, node, &prop))
+                },
+            )?,
+        )?;
+        let w = core.clone();
+        host.set(
+            "unlink",
+            Function::new(ctx.clone(), move |ctx: Ctx<'js>, id: u32| -> Res<()> {
+                let c = core_of(&ctx, &w)?;
+                op(&ctx, c.op_unlink(id))
+            })?,
+        )?;
         let w = core.clone();
         host.set(
             "style",
@@ -1265,6 +1339,24 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
                 c.dx_op(&op, &a, &b).map_err(|(code, m)| Exception::throw_message(&ctx, &format!("{code}: {m}")))
             })?,
         )?;
+        // AS1: `svelters:assets` reads (`text`, `info`; `assetBytes` copies the content once).
+        let w = core.clone();
+        host.set(
+            "assets",
+            Function::new(ctx.clone(), move |ctx: Ctx<'js>, op: String, uri: String| -> Res<String> {
+                let c = core_of(&ctx, &w)?;
+                c.asset_op(&op, &uri).map_err(|m| Exception::throw_message(&ctx, &m))
+            })?,
+        )?;
+        let w = core.clone();
+        host.set(
+            "assetBytes",
+            Function::new(ctx.clone(), move |ctx: Ctx<'js>, uri: String| -> Res<rquickjs::ArrayBuffer<'js>> {
+                let c = core_of(&ctx, &w)?;
+                let b = c.asset_bytes(&uri).map_err(|m| Exception::throw_message(&ctx, &m))?;
+                rquickjs::ArrayBuffer::new(ctx.clone(), b)
+            })?,
+        )?;
         // E2: `alloc(Float32Array, n)` (`@svelters/types/core`): a typed array over a Rust allocation,
         // which a `Buffer<T>` parameter takes back without a copy.
         let cb = cbs.clone();
@@ -1288,7 +1380,12 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
     globals.set("__svelters_host", host)?;
 
     let prelude: Function = ctx.eval(PRELUDE)?;
-    prelude.call::<_, ()>((native, globals))
+    prelude.call::<_, ()>((native, globals.clone()))?;
+    if let Some(seed) = core.upgrade().and_then(|c| c.cfg.sched.seed) {
+        let seeded: Function = ctx.eval(SEEDED_RANDOM)?;
+        seeded.call::<_, ()>((globals, seed as u32, (seed >> 32) as u32))?;
+    }
+    Ok(())
 }
 
 // ---- module loading ----
@@ -1361,15 +1458,49 @@ fn declare<'js>(ctx: &Ctx<'js>, name: &str, code: ModuleCode, core: &Weak<Core>,
 fn declare_code<'js>(ctx: &Ctx<'js>, name: &str, code: ModuleCode, core: &Weak<Core>) -> Res<Module<'js, Declared>> {
     match code {
         ModuleCode::Source { js, map } => {
-            if let (Some(map), Some(core)) = (map, core.upgrade()) {
+            let core = core.upgrade();
+            if let (Some(map), Some(core)) = (map, &core) {
                 core.maps.borrow_mut().insert(name, &map);
             }
-            Module::declare(ctx.clone(), name, js)
+            // Q2: through the bytecode cache, except HMR re-imports (`?v=n`, one-off names)
+            match core.and_then(|c| c.bytecode.borrow().clone()).filter(|_| !name.contains('?')) {
+                Some(cache) => declare_cached(ctx, name, js, &cache),
+                None => Module::declare(ctx.clone(), name, js),
+            }
         }
         // Safety: only bytecode tagged for this engine is read; its writer is the same QuickJS build.
         ModuleCode::Cached { engine, bytes } if engine == BYTECODE_TAG => unsafe { Module::load(ctx.clone(), &bytes) },
         ModuleCode::Cached { engine, .. } => Err(rquickjs::Error::new_loading_message(name, format!("bytecode for engine {engine:?}, not {BYTECODE_TAG:?}"))),
     }
+}
+
+/// Declares a source module from its cached bytecode, or compiles it and caches the bytecode.
+fn declare_cached<'js>(ctx: &Ctx<'js>, name: &str, js: String, cache: &crate::bytecode::BytecodeCache) -> Res<Module<'js, Declared>> {
+    if let Some(bytes) = cache.get(name, &js) {
+        // Safety: the entry passed its header and checksum checks for this engine stamp, name and
+        // source; it was written by `Module::write` of this QuickJS build (bytecode.rs, "Trust").
+        match unsafe { Module::load(ctx.clone(), &bytes) } {
+            Ok(m) => return Ok(m),
+            Err(e) => {
+                tracing::debug!(target: "svelters::host", "bytecode cache entry for {name} rejected ({e}); recompiling");
+                let _ = ctx.catch();
+                cache.remove(name, &js);
+            }
+        }
+    }
+    let m = Module::declare(ctx.clone(), name, js.as_str())?;
+    match m.write(crate::bytecode::write_options()) {
+        Ok(bytes) => {
+            if let Err(e) = cache.put(name, &js, &bytes) {
+                tracing::debug!(target: "svelters::host", "bytecode cache entry for {name} not written: {e}");
+            }
+        }
+        Err(e) => {
+            tracing::debug!(target: "svelters::host", "bytecode of {name} not written: {e}");
+            let _ = ctx.catch();
+        }
+    }
+    Ok(m)
 }
 
 /// Reads a sync handler result. `nested` allows one level of object/array whose members must be primitives.
