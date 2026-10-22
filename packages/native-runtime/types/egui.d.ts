@@ -734,6 +734,8 @@ export interface EguiElements {
     ontoggled?: (checked: boolean) => void;
     /** The user picked it (click, Enter, or its shortcut); carries `checked` after the pick. */
     onactivate?: (checked: boolean) => void;
+    /** It became the open menu's current row (the pointer or the arrow keys; QAction `hovered`). Svelters' own menus only (OW3). */
+    onhover?: () => void;
   };
   /** A line between menu items (a vertical one in a menu bar). */
   'menu-separator': {

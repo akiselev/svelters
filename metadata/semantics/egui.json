@@ -185,6 +185,17 @@
           "sync": false,
           "sync_required": false
         },
+        "hover": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "It became the open menu's current row (the pointer or the arrow keys; QAction `hovered`). Svelters' own menus only (OW3).",
+          "handler_result": "none",
+          "js_event": "hover",
+          "name": "hover",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "toggled": {
           "args": [
             {

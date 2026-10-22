@@ -188,6 +188,8 @@ struct State {
     anchor: Option<Rect>,
     /// The pass it opened in.
     opened: u64,
+    /// The row `hover` was last announced for.
+    hovered: Option<NodeId>,
 }
 
 /// One root's pass.
@@ -286,6 +288,7 @@ impl<'a> Menu<'a> {
         self.clear_bits();
         self.st.keyboard = false;
         self.st.hover = None;
+        self.st.hovered = None;
         self.st.typeahead.reset();
         if !self.st.bar_keys {
             self.st.grab.release(&self.ctx, self.focus);
@@ -666,6 +669,11 @@ impl<'a> Menu<'a> {
                 });
                 if is_cur {
                     active = Some(resp.id);
+                    // QAction `hovered`: the deepest level's current row changed
+                    if deepest && r.kind == Kind::Action && self.st.hovered != node_id {
+                        self.st.hovered = node_id;
+                        menus::announce(self.arena, r.i, None, &[("hover", vec![])], self.out);
+                    }
                 }
                 if r.kind == Kind::Sub && open_sub == node_id {
                     next = Some(*rect);

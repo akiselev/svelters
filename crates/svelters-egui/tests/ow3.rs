@@ -88,6 +88,7 @@ fn bar(rig: &mut Rig) -> Bar {
     rig.leaf(col, "text-edit", &[("accessible-name", s("field"))]);
     for h in [open, a, b, bold, quit, copy] {
         rig.listen(h, "activate");
+        rig.listen(h, "hover");
     }
     rig.run();
     Bar { open, a, b, bold, quit, recent, copy }
@@ -102,6 +103,7 @@ fn ow3_menu_bar_keyboard() {
     assert!(!has(&rig, "Open"));
     key(&mut rig, egui::Key::ArrowDown);
     assert!(has(&rig, "Open") && current(&rig, m.open));
+    assert_eq!(events(&rig, m.open, "hover").len(), 1, "QAction `hovered`");
     // roles: menu bar, menu, menu items; the accelerator is AccessKit's keyboard shortcut
     rig.harness.get_by_role(Role::MenuBar);
     rig.harness.get_by_role(Role::Menu);
