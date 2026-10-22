@@ -107,7 +107,7 @@ Full matrix: [css/properties](../../css/properties.md). States: below.
 | `:exiting` | it plays an out transition before it is removed | scene |
 | `:selected` | `selected` is true | prop |
 
-Never set on it (rules with them don't match): `:checked`, `:open`, `:expanded`, `:invalid`, `:read-only`, `:dragging`, `:busy`.
+Never set on it (rules with them don't match): `:checked`, `:open`, `:expanded`, `:invalid`, `:read-only`, `:dragging`, `:busy`, `:indeterminate`, `:placeholder-shown`, `:default`, `:drop-target`, `:current`, `:backdrop`, `:required`, `:user-invalid`, `:has-children`.
 
 States are tracked once the scene has a style input (a `<style>` block, `class`, `style=` or a theme).
 <!-- END GENERATED -->
