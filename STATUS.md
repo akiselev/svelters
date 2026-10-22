@@ -79,7 +79,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | SV48 `Json<T>` error paths through tagged enums | IN PROGRESS | | branch `ci/sv48` |
 | H1 component HMR on the Rust loader | IN PROGRESS | | thinkpad-svelters, branch `ci/h1`, stacked on `ci/q1` |
 | H3 `$state` kept on HMR (SV36) | IN PROGRESS | | thinkpad-svelters, branch `ci/h3`, stacked on `ci/h1` |
-| TR2 native animator (SV13, SV37) | IN PROGRESS | | thinkpad-svelters, branch `ci/tr2`; ABI v2.9 allocates style op 11 `SVL_STYLE_ANIMATE` |
+| TR2 native animator (SV13, SV37) | DONE | 2026-10-22 | merged (this commit); ABI v2.9: style op 11 `SVL_STYLE_ANIMATE`; follow-ups TR2b, TR3 |
 | LD1 loader hooks + native module providers (SV22, SV25) | DONE | 2026-10-22 | merged 7e8909bb |
 | CS5e egui cascade | DONE | 2026-10-22 | merged 9edf8e24 |
 | Q3w Q3's CSS port in compile() + CLI | IN PROGRESS | | macbook-svelters, branch `ci/q3w` |
