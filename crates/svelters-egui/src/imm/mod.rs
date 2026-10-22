@@ -205,6 +205,8 @@ pub(crate) struct Compose {
     pub focus: Option<FocusParams>,
     pub press: Option<PressParams>,
     pub toggle: Option<ToggleParams>,
+    /// Where the host takes the pointer, inside its rect (a label: its text), else the rect.
+    pub hit: Option<egui::Rect>,
 }
 
 /// What the units did this pass.
@@ -222,6 +224,11 @@ pub(crate) struct Ran {
 
 fn lock(u: &Mutex<Units>) -> std::sync::MutexGuard<'_, Units> {
     u.lock().unwrap_or_else(std::sync::PoisonError::into_inner)
+}
+
+/// The bits widget `id`'s units left last pass (`NONE` before its first).
+pub(crate) fn last_state(ctx: &egui::Context, id: egui::Id) -> StateBits {
+    ctx.data(|d| d.get_temp::<Arc<Mutex<Units>>>(id.with("svelters-imm"))).map_or(StateBits::NONE, |u| lock(&u).state)
 }
 
 /// Runs the units of `c` for widget `id` at `rect`, as the walk and `WidgetCx::run_units` do for
@@ -251,7 +258,7 @@ pub(crate) fn run(ui: &mut egui::Ui, id: egui::Id, rect: egui::Rect, enabled: bo
         if c.toggle.is_some() {
             sense |= toggle.sense(&tp);
         }
-        let resp = child.interact(rect, id, sense);
+        let resp = child.interact(c.hit.map_or(rect, |h| h.intersect(rect)), id, sense);
         // the prop mirror: set before the units run (§2.3)
         let keep = StateBits(Hoverable::OWNS.0 | Focusable::OWNS.0 | Pressable::OWNS.0 | Toggleable::OWNS.0);
         *state = StateBits(state.0 & keep.0) | props;
@@ -288,7 +295,7 @@ impl Ran {
         p
     }
 
-    /// For a kind without `Caps::PAINTS_BOX` (checkbox, switch, label, separator): the box the
+    /// For a kind without `Caps::PAINTS_BOX` (label, separator): the box the
     /// walk paints behind it from its CSS alone (`style::before_leaf`: background, border,
     /// shadows; no UA table), and its CSS `opacity` on the widget's `Ui`. Nothing without a
     /// cascade.

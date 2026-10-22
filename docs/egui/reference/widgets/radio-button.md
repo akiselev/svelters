@@ -32,6 +32,7 @@ One choice of several. Siblings are exclusive: a click checks it and unchecks th
 |---|---|---|---|---|
 | `checked` | `boolean` | `false` | **yes**, on `changed` | Chosen. A click checks it and unchecks its sibling radio buttons (Qt's auto-exclusive siblings); it never unchecks itself. With `value`, it follows `group == value`. |
 | `group` | `string` | `""` | **yes**, on `changed` | The group's chosen value (`bind:group={choice}` on every button of the group, each with its own `value`). A click sets it on this button and its siblings. |
+| `icon` | `string` | `""` | no | WIDGET-PARITY §2.3: an icon before the caption (a key, or `family:name`). |
 | `text` | `string` | `""` | no | The caption. |
 | `value` | `string` | `""` | no | What this button stands for in its group: a click writes it into `group`. |
 
@@ -78,7 +79,7 @@ None.
 | `box-shadow` | yes (outer and inset) | — |
 | `opacity` | yes | — |
 
-**Layout properties** (as attributes or in CSS; an explicit attribute wins): `align-self`, `bottom`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `top`, `visible`, `width`.
+**Layout properties** (as attributes or in CSS; an explicit attribute wins): `align-self`, `bottom`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `left`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `top`, `visible`, `width`.
 Also in CSS only: `display`, `grid-column`, `grid-row`, `margin-bottom`, `margin-left`, `margin-right`, `margin-top`.
 
 `:checked` does not match it yet: use `class:on={checked}`.

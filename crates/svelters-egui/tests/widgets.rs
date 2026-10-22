@@ -79,7 +79,9 @@ fn collapsing_header_toggles_open_and_lays_out_its_body() {
     let _ = field;
     assert_eq!(rig.harness.get_by_role_and_label(Role::DisclosureTriangle, "Placement").accesskit_node().data().is_expanded(), Some(true));
     let (hd, xr) = (rig.drawn(h), rig.drawn(x));
-    assert!(xr.top() >= hd.bottom() - 0.5, "the body is below the header: {hd:?} {xr:?}");
+    // (the own header's node is header and body, OW1a2; the egui wrapper's drawn rect is the header)
+    let head_h = rig.drawn(after).top() - closed_after;
+    assert!(xr.top() >= hd.top() + 16.0 && head_h > 10.0, "the body is below the header: {hd:?} {xr:?}");
     assert!(xr.left() >= hd.left() + 10.0, "and indented: {hd:?} {xr:?}");
     assert!(rig.drawn(after).top() > closed_after + 10.0, "the next sibling moved down");
 

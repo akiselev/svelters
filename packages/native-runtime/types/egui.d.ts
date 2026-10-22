@@ -2,6 +2,8 @@
 // An egui app's tsconfig: "types": ["@svelters/native-runtime/types/egui"] (instead of
 // "@svelters/native-runtime/types", GTK's), plus the app's dumped .svelters/app/{app,kinds}.d.ts.
 import type { Component, ComponentProps, SvelteComponent } from 'svelte';
+/** The value of `bind:this` on an element (a provider kind with methods extends it: `kinds.d.ts`). */
+export type { NativeElement } from './native';
 
 /** What a sync signal's handler gets first; the signal's arguments follow it (and are its `args`). A plain
  * signal's handler gets the arguments only. */
@@ -236,6 +238,10 @@ export interface EguiElements {
     selectable?: boolean;
     /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
     'font-weight'?: number;
+    /** WG6 QW13: cut one line with `…` to the width: `none`, `start`, `middle`, `end`. */
+    elide?: 'none' | 'start' | 'middle' | 'end';
+    /** The `anchor` of the control this label names (Qt's buddy): a click focuses it. */
+    for?: string;
     /** Pressed and released (`Response::clicked`). */
     onclicked?: () => void;
   };
@@ -277,6 +283,13 @@ export interface EguiElements {
     /** Checked state; clicking toggles it. */
     checked?: boolean;
     'bind:checked'?: boolean;
+    /** WIDGET-PARITY §2.2: partially checked (`bind:indeterminate`), shown as a dash. The app writes it; a click clears it and checks the box (Qt, GTK). */
+    indeterminate?: boolean;
+    'bind:indeterminate'?: boolean;
+    /** The user cycles unchecked → checked → indeterminate (Qt's tristate). */
+    tristate?: boolean;
+    /** An icon before the caption (a key, or `family:name`). */
+    icon?: string;
     /** The user toggled it; carries the new state. */
     onchanged?: (checked: boolean) => void;
     /** Pressed and released. */
@@ -341,6 +354,8 @@ export interface EguiElements {
     frame?: boolean;
     /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
     'font-weight'?: number;
+    /** WIDGET-PARITY §2.1 (QButtonGroup): the sibling toggle buttons with the same `group` form an exclusive set (checking one unchecks the others) and one Tab stop the arrow keys move in. */
+    group?: string;
     /** The user toggled it; carries the new state. */
     onchanged?: (checked: boolean) => void;
     /** Pressed and released (also when a `radio` click left it checked). */
@@ -491,6 +506,8 @@ export interface EguiElements {
     /** The group's chosen value (`bind:group={choice}` on every button of the group, each with its own `value`). A click sets it on this button and its siblings. */
     group?: string;
     'bind:group'?: string;
+    /** WIDGET-PARITY §2.3: an icon before the caption (a key, or `family:name`). */
+    icon?: string;
     /** The user's click changed it (or a sibling's click unchecked it); carries the new state and group value. */
     onchanged?: (checked: boolean, group: string) => void;
     /** Pressed and released. */
@@ -624,6 +641,13 @@ export interface EguiElements {
     label?: string;
     /** The egui frame drawn around the content: `egui::Frame::group`, `canvas`, `window`, `menu`, `popup`, `side_top_panel` (`panel`), or no chrome (`none`). Its inner margin adds to `padding`. */
     'frame-style'?: 'group' | 'canvas' | 'window' | 'menu' | 'popup' | 'panel' | 'none';
+    /** WIDGET-PARITY §2.16 (QGroupBox `checkable`): a check before the caption; unchecked disables the content. */
+    checkable?: boolean;
+    /** Checked (`bind:checked`), when `checkable`. */
+    checked?: boolean;
+    'bind:checked'?: boolean;
+    /** The user toggled the check; carries the new state. */
+    onchanged?: (value: boolean) => void;
   };
   /** Shows one of its children (GTK's `stack`, Qt's `stacked-widget`): the one anchored `visible-child-name`, else the one at `visible-index`. The others are neither drawn nor hit. */
   stack: EguiWidgetProps & {
@@ -655,6 +679,18 @@ export interface EguiElements {
     'show-percentage'?: boolean;
     /** Animates the bar and shows a spinner in it (busy look; repaints while shown). */
     animate?: boolean;
+    /** WIDGET-PARITY §2.9: the value in `min..max`, the alternative to `fraction` (Qt's form). */
+    value?: number | null;
+    min?: number;
+    max?: number;
+    /** Busy, as `animate` (and `:indeterminate`); also when `value` is set and `min == max`. */
+    indeterminate?: boolean;
+    /** The bar's axis (P7: `[orientation="vertical"]` styles it). */
+    orientation?: 'horizontal' | 'vertical';
+    /** Fills from the end (right, or top when vertical) instead. */
+    inverted?: boolean;
+    /** The label's text when `text` is empty: `%p` percent, `%v` value, `%m` maximum (`%%` a percent sign); shown when set or with `show-percentage` (`%p%`). */
+    format?: string;
   };
   /** A busy indicator. */
   spinner: EguiWidgetProps & {
@@ -958,7 +994,7 @@ export interface EguiElements {
     /** The tab's close button was clicked (or middle click on the tab); remove the tab to close it. */
     'onclose-requested'?: () => void;
   };
-  /** Two panes (its first two children; more are not shown) split by a divider the user drags. `divider-position` is the first pane's size. */
+  /** Panes (its children) side by side or stacked, split by sashes the user drags or moves with the keys (R11: a 1 px line, a 4 px hit area, a focus-coloured bar and grip after 300 ms of hover). `divider-position` is the first pane's size; `sizes` every pane's. */
   'split-view': EguiWidgetProps & {
     /** `horizontal`: the panes side by side (a vertical divider); `vertical`: one above the other. */
     orientation?: 'horizontal' | 'vertical';
@@ -969,12 +1005,23 @@ export interface EguiElements {
     'min-size'?: number;
     /** The divider can be dragged. */
     resizable?: boolean;
+    /** OW2: every pane's size in points along the split (`bind:sizes`, Qt's `sizes`); null: from `divider-position` (two panes) or equal shares. When the split view grows or shrinks, the difference goes to the panes by their `flex-grow` (Qt's stretch factors; the last pane when none has one). Each pane keeps `min-size` and its own `min-width`/`max-width` (or heights). */
+    sizes?: number[] | null;
+    'bind:sizes'?: number[] | null;
+    /** OW2: dragging a sash below half a pane's minimum collapses the pane to 0 (Qt's `childrenCollapsible`); Enter on a focused sash collapses or restores. */
+    collapsible?: boolean;
+    /** OW2: a double click on a sash restores the pane before it to its size before a collapse, or collapses it (`collapsible`). */
+    'restore-on-double-click'?: boolean;
+    /** OW2: `live` moves the panes while dragging; `release` draws a guide line and moves them once, on release (Qt's `opaqueResize = false`). */
+    'commit-mode'?: 'live' | 'release';
     /** The user dragged the divider; carries the first pane's new size. */
     onchanged?: (divider_position: number) => void;
     /** A divider drag began. */
     'ondrag-started'?: () => void;
     /** A divider drag ended. */
     'ondrag-stopped'?: () => void;
+    /** OW2: the user finished a resize (drag released, a key step, a restore); carries every pane's size. */
+    oncommit?: (sizes: number[]) => void;
   };
   /** Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. `show` from JS (`bind:this`), `svelters_egui::toast::show` from Rust. */
   'toast-host': EguiWidgetProps & {
@@ -1119,6 +1166,24 @@ export interface EguiElements {
     href?: string;
     /** The link was activated (click, or Enter/Space while it has keyboard focus). */
     onclicked?: () => void;
+  };
+  /** A standalone scroll bar (Qt's `QScrollBar`) for a view that scrolls itself (a canvas, a plot, cadatomic's viewport): `value` from `min` to `max`, the thumb sized by `page`. It looks like a scroll area's bar (overlay, VS Code's `scrollbarSlider.*`), always shown. */
+  scrollbar: EguiWidgetProps & {
+    /** The position, from `min` to `max` (`bind:value`): the start of the visible part of what it scrolls. */
+    value?: number;
+    'bind:value'?: number;
+    /** The smallest value. */
+    min?: number;
+    /** The largest value (the content's size less `page`). */
+    max?: number;
+    /** The visible part's size: the thumb's length in proportion, and what a press on the track scrolls. */
+    page?: number;
+    /** What AccessKit's Increment and Decrement move. */
+    step?: number;
+    /** `vertical` or `horizontal`. */
+    orientation?: 'horizontal' | 'vertical';
+    /** The user moved it (thumb, track, wheel, AccessKit); carries the new value. */
+    onchanged?: (value: number) => void;
   };
 }
 

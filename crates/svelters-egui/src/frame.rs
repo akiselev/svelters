@@ -245,6 +245,7 @@ impl EguiBackend {
         self.apply_pending_theme(ctx);
         // ARCH-SCENE §7.2 step 7 (CS5e): restyle what this logic's changes reach.
         self.restyle_pending(ctx);
+        self.transitions_step(ctx);
         self.animate_step(ctx);
         // Remeasure leaves whose text changed, per root; only a size change queues a relayout.
         let mut scene = self.0.scene.borrow_mut();
@@ -291,6 +292,39 @@ impl EguiBackend {
                 self.bump(|s| s.events += 1);
                 host.post_event(h, sig, &[Value::I64(aid as i64)]);
                 self.0.checkpoint_pending.set(true);
+            }
+        }
+    }
+
+    /// OW-CSS: steps the CSS transitions at egui's time (kittest's virtual clock in tests): ended
+    /// ones drop and running ones are sampled for this frame's paint.
+    fn transitions_step(&self, ctx: &egui::Context) {
+        let now = ctx.input(|i| i.time);
+        self.0.scene.borrow_mut().step_style_transitions(now);
+    }
+
+    /// OW-CSS: the viewports of the roots with a running CSS transition are asked for the next
+    /// frame, and the logic viewport (which steps them); as [`Self::animate_demand`].
+    fn transitions_demand(&self, ctx: &egui::Context) {
+        let roots: Vec<RootIx> = {
+            let scene = self.0.scene.borrow();
+            if !scene.style.transitions_running() {
+                return;
+            }
+            let mut v: Vec<RootIx> = Vec::new();
+            for r in scene.style.transitioning_nodes().filter_map(|id| scene.idx(id).map(|i| scene.core[i].root)) {
+                if !v.contains(&r) {
+                    v.push(r);
+                }
+            }
+            v
+        };
+        ctx.request_repaint_of(self.logic_vp());
+        for r in roots {
+            if !r.is_detached()
+                && let Some(vp) = self.viewport_of(r)
+            {
+                ctx.request_repaint_of(vp);
             }
         }
     }
@@ -363,7 +397,12 @@ impl EguiBackend {
 
     /// Flushes `out` to the host (queues only: `post_event`/`prop_changed` run no JS) and requests
     /// the repaints pending work needs. Also called by `Embed` after its logic and each slot.
-    pub(crate) fn after_pass(&self, ctx: &egui::Context, out: Vec<Out>) {
+    pub(crate) fn after_pass(&self, ctx: &egui::Context, mut out: Vec<Out>) {
+        // RA3: kind methods' writes since the last pass go first
+        let pending = std::mem::take(&mut *self.0.pending_out.borrow_mut());
+        if !pending.is_empty() {
+            out.splice(0..0, pending);
+        }
         if !out.is_empty() {
             if let Some(host) = self.host() {
                 for o in out {
@@ -392,6 +431,7 @@ impl EguiBackend {
             ctx.request_repaint_of(egui::ViewportId::ROOT);
         }
         self.animate_demand(ctx);
+        self.transitions_demand(ctx);
         // CS5e: a walk-time restyle that shows next frame (an ancestor, a layout change)
         if std::mem::take(&mut self.0.scene.borrow_mut().style.repaint) {
             ctx.request_repaint_of(vp);

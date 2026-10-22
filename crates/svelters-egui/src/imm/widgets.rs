@@ -71,6 +71,19 @@ macro_rules! common_setters {
     };
 }
 
+/// The computed styles of `el`'s paint parts `names` (`::part(name)`) in `st`'s state: what a
+/// kind's `cx.part_css(name)` gives (none until a sheet has a rule for the part).
+fn part_styles(sv: &Sv, el: &El, st: &super::Styled, names: &[&'static str]) -> Vec<(&'static str, std::sync::Arc<svelters_style::ComputedStyle>)> {
+    let Some(host) = st.css.as_deref() else { return Vec::new() };
+    names.iter().filter_map(|n| sv.part_computed(el, st.state, host, n).map(|c| (*n, c))).collect()
+}
+
+fn css_of<'a>(parts: &'a [(&'static str, std::sync::Arc<svelters_style::ComputedStyle>)], name: &str) -> Option<&'a svelters_style::ComputedStyle> {
+    parts.iter().find(|(n, _)| *n == name).map(|(_, c)| &**c)
+}
+
+const INDICATOR_PARTS: &[&str] = &["indicator", "track", "icon", "label"];
+
 fn resp(inner: egui::Response, state: StateBits) -> Response {
     Response { inner, activated: false, double_clicked: false, secondary_clicked: false, changed: false, state }
 }
@@ -131,9 +144,9 @@ impl Button {
     pub fn size(&self, ui: &egui::Ui, sv: &Sv) -> egui::Vec2 {
         let st = sv.styled(ui.ctx(), &self.c.el, button::UA, StateBits::NONE);
         let host = st.view().with_font_weight(Some(self.font_weight));
-        let css = st.css.as_deref();
-        let (icon, label) = (css.and_then(|h| sv.part_computed(&self.c.el, StateBits::NONE, h, "icon")), css.and_then(|h| sv.part_computed(&self.c.el, StateBits::NONE, h, "label")));
-        button::measure(ui.ctx(), &host, icon.as_deref(), label.as_deref(), &self.look())
+        let parts = part_styles(sv, &self.c.el, &st, &["icon", "label"]);
+        let (icon_v, label_v) = (host.part(css_of(&parts, "icon"), button::ICON_UA), host.part(css_of(&parts, "label"), crate::paint::Ua::NONE));
+        button::measure(ui.ctx(), &host, &icon_v, &label_v, &self.look())
     }
 
     /// Allocates its size in `ui`'s layout and shows it there.
@@ -149,7 +162,7 @@ impl Button {
         let mut props = StateBits::NONE;
         props.set(StateBits::SELECTED, self.selected);
         let press = PressParams { repeat: self.repeat.then_some((0.3, 0.1)), ..PressParams::default() };
-        let mut ran = run(ui, id, rect, enabled, Compose { hover: true, focus: Some(FocusParams::default()), press: Some(press), toggle: None }, props);
+        let mut ran = run(ui, id, rect, enabled, Compose { hover: true, focus: Some(FocusParams::default()), press: Some(press), toggle: None, hit: None }, props);
         let mut out = resp(ran.resp.clone(), ran.state);
         for p in ran.press.iter() {
             match p {
@@ -166,9 +179,9 @@ impl Button {
             ran.ui.multiply_opacity(host.opacity());
         }
         if ran.ui.is_rect_visible(rect) {
-            let css = st.css.as_deref();
-            let (icon, label) = (css.and_then(|h| sv.part_computed(&self.c.el, ran.state, h, "icon")), css.and_then(|h| sv.part_computed(&self.c.el, ran.state, h, "label")));
-            button::paint(&mut ran.paint_cx("button"), ui.ctx(), &host, icon.as_deref(), label.as_deref(), rect, &self.look());
+            let parts = part_styles(sv, &self.c.el, &st, &["icon", "label"]);
+            let (icon_v, label_v) = (host.part(css_of(&parts, "icon"), button::ICON_UA), host.part(css_of(&parts, "label"), crate::paint::Ua::NONE));
+            button::paint(&mut ran.paint_cx("button"), ui.ctx(), &host, &icon_v, &label_v, rect, &self.look());
         }
         let cursor = host.cursor();
         let (selected, text) = (self.selected, self.text.as_str());
@@ -186,17 +199,30 @@ pub struct Checkbox<'a> {
     c: Common,
     checked: &'a mut bool,
     text: String,
+    icon: String,
+    indeterminate: bool,
 }
 
 impl<'a> Checkbox<'a> {
     pub fn new(checked: &'a mut bool, text: impl Into<String>) -> Checkbox<'a> {
-        Checkbox { c: Common::new("checkbox"), checked, text: text.into() }
+        Checkbox { c: Common::new("checkbox"), checked, text: text.into(), icon: String::new(), indeterminate: false }
     }
     common_setters!();
+    /// An icon between the box and the caption (`name`, or `family:name`).
+    pub fn icon(mut self, key: impl Into<String>) -> Self {
+        self.icon = key.into();
+        self
+    }
+    /// Shown partly checked (the dash); a click checks it.
+    pub fn indeterminate(mut self, on: bool) -> Self {
+        self.indeterminate = on;
+        self
+    }
 
     pub fn size(&self, ui: &egui::Ui, sv: &Sv) -> egui::Vec2 {
         let st = sv.styled(ui.ctx(), &self.c.el, checkbox::UA, StateBits::NONE);
-        checkbox::measure_indicator(ui.ctx(), &st.view(), checkbox::INDICATOR, &self.text, 18.0)
+        let parts = part_styles(sv, &self.c.el, &st, INDICATOR_PARTS);
+        checkbox::measure_indicator(ui.ctx(), &st.view(), |n| css_of(&parts, n), "indicator", checkbox::INDICATOR, &self.text, &self.icon, true)
     }
 
     pub fn show(self, ui: &mut egui::Ui, sv: &Sv) -> Response {
@@ -205,14 +231,17 @@ impl<'a> Checkbox<'a> {
     }
 
     pub fn show_at(self, ui: &mut egui::Ui, rect: egui::Rect, sv: &Sv) -> Response {
-        let Checkbox { c, checked, text } = self;
-        let (mut ran, mut out) = toggle(ui, &c, rect, checked, ToggleParams { checked: *checked, ..ToggleParams::default() });
-        let st = sv.styled(ui.ctx(), &c.el, checkbox::UA, ran.state);
-        ran.host_box("checkbox", &st, rect);
-        if ran.ui.is_rect_visible(rect) {
-            checkbox::paint(&mut ran.paint_cx("checkbox"), ui.ctx(), &st.view(), rect, &text, *checked);
+        let Checkbox { c, checked, text, icon, mut indeterminate } = self;
+        let (ran, mut out) = toggle(ui, &c, rect, checked, ToggleParams { checked: *checked, indeterminate, ..ToggleParams::default() });
+        if out.changed {
+            indeterminate = ran.state.contains(StateBits::INDETERMINATE);
         }
-        let (enabled, on) = (c.enabled(ui), *checked);
+        let st = sv.styled(ui.ctx(), &c.el, checkbox::UA, ran.state);
+        if ran.ui.is_rect_visible(rect) {
+            let parts = part_styles(sv, &c.el, &st, INDICATOR_PARTS);
+            checkbox::paint(&mut ran.paint_cx("checkbox"), ui.ctx(), &st.view(), |n| css_of(&parts, n), rect, &text, &icon, *checked, indeterminate);
+        }
+        let (enabled, on) = (c.enabled(ui), *checked && !indeterminate);
         let info = || egui::WidgetInfo::selected(egui::Role::CheckBox, enabled, on, &text);
         out.inner = ran.finish(st.view().cursor(), Some(&info), |n| n.set_role(accesskit::Role::CheckBox), true, Some(FocusRole::Toggle), c.name.as_deref(), c.tooltip.as_deref());
         out
@@ -224,7 +253,7 @@ impl<'a> Checkbox<'a> {
 fn toggle(ui: &mut egui::Ui, c: &Common, rect: egui::Rect, value: &mut bool, tp: ToggleParams) -> (super::Ran, Response) {
     let id = widget_id(ui, c.id);
     let enabled = c.enabled(ui);
-    let ran = run(ui, id, rect, enabled, Compose { hover: true, focus: Some(FocusParams::default()), press: Some(PressParams::default()), toggle: Some(tp) }, StateBits::NONE);
+    let ran = run(ui, id, rect, enabled, Compose { hover: true, focus: Some(FocusParams::default()), press: Some(PressParams::default()), toggle: Some(tp), hit: None }, StateBits::NONE);
     let mut out = resp(ran.resp.clone(), ran.state);
     out.activated = ran.press.iter().any(Press::is_click);
     for Toggle::Toggled { checked, .. } in ran.toggle.iter().copied() {
@@ -253,7 +282,8 @@ impl<'a> Switch<'a> {
 
     pub fn size(&self, ui: &egui::Ui, sv: &Sv) -> egui::Vec2 {
         let st = sv.styled(ui.ctx(), &self.c.el, switch::UA, StateBits::NONE);
-        checkbox::measure_indicator(ui.ctx(), &st.view(), switch::TRACK, &self.text, 20.0)
+        let parts = part_styles(sv, &self.c.el, &st, INDICATOR_PARTS);
+        checkbox::measure_indicator(ui.ctx(), &st.view(), |n| css_of(&parts, n), "track", switch::TRACK, &self.text, "", false)
     }
 
     pub fn show(self, ui: &mut egui::Ui, sv: &Sv) -> Response {
@@ -263,11 +293,11 @@ impl<'a> Switch<'a> {
 
     pub fn show_at(self, ui: &mut egui::Ui, rect: egui::Rect, sv: &Sv) -> Response {
         let Switch { c, active, text } = self;
-        let (mut ran, mut out) = toggle(ui, &c, rect, active, ToggleParams { checked: *active, ..ToggleParams::default() });
+        let (ran, mut out) = toggle(ui, &c, rect, active, ToggleParams { checked: *active, ..ToggleParams::default() });
         let st = sv.styled(ui.ctx(), &c.el, switch::UA, ran.state);
-        ran.host_box("switch", &st, rect);
         if ran.ui.is_rect_visible(rect) {
-            switch::paint(&mut ran.paint_cx("switch"), ui.ctx(), &st.view(), rect, ran.resp.id, &text, *active);
+            let parts = part_styles(sv, &c.el, &st, INDICATOR_PARTS);
+            switch::paint(&mut ran.paint_cx("switch"), ui.ctx(), &st.view(), |n| css_of(&parts, n), rect, ran.resp.id, &text, *active);
         }
         let (enabled, on) = (c.enabled(ui), *active);
         let info = || egui::WidgetInfo::selected(egui::Role::Switch, enabled, on, &text);
@@ -339,22 +369,32 @@ pub struct Label {
     c: Common,
     text: String,
     wrap_mode: &'static str,
+    elide: &'static str,
     font_weight: i64,
     click: bool,
 }
 
 impl Label {
     pub fn new(text: impl Into<String>) -> Label {
-        Label { c: Common::new("label"), text: text.into(), wrap_mode: "wrap", font_weight: 400, click: false }
+        Label { c: Common::new("label"), text: text.into(), wrap_mode: "wrap", elide: "none", font_weight: 400, click: false }
     }
     common_setters!();
     pub fn wrap_mode(mut self, mode: &'static str) -> Self {
         self.wrap_mode = mode;
         self
     }
+    /// Cuts one line with `…` to the width: `none` (default), `start`, `middle`, `end` (WG6 QW13).
+    pub fn elide(mut self, mode: &'static str) -> Self {
+        self.elide = mode;
+        self
+    }
     pub fn font_weight(mut self, w: i64) -> Self {
         self.font_weight = w;
         self
+    }
+
+    fn look(&self) -> label::Look<'_> {
+        label::Look { text: &self.text, wrap_mode: self.wrap_mode, elide: self.elide }
     }
     /// Takes clicks ([`Response::clicked`]).
     pub fn sense_click(mut self, on: bool) -> Self {
@@ -365,7 +405,7 @@ impl Label {
     /// Its size in `avail` (`wrap` wraps at a definite width).
     pub fn size(&self, ui: &egui::Ui, sv: &Sv, avail: AvailableSpace) -> egui::Vec2 {
         let st = sv.styled(ui.ctx(), &self.c.el, label::UA, StateBits::NONE);
-        label::measure(ui.ctx(), &st.view().with_font_weight(Some(self.font_weight)), &self.text, self.wrap_mode, avail)
+        label::measure(ui.ctx(), &st.view().with_font_weight(Some(self.font_weight)), &self.look(), avail)
     }
 
     /// Allocates its size (wrapping at `ui`'s available width) and shows it there.
@@ -379,15 +419,22 @@ impl Label {
         let id = widget_id(ui, self.c.id);
         let enabled = self.c.enabled(ui);
         let press = self.click.then(PressParams::default);
-        let mut ran = run(ui, id, rect, enabled, Compose { hover: true, focus: None, press, toggle: None }, StateBits::NONE);
+        // the galley first: the hit area is its text (as the kind)
+        let (g, hit) = {
+            let st = sv.styled(ui.ctx(), &self.c.el, label::UA, self.prev_state(ui, id));
+            label::layout(ui.ctx(), &st.view().with_font_weight(Some(self.font_weight)), &self.look(), rect)
+        };
+        let elided = g.job.text != self.text;
+        let mut ran = run(ui, id, rect, enabled, Compose { hover: true, focus: None, press, toggle: None, hit: Some(hit) }, StateBits::NONE);
         let mut out = resp(ran.resp.clone(), ran.state);
         out.activated = self.click && ran.press.iter().any(Press::is_click);
         let st = sv.styled(ui.ctx(), &self.c.el, label::UA, ran.state);
         ran.host_box("label", &st, rect);
         if ran.ui.is_rect_visible(rect) {
-            let s = st.view().with_font_weight(Some(self.font_weight));
-            label::paint(&mut ran.paint_cx("label"), ui.ctx(), &s, rect, &self.text, self.wrap_mode);
+            label::paint(&mut ran.paint_cx("label"), &st.view().with_font_weight(Some(self.font_weight)), &g, rect);
         }
+        // an elided label shows its whole text as the tooltip, unless it has one
+        let tooltip = self.c.tooltip.clone().or_else(|| elided.then(|| self.text.clone()));
         let text = self.text.as_str();
         let info = || egui::WidgetInfo::labeled(egui::Role::Label, enabled, text);
         out.inner = ran.finish(
@@ -400,9 +447,15 @@ impl Label {
             false,
             None,
             self.c.name.as_deref(),
-            self.c.tooltip.as_deref(),
+            tooltip.as_deref(),
         );
         out
+    }
+
+    /// The state the label's units left last frame (what the kind's style has before its units
+    /// run): its galley is laid out in it.
+    fn prev_state(&self, ui: &egui::Ui, id: egui::Id) -> StateBits {
+        super::last_state(ui.ctx(), id)
     }
 }
 
@@ -445,14 +498,11 @@ impl Separator {
         if ran.ui.is_rect_visible(rect) {
             separator::paint(&mut ran.paint_cx("separator"), &st.view(), rect, self.vertical);
         }
-        let vertical = self.vertical;
         let inner = ran.finish(
             None,
             None,
-            |n| {
-                n.set_role(accesskit::Role::Splitter);
-                n.set_orientation(if vertical { accesskit::Orientation::Vertical } else { accesskit::Orientation::Horizontal });
-            },
+            // no AccessKit role: decoration, as the kind (an unnamed `Splitter` reads as a resize handle)
+            |_| {},
             false,
             None,
             self.c.name.as_deref(),

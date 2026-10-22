@@ -94,7 +94,7 @@ pub use spec::dump;
 /// (`#[svelters::behavior]`) needs.
 pub mod prelude {
     pub use crate::provider::{
-        A11yCx, AvailableSpace, Behavior, BehaviorCx, Caps, Dispatched, Event, ExtKey, Hit, HitCx, IntoStateBits, KindDecl, LayoutCx, MeasureCx, Part, PassCx, PassScope, PrepareCx, ProviderCx, ScenePass, StateBit, StateBits, StateProvider, Widget, WidgetCx,
+        A11yCx, AvailableSpace, Behavior, BehaviorCx, Caps, Dispatched, Event, ExtKey, Hit, HitCx, IntoStateBits, KindDecl, LayoutCx, MeasureCx, MethodCx, Part, PassCx, PassScope, PrepareCx, ProviderCx, ScenePass, StateBit, StateBits, StateProvider, Widget, WidgetCx,
     };
     /// OW0: units and primitives for own widgets.
     pub use crate::interact::{Focusable, Hoverable, Intents, Pressable, Unit};

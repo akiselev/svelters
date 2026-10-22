@@ -30,7 +30,7 @@ use egui::{Rect, Vec2, pos2, vec2};
 use taffy::prelude::{AvailableSpace, Dimension, Display, FlexDirection, FlexWrap, Layout, LengthPercentage, LengthPercentageAuto, Position, Size, Style};
 use taffy::style_helpers::{auto, fit_content, fr, length, max_content, min_content, minmax, percent, repeat};
 use taffy::{
-    AlignContent, AlignItems, CacheTree, GridTemplateComponent, LayoutInput, LayoutOutput, LayoutPartialTree, Line, MaxTrackSizingFunction, MinTrackSizingFunction, NodeId, Overflow,
+    AlignContent, AlignItems, CacheTree, GridTemplateComponent, LayoutInput, LayoutOutput, LayoutPartialTree, Line, MaxTrackSizingFunction, MinTrackSizingFunction, NodeId,
     RequestedAxis, RunMode, SizingMode, TrackSizingFunction, compute_cached_layout, compute_flexbox_layout, compute_grid_layout, compute_hidden_layout, compute_leaf_layout,
     compute_oof_layout, compute_root_layout, round_layout,
 };
@@ -209,6 +209,12 @@ pub fn style_of(c: &Common, w: &W, vis: &Visual) -> Style {
         inset: taffy::Rect { left: lpa(c.left), right: lpa(c.right), top: lpa(c.top), bottom: lpa(c.bottom) },
         ..Style::default()
     };
+    // OW2: an own widget's own part of its style (a scroll area's overflow, a panel's size)
+    if let W::Ext(x) = w
+        && let Ok(b) = x.0.try_borrow()
+    {
+        b.taffy_style(&mut s);
+    }
     // TR1 clip channel: the node occupies at most the clipped size (paint is cut at it, render.rs)
     if let Some([cw, ch]) = vis.clip {
         if cw >= 0.0 {
@@ -272,17 +278,6 @@ pub fn style_of(c: &Common, w: &W, vis: &Visual) -> Style {
             // the header row above the body, the indent left of it (`Tree::collapsing` measures them)
             s.padding.top = LengthPercentage::length(DEFAULT_HEADER + c.padding as f32);
             s.padding.left = LengthPercentage::length(DEFAULT_INDENT + c.padding as f32);
-        }
-        W::ScrollArea { direction, .. } => {
-            let (x, y) = match *direction {
-                "horizontal" => (true, false),
-                "both" => (true, true),
-                _ => (false, true),
-            };
-            let o = |on: bool| if on { Overflow::Scroll } else { Overflow::Visible };
-            s.overflow = taffy::Point { x: o(x), y: o(y) };
-            // egui's scroll bars float over the content (`ScrollStyle::floating`)
-            s.scrollbar_width = 0.0;
         }
         // WG2b: `panel`, `sides`, `frame` (`crate::elements::panes`)
         w if crate::elements::is_container(w) => crate::elements::style(c, w, &mut s),
@@ -367,7 +362,7 @@ impl Metrics {
                 }
                 vec2(wdt, interact.y)
             }
-            W::Box | W::Window { .. } | W::Grid { .. } | W::ScrollArea { .. } | W::VirtualList(_) => Vec2::ZERO,
+            W::Box | W::Window { .. } | W::Grid { .. } | W::VirtualList(_) => Vec2::ZERO,
             // ---- WG2a ----
             W::Menu(x) => crate::menus::measure(self, x),
             W::Overlay(_) => Vec2::ZERO,
@@ -378,7 +373,6 @@ impl Metrics {
             | W::Switch { .. }
             | W::RangeSlider { .. }
             | W::DragValue { .. }
-            | W::Panel { .. }
             | W::Sides
             | W::Frame { .. }
             | W::Stack { .. }
@@ -387,7 +381,7 @@ impl Metrics {
             | W::Spinner { .. }
             | W::Canvas(_) => crate::elements::intrinsic(self, w),
             // WG4a: the views' own size (`crate::views::intrinsic`)
-            W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::SplitView { .. } | W::ToastHost(_) => crate::views::intrinsic(self, w),
+            W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) => crate::views::intrinsic(self, w),
             W::Picker(p) => p.measure(self), // WG4b
             // ---- WG1 ----
             W::ToggleButton { text, weight, .. } => {
@@ -434,6 +428,12 @@ impl Metrics {
             _ => None,
         }
     }
+}
+
+/// CS5f: the metrics leaf `i` measures with when its computed style changes its font or button
+/// padding (`style::leaf_style`, which painting uses too).
+fn styled_metrics(s: &Scene, m: &Metrics, i: usize) -> Option<Metrics> {
+    crate::style::leaf_style(s, i, &m.ctx, &m.style).map(|st| Metrics { ctx: m.ctx.clone(), style: std::sync::Arc::new(st) })
 }
 
 // ---- the taffy adapter over the scene's columns ----
@@ -513,8 +513,8 @@ impl LayoutPartialTree for Tree<'_> {
             let i = ix(id);
             // the WIDGETS containers with their own layout
             match tree.s.w(i) {
-                // WG4a: table (columns hidden), tab-view (the selected page), split-view (two panes)
-                W::Table(_) | W::TabView { .. } | W::SplitView { .. } => return crate::views::layout(tree, id, inputs),
+                // WG4a: table (columns hidden), tab-view (the selected page)
+                W::Table(_) | W::TabView { .. } => return crate::views::layout(tree, id, inputs),
                 &W::CollapsingHeader { open, .. } => return tree.collapsing(id, open, inputs),
                 // WG2b: one child shown at a time (`crate::elements::panes`)
                 W::Stack { .. } => {
@@ -526,8 +526,10 @@ impl LayoutPartialTree for Tree<'_> {
             // SG4: a provider with children (shadow children) or its own layout is a container
             let custom = provider_caps(tree.s, i).is_some_and(|c| c.contains(crate::provider::Caps::CUSTOM_LAYOUT));
             // (OW0: an own widget replacing a built-in leaf stays a leaf: its children are attached
-            // overlays, as on the built-in)
-            let provider_box = custom || (matches!(tree.s.w(i), W::Ext(x) if x.entry().replaces.is_none()) && !tree.s.children[i].is_empty());
+            // overlays, as on the built-in; OW2: one replacing a container, `Caps::CONTAINER`, is one)
+            let provider_box = custom
+                || (matches!(tree.s.w(i), W::Ext(x) if x.entry().replaces.is_none() || x.entry().caps.contains(crate::provider::Caps::CONTAINER))
+                    && !tree.s.children[i].is_empty());
             if tree.s.w(i).is_container() || provider_box {
                 let mut out = if custom {
                     tree.custom_layout(id, inputs)
@@ -547,7 +549,9 @@ impl LayoutPartialTree for Tree<'_> {
                 return vlist_layout(tree, id, inputs);
             }
             tree.leaf_layouts += 1;
-            let m = tree.m;
+            // CS5f: the leaf's computed font and padding
+            let styled = styled_metrics(tree.s, tree.m, i);
+            let m = styled.as_ref().unwrap_or(tree.m);
             let s = &mut *tree.s;
             if s.layout[i].intrinsic.is_none() {
                 crate::rich::refresh(s, i); // RT2: a rich label's runs, before it is measured
@@ -737,7 +741,16 @@ impl CacheTree for Tree<'_> {
     fn cache_store(&mut self, id: NodeId, inputs: &LayoutInput, out: LayoutOutput) {
         // SG6: only nodes whose layout is not a built-in leaf's cheap rerun keep a cache
         let i = ix(id);
-        let cached = !self.s.children[i].is_empty() || !matches!(&self.s.payload[i], Payload::Builtin(w) if !w.is_container() && !matches!(w, W::Ext(_)));
+        // (OW1a2: an own widget replacing a built-in leaf is such a leaf: its intrinsic size is
+        // cached in `LayoutBox` like the egui wrapper's)
+        let leaf_like = |w: &W| match w {
+            W::Ext(x) => {
+                let e = x.entry();
+                e.replaces.is_some() && !e.caps.contains(crate::provider::Caps::CONTAINER) && !e.caps.contains(crate::provider::Caps::CUSTOM_LAYOUT)
+            }
+            w => !w.is_container(),
+        };
+        let cached = !self.s.children[i].is_empty() || !matches!(&self.s.payload[i], Payload::Builtin(w) if leaf_like(w));
         if cached || CACHE_LEAVES {
             self.s.layout[i].cache.store(inputs, out)
         }
@@ -960,7 +973,11 @@ fn ink(s: &mut Scene, i: usize) -> bool {
     let mut ink = own;
     // a node that is not laid out (hidden, not shown) paints nothing, whatever its children's
     // last rects say
-    let clips = own == Rect::NOTHING || matches!(s.w(i), W::ScrollArea { .. } | W::VirtualList(_)) || s.vis(i).clip.is_some();
+    // (OW2: the scroll area is svelters' own widget, `widgets::scroll_area`)
+    let clips = own == Rect::NOTHING
+        || matches!(s.w(i), W::VirtualList(_))
+        || matches!(s.w(i), W::Ext(x) if x.entry().replaces == Some("scroll-area"))
+        || s.vis(i).clip.is_some();
     if !clips {
         for &c in &s.children[i] {
             let ci = c.index() as usize;
@@ -1019,8 +1036,13 @@ fn positional_parent(s: &Scene, i: usize) -> Option<usize> {
     }
 }
 
-/// The capabilities of node `i`'s provider kind, `None` for a built-in.
+/// The capabilities of node `i`'s provider kind (or of the own widget that replaces a built-in,
+/// OW1a2: `frame`, `collapsing-header`), `None` for a built-in's egui wrapper.
 fn provider_caps(s: &Scene, i: usize) -> Option<crate::provider::Caps> {
+    // OW2: an own widget replacing a built-in has a provider entry too (`replaces`)
+    if let Payload::Builtin(W::Ext(x)) = &s.payload[i] {
+        return Some(x.entry().caps);
+    }
     crate::kinds::KindRegistry::global().provider(s.core[i].kind as usize).map(|p| p.entry.caps)
 }
 
@@ -1046,6 +1068,20 @@ impl LayoutCx<'_> {
     /// This node.
     pub fn node(&self) -> SceneId {
         self.node
+    }
+    /// OW2: this node's taffy style (its props, CSS and `Widget::taffy_style`).
+    pub fn style(&self) -> &crate::taffy::Style {
+        &self.s.layout[self.node.index() as usize].style
+    }
+    /// OW2: lays out `child` as hidden (`display: none`; not drawn).
+    pub fn hide(&mut self, child: SceneId) {
+        self.with_tree(|t| {
+            compute_hidden_layout(t, tid(child));
+        });
+    }
+    /// OW2: a child's `Common` props (its `flex-grow`, `min-width`, `visible`).
+    pub fn child_common(&self, child: SceneId) -> Option<&crate::scene::Common> {
+        self.s.idx(child).map(|i| self.s.common(i))
     }
     /// The children to lay out (the node's shadow children), in order.
     pub fn children(&self) -> &[SceneId] {
@@ -1102,6 +1138,49 @@ impl LayoutCx<'_> {
     pub fn default_layout(&mut self, inputs: LayoutInput) -> LayoutOutput {
         let id = tid(self.node);
         self.with_tree(|t| compute_flexbox_layout(t, id, inputs))
+    }
+
+    /// OW1a2: [`Self::default_layout`] with `add` (left, right, top, bottom, in points) added to
+    /// the node's padding: room for chrome the widget paints itself (a frame's caption and
+    /// border, a collapsing header's row and indent).
+    pub fn padded_layout(&mut self, inputs: LayoutInput, add: [f32; 4]) -> LayoutOutput {
+        let i = self.node.index() as usize;
+        let grow = |p: LengthPercentage, a: f32| match p.into_raw().tag() {
+            taffy::style::CompactLength::LENGTH_TAG => LengthPercentage::length(p.into_raw().value() + a),
+            _ => p,
+        };
+        let saved = self.s.layout[i].style.clone();
+        let st = std::sync::Arc::make_mut(&mut self.s.layout[i].style); // SG6: a copy for this run only
+        let p = st.padding;
+        st.padding = taffy::Rect { left: grow(p.left, add[0]), right: grow(p.right, add[1]), top: grow(p.top, add[2]), bottom: grow(p.bottom, add[3]) };
+        let out = self.default_layout(inputs);
+        self.s.layout[i].style = saved;
+        out
+    }
+
+    /// OW1a2: the node as a leaf of `size` (its known dimensions win), with every child given the
+    /// hidden layout: a closed collapsing header.
+    pub fn collapsed(&mut self, inputs: LayoutInput, size: egui::Vec2) -> LayoutOutput {
+        let i = self.node.index() as usize;
+        self.leaf_layouts += 1;
+        let out = compute_leaf_layout(inputs, &*self.s.layout[i].style, |_, _| 0.0, |known, _| Size { width: known.width.unwrap_or(size.x.ceil()), height: known.height.unwrap_or(size.y.ceil()) });
+        if inputs.run_mode == RunMode::PerformLayout {
+            for k in 0..self.s.children[i].len() {
+                let c = tid(self.s.children[i][k]);
+                self.with_tree(|t| compute_hidden_layout(t, c));
+            }
+        }
+        out
+    }
+
+    /// OW1a2: a [`MeasureCx`](crate::provider::MeasureCx) for this node (its computed style and
+    /// part styles), to size chrome the widget paints.
+    pub fn with_measure<R>(&self, f: impl FnOnce(&crate::provider::MeasureCx<'_>) -> R) -> R {
+        let css = self.s.style.computed(self.node).cloned();
+        let parts = self.s.style.part_styles(self.node);
+        let id = egui::Id::new(("svelters-egui.measure", self.node)); // RA3's measuring id
+        let cx = crate::provider::MeasureCx { ctx: &self.m.ctx, style: &self.m.style, id, css: css.as_deref(), parts: &parts };
+        f(&cx)
     }
 }
 
@@ -1284,9 +1363,11 @@ pub(crate) fn remeasure(s: &mut Scene, m: &Metrics, r: RootIx) -> bool {
         s.core[i].dirty.remove(Dirty::MEASURE);
         let old = s.layout[i].intrinsic.take();
         crate::rich::refresh(s, i); // RT2
+        // CS5f: the leaf's computed font and padding; OW0: the computed style for own widgets
+        let styled = styled_metrics(s, m, i);
         let css = s.slots.id_at(i).and_then(|id| s.style.computed(id)).cloned();
         let parts = s.slots.id_at(i).map(|id| s.style.part_styles(id)).unwrap_or_default();
-        let new = m.intrinsic_with(s.w(i), css.as_deref(), &parts);
+        let new = styled.as_ref().unwrap_or(m).intrinsic_with(s.w(i), css.as_deref(), &parts);
         s.counters.leaves_measured += 1;
         s.layout[i].intrinsic = Some(new);
         // A wrapping label that does not fit its last width may wrap differently with new text.

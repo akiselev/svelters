@@ -49,7 +49,7 @@ export class Locator {
   hover(opts?: ActOptions): Promise<unknown>;
   focus(opts?: ActOptions): Promise<unknown>;
   fill(text: string, opts?: ActOptions): Promise<unknown>;
-  setValue(value: number, opts?: ActOptions): Promise<unknown>;
+  setValue(value: number, opts?: ActOptions & { handle?: string | number }): Promise<unknown>;
   all(): Promise<NodeInfo[]>;
   count(): Promise<number>;
   info(): Promise<NodeInfo>;
@@ -63,6 +63,17 @@ export class App extends Locator {
   readonly endpoint: string;
   readonly hello: any;
   readonly keyboard: { press(key: string): Promise<unknown>; type(text: string): Promise<unknown> };
+  /** AU1b's clock: `advance`/`runFor` need the `clock` grant and a virtual clock. */
+  readonly clock: {
+    now(): Promise<ClockNow>;
+    advance(ms: number): Promise<{ frames: number; ms: number }>;
+    runFor(ms: number): Promise<{ frames: number; ms: number }>;
+  };
+  readonly grants: { read?: boolean; act?: boolean; tooling?: boolean; clock?: boolean };
+  /** `app.reset`: the start app in a fresh host on a fresh virtual clock. */
+  reset(opts?: { seed?: number; timeout?: number }): Promise<{ seed: number | null; frames: number }>;
+  /** `app.mount`: one component alone in a fresh host (compiled live). */
+  mount(component: string | URL, opts?: MountOptions): Promise<Mounted>;
   call<T = any>(method: string, params?: Record<string, unknown>): Promise<T>;
   root(key: string): Locator;
   waitSettled(opts?: { timeout?: number }): Promise<{ frames: number }>;
@@ -72,19 +83,79 @@ export class App extends Locator {
   close(): Promise<void>;
 }
 
+export interface ClockNow {
+  mode: 'virtual' | 'real';
+  ms: number | null;
+  seed: number | null;
+  session_ms: number;
+}
+
+export interface MountOptions {
+  /** The component's export name (default: the file stem). */
+  export?: string;
+  props?: Record<string, unknown>;
+  size?: [number, number];
+  seed?: number;
+  timeout?: number;
+}
+
+export class Mounted extends Locator {
+  readonly module: string;
+  setProps(props: Record<string, unknown>, opts?: { timeout?: number }): Promise<{ frames: number }>;
+}
+
 export function attach(endpoint: string, opts?: { timeout?: number }): Promise<App>;
 
 export function launch(opts: {
   bin: string;
   app?: string;
   args?: string[];
+  clock?: 'virtual' | 'real';
   endpoint?: string;
   seed?: number;
   stepMs?: number;
   headless?: boolean;
   timeout?: number;
   env?: NodeJS.ProcessEnv;
+  stderr?: 'inherit' | 'pipe' | 'ignore';
 }): Promise<App>;
+
+/** Options of `test.use`, `test.describe` scopes and a test's own second argument. */
+export interface TestOptions {
+  /** An app dir, `App.svelte` or `dist/app.js`; relative to the test file. None: an empty host for `mount`. */
+  app?: string;
+  bin?: string;
+  clock?: 'virtual' | 'real';
+  stepMs?: number;
+  args?: string[];
+  seed?: number;
+  iterations?: number;
+  /** Wall ms per iteration (default 30 000). */
+  timeout?: number;
+  retries?: number;
+}
+
+export interface Fixtures {
+  /** The worker's app, reset to `seed` before the test. */
+  app: App;
+  /** `app.mount` with the test's seed; relative paths are the test file's. */
+  mount(component: string | URL, opts?: MountOptions): Promise<Mounted>;
+  seed: number;
+}
+
+type TestFn = (fixtures: Fixtures) => Promise<void> | void;
+export interface TestRegister {
+  (title: string, fn: TestFn): void;
+  (title: string, opts: TestOptions, fn: TestFn): void;
+}
+export interface TestApi extends TestRegister {
+  skip: TestRegister;
+  only: TestRegister;
+  use(opts: TestOptions): void;
+  describe(title: string, fn: () => void): void;
+}
+/** svelters' own runner (`svelters-e2e`, AU2b). */
+export const test: TestApi;
 
 export function dedent(text: string): string;
 

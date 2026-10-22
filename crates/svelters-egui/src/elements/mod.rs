@@ -30,7 +30,7 @@ use svelters_abi::Value;
 
 /// True for WG2b's containers.
 pub(crate) fn is_container(w: &W) -> bool {
-    matches!(w, W::Panel { .. } | W::Sides | W::Frame { .. } | W::Stack { .. })
+    matches!(w, W::Sides | W::Frame { .. } | W::Stack { .. })
 }
 
 /// True for WG2b's leaves (painted by [`leaf`]).
@@ -57,7 +57,6 @@ pub(crate) fn payload(id: &str) -> Option<W> {
         "Switch" => W::Switch { text: String::new(), active: false },
         "RangeSlider" => W::RangeSlider { low: 0.0, high: 100.0, min: 0.0, max: 100.0, step: 0.0, text: String::new(), show_value: true },
         "DragValue" => W::DragValue { value: 0.0, min: None, max: None, speed: 1.0, decimals: None, prefix: String::new(), suffix: String::new() },
-        "Panel" => W::Panel { side: "left", size: None, resizable: false, separator: true },
         "Sides" => W::Sides,
         "Frame" => W::Frame { label: String::new(), style: "group" },
         "Stack" => W::Stack { name: String::new(), index: 0, homogeneous: true },
@@ -176,22 +175,6 @@ fn set(w: &mut W, def: &PropDef, v: &Value) -> Result<Dirty, String> {
             *suffix = as_str(v)?;
             measure
         }
-        (P::Side, W::Panel { side, .. }) => {
-            *side = as_enum(v, kinds::SIDE)?;
-            Dirty::LAYOUT
-        }
-        (P::Size, W::Panel { size, .. }) => {
-            *size = as_len(v)?.filter(|s| s.is_finite()).map(finite_len);
-            Dirty::LAYOUT
-        }
-        (P::Resizable, W::Panel { resizable, .. }) => {
-            *resizable = as_bool(v)?;
-            none
-        }
-        (P::ShowSeparator, W::Panel { separator, .. }) => {
-            *separator = as_bool(v)?;
-            none
-        }
         // the caption takes a row of the frame's padding: a style change
         (P::Text, W::Frame { label, .. }) => {
             *label = as_str(v)?;
@@ -288,10 +271,6 @@ pub(crate) fn get_prop(w: &W, def: &PropDef) -> Option<Value> {
         (P::Decimals, W::DragValue { decimals, .. }) => decimals.map_or(Value::Null, Value::I64),
         (P::Prefix, W::DragValue { prefix, .. }) => s(prefix),
         (P::Suffix, W::DragValue { suffix, .. }) => s(suffix),
-        (P::Side, W::Panel { side, .. }) => s(side),
-        (P::Size, W::Panel { size, .. }) => len_value(*size),
-        (P::Resizable, W::Panel { resizable, .. }) => Value::Bool(*resizable),
-        (P::ShowSeparator, W::Panel { separator, .. }) => Value::Bool(*separator),
         (P::FrameStyle, W::Frame { style, .. }) => s(style),
         (P::VisibleChildName, W::Stack { name, .. }) => s(name),
         (P::VisibleIndex, W::Stack { index, .. }) => Value::I64(*index),

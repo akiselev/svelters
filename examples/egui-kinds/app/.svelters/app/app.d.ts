@@ -6,6 +6,19 @@ declare module 'svelters:app/cad' {
   export interface PickRef { /** The value kind the host presents. */ kind: string; /** The host's text. */ label: string; }
   /** What a quantity measures. */
   export type Dim = 'length' | 'angle';
+  /** A text position as cadatomic's editor kinds take it: 0-based, column in UTF-16 code units. */
+  export type Position = { column: number; line: number; };
+  /**
+   * RA3: a document an app hands to a kind as an object-handle prop (`Obj<T>`), as K1's
+   * `<code-editor doc={…}>`: `new DocHandle('plan.md')` from `svelters:app/cad`.
+   */
+  export class DocHandle extends NativeObject {
+    constructor(name: string);
+    /** How many times a `<doc-title>` was clicked (written by the kind, in Rust). */
+    readonly edits: number;
+    /** The document's name. */
+    readonly name: string;
+  }
 }
 
 declare module 'svelters:app/egui' {

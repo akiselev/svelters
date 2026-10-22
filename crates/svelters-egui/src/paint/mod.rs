@@ -26,12 +26,12 @@ mod parts;
 mod text;
 pub mod trace;
 
-pub use boxes::{BoxGeom, box_extra, box_geom, paint_box, paint_outline};
+pub use boxes::{BoxGeom, box_extra, box_geom, paint_box, paint_box_layers, paint_inset_shadows, paint_outline};
 pub use icon::{IconKey, content_icon, icon_size, paint_icon};
 pub use image::paint_image;
 pub use painters::{Orientation, PaintArgs, PartInfo, PartPainter, register_painter};
 pub use parts::{PartItem, layout_parts, measure_parts};
-pub use text::{Align, measure_text, paint_text, text_galley};
+pub use text::{Align, Elide, elide, elide_with, measure_text, paint_text, text_galley};
 pub(crate) use text::font as text_font;
 pub use trace::{PaintTrace, TraceEntry, TraceKind};
 
@@ -211,11 +211,14 @@ enum Got<'a> {
 /// Resolution of a property: the computed style, then the UA table, then (inherited properties
 /// only) the parent view ([`StyleView::with_parent`]: a part's host), then [`Ua::ROOT`].
 ///
-/// DS2/OW-CSS hook: running transitions will be applied here (the view interpolates a property
-/// between the painted and the computed value at paint time); today it reads the computed value.
+/// OW-CSS: running CSS transitions apply here. `over` holds the node's (or part's) transition
+/// samples for this frame ([`svelters_style::Transitions::sample`], kept on the scene), which
+/// override the computed values.
 #[derive(Clone, Copy)]
 pub struct StyleView<'a> {
     css: Option<&'a ComputedStyle>,
+    /// Running transitions' values at this frame, sorted by property index (empty: none run).
+    over: &'a [(usize, ComputedValue)],
     ua: Ua,
     state: StateBits,
     dark: bool,
@@ -225,7 +228,7 @@ pub struct StyleView<'a> {
 
 impl std::fmt::Debug for StyleView<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("StyleView").field("css", &self.css.is_some()).field("state", &self.state).field("dark", &self.dark).field("parent", &self.parent.is_some()).finish()
+        f.debug_struct("StyleView").field("css", &self.css.is_some()).field("animated", &!self.over.is_empty()).field("state", &self.state).field("dark", &self.dark).field("parent", &self.parent.is_some()).finish()
     }
 }
 
@@ -233,19 +236,37 @@ impl<'a> StyleView<'a> {
     /// `css` (the cascade's computed style, `None` when no sheet reaches the node) over `ua`, in
     /// `state`; `dark` picks the scheme UA tokens resolve in.
     pub fn new(css: Option<&'a ComputedStyle>, ua: Ua, state: StateBits, dark: bool) -> StyleView<'a> {
-        StyleView { css, ua, state, dark, weight: None, parent: None }
+        StyleView { css, over: &[], ua, state, dark, weight: None, parent: None }
     }
 
     /// The UA table alone (no cascade): a foreign painter's styled control (OW-RUST, berth's
     /// `ChromePainter`).
     pub fn ua_only(ua: Ua, state: StateBits, dark: bool) -> StyleView<'static> {
-        StyleView { css: None, ua, state, dark, weight: None, parent: None }
+        StyleView { css: None, over: &[], ua, state, dark, weight: None, parent: None }
     }
 
     /// A part's view: its own computed style (`::part(name)`, `None` until a rule reaches it) and
     /// UA table, inheriting from this view (its host). The part shares the host's state.
     pub fn part(&'a self, css: Option<&'a ComputedStyle>, ua: Ua) -> StyleView<'a> {
-        StyleView { css, ua, state: self.state, dark: self.dark, weight: None, parent: Some(self) }
+        StyleView { css, over: &[], ua, state: self.state, dark: self.dark, weight: None, parent: Some(self) }
+    }
+
+    /// With running transitions' values over the computed style (OW-CSS: the scene's sample of
+    /// the node or part this frame, sorted by property index).
+    pub fn with_overlay(mut self, over: &'a [(usize, ComputedValue)]) -> StyleView<'a> {
+        self.over = over;
+        self
+    }
+
+    /// The engine's typed view of the CSS layer (transitions applied), for what the UA table
+    /// doesn't carry: per-side borders, radii, gradients, painters, `content`.
+    pub fn engine(&self) -> Option<svelters_style::StyleView<'a>> {
+        self.css.map(|c| svelters_style::StyleView::with_overlay(c, self.over))
+    }
+
+    /// Whether a running transition overrides any value.
+    pub fn is_animated(&self) -> bool {
+        !self.over.is_empty()
     }
 
     /// With `parent` to inherit from.
@@ -277,7 +298,7 @@ impl<'a> StyleView<'a> {
     }
 
     fn css(&self, name: &str) -> Option<&'a ComputedValue> {
-        self.css.and_then(|c| c.get(name))
+        self.css.and_then(|c| svelters_style::overlay_get(c, self.over, name))
     }
 
     fn get(&self, name: &str) -> Option<Got<'a>> {
@@ -417,6 +438,31 @@ impl<'a> StyleView<'a> {
     /// `display: none`.
     pub fn is_hidden(&self) -> bool {
         self.keyword("display") == Some("none")
+    }
+
+    /// The corner radii [top-left, top-right, bottom-right, bottom-left]: each
+    /// `border-{corner}-radius`, else `border-radius`.
+    pub fn radii(&self) -> [f32; 4] {
+        let one = self.px("border-radius").unwrap_or(0.0);
+        ["border-top-left-radius", "border-top-right-radius", "border-bottom-right-radius", "border-bottom-left-radius"].map(|n| match self.css(n) {
+            Some(ComputedValue::Length(l)) => l.px.max(0.0),
+            _ => one.max(0.0),
+        })
+    }
+
+    /// The border sides [left, right, top, bottom] as (width, colour): `border-{side}-width` and
+    /// `-color`, else `border-width` and `border-color`. A `none`/`hidden` style gives width 0 (an
+    /// unset style counts as solid, as in the engine's view).
+    pub fn border_sides(&self) -> [(f32, Color32); 4] {
+        const NAMES: [(&str, &str); 4] = [("border-left-style", "border-left-color"), ("border-right-style", "border-right-color"), ("border-top-style", "border-top-color"), ("border-bottom-style", "border-bottom-color")];
+        let w = self.sides("border-width");
+        let one = self.color("border-color");
+        let mut out = [(0.0, Color32::TRANSPARENT); 4];
+        for (k, (style, color)) in NAMES.iter().enumerate() {
+            let hidden = matches!(self.keyword(style), Some("none" | "hidden"));
+            out[k] = (if hidden { 0.0 } else { w[k] }, self.color(color).or(one).unwrap_or(Color32::TRANSPARENT));
+        }
+        out
     }
 
     /// One side group (`padding`, `border-width`, `margin`) as [left, right, top, bottom]: the

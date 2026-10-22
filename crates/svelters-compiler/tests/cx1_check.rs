@@ -304,7 +304,16 @@ fn fixes_in_the_corpus_resolve() {
     for (path, b) in corpus() {
         let name = path.file_name().unwrap().to_string_lossy().to_string();
         if name.ends_with(".svelte") {
-            n += assert_fixes_resolve(&name, &fs::read_to_string(&path).unwrap(), backend(b));
+            let src = fs::read_to_string(&path).unwrap();
+            // an app's own kinds (RA3's egui-kinds): its `.svelters/app/kinds.json` fragment, as the
+            // app's tooling sees them; else an unknown app kind's "did you mean" names a built-in
+            match path.ancestors().map(|a| a.join(".svelters/app/kinds.json")).find(|f| f.is_file()) {
+                Some(frag) => {
+                    let with_app = SpecBackend::builtin(b).unwrap().merge_fragment_path(&frag).unwrap();
+                    n += assert_fixes_resolve(&name, &src, &with_app);
+                }
+                None => n += assert_fixes_resolve(&name, &src, backend(b)),
+            }
         }
     }
     assert!(n >= 5, "{n}");

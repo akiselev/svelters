@@ -126,6 +126,20 @@ pub struct Timing {
     pub checkpoints: u64,
 }
 
+/// The host's own measurement of the last entry into JS that the turn budget stopped (FX4): the
+/// budget that was armed and how late the abort came back to Rust after the deadline passed. Unlike
+/// a wall-clock measurement around the whole frame, `late` excludes the work before and after the
+/// entry (commands, disposal, layout) and the budget itself; it is what an interrupt-latency test
+/// bounds. An external [`crate::Host::interrupt_flag`] stop is not recorded.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[non_exhaustive]
+pub struct BudgetInterrupt {
+    /// The turn budget armed for the entry.
+    pub budget: Duration,
+    /// From the deadline (arm time + `budget`) to the entry's return to Rust with the abort.
+    pub late: Duration,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ConsoleLine {
     pub level: String,
@@ -366,7 +380,9 @@ pub(crate) struct Core {
     pub(crate) bytecode: RefCell<Option<Rc<crate::bytecode::BytecodeCache>>>,
     pub(crate) bytecode_explicit: Cell<bool>,
     /// App exports (E0): this host's exported Rust objects.
-    pub(crate) apps: crate::exports::objects::AppObjects,
+    /// Shared (`Rc`) so backend code converting values during a host op sees it (RA3:
+    /// `exports::objects::scope`, object-handle props of provider kinds).
+    pub(crate) apps: std::rc::Rc<crate::exports::objects::AppObjects>,
     /// LD1: whether an `svelters:app/<module>` export is reachable by `construct` and `callStatic`,
     /// which need no import. Set by `Host::set_module_hooks` from the extension policy.
     pub(crate) app_gate: RefCell<Option<Rc<dyn Fn(&str) -> bool>>>,
@@ -379,6 +395,8 @@ pub(crate) struct Core {
     /// The turn budget armed for the next entries into JS (starts as `cfg.turn_budget`; an embedder
     /// sets per-entry budgets, ARCH-EMBED §4.2 `Budgets`).
     pub(crate) budget: Cell<Option<Duration>>,
+    /// FX4: the last entry the turn budget stopped (set by the engine when it disarms).
+    pub(crate) last_interrupt: Cell<Option<BudgetInterrupt>>,
     /// EM1: what mounted roots reported (`__svelters_host.rootFault`/`rootInfo`/`rootEmit`).
     pub(crate) root_msgs: RefCell<Vec<RootMessage>>,
     /// IN1: a locale change made while JS was running, delivered by the next checkpoint.
@@ -442,6 +460,7 @@ impl Core {
             ops: offload::OpTable::new(crate::exports::offload::Completions::new(waker.clone())),
             reactive: reactive::Reactive::new(crate::exports::reactive::Hub::new(waker.clone())),
             budget: Cell::new(turn_budget),
+            last_interrupt: Cell::new(None),
             root_msgs: RefCell::new(Vec::new()),
             pending_locale: RefCell::new(None),
             waker,
@@ -476,6 +495,8 @@ impl Core {
     /// Runs one host op, adding its duration to the timing counters when enabled.
     fn timed<R>(&self, name: &'static str, f: impl FnOnce() -> R) -> R {
         crate::crash::note_op(name);
+        // RA3: backend code converting exported objects during this op uses this host's table
+        let _objects = crate::exports::objects::scope(&self.apps);
         if !self.cfg.timing {
             return f();
         }
@@ -732,6 +753,7 @@ impl Core {
     /// is still observed is read natively (no JS) unless it is proportional, compared with its
     /// `last` value and kept only if it differs (or a normalized write forces it). Never runs JS.
     pub(crate) fn take_changes(&self) -> Vec<ChangedProp> {
+        let _objects = crate::exports::objects::scope(&self.apps);
         let dirty = {
             let mut st = self.st.borrow_mut();
             st.dirty_set.clear();

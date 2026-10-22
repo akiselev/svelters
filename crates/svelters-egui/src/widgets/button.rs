@@ -9,7 +9,6 @@
 
 use crate::interact::{Focusable, Hoverable, Press, PressParams, Pressable};
 use crate::paint::{self, Align, IconKey, PaintCx, PartItem, StyleView, Ua, UaRule, UaValue::*};
-use svelters_style::ComputedStyle;
 use crate::provider::{A11yCx, AvailableSpace, Event, MeasureCx, Part, StateBits, Widget, WidgetCx};
 
 /// The button's UA sheet (ARCH-WIDGETS §1.1), with DESIGN's affordance rules on by default:
@@ -120,7 +119,7 @@ impl Button {
     }
 }
 
-/// What a button shows, from its props: the kind's and `imm::Button`'s (OW-RUST) one input to
+/// What a button shows, from its props: the kind's and `imm::Button`'s (OW-RUST) input to
 /// [`measure`] and [`paint`].
 #[derive(Clone, Copy, Debug)]
 pub(crate) struct Look<'a> {
@@ -152,17 +151,15 @@ impl Look<'_> {
 }
 
 /// The button's size under `host` (its style at rest, with the `font-weight` prop) and its parts'
-/// computed styles (`::part(icon)`, `::part(label)`).
-pub(crate) fn measure(ctx: &egui::Context, host: &StyleView, icon_css: Option<&ComputedStyle>, label_css: Option<&ComputedStyle>, look: &Look) -> egui::Vec2 {
-    let icon_v = host.part(icon_css, ICON_UA);
-    let label_v = host.part(label_css, Ua::NONE);
-    let (icon, label) = look.content(ctx, &icon_v, &label_v);
+/// views (`::part(icon)` over [`ICON_UA`], `::part(label)`).
+pub(crate) fn measure(ctx: &egui::Context, host: &StyleView, icon_v: &StyleView, label_v: &StyleView, look: &Look) -> egui::Vec2 {
+    let (icon, label) = look.content(ctx, icon_v, label_v);
     let mut items = Vec::new();
     if let Some((_, size)) = &icon {
-        items.push(PartItem { name: "icon", style: &icon_v, content: *size });
+        items.push(PartItem { name: "icon", style: icon_v, content: *size });
     }
     if let Some(g) = &label {
-        items.push(PartItem { name: "label", style: &label_v, content: line_size(&label_v, g) });
+        items.push(PartItem { name: "label", style: label_v, content: line_size(label_v, g) });
     }
     let mut size = paint::measure_parts(host, &items);
     if items.is_empty() {
@@ -177,21 +174,20 @@ pub(crate) fn measure(ctx: &egui::Context, host: &StyleView, icon_css: Option<&C
     size + extra
 }
 
-/// Paints the button at `rect` under `host` (its style in this pass's state): box (when framed),
-/// icon and label parts laid out by CSS, the focus ring last. The kind and `imm::Button` call it.
-pub(crate) fn paint(pc: &mut PaintCx<'_>, ctx: &egui::Context, host: &StyleView, icon_css: Option<&ComputedStyle>, label_css: Option<&ComputedStyle>, rect: egui::Rect, look: &Look) {
+/// Paints the button at `rect` under `host` (its style in this pass's state) and its parts'
+/// views: box (when framed), icon and label laid out by CSS (P3), the focus ring last. The kind
+/// and `imm::Button` (OW-RUST) call it.
+pub(crate) fn paint(pc: &mut PaintCx<'_>, ctx: &egui::Context, host: &StyleView, icon_v: &StyleView, label_v: &StyleView, rect: egui::Rect, look: &Look) {
     let framed = look.frame || host.state().intersects(StateBits(StateBits::HOVERED.0 | StateBits::PRESSED.0 | StateBits::SELECTED.0));
     let geom = if framed { paint::paint_box(pc, host, rect) } else { paint::box_geom(host, rect) };
     let content = if look.small { geom.padding } else { geom.content };
-    let icon_v = host.part(icon_css, ICON_UA);
-    let label_v = host.part(label_css, Ua::NONE);
-    let (icon, label) = look.content(ctx, &icon_v, &label_v);
+    let (icon, label) = look.content(ctx, icon_v, label_v);
     let mut items = Vec::new();
     if let Some((_, size)) = &icon {
-        items.push(PartItem { name: "icon", style: &icon_v, content: *size });
+        items.push(PartItem { name: "icon", style: icon_v, content: *size });
     }
     if let Some(g) = &label {
-        items.push(PartItem { name: "label", style: &label_v, content: line_size(&label_v, g) });
+        items.push(PartItem { name: "label", style: label_v, content: line_size(label_v, g) });
     }
     let rects = paint::layout_parts(host, content, &items);
     for (item, r) in items.iter().zip(rects) {
@@ -213,7 +209,9 @@ fn line_size(s: &StyleView, g: &egui::Galley) -> egui::Vec2 {
 impl Widget for Button {
     fn measure(&mut self, cx: &mut MeasureCx<'_>, _avail: AvailableSpace) -> egui::Vec2 {
         let host = cx.style(UA).with_font_weight(Some(self.font_weight));
-        measure(cx.ctx, &host, cx.part_css("icon"), cx.part_css("label"), &self.look())
+        let icon_v = host.part(cx.part_css("icon"), ICON_UA);
+        let label_v = host.part(cx.part_css("label"), Ua::NONE);
+        measure(cx.ctx, &host, &icon_v, &label_v, &self.look())
     }
 
     fn ui(&mut self, ui: &mut egui::Ui, cx: &mut WidgetCx<'_>) -> egui::Response {
@@ -264,7 +262,9 @@ impl Widget for Button {
             ui.multiply_opacity(host.opacity());
         }
         if ui.is_rect_visible(cx.rect()) {
-            paint(&mut cx.paint_cx(ui), ui.ctx(), &host, cx.part_css("icon"), cx.part_css("label"), cx.rect(), &self.look());
+            let icon_v = cx.part(&host, "icon", ICON_UA);
+            let label_v = cx.part(&host, "label", Ua::NONE);
+            paint(&mut cx.paint_cx(ui), ui.ctx(), &host, &icon_v, &label_v, cx.rect(), &self.look());
         }
         let (enabled, selected, text) = (cx.enabled(), self.selected, &self.text);
         resp.widget_info(|| egui::WidgetInfo::selected(egui::Role::Button, enabled, selected, text));

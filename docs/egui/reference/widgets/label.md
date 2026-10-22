@@ -30,7 +30,9 @@ Static text; with inline run children (`<b>`, `<i>`, `<code>`, `<a>`, `<span>`) 
 <!-- BEGIN GENERATED: props of kinds.Label (tools/docs/egui/gen_reference.py). Do not edit. -->
 | Prop | Type | Default | `bind:` | Description |
 |---|---|---|---|---|
+| `elide` | `'none' \| 'start' \| 'middle' \| 'end'` | `"none"` | no | WG6 QW13: cut one line with `…` to the width: `none`, `start`, `middle`, `end`. |
 | `font-weight` | `number` | `400` | no | CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. |
+| `for` | `string` | `""` | no | The `anchor` of the control this label names (Qt's buddy): a click focuses it. |
 | `selectable` | `boolean` | `false` | no | The text can be selected and copied. |
 | `text` | `string` | `""` | no | The text. |
 | `wrap-mode` | `'wrap' \| 'truncate' \| 'extend'` | `"wrap"` | no | What a line longer than the width does. |
@@ -77,7 +79,7 @@ None.
 | `box-shadow` | yes (outer and inset) | — |
 | `opacity` | yes | — |
 
-**Layout properties** (as attributes or in CSS; an explicit attribute wins): `align-self`, `bottom`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `top`, `visible`, `width`.
+**Layout properties** (as attributes or in CSS; an explicit attribute wins): `align-self`, `bottom`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `left`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `top`, `visible`, `width`.
 Also in CSS only: `display`, `grid-column`, `grid-row`, `margin-bottom`, `margin-left`, `margin-right`, `margin-top`.
 
 Full matrix: [css/properties](../../css/properties.md). States: below.

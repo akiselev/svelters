@@ -33,13 +33,9 @@ impl Align {
 pub(crate) fn font(ctx: &egui::Context, s: &StyleView, text: &str) -> FontId {
     let base = FontFamily::Proportional;
     let w = s.font_weight();
-    let family = if w == 400 {
-        base
-    } else {
-        let f = crate::fonts::family_for(ctx, &base, w);
-        let ok = f == base || ctx.fonts_mut(|fs| text.chars().filter(|c| !c.is_control()).all(|c| fs.has_glyph(&FontId::new(14.0, f.clone()), c)));
-        if ok { f } else { base }
-    };
+    // the weight's registered family, or the regular face when it lacks a character of `text`
+    // (reported once: `fonts::FontWarning::WeightGlyph`)
+    let family = if w == 400 { base } else { crate::fonts::weighted_family(ctx, &base, w, text) };
     FontId::new(s.font_size(), family)
 }
 
@@ -85,4 +81,87 @@ pub fn paint_text(cx: &mut PaintCx, s: &StyleView, galley: &Arc<egui::Galley>, c
     let color = s.color("color").unwrap_or(Color32::PLACEHOLDER);
     cx.painter.galley(pos, galley.clone(), color);
     cx.record(TraceKind::Text, Rect::from_min_size(pos, size), color, egui::Stroke::NONE, s.font_size());
+}
+
+/// How [`elide`] cuts a line that is too wide (WG6 QW13, `elide` / CSS `text-overflow`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Elide {
+    /// `…tail`.
+    Start,
+    /// `head…tail`, the middle cut (paths and names).
+    Middle,
+    /// `head…` (CSS `text-overflow: ellipsis`).
+    End,
+}
+
+impl Elide {
+    /// The `elide` prop's value (`none` and anything else: `None`).
+    pub fn parse(v: &str) -> Option<Elide> {
+        match v {
+            "start" => Some(Elide::Start),
+            "middle" => Some(Elide::Middle),
+            "end" => Some(Elide::End),
+            _ => None,
+        }
+    }
+    /// The mode `s` asks for: `text-overflow: ellipsis` is an end cut.
+    pub fn of_style(s: &StyleView) -> Option<Elide> {
+        (s.keyword("text-overflow") == Some("ellipsis")).then_some(Elide::End)
+    }
+}
+
+/// `text` cut with `…` to fit `width` on one line under `s` (the longest cut that fits, found by
+/// a binary search over measured cuts); `text` itself when it fits.
+pub fn elide(ctx: &egui::Context, s: &StyleView, text: &str, mode: Elide, width: f32) -> String {
+    let f = font(ctx, s, text);
+    elide_with(text, mode, width, |t| ctx.fonts_mut(|fs| fs.layout_no_wrap(t.to_owned(), f.clone(), Color32::WHITE).size().x))
+}
+
+/// [`elide`] over any measure.
+pub fn elide_with(text: &str, mode: Elide, width: f32, measure: impl Fn(&str) -> f32) -> String {
+    if measure(text) <= width {
+        return text.to_owned();
+    }
+    let chars: Vec<char> = text.chars().collect();
+    let cut = |n: usize| -> String {
+        let (head, tail) = match mode {
+            Elide::Start => (0, n),
+            Elide::End => (n, 0),
+            Elide::Middle => (n.div_ceil(2), n / 2),
+        };
+        let mut s: String = chars[..head].iter().collect();
+        s.push('…');
+        s.extend(&chars[chars.len() - tail..]);
+        s
+    };
+    // the widest cut that fits: `fits(n)` is monotonic in n
+    let (mut lo, mut hi) = (0usize, chars.len().saturating_sub(1));
+    while lo < hi {
+        let mid = (lo + hi).div_ceil(2);
+        if measure(&cut(mid)) <= width {
+            lo = mid;
+        } else {
+            hi = mid - 1;
+        }
+    }
+    cut(lo)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{Elide, elide_with};
+
+    fn w(s: &str) -> f32 {
+        s.chars().count() as f32
+    }
+
+    #[test]
+    fn ow1a2_elide_modes() {
+        let t = "/home/user/projects/part.step";
+        assert_eq!(elide_with(t, Elide::Middle, 100.0, w), t);
+        assert_eq!(elide_with(t, Elide::End, 10.0, w), "/home/use…");
+        assert_eq!(elide_with(t, Elide::Start, 10.0, w), "…part.step");
+        assert_eq!(elide_with(t, Elide::Middle, 11.0, w), "/home….step");
+        assert_eq!(elide_with(t, Elide::Middle, 0.0, w), "…");
+    }
 }

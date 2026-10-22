@@ -33,6 +33,8 @@ them.
 
 **Decided (coordinator, 2026-10-22):** svelters ships generic `toolbar` and `status-bar` kinds, cadatomic builds its command strip and status sections on them; the completer is cadatomic's, svelters' half (caret-anchored popup + key forwarding) is OW4b; lane splits adopted: OW3b (toolbar, editable combo), OW4b (masks, validators, adornments, completer popup), OW5a (lists, tree incl. WG5b's tree-view, DnD), OW5b (table, header), OW5c (tabs), OW6b optional; new kinds `scrollbar`, `calendar`, `color-editor`, `dialog-buttons` in their lanes; P1-P10 styling rules go to OW-CSS/OW0b; container queries CS-CQ after OW-CSS. The **verify** items are checked by the lane that implements them. The state-bit gaps DOC1 found on today's egui wrappers (`:invalid`, `:open`, `:expanded`, `:read-only`, `:dragging`, `:busy`, `:checked` beyond checkbox, combo `:focus`) are acceptance for the own-widget replacements.
 
+**Decided (coordinator, 2026-10-22, later):** splits OW5a1/OW5a2 (OW5a2 after OW5b: grid layout, rubber band, sticky headers, multi-column tree, rename, expand animation) and OW6/OW6b (OW6b: sectioned date field, month/year sub-pickers, rgb/hsv fields as OW1b drag-value parts). New row, OW6b: **`path-field`** (QFileDialog-backed line edit; Qt's pattern is a QLineEdit plus a browse button): a text field plus browse button, `mode` file|dir|save, `filters`, `multiple`, `start-dir`; the dialog runs off the UI thread through the async rfd path (ZU3); validation shows `:invalid` for a missing path when `must-exist`.
+
 ## 0. Summary
 
 1. **Configuration.** Today's kinds cover the core of every Qt widget, but this document finds 223 MISSING items

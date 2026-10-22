@@ -20,15 +20,17 @@ needs no scene node. A paint-only seam covers chrome that keeps its own interact
 | `imm::Sv` (`EguiBackend::imm()`, `Sv::ua_only()`) | The style source. A **virtual element** (`imm::El`: tag, `style_as`, id, classes, attributes) in a chain of virtual ancestors (`sv.within(El::new("div").class("toolbar"))`, root `chrome`, which `:root` matches) is matched and computed by the **scene's own `Stylist`**: theme tokens, `sv.base`, `sv.affordance`, author sheets and media. Results are cached per chain and state, and the cache is dropped when the cascade restyles everything (new `SceneStyle::generation`, bumped where `all` is taken). With no cascade, or with `ua_only`, widgets paint from their UA tables, as scene nodes do then. Inside a scene pass (the scene is busy) the last cached style is used. |
 | `imm::Button`, `Checkbox`, `ToggleButton`, `Switch`, `Label`, `Separator`, `Icon` | egui-style builders: options, then `show(ui, &sv)` (measures, allocates) or `show_at(ui, rect, &sv)` (the caller lays out). Common options: `class`, `element` (the whole `El`), `id`, `enabled`, `tooltip`, `accessible_name`. They return `imm::Response` (derefs to `egui::Response`): `clicked()` (pointer, Space, Enter, AccessKit `Click`, `repeat` steps), `double_clicked`, `secondary_clicked`, `changed()` (toggles write the caller's `&mut bool`), `state` (the bits). |
 | Units without a node (`imm::run`) | The kind's units in declaration order (Hoverable, Focusable, Pressable, Toggleable) through `interact::run`, with the bits kept between frames in egui memory by widget id. The prop mirror (`selected`) is set before the units run, and `DISABLED` follows the enabled state. A disabled widget runs in a disabled child `Ui`, keeps its shape at `opacity` .4 (R9) and shows its tooltip while disabled. `next_frame` drives repaints. |
-| Same paint | Each OW1a kind's paint (and measure) moved, unchanged, into a function the kind and `imm` both call: `widgets::{button,checkbox,switch,toggle_button,label,separator}::paint` (+ `measure`, `Look`). Kinds without `PAINTS_BOX` (checkbox, switch, label, separator) also get the CSS host box the walk paints behind them (`Ran::host_box`, as `style::before_leaf`). |
+| Same paint | Redone on OW1a2's structure (master ba5f7239). Each kind's paint and measure are free functions, which the kind and `imm` both call: `button::{paint, measure, Look}` (taking the parts' views, so the kind passes its transition overlays); `checkbox::{paint, paint_indicator, measure_indicator}` (OW1a2's `paint_indicator_kind`/`measure_with_indicator` are now thin `WidgetCx`/`MeasureCx` wrappers of these, and the radio button keeps using them); `switch::paint`; `toggle_button::{paint, measure}`; `label::{layout, paint, measure, Look}` (`layout` returns the galley and the text rect, the hit area); `separator::{paint, measure}`. Kinds without `PAINTS_BOX` (label, separator) also get the CSS host box the walk paints behind them (`Ran::host_box`, as `style::before_leaf`). |
 | EV3 without a node | `focus::record_foreign`. An `imm` widget is in egui's Tab order in paint order with the scene's widgets, outside every focus scope (`Entry.node` is now `Option<NodeId>`). While it has focus, the keys its role claims (Space, Enter) leave the pass's input (R11), and `EguiBackend::shortcut_override` answers for it. |
 | AccessKit | `widget_info` as the kind, then the kind's role and the units' `a11y` (toggled, Click, Focus), `accessible_name` (EM1). |
 | `imm::chrome` (paint-only seam, berth BD7) | `chrome::state(ui, &resp, props)` runs Hoverable, Pressable and (when the sense is focusable) Focusable as observers (`interact::observe`, new: nothing is applied to egui) on **the caller's own response**. `props` carry the caller's bits, `DISABLED` included (a disabled control on an enabled `Ui`). `sv.chrome(ui, &resp, &el, ua, props)` returns the `Styled` in that state. `chrome::surface` / `ring` / `icon` / `label` / `galley` paint through the primitives, traced under the caller's id, and `chrome::text_color` / `font` serve the caller's own text layout. `chrome::BUTTON_UA` is the push button's table. |
 
-Shared code changed (pure moves, no behaviour change; the OW1a, own_widgets and focus_keys tests
-pass unchanged): `widgets/{button,checkbox,switch,toggle_button,label,separator}.rs` (paint and
-measure functions), `focus.rs` (`record_with` → `push_entry`, `record_foreign`, `foreign_focused`),
-`style.rs` (`generation`, `compute_virtual`, `part_virtual`), `tests/common/mod.rs`
+Shared code changed (pure moves, no behaviour change; the ow1a, ow1a2, own_widgets, ow_css and
+focus_keys tests pass unchanged): `widgets/{button,checkbox,switch,toggle_button,label,separator}.rs`
+(paint and measure functions), `focus.rs` (`record_with` → `push_entry`, `record_foreign`,
+`foreign_focused`; `Entry.node` optional), `interact/mod.rs` (`run` = `observe` + applying focus),
+`style.rs` (`generation`, `compute_virtual`, `part_virtual` = `compute_pseudo` when a sheet has rules
+for the part, as the scene), `paint` (`text_font` in-crate), `tests/common/mod.rs`
 (`Rig::with_extra`).
 
 ```rust
@@ -166,17 +168,14 @@ become bits or classes: `active` → `SELECTED`, `group_focused` → `.focused` 
 - **Measure state.** `show` measures at rest (state `NONE`). The scene measures with the node's
   current computed style. The two differ only when CSS changes a size by state, which no sheet
   does today.
-- **Host-box state for kinds without `PAINTS_BOX`.** The walk paints that box with last pass's
-  response bits (`before_leaf` reads `read_response`, and it sets `focus-visible` on any focus).
-  `imm` uses this pass's unit bits. Both are equal once the frame settles, which is what the tests
-  compare. Finding for OW1a2: the scene's bits for those kinds lag one frame, and a pointer-focused
-  checkbox's host gets `:focus-visible`.
-- **Finding for OW1a2.** The theme's `checkbox` base rule sets background and border on the
-  *host*. The walk paints that host box across the whole row (448 px wide in the kittest) behind the
-  indicator, where `parts.rs` intends the rule for the indicator only. `imm` reproduces it, for
-  parity. Fix it in the kind or the sheet, and `imm` follows with no change here.
-- **Finding.** An own `separator` with no `accessible-name` fails kittest's unnamed-input check
-  (Splitter is an input role) in this harness. The test names both separators.
+- **Transitions.** `imm` widgets have no CSS transitions yet: the scene samples them per node
+  (`SceneStyle::overlay`), `imm` paints the computed end value at once. Settled frames are equal
+  (what the kittests compare). Per-id transitions for `imm` come when chrome needs them.
+- **Host-box state for label and separator** (no `PAINTS_BOX`): the walk paints that box with the
+  node's bits as of the start of the pass, `imm` with this pass's unit bits; equal once settled.
+- **Resolved by OW1a2** (findings of the first push): the checkbox's full-row host box and the
+  lagging host bits of the indicator kinds (they paint their own box now); the separator has no
+  AccessKit role any more (decoration), so neither has `imm::Separator`.
 - **Icons.** `imm::Icon` and the button's `icon` resolve through today's icon path
   (`paint::paint_icon`, `IconKey`). ICR1's registry re-points it with no change here.
 - **State storage.** Unit state lives in egui temp data under `id.with("svelters-imm")`. It stays

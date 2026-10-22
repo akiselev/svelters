@@ -85,6 +85,9 @@ pub(crate) struct Inner {
     pub theme: RefCell<Option<crate::theme::Theme>>,
     pub theme_generation: Cell<u64>,
     pub theme_pending: Cell<bool>,
+    /// RA3: what kind methods called from JS announced (`prop_changed`, events), sent after the next
+    /// pass (`after_pass`) ahead of that pass's own.
+    pub pending_out: RefCell<Vec<crate::walk::Out>>,
     /// EV1: event dispatch state (presses, focus, late events per viewport; `events.rs`).
     pub ev: RefCell<crate::events::BackendState>,
 }
@@ -135,6 +138,7 @@ impl EguiBackend {
             theme: RefCell::new(None),
             theme_generation: Cell::new(0),
             theme_pending: Cell::new(false),
+            pending_out: RefCell::new(Vec::new()),
             ev: RefCell::new(Default::default()),
         }))
     }
@@ -153,6 +157,8 @@ impl EguiBackend {
     /// TR2/SV37: the motion settings (slow-motion factor, reduced motion), effective from the next frame.
     pub fn set_motion(&self, cfg: crate::anim::MotionConfig) {
         self.0.anim.borrow_mut().config = crate::anim::MotionConfig { slow: if cfg.slow > 0.0 { cfg.slow } else { 1.0 }, ..cfg };
+        // OW-CSS: `prefers-reduced-motion: reduce` matches, and CSS transitions don't run
+        self.0.scene.borrow_mut().style.reduced_motion = cfg.reduced;
         if let Some(ctx) = self.ctx() {
             ctx.request_repaint();
         }

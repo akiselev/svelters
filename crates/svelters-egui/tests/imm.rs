@@ -80,8 +80,16 @@ impl T {
         let h = rig.leaf(col, tag, props);
         rig.run();
         {
+            // a label's drawn rect is its text (its hit area); its layout rect is where the walk
+            // painted its CSS box
+            let mut r = rig.drawn(h);
+            if tag == "label"
+                && let Some(b) = trace::last(&rig.harness.ctx).entries.iter().find(|e| e.node == h && e.part.is_none() && e.kind == TraceKind::Box)
+            {
+                r = b.rect;
+            }
             let mut p = plan.borrow_mut();
-            p.rect = Some(rig.drawn(h).translate(OFFSET));
+            p.rect = Some(r.translate(OFFSET));
             p.sv = Some(rig.backend.imm());
             p.draw = Some(draw);
         }
@@ -152,7 +160,8 @@ impl T {
     fn assert_same_in_pointer_states(&mut self, what: &str) {
         self.hover(Pos2::new(470.0, 350.0));
         self.assert_same(&format!("{what} at rest"));
-        let (sc, ic) = (self.rig.drawn(self.h).center(), self.imm_rect().center());
+        let sc = self.rig.drawn(self.h).center();
+        let ic = sc + OFFSET; // the same point of each widget
         // hover the scene node, record; hover the imm widget, record
         self.hover(sc);
         assert!(self.scene_state().contains(StateBits::HOVERED), "{what}: scene hovered");

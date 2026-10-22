@@ -1162,6 +1162,8 @@ name = "egui-kinds-example"
 version = "0.0.0"
 dependencies = [
  "egui_kittest",
+ "schemars",
+ "serde",
  "serde_json",
  "svelters",
  "svelters-abi",
@@ -4613,8 +4615,11 @@ dependencies = [
  "egui",
  "egui_kittest",
  "gtk4",
+ "objc2 0.6.5",
+ "objc2-foundation 0.3.2",
  "serde_json",
  "svelters-abi",
+ "svelters-apple",
  "svelters-egui",
  "svelters-gtk",
  "windows",
