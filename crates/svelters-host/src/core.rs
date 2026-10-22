@@ -347,6 +347,10 @@ pub(crate) struct Core {
     pub(crate) maps: RefCell<SourceMaps>,
     /// DX1: the app's settings, UI state and paths (`Host::set_dx`).
     pub(crate) dx: RefCell<Option<Rc<crate::dx::Dx>>>,
+    /// Q2: the on-disk bytecode cache source modules are compiled through (`Host::set_bytecode_cache`;
+    /// `Host::set_dx` opens one under `Paths::cache()` unless it was set explicitly).
+    pub(crate) bytecode: RefCell<Option<Rc<crate::bytecode::BytecodeCache>>>,
+    pub(crate) bytecode_explicit: Cell<bool>,
     /// App exports (E0): this host's exported Rust objects.
     pub(crate) apps: crate::exports::objects::AppObjects,
     /// LD1: whether an `svelters:app/<module>` export is reachable by `construct` and `callStatic`,
@@ -407,6 +411,8 @@ impl Core {
             apps: Default::default(),
             app_gate: RefCell::new(None),
             dx: RefCell::new(None),
+            bytecode: RefCell::new(None),
+            bytecode_explicit: Cell::new(false),
             op_log: RefCell::new(None),
             ops: offload::OpTable::new(crate::exports::offload::Completions::new(backend.wake_handle())),
             reactive: reactive::Reactive::new(crate::exports::reactive::Hub::new(backend.wake_handle())),

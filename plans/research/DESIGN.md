@@ -625,6 +625,12 @@ VS Code **1.133.0 is installed system-wide** on the WSL PC: `/mnt/c/Program File
 
 ## 7. Open questions for the user
 
+**Decided (user, 2026-10-22):** (1) base on VS Code **Modern** (Dark/Light Modern); (2) affordances **on by default**
+(a switch returns to exact VS Code); (3) icons are decided by the separate icon research (plans/research/ICONS.md).
+Implementation (DS2 engine gaps, DS3 affordance sheet, DS4 importer, DS5 icons) starts **after the VS Code baseline is
+done** (DS1 theme module + VIS1 conformance merged).
+
+
 1. **Which VS Code is the base: Modern (Dark/Light Modern) or 2026 (Dark/Light 2026, the current default in
    1.133)?** **Recommended: Modern.** It is what "looks like VS Code" means to most users, and it is less flat than
    2026, whose input borders are 1.41:1 (dark) and 1.15:1 (light). 2026 comes free through the importer, as a theme

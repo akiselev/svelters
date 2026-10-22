@@ -61,7 +61,7 @@ pub enum W {
     // ---- WG4a (plans/milestones/WG4a-tier1-views.md; state and paint in `crate::views`) ----
     /// `table`: props, the JS data window and what the last frame asked for.
     Table(std::boxed::Box<crate::views::table::TableState>),
-    TableColumn { title: String, resizable: bool, align: &'static str, sort: &'static str },
+    TableColumn { title: String, resizable: bool, align: &'static str, sort: &'static str, editable: bool, editor: bool },
     TabView { selected: i64 },
     Tab { title: String, closable: bool },
     /// `vertical`: `orientation="vertical"` (panes stacked).
@@ -121,6 +121,13 @@ pub struct Common {
     pub top: Option<f64>,
     pub right: Option<f64>,
     pub bottom: Option<f64>,
+    /// EV3 (`crate::focus`): focus this node when it first appears.
+    pub autofocus: bool,
+    /// EV3: a box's focus scope (`none`, `contain`, `dialog`).
+    pub focus_scope: &'static str,
+    /// EV3: a button activated by Enter (`default`) or Escape (`cancel`) in its scope.
+    pub default_button: bool,
+    pub cancel_button: bool,
 }
 
 impl Common {
@@ -156,6 +163,10 @@ impl Common {
         top: None,
         right: None,
         bottom: None,
+        autofocus: false,
+        focus_scope: "none",
+        default_button: false,
+        cancel_button: false,
     };
 }
 

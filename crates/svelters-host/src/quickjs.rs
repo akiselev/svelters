@@ -345,71 +345,83 @@ impl JsEngine for QjsEngine {
                 f.call((id,))
             })
         };
-        let mut redo: Vec<String> = Vec::new();
-        let mut boundaries: Vec<String> = Vec::new();
-        let mut seen: HashSet<String> = HashSet::new();
-        let mut queue: Vec<String> = changed.to_vec();
-        while let Some(m) = queue.pop() {
-            if !seen.insert(m.clone()) {
-                continue;
-            }
-            redo.push(m.clone());
-            if accepts(&m)? {
-                boundaries.push(m);
-                continue;
-            }
-            let importers = provider.importers(&m);
-            if importers.is_empty() {
-                return Ok(HotOutcome::Reload(format!("{m} is not accepted by it or by any importer")));
-            }
-            queue.extend(importers);
-        }
-        // New versions: the resolver now hands out `<id>?v=<n>` for every re-evaluated module, so
-        // the boundaries' imports reach the new code. A failure restores the previous versions.
+        // H1b: a boundary that accepts only some exports (`acceptExports`) while another export changed is
+        // rejected; the change then propagates to that module's importers (as one that does not accept).
         let saved = self.versions.borrow().clone();
-        {
-            let mut v = self.versions.borrow_mut();
-            for id in &redo {
-                *v.entry(id.clone()).or_insert(0) += 1;
-            }
-        }
         let core = Rc::downgrade(&self.core);
         let versions = self.versions.clone();
+        let mut redo: Vec<String> = Vec::new();
         let res = (|| -> Result<Option<String>, JsError> {
-            let mut loaded = Vec::new();
-            for id in &boundaries {
-                let name = versioned(id, &versions);
-                let code = provider.load(id).map_err(|m| JsError::new(ErrorKind::Load, m))?;
-                let ns = self.call_guarded(|ctx| {
-                    let (m, promise) = declare(ctx, &name, code, &core, true)?.eval()?;
-                    if let Some(Err(e)) = promise.result::<Value>() {
-                        return Err(e);
+            let mut rejected: HashSet<String> = HashSet::new();
+            loop {
+                redo.clear();
+                let mut boundaries: Vec<String> = Vec::new();
+                let mut seen: HashSet<String> = HashSet::new();
+                let mut queue: Vec<String> = changed.to_vec();
+                while let Some(m) = queue.pop() {
+                    if !seen.insert(m.clone()) {
+                        continue;
                     }
-                    Ok(rquickjs::Persistent::save(ctx, m.namespace()?))
-                })?;
-                loaded.push((id.clone(), ns));
-            }
-            for (id, ns) in &loaded {
-                let reason: Option<String> = self.call_guarded(|ctx| {
-                    let hot: Object = ctx.globals().get("__svelters_hot")?;
-                    let f: Function = hot.get("check")?;
-                    f.call((id.as_str(), ns.clone().restore(ctx)?))
-                })?;
-                if reason.is_some() {
-                    return Ok(reason);
+                    redo.push(m.clone());
+                    if !rejected.contains(&m) && accepts(&m)? {
+                        boundaries.push(m);
+                        continue;
+                    }
+                    let importers = provider.importers(&m);
+                    if importers.is_empty() {
+                        let why = if rejected.contains(&m) { "changes an export that nothing accepts" } else { "is not accepted by it or by any importer" };
+                        return Ok(Some(format!("{m} {why}")));
+                    }
+                    queue.extend(importers);
                 }
-            }
-            for (id, ns) in loaded {
-                let reason: Option<String> = self.call_guarded(|ctx| {
-                    let hot: Object = ctx.globals().get("__svelters_hot")?;
-                    let f: Function = hot.get("update")?;
-                    f.call((id.as_str(), ns.restore(ctx)?))
-                })?;
-                if reason.is_some() {
-                    return Ok(reason);
+                // New versions: the resolver now hands out `<id>?v=<n>` for every re-evaluated module, so
+                // the boundaries' imports reach the new code. A failure restores the previous versions.
+                {
+                    let mut v = versions.borrow_mut();
+                    for id in &redo {
+                        *v.entry(id.clone()).or_insert(0) += 1;
+                    }
                 }
+                let mut loaded = Vec::new();
+                for id in &boundaries {
+                    let name = versioned(id, &versions);
+                    let code = provider.load(id).map_err(|m| JsError::new(ErrorKind::Load, m))?;
+                    let ns = self.call_guarded(|ctx| {
+                        let (m, promise) = declare(ctx, &name, code, &core, true)?.eval()?;
+                        if let Some(Err(e)) = promise.result::<Value>() {
+                            return Err(e);
+                        }
+                        Ok(rquickjs::Persistent::save(ctx, m.namespace()?))
+                    })?;
+                    loaded.push((id.clone(), ns));
+                }
+                let mut failing = Vec::new();
+                for (id, ns) in &loaded {
+                    let reason: Option<String> = self.call_guarded(|ctx| {
+                        let hot: Object = ctx.globals().get("__svelters_hot")?;
+                        let f: Function = hot.get("check")?;
+                        f.call((id.as_str(), ns.clone().restore(ctx)?))
+                    })?;
+                    if reason.is_some() {
+                        failing.push(id.clone());
+                    }
+                }
+                if !failing.is_empty() {
+                    rejected.extend(failing);
+                    continue;
+                }
+                for (id, ns) in loaded {
+                    let reason: Option<String> = self.call_guarded(|ctx| {
+                        let hot: Object = ctx.globals().get("__svelters_hot")?;
+                        let f: Function = hot.get("update")?;
+                        f.call((id.as_str(), ns.restore(ctx)?))
+                    })?;
+                    if reason.is_some() {
+                        return Ok(reason);
+                    }
+                }
+                return Ok(None);
             }
-            Ok(None)
         })();
         match res {
             Ok(None) => {
@@ -1369,15 +1381,49 @@ fn declare<'js>(ctx: &Ctx<'js>, name: &str, code: ModuleCode, core: &Weak<Core>,
 fn declare_code<'js>(ctx: &Ctx<'js>, name: &str, code: ModuleCode, core: &Weak<Core>) -> Res<Module<'js, Declared>> {
     match code {
         ModuleCode::Source { js, map } => {
-            if let (Some(map), Some(core)) = (map, core.upgrade()) {
+            let core = core.upgrade();
+            if let (Some(map), Some(core)) = (map, &core) {
                 core.maps.borrow_mut().insert(name, &map);
             }
-            Module::declare(ctx.clone(), name, js)
+            // Q2: through the bytecode cache, except HMR re-imports (`?v=n`, one-off names)
+            match core.and_then(|c| c.bytecode.borrow().clone()).filter(|_| !name.contains('?')) {
+                Some(cache) => declare_cached(ctx, name, js, &cache),
+                None => Module::declare(ctx.clone(), name, js),
+            }
         }
         // Safety: only bytecode tagged for this engine is read; its writer is the same QuickJS build.
         ModuleCode::Cached { engine, bytes } if engine == BYTECODE_TAG => unsafe { Module::load(ctx.clone(), &bytes) },
         ModuleCode::Cached { engine, .. } => Err(rquickjs::Error::new_loading_message(name, format!("bytecode for engine {engine:?}, not {BYTECODE_TAG:?}"))),
     }
+}
+
+/// Declares a source module from its cached bytecode, or compiles it and caches the bytecode.
+fn declare_cached<'js>(ctx: &Ctx<'js>, name: &str, js: String, cache: &crate::bytecode::BytecodeCache) -> Res<Module<'js, Declared>> {
+    if let Some(bytes) = cache.get(name, &js) {
+        // Safety: the entry passed its header and checksum checks for this engine stamp, name and
+        // source; it was written by `Module::write` of this QuickJS build (bytecode.rs, "Trust").
+        match unsafe { Module::load(ctx.clone(), &bytes) } {
+            Ok(m) => return Ok(m),
+            Err(e) => {
+                tracing::debug!(target: "svelters::host", "bytecode cache entry for {name} rejected ({e}); recompiling");
+                let _ = ctx.catch();
+                cache.remove(name, &js);
+            }
+        }
+    }
+    let m = Module::declare(ctx.clone(), name, js.as_str())?;
+    match m.write(crate::bytecode::write_options()) {
+        Ok(bytes) => {
+            if let Err(e) = cache.put(name, &js, &bytes) {
+                tracing::debug!(target: "svelters::host", "bytecode cache entry for {name} not written: {e}");
+            }
+        }
+        Err(e) => {
+            tracing::debug!(target: "svelters::host", "bytecode of {name} not written: {e}");
+            let _ = ctx.catch();
+        }
+    }
+    Ok(m)
 }
 
 /// Reads a sync handler result. `nested` allows one level of object/array whose members must be primitives.

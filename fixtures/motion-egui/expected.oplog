@@ -1,6 +1,4 @@
 style sheet "*" null
-style scheme "light" 0
-style sheet "@tokens" ":root {\n  --sv-bg: #f6f5f4;\n  --sv-fg: #2e3436;\n  --sv-surface: #ffffff;\n  --sv-border: #cdc7c2;\n  --sv-accent: #3584e4;\n  --sv-accent-hover: #1c71d8;\n  --sv-accent-fg: #ffffff;\n  --sv-muted: #77767b;\n  --sv-danger: #c01c28;\n  --sv-radius: 6px;\n  --sv-space-1: 4px;\n  --sv-space-2: 8px;\n  --sv-space-3: 12px;\n  --sv-space-4: 16px;\n  --sv-font-size: 11pt;\n  --sv-font-family: sans-serif;\n}\n"
 style sheet "fixtures/motion-egui/src/App.svelte" "\n  .column.svelte-e85af360ca {\n    gap: 8px;\n  }\n"
 create window #1
 set #1 title "Motion"

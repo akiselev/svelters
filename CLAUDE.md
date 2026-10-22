@@ -126,8 +126,16 @@ other agent on the machine. **GitHub CI is the gate, not your machine.** The use
 - **Stop when told.** When the coordinator or user says stop, kill your running builds and tests,
   commit, push and report.
 - `tools/dev/headless` runs GTK/Qt tests under Xvfb. macOS needs `flock` (`brew install flock`).
+- Never run `tmux kill-server` or kill processes you didn't start: other sessions and lanes run in the same tmux
+  server (on 2026-10-22 a `kill-server` killed macbook-svelters mid-lane). Kill only your own named session.
 - Start Claude sessions inside a repo, never in `~/projects` itself: rust-analyzer there loads every
   project (23 GB, ~50 parallel `cargo check`s).
+
+## Agents (user, 2026-10-22)
+
+- **Always start a fresh agent for new work; never reuse a finished or long-context agent** (it costs more tokens).
+  The per-machine cap (8 agents) counts agents **running in parallel**: a finished agent frees its slot.
+- Hand off to a fresh agent at about 400k tokens, with a handoff note in the milestone file.
 
 ## Before reporting a lane done
 

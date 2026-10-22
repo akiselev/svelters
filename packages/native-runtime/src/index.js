@@ -562,7 +562,91 @@ export function set(node, prop, value) {
   }
   if (node.last.has(prop) && Object.is(node.last.get(prop), value)) return;
   node.last.set(prop, value);
-  node.host.setProp(node.h, prop, value);
+  // WG5a: a snippet passed as a prop (`<table-column editor={cellEditor}>`) stays in JS
+  if (typeof value === 'function') {
+    snippetProp(node, prop, value);
+    return;
+  }
+  if (value == null) node.snippets?.delete(prop);
+  // WG5a: a `$state` array is a Proxy, which the host's list conversion does not read as an
+  // array: a list prop (`bind:selected` ids) is written as a plain copy
+  node.host.setProp(node.h, prop, Array.isArray(value) ? Array.from(value) : value);
+}
+
+// ---------------------------------------------------------------------------------------------
+// WG5a: snippet props. Svelte passes a snippet as a prop value (a function); the runtime keeps it
+// on the node, writes `true` natively (the backend's `Ty::Snippet` prop: "one is set"), and a
+// per-kind hook realises it when the backend asks.
+
+const SNIPPET_PROPS = { 'table-column:editor': cellEditor };
+
+function snippetProp(node, prop, fn) {
+  (node.snippets ??= new Map()).set(prop, fn);
+  const hook = SNIPPET_PROPS[`${node.kind}:${prop}`];
+  if (!hook) {
+    console.warn(`<${node.kind}> takes no snippet as \`${prop}\``);
+    return;
+  }
+  hook(node, prop);
+  node.host.setProp(node.h, prop, true);
+}
+
+/** A sync handler's arguments without the event (call_sync delivers `(event, ...args)`). */
+const syncArgs = (a) => (a.length && a[0] instanceof NativeEvent ? [a[0], a.slice(1)] : [null, a]);
+
+/**
+ * A `table-column`'s cell editor (plans/milestones/WG5a-list-table-interaction.md): the snippet is
+ * mounted once into a row outlet the table adopts (`set-editor`), then rebound per edit. It gets
+ * one argument, the edit: `{ row, column, value (bindable), typed, commit(), cancel() }`. The table
+ * asks for the value to commit (`editor-value`); `commit()`/`cancel()` end the edit from the editor.
+ */
+function cellEditor(col, prop) {
+  if (col.cellEditor) return;
+  const row = $.state(-1);
+  const value = $.state(null);
+  const typed = $.state('');
+  const ed = (col.cellEditor = { outlet: null, unmountOutlet: null, unmount: null });
+  const edit = {
+    get row() {
+      return $.get(row);
+    },
+    get value() {
+      return $.get(value);
+    },
+    set value(v) {
+      $.set(value, v);
+    },
+    get typed() {
+      return $.get(typed);
+    },
+    commit: () => col.call('end-edit', true),
+    cancel: () => col.call('end-edit', false),
+  };
+  on(col, 'editor-bind', (...a) => {
+    const [, [r, v, t]] = syncArgs(a);
+    $.set(row, r);
+    $.set(typed, t ?? '');
+    $.set(value, t ? t : v);
+    if (!ed.outlet) ed.unmountOutlet = mount(() => void (ed.outlet = element(rowOutlet())));
+    if (!ed.unmount) {
+      ed.unmount = mount(
+        ($$anchor) => {
+          $.push({}, true);
+          col.snippets?.get(prop)?.($$anchor, () => edit);
+          $.pop();
+        },
+        { target: ed.outlet },
+      );
+    }
+    col.call('set-editor', ed.outlet);
+    flush();
+  });
+  on(col, 'editor-value', (...a) => {
+    const [ev] = syncArgs(a);
+    if (ev) ev.result = $.get(value) ?? null;
+  });
+  // the editor stays mounted for the next edit of this column
+  on(col, 'editor-unbind', () => {});
 }
 
 /**
@@ -1369,18 +1453,31 @@ export function hmr(fn, id = fn?.[FILENAME] ?? 'component', sig) {
     const instance = {};
     const r = newRegion(anchor);
     const owner = scope;
+    // H3c: the position of this instance among its parent's instances of the same component, and the
+    // registry a swapped parent parked for it
+    const inst = { path: instancePath(owner, id), counters: new Map(), reg: () => liveReg, sig: () => liveReg?.sig };
+    let claimed = takeClaim(inst.path);
     block(() => {
       const next = $.get(current);
       if (component === next) return;
       const prevBranch = live;
       const nb = newRegion(r);
       nb.scope = new Scope(owner);
+      nb.scope.hmr = inst;
+      inst.counters = new Map();
       const prevScope = scope;
       scope = nb.scope;
       let result;
       // H3: the values the live version changed carry over when the signatures match (all or nothing)
       const sig = next[HMR_SIG];
-      const restore = ran && hmrPreserve && liveReg && sig != null && liveReg.sig === sig ? snapshot(liveReg.entries) : null;
+      let restore = ran && hmrPreserve && liveReg && sig != null && liveReg.sig === sig ? snapshot(liveReg.entries) : null;
+      // H3c: this instance is new, but its parent's swap parked the state of the instance that stood here
+      if (!ran && claimed) {
+        if (sig != null && claimed.sig === sig) restore = claimed.snap;
+        claimed = null;
+      }
+      // H3c: park the live registries of the instances below this one before they are destroyed
+      const parked = ran && live ? parkDescendants(live.scope) : null;
       const ctx = { restore, entries: new Map() };
       try {
         // intros are suppressed while a version is replaced
@@ -1388,11 +1485,14 @@ export function hmr(fn, id = fn?.[FILENAME] ?? 'component', sig) {
         building(() => {
           nb.effect = branch(() => {
             const outer = hmrCtx;
+            const outerClaims = hmrClaims;
             hmrCtx = ctx;
+            hmrClaims = parked;
             try {
               result = next(nb, props);
             } finally {
               hmrCtx = outer;
+              hmrClaims = outerClaims;
             }
           });
         });
@@ -1421,6 +1521,8 @@ export function hmr(fn, id = fn?.[FILENAME] ?? 'component', sig) {
         if (hadState && !restore) hmrStats.statesReset++;
         hmrStats.failed.delete(id);
         close(prevBranch);
+      } else if (restore) {
+        hmrStats.statesKept += restore.size;
       }
       if (result) Object.defineProperties(instance, Object.getOwnPropertyDescriptors(result));
     }, EFFECT_TRANSPARENT);
@@ -1461,6 +1563,43 @@ let hmrCtx = null;
 /** Global switch (HMR.md D2): `false` makes every swap start fresh. */
 export function setHmrPreserveState(on) {
   hmrPreserve = !!on;
+}
+
+/** H3c: registries parked by a swapping ancestor, by instance path; `null` outside a swap. */
+let hmrClaims = null;
+const rootCounters = new Map();
+
+/** `<parent path>/<component id>#<n>`: n counts the instances of that component created under the same
+ *  parent instance since its current version started (call order is the positional key). */
+function instancePath(owner, id) {
+  let s = owner;
+  while (s && !s.hmr) s = s.parent;
+  const counters = s ? s.hmr.counters : rootCounters;
+  const n = counters.get(id) ?? 0;
+  counters.set(id, n + 1);
+  return `${s ? s.hmr.path : ''}/${id}#${n}`;
+}
+
+function takeClaim(path) {
+  const c = hmrClaims?.get(path);
+  if (c) hmrClaims.delete(path);
+  return c ?? null;
+}
+
+/** The changed values of every live hmr instance below `scope`, keyed by path (H3c). */
+function parkDescendants(scope) {
+  if (!hmrPreserve || !scope) return null;
+  const out = new Map();
+  const walk = (sc) => {
+    for (const c of sc.children) {
+      const inst = c.hmr;
+      const reg = inst?.reg();
+      if (reg && reg.sig != null) out.set(inst.path, { sig: reg.sig, snap: snapshot(reg.entries) });
+      walk(c);
+    }
+  };
+  walk(scope);
+  return out;
 }
 
 const isPrimitive = (v) => v === null || (typeof v !== 'object' && typeof v !== 'function');
