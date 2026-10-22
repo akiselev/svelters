@@ -173,6 +173,30 @@ Not run locally: tests that need `fixtures/*/dist` or `pnpm install` (embed, `fo
 `own_widgets::ow0b_svelte_onclicked_reaches_js_through_dispatch`, `queries`, gallery pages: the worktree has no
 `node_modules`), the rest of the workspace, the other backends, conformance, VIS1's gate. CI runs them.
 
+OW2b (after merging `origin/master` at `befca905`: OW1a, EV1, AU1b, Q4b, LD2, SG6, RT2, LD3), after the last code
+edit: `cargo check -p svelters-egui --all-targets`; nextest `-p svelters-egui` `--test ow2 --test theme --test views
+--test spec --test events --test scene_memory --test animator --test tier0 --test widgets --test ow1a --test
+rt2_rich` (85/85, with `pnpm install`); `SVELTERS_UPDATE=1 --test spec` (spec unchanged, typings regenerated);
+`tools/docs/egui/gen_reference.py`; the TK1 egui snapshots `counter-three` and `transition-back` regenerated
+(`UPDATE_SNAPSHOTS=1 WGPU_BACKEND=vulkan … -p svelters-testkit --features snapshots -E 'test(cases_on_egui)'`, llvmpipe)
+and rerun without UPDATE. The only change in both PNGs is the window background, #1B1B1B (egui's `CentralPanel`)
+to the theme's `bg` #181818, plus antialiased edges blended onto it. Not run locally: everything else (CI).
+
+## Handoff
+
+- **OW2b** (2026-10-22, WSL PC) took over from the first OW2 agent at `b4094d13`. It merged master twice. The
+  conflicts were resolved as follows. `interact`, `widgets`, `provider::WidgetCx` (EV1's `ctx` beside OW2's
+  `relayout`) and `Scene` (EV1's `filters` beside `reveals`) keep both sides. `windows.rs` keeps OW2's
+  `window_chrome_ui` and calls EV1's `run_viewport_passes` after it. The kind table puts RT2's rows and `Href`
+  first, then OW2's `Scrollbar` and props. SG6's walk culls through `walk::cull`, which now also asks
+  `scroll_area::keep` (the one culling predicate, as SG6 asks). SG6's `layout::ink` treats the own scroll area
+  (`W::Ext` replacing `scroll-area`) as clipping, in place of the deleted `W::ScrollArea`. CI on `b4094d13`:
+  the js and linux-gtk failures were the stale reference pages and the snapshots (both fixed here). windows-winui
+  failed in `event_content_dialog_closed` ("show-async did not open the dialog"), a WinUI ContentDialog test
+  that OW2 does not touch.
+- Not done: the OW2 own widgets' `changed`/`commit` dispatches report after the scroll or resize and ignore
+  EV1's `prevented()` (a notification, not a default action). Revisit if a handler needs to veto a scroll.
+
 ## Follow-ups
 
 - Style the parts through `::part()` (`thumb-x/y`, `sash`, `grip`, `separator`) now that OW-CSS's part styles
