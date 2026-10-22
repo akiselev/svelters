@@ -102,10 +102,27 @@
 //! - [`Sink<T>`] parameters of offloaded exports and [`Stream<T>`] results: bounded async iterables.
 //! - JS `persist(key, () => new T(...))` (from `@svelters/types/core`) keeps an app object across hot
 //!   reloads; objects that are not persisted die with their runtime.
+//!
+//! # Serde values and data enums (RA2)
+//!
+//! - [`Json<T>`] (`T: Serialize + DeserializeOwned + schemars::JsonSchema`) crosses as a plain JS value
+//!   (objects, arrays, numbers, strings), never as JSON text, for types that cannot derive `Record`
+//!   (a headless crate, or the orphan rule). Its typings come from `T`'s JSON Schema: named schemas
+//!   become exported types of the module, and `exports.json` carries the schema itself. [`JsonAny<T>`]
+//!   needs only serde and is typed `unknown`.
+//! - `#[derive(svelters::Enum)]` with `#[js(tag = "kind")]` takes unit, struct and newtype variants: a
+//!   discriminated union of plain objects (`{ kind: 'circle', r: 1 }`, serde's internally tagged form).
+//!   Variant tags are kebab-case (`#[js(rename)]`), fields camelCase like records.
+//! - A JS value that does not fit throws `NativeError { domain: 'svelters' }` with `code` `type`,
+//!   `range` (an integer out of range), `missing-field`, `unknown-variant` (a wrong tag),
+//!   `unknown-field` (serde's `deny_unknown_fields`) or `invalid` (a serde `custom` error), and a
+//!   message that starts with the path: `at shape.r: invalid type: string "x", expected f64`.
+//! - The codegen works on any [`exports::Schema`] value: `schema.typescript()`, `schema.json()`,
+//!   `schema.javascript(..)`, `schema.dump(dir)` (SV24).
 
 pub use svelters_host::exports;
 pub use svelters_host::exports::{
-    Buffer, CallCx, Cancelled, Closed, Element, Emitter, EventSet, ExportError, ExportObject, FromJs, IntoJs, JsType, NativeError, Obj, ServiceCx, Shared,
+    Buffer, CallCx, Cancelled, Closed, Element, Emitter, EventSet, ExportError, ExportObject, FromJs, IntoJs, JsType, Json, JsonAny, NativeError, Obj, ServiceCx, Shared,
     SharedObject, Sink, StopToken, Store, StoreHooks, StoreState, StoreStatic, Stream, TypeBuilder, TypeRef, UiObject, Value, WorkCx, channel,
 };
 /// The rayon `#[js(worker)]` exports run on (for [`exports::set_worker_pool`] and `par_iter` in jobs).
@@ -115,7 +132,7 @@ pub use svelters_macros::{Enum, Error, Events, Record, export, object, service, 
 /// `use svelters::prelude::*;`
 pub mod prelude {
     pub use super::{
-        Buffer, Cancelled, Closed, Emitter, ExportError, NativeError, Obj, ServiceCx, Shared, Sink, StopToken, Store, StoreHooks, StoreStatic, Stream, WorkCx, channel,
+        Buffer, Cancelled, Closed, Emitter, ExportError, Json, JsonAny, NativeError, Obj, ServiceCx, Shared, Sink, StopToken, Store, StoreHooks, StoreStatic, Stream, WorkCx, channel,
     };
     pub use std::sync::Arc;
 }

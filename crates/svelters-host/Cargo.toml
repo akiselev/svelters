@@ -10,6 +10,9 @@ svelters-abi.workspace = true
 svelters-backend-log.workspace = true
 rquickjs.workspace = true
 serde_json.workspace = true
+# RA2: `Json<T>` crosses serde values, typed from `schemars::JsonSchema`.
+serde.workspace = true
+schemars.workspace = true
 sourcemap = { version = "9.3.2", default-features = false }
 notify = "8"
 inventory = "0.3"
