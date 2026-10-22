@@ -270,3 +270,22 @@ fn an_extension_cannot_import_files_outside_its_package() {
     host.run().unwrap();
     assert!(log.log().contains("\"own\""), "{}", log.log());
 }
+
+/// IN1: a component reading `$locale` (`svelters:intl`) re-renders when the host switches language.
+#[cfg(feature = "intl")]
+#[test]
+fn a_locale_switch_re_renders_components_reading_locale() {
+    let app = App::new(
+        "intl-locale",
+        "<script>\n  import { locale } from 'svelters:intl';\n  const n = 1234.5;\n</script>\n<window><label>{$locale}: {n.toLocaleString($locale)}</label></window>\n",
+    );
+    let (log, host) = log_host(Duration::from_millis(100));
+    host.set_locale("en-US").unwrap();
+    host.load_from(app.provider()).unwrap();
+    host.run().unwrap();
+    assert!(log.log().contains("\"en-US: 1,234.5\""), "{}", log.log());
+    host.set_locale("de-DE").unwrap();
+    host.drain_jobs();
+    assert!(log.log().contains("\"de-DE: 1.234,5\""), "{}", log.log());
+    assert!(host.take_errors().is_empty());
+}

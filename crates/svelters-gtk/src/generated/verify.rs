@@ -5126,7 +5126,7 @@ fn method_editable_get_width_chars() {
     });
 }
 
-/// method Editable.select_region (dynamic GI call): gtk_editable_select_region (Gtk 4 docs); called through GIRepository (X1)
+/// method Editable.select_region (dynamic GI call): gtk_editable_select_region (Gtk 4 docs); called through GIRepository (X1); cursor-position/selection-bound read on the GtkText delegate (WG3b)
 #[test]
 fn method_editable_select_region() {
     on_gtk(|| {
@@ -5136,7 +5136,7 @@ fn method_editable_select_region() {
         let r = h.call_args(o, "selectRegion", &[V::I64(1), V::I64(3)]).unwrap();
         let w = h.obj(o);
         let _ = (&w, &r);
-        assert!(h.get(o, "cursor-position") == V::I64(1) && h.get(o, "selection-bound") == V::I64(3), "postcondition: h.get(o, 'cursor-position') == V::I64(1) && h.get(o, 'selection-bound') == V::I64(3)");
+        assert!(h.get(o, "cursor-position") == V::I64(3) && h.get(o, "selection-bound") == V::I64(1), "postcondition: h.get(o, 'cursor-position') == V::I64(3) && h.get(o, 'selection-bound') == V::I64(1)");
     });
 }
 

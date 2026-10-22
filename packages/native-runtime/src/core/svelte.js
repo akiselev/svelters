@@ -83,6 +83,10 @@ export {
   wrap_snippet,
 } from 'svelte/internal/client';
 
+/** HMR (dev): Svelte's `HMR` / `FILENAME` symbols, so upstream tests and tools that read `C[HMR]` run unchanged. */
+export const HMR = $.HMR;
+export const FILENAME = $.FILENAME;
+
 // ---- internals of the block machinery (./internal.js) ----
 
 /** Svelte's effect flags (svelte/src/internal/client/constants.js; checked by tools/check-svelte-internals.mjs). */

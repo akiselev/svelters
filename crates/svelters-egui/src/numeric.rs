@@ -1,5 +1,5 @@
 //! IN1: locale-aware number display and entry for egui's numeric widgets (`slider`'s value box,
-//! `drag-value`, spin-style fields): the decimal separator and grouping of the current locale
+//! `drag-value`, `range-slider`'s value boxes): the decimal separator and grouping of the current locale
 //! (`svelters_intl::current`, set by `Host::set_locale`), and parsing of what users type in it
 //! (`1,5` is 1.5 under de-DE).
 //!
@@ -7,7 +7,7 @@
 //!
 //! Writer lane: IN1 (the widget files call [`slider`] / [`drag_value`] and nothing else).
 
-use egui::{DragValue, Slider};
+use egui::{DragValue, RangeSlider, Slider};
 use std::ops::RangeInclusive;
 
 /// Formats `value` as egui's default formatter would (the fewest decimals in `decimals` that show
@@ -45,4 +45,9 @@ pub fn slider(s: Slider<'_>) -> Slider<'_> {
 /// `drag-value` (and spin fields) with locale-aware text and entry.
 pub fn drag_value(d: DragValue<'_>) -> DragValue<'_> {
     if cfg!(feature = "intl") { d.custom_formatter(format).custom_parser(parse) } else { d }
+}
+
+/// `range-slider` with locale-aware value boxes.
+pub fn range_slider(s: RangeSlider<'_>) -> RangeSlider<'_> {
+    if cfg!(feature = "intl") { s.custom_formatter(format).custom_parser(parse) } else { s }
 }

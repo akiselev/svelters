@@ -33,7 +33,7 @@ impl Default for ModuleHooks {
     fn default() -> Self {
         let mut natives = NativeRegistry::new();
         natives.add(ExportModules);
-        ModuleHooks { natives, extra: NativeRegistry::new(), schemes: Vec::new(), policy: ExtensionPolicy::open() }
+        ModuleHooks { natives, extra: { let mut e = NativeRegistry::new(); e.add(crate::dx::DxModules); e }, schemes: Vec::new(), policy: ExtensionPolicy::open() }
     }
 }
 

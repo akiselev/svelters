@@ -22,7 +22,7 @@ impl Core {
     where
         E: JsReader + JsWriter<V = <E as JsReader>::V>,
     {
-        self.timed(|| {
+        self.timed("op_construct", || {
             if let Name::Str(s) = kind {
                 if s.starts_with("app:") {
                     let k = self.op_kind_id(s)?;
@@ -105,7 +105,7 @@ impl Core {
     where
         E: JsReader + JsWriter<V = <E as JsReader>::V> + crate::convert::JsPromises,
     {
-        self.timed(|| {
+        self.timed("op_call_static", || {
             let app = match kind {
                 Name::Str(s) if s.starts_with("app:") => Some(self.op_kind_id(s)?),
                 Name::Id(k) if crate::exports::is_app_id(k) => Some(k),

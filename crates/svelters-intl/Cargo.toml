@@ -25,3 +25,7 @@ icu_provider_blob = { version = "=2.4.0", features = ["alloc"] }
 icu_provider_adapters = { version = "=2.4.0", default-features = false }
 fixed_decimal = { version = "0.7.3", features = ["ryu"] }
 writeable = "0.6"
+
+[features]
+# examples/size.rs only: links every formatter (the size probe in plans/milestones/IN1-intl.md).
+probe = []

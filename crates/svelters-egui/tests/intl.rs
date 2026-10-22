@@ -65,3 +65,22 @@ fn format_and_parse_follow_the_locale() {
     assert_eq!(format(1234.5, 0..=1), "1,234.5");
     assert_eq!(parse("1,234.5"), Some(1234.5));
 }
+
+#[test]
+fn drag_value_shows_and_reads_the_locale() {
+    svelters_intl::set_current("de-DE").unwrap();
+    let mut rig = Rig::new();
+    let (_w, col) = rig.window();
+    let dv = rig.leaf(col, "drag-value", &[("accessible-name", Value::Str("Width".into())), ("decimals", Value::F64(1.0)), ("value", Value::F64(1234.5))]);
+    rig.run();
+    assert_eq!(value_box(&rig), "1.234,5");
+    rig.harness.get_by_role(egui::accesskit::Role::SpinButton).click();
+    rig.run();
+    rig.harness.key_press_modifiers(egui::Modifiers::COMMAND, egui::Key::A);
+    rig.harness.event(egui::Event::Text("1,5".into()));
+    rig.run();
+    rig.harness.key_press(egui::Key::Enter);
+    rig.run();
+    assert_eq!(rig.get(dv, "value"), Value::F64(1.5));
+    assert_eq!(value_box(&rig), "1,5");
+}

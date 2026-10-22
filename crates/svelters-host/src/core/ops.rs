@@ -227,7 +227,7 @@ impl Core {
     // ---- tree ops ----
 
     pub(crate) fn op_create(&self, kind: &str) -> Result<svl_handle, OpError> {
-        self.timed(|| {
+        self.timed("op_create", || {
             self.tree_ops_allowed()?;
             let kid = self.op_kind_id(kind)?;
             self.create_kind(kid)
@@ -235,7 +235,7 @@ impl Core {
     }
 
     pub(crate) fn op_create_id(&self, kid: svl_id) -> Result<svl_handle, OpError> {
-        self.timed(|| {
+        self.timed("op_create_id", || {
             self.tree_ops_allowed()?;
             self.create_kind(kid)
         })
@@ -267,7 +267,7 @@ impl Core {
         before: Option<svl_handle>,
         slot: Option<Name<'_>>,
     ) -> Result<(), OpError> {
-        self.timed(|| {
+        self.timed("op_insert", || {
             self.tree_ops_allowed()?;
             let pk = self.kind_of(parent)?;
             self.kind_of(child)?;
@@ -287,7 +287,7 @@ impl Core {
     }
 
     pub(crate) fn op_remove(&self, parent: svl_handle, child: svl_handle) -> Result<(), OpError> {
-        self.timed(|| {
+        self.timed("op_remove", || {
             self.tree_ops_allowed()?;
             // A dead parent or child has nothing left to remove.
             if self.live_kind(parent)?.is_none() || self.live_kind(child)?.is_none() {
@@ -309,7 +309,7 @@ impl Core {
         attr: Name<'_>,
         v: &R::V,
     ) -> Result<(), OpError> {
-        self.timed(|| {
+        self.timed("op_set_child_attr", || {
             let (Some(pk), Some(_)) = (self.live_kind(parent)?, self.live_kind(child)?) else {
                 return Ok(());
             };
@@ -351,7 +351,7 @@ impl Core {
         child: svl_handle,
         attr: Name<'_>,
     ) -> Result<W::V, OpError> {
-        self.timed(|| {
+        self.timed("op_get_child_attr", || {
             let pk = self.kind_of(parent)?;
             self.kind_of(child)?;
             let a = self.resolve_name(NameKind::Attr, pk, attr)?;
@@ -361,7 +361,7 @@ impl Core {
     }
 
     pub(crate) fn op_destroy(&self, h: svl_handle) -> Result<(), OpError> {
-        self.timed(|| {
+        self.timed("op_destroy", || {
             if crate::exports::is_app_handle(h) {
                 self.app_destroy(h);
                 return Ok(());
@@ -401,7 +401,7 @@ impl Core {
         prop: Name<'_>,
         v: &R::V,
     ) -> Result<(), OpError> {
-        self.timed(|| {
+        self.timed("op_set_prop", || {
             if crate::exports::is_app_handle(h) {
                 return self.app_set_prop(r, h, prop, v);
             }
@@ -459,7 +459,7 @@ impl Core {
     }
 
     pub(crate) fn op_get_prop<W: JsWriter>(&self, w: &W, h: svl_handle, prop: Name<'_>) -> Result<W::V, OpError> {
-        self.timed(|| {
+        self.timed("op_get_prop", || {
             if crate::exports::is_app_handle(h) {
                 return self.app_get_prop(w, h, prop);
             }
@@ -481,7 +481,7 @@ impl Core {
     where
         E: JsReader + JsWriter<V = <E as JsReader>::V> + JsPromises,
     {
-        self.timed(|| {
+        self.timed("op_call", || {
             if crate::exports::is_app_handle(h) {
                 return self.app_call(e, h, method, args);
             }
@@ -656,7 +656,7 @@ impl Core {
 
     /// A styling op (ABI v2.3). `h == 0` ops are app-wide; a dead widget handle is a no-op.
     pub(crate) fn op_style(&self, op: u32, h: svl_handle, text: Option<&str>) -> Result<i32, OpError> {
-        self.timed(|| {
+        self.timed("op_style", || {
             if h != 0 && self.live_kind(h)?.is_none() {
                 return Ok(0);
             }
@@ -667,7 +667,7 @@ impl Core {
     /// ABI v2.8 (TR1): the layout rect of a widget; `None` for a dead handle or a backend without
     /// geometry.
     pub(crate) fn op_bounds(&self, h: svl_handle) -> Result<Option<[f64; 4]>, OpError> {
-        self.timed(|| {
+        self.timed("op_bounds", || {
             if self.live_kind(h)?.is_none() {
                 return Ok(None);
             }
@@ -676,7 +676,7 @@ impl Core {
     }
 
     pub(crate) fn op_listen(&self, h: svl_handle, signal: Name<'_>, on: bool, flags: u32) -> Result<(), OpError> {
-        self.timed(|| {
+        self.timed("op_listen", || {
             if crate::exports::is_app_handle(h) {
                 // E3: events of an object with an `Emitter` field.
                 return self.app_listen(h, signal, on);
@@ -707,7 +707,7 @@ impl Core {
     /// handle or an unobserved prop is a no-op. Errors: a dead handle (for `on`), an unknown prop,
     /// or a backend failure.
     pub(crate) fn op_observe(&self, h: svl_handle, prop: Name<'_>, on: bool) -> Result<bool, OpError> {
-        self.timed(|| {
+        self.timed("op_observe", || {
             if crate::exports::is_app_handle(h) {
                 // E3: store fields are observable (`exact`); other getters are plain reads.
                 return self.app_observe(h, prop, on);

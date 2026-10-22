@@ -17,6 +17,9 @@ serde.workspace = true
 schemars.workspace = true
 sourcemap = { version = "9.3.2", default-features = false }
 notify = "8"
+# DX1: JS console and `logger()` records; standard per-app directories.
+tracing = "0.1"
+directories = "6"
 inventory = "0.3"
 # E1: `#[js(worker)]` exports run on rayon.
 rayon = "1.12"

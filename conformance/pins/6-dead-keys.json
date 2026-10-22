@@ -1,0 +1,22 @@
+{
+  "id": "dead-keys",
+  "pin": 6,
+  "title": "Composition with dead keys: a composable letter, space (the spacing accent), a letter that does not compose, Backspace during composition",
+  "setup": {
+    "fields": { "a": { "text": "", "sel": [0, 0] }, "b": { "text": "other" } },
+    "focus": "a"
+  },
+  "steps": [
+    { "key": "dead-acute" },
+    { "type": "e" },
+    { "key": "dead-diaeresis" },
+    { "type": "u" },
+    { "key": "dead-acute" },
+    { "key": "space" },
+    { "key": "dead-acute" },
+    { "type": "x" },
+    { "key": "dead-acute" },
+    { "key": "backspace" },
+    { "type": "a" }
+  ]
+}
