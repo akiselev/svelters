@@ -48,3 +48,36 @@ fingerprint) change the fingerprints of those winui facts, so the ledger was re-
 lane's windows-winui artifact (`python3 tools/metadata/ledger.py import --toolkit winui <artifact>`).
 
 ## Verification
+
+Local loops on the WSL PC's Windows side (`tools/dev/win`, script `C:\Users\dev\projects\fx5-loop.ps1`):
+each iteration runs `cargo test -p svelters-winui --test generated -- event_text_box event_content_dialog
+event_progress_bar event_app_bar` (73 tests, both flaky ones included).
+
+| Code | Load | Iterations | Passed |
+|---|---|---|---|
+| before (797835a5) | idle | 30 | 30 |
+| before (797835a5) | 24 busy-looping processes at normal priority | 15 | 15 |
+| after (1152f0b5) | idle | 30 | 30 |
+
+**Not reproduced locally**, even under load: the 16-core PC delivers TextChanged and Opened well
+inside the old windows. The fix rests on the CI evidence (count 0, not 2; `opened` absent after a
+fixed 600 ms) and on the event being asynchronous; it removes the time bound rather than
+lengthening it. The loops show the change does not break the tests; only CI over time shows the
+flake gone.
+
+## 2. svelters-host clippy: `reveal_system` spawns on macOS and Windows
+
+Coordinator's follow-up item. ZU3's `disallowed_methods` lint (`crates/svelters-host/clippy.toml`)
+denies `std::process::Command::spawn` in the library. `reveal_system` has three cfg'd versions; ZU3
+allowed the Linux/BSD one (dbus-send on its own thread), but CI's clippy step runs on Linux only, so
+the macOS (`open -R`, `platform.rs:404` on master) and Windows (`explorer /select,`) spawns were never
+linted. Both are detached launches, never waited on, made once per user action: the same thing
+`open::that_detached` does in `open_url`/`open_path` (the lint can't see inside the `open` crate). So
+they get `#[allow(clippy::disallowed_methods)]` with a `// ZU3:` reason, and ZU3's allow table says so.
+Moving them to a thread would only lose the spawn error that `reveal` reports today.
+
+- `tools/dev/win cargo clippy -p svelters-host --lib`: no errors (27 pre-existing warnings).
+  `--all-targets` on Windows fails to compile the `dx` and `reload` test targets (`std::os::unix`,
+  pre-existing, unrelated).
+- `cargo clippy -p svelters-host --all-targets` on Linux: clean of errors.
+- macOS: not linted locally (no macOS SDK on this machine); the site is the same shape as Windows.
