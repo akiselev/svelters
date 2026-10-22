@@ -64,3 +64,7 @@ svelters-egui = { path = ".", features = ["eframe", "kittest", "source"] }
 egui_kittest = "=0.37.0"
 # WG2b: the image tests encode their PNGs
 image = { version = "0.25", default-features = false, features = ["png"] }
+
+[lints.clippy]
+# ZU3: allowed for tests, examples and bins; lib.rs denies it for the library (see clippy.toml).
+disallowed_methods = "allow"

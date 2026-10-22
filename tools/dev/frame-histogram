@@ -1,0 +1,95 @@
+#!/usr/bin/env python3
+"""Frame-time histogram and comparison (ZU3, plans/milestones/ZU3-ui-thread.md).
+
+Reads the JSON a run writes with SVELTERS_MEASUREMENTS=1 (svelters_host::dx::frames):
+  {"version": 1, "unit": "us", "frames": [...]}
+
+  tools/dev/frame-histogram run.json            # histogram and percentiles of one run
+  tools/dev/frame-histogram base.json new.json  # both side by side, with the change per row
+  tools/dev/frame-histogram base.json new.json --fail-above 20
+      # exit 1 when new's p50, p90 or p99 is more than 20 % above base's
+"""
+import argparse
+import json
+import sys
+
+# bucket upper bounds in ms (the last bucket is open)
+BOUNDS = [1, 2, 4, 8, 16.7, 33.3, 50, 100, 250, 500]
+PCTS = [("p50", 0.50), ("p90", 0.90), ("p99", 0.99), ("max", 1.0)]
+
+
+def load(path):
+    with open(path) as f:
+        d = json.load(f)
+    if d.get("unit") != "us" or not isinstance(d.get("frames"), list):
+        sys.exit(f"{path}: not a frame-times file (want unit 'us' and a 'frames' list)")
+    return sorted(x / 1000.0 for x in d["frames"])
+
+
+def pct(ms, q):
+    # the same rounding as svelters_host::dx::frames::summary (half away from zero)
+    return ms[int((len(ms) - 1) * q + 0.5)] if ms else 0.0
+
+
+def buckets(ms):
+    counts = [0] * (len(BOUNDS) + 1)
+    for v in ms:
+        i = next((i for i, b in enumerate(BOUNDS) if v <= b), len(BOUNDS))
+        counts[i] += 1
+    return counts
+
+
+def labels():
+    out, lo = [], 0
+    for b in BOUNDS:
+        out.append(f"{lo:g}-{b:g} ms")
+        lo = b
+    out.append(f">{BOUNDS[-1]:g} ms")
+    return out
+
+
+def bar(share, width=30):
+    return "#" * round(share * width)
+
+
+def change(a, b):
+    if a == 0:
+        return "" if b == 0 else "new"
+    return f"{(b - a) / a * 100:+.1f} %"
+
+
+def main():
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("base")
+    ap.add_argument("new", nargs="?")
+    ap.add_argument("--fail-above", type=float, metavar="PCT", help="with two runs: exit 1 if a percentile regressed by more than PCT %%")
+    args = ap.parse_args()
+    runs = [load(args.base)] + ([load(args.new)] if args.new else [])
+    names = [args.base] + ([args.new] if args.new else [])
+    for i, n in enumerate(names):
+        print(f"{'ab'[i]}: {n} ({len(runs[i])} frames)")
+    print()
+    counts = [buckets(r) for r in runs]
+    for row, label in enumerate(labels()):
+        cells = []
+        for i, r in enumerate(runs):
+            share = counts[i][row] / len(r) if r else 0
+            cells.append(f"{counts[i][row]:>7} {share * 100:5.1f} % {bar(share):<30}")
+        print(f"{label:>14} " + " | ".join(cells))
+    print()
+    regressed = []
+    for name, q in PCTS:
+        vals = [pct(r, q) for r in runs]
+        line = f"{name:>14} " + " | ".join(f"{v:9.2f} ms" for v in vals)
+        if len(vals) == 2:
+            line += f"   {change(*vals)}"
+            if args.fail_above is not None and name != "max" and vals[0] > 0 and (vals[1] - vals[0]) / vals[0] * 100 > args.fail_above:
+                regressed.append(name)
+        print(line)
+    if regressed:
+        print(f"\nregressed by more than {args.fail_above:g} %: {', '.join(regressed)}")
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    main()

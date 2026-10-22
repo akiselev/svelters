@@ -55,6 +55,8 @@ impl ImageLoader for PngLoader {
         LOADER_ID
     }
 
+    // ZU3: debt: file:// PNGs are read on the UI thread in egui's ImageLoader::load (first load per uri; AS1's loaders own the fix).
+    #[allow(clippy::disallowed_methods)]
     fn load(&self, ctx: &Context, uri: &str, _size_hint: SizeHint) -> ImageLoadResult {
         if let Some(e) = self.cache.lock().unwrap_or_else(|p| p.into_inner()).get(uri) {
             return e.clone().map(|image| ImagePoll::Ready { image }).map_err(LoadError::Loading);
