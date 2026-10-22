@@ -1397,7 +1397,7 @@ deprecation; enums `#[non_exhaustive]`, traits extended only with defaulted meth
 
 - `NodeId` (`to_raw`/`from_raw`, generation semantics), `VNodeId`, `Target`, `KindId`, `PropId`, `Tick`.
 - `SceneHandle` (`read`, `write`, `defer`, `observe`, `take_changes`, registrations); `SceneRef`, `NodeRef`, traversal
-  iterators, `Cursor`, `Query` and its predicates; `by_anchor`/`by_path`; `hit_test`.
+  iterators, `Cursor`, `Query` and its predicates, including `Query::changed_since(tick)` (R14); `by_anchor`/`by_path`; `hit_test`, `Hit` {Node, Part(u64), Miss} (R13) and `Widget::hit_test`.
 - `SceneMut`, `NodeMut` operations of §6.4 and the ownership rules of §5 (an operation may become *more* permissive).
 - `ExtKey`, `ExtEntry`, `state_bits!`, `StateBits` built-in bit names (bit positions are not promised).
 - `Widget` (ARCH-EMBED §8.2 + §7.3 here), `Behavior`, `StateProvider`, `ScenePass`, `VirtualChildren`, `RowPool`, the
