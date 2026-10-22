@@ -678,9 +678,16 @@ impl Parser<'_> {
                 let w = self.skip_trivia(i + 1, e);
                 let we = self.ident_end(w, e);
                 if self.src[w..we].eq_ignore_ascii_case("important") {
+                    // the fix-it deletes `!important` with the whitespace before it
+                    let mut ws = i;
+                    while ws > 0 && self.b[ws - 1].is_ascii_whitespace() {
+                        ws -= 1;
+                    }
+                    let del = self.sp(ws, we);
                     self.diags
                         .error(UNSUPPORTED_IMPORTANT, self.sp(i, we), "`!important` is not supported")
-                        .help("native styles apply by specificity and source order; use a more specific selector");
+                        .help("native styles apply by specificity and source order; use a more specific selector")
+                        .fix(crate::diag::FixIt::new("remove `!important`", vec![crate::diag::TextEdit { start: del.0, end: del.1, text: String::new() }]));
                 } else {
                     self.unexpected(i, "value");
                 }
