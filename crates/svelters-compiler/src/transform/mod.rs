@@ -463,7 +463,6 @@ impl Rewriter for ScopeRewriter<'_> {
                             }
                         }
                     }
-                    NodeRef::CallExpression(_) | NodeRef::NewExpression(_) | NodeRef::TaggedTemplateExpression(_) => self.found = true,
                     _ => {}
                 }
                 if !self.found {
@@ -473,7 +472,11 @@ impl Rewriter for ScopeRewriter<'_> {
         }
         let mut r = R { cx: &self.cx, found: false };
         Walker::walk(expr_ref(e), &(), &mut r);
-        r.found
+        // upstream's CallExpression / TaggedTemplateExpression visitors: a call is state when it
+        // `has_call` (an impure callee, or any call in an expression with dependencies), so a pure
+        // global call (`{console.log(..)}`, `Math.random()`) is written once, not in the
+        // fragment's template effect, where it would run again with every other value
+        r.found || self.has_call(e)
     }
 
     fn uses_store(&self, e: &Expression) -> bool {

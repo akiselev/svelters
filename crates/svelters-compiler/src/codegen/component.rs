@@ -1367,6 +1367,12 @@ impl Codegen<'_, '_> {
                     self.w.write(&format!("{}: ", js_key(name)));
                     self.json(value);
                 }
+                // a value that reads no state is a plain property, evaluated once (Svelte's
+                // build_component: `b.init` unless `has_state`)
+                ComponentProp::Dynamic { name, value } if !self.dynamic_reactive(value) => {
+                    self.w.write(&format!("{}: ", js_key(name)));
+                    self.dynamic(value);
+                }
                 ComponentProp::Dynamic { name, value } => {
                     self.w.write(&format!("get {}() {{ return ", js_key(name)));
                     match &memo[i] {
