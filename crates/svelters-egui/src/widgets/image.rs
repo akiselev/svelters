@@ -131,6 +131,8 @@ impl Icon {
             return (Vec2::splat(size.unwrap_or(16.0) as f32), None);
         }
         match crate::fonts::icon_look(ctx, &ctx.global_style(), &self.family, &self.name, &self.glyph, self.font_weight, size) {
+            // nothing to draw (no name, no glyph): a blank square of the font size
+            crate::fonts::IconLook::Glyph(font, text) if text.is_empty() => (Vec2::splat(font.size), Some((font, text))),
             crate::fonts::IconLook::Glyph(font, text) => {
                 let g = ctx.fonts_mut(|f| f.layout_no_wrap(text.clone(), font.clone(), egui::Color32::WHITE));
                 (g.size(), Some((font, text)))
@@ -158,7 +160,12 @@ impl Widget for Icon {
         } else {
             let size = self.content(ui.ctx(), &cx.style(ICON_UA)).0;
             let r = cx.rect();
-            cx.interact_at(ui, Rect::from_min_size(pos2(r.left(), r.center().y - size.y / 2.0), size), sense)
+            // (nothing to draw, such as no name and no glyph: the laid-out rect, as egui's label)
+            if size.x <= 0.0 || size.y <= 0.0 {
+                cx.interact(ui, sense)
+            } else {
+                cx.interact_at(ui, Rect::from_min_size(pos2(r.left(), r.center().y - size.y / 2.0), size), sense)
+            }
         };
         let fired = self.run_units(cx, ui, &resp);
         if self.clickable {
