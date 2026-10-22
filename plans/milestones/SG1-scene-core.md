@@ -111,3 +111,45 @@ events, owner rules with a runtime's tree, defer across frames, boundary relayou
   from-scratch layout).
 - Not run locally: `--workspace` builds and tests (nothing outside this crate uses its Rust API), conformance, the
   other backends' suites. CI runs them.
+
+## Handoff: the EM1 merge (in progress)
+
+State: `ci/sg1` was green at `ca26017a` (SG1 + RA1 merge; CI runs 39758049162 macos-appkit, 39758049086 linux-qt,
+39758049178 linux-gtk, 39758049103 windows-winui, 39758049123 js). The next commit on `ci/sg1` is a **WIP merge of
+origin/master `ff04be32` (EM1) with the conflicts still marked** (the SG1 lane ran out of budget). It does not
+build. To finish it, check out `ci/sg1`, resolve, and continue from there (do not reset: amend or add a fix-up commit).
+
+Conflicted (markers in the files): `frame.rs`, `leaf.rs`, `ops.rs`, `scene/node.rs`, `scene/tree.rs`. Auto-merged
+but written against the pre-SG1 `Arena`/`Node` (will not compile): `embed/mod.rs` (~38 sites: `scene.alloc` +
+`scene::new_node` for slot boxes, `get_mut`, `n.cache`, `n.children.clone()`, `n.root`, `n.c.anchor`,
+`tree::detach`/`tree::free_subtree(&mut Arena, Handle)`, `b.0.dirty.remeasure`/`layout_size`), `ids.rs`
+(`adopt`/`reanchor` walk `Node.root`), `walk.rs`, `a11y.rs` (`decorate(resp, n)`), `runner/*`, `tests/embed.rs`.
+
+How to resolve, keeping both lanes' intent:
+- **Node fields → columns.** EM1's `Node.root: u32` (the slot handle of the embedded root, 0 = none) is SG1's
+  `NodeCore::root: RootIx` plus the root table: add `TreeRoot::Slot { node }` and create slot roots with
+  `Scene::add_root(TreeRoot::Slot { node }, top)` (end them with `remove_root`). Keep EM1's per-root id base
+  (`root_bases`) keyed by the slot handle, reachable from the `RootEntry` (`roots.get(r).top`). `Node.host_owned`
+  → `Owner::Host` (`Scene::create(kind, Owner::Host)` for slot boxes; `handle_info` answers `SVL_LIFE_BORROWED`
+  for `Owner::Host`). `Common.anchor` stays in `Common` (cold column) with EM1's `P::Anchor` arm in `props.rs`; the
+  `Node` view exposes `c.anchor` already.
+- **Re-iding.** EM1's `ids::adopt` (insert op) and `ids::reanchor` (anchor prop) belong in SG1's attach hook
+  `Scene::attached(id, root)` (`scene/tree.rs`, called for every node entering a root from `set_root_subtree`) and
+  in `Scene::set_value` for `P::Anchor`. The hook needs the root's id base: store it on `RootEntry` (e.g. a
+  `base: egui::Id` field set by EM1's slot creation) rather than in `Inner::root_bases`.
+- **Layout and Busy.** Slot layout = `layout::remeasure(s, m, r)` + `layout::run_root(s, m, r, size)` (what
+  `walk.rs::window_ui` does for windows). `Busy::LAYOUT` = the root's `RootDirty` is non-empty
+  (`relayout`/`remeasure`/`full`) or its size changed; replace the reads of `n.cache.is_empty()` and
+  `dirty.remeasure`. R16: `SceneHandle::deferred_len() > 0` and a non-empty `Scene::announce` count as busy.
+- **Slot teardown.** `tree::detach` + `tree::free_subtree` → `Scene::free_subtree(id)` (unlinks, ends the root,
+  returns the ids in pre-order; convert with `to_raw()` for `on_destroyed`); `layout_size` is gone (`RootEntry::size`).
+- **Frame.** EM1 split `ui` into `logic_pass` (JS) and `show_windows` (walk). SG1's phase calls go there:
+  `set_phase(Logic)` + `run_deferred()` + the announcement flush at the start of `logic_pass`/`before_pass`,
+  `set_phase(Ui)` at its end, `set_phase(Idle)` at the end of the egui pass (R17: `Embed` should do it at end of
+  pass, not at the end of `show_slot`). Keep SG1's per-root remeasure in `before_pass` and EM1's `bind_ctx` and
+  public `after_pass` (with SG1's deferred-repaint request).
+- **leaf.rs.** Keep SG1's index-based body and replace the `a11y::name` block with EM1's `a11y::decorate(resp,
+  &arena.n(h))` (adapt `decorate` to the `Node<'_>` view).
+- Then: `tools/dev/cargo-slot cargo check -p svelters-egui --all-targets`, `cargo check -p egui-kinds-example
+  --all-targets`, `cargo nextest run -p svelters-egui` (bundles: `pnpm --filter "./fixtures/*-egui" build` after
+  `cargo build -p svelters-compiler --bin svelters-compile`), push, all five workflows green.

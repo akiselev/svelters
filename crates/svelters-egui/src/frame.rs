@@ -97,8 +97,8 @@ impl EguiBackend {
                 *slot = Some(ctx.clone());
             }
         }
-        self.0.in_frame.set(true);
         if ctx.current_pass_index() == 0 {
+<<<<<<< HEAD
             self.bump(|s| s.frames += 1);
             self.0.shared.frames.fetch_add(1, Ordering::Relaxed);
             self.0.scene.set_phase(Phase::Logic);
@@ -106,12 +106,40 @@ impl EguiBackend {
         }
         // R17: from the end of logic to the end of the pass, Rust writes are deferred.
         self.0.scene.set_phase(Phase::Ui);
+=======
+            self.logic_pass(&ctx);
+        }
+        self.show_windows(ui);
+    }
+
+    /// The part of a frame that runs JS (EM1: `Embed::logic` calls it, after its queued commands):
+    /// counts the frame, then closes, checkpoint, rAF and remeasure. First pass only.
+    pub(crate) fn logic_pass(&self, ctx: &egui::Context) {
+        self.0.in_frame.set(true);
+        self.bump(|s| s.frames += 1);
+        self.0.shared.frames.fetch_add(1, Ordering::Relaxed);
+        self.before_pass(ctx);
+        self.0.in_frame.set(false);
+    }
+
+    /// The presented windows (the desktop order: the root window in `ui`, the others as
+    /// immediate viewports), then the outbox. Never runs JS.
+    pub(crate) fn show_windows(&self, ui: &mut egui::Ui) {
+        let ctx = ui.ctx().clone();
+        self.0.in_frame.set(true);
+>>>>>>> origin/master
         let out = self.walk(ui);
         self.after_pass(&ctx, out);
         // This call is the whole frame of the legacy backend: the pass ends here. (EM1's `Embed`
         // keeps `Ui` until egui's end of pass, so the app's own ui between slots is covered.)
         self.0.scene.set_phase(Phase::Idle);
         self.0.in_frame.set(false);
+    }
+
+    /// Makes `ctx` the context wakes and host ops repaint (an embedder may create the backend
+    /// before the context it is drawn in exists).
+    pub(crate) fn bind_ctx(&self, ctx: &egui::Context) {
+        *self.0.shared.ctx.lock().unwrap() = Some(ctx.clone());
     }
 
     fn before_pass(&self, ctx: &egui::Context) {
@@ -199,7 +227,9 @@ impl EguiBackend {
         }
     }
 
-    fn after_pass(&self, ctx: &egui::Context, out: Vec<Out>) {
+    /// Flushes `out` to the host (queues only: `post_event`/`prop_changed` run no JS) and requests
+    /// the repaints pending work needs. Also called by `Embed` after its logic and each slot.
+    pub(crate) fn after_pass(&self, ctx: &egui::Context, out: Vec<Out>) {
         if !out.is_empty() {
             if let Some(host) = self.host() {
                 for o in out {

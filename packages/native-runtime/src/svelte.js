@@ -21,7 +21,7 @@ const mounted = new WeakMap();
  * transitions of the first render, as in Svelte.
  */
 export function mount(component, options = {}) {
-  const { target, anchor, props = {}, events, context, transformError, intro = true } = options;
+  const { target, anchor, props = {}, events, context, transformError, intro = true, onerror } = options;
   if (anchor != null) throw new Error('mount: `anchor` is not supported by the native runtime (mount into `target`)');
   // as Svelte's _mount: on the props object itself, so a state proxy stays one
   if (events) props.$$events = events;
@@ -35,7 +35,7 @@ export function mount(component, options = {}) {
         return exports;
       }
     : component;
-  const unmountFn = nativeMount(Component, { props, target, transformError, intro });
+  const unmountFn = nativeMount(Component, { props, target, transformError, intro, onerror });
   const exports = unmountFn.exports;
   mounted.set(exports, unmountFn);
   return exports;

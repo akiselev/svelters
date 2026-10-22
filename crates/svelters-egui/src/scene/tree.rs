@@ -92,9 +92,49 @@ fn builtin_payload(kind: usize) -> Option<W> {
         "Checkbox" => W::Checkbox { text: String::new(), checked: false },
         "TextEdit" => W::TextEdit { text: String::new(), hint: String::new(), multiline: false, password: false, char_limit: 0 },
         "Slider" => W::Slider { value: 0.0, min: 0.0, max: 100.0, step: 0.0, text: String::new(), show_value: true },
+<<<<<<< HEAD
         // RA1: a provider kind's widget struct with its defaults
         _ => W::Ext(crate::provider::ExtWidget::new((kinds::KindRegistry::global().provider(kind)?.entry.new)())),
     })
+=======
+        other => match crate::kinds::KindRegistry::global().provider(kind) {
+            Some(p) => W::Ext(crate::provider::ExtWidget::new((p.entry.new)())),
+            None => unreachable!("not creatable: {other}"),
+        },
+    };
+    let mut c = Common::default();
+    if matches!(w, W::Window { .. }) {
+        c.padding = 8.0;
+    }
+    let mut n = Node {
+        kind,
+        handle,
+        parent: None,
+        children: Vec::new(),
+        id: crate::ids::node_id(handle),
+        c,
+        w,
+        listen: Vec::new(),
+        observe: HashMap::new(),
+        presented: false,
+        want_focus: false,
+        style: taffy::Style::default(),
+        cache: taffy::Cache::new(),
+        unrounded: taffy::Layout::with_order(0),
+        layout: taffy::Layout::with_order(0),
+        intrinsic: None,
+        rect: egui::Rect::NOTHING,
+        drawn: egui::Rect::NOTHING,
+        had_focus: false,
+        vis: Visual::default(),
+        root: 0,
+        host_owned: false,
+        state: Default::default(),
+        ext: Default::default(),
+    };
+    crate::layout::restyle(&mut n);
+    n
+>>>>>>> origin/master
 }
 
 fn is_js(o: Origin) -> bool {

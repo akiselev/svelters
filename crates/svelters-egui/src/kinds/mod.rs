@@ -55,6 +55,9 @@ pub enum P {
     Visible,
     Tooltip,
     AccessibleName,
+    /// EM1: a stable name inside the root (ARCH-EMBED §4.4): salts the node's egui id and is its
+    /// AccessKit author id.
+    Anchor,
     Width,
     Height,
     MinWidth,

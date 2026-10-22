@@ -89,6 +89,7 @@ impl Backend for EguiBackend {
         if slot > 1 && kinds::slot_of(pk).is_some() {
             return Err(format!("unknown slot id {slot} on <{}>", kinds::kind(pk).tag.unwrap_or("?")));
         }
+<<<<<<< HEAD
         let changed = {
             let mut scene = self.0.scene.borrow_mut();
             let (p, c) = (scene.live(parent)?, scene.live(child)?);
@@ -97,6 +98,21 @@ impl Backend for EguiBackend {
         };
         if !changed {
             return Ok(()); // already in place
+=======
+        if kinds::kind(ck).toplevel {
+            return Err("a window cannot be inserted under another element".into());
+        }
+        if parent == child {
+            return Err("cannot insert an element into itself".into());
+        }
+        {
+            let mut scene = self.0.scene.borrow_mut();
+            if !tree::insert(&mut scene, parent, child, before)? {
+                return Ok(()); // already in place
+            }
+            // EM1: a subtree joining an embedded root takes the root's ids (ARCH-EMBED §4.4)
+            crate::ids::adopt(&mut scene, &self.0.root_bases.borrow(), parent, child);
+>>>>>>> origin/master
         }
         self.touched();
         Ok(())
@@ -135,11 +151,29 @@ impl Backend for EguiBackend {
     }
 
     fn set_prop(&self, h: svl_handle, prop: svl_id, v: &Value) -> StrResult<()> {
+<<<<<<< HEAD
         {
             let mut scene = self.0.scene.borrow_mut();
             let id = scene.live(h)?;
             // Host writes never announce a change: there is no echo to suppress (EGUI.md §1.4).
             scene.set_value(id, prop, v, Origin::Js).map_err(|e| e.to_string())?;
+=======
+        let mut scene = self.0.scene.borrow_mut();
+        let n = scene.get_mut(h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
+        let def = kinds::prop_def(n.kind, prop).ok_or_else(|| format!("unknown prop id {prop} on <{}>", n.tag()))?;
+        // Host writes never announce a change: there is no echo to suppress (EGUI.md §1.4).
+        let d = scene::set_prop(n, def, v).map_err(|e| format!("<{}> {}: {e}", n.tag(), def.name))?;
+        if d.style {
+            layout::invalidate(&mut scene, h);
+            self.0.dirty.layout_dirty.set(true);
+        }
+        if def.key == kinds::P::Anchor {
+            crate::ids::reanchor(&mut scene, &self.0.root_bases.borrow(), h);
+        }
+        drop(scene);
+        if d.measure {
+            self.0.dirty.remeasure.borrow_mut().push(h);
+>>>>>>> origin/master
         }
         self.touched();
         Ok(())
@@ -195,9 +229,17 @@ impl Backend for EguiBackend {
 
     fn handle_info(&self, h: svl_handle) -> StrResult<svl_handle_info> {
         let k = self.kind_of(h)?;
+        let host_owned = self.0.scene.borrow().get(h).is_some_and(|n| n.host_owned);
         Ok(svl_handle_info {
             kind: kinds::kind_id(k),
-            lifetime: if kinds::kind(k).toplevel { SVL_LIFE_TOPLEVEL } else { SVL_LIFE_OWNED },
+            // EM1: a slot belongs to the embedder; JS mounts into it but cannot destroy it
+            lifetime: if host_owned {
+                SVL_LIFE_BORROWED
+            } else if kinds::kind(k).toplevel {
+                SVL_LIFE_TOPLEVEL
+            } else {
+                SVL_LIFE_OWNED
+            },
             flags: 0,
         })
     }

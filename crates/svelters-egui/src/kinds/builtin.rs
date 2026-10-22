@@ -33,6 +33,13 @@ static WIDGET_PROPS: &[PropDef] = &[
     length("flex-basis", P::FlexBasis, "Main-axis size before growing or shrinking; null for auto."),
     layout("align-self", P::AlignSelf, Ty::Enum(ALIGN_SELF), Def::Str("auto"), "Cross-axis alignment in the parent box, overriding its `align-items`."),
     layout("margin", P::Margin, Ty::F64, Def::F64(0.0), "Outer spacing on all four sides, in points."),
+    prop(
+        "anchor",
+        P::Anchor,
+        Ty::Str,
+        Def::Str(""),
+        "A name unique in its embedded root: the node's egui id derives from it (stable across runs, not only across reorders), it is the AccessKit author id, and `Embed::anchor_rect` finds it. Changing it drops the node's egui memory.",
+    ),
 ];
 
 static LABEL_PROPS: &[PropDef] = &[

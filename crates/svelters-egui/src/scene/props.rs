@@ -89,6 +89,7 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         }
         (P::Tooltip, _) => c.tooltip = as_str(v)?,
         (P::AccessibleName, _) => c.accessible_name = as_str(v)?,
+        (P::Anchor, _) => c.anchor = as_str(v)?,
         (P::Width, _) => c.width = as_len(v)?,
         (P::Height, _) => c.height = as_len(v)?,
         (P::MinWidth, _) => c.min_width = as_len(v)?,
@@ -161,6 +162,7 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Visible, _) => Value::Bool(c.visible),
         (P::Tooltip, _) => s(&c.tooltip),
         (P::AccessibleName, _) => s(&c.accessible_name),
+        (P::Anchor, _) => s(&c.anchor),
         (P::Width, _) => len_value(c.width),
         (P::Height, _) => len_value(c.height),
         (P::MinWidth, _) => len_value(c.min_width),

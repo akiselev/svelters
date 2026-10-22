@@ -15,7 +15,7 @@
 //! the engine, so backend callbacks (`post_event`, `on_destroyed`, nested `checkpoint`) cannot
 //! double-borrow.
 
-use crate::engine::{ChangedProp, ErrorKind, JsEngine, JsError};
+use crate::engine::{ChangedProp, ErrorKind, HostBusy, JsEngine, JsError, RootMessage};
 use crate::sourcemap::SourceMaps;
 use std::cell::{Cell, RefCell};
 use std::cmp::Reverse;
@@ -336,6 +336,11 @@ pub(crate) struct Core {
     pub(crate) ops: offload::OpTable,
     /// Stores, events and persisted objects of app exports (E3).
     pub(crate) reactive: reactive::Reactive,
+    /// The turn budget armed for the next entries into JS (starts as `cfg.turn_budget`; an embedder
+    /// sets per-entry budgets, ARCH-EMBED §4.2 `Budgets`).
+    pub(crate) budget: Cell<Option<Duration>>,
+    /// EM1: what mounted roots reported (`__svelters_host.rootFault`/`rootInfo`/`rootEmit`).
+    pub(crate) root_msgs: RefCell<Vec<RootMessage>>,
 }
 
 /// Held while JS runs. See the module docs on re-entrancy.
@@ -358,6 +363,7 @@ impl Drop for JsGuard<'_> {
 
 impl Core {
     pub(crate) fn new(backend: BackendRef<'static>, cfg: HostConfig) -> Core {
+        let turn_budget = cfg.turn_budget;
         Core {
             backend,
             cfg,
@@ -378,6 +384,8 @@ impl Core {
             op_log: RefCell::new(None),
             ops: offload::OpTable::new(crate::exports::offload::Completions::new(backend.wake_handle())),
             reactive: reactive::Reactive::new(crate::exports::reactive::Hub::new(backend.wake_handle())),
+            budget: Cell::new(turn_budget),
+            root_msgs: RefCell::new(Vec::new()),
         }
     }
 
@@ -401,6 +409,35 @@ impl Core {
         t.ops += 1;
         self.timing.set(t);
         r
+    }
+
+    /// Every queue the core holds (ARCH-EMBED §5.4); `jobs` comes from the engine.
+    pub(crate) fn busy(&self, jobs: bool) -> HostBusy {
+        let next_timer = self.next_timer_deadline();
+        let st = self.st.borrow();
+        HostBusy {
+            events: !st.events.is_empty(),
+            changes: !st.dirty.is_empty(),
+            jobs,
+            ops_in_flight: self.ops_in_flight(),
+            stores: self.reactive.hub.pending(),
+            frame: self.frame_requested.get(),
+            running: self.busy.get() > 0,
+            next_timer,
+        }
+    }
+
+    pub(crate) fn root_message(&self, m: RootMessage) {
+        if let RootMessage::Fault { error, .. } = &m
+            && self.cfg.echo_errors
+        {
+            eprintln!("[svelters] root fault: {error}");
+        }
+        self.root_msgs.borrow_mut().push(m);
+    }
+
+    pub(crate) fn take_root_messages(&self) -> Vec<RootMessage> {
+        std::mem::take(&mut *self.root_msgs.borrow_mut())
     }
 
     /// True when nothing is waiting for the host: no queued events and no live timers.
@@ -996,7 +1033,7 @@ pub(crate) fn call_sync(
     let result = match eng.dispatch_sync(h, &name, args, flags) {
         Ok(v) => v,
         Err(e) => {
-            core.report(e);
+            core.report(e.at_handle(h));
             Value::Null
         }
     };
@@ -1036,9 +1073,9 @@ fn deliver(core: &Core, eng: &mut Box<dyn JsEngine>, ev: DispatchEvent) -> Resul
         } => {
             let r = eng.dispatch(handle, &signal, &args, deferred, flags);
             core.pin_args(&args, false);
-            r
+            r.map_err(|e| e.at_handle(handle))
         }
-        DispatchEvent::Gone { handle, reason } => eng.dispatch_gone(handle, reason),
+        DispatchEvent::Gone { handle, reason } => eng.dispatch_gone(handle, reason).map_err(|e| e.at_handle(handle)),
     }
 }
 
@@ -1197,6 +1234,60 @@ pub(crate) fn load_bundle(
     drop(eng);
     core.sync_sched();
     if !core.cfg.scripted && (pending || core.has_events()) {
+        core.backend.wake();
+    }
+    res
+}
+
+/// EM1: loads an entry and keeps its namespace (see [`load_bundle`]).
+pub(crate) fn load_entry(
+    core: &Core,
+    engine: &RefCell<Box<dyn JsEngine>>,
+    entry: &std::path::Path,
+) -> Result<u32, JsError> {
+    let Some(_guard) = core.enter() else {
+        return Err(JsError::new(ErrorKind::Host, "load_entry called while JS is running"));
+    };
+    core.maps.borrow_mut().set_entry(entry);
+    let mut eng = engine.borrow_mut();
+    let res = eng.load_entry(entry);
+    let st = eng.run_jobs(core.cfg.max_jobs_per_checkpoint);
+    core.report_all(eng.take_errors());
+    drop(eng);
+    core.sync_sched();
+    if st.pending || core.has_events() {
+        core.backend.wake();
+    }
+    res
+}
+
+/// EM1: one call into a mounted root (`__svelters_embed.*`) as its own entry into JS, under the
+/// turn budget, followed by a job drain (the microtasks it queued, Svelte's flush among them).
+/// An error thrown by the call itself is returned (not reported); errors of the jobs are reported.
+pub(crate) fn root_call<R>(
+    core: &Core,
+    engine: &RefCell<Box<dyn JsEngine>>,
+    target: Option<svl_handle>,
+    f: impl FnOnce(&mut Box<dyn JsEngine>) -> Result<R, JsError>,
+) -> Result<R, JsError> {
+    let Some(_guard) = core.enter() else {
+        return Err(JsError::new(ErrorKind::Host, "a root call while JS is running"));
+    };
+    if let Some(t) = target {
+        // The mount target (an embedder's slot) was created natively, not by JS: adopt it.
+        core.adopt_handles(&Value::Handle(t));
+    }
+    let mut eng = engine.borrow_mut();
+    // Changes and store fields first, as a checkpoint would, so the call sees current state.
+    reactive::collect(core);
+    deliver_changes(core, &mut eng);
+    let res = f(&mut eng);
+    let st = eng.run_jobs(core.cfg.max_jobs_per_checkpoint);
+    core.report_all(eng.take_errors());
+    drop(eng);
+    core.process_releases();
+    core.sync_sched();
+    if st.pending || core.has_events() {
         core.backend.wake();
     }
     res

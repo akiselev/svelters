@@ -7,23 +7,26 @@
 //! app.run();
 //! assert!(app.harness.query_by_label("Count: 1").is_some());
 //! ```
+//!
+//! [`TestApp`] runs an app bundle (its `App` mounts its windows) on an [`Embed`]; [`EmbedHarness`]
+//! hosts embed bundles in a `Ui` of the test's own, the way an application embeds svelters-egui.
 
 use crate::backend::EguiBackend;
+use crate::embed::{Busy, Embed, EmbedConfig, EmbedError};
 use egui_kittest::Harness;
 use std::cell::RefCell;
 use std::path::Path;
 use std::rc::Rc;
-use svelters_abi::BackendVtable;
 use svelters_host::{Host, HostConfig};
 
 pub use egui_kittest;
 pub use egui_kittest::kittest::{NodeT, Queryable};
 
-/// A bundle mounted on a [`Host`] attached through ABI v2.7 `start` (D1: the harness drives the
-/// frames), with a kittest [`Harness`] whose frames run the backend.
+/// An app bundle on an [`Embed`] (the host attached through ABI v2.7 `start`; D1: the harness drives
+/// the frames), with a kittest [`Harness`] whose frames run `logic` and draw the presented windows.
 pub struct TestApp {
-    pub harness: Harness<'static, EguiBackend>,
-    pub host: Host<'static>,
+    pub harness: Harness<'static, Embed>,
+    pub embed: Embed,
     pub backend: EguiBackend,
 }
 
@@ -34,21 +37,10 @@ impl TestApp {
     }
 
     pub fn with_config(bundle: impl AsRef<Path>, cfg: HostConfig) -> Result<TestApp, String> {
-        let backend = EguiBackend::new();
-        // The host borrows the vtable for its lifetime; a test app lives as long as the test.
-        let vt: &'static BackendVtable = Box::leak(Box::new(backend.vtable()));
-        let host = Host::new(vt.backend_ref(), cfg).map_err(|e| e.to_string())?;
-        let err: Rc<RefCell<Option<String>>> = Rc::default();
-        let (path, e2) = (bundle.as_ref().to_path_buf(), err.clone());
-        host.start_with(move |h| {
-            if let Err(e) = h.load_bundle(&path) {
-                *e2.borrow_mut() = Some(e.to_string());
-            }
-        })
-        .map_err(|e| e.to_string())?;
-        if let Some(e) = err.borrow_mut().take() {
-            return Err(e);
-        }
+        // The harness's context does not exist yet: `logic` binds it at the first frame.
+        let embed = Embed::new(&egui::Context::default(), EmbedConfig::app(cfg)).map_err(|e| e.to_string())?;
+        embed.load_app(bundle).map_err(|e| e.to_string())?;
+        let backend = embed.backend().clone();
         let size = backend
             .root_window()
             .and_then(|w| match backend.prop(w, "default-width").ok().zip(backend.prop(w, "default-height").ok()) {
@@ -56,8 +48,18 @@ impl TestApp {
                 _ => None,
             })
             .unwrap_or(egui::vec2(480.0, 360.0));
-        let harness = Harness::builder().with_size(size).build_ui_state(|ui, b: &mut EguiBackend| b.ui(ui), backend.clone());
-        Ok(TestApp { harness, host, backend })
+        let harness = Harness::builder().with_size(size).build_ui_state(
+            |ui, e: &mut Embed| {
+                e.logic(ui.ctx());
+                e.show_windows(ui);
+            },
+            embed.clone(),
+        );
+        Ok(TestApp { harness, embed, backend })
+    }
+
+    pub fn host(&self) -> &Host<'static> {
+        self.embed.host()
     }
 
     /// Runs frames until nothing asks for another one; returns how many ran.
@@ -67,6 +69,73 @@ impl TestApp {
 
     /// Errors JS reported so far (uncaught exceptions, rejected promises).
     pub fn errors(&self) -> Vec<String> {
-        self.host.take_errors().into_iter().map(|e| e.to_string()).collect()
+        self.host().take_errors().into_iter().map(|e| e.to_string()).collect()
+    }
+}
+
+type UiFn = Rc<RefCell<Box<dyn FnMut(&mut egui::Ui)>>>;
+
+/// The harness state: the test's own ui closure, set after the embed exists.
+pub struct HostUi(UiFn);
+
+/// An [`Embed`] in a kittest harness whose ui is the test's (`set_ui`): the host app's panels call
+/// `embed.show_slot`, as cadatomic's panes do. Each frame calls `embed.logic` first.
+pub struct EmbedHarness {
+    pub harness: Harness<'static, HostUi>,
+    pub embed: Embed,
+}
+
+/// `run_until_settled` gave up: the busy reasons of each iteration (a non-converging loop shows its
+/// chain).
+#[derive(Clone, Debug)]
+pub struct NotSettled {
+    pub chain: Vec<Busy>,
+}
+
+impl EmbedHarness {
+    pub fn new(size: egui::Vec2, cfg: EmbedConfig) -> Result<EmbedHarness, EmbedError> {
+        let f: UiFn = Rc::new(RefCell::new(Box::new(|_ui: &mut egui::Ui| {})));
+        let harness = Harness::builder().with_size(size).build_ui_state(
+            |ui, s: &mut HostUi| {
+                let f = s.0.clone();
+                (f.borrow_mut())(ui);
+            },
+            HostUi(f),
+        );
+        let embed = Embed::new(&harness.ctx, cfg)?;
+        Ok(EmbedHarness { harness, embed })
+    }
+
+    /// Sets the host's ui; `embed.logic` runs before it every frame.
+    pub fn set_ui(&mut self, mut f: impl FnMut(&Embed, &mut egui::Ui) + 'static) {
+        let e = self.embed.clone();
+        *self.harness.state().0.borrow_mut() = Box::new(move |ui| {
+            e.logic(ui.ctx());
+            f(&e, ui);
+        });
+    }
+
+    /// Runs frames until nothing asks for another one; returns how many ran.
+    pub fn run(&mut self) -> u64 {
+        self.harness.run()
+    }
+
+    pub fn step(&mut self) {
+        self.harness.step();
+    }
+
+    /// Steps frames until [`Embed::settled`] is empty, at most `max_iters` (slint's
+    /// `flush_until_settled`, cap 10 by convention). Returns the iterations it took.
+    pub fn run_until_settled(&mut self, max_iters: u32) -> Result<u32, NotSettled> {
+        let mut chain = Vec::new();
+        for i in 1..=max_iters {
+            self.harness.step();
+            let s = self.embed.settled();
+            chain.push(s.busy);
+            if s.is_settled() {
+                return Ok(i);
+            }
+        }
+        Err(NotSettled { chain })
     }
 }
