@@ -1,6 +1,7 @@
 //! Maps QuickJS positions (`module.js:line:col`) in error messages, stacks and console text back
-//! to the original `.svelte`/`.ts` sources, using the `<module>.map` files Vite writes next to the
-//! bundle. All mapping happens here in Rust; the JS side only produces ordinary stacks.
+//! to the original `.svelte`/`.ts` sources: with the `<module>.map` files Vite writes next to a
+//! bundle, or the maps a module provider hands over with each module (Q1, loaded from source). All
+//! mapping happens here in Rust; the JS side only produces ordinary stacks.
 
 use crate::engine::JsError;
 use ::sourcemap::SourceMap;
@@ -13,20 +14,39 @@ pub(crate) struct SourceMaps {
     /// Module name (slash-separated, relative to `root`) -> its parsed map, or None when there is
     /// no usable map.
     maps: HashMap<String, Option<SourceMap>>,
+    /// Maps that came with the modules' code, by module id. Kept across loads (a failed reload
+    /// leaves the previous runtime running); a module's newer map replaces its older one.
+    inline: HashMap<String, SourceMap>,
 }
 
 impl SourceMaps {
-    /// Starts a new bundle: forgets every cached map and eagerly loads the entry's map, so a
-    /// rebuild that lands later cannot change what an already-running bundle maps to.
-    pub(crate) fn set_entry(&mut self, entry: &Path) {
+    /// Starts a new load. With a bundle's `map_dir`: forgets every cached file map and eagerly
+    /// loads the entry's, so a rebuild that lands later cannot change what an already-running
+    /// bundle maps to.
+    pub(crate) fn begin(&mut self, map_dir: Option<PathBuf>, entry: &str) {
         self.maps.clear();
-        self.root = entry.parent().map(Path::to_path_buf);
-        if let Some(name) = entry.file_name().and_then(|n| n.to_str()) {
-            self.map_for(name);
+        self.root = map_dir;
+        if self.root.is_some() {
+            self.map_for(entry);
+        }
+    }
+
+    /// The map of module `id` (JSON), from its provider. An unparsable map is ignored.
+    pub(crate) fn insert(&mut self, id: &str, map: &str) {
+        match SourceMap::from_slice(map.as_bytes()) {
+            Ok(sm) => {
+                self.inline.insert(id.to_string(), sm);
+            }
+            Err(_) => {
+                self.inline.remove(id);
+            }
         }
     }
 
     fn map_for(&mut self, module: &str) -> Option<&SourceMap> {
+        if self.inline.contains_key(module) {
+            return self.inline.get(module);
+        }
         let root = self.root.as_ref()?;
         self.maps
             .entry(module.to_string())
@@ -41,7 +61,7 @@ impl SourceMaps {
     /// Rewrites every `module.js:line:col` in `text` that the maps can resolve to
     /// `original/path:line:col`. Everything else is left untouched.
     pub(crate) fn map_text(&mut self, text: &str) -> String {
-        if self.root.is_none() {
+        if self.root.is_none() && self.inline.is_empty() {
             return text.to_string();
         }
         let mut out = String::with_capacity(text.len());
@@ -92,16 +112,16 @@ fn is_path_char(c: char) -> bool {
     c.is_ascii_alphanumeric() || matches!(c, '_' | '-' | '.' | '/' | '@' | '+' | '~')
 }
 
-/// Finds the next `<name>.js:<line>:<col>` (or `.mjs`) in `s`.
+/// Module extensions whose positions are mapped: bundles and JS modules, and components loaded
+/// from source (their module id is the `.svelte` file).
+const EXTENSIONS: [&str; 3] = [".js:", ".mjs:", ".svelte:"];
+
+/// Finds the next `<name>.js:<line>:<col>` (or `.mjs`, `.svelte`) in `s`.
 fn find_position(s: &str) -> Option<Pos<'_>> {
     let mut from = 0;
     loop {
-        let i = match (s[from..].find(".js:"), s[from..].find(".mjs:")) {
-            (Some(a), Some(b)) => from + a.min(b),
-            (Some(a), None) | (None, Some(a)) => from + a,
-            (None, None) => return None,
-        };
-        let ext_len = if s[i..].starts_with(".mjs:") { 4 } else { 3 };
+        let (i, ext) = EXTENSIONS.iter().filter_map(|e| s[from..].find(e).map(|a| (from + a, *e))).min_by_key(|(i, _)| *i)?;
+        let ext_len = ext.len() - 1;
         let name_end = i + ext_len;
         let start = s[..i]
             .char_indices()
@@ -135,8 +155,13 @@ fn number(s: &str) -> (u32, usize) {
 }
 
 /// Source paths in a Vite map are relative to the map's directory (`../src/App.svelte`). Shows
-/// them lexically normalised with the leading `..` components dropped (`src/App.svelte`).
+/// them lexically normalised with the leading `..` components dropped (`src/App.svelte`). An
+/// absolute path (the compiler's own maps, loaded from source) is shown as is.
 fn display_path(src: &str) -> String {
+    let src = src.strip_prefix("file://").unwrap_or(src);
+    if Path::new(src).is_absolute() {
+        return src.to_string();
+    }
     let mut parts: Vec<String> = Vec::new();
     for c in Path::new(src.strip_prefix("file://").unwrap_or(src)).components() {
         match c {
@@ -179,9 +204,19 @@ mod tests {
     }
 
     #[test]
+    fn finds_positions_of_source_modules() {
+        let s = "at render (/app/src/App.svelte:7:3)\nat /app/src/state.svelte.js:2:1";
+        let p = find_position(s).unwrap();
+        assert_eq!((p.module, p.line, p.col), ("/app/src/App.svelte", 7, 3));
+        let q = find_position(&s[p.end..]).unwrap();
+        assert_eq!((q.module, q.line, q.col), ("/app/src/state.svelte.js", 2, 1));
+    }
+
+    #[test]
     fn normalises_source_paths() {
         assert_eq!(display_path("../src/App.svelte"), "src/App.svelte");
         assert_eq!(display_path("../../node_modules/svelte/x.js"), "node_modules/svelte/x.js");
         assert_eq!(display_path("a/../b.ts"), "b.ts");
+        assert_eq!(display_path("/app/src/App.svelte"), "/app/src/App.svelte");
     }
 }
