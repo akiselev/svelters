@@ -68,7 +68,8 @@ const COUNTER: &str = r#"<script>
   import data from './data.json';
   import icon from './icon.png';
   import { label } from './state.svelte.js';
-  let count = $state(data.start);
+  import { tag } from 'svelters:behaviors/demo';
+  let count = $state(data.start + tag);
 </script>
 
 <window title={icon.endsWith('/src/icon.png') ? 'asset' : 'no asset'}>
@@ -84,6 +85,9 @@ fn counter_app(name: &str) -> App {
     app.write("src/data.json", "{ \"start\": 41 }\n");
     app.write("src/icon.png", "not really a png");
     app.write("src/state.svelte.js", "export const label = $state({ text: 'Count' });\n");
+    // EV2b: a dumped behaviours module (svelters_egui::dump), resolved from the app root.
+    std::fs::create_dir_all(app.path(".svelters/app/behaviors")).unwrap();
+    app.write(".svelters/app/behaviors/demo.js", "export const tag = 0;\n");
     app
 }
 

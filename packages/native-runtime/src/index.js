@@ -458,6 +458,92 @@ export function attached(kind) {
   return n;
 }
 
+if (typeof globalThis.EventTarget !== 'function') {
+  // QuickJS has none. Svelte's `action` reads a `use:` param object with `deep_read_state`, which
+  // tests `value instanceof EventTarget` and threw here: the param effect lost its dependencies and
+  // `update` never ran (EV2b).
+  globalThis.EventTarget = class EventTarget {};
+}
+
+/** Plain data equality for behaviour params (arrays and plain objects by content). */
+function sameParam(a, b) {
+  if (Object.is(a, b)) return true;
+  if (Array.isArray(a)) return Array.isArray(b) && a.length === b.length && a.every((x, i) => sameParam(x, b[i]));
+  if (a && b && typeof a === 'object' && typeof b === 'object' && Object.getPrototypeOf(a) === Object.prototype && Object.getPrototypeOf(b) === Object.prototype) {
+    const ka = Object.keys(a);
+    return ka.length === Object.keys(b).length && ka.every((k) => Object.hasOwn(b, k) && sameParam(a[k], b[k]));
+  }
+  return false;
+}
+
+/**
+ * EV2b (ARCH-EMBED §8.5): the Svelte action of a native behaviour, what the generated
+ * `svelters:behaviors/<ns>` modules export (`export const pick = nativeBehavior('cad.pick', ['picked'])`).
+ * `use:pick={params}` creates the behaviour's attached node, inserts it into the element (no slot or
+ * position), sets each param as a prop and listens to the events whose `on<event>` callback the
+ * params carry. An update sets only the params whose value changed (arrays and plain objects by
+ * content: one `set_prop` per changed param) and swaps callbacks without host ops; a param that goes
+ * away is reset (`null`). The behaviour itself runs in Rust every frame, with no JS entry.
+ */
+export function nativeBehavior(kind, events = []) {
+  const evs = new Set(events);
+  return (element, params) => {
+    const hs = element.host ?? host();
+    const b = new Native(kind, hs.create(kind), null);
+    b.attached = true;
+    table(hs).set(b.h, b);
+    const sent = new Map(); // prop -> value
+    const cbs = new Map(); // event -> the params' current callback
+    const apply = (p) => {
+      if (!alive(b)) return;
+      const next = p ?? {};
+      for (const [key, v] of Object.entries(next)) {
+        if (key.startsWith('on') && evs.has(key.slice(2))) {
+          const ev = key.slice(2);
+          if (typeof v === 'function') {
+            if (!cbs.has(ev)) {
+              const fn = (...args) => cbs.get(ev)?.(...args);
+              b.handlers.set(hkey(ev, 0), [fn]);
+              b.listening.add(hkey(ev, 0));
+              hostListen(b, ev, true, 0);
+            }
+            cbs.set(ev, v);
+          } else cbs.set(ev, undefined);
+          continue;
+        }
+        if (v === undefined) continue;
+        if (sent.has(key) && sameParam(sent.get(key), v)) continue;
+        sent.set(key, v);
+        hs.setProp(b.h, key, v);
+      }
+      for (const key of [...sent.keys()]) {
+        if (next[key] === undefined) {
+          sent.delete(key);
+          hs.setProp(b.h, key, null);
+        }
+      }
+      for (const ev of cbs.keys()) if (typeof next['on' + ev] !== 'function') cbs.set(ev, undefined);
+    };
+    apply(params);
+    if (alive(element) && alive(b)) {
+      hs.insert(element.h, b.h, null, undefined);
+      b.np = element;
+    }
+    return {
+      update: apply,
+      destroy() {
+        if (b.destroyed) return;
+        b.destroyed = true;
+        b.np = null;
+        if (!b.dead) {
+          table(hs).delete(b.h);
+          hs.destroy(b.h);
+        }
+      },
+    };
+  };
+}
+
 export function set(node, prop, value) {
   if (value === RESTORE) {
     if (!node.captured.has(prop)) throw new Error(`set ${prop}: RESTORE without capture()`);
