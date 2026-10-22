@@ -28,6 +28,14 @@ pub mod range_slider;
 pub mod slider;
 /// OW1b: the number field of `drag-value` and the sliders' value boxes.
 pub mod value_box;
+pub mod checkbox;
+pub mod hyperlink;
+pub mod label;
+mod parts;
+pub mod progress;
+pub mod separator;
+pub mod switch;
+pub mod toggle_button;
 
 use crate::scene::W;
 

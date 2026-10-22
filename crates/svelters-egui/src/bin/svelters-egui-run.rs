@@ -3,6 +3,7 @@
 //! ```text
 //! svelters-egui-run [--bundle] <dist/app.js>          # a bundle built by Vite
 //! svelters-egui-run --entry <app dir | file> [--dev]  # from source, compiled live (Q1)
+//! svelters-egui-run --app <app.svb>                   # a release bundle (Q4b)
 //!                   [--watch] [--idle-report <ms>]
 //! ```
 //!
@@ -12,6 +13,9 @@
 //! `--dev` compiles with Svelte's `dev` and resolves the `development` condition. `--watch`
 //! reloads in place when a file of the app changes (a bundle: the bundle; from source: the module
 //! graph).
+//!
+//! `--app` loads a `.svb` release bundle (`svelters_modules::svb::build`): its bytecode when it was
+//! precompiled by this binary's engine, else its JS through the bytecode cache.
 //!
 //! `--idle-report <ms>`: after the app has settled (first frames drawn, then 1 s without one), counts the frames drawn and the CPU time
 //! the process used over `<ms>`, prints one JSON line (`{"frames":..,"cpu_ms":..,"wall_ms":..}`) and
@@ -31,9 +35,10 @@ fn cpu_ms() -> Option<f64> {
 enum Load {
     Bundle(std::path::PathBuf),
     Entry(std::path::PathBuf),
+    App(std::path::PathBuf),
 }
 
-const USAGE: &str = "usage: svelters-egui-run [--idle-report <ms>] [--watch] ([--bundle] <dist/app.js> | --entry <app dir|file> [--dev])";
+const USAGE: &str = "usage: svelters-egui-run [--idle-report <ms>] [--watch] ([--bundle] <dist/app.js> | --entry <app dir|file> [--dev] | --app <app.svb>)";
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
@@ -44,6 +49,7 @@ fn main() {
             "--idle-report" => idle_ms = it.next().and_then(|v| v.parse::<u64>().ok()),
             "--bundle" => load = it.next().map(|p| Load::Bundle(p.into())),
             "--entry" => load = it.next().map(|p| Load::Entry(p.into())),
+            "--app" => load = it.next().map(|p| Load::App(p.into())),
             "--dev" => dev = true,
             "--watch" => watch = true,
             "-h" | "--help" => {
@@ -74,6 +80,12 @@ fn main() {
             cfg.backend = "egui".into();
             cfg.dev = dev;
             let provider = svelters_host::modules::SourceProvider::new(cfg).unwrap_or_else(|e| fail(e));
+            embed.load_app_from(std::rc::Rc::new(provider))
+        }
+        Load::App(file) => {
+            use svelters_host::modules::svb::{Svb, SvbProvider};
+            let svb = Svb::open(&file).unwrap_or_else(|e| fail(e));
+            let provider = SvbProvider::new(std::sync::Arc::new(svb)).unwrap_or_else(|e| fail(e)).engine_build(svelters_host::bytecode::stamp());
             embed.load_app_from(std::rc::Rc::new(provider))
         }
     };

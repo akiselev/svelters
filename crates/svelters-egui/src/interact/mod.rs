@@ -27,6 +27,7 @@ mod hover;
 mod press;
 mod scrub;
 mod step;
+mod toggle;
 
 pub use drag::{Axis, Drag, DragParams, Draggable};
 pub use focus::{Focus, FocusParams, Focusable};
@@ -34,6 +35,7 @@ pub use hover::{Hover, Hoverable};
 pub use press::{ACCEL_EVERY, ActivateOn, Press, PressParams, Pressable};
 pub use scrub::{DragToValue, Scale, Scrub, ScrubMode, ScrubParams};
 pub use step::{Arrows, POINTS_PER_STEP, Step, StepParams, Steppable, Wheel};
+pub use toggle::{Toggle, ToggleParams, Toggleable};
 
 use crate::native::Policy;
 use crate::provider::StateBits;

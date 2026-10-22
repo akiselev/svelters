@@ -53,7 +53,7 @@ pub fn build(cfg: SourceConfig, opts: &BuildOptions) -> Result<Vec<u8>, String> 
     let mut manifests = BTreeSet::new();
     while let Some(id) = queue.pop_front() {
         let logical = ids.id(&id)?;
-        let (js, map) = match provider.load(&id).map_err(|e| format!("{id}: {e}"))? {
+        let (mut js, map) = match provider.load(&id).map_err(|e| format!("{id}: {e}"))? {
             ModuleCode::Source { js, map } => (js, map),
             ModuleCode::Cached { .. } => return Err(format!("{id}: the source provider gave bytecode")),
         };
@@ -63,13 +63,25 @@ pub fn build(cfg: SourceConfig, opts: &BuildOptions) -> Result<Vec<u8>, String> 
                 continue;
             }
             let dep = provider.resolve(&id, &spec).map_err(|e| format!("{id}: {e}"))?;
-            imports.insert(spec, ids.id(&dep)?);
+            let logical_dep = ids.id(&dep)?;
+            if Path::new(spec.strip_prefix(super::STYLE_PREFIX).unwrap_or(&spec)).is_absolute() {
+                // Q4b: the generated entry names the app's files, and a component its sheet
+                // module (LD2, `svelters-style:<path>`), by build-machine path; the bundle names
+                // them by logical id, so its bytes and build id are the same on every machine.
+                // (Both quote the specifier as a JSON string.)
+                let lit = |s: &str| Value::String(s.to_string()).to_string();
+                js = js.replace(&lit(&spec), &lit(&logical_dep));
+                imports.insert(logical_dep.clone(), logical_dep);
+            } else {
+                imports.insert(spec, logical_dep);
+            }
             if visited.insert(dep.clone()) {
                 queue.push_back(dep);
             }
         }
         let mut entry = ModuleEntry { imports, ..ModuleEntry::default() };
         entry.js = w.blob(js.as_bytes());
+        let map = map.map(|m| logical_map(&m, &mut ids)).transpose()?;
         entry.map = map.map(|m| w.blob(m.as_bytes()));
         if let Some(path) = file_of(&id) {
             let rel = ids.rel(&path)?;
@@ -124,18 +136,7 @@ impl Logical {
 
     /// `path`'s name in the bundle: relative to the app, or `node_modules/<package>/…`.
     fn rel(&mut self, path: &Path) -> Result<String, String> {
-        let slashed = |p: &Path| p.components().map(|c| c.as_os_str().to_string_lossy()).collect::<Vec<_>>().join("/");
-        let rel = match path.strip_prefix(&self.root) {
-            Ok(rel) => slashed(rel),
-            Err(_) => {
-                let (dir, name) = path
-                    .ancestors()
-                    .skip(1)
-                    .find_map(|d| package_name(d).map(|n| (d, n)))
-                    .ok_or_else(|| format!("{}: outside the app and in no package", path.display()))?;
-                format!("node_modules/{name}/{}", slashed(path.strip_prefix(dir).expect("an ancestor")))
-            }
-        };
+        let rel = bundle_path(&self.root, path)?;
         match self.seen.get(&rel) {
             Some(prev) if prev != path => Err(format!("{} and {} would both be {rel} in the bundle (two copies of a package)", prev.display(), path.display())),
             Some(_) => Ok(rel),
@@ -145,6 +146,45 @@ impl Logical {
             }
         }
     }
+}
+
+/// `path`'s name in an app bundle rooted at `root`: relative to the app (`src/App.svelte`), or
+/// `node_modules/<package>/<path in the package>` for a file of a package outside the app (found
+/// through the nearest named package.json, as `Assets::register` does). Machine-independent.
+pub(super) fn bundle_path(root: &Path, path: &Path) -> Result<String, String> {
+    let slashed = |p: &Path| p.components().map(|c| c.as_os_str().to_string_lossy()).collect::<Vec<_>>().join("/");
+    Ok(match path.strip_prefix(root) {
+        Ok(rel) => slashed(rel),
+        Err(_) => {
+            let (dir, name) = path
+                .ancestors()
+                .skip(1)
+                .find_map(|d| package_name(d).map(|n| (d, n)))
+                .ok_or_else(|| format!("{}: outside the app and in no package", path.display()))?;
+            format!("node_modules/{name}/{}", slashed(path.strip_prefix(dir).expect("an ancestor")))
+        }
+    })
+}
+
+/// Q4b: the logical id of the app file `path` (`app/src/App.svelte`), as a bundle names it; the
+/// path itself when it has none.
+pub(super) fn logical_id(root: &Path, path: &Path) -> String {
+    bundle_path(root, path).map_or_else(|_| path.to_string_lossy().into_owned(), |rel| format!("{ROOT}/{rel}"))
+}
+
+/// Q4b: `map` with its `sources` named by logical id (`app/src/App.svelte`) instead of the
+/// build machine's paths. Relative sources are kept.
+fn logical_map(map: &str, ids: &mut Logical) -> Result<String, String> {
+    let mut json: Value = serde_json::from_str(map).map_err(|e| format!("a source map: {e}"))?;
+    let Some(Value::Array(sources)) = json.get_mut("sources") else { return Ok(map.to_string()) };
+    let mut changed = false;
+    for s in sources.iter_mut() {
+        if let Some(p) = s.as_str().filter(|p| Path::new(p).is_absolute()) {
+            *s = Value::String(ids.id(p)?);
+            changed = true;
+        }
+    }
+    Ok(if changed { json.to_string() } else { map.to_string() })
 }
 
 /// The file behind a source provider id, if it is one.

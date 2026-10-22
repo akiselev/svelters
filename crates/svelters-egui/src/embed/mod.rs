@@ -1716,7 +1716,8 @@ fn takes_input(w: &crate::scene::W) -> bool {
         W::Button { .. } | W::Checkbox { .. } | W::TextEdit { .. } => true,
         // scrolls and selects (LS1)
         W::VirtualList(_) => true,
-        W::Label { selectable, .. } => *selectable,
+        W::Run { anchor, .. } => *anchor,
+        W::Label { selectable, rich, .. } => *selectable || rich.as_ref().is_some_and(|r| r.runs.iter().any(|x| x.link.is_some())),
         W::Ext(x) => {
             let c = x.entry().caps;
             c.contains(crate::provider::Caps::FOCUSABLE) || c.contains(crate::provider::Caps::EDITABLE)

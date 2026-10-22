@@ -10,6 +10,10 @@
   ],
   "event_aliases": {},
   "framework": "egui 0.37 (svelters-egui; taffy 0.15 layout)",
+  "inline_text": {
+    "kind": "span",
+    "prop": "text"
+  },
   "kinds": {
     "Action": {
       "a11y": {
@@ -200,6 +204,169 @@
       },
       "states": [],
       "text_content": "label"
+    },
+    "Anchor": {
+      "a11y": {
+        "actions": [
+          "Click",
+          "Focus"
+        ],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [
+          "accessible-name",
+          "text"
+        ],
+        "note": "A `Link` node at its glyphs' bounds, a child of the label's node; Tab reaches it, Enter or Space activates it.",
+        "role": "Link",
+        "value": null,
+        "variants": []
+      },
+      "abstract": false,
+      "bindings": {},
+      "category": "display",
+      "chain": [
+        "Anchor",
+        "Run"
+      ],
+      "children": {
+        "default_slot": "runs",
+        "policy": "ordered",
+        "slots": {
+          "runs": {
+            "accepts": [
+              "Span",
+              "Bold",
+              "Italic",
+              "Code",
+              "Anchor"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "css_hidden": [],
+      "css_note": "Drawn as a section of its label's paragraph: `color`, `background-color`, `font-size`, `font-weight`, `font-style`, `font-family` (monospace when it names one) and `text-decoration-line` apply; box properties do not.",
+      "doc": "An inline link: the `link` colour, underlined on hover (DESIGN R18), the pointer cursor (R10); focusable, activated by click, Enter or Space.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "svelters text run (a link: focusable, clickable, AccessKit `Link`)",
+      "paint": "none",
+      "present": null,
+      "props": {
+        "href": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The link target. Without an `onclicked` handler a click opens it (as `hyperlink`'s `url`); with one, only the handler runs.",
+          "js": "href",
+          "native": "href",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Anchor:href",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "clicked": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "The link was activated (click, or Enter/Space while it has keyboard focus).",
+          "handler_result": "none",
+          "js_event": "clicked",
+          "name": "clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "kind",
+          "when": "the pointer is over one of its glyphs"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "kind",
+          "when": "it has keyboard focus"
+        }
+      ],
+      "text_content": "text"
+    },
+    "Bold": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "Part of its label's text (the label's AccessKit value holds all its runs).",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
+      "abstract": false,
+      "bindings": {},
+      "category": "display",
+      "chain": [
+        "Bold",
+        "Run"
+      ],
+      "children": {
+        "default_slot": "runs",
+        "policy": "ordered",
+        "slots": {
+          "runs": {
+            "accepts": [
+              "Span",
+              "Bold",
+              "Italic",
+              "Code",
+              "Anchor"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "css_hidden": [],
+      "css_note": "Drawn as a section of its label's paragraph: `color`, `background-color`, `font-size`, `font-weight`, `font-style`, `font-family` (monospace when it names one) and `text-decoration-line` apply; box properties do not.",
+      "doc": "Bold inline text (`font-weight: 700` from the theme's base sheet).",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "svelters text run (one section of its label's galley)",
+      "paint": "none",
+      "present": null,
+      "props": {},
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {},
+      "states": [],
+      "text_content": "text"
     },
     "Box": {
       "a11y": {
@@ -1176,6 +1343,60 @@
           "when": "`checked` is true"
         }
       ],
+      "text_content": "text"
+    },
+    "Code": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "Part of its label's text (the label's AccessKit value holds all its runs).",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
+      "abstract": false,
+      "bindings": {},
+      "category": "display",
+      "chain": [
+        "Code",
+        "Run"
+      ],
+      "children": {
+        "default_slot": "runs",
+        "policy": "ordered",
+        "slots": {
+          "runs": {
+            "accepts": [
+              "Span",
+              "Bold",
+              "Italic",
+              "Code",
+              "Anchor"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "css_hidden": [],
+      "css_note": "Drawn as a section of its label's paragraph: `color`, `background-color`, `font-size`, `font-weight`, `font-style`, `font-family` (monospace when it names one) and `text-decoration-line` apply; box properties do not.",
+      "doc": "Inline code: the monospace font on the field fill (theme's base sheet).",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "svelters text run (one section of its label's galley)",
+      "paint": "none",
+      "present": null,
+      "props": {},
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {},
+      "states": [],
       "text_content": "text"
     },
     "CollapsingHeader": {
@@ -3806,6 +4027,60 @@
       "states": [],
       "text_content": null
     },
+    "Italic": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "Part of its label's text (the label's AccessKit value holds all its runs).",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
+      "abstract": false,
+      "bindings": {},
+      "category": "display",
+      "chain": [
+        "Italic",
+        "Run"
+      ],
+      "children": {
+        "default_slot": "runs",
+        "policy": "ordered",
+        "slots": {
+          "runs": {
+            "accepts": [
+              "Span",
+              "Bold",
+              "Italic",
+              "Code",
+              "Anchor"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "css_hidden": [],
+      "css_note": "Drawn as a section of its label's paragraph: `color`, `background-color`, `font-size`, `font-weight`, `font-style`, `font-family` (monospace when it names one) and `text-decoration-line` apply; box properties do not.",
+      "doc": "Italic inline text (`font-style: italic` from the theme's base sheet).",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "svelters text run (one section of its label's galley)",
+      "paint": "none",
+      "present": null,
+      "props": {},
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {},
+      "states": [],
+      "text_content": "text"
+    },
     "Label": {
       "a11y": {
         "actions": [
@@ -3830,10 +4105,28 @@
         "Label",
         "Widget"
       ],
-      "children": null,
+      "children": {
+        "default_slot": "runs",
+        "policy": "ordered",
+        "slots": {
+          "runs": {
+            "accepts": [
+              "Span",
+              "Bold",
+              "Italic",
+              "Code",
+              "Anchor"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
       "css_hidden": [],
       "css_note": "",
-      "doc": "Static text.",
+      "doc": "Static text; with inline run children (`<b>`, `<i>`, `<code>`, `<a>`, `<span>`) one paragraph of styled runs (RT2).",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
@@ -5958,6 +6251,111 @@
       ],
       "text_content": null
     },
+    "Run": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "Part of its label's text (the label's AccessKit value holds all its runs).",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
+      "abstract": true,
+      "bindings": {},
+      "category": "display",
+      "chain": [
+        "Run"
+      ],
+      "children": {
+        "default_slot": "runs",
+        "policy": "ordered",
+        "slots": {
+          "runs": {
+            "accepts": [
+              "Span",
+              "Bold",
+              "Italic",
+              "Code",
+              "Anchor"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "css_hidden": [],
+      "css_note": "Drawn as a section of its label's paragraph: `color`, `background-color`, `font-size`, `font-weight`, `font-style`, `font-family` (monospace when it names one) and `text-decoration-line` apply; box properties do not.",
+      "doc": "Common properties of the inline runs (`span`, `b`, `i`, `code`, `a`): text inside a `label`, laid out with the label's other runs as one paragraph, never by taffy.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "svelters text run",
+      "paint": "none",
+      "present": null,
+      "props": {
+        "accessible-name": {
+          "construct_only": false,
+          "default": "",
+          "doc": "AccessKit name of an `a` run's link (defaults to its text); other runs are read as part of their label's text.",
+          "js": "accessible-name",
+          "native": "accessible-name",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Run:accessible-name",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "font-weight": {
+          "construct_only": false,
+          "default": 0,
+          "doc": "CSS font weight (100-900) of this run and the runs in it; 0 (the default) inherits the enclosing run's or label's weight. `b` has 700 from the theme's base sheet.",
+          "js": "font-weight",
+          "native": "font-weight",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Run:font-weight",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "text": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The run's own text, before its child runs (its text children fold into it).",
+          "js": "text",
+          "native": "text",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Run:text",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {},
+      "states": [],
+      "text_content": "text"
+    },
     "ScrollArea": {
       "a11y": {
         "actions": [],
@@ -6962,6 +7360,60 @@
         }
       ],
       "text_content": null
+    },
+    "Span": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "Part of its label's text (the label's AccessKit value holds all its runs).",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
+      "abstract": false,
+      "bindings": {},
+      "category": "display",
+      "chain": [
+        "Span",
+        "Run"
+      ],
+      "children": {
+        "default_slot": "runs",
+        "policy": "ordered",
+        "slots": {
+          "runs": {
+            "accepts": [
+              "Span",
+              "Bold",
+              "Italic",
+              "Code",
+              "Anchor"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "css_hidden": [],
+      "css_note": "Drawn as a section of its label's paragraph: `color`, `background-color`, `font-size`, `font-weight`, `font-style`, `font-family` (monospace when it names one) and `text-decoration-line` apply; box properties do not.",
+      "doc": "An inline run of text in a `label`, styled by CSS (`label span.cls`). Bare text in a rich label becomes anonymous spans.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "svelters text run (one section of its label's galley)",
+      "paint": "none",
+      "present": null,
+      "props": {},
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {},
+      "states": [],
+      "text_content": "text"
     },
     "Spinner": {
       "a11y": {
@@ -9030,7 +9482,7 @@
         },
         "show": {
           "dispatch": "generated",
-          "doc": "`show(text, level = 'info', duration = the host's)`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed) and returns its id.",
+          "doc": "`show(text, level = 'info', duration = the host's)`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed) and returns its id. `text` may be a run list (RT2): strings and `{text, b, i, code, href}` objects, drawn as one paragraph with the theme's run defaults; a click on a run with an `href` opens it.",
           "native": "show",
           "params": [],
           "returns": {
@@ -13369,11 +13821,14 @@
     }
   },
   "tags": {
+    "a": "Anchor",
     "action": "Action",
+    "b": "Bold",
     "box": "Box",
     "button": "Button",
     "canvas": "Canvas",
     "checkbox": "Checkbox",
+    "code": "Code",
     "collapsing-header": "CollapsingHeader",
     "color-picker": "ColorPicker",
     "combo-box": "ComboBox",
@@ -13383,6 +13838,7 @@
     "frame": "Frame",
     "grid": "Grid",
     "hyperlink": "Hyperlink",
+    "i": "Italic",
     "icon": "Icon",
     "image": "Image",
     "inner-window": "InnerWindow",
@@ -13401,6 +13857,7 @@
     "separator": "Separator",
     "sides": "Sides",
     "slider": "Slider",
+    "span": "Span",
     "spinner": "Spinner",
     "split-view": "SplitView",
     "stack": "Stack",
