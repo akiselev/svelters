@@ -83,22 +83,26 @@ fn color_picker_normalizes_hex_and_edits_through_its_popup() {
 }
 
 /// Presses at `from`, moves to `to` in steps (a frame each), releases there.
-fn drag(rig: &mut Rig, from: egui::Pos2, to: egui::Pos2) {
+fn drag_on<S>(h: &mut egui_kittest::Harness<'_, S>, from: egui::Pos2, to: egui::Pos2) {
     let mods = egui::Modifiers::NONE;
-    rig.harness.event(egui::Event::PointerMoved(from));
-    rig.harness.step();
-    rig.harness.event(egui::Event::PointerButton { pos: from, button: egui::PointerButton::Primary, pressed: true, modifiers: mods });
-    rig.harness.step();
+    h.event(egui::Event::PointerMoved(from));
+    h.step();
+    h.event(egui::Event::PointerButton { pos: from, button: egui::PointerButton::Primary, pressed: true, modifiers: mods });
+    h.step();
     for k in 1..=8 {
         let p = from + (to - from) * (k as f32 / 8.0);
-        rig.harness.event(egui::Event::PointerMoved(p));
-        rig.harness.step();
+        h.event(egui::Event::PointerMoved(p));
+        h.step();
     }
     // a couple of frames over the target: the claim of the previous pass decides
-    rig.harness.step();
-    rig.harness.step();
-    rig.harness.event(egui::Event::PointerButton { pos: to, button: egui::PointerButton::Primary, pressed: false, modifiers: mods });
-    rig.run();
+    h.step();
+    h.step();
+    h.event(egui::Event::PointerButton { pos: to, button: egui::PointerButton::Primary, pressed: false, modifiers: mods });
+    h.run();
+}
+
+fn drag(rig: &mut Rig, from: egui::Pos2, to: egui::Pos2) {
+    drag_on(&mut rig.harness, from, to);
 }
 
 #[test]
@@ -245,4 +249,83 @@ fn dialog_exports_resolve_from_the_backend_and_abort() {
     assert!(seen[2].starts_with("OpenMany") && seen[2].contains("/parts"), "{seen:?}");
     assert!(seen[5].contains("Warning") && seen[5].contains("YesNoCancel"), "{seen:?}");
     assert_eq!(seen.len(), 8, "{seen:?}");
+}
+
+// ---- the gallery (fixtures/gallery-egui) ----
+
+fn gallery() -> PathBuf {
+    std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/gallery-egui")
+}
+
+/// The gallery imports `svelters:app/egui`, so it needs the dumped stub; this checks it (and
+/// `SVELTERS_UPDATE=1` rewrites it).
+#[test]
+fn gallery_export_stubs_are_current() {
+    let dir = gallery().join(".svelters/app");
+    if std::env::var("SVELTERS_UPDATE").as_deref() == Ok("1") {
+        svelters_egui::dump(&dir).unwrap();
+        return;
+    }
+    let tmp = std::env::temp_dir().join(format!("svelters-egui-wg4b-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&tmp);
+    svelters_egui::dump(&tmp).unwrap();
+    let mut dirs = vec![PathBuf::new()];
+    while let Some(rel) = dirs.pop() {
+        for e in std::fs::read_dir(tmp.join(&rel)).unwrap().flatten() {
+            let name = rel.join(e.file_name());
+            if e.path().is_dir() {
+                dirs.push(name);
+                continue;
+            }
+            let want = std::fs::read_to_string(e.path()).unwrap();
+            let have = std::fs::read_to_string(dir.join(&name)).unwrap_or_default();
+            assert!(have == want, "fixtures/gallery-egui/.svelters/app/{} is stale: run SVELTERS_UPDATE=1 cargo test -p svelters-egui --test wg4b", name.display());
+        }
+    }
+    let _ = std::fs::remove_dir_all(&tmp);
+}
+
+#[test]
+fn gallery_pages_drive_pickers_dnd_and_dialogs() {
+    let bundle = gallery().join("dist/app.js");
+    assert!(bundle.exists(), "{} is missing: run `pnpm build` (needs `cargo build -p svelters-compiler` first)", bundle.display());
+    let fake = Rc::new(Fake::default());
+    svelters_egui::dialogs::set_dialog_backend(Some(fake.clone()));
+    let mut app = svelters_egui::harness::TestApp::load(bundle).unwrap();
+    app.run();
+    let has = |app: &svelters_egui::harness::TestApp, l: &str| app.harness.query_by_label(l).is_some();
+
+    // pickers: bind:value shows in the label next to each
+    assert!(has(&app, "#3366cc") && has(&app, "#ff000080"));
+    app.harness.get_by_label("2026-10-22 📆").click();
+    app.run();
+    app.harness.get_by_label(">").click();
+    app.run();
+    app.harness.get_by_label("Save").click();
+    app.run();
+    assert!(has(&app, "2026-10-23"), "bind:value on the date picker");
+
+    // drag and drop
+    app.harness.get_by_label("Drag and drop").click();
+    app.run();
+    let from = app.harness.get_by_label("R1 10k").rect().center();
+    let to = app.harness.get_by_label("Board").rect().center();
+    drag_on(&mut app.harness, from, to);
+    app.run();
+    assert!(has(&app, "placed R1 10k (cad/part)"), "the drop reached JS");
+
+    // dialogs, from the fake backend
+    app.harness.get_by_label("Dialogs").click();
+    app.run();
+    app.harness.get_by_label("Open file…").click();
+    app.run();
+    app.run();
+    assert!(has(&app, r#"openFile: "/parts/a.step""#));
+    app.harness.get_by_label("Custom buttons…").click();
+    app.run();
+    app.run();
+    assert!(has(&app, r#"labels: "Keep mine""#));
+    svelters_egui::dialogs::set_dialog_backend(None);
+    let errors = app.errors();
+    assert!(errors.is_empty(), "{errors:?}");
 }

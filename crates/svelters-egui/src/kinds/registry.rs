@@ -99,7 +99,12 @@ impl KindRegistry {
                 id: e.id,
                 tag: Some(e.tag),
                 native: e.rust,
-                base: Some("Widget"),
+                // EV2b: a behaviour (attached kind) has its own props only, no `Widget` base
+                base: if e.attaches_to.is_some() {
+                    None
+                } else {
+                    Some("Widget")
+                },
                 toplevel: false,
                 slot: None,
                 text_content: None,
@@ -159,6 +164,27 @@ impl KindRegistry {
     /// Kind index `k` if it is a provider kind.
     pub fn provider(&self, k: usize) -> Option<&ProviderKind> {
         self.providers.get(k.checked_sub(KINDS.len())?)
+    }
+
+    /// Whether `k` is an attached kind (a behaviour, EV2b): inserted into any `Widget` with no slot
+    /// or position, never laid out or painted.
+    pub fn attaches(&self, k: usize) -> bool {
+        self.provider(k)
+            .is_some_and(|p| p.entry.attaches_to.is_some())
+    }
+
+    /// The behaviours (attached provider kinds), in spec id order.
+    pub fn behaviors(&self) -> impl Iterator<Item = &ProviderKind> {
+        self.providers
+            .iter()
+            .filter(|p| p.entry.attaches_to.is_some())
+    }
+
+    /// The provider kinds that are elements (not behaviours), in spec id order.
+    pub fn elements(&self) -> impl Iterator<Item = &ProviderKind> {
+        self.providers
+            .iter()
+            .filter(|p| p.entry.attaches_to.is_none())
     }
 
     /// The kind index of a provider kind's entry.
