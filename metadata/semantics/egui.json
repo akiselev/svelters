@@ -1177,7 +1177,24 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
-      "signals": {},
+      "signals": {
+        "animationend": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A native animation (TR2) finished; carries its id. The runtime listens to it itself.",
+          "handler_result": "none",
+          "js_event": "animationend",
+          "name": "animationend",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
       "text_content": null
     },
     "Window": {

@@ -79,10 +79,10 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | SV48 `Json<T>` error paths through tagged enums | IN PROGRESS | | branch `ci/sv48` |
 | H1 component HMR on the Rust loader | IN PROGRESS | | thinkpad-svelters, branch `ci/h1`, stacked on `ci/q1` |
 | H3 `$state` kept on HMR (SV36) | IN PROGRESS | | thinkpad-svelters, branch `ci/h3`, stacked on `ci/h1` |
-| TR2 native animator (SV13, SV37) | IN PROGRESS | | thinkpad-svelters, branch `ci/tr2`; ABI v2.9 allocates style op 11 `SVL_STYLE_ANIMATE` |
+| TR2 native animator (SV13, SV37) | DONE | 2026-10-22 | merged (this commit); ABI v2.9: style op 11 `SVL_STYLE_ANIMATE`; follow-ups TR2b, TR3 |
 | LD1 loader hooks + native module providers (SV22, SV25) | DONE | 2026-10-22 | merged 7e8909bb |
 | CS5e egui cascade | DONE | 2026-10-22 | merged 9edf8e24 |
-| Q3w Q3's CSS port in compile() + CLI | IN PROGRESS | | macbook-svelters, branch `ci/q3w` |
+| Q3w Q3's CSS port in compile() + CLI | DONE | 2026-10-22 | merged (this commit); `CompileOptions::scoped_css`, `--css`, Vite uses it for non-egui |
 | CS5f egui fonts in measure/paint, leaf padding, multi-value margin/padding | IN PROGRESS | | macbook-svelters, branch `ci/cs5f` |
 | Q3 Svelte CSS analyze/prune/scope in Rust | DONE | 2026-10-22 | merged 2441d69f; not yet wired into compile()/CLI |
 | G1 egui backend skeleton | DONE | 6f386b2f | `svelters-egui` (egui 0.37.0 + taffy 0.15.0 pinned, version provisional: D9 open): generational retained arena, taffy on the arena, host ops only edit the scene, events/changes queued during the pass and delivered after, `close-request` the one sync handler; elements `window`, `box`, `label`, `button`, `checkbox`, `text-edit`, `slider`; eframe runner, embed runner (`EguiBackend::ui` + `Host::start_with`, D1), kittest harness without a renderer (no GPU/display); observe `exact` on text/checked/value, others `set_only`; kind table → `metadata/semantics/egui.json` (freshness test), `--backend egui`, layout props in `<style>` (D3); `counter/if-toggle/keyed-list/timers-egui` fixtures replay; idle 0 frames/0 CPU over 5 s (CI test allows a ≤10-frame startup burst); 2.57 ms/kittest frame (debug); release binary 21.0 MB (15.6 stripped); merged master 2411/2411 nextest; open: G2 (styling/tokens, key/pointer sync handlers, per-side padding, %, scroll-area, menus, virtual lists, image snapshots), egui not in ledger/coverage/docs site, hot reload untested, timer-tick frame cost, "no styling support" warning; `plans/milestones/G1-egui-skeleton.md` |

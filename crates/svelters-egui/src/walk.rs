@@ -108,6 +108,10 @@ fn paint_visual(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mu
     if v.clip.is_some() {
         child.set_clip_rect(ui.clip_rect().intersect(r));
     }
+    if v.inert {
+        // an exiting node leaves the accessibility tree
+        ui.ctx().accesskit_node_builder(child.unique_id(), |b| b.set_hidden());
+    }
     let mut dropped = Vec::new();
     let sink = if v.inert { &mut dropped } else { out };
     match v.transform {
