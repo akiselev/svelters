@@ -56,7 +56,7 @@ The compiler writes its output as edits over your source rather than reprinting 
 | `{#snippet}`, `{@render}`, `children` | partial | Snippet parameters must be plain identifiers (no destructuring or defaults). |
 | `{@attach}` | works | Runs in an effect after mount, with the runtime node. |
 | `use:` actions | error | Use `{@attach}`. |
-| Spread `{...obj}` on native elements | partial | Only static keys: an object literal or a top-level `const` object literal. Any other spread is `native_spread_unsupported`; set the props explicitly or spread onto a component. |
+| Spread `{...obj}` on native elements | works | An object literal is checked at compile time. Any other spread is checked at run time against the toolkit's spec: each key becomes a property (strings are converted to the property's type), an event handler, a class or style, or a child attribute (`parent:`). A key the element does not have prints a warning in dev builds and is skipped. A key that goes away goes back to the default. Later attributes win, as in Svelte. |
 | Spread on components | works | |
 | `parent:<name>={v}` | works | Svelters syntax: a child attribute (grid cell, stretch, tab title) checked against the actual parent's slot. |
 | `<sv-slot name="x">` | works | Svelters syntax: routes its content to the parent's named slot. |
@@ -70,7 +70,8 @@ The compiler writes its output as edits over your source rather than reprinting 
 | Dynamic components, `<svelte:component this>` | works | Recreated when the component changes. |
 | `<svelte:boundary>` | partial | `onerror` and `failed` work; `pending` is ignored (no async mode). |
 | Context (`setContext`, `getContext`, `getAllContexts`) | works | `ListView` rows get the list's context. |
-| `<svelte:element>`, `<svelte:self>`, `<svelte:fragment>` | error | |
+| `<svelte:element this={tag}>` | works | `tag` is a native tag (`label`, `button`). Its attributes are checked at run time, as for a spread. A new tag recreates the element; a nullish tag renders nothing. Only `bind:this` among bindings. |
+| `<svelte:self>`, `<svelte:fragment>` | error | |
 | `<svelte:window>`, `<svelte:document>`, `<svelte:body>`, `<svelte:head>` | error | DOM-only. See [Replacing svelte:window](/guides/events/#replacing-sveltewindow). |
 | `<slot>` (Svelte 4) | error | Use snippets. |
 | `<svelte:options>` | works | At the top level. |

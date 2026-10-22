@@ -39,7 +39,9 @@ behavioural fixtures `experiments/native-compiler/fixtures/runes-*`.
 | An `attaches_to` kind (GTK event controllers, `context-menu`; Qt `menu` outside a menu container) inside any widget, also next to text in `<button>` (RT1) | yes | `$n.attached(kind)`: inserted with no slot or position |
 | `{@attach f}` | yes | `$.attach(node, () => f)` |
 | Handlers of sync signals | yes | listeners get `(event, ...args)` with a `NativeEvent` (`e.preventDefault()`, `e.result = v`); `(...args)` for every other signal |
-| `{...{ k: v }}` / `{...constObject}` on native elements | yes (static keys) | one op per key; other spreads: `native_spread_unsupported` |
+| `{...{ k: v }}` (object literal) on native elements | yes (static keys, checked at compile time) | one op per key |
+| `{...expr}` on native elements (SP1) | yes, resolved at run time against the spec tables; explicit attributes stay checked at compile time | `$n.spread(node, $$kinds, () => ({...all attributes in source order}))`; unknown keys warn in DEV (runtime-contract.md "Spread attributes") |
+| `<svelte:element this={tag}>` (SP1) | yes; `bind:this`, `use:`, `{@attach}`; other `bind:` is `dynamic_element_bind` | `$n.dynamic_element(container, () => tag, render, $$kinds)`: recreated when the tag changes, nothing for a nullish tag |
 | Static text for string-form values (`keySequence="Ctrl+K"`, icons, fonts, colors) | yes (spec `string_form`) | passed as a string |
 
 ## Lists: `{#each}` vs `<ListView>`

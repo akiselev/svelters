@@ -183,12 +183,75 @@ snippet roots are checked at each local `{@render}` site. Runtime semantics: `ch
 
 ## Spreads with static keys and `{@attach}`
 
-`{...{ key: value }}` and `{...obj}` where `obj` is a top-level `const` object literal are lowered
-as the attributes they name (`on...` events with phase suffixes, `parent:` child attributes,
-props; `slot`/`class`/`style` are rejected): the keys are checked against the spec, the values are
-the property expressions (`obj[key]`, read when the event fires or the effect runs). Any other
-spread on a native element stays `native_spread_unsupported`. `{@attach f}` is Svelte's
-`$.attach(node, () => f)` with the runtime node (the attachment runs in an effect after mount).
+`{...{ key: value }}` (an object literal with plain keys, none of them `slot`, `class` or `style`)
+is lowered as the attributes it names (`on...` events with phase suffixes, `parent:` child
+attributes, props): the keys are checked against the spec at compile time and the values are the
+property expressions. Every other spread on a native element is resolved at run time ("Spread
+attributes" below). `{@attach f}` is Svelte's `$.attach(node, () => f)` with the runtime node (the
+attachment runs in an effect after mount); on a component it is Svelte's `[$.attachment()]: f`
+prop, which the child spreads onto its element.
+
+## Spread attributes
+
+SP1 (`plans/milestones/SP1-spread-element.md`). A spread whose keys are only known at run time,
+and every attribute of `<svelte:element this={tag}>`, go through a runtime-checked path that reads
+the same spec the compiler uses. Explicit attributes stay checked at compile time: an unknown name
+or a bad static value is still a compile error, only the spread part is resolved at run time.
+
+**Spec tables.** `svelters-compile --kinds --backend <b> [--spec file]` prints an ES module
+generated from the loaded spec (`semantics::kinds_module`): `tags` (tag -> kind id), `kinds` (per
+kind: its chain, props `[js, native, flags, type, default, values, binding]`, events
+`[js_event, sync, phases]`, text-content prop, toplevel), event `aliases` and `backend`. Generated
+code imports it as `import * as $$kinds from '@svelters/native-runtime/kinds'` only when a component
+needs it; `svelteNative` (`@svelters/native-runtime/vite`) resolves the specifier to a virtual module
+built for the backend being bundled, so the table is in a bundle once, and only when used. A tag's
+merged lookup (props and events of its whole chain) is built on first use and cached.
+
+**`$n.spread(node, $$kinds, (memo...) => ({...}), memo?, css?)`** (Svelte's `attribute_effect`):
+when an element has a runtime spread, all of its attributes go into one object in source order
+(`{ label: "x", ...p, onclicked: f }`, later keys win), with `class:` toggles under `[$n.CLASS]`
+and `style:` directives under `[$n.STYLE]`; a render effect applies each new object. Call
+expressions in the object are memoized as deriveds (Svelte's Memoizer), and inline handler
+functions are hoisted so a re-run passes the same function. Bindings, `use:`, `{@attach}`,
+`bind:this` and `parent:` attributes stay separate and run after it. Each key, against the tag's
+spec:
+
+| key | what happens |
+| --- | --- |
+| a writable prop (JS or native name) | `set(node, prop, value)`; a string for a non-string prop is coerced as a static attribute would be (bool, integers, numbers, enums, flags, string lists, string-form values); a prop with a binding plan gets the `track` mirror, as an explicit one-way prop does |
+| `on<event>`, `on<event>capture` | resolved as the compiler resolves an event attribute (alias, signal or `js_event`, the `capture` suffix with its phase check); one native connection per key that calls the key's current value (a new function does not reconnect, as in Svelte); null/undefined disconnects |
+| `class`, `style`, `id` (GTK, Qt, AppKit, WinUI, egui) | the X6 styling through `attr`: `class` through `clsx` merged with the `class:` toggles and the component's CSS scope class, `style` merged with the `style:` directives (a directive wins over the same property in `style`) |
+| `class` / `style` where they are props (the DOM conformance backend) | the prop, `class` through `clsx` plus the `class:` toggles |
+| `parent:<name>` | `child_attr(node, name, value)`, unchecked (as for an element whose parent is not known) |
+| an attachment key (`createAttachmentKey()`) | an attachment, re-run when the function changes |
+| `slot`, `children`, `$$...`, a function value for a prop | ignored |
+| anything else | DEV: `console.warn('[svelters] <code>: <message>')` once per message, with the compiler's code (`unknown_property`, `read_only_property`, `unknown_event`, `listen_phase_unsupported`, `bad_attribute_value`); never a throw; the key is skipped |
+
+A key that goes away, or becomes null/undefined, is reset: to the spec default when the spec has
+one; else to the native value read before the spread first wrote the prop (as the style
+fallbacks restore); a prop that is neither readable nor has a default is written `null`. A
+removed event key disconnects its handler, a removed `parent:` attribute sends `null`. When an
+explicit attribute and a spread key name the same prop, the later one in source order wins, and
+when the spread drops the key the explicit value comes back.
+
+Bindings and spreads, as in Svelte: the binding writes after the spread at creation, so
+`<entry bind:text {...p}>` with `p.text` shows the bound value; a later change of the spread writes
+the spread's value (the binding writes again when its state changes). A binding updates its state
+before the element's own handlers of the same signal run, so a handler reads the new value.
+
+On AppKit the `class`/`style`/`id` keys reach the ST2 cascade engine through the same `attr` path
+as explicit attributes: a spread class is matched by the stylesheet rules like a static one.
+
+**`$n.dynamic_element(container, () => tag, (node) => {...}, $$kinds)`** (Svelte's `element()`):
+a block tracks `tag || null`. A nullish or empty tag renders nothing; a new tag builds a new
+element (`render(node)` applies its attributes through `$n.spread` and builds its children, then
+it is appended in place) and disposes the old one; the same tag keeps the element. A toplevel kind
+is created as a toplevel. A tag the backend does not have renders nothing and warns in DEV
+(`unknown_element`); a non-string `this` is Svelte's `svelte_element_invalid_this_value`.
+`bind:this` binds each new node, `use:` and `{@attach}` run per element; any other `bind:` is a
+compile error (`dynamic_element_bind`: a binding plan needs the kind). Text children go to the
+kind's text-content prop at run time (`$n.text`, DEV `text_not_allowed` for a kind without one);
+element children go to its default slot (or `slot="..."`), checked by the host at insertion.
 
 ## Template blocks (native semantics)
 
@@ -250,12 +313,9 @@ read as `$.get(name)`. Allowed where Svelte allows it (directly inside `{#snippe
 Destructuring is `unsupported_feature`.
 
 **Spread attributes.** On components: Svelte's `$.spread_props(obj, () => spread, obj, ...)` in
-source order (a thunk when the spread reads reactive state). On native elements: **rejected**
-(`native_spread_unsupported`). Rationale: the compiler's point is to resolve every prop, event and
-value type against the backend spec at compile time; the runtime does not know the spec, and a
-per-element allowed-prop table would have to carry every prop of the kind's chain (hundreds on GTK)
-plus value coercion and restore-to-default for keys that disappear. Set the props explicitly or
-spread onto a component.
+source order (a thunk when the spread reads reactive state). On native elements: an object literal
+is lowered key by key at compile time; any other spread is resolved at run time against the spec
+tables ("Spread attributes" above).
 
 **Dynamic `class`.** `class={expr}` or an interpolated `class="a {b}"` declares
 `const c<id> = $.derived(() => $n.classes(expr))`; every style rule whose selector needs a class the
