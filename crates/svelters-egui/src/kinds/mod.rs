@@ -22,6 +22,8 @@
 
 mod builtin;
 mod containers;
+/// DOC1: category, states, accessibility and paint of each kind, for the docs.
+pub mod docs;
 pub mod dnd;
 pub mod pickers;
 mod registry;
