@@ -60,7 +60,7 @@ Facts the table records that differ from the plan's sample page (`reference-text
 ### 2. The generator: `tools/docs/egui/gen_reference.py`
 
 Writes `docs/egui/reference/widgets/<tag>.md` for every kind (abstract kinds as `widget.md`,
-`menu-entry.md`) and `index.md` grouped by category: 48 pages. Path as in DOCS-PLAN §5.4
+`menu-entry.md`) and `index.md` grouped by category: 49 files for the 48 kinds on master `d242d83c` (WG5b's `tree-view` included). Path as in DOCS-PLAN §5.4
 (`reference/widgets/`), not `reference/<kind>.md`.
 
 - **Managed regions.** The generator owns only the text between
@@ -122,9 +122,17 @@ finds a page.
   `checked_in_kinds_json_and_typings_are_current` test of egui-kinds-example (with and without update), the
   new Python tests (`test_egui_reference.py`, 17 tests), `gen_reference.py --check`,
   `tools/metadata/style/gen_props.py --check`, `svelters-compile --backend egui --check` on a small file (the
-  compiler loads the new egui.json), and `cargo clippy -p svelters-egui --all-targets -- -D warnings`.
+  compiler loads the new egui.json), and `cargo clippy -p svelters-egui --all-targets` (as linux-gtk runs it; no warnings in the lane's files).
 - Not run: the rest of `pnpm docs:test` (`test_ir.py`, the site tests; pnpm isn't installed on this
   machine), any other nextest suite, conformance. CI runs them.
+
+## Environment
+
+Briefed as a cloud session, this lane in fact ran as a worktree agent on the WSL PC (the remote launch fell back to a local worktree; the coordinator confirmed)
+(`~/projects/svelters/.claude/worktrees/agent-a0fcbdd01da786661`, WSL2), so it used `tools/dev/cargo-slot`
+and the machine's slots. A fresh worktree `target/` built `svelters-egui`'s `spec` test in about 6 minutes;
+each later spec regeneration took 1 to 2 minutes. Xvfb wasn't needed: `egui.json` comes from a plain cargo
+test, not a GUI run. `pnpm` isn't on this machine's PATH, so `pnpm docs:test` wasn't run as a whole.
 
 ## Follow-ups
 

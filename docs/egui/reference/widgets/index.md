@@ -83,6 +83,7 @@ Lists and tables over app data.
 |---|---|
 | [`<table>`](table.md) | A virtual table (`egui_table`): only the visible rows and columns are drawn. |
 | [`<table-column>`](table-column.md) | A column of its parent `table` (data only: not laid out or drawn as a node). |
+| [`<tree-view>`](tree-view.md) | A virtualized tree: JS keeps the tree and flattens its visible rows into the list; children load when a node expands. |
 | [`<virtual-list>`](virtual-list.md) | A virtualized list (the M5 model-view protocol): JS keeps the items, the list asks for the rows it shows. |
 
 ## Menus

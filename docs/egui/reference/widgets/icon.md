@@ -37,6 +37,8 @@ A glyph from an icon font the embedder registered (SVP6), by name or as text. Wi
 | `name` | `string` | `""` | no | The glyph's name in the family's name table (`svelters_egui::fonts::register_icons`); also the default accessible name. |
 | `selected` | `boolean` | `false` | no | With `frame`: drawn as selected (a toggle look). |
 | `size` | `number \| null` | `null` | no | Font size in points; null for the body size. |
+| `source` | `string \| null` | `null` | no | An image instead of the glyph: an `asset://` ref (an imported SVG or PNG), a file path or any uri an egui loader serves. Measured `size` (else the body size) square and fitted inside; when it does not load the placeholder box is drawn. |
+| `tint` | `boolean` | `true` | no | With `source`: tints the image with the text colour (SVG `currentColor` icons render white, then tint like a glyph); false keeps its own colours. |
 
 Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessible-name`, `align-self`, `anchor`, `autofocus`, `bottom`, `drag-data`, `drag-type`, `drop-types`, `enabled`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `invalid`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `tooltip`, `top`, `visible`, `width`.
 <!-- END GENERATED -->

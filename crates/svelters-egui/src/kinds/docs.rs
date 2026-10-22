@@ -609,6 +609,20 @@ pub static KIND_DOCS: &[KindDoc] = &[
         },
         css_note: "Style the rows: each row is the element its row template renders.",
     },
+    // WG5b: a `virtual-list` with a tree attached
+    KindDoc {
+        id: "TreeView",
+        category: Category::Views,
+        paint: Paint::None,
+        walk: Walk::None,
+        states: &[],
+        a11y: A11yDoc {
+            note: "Rows are `TreeItem` nodes with their level, `expanded` on expandable rows, `selected`, and their position and set size over the visible rows. The tree is one tab stop; the cursor row is its active descendant.",
+            decorated: false,
+            ..a11y(Some("Tree"), &["accessible-name"], None, &["Focus"])
+        },
+        css_note: "Style the rows: each row is the element its row template renders.",
+    },
 ];
 
 /// Paint properties a kind's own drawing covers, so a rule with them has no visible effect (the

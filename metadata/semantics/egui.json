@@ -8574,13 +8574,30 @@
       "text_content": "text"
     },
     "TreeView": {
+      "a11y": {
+        "actions": [
+          "Focus"
+        ],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [
+          "accessible-name"
+        ],
+        "note": "Rows are `TreeItem` nodes with their level, `expanded` on expandable rows, `selected`, and their position and set size over the visible rows. The tree is one tab stop; the cursor row is its active descendant.",
+        "role": "Tree",
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "views",
       "chain": [
         "TreeView",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "Style the rows: each row is the element its row template renders.",
       "doc": "A virtualized tree: JS keeps the tree and flattens its visible rows into the list; children load when a node expands.",
       "interface": false,
       "lifetime": "owned",
@@ -8667,6 +8684,7 @@
         }
       },
       "native": "svelters_egui::kinds::treeview (a virtual-list with tree rows)",
+      "paint": "none",
       "present": null,
       "props": {
         "indent": {
@@ -8943,6 +8961,7 @@
           "sync_required": false
         }
       },
+      "states": [],
       "text_content": null
     },
     "VirtualList": {
