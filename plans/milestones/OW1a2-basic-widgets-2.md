@@ -7,7 +7,11 @@ OW-CSS stage 1, RT2, SG6, LD3). Design: ARCH-WIDGETS §1–§3, §6.1,
 record is `OW1a-basic-widgets.md`. The coordinator split the rest of OW1a into OW1a2 (this lane) and
 OW1a3 (§6).
 
-**Status:** done. Own widgets are the **default** for all 13 OW1a kinds. The egui wrappers stay behind
+**Status:** done. Own widgets are the **default** for 12 of the 13 OW1a kinds. **`label` is not
+flipped yet**: RT2 (master befca905) draws a label's rich runs inside the egui label wrapper (`crate::rich`
+paint, link hit-testing and focus), and the own label does not draw them yet (OW1a3, §6). A flip would
+break `rt2_rich.rs`. The own label is complete otherwise; `SVELTERS_OWN_WIDGETS=all` or a tag list
+picks it. The egui wrappers stay behind
 `SVELTERS_OWN_WIDGETS=none` until VIS1c, as button's does (coordinator decision).
 
 ## 1. What landed
@@ -150,7 +154,7 @@ ring (keyboard). Tested in kittest, not against the goldens.
 ## 3. Tests
 
 `crates/svelters-egui/tests/ow1a2.rs`, on the new default:
-- `ow1a2_the_default_is_own_for_every_ow1a_kind_and_none_keeps_the_wrappers`
+- `ow1a2_the_default_is_own_for_every_ow1a_kind_and_none_keeps_the_wrappers` (label excepted)
 - `ow1a2_radio_roving_moves_focus_and_the_check_and_is_one_tab_stop`
 - `ow1a2_checkbox_indeterminate_and_tristate`
 - `ow1a2_progress_value_range_orientation_and_busy`
@@ -191,7 +195,12 @@ it now asserts the own geometry (§4).
   the whole row.
 - **Row checks on replaced props.** `font-weight` is range-checked for own widgets too
   (`provider::set_replaced_prop`). A non-finite spinner `size` reads back as null.
-- **Typed `text` keys** (`scene::keys::label::TEXT` and the like) read an own widget's text mirror.
+- **Typed `text` keys** (`scene::keys::label::TEXT` and the like) read an own widget's text mirror,
+  only for the kind the key belongs to (`keys::replaces_variant`).
+- **Layout cache (SG6).** An own widget that replaces a built-in leaf gets no boxed taffy cache, as
+  the built-in leaves don't: its intrinsic size is cached in `LayoutBox`. Without this,
+  `scene_memory` went from 517 to 684 B/node, over the 640 B budget.
+- **An empty icon** (no name, no glyph, no source) keeps a blank square of its font size.
 - **Font weight.** The text primitive reports a weight family's missing glyph
   (`fonts::weighted_family`, `FontWarning::WeightGlyph`), as the wrappers did.
 - **Separator** has no AccessKit role: it is decoration, as egui's was.
@@ -225,8 +234,12 @@ the base). CI runs these.
    `:read-only`.
 4. **The in-crate egui uses** tagged OW1a3: `views/table.rs` 415 and 492 (cell checkbox and
    label), and `views/toast.rs` 185.
-5. **RT2's seam**, if ci/rt2 has landed. When the label node has run children, build the galley in
-   `widgets/label.rs::Label::galley` (and `measure`) from `crate::rich::layout_job(...)`. Match
-   `W::Label { .. }` with `..`.
+5. **RT2 in the own label, then flip `label`.** RT2 is on master (befca905).
+   - Port `crate::rich::{refresh, measure, paint}` from `W::Label { rich }` to the own label:
+     `Label::galley` and `measure` build from `rich::layout_job(...)` when the node has run children,
+     and the links' hit-testing, hover and focus follow.
+   - Add `"label"` to `DEFAULT_OWN`; `tests/rt2_rich.rs` must pass.
+   - The TK1 snapshots `counter-three` and `transition-back` change with the flip (the own label's
+     text is the theme's `fg`). Take the lavapipe renders from CI's `egui-snapshots` artifact.
 6. **VIS1c** deletes the wrappers listed in §4 and their `layout.rs`/`elements` size copies, and
    moves the checks to PaintTrace.

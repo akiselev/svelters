@@ -47,7 +47,7 @@ fn events(rig: &Rig, log: &common::Log, h: svl_handle, name: &str) -> Vec<Vec<Va
 fn ow1a2_the_default_is_own_for_every_ow1a_kind_and_none_keeps_the_wrappers() {
     let reg = KindRegistry::global();
     for tag in OW1A {
-        assert!(DEFAULT_OWN.contains(tag), "{tag} flipped");
+        assert_eq!(DEFAULT_OWN.contains(tag), *tag != "label", "{tag} flipped (label waits for RT2's runs, OW1a3)");
         let k = reg.tag_index(tag).expect(tag);
         let r = reg.replacement(k).unwrap_or_else(|| panic!("an own widget replaces <{tag}>"));
         assert_eq!(r.entry.replaces, Some(*tag));
@@ -164,6 +164,7 @@ fn ow1a2_progress_value_range_orientation_and_busy() {
 #[test]
 fn ow1a2_label_for_focuses_its_buddy_and_elide_keeps_the_full_name() {
     let mut rig = rig();
+    rig.backend.set_own_widgets(KindSet::All);
     let (_w, col) = rig.window();
     let l = rig.leaf(col, "label", &[("text", s("Name")), ("for", s("name-field"))]);
     let f = rig.leaf(col, "text-edit", &[("anchor", s("name-field")), ("hint-text", s("Your name"))]);

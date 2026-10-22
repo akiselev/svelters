@@ -737,7 +737,16 @@ impl CacheTree for Tree<'_> {
     fn cache_store(&mut self, id: NodeId, inputs: &LayoutInput, out: LayoutOutput) {
         // SG6: only nodes whose layout is not a built-in leaf's cheap rerun keep a cache
         let i = ix(id);
-        let cached = !self.s.children[i].is_empty() || !matches!(&self.s.payload[i], Payload::Builtin(w) if !w.is_container() && !matches!(w, W::Ext(_)));
+        // (OW1a2: an own widget replacing a built-in leaf is such a leaf: its intrinsic size is
+        // cached in `LayoutBox` like the egui wrapper's)
+        let leaf_like = |w: &W| match w {
+            W::Ext(x) => {
+                let e = x.entry();
+                e.replaces.is_some() && !e.caps.contains(crate::provider::Caps::CONTAINER) && !e.caps.contains(crate::provider::Caps::CUSTOM_LAYOUT)
+            }
+            w => !w.is_container(),
+        };
+        let cached = !self.s.children[i].is_empty() || !matches!(&self.s.payload[i], Payload::Builtin(w) if leaf_like(w));
         if cached || CACHE_LEAVES {
             self.s.layout[i].cache.store(inputs, out)
         }
