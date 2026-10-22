@@ -5,7 +5,7 @@
 #   tools/dev/ci-wait <sha> --once     # prints the current state and exits
 #   tools/dev/ci-wait <sha> --jobs     # after finishing, also lists failed jobs/steps
 #
-# No gh CLI and no credentials (user, 2026-10-22: don't use gh to access the user's account):
+# Needs no gh CLI and no credentials (committed files never use ours, user 2026-10-22):
 # svelters is public, so this reads GitHub's public REST API with curl. Unauthenticated calls get
 # 60 per hour per IP, shared by every machine behind the same router, so it polls every 600 s
 # (CI_WAIT_INTERVAL) and sends the last ETag: an unchanged answer (304) doesn't count against the
