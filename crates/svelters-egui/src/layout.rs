@@ -466,9 +466,7 @@ impl LayoutPartialTree for Tree<'_> {
                 W::Grid { .. } => return compute_grid_layout(tree, id, inputs),
                 &W::CollapsingHeader { open, .. } => return tree.collapsing(id, open, inputs),
                 // CS5e: `display: grid` from the computed style
-                w if w.is_container() && tree.s.layout[i].style.display == Display::Grid => {
-                    return compute_grid_layout(tree, id, inputs)
-                }
+                w if w.is_container() && tree.s.layout[i].style.display == Display::Grid => return compute_grid_layout(tree, id, inputs),
                 w if w.is_container() => return compute_flexbox_layout(tree, id, inputs),
                 _ => {}
             }
