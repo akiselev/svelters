@@ -90,18 +90,35 @@
   "fragment": true,
   "kinds": {
     "cad.QuantityField": {
+      "a11y": {
+        "actions": [],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "tooltip"
+        ],
+        "note": "Its role, value and actions are what the kind's `Widget::a11y` sets.",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "custom",
       "chain": [
         "cad.QuantityField",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "Provider states match as `:state(<namespace>.<name>)`.",
       "doc": "A unit-aware numeric field: `<quantity-field dim=\"length\" bind:value={x} onaccepted={…} />`.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui_kinds_demo::QuantityField",
+      "paint": "provider",
       "present": null,
       "props": {
         "dim": {
@@ -238,6 +255,64 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     }
   },

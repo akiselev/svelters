@@ -76,6 +76,13 @@ jobs:
       - name: Python deps (system python; build scripts run python3 -I)
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends python3-yaml python3-jsonschema python3-pytest
 
+      # IC1 (plans/milestones/IC1-icon-toolchain.md): the icon lint on the reference samples, and the tool's tests
+      # (they also check that svelters-egui's loader-snapshot SVGs are the tool's current output).
+      - name: Icon toolchain (tools/icons)
+        run: |
+          python3 tools/icons/icons.py lint tools/icons/samples
+          python3 -m pytest -q -p no:cacheprovider tools/icons
+
       - name: Rust toolchain (rust-toolchain.toml)
         run: rustup toolchain install --profile minimal && rustc --version
       - uses: Swatinem/rust-cache@v2
@@ -97,6 +104,12 @@ jobs:
       - name: pnpm test:meta
         if: ${{ !cancelled() }}
         run: pnpm test:meta
+
+      # DOC1: the generated regions of docs/egui/reference/widgets match metadata/semantics/egui.json
+      # (itself checked by svelters-egui's tests/spec.rs). Fix: python3 tools/docs/egui/gen_reference.py
+      - name: egui widget reference --check
+        if: ${{ !cancelled() }}
+        run: python3 -I tools/docs/egui/gen_reference.py --check
 
       - name: pnpm docs:test
         if: ${{ !cancelled() }}
