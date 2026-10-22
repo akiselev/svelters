@@ -1,0 +1,216 @@
+{
+  "schema": "svelters-na-golden/v1",
+  "platform": "linux",
+  "toolkit": "qt",
+  "version": "6.12.0",
+  "injector": "xtest",
+  "offsets": "unicode-scalar",
+  "settings": {"mouseDoubleClickDistance":5,"mouseDoubleClickInterval":400,"platform":"xcb","startDragDistance":10,"style":"fusion"},
+  "observe": {"cursor-position":{"changes":103,"announced":103},"focus":{"changes":28,"announced":28},"selectedText":{"changes":69,"announced":69},"text":{"changes":33,"announced":33}},
+  "pins": {
+    "word-delete-back": {
+      "pin": 1,
+      "fingerprint": "fb3c0c2aa9b1da8b",
+      "checkpoints": [
+        {"after":"setup","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[65,65],"caret":65,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-back","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y ","sel":[62,62],"caret":62,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-back","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト ","sel":[58,58],"caret":58,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-back","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 ","sel":[50,50],"caret":50,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-back","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.","sel":[47,47],"caret":47,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-back","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3","sel":[46,46],"caret":46,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-back","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc ","sel":[45,45],"caret":45,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-back","a":{"text":"foo  bar, baz.qux CamelCase snake_case ","sel":[39,39],"caret":39,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-back","a":{"text":"foo  bar, baz.qux CamelCase ","sel":[28,28],"caret":28,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-back","a":{"text":"foo  bar, baz.qux ","sel":[18,18],"caret":18,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-back","a":{"text":"foo  bar, baz.","sel":[14,14],"caret":14,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-back","a":{"text":"foo  bar, baz","sel":[13,13],"caret":13,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-back","a":{"text":"foo  bar, ","sel":[10,10],"caret":10,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-back","a":{"text":"foo  bar","sel":[8,8],"caret":8,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-back","a":{"text":"foo  ","sel":[5,5],"caret":5,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-back","a":{"text":"","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}}
+      ]
+    },
+    "word-delete-fwd": {
+      "pin": 1,
+      "fingerprint": "880549f431a0e43e",
+      "checkpoints": [
+        {"after":"setup","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-fwd","a":{"text":"bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-fwd","a":{"text":", baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-fwd","a":{"text":"baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-fwd","a":{"text":".qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-fwd","a":{"text":"qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-fwd","a":{"text":"CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-fwd","a":{"text":"snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-fwd","a":{"text":"42abc 3.14 日本語テキスト x😀y end","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-fwd","a":{"text":"3.14 日本語テキスト x😀y end","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-fwd","a":{"text":".14 日本語テキスト x😀y end","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-fwd","a":{"text":"14 日本語テキスト x😀y end","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-fwd","a":{"text":"日本語テキスト x😀y end","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-fwd","a":{"text":"x😀y end","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-fwd","a":{"text":"end","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-fwd","a":{"text":"","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}}
+      ]
+    },
+    "word-delete-mid": {
+      "pin": 1,
+      "fingerprint": "bcaba41b6f0bbb20",
+      "checkpoints": [
+        {"after":"setup","a":{"text":"alpha beta gamma delta","sel":[8,8],"caret":8,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-fwd","a":{"text":"alpha begamma delta","sel":[8,8],"caret":8,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-back","a":{"text":"alpha gamma delta","sel":[6,6],"caret":6,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+right","a":{"text":"alpha gamma delta","sel":[6,7],"caret":7,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+right","a":{"text":"alpha gamma delta","sel":[6,8],"caret":8,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+right","a":{"text":"alpha gamma delta","sel":[6,9],"caret":9,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"delete-word-back","a":{"text":"alpha ma delta","sel":[6,6],"caret":6,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}}
+      ]
+    },
+    "word-move": {
+      "pin": 1,
+      "fingerprint": "4b995b26f34f8f94",
+      "checkpoints": [
+        {"after":"setup","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-next","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[5,5],"caret":5,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-next","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[8,8],"caret":8,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-next","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[10,10],"caret":10,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-next","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[13,13],"caret":13,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-next","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[14,14],"caret":14,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-next","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[18,18],"caret":18,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-next","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[28,28],"caret":28,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-next","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[39,39],"caret":39,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-next","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[45,45],"caret":45,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-next","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[46,46],"caret":46,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-next","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[47,47],"caret":47,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-next","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[50,50],"caret":50,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-next","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[58,58],"caret":58,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-next","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[62,62],"caret":62,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-next","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[65,65],"caret":65,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-next","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[65,65],"caret":65,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-prev","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[62,62],"caret":62,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-prev","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[58,58],"caret":58,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-prev","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[50,50],"caret":50,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-prev","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[47,47],"caret":47,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-prev","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[46,46],"caret":46,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-prev","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[45,45],"caret":45,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-prev","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[39,39],"caret":39,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-prev","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[28,28],"caret":28,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-prev","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[18,18],"caret":18,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-prev","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[14,14],"caret":14,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-prev","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[13,13],"caret":13,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-prev","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[10,10],"caret":10,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-prev","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[8,8],"caret":8,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-prev","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[5,5],"caret":5,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-prev","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-prev","a":{"text":"foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}}
+      ]
+    },
+    "select-all": {
+      "pin": 2,
+      "fingerprint": "e558acb652b17b2a",
+      "checkpoints": [
+        {"after":"setup","a":{"text":"hello brave new world","sel":[3,3],"caret":3,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"select-all","a":{"text":"hello brave new world","sel":[0,21],"caret":21,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+left","a":{"text":"hello brave new world","sel":[0,20],"caret":20,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"select-all","a":{"text":"hello brave new world","sel":[0,21],"caret":21,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"left","a":{"text":"hello brave new world","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"select-all","a":{"text":"hello brave new world","sel":[0,21],"caret":21,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"right","a":{"text":"hello brave new world","sel":[21,21],"caret":21,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"select-all","a":{"text":"hello brave new world","sel":[0,21],"caret":21,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"line-start","a":{"text":"hello brave new world","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"select-all","a":{"text":"hello brave new world","sel":[0,21],"caret":21,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+word-prev","a":{"text":"hello brave new world","sel":[0,16],"caret":16,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}}
+      ]
+    },
+    "select-collapse": {
+      "pin": 2,
+      "fingerprint": "9132b0ecc00e8d8a",
+      "checkpoints": [
+        {"after":"setup","a":{"text":"hello brave new world","sel":[6,11],"caret":11,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"left","a":{"text":"hello brave new world","sel":[6,6],"caret":6,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+right","a":{"text":"hello brave new world","sel":[6,7],"caret":7,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+right","a":{"text":"hello brave new world","sel":[6,8],"caret":8,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+right","a":{"text":"hello brave new world","sel":[6,9],"caret":9,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"right","a":{"text":"hello brave new world","sel":[9,9],"caret":9,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+left","a":{"text":"hello brave new world","sel":[9,8],"caret":8,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+left","a":{"text":"hello brave new world","sel":[9,7],"caret":7,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"right","a":{"text":"hello brave new world","sel":[9,9],"caret":9,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+word-prev","a":{"text":"hello brave new world","sel":[9,6],"caret":6,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-next","a":{"text":"hello brave new world","sel":[12,12],"caret":12,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+word-prev","a":{"text":"hello brave new world","sel":[12,6],"caret":6,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+word-prev","a":{"text":"hello brave new world","sel":[12,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"word-prev","a":{"text":"hello brave new world","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+right","a":{"text":"hello brave new world","sel":[0,1],"caret":1,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+right","a":{"text":"hello brave new world","sel":[0,2],"caret":2,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"line-end","a":{"text":"hello brave new world","sel":[21,21],"caret":21,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}}
+      ]
+    },
+    "select-extend": {
+      "pin": 2,
+      "fingerprint": "13db149a7c06f26c",
+      "checkpoints": [
+        {"after":"setup","a":{"text":"hello brave new world","sel":[8,8],"caret":8,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+right","a":{"text":"hello brave new world","sel":[8,9],"caret":9,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+right","a":{"text":"hello brave new world","sel":[8,10],"caret":10,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+left","a":{"text":"hello brave new world","sel":[8,9],"caret":9,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+left","a":{"text":"hello brave new world","sel":[8,8],"caret":8,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+left","a":{"text":"hello brave new world","sel":[8,7],"caret":7,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+left","a":{"text":"hello brave new world","sel":[8,6],"caret":6,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+word-next","a":{"text":"hello brave new world","sel":[8,12],"caret":12,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+word-next","a":{"text":"hello brave new world","sel":[8,16],"caret":16,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+word-prev","a":{"text":"hello brave new world","sel":[8,12],"caret":12,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+word-prev","a":{"text":"hello brave new world","sel":[8,6],"caret":6,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+word-prev","a":{"text":"hello brave new world","sel":[8,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+line-end","a":{"text":"hello brave new world","sel":[8,21],"caret":21,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"shift+line-start","a":{"text":"hello brave new world","sel":[8,0],"caret":0,"focus":true},"b":{"text":"second","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}}
+      ]
+    },
+    "multi-click": {
+      "pin": 3,
+      "fingerprint": "88680ed1bea0da14",
+      "checkpoints": [
+        {"after":"setup","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[0,0],"caret":0,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"click a@5 x1","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[5,5],"caret":5,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"click a@5 x2","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[4,7],"caret":7,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"click a@7 x2","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[7,8],"caret":8,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"click a@3 x2","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[0,3],"caret":3,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"click a@14 x2","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[12,15],"caret":15,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"click a@22 x2","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[21,24],"caret":24,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"click a@9 x3","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[0,28],"caret":28,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"drag a 5->13 x2","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[4,13],"caret":13,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"drag a 13->2 x2","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[12,2],"caret":2,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"click a@25 x1","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[25,25],"caret":25,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"drag a 1->9 x1","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[1,9],"caret":9,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"click b@3 x1","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[9,9],"caret":9,"focus":false},"b":{"text":"second field","sel":[3,3],"caret":3,"focus":true},"c":{"focus":false}},
+        {"after":"click b@3 x2","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[9,9],"caret":9,"focus":false},"b":{"text":"second field","sel":[0,6],"caret":6,"focus":true},"c":{"focus":false}}
+      ]
+    },
+    "focus-click": {
+      "pin": 7,
+      "fingerprint": "3af05f7eabdc0034",
+      "checkpoints": [
+        {"after":"setup","a":{"text":"first","sel":[2,2],"caret":2,"focus":true},"b":{"text":"second","sel":[1,1],"caret":1,"focus":false},"c":{"focus":false}},
+        {"after":"click b@3 x1","a":{"text":"first","sel":[2,2],"caret":2,"focus":false},"b":{"text":"second","sel":[3,3],"caret":3,"focus":true},"c":{"focus":false}},
+        {"after":"click c x1","a":{"text":"first","sel":[2,2],"caret":2,"focus":false},"b":{"text":"second","sel":[3,3],"caret":3,"focus":false},"c":{"focus":true}},
+        {"after":"tab","a":{"text":"first","sel":[0,5],"caret":5,"focus":true},"b":{"text":"second","sel":[3,3],"caret":3,"focus":false},"c":{"focus":false}},
+        {"after":"backtab","a":{"text":"first","sel":[5,5],"caret":5,"focus":false},"b":{"text":"second","sel":[3,3],"caret":3,"focus":false},"c":{"focus":true}},
+        {"after":"backtab","a":{"text":"first","sel":[5,5],"caret":5,"focus":false},"b":{"text":"second","sel":[0,6],"caret":6,"focus":true},"c":{"focus":false}},
+        {"after":"escape","a":{"text":"first","sel":[5,5],"caret":5,"focus":false},"b":{"text":"second","sel":[0,6],"caret":6,"focus":true},"c":{"focus":false}}
+      ]
+    },
+    "focus-tab": {
+      "pin": 7,
+      "fingerprint": "165bda706670a191",
+      "checkpoints": [
+        {"after":"setup","a":{"text":"first","sel":[2,2],"caret":2,"focus":true},"b":{"text":"second","sel":[1,1],"caret":1,"focus":false},"c":{"focus":false}},
+        {"after":"tab","a":{"text":"first","sel":[2,2],"caret":2,"focus":false},"b":{"text":"second","sel":[0,6],"caret":6,"focus":true},"c":{"focus":false}},
+        {"after":"tab","a":{"text":"first","sel":[2,2],"caret":2,"focus":false},"b":{"text":"second","sel":[6,6],"caret":6,"focus":false},"c":{"focus":true}},
+        {"after":"tab","a":{"text":"first","sel":[0,5],"caret":5,"focus":true},"b":{"text":"second","sel":[6,6],"caret":6,"focus":false},"c":{"focus":false}},
+        {"after":"tab","a":{"text":"first","sel":[5,5],"caret":5,"focus":false},"b":{"text":"second","sel":[0,6],"caret":6,"focus":true},"c":{"focus":false}},
+        {"after":"backtab","a":{"text":"first","sel":[0,5],"caret":5,"focus":true},"b":{"text":"second","sel":[6,6],"caret":6,"focus":false},"c":{"focus":false}},
+        {"after":"backtab","a":{"text":"first","sel":[5,5],"caret":5,"focus":false},"b":{"text":"second","sel":[6,6],"caret":6,"focus":false},"c":{"focus":true}},
+        {"after":"backtab","a":{"text":"first","sel":[5,5],"caret":5,"focus":false},"b":{"text":"second","sel":[0,6],"caret":6,"focus":true},"c":{"focus":false}},
+        {"after":"backtab","a":{"text":"first","sel":[0,5],"caret":5,"focus":true},"b":{"text":"second","sel":[6,6],"caret":6,"focus":false},"c":{"focus":false}}
+      ]
+    }
+  }
+}

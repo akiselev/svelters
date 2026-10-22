@@ -1,0 +1,15 @@
+{
+  "id": "word-delete-mid",
+  "pin": 1,
+  "title": "Word deletion from inside a word, and word deletion with a selection",
+  "setup": {
+    "fields": { "a": { "text": "alpha beta gamma delta", "sel": [8, 8] }, "b": { "text": "second" } },
+    "focus": "a"
+  },
+  "steps": [
+    { "key": "delete-word-fwd" },
+    { "key": "delete-word-back" },
+    { "key": "right", "shift": true, "repeat": 3 },
+    { "key": "delete-word-back" }
+  ]
+}
