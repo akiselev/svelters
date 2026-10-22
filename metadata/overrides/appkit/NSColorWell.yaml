@@ -1,0 +1,18 @@
+class: NSColorWell
+element:
+  tag: color-well
+  lifetime: owned
+  construct: new
+  provenance: "NSColorWell.h: -init gives a bordered well showing white; a click opens the shared color panel. color takes and gives an NSColor handle (svelters:appkit NSColor factories); the well sends its action when the user picks a color (no bind: yet: the renderer has no binding type for object-typed props)."
+props:
+  - name: color-well-style
+    sample: minimal
+    provenance: "NSColorWell.colorWellStyle (NSColorWellStyle, 13.0+)"
+methods:
+  - name: activate
+    selector: "activate:"
+    test: false
+    provenance: "NSColorWell.h: activates the well and opens the shared color panel (exclusive: deactivates other wells); not run on CI (it shows a panel)"
+  - name: deactivate
+    selector: deactivate
+    provenance: "NSColorWell.h"

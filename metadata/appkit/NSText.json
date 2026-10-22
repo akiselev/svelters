@@ -1,0 +1,439 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSText",
+  "kind": "object",
+  "methods": [
+    {
+      "name": "scroll-range-to-visible",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "range",
+          "type": {
+            "native": "NSRange",
+            "ref": "range"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "scrollRangeToVisible:"
+    },
+    {
+      "name": "select-all",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "selectAll:"
+    },
+    {
+      "name": "size-to-fit",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "sizeToFit"
+    }
+  ],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSText.h",
+    "name": "NSText"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "alignment",
+        "set": "setAlignment:"
+      },
+      "js_name": "alignment",
+      "memory": "assign",
+      "name": "alignment",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTextAlignment",
+        "ref": "enum<NSTextAlignment>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "backgroundColor",
+        "set": "setBackgroundColor:"
+      },
+      "js_name": "background-color",
+      "memory": "copy",
+      "name": "backgroundColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "nullable": true,
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "baseWritingDirection",
+        "set": "setBaseWritingDirection:"
+      },
+      "js_name": "base-writing-direction",
+      "memory": "assign",
+      "name": "baseWritingDirection",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWritingDirection",
+        "ref": "enum<NSWritingDirection>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "delegate",
+        "set": "setDelegate:"
+      },
+      "js_name": "delegate",
+      "memory": "assign",
+      "name": "delegate",
+      "origin": "sdk",
+      "type": {
+        "native": "id<NSTextDelegate>",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "drawsBackground",
+        "set": "setDrawsBackground:"
+      },
+      "js_name": "draws-background",
+      "memory": "assign",
+      "name": "drawsBackground",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isEditable",
+        "set": "setEditable:"
+      },
+      "js_name": "editable",
+      "memory": "assign",
+      "name": "editable",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isFieldEditor",
+        "set": "setFieldEditor:"
+      },
+      "js_name": "field-editor",
+      "memory": "assign",
+      "name": "fieldEditor",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "font",
+        "set": "setFont:"
+      },
+      "js_name": "font",
+      "memory": "strong",
+      "name": "font",
+      "origin": "sdk",
+      "type": {
+        "native": "NSFont *",
+        "nullable": true,
+        "ref": "object<NSFont>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isHorizontallyResizable",
+        "set": "setHorizontallyResizable:"
+      },
+      "js_name": "horizontally-resizable",
+      "memory": "assign",
+      "name": "horizontallyResizable",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "importsGraphics",
+        "set": "setImportsGraphics:"
+      },
+      "js_name": "imports-graphics",
+      "memory": "assign",
+      "name": "importsGraphics",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "maxSize",
+        "set": "setMaxSize:"
+      },
+      "js_name": "max-size",
+      "memory": "assign",
+      "name": "maxSize",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSize",
+        "ref": "size"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "minSize",
+        "set": "setMinSize:"
+      },
+      "js_name": "min-size",
+      "memory": "assign",
+      "name": "minSize",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSize",
+        "ref": "size"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isRichText",
+        "set": "setRichText:"
+      },
+      "js_name": "rich-text",
+      "memory": "assign",
+      "name": "richText",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isRulerVisible"
+      },
+      "js_name": "ruler-visible",
+      "memory": "assign",
+      "name": "rulerVisible",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isSelectable",
+        "set": "setSelectable:"
+      },
+      "js_name": "selectable",
+      "memory": "assign",
+      "name": "selectable",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "selectedRange",
+        "set": "setSelectedRange:"
+      },
+      "js_name": "selected-range",
+      "memory": "assign",
+      "name": "selectedRange",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRange",
+        "ref": "range"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "string",
+        "set": "setString:"
+      },
+      "js_name": "string",
+      "memory": "copy",
+      "name": "string",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "textColor",
+        "set": "setTextColor:"
+      },
+      "js_name": "text-color",
+      "memory": "copy",
+      "name": "textColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "nullable": true,
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "usesFontPanel",
+        "set": "setUsesFontPanel:"
+      },
+      "js_name": "uses-font-panel",
+      "memory": "assign",
+      "name": "usesFontPanel",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isVerticallyResizable",
+        "set": "setVerticallyResizable:"
+      },
+      "js_name": "vertically-resizable",
+      "memory": "assign",
+      "name": "verticallyResizable",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nstext?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

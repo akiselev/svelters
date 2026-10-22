@@ -1,0 +1,29 @@
+class: NSSwitch
+element:
+  tag: switch
+  lifetime: owned
+  construct: new
+  provenance: "NSSwitch.h (10.15+): an on/off switch control, off at -init"
+props:
+  - name: state
+    sample: "on"
+    provenance: "NSSwitch.state (NSControlStateValue: an NSInteger typedef with constants)"
+enums:
+  - prop: state
+    members: {"off": 0, "on": 1}
+    provenance: "NSCell.h: NSControlStateValueOff = 0, On = 1 (a switch has no mixed state)"
+signals:
+  - name: action
+    via: target_action
+    verify: perform_click
+    provenance: "NSSwitch sends its action when toggled (performClick: toggles it like a click); inherited from NSControl"
+bindings:
+  - name: state
+    direction: two_way
+    property: state
+    type: { ref: enum<NSControlStateValue>, nullable: false }
+    change: { signal: action, role: user_edit, value: prop }
+    write: { natively_normalizes: false }
+    echo: { strategy: none, compare_before_set: true, read_back: false }
+    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+    provenance: "two-way bind:state: the switch sends its action after the user toggled it (the state is read back); setting state never sends it"

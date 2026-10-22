@@ -1,0 +1,107 @@
+class: NSComboBox
+element:
+  tag: combo-box
+  lifetime: owned
+  construct: new
+  test_setup:
+    - {name: object-values, value: ["One", "Two", "Three"]}
+  provenance: "NSComboBox.h: an editable text field (NSTextField subclass) with a pop-up list; -init uses the internal item list (usesDataSource NO). The text binds like a text-field (bind:string-value); the list comes from `object-values`."
+props:
+  - name: object-values
+    sample: ["Red", "Green", "Blue"]
+    write: {selector: "addItemsWithObjectValues:", clear: removeAllItems}
+    provenance: "NSComboBox.objectValues (readonly NSArray): written by -removeAllItems then -addItemsWithObjectValues:, so the list replaces the items"
+  - name: index-of-selected-item
+    sample: 1
+    write: {selector: "selectItemAtIndex:"}
+    provenance: "NSComboBox.indexOfSelectedItem (readonly NSInteger, -1 for none): written through -selectItemAtIndex:"
+  - name: number-of-visible-items
+    sample: 3
+    provenance: "NSComboBox.numberOfVisibleItems (NSInteger)"
+  - name: completes
+    sample: true
+    provenance: "NSComboBox.completes (BOOL)"
+  - name: has-vertical-scroller
+    sample: false
+    provenance: "NSComboBox.hasVerticalScroller (BOOL)"
+methods:
+  - name: add-item-with-object-value
+    selector: "addItemWithObjectValue:"
+    test: false
+    provenance: "NSComboBox.h"
+  - name: insert-item-with-object-value-at-index
+    selector: "insertItemWithObjectValue:atIndex:"
+    test: false
+    provenance: "NSComboBox.h"
+  - name: remove-item-at-index
+    selector: "removeItemAtIndex:"
+    test: false
+    provenance: "NSComboBox.h"
+  - name: remove-all-items
+    selector: removeAllItems
+    provenance: "NSComboBox.h"
+  - name: deselect-item-at-index
+    selector: "deselectItemAtIndex:"
+    test: false
+    provenance: "NSComboBox.h"
+  - name: item-object-value-at-index
+    selector: "itemObjectValueAtIndex:"
+    test: false
+    provenance: "NSComboBox.h"
+  - name: index-of-item-with-object-value
+    selector: "indexOfItemWithObjectValue:"
+    test: false
+    provenance: "NSComboBox.h: NSNotFound if there is none"
+  - name: note-number-of-items-changed
+    selector: noteNumberOfItemsChanged
+    provenance: "NSComboBox.h"
+  - name: scroll-item-at-index-to-visible
+    selector: "scrollItemAtIndexToVisible:"
+    test: false
+    provenance: "NSComboBox.h"
+signals:
+  - name: combo-box-selection-did-change
+    via: notification
+    notification: NSComboBoxSelectionDidChangeNotification
+    args: [index-of-selected-item]
+    verify: post
+    provenance: "NSComboBox.h: NSComboBoxSelectionDidChangeNotification, object = the combo box, after the user picked an item from the list (not for typing, not for -selectItemAtIndex:); JS gets the new index"
+  - name: combo-box-selection-is-changing
+    via: notification
+    notification: NSComboBoxSelectionIsChangingNotification
+    verify: post
+    provenance: "NSComboBox.h: NSComboBoxSelectionIsChangingNotification, object = the combo box, while the user moves through the list"
+  - name: combo-box-will-pop-up
+    via: notification
+    notification: NSComboBoxWillPopUpNotification
+    verify: post
+    provenance: "NSComboBox.h: NSComboBoxWillPopUpNotification, object = the combo box"
+  - name: combo-box-will-dismiss
+    via: notification
+    notification: NSComboBoxWillDismissNotification
+    verify: post
+    provenance: "NSComboBox.h: NSComboBoxWillDismissNotification, object = the combo box"
+bindings:
+  - name: index-of-selected-item
+    direction: two_way
+    property: index-of-selected-item
+    type: { ref: i64, nullable: false }
+    change: { signal: combo-box-selection-did-change, role: user_edit, value: arg0 }
+    write: { natively_normalizes: true }
+    echo: { strategy: compare, compare_before_set: true, read_back: false }
+    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+    observability: { class: partial, missed: [programmatic] }
+    provenance: "two-way bind:index-of-selected-item: NSComboBoxSelectionDidChangeNotification is posted for a pick from the list and carries the index as argument 0. -selectItemAtIndex: posts it too (not documented; seen in the gallery test, CI run 39680099443), so the echo strategy is compare (the host compares with the value it wrote)"
+dangerous:
+  properties:
+    usesDataSource:
+      severity: other
+      reason: >-
+        With usesDataSource YES the combo box asks a data source for its items and raises when the item methods
+        (addItemsWithObjectValues:, used by object-values) are called; no data source is offered.
+      use_instead: object-values.
+    dataSource:
+      severity: other
+      reason: >-
+        A data source object is weakly held by the combo box and needs usesDataSource; JS objects cannot be one.
+      use_instead: object-values.

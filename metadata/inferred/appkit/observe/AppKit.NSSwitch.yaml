@@ -1,0 +1,15 @@
+schema: svelters-observe-layer/v1
+toolkit: appkit
+owner: AppKit:NSSwitch
+observe:
+- prop: state
+  class: exact
+  via:
+  - mechanism: notify
+  - mechanism: target_action
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `state` fired on a programmatic set'
+  - origin: rule
+    ref: 'O7: user edits reach the value through target_action'
+  confidence: 0.9

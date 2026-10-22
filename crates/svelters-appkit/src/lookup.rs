@@ -87,6 +87,11 @@ pub fn prop_info(id: u32) -> Option<&'static PropInfo> {
     PROPS.get((id as usize).wrapping_sub(1))
 }
 
+/// How a prop is written when it is not a plain KVC set (`PROP_WRITES`).
+pub fn prop_write(id: u32) -> Option<&'static PropWrite> {
+    PROP_WRITES.iter().find(|w| w.prop == id)
+}
+
 pub fn signal_info(id: u32) -> Option<&'static SignalInfo> {
     SIGNALS.get((id as usize).wrapping_sub(1))
 }

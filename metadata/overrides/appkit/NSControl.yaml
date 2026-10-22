@@ -7,6 +7,16 @@ props:
   - name: continuous
     sample: true
     provenance: "NSControl.continuous: whether the action is sent continuously while tracking"
+methods:
+  - name: size-to-fit
+    selector: sizeToFit
+    provenance: "NSControl.h: resizes the control to its cell's minimum size (frame layout; Auto Layout uses the intrinsic size)"
+  - name: validate-editing
+    selector: validateEditing
+    provenance: "NSControl.h: commits the field editor's text to the value"
+  - name: abort-editing
+    selector: abortEditing
+    provenance: "NSControl.h: ends editing without committing; returns whether editing was in progress"
 signals:
   - name: action
     via: target_action

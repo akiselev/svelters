@@ -1,0 +1,62 @@
+{
+ "props:blending-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "behind-window",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "within-window",
+   "sample": {
+    "t": "str",
+    "v": "within-window"
+   }
+  }
+ },
+ "props:emphasized": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:material": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "titlebar",
+   "sample": {
+    "t": "str",
+    "v": "titlebar"
+   }
+  }
+ },
+ "props:state": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "follows-window-active-state",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "active",
+   "sample": {
+    "t": "str",
+    "v": "active"
+   }
+  }
+ }
+}

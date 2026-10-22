@@ -1,0 +1,100 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSTextField",
+    "NSControl",
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSTokenField",
+  "kind": "object",
+  "methods": [],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSTokenField.h",
+    "name": "NSTokenField"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "completionDelay",
+        "set": "setCompletionDelay:"
+      },
+      "js_name": "completion-delay",
+      "memory": "assign",
+      "name": "completionDelay",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTimeInterval",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "delegate",
+        "set": "setDelegate:"
+      },
+      "js_name": "delegate",
+      "memory": "weak",
+      "name": "delegate",
+      "origin": "sdk",
+      "type": {
+        "native": "id<NSTokenFieldDelegate>",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "tokenStyle",
+        "set": "setTokenStyle:"
+      },
+      "js_name": "token-style",
+      "memory": "assign",
+      "name": "tokenStyle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTokenStyle",
+        "ref": "enum<NSTokenStyle>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "tokenizingCharacterSet",
+        "set": "setTokenizingCharacterSet:"
+      },
+      "js_name": "tokenizing-character-set",
+      "memory": "copy",
+      "name": "tokenizingCharacterSet",
+      "origin": "sdk",
+      "type": {
+        "native": "NSCharacterSet *",
+        "ref": "object<NSCharacterSet>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nstokenfield?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

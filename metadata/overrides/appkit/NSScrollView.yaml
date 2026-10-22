@@ -1,0 +1,32 @@
+class: NSScrollView
+element:
+  tag: scroll-view
+  lifetime: owned
+  construct: new
+  provenance: "NSScrollView.h: -init gives a scroll view with a clip view and no document view; scrollers are off until has-vertical-scroller / has-horizontal-scroller"
+props:
+  - name: has-vertical-scroller
+    sample: true
+    provenance: "NSScrollView.hasVerticalScroller (BOOL)"
+  - name: has-horizontal-scroller
+    sample: true
+    provenance: "NSScrollView.hasHorizontalScroller (BOOL)"
+  - name: border-type
+    sample: bezel-border
+    provenance: "NSScrollView.borderType (NSBorderType)"
+slots:
+  - name: document-view
+    default: true
+    cardinality: one
+    ops:
+      set: "setDocumentView:"
+      get: documentView
+      clear: nil
+    provenance: "NSScrollView.documentView (strong, nullable; forwarded to the clip view): the scrolled content. The document view keeps its own frame (no Auto Layout from the scroll view): give it a frame, or use a view that sizes itself (a text-view made resizable)."
+methods:
+  - name: flash-scrollers
+    selector: flashScrollers
+    provenance: "NSScrollView.h: shows overlay scrollers briefly"
+  - name: tile
+    selector: tile
+    provenance: "NSScrollView.h: lays out the scrollers, rulers and the clip view"

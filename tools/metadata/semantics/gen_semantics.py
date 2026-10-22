@@ -870,6 +870,14 @@ def appkit_spec() -> dict:
             if r is None:
                 fail(f"appkit {cls}: setter {s['name']} has no spec type ({s['type']})")
             props[r["js"]] = r
+        # A read-only property written through methods (`write:`, WP-A): writable on this class (a copy for an inherited one).
+        for p in ov.get("props", []):
+            if p.get("write"):
+                _, meta = m.find_prop(cls, p["name"])
+                r = prop_rec(cls, meta) if meta else None
+                if r is None:
+                    fail(f"appkit {cls}: props: {p['name']}: write on a property without a spec type")
+                props[r["js"]] = {**r, "writable": True}
         for js, r in props.items():
             if (f"AppKit:{cls}", js) in obs_specs:
                 r["observe"] = obs_specs[(f"AppKit:{cls}", js)]
@@ -923,7 +931,7 @@ def appkit_spec() -> dict:
         slots = ov.get("slots", [])
         if slots:
             kd["children"] = {"policy": "slots", "default_slot": next((s["name"] for s in slots if s.get("default")), None), "slots": {
-                s["name"]: {"many": s["cardinality"] == "many", "accepts": ["NSView"], "route_by_kind": False,
+                s["name"]: {"many": s["cardinality"] == "many", "accepts": [m.class_of_tag(s["child"]) if s.get("child") else "NSView"], "route_by_kind": False,
                             "order": ("native_index" if s["ops"].get("insert_at") else "before_sibling" if s["ops"].get("insert_relative")
                                       else "append_only") if s["cardinality"] == "many" else "none", "attrs": {}}
                 for s in sorted(slots, key=lambda s: s["name"])}}

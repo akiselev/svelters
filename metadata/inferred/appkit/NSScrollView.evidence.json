@@ -1,0 +1,460 @@
+{
+ "props:allows-magnification": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:autohides-scrollers": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:automatically-adjusts-content-insets": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:border-type": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "no-border",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "line-border",
+   "sample": {
+    "t": "str",
+    "v": "line-border"
+   }
+  }
+ },
+ "props:content-insets": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": {
+    "record": [
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": {
+    "record": [
+     1.0,
+     2.0,
+     3.0,
+     4.0
+    ]
+   },
+   "sample": {
+    "t": "insets",
+    "v": [
+     1.0,
+     2.0,
+     3.0,
+     4.0
+    ]
+   }
+  }
+ },
+ "props:draws-background": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:find-bar-position": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "above-content",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "above-horizontal-ruler",
+   "sample": {
+    "t": "str",
+    "v": "above-horizontal-ruler"
+   }
+  }
+ },
+ "props:has-horizontal-ruler": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:has-horizontal-scroller": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:has-vertical-ruler": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:has-vertical-scroller": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:horizontal-line-scroll": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 10.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:horizontal-page-scroll": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 10.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:horizontal-scroll-elasticity": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "automatic",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "none",
+   "sample": {
+    "t": "str",
+    "v": "none"
+   }
+  }
+ },
+ "props:line-scroll": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 10.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:magnification": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 1.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:max-magnification": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 4.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:min-magnification": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0.25,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:page-scroll": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 10.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:rulers-visible": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:scroller-insets": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": {
+    "record": [
+     0.0,
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": {
+    "record": [
+     1.0,
+     2.0,
+     3.0,
+     4.0
+    ]
+   },
+   "sample": {
+    "t": "insets",
+    "v": [
+     1.0,
+     2.0,
+     3.0,
+     4.0
+    ]
+   }
+  }
+ },
+ "props:scroller-knob-style": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "default",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "dark",
+   "sample": {
+    "t": "str",
+    "v": "dark"
+   }
+  }
+ },
+ "props:scroller-style": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "legacy",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "overlay",
+   "sample": {
+    "t": "str",
+    "v": "overlay"
+   }
+  }
+ },
+ "props:scrolls-dynamically": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:uses-predominant-axis-scrolling": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:vertical-line-scroll": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 10.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:vertical-page-scroll": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 10.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:vertical-scroll-elasticity": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "automatic",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "none",
+   "sample": {
+    "t": "str",
+    "v": "none"
+   }
+  }
+ }
+}

@@ -247,7 +247,7 @@ impl Inner {
             self.start_async(0, class_object(cls), s, a, args)
         } else {
             match bridge::invoke_ex(class_object(cls), s, args, self, &Invoke { error_out, ..Default::default() }) {
-                Ok(o) => Ok(o.value),
+                Ok(o) => Ok(bool_ret(&sname, o.value)),
                 Err(e) => fail(e),
             }
         };
@@ -270,7 +270,7 @@ impl Inner {
             self.start_async(h, &obj, s, a, args)
         } else {
             match bridge::invoke_ex(&obj, s, args, self, &Invoke { error_out: sname.ends_with("error:"), ..Default::default() }) {
-                Ok(o) => Ok(o.value),
+                Ok(o) => Ok(bool_ret(&sname, o.value)),
                 Err(e) => fail(e),
             }
         };
@@ -407,5 +407,13 @@ pub(super) fn async_done_desc() -> TypeDesc {
         members: vec![],
         fields: vec![SlotDesc::new(SVL_NULL).named("result")],
         ret: SlotDesc::new(SVL_NULL),
+    }
+}
+
+/// A BOOL result the runtime encoded as `c` (x86-64) reads back as 0/1: the facts say it is a boolean.
+fn bool_ret(sel: &str, v: Value) -> Value {
+    match v {
+        Value::I64(i) if tt::returns_bool(sel) => Value::Bool(i != 0),
+        v => v,
     }
 }

@@ -127,6 +127,16 @@ jobs:
         if: ${{ !cancelled() }}
         timeout-minutes: 10
         run: cargo test -p counter-mac --test counter
+      # WP-A: every gallery page clicked natively; screenshots in target/gallery (uploaded below).
+      - name: counter-mac gallery
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: cargo test -p counter-mac --test gallery
+      # ST2: the styled todo app (decl dialect): native styling checks, screenshots in target/todo.
+      - name: counter-mac todo
+        if: ${{ !cancelled() }}
+        timeout-minutes: 10
+        run: cargo test -p counter-mac --test todo
       - name: counter-mac run with screenshot
         if: ${{ !cancelled() }}
         timeout-minutes: 5
@@ -172,5 +182,6 @@ jobs:
           if-no-files-found: ignore
           path: |
             target/gallery/
+            target/todo/
             target/*.png
             target/*.json

@@ -1,0 +1,720 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSMenuItem",
+  "kind": "object",
+  "methods": [
+    {
+      "name": "set-menu",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "menu",
+          "type": {
+            "native": "NSMenu *",
+            "nullable": true,
+            "ref": "object<NSMenu>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setMenu:"
+    },
+    {
+      "name": "set-submenu",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "submenu",
+          "type": {
+            "native": "NSMenu *",
+            "nullable": true,
+            "ref": "object<NSMenu>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setSubmenu:"
+    },
+    {
+      "availability": {
+        "since": "10.5"
+      },
+      "name": "set-view",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "view",
+          "type": {
+            "native": "NSView *",
+            "nullable": true,
+            "ref": "object<NSView>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setView:"
+    }
+  ],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSMenuItem.h",
+    "name": "NSMenuItem"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "action",
+        "set": "setAction:"
+      },
+      "js_name": "action",
+      "memory": "assign",
+      "name": "action",
+      "origin": "sdk",
+      "type": {
+        "native": "SEL",
+        "nullable": true,
+        "ref": "selector"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsAutomaticKeyEquivalentLocalization",
+        "set": "setAllowsAutomaticKeyEquivalentLocalization:"
+      },
+      "availability": {
+        "since": "12.0"
+      },
+      "js_name": "allows-automatic-key-equivalent-localization",
+      "memory": "assign",
+      "name": "allowsAutomaticKeyEquivalentLocalization",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsAutomaticKeyEquivalentMirroring",
+        "set": "setAllowsAutomaticKeyEquivalentMirroring:"
+      },
+      "availability": {
+        "since": "12.0"
+      },
+      "js_name": "allows-automatic-key-equivalent-mirroring",
+      "memory": "assign",
+      "name": "allowsAutomaticKeyEquivalentMirroring",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsKeyEquivalentWhenHidden",
+        "set": "setAllowsKeyEquivalentWhenHidden:"
+      },
+      "availability": {
+        "since": "10.13"
+      },
+      "js_name": "allows-key-equivalent-when-hidden",
+      "memory": "assign",
+      "name": "allowsKeyEquivalentWhenHidden",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isAlternate",
+        "set": "setAlternate:"
+      },
+      "js_name": "alternate",
+      "memory": "assign",
+      "name": "alternate",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "attributedTitle",
+        "set": "setAttributedTitle:"
+      },
+      "js_name": "attributed-title",
+      "memory": "copy",
+      "name": "attributedTitle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSAttributedString *",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "badge",
+        "set": "setBadge:"
+      },
+      "availability": {
+        "since": "14.0"
+      },
+      "js_name": "badge",
+      "memory": "copy",
+      "name": "badge",
+      "origin": "sdk",
+      "type": {
+        "native": "NSMenuItemBadge *",
+        "nullable": true,
+        "ref": "object<NSMenuItemBadge>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isEnabled",
+        "set": "setEnabled:"
+      },
+      "js_name": "enabled",
+      "memory": "assign",
+      "name": "enabled",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "hasSubmenu"
+      },
+      "js_name": "has-submenu",
+      "memory": "assign",
+      "name": "hasSubmenu",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isHidden",
+        "set": "setHidden:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "hidden",
+      "memory": "assign",
+      "name": "hidden",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isHiddenOrHasHiddenAncestor"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "hidden-or-has-hidden-ancestor",
+      "memory": "assign",
+      "name": "hiddenOrHasHiddenAncestor",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isHighlighted"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "highlighted",
+      "memory": "assign",
+      "name": "highlighted",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "image",
+        "set": "setImage:"
+      },
+      "js_name": "image",
+      "memory": "strong",
+      "name": "image",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImage *",
+        "nullable": true,
+        "ref": "object<NSImage>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "indentationLevel",
+        "set": "setIndentationLevel:"
+      },
+      "js_name": "indentation-level",
+      "memory": "assign",
+      "name": "indentationLevel",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "keyEquivalent",
+        "set": "setKeyEquivalent:"
+      },
+      "js_name": "key-equivalent",
+      "memory": "copy",
+      "name": "keyEquivalent",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "keyEquivalentModifierMask",
+        "set": "setKeyEquivalentModifierMask:"
+      },
+      "js_name": "key-equivalent-modifier-mask",
+      "memory": "assign",
+      "name": "keyEquivalentModifierMask",
+      "origin": "sdk",
+      "type": {
+        "native": "NSEventModifierFlags",
+        "ref": "flags<NSEventModifierFlags>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "menu",
+        "set": "setMenu:"
+      },
+      "js_name": "menu",
+      "memory": "assign",
+      "name": "menu",
+      "origin": "sdk",
+      "type": {
+        "native": "NSMenu *",
+        "nullable": true,
+        "ref": "object<NSMenu>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "mixedStateImage",
+        "set": "setMixedStateImage:"
+      },
+      "js_name": "mixed-state-image",
+      "memory": "strong",
+      "name": "mixedStateImage",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImage *",
+        "ref": "object<NSImage>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "offStateImage",
+        "set": "setOffStateImage:"
+      },
+      "js_name": "off-state-image",
+      "memory": "strong",
+      "name": "offStateImage",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImage *",
+        "nullable": true,
+        "ref": "object<NSImage>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "onStateImage",
+        "set": "setOnStateImage:"
+      },
+      "js_name": "on-state-image",
+      "memory": "strong",
+      "name": "onStateImage",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImage *",
+        "ref": "object<NSImage>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "parentItem"
+      },
+      "availability": {
+        "since": "10.6"
+      },
+      "js_name": "parent-item",
+      "memory": "assign",
+      "name": "parentItem",
+      "origin": "sdk",
+      "type": {
+        "native": "NSMenuItem *",
+        "nullable": true,
+        "ref": "object<NSMenuItem>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "representedObject",
+        "set": "setRepresentedObject:"
+      },
+      "js_name": "represented-object",
+      "memory": "strong",
+      "name": "representedObject",
+      "origin": "sdk",
+      "type": {
+        "native": "id",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isSectionHeader"
+      },
+      "availability": {
+        "since": "14.0"
+      },
+      "js_name": "section-header",
+      "memory": "assign",
+      "name": "sectionHeader",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isSeparatorItem"
+      },
+      "js_name": "separator-item",
+      "memory": "assign",
+      "name": "separatorItem",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "state",
+        "set": "setState:"
+      },
+      "js_name": "state",
+      "memory": "assign",
+      "name": "state",
+      "origin": "sdk",
+      "type": {
+        "native": "NSControlStateValue",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "submenu",
+        "set": "setSubmenu:"
+      },
+      "js_name": "submenu",
+      "memory": "strong",
+      "name": "submenu",
+      "origin": "sdk",
+      "type": {
+        "native": "NSMenu *",
+        "nullable": true,
+        "ref": "object<NSMenu>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "subtitle",
+        "set": "setSubtitle:"
+      },
+      "availability": {
+        "since": "14.4"
+      },
+      "js_name": "subtitle",
+      "memory": "copy",
+      "name": "subtitle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "tag",
+        "set": "setTag:"
+      },
+      "js_name": "tag",
+      "memory": "assign",
+      "name": "tag",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "target",
+        "set": "setTarget:"
+      },
+      "js_name": "target",
+      "memory": "weak",
+      "name": "target",
+      "origin": "sdk",
+      "type": {
+        "native": "id",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "title",
+        "set": "setTitle:"
+      },
+      "js_name": "title",
+      "memory": "copy",
+      "name": "title",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "toolTip",
+        "set": "setToolTip:"
+      },
+      "js_name": "tool-tip",
+      "memory": "copy",
+      "name": "toolTip",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "userKeyEquivalent"
+      },
+      "js_name": "user-key-equivalent",
+      "memory": "copy",
+      "name": "userKeyEquivalent",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "view",
+        "set": "setView:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "view",
+      "memory": "strong",
+      "name": "view",
+      "origin": "sdk",
+      "type": {
+        "native": "NSView *",
+        "nullable": true,
+        "ref": "object<NSView>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nsmenuitem?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

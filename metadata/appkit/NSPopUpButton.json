@@ -1,0 +1,505 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSButton",
+    "NSControl",
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSPopUpButton",
+  "kind": "object",
+  "methods": [
+    {
+      "name": "add-item-with-title",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "title",
+          "type": {
+            "native": "NSString *",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "addItemWithTitle:"
+    },
+    {
+      "name": "add-items-with-titles",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "itemTitles",
+          "type": {
+            "native": "NSArray<NSString *> *",
+            "ref": "list"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "addItemsWithTitles:"
+    },
+    {
+      "name": "index-of-item-with-title",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "title",
+          "type": {
+            "native": "NSString *",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "native": "NSInteger",
+          "ref": "i64"
+        }
+      },
+      "selector": "indexOfItemWithTitle:"
+    },
+    {
+      "name": "insert-item-with-title-at-index",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "title",
+          "type": {
+            "native": "NSString *",
+            "ref": "string"
+          }
+        },
+        {
+          "name": "index",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "insertItemWithTitle:atIndex:"
+    },
+    {
+      "name": "item-title-at-index",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "index",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "native": "NSString *",
+          "ref": "string"
+        }
+      },
+      "selector": "itemTitleAtIndex:"
+    },
+    {
+      "name": "remove-all-items",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "removeAllItems"
+    },
+    {
+      "name": "remove-item-at-index",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "index",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "removeItemAtIndex:"
+    },
+    {
+      "name": "select-item-at-index",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "index",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "selectItemAtIndex:"
+    },
+    {
+      "name": "select-item-with-tag",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "tag",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "native": "BOOL",
+          "ref": "bool"
+        }
+      },
+      "selector": "selectItemWithTag:"
+    },
+    {
+      "name": "select-item-with-title",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "title",
+          "type": {
+            "native": "NSString *",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "selectItemWithTitle:"
+    },
+    {
+      "name": "set-menu",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "menu",
+          "type": {
+            "native": "NSMenu *",
+            "nullable": true,
+            "ref": "object<NSMenu>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setMenu:"
+    },
+    {
+      "name": "synchronize-title-and-selected-item",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "synchronizeTitleAndSelectedItem"
+    }
+  ],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSPopUpButton.h",
+    "name": "NSPopUpButton"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "altersStateOfSelectedItem",
+        "set": "setAltersStateOfSelectedItem:"
+      },
+      "availability": {
+        "since": "15.0"
+      },
+      "js_name": "alters-state-of-selected-item",
+      "memory": "assign",
+      "name": "altersStateOfSelectedItem",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "autoenablesItems",
+        "set": "setAutoenablesItems:"
+      },
+      "js_name": "autoenables-items",
+      "memory": "assign",
+      "name": "autoenablesItems",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "indexOfSelectedItem"
+      },
+      "js_name": "index-of-selected-item",
+      "memory": "assign",
+      "name": "indexOfSelectedItem",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "itemArray"
+      },
+      "js_name": "item-array",
+      "memory": "copy",
+      "name": "itemArray",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSMenuItem *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "itemTitles"
+      },
+      "js_name": "item-titles",
+      "memory": "copy",
+      "name": "itemTitles",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSString *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "lastItem"
+      },
+      "js_name": "last-item",
+      "memory": "strong",
+      "name": "lastItem",
+      "origin": "sdk",
+      "type": {
+        "native": "NSMenuItem *",
+        "nullable": true,
+        "ref": "object<NSMenuItem>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "menu",
+        "set": "setMenu:"
+      },
+      "js_name": "menu",
+      "memory": "strong",
+      "name": "menu",
+      "origin": "sdk",
+      "type": {
+        "native": "NSMenu *",
+        "nullable": true,
+        "ref": "object<NSMenu>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "numberOfItems"
+      },
+      "js_name": "number-of-items",
+      "memory": "assign",
+      "name": "numberOfItems",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "preferredEdge",
+        "set": "setPreferredEdge:"
+      },
+      "js_name": "preferred-edge",
+      "memory": "assign",
+      "name": "preferredEdge",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRectEdge",
+        "ref": "enum<NSRectEdge>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "pullsDown",
+        "set": "setPullsDown:"
+      },
+      "js_name": "pulls-down",
+      "memory": "assign",
+      "name": "pullsDown",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "selectedItem"
+      },
+      "js_name": "selected-item",
+      "memory": "strong",
+      "name": "selectedItem",
+      "origin": "sdk",
+      "type": {
+        "native": "NSMenuItem *",
+        "nullable": true,
+        "ref": "object<NSMenuItem>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "selectedTag"
+      },
+      "js_name": "selected-tag",
+      "memory": "assign",
+      "name": "selectedTag",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "titleOfSelectedItem"
+      },
+      "js_name": "title-of-selected-item",
+      "memory": "copy",
+      "name": "titleOfSelectedItem",
+      "origin": "sdk",
+      "type": {
+        "native": "NSString *",
+        "nullable": true,
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "usesItemFromMenu",
+        "set": "setUsesItemFromMenu:"
+      },
+      "availability": {
+        "since": "15.0"
+      },
+      "js_name": "uses-item-from-menu",
+      "memory": "assign",
+      "name": "usesItemFromMenu",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nspopupbutton?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

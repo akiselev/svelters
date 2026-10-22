@@ -26,3 +26,8 @@ methods:
   - name: stop-animation
     selector: "stopAnimation:"
     provenance: "NSProgressIndicator.h; `sender` is nil"
+  - name: increment-by
+    selector: "incrementBy:"
+    args: [10]
+    expect: {get: double-value, value: 10.0}
+    provenance: "NSProgressIndicator.h: adds a delta to double-value (from 0 on a fresh indicator)"

@@ -1,0 +1,288 @@
+schema: svelters-observe-layer/v1
+toolkit: appkit
+owner: AppKit:NSScrollView
+observe:
+- prop: allows-magnification
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `allowsMagnification` fired on a programmatic set'
+  confidence: 0.9
+- prop: autohides-scrollers
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `autohidesScrollers` fired on a programmatic set'
+  confidence: 0.9
+- prop: automatically-adjusts-content-insets
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `automaticallyAdjustsContentInsets` fired on a programmatic set'
+  confidence: 0.9
+- prop: background-color
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: border-type
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `borderType` fired on a programmatic set'
+  confidence: 0.9
+- prop: content-insets
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `contentInsets` fired on a programmatic set'
+  confidence: 0.9
+- prop: content-size
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: content-view
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: document-cursor
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: document-view
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: document-visible-rect
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: draws-background
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `drawsBackground` fired on a programmatic set'
+  confidence: 0.9
+- prop: find-bar-position
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `findBarPosition` fired on a programmatic set'
+  confidence: 0.9
+- prop: has-horizontal-ruler
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `hasHorizontalRuler` fired on a programmatic set'
+  confidence: 0.9
+- prop: has-horizontal-scroller
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `hasHorizontalScroller` fired on a programmatic set'
+  confidence: 0.9
+- prop: has-vertical-ruler
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `hasVerticalRuler` fired on a programmatic set'
+  confidence: 0.9
+- prop: has-vertical-scroller
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `hasVerticalScroller` fired on a programmatic set'
+  confidence: 0.9
+- prop: horizontal-line-scroll
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `horizontalLineScroll` fired on a programmatic set'
+  confidence: 0.9
+- prop: horizontal-page-scroll
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `horizontalPageScroll` fired on a programmatic set'
+  confidence: 0.9
+- prop: horizontal-ruler-view
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: horizontal-scroll-elasticity
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `horizontalScrollElasticity` fired on a programmatic set'
+  confidence: 0.9
+- prop: horizontal-scroller
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: line-scroll
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `lineScroll` fired on a programmatic set'
+  confidence: 0.9
+- prop: magnification
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `magnification` fired on a programmatic set'
+  confidence: 0.9
+- prop: max-magnification
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `maxMagnification` fired on a programmatic set'
+  confidence: 0.9
+- prop: min-magnification
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `minMagnification` fired on a programmatic set'
+  confidence: 0.9
+- prop: page-scroll
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `pageScroll` fired on a programmatic set'
+  confidence: 0.9
+- prop: rulers-visible
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `rulersVisible` fired on a programmatic set'
+  confidence: 0.9
+- prop: scroller-insets
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `scrollerInsets` fired on a programmatic set'
+  confidence: 0.9
+- prop: scroller-knob-style
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `scrollerKnobStyle` fired on a programmatic set'
+  confidence: 0.9
+- prop: scroller-style
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `scrollerStyle` fired on a programmatic set'
+  confidence: 0.9
+- prop: scrolls-dynamically
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `scrollsDynamically` fired on a programmatic set'
+  confidence: 0.9
+- prop: uses-predominant-axis-scrolling
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `usesPredominantAxisScrolling` fired on a programmatic set'
+  confidence: 0.9
+- prop: vertical-line-scroll
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `verticalLineScroll` fired on a programmatic set'
+  confidence: 0.9
+- prop: vertical-page-scroll
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `verticalPageScroll` fired on a programmatic set'
+  confidence: 0.9
+- prop: vertical-ruler-view
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: vertical-scroll-elasticity
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `verticalScrollElasticity` fired on a programmatic set'
+  confidence: 0.9
+- prop: vertical-scroller
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
