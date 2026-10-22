@@ -174,6 +174,9 @@ impl<B: Behavior + KindDecl> ErasedWidget for BehaviorBox<B> {
         // attached nodes are not painted, so they never own a point: it goes to the host
         super::Hit::Miss
     }
+    fn virtual_children(&self) -> Option<&dyn crate::scene::VirtualChildren> {
+        None
+    }
     fn as_any(&self) -> &dyn Any {
         &self.0
     }

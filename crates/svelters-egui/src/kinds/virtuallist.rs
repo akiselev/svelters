@@ -768,10 +768,10 @@ pub(crate) fn uniform_height(v: &VList) -> Option<f32> {
 /// Draws list `i` (its rect from layout, offset by `origin`): rows at their places in a clipped
 /// child `Ui`, a11y nodes with set size, selection and activation, placeholders for unbound
 /// positions, the scroll bar; wheel input not taken by this frame's offset waits for the next.
-pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::Ui, out: &mut Vec<Out>) {
+pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::Ui, out: &mut Vec<Out>) -> Option<egui::Response> {
     let r = s.core[i].rect.translate(origin);
     if !ui.is_rect_visible(r) {
-        return;
+        return None;
     }
     let list = s.slots.id_at(i).expect("live list");
     let h = list.to_raw();
@@ -779,12 +779,12 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
     let list_id = s.core[i].egui_id;
     let ctx = ui.ctx().clone();
     let placed = {
-        let W::VirtualList(v) = s.w(i) else { return };
+        let W::VirtualList(v) = s.w(i) else { return None };
         v.placed(s)
     };
     let resp = ui.interact(r, list_id, egui::Sense::hover());
     let (len, selected, selectable, offset, total, view, est, taken, decided) = {
-        let W::VirtualList(v) = s.w_mut(i) else { return };
+        let W::VirtualList(v) = s.w_mut(i) else { return None };
         v.scroll.last_rect = r;
         v.scroll.layer = Some(ui.layer_id());
         v.stats.frames += 1;
@@ -824,7 +824,7 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
             continue;
         }
         let key = {
-            let W::VirtualList(v) = s.w(i) else { return };
+            let W::VirtualList(v) = s.w(i) else { return None };
             if pos >= v.len() {
                 continue;
             }
@@ -866,7 +866,7 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
     // positions in view that no bound row covers: placeholders (R22's gate counts them)
     let mut unbound = 0u64;
     if view.y > 0.0 {
-        let W::VirtualList(v) = s.w(i) else { return };
+        let W::VirtualList(v) = s.w(i) else { return None };
         for pos in v.heights.range(offset, offset + view.y as f64) {
             let y = r.min.y + (v.heights.offset(pos) - offset) as f32;
             let yr = y..y + v.heights.height(pos);
@@ -902,6 +902,7 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         v.stats.rows_drawn += drawn;
         v.stats.unbound_drawn += unbound;
     }
+    Some(resp)
 }
 
 // ---- reads ----

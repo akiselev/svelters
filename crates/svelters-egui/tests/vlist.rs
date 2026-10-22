@@ -368,3 +368,75 @@ fn a_rust_row_source_realises_2k_rows_with_60_nodes() {
     check(&r);
     assert_eq!(*built.borrow(), b0);
 }
+
+// ---- end to end: `<ListView>` from @svelters/lists on the real QuickJS host ----
+
+fn bundle(name: &str) -> std::path::PathBuf {
+    let p = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures").join(name).join("dist/app.js");
+    assert!(p.exists(), "{} is missing: run `pnpm build` (needs `cargo build -p svelters-compiler` first)", p.display());
+    p
+}
+
+/// `fixtures/lists-egui`: 2k items in a `<ListView>`; the list binds its window through JS, a fling
+/// draws no unbound row and every drawn row shows its item, keyed splices keep rows bound, and a
+/// click selects through `bind:selected`.
+#[test]
+fn list_view_runs_on_egui() {
+    use svelters_egui::harness::TestApp;
+    let mut app = TestApp::load(bundle("lists-egui")).unwrap();
+    app.run();
+    assert!(app.errors().is_empty(), "{:?}", app.errors());
+    let scene = app.backend.scene();
+    let list = NodeId::from_raw(app.backend.handles_of("virtual-list")[0]).unwrap();
+    let text_of = |s: svelters_egui::scene::SceneRef<'_>, n: NodeId| -> String {
+        // outlet → row component's box → first label
+        let mut d = s.get(n).unwrap().descendants();
+        d.find(|x| x.tag() == "label").map(|l| l.text().to_string()).unwrap_or_default()
+    };
+    let check = |app: &TestApp, first: usize| {
+        app.backend.scene().read(|s| {
+            let rows = s.list_rows(list);
+            assert!(!rows.is_empty());
+            for (n, pos) in rows {
+                let want = if pos < first { "Item new".to_string() } else { format!("Item {}", pos + 1 - first) };
+                assert_eq!(text_of(s, n), want, "row at {pos}");
+            }
+        })
+    };
+    check(&app, 0);
+    let v = scene.read(|s| s.virtual_list(list).unwrap().len());
+    assert_eq!(v, 2000);
+    let slots = scene.read(|s| s.virtual_list(list).unwrap().slot_count());
+    assert!(slots <= 60, "{slots} row slots");
+    let base = scene.read(|s| s.virtual_list(list).unwrap().stats());
+    let rect = scene.read(|s| s.get(list).unwrap().drawn().unwrap());
+    for _ in 0..80 {
+        app.harness.event(egui::Event::PointerMoved(rect.center()));
+        app.harness.event(egui::Event::MouseWheel {
+            unit: egui::MouseWheelUnit::Point,
+            delta: egui::vec2(0.0, -500.0),
+            phase: egui::TouchPhase::Move,
+            source: egui::MouseWheelSource::Unknown,
+            modifiers: egui::Modifiers::NONE,
+        });
+        app.harness.step();
+        check(&app, 0);
+        let st = scene.read(|s| s.virtual_list(list).unwrap().stats());
+        assert_eq!(st.unbound_drawn, base.unbound_drawn, "an unbound row was drawn");
+    }
+    let st = scene.read(|s| s.virtual_list(list).unwrap().stats());
+    assert_eq!(st.setups, base.setups, "no row slot created while scrolling");
+    assert!(scene.read(|s| s.virtual_list(list).unwrap().offset()) > 10_000.0);
+    // keyed splices from JS: prepend keeps the first visible row in place (anchoring)
+    let off = scene.read(|s| s.virtual_list(list).unwrap().offset());
+    app.harness.get_by_label("prepend").click();
+    app.run();
+    let off2 = scene.read(|s| s.virtual_list(list).unwrap().offset());
+    assert_eq!(off2 - off, 24.0, "anchored by key");
+    check(&app, 1);
+    // scrollEnd through bind:this
+    app.harness.get_by_label("scrollEnd").click();
+    app.run();
+    assert!(app.harness.query_by_label("Item 2000").is_some());
+    assert!(app.errors().is_empty(), "{:?}", app.errors());
+}

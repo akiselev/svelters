@@ -197,7 +197,8 @@ fn a_10k_row_painted_tree_scrolls_with_no_js_and_a_small_scene_time() {
     assert!(median <= budget, "scene time {median:?} > {budget:?}");
     // a11y: the drawn rows are tree items with set size and position over all 10k
     let first = (scroll / ROW).ceil() as u64 + 1;
-    let node = r.h.harness.get_by_label(&format!("Feature {}", first * 7));
+    let label = format!("Feature {}", first * 7);
+    let node = r.h.harness.get_by_label(&label);
     let ak = node.accesskit_node();
     assert_eq!(ak.size_of_set(), Some(10_000));
     assert_eq!(ak.position_in_set(), Some(first as usize + 1));
