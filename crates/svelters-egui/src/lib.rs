@@ -13,6 +13,7 @@
 //! plans/milestones/EG0-module-split.md); each file's doc names its writer lane. The old paths
 //! (`render`, `harness`, `layout::invalidate`) are kept as re-exports.
 
+pub mod assets;
 pub mod backend;
 pub mod dialogs;
 pub mod embed;

@@ -335,7 +335,8 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             r
         }
         W::Separator { vertical } => ui.add(if *vertical { egui::Separator::default().vertical() } else { egui::Separator::default().horizontal() }),
-        W::Icon { name, glyph, family, size: pt, weight, frame, selected } => {
+        W::Icon { source, tint, frame, selected, .. } if !source.is_empty() => icon_image(ui, source, *tint, *frame, *selected, size, click_sense),
+        W::Icon { name, glyph, family, size: pt, weight, frame, selected, .. } => {
             use crate::fonts::IconLook;
             // a family, name or glyph the fonts cannot draw: an outlined box instead (never egui's
             // missing-glyph panic, `crate::fonts`)
@@ -465,4 +466,38 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         }
     }
     resp
+}
+
+/// AS1: an `icon` with a `source`: the image fitted inside the leaf's square (inside the padding of
+/// a framed one, whose button draws the state visuals), tinted with the text colour of its state;
+/// the placeholder box when the source does not load.
+fn icon_image(ui: &mut Ui, source: &str, tint: bool, frame: bool, selected: bool, size: Vec2, click_sense: bool) -> egui::Response {
+    use egui::load::TexturePoll;
+    let sense = if click_sense { Sense::click() } else { Sense::hover() };
+    let r = if frame { ui.add(egui::Button::new("").selected(selected).min_size(size)) } else { ui.allocate_exact_size(size, sense).1 };
+    let inner = if frame { r.rect.shrink2(ui.spacing().button_padding) } else { r.rect };
+    let color = if !tint {
+        egui::Color32::WHITE
+    } else if frame {
+        ui.visuals().override_text_color.unwrap_or_else(|| ui.style().interact_selectable(&r, selected).fg_stroke.color)
+    } else {
+        ui.visuals().text_color()
+    };
+    if inner.width() < 1.0 || inner.height() < 1.0 || !ui.is_rect_visible(r.rect) {
+        return r;
+    }
+    let img = egui::Image::new(crate::elements::images::uri_of(source)).fit_to_exact_size(inner.size());
+    match img.load_for_size(ui.ctx(), inner.size()) {
+        Ok(TexturePoll::Ready { texture }) => {
+            let (dest, uv) = crate::elements::media::fit_rect("contain", inner, texture.size);
+            ui.painter().with_clip_rect(r.rect.intersect(ui.clip_rect())).image(texture.id, dest, uv, color);
+        }
+        Ok(TexturePoll::Pending { .. }) => {}
+        Err(_) => {
+            let side = inner.width().min(inner.height());
+            let rect = Rect::from_center_size(inner.center(), Vec2::splat(side));
+            ui.painter().rect_stroke(rect, 1.0, egui::Stroke::new(1.0, ui.visuals().text_color()), egui::StrokeKind::Inside);
+        }
+    }
+    r
 }

@@ -183,6 +183,11 @@ impl EguiBackend {
         // ARCH-SCENE §7.2 step 2b: mutations deferred during the last frame (the runtime sees them
         // in this logic's checkpoint), then the prop changes Rust writes announced.
         self.0.scene.run_deferred();
+        // AS1: images whose asset changed (no JS ran): their nodes remeasure below
+        let changed = crate::assets::take_changed(ctx);
+        if !changed.is_empty() {
+            crate::assets::mark_nodes(&mut self.0.scene.borrow_mut(), &changed);
+        }
         self.flush_announcements();
         // Native closes: user requests (sync close-request decides) and `close` calls.
         let requests: Vec<Handle> = std::mem::take(&mut *self.0.close_requests.borrow_mut());

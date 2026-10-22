@@ -262,6 +262,10 @@ export interface EguiElements {
     size?: number | null;
     /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
     'font-weight'?: number;
+    /** An image instead of the glyph: an `asset://` ref (an imported SVG or PNG), a file path or any uri an egui loader serves. Measured `size` (else the body size) square and fitted inside; when it does not load the placeholder box is drawn. */
+    source?: string | null;
+    /** With `source`: tints the image with the text colour (SVG `currentColor` icons render white, then tint like a glyph); false keeps its own colours. */
+    tint?: boolean;
     /** Draws it as a button (an icon button: role `Button`, takes focus). */
     frame?: boolean;
     /** With `frame`: drawn as selected (a toggle look). */
