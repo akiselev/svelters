@@ -12,7 +12,7 @@ use std::time::Duration;
 use svelters_abi::Backend;
 use svelters_backend_log::{LogBackend, LogOptions};
 use svelters_host::modules::{SourceConfig, SourceProvider};
-use svelters_host::{ErrorKind, Host, HostConfig, ModuleProvider, ReloadReport};
+use svelters_host::{ErrorKind, Host, HostConfig, ModuleCode, ModuleProvider, ReloadReport};
 
 fn repo() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../..").canonicalize().unwrap()
@@ -215,7 +215,44 @@ fn styles_are_reported_not_silently_dropped() {
     let (_log, host) = log_host(Duration::from_millis(100));
     host.load_from(provider.clone()).unwrap();
     let warnings: Vec<String> = host.take_console().into_iter().filter(|l| l.level == "warn").map(|l| l.text).collect();
-    assert!(warnings.iter().any(|w| w.contains("<style> is not applied")), "{warnings:?}");
+    // LD2: the live path applies `<style>` on egui; the other backends' sheets come from the Vite build
+    assert!(warnings.iter().any(|w| w.contains("<style> is applied from source on egui only")), "{warnings:?}");
+}
+
+/// LD2: on egui a component's scoped sheet is its own `svelters-style:` module (`registerStyles(id,
+/// { css })`, the sheet as text). A `<style>`-only edit selects that module alone for the in-place
+/// update; a markup edit selects the component alone.
+#[test]
+fn a_style_only_edit_reruns_only_the_sheet_module() {
+    let text = "<window><label>x</label></window>\n<style>\n  label { color: red; }\n</style>\n";
+    let app = App::new("ld2-sheet", text);
+    let mut cfg = SourceConfig::for_path(&app.dir).unwrap();
+    cfg.backend = "egui".into();
+    cfg.dev = true;
+    cfg.hmr = true;
+    let provider = Rc::new(SourceProvider::new(cfg).unwrap());
+    let (_log, host) = log_host(Duration::from_millis(100));
+    host.load_from(provider.clone()).unwrap();
+    let svelte = app.path("src/App.svelte");
+    let id = svelte.to_string_lossy().into_owned();
+    let sheet_id = format!("svelters-style:{id}");
+    let ModuleCode::Source { js, .. } = provider.load(&id).unwrap() else { panic!("source") };
+    assert!(js.contains(&format!("import {};", serde_json::Value::String(sheet_id.clone()))), "{js}");
+    let ModuleCode::Source { js: sheet, .. } = provider.load(&sheet_id).unwrap() else { panic!("source") };
+    assert!(sheet.contains("registerStyles(") && sheet.contains("color: red") && sheet.contains("svelte-"), "{sheet}");
+    assert!(sheet.contains("import.meta.hot.accept()"), "{sheet}");
+    // nothing else may import a component's sheet
+    assert!(provider.resolve(&app.path("src/other.js").to_string_lossy(), &sheet_id).is_err());
+
+    app.write("src/App.svelte", &text.replace("red", "blue"));
+    assert!(provider.invalidate(std::slice::from_ref(&svelte)));
+    assert_eq!(provider.modules_at(std::slice::from_ref(&svelte)), vec![sheet_id.clone()]);
+
+    app.write("src/App.svelte", &text.replace("red", "blue").replace(">x<", ">y<"));
+    assert!(provider.invalidate(std::slice::from_ref(&svelte)));
+    assert_eq!(provider.modules_at(std::slice::from_ref(&svelte)), vec![id.clone()]);
+    let warnings: Vec<String> = host.take_console().into_iter().filter(|l| l.level == "warn").map(|l| l.text).collect();
+    assert!(!warnings.iter().any(|w| w.contains("<style>")), "{warnings:?}");
 }
 
 /// Q2: a `lang="ts"` component importing a `.ts` module (as `./util.js`, TypeScript's convention, and
