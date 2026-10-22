@@ -393,6 +393,17 @@ in this document blocks a running lane. SC1 needs none of it (cadatomic's icons 
 
 ## 6. Open questions for the user
 
+**Decided (user, 2026-10-22):**
+- **AS-O1: (b), an `Asset` handle object**, against the recommendation. AS1 designs it so that it can cross boundaries:
+  the handle wraps the stable ref (`asset://app/src/icon.svg`). Wherever an import result reaches a native prop,
+  `Json<T>`, an export, an isolate or a manifest, the runtime and codegen take its ref (a well-known symbol or
+  `toJSON`), so no new ABI value type is needed. JS gets methods and fields on the handle (`.url`, `.bytes()`,
+  `.text()`, `.size`, change notification in dev). TypeScript types the import as `Asset`, and Vite returns the same
+  handle shape.
+- **AS-O2: (a)**, as recommended.
+- **AS-O3: (a)**, as recommended (logical module ids, in Q4).
+
+
 | # | Question | Options | Recommendation |
 |---|---|---|---|
 | AS-O1 | What does `import icon from './icon.svg'` give JS? | (a) a branded string `asset://app/src/icon.svg`; (b) an `Asset` handle object with methods (`.bytes()`, `.size`) | **(a)**: no new ABI type, works in props, `Json<T>`, isolates, manifests and Vite unchanged; methods live in `svelters:assets` functions taking the string |

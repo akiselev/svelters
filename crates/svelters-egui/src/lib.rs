@@ -17,6 +17,8 @@ pub mod backend;
 pub mod embed;
 pub mod kinds;
 pub mod layout;
+/// FX1: native focus policy and word rules (GTK on Linux).
+pub mod native;
 pub mod provider;
 pub mod runner;
 pub mod scene;
