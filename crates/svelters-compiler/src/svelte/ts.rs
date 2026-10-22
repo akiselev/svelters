@@ -17,7 +17,7 @@ use crate::estree::Span;
 use crate::svelte::ast::Root;
 use crate::svelte::errors::CompileError;
 pub use crate::svelte::parse::remove_typescript_nodes::TsStrip;
-use crate::svelte::parse::remove_typescript_nodes::remove_typescript_nodes;
+use crate::svelte::parse::remove_typescript_nodes::{remove_typescript_nodes, remove_typescript_nodes_program};
 
 /// Removes the TypeScript from a parsed `lang="ts"` component (a no-op for JavaScript ones) and
 /// returns the source ranges that held it.
@@ -29,6 +29,21 @@ pub fn strip(root: &mut Root, src: &str) -> Result<TsStrip, CompileError> {
         ranges.ranges.dedup();
     }
     Ok(ranges)
+}
+
+/// Removes the TypeScript from a module parsed with TypeScript on (`.ts`, `.svelte.ts`) and returns
+/// the source ranges that held it.
+pub fn strip_program(program: &mut crate::estree::Program, src: &str) -> Result<TsStrip, CompileError> {
+    let mut ranges = TsStrip::default();
+    remove_typescript_nodes_program(program, src, Some(&mut ranges))?;
+    ranges.ranges.sort_unstable();
+    ranges.ranges.dedup();
+    Ok(ranges)
+}
+
+/// Whether a module file is TypeScript, by its name: `.ts`, `.mts` (so `.svelte.ts` too).
+pub fn is_ts_module(filename: &str) -> bool {
+    filename.ends_with(".ts") || filename.ends_with(".mts")
 }
 
 impl TsStrip {
