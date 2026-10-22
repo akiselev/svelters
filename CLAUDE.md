@@ -81,9 +81,10 @@ other agent on the machine. **GitHub CI is the gate, not your machine.** The use
 - **Never rerun anything on unchanged code.** Run nothing for docs-only changes, milestone records,
   or a merge of `origin/master` that conflicts nowhere in code. A result from before your last code
   edit is not a pass, so say "not run" instead.
-- **Conformance** (compiler or runtime changes only; it is not in CI): run only the affected
-  samples (`node run.mjs <name-filter>`, see `docs/notes/cf1-handoff.md`). The coordinator does the
-  full run and `--update-baseline` once per merge round.
+- **Conformance** runs in CI (the `conformance` job of `js.yml`, `--check` against `baseline.json`;
+  its `results.json`/`REPORT.md` are uploaded as an artifact). Locally, run only the affected
+  samples (`node run.mjs <name-filter>`, see `docs/notes/cf1-handoff.md`). When a lane raises the
+  score, it commits `--update-baseline` output from one full run at the end.
 - **Research and docs lanes build nothing.**
 - **Stop when told.** When the coordinator or user says stop, kill your running builds and tests,
   commit, push and report.
