@@ -16,15 +16,25 @@ pub struct Writer<'s> {
     /// (gen line, gen col, src line, src col)
     mappings: Vec<(u32, u32, u32, u32)>,
     indent: usize,
+    /// A sink ([`Writer::sink`]): nothing is kept.
+    discard: bool,
 }
 
 impl<'s> Writer<'s> {
     pub fn new(source: &'s str) -> Writer<'s> {
-        Writer { out: String::new(), line: 0, col: 0, src_lines: LineIndex::new(source), mappings: Vec::new(), indent: 0 }
+        Writer { out: String::new(), line: 0, col: 0, src_lines: LineIndex::new(source), mappings: Vec::new(), indent: 0, discard: false }
+    }
+
+    /// A writer that keeps nothing: code generation run for its diagnostics only (CX1's check).
+    pub fn sink() -> Writer<'static> {
+        Writer { out: String::new(), line: 0, col: 0, src_lines: LineIndex::new(""), mappings: Vec::new(), indent: 0, discard: true }
     }
 
     /// Records that the next output position corresponds to byte `offset` of the source.
     pub fn map(&mut self, offset: u32) {
+        if self.discard {
+            return;
+        }
         let (l, c) = self.src_lines.line_col(offset);
         if self.mappings.last() != Some(&(self.line, self.col, l, c)) {
             self.mappings.push((self.line, self.col, l, c));
@@ -33,6 +43,9 @@ impl<'s> Writer<'s> {
 
     /// Appends text with no mapping of its own.
     pub fn write(&mut self, s: &str) {
+        if self.discard {
+            return;
+        }
         for ch in s.chars() {
             if ch == '\n' {
                 self.line += 1;
@@ -52,6 +65,9 @@ impl<'s> Writer<'s> {
 
     /// Appends a copy of `source[start..end]`, mapping every line start to its origin.
     pub fn copy(&mut self, source: &str, start: u32, end: u32) {
+        if self.discard {
+            return;
+        }
         let text = &source[start as usize..end as usize];
         self.map(start);
         let mut off = start;

@@ -29,7 +29,6 @@ use super::Scene;
 use super::access::SceneRef;
 use super::id::{NodeId, RootIx, Target, VNodeId};
 use super::node::{NodeFlags, W};
-use super::tree::TreeRoot;
 
 /// What a provider widget answers for a point inside its drawn rect (R13).
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
@@ -158,7 +157,7 @@ impl<'a> SceneRef<'a> {
     /// Root `r` is shown and, for a slot root, drawn in `vp` now (R20).
     fn live_in(self, r: RootIx, vp: egui::ViewportId) -> bool {
         match self.s.roots.get(r) {
-            Some(e) => e.visible && (!matches!(e.kind, TreeRoot::Slot { .. }) || e.viewport == vp),
+            Some(e) => e.visible && (e.kind.slot_node().is_none() || e.viewport == vp),
             None => false,
         }
     }

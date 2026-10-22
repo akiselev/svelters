@@ -98,6 +98,14 @@ pub fn with_embed<R>(id: EmbedId, f: impl FnOnce(&Embed) -> R) -> Option<R> {
     Some(f(&e))
 }
 
+/// ARCH-SCENE R21 for hosts that have only the `Ui` (berth's `DeferredHost::viewport_done(ui,
+/// window)`, inside a deferred viewport's `Send + Sync` closure): [`Embed::show_viewport_passes`]
+/// of this thread's current embed (see [`with_current`]). Returns how many passes ran; 0 when the
+/// thread has no embed. Call it once per viewport per pass, after that viewport's panes are drawn.
+pub fn show_viewport_passes(ui: &mut egui::Ui) -> usize {
+    with_current(|e| e.show_viewport_passes(ui)).unwrap_or(0)
+}
+
 /// A `Copy + Send + Sync` token for one slot, for closures that must be `Send + Sync` (a deferred
 /// viewport's). [`SlotPainter::show`] draws the slot on the thread that made the painter (the UI
 /// thread); on any other thread it draws nothing (debug builds panic, release builds log once).

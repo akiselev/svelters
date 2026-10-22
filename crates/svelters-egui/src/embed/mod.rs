@@ -38,7 +38,7 @@ mod roots;
 mod settle;
 mod slots;
 
-pub use current::{EmbedId, SlotPainter, with_current, with_embed};
+pub use current::{EmbedId, SlotPainter, show_viewport_passes, with_current, with_embed};
 pub use roots::{FaultCause, RootError, RootId, RootInfo, RootOwner, RootState};
 pub use settle::{Busy, BusyProbe, Settle};
 pub use slots::{FaultUi, SlotId, SlotOptions, SlotResponse, SlotSizing, SlotWarning};
@@ -552,7 +552,12 @@ impl Embed {
 
     /// Creates a slot (or returns the one with this key).
     pub fn create_slot(&self, key: impl Into<SlotKey>, opts: SlotOptions) -> SlotId {
-        let key = key.into().0;
+        self.create_slot_as(key.into(), opts, None)
+    }
+
+    /// A slot, or (SG4) an overlay root on order `overlay`.
+    fn create_slot_as(&self, key: SlotKey, opts: SlotOptions, overlay: Option<egui::Order>) -> SlotId {
+        let key = key.0;
         if let Some(&s) = self.inner.st.borrow().slot_keys.get(&key) {
             return s;
         }
@@ -564,7 +569,11 @@ impl Embed {
             let n = scene.create(box_kind, Owner::Host).expect("a box");
             let i = scene.ix(n);
             scene.core[i].egui_id = id;
-            let rix = scene.add_root(TreeRoot::Slot { node: n }, n);
+            let kind = match overlay {
+                Some(layer) => TreeRoot::Overlay { node: n, layer },
+                None => TreeRoot::Slot { node: n },
+            };
+            let rix = scene.add_root(kind, n);
             (n.to_raw(), rix)
         };
         let slot = SlotId(h);
@@ -861,7 +870,14 @@ impl Embed {
         b.0.pass_active.set(false);
         ui.advance_cursor_after_rect(rect);
         let (drawn, content) = match res {
-            Ok(x) => x,
+            Ok(x) => {
+                // SG4, §7.2 step e: the root's scene passes (and after_layout of a fresh layout)
+                let rix = self.inner.st.borrow().slots.get(&slot).map(|s| s.rix);
+                if let Some(rix) = rix {
+                    crate::provider::pass::run_root_passes(&b.0.scene, ui, rix, x.0);
+                }
+                x
+            }
             Err(p) => {
                 let msg = p
                     .downcast_ref::<&str>()
@@ -1036,8 +1052,72 @@ impl Embed {
     /// `PassScope::Viewport`/`AllViewports` scene passes (overlays over every pane of the window)
     /// run once per viewport. EM2 lands the call site; the passes themselves are SG4's
     /// (`provider/pass.rs`): until then it only publishes the busy probe.
-    pub fn show_viewport_passes(&self, _ui: &mut egui::Ui) {
+    ///
+    /// SG4: runs those passes over `ui`'s max rect (each on its own layer, `ScenePass::order`).
+    /// Returns how many ran. From a deferred viewport's `Send + Sync` closure, use
+    /// [`show_viewport_passes`](crate::embed::show_viewport_passes) (the thread's current embed).
+    pub fn show_viewport_passes(&self, ui: &mut egui::Ui) -> usize {
+        let n = crate::provider::pass::run_viewport_passes(&self.inner.backend.0.scene, ui);
         self.publish();
+        n
+    }
+
+    /// SG4 (R23): registers a state provider (`SceneHandle::register_state_provider`).
+    pub fn register_state_provider<P: crate::provider::StateProvider>(&self, p: P) -> crate::provider::ProviderHandle<P> {
+        self.inner.backend.0.scene.register_state_provider(p)
+    }
+
+    /// SG4: registers a scene pass (`SceneHandle::register_pass`).
+    pub fn register_pass<P: crate::provider::ScenePass>(&self, p: P) -> crate::provider::PassHandle<P> {
+        self.inner.backend.0.scene.register_pass(p)
+    }
+
+    /// SG4 (ARCH-SCENE §7.5): an overlay root, a slot drawn with [`Embed::show_overlay`] in an
+    /// `egui::Area` of order `layer` over other content (a 3D viewport, a canvas). Mount into it
+    /// like any slot (JS), or build its content from Rust (`SceneMut`, the slot's node is
+    /// Host-owned). Returns the existing slot for a key in use.
+    pub fn create_overlay(&self, key: impl Into<SlotKey>, layer: egui::Order, opts: SlotOptions) -> SlotId {
+        self.create_slot_as(key.into(), opts, Some(layer))
+    }
+
+    /// SG4: draws overlay `slot` at `rect` (screen points) above what is under it. The area is
+    /// click-through, so the content under it keeps receiving pointer input, except while the
+    /// pointer is over one of the overlay's nodes that takes input (a button, a field, a focusable
+    /// provider kind), as laid out and drawn in the last pass: then that node gets it. A slot made
+    /// with `create_slot` is drawn the same way, on the `Foreground` order.
+    pub fn show_overlay(&self, ctx: &egui::Context, slot: SlotId, rect: egui::Rect) -> SlotResponse {
+        let (layer, rix, id) = {
+            let scene = self.inner.backend.0.scene.borrow();
+            let Some(n) = scene.get(slot.0) else {
+                return SlotResponse { rect: egui::Rect::NOTHING, content_size: egui::Vec2::ZERO, state: RootState::Empty };
+            };
+            let rix = scene.core[scene.ix(n.handle)].root;
+            let layer = match scene.roots.get(rix).map(|e| e.kind) {
+                Some(TreeRoot::Overlay { layer, .. }) => layer,
+                _ => egui::Order::Foreground,
+            };
+            (layer, rix, n.id.with("overlay"))
+        };
+        let captures = ctx.pointer_hover_pos().is_some_and(|p| self.overlay_takes_input(rix, ctx.viewport_id(), p));
+        egui::Area::new(id)
+            .order(layer)
+            .fixed_pos(rect.min)
+            .constrain(false)
+            .interactable(captures)
+            .sense(egui::Sense::hover())
+            .show(ctx, |ui| {
+                ui.set_min_size(rect.size());
+                let mut child = ui.new_child(egui::UiBuilder::new().max_rect(rect));
+                self.show_slot(&mut child, slot)
+            })
+            .inner
+    }
+
+    /// True if the topmost node of overlay root `rix` at `pos` (last pass's hit list) takes input.
+    fn overlay_takes_input(&self, rix: crate::scene::RootIx, vp: egui::ViewportId, pos: egui::Pos2) -> bool {
+        let Ok(scene) = self.inner.backend.0.scene.try_borrow() else { return false };
+        let s = crate::scene::SceneRef::new(&scene);
+        s.hit_test(vp, pos).into_iter().filter_map(|t| s.get(t.node())).find(|n| n.root() == rix).is_some_and(|n| takes_input(n.builtin()))
     }
 
     /// The desktop runners' walk: presented `<window>`s (the root one in `ui`, the others as
@@ -1076,6 +1156,8 @@ impl Embed {
         drop(scene);
         // R16: Rust writes deferred to the next logic, and announcements not delivered yet.
         busy |= settle::scene_busy(&b.0.scene);
+        // SG4, R16/R8: a state provider that wants (or was kicked), or a provider widget at work
+        busy.set(Busy::PROVIDER, crate::provider::pass::providers_busy(&b.0.scene) || crate::provider::pass::widgets_busy(&b.0.scene.borrow()));
         let now = Instant::now();
         let next = [hb.next_timer, b.0.deadline.get()].into_iter().flatten().min();
         busy.set(Busy::TIMER_SOON, next.is_some_and(|t| t <= now + self.inner.cfg.timer_horizon));
@@ -1468,10 +1550,7 @@ impl Embed {
         let slot = {
             let scene = self.inner.backend.0.scene.borrow();
             let n = scene.live(h).ok()?;
-            match scene.roots.get(scene.core[scene.ix(n)].root)?.kind {
-                TreeRoot::Slot { node } => SlotId(node.to_raw()),
-                _ => return None,
-            }
+            SlotId(scene.roots.get(scene.core[scene.ix(n)].root)?.kind.slot_node()?.to_raw())
         };
         self.inner.st.borrow().slots.get(&slot)?.root
     }
@@ -1528,6 +1607,20 @@ impl Embed {
                 }
             }
         }
+    }
+}
+
+/// SG4: a node that takes pointer input in an overlay (the overlay's area turns interactable over it).
+fn takes_input(w: &crate::scene::W) -> bool {
+    use crate::scene::W;
+    match w {
+        W::Button { .. } | W::Checkbox { .. } | W::TextEdit { .. } | W::Slider { .. } => true,
+        W::Label { selectable, .. } => *selectable,
+        W::Ext(x) => {
+            let c = x.entry().caps;
+            c.contains(crate::provider::Caps::FOCUSABLE) || c.contains(crate::provider::Caps::EDITABLE)
+        }
+        W::Box | W::Window { .. } => false,
     }
 }
 

@@ -447,10 +447,6 @@ pub(crate) struct ExtCx<'a> {
 }
 
 impl ExtCx<'_> {
-    pub fn reborrow(&mut self) -> ExtCx<'_> {
-        ExtCx { cols: self.cols, journal: self.journal, core: self.core, roots: self.roots, tick: self.tick, in_batch: self.in_batch }
-    }
-
     /// A tick for this write (the batch's inside a batch), stamped on the node; journals `what`.
     fn changed(&mut self, i: u32, node: NodeId, ext: ExtId, what: ExtChange, origin: Origin) -> Tick {
         if !self.in_batch {

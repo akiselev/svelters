@@ -68,7 +68,7 @@ pub(crate) fn is_common(key: P) -> bool {
     use P::*;
     matches!(
         key,
-        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent
+        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | Position | Left | Top | Right | Bottom | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent
     )
 }
 
@@ -101,6 +101,11 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (P::FlexBasis, _) => c.flex_basis = as_len(v)?,
         (P::AlignSelf, _) => c.align_self = as_enum(v, kinds::ALIGN_SELF)?,
         (P::Margin, _) => c.margin = as_f64(v)?,
+        (P::Position, _) => c.position = as_enum(v, kinds::POSITION)?,
+        (P::Left, _) => c.left = as_len(v)?,
+        (P::Top, _) => c.top = as_len(v)?,
+        (P::Right, _) => c.right = as_len(v)?,
+        (P::Bottom, _) => c.bottom = as_len(v)?,
         (P::FlexDirection, _) => c.flex_direction = as_enum(v, kinds::DIRECTION)?,
         (P::FlexWrap, _) => c.flex_wrap = as_enum(v, kinds::WRAP)?,
         (P::Gap, _) => c.gap = as_f64(v)?,
@@ -174,6 +179,11 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::FlexBasis, _) => len_value(c.flex_basis),
         (P::AlignSelf, _) => s(c.align_self),
         (P::Margin, _) => Value::F64(c.margin),
+        (P::Position, _) => s(c.position),
+        (P::Left, _) => len_value(c.left),
+        (P::Top, _) => len_value(c.top),
+        (P::Right, _) => len_value(c.right),
+        (P::Bottom, _) => len_value(c.bottom),
         (P::FlexDirection, _) => s(c.flex_direction),
         (P::FlexWrap, _) => s(c.flex_wrap),
         (P::Gap, _) => Value::F64(c.gap),
