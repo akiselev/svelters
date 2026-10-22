@@ -43,7 +43,7 @@ use std::sync::{Arc, Mutex, OnceLock};
 use svelters_abi::*;
 use svelters_style::{
     Atom, ColorScheme, ComputeContext, Contrast, ComputedStyle, ComputedValue, DeclBlock, Diagnostic, Element, Length, MatchCaches, MediaEnv, Origin, ParseOptions, Reach, SheetId,
-    StateMask, StateNames, Stylesheet, Stylist,
+    Overlay, PseudoElement, StateMask, StateNames, Stylesheet, Stylist, Transitions,
 };
 
 /// `SVL_STYLE_TARGET` answer of a backend that runs the Rust engine itself: the runtime sends raw
@@ -159,6 +159,12 @@ pub(crate) struct NodeStyle {
     computed: Option<Arc<ComputedStyle>>,
     /// Stock widgets: the style in egui's `inactive`, `hovered` and `active` states.
     states: Option<Arc<[Arc<ComputedStyle>; 3]>>,
+    /// OW-CSS: an own widget's `#[part]`s (its `KindEntry::parts`), kept from the last restyle
+    /// that saw the payload (it is taken out while the widget paints).
+    part_decl: &'static [crate::provider::PartEntry],
+    /// OW-CSS: the computed styles of its paint parts that a `::part()` rule can reach, as
+    /// (declaration index, name, style), restyled with the host.
+    parts: Vec<(u16, &'static str, Arc<ComputedStyle>)>,
 }
 
 /// The cascade's state in one scene.
@@ -186,6 +192,18 @@ pub(crate) struct SceneStyle {
     focus: Option<NodeId>,
     /// A walk-time restyle that needs another frame (an ancestor or a layout change).
     pub(crate) repaint: bool,
+    /// OW-CSS: running CSS transitions of nodes, and of own widgets' parts (by declaration index).
+    transitions: Transitions<NodeId>,
+    part_transitions: Transitions<(NodeId, u16)>,
+    /// Their samples at `now`: what paint reads over the computed style.
+    sampled: std::collections::HashMap<NodeId, Overlay>,
+    part_sampled: std::collections::HashMap<(NodeId, u16), Overlay>,
+    /// egui's input time at the last logic step (kittest's virtual clock in tests): transitions
+    /// start and are sampled at it.
+    pub(crate) now: f64,
+    /// Reduced motion (`EguiBackend::set_motion`): `prefers-reduced-motion: reduce` matches and
+    /// no transition runs.
+    pub(crate) reduced_motion: bool,
 }
 
 impl SceneStyle {
@@ -223,6 +241,12 @@ impl Default for SceneStyle {
             contrast: None,
             focus: None,
             repaint: false,
+            transitions: Transitions::new(),
+            part_transitions: Transitions::new(),
+            sampled: Default::default(),
+            part_sampled: Default::default(),
+            now: 0.0,
+            reduced_motion: false,
         }
     }
 }
@@ -235,18 +259,105 @@ impl SceneStyle {
         self.active
     }
 
-    /// OW0 hook for OW-CSS: the computed style of node `id`'s part `part` (`::part(name)`), as a
-    /// pseudo-element of the host. `None` until the engine computes part styles (OW-CSS); own
-    /// widgets then paint the part from its UA table, inheriting from the host.
+    /// The computed style of node `id`'s paint part `part` (`::part(name)`), as a pseudo-element
+    /// of the host (`Stylist::compute_pseudo`). `None` when no sheet has a rule ending in that
+    /// part: own widgets then paint the part from its UA table, inheriting from the host.
     pub(crate) fn part_computed(&self, id: NodeId, part: &str) -> Option<&Arc<ComputedStyle>> {
-        let _ = (id, part);
-        None
+        self.node(id)?.parts.iter().find(|(_, n, _)| *n == part).map(|(_, _, c)| c)
     }
 
-    /// OW0 hook for OW-CSS: every part style of node `id` (what `measure` sees).
+    /// Every part style of node `id` (what `measure` sees).
     pub(crate) fn part_styles(&self, id: NodeId) -> PartStyles {
-        let _ = id;
-        Vec::new()
+        self.node(id).map(|n| n.parts.iter().map(|(_, name, c)| (Box::from(*name), c.clone())).collect()).unwrap_or_default()
+    }
+
+    /// Node `id`'s running transitions at [`SceneStyle::now`] (empty: none), sorted by property.
+    pub(crate) fn overlay(&self, id: NodeId) -> &[(usize, ComputedValue)] {
+        self.sampled.get(&id).map_or(&[], |v| &v[..])
+    }
+
+    /// Part `part` of node `id`: its running transitions at [`SceneStyle::now`].
+    pub(crate) fn part_overlay(&self, id: NodeId, part: &str) -> &[(usize, ComputedValue)] {
+        let Some((k, _, _)) = self.node(id).and_then(|n| n.parts.iter().find(|(_, n, _)| *n == part)) else { return &[] };
+        self.part_sampled.get(&(id, *k)).map_or(&[], |v| &v[..])
+    }
+
+    /// Whether a CSS transition of a node or a part is running.
+    pub(crate) fn transitions_running(&self) -> bool {
+        !self.sampled.is_empty() || !self.part_sampled.is_empty()
+    }
+
+    /// The nodes with a running transition (theirs or a part's), possibly repeated.
+    pub(crate) fn transitioning_nodes(&self) -> impl Iterator<Item = NodeId> + '_ {
+        self.sampled.keys().copied().chain(self.part_sampled.keys().map(|k| k.0))
+    }
+
+    /// The logic step's clock: drops ended transitions and samples the running ones at `now`.
+    /// Returns whether any still run (their roots need frames).
+    pub(crate) fn step_transitions(&mut self, now: f64) -> bool {
+        self.now = now;
+        if !self.transitions_running() {
+            return false;
+        }
+        self.transitions.tick(now);
+        self.part_transitions.tick(now);
+        let SceneStyle { transitions, part_transitions, sampled, part_sampled, .. } = self;
+        sampled.clear();
+        sampled.extend(transitions.running_keys().filter_map(|k| Some((k, transitions.sample(k, now)?))));
+        part_sampled.clear();
+        part_sampled.extend(part_transitions.running_keys().filter_map(|k| Some((k, part_transitions.sample(k, now)?))));
+        self.transitions_running()
+    }
+
+    /// Records node `id`'s restyle for transitions: the host from `old` to its new style, and each
+    /// part from `old_parts` to its new one; what starts is sampled at once (paint this pass).
+    fn note_transitions(&mut self, id: NodeId, old: Option<&ComputedStyle>, old_parts: &[(u16, &'static str, Arc<ComputedStyle>)]) {
+        let now = self.now;
+        let instant = self.reduced_motion;
+        let SceneStyle { nodes, transitions, part_transitions, sampled, part_sampled, .. } = self;
+        let Some(ns) = nodes.get(id.index() as usize).filter(|n| n.id == Some(id)) else { return };
+        if let (Some(a), Some(b)) = (old, ns.computed.as_deref())
+            && !std::ptr::eq(a, b)
+        {
+            transitions.restyled(id, a, b, now, instant);
+            match transitions.sample(id, now) {
+                Some(o) => sampled.insert(id, o),
+                None => sampled.remove(&id),
+            };
+        }
+        for (k, _, b) in &ns.parts {
+            let Some((_, _, a)) = old_parts.iter().find(|(j, _, _)| j == k) else { continue };
+            if Arc::ptr_eq(a, b) {
+                continue;
+            }
+            let key = (id, *k);
+            part_transitions.restyled(key, a, b, now, instant);
+            match part_transitions.sample(key, now) {
+                Some(o) => part_sampled.insert(key, o),
+                None => part_sampled.remove(&key),
+            };
+        }
+    }
+
+    /// Ends every running transition (reduced motion switched on).
+    pub(crate) fn end_transitions(&mut self) {
+        self.transitions.clear();
+        self.part_transitions.clear();
+        self.sampled.clear();
+        self.part_sampled.clear();
+    }
+
+    /// Node `id` went away: forgets its transitions.
+    pub(crate) fn forget(&mut self, id: NodeId) {
+        if self.sampled.remove(&id).is_some() {
+            self.transitions.remove(id);
+        }
+        let parts = self.node(id).map_or(0, |n| n.part_decl.len());
+        for k in 0..parts as u16 {
+            if self.part_sampled.remove(&(id, k)).is_some() {
+                self.part_transitions.remove((id, k));
+            }
+        }
     }
 
     fn node(&self, id: NodeId) -> Option<&NodeStyle> {
@@ -424,6 +535,23 @@ fn is_stock(w: &W) -> bool {
     matches!(w, W::Button { .. } | W::Checkbox { .. } | W::Slider { .. } | W::TextEdit { .. })
 }
 
+/// Whether two part lists hold the same parts with equal styles.
+fn parts_eq(a: &[(u16, &'static str, Arc<ComputedStyle>)], b: &[(u16, &'static str, Arc<ComputedStyle>)]) -> bool {
+    a.len() == b.len() && a.iter().zip(b).all(|(x, y)| x.0 == y.0 && x.2 == y.2)
+}
+
+/// The part properties `measure` reads (box and text metrics): a change relayouts the host.
+const PART_LAYOUT_PROPS: &[&str] = &[
+    "padding-left", "padding-right", "padding-top", "padding-bottom", "padding", "border-width", "border-left-width", "border-right-width", "border-top-width", "border-bottom-width",
+    "font-size", "font-weight", "font-family", "font-style", "line-height", "letter-spacing", "text-transform", "width", "height", "min-width", "min-height", "display", "gap", "content",
+];
+
+/// Whether `b`'s parts differ from `a`'s in what layout reads (a part added or removed, or a
+/// [`PART_LAYOUT_PROPS`] value).
+fn parts_layout_differs(a: &[(u16, &'static str, Arc<ComputedStyle>)], b: &[(u16, &'static str, Arc<ComputedStyle>)]) -> bool {
+    a.len() != b.len() || a.iter().zip(b).any(|(x, y)| x.0 != y.0 || PART_LAYOUT_PROPS.iter().any(|p| x.2.get(p) != y.2.get(p)))
+}
+
 /// Whether two styles differ in what children inherit (inherited properties, custom properties).
 fn inherited_differs(a: Option<&ComputedStyle>, b: &ComputedStyle) -> bool {
     let Some(a) = a else { return true };
@@ -432,6 +560,24 @@ fn inherited_differs(a: Option<&ComputedStyle>, b: &ComputedStyle) -> bool {
 }
 
 impl Scene {
+    /// OW-CSS: the logic step's transition clock ([`SceneStyle::step_transitions`]). Every node
+    /// whose transitions ran this frame, including those that just ended, drops its cached shapes
+    /// (SG6's `WidgetCx::cached_shapes`): its paint changes every frame while it animates.
+    pub(crate) fn step_style_transitions(&mut self, now: f64) {
+        let ran: Vec<NodeId> = self.style.transitioning_nodes().collect();
+        self.style.step_transitions(now);
+        for id in ran {
+            if let Some(i) = self.idx(id) {
+                self.paint_cache.remove(i as u32);
+            }
+        }
+    }
+
+    /// OW-CSS: whether a CSS transition (of a node or an own widget's part) is running.
+    pub fn style_transitions_running(&self) -> bool {
+        self.style.transitions_running()
+    }
+
     /// Marks node `id` for the next logic restyle.
     pub(crate) fn mark_style(&mut self, id: NodeId) {
         if let Some(i) = self.idx(id)
@@ -501,23 +647,51 @@ impl Scene {
         } else {
             None
         };
+        // OW-CSS: an own widget's paint parts, as pseudo-elements of the host (W3)
+        let decl: &'static [crate::provider::PartEntry] = match self.w(i) {
+            W::Ext(x) => x.entry().parts,
+            _ => st.node(id).map_or(&[], |n| n.part_decl),
+        };
+        let mut parts = Vec::new();
+        for (k, p) in decl.iter().enumerate() {
+            let pe = PseudoElement::part(p.name);
+            if !p.node && st.stylist.has_pseudo_rules(&pe) {
+                parts.push((k as u16, p.name, Arc::new(st.stylist.compute_pseudo(n, &pe, &c, &st.cx, &mut caches))));
+            }
+        }
         caches.clear();
         self.style.caches = caches;
         let ns = self.style.node_mut(id);
+        ns.part_decl = decl;
         let changed = ns.computed.as_deref() != Some(&c) || ns.states.as_deref().map(|s| &s[..]) != states.as_deref().map(|s| &s[..]);
+        let parts_changed = !parts_eq(&ns.parts, &parts);
         let inherit = inherited_differs(ns.computed.as_deref(), &c);
-        if !changed {
+        if !changed && !parts_changed {
             return false;
         }
-        ns.computed = Some(Arc::new(c));
+        let relayout_parts = parts_changed && parts_layout_differs(&ns.parts, &parts);
+        // keep unchanged styles (their identity tells transitions what changed)
+        let old = if ns.computed.as_deref() != Some(&c) { ns.computed.replace(Arc::new(c)) } else { None };
         ns.states = states;
+        let old_parts = std::mem::take(&mut ns.parts);
+        for p in parts.iter_mut() {
+            if let Some((_, _, o)) = old_parts.iter().find(|(k, _, o)| *k == p.0 && **o == *p.2) {
+                p.2 = o.clone();
+            }
+        }
+        ns.parts = parts;
+        self.style.note_transitions(id, old.as_deref(), &old_parts);
         self.core[i].dirty.insert(Dirty::PAINT);
+        // SG6: a new style draws differently, whatever version the widget caches its shapes under
+        self.paint_cache.remove(i as u32);
         if matches!(self.w(i), W::Run { .. }) {
             crate::rich::touched(self, i); // RT2: a run's font may have changed
         }
         let t = layout_style(self, i);
-        if t != *self.layout[i].style {
-            self.layout[i].style = self.intern_style(t);
+        if t != *self.layout[i].style || relayout_parts {
+            if t != *self.layout[i].style {
+                self.layout[i].style = self.intern_style(t);
+            }
             self.invalidate_style(id);
             self.style.repaint = true;
         }
@@ -715,11 +889,11 @@ pub(crate) fn before_container(s: &mut Scene, i: usize, r: egui::Rect, ui: &egui
     s.set_walk_state(i, b);
     let id = s.slots.id_at(i)?;
     let c = s.style.computed(id)?.clone();
-    paint_node_box(&c, s.core[i].state, id, r, ui.painter());
-    match c.get("opacity") {
-        Some(ComputedValue::Number(o)) if *o < 1.0 => Some(o.max(0.0)),
-        _ => None,
-    }
+    let dark = ui.ctx().theme() == egui::Theme::Dark;
+    let v = crate::paint::StyleView::new(Some(&c), crate::paint::Ua::NONE, s.core[i].state, dark).with_overlay(s.style.overlay(id));
+    crate::paint::paint_box(&mut crate::paint::PaintCx::for_node(ui.painter(), id.to_raw()), &v, r);
+    let o = v.opacity();
+    (o < 1.0).then_some(o)
 }
 
 /// OW0: an own widget's bits after its units ran (`WidgetCx::commit_state`): stored now
@@ -825,8 +999,10 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
         };
         stock_shadows(now, r, child);
     } else {
-        paint_node_box(&c, s.core[i].state, id, r, child.painter());
-        if let Some(col) = color(&c, "color") {
+        let dark = child.ctx().theme() == egui::Theme::Dark;
+        let v = crate::paint::StyleView::new(Some(&c), crate::paint::Ua::NONE, s.core[i].state, dark).with_overlay(s.style.overlay(id));
+        crate::paint::paint_box(&mut crate::paint::PaintCx::for_node(child.painter(), id.to_raw()), &v, r);
+        if let Some(col) = v.color("color").filter(|_| c.get("color").is_some()) {
             child.visuals_mut().override_text_color = Some(col);
         }
     }
@@ -847,14 +1023,6 @@ fn px(c: &ComputedStyle, name: &str) -> Option<f32> {
         Some(ComputedValue::Length(l)) => Some(l.px),
         _ => None,
     }
-}
-
-/// OW0: a box's outer shadows, background, border and inset shadows, behind its content, through
-/// the box primitive (`paint::paint_box`; traced as node `id`).
-fn paint_node_box(c: &ComputedStyle, state: StateBits, id: NodeId, r: egui::Rect, p: &egui::Painter) {
-    let dark = p.ctx().theme() == egui::Theme::Dark;
-    let s = crate::paint::StyleView::new(Some(c), crate::paint::Ua::NONE, state, dark);
-    crate::paint::paint_box(&mut crate::paint::PaintCx::for_node(p, id.to_raw()), &s, r);
 }
 
 /// A stock widget's outer shadows (CS5g) around its rect `r`, with its corner radius as egui draws
@@ -1284,6 +1452,10 @@ impl Scene {
         let mut env = MediaEnv { width: r.width(), height: r.height(), color_scheme: scheme, ..*self.style.stylist.media_env() };
         if let Some(c) = self.style.contrast {
             env.contrast = c;
+        }
+        env.reduced_motion = self.style.reduced_motion;
+        if env.reduced_motion && !self.style.stylist.media_env().reduced_motion {
+            self.style.end_transitions();
         }
         if env != *self.style.stylist.media_env() && !self.style.stylist.set_media(env).is_empty() {
             self.style.all = true;

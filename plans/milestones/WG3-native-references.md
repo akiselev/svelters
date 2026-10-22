@@ -182,6 +182,9 @@ module and the focus policies above. The decision is W4's owner's.
 
 (WG3b below closes the first, third and fourth items for pins 4–6; pins 8–10, Windows and macOS remain.)
 
+(macOS: `plans/milestones/WG3m-macos-references.md`, AppKit goldens for the 14 pins that apply there and egui
+measured against them.)
+
 ## WG3b (2026-10-22): GtkEntry selection fidelity, pins 4–6, Qt 6.11 golden
 
 ### GtkEntry `cursor-position`/`selection-bound` (coordinator decision: fix the backend)

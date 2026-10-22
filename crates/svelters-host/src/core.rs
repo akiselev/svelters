@@ -126,6 +126,20 @@ pub struct Timing {
     pub checkpoints: u64,
 }
 
+/// The host's own measurement of the last entry into JS that the turn budget stopped (FX4): the
+/// budget that was armed and how late the abort came back to Rust after the deadline passed. Unlike
+/// a wall-clock measurement around the whole frame, `late` excludes the work before and after the
+/// entry (commands, disposal, layout) and the budget itself; it is what an interrupt-latency test
+/// bounds. An external [`crate::Host::interrupt_flag`] stop is not recorded.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[non_exhaustive]
+pub struct BudgetInterrupt {
+    /// The turn budget armed for the entry.
+    pub budget: Duration,
+    /// From the deadline (arm time + `budget`) to the entry's return to Rust with the abort.
+    pub late: Duration,
+}
+
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct ConsoleLine {
     pub level: String,
@@ -381,6 +395,8 @@ pub(crate) struct Core {
     /// The turn budget armed for the next entries into JS (starts as `cfg.turn_budget`; an embedder
     /// sets per-entry budgets, ARCH-EMBED §4.2 `Budgets`).
     pub(crate) budget: Cell<Option<Duration>>,
+    /// FX4: the last entry the turn budget stopped (set by the engine when it disarms).
+    pub(crate) last_interrupt: Cell<Option<BudgetInterrupt>>,
     /// EM1: what mounted roots reported (`__svelters_host.rootFault`/`rootInfo`/`rootEmit`).
     pub(crate) root_msgs: RefCell<Vec<RootMessage>>,
     /// IN1: a locale change made while JS was running, delivered by the next checkpoint.
@@ -444,6 +460,7 @@ impl Core {
             ops: offload::OpTable::new(crate::exports::offload::Completions::new(waker.clone())),
             reactive: reactive::Reactive::new(crate::exports::reactive::Hub::new(waker.clone())),
             budget: Cell::new(turn_budget),
+            last_interrupt: Cell::new(None),
             root_msgs: RefCell::new(Vec::new()),
             pending_locale: RefCell::new(None),
             waker,

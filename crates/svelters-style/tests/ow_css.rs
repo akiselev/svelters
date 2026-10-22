@@ -67,10 +67,21 @@ fn new_state_pseudo_classes() {
 
 #[test]
 fn pseudo_elements_parse_and_reject() {
-    for ok in ["button::part(label)", "slider:hover::part(thumb)", "text-edit::placeholder", "::selection", ".x::PART(track)"] {
+    // P1: state and logical structural pseudo-classes may follow `::part()` (not `of S`)
+    for ok in [
+        "button::part(label)",
+        "slider:hover::part(thumb)",
+        "text-edit::placeholder",
+        "::selection",
+        ".x::PART(track)",
+        "a::part(x):hover",
+        "tabs::part(tab):first-child",
+        "tabs::part(tab):nth-child(2n+1):not(:hover)",
+        "a::part(x):nth-last-child(odd), b:nth-child(2)",
+    ] {
         parse_selector_list(ok, None).unwrap_or_else(|e| panic!("{ok}: {e}"));
     }
-    for bad in ["a::before", "a::part(x):hover", "a::part()", "a::part(x)::placeholder", "a::part(x) b"] {
+    for bad in ["a::before", "a::part()", "a::part(x)::placeholder", "a::part(x) b", "a::part(x):nth-child(2 of .y)", "a::placeholder:first-child", "a::part(x).y"] {
         assert!(parse_selector_list(bad, None).is_err(), "{bad} parsed");
     }
 }
@@ -366,4 +377,119 @@ fn glyph_content_and_part_painters() {
     let sheet = Stylesheet::parse("a { content: icon() } b { background-image: paint(1x) } c { content: \"\" }", &ParseOptions::default());
     let (_, diags) = st.add_sheet(&sheet, Origin::Author);
     assert_eq!(diags.iter().filter(|d| d.severity == Severity::Error).count(), 3, "{diags:?}");
+}
+
+#[test]
+fn logical_positions_after_parts() {
+    // WIDGET-PARITY P1: repeated parts match their logical (model) position, not a sibling walk
+    let s = stylist(
+        "tabs::part(tab) { color: rgb(1, 1, 1) }
+         tabs::part(tab):first-child { border-top-left-radius: 4px }
+         tabs::part(tab):last-child { border-top-right-radius: 4px }
+         tabs::part(tab):only-child { letter-spacing: 3px }
+         tabs::part(tab):nth-child(even) { background-color: rgb(0, 0, 255) }
+         tabs::part(tab):nth-last-child(2) { opacity: 0.5 }
+         tabs::part(tab):hover { color: rgb(9, 9, 9) }
+         tabs { &::part(tab):nth-child(odd) { font-weight: 700 } }",
+    );
+    let tree = Tree::parse("window\n  tabs#t\n  tabs#h :hovered");
+    let cx = ComputeContext::default();
+    let at = |id: &str, pos: Option<(usize, usize)>| {
+        let host = style_of(&s, &tree, id);
+        s.compute_pseudo_at(tree.by_id(id), &PseudoElement::part("tab"), pos, &host, &cx, &mut MatchCaches::new())
+    };
+    let px = |c: &ComputedStyle, n: &str| match c.get(n) {
+        Some(ComputedValue::Length(l)) => Some(l.px),
+        _ => None,
+    };
+    let blue = Some(&ComputedValue::Color(rgb(0, 0, 255)));
+    let first = at("t", Some((0, 3)));
+    assert_eq!(px(&first, "border-top-left-radius"), Some(4.0));
+    assert_eq!(px(&first, "border-top-right-radius"), None);
+    assert_ne!(first.get("background-color"), blue);
+    assert_eq!(first.get("font-weight"), Some(&ComputedValue::FontWeight(700)), "nested `&::part():nth-child()`");
+    let middle = at("t", Some((1, 3)));
+    assert_eq!(middle.get("background-color"), blue);
+    assert_eq!(middle.get("opacity"), Some(&ComputedValue::Number(0.5)));
+    assert_eq!(px(&middle, "border-top-left-radius"), None);
+    let last = at("t", Some((2, 3)));
+    assert_eq!(px(&last, "border-top-right-radius"), Some(4.0));
+    assert_eq!(px(&last, "letter-spacing"), None);
+    let only = at("t", Some((0, 1)));
+    assert_eq!((px(&only, "letter-spacing"), px(&only, "border-top-left-radius"), px(&only, "border-top-right-radius")), (Some(3.0), Some(4.0), Some(4.0)));
+    // no logical position: only the position-free rules
+    let none = at("t", None);
+    assert_eq!((px(&none, "border-top-left-radius"), none.get("color")), (None, Some(&ComputedValue::Color(rgb(1, 1, 1)))));
+    // a state pseudo-class after the part reads the host's state
+    assert_eq!(at("h", None).get("color"), Some(&ComputedValue::Color(rgb(9, 9, 9))));
+    assert!(s.invalidation().state_changed(StateMask::NONE, StateMask::HOVERED).contains(Reach::SELF));
+    // serialized with the standard names
+    let list = parse_selector_list("tabs::part(tab):nth-last-child(2n+1)", None).unwrap();
+    assert_eq!(cssparser::ToCss::to_css_string(&list.slice()[0]), "tabs::part(tab):nth-last-child(2n+1)");
+    // the position test itself
+    assert!(Logical::Nth { a: 2, b: 0, from_end: false }.matches(Some((3, 10))));
+    assert!(!Logical::Nth { a: 2, b: 0, from_end: false }.matches(Some((2, 10))));
+    assert!(Logical::Nth { a: -1, b: 3, from_end: false }.matches(Some((2, 10))));
+    assert!(!Logical::Nth { a: -1, b: 3, from_end: false }.matches(Some((3, 10))));
+    assert!(!Logical::Only.matches(Some((0, 2))));
+}
+
+#[test]
+fn radial_gradients() {
+    let s = stylist(
+        "#ok { background-image: radial-gradient(circle closest-side at 25% 50%, red, blue) }
+         #cancel { background-image: radial-gradient(red, lime 40%, blue) }
+         #name { background-image: linear-gradient(to right, red, blue) }",
+    );
+    let tree = Tree::parse(TREE);
+    let ok = style_of(&s, &tree, "ok");
+    let v = StyleView::new(&ok);
+    assert_eq!(v.background_image(), None, "linear only");
+    let Some(Gradient::Radial(g)) = v.gradient() else { panic!("{:?}", v.gradient()) };
+    assert_eq!((g.circle, g.extent, g.center), (true, RadialExtent::ClosestSide, [0.25, 0.5]));
+    let gr = v.gradient().unwrap();
+    // closest side of (25, 25) in a 100x50 box: 25
+    assert_eq!(gr.t_at([100.0, 50.0], [25.0, 25.0]), 0.0);
+    assert!((gr.t_at([100.0, 50.0], [50.0, 25.0]) - 1.0).abs() < 1e-5);
+    let mid = gr.color_at(0.5);
+    assert!((mid.r - 0.5).abs() < 1e-3 && (mid.b - 0.5).abs() < 1e-3, "{mid:?}");
+    assert!(ok.get("background-image").unwrap().to_string().starts_with("radial-gradient(circle closest-side at 25% 50%"));
+    // the default: an ellipse through the farthest corner
+    let cancel = style_of(&s, &tree, "cancel");
+    let gr = StyleView::new(&cancel).gradient().unwrap().clone();
+    assert_eq!(gr.stops().iter().map(|s| s.position).collect::<Vec<_>>(), [0.0, 0.4, 1.0]);
+    assert!((gr.t_at([100.0, 50.0], [0.0, 0.0]) - 1.0).abs() < 1e-5);
+    assert_eq!(gr.color_at(0.4), rgb(0, 255, 0));
+    // linear: corners at 0 and 1 along the line
+    let name = style_of(&s, &tree, "name");
+    let gr = StyleView::new(&name).gradient().unwrap().clone();
+    assert!(gr.t_at([100.0, 50.0], [0.0, 10.0]).abs() < 1e-5 && (gr.t_at([100.0, 50.0], [100.0, 40.0]) - 1.0).abs() < 1e-5);
+    // explicit sizes and unknown positions are diagnosed
+    for bad in ["radial-gradient(circle 10px, red, blue)", "radial-gradient(at middle, red, blue)", "radial-gradient(circle, red)"] {
+        let sheet = Stylesheet::parse(&format!("a {{ background-image: {bad} }}"), &ParseOptions::default());
+        let mut st = Stylist::new(&tables::EGUI);
+        let (_, diags) = st.add_sheet(&sheet, Origin::Author);
+        assert!(!sheet.diagnostics.is_empty() || !diags.is_empty(), "{bad} accepted");
+    }
+}
+
+#[test]
+fn radial_gradient_transitions_and_borrowed_overlays() {
+    let s = stylist(
+        "button { background-image: radial-gradient(circle at 0% 0%, red, blue); transition: background-image 1s linear }
+         button:hover { background-image: radial-gradient(circle at 100% 100%, red, blue) }",
+    );
+    let idle = style_of(&s, &Tree::parse("window\n  button#b"), "b");
+    let hover = style_of(&s, &Tree::parse("window\n  button#b :hovered"), "b");
+    let mut tr: Transitions<u32> = Transitions::new();
+    assert!(tr.restyled(1, &idle, &hover, 0.0, false));
+    let over = tr.sample(1, 0.5).unwrap();
+    // a borrowed overlay reads as the owned view
+    let v = StyleView::with_overlay(&hover, &over);
+    let Some(Gradient::Radial(g)) = v.gradient() else { panic!() };
+    assert!((g.center[0] - 0.5).abs() < 1e-4 && (g.center[1] - 0.5).abs() < 1e-4, "{:?}", g.center);
+    assert_eq!(v.gradient(), tr.view(1, &hover, 0.5).gradient());
+    assert_eq!(overlay_get(&hover, &over, "background-image"), v.get("background-image"));
+    assert_eq!(overlay_get(&hover, &over, "color"), hover.get("color"));
+    assert!(tr.sample(2, 0.5).is_none());
 }

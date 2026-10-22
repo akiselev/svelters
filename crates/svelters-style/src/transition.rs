@@ -16,7 +16,7 @@
 
 use crate::computed::ComputedStyle;
 use crate::shorthand::longhands;
-use crate::values::{Color, ComputedValue, GradientStop, Length, LinearGradient, Shadow, TimingFunction};
+use crate::values::{Color, ComputedValue, Gradient, GradientStop, Length, LinearGradient, RadialGradient, Shadow, TimingFunction};
 use crate::view::StyleView;
 use smallvec::SmallVec;
 use std::collections::HashMap;
@@ -140,6 +140,15 @@ impl<K: Copy + Eq + Hash> Transitions<K> {
         StyleView::with(style, over)
     }
 
+    /// The key's running transitions sampled at `now`, sorted by property index (`None`: nothing
+    /// runs). A scene keeps it for the frame and paints with [`StyleView::with_overlay`].
+    pub fn sample(&self, key: K, now: f64) -> Option<crate::view::Overlay> {
+        let list = self.running.get(&key)?;
+        let mut over: crate::view::Overlay = list.iter().map(|r| (r.prop, r.sample(now).0)).collect();
+        over.sort_by_key(|(i, _)| *i);
+        Some(over)
+    }
+
     pub fn is_running(&self, key: K) -> bool {
         self.running.contains_key(&key)
     }
@@ -173,7 +182,7 @@ fn mix(a: f32, b: f32, p: f32) -> f32 {
     a + (b - a) * p
 }
 
-fn mix_color(a: Color, b: Color, p: f32) -> Color {
+pub(crate) fn mix_color(a: Color, b: Color, p: f32) -> Color {
     // premultiplied sRGB
     let al = mix(a.a, b.a, p);
     if al <= 0.0 {
@@ -218,10 +227,17 @@ fn lerp(a: &ComputedValue, b: &ComputedValue, p: f32) -> Option<ComputedValue> {
             }
             V::Shadows(out.into())
         }
-        (V::Image(Some(x)), V::Image(Some(y))) if x.stops.len() == y.stops.len() => V::Image(Some(Box::new(LinearGradient {
-            angle: mix(x.angle, y.angle, p),
-            stops: x.stops.iter().zip(y.stops.iter()).map(|(s, t)| GradientStop { color: mix_color(s.color, t.color, p), position: mix(s.position, t.position, p) }).collect(),
-        }))),
+        (V::Image(Some(x)), V::Image(Some(y))) if x.stops().len() == y.stops().len() => {
+            let stops = || x.stops().iter().zip(y.stops().iter()).map(|(s, t)| GradientStop { color: mix_color(s.color, t.color, p), position: mix(s.position, t.position, p) }).collect();
+            let g = match (&**x, &**y) {
+                (Gradient::Linear(a), Gradient::Linear(b)) => Gradient::Linear(LinearGradient { angle: mix(a.angle, b.angle, p), stops: stops() }),
+                (Gradient::Radial(a), Gradient::Radial(b)) if a.circle == b.circle && a.extent == b.extent => {
+                    Gradient::Radial(RadialGradient { circle: a.circle, extent: a.extent, center: [mix(a.center[0], b.center[0], p), mix(a.center[1], b.center[1], p)], stops: stops() })
+                }
+                _ => return None,
+            };
+            V::Image(Some(Box::new(g)))
+        }
         _ => return None,
     })
 }

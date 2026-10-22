@@ -157,6 +157,8 @@ impl EguiBackend {
     /// TR2/SV37: the motion settings (slow-motion factor, reduced motion), effective from the next frame.
     pub fn set_motion(&self, cfg: crate::anim::MotionConfig) {
         self.0.anim.borrow_mut().config = crate::anim::MotionConfig { slow: if cfg.slow > 0.0 { cfg.slow } else { 1.0 }, ..cfg };
+        // OW-CSS: `prefers-reduced-motion: reduce` matches, and CSS transitions don't run
+        self.0.scene.borrow_mut().style.reduced_motion = cfg.reduced;
         if let Some(ctx) = self.ctx() {
             ctx.request_repaint();
         }

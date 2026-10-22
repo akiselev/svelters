@@ -653,6 +653,8 @@ impl Scene {
             self.record(Change::Destroyed { node, kind }, origin);
             // SG3: out of the indexes, after the records
             self.index.remove(self.core[i].kind, node);
+            // OW-CSS: its running transitions end with it
+            self.style.forget(node);
             let r = self.core[i].root;
             if let Some(a) = self.common[i].as_deref().map(|c| c.anchor.as_str()).filter(|a| !a.is_empty()) {
                 super::query::index_anchor(&mut self.roots, r, node, a, false);
