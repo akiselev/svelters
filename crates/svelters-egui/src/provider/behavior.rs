@@ -183,6 +183,9 @@ impl<B: Behavior + KindDecl> ErasedWidget for BehaviorBox<B> {
         // attached nodes are not painted, so they never own a point: it goes to the host
         super::Hit::Miss
     }
+    fn virtual_children(&self) -> Option<&dyn crate::scene::VirtualChildren> {
+        None
+    }
     // never called: attached nodes are not laid out
     fn layout(&mut self, cx: &mut super::LayoutCx<'_>, inputs: crate::taffy::LayoutInput) -> crate::taffy::LayoutOutput {
         cx.default_layout(inputs)

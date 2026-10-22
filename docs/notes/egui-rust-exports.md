@@ -428,7 +428,8 @@ pub enum BufData {
   over the owned `Value` reads `T`. Out, `serde_json::to_value` and a map per object. No JSON text crosses.
 - **Typings from the JSON Schema.** One `schemars::SchemaGenerator` (draft 2020-12) per schema build, so `$defs` names are
   unique. `Json<T>` is typed as its `$ref` or inline schema; every definition a module uses, closed over its own `$ref`s,
-  is declared there as `export type Name = …;`, with `description`s as doc comments. `exports.json` lists them as
+  is declared there as `export type Name = …;`, with `description`s as doc comments. A definition named like a svelters
+  type or class (anywhere in the app) is declared as `NameJson` instead (SV48). `exports.json` lists them as
   `kind: "json"` types with the schema itself (`schema`), for run-time descriptors later. Object properties come in the
   schema's (alphabetical) order.
 - **Data enums.** `#[derive(svelters::Enum)]` with `#[js(tag = "kind")]`: unit (`{ kind: 'empty' }`), struct
@@ -447,8 +448,8 @@ pub enum BufData {
   | `unknown-field` | serde's `deny_unknown_fields` |
   | `invalid` | a serde `custom` error (`try_from`, validation) |
 
-  The message starts with the path from the parameter: ``at l.shapes[1]: missing field `h` ``. Inside a serde internally
-  tagged enum the path stops at the enum (serde buffers its content).
+  The message starts with the path from the parameter: ``at l.shapes[1]: missing field `h` ``. The path also goes through
+  serde's internally tagged, adjacently tagged, untagged and flattened types (SV48, `plans/milestones/SV48-json-error-paths.md`).
 - **Codegen over a value (SV24).** `Schema::{typescript, json, javascript, dump}` take `&self`; the free functions call
   them on `schema()`.
 
