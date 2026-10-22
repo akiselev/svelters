@@ -27,9 +27,12 @@ Decided (coordinator): text, not a pre-parsed sheet (parsing costs 0.23 ms at st
 - **Scope class.** Vite's egui path scopes with a hash of the path relative to the repository (`scopeOf`); the live
   path uses Svelte's default `cssHash` of the absolute filename (Q3w's default when no `css_scope` is given). Both
   are self-consistent (the elements get the class the sheet uses); the class differs between the two paths.
+- **Q4 release bundles carry the styles.** `svb::build` loads through the same `SourceProvider`, so an egui
+  component's sheet module is bundled with no extra work beyond the one `Logical::id` hunk (tested in
+  `a_style_only_edit_reruns_only_the_sheet_module`).
 - **Release bundles (Q4) are not yet machine-independent for styled egui components.** The module ids are logical,
   but the scope class (Svelte's default hash of the absolute filename) and the `registerStyles` key (the absolute
-  path) inside the compiled code still derive from the build machine's path. Functionally fine; a follow-up can pass
+  path) inside the compiled code still derive from the build machine's path. Functionally fine. Follow-up: pass
   a `css_scope` and sheet key derived from the logical id.
 - **Sheet id.** `registerStyles` is keyed by the component's module id (its absolute path), not the
   repository-relative path the Vite plugin uses: two extensions can both have `src/App.svelte`.
