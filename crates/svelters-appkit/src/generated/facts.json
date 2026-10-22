@@ -13,7 +13,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSBox:element:readable",
-   "fingerprint": "497693a788b3c98d",
+   "fingerprint": "944926b046f8e263",
    "kind": "NSBox",
    "name": "readable",
    "origin": "manual",
@@ -344,7 +344,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSButton:element:readable",
-   "fingerprint": "6698cee5bd6adb30",
+   "fingerprint": "c0eb8f1413f8362c",
    "kind": "NSButton",
    "name": "readable",
    "origin": "manual",
@@ -1068,7 +1068,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSColorWell:element:readable",
-   "fingerprint": "7526333527529146",
+   "fingerprint": "8b77ec54c8049830",
    "kind": "NSColorWell",
    "name": "readable",
    "origin": "manual",
@@ -1311,7 +1311,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSComboBox:element:readable",
-   "fingerprint": "3e0f1462eca5d717",
+   "fingerprint": "01c81a811fe2b8c1",
    "kind": "NSComboBox",
    "name": "readable",
    "origin": "manual",
@@ -2241,7 +2241,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSDatePicker:element:readable",
-   "fingerprint": "400f68373e9779e7",
+   "fingerprint": "5928a3e81fc07b37",
    "kind": "NSDatePicker",
    "name": "readable",
    "origin": "manual",
@@ -2574,7 +2574,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSImageView:element:readable",
-   "fingerprint": "9fe2375010528ee8",
+   "fingerprint": "d10c8f433f5825a2",
    "kind": "NSImageView",
    "name": "readable",
    "origin": "manual",
@@ -2866,7 +2866,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSLevelIndicator:element:readable",
-   "fingerprint": "b049cfca3760f517",
+   "fingerprint": "c6ff08153471576e",
    "kind": "NSLevelIndicator",
    "name": "readable",
    "origin": "manual",
@@ -3270,7 +3270,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSMenu:element:readable",
-   "fingerprint": "50dfde9e673fed7d",
+   "fingerprint": "1be4184ffeb21d66",
    "kind": "NSMenu",
    "name": "readable",
    "origin": "manual",
@@ -3709,7 +3709,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSMenuItem:element:readable",
-   "fingerprint": "ec5af2db1f792cda",
+   "fingerprint": "db5f16bd642aee89",
    "kind": "NSMenuItem",
    "name": "readable",
    "origin": "manual",
@@ -4352,7 +4352,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSPanel:element:readable",
-   "fingerprint": "e9c1b266a580b1f9",
+   "fingerprint": "7c6406097535f2e0",
    "kind": "NSPanel",
    "name": "readable",
    "origin": "manual",
@@ -4458,7 +4458,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSPathControl:element:readable",
-   "fingerprint": "e1eb77a884f481dc",
+   "fingerprint": "107bcce9664724fd",
    "kind": "NSPathControl",
    "name": "readable",
    "origin": "manual",
@@ -4692,7 +4692,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSPopUpButton:element:readable",
-   "fingerprint": "f9ea0a74edc24585",
+   "fingerprint": "40fdd0489bc38e29",
    "kind": "NSPopUpButton",
    "name": "readable",
    "origin": "manual",
@@ -5020,7 +5020,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSProgressIndicator:element:readable",
-   "fingerprint": "cc82486469d25fa9",
+   "fingerprint": "594e45d6d74647ab",
    "kind": "NSProgressIndicator",
    "name": "readable",
    "origin": "manual",
@@ -5284,7 +5284,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSScrollView:element:readable",
-   "fingerprint": "39af643f0df7b705",
+   "fingerprint": "ad994ca6e24410eb",
    "kind": "NSScrollView",
    "name": "readable",
    "origin": "manual",
@@ -6166,7 +6166,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSearchField:element:readable",
-   "fingerprint": "f3e79006a5ff5c42",
+   "fingerprint": "45db6c595d315de9",
    "kind": "NSSearchField",
    "name": "readable",
    "origin": "manual",
@@ -6411,7 +6411,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSecureTextField:element:readable",
-   "fingerprint": "d6204cafefa3144b",
+   "fingerprint": "cec0edfe8c48646d",
    "kind": "NSSecureTextField",
    "name": "readable",
    "origin": "manual",
@@ -6527,7 +6527,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSegmentedControl:element:readable",
-   "fingerprint": "28408b133011d7a4",
+   "fingerprint": "ab9b938039e37015",
    "kind": "NSSegmentedControl",
    "name": "readable",
    "origin": "manual",
@@ -6854,7 +6854,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSlider:element:readable",
-   "fingerprint": "a3883056ba6c22d0",
+   "fingerprint": "77f433b831ddace2",
    "kind": "NSSlider",
    "name": "readable",
    "origin": "manual",
@@ -7259,7 +7259,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSplitView:element:readable",
-   "fingerprint": "7e495be865a6b5ba",
+   "fingerprint": "9aa98cf9ea06e623",
    "kind": "NSSplitView",
    "name": "readable",
    "origin": "manual",
@@ -7463,7 +7463,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSStackView:element:readable",
-   "fingerprint": "dbd2cf5b36ad86db",
+   "fingerprint": "775922d4c01b181a",
    "kind": "NSStackView",
    "name": "readable",
    "origin": "manual",
@@ -7740,7 +7740,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSStepper:element:readable",
-   "fingerprint": "4c045b3fe8d819a0",
+   "fingerprint": "8042e6cd220ab9e6",
    "kind": "NSStepper",
    "name": "readable",
    "origin": "manual",
@@ -8053,7 +8053,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSSwitch:element:readable",
-   "fingerprint": "2fb124ee45e70d30",
+   "fingerprint": "22111cadf4cceda8",
    "kind": "NSSwitch",
    "name": "readable",
    "origin": "manual",
@@ -8170,7 +8170,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTabView:element:readable",
-   "fingerprint": "bcb101e4efe22b42",
+   "fingerprint": "0b6912f0a5de4777",
    "kind": "NSTabView",
    "name": "readable",
    "origin": "manual",
@@ -9200,7 +9200,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextField:element:readable",
-   "fingerprint": "bcfb24f2b6848047",
+   "fingerprint": "d7a6d92b74d2f5ee",
    "kind": "NSTextField",
    "name": "readable",
    "origin": "manual",
@@ -9913,7 +9913,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTextView:element:readable",
-   "fingerprint": "eb3ceae6c326a4a2",
+   "fingerprint": "3225419ee78b80db",
    "kind": "NSTextView",
    "name": "readable",
    "origin": "manual",
@@ -11396,7 +11396,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSTokenField:element:readable",
-   "fingerprint": "66bf2869c8c8b2ea",
+   "fingerprint": "49a99f09a32a08ff",
    "kind": "NSTokenField",
    "name": "readable",
    "origin": "manual",
@@ -11552,7 +11552,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSView:element:readable",
-   "fingerprint": "3fbbdea439edf5fa",
+   "fingerprint": "0ffeb6971acc46a7",
    "kind": "NSView",
    "name": "readable",
    "origin": "manual",
@@ -13326,7 +13326,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSVisualEffectView:element:readable",
-   "fingerprint": "d662a8b57da8baa4",
+   "fingerprint": "2f8f43a56aa131ba",
    "kind": "NSVisualEffectView",
    "name": "readable",
    "origin": "manual",
@@ -13470,7 +13470,7 @@
   },
   {
    "fact": "svelters-api:v1:type:appkit:AppKit:NSWindow:element:readable",
-   "fingerprint": "5e8c805f74ff3ee4",
+   "fingerprint": "6507bf7433c48c6f",
    "kind": "NSWindow",
    "name": "readable",
    "origin": "manual",
