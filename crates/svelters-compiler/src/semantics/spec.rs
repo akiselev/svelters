@@ -574,4 +574,58 @@ impl Spec {
         }
         Ok(spec)
     }
+
+    /// RA1: merges a spec fragment (`kinds` and `tags` only, e.g. the `kinds.json` an egui app binary
+    /// dumps for its Rust-provided kinds, ARCH-EMBED §8.3) into this spec. A kind id or tag that is
+    /// already there is an error, never a shadow; every tag must name a kind and every chain entry a
+    /// known kind.
+    pub fn merge_fragment(&mut self, json: &str) -> Result<(), String> {
+        #[derive(Deserialize)]
+        struct Fragment {
+            schema: String,
+            #[serde(default)]
+            backend: Option<String>,
+            #[serde(default)]
+            tags: BTreeMap<String, String>,
+            #[serde(default)]
+            kinds: BTreeMap<String, KindSpec>,
+        }
+        let f: Fragment = serde_json::from_str(json).map_err(|e| format!("spec fragment: {e}"))?;
+        if f.schema != SCHEMA {
+            return Err(format!("spec fragment: schema {:?}, expected {SCHEMA}", f.schema));
+        }
+        if let Some(b) = &f.backend
+            && *b != self.backend
+        {
+            return Err(format!("spec fragment for backend {b:?} cannot extend the {} spec", self.backend));
+        }
+        let added: Vec<String> = f.kinds.keys().cloned().collect();
+        for (id, mut k) in f.kinds {
+            if self.kinds.contains_key(&id) {
+                return Err(format!("spec fragment: kind {id} is already defined"));
+            }
+            for p in k.props.values_mut() {
+                p.owner = id.clone();
+            }
+            for s in k.signals.values_mut() {
+                s.owner = id.clone();
+            }
+            self.kinds.insert(id, k);
+        }
+        for (tag, kind) in f.tags {
+            if self.tags.contains_key(&tag) {
+                return Err(format!("spec fragment: tag <{tag}> is already defined"));
+            }
+            if !self.kinds.contains_key(&kind) {
+                return Err(format!("spec fragment: tag {tag} names unknown kind {kind}"));
+            }
+            self.tags.insert(tag, kind);
+        }
+        for id in &added {
+            if let Some(c) = self.kinds[id].chain.iter().find(|c| !self.kinds.contains_key(*c)) {
+                return Err(format!("spec fragment: kind {id} names unknown base {c}"));
+            }
+        }
+        Ok(())
+    }
 }

@@ -1,4 +1,4 @@
-//! `svelters-compile --backend gtk|qt|appkit|winui|egui[,...] [--spec path.json] [--target quickjs-host|node-vite] [--strict-native] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file | ->`
+//! `svelters-compile --backend gtk|qt|appkit|winui|egui[,...] [--spec path.json] [--spec-fragment kinds.json]... [--target quickjs-host|node-vite] [--strict-native] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file | ->`
 //!
 //! Compiles a component (or, with `--module` or a `.svelte.js` input, a module with runes).
 //! `--backend gtk,qt,appkit,winui` is the portability mode: the output is for the first platform, the
@@ -7,17 +7,20 @@
 //! Diagnostics go to stderr; exit status 1 when there are errors.
 //! `--kinds` prints the runtime spec tables of the (first) backend instead (`@svelters/native-runtime/kinds`,
 //! the module spreads and `<svelte:element>` resolve attributes with at run time).
+//! `--spec-fragment` (repeatable, RA1) merges a fragment (`kinds` and `tags`, e.g. an egui app's
+//! dumped `kinds.json`) into the first backend's spec; `--spec` still replaces the spec.
 
 use std::io::Read;
 use svelters_compiler::compile::{CompileOptions, ModuleOptions, compile, compile_module};
 use svelters_compiler::semantics::SpecBackend;
 use svelters_compiler::target::builtin_target;
 
-const USAGE: &str = "usage: svelters-compile --backend gtk|qt|appkit|winui|egui[,...] [--spec spec.json] [--target quickjs-host|node-vite] [--strict-native] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file.svelte | file.svelte.js | ->\n       svelters-compile --kinds --backend gtk|qt|appkit|winui|egui [--spec spec.json]";
+const USAGE: &str = "usage: svelters-compile --backend gtk|qt|appkit|winui|egui[,...] [--spec spec.json] [--spec-fragment kinds.json]... [--target quickjs-host|node-vite] [--strict-native] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file.svelte | file.svelte.js | ->\n       svelters-compile --kinds --backend gtk|qt|appkit|winui|egui [--spec spec.json] [--spec-fragment kinds.json]...";
 
 fn main() {
     let mut backend = "gtk".to_string();
     let mut spec: Option<String> = None;
+    let mut fragments: Vec<String> = Vec::new();
     let mut filename: Option<String> = None;
     let mut json = false;
     let mut dev = false;
@@ -32,6 +35,7 @@ fn main() {
         match a.as_str() {
             "--backend" => backend = args.next().expect("--backend needs a value"),
             "--spec" => spec = args.next(),
+            "--spec-fragment" => fragments.push(args.next().expect("--spec-fragment needs a value")),
             "--filename" => filename = args.next(),
             "--json" => json = true,
             "--dev" => dev = true,
@@ -52,7 +56,8 @@ fn main() {
         let sem = match &spec {
             Some(p) => SpecBackend::from_path(p),
             None => SpecBackend::builtin(first),
-        };
+        }
+        .and_then(|s| fragments.iter().try_fold(s, |s, f| s.merge_fragment_path(f)));
         match sem {
             Ok(sem) => print!("{}", svelters_compiler::semantics::kinds_module(sem.spec())),
             Err(e) => {
@@ -85,6 +90,7 @@ fn main() {
             Some(p) => SpecBackend::from_path(p),
             None => SpecBackend::builtin(first),
         }
+        .and_then(|s| fragments.iter().try_fold(s, |s, f| s.merge_fragment_path(f)))
         .unwrap_or_else(|e| fail(e));
         let others: Vec<SpecBackend> = ids.map(|b| SpecBackend::builtin(b).unwrap_or_else(|e| fail(e))).collect();
         let target = builtin_target(&target).unwrap_or_else(|| fail(format!("unknown --target {target:?} (known: quickjs-host, node-vite)")));

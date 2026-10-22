@@ -119,6 +119,17 @@
 //!   message that starts with the path: `at shape.r: invalid type: string "x", expected f64`.
 //! - The codegen works on any [`exports::Schema`] value: `schema.typescript()`, `schema.json()`,
 //!   `schema.javascript(..)`, `schema.dump(dir)` (SV24).
+//!
+//! # Native egui widget kinds (RA1)
+//!
+//! `#[svelters::widget(namespace = "cad", tag = "quantity-field", caps = FOCUSABLE | EDITABLE)]` on a
+//! struct makes it an element of the egui backend: `#[prop]` fields (typed by the same `JsType`
+//! schema as exports; `#[prop(bind)]` for `bind:`), `#[event] x: Event<T>` fields (`onx`), and
+//! `#[state]` fields (Rust-only). The struct implements `svelters_egui::provider::Widget`
+//! (`measure`, `ui`, `a11y`); the crate depends on `svelters-egui` as well. `svelters_egui::dump(dir)`
+//! writes the exports plus `kinds.json` (the compiler's `--spec-fragment`, Vite `specFragments`) and
+//! `kinds.d.ts` (the `IntrinsicElements` typings). See `examples/egui-kinds` and
+//! `plans/milestones/RA1-widget-kinds.md`.
 
 pub use svelters_host::exports;
 pub use svelters_host::exports::{
@@ -127,7 +138,7 @@ pub use svelters_host::exports::{
 };
 /// The rayon `#[js(worker)]` exports run on (for [`exports::set_worker_pool`] and `par_iter` in jobs).
 pub use svelters_host::exports::offload::rayon;
-pub use svelters_macros::{Enum, Error, Events, Record, export, object, service, store};
+pub use svelters_macros::{Enum, Error, Events, Record, export, object, service, store, widget};
 
 /// `use svelters::prelude::*;`
 pub mod prelude {

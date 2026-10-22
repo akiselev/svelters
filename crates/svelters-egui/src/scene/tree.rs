@@ -9,11 +9,10 @@
 use super::dirty::invalidate;
 use super::node::{Common, Node, Visual, W};
 use super::{Arena, Handle};
-use crate::kinds::KINDS;
 use std::collections::HashMap;
 
 pub fn new_node(kind: usize, handle: Handle) -> Node {
-    let w = match KINDS[kind].id {
+    let w = match crate::kinds::kind(kind).id {
         "Window" => W::Window { title: String::new(), default_w: 480.0, default_h: 360.0 },
         "Box" => W::Box,
         "Label" => W::Label { text: String::new(), wrap: "wrap", selectable: false },
@@ -21,7 +20,10 @@ pub fn new_node(kind: usize, handle: Handle) -> Node {
         "Checkbox" => W::Checkbox { text: String::new(), checked: false },
         "TextEdit" => W::TextEdit { text: String::new(), hint: String::new(), multiline: false, password: false, char_limit: 0 },
         "Slider" => W::Slider { value: 0.0, min: 0.0, max: 100.0, step: 0.0, text: String::new(), show_value: true },
-        other => unreachable!("not creatable: {other}"),
+        other => match crate::kinds::KindRegistry::global().provider(kind) {
+            Some(p) => W::Ext(crate::provider::ExtWidget::new((p.entry.new)())),
+            None => unreachable!("not creatable: {other}"),
+        },
     };
     let mut c = Common::default();
     if matches!(w, W::Window { .. }) {
@@ -48,6 +50,8 @@ pub fn new_node(kind: usize, handle: Handle) -> Node {
         drawn: egui::Rect::NOTHING,
         had_focus: false,
         vis: Visual::default(),
+        state: Default::default(),
+        ext: Default::default(),
     };
     crate::layout::restyle(&mut n);
     n

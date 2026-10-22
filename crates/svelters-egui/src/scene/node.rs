@@ -5,7 +5,6 @@
 //! and adds `NodeFlags`, `StateBits` and `Owner`. Writer lane: SCENE (RA1 adds payload variants).
 
 use super::Handle;
-use crate::kinds::KINDS;
 use std::collections::HashMap;
 
 /// Which egui widget a node shows, with the props the widget borrows mutably.
@@ -18,6 +17,8 @@ pub enum W {
     Checkbox { text: String, checked: bool },
     TextEdit { text: String, hint: String, multiline: bool, password: bool, char_limit: i64 },
     Slider { value: f64, min: f64, max: f64, step: f64, text: String, show_value: bool },
+    /// RA1: a provider kind's widget struct (`#[svelters::widget]`, `crate::provider`).
+    Ext(crate::provider::ExtWidget),
 }
 
 /// Props every in-window node has (`Widget`), plus the box/window container props.
@@ -109,6 +110,10 @@ pub struct Node {
     pub had_focus: bool,
     /// TR1 visual channels (ABI v2.8 style ops): what a running transition shows.
     pub vis: Visual,
+    /// RA1: state bits (ARCH-EMBED §8.4; accessors in `provider/state.rs`).
+    pub state: crate::provider::StateBits,
+    /// RA1: provider data (ARCH-EMBED §8.4; accessors in `scene/ext.rs`).
+    pub ext: super::ext::ExtBlock,
 }
 
 /// The visual channels of a node (plans/milestones/TR1-transitions.md section 3.2). Paint-only
@@ -139,7 +144,7 @@ impl Node {
         prop != 0 && self.observe.get(&prop).copied().unwrap_or(0) > 0
     }
     pub fn tag(&self) -> &'static str {
-        KINDS[self.kind].tag.unwrap_or("?")
+        crate::kinds::kind(self.kind).tag.unwrap_or("?")
     }
     pub fn is_window(&self) -> bool {
         matches!(self.w, W::Window { .. })
@@ -148,7 +153,7 @@ impl Node {
         match &self.w {
             W::Label { text, .. } | W::Button { text, .. } | W::Checkbox { text, .. } | W::TextEdit { text, .. } | W::Slider { text, .. } => text,
             W::Window { title, .. } => title,
-            W::Box => "",
+            W::Box | W::Ext(_) => "",
         }
     }
 }
