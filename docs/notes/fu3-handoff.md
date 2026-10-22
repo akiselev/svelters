@@ -14,7 +14,7 @@ written yet; this note holds its material.
 | 4 | `native_read_not_observable` scope-aware | done | 81035503 |
 | 5 | RT1 small items: `{await p}` diagnostic, `language-subset.md`, site `concepts/abi.md` | done | 7e03908f |
 | 6 | NT0/NT1 GTK fact/invoker mismatches | done | a2d2159b |
-| 7 | Stale observation baselines | partial: code + host tests in the WIP commit after a2d2159b; JS tests and docs not run/updated | WIP |
+| 7 | Stale observation baselines | done: native (a2e3c0e3, 0c62db18), docs (91f216a7), E3 store fields after the merge | see §7 |
 
 ### 1. Qt wake coalescing
 `tools/metadata/qt/templates/backend.cpp.in`: `b_wake` does `if (g.queued.exchange(true)) return;`; the posted
@@ -83,7 +83,17 @@ new: passes. R1 tests updated (no baseline read in logs; first null announcement
 release of an unseen read-back). `cargo nextest -p svelters-host`: all pass except 4 `reload` tests that needed
 `pnpm install` (done afterwards; not re-run).
 
-Left for 7: run `pnpm test` (testhost/native-runtime JS tests may assert the baseline:
+Done since (second agent): `pnpm test` green after updating `packages/native-runtime/test/observe.test.mjs`
+(first announcement after observe is delivered even when equal to the value written before) and regenerating
+`metadata/semantics/types/gtk.json` (`gen_observe_outputs.py`; item 6's GLib.Variant exclusion, was stale);
+svelters-host 66/66; svelters-gtk + counter-qt 1976/1976 (incl. op-log replay, observe, bind-observe);
+docs: backend-abi.md Host contract, REACTIVITY.md §5.2 (+ "No observe-time baseline" paragraph), R1/R2 records
+annotated. Merged origin/master (99053f38, no textual conflicts). E3 store fields had the same baseline read
+(`core/reactive.rs` `app_observe`): removed too, for the same reason (a writer thread can change a field
+between JS's read and the observe-time read); E3 test `update_marks_every_field_and_the_compare_drops_the_unchanged`
+now expects one delivery of the 5 fields on the first touch and 0 on the second.
+
+Originally left for 7: run `pnpm test` (testhost/native-runtime JS tests may assert the baseline:
 `crates/svelters-host/tests/js/observe.js`, `packages/testhost` tests), fixture op-log parity
 (`tools/oplog-compare.mjs`), GTK/Qt `observe`/`bind_observe_*` integration tests; update
 `plans/architecture/backend-abi.md` "Host contract" refcount row ("At 0→1 ... read once as the baseline") and

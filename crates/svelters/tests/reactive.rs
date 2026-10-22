@@ -407,6 +407,8 @@ bump(s, 10000, 1).then((v) => console.log('done', v));
     );
 }
 
+/// `update` marks every field. The first marked change after `observe` is always delivered (no baseline,
+/// FU3: `last` starts unknown, as for native props); from then on the compare drops the unchanged ones.
 #[test]
 fn update_marks_every_field_and_the_compare_drops_the_unchanged() {
     with_host(
@@ -416,6 +418,12 @@ fn update_marks_every_field_and_the_compare_drops_the_unchanged() {
 import {{ freshStats, touchAll }} from 'svelters:app/rx';
 const s = freshStats();
 for (const p of ['count', 'energy', 'running', 'speed', 'label']) H.observe(s.svlHandle, p, true);
+const watch = globalThis.__svelters_changed;
+let again = true;
+globalThis.__svelters_changed = (b) => {{
+  watch(b);
+  if (again) {{ again = false; touchAll(s); console.log('touched again'); }}
+}};
 touchAll(s);
 console.log('touched');
 "
@@ -423,11 +431,17 @@ console.log('touched');
         |r| {
             let s0 = r.host.reactive_stats();
             r.turn();
+            assert!(r.has("touched"));
+            assert_eq!(r.count("batch "), 1, "the first announcement after observe is delivered: {:?}", r.lines);
+            assert_eq!(r.count("changed "), 5, "{:?}", r.lines);
+            assert!(r.has("touched again"), "{:?}", r.lines);
+            let s1 = r.host.reactive_stats();
+            assert_eq!(s1.store_delivered - s0.store_delivered, 5, "{s1:?}");
+            r.turn();
             r.turn();
             let s = r.host.reactive_stats();
-            assert!(r.has("touched"));
-            assert_eq!(r.count("batch "), 0, "nothing changed: {:?}", r.lines);
-            assert_eq!(s.store_unchanged - s0.store_unchanged, 5, "{s:?}");
+            assert_eq!(r.count("batch "), 1, "nothing changed the second time: {:?}", r.lines);
+            assert_eq!(s.store_unchanged - s1.store_unchanged, 5, "{s:?}");
             r.no_errors();
         },
     );
