@@ -310,7 +310,7 @@ export const STYLE_TABLES = {
       "position": {"via": "setter", "prop": "position", "native": "position", "type": "enum", "kinds": ["Widget"], "tags": 20, "values": ["static", "relative", "absolute"]},
       "right": {"via": "setter", "prop": "right", "native": "right", "type": "length", "kinds": ["Widget"], "tags": 20},
       "row-gap": {"via": "setter", "prop": "row-gap", "native": "row-gap", "type": "length", "kinds": ["Box", "Grid"], "tags": 21},
-      "text-decoration": {"via": "css", "type": "enum", "values": ["none", "underline", "line-through"]},
+      "text-decoration-line": {"via": "css", "type": "enum", "values": ["none", "underline", "line-through"]},
       "top": {"via": "setter", "prop": "top", "native": "top", "type": "length", "kinds": ["Widget"], "tags": 20},
       "visible": {"via": "setter", "prop": "visible", "native": "visible", "type": "bool", "kinds": ["Widget"], "tags": 20},
       "width": {"via": "setter", "prop": "width", "native": "width", "type": "length", "kinds": ["Widget"], "tags": 20},

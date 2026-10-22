@@ -249,7 +249,7 @@
         }
       },
       "css_hidden": [],
-      "css_note": "Drawn as a section of its label's paragraph: `color`, `background-color`, `font-size`, `font-weight`, `font-style`, `font-family` (monospace when it names one) and `text-decoration` apply; box properties do not.",
+      "css_note": "Drawn as a section of its label's paragraph: `color`, `background-color`, `font-size`, `font-weight`, `font-style`, `font-family` (monospace when it names one) and `text-decoration-line` apply; box properties do not.",
       "doc": "An inline link: the `link` colour, underlined on hover (DESIGN R18), the pointer cursor (R10); focusable, activated by click, Enter or Space.",
       "interface": false,
       "lifetime": "owned",
@@ -369,7 +369,7 @@
         }
       },
       "css_hidden": [],
-      "css_note": "Drawn as a section of its label's paragraph: `color`, `background-color`, `font-size`, `font-weight`, `font-style`, `font-family` (monospace when it names one) and `text-decoration` apply; box properties do not.",
+      "css_note": "Drawn as a section of its label's paragraph: `color`, `background-color`, `font-size`, `font-weight`, `font-style`, `font-family` (monospace when it names one) and `text-decoration-line` apply; box properties do not.",
       "doc": "Bold inline text (`font-weight: 700` from the theme's base sheet).",
       "interface": false,
       "lifetime": "owned",
@@ -1344,7 +1344,7 @@
         }
       },
       "css_hidden": [],
-      "css_note": "Drawn as a section of its label's paragraph: `color`, `background-color`, `font-size`, `font-weight`, `font-style`, `font-family` (monospace when it names one) and `text-decoration` apply; box properties do not.",
+      "css_note": "Drawn as a section of its label's paragraph: `color`, `background-color`, `font-size`, `font-weight`, `font-style`, `font-family` (monospace when it names one) and `text-decoration-line` apply; box properties do not.",
       "doc": "Inline code: the monospace font on the field fill (theme's base sheet).",
       "interface": false,
       "lifetime": "owned",
@@ -3743,7 +3743,7 @@
         }
       },
       "css_hidden": [],
-      "css_note": "Drawn as a section of its label's paragraph: `color`, `background-color`, `font-size`, `font-weight`, `font-style`, `font-family` (monospace when it names one) and `text-decoration` apply; box properties do not.",
+      "css_note": "Drawn as a section of its label's paragraph: `color`, `background-color`, `font-size`, `font-weight`, `font-style`, `font-family` (monospace when it names one) and `text-decoration-line` apply; box properties do not.",
       "doc": "Italic inline text (`font-style: italic` from the theme's base sheet).",
       "interface": false,
       "lifetime": "owned",
@@ -5789,7 +5789,7 @@
         }
       },
       "css_hidden": [],
-      "css_note": "Drawn as a section of its label's paragraph: `color`, `background-color`, `font-size`, `font-weight`, `font-style`, `font-family` (monospace when it names one) and `text-decoration` apply; box properties do not.",
+      "css_note": "Drawn as a section of its label's paragraph: `color`, `background-color`, `font-size`, `font-weight`, `font-style`, `font-family` (monospace when it names one) and `text-decoration-line` apply; box properties do not.",
       "doc": "Common properties of the inline runs (`span`, `b`, `i`, `code`, `a`): text inside a `label`, laid out with the label's other runs as one paragraph, never by taffy.",
       "interface": false,
       "lifetime": "owned",
@@ -6621,7 +6621,7 @@
         }
       },
       "css_hidden": [],
-      "css_note": "Drawn as a section of its label's paragraph: `color`, `background-color`, `font-size`, `font-weight`, `font-style`, `font-family` (monospace when it names one) and `text-decoration` apply; box properties do not.",
+      "css_note": "Drawn as a section of its label's paragraph: `color`, `background-color`, `font-size`, `font-weight`, `font-style`, `font-family` (monospace when it names one) and `text-decoration-line` apply; box properties do not.",
       "doc": "An inline run of text in a `label`, styled by CSS (`label span.cls`). Bare text in a rich label becomes anonymous spans.",
       "interface": false,
       "lifetime": "owned",
@@ -11778,7 +11778,7 @@
         "type": "length",
         "via": "setter"
       },
-      "text-decoration": {
+      "text-decoration-line": {
         "decl_type": "enum",
         "values": [
           "none",

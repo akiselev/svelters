@@ -23,7 +23,7 @@ fn paragraph(rig: &Rig, col: svl_handle) -> (svl_handle, [svl_handle; 6]) {
         runs[k] = rig.leaf(label, tag, &[("text", s(text))]);
     }
     rig.set(runs[5], "href", s("https://svelters.dev/docs"));
-    rig.backend.set_classes(runs[1].into(), "warn").unwrap();
+    rig.backend.set_classes(runs[1], "warn").unwrap();
     (label, runs)
 }
 
