@@ -11,13 +11,16 @@
 // Waits run in the app (`wait.for`, evaluated after each settle, timeouts on the app's virtual
 // clock), so `expect` sends one request per assertion and never polls or sleeps.
 //
-// Not here yet: the test runner itself (the user chose our own runner over @playwright/test,
-// §6 Q2), `mount` (needs `app.mount` in the host), `toHaveScreenshot` (needs pixels over the wire)
-// and `clock.*` (AU1b). See plans/milestones/AU2-automation-transport.md.
+// AU2b: `app.clock` (`clock.now`/`clock.advance`, the `clock` grant), `app.reset()` and
+// `app.mount()` (a component alone in a fresh host on a fresh virtual clock), and the runner
+// (`test`, the `svelters-e2e` CLI: runner/). Not here yet: `toHaveScreenshot` (needs pixels over
+// the wire). See plans/milestones/AU2b-ts-runner-mount.md.
 
 import net from 'node:net';
 import { spawn } from 'node:child_process';
 import { createInterface } from 'node:readline';
+import { resolve as resolvePath } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 /** A protocol error: `code` is the app's stable code (`node.not_found`, `timeout`, …). */
 export class AutomationError extends Error {
@@ -150,8 +153,9 @@ export class Locator {
   fill(text, opts) {
     return this.#act('input.fill', { text }, opts);
   }
-  setValue(value, opts) {
-    return this.#act('input.set_value', { value }, opts);
+  /** `opts.handle`: one handle of a multi-handle widget (`'low'`/`'high'` of a range-slider). */
+  setValue(value, opts = {}) {
+    return this.#act('input.set_value', { value, handle: opts.handle }, opts);
   }
 
   /** Every node that matches now (no waiting). */
@@ -187,6 +191,49 @@ export class App extends Locator {
       press: (key) => this.call('input.press', { key }),
       type: (text) => this.call('input.type', { text }),
     };
+    /**
+     * The app's clock (AU1b). `now()` is `clock.now` (`{mode, ms, seed, session_ms}`);
+     * `advance(ms)`/`runFor(ms)` let `ms` of virtual time pass frame by frame (timers fire,
+     * transitions finish) and need the session's `clock` grant and a virtual clock.
+     */
+    this.clock = {
+      now: () => this.call('clock.now'),
+      advance: (ms) => this.#clockGrant().then(() => this.call('clock.advance', { ms })),
+      runFor: (ms) => this.clock.advance(ms),
+    };
+  }
+
+  /** The session's grants (`read`, `act`, `tooling`, `clock`), from `session.hello`. */
+  get grants() {
+    return this.hello?.grants ?? {};
+  }
+
+  async #clockGrant() {
+    if (this.grants.clock === false) throw new AutomationError('grant.denied', 'moving the clock needs the `clock` grant', 'clock.advance');
+  }
+
+  /**
+   * `app.reset`: the app the host was started with, rebuilt in a fresh host on a fresh virtual
+   * clock (seeded with `seed`, else the launch seed), then settled. The runner calls it between
+   * tests, so a worker keeps one process.
+   */
+  async reset({ seed, timeout } = {}) {
+    const r = await this.call('app.reset', { seed, timeout });
+    if (r?.seed !== undefined && r.seed !== null) process.env.SVELTERS_SEED = String(r.seed);
+    return r;
+  }
+
+  /**
+   * `app.mount` (E2E-INSPECTOR §2.4): `component` (a `.svelte` path, or a `file:` URL, inside an
+   * app: its package.json gives the toolkit) alone in a fresh host on a fresh virtual clock,
+   * compiled live, with `props`, in a `size` window. Returns the mounted component as a locator
+   * over the host, with `setProps`.
+   */
+  async mount(component, { export: exportName, props, size, seed, timeout } = {}) {
+    const module = component instanceof URL ? fileURLToPath(component) : resolvePath(String(component));
+    const r = await this.call('app.mount', { module, export: exportName, props: props ?? {}, size, seed, timeout });
+    if (r?.seed !== undefined && r.seed !== null) process.env.SVELTERS_SEED = String(r.seed);
+    return new Mounted(this, module);
   }
 
   call(method, params) {
@@ -234,6 +281,18 @@ export class App extends Locator {
   }
 }
 
+/** A component from `app.mount`: locators over its host, and its props. */
+export class Mounted extends Locator {
+  constructor(app, module) {
+    super(app, '');
+    this.module = module;
+  }
+  /** Shallow-merges `props` into the component's props (`app.set_props`); its state is kept. */
+  setProps(props, { timeout } = {}) {
+    return this.app.call('app.set_props', { props, timeout });
+  }
+}
+
 /** Connects to an app that already listens on `endpoint`. */
 export async function attach(endpoint, { timeout } = {}) {
   const client = await Client.connect(endpoint, { timeout });
@@ -242,16 +301,24 @@ export async function attach(endpoint, { timeout } = {}) {
 }
 
 /**
- * Spawns `bin app --automation <endpoint> --headless --clock virtual [--seed N] [--step-ms MS]`
+ * Spawns `bin [app] --automation <endpoint> --headless --clock virtual [--seed N] [--step-ms MS]`
  * (the reference host `svelters-run`, or an app binary that takes the same flags), waits for its
  * `SVELTERS_AUTOMATION=<endpoint>` line and says hello. `endpoint` defaults to `tcp:0`.
  */
-export async function launch({ bin, app, args = [], endpoint = 'tcp:0', seed, stepMs, headless = true, timeout = 60_000, env } = {}) {
+export async function launch({ bin, app, args = [], clock = 'virtual', endpoint = 'tcp:0', seed, stepMs, headless = true, timeout = 60_000, env, stderr = 'inherit' } = {}) {
   const argv = [...(app ? [app] : []), ...args, '--automation', endpoint];
-  if (headless) argv.push('--headless', '--clock', 'virtual');
+  if (headless) argv.push('--headless', '--clock', clock);
   if (seed !== undefined) argv.push('--seed', String(seed));
   if (stepMs !== undefined) argv.push('--step-ms', String(stepMs));
-  const child = spawn(bin, argv, { stdio: ['ignore', 'pipe', 'inherit'], env: env ?? process.env });
+  const child = spawn(bin, argv, { stdio: ['ignore', 'pipe', stderr], env: env ?? process.env });
+  // `stderr: 'pipe'` (the runner): the last lines are kept for a failure report.
+  child.stderrTail = [];
+  if (child.stderr) {
+    createInterface({ input: child.stderr }).on('line', (l) => {
+      child.stderrTail.push(l);
+      if (child.stderrTail.length > 40) child.stderrTail.shift();
+    });
+  }
   const listening = await new Promise((resolve, reject) => {
     const t = setTimeout(() => {
       child.kill('SIGKILL');
@@ -267,7 +334,11 @@ export async function launch({ bin, app, args = [], endpoint = 'tcp:0', seed, st
     });
     child.once('exit', (code) => {
       clearTimeout(t);
-      reject(new AutomationError('transport.closed', `${bin} exited (${code}) before listening`));
+      // Give the stderr reader a moment to collect the reason.
+      setTimeout(() => {
+        const why = child.stderrTail.length ? `:\n${child.stderrTail.join('\n')}` : '';
+        reject(new AutomationError('transport.closed', `${bin} exited (${code}) before listening${why}`));
+      }, 20);
     });
     child.once('error', (e) => {
       clearTimeout(t);
@@ -324,3 +395,5 @@ export function expect(locator) {
     },
   };
 }
+
+export { test } from './runner/api.js';

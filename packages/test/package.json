@@ -4,14 +4,18 @@
   "license": "MIT",
   "private": true,
   "type": "module",
-  "description": "AU2: the TypeScript client of svelters-automation's socket transport (launch an app under automation, locators, web-first expect, scene snapshots)",
+  "description": "AU2/AU2b: the TypeScript client of svelters-automation's socket transport (launch an app under automation, locators, web-first expect, scene snapshots, clock, mount) and svelters' own e2e runner (svelters-e2e)",
   "exports": {
     ".": {
       "types": "./index.d.ts",
       "default": "./index.js"
-    }
+    },
+    "./runner": "./runner/cli.js"
   },
   "scripts": {
     "test": "node --test test/*.test.js"
+  },
+  "bin": {
+    "svelters-e2e": "./bin/svelters-e2e.mjs"
   }
 }

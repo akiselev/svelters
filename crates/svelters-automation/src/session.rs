@@ -823,6 +823,48 @@ impl<D: Driver> Session<D> {
         })
     }
 
+    /// `input.set_value {handle}` (AU2b): one handle of a multi-handle widget (a `range-slider`
+    /// is one scene node with two AccessKit sliders, "<name> low" and "<name> high"). `handle` is
+    /// matched against the label's end (`"high"`), or is an index into the widget's slider handles
+    /// in left-to-right order (`"1"`). Fails with `node.not_found` when no handle matches.
+    pub fn set_value_handle(
+        &mut self,
+        target: impl Into<Target>,
+        handle: &str,
+        value: f64,
+        opts: ActOptions,
+    ) -> Result<ActResult, Error> {
+        let mut missing = None;
+        let r = self.act(target.into(), opts, |me, _, rect| {
+            let area = rect.expand(2.0);
+            let mut handles: Vec<A11yNode> = me
+                .driver
+                .a11y_nodes()
+                .into_iter()
+                .filter(|n| n.role == egui::accesskit::Role::Slider && area.contains(n.rect.center()))
+                .collect();
+            handles.sort_by(|a, b| a.rect.left().total_cmp(&b.rect.left()).then(a.rect.top().total_cmp(&b.rect.top())));
+            let want = handle.to_lowercase();
+            let pick = handles
+                .iter()
+                .find(|n| n.label.as_deref().is_some_and(|l| l.to_lowercase().ends_with(&want)))
+                .or_else(|| handle.parse::<usize>().ok().and_then(|i| handles.get(i)))
+                .cloned();
+            match pick {
+                Some(n) => me.accesskit(&n, Action::SetValue, Some(ActionData::NumericValue(value))),
+                None => {
+                    let labels: Vec<_> = handles.iter().map(|n| n.label.clone().unwrap_or_default()).collect();
+                    missing = Some(format!("no handle {handle:?} (handles: {labels:?})"));
+                }
+            }
+            Tier::Semantic
+        });
+        match missing {
+            Some(why) => Err(Error::new("node.not_found", why)),
+            None => r,
+        }
+    }
+
     fn key(&mut self, key: egui::Key, modifiers: egui::Modifiers) {
         for pressed in [true, false] {
             self.send(egui::Event::Key {
@@ -951,7 +993,11 @@ impl<D: Driver> Session<D> {
             "input.fill" => act_json(self.fill(target_param(p)?, str_param(p, "text")?, opts()?)?),
             "input.set_value" => {
                 let v = p.get("value").and_then(Value::as_f64).ok_or_else(|| Error::new("params.invalid", "`value` wants a number"))?;
-                act_json(self.set_value(target_param(p)?, v, opts()?)?)
+                match p.get("handle") {
+                    Some(Value::String(h)) => act_json(self.set_value_handle(target_param(p)?, h, v, opts()?)?),
+                    Some(Value::Number(i)) => act_json(self.set_value_handle(target_param(p)?, &i.to_string(), v, opts()?)?),
+                    _ => act_json(self.set_value(target_param(p)?, v, opts()?)?),
+                }
             }
             "input.press" => act_json(self.press(str_param(p, "key")?)?),
             "input.type" => act_json(self.type_text(str_param(p, "text")?)?),
