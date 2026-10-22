@@ -136,6 +136,21 @@ impl std::ops::BitOr for Caps {
 
 // ---- registration (what the macro emits) ----
 
+/// OW0: the kind-table type of a prop or event payload (from the Rust type; `#[prop(enumeration =
+/// "a|b")]` for an enum). An own widget's prop that its built-in row lacks is added to the built-in
+/// kind with this type (`KindRegistry::replacement`); provider kinds describe theirs through the
+/// export schema instead.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum RowTy {
+    Bool,
+    I64,
+    F64,
+    Str,
+    Enum(&'static [&'static str]),
+    /// Not a kind-table type (records, lists): not allowed as an extra prop of a built-in kind.
+    Other,
+}
+
 /// One `#[prop]` of a kind.
 pub struct PropEntry {
     /// The JS name: the field name in kebab-case (`units_shown` → `units-shown`).
@@ -149,6 +164,9 @@ pub struct PropEntry {
     pub measure: bool,
     /// `offset_of!` the field (how [`WidgetCx::set`] finds the prop a write is for).
     pub offset: usize,
+    /// OW0: its kind-table type and nullability (an `Option`).
+    pub row_ty: RowTy,
+    pub nullable: bool,
 }
 
 /// One `#[event]` of a kind (`Event<T>`, `on<name>` in Svelte).
@@ -156,6 +174,8 @@ pub struct EventEntry {
     /// The JS event name: the field name in kebab-case.
     pub name: &'static str,
     pub docs: &'static str,
+    /// OW0: the payload's kind-table type (`None` for `Event<()>`).
+    pub arg: Option<RowTy>,
 }
 
 /// One `#[part]` of a kind (ARCH-WIDGETS §1.3): `::part(name)` in CSS.
@@ -203,6 +223,10 @@ pub struct KindEntry {
     /// svelters-egui). Not an element of its own: the built-in row (tag, prop and signal ids)
     /// stays, and the own-widget switch (`crate::widgets`) picks this struct for new nodes.
     pub replaces: Option<&'static str>,
+    /// OW0 (WIDGET-PARITY §4.3): the built-in tag whose type selectors and part names also style
+    /// this kind (`style_as = "slider"` on `cad-slider`): the theme styles it as that built-in and
+    /// the app's CSS adds only its differences.
+    pub style_as: Option<&'static str>,
     /// Its `#[part]`s, in declaration order.
     pub parts: &'static [PartEntry],
 }
@@ -375,6 +399,8 @@ pub struct MeasureCx<'a> {
     pub style: &'a egui::Style,
     /// OW0: the node's computed style (CSS), if the cascade reaches it.
     pub(crate) css: Option<&'a svelters_style::ComputedStyle>,
+    /// OW0: its parts' computed styles (`::part(name)`).
+    pub(crate) parts: &'a [(Box<str>, std::sync::Arc<svelters_style::ComputedStyle>)],
 }
 
 impl MeasureCx<'_> {
@@ -382,6 +408,11 @@ impl MeasureCx<'_> {
     /// with: font, padding, border).
     pub fn style(&self, ua: crate::paint::Ua) -> crate::paint::StyleView<'_> {
         crate::paint::StyleView::new(self.css, ua, StateBits::NONE, self.ctx.theme() == egui::Theme::Dark)
+    }
+
+    /// OW0: the computed style of part `name` (`::part(name)`), if a rule reaches it.
+    pub fn part_css(&self, name: &str) -> Option<&svelters_style::ComputedStyle> {
+        self.parts.iter().find(|(n, _)| &**n == name).map(|(_, c)| &**c)
     }
 
     fn font(&self) -> egui::FontId {
@@ -468,6 +499,8 @@ impl WidgetCx<'_> {
     /// requests are applied after, then [`WidgetCx::commit_state`] restyles in the same frame.
     pub fn run_units(&mut self, ui: &egui::Ui, resp: &egui::Response, f: impl FnOnce(&mut crate::interact::InputCx<'_>)) -> crate::interact::FocusCx {
         let parts = crate::interact::PartResponses::default();
+        // the prop-mirror bit the units' rules depend on, also when no sheet runs the cascade
+        self.state.set(StateBits::DISABLED, !self.enabled);
         let fc = crate::interact::run(ui, resp, &mut self.state, &parts, f);
         self.commit_state();
         fc
@@ -478,6 +511,12 @@ impl WidgetCx<'_> {
     /// lag; §2.3). Also moves `:focus-within` with `focused`.
     pub fn commit_state(&mut self) {
         crate::style::set_own_state(self.s, self.i, self.state);
+    }
+
+    /// OW0: the computed style of the node's part `name` (`::part(name)`), if a rule reaches it;
+    /// build its view with `cx.style(UA).part(cx.part_css("label"), LABEL_UA)`.
+    pub fn part_css(&self, name: &str) -> Option<&svelters_style::ComputedStyle> {
+        self.s.style.part_computed(self.node, name).map(|c| &**c)
     }
 
     /// The node's style over `ua` in its current state: what the paint primitives read.
@@ -493,8 +532,8 @@ impl WidgetCx<'_> {
 
     /// A paint context on `ui`'s painter for this node (traced when the pass traces).
     pub fn paint_cx<'p>(&self, ui: &'p egui::Ui) -> crate::paint::PaintCx<'p> {
-        let mut p = crate::paint::PaintCx::new(ui.painter());
-        p.target = (self.node.to_raw(), None);
+        let mut p = crate::paint::PaintCx::for_node(ui.painter(), self.node.to_raw());
+        p.tag = self.entry.replaces.unwrap_or(self.entry.tag);
         p
     }
 
@@ -783,8 +822,8 @@ impl ExtWidget {
         let mut b = self.0.try_borrow_mut().ok()?;
         b.as_any_mut().downcast_mut::<W>().map(f)
     }
-    pub(crate) fn measure(&self, m: &crate::layout::Metrics, avail: AvailableSpace, css: Option<&svelters_style::ComputedStyle>) -> egui::Vec2 {
-        let mut cx = MeasureCx { ctx: &m.ctx, style: &m.style, css };
+    pub(crate) fn measure(&self, m: &crate::layout::Metrics, avail: AvailableSpace, css: Option<&svelters_style::ComputedStyle>, parts: &[(Box<str>, std::sync::Arc<svelters_style::ComputedStyle>)]) -> egui::Vec2 {
+        let mut cx = MeasureCx { ctx: &m.ctx, style: &m.style, css, parts };
         self.0.borrow_mut().measure(&mut cx, avail)
     }
 }
@@ -957,8 +996,10 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
     resp = crate::a11y::decorate(resp, &arena.n(h));
     let c = arena.common(i);
     if !c.tooltip.is_empty() {
-        resp = resp.on_hover_text(c.tooltip.clone());
+        // OW0 (DESIGN R9): an own widget shows its tooltip while disabled too (the reason)
+        resp = if !resp.enabled() && crate::style::is_own(arena.w(i)) { resp.on_disabled_hover_text(c.tooltip.clone()) } else { resp.on_hover_text(c.tooltip.clone()) };
     }
+    let c = arena.common(i);
     {
         let name = (!c.accessible_name.is_empty()).then_some(c.accessible_name.as_str());
         let acx = A11yCx { id: resp.id, state, name };

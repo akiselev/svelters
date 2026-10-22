@@ -650,10 +650,11 @@ impl Core {
 }
 
 /// Checkpoint step 1 (§6.2): woken JS-thread futures, progress, finished jobs, host rejections, all
-/// settled in one engine entry. Runs no jobs: the reactions run in the checkpoint's job drain.
-pub(crate) fn drain(core: &Core, eng: &mut Box<dyn JsEngine>) {
+/// settled in one engine entry. Runs no jobs; returns whether it settled anything (a settle batch, a
+/// task of its own), so the live checkpoint drains its reactions before the next task (SCHED1b).
+pub(crate) fn drain(core: &Core, eng: &mut Box<dyn JsEngine>) -> bool {
     if !core.ops_have_work() {
-        return;
+        return false;
     }
     let t0 = Instant::now();
     let t = &core.ops;
@@ -733,4 +734,5 @@ pub(crate) fn drain(core: &Core, eng: &mut Box<dyn JsEngine>) {
         s.drain_ns += ns;
         s.engine_ns += engine_ns;
     });
+    !out.is_empty()
 }

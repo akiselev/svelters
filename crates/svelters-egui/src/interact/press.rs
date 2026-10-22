@@ -33,19 +33,19 @@ pub struct PressParams {
 /// OW1b: repeats per halving of the interval when [`PressParams::accelerate`] is on.
 pub const ACCEL_EVERY: u32 = 8;
 
-/// The time from the press to repeat `k` (1-based) under `p` (`None`: no repeat).
-fn repeat_due(p: &PressParams, k: u32) -> Option<f64> {
-    let (delay, interval) = p.repeat?;
-    let (delay, interval) = (delay.max(0.0) as f64, interval.max(0.005) as f64);
-    let mut t = delay;
-    let mut step = interval;
-    for i in 1..k {
-        if p.accelerate && i % ACCEL_EVERY == 0 {
-            step = (step / 2.0).max(interval / 5.0);
-        }
-        t += step;
+/// The time from the press to the first repeat under `p` (`None`: no repeat).
+fn repeat_due(p: &PressParams, _k: u32) -> Option<f64> {
+    p.repeat.map(|(delay, _)| delay.max(0.0) as f64)
+}
+
+/// The interval after `sent` repeats: `interval`, halved every [`ACCEL_EVERY`] repeats under
+/// `accelerate`, down to a fifth.
+fn repeat_interval(p: &PressParams, sent: u32) -> f64 {
+    let base = p.repeat.map_or(0.1, |(_, i)| (i as f64).max(0.01));
+    if !p.accelerate {
+        return base;
     }
-    Some(t)
+    (base / 2f64.powi((sent / ACCEL_EVERY).min(8) as i32)).max(base / 5.0)
 }
 
 /// What [`Pressable`] reports.
@@ -74,12 +74,13 @@ impl Press {
 #[derive(Debug, Default)]
 pub struct Pressable {
     down: bool,
-    /// OW1b: when the press began (input time) and how many repeats it sent.
+    /// When the press began and when it last repeated (input time, seconds).
     down_at: f64,
+    last_repeat: f64,
+    /// The interval while a repeating press is held.
+    repeat_every: Option<f64>,
+    /// OW1b: repeats sent by this press (`accelerate`).
     repeats: u32,
-    /// The input time of the last pass and the next repeat's due time ([`Unit::next_frame`]).
-    now: f64,
-    next_due: Option<f64>,
 }
 
 impl Pressable {
@@ -100,29 +101,29 @@ impl Unit for Pressable {
     fn input(&mut self, p: &PressParams, cx: &mut InputCx<'_>, out: &mut Intents<Press>) {
         let r = cx.resp;
         let down = cx.enabled && r.down_on;
-        self.now = cx.now;
         if down && !self.down {
             out.push(Press::Down);
             self.down_at = cx.now;
+            self.last_repeat = cx.now;
             self.repeats = 0;
         } else if !down && self.down {
             out.push(if cx.enabled { Press::Up { inside: r.hovered } } else { Press::Cancel });
         }
-        self.down = down;
-        // OW1b: auto-repeat while held over the host (spin buttons; Qt pauses it outside)
-        self.next_due = None;
-        if down {
-            while let Some(due) = repeat_due(p, self.repeats + 1) {
-                if cx.now - self.down_at < due {
-                    self.next_due = Some(self.down_at + due);
-                    break;
-                }
+        // `repeat`: held over the host, a step after `delay`, then every `interval` (QAbstractButton
+        // autoRepeat); the widget treats each `Repeat` as an activation. OW1b: with `accelerate`
+        // the interval shortens as the press is held (Qt `QAbstractSpinBox::accelerated`).
+        self.repeat_every = None;
+        if down && p.repeat.is_some() {
+            let interval = repeat_interval(p, self.repeats);
+            self.repeat_every = Some(interval);
+            let next = if self.repeats == 0 { self.down_at + repeat_due(p, 1).unwrap_or(0.0) } else { self.last_repeat + interval };
+            if r.hovered && cx.now >= next {
+                out.push(Press::Repeat);
+                self.last_repeat = cx.now;
                 self.repeats += 1;
-                if r.contains_pointer {
-                    out.push(Press::Repeat);
-                }
             }
         }
+        self.down = down;
         cx.set(StateBits::PRESSED, down);
         if !cx.enabled {
             return;
@@ -146,13 +147,28 @@ impl Unit for Pressable {
         node.add_action(accesskit::Action::Click);
     }
 
+    fn next_frame(&self) -> Option<std::time::Duration> {
+        self.repeat_every.map(std::time::Duration::from_secs_f64)
+    }
+
     /// EV3: a focused clickable claims Space and Enter (unmodified).
     fn claims(&self, _p: &PressParams, key: egui::Key, m: egui::Modifiers) -> bool {
         !m.command && !m.alt && !m.shift && matches!(key, egui::Key::Space | egui::Key::Enter)
     }
+}
 
-    /// OW1b: the next auto-repeat while held.
-    fn next_frame(&self) -> Option<std::time::Duration> {
-        self.next_due.map(|t| std::time::Duration::from_secs_f64((t - self.now).max(0.0)))
+#[cfg(test)]
+mod ow1b_tests {
+    use super::*;
+
+    #[test]
+    fn ow1b_accelerated_repeat_shortens_the_interval() {
+        let p = PressParams { repeat: Some((0.5, 0.1)), accelerate: true, ..PressParams::default() };
+        assert_eq!(repeat_due(&p, 1), Some(0.5));
+        assert_eq!(repeat_interval(&p, 0), 0.1);
+        assert_eq!(repeat_interval(&p, ACCEL_EVERY), 0.05);
+        assert!((repeat_interval(&p, 10 * ACCEL_EVERY) - 0.02).abs() < 1e-12, "at most five times faster");
+        let q = PressParams { accelerate: false, ..p };
+        assert_eq!(repeat_interval(&q, 100), 0.1);
     }
 }

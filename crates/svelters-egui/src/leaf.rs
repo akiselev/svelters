@@ -144,6 +144,7 @@ fn collapsing(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, o
     }
 }
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW2
 /// `scroll-area`: an `egui::ScrollArea` at its rect, the children (laid out by taffy at their full
 /// size) drawn in its content `Ui`; a host write of `scroll-x`/`scroll-y` scrolls, a user scroll
 /// (or egui clamping a write) writes them back.
@@ -216,6 +217,7 @@ fn scroll(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, out: 
     }
 }
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW0 (the `button` wrapper, behind the switch), OW1a (toggle-button, icon), OW1a, OW1b, OW3, OW4
 /// Paints the leaf in slot `i` (the walk's index into the scene's columns); returns its response
 /// (EV2b: the host response of its behaviours).
 pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> egui::Response {
@@ -287,6 +289,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             if *char_limit > 0 {
                 te = te.char_limit(*char_limit as usize);
             }
+            crate::primary::note_egui_paste(ui.ctx()); // W5: egui pastes MiddleClickPaste itself
             let o = te.show(ui);
             crate::focus::after_text(ui, node_id); // EV3: a Cut or Copy command to the host's clipboard
             // W5: the Linux primary selection (select-to-copy, middle-click paste)
@@ -505,6 +508,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     resp
 }
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW0 (the `button` wrapper, behind the switch), OW1a (toggle-button, icon)
 /// AS1: an `icon` with a `source`: the image fitted inside the leaf's square (inside the padding of
 /// a framed one, whose button draws the state visuals), tinted with the text colour of its state;
 /// the placeholder box when the source does not load.

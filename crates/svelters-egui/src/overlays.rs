@@ -231,6 +231,7 @@ fn content(
     crate::walk::paint_children(arena, i, origin, ui, out);
 }
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW3, OW7
 /// Paints overlay `i` (open or not) anchored to `owner`, and announces a user (or `popup`/`popdown`)
 /// open or close.
 fn overlay(
