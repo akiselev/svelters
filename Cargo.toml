@@ -10,6 +10,7 @@ members = [
     "crates/svelters-appkit",
     "crates/svelters-winui",
     "crates/svelters-egui",
+    "crates/svelters-style",
     "crates/svelters-compiler",
     "crates/svelters-cli",
     "crates/svelters-macros",
