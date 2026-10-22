@@ -39,9 +39,23 @@ impl TestApp {
     }
 
     pub fn with_config(bundle: impl AsRef<Path>, cfg: HostConfig) -> Result<TestApp, String> {
+        TestApp::loading(cfg, |embed| embed.load_app(bundle))
+    }
+
+    /// Q1: the app at `path` (an app directory or a file in it) loaded from source, compiled live
+    /// for egui (`svelters-egui-run --entry`).
+    #[cfg(feature = "source")]
+    pub fn from_source(path: impl AsRef<Path>) -> Result<TestApp, String> {
+        let mut src = svelters_modules::SourceConfig::for_path(path.as_ref())?;
+        src.backend = "egui".into();
+        let provider = std::rc::Rc::new(svelters_modules::SourceProvider::new(src)?);
+        TestApp::loading(HostConfig { echo_console: false, echo_errors: false, ..HostConfig::default() }, |embed| embed.load_app_from(provider))
+    }
+
+    fn loading(cfg: HostConfig, load: impl FnOnce(&Embed) -> Result<(), svelters_host::JsError>) -> Result<TestApp, String> {
         // The harness's context does not exist yet: `logic` binds it at the first frame.
         let embed = Embed::new(&egui::Context::default(), EmbedConfig::app(cfg)).map_err(|e| e.to_string())?;
-        embed.load_app(bundle).map_err(|e| e.to_string())?;
+        load(&embed).map_err(|e| e.to_string())?;
         let backend = embed.backend().clone();
         let size = backend
             .root_window()

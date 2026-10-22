@@ -1,0 +1,16 @@
+{
+  "name": "@svelters-tests/cases",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TK1 test cases: one .svelte file per case, run on GTK, Qt, egui and the log backend (plans/milestones/TK1-test-cases.md)",
+  "scripts": {
+    "build": "svelters-cases ."
+  },
+  "dependencies": {
+    "svelte": "5.57.2"
+  },
+  "devDependencies": {
+    "@svelters/testkit": "workspace:*"
+  }
+}

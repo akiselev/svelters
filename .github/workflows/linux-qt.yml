@@ -62,7 +62,7 @@ jobs:
       - name: Build svelters-compile (the fixtures are compiled by it)
         run: cargo build -p svelters-compiler --bin svelters-compile
       - name: Build bundles
-        run: pnpm --filter './fixtures/*' --filter './tests/qt-types-*' build
+        run: pnpm --filter './fixtures/*' --filter './tests/qt-types-*' --filter ./tests/cases build
 
       # counter is built with only its Qt feature; its *_gtk tests run in linux-gtk.yml.
       - name: Build tests
@@ -85,4 +85,5 @@ jobs:
           path: |
             target/gallery/
             target/p5/
+            target/testkit/
             target/*.png

@@ -1,0 +1,19 @@
+{
+  "name": "@svelters/testkit",
+  "version": "0.0.0",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "description": "TK1: single-file test cases (.svelte with inline expectations) built for every toolkit, and the portable kit vocabulary they use (`svelters:testkit`)",
+  "exports": {
+    ".": "./index.js"
+  },
+  "bin": {
+    "svelters-cases": "./bin/svelters-cases.mjs"
+  },
+  "dependencies": {
+    "@svelters/build": "workspace:*",
+    "svelte": "5.57.2",
+    "vite": "8.3.4"
+  }
+}
