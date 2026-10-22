@@ -56,6 +56,8 @@ impl StateBits {
     pub const REQUIRED: StateBits = StateBits(1 << 21);
     /// `:user-invalid`: invalid, shown only after the user's first commit.
     pub const USER_INVALID: StateBits = StateBits(1 << 22);
+    /// `:has-children`: a tree row with children (WIDGET-PARITY P5, OW-CSS); 24–31 stay free.
+    pub const HAS_CHILDREN: StateBits = StateBits(1 << 23);
 
     /// The built-in names, by bit.
     pub const BUILTIN: &'static [(&'static str, StateBits)] = &[
@@ -82,6 +84,7 @@ impl StateBits {
         ("backdrop", Self::BACKDROP),
         ("required", Self::REQUIRED),
         ("user-invalid", Self::USER_INVALID),
+        ("has-children", Self::HAS_CHILDREN),
     ];
 
     pub const fn contains(self, other: StateBits) -> bool {

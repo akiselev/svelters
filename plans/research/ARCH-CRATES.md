@@ -679,7 +679,7 @@ berth/                         (own repo; cadatomic sessions own it)
 - **KDDW** (GPL) and **ADS** (LGPL-2.1): designs and bug histories only. No code, data files or artwork,
   including KDDW's indicator PNGs. This repeats `docking` §11.
 - **VS Code** (MIT): behaviour only.
-- The crate's own licence is O2.
+- The crate's own licence is O2, which is superseded: undecided, likely AGPL, no licence declared until the user decides (2026-10-22).
 
 ## 3. The code-editor crate (`quire`)
 
@@ -1295,6 +1295,7 @@ consumer (`01-overview` §3.12 "traits and crates only with a consumer").
 |---|---|---|---|
 | O1 | Names | working names `berth` / `quire`; something plainer (`egui_docking`, `egui_code`) | Any name free on crates.io as `<name>-core` plus `egui_<name>` (checked 2026-10-22: `berth-core`, `egui_berth`, `quire-core` and `egui_quire` are free; `berth` and `quire` themselves are taken). Decide before BD0 and QE0 |
 | O2 | Licence of the two repos | MIT OR Apache-2.0; MIT; proprietary | **MIT OR Apache-2.0**, the egui ecosystem's norm. It allows upstreaming and borrowing from egui_tiles. cadatomic's own licence was never checked (`slint` SQ6), so the user should confirm |
+| | **Superseded (user, 2026-10-22):** licences undecided, likely AGPL; "remove until decided". berth, quire and cadatomic declare no licence and are `publish = false` (cadatomic register 8331280). No LICENSE files; code moved between repos carries provenance only. | | |
 | O3 | Publish on crates.io or git only | publish; git tags only | **Git tags only until the API settles** (after BD5 and QE4), then publish. Publishing forces semver discipline the joint egui lane already provides |
 | O4 | Who applies intents | always the host; `auto_apply` option | **Both**: the host routes through its registry (cadatomic); `auto_apply` for tests and other apps |
 | O5 | Deferred viewports in v1 | immediate only; deferred from BD5 | **Immediate in BD3, deferred in BD5** behind W2. The thread-local design must match svelters EM2's |

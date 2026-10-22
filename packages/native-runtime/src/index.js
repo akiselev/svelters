@@ -37,6 +37,7 @@ import {
   root_boundary,
   HMR,
   FILENAME,
+  is_state_proxy,
 } from './core/internal.js';
 // The X6 styling (classes, widget name, inline style, sheets, tokens) works on any node with `h`,
 // `tag`, `attrs` and `sc`: compiled components drive it through `attr`.
@@ -501,7 +502,7 @@ export function nativeBehavior(kind, events = []) {
     const apply = (p) => {
       if (!alive(b)) return;
       const next = p ?? {};
-      for (const [key, v] of Object.entries(next)) {
+      for (let [key, v] of Object.entries(next)) {
         if (key.startsWith('on') && evs.has(key.slice(2))) {
           const ev = key.slice(2);
           if (typeof v === 'function') {
@@ -516,6 +517,7 @@ export function nativeBehavior(kind, events = []) {
           continue;
         }
         if (v === undefined) continue;
+        v = plainData(v);
         if (sent.has(key) && sameParam(sent.get(key), v)) continue;
         sent.set(key, v);
         hs.setProp(b.h, key, v);
@@ -554,15 +556,20 @@ export function set(node, prop, value) {
     value = node.captured.get(prop);
   }
   if (!alive(node)) return;
+  // RT1: a `$state` value (or one with `$state` inside) goes to the host as plain data. Its copy
+  // is new on every run, so it is compared by content; any other value by identity.
+  const data = plainData(value);
+  const same = data === value ? Object.is : sameParam;
+  value = data;
   // a tracked prop (`track`): `last` follows the native edits, so the template effect running
   // again with the value it wrote before (another value of its fragment changed) must not write
   // it over the user's edit. Svelte's DOM setters compare with the last value they were given too.
   const req = node.requested;
   if (req?.has(prop)) {
-    if (Object.is(req.get(prop), value)) return;
+    if (same(req.get(prop), value)) return;
     req.set(prop, value);
   }
-  if (node.last.has(prop) && Object.is(node.last.get(prop), value)) return;
+  if (node.last.has(prop) && same(node.last.get(prop), value)) return;
   node.last.set(prop, value);
   // WG5a: a snippet passed as a prop (`<table-column editor={cellEditor}>`) stays in JS
   if (typeof value === 'function') {
@@ -570,9 +577,48 @@ export function set(node, prop, value) {
     return;
   }
   if (value == null) node.snippets?.delete(prop);
-  // WG5a: a `$state` array is a Proxy, which the host's list conversion does not read as an
-  // array: a list prop (`bind:selected` ids) is written as a plain copy
-  node.host.setProp(node.h, prop, Array.isArray(value) ? Array.from(value) : value);
+  node.host.setProp(node.h, prop, value);
+}
+
+/**
+ * RT1: `v` as plain data for the host. A `$state` array or record is a Proxy, which the host's
+ * list conversion does not read as an array, at any depth (`selection.ranges` of a record prop),
+ * so every proxy in `v` is copied, deeply: arrays and plain objects, as `$state.snapshot` does.
+ * Other objects (handles, assets, Dates, typed arrays) go through as they are, unlike in
+ * `$state.snapshot`, which clones them. Reading the proxies here, in the template effect, tracks
+ * their nested signals, so a nested mutation (`selection.ranges[0].head.line = 3`) writes the prop
+ * again. A value with no proxy in it is returned as is, uncopied (scalars return at once).
+ */
+function plainData(v) {
+  if (typeof v !== 'object' || v === null) return v;
+  const proxied = is_state_proxy(v);
+  if (Array.isArray(v)) {
+    let out = proxied ? new Array(v.length) : null;
+    for (let i = 0; i < v.length; i++) {
+      const x = v[i];
+      const p = plainData(x);
+      if (!out && p !== x) out = v.slice(0, i);
+      if (out) out[i] = p;
+    }
+    return out ?? v;
+  }
+  if (!proxied) {
+    const proto = Object.getPrototypeOf(v);
+    if (proto !== Object.prototype && proto !== null) return v;
+  }
+  let out = proxied ? {} : null;
+  const keys = Object.keys(v);
+  for (let i = 0; i < keys.length; i++) {
+    const k = keys[i];
+    const x = v[k];
+    const p = plainData(x);
+    if (!out && p !== x) {
+      out = {};
+      for (let j = 0; j < i; j++) out[keys[j]] = v[keys[j]];
+    }
+    if (out) out[k] = p;
+  }
+  return out ?? v;
 }
 
 // ---------------------------------------------------------------------------------------------
