@@ -109,9 +109,19 @@ pub(crate) const ENGINE_PROPS: &[(&str, &str, &[&str])] = &[
     ("outline-offset", "length", &[]),
     ("outline-style", "enum", &["none", "auto", "solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"]),
     ("outline-width", "length", &[]),
+    // the text primitive's inputs (ARCH-WIDGETS §1.1); `font-family` and `line-height` stay text
+    // (a family list; a number or a length) for the primitive to read
+    ("font-family", "raw", &[]),
+    ("font-style", "enum", &["normal", "italic", "oblique"]),
+    ("font-weight", "font-weight", &[]),
+    ("line-height", "raw", &[]),
+    ("text-align", "enum", &["start", "end", "left", "right", "center", "justify"]),
+    // R18: links underline on hover
+    ("text-decoration-line", "enum", &["none", "underline", "overline", "line-through"]),
     ("text-overflow", "enum", &["clip", "ellipsis"]),
     ("text-transform", "enum", &["none", "uppercase", "lowercase", "capitalize"]),
     ("transition", "transition", &[]),
+    ("white-space", "enum", &["normal", "nowrap", "pre", "pre-wrap", "pre-line", "break-spaces"]),
 ];
 
 /// The bits the walk owns: set from the pass's interaction and from props, never by providers.

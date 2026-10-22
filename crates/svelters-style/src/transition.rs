@@ -11,7 +11,8 @@
 //!
 //! Interpolated: colours (premultiplied sRGB), lengths, numbers, insets, font weights, shadow
 //! lists (the shorter padded with transparent zero shadows) and gradients with the same stop
-//! count. Everything else (keywords, strings) changes at once.
+//! count. Everything else (keywords, strings) changes at once, or at the end of the delay when
+//! the duration is 0 (`transition: background-color 0s 300ms`, R11).
 
 use crate::computed::ComputedStyle;
 use crate::shorthand::longhands;
@@ -35,9 +36,14 @@ struct Running {
 impl Running {
     /// The value at `now`, and whether the transition is over.
     fn sample(&self, now: f64) -> (ComputedValue, bool) {
-        let t = ((now - self.start) as f32 - self.delay) / self.duration;
+        let elapsed = (now - self.start) as f32 - self.delay;
+        // a zero duration with a delay switches at the end of the delay (R11's 300ms sash bar)
+        let t = if self.duration > 0.0 { elapsed / self.duration } else if elapsed >= 0.0 { 1.0 } else { 0.0 };
         if t >= 1.0 {
             return (self.to.clone(), true);
+        }
+        if self.duration <= 0.0 {
+            return (self.from.clone(), false);
         }
         let p = self.timing.apply(t.max(0.0));
         (lerp(&self.from, &self.to, p).unwrap_or_else(|| self.to.clone()), false)
@@ -93,7 +99,7 @@ impl<K: Copy + Eq + Hash> Transitions<K> {
                 }
                 continue;
             };
-            if spec.duration <= 0.0 {
+            if spec.duration <= 0.0 && spec.delay <= 0.0 {
                 if let Some(k) = pos {
                     entry.remove(k);
                 }
@@ -103,7 +109,7 @@ impl<K: Copy + Eq + Hash> Transitions<K> {
                 Some(k) => Some(entry[k].sample(now).0),
                 None => before.get_index(i).cloned(),
             };
-            let Some(from) = from.filter(|f| lerp(f, to, 0.5).is_some()) else {
+            let Some(from) = from.filter(|f| spec.duration <= 0.0 || lerp(f, to, 0.5).is_some()) else {
                 if let Some(k) = pos {
                     entry.remove(k);
                 }

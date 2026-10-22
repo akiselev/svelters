@@ -7871,8 +7871,25 @@
         ],
         "via": "setter"
       },
+      "font-family": {
+        "decl_type": "raw",
+        "via": "css"
+      },
       "font-size": {
         "decl_type": "length",
+        "via": "css"
+      },
+      "font-style": {
+        "decl_type": "enum",
+        "values": [
+          "normal",
+          "italic",
+          "oblique"
+        ],
+        "via": "css"
+      },
+      "font-weight": {
+        "decl_type": "font-weight",
         "via": "css"
       },
       "gap": {
@@ -8069,6 +8086,10 @@
       },
       "letter-spacing": {
         "decl_type": "length",
+        "via": "css"
+      },
+      "line-height": {
+        "decl_type": "raw",
         "via": "css"
       },
       "margin": {
@@ -8554,6 +8575,28 @@
         "type": "length",
         "via": "setter"
       },
+      "text-align": {
+        "decl_type": "enum",
+        "values": [
+          "start",
+          "end",
+          "left",
+          "right",
+          "center",
+          "justify"
+        ],
+        "via": "css"
+      },
+      "text-decoration-line": {
+        "decl_type": "enum",
+        "values": [
+          "none",
+          "underline",
+          "overline",
+          "line-through"
+        ],
+        "via": "css"
+      },
       "text-overflow": {
         "decl_type": "enum",
         "values": [
@@ -8679,6 +8722,18 @@
         ],
         "type": "bool",
         "via": "setter"
+      },
+      "white-space": {
+        "decl_type": "enum",
+        "values": [
+          "normal",
+          "nowrap",
+          "pre",
+          "pre-wrap",
+          "pre-line",
+          "break-spaces"
+        ],
+        "via": "css"
       },
       "width": {
         "kinds": [

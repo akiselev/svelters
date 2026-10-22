@@ -271,3 +271,37 @@ fn pressed_and_reduced_motion_are_instant() {
     assert!(!tr.restyled(3, &idle, &hover, 0.0, true));
     assert_eq!(tr.running_keys().count(), 0);
 }
+
+#[test]
+fn zero_duration_with_delay_switches_after_the_delay() {
+    // R11: the sash bar appears 300ms after hover; keywords switch too
+    let s = stylist("sash { background-color: rgb(0, 0, 0); cursor: default; transition: all 0s 300ms } sash:hover { background-color: rgb(0, 0, 255); cursor: col-resize }");
+    let idle = style_of(&s, &Tree::parse("window\n  sash#s"), "s");
+    let hover = style_of(&s, &Tree::parse("window\n  sash#s :hovered"), "s");
+    let mut tr: Transitions<u32> = Transitions::new();
+    assert!(tr.restyled(1, &idle, &hover, 0.0, false));
+    assert_eq!(tr.view(1, &hover, 0.2).background(), Some(rgb(0, 0, 0)));
+    assert_eq!(tr.view(1, &hover, 0.2).cursor(), Some("default"));
+    assert!(tr.tick(0.2));
+    assert_eq!(tr.view(1, &hover, 0.31).background(), Some(rgb(0, 0, 255)));
+    assert!(!tr.tick(0.31));
+}
+
+#[test]
+fn text_primitive_properties() {
+    let s = stylist("#form { font-weight: bold; font-style: italic; white-space: nowrap; text-align: center; font-family: \"Segoe UI\", sans-serif; line-height: 1.4 }
+                     #ok:hover, #ok { text-decoration-line: underline }");
+    let tree = Tree::parse(TREE);
+    let cx = ComputeContext::default();
+    let mut caches = MatchCaches::new();
+    let form = s.compute(tree.by_id("form"), None, None, &cx, &mut caches);
+    let ok = s.compute(tree.by_id("ok"), Some(&form), None, &cx, &mut caches);
+    let v = StyleView::new(&ok);
+    assert_eq!(v.get("font-weight"), Some(&ComputedValue::FontWeight(700)));
+    assert_eq!(v.keyword("font-style"), Some("italic"));
+    assert_eq!(v.keyword("white-space"), Some("nowrap"));
+    assert_eq!(v.keyword("text-align"), Some("center"));
+    assert_eq!(v.keyword("text-decoration-line"), Some("underline"));
+    assert_eq!(v.get("line-height"), Some(&ComputedValue::Raw("1.4".into())));
+    assert_eq!(StyleView::new(&form).keyword("text-decoration-line"), None, "not inherited");
+}
