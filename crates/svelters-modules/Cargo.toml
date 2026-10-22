@@ -8,16 +8,17 @@ publish.workspace = true
 
 [dependencies]
 serde_json.workspace = true
+serde = { workspace = true, optional = true }
 svelters-compiler = { workspace = true, optional = true }
-oxc_resolver = { version = "11", optional = true }
 libloading = { version = "0.8", optional = true }
 
 [features]
 default = ["source"]
-# `SourceProvider`: resolves with oxc_resolver and compiles `.svelte`/`.svelte.js` with
+# `SourceProvider`: resolves with Node's ESM rules (not oxc_resolver: it forces serde_json's
+# `preserve_order` on every crate in the build) and compiles `.svelte`/`.svelte.js` with
 # svelters-compiler. Without it the crate is the engine boundary only (`ModuleProvider`,
 # `BundleProvider`), which is what svelters-host links.
-source = ["dep:svelters-compiler", "dep:oxc_resolver"]
+source = ["dep:svelters-compiler", "dep:serde"]
 # LD1: `DylibModules` loads native modules from dlopen'd libraries. Off by default: cadatomic runs
 # third-party native code out of process only (TRACKS §6 Q3).
 dlopen = ["dep:libloading"]
