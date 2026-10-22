@@ -20,7 +20,7 @@ use svelters_conformance::pins::{BUTTON_LABEL, Keys, load_pins};
 use svelters_conformance::run_pin;
 use svelters_conformance::win::{UiaDriver, WinFixture, WinResult, find_window, init_thread, os_build, post_close};
 use windows::Win32::Foundation::{HWND, LPARAM, LRESULT, RECT, WPARAM};
-use windows::Win32::Graphics::Gdi::{CreateFontIndirectW, HFONT};
+use windows::Win32::Graphics::Gdi::{COLOR_BTNFACE, CreateFontIndirectW, HFONT};
 use windows::Win32::System::LibraryLoader::{GetModuleFileNameW, GetModuleHandleW};
 use windows::Win32::UI::Controls::{ICC_STANDARD_CLASSES, INITCOMMONCONTROLSEX, InitCommonControlsEx};
 use windows::Win32::UI::HiDpi::{AdjustWindowRectExForDpi, GetDpiForSystem};
