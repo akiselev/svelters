@@ -154,8 +154,17 @@ Semantics are specified in `runtime-contract.md` "Template blocks"; departures f
   function changes. `<svelte:component this={expr}>` likewise (always dynamic).
 - **Legacy `on:event={handler}`** on native elements is a listener, as `onevent={handler}` (both
   run, in attribute order). Svelte attaches it with `addEventListener` (not delegated), so its
-  order relative to delegated `onevent` handlers can differ. Modifiers, bare forwarding
-  (`on:click`) and `on:` on components are rejected (`unsupported_feature`).
+  order relative to delegated `onevent` handlers can differ. On a component, `on:event={h}` is the
+  prop `onevent={h}`.
+- **Bare `on:event` forwards one callback prop** (FW1, ARCH-EMBED §8.7). Inside a component, a bare
+  `on:clicked` on an element is the listener `onclicked={$$props.onclicked}` and on a child component
+  the prop `onclicked={$$props.onclicked}` (`$$props`: the compiler's own props parameter). Svelte 4
+  re-dispatched a component event to every `$on` listener; here the one handler the parent passes
+  gets it, and there are no component events (`createEventDispatcher`, `$on`). A note,
+  `legacy_forwarding_lowered`, says so once per component. A bare `on:x` next to another handler of
+  `x` (`onx={h}`, `on:x={h}`) and two `onx` props on a component, one from `on:`, are
+  `duplicate_event` errors. A snippet with a bare `on:` is not hoisted to module level. Modifiers
+  (`on:click|once`) stay `unsupported_feature`, with the `onclick={...}` rewrite as help.
 - **`<svelte:boundary>`** (`$n.boundary`, runtime-contract.md): the `pending` snippet is ignored
   (no async mode); `failed` renders in the flush after the task that ran `onerror` (Svelte renders
   it inside that task); no fork batches; dev-mode error adjustments (component stack in the

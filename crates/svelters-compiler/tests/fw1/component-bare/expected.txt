@@ -1,0 +1,21 @@
+backend: gtk
+
+## diagnostics
+note[legacy_forwarding_lowered] @10:20: `on:accepted` forwards this component's `onaccepted` callback prop: the one handler its parent passes gets the event (legacy forwarding re-dispatched it to every listener; svelters has no component events)
+  help: for svelte-check, declare the prop in this component's `$props()` type, e.g. `Props & ForwardFrom<typeof Child, 'accepted'>` (types from `@svelters/native-runtime/types`)
+
+## output.js
+import * as $ from '@svelters/native-runtime/core';
+import * as $n from '@svelters/native-runtime';
+import Child from './Child.svelte';
+
+export default function Input($$anchor, $$props) {
+	$.push($$props, true);
+	let n = $.state(0);
+	const $$n1 = $n.element("box");
+	const $$prop1 = $.derived(() => () => $.update(n));
+	Child($n.region($n.slot($$n1, null)), { title: "t", get onaccepted() { return $$props.onaccepted; }, get onrejected() { return $.get($$prop1); } });
+	$n.snippet($n.slot($$n1, null), () => Child, { get onaccepted() { return $$props.onaccepted; } });
+	$n.append($$anchor, $$n1);
+	$.pop();
+}

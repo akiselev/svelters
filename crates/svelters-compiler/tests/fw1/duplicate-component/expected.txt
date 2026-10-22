@@ -1,0 +1,9 @@
+backend: gtk
+
+## diagnostics
+error[duplicate_event] @7:10: `on:accepted` forwards this component's `onaccepted` callback prop, and <Child> also gets the prop `onaccepted`: a bare `on:accepted` must be its only handler
+  help: to handle `accepted` here and forward it, destructure the prop (`let { onaccepted } = $props()`) and call it from one handler: `onaccepted={(e) => { handle(e); onaccepted?.(e); }}`
+note[legacy_forwarding_lowered] @7:10: `on:accepted` forwards this component's `onaccepted` callback prop: the one handler its parent passes gets the event (legacy forwarding re-dispatched it to every listener; svelters has no component events)
+  help: for svelte-check, declare the prop in this component's `$props()` type, e.g. `Props & ForwardFrom<typeof Child, 'accepted'>` (types from `@svelters/native-runtime/types`)
+error[duplicate_event] @8:26: <Child> gets the `onaccepted` prop twice (`on:accepted={…}` is the prop `onaccepted`): only the last one would be passed
+  help: pass one `onaccepted={…}` that does both

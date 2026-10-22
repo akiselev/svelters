@@ -1,0 +1,32 @@
+create window #1
+set #1 title "Forward"
+create box #2
+set #2 orientation "vertical"
+create label #3
+insert #2 #3 before=end slot=default
+create box #4
+create label #5
+insert #4 #5 before=end slot=default
+create button #6
+set #6 label "Go"
+insert #4 #6 before=end slot=default
+listen #6 clicked on
+insert #2 #4 before=end slot=default
+set #5 label "With handler"
+create box #7
+create label #8
+insert #7 #8 before=end slot=default
+create button #9
+set #9 label "Go"
+insert #7 #9 before=end slot=default
+listen #9 clicked on
+insert #2 #7 before=end slot=default
+set #8 label "Without handler"
+insert #1 #2 before=end slot=default
+set #3 label "Count: 0"
+call #1 present []
+event #6 clicked []
+set #3 label "Count: 1"
+event #6 clicked []
+set #3 label "Count: -9"
+event #9 clicked []

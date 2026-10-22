@@ -7,6 +7,9 @@ use serde::Serialize;
 pub enum Severity {
     Error,
     Warning,
+    /// Information about how the source was lowered; never fails a build and is not a warning
+    /// (FW1's `legacy_forwarding_lowered`).
+    Note,
 }
 
 #[derive(Clone, Debug, Serialize)]
@@ -54,6 +57,10 @@ impl Diagnostics {
 
     pub fn warning(&mut self, code: &'static str, span: (u32, u32), message: impl Into<String>) -> &mut Diagnostic {
         self.push(Severity::Warning, code, span, message.into(), false)
+    }
+
+    pub fn note(&mut self, code: &'static str, span: (u32, u32), message: impl Into<String>) -> &mut Diagnostic {
+        self.push(Severity::Note, code, span, message.into(), false)
     }
 
     fn push(&mut self, severity: Severity, code: &'static str, span: (u32, u32), message: String, native: bool) -> &mut Diagnostic {
@@ -108,6 +115,7 @@ impl Diagnostic {
         let sev = match self.severity {
             Severity::Error => "error",
             Severity::Warning => "warning",
+            Severity::Note => "note",
         };
         let be = self.backend.as_deref().map(|b| format!(" ({b})")).unwrap_or_default();
         let mut s = format!("{filename}:{}:{}: {sev}[{}]{be}: {}", self.line, self.column, self.code, self.message);
