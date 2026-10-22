@@ -3,7 +3,11 @@
 //! ```text
 //! counter-win [--fixture <name|dir>] [--selftest] [--report <json>] [--timeout <secs>]
 //! counter-win --start-test <start-with|run-with|preattach> [--report <json>]
+//! counter-win --na-fixture <title> [--keyboard-layout <KLID>]
 //! ```
+//!
+//! `--stall-ms <ms>` blocks the UI thread for that long before the loop starts (a slow first frame), so every
+//! selftest timer is already due when the loop begins; the selftest must pass that way too (WG3w).
 //!
 //! Without `--selftest` it opens the window and runs until the user closes it. `--selftest`
 //! (counter-win fixture; `--fixture winui-types` has its own checks, N4) drives the app through the real toolkit: clicks the button three
@@ -16,6 +20,11 @@
 //! reports the same way: `start-with` mounts in `Host::start_with`'s hook while it pumps messages
 //! (no `run`), then `stop` detaches; `run-with` mounts in `Host::run_with`'s hook from inside `run`;
 //! `preattach` is the desktop order without `attach_host` (`load_bundle` attaches before mount).
+//!
+//! `--na-fixture <title>` (WG3w) opens the NA1 fixture of the WinUI capture (`tests/na_capture.rs`): a window
+//! titled `<title>` holding two `TextBox`es and a `Button` (`Done`) in a vertical `StackPanel`, made through the
+//! backend's ABI (no JavaScript, no bundle). It runs until its stdin closes; the capture drives it from outside
+//! through `SendInput` and UI Automation.
 //!
 //! Build the bundle first: `pnpm install && pnpm --filter ./fixtures/counter-win build`.
 //! Setup on Windows: docs/notes/windows-setup.md.
@@ -48,10 +57,13 @@ mod win {
         report: Option<PathBuf>,
         timeout: f64,
         start_test: Option<String>,
+        na_fixture: Option<String>,
+        keyboard_layout: Option<String>,
+        stall_ms: u64,
     }
 
     fn parse() -> Result<Args, String> {
-        let mut a = Args { fixture: "counter-win".into(), selftest: false, report: None, timeout: 60.0, start_test: None };
+        let mut a = Args { fixture: "counter-win".into(), selftest: false, report: None, timeout: 60.0, start_test: None, na_fixture: None, keyboard_layout: None, stall_ms: 0 };
         let mut it = std::env::args().skip(1);
         while let Some(x) = it.next() {
             match x.as_str() {
@@ -60,6 +72,9 @@ mod win {
                 "--report" => a.report = Some(it.next().ok_or("--report needs a value")?.into()),
                 "--timeout" => a.timeout = it.next().ok_or("--timeout needs seconds")?.parse().map_err(|_| "bad --timeout")?,
                 "--start-test" => a.start_test = Some(it.next().ok_or("--start-test needs a mode")?),
+                "--na-fixture" => a.na_fixture = Some(it.next().ok_or("--na-fixture needs a title")?),
+                "--keyboard-layout" => a.keyboard_layout = Some(it.next().ok_or("--keyboard-layout needs a KLID")?),
+                "--stall-ms" => a.stall_ms = it.next().ok_or("--stall-ms needs milliseconds")?.parse().map_err(|_| "bad --stall-ms")?,
                 "-h" | "--help" => return Err("usage: counter-win [--fixture <name|dir>] [--selftest] [--report <json>] [--timeout <secs>]".into()),
                 other => return Err(format!("unknown argument {other:?}")),
             }
@@ -281,6 +296,161 @@ mod win {
         b.after(800, move || gallery_click(g, 0))
     }
 
+    /// The counter (or winui-types) selftest's state, shared by its timer steps.
+    struct SelfTest {
+        b: WinUiBackend,
+        host: Rc<Host<'static>>,
+        report: Rc<RefCell<Json>>,
+        path: Option<PathBuf>,
+        types: bool,
+        load_ms: f64,
+        tree: RefCell<Json>,
+        /// Why driving failed, if it did.
+        driving: RefCell<Option<String>>,
+        /// How long the driving waited for the elements to load.
+        waited_ms: RefCell<u64>,
+    }
+
+    /// Drives the app through the toolkit, then polls the read-back (`selftest_poll`). The read-back is checked
+    /// relative to the driving, not at a fixed time after start: the events the driving raises reach JavaScript
+    /// in a checkpoint the host schedules with a wake, and when the UI thread starts late (a slow first frame on
+    /// CI's software-rendered runners) every startup timer is already due when the loop begins, so a check timed
+    /// from start ran right behind the driving, before that checkpoint (the CI flake "Count: 0", WG3w).
+    ///
+    /// It also waits (every 50 ms, at most 10 s) until the elements it drives are loaded: a `TextBox` whose
+    /// `Text` is set before it is loaded never raises `TextChanged`, so on a late start the name never arrived.
+    fn selftest_drive(st: Rc<SelfTest>, waited: u32) {
+        let unloaded = || -> Vec<&'static str> {
+            let Some(root) = st.host.toplevel_handles().first().copied() else { return vec!["window"] };
+            let mut all = Vec::new();
+            walk(&st.b, root, &mut all);
+            let tags: &[&'static str] = if st.types { &["button"] } else { &["button", "text-box", "slider", "check-box"] };
+            tags.iter()
+                .copied()
+                .filter(|tag| !all.iter().find(|(_, t)| t == tag).is_some_and(|(h, _)| matches!(prop(&st.b, *h, "is-loaded"), Ok(Value::Bool(true)))))
+                .collect()
+        };
+        let pending = unloaded();
+        if !pending.is_empty() {
+            if waited < 200 {
+                let s2 = st.clone();
+                if st.b.after(50, move || selftest_drive(s2, waited + 1)).is_ok() {
+                    return;
+                }
+            }
+            *st.driving.borrow_mut() = Some(format!("not loaded after {} ms: {pending:?}", waited * 50));
+        }
+        *st.waited_ms.borrow_mut() = waited as u64 * 50;
+        let drive = || -> Result<(), String> {
+            let (b, h) = (&st.b, &st.host);
+            let root = *h.toplevel_handles().first().ok_or("no window")?;
+            let mut all = Vec::new();
+            walk(b, root, &mut all);
+            *st.tree.borrow_mut() = Json::Array(all.iter().map(|(h, t)| json!([h, t])).collect());
+            let find = |tag: &str, n: usize| all.iter().filter(|(_, t)| *t == tag).nth(n).map(|(h, _)| *h).ok_or(format!("no <{tag}> #{n}"));
+            let button = find("button", 0)?;
+            if st.types {
+                // fixtures/winui-types: one click inserts into the PropertySet and recolors the brush.
+                return b.invoke(button);
+            }
+            for _ in 0..3 {
+                b.invoke(button)?;
+            }
+            set(b, find("text-box", 0)?, "text", Value::Str("Ada".into()))?;
+            set(b, find("slider", 0)?, "value", Value::F64(42.0))?;
+            set(b, find("check-box", 0)?, "is-checked", Value::Bool(true))?;
+            Ok(())
+        };
+        if st.driving.borrow().is_none()
+            && let Err(e) = drive()
+        {
+            *st.driving.borrow_mut() = Some(e);
+        }
+        let driven = Instant::now();
+        let deadline = driven + std::time::Duration::from_secs(10);
+        let s2 = st.clone();
+        if let Err(e) = st.b.after(100, move || selftest_poll(s2, driven, deadline)) {
+            st.driving.borrow_mut().get_or_insert(format!("scheduling the check: {e}"));
+            selftest_poll(st, driven, driven);
+        }
+    }
+
+    /// What the selftest reads back from the native widgets, and what it expects.
+    fn selftest_read(st: &SelfTest) -> (Json, Json) {
+        let mut all = Vec::new();
+        if let Some(root) = st.host.toplevel_handles().first() {
+            walk(&st.b, *root, &mut all);
+        }
+        let find = |tag: &str, n: usize| all.iter().filter(|(_, t)| *t == tag).nth(n).map(|(h, _)| *h);
+        let read = |tag: &str, n: usize, p: &str| find(tag, n).map(|h| text(prop(&st.b, h, p))).unwrap_or(Json::Null);
+        if st.types {
+            // fixtures/winui-types (N4): non-GUI WinRT types used from Svelte.
+            let got = json!({
+                "uri": read("text-block", 0, "text"),
+                "map": read("text-block", 1, "text"),
+                "brush": read("text-block", 2, "text"),
+                "async": read("text-block", 3, "text"),
+            });
+            let want = json!({
+                "uri": "example.com:8080/docs",
+                "map": "size 3, changes 3",
+                "brush": "brush 0,0,255 @ 0.5",
+                "async": "pasted copied",
+            });
+            (got, want)
+        } else {
+            let got = json!({
+                "count": read("text-block", 0, "text"),
+                "hello": read("text-block", 1, "text"),
+                "button": read("button", 0, "content"),
+                "check": read("check-box", 0, "content"),
+                "title": read("window", 0, "title"),
+            });
+            let want = json!({
+                "count": "Count: 3",
+                "hello": "Hello Ada",
+                "button": "Increment",
+                "check": "Level 42, agree: yes",
+                "title": "Counter",
+            });
+            (got, want)
+        }
+    }
+
+    /// Every 100 ms until the read-back is what the selftest expects or `deadline` passes, then the report.
+    fn selftest_poll(st: Rc<SelfTest>, driven: Instant, deadline: Instant) {
+        let (got, want) = selftest_read(&st);
+        if got != want && st.driving.borrow().is_none() && Instant::now() < deadline {
+            let s2 = st.clone();
+            if st.b.after(100, move || selftest_poll(s2, driven, deadline)).is_ok() {
+                return;
+            }
+        }
+        let mut failures: Vec<String> = st.driving.borrow().iter().map(|e| format!("driving: {e}")).collect();
+        for (k, v) in want.as_object().unwrap() {
+            if got[k] != *v {
+                failures.push(format!("{k}: expected {v}, got {}", got[k]));
+            }
+        }
+        failures.extend(st.host.take_errors().iter().map(|e| format!("js error: {e}")));
+        let mut rep = st.report.borrow_mut();
+        *rep = json!({
+            "backend": "winui",
+            "ok": failures.is_empty(),
+            "failures": failures,
+            "read_back": got,
+            "loaded_wait_ms": *st.waited_ms.borrow(),
+            "settled_ms": driven.elapsed().as_millis() as u64,
+            "tree": st.tree.borrow().clone(),
+            "console": st.host.take_console().iter().map(|l| format!("[{}] {}", l.level, l.text)).collect::<Vec<_>>(),
+            "load_ms": st.load_ms,
+        });
+        if let Some(p) = &st.path {
+            let _ = std::fs::write(p, serde_json::to_string_pretty(&*rep).unwrap());
+        }
+        st.b.quit();
+    }
+
     /// `--start-test <mode>` (G0): one host order on the counter-win bundle; a JSON report like `--selftest`.
     fn start_test(mode: &str, b: &WinUiBackend, vt: &'static BackendVtable, args: &Args) -> i32 {
         let path = bundle(&args.fixture);
@@ -397,6 +567,78 @@ mod win {
         if rep["ok"] == json!(true) { 0 } else { 1 }
     }
 
+    #[link(name = "user32")]
+    unsafe extern "system" {
+        fn LoadKeyboardLayoutW(klid: *const u16, flags: u32) -> isize;
+        fn ActivateKeyboardLayout(hkl: isize, flags: u32) -> isize;
+        fn GetKeyboardLayout(thread: u32) -> isize;
+    }
+
+    /// `--na-fixture <title>` (WG3w): the NA1 fixture window, until stdin closes. With `--keyboard-layout <KLID>`
+    /// the UI thread runs that keyboard layout (the dead-key pins: US-International) and restores the previous one
+    /// at the end.
+    fn na_fixture(b: &WinUiBackend, title: &str, layout: Option<&str>) -> i32 {
+        const KLF_ACTIVATE: u32 = 1;
+        let before = unsafe { GetKeyboardLayout(0) };
+        if let Some(l) = layout {
+            let wide: Vec<u16> = l.encode_utf16().chain([0]).collect();
+            if unsafe { LoadKeyboardLayoutW(wide.as_ptr(), KLF_ACTIVATE) } == 0 {
+                eprintln!("[counter-win] na-fixture: LoadKeyboardLayoutW({l}) failed");
+                return 3;
+            }
+        }
+        let code = na_fixture_run(b, title);
+        if layout.is_some() {
+            unsafe { ActivateKeyboardLayout(before, 0) };
+        }
+        code
+    }
+
+    fn na_fixture_run(b: &WinUiBackend, title: &str) -> i32 {
+        let build = || -> Result<(), String> {
+            let make = |tag: &str| -> Result<u64, String> {
+                let k = b.resolve(NameKind::Kind, 0, tag);
+                if k == 0 {
+                    return Err(format!("no kind <{tag}>"));
+                }
+                b.create(k)
+            };
+            let win = make("window")?;
+            set(b, win, "title", Value::Str(title.into()))?;
+            let panel = make("stack-panel")?;
+            set(b, panel, "orientation", Value::Str("vertical".into()))?;
+            set(b, panel, "spacing", Value::Str("8".into()))?;
+            set(b, panel, "padding", Value::Str("16".into()))?;
+            for _ in 0..2 {
+                let tb = make("text-box")?;
+                b.insert(panel, tb, None, 0)?;
+            }
+            let button = make("button")?;
+            set(b, button, "content", Value::Str("Done".into()))?;
+            b.insert(panel, button, None, 0)?;
+            b.insert(win, panel, None, 0)?;
+            let kind = b.handle_info(win)?.kind;
+            b.call(win, b.resolve(NameKind::Method, kind, "activate"), &[])?;
+            Ok(())
+        };
+        if let Err(e) = build() {
+            eprintln!("[counter-win] na-fixture: {e}");
+            return 3;
+        }
+        let open = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(true));
+        let flag = open.clone();
+        std::thread::spawn(move || {
+            let mut sink = Vec::new();
+            let _ = std::io::Read::read_to_end(&mut std::io::stdin(), &mut sink);
+            flag.store(false, std::sync::atomic::Ordering::SeqCst);
+        });
+        while open.load(std::sync::atomic::Ordering::SeqCst) {
+            b.pump(20);
+        }
+        b.shutdown();
+        0
+    }
+
     pub fn main() -> i32 {
         let args = match parse() {
             Ok(a) => a,
@@ -421,6 +663,10 @@ mod win {
         let vt: &'static BackendVtable = Box::leak(Box::new(BackendVtable::new(backend)));
         if let Some(mode) = &args.start_test {
             return start_test(mode, &driver, vt, &args);
+        }
+        if let Some(title) = &args.na_fixture {
+            let _ = vt;
+            return na_fixture(&driver, title, args.keyboard_layout.as_deref());
         }
         let host = match Host::new(vt.backend_ref(), HostConfig::default()) {
             Ok(h) => Rc::new(h),
@@ -450,107 +696,29 @@ mod win {
                 return 3;
             }
         } else if args.selftest {
-            let (b, h, r) = (driver.clone(), host.clone(), report.clone());
-            let steps = move || -> Result<(), String> {
-                let root = *h.toplevel_handles().first().ok_or("no window")?;
-                let mut all = Vec::new();
-                walk(&b, root, &mut all);
-                let find = |tag: &str, n: usize| all.iter().filter(|(_, t)| *t == tag).nth(n).map(|(h, _)| *h).ok_or(format!("no <{tag}> #{n}"));
-                let button = find("button", 0)?;
-                if types {
-                    // fixtures/winui-types: one click inserts into the PropertySet and recolors the brush.
-                    b.invoke(button)?;
-                    let tree: Vec<Json> = all.iter().map(|(h, t)| json!([h, t])).collect();
-                    *r.borrow_mut() = json!({ "tree": tree });
-                    return Ok(());
-                }
-                for _ in 0..3 {
-                    b.invoke(button)?;
-                }
-                set(&b, find("text-box", 0)?, "text", Value::Str("Ada".into()))?;
-                set(&b, find("slider", 0)?, "value", Value::F64(42.0))?;
-                set(&b, find("check-box", 0)?, "is-checked", Value::Bool(true))?;
-                let tree: Vec<Json> = all.iter().map(|(h, t)| json!([h, t])).collect();
-                *r.borrow_mut() = json!({ "tree": tree });
-                Ok(())
-            };
-            let (b2, h2, r2, report_path) = (driver.clone(), host.clone(), report.clone(), args.report.clone());
-            let check = move || {
-                let mut failures: Vec<String> = Vec::new();
-                let mut all = Vec::new();
-                if let Some(root) = h2.toplevel_handles().first() {
-                    walk(&b2, *root, &mut all);
-                }
-                let find = |tag: &str, n: usize| all.iter().filter(|(_, t)| *t == tag).nth(n).map(|(h, _)| *h);
-                let read = |tag: &str, n: usize, p: &str| find(tag, n).map(|h| text(prop(&b2, h, p))).unwrap_or(Json::Null);
-                let (got, want) = if types {
-                    // fixtures/winui-types (N4): non-GUI WinRT types used from Svelte.
-                    let got = json!({
-                        "uri": read("text-block", 0, "text"),
-                        "map": read("text-block", 1, "text"),
-                        "brush": read("text-block", 2, "text"),
-                        "async": read("text-block", 3, "text"),
-                    });
-                    let want = json!({
-                        "uri": "example.com:8080/docs",
-                        "map": "size 3, changes 3",
-                        "brush": "brush 0,0,255 @ 0.5",
-                        "async": "pasted copied",
-                    });
-                    (got, want)
-                } else {
-                    let got = json!({
-                        "count": read("text-block", 0, "text"),
-                        "hello": read("text-block", 1, "text"),
-                        "button": read("button", 0, "content"),
-                        "check": read("check-box", 0, "content"),
-                        "title": read("window", 0, "title"),
-                    });
-                    let want = json!({
-                        "count": "Count: 3",
-                        "hello": "Hello Ada",
-                        "button": "Increment",
-                        "check": "Level 42, agree: yes",
-                        "title": "Counter",
-                    });
-                    (got, want)
-                };
-                for (k, v) in want.as_object().unwrap() {
-                    if got[k] != *v {
-                        failures.push(format!("{k}: expected {v}, got {}", got[k]));
-                    }
-                }
-                let errors: Vec<String> = h2.take_errors().iter().map(|e| e.to_string()).collect();
-                failures.extend(errors.iter().map(|e| format!("js error: {e}")));
-                let mut rep = r2.borrow_mut();
-                let tree = rep.get("tree").cloned().unwrap_or(Json::Null);
-                *rep = json!({
-                    "backend": "winui",
-                    "ok": failures.is_empty(),
-                    "failures": failures,
-                    "read_back": got,
-                    "tree": tree,
-                    "console": h2.take_console().iter().map(|l| format!("[{}] {}", l.level, l.text)).collect::<Vec<_>>(),
-                    "load_ms": load_ms,
-                });
-                if let Some(p) = &report_path {
-                    let _ = std::fs::write(p, serde_json::to_string_pretty(&*rep).unwrap());
-                }
-                b2.quit();
-            };
-            let r3 = report.clone();
-            let ok = driver.after(800, move || {
-                if let Err(e) = steps() {
-                    *r3.borrow_mut() = json!({ "ok": false, "failures": [format!("driving: {e}")] });
-                }
+            let st = Rc::new(SelfTest {
+                b: driver.clone(),
+                host: host.clone(),
+                report: report.clone(),
+                path: args.report.clone(),
+                types,
+                load_ms,
+                tree: RefCell::new(Json::Null),
+                driving: RefCell::new(None),
+                waited_ms: RefCell::new(0),
             });
-            let ok = ok.and_then(|_| driver.after(2500, check));
+            let ok = driver.after(800, move || selftest_drive(st, 0));
             let b3 = driver.clone();
             let ok = ok.and_then(|_| driver.after((args.timeout * 1000.0) as u64, move || b3.quit()));
             if let Err(e) = ok {
                 eprintln!("[counter-win] scheduling the selftest: {e}");
                 return 3;
             }
+        }
+        if args.stall_ms > 0 {
+            // A UI thread busy before its loop starts, as a slow first frame on CI's software-rendered runners
+            // (WG3w: the selftest's timers are all due when the loop starts).
+            std::thread::sleep(std::time::Duration::from_millis(args.stall_ms));
         }
         let ran = host.run();
         for e in host.take_errors() {

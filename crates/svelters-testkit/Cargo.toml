@@ -27,3 +27,5 @@ egui_kittest = { version = "=0.37.0", optional = true }
 # The tests run the egui cases whatever features the build selects (CI builds this crate in one
 # command with `--no-default-features` meant for another package), as svelters-egui does.
 svelters-testkit = { path = ".", features = ["egui"] }
+# SCHED1's egui test declares an offloaded export (`#[svelters::export]`).
+svelters = { path = "../svelters" }
