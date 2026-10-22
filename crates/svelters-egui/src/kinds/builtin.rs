@@ -356,4 +356,5 @@ pub static KINDS: &[KindDef] = &[
     super::views::SCROLLBAR,
     // ---- OW6: appended (`pickers.rs`; svelters' own widgets only) ----
     super::pickers::CALENDAR,
+    super::pickers::COLOR_EDITOR,
 ];

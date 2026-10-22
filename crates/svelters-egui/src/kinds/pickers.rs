@@ -131,6 +131,46 @@ pub const CALENDAR: KindDef = KindDef {
     doc: "An inline month calendar (Qt's `QCalendarWidget`): a header with previous/next, a weekday row, ISO week numbers and a 6×7 day grid. `date-picker` shows the same calendar in its popup.",
 };
 
+// ---- OW6: color-editor (new kind; svelters' own widget only, `widgets::color_editor`) ----
+
+/// `color-editor`'s and `color-picker`'s editor props (WIDGET-PARITY §2.20).
+const COLOR_EDITOR_SHARED: [PropDef; 3] = [
+    prop("fields", P::Fields, Ty::Str, Def::Str("hex rgb"), "Which fields show under the strips, space-separated: `hex` (a hex field), `rgb` (R, G, B boxes, 0–255), `hsv` (H 0–360, S and V 0–100)."),
+    prop("swatches", P::Swatches, Ty::StrList, Def::Null, "A palette of hex colours shown as cells (`::part(swatch-cell)`); a click picks one."),
+    input("custom-colors", P::CustomColors, Ty::StrList, Def::Null, "The user's colours (`bind:custom-colors`, up to 16): the add cell appends the current colour. Persist it with `uiState()`."),
+];
+
+static COLOR_EDITOR_PROPS: &[PropDef] = &{
+    let [a, b, c] = COLOR_EDITOR_SHARED;
+    [
+        input("value", P::Value, Ty::Str, Def::Str("#000000"), "The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted)."),
+        prop("alpha", P::Alpha, Ty::Enum(ALPHA), Def::Str("opaque"), "`opaque` hides the alpha strip; `blend` and `blend-or-additive` show it."),
+        a,
+        b,
+        c,
+    ]
+};
+
+static COLOR_EDITOR_SIGNALS: &[SignalDef] = &[
+    signal("changed", &[("value", Ty::Str)], "The user edited the colour (each drag frame, step, field or swatch); carries it (CSS hex)."),
+    signal("commit", &[("value", Ty::Str)], "A commit point: a drag released, a key step, a field set, a swatch picked (§2.4)."),
+];
+
+pub const COLOR_EDITOR: KindDef = KindDef {
+    id: "ColorEditor",
+    tag: Some("color-editor"),
+    native: "svelters' own (OW6)",
+    base: Some("Widget"),
+    toplevel: false,
+    slot: None,
+    text_content: None,
+    present: None,
+    props: COLOR_EDITOR_PROPS,
+    signals: COLOR_EDITOR_SIGNALS,
+    methods: &[],
+    doc: "An inline colour editor (the body of Qt's `QColorDialog`, GTK's `ColorChooserWidget`): a saturation/value square, hue and alpha strips, hex and channel fields, a palette and custom colours. `color-picker` shows the same editor in its popup.",
+};
+
 /// The payload of a picker node.
 #[derive(Clone, Debug, PartialEq)]
 pub enum Picker {

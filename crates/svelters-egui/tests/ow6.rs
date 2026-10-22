@@ -111,3 +111,86 @@ fn ow6_calendar_first_day_weekdays_and_day_parts() {
     assert!(w.accesskit_node().description().unwrap_or_default().contains("weekend"));
     assert_eq!(rig.get(c, "first-day"), s("sunday"));
 }
+
+/// Presses at `from`, moves to `to` in steps (a frame each), releases there.
+fn drag(rig: &mut Rig, from: egui::Pos2, to: egui::Pos2) {
+    let h = &mut rig.harness;
+    let m = egui::Modifiers::NONE;
+    h.event(egui::Event::PointerMoved(from));
+    h.step();
+    h.event(egui::Event::PointerButton { pos: from, button: egui::PointerButton::Primary, pressed: true, modifiers: m });
+    h.step();
+    for k in 1..=4 {
+        h.event(egui::Event::PointerMoved(from + (to - from) * (k as f32 / 4.0)));
+        h.step();
+    }
+    h.event(egui::Event::PointerButton { pos: to, button: egui::PointerButton::Primary, pressed: false, modifiers: m });
+    h.step();
+    rig.run();
+}
+
+#[test]
+fn ow6_color_editor_edits_through_square_strips_fields_and_swatches() {
+    let mut rig = Rig::new();
+    let (_, b) = rig.window();
+    let c = rig.leaf(b, "color-editor", &[("value", s("#F00")), ("alpha", s("blend")), ("fields", s("hex rgb hsv"))]);
+    rig.set(c, "swatches", Value::List(vec![s("#3366cc"), s("#00ff0080")]));
+    rig.observe(c, "value", true);
+    rig.observe(c, "custom-colors", true);
+    rig.listen(c, "changed");
+    rig.listen(c, "commit");
+    rig.run();
+    assert_eq!(rig.get(c, "value"), s("#ff0000"));
+    assert!(rig.br().set_prop(c, rig.prop_id(c, "value"), &s("red")).is_err());
+    rig.take();
+
+    // the square: drag past the bottom-right corner = black (saturation 1, value 0); one commit on release
+    let sq = rig.harness.get_by_role_and_label(Role::Slider, "Saturation and value").rect();
+    let (from, to) = (egui::pos2(sq.center().x as f32, sq.center().y as f32), egui::pos2(sq.max.x as f32 + 20.0, sq.max.y as f32 + 20.0));
+    drag(&mut rig, from, to);
+    assert_eq!(rig.get(c, "value"), s("#000000"));
+    let log = rig.take();
+    assert!(!events_of(&rig, &log, c, "changed").is_empty());
+    assert_eq!(events_of(&rig, &log, c, "commit"), vec![vec![s("#000000")]]);
+    assert!(log.changed.contains(&(c, rig.prop_id(c, "value"))));
+
+    // the hue survives black: V back to 100 through the V box gives red again
+    rig.harness.get_by_role_and_label(Role::SpinButton, "Value").set_value_accesskit(100.0);
+    rig.run();
+    assert_eq!(rig.get(c, "value"), s("#ff0000"));
+    // R box (AccessKit SetValue), hue slider steps
+    rig.harness.get_by_role_and_label(Role::SpinButton, "Green").set_value_accesskit(255.0);
+    rig.run();
+    assert_eq!(rig.get(c, "value"), s("#ffff00"));
+    rig.harness.get_by_role_and_label(Role::Slider, "Alpha").set_value_accesskit(50.0);
+    rig.run();
+    assert_eq!(rig.get(c, "value"), s("#ffff0080"));
+    // hex field (AccessKit SetValue until the text entry lands)
+    rig.harness.get_by_role_and_label(Role::TextInput, "Hex").set_text_value_accesskit("#123456");
+    rig.run();
+    assert_eq!(rig.get(c, "value"), s("#123456"));
+    // swatches pick; the add cell appends to custom-colors (bound)
+    rig.harness.get_by_role_and_label(Role::Button, "#3366cc").click();
+    rig.run();
+    assert_eq!(rig.get(c, "value"), s("#3366cc"));
+    rig.take();
+    rig.harness.get_by_role_and_label(Role::Button, "Add to custom colours").click();
+    rig.run();
+    assert_eq!(rig.get(c, "custom-colors"), Value::List(vec![s("#3366cc")]));
+    assert!(rig.take().changed.contains(&(c, rig.prop_id(c, "custom-colors"))));
+    assert!(rig.harness.query_all_by_role_and_label(Role::Button, "#3366cc").count() == 2, "the custom colour shows");
+
+    // keys: the hue slider is a tab stop; Right steps 1%
+    rig.harness.get_by_role_and_label(Role::Slider, "Hue").focus();
+    rig.run();
+    rig.harness.key_press(egui::Key::End);
+    rig.run();
+    let v = rig.get(c, "value");
+    assert_ne!(v, s("#3366cc"), "End moves the hue");
+    // host writes are not echoed
+    rig.take();
+    rig.set(c, "value", s("#00ff00"));
+    rig.run();
+    assert!(rig.take().changed.is_empty());
+    assert_eq!(rig.harness.get_by_role_and_label(Role::SpinButton, "Green").accesskit_node().numeric_value(), Some(255.0));
+}

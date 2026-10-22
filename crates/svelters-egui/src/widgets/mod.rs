@@ -15,6 +15,7 @@
 
 pub mod button;
 pub mod calendar;
+pub mod color_editor;
 pub mod checkbox;
 pub mod hyperlink;
 pub mod label;
@@ -41,7 +42,7 @@ pub const DEFAULT_OWN: &[&str] = &["button"];
 /// The built-in tags whose egui wrapper is gone (deleted in the lane whose own widget passed its
 /// acceptance, §6.2 step 3) or never existed (`scrollbar`): always svelters' own, whatever the
 /// switch says.
-pub const OWN_ONLY: &[&str] = &["calendar", "panel", "scroll-area", "scrollbar", "split-view"];
+pub const OWN_ONLY: &[&str] = &["calendar", "color-editor", "panel", "scroll-area", "scrollbar", "split-view"];
 
 /// Which built-in kinds get svelters' own widget (§6.2: the per-kind switch).
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
