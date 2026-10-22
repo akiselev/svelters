@@ -2,6 +2,8 @@
 
 declare module 'svelters:app/cad' {
   import type { NativeObject } from '@svelters/types/core';
+  /** What a pick produced (EV2b's `picked` event). */
+  export interface PickRef { /** The value kind the host presents. */ kind: string; /** The host's text. */ label: string; }
   /** What a quantity measures. */
   export type Dim = 'length' | 'angle';
 }

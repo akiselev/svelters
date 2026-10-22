@@ -1,13 +1,14 @@
 //! SVELTERS: replaces `phases/1-parse/read/style.js` (Svelte 5.57.2 @ f3de3f2).
 //!
-//! Svelte's CSS parser is not ported: the top-level `<style>` block is captured raw
-//! (`ast::StyleBlock`: attributes + content span + text) and parsed by the native style subset
-//! parser (`crate::style`). See docs/notes/native-compiler/deviations.md.
+//! The top-level `<style>` block is kept raw (`ast::StyleBlock`: attributes + content span +
+//! text); its CSS AST is rebuilt on demand by `crate::svelte::css` (Q3), whose parser is the port
+//! of upstream's. In HTML syntax (`!native`) that parser runs here, as upstream's does: CSS syntax
+//! errors are parse errors and the content ends where upstream's does.
 //!
-//! Differences from upstream's `read_style`: the content ends at the first `</style` (upstream
-//! only checks for `</style` between rules, so one inside a CSS string or comment would not end
-//! the block); no CSS syntax errors are reported here; `content.comment` (the HTML comment
-//! before the block) is not kept.
+//! Differences from upstream's `read_style`: in native syntax the content ends at the first
+//! `</style` and no CSS syntax errors are reported (native `<style>` blocks are parsed by the
+//! native style subset parser, `crate::style`); `content.comment` (the HTML comment before the
+//! block) is not kept (`crate::svelte::css` finds it again).
 
 use crate::svelte::ast::{Attribute, StyleBlock, StyleContent};
 use crate::svelte::parse::utils::whitespace::is_js_regex_space;
@@ -22,7 +23,11 @@ fn regex_whitespace_then_gt(s: &str, at: usize) -> Option<usize> {
 
 pub fn read_style(parser: &mut Parser, start: usize, attributes: Vec<Attribute>) -> PResult<StyleBlock> {
     let content_start = parser.index;
-    let content_end = parser.template[content_start..].find("</style").map_or(parser.template.len(), |i| content_start + i);
+    let content_end = if parser.native {
+        parser.template[content_start..].find("</style").map_or(parser.template.len(), |i| content_start + i)
+    } else {
+        crate::svelte::css::parse::parse_stylesheet(&parser.template, start, content_start)?.content_end
+    };
     parser.index = content_end;
 
     parser.eat_required("</style")?;

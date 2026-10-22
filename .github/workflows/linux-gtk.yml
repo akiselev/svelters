@@ -70,10 +70,11 @@ jobs:
           -p counter --no-default-features --features counter/gtk
           -E 'not (package(counter) & test(/qt/))'
 
-      # Platform-neutral parts of the other backends (tables, parsers); empty suites off-platform.
+      # Platform-neutral parts of the other backends (tables, parsers; empty suites off-platform) and
+      # the CSS engine (svelters-style), which links no toolkit.
       - name: nextest (portable backend crates)
         if: ${{ !cancelled() }}
-        run: cargo nextest run --no-fail-fast -p svelters-apple -p svelters-appkit -p svelters-winui -p counter-mac -p counter-win
+        run: cargo nextest run --no-fail-fast -p svelters-apple -p svelters-appkit -p svelters-winui -p counter-mac -p counter-win -p svelters-style
 
       - name: Upload screenshots and reports
         if: ${{ !cancelled() }}

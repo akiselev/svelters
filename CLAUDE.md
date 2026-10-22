@@ -33,6 +33,13 @@ Decisions already made by the user (2026-10-21):
 - egui stays at 0.37 and is upgraded together with cadatomic. The Svelte UI sources live in
   cadatomic. SC1 (one real cadatomic panel rendered by Svelte inside the running app) comes first.
 
+Decided by the user (2026-10-22): **leave room for extension security policies, build none now.**
+cadatomic may later serve high-security fields (aerospace) where extensions get deny-by-default,
+audited grants, but "right now we're developing": no enforcement, policy, audit or signing work,
+and security must not slow development. APIs only leave room: `#[non_exhaustive]` types and a
+principal id where ARCH-SECURITY §5 shows it is cheap now and breaking later. ARCH-SECURITY.md
+(SEC1–SEC4, SEC-O, SEC-C) is deferred until cadatomic loads its first third-party extension.
+
 ## Machines and sessions
 
 Rust builds are the bottleneck, so work is spread over three machines. Every machine runs several
@@ -91,7 +98,13 @@ other agent on the machine. **GitHub CI is the gate, not your machine.** The use
   build slots, `${XDG_RUNTIME_DIR:-/tmp}/build-slots/slot-<n>.lock`, shared with cadatomic's and
   cadabra3's wrappers. Slot count and cores per slot come from `~/.config/build-slots.env`; don't
   override them. There are **no other locks** (no test lock): never wrap a slot-taking command in
-  another lock. Nested calls are safe (`BUILD_SLOT_HELD`).
+  another lock. Nested calls are safe (`BUILD_SLOT_HELD`). Builds and tests take a slot;
+  `cargo check`/`clippy` take **none** (they run niced with 3 jobs), so never wait for a slot to
+  type-check. The coordinator checks a merge locally only when it combines lanes that touched the
+  same crate (`cargo check -p <that crate> --all-targets`, once); docs and disjoint merges get
+  nothing.
+- **Disk (WSL PC):** `df /` lies (the WSL disk is a growing file on C:); watch `df -h /mnt/c`.
+  When a lane is merged, delete its worktree's `target/`.
 - **While writing code:** `tools/dev/cargo-slot cargo check -p <crate you changed>` only, and only
   when you need the compiler's answer. Use `--workspace --all-targets` only after changing an API
   that other crates use.
