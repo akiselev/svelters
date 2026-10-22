@@ -610,6 +610,16 @@ file and calls `reload.apply`.
 
 ## 6. Open questions
 
+**Decided (user, 2026-10-22):**
+- **Q1, shipped builds:** the protocol is built in and runs in process in production, but is **off by default in builds shipped
+  to users**. Turning it on (it is what the inspector and in-app agents need) goes through a settings page with a warning
+  (cadatomic's settings UI). The external socket stays behind a flag and a token on top of that. OS input, clock and eval
+  are allowed only in test builds.
+- **Q2, TypeScript runner: our own runner**, not `@playwright/test`. Playwright stays prior art for the API shape
+  (locators, auto-waiting, web-first assertions, fixtures, traces).
+- **Q3, inspector UI: Svelte in a protected root**, as recommended.
+
+
 1. **Is the protocol in shipped builds?** cadatomic's pixel tier is a `compile_error!` in release builds (A8a-2). In-app
    agents and the self-modifying UI need the protocol in release, and the user wants e2e against the build as
    shipped.
