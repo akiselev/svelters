@@ -5,12 +5,15 @@
 //! - [`golden`]: `conformance/golden/<platform>/<toolkit>-<version>.json`, capture and compare.
 //! - [`xtest`]: the XTEST user-path injector the GTK and Qt captures use.
 //! - [`win`]: the Windows user path (WG3w): `SendInput` and UI Automation, one driver for every fixture.
+//! - [`macos`]: the CGEvent and accessibility user path of the AppKit captures (WG3m).
 //! - [`run_pin`]: drives one pin through a [`Driver`] (one per toolkit, in the tests of this crate,
 //!   `examples/counter-qt/tests/na_capture.rs` and this crate's egui measurement).
 
 pub mod golden;
 pub mod pins;
 pub mod trace;
+#[cfg(target_os = "macos")]
+pub mod macos;
 #[cfg(windows)]
 pub mod win;
 #[cfg(target_os = "linux")]
