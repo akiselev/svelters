@@ -46,6 +46,8 @@ Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessib
 |---|---|---|
 | `onactivate` | `(pos: number) => void` | The user activated the item at `pos` (double click). |
 | `onbind` | `(e: SvlEvent<[number, number, number, number]>, row: number, pos: number, id: number, gen: number) => void` | Slot `row` now shows item `id` at `pos`; `gen` counts the binds of the slot. **Sync:** the handler runs before the frame's pass and gets an `SvlEvent` first. |
+| `onrow-clicked` | `(pos: number, id: number) => void` | OW5a: a click on the row at `pos` (item `id`), after the selection moved. |
+| `onrow-context` | `(pos: number, id: number) => void` | OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. |
 | `onselect` | `(pos: number) => void` | The user selected the item at `pos`. |
 | `onselectionchange` | `(ids: unknown[]) => void` | The user changed the selection; carries the selected ids. |
 | `onsetup` | `(e: SvlEvent<[number]>, row: number) => void` | Row slot `row` was created: give it content with `setRow`. **Sync:** the handler runs before the frame's pass and gets an `SvlEvent` first. |

@@ -9950,6 +9950,28 @@
       "paint": "none",
       "present": null,
       "props": {
+        "expand-on": {
+          "construct_only": false,
+          "default": "twistie",
+          "doc": "What toggles a row besides its twistie, Left/Right and AccessKit: `twistie` (nothing more; a double click activates), `click` (a click on the row), `double-click` (Qt's `expandsOnDoubleClick`).",
+          "js": "expand-on",
+          "native": "expand-on",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TreeView:expand-on",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "twistie",
+            "click",
+            "double-click"
+          ],
+          "writable": true
+        },
         "indent": {
           "construct_only": false,
           "default": 16,
@@ -9965,6 +9987,23 @@
           },
           "readable": true,
           "type": "i64",
+          "writable": true
+        },
+        "root-decorated": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Level-0 rows show their twistie (Qt's `rootIsDecorated`).",
+          "js": "root-decorated",
+          "native": "root-decorated",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TreeView:root-decorated",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         },
         "row-drag-type": {
@@ -10156,6 +10195,46 @@
           "handler_result": "none",
           "js_event": "expand",
           "name": "expand",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-clicked": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a: a click on the row at `pos` (item `id`), after the selection moved.",
+          "handler_result": "none",
+          "js_event": "row-clicked",
+          "name": "row-clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-context": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a: a secondary click on the row at `pos` (item `id`): open its context menu.",
+          "handler_result": "none",
+          "js_event": "row-context",
+          "name": "row-context",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -10497,6 +10576,46 @@
           "name": "bind",
           "phases": [],
           "sync": true,
+          "sync_required": false
+        },
+        "row-clicked": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a: a click on the row at `pos` (item `id`), after the selection moved.",
+          "handler_result": "none",
+          "js_event": "row-clicked",
+          "name": "row-clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-context": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a: a secondary click on the row at `pos` (item `id`): open its context menu.",
+          "handler_result": "none",
+          "js_event": "row-context",
+          "name": "row-context",
+          "phases": [],
+          "sync": false,
           "sync_required": false
         },
         "select": {
@@ -11234,10 +11353,14 @@
             {
               "name": "dropped",
               "type": "bool"
+            },
+            {
+              "name": "action",
+              "type": "string"
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "Drag source: the drag ended; `dropped` is true when a target took it.",
+          "doc": "Drag source: the drag ended; `dropped` is true when a target took it, `action` how (`move`, `copy`, `link`; `none` when not dropped).",
           "handler_result": "none",
           "js_event": "drag-end",
           "name": "drag-end",
@@ -11289,10 +11412,14 @@
             {
               "name": "y",
               "type": "f64"
+            },
+            {
+              "name": "action",
+              "type": "string"
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "Drop target: a drag it accepts was released over it; carries the type, the data and the point in the node's own points.",
+          "doc": "Drop target: a drag it accepts was released over it; carries the type, the data, the point in the node's own points and the drop action from the modifiers (`move`; `copy` with Ctrl, Option on macOS; `link` with Ctrl+Shift, Cmd+Option on macOS). Files dragged in from the OS arrive as `text/uri-list` (one `file://` URI per line) with `copy` on a target that accepts that type.",
           "handler_result": "none",
           "js_event": "drop",
           "name": "drop",
