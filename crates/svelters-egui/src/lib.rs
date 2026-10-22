@@ -44,12 +44,13 @@ pub use backend::{EguiBackend, Stats};
 pub use embed::Embed;
 pub use spec::dump;
 
-/// `use svelters_egui::prelude::*;`: what a provider kind (`#[svelters::widget]`) needs.
+/// `use svelters_egui::prelude::*;`: what a provider kind (`#[svelters::widget]`) or a behaviour
+/// (`#[svelters::behavior]`) needs.
 pub mod prelude {
     pub use crate::provider::{
-        A11yCx, AvailableSpace, Caps, Event, ExtKey, Hit, HitCx, IntoStateBits, KindDecl, LayoutCx, MeasureCx, PassCx, PassScope, PrepareCx, ProviderCx, ScenePass, StateBit, StateBits, StateProvider, Widget, WidgetCx,
+        A11yCx, AvailableSpace, Behavior, BehaviorCx, Caps, Event, ExtKey, Hit, HitCx, IntoStateBits, KindDecl, LayoutCx, MeasureCx, PassCx, PassScope, PrepareCx, ProviderCx, ScenePass, StateBit, StateBits, StateProvider, Widget, WidgetCx,
     };
-    pub use crate::scene::{NodeId, NodeRef, SceneMut, SceneRef};
+    pub use crate::scene::{NodeId, NodeMut, NodeRef, SceneMut, SceneRef};
     pub use egui;
 }
 pub use runner::run_app;

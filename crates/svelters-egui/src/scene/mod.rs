@@ -361,7 +361,13 @@ impl Scene {
                 match self.idx(p) {
                     None => errs.push(format!("{id}: stale parent {p}")),
                     Some(pi) => {
-                        let n = self.children[pi].iter().filter(|&&x| x == id).count();
+                        // EV2b: an attached node is listed by its host's attached list instead
+                        let list = if c.flags.contains(NodeFlags::ATTACHED) {
+                            &self.cold(pi).attached
+                        } else {
+                            &self.children[pi]
+                        };
+                        let n = list.iter().filter(|&&x| x == id).count();
                         if n != 1 {
                             errs.push(format!("{id}: listed {n} times by its parent {p}"));
                         }
@@ -371,7 +377,7 @@ impl Scene {
                     }
                 }
             }
-            for &k in &self.children[i] {
+            for &k in self.children[i].iter().chain(&self.cold(i).attached) {
                 match self.idx(k) {
                     None => errs.push(format!("{id}: stale child {k}")),
                     Some(ki) if self.core[ki].parent != Some(id) => errs.push(format!("{id}: child {k} has parent {:?}", self.core[ki].parent)),

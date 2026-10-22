@@ -129,21 +129,62 @@ fn paint_visual(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mu
 }
 
 fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+    // EV2b: a host with behaviours (`use:`) runs their `after_ui` hooks around its own paint
+    if arena.core[i]
+        .flags
+        .contains(crate::scene::NodeFlags::HAS_ATTACHED)
+    {
+        return paint_host(arena, i, origin, ui, out);
+    }
+    paint_own(arena, i, origin, ui, out);
+}
+
+/// EV2b: [`paint_own`] with the attached behaviours' hooks (`provider/behavior.rs`). A container
+/// host gets a response of its own at its rect, registered under its children.
+fn paint_host(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+    let r = arena.core[i].rect.translate(origin);
+    if !ui.is_rect_visible(r) {
+        return;
+    }
+    let container = arena.w(i).is_container();
+    let mut host = ui.new_child(
+        UiBuilder::new()
+            .max_rect(r)
+            .scope_id(arena.core[i].egui_id.with("behaviors")),
+    );
+    crate::provider::behavior::around(
+        arena,
+        i,
+        &mut host,
+        out,
+        |arena, out| paint_own(arena, i, origin, ui, out),
+        container,
+    );
+}
+
+/// Paints node `i` itself: a container's children, or a leaf; returns a leaf's response.
+fn paint_own(
+    arena: &mut Arena,
+    i: usize,
+    origin: Vec2,
+    ui: &mut Ui,
+    out: &mut Vec<Out>,
+) -> Option<egui::Response> {
     let r = arena.core[i].rect.translate(origin);
     if arena.w(i).is_container() {
         // Containers draw nothing: cull whole subtrees outside the clip rect.
         if !ui.is_rect_visible(r) {
-            return;
+            return None;
         }
         // By index, no clone: the walk never changes the structure (ARCH-SCENE §5.2).
         for k in 0..arena.children[i].len() {
             let c = arena.children[i][k].index() as usize;
             paint_at(arena, c, origin, ui, out);
         }
-        return;
+        return None;
     }
     if !ui.is_rect_visible(r) {
-        return;
+        return None;
     }
     let mut b = UiBuilder::new()
         .max_rect(r)
@@ -154,10 +195,11 @@ fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut 
         b = b.disabled();
     }
     let mut child = ui.new_child(b);
-    if matches!(arena.w(i), crate::scene::W::Ext(_)) {
-        crate::provider::paint(arena, i, &mut child, origin, out); // RA1: a provider kind
+    let resp = if matches!(arena.w(i), crate::scene::W::Ext(_)) {
+        crate::provider::paint(arena, i, &mut child, origin, out) // RA1: a provider kind
     } else {
-        crate::leaf::leaf(arena, i, &mut child, out);
-    }
+        Some(crate::leaf::leaf(arena, i, &mut child, out))
+    };
     crate::scene::hit::record(arena, i, &child); // SG3: the viewport's hit list
+    resp
 }

@@ -27,6 +27,9 @@
 //! - The scene stores the widget struct in the node (`W::Ext`); the walk calls [`Widget::ui`] at the
 //!   rect taffy computed, layout calls [`Widget::measure`].
 //!
+//! - `#[svelters::behavior]` registers a behaviour the same way (EV2b, ARCH-EMBED §8.5): an attached
+//!   kind ([`KindEntry::attaches_to`]) whose struct implements [`Behavior`] instead of [`Widget`],
+//!   used from Svelte as `use:name` (`behavior.rs`).
 //! - SG4 (ARCH-SCENE §7.3): the walk takes a widget's payload out of the scene while its code runs
 //!   ([`with_taken`]), so [`WidgetCx::scene`] reads the rest of the scene, [`WidgetCx::children`]
 //!   draws its shadow children, and a panic drops the widget (a fresh one replaces it) and faults
@@ -34,12 +37,14 @@
 //!   [`Widget::prepare`] (`PREPARE`), [`Widget::hit_test`] (`HIT_TEST`, SG3).
 //!
 //! Files: this one holds the trait, the contexts and the registration types; `state.rs` the state
-//! bits; `behavior.rs` (EV2b) is EVENTS'; `pass.rs` (SG4: `StateProvider`, `ScenePass`,
+//! bits; `behavior.rs` the behaviours (EVENTS, EV2b); `pass.rs` (SG4: `StateProvider`, `ScenePass`,
 //! `PrepareCx`) is SCENE's. Writer lane: RUSTAPI (RA1, RA3).
 
-mod behavior;
+pub(crate) mod behavior;
 pub(crate) mod pass;
 mod state;
+
+pub use behavior::{__new_behavior, Behavior, BehaviorBox, BehaviorCx};
 
 pub use crate::scene::ext::{ExtBlock, ExtEntry, ExtId, ExtKey, ExtTicks, Storage};
 pub use crate::scene::{Hit, HitCx};
@@ -166,6 +171,23 @@ pub struct KindEntry {
     pub events: &'static [EventEntry],
     /// A widget with every prop at its default.
     pub new: fn() -> Box<dyn ErasedWidget>,
+    /// `None` for an element kind (`#[svelters::widget]`). A behaviour (`#[svelters::behavior]`,
+    /// EV2b) attaches to an element of this kind (`"Widget"`): its `tag` is `<namespace>.<name>`,
+    /// which no template can write, and Svelte uses it through `use:<name>` from
+    /// `svelters:behaviors/<namespace>`.
+    pub attaches_to: Option<&'static str>,
+}
+
+impl KindEntry {
+    /// A behaviour's JS name (the export of `svelters:behaviors/<namespace>`), `None` for an element.
+    pub fn behavior_name(&self) -> Option<&'static str> {
+        self.attaches_to.map(|_| {
+            self.tag
+                .strip_prefix(self.namespace)
+                .and_then(|t| t.strip_prefix('.'))
+                .unwrap_or(self.tag)
+        })
+    }
 }
 
 /// What `inventory` collects (a reference to the kind's static entry).
@@ -395,27 +417,16 @@ impl WidgetCx<'_> {
             return;
         }
         *field = v;
-        let off = (field as *mut T as usize).wrapping_sub(self.base);
-        match self.entry.props.iter().position(|p| p.offset == off) {
-            Some(i) => {
-                if !self.changed.contains(&i) {
-                    self.changed.push(i);
-                }
-                if self.entry.props[i].measure {
-                    self.remeasure = true;
-                }
-            }
-            None => self.errors.push(format!("<{}>: WidgetCx::set on a field that is not a #[prop]", self.entry.tag)),
+        if let Some(i) = written_prop(self.entry, self.base, field, &mut self.changed, &mut self.errors)
+            && self.entry.props[i].measure
+        {
+            self.remeasure = true;
         }
     }
 
     /// Queues `payload` for the event's JS listeners (delivered after the pass, in order).
     pub fn emit<T: IntoJs>(&mut self, event: &Event<T>, payload: T) {
-        let ns = self.entry.namespace;
-        match svelters_host::exports::__private::with_cx(ns, |cx| payload.into_js(cx)) {
-            Ok(v) => self.emits.push((event.index(), v)),
-            Err(e) => self.errors.push(format!("<{}> {}: payload: {}", self.entry.tag, self.entry.events.get(event.index()).map_or("?", |e| e.name), e.message)),
-        }
+        queue_emit(self.entry, event, payload, &mut self.emits, &mut self.errors);
     }
 
     /// The node's provider data for `key` (ARCH-EMBED §8.4).
@@ -430,6 +441,52 @@ impl WidgetCx<'_> {
     /// Measures the node again before the next layout (its content size changed).
     pub fn request_measure(&mut self) {
         self.remeasure = true;
+    }
+}
+
+/// The prop a `cx.set` wrote (by the field's offset in the struct at `base`), recorded once in
+/// `changed`; an error for a field that is not a `#[prop]`.
+fn written_prop<T>(
+    entry: &KindEntry,
+    base: usize,
+    field: &mut T,
+    changed: &mut Vec<usize>,
+    errors: &mut Vec<String>,
+) -> Option<usize> {
+    let off = (field as *mut T as usize).wrapping_sub(base);
+    match entry.props.iter().position(|p| p.offset == off) {
+        Some(i) => {
+            if !changed.contains(&i) {
+                changed.push(i);
+            }
+            Some(i)
+        }
+        None => {
+            errors.push(format!(
+                "<{}>: cx.set on a field that is not a #[prop]",
+                entry.tag
+            ));
+            None
+        }
+    }
+}
+
+/// Converts an event payload and queues it.
+fn queue_emit<T: IntoJs>(
+    entry: &KindEntry,
+    event: &Event<T>,
+    payload: T,
+    emits: &mut Vec<(usize, Value)>,
+    errors: &mut Vec<String>,
+) {
+    match svelters_host::exports::__private::with_cx(entry.namespace, |cx| payload.into_js(cx)) {
+        Ok(v) => emits.push((event.index(), v)),
+        Err(e) => errors.push(format!(
+            "<{}> {}: payload: {}",
+            entry.tag,
+            entry.events.get(event.index()).map_or("?", |e| e.name),
+            e.message
+        )),
     }
 }
 
@@ -460,6 +517,13 @@ pub trait ErasedWidget: Any {
     fn as_any_mut(&mut self) -> &mut dyn Any;
     /// The struct's address (field offsets are relative to it).
     fn base(&self) -> usize;
+    /// The behaviour, for an attached kind (EV2b; `None` for a widget).
+    fn behavior(&mut self) -> Option<&mut dyn Behavior> {
+        None
+    }
+    fn behavior_ref(&self) -> Option<&dyn Behavior> {
+        None
+    }
 }
 
 impl<T: Widget + KindDecl> ErasedWidget for T {
@@ -518,12 +582,13 @@ impl ExtWidget {
         self.0.borrow().entry()
     }
     /// The widget, typed (full access to a kind's own state; ARCH-SCENE §6.1 `NodeRef::widget`).
+    /// `None` also while the widget is being drawn (or a behaviour's hook runs on it).
     pub fn with<W: 'static, R>(&self, f: impl FnOnce(&W) -> R) -> Option<R> {
-        let b = self.0.borrow();
+        let b = self.0.try_borrow().ok()?;
         b.as_any().downcast_ref::<W>().map(f)
     }
     pub fn with_mut<W: 'static, R>(&self, f: impl FnOnce(&mut W) -> R) -> Option<R> {
-        let mut b = self.0.borrow_mut();
+        let mut b = self.0.try_borrow_mut().ok()?;
         b.as_any_mut().downcast_mut::<W>().map(f)
     }
     pub(crate) fn measure(&self, m: &crate::layout::Metrics, avail: AvailableSpace) -> egui::Vec2 {
@@ -627,12 +692,12 @@ pub(crate) fn with_taken<R>(s: &mut crate::scene::Scene, i: usize, f: impl FnOnc
 /// Draws the provider node in slot `i` (the walk's index into the scene's columns): its `ui` in `ui`
 /// (a child `Ui` at the node's rect) with the payload taken out (SG4), then the a11y hook, then its
 /// writes as outbox entries (`prop_changed` for observed props, events for listeners). `origin` is
-/// the walk's (for `WidgetCx::children`).
-pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui, origin: egui::Vec2, out: &mut Vec<Out>) {
+/// the walk's (for `WidgetCx::children`). Returns the widget's response (the host response of its
+/// behaviours, EV2b).
+pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui, origin: egui::Vec2, out: &mut Vec<Out>) -> Option<egui::Response> {
     use crate::scene::NodeFlags;
     let node = arena.slots.id_at(i).expect("live provider node");
     let h: Handle = node.to_raw();
-    let kind = arena.core[i].kind as usize;
     let rect = ui.max_rect();
     let enabled = arena.common(i).enabled;
     let id = arena.core[i].egui_id;
@@ -659,7 +724,7 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
         let WidgetCx { state, changed, emits, remeasure, errors, .. } = cx;
         (resp, state, changed, emits, remeasure, errors)
     });
-    let Some((mut resp, state, changed, emits, remeasure, errors)) = ran else { return };
+    let Some((mut resp, state, changed, emits, remeasure, errors)) = ran else { return None };
     // EM1: the accessible name and, for an anchored node, the anchor as AccessKit author id
     resp = crate::a11y::decorate(resp, &arena.n(h));
     let c = arena.common(i);
@@ -687,6 +752,28 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
         resp.request_focus();
     }
     core.drawn = resp.rect;
+    flush_writes(arena, i, changed, emits, errors, out);
+    if remeasure {
+        arena.layout[i].intrinsic = None;
+        arena.invalidate_content(node);
+        ui.ctx().request_repaint();
+    }
+    Some(resp)
+}
+
+/// The writes a provider node (widget or behaviour) in slot `i` made during the pass: `cx.set`
+/// props are journaled and announced to observers (`prop_changed`), events go to listeners.
+fn flush_writes(
+    arena: &mut crate::scene::Arena,
+    i: usize,
+    changed: Vec<usize>,
+    emits: Vec<(usize, Value)>,
+    errors: Vec<String>,
+    out: &mut Vec<Out>,
+) {
+    let node = arena.slots.id_at(i).expect("live provider node");
+    let h: Handle = node.to_raw();
+    let kind = arena.core[i].kind as usize;
     let reg = crate::kinds::KindRegistry::global();
     if !changed.is_empty() {
         let t = arena.stamp();
@@ -707,10 +794,5 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
     }
     for e in errors {
         eprintln!("svelters-egui: {e}");
-    }
-    if remeasure {
-        arena.layout[i].intrinsic = None;
-        arena.invalidate_content(node);
-        ui.ctx().request_repaint();
     }
 }
