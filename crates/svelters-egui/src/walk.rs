@@ -188,10 +188,11 @@ fn paint_own(
         b = b.disabled();
     }
     let mut child = ui.new_child(b);
-    if matches!(arena.w(i), crate::scene::W::Ext(_)) {
+    let resp = if matches!(arena.w(i), crate::scene::W::Ext(_)) {
         crate::provider::paint(arena, i, &mut child, out) // RA1: a provider kind
     } else {
         Some(crate::leaf::leaf(arena, i, &mut child, out))
-    }
+    };
     crate::scene::hit::record(arena, i, &child); // SG3: the viewport's hit list
+    resp
 }
