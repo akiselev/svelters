@@ -2,6 +2,5 @@
 unknown_element (gtk): <statusbar> is not an element of the gtk backend (help: did you mean one of `menu-bar`, `scrollbar`, `search-bar`?)
   App.svelte:21:2: slot_proxy_placement: <sv-slot> must be a direct child of a native element (it names one of that element's slots)
   App.svelte:25:5: const_tag_invalid_placement: `{@const}` must be the immediate child of `{#snippet}`, `{#if}`, `{:else if}`, `{:else}`, `{#each}`, `{:then}`, `{:catch}`, `<svelte:fragment>`, `<svelte:boundary>` or `<Component>`
-  App.svelte:26:13: native_spread_unsupported: spread attributes on native elements cannot be checked against the gtk spec of <button> at compile time, so the native compiler rejects them
   App.svelte:27:12: text_content_children: <label> holds text only on gtk (its text children set `label`); it cannot contain this
   App.svelte:36:4: unknown_slot: <window> has no slot `menubar` on gtk (slots: child, titlebar)

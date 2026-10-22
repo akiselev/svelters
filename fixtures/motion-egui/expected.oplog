@@ -1,0 +1,28 @@
+create window #1
+set #1 title "Motion"
+set #1 default-width 360
+set #1 default-height 260
+create box #2
+set #2 gap 8
+create button #3
+set #3 text "Toggle"
+insert #2 #3 before=end slot=default
+create label #4
+set #4 text "Faded"
+insert #2 #4 before=end slot=default
+create button #5
+set #5 text "Flown"
+insert #2 #5 before=end slot=default
+create label #6
+set #6 text "Slid"
+insert #2 #6 before=end slot=default
+create label #7
+insert #2 #7 before=end slot=default
+insert #1 #2 before=end slot=default
+set #7 text "Outros ended: 0"
+listen #3 clicked on
+call #1 present []
+style sheet "*" null
+style scheme "light" 0
+style sheet "@tokens" ":root {\n  --sv-bg: #f6f5f4;\n  --sv-fg: #2e3436;\n  --sv-surface: #ffffff;\n  --sv-border: #cdc7c2;\n  --sv-accent: #3584e4;\n  --sv-accent-hover: #1c71d8;\n  --sv-accent-fg: #ffffff;\n  --sv-muted: #77767b;\n  --sv-danger: #c01c28;\n  --sv-radius: 6px;\n  --sv-space-1: 4px;\n  --sv-space-2: 8px;\n  --sv-space-3: 12px;\n  --sv-space-4: 16px;\n  --sv-font-size: 11pt;\n  --sv-font-family: sans-serif;\n}\n"
+style #2 classes "column"

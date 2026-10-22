@@ -115,7 +115,9 @@ fn replay(name: &str, log: String) {
                         Val::Str(s) => h.set_str(o, prop, &s),
                         Val::Int(i) => h.set_i64(o, prop, i),
                         Val::Bool(b) => h.set_bool(o, prop, b),
-                        Val::Float(_) | Val::Null => panic!("{ctx}: unsupported value"),
+                        // a nullable prop reset to null (a spread key that went away, SP1)
+                        Val::Null => h.set_value(o, prop, &svelters_abi::Value::Null),
+                        Val::Float(_) => panic!("{ctx}: unsupported value"),
                     };
                     r.unwrap_or_else(|e| panic!("{ctx}: {e}"));
                 }
@@ -212,6 +214,9 @@ fn replay(name: &str, log: String) {
                             "name" => SVL_STYLE_NAME,
                             "inline" => SVL_STYLE_INLINE,
                             "opacity" => SVL_STYLE_OPACITY,
+                            "transform" => SVL_STYLE_TRANSFORM,
+                            "clip" => SVL_STYLE_CLIP,
+                            "inert" => SVL_STYLE_INERT,
                             other => panic!("{ctx}: unknown style op {other}"),
                         };
                         let t = text(parse_val(parts[3]));

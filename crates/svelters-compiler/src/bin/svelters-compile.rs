@@ -5,13 +5,15 @@
 //! others add `observability_differs` warnings. `--strict-native` makes the observability warnings errors.
 //! Prints the generated JS (or, with `--json`, `{js, map, diagnostics, backend, timings}`).
 //! Diagnostics go to stderr; exit status 1 when there are errors.
+//! `--kinds` prints the runtime spec tables of the (first) backend instead (`@svelters/native-runtime/kinds`,
+//! the module spreads and `<svelte:element>` resolve attributes with at run time).
 
 use std::io::Read;
 use svelters_compiler::compile::{CompileOptions, ModuleOptions, compile, compile_module};
 use svelters_compiler::semantics::SpecBackend;
 use svelters_compiler::target::builtin_target;
 
-const USAGE: &str = "usage: svelters-compile --backend gtk|qt|appkit|winui|egui[,...] [--spec spec.json] [--target quickjs-host|node-vite] [--strict-native] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file.svelte | file.svelte.js | ->";
+const USAGE: &str = "usage: svelters-compile --backend gtk|qt|appkit|winui|egui[,...] [--spec spec.json] [--target quickjs-host|node-vite] [--strict-native] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file.svelte | file.svelte.js | ->\n       svelters-compile --kinds --backend gtk|qt|appkit|winui|egui [--spec spec.json]";
 
 fn main() {
     let mut backend = "gtk".to_string();
@@ -24,6 +26,7 @@ fn main() {
     let mut strict_native = false;
     let mut target = "quickjs-host".to_string();
     let mut input: Option<String> = None;
+    let mut kinds = false;
     let mut args = std::env::args().skip(1);
     while let Some(a) = args.next() {
         match a.as_str() {
@@ -35,6 +38,7 @@ fn main() {
             "--module" => module = true,
             "--css-scope" => css_scope = args.next(),
             "--strict-native" => strict_native = true,
+            "--kinds" => kinds = true,
             "--target" => target = args.next().expect("--target needs a value"),
             "-h" | "--help" => {
                 eprintln!("{USAGE}");
@@ -42,6 +46,21 @@ fn main() {
             }
             _ => input = Some(a),
         }
+    }
+    if kinds {
+        let first = backend.split(',').map(str::trim).find(|b| !b.is_empty()).unwrap_or("gtk");
+        let sem = match &spec {
+            Some(p) => SpecBackend::from_path(p),
+            None => SpecBackend::builtin(first),
+        };
+        match sem {
+            Ok(sem) => print!("{}", svelters_compiler::semantics::kinds_module(sem.spec())),
+            Err(e) => {
+                eprintln!("svelters-compile: {e}");
+                std::process::exit(2)
+            }
+        }
+        return;
     }
     let input = input.unwrap_or_else(|| "-".into());
     let src = if input == "-" {

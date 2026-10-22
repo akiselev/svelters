@@ -1,0 +1,5 @@
+[{"checkpoint":true},
+ {"event":[3,"clicked",[]]},{"checkpoint":true},
+ {"event":[6,"clicked",[]]},{"checkpoint":true},
+ {"event":[3,"clicked",[]]},{"checkpoint":true},
+ {"event":[6,"clicked",[]]},{"checkpoint":true}]

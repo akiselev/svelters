@@ -19,6 +19,7 @@ unsafe extern "C" {
     fn svl_qt_palette_color(h: u64, background: i32) -> i32;
     fn svl_qt_app_stylesheet() -> *const std::ffi::c_char;
     fn svl_qt_opacity(h: u64) -> f64;
+    fn svl_qt_visual(h: u64, out: *mut f64) -> i32;
     fn svl_qt_type_text(h: u64, utf8: *const std::ffi::c_char) -> i32;
     fn svl_qt_send_mouse(h: u64, kind: i32, x: f64, y: f64, button: i32) -> i32;
     fn svl_qt_close(h: u64) -> i32;
@@ -145,6 +146,13 @@ pub mod hooks {
     /// The opacity of the widget's `QGraphicsOpacityEffect` (1.0 without one).
     pub fn opacity(h: u64) -> f64 {
         unsafe { svl_qt_opacity(h) }
+    }
+
+    /// TR1 visual channels of the widget: tx, ty, sx, sy (identity without a transform), maximum
+    /// width and height, and 1 when inert (mouse-transparent).
+    pub fn visual(h: u64) -> Option<[f64; 7]> {
+        let mut out = [0.0; 7];
+        (unsafe { svl_qt_visual(h, out.as_mut_ptr()) } == 0).then_some(out)
     }
 
     /// Sends a mouse event to the widget behind `h`: kind 0 press, 1 release, 2 move, 3 wheel (`button` is the

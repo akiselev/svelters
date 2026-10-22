@@ -92,6 +92,8 @@ export function cases() {
     'style-precedence',
     // NT0: non-UI types imported from svelters:gtk/gtk and svelters:gtk/gio (named exports, construct / static ops)
     'gtk-types',
+    // SP1: a spread and <svelte:element this> resolved at run time against the spec tables
+    'spread',
   ];
   for (const name of goldenOnly) {
     out.push({

@@ -113,6 +113,28 @@ pub struct Node {
     pub drawn: egui::Rect,
     /// Last frame's focus, for gained/lost-focus.
     pub had_focus: bool,
+    /// TR1 visual channels (ABI v2.8 style ops): what a running transition shows.
+    pub vis: Visual,
+}
+
+/// The visual channels of a node (plans/milestones/TR1-transitions.md section 3.2). Paint-only
+/// except `clip`, which also caps the node's layout size.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct Visual {
+    /// `SVL_STYLE_OPACITY`: multiplies the subtree's opacity.
+    pub opacity: Option<f32>,
+    /// `SVL_STYLE_TRANSFORM`: tx, ty (points), sx, sy, origin x, y (fractions of the size).
+    pub transform: Option<[f32; 6]>,
+    /// `SVL_STYLE_CLIP`: width, height the node occupies and is cut at (< 0: that axis free).
+    pub clip: Option<[f32; 2]>,
+    /// `SVL_STYLE_INERT`: the subtree reports no events.
+    pub inert: bool,
+}
+
+impl Visual {
+    pub fn is_identity(&self) -> bool {
+        *self == Visual::default()
+    }
 }
 
 impl Node {
@@ -252,6 +274,7 @@ pub fn new_node(kind: usize, handle: Handle) -> Node {
         rect: egui::Rect::NOTHING,
         drawn: egui::Rect::NOTHING,
         had_focus: false,
+        vis: Visual::default(),
     };
     crate::layout::restyle(&mut n);
     n

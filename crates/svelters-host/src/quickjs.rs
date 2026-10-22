@@ -971,6 +971,24 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
             )?,
         )?;
         let w = core.clone();
+        host.set(
+            "bounds",
+            Function::new(ctx.clone(), move |ctx: Ctx<'js>, h: f64| -> Res<Value<'js>> {
+                let c = core_of(&ctx, &w)?;
+                let h = handle_of(&ctx, h)?;
+                match op(&ctx, c.op_bounds(h))? {
+                    Some(r) => {
+                        let a = rquickjs::Array::new(ctx.clone())?;
+                        for (i, v) in r.iter().enumerate() {
+                            a.set(i, *v)?;
+                        }
+                        Ok(a.into_value())
+                    }
+                    None => Ok(Value::new_null(ctx.clone())),
+                }
+            })?,
+        )?;
+        let w = core.clone();
         let cb = cbs.clone();
         host.set(
             "setChildAttr",

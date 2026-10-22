@@ -473,3 +473,27 @@ fn bind_value_gtk() {
 fn bind_value_qt() {
     bind_value("qt");
 }
+
+// ---- spreads and <svelte:element> (SP1): attributes resolved at run time ----
+
+fn spread(backend: &str) {
+    // The script clicks the spread button (its `onclicked` from the spread: +1), steps (the spread
+    // loses keys, the dynamic element becomes a button), clicks again (the spread's new handler:
+    // +10), then steps to an empty spread (the explicit label comes back, the handler is
+    // disconnected) and a null tag (the dynamic element is removed).
+    let r = run_fixture(backend, "spread");
+    r.assert_clean();
+    assert_eq!(r.labels(), ["clicks 11"], "the dynamic label is gone and both spread handlers ran");
+    let texts: Vec<String> = r.nodes().into_iter().filter(|(_, c, _)| c == "GtkButton" || c == "QPushButton").map(|(_, _, t)| t).collect();
+    assert_eq!(texts, ["Explicit", "Next"], "the explicit label is back; the dynamic button is gone");
+}
+
+#[test]
+fn spread_gtk() {
+    spread("gtk");
+}
+
+#[test]
+fn spread_qt() {
+    spread("qt");
+}
