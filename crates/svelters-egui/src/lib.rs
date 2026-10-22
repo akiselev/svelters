@@ -70,6 +70,7 @@ pub mod numeric;
 // WG2a: menus and overlays (plans/milestones/WG2a-menus-popups.md)
 mod menus;
 mod overlays;
+pub mod rich;
 mod ops;
 mod walk;
 // WG4a: state, layout and paint of the Tier 1 views (`kinds/views.rs`); `toast` is public

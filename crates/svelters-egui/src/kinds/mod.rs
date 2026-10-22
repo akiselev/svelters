@@ -65,6 +65,7 @@ pub mod dnd;
 pub mod pickers;
 mod registry;
 pub(crate) mod virtuallist;
+pub mod rich;
 pub mod treeview;
 // WG1 families
 mod controls;
@@ -94,7 +95,7 @@ pub use virtuallist::{ListStats, VList};
 /// The kinds a slot of kind `id` accepts (spec `children.slots.*.accepts`): WG4a's `table` takes
 /// `table-column`s, WG2a's menu containers menu items, every other container any `Widget`.
 pub fn slot_accepts(id: &str) -> &'static [&'static str] {
-    views::slot_accepts(id).unwrap_or_else(|| menus::slot_accepts(id))
+    views::slot_accepts(id).or_else(|| rich::slot_accepts(id)).unwrap_or_else(|| menus::slot_accepts(id))
 }
 
 /// A property's value type (also its ABI tag).
@@ -324,6 +325,8 @@ pub enum P {
     /// EV3: a button's Enter and Escape roles.
     Default,
     Cancel,
+    /// RT2: an `a` run's link target
+    Href,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }

@@ -1411,6 +1411,13 @@ fn versioned(id: &str, versions: &Versions) -> String {
 
 impl Resolver for ProviderResolver {
     fn resolve<'js>(&mut self, _ctx: &Ctx<'js>, base: &str, name: &str, _attrs: Option<ImportAttributes<'js>>) -> Res<String> {
+        if base == HOT_SCRIPT {
+            // LD3: hot.js imports a module it was handed by id (`ctx(id)`, called while the engine
+            // declared it), not a specifier: the engine already holds it under that name. The
+            // provider's resolution is relative to an importer and refuses generated ids
+            // (`svelters:entry`, a component's `svelters-style:` sheet), so it is not asked.
+            return Ok(name.to_string());
+        }
         let id = self.provider.resolve(unversioned(base), name).map_err(|m| rquickjs::Error::new_resolving_message(base, name, m))?;
         Ok(versioned(&id, &self.versions))
     }
@@ -1436,10 +1443,15 @@ const BYTECODE_TAG: &str = "quickjs-ng";
 
 /// The JS side of `import.meta.hot` (hot.js).
 const HOT_JS: &str = include_str!("hot.js");
+/// hot.js's script name: the `base` of its `import(id)`s, which [`ProviderResolver`] maps to `id`
+/// itself. Not a module id any provider hands out (`<…>`).
+const HOT_SCRIPT: &str = "<svelters:hot>";
 
 fn ensure_hot(ctx: &Ctx<'_>) -> Res<()> {
     if ctx.globals().get::<_, Value>("__svelters_hot")?.is_undefined() {
-        ctx.eval::<(), _>(HOT_JS)?;
+        let mut opts = rquickjs::context::EvalOptions::default();
+        opts.filename = Some(HOT_SCRIPT.into());
+        ctx.eval_with_options::<(), _>(HOT_JS, opts)?;
     }
     Ok(())
 }

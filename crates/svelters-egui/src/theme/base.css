@@ -14,6 +14,26 @@
 @layer sv.tokens, sv.base, sv.affordance;
 
 @layer sv.base {
+  /* RT2: inline runs of a rich label (crates/svelters-egui/src/rich.rs). The Rust tag defaults
+     are the same, so they hold without a theme; links follow DESIGN R18 (link colour, underline
+     on hover) and R10 (pointer). */
+  b {
+    font-weight: 700;
+  }
+  i {
+    font-style: italic;
+  }
+  code {
+    font-family: var(--sv-font-mono);
+    background-color: var(--sv-control-bg);
+  }
+  a {
+    color: var(--sv-link);
+  }
+  a:hover {
+    text-decoration-line: underline;
+  }
+
   button {
     background-color: var(--sv-button-bg);
     border-color: var(--sv-button-border-color);
