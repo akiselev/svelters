@@ -80,7 +80,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | WG6 widget polish: disabled tooltips, snippet tooltips, truncation, scrollIntoView, SVG, shortcut capture, OS file drops | QUEUED | | after INT1 |
 | WG5b tree-view | QUEUED | | after LISTS2 |
 | DX1 settings binding, persisted UI state, standard paths, console→tracing, crash context | DONE | 2026-10-22 | merged (this commit); decided (coordinator): UI-state id (root from RootKey, explicit anchors), `js[{category=…}]` filtering, external-change push and panic-time JS stacks as follow-ups, no dx-op policy now |
-| DX2 multi-format clipboard, open/reveal from JS | QUEUED | | independent |
+| DX2 multi-format clipboard (MimeData shared with DnD), svelters:clipboard / svelters:shell | DONE | 2026-10-22 | merged (this commit); DragPayload now holds MimeData; follow-up: fold W5 PrimarySelection onto ClipboardBackend |
 | IN1 Intl via ICU4X, locale-aware numbers | QUEUED | | MacBook, next free lane; locale and catalog come from the host (catalog.t); svelters formats numbers/dates |
 | CX1 in-process diagnostics (SV27) | DONE | 2026-10-22 | merged (this commit); `check()` API, incremental FileState, 172 registered codes, fix-its, `--check/--explain/--list-codes` |
 | Q1 module loader (`svelters-modules`) | DONE | 2026-10-22 | merged 6dbee841 |

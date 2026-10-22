@@ -29,7 +29,13 @@ use crate::embed::{Embed, EmbedConfig};
 /// The desktop order in one call: loads `bundle` (its `App` mounts its windows) on an [`Embed`] and
 /// runs it in an eframe window until the app quits. Errors are load errors (mapped to the sources)
 /// or the runner's.
-pub fn run_app(bundle: &std::path::Path, cfg: svelters_host::HostConfig) -> Result<(), String> {
+///
+/// DX2: a `cfg` with the default (headless) platform gets the desktop one
+/// ([`crate::platform::system`]): the system clipboard and shell.
+pub fn run_app(bundle: &std::path::Path, mut cfg: svelters_host::HostConfig) -> Result<(), String> {
+    if cfg.platform.is_headless() {
+        cfg.platform = crate::platform::system();
+    }
     // eframe creates the real context later: `logic` binds it at the first frame.
     let embed = Embed::new(&egui::Context::default(), EmbedConfig::app(cfg)).map_err(|e| e.to_string())?;
     embed.load_app(bundle).map_err(|e| e.to_string())?;
