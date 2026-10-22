@@ -22,7 +22,7 @@ pub const TRACK: Ua = Ua(&[UaRule::base(&[("background-color", Token("control-bg
 /// `::part(fill)`.
 pub const FILL: Ua = Ua(&[UaRule::base(&[("background-color", Token("progress"))])]);
 
-/// A horizontal progress bar.
+/// A progress bar (horizontal, or vertical with `orientation`).
 // the `#[part]` fields name the kind\'s `::part()`s; nothing reads them (paint parts)
 #[allow(dead_code)]
 #[svelters::widget(namespace = "sv", replaces = "progress-bar")]
@@ -39,6 +39,26 @@ pub struct ProgressBar {
     /// Busy: progress without a known fraction (a sweep).
     #[prop]
     animate: bool,
+    /// WIDGET-PARITY §2.9: the value in `min..max`, the alternative to `fraction` (Qt's form).
+    #[prop(measure)]
+    value: Option<f64>,
+    #[prop(measure)]
+    min: f64,
+    #[prop(measure, default = 100.0)]
+    max: f64,
+    /// Busy, as `animate` (and `:indeterminate`); also when `value` is set and `min == max`.
+    #[prop]
+    indeterminate: bool,
+    /// The bar's axis (P7: `[orientation="vertical"]` styles it).
+    #[prop(measure, enumeration = "horizontal|vertical", default = "horizontal".to_string())]
+    orientation: String,
+    /// Fills from the end (right, or top when vertical) instead.
+    #[prop]
+    inverted: bool,
+    /// The label's text when `text` is empty: `%p` percent, `%v` value, `%m` maximum (`%%` a
+    /// percent sign); shown when set or with `show-percentage` (`%p%`).
+    #[prop(measure)]
+    format: String,
     #[part]
     track: crate::provider::Part,
     #[part]
@@ -47,18 +67,54 @@ pub struct ProgressBar {
 
 impl ProgressBar {
     fn fraction(&self) -> f32 {
-        if self.fraction.is_finite() { self.fraction.clamp(0.0, 1.0) as f32 } else { 0.0 }
+        let f = match self.value {
+            Some(v) if self.max > self.min => (v - self.min) / (self.max - self.min),
+            Some(_) => 0.0,
+            None => self.fraction,
+        };
+        if f.is_finite() { f.clamp(0.0, 1.0) as f32 } else { 0.0 }
+    }
+
+    /// Busy: `animate`, `indeterminate`, or Qt's `minimum == maximum` with a value.
+    fn busy(&self) -> bool {
+        self.animate || self.indeterminate || (self.value.is_some() && self.min == self.max)
+    }
+
+    fn vertical(&self) -> bool {
+        self.orientation == "vertical"
     }
 
     fn label(&self) -> Option<String> {
         if !self.text.is_empty() {
             Some(self.text.clone())
-        } else if self.show_percentage {
-            Some(format!("{}%", (self.fraction() * 100.0).round() as i64))
+        } else if !self.format.is_empty() || self.show_percentage {
+            let fmt = if self.format.is_empty() { "%p%" } else { self.format.as_str() };
+            Some(format_progress(fmt, self.fraction(), self.value.unwrap_or(f64::from(self.fraction()) * 100.0), self.max))
         } else {
             None
         }
     }
+}
+
+/// Qt's `QProgressBar::format`: `%p` percent, `%v` value, `%m` maximum, `%%` a percent sign.
+pub(crate) fn format_progress(fmt: &str, fraction: f32, value: f64, max: f64) -> String {
+    let num = |v: f64| if v.fract() == 0.0 { format!("{}", v as i64) } else { format!("{v}") };
+    let mut out = String::new();
+    let mut it = fmt.chars().peekable();
+    while let Some(c) = it.next() {
+        match (c, it.peek().copied()) {
+            ('%', Some('p')) => out.push_str(&format!("{}", (fraction * 100.0).round() as i64)),
+            ('%', Some('v')) => out.push_str(&num(value)),
+            ('%', Some('m')) => out.push_str(&num(max)),
+            ('%', Some('%')) => out.push('%'),
+            _ => {
+                out.push(c);
+                continue;
+            }
+        }
+        it.next();
+    }
+    out
 }
 
 impl Widget for ProgressBar {
@@ -66,45 +122,55 @@ impl Widget for ProgressBar {
         let s = cx.style(UA);
         let w = s.px("width").unwrap_or(100.0);
         let th = parts::part_size(&s, TRACK, 4.0).y;
-        match self.label() {
+        let along = match self.label() {
             Some(t) => {
                 let t = paint::measure_text(cx.ctx, &s, &t, AvailableSpace::MaxContent);
                 egui::vec2(w.max(t.x + 8.0), (t.y + 4.0).max(th))
             }
             None => egui::vec2(w, th),
-        }
+        };
+        if self.vertical() { egui::vec2(along.y, along.x) } else { along }
     }
 
     fn ui(&mut self, ui: &mut egui::Ui, cx: &mut WidgetCx<'_>) -> egui::Response {
-        cx.set_state(StateBits::BUSY, self.animate);
+        let busy = self.busy();
+        cx.set_state(StateBits::BUSY, busy);
+        cx.set_state(StateBits::INDETERMINATE, busy);
         cx.commit_state();
         let resp = cx.interact(ui, egui::Sense::hover());
         let label = self.label();
+        let (vertical, inverted) = (self.vertical(), self.inverted);
         if ui.is_rect_visible(cx.rect()) {
             let host = cx.style(UA);
             let r = cx.rect();
             let track = parts::part_view(&host, TRACK, false);
-            let th = if label.is_some() { r.height() } else { parts::part_size(&host, TRACK, 4.0).y.min(r.height()) };
-            let tr = egui::Rect::from_center_size(r.center(), egui::vec2(r.width(), th));
+            let th = if label.is_some() { if vertical { r.width() } else { r.height() } } else { parts::part_size(&host, TRACK, 4.0).y.min(if vertical { r.width() } else { r.height() }) };
+            let tr = if vertical { egui::Rect::from_center_size(r.center(), egui::vec2(th, r.height())) } else { egui::Rect::from_center_size(r.center(), egui::vec2(r.width(), th)) };
             let mut pc = cx.paint_cx(ui);
             paint::paint_box(&mut pc.part("track"), &track, tr);
             let fill = parts::part_view(&host, FILL, false);
             let color = fill.color("background-color").unwrap_or(egui::Color32::PLACEHOLDER);
             let radius = track.px("border-radius").unwrap_or(0.0);
-            let fr = if self.animate {
-                let seg = 0.3 * tr.width();
+            // the fill's span along the bar, 0..1 from where it starts (left, or bottom when vertical)
+            let (a, b) = if busy {
                 let t = if parts::reduced_motion(ui.ctx()) {
                     0.0
                 } else {
                     ui.ctx().request_repaint();
                     ((ui.input(|i| i.time) / 1.5).fract()) as f32
                 };
-                let x = tr.left() - seg + t * (tr.width() + seg);
-                egui::Rect::from_min_max(egui::pos2(x.max(tr.left()), tr.top()), egui::pos2((x + seg).min(tr.right()), tr.bottom()))
+                let x = -0.3 + t * 1.3;
+                (x.max(0.0), (x + 0.3).min(1.0))
             } else {
-                egui::Rect::from_min_size(tr.min, egui::vec2(tr.width() * self.fraction(), tr.height()))
+                (0.0, self.fraction())
             };
-            if fr.width() > 0.0 {
+            let (a, b) = if inverted { (1.0 - b, 1.0 - a) } else { (a, b) };
+            let fr = if vertical {
+                egui::Rect::from_min_max(egui::pos2(tr.left(), tr.bottom() - b * tr.height()), egui::pos2(tr.right(), tr.bottom() - a * tr.height()))
+            } else {
+                egui::Rect::from_min_max(egui::pos2(tr.left() + a * tr.width(), tr.top()), egui::pos2(tr.left() + b * tr.width(), tr.bottom()))
+            };
+            if fr.width() > 0.0 && fr.height() > 0.0 {
                 parts::paint_fill(&mut pc.part("fill"), fr, radius, color);
             }
             if let Some(t) = &label {
@@ -120,12 +186,19 @@ impl Widget for ProgressBar {
 
     fn a11y(&self, _cx: &A11yCx<'_>, node: &mut egui::accesskit::Node) {
         node.set_role(egui::accesskit::Role::ProgressIndicator);
-        if self.animate {
+        if self.busy() {
             node.set_busy();
+        } else if let Some(v) = self.value {
+            node.set_numeric_value(v);
+            node.set_min_numeric_value(self.min);
+            node.set_max_numeric_value(self.max);
         } else {
             node.set_numeric_value(f64::from(self.fraction()));
             node.set_min_numeric_value(0.0);
             node.set_max_numeric_value(1.0);
+        }
+        if self.vertical() {
+            node.set_orientation(egui::accesskit::Orientation::Vertical);
         }
     }
 }

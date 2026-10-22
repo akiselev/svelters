@@ -468,6 +468,8 @@ pub struct WidgetCx<'a> {
     changed: Vec<usize>,
     emits: Vec<(usize, Value)>,
     remeasure: bool,
+    /// OW1a2: a peer write ([`WidgetCx::with_peer`]) wants another frame.
+    repaint: bool,
     errors: Vec<String>,
     /// OW0: UA tokens resolve in the dark scheme.
     dark: bool,
@@ -650,6 +652,102 @@ impl WidgetCx<'_> {
     /// Measures the node again before the next layout (its content size changed).
     pub fn request_measure(&mut self) {
         self.remeasure = true;
+    }
+
+    /// OW1a2: writes to another own widget of type `Wd` in this pass, through `PeerCx` (its
+    /// `set` and `emit` are announced like the peer's own). It is for the writes one widget makes
+    /// to its group: radio exclusivity, toggle-button `group` and accordion. A peer drawn earlier in
+    /// the pass shows the change next frame, so a repaint is requested. `None` if `id` is this node,
+    /// is not live, or is not a `Wd`.
+    pub fn with_peer<Wd: 'static, R>(&mut self, id: crate::scene::NodeId, f: impl FnOnce(&mut Wd, &mut PeerCx) -> R) -> Option<R> {
+        let j = self.s.idx(id)?;
+        if j == self.i {
+            return None;
+        }
+        let (r, p) = {
+            let crate::scene::node::Payload::Builtin(W::Ext(x)) = &self.s.payload[j] else { return None };
+            let mut b = x.0.try_borrow_mut().ok()?;
+            let (entry, base) = (b.entry(), b.base());
+            let w = b.as_any_mut().downcast_mut::<Wd>()?;
+            let mut p = PeerCx { entry, base, changed: Vec::new(), emits: Vec::new(), errors: Vec::new(), focus: false };
+            (f(w, &mut p), p)
+        };
+        if p.focus {
+            self.s.core[j].flags.insert(crate::scene::NodeFlags::WANT_FOCUS);
+        }
+        if !p.changed.is_empty() || !p.emits.is_empty() || p.focus {
+            self.s.invalidate_content(id);
+            self.repaint = true;
+        }
+        flush_writes(self.s, j, p.changed, p.emits, p.errors, self.out);
+        Some(r)
+    }
+
+    /// OW1a2: moves keyboard focus to node `id` (a label's `for` target) at its next draw.
+    pub fn focus_node(&mut self, id: crate::scene::NodeId) {
+        if let Some(j) = self.s.idx(id) {
+            self.s.core[j].flags.insert(crate::scene::NodeFlags::WANT_FOCUS);
+            self.s.invalidate_content(id);
+            self.repaint = true;
+        }
+    }
+
+    /// OW1a2: this node's siblings (the parent's children, this one included), in order.
+    pub fn sibling_ids(&self) -> Vec<crate::scene::NodeId> {
+        match self.s.core[self.i].parent.and_then(|p| self.s.idx(p)) {
+            Some(p) => self.s.children[p].clone(),
+            None => Vec::new(),
+        }
+    }
+
+    /// OW1a2: the tag of node `id` (an own widget's is the built-in tag it replaces).
+    pub fn tag_of(&self, id: crate::scene::NodeId) -> Option<&'static str> {
+        let j = self.s.idx(id)?;
+        crate::kinds::KindRegistry::global().kind(self.s.core[j].kind as usize).tag
+    }
+}
+
+/// OW1a2: what [`WidgetCx::with_peer`] gives the closure: the peer's own `set` and `emit`.
+pub struct PeerCx {
+    entry: &'static KindEntry,
+    base: usize,
+    changed: Vec<usize>,
+    emits: Vec<(usize, Value)>,
+    errors: Vec<String>,
+    focus: bool,
+}
+
+impl PeerCx {
+    /// [`WidgetCx::set`] on the peer's `#[prop]` field.
+    pub fn set<T: PartialEq>(&mut self, field: &mut T, v: T) {
+        if *field != v {
+            *field = v;
+            written_prop(self.entry, self.base, field, &mut self.changed, &mut self.errors);
+        }
+    }
+    /// [`WidgetCx::emit`] on the peer's event.
+    pub fn emit<T: IntoJs>(&mut self, event: &Event<T>, payload: T) {
+        queue_emit(self.entry, event, payload, &mut self.emits, &mut self.errors);
+    }
+    /// Moves keyboard focus to the peer (Roving), shown as keyboard focus.
+    pub fn focus(&mut self) {
+        self.focus = true;
+    }
+}
+
+/// OW1a2: an event payload of several arguments (a built-in signal with more than one, such as
+/// `radio-button`'s `changed(checked, group)`); the emit path spreads it into the signal's args.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Args(pub Vec<Value>);
+
+impl svelters_host::exports::JsType for Args {
+    fn describe(b: &mut svelters_host::exports::TypeBuilder) -> svelters_host::exports::TypeRef {
+        <Vec<String> as svelters_host::exports::JsType>::describe(b)
+    }
+}
+impl IntoJs for Args {
+    fn into_js(self, _: &svelters_host::exports::CallCx<'_>) -> Result<Value, NativeError> {
+        Ok(Value::List(self.0))
     }
 }
 
@@ -986,10 +1084,14 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
             changed: Vec::new(),
             emits: Vec::new(),
             remeasure: false,
+            repaint: false,
             errors: Vec::new(),
             dark,
         };
         let resp = w.ui(ui, &mut cx);
+        if cx.repaint {
+            ui.ctx().request_repaint();
+        }
         let WidgetCx { state, changed, emits, remeasure, errors, .. } = cx;
         (resp, state, changed, emits, remeasure, errors)
     });
@@ -1061,7 +1163,13 @@ fn flush_writes(
         let sig = reg.ext_signal_id(kind, e);
         if arena.listens(i, sig) {
             // OW0: an own widget's event keeps the built-in signal's arity (no args: no payload)
-            let args = if reg.provider(kind).is_none() && reg.signal_def(kind, sig).is_some_and(|d| d.args.is_empty()) { vec![] } else { vec![v] };
+            // (OW1a2: and a several-arg signal gets its `Args` list spread)
+            let arity = if reg.provider(kind).is_none() { reg.signal_def(kind, sig).map(|d| d.args.len()) } else { None };
+            let args = match (arity, v) {
+                (Some(0), _) => vec![],
+                (Some(n), Value::List(l)) if n > 1 && l.len() == n => l,
+                (_, v) => vec![v],
+            };
             out.push(Out::Event(h, sig, args));
         }
     }

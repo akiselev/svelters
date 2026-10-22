@@ -19,6 +19,7 @@ pub mod hyperlink;
 pub mod label;
 mod parts;
 pub mod progress;
+pub mod radio;
 pub mod separator;
 pub mod switch;
 pub mod toggle_button;

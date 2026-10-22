@@ -9,14 +9,16 @@
 //! with R17's on-fill.
 
 use super::parts;
+use std::sync::Arc;
 use crate::interact::{Focusable, Hoverable, Pressable, Toggle, ToggleParams, Toggleable};
-use crate::paint::{self, Align, Ua, UaRule, UaValue::*};
-use crate::provider::{A11yCx, AvailableSpace, Event, MeasureCx, StateBits, Widget, WidgetCx};
+use crate::paint::{self, Align, IconKey, PartItem, StyleView, Ua, UaRule, UaValue::*};
+use crate::provider::{A11yCx, AvailableSpace, Event, MeasureCx, Part, StateBits, Widget, WidgetCx};
 
 /// The host: the caption's colour and font, the gap, the focus ring (drawn around the indicator).
 pub const UA: Ua = Ua(&[
     UaRule::base(&[
         ("gap", Px(6.0)),
+        ("align-items", Keyword("center")),
         ("outline-style", Keyword("none")),
         ("outline-color", Token("focus")),
         ("outline-width", Px(1.0)),
@@ -46,8 +48,11 @@ pub const INDICATOR: Ua = Ua(&[
 /// `::part(mark)`: the glyph's colour.
 pub const MARK: Ua = Ua(&[UaRule::base(&[("color", Token("fg"))]), UaRule::when(StateBits::DISABLED, &[("color", Token("disabled-fg"))])]);
 
+/// `::part(icon)` of the indicator kinds (16px, as the button's).
+pub const ICON: Ua = Ua(&[UaRule::base(&[("font-size", Px(16.0))])]);
+
 /// A check box with a caption.
-// the `#[part]` fields name the kind\'s `::part()`s; nothing reads them (paint parts)
+// the `#[part]` fields name the kind's `::part()`s; nothing reads them (paint parts)
 #[allow(dead_code)]
 #[svelters::widget(namespace = "sv", replaces = "checkbox", caps = FOCUSABLE)]
 pub struct Checkbox {
@@ -57,7 +62,17 @@ pub struct Checkbox {
     /// Checked (`bind:checked`); the user toggles it.
     #[prop(bind)]
     checked: bool,
-    /// The user toggled it; carries the new state.
+    /// WIDGET-PARITY §2.2: partially checked (`bind:indeterminate`), shown as a dash. The app
+    /// writes it; a click clears it and checks the box (Qt, GTK).
+    #[prop(bind)]
+    indeterminate: bool,
+    /// The user cycles unchecked → checked → indeterminate (Qt's tristate).
+    #[prop]
+    tristate: bool,
+    /// An icon before the caption (a key, or `family:name`).
+    #[prop(measure)]
+    icon: String,
+    /// The user toggled it; carries the new `checked` (`indeterminate` is announced as a prop).
     #[event]
     changed: Event<bool>,
     #[event]
@@ -71,38 +86,123 @@ pub struct Checkbox {
     #[behavior(params = toggle_params)]
     toggle: Toggleable,
     #[part]
-    indicator: crate::provider::Part,
+    indicator: Part,
     #[part]
-    mark: crate::provider::Part,
+    mark: Part,
+    #[part(name = "icon")]
+    icon_part: Part,
+    #[part(name = "label")]
+    label_part: Part,
 }
 
 impl Checkbox {
     fn toggle_params(&self) -> ToggleParams {
-        ToggleParams { checked: self.checked, ..ToggleParams::default() }
+        ToggleParams { checked: self.checked, indeterminate: self.indeterminate, tristate: self.tristate, radio: false }
     }
 }
 
-/// The indicator's rect and the caption's rect in `r` (indicator left, vertically centred).
-pub(crate) fn split(r: egui::Rect, ind: egui::Vec2, gap: f32) -> (egui::Rect, egui::Rect) {
-    let i = egui::Rect::from_min_size(egui::pos2(r.left(), r.center().y - ind.y / 2.0), ind);
-    let t = egui::Rect::from_min_max(egui::pos2(i.right() + gap, r.top()), r.max);
-    (i, t)
+/// An `icon` prop's key: `family:name`, or a name in the `icons` family.
+pub(crate) fn icon_key(icon: &str) -> Option<IconKey> {
+    (!icon.is_empty()).then(|| match icon.split_once(':') {
+        Some((f, n)) => IconKey::new(f, n),
+        None => IconKey::new("icons", icon),
+    })
 }
 
-/// Indicator, gap and caption: what a toggle with an indicator measures.
-pub(crate) fn measure_with_indicator(cx: &MeasureCx<'_>, ua: Ua, ind: Ua, text: &str, default: f32) -> egui::Vec2 {
-    let s = cx.style(ua);
-    let isz = parts::part_size(&s, ind, default);
-    if text.is_empty() {
-        return isz;
+/// The content of an indicator kind, laid out by P3 in the host's content box: the `indicator`
+/// part, an optional `icon` and the caption `label`, spaced by `gap` (`flex-direction`, `order`
+/// and `display: none` on the parts apply). `f` gets the items, the icon and the caption galley.
+pub(crate) fn with_parts<'c, R>(
+    ctx: &egui::Context,
+    host: &StyleView<'_>,
+    ind_name: &'static str,
+    ind: &StyleView<'_>,
+    part_css: impl Fn(&str) -> Option<&'c svelters_style::ComputedStyle>,
+    text: &str,
+    icon: &str,
+    f: impl FnOnce(&[PartItem<'_>], Option<&IconKey>, Option<&Arc<egui::Galley>>) -> R,
+) -> R {
+    let icon_v = host.part(part_css("icon"), ICON);
+    let label_v = host.part(part_css("label"), Ua::NONE);
+    let key = icon_key(icon).and_then(|k| paint::content_icon(&icon_v, &k));
+    let galley = (!text.is_empty()).then(|| paint::text_galley(ctx, &label_v, text, None));
+    let isz = egui::vec2(ind.px("width").unwrap_or(16.0), ind.px("height").unwrap_or(16.0));
+    let mut items = vec![PartItem { name: ind_name, style: ind, content: isz }];
+    if let Some(k) = &key {
+        items.push(PartItem { name: "icon", style: &icon_v, content: paint::icon_size(ctx, &icon_v, k) });
     }
-    let t = paint::measure_text(cx.ctx, &s, text, AvailableSpace::MaxContent);
-    egui::vec2(isz.x + parts::gap(&s, 6.0) + t.x, isz.y.max(t.y))
+    if let Some(g) = &galley {
+        items.push(PartItem { name: "label", style: &label_v, content: g.size() });
+    }
+    f(&items, key.as_ref(), galley.as_ref())
+}
+
+/// The indicator's view: its `::part()` style when a sheet computed one, else `ua` (over the
+/// host's computed style when `host_css`: the base sheet's `checkbox` rule styles the box).
+pub(crate) fn indicator_view<'a>(host: &'a StyleView<'a>, css: Option<&'a svelters_style::ComputedStyle>, ua: Ua, host_css: bool) -> StyleView<'a> {
+    match css {
+        Some(c) => host.part(Some(c), ua),
+        None => parts::part_view(host, ua, host_css),
+    }
+}
+
+/// What an indicator kind measures: its parts (P3) plus the host's padding and border.
+pub(crate) fn measure_with_indicator(cx: &MeasureCx<'_>, ua: Ua, ind_name: &'static str, ind: Ua, text: &str, icon: &str, host_css: bool) -> egui::Vec2 {
+    let host = cx.style(ua);
+    let ind_v = indicator_view(&host, cx.part_css(ind_name), ind, host_css);
+    with_parts(cx.ctx, &host, ind_name, &ind_v, |n| cx.part_css(n), text, icon, |items, _, _| paint::measure_parts(&host, items)) + paint::box_extra(&host)
+}
+
+/// Paints an indicator kind: the indicator box, `mark` inside it (the check, the dot, the knob),
+/// the icon and the caption, then the focus ring around the indicator (DESIGN R8).
+pub(crate) fn paint_indicator_kind(
+    ui: &egui::Ui,
+    cx: &WidgetCx<'_>,
+    ua: Ua,
+    ind_name: &'static str,
+    ind: Ua,
+    host_css: bool,
+    text: &str,
+    icon: &str,
+    mark: impl FnOnce(&mut paint::PaintCx<'_>, &StyleView<'_>, egui::Rect),
+) {
+    let host = cx.style(ua);
+    let ind_v = indicator_view(&host, cx.part_css(ind_name), ind, host_css);
+    let content = paint::box_geom(&host, cx.rect()).content;
+    let mut pc = cx.paint_cx(ui);
+    let ir = with_parts(ui.ctx(), &host, ind_name, &ind_v, |n| cx.part_css(n), text, icon, |items, key, galley| {
+        let rects = paint::layout_parts(&host, content, items);
+        let mut ir = None;
+        for (item, r) in items.iter().zip(rects) {
+            let Some(r) = r else { continue };
+            match item.name {
+                n if n == ind_name => {
+                    paint::paint_box(&mut pc.part(ind_name), item.style, r);
+                    ir = Some(r);
+                }
+                "icon" => {
+                    if let Some(k) = key {
+                        paint::paint_icon(&mut pc.part("icon"), item.style, k, r);
+                    }
+                }
+                _ => {
+                    if let Some(g) = galley {
+                        paint::paint_text(&mut pc.part("label"), item.style, g, r, Align::Start);
+                    }
+                }
+            }
+        }
+        ir
+    });
+    if let Some(ir) = ir {
+        mark(&mut pc, &host, ir);
+        paint::paint_outline(&mut pc, &host, ir);
+    }
 }
 
 impl Widget for Checkbox {
     fn measure(&mut self, cx: &mut MeasureCx<'_>, _avail: AvailableSpace) -> egui::Vec2 {
-        measure_with_indicator(cx, UA, INDICATOR, &self.text, 18.0)
+        measure_with_indicator(cx, UA, "indicator", INDICATOR, &self.text, &self.icon, true)
     }
 
     fn ui(&mut self, ui: &mut egui::Ui, cx: &mut WidgetCx<'_>) -> egui::Response {
@@ -111,31 +211,24 @@ impl Widget for Checkbox {
         if fired.press.iter().any(|p| p.is_click()) {
             cx.dispatch(&self.clicked, ());
         }
-        for Toggle::Toggled { checked, .. } in fired.toggle.iter().copied() {
-            // EV1: dispatched before the default action (the prop write)
+        for Toggle::Toggled { checked, indeterminate } in fired.toggle.iter().copied() {
+            // EV1: dispatched before the default action (the prop writes)
             if !cx.dispatch(&self.changed, checked).prevented {
                 cx.set(&mut self.checked, checked);
+                cx.set(&mut self.indeterminate, indeterminate);
             }
         }
         if ui.is_rect_visible(cx.rect()) {
-            let host = cx.style(UA);
-            let isz = parts::part_size(&host, INDICATOR, 18.0);
-            let (ir, tr) = split(cx.rect(), isz, parts::gap(&host, 6.0));
-            let mut pc = cx.paint_cx(ui);
-            let ind = parts::part_view(&host, INDICATOR, true);
-            paint::paint_box(&mut pc.part("indicator"), &ind, ir);
-            if self.checked {
-                let mark = parts::part_view(&host, MARK, false);
-                let color = mark.color("color").unwrap_or(egui::Color32::PLACEHOLDER);
-                parts::paint_mark(&mut pc.part("mark"), ir, color, false);
-            }
-            if !self.text.is_empty() {
-                let g = paint::text_galley(ui.ctx(), &host, &self.text, None);
-                paint::paint_text(&mut pc.part("label"), &host, &g, tr, Align::Start);
-            }
-            paint::paint_outline(&mut pc, &host, ir);
+            let (on, partial) = (self.checked, self.indeterminate);
+            paint_indicator_kind(ui, cx, UA, "indicator", INDICATOR, true, &self.text, &self.icon, |pc, host, ir| {
+                if on || partial {
+                    let mark = parts::part_view(host, MARK, false);
+                    let color = mark.color("color").unwrap_or(egui::Color32::PLACEHOLDER);
+                    parts::paint_mark(&mut pc.part("mark"), ir, color, partial);
+                }
+            });
         }
-        let (enabled, checked, text) = (cx.enabled(), self.checked, &self.text);
+        let (enabled, checked, text) = (cx.enabled(), self.checked && !self.indeterminate, &self.text);
         resp.widget_info(|| egui::WidgetInfo::selected(egui::Role::CheckBox, enabled, checked, text));
         resp
     }

@@ -24,11 +24,13 @@
 mod focus;
 mod hover;
 mod press;
+mod roving;
 mod toggle;
 
 pub use focus::{Focus, FocusParams, Focusable};
 pub use hover::{Hover, Hoverable};
 pub use press::{Press, PressParams, Pressable};
+pub use roving::{Rove, Roving, RovingParams};
 pub use toggle::{Toggle, ToggleParams, Toggleable};
 
 use crate::native::Policy;

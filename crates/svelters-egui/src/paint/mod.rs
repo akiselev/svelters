@@ -31,7 +31,7 @@ pub use icon::{IconKey, content_icon, icon_size, paint_icon};
 pub use image::paint_image;
 pub use painters::{Orientation, PaintArgs, PartInfo, PartPainter, register_painter};
 pub use parts::{PartItem, layout_parts, measure_parts};
-pub use text::{Align, measure_text, paint_text, text_galley};
+pub use text::{Align, Elide, elide, elide_with, measure_text, paint_text, text_galley};
 pub use trace::{PaintTrace, TraceEntry, TraceKind};
 
 use crate::provider::StateBits;

@@ -61,11 +61,6 @@ pub(crate) fn paint_fill(cx: &mut PaintCx<'_>, r: Rect, radius: f32, fill: Color
     cx.record(TraceKind::Path, r, fill, Stroke::NONE, 0.0);
 }
 
-/// The host's `gap` (between an indicator and the caption).
-pub(crate) fn gap(s: &StyleView<'_>, default: f32) -> f32 {
-    s.px("gap").or_else(|| s.px("column-gap")).unwrap_or(default)
-}
-
 /// `prefers-reduced-motion`: animations (the busy sweep, the spinner, the knob) are static.
 pub(crate) fn reduced_motion(ctx: &egui::Context) -> bool {
     ctx.global_style().animation_time <= 0.0
