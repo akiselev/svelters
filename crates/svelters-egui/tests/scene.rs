@@ -5,7 +5,7 @@ mod common;
 
 use common::Rig;
 use svelters_abi::*;
-use svelters_egui::scene::{DumpOpts, NodeId, Owner, ProviderId, SceneError, keys};
+use svelters_egui::scene::{ChangeFilter, ChangeMask, DumpOpts, ExtKey, NodeId, Owner, ProviderId, SceneError, SceneHandle, StateBits, keys};
 
 fn id(h: svl_handle) -> NodeId {
     NodeId::from_raw(h).unwrap()
@@ -153,4 +153,161 @@ fn a_label_change_relays_out_its_boundary_only() {
     let b = rig.br().bounds(labels[37]).unwrap().unwrap();
     let r = h.read(|s| s.get(id(labels[37])).unwrap().rect());
     assert_eq!([b[0] as f32, b[1] as f32, b[2] as f32, b[3] as f32], [r.min.x, r.min.y, r.width(), r.height()]);
+}
+
+// ---- SG2: allocation and `with_ext` budgets ----
+
+/// Counts this thread's allocations (and reallocations), so a test can assert a code path makes
+/// none.
+struct Counting;
+
+thread_local! {
+    static ALLOCS: std::cell::Cell<u64> = const { std::cell::Cell::new(0) };
+}
+
+fn count() {
+    let _ = ALLOCS.try_with(|c| c.set(c.get() + 1));
+}
+
+fn allocs() -> u64 {
+    ALLOCS.with(|c| c.get())
+}
+
+// SAFETY: forwards every call to the system allocator unchanged.
+unsafe impl std::alloc::GlobalAlloc for Counting {
+    unsafe fn alloc(&self, l: std::alloc::Layout) -> *mut u8 {
+        count();
+        unsafe { std::alloc::System.alloc(l) }
+    }
+    unsafe fn alloc_zeroed(&self, l: std::alloc::Layout) -> *mut u8 {
+        count();
+        unsafe { std::alloc::System.alloc_zeroed(l) }
+    }
+    unsafe fn realloc(&self, p: *mut u8, l: std::alloc::Layout, n: usize) -> *mut u8 {
+        count();
+        unsafe { std::alloc::System.realloc(p, l, n) }
+    }
+    unsafe fn dealloc(&self, p: *mut u8, l: std::alloc::Layout) {
+        unsafe { std::alloc::System.dealloc(p, l) }
+    }
+}
+
+#[global_allocator]
+static ALLOC: Counting = Counting;
+
+static MARK: ExtKey<u32> = ExtKey::new("sg2.test.mark");
+static HEAT: ExtKey<f32> = ExtKey::dense("sg2.test.heat");
+
+/// ARCH-SCENE §14 SG2: no allocation per mutation when nobody observes (a counting allocator).
+/// Covers prop writes (number, bool, a common prop), state bits, extension entries (set, change,
+/// remove and re-add in sparse and dense columns), a reorder among siblings and a batch. The first
+/// rounds warm the vectors up; the next ones must allocate nothing. Also with an observer that
+/// wants none of it, and after the last observer is dropped.
+#[test]
+fn mutations_allocate_nothing_without_observers() {
+    let h = SceneHandle::default();
+    let app = ProviderId::APP;
+    let (top, kids) = h
+        .write(app, |s| {
+            let top = s.create_tag("box").unwrap();
+            let mut kids = Vec::new();
+            for tag in ["slider", "checkbox", "label", "box"] {
+                let k = s.create_tag(tag).unwrap();
+                s.insert(top, k, None).unwrap();
+                kids.push(k);
+            }
+            (top, kids)
+        })
+        .unwrap();
+    let round = |k: u32| {
+        h.write(app, |s| {
+            s.node(kids[0]).unwrap().set(&keys::slider::VALUE, k as f64).unwrap();
+            s.node(kids[1]).unwrap().set(&keys::checkbox::CHECKED, k % 2 == 0).unwrap();
+            s.node(kids[2]).unwrap().set(&keys::widget::ENABLED, k % 2 == 0).unwrap();
+            s.node(kids[3]).unwrap().set_state(StateBits::SELECTED, k % 2 == 0);
+            for &x in &kids {
+                let mut n = s.node(x).unwrap();
+                n.ext_mut(&MARK).set(k);
+                *n.ext_mut(&MARK).get_mut().unwrap() += 1;
+                n.ext_mut(&HEAT).set(k as f32);
+            }
+            s.node(kids[1]).unwrap().ext_mut(&MARK).remove();
+            s.node(kids[1]).unwrap().ext_mut(&HEAT).remove();
+            // move the last child to the front, and back
+            s.insert(top, kids[3], Some(kids[0])).unwrap();
+            s.insert(top, kids[3], None).unwrap();
+            s.batch("b", |s| s.node(kids[2]).unwrap().set_state(StateBits::HOVERED, k % 2 == 1));
+        })
+        .unwrap();
+    };
+    for k in 0..3 {
+        round(k); // warm-up
+    }
+    let a = allocs();
+    for k in 3..53 {
+        round(k);
+    }
+    assert_eq!(allocs() - a, 0, "50 rounds of mutations with no observer allocated");
+
+    // an observer that wants none of these kinds of change costs nothing either
+    let roots = h.observe(ChangeFilter::only(ChangeMask::ROOT));
+    let a = allocs();
+    for k in 53..63 {
+        round(k);
+    }
+    assert_eq!(allocs() - a, 0, "with an uninterested observer");
+    // an interested one does record (and so allocates its queue)
+    let all = h.observe(ChangeFilter::all());
+    round(63);
+    assert!(all.pending() > 10, "{}", all.pending());
+    drop(all);
+    drop(roots);
+    round(64); // prunes the dropped observers
+    let a = allocs();
+    for k in 65..75 {
+        round(k);
+    }
+    assert_eq!(allocs() - a, 0, "after the observers are dropped");
+    h.read(|s| s.validate().unwrap());
+}
+
+/// ARCH-SCENE §14 SG2: `with_ext` over 5k entries among 100k nodes takes ≤ 50 µs (the best of 20
+/// runs in a release build: `cargo nextest run --release -p svelters-egui --test scene with_ext`).
+/// CI runs debug builds: there the budget is 4 ms, and the walk must beat a scan of every node 5×.
+#[test]
+fn with_ext_over_5k_of_100k_nodes() {
+    let h = SceneHandle::default();
+    let app = ProviderId::APP;
+    h.write(app, |s| {
+        for k in 0..100_000u32 {
+            let n = s.create_tag("box").unwrap();
+            if k % 20 == 0 {
+                s.node(n).unwrap().ext_mut(&MARK).set(k);
+            }
+        }
+    })
+    .unwrap();
+    let (t, sum) = h.read(|s| {
+        let mut best = std::time::Duration::MAX;
+        let mut sum = 0u64;
+        for _ in 0..20 {
+            let t = std::time::Instant::now();
+            sum = std::hint::black_box(s.with_ext(&MARK).map(|(n, v)| n.id().to_raw() ^ *v as u64).fold(0u64, |a, x| a.wrapping_add(x)));
+            best = best.min(t.elapsed());
+        }
+        (best, sum)
+    });
+    assert_eq!(h.read(|s| s.with_ext(&MARK).count()), 5_000);
+    assert_eq!(h.read(|s| s.len()), 100_000);
+    assert!(sum != 0);
+    // O(entries), not O(nodes): far cheaper than looking at every node
+    let scan = h.read(|s| {
+        let t = std::time::Instant::now();
+        std::hint::black_box(s.nodes().filter(|n| n.ext(&MARK).is_some()).count());
+        t.elapsed()
+    });
+    let budget = std::time::Duration::from_micros(if cfg!(debug_assertions) { 4_000 } else { 50 });
+    eprintln!("with_ext: 5000 entries of 100000 nodes in {t:?} (budget {budget:?}); a scan of every node: {scan:?}");
+    assert!(t <= budget, "with_ext over 5k entries took {t:?} (budget {budget:?})");
+    assert!(t * 5 < scan, "with_ext {t:?} vs a full scan {scan:?}");
 }

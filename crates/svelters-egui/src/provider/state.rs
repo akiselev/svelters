@@ -5,7 +5,11 @@
 //! MCP introspection read them; RA1 lands the storage, the registry and `WidgetCx::set_state`.
 //! SG1 moves the bits into `NodeCore` (they stay a field there, never an extension column).
 //!
-//! Writer lane: RUSTAPI (RA1); SG2 hooks the registry into the scene's journal.
+//! SG2 hooks the bits into the scene's journal: a change is a `Change::State { before, after }`
+//! record, and observers filter by bit (`ChangeFilter::states`, built-in or provider bits), so a
+//! provider toggling its own bits on 5k nodes costs nothing for observers of other bits.
+//!
+//! Writer lane: RUSTAPI (RA1); SCENE (SG2) for the journal hookup.
 
 use crate::scene::Node;
 use std::sync::OnceLock;
@@ -53,6 +57,14 @@ impl StateBits {
 
     pub const fn contains(self, other: StateBits) -> bool {
         self.0 & other.0 == other.0
+    }
+
+    pub const fn intersects(self, other: StateBits) -> bool {
+        self.0 & other.0 != 0
+    }
+
+    pub const fn is_empty(self) -> bool {
+        self.0 == 0
     }
 
     pub fn set(&mut self, bits: StateBits, on: bool) {

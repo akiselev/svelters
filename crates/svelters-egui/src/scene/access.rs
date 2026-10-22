@@ -11,13 +11,19 @@
 //! runtime observes the prop, announces it (`prop_changed`) at the next logic. It never fires the
 //! kind's events (input, change, …): Rust writes are not user input.
 //!
+//! Observing (SG2, `journal.rs`): [`SceneHandle::observe`] returns an [`Observer`];
+//! [`SceneHandle::take_changes`] drains it. Extension data (`ext.rs`): [`NodeRef::ext`],
+//! [`NodeMut::ext_mut`], [`SceneRef::with_ext`] (O(entries)).
+//!
 //! Writer lane: SCENE.
 
 use super::dump::{DumpOpts, SceneStats};
 use super::id::{Handle, KindId, NodeId, PropId, ProviderId, RootIx, Tick};
 use super::keys::{PropKey, PropValue};
 use super::node::{Common, Dirty, NodeFlags, Owner, W};
-use crate::provider::{ExtBlock, ExtEntry, ExtKey, IntoStateBits, StateBits};
+use super::ext::{ExtBlock, ExtEntry, ExtKey, ExtTicks};
+use super::journal::{Change, ChangeFilter, ChangeSet, Observer};
+use crate::provider::{IntoStateBits, StateBits};
 use super::props;
 use super::tree::TreeRoot;
 use super::{Member, Phase, Scene, member_bit};
@@ -248,22 +254,30 @@ impl SceneHandle {
             }
             return Err(SceneBusy);
         }
-        let r = self.write_now(Origin::Rust(origin), f)?;
+        let r = self.write_now(Origin::Rust(origin), "write", f)?;
         self.wake();
         Ok(r)
     }
 
-    fn write_now<R>(&self, origin: Origin, f: impl FnOnce(&mut SceneMut<'_>) -> R) -> Result<R, SceneBusy> {
+    fn write_now<R>(&self, origin: Origin, label: &'static str, f: impl FnOnce(&mut SceneMut<'_>) -> R) -> Result<R, SceneBusy> {
         let mut s = self.0.scene.try_borrow_mut().map_err(|_| SceneBusy)?;
-        let was = s.in_batch;
-        if !was {
-            s.tick += 1;
-            s.in_batch = true;
-        }
+        let outer = s.begin_batch(label);
         s.counters.writes += 1;
         let r = f(&mut SceneMut { s: &mut s, origin });
-        s.in_batch = was;
+        s.end_batch(outer);
         Ok(r)
+    }
+
+    /// A new observer of this scene's changes (ARCH-SCENE §6.5): drain it with
+    /// [`SceneHandle::take_changes`] or [`Observer::take`]; drop it to unsubscribe. Panics inside a
+    /// `write` closure (use [`SceneMut::observe`] there).
+    pub fn observe(&self, filter: ChangeFilter) -> Observer {
+        self.0.scene.try_borrow_mut().expect("svelters-egui: SceneHandle::observe while the scene is borrowed (use SceneMut::observe)").journal.observe(filter)
+    }
+
+    /// The records `obs` collected since its last take. Any phase, also inside a `write`.
+    pub fn take_changes(&self, obs: &Observer) -> ChangeSet {
+        obs.take()
     }
 
     /// Queues a mutation for the start of the next logic (callable in any phase on the UI
@@ -283,7 +297,7 @@ impl SceneHandle {
         let q = std::mem::take(&mut *self.0.deferred.borrow_mut());
         let n = q.len();
         for (origin, f) in q {
-            if self.write_now(Origin::Rust(origin), f).is_err() {
+            if self.write_now(Origin::Rust(origin), "defer", f).is_err() {
                 panic!("svelters-egui: deferred scene write while the scene is borrowed");
             }
         }
@@ -373,6 +387,32 @@ impl<'a> SceneRef<'a> {
     pub fn dump(self, top: NodeId, opts: DumpOpts) -> String {
         self.s.dump(top, opts)
     }
+
+    /// Every node with a value for `key`, with the value: O(entries) for a sparse key, O(slots) for
+    /// a dense one (ARCH-SCENE §6.3).
+    pub fn with_ext<T: 'static>(self, key: &ExtKey<T>) -> impl Iterator<Item = (NodeRef<'a>, &'a T)> + use<'a, T> {
+        let s = self.s;
+        WithExt { s, it: s.ext.col(key).map(|c| c.values()) }
+    }
+
+    /// [`SceneRef::with_ext`] with each entry's ticks (what was added or changed since a tick).
+    pub fn with_ext_ticks<T: 'static>(self, key: &ExtKey<T>) -> impl Iterator<Item = (NodeRef<'a>, &'a T, ExtTicks)> + use<'a, T> {
+        let s = self.s;
+        s.ext.col(key).into_iter().flat_map(|c| c.iter()).map(move |(id, v, t)| (NodeRef::at(s, id), v, t))
+    }
+
+    /// The number of nodes with a value for `key` (O(1)).
+    pub fn ext_len<T: 'static>(self, key: &ExtKey<T>) -> usize {
+        use super::ext::ErasedColumn;
+        self.s.ext.col(key).map_or(0, |c| c.len())
+    }
+
+    /// The nodes changed (a prop, a state bit, an extension entry or their children) after tick `t`,
+    /// in slot order: a scan of the hot column (Bevy's change detection; SG3's
+    /// `Query::changed_since` builds on it).
+    pub fn changed_since(self, t: Tick) -> impl Iterator<Item = NodeRef<'a>> + 'a {
+        self.nodes().filter(move |n| n.changed_since(t))
+    }
 }
 
 /// Read access to one live node.
@@ -384,6 +424,11 @@ pub struct NodeRef<'a> {
 }
 
 impl<'a> NodeRef<'a> {
+    /// The live node `id`.
+    #[inline]
+    fn at(s: &'a Scene, id: NodeId) -> NodeRef<'a> {
+        NodeRef { s, id, i: id.index() as usize }
+    }
     pub fn id(self) -> NodeId {
         self.id
     }
@@ -489,13 +534,17 @@ impl<'a> NodeRef<'a> {
             _ => None,
         }
     }
-    /// This node's provider data for `key` (ARCH-EMBED §8.4; SG2 moves it into per-key columns).
+    /// This node's provider data for `key` (ARCH-EMBED §8.4; one column per key, SG2).
     pub fn ext<T: 'static>(self, key: &ExtKey<T>) -> Option<&'a T> {
-        self.s.ext[self.i].get(key)
+        self.s.ext.get(key, self.i as u32)
+    }
+    /// When this node's entry for `key` was added and last changed.
+    pub fn ext_ticks<T: 'static>(self, key: &ExtKey<T>) -> Option<ExtTicks> {
+        self.s.ext.col(key)?.ticks(self.i as u32)
     }
     /// Every provider data key present on this node.
-    pub fn ext_block(self) -> &'a ExtBlock {
-        &self.s.ext[self.i]
+    pub fn ext_block(self) -> ExtBlock<'a> {
+        ExtBlock::new(&self.s.ext, self.i as u32)
     }
     pub fn common(self) -> &'a Common {
         self.s.common(self.i)
@@ -516,6 +565,24 @@ impl<'a> NodeRef<'a> {
 impl std::fmt::Debug for NodeRef<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "<{} {}>", self.tag(), self.id)
+    }
+}
+
+/// [`SceneRef::with_ext`]'s iterator.
+struct WithExt<'a, T> {
+    s: &'a Scene,
+    it: Option<super::ext::ColumnValues<'a, T>>,
+}
+
+impl<'a, T> Iterator for WithExt<'a, T> {
+    type Item = (NodeRef<'a>, &'a T);
+    #[inline]
+    fn next(&mut self) -> Option<Self::Item> {
+        let (id, v) = self.it.as_mut()?.next()?;
+        Some((NodeRef::at(self.s, id), v))
+    }
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.it.as_ref().map_or((0, Some(0)), |it| it.size_hint())
     }
 }
 
@@ -590,6 +657,11 @@ impl<'a> SceneMut<'a> {
         self.origin
     }
 
+    /// A new observer ([`SceneHandle::observe`] from inside a write); it sees what follows.
+    pub fn observe(&mut self, filter: ChangeFilter) -> Observer {
+        self.s.journal.observe(filter)
+    }
+
     fn owner(&self) -> Owner {
         match self.origin {
             Origin::Js => Owner::Js,
@@ -642,7 +714,7 @@ impl<'a> SceneMut<'a> {
                 return Err(SceneError::NotOwner { node: p, owner: Owner::Js });
             }
         }
-        self.s.free_subtree(id);
+        self.s.free_subtree_from(id, self.origin);
         Ok(())
     }
 
@@ -670,15 +742,12 @@ impl<'a> SceneMut<'a> {
         Some(NodeMut { s: self.s, id, i, origin: self.origin })
     }
 
-    /// Groups writes into one tick (SG2: one journal batch). A `write` is already one batch.
-    pub fn batch<R>(&mut self, _label: &'static str, f: impl FnOnce(&mut Self) -> R) -> R {
-        let was = self.s.in_batch;
-        if !was {
-            self.s.tick += 1;
-            self.s.in_batch = true;
-        }
+    /// Groups writes into one tick and one journal batch (`Change::Batch { label, .. }`). A `write`
+    /// is already one batch (labelled `write`, or `defer`); a nested batch joins the outer one.
+    pub fn batch<R>(&mut self, label: &'static str, f: impl FnOnce(&mut Self) -> R) -> R {
+        let outer = self.s.begin_batch(label);
         let r = f(self);
-        self.s.in_batch = was;
+        self.s.end_batch(outer);
         r
     }
 }
@@ -717,6 +786,8 @@ impl NodeMut<'_> {
         self.s.set_value(self.id, id, v, self.origin)
     }
 
+    /// Sets or clears state bits (built-in or a provider's [`StateBit`](crate::provider::StateBit));
+    /// a change is journaled (`Change::State`) for observers interested in one of those bits.
     pub fn set_state(&mut self, bits: impl IntoStateBits, on: bool) {
         let before = self.s.core[self.i].state;
         self.s.core[self.i].state.set(bits.state_bits(), on);
@@ -724,14 +795,14 @@ impl NodeMut<'_> {
             let t = self.s.stamp();
             self.s.core[self.i].changed = t;
             self.s.core[self.i].dirty.insert(Dirty::PAINT);
+            self.s.record_state(self.i, before, self.origin);
         }
     }
 
-    /// This node's provider data entry for `key` (get, set, remove). Marks the node changed.
+    /// This node's provider data entry for `key` (get, set, remove). Its writes stamp the node and
+    /// are journaled (`Change::Ext`).
     pub fn ext_mut<'k, T: 'static>(&'k mut self, key: &'k ExtKey<T>) -> ExtEntry<'k, T> {
-        let t = self.s.stamp();
-        self.s.core[self.i].changed = t;
-        ExtEntry::new(&mut self.s.ext[self.i], key)
+        ExtEntry::new(self.s.ext_cx(), key, self.id, self.origin)
     }
 
     /// Sets the public flags ([`NodeFlags::PUBLIC`]: `LAYOUT_BOUNDARY`, `HIT_TRANSPARENT`,
@@ -783,6 +854,7 @@ impl Scene {
         }
         .map_err(|e| PropError::Invalid(format!("<{tag}> {}: {e}", def.name)))?;
         let t = self.stamp();
+        self.record(Change::Prop { node: id, prop: PropId(prop), origin }, origin);
         let core = &mut self.core[i];
         core.changed = t;
         core.dirty.insert(Dirty::PAINT);
@@ -805,6 +877,7 @@ impl Scene {
             if !r.is_detached() {
                 self.attached(id, r);
             }
+            self.record(Change::Anchor { node: id, root: r }, origin);
         }
         if announce {
             let after = props::get_prop(&self.get(id.to_raw()).expect("live"), def).ok();

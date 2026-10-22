@@ -8,11 +8,16 @@
 //! the whole subtree when it moves between roots (O(subtree), once per such insert).
 //!
 //! [`Scene::attached`] is the attach hook (called for each node that enters a root): it derives the
-//! node's egui id from its root's id base (EM1, ARCH-EMBED §4.4, `ids.rs`). Writer lane: SCENE.
+//! node's egui id from its root's id base (EM1, ARCH-EMBED §4.4, `ids.rs`).
+//!
+//! SG2: every edit here is journaled (`Created`, `Inserted`, `Removed`, `Destroyed`, `Root`), and a
+//! freed node's extension entries are dropped with an `Ext { Removed }` record each (R19).
+//! Writer lane: SCENE.
 
 use super::access::{Origin, SceneError};
 use super::dirty::RootDirty;
-use super::id::{NodeId, RootIx};
+use super::id::{KindId, NodeId, RootIx};
+use super::journal::{Change, ExtChange, RootChange};
 use super::node::{Dirty, LayoutBox, NodeCold, NodeCore, NodeFlags, Owner, Payload, W};
 use super::{Common, Scene};
 use crate::kinds;
@@ -37,6 +42,8 @@ pub(crate) struct RootEntry {
     /// The egui id base of the root mounted here (EM1: `ids::root_base` of the embed's salt and the
     /// root's key); `None`: nodes keep the unsalted `ids::node_id` (windows, empty slots).
     pub base: Option<egui::Id>,
+    /// The viewport it is drawn in (SG2: damage routing; `Scene::root_changed` keeps it).
+    pub viewport: egui::ViewportId,
 }
 
 impl RootDirty {
@@ -114,6 +121,15 @@ fn is_js(o: Origin) -> bool {
     matches!(o, Origin::Js)
 }
 
+/// The origin of an owner's writes.
+fn origin_of(o: Owner) -> Origin {
+    match o {
+        Owner::Js => Origin::Js,
+        Owner::Rust(p) => Origin::Rust(p),
+        Owner::Host => Origin::Host,
+    }
+}
+
 impl Scene {
     /// Creates a detached node of kind index `kind` (a window: a new root of its own).
     pub(crate) fn create(&mut self, kind: usize, owner: Owner) -> Result<NodeId, SceneError> {
@@ -136,15 +152,14 @@ impl Scene {
             self.layout.push(lb);
             self.payload.push(Payload::Builtin(w));
             self.cold.push(cold);
-            self.ext.push(Default::default());
         } else {
             self.core[i] = core;
             self.children[i] = Vec::new();
             self.layout[i] = lb;
             self.payload[i] = Payload::Builtin(w);
             self.cold[i] = cold;
-            self.ext[i] = Default::default();
         }
+        self.record(Change::Created { node: id, kind: KindId(kinds::kind_id(kind)), owner }, origin_of(owner));
         if kinds::kind(kind).toplevel {
             self.add_root(TreeRoot::Window { node: id }, id);
         }
@@ -156,10 +171,22 @@ impl Scene {
     pub(crate) fn add_root(&mut self, kind: TreeRoot, top: NodeId) -> RootIx {
         let ti = self.ix(top);
         debug_assert!(self.core[ti].parent.is_none() && self.core[ti].root.is_detached());
-        let r = self.roots.add(RootEntry { kind, top, dirty: RootDirty { full: true, ..Default::default() }, size: None, base: None });
+        let r = self.roots.add(RootEntry { kind, top, dirty: RootDirty { full: true, ..Default::default() }, size: None, base: None, viewport: egui::ViewportId::ROOT });
         self.core[ti].flags.insert(NodeFlags::ROOT);
         self.set_root_subtree(top, r);
+        self.record(Change::Root { root: r, what: RootChange::Added }, Origin::Host);
         r
+    }
+
+    /// Something about root `r` changed that the embed owns (visibility, viewport): journals it, and
+    /// keeps the root's viewport for damage routing. EM2 calls it from `set_visible`/`set_viewport`.
+    #[allow(dead_code)]
+    pub(crate) fn root_changed(&mut self, r: RootIx, what: RootChange) {
+        let Some(e) = self.roots.get_mut(r) else { return };
+        if let RootChange::Viewport(vp) = what {
+            e.viewport = vp;
+        }
+        self.record(Change::Root { root: r, what }, Origin::Host);
     }
 
     /// The entry of the root whose top is the live node `h` (a slot's or a window's own root).
@@ -171,6 +198,10 @@ impl Scene {
 
     /// Ends root `r`: its tree stays, detached.
     pub(crate) fn remove_root(&mut self, r: RootIx) {
+        if self.roots.get(r).is_none() {
+            return;
+        }
+        self.record(Change::Root { root: r, what: RootChange::Removed }, Origin::Host);
         let Some(e) = self.roots.remove(r) else { return };
         if let Some(ti) = self.idx(e.top) {
             self.core[ti].flags.remove(NodeFlags::ROOT);
@@ -266,13 +297,14 @@ impl Scene {
 
     /// Takes `child` out of its parent's children, invalidating the parent's layout; its subtree
     /// is detached from its root when `detach_root`.
-    fn unlink(&mut self, child: NodeId, detach_root: bool) {
+    fn unlink(&mut self, child: NodeId, detach_root: bool, origin: Origin) {
         let ci = self.ix(child);
         let Some(p) = self.core[ci].parent else { return };
         let pi = self.ix(p);
         self.children[pi].retain(|&c| c != child);
         self.core[ci].parent = None;
         let t = self.stamp();
+        self.record(Change::Removed { parent: p, node: child }, origin);
         self.core[pi].dirty.insert(Dirty::CHILDREN);
         self.core[pi].changed = t;
         self.core[ci].changed = t;
@@ -317,7 +349,7 @@ impl Scene {
                 return Err(SceneError::Invalid(format!("handle {b} is not a child of {parent}")));
             }
         }
-        self.unlink(child, false);
+        self.unlink(child, false, origin);
         let kids = &mut self.children[pi];
         let at = before.and_then(|b| kids.iter().position(|&c| c == b)).unwrap_or(kids.len());
         kids.insert(at, child);
@@ -330,6 +362,7 @@ impl Scene {
         if self.core[ci].root != r {
             self.set_root_subtree(child, r);
         }
+        self.record(Change::Inserted { parent, node: child, before }, origin);
         self.invalidate_content(parent);
         Ok(true)
     }
@@ -342,7 +375,7 @@ impl Scene {
             return Err(SceneError::Invalid(format!("handle {child} is not a child of {parent}")));
         }
         self.may_edit(origin, &[parent, child])?;
-        self.unlink(child, true);
+        self.unlink(child, true, origin);
         Ok(())
     }
 
@@ -354,12 +387,16 @@ impl Scene {
         if let Some(p) = self.core[i].parent {
             self.may_edit(origin, &[p])?;
         }
-        self.unlink(id, true);
+        self.unlink(id, true, origin);
         if self.core[i].flags.contains(NodeFlags::ROOT) {
             let r = self.core[i].root;
             self.remove_root(r);
         }
         let kids = std::mem::take(&mut self.children[i]);
+        for &c in &kids {
+            // orphaned: journaled while both are live
+            self.record(Change::Removed { parent: id, node: c }, origin);
+        }
         for c in kids {
             let ki = self.ix(c);
             self.core[ki].parent = None;
@@ -368,15 +405,26 @@ impl Scene {
             }
         }
         let d = Destroyed { egui_id: self.core[i].egui_id, was_window: matches!(self.w(i), W::Window { .. }) };
-        self.free_slot(i);
+        self.free_slot(i, origin);
         Ok(d)
     }
 
-    fn free_slot(&mut self, i: usize) {
+    /// Frees slot `i`: its extension entries (each journaled `Ext { Removed }`, R19), then the node
+    /// (`Destroyed`), then the columns.
+    fn free_slot(&mut self, i: usize, origin: Origin) {
+        if let Some(node) = self.slots.id_at(i) {
+            let Scene { ext, journal, core, roots, tick, .. } = self;
+            ext.free(i as u32, |k| {
+                if journal.wants_ext(k) {
+                    journal.record(core, roots, Change::Ext { node, ext: k, what: ExtChange::Removed }, origin, *tick);
+                }
+            });
+            let kind = KindId(kinds::kind_id(self.core[i].kind as usize));
+            self.record(Change::Destroyed { node, kind }, origin);
+        }
         self.slots.free(i);
         self.payload[i] = Payload::Vacant;
         self.cold[i] = None;
-        self.ext[i] = Default::default();
         self.children[i] = Vec::new();
         self.core[i].flags = NodeFlags::EMPTY;
         self.counters.destroyed += 1;
@@ -385,8 +433,13 @@ impl Scene {
     /// Frees `top` and its whole subtree (a native close); returns the freed ids in pre-order
     /// (empty if `top` is not live).
     pub(crate) fn free_subtree(&mut self, top: NodeId) -> Vec<NodeId> {
+        self.free_subtree_from(top, Origin::Host)
+    }
+
+    /// [`Scene::free_subtree`] journaled as written by `origin`.
+    pub(crate) fn free_subtree_from(&mut self, top: NodeId, origin: Origin) -> Vec<NodeId> {
         let Some(ti) = self.idx(top) else { return Vec::new() };
-        self.unlink(top, true);
+        self.unlink(top, true, origin);
         if self.core[ti].flags.contains(NodeFlags::ROOT) {
             let r = self.core[ti].root;
             self.remove_root(r);
@@ -399,7 +452,7 @@ impl Scene {
         }
         for &x in &dead {
             let xi = self.ix(x);
-            self.free_slot(xi);
+            self.free_slot(xi, origin);
         }
         dead
     }

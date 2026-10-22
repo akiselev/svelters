@@ -131,6 +131,9 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         let t = arena.stamp();
         arena.core[i].changed = t;
         let prop = kinds::prop_id(kind, key);
+        // SG2: journaled as a widget's prop write
+        let node = arena.slots.id_at(i).expect("live leaf");
+        arena.record(crate::scene::Change::Prop { node, prop: crate::scene::PropId(prop), origin: crate::scene::Origin::Widget }, crate::scene::Origin::Widget);
         let s = sig("changed");
         if arena.observes(i, prop) {
             out.push(Out::Changed(h, prop));
