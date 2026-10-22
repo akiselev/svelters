@@ -695,9 +695,15 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
                 w.upgrade().is_some_and(|c| c.frame_request())
             })?,
         )?;
+        // Scripted mode reads the virtual clock: a transition there would otherwise wait for wall
+        // time while its frames fire on the virtual clock, ending only by chance before
+        // `max_virtual_timer_fires` (TK1 saw both outcomes).
+        let w = core.clone();
         native.set(
             "now",
-            Function::new(ctx.clone(), move || base.elapsed().as_secs_f64() * 1000.0)?,
+            Function::new(ctx.clone(), move || {
+                w.upgrade().and_then(|c| c.virtual_ms()).unwrap_or_else(|| base.elapsed().as_secs_f64() * 1000.0)
+            })?,
         )?;
         // An AbortSignal fired: ask the backend to cancel the operation behind a completion callback.
         let w = core.clone();

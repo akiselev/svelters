@@ -72,7 +72,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | CS0 Rust CSS engine (`svelters-style`) | DONE | 2026-10-22 | merged 1b6a754f |
 | SG4 provider passes (R16 provider half, R21, R23) | IN PROGRESS | | branch `ci/sg4`, stacked on `ci/ev2b` + `ci/sg3` |
 | LS1 + SG5 virtual lists on egui (SV40, SV47) | IN PROGRESS | | branch `ci/lists`, stacked on `ci/sg3` (+ `ci/sg4`) |
-| TK1 one-file cases across backends (SV34) | IN PROGRESS | | branch `ci/tk1` |
+| TK1 one-file cases across backends (SV34) | DONE | 2026-10-22 | merged bf82674f |
 | SV48 `Json<T>` error paths through tagged enums | IN PROGRESS | | branch `ci/sv48` |
 | H1 component HMR on the Rust loader | IN PROGRESS | | thinkpad-svelters, branch `ci/h1`, stacked on `ci/q1` |
 | LD1 loader hooks + native module providers (SV22, SV25) | IN PROGRESS | | thinkpad-svelters, branch `ci/ld1`, stacked on `ci/q1` |
