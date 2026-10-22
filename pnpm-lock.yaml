@@ -1149,6 +1149,18 @@ importers:
 
   packages/testhost: {}
 
+  packages/testkit:
+    dependencies:
+      '@svelters/build':
+        specifier: workspace:*
+        version: link:../build
+      svelte:
+        specifier: 5.57.2
+        version: 5.57.2
+      vite:
+        specifier: 8.3.4
+        version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
   packages/types:
     devDependencies:
       typescript:
@@ -1157,6 +1169,16 @@ importers:
       vite:
         specifier: 8.3.4
         version: 8.3.4(@types/node@24.19.2)(esbuild@0.28.2)(yaml@2.9.1)
+
+  tests/cases:
+    dependencies:
+      svelte:
+        specifier: 5.57.2
+        version: 5.57.2
+    devDependencies:
+      '@svelters/testkit':
+        specifier: workspace:*
+        version: link:../../packages/testkit
 
   tests/gtk-types-gc:
     dependencies:

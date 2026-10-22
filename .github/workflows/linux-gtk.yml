@@ -58,7 +58,7 @@ jobs:
       - name: Build tests
         run: >
           cargo nextest run --no-run
-          -p svelters-abi -p svelters-backend-log -p svelters-host -p svelters-compiler -p svelters-gtk -p svelters -p exports-example -p svelters-egui -p egui-kinds-example
+          -p svelters-abi -p svelters-backend-log -p svelters-host -p svelters-compiler -p svelters-gtk -p svelters -p exports-example -p svelters-egui -p egui-kinds-example -p svelters-testkit
           -p counter --no-default-features --features counter/gtk
 
       - name: nextest (GTK, egui, host, compiler)
@@ -66,7 +66,7 @@ jobs:
         run: >
           xvfb-run -a -s "-screen 0 1920x1080x24" dbus-run-session --
           cargo nextest run --no-fail-fast
-          -p svelters-abi -p svelters-backend-log -p svelters-host -p svelters-compiler -p svelters-gtk -p svelters -p exports-example -p svelters-egui -p egui-kinds-example
+          -p svelters-abi -p svelters-backend-log -p svelters-host -p svelters-compiler -p svelters-gtk -p svelters -p exports-example -p svelters-egui -p egui-kinds-example -p svelters-testkit
           -p counter --no-default-features --features counter/gtk
           -E 'not (package(counter) & test(/qt/))'
 
@@ -86,7 +86,53 @@ jobs:
             target/gallery/
             target/p5/
             target/m2b/
+            target/testkit/
             target/*.png
+
+  # TK1: the egui runs of tests/cases with `snapshot` steps rendered through wgpu on lavapipe (Mesa's
+  # software Vulkan) and compared with the committed PNGs in tests/cases/snapshots. A case whose
+  # snapshot does not exist yet records it (uploaded below; commit it).
+  egui-snapshots:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    env:
+      # Vulkan only: lavapipe. wgpu's GL fallback probes DRI devices the runner does not have.
+      WGPU_BACKEND: vulkan
+    steps:
+      - uses: actions/checkout@v4
+      - name: System packages (lavapipe, fonts)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends mesa-vulkan-drivers libvulkan1 vulkan-tools fonts-dejavu-core
+          vulkaninfo --summary | grep -iE 'deviceName|driverName' || true
+      - name: Rust toolchain (rust-toolchain.toml)
+        run: rustup toolchain install --profile minimal && rustc --version
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: linux-egui-snapshots
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-nextest
+
+      - uses: ./.github/actions/setup-pnpm
+      - name: Build svelters-compile (the cases are compiled by it)
+        run: cargo build -p svelters-compiler --bin svelters-compile
+      - name: Build the cases
+        run: pnpm --filter ./tests/cases build
+
+      - name: nextest (egui cases with snapshots)
+        timeout-minutes: 30
+        run: cargo nextest run --no-fail-fast -p svelters-testkit --features snapshots -E 'test(cases_on_egui)'
+
+      - name: Upload snapshots and results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: egui-snapshots
+          if-no-files-found: ignore
+          path: |
+            tests/cases/snapshots/
+            target/testkit/
 
   # The oldest supported GTK (docs/notes/fg1-gtk-compat.md): Ubuntu 24.04 ships GTK 4.14. The same
   # backend build must link and pass here; kinds/members newer than 4.14 are resolved at run time

@@ -1,0 +1,29 @@
+[package]
+name = "svelters-testkit"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "TK1: one .svelte test case with inline expectations, run on the log backend, egui (kittest), GTK and Qt, with a per-backend ratchet"
+
+[features]
+default = ["egui"]
+# The egui runner (`svelters_testkit::egui`): kittest, headless, no renderer.
+egui = ["dep:svelters-egui", "dep:egui_kittest"]
+# `snapshot` steps on egui: kittest renders through wgpu (lavapipe in CI) and compares with the
+# case's committed PNGs. Without it the steps are skipped and reported as such.
+snapshots = ["egui", "egui_kittest/wgpu", "egui_kittest/snapshot"]
+
+[dependencies]
+svelters-abi.workspace = true
+svelters-host.workspace = true
+svelters-backend-log.workspace = true
+serde_json.workspace = true
+# No eframe (SVP7): the runner only needs the kittest harness.
+svelters-egui = { path = "../svelters-egui", optional = true, default-features = false, features = ["kittest"] }
+egui_kittest = { version = "=0.37.0", optional = true }
+
+[dev-dependencies]
+# The tests run the egui cases whatever features the build selects (CI builds this crate in one
+# command with `--no-default-features` meant for another package), as svelters-egui does.
+svelters-testkit = { path = ".", features = ["egui"] }
