@@ -151,13 +151,13 @@ impl Widget for RadioButton {
         }
         if check {
             let new_group = if self.value.is_empty() { self.group.clone() } else { self.value.clone() };
-            if !self.checked || new_group != self.group {
-                if !cx.dispatch(&self.changed, Self::changed_args(true, &new_group)).prevented() {
-                    cx.set(&mut self.checked, true);
-                    cx.set(&mut self.group, new_group.clone());
-                }
+            let changes = !self.checked || new_group != self.group;
+            // EV1: a filter that prevents the default action leaves this button and its siblings
+            if !changes || !cx.dispatch(&self.changed, Self::changed_args(true, &new_group)).prevented() {
+                cx.set(&mut self.checked, true);
+                cx.set(&mut self.group, new_group.clone());
+                self.uncheck_siblings(cx, me, &new_group);
             }
-            self.uncheck_siblings(cx, me, &new_group);
         }
         cx.set_state(StateBits::CHECKED, self.checked);
         if ui.is_rect_visible(cx.rect()) {

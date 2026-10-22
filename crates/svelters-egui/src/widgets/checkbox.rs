@@ -112,6 +112,7 @@ pub(crate) fn icon_key(icon: &str) -> Option<IconKey> {
 /// The content of an indicator kind, laid out by P3 in the host's content box: the `indicator`
 /// part, an optional `icon` and the caption `label`, spaced by `gap` (`flex-direction`, `order`
 /// and `display: none` on the parts apply). `f` gets the items, the icon and the caption galley.
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn with_parts<'c, R>(
     ctx: &egui::Context,
     host: &StyleView<'_>,
@@ -153,6 +154,7 @@ pub(crate) fn measure_with_indicator(cx: &MeasureCx<'_>, ua: Ua, ind_name: &'sta
     with_parts(cx.ctx, &host, ind_name, &ind_v, |n| cx.part_css(n), text, icon, |items, _, _| paint::measure_parts(&host, items)) + paint::box_extra(&host)
 }
 
+#[allow(clippy::too_many_arguments)]
 /// Paints an indicator kind: the indicator box, `mark` inside it (the check, the dot, the knob),
 /// the icon and the caption, then the focus ring around the indicator (DESIGN R8).
 pub(crate) fn paint_indicator_kind(

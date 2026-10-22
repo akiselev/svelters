@@ -1,7 +1,8 @@
 # OW1a2: simple controls as svelters' own widgets (slice 2), and the default flip
 
 Lane OW1a2 (thinkpad, `ci/ow1a2`), 2026-10-22. Branched from `ci/ow1a` (slice 1, c92b9412) and merged
-with `ci/ow0` (OW0b, 6f013c72, which includes master 95f376ce). Design: ARCH-WIDGETS §1–§3, §6.1,
+with `ci/ow0` (OW0b, 6f013c72), then with `ci/ow1a` 8b754498, which carries master 2305a42d (OW0 and EV1
+merged). Design: ARCH-WIDGETS §1–§3, §6.1,
 §6.2, §7.2 (OW1a row); WIDGET-PARITY §2.1–§2.3, §2.9, §2.10, §2.16, §5; DESIGN §1–§2. Slice 1's
 record is `OW1a-basic-widgets.md`. The coordinator split the rest of OW1a into OW1a2 (this lane) and
 OW1a3 (§6).
@@ -154,6 +155,24 @@ it now asserts the own geometry (§4).
 - **Glyphs are paths** (check, dash, dot, chevron) until ICR1. `content: icon(..)` on the part
   replaces them (P2).
 - **Part styles are UA tables** until OW-CSS computes `::part()` (`TODO(OW-CSS ::part)`).
+- **Every own widget keeps its unit bits** (`style.rs::is_own` now covers every replacement, not
+  only `PAINTS_BOX` kinds). Before this change the walk cleared a checkbox's `:checked` each frame,
+  and a `checkbox:checked` rule restyled it forever (`style.rs::prop_states_and_grid`). The walk still
+  paints the CSS box and opacity of own widgets that do not paint their own. R9's disabled tooltip
+  now reaches every own widget.
+- **Hit and drawn rects.** The label's rect is its text and the unframed icon's is its glyph, as the
+  egui wrappers' were (`WidgetCx::interact_at`). Without this, a stretched label took clicks across
+  the whole row.
+- **Row checks on replaced props.** `font-weight` is range-checked for own widgets too
+  (`provider::set_replaced_prop`). A non-finite spinner `size` reads back as null.
+- **Typed `text` keys** (`scene::keys::label::TEXT` and the like) read an own widget's text mirror.
+- **Font weight.** The text primitive reports a weight family's missing glyph
+  (`fonts::weighted_family`, `FontWarning::WeightGlyph`), as the wrappers did.
+- **Separator** has no AccessKit role: it is decoration, as egui's was.
+- **EV1** landed on master: `Dispatched::prevented()` is a method now. A prevented radio click
+  leaves the siblings alone.
+- **OW0b's test widget** (`own_widgets.rs`) replaces `menu-separator` now (ow1a-lane's fix, taken
+  in the merge).
 
 ## 5. Pins and what was not run
 

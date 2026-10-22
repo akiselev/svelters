@@ -118,15 +118,15 @@ impl Widget for CollapsingHeader {
         };
         let row = egui::Rect::from_min_size(cx.rect().min, egui::vec2(cx.rect().width(), hs.y));
         // a click on the header row toggles (not one on the body's empty space)
-        let mut set = fired.expand.iter().map(|Expand::Set(v)| *v).last();
+        let mut set = fired.expand.iter().map(|Expand::Set(v)| *v).next_back();
         if fired.press.iter().any(|p| p.is_click()) && cx.enabled() && resp.interact_pointer_pos().is_none_or(|p| row.contains(p)) {
             set = Some(!self.open);
         }
-        if let Some(v) = set.filter(|v| *v != self.open) {
-            if !cx.dispatch(&self.changed, v).prevented() {
-                cx.set(&mut self.open, v);
-                cx.request_measure();
-            }
+        if let Some(v) = set.filter(|v| *v != self.open)
+            && !cx.dispatch(&self.changed, v).prevented()
+        {
+            cx.set(&mut self.open, v);
+            cx.request_measure();
         }
         cx.set_state(StateBits::EXPANDED, self.open);
         if ui.is_rect_visible(row) {
