@@ -32,7 +32,6 @@ export const TAG_SETS = [
   ["box", "collapsing-header", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "tab"],
   ["box", "collapsing-header", "frame", "inner-window", "modal", "panel", "popup", "scroll-area", "tab"],
   ["box", "collapsing-header", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "sides", "tab", "window"],
-  ["box", "collapsing-header", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "sides", "stack", "tab", "window"],
 ];
 
 export const STYLE_TABLES = {
@@ -279,7 +278,9 @@ export const STYLE_TABLES = {
       "flex-grow": {"via": "setter", "prop": "flex-grow", "native": "flex-grow", "type": "number", "kinds": ["Widget"], "tags": 20},
       "flex-shrink": {"via": "setter", "prop": "flex-shrink", "native": "flex-shrink", "type": "number", "kinds": ["Widget"], "tags": 20},
       "flex-wrap": {"via": "setter", "prop": "flex-wrap", "native": "flex-wrap", "type": "enum", "kinds": ["Box"], "tags": 22, "values": ["nowrap", "wrap", "wrap-reverse"]},
+      "font-family": {"via": "css", "type": "raw"},
       "font-size": {"via": "css", "type": "length"},
+      "font-weight": {"via": "css", "type": "font-weight"},
       "gap": {"via": "setter", "prop": "gap", "native": "gap", "type": "length", "kinds": ["Window", "Box", "Grid", "Sides"], "tags": 23},
       "grid-column": {"via": "css", "type": "raw"},
       "grid-row": {"via": "css", "type": "raw"},
@@ -289,7 +290,7 @@ export const STYLE_TABLES = {
       "justify-content": {"via": "setter", "prop": "justify-content", "native": "justify-content", "type": "enum", "kinds": ["Box"], "tags": 22, "values": ["start", "end", "center", "space-between", "space-around", "space-evenly"]},
       "justify-items": {"via": "setter", "prop": "justify-items", "native": "justify-items", "type": "enum", "kinds": ["Grid"], "tags": 0, "values": ["start", "end", "center", "stretch"]},
       "left": {"via": "setter", "prop": "left", "native": "left", "type": "length", "kinds": ["Widget"], "tags": 20},
-      "margin": {"via": "setter", "prop": "margin", "native": "margin", "type": "length", "kinds": ["Widget"], "tags": 20},
+      "margin": {"via": "css", "type": "insets"},
       "margin-bottom": {"via": "css", "type": "length"},
       "margin-left": {"via": "css", "type": "length"},
       "margin-right": {"via": "css", "type": "length"},
@@ -299,7 +300,7 @@ export const STYLE_TABLES = {
       "min-height": {"via": "setter", "prop": "min-height", "native": "min-height", "type": "length", "kinds": ["Widget"], "tags": 20},
       "min-width": {"via": "setter", "prop": "min-width", "native": "min-width", "type": "length", "kinds": ["Widget"], "tags": 20},
       "opacity": {"via": "css", "type": "number"},
-      "padding": {"via": "setter", "prop": "padding", "native": "padding", "type": "length", "kinds": ["Window", "Box", "Grid", "Sides", "Stack"], "tags": 24},
+      "padding": {"via": "css", "type": "insets"},
       "padding-bottom": {"via": "css", "type": "length"},
       "padding-left": {"via": "css", "type": "length"},
       "padding-right": {"via": "css", "type": "length"},

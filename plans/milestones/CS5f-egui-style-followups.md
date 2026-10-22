@@ -86,7 +86,9 @@ GitHub CI is the gate.
 
 ## Deferred
 
-- Absolute positioning and insets (`top`/`left`/…): after SG4 (hoisted children).
-- `box-shadow`, `line-height`, `font-style`, `text-align`; leaf box paint beyond `WidgetVisuals` for stock widgets.
+- Absolute positioning and insets: done by SG4 (bd959510; `position` and `left`/`top`/`right`/`bottom` mapped in
+  `style.rs::layout_style`, hoisting places the boxes). Still open there: `position: fixed`, `z-index` (see CS5g's
+  "SG4" section).
+- `box-shadow`: done by CS5g. Still deferred: `line-height`, `font-style`, `text-align`; leaf box paint beyond `WidgetVisuals` for stock widgets.
 - Inline `style=` setters other than margin/padding through the engine (the rest of D9's inline step).
 - Kittest snapshot gallery (needs the `wgpu` kittest feature).
