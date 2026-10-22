@@ -1806,7 +1806,8 @@
           "checkbox",
           "label",
           "slider",
-          "text-edit"
+          "text-edit",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -2009,7 +2010,8 @@
           "checkbox",
           "label",
           "slider",
-          "text-edit"
+          "text-edit",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -2166,7 +2168,8 @@
           "checkbox",
           "label",
           "slider",
-          "text-edit"
+          "text-edit",
+          "virtual-list"
         ],
         "type": "enum",
         "values": [
@@ -2188,7 +2191,8 @@
           "checkbox",
           "label",
           "slider",
-          "text-edit"
+          "text-edit",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -2217,7 +2221,8 @@
           "checkbox",
           "label",
           "slider",
-          "text-edit"
+          "text-edit",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
