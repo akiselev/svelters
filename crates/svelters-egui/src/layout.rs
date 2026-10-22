@@ -43,6 +43,19 @@ pub fn restyle(n: &mut Node) {
         margin: taffy::Rect::length(c.margin as f32),
         ..Style::default()
     };
+    // TR1 clip channel: the node occupies at most the clipped size (paint is cut at it, render.rs)
+    if let Some([cw, ch]) = n.vis.clip {
+        if cw >= 0.0 {
+            s.max_size.width = LengthPercentageAuto::length(cw);
+            s.min_size.width = LengthPercentageAuto::length(0.0);
+            s.size.width = Dimension::auto();
+        }
+        if ch >= 0.0 {
+            s.max_size.height = LengthPercentageAuto::length(ch);
+            s.min_size.height = LengthPercentageAuto::length(0.0);
+            s.size.height = Dimension::auto();
+        }
+    }
     if container {
         let column = c.flex_direction.starts_with("column");
         s.flex_direction = match c.flex_direction {

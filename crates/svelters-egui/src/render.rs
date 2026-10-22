@@ -22,6 +22,42 @@ pub fn paint(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut 
     if !n.c.visible {
         return;
     }
+    if !n.vis.is_identity() {
+        return paint_visual(arena, h, origin, ui, out);
+    }
+    paint_node(arena, h, origin, ui, out);
+}
+
+/// TR1 visual channels: the node's subtree in a child `Ui` with its opacity multiplied, its paint
+/// cut at the node's (clipped) rect, its shapes moved by the transform, and its events dropped while
+/// inert. The transform is visual only (egui's `with_visual_transform`): input still hits the
+/// layout rect, and a non-uniform scale is drawn uniform (the geometric mean).
+fn paint_visual(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+    let n = arena.n(h);
+    let v = n.vis;
+    let r = n.rect.translate(origin);
+    let mut child = ui.new_child(UiBuilder::new().max_rect(ui.max_rect()).scope_id(n.id.with("vis")));
+    if let Some(o) = v.opacity {
+        child.multiply_opacity(o.clamp(0.0, 1.0));
+    }
+    if v.clip.is_some() {
+        child.set_clip_rect(ui.clip_rect().intersect(r));
+    }
+    let mut dropped = Vec::new();
+    let sink = if v.inert { &mut dropped } else { out };
+    match v.transform {
+        Some([tx, ty, sx, sy, ox, oy]) => {
+            let s = (sx * sy).abs().sqrt();
+            let o = r.min + egui::vec2(r.width() * ox, r.height() * oy);
+            let t = egui::emath::TSTransform::new(o.to_vec2() + egui::vec2(tx, ty) - o.to_vec2() * s, s);
+            child.with_visual_transform(t, |ui| paint_node(arena, h, origin, ui, sink));
+        }
+        None => paint_node(arena, h, origin, &mut child, sink),
+    }
+}
+
+fn paint_node(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+    let n = arena.n(h);
     let r = n.rect.translate(origin);
     if matches!(n.w, W::Box | W::Window { .. }) {
         // Containers draw nothing: cull whole subtrees outside the clip rect.

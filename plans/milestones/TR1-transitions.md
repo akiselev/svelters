@@ -22,8 +22,8 @@ alternatives), `plans/architecture/backend-abi.md` (ABI v2.1 frame clock, v2.3 s
 | 4. `animate:` | Needs geometry. ABI v2.8 adds an optional `bounds` member: the layout rect in toplevel coordinates, or the natural size when the widget has not been laid out. FLIP and crossfade use it, and so does `slide`'s height. Without it, `animate:` is a no-op. |
 | 5. Driving | JS calls one style op per changed channel per element per frame (about 1.5 µs of host and ABI time each). Native interpolation from keyframes is not needed yet. The ABI leaves room for it (section 5). |
 
-ABI: **v2.8, additive.** Style ops `SVL_STYLE_TRANSFORM` (7), `SVL_STYLE_CLIP` (8) and
-`SVL_STYLE_INERT` (9) are new codes on the existing optional `style` member. One optional backend
+ABI: **v2.8, additive.** Style ops `SVL_STYLE_TRANSFORM` (8), `SVL_STYLE_CLIP` (9) and
+`SVL_STYLE_INERT` (10) are new codes on the existing optional `style` member. One optional backend
 member, `bounds`, is appended last.
 
 ## 1. The core: reuse Svelte's transition runtime
@@ -194,9 +194,9 @@ toolkit has.
 | Channel | CSS it comes from | Style op | Payload |
 | --- | --- | --- | --- |
 | opacity | `opacity` | `SVL_STYLE_OPACITY` (4, exists since v2.3) | `"0".."1"`; `NULL` restores 1 |
-| transform | `transform` (`translate[X/Y]`, `scale[X/Y]`, `none`); `transform-origin` | `SVL_STYLE_TRANSFORM` (7, new) | `"tx ty sx sy ox oy"`: px, px, factor, factor, origin as fractions of the size (default `0.5 0.5`); `NULL` = identity |
-| clip | `height`/`width` with `overflow: hidden` (what `slide` emits) | `SVL_STYLE_CLIP` (8, new) | `"w h"` in px, `-1` = that axis unclipped; `NULL` = none. The element takes this much layout space and its content is cut at it. |
-| inert | the facade's `inert` | `SVL_STYLE_INERT` (9, new) | `"1"` or `NULL` |
+| transform | `transform` (`translate[X/Y]`, `scale[X/Y]`, `none`); `transform-origin` | `SVL_STYLE_TRANSFORM` (8, new) | `"tx ty sx sy ox oy"`: px, px, factor, factor, origin as fractions of the size (default `0.5 0.5`); `NULL` = identity |
+| clip | `height`/`width` with `overflow: hidden` (what `slide` emits) | `SVL_STYLE_CLIP` (9, new) | `"w h"` in px, `-1` = that axis unclipped; `NULL` = none. The element takes this much layout space and its content is cut at it. |
+| inert | the facade's `inert` | `SVL_STYLE_INERT` (10, new) | `"1"` or `NULL` |
 
 Other declarations are handled as follows:
 
@@ -278,7 +278,7 @@ re-polishes the widget's stylesheet. Both are far costlier than a property write
 - **transform** (translate and scale): GTK, Qt, AppKit and WinUI. egui follows later. This gives
   `fly`, `scale` and FLIP.
 - **clip**: Qt (exact) and GTK (approximated), for `slide`. egui follows later.
-- **blur**: reserved (op 10 is not assigned yet). `blur` degrades to its opacity part.
+- **blur**: reserved (op 11 is not assigned yet). `blur` degrades to its opacity part.
 - **`draw`** is SVG-only and is not provided. Importing it is a build error, because the native
   module does not export it.
 

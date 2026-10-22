@@ -483,7 +483,7 @@ int (*style)(void *self, uint32_t op, svl_handle h, const svl_value *v);
 
 Ordering: the first styling use of an app sends `SHEET` with `NULL` (so a hot-reloaded bundle drops sheets of modules that no longer exist), then `SCHEME`, then the token layer, then sheets, then per-element ops. Apps that never use styling send nothing. Dead widget handles are a no-op in the host.
 
-Op log lines: `style #h classes|name|inline|opacity <json|null>`, `style sheet "<id>" <json text|null>` (id `*` = clear), `style scheme "<scheme>" <number of palette pairs>`.
+Op log lines: `style #h classes|name|inline|opacity|transform|clip|inert <json|null>` (the last three: ABI v2.8), `style sheet "<id>" <json text|null>` (id `*` = clear), `style scheme "<scheme>" <number of palette pairs>`.
 
 ### Toplevels in the tree (X7)
 
@@ -774,6 +774,56 @@ int (*start)(void *self, const svl_host *host);
   Android backends implement `start` and checkpoint once the platform has brought the UI up
   (docs/notes/ios-uikit-backend.md §2.2 decision I1, docs/notes/android-backend.md A2); egui
   embedding uses it as plans/research/EGUI.md §8 D1 describes.
+
+### ABI v2.8 additive (TR1): visual channels and bounds
+
+Status: TR1 (2026-10-22). Three new `style` op codes and one nullable member at the end of
+`svl_backend`; `svl_host` is unchanged. `SVL_ABI_VERSION` stays 3: like v2.1 to v2.7, this is an
+additive minor step, and a backend built against v2.7 keeps working (fallbacks below). Design and
+record: `plans/milestones/TR1-transitions.md`.
+
+```c
+/* style ops (the X6 `style` member), after ST2's SVL_STYLE_DECLS = 7 */
+SVL_STYLE_TRANSFORM = 8, /* widget h: "tx ty sx sy ox oy"; NULL = identity */
+SVL_STYLE_CLIP = 9,      /* widget h: "w h"; NULL = none */
+SVL_STYLE_INERT = 10,    /* widget h: "1"; NULL = restore */
+
+/* backend, after start. NULL = no geometry. */
+int (*bounds)(void *self, svl_handle h, double *out); /* out[4] = x, y, width, height */
+```
+
+| Op | Payload | Meaning |
+| --- | --- | --- |
+| `SVL_STYLE_OPACITY` 4 (v2.3) | `0`..`1` | Also the opacity channel of a running transition (`fade`, the opacity part of every built-in). |
+| `SVL_STYLE_TRANSFORM` 8 | `tx ty sx sy ox oy` | Paint-only translate (logical px) and scale (factors) around an origin given as fractions of the element's size (`0.5 0.5` = centre). `NULL` = identity. `fly`, `scale`, `flip`, `crossfade`. |
+| `SVL_STYLE_CLIP` 9 | `w h` | The element occupies at most `w` x `h` logical px of layout and its paint is cut there; `-1` leaves that axis free. `NULL` = none. `slide`. |
+| `SVL_STYLE_INERT` 10 | `1` | No pointer input or focus for the element's subtree (an outroing element). `NULL` restores what was there before. The runtime also drops events of inert nodes itself, so this op is a refinement. |
+
+- **Who sends them.** Only the TR1 animation player (`packages/native-runtime/src/motion.js`): one op
+  per changed channel per element per frame of the ABI v2.1 frame clock, and a final `NULL` when
+  the animation ends. Static styling never uses 8 to 10.
+- **`bounds(self, h, out)`**: the layout rect of `h` in its toplevel's coordinates, logical px. A
+  widget not laid out yet reports `x = y = 0` and its natural size. `0` ok, `< 0` + `last_error`.
+  JS: `host.bounds(h)` returns `[x, y, w, h]` or `null` (dead handle, or the member is NULL).
+  `animate:flip`, `crossfade` and `slide`'s size read it.
+- **Fallback for older backends.** A backend that answers `< 0` for an op (or has no `style`
+  member) loses that channel only: the runtime warns once per op in dev and stops sending it,
+  while the transition's timing, events and `tick` still run and an outroing element is still
+  removed when its outro ends. A NULL `bounds` makes `animate:` and `crossfade` no-ops and `slide`
+  animate from size 0. A backend that answers `0` without acting on an op (AppKit today) shows
+  nothing for it, with the same timing guarantees; WinUI has no `style` member, so every channel
+  is dropped there.
+- **Backends.** GTK: transform and clip as CSS on a provider owned by the widget (`transform`,
+  `transform-origin`; clip approximated by a negative margin plus a scale, decision D3), inert as
+  `can-target`/`can-focus`, `bounds` from `gtk_widget_compute_bounds` against the root (or
+  `measure`). Qt: one `QGraphicsOpacityEffect` subclass carries opacity and paints the source
+  through a `QTransform`; clip is `maximumWidth`/`Height` (restored after); inert is
+  `WA_TransparentForMouseEvents` + `NoFocus`; `bounds` maps to the window after
+  `QLayout::activate`. egui: channels are paint state on the scene node (opacity multiplied into
+  the subtree's `Ui`, transform through `Ui::with_visual_transform`, clip as a taffy max size and a
+  clip rect, inert drops the subtree's events); `bounds` lays out a dirty window synchronously and
+  returns the node's rect. Log backend and TestHost: op-log lines. AppKit (ops accepted and
+  ignored) and WinUI (no `style` member): no channels and no geometry yet (follow-ups).
 
 ## ABI v3: value model (M3)
 
