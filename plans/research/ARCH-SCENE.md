@@ -25,6 +25,14 @@ Short names for cadatomic sources (all under `~/projects/cadatomic/docs/`), as i
 | editor | `research/2026-10-22-code-editor-and-lsp.md` |
 | decisions | `plan/00-decisions.md` |
 
+## Decided (user, 2026-10-22, by default; to revisit)
+
+The user's standing instruction for the overnight work: take the recommendation on every open question and
+revisit later. So S1–S12 in §15 are each taken as option **(a)** and are open to revisiting. The milestones in §14
+follow from them: SG0 goes into EG0 as the §13 file cut, and SG1–SG3 sit on SC1's path with EM1 and RA1. Every
+other SG milestone comes after SC1. cadatomic (main-cadatomic) reviews this doc for cadatomic's needs. Its
+corrections are recorded here once both coordinators agree.
+
 ## Binding inputs
 
 - **User (svelters CLAUDE.md, 2026-10-21/22):** one retained scene, owned by svelters-egui; cadatomic extends it
