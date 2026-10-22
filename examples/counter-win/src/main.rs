@@ -6,6 +6,9 @@
 //! counter-win --na-fixture <title>
 //! ```
 //!
+//! `--stall-ms <ms>` blocks the UI thread for that long before the loop starts (a slow first frame), so every
+//! selftest timer is already due when the loop begins; the selftest must pass that way too (WG3w).
+//!
 //! Without `--selftest` it opens the window and runs until the user closes it. `--selftest`
 //! (counter-win fixture; `--fixture winui-types` has its own checks, N4) drives the app through the real toolkit: clicks the button three
 //! times through UI Automation, types a name, moves the slider, checks the box, then reads the
@@ -55,10 +58,11 @@ mod win {
         timeout: f64,
         start_test: Option<String>,
         na_fixture: Option<String>,
+        stall_ms: u64,
     }
 
     fn parse() -> Result<Args, String> {
-        let mut a = Args { fixture: "counter-win".into(), selftest: false, report: None, timeout: 60.0, start_test: None, na_fixture: None };
+        let mut a = Args { fixture: "counter-win".into(), selftest: false, report: None, timeout: 60.0, start_test: None, na_fixture: None, stall_ms: 0 };
         let mut it = std::env::args().skip(1);
         while let Some(x) = it.next() {
             match x.as_str() {
@@ -68,6 +72,7 @@ mod win {
                 "--timeout" => a.timeout = it.next().ok_or("--timeout needs seconds")?.parse().map_err(|_| "bad --timeout")?,
                 "--start-test" => a.start_test = Some(it.next().ok_or("--start-test needs a mode")?),
                 "--na-fixture" => a.na_fixture = Some(it.next().ok_or("--na-fixture needs a title")?),
+                "--stall-ms" => a.stall_ms = it.next().ok_or("--stall-ms needs milliseconds")?.parse().map_err(|_| "bad --stall-ms")?,
                 "-h" | "--help" => return Err("usage: counter-win [--fixture <name|dir>] [--selftest] [--report <json>] [--timeout <secs>]".into()),
                 other => return Err(format!("unknown argument {other:?}")),
             }
@@ -609,6 +614,11 @@ mod win {
                 eprintln!("[counter-win] scheduling the selftest: {e}");
                 return 3;
             }
+        }
+        if args.stall_ms > 0 {
+            // A UI thread busy before its loop starts, as a slow first frame on CI's software-rendered runners
+            // (WG3w: the selftest's timers are all due when the loop starts).
+            std::thread::sleep(std::time::Duration::from_millis(args.stall_ms));
         }
         let ran = host.run();
         for e in host.take_errors() {

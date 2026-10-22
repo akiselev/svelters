@@ -35,7 +35,7 @@ if [ "${1:-}" = sync ]; then
   branch=$(git -C "$here" rev-parse --abbrev-ref HEAD)
   common=$(cd "$here" && cd "$(git rev-parse --git-common-dir)" && pwd)
   src=$(wslpath -w "$common")
-  run_ps "git -c safe.directory='*' fetch --quiet '$src' 'refs/heads/${branch}:refs/remotes/wsl/${branch}'; if (\$LASTEXITCODE) { exit \$LASTEXITCODE }; git switch --quiet '$branch' 2>\$null; if (\$LASTEXITCODE) { git switch --quiet -c '$branch' 'wsl/$branch' }; git merge --ff-only --quiet 'wsl/$branch'; git log --oneline -1"
+  run_ps "git -c safe.directory='*' fetch --quiet '$src' 'refs/heads/${branch}:refs/remotes/wsl/${branch}'; if (\$LASTEXITCODE) { exit \$LASTEXITCODE }; git switch --quiet '$branch' 2>\$null; if (\$LASTEXITCODE) { git switch --quiet -c '$branch' 'wsl/$branch' }; git merge --ff-only --autostash --quiet 'wsl/$branch'; git log --oneline -1"
 fi
 
 if [ "${1:-}" = cargo ] && [[ "${2:-}" =~ ^(check|clippy|metadata|tree|locate-project)$ ]]; then
