@@ -32,8 +32,16 @@ fn every_prop_is_observable_and_host_writes_never_echo() {
                     kinds::Ty::Bool => Value::Bool(!matches!(rig.get(h, p.name), Value::Bool(true))),
                     kinds::Ty::F64 => Value::F64(3.0),
                     kinds::Ty::I64 => Value::I64(3),
+                    // WG1: a grid template is validated on write
+                    kinds::Ty::Str if p.name == "grid-template-columns" => Value::Str("1fr 2fr".into()),
+                    // WG2b: a canvas display list is validated on write
+                    kinds::Ty::Str if p.name == "ops" => Value::Str("[[\"fillRect\",0,0,1,1]]".into()),
+                    // WG4b: the pickers' values are validated on write
+                    kinds::Ty::Str if tag == "date-picker" && p.name == "value" => Value::Str("2026-10-22".into()),
+                    kinds::Ty::Str if tag == "color-picker" && p.name == "value" => Value::Str("#123456".into()),
                     kinds::Ty::Str => Value::Str("x".into()),
                     kinds::Ty::Enum(vals) => Value::Str(vals[vals.len() - 1].into()),
+                    kinds::Ty::StrList => Value::List(vec![Value::Str("x".into())]),
                     kinds::Ty::Provider => continue, // RA1: no provider kinds in this binary
                 };
                 br.set_prop(h, id, &v).unwrap();

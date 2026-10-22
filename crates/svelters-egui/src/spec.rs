@@ -35,6 +35,7 @@ fn ty_name(ty: Ty) -> &'static str {
         Ty::I64 => "i64",
         Ty::Str => "string",
         Ty::Enum(_) => "enum",
+        Ty::StrList => "list",
         Ty::Provider => "other",
     }
 }
@@ -76,6 +77,9 @@ fn prop_json(k: &KindDef, p: &PropDef) -> J {
     m.insert("type".into(), json!(ty_name(p.ty)));
     if let Ty::Enum(values) = p.ty {
         m.insert("values".into(), json!(values));
+    }
+    if p.ty == Ty::StrList {
+        m.insert("of".into(), json!("string"));
     }
     m.insert("writable".into(), json!(true));
     J::Object(m)
@@ -144,25 +148,41 @@ fn kind_json(k: &KindDef) -> J {
     // Two-way bindings for what the widget changes: the `changed` signal carries the new value;
     // the scene never echoes a host write. Provider kinds declare none: their bound props are
     // `exact`/`delivery` (written only through `WidgetCx::set`), so `bind:` lowers onto observation.
+    // The value is the `changed` argument named like the prop (WG1: `scroll-area`'s carries both
+    // offsets), else argument 0.
+    // WG2a: a kind without `changed` binds through its first signal with an argument named like the
+    // prop (`action`'s `toggled`, as on GTK and Qt).
+    let bind_signal = |p: &PropDef| {
+        k.signals.iter().find(|s| s.name == "changed").or_else(|| k.signals.iter().find(|s| s.args.iter().any(|(n, _)| *n == p.name)))
+    };
     let bindings: Map<String, J> = k
         .props
         .iter()
         .filter(|p| p.native == Native::Widget && provider.is_none())
         .map(|p| {
+            let sig = bind_signal(p);
+            let event = sig.map_or("changed", |s| s.name);
+            let arg = sig.map_or(&[][..], |s| s.args).iter().position(|(n, _)| *n == p.name).unwrap_or(0);
+            // the widget itself changes a written value (a slider's range, a scroll offset's extent)
+            let normalizes = matches!(p.key, kinds::P::Value | kinds::P::ScrollX | kinds::P::ScrollY)
+                // WG2b: a range slider keeps low <= high within its bounds; a radio button with a
+                // `value` derives `checked` from `group`
+                || matches!(p.key, kinds::P::Low | kinds::P::High)
+                || (k.id == "RadioButton" && p.key == kinds::P::Checked);
             (
                 p.name.to_string(),
                 json!({
                     "compare_before_set": true,
                     "direction": "two_way",
                     "echo": "none",
-                    "event": "changed",
+                    "event": event,
                     "lifetime": {"on_destroy": "idempotent_disconnect", "on_native_death": "end_binding", "on_stale_update": "warn_noop"},
-                    "natively_normalizes": p.key == kinds::P::Value,
+                    "natively_normalizes": normalizes,
                     "property": p.name,
-                    "provenance": format!("svelters-egui: the {} widget writes {} into the node during the pass; `changed` carries it (arg 0), set_prop never announces", k.native, p.name),
-                    "read_back": p.key == kinds::P::Value,
+                    "provenance": format!("svelters-egui: the {} widget writes {} into the node during the pass; `{event}` carries it (arg 0), set_prop never announces", k.native, p.name),
+                    "read_back": normalizes,
                     "sync_signals_on_set": [],
-                    "value": {"arg": 0},
+                    "value": {"arg": arg},
                 }),
             )
         })
@@ -171,10 +191,10 @@ fn kind_json(k: &KindDef) -> J {
         json!({
             "default_slot": slot,
             "policy": "ordered",
-            "slots": {slot: {"accepts": ["Widget"], "attrs": {}, "many": true, "order": "before_sibling", "route_by_kind": false}},
+            "slots": {slot: {"accepts": kinds::slot_accepts(k.id), "attrs": {}, "many": true, "order": "before_sibling", "route_by_kind": false}},
         })
     });
-    json!({
+    let mut kj = json!({
         "abstract": k.tag.is_none(),
         "bindings": bindings,
         "chain": chain,
@@ -189,7 +209,12 @@ fn kind_json(k: &KindDef) -> J {
         "provenance": {"kind": if provider.is_some() { k.native } else { "crates/svelters-egui/src/kinds/builtin.rs" }},
         "signals": signals,
         "text_content": k.text_content,
-    })
+    });
+    // WG2a: `context-menu` and `popup` attach to the element they are declared in
+    if let Some(t) = kinds::attaches_to(k.id) {
+        kj.as_object_mut().expect("kind object").insert("attaches_to".into(), json!(t));
+    }
+    kj
 }
 
 /// The style table (D3): every layout prop is a setter, so `<style>` rules can use the CSS names
@@ -209,6 +234,7 @@ fn style_json() -> J {
                 let value = match p.ty {
                     Ty::Bool => "bool",
                     Ty::Enum(_) => "enum",
+                    Ty::Str => "string",
                     Ty::F64 if matches!(p.key, kinds::P::FlexGrow | kinds::P::FlexShrink) => "number",
                     _ => "length",
                 };
@@ -424,6 +450,7 @@ fn ts_of(ty: Ty) -> String {
         Ty::F64 | Ty::I64 => "number".into(),
         Ty::Str => "string".into(),
         Ty::Enum(values) => values.iter().map(|v| format!("'{v}'")).collect::<Vec<_>>().join(" | "),
+        Ty::StrList => "string[]".into(),
         Ty::Provider => "unknown".into(),
     }
 }
@@ -508,7 +535,7 @@ export type ForwardFrom<C extends Component<any, any> | SvelteComponent, Event e
 type WithAttrs<E> = { [K in keyof E]: EguiAttrs<E[K]> };
 // Tags that are also HTML elements keep svelte-check's own HTML entry, which `extends` cannot
 // override; it merges `HTMLAttributes` into each of them, so their egui props go there.
-type EguiHtmlNamedProps = EguiAttrs<EguiElements['button']> & EguiAttrs<EguiElements['label']>;
+type EguiHtmlNamedProps = EguiAttrs<EguiElements['button']> & EguiAttrs<EguiElements['label']> & EguiAttrs<EguiElements['table']>;
 
 declare global {
   namespace svelteHTML {

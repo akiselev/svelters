@@ -179,3 +179,158 @@ module and the focus policies above. The decision is W4's owner's.
   backend).
 - Qt 6.11 (CI's version) has no golden yet; importing CI's capture from the `linux-qt-artifacts` artifact makes
   CI check Qt determinism too.
+
+(WG3b below closes the first, third and fourth items for pins 4–6; pins 8–10, Windows and macOS remain.)
+
+## WG3b (2026-10-22): GtkEntry selection fidelity, pins 4–6, Qt 6.11 golden
+
+### GtkEntry `cursor-position`/`selection-bound` (coordinator decision: fix the backend)
+
+`crates/svelters-gtk/src/backend.rs` `editable_delegate`: GtkEditable `cursor-position` and `selection-bound`
+of an editable with a delegate (GtkEntry, GtkSpinButton, GtkPasswordEntry, GtkSearchEntry, GtkEditableLabel) are
+read and observed on the delegate, the inner GtkText. The wrapper's own values come from
+`gtk_editable_delegate_get_property`, which reports a selection as (start, end). GtkText holds the real caret and
+anchor and notifies both. Observation connects `notify::<prop>` on the delegate (`Target::Delegate` in
+`backend/observe.rs`; the delegate is fixed for the widget's lifetime, so nothing re-targets). GtkText itself has
+no delegate and reads its own; both props are read-only, so writes are unchanged. The facts
+(`metadata/observe/gtk.json`) are unchanged and stay `exact`. The one manual fact that encoded the old reading,
+`Gtk:Editable:method:select_region`, now expects `select_region(1, 3)` to give caret 3 and anchor 1
+(`metadata/overrides/gtk/Editable.yaml`; `generated/verify.rs` and `facts.json` regenerated with
+`gen_backend.py`).
+
+`metadata/gtk/Editable.json` (the merged record) was updated to match the override field for field. `ingest.py`
+needs PyGObject, which is not on the WSL PC, and it would re-ingest against GTK 4.24.1 instead of the metadata's
+4.22.4. The ledger entry was re-verified with `ledger.py`'s own `run_gtk`, limited to the changed fact plus the
+`observe_gtk_editable` table (9 tests, all pass). `ledger.py check --toolkit gtk` passes.
+
+The capture now reads caret and anchor through the backend and fails if they differ from the GtkText's. On GTK
+4.24.1:
+
+| Evidence | WG3 (10 pins) | WG3b (18 pins) |
+|---|---|---|
+| entry props equal to the GtkText's | 243 / 288 checkpoints | **486 / 486** |
+| `selection-bound` changes announced | 66 / 104 | **130 / 130** |
+| `cursor-position` changes announced | 79 / 82 | **181 / 181** |
+| `text`, window `focus-widget` | 33/33, 14/14 | 83/83, 17/17 |
+
+The checkpoint lines of pins 1–3 and 7 in `gtk-4.24.1.json` are unchanged (they were already read from the
+GtkText).
+
+### Harness additions
+
+- Pin format (`pins.rs`): `{"type": text}` types one key per character. `"button": 2` on a click is the middle
+  button (label `middle-click …`). `setup.clipboard` puts text on CLIPBOARD, owned by another client.
+  `observe: ["clipboard", "primary"]` adds those pseudo-anchors to every checkpoint as `{"text":…}` (in traces,
+  `state #18446744073709551614` and `…613`). Existing pins' labels and lines are unchanged, so `HARNESS_VERSION`
+  stays `na1-v1`.
+- Key table: `undo`, `redo` (Linux Ctrl+Shift+Z), `redo-alt` (Linux Ctrl+Y), `copy`/`cut`/`paste`, the CUA chords
+  `copy-alt` (Ctrl+Insert), `cut-alt` (Shift+Delete), `paste-alt` (Shift+Insert), `dead-acute`, `dead-diaeresis`,
+  `unicode-entry` (Ctrl+Shift+U, Linux only), `space`, `return`. Windows and macOS have their own chords (see the
+  table's note).
+- XTEST injector (`xtest.rs`): typed characters come from the server keymap (Shift for the second column). Dead
+  keys are bound to unused keycodes because the Xvfb keymap has none; toolkits reload their keymap on the
+  MappingNotify. CLIPBOARD and PRIMARY are read with `ConvertSelection` (UTF8_STRING) from the capture's own
+  connection while the toolkit loop is pumped, and both are cleared at the start of every pin. The clipboard seed
+  is served by a thread with its own X connection: Qt's xcb clipboard blocks its thread while it reads.
+- Input methods are fixed for captures: `GTK_IM_MODULE=gtk-im-context-simple`, `QT_IM_MODULE=compose`,
+  `XMODIFIERS` unset. These are the toolkits' built-in methods with no IM server; each golden records its setting.
+  A real IBus or Fcitx under Xvfb (survey NA4) is not covered.
+
+### Pins 4–6
+
+| Pin | Script | Checkpoints | What it pins |
+|---|---|---|---|
+| 4 | undo-typing | 11 | one typing run with spaces, undo to empty, redo with both chords |
+| 4 | undo-edits | 21 | grouping across a word deletion, typing, backspaces, a caret move, typing over select-all |
+| 4 | undo-paste | 10 | a paste between two typing runs (clipboard seeded) |
+| 5 | clipboard-keys | 20 | Ctrl+C/X/V and the CUA chords, with the clipboard after each step |
+| 5 | paste-multiline | 4 | LF, CRLF and a tab pasted into a single-line field |
+| 5 | primary | 8 | mouse and keyboard selection as PRIMARY, middle-click paste at the pointer, CLIPBOARD untouched |
+| 6 | dead-keys | 12 | dead acute/diaeresis + letter, + space, + a letter that does not compose, + BackSpace |
+| 6 | unicode-entry | 13 | Ctrl+Shift+U hex entry: text during the preedit, commit with space and Enter, cancel with Escape, BackSpace |
+
+The preedit itself is not observed (GTK has no public read of it). The checkpoints show the committed text, which
+stays unchanged while a composition is open.
+
+Both goldens were re-captured with all 18 scripts (243 checkpoints). Each reproduced byte for byte on a second
+capture (WSL PC, private Xvfb).
+
+Native findings (W1 counts both toolkits as native):
+
+1. **Undo grouping differs between the toolkits.** GTK makes one step per word of a typing run (`foo bar baz`
+   undoes as `foo bar`, `foo`, `""`). Qt makes the whole run one step. Both split steps at deletions, caret moves
+   and pastes, and a paste is its own step. undo-edits takes 7 undos to reach the setup text on GTK and 4 on Qt.
+   Ctrl+Y redoes on both. GTK restores a replaced select-all with its direction reversed (`[15,0]`).
+2. **Clipboard:** Ctrl+C/X/V and the CUA chords (Ctrl+Insert, Shift+Insert, Shift+Delete) behave the same on
+   both. **Multi-line paste keeps LF, CRLF and the tab verbatim** in a single-line GtkEntry and QLineEdit.
+3. **PRIMARY:** both put a mouse selection (double-click, drag) and a keyboard selection (select-all) into
+   PRIMARY. Middle-click pastes it at the pointer and focuses the field; CLIPBOARD is untouched. When the selection
+   collapses (`line-end`), GTK drops PRIMARY (`""`) and Qt keeps the old text. After a middle-click into the other
+   field, GTK keeps the first field's selection and Qt collapses it (as in pin 3).
+4. **Dead keys:** a composable letter and space agree (`é`, `ü`, `'`). On a letter that does not compose, GTK's
+   simple context gives the letter plus U+0301 (`x́`) and Qt's compose plugin drops the accent (`x`). Dead key +
+   BackSpace: GTK cancels the composition only; Qt cancels it and deletes a character.
+5. **Ctrl+Shift+U is GTK-only** (without an IM server). GTK commits `日` on space and `B` on Enter, and Escape
+   cancels with focus kept. Qt types the hex digits literally.
+6. **Qt observe evidence:** `selectedText` was announced 93 times for 96 changes. Pins 1–3 and 7 alone gave
+   69/69, so the 3 missed changes come from pins 4–6, likely undo/redo restoring a selection [unverified which
+   checkpoints]. The R0 fact calls `QLineEdit:selectedText` exact; this is reported, not fixed.
+   `cursor-position` 167/167, `text` 82/82 and `focus` 34/34 were all announced.
+
+### Qt 6.11.3 golden (CI)
+
+`conformance/golden/linux/qt-6.11.3.json` was imported unchanged from the `linux-qt-artifacts` artifact of run
+39807534068 (`ci/wg3b` at 904d223b, aqt Qt 6.11.3, ubuntu-24.04). Its fingerprints are current, and all 243 of its
+checkpoints equal the local Qt 6.12.0 golden: no behaviour difference between the two Qt versions on any pin.
+Its observe evidence (`selectedText` 93/96, everything else complete) and its settings (Fusion, xcb, 400 ms / 5 px
+double-click, 10 px drag, `QT_IM_MODULE=compose`) are also identical. From now on, CI's Qt capture compares
+itself byte for byte with this file, so CI checks Qt determinism. When aqt resolves `6.11.*` to a newer patch
+release, the capture finds no golden, passes with a note, and the new file can be imported the same way.
+
+### W4: egui `TextEdit` on pins 4–6
+
+Same method as for pins 1–3 and 7 (`egui_measure.rs`). Input follows egui-winit 0.37 on Linux, as described in the
+test's header: Ctrl+X/C/V become `Cut`/`Copy`/`Paste`, output commands set the clipboard and PRIMARY, and a middle
+press sends `MiddleClickPaste`. The dead-key rows are a model of winit's X11 compose path, not a measurement.
+
+| Pin | Script | Checkpoints | = GTK 4.24.1 (first difference) | = Qt 6.12.0 (first difference) | = either |
+|---|---|---|---|---|---|
+| 4 | undo-typing | 11 | 6 (#2 `undo`) | **11** | 11 |
+| 4 | undo-edits | 21 | 12 (#10 `undo`) | 10 (#10 `undo`) | 12 |
+| 4 | undo-paste | 10 | 6 (#4 `undo`) | 6 (#4 `undo`) | 6 |
+| 5 | clipboard-keys | 20 | 12 (#12 `copy-alt`) | 12 (#12 `copy-alt`) | 12 |
+| 5 | paste-multiline | 4 | 1 (#1 `paste`) | 1 (#1 `paste`) | 1 |
+| 5 | primary | 8 | 2 (#2 `middle-click b@2 x1`) | 5 (#5 `select-all`) | 5 |
+| 6 | dead-keys [model] | 12 | 8 (#8 `type "x"`) | **12** | 12 |
+| 6 | unicode-entry | 13 | 1 (#1 `unicode-entry`) | 1 (#1 `unicode-entry`) | 1 |
+| | **pins 4–6** | **99** | **48** | **58** | **60** |
+| | pins 1–3, 7 (WG3, unchanged) | 144 | 85 | 75 | 99 |
+| | **all 18 scripts** | **243** | **133** | **133** | **159** |
+
+The gap, per pin:
+
+- **Pin 4, undo.** egui's `Undoer` groups by time, not by edit kind: it saves an undo point once the text has been
+  stable for `stable_time` (1 s, the egui 0.37 default). A run typed without a pause is one step, which matches
+  Qt and differs from GTK's per-word steps. Everything else in undo-edits and undo-paste also happened within one
+  second, so one undo returns to the setup text and one redo restores everything. Both toolkits split at
+  deletions, caret moves and pastes. This is undo-point policy, which svelters-egui could set per edit kind
+  through `TextEditState`'s undoer; it is not the editing core.
+- **Pin 5, clipboard.** Ctrl+C/X/V match both toolkits. Gaps:
+  - egui-winit treats the CUA chords as clipboard commands only on Windows. On Linux, Ctrl+Insert and
+    Shift+Insert do nothing, and Shift+Delete deletes without copying. This is input-layer key mapping.
+  - A single-line `TextEdit` turns line breaks into spaces; both toolkits keep them. This is a policy choice, and
+    egui's is arguably the better one.
+  - egui 0.37 has PRIMARY (`TextSelectionSettled`, `MiddleClickPaste`), and mouse selection and middle-click
+    paste match Qt. A keyboard select-all does not become PRIMARY, though it does on both toolkits (W5).
+- **Pin 6, IME.** Dead-key composition happens in the platform input layer (XIM or xkbcommon under winit), not in
+  `TextEdit`. With the model following the X Compose table, egui equals Qt's compose plugin; GTK differs on a
+  letter that does not compose and on BackSpace. For Ctrl+Shift+U, egui has no hex entry (GTK has one built in,
+  Qt does not). It also hits `TextEdit`'s Ctrl+U binding (delete to line start), which ignores Shift. Then Escape
+  drops focus (pin 7's policy gap), so the rest of the script types into nothing. Preedit handling (`Event::Ime`)
+  needs an IM server or recorded input traces (survey §4.4, NA4) and is not measured.
+
+**Reading for W4 (numbers only, not a decision).** On pins 4–6, egui matches Qt on 58 of 99 checkpoints and GTK on
+48. Across all 18 scripts it matches each toolkit on 133 of 243 checkpoints and either one on 159. The largest
+new gaps are undo-point policy (pin 4), the Linux CUA chords and keyboard PRIMARY (pin 5), and the Ctrl+U binding
+plus Escape focus (pin 6). Each sits in svelters-egui's kind code, egui-winit's key mapping or `TextEdit` options,
+not in the editing core. W4's owner decides.

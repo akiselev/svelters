@@ -1,0 +1,20 @@
+{
+  "id": "primary",
+  "pin": 5,
+  "title": "Linux primary selection: a mouse or keyboard selection becomes PRIMARY, middle-click pastes it at the pointer; CLIPBOARD is untouched",
+  "setup": {
+    "fields": { "a": { "text": "primary source words", "sel": [0, 0] }, "b": { "text": "dest", "sel": [0, 0] } },
+    "focus": "a",
+    "clipboard": "clip"
+  },
+  "observe": ["clipboard", "primary"],
+  "steps": [
+    { "click": "a", "at": 9, "count": 2 },
+    { "click": "b", "at": 2, "count": 1, "button": 2 },
+    { "drag": "b", "from": 0, "to": 3, "count": 1 },
+    { "click": "a", "at": 0, "count": 1, "button": 2 },
+    { "key": "select-all" },
+    { "key": "line-end" },
+    { "click": "b", "at": 1, "count": 1, "button": 2 }
+  ]
+}

@@ -1,7 +1,9 @@
 //! NA1 capture on GTK4 (WG3): every pin of `conformance/pins/` on real `GtkEntry`s and a
 //! `GtkButton`, created through the svelters GTK backend's C ABI, with input injected through XTEST
 //! on a private Xvfb. Text, caret and selection are read through the backend (`text`,
-//! `cursor-position`, `selection-bound`), keyboard focus through the window's `focus-widget` (the
+//! `cursor-position`, `selection-bound`; since WG3b the backend reads the last two on the entry's
+//! GtkText delegate, and the capture fails when they differ from the GtkText's), keyboard focus
+//! through the window's `focus-widget` (the
 //! entry's own `has-focus` stays false: GTK4 focuses the entry's inner `GtkText`), and every one of
 //! those props is observed (ABI v2.6) so the capture also records whether the backend announced
 //! each change the user path made.
@@ -17,7 +19,9 @@ use svelters_conformance::golden::{Capture, finish};
 use svelters_conformance::pins::{BUTTON, BUTTON_LABEL, Chord, FIELDS, Keys, Pin, load_pins};
 use svelters_conformance::trace::{Checkpoint, State, Trace};
 use svelters_conformance::xtest::XInput;
-use svelters_conformance::{Driver, rerun_on_private_display, run_pin};
+use svelters_conformance::{
+    Driver, observe_selections, prepare_selections, rerun_on_private_display, run_pin,
+};
 use svelters_gtk::testing::{Harness, V, on_gtk, pump};
 
 /// Observation evidence: per prop, (changes seen at checkpoints, changes announced).
@@ -39,6 +43,8 @@ struct Gtk<'h> {
     x: Option<XInput>,
     ev: Evidence,
     observed: Vec<(u64, String, u32)>,
+    /// The pin's selection pseudo-anchors.
+    selections: Vec<String>,
 }
 
 fn p(ms: u64) {
@@ -171,7 +177,10 @@ impl Driver for Gtk<'_> {
         self.win = win;
         self.button = b;
         p(200);
-        self.x = Some(XInput::attach(&title, &mut p)?);
+        let mut x = XInput::attach(&title, &mut p)?;
+        prepare_selections(&mut x, pin, &mut p)?;
+        self.x = Some(x);
+        self.selections = pin.observe.clone();
         // Programmatic setup (the user path starts after it): focus, then each field's selection
         // (grab_focus selects the whole entry, gtk-entry-select-on-focus).
         if let Some(f) = &pin.setup.focus {
@@ -201,9 +210,22 @@ impl Driver for Gtk<'_> {
         self.x.as_ref().unwrap().key(chord, &mut p)
     }
 
-    fn click(&mut self, target: &str, at: Option<usize>, count: u32) -> Result<(), String> {
+    fn click(
+        &mut self,
+        target: &str,
+        at: Option<usize>,
+        count: u32,
+        button: u32,
+    ) -> Result<(), String> {
         let pt = self.point(target, at)?;
-        self.x.as_ref().unwrap().click(pt, count, &mut p)
+        self.x
+            .as_ref()
+            .unwrap()
+            .click_button(pt, count, button as u8, &mut p)
+    }
+
+    fn type_text(&mut self, text: &str) -> Result<(), String> {
+        self.x.as_ref().unwrap().type_text(text, &mut p)
     }
 
     fn drag(&mut self, target: &str, from: usize, to: usize, count: u32) -> Result<(), String> {
@@ -250,19 +272,24 @@ impl Driver for Gtk<'_> {
                 V::I64(n) => Ok(n as usize),
                 o => Err(format!("{o:?}")),
             };
-            // The entry's own props come from GtkEditable's delegate forwarding, which reports the
-            // selection as (start, end) and loses its direction; the inner GtkText holds the real
-            // anchor (`selection-bound`) and moving end (`cursor-position`).
-            let ec = n(self.h.get(e, "cursor-position"))?;
-            let eb = n(self.h.get(e, "selection-bound"))?;
+            // The backend reads both on the entry's GtkText delegate (WG3b): the real anchor
+            // (`selection-bound`) and moving end (`cursor-position`). GtkEditable's own delegate
+            // forwarding would report (start, end) and lose the direction (WG3 finding 1).
+            let caret = n(self.h.get(e, "cursor-position"))?;
+            let anchor = n(self.h.get(e, "selection-bound"))?;
             let t = self.text_widget(e);
-            let caret = t.property::<i32>("cursor-position") as usize;
-            let anchor = t.property::<i32>("selection-bound") as usize;
+            let (tc, tb) = (
+                t.property::<i32>("cursor-position") as usize,
+                t.property::<i32>("selection-bound") as usize,
+            );
             let c = &mut self.ev.agree;
             c.0 += 1;
-            if ec == caret && eb == anchor {
-                c.1 += 1;
+            if (caret, anchor) != (tc, tb) {
+                return Err(format!(
+                    "{a}: backend [{anchor},{caret}], GtkText [{tb},{tc}]"
+                ));
             }
+            c.1 += 1;
             let s = State {
                 text: Some(text),
                 sel: Some([anchor, caret]),
@@ -278,6 +305,13 @@ impl Driver for Gtk<'_> {
         };
         self.trace.state(self.button, &s);
         cp.push((BUTTON.to_string(), s));
+        observe_selections(
+            self.x.as_ref().unwrap(),
+            &self.selections,
+            &mut p,
+            &mut self.trace,
+            &mut cp,
+        )?;
         Ok(cp)
     }
 
@@ -311,6 +345,7 @@ fn capture() {
         x: None,
         ev: Evidence::default(),
         observed: vec![],
+        selections: vec![],
     };
     let mut results = Vec::new();
     let mut traces = Vec::new();
@@ -341,6 +376,10 @@ fn capture() {
         (
             "gtk-keynav-use-caret".to_string(),
             s.property::<bool>("gtk-keynav-use-caret").to_string(),
+        ),
+        (
+            "gtk-im-module".to_string(),
+            format!("{:?}", std::env::var("GTK_IM_MODULE").unwrap_or_default()),
         ),
     ];
     let mut observe: Vec<(String, String)> =

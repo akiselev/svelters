@@ -151,6 +151,8 @@ other agent on the machine. **GitHub CI is the gate, not your machine.** The use
 - Never use destructive git to undo your own edits (`git checkout <file>`, `git restore`,
   `git reset --hard`, `git clean`); make the inverse edit. Run `git status --porcelain` before
   editing and treat dirty files as someone else's work. Never force-push.
+- A new compiler diagnostic code needs a row in `crates/svelters-compiler/src/codes.rs` (then `UPDATE=1` on the
+  `cx1_codes` test regenerates the docs page); an unregistered code fails that test and panics in debug builds.
 - Generated files (`*.generated.js`, `types/*.d.ts`, metadata outputs, op logs, snapshots): on
   conflicts, rerun that generator; don't hand-merge.
 - Commit messages end with the attribution trailers your session is given.

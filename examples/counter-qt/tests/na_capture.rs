@@ -19,7 +19,9 @@ use svelters_conformance::golden::{Capture, finish};
 use svelters_conformance::pins::{BUTTON, BUTTON_LABEL, Chord, FIELDS, Keys, Pin, load_pins};
 use svelters_conformance::trace::{Checkpoint, State, Trace};
 use svelters_conformance::xtest::XInput;
-use svelters_conformance::{Driver, rerun_on_private_display, run_pin};
+use svelters_conformance::{
+    Driver, observe_selections, prepare_selections, rerun_on_private_display, run_pin,
+};
 
 unsafe extern "C" {
     fn svl_qt_meta_prop_id(native: *const std::ffi::c_char) -> svl_id;
@@ -131,6 +133,8 @@ struct Qt {
     ev: Evidence,
     /// (handle, name, prop id) of every observation.
     observed: Vec<(u64, &'static str, svl_id)>,
+    /// The pin's selection pseudo-anchors.
+    selections: Vec<String>,
 }
 
 impl Qt {
@@ -219,7 +223,10 @@ impl Driver for Qt {
         self.win = win;
         self.button = btn;
         p(200);
-        self.x = Some(XInput::attach(&title, &mut p)?);
+        let mut x = XInput::attach(&title, &mut p)?;
+        prepare_selections(&mut x, pin, &mut p)?;
+        self.x = Some(x);
+        self.selections = pin.observe.clone();
         if let Some(f) = &pin.setup.focus {
             hooks::na_setup(self.handle(f)?, true, None);
         }
@@ -244,9 +251,22 @@ impl Driver for Qt {
         self.x.as_ref().unwrap().key(chord, &mut p)
     }
 
-    fn click(&mut self, target: &str, at: Option<usize>, count: u32) -> Result<(), String> {
+    fn click(
+        &mut self,
+        target: &str,
+        at: Option<usize>,
+        count: u32,
+        button: u32,
+    ) -> Result<(), String> {
         let pt = self.point(target, at)?;
-        self.x.as_ref().unwrap().click(pt, count, &mut p)
+        self.x
+            .as_ref()
+            .unwrap()
+            .click_button(pt, count, button as u8, &mut p)
+    }
+
+    fn type_text(&mut self, text: &str) -> Result<(), String> {
+        self.x.as_ref().unwrap().type_text(text, &mut p)
     }
 
     fn drag(&mut self, target: &str, from: usize, to: usize, count: u32) -> Result<(), String> {
@@ -292,6 +312,13 @@ impl Driver for Qt {
         now.insert((self.button, "focus"), s.focus.to_string());
         self.trace.state(self.button, &s);
         cp.push((BUTTON.to_string(), s));
+        observe_selections(
+            self.x.as_ref().unwrap(),
+            &self.selections,
+            &mut p,
+            &mut self.trace,
+            &mut cp,
+        )?;
         for (h, name, id) in self.observed.clone() {
             let Some(v) = now.get(&(h, name)) else {
                 continue;
@@ -347,6 +374,7 @@ fn capture() {
         x: None,
         ev: Evidence::default(),
         observed: vec![],
+        selections: vec![],
     };
     let mut results = Vec::new();
     let mut traces = Vec::new();
@@ -360,15 +388,18 @@ fn capture() {
         .as_str()
         .expect("qtVersion")
         .to_string();
-    let settings = settings
+    let mut settings: BTreeMap<String, String> = settings
         .as_object()
         .unwrap()
         .iter()
         .filter(|(k, _)| *k != "qtVersion")
         .map(|(k, v)| (k.clone(), v.to_string()))
-        .collect::<BTreeMap<_, _>>()
-        .into_iter()
         .collect();
+    settings.insert(
+        "QT_IM_MODULE".into(),
+        serde_json::Value::String(std::env::var("QT_IM_MODULE").unwrap_or_default()).to_string(),
+    );
+    let settings = settings.into_iter().collect();
     let mut observe: Vec<(String, String)> =
         d.ev.counts
             .iter()

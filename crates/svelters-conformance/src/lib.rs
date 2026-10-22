@@ -25,10 +25,20 @@ pub trait Driver {
     /// Builds the fixture window (fields `a`, `b`, button `c`) and applies the pin's setup.
     fn setup(&mut self, pin: &Pin) -> Result<(), String>;
     fn key(&mut self, chord: &Chord) -> Result<(), String>;
-    /// `at`: a character offset in a field (`None` on the button: its centre).
-    fn click(&mut self, target: &str, at: Option<usize>, count: u32) -> Result<(), String>;
+    /// `at`: a character offset in a field (`None` on the button: its centre). `button`: 1 primary,
+    /// 2 middle.
+    fn click(
+        &mut self,
+        target: &str,
+        at: Option<usize>,
+        count: u32,
+        button: u32,
+    ) -> Result<(), String>;
+    /// Types `text` into the focused widget, one key per character.
+    fn type_text(&mut self, text: &str) -> Result<(), String>;
     fn drag(&mut self, target: &str, from: usize, to: usize, count: u32) -> Result<(), String>;
-    /// Reads every anchor's state and writes the `state` lines into the trace.
+    /// Reads every anchor's state (and the pin's `observe` pseudo-anchors) and writes the `state`
+    /// lines into the trace.
     fn observe(&mut self) -> Result<Checkpoint, String>;
     /// Destroys the fixture and returns the pin's trace (op log with `state` lines).
     fn teardown(&mut self) -> Result<String, String>;
@@ -41,8 +51,17 @@ pub fn run_pin(d: &mut dyn Driver, pin: &Pin, keys: &Keys) -> Result<(PinResult,
     let mut checkpoints = vec![("setup".to_string(), d.observe().map_err(ctx)?)];
     for a in &pin.actions {
         match a {
+            // An intent the platform has no chord for (`unicode-entry` off Linux) is a step without input: its
+            // checkpoint records that nothing happened (WG3w).
+            Action::Key { intent, .. } if !keys.map.contains_key(intent) => Ok(()),
             Action::Key { intent, shift } => d.key(&keys.chord(intent, *shift).map_err(ctx)?),
-            Action::Click { target, at, count } => d.click(target, *at, *count),
+            Action::Click {
+                target,
+                at,
+                count,
+                button,
+            } => d.click(target, *at, *count, *button),
+            Action::Type { text } => d.type_text(text),
             Action::Drag {
                 target,
                 from,
@@ -79,7 +98,58 @@ pub fn rerun_on_private_display(args: &[&str]) -> Option<bool> {
         .args(args)
         .env("SVELTERS_HEADLESS_FORCE", "1")
         .env("SVELTERS_NA_PRIVATE", "1")
+        // Pin 6 (IME) runs on the toolkits' built-in input methods, not an IM server: GTK's simple
+        // context (dead keys, Ctrl+Shift+U), Qt's compose plugin (dead keys). Captures record both.
+        .env("GTK_IM_MODULE", "gtk-im-context-simple")
+        .env("QT_IM_MODULE", "compose")
+        .env_remove("XMODIFIERS")
         .status()
         .expect("run tools/dev/headless");
     Some(status.success())
+}
+
+/// The trace handle of a selection pseudo-anchor (`clipboard`, `primary`): not a node, so a fixed
+/// number no backend hands out.
+pub fn selection_handle(anchor: &str) -> u64 {
+    if anchor == pins::CLIPBOARD {
+        u64::MAX - 1
+    } else {
+        u64::MAX - 2
+    }
+}
+
+/// Start of a pin on an X11 toolkit: empty CLIPBOARD and PRIMARY, then the pin's clipboard seed.
+#[cfg(target_os = "linux")]
+pub fn prepare_selections(
+    x: &mut xtest::XInput,
+    pin: &Pin,
+    pump: &mut dyn FnMut(u64),
+) -> Result<(), String> {
+    x.clear_selections(pump)?;
+    if let Some(t) = &pin.setup.clipboard {
+        x.seed_clipboard(t, pump)?;
+    }
+    Ok(())
+}
+
+/// Appends the pin's selection pseudo-anchors to a checkpoint (read from the X server).
+#[cfg(target_os = "linux")]
+pub fn observe_selections(
+    x: &xtest::XInput,
+    observe: &[String],
+    pump: &mut dyn FnMut(u64),
+    trace: &mut trace::Trace,
+    cp: &mut Checkpoint,
+) -> Result<(), String> {
+    for name in observe {
+        let sel = if name == pins::CLIPBOARD {
+            "CLIPBOARD"
+        } else {
+            "PRIMARY"
+        };
+        let s = trace::State::selection(x.read_selection(sel, pump)?);
+        trace.state(selection_handle(name), &s);
+        cp.push((name.clone(), s));
+    }
+    Ok(())
 }

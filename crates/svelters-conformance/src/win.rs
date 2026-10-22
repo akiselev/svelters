@@ -23,7 +23,7 @@
 //! pixels. Input goes to the interactive desktop: a capture needs an unlocked session and nobody using the mouse.
 
 use crate::Driver;
-use crate::pins::{BUTTON, BUTTON_LABEL, Chord, FIELDS, Pin};
+use crate::pins::{BUTTON, BUTTON_LABEL, CLIPBOARD, Chord, FIELDS, Pin};
 use crate::trace::{Checkpoint, State, Trace, scalar_to_utf16, utf16_to_scalar};
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
@@ -57,8 +57,24 @@ pub fn init_thread() {
 
 // ---- input -------------------------------------------------------------------------------------------------------
 
-fn vk_of(key: &str) -> WinResult<(VIRTUAL_KEY, bool)> {
+/// A key name of `keys.json` (X keysym names) as a virtual key, whether it is an extended key, and whether it
+/// needs Shift. The dead keys are those of the US-International layout (the Windows row of `keys.json`), which the
+/// driver activates for pins that use them.
+fn vk_of(key: &str) -> WinResult<(VIRTUAL_KEY, bool, bool)> {
     Ok(match key {
+        "dead_acute" => (VK_OEM_7, false, false),
+        "dead_diaeresis" => (VK_OEM_7, false, true),
+        k => {
+            let (vk, ext) = vk_plain(k)?;
+            (vk, ext, false)
+        }
+    })
+}
+
+fn vk_plain(key: &str) -> WinResult<(VIRTUAL_KEY, bool)> {
+    Ok(match key {
+        "Insert" => (VK_INSERT, true),
+        "space" => (VK_SPACE, false),
         "Left" => (VK_LEFT, true),
         "Right" => (VK_RIGHT, true),
         "Up" => (VK_UP, true),
@@ -113,7 +129,7 @@ fn send(inputs: &[INPUT]) -> WinResult<()> {
 
 /// One chord: modifiers down, the key down and up, modifiers up.
 pub fn key(chord: &Chord) -> WinResult<()> {
-    let (vk, ext) = vk_of(&chord.key)?;
+    let (vk, ext, shift) = vk_of(&chord.key)?;
     let mut mods = Vec::new();
     if chord.ctrl {
         mods.push(VK_LCONTROL);
@@ -121,7 +137,7 @@ pub fn key(chord: &Chord) -> WinResult<()> {
     if chord.alt {
         mods.push(VK_LMENU);
     }
-    if chord.shift {
+    if chord.shift || shift {
         mods.push(VK_LSHIFT);
     }
     if chord.cmd {
@@ -166,7 +182,155 @@ pub fn move_to(x: i32, y: i32) -> WinResult<()> {
 }
 
 pub fn button(down: bool) -> WinResult<()> {
-    send(&[mouse_input(if down { MOUSEEVENTF_LEFTDOWN } else { MOUSEEVENTF_LEFTUP })])
+    button_n(1, down)
+}
+
+/// Button 1 (left, primary) or 2 (middle).
+pub fn button_n(n: u32, down: bool) -> WinResult<()> {
+    let f = match (n, down) {
+        (2, true) => MOUSEEVENTF_MIDDLEDOWN,
+        (2, false) => MOUSEEVENTF_MIDDLEUP,
+        (_, true) => MOUSEEVENTF_LEFTDOWN,
+        (_, false) => MOUSEEVENTF_LEFTUP,
+    };
+    send(&[mouse_input(f)])
+}
+
+/// Types one character as the key that makes it on keyboard layout `hkl` (`VkKeyScanExW`, with Shift when the
+/// layout needs it), so dead keys compose with it; a character the layout has no key for goes as a Unicode
+/// packet (`KEYEVENTF_UNICODE`).
+pub fn type_char(c: char, hkl: HKL) -> WinResult<()> {
+    let mut buf = [0u16; 2];
+    let units = c.encode_utf16(&mut buf);
+    let scan = if units.len() == 1 { unsafe { VkKeyScanExW(units[0], hkl) } } else { -1 };
+    if scan != -1 && (scan as u16 >> 8) & !1 == 0 {
+        let vk = VIRTUAL_KEY(scan as u16 & 0xff);
+        let shift = (scan as u16 >> 8) & 1 == 1;
+        let mut v = Vec::new();
+        if shift {
+            v.push(key_input(VK_LSHIFT, false, false));
+        }
+        v.push(key_input(vk, false, false));
+        v.push(key_input(vk, false, true));
+        if shift {
+            v.push(key_input(VK_LSHIFT, false, true));
+        }
+        return send(&v);
+    }
+    let mut v = Vec::new();
+    for u in units.iter() {
+        for up in [false, true] {
+            let mut flags = KEYEVENTF_UNICODE;
+            if up {
+                flags |= KEYEVENTF_KEYUP;
+            }
+            v.push(INPUT {
+                r#type: INPUT_KEYBOARD,
+                Anonymous: INPUT_0 { ki: KEYBDINPUT { wVk: VIRTUAL_KEY(0), wScan: *u, dwFlags: flags, time: 0, dwExtraInfo: 0 } },
+            });
+        }
+    }
+    send(&v)
+}
+
+/// The clipboard's text (`CF_UNICODETEXT`), `""` when it holds none.
+pub fn clipboard_text() -> WinResult<String> {
+    use windows::Win32::Foundation::HGLOBAL;
+    use windows::Win32::System::DataExchange::{CloseClipboard, GetClipboardData};
+    use windows::Win32::System::Memory::{GlobalLock, GlobalUnlock};
+    open_clipboard()?;
+    let out = unsafe {
+        match GetClipboardData(13) {
+            Ok(h) if !h.is_invalid() => {
+                let g = HGLOBAL(h.0);
+                let p = GlobalLock(g) as *const u16;
+                let mut s = String::new();
+                if !p.is_null() {
+                    let mut n = 0;
+                    while *p.add(n) != 0 {
+                        n += 1;
+                    }
+                    s = String::from_utf16_lossy(std::slice::from_raw_parts(p, n));
+                    let _ = GlobalUnlock(g);
+                }
+                s
+            }
+            _ => String::new(),
+        }
+    };
+    unsafe {
+        let _ = CloseClipboard();
+    }
+    Ok(out)
+}
+
+/// Empties the clipboard, then puts `text` on it (owned by this process, not the fixture) when given.
+pub fn set_clipboard(text: Option<&str>) -> WinResult<()> {
+    use windows::Win32::Foundation::HANDLE;
+    use windows::Win32::System::DataExchange::{CloseClipboard, EmptyClipboard, SetClipboardData};
+    use windows::Win32::System::Memory::{GMEM_MOVEABLE, GlobalAlloc, GlobalLock, GlobalUnlock};
+    open_clipboard()?;
+    let r = unsafe {
+        (|| -> WinResult<()> {
+            EmptyClipboard().map_err(e("EmptyClipboard"))?;
+            if let Some(t) = text {
+                let wide: Vec<u16> = t.encode_utf16().chain([0]).collect();
+                let g = GlobalAlloc(GMEM_MOVEABLE, wide.len() * 2).map_err(e("GlobalAlloc"))?;
+                let p = GlobalLock(g) as *mut u16;
+                std::ptr::copy_nonoverlapping(wide.as_ptr(), p, wide.len());
+                let _ = GlobalUnlock(g);
+                SetClipboardData(13, Some(HANDLE(g.0))).map_err(e("SetClipboardData"))?;
+            }
+            Ok(())
+        })()
+    };
+    unsafe {
+        let _ = CloseClipboard();
+    }
+    r
+}
+
+fn open_clipboard() -> WinResult<()> {
+    use windows::Win32::System::DataExchange::OpenClipboard;
+    for _ in 0..100 {
+        if unsafe { OpenClipboard(None) }.is_ok() {
+            return Ok(());
+        }
+        sleep(10);
+    }
+    Err("OpenClipboard: the clipboard stayed busy".into())
+}
+
+/// Activates keyboard layout `klid` (`"00020409"`, US-International) in the window's thread, loading it when
+/// needed. Returns the layout to restore and whether this call loaded the new one (to unload it after).
+pub fn switch_layout(hwnd: HWND, klid: &str) -> WinResult<(HKL, Option<HKL>)> {
+    unsafe {
+        let thread = GetWindowThreadProcessId(hwnd, None);
+        let before = GetKeyboardLayout(thread);
+        let n = GetKeyboardLayoutList(None).max(0) as usize;
+        let mut list = vec![HKL::default(); n];
+        GetKeyboardLayoutList(Some(&mut list));
+        let wide: Vec<u16> = klid.encode_utf16().chain([0]).collect();
+        let hkl = LoadKeyboardLayoutW(windows::core::PCWSTR(wide.as_ptr()), KLF_NOTELLSHELL).map_err(e("LoadKeyboardLayoutW"))?;
+        let loaded = (!list.contains(&hkl)).then_some(hkl);
+        activate_layout(hwnd, hkl)?;
+        Ok((before, loaded))
+    }
+}
+
+/// Asks the window's thread to activate `hkl` and waits until it has.
+pub fn activate_layout(hwnd: HWND, hkl: HKL) -> WinResult<()> {
+    unsafe {
+        let thread = GetWindowThreadProcessId(hwnd, None);
+        for _ in 0..100 {
+            if GetKeyboardLayout(thread) == hkl {
+                return Ok(());
+            }
+            let _ = PostMessageW(Some(hwnd), WM_INPUTLANGCHANGEREQUEST, WPARAM(0), LPARAM(hkl.0 as isize));
+            sleep(20);
+        }
+        Err(format!("keyboard layout {:?} did not activate in the fixture (it has {:?})", hkl, GetKeyboardLayout(thread)))
+    }
 }
 
 /// Milliseconds a click sequence waits so it never joins the previous one.
@@ -174,17 +338,17 @@ pub fn click_gap() -> u64 {
     (unsafe { GetDoubleClickTime() } as u64 + 200).max(700)
 }
 
-/// `count` clicks at a screen point (physical pixels), 40 ms apart.
-pub fn click_at(x: i32, y: i32, count: u32) -> WinResult<()> {
+/// `count` clicks of button `n` (1 left, 2 middle) at a screen point (physical pixels), 40 ms apart.
+pub fn click_at(x: i32, y: i32, count: u32, n: u32) -> WinResult<()> {
     move_to(x, y)?;
     sleep(30);
     for i in 0..count {
         if i > 0 {
             sleep(40);
         }
-        button(true)?;
+        button_n(n, true)?;
         sleep(20);
-        button(false)?;
+        button_n(n, false)?;
     }
     Ok(())
 }
@@ -555,6 +719,10 @@ pub struct UiaDriver<F: WinFixture> {
     pub evidence: FocusEvidence,
     /// The settings read at the first setup.
     pub settings: Vec<(String, String)>,
+    /// The pin's pseudo-anchors (`clipboard`, `primary`).
+    observe: Vec<String>,
+    /// While a pin uses dead keys: the layout to restore and the one this driver loaded.
+    layout: Option<(HKL, Option<HKL>)>,
 }
 
 const HANDLES: [(&str, u64); 3] = [("a", 2), ("b", 3), ("c", 4)];
@@ -577,6 +745,8 @@ impl<F: WinFixture> UiaDriver<F> {
             reading: [0; 4],
             evidence: FocusEvidence::default(),
             settings: Vec::new(),
+            observe: Vec::new(),
+            layout: None,
         })
     }
 
@@ -704,6 +874,15 @@ impl<F: WinFixture> Driver for UiaDriver<F> {
         self.trace.set_str(1, "title", &title);
         bring_to_front(self.hwnd)?;
         self.find_elements()?;
+        // Pins 5-6 (WG3b): an empty clipboard, then the pin's seed, owned by this process; the US-International
+        // layout (the Windows row of keys.json) while a pin uses dead keys.
+        set_clipboard(pin.setup.clipboard.as_deref())?;
+        self.observe = pin.observe.clone();
+        let dead = pin.actions.iter().any(|a| matches!(a, crate::pins::Action::Key { intent, .. } if intent.starts_with("dead-")));
+        if dead {
+            self.layout = Some(switch_layout(self.hwnd, "00020409")?);
+            self.trace.call(1, "keyboardLayout", "[\"00020409\"]");
+        }
         if self.settings.is_empty() {
             self.settings = input_settings(self.hwnd);
         }
@@ -754,11 +933,21 @@ impl<F: WinFixture> Driver for UiaDriver<F> {
         key(chord)
     }
 
-    fn click(&mut self, target: &str, at: Option<usize>, count: u32) -> Result<(), String> {
+    fn click(&mut self, target: &str, at: Option<usize>, count: u32, button: u32) -> Result<(), String> {
         sleep(click_gap());
         let (x, y) = self.point(target, at)?;
         bring_to_front(self.hwnd)?;
-        click_at(x, y, count)
+        click_at(x, y, count, button)
+    }
+
+    fn type_text(&mut self, text: &str) -> Result<(), String> {
+        bring_to_front(self.hwnd)?;
+        let hkl = unsafe { GetKeyboardLayout(GetWindowThreadProcessId(self.hwnd, None)) };
+        for c in text.chars() {
+            type_char(c, hkl)?;
+            sleep(30);
+        }
+        Ok(())
     }
 
     fn drag(&mut self, target: &str, from: usize, to: usize, count: u32) -> Result<(), String> {
@@ -787,6 +976,11 @@ impl<F: WinFixture> Driver for UiaDriver<F> {
             *d += r;
         }
         let focus = prev.iter().find(|(_, s)| s.focus).map(|(a, _)| a.clone());
+        // Pseudo-anchors: the clipboard's text; Windows has no PRIMARY selection, so `primary` is always "".
+        for name in self.observe.clone() {
+            let text = if name == CLIPBOARD { clipboard_text()? } else { String::new() };
+            prev.push((name, State::selection(text)));
+        }
         if let Some(last) = &self.last_focus
             && *last != focus
         {
@@ -800,12 +994,22 @@ impl<F: WinFixture> Driver for UiaDriver<F> {
         self.seen_events = self.uia.last_focus_event().0;
         self.last_focus = Some(focus);
         for (a, s) in &prev {
-            self.trace.state(handle_of(a), s);
+            let h = if self.observe.contains(a) { crate::selection_handle(a) } else { handle_of(a) };
+            self.trace.state(h, s);
         }
         Ok(prev)
     }
 
     fn teardown(&mut self) -> Result<String, String> {
+        if let Some((before, loaded)) = self.layout.take() {
+            let restored = activate_layout(self.hwnd, before);
+            if let Some(hkl) = loaded {
+                unsafe {
+                    let _ = UnloadKeyboardLayout(hkl);
+                }
+            }
+            restored?;
+        }
         self.fields.clear();
         self.button = None;
         self.fixture.close()?;
