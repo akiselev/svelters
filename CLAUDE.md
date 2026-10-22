@@ -63,14 +63,16 @@ coordinators and does not want sessions asking them questions.
   coordinator (`svelters-agent` for svelters, `main-cadatomic` for cadatomic) with a recommendation,
   keep working on something else meanwhile, and follow the answer.
 - **The coordinators decide**, citing the reason in the answer:
-  - each coordinator decides everything technical and procedural in its own repo: design, APIs,
-    lane assignment and order, scheduling, pins and pin advances, build and test rules, rules files
-    (`CLAUDE.md`), and recording in the decision register the user's decisions that the other
-    coordinator relays;
+  - each coordinator decides routine and procedural questions in its own repo: lane assignment
+    and order, scheduling, merges and conflict resolution, pins and pin advances, build and test
+    rules, rules files (`CLAUDE.md`), implementation details inside an agreed design, and recording
+    in the decision register the user's decisions that the other coordinator relays;
   - the two coordinators settle cross-repo seams between themselves. If they disagree, svelters-agent
     decides for svelters-side APIs, main-cadatomic for cadatomic-side ones;
   - a coordinator's message to a session in its repo carries this delegated authority. Act on it.
 - **Escalate to the user only** (the coordinator does it, nobody else):
+  - architecture and design choices: the open questions in `plans/research/ARCH-*.md` and similar
+    design docs, brought together with a recommendation each;
   - reversing or contradicting a decision the user made (the list above, or a register entry
     marked as the user's);
   - destructive actions on work that isn't yours: force-push, deleting branches or repos with
