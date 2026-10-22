@@ -126,6 +126,10 @@ other agent on the machine. **GitHub CI is the gate, not your machine.** The use
 
 ## Git safety
 
+- **Never commit build artifacts.** Any `target/` directory (at any depth) is ignored and rejected:
+  `.githooks/pre-commit` runs `tools/dev/check-no-artifacts --staged` (enable once per checkout with
+  `git config core.hooksPath .githooks`), and CI's js job runs it on every push. Run cargo from the checkout root.
+  Before every push, check `git diff --stat origin/master...HEAD` lists only your lane's files.
 - Never use destructive git to undo your own edits (`git checkout <file>`, `git restore`,
   `git reset --hard`, `git clean`); make the inverse edit. Run `git status --porcelain` before
   editing and treat dirty files as someone else's work. Never force-push.
