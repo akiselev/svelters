@@ -22,6 +22,8 @@ Spec: `plans/research/TRACKS.md` §2.1 (LOADER, row LD1), `plans/research/QUICKJ
 - `svelters:app/*` visibility defaults to `All` for the primary host (`ModuleHooks::default()`); cadatomic sets `Allow` for its own hosts.
 - Amendment (main-cadatomic, accepted): visibility fails closed for isolates. Any extension or isolate host uses `ModuleHooks::isolate()`, which defaults to `Allow([])`: an isolate host nobody configured must not see every app export. The host has no isolate concept yet, so the flag is this constructor; the code that creates an isolate host calls it.
 
+- User decision (2026-10-22, relayed by the coordinator): extensions run under a deny-by-default, auditable security policy; SEC0 (`ARCH-SECURITY.md`) designs it. LD1 leaves the hooks only. `ExtensionPolicy` (`#[non_exhaustive]`, in `svelters-modules/src/compose.rs`) holds `visibility` and `native_modules` (`NativeAccess`: `All`, `Allow(ids)`, `Deny`) and grows with SEC0. `ExtensionPolicy::open()` is the primary host; `deny_all()` is `ModuleHooks::isolate()`: no app module visible, no added native module loadable. The gate covers sets added with `ModuleHooks::natives` (dlopen'd, embedder's); the app's own exports are governed by visibility. SEC0 slot: a file-system scope. `SourceProvider` loads any path it resolves, so an extension host must reach it only through a `ComposedProvider` that carries the policy.
+
 ## Decided (LD1)
 
 - Q3 option (b), as recommended in TRACKS §6: static modules always, dlopen behind the `dlopen` feature, which cadatomic leaves off. The feature adds `libloading` (already in the lockfile).
@@ -37,5 +39,5 @@ Spec: `plans/research/TRACKS.md` §2.1 (LOADER, row LD1), `plans/research/QUICKJ
 ## Tests
 
 - `svelters-modules`: `compose::tests` (routing, visibility, hidden-looks-absent, reserved/duplicate schemes).
-- `crates/svelters-host/tests/hooks.rs`: both visibility defaults (primary sees all, `isolate()` sees none until allowed); a scheme and an extra native module load through a `Host`; an unregistered scheme is a load error; the filter hides a module; a reserved scheme is refused.
+- `crates/svelters-host/tests/hooks.rs`: both policy defaults (primary sees all; `isolate()` sees no app module and loads no added native module until allowed, and a visible module stays denied while the native gate is closed); a scheme and an extra native module load through a `Host`; an unregistered scheme is a load error; the filter hides a module; a reserved scheme is refused.
 - Not tested: `DylibModules` (needs a built cdylib fixture; checked with `cargo check --features dlopen` only).

@@ -45,22 +45,89 @@ impl Visibility {
     }
 }
 
+/// Which native modules from added sets (a dlopen'd library's, an embedder's; not the app's own
+/// exports, which `Visibility` governs) an importer may load.
+#[derive(Clone)]
+pub enum NativeAccess {
+    All,
+    /// Only these ids (`svelters:app/extra`).
+    Allow(Vec<String>),
+    /// None.
+    Deny,
+}
+
+impl NativeAccess {
+    fn permits(&self, id: &str) -> bool {
+        match self {
+            NativeAccess::All => true,
+            NativeAccess::Allow(ids) => ids.iter().any(|i| i == id),
+            NativeAccess::Deny => false,
+        }
+    }
+}
+
+/// What a host's modules may reach: the first fields of the extension security policy
+/// (ARCH-SECURITY, SEC0, designs the rest). Deny by default for an extension or isolate host
+/// ([`ExtensionPolicy::deny_all`]); the primary host uses [`ExtensionPolicy::open`].
+///
+/// SEC0 slot: a file-system scope. `SourceProvider` loads any path it resolves, so an extension
+/// host must reach it only through a [`ComposedProvider`] carrying this policy, never directly.
+#[derive(Clone)]
+#[non_exhaustive]
+pub struct ExtensionPolicy {
+    /// The `svelters:app/*` modules an import may see (SV25).
+    pub visibility: Visibility,
+    /// The native modules of added sets an import may load.
+    pub native_modules: NativeAccess,
+}
+
+impl ExtensionPolicy {
+    /// The primary host: nothing is restricted.
+    pub fn open() -> ExtensionPolicy {
+        ExtensionPolicy { visibility: Visibility::All, native_modules: NativeAccess::All }
+    }
+
+    /// An extension or isolate host: no app module and no added native module is visible.
+    pub fn deny_all() -> ExtensionPolicy {
+        ExtensionPolicy { visibility: Visibility::Allow(Vec::new()), native_modules: NativeAccess::Deny }
+    }
+
+    pub fn visibility(mut self, v: Visibility) -> Self {
+        self.visibility = v;
+        self
+    }
+
+    pub fn native_modules(mut self, n: NativeAccess) -> Self {
+        self.native_modules = n;
+        self
+    }
+}
+
 /// Routing, in order: `svelters:core` and `svelters:app/*` go to the native modules (through the
 /// visibility filter); a registered scheme goes to its hook; the rest goes to the inner provider.
 pub struct ComposedProvider {
     inner: Rc<dyn ModuleProvider>,
     natives: NativeRegistry,
+    extra: NativeRegistry,
     hooks: Vec<Rc<dyn SchemeHook>>,
-    visibility: Visibility,
+    policy: ExtensionPolicy,
 }
 
 impl ComposedProvider {
     pub fn new(inner: Rc<dyn ModuleProvider>) -> ComposedProvider {
-        ComposedProvider { inner, natives: NativeRegistry::new(), hooks: Vec::new(), visibility: Visibility::All }
+        ComposedProvider { inner, natives: NativeRegistry::new(), extra: NativeRegistry::new(), hooks: Vec::new(), policy: ExtensionPolicy::open() }
     }
 
+    /// The app's own native modules, governed by `policy.visibility`.
     pub fn natives(mut self, natives: NativeRegistry) -> Self {
         self.natives = natives;
+        self
+    }
+
+    /// Added native sets (dlopen'd, embedder's): governed by `policy.visibility` and then
+    /// `policy.native_modules`.
+    pub fn extra_natives(mut self, natives: NativeRegistry) -> Self {
+        self.extra = natives;
         self
     }
 
@@ -78,7 +145,12 @@ impl ComposedProvider {
     }
 
     pub fn visibility(mut self, v: Visibility) -> Self {
-        self.visibility = v;
+        self.policy.visibility = v;
+        self
+    }
+
+    pub fn policy(mut self, p: ExtensionPolicy) -> Self {
+        self.policy = p;
         self
     }
 
@@ -98,7 +170,9 @@ impl ModuleProvider for ComposedProvider {
             return Ok(specifier.to_string());
         }
         if let Some(module) = specifier.strip_prefix(APP_PREFIX) {
-            if !self.visibility.permits(module, base) || !self.natives.serves(specifier) {
+            let visible = self.policy.visibility.permits(module, base);
+            let served = self.natives.serves(specifier) || (self.extra.serves(specifier) && self.policy.native_modules.permits(specifier));
+            if !visible || !served {
                 // The same message for "hidden" and "absent": a filter does not reveal what it hides.
                 return Err(format!("no such module: `{specifier}`"));
             }
@@ -112,6 +186,13 @@ impl ModuleProvider for ComposedProvider {
 
     fn load(&self, id: &str) -> Result<ModuleCode, String> {
         if id == CORE_ID || id.starts_with(APP_PREFIX) {
+            // The id passed `resolve`; a load by id alone (a cached graph) is gated again.
+            if id != CORE_ID && !self.natives.serves(id) {
+                if !(self.extra.serves(id) && self.policy.native_modules.permits(id)) {
+                    return Err(format!("no such module: `{id}`"));
+                }
+                return self.extra.load(id);
+            }
             return self.natives.load(id);
         }
         if let Some(h) = self.hook_for(id) {

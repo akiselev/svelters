@@ -5,7 +5,7 @@ use std::path::PathBuf;
 use std::rc::Rc;
 use std::time::Duration;
 use svelters_backend_log::{LogBackend, LogOptions};
-use svelters_host::modules::{SchemeHook, StaticModules, Visibility};
+use svelters_host::modules::{NativeAccess, SchemeHook, StaticModules, Visibility};
 use svelters_host::{ErrorKind, Host, HostConfig, ModuleCode, ModuleHooks, ModuleProvider};
 
 struct Mem(String);
@@ -111,6 +111,15 @@ fn the_primary_host_sees_every_app_module_and_an_isolate_sees_none_until_allowed
     assert!(err.to_string().contains("no such module"), "{err}");
 
     let allowed = host();
-    allowed.set_module_hooks(ModuleHooks::isolate().natives(extra()).visibility(Visibility::Allow(vec!["extra".into()])));
+    allowed.set_module_hooks(ModuleHooks::isolate().natives(extra()).visibility(Visibility::Allow(vec!["extra".into()])).native_access(NativeAccess::Allow(vec!["svelters:app/extra".into()])));
     allowed.load_from(entry).unwrap();
+}
+
+#[test]
+fn an_isolate_denies_added_native_modules_even_when_visible() {
+    let entry = Rc::new(Mem("import { v } from 'svelters:app/extra';\n".into()));
+    let h = host();
+    h.set_module_hooks(ModuleHooks::isolate().natives(extra()).visibility(Visibility::Allow(vec!["extra".into()])));
+    let err = h.load_from(entry).expect_err("visible, but the native-module gate is closed");
+    assert!(err.to_string().contains("no such module"), "{err}");
 }

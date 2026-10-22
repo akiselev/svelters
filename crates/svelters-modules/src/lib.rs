@@ -25,7 +25,7 @@ mod native;
 mod source;
 
 pub use bundle::BundleProvider;
-pub use compose::{ComposedProvider, SchemeHook, Visibility};
+pub use compose::{ComposedProvider, ExtensionPolicy, NativeAccess, SchemeHook, Visibility};
 #[cfg(feature = "dlopen")]
 pub use dylib::DylibModules;
 pub use native::{NativeModules, NativeRegistry, StaticModules, APP_PREFIX, CORE_ID};
