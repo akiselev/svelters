@@ -300,6 +300,7 @@ pub enum Native {
     Widget,
 }
 
+#[derive(Clone)]
 pub struct PropDef {
     pub name: &'static str,
     pub key: P,
@@ -312,6 +313,7 @@ pub struct PropDef {
     pub doc: &'static str,
 }
 
+#[derive(Clone)]
 pub struct SignalDef {
     pub name: &'static str,
     pub args: &'static [(&'static str, Ty)],
@@ -325,6 +327,7 @@ pub struct MethodDef {
     pub doc: &'static str,
 }
 
+#[derive(Clone)]
 pub struct KindDef {
     /// The kind's id in the spec (`kinds` keys) and in `resolve(SVL_KIND)`.
     pub id: &'static str,

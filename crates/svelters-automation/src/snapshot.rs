@@ -72,7 +72,7 @@ pub(crate) fn yaml(n: NodeRef<'_>, depth: usize, out: &mut String) {
     }
     for s in states_of(n) {
         // pointer and focus states are transient: a snapshot is a regression artefact
-        if !matches!(s, "hovered" | "pressed" | "focused" | "focus-within") {
+        if !matches!(s, "hovered" | "pressed" | "focused" | "focus-within" | "focus-visible") {
             out.push_str(&format!(" [{s}]"));
         }
     }

@@ -2,8 +2,9 @@
 //! shape is (`node`, `part`, kind), so the VIS1 gate and kittests measure "the thumb's background"
 //! or "the focus ring" instead of guessing which `RectShape` in a rect is which.
 //!
-//! Primitives record into the `PaintCx`'s trace when it has one. The scene's per-pass trace (on
-//! in debug builds and tests only) is OW0b.
+//! Primitives record into the `PaintCx`'s trace when it has one; scene nodes record into the
+//! context's per-pass trace while [`enable`] has it on (debug builds only: release builds never
+//! record). [`last`] returns the latest pass's entries.
 
 use egui::{Color32, Rect, Stroke};
 
@@ -43,6 +44,47 @@ pub struct TraceEntry {
 #[derive(Clone, Debug, Default)]
 pub struct PaintTrace {
     pub entries: Vec<TraceEntry>,
+}
+
+#[derive(Clone, Default)]
+struct Store {
+    on: bool,
+    pass: u64,
+    trace: PaintTrace,
+}
+
+fn store_id() -> egui::Id {
+    egui::Id::unique("svelters-egui/paint-trace")
+}
+
+/// Turns the per-pass paint trace of `ctx`'s scene nodes on or off (debug builds; a no-op in
+/// release builds). Tests and the VIS1 gate turn it on.
+pub fn enable(ctx: &egui::Context, on: bool) {
+    if cfg!(debug_assertions) {
+        ctx.data_mut(|d| d.get_temp_mut_or_default::<Store>(store_id()).on = on);
+    }
+}
+
+/// Whether scene nodes record their shapes.
+pub fn enabled(ctx: &egui::Context) -> bool {
+    cfg!(debug_assertions) && ctx.data(|d| d.get_temp::<Store>(store_id()).is_some_and(|s| s.on))
+}
+
+pub(crate) fn push(ctx: &egui::Context, e: TraceEntry) {
+    let pass = ctx.cumulative_pass_nr();
+    ctx.data_mut(|d| {
+        let s = d.get_temp_mut_or_default::<Store>(store_id());
+        if s.pass != pass {
+            s.pass = pass;
+            s.trace.entries.clear();
+        }
+        s.trace.entries.push(e);
+    });
+}
+
+/// The shapes the latest traced pass painted.
+pub fn last(ctx: &egui::Context) -> PaintTrace {
+    ctx.data(|d| d.get_temp::<Store>(store_id()).map(|s| s.trace).unwrap_or_default())
 }
 
 impl PaintTrace {

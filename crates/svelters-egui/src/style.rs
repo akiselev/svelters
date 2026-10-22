@@ -169,9 +169,26 @@ impl Default for SceneStyle {
     }
 }
 
+/// OW0: the computed styles of one node's paint parts (`::part(name)`), by part name.
+pub(crate) type PartStyles = Vec<(Box<str>, Arc<ComputedStyle>)>;
+
 impl SceneStyle {
     pub(crate) fn is_active(&self) -> bool {
         self.active
+    }
+
+    /// OW0 hook for OW-CSS: the computed style of node `id`'s part `part` (`::part(name)`), as a
+    /// pseudo-element of the host. `None` until the engine computes part styles (OW-CSS); own
+    /// widgets then paint the part from its UA table, inheriting from the host.
+    pub(crate) fn part_computed(&self, id: NodeId, part: &str) -> Option<&Arc<ComputedStyle>> {
+        let _ = (id, part);
+        None
+    }
+
+    /// OW0 hook for OW-CSS: every part style of node `id` (what `measure` sees).
+    pub(crate) fn part_styles(&self, id: NodeId) -> PartStyles {
+        let _ = id;
+        Vec::new()
     }
 
     fn node(&self, id: NodeId) -> Option<&NodeStyle> {
@@ -253,6 +270,13 @@ impl Element for NodeRef<'_> {
     fn tag(&self) -> &str {
         NodeRef::tag(*self)
     }
+    /// OW0: a provider kind declared with `style_as = "<tag>"`.
+    fn style_as(&self) -> Option<&str> {
+        match self.s.w(self.i) {
+            W::Ext(x) => x.entry().style_as,
+            _ => None,
+        }
+    }
     fn id(&self) -> Option<&str> {
         self.s.style.node(NodeRef::id(*self))?.name.as_deref()
     }
@@ -311,6 +335,9 @@ impl Element for Forced<'_> {
     }
     fn tag(&self) -> &str {
         Element::tag(&self.n)
+    }
+    fn style_as(&self) -> Option<&str> {
+        Element::style_as(&self.n)
     }
     fn id(&self) -> Option<&str> {
         Element::id(&self.n)
@@ -627,7 +654,7 @@ pub(crate) fn before_container(s: &mut Scene, i: usize, r: egui::Rect, ui: &egui
     s.set_walk_state(i, b);
     let id = s.slots.id_at(i)?;
     let c = s.style.computed(id)?.clone();
-    paint_box(&c, r, ui.painter());
+    paint_node_box(&c, s.core[i].state, id, r, ui.painter());
     match c.get("opacity") {
         Some(ComputedValue::Number(o)) if *o < 1.0 => Some(o.max(0.0)),
         _ => None,
@@ -671,14 +698,10 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
     if is_own(s.w(i)) {
         // OW0: its units set hover, press and focus during its `ui` (`WidgetCx::run_units`), and
         // it paints its own box: only the prop bits here
+        // (and `opacity`: `StyleView::opacity`, CSS over its UA table)
         let b = s.prop_bits(i) | StateBits(s.core[i].state.0 & OWN_KEEPS.0);
         s.set_walk_state(i, b);
-        if let Some(c) = s.style.computed(id).cloned()
-            && let Some(ComputedValue::Number(o)) = c.get("opacity")
-            && *o < 1.0
-        {
-            child.multiply_opacity(o.max(0.0));
-        }
+        let _ = child;
         return;
     }
     // the id the widget takes: TextEdit's is the node's (leaf.rs), the others the child's first
@@ -735,7 +758,7 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
         };
         stock_shadows(now, r, child);
     } else {
-        paint_box(&c, r, child.painter());
+        paint_node_box(&c, s.core[i].state, id, r, child.painter());
         if let Some(col) = color(&c, "color") {
             child.visuals_mut().override_text_color = Some(col);
         }
@@ -759,26 +782,12 @@ fn px(c: &ComputedStyle, name: &str) -> Option<f32> {
     }
 }
 
-/// A box's outer shadows, background, border and inset shadows, behind its content.
-fn paint_box(c: &ComputedStyle, r: egui::Rect, p: &egui::Painter) {
-    let radius = px(c, "border-radius").unwrap_or(0.0);
-    shadow::paint(c, r, radius, false, p);
-    paint_fill(c, r, radius, p);
-    shadow::paint(c, r, radius, true, p);
-}
-
-/// A box's background and border.
-fn paint_fill(c: &ComputedStyle, r: egui::Rect, radius: f32, p: &egui::Painter) {
-    let fill = color(c, "background-color");
-    let bw = px(c, "border-width").unwrap_or(0.0);
-    let stroke = match color(c, "border-color") {
-        Some(col) if bw > 0.0 => Some(egui::Stroke::new(bw, col)),
-        _ => None,
-    };
-    if fill.is_none() && stroke.is_none() {
-        return;
-    }
-    p.add(egui::epaint::RectShape::new(r, radius, fill.unwrap_or(egui::Color32::TRANSPARENT), stroke.unwrap_or(egui::Stroke::NONE), egui::StrokeKind::Inside));
+/// OW0: a box's outer shadows, background, border and inset shadows, behind its content, through
+/// the box primitive (`paint::paint_box`; traced as node `id`).
+fn paint_node_box(c: &ComputedStyle, state: StateBits, id: NodeId, r: egui::Rect, p: &egui::Painter) {
+    let dark = p.ctx().theme() == egui::Theme::Dark;
+    let s = crate::paint::StyleView::new(Some(c), crate::paint::Ua::NONE, state, dark);
+    crate::paint::paint_box(&mut crate::paint::PaintCx::for_node(p, id.to_raw()), &s, r);
 }
 
 /// A stock widget's outer shadows (CS5g) around its rect `r`, with its corner radius as egui draws

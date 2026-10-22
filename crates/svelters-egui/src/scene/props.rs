@@ -94,7 +94,9 @@ pub(crate) fn is_common(key: P) -> bool {
 /// default. Returns what the node needs (the caller restyles on LAYOUT).
 pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> Result<Dirty, String> {
     if let P::Ext(i) = def.key {
-        return crate::provider::set_prop(w, i as usize, v); // RA1: a provider kind's field
+        // RA1: a provider kind's field; OW0: an own widget's extra prop, which the built-in egui
+        // wrapper of the same kind ignores
+        return if matches!(w, W::Ext(_)) { crate::provider::set_prop(w, i as usize, v) } else { Ok(Dirty::EMPTY) };
     }
     if matches!(w, W::Ext(_)) && !is_common(def.key) {
         return crate::provider::set_replaced_prop(w, def, v); // OW0: an own widget's field
@@ -304,7 +306,8 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
 
 pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
     if let P::Ext(i) = def.key {
-        return crate::provider::get_prop(n, i as usize); // RA1: a provider kind's field
+        // RA1: a provider kind's field; OW0: an own widget's extra prop (the wrapper reads the default)
+        return if matches!(n.w, W::Ext(_)) { crate::provider::get_prop(n, i as usize) } else { Ok(default_value(def)) };
     }
     if let W::Ext(x) = n.w
         && !is_common(def.key)

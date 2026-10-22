@@ -83,7 +83,10 @@ typedef struct svl_host {
 
 ## Checkpoint semantics
 
-1. Deliver the batch of changed observed properties (`__svelters_changed`, ABI v2.6), then the queued native events.
+1. Settle offloaded export calls (progress, results); if any settled, drain JS jobs before step 2. Then deliver
+   the batch of changed observed properties (`__svelters_changed`, ABI v2.6), then the queued native events,
+   then due timers. A job drain follows every task (a settle batch, an event, a timer callback); only the
+   change batch shares its drain with the first event (`plans/research/REACTIVITY.md` §5.3).
 2. Run Svelte effects and QuickJS jobs, up to a bounded number.
 3. Apply the resulting tree/prop operations through the vtable.
 4. If jobs remain, call `backend->wake()` and return to the toolkit loop.
