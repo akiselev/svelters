@@ -35,4 +35,6 @@ export {
   flush,
   tick,
   clsx,
+  HMR,
+  FILENAME,
 } from './svelte.js';

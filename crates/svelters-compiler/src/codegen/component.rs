@@ -128,9 +128,9 @@ pub struct Codegen<'a, 's> {
 }
 
 /// Generates the whole module. `name` is the component function name.
-pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, filename: &str, imports: &crate::target::RuntimeImports) -> (String, String) {
+pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, filename: &str, imports: &crate::target::RuntimeImports, hmr: bool) -> (String, String) {
     let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, root_fragment: false, memo: Vec::new(), name, _p: std::marker::PhantomData };
-    g.module(comp, imports);
+    g.module(comp, imports, hmr.then_some(filename));
     let out = filename.rsplit('/').next().unwrap_or(filename).replace(".svelte", ".js");
     g.w.finish(filename, src, &out)
 }
@@ -140,12 +140,12 @@ pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, file
 /// the template's expressions, so the walk runs, but nothing is written and no source map is built.
 pub fn traverse(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, imports: &crate::target::RuntimeImports) {
     let mut g = Codegen { src, rw, w: Writer::sink(), tmp: 0, root_fragment: false, memo: Vec::new(), name, _p: std::marker::PhantomData };
-    g.module(comp, imports);
+    g.module(comp, imports, None);
 }
 
 impl Codegen<'_, '_> {
     /// The whole module: imports, hoisted snippets, the component function.
-    fn module(&mut self, comp: &Component, imports: &crate::target::RuntimeImports) {
+    fn module(&mut self, comp: &Component, imports: &crate::target::RuntimeImports, hmr_id: Option<&str>) {
         let (rw, name) = (self.rw, self.name);
         let g = self;
         if rw.tracing() {
@@ -162,7 +162,7 @@ impl Codegen<'_, '_> {
             g.snippet(s);
             g.w.newline();
         }
-        g.w.write(&format!("\nexport default function {name}($$anchor, $$props) {{"));
+        g.w.write(&format!("\n{}function {name}($$anchor, $$props) {{", if hmr_id.is_some() { "" } else { "export default " }));
         g.w.indent();
         g.w.newline();
         g.w.write("$.push($$props, true);");
@@ -179,6 +179,12 @@ impl Codegen<'_, '_> {
         g.w.dedent();
         g.w.newline();
         g.w.write("}\n");
+        if let Some(id) = hmr_id {
+            let id = serde_json::to_string(id).expect("string serializes");
+            g.w.write(&format!(
+                "\nif (import.meta.hot) {{\n\t{name} = $n.hmr({name}, {id});\n\timport.meta.hot.acceptExports([\"default\"], (m) => m && {name}[$n.HMR].update(m.default));\n}}\n\nexport default {name};\n"
+            ));
+        }
     }
 }
 

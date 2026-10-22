@@ -32,6 +32,9 @@ pub struct CompileOptions<'b> {
     /// Portability mode (`--backend gtk,qt,...`): the other platforms the same component is checked
     /// against; their answers only add `observability_differs` warnings (output stays per platform).
     pub portability: Vec<&'b dyn PlatformSemantics>,
+    /// `--hmr` (dev only): the component is wrapped for in-place replacement
+    /// (`if (import.meta.hot) { C = $n.hmr(C, id); ... }`); `filename` is the component id.
+    pub hmr: bool,
     /// Q3w (`--css`): scope the `<style>` with the Rust port of Svelte's CSS pipeline
     /// ([`crate::scoped_css`]) and return it as [`CompileResult::css`], hashed with `css_scope`
     /// (else Svelte's default hash of `filename`, which then also becomes the elements' scope class).
@@ -40,7 +43,7 @@ pub struct CompileOptions<'b> {
 
 impl<'b> CompileOptions<'b> {
     pub fn new(filename: impl Into<String>, backend: &'b dyn PlatformSemantics) -> Self {
-        CompileOptions { filename: filename.into(), backend, dev: false, css_scope: None, target: &QuickJsHost, strict_native: false, portability: Vec::new(), scoped_css: false }
+        CompileOptions { filename: filename.into(), backend, dev: false, css_scope: None, target: &QuickJsHost, strict_native: false, portability: Vec::new(), scoped_css: false, hmr: false }
     }
 }
 
@@ -187,7 +190,7 @@ fn run_component(src: &str, opts: &CompileOptions, check: bool) -> CompileResult
         crate::codegen::component::traverse(src, &ir, &rw, &name, &opts.target.runtime_imports());
         None
     } else {
-        Some(generate(src, &ir, &rw, &name, &opts.filename, &opts.target.runtime_imports()))
+        Some(generate(src, &ir, &rw, &name, &opts.filename, &opts.target.runtime_imports(), opts.hmr))
     };
     let diags = rw.into_diagnostics();
     timings.generate_us = t.elapsed().as_micros() as u64;

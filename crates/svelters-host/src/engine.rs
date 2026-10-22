@@ -177,7 +177,25 @@ pub struct OpSettle {
 /// Where an engine's modules come from (Q1): a built bundle or the app's sources.
 pub use svelters_modules::ModuleProvider;
 
+/// What [`JsEngine::hot_update`] did.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum HotOutcome {
+    /// The changed modules were swapped in place; these modules were re-evaluated.
+    Applied { modules: Vec<String> },
+    /// The change cannot be applied in place (no accepting module, an invalidate, the swap
+    /// budget): do a full reload. The reason is for the log.
+    Reload(String),
+}
+
 pub trait JsEngine {
+    /// H1: re-evaluates the modules `changed` (provider ids) as new versions in the running
+    /// context and runs the accept callbacks of the first self-accepting module on each path to
+    /// the entry. A load or evaluation error leaves the previous versions in place (`Err`).
+    fn hot_update(&mut self, provider: Rc<dyn ModuleProvider>, changed: &[String]) -> Result<HotOutcome, JsError> {
+        let _ = (provider, changed);
+        Ok(HotOutcome::Reload("this engine has no in-place module updates".into()))
+    }
+
     /// Evaluates the provider's entry module; its imports are resolved and loaded through the
     /// provider (host built-ins, `svelters:core` and `svelters:app/*`, first). Jobs may remain
     /// queued afterwards.
