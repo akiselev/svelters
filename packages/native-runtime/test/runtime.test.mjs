@@ -2,6 +2,7 @@
 // Run: node --import ./test/register.mjs --test test/*.test.mjs
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { types } from 'node:util';
 import * as $ from 'svelte/internal/client';
 import { createTestHost } from '@svelters/testhost';
 import * as $n from '../src/index.js';
@@ -430,4 +431,55 @@ test('lis', () => {
   assert.deepEqual([...$n.lis([4, 3, 2, 1])].length, 1);
   assert.deepEqual([...$n.lis([0, -1, 1, 5, 2, 3])].sort(), [0, 2, 4, 5]);
   assert.deepEqual([...$n.lis([])], []);
+});
+
+test('RT1: a record prop from $state reaches the host as plain data, nested mutations included', () => {
+  const t = harness();
+  const plain = (v) => {
+    assert.ok(!types.isProxy(v), 'no Proxy reaches the host');
+    if (v && typeof v === 'object') for (const x of Object.values(v)) plain(x);
+  };
+  const pos = (line, column) => ({ line, column });
+  // an array of objects holding objects, and an array inside an object inside an array
+  const selection = $.state(
+    $.proxy({
+      ranges: [{ anchor: pos(1, 0), head: pos(1, 4) }],
+      groups: [{ tags: ['a', 'b'], meta: { spans: [pos(0, 0)] } }],
+    }),
+  );
+  const handle = { svlHandle: 99 };
+  let ed;
+  mountInWindow((c) => {
+    ed = $n.element('entry');
+    $.template_effect(() => $n.set(ed, 'selection', $.get(selection)));
+    $.template_effect(() => $n.set(ed, 'extra', { ref: handle, list: [1, 2] }));
+    $n.append(c, ed);
+  });
+  const sent = () => t.th.host.getProp(ed.h, 'selection');
+  plain(sent());
+  assert.deepEqual(sent(), {
+    ranges: [{ anchor: { line: 1, column: 0 }, head: { line: 1, column: 4 } }],
+    groups: [{ tags: ['a', 'b'], meta: { spans: [{ line: 0, column: 0 }] } }],
+  });
+  // a value with no proxy in it goes through uncopied (the handle object stays the same)
+  assert.equal(t.th.host.getProp(ed.h, 'extra').ref, handle);
+  t.take();
+
+  // a nested mutation writes the prop again, as plain data
+  $.get(selection).ranges[0].head.line = 3;
+  $.flush();
+  assert.deepEqual(t.take(), [
+    'set #2 selection {"ranges":[{"anchor":{"line":1,"column":0},"head":{"line":3,"column":4}}],"groups":[{"tags":["a","b"],"meta":{"spans":[{"line":0,"column":0}]}}]}',
+  ]);
+  plain(sent());
+  $.get(selection).groups[0].meta.spans.push(pos(2, 5));
+  $.flush();
+  assert.deepEqual(sent().groups[0].meta.spans, [{ line: 0, column: 0 }, { line: 2, column: 5 }]);
+  plain(sent());
+  t.take();
+
+  // the same content again (a new proxy, equal data) is not rewritten
+  $.set(selection, $.proxy($.snapshot($.get(selection))));
+  $.flush();
+  assert.deepEqual(t.take(), [], 'equal data is not written twice');
 });
