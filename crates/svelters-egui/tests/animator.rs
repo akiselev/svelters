@@ -118,3 +118,53 @@ fn flip_animates_from_the_scene_bounds() {
     assert!(top(&app, "Gamma") < top(&app, "Beta") && top(&app, "Beta") < top(&app, "Alpha"));
     assert!(app.errors().is_empty());
 }
+
+// ---- TR2b: focus ----
+
+fn tab(app: &mut TestApp, shift: bool) {
+    let mods = if shift { egui::Modifiers::SHIFT } else { egui::Modifiers::NONE };
+    app.harness.key_press_modifiers(mods, egui::Key::Tab);
+    app.harness.step();
+}
+
+fn focused(app: &TestApp, label: &str) -> bool {
+    app.harness.query_by_label(label).is_some_and(|n| n.is_focused())
+}
+
+#[test]
+fn tab_skips_exiting_nodes() {
+    let mut app = start();
+    // sanity: while nothing exits, Tab visits Toggle, then the Flown button
+    tab(&mut app, false);
+    assert!(focused(&app, "Toggle"), "first Tab: Toggle");
+    tab(&mut app, false);
+    assert!(focused(&app, "Flown"), "second Tab: the live Flown button");
+    tab(&mut app, true);
+    assert!(focused(&app, "Toggle"));
+
+    // Enter on the focused Toggle starts the outro; its elements are inert (and hidden)
+    app.harness.key_press(egui::Key::Enter);
+    app.harness.step();
+    app.harness.step();
+    assert!(visuals(&app).iter().any(|v| v.inert), "the outro runs");
+    // the only focusable live node is Toggle: Tab and Shift-Tab never end on the exiting button
+    for i in 0..6 {
+        tab(&mut app, i % 2 == 1);
+        assert!(focused(&app, "Toggle"), "Tab {i} skips the exiting button");
+    }
+    play(&mut app, |a| has(a, "Outros ended: 1"));
+}
+
+#[test]
+fn a_focused_node_that_starts_exiting_gives_up_focus() {
+    use svelters_abi::Backend;
+    let mut app = start();
+    let flown = app.backend.handles_of("button")[1];
+    tab(&mut app, false);
+    tab(&mut app, false);
+    assert!(focused(&app, "Flown"));
+    app.backend.style(svelters_abi::SVL_STYLE_INERT, flown, Some("1")).unwrap();
+    app.harness.step();
+    app.harness.step();
+    assert_eq!(app.harness.ctx.memory(|m| m.focused()), None, "focus left the exiting node");
+}
