@@ -263,13 +263,30 @@ function tagsOf(backend, specFragments = []) {
   return tagCache.get(key);
 }
 
-export function nativeSheets(code, file, toolkit, warn = () => {}, specFragments = []) {
+/** The component's `<style>` match, null without one or for `<style lang=...>` (left alone). */
+function styleBlock(code) {
   const m = STYLE_TAG.exec(code);
-  if (!m || /\blang\s*=/.test(m[1] ?? '')) return null;
-  const { css, native, errors } = extractNative(m[2]);
-  if (errors.length) throw new Error(`${file}: ${errors.join('; ')}`);
+  return !m || /\blang\s*=/.test(m[1] ?? '') ? null : m;
+}
+
+/** The scope class of a component's sheets: a hash of its path in the repository. */
+function scopeOf(file) {
+  return `svelte-${createHash('sha256').update(path.relative(repoRoot, file)).digest('hex').slice(0, 10)}`;
+}
+
+/** The `@native` blocks of a `<style>` body (`extractNative`), throwing on a malformed one. */
+function nativeBlocks(styleText, file) {
+  const r = extractNative(styleText);
+  if (r.errors.length) throw new Error(`${file}: ${r.errors.join('; ')}`);
+  return r;
+}
+
+export function nativeSheets(code, file, toolkit, warn = () => {}, specFragments = []) {
+  const m = styleBlock(code);
+  if (!m) return null;
+  const { css, native } = nativeBlocks(m[2], file);
   const src = code.slice(0, m.index) + `<style${m[1] ?? ''}>${css}</style>` + code.slice(m.index + m[0].length);
-  const scope = `svelte-${createHash('sha256').update(path.relative(repoRoot, file)).digest('hex').slice(0, 10)}`;
+  const scope = scopeOf(file);
   let r;
   try {
     r = svelteCompile(withoutBindings(src), { filename: file, css: 'external', cssHash: () => scope });
@@ -280,7 +297,17 @@ export function nativeSheets(code, file, toolkit, warn = () => {}, specFragments
   }
   // egui runs the Rust CSS engine in process (CS5e): it gets the scoped CSS as Svelte wrote it
   if (toolkit === 'egui') return r.css?.code?.trim() ? { scope, sheets: { css: r.css.code } } : null;
-  const t = translateSheet(r.css?.code ?? '', toolkit, { native: native[toolkit] ?? [], setters: false, tags: tagsOf(toolkit, specFragments) });
+  return translatedSheets(r.css?.code ?? '', scope, native, toolkit, warn, specFragments);
+}
+
+/**
+ * The X6 sheets of a stylesheet already scoped with `scope` (by stock Svelte in nativeSheets, or by the
+ * svelters compiler's port of Svelte's CSS pipeline, `svelters-compile --css`): @svelters/style
+ * translates it for `toolkit` without the setter declarations, plus the toolkit's `@native` blocks.
+ * Null when nothing remains for the toolkit's dialect.
+ */
+export function translatedSheets(scopedCss, scope, native, toolkit, warn = () => {}, specFragments = []) {
+  const t = translateSheet(scopedCss, toolkit, { native: native[toolkit] ?? [], setters: false, tags: tagsOf(toolkit, specFragments) });
   for (const d of t.diagnostics) if (d.level !== 'info') warn(formatDiagnostic(d));
   // decl dialect (AppKit): structured rules for the runtime cascade engine
   if (t.declRules) return t.declRules.length ? { scope, sheets: { decl: t.declRules } } : null;
@@ -317,19 +344,40 @@ export function svelteNative({ backend = 'gtk', spec, specFragments = [], dev = 
       const args = isModule ? ['--module', '--json', '--filename', file] : ['--backend', backend, '--json', '--filename', file];
       if (spec && !isModule) args.push('--spec', spec);
       if (!isModule) for (const f of specFragments) args.push('--spec-fragment', f);
-      // CSS declarations of <style> go to the X6 translator (GTK CSS / QSS), scoped like Svelte's
-      const css = isModule ? null : nativeSheets(code, file, backend, (message) => this.warn({ message }), specFragments);
-      if (css) args.push('--css-scope', css.scope);
       if (dev) args.push('--dev');
-      args.push('-');
-      let out;
-      try {
-        out = execFileSync(bin, args, { input: code, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] });
-      } catch (e) {
-        out = e.stdout;
-        if (!out) throw new Error(`svelters-compile failed: ${e.stderr || e.message}`);
+      const warn = (message) => this.warn({ message });
+      const run = (extra) => {
+        let out;
+        try {
+          out = execFileSync(bin, [...args, ...extra, '-'], { input: code, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] });
+        } catch (e) {
+          out = e.stdout;
+          if (!out) throw new Error(`svelters-compile failed: ${e.stderr || e.message}`);
+        }
+        return JSON.parse(out);
+      };
+      // CSS declarations of <style> go to the X6 translator (GTK CSS / QSS / decl), scoped like Svelte's.
+      // Q3w: the svelters compiler scopes the <style> itself (`--css`, the Rust port of Svelte's CSS
+      // pipeline, `@native` blocks lifted out); egui still takes stock Svelte's scoped CSS (CS5e).
+      const style = isModule ? null : styleBlock(code);
+      let css = null;
+      let res;
+      if (style && backend !== 'egui') {
+        const { native } = nativeBlocks(style[2], file);
+        const scope = scopeOf(file);
+        res = run(['--css', '--css-scope', scope]);
+        if (res.js != null) {
+          css = res.css && !res.css.injected ? translatedSheets(res.css.code, scope, native, backend, warn, specFragments) : null;
+          // nothing for the toolkit (only setter declarations, say): no scope class on the elements, as before
+          if (!css) {
+            const plain = run([]);
+            res = { ...res, js: plain.js, map: plain.map };
+          }
+        }
+      } else {
+        css = style ? nativeSheets(code, file, backend, warn, specFragments) : null;
+        res = run(css ? ['--css-scope', css.scope] : []);
       }
-      const res = JSON.parse(out);
       for (const d of res.diagnostics.filter((d) => d.severity === 'warning')) {
         this.warn({ message: `${d.code}${d.backend ? ` (${d.backend})` : ''}: ${d.message}`, loc: { line: d.line, column: d.column - 1 }, pos: d.start });
       }
