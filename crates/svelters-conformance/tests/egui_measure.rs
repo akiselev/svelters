@@ -5,9 +5,19 @@
 //! traces and the gap table (`target/na/linux/egui-gap.md`). A measurement, not a gate: it fails
 //! only when the harness itself breaks.
 //!
-//! Input is synthetic (egui `Event`s, not winit): no IME, no key repeat. Offsets are chars, as in
-//! the goldens.
+//! Input is synthetic (egui `Event`s, not winit): no key repeat. Offsets are chars, as in the
+//! goldens.
+//!
+//! Pins 4-6 (WG3b) follow egui-winit 0.37 on Linux: Ctrl+X/C/V (and only those: `command_only`)
+//! become `Cut`/`Copy`/`Paste(clipboard)` instead of the key, the paste text with CRLF turned into
+//! LF; `CopyText` and `TextSelectionSettled` output commands set the clipboard and PRIMARY; a middle
+//! press pushes `MiddleClickPaste` with PRIMARY. Typed characters are `Text` events. Dead keys are
+//! a model of winit's X11 path without an input-method server (the setup the native captures use):
+//! a dead key composes with the next letter or gives the Compose table's accent on Space; a key
+//! that does not compose cancels it and goes through alone [model, not measured on winit].
+//! Ctrl+Shift+U reaches egui as a plain key (the hex entry is a GTK and IBus feature).
 
+use egui::OutputCommand;
 use egui::text::{CCursor, CCursorRange};
 use egui::text_edit::TextEditState;
 use egui_kittest::Harness;
@@ -15,9 +25,11 @@ use egui_kittest::kittest::Queryable;
 use std::fmt::Write as _;
 use svelters_abi::*;
 use svelters_conformance::golden::{Capture, PinGap, compare, finish, goldens};
-use svelters_conformance::pins::{BUTTON, BUTTON_LABEL, Chord, FIELDS, Keys, Pin, load_pins};
+use svelters_conformance::pins::{
+    BUTTON, BUTTON_LABEL, CLIPBOARD, Chord, FIELDS, Keys, Pin, load_pins,
+};
 use svelters_conformance::trace::{Checkpoint, State, Trace};
-use svelters_conformance::{Driver, run_pin};
+use svelters_conformance::{Driver, run_pin, selection_handle};
 use svelters_egui::EguiBackend;
 
 struct Rec;
@@ -42,6 +54,31 @@ struct Egui {
     win: u64,
     fields: Vec<(String, u64)>,
     button: u64,
+    /// What egui-winit's clipboard would hold: the system clipboard and PRIMARY.
+    clipboard: String,
+    primary: String,
+    /// The pin's selection pseudo-anchors.
+    selections: Vec<String>,
+    /// A dead key waiting for the next key (`acute`, `diaeresis`, `grave`).
+    dead: Option<String>,
+}
+
+/// The composition a dead key and the next character give (`None`: no composition, the character
+/// goes through alone). Space gives the ASCII accent of libX11's and xkbcommon's en_US.UTF-8 Compose
+/// table (`<dead_acute> <space> : "'"`), which winit's X11 path composes with too.
+fn compose(dead: &str, c: char) -> Option<char> {
+    let (from, to, spacing): (&str, &str, char) = match dead {
+        "acute" => ("aeiou", "áéíóú", '\''),
+        "diaeresis" => ("aeiou", "äëïöü", '"'),
+        "grave" => ("aeiou", "àèìòù", '`'),
+        _ => return None,
+    };
+    if c == ' ' {
+        return Some(spacing);
+    }
+    from.chars()
+        .position(|f| f == c)
+        .and_then(|i| to.chars().nth(i))
 }
 
 impl Egui {
@@ -68,7 +105,31 @@ impl Egui {
             win: 0,
             fields: vec![],
             button: 0,
+            clipboard: String::new(),
+            primary: String::new(),
+            selections: vec![],
+            dead: None,
         }
+    }
+
+    /// The clipboard and PRIMARY writes of the last frame (egui-winit's `handle_platform_output`).
+    fn collect(&mut self) {
+        for c in &self.harness.output().platform_output.commands {
+            match c {
+                OutputCommand::CopyText(t) => self.clipboard = t.clone(),
+                OutputCommand::TextSelectionSettled(t) => self.primary = t.clone(),
+                _ => {}
+            }
+        }
+    }
+
+    fn text_event(&mut self, c: char) {
+        let c = match self.dead.take() {
+            Some(d) => compose(&d, c).unwrap_or(c),
+            None => c,
+        };
+        self.harness.event(egui::Event::Text(c.to_string()));
+        self.frames(3);
     }
 
     fn br(&self) -> BackendRef<'static> {
@@ -132,6 +193,7 @@ impl Egui {
     fn frames(&mut self, n: usize) {
         for _ in 0..n {
             self.harness.step();
+            self.collect();
         }
     }
 
@@ -161,12 +223,23 @@ impl Egui {
     }
 
     fn button_event(&mut self, pos: egui::Pos2, pressed: bool) {
+        self.button_n(pos, egui::PointerButton::Primary, pressed);
+    }
+
+    fn button_n(&mut self, pos: egui::Pos2, button: egui::PointerButton, pressed: bool) {
         self.harness.event(egui::Event::PointerButton {
             pos,
-            button: egui::PointerButton::Primary,
+            button,
             pressed,
             modifiers: egui::Modifiers::NONE,
         });
+        // egui-winit: a middle press pastes PRIMARY (X11, Wayland)
+        if pressed && button == egui::PointerButton::Middle && !self.primary.is_empty() {
+            self.harness.event(egui::Event::MiddleClickPaste {
+                pos,
+                text: self.primary.clone(),
+            });
+        }
         self.frames(1);
     }
 
@@ -190,7 +263,15 @@ fn egui_key(name: &str) -> Result<egui::Key, String> {
         "Tab" => Tab,
         "Escape" => Escape,
         "Return" => Enter,
+        "Insert" => Insert,
+        "space" => Space,
         "a" => A,
+        "c" => C,
+        "u" => U,
+        "v" => V,
+        "x" => X,
+        "y" => Y,
+        "z" => Z,
         o => return Err(format!("no egui key for {o}")),
     })
 }
@@ -222,6 +303,10 @@ impl Driver for Egui {
         self.trace.call(win, "present", "[]");
         self.win = win;
         self.button = b;
+        self.clipboard = pin.setup.clipboard.clone().unwrap_or_default();
+        self.primary = String::new();
+        self.selections = pin.observe.clone();
+        self.dead = None;
         self.frames(3);
         let ctx = self.harness.ctx.clone();
         if let Some(f) = &pin.setup.focus {
@@ -253,19 +338,63 @@ impl Driver for Egui {
             mac_cmd: false,
             command: c.ctrl,
         };
-        self.harness.key_press_modifiers(mods, egui_key(&c.key)?);
+        if let Some(d) = c.key.strip_prefix("dead_") {
+            self.dead = Some(d.to_string());
+            self.frames(3);
+            return Ok(());
+        }
+        let k = egui_key(&c.key)?;
+        let plain = !(c.ctrl || c.alt || c.cmd);
+        if plain && !c.shift && k == egui::Key::Space {
+            // a key with text: the key and its `Text` (composed when a dead key waits)
+            self.harness.key_press_modifiers(mods, k);
+            self.text_event(' ');
+            return Ok(());
+        }
+        // any other key cancels a waiting dead key and goes through alone
+        self.dead = None;
+        let command_only = c.ctrl && !c.shift && !c.alt && !c.cmd;
+        match k {
+            egui::Key::X if command_only => self.harness.event(egui::Event::Cut),
+            egui::Key::C if command_only => self.harness.event(egui::Event::Copy),
+            egui::Key::V if command_only => {
+                let t = self.clipboard.replace("\r\n", "\n");
+                if !t.is_empty() {
+                    self.harness.event(egui::Event::Paste(t));
+                }
+            }
+            _ => self.harness.key_press_modifiers(mods, k),
+        }
         self.frames(3);
         Ok(())
     }
 
-    fn click(&mut self, target: &str, at: Option<usize>, count: u32) -> Result<(), String> {
+    fn type_text(&mut self, text: &str) -> Result<(), String> {
+        for c in text.chars() {
+            self.text_event(c);
+        }
+        Ok(())
+    }
+
+    fn click(
+        &mut self,
+        target: &str,
+        at: Option<usize>,
+        count: u32,
+        button: u32,
+    ) -> Result<(), String> {
         self.settle();
         let pos = self.point(target, at)?;
         self.harness.event(egui::Event::PointerMoved(pos));
         self.frames(1);
+        let b = if button == 2 {
+            egui::PointerButton::Middle
+        } else {
+            egui::PointerButton::Primary
+        };
         for _ in 0..count {
-            self.button_event(pos, true);
-            self.button_event(pos, false);
+            self.button_n(pos, b, true);
+            self.button_n(pos, b, false);
         }
         self.frames(3);
         Ok(())
@@ -322,6 +451,16 @@ impl Driver for Egui {
         };
         self.trace.state(self.button, &s);
         cp.push((BUTTON.to_string(), s));
+        for name in self.selections.clone() {
+            let t = if name == CLIPBOARD {
+                self.clipboard.clone()
+            } else {
+                self.primary.clone()
+            };
+            let s = State::selection(t);
+            self.trace.state(selection_handle(&name), &s);
+            cp.push((name, s));
+        }
         Ok(cp)
     }
 

@@ -1,0 +1,20 @@
+{
+  "id": "undo-edits",
+  "pin": 4,
+  "title": "Undo grouping across a word deletion, typing, backspaces, a caret move, typing over a select-all; then redo",
+  "setup": {
+    "fields": { "a": { "text": "alpha beta gamma", "sel": [-1, -1] }, "b": { "text": "other" } },
+    "focus": "a"
+  },
+  "steps": [
+    { "key": "delete-word-back" },
+    { "type": "delta" },
+    { "key": "backspace", "repeat": 2 },
+    { "key": "left", "repeat": 2 },
+    { "type": "x" },
+    { "key": "select-all" },
+    { "type": "new" },
+    { "key": "undo", "repeat": 8 },
+    { "key": "redo", "repeat": 3 }
+  ]
+}

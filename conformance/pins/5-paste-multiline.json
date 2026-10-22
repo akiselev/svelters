@@ -1,0 +1,16 @@
+{
+  "id": "paste-multiline",
+  "pin": 5,
+  "title": "Pasting text with LF, CRLF and a tab into a single-line field, into a caret and over a selection",
+  "setup": {
+    "fields": { "a": { "text": "ab", "sel": [1, 1] }, "b": { "text": "other" } },
+    "focus": "a",
+    "clipboard": "one\ntwo\r\nthree\tfour"
+  },
+  "observe": ["clipboard"],
+  "steps": [
+    { "key": "paste" },
+    { "key": "select-all" },
+    { "key": "paste" }
+  ]
+}
