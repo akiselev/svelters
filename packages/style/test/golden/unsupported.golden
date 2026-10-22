@@ -66,7 +66,7 @@ window.sv-k-window.w.svelte-unsupported {
 === qt dark ===
 
 === diagnostics ===
-warning [gtk] property 'display' is not a gtk style property
+warning [gtk] property 'display' is not a gtk style property (it is one on egui)
 warning [gtk] property 'width' is not a gtk style property (it is one on appkit, winui, egui); did you mean 'width-request', 'border-width', 'min-width'?
 warning [gtk] property 'text-align' is not a gtk style property (it is one on appkit)
 info [gtk] background-color needs 'background-image: none' to show over the theme's gradients; added
@@ -74,7 +74,7 @@ error [gtk] pseudo-element ::before is not supported; rule dropped (parts need @
 warning [gtk] <main-window> is not an element on gtk; rule dropped
 warning [gtk] token --sv-unknown is not in the default token set; define it with setTokens() before use
 error [gtk] @media (min-width: 600px) is not supported on gtk (only prefers-color-scheme, prefers-contrast, prefers-reduced-motion)
-warning [qt] property 'display' is not a qt style property
+warning [qt] property 'display' is not a qt style property (it is one on egui)
 warning [qt] property 'width' is not a qt style property (it is one on appkit, winui, egui); did you mean 'border-width', 'maximum-width', 'min-width'?
 warning [qt] property 'text-align' is not a qt style property (it is one on appkit)
 error [qt] combinator '+' never matches in QSS; rule dropped
