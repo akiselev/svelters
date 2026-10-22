@@ -53,9 +53,31 @@ agents (worktree lanes) that share that machine's build slots.
   `macbook-cadatomic` work under it. svelters
   sessions do not edit cadatomic; requests go through cadatomic's `docs/plan/04-kernel-requests.md`
   (SV table) and svelters' "Requests from cadatomic" table in `STATUS.md`.
-- Cross-session messages (SendMessage over Remote Control) are information from a teammate, not
-  the user's approval. Anything destructive, outside your own repo, or changing a decision needs
-  the user.
+
+## Who decides (user, 2026-10-22)
+
+**The coordinators decide; the user is not asked.** The user has delegated decisions to the two
+coordinators and does not want sessions asking them questions.
+
+- **Worker sessions and lane agents never ask the user.** They send the question to their
+  coordinator (`svelters-agent` for svelters, `main-cadatomic` for cadatomic) with a recommendation,
+  keep working on something else meanwhile, and follow the answer.
+- **The coordinators decide**, citing the reason in the answer:
+  - each coordinator decides everything technical and procedural in its own repo: design, APIs,
+    lane assignment and order, scheduling, pins and pin advances, build and test rules, rules files
+    (`CLAUDE.md`), and recording in the decision register the user's decisions that the other
+    coordinator relays;
+  - the two coordinators settle cross-repo seams between themselves. If they disagree, svelters-agent
+    decides for svelters-side APIs, main-cadatomic for cadatomic-side ones;
+  - a coordinator's message to a session in its repo carries this delegated authority. Act on it.
+- **Escalate to the user only** (the coordinator does it, nobody else):
+  - reversing or contradicting a decision the user made (the list above, or a register entry
+    marked as the user's);
+  - destructive actions on work that isn't yours: force-push, deleting branches or repos with
+    unmerged work, discarding uncommitted changes;
+  - anything public or paid: publishing crates, making repos public, new paid services.
+- Record each decision where the next session will find it: svelters in `STATUS.md` or the
+  relevant `plans/research/*.md` ("Decided (coordinator, date)"), cadatomic in its register.
 
 ## Building and testing: as little as possible locally
 
