@@ -216,6 +216,9 @@ pub(crate) struct SceneStyle {
     /// Their samples at `now`: what paint reads over the computed style.
     sampled: std::collections::HashMap<NodeId, Overlay>,
     part_sampled: std::collections::HashMap<(NodeId, u16), Overlay>,
+    /// OW5a: repeated parts' styles by (host, part, forced state, index, count) ([`Scene::part_at`]),
+    /// dropped at every restyle.
+    part_at: std::collections::HashMap<(NodeId, &'static str, u64, u32, u32), Arc<ComputedStyle>>,
     /// egui's input time at the last logic step (kittest's virtual clock in tests): transitions
     /// start and are sampled at it.
     pub(crate) now: f64,
@@ -263,6 +266,7 @@ impl Default for SceneStyle {
             part_transitions: Transitions::new(),
             sampled: Default::default(),
             part_sampled: Default::default(),
+            part_at: Default::default(),
             now: 0.0,
             reduced_motion: false,
         }
@@ -640,10 +644,48 @@ impl Scene {
         self.style.observer = Some(self.journal.observe(f));
     }
 
+    /// OW5a (DESIGN R6, WIDGET-PARITY P1): node `id`'s repeated part `part` (a list's `row`) at
+    /// logical position `at` = (index, count), matched with the host's state bits replaced by
+    /// `state` (the row's own hover, selection, cursor; the caller keeps the host's
+    /// `:focus-within`), so `virtual-list::part(row):selected`,
+    /// `virtual-list:not(:focus-within)::part(row):selected` and `::part(row):nth-child(even)`
+    /// style each pooled row. `None` when no sheet has a rule ending in `::part(part)` (the widget
+    /// paints the part from its UA table). Cached until the next restyle of any node.
+    pub(crate) fn part_at(&mut self, id: NodeId, part: &'static str, state: StateBits, at: (usize, usize)) -> Option<Arc<ComputedStyle>> {
+        let st = &self.style;
+        if !st.active {
+            return None;
+        }
+        let host = st.computed(id)?.clone();
+        let key = (id, part, state.0, at.0 as u32, at.1 as u32);
+        if let Some(c) = st.part_at.get(&key) {
+            return Some(c.clone());
+        }
+        let pe = PseudoElement::part(part);
+        if !st.stylist.has_pseudo_rules(&pe) {
+            return None;
+        }
+        let mut caches = std::mem::take(&mut self.style.caches);
+        let n = NodeRef::at(self, id);
+        let st = &self.style;
+        caches.clear();
+        let c = Arc::new(st.stylist.compute_pseudo_at(Forced { n, subject: id, state }, &pe, Some(at), &host, &st.cx, &mut caches));
+        caches.clear();
+        self.style.caches = caches;
+        if self.style.part_at.len() > 4096 {
+            self.style.part_at.clear();
+        }
+        self.style.part_at.insert(key, c.clone());
+        Some(c)
+    }
+
     /// Computes node `i`'s style now from its parent's stored style; applies it (taffy style,
     /// paint). Returns true if what its children inherit changed.
     pub(crate) fn restyle_node(&mut self, i: usize) -> bool {
         let Some(id) = self.slots.id_at(i) else { return false };
+        if !self.style.part_at.is_empty() {
+            self.style.part_at.clear();
+        }
         self.core[i].dirty.remove(Dirty::STYLE);
         let parent = self.core[i].parent.and_then(|p| self.style.computed(p).cloned());
         let inline = self.style.node(id).and_then(|n| n.inline.clone());

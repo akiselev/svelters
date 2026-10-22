@@ -135,16 +135,17 @@ fn drag_and_drop_between_two_nodes() {
     let drops = events_of(&rig, &log, dst, "drop");
     assert_eq!(drops.len(), 1, "{log:?}", log = log.events);
     assert_eq!(drops[0][..2], [s("cad/part"), s(r#"{"id":7}"#)]);
+    assert_eq!(drops[0][4], s("move"), "WG6: the drop action (no modifiers)");
     let local = rig.drawn(dst).size() / 2.0;
     assert!(matches!((&drops[0][2], &drops[0][3]), (Value::F64(x), Value::F64(y)) if (*x as f32 - local.x).abs() < 2.0 && (*y as f32 - local.y).abs() < 2.0));
-    assert_eq!(events_of(&rig, &log, src, "drag-end"), vec![vec![Value::Bool(true)]]);
+    assert_eq!(events_of(&rig, &log, src, "drag-end"), vec![vec![Value::Bool(true), s("move")]]);
     assert!(events_of(&rig, &log, other, "drag-enter").is_empty(), "the target that does not accept the type is passed over");
 
     // dropped on a target that does not accept it: drag-end(false), no drop
     let to = rig.drawn(other).center();
     drag(&mut rig, from, to);
     let log = rig.take();
-    assert_eq!(events_of(&rig, &log, src, "drag-end"), vec![vec![Value::Bool(false)]]);
+    assert_eq!(events_of(&rig, &log, src, "drag-end"), vec![vec![Value::Bool(false), s("none")]]);
     assert!(events_of(&rig, &log, other, "drop").is_empty());
     assert!(events_of(&rig, &log, dst, "drop").is_empty());
 
@@ -179,7 +180,7 @@ fn nested_drop_targets_give_the_drop_to_the_innermost() {
     drag(&mut rig, from, to);
     let log = rig.take();
     assert_eq!(events_of(&rig, &log, outer, "drop").len(), 1, "{:?}", log.events);
-    assert_eq!(events_of(&rig, &log, src, "drag-end"), vec![vec![Value::Bool(true)]]);
+    assert_eq!(events_of(&rig, &log, src, "drag-end"), vec![vec![Value::Bool(true), s("move")]]);
 }
 
 // ---- dialogs ----
