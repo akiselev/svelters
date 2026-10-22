@@ -135,46 +135,63 @@ pub struct Codegen<'a, 's> {
 /// Generates the whole module. `name` is the component function name.
 pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, filename: &str, imports: &crate::target::RuntimeImports, hmr: bool) -> (String, String) {
     let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, root_fragment: false, memo: Vec::new(), name, _p: std::marker::PhantomData };
-    if rw.tracing() {
-        g.w.write(&format!("import '{}/tracing';\n", imports.core));
-    }
-    g.w.write(&format!("import * as $ from '{}';\nimport * as $n from '{}';\n", imports.core, imports.native));
-    if comp.kinds {
-        // the spec tables of runtime-resolved attributes (spreads, <svelte:element>)
-        g.w.write(&format!("import * as $$kinds from '{}/kinds';\n", imports.native));
-    }
-    rw.script(&mut g.w, true);
-    let (hoisted, instance): (Vec<_>, Vec<_>) = comp.root.snippets.iter().partition(|s| rw.hoist_snippet(s.span.start));
-    for s in hoisted {
-        g.snippet(s);
-        g.w.newline();
-    }
-    g.w.write(&format!("\n{}function {name}($$anchor, $$props) {{", if hmr { "" } else { "export default " }));
-    g.w.indent();
-    g.w.newline();
-    g.w.write("$.push($$props, true);");
-    // Top-level snippets come before the instance script, so it can reference them (Svelte's
-    // instance_level_snippets)
-    for s in instance {
-        g.snippet(s);
-    }
-    rw.script(&mut g.w, false);
-    g.root_fragment = true;
-    g.fragment(&comp.root, "$$anchor");
-    g.w.newline();
-    rw.epilogue(&mut g.w);
-    g.w.dedent();
-    g.w.newline();
-    g.w.write("}\n");
-    if hmr {
-        let id = serde_json::to_string(filename).expect("string serializes");
-        let sig = rw.hmr_signature().map_or(String::new(), |s| format!(", {s}"));
-        g.w.write(&format!(
-            "\nif (import.meta.hot) {{\n\t{name} = $n.hmr({name}, {id}{sig});\n\timport.meta.hot.acceptExports([\"default\"], (m) => m && {name}[$n.HMR].update(m.default));\n}}\n\nexport default {name};\n"
-        ));
-    }
+    g.module(comp, imports, hmr.then_some(filename));
     let out = filename.rsplit('/').next().unwrap_or(filename).replace(".svelte", ".js");
     g.w.finish(filename, src, &out)
+}
+
+/// [`generate`]'s traversal with no output (CX1's diagnostics-only check): the rune transform
+/// reports some diagnostics (assignments to constants, invalid bindings, ...) while it rewrites
+/// the template's expressions, so the walk runs, but nothing is written and no source map is built.
+pub fn traverse(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, imports: &crate::target::RuntimeImports) {
+    let mut g = Codegen { src, rw, w: Writer::sink(), tmp: 0, root_fragment: false, memo: Vec::new(), name, _p: std::marker::PhantomData };
+    g.module(comp, imports, None);
+}
+
+impl Codegen<'_, '_> {
+    /// The whole module: imports, hoisted snippets, the component function.
+    fn module(&mut self, comp: &Component, imports: &crate::target::RuntimeImports, hmr_id: Option<&str>) {
+        let (rw, name) = (self.rw, self.name);
+        let g = self;
+        if rw.tracing() {
+            g.w.write(&format!("import '{}/tracing';\n", imports.core));
+        }
+        g.w.write(&format!("import * as $ from '{}';\nimport * as $n from '{}';\n", imports.core, imports.native));
+        if comp.kinds {
+            // the spec tables of runtime-resolved attributes (spreads, <svelte:element>)
+            g.w.write(&format!("import * as $$kinds from '{}/kinds';\n", imports.native));
+        }
+        rw.script(&mut g.w, true);
+        let (hoisted, instance): (Vec<_>, Vec<_>) = comp.root.snippets.iter().partition(|s| rw.hoist_snippet(s.span.start));
+        for s in hoisted {
+            g.snippet(s);
+            g.w.newline();
+        }
+        g.w.write(&format!("\n{}function {name}($$anchor, $$props) {{", if hmr_id.is_some() { "" } else { "export default " }));
+        g.w.indent();
+        g.w.newline();
+        g.w.write("$.push($$props, true);");
+        // Top-level snippets come before the instance script, so it can reference them (Svelte's
+        // instance_level_snippets)
+        for s in instance {
+            g.snippet(s);
+        }
+        rw.script(&mut g.w, false);
+        g.root_fragment = true;
+        g.fragment(&comp.root, "$$anchor");
+        g.w.newline();
+        rw.epilogue(&mut g.w);
+        g.w.dedent();
+        g.w.newline();
+        g.w.write("}\n");
+        if let Some(id) = hmr_id {
+            let id = serde_json::to_string(id).expect("string serializes");
+            let sig = rw.hmr_signature().map_or(String::new(), |s| format!(", {s}"));
+            g.w.write(&format!(
+                "\nif (import.meta.hot) {{\n\t{name} = $n.hmr({name}, {id}{sig});\n\timport.meta.hot.acceptExports([\"default\"], (m) => m && {name}[$n.HMR].update(m.default));\n}}\n\nexport default {name};\n"
+            ));
+        }
+    }
 }
 
 impl Codegen<'_, '_> {

@@ -20,7 +20,7 @@ mod builtin;
 mod containers;
 mod registry;
 
-pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, WRAP, WRAP_MODE};
+pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, POSITION, WRAP, WRAP_MODE};
 pub use registry::{KindRegistry, PROVIDER_PACK, ProviderKind, kind};
 
 /// A property's value type (also its ABI tag).
@@ -69,6 +69,12 @@ pub enum P {
     FlexBasis,
     AlignSelf,
     Margin,
+    // SG4: out-of-flow positioning
+    Position,
+    Left,
+    Top,
+    Right,
+    Bottom,
     // Box (and the window's content area)
     FlexDirection,
     FlexWrap,

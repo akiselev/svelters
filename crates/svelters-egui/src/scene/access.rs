@@ -151,6 +151,8 @@ pub(crate) struct SceneCell {
     deferred: RefCell<Vec<(ProviderId, Deferred)>>,
     /// Asks for a frame (set by the backend): queued work needs a logic pass.
     wake: RefCell<Option<Box<dyn Fn()>>>,
+    /// SG4: registered state providers and scene passes (`provider/pass.rs`).
+    pub(crate) passes: RefCell<crate::provider::pass::Registry>,
 }
 
 /// The scene of one embed (today: one `EguiBackend`). `Rc`, `!Send`: UI thread only. From
@@ -160,7 +162,7 @@ pub struct SceneHandle(Rc<SceneCell>);
 
 impl Default for SceneHandle {
     fn default() -> Self {
-        SceneHandle(Rc::new(SceneCell { scene: RefCell::new(Scene::default()), phase: Arc::default(), deferred: RefCell::new(Vec::new()), wake: RefCell::new(None) }))
+        SceneHandle(Rc::new(SceneCell { scene: RefCell::new(Scene::default()), phase: Arc::default(), deferred: RefCell::new(Vec::new()), wake: RefCell::new(None), passes: RefCell::default() }))
     }
 }
 
@@ -171,6 +173,22 @@ impl SceneHandle {
 
     pub(crate) fn borrow_mut(&self) -> RefMut<'_, Scene> {
         self.0.scene.borrow_mut()
+    }
+
+    pub(crate) fn try_borrow(&self) -> Result<Ref<'_, Scene>, SceneBusy> {
+        self.0.scene.try_borrow().map_err(|_| SceneBusy)
+    }
+
+    pub(crate) fn try_borrow_mut(&self) -> Result<RefMut<'_, Scene>, SceneBusy> {
+        self.0.scene.try_borrow_mut().map_err(|_| SceneBusy)
+    }
+
+    pub(crate) fn cell(&self) -> &Rc<SceneCell> {
+        &self.0
+    }
+
+    pub(crate) fn from_cell(c: Rc<SceneCell>) -> SceneHandle {
+        SceneHandle(c)
     }
 
     pub(crate) fn set_phase(&self, p: Phase) {
@@ -218,7 +236,7 @@ impl SceneHandle {
         *self.0.wake.borrow_mut() = Some(Box::new(f));
     }
 
-    fn wake(&self) {
+    pub(crate) fn wake(&self) {
         if let Some(f) = self.0.wake.borrow().as_ref() {
             f();
         }
@@ -259,7 +277,7 @@ impl SceneHandle {
         Ok(r)
     }
 
-    fn write_now<R>(&self, origin: Origin, label: &'static str, f: impl FnOnce(&mut SceneMut<'_>) -> R) -> Result<R, SceneBusy> {
+    pub(crate) fn write_now<R>(&self, origin: Origin, label: &'static str, f: impl FnOnce(&mut SceneMut<'_>) -> R) -> Result<R, SceneBusy> {
         let mut s = self.0.scene.try_borrow_mut().map_err(|_| SceneBusy)?;
         let outer = s.begin_batch(label);
         s.counters.writes += 1;
@@ -443,7 +461,11 @@ impl<'a> NodeRef<'a> {
     pub fn root(self) -> RootIx {
         self.s.core[self.i].root
     }
-    /// The light parent.
+    /// SG4: the top of a provider's shadow subtree (its parent is the host).
+    pub fn is_shadow(self) -> bool {
+        self.s.core[self.i].flags.contains(NodeFlags::SHADOW)
+    }
+    /// The light parent (for a shadow top, its host).
     pub fn parent(self) -> Option<NodeRef<'a>> {
         self.s.core[self.i].parent.map(|p| NodeRef { s: self.s, id: p, i: p.index() as usize })
     }
@@ -686,6 +708,15 @@ impl<'a> SceneMut<'a> {
         self.s.insert(parent, child, before, self.origin).map(|_| ())
     }
 
+    /// SG4 (ARCH-SCENE §4.4): makes `child` a shadow child of the provider node `host`, before
+    /// `before` (last when `None`): the host lays it out (flexbox from its style, or its own
+    /// `Widget::layout`) and draws it (`WidgetCx::children`); no runtime sees it. The host may be
+    /// runtime-owned; `child` must be Rust- or Host-owned. Destroying the host frees its shadow
+    /// subtrees; [`SceneMut::remove`] takes one out again.
+    pub fn insert_shadow(&mut self, host: NodeId, child: NodeId, before: Option<NodeId>) -> Result<(), SceneError> {
+        self.s.insert_shadow(host, child, before, self.origin).map(|_| ())
+    }
+
     /// Detaches `child` from its parent (it stays alive).
     pub fn remove(&mut self, child: NodeId) -> Result<(), SceneError> {
         let ci = self.s.idx(child).ok_or(SceneError::Stale(child.to_raw()))?;
@@ -706,6 +737,7 @@ impl<'a> SceneMut<'a> {
             }
             if let Some(p) = self.s.core[i].parent
                 && self.s.core[self.s.ix(p)].owner == Owner::Js
+                && !self.s.core[i].flags.contains(NodeFlags::SHADOW)
             {
                 return Err(SceneError::NotOwner { node: p, owner: Owner::Js });
             }

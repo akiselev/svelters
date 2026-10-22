@@ -103,12 +103,18 @@ impl Unresolved {
     pub fn report(&self, diags: &mut Diagnostics, span: (u32, u32)) {
         let d = diags.native_error(self.code, span, self.message.clone());
         d.help = self.help_text();
+        if !self.suggestions.is_empty() {
+            d.hint = crate::diag::FixHint::Suggest(self.suggestions.clone());
+        }
     }
 
     /// Record as a backend warning at `span` (`--strict-native` makes the R2 ones errors).
     pub fn report_warning(&self, diags: &mut Diagnostics, span: (u32, u32)) {
         let d = diags.native_warning(self.code, span, self.message.clone());
         d.help = self.help_text();
+        if !self.suggestions.is_empty() {
+            d.hint = crate::diag::FixHint::Suggest(self.suggestions.clone());
+        }
     }
 }
 
@@ -276,6 +282,12 @@ pub trait PlatformSemantics {
     /// `gtk`, `qt`, ...
     fn backend(&self) -> &str;
     fn framework(&self) -> &str;
+    /// Identifies this backend's answers: two backends with the same fingerprint answer every
+    /// question alike (a hash of the spec texts for [`SpecBackend`]). `None` (the default) means
+    /// unknown, and CX1's check then never reuses a result computed with another backend value.
+    fn fingerprint(&self) -> Option<u64> {
+        None
+    }
     /// Tag of the per-row outlet of virtualized lists (the spec's `row_outlet`), if the backend has one.
     fn row_outlet(&self) -> Option<&str> {
         None

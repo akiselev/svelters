@@ -18,16 +18,28 @@ const QT_TYPES_JSON: &str = include_str!("../../../../metadata/semantics/types/q
 pub struct SpecBackend {
     spec: Spec,
     types: Option<TypeTable>,
+    /// A hash of the JSON texts this backend was built from ([`PlatformSemantics::fingerprint`]).
+    fingerprint: u64,
+}
+
+/// `seed` mixed with a hash of `text` (deterministic: `DefaultHasher::new` has fixed keys).
+fn mix(seed: u64, text: &str) -> u64 {
+    use std::hash::{Hash, Hasher};
+    let mut h = std::hash::DefaultHasher::new();
+    seed.hash(&mut h);
+    text.hash(&mut h);
+    h.finish()
 }
 
 impl SpecBackend {
     pub fn from_json(json: &str) -> Result<SpecBackend, String> {
-        Ok(SpecBackend { spec: Spec::parse(json)?, types: None })
+        Ok(SpecBackend { spec: Spec::parse(json)?, types: None, fingerprint: mix(0, json) })
     }
 
     /// Answer `native_type` / `type_property` from a type table (`metadata/semantics/types/<tk>.json`).
     pub fn with_types(mut self, json: &str) -> Result<SpecBackend, String> {
         self.types = Some(TypeTable::parse(json)?);
+        self.fingerprint = mix(self.fingerprint, json);
         Ok(self)
     }
 
@@ -52,6 +64,7 @@ impl SpecBackend {
     /// RA1: merges a spec fragment (`kinds.json` of an egui app binary) into this backend's spec.
     pub fn merge_fragment(mut self, json: &str) -> Result<SpecBackend, String> {
         self.spec.merge_fragment(json)?;
+        self.fingerprint = mix(self.fingerprint, json);
         Ok(self)
     }
 
@@ -217,6 +230,10 @@ fn parse_int(s: &str) -> Option<i64> {
 }
 
 impl PlatformSemantics for SpecBackend {
+    fn fingerprint(&self) -> Option<u64> {
+        Some(self.fingerprint)
+    }
+
     fn bind_modifiers(&self) -> &[&'static str] {
         // the DOM conformance spec has no native bindings to opt out of
         if self.spec.html_syntax { &[] } else { &["nonreactive"] }

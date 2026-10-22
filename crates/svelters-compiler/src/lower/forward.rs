@@ -12,6 +12,7 @@
 //!   them from `on:`), and `unsupported_feature` with a fix-it for modifiers (`on:x|once`).
 
 use super::*;
+use crate::diag::{FixIt, TextEdit};
 use crate::svelte::ast::Directive;
 
 /// Where an `on:` directive is: an element (`<button>`, `<svelte:element>`) or a component.
@@ -168,12 +169,35 @@ impl<'a> Lower<'a, '_, '_> {
             OnSite::Element(_) => "",
             OnSite::Component(_) => " on a component",
         };
-        self.diags
+        // the fix-it (CX1): the rewrite of the help, when it is exact (a handler is given and no
+        // modifier is left for the author to reimplement, and no capture phase, which the backend
+        // may not have); the handler's own text stays in place
+        let fix = match &d.expression {
+            Some(e) if notes.is_empty() && !capture => {
+                let (ds, de) = sp(d.span());
+                let (es, ee) = (e.span().start, e.span().end);
+                let edits = match e {
+                    Expression::Identifier(_) if !stmts.is_empty() => vec![TextEdit { start: ds, end: de, text: format!("{attr}={{{attr_value}}}") }],
+                    _ if stmts.is_empty() => vec![TextEdit { start: ds, end: es, text: format!("{attr}={{") }, TextEdit { start: ee, end: de, text: "}".into() }],
+                    _ => vec![
+                        TextEdit { start: ds, end: es, text: format!("{attr}={{(event) => {{ {} (", stmts.join(" ")) },
+                        TextEdit { start: ee, end: de, text: ")(event); }}".into() },
+                    ],
+                };
+                Some(FixIt::new(format!("rewrite as `{attr}={{…}}` without modifiers"), edits))
+            }
+            _ => None,
+        };
+        let diag = self
+            .diags
             .error(
                 "unsupported_feature",
                 sp(d.span()),
                 format!("`on:{}{mods}`: event modifiers{on} are not supported by the native compiler (runes mode has no modifiers)", d.name),
             )
             .help(help);
+        if let Some(f) = fix {
+            diag.fix(f);
+        }
     }
 }
