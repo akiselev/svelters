@@ -880,7 +880,7 @@ mod tests {
     fn entry(n: u64, scope: Id, scoped: bool, role: Role) -> Entry {
         Entry {
             id: Id::unique("w").with(n),
-            node: NodeId::from_raw(n + 1).unwrap(),
+            node: Some(NodeId::from_raw(n + 1).unwrap()),
             node_eid: Id::unique("n").with(n),
             scope,
             scoped,

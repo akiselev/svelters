@@ -301,7 +301,8 @@ fn owrust_author_css_reaches_virtual_elements_and_restyles() {
 fn owrust_accesskit_matches_the_scene_widget() {
     let v = Rc::new(RefCell::new(true));
     let v2 = v.clone();
-    let cases: Vec<(&str, Vec<(&str, Value)>, Draw, Role, &str)> = vec![
+    type Case = (&'static str, Vec<(&'static str, Value)>, Draw, Role, &'static str);
+    let cases: Vec<Case> = vec![
         ("button", vec![("text", s("Apply"))], button(), Role::Button, "Apply"),
         ("checkbox", vec![("text", s("Wrap")), ("checked", Value::Bool(true))], Box::new(move |ui, r, sv| imm::Checkbox::new(&mut v2.borrow_mut(), "Wrap").show_at(ui, r, sv)), Role::CheckBox, "Wrap"),
         ("label", vec![("text", s("Status"))], Box::new(|ui, r, sv| imm::Label::new("Status").show_at(ui, r, sv)), Role::Label, "Status"),
