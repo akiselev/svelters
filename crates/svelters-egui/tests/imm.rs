@@ -366,41 +366,166 @@ fn owrust_focus_tab_order_focus_visible_and_key_claims() {
 }
 
 
+/// berth's side of BD7, for the chrome tests: every `Response` is the caller's, and the painter
+/// only paints (`imm::chrome`).
+struct Berth {
+    rig: Rig,
+    seen: Rc<RefCell<Seen>>,
+}
+
+#[derive(Default, Clone)]
+struct Seen {
+    /// The draggable tab, the close button, the disabled close button.
+    tab: StateBits,
+    close: StateBits,
+    off: StateBits,
+    tab_color: Option<egui::Color32>,
+    tab_font: Option<egui::FontId>,
+    focus_before: Option<egui::Id>,
+    focus_after: Option<egui::Id>,
+}
+
+const TAB: Rect = Rect { min: Pos2::new(20.0, 300.0), max: Pos2::new(140.0, 330.0) };
+const CLOSE: Rect = Rect { min: Pos2::new(150.0, 304.0), max: Pos2::new(172.0, 326.0) };
+const OFF: Rect = Rect { min: Pos2::new(180.0, 304.0), max: Pos2::new(202.0, 326.0) };
+
+fn ids() -> (egui::Id, egui::Id, egui::Id) {
+    (egui::Id::unique("berth-tab"), egui::Id::unique("berth-close"), egui::Id::unique("berth-close-off"))
+}
+
+impl Berth {
+    fn new(css: &str) -> Berth {
+        let sv: Rc<RefCell<Option<Sv>>> = Rc::default();
+        let seen: Rc<RefCell<Seen>> = Rc::default();
+        let (s2, seen2) = (sv.clone(), seen.clone());
+        let mut rig = Rig::with_extra(move |ui| {
+            let Some(sv) = s2.borrow().clone() else { return };
+            let (tab_id, close_id, off_id) = ids();
+            let mut seen = seen2.borrow_mut();
+            seen.focus_before = ui.memory(|m| m.focused());
+            // berth: a tab that drags, its label laid out in berth's tab_font
+            let tab = ui.interact(TAB, tab_id, egui::Sense::click_and_drag());
+            let st = sv.chrome(ui, &tab, &El::new("tab"), svelters_egui::paint::Ua::NONE, StateBits::SELECTED);
+            let geom = imm::chrome::surface(ui.painter(), tab_id, &st, TAB);
+            let font = imm::chrome::font(ui.ctx(), &st);
+            let g = ui.ctx().fonts_mut(|f| f.layout_no_wrap("main.rs".into(), font.clone(), egui::Color32::RED));
+            imm::chrome::galley(ui.painter(), tab_id, &st, &g, geom.content.left_top());
+            tab.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Tab, true, "main.rs"));
+            seen.tab = st.state;
+            seen.tab_color = Some(imm::chrome::text_color(&st));
+            seen.tab_font = Some(font);
+            // berth: its close button (focusable, clickable), and a non-closable one (hover only,
+            // disabled on an enabled Ui)
+            for (id, rect, sense, props) in [(close_id, CLOSE, egui::Sense::click(), StateBits::NONE), (off_id, OFF, egui::Sense::hover(), StateBits::DISABLED)] {
+                let resp = ui.interact(rect, id, sense);
+                let st = sv.chrome(ui, &resp, &El::new("chrome-button").class("tab-close"), imm::chrome::BUTTON_UA, props);
+                imm::chrome::surface(ui.painter(), id, &st, rect);
+                imm::chrome::icon(ui.painter(), id, &st, "codicons:close", rect);
+                imm::chrome::ring(ui.painter(), id, &st, rect);
+                resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, id == close_id, "Close"));
+                if id == close_id {
+                    seen.close = st.state;
+                } else {
+                    seen.off = st.state;
+                }
+            }
+            seen.focus_after = ui.memory(|m| m.focused());
+        });
+        trace::enable(&rig.harness.ctx, true);
+        native::set(&rig.harness.ctx, Native::Gtk);
+        rig.backend.set_theme(&Theme::default());
+        rig.backend.add_sheet("app", css);
+        *sv.borrow_mut() = Some(rig.backend.imm());
+        rig.run();
+        rig.run();
+        Berth { rig, seen }
+    }
+    fn seen(&self) -> Seen {
+        self.seen.borrow().clone()
+    }
+    fn traced(&self, id: egui::Id, kind: TraceKind) -> Option<svelters_egui::paint::TraceEntry> {
+        trace::last(&self.rig.harness.ctx).entries.iter().find(|e| e.node == id.value() && e.kind == kind).copied()
+    }
+    fn press(&mut self, p: Pos2, pressed: bool) {
+        self.rig.harness.hover_at(p);
+        self.rig.harness.event(egui::Event::PointerButton { pos: p, button: egui::PointerButton::Primary, pressed, modifiers: egui::Modifiers::NONE });
+        self.rig.run();
+    }
+}
+
+const BERTH_CSS: &str = "tab { background-color: rgb(10, 20, 30); color: rgb(200, 201, 202); } tab:selected { background-color: rgb(1, 1, 1); } tab:selected:hover { background-color: rgb(40, 50, 60); }";
+
 #[test]
-fn owrust_chrome_paints_a_foreign_element_on_the_callers_response() {
-    // berth's case: a tab it interacts with itself (drag sense), styled by the app's CSS through
-    // a virtual `tab` element; the active tab mirrors `:selected`
-    type Seen = Rc<RefCell<Vec<(StateBits, Option<egui::Color32>)>>>;
-    let seen: Seen = Rc::default();
-    let s2 = seen.clone();
-    let sv_slot: Rc<RefCell<Option<Sv>>> = Rc::default();
-    let sv2 = sv_slot.clone();
-    let mut rig = Rig::with_extra(move |ui| {
-        let Some(sv) = sv2.borrow().clone() else { return };
-        let rect = Rect::from_min_size(Pos2::new(20.0, 300.0), vec2(120.0, 30.0));
-        let id = egui::Id::unique("berth-tab-1");
-        let resp = ui.interact(rect, id, egui::Sense::click_and_drag());
-        let st = sv.chrome(ui, &resp, &El::new("tab"), svelters_egui::paint::Ua::NONE, StateBits::SELECTED);
-        let geom = imm::chrome::surface(ui.painter(), id, &st, rect);
-        imm::chrome::label(ui.painter(), id, &st, "main.rs", geom.content, svelters_egui::paint::Align::Start);
-        imm::chrome::ring(ui.painter(), id, &st, rect);
-        resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, true, "main.rs"));
-        let fill = trace::last(ui.ctx()).entries.iter().rev().find(|e| e.node == id.value() && e.kind == TraceKind::Box).map(|e| e.fill);
-        s2.borrow_mut().push((st.state, fill));
-    });
-    trace::enable(&rig.harness.ctx, true);
-    rig.backend.set_theme(&Theme::default());
-    rig.backend.add_sheet("app", "tab { background-color: rgb(10, 20, 30); } tab:selected { background-color: rgb(1, 1, 1); } tab:selected:hover { background-color: rgb(40, 50, 60); }");
-    *sv_slot.borrow_mut() = Some(rig.backend.imm());
-    rig.run();
-    let last = |seen: &Seen| *seen.borrow().last().unwrap();
-    rig.run();
-    let (st, fill) = last(&seen);
-    assert!(st.contains(StateBits::SELECTED) && !st.contains(StateBits::HOVERED), "{st:?}");
-    assert_eq!(fill, Some(egui::Color32::from_rgb(1, 1, 1)), ":selected from the caller's props");
-    rig.harness.hover_at(Pos2::new(60.0, 315.0));
-    rig.run();
-    let (st, fill) = last(&seen);
-    assert!(st.contains(StateBits::HOVERED), "hover from the caller's response");
-    assert_eq!(fill, Some(egui::Color32::from_rgb(40, 50, 60)), ":selected:hover");
+fn owrust_chrome_hover_press_and_focus_from_the_callers_response() {
+    let mut b = Berth::new(BERTH_CSS);
+    let (tab_id, close_id, _) = ids();
+    // the tab: `:selected` from the caller's props, `:hover` from its response
+    let s = b.seen();
+    assert!(s.tab.contains(StateBits::SELECTED) && !s.tab.contains(StateBits::HOVERED), "{:?}", s.tab);
+    assert_eq!(b.traced(tab_id, TraceKind::Box).map(|e| e.fill), Some(egui::Color32::from_rgb(1, 1, 1)));
+    b.rig.harness.hover_at(TAB.center());
+    b.rig.run();
+    assert!(b.seen().tab.contains(StateBits::HOVERED));
+    assert_eq!(b.traced(tab_id, TraceKind::Box).map(|e| e.fill), Some(egui::Color32::from_rgb(40, 50, 60)), ":selected:hover");
+    // the close button: hover, pressed (R2: the button's pressed fill), from berth's response
+    b.rig.harness.hover_at(CLOSE.center());
+    b.rig.run();
+    let rest_hover = b.traced(close_id, TraceKind::Box).map(|e| e.fill);
+    assert!(b.seen().close.contains(StateBits::HOVERED));
+    b.press(CLOSE.center(), true);
+    assert!(b.seen().close.contains(StateBits::PRESSED), "pressed from the caller's response");
+    let pressed = b.traced(close_id, TraceKind::Box).map(|e| e.fill);
+    assert_ne!(pressed, rest_hover, "R2: the pressed fill differs from the hover fill");
+    b.press(CLOSE.center(), false);
+    assert!(!b.seen().close.contains(StateBits::PRESSED));
+    // a click leaves focus where berth put it (the painter never focuses), and shows no ring
+    let s = b.seen();
+    assert_eq!(s.focus_before, s.focus_after, "the painter changed no focus");
+    assert!(!s.close.contains(StateBits::FOCUS_VISIBLE));
+    // keyboard focus (berth's): `:focus-visible` and the R8 ring
+    b.rig.harness.hover_at(Pos2::new(470.0, 350.0));
+    for _ in 0..4 {
+        if b.seen().focus_after == Some(close_id) {
+            break;
+        }
+        b.rig.harness.key_press(egui::Key::Tab);
+        b.rig.run();
+    }
+    assert_eq!(b.seen().focus_after, Some(close_id), "Tab (egui's, berth's ids) reaches the close button");
+    let s = b.seen();
+    assert!(s.close.contains(StateBits::FOCUSED) && s.close.contains(StateBits::FOCUS_VISIBLE), "keyboard focus: {:?}", s.close);
+    let ring = b.traced(close_id, TraceKind::Outline).expect("R8: the focus ring");
+    assert!(ring.stroke.width > 0.0);
+}
+
+#[test]
+fn owrust_chrome_disabled_on_an_enabled_ui() {
+    let mut b = Berth::new(BERTH_CSS);
+    let (_, _, off_id) = ids();
+    let s = b.seen();
+    assert!(s.off.contains(StateBits::DISABLED), "{:?}", s.off);
+    // R9: still hoverable; never pressed, never focused
+    b.rig.harness.hover_at(OFF.center());
+    b.rig.run();
+    assert!(b.seen().off.contains(StateBits::HOVERED), "a disabled chrome button stays hoverable");
+    b.press(OFF.center(), true);
+    assert!(!b.seen().off.contains(StateBits::PRESSED), "a disabled chrome button never sinks");
+    b.press(OFF.center(), false);
+    // the button UA's disabled look: no lip (box-shadow none), drawn (faded at opacity .4)
+    assert!(b.traced(off_id, TraceKind::Box).is_some(), "the disabled button keeps its shape");
+}
+
+#[test]
+fn owrust_chrome_galley_in_the_style_colour_and_font() {
+    let b = Berth::new(BERTH_CSS);
+    let (tab_id, close_id, _) = ids();
+    let s = b.seen();
+    let color = egui::Color32::from_rgb(200, 201, 202);
+    assert_eq!(s.tab_color, Some(color), "text_color is the CSS `color`");
+    let text = trace::last(&b.rig.harness.ctx).entries.iter().find(|e| e.node == tab_id.value() && e.part == Some("label")).copied().expect("the tab label");
+    assert_eq!(text.fill, color, "the caller's galley painted in the style's colour (not its own red)");
+    let font = s.tab_font.expect("font");
+    assert!(font.size > 0.0, "font() gives the style's font: {font:?}");
+    // an icon by key in a rect, traced as part `icon`
+    assert!(trace::last(&b.rig.harness.ctx).entries.iter().any(|e| e.node == close_id.value() && e.part == Some("icon")), "the close icon");
 }

@@ -30,7 +30,7 @@ impl Align {
 }
 
 /// The font of `s` for `text` (the weight's registered family when it has the glyphs).
-fn font(ctx: &egui::Context, s: &StyleView, text: &str) -> FontId {
+pub(crate) fn font(ctx: &egui::Context, s: &StyleView, text: &str) -> FontId {
     let base = FontFamily::Proportional;
     let w = s.font_weight();
     let family = if w == 400 {

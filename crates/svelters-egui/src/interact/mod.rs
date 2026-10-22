@@ -245,9 +245,23 @@ impl InputCx<'_> {
 ///
 /// This is all a foreign painter needs (OW-RUST, berth's `ChromePainter`): no scene, no JS.
 pub fn run(ui: &egui::Ui, resp: &egui::Response, state: &mut StateBits, parts: &PartResponses, f: impl FnOnce(&mut InputCx<'_>)) -> FocusCx {
+    let focus = observe(ui, resp, ui.is_enabled(), state, parts, f);
+    if focus.request && !focus.has {
+        resp.request_focus();
+    } else if focus.surrender && focus.has {
+        resp.surrender_focus();
+    }
+    crate::native::keep_focus_on_escape(ui, resp.id);
+    focus
+}
+
+/// [`run`] for a host whose focus and input someone else owns (OW-RUST's `imm::chrome`, berth's
+/// paint-only `ChromePainter`): the units read `resp` and set `state`, but nothing is applied
+/// (no focus request or surrender, no Escape rule); `enabled` is the host's own (a disabled
+/// button on an enabled `Ui`).
+pub fn observe(ui: &egui::Ui, resp: &egui::Response, enabled: bool, state: &mut StateBits, parts: &PartResponses, f: impl FnOnce(&mut InputCx<'_>)) -> FocusCx {
     let ctx = ui.ctx();
     let policy = &crate::native::policy_of(ctx);
-    let enabled = ui.is_enabled();
     let mut snap = Resp::of(resp);
     if !enabled {
         // egui senses nothing on a disabled widget; R9 keeps it hoverable (tooltip, reason)
@@ -269,12 +283,6 @@ pub fn run(ui: &egui::Ui, resp: &egui::Response, state: &mut StateBits, parts: &
         let mut cx = InputCx { resp: &snap, input: inp, policy, now: inp.time, state, enabled, a11y: &a11y, focus: &mut focus, parts };
         f(&mut cx);
     });
-    if focus.request && !focus.has {
-        resp.request_focus();
-    } else if focus.surrender && focus.has {
-        resp.surrender_focus();
-    }
-    crate::native::keep_focus_on_escape(ui, resp.id);
     focus
 }
 

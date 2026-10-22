@@ -32,6 +32,7 @@ pub use image::paint_image;
 pub use painters::{Orientation, PaintArgs, PartInfo, PartPainter, register_painter};
 pub use parts::{PartItem, layout_parts, measure_parts};
 pub use text::{Align, measure_text, paint_text, text_galley};
+pub(crate) use text::font as text_font;
 pub use trace::{PaintTrace, TraceEntry, TraceKind};
 
 use crate::provider::StateBits;

@@ -10,7 +10,7 @@
 use super::{Compose, El, Response, Sv, run, widget_id};
 use crate::focus::Role as FocusRole;
 use crate::interact::{FocusParams, Press, PressParams, Toggle, ToggleParams};
-use crate::paint::{self, IconKey, StyleView};
+use crate::paint::{self, StyleView};
 use crate::provider::{AvailableSpace, StateBits};
 use crate::widgets::{button, checkbox, label, separator, switch, toggle_button};
 use egui::accesskit;
@@ -468,17 +468,13 @@ impl Separator {
 #[derive(Clone, Debug)]
 pub struct Icon {
     c: Common,
-    key: IconKey,
+    key: String,
     label: String,
 }
 
 impl Icon {
     pub fn new(key: &str) -> Icon {
-        let key = match key.split_once(':') {
-            Some((f, n)) => IconKey::new(f, n),
-            None => IconKey::new("icons", key),
-        };
-        Icon { c: Common::new("icon"), key, label: String::new() }
+        Icon { c: Common::new("icon"), key: key.to_string(), label: String::new() }
     }
     common_setters!();
     /// Its accessible name (an icon with none is decoration).
@@ -493,7 +489,7 @@ impl Icon {
 
     pub fn size(&self, ui: &egui::Ui, sv: &Sv) -> egui::Vec2 {
         let st = sv.styled(ui.ctx(), &self.c.el, button::ICON_UA, StateBits::NONE);
-        paint::icon_size(ui.ctx(), &self.view(&st), &self.key)
+        paint::icon_size(ui.ctx(), &self.view(&st), &super::icon_key(&self.key))
     }
 
     pub fn show(self, ui: &mut egui::Ui, sv: &Sv) -> Response {
@@ -508,7 +504,7 @@ impl Icon {
         let out = resp(ran.resp.clone(), ran.state);
         let st = sv.styled(ui.ctx(), &self.c.el, button::ICON_UA, ran.state);
         if ran.ui.is_rect_visible(rect) {
-            paint::paint_icon(&mut ran.paint_cx("icon"), &self.view(&st), &self.key, rect);
+            super::paint_icon_key(&mut ran.paint_cx("icon"), &self.view(&st), &self.key, rect);
         }
         let label = self.label.as_str();
         let info = || egui::WidgetInfo::labeled(egui::Role::Image, enabled, label);

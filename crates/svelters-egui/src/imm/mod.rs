@@ -400,6 +400,21 @@ impl std::ops::Deref for Response {
     }
 }
 
+/// `name` in the `icons` family, or `family:name`, as the button's `icon` prop.
+pub(crate) fn icon_key(key: &str) -> crate::paint::IconKey {
+    match key.split_once(':') {
+        Some((f, n)) => crate::paint::IconKey::new(f, n),
+        None => crate::paint::IconKey::new("icons", key),
+    }
+}
+
+/// The one place `imm` paints an icon by key (`imm::Icon`, `imm::chrome::icon`): today's icon
+/// path (`paint::paint_icon`, the font glyph). ICR1 re-points this function at its registry
+/// (`icons::paint`, falling back to the glyph on an unknown key).
+pub(crate) fn paint_icon_key(pc: &mut PaintCx<'_>, v: &StyleView, key: &str, rect: egui::Rect) {
+    crate::paint::paint_icon(pc, v, &icon_key(key), rect);
+}
+
 /// The id of an `imm` widget: `id` as given, else `ui`'s next auto id (stable while the same
 /// widgets are drawn in the same order, as egui's own widgets).
 pub(crate) fn widget_id(ui: &mut egui::Ui, id: Option<egui::Id>) -> egui::Id {
