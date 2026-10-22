@@ -73,11 +73,21 @@ reference page lists its parts.
 - A part inherits from its host. A part change that affects size (box, text, `content`) relayouts the
   host; anything else only repaints.
 
-**Which widgets read `::part()` rules today:** `button` (`icon`, `label`). The OW1a indicator kinds
-(`checkbox`, `switch`, `progress-bar`, and on `ci/ow1a2` `radio-button`, `frame`, `collapsing-header`)
-still paint their parts from built-in tables plus the host's computed style, so a `::part()` rule on
-them has no effect yet. Style the host (`checkbox:checked { … }`) or wait for their switch to
-`cx.part`. The `scrollbar` thumb and `split-view` sash have no `::part()` yet either.
+**Which parts read `::part()` rules today:**
+
+| Widget | Parts that take CSS | Parts still painted from built-in tables |
+|---|---|---|
+| `button` | `icon`, `label` | — |
+| `checkbox`, `radio-button` | `indicator`, `icon`, `label` | `mark` (checkbox), `dot` (radio) |
+| `switch` | `track`, `label` | `knob` |
+| `frame` | `caption` | `indicator`, `mark` (checkable frames) |
+| `combo-box` (select) | `chevron`, `label`, `popup`, `option` | — |
+| menus | `popup` | — |
+| `progress-bar` | — | `track`, `fill` |
+| `collapsing-header` | — | `header`, `twistie` |
+
+A rule on a part in the last column has no effect yet; style the host (`switch:checked { … }`) instead.
+The `scrollbar` thumb and the `split-view` sash have no `::part()` yet either.
 
 ### List rows *(pending OW5a)*
 
@@ -233,6 +243,6 @@ the same properties.
 ## Mistakes we have seen
 
 - `::part(icon):hover` read as "hovering the icon": the state is always the host's.
-- Styling `checkbox::part(indicator)` and seeing no change: see "Which widgets read `::part()` rules
-  today" above.
+- Styling `switch::part(knob)` and seeing no change: see "Which parts read `::part()` rules today"
+  above.
 - A transition on `:active`: pressed must be instant (`transition: none`).

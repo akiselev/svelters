@@ -68,6 +68,19 @@ START-HERE should link them. Paths follow DOCS-PLAN §5.2 (`loading-code.md`, `h
 12. **OW5a is on `ci/ow5a`** (d80f80e5), not on master. The list-rows section of `css/own-widgets.md` follows
     its record and is marked pending. When it merges, drop the banner.
 
+## Follow-up (after OW1a2 and OW3 merged)
+
+- OW1a2 (ba5f7239): the pending markers on `Expandable`, `Roving` and `with_peer` are gone, and the
+  worked examples point to master.
+- OW3 (e832e001): `rust/own-widgets.md` documents `RovingList` (an index inside one widget) next to
+  OW1a2's `Roving` (focus across sibling nodes), when to use each, and a "Floating surfaces and tooltips"
+  section (`Anchored`, `Dismissable`, `Typeahead`, `Tooltipable`; the common `tooltip` prop needs no
+  widget code; `widgets::tooltip::{show, hide, is_shown}`).
+- Gap 1, updated: `css/own-widgets.md` now has a per-widget table of which parts read `::part()` on
+  master. Still on built-in tables: checkbox `mark`, radio `dot`, switch `knob`, frame `indicator`/`mark`,
+  progress `track`/`fill`, collapsing `header`/`twistie`.
+- Gap 4 is resolved: `DEFAULT_OWN` now includes the OW1a/OW1a2 kinds (not `label`) and OW3's kinds.
+
 ## Not run
 
 Nothing was built or run (docs lane). No code block was compiled. The gallery CSS and the e2e examples are
