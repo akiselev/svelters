@@ -227,13 +227,14 @@ pub static KINDS: &[KindDef] = &[
         native: "egui::Label",
         base: Some("Widget"),
         toplevel: false,
-        slot: None,
+        // RT2: inline runs (`span`, `b`, `i`, `code`, `a`; `kinds/rich.rs`)
+        slot: Some("runs"),
         text_content: Some("text"),
         present: None,
         props: LABEL_PROPS,
         signals: CLICK_SIGNALS,
         methods: &[],
-        doc: "Static text.",
+        doc: "Static text; with inline run children (`<b>`, `<i>`, `<code>`, `<a>`, `<span>`) one paragraph of styled runs (RT2).",
     },
     KindDef {
         id: "Button",
@@ -338,4 +339,11 @@ pub static KINDS: &[KindDef] = &[
     super::virtuallist::DEF,
     // ---- WG5b: appended (`treeview.rs`) ----
     super::treeview::DEF,
+    // ---- RT2: appended (`rich.rs`) ----
+    super::rich::RUN,
+    super::rich::SPAN,
+    super::rich::BOLD,
+    super::rich::ITALIC,
+    super::rich::CODE,
+    super::rich::ANCHOR,
 ];

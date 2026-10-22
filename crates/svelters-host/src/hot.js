@@ -18,7 +18,8 @@
       else {
         r.cur = v;
         // the first version's exports, for acceptExports' "everything else unchanged" check; the module
-        // has finished evaluating by the time this runs
+        // has finished evaluating by the time this runs. `id` is a module id, not a specifier: the
+        // host resolves an import from this script to that id as is (LD3), generated ids too.
         Promise.resolve()
           .then(() => import(id))
           .then((ns) => {

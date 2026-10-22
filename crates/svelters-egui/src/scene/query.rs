@@ -115,7 +115,7 @@ pub(crate) fn index_anchor(roots: &mut RootTable, r: RootIx, id: NodeId, anchor:
 impl Scene {
     /// The node's `anchor` prop, if set.
     pub(crate) fn anchor_at(&self, i: usize) -> Option<&str> {
-        self.cold[i].as_deref().map(|c| c.common.anchor.as_str()).filter(|a| !a.is_empty())
+        self.common[i].as_deref().map(|c| c.anchor.as_str()).filter(|a| !a.is_empty())
     }
 
     /// Checks the anchor maps against the nodes (`Scene::validate`).

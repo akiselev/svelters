@@ -228,7 +228,7 @@ export interface EguiElements {
     /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
     'focus-scope'?: 'none' | 'contain' | 'dialog';
   };
-  /** Static text. */
+  /** Static text; with inline run children (`<b>`, `<i>`, `<code>`, `<a>`, `<span>`) one paragraph of styled runs (RT2). */
   label: EguiWidgetProps & {
     /** The text. */
     text?: string;
@@ -1072,6 +1072,55 @@ export interface EguiElements {
     oncopy?: () => void;
     /** A drag was dropped `before`, `after` or `into` row `id` (-1: below the last row), as the entry of `type` it took. */
     'ondrop-row'?: (id: number, where: string, type: string, data: string) => void;
+  };
+  /** An inline run of text in a `label`, styled by CSS (`label span.cls`). Bare text in a rich label becomes anonymous spans. */
+  span: {
+    /** The run's own text, before its child runs (its text children fold into it). */
+    text?: string;
+    /** CSS font weight (100-900) of this run and the runs in it; 0 (the default) inherits the enclosing run's or label's weight. `b` has 700 from the theme's base sheet. */
+    'font-weight'?: number;
+    /** AccessKit name of an `a` run's link (defaults to its text); other runs are read as part of their label's text. */
+    'accessible-name'?: string;
+  };
+  /** Bold inline text (`font-weight: 700` from the theme's base sheet). */
+  b: {
+    /** The run's own text, before its child runs (its text children fold into it). */
+    text?: string;
+    /** CSS font weight (100-900) of this run and the runs in it; 0 (the default) inherits the enclosing run's or label's weight. `b` has 700 from the theme's base sheet. */
+    'font-weight'?: number;
+    /** AccessKit name of an `a` run's link (defaults to its text); other runs are read as part of their label's text. */
+    'accessible-name'?: string;
+  };
+  /** Italic inline text (`font-style: italic` from the theme's base sheet). */
+  i: {
+    /** The run's own text, before its child runs (its text children fold into it). */
+    text?: string;
+    /** CSS font weight (100-900) of this run and the runs in it; 0 (the default) inherits the enclosing run's or label's weight. `b` has 700 from the theme's base sheet. */
+    'font-weight'?: number;
+    /** AccessKit name of an `a` run's link (defaults to its text); other runs are read as part of their label's text. */
+    'accessible-name'?: string;
+  };
+  /** Inline code: the monospace font on the field fill (theme's base sheet). */
+  code: {
+    /** The run's own text, before its child runs (its text children fold into it). */
+    text?: string;
+    /** CSS font weight (100-900) of this run and the runs in it; 0 (the default) inherits the enclosing run's or label's weight. `b` has 700 from the theme's base sheet. */
+    'font-weight'?: number;
+    /** AccessKit name of an `a` run's link (defaults to its text); other runs are read as part of their label's text. */
+    'accessible-name'?: string;
+  };
+  /** An inline link: the `link` colour, underlined on hover (DESIGN R18), the pointer cursor (R10); focusable, activated by click, Enter or Space. */
+  a: {
+    /** The run's own text, before its child runs (its text children fold into it). */
+    text?: string;
+    /** CSS font weight (100-900) of this run and the runs in it; 0 (the default) inherits the enclosing run's or label's weight. `b` has 700 from the theme's base sheet. */
+    'font-weight'?: number;
+    /** AccessKit name of an `a` run's link (defaults to its text); other runs are read as part of their label's text. */
+    'accessible-name'?: string;
+    /** The link target. Without an `onclicked` handler a click opens it (as `hyperlink`'s `url`); with one, only the handler runs. */
+    href?: string;
+    /** The link was activated (click, or Enter/Space while it has keyboard focus). */
+    onclicked?: () => void;
   };
 }
 

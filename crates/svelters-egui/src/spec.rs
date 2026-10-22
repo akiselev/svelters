@@ -471,6 +471,8 @@ pub fn semantics() -> J {
         }],
         "event_aliases": {},
         "framework": "egui 0.37 (svelters-egui; taffy 0.15 layout)",
+        // RT2: text mixed with runs in a `label` lowers to `span` runs (`kinds/rich.rs`)
+        "inline_text": {"kind": kinds::rich::INLINE_TEXT.0, "prop": kinds::rich::INLINE_TEXT.1},
         "kinds": kinds,
         "method_lookup": "annotated",
         "schema": "svelters-semantics/v0",
