@@ -27,7 +27,7 @@ use crate::svelte::ast::{
     Root, SnippetBlock, TextOrExpressionTag,
 };
 use ir::*;
-use native_attrs::{ScriptFacts, CHILD_ATTR_PREFIX};
+use native_attrs::{animate_host, ScriptFacts, CHILD_ATTR_PREFIX};
 use serde_json::Value as Json;
 use std::collections::{HashMap, HashSet};
 
@@ -56,6 +56,7 @@ pub fn lower<'a>(root: &'a Root, sem: &dyn PlatformSemantics, styles: Option<&'a
         snippet_roots,
         script: ScriptFacts::collect([root.instance.as_ref(), root.module.as_ref()]),
         list_views: lists::list_view_names(root),
+        animate_hosts: HashSet::new(),
     };
     l.check_style_sheet();
     let root_fragment = l.fragment(&root.fragment, &Parent::Root, &[]);
@@ -124,6 +125,8 @@ struct Lower<'a, 's, 'd> {
     script: ScriptFacts<'a>,
     /// Local names of `ListView` imported from `@svelters/lists` (virtualized lists, `lists.rs`).
     list_views: HashSet<String>,
+    /// TR1: span starts of the elements that may carry `animate:` (the only element of a keyed each).
+    animate_hosts: HashSet<u32>,
 }
 
 fn sp(s: Span) -> (u32, u32) {
@@ -314,9 +317,17 @@ impl<'a> Lower<'a, '_, '_> {
                     let consequent = self.branch(&b.consequent, parent, ancestors, true);
                     let alternate = b.alternate.as_ref().map(|a| self.branch(a, parent, ancestors, true));
                     let slot = self.block_slot((b.start, b.end), [Some(&consequent), alternate.as_ref()]);
-                    out.items.push(Item::If(IfBlock { span: b.span(), slot, test: &b.test, consequent, alternate }));
+                    out.items.push(Item::If(IfBlock { span: b.span(), elseif: b.elseif, slot, test: &b.test, consequent, alternate }));
                 }
                 FragmentNode::EachBlock(b) => {
+                    // TR1: `animate:` is allowed on the only element of a keyed each (Svelte's
+                    // animation_invalid_placement / animation_missing_key)
+                    if let Some(e) = animate_host(&b.body) {
+                        self.animate_hosts.insert(e.start);
+                        if b.key.is_none() {
+                            self.missing_key_animate(e);
+                        }
+                    }
                     let context = b.context.as_ref();
                     let body = self.branch(&b.body, parent, ancestors, true);
                     let fallback = b.fallback.as_ref().map(|f| self.branch(f, parent, ancestors, true));
@@ -740,6 +751,9 @@ impl<'a> Lower<'a, '_, '_> {
         // pass 2: ops in source order
         let mut ops: Vec<Op<'a>> = Vec::new();
         let mut explicit_props: Vec<String> = Vec::new();
+        // TR1: the element's `in` / `out` transitions so far, and whether it has `animate:`
+        let mut transitions: (Option<&'a crate::svelte::ast::TransitionDirective>, Option<&'a crate::svelte::ast::TransitionDirective>) = (None, None);
+        let mut animate_seen = false;
         let mut bound_props: Vec<String> = Vec::new();
         // inline style: static CSS text, a dynamic `style=`, CSS `style:` directives, setters
         let mut inline_css = String::new();
@@ -779,6 +793,12 @@ impl<'a> Lower<'a, '_, '_> {
                     style_span.get_or_insert(d.span());
                     self.style_directive(&er, parent_er.as_ref(), d, &mut ops, &mut inline_dirs, &mut inline_setters);
                 }
+                // TR1: the transition events are the runtime's own (dispatched by the node's
+                // `dispatchEvent`), on every element, in no backend spec
+                AttributeLike::Attribute(at) if matches!(at.name.as_str(), "onintrostart" | "onintroend" | "onoutrostart" | "onoutroend") && matches!(at.value, AttributeValue::Expression(_)) => {
+                    let AttributeValue::Expression(ExpressionTagNode::ExpressionTag(t)) = &at.value else { unreachable!() };
+                    ops.push(Op::Listen { signal: at.name[2..].to_string(), handler: Handler::Expr(&t.expression), flags: 0, sync: false, span: at.span() });
+                }
                 AttributeLike::Attribute(at) if at.name.starts_with("on") && matches!(at.value, AttributeValue::Expression(_)) => {
                     let AttributeValue::Expression(ExpressionTagNode::ExpressionTag(t)) = &at.value else { unreachable!() };
                     ops.extend(self.listen_op(&er, &at.name, Handler::Expr(&t.expression), at.span(), name_span(at)));
@@ -795,6 +815,21 @@ impl<'a> Lower<'a, '_, '_> {
                 }
                 AttributeLike::AttachTag(t) => ops.extend(self.attach_op(&er, t)),
                 AttributeLike::UseDirective(d) => ops.push(Op::Action { name: d.name.clone(), arg: d.expression.as_ref(), span: d.span() }),
+                AttributeLike::TransitionDirective(d) => {
+                    if let Some(op) = self.transition_op(d, &mut transitions) {
+                        ops.push(op);
+                    }
+                }
+                AttributeLike::AnimateDirective(d) => {
+                    if animate_seen {
+                        self.diags.error("animation_duplicate", sp(d.span()), "An element can only have one 'animate' directive");
+                    } else if !self.animate_hosts.contains(&el.start) {
+                        self.diags.error("animation_invalid_placement", sp(d.span()), "An element that uses the `animate:` directive must be the only child of a keyed `{#each ...}` block");
+                    } else {
+                        ops.push(Op::Animate { name: d.name.clone(), arg: d.expression.as_ref(), span: d.span() });
+                    }
+                    animate_seen = true;
+                }
                 AttributeLike::Attribute(at) => {
                     let prop = match self.sem.writable_property(&er, &at.name) {
                         Ok(p) => p.clone(),
@@ -891,7 +926,7 @@ impl<'a> Lower<'a, '_, '_> {
         // Actions go with them, in source order ("actions need to run after attribute updates in
         // order with bindings/events", Svelte's UseDirective visitor).
         let (binds, rest): (Vec<_>, Vec<_>) =
-            ops.into_iter().partition(|o| matches!(o, Op::Bind { .. } | Op::BindProp { .. } | Op::BindReadonly { .. } | Op::BindOnce { .. } | Op::Action { .. }));
+            ops.into_iter().partition(|o| matches!(o, Op::Bind { .. } | Op::BindProp { .. } | Op::BindReadonly { .. } | Op::BindOnce { .. } | Op::Action { .. } | Op::Transition { .. } | Op::Animate { .. }));
         ops = rest;
         ops.extend(binds);
 

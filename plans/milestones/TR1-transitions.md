@@ -217,8 +217,21 @@ value wins while the animation runs, and cancel writes back the base value, or `
 clip and inert have no static source yet. When the CSS lane brings a static `transform`, it becomes
 that channel's base value through the same op.
 
-**Compatibility with `plans/research/CSS.md`** (branch `research/css`; the CS phases are not decided
-yet, and this lane does not depend on them). The animated values are not a second style path:
+**Scope after the CSS deferral (2026-10-21).** The user has deferred the CSS engine
+(`svelters-style`) and all of CSS.md's decisions (D1–D10). This lane therefore builds only on what
+is in the tree today:
+
+- the per-element style sink (`host.style` ops);
+- the existing property setters;
+- the ABI v2.1 frame clock.
+
+The animated-value path is deliberately small and self-contained: one module, `src/motion.js`, with
+four channels and no cascade, selectors or general CSS parsing beyond the declarations a transition
+emits. A style engine could take it over later as one unit. The paragraph below records how it
+would fit.
+
+**Compatibility with `plans/research/CSS.md`** (branch `research/css`; deferred, see above). The
+animated values are not a second style path:
 
 - **The animated values are inline declarations.** An animation frame is a set of inline
   declarations at the top of the cascade. It goes through the same per-element inline sink that ST1

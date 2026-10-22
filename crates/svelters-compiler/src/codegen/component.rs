@@ -431,6 +431,31 @@ impl Codegen<'_, '_> {
                     None => self.w.write(&format!("$.action({n}, ($$node) => {f}?.($$node));")),
                 }
             }
+            // TR1: Svelte's `$.transition(flags, node, () => fn, () => params)` / `$.animation`, on the
+            // runtime node (after `bind:this`, as Svelte's `after_update`)
+            Op::Transition { flags, name, arg, span } => {
+                self.w.map(span.start);
+                let f = self.rw.directive_name(name);
+                self.w.write(&format!("$n.transition({flags}, {n}, () => {f}"));
+                if let Some(a) = arg {
+                    self.w.write(", () => ");
+                    self.paren_expr(a, Mode::Read);
+                }
+                self.w.write(");");
+            }
+            Op::Animate { name, arg, span } => {
+                self.w.map(span.start);
+                let f = self.rw.directive_name(name);
+                self.w.write(&format!("$n.animation({n}, () => {f}, "));
+                match arg {
+                    Some(a) => {
+                        self.w.write("() => ");
+                        self.paren_expr(a, Mode::Read);
+                    }
+                    None => self.w.write("null"),
+                }
+                self.w.write(");");
+            }
             Op::Classes { base, dynamic, toggles, span } => {
                 self.w.map(span.start);
                 if dynamic.is_none() && toggles.is_empty() {
@@ -831,10 +856,12 @@ impl Codegen<'_, '_> {
                 self.fragment(alt, "$$anchor");
                 self.w.dedent();
                 self.line();
-                self.w.write("});");
+                self.w.write("}");
             }
-            None => self.w.write("null);"),
+            None => self.w.write("null"),
         }
+        // TR1: an `{:else if}` block is transparent for local transitions
+        self.w.write(if b.elseif { ", true);" } else { ");" });
     }
 
     fn each_block(&mut self, b: &EachBlock, container: &str) {

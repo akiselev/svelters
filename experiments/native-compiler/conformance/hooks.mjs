@@ -10,7 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { HIDDEN_MODULES, svelteFacadePath } from '@svelters/native-runtime/vite';
+import { HIDDEN_MODULES, animatePath, svelteFacadePath, transitionPath } from '@svelters/native-runtime/vite';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const svelteClient = path.join(path.dirname(createRequire(import.meta.url).resolve('svelte/internal/client')), '../../index-client.js');
@@ -20,6 +20,11 @@ export async function resolve(specifier, context, next) {
   if (Object.hasOwn(HIDDEN_MODULES, specifier)) return { url: pathToFileURL(HIDDEN_MODULES[specifier]).href, shortCircuit: true };
   // as the `svelte` alias of packages/native-runtime/vite.js: native mount/unmount
   if (specifier === 'svelte') return { url: pathToFileURL(svelteFacadePath).href, shortCircuit: true };
+  // TR1: the native ports of Svelte's built-in transitions (as vite.js)
+  if (specifier === 'svelte/transition') return { url: pathToFileURL(transitionPath).href, shortCircuit: true };
+  if (specifier === 'svelte/animate') return { url: pathToFileURL(animatePath).href, shortCircuit: true };
+  // Svelte's test helper: the conformance raf (shims/animation-helpers.mjs)
+  if (/^(\.\.\/)+animation-helpers(\.js)?$/.test(specifier)) return shim('animation-helpers.mjs');
   if (/^(\.\.\/)+test(\.js|\.ts)?$/.test(specifier)) return shim('test.mjs');
   if (/^(\.\.\/)+helpers(\.js)?$/.test(specifier)) return shim('helpers.mjs');
   if (/^(\.\.\/)+suite(\.js|\.ts)?$/.test(specifier)) return shim('suite.mjs');

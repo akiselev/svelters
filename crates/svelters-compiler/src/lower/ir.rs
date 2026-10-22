@@ -106,6 +106,11 @@ pub enum Op<'a> {
     /// `use:name={arg}`: Svelte's `$.action(node, ($$node, $$action_arg) => name?.($$node,
     /// $$action_arg), () => arg)` with the runtime node (`name` may be dotted: `use:a.b`).
     Action { name: String, arg: Option<&'a Expression>, span: Span },
+    /// TR1 `transition:` / `in:` / `out:` (`flags`: Svelte's TRANSITION_IN 1 | TRANSITION_OUT 2 |
+    /// TRANSITION_GLOBAL 4): `$n.transition(flags, node, () => name, () => arg)`, after `bind:this`.
+    Transition { flags: u32, name: String, arg: Option<&'a Expression>, span: Span },
+    /// TR1 `animate:name={arg}` on the only element of a keyed each item: `$n.animation(node, () => name, () => arg)`.
+    Animate { name: String, arg: Option<&'a Expression>, span: Span },
     /// `parent:<name>=...`: `$n.child_attr(node, name, value)`, sent to the native parent after insertion.
     ChildAttr { name: String, value: AttrValue<'a>, span: Span },
     /// `$n.bind(node, prop, signal, arg, get, set)`; `target` is the bound lvalue.
@@ -203,6 +208,8 @@ pub enum TemplatePart<'a> {
 #[derive(Debug)]
 pub struct IfBlock<'a> {
     pub span: Span,
+    /// `{:else if}`: transparent for local transitions (TR1, `$n.if_block(..., true)`).
+    pub elseif: bool,
     pub slot: Slot,
     pub test: &'a Expression,
     pub consequent: Fragment<'a>,
