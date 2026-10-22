@@ -7,9 +7,11 @@
 //! `__svelters_host.dx` op. Without a `Dx` the modules load and every call fails with
 //! `settings/unavailable`.
 
+pub mod frames;
 mod paths;
 mod settings;
 
+pub use frames::{FrameConfig, FrameMonitor};
 pub use paths::{AppId, Paths};
 pub use settings::{
     FileSettings, FileUiState, MemorySettings, MemoryUiState, SettingSource, SettingsBackend, SettingsError, Subscription,

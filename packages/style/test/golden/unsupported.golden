@@ -80,7 +80,7 @@ warning [qt] property 'text-align' is not a qt style property (it is one on appk
 error [qt] combinator '+' never matches in QSS; rule dropped
 error [qt] combinator '~' never matches in QSS; rule dropped
 error [qt] value 'oklch(0.6 0.1 250)' for background-color uses 'oklch', which QSS cannot parse
-warning [qt] property 'box-shadow' is not a qt style property (it is one on gtk, appkit)
+warning [qt] property 'box-shadow' is not a qt style property (it is one on gtk, appkit, egui)
 warning [qt] property 'transition' is not a qt style property (it is one on gtk)
 error [qt] custom property --local cannot be declared in QSS; define tokens with setTokens() or the token set
 error [qt] value 'calc(1px + 2px)' for padding uses 'calc(', which QSS cannot parse

@@ -117,6 +117,8 @@ impl Reloader {
         self.pending.swap(false, Ordering::SeqCst)
     }
 
+    // ZU3: the receive loop runs on the svelters-watch thread, never the UI thread.
+    #[allow(clippy::disallowed_methods)]
     /// Starts watching the files of the provider recorded by `set_provider`. The thread only
     /// records changed paths, sets the flag and calls `wake`.
     pub(crate) fn start_watch(&self, wake: WakeHandle) -> Result<(), JsError> {
@@ -165,6 +167,8 @@ impl Reloader {
         self.sync_watch().map_err(host_err)
     }
 
+    // ZU3: the loader's reload: stats the watched directories when the provider's file set changes.
+    #[allow(clippy::disallowed_methods)]
     /// Points the watcher at the provider's current files: their directories, non-recursively.
     fn sync_watch(&self) -> Result<(), String> {
         let Some(provider) = self.provider.borrow().clone() else { return Ok(()) };
@@ -357,6 +361,8 @@ struct Watch {
     dirs: HashSet<PathBuf>,
 }
 
+// ZU3: watcher teardown: joins the watch thread, which ends as soon as the watcher drops.
+#[allow(clippy::disallowed_methods)]
 impl Drop for Watch {
     fn drop(&mut self) {
         // Dropping the watcher drops the event closure and with it the channel sender, which ends

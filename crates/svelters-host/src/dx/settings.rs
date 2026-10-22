@@ -265,11 +265,15 @@ impl UiStateBackend for FileUiState {
     }
 }
 
+// ZU3: debt: the UI-state file is read on the UI thread when a root mounts; small file, move to an I/O thread.
+#[allow(clippy::disallowed_methods)]
 fn read_json(path: &Path) -> Option<Value> {
     let s = std::fs::read_to_string(path).ok()?;
     serde_json::from_str(&s).ok()
 }
 
+// ZU3: debt: the UI-state file is written on the UI thread when a root saves; small file, move to an I/O thread.
+#[allow(clippy::disallowed_methods)]
 fn write_json_atomic(path: &Path, v: &Value) -> std::io::Result<()> {
     if let Some(dir) = path.parent() {
         std::fs::create_dir_all(dir)?;
