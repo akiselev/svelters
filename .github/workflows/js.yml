@@ -70,6 +70,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: No build artifacts tracked (target/ dirs, files over 8 MB)
+        run: tools/dev/check-no-artifacts
+
       - name: Python deps (system python; build scripts run python3 -I)
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends python3-yaml python3-jsonschema python3-pytest
 
