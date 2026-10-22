@@ -93,7 +93,9 @@ other agent on the machine. **GitHub CI is the gate, not your machine.** The use
   override them. There are **no other locks** (no test lock): never wrap a slot-taking command in
   another lock. Nested calls are safe (`BUILD_SLOT_HELD`). Builds and tests take a slot;
   `cargo check`/`clippy` take **none** (they run niced with 3 jobs), so never wait for a slot to
-  type-check. The coordinator runs no builds or checks at all; CI verifies its merges.
+  type-check. The coordinator checks a merge locally only when it combines lanes that touched the
+  same crate (`cargo check -p <that crate> --all-targets`, once); docs and disjoint merges get
+  nothing.
 - **Disk (WSL PC):** `df /` lies (the WSL disk is a growing file on C:); watch `df -h /mnt/c`.
   When a lane is merged, delete its worktree's `target/`.
 - **While writing code:** `tools/dev/cargo-slot cargo check -p <crate you changed>` only, and only
