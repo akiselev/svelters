@@ -76,7 +76,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | SV48 `Json<T>` error paths through tagged enums | IN PROGRESS | | branch `ci/sv48` |
 | H1 component HMR on the Rust loader | IN PROGRESS | | thinkpad-svelters, branch `ci/h1`, stacked on `ci/q1` |
 | H3 `$state` kept on HMR (SV36) | IN PROGRESS | | thinkpad-svelters, branch `ci/h3`, stacked on `ci/h1` |
-| TR2 native animator (SV13, SV37) | IN PROGRESS | | thinkpad-svelters, branch `ci/tr2` |
+| TR2 native animator (SV13, SV37) | IN PROGRESS | | thinkpad-svelters, branch `ci/tr2`; ABI v2.9 allocates style op 11 `SVL_STYLE_ANIMATE` |
 | LD1 loader hooks + native module providers (SV22, SV25) | DONE | 2026-10-22 | merged 7e8909bb |
 | CS5e egui cascade | IN PROGRESS | | macbook-svelters, branch `ci/cs5e`, stacked on `ci/cs0` (+ `ci/wg1`, `ci/sg3`) |
 | Q3 Svelte CSS analyze/prune/scope in Rust | DONE | 2026-10-22 | merged 2441d69f; not yet wired into compile()/CLI |
