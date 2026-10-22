@@ -53,7 +53,9 @@ independent of the machine. The times are only printed.
   relaid boundary while they change. A node's ink is its paint bounds (CS5g shadows) joined with its children's ink.
   Two cases change that:
   - Scroll areas, virtual lists and `clip` channels clip their content, so their ink is their own bounds.
-  - A transformed child makes its parent's ink everything.
+  - A TR1 transform is not part of the ink: it changes without a layout. Making a transformed child's parent ink
+    "everything" kept subtrees walked in clipped passes, where they registered for focus (it broke
+    `animator::tab_skips_exiting_nodes`). A transformed node is still culled by its layout bounds, as before SG6.
 
   Ink is stored only when it is larger than the node's own bounds: `NodeFlags::INK_OVERFLOW` (**new bit 21**) plus
   `Scene::ink`. Before this, a container laid out off screen culled a child that painted on screen (an absolute box,

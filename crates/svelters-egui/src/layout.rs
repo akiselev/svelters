@@ -933,23 +933,23 @@ fn place(s: &mut Scene, top: SceneId, origin: egui::Pos2) -> u64 {
 
 /// SG6 (ARCH-SCENE §7.3): node `i`'s ink rect, the root-relative rect its subtree paints in: its
 /// paint bounds (CS5g shadows) joined with its children's ink, except where it clips them (a scroll
-/// area, a virtual list, a `clip` channel). A transformed child (TR1) paints anywhere: its
-/// parent's ink is everything. Stored only when larger than the node's own bounds
+/// area, a virtual list, a `clip` channel). A TR1 transform is visual and changes without a
+/// layout, so it is not in the ink (as before SG6, a transformed node is culled by its layout
+/// bounds): an infinite ink would keep subtrees walked in clipped passes, where their widgets
+/// register for focus (`tests/animator.rs` tab_skips_exiting_nodes). Stored only when larger than the node's own bounds
 /// (`NodeFlags::INK_OVERFLOW`). Overlays and menus are out of flow and paint themselves. True if
 /// it changed.
 fn ink(s: &mut Scene, i: usize) -> bool {
     let own = crate::style::paint_bounds(s, i, s.core[i].rect);
     let mut ink = own;
-    let clips = matches!(s.w(i), W::ScrollArea { .. } | W::VirtualList(_)) || s.vis(i).clip.is_some();
+    // a node that is not laid out (hidden, not shown) paints nothing, whatever its children's
+    // last rects say
+    let clips = own == Rect::NOTHING || matches!(s.w(i), W::ScrollArea { .. } | W::VirtualList(_)) || s.vis(i).clip.is_some();
     if !clips {
         for &c in &s.children[i] {
             let ci = c.index() as usize;
             if s.core[ci].rect == Rect::NOTHING || !s.common(ci).visible || crate::overlays::out_of_flow(s.w(ci)) {
                 continue;
-            }
-            if s.vis(ci).transform.is_some() {
-                ink = Rect::EVERYTHING;
-                break;
             }
             ink = ink.union(ink_of(s, ci));
         }
