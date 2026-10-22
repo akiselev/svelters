@@ -151,3 +151,59 @@ test('bind_once read-only: one snapshot after the first layout pass', async () =
   assert.equal($.get(pos), 3, 'one snapshot only');
   assert.ok(!t.take().some((l) => l.startsWith('observe')));
 });
+
+// CX3: `bind:prop|commit` and the native link of `bind:prop={store.field}`.
+
+test('bind_commit: state reaches native at once; native reaches state only on the commit event', () => {
+  const t = harness();
+  const v = $.state('Ann');
+  mountInWindow((c) => {
+    const e = $n.element('entry');
+    $n.bind_commit(e, 'text', () => $.get(v), (x) => $.set(v, x), 'commit', 0);
+    $n.append(c, e);
+  });
+  const ops = t.take().filter((l) => l.includes('#2'));
+  assert.ok(ops.includes('set #2 text "Ann"') && ops.includes('listen #2 commit on'), ops.join('\n'));
+  assert.ok(!ops.some((l) => l.startsWith('observe') || l.includes(' changed ')), 'no observation, no change listener');
+  t.native(2, 'text', 'Ad'); // typing: unobserved, nothing reaches state
+  assert.equal($.get(v), 'Ann');
+  t.event(2, 'commit', ['Ada']);
+  assert.equal($.get(v), 'Ada');
+  assert.deepEqual(t.take(), [], 'the committed value is not written back');
+  $.set(v, 'Bob');
+  $.flush();
+  assert.deepEqual(t.take(), ['set #2 text "Bob"']);
+});
+
+test('bind_link: the host links the store field; the JS binding is only the fallback', () => {
+  const t = harness();
+  const calls = [];
+  t.th.host.link = (h, field, node, prop) => (calls.push(['link', h, field, node, prop]), 7);
+  t.th.host.unlink = (id) => calls.push(['unlink', id]);
+  const store = { svlHandle: 99 };
+  let fallback = 0;
+  const unmount = mountInWindow((c) => {
+    const e = $n.element('entry');
+    $n.bind_link(e, 'text', () => store, 'label', () => fallback++);
+    $n.append(c, e);
+  });
+  assert.deepEqual(calls, [['link', 99, 'label', 2, 'text']]);
+  assert.equal(fallback, 0);
+  assert.ok(!t.take().some((l) => l.startsWith('set #2 text') || l.startsWith('observe')), 'no JS write, no JS observation');
+  unmount();
+  assert.deepEqual(calls.at(-1), ['unlink', 7]);
+  // refused (0), no `link` (an older host), or not an exported object: the planned binding
+  t.th.host.link = () => 0;
+  mountInWindow((c) => {
+    const e = $n.element('entry');
+    $n.bind_link(e, 'text', () => store, 'label', () => fallback++);
+    $n.append(c, e);
+  });
+  delete t.th.host.link;
+  mountInWindow((c) => {
+    const e = $n.element('entry');
+    $n.bind_link(e, 'text', () => ({}), 'label', () => fallback++);
+    $n.append(c, e);
+  });
+  assert.equal(fallback, 2);
+});

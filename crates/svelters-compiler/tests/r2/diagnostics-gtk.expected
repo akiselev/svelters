@@ -13,14 +13,14 @@ diagnostics-gtk.svelte:17:12: error[bind_no_plan] (gtk): bind:has-focus is not s
   help: set the property one way and listen to an event instead, or read it once with `bind:has-focus|nonreactive`
 diagnostics-gtk.svelte:18:12: warning[bind_partially_observed] (gtk): bind:progress-pulse-step on <entry>: `progress-pulse-step` is only partially observed on gtk: side effects of setting other properties are not announced, so the bound value can go stale after them
   help: read it explicitly where it matters (node.getProp), or opt out with `|nonreactive`
-diagnostics-gtk.svelte:19:12: error[bind_modifier_invalid] (gtk): `bind:text|bogus`: unknown binding modifier `bogus` (native bindings take `|nonreactive`)
+diagnostics-gtk.svelte:19:12: error[bind_modifier_invalid] (gtk): `bind:text|bogus`: unknown binding modifier `bogus` (native bindings take `|nonreactive`, `|commit`)
 diagnostics-gtk.svelte:20:12: error[bind_modifier_invalid] (gtk): `bind:text`: `|nonreactive` is given twice
 diagnostics-gtk.svelte:22:12: error[bind_modifier_invalid] (gtk): `bind:this|nonreactive`: `|nonreactive` has no meaning on bind:this
-  help: `|nonreactive` applies to bindings of native element properties only
+  help: `|nonreactive` and `|commit` apply to bindings of native element properties only
 diagnostics-gtk.svelte:22:47: warning[native_read_not_observable] (gtk): `tag.font` reads `font` of TextTag, which is only partially observed on gtk: side effects of setting other properties are not announced
   help: read it where it is needed (an event handler), or mark the snapshot with `untrack(() => ...)`
 diagnostics-gtk.svelte:24:12: error[bind_modifier_invalid] (gtk): `bind:value|nonreactive`: `|nonreactive` has no meaning on a component binding
-  help: `|nonreactive` applies to bindings of native element properties only
+  help: `|nonreactive` and `|commit` apply to bindings of native element properties only
 (no output: errors)
 == gtk --strict-native
 diagnostics-gtk.svelte:8:23: error[native_read_not_observable] (gtk): `tag.font` reads `font` of TextTag, which is only partially observed on gtk: side effects of setting other properties are not announced
@@ -37,12 +37,12 @@ diagnostics-gtk.svelte:17:12: error[bind_no_plan] (gtk): bind:has-focus is not s
   help: set the property one way and listen to an event instead, or read it once with `bind:has-focus|nonreactive`
 diagnostics-gtk.svelte:18:12: error[bind_partially_observed] (gtk): bind:progress-pulse-step on <entry>: `progress-pulse-step` is only partially observed on gtk: side effects of setting other properties are not announced, so the bound value can go stale after them
   help: read it explicitly where it matters (node.getProp), or opt out with `|nonreactive`
-diagnostics-gtk.svelte:19:12: error[bind_modifier_invalid] (gtk): `bind:text|bogus`: unknown binding modifier `bogus` (native bindings take `|nonreactive`)
+diagnostics-gtk.svelte:19:12: error[bind_modifier_invalid] (gtk): `bind:text|bogus`: unknown binding modifier `bogus` (native bindings take `|nonreactive`, `|commit`)
 diagnostics-gtk.svelte:20:12: error[bind_modifier_invalid] (gtk): `bind:text`: `|nonreactive` is given twice
 diagnostics-gtk.svelte:22:12: error[bind_modifier_invalid] (gtk): `bind:this|nonreactive`: `|nonreactive` has no meaning on bind:this
-  help: `|nonreactive` applies to bindings of native element properties only
+  help: `|nonreactive` and `|commit` apply to bindings of native element properties only
 diagnostics-gtk.svelte:22:47: error[native_read_not_observable] (gtk): `tag.font` reads `font` of TextTag, which is only partially observed on gtk: side effects of setting other properties are not announced
   help: read it where it is needed (an event handler), or mark the snapshot with `untrack(() => ...)`
 diagnostics-gtk.svelte:24:12: error[bind_modifier_invalid] (gtk): `bind:value|nonreactive`: `|nonreactive` has no meaning on a component binding
-  help: `|nonreactive` applies to bindings of native element properties only
+  help: `|nonreactive` and `|commit` apply to bindings of native element properties only
 (no output: errors)
