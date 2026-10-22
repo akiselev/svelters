@@ -4087,27 +4087,6 @@
         ],
         "via": "setter"
       },
-      "frame-style": {
-        "kinds": [
-          "Frame"
-        ],
-        "native": "frame-style",
-        "prop": "frame-style",
-        "tags": [
-          "frame"
-        ],
-        "type": "enum",
-        "values": [
-          "group",
-          "canvas",
-          "window",
-          "menu",
-          "popup",
-          "panel",
-          "none"
-        ],
-        "via": "setter"
-      },
       "gap": {
         "kinds": [
           "Window",
@@ -4177,18 +4156,6 @@
           "toggle-button"
         ],
         "type": "length",
-        "via": "setter"
-      },
-      "homogeneous": {
-        "kinds": [
-          "Stack"
-        ],
-        "native": "homogeneous",
-        "prop": "homogeneous",
-        "tags": [
-          "stack"
-        ],
-        "type": "bool",
         "via": "setter"
       },
       "justify-content": {
@@ -4460,36 +4427,6 @@
         "type": "length",
         "via": "setter"
       },
-      "side": {
-        "kinds": [
-          "Panel"
-        ],
-        "native": "side",
-        "prop": "side",
-        "tags": [
-          "panel"
-        ],
-        "type": "enum",
-        "values": [
-          "left",
-          "right",
-          "top",
-          "bottom"
-        ],
-        "via": "setter"
-      },
-      "size": {
-        "kinds": [
-          "Panel"
-        ],
-        "native": "size",
-        "prop": "size",
-        "tags": [
-          "panel"
-        ],
-        "type": "length",
-        "via": "setter"
-      },
       "visible": {
         "kinds": [
           "Widget"
@@ -4525,30 +4462,6 @@
           "toggle-button"
         ],
         "type": "bool",
-        "via": "setter"
-      },
-      "visible-child-name": {
-        "kinds": [
-          "Stack"
-        ],
-        "native": "visible-child-name",
-        "prop": "visible-child-name",
-        "tags": [
-          "stack"
-        ],
-        "type": "string",
-        "via": "setter"
-      },
-      "visible-index": {
-        "kinds": [
-          "Stack"
-        ],
-        "native": "visible-index",
-        "prop": "visible-index",
-        "tags": [
-          "stack"
-        ],
-        "type": "length",
         "via": "setter"
       },
       "width": {

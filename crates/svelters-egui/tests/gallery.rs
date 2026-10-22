@@ -4,7 +4,7 @@
 //! `bind:high`, `bind:value`, `bind:size`) is checked end to end. Headless (kittest).
 
 use egui::accesskit::Role;
-use egui_kittest::kittest::{NodeT, Queryable};
+use egui_kittest::kittest::Queryable;
 use std::path::PathBuf;
 use svelters_egui::harness::TestApp;
 

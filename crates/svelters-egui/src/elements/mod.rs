@@ -178,11 +178,11 @@ fn set(w: &mut W, def: &PropDef, v: &Value) -> Result<Dirty, String> {
         }
         (P::Side, W::Panel { side, .. }) => {
             *side = as_enum(v, kinds::SIDE)?;
-            none
+            Dirty::LAYOUT
         }
         (P::Size, W::Panel { size, .. }) => {
             *size = as_len(v)?.map(|s| s.max(0.0));
-            none
+            Dirty::LAYOUT
         }
         (P::Resizable, W::Panel { resizable, .. }) => {
             *resizable = as_bool(v)?;
@@ -199,19 +199,19 @@ fn set(w: &mut W, def: &PropDef, v: &Value) -> Result<Dirty, String> {
         }
         (P::FrameStyle, W::Frame { style, .. }) => {
             *style = as_enum(v, kinds::FRAME_STYLE)?;
-            none
+            Dirty::LAYOUT
         }
         (P::VisibleChildName, W::Stack { name, .. }) => {
             *name = as_str(v)?;
-            none
+            Dirty::LAYOUT
         }
         (P::VisibleIndex, W::Stack { index, .. }) => {
             *index = as_i64(v)?;
-            none
+            Dirty::LAYOUT
         }
         (P::Homogeneous, W::Stack { homogeneous, .. }) => {
             *homogeneous = as_bool(v)?;
-            none
+            Dirty::LAYOUT
         }
         (P::Source, W::Image { source, .. }) => {
             *source = as_str(v)?;
@@ -377,26 +377,10 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     resp
 }
 
-/// A widget-side change of props `keys` of node `i`: stamped and journaled, `prop_changed` when
-/// observed, then the kind's `changed` event with `args` when listened (as `leaf.rs` does for
-/// the G1 and WG1 kinds).
+/// A widget-side change of props `keys` of node `i` (stamped, journaled, `prop_changed` when
+/// observed, then `changed` with `args` when listened): WG1's `leaf::widget_changed`.
 pub(crate) fn changed(arena: &mut Arena, i: usize, keys: &[P], args: Vec<Value>, out: &mut Vec<Out>) {
-    let node = arena.slots.id_at(i).expect("live node");
-    let h = node.to_raw();
-    let kind = arena.core[i].kind as usize;
-    let t = arena.stamp();
-    arena.core[i].changed = t;
-    for &key in keys {
-        let prop = kinds::prop_id(kind, key);
-        arena.record(crate::scene::Change::Prop { node, prop: crate::scene::PropId(prop), origin: crate::scene::Origin::Widget }, crate::scene::Origin::Widget);
-        if arena.observes(i, prop) {
-            out.push(Out::Changed(h, prop));
-        }
-    }
-    let s = kinds::signal_id(kind, "changed");
-    if arena.listens(i, s) {
-        out.push(Out::Event(h, s, args));
-    }
+    crate::leaf::widget_changed(arena, i, keys, args, out);
 }
 
 /// Paints WG2b container `i` at `r` (screen) with its chrome and children (`leaf::container`'s

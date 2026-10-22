@@ -5,7 +5,9 @@
 //! Layout behaviour (SG1's boundary rule applies unchanged): `panel`'s `size` is its own width or
 //! height (a style change: restyle, relayout from its parent); `frame`'s chrome is padding in its
 //! taffy style; `stack` lays out its visible child (and, `homogeneous`, sizes to the largest
-//! child), so `visible-*` writes are style changes of the stack.
+//! child), so `visible-*` writes are style changes of the stack. Those props are not CSS setters
+//! (`layout: false`): their writes return `Dirty::LAYOUT` themselves (`crate::elements`). Only the
+//! `Box` props (`gap`, `padding`, `align-items`) are setters.
 
 use super::builtin::ALIGN;
 use super::{Def, KindDef, Native, P, PropDef, SignalDef, Ty, layout, prop, signal};
@@ -14,7 +16,7 @@ pub const SIDE: &[&str] = &["left", "right", "top", "bottom"];
 pub const FRAME_STYLE: &[&str] = &["group", "canvas", "window", "menu", "popup", "panel", "none"];
 
 static PANEL_PROPS: &[PropDef] = &[
-    layout(
+    prop(
         "side",
         P::Side,
         Ty::Enum(SIDE),
@@ -28,7 +30,7 @@ static PANEL_PROPS: &[PropDef] = &[
         default: Def::Null,
         nullable: true,
         native: Native::Widget,
-        layout: true,
+        layout: false,
         doc: "Width (left, right) or height (top, bottom) in points; null for its content's. Dragging the grip of a `resizable` panel changes it, within `min-*`/`max-*`.",
     },
     prop("resizable", P::Resizable, Ty::Bool, Def::Bool(false), "The inner edge can be dragged to resize it."),
@@ -45,7 +47,7 @@ static SIDES_PROPS: &[PropDef] = &[
 
 static FRAME_PROPS: &[PropDef] = &[
     prop("label", P::Text, Ty::Str, Def::Str(""), "A caption above the content (GTK's `Gtk.Frame:label`); empty for none."),
-    layout(
+    prop(
         "frame-style",
         P::FrameStyle,
         Ty::Enum(FRAME_STYLE),
@@ -55,15 +57,15 @@ static FRAME_PROPS: &[PropDef] = &[
 ];
 
 static STACK_PROPS: &[PropDef] = &[
-    layout(
+    prop(
         "visible-child-name",
         P::VisibleChildName,
         Ty::Str,
         Def::Str(""),
         "Shows the child whose `anchor` is this name (GTK's `visible-child-name`; the child names itself with `anchor`). Empty: `visible-index` decides.",
     ),
-    layout("visible-index", P::VisibleIndex, Ty::I64, Def::I64(0), "Shows the child at this index when `visible-child-name` is empty or names no child (Qt's `current-index`)."),
-    layout("homogeneous", P::Homogeneous, Ty::Bool, Def::Bool(true), "Sized to the largest child (GTK's `hhomogeneous`/`vhomogeneous`); false: to the visible child."),
+    prop("visible-index", P::VisibleIndex, Ty::I64, Def::I64(0), "Shows the child at this index when `visible-child-name` is empty or names no child (Qt's `current-index`)."),
+    prop("homogeneous", P::Homogeneous, Ty::Bool, Def::Bool(true), "Sized to the largest child (GTK's `hhomogeneous`/`vhomogeneous`); false: to the visible child."),
     layout("padding", P::Padding, Ty::F64, Def::F64(0.0), "Inner spacing on all four sides, in points."),
 ];
 
