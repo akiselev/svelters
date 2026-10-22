@@ -265,7 +265,7 @@ impl<'a> Lower<'a, '_, '_> {
     /// `{...spread}` on a native element, when its keys are known at compile time (an object
     /// literal, or a top-level `const` object literal): each key is lowered as the attribute of
     /// that name (`on...` events, `parent:` child attributes, props). Returns false when the keys
-    /// are not static (the caller reports `native_spread_unsupported`).
+    /// are not static (`is_static_spread`; such a spread goes through `$n.spread`).
     pub(super) fn static_spread(
         &mut self,
         er: &ElementRef,
@@ -310,10 +310,6 @@ impl<'a> Lower<'a, '_, '_> {
                     continue;
                 }
                 ops.push(Op::ChildAttr { name: name.to_string(), value: AttrValue::Dynamic(value), span });
-                continue;
-            }
-            if matches!(key.as_str(), "slot" | "data-slot" | "class" | "style") {
-                self.diags.error("native_spread_unsupported", s, format!("`{key}` cannot come from a spread on a native element; write it as an attribute"));
                 continue;
             }
             let prop = match self.sem.writable_property(er, &key) {
@@ -384,6 +380,175 @@ impl<'a> Lower<'a, '_, '_> {
             }
         }
         Some(Op::Attach { expr: &t.expression, span })
+    }
+}
+
+/// An attribute's value as written: `true` for a bare attribute, the text of a static one, else
+/// the expression or template (no spec coercion: the kind is not known, or it is a styling attribute).
+pub(super) fn attr_value(at: &Attribute) -> AttrValue<'_> {
+    match (&at.value, static_text(at)) {
+        (AttributeValue::True(_), _) => AttrValue::Static(Json::Bool(true)),
+        (_, Some(t)) => AttrValue::Static(Json::String(t)),
+        _ => AttrValue::Dynamic(dynamic_of(at).expect("not a bare attribute")),
+    }
+}
+
+impl<'a> Lower<'a, '_, '_> {
+    /// Whether `{...expr}` has keys known at compile time (`static_spread` lowers it key by key).
+    pub(super) fn is_static_spread(&self, expr: &Expression) -> bool {
+        // `class` / `style` (and `slot`) need the runtime path: they merge with the element's own
+        let ok = |o: &ObjectExpression| object_keys(o).is_some_and(|k| !k.iter().any(|(k, _)| matches!(k.as_str(), "slot" | "data-slot" | "class" | "style")));
+        match expr {
+            Expression::ObjectExpression(o) => ok(o),
+            Expression::Identifier(id) => self.script.objects.get(&id.name).is_some_and(|o| ok(o)),
+            _ => false,
+        }
+    }
+
+    /// The value of a `style:` directive (the shorthand `style:x` is rejected natively).
+    pub(super) fn directive_value(&mut self, d: &'a crate::svelte::ast::StyleDirective) -> Option<AttrValue<'a>> {
+        let span = sp(d.span());
+        if !d.modifiers.is_empty() {
+            self.diags.error("unsupported_feature", span, format!("`style:{}|{}`: style directive modifiers are not supported natively", d.name, d.modifiers.join("|")));
+            return None;
+        }
+        match &d.value {
+            AttributeValue::True(_) => {
+                self.diags.error("unsupported_feature", span, format!("the `style:{0}` shorthand is not supported natively; write `style:{0}={{{0}}}`", d.name));
+                None
+            }
+            AttributeValue::Expression(ExpressionTagNode::ExpressionTag(t)) => Some(AttrValue::Dynamic(Dynamic::Expr(&t.expression))),
+            AttributeValue::Sequence(parts) if parts.iter().all(|p| matches!(p, TextOrExpressionTag::Text(_))) => {
+                Some(AttrValue::Static(Json::String(parts.iter().map(|p| if let TextOrExpressionTag::Text(t) = p { t.data.as_str() } else { "" }).collect())))
+            }
+            AttributeValue::Sequence(parts) => Some(AttrValue::Dynamic(Dynamic::Template(
+                parts
+                    .iter()
+                    .map(|p| match p {
+                        TextOrExpressionTag::Text(t) => TemplatePart::Text(t.data.clone()),
+                        TextOrExpressionTag::ExpressionTag(e) => TemplatePart::Expr(&e.expression),
+                    })
+                    .collect(),
+            ))),
+        }
+    }
+
+    /// `<svelte:element this={tag}>` (runtime-contract.md "Spread attributes"): the kind is only
+    /// known at run time, so every attribute goes through `$n.spread` and the children are placed
+    /// (and checked by the host) at run time.
+    pub(super) fn dynamic_element(&mut self, n: &'a crate::svelte::ast::SvelteElement, parent: &Parent, ancestors: &[StyleSubject<'a>]) -> Option<DynamicElement<'a>> {
+        let id = self.next_id;
+        self.next_id += 1;
+        self.kinds = true;
+        let mut slot = None;
+        let mut entries: Vec<SpreadEntry<'a>> = Vec::new();
+        let mut ops: Vec<Op<'a>> = Vec::new();
+        let mut binds: Vec<Op<'a>> = Vec::new();
+        let mut subject = StyleSubject { tag: n.name.clone(), id: None, dynamic_id: None, static_classes: Vec::new(), cond_classes: Vec::new(), dynamic: None };
+        for a in &n.attributes {
+            match a {
+                AttributeLike::Attribute(at) if matches!(at.name.as_str(), "slot" | "data-slot") => match static_text(at) {
+                    Some(s) => slot = Some(s),
+                    None => {
+                        self.diags.error("slot_not_static", sp(at.span()), "`slot` must be a static name");
+                    }
+                },
+                AttributeLike::Attribute(at) if at.name.starts_with(CHILD_ATTR_PREFIX) => {
+                    ops.extend(self.child_attr_op(None, &at.name[CHILD_ATTR_PREFIX.len()..], at));
+                }
+                AttributeLike::Attribute(at) if at.name.starts_with("on") && matches!(at.value, AttributeValue::Expression(_)) => {
+                    let AttributeValue::Expression(ExpressionTagNode::ExpressionTag(t)) = &at.value else { unreachable!() };
+                    entries.push(SpreadEntry::Event { key: at.name.clone(), handler: &t.expression });
+                }
+                AttributeLike::Attribute(at) => {
+                    if at.name == "class"
+                        && let Some(s) = static_text(at)
+                    {
+                        subject.static_classes.extend(s.split_ascii_whitespace().map(str::to_string));
+                    }
+                    entries.push(SpreadEntry::Attr { key: at.name.clone(), value: attr_value(at) });
+                }
+                AttributeLike::SpreadAttribute(s) => entries.push(SpreadEntry::Spread(&s.expression)),
+                AttributeLike::ClassDirective(d) => {
+                    if let Some(e) = &d.expression {
+                        subject.cond_classes.push((d.name.clone(), e));
+                        entries.push(SpreadEntry::Class { name: d.name.clone(), expr: e });
+                    }
+                }
+                AttributeLike::StyleDirective(d) => {
+                    if let Some(value) = self.directive_value(d) {
+                        entries.push(SpreadEntry::Style { name: d.name.clone(), value });
+                    }
+                }
+                AttributeLike::OnDirective(d) if d.modifiers.is_empty() && d.expression.is_some() => {
+                    entries.push(SpreadEntry::Event { key: format!("on{}", d.name), handler: d.expression.as_ref().unwrap() });
+                }
+                AttributeLike::BindDirective(d) if d.name == "this" => {
+                    let Some(target) = &d.expression else { unreachable!("the parser synthesises bind:x shorthands") };
+                    self.no_bind_modifiers(d, "bind:this");
+                    binds.push(Op::BindThis { target, span: d.span() });
+                }
+                AttributeLike::BindDirective(d) => {
+                    self.diags
+                        .native_error(
+                            "dynamic_element_bind",
+                            sp(d.span()),
+                            format!("bind:{} on <svelte:element> needs the element's kind at compile time to find its binding plan", d.name),
+                        )
+                        .help("use a static element, or set the property and listen to its event");
+                }
+                AttributeLike::AttachTag(t) => ops.push(Op::Attach { expr: &t.expression, span: t.span() }),
+                AttributeLike::UseDirective(d) => binds.push(Op::Action { name: d.name.clone(), arg: d.expression.as_ref(), span: d.span() }),
+                other => {
+                    let what = match other {
+                        AttributeLike::OnDirective(_) => "on: directives with modifiers or without a handler (use on<event>={handler})",
+                        AttributeLike::TransitionDirective(_) => "transitions",
+                        AttributeLike::AnimateDirective(_) => "animate: directives",
+                        AttributeLike::LetDirective(_) => "let: directives",
+                        _ => "this attribute",
+                    };
+                    self.diags.error("unsupported_feature", sp(other.span()), format!("{what} are not supported by the native compiler yet"));
+                }
+            }
+        }
+        if let Some(f) = &self.forced_slot {
+            match &slot {
+                Some(r) if r != f => {
+                    self.diags.error("slot_conflict", sp(n.name_span), format!("<svelte:element> asks for slot `{r}` inside <sv-slot name=\"{f}\">"));
+                }
+                _ => slot = Some(f.clone()),
+            }
+        }
+        let css = if self.sem.text_node().is_none() { self.css_scope.clone() } else { None };
+        ops.insert(0, Op::Spread { entries, css, span: n.span() });
+        ops.extend(binds);
+
+        // children: text goes to the kind's text-content prop (looked up at run time) on a backend
+        // without text nodes; elements go into its slots, placed by the host
+        let forced = self.forced_slot.take();
+        let mut chain = ancestors.to_vec();
+        chain.push(subject);
+        let children = if self.sem.text_node().is_none() && has_text(&n.fragment) {
+            self.text_prop = Some("its text-content property".to_string());
+            let parts = trim_parts(self.text_parts(("svelte:element", &n.fragment), &n.fragment));
+            self.text_prop = None;
+            let span = n.fragment.nodes.first().map(|x| x.span()).unwrap_or(n.span());
+            match parts.as_slice() {
+                [] => {}
+                [TemplatePart::Text(t)] => ops.push(Op::Text { value: AttrValue::Static(Json::String(t.clone())), span }),
+                _ => ops.push(Op::Text { value: AttrValue::Dynamic(Dynamic::Template(parts)), span }),
+            }
+            Fragment::default()
+        } else {
+            let outer = std::mem::replace(&mut self.in_block, true);
+            let f = self.fragment(&n.fragment, &Parent::Detached, &chain);
+            self.in_block = outer;
+            f
+        };
+        self.forced_slot = forced;
+        // placement in `parent` is checked by the host at insertion (the kind is not known here)
+        let _ = parent;
+        Some(DynamicElement { id, span: n.span(), tag: &n.tag, slot, ops, children })
     }
 }
 

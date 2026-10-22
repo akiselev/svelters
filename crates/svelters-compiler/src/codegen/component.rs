@@ -134,6 +134,10 @@ pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, file
         g.w.write(&format!("import '{}/tracing';\n", imports.core));
     }
     g.w.write(&format!("import * as $ from '{}';\nimport * as $n from '{}';\n", imports.core, imports.native));
+    if comp.kinds {
+        // the spec tables of runtime-resolved attributes (spreads, <svelte:element>)
+        g.w.write(&format!("import * as $$kinds from '{}/kinds';\n", imports.native));
+    }
     rw.script(&mut g.w, true);
     let (hoisted, instance): (Vec<_>, Vec<_>) = comp.root.snippets.iter().partition(|s| rw.hoist_snippet(s.span.start));
     for s in hoisted {
@@ -258,7 +262,93 @@ impl Codegen<'_, '_> {
             Item::Await(b) => self.await_block(b, container),
             Item::Render(r) => self.render(r, container),
             Item::Component(c) => self.component(c, container),
+            Item::Dynamic(d) => self.dynamic_element(d, container),
         }
+    }
+
+    /// `<svelte:element this={tag}>`: the ops and children are built for each new element.
+    fn dynamic_element(&mut self, d: &DynamicElement, container: &str) {
+        let n = format!("$$n{}", d.id + 1);
+        self.line();
+        self.w.map(d.span.start);
+        self.w.write(&format!("$n.dynamic_element({container}, () => "));
+        self.paren_expr(d.tag, Mode::Read);
+        self.w.write(&format!(", ({n}) => {{"));
+        self.w.indent();
+        for op in &d.ops {
+            self.op(&n, op);
+        }
+        self.fragment_children(&d.children, &n);
+        self.w.dedent();
+        self.line();
+        self.w.write("}, $$kinds);");
+    }
+
+    /// The object of an `Op::Spread`, in source order; inline handler functions are hoisted
+    /// before the call (`hoisted`), so a re-run passes the same function.
+    fn spread_object(&mut self, entries: &[SpreadEntry], hoisted: &[(usize, String)]) {
+        self.w.write("({");
+        let mut first = true;
+        let mut sep = |w: &mut Writer| {
+            w.write(if first { " " } else { ", " });
+            first = false;
+        };
+        for (i, e) in entries.iter().enumerate() {
+            match e {
+                SpreadEntry::Attr { key, value } => {
+                    sep(&mut self.w);
+                    self.w.write(&format!("{}: ", js_key(key)));
+                    match value {
+                        AttrValue::Static(j) => self.json(j),
+                        AttrValue::Dynamic(d) => self.dynamic(d),
+                    }
+                }
+                SpreadEntry::Event { key, handler } => {
+                    sep(&mut self.w);
+                    self.w.write(&format!("{}: ", js_key(key)));
+                    match hoisted.iter().find(|(j, _)| *j == i) {
+                        Some((_, id)) => self.w.write(id),
+                        None => self.paren_expr(handler, Mode::Read),
+                    }
+                }
+                SpreadEntry::Spread(e) => {
+                    sep(&mut self.w);
+                    self.w.write("...(");
+                    self.expr_text(e, Mode::Read);
+                    self.w.write(")");
+                }
+                SpreadEntry::Class { .. } | SpreadEntry::Style { .. } => {}
+            }
+        }
+        for (sym, class) in [("$n.CLASS", true), ("$n.STYLE", false)] {
+            let list: Vec<&SpreadEntry> = entries.iter().filter(|e| if class { matches!(e, SpreadEntry::Class { .. }) } else { matches!(e, SpreadEntry::Style { .. }) }).collect();
+            if list.is_empty() {
+                continue;
+            }
+            sep(&mut self.w);
+            self.w.write(&format!("[{sym}]: {{ "));
+            for (k, e) in list.iter().enumerate() {
+                if k > 0 {
+                    self.w.write(", ");
+                }
+                match e {
+                    SpreadEntry::Class { name, expr } => {
+                        self.w.write(&format!("{}: ", js_key(name)));
+                        self.paren_expr(expr, Mode::Read);
+                    }
+                    SpreadEntry::Style { name, value } => {
+                        self.w.write(&format!("{}: ", js_key(name)));
+                        match value {
+                            AttrValue::Static(j) => self.json(j),
+                            AttrValue::Dynamic(d) => self.dynamic(d),
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            self.w.write(" }");
+        }
+        self.w.write(if first { "})" } else { " })" });
     }
 
     fn element(&mut self, e: &Element, container: &str) {
@@ -504,6 +594,40 @@ impl Codegen<'_, '_> {
                     self.candidates(candidates, fallback);
                 }
                 self.w.write("));");
+            }
+            Op::Spread { entries, css, span } => {
+                let mut hoisted = Vec::new();
+                for (i, e) in entries.iter().enumerate() {
+                    if let SpreadEntry::Event { handler, .. } = e
+                        && is_function(handler)
+                    {
+                        self.tmp += 1;
+                        let id = format!("$$handler{}", self.tmp);
+                        self.w.write(&format!("const {id} = "));
+                        self.expr_text(handler, Mode::Read);
+                        self.w.write(";");
+                        self.line();
+                        hoisted.push((i, id));
+                    }
+                }
+                self.w.map(span.start);
+                self.w.write(&format!("$n.spread({n}, $$kinds, () => "));
+                self.spread_object(entries, &hoisted);
+                if let Some(c) = css {
+                    self.w.write(&format!(", {}", js_str(c)));
+                }
+                self.w.write(");");
+            }
+            Op::Text { value, span } => {
+                self.w.map(span.start);
+                match value {
+                    AttrValue::Static(v) => {
+                        self.w.write(&format!("$n.text({n}, $$kinds, "));
+                        self.json(v);
+                        self.w.write(");");
+                    }
+                    AttrValue::Dynamic(d) => self.dynamic_call(&format!("$n.text({n}, $$kinds, "), d),
+                }
             }
             Op::Explicit { props, attrs } => {
                 let list = |v: &[String]| v.iter().map(|x| js_str(x)).collect::<Vec<_>>().join(", ");
