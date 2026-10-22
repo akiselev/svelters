@@ -16,6 +16,31 @@ pub(crate) struct Entry {
     generation: u64,
 }
 
+thread_local! {
+    /// RA3: the object tables of the host ops running on this thread, innermost last.
+    static CURRENT: RefCell<Vec<std::rc::Rc<AppObjects>>> = const { RefCell::new(Vec::new()) };
+}
+
+/// While alive, [`current`] is `objects` (a host op is running: backend code that converts values,
+/// such as a provider kind's prop setter, resolves exported objects through this host's table).
+pub(crate) struct Scope(());
+
+pub(crate) fn scope(objects: &std::rc::Rc<AppObjects>) -> Scope {
+    CURRENT.with(|c| c.borrow_mut().push(objects.clone()));
+    Scope(())
+}
+
+impl Drop for Scope {
+    fn drop(&mut self) {
+        CURRENT.with(|c| c.borrow_mut().pop());
+    }
+}
+
+/// The object table of the innermost running host op, if any.
+pub(crate) fn current() -> Option<std::rc::Rc<AppObjects>> {
+    CURRENT.with(|c| c.borrow().last().cloned())
+}
+
 #[derive(Default)]
 pub(crate) struct AppObjects {
     next: Cell<u64>,

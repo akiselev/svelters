@@ -131,6 +131,11 @@
 //! `kinds.d.ts` (the `IntrinsicElements` typings). See `examples/egui-kinds` and
 //! `plans/milestones/RA1-widget-kinds.md`.
 //!
+//! RA3 (`plans/milestones/RA3-widget-api.md`): `#[svelters::widget] impl Kind { pub fn … }` gives the
+//! kind methods JS calls on the element (`bind:this`, then `field.commit()`); `#[svelters::widget]` on
+//! a `fn(ui: &mut egui::Ui, props…) -> egui::Response` is the fn form; [`wrap_widget!`] wraps an
+//! ecosystem egui widget; `caps = CONTAINER` takes children (`cx.children(ui)` draws them).
+//!
 //! # Native behaviours (EV2b)
 //!
 //! `#[svelters::behavior(namespace = "cad", name = "pick")]` on a struct makes it a behaviour that
@@ -149,7 +154,7 @@ pub use svelters_host::exports::{
 };
 /// The rayon `#[js(worker)]` exports run on (for [`exports::set_worker_pool`] and `par_iter` in jobs).
 pub use svelters_host::exports::offload::rayon;
-pub use svelters_macros::{Enum, Error, Events, Record, behavior, export, object, service, store, widget};
+pub use svelters_macros::{Enum, Error, Events, Record, behavior, export, object, service, store, widget, wrap_widget};
 
 /// `use svelters::prelude::*;`
 pub mod prelude {

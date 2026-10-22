@@ -8,7 +8,7 @@
 use crate::kinds;
 use crate::scene::{Arena, Dirty, NodeFlags, W};
 use crate::walk::Out;
-use egui::{Rect, Role, Sense, Ui, UiBuilder, Vec2, WidgetInfo, WidgetText, vec2};
+use egui::{Rect, Role, Sense, Ui, Vec2, WidgetInfo, WidgetText, vec2};
 use svelters_abi::Value;
 
 /// `text` in the `text_style` font at `weight` (the plain text, so the style's font, at 400).
@@ -63,9 +63,8 @@ pub(crate) fn container(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: 
         // WG2b: `panel`, `sides`, `frame`, `stack`
         w if crate::elements::is_container(w) => crate::elements::container(arena, i, r, origin, ui, out),
         W::CollapsingHeader { .. } => collapsing(arena, i, r, origin, ui, out),
-        W::ScrollArea { .. } => scroll(arena, i, r, origin, ui, out),
-        // WG4a: table, tab-view, split-view (`crate::views`)
-        W::Table(_) | W::TabView { .. } | W::SplitView { .. } => crate::views::container(arena, i, r, origin, ui, out),
+        // WG4a: table, tab-view (`crate::views`)
+        W::Table(_) | W::TabView { .. } => crate::views::container(arena, i, r, origin, ui, out),
         _ => {
             let c = arena.common(i);
             if !c.tooltip.is_empty() {
@@ -144,79 +143,6 @@ fn collapsing(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, o
     }
 }
 
-#[allow(clippy::disallowed_types)] // OW: wrapper until OW2
-/// `scroll-area`: an `egui::ScrollArea` at its rect, the children (laid out by taffy at their full
-/// size) drawn in its content `Ui`; a host write of `scroll-x`/`scroll-y` scrolls, a user scroll
-/// (or egui clamping a write) writes them back.
-fn scroll(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
-    let _ = origin;
-    let W::ScrollArea { direction, x, y, seen } = arena.w(i) else { unreachable!() };
-    let (direction, x, y, seen) = (*direction, *x, *y, *seen);
-    let (hs, vs) = match direction {
-        "horizontal" => (true, false),
-        "both" => (true, true),
-        _ => (false, true),
-    };
-    let rr = arena.core[i].rect;
-    let pad = arena.common(i).padding as f32;
-    // the content's extent from the scroll area's origin (children are placed root-relative)
-    let mut content = Vec2::ZERO;
-    for &c in &arena.children[i] {
-        let cr = arena.core[arena.ix(c)].rect;
-        if cr != Rect::NOTHING {
-            content = content.max(cr.max - rr.min);
-        }
-    }
-    let content = content + Vec2::splat(pad);
-    let id = arena.core[i].egui_id;
-    let c = arena.common(i);
-    let (enabled, tip, invalid) = (c.enabled, c.tooltip.clone(), c.invalid);
-    arena.core[i].drawn = r;
-    crate::scene::hit::record(arena, i, ui);
-    let mut b = UiBuilder::new().max_rect(r).scope_id(id.with("scope")).layout(egui::Layout::top_down(egui::Align::Min));
-    if !enabled {
-        b = b.disabled();
-    }
-    let mut child = ui.new_child(b);
-    let mut sa = egui::ScrollArea::new([hs, vs])
-        .id_salt(id.with("scroll"))
-        .auto_shrink(false)
-        .max_width(r.width())
-        .max_height(r.height())
-        .content_margin(egui::Margin::ZERO);
-    if seen != Some((x, y)) {
-        sa = sa.scroll_offset(vec2(x as f32, y as f32));
-    }
-    let o = sa.show_viewport(&mut child, |cui, _viewport| {
-        cui.set_min_size(content);
-        let origin2 = cui.max_rect().min - rr.min;
-        crate::walk::paint_children(arena, i, origin2, cui, out);
-    });
-    if !tip.is_empty() {
-        ui.interact(r, id.with("tip"), Sense::hover()).on_hover_text(tip);
-    }
-    if invalid {
-        invalid_outline(ui, r);
-    }
-    let off = o.state.clamped_offset();
-    let (nx, ny) = (off.x as f64, off.y as f64);
-    if let W::ScrollArea { x: wx, y: wy, seen: s, .. } = arena.w_mut(i) {
-        *s = Some((nx, ny));
-        *wx = nx;
-        *wy = ny;
-    }
-    if (nx, ny) != (x, y) {
-        let mut keys = Vec::new();
-        if nx != x {
-            keys.push(kinds::P::ScrollX);
-        }
-        if ny != y {
-            keys.push(kinds::P::ScrollY);
-        }
-        widget_changed(arena, i, &keys, vec![Value::F64(nx), Value::F64(ny)], out);
-    }
-}
-
 #[allow(clippy::disallowed_types)] // OW: wrapper until OW0 (the `button` wrapper, behind the switch), OW1a (toggle-button, icon), OW1a, OW1b, OW3, OW4
 /// Paints the leaf in slot `i` (the walk's index into the scene's columns); returns its response
 /// (EV2b: the host response of its behaviours).
@@ -233,7 +159,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     let h = arena.slots.id_at(i).expect("live leaf").to_raw();
     let kind = arena.core[i].kind as usize;
     let sig = |name: &str| kinds::signal_id(kind, name);
-    let size = arena.core[i].rect.size();
+    let size = ui.max_rect().size(); // its rect less its CSS padding (CS5f, `style::content_rect`)
     let node_id = arena.core[i].egui_id;
     let click_sense = arena.listens(i, sig("clicked"));
     let mut text_changed = None;
@@ -398,7 +324,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
                 r
             }
         }
-        W::Box | W::Window { .. } | W::Grid { .. } | W::CollapsingHeader { .. } | W::ScrollArea { .. } => unreachable!("containers are not leaves"),
+        W::Box | W::Window { .. } | W::Grid { .. } | W::CollapsingHeader { .. } => unreachable!("containers are not leaves"),
         W::Ext(_) => unreachable!("provider kinds are drawn by provider::paint"),
         W::VirtualList(_) => unreachable!("lists are drawn by kinds::virtuallist::paint"),
         W::Menu(_) | W::Overlay(_) => unreachable!("WG2a kinds are drawn by crate::menus and crate::overlays"),
@@ -407,7 +333,6 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         | W::Switch { .. }
         | W::RangeSlider { .. }
         | W::DragValue { .. }
-        | W::Panel { .. }
         | W::Sides
         | W::Frame { .. }
         | W::Stack { .. }
@@ -415,7 +340,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         | W::ProgressBar { .. }
         | W::Spinner { .. }
         | W::Canvas(_) => unreachable!("WG2b kinds are drawn by crate::elements"),
-        W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::SplitView { .. } | W::ToastHost(_) => unreachable!("WG4a views: crate::views"),
+        W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) => unreachable!("WG4a views: crate::views"),
         W::Picker(p) => p.ui(ui, size), // WG4b (`kinds/pickers.rs`)
         W::Run { .. } => unreachable!("RT2: runs are drawn by their label (crate::rich)"),
         }

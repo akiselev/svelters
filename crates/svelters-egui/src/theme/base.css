@@ -14,6 +14,21 @@
 @layer sv.tokens, sv.base, sv.affordance;
 
 @layer sv.base {
+  /* OW2: the panel's chrome surface (the window's is its UA, `windows::WINDOW_UA`), and R15's edge shadows on a scroll area scrolled away from its top or
+     left (`:state(sv.overflow-*)`, set by its Scrollable unit; VS Code's `scrollbar.shadow`) */
+  panel {
+    background-color: var(--sv-bg);
+  }
+  scroll-area:state(sv.overflow-top) {
+    box-shadow: inset 0 6px 6px -6px var(--sv-scroll-shadow);
+  }
+  scroll-area:state(sv.overflow-left) {
+    box-shadow: inset 6px 0 6px -6px var(--sv-scroll-shadow);
+  }
+  scroll-area:state(sv.overflow-top):state(sv.overflow-left) {
+    box-shadow: inset 0 6px 6px -6px var(--sv-scroll-shadow), inset 6px 0 6px -6px var(--sv-scroll-shadow);
+  }
+
   /* RT2: inline runs of a rich label (crates/svelters-egui/src/rich.rs). The Rust tag defaults
      are the same, so they hold without a theme; links follow DESIGN R18 (link colour, underline
      on hover) and R10 (pointer). */

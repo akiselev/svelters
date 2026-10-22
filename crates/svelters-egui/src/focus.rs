@@ -552,8 +552,14 @@ pub(crate) fn record(arena: &Arena, i: usize, ui: &Ui, resp: &egui::Response) {
         W::Slider { .. } | W::RangeSlider { .. } | W::DragValue { .. } => Role::Slider,
         W::Ext(x) => {
             let w = x.0.try_borrow();
-            let claim = |k| w.as_ref().is_ok_and(|w| w.consume_key(k, Modifiers::NONE));
-            Role::Ext { enter: claim(Key::Enter), escape: claim(Key::Escape) }
+            // RA3: a provider text input (`Widget::text_input`) is a text field for EV3
+            match w.as_ref().ok().and_then(|w| w.text_input()) {
+                Some(multiline) => Role::Text { multiline },
+                None => {
+                    let claim = |k| w.as_ref().is_ok_and(|w| w.consume_key(k, Modifiers::NONE));
+                    Role::Ext { enter: claim(Key::Enter), escape: claim(Key::Escape) }
+                }
+            }
         }
         // check boxes, toggles, switches, radio and menu buttons, combo boxes: Space and Enter
         _ if resp.sense.senses_click() => Role::Toggle,
@@ -724,6 +730,12 @@ pub fn consumed_keys(ctx: &Context) -> Vec<KeyboardShortcut> {
 /// `composing()`): no Enter or Escape to default or cancel buttons, every key is the field's.
 pub fn composing(ctx: &Context) -> bool {
     read(ctx, |st| st.composing.is_some())
+}
+
+/// OW2: the scene node holding keyboard focus in `ctx`'s viewport (from the latest record).
+pub(crate) fn focused_node(ctx: &Context) -> Option<crate::scene::NodeId> {
+    let focus = ctx.memory(|m| m.focused())?;
+    read(ctx, |st| st.cur.entry(Some(focus)).or_else(|| st.prev.entry(Some(focus))).map(|e| e.node))
 }
 
 impl EguiBackend {

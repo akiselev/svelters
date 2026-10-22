@@ -1,7 +1,58 @@
 {
   "modules": [
     {
-      "classes": [],
+      "classes": [
+        {
+          "constructor": {
+            "async": false,
+            "docs": "",
+            "kind": "constructor",
+            "maxInFlight": 0,
+            "name": "new",
+            "params": [
+              {
+                "name": "name",
+                "optional": false,
+                "type": "string"
+              }
+            ],
+            "progress": null,
+            "readonly": false,
+            "returns": "DocHandle",
+            "runsOn": "ui",
+            "rust": "new",
+            "stream": null,
+            "supersede": false,
+            "throws": [],
+            "writeonly": false
+          },
+          "docs": "RA3: a document an app hands to a kind as an object-handle prop (`Obj<T>`), as K1's\n`<code-editor doc={…}>`: `new DocHandle('plan.md')` from `svelters:app/cad`.",
+          "events": [],
+          "methods": [],
+          "name": "DocHandle",
+          "native": "app:cad.DocHandle",
+          "props": [
+            {
+              "docs": "How many times a `<doc-title>` was clicked (written by the kind, in Rust).",
+              "name": "edits",
+              "observability": "none",
+              "readonly": true,
+              "type": "number"
+            },
+            {
+              "docs": "The document's name.",
+              "name": "name",
+              "observability": "none",
+              "readonly": true,
+              "type": "string"
+            }
+          ],
+          "rust": "DocHandle",
+          "shared": false,
+          "statics": [],
+          "store": false
+        }
+      ],
       "functions": [],
       "name": "cad",
       "specifier": "svelters:app/cad",
@@ -33,6 +84,34 @@
             "length",
             "angle"
           ]
+        },
+        {
+          "docs": "A text position as cadatomic's editor kinds take it: 0-based, column in UTF-16 code units.",
+          "fields": [],
+          "kind": "json",
+          "name": "Position",
+          "schema": {
+            "description": "A text position as cadatomic's editor kinds take it: 0-based, column in UTF-16 code units.",
+            "properties": {
+              "column": {
+                "format": "uint32",
+                "minimum": 0,
+                "type": "integer"
+              },
+              "line": {
+                "format": "uint32",
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "line",
+              "column"
+            ],
+            "type": "object"
+          },
+          "type": "{ column: number; line: number; }",
+          "values": []
         }
       ],
       "values": []

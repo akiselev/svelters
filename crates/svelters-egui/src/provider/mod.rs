@@ -36,15 +36,20 @@
 //!   its root only. Opt-in hooks by capability: [`Widget::layout`] (`CUSTOM_LAYOUT`),
 //!   [`Widget::prepare`] (`PREPARE`), [`Widget::hit_test`] (`HIT_TEST`, SG3).
 //!
+//! - `#[svelters::widget] impl T { pub fn … }` (RA3) gives a kind methods JS calls on the element
+//!   (`methods.rs`, [`MethodCx`]).
+//!
 //! Files: this one holds the trait, the contexts and the registration types; `state.rs` the state
-//! bits; `behavior.rs` the behaviours (EVENTS, EV2b); `pass.rs` (SG4: `StateProvider`, `ScenePass`,
+//! bits; `methods.rs` the kind methods (RA3); `behavior.rs` the behaviours (EVENTS, EV2b); `pass.rs` (SG4: `StateProvider`, `ScenePass`,
 //! `PrepareCx`) is SCENE's. Writer lane: RUSTAPI (RA1, RA3).
 
 pub(crate) mod behavior;
+pub(crate) mod methods;
 pub(crate) mod pass;
 mod state;
 
 pub use behavior::{__new_behavior, Behavior, BehaviorBox, BehaviorCx};
+pub use methods::{__kind_of, __this, KindMethods, MethodCx, MethodEntry, types_key as methods_types_key};
 
 pub use crate::scene::ext::{ExtBlock, ExtEntry, ExtId, ExtKey, ExtTicks, Storage};
 pub use crate::scene::{Hit, HitCx};
@@ -282,6 +287,12 @@ inventory::collect!(BindSourceDef);
 /// Implemented by `#[svelters::widget]`: the struct's entry and its typed prop table.
 pub trait KindDecl: Sized + 'static {
     const KIND: &'static KindEntry;
+    /// The kind's namespace (`KindEntry::namespace`), as a constant for generated statics.
+    #[doc(hidden)]
+    const __NAMESPACE: &'static str;
+    /// RA3: the key the types of the kind's methods are registered under (`methods_types_key`).
+    #[doc(hidden)]
+    const __METHODS_KEY: &'static str;
     #[doc(hidden)]
     fn __svelters_new() -> Self;
     #[doc(hidden)]
@@ -349,6 +360,11 @@ pub trait Widget: 'static {
     fn layout(&mut self, cx: &mut LayoutCx<'_>, inputs: crate::taffy::LayoutInput) -> crate::taffy::LayoutOutput {
         cx.default_layout(inputs)
     }
+    /// OW2: adjusts the node's taffy style after its props and before its computed CSS (a
+    /// scroll area's `overflow`, a panel's `size`). Called when the node is restyled: a prop write
+    /// that changes it must make the scene restyle the node (`Dirty::LAYOUT`). Unstable (§16):
+    /// taffy's types.
+    fn taffy_style(&self, _style: &mut crate::taffy::Style) {}
     /// SG4, `Caps::PREPARE` (ARCH-SCENE §7.2 step b, §8.2): runs before its root's layout every
     /// frame the root is drawn, with last frame's visible rect: build or rebind shadow children
     /// here (a virtualiser's rows) through [`PrepareCx::scene`].
@@ -363,6 +379,14 @@ pub trait Widget: 'static {
     /// R11: an input method is composing in it (every key is its own, Enter included).
     fn composing(&self) -> bool {
         false
+    }
+    /// RA3 (ARCH-WIDGETS TextInput unit): `Some(multiline)` when the widget is a text input whose
+    /// egui text field has the node's id (`cx.id()`). EV3's edit commands (the Edit menu's Cut,
+    /// Copy, Paste, Undo, Select All: `Embed::text_command`) then reach it as the input events they
+    /// stand for, fed just before its `ui`, and it gets the text-field key rules (R11). `None` (the
+    /// default): not a text input.
+    fn text_input(&self) -> Option<bool> {
+        None
     }
 }
 
@@ -398,6 +422,8 @@ impl<T> std::fmt::Debug for Event<T> {
 pub struct MeasureCx<'a> {
     pub ctx: &'a egui::Context,
     pub style: &'a egui::Style,
+    /// RA3: an id for the widget's measuring (stable per node, apart from its drawing ids).
+    pub id: egui::Id,
     /// OW0: the node's computed style (CSS), if the cascade reaches it.
     pub(crate) css: Option<&'a svelters_style::ComputedStyle>,
     /// OW0: its parts' computed styles (`::part(name)`).
@@ -444,6 +470,24 @@ impl MeasureCx<'_> {
     pub fn text_field_size(&self, _text: &str, width: f32) -> egui::Vec2 {
         egui::vec2(width, (self.row_height() + 4.0).max(self.interact_size().y))
     }
+
+    /// RA3: the size `add` takes when it runs in an invisible, disabled sizing-pass `Ui` `avail`
+    /// wide (egui's own way to size a widget before showing it): what the fn form and
+    /// `wrap_widget!` measure with, so the measured size is the drawn one. Nothing is painted and
+    /// no input is sensed; the `Ui`'s ids derive from [`MeasureCx::id`].
+    pub fn sizing_pass(&self, avail: AvailableSpace, add: impl FnOnce(&mut egui::Ui)) -> egui::Vec2 {
+        let width = match avail {
+            AvailableSpace::Definite(w) => w,
+            AvailableSpace::MinContent => 0.0,
+            AvailableSpace::MaxContent => 16384.0,
+        };
+        let max = egui::Rect::from_min_size(egui::Pos2::ZERO, egui::vec2(width, 16384.0));
+        let builder = egui::UiBuilder::new().max_rect(max).sizing_pass().invisible().layout(egui::Layout::left_to_right(egui::Align::Min));
+        let mut ui = egui::Ui::new(self.ctx.clone(), self.id, builder);
+        ui.set_style(std::sync::Arc::new(self.style.clone()));
+        add(&mut ui);
+        ui.min_rect().size()
+    }
 }
 
 /// What [`Widget::ui`] gets: the node's id, rect and state, read access to the whole scene, the
@@ -472,6 +516,8 @@ pub struct WidgetCx<'a> {
     errors: Vec<String>,
     /// OW0: UA tokens resolve in the dark scheme.
     dark: bool,
+    /// OW2: restyle the node and relayout it from its parent once its payload is back.
+    relayout: bool,
     /// EV1: the pass's context (repaints asked by behaviours' filters during `dispatch`).
     ctx: egui::Context,
 }
@@ -497,6 +543,14 @@ impl WidgetCx<'_> {
         // the prop-mirror bit the units' rules depend on, also when no sheet runs the cascade
         self.state.set(StateBits::DISABLED, !self.enabled);
         let fc = crate::interact::run(ui, resp, &mut self.state, &parts, f);
+        self.commit_state();
+        fc
+    }
+
+    /// OW2: [`WidgetCx::run_units`] with the responses of the node's parts (a scroll area's thumbs
+    /// and tracks, a split view's sashes), for units that read them (`InputCx::parts`).
+    pub fn run_units_with(&mut self, ui: &egui::Ui, resp: &egui::Response, parts: &crate::interact::PartResponses, f: impl FnOnce(&mut crate::interact::InputCx<'_>)) -> crate::interact::FocusCx {
+        let fc = crate::interact::run(ui, resp, &mut self.state, parts, f);
         self.commit_state();
         fc
     }
@@ -610,6 +664,77 @@ impl WidgetCx<'_> {
             crate::walk::paint_child(self.s, c, self.origin, ui, self.out);
         }
     }
+    /// OW2: draws every child moved by `offset` (a scrollable passes minus its scroll offset) in
+    /// `ui`, whose clip rect the caller set (the viewport). Culling and the hit list follow `ui`'s
+    /// clip, so hidden parts of children neither paint nor hit.
+    pub fn children_offset(&mut self, ui: &mut egui::Ui, offset: egui::Vec2) {
+        let origin = self.origin + offset;
+        for k in 0..self.s.children[self.i].len() {
+            let c = self.s.children[self.i][k].index() as usize;
+            crate::walk::paint_child(self.s, c, origin, ui, self.out);
+        }
+    }
+
+    /// OW2: records the node in the viewport's hit list now, at its rect in `ui`'s clip: an own
+    /// container calls it before drawing its children, so they are hit above it.
+    pub fn record_hit(&mut self, ui: &egui::Ui) {
+        self.s.core[self.i].drawn = self.rect;
+        crate::scene::hit::record(self.s, self.i, ui);
+    }
+
+    /// OW2: this node's own size or position props changed (a panel's `size`): its taffy style is
+    /// rebuilt and it is laid out again from its parent next frame.
+    pub fn relayout_self(&mut self) {
+        // (applied after `ui`: the restyle reads the widget, which is out of the scene now)
+        self.relayout = true;
+    }
+
+    /// OW2: its children must be laid out again (a split view's pane sizes), its own size is
+    /// unchanged.
+    pub fn relayout_children(&mut self) {
+        self.s.invalidate_content(self.node);
+    }
+
+    /// OW2: puts a part's response (a sash) in EV3's tab order with the keys a slider claims
+    /// (arrows, Home/End, PageUp/PageDown), so Tab reaches it and the host keymap leaves them.
+    pub fn record_part_focus(&mut self, ui: &egui::Ui, resp: &egui::Response) {
+        crate::focus::record_with(self.s, self.i, ui, resp, crate::focus::Role::Slider, true);
+    }
+
+    /// OW2: the node's rect from layout, in its root's coordinates (unscrolled content
+    /// coordinates; `rect()` is where it is on screen).
+    pub fn layout_rect(&self) -> egui::Rect {
+        self.s.core[self.i].rect
+    }
+
+    /// OW2: how far the children's layout rects reach from this node's top left (a scrollable's
+    /// content size, before its padding is added).
+    pub fn children_extent(&self) -> egui::Vec2 {
+        let rr = self.s.core[self.i].rect;
+        let mut ext = egui::Vec2::ZERO;
+        for &c in &self.s.children[self.i] {
+            let Some(ci) = self.s.idx(c) else { continue };
+            if !self.s.common(ci).visible {
+                continue;
+            }
+            let cr = self.s.core[ci].rect;
+            if cr != egui::Rect::NOTHING && cr.is_finite() {
+                ext = ext.max(cr.max - rr.min);
+            }
+        }
+        ext
+    }
+
+    /// OW0/OW2: UA tokens resolve in the dark scheme.
+    pub fn dark(&self) -> bool {
+        self.dark
+    }
+
+    /// OW2: the scene, writable, for the crate's own widgets (scroll requests).
+    pub(crate) fn scene_mut(&mut self) -> &mut crate::scene::Scene {
+        self.s
+    }
+
     /// SG4: draws one child of this node (a row of a pool); false if `id` is not one of them.
     pub fn child(&mut self, ui: &mut egui::Ui, id: crate::scene::NodeId) -> bool {
         match self.s.idx(id) {
@@ -756,6 +881,7 @@ pub trait ErasedWidget: Any {
     fn virtual_children(&self) -> Option<&dyn crate::scene::VirtualChildren>;
     fn layout(&mut self, cx: &mut LayoutCx<'_>, inputs: crate::taffy::LayoutInput) -> crate::taffy::LayoutOutput;
     fn prepare(&mut self, cx: &mut PrepareCx<'_>);
+    fn taffy_style(&self, _style: &mut crate::taffy::Style) {}
     fn as_any(&self) -> &dyn Any;
     fn as_any_mut(&mut self) -> &mut dyn Any;
     /// The struct's address (field offsets are relative to it).
@@ -774,6 +900,10 @@ pub trait ErasedWidget: Any {
     /// EV3: [`Widget::composing`].
     fn composing(&self) -> bool {
         false
+    }
+    /// RA3: [`Widget::text_input`].
+    fn text_input(&self) -> Option<bool> {
+        None
     }
 }
 
@@ -814,6 +944,9 @@ impl<T: Widget + KindDecl> ErasedWidget for T {
     fn prepare(&mut self, cx: &mut PrepareCx<'_>) {
         Widget::prepare(self, cx)
     }
+    fn taffy_style(&self, style: &mut crate::taffy::Style) {
+        Widget::taffy_style(self, style)
+    }
     fn as_any(&self) -> &dyn Any {
         self
     }
@@ -828,6 +961,9 @@ impl<T: Widget + KindDecl> ErasedWidget for T {
     }
     fn composing(&self) -> bool {
         Widget::composing(self)
+    }
+    fn text_input(&self) -> Option<bool> {
+        Widget::text_input(self)
     }
 }
 
@@ -858,8 +994,10 @@ impl ExtWidget {
         b.as_any_mut().downcast_mut::<W>().map(f)
     }
     pub(crate) fn measure(&self, m: &crate::layout::Metrics, avail: AvailableSpace, css: Option<&svelters_style::ComputedStyle>, parts: &[(Box<str>, std::sync::Arc<svelters_style::ComputedStyle>)]) -> egui::Vec2 {
-        let mut cx = MeasureCx { ctx: &m.ctx, style: &m.style, css, parts };
-        self.0.borrow_mut().measure(&mut cx, avail)
+        let mut w = self.0.borrow_mut();
+        let id = egui::Id::unique(("svelters-egui.measure", w.base()));
+        let mut cx = MeasureCx { ctx: &m.ctx, style: &m.style, id, css, parts };
+        w.measure(&mut cx, avail)
     }
 }
 
@@ -930,11 +1068,17 @@ pub(crate) fn set_replaced_prop(w: &mut W, def: &crate::kinds::PropDef, v: &Valu
         };
         d.insert(crate::scene::Dirty::MEASURE);
     }
-    if def.layout {
+    // OW2: props that change the own widget's taffy style or how it lays out its children, as
+    // the wrappers' writes did (`Widget::taffy_style`, `Caps::CUSTOM_LAYOUT`)
+    use crate::kinds::P;
+    if def.layout || matches!(def.key, P::ScrollDirection | P::Side | P::Size | P::Orientation | P::DividerPosition | P::MinSize) || OW2_LAYOUT_PROPS.contains(&def.name) {
         d.insert(crate::scene::Dirty::LAYOUT);
     }
     Ok(d)
 }
+
+/// OW2: further own-widget props whose writes relayout (by name: new props of the replaced rows).
+const OW2_LAYOUT_PROPS: &[&str] = &["sizes", "collapsible"];
 
 /// OW0: a read of built-in prop `def` from an own widget that replaces the kind.
 pub(crate) fn get_replaced_prop(x: &ExtWidget, def: &crate::kinds::PropDef) -> Result<Value, String> {
@@ -1003,6 +1147,11 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
     let id = arena.core[i].egui_id;
     let state0 = arena.core[i].state;
     let dark = ui.ctx().theme() == egui::Theme::Dark;
+    // RA3: a provider text input gets EV3's pending edit command before its `ui`
+    let text_input = matches!(&arena.payload[i], crate::scene::node::Payload::Builtin(W::Ext(x)) if x.0.try_borrow().is_ok_and(|w| w.text_input().is_some()));
+    if text_input {
+        crate::focus::before_text(ui, id);
+    }
     let ran = with_taken(arena, i, |w, s| {
         let mut cx = WidgetCx {
             s,
@@ -1021,13 +1170,21 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
             remeasure: false,
             errors: Vec::new(),
             dark,
+            relayout: false,
             ctx: ui.ctx().clone(),
         };
         let resp = w.ui(ui, &mut cx);
-        let WidgetCx { state, changed, emits, remeasure, errors, .. } = cx;
-        (resp, state, changed, emits, remeasure, errors)
+        let WidgetCx { state, changed, emits, remeasure, errors, relayout, .. } = cx;
+        (resp, state, changed, emits, remeasure, errors, relayout)
     });
-    let Some((mut resp, state, changed, emits, remeasure, errors)) = ran else { return None };
+    let Some((mut resp, state, changed, emits, remeasure, errors, relayout)) = ran else { return None };
+    if relayout {
+        arena.restyle(i);
+        arena.invalidate_style(node);
+    }
+    if text_input {
+        crate::focus::after_text(ui, id);
+    }
     // EM1: the accessible name and, for an anchored node, the anchor as AccessKit author id
     resp = crate::a11y::decorate(resp, &arena.n(h));
     let c = arena.common(i);
@@ -1095,7 +1252,13 @@ fn flush_writes(
         let sig = reg.ext_signal_id(kind, e);
         if arena.listens(i, sig) {
             // OW0: an own widget's event keeps the built-in signal's arity (no args: no payload)
-            let args = if reg.provider(kind).is_none() && reg.signal_def(kind, sig).is_some_and(|d| d.args.is_empty()) { vec![] } else { vec![v] };
+            // (OW2: a list payload spreads over a built-in signal of several args: `changed(x, y)`)
+            let n = if reg.provider(kind).is_none() { reg.signal_def(kind, sig).map(|d| d.args.len()) } else { None };
+            let args = match (n, v) {
+                (Some(0), _) => vec![],
+                (Some(n), Value::List(l)) if n > 1 && l.len() == n => l,
+                (_, v) => vec![v],
+            };
             out.push(Out::Event(h, sig, args));
         }
     }

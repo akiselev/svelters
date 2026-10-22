@@ -23,6 +23,10 @@
 //!   `calc()` through taffy's calc handles, per-side insets, `display: grid` and grid
 //!   placement). Paint properties go to a `RectShape` behind boxes and labels and to the child
 //!   `Ui`'s `Visuals` for stock widgets. Unset properties keep egui's `Visuals` (the defaults).
+//! - **Text and leaf padding** (CS5f). Leaves measure and paint with one egui style
+//!   ([`leaf_style`]), which holds the computed `font-size`, `font-family` and `font-weight` (through
+//!   `fonts::register_weight`) and, for buttons, the padding as `button_padding`. Other leaves are
+//!   padded around the widget ([`content_rect`]). A change of any of these remeasures the leaf.
 //!
 //! Precedence (CSS.md §2.8): a prop the runtime set (`NodeCore::explicit`) wins over every rule,
 //! then inline, then rules, then the native default.
@@ -70,21 +74,35 @@ pub(crate) const ENGINE_PROPS: &[(&str, &str, &[&str])] = &[
     ("box-shadow", "shadow", &[]),
     ("color", "color", &[]),
     ("display", "enum", &["flex", "grid", "none"]),
-    // computed and inherited (`em`); measuring and painting with it is deferred
+    // CS5f: computed and inherited; leaves measure and paint with them (`leaf_style`)
+    ("font-family", "raw", &[]),
     ("font-size", "length", &[]),
+    ("font-weight", "font-weight", &[]),
     ("grid-column", "raw", &[]),
     ("grid-row", "raw", &[]),
     ("grid-template-columns", "raw", &[]),
     ("grid-template-rows", "raw", &[]),
+    // CS5f: the shorthands take 1 to 4 values. Engine properties, not setters: inline `style=`
+    // reaches the engine as the inline block; a `margin`/`padding` attribute stays an explicit prop.
+    ("margin", "insets", &[]),
     ("margin-bottom", "length", &[]),
     ("margin-left", "length", &[]),
     ("margin-right", "length", &[]),
     ("margin-top", "length", &[]),
     ("opacity", "number", &[]),
+    // OW2: scrolling (`widgets::scroll_area`; `overflow-*` also set taffy's overflow, so a scrolled
+    // box keeps its size while its content overflows)
+    ("overflow-x", "enum", &["visible", "hidden", "clip", "scroll", "auto"]),
+    ("overflow-y", "enum", &["visible", "hidden", "clip", "scroll", "auto"]),
+    ("overscroll-behavior", "enum", &["auto", "contain", "none"]),
+    ("padding", "insets", &[]),
     ("padding-bottom", "length", &[]),
     ("padding-left", "length", &[]),
     ("padding-right", "length", &[]),
     ("padding-top", "length", &[]),
+    // OW2: the gap a revealed node keeps from the scroll area's edge; a classic bar's gutter
+    ("scroll-margin", "length", &[]),
+    ("scrollbar-gutter", "enum", &["auto", "stable"]),
     // OW-CSS (ARCH-WIDGETS §1.1): read by the paint primitives through `StyleView`
     ("background-image", "image", &[]),
     ("border-top-color", "color", &[]),
@@ -684,8 +702,19 @@ impl Scene {
         self.core[i].dirty.insert(Dirty::PAINT);
         // SG6: a new style draws differently, whatever version the widget caches its shapes under
         self.paint_cache.remove(i as u32);
-        if matches!(self.w(i), W::Run { .. }) {
+        let w = self.w(i);
+        if matches!(w, W::Run { .. }) {
             crate::rich::touched(self, i); // RT2: a run's font may have changed
+        } else if !w.is_container() && !matches!(w, W::Ext(_)) {
+            // CS5f: a leaf's font or padding changed: it measures again (a new size relays out).
+            // `old` is None when only its parts changed (OW-CSS): nothing of its own to compare.
+            if let Some(o) = old.as_deref() {
+                let new = self.style.computed(id).cloned();
+                if MEASURED_PROPS.iter().any(|p| o.get(p) != new.as_ref().and_then(|n| n.get(p))) {
+                    self.mark_measure(id);
+                    self.style.repaint = true;
+                }
+            }
         }
         let t = layout_style(self, i);
         if t != *self.layout[i].style || relayout_parts {
@@ -976,6 +1005,10 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
     {
         child.multiply_opacity(o.max(0.0));
     }
+    // CS5f: its font and button padding, as measured (`leaf_style`)
+    if let Some(st) = leaf_style(s, i, &child.ctx().clone(), child.style()) {
+        child.set_style(st);
+    }
     let states = s.style.node(id).and_then(|n| n.states.clone());
     if is_stock(s.w(i)) {
         let v = &mut child.visuals_mut().widgets;
@@ -1053,6 +1086,147 @@ fn widget_visuals(c: &ComputedStyle, v: &mut egui::style::WidgetVisuals) {
     if let Some(col) = color(c, "color") {
         v.fg_stroke.color = col;
     }
+}
+
+// ---- typography and leaf padding (CS5f) ----
+
+/// The computed properties a leaf is measured with: a change remeasures it.
+const MEASURED_PROPS: &[&str] = &["font-family", "font-size", "font-weight", "padding", "padding-bottom", "padding-left", "padding-right", "padding-top"];
+
+/// Leaves whose CSS padding goes inside egui's frame, as `Spacing::button_padding` (the button is
+/// the box). Other leaves are padded around the widget (taffy padding, drawn in the content box).
+fn pads_inside(w: &W) -> bool {
+    matches!(w, W::Button { .. } | W::ToggleButton { .. } | W::ComboBox { .. } | W::Icon { frame: true, .. })
+}
+
+/// Built-in leaves padded around the widget ([`content_rect`]).
+fn pads_outside(w: &W) -> bool {
+    !w.is_container() && !pads_inside(w) && !matches!(w, W::Ext(_))
+}
+
+/// Whether the runtime set prop `name` of node `i` explicitly (it wins over every rule).
+fn explicit_prop(s: &Scene, i: usize, name: &str) -> bool {
+    let kind = s.core[i].kind as usize;
+    kinds::find_prop(kind, name)
+        .and_then(|(id, _)| crate::scene::member_bit(kind, id, crate::scene::Member::Prop))
+        .is_some_and(|b| b < 64 && s.core[i].explicit & (1 << b) != 0)
+}
+
+/// Padding (top, right, bottom, left) in points: the `padding` shorthand, then the per-side
+/// longhands over it. `%` has no basis in a leaf's measure and counts as 0.
+fn padding_sides(c: &ComputedStyle) -> Option<[f32; 4]> {
+    let mut sides = match c.get("padding") {
+        Some(ComputedValue::Insets(v)) => Some(v.map(|l| l.px)),
+        _ => None,
+    };
+    for (k, name) in ["padding-top", "padding-right", "padding-bottom", "padding-left"].into_iter().enumerate() {
+        if let Some(ComputedValue::Length(l)) = c.get(name) {
+            sides.get_or_insert([0.0; 4])[k] = l.px;
+        }
+    }
+    sides
+}
+
+/// The first family of a `font-family` list the context can draw: the generic names map to egui's
+/// `Proportional` and `Monospace`, any other name to `FontFamily::Name` when the embedder bound it
+/// (`Context::set_fonts`). An unbound name is skipped, never drawn (egui would panic).
+fn resolve_family(ctx: &egui::Context, list: &str) -> Option<egui::FontFamily> {
+    for f in list.split(',') {
+        let name = f.trim().trim_matches(|c| c == '"' || c == '\'');
+        let fam = match name.to_ascii_lowercase().as_str() {
+            "" => continue,
+            "sans-serif" | "serif" | "system-ui" | "ui-sans-serif" | "ui-serif" | "proportional" => egui::FontFamily::Proportional,
+            "monospace" | "ui-monospace" => egui::FontFamily::Monospace,
+            _ => egui::FontFamily::Name(name.into()),
+        };
+        if crate::fonts::has_family(ctx, &fam) {
+            return Some(fam);
+        }
+    }
+    None
+}
+
+/// The text a leaf draws, for the weight family's glyph check.
+fn leaf_text(w: &W) -> &str {
+    match w {
+        W::Label { text, .. } | W::Button { text, .. } | W::ToggleButton { text, .. } | W::Checkbox { text, .. } | W::TextEdit { text, .. } | W::Slider { text, .. } => text,
+        _ => "",
+    }
+}
+
+/// The egui style leaf `i` measures (`layout.rs`) and paints ([`before_leaf`]) with under its
+/// computed style: every text style at the computed `font-size`, `font-family` (not Monospace) and
+/// `font-weight` (the family `fonts::register_weight` registered for the nearest weight; an explicit
+/// `font-weight` prop wins and is applied by the leaf), and for [`pads_inside`] kinds the CSS
+/// padding as `button_padding` (egui pads both sides alike: the mean of left/right and top/bottom).
+/// `None`: the base style as is.
+pub(crate) fn leaf_style(s: &Scene, i: usize, ctx: &egui::Context, base: &egui::Style) -> Option<egui::Style> {
+    if !s.style.active {
+        return None;
+    }
+    let w = s.w(i);
+    if w.is_container() || matches!(w, W::Ext(_)) {
+        return None;
+    }
+    let c = s.style.computed(s.slots.id_at(i)?)?;
+    let size = px(c, "font-size").filter(|v| *v > 0.0);
+    let family = match c.get("font-family") {
+        Some(ComputedValue::Raw(t)) => resolve_family(ctx, t),
+        _ => None,
+    };
+    let weight = match c.get("font-weight") {
+        Some(ComputedValue::FontWeight(v)) if *v != 400 && !explicit_prop(s, i, "font-weight") => Some(*v as i64),
+        _ => None,
+    };
+    let pad = if pads_inside(w) { padding_sides(c) } else { None };
+    if size.is_none() && family.is_none() && weight.is_none() && pad.is_none() {
+        return None;
+    }
+    let mut st = base.clone();
+    let text = leaf_text(w);
+    for (ts, f) in st.text_styles.iter_mut() {
+        if let Some(v) = size {
+            f.size = v;
+        }
+        if let Some(fam) = &family
+            && *ts != egui::TextStyle::Monospace
+        {
+            f.family = fam.clone();
+        }
+        if let Some(v) = weight {
+            f.family = crate::fonts::weighted_family(ctx, &f.family, v, text);
+        }
+    }
+    if let Some([t, r, b, l]) = pad {
+        st.spacing.button_padding = egui::vec2((l + r) / 2.0, (t + b) / 2.0);
+    }
+    Some(st)
+}
+
+/// The rect leaf `i`'s widget draws in: `r` less its CSS padding ([`pads_outside`] leaves; the
+/// padding is in its taffy style). SG6 keeps no resolved padding per node, so it is resolved here
+/// as taffy does for a flex child: `%` and `calc()` against the parent's content width.
+pub(crate) fn content_rect(s: &Scene, i: usize, r: egui::Rect) -> egui::Rect {
+    use taffy::ResolveOrZero;
+    if !s.style.active || !pads_outside(s.w(i)) {
+        return r;
+    }
+    let zero = taffy::LengthPercentage::length(0.0);
+    let pad = s.layout[i].style.padding;
+    if pad.left == zero && pad.right == zero && pad.top == zero && pad.bottom == zero {
+        return r;
+    }
+    let basis = s.core[i].parent.and_then(|q| s.idx(q)).map(|q| {
+        let w = s.core[q].rect.width();
+        let ps = &s.layout[q].style;
+        let side = |v: taffy::LengthPercentage| v.resolve_or_zero(Some(w), resolve_calc);
+        (w - side(ps.padding.left) - side(ps.padding.right) - side(ps.border.left) - side(ps.border.right)).max(0.0)
+    });
+    let side = |v: taffy::LengthPercentage| v.resolve_or_zero(basis, resolve_calc);
+    let p = taffy::Rect { left: side(pad.left), right: side(pad.right), top: side(pad.top), bottom: side(pad.bottom) };
+    let min = r.min + egui::vec2(p.left, p.top);
+    let max = (r.max - egui::vec2(p.right, p.bottom)).max(min);
+    egui::Rect::from_min_max(min, max)
 }
 
 // ---- layout ----
@@ -1200,13 +1374,12 @@ pub(crate) fn layout_style(s: &Scene, i: usize) -> taffy::Style {
     let vis = s.vis(i);
     let mut st = crate::layout::style_of(s.common(i), w, &vis);
     let Some(c) = s.slots.id_at(i).and_then(|id| s.style.computed(id)) else { return st };
-    let kind = s.core[i].kind as usize;
-    let explicit = |name: &str| {
-        kinds::find_prop(kind, name)
-            .and_then(|(id, _)| crate::scene::member_bit(kind, id, crate::scene::Member::Prop))
-            .is_some_and(|b| b < 64 && s.core[i].explicit & (1 << b) != 0)
-    };
-    let container = w.is_container();
+    let explicit = |name: &str| explicit_prop(s, i, name);
+    // (OW2: an own widget with children takes the box properties too)
+    let container = w.is_container()
+        || matches!(w, W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::CONTAINER) || x.entry().caps.contains(crate::provider::Caps::CUSTOM_LAYOUT));
+    // CS5f: padding is taffy's for containers and for leaves padded around the widget
+    let pad_ok = container || pads_outside(w);
     for (p, v) in c.iter() {
         // per-side insets yield to an explicit shorthand prop
         let owner = match p.name {
@@ -1236,8 +1409,9 @@ pub(crate) fn layout_style(s: &Scene, i: usize) -> taffy::Style {
             }
             "align-self" => st.align_self = kw.and_then(align),
             "margin" => {
-                if let Some(m) = lpa(v) {
-                    st.margin = taffy::Rect { left: m, right: m, top: m, bottom: m };
+                if let ComputedValue::Insets([t, r, b, l]) = v {
+                    let side = |x: &Length| lpa(&ComputedValue::Length(*x)).unwrap_or(taffy::LengthPercentageAuto::length(0.0));
+                    st.margin = taffy::Rect { top: side(t), right: side(r), bottom: side(b), left: side(l) };
                 }
             }
             "margin-top" => st.margin.top = lpa(v).unwrap_or(st.margin.top),
@@ -1257,6 +1431,23 @@ pub(crate) fn layout_style(s: &Scene, i: usize) -> taffy::Style {
             "top" => st.inset.top = lpa(v).unwrap_or(st.inset.top),
             "right" => st.inset.right = lpa(v).unwrap_or(st.inset.right),
             "bottom" => st.inset.bottom = lpa(v).unwrap_or(st.inset.bottom),
+            // OW2: a scrolled or clipped axis keeps the box from growing to its content
+            "overflow-x" | "overflow-y" => {
+                let o = match kw {
+                    Some("scroll" | "auto") => Some(taffy::Overflow::Scroll),
+                    Some("hidden") => Some(taffy::Overflow::Hidden),
+                    Some("clip") => Some(taffy::Overflow::Clip),
+                    // `visible` (the initial value) keeps what the props gave (a scroll area's axes)
+                    _ => None,
+                };
+                if let Some(o) = o {
+                    if p.name == "overflow-x" { st.overflow.x = o } else { st.overflow.y = o }
+                }
+            }
+            // OW2: classic scroll bars take a gutter beside the content (`scrollbar-w`)
+            "scrollbar-gutter" if kw == Some("stable") => {
+                st.scrollbar_width = crate::paint::StyleView::ua_only(crate::widgets::scroll_area::TRACK_UA, crate::provider::StateBits::NONE, true).px("width").unwrap_or(10.0);
+            }
             "visible" => {
                 if matches!(v, ComputedValue::Bool(false)) {
                     st.display = taffy::Display::None;
@@ -1275,6 +1466,15 @@ pub(crate) fn layout_style(s: &Scene, i: usize) -> taffy::Style {
                     if p.name == "grid-column" { st.grid_column = l } else { st.grid_row = l }
                 }
             }
+            "padding" if pad_ok => {
+                if let ComputedValue::Insets([t, r, b, l]) = v {
+                    st.padding = taffy::Rect { top: lp(t), right: lp(r), bottom: lp(b), left: lp(l) };
+                }
+            }
+            "padding-top" if pad_ok => st.padding.top = len_of(v).unwrap_or(st.padding.top),
+            "padding-right" if pad_ok => st.padding.right = len_of(v).unwrap_or(st.padding.right),
+            "padding-bottom" if pad_ok => st.padding.bottom = len_of(v).unwrap_or(st.padding.bottom),
+            "padding-left" if pad_ok => st.padding.left = len_of(v).unwrap_or(st.padding.left),
             _ if !container => {}
             "flex-direction" => {
                 st.flex_direction = match kw {
@@ -1309,15 +1509,6 @@ pub(crate) fn layout_style(s: &Scene, i: usize) -> taffy::Style {
             }
             "row-gap" => st.gap.height = len_of(v).unwrap_or(st.gap.height),
             "column-gap" => st.gap.width = len_of(v).unwrap_or(st.gap.width),
-            "padding" => {
-                if let Some(g) = len_of(v) {
-                    st.padding = taffy::Rect { left: g, right: g, top: g, bottom: g };
-                }
-            }
-            "padding-top" => st.padding.top = len_of(v).unwrap_or(st.padding.top),
-            "padding-right" => st.padding.right = len_of(v).unwrap_or(st.padding.right),
-            "padding-bottom" => st.padding.bottom = len_of(v).unwrap_or(st.padding.bottom),
-            "padding-left" => st.padding.left = len_of(v).unwrap_or(st.padding.left),
             "grid-template-columns" | "grid-template-rows" => {
                 if let ComputedValue::Raw(t) = v
                     && let Some(tracks) = template(t)
