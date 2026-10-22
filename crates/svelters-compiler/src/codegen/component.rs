@@ -129,12 +129,15 @@ pub struct Codegen<'a, 's> {
     memo: Vec<(usize, String)>,
     /// The component function name (`$.wrap_snippet(Name, ...)` in dev).
     name: &'s str,
+    /// CX3: the component's draft bindings (`Component::drafts`).
+    drafts: Vec<(usize, Draft<'a>)>,
     _p: std::marker::PhantomData<&'a ()>,
 }
 
 /// Generates the whole module. `name` is the component function name.
 pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, filename: &str, imports: &crate::target::RuntimeImports, hmr: bool) -> (String, String) {
-    let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, root_fragment: false, memo: Vec::new(), name, _p: std::marker::PhantomData };
+    let drafts = comp.drafts.clone();
+    let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, root_fragment: false, memo: Vec::new(), name, drafts, _p: std::marker::PhantomData };
     g.module(comp, imports, hmr.then_some(filename));
     let out = filename.rsplit('/').next().unwrap_or(filename).replace(".svelte", ".js");
     g.w.finish(filename, src, &out)
@@ -144,8 +147,17 @@ pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, file
 /// reports some diagnostics (assignments to constants, invalid bindings, ...) while it rewrites
 /// the template's expressions, so the walk runs, but nothing is written and no source map is built.
 pub fn traverse(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, imports: &crate::target::RuntimeImports) {
-    let mut g = Codegen { src, rw, w: Writer::sink(), tmp: 0, root_fragment: false, memo: Vec::new(), name, _p: std::marker::PhantomData };
+    let drafts = comp.drafts.clone();
+    let mut g = Codegen { src, rw, w: Writer::sink(), tmp: 0, root_fragment: false, memo: Vec::new(), name, drafts, _p: std::marker::PhantomData };
     g.module(comp, imports, None);
+}
+
+impl<'a> Codegen<'a, '_> {
+    /// CX3: the draft binding whose bound expression is `target`, if it is one.
+    fn draft(&self, target: &Expression) -> Option<Draft<'a>> {
+        let at = target as *const Expression as usize;
+        self.drafts.iter().find(|(k, _)| *k == at).map(|(_, d)| d.clone())
+    }
 }
 
 impl Codegen<'_, '_> {
@@ -160,6 +172,10 @@ impl Codegen<'_, '_> {
         if comp.kinds {
             // the spec tables of runtime-resolved attributes (spreads, <svelte:element>)
             g.w.write(&format!("import * as $$kinds from '{}/kinds';\n", imports.native));
+        }
+        // CX3: the modules of draft bind sources (their `get`/`set` exports)
+        for (i, m) in comp.bind_imports.iter().enumerate() {
+            g.w.write(&format!("import * as $$bind_source_{i} from {};\n", js_str(m)));
         }
         rw.script(&mut g.w, true);
         let (hoisted, instance): (Vec<_>, Vec<_>) = comp.root.snippets.iter().partition(|s| rw.hoist_snippet(s.span.start));
@@ -233,6 +249,13 @@ impl Codegen<'_, '_> {
     /// `get, set` of a binding: the functions of `bind:x={get, set}` (Svelte >= 5.9), else accessors
     /// of the bound lvalue.
     fn bind_accessors(&mut self, target: &Expression) {
+        if let Some(d) = self.draft(target) {
+            self.w.write("() => ");
+            self.draft_call(&d, &d.get, false);
+            self.w.write(", ($$value) => ");
+            self.draft_call(&d, &d.set, true);
+            return;
+        }
         if let Some((get, set)) = function_binding(target) {
             self.paren_expr(get, Mode::Read);
             self.w.write(", ");
@@ -247,12 +270,34 @@ impl Codegen<'_, '_> {
 
     /// The `set` half of a binding (read-only bindings never read the target).
     fn bind_setter(&mut self, target: &Expression) {
+        if let Some(d) = self.draft(target) {
+            self.w.write("($$value) => ");
+            self.draft_call(&d, &d.set, true);
+            return;
+        }
         if let Some((_, set)) = function_binding(target) {
             self.paren_expr(set, Mode::Read);
         } else {
             let set = self.rw.assign(target, "$$value");
             self.w.write(&format!("($$value) => {{ {set}; }}"));
         }
+    }
+
+    /// CX3: `$$bind_source_<ns>.<f>(...args[, $$value])`.
+    fn draft_call(&mut self, d: &Draft<'_>, f: &str, value: bool) {
+        let ident = f.chars().next().is_some_and(|c| c.is_ascii_alphabetic() || c == '_' || c == '$') && f.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '$');
+        let member = if ident { format!(".{f}") } else { format!("[{}]", js_str(f)) };
+        self.w.write(&format!("$$bind_source_{}{member}(", d.ns));
+        for (i, a) in d.args.iter().enumerate() {
+            if i > 0 {
+                self.w.write(", ");
+            }
+            self.expr_text(a, Mode::Read);
+        }
+        if value {
+            self.w.write(if d.args.is_empty() { "$$value" } else { ", $$value" });
+        }
+        self.w.write(")");
     }
 
     fn json(&mut self, v: &Json) {
@@ -550,7 +595,7 @@ impl Codegen<'_, '_> {
             Op::StyleProp { .. } | Op::StyleSetter { .. } => Phase::Update,
             Op::Listen { .. } => Phase::Event,
             Op::ListenAttach { .. } | Op::Attach { .. } | Op::Action { .. } | Op::BindThis { .. } => Phase::ElementInit,
-            Op::Bind { .. } | Op::BindProp { .. } | Op::BindReadonly { .. } | Op::BindOnce { .. } => Phase::Binding,
+            Op::Bind { .. } | Op::BindProp { .. } | Op::BindReadonly { .. } | Op::BindOnce { .. } | Op::BindCommit { .. } | Op::BindLink { .. } => Phase::Binding,
             // Svelte's TransitionDirective / AnimateDirective push to the element's `after_update`,
             // with its bindings, in attribute order
             Op::Transition { .. } | Op::Animate { .. } => Phase::Binding,
@@ -1061,6 +1106,23 @@ impl Codegen<'_, '_> {
                 self.w.write(&format!("$n.bind_once({n}, {}, ", js_str(prop)));
                 self.bind_accessors(target);
                 self.w.write(&format!(", {readonly});"));
+            }
+            Op::BindCommit { prop, signal, arg, target, span } => {
+                self.w.map(span.start);
+                self.w.write(&format!("$n.bind_commit({n}, {}, ", js_str(prop)));
+                self.bind_accessors(target);
+                self.w.write(&format!(", {}, {arg});", js_str(signal)));
+            }
+            Op::BindLink { prop, obj, field, fallback, span } => {
+                self.w.map(span.start);
+                self.w.write(&format!("$n.bind_link({n}, {}, () => ", js_str(prop)));
+                self.expr_text(obj, Mode::Read);
+                self.w.write(&format!(", {}, () => {{", js_str(field)));
+                self.w.indent();
+                self.op(n, fallback);
+                self.w.dedent();
+                self.line();
+                self.w.write("});");
             }
             Op::BindThis { target, span } => {
                 self.w.map(span.start);

@@ -159,6 +159,13 @@ static TEXT_EDIT_SIGNALS: &[SignalDef] = &[
     signal("changed", &[("text", Ty::Str)], "The user edited the text; carries the new text (once per frame)."),
     signal("gained-focus", NONE, "Took keyboard focus."),
     signal("lost-focus", NONE, "Lost keyboard focus."),
+    // CX3: `bind:text|commit` updates its source on this event (egui.json `bindings.text.commit`)
+    signal(
+        "commit",
+        &[("text", Ty::Str)],
+        "The user committed the text: Enter in a one-line field (also when a default button takes it), or losing focus after an edit since the last commit; carries the text.",
+    ),
+    signal("submit", &[("text", Ty::Str)], "Enter in a one-line field (also when a default button takes it); carries the text. Fires after `commit`."),
 ];
 
 static SLIDER_SIGNALS: &[SignalDef] = &[

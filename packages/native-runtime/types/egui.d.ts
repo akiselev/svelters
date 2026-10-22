@@ -200,6 +200,10 @@ export interface EguiElements {
     'ongained-focus'?: () => void;
     /** Lost keyboard focus. */
     'onlost-focus'?: () => void;
+    /** The user committed the text: Enter in a one-line field (also when a default button takes it), or losing focus after an edit since the last commit; carries the text. */
+    oncommit?: (text: string) => void;
+    /** Enter in a one-line field (also when a default button takes it); carries the text. Fires after `commit`. */
+    onsubmit?: (text: string) => void;
   };
   /** A horizontal slider with an optional value box. */
   slider: EguiWidgetProps & {

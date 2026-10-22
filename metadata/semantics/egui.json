@@ -1,5 +1,13 @@
 {
   "backend": "egui",
+  "bind_sources": [
+    {
+      "doc": "A writable field of a Rust store (#[svelters::store]) bound to a native prop: linked in the host, both ways, with no JS per change.",
+      "export": "*",
+      "lowering": "link",
+      "module": "svelters:app/*"
+    }
+  ],
   "event_aliases": {},
   "framework": "egui 0.37 (svelters-egui; taffy 0.15 layout)",
   "kinds": {
@@ -5102,6 +5110,10 @@
       "abstract": false,
       "bindings": {
         "text": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
           "compare_before_set": true,
           "direction": "two_way",
           "echo": "none",
@@ -5250,6 +5262,22 @@
           "sync": false,
           "sync_required": false
         },
+        "commit": {
+          "args": [
+            {
+              "name": "text",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user committed the text: Enter in a one-line field (also when a default button takes it), or losing focus after an edit since the last commit; carries the text.",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "gained-focus": {
           "args": [],
           "disconnect_on_drop": true,
@@ -5268,6 +5296,22 @@
           "handler_result": "none",
           "js_event": "lost-focus",
           "name": "lost-focus",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "submit": {
+          "args": [
+            {
+              "name": "text",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Enter in a one-line field (also when a default button takes it); carries the text. Fires after `commit`.",
+          "handler_result": "none",
+          "js_event": "submit",
+          "name": "submit",
           "phases": [],
           "sync": false,
           "sync_required": false

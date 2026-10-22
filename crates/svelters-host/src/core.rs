@@ -34,6 +34,7 @@ use svelters_abi::{
 mod apps;
 mod asyncs;
 mod callbacks;
+mod links;
 mod offload;
 mod ops;
 mod reactive;
@@ -166,6 +167,9 @@ pub(crate) struct Observed {
     /// Deliver at the next checkpoint even if equal to `last`: our own write was normalized by the
     /// toolkit (the read-back differs from what JS wrote), so JS must see the value once.
     pub force: bool,
+    /// CX3: how many of `count` are native links (`host.link`), not JS. A pair only links observe is
+    /// propagated at the checkpoint but never delivered to JS.
+    pub links: u32,
 }
 
 /// Why a handle is no longer live.
@@ -312,6 +316,9 @@ struct CoreState {
     dirty: Vec<(svl_handle, svl_id)>,
     dirty_set: HashSet<(svl_handle, svl_id)>,
     events: VecDeque<Event>,
+    /// CX3: native links (`host.link`), and the last id handed out.
+    links: Vec<links::Link>,
+    next_link: u32,
     /// Handles carried in the arguments of queued events (a list item in a deferred `bind`, N3), with
     /// a count: `destroy` leaves a pinned handle alive, so a wrapper collected while its event waits
     /// cannot kill the handle the event is about to deliver. Unpinned when the event is delivered.
@@ -678,8 +685,12 @@ impl Core {
                     }
                     changed
                 };
-                self.note_store_change(changed);
                 if changed {
+                    self.link_propagate(key, &v);
+                }
+                let js = changed && self.js_observes(key);
+                self.note_store_change(js);
+                if js {
                     out.push(ChangedProp { handle: key.0, prop: name, value: Some(v) });
                 }
                 continue;
@@ -696,7 +707,11 @@ impl Core {
                 }
                 changed
             };
-            if changed {
+            // CX3: a linked prop goes to its store (no boxed values: those always compare changed)
+            if changed && !has_boxed(&v) {
+                self.link_propagate(key, &v);
+            }
+            if changed && self.js_observes(key) {
                 out.push(ChangedProp { handle: key.0, prop: name, value: Some(v) });
             } else {
                 // Dropped: a read that minted VALUE handles must not leak them.
