@@ -232,6 +232,8 @@ impl EguiBackend {
         // Writes the checkpoint's handlers and the state providers made through `SceneHandle` are
         // announced now.
         self.flush_announcements();
+        // DS1: a theme installed since the last logic reaches the context's Style.
+        self.apply_pending_theme(ctx);
         // ARCH-SCENE §7.2 step 7 (CS5e): restyle what this logic's changes reach.
         self.restyle_pending(ctx);
         self.animate_step(ctx);

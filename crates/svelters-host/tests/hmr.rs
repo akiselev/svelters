@@ -192,7 +192,7 @@ fn the_swap_budget_forces_a_full_reload() {
 }
 
 #[test]
-fn accept_exports_covers_default_only_and_a_changed_other_export_falls_back() {
+fn accept_exports_covers_default_only_and_a_changed_other_export_propagates_to_the_importer() {
     let app = app_with_child("hmr-exports", "<script module>\n  export const k = 1;\n</script>\n<label>one</label>\n");
     let child = app.path("src/Child.svelte");
     let (_oplog, reports) = run_watching(app.provider(), 2, move || {
@@ -201,6 +201,9 @@ fn accept_exports_covers_default_only_and_a_changed_other_export_falls_back() {
         std::fs::write(&child, "<script module>\n  export const k = 2;\n</script>\n<label>three</label>\n").unwrap();
     });
     assert!(reports[0].ok && reports[0].hot.is_some(), "{:?}", reports[0]);
-    assert!(reports[1].ok && reports[1].hot.is_none(), "{:?}", reports[1]);
-    assert!(reports[1].fallback.as_deref().is_some_and(|w| w.contains("export k changed")), "{:?}", reports[1]);
+    // H1b: `k` is not accepted by Child, so the change moves up to App (which accepts its own default)
+    assert!(reports[1].ok && reports[1].fallback.is_none(), "{:?}", reports[1]);
+    let hot = reports[1].hot.clone().unwrap_or_default();
+    assert!(hot.iter().any(|m| m.ends_with("Child.svelte")) && hot.iter().any(|m| m.ends_with("App.svelte")), "{hot:?}");
 }
+
