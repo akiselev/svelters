@@ -680,11 +680,13 @@ pub mod __private {
         TypeRef::new(SlotDesc::new(svelters_abi::SVL_MAP), ts)
     }
 
-    /// RA1: runs `f` with a call context outside any host call (provider kinds convert their typed
-    /// props and event payloads with it). It has an empty object table: a value holding an exported
-    /// object handle does not convert here.
+    /// RA1: runs `f` with a call context for module `module` (provider kinds convert their typed
+    /// props, method arguments and event payloads with it). RA3: during a host op (a `set_prop`, a
+    /// method call, a read of an observed prop) it has that host's object table, so exported objects
+    /// (`Obj<T>`, `Arc<T>`) convert; outside any op (event payloads after a pass) the table is empty
+    /// and a value holding an object handle does not convert.
     pub fn with_cx<R>(module: &'static str, f: impl FnOnce(&CallCx<'_>) -> R) -> R {
-        let objects = objects::AppObjects::default();
+        let objects = objects::current().unwrap_or_default();
         f(&CallCx { objects: &objects, schema: schema(), this: None, module })
     }
 

@@ -150,7 +150,26 @@ fn kind_json(k: &KindDef) -> J {
     let methods: Map<String, J> = k
         .methods
         .iter()
-        .map(|m| {
+        .enumerate()
+        .map(|(i, m)| {
+            // RA3: a provider method's parameters and result from its Rust signature
+            if let Some((entry, params, ret)) = provider.and_then(|pk| pk.method(i)) {
+                let params: Vec<J> = entry
+                    .params
+                    .iter()
+                    .zip(params)
+                    .map(|(n, t)| {
+                        let (ty, _) = slot_spec(&t.slot);
+                        json!({"name": n, "type": ty, "nullable": t.slot.has(SVL_D_NULLABLE), "optional": t.slot.has(SVL_D_OPTIONAL), "ts": t.ts})
+                    })
+                    .collect();
+                let returns = if ret.slot.tag == SVL_NULL {
+                    json!({"nullable": false, "type": "void"})
+                } else {
+                    json!({"nullable": ret.slot.has(SVL_D_NULLABLE), "type": slot_spec(&ret.slot).0, "ts": ret.ts})
+                };
+                return (m.name.to_string(), json!({"dispatch": "provider", "doc": m.doc, "native": entry.rust, "params": params, "returns": returns}));
+            }
             (
                 m.name.to_string(),
                 json!({"dispatch": "generated", "doc": m.doc, "native": m.name, "params": [], "returns": {"nullable": false, "type": "void"}}),
@@ -198,14 +217,44 @@ fn kind_json(k: &KindDef) -> J {
             // the change event's shape (the coordinator's seam: the committed value where the change
             // event carries the live one). A `commit` of another shape (a table's cell edit) is not
             // a commit of this prop.
-            if let (Some(c), Some(s)) = (k.signals.iter().find(|s| s.name == "commit"), sig)
-                && c.args == s.args
-            {
-                b["commit"] = json!({"event": "commit", "arg": arg});
+            if let Some(c) = commit_binding(k.signals.iter().find(|s| s.name == "commit").map(|c| c.args), sig.map(|s| s.args), arg) {
+                b["commit"] = c;
             }
             (p.name.to_string(), b)
         })
         .collect();
+    // RA3: a provider kind's bound props lower onto observation (exact); one with a `commit` event
+    // whose payload has the prop's type also gets a binding for `bind:<prop>|commit`, by the same
+    // rule (`commit_binding`; a provider prop's change shape is its type)
+    let bindings: Map<String, J> = match provider {
+        None => bindings,
+        Some(pk) => k
+            .props
+            .iter()
+            .enumerate()
+            .filter(|(_, p)| p.native == Native::Widget)
+            .filter_map(|(i, p)| {
+                let c = provider_commit(pk, i)?;
+                Some((
+                    p.name.to_string(),
+                    json!({
+                        "commit": c,
+                        "compare_before_set": true,
+                        "direction": "two_way",
+                        "echo": "none",
+                        "event": "commit",
+                        "lifetime": {"on_destroy": "idempotent_disconnect", "on_native_death": "end_binding", "on_stale_update": "warn_noop"},
+                        "natively_normalizes": false,
+                        "property": p.name,
+                        "provenance": format!("svelters-egui: {} writes {} with cx.set (observed, exact); its `commit` event carries the committed value", pk.entry.rust, p.name),
+                        "read_back": false,
+                        "sync_signals_on_set": [],
+                        "value": {"arg": 0},
+                    }),
+                ))
+            })
+            .collect(),
+    };
     let children = k.slot.map(|slot| {
         json!({
             "default_slot": slot,
@@ -479,6 +528,26 @@ fn value_json(v: &Value) -> J {
     }
 }
 
+/// CX3: the `commit` entry of a binding (`bind:<prop>|commit`) when the kind's `commit` event has
+/// the shape of the prop's change event (its arguments; for a provider kind, its value type), with
+/// the committed value at `arg`. A `commit` of another shape (a table's cell edit) is not a commit
+/// of this prop.
+fn commit_binding<S: PartialEq>(commit: Option<S>, change: Option<S>, arg: usize) -> Option<J> {
+    (commit.is_some() && commit == change).then(|| json!({"event": "commit", "arg": arg}))
+}
+
+/// RA3: the `commit` entry of provider prop `i`'s binding, if its kind's `commit` event has the prop's shape.
+fn provider_commit(pk: &ProviderKind, i: usize) -> Option<J> {
+    let commit = pk.entry.events.iter().position(|e| e.name == "commit").and_then(|e| pk.event_type(e)).map(provider_shape);
+    commit_binding(commit, pk.types.get(i).map(provider_shape), 0)
+}
+
+/// RA3: a provider value's change shape: its JS type without nullability (`Option<f64>` commits an
+/// `f64`).
+fn provider_shape(t: &svelters_host::exports::TypeRef) -> String {
+    t.ts.strip_suffix(" | null").unwrap_or(&t.ts).to_string()
+}
+
 /// Fills a provider prop's type, values, range, default and observability from its Rust type and its
 /// widget's default.
 fn provider_prop(j: &mut J, pk: &ProviderKind, i: usize) {
@@ -619,6 +688,10 @@ fn ts_members(out: &mut String, indent: &str, k: &KindDef, provider: Option<&Pro
         let _ = writeln!(out, "{indent}{}{}: {ty};", ts_key(p.name), if optional { "?" } else { "" });
         if p.native == Native::Widget {
             let _ = writeln!(out, "{indent}{}?: {ty};", ts_key(&format!("bind:{}", p.name)));
+            // RA3: `bind:<prop>|commit` where the fragment declares its commit (`provider_commit`)
+            if provider.is_some_and(|pk| provider_commit(pk, i).is_some()) {
+                let _ = writeln!(out, "{indent}{}?: {ty};", ts_key(&format!("bind:{}|commit", p.name)));
+            }
         }
     }
     for (i, s) in k.signals.iter().enumerate() {
@@ -650,6 +723,8 @@ const TYPINGS_HEADER: &str = "// @generated by crates/svelters-egui/src/spec.rs 
 const TYPINGS_PRELUDE: &str = r#"// An egui app's tsconfig: "types": ["@svelters/native-runtime/types/egui"] (instead of
 // "@svelters/native-runtime/types", GTK's), plus the app's dumped .svelters/app/{app,kinds}.d.ts.
 import type { Component, ComponentProps, SvelteComponent } from 'svelte';
+/** The value of `bind:this` on an element (a provider kind with methods extends it: `kinds.d.ts`). */
+export type { NativeElement } from './native';
 
 /** What a sync signal's handler gets first; the signal's arguments follow it (and are its `args`). A plain
  * signal's handler gets the arguments only. */
@@ -781,6 +856,34 @@ pub fn kinds_typings() -> String {
             }
         }
     }
+    // RA3: the node `bind:this` gives for a kind with methods, `<Name>Element`
+    let with_methods: Vec<&ProviderKind> = reg.elements().filter(|p| p.methods.is_some_and(|m| !m.methods.is_empty())).collect();
+    if !with_methods.is_empty() {
+        s.push_str("import type { NativeElement } from '@svelters/native-runtime/types/egui';\n");
+        for p in &with_methods {
+            let _ = writeln!(s, "\n/** `bind:this` on `<{}>`: the element node with the kind's methods (RA3). */", p.entry.tag);
+            let _ = writeln!(s, "export interface {}Element extends NativeElement {{", p.entry.name);
+            for i in 0..p.def.methods.len() {
+                let Some((m, params, ret)) = p.method(i) else { continue };
+                ts_doc(&mut s, "  ", m.docs);
+                // only trailing optional parameters may be left out (`provider_method_desc`)
+                let mut trailing = true;
+                let mut args: Vec<String> = m
+                    .params
+                    .iter()
+                    .zip(params)
+                    .rev()
+                    .map(|(n, t)| {
+                        trailing &= t.slot.has(SVL_D_OPTIONAL);
+                        format!("{n}{}: {}", if trailing { "?" } else { "" }, t.ts)
+                    })
+                    .collect();
+                args.reverse();
+                let _ = writeln!(s, "  {}({}): {};", m.name, args.join(", "), ret.ts);
+            }
+            s.push_str("}\n");
+        }
+    }
     s.push_str("\ndeclare global {\n  namespace svelteHTML {\n    interface IntrinsicElements {\n");
     for p in reg.elements() {
         ts_doc(&mut s, "      ", p.entry.docs);
@@ -788,7 +891,16 @@ pub fn kinds_typings() -> String {
         ts_members(&mut s, "        ", p.def, Some(p));
         s.push_str("      }>;\n");
     }
-    s.push_str("    }\n  }\n}\n\nexport {};\n");
+    s.push_str("    }\n  }\n");
+    if !with_methods.is_empty() {
+        // svelte-check types `bind:this` on an element from this map
+        s.push_str("  interface HTMLElementTagNameMap {\n");
+        for p in &with_methods {
+            let _ = writeln!(s, "    {}: {}Element;", ts_key(p.entry.tag), p.entry.name);
+        }
+        s.push_str("  }\n");
+    }
+    s.push_str("}\n\nexport {};\n");
     s
 }
 

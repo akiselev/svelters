@@ -18,6 +18,8 @@ path = "src/main.rs"
 svelters = { path = "../../crates/svelters" }
 svelters-egui.workspace = true
 svelters-host.workspace = true
+serde = { workspace = true, features = ["derive"] }
+schemars.workspace = true
 
 [dev-dependencies]
 svelters-abi.workspace = true

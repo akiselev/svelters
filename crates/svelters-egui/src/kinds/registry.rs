@@ -15,12 +15,26 @@ pub struct ProviderKind {
     pub def: &'static KindDef,
     /// The JS types of the props, then of the event payloads (from the export schema).
     pub types: &'static [TypeRef],
+    /// RA3: the kind's methods (`#[svelters::widget] impl`), if it has any.
+    pub methods: Option<&'static crate::provider::KindMethods>,
+    /// RA3: the JS types of the methods: each method's parameters, then its result.
+    pub method_types: &'static [TypeRef],
 }
 
 impl ProviderKind {
     /// The JS type of event `i`'s payload.
     pub fn event_type(&self, i: usize) -> Option<&TypeRef> {
         self.types.get(self.entry.props.len() + i)
+    }
+
+    /// RA3: method `i`'s entry, parameter types and result type.
+    pub fn method(&self, i: usize) -> Option<(&'static crate::provider::MethodEntry, &[TypeRef], &TypeRef)> {
+        let ms = self.methods?.methods;
+        let m = ms.get(i)?;
+        let at: usize = ms[..i].iter().map(|m| m.params.len() + 1).sum();
+        let params = self.method_types.get(at..at + m.params.len())?;
+        let ret = self.method_types.get(at + m.params.len())?;
+        Some((m, params, ret))
     }
 }
 
@@ -190,6 +204,12 @@ impl KindRegistry {
             return KindRegistry { providers, replacements: Vec::new(), bases: Vec::new() }.with_bases().with_replacements(own);
         }
         let schema = svelters_host::exports::schema();
+        // RA3: the kinds' methods, by spec id (one `#[svelters::widget] impl` per kind)
+        let mut methods: std::collections::HashMap<&'static str, &'static crate::provider::KindMethods> = std::collections::HashMap::new();
+        for km in inventory::iter::<crate::provider::KindMethods> {
+            let id = (km.kind)().id;
+            assert!(methods.insert(id, km).is_none(), "svelters-egui: provider kind {id} has two #[svelters::widget] impl blocks (put its methods in one)");
+        }
         for e in entries {
             assert!(
                 KINDS.iter().all(|k| k.id != e.id && k.tag != Some(e.tag)),
@@ -222,6 +242,15 @@ impl KindRegistry {
                     doc: p.docs,
                 })
                 .collect();
+            let km = methods.remove(e.id);
+            let method_types: Vec<TypeRef> = match km {
+                Some(_) => schema
+                    .kind_types(&crate::provider::methods_types_key(e.id))
+                    .unwrap_or_else(|| panic!("svelters-egui: the methods of provider kind {} have no types in the export schema", e.id))
+                    .to_vec(),
+                None => Vec::new(),
+            };
+            let method_defs: Vec<MethodDef> = km.map_or(&[][..], |km| km.methods).iter().map(|m| MethodDef { name: m.name, doc: m.docs }).collect();
             let signals: Vec<SignalDef> =
                 e.events.iter().map(|ev| SignalDef { name: ev.name, args: leak(vec![(ev.name, Ty::Provider)]), sync: false, doc: ev.docs }).collect();
             let def: &'static KindDef = Box::leak(Box::new(KindDef {
@@ -235,15 +264,20 @@ impl KindRegistry {
                     Some("Widget")
                 },
                 toplevel: false,
-                slot: None,
+                // RA3: a container kind (`caps = CONTAINER`) takes JS children in its default slot;
+                // taffy lays them out from its style (or `Widget::layout`), `cx.children` draws them
+                slot: (e.caps.contains(crate::provider::Caps::CONTAINER) && e.attaches_to.is_none()).then_some("children"),
                 text_content: None,
                 present: None,
                 props: leak(props),
                 signals: leak(signals),
-                methods: &[],
+                methods: leak(method_defs),
                 doc: e.docs,
             }));
-            providers.push(ProviderKind { entry: e, def, types: leak(types) });
+            providers.push(ProviderKind { entry: e, def, types: leak(types), methods: km, method_types: leak(method_types) });
+        }
+        if let Some(id) = methods.keys().next() {
+            panic!("svelters-egui: #[svelters::widget] impl for {id}, which is not a registered provider kind");
         }
         KindRegistry { providers, replacements: Vec::new(), bases: Vec::new() }.with_bases().with_replacements(own)
     }
@@ -514,6 +548,28 @@ impl KindRegistry {
         let name = p.entry.props.get(i)?.name;
         let slot = p.types.get(i)?.slot.clone().named(name);
         Some(svelters_abi::MemberDesc { name: name.to_string(), params: vec![slot.clone()], ret: slot, flags: svelters_abi::SVL_M_OBSERVABLE })
+    }
+
+    /// RA3: the host descriptor of method `i` of provider kind `kind`: its parameters' slots (only
+    /// trailing `Option`s may be left out) and its result's.
+    pub fn provider_method_desc(&self, kind: usize, i: usize) -> Option<svelters_abi::MemberDesc> {
+        use svelters_abi::SVL_D_OPTIONAL;
+        let (m, params, ret) = self.provider(kind)?.method(i)?;
+        let mut slots: Vec<svelters_abi::SlotDesc> = m.params.iter().zip(params).map(|(n, t)| t.slot.clone().named(n)).collect();
+        let mut trailing = true;
+        for p in slots.iter_mut().rev() {
+            if !(trailing && p.has(SVL_D_OPTIONAL)) {
+                trailing = false;
+                p.flags &= !SVL_D_OPTIONAL;
+            }
+        }
+        Some(svelters_abi::MemberDesc { name: m.name.to_string(), params: slots, ret: ret.slot.clone(), flags: svelters_abi::SVL_M_THROWS })
+    }
+
+    /// RA3: the index of method id `id` among provider kind `kind`'s own methods.
+    pub fn provider_method_index(&self, kind: usize, id: u32) -> Option<usize> {
+        let (owner, i) = self.split(id)?;
+        (owner == kind && self.provider(kind)?.methods.is_some_and(|m| i < m.methods.len())).then_some(i)
     }
 }
 
