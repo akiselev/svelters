@@ -141,13 +141,18 @@ impl Behavior for Pick {
   not mapped.
 - **cadatomic:** berth's `PaneHost::viewport_done(&mut self, ui, window)` → `SvelteDock::viewport_done(ui)`.
 
-## Verification (local)
+## Verification
 
 - `tools/dev/cargo-slot cargo check -p svelters-egui -p egui-kinds-example --all-targets`: clean after the last
-  merge of origin/master.
-- `cargo nextest run -p svelters-egui -p egui-kinds-example -E 'binary(passes) | (package(svelters-egui) & kind(lib)) | test(checked_in_kinds_json)'`:
-  21/22. The failing one is `a_provider_panic_faults_one_root`, which needs the `fixtures/embed-egui` bundle; no
-  bundle is built in this worktree (CI builds it). `SVELTERS_UPDATE=1 … --test spec` regenerated `egui.json` and
-  `egui.d.ts` (3/3).
-- Not run locally: the rest of the svelters-egui and egui-kinds suites, the workspace, conformance, JS tests,
-  other backends.
+  merge of origin/master (which brought Q1/LD1/TK1/CS0/Q3 changes to `embed/mod.rs` and `runner/kittest.rs`).
+- Local nextest after that merge: the five `passes` tests that need no bundle (5/5). Earlier, before that merge:
+  the svelters-egui lib tests (scene, journal, queries, random interleavings, the 11k-node boundary test) and
+  `checked_in_kinds_json_and_typings_are_current`, all passing. `SVELTERS_UPDATE=1 … --test spec` regenerated
+  `egui.json` and `egui.d.ts`, and `tools/metadata/style/gen_props.py` regenerated `props.generated.js`. The
+  `--check` runs of gen_semantics, gen_observe_outputs, coverage, gen_props, gen_bindings and observe passed.
+- CI on `dfcec15a`: linux-gtk 2335/2336. The one failure was `a_provider_panic_faults_one_root` reading the
+  boom node after its root was disposed (disposal frees the slot's content, the Rust node too); the test now
+  allows that. The fault isolation assertions before it passed. js failed only on the stale
+  `props.generated.js`, now regenerated. macos-appkit and windows-winui passed.
+- Not run locally: the rest of the svelters-egui and egui-kinds suites (they need the fixture bundles), the
+  workspace, conformance, JS tests and the other backends.
