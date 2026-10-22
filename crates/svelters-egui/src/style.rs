@@ -162,7 +162,14 @@ pub(crate) const WALK_BITS: StateBits = StateBits(
 const OWN_KEEPS: StateBits = StateBits(WALK_BITS.0 & !(StateBits::DISABLED.0 | StateBits::EXITING.0));
 
 /// OW0: an own widget draws itself (`crate::paint`) and owns its interaction bits.
+/// (OW1a2: every own widget that replaces a built-in, too: its units own its interaction bits
+/// and its prop mirror, such as a checkbox's `:checked`, whether or not it paints its own box.)
 pub(crate) fn is_own(w: &W) -> bool {
+    matches!(w, W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::PAINTS_BOX) || x.entry().replaces.is_some())
+}
+
+/// OW0: an own widget that paints its own box (the walk paints none behind it).
+fn paints_box(w: &W) -> bool {
     matches!(w, W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::PAINTS_BOX))
 }
 
@@ -1013,7 +1020,19 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
         // (and `opacity`: `StyleView::opacity`, CSS over its UA table)
         let b = s.prop_bits(i) | StateBits(s.core[i].state.0 & OWN_KEEPS.0);
         s.set_walk_state(i, b);
-        let _ = child;
+        // (OW1a2: one that does not paint its own box gets the node's CSS box and opacity here)
+        if !paints_box(s.w(i))
+            && let Some(c) = s.style.computed(id).cloned()
+        {
+            if let Some(ComputedValue::Number(o)) = c.get("opacity")
+                && *o < 1.0
+            {
+                child.multiply_opacity(o.max(0.0));
+            }
+            let dark = child.ctx().theme() == egui::Theme::Dark;
+            let v = crate::paint::StyleView::new(Some(&c), crate::paint::Ua::NONE, s.core[i].state, dark).with_overlay(s.style.overlay(id));
+            crate::paint::paint_box(&mut crate::paint::PaintCx::for_node(child.painter(), id.to_raw()), &v, r);
+        }
         return;
     }
     // the id the widget takes: TextEdit's is the node's (leaf.rs), the others the child's first

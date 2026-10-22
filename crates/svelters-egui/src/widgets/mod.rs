@@ -15,12 +15,16 @@
 
 pub mod button;
 pub mod checkbox;
+pub mod collapsing;
+pub mod frame;
 pub mod hyperlink;
+pub mod image;
 pub mod label;
 pub(crate) mod list_rows;
 pub mod panel;
 mod parts;
 pub mod progress;
+pub mod radio;
 pub mod scroll_area;
 pub mod scrollbar;
 pub mod separator;
@@ -35,7 +39,24 @@ use crate::scene::W;
 
 /// The built-in tags whose own widget is the default (the egui wrapper otherwise). Grows by one
 /// tag per lane as each own widget passes its acceptance (ARCH-WIDGETS §6.2 step 2).
-pub const DEFAULT_OWN: &[&str] = &["button"];
+pub const DEFAULT_OWN: &[&str] = &[
+    "button",
+    // OW1a, OW1a2
+    "checkbox",
+    "switch",
+    "toggle-button",
+    "radio-button",
+    // (`label` stays the egui wrapper by default until OW1a3 draws RT2's rich runs, `crate::rich`,
+    // in the own label; `SVELTERS_OWN_WIDGETS=all` or a tag list picks it)
+    "hyperlink",
+    "separator",
+    "progress-bar",
+    "spinner",
+    "frame",
+    "collapsing-header",
+    "icon",
+    "image",
+];
 
 /// The built-in tags whose egui wrapper is gone (deleted in the lane whose own widget passed its
 /// acceptance, §6.2 step 3) or never existed (`scrollbar`): always svelters' own, whatever the

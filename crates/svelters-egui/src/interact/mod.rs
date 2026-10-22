@@ -21,16 +21,20 @@
 //! Disabled hosts: units other than [`Hoverable`] produce no intents (R9: disabled controls stay
 //! hoverable). Writer lane: OW.
 
+mod expand;
 mod focus;
 mod hover;
 mod press;
+mod roving;
 mod resize;
 pub mod scroll;
 mod toggle;
 
+pub use expand::{Expand, ExpandParams, Expandable};
 pub use focus::{Focus, FocusParams, Focusable};
 pub use hover::{Hover, Hoverable};
 pub use press::{Press, PressParams, Pressable};
+pub use roving::{Rove, Roving, RovingParams};
 pub use resize::{Resizable, Resize, ResizeParams};
 pub use scroll::{BarGeom, Scroll, ScrollBy, ScrollParams, Scrollable};
 pub use toggle::{Toggle, ToggleParams, Toggleable};
