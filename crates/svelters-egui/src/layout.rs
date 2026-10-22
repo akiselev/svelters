@@ -291,8 +291,8 @@ impl Metrics {
     }
 
     /// The body font at `weight` (`crate::fonts`).
-    fn weighted(&self, weight: i64) -> egui::FontId {
-        crate::fonts::text_font(&self.ctx, &self.style, egui::TextStyle::Body, weight)
+    fn weighted(&self, text: &str, weight: i64) -> egui::FontId {
+        crate::fonts::text_font(&self.ctx, &self.style, egui::TextStyle::Body, weight, text)
     }
 
     fn text_size_in(&self, text: &str, font: egui::FontId, wrap: Option<f32>) -> Vec2 {
@@ -312,9 +312,9 @@ impl Metrics {
         let sp = &self.style.spacing;
         let interact = sp.interact_size;
         match w {
-            W::Label { text, weight, .. } => self.text_size_in(text, self.weighted(*weight), None),
+            W::Label { text, weight, .. } => self.text_size_in(text, self.weighted(text, *weight), None),
             W::Button { text, small, weight, .. } => {
-                let t = self.text_size_in(text, self.weighted(*weight), None);
+                let t = self.text_size_in(text, self.weighted(text, *weight), None);
                 let pad = if *small { vec2(sp.button_padding.x, 0.0) } else { sp.button_padding };
                 let h = t.y + 2.0 * pad.y;
                 vec2(t.x + 2.0 * pad.x, if *small { h } else { h.max(interact.y) })
@@ -343,7 +343,7 @@ impl Metrics {
             W::Ext(x) => x.measure(self, crate::provider::AvailableSpace::MaxContent),
             // ---- WG1 ----
             W::ToggleButton { text, weight, .. } => {
-                let t = self.text_size_in(text, self.weighted(*weight), None);
+                let t = self.text_size_in(text, self.weighted(text, *weight), None);
                 vec2(t.x + 2.0 * sp.button_padding.x, (t.y + 2.0 * sp.button_padding.y).max(interact.y))
             }
             W::ComboBox { options, hint, .. } => {
@@ -356,8 +356,10 @@ impl Metrics {
             W::Separator { vertical: false } => vec2(0.0, 6.0),
             W::Separator { vertical: true } => vec2(6.0, 0.0),
             W::Icon { name, glyph, family, size, weight, frame, .. } => {
-                let font = crate::fonts::icon_font(&self.ctx, &self.style, family, *weight, *size);
-                let t = self.text_size_in(&crate::fonts::icon_text(family, name, glyph), font, None);
+                let t = match crate::fonts::icon_look(&self.ctx, &self.style, family, name, glyph, *weight, *size) {
+                    crate::fonts::IconLook::Glyph(font, text) => self.text_size_in(&text, font, None),
+                    crate::fonts::IconLook::Placeholder(side) => Vec2::splat(side),
+                };
                 if *frame { vec2(t.x + 2.0 * sp.button_padding.x, (t.y + 2.0 * sp.button_padding.y).max(interact.y)) } else { t }
             }
             // the header row (`CollapsingHeader::begin`): indent, caption, padding
@@ -371,7 +373,7 @@ impl Metrics {
     /// Height-for-width of a leaf at `width` (labels that wrap).
     fn wrapped(&self, w: &W, width: f32) -> Option<Vec2> {
         match w {
-            W::Label { text, wrap: "wrap", weight, .. } => Some(self.text_size_in(text, self.weighted(*weight), Some(width))),
+            W::Label { text, wrap: "wrap", weight, .. } => Some(self.text_size_in(text, self.weighted(text, *weight), Some(width))),
             W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::HEIGHT_FOR_WIDTH) => {
                 Some(x.measure(self, crate::provider::AvailableSpace::Definite(width)))
             }

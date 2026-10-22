@@ -16,7 +16,7 @@ fn weighted(ui: &Ui, text: &str, text_style: egui::TextStyle, weight: i64) -> Wi
     if weight == 400 {
         return text.into();
     }
-    egui::RichText::new(text).font(crate::fonts::text_font(ui.ctx(), ui.style(), text_style, weight)).into()
+    egui::RichText::new(text).font(crate::fonts::text_font(ui.ctx(), ui.style(), text_style, weight, text)).into()
 }
 
 /// WG1: the outline of an `invalid` node (`rect`: what it drew).
@@ -308,12 +308,29 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         }
         W::Separator { vertical } => ui.add(if *vertical { egui::Separator::default().vertical() } else { egui::Separator::default().horizontal() }),
         W::Icon { name, glyph, family, size: pt, weight, frame, selected } => {
-            let font = crate::fonts::icon_font(ui.ctx(), ui.style(), family, *weight, *pt);
-            let rt = egui::RichText::new(crate::fonts::icon_text(family, name, glyph)).font(font);
+            use crate::fonts::IconLook;
+            // a family, name or glyph the fonts cannot draw: an outlined box instead (never egui's
+            // missing-glyph panic, `crate::fonts`)
+            let look = crate::fonts::icon_look(ui.ctx(), ui.style(), family, name, glyph, *weight, *pt);
+            let sense = if click_sense { Sense::click() } else { Sense::hover() };
+            let r = match (&look, *frame) {
+                (IconLook::Glyph(font, text), true) => {
+                    ui.add(egui::Button::new(egui::RichText::new(text.as_str()).font(font.clone())).selected(*selected).min_size(size))
+                }
+                (IconLook::Placeholder(_), true) => ui.add(egui::Button::new("").selected(*selected).min_size(size)),
+                (IconLook::Glyph(font, text), false) => {
+                    ui.add(egui::Label::new(egui::RichText::new(text.as_str()).font(font.clone())).selectable(false).sense(sense))
+                }
+                (IconLook::Placeholder(side), false) => ui.allocate_exact_size(Vec2::splat(*side), sense).1,
+            };
+            if let IconLook::Placeholder(side) = look {
+                let rect = Rect::from_center_size(r.rect.center(), Vec2::splat(side));
+                let stroke = egui::Stroke::new(1.0, ui.visuals().text_color());
+                ui.painter().rect_stroke(rect, 1.0, stroke, egui::StrokeKind::Inside);
+            }
             if *frame {
-                ui.add(egui::Button::new(rt).selected(*selected).min_size(size))
+                r
             } else {
-                let r = ui.add(egui::Label::new(rt).selectable(false).sense(if click_sense { Sense::click() } else { Sense::hover() }));
                 // a glyph is not text: an image, or a button when it takes clicks
                 let role = if click_sense { Role::Button } else { Role::Image };
                 ui.ctx().accesskit_node_builder(r.id, |b| {

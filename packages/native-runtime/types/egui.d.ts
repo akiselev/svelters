@@ -228,7 +228,7 @@ export interface EguiElements {
     name?: string;
     /** The glyph itself (text), when `name` is empty or not in the table. */
     glyph?: string;
-    /** The registered font family (`egui::FontFamily::Name`) holding the glyphs; the proportional family if it is not registered. */
+    /** The registered font family (`egui::FontFamily::Name`) holding the glyphs; empty for the proportional family. A family with no fonts, a name not in its table or a glyph no font has draws an outlined placeholder box (`svelters_egui::fonts::FontWarning`). */
     family?: string;
     /** Font size in points; null for the body size. */
     size?: number | null;

@@ -947,9 +947,12 @@ impl Embed {
 
     /// What the debug checks found since the last call (ARCH-EMBED §5.3): a slot drawn while set
     /// hidden, a visible slot not drawn for 60 passes of its viewport, a slot drawn in a viewport
-    /// other than the one set.
+    /// other than the one set. Also the font problems found since the last call (`SlotWarning::Font`,
+    /// from `crate::fonts::take_warnings`).
     pub fn take_warnings(&self) -> Vec<SlotWarning> {
-        std::mem::take(&mut self.inner.st.borrow_mut().warnings)
+        let mut w = std::mem::take(&mut self.inner.st.borrow_mut().warnings);
+        w.extend(crate::fonts::take_warnings().into_iter().map(SlotWarning::Font));
+        w
     }
 
     // ---- the pass plugin (current.rs) ----
