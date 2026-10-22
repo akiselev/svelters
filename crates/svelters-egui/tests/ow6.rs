@@ -194,3 +194,107 @@ fn ow6_color_editor_edits_through_square_strips_fields_and_swatches() {
     assert!(rig.take().changed.is_empty());
     assert_eq!(rig.harness.get_by_role_and_label(Role::SpinButton, "Green").accesskit_node().numeric_value(), Some(255.0));
 }
+
+#[test]
+fn ow6_date_picker_opens_its_calendar_and_commits() {
+    let mut rig = Rig::new();
+    let (_, b) = rig.window();
+    let d = rig.leaf(b, "date-picker", &[("value", s("2026-10-22")), ("accessible-name", s("Due"))]);
+    rig.observe(d, "value", true);
+    for e in ["changed", "commit"] {
+        rig.listen(d, e);
+    }
+    rig.run();
+    // closed: a button with R14's chevron, not expanded
+    let btn = rig.harness.get_by_role_and_label(Role::Button, "Due");
+    assert_eq!(btn.accesskit_node().data().is_expanded(), Some(false));
+    btn.click();
+    rig.run();
+    assert_eq!(rig.harness.get_by_role_and_label(Role::Button, "Due").accesskit_node().data().is_expanded(), Some(true));
+    // confirm (default): a pick is pending, Cancel drops it
+    rig.harness.get_by_role_and_label(Role::GridCell, "2026-10-25").click();
+    rig.run();
+    assert_eq!(rig.get(d, "value"), s("2026-10-22"));
+    rig.harness.get_by_role_and_label(Role::Button, "Cancel").click();
+    rig.run();
+    assert!(rig.harness.query_by_role_and_label(Role::GridCell, "2026-10-25").is_none(), "closed");
+    assert!(rig.take().events.is_empty());
+
+    // keyboard: Alt+Down opens with focus in the grid; arrows rove; Enter saves; focus returns
+    rig.harness.get_by_role_and_label(Role::Button, "Due").focus();
+    rig.run();
+    rig.harness.key_press_modifiers(egui::Modifiers::ALT, egui::Key::ArrowDown);
+    rig.run();
+    rig.run();
+    rig.harness.key_press(egui::Key::ArrowLeft);
+    rig.run();
+    rig.harness.key_press(egui::Key::Enter);
+    rig.run();
+    assert_eq!(rig.get(d, "value"), s("2026-10-21"));
+    let log = rig.take();
+    assert_eq!(events_of(&rig, &log, d, "changed"), vec![vec![s("2026-10-21")]]);
+    assert_eq!(events_of(&rig, &log, d, "commit"), vec![vec![s("2026-10-21")]]);
+    assert!(rig.harness.get_by_role_and_label(Role::Button, "Due").accesskit_node().is_focused());
+
+    // immediate: a click picks, commits and closes; Escape closes without a pick
+    rig.set(d, "commit-mode", s("immediate"));
+    rig.set(d, "min", s("2026-10-10"));
+    rig.run();
+    rig.harness.get_by_role_and_label(Role::Button, "Due").click();
+    rig.run();
+    assert!(rig.harness.get_by_role_and_label(Role::GridCell, "2026-10-09").accesskit_node().is_disabled(), "min disables earlier days");
+    rig.harness.get_by_role_and_label(Role::GridCell, "2026-10-30").click();
+    rig.run();
+    assert_eq!(rig.get(d, "value"), s("2026-10-30"));
+    assert!(rig.harness.query_by_role_and_label(Role::GridCell, "2026-10-30").is_none(), "a pick closes");
+    rig.harness.get_by_role_and_label(Role::Button, "Due").click();
+    rig.run();
+    rig.harness.key_press(egui::Key::Escape);
+    rig.run();
+    assert!(rig.harness.query_by_role_and_label(Role::GridCell, "2026-10-30").is_none(), "Escape closes");
+    assert_eq!(rig.get(d, "value"), s("2026-10-30"));
+}
+
+#[test]
+fn ow6_color_picker_live_and_confirm() {
+    let mut rig = Rig::new();
+    let (_, b) = rig.window();
+    let c = rig.leaf(b, "color-picker", &[("value", s("#ff0000")), ("accessible-name", s("Layer"))]);
+    rig.observe(c, "value", true);
+    for e in ["changed", "commit"] {
+        rig.listen(c, e);
+    }
+    rig.run();
+    let well = rig.harness.get_by_role(Role::ColorWell);
+    assert_eq!(well.accesskit_node().data().is_expanded(), Some(false));
+    // live (default): edits change the value at once; closing commits them
+    rig.click(c);
+    rig.harness.get_by_role_and_label(Role::SpinButton, "Blue").set_value_accesskit(255.0);
+    rig.run();
+    assert_eq!(rig.get(c, "value"), s("#ff00ff"));
+    rig.harness.key_press(egui::Key::Escape);
+    rig.run();
+    let log = rig.take();
+    assert!(events_of(&rig, &log, c, "changed").contains(&vec![s("#ff00ff")]));
+    assert_eq!(events_of(&rig, &log, c, "commit").last(), Some(&vec![s("#ff00ff")]));
+    assert!(rig.harness.query_by_role_and_label(Role::SpinButton, "Blue").is_none(), "closed");
+
+    // confirm: pending until Save; Cancel drops it
+    rig.set(c, "commit-mode", s("confirm"));
+    rig.run();
+    rig.click(c);
+    rig.harness.get_by_role_and_label(Role::SpinButton, "Green").set_value_accesskit(255.0);
+    rig.run();
+    assert_eq!(rig.get(c, "value"), s("#ff00ff"), "pending");
+    rig.harness.get_by_role_and_label(Role::Button, "Cancel").click();
+    rig.run();
+    assert_eq!(rig.get(c, "value"), s("#ff00ff"));
+    rig.click(c);
+    rig.harness.get_by_role_and_label(Role::SpinButton, "Green").set_value_accesskit(255.0);
+    rig.run();
+    rig.harness.get_by_role_and_label(Role::Button, "Save").click();
+    rig.run();
+    assert_eq!(rig.get(c, "value"), s("#ffffff"));
+    let log = rig.take();
+    assert_eq!(events_of(&rig, &log, c, "commit").last(), Some(&vec![s("#ffffff")]));
+}

@@ -590,20 +590,20 @@ pub static KIND_DOCS: &[KindDoc] = &[
     KindDoc {
         id: "DatePicker",
         category: Category::Pickers,
-        paint: Paint::Box,
+        paint: Paint::Provider,
         walk: Walk::Leaf(Focus::Yes),
-        states: &[],
-        a11y: A11yDoc { note: "The calendar popup's controls are nodes of their own.", ..a11y(Some("Button"), &["accessible-name", "the shown date"], None, CLICK_FOCUS) },
-        css_note: "The calendar popup follows the theme.",
+        states: &[StateDoc { name: "open", source: Source::Kind, when: "its calendar popup is shown" }, StateDoc { name: "read-only", source: Source::Kind, when: "`read-only` is set" }],
+        a11y: A11yDoc { note: "A `Button` named by the shown date (or its accessible name), `expanded` while open, `has_popup` dialog. The popup holds the calendar's `Grid` (cells named by ISO date) and, with `commit-mode=\"confirm\"`, Save and Cancel buttons; Escape closes it and focus returns to the button.", ..a11y(Some("Button"), &["accessible-name", "the shown date"], None, CLICK_FOCUS) },
+        css_note: "The button: R4's field look with R14's chevron (`::part(chevron)`); the popup is `::part(popup)` (OW3's surface) holding the `calendar` kind's parts (`header`, `prev`, `next`, `month`, `year`, `weekday`, `week-number`, `grid`, `day`) and `::part(save)`, `::part(cancel)`.",
     },
     KindDoc {
         id: "ColorPicker",
         category: Category::Pickers,
-        paint: Paint::Box,
+        paint: Paint::Provider,
         walk: Walk::Leaf(Focus::Yes),
-        states: &[],
-        a11y: a11y(Some("ColorWell"), &["accessible-name", "tooltip", "\"Color\""], Some("the colour"), CLICK_FOCUS),
-        css_note: "The swatch shows the colour; the picker popup follows the theme.",
+        states: &[StateDoc { name: "open", source: Source::Kind, when: "its editor popup is shown" }],
+        a11y: A11yDoc { note: "A `ColorWell` named \"Color\" (or its accessible name) with the hex as its value, `expanded` while open. The popup holds the `color-editor` kind's sliders, boxes and swatches and, with `commit-mode=\"confirm\"`, Save and Cancel; Escape closes it and focus returns.", ..a11y(Some("ColorWell"), &["accessible-name", "tooltip", "\"Color\""], Some("the colour"), CLICK_FOCUS) },
+        css_note: "The button shows `::part(swatch)` (a checkerboard under alpha) and R14's `::part(chevron)`; the popup is `::part(popup)` holding the `color-editor` kind's parts and `::part(save)`, `::part(cancel)`.",
     },
     // LISTS
     KindDoc {

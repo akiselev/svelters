@@ -31,6 +31,18 @@ macro_rules! calendar_props {
     };
 }
 
+/// `color-editor`'s and `color-picker`'s editor props (WIDGET-PARITY §2.20).
+macro_rules! color_editor_props {
+    () => {
+        [
+    prop("fields", P::Fields, Ty::Str, Def::Str("hex rgb"), "Which fields show under the strips, space-separated: `hex` (a hex field), `rgb` (R, G, B boxes, 0–255), `hsv` (H 0–360, S and V 0–100)."),
+    prop("swatches", P::Swatches, Ty::StrList, Def::Null, "A palette of hex colours shown as cells (`::part(swatch-cell)`); a click picks one."),
+    input("custom-colors", P::CustomColors, Ty::StrList, Def::Null, "The user's colours (`bind:custom-colors`, up to 16): the add cell appends the current colour. Persist it with `uiState()`."),
+        ]
+    };
+}
+
+
 static DATE_PROPS: &[PropDef] = &{
     let [a, b, c, d, e, f, g] = calendar_props!();
     [
@@ -49,7 +61,9 @@ static DATE_PROPS: &[PropDef] = &{
     ]
 };
 
-static COLOR_PROPS: &[PropDef] = &[
+static COLOR_PROPS: &[PropDef] = &{
+    let [x, y, z] = color_editor_props!();
+    [
     input(
         "value",
         P::Value,
@@ -65,11 +79,12 @@ static COLOR_PROPS: &[PropDef] = &[
         "Whether the popup edits alpha: `opaque` hides the alpha strip, `blend` and `blend-or-additive` show it (additive colours are not offered by the own editor).",
     ),
     // ---- OW6: appended ----
-    COLOR_EDITOR_SHARED[0],
-    COLOR_EDITOR_SHARED[1],
-    COLOR_EDITOR_SHARED[2],
+    x,
+    y,
+    z,
     prop("commit-mode", P::CommitMode, Ty::Enum(crate::widgets::color_editor::COLOR_COMMIT_MODE), Def::Str("live"), "`live`: each edit changes `value` (closing the popup commits); `confirm`: edits are pending until Save, Cancel or Escape drops them (Qt's dialog)."),
-];
+    ]
+};
 
 static DATE_SIGNALS: &[SignalDef] = &[
     signal("changed", &[("value", Ty::Str)], "The user saved a date; carries it (ISO 8601)."),
@@ -154,15 +169,8 @@ pub const CALENDAR: KindDef = KindDef {
 
 // ---- OW6: color-editor (new kind; svelters' own widget only, `widgets::color_editor`) ----
 
-/// `color-editor`'s and `color-picker`'s editor props (WIDGET-PARITY §2.20).
-const COLOR_EDITOR_SHARED: [PropDef; 3] = [
-    prop("fields", P::Fields, Ty::Str, Def::Str("hex rgb"), "Which fields show under the strips, space-separated: `hex` (a hex field), `rgb` (R, G, B boxes, 0–255), `hsv` (H 0–360, S and V 0–100)."),
-    prop("swatches", P::Swatches, Ty::StrList, Def::Null, "A palette of hex colours shown as cells (`::part(swatch-cell)`); a click picks one."),
-    input("custom-colors", P::CustomColors, Ty::StrList, Def::Null, "The user's colours (`bind:custom-colors`, up to 16): the add cell appends the current colour. Persist it with `uiState()`."),
-];
-
 static COLOR_EDITOR_PROPS: &[PropDef] = &{
-    let [a, b, c] = COLOR_EDITOR_SHARED;
+    let [a, b, c] = color_editor_props!();
     [
         input("value", P::Value, Ty::Str, Def::Str("#000000"), "The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted)."),
         prop("alpha", P::Alpha, Ty::Enum(ALPHA), Def::Str("opaque"), "`opaque` hides the alpha strip; `blend` and `blend-or-additive` show it."),

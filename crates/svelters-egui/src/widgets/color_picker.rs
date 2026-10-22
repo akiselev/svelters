@@ -10,7 +10,7 @@
 //! the popup, Escape closes it and focus returns to the button. AccessKit: a `ColorWell` named
 //! "Color" with the hex as its value, `expanded` and `has_popup`. Writer lane: OW6.
 
-use super::color_editor::{self, COLOR_COMMIT_MODE, ColorBody, ColorCfg, HexColor};
+use super::color_editor::{self, AlphaMode, COLOR_COMMIT_MODE, ColorBody, ColorCfg, HexColor};
 use super::picker_glyphs::{self, Dir};
 use super::picker_popup::{self, BUTTON_UA, CHEVRON_UA, Drop, Footer, POPUP_UA};
 use crate::interact::{Focusable, Hoverable, Pressable};
@@ -30,8 +30,8 @@ pub const SWATCH_UA: Ua = Ua(&[UaRule::base(&[("width", Px(28.0)), ("height", Px
 pub struct ColorPicker {
     #[prop(bind)]
     value: HexColor,
-    #[prop(default = "opaque", measure)]
-    alpha: String,
+    #[prop(measure)]
+    alpha: AlphaMode,
     #[prop(default = "hex rgb")]
     fields: String,
     #[prop]
@@ -93,7 +93,7 @@ impl ColorPicker {
     }
 
     fn has_alpha(&self) -> bool {
-        super::pick(&self.alpha, crate::kinds::pickers::ALPHA, "opaque") != "opaque"
+        self.alpha.shown()
     }
 
     fn set_open(&mut self, cx: &mut WidgetCx<'_>, ctx: &egui::Context, on: bool, keyboard: bool) {

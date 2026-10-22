@@ -154,6 +154,44 @@ impl svelters_host::exports::IntoJs for HexColor {
     }
 }
 
+/// The `alpha` prop: one of [`crate::kinds::pickers::ALPHA`]; anything else is refused on write
+/// (as the egui wrapper did).
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct AlphaMode(pub &'static str);
+
+impl Default for AlphaMode {
+    fn default() -> Self {
+        AlphaMode("opaque")
+    }
+}
+
+impl AlphaMode {
+    /// The editor shows the alpha strip.
+    pub fn shown(&self) -> bool {
+        self.0 != "opaque"
+    }
+}
+
+impl svelters_host::exports::JsType for AlphaMode {
+    fn describe(b: &mut svelters_host::exports::__private::TypeBuilder) -> svelters_host::exports::__private::TypeRef {
+        <String as svelters_host::exports::JsType>::describe(b)
+    }
+}
+
+impl svelters_host::exports::FromJs for AlphaMode {
+    fn from_js(v: svelters_host::exports::Value, cx: &svelters_host::exports::CallCx<'_>) -> Result<Self, svelters_host::exports::NativeError> {
+        let all = crate::kinds::pickers::ALPHA;
+        let s = <Option<String> as svelters_host::exports::FromJs>::from_js(v, cx)?.unwrap_or_else(|| "opaque".into());
+        all.iter().find(|a| **a == s).map(|a| AlphaMode(a)).ok_or_else(|| super::invalid(format!("`{s}` is not one of {}", all.join(", "))))
+    }
+}
+
+impl svelters_host::exports::IntoJs for AlphaMode {
+    fn into_js(self, cx: &svelters_host::exports::CallCx<'_>) -> Result<svelters_host::exports::Value, svelters_host::exports::NativeError> {
+        self.0.to_string().into_js(cx)
+    }
+}
+
 /// What the body is configured with (the props `color-editor` and `color-picker` share).
 #[derive(Clone, Debug)]
 pub struct ColorCfg<'a> {
@@ -849,8 +887,8 @@ pub struct ColorEditor {
     /// The colour (`bind:value`), CSS hex.
     #[prop(bind)]
     value: HexColor,
-    #[prop(default = "opaque", measure)]
-    alpha: String,
+    #[prop(measure)]
+    alpha: AlphaMode,
     #[prop(default = "hex rgb", measure)]
     fields: String,
     #[prop(measure)]
@@ -939,7 +977,7 @@ impl Widget for ColorEditor {
     fn measure(&mut self, cx: &mut MeasureCx<'_>, _avail: AvailableSpace) -> Vec2 {
         let s = cx.style(UA);
         let (hex, rgb, hsv) = ColorCfg::fields_of(&self.fields);
-        let cfg = ColorCfg { alpha: self.alpha != "opaque", hex, rgb, hsv, swatches: &self.swatches, custom: &self.custom_colors };
+        let cfg = ColorCfg { alpha: self.alpha.shown(), hex, rgb, hsv, swatches: &self.swatches, custom: &self.custom_colors };
         ColorBody::measure(&s, &cfg) + paint::box_extra(&s)
     }
 
@@ -954,7 +992,7 @@ impl Widget for ColorEditor {
         // `cx.set` finds a prop by its field's address: `value` and `custom-colors` stay in place
         let swatches = std::mem::take(&mut self.swatches);
         let custom = self.custom_colors.clone();
-        let cfg = ColorCfg { alpha: super::pick(&self.alpha, crate::kinds::pickers::ALPHA, "opaque") != "opaque", hex, rgb, hsv, swatches: &swatches, custom: &custom };
+        let cfg = ColorCfg { alpha: self.alpha.shown(), hex, rgb, hsv, swatches: &swatches, custom: &custom };
         run_body(&mut self.body, ui, cx, UA, &cfg, &mut self.value, &mut self.custom_colors, geom.content, resp.id, true, &self.changed, &self.commit);
         self.swatches = swatches;
         let enabled = cx.enabled();

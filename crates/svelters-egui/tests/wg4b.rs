@@ -33,7 +33,8 @@ fn date_picker_saves_a_day_through_its_popup() {
 
     rig.harness.get_by_label("2026-10-22").click();
     rig.run();
-    rig.harness.get_by_label(">").click(); // one day on
+    // OW6: the own calendar's day cells are AccessKit grid cells named by ISO date
+    rig.harness.get_by_role_and_label(egui::accesskit::Role::GridCell, "2026-10-23").click(); // one day on
     rig.run();
     rig.harness.get_by_label("Save").click();
     rig.run();
@@ -58,8 +59,6 @@ fn date_picker_saves_a_day_through_its_popup() {
 fn color_picker_normalizes_hex_and_edits_through_its_popup() {
     let mut rig = Rig::new();
     let (_, b) = rig.window();
-    // egui's colour popup has a "📋" button and 0.37's default fonts have no emoji (tofu in apps)
-    rig.harness.ctx.set_missing_glyph_policy(egui::MissingGlyphPolicy::Tofu);
     let c = rig.leaf(b, "color-picker", &[("value", s("#F00"))]);
     rig.observe(c, "value", true);
     rig.listen(c, "changed");
@@ -73,7 +72,7 @@ fn color_picker_normalizes_hex_and_edits_through_its_popup() {
     rig.run();
     rig.take();
 
-    // the popup: sRGB drag values, the first is R
+    // the popup: the own editor's channel boxes (`fields="hex rgb"`), the first is R
     rig.click(c);
     let r = rig.harness.get_all_by_role(egui::accesskit::Role::SpinButton).next().expect("the popup's R value");
     r.set_value_accesskit(0.0);
@@ -305,7 +304,8 @@ fn gallery_pages_drive_pickers_dnd_and_dialogs() {
     assert!(has(&app, "#3366cc") && has(&app, "#ff000080"));
     app.harness.get_by_label("Pick the due date").click();
     app.run();
-    app.harness.get_by_label(">").click();
+    // OW6: the own calendar's day cells are AccessKit grid cells named by ISO date
+    app.harness.get_by_role_and_label(egui::accesskit::Role::GridCell, "2026-10-23").click();
     app.run();
     app.harness.get_by_label("Save").click();
     app.run();
