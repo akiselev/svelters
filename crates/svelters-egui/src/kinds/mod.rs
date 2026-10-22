@@ -12,12 +12,15 @@
 //!
 //! Files (ARCH-EMBED §9): this one holds the table types, the id scheme and [`KindRegistry`];
 //! `builtin.rs` the built-in table [`KINDS`] with the `Widget` base and the leaves; `containers.rs`
-//! the `window` and `box` tables; `registry.rs` [`KindRegistry`] with the provider kinds of
+//! the `window` and `box` tables; `pickers.rs` (WG4b) `date-picker` and `color-picker`; `dnd.rs`
+//! (WG4b) drag and drop on any node; `registry.rs` [`KindRegistry`] with the provider kinds of
 //! `#[svelters::widget]` (RA1). Writer lanes: WIDGETS (tables, one file per new family), RUSTAPI
 //! (`registry.rs`).
 
 mod builtin;
 mod containers;
+pub mod dnd;
+pub mod pickers;
 mod registry;
 
 pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, WRAP, WRAP_MODE};
@@ -99,6 +102,16 @@ pub enum P {
     Max,
     Step,
     ShowValue,
+    // WG4b (plans/milestones/WG4b-dialogs-pickers-dnd.md)
+    /// Widget: drag and drop (`kinds/dnd.rs`).
+    DragType,
+    DragData,
+    DropTypes,
+    /// date-picker
+    Format,
+    CalendarWeek,
+    /// color-picker
+    Alpha,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }
