@@ -628,7 +628,42 @@ type CacheKey = (String, u64, u32, u64, bool, u32, Option<[Option<Color32>; 4]>)
 
 #[derive(Default)]
 struct Cache {
-    textures: Mutex<HashMap<CacheKey, TextureHandle>>,
+    /// Each raster with the use counter at its last draw.
+    textures: Mutex<HashMap<CacheKey, (TextureHandle, u64)>>,
+    uses: AtomicU64,
+}
+
+/// The rasters kept per key (zoom levels × colour sets × hc); the least recently drawn beyond this
+/// are dropped, so the rasters of an earlier zoom level go once the new ones are drawn.
+pub const RASTERS_PER_KEY: usize = 6;
+
+impl Cache {
+    fn get(&self, ck: &CacheKey) -> Option<TextureHandle> {
+        let n = self.uses.fetch_add(1, Ordering::Relaxed);
+        lock(&self.textures).get_mut(ck).map(|(t, used)| {
+            *used = n;
+            t.clone()
+        })
+    }
+
+    fn insert(&self, ck: CacheKey, t: TextureHandle) {
+        let n = self.uses.fetch_add(1, Ordering::Relaxed);
+        let mut cache = lock(&self.textures);
+        // an older generation or file version of the same key is dead
+        cache.retain(|k, _| !(k.0 == ck.0 && (k.1 != ck.1 || k.3 != ck.3)));
+        let mut same: Vec<(u64, CacheKey)> = cache.iter().filter(|(k, _)| k.0 == ck.0).map(|(k, (_, u))| (*u, k.clone())).collect();
+        if same.len() >= RASTERS_PER_KEY {
+            same.sort_by_key(|(u, _)| *u);
+            for (_, k) in same.iter().take(same.len() + 1 - RASTERS_PER_KEY) {
+                cache.remove(k);
+            }
+        }
+        cache.insert(ck, (t, n));
+    }
+
+    fn len_of(&self, key: &str) -> usize {
+        lock(&self.textures).keys().filter(|k| k.0 == key).count()
+    }
 }
 
 fn cache(ctx: &Context) -> Arc<Cache> {
@@ -639,6 +674,11 @@ fn cache(ctx: &Context) -> Arc<Cache> {
     let c = Arc::new(Cache::default());
     ctx.data_mut(|d| d.insert_temp(id, c.clone()));
     c
+}
+
+/// How many rasters of `key` `ctx` keeps (tests: eviction by last use, [`RASTERS_PER_KEY`]).
+pub fn cached_rasters(ctx: &Context, key: &str) -> usize {
+    cache(ctx).len_of(key)
 }
 
 /// What [`paint`] drew.
@@ -700,7 +740,7 @@ pub fn paint(painter: &Painter, registry: &IconRegistry, key: &str, rect: Rect, 
             let colours = (!style.slots.is_empty()).then_some([Some(style.color.to_opaque()), style.slots.subject, style.slots.accent, style.slots.badge]);
             let ck: CacheKey = (key.to_string(), generation, choice.master, data.version(), use_hc, choice.px, colours);
             let c = cache(ctx);
-            let tex = lock(&c.textures).get(&ck).cloned();
+            let tex = c.get(&ck);
             let tex = match tex {
                 Some(t) => t,
                 None => {
@@ -713,10 +753,7 @@ pub fn paint(painter: &Painter, registry: &IconRegistry, key: &str, rect: Rect, 
                         }
                     };
                     let t = ctx.load_texture(format!("icon:{key}@{}", choice.px), img, TextureOptions::LINEAR);
-                    let mut cache = lock(&c.textures);
-                    // an older generation or file version of the same draw is dead
-                    cache.retain(|k, _| !(k.0 == ck.0 && (k.1 != ck.1 || k.3 != ck.3)));
-                    cache.insert(ck, t.clone());
+                    c.insert(ck, t.clone());
                     t
                 }
             };

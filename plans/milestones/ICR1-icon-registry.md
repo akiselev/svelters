@@ -31,8 +31,11 @@ AS1's record (`AS1-asset-imports.md`: the SVG loader on resvg/usvg 0.45.1, `asse
   zooms 1.0–2.0.
 - **`paint(painter, registry, key, rect, &IconStyle)`.** It snaps the box to whole physical pixels (rule Z1:
   `P = round(size × ppp)`, origin rounded), rasterises the chosen master at the drawn pixel size and paints it
-  1:1. Textures are cached per (key, registration generation, master, asset version, hc, px, colours), and stale
-  generations or versions of the same key are dropped. `size()` gives the box size. `DEFAULT_SIZE` is 16 (the
+  1:1, always at the physical size (ZM1's rule for image sources holds for registry icons too). Textures are
+  cached per (key, registration generation, master, asset version, hc, px, colours). Stale generations or
+  versions of the same key are dropped, and each key keeps at most `RASTERS_PER_KEY` (6) rasters, evicted by
+  last draw, so rasters of earlier zoom levels go (coordinator request, ZM1). `cached_rasters(ctx, key)` reports
+  the count. `size()` gives the box size. `DEFAULT_SIZE` is 16 (the
   default chrome size).
 - **Colours (ICON-STYLE §6).**
   - With no slot set, the icon is rasterised with `currentColor` white and multiplied by `color`.
@@ -128,6 +131,7 @@ VIS1:
   - `subject_slot_colours_the_tone_and_its_outline_only`: the arrow keeps `color`, the face is the translucent
     slot colour, the subject's outline is the slot colour;
   - `paint_snaps_the_box_to_physical_pixels`;
+  - `rasters_of_earlier_zoom_levels_are_evicted`: 11 zoom levels leave 6 rasters of the key;
   - `content_icon_and_button_icon_part_use_the_registry`: CSS `content: icon(chrome.warning)` and
     `--icon-accent` on a node; `paint_icon` paints a texture, untinted. The own button's `icon` part is drawn
     from the registry at 16px;
@@ -147,5 +151,4 @@ VIS1:
   the primitive (there is no context accessor for the theme yet). Embedders pass it in `icons::paint`.
 - **`content: icon(a.b+badge)` and `icon(family:name)`**: svelters-style's `dotted_fn` parses only dotted idents,
   so composed ids are reachable from props, not from CSS `content`.
-- **The registry's texture cache** is unbounded across distinct colour sets (one entry per key, size and colour
-  set).
+

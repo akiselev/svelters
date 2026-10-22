@@ -231,3 +231,25 @@ fn icon_kind_draws_registry_keys() {
     rig.run();
     assert!(rig.drawn(a).width() > 0.0);
 }
+
+/// Zooming through many levels keeps at most `RASTERS_PER_KEY` rasters of a key: the least
+/// recently drawn (earlier zoom levels) are evicted.
+#[test]
+fn rasters_of_earlier_zoom_levels_are_evicted() {
+    let reg = registry();
+    let ctx = egui::Context::default();
+    let rect = egui::Rect::from_min_size(egui::pos2(0.0, 0.0), egui::vec2(40.0, 40.0));
+    let zooms = [1.0, 1.1, 1.2, 1.25, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 2.0];
+    for ppp in zooms {
+        ctx.set_pixels_per_point(ppp);
+        let mut out = ctx.run_ui(egui::RawInput::default(), |_| {});
+        out.textures_delta.clear();
+        let mut out = ctx.run_ui(egui::RawInput::default(), |ui| {
+            icons::paint(ui.painter(), &reg, "mcad.extrude", rect, &IconStyle::new(16.0, GREY)).unwrap();
+        });
+        out.textures_delta.clear();
+        assert!(icons::cached_rasters(&ctx, "mcad.extrude") <= icons::RASTERS_PER_KEY);
+    }
+    assert_eq!(icons::cached_rasters(&ctx, "mcad.extrude"), icons::RASTERS_PER_KEY);
+    assert_eq!(icons::cached_rasters(&ctx, "chrome.warning"), 0);
+}
