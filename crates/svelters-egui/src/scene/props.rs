@@ -128,6 +128,9 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (P::AlignItems, _) => c.align_items = as_enum(v, kinds::ALIGN)?,
         (P::JustifyContent, _) => c.justify_content = as_enum(v, kinds::JUSTIFY)?,
         (P::Invalid, _) => c.invalid = as_bool(v)?,
+        // WG2a: the menu family and the overlays (`crate::menus`, `crate::overlays`)
+        (key, W::Menu(m)) => d = crate::menus::set_prop(m, key, v)?,
+        (key, W::Overlay(o)) => crate::overlays::set_prop(o, key, v)?,
         (P::Title, W::Window { title, .. }) => *title = as_str(v)?,
         (P::DefaultWidth, W::Window { default_w, .. }) => *default_w = as_f64(v)?,
         (P::DefaultHeight, W::Window { default_h, .. }) => *default_h = as_f64(v)?,
@@ -264,6 +267,9 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::AlignItems, _) => s(c.align_items),
         (P::JustifyContent, _) => s(c.justify_content),
         (P::Invalid, _) => Value::Bool(c.invalid),
+        // WG2a
+        (key, W::Menu(m)) => crate::menus::get_prop(m, key)?,
+        (key, W::Overlay(o)) => crate::overlays::get_prop(o, key)?,
         (P::Title, W::Window { title, .. }) => s(title),
         (P::DefaultWidth, W::Window { default_w, .. }) => Value::F64(*default_w),
         (P::DefaultHeight, W::Window { default_h, .. }) => Value::F64(*default_h),

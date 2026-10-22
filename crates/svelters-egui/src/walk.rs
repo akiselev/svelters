@@ -122,6 +122,10 @@ fn paint_visual(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mu
 }
 
 fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+    // WG2a: overlays and menu entries are out of flow: they paint themselves, anchored to the parent
+    if crate::overlays::out_of_flow(arena.w(i)) {
+        return crate::overlays::paint_node(arena, i, origin, ui, out);
+    }
     let r = arena.core[i].rect.translate(origin);
     if arena.w(i).is_container() {
         // Cull whole subtrees outside the clip rect.
@@ -153,6 +157,7 @@ fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut 
         crate::leaf::leaf(arena, i, &mut child, out);
     }
     crate::scene::hit::record(arena, i, &child); // SG3: the viewport's hit list
+    crate::overlays::paint_attached(arena, i, origin, ui, out); // WG2a: its context menu, popup
 }
 
 /// Paints the children of container `i` (in order, by index: the walk never changes the

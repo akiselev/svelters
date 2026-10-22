@@ -126,6 +126,9 @@ fn builtin_payload(kind: usize) -> Option<W> {
         "Grid" => W::Grid { columns: "auto 1fr".into(), justify_items: "stretch" },
         "CollapsingHeader" => W::CollapsingHeader { text: String::new(), open: false },
         "ScrollArea" => W::ScrollArea { direction: "vertical", x: 0.0, y: 0.0, seen: None },
+        // WG2a: the defaults match the kind tables (`kinds/menus.rs`, `kinds/popups.rs`)
+        id @ ("MenuEntry" | "MenuBar" | "Menu" | "Action" | "MenuSeparator" | "ContextMenu" | "MenuButton") => W::Menu(crate::menus::payload(id)),
+        id @ ("Popup" | "Modal" | "InnerWindow") => W::Overlay(Box::new(crate::overlays::payload(id))),
         // RA1: a provider kind's widget struct with its defaults
         _ => W::Ext(crate::provider::ExtWidget::new((kinds::KindRegistry::global().provider(kind)?.entry.new)())),
     })
@@ -362,7 +365,8 @@ impl Scene {
         let pi = self.idx(parent).ok_or(SceneError::Stale(parent.to_raw()))?;
         let ci = self.idx(child).ok_or(SceneError::Stale(child.to_raw()))?;
         let (pk, ck) = (self.core[pi].kind as usize, self.core[ci].kind as usize);
-        if kinds::slot_of(pk).is_none() {
+        // WG2a: a kind that attaches (`context-menu`, `popup`) goes under any element
+        if kinds::slot_of(pk).is_none() && kinds::attaches_to(kinds::kind(ck).id).is_none() {
             return Err(SceneError::Invalid(format!("<{}> takes no children", kinds::kind(pk).tag.unwrap_or("?"))));
         }
         if kinds::kind(ck).toplevel || self.core[ci].flags.contains(NodeFlags::ROOT) {

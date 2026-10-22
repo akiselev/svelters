@@ -248,6 +248,17 @@ pub static KINDS: &[KindDef] = &[
     super::layouts::GRID,
     super::layouts::COLLAPSING_HEADER,
     super::layouts::SCROLL_AREA,
+    // ---- WG2a: appended (tables in `menus.rs`, `popups.rs`) ----
+    super::menus::MENU_ENTRY,
+    super::menus::MENU_BAR,
+    super::menus::MENU,
+    super::menus::ACTION,
+    super::menus::MENU_SEPARATOR,
+    super::menus::CONTEXT_MENU,
+    super::menus::MENU_BUTTON,
+    super::popups::POPUP,
+    super::popups::MODAL,
+    super::popups::INNER_WINDOW,
 
 
 

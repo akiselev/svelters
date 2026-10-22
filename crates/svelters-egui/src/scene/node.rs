@@ -36,13 +36,18 @@ pub enum W {
     CollapsingHeader { text: String, open: bool },
     /// `seen`: the offsets egui reported last frame (a differing `x`/`y` is a host write to apply).
     ScrollArea { direction: &'static str, x: f64, y: f64, seen: Option<(f64, f64)> },
+    // ---- WG2a (plans/milestones/WG2a-menus-popups.md) ----
+    /// The menu family (`crate::menus`).
+    Menu(crate::menus::MenuW),
+    /// `popup`, `modal`, `inner-window`: a flex box shown out of flow (`crate::overlays`).
+    Overlay(Box<crate::overlays::OverlayW>),
 }
 
 impl W {
     /// Containers lay out children with taffy (flexbox, or grid for `Grid`); `Box` and `Window`
     /// paint nothing themselves, the WG1 containers paint their chrome (`leaf::container`).
     pub fn is_container(&self) -> bool {
-        matches!(self, W::Box | W::Window { .. } | W::Grid { .. } | W::CollapsingHeader { .. } | W::ScrollArea { .. })
+        matches!(self, W::Box | W::Window { .. } | W::Grid { .. } | W::CollapsingHeader { .. } | W::ScrollArea { .. } | W::Overlay(_))
     }
 }
 
@@ -384,6 +389,8 @@ pub fn text_of(w: &W) -> &str {
         W::Window { title, .. } => title,
         W::ComboBox { options, selected, .. } => usize::try_from(*selected).ok().and_then(|i| options.get(i)).map_or("", |s| s.as_str()),
         W::Icon { name, .. } => name,
+        W::Menu(m) => m.label(),
+        W::Overlay(o) => &o.title,
         W::Box | W::Ext(_) | W::Separator { .. } | W::Grid { .. } | W::ScrollArea { .. } => "",
     }
 }

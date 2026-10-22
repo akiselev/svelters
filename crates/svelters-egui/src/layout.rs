@@ -169,6 +169,9 @@ pub fn style_of(c: &Common, w: &W, vis: &Visual) -> Style {
     let mut s = Style {
         display: if !c.visible {
             Display::None
+        } else if crate::overlays::out_of_flow(w) {
+            // WG2a: overlays and menu entries take no place in their parent's flow
+            Display::None
         } else if matches!(w, W::Grid { .. }) {
             Display::Grid
         } else {
@@ -340,6 +343,9 @@ impl Metrics {
                 vec2(wdt, interact.y)
             }
             W::Box | W::Window { .. } | W::Grid { .. } | W::ScrollArea { .. } => Vec2::ZERO,
+            // ---- WG2a ----
+            W::Menu(x) => crate::menus::measure(self, x),
+            W::Overlay(_) => Vec2::ZERO,
             W::Ext(x) => x.measure(self, crate::provider::AvailableSpace::MaxContent),
             // ---- WG1 ----
             W::ToggleButton { text, weight, .. } => {
@@ -818,6 +824,42 @@ pub(crate) fn run_root(s: &mut Scene, m: &Metrics, r: RootIx, size: Vec2) -> Opt
     c.leaves_measured += run.fonts;
     c.nodes_placed += placed;
     Some(run)
+}
+
+/// WG2a: lays out overlay node `top` (`popup`, `modal`, `inner-window`: out of its parent's flow,
+/// where it has the hidden layout) on its own, as the root of its subtree: the axes of `size` are
+/// definite, the others max-content (its own `width`/`height` still apply). Places it with its
+/// top-left at `at` (root-relative, so its children's rects stay root-relative) and returns its size
+/// and the layout generation it saw. `seen` is the generation of its last run: when any root ran a
+/// layout since (`Counters::nodes_placed` moved), a root run may have given the subtree the hidden
+/// layout below a cache this run would reuse, so its caches are cleared first.
+pub(crate) fn layout_overlay(s: &mut Scene, m: &Metrics, top: SceneId, size: [Option<f32>; 2], at: egui::Pos2, seen: u64) -> (Vec2, u64) {
+    let i = top.index() as usize;
+    let generation = s.counters.nodes_placed;
+    if generation != seen {
+        let mut stack = vec![i];
+        while let Some(k) = stack.pop() {
+            s.layout[k].cache.clear();
+            stack.extend(s.children[k].iter().map(|c| c.index() as usize));
+        }
+    }
+    let saved = (s.layout[i].style.display, s.layout[i].style.size);
+    let st = &mut s.layout[i].style;
+    st.display = Display::Flex;
+    if let Some(w) = size[0] {
+        st.size.width = Dimension::length(w);
+    }
+    if let Some(h) = size[1] {
+        st.size.height = Dimension::length(h);
+    }
+    let avail = |v: Option<f32>| v.map_or(AvailableSpace::MaxContent, AvailableSpace::Definite);
+    let mut t = Tree { s, m, leaf_layouts: 0, fonts: 0 };
+    compute_root_layout(&mut t, tid(top), Size { width: avail(size[0]), height: avail(size[1]) });
+    round_layout(&mut t, tid(top));
+    (s.layout[i].style.display, s.layout[i].style.size) = saved;
+    let l = s.layout[i].layout;
+    place(s, top, at - vec2(l.location.x, l.location.y));
+    (vec2(l.size.width, l.size.height), generation)
 }
 
 /// Re-measures root `r`'s queued leaves; invalidates layout only for the ones whose size changed (a
