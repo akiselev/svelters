@@ -20,6 +20,14 @@
 //! a dead key composes with the next letter or gives the Compose table's accent on Space; a key
 //! that does not compose cancels it and goes through alone [model, not measured on winit].
 //! Ctrl+Shift+U reaches egui as a plain key (the hex entry is a GTK and IBus feature).
+//!
+//! WG3m: [`egui_text_edit_against_macos_goldens`] runs the pins that apply on macOS as egui-winit
+//! delivers macOS input (`OperatingSystem::Mac`; Cmd sets `mac_cmd` and `command`, Cmd+X/C/V become
+//! `Cut`/`Copy`/`Paste`) with egui's own behaviour (FX1 keeps it on macOS) and compares them with
+//! the AppKit goldens (`conformance/golden/macos/`): a report, not gated. Option+E and Option+U are
+//! the US layout's dead keys; macOS composes them in its input system, which winit forwards as IME
+//! commits, so the model gives what AppKit's own composition gives (the spacing accent on Space,
+//! the accent then the letter when they do not compose, Backspace cancels) [model, not measured].
 
 use egui::OutputCommand;
 use egui::text::{CCursor, CCursorRange};
@@ -30,7 +38,7 @@ use std::fmt::Write as _;
 use svelters_abi::*;
 use svelters_conformance::golden::{Capture, PinGap, compare, finish, goldens};
 use svelters_conformance::pins::{
-    BUTTON, BUTTON_LABEL, CLIPBOARD, Chord, FIELDS, Keys, Pin, load_pins,
+    BUTTON, BUTTON_LABEL, CLIPBOARD, Chord, FIELDS, Keys, Pin, load_pins, not_applicable,
 };
 use svelters_conformance::trace::{Checkpoint, State, Trace};
 use svelters_conformance::{Driver, run_pin, selection_handle};
@@ -92,6 +100,8 @@ struct Egui {
     selections: Vec<String>,
     /// A dead key waiting for the next key (`acute`, `diaeresis`, `grave`).
     dead: Option<String>,
+    /// macOS input (egui-winit on macOS) instead of Linux X11.
+    mac: bool,
 }
 
 /// The composition a dead key and the next character give (`None`: no composition, the character
@@ -112,15 +122,33 @@ fn compose(dead: &str, c: char) -> Option<char> {
         .and_then(|i| to.chars().nth(i))
 }
 
+/// macOS's own composition (the US layout's dead keys, committed through the input system): the
+/// spacing accent on Space, the accent followed by the letter when they do not compose.
+fn compose_mac(dead: &str, c: char) -> String {
+    let spacing = match dead {
+        "acute" => '´',
+        "diaeresis" => '¨',
+        _ => '`',
+    };
+    match c {
+        ' ' => spacing.to_string(),
+        c => compose(dead, c).map_or_else(|| format!("{spacing}{c}"), |x| x.to_string()),
+    }
+}
+
 impl Egui {
-    fn new(native: Native) -> Egui {
+    fn new(native: Native, mac: bool) -> Egui {
         let backend = EguiBackend::new();
         let vt: &'static BackendVtable = Box::leak(Box::new(backend.vtable()));
         let hv: &'static HostVtable = Box::leak(Box::new(HostVtable::new(Rec)));
         vt.backend_ref().start(hv).expect("start");
         let harness = Harness::builder()
             .with_size(egui::vec2(700.0, 240.0))
-            .with_os(egui::os::OperatingSystem::Nix)
+            .with_os(if mac {
+                egui::os::OperatingSystem::Mac
+            } else {
+                egui::os::OperatingSystem::Nix
+            })
             .with_step_dt(STEP)
             .build_ui_state(|ui, b: &mut EguiBackend| b.ui(ui), backend.clone());
         // egui's bundled fonts have no CJK glyphs; kittest panics on a missing glyph, an app draws
@@ -141,6 +169,7 @@ impl Egui {
             primary: String::new(),
             selections: vec![],
             dead: None,
+            mac,
         }
     }
 
@@ -156,11 +185,12 @@ impl Egui {
     }
 
     fn text_event(&mut self, c: char) {
-        let c = match self.dead.take() {
-            Some(d) => compose(&d, c).unwrap_or(c),
-            None => c,
+        let text = match self.dead.take() {
+            Some(d) if self.mac => compose_mac(&d, c),
+            Some(d) => compose(&d, c).unwrap_or(c).to_string(),
+            None => c.to_string(),
         };
-        self.harness.event(egui::Event::Text(c.to_string()));
+        self.harness.event(egui::Event::Text(text));
         self.frames(3);
     }
 
@@ -362,14 +392,27 @@ impl Driver for Egui {
     }
 
     fn key(&mut self, c: &Chord) -> Result<(), String> {
-        // egui-winit on Linux: Ctrl is `ctrl` and `command`; Super is `mac_cmd` only on macOS
+        // egui-winit on Linux: Ctrl is `ctrl` and `command`; on macOS Cmd is `mac_cmd` and `command`
         let mods = egui::Modifiers {
             alt: c.alt,
             ctrl: c.ctrl,
             shift: c.shift,
-            mac_cmd: false,
-            command: c.ctrl,
+            mac_cmd: self.mac && c.cmd,
+            command: if self.mac { c.cmd } else { c.ctrl },
         };
+        if self.mac && c.alt && !(c.cmd || c.ctrl || c.shift) && matches!(c.key.as_str(), "e" | "u")
+        {
+            // the US layout's dead keys: Option+E acute, Option+U diaeresis
+            self.dead = Some(if c.key == "e" { "acute" } else { "diaeresis" }.into());
+            self.frames(3);
+            return Ok(());
+        }
+        if self.mac && self.dead.is_some() && c.key == "BackSpace" {
+            // macOS cancels the composition and deletes nothing
+            self.dead = None;
+            self.frames(3);
+            return Ok(());
+        }
         if let Some(d) = c.key.strip_prefix("dead_") {
             self.dead = Some(d.to_string());
             self.frames(3);
@@ -385,7 +428,11 @@ impl Driver for Egui {
         }
         // any other key cancels a waiting dead key and goes through alone
         self.dead = None;
-        let command_only = c.ctrl && !c.shift && !c.alt && !c.cmd;
+        let command_only = if self.mac {
+            c.cmd && !c.shift && !c.alt && !c.ctrl
+        } else {
+            c.ctrl && !c.shift && !c.alt && !c.cmd
+        };
         match k {
             egui::Key::X if command_only => self.harness.event(egui::Event::Cut),
             egui::Key::C if command_only => self.harness.event(egui::Event::Copy),
@@ -505,11 +552,20 @@ impl Driver for Egui {
 }
 
 fn run(native: Native, pins: &[Pin], keys: &Keys) -> Vec<svelters_conformance::golden::PinResult> {
+    run_on(native, pins, keys, false)
+}
+
+fn run_on(
+    native: Native,
+    pins: &[Pin],
+    keys: &Keys,
+    mac: bool,
+) -> Vec<svelters_conformance::golden::PinResult> {
     let mut results = Vec::new();
     let mut traces = Vec::new();
     for pin in pins {
         // a fresh context per pin, as the native captures use a fresh window
-        let mut d = Egui::new(native);
+        let mut d = Egui::new(native, mac);
         let (r, t) = run_pin(&mut d, pin, keys).unwrap_or_else(|e| panic!("{e}"));
         results.push(r);
         traces.push((pin.id.clone(), t));
@@ -520,12 +576,13 @@ fn run(native: Native, pins: &[Pin], keys: &Keys) -> Vec<svelters_conformance::g
         Native::Qt => "egui-qt",
     };
     let cap = Capture {
-        platform: "linux".into(),
+        platform: if mac { "macos" } else { "linux" }.into(),
         toolkit: toolkit.into(),
         version: "0.37.0".into(),
         injector: "kittest".into(),
         settings: vec![],
         observe: vec![],
+        not_applicable: vec![],
         pins: results.clone(),
     };
     finish(&cap, &traces).unwrap();
@@ -543,8 +600,11 @@ fn egui_text_edit_against_native_goldens() {
     let golds = goldens("linux").unwrap();
     let toolkit = |t: &str| golds.iter().find(|g| g.toolkit == t).expect("a golden");
     let (g_gtk, g_qt) = (toolkit("gtk"), toolkit("qt"));
-    let gap = |r: &svelters_conformance::golden::PinResult, g: &svelters_conformance::golden::Golden| {
-        g.pin(&r.id).map(|p| compare(&r.checkpoints, &p.checkpoints)).unwrap_or_default()
+    let gap = |r: &svelters_conformance::golden::PinResult,
+               g: &svelters_conformance::golden::Golden| {
+        g.pin(&r.id)
+            .map(|p| compare(&r.checkpoints, &p.checkpoints))
+            .unwrap_or_default()
     };
     let cell = |g: &PinGap| match g.diffs.first() {
         // the first differing step: later checkpoints of a pin build on earlier ones
@@ -572,18 +632,32 @@ fn egui_text_edit_against_native_goldens() {
         }
         for (name, c) in [("native=gtk vs gtk", &row[2]), ("native=qt vs qt", &row[3])] {
             for (i, after, ours, theirs) in &c.diffs {
-                let _ = writeln!(details, "- {} #{i} after `{after}`, {name}:\n  - egui: `{ours}`\n  - native: `{theirs}`", s.id);
+                let _ = writeln!(
+                    details,
+                    "- {} #{i} after `{after}`, {name}:\n  - egui: `{ours}`\n  - native: `{theirs}`",
+                    s.id
+                );
             }
         }
         if let Some(&(_, fg, fq)) = FLOOR.iter().find(|f| f.0 == s.id) {
             if row[2].equal < fg || row[3].equal < fq {
-                below.push(format!("{}: gtk {} (floor {fg}), qt {} (floor {fq})", s.id, row[2].equal, row[3].equal));
+                below.push(format!(
+                    "{}: gtk {} (floor {fg}), qt {} (floor {fq})",
+                    s.id, row[2].equal, row[3].equal
+                ));
             }
         } else {
-            below.push(format!("{}: no floor (gtk {}, qt {})", s.id, row[2].equal, row[3].equal));
+            below.push(format!(
+                "{}: no floor (gtk {}, qt {})",
+                s.id, row[2].equal, row[3].equal
+            ));
         }
     }
-    let _ = writeln!(md, "| | **total** | **{}** | **{}** | **{}** | **{}** | **{}** |", totals[0], totals[1], totals[2], totals[3], totals[4]);
+    let _ = writeln!(
+        md,
+        "| | **total** | **{}** | **{}** | **{}** | **{}** | **{}** |",
+        totals[0], totals[1], totals[2], totals[3], totals[4]
+    );
     let report = format!("{md}\n## Differing checkpoints of the native runs\n\n{details}");
     let out = svelters_conformance::golden::out_dir("linux", "egui-gap.md");
     std::fs::write(&out, &report).unwrap();
@@ -591,9 +665,90 @@ fn egui_text_edit_against_native_goldens() {
     // CI: the table in the job summary
     if let Ok(summary) = std::env::var("GITHUB_STEP_SUMMARY") {
         use std::io::Write as _;
-        if let Ok(mut f) = std::fs::OpenOptions::new().append(true).create(true).open(summary) {
-            let _ = writeln!(f, "### egui against the native references (svelters-conformance egui_measure)\n\n{md}");
+        if let Ok(mut f) = std::fs::OpenOptions::new()
+            .append(true)
+            .create(true)
+            .open(summary)
+        {
+            let _ = writeln!(
+                f,
+                "### egui against the native references (svelters-conformance egui_measure)\n\n{md}"
+            );
         }
     }
     assert!(below.is_empty(), "FX1 ratchet: {below:#?}");
+}
+
+/// WG3m: egui's own behaviour on macOS input against the AppKit goldens (NSTextField, NSTextView),
+/// on the pins that apply there. A report (the gap table in `target/na/macos/egui-gap.md` and the
+/// CI job summary), not gated: FX1 keeps egui's behaviour on macOS until a policy follows AppKit.
+#[test]
+fn egui_text_edit_against_macos_goldens() {
+    let golds = goldens("macos").unwrap();
+    if golds.is_empty() {
+        eprintln!("no macOS goldens: nothing to compare");
+        return;
+    }
+    let keys = Keys::load("macos").unwrap();
+    let pins: Vec<Pin> = load_pins()
+        .unwrap()
+        .into_iter()
+        .filter(|p| not_applicable(p, &keys).is_none())
+        .collect();
+    let stock = run_on(Native::Egui, &pins, &keys, true);
+    let mut md = String::from("| Pin | Behaviour | Checkpoints |");
+    for g in &golds {
+        let _ = write!(md, " egui = {} {} |", g.toolkit, g.version);
+    }
+    md += "\n|---|---|---|";
+    md += &"---|".repeat(golds.len());
+    md.push('\n');
+    let mut totals = vec![0usize; golds.len() + 1];
+    let mut details = String::new();
+    for s in &stock {
+        let _ = write!(md, "| {} | {} | {} |", s.pin, s.id, s.checkpoints.len());
+        totals[0] += s.checkpoints.len();
+        for (i, g) in golds.iter().enumerate() {
+            let gap = g
+                .pin(&s.id)
+                .map(|p| compare(&s.checkpoints, &p.checkpoints))
+                .unwrap_or_default();
+            let cell = match gap.diffs.first() {
+                Some((i, after, ..)) => format!("{} (first: #{i} `{after}`)", gap.equal),
+                None => gap.equal.to_string(),
+            };
+            let _ = write!(md, " {cell} |");
+            totals[i + 1] += gap.equal;
+            for (k, after, ours, theirs) in &gap.diffs {
+                let _ = writeln!(
+                    details,
+                    "- {} #{k} after `{after}`, vs {}:\n  - egui: `{ours}`\n  - AppKit: `{theirs}`",
+                    s.id, g.toolkit
+                );
+            }
+        }
+        md.push('\n');
+    }
+    let _ = write!(md, "| | **total** | **{}** |", totals[0]);
+    for t in &totals[1..] {
+        let _ = write!(md, " **{t}** |");
+    }
+    md.push('\n');
+    let out = svelters_conformance::golden::out_dir("macos", "egui-gap.md");
+    std::fs::create_dir_all(out.parent().unwrap()).unwrap();
+    std::fs::write(&out, format!("{md}\n## Differing checkpoints\n\n{details}")).unwrap();
+    eprintln!("{md}\nWG3m gap report: {}", out.display());
+    if let Ok(summary) = std::env::var("GITHUB_STEP_SUMMARY") {
+        use std::io::Write as _;
+        if let Ok(mut f) = std::fs::OpenOptions::new()
+            .append(true)
+            .create(true)
+            .open(summary)
+        {
+            let _ = writeln!(
+                f,
+                "### egui against the macOS references (svelters-conformance egui_measure)\n\n{md}"
+            );
+        }
+    }
 }

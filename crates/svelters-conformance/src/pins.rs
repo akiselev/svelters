@@ -378,6 +378,37 @@ impl Keys {
     }
 }
 
+/// Why a pin cannot run on a platform (`None`: it runs). A pin needs a chord for every intent it
+/// uses in the platform's key table, and the X11 primary selection (a middle click, observing
+/// `primary`) exists on Linux only. WG3m: macOS has no CUA chords, no second redo chord and no
+/// Ctrl+Shift+U, so 4 of the 18 scripts do not apply there; its goldens list them.
+pub fn not_applicable(pin: &Pin, keys: &Keys) -> Option<String> {
+    let mut missing: Vec<&str> = pin
+        .actions
+        .iter()
+        .filter_map(|a| match a {
+            Action::Key { intent, .. } if !keys.map.contains_key(intent) => Some(intent.as_str()),
+            _ => None,
+        })
+        .collect();
+    missing.sort();
+    missing.dedup();
+    if !missing.is_empty() {
+        return Some(format!(
+            "no chord on {} for {}",
+            keys.platform,
+            missing.join(", ")
+        ));
+    }
+    let primary = pin.observe.iter().any(|o| o == PRIMARY)
+        || pin
+            .actions
+            .iter()
+            .any(|a| matches!(a, Action::Click { button: 2, .. }));
+    (primary && keys.platform != "linux")
+        .then(|| format!("no primary selection on {}", keys.platform))
+}
+
 /// Version of the capture procedure: bump it when a change to the harness (not to a pin) changes
 /// what a capture records, so every golden reads as stale.
 pub const HARNESS_VERSION: &str = "na1-v1";

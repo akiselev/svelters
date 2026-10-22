@@ -421,6 +421,7 @@ fn capture() {
         injector: "xtest".into(),
         settings,
         observe,
+        not_applicable: vec![],
         pins: results,
     };
     finish(&cap, &traces).unwrap_or_else(|e| panic!("{e}"));

@@ -4,12 +4,15 @@
 //! - [`trace`]: the `state #h {…}` trace writer for `tools/oplog-compare.mjs`.
 //! - [`golden`]: `conformance/golden/<platform>/<toolkit>-<version>.json`, capture and compare.
 //! - [`xtest`]: the XTEST user-path injector the GTK and Qt captures use.
+//! - [`macos`]: the CGEvent and accessibility user path of the AppKit captures (WG3m).
 //! - [`run_pin`]: drives one pin through a [`Driver`] (one per toolkit, in the tests of this crate,
 //!   `examples/counter-qt/tests/na_capture.rs` and this crate's egui measurement).
 
 pub mod golden;
 pub mod pins;
 pub mod trace;
+#[cfg(target_os = "macos")]
+pub mod macos;
 #[cfg(target_os = "linux")]
 pub mod xtest;
 
