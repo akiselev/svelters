@@ -6,7 +6,7 @@
   "injector": "sendinput+uia",
   "offsets": "unicode-scalar",
   "settings": {"doubleClickRect":[4,4],"doubleClickTime":500,"dpi":120,"dragRect":[4,4],"fixture":"counter-win --na-fixture: Window > StackPanel > TextBox, TextBox, Button","keyboardLayout":"04090409","os":"10.0.19045.7807 (22H2)","package":"Microsoft.WindowsAppRuntime.2_2.5.1.0_x64__8wekyb3d8bbwe","xaml":"Microsoft.UI.Xaml.dll 3.2.3.0"},
-  "observe": {"focus":{"changes":14,"announced":14},"direction":{"collapsed":246,"system-caret":0,"caret-range":42,"unknown":0}},
+  "observe": {"focus":{"changes":14,"announced":14},"direction":{"collapsed":243,"system-caret":0,"caret-range":45,"unknown":0}},
   "pins": {
     "word-delete-back": {
       "pin": 1,
@@ -176,12 +176,12 @@
         {"after":"click a@14 x2","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[12,15],"caret":15,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
         {"after":"click a@22 x2","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[22,23],"caret":23,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
         {"after":"click a@9 x3","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[0,28],"caret":28,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
-        {"after":"drag a 5->13 x2","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[4,7],"caret":7,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
-        {"after":"drag a 13->2 x2","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[12,15],"caret":15,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"drag a 5->13 x2","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[4,15],"caret":15,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"drag a 13->2 x2","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[15,0],"caret":0,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
         {"after":"click a@25 x1","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[25,25],"caret":25,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
-        {"after":"drag a 1->9 x1","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[1,1],"caret":1,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
-        {"after":"click b@3 x1","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[1,1],"caret":1,"focus":false},"b":{"text":"second field","sel":[3,3],"caret":3,"focus":true},"c":{"focus":false}},
-        {"after":"click b@3 x2","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[1,1],"caret":1,"focus":false},"b":{"text":"second field","sel":[0,7],"caret":7,"focus":true},"c":{"focus":false}}
+        {"after":"drag a 1->9 x1","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[1,9],"caret":9,"focus":true},"b":{"text":"second field","sel":[0,0],"caret":0,"focus":false},"c":{"focus":false}},
+        {"after":"click b@3 x1","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[1,9],"caret":9,"focus":false},"b":{"text":"second field","sel":[3,3],"caret":3,"focus":true},"c":{"focus":false}},
+        {"after":"click b@3 x2","a":{"text":"foo bar-baz qux.quux 日本語 end","sel":[1,9],"caret":9,"focus":false},"b":{"text":"second field","sel":[0,7],"caret":7,"focus":true},"c":{"focus":false}}
       ]
     },
     "focus-click": {
