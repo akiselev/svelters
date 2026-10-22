@@ -59,7 +59,9 @@ independent of the machine. The times are only printed.
   `Scene::ink`. Before this, a container laid out off screen culled a child that painted on screen (an absolute box,
   overflow). The test `overflowing_child_of_an_offscreen_container_is_painted` covers this.
 - **One culling predicate.** `walk::culled(arena, i, origin, ui)` is used by every cull in the walk (containers, leaves,
-  behaviour hosts). WG6's rule against culling on a Tab pass goes there.
+  behaviour hosts). This is the seam for the rule against culling on a Tab pass: OW2, which takes over WG6's scroll
+  and focus code, adds it there. NodeFlags bit 21 (`INK_OVERFLOW`) was confirmed by the coordinator; bits 18 and 19 stay
+  free.
 - **Paint cache.** `WidgetCx::cached_shapes(painter, version, |painter, rect, shapes| …)` stores `Arc<[Shape]>` in
   local coordinates, keyed by version, size, `pixels_per_point` and dark mode (`scene/paint_cache.rs`). A hit replays
   the shapes moved to the node's rect. A prop write to the node or freeing the node drops the entry. The oracle test
@@ -78,7 +80,7 @@ independent of the machine. The times are only printed.
 - **`SKIP_OFFSCREEN` deferring layout** ("not laid out while offscreen if its size is known"). The walk already culls
   every container by ink, so the flag still adds nothing at paint time. Deferring a flagged boundary's relayout while
   it is off screen needs the walk to queue it when it becomes visible, which takes one frame of stale layout.
-- **Tab reachability of culled nodes.** This is unchanged: a culled leaf records no focus entry. WG6 adds the Tab-pass
+- **Tab reachability of culled nodes.** This is unchanged: a culled leaf records no focus entry. OW2 adds the Tab-pass
   rule to `walk::culled`.
 - **Interning CSS computed styles** (`NodeStyle::computed` is an `Arc` per node). The grid uses props, so the `style`
   column is 0 here. `SceneStats::bytes_by` now counts that column for a CSS-styled screen.
