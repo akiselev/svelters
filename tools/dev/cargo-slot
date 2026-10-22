@@ -27,6 +27,15 @@ if [ -n "${BUILD_SLOT_HELD:-}" ]; then
   exec "$@"
 fi
 
+# `cargo check`/`clippy` (and other non-building subcommands) take no slot: they are short and
+# metadata-only, and an agent waiting behind someone's 20-minute test build for a type check is an
+# agent not writing code. They run niced with few jobs so builds in the slots keep the CPU.
+if [ "${1:-}" = cargo ] && [[ "${2:-}" =~ ^(check|clippy|fmt|metadata|tree|locate-project)$ ]]; then
+  export CARGO_BUILD_JOBS=${CARGO_BUILD_JOBS:-${CHECK_JOBS:-3}}
+  export CARGO_BUILD_BUILD_DIR=${CARGO_BUILD_BUILD_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)/target/build}
+  exec nice -n 10 "$@"
+fi
+
 env_slots=${BUILD_SLOTS:-} env_jobs=${BUILD_SLOT_JOBS:-}
 conf=${XDG_CONFIG_HOME:-$HOME/.config}/build-slots.env
 if [ -f "$conf" ]; then

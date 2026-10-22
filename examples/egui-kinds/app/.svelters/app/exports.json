@@ -7,6 +7,24 @@
       "specifier": "svelters:app/cad",
       "types": [
         {
+          "docs": "What a pick produced (EV2b's `picked` event).",
+          "fields": [
+            {
+              "name": "kind",
+              "optional": false,
+              "type": "string"
+            },
+            {
+              "name": "label",
+              "optional": false,
+              "type": "string"
+            }
+          ],
+          "kind": "record",
+          "name": "PickRef",
+          "values": []
+        },
+        {
           "docs": "What a quantity measures.",
           "fields": [],
           "kind": "enum",
