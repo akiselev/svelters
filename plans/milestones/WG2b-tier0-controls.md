@@ -184,4 +184,12 @@ tests: kittest runs without a renderer here.
   run -p svelters-egui --test tier0 --test gallery --test spec` 22/22 on the merged tree (gallery bundle built
   before the WG1b merge, whose `egui.json` change is one line). Not run locally: everything else listed above.
   After the uncaptioned range-slider fix: `cargo check -p svelters-egui --all-targets` clean; `tier0`
-  `range_slider|bad_input` 3/3 and `widgets` `every_kind_has_a_tooltip_and_inputs_are_named` 1/1.
+  `range_slider|bad_input` 3/3 and `widgets` `every_kind_has_a_tooltip_and_inputs_are_named` 1/1. CI green on
+  7bbd8563 (linux-gtk 39798299314, linux-qt 39798299301, macos-appkit 39798299370, windows-winui 39798299368, js
+  39798299332).
+- After merging `origin/ci/wg1` ef0584a7 (WG1 with CS5e) and `origin/master` bbaa102e: conflicts in
+  `svelters-egui/Cargo.toml` (taffy `calc` + WG2b's `image`/`arboard`) and `layout.rs` (WG2b's `stack` arm before
+  CS5e's `display: grid` arm); the generated style tables regenerated with `gen_props.py` (`--check` clean).
+  `cargo check -p svelters-egui -p egui-kinds-example --all-targets` clean; `svelters-compile` and the gallery
+  bundle rebuilt; `cargo nextest run -p svelters-egui` `tier0`, `gallery`, `spec` and `widgets`
+  `every_kind_has_a_tooltip_and_inputs_are_named` 24/24.
