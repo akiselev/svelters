@@ -96,6 +96,10 @@ export const loopPath = ALIASES[LOOP_SPECIFIER];
 export const RENDER_SPECIFIER = 'svelte/internal/client/render';
 export const renderPath = ALIASES[RENDER_SPECIFIER];
 
+/** Svelte's runtime constants (RT1: `STATE_SYMBOL`, what marks a `$state` proxy). */
+export const CONSTANTS_SPECIFIER = 'svelte/internal/client/constants';
+export const constantsPath = ALIASES[CONSTANTS_SPECIFIER];
+
 /** Svelte's client entry (what `svelte` resolves to with the browser condition), for src/svelte.js. */
 export const SVELTE_CLIENT_SPECIFIER = 'svelte/index-client';
 export const svelteClientPath = ALIASES[SVELTE_CLIENT_SPECIFIER];
@@ -115,6 +119,7 @@ export const HIDDEN_MODULES = {
   [EQUALITY_SPECIFIER]: equalityPath,
   [LOOP_SPECIFIER]: loopPath,
   [RENDER_SPECIFIER]: renderPath,
+  [CONSTANTS_SPECIFIER]: constantsPath,
 };
 
 /** TR1: `svelte/transition` and `svelte/animate` as app code sees them: native ports of Svelte's built-ins. */
