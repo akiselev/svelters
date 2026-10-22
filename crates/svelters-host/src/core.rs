@@ -70,11 +70,18 @@ pub struct HostConfig {
     /// Ask the backend to quit once the last toplevel handle is gone (after the first one was
     /// created). The host, not the toolkit, decides when the app ends. Ignored in scripted mode.
     pub quit_on_last_window: bool,
+    /// H1: a runtime that applied this many in-place module swaps is replaced by a full reload at
+    /// the next change (replaced module versions are not freed while the runtime lives). 0: no limit.
+    pub hmr_max_swaps: u32,
+    /// H1: ... or when its heap is above this fraction of `memory_limit`.
+    pub hmr_memory_fraction: f32,
 }
 
 impl Default for HostConfig {
     fn default() -> Self {
         HostConfig {
+            hmr_max_swaps: 200,
+            hmr_memory_fraction: 0.5,
             memory_limit: 256 * 1024 * 1024,
             max_stack_size: 1024 * 1024,
             turn_budget: Some(Duration::from_secs(10)),
@@ -1233,6 +1240,35 @@ pub(crate) fn load_bundle(
     if res.is_ok() && !core.cfg.scripted {
         let st = eng.run_jobs(core.cfg.max_jobs_per_checkpoint);
         pending = st.pending;
+    }
+    core.report_all(eng.take_errors());
+    drop(eng);
+    core.sync_sched();
+    if !core.cfg.scripted && (pending || core.has_events()) {
+        core.backend.wake();
+    }
+    res
+}
+
+/// H1: applies a source change in place (see [`JsEngine::hot_update`]); runs the jobs that
+/// flush the swapped components' effects.
+pub(crate) fn hot_update(
+    core: &Core,
+    engine: &RefCell<Box<dyn JsEngine>>,
+    provider: &Rc<dyn crate::engine::ModuleProvider>,
+    ids: &[String],
+) -> Result<crate::engine::HotOutcome, JsError> {
+    let Some(_guard) = core.enter() else {
+        return Err(JsError::new(ErrorKind::Host, "hot_update called while JS is running"));
+    };
+    let mut eng = engine.borrow_mut();
+    let res = eng.hot_update(provider.clone(), ids);
+    for w in provider.take_warnings() {
+        core.console("warn", w);
+    }
+    let mut pending = false;
+    if matches!(res, Ok(crate::engine::HotOutcome::Applied { .. })) && !core.cfg.scripted {
+        pending = eng.run_jobs(core.cfg.max_jobs_per_checkpoint).pending;
     }
     core.report_all(eng.take_errors());
     drop(eng);

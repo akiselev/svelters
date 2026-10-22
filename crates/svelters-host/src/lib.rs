@@ -32,6 +32,7 @@ pub use crate::core::{ConsoleLine, HostConfig, OffloadStats, ReactiveStats, Timi
 pub use crate::engine::{
     BufferStats, ChangedProp, ErrorKind, HostBusy, JobStatus, JsEngine, JsError, OpOutcome, OpSettle, RootMessage,
 };
+pub use crate::engine::HotOutcome;
 pub use crate::reload::ReloadReport;
 /// Q1: the module loader (providers; `SourceProvider` with its `source` feature).
 pub use svelters_modules as modules;

@@ -49,6 +49,8 @@ pub struct SourceConfig {
     pub spec_fragments: Vec<PathBuf>,
     /// Svelte's `dev` option, and the `development` export condition instead of `production`.
     pub dev: bool,
+    /// Compile components with `--hmr` (with `dev`): `import.meta.hot` wrappers for in-place swaps (H1).
+    pub hmr: bool,
     /// `@svelters/native-runtime`'s directory; found from the app when `None`.
     pub runtime_dir: Option<PathBuf>,
 }
@@ -95,6 +97,7 @@ impl SourceConfig {
                 .map(|a| a.iter().filter_map(|v| v.as_str()).map(|p| root.join(p)).collect())
                 .unwrap_or_default(),
             dev: false,
+            hmr: false,
             runtime_dir: None,
             root,
         })
@@ -199,7 +202,7 @@ impl SourceProvider {
     pub fn new(cfg: SourceConfig) -> Result<SourceProvider, String> {
         let runtime_dir = cfg.find_runtime()?;
         let aliases = Aliases::load(&runtime_dir)?;
-        let compiler = Compiler { sem: spec_backend(&cfg)?, dev: cfg.dev };
+        let compiler = Compiler { sem: spec_backend(&cfg)?, dev: cfg.dev, hmr: cfg.hmr && cfg.dev };
         let resolver = Resolver::new(resolve_options(cfg.dev));
         Ok(SourceProvider {
             inner: RefCell::new(Inner { cfg, runtime_dir, compiler, resolver, aliases, cache: HashMap::new(), nodes: BTreeMap::new(), warnings: Vec::new() }),
@@ -403,6 +406,20 @@ impl ModuleProvider for SourceProvider {
             return true;
         }
         changed.iter().any(|p| inner.nodes.values().any(|n| n.path.as_ref() == Some(p)))
+    }
+
+    fn hmr(&self) -> bool {
+        self.inner.borrow().compiler.hmr
+    }
+
+    fn modules_at(&self, changed: &[PathBuf]) -> Vec<ModuleId> {
+        let inner = self.inner.borrow();
+        let changed: Vec<PathBuf> = changed.iter().map(|p| key(p)).collect();
+        inner.nodes.iter().filter(|(_, n)| n.path.as_ref().is_some_and(|p| changed.contains(p))).map(|(id, _)| id.clone()).collect()
+    }
+
+    fn importers(&self, id: &str) -> Vec<ModuleId> {
+        SourceProvider::importers(self, id)
     }
 
     fn take_warnings(&self) -> Vec<String> {
