@@ -1,0 +1,25 @@
+backend: gtk
+
+## diagnostics
+note[legacy_forwarding_lowered] @7:21: `on:clicked` forwards this component's `onclicked` callback prop: the one handler its parent passes gets the event (legacy forwarding re-dispatched it to every listener; svelters has no component events)
+  help: for svelte-check, declare the prop in this component's `$props()` type, e.g. `Props & Forward<'button', 'clicked'>` (types from `@svelters/native-runtime/types`)
+
+## output.js
+import * as $ from '@svelters/native-runtime/core';
+import * as $n from '@svelters/native-runtime';
+import * as $$kinds from '@svelters/native-runtime/kinds';
+var rest_excludes = new Set(["$$slots", "$$events", "$$legacy", "tag"]);
+
+export default function Input($$anchor, $$props) {
+	$.push($$props, true);
+	let rest = $.rest_props($$props, rest_excludes);
+	const $$n1 = $n.element("box");
+	const $$n2 = $n.element("button");
+	$n.spread($$n2, $$kinds, () => ({ ...(rest), onclicked: $$props.onclicked }));
+	$n.append($n.slot($$n1, null), $$n2);
+	$n.dynamic_element($n.slot($$n1, null), () => $$props.tag, ($$n3) => {
+		$n.spread($$n3, $$kinds, () => ({ onclicked: $$props.onclicked }));
+	}, $$kinds);
+	$n.append($$anchor, $$n1);
+	$.pop();
+}
