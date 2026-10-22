@@ -53,7 +53,7 @@ pub fn paint_box_layers(cx: &mut PaintCx, s: &StyleView, border_box: Rect, inset
         }
         None => s.color("color").unwrap_or(egui::Color32::BLACK),
     };
-    if let Some(list) = shadows {
+    if let Some(list) = shadows.as_deref() {
         for sh in crate::style::shadow::shapes(list, r, radius, false, &shadow_color) {
             cx.painter.add(sh);
         }
@@ -64,19 +64,31 @@ pub fn paint_box_layers(cx: &mut PaintCx, s: &StyleView, border_box: Rect, inset
     let bw = cx.snap_width(bl.max(br).max(bt).max(bb));
     let bc = s.color("border-top-color").or_else(|| s.color("border-color")).unwrap_or(egui::Color32::TRANSPARENT);
     let stroke = if bw > 0.0 && bc.a() > 0 { Stroke::new(bw, bc) } else { Stroke::NONE };
-    if fill.a() > 0 || stroke.width > 0.0 {
-        cx.painter.add(egui::epaint::RectShape::new(r, radius, fill, stroke, egui::StrokeKind::Inside));
+    // WIDGET-PARITY Q1: `background-image: paint(name)` between the inset shadows and the border
+    let painter = super::painters::selected(s, "background-image");
+    let first = if painter.is_some() { Stroke::NONE } else { stroke };
+    if fill.a() > 0 || first.width > 0.0 {
+        cx.painter.add(egui::epaint::RectShape::new(r, radius, fill, first, egui::StrokeKind::Inside));
     }
     cx.record(TraceKind::Box, r, fill, stroke, 0.0);
     if inset {
         paint_inset_shadows(cx, s, border_box);
+    }
+    if let Some((_, p)) = painter {
+        let clipped = cx.painter.with_clip_rect(cx.painter.clip_rect().intersect(r));
+        let mut pc = PaintCx { painter: &clipped, ppp: cx.ppp, trace: cx.trace.as_deref_mut(), target: cx.target, sink: cx.sink.clone(), tag: cx.tag, args: cx.args };
+        pc.run_painter(&*p, s, g.padding);
+        if stroke.width > 0.0 {
+            cx.painter.add(egui::epaint::RectShape::new(r, radius, egui::Color32::TRANSPARENT, stroke, egui::StrokeKind::Inside));
+        }
     }
     g
 }
 
 /// OW2: the inset `box-shadow`s of `border_box` alone, clipped to it; true if there were any.
 pub fn paint_inset_shadows(cx: &mut PaintCx, s: &StyleView, border_box: Rect) -> bool {
-    let Some(list) = s.shadows() else { return false };
+    let Some(shadows) = s.shadows() else { return false };
+    let list: &[svelters_style::Shadow] = &shadows;
     let r = cx.snap_rect(border_box);
     let radius = s.px("border-radius").unwrap_or(0.0).max(0.0);
     let shadow_color = |sh: &svelters_style::Shadow| match sh.color {

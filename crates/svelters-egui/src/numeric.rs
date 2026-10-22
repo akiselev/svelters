@@ -7,6 +7,7 @@
 //!
 //! Writer lane: IN1 (the widget files call [`slider`] / [`drag_value`] and nothing else).
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW1b
 use egui::{DragValue, RangeSlider, Slider};
 use std::ops::RangeInclusive;
 
@@ -37,11 +38,13 @@ pub fn parse(text: &str) -> Option<f64> {
     t.parse().ok()
 }
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW1b
 /// `slider` with locale-aware value text and entry.
 pub fn slider(s: Slider<'_>) -> Slider<'_> {
     if cfg!(feature = "intl") { s.custom_formatter(format).custom_parser(parse) } else { s }
 }
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW1b
 /// `drag-value` (and spin fields) with locale-aware text and entry.
 pub fn drag_value(d: DragValue<'_>) -> DragValue<'_> {
     if cfg!(feature = "intl") { d.custom_formatter(format).custom_parser(parse) } else { d }

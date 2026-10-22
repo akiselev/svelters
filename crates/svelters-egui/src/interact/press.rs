@@ -53,6 +53,11 @@ impl Press {
 #[derive(Debug, Default)]
 pub struct Pressable {
     down: bool,
+    /// When the press began and when it last repeated (input time, seconds).
+    down_at: f64,
+    last_repeat: f64,
+    /// The interval while a repeating press is held.
+    repeat_every: Option<f64>,
 }
 
 impl Pressable {
@@ -70,13 +75,27 @@ impl Unit for Pressable {
         egui::Sense::click()
     }
 
-    fn input(&mut self, _p: &PressParams, cx: &mut InputCx<'_>, out: &mut Intents<Press>) {
+    fn input(&mut self, p: &PressParams, cx: &mut InputCx<'_>, out: &mut Intents<Press>) {
         let r = cx.resp;
         let down = cx.enabled && r.down_on;
         if down && !self.down {
             out.push(Press::Down);
+            self.down_at = cx.now;
+            self.last_repeat = cx.now;
         } else if !down && self.down {
             out.push(if cx.enabled { Press::Up { inside: r.hovered } } else { Press::Cancel });
+        }
+        // `repeat`: held over the host, a step after `delay`, then every `interval` (QAbstractButton
+        // autoRepeat); the widget treats each `Repeat` as an activation
+        self.repeat_every = None;
+        if down && let Some((delay, interval)) = p.repeat {
+            let (delay, interval) = (delay as f64, (interval as f64).max(0.01));
+            self.repeat_every = Some(interval);
+            let next = if self.last_repeat == self.down_at { self.down_at + delay } else { self.last_repeat + interval };
+            if r.hovered && cx.now >= next {
+                out.push(Press::Repeat);
+                self.last_repeat = cx.now;
+            }
         }
         self.down = down;
         cx.set(StateBits::PRESSED, down);
@@ -100,6 +119,10 @@ impl Unit for Pressable {
 
     fn a11y(&self, _p: &PressParams, node: &mut accesskit::Node) {
         node.add_action(accesskit::Action::Click);
+    }
+
+    fn next_frame(&self) -> Option<std::time::Duration> {
+        self.repeat_every.map(std::time::Duration::from_secs_f64)
     }
 
     /// EV3: a focused clickable claims Space and Enter (unmodified).

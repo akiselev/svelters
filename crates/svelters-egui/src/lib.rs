@@ -16,6 +16,8 @@
 // ZU3: no blocking file, process or wait calls on the UI thread (list in clippy.toml). Unit tests
 // are exempt; the legitimate I/O sites carry `#[allow(clippy::disallowed_methods)]` with a reason.
 #![cfg_attr(not(test), deny(clippy::disallowed_methods))]
+// OW0: no egui widget wrappers beyond the allow-listed ones (clippy.toml `disallowed-types`).
+#![cfg_attr(not(test), deny(clippy::disallowed_types))]
 
 // OW0: the own widgets (`widgets/`) are `#[svelters::widget]` kinds of this crate, whose generated
 // code names `::svelters_egui`.

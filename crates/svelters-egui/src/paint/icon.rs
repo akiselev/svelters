@@ -36,9 +36,33 @@ pub fn icon_size(ctx: &egui::Context, s: &StyleView, key: &IconKey) -> egui::Vec
     }
 }
 
+/// The icon a glyph part shows: `content: icon(<key>)` (WIDGET-PARITY P2, `family:name` or a
+/// name in `default`'s family) when its style sets one, else `default`. `None` for
+/// `content: none`.
+pub fn content_icon(s: &StyleView, default: &IconKey) -> Option<IconKey> {
+    match s.keyword("content") {
+        Some("none") => None,
+        Some(v) => match super::painters::css_call(v, "icon").and_then(|a| a.first().map(|k| k.trim_matches(['"', '\'']).to_string())) {
+            Some(k) => Some(match k.split_once(':') {
+                Some((f, n)) => IconKey::new(f, n),
+                None => IconKey::new(default.family.clone(), k),
+            }),
+            None => Some(default.clone()),
+        },
+        None => Some(default.clone()),
+    }
+}
+
 /// Paints icon `key` centred in `rect`, tinted by `color`; an outlined square when it cannot be
-/// drawn (never egui's missing-glyph box).
+/// drawn (never egui's missing-glyph box). A glyph part's `content` overrides `key` (P2:
+/// `content: icon(check)`, `content: none`, and `content: paint(name)` for a part painter).
 pub fn paint_icon(cx: &mut PaintCx, s: &StyleView, key: &IconKey, rect: Rect) {
+    if let Some((_, p)) = super::painters::selected(s, "content") {
+        cx.run_painter(&*p, s, rect);
+        return;
+    }
+    let Some(key) = content_icon(s, key) else { return };
+    let key = &key;
     let color = s.color("color").unwrap_or(egui::Color32::PLACEHOLDER);
     let ctx = cx.painter.ctx().clone();
     match glyph(&ctx, s, key) {

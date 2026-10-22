@@ -37,10 +37,54 @@ pub enum Native {
     Qt,
     /// egui 0.37's own behaviour, unchanged.
     Egui,
+    /// OW0 (ARCH-WIDGETS W6): Windows, from the platform guidelines until WG3w's references pin it
+    /// (Ctrl word motions with Qt-like stops, focus on click). Not yet the default on Windows.
+    Windows,
+    /// OW0 (W6): macOS, from the platform guidelines until a WG3m lane pins it (Option word
+    /// motions, no focus on click for buttons). Not yet the default on macOS.
+    Mac,
 }
 
-/// What a [`Native`] does, one switch per behaviour WG3 measured.
+/// OW0: how a kinetic (momentum) scroll is produced.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Kinetic {
+    /// The OS sends momentum phases (macOS, Windows precision touchpads).
+    Os,
+    /// svelters decays the velocity itself (Linux touchpads without OS momentum).
+    Own,
+    /// None (mouse wheels).
+    None,
+}
+
+/// OW0: the platform's scrollbar style.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Scrollbars {
+    /// Thin bars over the content, shown while scrolling or hovered (VS Code, macOS, GTK).
+    Overlay,
+    /// Bars beside the content, always shown (Qt Fusion, classic Windows).
+    Classic,
+}
+
+/// OW0: when Space (or Enter) activates a focused button.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ActivateOn {
+    Press,
+    Release,
+}
+
+/// OW0 (FM1 QW11): the order of a dialog's affirmative and dismissive buttons.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ButtonOrder {
+    /// OK then Cancel (Windows, KDE).
+    OkCancel,
+    /// Cancel then OK (GTK, macOS).
+    CancelOk,
+}
+
+/// What a [`Native`] does, one switch per behaviour WG3 measured. `#[non_exhaustive]`: an app
+/// changes a field through [`override_policy`] (WIDGET-PARITY §4.3, the `styleHint` equivalent).
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[non_exhaustive]
 pub struct Policy {
     /// Word movement and deletion rules; `None`: egui's.
     pub words: Option<WordRules>,
@@ -61,18 +105,30 @@ pub struct Policy {
     pub focus_on_click: bool,
     /// Escape leaves keyboard focus where it is (egui drops it).
     pub escape_keeps_focus: bool,
-    /// OW2: scrolling and sashes (`interact::Scrollable`, `interact::Resizable`).
+    // ---- OW0: the behaviour units' fields (ARCH-WIDGETS §1.2) ----
+    /// Points the pointer moves before a press becomes a drag (GTK `gtk-dnd-drag-threshold` 8,
+    /// Qt `startDragDistance` 10, Windows `SM_CXDRAG` 4; WG3s pin 10 measures).
+    pub drag_threshold: f32,
+    /// The longest gap between the clicks of a double click.
+    pub double_click_ms: u32,
+    /// Hover time before a tooltip shows.
+    pub tooltip_delay_ms: u32,
+    /// A full caret blink cycle; 0 for no blink.
+    pub caret_blink_ms: u32,
+    pub kinetic: Kinetic,
+    pub scrollbars: Scrollbars,
+    /// When Space activates a focused button.
+    pub space_activates_on: ActivateOn,
+    pub button_order: ButtonOrder,
+    /// OW2: scroll gestures and sashes (`interact::Scrollable`, `interact::Resizable`).
     pub scroll: ScrollPolicy,
 }
 
-/// OW2 (ARCH-WIDGETS §1.2, §3.3): how scrollables and sashes behave on a platform. Sizes and
-/// colours are CSS (WIDGET-PARITY P9); this is timing and gesture behaviour only.
+/// OW2 (ARCH-WIDGETS §1.2, §3.3): how scrollables and sashes behave on a platform, beside
+/// [`Policy::kinetic`] and [`Policy::scrollbars`]. Sizes and colours are CSS (WIDGET-PARITY P9);
+/// this is timing and gesture behaviour only.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct ScrollPolicy {
-    /// Who continues a trackpad flick after the fingers leave.
-    pub kinetic: Kinetic,
-    /// Bars over the content (fading) or beside it (a gutter, always shown when it overflows).
-    pub bar: BarMode,
     /// What a primary press on the track (beside the thumb) does.
     pub track_click: TrackClick,
     /// Shift+press on the track does the other [`TrackClick`] (GTK).
@@ -85,28 +141,6 @@ pub struct ScrollPolicy {
     pub bar_fade: f32,
     /// R11: hovering a sash shows its hover bar and grip after this many seconds (VS Code 0.3 s).
     pub sash_hover_delay: f32,
-}
-
-/// Who continues a trackpad flick (ARCH-WIDGETS §3.3).
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Kinetic {
-    /// The OS sends momentum events after the fingers lift (macOS, Windows precision touchpads).
-    Os,
-    /// svelters decays the release velocity itself (Linux touchpads through libinput, as GTK).
-    Own,
-    /// No momentum (Qt widgets without `QScroller`).
-    None,
-}
-
-/// Where scroll bars sit (`--sv-scrollbar-mode` / `scrollbar-gutter`).
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum BarMode {
-    /// Over the content, thumb only, shown while hovered or scrolling and then faded (VS Code,
-    /// GTK 4, macOS).
-    Overlay,
-    /// Beside the content in a gutter with a track, shown whenever the content overflows (Qt
-    /// Fusion, Windows classic).
-    Classic,
 }
 
 /// A primary press on the track (Qt `SH_ScrollBar_LeftClickAbsolutePosition`, GTK
@@ -128,9 +162,15 @@ const GTK: Policy = Policy {
     one_selection_owner: true,
     focus_on_click: true,
     escape_keeps_focus: true,
+    drag_threshold: 8.0,
+    double_click_ms: 400,
+    tooltip_delay_ms: 500,
+    caret_blink_ms: 1200,
+    kinetic: Kinetic::Own,
+    scrollbars: Scrollbars::Overlay,
+    space_activates_on: ActivateOn::Release,
+    button_order: ButtonOrder::CancelOk,
     scroll: ScrollPolicy {
-        kinetic: Kinetic::Own,
-        bar: BarMode::Overlay,
         track_click: TrackClick::Jump,
         shift_track_click_inverts: true,
         line: 40.0,
@@ -149,9 +189,69 @@ const QT: Policy = Policy {
     one_selection_owner: false,
     focus_on_click: true,
     escape_keeps_focus: true,
+    drag_threshold: 10.0,
+    double_click_ms: 400,
+    tooltip_delay_ms: 700,
+    caret_blink_ms: 1000,
+    kinetic: Kinetic::None,
+    scrollbars: Scrollbars::Classic,
+    space_activates_on: ActivateOn::Release,
+    button_order: ButtonOrder::OkCancel,
     scroll: ScrollPolicy {
-        kinetic: Kinetic::None,
-        bar: BarMode::Classic,
+        track_click: TrackClick::Page,
+        shift_track_click_inverts: false,
+        line: 40.0,
+        bar_hold: 0.5,
+        bar_fade: 0.8,
+        sash_hover_delay: 0.3,
+    },
+};
+
+const WINDOWS: Policy = Policy {
+    words: Some(WordRules::Qt),
+    word_move_collapses: false,
+    select_on_keyboard_focus: true,
+    select_on_programmatic_focus: false,
+    keep_selection_unfocused: false,
+    one_selection_owner: false,
+    focus_on_click: true,
+    escape_keeps_focus: true,
+    drag_threshold: 4.0,
+    double_click_ms: 500,
+    tooltip_delay_ms: 400,
+    caret_blink_ms: 1060,
+    kinetic: Kinetic::Os,
+    scrollbars: Scrollbars::Overlay,
+    space_activates_on: ActivateOn::Release,
+    button_order: ButtonOrder::OkCancel,
+    scroll: ScrollPolicy {
+        track_click: TrackClick::Page,
+        shift_track_click_inverts: false,
+        line: 40.0,
+        bar_hold: 0.5,
+        bar_fade: 0.8,
+        sash_hover_delay: 0.3,
+    },
+};
+
+const MAC: Policy = Policy {
+    words: Some(WordRules::Qt),
+    word_move_collapses: false,
+    select_on_keyboard_focus: true,
+    select_on_programmatic_focus: true,
+    keep_selection_unfocused: true,
+    one_selection_owner: false,
+    focus_on_click: false,
+    escape_keeps_focus: true,
+    drag_threshold: 3.0,
+    double_click_ms: 500,
+    tooltip_delay_ms: 1000,
+    caret_blink_ms: 1060,
+    kinetic: Kinetic::Os,
+    scrollbars: Scrollbars::Overlay,
+    space_activates_on: ActivateOn::Release,
+    button_order: ButtonOrder::CancelOk,
+    scroll: ScrollPolicy {
         track_click: TrackClick::Page,
         shift_track_click_inverts: false,
         line: 40.0,
@@ -170,9 +270,15 @@ const EGUI: Policy = Policy {
     one_selection_owner: false,
     focus_on_click: false,
     escape_keeps_focus: false,
+    drag_threshold: 6.0,
+    double_click_ms: 300,
+    tooltip_delay_ms: 500,
+    caret_blink_ms: 1000,
+    kinetic: Kinetic::None,
+    scrollbars: Scrollbars::Overlay,
+    space_activates_on: ActivateOn::Press,
+    button_order: ButtonOrder::OkCancel,
     scroll: ScrollPolicy {
-        kinetic: Kinetic::Os,
-        bar: BarMode::Overlay,
         track_click: TrackClick::Jump,
         shift_track_click_inverts: false,
         line: 40.0,
@@ -197,6 +303,8 @@ impl Native {
             Native::Gtk => &GTK,
             Native::Qt => &QT,
             Native::Egui => &EGUI,
+            Native::Windows => &WINDOWS,
+            Native::Mac => &MAC,
         }
     }
 }
@@ -219,8 +327,36 @@ pub fn get(ctx: &egui::Context) -> Native {
     ctx.data(|d| d.get_temp(setting_id())).unwrap_or_else(|| Native::for_os(ctx.os()))
 }
 
-fn policy(ui: &Ui) -> &'static Policy {
-    get(ui.ctx()).policy()
+fn override_id() -> Id {
+    Id::unique("svelters-egui/native/policy-override")
+}
+
+/// OW0 (WIDGET-PARITY §4.3): changes fields of `ctx`'s policy (the `styleHint` equivalent):
+/// `override_policy(ctx, |p| p.tooltip_delay_ms = 400)`. The change applies on top of whichever
+/// [`Native`] is set, now and after a later [`set`]. `EmbedConfig::with_policy` calls it.
+pub fn override_policy(ctx: &egui::Context, f: fn(&mut Policy)) {
+    ctx.data_mut(|d| d.insert_temp(override_id(), PolicyOverride(f)));
+}
+
+/// Drops [`override_policy`]'s change.
+pub fn clear_policy_override(ctx: &egui::Context) {
+    ctx.data_mut(|d| d.remove::<PolicyOverride>(override_id()));
+}
+
+#[derive(Clone, Copy)]
+struct PolicyOverride(fn(&mut Policy));
+
+/// The policy `ctx`'s widgets follow: its [`Native`]'s row with the app's override applied.
+pub fn policy_of(ctx: &egui::Context) -> Policy {
+    let mut p = *get(ctx).policy();
+    if let Some(PolicyOverride(f)) = ctx.data(|d| d.get_temp::<PolicyOverride>(override_id())) {
+        f(&mut p);
+    }
+    p
+}
+
+fn policy(ui: &Ui) -> Policy {
+    policy_of(ui.ctx())
 }
 
 fn tab_pass_id() -> Id {

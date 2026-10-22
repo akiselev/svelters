@@ -29,7 +29,7 @@
 //! from their UA tables ([`THUMB_UA`], [`TRACK_UA`], [`SHADOW_UA`]).
 
 use crate::interact::{BarGeom, Scroll, ScrollParams, Scrollable, Unit};
-use crate::native::BarMode;
+use crate::native::Scrollbars as BarMode;
 use crate::paint::{self, StyleView, Ua, UaRule, UaValue::*};
 use crate::provider::{A11yCx, AvailableSpace, Event, MeasureCx, StateBits, Widget, WidgetCx};
 use egui::{Color32, Rect, Vec2, accesskit, pos2, vec2};
@@ -268,7 +268,7 @@ impl Widget for ScrollArea {
     fn ui(&mut self, ui: &mut egui::Ui, cx: &mut WidgetCx<'_>) -> egui::Response {
         let rect = cx.rect();
         let now = ui.input(|i| i.time);
-        let policy = crate::native::get(ui.ctx()).policy();
+        let policy = crate::native::policy_of(ui.ctx());
         let pol = policy.scroll;
         let dark = cx.dark();
         let st = cx.style(UA);
@@ -282,7 +282,7 @@ impl Widget for ScrollArea {
         let axes = [ax, ay];
         let chain = !matches!(st.keyword("overscroll-behavior"), Some("contain" | "none"));
         let margin = st.px("scroll-margin").unwrap_or(0.0).max(0.0);
-        let mode = crate::interact::scroll::bar_mode(st.keyword("scrollbar-gutter").or(st.keyword("--sv-scrollbar-mode")), &pol);
+        let mode = crate::interact::scroll::bar_mode(st.keyword("scrollbar-gutter").or(st.keyword("--sv-scrollbar-mode")), policy.scrollbars);
 
         // a host write of the offset (one that differs from what was last drawn) scrolls
         let want = vec2(self.scroll_x as f32, self.scroll_y as f32);

@@ -17,7 +17,7 @@
 //! track press does (page or jump), how long overlay bars stay before they fade.
 
 use super::{InputCx, Intents, Unit};
-use crate::native::{BarMode, Kinetic, ScrollPolicy, TrackClick};
+use crate::native::{Kinetic, ScrollPolicy, Scrollbars, TrackClick};
 use crate::provider::StateBits;
 use egui::{Key, Modifiers, Rect, Vec2, accesskit, vec2};
 
@@ -328,7 +328,6 @@ impl Scrollable {
     }
 
     fn input_wheel(&mut self, p: &ScrollParams, cx: &InputCx<'_>, out: &mut Intents<Scroll>) {
-        let pol = &cx.policy.scroll;
         let dt = (cx.now - self.last_time).clamp(0.0, 0.1) as f32;
         // the trackpad's phase: momentum (Kinetic::Own) starts when the fingers lift
         let mut trackpad_end = false;
@@ -371,7 +370,7 @@ impl Scrollable {
         } else if trackpad_move {
             self.flick = false;
         }
-        if trackpad_end && pol.kinetic == Kinetic::Own && cx.resp.contains_pointer && self.vel.length() > 30.0 {
+        if trackpad_end && cx.policy.kinetic == Kinetic::Own && cx.resp.contains_pointer && self.vel.length() > 30.0 {
             self.flick = true;
         }
         if self.flick {
@@ -629,11 +628,11 @@ impl Unit for Scrollable {
 
 /// The bar mode for a host: `classic` or `overlay` from CSS (`--sv-scrollbar-mode`,
 /// `scrollbar-gutter: stable` = classic), else the platform's.
-pub fn bar_mode(css: Option<&str>, pol: &ScrollPolicy) -> BarMode {
+pub fn bar_mode(css: Option<&str>, platform: Scrollbars) -> Scrollbars {
     match css {
-        Some("classic" | "stable") => BarMode::Classic,
-        Some("overlay" | "auto") => BarMode::Overlay,
-        _ => pol.bar,
+        Some("classic" | "stable") => Scrollbars::Classic,
+        Some("overlay" | "auto") => Scrollbars::Overlay,
+        _ => platform,
     }
 }
 

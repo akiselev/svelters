@@ -400,10 +400,13 @@ fn style_json() -> J {
 
 /// The whole spec.
 pub fn semantics() -> J {
+    // OW0: a kind with an own widget lists the widget's extra props and signals too
+    let reg = KindRegistry::global();
     let kinds: Map<String, J> = KINDS
         .iter()
-        .map(|k| {
-            let mut j = kind_json(k);
+        .enumerate()
+        .map(|(i, k)| {
+            let mut j = kind_json(reg.spec_kind(i));
             add_docs(&mut j, k, None);
             (k.id.to_string(), j)
         })
@@ -710,7 +713,7 @@ pub fn builtin_typings() -> String {
         for b in bases.iter().rev().filter(|b| b.id != "Widget") {
             ts_members(&mut s, "    ", b, None);
         }
-        ts_members(&mut s, "    ", k, None);
+        ts_members(&mut s, "    ", KindRegistry::global().spec_kind(i), None);
         s.push_str("  };\n");
     }
     s.push_str("}\n");
