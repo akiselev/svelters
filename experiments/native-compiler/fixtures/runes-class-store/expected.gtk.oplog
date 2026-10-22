@@ -1,24 +1,24 @@
 create window #1
-set #1 title "Todos"
 create box #2
 set #2 orientation "vertical"
 set #2 spacing 4
 create label #3
-set #3 label "Todos: 0/0 left (next #1)"
 insert #2 #3 before=end slot=default
 create button #4
-listen #4 clicked on
 set #4 label "Add"
 insert #2 #4 before=end slot=default
 create button #5
-listen #5 clicked on
 set #5 label "Toggle first"
 insert #2 #5 before=end slot=default
 create button #6
-listen #6 clicked on
 set #6 label "Rename"
 insert #2 #6 before=end slot=default
 insert #1 #2 before=end slot=default
+set #1 title "Todos"
+set #3 label "Todos: 0/0 left (next #1)"
+listen #4 clicked on
+listen #5 clicked on
+listen #6 clicked on
 call #1 present []
 event #4 clicked []
 set #3 label "Todos: 1/1 left (next #2)"

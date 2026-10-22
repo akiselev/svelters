@@ -4,21 +4,21 @@ create box-layout #2
 set #2 direction "top-to-bottom"
 set #2 spacing 4
 create label #3
-set #3 text "0 (last none, 0 steps) x0 mounted 1"
 insert #2 #3 before=end slot=default
 create push-button #4
-listen #4 clicked on
 set #4 text "+1"
 insert #2 #4 before=end slot=default
 create push-button #5
-listen #5 clicked on
 set #5 text "+5"
 insert #2 #5 before=end slot=default
 create push-button #6
-listen #6 clicked on
 set #6 text "Factor"
 insert #2 #6 before=end slot=default
 insert #1 #2 before=end slot=default
+set #3 text "0 (last none, 0 steps) x0 mounted 1"
+listen #4 clicked on
+listen #5 clicked on
+listen #6 clicked on
 call #1 present []
 event #4 clicked []
 set #3 text "1 (last 1, 1 steps) x2 mounted 1"

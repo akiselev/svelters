@@ -23,29 +23,45 @@ export default function App($$anchor, $$props) {
   $n.set(n2, 'orientation', 'vertical');
   $n.set(n2, 'spacing', 8);
   const n3 = $n.element('label');
-  $.template_effect(() => $n.set(n3, 'label', `Count: ${$.get(count) ?? ''}`));
   $n.append($n.slot(n2, null), n3);
   const n4 = $n.element('button');
-  $n.on(n4, 'clicked', () => $.update(count));
   $n.set(n4, 'label', 'Increment');
   $n.append($n.slot(n2, null), n4);
   $n.append($n.slot(n1, null), n2);
-  $n.append($$anchor, n1);
+  $n.append($$anchor, n1);                         // a toplevel at the root: shown when mount returns
+  $.template_effect(() => $n.set(n3, 'label', `Count: ${$.get(count) ?? ''}`));
+  $n.on(n4, 'clicked', () => $.update(count));
   $.pop();
 }
 // entry: $n.mount(App, { props: {} })
 ```
 
+A fragment (the component root, a block branch, a snippet or component children, an element's
+children that declare snippets or `{@const}`s) is written as Svelte's Fragment visitor writes it
+(CF2, `plans/milestones/CF2-template-effects.md`):
 
-Required op order (as the retired JS pipeline's op logs): `create`, static `set`s / `listen`s /
-first effect runs in source order, children inserted into a node before that node is inserted
-into its parent, `present` after a toplevel's subtree is complete.
+1. **init**, in source order: each element is created and gets its static props, child attributes
+   and one-off writes, then its children (inserted into it), then its actions, attachments and
+   `bind:this`, then it is inserted into its parent; blocks, components and `{@render}` tags in
+   place.
+2. **update**: one `$.template_effect` with every reactive write of the fragment's elements
+   (element order, an element before its children; call expressions memoized as its
+   dependencies). It is created after the fragment's blocks and child components, so their
+   template expressions run first, and every write in it runs again when any value of the
+   fragment changes (the runtime skips unchanged values).
+3. **after_update**: events (`$n.on`), an element's before its children's, then two-way and
+   read-only bindings (`$n.bind*`), an element's after its children's, so a binding's first write
+   sees the element's other props (a bound `value` after a reactive `max`).
 
-Update order: render effects run in effect-tree order during a flush, so with template effects
-emitted in source order (above) an update can order its ops differently from the retired JS pipeline,
-where Svelte groups a fragment's template effects after its blocks (e.g. a label update before the
-`{#if}` below it instead of after). The resulting native state is the same; see
-`experiments/native-compiler/handwritten/README.md`.
+Op order that follows: `create`, static `set`s, children inserted into a node before that node
+is inserted into its parent, then the reactive props' first `set`s, then `listen`s, then
+`present`. A toplevel shown at the root (`present`, or a modal dialog's method) is shown when the
+outermost build returns (`mount`, or a block branch created in a later update), so after its
+fragment's template effect wrote its props, and toplevels are shown in document order.
+
+Update order: render effects run in effect-tree order during a flush: a fragment's blocks before
+its template effect, as in Svelte (the retired JS pipeline ran Svelte's own output, so updates
+order their ops as it did).
 
 Text content folded into a prop (`label` of label/button) must be a string: the compiler emits a
 template literal (`` `${$.get(x) ?? ''}` ``) unless the expression is statically a string.
@@ -88,7 +104,7 @@ boundaries as Svelte's runtime sees them on `effect.b`), `queue_task`, `get_all_
 | Function | Semantics |
 | --- | --- |
 | `element(kind)` | `host.create(kind)`; registers the node with the current ownership scope. (`element(kind, present)` is `toplevel(kind, present)`.) |
-| `toplevel(kind, present, show?)` | A toplevel kind (X7, the compiler emits it for every one): created like `element`. Appended to the root container it is shown by its policy; appended anywhere else it is inserted into the nearest enclosing toplevel (`host.insert(enclosing, h, null)`: transient, backend-abi.md "Toplevels in the tree") once the appends around it are complete, and shown after that one was shown. Policy: the static `show` (`modal`, `modeless`, `none`; `show_invalid` at compile time otherwise), else `modal` for dialog kinds (`TOPLEVELS` in `src/bindings.generated.js`) and `modeless` for windows. `modeless` calls `present` (the spec's method; null: the first `TOPLEVELS` candidate the host resolves); `modal` calls the kind's modal method (`open` on Qt dialogs, else `present`), setting `modal` to true first when the kind has it and the app did not set it; `none` shows nothing (the app calls `present` through `bind:this`). Removal: `host.remove(enclosing, h)`, then destroy. |
+| `toplevel(kind, present, show?)` | A toplevel kind (X7, the compiler emits it for every one): created like `element`. Appended to the root container it is shown by its policy when the outermost build (`mount`, a block branch) returns, so after its fragment's template effect, in append order (a failed build shows nothing); appended anywhere else it is inserted into the nearest enclosing toplevel (`host.insert(enclosing, h, null)`: transient, backend-abi.md "Toplevels in the tree") once the appends around it are complete, and shown after that one was shown. Policy: the static `show` (`modal`, `modeless`, `none`; `show_invalid` at compile time otherwise), else `modal` for dialog kinds (`TOPLEVELS` in `src/bindings.generated.js`) and `modeless` for windows. `modeless` calls `present` (the spec's method; null: the first `TOPLEVELS` candidate the host resolves); `modal` calls the kind's modal method (`open` on Qt dialogs, else `present`), setting `modal` to true first when the kind has it and the app did not set it; `none` shows nothing (the app calls `present` through `bind:this`). Removal: `host.remove(enclosing, h)`, then destroy. |
 | `attached(kind)` | A kind the spec marks `attaches_to` (GTK event controllers and `context-menu`, a Qt `menu` outside a menu container) placed in an element whose slots do not take it: created like `element`, inserted into its parent with no slot and no position (`host.insert(parent, h, null)`), never used as the `before` of a sibling, not moved by keyed updates. In a text-content element (`<button>Copy <context-menu>…`) it does not count as content. |
 | `set(node, prop, value)` | `host.setProp` unless `value` equals the last value written (`Object.is`). No-op on a dead or destroyed node. |
 | `assume(node, prop, value)` | Records the spec's native default as the last value without writing it (a fresh widget is at its default), so a style fallback to the default is not written redundantly. |
@@ -102,9 +118,9 @@ boundaries as Svelte's runtime sees them on `effect.b`), `queue_task`, `get_all_
 | `bind_prop(node, prop, get, set, signal?, arg?)` | R2: two-way binding on observation, emitted for `bind:` on a prop that is `exact` on the platform with a delivery-verified fact (OV1; an `exact` fact without delivery evidence keeps the signal plan, or without one is emitted here with `bind_observation_unverified`), and on a `partial` one without a signal plan, with `bind_partially_observed`. A render effect writes `get()` through `set(node, prop, …)`; the binding observes (handle, prop) through `src/observe.js` (`observeProp`, R1's tracker; a stand-in over `host.observe` + `__svelters_prop_changed` until R1 merges) for the enclosing effect's lifetime, holding one host-side observation itself. Each delivered value (read with `getProp` when it comes as `undefined`, a proportional prop) becomes the node's last value and goes to `set(v)` when it differs from `get()`. `signal`/`arg` are the spec's signal plan, used only when `host.observe` answers false (the backend has no mechanism for the prop yet). |
 | `bind_readonly(node, prop, set)` | R2: a read-only observable prop (no `bindings` annotation needed): `set` gets the value at creation, again after the first layout pass (the next host turn) if it changed, then every observed change. Never writes. |
 | `bind_once(node, prop, get, set, readonly)` | R2: `bind:prop\|nonreactive` (REACTIVITY.md section 8.2). Two-way: state -> native as usual, native -> state once right after the first write (a bound `undefined` takes the native value instead of being written), then never: no observation, no signal, no mirror. Read-only: one snapshot after the first layout pass. |
-| `track(node, prop, signal, arg)` | For a one-way prop that has a spec binding (`text={draft}` on an entry, without `bind:`): on `signal` records `args[arg]` (or `getProp` when `arg < 0`) as the node's last value for `prop`, so writing the same value back is not echoed. Passive: it runs (before the handlers) when the signal is delivered because a handler listens, but never makes the host listen itself, exactly as the JS renderer's hard-coded `entry`/`changed` mirror. |
+| `track(node, prop, signal, arg)` | For a one-way prop that has a spec binding (`text={draft}` on an entry, without `bind:`): on `signal` records `args[arg]` (or `getProp` when `arg < 0`) as the node's last value for `prop`, so writing the same value back is not echoed. `set` of a tracked prop also skips the value it was given last time, so the fragment's template effect running again for another value does not write the old value over the user's edit (Svelte's DOM setters compare with their last value too). Passive: it runs (before the handlers) when the signal is delivered because a handler listens, but never makes the host listen itself, exactly as the JS renderer's hard-coded `entry`/`changed` mirror. |
 | `slot(node, name)` | The container for `node`'s slot `name` (`null` = default slot; the host gets `slot` undefined). Same object for the same (node, name). |
-| `append(container, node)` | Appends at the end of the container (slot, region or root): `host.insert(parent, h, before, slot)` where `before` is the next inserted live native after it in the same parent+slot, looking through regions (null = end). For the root container: `present`. Insertion is immediate: branches are always built in place (see `each_block`), so no deferred attach is needed. Skipped when the node or its native parent is dead. |
+| `append(container, node)` | Appends at the end of the container (slot, region or root): `host.insert(parent, h, before, slot)` where `before` is the next inserted live native after it in the same parent+slot, looking through regions (null = end). For the root container: the toplevel's show policy (`toplevel`). Insertion is immediate: branches are always built in place (see `each_block`), so no deferred attach is needed. Skipped when the node or its native parent is dead. |
 | `if_block(container, test, consequent, alternate)` | A region in `container`. A Svelte `block` effect evaluates `!!test()`; on change it builds the other branch (a `branch` effect + scope, `fn(anchor)` with `anchor` the branch's region) after the current one, then disposes the current one (effect, then natives). Op order: create/insert new, remove/destroy old, as Svelte's own if block. `alternate` may be null. |
 | `each_block(container, collection, key, render, fallback)` | `render(anchor, item, index)` with `item`/`index` sources (`$.get(item)` in the body); `key(value, index)` or null for index-based; `fallback(anchor)` or null. Keyed: duplicate keys throw; removed items are disposed first, kept items get `$.set(item)`/`$.set(index)`, items outside a longest increasing subsequence of old positions are moved back to front (`host.remove` + `host.insert(before)`: minimal moves), then new items are built front to back (creation order = handle order follows the list). Index-based: item sources updated in place, surplus items disposed from the end, new ones appended. |
 | `region(container)` | A child region (used for component calls: `Child($n.region(c), props)`, and direct snippet calls: `row($n.region(c), () => a)`). |

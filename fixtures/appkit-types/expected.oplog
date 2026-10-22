@@ -11,20 +11,21 @@ create stack-view #5
 set #5 orientation "vertical"
 set #5 spacing 6
 create text-field #6
+set #6 editable false
+insert #5 #6 before=end slot=default
+create text-field #7
+set #7 editable false
+insert #5 #7 before=end slot=default
+create text-field #8
+set #8 editable false
+insert #5 #8 before=end slot=default
+insert #4 #5 before=end slot=default
 call #1 host []
 set #6 string-value null
 set #6 text-color null
 set #6 font null
-set #6 editable false
-insert #5 #6 before=end slot=default
-create text-field #7
 set #7 string-value "undo levels 5"
-set #7 editable false
-insert #5 #7 before=end slot=default
-create text-field #8
 set #8 string-value "loading"
-set #8 editable false
-insert #5 #8 before=end slot=default
-insert #4 #5 before=end slot=default
 call #4 make-key-and-order-front []
+call #1 host []
 set #8 string-value "none"

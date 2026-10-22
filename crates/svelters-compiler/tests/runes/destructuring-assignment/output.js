@@ -25,8 +25,8 @@ export default function Input($$anchor, $$props) {
     [plain1, plain2] = [plain2, plain1];
   }
 	const $$n1 = $n.element("label");
-	$.template_effect(() => $n.set($$n1, "label", `${$.get(a)} ${$.get(b)} ${left()} ${right()}`));
 	$n.track($$n1, "label", "notify::label", -1);
 	$n.append($$anchor, $$n1);
+	$.template_effect(() => $n.set($$n1, "label", `${$.get(a)} ${$.get(b)} ${left()} ${right()}`));
 	$.pop();
 }

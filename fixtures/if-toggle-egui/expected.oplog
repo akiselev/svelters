@@ -3,13 +3,13 @@ set #1 title "If toggle"
 create box #2
 set #2 gap 8
 create button #3
-listen #3 clicked on
 set #3 text "Toggle"
 insert #2 #3 before=end slot=default
 create label #4
 set #4 text "Hidden"
 insert #2 #4 before=end slot=default
 insert #1 #2 before=end slot=default
+listen #3 clicked on
 call #1 present []
 event #3 clicked []
 create label #5

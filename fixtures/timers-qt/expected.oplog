@@ -1,8 +1,8 @@
 create main-window #1
 set #1 window-title "Timers"
 create label #2
-set #2 text "waiting"
 insert #1 #2 before=end slot=default
+set #2 text "waiting"
 call #1 present []
 set #2 text "timer 1"
 set #2 text "timer 2"

@@ -7,31 +7,23 @@ create line-edit #3
 set #3 text "seed"
 insert #2 #3 before=end slot=default
 create push-button #4
-listen #4 clicked on
 set #4 text "Walk"
 insert #2 #4 before=end slot=default
 create push-button #5
-listen #5 clicked on
 set #5 text "Drop"
 insert #2 #5 before=end slot=default
 create push-button #6
-listen #6 clicked on
 set #6 text "Probe"
 insert #2 #6 before=end slot=default
 create label #7
-set #7 text "(none)"
 insert #2 #7 before=end slot=default
 create label #8
-set #8 text "(none)"
 insert #2 #8 before=end slot=default
 create label #9
-set #9 text "(none)"
 insert #2 #9 before=end slot=default
 create label #10
-set #10 text "(none)"
 insert #2 #10 before=end slot=default
 create label #11
-set #11 text "(none)"
 insert #2 #11 before=end slot=default
 create scroll-area #12
 create box-layout #13
@@ -43,6 +35,14 @@ insert #13 #14 before=end slot=default
 insert #12 #13 before=end slot=default
 insert #2 #12 before=end slot=default
 insert #1 #2 before=end slot=default
+set #7 text "(none)"
+set #8 text "(none)"
+set #9 text "(none)"
+set #10 text "(none)"
+set #11 text "(none)"
+listen #4 clicked on
+listen #5 clicked on
+listen #6 clicked on
 call #1 present []
 event #4 clicked []
 call #3 getParent []

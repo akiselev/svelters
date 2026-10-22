@@ -324,6 +324,36 @@ function pickMethod(node, names) {
  */
 function showTop(node) {
   node.shown = true;
+  if (depth > 0) shows.push(node);
+  else presentTop(node);
+}
+
+/**
+ * Builds in progress (`mount`, block branches). A toplevel shown during one is shown when the
+ * outermost returns: after the template effect of its fragment, which runs after the fragment's
+ * blocks and components (Svelte's order), wrote its props, and in document order (a toplevel
+ * in a block shown after the toplevel declared before the block). A failed build shows nothing.
+ */
+let depth = 0;
+let shows = [];
+
+function building(fn) {
+  depth++;
+  let ok = false;
+  try {
+    const r = fn();
+    ok = true;
+    return r;
+  } finally {
+    if (--depth === 0 && shows.length) {
+      const list = shows;
+      shows = [];
+      if (ok) for (const n of list) if (alive(n)) presentTop(n);
+    }
+  }
+}
+
+function presentTop(node) {
   const spec = Object.hasOwn(TOPLEVELS, node.kind) ? TOPLEVELS[node.kind] : null;
   const mode = node.top.show ?? (spec?.dialog ? 'modal' : 'modeless');
   if (mode === 'none') return;
@@ -418,6 +448,14 @@ export function set(node, prop, value) {
     value = node.captured.get(prop);
   }
   if (!alive(node)) return;
+  // a tracked prop (`track`): `last` follows the native edits, so the template effect running
+  // again with the value it wrote before (another value of its fragment changed) must not write
+  // it over the user's edit. Svelte's DOM setters compare with the last value they were given too.
+  const req = node.requested;
+  if (req?.has(prop)) {
+    if (Object.is(req.get(prop), value)) return;
+    req.set(prop, value);
+  }
   if (node.last.has(prop) && Object.is(node.last.get(prop), value)) return;
   node.last.set(prop, value);
   node.host.setProp(node.h, prop, value);
@@ -623,6 +661,8 @@ export function listen(type, handler, options = {}) {
   };
 }
 
+const NOT_REQUESTED = Symbol('not requested');
+
 const reported = (node, prop, arg, args) => (arg >= 0 ? args[arg] : node.host.getProp(node.h, prop));
 
 /** Two-way binding: `prop` follows `get()`, and `signal` reports native changes to `setv`. */
@@ -642,6 +682,8 @@ export function bind(node, prop, signal, arg, get, setv) {
  * make the host listen by itself.
  */
 export function track(node, prop, signal, arg) {
+  // `set` compares with the last value it was given (no value yet: NOT_REQUESTED)
+  (node.requested ??= new Map()).set(prop, NOT_REQUESTED);
   let list = node.passive.get(signal);
   if (!list) node.passive.set(signal, (list = []));
   list.push((...args) => void node.last.set(prop, reported(node, prop, arg, args)));
@@ -806,7 +848,9 @@ function open(parent, owner, fn, b = newRegion(parent), ...args) {
   const prev = scope;
   scope = b.scope;
   try {
-    b.effect = branch(() => fn(b, ...args));
+    building(() => {
+      b.effect = branch(() => fn(b, ...args));
+    });
   } finally {
     scope = prev;
   }
@@ -1324,21 +1368,23 @@ export function mount(Component, { props = {}, target, transformError } = {}) {
   try {
     // In a branch, as Svelte's mount does (through its boundary): user effects created during the
     // root component's init are then deferred to its $.pop(), i.e. run after its children's.
-    dispose_root = componentRoot(() => {
-      branch(() => {
-        // the root of the boundary chain (Svelte's mount renders the app in a boundary): carries
-        // `transformError` for every <svelte:boundary>, handles nothing itself
-        root_boundary(
-          boundary_handler({
-            transform_error: transformError ?? ((e) => e),
-            error(e) {
-              throw e;
-            },
-          }),
-        );
-        exports = Component(root, props);
-      });
-    });
+    dispose_root = building(() =>
+      componentRoot(() => {
+        branch(() => {
+          // the root of the boundary chain (Svelte's mount renders the app in a boundary): carries
+          // `transformError` for every <svelte:boundary>, handles nothing itself
+          root_boundary(
+            boundary_handler({
+              transform_error: transformError ?? ((e) => e),
+              error(e) {
+                throw e;
+              },
+            }),
+          );
+          exports = Component(root, props);
+        });
+      }),
+    );
   } catch (e) {
     // a failed first render: tear down what it already created (natives inserted under the
     // root or target, handlers, effects) before the error leaves mount

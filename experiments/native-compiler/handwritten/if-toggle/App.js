@@ -14,7 +14,6 @@ export default function App($$anchor, $$props) {
   $n.set(n3, 'orientation', 'vertical');
   $n.set(n3, 'spacing', 8);
   const n4 = $n.element('button');
-  $n.on(n4, 'clicked', () => $.set(show, !$.get(show)));
   $n.set(n4, 'label', 'Toggle');
   $n.append($n.slot(n3, null), n4);
   $n.if_block(
@@ -33,5 +32,7 @@ export default function App($$anchor, $$props) {
   );
   $n.append($n.slot(n1, null), n3);
   $n.append($$anchor, n1);
+  // events after the fragment's template effect (Svelte's order)
+  $n.on(n4, 'clicked', () => $.set(show, !$.get(show)));
   $.pop();
 }

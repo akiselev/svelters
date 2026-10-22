@@ -7,31 +7,24 @@ create box #3
 set #3 orientation "horizontal"
 set #3 spacing 4
 create button #4
-listen #4 clicked on
 set #4 label "fill1k"
 insert #3 #4 before=end slot=default
 create button #5
-listen #5 clicked on
 set #5 label "fill10k"
 insert #3 #5 before=end slot=default
 create button #6
-listen #6 clicked on
 set #6 label "fill100k"
 insert #3 #6 before=end slot=default
 create button #7
-listen #7 clicked on
 set #7 label "append"
 insert #3 #7 before=end slot=default
 create button #8
-listen #8 clicked on
 set #8 label "prepend"
 insert #3 #8 before=end slot=default
 create button #9
-listen #9 clicked on
 set #9 label "removeFirst"
 insert #3 #9 before=end slot=default
 create button #10
-listen #10 clicked on
 set #10 label "removeMiddle"
 insert #3 #10 before=end slot=default
 insert #2 #3 before=end slot=default
@@ -39,48 +32,37 @@ create box #11
 set #11 orientation "horizontal"
 set #11 spacing 4
 create button #12
-listen #12 clicked on
 set #12 label "reverse"
 insert #11 #12 before=end slot=default
 create button #13
-listen #13 clicked on
 set #13 label "rename"
 insert #11 #13 before=end slot=default
 create button #14
-listen #14 clicked on
 set #14 label "sortDesc"
 insert #11 #14 before=end slot=default
 create button #15
-listen #15 clicked on
 set #15 label "odd"
 insert #11 #15 before=end slot=default
 create button #16
-listen #16 clicked on
 set #16 label "clear"
 insert #11 #16 before=end slot=default
 create button #17
-listen #17 clicked on
 set #17 label "moveFirst"
 insert #11 #17 before=end slot=default
 create button #18
-listen #18 clicked on
 set #18 label "scrollEnd"
 insert #11 #18 before=end slot=default
 create button #19
-listen #19 clicked on
 set #19 label "scrollStart"
 insert #11 #19 before=end slot=default
 create button #20
-listen #20 clicked on
 set #20 label "scrollMid"
 insert #11 #20 before=end slot=default
 create button #21
-listen #21 clicked on
 set #21 label "toggle"
 insert #11 #21 before=end slot=default
 insert #2 #11 before=end slot=default
 create label #22
-set #22 label "items=0 selected=-1 activated=-"
 insert #2 #22 before=end slot=default
 create virtual-list #23
 set #23 layout "list"
@@ -96,6 +78,24 @@ listen #23 activate on
 listen #23 select on
 insert #2 #23 before=end slot=default
 insert #1 #2 before=end slot=default
+set #22 label "items=0 selected=-1 activated=-"
+listen #4 clicked on
+listen #5 clicked on
+listen #6 clicked on
+listen #7 clicked on
+listen #8 clicked on
+listen #9 clicked on
+listen #10 clicked on
+listen #12 clicked on
+listen #13 clicked on
+listen #14 clicked on
+listen #15 clicked on
+listen #16 clicked on
+listen #17 clicked on
+listen #18 clicked on
+listen #19 clicked on
+listen #20 clicked on
+listen #21 clicked on
 call #1 present []
 event #4 clicked []
 set #22 label "items=1000 selected=-1 activated=-"

@@ -4,7 +4,6 @@ create stack-view #2
 set #2 orientation "vertical"
 set #2 spacing 8
 create text-field #3
-set #3 string-value "Count: 0"
 set #3 editable false
 set #3 selectable false
 set #3 bezeled false
@@ -12,9 +11,10 @@ set #3 draws-background false
 insert #2 #3 before=end slot=default
 create button #4
 set #4 title "Increment"
-listen #4 action on
 insert #2 #4 before=end slot=default
 insert #1 #2 before=end slot=default
+set #3 string-value "Count: 0"
+listen #4 action on
 call #1 make-key-and-order-front []
 event #4 action []
 set #3 string-value "Count: 1"

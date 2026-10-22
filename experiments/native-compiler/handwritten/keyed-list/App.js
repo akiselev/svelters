@@ -32,17 +32,13 @@ export default function App($$anchor, $$props) {
   $n.set(n3, 'spacing', 6);
   const n4 = $n.element('entry');
   $n.set(n4, 'placeholder-text', 'New item');
-  $.template_effect(() => $n.set(n4, 'text', $.get(draft)));
   // entry.text has a spec binding (changed, arg 0): the one-way prop is tracked, no echo.
   $n.track(n4, 'text', 'changed', 0);
-  $n.on(n4, 'changed', (arg) => $.set(draft, arg?.detail ?? arg));
   $n.append($n.slot(n3, null), n4);
   const n5 = $n.element('button');
-  $n.on(n5, 'clicked', add);
   $n.set(n5, 'label', 'Add');
   $n.append($n.slot(n3, null), n5);
   const n6 = $n.element('button');
-  $n.on(n6, 'clicked', reverse);
   $n.set(n6, 'label', 'Reverse');
   $n.append($n.slot(n3, null), n6);
   $n.append($n.slot(n2, null), n3);
@@ -59,13 +55,13 @@ export default function App($$anchor, $$props) {
       $n.set(n9, 'orientation', 'horizontal');
       $n.set(n9, 'spacing', 6);
       const n10 = $n.element('label');
-      $.template_effect(() => $n.set(n10, 'label', $.get(row).text ?? ''));
       $n.append($n.slot(n9, null), n10);
       const n11 = $n.element('button');
-      $n.on(n11, 'clicked', () => remove($.get(row).id));
       $n.set(n11, 'label', 'Remove');
       $n.append($n.slot(n9, null), n11);
       $n.append($$anchor, n9);
+      $.template_effect(() => $n.set(n10, 'label', $.get(row).text ?? ''));
+      $n.on(n11, 'clicked', () => remove($.get(row).id));
     },
     null,
   );
@@ -73,5 +69,10 @@ export default function App($$anchor, $$props) {
   $n.append($n.slot(n2, null), n7);
   $n.append($n.slot(n1, null), n2);
   $n.append($$anchor, n1);
+  // the fragment's template effect (after the {#each} above), then its events (Svelte's order)
+  $.template_effect(() => $n.set(n4, 'text', $.get(draft)));
+  $n.on(n4, 'changed', (arg) => $.set(draft, arg?.detail ?? arg));
+  $n.on(n5, 'clicked', add);
+  $n.on(n6, 'clicked', reverse);
   $.pop();
 }

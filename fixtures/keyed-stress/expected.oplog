@@ -4,31 +4,31 @@ create box #2
 set #2 orientation "vertical"
 set #2 spacing 2
 create label #3
-set #3 label ""
 insert #2 #3 before=end slot=default
 create box #4
 set #4 orientation "vertical"
 set #4 spacing 2
 create label #5
-set #5 label "1"
 insert #4 #5 before=end slot=default
+set #5 label "1"
 create label #6
-set #6 label "2"
 insert #4 #6 before=end slot=default
+set #6 label "2"
 create label #7
-set #7 label "3"
 insert #4 #7 before=end slot=default
+set #7 label "3"
 create label #8
-set #8 label "4"
 insert #4 #8 before=end slot=default
+set #8 label "4"
 create label #9
-set #9 label "5"
 insert #4 #9 before=end slot=default
+set #9 label "5"
 create label #10
-set #10 label "6"
 insert #4 #10 before=end slot=default
+set #10 label "6"
 insert #2 #4 before=end slot=default
 insert #1 #2 before=end slot=default
+set #3 label ""
 call #1 present []
 remove #4 #6
 insert #4 #6 before=#5 slot=default
@@ -41,14 +41,14 @@ insert #4 #9 before=#8 slot=default
 remove #4 #10
 insert #4 #10 before=#9 slot=default
 create label #11
-set #11 label "7"
 insert #4 #11 before=#8 slot=default
+set #11 label "7"
 create label #12
-set #12 label "8"
 insert #4 #12 before=#10 slot=default
+set #12 label "8"
 create label #13
-set #13 label "9"
 insert #4 #13 before=end slot=default
+set #13 label "9"
 remove #4 #12
 destroy #12
 remove #4 #8
@@ -90,9 +90,9 @@ destroy #13
 remove #4 #10
 insert #4 #10 before=#6 slot=default
 create label #14
-set #14 label "101"
 insert #4 #14 before=#10 slot=default
+set #14 label "101"
 create label #15
-set #15 label "100"
 insert #4 #15 before=#10 slot=default
+set #15 label "100"
 set #3 label "101,100,6,2"

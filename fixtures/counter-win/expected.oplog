@@ -5,10 +5,8 @@ set #2 orientation "vertical"
 set #2 spacing 8
 set #2 padding "16"
 create text-block #3
-set #3 text "Count: 0"
 insert #2 #3 before=end slot=default
 create button #4
-listen #4 click on
 set #4 content "Increment"
 insert #2 #4 before=end slot=default
 create grid #5
@@ -18,32 +16,34 @@ set #5 column-spacing 8
 set #5 row-spacing 8
 create text-box #6
 set #6 placeholder-text "Name"
-listen #6 text-changed on
 insert #5 #6 before=end slot=default
 attr #5 #6 row 0
 attr #5 #6 column 0
 create text-block #7
-set #7 text "Hello "
 insert #5 #7 before=end slot=default
 attr #5 #7 row 0
 attr #5 #7 column 1
 create slider #8
 set #8 minimum 0
 set #8 maximum 100
-set #8 value 20
-listen #8 value-changed on
 insert #5 #8 before=end slot=default
 attr #5 #8 row 1
 attr #5 #8 column 0
 create check-box #9
-listen #9 checked on
-listen #9 unchecked on
-set #9 content "Level 20, agree: no"
 insert #5 #9 before=end slot=default
 attr #5 #9 row 1
 attr #5 #9 column 1
 insert #2 #5 before=end slot=default
 insert #1 #2 before=end slot=default
+set #3 text "Count: 0"
+set #7 text "Hello "
+set #8 value 20
+set #9 content "Level 20, agree: no"
+listen #4 click on
+listen #6 text-changed on
+listen #8 value-changed on
+listen #9 checked on
+listen #9 unchecked on
 call #1 activate []
 event #4 click []
 set #3 text "Count: 1"

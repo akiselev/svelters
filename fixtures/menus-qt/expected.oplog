@@ -8,14 +8,10 @@ set #4 title "File"
 create action #5
 set #5 text "Open"
 set #5 shortcut "Ctrl+O"
-listen #5 triggered on
 insert #4 #5 before=end slot=default
 create action #6
 set #6 text "Autosave"
 set #6 checkable true
-listen #6 toggled on
-set #6 checked false
-observe #6 checked on
 insert #4 #6 before=end slot=default
 create action #7
 set #7 separator true
@@ -23,18 +19,17 @@ insert #4 #7 before=end slot=default
 create menu #8
 set #8 title "Recent"
 create action #9
+insert #8 #9 before=end slot=default
 set #9 text "a.txt"
 listen #9 triggered on
-insert #8 #9 before=end slot=default
 create action #10
+insert #8 #10 before=end slot=default
 set #10 text "b.txt"
 listen #10 triggered on
-insert #8 #10 before=end slot=default
 insert #4 #8 before=end slot=default
 create action #11
 set #11 text "Quit"
 set #11 shortcut "Ctrl+Q"
-listen #11 triggered on
 insert #4 #11 before=end slot=default
 insert #3 #4 before=end slot=default
 create menu #12
@@ -42,16 +37,10 @@ set #12 title "Size"
 create action #13
 set #13 text "Small"
 set #13 group "size"
-listen #13 toggled on
-set #13 checked true
-observe #13 checked on
 insert #12 #13 before=end slot=default
 create action #14
 set #14 text "Large"
 set #14 group "size"
-listen #14 toggled on
-set #14 checked false
-observe #14 checked on
 insert #12 #14 before=end slot=default
 insert #3 #12 before=end slot=default
 insert #2 #3 before=end slot=default
@@ -59,26 +48,37 @@ create tool-bar #15
 create action #16
 set #16 icon "edit-copy"
 set #16 text "Copy"
-listen #16 triggered on
 insert #15 #16 before=end slot=default
 insert #2 #15 before=end slot=default
 create push-button #17
-listen #17 clicked on
 set #17 text "Shuffle"
 insert #2 #17 before=end slot=default
 create label #18
-set #18 text "S:|false|true|false"
 insert #2 #18 before=end slot=default
 create push-button #19
 set #19 text "Context "
 create menu #20
 create action #21
 set #21 text "Paste"
-listen #21 triggered on
 insert #20 #21 before=end slot=default
 insert #19 #20 before=end slot=default
 insert #2 #19 before=end slot=default
 insert #1 #2 before=end slot=default
+set #18 text "S:|false|true|false"
+listen #5 triggered on
+listen #6 toggled on
+set #6 checked false
+observe #6 checked on
+listen #11 triggered on
+listen #13 toggled on
+set #13 checked true
+observe #13 checked on
+listen #14 toggled on
+set #14 checked false
+observe #14 checked on
+listen #16 triggered on
+listen #17 clicked on
+listen #21 triggered on
 call #1 present []
 event #5 triggered [false]
 event #6 toggled [true]
@@ -89,6 +89,6 @@ event #17 clicked []
 remove #8 #9
 destroy #9
 create action #22
+insert #8 #22 before=#10 slot=default
 set #22 text "c.txt"
 listen #22 triggered on
-insert #8 #22 before=#10 slot=default

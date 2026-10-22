@@ -1,4 +1,4 @@
 == winui
-$n.bind_readonly($$n2, "actual-width", ($$value) => { $.set(w, $$value); });
 $n.bind_prop($$n3, "text", () => $.get(s), ($$value) => { $.set(s, $$value); }, "text-changed", 0);
 $n.bind_prop($$n4, "is-checked", () => $.get(c), ($$value) => { $.set(c, $$value); }, "click", -1);
+$n.bind_readonly($$n2, "actual-width", ($$value) => { $.set(w, $$value); });

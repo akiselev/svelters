@@ -57,11 +57,12 @@ test('show policy: none is not shown, a dialog defaults to modal (modal set, the
     $n.append($$anchor, $n.toplevel('about-dialog', 'present'));
     $.pop();
   });
+  // toplevels at the root are shown when the outermost build returns, in append order (CF2)
   assert.deepEqual(t.take(), [
     'create window #1',
-    'call #1 present []',
     'create about-dialog #2',
     'create about-dialog #3',
+    'call #1 present []',
     'set #3 modal true',
     'call #3 present []',
   ]);

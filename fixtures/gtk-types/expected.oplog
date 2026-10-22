@@ -9,21 +9,21 @@ create box #6
 set #6 orientation "vertical"
 set #6 spacing 6
 create text-view #7
-set #7 buffer 1
 insert #6 #7 before=end slot=default
 create text-view #8
-set #8 buffer 1
 set #8 monospace true
 insert #6 #8 before=end slot=default
 create label #9
-observe #1 text on
-set #9 label "5 characters"
 insert #6 #9 before=end slot=default
 create image #10
-set #10 gicon 4
 set #10 pixel-size 16
 insert #6 #10 before=end slot=default
 insert #5 #6 before=end slot=default
+set #7 buffer 1
+set #8 buffer 1
+observe #1 text on
+set #9 label "5 characters"
+set #10 gicon 4
 call #5 present []
 changed #1 text "Hello, world"
 set #9 label "12 characters"

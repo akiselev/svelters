@@ -5,10 +5,8 @@ set #1 default-height 260
 create box #2
 set #2 gap 8
 create label #3
-set #3 text "Count: 0"
 insert #2 #3 before=end slot=default
 create button #4
-listen #4 clicked on
 set #4 text "Increment"
 insert #2 #4 before=end slot=default
 create box #5
@@ -18,11 +16,8 @@ set #5 flex-direction "row"
 create text-edit #6
 set #6 hint-text "Name"
 set #6 flex-grow 1
-set #6 text ""
-observe #6 text on
 insert #5 #6 before=end slot=default
 create label #7
-set #7 text "Hello "
 insert #5 #7 before=end slot=default
 insert #2 #5 before=end slot=default
 create slider #8
@@ -30,15 +25,20 @@ set #8 min 0
 set #8 max 100
 set #8 step 1
 set #8 accessible-name "Level"
-set #8 value 20
-observe #8 value on
 insert #2 #8 before=end slot=default
 create checkbox #9
-set #9 checked false
-observe #9 checked on
-set #9 text "Level 20, agree: no"
 insert #2 #9 before=end slot=default
 insert #1 #2 before=end slot=default
+set #3 text "Count: 0"
+set #7 text "Hello "
+set #9 text "Level 20, agree: no"
+listen #4 clicked on
+set #6 text ""
+observe #6 text on
+set #8 value 20
+observe #8 value on
+set #9 checked false
+observe #9 checked on
 call #1 present []
 style sheet "*" null
 style scheme "light" 0

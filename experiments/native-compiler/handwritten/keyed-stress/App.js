@@ -41,7 +41,6 @@ export default function App($$anchor, $$props) {
   $n.set(n2, 'orientation', 'vertical');
   $n.set(n2, 'spacing', 2);
   const n3 = $n.element('label');
-  $.template_effect(() => $n.set(n3, 'label', $.get(expected) ?? ''));
   $n.append($n.slot(n2, null), n3);
   const n4 = $n.element('box');
   $n.set(n4, 'orientation', 'vertical');
@@ -52,13 +51,15 @@ export default function App($$anchor, $$props) {
     (id) => id,
     ($$anchor, id) => {
       const n5 = $n.element('label');
-      $.template_effect(() => $n.set(n5, 'label', `${$.get(id) ?? ''}`));
       $n.append($$anchor, n5);
+      $.template_effect(() => $n.set(n5, 'label', `${$.get(id) ?? ''}`));
     },
     null,
   );
   $n.append($n.slot(n2, null), n4);
   $n.append($n.slot(n1, null), n2);
   $n.append($$anchor, n1);
+  // the fragment's template effect, after the {#each} (Svelte's order)
+  $.template_effect(() => $n.set(n3, 'label', $.get(expected) ?? ''));
   $.pop();
 }

@@ -3,22 +3,22 @@ set #1 title "Precedence"
 create box #2
 set #2 orientation "vertical"
 create box #3
-set #3 spacing 8
 insert #2 #3 before=end slot=default
 create box #4
-set #4 spacing 5
 insert #2 #4 before=end slot=default
 create box #5
 set #5 spacing 1
 insert #2 #5 before=end slot=default
 create box #6
-set #6 spacing 8
 insert #2 #6 before=end slot=default
 create button #7
-listen #7 clicked on
 set #7 label "Next"
 insert #2 #7 before=end slot=default
 insert #1 #2 before=end slot=default
+set #3 spacing 8
+set #4 spacing 5
+set #6 spacing 8
+listen #7 clicked on
 call #1 present []
 style sheet "*" null
 style scheme "light" 0

@@ -12,8 +12,6 @@ set #3 height-request 36
 set #3 label "Save"
 insert #2 #3 before=end slot=default
 create button #4
-listen #4 clicked on
-set #4 height-request 24
 set #4 label "Toggle"
 insert #2 #4 before=end slot=default
 create button #5
@@ -21,13 +19,15 @@ set #5 height-request 30
 set #5 label "Plain"
 insert #2 #5 before=end slot=default
 insert #1 #2 before=end slot=default
+set #4 height-request 24
+listen #4 clicked on
 call #1 present []
 style #1 classes "sv-k-window svelte-38269b8677"
 style #2 classes "sv-k-box toolbar svelte-38269b8677"
 style #3 classes "sv-k-button primary svelte-38269b8677"
-style #4 classes "sv-k-button svelte-38269b8677"
 style #5 classes "sv-k-button svelte-38269b8677"
 style #5 inline "font-weight: bold;"
+style #4 classes "sv-k-button svelte-38269b8677"
 event #4 clicked []
 set #4 height-request 36
 style #4 classes "sv-k-button svelte-38269b8677 primary"

@@ -4,30 +4,30 @@ create box #2
 set #2 orientation "vertical"
 set #2 spacing 6
 create text-view #3
-set #3 text "start"
-observe #3 text on
 insert #2 #3 before=end slot=default
 create label #4
-set #4 label "text=start"
 insert #2 #4 before=end slot=default
 create scale #5
 set #5 lower 0
 set #5 upper 100
 set #5 step-increment 1
-set #5 value 10
-observe #5 value on
 insert #2 #5 before=end slot=default
 create label #6
-set #6 label "value=10"
 insert #2 #6 before=end slot=default
 create button #7
-listen #7 clicked on
 set #7 label "Set"
 insert #2 #7 before=end slot=default
 insert #1 #2 before=end slot=default
+set #4 label "text=start"
+set #6 label "value=10"
+set #3 text "start"
+observe #3 text on
+set #5 value 10
+observe #5 value on
+listen #7 clicked on
 call #1 present []
 event #7 clicked []
-set #3 text "from js"
 set #4 label "text=from js"
-set #5 value 55
 set #6 label "value=55"
+set #3 text "from js"
+set #5 value 55

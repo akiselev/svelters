@@ -11,8 +11,6 @@ set #3 minimum-height 36
 set #3 text "Save"
 insert #2 #3 before=end slot=default
 create push-button #4
-listen #4 clicked on
-set #4 minimum-height 24
 set #4 text "Toggle"
 insert #2 #4 before=end slot=default
 create push-button #5
@@ -20,13 +18,15 @@ set #5 minimum-height 30
 set #5 text "Plain"
 insert #2 #5 before=end slot=default
 insert #1 #2 before=end slot=default
+set #4 minimum-height 24
+listen #4 clicked on
 call #1 present []
 style #1 classes "svelte-2188395467"
 style #2 classes "sv-k-box-layout toolbar svelte-2188395467"
 style #3 classes "primary svelte-2188395467"
-style #4 classes "svelte-2188395467"
 style #5 classes "svelte-2188395467"
 style #5 inline "font-weight: bold;"
+style #4 classes "svelte-2188395467"
 event #4 clicked []
 set #4 minimum-height 36
 style #4 classes "svelte-2188395467 primary"

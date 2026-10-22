@@ -1,47 +1,46 @@
 create main-window #1
-set #1 window-title "Typed"
 create box-layout #2
 set #2 direction "top-to-bottom"
 set #2 spacing 4
 create label #3
-set #3 text "2 shown (all)"
 insert #2 #3 before=end slot=default
 create box-layout #4
 set #4 direction "left-to-right"
 set #4 spacing 4
 create label #5
-set #5 text "· Milk"
 insert #4 #5 before=end slot=default
 create push-button #6
-listen #6 clicked on
 set #6 text "Toggle"
 insert #4 #6 before=end slot=default
 insert #2 #4 before=end slot=default
+set #5 text "· Milk"
+listen #6 clicked on
 create box-layout #7
 set #7 direction "left-to-right"
 set #7 spacing 4
 create label #8
-set #8 text "✓ Eggs"
 insert #7 #8 before=end slot=default
 create push-button #9
-listen #9 clicked on
 set #9 text "Toggle"
 insert #7 #9 before=end slot=default
 insert #2 #7 before=end slot=default
+set #8 text "✓ Eggs"
+listen #9 clicked on
 create push-button #10
-listen #10 clicked on
 set #10 text "Add"
 insert #2 #10 before=end slot=default
 create push-button #11
-listen #11 clicked on
 set #11 text "Filter"
 insert #2 #11 before=end slot=default
 insert #1 #2 before=end slot=default
+set #1 window-title "Typed"
+set #3 text "2 shown (all)"
+listen #10 clicked on
+listen #11 clicked on
 call #1 present []
 event #6 clicked []
 set #5 text "✓ Milk"
 event #11 clicked []
-set #3 text "0 shown (open)"
 remove #2 #4
 destroy #5
 destroy #6
@@ -50,42 +49,43 @@ remove #2 #7
 destroy #8
 destroy #9
 destroy #7
+set #3 text "0 shown (open)"
 event #10 clicked []
-set #3 text "1 shown (open)"
 create box-layout #12
 set #12 direction "left-to-right"
 set #12 spacing 4
 create label #13
-set #13 text "· Bread"
 insert #12 #13 before=end slot=default
 create push-button #14
-listen #14 clicked on
 set #14 text "Toggle"
 insert #12 #14 before=end slot=default
 insert #2 #12 before=#10 slot=default
+set #13 text "· Bread"
+listen #14 clicked on
+set #3 text "1 shown (open)"
 event #11 clicked []
-set #3 text "3 shown (all)"
 create box-layout #15
 set #15 direction "left-to-right"
 set #15 spacing 4
 create label #16
-set #16 text "✓ Milk"
 insert #15 #16 before=end slot=default
 create push-button #17
-listen #17 clicked on
 set #17 text "Toggle"
 insert #15 #17 before=end slot=default
 insert #2 #15 before=#12 slot=default
+set #16 text "✓ Milk"
+listen #17 clicked on
 create box-layout #18
 set #18 direction "left-to-right"
 set #18 spacing 4
 create label #19
-set #19 text "✓ Eggs"
 insert #18 #19 before=end slot=default
 create push-button #20
-listen #20 clicked on
 set #20 text "Toggle"
 insert #18 #20 before=end slot=default
 insert #2 #18 before=#12 slot=default
+set #19 text "✓ Eggs"
+listen #20 clicked on
+set #3 text "3 shown (all)"
 event #20 clicked []
 set #19 text "· Eggs"
