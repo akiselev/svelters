@@ -14,7 +14,7 @@ Svelters compiles components with its own compiler, `svelters-compile` (crate `c
 | **error** | A compile error. The code is given where it is not `unsupported_feature`. |
 | **n/a** | Meaningless for native UI. |
 
-Behaviour not listed as a departure here or in `docs/notes/native-compiler/deviations.md` is meant to match Svelte. Two checks keep it honest: the oracle compares the parser and scope ports with upstream, and the conformance ratchet (`experiments/native-compiler/conformance`) runs Svelte's own `runtime-runes` samples through the compiler and runtime on a DOM test backend. 498 of the 774 samples with a DOM variant pass; most of the rest use features rejected below (spreads on elements, transitions, `use:`, SVG).
+Behaviour not listed as a departure here or in `docs/notes/native-compiler/deviations.md` is meant to match Svelte. Two checks keep it honest: the oracle compares the parser and scope ports with upstream, and the conformance ratchet (`experiments/native-compiler/conformance`) runs Svelte's own `runtime-runes` samples through the compiler and runtime on a DOM test backend. 591 of the 774 samples with a DOM variant pass; most of the rest use features rejected below (transitions, legacy syntax, SVG) or call DOM APIs on what is a native handle.
 
 :::note[Native widgets, not DOM]
 Elements are native kinds (`window`, `box`, `label`, `button`, `entry`, ...), not HTML. The compiler checks every tag, prop, event, child and binding against the toolkit's semantic spec (`metadata/semantics/<toolkit>.json`), so a mistake is a compile error with a position. See [the element reference](/api/) for the tags each toolkit provides.
