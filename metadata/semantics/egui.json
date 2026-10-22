@@ -1024,6 +1024,25 @@
           "value": {
             "arg": 0
           }
+        },
+        "indeterminate": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "indeterminate",
+          "provenance": "svelters-egui: the egui::Checkbox widget writes indeterminate into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
         }
       },
       "category": "inputs",
@@ -1059,6 +1078,40 @@
           "type": "bool",
           "writable": true
         },
+        "icon": {
+          "construct_only": false,
+          "default": "",
+          "doc": "An icon before the caption (a key, or `family:name`).",
+          "js": "icon",
+          "native": "icon",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Checkbox:icon",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "indeterminate": {
+          "construct_only": false,
+          "default": false,
+          "doc": "WIDGET-PARITY §2.2: partially checked (`bind:indeterminate`), shown as a dash. The app\nwrites it; a click clears it and checks the box (Qt, GTK).",
+          "js": "indeterminate",
+          "native": "indeterminate",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Checkbox:indeterminate",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "text": {
           "construct_only": false,
           "default": "",
@@ -1074,6 +1127,23 @@
           },
           "readable": true,
           "type": "string",
+          "writable": true
+        },
+        "tristate": {
+          "construct_only": false,
+          "default": false,
+          "doc": "The user cycles unchecked → checked → indeterminate (Qt's tristate).",
+          "js": "tristate",
+          "native": "tristate",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Checkbox:tristate",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         }
       },
@@ -2286,7 +2356,27 @@
         "variants": []
       },
       "abstract": false,
-      "bindings": {},
+      "bindings": {
+        "checked": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "checked",
+          "provenance": "svelters-egui: the egui::Frame + taffy flexbox widget writes checked into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
       "category": "containers",
       "chain": [
         "Frame",
@@ -2318,6 +2408,40 @@
       "paint": "box",
       "present": null,
       "props": {
+        "checkable": {
+          "construct_only": false,
+          "default": false,
+          "doc": "WIDGET-PARITY §2.16 (QGroupBox `checkable`): a check before the caption; unchecked\ndisables the content.",
+          "js": "checkable",
+          "native": "checkable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Frame:checkable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "checked": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Checked (`bind:checked`), when `checkable`.",
+          "js": "checked",
+          "native": "checked",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Frame:checked",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "frame-style": {
           "construct_only": false,
           "default": "group",
@@ -2365,7 +2489,24 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
-      "signals": {},
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "value",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user toggled the check; carries the new state.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
       "states": [
         {
           "name": "hovered",
@@ -3558,6 +3699,29 @@
       "paint": "box",
       "present": null,
       "props": {
+        "elide": {
+          "construct_only": false,
+          "default": "none",
+          "doc": "WG6 QW13: cut one line with `…` to the width: `none`, `start`, `middle`, `end`.",
+          "js": "elide",
+          "native": "elide",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Label:elide",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "start",
+            "middle",
+            "end"
+          ],
+          "writable": true
+        },
         "font-weight": {
           "construct_only": false,
           "default": 400,
@@ -3573,6 +3737,23 @@
           },
           "readable": true,
           "type": "i64",
+          "writable": true
+        },
+        "for": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The `anchor` of the control this label names (Qt's buddy): a click focuses it.",
+          "js": "for",
+          "native": "for",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Label:for",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
           "writable": true
         },
         "selectable": {
@@ -4847,6 +5028,23 @@
           "type": "bool",
           "writable": true
         },
+        "format": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The label's text when `text` is empty: `%p` percent, `%v` value, `%m` maximum (`%%` a\npercent sign); shown when set or with `show-percentage` (`%p%`).",
+          "js": "format",
+          "native": "format",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ProgressBar:format",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "fraction": {
           "construct_only": false,
           "default": 0.0,
@@ -4862,6 +5060,95 @@
           },
           "readable": true,
           "type": "f64",
+          "writable": true
+        },
+        "indeterminate": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Busy, as `animate` (and `:indeterminate`); also when `value` is set and `min == max`.",
+          "js": "indeterminate",
+          "native": "indeterminate",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ProgressBar:indeterminate",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "inverted": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Fills from the end (right, or top when vertical) instead.",
+          "js": "inverted",
+          "native": "inverted",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ProgressBar:inverted",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "max": {
+          "construct_only": false,
+          "default": 100.0,
+          "doc": "",
+          "js": "max",
+          "native": "max",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ProgressBar:max",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "min": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "",
+          "js": "min",
+          "native": "min",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ProgressBar:min",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "orientation": {
+          "construct_only": false,
+          "default": "horizontal",
+          "doc": "The bar's axis (P7: `[orientation=\"vertical\"]` styles it).",
+          "js": "orientation",
+          "native": "orientation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ProgressBar:orientation",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ],
           "writable": true
         },
         "show-percentage": {
@@ -4896,6 +5183,23 @@
           },
           "readable": true,
           "type": "string",
+          "writable": true
+        },
+        "value": {
+          "construct_only": false,
+          "default": null,
+          "doc": "WIDGET-PARITY §2.9: the value in `min..max`, the alternative to `fraction` (Qt's form).",
+          "js": "value",
+          "native": "value",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ProgressBar:value",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
           "writable": true
         }
       },
@@ -5058,6 +5362,23 @@
             "fact": "egui:RadioButton:group",
             "mechanism": "widget",
             "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "icon": {
+          "construct_only": false,
+          "default": "",
+          "doc": "WIDGET-PARITY §2.3: an icon before the caption (a key, or `family:name`).",
+          "js": "icon",
+          "native": "icon",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RadioButton:icon",
+            "mechanism": "scene",
+            "verified": "weak"
           },
           "readable": true,
           "type": "string",
@@ -8564,6 +8885,23 @@
           },
           "readable": true,
           "type": "bool",
+          "writable": true
+        },
+        "group": {
+          "construct_only": false,
+          "default": "",
+          "doc": "WIDGET-PARITY §2.1 (QButtonGroup): the sibling toggle buttons with the same `group` form an\nexclusive set (checking one unchecks the others) and one Tab stop the arrow keys move in.",
+          "js": "group",
+          "native": "group",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ToggleButton:group",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
           "writable": true
         },
         "radio": {

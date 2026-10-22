@@ -33,6 +33,7 @@ A button that stays pressed (`checked`). With `radio`, a row of them is a segmen
 | `checked` | `boolean` | `false` | **yes**, on `changed` | Pressed state; a click toggles it (with `radio`, a click only sets it). |
 | `font-weight` | `number` | `400` | no | CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. |
 | `frame` | `boolean` | `true` | no | Draws the button background and border. |
+| `group` | `string` | `""` | no | WIDGET-PARITY §2.1 (QButtonGroup): the sibling toggle buttons with the same `group` form an exclusive set (checking one unchecks the others) and one Tab stop the arrow keys move in. |
 | `radio` | `boolean` | `false` | no | One of a segmented group: a click checks it and never unchecks it; AccessKit role `RadioButton`. The app unchecks the others. |
 | `text` | `string` | `""` | no | The caption. |
 

@@ -32,6 +32,7 @@ One choice of several. Siblings are exclusive: a click checks it and unchecks th
 |---|---|---|---|---|
 | `checked` | `boolean` | `false` | **yes**, on `changed` | Chosen. A click checks it and unchecks its sibling radio buttons (Qt's auto-exclusive siblings); it never unchecks itself. With `value`, it follows `group == value`. |
 | `group` | `string` | `""` | **yes**, on `changed` | The group's chosen value (`bind:group={choice}` on every button of the group, each with its own `value`). A click sets it on this button and its siblings. |
+| `icon` | `string` | `""` | no | WIDGET-PARITY §2.3: an icon before the caption (a key, or `family:name`). |
 | `text` | `string` | `""` | no | The caption. |
 | `value` | `string` | `""` | no | What this button stands for in its group: a click writes it into `group`. |
 

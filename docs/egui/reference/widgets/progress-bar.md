@@ -31,9 +31,16 @@ A horizontal bar filled to `fraction`, as wide as its rect.
 | Prop | Type | Default | `bind:` | Description |
 |---|---|---|---|---|
 | `animate` | `boolean` | `false` | no | Animates the bar and shows a spinner in it (busy look; repaints while shown). |
+| `format` | `string` | `""` | no | The label's text when `text` is empty: `%p` percent, `%v` value, `%m` maximum (`%%` a percent sign); shown when set or with `show-percentage` (`%p%`). |
 | `fraction` | `number` | `0` | no | Progress from 0 to 1 (GTK's `fraction`). |
+| `indeterminate` | `boolean` | `false` | no | Busy, as `animate` (and `:indeterminate`); also when `value` is set and `min == max`. |
+| `inverted` | `boolean` | `false` | no | Fills from the end (right, or top when vertical) instead. |
+| `max` | `number` | `100` | no |  |
+| `min` | `number` | `0` | no |  |
+| `orientation` | `'horizontal' \| 'vertical'` | `"horizontal"` | no | The bar's axis (P7: `[orientation="vertical"]` styles it). |
 | `show-percentage` | `boolean` | `false` | no | Shows the percentage inside the bar when `text` is empty. |
 | `text` | `string` | `""` | no | Text inside the bar; empty for none. |
+| `value` | `number \| null` | `null` | no | WIDGET-PARITY §2.9: the value in `min..max`, the alternative to `fraction` (Qt's form). |
 
 Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessible-name`, `align-self`, `anchor`, `autofocus`, `bottom`, `drag-data`, `drag-type`, `drop-types`, `enabled`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `invalid`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `tooltip`, `top`, `visible`, `width`.
 <!-- END GENERATED -->

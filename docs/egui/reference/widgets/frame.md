@@ -30,6 +30,8 @@ A flex box drawn inside an egui frame (background, border, rounding, inner margi
 <!-- BEGIN GENERATED: props of kinds.Frame (tools/docs/egui/gen_reference.py). Do not edit. -->
 | Prop | Type | Default | `bind:` | Description |
 |---|---|---|---|---|
+| `checkable` | `boolean` | `false` | no | WIDGET-PARITY §2.16 (QGroupBox `checkable`): a check before the caption; unchecked disables the content. |
+| `checked` | `boolean` | `true` | **yes**, on `changed` | Checked (`bind:checked`), when `checkable`. |
 | `frame-style` | `'group' \| 'canvas' \| 'window' \| 'menu' \| 'popup' \| 'panel' \| 'none'` | `"group"` | no | The egui frame drawn around the content: `egui::Frame::group`, `canvas`, `window`, `menu`, `popup`, `side_top_panel` (`panel`), or no chrome (`none`). Its inner margin adds to `padding`. |
 | `label` | `string` | `""` | no | A caption above the content (GTK's `Gtk.Frame:label`); empty for none. |
 
@@ -53,7 +55,11 @@ Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessib
 ## Events
 
 <!-- BEGIN GENERATED: events of kinds.Frame (tools/docs/egui/gen_reference.py). Do not edit. -->
-No events of its own.
+| Attribute | Handler | When |
+|---|---|---|
+| `onchanged` | `(value: boolean) => void` | The user toggled the check; carries the new state. |
+
+`on:changed` works too, and a bare `on:<event>` on a component forwards the component's `on<event>` prop.
 
 Plus the events of [`Widget`](widget.md#events): `onanimationend`, `ondrag-begin`, `ondrag-end`, `ondrag-enter`, `ondrag-leave`, `ondrop`.
 <!-- END GENERATED -->
