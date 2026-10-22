@@ -1178,7 +1178,7 @@ impl LayoutCx<'_> {
     pub fn with_measure<R>(&self, f: impl FnOnce(&crate::provider::MeasureCx<'_>) -> R) -> R {
         let css = self.s.style.computed(self.node).cloned();
         let parts = self.s.style.part_styles(self.node);
-        let cx = crate::provider::MeasureCx { ctx: &self.m.ctx, style: &self.m.style, css: css.as_deref(), parts: &parts };
+        let cx = crate::provider::MeasureCx { ctx: &self.m.ctx, style: &self.m.style, id: egui::Id::unique(("svelters-egui.measure", self.node.to_raw())), css: css.as_deref(), parts: &parts };
         f(&cx)
     }
 }

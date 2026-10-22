@@ -324,6 +324,9 @@ pub enum P {
     TreeIndent,
     RowDragType,
     RowDropTypes,
+    /// OW5a: tree-view
+    ExpandOn,
+    RootDecorated,
     /// EV3: a button's Enter and Escape roles.
     Default,
     Cancel,

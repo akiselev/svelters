@@ -129,8 +129,6 @@ pub(crate) fn part_style(s: &mut Scene, list: NodeId, part: &'static str, row: S
 pub(crate) struct Painted {
     /// The row's `cursor` (R10), to set while it is hovered.
     pub cursor: Option<egui::CursorIcon>,
-    /// Its text colour (`list-sel-fg` on the active selection), for content drawn by the list.
-    pub color: Color32,
 }
 
 /// Paints row `rect`'s box (`::part(row)`) of list `list` (scene index `li`): background, border,
@@ -145,7 +143,7 @@ pub(crate) fn paint_row(s: &mut Scene, li: usize, row: &RowState, at: (usize, us
     let mut pc = PaintCx::for_node(ui.painter(), list.to_raw());
     pc.tag = tag_of(s, li);
     paint::paint_box(&mut pc.part("row"), &st, rect);
-    Painted { cursor: st.cursor(), color: st.color("color").unwrap_or(Color32::PLACEHOLDER) }
+    Painted { cursor: st.cursor() }
 }
 
 /// The row's outline (R8 focus ring, 1px inside), over its contents.
@@ -253,7 +251,9 @@ impl ListBar {
         let policy = crate::native::policy_of(&ctx);
         let d = dark(ui);
         let content = egui::vec2(r.width(), total as f32);
-        self.scroll.set_offset(egui::vec2(0.0, offset as f32));
+        // the unit works in f32: its change is measured against the value it was given
+        let given = offset as f32;
+        self.scroll.set_offset(egui::vec2(0.0, given));
         self.scroll.set_geometry(content, r.size(), [None, None]);
         let bar_w = StyleView::ua_only(TRACK_UA, StateBits::NONE, d).px("width").unwrap_or(10.0);
         let min_thumb = StyleView::ua_only(THUMB_UA, StateBits::NONE, d).px("min-height").unwrap_or(20.0);
@@ -309,7 +309,7 @@ impl ListBar {
             ctx.request_repaint_after(std::time::Duration::from_secs_f32(t.max(0.0)));
         }
         self.paint(s, li, ui, &bars, alpha);
-        self.scroll.offset().y as f64 - offset
+        (self.scroll.offset().y - given) as f64
     }
 
     fn paint(&self, s: &mut Scene, li: usize, ui: &egui::Ui, bars: &[Option<BarGeom>; 2], alpha: f32) {
@@ -358,4 +358,16 @@ pub(crate) fn paint_shadows(s: &Scene, li: usize, r: Rect, ui: &egui::Ui) {
     let mut pc = PaintCx::for_node(ui.painter(), list.to_raw());
     pc.tag = tag_of(s, li);
     paint::paint_inset_shadows(&mut pc, &host, r);
+}
+
+/// EV1: the list's event `name` through the Rust filters and behaviours on its path before the
+/// list's default action (moving the selection, expanding, activating); false when one of them
+/// prevented it. The JS event itself is emitted by the caller as before.
+pub(crate) fn allowed(s: &mut Scene, li: usize, name: &'static str, ctx: &egui::Context, out: &mut Vec<crate::walk::Out>) -> bool {
+    let node = s.slots.id_at(li).expect("live list");
+    let (o, runs) = crate::events::dispatch_signal(s, node, name);
+    for r in runs {
+        crate::provider::behavior::apply(s, r, Some(ctx), out);
+    }
+    !o.prevented()
 }
