@@ -72,7 +72,7 @@ impl Compiler {
                 opts.hmr = self.hmr;
                 Some(compile(src, &opts))
             }
-            Kind::RunesModule => Some(compile_module(src, &ModuleOptions { filename, dev: self.dev })),
+            Kind::RunesModule => Some(compile_module(src, &ModuleOptions { filename, dev: self.dev, hmr: self.hmr })),
             _ => None,
         }
     }
