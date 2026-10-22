@@ -562,7 +562,91 @@ export function set(node, prop, value) {
   }
   if (node.last.has(prop) && Object.is(node.last.get(prop), value)) return;
   node.last.set(prop, value);
-  node.host.setProp(node.h, prop, value);
+  // WG5a: a snippet passed as a prop (`<table-column editor={cellEditor}>`) stays in JS
+  if (typeof value === 'function') {
+    snippetProp(node, prop, value);
+    return;
+  }
+  if (value == null) node.snippets?.delete(prop);
+  // WG5a: a `$state` array is a Proxy, which the host's list conversion does not read as an
+  // array: a list prop (`bind:selected` ids) is written as a plain copy
+  node.host.setProp(node.h, prop, Array.isArray(value) ? Array.from(value) : value);
+}
+
+// ---------------------------------------------------------------------------------------------
+// WG5a: snippet props. Svelte passes a snippet as a prop value (a function); the runtime keeps it
+// on the node, writes `true` natively (the backend's `Ty::Snippet` prop: "one is set"), and a
+// per-kind hook realises it when the backend asks.
+
+const SNIPPET_PROPS = { 'table-column:editor': cellEditor };
+
+function snippetProp(node, prop, fn) {
+  (node.snippets ??= new Map()).set(prop, fn);
+  const hook = SNIPPET_PROPS[`${node.kind}:${prop}`];
+  if (!hook) {
+    console.warn(`<${node.kind}> takes no snippet as \`${prop}\``);
+    return;
+  }
+  hook(node, prop);
+  node.host.setProp(node.h, prop, true);
+}
+
+/** A sync handler's arguments without the event (call_sync delivers `(event, ...args)`). */
+const syncArgs = (a) => (a.length && a[0] instanceof NativeEvent ? [a[0], a.slice(1)] : [null, a]);
+
+/**
+ * A `table-column`'s cell editor (plans/milestones/WG5a-list-table-interaction.md): the snippet is
+ * mounted once into a row outlet the table adopts (`set-editor`), then rebound per edit. It gets
+ * one argument, the edit: `{ row, column, value (bindable), typed, commit(), cancel() }`. The table
+ * asks for the value to commit (`editor-value`); `commit()`/`cancel()` end the edit from the editor.
+ */
+function cellEditor(col, prop) {
+  if (col.cellEditor) return;
+  const row = $.state(-1);
+  const value = $.state(null);
+  const typed = $.state('');
+  const ed = (col.cellEditor = { outlet: null, unmountOutlet: null, unmount: null });
+  const edit = {
+    get row() {
+      return $.get(row);
+    },
+    get value() {
+      return $.get(value);
+    },
+    set value(v) {
+      $.set(value, v);
+    },
+    get typed() {
+      return $.get(typed);
+    },
+    commit: () => col.call('end-edit', true),
+    cancel: () => col.call('end-edit', false),
+  };
+  on(col, 'editor-bind', (...a) => {
+    const [, [r, v, t]] = syncArgs(a);
+    $.set(row, r);
+    $.set(typed, t ?? '');
+    $.set(value, t ? t : v);
+    if (!ed.outlet) ed.unmountOutlet = mount(() => void (ed.outlet = element(rowOutlet())));
+    if (!ed.unmount) {
+      ed.unmount = mount(
+        ($$anchor) => {
+          $.push({}, true);
+          col.snippets?.get(prop)?.($$anchor, () => edit);
+          $.pop();
+        },
+        { target: ed.outlet },
+      );
+    }
+    col.call('set-editor', ed.outlet);
+    flush();
+  });
+  on(col, 'editor-value', (...a) => {
+    const [ev] = syncArgs(a);
+    if (ev) ev.result = $.get(value) ?? null;
+  });
+  // the editor stays mounted for the next edit of this column
+  on(col, 'editor-unbind', () => {});
 }
 
 /**

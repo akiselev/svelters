@@ -31,6 +31,17 @@ pub(crate) fn invalid_outline(ui: &Ui, rect: Rect) {
 /// A widget-side change of props `keys` of node `i`: stamped and journaled, `prop_changed` when
 /// observed, then the kind's `changed` event with `args` when listened.
 pub(crate) fn widget_changed(arena: &mut Arena, i: usize, keys: &[kinds::P], args: Vec<Value>, out: &mut Vec<Out>) {
+    props_changed(arena, i, keys, out);
+    let h = arena.slots.id_at(i).expect("live node").to_raw();
+    let s = kinds::signal_id(arena.core[i].kind as usize, "changed");
+    if arena.listens(i, s) {
+        out.push(Out::Event(h, s, args));
+    }
+}
+
+/// WG5a: the stamp, journal and `prop_changed` half of [`widget_changed`], without the `changed`
+/// signal (a prop the user changed that `changed` does not carry: a table's cursor).
+pub(crate) fn props_changed(arena: &mut Arena, i: usize, keys: &[kinds::P], out: &mut Vec<Out>) {
     let node = arena.slots.id_at(i).expect("live node");
     let h = node.to_raw();
     let kind = arena.core[i].kind as usize;
@@ -42,10 +53,6 @@ pub(crate) fn widget_changed(arena: &mut Arena, i: usize, keys: &[kinds::P], arg
         if arena.observes(i, prop) {
             out.push(Out::Changed(h, prop));
         }
-    }
-    let s = kinds::signal_id(kind, "changed");
-    if arena.listens(i, s) {
-        out.push(Out::Event(h, s, args));
     }
 }
 
