@@ -16,7 +16,19 @@ modules logical ids (`app/src/…`, `app/node_modules/<package>/…`). Now the b
   (`import App from "app/src/App.svelte"`), and the entry's import table is keyed by that id.
 - **Source maps**: each absolute `sources` entry becomes the file's logical id. Relative sources are kept.
   Before this, every component map and every package module's map named the checkout.
-- LD2's style modules: see "Scoped styles" below.
+- **Scoped styles (LD2, egui).** Three things named a component's sheet after the build machine's
+  path, and all three now use the component's logical id:
+  - **the scope class.** `CompileOptions::css_scope` is now `svelte-<hash(logical id)>`; it was
+    Svelte's default `hash(filename)` of the absolute path. This is set in `transform.rs`
+    (`Compiler::root`), so the dev provider gives the same class names as the bundle.
+  - **the sheet key.** `registerStyles("app/src/App.svelte", …)` is the logical id, in dev too. The
+    key is stable for each file, so LD2's style-only HMR replaces the sheet as before.
+  - **the component's sheet import.** The builder rewrites `svelters-style:<abs>` to
+    `svelters-style:app/src/App.svelte`, the same rewrite as the entry's. LD2's `Logical::id` hunk
+    already names that module this way. The dev provider keeps the absolute specifier, which its
+    resolver checks against the importing component.
+  - Logical ids come from one function, `source::build::bundle_path`/`logical_id`. `Logical::rel`
+    and the dev side share it.
 
 The bundle no longer contains the checkout path. The same app built from two checkout paths gives the
 same bytes, so the same `build` id. When LI2 lands, the dev provider's ids can follow the same scheme,
@@ -88,11 +100,16 @@ What the numbers show:
 ## Tests
 
 - `svelters-host/tests/modules.rs`, `a_bundle_does_not_depend_on_the_checkout_path` (new). The counter
-  app is built from two scratch copies at different paths. The test checks that:
+  app, with a `<style>` added and built for egui, is built from two scratch copies at different
+  paths. The test checks that:
   - the entry imports `app/src/App.svelte`;
+  - the component imports `svelters-style:app/src/App.svelte`, whose module registers the sheet under
+    `app/src/App.svelte`;
   - neither bundle contains the repo path;
   - the build ids and the bytes are equal.
-- `an_app_loads_from_its_release_bundle_without_its_sources` (Q4) still passes with the logical-id entry.
+- `an_app_loads_from_its_release_bundle_without_its_sources` (Q4), LD2's
+  `a_style_only_edit_reruns_only_the_sheet_module`, and `svelters-egui/tests/live_styles.rs` pass with the
+  logical-id entry, scope and key.
 - `svelters-egui/tests/startup.rs` (ignored), above.
 
 ## Deferred
