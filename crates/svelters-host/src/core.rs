@@ -342,6 +342,8 @@ pub(crate) struct Core {
     pub(crate) maps: RefCell<SourceMaps>,
     /// DX1: the app's settings, UI state and paths (`Host::set_dx`).
     pub(crate) dx: RefCell<Option<Rc<crate::dx::Dx>>>,
+    /// AS1: the loaded provider's asset registry (`svelters:assets` reads through it).
+    pub(crate) assets: RefCell<Option<std::sync::Arc<svelters_modules::Assets>>>,
     /// App exports (E0): this host's exported Rust objects.
     pub(crate) apps: crate::exports::objects::AppObjects,
     /// LD1: whether an `svelters:app/<module>` export is reachable by `construct` and `callStatic`,
@@ -400,6 +402,7 @@ impl Core {
             apps: Default::default(),
             app_gate: RefCell::new(None),
             dx: RefCell::new(None),
+            assets: RefCell::new(None),
             op_log: RefCell::new(None),
             ops: offload::OpTable::new(crate::exports::offload::Completions::new(backend.wake_handle())),
             reactive: reactive::Reactive::new(crate::exports::reactive::Hub::new(backend.wake_handle())),
@@ -547,6 +550,35 @@ impl Core {
     }
 
     /// DX1: the `__svelters_host.dx` op. Errors are `(code, message)`.
+    /// AS1: `svelters:assets` reads: `text` (UTF-8), `info` (JSON) of an `asset://` ref.
+    pub(crate) fn asset_op(&self, op: &str, uri: &str) -> Result<String, String> {
+        let a = self.asset_read(uri)?;
+        let (assets, r) = (a.0, a.1);
+        match op {
+            "text" => {
+                let b = assets.bytes(&r).map_err(|e| e.to_string())?;
+                String::from_utf8(b.to_vec()).map_err(|_| format!("{r}: not UTF-8 text (import it with ?bytes)"))
+            }
+            "info" => {
+                let i = assets.info(&r).map_err(|e| e.to_string())?;
+                Ok(serde_json::json!({ "mime": i.mime, "len": i.len, "hash": format!("{:016x}", i.hash), "version": i.version }).to_string())
+            }
+            _ => Err(format!("unknown assets op {op}")),
+        }
+    }
+
+    /// AS1: the bytes of an `asset://` ref.
+    pub(crate) fn asset_bytes(&self, uri: &str) -> Result<Vec<u8>, String> {
+        let (assets, r) = self.asset_read(uri)?;
+        assets.bytes(&r).map(|b| b.to_vec()).map_err(|e| e.to_string())
+    }
+
+    fn asset_read(&self, uri: &str) -> Result<(std::sync::Arc<svelters_modules::Assets>, svelters_modules::AssetRef), String> {
+        let r = svelters_modules::AssetRef::parse(uri).map_err(|e| e.to_string())?;
+        let assets = self.assets.borrow().clone().ok_or("svelters:assets: the loaded app has no asset registry")?;
+        Ok((assets, r))
+    }
+
     pub(crate) fn dx_op(&self, op: &str, a: &str, b: &str) -> Result<String, (&'static str, String)> {
         if op == "log" {
             let (level, cat) = a.split_once('\n').unwrap_or((a, ""));
@@ -1284,6 +1316,7 @@ pub(crate) fn load_bundle(
         ));
     };
     core.maps.borrow_mut().begin(provider.map_dir(), &provider.entry());
+    *core.assets.borrow_mut() = provider.assets();
     let mut eng = engine.borrow_mut();
     let res = eng.load_module(provider.clone());
     for w in provider.take_warnings() {
@@ -1332,6 +1365,19 @@ pub(crate) fn hot_update(
     res
 }
 
+/// AS1: runs the `Asset.onChange` listeners for changed asset files (no module re-runs).
+pub(crate) fn assets_changed(core: &Core, engine: &RefCell<Box<dyn JsEngine>>, refs: &[svelters_modules::AssetRef]) {
+    let Some(_guard) = core.enter() else { return };
+    let uris: Vec<String> = refs.iter().map(|r| r.as_uri().to_string()).collect();
+    let mut eng = engine.borrow_mut();
+    if let Err(e) = eng.assets_changed(&uris) {
+        core.report(core.map_error(e));
+    }
+    // the listeners' state changes flush like any event's
+    eng.run_jobs(core.cfg.max_jobs_per_checkpoint);
+    core.report_all(eng.take_errors());
+}
+
 /// EM1: loads an entry and keeps its namespace (see [`load_bundle`]).
 pub(crate) fn load_entry(
     core: &Core,
@@ -1342,6 +1388,7 @@ pub(crate) fn load_entry(
         return Err(JsError::new(ErrorKind::Host, "load_entry called while JS is running"));
     };
     core.maps.borrow_mut().begin(provider.map_dir(), &provider.entry());
+    *core.assets.borrow_mut() = provider.assets();
     let mut eng = engine.borrow_mut();
     let res = eng.load_entry(provider.clone());
     for w in provider.take_warnings() {

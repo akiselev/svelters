@@ -15,7 +15,9 @@
 //! asked.
 
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
 
+pub mod assets;
 mod bundle;
 mod compose;
 #[cfg(feature = "dlopen")]
@@ -24,6 +26,7 @@ mod native;
 #[cfg(feature = "source")]
 mod source;
 
+pub use assets::{AssetBytes, AssetError, AssetInfo, AssetRef, AssetSource, Assets, Subscription};
 pub use bundle::BundleProvider;
 pub use compose::{ComposedProvider, ExtensionPolicy, NativeAccess, SchemeHook, Visibility};
 #[cfg(feature = "dlopen")]
@@ -96,6 +99,13 @@ pub trait ModuleProvider {
     /// Warnings collected since the last call (compiler warnings, skipped styles), rendered.
     fn take_warnings(&self) -> Vec<String> {
         Vec::new()
+    }
+
+    /// AS1: the asset registry behind this provider's `asset://` refs (imports, `svelters:assets`).
+    /// The host reads assets through it and reports changed files to it before
+    /// [`ModuleProvider::invalidate`], so an asset change reloads no JS.
+    fn assets(&self) -> Option<Arc<Assets>> {
+        None
     }
 
     /// What is loaded, for log lines (`dist/app.js`, `src/App.svelte`).

@@ -10,7 +10,7 @@ svelters-abi.workspace = true
 svelters-backend-log.workspace = true
 rquickjs.workspace = true
 # Q1: the engine boundary (`ModuleProvider`) and the bundle provider; runners add `SourceProvider`.
-svelters-modules.workspace = true
+svelters-modules = { workspace = true, features = ["serde"] }
 serde_json.workspace = true
 # RA2: `Json<T>` crosses serde values, typed from `schemars::JsonSchema`.
 serde.workspace = true

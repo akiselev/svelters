@@ -72,7 +72,7 @@ const COUNTER: &str = r#"<script>
   let count = $state(data.start + tag);
 </script>
 
-<window title={icon.endsWith('/src/icon.png') ? 'asset' : 'no asset'}>
+<window title={String(icon) === 'asset://app/src/icon.png' && icon.text() === 'not really a png' ? 'asset' : 'no asset'}>
   <box orientation="vertical" spacing="8">
     <label>{label.text}: {count}</label>
     <button onclicked={() => count++}>Increment</button>
@@ -115,6 +115,56 @@ fn an_app_loads_from_source_with_json_assets_and_runes_modules() {
     assert!(!watched.iter().any(|f| f.components().any(|c| c.as_os_str() == "node_modules")), "{watched:#?}");
     let app_id = app.path("src/App.svelte").to_string_lossy().into_owned();
     assert!(provider.importers(&app_id).contains(&"svelters:entry".to_string()));
+}
+
+const ASSETS: &str = r#"<script>
+  import icon from './icon.svg';
+  import again from './icon.svg?url';
+  import note from './note.txt?raw';
+  import inline from './note.txt?inline';
+  import bytes from './note.txt?bytes';
+  import { asset } from 'svelters:assets';
+  globalThis.__evals = (globalThis.__evals ?? 0) + 1;
+  let changes = $state(0);
+  icon.onChange(() => changes++);
+</script>
+
+<window title={[icon === again && icon === asset('src/icon.svg'), note, inline, bytes.length, JSON.stringify({ icon }), icon.size].join('|')}>
+  <label tooltip-text={icon}>changes {changes} evals {globalThis.__evals}</label>
+</window>
+"#;
+
+/// AS1: asset imports give one `Asset` handle per ref; a handle crosses into a native prop as its
+/// ref; value imports read the file; an asset change runs no module, only `onChange` listeners.
+#[test]
+fn asset_imports_are_handles_and_their_changes_run_no_modules() {
+    let app = App::new("assets", ASSETS);
+    app.write("src/icon.svg", "<svg/>");
+    app.write("src/note.txt", "hi");
+    let provider = app.provider();
+    let (log, host) = log_host(Duration::from_millis(100));
+    host.load_from(provider.clone()).unwrap();
+    let report = host.apply_changes(vec![app.path("src/icon.svg")]).expect("an asset change is reported");
+    assert!(report.ok, "{:?}", report.error);
+    assert_eq!(report.hot, Some(Vec::new()));
+    assert_eq!(report.assets.iter().map(|r| r.as_uri()).collect::<Vec<_>>(), ["asset://app/src/icon.svg"]);
+    host.run().unwrap();
+    let oplog = log.log();
+    assert!(oplog.contains("true|hi|data:text/plain;base64,aGk=|2|{"), "{oplog}");
+    assert!(oplog.contains("asset://app/src/icon.svg") && oplog.contains("}|6"), "toJSON gives the ref: {oplog}");
+    assert!(oplog.contains("\"asset://app/src/icon.svg\""), "the handle crossed into tooltip-text as its ref: {oplog}");
+    assert!(oplog.contains("\"changes 1 evals 1\""), "{oplog}");
+    // the ref module is not a hot-update target; the `?raw` module is
+    let icon = app.path("src/icon.svg");
+    assert!(provider.modules_at(std::slice::from_ref(&icon)).is_empty());
+    assert!(!provider.invalidate(std::slice::from_ref(&icon)));
+    let note = provider.modules_at(&[app.path("src/note.txt")]);
+    assert_eq!(note.len(), 3, "{note:?}");
+    let assets = provider.assets();
+    assert!(assets.watch_files().contains(&icon));
+    assert_eq!(assets.version(&"asset://app/src/icon.svg".parse().unwrap()), 1);
+    let err = SourceProvider::for_path(&app.dir).unwrap().resolve(&app.path("src/App.svelte").to_string_lossy(), "./icon.svg?worker").unwrap_err();
+    assert!(err.contains("?worker"), "{err}");
 }
 
 #[test]

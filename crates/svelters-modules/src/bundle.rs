@@ -1,7 +1,8 @@
 //! A directory with a built bundle (`dist/app.js` and its chunks), as Vite writes it.
 
-use crate::{ModuleCode, ModuleId, ModuleProvider};
+use crate::{AssetSource, Assets, ModuleCode, ModuleId, ModuleProvider};
 use std::path::{Path, PathBuf};
+use std::sync::Arc;
 
 /// Serves a built bundle. Module ids are slash-separated paths relative to the bundle's directory;
 /// only relative imports are allowed, and none may leave the directory (symlinks included). Source
@@ -9,6 +10,8 @@ use std::path::{Path, PathBuf};
 pub struct BundleProvider {
     root: PathBuf,
     entry: String,
+    /// AS1: `app` is `<bundle dir>/assets` (what `vite build` copies the imported assets to).
+    assets: Arc<Assets>,
 }
 
 impl BundleProvider {
@@ -17,7 +20,12 @@ impl BundleProvider {
         let entry = entry.canonicalize().map_err(|e| format!("{}: {e}", entry.display()))?;
         let root = entry.parent().ok_or("entry has no parent directory")?.to_path_buf();
         let name = entry.file_name().and_then(|n| n.to_str()).ok_or("entry file name is not UTF-8")?.to_string();
-        Ok(BundleProvider { root, entry: name })
+        let assets = Assets::new();
+        let dir = root.join("assets");
+        if dir.is_dir() {
+            assets.mount(crate::assets::APP_ROOT, AssetSource::Dir(dir)).map_err(|e| e.to_string())?;
+        }
+        Ok(BundleProvider { root, entry: name, assets })
     }
 
     /// The bundle's entry file.
@@ -64,6 +72,10 @@ impl ModuleProvider for BundleProvider {
         Some(self.root.clone())
     }
 
+    fn assets(&self) -> Option<Arc<Assets>> {
+        Some(self.assets.clone())
+    }
+
     fn watch_files(&self) -> Vec<PathBuf> {
         let entry = self.entry_path();
         let mut map = entry.clone().into_os_string();
@@ -89,7 +101,7 @@ mod tests {
     use super::*;
 
     fn provider() -> BundleProvider {
-        BundleProvider { root: PathBuf::from("/b"), entry: "app.js".into() }
+        BundleProvider { root: PathBuf::from("/b"), entry: "app.js".into(), assets: Assets::new() }
     }
 
     #[test]
