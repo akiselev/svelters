@@ -414,6 +414,7 @@ impl<'a> Lower<'a, '_, '_> {
         let mut entries: Vec<SpreadEntry<'a>> = Vec::new();
         let mut ops: Vec<Op<'a>> = Vec::new();
         let mut binds: Vec<Op<'a>> = Vec::new();
+        let mut transitions: SeenTransitions<'a> = (None, None);
         let mut subject = StyleSubject { tag: n.name.clone(), id: None, dynamic_id: None, static_classes: Vec::new(), cond_classes: Vec::new(), dynamic: None };
         for a in &n.attributes {
             match a {
@@ -469,10 +470,16 @@ impl<'a> Lower<'a, '_, '_> {
                 }
                 AttributeLike::AttachTag(t) => ops.push(Op::Attach { expr: &t.expression, span: t.span() }),
                 AttributeLike::UseDirective(d) => binds.push(Op::Action { name: d.name.clone(), arg: d.expression.as_ref(), span: d.span() }),
+                // TR1 on SP1's dynamic element: Svelte's SvelteElement visits it into the element's
+                // own `after_update` (the runtime node gets it, as `bind:this` does)
+                AttributeLike::TransitionDirective(d) => {
+                    if let Some(op) = self.transition_op(d, &mut transitions) {
+                        binds.push(op);
+                    }
+                }
                 other => {
                     let what = match other {
                         AttributeLike::OnDirective(_) => "on: directives with modifiers or without a handler (use on<event>={handler})",
-                        AttributeLike::TransitionDirective(_) => "transitions",
                         AttributeLike::AnimateDirective(_) => "animate: directives",
                         AttributeLike::LetDirective(_) => "let: directives",
                         _ => "this attribute",

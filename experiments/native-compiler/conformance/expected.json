@@ -30,7 +30,6 @@
 
   "action-void-element": {"category": "dom-node", "match": {"runtime": ["^expected '' to equal 'set from action'"]}, "note": "an action sets `node.value`"},
   "attachment-svelte-element": {"category": "dom-node", "match": {"runtime": ["^expected '<div></div>' to deeply equal '<div>DIV</div>'"]}, "note": "`node.textContent = node.nodeName`"},
-  "dynamic-element-transition": "transition",
   "svelte-element-css-hash": {"category": "dom-css", "match": {"runtime": ["^expected '<div></div>\\\\n<div class=\"red\"></div>.* to deeply equal '<div></div>\\\\n<div class=\"red svelte-x"]}, "note": "the scoping hash class on `<svelte:element>`"},
   "svelte-element-custom-element-css-hash": "foreign-element",
   "svelte-meta-dynamic": "dom-meta",
