@@ -253,6 +253,14 @@ fn a_style_only_edit_reruns_only_the_sheet_module() {
     assert_eq!(provider.modules_at(std::slice::from_ref(&svelte)), vec![id.clone()]);
     let warnings: Vec<String> = host.take_console().into_iter().filter(|l| l.level == "warn").map(|l| l.text).collect();
     assert!(!warnings.iter().any(|w| w.contains("<style>")), "{warnings:?}");
+
+    // Q4: a release bundle names the sheet module after its component's logical id
+    use svelters_host::modules::svb::{self, BuildOptions, Svb};
+    let mut bcfg = SourceConfig::for_path(&app.dir).unwrap();
+    bcfg.backend = "egui".into();
+    let bundle = Svb::from_bytes(svb::build(bcfg, &BuildOptions::default()).unwrap()).unwrap();
+    let keys: Vec<&String> = bundle.index().modules.keys().collect();
+    assert!(keys.iter().any(|k| *k == "svelters-style:app/src/App.svelte"), "{keys:?}");
 }
 
 /// Q2: a `lang="ts"` component importing a `.ts` module (as `./util.js`, TypeScript's convention, and
