@@ -1,0 +1,23 @@
+{
+  "name": "@svelters-fixtures/gallery-egui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "test": "vite build",
+    "watch": "svelters-build --watch"
+  },
+  "dependencies": {
+    "@svelters/canvas": "workspace:*",
+    "svelte": "5.57.2"
+  },
+  "devDependencies": {
+    "@svelters/build": "workspace:*",
+    "@svelters/native-runtime": "workspace:*",
+    "vite": "8.3.4"
+  },
+  "svelters": {
+    "toolkit": "egui"
+  }
+}
