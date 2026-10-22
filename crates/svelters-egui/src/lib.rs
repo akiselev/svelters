@@ -47,7 +47,7 @@ pub use spec::dump;
 /// `use svelters_egui::prelude::*;`: what a provider kind (`#[svelters::widget]`) needs.
 pub mod prelude {
     pub use crate::provider::{
-        A11yCx, AvailableSpace, Caps, Event, ExtKey, IntoStateBits, KindDecl, MeasureCx, StateBit, StateBits, Widget, WidgetCx,
+        A11yCx, AvailableSpace, Caps, Event, ExtKey, Hit, HitCx, IntoStateBits, KindDecl, MeasureCx, StateBit, StateBits, Widget, WidgetCx,
     };
     pub use egui;
 }
