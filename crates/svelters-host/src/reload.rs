@@ -91,6 +91,11 @@ impl Reloader {
         *self.provider.borrow_mut() = Some(provider);
     }
 
+    /// Records changed files as the watcher thread does (without the debounce or the wake).
+    pub(crate) fn note_changed(&self, paths: Vec<PathBuf>) {
+        self.changed.lock().unwrap().extend(paths);
+    }
+
     pub(crate) fn set_hook(&self, f: Rc<dyn Fn(&ReloadReport)>) {
         *self.hook.borrow_mut() = Some(f);
     }
