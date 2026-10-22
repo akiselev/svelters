@@ -1,10 +1,11 @@
 //! rquickjs (QuickJS-NG) implementation of [`JsEngine`]: a synchronous runtime on the calling
-//! thread, a bundle-relative module loader, the `__svelters_host` object, and a JS prelude for
+//! thread, a module loader over a [`ModuleProvider`], the `__svelters_host` object, and a JS prelude for
 //! `console`, timers and `queueMicrotask`.
 
 use crate::convert;
 use crate::core::{Core, Name, OpError, OpKind};
-use crate::engine::{ChangedProp, ErrorKind, JobStatus, JsEngine, JsError};
+use crate::engine::{ChangedProp, ErrorKind, JobStatus, JsEngine, JsError, ModuleProvider};
+use svelters_modules::ModuleCode;
 use rquickjs::function::Opt;
 use rquickjs::loader::{ImportAttributes, Loader, Resolver};
 use rquickjs::module::Declared;
@@ -13,7 +14,6 @@ use rquickjs::{
     CatchResultExt, Context, Ctx, Exception, FromJs, Function, Module, Object, Runtime, Value,
 };
 use std::cell::RefCell;
-use std::path::{Path, PathBuf};
 use std::rc::{Rc, Weak};
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
@@ -252,39 +252,22 @@ impl QjsEngine {
         })
     }
 
-    fn near_memory_limit(&self) -> bool {
-        let u = self.rt.memory_usage();
-        u.malloc_limit > 0 && u.malloc_size + (u.malloc_limit / 8).max(256 * 1024) >= u.malloc_limit
-    }
-}
-
-impl JsEngine for QjsEngine {
-    fn load_module(&mut self, entry: &Path) -> Result<(), JsError> {
-        let load_err = |m: String| JsError::new(ErrorKind::Load, m);
-        let entry = entry
-            .canonicalize()
-            .map_err(|e| load_err(format!("{}: {e}", entry.display())))?;
-        let root = entry
-            .parent()
-            .ok_or_else(|| load_err("entry has no parent directory".into()))?
-            .to_path_buf();
-        let name = entry
-            .file_name()
-            .and_then(|n| n.to_str())
-            .ok_or_else(|| load_err("entry file name is not UTF-8".into()))?
-            .to_string();
-        let source = std::fs::read_to_string(&entry)
-            .map_err(|e| load_err(format!("{}: {e}", entry.display())))?;
-
-        self.rt.set_loader(BundleResolver, BundleLoader { root });
+    /// Installs the provider as the module loader and evaluates its entry; returns the entry's
+    /// namespace. A module that failed synchronously has a rejected promise; one waiting on
+    /// top-level await settles later and is reported as an unhandled rejection if it fails.
+    fn eval_entry(&mut self, provider: Rc<dyn ModuleProvider>) -> Result<rquickjs::Persistent<Object<'static>>, JsError> {
+        provider.begin();
+        let entry = provider.entry();
+        let code = provider.load(&entry).map_err(|m| JsError::new(ErrorKind::Load, m))?;
+        let core = Rc::downgrade(&self.core);
+        self.rt.set_loader(ProviderResolver(provider.clone()), ProviderLoader { provider, core: core.clone() });
         let res = self.call_guarded(|ctx| {
-            let (_m, promise) = Module::declare(ctx.clone(), name.as_str(), source)?.eval()?;
-            // A module that failed synchronously has a rejected promise; one that is waiting on
-            // top-level await settles later and is reported as an unhandled rejection if it fails.
-            match promise.result::<Value>() {
-                Some(Err(e)) => Err(e),
-                _ => Ok(()),
+            let (m, promise) = declare(ctx, &entry, code, &core)?.eval()?;
+            if let Some(Err(e)) = promise.result::<Value>() {
+                return Err(e);
             }
+            let ns = m.namespace()?;
+            Ok(rquickjs::Persistent::save(ctx, ns))
         });
         res.map_err(|mut e| {
             // The rejection tracker saw the same failure; report it once, as the load error.
@@ -294,6 +277,17 @@ impl JsEngine for QjsEngine {
             }
             e
         })
+    }
+
+    fn near_memory_limit(&self) -> bool {
+        let u = self.rt.memory_usage();
+        u.malloc_limit > 0 && u.malloc_size + (u.malloc_limit / 8).max(256 * 1024) >= u.malloc_limit
+    }
+}
+
+impl JsEngine for QjsEngine {
+    fn load_module(&mut self, provider: Rc<dyn ModuleProvider>) -> Result<(), JsError> {
+        self.eval_entry(provider).map(|_| ())
     }
 
     fn dispatch(
@@ -460,34 +454,10 @@ impl JsEngine for QjsEngine {
         self.rt.is_job_pending()
     }
 
-    fn load_entry(&mut self, entry: &Path) -> Result<u32, JsError> {
-        let load_err = |m: String| JsError::new(ErrorKind::Load, m);
-        let entry = entry.canonicalize().map_err(|e| load_err(format!("{}: {e}", entry.display())))?;
-        let root = entry.parent().ok_or_else(|| load_err("entry has no parent directory".into()))?.to_path_buf();
-        let name = entry.file_name().and_then(|n| n.to_str()).ok_or_else(|| load_err("entry file name is not UTF-8".into()))?.to_string();
-        let source = std::fs::read_to_string(&entry).map_err(|e| load_err(format!("{}: {e}", entry.display())))?;
-        self.rt.set_loader(BundleResolver, BundleLoader { root });
-        let res = self.call_guarded(|ctx| {
-            let (m, promise) = Module::declare(ctx.clone(), name.as_str(), source)?.eval()?;
-            if let Some(Err(e)) = promise.result::<Value>() {
-                return Err(e);
-            }
-            let ns = m.namespace()?;
-            Ok(rquickjs::Persistent::save(ctx, ns))
-        });
-        match res {
-            Ok(ns) => {
-                self.entries.push(ns);
-                Ok(self.entries.len() as u32 - 1)
-            }
-            Err(mut e) => {
-                self.async_errors.borrow_mut().clear();
-                if e.kind == ErrorKind::Exception {
-                    e.kind = ErrorKind::Load;
-                }
-                Err(e)
-            }
-        }
+    fn load_entry(&mut self, provider: Rc<dyn ModuleProvider>) -> Result<u32, JsError> {
+        let ns = self.eval_entry(provider)?;
+        self.entries.push(ns);
+        Ok(self.entries.len() as u32 - 1)
     }
 
     fn mount_root(&mut self, entry: u32, export: &str, root: u32, target: u64, props: &[(String, AV)]) -> Result<(), JsError> {
@@ -1166,82 +1136,56 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
 
 // ---- module loading ----
 
-/// Resolves relative specifiers against the importing module's name. Names are slash-separated
-/// paths relative to the bundle directory; a specifier that would climb above it is rejected.
-struct BundleResolver;
+/// Host built-in modules: the app's Rust exports and the object core they import. Served before
+/// the provider is asked.
+fn is_builtin(name: &str) -> bool {
+    name == "svelters:core" || name.starts_with("svelters:app/")
+}
 
-impl Resolver for BundleResolver {
-    fn resolve<'js>(
-        &mut self,
-        _ctx: &Ctx<'js>,
-        base: &str,
-        name: &str,
-        _attrs: Option<ImportAttributes<'js>>,
-    ) -> Res<String> {
-        // Host built-in modules: the app's Rust exports and the object core they import.
-        if name == "svelters:core" || name.starts_with("svelters:app/") {
+/// The QuickJS side of a [`ModuleProvider`]: resolution.
+struct ProviderResolver(Rc<dyn ModuleProvider>);
+
+impl Resolver for ProviderResolver {
+    fn resolve<'js>(&mut self, _ctx: &Ctx<'js>, base: &str, name: &str, _attrs: Option<ImportAttributes<'js>>) -> Res<String> {
+        if is_builtin(name) {
             return Ok(name.to_string());
         }
-        if !(name.starts_with("./") || name.starts_with("../")) {
-            return Err(rquickjs::Error::new_resolving_message(
-                base,
-                name,
-                "only relative imports inside the bundle directory are supported",
-            ));
-        }
-        let mut parts: Vec<&str> = base
-            .rsplit_once('/')
-            .map_or(Vec::new(), |(dir, _)| dir.split('/').collect());
-        for seg in name.split('/') {
-            match seg {
-                "" | "." => {}
-                ".." => {
-                    if parts.pop().is_none() {
-                        return Err(rquickjs::Error::new_resolving_message(
-                            base,
-                            name,
-                            "import escapes the bundle directory",
-                        ));
-                    }
-                }
-                s => parts.push(s),
-            }
-        }
-        Ok(parts.join("/"))
+        self.0.resolve(base, name).map_err(|m| rquickjs::Error::new_resolving_message(base, name, m))
     }
 }
 
-struct BundleLoader {
-    root: PathBuf,
+/// The QuickJS side of a [`ModuleProvider`]: loading. Source maps go to the core's map store.
+struct ProviderLoader {
+    provider: Rc<dyn ModuleProvider>,
+    core: Weak<Core>,
 }
 
-impl Loader for BundleLoader {
-    fn load<'js>(
-        &mut self,
-        ctx: &Ctx<'js>,
-        name: &str,
-        _attrs: Option<ImportAttributes<'js>>,
-    ) -> Res<Module<'js, Declared>> {
-        if name.starts_with("svelters:") {
+impl Loader for ProviderLoader {
+    fn load<'js>(&mut self, ctx: &Ctx<'js>, name: &str, _attrs: Option<ImportAttributes<'js>>) -> Res<Module<'js, Declared>> {
+        if is_builtin(name) {
             let source = crate::exports::builtin_module(name)
                 .ok_or_else(|| rquickjs::Error::new_loading_message(name, "no such module: this binary exports no such svelters:app module"))?;
             return Module::declare(ctx.clone(), name, source);
         }
-        let path = self
-            .root
-            .join(name)
-            .canonicalize()
-            .map_err(|e| rquickjs::Error::new_loading_message(name, e.to_string()))?;
-        // Symlinks must not lead out of the bundle directory.
-        if !path.starts_with(&self.root) {
-            return Err(rquickjs::Error::new_loading_message(
-                name,
-                "resolves outside the bundle directory",
-            ));
+        let code = self.provider.load(name).map_err(|m| rquickjs::Error::new_loading_message(name, m))?;
+        declare(ctx, name, code, &self.core)
+    }
+}
+
+/// The engine tag of [`ModuleCode::Cached`] bytecode this engine reads.
+const BYTECODE_TAG: &str = "quickjs-ng";
+
+fn declare<'js>(ctx: &Ctx<'js>, name: &str, code: ModuleCode, core: &Weak<Core>) -> Res<Module<'js, Declared>> {
+    match code {
+        ModuleCode::Source { js, map } => {
+            if let (Some(map), Some(core)) = (map, core.upgrade()) {
+                core.maps.borrow_mut().insert(name, &map);
+            }
+            Module::declare(ctx.clone(), name, js)
         }
-        let source = std::fs::read_to_string(&path)
-            .map_err(|e| rquickjs::Error::new_loading_message(name, e.to_string()))?;
-        Module::declare(ctx.clone(), name, source)
+        // Safety: only bytecode tagged for this engine is read; its writer is the same QuickJS build.
+        ModuleCode::Cached { engine, bytes } if engine == BYTECODE_TAG => unsafe { Module::load(ctx.clone(), &bytes) },
+        ModuleCode::Cached { engine, .. } => Err(rquickjs::Error::new_loading_message(name, format!("bytecode for engine {engine:?}, not {BYTECODE_TAG:?}"))),
     }
 }
 

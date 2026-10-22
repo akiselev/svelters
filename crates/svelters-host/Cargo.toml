@@ -9,6 +9,8 @@ publish.workspace = true
 svelters-abi.workspace = true
 svelters-backend-log.workspace = true
 rquickjs.workspace = true
+# Q1: the engine boundary (`ModuleProvider`) and the bundle provider; runners add `SourceProvider`.
+svelters-modules.workspace = true
 serde_json.workspace = true
 # RA2: `Json<T>` crosses serde values, typed from `schemars::JsonSchema`.
 serde.workspace = true
@@ -20,6 +22,10 @@ inventory = "0.3"
 rayon = "1.12"
 # E1: `#[js(tokio)] async fn` exports (feature `tokio`).
 tokio = { version = "1.47", optional = true, default-features = false, features = ["rt", "rt-multi-thread"] }
+
+[dev-dependencies]
+# Q1 tests load apps from source.
+svelters-modules = { workspace = true, features = ["source"] }
 
 [features]
 tokio = ["dep:tokio"]

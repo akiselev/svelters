@@ -3704,6 +3704,7 @@ dependencies = [
  "svelters-abi",
  "svelters-egui",
  "svelters-host",
+ "svelters-modules",
  "taffy",
 ]
 
@@ -3732,6 +3733,7 @@ dependencies = [
  "sourcemap",
  "svelters-abi",
  "svelters-backend-log",
+ "svelters-modules",
  "tokio",
 ]
 
