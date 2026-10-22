@@ -113,7 +113,7 @@ impl Widget for Checkbox {
         }
         for Toggle::Toggled { checked, .. } in fired.toggle.iter().copied() {
             // EV1: dispatched before the default action (the prop write)
-            if !cx.dispatch(&self.changed, checked).prevented {
+            if !cx.dispatch(&self.changed, checked).prevented() {
                 cx.set(&mut self.checked, checked);
             }
         }

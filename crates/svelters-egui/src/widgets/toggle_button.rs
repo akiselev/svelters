@@ -81,7 +81,7 @@ impl Widget for ToggleButton {
             cx.dispatch(&self.clicked, ());
         }
         for Toggle::Toggled { checked, .. } in fired.toggle.iter().copied() {
-            if !cx.dispatch(&self.changed, checked).prevented {
+            if !cx.dispatch(&self.changed, checked).prevented() {
                 cx.set(&mut self.checked, checked);
             }
         }

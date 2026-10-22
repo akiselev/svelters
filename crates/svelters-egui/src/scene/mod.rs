@@ -111,6 +111,9 @@ pub struct Scene {
     /// OW0: which built-in kinds new nodes get as svelters' own widget (`crate::widgets`), from
     /// `SVELTERS_OWN_WIDGETS` or `EguiBackend::set_own_widgets`.
     pub(crate) own: crate::widgets::KindSet,
+    /// EV1: the registered event filters (SV6), shared with the scene's cell so that a widget's
+    /// `dispatch` during the walk reaches them (`events.rs`).
+    pub(crate) filters: std::rc::Rc<std::cell::RefCell<crate::events::Registry>>,
 }
 
 impl Default for Scene {
@@ -134,6 +137,7 @@ impl Default for Scene {
             style: Default::default(),
             taken_w: W::Box,
             own: crate::widgets::KindSet::from_env().unwrap_or_default(),
+            filters: Default::default(),
         }
     }
 }
@@ -282,6 +286,20 @@ impl Scene {
                     v.push(signal);
                 }
             }
+        }
+    }
+
+    /// EV1: true if the node listens to `signal` in the capture phase.
+    pub(crate) fn listens_capture(&self, i: usize, signal: u32) -> bool {
+        signal != 0 && self.cold(i).listen_capture.contains(&signal)
+    }
+
+    /// EV1: `listen_ex(.., SVL_LISTEN_CAPTURE)`.
+    pub(crate) fn set_listen_capture(&mut self, i: usize, signal: u32, on: bool) {
+        let v = &mut self.cold_mut(i).listen_capture;
+        v.retain(|&s| s != signal);
+        if on {
+            v.push(signal);
         }
     }
 

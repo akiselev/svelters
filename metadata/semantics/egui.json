@@ -9950,6 +9950,120 @@
           "sync": false,
           "sync_required": false
         },
+        "click": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The primary button was pressed and released; targets the innermost node that holds both points (EV1). `preventDefault` keeps the click from the widget.",
+          "handler_result": "bool_stop",
+          "js_event": "click",
+          "name": "click",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "contextmenu": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The secondary button went down (EV1), after `pointerdown`. `preventDefault` keeps the press from egui (no context menu).",
+          "handler_result": "bool_stop",
+          "js_event": "contextmenu",
+          "name": "contextmenu",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "dblclick": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A second click on the same node in a short time, after its `click` (EV1).",
+          "handler_result": "bool_stop",
+          "js_event": "dblclick",
+          "name": "dblclick",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
         "drag-begin": {
           "args": [],
           "disconnect_on_drop": true,
@@ -10030,6 +10144,244 @@
           "name": "drop",
           "phases": [],
           "sync": false,
+          "sync_required": false
+        },
+        "focusin": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "related",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "This node or a descendant took keyboard focus (EV1; after the frame that moved it). `related` is the node that lost it, 0 for none.",
+          "handler_result": "bool_stop",
+          "js_event": "focusin",
+          "name": "focusin",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "focusout": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "related",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "This node or a descendant lost keyboard focus (EV1). `related` is the node that took it, 0 for none.",
+          "handler_result": "bool_stop",
+          "js_event": "focusout",
+          "name": "focusout",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "keydown": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "key",
+              "type": "string"
+            },
+            {
+              "name": "repeat",
+              "type": "bool"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A key went down while this node or a descendant had focus (EV1); `key` is egui's key name. `preventDefault` keeps the key (and the text it types) from the focused widget.",
+          "handler_result": "bool_stop",
+          "js_event": "keydown",
+          "name": "keydown",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "keyup": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "key",
+              "type": "string"
+            },
+            {
+              "name": "repeat",
+              "type": "bool"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A key went up while this node or a descendant had focus (EV1).",
+          "handler_result": "bool_stop",
+          "js_event": "keyup",
+          "name": "keyup",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "pointerdown": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A pointer button went down over this node or a descendant (EV1: capture, target, bubble). `preventDefault` keeps the press from egui (no click, drag or focus).",
+          "handler_result": "bool_stop",
+          "js_event": "pointerdown",
+          "name": "pointerdown",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "pointerup": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A pointer button went up over this node or a descendant (EV1). `preventDefault` cancels the click.",
+          "handler_result": "bool_stop",
+          "js_event": "pointerup",
+          "name": "pointerup",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "wheel": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "dx",
+              "type": "f64"
+            },
+            {
+              "name": "dy",
+              "type": "f64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The mouse wheel or a trackpad scrolled over this node (EV1); `dx`, `dy` in points. `preventDefault` keeps it from scrolling.",
+          "handler_result": "bool_stop",
+          "js_event": "wheel",
+          "name": "wheel",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
           "sync_required": false
         }
       },
@@ -10246,6 +10598,44 @@
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {
+        "click": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The primary button was pressed and released; targets the innermost node that holds both points (EV1). `preventDefault` keeps the click from the widget.",
+          "handler_result": "bool_stop",
+          "js_event": "click",
+          "name": "click",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
         "close-request": {
           "args": [],
           "disconnect_on_drop": true,
@@ -10254,6 +10644,320 @@
           "js_event": "close-request",
           "name": "close-request",
           "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "contextmenu": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The secondary button went down (EV1), after `pointerdown`. `preventDefault` keeps the press from egui (no context menu).",
+          "handler_result": "bool_stop",
+          "js_event": "contextmenu",
+          "name": "contextmenu",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "dblclick": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A second click on the same node in a short time, after its `click` (EV1).",
+          "handler_result": "bool_stop",
+          "js_event": "dblclick",
+          "name": "dblclick",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "focusin": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "related",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "This node or a descendant took keyboard focus (EV1; after the frame that moved it). `related` is the node that lost it, 0 for none.",
+          "handler_result": "bool_stop",
+          "js_event": "focusin",
+          "name": "focusin",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "focusout": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "related",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "This node or a descendant lost keyboard focus (EV1). `related` is the node that took it, 0 for none.",
+          "handler_result": "bool_stop",
+          "js_event": "focusout",
+          "name": "focusout",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "keydown": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "key",
+              "type": "string"
+            },
+            {
+              "name": "repeat",
+              "type": "bool"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A key went down while this node or a descendant had focus (EV1); `key` is egui's key name. `preventDefault` keeps the key (and the text it types) from the focused widget.",
+          "handler_result": "bool_stop",
+          "js_event": "keydown",
+          "name": "keydown",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "keyup": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "key",
+              "type": "string"
+            },
+            {
+              "name": "repeat",
+              "type": "bool"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A key went up while this node or a descendant had focus (EV1).",
+          "handler_result": "bool_stop",
+          "js_event": "keyup",
+          "name": "keyup",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "pointerdown": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A pointer button went down over this node or a descendant (EV1: capture, target, bubble). `preventDefault` keeps the press from egui (no click, drag or focus).",
+          "handler_result": "bool_stop",
+          "js_event": "pointerdown",
+          "name": "pointerdown",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "pointerup": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A pointer button went up over this node or a descendant (EV1). `preventDefault` cancels the click.",
+          "handler_result": "bool_stop",
+          "js_event": "pointerup",
+          "name": "pointerup",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "wheel": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "dx",
+              "type": "f64"
+            },
+            {
+              "name": "dy",
+              "type": "f64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The mouse wheel or a trackpad scrolled over this node (EV1); `dx`, `dy` in points. `preventDefault` keeps it from scrolling.",
+          "handler_result": "bool_stop",
+          "js_event": "wheel",
+          "name": "wheel",
+          "phases": [
+            "capture"
+          ],
           "sync": true,
           "sync_required": false
         }
