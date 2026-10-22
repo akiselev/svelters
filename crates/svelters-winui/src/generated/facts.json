@@ -2,7 +2,7 @@
  "facts": [
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:event:Click",
-   "fingerprint": "6dab7efafe4553cc",
+   "fingerprint": "f783e8208a30daf7",
    "kind": "ButtonBase",
    "name": "Click",
    "origin": "manual",
@@ -37,7 +37,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:prop:ClickMode:observe",
-   "fingerprint": "a914e13a3a1ab4e1",
+   "fingerprint": "be2a16423575688d",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:ButtonBase",
    "name": "ClickMode",
    "origin": "inferred",
@@ -62,7 +62,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:prop:IsPointerOver:observe",
-   "fingerprint": "f9679c9cb7d31caa",
+   "fingerprint": "979d1dde681030e6",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:ButtonBase",
    "name": "IsPointerOver",
    "origin": "inferred",
@@ -87,7 +87,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ButtonBase:prop:IsPressed:observe",
-   "fingerprint": "152cd49e0625cb0d",
+   "fingerprint": "af6b161ed3ad393c",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:ButtonBase",
    "name": "IsPressed",
    "origin": "inferred",
@@ -260,7 +260,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase:prop:AllowFocusOnInteraction:observe",
-   "fingerprint": "af5fbf3595ba3c64",
+   "fingerprint": "7fd4a4e3745edee2",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase",
    "name": "AllowFocusOnInteraction",
    "origin": "inferred",
@@ -285,7 +285,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase:prop:AllowFocusWhenDisabled:observe",
-   "fingerprint": "09739f0c463e13d3",
+   "fingerprint": "5152e1d35384cbe5",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase",
    "name": "AllowFocusWhenDisabled",
    "origin": "inferred",
@@ -310,7 +310,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase:prop:AreOpenCloseAnimationsEnabled:observe",
-   "fingerprint": "9be28d5940bf7bdd",
+   "fingerprint": "5b8b1751fdd756f8",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase",
    "name": "AreOpenCloseAnimationsEnabled",
    "origin": "inferred",
@@ -335,7 +335,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase:prop:ElementSoundMode:observe",
-   "fingerprint": "6dca15a73a36cc25",
+   "fingerprint": "751d439c1885ed5d",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase",
    "name": "ElementSoundMode",
    "origin": "inferred",
@@ -360,7 +360,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase:prop:InputDevicePrefersPrimaryCommands:observe",
-   "fingerprint": "31fec79f2ea2db4d",
+   "fingerprint": "a1a217dd54786373",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase",
    "name": "InputDevicePrefersPrimaryCommands",
    "origin": "inferred",
@@ -385,7 +385,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase:prop:IsConstrainedToRootBounds:observe",
-   "fingerprint": "561d2970b3fcc257",
+   "fingerprint": "a97bc1afec9df3a2",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase",
    "name": "IsConstrainedToRootBounds",
    "origin": "inferred",
@@ -410,7 +410,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase:prop:IsOpen:observe",
-   "fingerprint": "bf100ca12ac9ef09",
+   "fingerprint": "6bf9c8631b8c7a0a",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase",
    "name": "IsOpen",
    "origin": "inferred",
@@ -435,7 +435,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase:prop:LightDismissOverlayMode:observe",
-   "fingerprint": "5e9c53e00cd9f255",
+   "fingerprint": "7f79e5f9df4d7194",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase",
    "name": "LightDismissOverlayMode",
    "origin": "inferred",
@@ -460,7 +460,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase:prop:Placement:observe",
-   "fingerprint": "a7cc382dae28dd7b",
+   "fingerprint": "7ef718f56477c7b0",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase",
    "name": "Placement",
    "origin": "inferred",
@@ -485,7 +485,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase:prop:ShouldConstrainToRootBounds:observe",
-   "fingerprint": "13afe663e8fa5704",
+   "fingerprint": "d44df77d0f572d5c",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase",
    "name": "ShouldConstrainToRootBounds",
    "origin": "inferred",
@@ -498,7 +498,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:event:ValueChanged",
-   "fingerprint": "e3bfe419d5be5d4c",
+   "fingerprint": "72e2efdda4afec77",
    "kind": "RangeBase",
    "name": "ValueChanged",
    "origin": "manual",
@@ -580,7 +580,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:prop:LargeChange:observe",
-   "fingerprint": "0a259ff5d8fb0e73",
+   "fingerprint": "f34a0286e7840484",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:RangeBase",
    "name": "LargeChange",
    "origin": "inferred",
@@ -604,7 +604,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:prop:Maximum:observe",
-   "fingerprint": "0f7a6c306a52157d",
+   "fingerprint": "613d356bc64f396f",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:RangeBase",
    "name": "Maximum",
    "origin": "inferred",
@@ -628,7 +628,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:prop:Minimum:observe",
-   "fingerprint": "49ecc085fa687840",
+   "fingerprint": "f8a5436dcf80d525",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:RangeBase",
    "name": "Minimum",
    "origin": "inferred",
@@ -652,7 +652,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:prop:SmallChange:observe",
-   "fingerprint": "6188e47868575be3",
+   "fingerprint": "e0d56745297eee42",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:RangeBase",
    "name": "SmallChange",
    "origin": "inferred",
@@ -676,7 +676,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RangeBase:prop:Value:observe",
-   "fingerprint": "92a949ff7a8a1482",
+   "fingerprint": "c5391b0d66f7629e",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:RangeBase",
    "name": "Value",
    "origin": "inferred",
@@ -749,7 +749,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RepeatButton:prop:Delay:observe",
-   "fingerprint": "74ac1de568972bd5",
+   "fingerprint": "f5c0823f0ca157ff",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:RepeatButton",
    "name": "Delay",
    "origin": "inferred",
@@ -774,7 +774,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:RepeatButton:prop:Interval:observe",
-   "fingerprint": "f0967181ba19bf44",
+   "fingerprint": "0d3f23cc0369acf0",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:RepeatButton",
    "name": "Interval",
    "origin": "inferred",
@@ -824,7 +824,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:Selector:prop:SelectedValuePath:observe",
-   "fingerprint": "ae6ce19d01b2ee4c",
+   "fingerprint": "fdcf4431a06f0a68",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:Selector",
    "name": "SelectedValuePath",
    "origin": "inferred",
@@ -861,7 +861,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:SelectorItem:prop:IsSelected:observe",
-   "fingerprint": "c8078bd79298097c",
+   "fingerprint": "9daa227684eb4543",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:SelectorItem",
    "name": "IsSelected",
    "origin": "inferred",
@@ -898,7 +898,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ToggleButton:event:Checked",
-   "fingerprint": "9ef484d593fd1dbe",
+   "fingerprint": "755c1f99761e6536",
    "kind": "ToggleButton",
    "name": "Checked",
    "origin": "manual",
@@ -922,7 +922,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ToggleButton:event:Unchecked",
-   "fingerprint": "3a039d16a1f7a0cc",
+   "fingerprint": "a501bd5ed3fd2578",
    "kind": "ToggleButton",
    "name": "Unchecked",
    "origin": "manual",
@@ -968,7 +968,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ToggleButton:prop:IsChecked:observe",
-   "fingerprint": "b7d74bf8e800605f",
+   "fingerprint": "9a9fe4779a063ce3",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:ToggleButton",
    "name": "IsChecked",
    "origin": "inferred",
@@ -992,7 +992,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:ToggleButton:prop:IsThreeState:observe",
-   "fingerprint": "4411d2941b2792e5",
+   "fingerprint": "7f0cc82ecbed2f72",
    "kind": "Microsoft.UI.Xaml.Controls.Primitives:ToggleButton",
    "name": "IsThreeState",
    "origin": "inferred",
@@ -1117,7 +1117,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBar:prop:ClosedDisplayMode:observe",
-   "fingerprint": "ef7ad72327f74593",
+   "fingerprint": "610b1c1c5cb4ed3e",
    "kind": "Microsoft.UI.Xaml.Controls:AppBar",
    "name": "ClosedDisplayMode",
    "origin": "inferred",
@@ -1142,7 +1142,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBar:prop:IsOpen:observe",
-   "fingerprint": "bcf1f8a0720757f8",
+   "fingerprint": "897c1927096e5385",
    "kind": "Microsoft.UI.Xaml.Controls:AppBar",
    "name": "IsOpen",
    "origin": "inferred",
@@ -1167,7 +1167,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBar:prop:IsSticky:observe",
-   "fingerprint": "052029385cea927b",
+   "fingerprint": "48b7ae2532c79752",
    "kind": "Microsoft.UI.Xaml.Controls:AppBar",
    "name": "IsSticky",
    "origin": "inferred",
@@ -1192,7 +1192,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBar:prop:LightDismissOverlayMode:observe",
-   "fingerprint": "ed1184af7df91df8",
+   "fingerprint": "1c329ddebc9421db",
    "kind": "Microsoft.UI.Xaml.Controls:AppBar",
    "name": "LightDismissOverlayMode",
    "origin": "inferred",
@@ -1349,7 +1349,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBarButton:prop:DynamicOverflowOrder:observe",
-   "fingerprint": "c0c84e398af1a451",
+   "fingerprint": "13b51288f2b83d5b",
    "kind": "Microsoft.UI.Xaml.Controls:AppBarButton",
    "name": "DynamicOverflowOrder",
    "origin": "inferred",
@@ -1374,7 +1374,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBarButton:prop:Icon:observe",
-   "fingerprint": "b859a72de63ed2ea",
+   "fingerprint": "fc528b0b199ba99f",
    "kind": "Microsoft.UI.Xaml.Controls:AppBarButton",
    "name": "Icon",
    "origin": "inferred",
@@ -1399,7 +1399,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBarButton:prop:IsCompact:observe",
-   "fingerprint": "8ee81b7cdd3e18ee",
+   "fingerprint": "01fef46a5f99fa19",
    "kind": "Microsoft.UI.Xaml.Controls:AppBarButton",
    "name": "IsCompact",
    "origin": "inferred",
@@ -1424,7 +1424,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBarButton:prop:IsInOverflow:observe",
-   "fingerprint": "9bc07f585c3bd91b",
+   "fingerprint": "e8b8ab168e41b24b",
    "kind": "Microsoft.UI.Xaml.Controls:AppBarButton",
    "name": "IsInOverflow",
    "origin": "inferred",
@@ -1449,7 +1449,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBarButton:prop:KeyboardAcceleratorTextOverride:observe",
-   "fingerprint": "c24a08c92a2c4643",
+   "fingerprint": "08d51cfb2232d338",
    "kind": "Microsoft.UI.Xaml.Controls:AppBarButton",
    "name": "KeyboardAcceleratorTextOverride",
    "origin": "inferred",
@@ -1473,7 +1473,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBarButton:prop:Label:observe",
-   "fingerprint": "4037096c79d0d0c1",
+   "fingerprint": "4deb67e5b0c626fb",
    "kind": "Microsoft.UI.Xaml.Controls:AppBarButton",
    "name": "Label",
    "origin": "inferred",
@@ -1498,7 +1498,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBarButton:prop:LabelPosition:observe",
-   "fingerprint": "a611e0fa3fdaa479",
+   "fingerprint": "e0fc2a6e5669e558",
    "kind": "Microsoft.UI.Xaml.Controls:AppBarButton",
    "name": "LabelPosition",
    "origin": "inferred",
@@ -1571,7 +1571,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBarSeparator:prop:DynamicOverflowOrder:observe",
-   "fingerprint": "7e3209003dfa13ec",
+   "fingerprint": "07689b8a96452817",
    "kind": "Microsoft.UI.Xaml.Controls:AppBarSeparator",
    "name": "DynamicOverflowOrder",
    "origin": "inferred",
@@ -1596,7 +1596,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBarSeparator:prop:IsCompact:observe",
-   "fingerprint": "597cfbdfcf81e7fc",
+   "fingerprint": "a93c42ccd6419a91",
    "kind": "Microsoft.UI.Xaml.Controls:AppBarSeparator",
    "name": "IsCompact",
    "origin": "inferred",
@@ -1621,7 +1621,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBarSeparator:prop:IsInOverflow:observe",
-   "fingerprint": "af77f8c76ac96f19",
+   "fingerprint": "0c567010067bab4e",
    "kind": "Microsoft.UI.Xaml.Controls:AppBarSeparator",
    "name": "IsInOverflow",
    "origin": "inferred",
@@ -1778,7 +1778,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBarToggleButton:prop:DynamicOverflowOrder:observe",
-   "fingerprint": "2e36aebe1f72fce1",
+   "fingerprint": "873392b4a69a602f",
    "kind": "Microsoft.UI.Xaml.Controls:AppBarToggleButton",
    "name": "DynamicOverflowOrder",
    "origin": "inferred",
@@ -1803,7 +1803,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBarToggleButton:prop:Icon:observe",
-   "fingerprint": "0f10e187917874e1",
+   "fingerprint": "913eb504fee850ad",
    "kind": "Microsoft.UI.Xaml.Controls:AppBarToggleButton",
    "name": "Icon",
    "origin": "inferred",
@@ -1828,7 +1828,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBarToggleButton:prop:IsCompact:observe",
-   "fingerprint": "2bb592f4fce46f99",
+   "fingerprint": "c146abc401cc300c",
    "kind": "Microsoft.UI.Xaml.Controls:AppBarToggleButton",
    "name": "IsCompact",
    "origin": "inferred",
@@ -1853,7 +1853,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBarToggleButton:prop:IsInOverflow:observe",
-   "fingerprint": "8e503bafe56b5fc5",
+   "fingerprint": "46a71025dc13978f",
    "kind": "Microsoft.UI.Xaml.Controls:AppBarToggleButton",
    "name": "IsInOverflow",
    "origin": "inferred",
@@ -1878,7 +1878,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBarToggleButton:prop:KeyboardAcceleratorTextOverride:observe",
-   "fingerprint": "a9ca623dffe4ab73",
+   "fingerprint": "a5fcc151f1fa519f",
    "kind": "Microsoft.UI.Xaml.Controls:AppBarToggleButton",
    "name": "KeyboardAcceleratorTextOverride",
    "origin": "inferred",
@@ -1902,7 +1902,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBarToggleButton:prop:Label:observe",
-   "fingerprint": "3b6cc17d5b65a79c",
+   "fingerprint": "1c1cf67b26792690",
    "kind": "Microsoft.UI.Xaml.Controls:AppBarToggleButton",
    "name": "Label",
    "origin": "inferred",
@@ -1927,7 +1927,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AppBarToggleButton:prop:LabelPosition:observe",
-   "fingerprint": "940eba7e5584713d",
+   "fingerprint": "d9950c0e539d44c4",
    "kind": "Microsoft.UI.Xaml.Controls:AppBarToggleButton",
    "name": "LabelPosition",
    "origin": "inferred",
@@ -2195,7 +2195,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AutoSuggestBox:prop:AutoMaximizeSuggestionArea:observe",
-   "fingerprint": "8b5dc3afbbbe8a5f",
+   "fingerprint": "cf7679240eabd2b4",
    "kind": "Microsoft.UI.Xaml.Controls:AutoSuggestBox",
    "name": "AutoMaximizeSuggestionArea",
    "origin": "inferred",
@@ -2220,7 +2220,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AutoSuggestBox:prop:Description:observe",
-   "fingerprint": "ba12b3e6ba5d2f59",
+   "fingerprint": "f6ac6aa42748e438",
    "kind": "Microsoft.UI.Xaml.Controls:AutoSuggestBox",
    "name": "Description",
    "origin": "inferred",
@@ -2244,7 +2244,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AutoSuggestBox:prop:Header:observe",
-   "fingerprint": "0a833740fcf15da8",
+   "fingerprint": "1871dabaa22c47aa",
    "kind": "Microsoft.UI.Xaml.Controls:AutoSuggestBox",
    "name": "Header",
    "origin": "inferred",
@@ -2269,7 +2269,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AutoSuggestBox:prop:IsSuggestionListOpen:observe",
-   "fingerprint": "150a40f00d562624",
+   "fingerprint": "f25228840183d7d6",
    "kind": "Microsoft.UI.Xaml.Controls:AutoSuggestBox",
    "name": "IsSuggestionListOpen",
    "origin": "inferred",
@@ -2294,7 +2294,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AutoSuggestBox:prop:LightDismissOverlayMode:observe",
-   "fingerprint": "0548f336f9c86dcd",
+   "fingerprint": "3e99adf12fa84160",
    "kind": "Microsoft.UI.Xaml.Controls:AutoSuggestBox",
    "name": "LightDismissOverlayMode",
    "origin": "inferred",
@@ -2319,7 +2319,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AutoSuggestBox:prop:MaxSuggestionListHeight:observe",
-   "fingerprint": "00bd4256ea6081b4",
+   "fingerprint": "8c66cf6761383fcb",
    "kind": "Microsoft.UI.Xaml.Controls:AutoSuggestBox",
    "name": "MaxSuggestionListHeight",
    "origin": "inferred",
@@ -2344,7 +2344,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AutoSuggestBox:prop:PlaceholderText:observe",
-   "fingerprint": "72db427c153da848",
+   "fingerprint": "a573cf287410c9cc",
    "kind": "Microsoft.UI.Xaml.Controls:AutoSuggestBox",
    "name": "PlaceholderText",
    "origin": "inferred",
@@ -2369,7 +2369,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AutoSuggestBox:prop:QueryIcon:observe",
-   "fingerprint": "f3f5540f3b7c038b",
+   "fingerprint": "b051513e81b2955e",
    "kind": "Microsoft.UI.Xaml.Controls:AutoSuggestBox",
    "name": "QueryIcon",
    "origin": "inferred",
@@ -2394,7 +2394,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AutoSuggestBox:prop:Text:observe",
-   "fingerprint": "84b6f753bfebc62d",
+   "fingerprint": "7957f48459965e30",
    "kind": "Microsoft.UI.Xaml.Controls:AutoSuggestBox",
    "name": "Text",
    "origin": "inferred",
@@ -2419,7 +2419,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AutoSuggestBox:prop:TextMemberPath:observe",
-   "fingerprint": "c631630118a9c9c9",
+   "fingerprint": "846d24e64d5fc2b4",
    "kind": "Microsoft.UI.Xaml.Controls:AutoSuggestBox",
    "name": "TextMemberPath",
    "origin": "inferred",
@@ -2444,7 +2444,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:AutoSuggestBox:prop:UpdateTextOnSelect:observe",
-   "fingerprint": "aac86b555a6f68d2",
+   "fingerprint": "ff5e478182d69d2a",
    "kind": "Microsoft.UI.Xaml.Controls:AutoSuggestBox",
    "name": "UpdateTextOnSelect",
    "origin": "inferred",
@@ -2553,7 +2553,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Border:prop:Background:observe",
-   "fingerprint": "70d69227499105a9",
+   "fingerprint": "14c45f7fe2ebd5a4",
    "kind": "Microsoft.UI.Xaml.Controls:Border",
    "name": "Background",
    "origin": "inferred",
@@ -2578,7 +2578,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Border:prop:BackgroundSizing:observe",
-   "fingerprint": "7e39dc1aceef897a",
+   "fingerprint": "c0d9ed8de3010604",
    "kind": "Microsoft.UI.Xaml.Controls:Border",
    "name": "BackgroundSizing",
    "origin": "inferred",
@@ -2603,7 +2603,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Border:prop:BorderBrush:observe",
-   "fingerprint": "e026b25637f483f0",
+   "fingerprint": "df0f33496695027d",
    "kind": "Microsoft.UI.Xaml.Controls:Border",
    "name": "BorderBrush",
    "origin": "inferred",
@@ -2628,7 +2628,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Border:prop:BorderThickness:observe",
-   "fingerprint": "3615676561d9a941",
+   "fingerprint": "ebd488466aa04e0b",
    "kind": "Microsoft.UI.Xaml.Controls:Border",
    "name": "BorderThickness",
    "origin": "inferred",
@@ -2653,7 +2653,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Border:prop:CornerRadius:observe",
-   "fingerprint": "d45ae1018d83826c",
+   "fingerprint": "7cc1d1458cb8a78f",
    "kind": "Microsoft.UI.Xaml.Controls:Border",
    "name": "CornerRadius",
    "origin": "inferred",
@@ -2678,7 +2678,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Border:prop:Padding:observe",
-   "fingerprint": "845989f4fde1c197",
+   "fingerprint": "d21f0d66ac27f936",
    "kind": "Microsoft.UI.Xaml.Controls:Border",
    "name": "Padding",
    "origin": "inferred",
@@ -3053,7 +3053,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:prop:CalendarIdentifier:observe",
-   "fingerprint": "e68e2d45a1e74a0e",
+   "fingerprint": "42c1111dfeee2b47",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarDatePicker",
    "name": "CalendarIdentifier",
    "origin": "inferred",
@@ -3078,7 +3078,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:prop:Date:observe",
-   "fingerprint": "13ed134246618d81",
+   "fingerprint": "a8e99f14dcac88db",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarDatePicker",
    "name": "Date",
    "origin": "inferred",
@@ -3103,7 +3103,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:prop:DayOfWeekFormat:observe",
-   "fingerprint": "64e10d2b0f6d07cb",
+   "fingerprint": "71478bc746cf4062",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarDatePicker",
    "name": "DayOfWeekFormat",
    "origin": "inferred",
@@ -3128,7 +3128,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:prop:Description:observe",
-   "fingerprint": "94dd4d645517c547",
+   "fingerprint": "d30c26ad3ba8d8fd",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarDatePicker",
    "name": "Description",
    "origin": "inferred",
@@ -3153,7 +3153,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:prop:DisplayMode:observe",
-   "fingerprint": "7e4903c856aec912",
+   "fingerprint": "58590d5d0f9520ed",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarDatePicker",
    "name": "DisplayMode",
    "origin": "inferred",
@@ -3178,7 +3178,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:prop:FirstDayOfWeek:observe",
-   "fingerprint": "b8d22eb3d92a8dcb",
+   "fingerprint": "76bea76650e1873c",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarDatePicker",
    "name": "FirstDayOfWeek",
    "origin": "inferred",
@@ -3203,7 +3203,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:prop:Header:observe",
-   "fingerprint": "b76811b025d619b7",
+   "fingerprint": "2d0c15b0191d09ba",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarDatePicker",
    "name": "Header",
    "origin": "inferred",
@@ -3228,7 +3228,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:prop:IsCalendarOpen:observe",
-   "fingerprint": "ef695b89c290b6fa",
+   "fingerprint": "8dcef7172c3c4216",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarDatePicker",
    "name": "IsCalendarOpen",
    "origin": "inferred",
@@ -3253,7 +3253,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:prop:IsGroupLabelVisible:observe",
-   "fingerprint": "a60b51558b454c21",
+   "fingerprint": "60ae4801d33d9d63",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarDatePicker",
    "name": "IsGroupLabelVisible",
    "origin": "inferred",
@@ -3278,7 +3278,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:prop:IsOutOfScopeEnabled:observe",
-   "fingerprint": "389ab8be393901cb",
+   "fingerprint": "d522f98f91db81f1",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarDatePicker",
    "name": "IsOutOfScopeEnabled",
    "origin": "inferred",
@@ -3303,7 +3303,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:prop:IsTodayHighlighted:observe",
-   "fingerprint": "d81ca5f710eb8cbc",
+   "fingerprint": "4feb3efc8c7fa12f",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarDatePicker",
    "name": "IsTodayHighlighted",
    "origin": "inferred",
@@ -3328,7 +3328,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:prop:LightDismissOverlayMode:observe",
-   "fingerprint": "b02e9d869b62f634",
+   "fingerprint": "11d71724f61875fd",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarDatePicker",
    "name": "LightDismissOverlayMode",
    "origin": "inferred",
@@ -3353,7 +3353,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:prop:MaxDate:observe",
-   "fingerprint": "8a9dd81fa01dde22",
+   "fingerprint": "c82c6bb6f7cb3a29",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarDatePicker",
    "name": "MaxDate",
    "origin": "inferred",
@@ -3378,7 +3378,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:prop:MinDate:observe",
-   "fingerprint": "3dd205b217b71ca5",
+   "fingerprint": "e969170e77c849cf",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarDatePicker",
    "name": "MinDate",
    "origin": "inferred",
@@ -3403,7 +3403,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:prop:PlaceholderText:observe",
-   "fingerprint": "f9a4e5a025796672",
+   "fingerprint": "5c9855d8286ca69e",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarDatePicker",
    "name": "PlaceholderText",
    "origin": "inferred",
@@ -4570,7 +4570,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:BlackoutBackground:observe",
-   "fingerprint": "5bbdacc3c3bc3c2b",
+   "fingerprint": "f10a6d644319df87",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "BlackoutBackground",
    "origin": "inferred",
@@ -4595,7 +4595,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:BlackoutForeground:observe",
-   "fingerprint": "fb6c407d1512e555",
+   "fingerprint": "d81ff4f3d38a7fa0",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "BlackoutForeground",
    "origin": "inferred",
@@ -4620,7 +4620,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:BlackoutStrikethroughBrush:observe",
-   "fingerprint": "3a6a1c2b2345e66b",
+   "fingerprint": "582eb4d0a288e6ca",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "BlackoutStrikethroughBrush",
    "origin": "inferred",
@@ -4645,7 +4645,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:CalendarIdentifier:observe",
-   "fingerprint": "6940381085e4f410",
+   "fingerprint": "e7257803f4b4bca2",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "CalendarIdentifier",
    "origin": "inferred",
@@ -4670,7 +4670,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:CalendarItemBackground:observe",
-   "fingerprint": "7b60bf7abfb445a2",
+   "fingerprint": "08bf46d29e0799eb",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "CalendarItemBackground",
    "origin": "inferred",
@@ -4695,7 +4695,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:CalendarItemBorderBrush:observe",
-   "fingerprint": "b80bda9544bbad77",
+   "fingerprint": "d12277edd75e80a3",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "CalendarItemBorderBrush",
    "origin": "inferred",
@@ -4720,7 +4720,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:CalendarItemBorderThickness:observe",
-   "fingerprint": "eba994a28d978ecc",
+   "fingerprint": "15e2e5a9a3d9b935",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "CalendarItemBorderThickness",
    "origin": "inferred",
@@ -4745,7 +4745,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:CalendarItemCornerRadius:observe",
-   "fingerprint": "0d16a011b7118c3a",
+   "fingerprint": "45954a3e7c7c8a73",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "CalendarItemCornerRadius",
    "origin": "inferred",
@@ -4770,7 +4770,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:CalendarItemDisabledBackground:observe",
-   "fingerprint": "53f86a909e389d2d",
+   "fingerprint": "68045f836bed2825",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "CalendarItemDisabledBackground",
    "origin": "inferred",
@@ -4795,7 +4795,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:CalendarItemForeground:observe",
-   "fingerprint": "db163a6d72adbb0e",
+   "fingerprint": "1b01e52010c19492",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "CalendarItemForeground",
    "origin": "inferred",
@@ -4820,7 +4820,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:CalendarItemHoverBackground:observe",
-   "fingerprint": "71a5a77134cd8dc1",
+   "fingerprint": "c895a596cba2f8ca",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "CalendarItemHoverBackground",
    "origin": "inferred",
@@ -4845,7 +4845,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:CalendarItemPressedBackground:observe",
-   "fingerprint": "272c01c623a03482",
+   "fingerprint": "e4278ef7da9025fa",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "CalendarItemPressedBackground",
    "origin": "inferred",
@@ -4870,7 +4870,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:DayItemFontFamily:observe",
-   "fingerprint": "874ba05da7b567b7",
+   "fingerprint": "67a83ea257c369cc",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "DayItemFontFamily",
    "origin": "inferred",
@@ -4895,7 +4895,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:DayItemFontSize:observe",
-   "fingerprint": "c3fa6b7c4cebdf6a",
+   "fingerprint": "8b0204d72b53b9ed",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "DayItemFontSize",
    "origin": "inferred",
@@ -4920,7 +4920,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:DayItemFontStyle:observe",
-   "fingerprint": "45da90c55b0620e4",
+   "fingerprint": "3419c620c275293d",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "DayItemFontStyle",
    "origin": "inferred",
@@ -4945,7 +4945,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:DayItemFontWeight:observe",
-   "fingerprint": "e18f6c8fe2c490d1",
+   "fingerprint": "d5325b8ad7145be5",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "DayItemFontWeight",
    "origin": "inferred",
@@ -4970,7 +4970,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:DayItemMargin:observe",
-   "fingerprint": "d553904614cf495a",
+   "fingerprint": "2577e190a16892e0",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "DayItemMargin",
    "origin": "inferred",
@@ -4995,7 +4995,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:DayOfWeekFormat:observe",
-   "fingerprint": "3ac4bf08156f779b",
+   "fingerprint": "ed385b14e617aceb",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "DayOfWeekFormat",
    "origin": "inferred",
@@ -5020,7 +5020,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:DisabledForeground:observe",
-   "fingerprint": "bab5d063ffa4c7c7",
+   "fingerprint": "f2a5f21820fd1ae4",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "DisabledForeground",
    "origin": "inferred",
@@ -5045,7 +5045,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:DisplayMode:observe",
-   "fingerprint": "7046ace9cec607b3",
+   "fingerprint": "0c5340a5eca6acac",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "DisplayMode",
    "origin": "inferred",
@@ -5070,7 +5070,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:FirstDayOfWeek:observe",
-   "fingerprint": "95cb002e830e990a",
+   "fingerprint": "f1caef07176ec7d7",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "FirstDayOfWeek",
    "origin": "inferred",
@@ -5095,7 +5095,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:FirstOfMonthLabelFontFamily:observe",
-   "fingerprint": "4054515d84c78d0c",
+   "fingerprint": "dc86dc1c43ffdb86",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "FirstOfMonthLabelFontFamily",
    "origin": "inferred",
@@ -5120,7 +5120,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:FirstOfMonthLabelFontSize:observe",
-   "fingerprint": "d8e5df5ccb7e553e",
+   "fingerprint": "0db918d9ec727461",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "FirstOfMonthLabelFontSize",
    "origin": "inferred",
@@ -5145,7 +5145,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:FirstOfMonthLabelFontStyle:observe",
-   "fingerprint": "ea542ed978aa1021",
+   "fingerprint": "dfb17a03543a4ac0",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "FirstOfMonthLabelFontStyle",
    "origin": "inferred",
@@ -5170,7 +5170,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:FirstOfMonthLabelFontWeight:observe",
-   "fingerprint": "4cca8b05e71c551e",
+   "fingerprint": "46700edc28f3a29f",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "FirstOfMonthLabelFontWeight",
    "origin": "inferred",
@@ -5195,7 +5195,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:FirstOfMonthLabelMargin:observe",
-   "fingerprint": "f9105f875a4c1568",
+   "fingerprint": "03ff3b11b9f2bed6",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "FirstOfMonthLabelMargin",
    "origin": "inferred",
@@ -5220,7 +5220,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:FirstOfYearDecadeLabelFontFamily:observe",
-   "fingerprint": "f5ca6f61e31305bd",
+   "fingerprint": "90f5aa1176b4f561",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "FirstOfYearDecadeLabelFontFamily",
    "origin": "inferred",
@@ -5245,7 +5245,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:FirstOfYearDecadeLabelFontSize:observe",
-   "fingerprint": "2eeb90af54982c5b",
+   "fingerprint": "37e928413d110371",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "FirstOfYearDecadeLabelFontSize",
    "origin": "inferred",
@@ -5270,7 +5270,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:FirstOfYearDecadeLabelFontStyle:observe",
-   "fingerprint": "1d787de15b007ea8",
+   "fingerprint": "bfa6223d3364ff6b",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "FirstOfYearDecadeLabelFontStyle",
    "origin": "inferred",
@@ -5295,7 +5295,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:FirstOfYearDecadeLabelFontWeight:observe",
-   "fingerprint": "9d0a42533d41e439",
+   "fingerprint": "7a8528cd21e96d9e",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "FirstOfYearDecadeLabelFontWeight",
    "origin": "inferred",
@@ -5320,7 +5320,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:FirstOfYearDecadeLabelMargin:observe",
-   "fingerprint": "8f8c8e0dcd66a9c9",
+   "fingerprint": "1ccd5639414f36e3",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "FirstOfYearDecadeLabelMargin",
    "origin": "inferred",
@@ -5345,7 +5345,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:FocusBorderBrush:observe",
-   "fingerprint": "a8f8769f17656cd4",
+   "fingerprint": "bb2d87b7c6772572",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "FocusBorderBrush",
    "origin": "inferred",
@@ -5370,7 +5370,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:HorizontalDayItemAlignment:observe",
-   "fingerprint": "0d5be0c210a7d160",
+   "fingerprint": "20caf2f545cd53ad",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "HorizontalDayItemAlignment",
    "origin": "inferred",
@@ -5395,7 +5395,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:HorizontalFirstOfMonthLabelAlignment:observe",
-   "fingerprint": "9ec759f36b4f6a4a",
+   "fingerprint": "f6e95057b5bb81bd",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "HorizontalFirstOfMonthLabelAlignment",
    "origin": "inferred",
@@ -5420,7 +5420,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:HoverBorderBrush:observe",
-   "fingerprint": "1e30f38b646d380e",
+   "fingerprint": "5e09d44840168fff",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "HoverBorderBrush",
    "origin": "inferred",
@@ -5445,7 +5445,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:IsGroupLabelVisible:observe",
-   "fingerprint": "1001004d3094c4da",
+   "fingerprint": "e8d05e272148f134",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "IsGroupLabelVisible",
    "origin": "inferred",
@@ -5470,7 +5470,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:IsOutOfScopeEnabled:observe",
-   "fingerprint": "641cfd77c99fc369",
+   "fingerprint": "08c8859141ac8826",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "IsOutOfScopeEnabled",
    "origin": "inferred",
@@ -5495,7 +5495,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:IsTodayHighlighted:observe",
-   "fingerprint": "ec0d7e5ba76f1f6d",
+   "fingerprint": "e672b77edde35edb",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "IsTodayHighlighted",
    "origin": "inferred",
@@ -5520,7 +5520,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:MaxDate:observe",
-   "fingerprint": "61b86893060e253d",
+   "fingerprint": "cf8f95dd3d5bd29f",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "MaxDate",
    "origin": "inferred",
@@ -5545,7 +5545,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:MinDate:observe",
-   "fingerprint": "8b0ebb3cc36d310a",
+   "fingerprint": "49cde8681830d6b2",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "MinDate",
    "origin": "inferred",
@@ -5570,7 +5570,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:MonthYearItemFontFamily:observe",
-   "fingerprint": "4cff859200682151",
+   "fingerprint": "69c4c0134b8c1201",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "MonthYearItemFontFamily",
    "origin": "inferred",
@@ -5595,7 +5595,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:MonthYearItemFontSize:observe",
-   "fingerprint": "889ecac72b07889d",
+   "fingerprint": "64d4af8cf335ba5a",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "MonthYearItemFontSize",
    "origin": "inferred",
@@ -5620,7 +5620,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:MonthYearItemFontStyle:observe",
-   "fingerprint": "ec0f86f6dc2db518",
+   "fingerprint": "315873db9d83f8be",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "MonthYearItemFontStyle",
    "origin": "inferred",
@@ -5645,7 +5645,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:MonthYearItemFontWeight:observe",
-   "fingerprint": "ef70414413b03174",
+   "fingerprint": "999fecce639a7149",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "MonthYearItemFontWeight",
    "origin": "inferred",
@@ -5670,7 +5670,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:MonthYearItemMargin:observe",
-   "fingerprint": "c99334af57906611",
+   "fingerprint": "44476b1705dc5c5d",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "MonthYearItemMargin",
    "origin": "inferred",
@@ -5695,7 +5695,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:NumberOfWeeksInView:observe",
-   "fingerprint": "7b4b2d893bdd1016",
+   "fingerprint": "cea8d1eb25b62fc9",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "NumberOfWeeksInView",
    "origin": "inferred",
@@ -5720,7 +5720,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:OutOfScopeBackground:observe",
-   "fingerprint": "5bf966a778146796",
+   "fingerprint": "29768be3c1d54ad7",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "OutOfScopeBackground",
    "origin": "inferred",
@@ -5745,7 +5745,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:OutOfScopeForeground:observe",
-   "fingerprint": "7751b82381eb9187",
+   "fingerprint": "b4a893c58622d46f",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "OutOfScopeForeground",
    "origin": "inferred",
@@ -5770,7 +5770,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:OutOfScopeHoverForeground:observe",
-   "fingerprint": "b5b1044b606b1ed3",
+   "fingerprint": "9d2462b973097968",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "OutOfScopeHoverForeground",
    "origin": "inferred",
@@ -5795,7 +5795,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:OutOfScopePressedForeground:observe",
-   "fingerprint": "287fa805e60d0b89",
+   "fingerprint": "846cdc6d798fc341",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "OutOfScopePressedForeground",
    "origin": "inferred",
@@ -5820,7 +5820,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:PressedBorderBrush:observe",
-   "fingerprint": "f3e4a6e01f0d6d7c",
+   "fingerprint": "1933d302af045d42",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "PressedBorderBrush",
    "origin": "inferred",
@@ -5845,7 +5845,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:PressedForeground:observe",
-   "fingerprint": "a61165c95076014c",
+   "fingerprint": "3d3fe6e12295d28e",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "PressedForeground",
    "origin": "inferred",
@@ -5870,7 +5870,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:SelectedBorderBrush:observe",
-   "fingerprint": "4d6d64a85d950df1",
+   "fingerprint": "b90363403b896801",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "SelectedBorderBrush",
    "origin": "inferred",
@@ -5895,7 +5895,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:SelectedDisabledBorderBrush:observe",
-   "fingerprint": "45080f1a93acb566",
+   "fingerprint": "b6ee107945803f61",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "SelectedDisabledBorderBrush",
    "origin": "inferred",
@@ -5920,7 +5920,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:SelectedDisabledForeground:observe",
-   "fingerprint": "98056d2ff45cdba9",
+   "fingerprint": "d45df24a5c85c536",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "SelectedDisabledForeground",
    "origin": "inferred",
@@ -5945,7 +5945,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:SelectedForeground:observe",
-   "fingerprint": "674ceac36c6a26f2",
+   "fingerprint": "77f2631008575c8e",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "SelectedForeground",
    "origin": "inferred",
@@ -5970,7 +5970,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:SelectedHoverBorderBrush:observe",
-   "fingerprint": "b98624d0e9b09af3",
+   "fingerprint": "1cd8dc983d124f77",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "SelectedHoverBorderBrush",
    "origin": "inferred",
@@ -5995,7 +5995,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:SelectedHoverForeground:observe",
-   "fingerprint": "8b40ce205fc2a46c",
+   "fingerprint": "b7b6187e9082f1b6",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "SelectedHoverForeground",
    "origin": "inferred",
@@ -6020,7 +6020,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:SelectedPressedBorderBrush:observe",
-   "fingerprint": "be5ec54859786002",
+   "fingerprint": "a500936b4210dea8",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "SelectedPressedBorderBrush",
    "origin": "inferred",
@@ -6045,7 +6045,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:SelectedPressedForeground:observe",
-   "fingerprint": "69af246c3addeda6",
+   "fingerprint": "38fc314456e5f1d7",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "SelectedPressedForeground",
    "origin": "inferred",
@@ -6070,7 +6070,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:SelectionMode:observe",
-   "fingerprint": "efec69f137f19578",
+   "fingerprint": "9698413956c8f2db",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "SelectionMode",
    "origin": "inferred",
@@ -6095,7 +6095,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:TodayBackground:observe",
-   "fingerprint": "1599977523ec15f5",
+   "fingerprint": "d0a3aa985f5d724e",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "TodayBackground",
    "origin": "inferred",
@@ -6120,7 +6120,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:TodayBlackoutBackground:observe",
-   "fingerprint": "dbd8eb313b0cbf7c",
+   "fingerprint": "fbdf2386d7ede172",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "TodayBlackoutBackground",
    "origin": "inferred",
@@ -6145,7 +6145,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:TodayBlackoutForeground:observe",
-   "fingerprint": "687374814ab7d9e9",
+   "fingerprint": "c288131f60f0dd33",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "TodayBlackoutForeground",
    "origin": "inferred",
@@ -6170,7 +6170,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:TodayDisabledBackground:observe",
-   "fingerprint": "ffdf0b3b4f80ca74",
+   "fingerprint": "f06698f669819e37",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "TodayDisabledBackground",
    "origin": "inferred",
@@ -6195,7 +6195,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:TodayFontWeight:observe",
-   "fingerprint": "b34fd58a2ba2f5f9",
+   "fingerprint": "15e90a29c6d72f4a",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "TodayFontWeight",
    "origin": "inferred",
@@ -6220,7 +6220,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:TodayForeground:observe",
-   "fingerprint": "0fe7d59255d8ae31",
+   "fingerprint": "a22914052e6d96ac",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "TodayForeground",
    "origin": "inferred",
@@ -6245,7 +6245,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:TodayHoverBackground:observe",
-   "fingerprint": "e7d8a15c7cc0d0df",
+   "fingerprint": "607fdda1bbc8a863",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "TodayHoverBackground",
    "origin": "inferred",
@@ -6270,7 +6270,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:TodayPressedBackground:observe",
-   "fingerprint": "e397b4fa023e9e35",
+   "fingerprint": "63f5791ad3ac8c22",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "TodayPressedBackground",
    "origin": "inferred",
@@ -6295,7 +6295,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:TodaySelectedInnerBorderBrush:observe",
-   "fingerprint": "797ca994a0a1445d",
+   "fingerprint": "f618b4245b7b5bcc",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "TodaySelectedInnerBorderBrush",
    "origin": "inferred",
@@ -6320,7 +6320,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:VerticalDayItemAlignment:observe",
-   "fingerprint": "680b33f2becdf37e",
+   "fingerprint": "a378351c5829837b",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "VerticalDayItemAlignment",
    "origin": "inferred",
@@ -6345,7 +6345,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarView:prop:VerticalFirstOfMonthLabelAlignment:observe",
-   "fingerprint": "96ef11c953884a19",
+   "fingerprint": "f9862ede945dddc9",
    "kind": "Microsoft.UI.Xaml.Controls:CalendarView",
    "name": "VerticalFirstOfMonthLabelAlignment",
    "origin": "inferred",
@@ -6872,7 +6872,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:Color:observe",
-   "fingerprint": "a42dd45439e390b1",
+   "fingerprint": "22feeba3578d3e8e",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "Color",
    "origin": "inferred",
@@ -6897,7 +6897,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:ColorSpectrumComponents:observe",
-   "fingerprint": "f81cdf8fec183c4c",
+   "fingerprint": "7192d3bb7f23b363",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "ColorSpectrumComponents",
    "origin": "inferred",
@@ -6922,7 +6922,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:ColorSpectrumShape:observe",
-   "fingerprint": "8967868f7b27bd7a",
+   "fingerprint": "714b377982943893",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "ColorSpectrumShape",
    "origin": "inferred",
@@ -6947,7 +6947,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:IsAlphaEnabled:observe",
-   "fingerprint": "4483923cb76378d7",
+   "fingerprint": "3764067ada25bb25",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "IsAlphaEnabled",
    "origin": "inferred",
@@ -6972,7 +6972,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:IsAlphaSliderVisible:observe",
-   "fingerprint": "0f45286b5c23a378",
+   "fingerprint": "b5ecc10469566a3d",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "IsAlphaSliderVisible",
    "origin": "inferred",
@@ -6997,7 +6997,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:IsAlphaTextInputVisible:observe",
-   "fingerprint": "ca5b4f01288c84dd",
+   "fingerprint": "b08cd92d710373e7",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "IsAlphaTextInputVisible",
    "origin": "inferred",
@@ -7022,7 +7022,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:IsColorChannelTextInputVisible:observe",
-   "fingerprint": "70f9cb1f59b771ce",
+   "fingerprint": "af87252d3bb6857f",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "IsColorChannelTextInputVisible",
    "origin": "inferred",
@@ -7047,7 +7047,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:IsColorPreviewVisible:observe",
-   "fingerprint": "01f29f6bbfde7503",
+   "fingerprint": "86af55f9d7db22e0",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "IsColorPreviewVisible",
    "origin": "inferred",
@@ -7072,7 +7072,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:IsColorSliderVisible:observe",
-   "fingerprint": "b85fe06f4fc977fb",
+   "fingerprint": "982da06c02fab4d8",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "IsColorSliderVisible",
    "origin": "inferred",
@@ -7097,7 +7097,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:IsColorSpectrumVisible:observe",
-   "fingerprint": "198b74dc93dd9136",
+   "fingerprint": "dc63b4fbe85bbc7a",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "IsColorSpectrumVisible",
    "origin": "inferred",
@@ -7122,7 +7122,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:IsHexInputVisible:observe",
-   "fingerprint": "c43b3599192fb5e3",
+   "fingerprint": "8782b4c9e52e4a56",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "IsHexInputVisible",
    "origin": "inferred",
@@ -7147,7 +7147,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:IsMoreButtonVisible:observe",
-   "fingerprint": "6e9f1c048d753932",
+   "fingerprint": "67c549d0364e646e",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "IsMoreButtonVisible",
    "origin": "inferred",
@@ -7172,7 +7172,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:MaxHue:observe",
-   "fingerprint": "c12a863e6bcb98af",
+   "fingerprint": "7f2b6dfbaecdbafe",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "MaxHue",
    "origin": "inferred",
@@ -7197,7 +7197,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:MaxSaturation:observe",
-   "fingerprint": "86b765f53654723c",
+   "fingerprint": "7a069124ec4d4b76",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "MaxSaturation",
    "origin": "inferred",
@@ -7222,7 +7222,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:MaxValue:observe",
-   "fingerprint": "81e63fd421c13b5d",
+   "fingerprint": "7dcf6c17227d924c",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "MaxValue",
    "origin": "inferred",
@@ -7247,7 +7247,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:MinHue:observe",
-   "fingerprint": "a32fd788872a803c",
+   "fingerprint": "b5310818f217e7b1",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "MinHue",
    "origin": "inferred",
@@ -7272,7 +7272,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:MinSaturation:observe",
-   "fingerprint": "fea4a1ba0ea4daed",
+   "fingerprint": "6308ea2e023a78b1",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "MinSaturation",
    "origin": "inferred",
@@ -7297,7 +7297,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:MinValue:observe",
-   "fingerprint": "6417f9eaaf8cf5cd",
+   "fingerprint": "66a99397b3653301",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "MinValue",
    "origin": "inferred",
@@ -7322,7 +7322,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:Orientation:observe",
-   "fingerprint": "090aeaa14a99f4cf",
+   "fingerprint": "4b5fd813c54d4432",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "Orientation",
    "origin": "inferred",
@@ -7347,7 +7347,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ColorPicker:prop:PreviousColor:observe",
-   "fingerprint": "d4c46132de169925",
+   "fingerprint": "e38498c3e92b4652",
    "kind": "Microsoft.UI.Xaml.Controls:ColorPicker",
    "name": "PreviousColor",
    "origin": "inferred",
@@ -7615,7 +7615,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ComboBox:prop:Description:observe",
-   "fingerprint": "ce35019299052cc0",
+   "fingerprint": "843ae488380f7526",
    "kind": "Microsoft.UI.Xaml.Controls:ComboBox",
    "name": "Description",
    "origin": "inferred",
@@ -7639,7 +7639,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ComboBox:prop:Header:observe",
-   "fingerprint": "867d753e26ba351c",
+   "fingerprint": "de477d7e0b5f7145",
    "kind": "Microsoft.UI.Xaml.Controls:ComboBox",
    "name": "Header",
    "origin": "inferred",
@@ -7664,7 +7664,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ComboBox:prop:IsDropDownOpen:observe",
-   "fingerprint": "a2157a364333c5e7",
+   "fingerprint": "1fdb548670269bfe",
    "kind": "Microsoft.UI.Xaml.Controls:ComboBox",
    "name": "IsDropDownOpen",
    "origin": "inferred",
@@ -7689,7 +7689,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ComboBox:prop:IsEditable:observe",
-   "fingerprint": "9add01d90d01f205",
+   "fingerprint": "d33784899c25fc86",
    "kind": "Microsoft.UI.Xaml.Controls:ComboBox",
    "name": "IsEditable",
    "origin": "inferred",
@@ -7714,7 +7714,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ComboBox:prop:IsSelectionBoxHighlighted:observe",
-   "fingerprint": "429aea2b3ae4ba03",
+   "fingerprint": "d8781e9a26dc160b",
    "kind": "Microsoft.UI.Xaml.Controls:ComboBox",
    "name": "IsSelectionBoxHighlighted",
    "origin": "inferred",
@@ -7739,7 +7739,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ComboBox:prop:IsTextSearchEnabled:observe",
-   "fingerprint": "f53e8e9571d5188f",
+   "fingerprint": "40eb6e12a6779de1",
    "kind": "Microsoft.UI.Xaml.Controls:ComboBox",
    "name": "IsTextSearchEnabled",
    "origin": "inferred",
@@ -7764,7 +7764,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ComboBox:prop:LightDismissOverlayMode:observe",
-   "fingerprint": "49419ecd2960dc16",
+   "fingerprint": "8eed70c5e98998a3",
    "kind": "Microsoft.UI.Xaml.Controls:ComboBox",
    "name": "LightDismissOverlayMode",
    "origin": "inferred",
@@ -7789,7 +7789,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ComboBox:prop:MaxDropDownHeight:observe",
-   "fingerprint": "03ce08f24e5a41d2",
+   "fingerprint": "df794a5a56672f5c",
    "kind": "Microsoft.UI.Xaml.Controls:ComboBox",
    "name": "MaxDropDownHeight",
    "origin": "inferred",
@@ -7814,7 +7814,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ComboBox:prop:PlaceholderForeground:observe",
-   "fingerprint": "d1c7dcee231d705a",
+   "fingerprint": "ec3502cc0c88f620",
    "kind": "Microsoft.UI.Xaml.Controls:ComboBox",
    "name": "PlaceholderForeground",
    "origin": "inferred",
@@ -7839,7 +7839,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ComboBox:prop:PlaceholderText:observe",
-   "fingerprint": "e18c702b11350a9f",
+   "fingerprint": "905d1195176d1783",
    "kind": "Microsoft.UI.Xaml.Controls:ComboBox",
    "name": "PlaceholderText",
    "origin": "inferred",
@@ -7864,7 +7864,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ComboBox:prop:SelectionChangedTrigger:observe",
-   "fingerprint": "6e3d1904f7e9b07f",
+   "fingerprint": "4052bd417b51023b",
    "kind": "Microsoft.UI.Xaml.Controls:ComboBox",
    "name": "SelectionChangedTrigger",
    "origin": "inferred",
@@ -7889,7 +7889,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ComboBox:prop:Text:observe",
-   "fingerprint": "4ec03cd61d3e52fa",
+   "fingerprint": "06044420dc5b061e",
    "kind": "Microsoft.UI.Xaml.Controls:ComboBox",
    "name": "Text",
    "origin": "inferred",
@@ -7999,7 +7999,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CommandBar:prop:DefaultLabelPosition:observe",
-   "fingerprint": "9a9515d8277ca7bb",
+   "fingerprint": "ec57f1a27fe24ed9",
    "kind": "Microsoft.UI.Xaml.Controls:CommandBar",
    "name": "DefaultLabelPosition",
    "origin": "inferred",
@@ -8024,7 +8024,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CommandBar:prop:IsDynamicOverflowEnabled:observe",
-   "fingerprint": "cad740434bc4df53",
+   "fingerprint": "922e47ce87377b2f",
    "kind": "Microsoft.UI.Xaml.Controls:CommandBar",
    "name": "IsDynamicOverflowEnabled",
    "origin": "inferred",
@@ -8049,7 +8049,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CommandBar:prop:OverflowButtonVisibility:observe",
-   "fingerprint": "f18794a1e54f6ff6",
+   "fingerprint": "b5ac489544afa776",
    "kind": "Microsoft.UI.Xaml.Controls:CommandBar",
    "name": "OverflowButtonVisibility",
    "origin": "inferred",
@@ -8095,7 +8095,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ContentControl:prop:Content:observe",
-   "fingerprint": "9609cbbfc258b98d",
+   "fingerprint": "5535a921507c9e3e",
    "kind": "Microsoft.UI.Xaml.Controls:ContentControl",
    "name": "Content",
    "origin": "inferred",
@@ -8216,7 +8216,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ContentDialog:event:Closed",
-   "fingerprint": "5895520976d8c7b7",
+   "fingerprint": "0713e0840c767398",
    "kind": "ContentDialog",
    "name": "Closed",
    "origin": "manual",
@@ -8266,7 +8266,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ContentDialog:method:ShowAsync",
-   "fingerprint": "635aa1eac776c7c7",
+   "fingerprint": "d4bbcefae1aa8c48",
    "kind": "ContentDialog",
    "name": "ShowAsync",
    "origin": "manual",
@@ -8373,7 +8373,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ContentDialog:prop:CloseButtonText:observe",
-   "fingerprint": "5e0ad18f725f8fd5",
+   "fingerprint": "bfdee28d34b2f0d3",
    "kind": "Microsoft.UI.Xaml.Controls:ContentDialog",
    "name": "CloseButtonText",
    "origin": "inferred",
@@ -8398,7 +8398,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ContentDialog:prop:DefaultButton:observe",
-   "fingerprint": "d67b7c7f39c16e47",
+   "fingerprint": "c430d72543b32900",
    "kind": "Microsoft.UI.Xaml.Controls:ContentDialog",
    "name": "DefaultButton",
    "origin": "inferred",
@@ -8423,7 +8423,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ContentDialog:prop:FullSizeDesired:observe",
-   "fingerprint": "6b525c2ed35b2d2b",
+   "fingerprint": "326433a94fbe2121",
    "kind": "Microsoft.UI.Xaml.Controls:ContentDialog",
    "name": "FullSizeDesired",
    "origin": "inferred",
@@ -8448,7 +8448,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ContentDialog:prop:IsPrimaryButtonEnabled:observe",
-   "fingerprint": "ef84cac2801ee54d",
+   "fingerprint": "49532eb88ed045bf",
    "kind": "Microsoft.UI.Xaml.Controls:ContentDialog",
    "name": "IsPrimaryButtonEnabled",
    "origin": "inferred",
@@ -8473,7 +8473,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ContentDialog:prop:IsSecondaryButtonEnabled:observe",
-   "fingerprint": "e875c68068a4da26",
+   "fingerprint": "f0cd665794398a5d",
    "kind": "Microsoft.UI.Xaml.Controls:ContentDialog",
    "name": "IsSecondaryButtonEnabled",
    "origin": "inferred",
@@ -8498,7 +8498,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ContentDialog:prop:PrimaryButtonText:observe",
-   "fingerprint": "eda6334965525367",
+   "fingerprint": "14e6ec4317b04eba",
    "kind": "Microsoft.UI.Xaml.Controls:ContentDialog",
    "name": "PrimaryButtonText",
    "origin": "inferred",
@@ -8523,7 +8523,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ContentDialog:prop:SecondaryButtonText:observe",
-   "fingerprint": "304180a00704c18f",
+   "fingerprint": "117a452af1f1c041",
    "kind": "Microsoft.UI.Xaml.Controls:ContentDialog",
    "name": "SecondaryButtonText",
    "origin": "inferred",
@@ -8547,7 +8547,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ContentDialog:prop:Title:observe",
-   "fingerprint": "30d895f645a00394",
+   "fingerprint": "463adb9ca96583b6",
    "kind": "Microsoft.UI.Xaml.Controls:ContentDialog",
    "name": "Title",
    "origin": "inferred",
@@ -8586,7 +8586,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:event:IsEnabledChanged",
-   "fingerprint": "ad71d3e1a0cbf10a",
+   "fingerprint": "6a90cc3b5fdeec87",
    "kind": "Control",
    "name": "IsEnabledChanged",
    "origin": "inferred",
@@ -8874,7 +8874,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:Background:observe",
-   "fingerprint": "6509aca911091045",
+   "fingerprint": "06396293b56d9a8c",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "Background",
    "origin": "inferred",
@@ -8899,7 +8899,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:BackgroundSizing:observe",
-   "fingerprint": "9a919267b5db4fb3",
+   "fingerprint": "cbc4e7442344be83",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "BackgroundSizing",
    "origin": "inferred",
@@ -8924,7 +8924,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:BorderBrush:observe",
-   "fingerprint": "bec90e33db0dc10a",
+   "fingerprint": "b9cca4cb0a734937",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "BorderBrush",
    "origin": "inferred",
@@ -8949,7 +8949,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:BorderThickness:observe",
-   "fingerprint": "5359ee2c20313a09",
+   "fingerprint": "b1753f15266d3d5b",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "BorderThickness",
    "origin": "inferred",
@@ -8974,7 +8974,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:CharacterSpacing:observe",
-   "fingerprint": "9baf49fa12cf78d4",
+   "fingerprint": "92306dbeea76e6fe",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "CharacterSpacing",
    "origin": "inferred",
@@ -8999,7 +8999,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:CornerRadius:observe",
-   "fingerprint": "3a60dd7974089336",
+   "fingerprint": "d98af51077a7d351",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "CornerRadius",
    "origin": "inferred",
@@ -9024,7 +9024,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:DefaultStyleResourceUri:observe",
-   "fingerprint": "0cd092899ca50e79",
+   "fingerprint": "8a5e56fa9e933e83",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "DefaultStyleResourceUri",
    "origin": "inferred",
@@ -9049,7 +9049,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:ElementSoundMode:observe",
-   "fingerprint": "1bf5a6e3e329bdec",
+   "fingerprint": "6696f8b483a4729c",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "ElementSoundMode",
    "origin": "inferred",
@@ -9074,7 +9074,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:FontFamily:observe",
-   "fingerprint": "1fb5cabaee190d1f",
+   "fingerprint": "1cf3d83375a1f50d",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "FontFamily",
    "origin": "inferred",
@@ -9098,7 +9098,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:FontSize:observe",
-   "fingerprint": "1db1998029013450",
+   "fingerprint": "834f8c7edb059e40",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "FontSize",
    "origin": "inferred",
@@ -9123,7 +9123,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:FontStretch:observe",
-   "fingerprint": "6a08bc6f0775a056",
+   "fingerprint": "d4dd76b7489819d0",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "FontStretch",
    "origin": "inferred",
@@ -9148,7 +9148,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:FontStyle:observe",
-   "fingerprint": "53894ce13385bfd1",
+   "fingerprint": "6bade75e787b89e8",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "FontStyle",
    "origin": "inferred",
@@ -9173,7 +9173,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:FontWeight:observe",
-   "fingerprint": "4be98719f0c2d3c1",
+   "fingerprint": "37ee89d65289e1e0",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "FontWeight",
    "origin": "inferred",
@@ -9198,7 +9198,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:Foreground:observe",
-   "fingerprint": "3d747f903d0e491c",
+   "fingerprint": "412d599d3aabfb82",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "Foreground",
    "origin": "inferred",
@@ -9223,7 +9223,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:HorizontalContentAlignment:observe",
-   "fingerprint": "ff8dec512b9c5b63",
+   "fingerprint": "f512776481d89aff",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "HorizontalContentAlignment",
    "origin": "inferred",
@@ -9247,7 +9247,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:IsEnabled:observe",
-   "fingerprint": "6a89c7c5fafc3011",
+   "fingerprint": "e3407283bd32f475",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "IsEnabled",
    "origin": "inferred",
@@ -9272,7 +9272,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:IsFocusEngagementEnabled:observe",
-   "fingerprint": "d8e9e51b248156df",
+   "fingerprint": "af88356e8a94a6b2",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "IsFocusEngagementEnabled",
    "origin": "inferred",
@@ -9297,7 +9297,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:IsTextScaleFactorEnabled:observe",
-   "fingerprint": "32dc57c670c12c41",
+   "fingerprint": "9d697bff017647a9",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "IsTextScaleFactorEnabled",
    "origin": "inferred",
@@ -9321,7 +9321,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:Padding:observe",
-   "fingerprint": "53dac7c131d1937f",
+   "fingerprint": "8a5970fd80526d01",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "Padding",
    "origin": "inferred",
@@ -9346,7 +9346,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:RequiresPointer:observe",
-   "fingerprint": "b499e5d3ea095f4f",
+   "fingerprint": "fa806cb07598c974",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "RequiresPointer",
    "origin": "inferred",
@@ -9371,7 +9371,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:TabNavigation:observe",
-   "fingerprint": "aac761b2544c1b64",
+   "fingerprint": "513033d8352468f4",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "TabNavigation",
    "origin": "inferred",
@@ -9396,7 +9396,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:prop:VerticalContentAlignment:observe",
-   "fingerprint": "a420b31fc2411ada",
+   "fingerprint": "2001718b545923f4",
    "kind": "Microsoft.UI.Xaml.Controls:Control",
    "name": "VerticalContentAlignment",
    "origin": "inferred",
@@ -9711,7 +9711,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:DatePicker:prop:CalendarIdentifier:observe",
-   "fingerprint": "9109c77aa44f68d7",
+   "fingerprint": "0b0b9a38126bc931",
    "kind": "Microsoft.UI.Xaml.Controls:DatePicker",
    "name": "CalendarIdentifier",
    "origin": "inferred",
@@ -9736,7 +9736,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:DatePicker:prop:Date:observe",
-   "fingerprint": "42f87e6410f237e0",
+   "fingerprint": "4123e47ff7f7f0d4",
    "kind": "Microsoft.UI.Xaml.Controls:DatePicker",
    "name": "Date",
    "origin": "inferred",
@@ -9761,7 +9761,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:DatePicker:prop:DayFormat:observe",
-   "fingerprint": "cd62d26e63b8fd2e",
+   "fingerprint": "0046ca013af320d9",
    "kind": "Microsoft.UI.Xaml.Controls:DatePicker",
    "name": "DayFormat",
    "origin": "inferred",
@@ -9786,7 +9786,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:DatePicker:prop:DayVisible:observe",
-   "fingerprint": "521f9114e96d1bb9",
+   "fingerprint": "6d68715bde13cda2",
    "kind": "Microsoft.UI.Xaml.Controls:DatePicker",
    "name": "DayVisible",
    "origin": "inferred",
@@ -9810,7 +9810,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:DatePicker:prop:Header:observe",
-   "fingerprint": "d6c41b15b830e753",
+   "fingerprint": "2eda909044ed2c40",
    "kind": "Microsoft.UI.Xaml.Controls:DatePicker",
    "name": "Header",
    "origin": "inferred",
@@ -9835,7 +9835,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:DatePicker:prop:LightDismissOverlayMode:observe",
-   "fingerprint": "638f5390bb4d734c",
+   "fingerprint": "f6b6cb4e25d50bfe",
    "kind": "Microsoft.UI.Xaml.Controls:DatePicker",
    "name": "LightDismissOverlayMode",
    "origin": "inferred",
@@ -9860,7 +9860,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:DatePicker:prop:MaxYear:observe",
-   "fingerprint": "036065e3fcaa8bbc",
+   "fingerprint": "11aec82f81f29d61",
    "kind": "Microsoft.UI.Xaml.Controls:DatePicker",
    "name": "MaxYear",
    "origin": "inferred",
@@ -9885,7 +9885,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:DatePicker:prop:MinYear:observe",
-   "fingerprint": "89f7b1379bb10b39",
+   "fingerprint": "903ade47f531d775",
    "kind": "Microsoft.UI.Xaml.Controls:DatePicker",
    "name": "MinYear",
    "origin": "inferred",
@@ -9910,7 +9910,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:DatePicker:prop:MonthFormat:observe",
-   "fingerprint": "eb8023f111e98238",
+   "fingerprint": "9b2239bc4ce6f297",
    "kind": "Microsoft.UI.Xaml.Controls:DatePicker",
    "name": "MonthFormat",
    "origin": "inferred",
@@ -9935,7 +9935,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:DatePicker:prop:MonthVisible:observe",
-   "fingerprint": "cbc61019ea6d840b",
+   "fingerprint": "025caee8e439a56a",
    "kind": "Microsoft.UI.Xaml.Controls:DatePicker",
    "name": "MonthVisible",
    "origin": "inferred",
@@ -9960,7 +9960,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:DatePicker:prop:Orientation:observe",
-   "fingerprint": "5380820a92d26db1",
+   "fingerprint": "17976e372ea2cf89",
    "kind": "Microsoft.UI.Xaml.Controls:DatePicker",
    "name": "Orientation",
    "origin": "inferred",
@@ -9985,7 +9985,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:DatePicker:prop:SelectedDate:observe",
-   "fingerprint": "e82a05e605f8b38f",
+   "fingerprint": "7da1010ae9380301",
    "kind": "Microsoft.UI.Xaml.Controls:DatePicker",
    "name": "SelectedDate",
    "origin": "inferred",
@@ -10010,7 +10010,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:DatePicker:prop:YearFormat:observe",
-   "fingerprint": "0ade3d1ec6348a0a",
+   "fingerprint": "8228df8d51bfc024",
    "kind": "Microsoft.UI.Xaml.Controls:DatePicker",
    "name": "YearFormat",
    "origin": "inferred",
@@ -10035,7 +10035,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:DatePicker:prop:YearVisible:observe",
-   "fingerprint": "ed9253048fa43070",
+   "fingerprint": "276b5a6f8ab19a47",
    "kind": "Microsoft.UI.Xaml.Controls:DatePicker",
    "name": "YearVisible",
    "origin": "inferred",
@@ -10134,7 +10134,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Expander:prop:ExpandDirection:observe",
-   "fingerprint": "b27751860ee0ca5b",
+   "fingerprint": "45753bd362d1f24a",
    "kind": "Microsoft.UI.Xaml.Controls:Expander",
    "name": "ExpandDirection",
    "origin": "inferred",
@@ -10158,7 +10158,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Expander:prop:Header:observe",
-   "fingerprint": "eb53f2db1d5e4dd4",
+   "fingerprint": "66870fabeef4bb4f",
    "kind": "Microsoft.UI.Xaml.Controls:Expander",
    "name": "Header",
    "origin": "inferred",
@@ -10183,7 +10183,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Expander:prop:IsExpanded:observe",
-   "fingerprint": "82807fd7a3474242",
+   "fingerprint": "88d355478e61d3b8",
    "kind": "Microsoft.UI.Xaml.Controls:Expander",
    "name": "IsExpanded",
    "origin": "inferred",
@@ -10352,7 +10352,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:FontIcon:prop:FontFamily:observe",
-   "fingerprint": "044e0d50e6e9a412",
+   "fingerprint": "c6f656320bf6cd48",
    "kind": "Microsoft.UI.Xaml.Controls:FontIcon",
    "name": "FontFamily",
    "origin": "inferred",
@@ -10377,7 +10377,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:FontIcon:prop:FontSize:observe",
-   "fingerprint": "c5f325e2f6213109",
+   "fingerprint": "be0a61691e2b6739",
    "kind": "Microsoft.UI.Xaml.Controls:FontIcon",
    "name": "FontSize",
    "origin": "inferred",
@@ -10402,7 +10402,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:FontIcon:prop:FontStyle:observe",
-   "fingerprint": "c01f89643edd241e",
+   "fingerprint": "361e820936e5fe93",
    "kind": "Microsoft.UI.Xaml.Controls:FontIcon",
    "name": "FontStyle",
    "origin": "inferred",
@@ -10427,7 +10427,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:FontIcon:prop:FontWeight:observe",
-   "fingerprint": "f5f80aa18fc9406e",
+   "fingerprint": "389608e32c9ea223",
    "kind": "Microsoft.UI.Xaml.Controls:FontIcon",
    "name": "FontWeight",
    "origin": "inferred",
@@ -10452,7 +10452,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:FontIcon:prop:Glyph:observe",
-   "fingerprint": "5c8fc4e0993d914e",
+   "fingerprint": "460b253c64f582f6",
    "kind": "Microsoft.UI.Xaml.Controls:FontIcon",
    "name": "Glyph",
    "origin": "inferred",
@@ -10477,7 +10477,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:FontIcon:prop:IsTextScaleFactorEnabled:observe",
-   "fingerprint": "305a98c117f56ec6",
+   "fingerprint": "11d82746cb109f2c",
    "kind": "Microsoft.UI.Xaml.Controls:FontIcon",
    "name": "IsTextScaleFactorEnabled",
    "origin": "inferred",
@@ -10502,7 +10502,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:FontIcon:prop:MirroredWhenRightToLeft:observe",
-   "fingerprint": "7ab41fd72a8212f1",
+   "fingerprint": "9d20e61653d8e807",
    "kind": "Microsoft.UI.Xaml.Controls:FontIcon",
    "name": "MirroredWhenRightToLeft",
    "origin": "inferred",
@@ -10691,7 +10691,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:BackgroundSizing:observe",
-   "fingerprint": "56ee89e63f0fd149",
+   "fingerprint": "e958b10b77eb0f0b",
    "kind": "Microsoft.UI.Xaml.Controls:Grid",
    "name": "BackgroundSizing",
    "origin": "inferred",
@@ -10716,7 +10716,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:BorderBrush:observe",
-   "fingerprint": "780c8957bb0cf4d6",
+   "fingerprint": "5c4cd89a369b4371",
    "kind": "Microsoft.UI.Xaml.Controls:Grid",
    "name": "BorderBrush",
    "origin": "inferred",
@@ -10741,7 +10741,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:BorderThickness:observe",
-   "fingerprint": "2c9860c338e3af17",
+   "fingerprint": "aeb633e73c51f29a",
    "kind": "Microsoft.UI.Xaml.Controls:Grid",
    "name": "BorderThickness",
    "origin": "inferred",
@@ -10765,7 +10765,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:ColumnDefinitions:observe",
-   "fingerprint": "8fef8c10ac712bcd",
+   "fingerprint": "5c69669011bbb44a",
    "kind": "Microsoft.UI.Xaml.Controls:Grid",
    "name": "ColumnDefinitions",
    "origin": "inferred",
@@ -10789,7 +10789,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:ColumnSpacing:observe",
-   "fingerprint": "777909773bc24eff",
+   "fingerprint": "646af45e17ac9ae0",
    "kind": "Microsoft.UI.Xaml.Controls:Grid",
    "name": "ColumnSpacing",
    "origin": "inferred",
@@ -10814,7 +10814,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:CornerRadius:observe",
-   "fingerprint": "fef12711ab995ea2",
+   "fingerprint": "05bb2059fa0b1014",
    "kind": "Microsoft.UI.Xaml.Controls:Grid",
    "name": "CornerRadius",
    "origin": "inferred",
@@ -10838,7 +10838,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:Padding:observe",
-   "fingerprint": "68656a83383dff0a",
+   "fingerprint": "745c4fd3319e9843",
    "kind": "Microsoft.UI.Xaml.Controls:Grid",
    "name": "Padding",
    "origin": "inferred",
@@ -10862,7 +10862,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:RowDefinitions:observe",
-   "fingerprint": "17d6dfe6d0a2a113",
+   "fingerprint": "753f4f333cb51e4b",
    "kind": "Microsoft.UI.Xaml.Controls:Grid",
    "name": "RowDefinitions",
    "origin": "inferred",
@@ -10886,7 +10886,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Grid:prop:RowSpacing:observe",
-   "fingerprint": "7ed19dd6b15f8aad",
+   "fingerprint": "76ca257c944ff8ae",
    "kind": "Microsoft.UI.Xaml.Controls:Grid",
    "name": "RowSpacing",
    "origin": "inferred",
@@ -10923,7 +10923,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:HyperlinkButton:prop:NavigateUri:observe",
-   "fingerprint": "9515aa5ffff38c03",
+   "fingerprint": "e3f3692d815fda7d",
    "kind": "Microsoft.UI.Xaml.Controls:HyperlinkButton",
    "name": "NavigateUri",
    "origin": "inferred",
@@ -10960,7 +10960,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:IconElement:prop:Foreground:observe",
-   "fingerprint": "12fb40302d7ed8d7",
+   "fingerprint": "85b059968a9f5afe",
    "kind": "Microsoft.UI.Xaml.Controls:IconElement",
    "name": "Foreground",
    "origin": "inferred",
@@ -11059,7 +11059,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Image:prop:NineGrid:observe",
-   "fingerprint": "4cee5ddc3c86c8d8",
+   "fingerprint": "a7141d75c55f8396",
    "kind": "Microsoft.UI.Xaml.Controls:Image",
    "name": "NineGrid",
    "origin": "inferred",
@@ -11084,7 +11084,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Image:prop:Source:observe",
-   "fingerprint": "6852d134b7bc4a6c",
+   "fingerprint": "807ce6f0b4809d82",
    "kind": "Microsoft.UI.Xaml.Controls:Image",
    "name": "Source",
    "origin": "inferred",
@@ -11109,7 +11109,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Image:prop:Stretch:observe",
-   "fingerprint": "893807585a759e9c",
+   "fingerprint": "6702d49bfc6baf56",
    "kind": "Microsoft.UI.Xaml.Controls:Image",
    "name": "Stretch",
    "origin": "inferred",
@@ -11158,7 +11158,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:InfoBadge:prop:Value:observe",
-   "fingerprint": "9cf730bb4db4644d",
+   "fingerprint": "fbe26cd10cfb028e",
    "kind": "Microsoft.UI.Xaml.Controls:InfoBadge",
    "name": "Value",
    "origin": "inferred",
@@ -11366,7 +11366,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:InfoBar:prop:IsClosable:observe",
-   "fingerprint": "01cda04786c71976",
+   "fingerprint": "de739d41baa068c6",
    "kind": "Microsoft.UI.Xaml.Controls:InfoBar",
    "name": "IsClosable",
    "origin": "inferred",
@@ -11391,7 +11391,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:InfoBar:prop:IsIconVisible:observe",
-   "fingerprint": "012ca6f01609a8d3",
+   "fingerprint": "06b2c5dac27b286d",
    "kind": "Microsoft.UI.Xaml.Controls:InfoBar",
    "name": "IsIconVisible",
    "origin": "inferred",
@@ -11416,7 +11416,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:InfoBar:prop:IsOpen:observe",
-   "fingerprint": "575c81694c3be630",
+   "fingerprint": "6b2203a4ca35b0bb",
    "kind": "Microsoft.UI.Xaml.Controls:InfoBar",
    "name": "IsOpen",
    "origin": "inferred",
@@ -11441,7 +11441,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:InfoBar:prop:Message:observe",
-   "fingerprint": "e279e46fea7c5217",
+   "fingerprint": "bfc9bc83fcdf1fe1",
    "kind": "Microsoft.UI.Xaml.Controls:InfoBar",
    "name": "Message",
    "origin": "inferred",
@@ -11466,7 +11466,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:InfoBar:prop:Severity:observe",
-   "fingerprint": "e872dadabf777aaa",
+   "fingerprint": "079903555ad65296",
    "kind": "Microsoft.UI.Xaml.Controls:InfoBar",
    "name": "Severity",
    "origin": "inferred",
@@ -11491,7 +11491,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:InfoBar:prop:Title:observe",
-   "fingerprint": "566268bcb73e4a72",
+   "fingerprint": "e1eb678def18bf43",
    "kind": "Microsoft.UI.Xaml.Controls:InfoBar",
    "name": "Title",
    "origin": "inferred",
@@ -11539,7 +11539,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ItemContainer:prop:IsSelected:observe",
-   "fingerprint": "26b94c63496b1ec4",
+   "fingerprint": "405c499c38197648",
    "kind": "Microsoft.UI.Xaml.Controls:ItemContainer",
    "name": "IsSelected",
    "origin": "inferred",
@@ -11576,7 +11576,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ItemsControl:prop:DisplayMemberPath:observe",
-   "fingerprint": "103872deb5fe757b",
+   "fingerprint": "8d8fc5cc0a426e51",
    "kind": "Microsoft.UI.Xaml.Controls:ItemsControl",
    "name": "DisplayMemberPath",
    "origin": "inferred",
@@ -11601,7 +11601,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ItemsControl:prop:IsGrouping:observe",
-   "fingerprint": "e5f8a1b6acd1d4a4",
+   "fingerprint": "7d736555c59d4ed3",
    "kind": "Microsoft.UI.Xaml.Controls:ItemsControl",
    "name": "IsGrouping",
    "origin": "inferred",
@@ -11919,7 +11919,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ListViewBase:prop:CanDragItems:observe",
-   "fingerprint": "efcdded8d8778ead",
+   "fingerprint": "d267a3af26a3f70f",
    "kind": "Microsoft.UI.Xaml.Controls:ListViewBase",
    "name": "CanDragItems",
    "origin": "inferred",
@@ -11944,7 +11944,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ListViewBase:prop:CanReorderItems:observe",
-   "fingerprint": "858d07d8eecd6956",
+   "fingerprint": "db081ca40373b560",
    "kind": "Microsoft.UI.Xaml.Controls:ListViewBase",
    "name": "CanReorderItems",
    "origin": "inferred",
@@ -11969,7 +11969,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ListViewBase:prop:DataFetchSize:observe",
-   "fingerprint": "cf3b28941de8ba32",
+   "fingerprint": "e3540615c18faaa3",
    "kind": "Microsoft.UI.Xaml.Controls:ListViewBase",
    "name": "DataFetchSize",
    "origin": "inferred",
@@ -11994,7 +11994,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ListViewBase:prop:Header:observe",
-   "fingerprint": "54cd86978cddfcc9",
+   "fingerprint": "b493585d27649112",
    "kind": "Microsoft.UI.Xaml.Controls:ListViewBase",
    "name": "Header",
    "origin": "inferred",
@@ -12019,7 +12019,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ListViewBase:prop:IncrementalLoadingThreshold:observe",
-   "fingerprint": "708ce04c4c5ad8f3",
+   "fingerprint": "fa12e71e3a836dca",
    "kind": "Microsoft.UI.Xaml.Controls:ListViewBase",
    "name": "IncrementalLoadingThreshold",
    "origin": "inferred",
@@ -12044,7 +12044,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ListViewBase:prop:IncrementalLoadingTrigger:observe",
-   "fingerprint": "ffbd8e172c1e5094",
+   "fingerprint": "69fc254df097fbb1",
    "kind": "Microsoft.UI.Xaml.Controls:ListViewBase",
    "name": "IncrementalLoadingTrigger",
    "origin": "inferred",
@@ -12069,7 +12069,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ListViewBase:prop:IsActiveView:observe",
-   "fingerprint": "de73d43802a09c27",
+   "fingerprint": "be3ab37da4c32b59",
    "kind": "Microsoft.UI.Xaml.Controls:ListViewBase",
    "name": "IsActiveView",
    "origin": "inferred",
@@ -12094,7 +12094,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ListViewBase:prop:IsItemClickEnabled:observe",
-   "fingerprint": "67b0164f518c9b45",
+   "fingerprint": "3c03f2dd8a60b321",
    "kind": "Microsoft.UI.Xaml.Controls:ListViewBase",
    "name": "IsItemClickEnabled",
    "origin": "inferred",
@@ -12119,7 +12119,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ListViewBase:prop:IsMultiSelectCheckBoxEnabled:observe",
-   "fingerprint": "0a558536ab59d9af",
+   "fingerprint": "f0c6d51515d0a259",
    "kind": "Microsoft.UI.Xaml.Controls:ListViewBase",
    "name": "IsMultiSelectCheckBoxEnabled",
    "origin": "inferred",
@@ -12144,7 +12144,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ListViewBase:prop:IsSwipeEnabled:observe",
-   "fingerprint": "4e929050434b3e67",
+   "fingerprint": "d7ac00671aa97508",
    "kind": "Microsoft.UI.Xaml.Controls:ListViewBase",
    "name": "IsSwipeEnabled",
    "origin": "inferred",
@@ -12169,7 +12169,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ListViewBase:prop:IsZoomedInView:observe",
-   "fingerprint": "4f887c33637126bd",
+   "fingerprint": "64ccee345a8a7b50",
    "kind": "Microsoft.UI.Xaml.Controls:ListViewBase",
    "name": "IsZoomedInView",
    "origin": "inferred",
@@ -12194,7 +12194,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ListViewBase:prop:ReorderMode:observe",
-   "fingerprint": "3e0f3d217ab12dbb",
+   "fingerprint": "e8ac075972f51201",
    "kind": "Microsoft.UI.Xaml.Controls:ListViewBase",
    "name": "ReorderMode",
    "origin": "inferred",
@@ -12219,7 +12219,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ListViewBase:prop:SelectionMode:observe",
-   "fingerprint": "3526b97440674004",
+   "fingerprint": "5c6e3f2974a9bfdf",
    "kind": "Microsoft.UI.Xaml.Controls:ListViewBase",
    "name": "SelectionMode",
    "origin": "inferred",
@@ -12244,7 +12244,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ListViewBase:prop:ShowsScrollingPlaceholders:observe",
-   "fingerprint": "7bc21256d84d7a99",
+   "fingerprint": "6dd45d4f9a7bf05f",
    "kind": "Microsoft.UI.Xaml.Controls:ListViewBase",
    "name": "ShowsScrollingPlaceholders",
    "origin": "inferred",
@@ -12269,7 +12269,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ListViewBase:prop:SingleSelectionFollowsFocus:observe",
-   "fingerprint": "ad3f836db4d77304",
+   "fingerprint": "63542345a3519ae4",
    "kind": "Microsoft.UI.Xaml.Controls:ListViewBase",
    "name": "SingleSelectionFollowsFocus",
    "origin": "inferred",
@@ -12328,7 +12328,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:MenuBarItem:prop:Title:observe",
-   "fingerprint": "d3d0dfb59424f84c",
+   "fingerprint": "bb834676ad35dc2a",
    "kind": "Microsoft.UI.Xaml.Controls:MenuBarItem",
    "name": "Title",
    "origin": "inferred",
@@ -12448,7 +12448,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:MenuFlyoutItem:prop:Icon:observe",
-   "fingerprint": "759c14e9127a9a6b",
+   "fingerprint": "b8ae273f93b6e73c",
    "kind": "Microsoft.UI.Xaml.Controls:MenuFlyoutItem",
    "name": "Icon",
    "origin": "inferred",
@@ -12473,7 +12473,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:MenuFlyoutItem:prop:KeyboardAcceleratorTextOverride:observe",
-   "fingerprint": "55731b5d46a1f842",
+   "fingerprint": "dea3a54178f4d05f",
    "kind": "Microsoft.UI.Xaml.Controls:MenuFlyoutItem",
    "name": "KeyboardAcceleratorTextOverride",
    "origin": "inferred",
@@ -12497,7 +12497,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:MenuFlyoutItem:prop:Text:observe",
-   "fingerprint": "5b451428acd024bd",
+   "fingerprint": "04e4b9ef5a415248",
    "kind": "Microsoft.UI.Xaml.Controls:MenuFlyoutItem",
    "name": "Text",
    "origin": "inferred",
@@ -12558,7 +12558,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:MenuFlyoutSubItem:prop:Icon:observe",
-   "fingerprint": "e13798b32b3dda20",
+   "fingerprint": "bd5e8db71e6f8b95",
    "kind": "Microsoft.UI.Xaml.Controls:MenuFlyoutSubItem",
    "name": "Icon",
    "origin": "inferred",
@@ -12582,7 +12582,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:MenuFlyoutSubItem:prop:Text:observe",
-   "fingerprint": "19376e47b40dfabc",
+   "fingerprint": "c95ecfbf22495552",
    "kind": "Microsoft.UI.Xaml.Controls:MenuFlyoutSubItem",
    "name": "Text",
    "origin": "inferred",
@@ -13156,7 +13156,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView:prop:AlwaysShowHeader:observe",
-   "fingerprint": "f3d2da5c543e270d",
+   "fingerprint": "0689c806c180d7b2",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationView",
    "name": "AlwaysShowHeader",
    "origin": "inferred",
@@ -13181,7 +13181,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView:prop:CompactModeThresholdWidth:observe",
-   "fingerprint": "3e243749ad2cf095",
+   "fingerprint": "664778e7c06fcdd7",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationView",
    "name": "CompactModeThresholdWidth",
    "origin": "inferred",
@@ -13206,7 +13206,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView:prop:CompactPaneLength:observe",
-   "fingerprint": "912e66737c31cd01",
+   "fingerprint": "573c7fff2ab164a0",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationView",
    "name": "CompactPaneLength",
    "origin": "inferred",
@@ -13231,7 +13231,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView:prop:DisplayMode:observe",
-   "fingerprint": "2a59c408bb090b89",
+   "fingerprint": "8c1c55a7e5d2e83f",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationView",
    "name": "DisplayMode",
    "origin": "inferred",
@@ -13256,7 +13256,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView:prop:ExpandedModeThresholdWidth:observe",
-   "fingerprint": "d0039de47a10fc7f",
+   "fingerprint": "6cbd213c15fae9aa",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationView",
    "name": "ExpandedModeThresholdWidth",
    "origin": "inferred",
@@ -13281,7 +13281,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView:prop:Header:observe",
-   "fingerprint": "6f556ee591100212",
+   "fingerprint": "e579d1776a9dd8ab",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationView",
    "name": "Header",
    "origin": "inferred",
@@ -13306,7 +13306,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView:prop:IsBackButtonVisible:observe",
-   "fingerprint": "af12a034135d40be",
+   "fingerprint": "823d09d0f2625533",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationView",
    "name": "IsBackButtonVisible",
    "origin": "inferred",
@@ -13331,7 +13331,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView:prop:IsBackEnabled:observe",
-   "fingerprint": "b26ef5f072b5843f",
+   "fingerprint": "7ed1b9ca1f976547",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationView",
    "name": "IsBackEnabled",
    "origin": "inferred",
@@ -13356,7 +13356,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView:prop:IsPaneOpen:observe",
-   "fingerprint": "d790fb135f2c9da7",
+   "fingerprint": "f15800df22971f50",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationView",
    "name": "IsPaneOpen",
    "origin": "inferred",
@@ -13381,7 +13381,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView:prop:IsPaneToggleButtonVisible:observe",
-   "fingerprint": "d53c548b05bcc9a9",
+   "fingerprint": "36b3c05500c7c1fd",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationView",
    "name": "IsPaneToggleButtonVisible",
    "origin": "inferred",
@@ -13406,7 +13406,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView:prop:IsPaneVisible:observe",
-   "fingerprint": "924f74d00a7154f0",
+   "fingerprint": "4494a9a6a268ff09",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationView",
    "name": "IsPaneVisible",
    "origin": "inferred",
@@ -13431,7 +13431,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView:prop:IsSettingsVisible:observe",
-   "fingerprint": "f90d49721fc5de86",
+   "fingerprint": "7751a0457e68c9d9",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationView",
    "name": "IsSettingsVisible",
    "origin": "inferred",
@@ -13456,7 +13456,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView:prop:IsTitleBarAutoPaddingEnabled:observe",
-   "fingerprint": "048902fba1719440",
+   "fingerprint": "4b69198f4b1b5cf7",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationView",
    "name": "IsTitleBarAutoPaddingEnabled",
    "origin": "inferred",
@@ -13481,7 +13481,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView:prop:OpenPaneLength:observe",
-   "fingerprint": "686a311ea7b58c1c",
+   "fingerprint": "c0d65a0a2917bb4c",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationView",
    "name": "OpenPaneLength",
    "origin": "inferred",
@@ -13506,7 +13506,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView:prop:OverflowLabelMode:observe",
-   "fingerprint": "e4d10dc246b57788",
+   "fingerprint": "52d79e553f6522bb",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationView",
    "name": "OverflowLabelMode",
    "origin": "inferred",
@@ -13531,7 +13531,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView:prop:PaneDisplayMode:observe",
-   "fingerprint": "2cc9b74d60063a0e",
+   "fingerprint": "1938f89145d54889",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationView",
    "name": "PaneDisplayMode",
    "origin": "inferred",
@@ -13556,7 +13556,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView:prop:PaneTitle:observe",
-   "fingerprint": "fecb3c446ab04a21",
+   "fingerprint": "57c7efbcbc5a0a5f",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationView",
    "name": "PaneTitle",
    "origin": "inferred",
@@ -13581,7 +13581,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView:prop:SelectionFollowsFocus:observe",
-   "fingerprint": "e078a520e93a9ef9",
+   "fingerprint": "c159415529fd7d51",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationView",
    "name": "SelectionFollowsFocus",
    "origin": "inferred",
@@ -13606,7 +13606,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView:prop:ShoulderNavigationEnabled:observe",
-   "fingerprint": "ce7292ce2af64fc6",
+   "fingerprint": "e9d5933e778571dc",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationView",
    "name": "ShoulderNavigationEnabled",
    "origin": "inferred",
@@ -13783,7 +13783,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationViewItem:prop:CompactPaneLength:observe",
-   "fingerprint": "59e92af133cc2dbc",
+   "fingerprint": "ee120f01a3b9c499",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationViewItem",
    "name": "CompactPaneLength",
    "origin": "inferred",
@@ -13808,7 +13808,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationViewItem:prop:HasUnrealizedChildren:observe",
-   "fingerprint": "aeaa4d40de3f5b2d",
+   "fingerprint": "98693d4361f922f8",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationViewItem",
    "name": "HasUnrealizedChildren",
    "origin": "inferred",
@@ -13833,7 +13833,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationViewItem:prop:Icon:observe",
-   "fingerprint": "d065447484a54ddb",
+   "fingerprint": "5e0e4d073f56e21b",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationViewItem",
    "name": "Icon",
    "origin": "inferred",
@@ -13858,7 +13858,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationViewItem:prop:IsChildSelected:observe",
-   "fingerprint": "d4a15830bf93250d",
+   "fingerprint": "abf96b56c9081551",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationViewItem",
    "name": "IsChildSelected",
    "origin": "inferred",
@@ -13883,7 +13883,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationViewItem:prop:IsExpanded:observe",
-   "fingerprint": "25861b7e18e782ed",
+   "fingerprint": "daaa38497e34d284",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationViewItem",
    "name": "IsExpanded",
    "origin": "inferred",
@@ -13908,7 +13908,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationViewItem:prop:SelectsOnInvoked:observe",
-   "fingerprint": "9f32b6a0d65e8132",
+   "fingerprint": "a7d54b5b8555784a",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationViewItem",
    "name": "SelectsOnInvoked",
    "origin": "inferred",
@@ -13956,7 +13956,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationViewItemBase:prop:IsSelected:observe",
-   "fingerprint": "972088279db432da",
+   "fingerprint": "f61c1e858b101603",
    "kind": "Microsoft.UI.Xaml.Controls:NavigationViewItemBase",
    "name": "IsSelected",
    "origin": "inferred",
@@ -14294,7 +14294,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:prop:AcceptsExpression:observe",
-   "fingerprint": "3b5994e6a2dd9869",
+   "fingerprint": "3c3fdc2643c30d18",
    "kind": "Microsoft.UI.Xaml.Controls:NumberBox",
    "name": "AcceptsExpression",
    "origin": "inferred",
@@ -14319,7 +14319,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:prop:Description:observe",
-   "fingerprint": "5ec89a0cdedd8748",
+   "fingerprint": "bf9fee1b55635b27",
    "kind": "Microsoft.UI.Xaml.Controls:NumberBox",
    "name": "Description",
    "origin": "inferred",
@@ -14343,7 +14343,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:prop:Header:observe",
-   "fingerprint": "4d56cb27d90f2e62",
+   "fingerprint": "1d11da489434fab8",
    "kind": "Microsoft.UI.Xaml.Controls:NumberBox",
    "name": "Header",
    "origin": "inferred",
@@ -14368,7 +14368,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:prop:IsWrapEnabled:observe",
-   "fingerprint": "e4401638daeeb0c0",
+   "fingerprint": "cdf6b3538318f258",
    "kind": "Microsoft.UI.Xaml.Controls:NumberBox",
    "name": "IsWrapEnabled",
    "origin": "inferred",
@@ -14393,7 +14393,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:prop:LargeChange:observe",
-   "fingerprint": "e5fbdb9876f47c8e",
+   "fingerprint": "1b7a33a7e0b9305c",
    "kind": "Microsoft.UI.Xaml.Controls:NumberBox",
    "name": "LargeChange",
    "origin": "inferred",
@@ -14418,7 +14418,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:prop:Maximum:observe",
-   "fingerprint": "37084454405011f2",
+   "fingerprint": "bb5c39face481022",
    "kind": "Microsoft.UI.Xaml.Controls:NumberBox",
    "name": "Maximum",
    "origin": "inferred",
@@ -14443,7 +14443,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:prop:Minimum:observe",
-   "fingerprint": "beea7e98428a6473",
+   "fingerprint": "0c3bac9af952a8dd",
    "kind": "Microsoft.UI.Xaml.Controls:NumberBox",
    "name": "Minimum",
    "origin": "inferred",
@@ -14468,7 +14468,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:prop:PlaceholderText:observe",
-   "fingerprint": "1e8a9c934a7faf6c",
+   "fingerprint": "d4ca18cbd1d24216",
    "kind": "Microsoft.UI.Xaml.Controls:NumberBox",
    "name": "PlaceholderText",
    "origin": "inferred",
@@ -14493,7 +14493,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:prop:PreventKeyboardDisplayOnProgrammaticFocus:observe",
-   "fingerprint": "3c16091de48984c0",
+   "fingerprint": "7caa9b33e26f9a7c",
    "kind": "Microsoft.UI.Xaml.Controls:NumberBox",
    "name": "PreventKeyboardDisplayOnProgrammaticFocus",
    "origin": "inferred",
@@ -14518,7 +14518,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:prop:SelectionHighlightColor:observe",
-   "fingerprint": "444fc26692c61d32",
+   "fingerprint": "1ff330f0248b13bf",
    "kind": "Microsoft.UI.Xaml.Controls:NumberBox",
    "name": "SelectionHighlightColor",
    "origin": "inferred",
@@ -14543,7 +14543,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:prop:SmallChange:observe",
-   "fingerprint": "815aac8a35244365",
+   "fingerprint": "b68ad54661823b9b",
    "kind": "Microsoft.UI.Xaml.Controls:NumberBox",
    "name": "SmallChange",
    "origin": "inferred",
@@ -14568,7 +14568,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:prop:SpinButtonPlacementMode:observe",
-   "fingerprint": "039729ef85c6fcf3",
+   "fingerprint": "e9becaf2b0e22907",
    "kind": "Microsoft.UI.Xaml.Controls:NumberBox",
    "name": "SpinButtonPlacementMode",
    "origin": "inferred",
@@ -14593,7 +14593,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:prop:Text:observe",
-   "fingerprint": "9d1e161be3851a31",
+   "fingerprint": "4fd66cb36a0bfd9c",
    "kind": "Microsoft.UI.Xaml.Controls:NumberBox",
    "name": "Text",
    "origin": "inferred",
@@ -14618,7 +14618,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:prop:ValidationMode:observe",
-   "fingerprint": "cc80f48ab5051e89",
+   "fingerprint": "54c72525e0c27049",
    "kind": "Microsoft.UI.Xaml.Controls:NumberBox",
    "name": "ValidationMode",
    "origin": "inferred",
@@ -14643,7 +14643,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:prop:Value:observe",
-   "fingerprint": "130683c0928b0bd6",
+   "fingerprint": "9263a4518b2bb0c2",
    "kind": "Microsoft.UI.Xaml.Controls:NumberBox",
    "name": "Value",
    "origin": "inferred",
@@ -14680,7 +14680,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Panel:prop:Background:observe",
-   "fingerprint": "b657f785b548d9a3",
+   "fingerprint": "f3120eca888b217b",
    "kind": "Microsoft.UI.Xaml.Controls:Panel",
    "name": "Background",
    "origin": "inferred",
@@ -14705,7 +14705,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Panel:prop:IsItemsHost:observe",
-   "fingerprint": "688ed5b4b1e115a0",
+   "fingerprint": "f5fe6f58f20bcf5e",
    "kind": "Microsoft.UI.Xaml.Controls:Panel",
    "name": "IsItemsHost",
    "origin": "inferred",
@@ -14961,7 +14961,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:prop:CanPasteClipboardContent:observe",
-   "fingerprint": "c1716b4a67559e83",
+   "fingerprint": "215ab90231312c3c",
    "kind": "Microsoft.UI.Xaml.Controls:PasswordBox",
    "name": "CanPasteClipboardContent",
    "origin": "inferred",
@@ -14986,7 +14986,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:prop:Description:observe",
-   "fingerprint": "a36fe8d42bd84b15",
+   "fingerprint": "63684f8b8e1cbc1f",
    "kind": "Microsoft.UI.Xaml.Controls:PasswordBox",
    "name": "Description",
    "origin": "inferred",
@@ -15010,7 +15010,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:prop:Header:observe",
-   "fingerprint": "0196f9679f710ecd",
+   "fingerprint": "f39f7a37d27ba051",
    "kind": "Microsoft.UI.Xaml.Controls:PasswordBox",
    "name": "Header",
    "origin": "inferred",
@@ -15035,7 +15035,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:prop:IsPasswordRevealButtonEnabled:observe",
-   "fingerprint": "434803775a2f85a7",
+   "fingerprint": "3aa1b2052acc40e9",
    "kind": "Microsoft.UI.Xaml.Controls:PasswordBox",
    "name": "IsPasswordRevealButtonEnabled",
    "origin": "inferred",
@@ -15060,7 +15060,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:prop:MaxLength:observe",
-   "fingerprint": "31d051c7925d9546",
+   "fingerprint": "56e009d746f66005",
    "kind": "Microsoft.UI.Xaml.Controls:PasswordBox",
    "name": "MaxLength",
    "origin": "inferred",
@@ -15085,7 +15085,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:prop:Password:observe",
-   "fingerprint": "91bbf8d26efe76f9",
+   "fingerprint": "2f6ebde4719c2cb3",
    "kind": "Microsoft.UI.Xaml.Controls:PasswordBox",
    "name": "Password",
    "origin": "inferred",
@@ -15110,7 +15110,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:prop:PasswordRevealMode:observe",
-   "fingerprint": "3aac085d036623e5",
+   "fingerprint": "c70f2c19510b2c43",
    "kind": "Microsoft.UI.Xaml.Controls:PasswordBox",
    "name": "PasswordRevealMode",
    "origin": "inferred",
@@ -15135,7 +15135,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:prop:PlaceholderText:observe",
-   "fingerprint": "bc8f8fb34b13ab07",
+   "fingerprint": "eb53e6506c6028df",
    "kind": "Microsoft.UI.Xaml.Controls:PasswordBox",
    "name": "PlaceholderText",
    "origin": "inferred",
@@ -15160,7 +15160,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:prop:PreventKeyboardDisplayOnProgrammaticFocus:observe",
-   "fingerprint": "548b098012910ce9",
+   "fingerprint": "39854211dbfd3521",
    "kind": "Microsoft.UI.Xaml.Controls:PasswordBox",
    "name": "PreventKeyboardDisplayOnProgrammaticFocus",
    "origin": "inferred",
@@ -15185,7 +15185,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:prop:SelectionHighlightColor:observe",
-   "fingerprint": "6a46f0c54ca20f9e",
+   "fingerprint": "d89701733bba2ff9",
    "kind": "Microsoft.UI.Xaml.Controls:PasswordBox",
    "name": "SelectionHighlightColor",
    "origin": "inferred",
@@ -15402,7 +15402,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PersonPicture:prop:BadgeGlyph:observe",
-   "fingerprint": "80a274ca9ccb8a82",
+   "fingerprint": "af3ffcdba70c4e6a",
    "kind": "Microsoft.UI.Xaml.Controls:PersonPicture",
    "name": "BadgeGlyph",
    "origin": "inferred",
@@ -15427,7 +15427,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PersonPicture:prop:BadgeImageSource:observe",
-   "fingerprint": "30593584ace6a4a2",
+   "fingerprint": "2e9cd143f7641eda",
    "kind": "Microsoft.UI.Xaml.Controls:PersonPicture",
    "name": "BadgeImageSource",
    "origin": "inferred",
@@ -15452,7 +15452,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PersonPicture:prop:BadgeNumber:observe",
-   "fingerprint": "73f6df91761b2d1b",
+   "fingerprint": "94dc5cce38b2412b",
    "kind": "Microsoft.UI.Xaml.Controls:PersonPicture",
    "name": "BadgeNumber",
    "origin": "inferred",
@@ -15477,7 +15477,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PersonPicture:prop:BadgeText:observe",
-   "fingerprint": "5060b9298913da21",
+   "fingerprint": "382312a9d92c403d",
    "kind": "Microsoft.UI.Xaml.Controls:PersonPicture",
    "name": "BadgeText",
    "origin": "inferred",
@@ -15502,7 +15502,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PersonPicture:prop:DisplayName:observe",
-   "fingerprint": "3015ee96bc440ec6",
+   "fingerprint": "daeed6a609a356e9",
    "kind": "Microsoft.UI.Xaml.Controls:PersonPicture",
    "name": "DisplayName",
    "origin": "inferred",
@@ -15527,7 +15527,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PersonPicture:prop:Initials:observe",
-   "fingerprint": "42d40f2214de1d95",
+   "fingerprint": "a61dbf67cb5b2c0a",
    "kind": "Microsoft.UI.Xaml.Controls:PersonPicture",
    "name": "Initials",
    "origin": "inferred",
@@ -15552,7 +15552,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PersonPicture:prop:IsGroup:observe",
-   "fingerprint": "e8311d5cfe62de56",
+   "fingerprint": "9e29d67aa5f19458",
    "kind": "Microsoft.UI.Xaml.Controls:PersonPicture",
    "name": "IsGroup",
    "origin": "inferred",
@@ -15577,7 +15577,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PersonPicture:prop:PreferSmallImage:observe",
-   "fingerprint": "20fd64872ab2f354",
+   "fingerprint": "411bb1026230a6e1",
    "kind": "Microsoft.UI.Xaml.Controls:PersonPicture",
    "name": "PreferSmallImage",
    "origin": "inferred",
@@ -15602,7 +15602,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PersonPicture:prop:ProfilePicture:observe",
-   "fingerprint": "e4d3893ae3bb0553",
+   "fingerprint": "71f82e5f1a13b04d",
    "kind": "Microsoft.UI.Xaml.Controls:PersonPicture",
    "name": "ProfilePicture",
    "origin": "inferred",
@@ -15699,7 +15699,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ProgressBar:prop:IsIndeterminate:observe",
-   "fingerprint": "b3fc337834be10d7",
+   "fingerprint": "b594686d06813cf9",
    "kind": "Microsoft.UI.Xaml.Controls:ProgressBar",
    "name": "IsIndeterminate",
    "origin": "inferred",
@@ -15724,7 +15724,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ProgressBar:prop:ShowError:observe",
-   "fingerprint": "5f89a547d0efa2bc",
+   "fingerprint": "00c610cbb8307640",
    "kind": "Microsoft.UI.Xaml.Controls:ProgressBar",
    "name": "ShowError",
    "origin": "inferred",
@@ -15749,7 +15749,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ProgressBar:prop:ShowPaused:observe",
-   "fingerprint": "2ff37eda57a87c23",
+   "fingerprint": "ae62e2148cd8518c",
    "kind": "Microsoft.UI.Xaml.Controls:ProgressBar",
    "name": "ShowPaused",
    "origin": "inferred",
@@ -15894,7 +15894,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ProgressRing:prop:IsActive:observe",
-   "fingerprint": "d950fe090494d120",
+   "fingerprint": "34a93230d242a17c",
    "kind": "Microsoft.UI.Xaml.Controls:ProgressRing",
    "name": "IsActive",
    "origin": "inferred",
@@ -15919,7 +15919,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ProgressRing:prop:IsIndeterminate:observe",
-   "fingerprint": "ec769d483b9dadef",
+   "fingerprint": "a016567564757c86",
    "kind": "Microsoft.UI.Xaml.Controls:ProgressRing",
    "name": "IsIndeterminate",
    "origin": "inferred",
@@ -15944,7 +15944,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ProgressRing:prop:Maximum:observe",
-   "fingerprint": "4becd34a47ca01d7",
+   "fingerprint": "9a16a35854fae45e",
    "kind": "Microsoft.UI.Xaml.Controls:ProgressRing",
    "name": "Maximum",
    "origin": "inferred",
@@ -15969,7 +15969,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ProgressRing:prop:Minimum:observe",
-   "fingerprint": "24bb12284cdbb931",
+   "fingerprint": "3da88f6dd5311905",
    "kind": "Microsoft.UI.Xaml.Controls:ProgressRing",
    "name": "Minimum",
    "origin": "inferred",
@@ -15994,7 +15994,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ProgressRing:prop:Value:observe",
-   "fingerprint": "cce04d04b398a188",
+   "fingerprint": "029dbb8b8248f7bf",
    "kind": "Microsoft.UI.Xaml.Controls:ProgressRing",
    "name": "Value",
    "origin": "inferred",
@@ -16042,7 +16042,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RadioButton:prop:GroupName:observe",
-   "fingerprint": "f5faf74e4abbb72d",
+   "fingerprint": "03f4b7de756ab49b",
    "kind": "Microsoft.UI.Xaml.Controls:RadioButton",
    "name": "GroupName",
    "origin": "inferred",
@@ -16103,7 +16103,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RadioButtons:prop:Header:observe",
-   "fingerprint": "85874dd900578348",
+   "fingerprint": "53a0fcdb85b922be",
    "kind": "Microsoft.UI.Xaml.Controls:RadioButtons",
    "name": "Header",
    "origin": "inferred",
@@ -16128,7 +16128,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RadioButtons:prop:MaxColumns:observe",
-   "fingerprint": "72de7eee4d4659fe",
+   "fingerprint": "4b65663281fabbb0",
    "kind": "Microsoft.UI.Xaml.Controls:RadioButtons",
    "name": "MaxColumns",
    "origin": "inferred",
@@ -16308,7 +16308,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:prop:Caption:observe",
-   "fingerprint": "fec57b2daeca11fd",
+   "fingerprint": "2f8ec79ea6cf9322",
    "kind": "Microsoft.UI.Xaml.Controls:RatingControl",
    "name": "Caption",
    "origin": "inferred",
@@ -16333,7 +16333,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:prop:InitialSetValue:observe",
-   "fingerprint": "a890e9e5720cd758",
+   "fingerprint": "cd1d86e26691fa21",
    "kind": "Microsoft.UI.Xaml.Controls:RatingControl",
    "name": "InitialSetValue",
    "origin": "inferred",
@@ -16358,7 +16358,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:prop:IsClearEnabled:observe",
-   "fingerprint": "a53fcc96ff9381f6",
+   "fingerprint": "868cbdb82514a6b6",
    "kind": "Microsoft.UI.Xaml.Controls:RatingControl",
    "name": "IsClearEnabled",
    "origin": "inferred",
@@ -16383,7 +16383,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:prop:IsReadOnly:observe",
-   "fingerprint": "4296eb8de2e5a0ad",
+   "fingerprint": "15db71286b426c1e",
    "kind": "Microsoft.UI.Xaml.Controls:RatingControl",
    "name": "IsReadOnly",
    "origin": "inferred",
@@ -16408,7 +16408,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:prop:MaxRating:observe",
-   "fingerprint": "98e4b8f2f063e55b",
+   "fingerprint": "524af0fcc58023fb",
    "kind": "Microsoft.UI.Xaml.Controls:RatingControl",
    "name": "MaxRating",
    "origin": "inferred",
@@ -16949,7 +16949,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:AcceptsReturn:observe",
-   "fingerprint": "0564b453f9925b15",
+   "fingerprint": "0645b6d6f6d3ff8f",
    "kind": "Microsoft.UI.Xaml.Controls:RichEditBox",
    "name": "AcceptsReturn",
    "origin": "inferred",
@@ -16974,7 +16974,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:CharacterCasing:observe",
-   "fingerprint": "6bbba501ec1ae533",
+   "fingerprint": "1a1902f123bd8682",
    "kind": "Microsoft.UI.Xaml.Controls:RichEditBox",
    "name": "CharacterCasing",
    "origin": "inferred",
@@ -16999,7 +16999,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:ClipboardCopyFormat:observe",
-   "fingerprint": "173e6a894ecd8ddf",
+   "fingerprint": "371dddd72a7a77e0",
    "kind": "Microsoft.UI.Xaml.Controls:RichEditBox",
    "name": "ClipboardCopyFormat",
    "origin": "inferred",
@@ -17024,7 +17024,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:Description:observe",
-   "fingerprint": "aecebd19ab0b68a7",
+   "fingerprint": "9a8fb34578c06fa6",
    "kind": "Microsoft.UI.Xaml.Controls:RichEditBox",
    "name": "Description",
    "origin": "inferred",
@@ -17049,7 +17049,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:DesiredCandidateWindowAlignment:observe",
-   "fingerprint": "4b0c7d685ad8eddf",
+   "fingerprint": "bd49df7bb50456a9",
    "kind": "Microsoft.UI.Xaml.Controls:RichEditBox",
    "name": "DesiredCandidateWindowAlignment",
    "origin": "inferred",
@@ -17073,7 +17073,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:Header:observe",
-   "fingerprint": "67ee8e27c1abf364",
+   "fingerprint": "e9e88d5f2a977f45",
    "kind": "Microsoft.UI.Xaml.Controls:RichEditBox",
    "name": "Header",
    "origin": "inferred",
@@ -17098,7 +17098,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:HorizontalTextAlignment:observe",
-   "fingerprint": "97e660ee289ced6c",
+   "fingerprint": "cce16a6013403d54",
    "kind": "Microsoft.UI.Xaml.Controls:RichEditBox",
    "name": "HorizontalTextAlignment",
    "origin": "inferred",
@@ -17123,7 +17123,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:IsColorFontEnabled:observe",
-   "fingerprint": "24d3efcf8a9c96aa",
+   "fingerprint": "a4674cedb18bcff3",
    "kind": "Microsoft.UI.Xaml.Controls:RichEditBox",
    "name": "IsColorFontEnabled",
    "origin": "inferred",
@@ -17148,7 +17148,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:IsReadOnly:observe",
-   "fingerprint": "2e88e4e9f5ed2197",
+   "fingerprint": "c46d2f228bcebf9d",
    "kind": "Microsoft.UI.Xaml.Controls:RichEditBox",
    "name": "IsReadOnly",
    "origin": "inferred",
@@ -17173,7 +17173,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:IsSpellCheckEnabled:observe",
-   "fingerprint": "833820130fbe38a5",
+   "fingerprint": "cfc2d07c997ebd15",
    "kind": "Microsoft.UI.Xaml.Controls:RichEditBox",
    "name": "IsSpellCheckEnabled",
    "origin": "inferred",
@@ -17198,7 +17198,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:IsTextPredictionEnabled:observe",
-   "fingerprint": "5e35cdd262967709",
+   "fingerprint": "dfdcc012ccf9af78",
    "kind": "Microsoft.UI.Xaml.Controls:RichEditBox",
    "name": "IsTextPredictionEnabled",
    "origin": "inferred",
@@ -17223,7 +17223,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:MaxLength:observe",
-   "fingerprint": "695172e08e7b24fe",
+   "fingerprint": "253765bea715e710",
    "kind": "Microsoft.UI.Xaml.Controls:RichEditBox",
    "name": "MaxLength",
    "origin": "inferred",
@@ -17248,7 +17248,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:PlaceholderText:observe",
-   "fingerprint": "1cd25409911b1857",
+   "fingerprint": "37aa377b12a207af",
    "kind": "Microsoft.UI.Xaml.Controls:RichEditBox",
    "name": "PlaceholderText",
    "origin": "inferred",
@@ -17273,7 +17273,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:PreventKeyboardDisplayOnProgrammaticFocus:observe",
-   "fingerprint": "a6ff93717b788820",
+   "fingerprint": "1c2091684642a8ca",
    "kind": "Microsoft.UI.Xaml.Controls:RichEditBox",
    "name": "PreventKeyboardDisplayOnProgrammaticFocus",
    "origin": "inferred",
@@ -17298,7 +17298,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:SelectionHighlightColor:observe",
-   "fingerprint": "169e35734bbb67d5",
+   "fingerprint": "aa82f0884e3ed778",
    "kind": "Microsoft.UI.Xaml.Controls:RichEditBox",
    "name": "SelectionHighlightColor",
    "origin": "inferred",
@@ -17323,7 +17323,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:SelectionHighlightColorWhenNotFocused:observe",
-   "fingerprint": "735e9bcdbbab9656",
+   "fingerprint": "9deba0561f67c3b9",
    "kind": "Microsoft.UI.Xaml.Controls:RichEditBox",
    "name": "SelectionHighlightColorWhenNotFocused",
    "origin": "inferred",
@@ -17348,7 +17348,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:TextAlignment:observe",
-   "fingerprint": "60705bbf89d03ea9",
+   "fingerprint": "c356b0bba6334ee0",
    "kind": "Microsoft.UI.Xaml.Controls:RichEditBox",
    "name": "TextAlignment",
    "origin": "inferred",
@@ -17373,7 +17373,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:TextWrapping:observe",
-   "fingerprint": "6c84fec37cd8930a",
+   "fingerprint": "a3069db6c1e533ef",
    "kind": "Microsoft.UI.Xaml.Controls:RichEditBox",
    "name": "TextWrapping",
    "origin": "inferred",
@@ -18051,7 +18051,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:BringIntoViewOnFocusChange:observe",
-   "fingerprint": "6400f436569f1a8d",
+   "fingerprint": "69737476659a1d31",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "BringIntoViewOnFocusChange",
    "origin": "inferred",
@@ -18076,7 +18076,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:CanContentRenderOutsideBounds:observe",
-   "fingerprint": "928324a544c8bf74",
+   "fingerprint": "b321a781ea30826e",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "CanContentRenderOutsideBounds",
    "origin": "inferred",
@@ -18101,7 +18101,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:ComputedHorizontalScrollBarVisibility:observe",
-   "fingerprint": "967e2baec9e0e67c",
+   "fingerprint": "743baa2625d8e7fe",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "ComputedHorizontalScrollBarVisibility",
    "origin": "inferred",
@@ -18126,7 +18126,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:ComputedVerticalScrollBarVisibility:observe",
-   "fingerprint": "bcc8fef04ee0c593",
+   "fingerprint": "acdba91e03a7b0b8",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "ComputedVerticalScrollBarVisibility",
    "origin": "inferred",
@@ -18151,7 +18151,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:ExtentHeight:observe",
-   "fingerprint": "cc473dbdbb4f4db8",
+   "fingerprint": "10d69ecfdfeeba40",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "ExtentHeight",
    "origin": "inferred",
@@ -18176,7 +18176,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:ExtentWidth:observe",
-   "fingerprint": "c1b38a5f506c9163",
+   "fingerprint": "90797bb44549cce2",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "ExtentWidth",
    "origin": "inferred",
@@ -18201,7 +18201,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:HorizontalAnchorRatio:observe",
-   "fingerprint": "9aaeda2e531435a3",
+   "fingerprint": "2a29a39383a33d08",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "HorizontalAnchorRatio",
    "origin": "inferred",
@@ -18226,7 +18226,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:HorizontalOffset:observe",
-   "fingerprint": "194d261956ae996c",
+   "fingerprint": "6cb71de75bbbb8bc",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "HorizontalOffset",
    "origin": "inferred",
@@ -18251,7 +18251,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:HorizontalScrollBarVisibility:observe",
-   "fingerprint": "a304e813629bc6ec",
+   "fingerprint": "7e26afddb2d702f3",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "HorizontalScrollBarVisibility",
    "origin": "inferred",
@@ -18276,7 +18276,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:HorizontalScrollMode:observe",
-   "fingerprint": "6cbaab0f51f2a9d7",
+   "fingerprint": "0ca1c95bbcf3eb91",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "HorizontalScrollMode",
    "origin": "inferred",
@@ -18301,7 +18301,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:HorizontalSnapPointsAlignment:observe",
-   "fingerprint": "8bb45e9bffec033f",
+   "fingerprint": "aaa087c4685db937",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "HorizontalSnapPointsAlignment",
    "origin": "inferred",
@@ -18326,7 +18326,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:HorizontalSnapPointsType:observe",
-   "fingerprint": "7021344d1cd3300d",
+   "fingerprint": "683816450d8ee15c",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "HorizontalSnapPointsType",
    "origin": "inferred",
@@ -18351,7 +18351,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:IsDeferredScrollingEnabled:observe",
-   "fingerprint": "4e6db005cfe117f3",
+   "fingerprint": "2bd64b7ada3c7d7e",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "IsDeferredScrollingEnabled",
    "origin": "inferred",
@@ -18376,7 +18376,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:IsHorizontalRailEnabled:observe",
-   "fingerprint": "9d9e6f01d94353c1",
+   "fingerprint": "0ac5961ebaab7b2e",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "IsHorizontalRailEnabled",
    "origin": "inferred",
@@ -18401,7 +18401,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:IsHorizontalScrollChainingEnabled:observe",
-   "fingerprint": "f71cc9d65c246d65",
+   "fingerprint": "3de86b5f15b25b09",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "IsHorizontalScrollChainingEnabled",
    "origin": "inferred",
@@ -18426,7 +18426,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:IsScrollInertiaEnabled:observe",
-   "fingerprint": "8fa6eff90d16c4fe",
+   "fingerprint": "83447e8fa922d988",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "IsScrollInertiaEnabled",
    "origin": "inferred",
@@ -18451,7 +18451,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:IsVerticalRailEnabled:observe",
-   "fingerprint": "9e26c1f06125e3d4",
+   "fingerprint": "1a192bc079f276ed",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "IsVerticalRailEnabled",
    "origin": "inferred",
@@ -18476,7 +18476,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:IsVerticalScrollChainingEnabled:observe",
-   "fingerprint": "a2035b6c9808c7f4",
+   "fingerprint": "63a1d54247a8ee75",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "IsVerticalScrollChainingEnabled",
    "origin": "inferred",
@@ -18501,7 +18501,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:IsZoomChainingEnabled:observe",
-   "fingerprint": "e89c86858c15359e",
+   "fingerprint": "ad3ae2a6cb330703",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "IsZoomChainingEnabled",
    "origin": "inferred",
@@ -18526,7 +18526,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:IsZoomInertiaEnabled:observe",
-   "fingerprint": "14e53ca3b57f34f9",
+   "fingerprint": "605ee6ffa770ff2d",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "IsZoomInertiaEnabled",
    "origin": "inferred",
@@ -18551,7 +18551,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:MaxZoomFactor:observe",
-   "fingerprint": "21fbbb5e6cbf085f",
+   "fingerprint": "897022a46ccddf29",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "MaxZoomFactor",
    "origin": "inferred",
@@ -18576,7 +18576,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:MinZoomFactor:observe",
-   "fingerprint": "989d2e06fb22b620",
+   "fingerprint": "00a55e04e0b58460",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "MinZoomFactor",
    "origin": "inferred",
@@ -18601,7 +18601,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:ReduceViewportForCoreInputViewOcclusions:observe",
-   "fingerprint": "a203eb840aef941a",
+   "fingerprint": "b999a4d6ce526c2f",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "ReduceViewportForCoreInputViewOcclusions",
    "origin": "inferred",
@@ -18626,7 +18626,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:ScrollableHeight:observe",
-   "fingerprint": "28c5891fc1c76728",
+   "fingerprint": "76216fe1e10645fe",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "ScrollableHeight",
    "origin": "inferred",
@@ -18651,7 +18651,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:ScrollableWidth:observe",
-   "fingerprint": "1a663b4806d9a166",
+   "fingerprint": "200d0f6ec3edef4e",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "ScrollableWidth",
    "origin": "inferred",
@@ -18676,7 +18676,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:VerticalAnchorRatio:observe",
-   "fingerprint": "0d0cdd03794b16dd",
+   "fingerprint": "1f064b6a1c555f58",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "VerticalAnchorRatio",
    "origin": "inferred",
@@ -18701,7 +18701,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:VerticalOffset:observe",
-   "fingerprint": "55721ea4bd9c7127",
+   "fingerprint": "c1336f657af2f230",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "VerticalOffset",
    "origin": "inferred",
@@ -18726,7 +18726,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:VerticalScrollBarVisibility:observe",
-   "fingerprint": "b64131bc1dd6edf1",
+   "fingerprint": "23f5876edd0155df",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "VerticalScrollBarVisibility",
    "origin": "inferred",
@@ -18751,7 +18751,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:VerticalScrollMode:observe",
-   "fingerprint": "7667598a8568ada5",
+   "fingerprint": "af0988772424fc7c",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "VerticalScrollMode",
    "origin": "inferred",
@@ -18776,7 +18776,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:VerticalSnapPointsAlignment:observe",
-   "fingerprint": "08f22ba34e47c7aa",
+   "fingerprint": "13d427debfa147ce",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "VerticalSnapPointsAlignment",
    "origin": "inferred",
@@ -18801,7 +18801,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:VerticalSnapPointsType:observe",
-   "fingerprint": "15fd8d5000131c83",
+   "fingerprint": "22df38f1916b2e45",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "VerticalSnapPointsType",
    "origin": "inferred",
@@ -18826,7 +18826,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:ViewportHeight:observe",
-   "fingerprint": "df91bbd586784d1d",
+   "fingerprint": "557cccf0025c7efe",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "ViewportHeight",
    "origin": "inferred",
@@ -18851,7 +18851,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:ViewportWidth:observe",
-   "fingerprint": "245cc7e11ae5cf09",
+   "fingerprint": "22f067d4a40d27cd",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "ViewportWidth",
    "origin": "inferred",
@@ -18876,7 +18876,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:ZoomFactor:observe",
-   "fingerprint": "c197a4b65519bbd1",
+   "fingerprint": "37e8fe1939605cbf",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "ZoomFactor",
    "origin": "inferred",
@@ -18901,7 +18901,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:ZoomMode:observe",
-   "fingerprint": "e9eea3f8f0ef9a02",
+   "fingerprint": "180d40f9938a6b36",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "ZoomMode",
    "origin": "inferred",
@@ -18926,7 +18926,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer:prop:ZoomSnapPointsType:observe",
-   "fingerprint": "25d948ebbc8b29d0",
+   "fingerprint": "b03b5088f7c21c59",
    "kind": "Microsoft.UI.Xaml.Controls:ScrollViewer",
    "name": "ZoomSnapPointsType",
    "origin": "inferred",
@@ -19011,7 +19011,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:SelectorBarItem:prop:Icon:observe",
-   "fingerprint": "1abf66d166bcf27d",
+   "fingerprint": "905f5c2486dd4c1b",
    "kind": "Microsoft.UI.Xaml.Controls:SelectorBarItem",
    "name": "Icon",
    "origin": "inferred",
@@ -19035,7 +19035,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:SelectorBarItem:prop:Text:observe",
-   "fingerprint": "a69406b7750569ec",
+   "fingerprint": "75bbddb09cd8ae60",
    "kind": "Microsoft.UI.Xaml.Controls:SelectorBarItem",
    "name": "Text",
    "origin": "inferred",
@@ -19251,7 +19251,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:Header:observe",
-   "fingerprint": "6bd211c8189e1514",
+   "fingerprint": "7a83bc2bda2fbb43",
    "kind": "Microsoft.UI.Xaml.Controls:Slider",
    "name": "Header",
    "origin": "inferred",
@@ -19276,7 +19276,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:IntermediateValue:observe",
-   "fingerprint": "e2a9d8e7c970614b",
+   "fingerprint": "f5a9e88baab526d7",
    "kind": "Microsoft.UI.Xaml.Controls:Slider",
    "name": "IntermediateValue",
    "origin": "inferred",
@@ -19301,7 +19301,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:IsDirectionReversed:observe",
-   "fingerprint": "fc94f400a03cd75c",
+   "fingerprint": "5f7caa4c498a83f9",
    "kind": "Microsoft.UI.Xaml.Controls:Slider",
    "name": "IsDirectionReversed",
    "origin": "inferred",
@@ -19326,7 +19326,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:IsThumbToolTipEnabled:observe",
-   "fingerprint": "4e9f6550fd1b749e",
+   "fingerprint": "5e88172369ed7e33",
    "kind": "Microsoft.UI.Xaml.Controls:Slider",
    "name": "IsThumbToolTipEnabled",
    "origin": "inferred",
@@ -19350,7 +19350,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:Orientation:observe",
-   "fingerprint": "d7e75cf0c6ad40a8",
+   "fingerprint": "abac3f92b94b4a36",
    "kind": "Microsoft.UI.Xaml.Controls:Slider",
    "name": "Orientation",
    "origin": "inferred",
@@ -19375,7 +19375,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:SnapsTo:observe",
-   "fingerprint": "49764e985344ccfb",
+   "fingerprint": "c6e38b2c7f7f2fac",
    "kind": "Microsoft.UI.Xaml.Controls:Slider",
    "name": "SnapsTo",
    "origin": "inferred",
@@ -19399,7 +19399,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:StepFrequency:observe",
-   "fingerprint": "ce243a3e89eac7e8",
+   "fingerprint": "6ae165aecbe60db5",
    "kind": "Microsoft.UI.Xaml.Controls:Slider",
    "name": "StepFrequency",
    "origin": "inferred",
@@ -19424,7 +19424,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:TickFrequency:observe",
-   "fingerprint": "28bc8894c3497347",
+   "fingerprint": "97f14051d69da889",
    "kind": "Microsoft.UI.Xaml.Controls:Slider",
    "name": "TickFrequency",
    "origin": "inferred",
@@ -19449,7 +19449,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Slider:prop:TickPlacement:observe",
-   "fingerprint": "459b0f742c13c364",
+   "fingerprint": "91899997b06239ac",
    "kind": "Microsoft.UI.Xaml.Controls:Slider",
    "name": "TickPlacement",
    "origin": "inferred",
@@ -19706,7 +19706,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:SplitView:prop:CompactPaneLength:observe",
-   "fingerprint": "1d4e8db5995c5507",
+   "fingerprint": "37f231b94f36ffee",
    "kind": "Microsoft.UI.Xaml.Controls:SplitView",
    "name": "CompactPaneLength",
    "origin": "inferred",
@@ -19731,7 +19731,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:SplitView:prop:DisplayMode:observe",
-   "fingerprint": "99a226ee1fcd7de3",
+   "fingerprint": "d4b0f27a8d4a8ae6",
    "kind": "Microsoft.UI.Xaml.Controls:SplitView",
    "name": "DisplayMode",
    "origin": "inferred",
@@ -19756,7 +19756,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:SplitView:prop:IsPaneOpen:observe",
-   "fingerprint": "688f1d7dab91c32b",
+   "fingerprint": "1b0d191f45c04ac3",
    "kind": "Microsoft.UI.Xaml.Controls:SplitView",
    "name": "IsPaneOpen",
    "origin": "inferred",
@@ -19781,7 +19781,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:SplitView:prop:LightDismissOverlayMode:observe",
-   "fingerprint": "2dae23d75d8650ad",
+   "fingerprint": "62aa1acef8636470",
    "kind": "Microsoft.UI.Xaml.Controls:SplitView",
    "name": "LightDismissOverlayMode",
    "origin": "inferred",
@@ -19806,7 +19806,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:SplitView:prop:OpenPaneLength:observe",
-   "fingerprint": "245a44752835d79b",
+   "fingerprint": "de630403bfa274e0",
    "kind": "Microsoft.UI.Xaml.Controls:SplitView",
    "name": "OpenPaneLength",
    "origin": "inferred",
@@ -19831,7 +19831,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:SplitView:prop:PaneBackground:observe",
-   "fingerprint": "d2d9da589d3d1b62",
+   "fingerprint": "3d82cb435385a8ca",
    "kind": "Microsoft.UI.Xaml.Controls:SplitView",
    "name": "PaneBackground",
    "origin": "inferred",
@@ -19856,7 +19856,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:SplitView:prop:PanePlacement:observe",
-   "fingerprint": "6d8468fc182d2b35",
+   "fingerprint": "cd48f967dd08bead",
    "kind": "Microsoft.UI.Xaml.Controls:SplitView",
    "name": "PanePlacement",
    "origin": "inferred",
@@ -20073,7 +20073,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:AreHorizontalSnapPointsRegular:observe",
-   "fingerprint": "147e59af1558f730",
+   "fingerprint": "d58969e1604ab705",
    "kind": "Microsoft.UI.Xaml.Controls:StackPanel",
    "name": "AreHorizontalSnapPointsRegular",
    "origin": "inferred",
@@ -20098,7 +20098,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:AreScrollSnapPointsRegular:observe",
-   "fingerprint": "06ce00d39f96525b",
+   "fingerprint": "ac19cc2ce4c45989",
    "kind": "Microsoft.UI.Xaml.Controls:StackPanel",
    "name": "AreScrollSnapPointsRegular",
    "origin": "inferred",
@@ -20123,7 +20123,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:AreVerticalSnapPointsRegular:observe",
-   "fingerprint": "e51de8d3ae7cd760",
+   "fingerprint": "30c083943dcfab0c",
    "kind": "Microsoft.UI.Xaml.Controls:StackPanel",
    "name": "AreVerticalSnapPointsRegular",
    "origin": "inferred",
@@ -20148,7 +20148,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:BackgroundSizing:observe",
-   "fingerprint": "14354b3b8c34a7ae",
+   "fingerprint": "da389eca00dc579f",
    "kind": "Microsoft.UI.Xaml.Controls:StackPanel",
    "name": "BackgroundSizing",
    "origin": "inferred",
@@ -20173,7 +20173,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:BorderBrush:observe",
-   "fingerprint": "2827d029cbfc0da1",
+   "fingerprint": "399f063a90ed94d0",
    "kind": "Microsoft.UI.Xaml.Controls:StackPanel",
    "name": "BorderBrush",
    "origin": "inferred",
@@ -20198,7 +20198,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:BorderThickness:observe",
-   "fingerprint": "f71951a125321173",
+   "fingerprint": "3e1755a6af7c64e1",
    "kind": "Microsoft.UI.Xaml.Controls:StackPanel",
    "name": "BorderThickness",
    "origin": "inferred",
@@ -20223,7 +20223,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:CornerRadius:observe",
-   "fingerprint": "f8300a5a020f4f2e",
+   "fingerprint": "3e21663c04a6ea3d",
    "kind": "Microsoft.UI.Xaml.Controls:StackPanel",
    "name": "CornerRadius",
    "origin": "inferred",
@@ -20247,7 +20247,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:Orientation:observe",
-   "fingerprint": "075a5190e8343ec0",
+   "fingerprint": "6ed93e46bcc439ad",
    "kind": "Microsoft.UI.Xaml.Controls:StackPanel",
    "name": "Orientation",
    "origin": "inferred",
@@ -20271,7 +20271,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:Padding:observe",
-   "fingerprint": "d500f157b97d9210",
+   "fingerprint": "d2241646af02263b",
    "kind": "Microsoft.UI.Xaml.Controls:StackPanel",
    "name": "Padding",
    "origin": "inferred",
@@ -20295,7 +20295,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:StackPanel:prop:Spacing:observe",
-   "fingerprint": "da34167a4325b45f",
+   "fingerprint": "b1d915a1f77629c1",
    "kind": "Microsoft.UI.Xaml.Controls:StackPanel",
    "name": "Spacing",
    "origin": "inferred",
@@ -20344,7 +20344,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:SymbolIcon:prop:Symbol:observe",
-   "fingerprint": "e20396d13cf01ee4",
+   "fingerprint": "4aaa6812f22f05c5",
    "kind": "Microsoft.UI.Xaml.Controls:SymbolIcon",
    "name": "Symbol",
    "origin": "inferred",
@@ -20718,7 +20718,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TabView:prop:AllowDropTabs:observe",
-   "fingerprint": "e3ba72fa326ce224",
+   "fingerprint": "96440e4bbfdcd4a9",
    "kind": "Microsoft.UI.Xaml.Controls:TabView",
    "name": "AllowDropTabs",
    "origin": "inferred",
@@ -20743,7 +20743,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TabView:prop:CanDragTabs:observe",
-   "fingerprint": "e1c2ae6e1670fbd6",
+   "fingerprint": "5143b3e35768a078",
    "kind": "Microsoft.UI.Xaml.Controls:TabView",
    "name": "CanDragTabs",
    "origin": "inferred",
@@ -20768,7 +20768,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TabView:prop:CanReorderTabs:observe",
-   "fingerprint": "1b418f79c72d2942",
+   "fingerprint": "e80db44fb4d3a57c",
    "kind": "Microsoft.UI.Xaml.Controls:TabView",
    "name": "CanReorderTabs",
    "origin": "inferred",
@@ -20793,7 +20793,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TabView:prop:CanTearOutTabs:observe",
-   "fingerprint": "a9110854d99d761a",
+   "fingerprint": "4429ba12b9229888",
    "kind": "Microsoft.UI.Xaml.Controls:TabView",
    "name": "CanTearOutTabs",
    "origin": "inferred",
@@ -20818,7 +20818,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TabView:prop:CloseButtonOverlayMode:observe",
-   "fingerprint": "efbfdd9c73f86f94",
+   "fingerprint": "dd971269a3c7a327",
    "kind": "Microsoft.UI.Xaml.Controls:TabView",
    "name": "CloseButtonOverlayMode",
    "origin": "inferred",
@@ -20843,7 +20843,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TabView:prop:IsAddTabButtonVisible:observe",
-   "fingerprint": "923f87fb3cf61ef8",
+   "fingerprint": "30310cb16f0b212b",
    "kind": "Microsoft.UI.Xaml.Controls:TabView",
    "name": "IsAddTabButtonVisible",
    "origin": "inferred",
@@ -20867,7 +20867,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TabView:prop:SelectedIndex:observe",
-   "fingerprint": "08f02c7bd3807f3a",
+   "fingerprint": "4961625e82c94954",
    "kind": "Microsoft.UI.Xaml.Controls:TabView",
    "name": "SelectedIndex",
    "origin": "inferred",
@@ -20892,7 +20892,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TabView:prop:TabWidthMode:observe",
-   "fingerprint": "b88e5760b6268ebf",
+   "fingerprint": "1ffa42104aa5ae12",
    "kind": "Microsoft.UI.Xaml.Controls:TabView",
    "name": "TabWidthMode",
    "origin": "inferred",
@@ -20964,7 +20964,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TabViewItem:prop:Header:observe",
-   "fingerprint": "a2c494928b07b2a2",
+   "fingerprint": "9b02f600646f6a3d",
    "kind": "Microsoft.UI.Xaml.Controls:TabViewItem",
    "name": "Header",
    "origin": "inferred",
@@ -20989,7 +20989,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TabViewItem:prop:IsClosable:observe",
-   "fingerprint": "a9f373ec0c14e2e5",
+   "fingerprint": "7ed693181517e078",
    "kind": "Microsoft.UI.Xaml.Controls:TabViewItem",
    "name": "IsClosable",
    "origin": "inferred",
@@ -21270,7 +21270,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TeachingTip:prop:ActionButtonContent:observe",
-   "fingerprint": "5caf32a5bfb53080",
+   "fingerprint": "edc38de35c48ea30",
    "kind": "Microsoft.UI.Xaml.Controls:TeachingTip",
    "name": "ActionButtonContent",
    "origin": "inferred",
@@ -21295,7 +21295,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TeachingTip:prop:CloseButtonContent:observe",
-   "fingerprint": "cba45e76eef94ccf",
+   "fingerprint": "1c5ac9ddbac98994",
    "kind": "Microsoft.UI.Xaml.Controls:TeachingTip",
    "name": "CloseButtonContent",
    "origin": "inferred",
@@ -21320,7 +21320,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TeachingTip:prop:HeroContentPlacement:observe",
-   "fingerprint": "e74b5157515595a2",
+   "fingerprint": "e532e28f17bcf8ae",
    "kind": "Microsoft.UI.Xaml.Controls:TeachingTip",
    "name": "HeroContentPlacement",
    "origin": "inferred",
@@ -21345,7 +21345,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TeachingTip:prop:IsLightDismissEnabled:observe",
-   "fingerprint": "e33e4ebf9deffad0",
+   "fingerprint": "4e4c3e05f05ce06e",
    "kind": "Microsoft.UI.Xaml.Controls:TeachingTip",
    "name": "IsLightDismissEnabled",
    "origin": "inferred",
@@ -21370,7 +21370,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TeachingTip:prop:IsOpen:observe",
-   "fingerprint": "b3ba62e4b1663077",
+   "fingerprint": "47cdaf730838a174",
    "kind": "Microsoft.UI.Xaml.Controls:TeachingTip",
    "name": "IsOpen",
    "origin": "inferred",
@@ -21395,7 +21395,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TeachingTip:prop:PlacementMargin:observe",
-   "fingerprint": "1b02ba488972429b",
+   "fingerprint": "bee0e9ac8044eaaf",
    "kind": "Microsoft.UI.Xaml.Controls:TeachingTip",
    "name": "PlacementMargin",
    "origin": "inferred",
@@ -21420,7 +21420,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TeachingTip:prop:PreferredPlacement:observe",
-   "fingerprint": "5c1c403d2fd4d5e4",
+   "fingerprint": "6625c782bbcd709a",
    "kind": "Microsoft.UI.Xaml.Controls:TeachingTip",
    "name": "PreferredPlacement",
    "origin": "inferred",
@@ -21445,7 +21445,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TeachingTip:prop:ShouldConstrainToRootBounds:observe",
-   "fingerprint": "a54359517599c5f9",
+   "fingerprint": "f64de4306f33cc83",
    "kind": "Microsoft.UI.Xaml.Controls:TeachingTip",
    "name": "ShouldConstrainToRootBounds",
    "origin": "inferred",
@@ -21470,7 +21470,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TeachingTip:prop:Subtitle:observe",
-   "fingerprint": "9d57652daaa9e2c1",
+   "fingerprint": "545728aad7c2ca4a",
    "kind": "Microsoft.UI.Xaml.Controls:TeachingTip",
    "name": "Subtitle",
    "origin": "inferred",
@@ -21495,7 +21495,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TeachingTip:prop:TailVisibility:observe",
-   "fingerprint": "f8127237d1cece4e",
+   "fingerprint": "a2e4063bb9446d4e",
    "kind": "Microsoft.UI.Xaml.Controls:TeachingTip",
    "name": "TailVisibility",
    "origin": "inferred",
@@ -21520,7 +21520,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TeachingTip:prop:Title:observe",
-   "fingerprint": "4f33941152099cdc",
+   "fingerprint": "1424d8d23080cef3",
    "kind": "Microsoft.UI.Xaml.Controls:TeachingTip",
    "name": "Title",
    "origin": "inferred",
@@ -22075,7 +22075,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:BaselineOffset:observe",
-   "fingerprint": "9f87bfada1f2d608",
+   "fingerprint": "8d13d0b710a5a7eb",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "BaselineOffset",
    "origin": "inferred",
@@ -22100,7 +22100,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:CharacterSpacing:observe",
-   "fingerprint": "a421871c9abeb736",
+   "fingerprint": "d3e4477fec7f95be",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "CharacterSpacing",
    "origin": "inferred",
@@ -22125,7 +22125,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:FontFamily:observe",
-   "fingerprint": "5326f046cf82fa47",
+   "fingerprint": "cb0e72c4db57a64f",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "FontFamily",
    "origin": "inferred",
@@ -22149,7 +22149,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:FontSize:observe",
-   "fingerprint": "800ad59fca441754",
+   "fingerprint": "5d54edce78ae08af",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "FontSize",
    "origin": "inferred",
@@ -22174,7 +22174,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:FontStretch:observe",
-   "fingerprint": "40f8e13a5b6daff4",
+   "fingerprint": "89c957599ffd2ad8",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "FontStretch",
    "origin": "inferred",
@@ -22199,7 +22199,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:FontStyle:observe",
-   "fingerprint": "cb7ca59b5699c4f6",
+   "fingerprint": "ed26698eb29c7437",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "FontStyle",
    "origin": "inferred",
@@ -22224,7 +22224,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:FontWeight:observe",
-   "fingerprint": "c733b211cf3b5769",
+   "fingerprint": "09375e10324167da",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "FontWeight",
    "origin": "inferred",
@@ -22249,7 +22249,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:Foreground:observe",
-   "fingerprint": "99df657bbaa76e86",
+   "fingerprint": "6f25c24063078789",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "Foreground",
    "origin": "inferred",
@@ -22274,7 +22274,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:HorizontalTextAlignment:observe",
-   "fingerprint": "3ff69bbdd2f35d92",
+   "fingerprint": "19f4a496338fd161",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "HorizontalTextAlignment",
    "origin": "inferred",
@@ -22299,7 +22299,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:IsColorFontEnabled:observe",
-   "fingerprint": "ad94f04f8b67a7e3",
+   "fingerprint": "564c7482f3d2aa71",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "IsColorFontEnabled",
    "origin": "inferred",
@@ -22324,7 +22324,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:IsTextScaleFactorEnabled:observe",
-   "fingerprint": "d4a301e8ae8af2dd",
+   "fingerprint": "1c09d92f8e422b02",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "IsTextScaleFactorEnabled",
    "origin": "inferred",
@@ -22348,7 +22348,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:IsTextSelectionEnabled:observe",
-   "fingerprint": "309a1f85bd1eb82f",
+   "fingerprint": "90206af56e944061",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "IsTextSelectionEnabled",
    "origin": "inferred",
@@ -22373,7 +22373,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:IsTextTrimmed:observe",
-   "fingerprint": "33c094095f4b0fb1",
+   "fingerprint": "fd8f84e8e0b3e21d",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "IsTextTrimmed",
    "origin": "inferred",
@@ -22398,7 +22398,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:LineHeight:observe",
-   "fingerprint": "7c97d098bc53e136",
+   "fingerprint": "233cd77f118d70f5",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "LineHeight",
    "origin": "inferred",
@@ -22423,7 +22423,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:LineStackingStrategy:observe",
-   "fingerprint": "b6185815e826deee",
+   "fingerprint": "bb53955179bffa7f",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "LineStackingStrategy",
    "origin": "inferred",
@@ -22447,7 +22447,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:MaxLines:observe",
-   "fingerprint": "1015700d64e04822",
+   "fingerprint": "081576522ca5bff2",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "MaxLines",
    "origin": "inferred",
@@ -22472,7 +22472,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:OpticalMarginAlignment:observe",
-   "fingerprint": "72b3e20a6739991f",
+   "fingerprint": "8e2e3afdce3bfa9a",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "OpticalMarginAlignment",
    "origin": "inferred",
@@ -22497,7 +22497,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:Padding:observe",
-   "fingerprint": "385f72437ade5cf1",
+   "fingerprint": "593361fe3283a543",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "Padding",
    "origin": "inferred",
@@ -22522,7 +22522,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:SelectedText:observe",
-   "fingerprint": "2065761ed5ded28c",
+   "fingerprint": "34eafa279166edb3",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "SelectedText",
    "origin": "inferred",
@@ -22547,7 +22547,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:SelectionHighlightColor:observe",
-   "fingerprint": "1998a9e06d875b83",
+   "fingerprint": "8abd1f29216fadd3",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "SelectionHighlightColor",
    "origin": "inferred",
@@ -22571,7 +22571,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:Text:observe",
-   "fingerprint": "d4c14734b3c1443d",
+   "fingerprint": "6405dbf45ae851d3",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "Text",
    "origin": "inferred",
@@ -22596,7 +22596,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextAlignment:observe",
-   "fingerprint": "f8515cb81b96bb8e",
+   "fingerprint": "caa5343dc4168435",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "TextAlignment",
    "origin": "inferred",
@@ -22621,7 +22621,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextLineBounds:observe",
-   "fingerprint": "8df71c268d39ae9d",
+   "fingerprint": "ef2539476f6adedd",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "TextLineBounds",
    "origin": "inferred",
@@ -22646,7 +22646,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextTrimming:observe",
-   "fingerprint": "e39b603fee426c49",
+   "fingerprint": "9d87eb8932deb886",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "TextTrimming",
    "origin": "inferred",
@@ -22670,7 +22670,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBlock:prop:TextWrapping:observe",
-   "fingerprint": "6cba4d1ecd5d65c9",
+   "fingerprint": "b1c97745a29a2ec8",
    "kind": "Microsoft.UI.Xaml.Controls:TextBlock",
    "name": "TextWrapping",
    "origin": "inferred",
@@ -22839,7 +22839,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:event:BeforeTextChanging",
-   "fingerprint": "3e2e7851fe155d79",
+   "fingerprint": "4f0b72d677df157e",
    "kind": "TextBox",
    "name": "BeforeTextChanging",
    "origin": "manual",
@@ -22941,7 +22941,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:event:TextChanged",
-   "fingerprint": "035fc171702a3b37",
+   "fingerprint": "1face3cf7bb392db",
    "kind": "TextBox",
    "name": "TextChanged",
    "origin": "manual",
@@ -22952,7 +22952,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:event:TextChanging",
-   "fingerprint": "51ac1375266c671c",
+   "fingerprint": "e8a8816633ea4e77",
    "kind": "TextBox",
    "name": "TextChanging",
    "origin": "inferred",
@@ -23254,7 +23254,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:AcceptsReturn:observe",
-   "fingerprint": "f2b0d4251b903fea",
+   "fingerprint": "db864b6c62fbb5dc",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "AcceptsReturn",
    "origin": "inferred",
@@ -23279,7 +23279,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:CanPasteClipboardContent:observe",
-   "fingerprint": "47616920ac455134",
+   "fingerprint": "8625690a4b6a16cf",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "CanPasteClipboardContent",
    "origin": "inferred",
@@ -23304,7 +23304,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:CanRedo:observe",
-   "fingerprint": "57c445070b87cdae",
+   "fingerprint": "c8af8d05326e6af4",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "CanRedo",
    "origin": "inferred",
@@ -23329,7 +23329,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:CanUndo:observe",
-   "fingerprint": "863feaf17f5104ce",
+   "fingerprint": "3fba5c277c5aad99",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "CanUndo",
    "origin": "inferred",
@@ -23354,7 +23354,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:CharacterCasing:observe",
-   "fingerprint": "2450cdce10013ceb",
+   "fingerprint": "2153a1da622a08f9",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "CharacterCasing",
    "origin": "inferred",
@@ -23379,7 +23379,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:Description:observe",
-   "fingerprint": "f734dad2b24037bf",
+   "fingerprint": "5731584e06cb55ed",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "Description",
    "origin": "inferred",
@@ -23404,7 +23404,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:DesiredCandidateWindowAlignment:observe",
-   "fingerprint": "3e460a13445dea64",
+   "fingerprint": "d20274c4238af91f",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "DesiredCandidateWindowAlignment",
    "origin": "inferred",
@@ -23428,7 +23428,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:Header:observe",
-   "fingerprint": "363de3f856554eb6",
+   "fingerprint": "e44d34effbc96bc4",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "Header",
    "origin": "inferred",
@@ -23453,7 +23453,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:HorizontalTextAlignment:observe",
-   "fingerprint": "9a8906cea70a9fb3",
+   "fingerprint": "bf4d5f7e5bd1e2f4",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "HorizontalTextAlignment",
    "origin": "inferred",
@@ -23478,7 +23478,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:IsColorFontEnabled:observe",
-   "fingerprint": "062fb1d3a60a6d18",
+   "fingerprint": "a611cc522b91dc3b",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "IsColorFontEnabled",
    "origin": "inferred",
@@ -23502,7 +23502,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:IsReadOnly:observe",
-   "fingerprint": "f281a3800255a2d6",
+   "fingerprint": "634b4b9f13986f65",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "IsReadOnly",
    "origin": "inferred",
@@ -23527,7 +23527,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:IsSpellCheckEnabled:observe",
-   "fingerprint": "1a1d3345c919002d",
+   "fingerprint": "d4719b255ace4ea0",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "IsSpellCheckEnabled",
    "origin": "inferred",
@@ -23552,7 +23552,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:IsTextPredictionEnabled:observe",
-   "fingerprint": "7a5a1d73d1f42bbf",
+   "fingerprint": "560e9bbd73346afd",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "IsTextPredictionEnabled",
    "origin": "inferred",
@@ -23576,7 +23576,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:MaxLength:observe",
-   "fingerprint": "e6259589d5b7a5b3",
+   "fingerprint": "5f9dcd06f182ac11",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "MaxLength",
    "origin": "inferred",
@@ -23601,7 +23601,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:PlaceholderForeground:observe",
-   "fingerprint": "5a61f41ee6d65107",
+   "fingerprint": "2bba48d854a709f2",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "PlaceholderForeground",
    "origin": "inferred",
@@ -23625,7 +23625,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:PlaceholderText:observe",
-   "fingerprint": "1f51c56dc98bfe2a",
+   "fingerprint": "6b5649948cb8be37",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "PlaceholderText",
    "origin": "inferred",
@@ -23650,7 +23650,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:PreventKeyboardDisplayOnProgrammaticFocus:observe",
-   "fingerprint": "71ef410897e8f714",
+   "fingerprint": "febdf8d6ba482822",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "PreventKeyboardDisplayOnProgrammaticFocus",
    "origin": "inferred",
@@ -23675,7 +23675,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:SelectedText:observe",
-   "fingerprint": "22162598a970d7c2",
+   "fingerprint": "40b1eec6ef6be456",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "SelectedText",
    "origin": "inferred",
@@ -23700,7 +23700,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:SelectionHighlightColor:observe",
-   "fingerprint": "2921828c7aed9a09",
+   "fingerprint": "d246074dfc63f850",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "SelectionHighlightColor",
    "origin": "inferred",
@@ -23725,7 +23725,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:SelectionHighlightColorWhenNotFocused:observe",
-   "fingerprint": "5ee50b89b454e9ca",
+   "fingerprint": "4522437a5df453c3",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "SelectionHighlightColorWhenNotFocused",
    "origin": "inferred",
@@ -23750,7 +23750,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:SelectionLength:observe",
-   "fingerprint": "913504014cabacd2",
+   "fingerprint": "c376c5cc3a74b553",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "SelectionLength",
    "origin": "inferred",
@@ -23775,7 +23775,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:SelectionStart:observe",
-   "fingerprint": "c1434a0eb056eecf",
+   "fingerprint": "dbde7bf69d93fd2d",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "SelectionStart",
    "origin": "inferred",
@@ -23799,7 +23799,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:Text:observe",
-   "fingerprint": "67548fb622c06672",
+   "fingerprint": "8c1eb5f4e1bcf8a6",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "Text",
    "origin": "inferred",
@@ -23824,7 +23824,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:TextAlignment:observe",
-   "fingerprint": "6c5a3e9ab1c052c7",
+   "fingerprint": "9746145779327813",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "TextAlignment",
    "origin": "inferred",
@@ -23848,7 +23848,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TextBox:prop:TextWrapping:observe",
-   "fingerprint": "5c5ede64f7a90baf",
+   "fingerprint": "0c84e9f790c51b2e",
    "kind": "Microsoft.UI.Xaml.Controls:TextBox",
    "name": "TextWrapping",
    "origin": "inferred",
@@ -23970,7 +23970,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TimePicker:prop:Header:observe",
-   "fingerprint": "fd16088a118318a3",
+   "fingerprint": "279e58b833b420ef",
    "kind": "Microsoft.UI.Xaml.Controls:TimePicker",
    "name": "Header",
    "origin": "inferred",
@@ -23995,7 +23995,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TimePicker:prop:LightDismissOverlayMode:observe",
-   "fingerprint": "36ad4a985313eaac",
+   "fingerprint": "f039e7b129b3ac50",
    "kind": "Microsoft.UI.Xaml.Controls:TimePicker",
    "name": "LightDismissOverlayMode",
    "origin": "inferred",
@@ -24020,7 +24020,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TimePicker:prop:MinuteIncrement:observe",
-   "fingerprint": "1de037b6ed754784",
+   "fingerprint": "f4a5bc1bb8b726d7",
    "kind": "Microsoft.UI.Xaml.Controls:TimePicker",
    "name": "MinuteIncrement",
    "origin": "inferred",
@@ -24045,7 +24045,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TimePicker:prop:SelectedTime:observe",
-   "fingerprint": "bdecbd7d2081c972",
+   "fingerprint": "8a482ecbe1209da2",
    "kind": "Microsoft.UI.Xaml.Controls:TimePicker",
    "name": "SelectedTime",
    "origin": "inferred",
@@ -24070,7 +24070,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TimePicker:prop:Time:observe",
-   "fingerprint": "6d076a79215ef911",
+   "fingerprint": "c23e35fbf46d82ab",
    "kind": "Microsoft.UI.Xaml.Controls:TimePicker",
    "name": "Time",
    "origin": "inferred",
@@ -24119,7 +24119,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ToggleMenuFlyoutItem:prop:IsChecked:observe",
-   "fingerprint": "80470f59420a1459",
+   "fingerprint": "14f240cd649588bc",
    "kind": "Microsoft.UI.Xaml.Controls:ToggleMenuFlyoutItem",
    "name": "IsChecked",
    "origin": "inferred",
@@ -24180,7 +24180,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ToggleSwitch:prop:Header:observe",
-   "fingerprint": "1c7e8ef79d6d99c7",
+   "fingerprint": "5feb802e7b3070e0",
    "kind": "Microsoft.UI.Xaml.Controls:ToggleSwitch",
    "name": "Header",
    "origin": "inferred",
@@ -24205,7 +24205,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ToggleSwitch:prop:IsOn:observe",
-   "fingerprint": "34e8328db500de09",
+   "fingerprint": "485bf191dbb9bee8",
    "kind": "Microsoft.UI.Xaml.Controls:ToggleSwitch",
    "name": "IsOn",
    "origin": "inferred",
@@ -24230,7 +24230,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ToggleSwitch:prop:OffContent:observe",
-   "fingerprint": "81bbc4dcc2f9a813",
+   "fingerprint": "fdb7b8301855de09",
    "kind": "Microsoft.UI.Xaml.Controls:ToggleSwitch",
    "name": "OffContent",
    "origin": "inferred",
@@ -24255,7 +24255,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ToggleSwitch:prop:OnContent:observe",
-   "fingerprint": "37a24ada8577a148",
+   "fingerprint": "a1bb8e69c3aac986",
    "kind": "Microsoft.UI.Xaml.Controls:ToggleSwitch",
    "name": "OnContent",
    "origin": "inferred",
@@ -24328,7 +24328,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Viewbox:prop:Stretch:observe",
-   "fingerprint": "69e1bb588519868b",
+   "fingerprint": "f33fd24c8c315682",
    "kind": "Microsoft.UI.Xaml.Controls:Viewbox",
    "name": "Stretch",
    "origin": "inferred",
@@ -24353,7 +24353,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Viewbox:prop:StretchDirection:observe",
-   "fingerprint": "78e32906e944ea26",
+   "fingerprint": "3e47ec459535dbca",
    "kind": "Microsoft.UI.Xaml.Controls:Viewbox",
    "name": "StretchDirection",
    "origin": "inferred",
@@ -24416,7 +24416,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:event:LayoutUpdated",
-   "fingerprint": "09b9fd2911ca0497",
+   "fingerprint": "4c8173f617884b43",
    "kind": "FrameworkElement",
    "name": "LayoutUpdated",
    "origin": "inferred",
@@ -24428,7 +24428,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:event:Loaded",
-   "fingerprint": "b2dab9e80b4027d9",
+   "fingerprint": "16df5dc97dad21fc",
    "kind": "FrameworkElement",
    "name": "Loaded",
    "origin": "inferred",
@@ -24453,7 +24453,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:event:SizeChanged",
-   "fingerprint": "12e0121279ce2d2d",
+   "fingerprint": "97afe987f5409f74",
    "kind": "FrameworkElement",
    "name": "SizeChanged",
    "origin": "inferred",
@@ -24718,7 +24718,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:ActualHeight:observe",
-   "fingerprint": "649d0cde8c46c746",
+   "fingerprint": "e6fd04c351b7f82f",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "ActualHeight",
    "origin": "inferred",
@@ -24743,7 +24743,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:ActualTheme:observe",
-   "fingerprint": "ad4f0ff50f2c77d3",
+   "fingerprint": "71d9d17358c7cbc1",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "ActualTheme",
    "origin": "inferred",
@@ -24756,7 +24756,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:ActualWidth:observe",
-   "fingerprint": "578a9463cfda2e2f",
+   "fingerprint": "1262f91f832b02eb",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "ActualWidth",
    "origin": "inferred",
@@ -24781,7 +24781,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:AllowFocusOnInteraction:observe",
-   "fingerprint": "6c0be0686f39742e",
+   "fingerprint": "3623507ad0c187ba",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "AllowFocusOnInteraction",
    "origin": "inferred",
@@ -24806,7 +24806,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:AllowFocusWhenDisabled:observe",
-   "fingerprint": "074db12de12fa7cb",
+   "fingerprint": "587e6bd507dd9ca4",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "AllowFocusWhenDisabled",
    "origin": "inferred",
@@ -24831,7 +24831,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:BaseUri:observe",
-   "fingerprint": "5672dea872d059ff",
+   "fingerprint": "86f39a3253e3ec92",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "BaseUri",
    "origin": "inferred",
@@ -24856,7 +24856,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:FlowDirection:observe",
-   "fingerprint": "24a7d6bf0eb79e49",
+   "fingerprint": "2a65634fa949c424",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "FlowDirection",
    "origin": "inferred",
@@ -24881,7 +24881,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:FocusVisualMargin:observe",
-   "fingerprint": "c9b36504815b68ac",
+   "fingerprint": "9161030d32daf9e1",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "FocusVisualMargin",
    "origin": "inferred",
@@ -24906,7 +24906,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:FocusVisualPrimaryBrush:observe",
-   "fingerprint": "cb16b418560ae96a",
+   "fingerprint": "1fd3d1c8b3dcc884",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "FocusVisualPrimaryBrush",
    "origin": "inferred",
@@ -24931,7 +24931,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:FocusVisualPrimaryThickness:observe",
-   "fingerprint": "d4d176ebfad53f79",
+   "fingerprint": "8f56b3578a3c4446",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "FocusVisualPrimaryThickness",
    "origin": "inferred",
@@ -24956,7 +24956,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:FocusVisualSecondaryBrush:observe",
-   "fingerprint": "62874436607b07f1",
+   "fingerprint": "426f150e62274103",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "FocusVisualSecondaryBrush",
    "origin": "inferred",
@@ -24981,7 +24981,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:FocusVisualSecondaryThickness:observe",
-   "fingerprint": "337651db5cfda45f",
+   "fingerprint": "3049fcc9389fcdd0",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "FocusVisualSecondaryThickness",
    "origin": "inferred",
@@ -25005,7 +25005,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Height:observe",
-   "fingerprint": "5fcaeca567d94982",
+   "fingerprint": "f57bf7886342cf13",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "Height",
    "origin": "inferred",
@@ -25029,7 +25029,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:HorizontalAlignment:observe",
-   "fingerprint": "65a60f1b5a25b83f",
+   "fingerprint": "c2db7a491988546b",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "HorizontalAlignment",
    "origin": "inferred",
@@ -25054,7 +25054,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:IsLoaded:observe",
-   "fingerprint": "f38e787941a6a3a9",
+   "fingerprint": "ed47cc7466655a66",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "IsLoaded",
    "origin": "inferred",
@@ -25079,7 +25079,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Language:observe",
-   "fingerprint": "fb63e11020127c9c",
+   "fingerprint": "1705d3fe22295c43",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "Language",
    "origin": "inferred",
@@ -25103,7 +25103,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Margin:observe",
-   "fingerprint": "971aa9def604a7e4",
+   "fingerprint": "1df5327281bb2e22",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "Margin",
    "origin": "inferred",
@@ -25128,7 +25128,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:MaxHeight:observe",
-   "fingerprint": "4882cf8d42d42f7f",
+   "fingerprint": "6be1e014967571e8",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "MaxHeight",
    "origin": "inferred",
@@ -25153,7 +25153,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:MaxWidth:observe",
-   "fingerprint": "07c12286e0fc309f",
+   "fingerprint": "130c0b9c77e7018e",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "MaxWidth",
    "origin": "inferred",
@@ -25177,7 +25177,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:MinHeight:observe",
-   "fingerprint": "d1a7e36f558d2072",
+   "fingerprint": "3e2a7e4bcb391e0f",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "MinHeight",
    "origin": "inferred",
@@ -25201,7 +25201,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:MinWidth:observe",
-   "fingerprint": "6c8477c5c689a911",
+   "fingerprint": "2ce405efab17e191",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "MinWidth",
    "origin": "inferred",
@@ -25225,7 +25225,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Name:observe",
-   "fingerprint": "376c86fd359d85c5",
+   "fingerprint": "1e7bde10d7d15f51",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "Name",
    "origin": "inferred",
@@ -25250,7 +25250,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:RequestedTheme:observe",
-   "fingerprint": "e2be7d6c3a0c7c71",
+   "fingerprint": "b74ff4116747828f",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "RequestedTheme",
    "origin": "inferred",
@@ -25274,7 +25274,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:VerticalAlignment:observe",
-   "fingerprint": "d7ee4c3312eb184e",
+   "fingerprint": "99ddf25d6e7fb2d2",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "VerticalAlignment",
    "origin": "inferred",
@@ -25298,7 +25298,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:FrameworkElement:prop:Width:observe",
-   "fingerprint": "9aef26967e084c3b",
+   "fingerprint": "7e777ab3cfd10992",
    "kind": "Microsoft.UI.Xaml:FrameworkElement",
    "name": "Width",
    "origin": "inferred",
@@ -26178,7 +26178,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:AccessKey:observe",
-   "fingerprint": "c5d0bdd51c5b82b3",
+   "fingerprint": "7b4dbfa4e3603960",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "AccessKey",
    "origin": "inferred",
@@ -26203,7 +26203,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:CanBeScrollAnchor:observe",
-   "fingerprint": "576eb584b174ae89",
+   "fingerprint": "d39bc7a3dd058a1b",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "CanBeScrollAnchor",
    "origin": "inferred",
@@ -26228,7 +26228,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:CompositeMode:observe",
-   "fingerprint": "e57c3d32f93c5ca6",
+   "fingerprint": "9c11d36c8c5ab9bf",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "CompositeMode",
    "origin": "inferred",
@@ -26253,7 +26253,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:ExitDisplayModeOnAccessKeyInvoked:observe",
-   "fingerprint": "353548885f57e88f",
+   "fingerprint": "c4ba38962b4ad299",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "ExitDisplayModeOnAccessKeyInvoked",
    "origin": "inferred",
@@ -26278,7 +26278,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:FocusState:observe",
-   "fingerprint": "003c3d50db358e39",
+   "fingerprint": "014d37916be8012e",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "FocusState",
    "origin": "inferred",
@@ -26303,7 +26303,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsAccessKeyScope:observe",
-   "fingerprint": "1c5a580099b43697",
+   "fingerprint": "0440302c0dd0cf1a",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "IsAccessKeyScope",
    "origin": "inferred",
@@ -26328,7 +26328,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsDoubleTapEnabled:observe",
-   "fingerprint": "463e405da0d98b71",
+   "fingerprint": "7a261c327804e81c",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "IsDoubleTapEnabled",
    "origin": "inferred",
@@ -26352,7 +26352,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsHitTestVisible:observe",
-   "fingerprint": "156462b9e95022f6",
+   "fingerprint": "485a4ecd431d6715",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "IsHitTestVisible",
    "origin": "inferred",
@@ -26377,7 +26377,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsHoldingEnabled:observe",
-   "fingerprint": "953b052b1522a927",
+   "fingerprint": "9481c33aee7d2436",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "IsHoldingEnabled",
    "origin": "inferred",
@@ -26402,7 +26402,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsRightTapEnabled:observe",
-   "fingerprint": "64ba63f6e667a8df",
+   "fingerprint": "b7b9f8adc56f7867",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "IsRightTapEnabled",
    "origin": "inferred",
@@ -26427,7 +26427,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsTabStop:observe",
-   "fingerprint": "6c5e612edeea0957",
+   "fingerprint": "a3fd04d728764553",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "IsTabStop",
    "origin": "inferred",
@@ -26452,7 +26452,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:IsTapEnabled:observe",
-   "fingerprint": "166679b592e74384",
+   "fingerprint": "a8652e7279a2ab4f",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "IsTapEnabled",
    "origin": "inferred",
@@ -26477,7 +26477,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:KeyTipHorizontalOffset:observe",
-   "fingerprint": "6f94bd7053703910",
+   "fingerprint": "072c026bdf457935",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "KeyTipHorizontalOffset",
    "origin": "inferred",
@@ -26502,7 +26502,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:KeyTipPlacementMode:observe",
-   "fingerprint": "b986cd21090b1b41",
+   "fingerprint": "14f7ba79185c07cc",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "KeyTipPlacementMode",
    "origin": "inferred",
@@ -26527,7 +26527,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:KeyTipVerticalOffset:observe",
-   "fingerprint": "506028b8d81d5a36",
+   "fingerprint": "ba868ff3af5b0a81",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "KeyTipVerticalOffset",
    "origin": "inferred",
@@ -26552,7 +26552,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:KeyboardAcceleratorPlacementMode:observe",
-   "fingerprint": "f50cb8895546c90a",
+   "fingerprint": "996a2f8133aebea1",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "KeyboardAcceleratorPlacementMode",
    "origin": "inferred",
@@ -26576,7 +26576,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:Opacity:observe",
-   "fingerprint": "2b8de5462b95d4b5",
+   "fingerprint": "13260c5745f4ffc0",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "Opacity",
    "origin": "inferred",
@@ -26601,7 +26601,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:RasterizationScale:observe",
-   "fingerprint": "9c1711f8c244bc9b",
+   "fingerprint": "bd1d09c3087c81fe",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "RasterizationScale",
    "origin": "inferred",
@@ -26626,7 +26626,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:Rotation:observe",
-   "fingerprint": "3e389b3d4fc1fc45",
+   "fingerprint": "006450a95e53a3a4",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "Rotation",
    "origin": "inferred",
@@ -26651,7 +26651,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:TabFocusNavigation:observe",
-   "fingerprint": "09e6b93ae3bfc975",
+   "fingerprint": "286cc0c47762ef25",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "TabFocusNavigation",
    "origin": "inferred",
@@ -26676,7 +26676,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:TabIndex:observe",
-   "fingerprint": "3527237c2c03c12f",
+   "fingerprint": "f2ffbd06717bd5c9",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "TabIndex",
    "origin": "inferred",
@@ -26701,7 +26701,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:UseLayoutRounding:observe",
-   "fingerprint": "cce676ea31515a5e",
+   "fingerprint": "09d2854fdd9faa8b",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "UseLayoutRounding",
    "origin": "inferred",
@@ -26726,7 +26726,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:UseSystemFocusVisuals:observe",
-   "fingerprint": "7604227503e96314",
+   "fingerprint": "823e2e53aaf9f770",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "UseSystemFocusVisuals",
    "origin": "inferred",
@@ -26750,7 +26750,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:Visibility:observe",
-   "fingerprint": "c81c1142f0b29d4b",
+   "fingerprint": "aaf9f36578fd892d",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "Visibility",
    "origin": "inferred",
@@ -26775,7 +26775,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusDownNavigationStrategy:observe",
-   "fingerprint": "692c53645b27012b",
+   "fingerprint": "698a762d9acf88b6",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "XYFocusDownNavigationStrategy",
    "origin": "inferred",
@@ -26800,7 +26800,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusKeyboardNavigation:observe",
-   "fingerprint": "fa9832a47f90b8b5",
+   "fingerprint": "99b206b759cc26cf",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "XYFocusKeyboardNavigation",
    "origin": "inferred",
@@ -26825,7 +26825,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusLeftNavigationStrategy:observe",
-   "fingerprint": "613d1e484b634309",
+   "fingerprint": "fe437410d04a2d60",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "XYFocusLeftNavigationStrategy",
    "origin": "inferred",
@@ -26850,7 +26850,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusRightNavigationStrategy:observe",
-   "fingerprint": "9318e6b792711d16",
+   "fingerprint": "ab7968cb94129bfd",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "XYFocusRightNavigationStrategy",
    "origin": "inferred",
@@ -26875,7 +26875,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:UIElement:prop:XYFocusUpNavigationStrategy:observe",
-   "fingerprint": "cc138420d1a55f63",
+   "fingerprint": "9bd97062c028011a",
    "kind": "Microsoft.UI.Xaml:UIElement",
    "name": "XYFocusUpNavigationStrategy",
    "origin": "inferred",
@@ -26934,7 +26934,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:Window:prop:Title:observe",
-   "fingerprint": "822814c2e78ee277",
+   "fingerprint": "70c024b03e6e5136",
    "kind": "Microsoft.UI.Xaml:Window",
    "name": "Title",
    "origin": "inferred",
@@ -26959,7 +26959,7 @@
   },
   {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml:Window:prop:Visible:observe",
-   "fingerprint": "93dafdcba753d1b8",
+   "fingerprint": "f2eab9580e30b583",
    "kind": "Microsoft.UI.Xaml:Window",
    "name": "Visible",
    "origin": "inferred",

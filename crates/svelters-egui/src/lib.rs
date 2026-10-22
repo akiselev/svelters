@@ -56,6 +56,8 @@ pub mod style;
 pub mod theme;
 /// OW0: svelters' own widgets (ARCH-WIDGETS §1.3) and the own-widget switch (§6.2).
 pub mod widgets;
+/// ZM1: UI zoom (`set_zoom`, VS Code's 1.2^n levels, who handles Ctrl+= / Ctrl+- / Ctrl+0).
+pub mod zoom;
 
 mod a11y;
 /// AU1: the accessible name the automation selectors share with AccessKit.
@@ -92,7 +94,7 @@ pub use spec::dump;
 /// (`#[svelters::behavior]`) needs.
 pub mod prelude {
     pub use crate::provider::{
-        A11yCx, AvailableSpace, Behavior, BehaviorCx, Caps, Dispatched, Event, ExtKey, Hit, HitCx, IntoStateBits, KindDecl, LayoutCx, MeasureCx, Part, PassCx, PassScope, PrepareCx, ProviderCx, ScenePass, StateBit, StateBits, StateProvider, Widget, WidgetCx,
+        A11yCx, AvailableSpace, Behavior, BehaviorCx, Caps, Dispatched, Event, ExtKey, Hit, HitCx, IntoStateBits, KindDecl, LayoutCx, MeasureCx, MethodCx, Part, PassCx, PassScope, PrepareCx, ProviderCx, ScenePass, StateBit, StateBits, StateProvider, Widget, WidgetCx,
     };
     /// OW0: units and primitives for own widgets.
     pub use crate::interact::{Focusable, Hoverable, Intents, Pressable, Unit};

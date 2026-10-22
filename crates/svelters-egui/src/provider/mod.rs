@@ -36,15 +36,20 @@
 //!   its root only. Opt-in hooks by capability: [`Widget::layout`] (`CUSTOM_LAYOUT`),
 //!   [`Widget::prepare`] (`PREPARE`), [`Widget::hit_test`] (`HIT_TEST`, SG3).
 //!
+//! - `#[svelters::widget] impl T { pub fn … }` (RA3) gives a kind methods JS calls on the element
+//!   (`methods.rs`, [`MethodCx`]).
+//!
 //! Files: this one holds the trait, the contexts and the registration types; `state.rs` the state
-//! bits; `behavior.rs` the behaviours (EVENTS, EV2b); `pass.rs` (SG4: `StateProvider`, `ScenePass`,
+//! bits; `methods.rs` the kind methods (RA3); `behavior.rs` the behaviours (EVENTS, EV2b); `pass.rs` (SG4: `StateProvider`, `ScenePass`,
 //! `PrepareCx`) is SCENE's. Writer lane: RUSTAPI (RA1, RA3).
 
 pub(crate) mod behavior;
+pub(crate) mod methods;
 pub(crate) mod pass;
 mod state;
 
 pub use behavior::{__new_behavior, Behavior, BehaviorBox, BehaviorCx};
+pub use methods::{__kind_of, __this, KindMethods, MethodCx, MethodEntry, types_key as methods_types_key};
 
 pub use crate::scene::ext::{ExtBlock, ExtEntry, ExtId, ExtKey, ExtTicks, Storage};
 pub use crate::scene::{Hit, HitCx};
@@ -282,6 +287,12 @@ inventory::collect!(BindSourceDef);
 /// Implemented by `#[svelters::widget]`: the struct's entry and its typed prop table.
 pub trait KindDecl: Sized + 'static {
     const KIND: &'static KindEntry;
+    /// The kind's namespace (`KindEntry::namespace`), as a constant for generated statics.
+    #[doc(hidden)]
+    const __NAMESPACE: &'static str;
+    /// RA3: the key the types of the kind's methods are registered under (`methods_types_key`).
+    #[doc(hidden)]
+    const __METHODS_KEY: &'static str;
     #[doc(hidden)]
     fn __svelters_new() -> Self;
     #[doc(hidden)]
@@ -369,6 +380,14 @@ pub trait Widget: 'static {
     fn composing(&self) -> bool {
         false
     }
+    /// RA3 (ARCH-WIDGETS TextInput unit): `Some(multiline)` when the widget is a text input whose
+    /// egui text field has the node's id (`cx.id()`). EV3's edit commands (the Edit menu's Cut,
+    /// Copy, Paste, Undo, Select All: `Embed::text_command`) then reach it as the input events they
+    /// stand for, fed just before its `ui`, and it gets the text-field key rules (R11). `None` (the
+    /// default): not a text input.
+    fn text_input(&self) -> Option<bool> {
+        None
+    }
 }
 
 pub use crate::layout::LayoutCx;
@@ -403,6 +422,8 @@ impl<T> std::fmt::Debug for Event<T> {
 pub struct MeasureCx<'a> {
     pub ctx: &'a egui::Context,
     pub style: &'a egui::Style,
+    /// RA3: an id for the widget's measuring (stable per node, apart from its drawing ids).
+    pub id: egui::Id,
     /// OW0: the node's computed style (CSS), if the cascade reaches it.
     pub(crate) css: Option<&'a svelters_style::ComputedStyle>,
     /// OW0: its parts' computed styles (`::part(name)`).
@@ -449,6 +470,24 @@ impl MeasureCx<'_> {
     pub fn text_field_size(&self, _text: &str, width: f32) -> egui::Vec2 {
         egui::vec2(width, (self.row_height() + 4.0).max(self.interact_size().y))
     }
+
+    /// RA3: the size `add` takes when it runs in an invisible, disabled sizing-pass `Ui` `avail`
+    /// wide (egui's own way to size a widget before showing it): what the fn form and
+    /// `wrap_widget!` measure with, so the measured size is the drawn one. Nothing is painted and
+    /// no input is sensed; the `Ui`'s ids derive from [`MeasureCx::id`].
+    pub fn sizing_pass(&self, avail: AvailableSpace, add: impl FnOnce(&mut egui::Ui)) -> egui::Vec2 {
+        let width = match avail {
+            AvailableSpace::Definite(w) => w,
+            AvailableSpace::MinContent => 0.0,
+            AvailableSpace::MaxContent => 16384.0,
+        };
+        let max = egui::Rect::from_min_size(egui::Pos2::ZERO, egui::vec2(width, 16384.0));
+        let builder = egui::UiBuilder::new().max_rect(max).sizing_pass().invisible().layout(egui::Layout::left_to_right(egui::Align::Min));
+        let mut ui = egui::Ui::new(self.ctx.clone(), self.id, builder);
+        ui.set_style(std::sync::Arc::new(self.style.clone()));
+        add(&mut ui);
+        ui.min_rect().size()
+    }
 }
 
 /// What [`Widget::ui`] gets: the node's id, rect and state, read access to the whole scene, the
@@ -474,6 +513,8 @@ pub struct WidgetCx<'a> {
     changed: Vec<usize>,
     emits: Vec<(usize, Value)>,
     remeasure: bool,
+    /// OW1a2: a peer write ([`WidgetCx::with_peer`]) wants another frame.
+    repaint: bool,
     errors: Vec<String>,
     /// OW0: UA tokens resolve in the dark scheme.
     dark: bool,
@@ -494,6 +535,11 @@ impl WidgetCx<'_> {
     /// picking, capture and focus memory under the units (Q2).
     pub fn interact(&self, ui: &mut egui::Ui, sense: egui::Sense) -> egui::Response {
         ui.interact(self.rect, self.id, sense)
+    }
+    /// OW1a2: [`Self::interact`] over `rect` only (a label's text, an unframed icon's glyph: the
+    /// node's hit area and drawn rect are its content, as the egui wrappers' were).
+    pub fn interact_at(&self, ui: &mut egui::Ui, rect: egui::Rect, sense: egui::Sense) -> egui::Response {
+        ui.interact(rect.intersect(self.rect), self.id, sense)
     }
 
     /// Runs behaviour units on the node's response (`#[svelters::widget]`'s generated
@@ -770,6 +816,102 @@ impl WidgetCx<'_> {
     pub fn request_measure(&mut self) {
         self.remeasure = true;
     }
+
+    /// OW1a2: writes to another own widget of type `Wd` in this pass, through `PeerCx` (its
+    /// `set` and `emit` are announced like the peer's own). It is for the writes one widget makes
+    /// to its group: radio exclusivity, toggle-button `group` and accordion. A peer drawn earlier in
+    /// the pass shows the change next frame, so a repaint is requested. `None` if `id` is this node,
+    /// is not live, or is not a `Wd`.
+    pub fn with_peer<Wd: 'static, R>(&mut self, id: crate::scene::NodeId, f: impl FnOnce(&mut Wd, &mut PeerCx) -> R) -> Option<R> {
+        let j = self.s.idx(id)?;
+        if j == self.i {
+            return None;
+        }
+        let (r, p) = {
+            let crate::scene::node::Payload::Builtin(W::Ext(x)) = &self.s.payload[j] else { return None };
+            let mut b = x.0.try_borrow_mut().ok()?;
+            let (entry, base) = (b.entry(), b.base());
+            let w = b.as_any_mut().downcast_mut::<Wd>()?;
+            let mut p = PeerCx { entry, base, changed: Vec::new(), emits: Vec::new(), errors: Vec::new(), focus: false };
+            (f(w, &mut p), p)
+        };
+        if p.focus {
+            self.s.core[j].flags.insert(crate::scene::NodeFlags::WANT_FOCUS);
+        }
+        if !p.changed.is_empty() || !p.emits.is_empty() || p.focus {
+            self.s.invalidate_content(id);
+            self.repaint = true;
+        }
+        flush_writes(self.s, j, p.changed, p.emits, p.errors, self.out);
+        Some(r)
+    }
+
+    /// OW1a2: moves keyboard focus to node `id` (a label's `for` target) at its next draw.
+    pub fn focus_node(&mut self, id: crate::scene::NodeId) {
+        if let Some(j) = self.s.idx(id) {
+            self.s.core[j].flags.insert(crate::scene::NodeFlags::WANT_FOCUS);
+            self.s.invalidate_content(id);
+            self.repaint = true;
+        }
+    }
+
+    /// OW1a2: this node's siblings (the parent's children, this one included), in order.
+    pub fn sibling_ids(&self) -> Vec<crate::scene::NodeId> {
+        match self.s.core[self.i].parent.and_then(|p| self.s.idx(p)) {
+            Some(p) => self.s.children[p].clone(),
+            None => Vec::new(),
+        }
+    }
+
+    /// OW1a2: the tag of node `id` (an own widget's is the built-in tag it replaces).
+    pub fn tag_of(&self, id: crate::scene::NodeId) -> Option<&'static str> {
+        let j = self.s.idx(id)?;
+        crate::kinds::KindRegistry::global().kind(self.s.core[j].kind as usize).tag
+    }
+}
+
+/// OW1a2: what [`WidgetCx::with_peer`] gives the closure: the peer's own `set` and `emit`.
+pub struct PeerCx {
+    entry: &'static KindEntry,
+    base: usize,
+    changed: Vec<usize>,
+    emits: Vec<(usize, Value)>,
+    errors: Vec<String>,
+    focus: bool,
+}
+
+impl PeerCx {
+    /// [`WidgetCx::set`] on the peer's `#[prop]` field.
+    pub fn set<T: PartialEq>(&mut self, field: &mut T, v: T) {
+        if *field != v {
+            *field = v;
+            written_prop(self.entry, self.base, field, &mut self.changed, &mut self.errors);
+        }
+    }
+    /// [`WidgetCx::emit`] on the peer's event.
+    pub fn emit<T: IntoJs>(&mut self, event: &Event<T>, payload: T) {
+        queue_emit(self.entry, event, payload, &mut self.emits, &mut self.errors);
+    }
+    /// Moves keyboard focus to the peer (Roving), shown as keyboard focus.
+    pub fn focus(&mut self) {
+        self.focus = true;
+    }
+}
+
+/// OW1a2: an event payload of several arguments (a built-in signal with more than one, such as
+/// `radio-button`'s `changed(checked, group)`); the emit path spreads it into the signal's args.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Args(pub Vec<Value>);
+
+impl svelters_host::exports::JsType for Args {
+    fn describe(b: &mut svelters_host::exports::TypeBuilder) -> svelters_host::exports::TypeRef {
+        <Vec<String> as svelters_host::exports::JsType>::describe(b)
+    }
+}
+impl IntoJs for Args {
+    fn into_js(self, _: &svelters_host::exports::CallCx<'_>) -> Result<Value, NativeError> {
+        Ok(Value::List(self.0))
+    }
 }
 
 /// The prop a `cx.set` wrote (by the field's offset in the struct at `base`), recorded once in
@@ -862,6 +1004,10 @@ pub trait ErasedWidget: Any {
     fn composing(&self) -> bool {
         false
     }
+    /// RA3: [`Widget::text_input`].
+    fn text_input(&self) -> Option<bool> {
+        None
+    }
 }
 
 impl<T: Widget + KindDecl> ErasedWidget for T {
@@ -919,6 +1065,9 @@ impl<T: Widget + KindDecl> ErasedWidget for T {
     fn composing(&self) -> bool {
         Widget::composing(self)
     }
+    fn text_input(&self) -> Option<bool> {
+        Widget::text_input(self)
+    }
 }
 
 /// The payload of a provider node (`W::Ext`). A `RefCell` so layout can measure through `&W`.
@@ -932,6 +1081,10 @@ impl ExtWidget {
     /// set so `Node::text`, queries and a11y read it without borrowing the widget); empty for
     /// provider kinds.
     pub fn text(&self) -> &str {
+        &self.1
+    }
+    /// [`Self::text`], as the `String` typed keys read (`scene::keys`).
+    pub(crate) fn text_string(&self) -> &String {
         &self.1
     }
     pub fn entry(&self) -> &'static KindEntry {
@@ -948,8 +1101,10 @@ impl ExtWidget {
         b.as_any_mut().downcast_mut::<W>().map(f)
     }
     pub(crate) fn measure(&self, m: &crate::layout::Metrics, avail: AvailableSpace, css: Option<&svelters_style::ComputedStyle>, parts: &[(Box<str>, std::sync::Arc<svelters_style::ComputedStyle>)]) -> egui::Vec2 {
-        let mut cx = MeasureCx { ctx: &m.ctx, style: &m.style, css, parts };
-        self.0.borrow_mut().measure(&mut cx, avail)
+        let mut w = self.0.borrow_mut();
+        let id = egui::Id::unique(("svelters-egui.measure", w.base()));
+        let mut cx = MeasureCx { ctx: &m.ctx, style: &m.style, id, css, parts };
+        w.measure(&mut cx, avail)
     }
 }
 
@@ -1006,6 +1161,11 @@ pub(crate) fn set_prop(w: &W, i: usize, v: &Value) -> Result<crate::scene::Dirty
 pub(crate) fn set_replaced_prop(w: &mut W, def: &crate::kinds::PropDef, v: &Value) -> Result<crate::scene::Dirty, String> {
     let W::Ext(x) = w else { return Err("not an own widget".into()) };
     let v = if matches!(v, Value::Null) && !def.nullable { crate::scene::props::default_value(def) } else { v.clone() };
+    // (OW1a2: the row's own range checks, so an own widget rejects what its wrapper rejected)
+    let v = match def.key {
+        crate::kinds::P::FontWeight => Value::I64(crate::scene::props::as_weight(&v)?),
+        _ => v,
+    };
     let mut d = {
         let mut b = x.0.borrow_mut();
         let entry = b.entry();
@@ -1099,6 +1259,11 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
     let id = arena.core[i].egui_id;
     let state0 = arena.core[i].state;
     let dark = ui.ctx().theme() == egui::Theme::Dark;
+    // RA3: a provider text input gets EV3's pending edit command before its `ui`
+    let text_input = matches!(&arena.payload[i], crate::scene::node::Payload::Builtin(W::Ext(x)) if x.0.try_borrow().is_ok_and(|w| w.text_input().is_some()));
+    if text_input {
+        crate::focus::before_text(ui, id);
+    }
     let ran = with_taken(arena, i, |w, s| {
         let mut cx = WidgetCx {
             s,
@@ -1115,12 +1280,16 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
             changed: Vec::new(),
             emits: Vec::new(),
             remeasure: false,
+            repaint: false,
             errors: Vec::new(),
             dark,
             relayout: false,
             ctx: ui.ctx().clone(),
         };
         let resp = w.ui(ui, &mut cx);
+        if cx.repaint {
+            ui.ctx().request_repaint();
+        }
         let WidgetCx { state, changed, emits, remeasure, errors, relayout, .. } = cx;
         (resp, state, changed, emits, remeasure, errors, relayout)
     });
@@ -1129,12 +1298,18 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
         arena.restyle(i);
         arena.invalidate_style(node);
     }
+    if text_input {
+        crate::focus::after_text(ui, id);
+    }
     // EM1: the accessible name and, for an anchored node, the anchor as AccessKit author id
     resp = crate::a11y::decorate(resp, &arena.n(h));
     let c = arena.common(i);
     if !c.tooltip.is_empty() {
         // OW0 (DESIGN R9): an own widget shows its tooltip while disabled too (the reason)
-        resp = if !resp.enabled() && crate::style::is_own(arena.w(i)) { resp.on_disabled_hover_text(c.tooltip.clone()) } else { resp.on_hover_text(c.tooltip.clone()) };
+        resp = if arena.own.contains("tooltip") {
+            let tip = c.tooltip.clone();
+            crate::widgets::tooltip::attach(ui, &resp, &tip, true) // OW3
+        } else if !resp.enabled() && crate::style::is_own(arena.w(i)) { resp.on_disabled_hover_text(c.tooltip.clone()) } else { resp.on_hover_text(c.tooltip.clone()) };
     }
     let c = arena.common(i);
     {

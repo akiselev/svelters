@@ -380,7 +380,9 @@ pub(crate) struct Core {
     pub(crate) bytecode: RefCell<Option<Rc<crate::bytecode::BytecodeCache>>>,
     pub(crate) bytecode_explicit: Cell<bool>,
     /// App exports (E0): this host's exported Rust objects.
-    pub(crate) apps: crate::exports::objects::AppObjects,
+    /// Shared (`Rc`) so backend code converting values during a host op sees it (RA3:
+    /// `exports::objects::scope`, object-handle props of provider kinds).
+    pub(crate) apps: std::rc::Rc<crate::exports::objects::AppObjects>,
     /// LD1: whether an `svelters:app/<module>` export is reachable by `construct` and `callStatic`,
     /// which need no import. Set by `Host::set_module_hooks` from the extension policy.
     pub(crate) app_gate: RefCell<Option<Rc<dyn Fn(&str) -> bool>>>,
@@ -493,6 +495,8 @@ impl Core {
     /// Runs one host op, adding its duration to the timing counters when enabled.
     fn timed<R>(&self, name: &'static str, f: impl FnOnce() -> R) -> R {
         crate::crash::note_op(name);
+        // RA3: backend code converting exported objects during this op uses this host's table
+        let _objects = crate::exports::objects::scope(&self.apps);
         if !self.cfg.timing {
             return f();
         }
@@ -749,6 +753,7 @@ impl Core {
     /// is still observed is read natively (no JS) unless it is proportional, compared with its
     /// `last` value and kept only if it differs (or a normalized write forces it). Never runs JS.
     pub(crate) fn take_changes(&self) -> Vec<ChangedProp> {
+        let _objects = crate::exports::objects::scope(&self.apps);
         let dirty = {
             let mut st = self.st.borrow_mut();
             st.dirty_set.clear();
