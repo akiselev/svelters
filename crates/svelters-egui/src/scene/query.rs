@@ -172,7 +172,8 @@ impl<'a> SceneRef<'a> {
     }
 
     /// A node by id path: `"<root key>/<anchor>"`, e.g. `"panel.task/slot/extents[0]"` (the anchor
-    /// may itself contain `/`). SG5 extends it to painted rows (`VirtualChildren::find_anchor`).
+    /// may itself contain `/`). Painted rows (`"<root key>/<host anchor>/row[…]"`) are targets, not
+    /// nodes: [`SceneRef::target_by_path`] (SG5).
     pub fn by_path(self, path: &str) -> Option<NodeRef<'a>> {
         let (key, anchor) = path.split_once('/')?;
         self.by_anchor(self.root_by_key(key)?, anchor)
@@ -371,11 +372,12 @@ pub struct Query<'a> {
     visible: bool,
     since: Option<Tick>,
     filters: Vec<Box<dyn Fn(NodeRef<'a>) -> bool + 'a>>,
+    virtual_rows: bool,
 }
 
 impl<'a> Query<'a> {
     fn new(s: &'a Scene) -> Query<'a> {
-        Query { s, scope: None, kind: None, empty: false, exts: Vec::new(), all: StateBits::NONE, none: StateBits::NONE, visible: false, since: None, filters: Vec::new() }
+        Query { s, scope: None, kind: None, empty: false, exts: Vec::new(), all: StateBits::NONE, none: StateBits::NONE, visible: false, since: None, filters: Vec::new(), virtual_rows: false }
     }
 
     /// Only nodes in root `r` (`RootIx`), or in the subtree of a node (`NodeId`, itself included).
@@ -459,6 +461,13 @@ impl<'a> Query<'a> {
         self
     }
 
+    /// SG5: [`Query::targets`] also yields the painted (or realised) rows of every matching
+    /// virtualiser, after the host, as `Target::Virtual` in row order (whether or not on screen).
+    pub fn include_virtual(mut self) -> Self {
+        self.virtual_rows = true;
+        self
+    }
+
     /// Any other test.
     pub fn filter(mut self, f: impl Fn(NodeRef<'a>) -> bool + 'a) -> Self {
         self.filters.push(Box::new(f));
@@ -530,10 +539,15 @@ impl<'a> Query<'a> {
         (!self.visible || n.is_visible()) && self.filters.iter().all(|f| f(n))
     }
 
-    /// The matches as hit-test targets (`Target::Node`; painted rows join in SG5 with
-    /// `include_virtual`).
+    /// The matches as hit-test targets: `Target::Node`, followed with [`Query::include_virtual`] by
+    /// each matching virtualiser's rows (`Target::Virtual`).
     pub fn targets(self) -> impl Iterator<Item = Target> + 'a {
-        self.iter().map(|n| Target::Node(n.id()))
+        let rows = self.virtual_rows;
+        let s = self.s;
+        self.iter().flat_map(move |n| {
+            let v = if rows { SceneRef::new(s).virtual_rows(n.id()) } else { Vec::new() };
+            std::iter::once(Target::Node(n.id())).chain(v)
+        })
     }
 
     pub fn first(self) -> Option<NodeRef<'a>> {

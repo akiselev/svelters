@@ -135,6 +135,7 @@ fn builtin_payload(kind: usize) -> Option<W> {
         "Checkbox" => W::Checkbox { text: String::new(), checked: false },
         "TextEdit" => W::TextEdit { text: String::new(), hint: String::new(), multiline: false, password: false, char_limit: 0 },
         "Slider" => W::Slider { value: 0.0, min: 0.0, max: 100.0, step: 0.0, text: String::new(), show_value: true },
+        "VirtualList" => W::VirtualList(Box::default()),
         // WG1: the defaults match the kind tables (`kinds/builtin.rs`, `kinds/containers.rs`)
         "ToggleButton" => W::ToggleButton { text: String::new(), checked: false, radio: false, frame: true, weight: 400 },
         "ComboBox" => W::ComboBox { options: Vec::new(), selected: 0, hint: String::new() },
@@ -191,7 +192,11 @@ impl Scene {
         });
         let mut lb = LayoutBox::new();
         lb.style = crate::layout::style_of(cold.as_ref().map(|c| &c.common).unwrap_or(&Common::DEFAULT), &w, &super::Visual::IDENTITY);
-        let core = NodeCore::new(kind as u32, owner, crate::ids::node_id(id.to_raw()), tick);
+        let mut core = NodeCore::new(kind as u32, owner, crate::ids::node_id(id.to_raw()), tick);
+        if matches!(w, W::VirtualList(_)) {
+            // LS1: a list's size never depends on its rows; scrolling relays out the list alone
+            core.flags.insert(NodeFlags::LAYOUT_BOUNDARY);
+        }
         if fresh {
             self.core.push(core);
             self.children.push(Vec::new());
@@ -456,6 +461,41 @@ impl Scene {
         self.record(Change::Inserted { parent, node: child, before }, origin);
         self.invalidate_content(parent);
         Ok(true)
+    }
+
+    /// LS1: makes `child` the last child of virtualiser `parent` (a `virtual-list` adopting a JS row
+    /// outlet, or a row a Rust row source built). Not a light child JS placed: no slot or owner
+    /// check, the rows are the virtualiser's own (ARCH-SCENE's shadow rows until SG4 has them).
+    pub(crate) fn adopt(&mut self, parent: NodeId, child: NodeId, origin: Origin) -> Result<(), SceneError> {
+        let pi = self.idx(parent).ok_or(SceneError::Stale(parent.to_raw()))?;
+        let ci = self.idx(child).ok_or(SceneError::Stale(child.to_raw()))?;
+        if self.core[ci].parent == Some(parent) {
+            return Ok(());
+        }
+        if kinds::kind(self.core[ci].kind as usize).toplevel || self.core[ci].flags.contains(NodeFlags::ROOT) || parent == child {
+            return Err(SceneError::Invalid("a row cannot be a window or the list itself".into()));
+        }
+        let mut a = Some(parent);
+        while let Some(x) = a {
+            if x == child {
+                return Err(SceneError::Invalid("cannot adopt an ancestor".into()));
+            }
+            a = self.core[self.ix(x)].parent;
+        }
+        self.unlink(child, false, origin);
+        self.children[pi].push(child);
+        self.core[ci].parent = Some(parent);
+        let t = self.stamp();
+        self.core[pi].dirty.insert(Dirty::CHILDREN);
+        self.core[pi].changed = t;
+        self.core[ci].changed = t;
+        let r = self.core[pi].root;
+        if self.core[ci].root != r {
+            self.set_root_subtree(child, r);
+        }
+        self.record(Change::Inserted { parent, node: child, before: None }, origin);
+        self.invalidate_content(parent);
+        Ok(())
     }
 
     /// Takes `child` out of `parent`; it stays alive, detached.

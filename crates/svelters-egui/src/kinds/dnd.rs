@@ -38,6 +38,7 @@ use egui::{CursorIcon, DragAndDrop, Id, LayerId, Order, Rect, Sense, StrokeKind,
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 use svelters_abi::Value;
+use svelters_host::platform::{type_matches, MimeData};
 
 // The `Widget` signals of drag and drop are in `builtin.rs` (`WIDGET_SIGNALS`, with TR2's
 // `animationend`).
@@ -76,21 +77,44 @@ pub(crate) fn get(c: &Common, key: P) -> &str {
 }
 
 /// What a drag carries in [`egui::DragAndDrop`] (svelters' drags, and drags Rust panels start for
-/// Svelte targets).
+/// Svelte targets). DX2: its data is a [`MimeData`], the clipboard's type, so a drag and a copy carry
+/// the same thing: a Svelte drag is one entry (`drag-type`, `drag-data`); a Rust drag may carry
+/// several types (`DragPayload::from_mime`), and a target takes the first of its `drop-types` the
+/// payload has. `clipboard.write(kind, payload.data.clone())` copies a drag;
+/// `DragPayload::from_mime(clipboard.read(kind, &[])?)` drags what was copied.
 #[derive(Debug)]
 pub struct DragPayload {
-    /// The type (`drag-type`).
-    pub ty: String,
-    /// The data (`drag-data`).
-    pub data: String,
+    /// The data by type (a Svelte drag: one entry, `drag-type` and `drag-data`).
+    pub data: MimeData,
     /// The source node's egui id (`None` for drags Rust started).
     pub source: Option<Id>,
     dropped: Arc<AtomicBool>,
 }
 
 impl DragPayload {
+    /// One entry: type `ty`, data `data`.
     pub fn new(ty: impl Into<String>, data: impl Into<String>) -> DragPayload {
-        DragPayload { ty: ty.into(), data: data.into(), source: None, dropped: Arc::default() }
+        DragPayload::from_mime(MimeData::single(ty, data.into()))
+    }
+
+    /// Several types (a Rust drag, or the clipboard's contents).
+    pub fn from_mime(data: MimeData) -> DragPayload {
+        DragPayload { data, source: None, dropped: Arc::default() }
+    }
+
+    /// The first type (a Svelte drag's `drag-type`); `""` when empty.
+    pub fn ty(&self) -> &str {
+        self.data.types().next().unwrap_or("")
+    }
+
+    /// The entry a target with `drop-types` `types` takes: the first of its patterns the payload
+    /// has a type for, as `(type, data)` (data as text, lossy for non-UTF-8 bytes).
+    pub fn best(&self, types: &str) -> Option<(&str, String)> {
+        let patterns: Vec<&str> = patterns(types).collect();
+        if patterns.is_empty() {
+            return None;
+        }
+        self.data.best(&patterns).map(|(t, d)| (t, String::from_utf8_lossy(d).into_owned()))
     }
 
     /// A target took the drag: the source's `drag-end` reports `dropped: true`. Svelte targets
@@ -104,12 +128,14 @@ impl DragPayload {
     }
 }
 
-/// Whether `types` (a `drop-types` value) accepts a drag of type `ty`.
+fn patterns(types: &str) -> impl Iterator<Item = &str> {
+    types.split(|c: char| c.is_whitespace() || c == ',').filter(|t| !t.is_empty())
+}
+
+/// Whether `types` (a `drop-types` value) accepts a drag of type `ty`. The patterns are the
+/// clipboard's ([`svelters_host::platform::type_matches`]).
 pub fn accepts(types: &str, ty: &str) -> bool {
-    types
-        .split(|c: char| c.is_whitespace() || c == ',')
-        .filter(|t| !t.is_empty())
-        .any(|t| t == "*" || t == ty || t.strip_suffix('*').is_some_and(|prefix| prefix.ends_with('/') && ty.starts_with(prefix)))
+    patterns(types).any(|t| type_matches(t, ty))
 }
 
 /// The targets' claims on the pointer, per viewport: this pass's (the last accepting target
@@ -187,7 +213,7 @@ pub(crate) fn node(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut 
         }
         let resp = ui.interact(r, id.with("dnd-src"), Sense::drag());
         if resp.drag_started() {
-            let p = DragPayload { ty: drag_type.clone(), data: drag_data, source: Some(id), dropped: Arc::default() };
+            let p = DragPayload { data: MimeData::single(drag_type.clone(), drag_data), source: Some(id), dropped: Arc::default() };
             ctx.data_mut(|m| m.insert_temp(key, InFlight { dropped: p.dropped.clone(), ended: false }));
             DragAndDrop::set_payload(&ctx, p);
             emit(arena, "drag-begin", vec![]);
@@ -211,7 +237,7 @@ pub(crate) fn node(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut 
     if part != Part::Source && !drop_types.is_empty() {
         let key = id.with("dnd-in");
         let was_in: bool = ctx.data(|m| m.get_temp(key)).unwrap_or(false);
-        let payload = DragAndDrop::payload::<DragPayload>(&ctx).filter(|p| p.source != Some(id) && accepts(&drop_types, &p.ty));
+        let payload = DragAndDrop::payload::<DragPayload>(&ctx).filter(|p| p.source != Some(id) && p.best(&drop_types).is_some());
         let inside = ctx.rect_contains_pointer(ui.layer_id(), r.intersect(ui.clip_rect()));
         if payload.is_some() && inside {
             claim(&ctx, id);
@@ -222,7 +248,7 @@ pub(crate) fn node(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut 
             ctx.request_repaint(); // the claim decides next pass
         }
         if active && !was_in {
-            emit(arena, "drag-enter", vec![Value::Str(payload.as_ref().map(|p| p.ty.clone()).unwrap_or_default())]);
+            emit(arena, "drag-enter", vec![Value::Str(payload.as_ref().and_then(|p| p.best(&drop_types)).map(|(t, _)| t.to_string()).unwrap_or_default())]);
         }
         let released = active && ctx.input(|inp| inp.pointer.any_released());
         if was_in && (!active || released) {
@@ -231,7 +257,8 @@ pub(crate) fn node(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut 
         if released && let Some(p) = DragAndDrop::take_payload::<DragPayload>(&ctx) {
             p.accept();
             let at = ctx.pointer_interact_pos().unwrap_or(r.min) - r.min;
-            emit(arena, "drop", vec![Value::Str(p.ty.clone()), Value::Str(p.data.clone()), Value::F64(at.x as f64), Value::F64(at.y as f64)]);
+            let (ty, data) = p.best(&drop_types).map(|(t, d)| (t.to_string(), d)).unwrap_or_default();
+            emit(arena, "drop", vec![Value::Str(ty), Value::Str(data), Value::F64(at.x as f64), Value::F64(at.y as f64)]);
         }
         let now_in = active && !released;
         if now_in != was_in {
@@ -256,7 +283,8 @@ fn ghost(ui: &Ui, id: Id, text: &str) {
 
 #[cfg(test)]
 mod tests {
-    use super::accepts;
+    use super::{accepts, DragPayload};
+    use svelters_host::platform::MimeData;
 
     #[test]
     fn drop_types_match_exactly_by_prefix_or_any() {
@@ -267,5 +295,17 @@ mod tests {
         assert!(accepts("*", "anything"));
         assert!(!accepts("cad/part", "cad/net"));
         assert!(!accepts("", "cad/part"));
+    }
+
+    #[test]
+    fn payload_is_mime_data_and_targets_take_their_first_type() {
+        let svelte = DragPayload::new("cad/part", "R1");
+        assert_eq!(svelte.ty(), "cad/part");
+        assert_eq!(svelte.data, MimeData::single("cad/part", "R1"));
+        let rust = DragPayload::from_mime(MimeData::new().with("text/plain", "R1 10k").with("cad/part", "R1"));
+        assert_eq!(rust.best("cad/* text/plain"), Some(("cad/part", "R1".to_string())));
+        assert_eq!(rust.best("text/plain"), Some(("text/plain", "R1 10k".to_string())));
+        assert_eq!(rust.best("image/png"), None);
+        assert_eq!(rust.best(""), None);
     }
 }

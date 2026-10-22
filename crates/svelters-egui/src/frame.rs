@@ -215,6 +215,8 @@ impl EguiBackend {
         {
             host.frame();
         }
+        // LS1: lists bind the rows this frame draws (call_sync), at this frame's offset (R22)
+        self.realize_lists(ctx);
         // ARCH-SCENE §7.2 step 6 (SG4): state providers that want to run, each one batch. What they
         // changed repaints the visible roots once (route_repaints); one still wanting asks for
         // another logic (R16).
