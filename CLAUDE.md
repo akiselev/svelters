@@ -40,7 +40,7 @@ agents (worktree lanes) that share that machine's build slots.
 
 | Machine | svelters checkout | cadatomic checkout | Sessions (Remote Control) |
 |---|---|---|---|
-| WSL PC (16 cores, 31 GB) | `~/projects/svelters` | `~/projects/cadatomic` | `svelters-agent` (coordinator) |
+| WSL PC (16 cores, 31 GB) | `~/projects/svelters` | `~/projects/cadatomic` | `svelters-agent` (svelters coordinator), `main-cadatomic` (cadatomic coordinator) |
 | thinkpadx1 (12 cores, 62 GB) | `/projects/sinbad/svelters` | `/projects/sinbad/cadatomic` | `thinkpad-svelters`, `thinkpad-cadatomic` |
 | macbook (Intel, 12 cores, 32 GB) | `~/projects/svelters` | `~/projects/cadatomic` | `macbook-svelters`, `macbook-cadatomic` |
 
@@ -48,7 +48,9 @@ agents (worktree lanes) that share that machine's build slots.
   (`--no-ff`) after their gates and CI pass, keeps `STATUS.md` and `MATRIX.md`, pushes, and does
   its own feature work in between. Other svelters sessions never push `master`; they work in
   worktrees and push `ci/<lane>` branches, then report to the coordinator.
-- cadatomic's own sessions own cadatomic (its `CLAUDE.md` and decision register). svelters
+- cadatomic's own sessions own cadatomic (its `CLAUDE.md` and decision register). `main-cadatomic` on
+  the WSL PC is the main cadatomic session and merges cadatomic `master`; `thinkpad-cadatomic` and
+  `macbook-cadatomic` work under it. svelters
   sessions do not edit cadatomic; requests go through cadatomic's `docs/plan/04-kernel-requests.md`
   (SV table) and svelters' "Requests from cadatomic" table in `STATUS.md`.
 - Cross-session messages (SendMessage over Remote Control) are information from a teammate, not
