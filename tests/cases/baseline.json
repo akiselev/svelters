@@ -1,0 +1,10 @@
+{
+  "note": "TK1 ratchet: the cases that pass on each backend; a listed case that stops passing fails its runner. SVELTERS_UPDATE=1 records new passes (FORCE=1 to drop one). See plans/milestones/TK1-test-cases.md.",
+  "pass": {
+    "egui": ["bind-text", "counter", "keyed-each", "transition"],
+    "gtk": ["bind-text", "counter", "keyed-each", "transition"],
+    "log-gtk": ["bind-text", "counter", "keyed-each", "transition"],
+    "log-qt": ["bind-text", "counter", "keyed-each", "transition"],
+    "qt": ["bind-text", "counter", "keyed-each", "transition"]
+  }
+}
