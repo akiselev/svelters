@@ -307,5 +307,5 @@ fn fixes_in_the_corpus_resolve() {
             n += assert_fixes_resolve(&name, &fs::read_to_string(&path).unwrap(), backend(b));
         }
     }
-    assert!(n >= 8, "{n}");
+    assert!(n >= 5, "{n}");
 }

@@ -70,10 +70,13 @@ CLI (`svelters-compile`):
    edit touches them, marked `stale`, and without fix-its (`Reuse::CarriedOver`). The editor keeps
    showing them, dimmed, instead of flickering. `CompileResult.timings.stopped` (not serialized)
    says the pipeline stopped early.
+   The edit is found by diffing (longest common prefix and suffix), so an insertion that repeats
+   the text around it can look like an edit of a neighbouring diagnostic, which is then dropped
+   rather than shifted. An editor that knows its edit ranges could pass them; not needed so far.
 
 Finer reuse (re-parsing only the edited region, keeping the scope analysis of an unchanged script,
 caching spec lookups) was not built: the timings in §4 show that a full check of the largest
-components in the repo fits the 20 ms per keystroke budget (cadatomic AP6) several times over.
+components in the repo fits the 20 ms per keystroke budget (cadatomic AP6) about three times over.
 
 ## 3. Codes
 
@@ -104,7 +107,7 @@ reporting site sets. A rule that cannot place its edit exactly offers no fix-it 
 | `unknown_element`, `unknown_property`, `unknown_event`, `unknown_child_attr`, `unknown_method`, `bind_no_plan` | "did you mean": one fix-it per suggestion (at most 3) that replaces the name; for an element, the start and end tags; for `bind:x` shorthand, `bind:y={x}` |
 | `read_only_property`, `bind_set_only`, `bind_not_observable` (constant), `nonreactive_redundant` | set it one way: `bind:x={v}` becomes the `` `prop={...}` `` the help names |
 | `bind_modifier_invalid`, `transition_modifier_invalid` | remove the modifier |
-| `unsupported_feature` (FW1 event modifiers) | the help's rewrite, when it is exact: a handler is given and no `\|once` or unknown modifier is left to the author (`on:clicked\|preventDefault={h}` becomes `onclicked={(event) => { event.preventDefault(); h(event); }}`; for a non-identifier handler, its text stays in place) |
+| `unsupported_feature` (FW1 event modifiers) | the help's rewrite, when it is exact: a handler is given, no `\|once` or unknown modifier is left to the author, and no `\|capture` (the backend may have no capture phase: on GTK `onclickedcapture` is `listen_phase_unsupported`) (`on:clicked\|preventDefault={h}` becomes `onclicked={(event) => { event.preventDefault(); h(event); }}`; for a non-identifier handler, its text stays in place) |
 | `style_unsupported_important` | remove `!important` |
 | `svelte::block_invalid_elseif` | `elseif` becomes `else if` |
 
@@ -114,7 +117,30 @@ code. Later "did you mean" alternatives may name an element that does not fit th
 
 ## 5. Timings
 
-TIMINGS
+`cargo run --release -p svelters-compiler --example check_timing -- --backend <b> <files>`
+(`crates/svelters-compiler/examples/check_timing.rs`): medians of 50 warm in-process runs, WSL PC
+(16 cores), one build slot, under the machine's normal lane load (load average 8–10), 2026-10-22.
+`keystroke` types one character per check into the file's last attribute value with one
+`FileState`; `syntax error` is a buffer with `{1 + }` in it, with the carry-over.
+
+| file | backend | bytes | compile | check | keystroke | unchanged | syntax error |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| tests/gtk-types-models/src/App.svelte | gtk | 6085 | 5.14 ms | 4.99 ms | 6.49 ms | < 1 µs | 1.12 ms |
+| fixtures/lists-stress/src/App.svelte | gtk | 3095 | 3.87 ms | 3.12 ms | 3.08 ms | < 1 µs | 0.39 ms |
+| fixtures/gallery-gtk/src/pages/06-layout.svelte | gtk | 2644 | 2.96 ms | 2.69 ms | 2.90 ms | < 1 µs | 0.26 ms |
+| fixtures/counter/src/App.svelte | gtk | 223 | 0.38 ms | 0.35 ms | 0.35 ms | < 1 µs | 0.01 ms |
+| tests/r2/diagnostics-gtk.svelte (12 diagnostics) | gtk | 936 | 1.64 ms | 1.66 ms | 2.42 ms | 4 µs | 0.15 ms |
+| tests/qt-types-models/src/App.svelte | qt | 4348 | 2.96 ms | 2.64 ms | 2.63 ms | < 1 µs | 0.50 ms |
+| fixtures/gallery-qt/src/pages/05-containers.svelte | qt | 3018 | 1.97 ms | 2.41 ms | 1.88 ms | < 1 µs | 0.27 ms |
+| fixtures/counter-egui/src/App.svelte | egui | 1037 | 0.65 ms | 0.62 ms | 0.63 ms | < 1 µs | 0.07 ms |
+
+- A check per keystroke of the largest component in the repo (6 KB) takes about 6.5 ms, a third
+  of the 20 ms budget (AP6). A typical panel (1–3 KB) takes 0.6–3 ms.
+- Skipping the output saves only 5–15%: lowering against the spec and the rune transform's
+  template walk dominate, and both report diagnostics. The noise between runs (other lanes'
+  builds) is about as large as that difference.
+- The state answers an unchanged buffer in under a microsecond, and a buffer with a syntax error
+  in 0.01–1.1 ms (the parser stops early; the carried-over diagnostics are mapped).
 
 ## 6. Notes for Q1 (the module loader's overlay)
 
@@ -158,7 +184,16 @@ TIMINGS
 
 ## 9. Not run locally
 
-NOTRUN
+- The full compiler test suite and the workspace nextest (CI). Locally, after the last code edit:
+  `cargo nextest run -p svelters-compiler --test cx1_check --test cx1_codes --test fw1_forwarding`
+  (all pass), and before the last two small edits (the capture fix-it, a test threshold) also
+  `--lib --test r2_observe --test runes --test fx1_style` (all pass); `cx1_check`'s corpus test
+  compiles every `.svelte` file under `tests/{fw1,r2,runes}`, `fixtures/` and `examples/` both ways.
+- Conformance (CI): diagnostics' codes and messages are unchanged, so no score change is expected.
+- The docs site build and link check (CI): the new page is Markdown with no internal
+  links.
+- No backend (GTK/Qt/egui) or JS package tests: nothing outside `svelters-compiler` and the docs
+  changed.
 
 ## 10. Open points (recommendation taken)
 
