@@ -215,7 +215,20 @@ impl EguiBackend {
         {
             host.frame();
         }
-        // Writes the checkpoint's handlers made through `SceneHandle` are announced now.
+        // ARCH-SCENE §7.2 step 6 (SG4): state providers that want to run, each one batch. What they
+        // changed repaints the visible roots once (route_repaints); one still wanting asks for
+        // another logic (R16).
+        if crate::provider::pass::run_state_providers(&self.0.scene, Some(ctx)) {
+            let roots: Vec<RootIx> = self.0.scene.borrow().roots.iter().filter(|(_, e)| e.visible).map(|(r, _)| r).collect();
+            for r in roots {
+                self.touched(Some(r));
+            }
+        }
+        if crate::provider::pass::providers_wanting(&self.0.scene) {
+            ctx.request_repaint_of(self.logic_vp());
+        }
+        // Writes the checkpoint's handlers and the state providers made through `SceneHandle` are
+        // announced now.
         self.flush_announcements();
         // Remeasure leaves whose text changed, per root; only a size change queues a relayout.
         let mut scene = self.0.scene.borrow_mut();

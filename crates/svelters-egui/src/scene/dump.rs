@@ -30,6 +30,11 @@ pub(crate) struct Counters {
     pub deferred_run: u64,
     /// `prop_changed` announcements of Rust writes.
     pub announced: u64,
+    /// SG4: provider code that panicked with its payload taken out (`ui`, `layout`, `prepare`).
+    pub provider_panics: u64,
+    /// SG4: `StateProvider::update` calls, and custom layouts run (`Caps::CUSTOM_LAYOUT`).
+    pub provider_updates: u64,
+    pub custom_layouts: u64,
 }
 
 /// What the scene holds and what it did (unstable fields, §16).
@@ -58,6 +63,10 @@ pub struct SceneStats {
     pub observers: usize,
     /// Entries in the per-viewport hit lists (SG3).
     pub hit_entries: usize,
+    /// SG4: see `Counters`.
+    pub provider_panics: u64,
+    pub provider_updates: u64,
+    pub custom_layouts: u64,
 }
 
 /// What [`Scene::dump`] prints besides tag, id and children.
@@ -108,6 +117,9 @@ impl Scene {
             layouts: c.layouts,
             boundaries_laid_out: c.boundaries_laid_out,
             leaves_measured: c.leaves_measured,
+            provider_panics: c.provider_panics,
+            provider_updates: c.provider_updates,
+            custom_layouts: c.custom_layouts,
             leaf_layouts: c.leaf_layouts,
             nodes_placed: c.nodes_placed,
             writes: c.writes,

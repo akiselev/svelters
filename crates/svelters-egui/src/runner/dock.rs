@@ -137,8 +137,10 @@ impl SvelteDock {
     }
 
     /// The end of a viewport's ui, after berth drew its panes (root viewport and deferred ones):
-    /// the per-viewport scene passes (ARCH-SCENE R21).
-    pub fn viewport_done(ui: &mut egui::Ui) {
-        with_current(|e| e.show_viewport_passes(ui));
+    /// the per-viewport scene passes (ARCH-SCENE R21; berth's `DeferredHost::viewport_done(ui,
+    /// window)` calls this). Through the thread-local entry point, so it works inside a deferred
+    /// viewport's closure. Returns how many passes ran.
+    pub fn viewport_done(ui: &mut egui::Ui) -> usize {
+        crate::embed::show_viewport_passes(ui)
     }
 }

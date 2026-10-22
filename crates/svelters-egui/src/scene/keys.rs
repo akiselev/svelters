@@ -115,6 +115,11 @@ pub mod widget {
         ALIGN_SELF: &'static str = "align-self", align_self;
         MARGIN: f64 = "margin", margin;
         ANCHOR: String = "anchor", anchor;
+        POSITION: &'static str = "position", position;
+        LEFT: Option<f64> = "left", left;
+        TOP: Option<f64> = "top", top;
+        RIGHT: Option<f64> = "right", right;
+        BOTTOM: Option<f64> = "bottom", bottom;
     }
 }
 

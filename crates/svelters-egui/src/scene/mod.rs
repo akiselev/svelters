@@ -103,6 +103,8 @@ pub struct Scene {
     /// Prop changes to announce to the host (`prop_changed`), from Rust writes (R18); flushed by the
     /// frame's logic.
     pub(crate) announce: Vec<(NodeId, u32)>,
+    /// What a taken-out payload reads as (SG4, `Scene::w`).
+    taken_w: W,
 }
 
 impl Default for Scene {
@@ -123,6 +125,7 @@ impl Default for Scene {
             in_batch: false,
             counters: Counters::default(),
             announce: Vec::new(),
+            taken_w: W::Box,
         }
     }
 }
@@ -192,6 +195,12 @@ impl Scene {
         true
     }
 
+    /// Closes a batch a panic left open (SG4: provider code unwinding out of a batch).
+    pub(crate) fn abort_batch(&mut self) {
+        self.in_batch = false;
+        self.journal.batch = None;
+    }
+
     pub(crate) fn end_batch(&mut self, outer: bool) {
         if outer {
             self.in_batch = false;
@@ -201,12 +210,15 @@ impl Scene {
 
     // ---- columns ----
 
+    /// Node `i`'s payload. A provider's payload taken out while its own code runs (SG4: `ui`,
+    /// `layout`, `prepare`) reads as an empty box: `NodeRef::widget` is `None` then, text is empty.
     pub(crate) fn w(&self, i: usize) -> &W {
         match &self.payload[i] {
             Payload::Builtin(w) => w,
-            Payload::Vacant => panic!("svelters-egui: vacant payload in slot {i}"),
+            Payload::Vacant => &self.taken_w,
         }
     }
+
 
     pub(crate) fn w_mut(&mut self, i: usize) -> &mut W {
         match &mut self.payload[i] {

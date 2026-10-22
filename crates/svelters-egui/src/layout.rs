@@ -9,6 +9,13 @@
 //! it is new, presented or resized; otherwise only the layout boundaries whose content changed, each
 //! at its last size ([`run_root`]). Placing rects walks children by index (no per-layout clones).
 //!
+//! SG4: provider kinds lay out their (shadow) children: flexbox from their style, or the widget's
+//! own [`Widget::layout`](crate::provider::Widget::layout) with `Caps::CUSTOM_LAYOUT` through a
+//! [`LayoutCx`]. `position: absolute` boxes are hoisted to their containing block (the nearest
+//! positioned ancestor, else the root's top) as taffy 0.15 records them (`NodeCold::hoisted`), and
+//! their rects are placed relative to it. A boundary relayout whose subtree has an absolute box
+//! with a containing block outside it falls back to a whole-root layout.
+//!
 //! Writer lanes: SCENE (the adapter), WIDGETS (per-kind measure), STYLE (computed style).
 
 pub use crate::scene::dirty::invalidate;
@@ -16,17 +23,19 @@ use crate::scene::id::IDX_MASK;
 use crate::scene::node::Payload;
 use crate::scene::{Common, Dirty, NodeFlags, NodeId as SceneId, RootIx, Scene, Visual, W};
 use egui::{Rect, Vec2, pos2, vec2};
-use taffy::prelude::{AvailableSpace, Dimension, Display, FlexDirection, FlexWrap, Layout, LengthPercentage, LengthPercentageAuto, Size, Style};
+use taffy::prelude::{AvailableSpace, Dimension, Display, FlexDirection, FlexWrap, Layout, LengthPercentage, LengthPercentageAuto, Position, Size, Style};
 use taffy::{
     AlignContent, AlignItems, CacheTree, LayoutInput, LayoutOutput, LayoutPartialTree, Line, NodeId, RequestedAxis, RunMode, SizingMode, compute_cached_layout, compute_flexbox_layout,
-    compute_hidden_layout, compute_leaf_layout, compute_root_layout, round_layout,
+    compute_hidden_layout, compute_leaf_layout, compute_oof_layout, compute_root_layout, round_layout,
 };
 
 /// A node's taffy style from its props.
 pub fn style_of(c: &Common, w: &W, vis: &Visual) -> Style {
     let len = |v: Option<f64>| v.map(|x| Dimension::length(x as f32)).unwrap_or(Dimension::auto());
     let lpa = |v: Option<f64>| v.map(|x| LengthPercentageAuto::length(x as f32)).unwrap_or(LengthPercentageAuto::auto());
-    let container = w.is_container();
+    // SG4: a provider kind declared a container (or laying out its own children) takes the box props
+    let container = w.is_container()
+        || matches!(w, W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::CONTAINER) || x.entry().caps.contains(crate::provider::Caps::CUSTOM_LAYOUT));
     let mut s = Style {
         display: if !c.visible {
             Display::None
@@ -48,6 +57,13 @@ pub fn style_of(c: &Common, w: &W, vis: &Visual) -> Style {
             _ => None,
         },
         margin: taffy::Rect::length(c.margin as f32),
+        // SG4: out-of-flow boxes (`position: absolute`), hoisted to their containing block
+        position: match c.position {
+            "absolute" => Position::Absolute,
+            "relative" => Position::Relative,
+            _ => Position::Static,
+        },
+        inset: taffy::Rect { left: lpa(c.left), right: lpa(c.right), top: lpa(c.top), bottom: lpa(c.bottom) },
         ..Style::default()
     };
     // TR1 clip channel: the node occupies at most the clipped size (paint is cut at it, render.rs)
@@ -249,8 +265,16 @@ impl LayoutPartialTree for Tree<'_> {
         }
         compute_cached_layout(self, id, inputs, |tree, id, inputs| {
             let i = ix(id);
-            if tree.s.w(i).is_container() {
-                return compute_flexbox_layout(tree, id, inputs);
+            // SG4: a provider with children (shadow children) or its own layout is a container
+            let custom = provider_caps(tree.s, i).is_some_and(|c| c.contains(crate::provider::Caps::CUSTOM_LAYOUT));
+            let provider_box = custom || (matches!(tree.s.w(i), W::Ext(_)) && !tree.s.children[i].is_empty());
+            if tree.s.w(i).is_container() || provider_box {
+                let mut out = if custom { tree.custom_layout(id, inputs) } else { compute_flexbox_layout(tree, id, inputs) };
+                // the absolute boxes this node is the containing block of (measure runs must not)
+                if inputs.run_mode == RunMode::PerformLayout {
+                    compute_oof_layout(tree, id, &mut out);
+                }
+                return out;
             }
             tree.leaf_layouts += 1;
             let m = tree.m;
@@ -297,9 +321,19 @@ impl taffy::LayoutContainingBlock for Tree<'_> {
     fn get_oof_item_style(&self, id: NodeId) -> Self::OofItemStyle<'_> {
         &self.s.layout[ix(id)].style
     }
-    // No absolute positioning yet (SG4: hoisted children in the cold column).
-    fn clear_hoisted_children(&mut self, _id: NodeId) {}
-    fn add_hoisted_children(&mut self, _id: NodeId, _hoisted: &[NodeId]) {}
+    // SG4: the out-of-flow boxes a containing block positions, in its cold column
+    fn clear_hoisted_children(&mut self, id: NodeId) {
+        if let Some(c) = self.s.cold[ix(id)].as_deref_mut() {
+            c.hoisted.clear();
+        }
+    }
+    fn add_hoisted_children(&mut self, id: NodeId, hoisted: &[NodeId]) {
+        if hoisted.is_empty() {
+            return;
+        }
+        let ids = hoisted.iter().filter_map(|&h| SceneId::from_raw(u64::from(h)));
+        self.s.cold_mut(ix(id)).hoisted.extend(ids);
+    }
 }
 
 impl CacheTree for Tree<'_> {
@@ -338,14 +372,14 @@ impl taffy::RoundTree for Tree<'_> {
     fn set_final_layout(&mut self, id: NodeId, layout: &Layout) {
         self.s.layout[ix(id)].layout = *layout;
     }
-    fn is_out_of_flow(&self, _id: NodeId) -> bool {
-        false
+    fn is_out_of_flow(&self, id: NodeId) -> bool {
+        out_of_flow(self.s, ix(id))
     }
-    fn hoisted_child_count(&self, _id: NodeId) -> usize {
-        0
+    fn hoisted_child_count(&self, id: NodeId) -> usize {
+        self.s.cold(ix(id)).hoisted.len()
     }
-    fn get_hoisted_child_id(&self, _id: NodeId, _index: usize) -> NodeId {
-        unreachable!("nothing is hoisted")
+    fn get_hoisted_child_id(&self, id: NodeId, index: usize) -> NodeId {
+        tid(self.s.cold(ix(id)).hoisted[index])
     }
 }
 
@@ -372,8 +406,10 @@ impl Tree<'_> {
         round_layout(self, id);
     }
 
-    /// Boundary `b`'s content at its current size (its own place and size do not change).
-    fn boundary(&mut self, b: SceneId) {
+    /// Boundary `b`'s content at its current size (its own place and size do not change). False if
+    /// an absolute box inside it has its containing block outside it (SG4: the caller lays out the
+    /// whole root instead).
+    fn boundary(&mut self, b: SceneId) -> bool {
         let i = b.index() as usize;
         let ul = self.s.layout[i].unrounded;
         let (w, h) = (ul.size.width, ul.size.height);
@@ -384,7 +420,7 @@ impl Tree<'_> {
             }
             None => Size::NONE,
         };
-        self.compute_child_layout(
+        let out = self.compute_child_layout(
             tid(b),
             LayoutInput {
                 run_mode: RunMode::PerformLayout,
@@ -397,6 +433,28 @@ impl Tree<'_> {
                 vertical_margins_are_collapsible: Line::FALSE,
             },
         );
+        out.oof_candidates.is_empty()
+    }
+
+    /// SG4: `Caps::CUSTOM_LAYOUT`: the provider's own `layout`, with its payload taken out.
+    fn custom_layout(&mut self, id: NodeId, inputs: LayoutInput) -> LayoutOutput {
+        let i = ix(id);
+        let Some(node) = self.s.slots.id_at(i) else { return compute_flexbox_layout(self, id, inputs) };
+        let m = self.m;
+        let r = crate::provider::with_taken(self.s, i, |w, s| {
+            let mut cx = LayoutCx { s, m, node, leaf_layouts: 0, fonts: 0 };
+            let out = w.layout(&mut cx, inputs);
+            (out, cx.leaf_layouts, cx.fonts)
+        });
+        match r {
+            Some((out, leaf, fonts)) => {
+                self.leaf_layouts += leaf;
+                self.fonts += fonts;
+                self.s.counters.custom_layouts += 1;
+                out
+            }
+            None => compute_flexbox_layout(self, id, inputs),
+        }
     }
 
     /// Rounds `b`'s subtree exactly as a whole-tree `round_layout` would: taffy rounds cumulative
@@ -405,12 +463,12 @@ impl Tree<'_> {
     fn round_from(&mut self, b: SceneId) {
         let i = b.index() as usize;
         let (mut x, mut y) = (0.0, 0.0);
-        let mut a = self.s.core[i].parent;
-        while let Some(p) = a {
-            let pi = p.index() as usize;
+        // positions are relative to the positional parent (SG4: an absolute box's containing block)
+        let mut a = positional_parent(self.s, i);
+        while let Some(pi) = a {
             x += self.s.layout[pi].unrounded.location.x;
             y += self.s.layout[pi].unrounded.location.y;
-            a = self.s.core[pi].parent;
+            a = positional_parent(self.s, pi);
         }
         let (saved_u, saved_f) = (self.s.layout[i].unrounded, self.s.layout[i].layout);
         self.s.layout[i].unrounded.location.x += x;
@@ -454,10 +512,134 @@ fn place(s: &mut Scene, top: SceneId, origin: egui::Pos2) -> u64 {
         s.core[i].dirty.remove(Dirty::LAYOUT | Dirty::DESC_LAYOUT | Dirty::CHILDREN);
         n += 1;
         for k in 0..s.children[i].len() {
-            stack.push((s.children[i][k].index() as usize, min));
+            let c = s.children[i][k].index() as usize;
+            // SG4: an absolute box is placed from its containing block's hoisted list
+            if !out_of_flow(s, c) {
+                stack.push((c, min));
+            }
+        }
+        let hoisted = s.cold(i).hoisted.len();
+        for k in 0..hoisted {
+            let h = s.cold(i).hoisted[k];
+            if let Some(hi) = s.idx(h)
+                && s.core[hi].root == s.core[i].root
+            {
+                stack.push((hi, min));
+            }
         }
     }
     n
+}
+
+/// SG4: an out-of-flow box (`position: absolute`, shown).
+fn out_of_flow(s: &Scene, i: usize) -> bool {
+    let st = &s.layout[i].style;
+    st.position.is_out_of_flow() && st.display != Display::None
+}
+
+/// SG4: what node `i`'s layout location is relative to: its parent, or for an absolute box its
+/// containing block (the nearest positioned ancestor, else the top of its tree).
+fn positional_parent(s: &Scene, i: usize) -> Option<usize> {
+    let p = s.core[i].parent.map(|p| p.index() as usize)?;
+    if !out_of_flow(s, i) {
+        return Some(p);
+    }
+    let mut a = p;
+    loop {
+        if s.layout[a].style.position.is_positioned() {
+            return Some(a);
+        }
+        match s.core[a].parent {
+            Some(x) => a = x.index() as usize,
+            None => return Some(a),
+        }
+    }
+}
+
+/// The capabilities of node `i`'s provider kind, `None` for a built-in.
+fn provider_caps(s: &Scene, i: usize) -> Option<crate::provider::Caps> {
+    crate::kinds::KindRegistry::global().provider(s.core[i].kind as usize).map(|p| p.entry.caps)
+}
+
+/// What [`Widget::layout`](crate::provider::Widget::layout) gets (SG4, `Caps::CUSTOM_LAYOUT`,
+/// ARCH-SCENE §7.3): the node's children and taffy for them. Positions are relative to this node's
+/// border box. Unstable (§16): taffy's types.
+pub struct LayoutCx<'a> {
+    s: &'a mut Scene,
+    m: &'a Metrics,
+    node: SceneId,
+    leaf_layouts: u64,
+    fonts: u64,
+}
+
+impl LayoutCx<'_> {
+    fn with_tree<R>(&mut self, f: impl FnOnce(&mut Tree<'_>) -> R) -> R {
+        let mut t = Tree { s: &mut *self.s, m: self.m, leaf_layouts: 0, fonts: 0 };
+        let r = f(&mut t);
+        self.leaf_layouts += t.leaf_layouts;
+        self.fonts += t.fonts;
+        r
+    }
+    /// This node.
+    pub fn node(&self) -> SceneId {
+        self.node
+    }
+    /// The children to lay out (the node's shadow children), in order.
+    pub fn children(&self) -> &[SceneId] {
+        &self.s.children[self.node.index() as usize]
+    }
+    /// The scene, read-only (this node's own payload is out while its `layout` runs).
+    pub fn scene(&self) -> crate::scene::SceneRef<'_> {
+        crate::scene::SceneRef::new(self.s)
+    }
+    /// taffy's `compute_child_layout` of `child` (measure or full layout, with caching).
+    pub fn compute_child(&mut self, child: SceneId, inputs: LayoutInput) -> LayoutOutput {
+        self.with_tree(|t| t.compute_child_layout(tid(child), inputs))
+    }
+    /// The size `child` wants within `available` (taffy's size-only run).
+    pub fn measure(&mut self, child: SceneId, available: egui::Vec2) -> egui::Vec2 {
+        let out = self.compute_child(
+            child,
+            LayoutInput {
+                run_mode: RunMode::ComputeSize,
+                sizing_mode: SizingMode::InherentSize,
+                axis: RequestedAxis::Both,
+                known_dimensions: Size::NONE,
+                known_dimensions_are_definite: Size { width: true, height: true },
+                parent_size: Size::NONE,
+                available_space: Size { width: AvailableSpace::Definite(available.x), height: AvailableSpace::Definite(available.y) },
+                vertical_margins_are_collapsible: Line::FALSE,
+            },
+        );
+        vec2(out.size.width, out.size.height)
+    }
+    /// Lays out `child` at exactly `size` and puts it at `at` (relative to this node's border box).
+    /// Only in a `RunMode::PerformLayout` run.
+    pub fn place(&mut self, child: SceneId, at: egui::Pos2, size: egui::Vec2) {
+        let order = self.children().iter().position(|&c| c == child).unwrap_or(0) as u32;
+        let out = self.compute_child(
+            child,
+            LayoutInput {
+                run_mode: RunMode::PerformLayout,
+                sizing_mode: SizingMode::InherentSize,
+                axis: RequestedAxis::Both,
+                known_dimensions: Size { width: Some(size.x), height: Some(size.y) },
+                known_dimensions_are_definite: Size { width: true, height: true },
+                parent_size: Size::NONE,
+                available_space: Size { width: AvailableSpace::Definite(size.x), height: AvailableSpace::Definite(size.y) },
+                vertical_margins_are_collapsible: Line::FALSE,
+            },
+        );
+        let mut l = Layout::with_order(order);
+        l.size = out.size;
+        l.location = taffy::Point { x: at.x, y: at.y };
+        self.s.layout[child.index() as usize].unrounded = l;
+    }
+    /// What the node would get without the cap: flexbox over its children from its style.
+    pub fn default_layout(&mut self, inputs: LayoutInput) -> LayoutOutput {
+        let id = tid(self.node);
+        self.with_tree(|t| compute_flexbox_layout(t, id, inputs))
+    }
 }
 
 /// True if `b` or an ancestor is `display: none` (its layout is the hidden one).
@@ -516,16 +698,34 @@ pub(crate) fn run_root(s: &mut Scene, m: &Metrics, r: RootIx, size: Vec2) -> Opt
     }
     let mut t = Tree { s, m, leaf_layouts: 0, fonts: 0 };
     let mut run = LayoutRun { full, ..Default::default() };
+    let mut oof_escaped = false;
     if !full {
         for &b in &bs {
             if hidden(t.s, b) {
                 // inside a hidden subtree: the hidden (zero) layout, as a whole-root run gives it
                 compute_hidden_layout(&mut t, tid(b));
             } else {
-                t.boundary(b);
+                if !t.boundary(b) {
+                    oof_escaped = true;
+                }
                 run.boundaries += 1;
             }
         }
+    }
+    if oof_escaped {
+        // SG4: an absolute box inside a boundary has its containing block above it: only the
+        // containing block's layout positions it, so lay out the whole root (caches above the
+        // boundaries cleared, as for a full run)
+        for &b in &bs {
+            let mut a = Some(b);
+            while let Some(x) = a {
+                let i = x.index() as usize;
+                t.s.layout[i].cache.clear();
+                a = t.s.core[i].parent;
+            }
+        }
+        full = true;
+        run.full = true;
     }
     if full {
         t.whole(top, size);
@@ -540,15 +740,25 @@ pub(crate) fn run_root(s: &mut Scene, m: &Metrics, r: RootIx, size: Vec2) -> Opt
         placed += place(s, top, pos2(0.0, 0.0));
     } else {
         for &b in &bs {
-            let o = s.core[b.index() as usize].parent.map(|p| s.core[p.index() as usize].rect.min).unwrap_or(pos2(0.0, 0.0));
+            let o = positional_parent(s, b.index() as usize).map(|p| s.core[p].rect.min).unwrap_or(pos2(0.0, 0.0));
             placed += place(s, b, o);
         }
     }
-    // SG2: `Damage::relayout` for observers of this root's layout
+    // SG2: `Damage::relayout` for observers of this root's layout; SG4: for `ScenePass::after_layout`
+    let laid: Vec<SceneId> = if full { vec![top] } else { bs.clone() };
     if s.journal.wants(crate::scene::ChangeMask::LAYOUT) {
-        let laid: Vec<SceneId> = if full { vec![top] } else { bs.clone() };
-        for b in laid {
+        for &b in &laid {
             s.journal.laid_out(&s.core, b);
+        }
+    }
+    if let Some(e) = s.roots.get_mut(r) {
+        if full {
+            e.laid.clear();
+        }
+        for b in laid {
+            if !e.laid.contains(&b) {
+                e.laid.push(b);
+            }
         }
     }
     let c = &mut s.counters;
