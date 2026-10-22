@@ -145,12 +145,11 @@ fn builtin_payload(kind: usize) -> Option<W> {
         "Icon" => W::Icon { name: String::new(), glyph: String::new(), family: "icons".into(), size: None, weight: 400, frame: false, selected: false, source: String::new(), tint: true },
         "Grid" => W::Grid { columns: "auto 1fr".into(), justify_items: "stretch" },
         "CollapsingHeader" => W::CollapsingHeader { text: String::new(), open: false },
-        "ScrollArea" => W::ScrollArea { direction: "vertical", x: 0.0, y: 0.0, seen: None },
         // WG2a: the defaults match the kind tables (`kinds/menus.rs`, `kinds/popups.rs`)
         id @ ("MenuEntry" | "MenuBar" | "Menu" | "Action" | "MenuSeparator" | "ContextMenu" | "MenuButton") => W::Menu(crate::menus::payload(id)),
         id @ ("Popup" | "Modal" | "InnerWindow") => W::Overlay(Box::new(crate::overlays::payload(id))),
         // WG2b: the defaults match the kind tables (`kinds/{inputs,panes,media}.rs`)
-        "Hyperlink" | "RadioButton" | "Switch" | "RangeSlider" | "DragValue" | "Panel" | "Sides" | "Frame" | "Stack" | "Image" | "ProgressBar" | "Spinner" | "Canvas" => {
+        "Hyperlink" | "RadioButton" | "Switch" | "RangeSlider" | "DragValue" | "Sides" | "Frame" | "Stack" | "Image" | "ProgressBar" | "Spinner" | "Canvas" => {
             crate::elements::payload(kinds::kind(kind).id)?
         }
         // WG4a: the defaults match `kinds/views.rs`
@@ -158,7 +157,6 @@ fn builtin_payload(kind: usize) -> Option<W> {
         "TableColumn" => W::TableColumn { title: String::new(), resizable: true, align: "start", sort: "none", editable: false, editor: false },
         "TabView" => W::TabView { selected: 0 },
         "Tab" => W::Tab { title: String::new(), closable: false },
-        "SplitView" => W::SplitView { vertical: false, position: None, min_size: 32.0, resizable: true },
         "ToastHost" => W::ToastHost(Box::default()),
         id if kinds::pickers::is_picker(id) => W::Picker(kinds::pickers::Picker::new(id)), // WG4b
         // RA1: a provider kind's widget struct with its defaults
@@ -652,6 +650,8 @@ impl Scene {
             self.record(Change::Destroyed { node, kind }, origin);
             // SG3: out of the indexes, after the records
             self.index.remove(self.core[i].kind, node);
+            // OW-CSS: its running transitions end with it
+            self.style.forget(node);
             let r = self.core[i].root;
             if let Some(a) = self.common[i].as_deref().map(|c| c.anchor.as_str()).filter(|a| !a.is_empty()) {
                 super::query::index_anchor(&mut self.roots, r, node, a, false);

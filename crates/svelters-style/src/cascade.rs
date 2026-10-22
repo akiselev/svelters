@@ -15,7 +15,7 @@ use crate::diag::{Diagnostic, Severity};
 use crate::element::{Element, Node};
 use crate::invalidation::Invalidation;
 use crate::media::MediaEnv;
-use crate::selector::PseudoElement;
+use crate::selector::{PseudoClass, PseudoElement, Selector};
 use crate::sheet::{DeclBlock, Declaration, Rule, Stylesheet};
 use crate::table::{Table, ValueType};
 use crate::values::{ValueCx, parse_value};
@@ -233,19 +233,9 @@ impl Stylist {
         self.index.pseudo.iter().any(|&(r, s)| self.entries[r as usize].rule.selectors.slice()[s as usize].pseudo_element().is_some_and(|p| pseudo.matched_by(p)))
     }
 
-    fn match_candidates<E: Element>(&self, el: E, candidates: Vec<(u32, u16)>, pseudo: Option<&PseudoElement>, caches: &mut MatchCaches) -> Vec<MatchedRule> {
-        let wanted = |p: &PseudoElement| pseudo.is_some_and(|mine| mine.matched_by(p));
-        let mut cx = MatchingContext::new(
-            if pseudo.is_some() { MatchingMode::ForStatelessPseudoElement } else { MatchingMode::Normal },
-            None,
-            &mut caches.0,
-            QuirksMode::NoQuirks,
-            NeedsSelectorFlags::No,
-            MatchingForInvalidation::No,
-        );
-        if pseudo.is_some() {
-            cx.pseudo_element_matching_fn = Some(&wanted);
-        }
+    /// `pseudo`: the pseudo-element being computed and its logical position (P1).
+    fn match_candidates<E: Element>(&self, el: E, candidates: Vec<(u32, u16)>, pseudo: Option<(&PseudoElement, Option<(usize, usize)>)>, caches: &mut MatchCaches) -> Vec<MatchedRule> {
+        let mut cx = MatchingContext::new(MatchingMode::Normal, None, &mut caches.0, QuirksMode::NoQuirks, NeedsSelectorFlags::No, MatchingForInvalidation::No);
         let node = Node(el);
         let mut out: Vec<MatchedRule> = Vec::new();
         for (r, s) in candidates {
@@ -254,12 +244,16 @@ impl Stylist {
                 continue;
             }
             let sel = &e.rule.selectors.slice()[s as usize];
-            if let Some(mine) = pseudo
-                && !sel.pseudo_element().is_some_and(|p| mine.matched_by(p))
-            {
-                continue;
-            }
-            if selectors::matching::matches_selector(sel, 0, None, &node, &mut cx) {
+            // a pseudo-element's rule: what follows the pseudo-element is tested here, then the
+            // host part (from `offset`) is matched against the element
+            let offset = match pseudo {
+                None => 0,
+                Some((mine, at)) => match pseudo_offset(sel, mine, at, &node, &mut cx) {
+                    Some(o) => o,
+                    None => continue,
+                },
+            };
+            if selectors::matching::matches_selector(sel, offset, None, &node, &mut cx) {
                 let spec = sel.specificity();
                 match out.last_mut() {
                     Some(m) if m.rule.0 == r => m.specificity = m.specificity.max(spec),
@@ -284,8 +278,14 @@ impl Stylist {
     /// The rules whose selector ends in `pseudo` and whose host part matches `el`, in cascade
     /// order.
     pub fn matched_pseudo_rules<E: Element>(&self, el: E, pseudo: &PseudoElement, caches: &mut MatchCaches) -> Vec<MatchedRule> {
+        self.matched_pseudo_rules_at(el, pseudo, None, caches)
+    }
+
+    /// [`Stylist::matched_pseudo_rules`] for a repeated part at logical position `at` (index,
+    /// count; WIDGET-PARITY P1).
+    pub fn matched_pseudo_rules_at<E: Element>(&self, el: E, pseudo: &PseudoElement, at: Option<(usize, usize)>, caches: &mut MatchCaches) -> Vec<MatchedRule> {
         let candidates = self.index.pseudo.clone();
-        self.match_candidates(el, candidates, Some(pseudo), caches)
+        self.match_candidates(el, candidates, Some((pseudo, at)), caches)
     }
 
     /// Computes the style of `el`'s pseudo-element `pseudo` (`::part(name)`, `::placeholder`,
@@ -293,7 +293,15 @@ impl Stylist {
     /// matches `el`, inheriting from `host`, the element's own computed style. With no such rule
     /// the result is `host`'s inherited properties only (as a child with no rules).
     pub fn compute_pseudo<E: Element>(&self, el: E, pseudo: &PseudoElement, host: &ComputedStyle, cx: &ComputeContext, caches: &mut MatchCaches) -> ComputedStyle {
-        let matched = self.matched_pseudo_rules(el, pseudo, caches);
+        self.compute_pseudo_at(el, pseudo, None, host, cx, caches)
+    }
+
+    /// [`Stylist::compute_pseudo`] for a repeated part (a tab, a row, a tick) at logical position
+    /// `at` = (index, count) in model order (WIDGET-PARITY P1): `::part(tab):first-child`,
+    /// `:last-child`, `:only-child`, `:nth-child(An+B)` and `:nth-last-child(An+B)` match it. With
+    /// `None` they never match.
+    pub fn compute_pseudo_at<E: Element>(&self, el: E, pseudo: &PseudoElement, at: Option<(usize, usize)>, host: &ComputedStyle, cx: &ComputeContext, caches: &mut MatchCaches) -> ComputedStyle {
+        let matched = self.matched_pseudo_rules_at(el, pseudo, at, caches);
         let decls = self.order_decls(&matched, None);
         compute(self.table, &decls, Some(host), cx)
     }
@@ -471,4 +479,36 @@ pub fn select<E: Element>(list: &crate::selector::SelectorList, root: E, caches:
         stack.extend(kids.into_iter().rev());
     }
     out
+}
+
+/// For a selector ending in a pseudo-element (`host::part(x):first-child`, stored as
+/// `[::part(x), :first-child, >>pseudo, host…]`: compounds right to left, each in parse order):
+/// whether the element's `mine` (at logical position `at`) passes the pseudo-element and what
+/// follows it, and if so the offset of the host compound. What follows is tested here, not by
+/// `selectors` (which matches nothing after a pseudo-element in its stateless mode): logical
+/// pseudo-classes against `at` (P1), others against the host.
+fn pseudo_offset<E: Element>(sel: &Selector, mine: &PseudoElement, at: Option<(usize, usize)>, node: &Node<E>, cx: &mut MatchingContext<'_, crate::selector::Impl>) -> Option<usize> {
+    use selectors::Element as _;
+    use selectors::parser::Combinator;
+    let comps = sel.iter_raw_match_order().as_slice();
+    let k = comps.iter().position(|c| matches!(c, Component::Combinator(_)))?;
+    if !matches!(comps[k], Component::Combinator(Combinator::PseudoElement)) {
+        return None;
+    }
+    let mut seen = false;
+    for c in &comps[..k] {
+        let ok = match c {
+            Component::PseudoElement(p) => {
+                seen = true;
+                mine.matched_by(p)
+            }
+            Component::NonTSPseudoClass(PseudoClass::Logical(l)) => l.matches(at),
+            Component::NonTSPseudoClass(pc) => node.match_non_ts_pseudo_class(pc, cx),
+            _ => false,
+        };
+        if !ok {
+            return None;
+        }
+    }
+    seen.then_some(k + 1)
 }

@@ -30,7 +30,7 @@ use svelters_abi::Value;
 
 /// True for WG2b's containers.
 pub(crate) fn is_container(w: &W) -> bool {
-    matches!(w, W::Panel { .. } | W::Sides | W::Frame { .. } | W::Stack { .. })
+    matches!(w, W::Sides | W::Frame { .. } | W::Stack { .. })
 }
 
 /// True for WG2b's leaves (painted by [`leaf`]).
@@ -53,7 +53,6 @@ pub(crate) fn payload(id: &str) -> Option<W> {
         "Hyperlink" => W::Hyperlink { text: String::new(), url: String::new(), new_tab: false },
         "RadioButton" => W::RadioButton { text: String::new(), checked: false, value: String::new(), group: String::new() },
         "Switch" => W::Switch { text: String::new(), active: false },
-        "Panel" => W::Panel { side: "left", size: None, resizable: false, separator: true },
         "Sides" => W::Sides,
         "Frame" => W::Frame { label: String::new(), style: "group" },
         "Stack" => W::Stack { name: String::new(), index: 0, homogeneous: true },
@@ -115,22 +114,6 @@ fn set(w: &mut W, def: &PropDef, v: &Value) -> Result<Dirty, String> {
         }
         (P::Active, W::Switch { active, .. }) => {
             *active = as_bool(v)?;
-            none
-        }
-        (P::Side, W::Panel { side, .. }) => {
-            *side = as_enum(v, kinds::SIDE)?;
-            Dirty::LAYOUT
-        }
-        (P::Size, W::Panel { size, .. }) => {
-            *size = as_len(v)?.filter(|s| s.is_finite()).map(finite_len);
-            Dirty::LAYOUT
-        }
-        (P::Resizable, W::Panel { resizable, .. }) => {
-            *resizable = as_bool(v)?;
-            none
-        }
-        (P::ShowSeparator, W::Panel { separator, .. }) => {
-            *separator = as_bool(v)?;
             none
         }
         // the caption takes a row of the frame's padding: a style change
@@ -216,10 +199,6 @@ pub(crate) fn get_prop(w: &W, def: &PropDef) -> Option<Value> {
         (P::Choice, W::RadioButton { value, .. }) => s(value),
         (P::Group, W::RadioButton { group, .. }) => s(group),
         (P::Active, W::Switch { active, .. }) => Value::Bool(*active),
-        (P::Side, W::Panel { side, .. }) => s(side),
-        (P::Size, W::Panel { size, .. }) => len_value(*size),
-        (P::Resizable, W::Panel { resizable, .. }) => Value::Bool(*resizable),
-        (P::ShowSeparator, W::Panel { separator, .. }) => Value::Bool(*separator),
         (P::FrameStyle, W::Frame { style, .. }) => s(style),
         (P::VisibleChildName, W::Stack { name, .. }) => s(name),
         (P::VisibleIndex, W::Stack { index, .. }) => Value::I64(*index),

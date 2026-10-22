@@ -14,7 +14,7 @@ sources:
 # `<split-view>`
 
 <!-- BEGIN GENERATED: summary of kinds.SplitView (tools/docs/egui/gen_reference.py). Do not edit. -->
-Two panes (its first two children; more are not shown) split by a divider the user drags. `divider-position` is the first pane's size.
+Panes (its children) side by side or stacked, split by sashes the user drags or moves with the keys (R11: a 1 px line, a 4 px hit area, a focus-coloured bar and grip after 300 ms of hover). `divider-position` is the first pane's size; `sizes` every pane's.
 
 **Base:** [`Widget`](widget.md) · **Children:** any element · **Text content:** no
 <!-- END GENERATED -->
@@ -30,10 +30,14 @@ Two panes (its first two children; more are not shown) split by a divider the us
 <!-- BEGIN GENERATED: props of kinds.SplitView (tools/docs/egui/gen_reference.py). Do not edit. -->
 | Prop | Type | Default | `bind:` | Description |
 |---|---|---|---|---|
+| `collapsible` | `boolean` | `false` | no | OW2: dragging a sash below half a pane's minimum collapses the pane to 0 (Qt's `childrenCollapsible`); Enter on a focused sash collapses or restores. |
+| `commit-mode` | `'live' \| 'release'` | `"live"` | no | OW2: `live` moves the panes while dragging; `release` draws a guide line and moves them once, on release (Qt's `opaqueResize = false`). |
 | `divider-position` | `number \| null` | `null` | **yes**, on `changed` | Size of the first pane in points along the split; null for half. Dragging the divider changes it (`bind:divider-position`); it is clamped by `min-size` when laid out. |
 | `min-size` | `number` | `32` | no | Smallest size of either pane, in points. |
 | `orientation` | `'horizontal' \| 'vertical'` | `"horizontal"` | no | `horizontal`: the panes side by side (a vertical divider); `vertical`: one above the other. |
 | `resizable` | `boolean` | `true` | no | The divider can be dragged. |
+| `restore-on-double-click` | `boolean` | `true` | no | OW2: a double click on a sash restores the pane before it to its size before a collapse, or collapses it (`collapsible`). |
+| `sizes` | `unknown[] \| null` | `null` | **yes**, on `changed` | OW2: every pane's size in points along the split (`bind:sizes`, Qt's `sizes`); null: from `divider-position` (two panes) or equal shares. When the split view grows or shrinks, the difference goes to the panes by their `flex-grow` (Qt's stretch factors; the last pane when none has one). Each pane keeps `min-size` and its own `min-width`/`max-width` (or heights). |
 
 Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessible-name`, `align-self`, `anchor`, `autofocus`, `bottom`, `drag-data`, `drag-type`, `drop-types`, `enabled`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `invalid`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `tooltip`, `top`, `visible`, `width`.
 <!-- END GENERATED -->
@@ -44,6 +48,7 @@ Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessib
 | Attribute | Handler | When |
 |---|---|---|
 | `onchanged` | `(divider_position: number) => void` | The user dragged the divider; carries the first pane's new size. |
+| `oncommit` | `(sizes: unknown[]) => void` | OW2: the user finished a resize (drag released, a key step, a restore); carries every pane's size. |
 | `ondrag-started` | `() => void` | A divider drag began. |
 | `ondrag-stopped` | `() => void` | A divider drag ended. |
 
@@ -79,10 +84,10 @@ None.
 | `box-shadow` | yes (outer and inset) | — |
 | `opacity` | yes | — |
 
-**Layout properties** (as attributes or in CSS; an explicit attribute wins): `align-self`, `bottom`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `top`, `visible`, `width`.
+**Layout properties** (as attributes or in CSS; an explicit attribute wins): `align-self`, `bottom`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `left`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `top`, `visible`, `width`.
 Also in CSS only: `display`, `grid-column`, `grid-row`, `margin-bottom`, `margin-left`, `margin-right`, `margin-top`.
 
-The divider line follows the theme.
+The sashes (`::part(sash)`, `::part(grip)`) paint from the theme's `border` (the 1 px line), `sash-w` (the hit area and hover bar) and `focus` (R11's hover bar after 300 ms) until `::part()` reaches them.
 
 Full matrix: [css/properties](../../css/properties.md). States: below.
 <!-- END GENERATED -->
@@ -108,13 +113,12 @@ States are tracked once the scene has a style input (a `<style>` block, `class`,
 <!-- BEGIN GENERATED: a11y of kinds.SplitView (tools/docs/egui/gen_reference.py). Do not edit. -->
 | | |
 |---|---|
-| Role | `Splitter` |
+| Role | `Group` |
 | Name | `accessible-name` |
-| Value | the divider position, and its orientation |
 | `invalid` | the `invalid` prop sets AccessKit `invalid` |
 | Author id | `anchor` (unique in its root) |
 
-The node is the divider.
+svelters' own (OW2): each sash between two panes is a `Splitter` node named by the split view (else `Resize pane <n>`), in the tab order, with the size of the pane before it, its bounds and step; arrows (Shift: ×5), Home/End and Enter (collapse) work while it is focused.
 <!-- END GENERATED -->
 
 ## Testing

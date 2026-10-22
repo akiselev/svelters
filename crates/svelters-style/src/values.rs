@@ -83,7 +83,7 @@ pub enum ComputedValue {
     /// `transition`; empty = `none`.
     Transitions(Box<[Transition]>),
     /// `background-image`; `None` = `none`.
-    Image(Option<Box<LinearGradient>>),
+    Image(Option<Box<Gradient>>),
     /// `background-image: paint(name)`: the registered Rust part painter `name` (`cad.knurl`)
     /// draws the background (WIDGET-PARITY Q1; the registry is OW0b's).
     Painter(Box<str>),
@@ -160,8 +160,11 @@ impl fmt::Display for ComputedValue {
             ComputedValue::Content(Content::Paint(n)) => write!(f, "paint({n})"),
             ComputedValue::Image(None) => f.write_str("none"),
             ComputedValue::Image(Some(g)) => {
-                write!(f, "linear-gradient({}deg", g.angle)?;
-                for st in g.stops.iter() {
+                match &**g {
+                    Gradient::Linear(l) => write!(f, "linear-gradient({}deg", l.angle)?,
+                    Gradient::Radial(r) => write!(f, "radial-gradient({} {} at {}% {}%", if r.circle { "circle" } else { "ellipse" }, r.extent.name(), r.center[0] * 100.0, r.center[1] * 100.0)?,
+                }
+                for st in g.stops().iter() {
                     let [r, gr, b, _] = st.color.rgba8();
                     write!(f, ", rgba({r}, {gr}, {b}, {}) {}%", st.color.a, st.position * 100.0)?;
                 }
@@ -281,6 +284,117 @@ pub struct GradientStop {
 pub struct LinearGradient {
     pub angle: f32,
     pub stops: Box<[GradientStop]>,
+}
+
+/// `radial-gradient()`'s ending-shape size (CSS Images 3 §3.2.1; explicit sizes are not parsed).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum RadialExtent {
+    ClosestSide,
+    ClosestCorner,
+    FarthestSide,
+    FarthestCorner,
+}
+
+impl RadialExtent {
+    pub fn name(self) -> &'static str {
+        match self {
+            RadialExtent::ClosestSide => "closest-side",
+            RadialExtent::ClosestCorner => "closest-corner",
+            RadialExtent::FarthestSide => "farthest-side",
+            RadialExtent::FarthestCorner => "farthest-corner",
+        }
+    }
+}
+
+/// `radial-gradient()` (WIDGET-PARITY P4): a circle or an ellipse of `extent` around `center`
+/// (fractions of the box: `at 50% 50%` = `[0.5, 0.5]`), and two or more stops with resolved
+/// positions (0 at the centre, 1 on the ending shape).
+#[derive(Clone, Debug, PartialEq)]
+pub struct RadialGradient {
+    pub circle: bool,
+    pub extent: RadialExtent,
+    pub center: [f32; 2],
+    pub stops: Box<[GradientStop]>,
+}
+
+/// A `background-image` gradient.
+#[derive(Clone, Debug, PartialEq)]
+pub enum Gradient {
+    Linear(LinearGradient),
+    Radial(RadialGradient),
+}
+
+impl Gradient {
+    pub fn stops(&self) -> &[GradientStop] {
+        match self {
+            Gradient::Linear(g) => &g.stops,
+            Gradient::Radial(g) => &g.stops,
+        }
+    }
+
+    /// The gradient parameter (0 at the first stop's origin, 1 at the end) at point `p` of a box
+    /// of `size`, both in px from the box's top left. Linear: along the gradient line, whose length
+    /// makes the corners 0 and 1 (CSS Images 3 §3.1.1). Radial: the distance to `center` over the
+    /// ending shape's radius.
+    pub fn t_at(&self, size: [f32; 2], p: [f32; 2]) -> f32 {
+        let [w, h] = size;
+        match self {
+            Gradient::Linear(g) => {
+                let a = g.angle.to_radians();
+                let (dx, dy) = (a.sin(), -a.cos());
+                let len = (w * dx).abs() + (h * dy).abs();
+                if len <= 0.0 {
+                    return 0.0;
+                }
+                ((p[0] - w / 2.0) * dx + (p[1] - h / 2.0) * dy) / len + 0.5
+            }
+            Gradient::Radial(g) => {
+                let (cx, cy) = (g.center[0] * w, g.center[1] * h);
+                let (sx_min, sx_max) = (cx.abs().min((w - cx).abs()), cx.abs().max((w - cx).abs()));
+                let (sy_min, sy_max) = (cy.abs().min((h - cy).abs()), cy.abs().max((h - cy).abs()));
+                let (rx, ry) = if g.circle {
+                    let r = match g.extent {
+                        RadialExtent::ClosestSide => sx_min.min(sy_min),
+                        RadialExtent::FarthestSide => sx_max.max(sy_max),
+                        RadialExtent::ClosestCorner => sx_min.hypot(sy_min),
+                        RadialExtent::FarthestCorner => sx_max.hypot(sy_max),
+                    };
+                    (r, r)
+                } else {
+                    let k = std::f32::consts::SQRT_2;
+                    match g.extent {
+                        RadialExtent::ClosestSide => (sx_min, sy_min),
+                        RadialExtent::FarthestSide => (sx_max, sy_max),
+                        RadialExtent::ClosestCorner => (sx_min * k, sy_min * k),
+                        RadialExtent::FarthestCorner => (sx_max * k, sy_max * k),
+                    }
+                };
+                if rx <= 0.0 || ry <= 0.0 {
+                    return 1.0;
+                }
+                ((p[0] - cx) / rx).hypot((p[1] - cy) / ry)
+            }
+        }
+    }
+
+    /// The colour at gradient parameter `t` (clamped to the first and last stops; premultiplied
+    /// interpolation between neighbours).
+    pub fn color_at(&self, t: f32) -> Color {
+        let st = self.stops();
+        let Some(first) = st.first() else { return Color::TRANSPARENT };
+        if t <= first.position {
+            return first.color;
+        }
+        for w in st.windows(2) {
+            let (a, b) = (w[0], w[1]);
+            if t <= b.position {
+                let span = b.position - a.position;
+                let p = if span > 0.0 { (t - a.position) / span } else { 1.0 };
+                return crate::transition::mix_color(a.color, b.color, p);
+            }
+        }
+        st[st.len() - 1].color
+    }
 }
 
 /// What a value needs from the element being computed.
@@ -424,13 +538,19 @@ fn parse_typed<'i>(prop: &'static Prop, input: &mut Parser<'i>, cx: &ValueCx<'_>
             if let Ok(n) = input.try_parse(|i| dotted_fn(i, "paint")) {
                 return Ok(ComputedValue::Painter(n.into()));
             }
+            if let Ok(g) = input.try_parse(|i| {
+                i.expect_function_matching("radial-gradient")?;
+                i.parse_nested_block(|i| radial_gradient(i, cx).map_err(ParseError::<String>::custom))
+            }) {
+                return Ok(ComputedValue::Image(Some(Box::new(Gradient::Radial(g)))));
+            }
             let g = input
                 .try_parse(|i| {
                     i.expect_function_matching("linear-gradient")?;
                     i.parse_nested_block(|i| linear_gradient(i, cx).map_err(ParseError::<String>::custom))
                 })
                 .map_err(|e| format!("{name}: {}", err_text(e)))?;
-            Ok(ComputedValue::Image(Some(Box::new(g))))
+            Ok(ComputedValue::Image(Some(Box::new(Gradient::Linear(g)))))
         }
         ValueType::Content => {
             if input.try_parse(|i| i.expect_ident_matching("none")).is_ok() {
@@ -634,6 +754,67 @@ fn linear_gradient(input: &mut Parser<'_>, cx: &ValueCx<'_>) -> VResult<LinearGr
         angle = a;
         input.expect_comma().map_err(|_| "expected `,` after the gradient direction".to_string())?;
     }
+    Ok(LinearGradient { angle, stops: color_stops(input, cx)? })
+}
+
+/// The inside of `radial-gradient(...)`: `[circle | ellipse] || <extent-keyword>`, then
+/// `at <position>` (one or two of `left`/`center`/`right`/`top`/`bottom`/percentages), then the
+/// colour stops. Explicit sizes (lengths) are rejected.
+fn radial_gradient(input: &mut Parser<'_>, cx: &ValueCx<'_>) -> VResult<RadialGradient> {
+    let (mut circle, mut extent, mut center) = (None::<bool>, None::<RadialExtent>, [0.5f32, 0.5]);
+    let mut header = false;
+    const HEADER: [&str; 7] = ["circle", "ellipse", "closest-side", "closest-corner", "farthest-side", "farthest-corner", "at"];
+    // only the header's keywords (a colour name starts the stops)
+    while let Ok(k) = input.try_parse(|i| -> Result<String, ParseError<()>> {
+        let k = i.expect_ident_cloned()?.to_ascii_lowercase();
+        if HEADER.contains(&&*k) { Ok(k) } else { Err(ParseError::custom(())) }
+    }) {
+        header = true;
+        match &*k {
+            "circle" if circle.is_none() => circle = Some(true),
+            "ellipse" if circle.is_none() => circle = Some(false),
+            "closest-side" if extent.is_none() => extent = Some(RadialExtent::ClosestSide),
+            "closest-corner" if extent.is_none() => extent = Some(RadialExtent::ClosestCorner),
+            "farthest-side" if extent.is_none() => extent = Some(RadialExtent::FarthestSide),
+            "farthest-corner" if extent.is_none() => extent = Some(RadialExtent::FarthestCorner),
+            "at" => {
+                let mut got: Vec<(Option<bool>, f32)> = Vec::new(); // (Some(true) = x, Some(false) = y, None = either), fraction
+                while got.len() < 2 {
+                    if let Ok(p) = input.try_parse(|i| i.expect_percentage()) {
+                        got.push((None, p));
+                        continue;
+                    }
+                    let Ok(k) = input.try_parse(|i| i.expect_ident_cloned()) else { break };
+                    got.push(match &*k.to_ascii_lowercase() {
+                        "left" => (Some(true), 0.0),
+                        "right" => (Some(true), 1.0),
+                        "top" => (Some(false), 0.0),
+                        "bottom" => (Some(false), 1.0),
+                        "center" => (None, 0.5),
+                        other => return Err(format!("radial-gradient: unknown position `{other}`")),
+                    });
+                }
+                match got.as_slice() {
+                    [] => return Err("radial-gradient: expected a position after `at`".into()),
+                    [(Some(false), y)] => center = [0.5, *y],
+                    [(_, x)] => center = [*x, 0.5],
+                    [(Some(false), y), (Some(true) | None, x)] => center = [*x, *y],
+                    [(Some(true) | None, x), (Some(false) | None, y)] => center = [*x, *y],
+                    _ => return Err("radial-gradient: invalid position".into()),
+                }
+                break;
+            }
+            other => return Err(format!("radial-gradient: `{other}` repeated")),
+        }
+    }
+    if header {
+        input.expect_comma().map_err(|_| "expected `,` after the gradient shape".to_string())?;
+    }
+    Ok(RadialGradient { circle: circle.unwrap_or(false), extent: extent.unwrap_or(RadialExtent::FarthestCorner), center, stops: color_stops(input, cx)? })
+}
+
+/// Two or more colour stops with optional percentages, positions resolved (CSS Images 3 §3.4.3).
+fn color_stops(input: &mut Parser<'_>, cx: &ValueCx<'_>) -> VResult<Box<[GradientStop]>> {
     let mut stops: Vec<(Color, Option<f32>)> = Vec::new();
     loop {
         let c = color(input, cx)?;
@@ -676,7 +857,7 @@ fn linear_gradient(input: &mut Parser<'_>, cx: &ValueCx<'_>) -> VResult<LinearGr
             GradientStop { color: *c, position: p }
         })
         .collect();
-    Ok(LinearGradient { angle, stops })
+    Ok(stops)
 }
 
 /// One shadow: `inset`, two to four lengths (x, y, blur, spread) and a colour, the lengths

@@ -1720,7 +1720,11 @@ fn takes_input(w: &crate::scene::W) -> bool {
         W::Label { selectable, rich, .. } => *selectable || rich.as_ref().is_some_and(|r| r.runs.iter().any(|x| x.link.is_some())),
         W::Ext(x) => {
             let c = x.entry().caps;
-            c.contains(crate::provider::Caps::FOCUSABLE) || c.contains(crate::provider::Caps::EDITABLE)
+            // OW2: the own scroll area, split view and scroll bar scroll and drag; a panel when resizable
+            c.contains(crate::provider::Caps::FOCUSABLE)
+                || c.contains(crate::provider::Caps::EDITABLE)
+                || matches!(x.entry().replaces, Some("scroll-area" | "split-view" | "scrollbar"))
+                || x.with(|p: &crate::widgets::panel::Panel| p.is_resizable()).unwrap_or(false)
         }
         W::Box | W::Window { .. } => false,
         // the WIDGETS lanes' kinds (WG1, WG2a, WG2b, WG4a, WG4b): decoration and plain layout take none
@@ -1735,11 +1739,9 @@ fn takes_input(w: &crate::scene::W) -> bool {
         | W::TableColumn { .. }
         | W::Tab { .. } => false,
         W::Icon { frame, .. } => *frame,
-        W::Panel { resizable, .. } => *resizable,
         W::ToggleButton { .. }
         | W::ComboBox { .. }
         | W::CollapsingHeader { .. }
-        | W::ScrollArea { .. }
         | W::Menu(_)
         | W::Overlay(_)
         | W::Hyperlink { .. }
@@ -1748,7 +1750,6 @@ fn takes_input(w: &crate::scene::W) -> bool {
         | W::Canvas(_)
         | W::Table(_)
         | W::TabView { .. }
-        | W::SplitView { .. }
         | W::ToastHost(_)
         | W::Picker(_) => true,
     }

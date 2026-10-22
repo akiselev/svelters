@@ -313,8 +313,12 @@ pub static KIND_DOCS: &[KindDoc] = &[
         paint: Paint::Box,
         walk: Walk::Container,
         states: &[],
-        a11y: A11yDoc { note: "Its scroll bars are `ScrollBar` nodes.", ..NO_NODE },
-        css_note: "",
+        a11y: A11yDoc {
+            note: "svelters' own (OW2): the node carries the scroll offsets and their ranges and takes ScrollUp/Down/Left/Right and SetScrollOffset; its bars are `ScrollBar` nodes with their value; ScrollIntoView on a descendant scrolls it into view.",
+            decorated: false,
+            ..a11y(Some("ScrollView"), &["accessible-name"], Some("`scroll-x`, `scroll-y` and their ranges"), &["ScrollUp", "ScrollDown", "ScrollLeft", "ScrollRight", "SetScrollOffset"])
+        },
+        css_note: "`overflow-x`/`overflow-y` (`hidden`, `scroll`, `auto`) override `direction` per axis; `overscroll-behavior: contain` keeps the wheel from chaining to an outer area; `scroll-margin` is the gap `scroll-into-view` and focus keep; `scrollbar-gutter: stable` (or `--sv-scrollbar-mode: classic`) gives classic bars in a gutter. Provider states `:state(sv.overflow-top)`, `-bottom`, `-left`, `-right` match while content lies beyond that edge; the theme draws R15's edge shadows as an inset `box-shadow` on `:state(sv.overflow-top)`/`(sv.overflow-left)`, painted over the content. The bars and thumbs are parts (`scrollbar-x`/`-y`, `thumb-x`/`-y`, `corner`, `shadow-*`), painted from VS Code's `scrollbarSlider.*` tokens until `::part()` reaches them.",
     },
     // WG2a: menus
     KindDoc {
@@ -467,8 +471,12 @@ pub static KIND_DOCS: &[KindDoc] = &[
         paint: Paint::Box,
         walk: Walk::Container,
         states: &[],
-        a11y: NO_NODE,
-        css_note: "The panel fills its rect with `--sv-panel-bg` over the CSS box, so `background-color` and `border-*` rules are hidden: override the token instead.",
+        a11y: A11yDoc {
+            note: "svelters' own (OW2): a `Pane`; a `resizable` panel's inner edge is a `Splitter` node with its size and bounds (arrows and Home/End while focused).",
+            decorated: false,
+            ..a11y(Some("Pane"), &["accessible-name"], None, &[])
+        },
+        css_note: "svelters' own (OW2): its box is CSS (`background-color` defaults to `--sv-bg`); the inner-edge line (`::part(separator)`, `border`) and the sash's hover bar (`focus`) paint from the theme until `::part()` reaches them.",
     },
     layout("Sides"),
     KindDoc {
@@ -563,8 +571,11 @@ pub static KIND_DOCS: &[KindDoc] = &[
         paint: Paint::Box,
         walk: Walk::Container,
         states: &[],
-        a11y: A11yDoc { note: "The node is the divider.", ..a11y(Some("Splitter"), &["accessible-name"], Some("the divider position, and its orientation"), &[]) },
-        css_note: "The divider line follows the theme.",
+        a11y: A11yDoc {
+            note: "svelters' own (OW2): each sash between two panes is a `Splitter` node named by the split view (else `Resize pane <n>`), in the tab order, with the size of the pane before it, its bounds and step; arrows (Shift: ×5), Home/End and Enter (collapse) work while it is focused.",
+            ..a11y(Some("Group"), &["accessible-name"], None, &[])
+        },
+        css_note: "The sashes (`::part(sash)`, `::part(grip)`) paint from the theme's `border` (the 1 px line), `sash-w` (the hit area and hover bar) and `focus` (R11's hover bar after 300 ms) until `::part()` reaches them.",
     },
     KindDoc {
         id: "ToastHost",
@@ -677,6 +688,16 @@ pub static KIND_DOCS: &[KindDoc] = &[
         states: &[StateDoc { name: "hovered", source: Source::Kind, when: "the pointer is over one of its glyphs" }, StateDoc { name: "focused", source: Source::Kind, when: "it has keyboard focus" }],
         a11y: A11yDoc { note: "A `Link` node at its glyphs' bounds, a child of the label's node; Tab reaches it, Enter or Space activates it.", decorated: false, ..a11y(Some("Link"), &["accessible-name", "text"], None, &["Click", "Focus"]) },
         css_note: "Drawn as a section of its label's paragraph: `color`, `background-color`, `font-size`, `font-weight`, `font-style`, `font-family` (monospace when it names one) and `text-decoration-line` apply; box properties do not.",
+    },
+    // OW2: a new kind, svelters' own only
+    KindDoc {
+        id: "Scrollbar",
+        category: Category::Containers,
+        paint: Paint::Provider,
+        walk: Walk::Leaf(Focus::Never),
+        states: &[],
+        a11y: a11y(Some("ScrollBar"), &["accessible-name"], Some("`value` in `min`..`max`, with its step"), &["Increment", "Decrement", "ScrollUp", "ScrollDown"]),
+        css_note: "Its track and thumb (`::part(scrollbar)`, `::part(thumb)`) paint from VS Code's `scrollbarSlider.*` tokens until `::part()` reaches them; its thickness is `scrollbar-w`.",
     },
 ];
 

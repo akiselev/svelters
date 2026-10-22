@@ -211,6 +211,25 @@ impl<'a, 'o> RulesParser<'a, 'o> {
     }
 
     fn parse_selectors<'i>(&self, input: &mut Parser<'i>) -> Result<SelectorList, PErr<'i>> {
+        // P1: `::part(x):nth-child(…)` goes through the dialect's name (`selectors` refuses it)
+        let state = input.state();
+        let start = input.position();
+        while input.next().is_ok() {}
+        if let std::borrow::Cow::Owned(text) = crate::selector::rename_part_nth(input.slice_from(start)) {
+            let mut inner = Parser::new(&text);
+            return self.parse_selectors_in(&mut inner).and_then(|l| inner.expect_exhausted().map(|_| l).map_err(Into::into)).map_err(|e| ParseError::custom(StyleParseError::Other(describe(&e))));
+        }
+        input.reset(&state);
+        self.parse_selectors_in(input)
+    }
+
+    fn parse_selectors_in<'i>(&self, input: &mut Parser<'i>) -> Result<SelectorList, PErr<'i>> {
+        let list = self.parse_selectors_raw(input)?;
+        crate::selector::check_list(&list).map_err(|m| ParseError::custom(StyleParseError::Other(m)))?;
+        Ok(list)
+    }
+
+    fn parse_selectors_raw<'i>(&self, input: &mut Parser<'i>) -> Result<SelectorList, PErr<'i>> {
         let parser = SelectorParser { states: self.cx.opts.states };
         match &self.nested_in {
             None => SelectorList::parse(&parser, input, ParseRelative::No),
@@ -223,7 +242,7 @@ impl<'a, 'o> RulesParser<'a, 'o> {
                     if sel.has_parent_selector() {
                         fixed.push(sel.clone());
                     } else {
-                        let text = format!("& {}", cssparser::ToCss::to_css_string(sel));
+                        let text = crate::selector::rename_part_nth(&format!("& {}", cssparser::ToCss::to_css_string(sel))).into_owned();
                         let mut inner = Parser::new(&text);
                         let reparsed = SelectorList::parse(&parser, &mut inner, ParseRelative::ForNesting)
                             .map_err(|_| ParseError::custom(StyleParseError::Other(format!("can't nest `{text}`"))))?;

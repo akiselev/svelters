@@ -213,6 +213,10 @@ fn runaway_loop_during_load_is_interrupted() {
     let err = host.load_bundle(js("runaway_load.js")).unwrap_err();
     assert_eq!(err.kind, ErrorKind::Interrupted, "{err}");
     assert!(started.elapsed() < Duration::from_secs(5));
+    // FX4: the host records the stop it measured (budget, then deadline to abort).
+    let int = host.last_interrupt().expect("a budget interrupt is recorded");
+    assert_eq!(int.budget, Duration::from_millis(150));
+    assert!(int.late < Duration::from_secs(1), "{int:?}");
     // The ops before the loop were forwarded.
     assert_eq!(log.log(), "create window #1\n");
 }
@@ -250,6 +254,7 @@ fn external_interrupt_flag_stops_a_script() {
     let err = host.load_bundle(js("runaway_load.js")).unwrap_err();
     t.join().unwrap();
     assert_eq!(err.kind, ErrorKind::Interrupted);
+    assert_eq!(host.last_interrupt(), None, "an external stop is not a budget interrupt");
 }
 
 #[test]

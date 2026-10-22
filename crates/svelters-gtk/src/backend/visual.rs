@@ -14,6 +14,8 @@
 //! * inert: `can-target` and `can-focus` off (the runtime also drops the subtree's events).
 use super::{Inner, Res};
 use gtk::prelude::*;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 /// What the channels changed on a widget, kept on the widget itself (so it goes with it).
 #[derive(Default)]
@@ -29,13 +31,18 @@ struct Visual {
 
 const KEY: &str = "svelters-visual";
 
-fn visual(w: &gtk::Widget) -> &mut Visual {
-    // SAFETY: the data is only ever stored under KEY with this type, and only touched on the UI thread.
+/// The widget's channel state, created on first use. A shared cell, not a `&mut` into the widget's
+/// data: two calls must not hand out aliasing mutable borrows (FX4, clippy `mut_from_ref`).
+fn visual(w: &gtk::Widget) -> Rc<RefCell<Visual>> {
+    // SAFETY: the data is only ever stored under KEY with this type, and only touched on the UI
+    // thread; the pointer is read (the Rc cloned) before anything can replace it.
     unsafe {
-        if w.data::<Visual>(KEY).is_none() {
-            w.set_data(KEY, Visual::default());
+        if let Some(p) = w.data::<Rc<RefCell<Visual>>>(KEY) {
+            return p.as_ref().clone();
         }
-        &mut *w.data::<Visual>(KEY).unwrap().as_ptr()
+        let v = Rc::new(RefCell::new(Visual::default()));
+        w.set_data(KEY, v.clone());
+        v
     }
 }
 
@@ -60,7 +67,8 @@ fn css_num(v: f64) -> String {
 impl Inner {
     pub(crate) fn visual_op(&self, op: u32, h: u64, text: Option<&str>) -> Res<()> {
         let (w, _) = self.widget_of(h)?;
-        let v = visual(&w);
+        let cell = visual(&w);
+        let mut v = cell.borrow_mut();
         match op {
             svelters_abi::SVL_STYLE_TRANSFORM => v.transform = text.map(|t| nums::<6>(t, "transform")).transpose()?,
             svelters_abi::SVL_STYLE_CLIP => v.clip = text.map(|t| nums::<2>(t, "clip")).transpose()?,
@@ -79,13 +87,15 @@ impl Inner {
             }
             _ => unreachable!(),
         }
+        drop(v);
         self.apply_visual(&w);
         Ok(())
     }
 
     /// Writes the widget's transform + clip rule into its own provider.
     fn apply_visual(&self, w: &gtk::Widget) {
-        let v = visual(w);
+        let cell = visual(w);
+        let mut v = cell.borrow_mut();
         let mut decls = String::new();
         let (tx, ty, mut sx, mut sy, mut ox, mut oy) = match v.transform {
             Some([tx, ty, sx, sy, ox, oy]) => (tx, ty, sx, sy, ox, oy),

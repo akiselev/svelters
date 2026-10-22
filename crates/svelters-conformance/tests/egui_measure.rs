@@ -33,6 +33,16 @@
 //! Windows goldens (`conformance/golden/windows/*.json`, Win32 `EDIT` and WinUI `TextBox`) and writes
 //! `target/na/windows/egui-gap.md`. A measurement: it fails only when the harness breaks. Pins 4-6 are left out
 //! there: this driver models egui-winit's Linux clipboard and dead-key paths, not Windows'.
+//!
+//! WG3m: [`egui_text_edit_against_macos_goldens`] runs every pin as egui-winit delivers macOS input
+//! (`OperatingSystem::Mac`; Cmd sets `mac_cmd` and `command`, Cmd+X/C/V become `Cut`/`Copy`/`Paste`)
+//! with egui's own behaviour (FX1 keeps it on macOS) against the AppKit goldens
+//! (`conformance/golden/macos/`): a report, not gated. There is no PRIMARY on macOS (egui-winit
+//! neither writes it nor pastes it on a middle click). Option+E and Option+U are the US layout's dead
+//! keys; macOS composes them in its input system, which winit forwards as IME commits, so the model
+//! gives what AppKit's composition commits (the spacing accent on Space, the accent then the letter
+//! when they do not compose, Backspace cancels) and not the marked text shown meanwhile [model, not
+//! measured].
 
 use egui::OutputCommand;
 use egui::text::{CCursor, CCursorRange};
@@ -121,6 +131,22 @@ struct Egui {
     selections: Vec<String>,
     /// A dead key waiting for the next key (`acute`, `diaeresis`, `grave`).
     dead: Option<String>,
+    /// macOS input (egui-winit on macOS, WG3m).
+    mac: bool,
+}
+
+/// macOS's own composition (the US layout's dead keys, committed through the input system): the
+/// spacing accent on Space, the accent followed by the letter when they do not compose.
+fn compose_mac(dead: &str, c: char) -> String {
+    let spacing = match dead {
+        "acute" => '´',
+        "diaeresis" => '¨',
+        _ => '`',
+    };
+    match c {
+        ' ' => spacing.to_string(),
+        c => compose(dead, c).map_or_else(|| format!("{spacing}{c}"), |x| x.to_string()),
+    }
 }
 
 /// The composition a dead key and the next character give (`None`: no composition, the character
@@ -177,6 +203,7 @@ impl Egui {
             primary: primary.0,
             selections: vec![],
             dead: None,
+            mac: os == egui::os::OperatingSystem::Mac,
         }
     }
 
@@ -186,7 +213,10 @@ impl Egui {
         for c in &self.harness.output().platform_output.commands {
             match c {
                 OutputCommand::CopyText(t) => self.clipboard = t.clone(),
-                OutputCommand::TextSelectionSettled(t) => *self.primary.lock().unwrap() = t.clone(),
+                // egui-winit writes PRIMARY on Linux and the BSDs only
+                OutputCommand::TextSelectionSettled(t) if !self.mac => {
+                    *self.primary.lock().unwrap() = t.clone()
+                }
                 _ => {}
             }
         }
@@ -222,11 +252,12 @@ impl Egui {
     }
 
     fn text_event(&mut self, c: char) {
-        let c = match self.dead.take() {
-            Some(d) => compose(&d, c).unwrap_or(c),
-            None => c,
+        let text = match self.dead.take() {
+            Some(d) if self.mac => compose_mac(&d, c),
+            Some(d) => compose(&d, c).unwrap_or(c).to_string(),
+            None => c.to_string(),
         };
-        self.harness.event(egui::Event::Text(c.to_string()));
+        self.harness.event(egui::Event::Text(text));
         self.frames(3);
     }
 
@@ -429,14 +460,30 @@ impl Driver for Egui {
     }
 
     fn key(&mut self, c: &Chord) -> Result<(), String> {
-        // egui-winit on Linux: Ctrl is `ctrl` and `command`; Super is `mac_cmd` only on macOS
+        // egui-winit on Linux: Ctrl is `ctrl` and `command`; on macOS Cmd is `mac_cmd` and `command`
         let mods = egui::Modifiers {
             alt: c.alt,
             ctrl: c.ctrl,
             shift: c.shift,
-            mac_cmd: false,
-            command: c.ctrl,
+            mac_cmd: self.mac && c.cmd,
+            command: if self.mac { c.cmd } else { c.ctrl },
         };
+        if self.mac
+            && c.alt
+            && !(c.cmd || c.ctrl || c.shift)
+            && matches!(c.key.as_str(), "e" | "u")
+        {
+            // the US layout's dead keys: Option+E acute, Option+U diaeresis
+            self.dead = Some(if c.key == "e" { "acute" } else { "diaeresis" }.into());
+            self.frames(3);
+            return Ok(());
+        }
+        if self.mac && self.dead.is_some() && c.key == "BackSpace" {
+            // macOS cancels the composition and deletes nothing
+            self.dead = None;
+            self.frames(3);
+            return Ok(());
+        }
         if let Some(d) = c.key.strip_prefix("dead_") {
             self.dead = Some(d.to_string());
             self.frames(3);
@@ -452,7 +499,11 @@ impl Driver for Egui {
         }
         // any other key cancels a waiting dead key and goes through alone
         self.dead = None;
-        let command_only = c.ctrl && !c.shift && !c.alt && !c.cmd;
+        let command_only = if self.mac {
+            c.cmd && !c.shift && !c.alt && !c.ctrl
+        } else {
+            c.ctrl && !c.shift && !c.alt && !c.cmd
+        };
         match k {
             egui::Key::X if command_only => self.harness.event(egui::Event::Cut),
             egui::Key::C if command_only => self.harness.event(egui::Event::Copy),
@@ -741,4 +792,87 @@ fn egui_text_edit_against_windows_goldens() {
     let out = svelters_conformance::golden::out_dir("windows", "egui-gap.md");
     std::fs::write(&out, &report).unwrap();
     eprintln!("{md}\nWG3w egui gap report: {}", out.display());
+}
+
+/// WG3m: egui's own behaviour on macOS input against the AppKit goldens (NSTextField, NSTextView),
+/// every pin (an intent without a macOS chord is a step without input, as in the captures). A report
+/// (`target/na/macos/egui-gap.md` and the CI job summary), not gated: FX1 keeps egui's behaviour on
+/// macOS until a policy follows AppKit.
+#[test]
+fn egui_text_edit_against_macos_goldens() {
+    let golds = goldens("macos").unwrap();
+    if golds.is_empty() {
+        eprintln!("no macOS goldens (conformance/golden/macos/): nothing to measure");
+        return;
+    }
+    let keys = Keys::load("macos").unwrap();
+    let pins = load_pins().unwrap();
+    let mut results = Vec::new();
+    let mut traces = Vec::new();
+    for pin in &pins {
+        let mut d = Egui::new(Native::Egui, egui::os::OperatingSystem::Mac);
+        let (r, t) = run_pin(&mut d, pin, &keys).unwrap_or_else(|e| panic!("{e}"));
+        results.push(r);
+        traces.push((pin.id.clone(), t));
+    }
+    let cap = Capture {
+        platform: "macos".into(),
+        toolkit: "egui".into(),
+        version: "0.37.0".into(),
+        injector: "kittest".into(),
+        settings: vec![],
+        observe: vec![],
+        pins: results.clone(),
+    };
+    finish(&cap, &traces).unwrap();
+    let mut md = String::from("| Pin | Behaviour | Checkpoints |");
+    for g in &golds {
+        let _ = write!(md, " egui = {} {} |", g.toolkit, g.version);
+    }
+    md.push_str("\n|---|---|---|");
+    md.push_str(&"---|".repeat(golds.len()));
+    md.push('\n');
+    let mut totals = vec![0usize; golds.len() + 1];
+    let mut details = String::new();
+    for r in &results {
+        let _ = write!(md, "| {} | {} | {} |", r.pin, r.id, r.checkpoints.len());
+        totals[0] += r.checkpoints.len();
+        for (k, g) in golds.iter().enumerate() {
+            let gap = g
+                .pin(&r.id)
+                .map(|p| compare(&r.checkpoints, &p.checkpoints))
+                .unwrap_or_default();
+            let cell = match gap.diffs.first() {
+                Some((i, after, ..)) => format!("{} (first: #{i} `{after}`)", gap.equal),
+                None => gap.equal.to_string(),
+            };
+            let _ = write!(md, " {cell} |");
+            totals[k + 1] += gap.equal;
+            for (i, after, ours, theirs) in &gap.diffs {
+                let _ = writeln!(
+                    details,
+                    "- {} #{i} after `{after}`, vs {}:\n  - egui: `{ours}`\n  - AppKit: `{theirs}`",
+                    r.id, g.toolkit
+                );
+            }
+        }
+        md.push('\n');
+    }
+    let _ = write!(md, "| | **total** |");
+    for t in &totals {
+        let _ = write!(md, " **{t}** |");
+    }
+    md.push('\n');
+    let out = svelters_conformance::golden::out_dir("macos", "egui-gap.md");
+    std::fs::write(&out, format!("{md}\n## Differing checkpoints\n\n{details}")).unwrap();
+    eprintln!("{md}\nWG3m egui gap report: {}", out.display());
+    if let Ok(summary) = std::env::var("GITHUB_STEP_SUMMARY") {
+        use std::io::Write as _;
+        if let Ok(mut f) = std::fs::OpenOptions::new().append(true).create(true).open(summary) {
+            let _ = writeln!(
+                f,
+                "### egui against the macOS references (svelters-conformance egui_measure)\n\n{md}"
+            );
+        }
+    }
 }

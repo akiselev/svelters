@@ -16,8 +16,9 @@
 //! The painter gets the part's [`StyleView`] (custom properties pass arguments), its rect, a
 //! [`PartInfo`] and widget-specific [`PaintArgs`] (documented per part by each widget). Pure paint:
 //! no input, no layout, no scene writes. An unknown name falls back to the default paint and is
-//! reported once. OW-CSS parses `paint(<ident> [, <args>]*)` into typed values; until then the
-//! raw text is read.
+//! reported once. The engine parses `paint(<ident>)` into typed values
+//! (`ComputedValue::Painter` for `background-image`, `Content::Paint` for `content`); a UA table's
+//! keyword text `paint(name)` is read too.
 
 use super::{PaintCx, StyleView};
 use crate::provider::StateBits;
@@ -103,8 +104,13 @@ pub fn css_call<'v>(value: &'v str, f: &str) -> Option<Vec<&'v str>> {
 
 /// The painter that `prop` (`background-image` or `content`) of `s` selects, with its name.
 pub fn selected(s: &StyleView, prop: &str) -> Option<(String, Arc<dyn PartPainter>)> {
-    let v = s.keyword(prop)?;
-    let name = css_call(v, "paint")?.first()?.to_string();
+    use svelters_style::{ComputedValue, Content};
+    let name = match s.css(prop) {
+        Some(ComputedValue::Painter(n) | ComputedValue::Content(Content::Paint(n))) => n.to_string(),
+        Some(_) => return None,
+        // no CSS value: a UA table's keyword text
+        None => css_call(s.keyword(prop)?, "paint")?.first()?.to_string(),
+    };
     match painter(&name) {
         Some(p) => Some((name, p)),
         None => {

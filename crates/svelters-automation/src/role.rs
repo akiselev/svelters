@@ -22,7 +22,6 @@ pub fn role_of(n: NodeRef<'_>) -> &'static str {
         W::Icon { .. } => "img",
         W::Grid { .. } => "grid",
         W::CollapsingHeader { .. } => "button",
-        W::ScrollArea { .. } => "scrollarea",
         W::Menu(_) => "menu",
         W::Hyperlink { .. } => "link",
         W::Switch { .. } => "switch",
@@ -60,6 +59,8 @@ fn role_of_tag(tag: &str) -> &'static str {
         "icon" | "image" => "img",
         "grid" => "grid",
         "scroll-area" => "scrollarea",
+        // OW2: own only
+        "scrollbar" => "scrollbar",
         "menu-bar" | "menu" | "menu-button" | "action" => "menu",
         "hyperlink" => "link",
         "switch" => "switch",

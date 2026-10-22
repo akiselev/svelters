@@ -281,9 +281,16 @@ fn an_infinite_handler_loop_is_interrupted_within_100ms_and_faults_only_its_root
     }
     let ((root, cause, _), step, logic) = fault.expect("the spinning root faulted");
     assert_eq!((root, cause), (s, FaultCause::Interrupt));
-    eprintln!("interrupt: logic {logic:?}, frame {step:?}");
-    assert!(logic <= Duration::from_millis(100), "interrupted in {logic:?}");
-    assert!(logic >= Duration::from_millis(45), "the budget ran ({logic:?})");
+    // FX4 (plans/milestones/FX4-flake-clippy.md): the 100 ms is the host's own measurement of the
+    // stopped entry (the 50 ms budget, then deadline to abort), not the whole logic pass, whose
+    // commands and disposal around the entry took 147 ms once on a loaded CI runner. The pass gets
+    // a loose sanity bound.
+    let int = e.host().last_interrupt().expect("the turn budget stopped the handler");
+    eprintln!("interrupt: {int:?}, logic {logic:?}, frame {step:?}");
+    assert_eq!(int.budget, Duration::from_millis(50), "the handler budget was armed");
+    assert!(int.budget + int.late <= Duration::from_millis(100), "interrupted {:?} after the deadline", int.late);
+    assert!(logic >= int.budget, "the budget ran ({logic:?})");
+    assert!(logic <= Duration::from_secs(2), "the logic pass took {logic:?}");
     eh.run();
     assert!(has(&eh, "spinner failed: interrupted"));
 
