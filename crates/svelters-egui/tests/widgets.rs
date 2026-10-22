@@ -235,6 +235,7 @@ fn scroll_area_scrolls_and_binds_its_offset() {
 fn icons_resolve_names_and_icon_buttons_click() {
     svelters_egui::fonts::register_icons("icons", [("gear", "*"), ("plus", "+")]);
     let mut rig = Rig::new();
+    bind_families(&rig, &[("icons", &["Ubuntu-Light"])]);
     let (_w, col) = rig.window();
     let plain = rig.leaf(col, "icon", &[("name", s("plus"))]);
     let btn = rig.leaf(col, "icon", &[("name", s("gear")), ("frame", Value::Bool(true)), ("tooltip", s("Settings"))]);
@@ -249,6 +250,119 @@ fn icons_resolve_names_and_icon_buttons_click() {
     assert_eq!(l.events.len(), 1);
     assert_eq!(l.events[0].0, btn);
     assert!(rig.drawn(plain).width() > 0.0);
+    assert_eq!(svelters_egui::fonts::take_warnings(), vec![], "a bound family with the glyphs: no placeholder");
+}
+
+/// The default fonts plus each `(family, fonts)` as `FontFamily::Name(family)`; returns them.
+fn bind_families(rig: &Rig, families: &[(&str, &[&str])]) -> egui::FontDefinitions {
+    let mut defs = egui::FontDefinitions::default();
+    for (family, fonts) in families {
+        defs.families.insert(egui::FontFamily::Name((*family).into()), fonts.iter().map(|f| f.to_string()).collect());
+    }
+    rig.harness.ctx.set_fonts(defs.clone());
+    defs
+}
+
+/// The body font size (an icon's size when `size` is null).
+fn body_size(rig: &Rig) -> f32 {
+    egui::TextStyle::Body.resolve(&rig.harness.ctx.global_style()).size
+}
+
+fn assert_square(r: egui::Rect, side: f32) {
+    assert!((r.width() - side).abs() < 0.5 && (r.height() - side).abs() < 0.5, "{r:?}: not a {side} pt placeholder");
+}
+
+/// WG1b fallbacks (kittest runs with `MissingGlyphPolicy::Panic`, so a glyph reaching egui's layout
+/// without a font would fail the test): a name not in its family's table draws an outlined
+/// placeholder of the icon's size, framed or not, still named, clickable, and reported once.
+#[test]
+fn icon_fallback_unknown_name() {
+    use svelters_egui::fonts::{FontWarning, take_warnings};
+    svelters_egui::fonts::register_icons("fb-icons", [("plus", "+")]);
+    let mut rig = Rig::new();
+    bind_families(&rig, &[("fb-icons", &["Ubuntu-Light"])]);
+    let (_w, col) = rig.window();
+    let typo = rig.leaf(col, "icon", &[("family", s("fb-icons")), ("name", s("pluss")), ("size", Value::F64(20.0))]);
+    let btn = rig.leaf(col, "icon", &[("family", s("fb-icons")), ("name", s("gera")), ("frame", Value::Bool(true)), ("tooltip", s("Settings"))]);
+    rig.listen(btn, "clicked");
+    rig.run();
+    assert_square(rig.drawn(typo), 20.0);
+    rig.harness.get_by_role_and_label(Role::Image, "pluss");
+    rig.harness.get_by_role_and_label(Role::Button, "Settings").click();
+    rig.run();
+    assert_eq!(rig.take().events.len(), 1, "a placeholder icon button still clicks");
+    let w = take_warnings();
+    for name in ["pluss", "gera"] {
+        let want = FontWarning::UnknownIcon { family: "fb-icons".into(), name: name.into() };
+        assert_eq!(w.iter().filter(|x| **x == want).count(), 1, "{w:?}");
+    }
+    rig.set(typo, "size", Value::F64(24.0));
+    rig.run();
+    assert_square(rig.drawn(typo), 24.0);
+    assert_eq!(take_warnings(), vec![], "reported once, not every frame");
+}
+
+/// An icon family bound to no font of the `Context`: a placeholder (once per family), also through
+/// `Embed::take_warnings`' queue.
+#[test]
+fn icon_fallback_unbound_family() {
+    use svelters_egui::fonts::{FontWarning, take_warnings};
+    let mut rig = Rig::new();
+    let (_w, col) = rig.window();
+    let a = rig.leaf(col, "icon", &[("family", s("fb-nope")), ("glyph", s("+"))]);
+    let b = rig.leaf(col, "icon", &[("family", s("fb-nope")), ("name", s("gear"))]);
+    rig.run();
+    let side = body_size(&rig);
+    assert_square(rig.drawn(a), side);
+    assert_square(rig.drawn(b), side);
+    assert_eq!(take_warnings(), vec![FontWarning::UnboundFamily { family: "fb-nope".into() }]);
+}
+
+/// A name whose glyph no font of its (bound) family has: a placeholder, found up front by
+/// `check_icons` and not reported again when drawn.
+#[test]
+fn icon_fallback_missing_glyph() {
+    use svelters_egui::fonts::{FontWarning, check_icons, take_warnings};
+    // egui's small "egui-icons" font has no letters
+    svelters_egui::fonts::register_icons("fb-few", [("letter", "A")]);
+    svelters_egui::fonts::register_icons("fb-unbound", [("x", "x")]);
+    let mut rig = Rig::new();
+    let defs = bind_families(&rig, &[("fb-few", &["egui-icons"])]);
+    let missing = FontWarning::MissingGlyph { family: "fb-few".into(), name: "letter".into(), text: "A".into() };
+    let unbound = FontWarning::UnboundFamily { family: "fb-unbound".into() };
+    assert_eq!(check_icons(&defs), vec![missing.clone(), unbound.clone()]);
+    let (_w, col) = rig.window();
+    let h = rig.leaf(col, "icon", &[("family", s("fb-few")), ("name", s("letter"))]);
+    let g = rig.leaf(col, "icon", &[("family", s("fb-few")), ("glyph", s("B")), ("font-weight", Value::I64(700))]);
+    rig.run();
+    assert_square(rig.drawn(h), body_size(&rig));
+    assert_square(rig.drawn(g), body_size(&rig));
+    let w = take_warnings();
+    assert_eq!(w.iter().filter(|x| **x == missing).count(), 1, "{w:?}");
+    assert!(w.contains(&FontWarning::MissingGlyph { family: "fb-few".into(), name: "B".into(), text: "B".into() }), "{w:?}");
+}
+
+/// `font-weight` whose registered family is not bound, or lacks a character of the text: the regular
+/// face draws it (label, button, toggle-button), and the missing character is reported once.
+#[test]
+fn weight_fallback_without_glyphs() {
+    use egui::FontFamily;
+    use svelters_egui::fonts::{FontWarning, register_weight, take_warnings};
+    let mut rig = Rig::new();
+    bind_families(&rig, &[("fb-bold", &["egui-icons"])]);
+    register_weight(FontFamily::Proportional, 600, FontFamily::Name("fb-unbound".into()));
+    register_weight(FontFamily::Proportional, 800, FontFamily::Name("fb-bold".into()));
+    let (_w, col) = rig.window();
+    let regular = rig.leaf(col, "label", &[("text", s("Wide text here"))]);
+    let semi = rig.leaf(col, "label", &[("text", s("Wide text here")), ("font-weight", Value::I64(600))]);
+    let bold = rig.leaf(col, "label", &[("text", s("Wide text here")), ("font-weight", Value::I64(800))]);
+    let button = rig.leaf(col, "button", &[("text", s("Wide text here")), ("font-weight", Value::I64(800))]);
+    let toggle = rig.leaf(col, "toggle-button", &[("text", s("Wide text here")), ("font-weight", Value::I64(800))]);
+    rig.run();
+    assert_eq!(rig.drawn(semi).width(), rig.drawn(regular).width(), "unbound weight family: the regular face");
+    assert_eq!(rig.drawn(bold).width(), rig.drawn(regular).width(), "glyphless weight family: the regular face");
+    assert!(rig.drawn(button).width() > 0.0 && rig.drawn(toggle).width() > 0.0);
+    assert_eq!(take_warnings(), vec![FontWarning::WeightGlyph { family: FontFamily::Name("fb-bold".into()), ch: 'W' }]);
 }
 
 /// `font-weight` maps to the family registered for the nearest weight, only when the `Context`

@@ -28,7 +28,7 @@ static ICON_PROPS: &[PropDef] = &[
         P::Family,
         Ty::Str,
         Def::Str("icons"),
-        "The registered font family (`egui::FontFamily::Name`) holding the glyphs; the proportional family if it is not registered.",
+        "The registered font family (`egui::FontFamily::Name`) holding the glyphs; empty for the proportional family. A family with no fonts, a name not in its table or a glyph no font has draws an outlined placeholder box (`svelters_egui::fonts::FontWarning`).",
     ),
     optional("size", P::Size, Ty::F64, "Font size in points; null for the body size."),
     prop("font-weight", P::FontWeight, Ty::I64, Def::I64(400), FONT_WEIGHT_DOC),

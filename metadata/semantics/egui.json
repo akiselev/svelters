@@ -1332,7 +1332,7 @@
         "family": {
           "construct_only": false,
           "default": "icons",
-          "doc": "The registered font family (`egui::FontFamily::Name`) holding the glyphs; the proportional family if it is not registered.",
+          "doc": "The registered font family (`egui::FontFamily::Name`) holding the glyphs; empty for the proportional family. A family with no fonts, a name not in its table or a glyph no font has draws an outlined placeholder box (`svelters_egui::fonts::FontWarning`).",
           "js": "family",
           "native": "family",
           "nullable": false,

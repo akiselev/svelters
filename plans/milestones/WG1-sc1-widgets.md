@@ -33,7 +33,7 @@ On every kind (Widget base): `invalid` (bool). On `label` and `button`: `font-we
 | Leaf painting; `container` (container tooltip, collapsing header row, scroll viewport); `invalid_outline`; `widget_changed` | `leaf.rs` |
 | Container branch → `leaf::container`; `paint_children`; `invalid` outline of provider kinds | `walk.rs` (small edit) |
 | Name fallbacks and AccessKit `invalid` | `a11y.rs` (EMBED file, small edit) |
-| SVP6: `register_weight`, `register_icons`, `icon`, `clear` | `fonts.rs` (`svelters_egui::fonts`) |
+| SVP6: `register_weight`, `register_icons`, `icon`, `clear`; WG1b: `FontWarning`, `take_warnings`, `check_icons` | `fonts.rs` (`svelters_egui::fonts`); `SlotWarning::Font` in `embed/slots.rs` |
 | Binding generation: the bound value is the `changed` argument named like the prop (else 0); `natively_normalizes`/`read_back` for `scroll-x`/`scroll-y`; string layout props are `"string"` in the style table | `spec.rs` |
 | Generated | `metadata/semantics/egui.json`, `packages/native-runtime/types/egui.d.ts` (`SVELTERS_UPDATE=1 … --test spec`) |
 | Tests | `tests/widgets.rs` (one kittest per kind, fonts, invalid, tooltip on every kind), `tests/widgets_panel.rs` + `fixtures/embed-egui/src/TaskPanel.svelte` (the task-panel-shaped form, compiled from Svelte, mounted in a slot) |
@@ -59,14 +59,28 @@ On every kind (Widget base): `invalid` (bool). On `label` and `button`: `font-we
   otherwise role `Button` with `toggled`.
 - **combo-box**: `egui::ComboBox` with `selectable_label` rows; `selected` out of range shows `hint-text`.
   It has no caption: name it with `accessible-name` or `tooltip`.
-- **icon** (SVP6): text = the family's name table entry for `name`, else `glyph`, else `name`. The family is
-  `FontFamily::Name(family)` when the context has it, else Proportional. Frameless: role `Image` (or
-  `Button` when `clicked` is listened); `frame`: an `egui::Button` (icon button). Name: `accessible-name`,
-  else `tooltip`, else `name`. egui 0.37 **panics on a glyph no installed font has**
-  (`MissingGlyphPolicy`); cadatomic's Phosphor family covers its table.
+- **icon** (SVP6): text = the family's name table entry for `name`, else `glyph`, else `name` (only when the
+  family has no table). The family is `FontFamily::Name(family)`, Proportional for `family=""`. Frameless:
+  role `Image` (or `Button` when `clicked` is listened); `frame`: an `egui::Button` (icon button). Name:
+  `accessible-name`, else `tooltip`, else `name`. Fallbacks: see WG1b below.
 - **font-weight** (SVP6): `fonts::register_weight(base, weight, family)`; a node picks the registered family
   nearest its weight (ties: heavier from 400 up), with the base standing for 400; a family the `Context`
-  does not have is skipped. Measured and drawn with the same font.
+  does not have, or one lacking a character of the node's text, is skipped (the base draws it). Measured and
+  drawn with the same font.
+- **WG1b: a bad font setup never panics.** egui 0.37 panics on a character no font has when the context's
+  `MissingGlyphPolicy` is `Panic` (kittest's default; an app may set it), and draws tofu otherwise. So
+  `fonts::icon_look` checks the family (`FontDefinitions::families`) and the glyphs (`FontsView::has_glyph`;
+  control characters exempt) before any `FontId` is built. An icon whose family is bound to no font, whose
+  `name` is not in its family's table (with no `glyph`), or whose glyph no font of the family has, draws an
+  **outlined box the size of the icon** (side = `size`, else the body size; inside an `egui::Button` when
+  `frame`), still named, hoverable and clickable. A weight family missing a character of the text falls back
+  to the base family (`fonts::text_font`, for label, button, toggle-button and icon). Each problem is reported
+  **once per process** as a `fonts::FontWarning` (`UnboundFamily`, `UnknownIcon`, `MissingGlyph`,
+  `WeightGlyph`): one stderr line, plus a queue (capped at 256) drained by `fonts::take_warnings()` and by
+  `Embed::take_warnings()` as `SlotWarning::Font` (not tied to a slot). `register_icons` has no fonts to check
+  against; `fonts::check_icons(&FontDefinitions)` checks every registered name up front (call it with what
+  you pass to `set_fonts`). The check costs one cached face lookup per character per measure/paint.
+  Tests: `tests/widgets.rs` `icon_fallback_*`, `weight_fallback_without_glyphs`.
 - **tooltip on every kind**: leaves and provider kinds already had it; containers now get a hover-only
   response at their rect (it takes no clicks from children), the collapsing header on its header row.
 - **invalid**: `Common::invalid`, drawn as a 1 pt outline in `Visuals::error_fg_color` around what the node
@@ -118,3 +132,12 @@ On every kind (Widget base): `invalid` (bool). On `label` and `button`: `font-we
   passed on the code before the last test-only fixes.
 - Not run locally (coordinator's call): the full svelters-egui and egui-kinds-example suites, the workspace,
   conformance, the other backends, the JS tests. CI runs them.
+
+### WG1b verification (local)
+
+- `tools/dev/cargo-slot cargo check -p svelters-egui --all-targets`: clean.
+- `SVELTERS_UPDATE=1 … nextest run -p svelters-egui --test spec` regenerated `egui.json`/`egui.d.ts` (the
+  icon `family` doc): 3/3.
+- `… nextest run -p svelters-egui --test widgets fallback icons_resolve font_weight every_kind`: 7/7.
+- Not run locally: `widgets_panel` (its icon button now draws a placeholder, `icons` is unbound there),
+  `viewports` (`take_warnings`), the rest of the suite. CI runs them.
