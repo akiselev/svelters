@@ -319,6 +319,11 @@ pub fn check_layout(hwnd: HWND, klid: &str) -> WinResult<()> {
     }
 }
 
+/// Milliseconds a click sequence waits so it never joins the previous one.
+pub fn click_gap() -> u64 {
+    (unsafe { GetDoubleClickTime() } as u64 + 200).max(700)
+}
+
 /// `count` clicks of button `n` (1 left, 2 middle) at a screen point (physical pixels), 40 ms apart.
 pub fn click_at(x: i32, y: i32, count: u32, n: u32) -> WinResult<()> {
     move_to(x, y)?;
