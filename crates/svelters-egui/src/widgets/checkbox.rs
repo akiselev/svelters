@@ -27,7 +27,7 @@ pub const UA: Ua = Ua(&[
     UaRule::when(StateBits::FOCUS_VISIBLE, &[("outline-style", Keyword("solid"))]),
 ]);
 
-// TODO(OW-CSS `::part`): a hard-coded part UA table; replace it with the part's computed style once the engine computes `::part()` styles (see `parts::part_view`).
+// The part's UA layer: `::part()` rules in a sheet override it (OW1a3, `parts::part_of`).
 /// `::part(indicator)`: the box.
 pub const INDICATOR: Ua = Ua(&[
     UaRule::base(&[
@@ -44,7 +44,7 @@ pub const INDICATOR: Ua = Ua(&[
     UaRule::when(StateBits::PRESSED, &[("background-color", Token("button-bg-active"))]),
 ]);
 
-// TODO(OW-CSS `::part`): a hard-coded part UA table; replace it with the part's computed style once the engine computes `::part()` styles (see `parts::part_view`).
+// The part's UA layer: `::part()` rules in a sheet override it (OW1a3, `parts::part_of`).
 /// `::part(mark)`: the glyph's colour.
 pub const MARK: Ua = Ua(&[UaRule::base(&[("color", Token("fg"))]), UaRule::when(StateBits::DISABLED, &[("color", Token("disabled-fg"))])]);
 
@@ -224,7 +224,7 @@ impl Widget for Checkbox {
             let (on, partial) = (self.checked, self.indeterminate);
             paint_indicator_kind(ui, cx, UA, "indicator", INDICATOR, true, &self.text, &self.icon, |pc, host, ir| {
                 if on || partial {
-                    let mark = parts::part_view(host, MARK, false);
+                    let mark = parts::part_of(cx, host, "mark", MARK, false);
                     let color = mark.color("color").unwrap_or(egui::Color32::PLACEHOLDER);
                     parts::paint_mark(&mut pc.part("mark"), ir, color, partial);
                 }

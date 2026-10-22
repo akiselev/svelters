@@ -132,3 +132,42 @@ fn ow1a3_own_leaves_remeasure_when_css_changes_their_font_or_padding() {
     rig.run();
     assert!((rig.drawn(l).height() - l0.height()).abs() < 1.0, "font-size back: {:?}", rig.drawn(l));
 }
+
+/// The fill of `h`'s `part` (of `kind`) in the last frame's paint trace.
+fn part_fill(rig: &Rig, h: svl_handle, part: &str, kind: svelters_egui::paint::TraceKind) -> Option<egui::Color32> {
+    let n = rig.backend.with_scene(|s| s.n(h).handle.to_raw());
+    svelters_egui::paint::trace::last(&rig.harness.ctx).find(n, Some(part), kind).map(|e| e.fill)
+}
+
+/// An author `::part()` rule reaches each indicator kind's part (OW-CSS stage 2 through
+/// `parts::part_of`); the UA tables stay the UA layer under it.
+#[test]
+fn ow1a3_part_rules_paint_the_indicator_kinds() {
+    use svelters_egui::paint::TraceKind::{Box as B, Path as P};
+    let red = egui::Color32::from_rgb(255, 0, 0);
+    let cases: &[(&str, &[(&str, Value)], &str, svelters_egui::paint::TraceKind, &str)] = &[
+        ("checkbox", &[("text", Value::Str("Check".into())), ("checked", Value::Bool(true))], "mark", P, "color"),
+        ("checkbox", &[("text", Value::Str("Check".into()))], "indicator", B, "background-color"),
+        ("switch", &[("text", Value::Str("Switch".into())), ("active", Value::Bool(true))], "knob", P, "color"),
+        ("radio-button", &[("text", Value::Str("Radio".into())), ("checked", Value::Bool(true))], "dot", P, "color"),
+        ("progress-bar", &[("fraction", Value::F64(0.5))], "fill", P, "background-color"),
+        ("progress-bar", &[("fraction", Value::F64(0.5))], "track", B, "background-color"),
+        ("frame", &[("label", Value::Str("Group".into())), ("checkable", Value::Bool(true))], "indicator", B, "background-color"),
+        ("collapsing-header", &[("text", Value::Str("Section".into()))], "header", B, "background-color"),
+        ("collapsing-header", &[("text", Value::Str("Section".into()))], "twistie", P, "color"),
+    ];
+    for (tag, props, part, kind, prop) in cases {
+        let mut rig = Rig::new();
+        svelters_egui::paint::trace::enable(&rig.harness.ctx, true);
+        let (_w, col) = rig.window();
+        let h = rig.leaf(col, tag, props);
+        rig.run();
+        assert!(own(&rig, h), "{tag}");
+        let before = part_fill(&rig, h, part, *kind);
+        assert!(before.is_some() && before != Some(red), "{tag}::part({part}) painted by its UA table: {before:?}");
+        let d = rig.backend.add_sheet("author", &format!("{tag}::part({part}) {{ {prop}: #ff0000; }}"));
+        assert!(d.is_empty(), "{d:?}");
+        rig.run();
+        assert_eq!(part_fill(&rig, h, part, *kind), Some(red), "{tag}::part({part}) {{ {prop} }}");
+    }
+}

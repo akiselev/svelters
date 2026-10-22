@@ -20,7 +20,7 @@ use crate::taffy::{LayoutInput, LayoutOutput};
 pub const UA: Ua = Ua(&[UaRule::base(&[("gap", Px(2.0))])]);
 
 /// `::part(header)`: the row (VS Code pane header metrics, flat).
-// TODO(OW-CSS ::part): the part's computed style replaces this table where a sheet sets it
+// The part's UA layer: `::part()` rules in a sheet override it (OW1a3, `parts::part_of`).
 pub const HEADER: Ua = Ua(&[
     UaRule::base(&[
         ("height", Token("header-h")),
@@ -86,8 +86,8 @@ impl CollapsingHeader {
 
     fn header_of(&self, cx: &MeasureCx<'_>) -> (egui::Vec2, f32, f32) {
         let host = cx.style(UA);
-        let head = parts::part_view(&host, HEADER, false);
-        let tw = parts::part_view(&host, TWISTIE, false);
+        let head = parts::measured_part(cx, &host, "header", HEADER, false);
+        let tw = parts::measured_part(cx, &host, "twistie", TWISTIE, false);
         let (s, indent) = self.header(cx.ctx, &host, &head, &tw);
         (s, indent, host.px("gap").unwrap_or(0.0))
     }
@@ -112,8 +112,8 @@ impl Widget for CollapsingHeader {
         let fired = self.run_units(cx, ui, &resp);
         let hs = {
             let host = cx.style(UA);
-            let head_v = parts::part_view(&host, HEADER, false);
-            let tw = parts::part_view(&host, TWISTIE, false);
+            let head_v = parts::part_of(cx, &host, "header", HEADER, false);
+            let tw = parts::part_of(cx, &host, "twistie", TWISTIE, false);
             self.header(ui.ctx(), &host, &head_v, &tw).0
         };
         let row = egui::Rect::from_min_size(cx.rect().min, egui::vec2(cx.rect().width(), hs.y));
@@ -131,8 +131,8 @@ impl Widget for CollapsingHeader {
         cx.set_state(StateBits::EXPANDED, self.open);
         if ui.is_rect_visible(row) {
             let host = cx.style(UA);
-            let head_v = parts::part_view(&host, HEADER, false);
-            let tw = parts::part_view(&host, TWISTIE, false);
+            let head_v = parts::part_of(cx, &host, "header", HEADER, false);
+            let tw = parts::part_of(cx, &host, "twistie", TWISTIE, false);
             if host.state().contains(StateBits::HOVERED)
                 && let Some(c) = head_v.cursor()
             {

@@ -26,7 +26,7 @@ pub const UA: Ua = Ua(&[
     UaRule::when(StateBits::FOCUS_VISIBLE, &[("outline-style", Keyword("solid"))]),
 ]);
 
-// TODO(OW-CSS `::part`): a hard-coded part UA table; replace it with the part's computed style once the engine computes `::part()` styles (see `parts::part_view`).
+// The part's UA layer: `::part()` rules in a sheet override it (OW1a3, `parts::part_of`).
 /// `::part(track)`.
 pub const TRACK: Ua = Ua(&[
     UaRule::base(&[
@@ -42,7 +42,7 @@ pub const TRACK: Ua = Ua(&[
     UaRule::when(StateBits(StateBits::CHECKED.0 | StateBits::HOVERED.0), &[("background-color", Token("accent-hover")), ("border-color", Token("accent-hover"))]),
 ]);
 
-// TODO(OW-CSS `::part`): a hard-coded part UA table; replace it with the part's computed style once the engine computes `::part()` styles (see `parts::part_view`).
+// The part's UA layer: `::part()` rules in a sheet override it (OW1a3, `parts::part_of`).
 /// `::part(knob)`: its colour and size.
 pub const KNOB: Ua = Ua(&[
     UaRule::base(&[("color", Token("fg")), ("width", Px(12.0)), ("height", Px(12.0))]),
@@ -106,7 +106,7 @@ impl Widget for Switch {
         if ui.is_rect_visible(cx.rect()) {
             let (active, id) = (self.active, cx.id());
             checkbox::paint_indicator_kind(ui, cx, UA, "track", TRACK, false, &self.text, "", |pc, host, tr| {
-                let knob = parts::part_view(host, KNOB, false);
+                let knob = parts::part_of(cx, host, "knob", KNOB, false);
                 let d = parts::part_size(host, KNOB, 12.0).x.min(tr.height());
                 let t = if parts::reduced_motion(ui.ctx()) { f32::from(u8::from(active)) } else { ui.ctx().animate_bool_responsive(id.with("knob"), active) };
                 let inset = tr.height() / 2.0;
