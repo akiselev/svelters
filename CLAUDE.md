@@ -51,6 +51,8 @@ agents (worktree lanes) that share that machine's build slots.
 | thinkpadx1 (12 cores, 62 GB) | `/projects/sinbad/svelters` | `/projects/sinbad/cadatomic` | `thinkpad-svelters`, `thinkpad-cadatomic` |
 | macbook (Intel, 12 cores, 32 GB) | `~/projects/svelters` | `~/projects/cadatomic` | `macbook-svelters`, `macbook-cadatomic` |
 
+- The WSL PC can build and test Windows targets: `tools/dev/win sync` fast-forwards a git.exe clone (`C:\Users\dev\projects\svelters-win`) to your branch, `tools/dev/win cargo …` runs cargo.exe there through cargo-slot.
+
 - **The coordinator** (`svelters-agent`, WSL PC) owns svelters `master`: it merges lane branches
   (`--no-ff`) after their gates and CI pass, keeps `STATUS.md` and `MATRIX.md`, pushes, and does
   its own feature work in between. Other svelters sessions never push `master`; they work in
