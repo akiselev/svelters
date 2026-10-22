@@ -131,6 +131,12 @@ other agent on the machine. **GitHub CI is the gate, not your machine.** The use
 - Start Claude sessions inside a repo, never in `~/projects` itself: rust-analyzer there loads every
   project (23 GB, ~50 parallel `cargo check`s).
 
+## Agents (user, 2026-10-22)
+
+- **Always start a fresh agent for new work; never reuse a finished or long-context agent** (it costs more tokens).
+  The per-machine cap (8 agents) counts agents **running in parallel**: a finished agent frees its slot.
+- Hand off to a fresh agent at about 400k tokens, with a handoff note in the milestone file.
+
 ## Before reporting a lane done
 
 1. Merge `origin/master` into your branch; on generated-file conflicts rerun only that generator.
