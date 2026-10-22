@@ -315,3 +315,63 @@ fn ev3_svelte_dialog_from_source() {
     assert!(app.harness.query_by_label("Result: cancel").is_some());
     assert!(is_focused(&app, "Open"));
 }
+
+/// WG2a's `modal` is a dialog scope: focus moves in when it opens, Tab stays in it, Enter reaches its
+/// default button, and focus goes back to the opener when it closes.
+#[test]
+fn ev3_modal_overlay_is_a_dialog_scope() {
+    let mut rig = Rig::new();
+    native::set(&rig.harness.ctx, Native::Gtk);
+    let (_w, col) = rig.window();
+    let opener = rig.leaf(col, "button", &[("text", s("Open"))]);
+    let modal = rig.leaf(col, "modal", &[("open", Value::Bool(false))]);
+    let _f = rig.leaf(modal, "text-edit", &[("accessible-name", s("field"))]);
+    let ok = rig.leaf(modal, "button", &[("text", s("OK")), ("default", Value::Bool(true))]);
+    rig.listen(ok, "clicked");
+    rig.run();
+    rig.click(opener);
+    assert!(focused(&rig, "Open"));
+    rig.set(modal, "open", Value::Bool(true));
+    rig.run();
+    assert!(focused(&rig, "field"), "the modal's first field takes focus");
+    key(&mut rig, egui::Modifiers::NONE, egui::Key::Tab);
+    assert!(focused(&rig, "OK"));
+    key(&mut rig, egui::Modifiers::NONE, egui::Key::Tab);
+    assert!(focused(&rig, "field"), "Tab stays in the modal");
+    rig.take();
+    key(&mut rig, egui::Modifiers::NONE, egui::Key::Enter);
+    assert_eq!(clicked(&rig, ok), 1);
+    rig.set(modal, "open", Value::Bool(false));
+    rig.run();
+    assert!(focused(&rig, "Open"), "focus back on the opener");
+}
+
+/// A menu (an egui popup) takes focus for its keys; when it closes, focus goes back to the field
+/// that had it, so an Edit-menu command reaches it.
+#[test]
+fn ev3_focus_returns_after_a_menu_closes() {
+    let mut rig = Rig::new();
+    native::set(&rig.harness.ctx, Native::Egui); // a click does not focus the menu button
+    let (_w, col) = rig.window();
+    let field = rig.leaf(col, "text-edit", &[("accessible-name", s("field"))]);
+    let mb = rig.leaf(col, "menu-button", &[("label", s("More")), ("align-self", s("start"))]);
+    let copy = rig.leaf(mb, "action", &[("label", s("Copy"))]);
+    rig.listen(copy, "activate");
+    rig.run();
+    rig.type_into(field, "hi");
+    assert!(focused(&rig, "field"));
+    let click = |rig: &mut Rig, l: &str| {
+        let pos = rig.harness.get_by_label(l).rect().center();
+        rig.harness.hover_at(pos);
+        for pressed in [true, false] {
+            rig.harness.event(egui::Event::PointerButton { pos, button: egui::PointerButton::Primary, pressed, modifiers: egui::Modifiers::NONE });
+        }
+        rig.run();
+    };
+    click(&mut rig, "More");
+    assert!(rig.harness.query_by_label("Copy").is_some(), "the menu is open");
+    assert!(!focused(&rig, "field"));
+    click(&mut rig, "Copy");
+    assert!(rig.harness.query_by_label("Copy").is_none(), "the menu closed");
+    assert!(focused(&rig, "field"), "focus back in the field");
+}

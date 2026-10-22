@@ -1,0 +1,24 @@
+{
+  "name": "@svelters-fixtures/gallery-egui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build && vite build --config vite.embed.config.js",
+    "test": "vite build && vite build --config vite.embed.config.js",
+    "watch": "svelters-build --watch"
+  },
+  "dependencies": {
+    "@svelters/canvas": "workspace:*",
+    "svelte": "5.57.2"
+  },
+  "devDependencies": {
+    "@svelters/build": "workspace:*",
+    "@svelters/native-runtime": "workspace:*",
+    "@svelters/types": "workspace:*",
+    "vite": "8.3.4"
+  },
+  "svelters": {
+    "toolkit": "egui"
+  }
+}

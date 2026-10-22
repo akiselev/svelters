@@ -6,6 +6,8 @@
 //!   when it appears (its `autofocus` node, else its first focusable one) and gives it back to the
 //!   widget that had it (the opener) when it goes away: hidden, removed, its slot hidden or its
 //!   subtree inert (an outro). `autofocus` focuses a node when it first appears, scope or not.
+//!   WG2a's `modal`, `inner-window` and `popup` are dialog scopes. When an egui popup (a menu,
+//!   svelters' or the host's) closes and nothing has focus, focus goes back to where it was.
 //! - **Key claims** (R11 `consume_key`, `composing()`): the focused field claims the keys it
 //!   handles (text and editing keys, Ctrl+Z, Del, arrows); after it ran they are taken out of the
 //!   pass's input, so code later in the pass never sees them, and [`EguiBackend::shortcut_override`]
@@ -140,6 +142,12 @@ struct State {
     composing: Option<Id>,
     /// The last text field that had focus.
     last_text: Option<Id>,
+    /// The focus when the last pass began, and the focus to give back when the open egui popup
+    /// (a menu) closes.
+    last_focus: Option<Id>,
+    popup: Option<Option<Id>>,
+    /// A popup closed at the end of the last pass: the focus to give back.
+    popup_closed: Option<Option<Id>>,
     /// The keys the focused node claimed in pass `consumed_pass`.
     consumed: Vec<KeyboardShortcut>,
     consumed_pass: u64,
@@ -226,7 +234,9 @@ struct Plan {
 /// The decisions of one pass from the last pass's record: scopes appearing and going away, Tab in
 /// a scope, Enter and Escape to the default and cancel buttons. `focus` is egui's focus now (after
 /// its own handling of this pass's keys).
-fn route(st: &mut State, focus: Option<Id>, keys: &[(Key, Modifiers)], ime: &[bool], popup_open: bool) -> Plan {
+fn route(st: &mut State, focus: Option<Id>, keys: &[(Key, Modifiers)], ime: &[bool]) -> Plan {
+    // egui knows a popup is open only once it is shown in the pass: the end-of-pass hook tracks it
+    let popup_open = st.popup.is_some();
     let mut plan = Plan::default();
     // the input method: composing from the first non-empty preedit until a commit or an empty one
     for &on in ime {
@@ -245,6 +255,15 @@ fn route(st: &mut State, focus: Option<Id>, keys: &[(Key, Modifiers)], ime: &[bo
         st.last_text = Some(e.id);
     }
 
+    // an egui popup (a menu, svelters' or the host's) gives focus back when it closes: menus take
+    // focus for their arrow keys and drop it when they go
+    let before = std::mem::replace(&mut st.last_focus, focus);
+    if let Some(opener) = st.popup_closed.take()
+        && focus.is_none()
+    {
+        plan.focus = opener;
+    }
+
     // dialogs that went away give focus back to their opener
     let prev = &st.prev;
     let mut gone = Vec::new();
@@ -256,7 +275,7 @@ fn route(st: &mut State, focus: Option<Id>, keys: &[(Key, Modifiers)], ime: &[bo
         keep
     });
     if focus.is_none()
-        && let Some(opener) = gone.into_iter().flatten().last()
+        && let Some(opener) = gone.into_iter().flatten().next_back()
     {
         plan.focus = Some(opener);
     }
@@ -266,7 +285,9 @@ fn route(st: &mut State, focus: Option<Id>, keys: &[(Key, Modifiers)], ime: &[bo
             continue;
         }
         let inside = prev.entry(focus).is_some_and(|e| e.scope == s.id);
-        let opener = if inside { None } else { focus.or(plan.focus) };
+        // egui's `Modal` drops the focus of the layers below it as it opens: then the opener is
+        // what had focus when the pass that showed the dialog began
+        let opener = if inside { None } else { focus.or(plan.focus).or(before) };
         st.openers.push((s.id, opener));
         if !inside {
             let mut members = prev.entries.iter().filter(|e| e.scoped && e.scope == s.id);
@@ -375,11 +396,10 @@ pub(crate) fn begin(ctx: &Context) {
         (keys, ime)
     });
     let focus = ctx.memory(|m| m.focused());
-    let popup_open = ctx.any_popup_open();
     let plan = with(ctx, |st| {
         st.routed = pass;
         st.rotate(pass);
-        route(st, focus, &keys, &ime, popup_open)
+        route(st, focus, &keys, &ime)
     });
     if plan.cancel_tab {
         ctx.memory_mut(|m| m.move_focus(FocusDirection::None));
@@ -410,6 +430,28 @@ fn install(ctx: &Context) {
         std::sync::Arc::new(|ui: &mut Ui| {
             let ctx = ui.ctx();
             let pass = ctx.cumulative_pass_nr();
+            // a popup (a menu) opened in this pass: note what had focus before; closed: give it
+            // back at the next pass
+            let popup_open = ctx.any_popup_open();
+            let focus = ctx.memory(|m| m.focused());
+            let closed = with(ctx, |st| {
+                if st.pass != pass {
+                    return false;
+                }
+                match (popup_open, st.popup) {
+                    (true, None) => st.popup = Some(focus.or(st.last_focus)),
+                    (false, Some(opener)) => {
+                        st.popup = None;
+                        st.popup_closed = Some(opener);
+                        return true;
+                    }
+                    _ => {}
+                }
+                false
+            });
+            if closed {
+                ctx.request_repaint();
+            }
             let due = read(ctx, |st| {
                 if st.pass != pass {
                     return false;
@@ -426,13 +468,23 @@ fn install(ctx: &Context) {
     );
 }
 
-/// The nearest focus scope of node `i` (its id and kind), else its root's id.
+/// Whether node `i` opens a focus scope, and whether it is a dialog: a `box` by its `focus-scope`;
+/// WG2a's overlays (`modal`, `inner-window`, `popup`) are dialogs unless they say `contain`.
+fn scope_kind(arena: &Arena, i: usize) -> Option<bool> {
+    let s = arena.common(i).focus_scope;
+    if matches!(arena.w(i), W::Overlay(_)) {
+        return Some(s != "contain");
+    }
+    (s != "none").then_some(s == "dialog")
+}
+
+/// The nearest focus scope of node `i`, else its root's id (and false).
 fn scope_of(arena: &Arena, i: usize) -> (Id, bool) {
     let mut at = arena.core[i].parent;
     let mut top = arena.core[i].egui_id;
     while let Some(p) = at {
         let Some(pi) = arena.idx(p) else { break };
-        if arena.common(pi).focus_scope != "none" {
+        if scope_kind(arena, pi).is_some() {
             return (arena.core[pi].egui_id, true);
         }
         top = arena.core[pi].egui_id;
@@ -441,13 +493,14 @@ fn scope_of(arena: &Arena, i: usize) -> (Id, bool) {
     (top, false)
 }
 
-/// After a container's own paint: notes the focus scope it opens (unless disabled or inert).
+/// Before a container's (or an open overlay's) children are painted: notes the focus scope it
+/// opens (unless disabled or inert).
 pub(crate) fn record_scope(arena: &Arena, i: usize, ui: &Ui) {
-    let s = arena.common(i).focus_scope;
-    if s == "none" || !ui.is_enabled() {
+    let Some(dialog) = scope_kind(arena, i) else { return };
+    if !ui.is_enabled() {
         return;
     }
-    let scope = Scope { id: arena.core[i].egui_id, dialog: s == "dialog" };
+    let scope = Scope { id: arena.core[i].egui_id, dialog };
     let pass = ui.ctx().cumulative_pass_nr();
     with(ui.ctx(), |st| {
         st.rotate(pass);
@@ -466,13 +519,14 @@ pub(crate) fn record(arena: &Arena, i: usize, ui: &Ui, resp: &egui::Response) {
     let role = match arena.w(i) {
         W::TextEdit { multiline, .. } => Role::Text { multiline: *multiline },
         W::Button { .. } => Role::Button { default: c.default_button, cancel: c.cancel_button },
-        W::Checkbox { .. } => Role::Toggle,
-        W::Slider { .. } => Role::Slider,
+        W::Slider { .. } | W::RangeSlider { .. } | W::DragValue { .. } => Role::Slider,
         W::Ext(x) => {
             let w = x.0.try_borrow();
             let claim = |k| w.as_ref().is_ok_and(|w| w.consume_key(k, Modifiers::NONE));
             Role::Ext { enter: claim(Key::Enter), escape: claim(Key::Escape) }
         }
+        // check boxes, toggles, switches, radio and menu buttons, combo boxes: Space and Enter
+        _ if resp.sense.senses_click() => Role::Toggle,
         _ => Role::Other,
     };
     let (scope, scoped) = scope_of(arena, i);
@@ -721,30 +775,30 @@ mod tests {
         st.cur.entries = vec![opener.clone(), a.clone(), ok.clone()];
         st.cur.scopes = vec![Scope { id: dlg, dialog: true }];
         st.rotate(3);
-        let p = route(&mut st, Some(opener.id), &[], &[], false);
+        let p = route(&mut st, Some(opener.id), &[], &[]);
         assert_eq!(p.focus, Some(a.id), "the dialog's first field takes focus");
         // Tab wraps inside the dialog
         st.cur = st.prev.clone();
         st.rotate(4);
-        let p = route(&mut st, Some(ok.id), &[(Key::Tab, Modifiers::NONE)], &[], false);
+        let p = route(&mut st, Some(ok.id), &[(Key::Tab, Modifiers::NONE)], &[]);
         assert_eq!((p.focus, p.cancel_tab), (Some(a.id), true));
         // Enter in the field activates the default button
         st.cur = st.prev.clone();
         st.rotate(5);
-        let p = route(&mut st, Some(a.id), &[(Key::Enter, Modifiers::NONE)], &[], false);
+        let p = route(&mut st, Some(a.id), &[(Key::Enter, Modifiers::NONE)], &[]);
         assert_eq!(p.eat, vec![Key::Enter]);
         assert_eq!(st.activate, Some(ok.node_eid));
         st.activate = None;
         // but not while composing
         st.cur = st.prev.clone();
         st.rotate(6);
-        let p = route(&mut st, Some(a.id), &[(Key::Enter, Modifiers::NONE)], &[true], false);
+        let p = route(&mut st, Some(a.id), &[(Key::Enter, Modifiers::NONE)], &[true]);
         assert!(p.eat == vec![Key::Enter] && st.activate.is_none(), "the input method's Enter");
         st.composing = None;
         // the dialog goes away: focus back to the opener
         st.cur.entries = vec![opener.clone()];
         st.rotate(7);
-        let p = route(&mut st, None, &[], &[], false);
+        let p = route(&mut st, None, &[], &[]);
         assert_eq!(p.focus, Some(opener.id));
         assert!(st.openers.is_empty());
     }

@@ -1,0 +1,187 @@
+style sheet "*" null
+style scheme "light" 0
+style sheet "@tokens" ":root {\n  --sv-bg: #f6f5f4;\n  --sv-fg: #2e3436;\n  --sv-surface: #ffffff;\n  --sv-border: #cdc7c2;\n  --sv-accent: #3584e4;\n  --sv-accent-hover: #1c71d8;\n  --sv-accent-fg: #ffffff;\n  --sv-muted: #77767b;\n  --sv-danger: #c01c28;\n  --sv-radius: 6px;\n  --sv-space-1: 4px;\n  --sv-space-2: 8px;\n  --sv-space-3: 12px;\n  --sv-space-4: 16px;\n  --sv-font-size: 11pt;\n  --sv-font-family: sans-serif;\n}\n"
+style sheet "fixtures/gallery-egui-menus/src/App.svelte" "\n  .page.svelte-c86df7296a {\n    gap: 8px;\n  }\n  .row.svelte-c86df7296a {\n    flex-direction: row;\n    align-items: center;\n    gap: 8px;\n  }\n  .pop.svelte-c86df7296a {\n    padding: 6px;\n    gap: 6px;\n  }\n"
+create window #1
+set #1 title "Menus and popups"
+set #1 default-width 520
+set #1 default-height 400
+create box #2
+create menu-bar #3
+create menu #4
+set #4 label "File"
+create action #5
+set #5 label "Open"
+set #5 shortcut "Ctrl+O"
+insert #4 #5 before=end slot=default
+create action #6
+set #6 label "Autosave"
+set #6 checkable true
+insert #4 #6 before=end slot=default
+create menu-separator #7
+insert #4 #7 before=end slot=default
+create menu #8
+set #8 label "Recent"
+create action #9
+set #9 label "a.txt"
+insert #8 #9 before=end slot=default
+insert #4 #8 before=end slot=default
+create action #10
+set #10 label "Quit"
+set #10 shortcut "Ctrl+Q"
+insert #4 #10 before=end slot=default
+insert #3 #4 before=end slot=default
+create menu #11
+set #11 label "Size"
+create action #12
+set #12 label "Small"
+set #12 group "size"
+insert #11 #12 before=end slot=default
+create action #13
+set #13 label "Large"
+set #13 group "size"
+insert #11 #13 before=end slot=default
+insert #3 #11 before=end slot=default
+insert #2 #3 before=end slot=default
+create box #14
+create menu-button #15
+set #15 label "More"
+create action #16
+set #16 label "Copy"
+insert #15 #16 before=end slot=default
+create action #17
+set #17 label "Paste"
+insert #15 #17 before=end slot=default
+insert #14 #15 before=end slot=default
+create button #18
+set #18 text "Pick"
+create popup #19
+create label #20
+set #20 text "Filter"
+insert #19 #20 before=end slot=default
+create text-edit #21
+set #21 hint-text "Filter text"
+insert #19 #21 before=end slot=default
+insert #18 #19 before=end slot=default
+insert #14 #18 before=end slot=default
+create button #22
+set #22 text "Delete"
+insert #14 #22 before=end slot=default
+create button #23
+set #23 text "Show inspector"
+create context-menu #24
+create action #25
+set #25 label "Hide inspector"
+insert #24 #25 before=end slot=default
+insert #23 #24 before=end slot=default
+insert #14 #23 before=end slot=default
+insert #2 #14 before=end slot=default
+create label #26
+insert #2 #26 before=end slot=default
+create modal #27
+set #27 title "Delete the file?"
+create label #28
+set #28 text "It cannot be undone."
+insert #27 #28 before=end slot=default
+create button #29
+set #29 text "Confirm"
+insert #27 #29 before=end slot=default
+insert #2 #27 before=end slot=default
+create inner-window #30
+set #30 title "Inspector"
+set #30 default-width 220
+set #30 default-height 120
+set #30 default-x 280
+set #30 default-y 230
+create label #31
+set #31 text "Selection: none"
+insert #30 #31 before=end slot=default
+insert #2 #30 before=end slot=default
+insert #1 #2 before=end slot=default
+set #26 text "S:|false|true|false|false||false"
+listen #5 activate on
+set #6 checked false
+observe #6 checked on
+listen #9 activate on
+listen #10 activate on
+set #12 checked true
+observe #12 checked on
+set #13 checked false
+observe #13 checked on
+listen #16 activate on
+listen #17 activate on
+set #15 active false
+observe #15 active on
+listen #18 clicked on
+set #21 text ""
+observe #21 text on
+set #19 open false
+observe #19 open on
+listen #22 clicked on
+listen #23 clicked on
+listen #25 activate on
+listen #29 clicked on
+set #27 open false
+observe #27 open on
+set #30 open false
+observe #30 open on
+call #1 present []
+style #1 classes "svelte-c86df7296a"
+style #2 classes "page svelte-c86df7296a"
+style #3 classes "svelte-c86df7296a"
+style #4 classes "svelte-c86df7296a"
+style #5 classes "svelte-c86df7296a"
+style #6 classes "svelte-c86df7296a"
+style #7 classes "svelte-c86df7296a"
+style #8 classes "svelte-c86df7296a"
+style #9 classes "svelte-c86df7296a"
+style #10 classes "svelte-c86df7296a"
+style #11 classes "svelte-c86df7296a"
+style #12 classes "svelte-c86df7296a"
+style #13 classes "svelte-c86df7296a"
+style #14 classes "row svelte-c86df7296a"
+style #15 classes "svelte-c86df7296a"
+style #16 classes "svelte-c86df7296a"
+style #17 classes "svelte-c86df7296a"
+style #18 classes "svelte-c86df7296a"
+style #19 classes "pop svelte-c86df7296a"
+style #20 classes "svelte-c86df7296a"
+style #21 classes "svelte-c86df7296a"
+style #22 classes "svelte-c86df7296a"
+style #23 classes "svelte-c86df7296a"
+style #24 classes "svelte-c86df7296a"
+style #25 classes "svelte-c86df7296a"
+style #26 classes "svelte-c86df7296a"
+style #27 classes "pop svelte-c86df7296a"
+style #28 classes "svelte-c86df7296a"
+style #29 classes "svelte-c86df7296a"
+style #30 classes "svelte-c86df7296a"
+style #31 classes "svelte-c86df7296a"
+event #5 activate [false]
+set #26 text "S:open;|false|true|false|false||false"
+changed #6 checked true
+set #26 text "S:open;|true|true|false|false||false"
+changed #13 checked true
+changed #12 checked false
+set #26 text "S:open;|true|false|true|false||false"
+changed #15 active true
+set #26 text "S:open;|true|false|true|true||false"
+event #17 activate [false]
+changed #15 active false
+set #26 text "S:open;paste;|true|false|true|false||false"
+event #18 clicked []
+set #19 open true
+changed #21 text "ab"
+set #26 text "S:open;paste;|true|false|true|false|ab|false"
+changed #19 open false
+event #22 clicked []
+set #27 open true
+event #29 clicked []
+set #26 text "S:open;paste;deleted;|true|false|true|false|ab|false"
+set #27 open false
+event #23 clicked []
+set #26 text "S:open;paste;deleted;|true|false|true|false|ab|true"
+set #30 open true
+event #25 activate [false]
+set #26 text "S:open;paste;deleted;|true|false|true|false|ab|false"
+set #30 open false

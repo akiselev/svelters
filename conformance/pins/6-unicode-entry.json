@@ -1,0 +1,23 @@
+{
+  "id": "unicode-entry",
+  "pin": 6,
+  "title": "Composition with a preedit (Ctrl+Shift+U hex entry): text during composition, commit with space and Enter, cancel with Escape (focus stays), Backspace in the preedit",
+  "setup": {
+    "fields": { "a": { "text": "ab", "sel": [1, 1] }, "b": { "text": "other" } },
+    "focus": "a"
+  },
+  "steps": [
+    { "key": "unicode-entry" },
+    { "type": "65e5" },
+    { "key": "space" },
+    { "key": "unicode-entry" },
+    { "type": "4e" },
+    { "key": "escape" },
+    { "key": "unicode-entry" },
+    { "type": "41" },
+    { "key": "backspace" },
+    { "type": "2" },
+    { "key": "return" },
+    { "type": "z" }
+  ]
+}

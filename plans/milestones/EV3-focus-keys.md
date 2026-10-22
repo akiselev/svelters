@@ -1,6 +1,7 @@
 # EV3+: keys and focus on egui (focus scopes, restore, key claims, edit commands, default/cancel)
 
-Track: EVENTS (egui). Lane EV3+, branch `ci/ev3`, from master `3c7d67be`. Design: `plans/research/QT-SURVEY.md`
+Track: EVENTS (egui). Lane EV3+, branch `ci/ev3`, from master `3c7d67be`, merged with master `16da721d` (INT1's
+widget library: WG1, WG2a overlays and menus, WG2b, WG4a, WG4b; DX1). Design: `plans/research/QT-SURVEY.md`
 §2.3 (`focus_info`, `shortcut_override`, `text_command`), §2.4 (claims), §3 row 1 (acceptance); ARCH-EMBED R11
 (`consume_key`, `composing()`) and E-7 (no Enter or Escape to default/cancel buttons while composing). Builds on FX1
 (`svelters_egui::native`) and TR2b (inert subtrees leave the tab order). egui `Memory` and `TextEdit` are not
@@ -11,7 +12,7 @@ forked: everything sits before the first svelters node of a pass, after each lea
 | Piece | Where | What |
 |---|---|---|
 | Focus router | `crates/svelters-egui/src/focus.rs` (new) | The record of what the walk painted (per viewport and pass, in egui temp data, keyed by egui ids so several embeds can share a context), `begin` (once per pass and viewport, before the first svelters node), the end-of-pass repaint hook, key claims, edit commands, default/cancel activation, the host API. |
-| Walk hooks | `walk.rs` (+6 lines) | `focus::begin` at the top of `window_ui` and `slot_ui`; `record_scope` for a container; `record` after each leaf or provider kind. |
+| Walk hooks | `walk.rs` (+8 lines), `overlays.rs` (+1 line) | `focus::begin` at the top of `window_ui` and `slot_ui`; `record_scope` for a container, and for an open overlay before its children; `record` after each leaf or provider kind. |
 | Leaf hooks | `leaf.rs` (+3 lines) | `text-edit`: a pending edit command is fed in before `TextEdit` runs; `button`: an Enter/Escape activation fires `clicked`. |
 | Props | `kinds/builtin.rs`, `kinds/containers.rs`, `kinds/mod.rs`, `scene/node.rs` (`Common`), `scene/props.rs` | `autofocus` (every widget), `focus-scope` (`box`: `none`, `contain`, `dialog`), `default` and `cancel` (`button`). Stored in `Common` (additive fields). |
 | Provider seam (R11) | `provider/mod.rs` | `Widget::consume_key(key, modifiers)` and `Widget::composing()`, both defaulted (additive), forwarded through `ErasedWidget`. |
@@ -30,13 +31,21 @@ forked: everything sits before the first svelters node of a pass, after each lea
   opener, which may be a host widget) is remembered. When it goes away (hidden, removed, its slot hidden, or its
   subtree inert in an outro) and nothing has focus (egui drops focus whose widget is gone), focus goes back to
   the opener. With nothing focused, Tab enters the topmost open dialog.
+- **Overlays (WG2a).** `modal`, `inner-window` and `popup` are `dialog` scopes while open (`focus-scope="contain"` on
+  one keeps traversal and drops the initial focus and restore). egui's `Modal` drops the focus of the layers below
+  as it opens, so the opener is what had focus when the pass that showed it began.
+- **Menus and other egui popups** (svelters' `menu-button`, `context-menu`, `combo-box`, or the host's menus): egui
+  knows a popup is open only once it is shown in the pass, so the end-of-pass hook notes the focus from before it
+  opened and, when it closes with nothing focused, focus goes back there at the next pass. This is also what
+  makes an Edit-menu click in the host land back in the Svelte field.
 - **`autofocus`** on any widget: focused once when the node first appears; again only after it left and came back.
 - **Out of the chain**: disabled nodes and inert (TR2b, exiting) subtrees are not recorded, so Tab skips them and a
   scope whose box is inert counts as gone.
 - **Key claims (R11 `consume_key`).** The focused node claims: a `text-edit` every key without Ctrl/Cmd/Alt except
   Tab, Escape and F-keys (Enter, Up/Down and PageUp/Down only when multi-line); with Ctrl/Cmd A, C, V, X, Y, Z,
   Left/Right, Home/End, BackSpace, Delete, Insert (Up/Down when multi-line); on macOS Option+Left/Right/BackSpace/
-  Delete. A `slider` claims the navigation keys, `button`/`checkbox` Space and Enter, a provider kind what its
+  Delete. `slider`, `range-slider` and `drag-value` claim the navigation keys; `button` and every other clickable
+  leaf (check box, toggle, switch, radio, menu button, combo box) Space and Enter; a provider kind what its
   `consume_key` says. After the focused node ran, its claimed key events are taken out of the pass's input (so a
   keymap or a menu shortcut later in the pass never sees them) and listed in `focus::consumed_keys(ctx)` for that
   pass. A host keymap that runs before the content asks `shortcut_override(ctx, chord)` (Qt's `ShortcutOverride`).
@@ -71,20 +80,20 @@ forked: everything sits before the first svelters node of a pass, after each lea
 | Enter activates the default button except while composing | `ev3_dialog_scope_focus_tab_default_cancel_restore`, `ev3_composing_holds_enter_and_every_key` |
 | Edit commands reach the focused field, and the last one after a click on host chrome | `ev3_text_commands_reach_the_focused_field` |
 | Initial focus, `autofocus`, disabled nodes skipped | `ev3_autofocus_and_disabled_nodes_leave_the_chain` |
+| A WG2a `modal` is a dialog scope (initial focus, Tab, Enter, restore) | `ev3_modal_overlay_is_a_dialog_scope` |
+| Focus returns to the field after a menu closes | `ev3_focus_returns_after_a_menu_closes` |
 
 ## Degradations and notes
 
-- **WG2a is not merged.** Its `modal`, `popup` and `inner-window` are not scopes yet. When WG2a lands, each should
-  record itself as a `dialog` scope (`modal`, `inner-window`) or a `contain` scope with restore (`popup`): one
-  `focus::record_scope`-style call in `overlays.rs` with the overlay's kind instead of the `focus-scope` prop; and
-  WG2a's `action` shortcuts (`consume_shortcut`) should skip chords the focused node claims
-  (`focus::consumed_keys` covers code after the content; a menu bar drawn before it needs `shortcut_override`).
-  WG2a's milestone already leaves focus restore after menus to EV3.
+- **WG2a `action` shortcuts** (`consume_shortcut`, active while the menu's owner is drawn) are not yet told about
+  claims: a menu bar drawn after the focused field never sees a claimed chord (it was taken out), but one drawn
+  before it can still take Ctrl+Z from a field. Fix in `menus.rs`: skip a chord when
+  `backend.shortcut_override(ctx, chord)` (follow-up, a few lines).
 - **Restore needs the opener to exist** at restore time; a host widget opener is focused by id and egui drops the
   request if that widget is not drawn. The opener of a dialog that opens while nothing is focused is nothing.
 - **Platform button order** (QW11's OK/Cancel order per platform) is not done: it is a layout convention for the
   dialog author or a later `dialog-buttons` kind.
-- **QA8 Menu key / Shift+F10** is not done (no context-menu kind on master; WG2a).
+- **QA8 Menu key / Shift+F10** to open a `context-menu` from the keyboard is not done.
 - **Not done here:** component-scope `use:keys` (QT-SURVEY §2.4; an EV2b behaviour), `std:` standard key names.
 - **FX1 follow-up found:** a GTK-policy field that loses focus while egui's `TextEdit` still holds an IME
   composition range repaints every frame (FX1 restores the "kept" selection, egui collapses the composition range
@@ -95,7 +104,9 @@ forked: everything sits before the first svelters node of a pass, after each lea
 
 Local, after the last code change: `cargo check -p svelters-egui --all-targets` (clean apart from existing
 warnings); nextest `-p svelters-egui --test focus_keys` (6/6), `--test native_focus` (2/2), `--lib ev3` (2/2),
-`--test spec` (3/3, with `SVELTERS_UPDATE=1` once to regenerate), `--test animator --test scene --lib` (the
-key- and focus-driving suites: pass); `gen_props.py --check`, `gen_kinds.py --check`. `--test queries` needs the
-built `fixtures/embed-egui/dist` (not built locally; CI). Not run locally: the full workspace, conformance, the
+`--test spec` (3/3, with `SVELTERS_UPDATE=1` to regenerate after the merge), and after the merge with master
+`--test focus_keys --test menus --test widgets --test native_focus --test animator --test scene --test spec --lib`
+(81/81) and `--test tier0 --test views --test wg4b --test widgets_panel --test menus_app` (28/31: the 3 others need
+built `dist/` bundles, CI); `gen_props.py --check`. `--test queries` and the gallery apps need the built `dist/`
+bundles (CI). `gen_kinds.py` (GTK/Qt tags) needs a display: not run. Not run locally: the full workspace, conformance, the
 other backends, the JS suites (CI).

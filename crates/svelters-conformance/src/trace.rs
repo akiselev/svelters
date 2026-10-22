@@ -4,6 +4,7 @@
 //! `state` lines, so traces from different toolkits (GTK, Qt, egui) can be compared.
 
 /// What a checkpoint observes on one node. Fields have `text` and `sel`; the button only `focus`.
+/// A selection pseudo-anchor (`clipboard`, `primary`) has only `text` ([`State::selection`]).
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct State {
     pub text: Option<String>,
@@ -14,7 +15,21 @@ pub struct State {
 }
 
 impl State {
-    /// Compact JSON with a fixed key order: `{"text":…,"sel":[a,f],"caret":f,"focus":b}`.
+    /// The content of a system selection (CLIPBOARD, PRIMARY).
+    pub fn selection(text: String) -> State {
+        State {
+            text: Some(text),
+            sel: None,
+            focus: false,
+        }
+    }
+
+    fn is_selection(&self) -> bool {
+        self.text.is_some() && self.sel.is_none() && !self.focus
+    }
+
+    /// Compact JSON with a fixed key order: `{"text":…,"sel":[a,f],"caret":f,"focus":b}`; a
+    /// selection pseudo-anchor is `{"text":…}`.
     pub fn json(&self) -> String {
         let mut parts = Vec::new();
         if let Some(t) = &self.text {
@@ -23,7 +38,9 @@ impl State {
         if let Some([a, f]) = self.sel {
             parts.push(format!("\"sel\":[{a},{f}],\"caret\":{f}"));
         }
-        parts.push(format!("\"focus\":{}", self.focus));
+        if !self.is_selection() {
+            parts.push(format!("\"focus\":{}", self.focus));
+        }
         format!("{{{}}}", parts.join(","))
     }
 

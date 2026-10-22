@@ -986,9 +986,12 @@ impl Embed {
 
     /// What the debug checks found since the last call (ARCH-EMBED §5.3): a slot drawn while set
     /// hidden, a visible slot not drawn for 60 passes of its viewport, a slot drawn in a viewport
-    /// other than the one set.
+    /// other than the one set. Also the font problems found since the last call (`SlotWarning::Font`,
+    /// from `crate::fonts::take_warnings`).
     pub fn take_warnings(&self) -> Vec<SlotWarning> {
-        std::mem::take(&mut self.inner.st.borrow_mut().warnings)
+        let mut w = std::mem::take(&mut self.inner.st.borrow_mut().warnings);
+        w.extend(crate::fonts::take_warnings().into_iter().map(SlotWarning::Font));
+        w
     }
 
     // ---- the pass plugin (current.rs) ----
@@ -1659,6 +1662,36 @@ fn takes_input(w: &crate::scene::W) -> bool {
             c.contains(crate::provider::Caps::FOCUSABLE) || c.contains(crate::provider::Caps::EDITABLE)
         }
         W::Box | W::Window { .. } => false,
+        // the WIDGETS lanes' kinds (WG1, WG2a, WG2b, WG4a, WG4b): decoration and plain layout take none
+        W::Separator { .. }
+        | W::Grid { .. }
+        | W::Sides
+        | W::Frame { .. }
+        | W::Stack { .. }
+        | W::Image { .. }
+        | W::ProgressBar { .. }
+        | W::Spinner { .. }
+        | W::TableColumn { .. }
+        | W::Tab { .. } => false,
+        W::Icon { frame, .. } => *frame,
+        W::Panel { resizable, .. } => *resizable,
+        W::ToggleButton { .. }
+        | W::ComboBox { .. }
+        | W::CollapsingHeader { .. }
+        | W::ScrollArea { .. }
+        | W::Menu(_)
+        | W::Overlay(_)
+        | W::Hyperlink { .. }
+        | W::RadioButton { .. }
+        | W::Switch { .. }
+        | W::RangeSlider { .. }
+        | W::DragValue { .. }
+        | W::Canvas(_)
+        | W::Table(_)
+        | W::TabView { .. }
+        | W::SplitView { .. }
+        | W::ToastHost(_)
+        | W::Picker(_) => true,
     }
 }
 

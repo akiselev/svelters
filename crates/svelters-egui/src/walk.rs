@@ -93,7 +93,9 @@ pub(crate) fn paint_child(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui
     paint_at(arena, i, origin, ui, out);
 }
 
-fn paint_at(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+/// `pub(crate)` for the WG4a views, which draw one child at a time (`crate::views`), and WG2b's
+/// `crate::elements`.
+pub(crate) fn paint_at(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
     if !arena.common(i).visible {
         return;
     }
@@ -140,6 +142,10 @@ fn paint_visual(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mu
 }
 
 fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+    // WG2a: overlays and menu entries are out of flow: they paint themselves, anchored to the parent
+    if crate::overlays::out_of_flow(arena.w(i)) {
+        return crate::overlays::paint_node(arena, i, origin, ui, out);
+    }
     // EV2b: a host with behaviours (`use:`) runs their `after_ui` hooks around its own paint
     if arena.core[i]
         .flags
@@ -183,11 +189,13 @@ fn paint_own(
 ) -> Option<egui::Response> {
     let r = arena.core[i].rect.translate(origin);
     if arena.w(i).is_container() {
-        // Containers draw nothing: cull whole subtrees outside the clip rect.
+        // Cull whole subtrees outside the clip rect.
         if !ui.is_rect_visible(r) {
             return None;
         }
-        crate::focus::record_scope(arena, i, ui); // EV3
+        if !matches!(arena.w(i), crate::scene::W::Overlay(_)) {
+            crate::focus::record_scope(arena, i, ui); // EV3 (an overlay records itself when open)
+        }
         // CS5e: its state and box (background, border), and the opacity of its subtree
         let opacity = crate::style::before_container(arena, i, r, ui);
         let mut faded;
@@ -199,11 +207,10 @@ fn paint_own(
             }
             None => ui,
         };
-        // By index, no clone: the walk never changes the structure (ARCH-SCENE §5.2).
-        for k in 0..arena.children[i].len() {
-            let c = arena.children[i][k].index() as usize;
-            paint_at(arena, c, origin, ui, out);
-        }
+        crate::kinds::dnd::node(arena, i, r, ui, out, crate::kinds::dnd::Part::Both); // WG4b: under the children
+        // WG1: a container's tooltip and chrome (collapsing header, scroll area), then
+        // `paint_children`
+        crate::leaf::container(arena, i, r, origin, ui, out);
         return None;
     }
     if !ui.is_rect_visible(r) {
@@ -220,14 +227,30 @@ fn paint_own(
     let mut child = ui.new_child(b);
     // CS5e: this pass's state, the restyle it reaches, then the computed visuals on `child`
     crate::style::before_leaf(arena, i, r, &mut child);
+    crate::kinds::dnd::node(arena, i, r, &mut child, out, crate::kinds::dnd::Part::Source); // WG4b: under the widget
     let resp = if matches!(arena.w(i), crate::scene::W::Ext(_)) {
-        crate::provider::paint(arena, i, &mut child, origin, out) // RA1: a provider kind
+        let resp = crate::provider::paint(arena, i, &mut child, origin, out); // RA1: a provider kind
+        if arena.common(i).invalid {
+            crate::leaf::invalid_outline(&child, arena.core[i].drawn); // WG1
+        }
+        resp
     } else {
         Some(crate::leaf::leaf(arena, i, &mut child, out))
     };
+    crate::kinds::dnd::node(arena, i, r, &mut child, out, crate::kinds::dnd::Part::Target); // WG4b
     crate::scene::hit::record(arena, i, &child); // SG3: the viewport's hit list
     if let Some(r) = &resp {
         crate::focus::record(arena, i, &child, r); // EV3: tab order, R11 key claims
     }
+    crate::overlays::paint_attached(arena, i, origin, ui, out); // WG2a: its context menu, popup
     resp
+}
+
+/// Paints the children of container `i` (in order, by index: the walk never changes the
+/// structure, ARCH-SCENE §5.2). `leaf::container` calls it inside its chrome.
+pub(crate) fn paint_children(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+    for k in 0..arena.children[i].len() {
+        let c = arena.children[i][k].index() as usize;
+        paint_at(arena, c, origin, ui, out);
+    }
 }

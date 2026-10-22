@@ -36,6 +36,243 @@
         }
       ],
       "values": []
+    },
+    {
+      "classes": [],
+      "functions": [
+        {
+          "async": true,
+          "docs": "Shows a native message box; resolves with the button clicked: `ok`, `cancel`, `yes`, `no`, or\nthe caption of a `labels` button.",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "messageBox",
+          "params": [
+            {
+              "name": "opts",
+              "optional": false,
+              "type": "MessageBoxOptions"
+            }
+          ],
+          "progress": null,
+          "readonly": false,
+          "returns": "string",
+          "runsOn": "local",
+          "rust": "message_box",
+          "stream": null,
+          "supersede": false,
+          "throws": [
+            "unsupported"
+          ],
+          "writeonly": false
+        },
+        {
+          "async": true,
+          "docs": "Shows an open dialog for one file; resolves with its path, or `null` when cancelled.",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "openFile",
+          "params": [
+            {
+              "name": "opts",
+              "optional": true,
+              "type": "FileDialogOptions | null"
+            }
+          ],
+          "progress": null,
+          "readonly": false,
+          "returns": "string | null",
+          "runsOn": "local",
+          "rust": "open_file",
+          "stream": null,
+          "supersede": false,
+          "throws": [
+            "unsupported"
+          ],
+          "writeonly": false
+        },
+        {
+          "async": true,
+          "docs": "Shows an open dialog for several files; resolves with their paths, or `null` when cancelled.",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "openFiles",
+          "params": [
+            {
+              "name": "opts",
+              "optional": true,
+              "type": "FileDialogOptions | null"
+            }
+          ],
+          "progress": null,
+          "readonly": false,
+          "returns": "string[] | null",
+          "runsOn": "local",
+          "rust": "open_files",
+          "stream": null,
+          "supersede": false,
+          "throws": [
+            "unsupported"
+          ],
+          "writeonly": false
+        },
+        {
+          "async": true,
+          "docs": "Shows a folder dialog; resolves with the folder's path, or `null` when cancelled.",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "pickFolder",
+          "params": [
+            {
+              "name": "opts",
+              "optional": true,
+              "type": "FileDialogOptions | null"
+            }
+          ],
+          "progress": null,
+          "readonly": false,
+          "returns": "string | null",
+          "runsOn": "local",
+          "rust": "pick_folder",
+          "stream": null,
+          "supersede": false,
+          "throws": [
+            "unsupported"
+          ],
+          "writeonly": false
+        },
+        {
+          "async": true,
+          "docs": "Shows a save dialog; resolves with the chosen path, or `null` when cancelled.",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "saveFile",
+          "params": [
+            {
+              "name": "opts",
+              "optional": true,
+              "type": "FileDialogOptions | null"
+            }
+          ],
+          "progress": null,
+          "readonly": false,
+          "returns": "string | null",
+          "runsOn": "local",
+          "rust": "save_file",
+          "stream": null,
+          "supersede": false,
+          "throws": [
+            "unsupported"
+          ],
+          "writeonly": false
+        }
+      ],
+      "name": "egui",
+      "specifier": "svelters:app/egui",
+      "types": [
+        {
+          "docs": "The icon of a message box.",
+          "fields": [],
+          "kind": "enum",
+          "name": "MessageLevel",
+          "values": [
+            "info",
+            "warning",
+            "error"
+          ]
+        },
+        {
+          "docs": "The buttons of a message box (without `labels`).",
+          "fields": [],
+          "kind": "enum",
+          "name": "MessageButtons",
+          "values": [
+            "ok",
+            "ok-cancel",
+            "yes-no",
+            "yes-no-cancel"
+          ]
+        },
+        {
+          "docs": "Options of `messageBox`.",
+          "fields": [
+            {
+              "name": "title",
+              "optional": true,
+              "type": "string | null"
+            },
+            {
+              "name": "description",
+              "optional": true,
+              "type": "string | null"
+            },
+            {
+              "name": "level",
+              "optional": true,
+              "type": "MessageLevel | null"
+            },
+            {
+              "name": "buttons",
+              "optional": true,
+              "type": "MessageButtons | null"
+            },
+            {
+              "name": "labels",
+              "optional": true,
+              "type": "string[] | null"
+            }
+          ],
+          "kind": "record",
+          "name": "MessageBoxOptions",
+          "values": []
+        },
+        {
+          "docs": "A file type choice of a file dialog.",
+          "fields": [
+            {
+              "name": "name",
+              "optional": false,
+              "type": "string"
+            },
+            {
+              "name": "extensions",
+              "optional": false,
+              "type": "string[]"
+            }
+          ],
+          "kind": "record",
+          "name": "FileFilter",
+          "values": []
+        },
+        {
+          "docs": "Options of `openFile`, `openFiles`, `saveFile` and `pickFolder`; every field is optional.",
+          "fields": [
+            {
+              "name": "title",
+              "optional": true,
+              "type": "string | null"
+            },
+            {
+              "name": "directory",
+              "optional": true,
+              "type": "string | null"
+            },
+            {
+              "name": "fileName",
+              "optional": true,
+              "type": "string | null"
+            },
+            {
+              "name": "filters",
+              "optional": true,
+              "type": "FileFilter[] | null"
+            }
+          ],
+          "kind": "record",
+          "name": "FileDialogOptions",
+          "values": []
+        }
+      ],
+      "values": []
     }
   ],
   "schema": "svelters-exports/1"
