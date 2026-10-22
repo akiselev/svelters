@@ -227,8 +227,10 @@ impl std::ops::Deref for AssetBytes {
 pub enum AssetSource {
     /// A package directory (dev): files are read when asked and watched.
     Dir(PathBuf),
-    /// A fixed table of `(path, bytes)` (tests, tiny embeds). A release bundle is Q4's.
+    /// A fixed table of `(path, bytes)` (tests, tiny embeds).
     Static(&'static [(&'static str, &'static [u8])]),
+    /// Q4: a release bundle's files (`.svb`), by their path in the bundle.
+    Bundle(Arc<crate::svb::Svb>),
 }
 
 /// What [`Assets::info`] knows about an asset.
@@ -318,7 +320,7 @@ impl Assets {
         }
         let canon = match &src {
             AssetSource::Dir(d) => Some(d.canonicalize().map_err(|e| AssetError::new(format!("{}: {e}", d.display())))?),
-            AssetSource::Static(_) => None,
+            AssetSource::Static(_) | AssetSource::Bundle(_) => None,
         };
         roots.insert(root.to_string(), Root { src, canon });
         Ok(())
@@ -383,12 +385,13 @@ impl Assets {
             let roots = self.roots.read().unwrap();
             let root = roots.get(r.root()).ok_or_else(|| AssetError::new(format!("{r}: asset root `{}` is not mounted", r.root())))?;
             match &root.src {
-                AssetSource::Static(table) => Some(table.iter().find(|(p, _)| *p == r.path()).map(|(_, b)| *b).ok_or_else(missing)?),
+                AssetSource::Static(table) => Some(AssetBytes::Static(table.iter().find(|(p, _)| *p == r.path()).map(|(_, b)| *b).ok_or_else(missing)?)),
+                AssetSource::Bundle(svb) => Some(svb.file_bytes(r.path()).ok_or_else(missing)?),
                 AssetSource::Dir(_) => None,
             }
         };
         if let Some(b) = is_static {
-            return Ok(AssetBytes::Static(b));
+            return Ok(b);
         }
         let p = self.file_path(r).ok_or_else(missing)?;
         let bytes = std::fs::read(&p).map_err(|e| AssetError::new(format!("{r}: {}: {e}", p.display())))?;
@@ -466,7 +469,7 @@ fn slashed(rel: &Path) -> String {
 }
 
 /// The `name` of `dir/package.json`, when there is one.
-fn package_name(dir: &Path) -> Option<String> {
+pub(crate) fn package_name(dir: &Path) -> Option<String> {
     let text = std::fs::read_to_string(dir.join("package.json")).ok()?;
     let json: serde_json::Value = serde_json::from_str(&text).ok()?;
     json.get("name")?.as_str().map(str::to_string)

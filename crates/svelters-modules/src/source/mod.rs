@@ -1,6 +1,7 @@
 //! [`SourceProvider`]: an app loaded from its sources, compiled live (Q1).
 
 mod aliases;
+pub(crate) mod build;
 mod resolve;
 mod transform;
 
