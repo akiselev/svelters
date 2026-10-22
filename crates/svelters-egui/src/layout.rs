@@ -935,9 +935,13 @@ fn positional_parent(s: &Scene, i: usize) -> Option<usize> {
     }
 }
 
-/// The capabilities of node `i`'s provider kind, `None` for a built-in.
+/// The capabilities of node `i`'s provider kind (or of the own widget that replaces a built-in,
+/// OW1a2: `frame`, `collapsing-header`), `None` for a built-in's egui wrapper.
 fn provider_caps(s: &Scene, i: usize) -> Option<crate::provider::Caps> {
-    crate::kinds::KindRegistry::global().provider(s.core[i].kind as usize).map(|p| p.entry.caps)
+    crate::kinds::KindRegistry::global().provider(s.core[i].kind as usize).map(|p| p.entry.caps).or_else(|| match &s.payload[i] {
+        Payload::Builtin(W::Ext(x)) => Some(x.entry().caps),
+        _ => None,
+    })
 }
 
 /// What [`Widget::layout`](crate::provider::Widget::layout) gets (SG4, `Caps::CUSTOM_LAYOUT`,
@@ -1018,6 +1022,47 @@ impl LayoutCx<'_> {
     pub fn default_layout(&mut self, inputs: LayoutInput) -> LayoutOutput {
         let id = tid(self.node);
         self.with_tree(|t| compute_flexbox_layout(t, id, inputs))
+    }
+
+    /// OW1a2: [`Self::default_layout`] with `add` (left, right, top, bottom, in points) added to
+    /// the node's padding: room for chrome the widget paints itself (a frame's caption and
+    /// border, a collapsing header's row and indent).
+    pub fn padded_layout(&mut self, inputs: LayoutInput, add: [f32; 4]) -> LayoutOutput {
+        let i = self.node.index() as usize;
+        let saved = self.s.layout[i].style.padding;
+        let grow = |p: LengthPercentage, a: f32| match p.into_raw().tag() {
+            taffy::style::CompactLength::LENGTH_TAG => LengthPercentage::length(p.into_raw().value() + a),
+            _ => p,
+        };
+        let st = &mut self.s.layout[i].style;
+        st.padding = taffy::Rect { left: grow(saved.left, add[0]), right: grow(saved.right, add[1]), top: grow(saved.top, add[2]), bottom: grow(saved.bottom, add[3]) };
+        let out = self.default_layout(inputs);
+        self.s.layout[i].style.padding = saved;
+        out
+    }
+
+    /// OW1a2: the node as a leaf of `size` (its known dimensions win), with every child given the
+    /// hidden layout: a closed collapsing header.
+    pub fn collapsed(&mut self, inputs: LayoutInput, size: egui::Vec2) -> LayoutOutput {
+        let i = self.node.index() as usize;
+        self.leaf_layouts += 1;
+        let out = compute_leaf_layout(inputs, &self.s.layout[i].style, |_, _| 0.0, |known, _| Size { width: known.width.unwrap_or(size.x.ceil()), height: known.height.unwrap_or(size.y.ceil()) });
+        if inputs.run_mode == RunMode::PerformLayout {
+            for k in 0..self.s.children[i].len() {
+                let c = tid(self.s.children[i][k]);
+                self.with_tree(|t| compute_hidden_layout(t, c));
+            }
+        }
+        out
+    }
+
+    /// OW1a2: a [`MeasureCx`](crate::provider::MeasureCx) for this node (its computed style and
+    /// part styles), to size chrome the widget paints.
+    pub fn with_measure<R>(&self, f: impl FnOnce(&crate::provider::MeasureCx<'_>) -> R) -> R {
+        let css = self.s.style.computed(self.node).cloned();
+        let parts = self.s.style.part_styles(self.node);
+        let cx = crate::provider::MeasureCx { ctx: &self.m.ctx, style: &self.m.style, css: css.as_deref(), parts: &parts };
+        f(&cx)
     }
 }
 
