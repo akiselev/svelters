@@ -22,13 +22,7 @@ use svelters_abi::Value;
 pub const ALPHA: &[&str] = &["opaque", "blend", "blend-or-additive"];
 
 static DATE_PROPS: &[PropDef] = &[
-    input(
-        "value",
-        P::Value,
-        Ty::Str,
-        Def::Str(""),
-        "The date, ISO 8601 (`2026-10-22`); `\"\"` for none (the button shows today). Picking a day and pressing Save changes it.",
-    ),
+    input("value", P::Value, Ty::Str, Def::Str(""), "The date, ISO 8601 (`2026-10-22`); `\"\"` for none (the button shows today). Picking a day and pressing Save changes it."),
     prop("format", P::Format, Ty::Str, Def::Str("%Y-%m-%d"), "How the button shows the date (`strftime`, jiff's `civil::Date::strftime`)."),
     prop("calendar-week", P::CalendarWeek, Ty::Bool, Def::Bool(true), "Shows ISO week numbers in the calendar."),
 ];
@@ -112,9 +106,7 @@ pub fn parse_date(s: &str) -> Result<Option<jiff::civil::Date>, String> {
 
 /// Parses a CSS hex colour into unmultiplied sRGBA.
 pub fn parse_color(s: &str) -> Result<[u8; 4], String> {
-    egui::Color32::from_hex(s.trim())
-        .map(|c| c.to_srgba_unmultiplied())
-        .map_err(|e| format!("`{s}` is not a hex colour (#rrggbb, #rrggbbaa, #rgb, #rgba): {e:?}"))
+    egui::Color32::from_hex(s.trim()).map(|c| c.to_srgba_unmultiplied()).map_err(|e| format!("`{s}` is not a hex colour (#rrggbb, #rrggbbaa, #rgb, #rgba): {e:?}"))
 }
 
 /// Unmultiplied sRGBA as CSS hex: `#rrggbb` when opaque, else `#rrggbbaa`.
@@ -202,9 +194,9 @@ impl Picker {
         parse_date(value).ok().flatten().unwrap_or_else(|| jiff::Zoned::now().date())
     }
 
-    /// The button's text (as `DatePickerButton` draws it, with its calendar icon).
+    /// The button's text (as `DatePickerButton` draws it; no calendar icon: egui's default fonts have no emoji).
     fn date_text(value: &str, format: &str) -> String {
-        format!("{} 📆", Picker::shown_date(value).strftime(format))
+        Picker::shown_date(value).strftime(format).to_string()
     }
 
     /// Paints the widget in `ui` (the node's rect); a user edit updates the payload, which
@@ -213,7 +205,9 @@ impl Picker {
         match self {
             Picker::Date { value, format, calendar_week } => {
                 let mut date = Picker::shown_date(value);
-                let resp = ui.add(egui_extras::DatePickerButton::new(&mut date).id_salt("date-picker").format(format.clone()).calendar_week(*calendar_week));
+                let resp = ui.add(
+                    egui_extras::DatePickerButton::new(&mut date).id_salt("date-picker").show_icon(false).combo_boxes(false).format(format.clone()).calendar_week(*calendar_week),
+                );
                 if resp.changed() {
                     *value = date.to_string();
                 }

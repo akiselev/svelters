@@ -31,7 +31,7 @@ fn date_picker_saves_a_day_through_its_popup() {
     assert_eq!(rig.get(d, "value"), s("2026-10-22"));
     assert!(rig.drawn(d).width() > 40.0, "measured: {:?}", rig.drawn(d));
 
-    rig.harness.get_by_label("2026-10-22 📆").click();
+    rig.harness.get_by_label("2026-10-22").click();
     rig.run();
     rig.harness.get_by_label(">").click(); // one day on
     rig.run();
@@ -47,7 +47,7 @@ fn date_picker_saves_a_day_through_its_popup() {
     rig.set(d, "format", s("%d.%m.%Y"));
     rig.set(d, "value", s("2027-01-05"));
     rig.run();
-    assert!(rig.harness.query_by_label("05.01.2027 📆").is_some());
+    assert!(rig.harness.query_by_label("05.01.2027").is_some());
     assert_eq!(rig.get(d, "value"), s("2027-01-05"));
     rig.set(d, "value", Value::Null);
     assert_eq!(rig.get(d, "value"), s(""));
@@ -58,6 +58,8 @@ fn date_picker_saves_a_day_through_its_popup() {
 fn color_picker_normalizes_hex_and_edits_through_its_popup() {
     let mut rig = Rig::new();
     let (_, b) = rig.window();
+    // egui's colour popup has a "📋" button and 0.37's default fonts have no emoji (tofu in apps)
+    rig.harness.ctx.set_missing_glyph_policy(egui::MissingGlyphPolicy::Tofu);
     let c = rig.leaf(b, "color-picker", &[("value", s("#F00"))]);
     rig.observe(c, "value", true);
     rig.listen(c, "changed");
@@ -112,11 +114,7 @@ fn drag_and_drop_between_two_nodes() {
     let src = rig.leaf(b, "button", &[("text", s("Part")), ("drag-type", s("cad/part")), ("drag-data", s(r#"{"id":7}"#))]);
     let other = rig.leaf(b, "label", &[("text", s("Notes")), ("drop-types", s("text/plain"))]);
     let dst = rig.leaf(b, "label", &[("text", s("Bin")), ("drop-types", s("cad/*"))]);
-    for (h, names) in [
-        (src, &["drag-begin", "drag-end", "clicked"][..]),
-        (dst, &["drag-enter", "drag-leave", "drop"][..]),
-        (other, &["drag-enter", "drag-leave", "drop"][..]),
-    ] {
+    for (h, names) in [(src, &["drag-begin", "drag-end", "clicked"][..]), (dst, &["drag-enter", "drag-leave", "drop"][..]), (other, &["drag-enter", "drag-leave", "drop"][..])] {
         for n in names {
             rig.listen(h, n);
         }
@@ -292,18 +290,20 @@ fn gallery_pages_drive_pickers_dnd_and_dialogs() {
     let fake = Rc::new(Fake::default());
     svelters_egui::dialogs::set_dialog_backend(Some(fake.clone()));
     let mut app = svelters_egui::harness::TestApp::load(bundle).unwrap();
+    // egui's colour popup has a "📋" button and 0.37's default fonts have no emoji (tofu in apps)
+    app.harness.ctx.set_missing_glyph_policy(egui::MissingGlyphPolicy::Tofu);
     app.run();
     let has = |app: &svelters_egui::harness::TestApp, l: &str| app.harness.query_by_label(l).is_some();
 
     // pickers: bind:value shows in the label next to each
     assert!(has(&app, "#3366cc") && has(&app, "#ff000080"));
-    app.harness.get_by_label("2026-10-22 📆").click();
+    app.harness.get_by_label("Pick the due date").click();
     app.run();
     app.harness.get_by_label(">").click();
     app.run();
     app.harness.get_by_label("Save").click();
     app.run();
-    assert!(has(&app, "2026-10-23"), "bind:value on the date picker");
+    assert!(has(&app, "Due: 2026-10-23"), "bind:value on the date picker");
 
     // drag and drop
     app.harness.get_by_label("Drag and drop").click();

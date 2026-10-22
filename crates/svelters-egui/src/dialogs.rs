@@ -156,34 +156,34 @@ async fn one(mode: FileMode, options: Option<FileDialogOptions>) -> Result<Optio
 
 /// Shows an open dialog for one file; resolves with its path, or `null` when cancelled.
 #[svelters::export(module = "egui")]
-pub async fn open_file(options: Option<FileDialogOptions>) -> Result<Option<String>, DialogError> {
-    one(FileMode::Open, options).await
+pub async fn open_file(opts: Option<FileDialogOptions>) -> Result<Option<String>, DialogError> {
+    one(FileMode::Open, opts).await
 }
 
 /// Shows an open dialog for several files; resolves with their paths, or `null` when cancelled.
 #[svelters::export(module = "egui")]
-pub async fn open_files(options: Option<FileDialogOptions>) -> Result<Option<Vec<String>>, DialogError> {
-    let paths = backend()?.files(FileMode::OpenMany, options.unwrap_or_default()).await;
+pub async fn open_files(opts: Option<FileDialogOptions>) -> Result<Option<Vec<String>>, DialogError> {
+    let paths = backend()?.files(FileMode::OpenMany, opts.unwrap_or_default()).await;
     Ok(paths.map(|v| v.into_iter().map(path_string).collect()))
 }
 
 /// Shows a save dialog; resolves with the chosen path, or `null` when cancelled.
 #[svelters::export(module = "egui")]
-pub async fn save_file(options: Option<FileDialogOptions>) -> Result<Option<String>, DialogError> {
-    one(FileMode::Save, options).await
+pub async fn save_file(opts: Option<FileDialogOptions>) -> Result<Option<String>, DialogError> {
+    one(FileMode::Save, opts).await
 }
 
 /// Shows a folder dialog; resolves with the folder's path, or `null` when cancelled.
 #[svelters::export(module = "egui")]
-pub async fn pick_folder(options: Option<FileDialogOptions>) -> Result<Option<String>, DialogError> {
-    one(FileMode::Folder, options).await
+pub async fn pick_folder(opts: Option<FileDialogOptions>) -> Result<Option<String>, DialogError> {
+    one(FileMode::Folder, opts).await
 }
 
 /// Shows a native message box; resolves with the button clicked: `ok`, `cancel`, `yes`, `no`, or
 /// the caption of a `labels` button.
 #[svelters::export(module = "egui")]
-pub async fn message_box(options: MessageBoxOptions) -> Result<String, DialogError> {
-    Ok(backend()?.message(options).await)
+pub async fn message_box(opts: MessageBoxOptions) -> Result<String, DialogError> {
+    Ok(backend()?.message(opts).await)
 }
 
 /// Keeps this module's export registrations linked into every binary that creates a backend.

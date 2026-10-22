@@ -24,8 +24,10 @@
 //! claim the pointer during the walk; the claim of the previous pass decides, so the target is
 //! one frame late, the same as egui's style feedback (a drag repaints every frame).
 //!
-//! The walk calls [`node`] once per node with any of the props (`walk.rs`: for a leaf after its
-//! widget, for a container before its children so they stay on top of the source's drag area).
+//! The walk calls [`node`] for each node with any of the props (`walk.rs`): for a leaf, the source
+//! half before its widget (the drag area lies under the widget, which keeps its clicks, and its own
+//! drags if it senses drags: a draggable slider still slides) and the target half after it; for a
+//! container, both before its children (they stay on top).
 //!
 //! Writer lane: WIDGETS (WG4b).
 
@@ -114,9 +116,10 @@ impl DragPayload {
 
 /// Whether `types` (a `drop-types` value) accepts a drag of type `ty`.
 pub fn accepts(types: &str, ty: &str) -> bool {
-    types.split(|c: char| c.is_whitespace() || c == ',').filter(|t| !t.is_empty()).any(|t| {
-        t == "*" || t == ty || t.strip_suffix('*').is_some_and(|prefix| prefix.ends_with('/') && ty.starts_with(prefix))
-    })
+    types
+        .split(|c: char| c.is_whitespace() || c == ',')
+        .filter(|t| !t.is_empty())
+        .any(|t| t == "*" || t == ty || t.strip_suffix('*').is_some_and(|prefix| prefix.ends_with('/') && ty.starts_with(prefix)))
 }
 
 /// The targets' claims on the pointer, per viewport: this pass's (the last accepting target
@@ -135,10 +138,11 @@ fn claims_id(ctx: &egui::Context) -> Id {
 /// The claims rolled over to this pass.
 fn claims(ctx: &egui::Context) -> Claims {
     let pass = ctx.cumulative_pass_nr();
-    let mut c: Claims = ctx.data(|d| d.get_temp(claims_id(ctx))).unwrap_or_default();
+    let key = claims_id(ctx);
+    let mut c: Claims = ctx.data(|d| d.get_temp(key)).unwrap_or_default();
     if c.pass != pass {
         c = Claims { pass, cur: None, prev: if c.pass + 1 == pass { c.cur } else { None } };
-        ctx.data_mut(|d| d.insert_temp(claims_id(ctx), c));
+        ctx.data_mut(|d| d.insert_temp(key, c));
     }
     c
 }
@@ -146,7 +150,8 @@ fn claims(ctx: &egui::Context) -> Claims {
 fn claim(ctx: &egui::Context, id: Id) {
     let mut c = claims(ctx);
     c.cur = Some(id);
-    ctx.data_mut(|d| d.insert_temp(claims_id(ctx), c));
+    let key = claims_id(ctx);
+    ctx.data_mut(|d| d.insert_temp(key, c));
 }
 
 /// The source's drag in flight: the payload's `dropped` flag, and whether it ended last pass.
@@ -156,10 +161,21 @@ struct InFlight {
     ended: bool,
 }
 
+/// Which half of [`node`] to run. A leaf's drag area goes under its widget (registered before it,
+/// so the widget keeps its clicks, and its own drags when it senses them); its target half after.
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+pub(crate) enum Part {
+    Source,
+    Target,
+    Both,
+}
+
 /// Drag and drop for node `i` drawn at `r` (screen) in `ui`. Does nothing for nodes without the
 /// props.
-pub(crate) fn node(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut Vec<Out>) {
-    let Some(d) = arena.common(i).dnd.as_deref() else { return };
+pub(crate) fn node(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut Vec<Out>, part: Part) {
+    let Some(d) = arena.common(i).dnd.as_deref() else {
+        return;
+    };
     let (drag_type, drag_data, drop_types) = (d.drag_type.clone(), d.drag_data.clone(), d.drop_types.clone());
     let id = arena.core[i].egui_id;
     let kind = arena.core[i].kind as usize;
@@ -171,7 +187,7 @@ pub(crate) fn node(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut 
         }
     };
     let ctx = ui.ctx().clone();
-    if !drag_type.is_empty() {
+    if part != Part::Target && !drag_type.is_empty() {
         let key = id.with("dnd-flight");
         let flight: Option<InFlight> = ctx.data(|m| m.get_temp(key));
         // the pass after the release: every target has run, so `dropped` is final
@@ -202,7 +218,7 @@ pub(crate) fn node(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut 
             ctx.request_repaint();
         }
     }
-    if !drop_types.is_empty() {
+    if part != Part::Source && !drop_types.is_empty() {
         let key = id.with("dnd-in");
         let was_in: bool = ctx.data(|m| m.get_temp(key)).unwrap_or(false);
         let payload = DragAndDrop::payload::<DragPayload>(&ctx).filter(|p| p.source != Some(id) && accepts(&drop_types, &p.ty));
@@ -236,7 +252,9 @@ pub(crate) fn node(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut 
 
 /// The label that follows the pointer during a drag.
 fn ghost(ui: &Ui, id: Id, text: &str) {
-    let Some(pos) = ui.ctx().pointer_interact_pos() else { return };
+    let Some(pos) = ui.ctx().pointer_interact_pos() else {
+        return;
+    };
     let painter = ui.ctx().layer_painter(LayerId::new(Order::Tooltip, id.with("dnd-ghost")));
     let v = ui.visuals();
     let font = egui::TextStyle::Body.resolve(ui.style());
