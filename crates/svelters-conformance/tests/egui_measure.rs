@@ -20,6 +20,12 @@
 //! a dead key composes with the next letter or gives the Compose table's accent on Space; a key
 //! that does not compose cancels it and goes through alone [model, not measured on winit].
 //! Ctrl+Shift+U reaches egui as a plain key (the hex entry is a GTK and IBus feature).
+//!
+//! WG3w: `egui_text_edit_against_windows_goldens` runs pins 1-3 and 7 as egui-winit delivers input on Windows
+//! (`OperatingSystem::Windows`, egui's own behaviour; Ctrl sets `ctrl` and `command`, as on Linux) against the
+//! Windows goldens (`conformance/golden/windows/*.json`, Win32 `EDIT` and WinUI `TextBox`) and writes
+//! `target/na/windows/egui-gap.md`. A measurement: it fails only when the harness breaks. Pins 4-6 are left out
+//! there: this driver models egui-winit's Linux clipboard and dead-key paths, not Windows'.
 
 use egui::OutputCommand;
 use egui::text::{CCursor, CCursorRange};
@@ -113,14 +119,14 @@ fn compose(dead: &str, c: char) -> Option<char> {
 }
 
 impl Egui {
-    fn new(native: Native) -> Egui {
+    fn new(native: Native, os: egui::os::OperatingSystem) -> Egui {
         let backend = EguiBackend::new();
         let vt: &'static BackendVtable = Box::leak(Box::new(backend.vtable()));
         let hv: &'static HostVtable = Box::leak(Box::new(HostVtable::new(Rec)));
         vt.backend_ref().start(hv).expect("start");
         let harness = Harness::builder()
             .with_size(egui::vec2(700.0, 240.0))
-            .with_os(egui::os::OperatingSystem::Nix)
+            .with_os(os)
             .with_step_dt(STEP)
             .build_ui_state(|ui, b: &mut EguiBackend| b.ui(ui), backend.clone());
         // egui's bundled fonts have no CJK glyphs; kittest panics on a missing glyph, an app draws
@@ -509,7 +515,7 @@ fn run(native: Native, pins: &[Pin], keys: &Keys) -> Vec<svelters_conformance::g
     let mut traces = Vec::new();
     for pin in pins {
         // a fresh context per pin, as the native captures use a fresh window
-        let mut d = Egui::new(native);
+        let mut d = Egui::new(native, egui::os::OperatingSystem::Nix);
         let (r, t) = run_pin(&mut d, pin, keys).unwrap_or_else(|e| panic!("{e}"));
         results.push(r);
         traces.push((pin.id.clone(), t));
@@ -596,4 +602,80 @@ fn egui_text_edit_against_native_goldens() {
         }
     }
     assert!(below.is_empty(), "FX1 ratchet: {below:#?}");
+}
+
+/// WG3w: the pins on egui `TextEdit` as egui-winit feeds it on Windows, against the Windows goldens.
+#[test]
+fn egui_text_edit_against_windows_goldens() {
+    let golds = goldens("windows").unwrap();
+    if golds.is_empty() {
+        eprintln!("no Windows goldens (conformance/golden/windows/): nothing to measure");
+        return;
+    }
+    let keys = Keys::load("windows").unwrap();
+    // pins 1-3 and 7: the driver models egui-winit's Linux clipboard and dead-key paths (pins 4-6)
+    let mut pins = load_pins().unwrap();
+    pins.retain(|p| matches!(p.pin, 1 | 2 | 3 | 7));
+    let mut results = Vec::new();
+    let mut traces = Vec::new();
+    for pin in &pins {
+        let mut d = Egui::new(Native::Egui, egui::os::OperatingSystem::Windows);
+        let (r, t) = run_pin(&mut d, pin, &keys).unwrap_or_else(|e| panic!("{e}"));
+        results.push(r);
+        traces.push((pin.id.clone(), t));
+    }
+    let cap = Capture {
+        platform: "windows".into(),
+        toolkit: "egui".into(),
+        version: "0.37.0".into(),
+        injector: "kittest".into(),
+        settings: vec![],
+        observe: vec![],
+        pins: results.clone(),
+    };
+    finish(&cap, &traces).unwrap();
+    let mut md = String::from("| Pin | Behaviour | Checkpoints |");
+    for g in &golds {
+        let _ = write!(md, " = {} {} |", g.toolkit, g.version);
+    }
+    md.push_str(" = either |\n|---|---|---|");
+    md.push_str(&"---|".repeat(golds.len() + 1));
+    md.push('\n');
+    let mut totals = vec![0usize; golds.len() + 2];
+    let mut details = String::new();
+    for r in &results {
+        let gaps: Vec<PinGap> = golds.iter().map(|g| g.pin(&r.id).map(|p| compare(&r.checkpoints, &p.checkpoints)).unwrap_or_default()).collect();
+        let either = (0..r.checkpoints.len())
+            .filter(|&i| golds.iter().any(|g| g.pin(&r.id).and_then(|p| p.checkpoints.get(i)).is_some_and(|c| c.1 == r.checkpoints[i].1)))
+            .count();
+        let _ = write!(md, "| {} | {} | {} |", r.pin, r.id, r.checkpoints.len());
+        totals[0] += r.checkpoints.len();
+        for (k, g) in gaps.iter().enumerate() {
+            totals[k + 1] += g.equal;
+            let _ = write!(
+                md,
+                " {} |",
+                match g.diffs.first() {
+                    Some((i, after, ..)) => format!("{} (first: #{i} `{after}`)", g.equal),
+                    None => g.equal.to_string(),
+                }
+            );
+        }
+        totals[golds.len() + 1] += either;
+        let _ = writeln!(md, " {either} |");
+        for (g, gap) in golds.iter().zip(&gaps) {
+            for (i, after, ours, theirs) in &gap.diffs {
+                let _ = writeln!(details, "- {} #{i} after `{after}` vs {} {}:\n  - egui: `{ours}`\n  - native: `{theirs}`", r.id, g.toolkit, g.version);
+            }
+        }
+    }
+    let _ = write!(md, "| | **total** |");
+    for t in &totals {
+        let _ = write!(md, " **{t}** |");
+    }
+    md.push('\n');
+    let report = format!("{md}\n## Differing checkpoints\n\n{details}");
+    let out = svelters_conformance::golden::out_dir("windows", "egui-gap.md");
+    std::fs::write(&out, &report).unwrap();
+    eprintln!("{md}\nWG3w egui gap report: {}", out.display());
 }

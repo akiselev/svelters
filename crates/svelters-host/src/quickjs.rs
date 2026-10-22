@@ -634,6 +634,8 @@ impl JsEngine for QjsEngine {
 }
 
 impl Drop for QjsEngine {
+    // ZU3: host teardown: waits up to TRANSFER_GRACE for workers to hand back buffers, after the last frame.
+    #[allow(clippy::disallowed_methods)]
     fn drop(&mut self) {
         // E2: a worker may still use a transferred buffer of this runtime (its call was cancelled, but
         // it has not looked yet). Wait a little; past that, leak the runtime rather than free memory
