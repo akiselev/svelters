@@ -58,9 +58,13 @@ fn placeholder(pc: &mut paint::PaintCx<'_>, r: Rect, side: f32, color: egui::Col
 fn paint_source(pc: &mut paint::PaintCx<'_>, ctx: &egui::Context, source: &str, fit: &str, r: Rect, tint: egui::Color32) -> bool {
     use egui::load::{SizeHint, TexturePoll};
     crate::elements::images::install(ctx);
-    match ctx.try_load_texture(&crate::elements::images::uri_of(source), egui::TextureOptions::default(), SizeHint::default()) {
+    let Some(size) = crate::elements::media::image_size(ctx, source) else { return false };
+    let (dest, uv) = crate::elements::media::fit_rect(fit, r, size);
+    // ZM1: an SVG renders at the physical size it is drawn at (zoom, HiDPI); a PNG ignores it
+    let ppp = ctx.pixels_per_point();
+    let hint = SizeHint::Size { width: (dest.width() * ppp).round().max(1.0) as u32, height: (dest.height() * ppp).round().max(1.0) as u32, maintain_aspect_ratio: true };
+    match ctx.try_load_texture(&crate::elements::images::uri_of(source), egui::TextureOptions::default(), hint) {
         Ok(TexturePoll::Ready { texture }) => {
-            let (dest, uv) = crate::elements::media::fit_rect(fit, r, texture.size);
             pc.painter.with_clip_rect(pc.painter.clip_rect().intersect(r)).image(texture.id, dest, uv, tint);
             pc.record(TraceKind::Image, dest, tint, Stroke::NONE, 0.0);
             true
