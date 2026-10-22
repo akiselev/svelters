@@ -21,6 +21,7 @@
 // code names `::svelters_egui`.
 extern crate self as svelters_egui;
 
+pub mod assets;
 pub mod backend;
 pub mod dialogs;
 pub mod embed;
@@ -60,6 +61,7 @@ mod events;
 mod frame;
 mod ids;
 mod leaf;
+pub mod numeric;
 // WG2a: menus and overlays (plans/milestones/WG2a-menus-popups.md)
 mod menus;
 mod overlays;

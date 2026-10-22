@@ -180,7 +180,7 @@ impl Core {
             self.cb_release(id);
         }
         // The Promise reactions run at the next checkpoint.
-        self.backend.wake();
+        self.wake();
     }
 
     /// Drops the JS functions of released callbacks. Called at checkpoints, outside any JS entry.
@@ -254,7 +254,7 @@ impl Core {
         drop(guard);
         if !nested {
             // Promise reactions queued by the callback run at a checkpoint the backend loop schedules.
-            self.backend.wake();
+            self.wake();
         }
         match res {
             Ok(v) => Ok(v),

@@ -401,10 +401,15 @@ impl Metrics {
             // egui's `Separator::default()` spacing
             W::Separator { vertical: false } => vec2(0.0, 6.0),
             W::Separator { vertical: true } => vec2(6.0, 0.0),
-            W::Icon { name, glyph, family, size, weight, frame, .. } => {
-                let t = match crate::fonts::icon_look(&self.ctx, &self.style, family, name, glyph, *weight, *size) {
+            W::Icon { name, glyph, family, size, weight, frame, source, .. } => {
+                let t = if !source.is_empty() {
+                    // AS1: an image icon is a square of `size` (else the body size)
+                    Vec2::splat(size.map_or_else(|| egui::TextStyle::Body.resolve(&self.style).size, |s| s as f32))
+                } else {
+                    match crate::fonts::icon_look(&self.ctx, &self.style, family, name, glyph, *weight, *size) {
                     crate::fonts::IconLook::Glyph(font, text) => self.text_size_in(&text, font, None),
                     crate::fonts::IconLook::Placeholder(side) => Vec2::splat(side),
+                    }
                 };
                 if *frame { vec2(t.x + 2.0 * sp.button_padding.x, (t.y + 2.0 * sp.button_padding.y).max(interact.y)) } else { t }
             }
@@ -590,16 +595,18 @@ fn vlist_layout(tree: &mut Tree<'_>, id: NodeId, inputs: LayoutInput) -> LayoutO
     let (w, h) = (out.size.width, out.size.height);
     let (placed, fixed, min_h) = {
         let W::VirtualList(v) = tree.s.w(i) else { unreachable!("a virtual-list") };
-        (v.placed(tree.s), virtuallist::uniform_height(v), v.heights().estimate().min(v.row_height_points()))
+        let placed: Vec<_> = v.placed(tree.s).into_iter().map(|(n, p)| (n, p, v.row_inset(p).min(w))).collect();
+        (placed, virtuallist::uniform_height(v), v.heights().estimate().min(v.row_height_points()))
     };
     for k in 0..tree.s.children[i].len() {
         let c = tree.s.children[i][k];
-        if !placed.iter().any(|&(n, _)| n == c) {
+        if !placed.iter().any(|&(n, _, _)| n == c) {
             compute_hidden_layout(tree, tid(c));
         }
     }
     let mut measured = Vec::with_capacity(placed.len());
-    for (c, pos) in placed {
+    for (c, pos, inset) in placed {
+        let w = w - inset;
         let r = tree.compute_child_layout(
             tid(c),
             LayoutInput {

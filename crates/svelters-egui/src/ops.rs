@@ -192,7 +192,7 @@ impl Backend for EguiBackend {
     fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value> {
         let k = self.kind_of(h)?;
         let def = kinds::method_def(k, method).ok_or_else(|| format!("unknown method id {method}"))?;
-        if kinds::kind(k).tag == Some("virtual-list") {
+        if matches!(kinds::kind(k).tag, Some("virtual-list" | "tree-view")) {
             return Ok(self.vlist_call(h, def.name, args)?);
         }
         // WG4a: the views' methods take arguments (`crate::views::call`)
