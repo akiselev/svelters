@@ -322,6 +322,40 @@ fn perf_step() {
     assert_eq!(hooks::app_stylesheet(), before, "class changes never touch the application sheet");
 }
 
+/// TR1 (ABI v2.8): transform / clip / inert ops and `bounds`.
+fn visual_step_1() {
+    let l = hd("label");
+    style(SVL_STYLE_OPACITY, l, Some("0.5"));
+    style(SVL_STYLE_TRANSFORM, l, Some("10 -4 0.5 0.5 0.5 0.5"));
+    style(SVL_STYLE_CLIP, l, Some("-1 7"));
+    style(SVL_STYLE_INERT, l, Some("1"));
+    let v = hooks::visual(l).unwrap();
+    assert_eq!(&v[..4], &[10.0, -4.0, 0.5, 0.5], "transform: {v:?}");
+    assert_eq!(v[5], 7.0, "clip caps the maximum height: {v:?}");
+    assert_eq!(v[6], 1.0, "inert: mouse-transparent");
+    assert!((hooks::opacity(l) - 0.5).abs() < 1e-9, "opacity and transform share the effect");
+    let bounds = be().bounds.expect("the Qt backend implements bounds");
+    let mut r = [0.0f64; 4];
+    assert_eq!(unsafe { bounds(be().self_, hd("button"), r.as_mut_ptr()) }, 0, "{}", err());
+    assert!(r[2] > 0.0 && r[3] > 0.0, "a laid-out button has a size: {r:?}");
+}
+
+fn visual_step_2() {
+    let l = hd("label");
+    let mut r = [0.0f64; 4];
+    let bounds = be().bounds.unwrap();
+    assert_eq!(unsafe { bounds(be().self_, l, r.as_mut_ptr()) }, 0, "{}", err());
+    assert!(r[3] <= 7.0, "the clipped label takes at most 7 px: {r:?}");
+    for op in [SVL_STYLE_TRANSFORM, SVL_STYLE_CLIP, SVL_STYLE_INERT, SVL_STYLE_OPACITY] {
+        style(op, l, None);
+    }
+    let v = hooks::visual(l).unwrap();
+    assert_eq!(&v[..4], &[0.0, 0.0, 1.0, 1.0], "identity again: {v:?}");
+    assert!(v[5] > 1000.0, "the maximum height is restored: {v:?}");
+    assert_eq!(v[6], 0.0);
+    assert_eq!(hooks::opacity(l), 1.0, "no effect left at rest");
+}
+
 fn main() {
     counter_qt::run_as_test("a_thousand_class_toggles_stay_cheap", || scenario(vec![perf_step]));
     counter_qt::run_as_test("target_is_qss", || scenario(vec![target]));
@@ -332,6 +366,7 @@ fn main() {
     counter_qt::run_as_test("inline_styles_are_per_widget", || scenario(vec![inline_step_1, inline_step_2, inline_step_3]));
     counter_qt::run_as_test("inline_beats_the_application_sheet", || scenario(vec![inline_beats_sheet_1, inline_beats_sheet_2]));
     counter_qt::run_as_test("opacity_uses_a_graphics_effect", || scenario(vec![opacity_step]));
+    counter_qt::run_as_test("visual_channels_and_bounds", || scenario(vec![visual_step_1, visual_step_2]));
     counter_qt::run_as_test("sheets_concatenate_replace_and_clear", || scenario(vec![sheets_step_1, sheets_step_2, sheets_step_3, sheets_step_4]));
     counter_qt::run_as_test("scheme_sets_the_palette", || scenario(vec![scheme_step_1, scheme_step_2, scheme_step_3]));
 }

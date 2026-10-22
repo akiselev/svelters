@@ -36,6 +36,7 @@ import {
   replaceVars,
   selectorMatches,
 } from '@svelters/style/runtime';
+import { animatesOpacity } from './motion.js';
 
 const OP = { TARGET: 0, CLASSES: 1, NAME: 2, INLINE: 3, OPACITY: 4, SHEET: 5, SCHEME: 6, DECLS: 7 };
 /** `SVL_STYLE_TARGET` answers: 1 GTK CSS, 2 QSS, 3 the decl dialect of AppKit (a toolkit per code). */
@@ -306,7 +307,12 @@ export function applyStyle(el) {
   const opacity = sc.opacity0 ?? '';
   if (opacity !== sc.opacity) {
     sc.opacity = opacity;
-    nativeOf(hs, OP.OPACITY, el.h, opacity);
+    // TR1: a running transition owns the opacity channel; this becomes its base value (written
+    // back when the transition ends, src/motion.js `commit`)
+    if (!animatesOpacity(el)) {
+      nativeOf(hs, OP.OPACITY, el.h, opacity);
+      if (el.vis) el.vis.sent.opacity = opacity === '' ? null : opacity;
+    }
   }
   if (state.rules.length || sc.inlineSetters?.length || sc.setters) applySetters(el, sc, list, name);
 }

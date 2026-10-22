@@ -18,7 +18,7 @@ use std::sync::{Arc, Condvar, Mutex, MutexGuard};
 use std::time::{Duration, Instant};
 use svelters_abi::{
     Backend, BackendVtable, HostRef, MemberDesc, NameKind, ObserveError, SVL_M_OBSERVABLE, SVL_BOOL, SVL_F64, SVL_GONE_PARENT, SVL_I64, SVL_LIFE_OWNED,
-    SVL_LIFE_TOPLEVEL, SVL_STYLE_CLASSES, SVL_STYLE_INLINE, SVL_STYLE_NAME, SVL_STYLE_OPACITY, SVL_STYLE_SCHEME, SVL_STYLE_SEP, SVL_STYLE_SHEET, SVL_STYLE_TARGET, SVL_STYLE_TARGET_CSS, SlotDesc, Value, Waker, gone_from_name, gone_name, svl_handle, svl_handle_info, svl_id,
+    SVL_LIFE_TOPLEVEL, SVL_STYLE_CLASSES, SVL_STYLE_INLINE, SVL_STYLE_NAME, SVL_STYLE_OPACITY, SVL_STYLE_SCHEME, SVL_STYLE_TRANSFORM, SVL_STYLE_CLIP, SVL_STYLE_INERT, SVL_STYLE_SEP, SVL_STYLE_SHEET, SVL_STYLE_TARGET, SVL_STYLE_TARGET_CSS, SlotDesc, Value, Waker, gone_from_name, gone_name, svl_handle, svl_handle_info, svl_id,
 };
 
 /// One scripted interaction step.
@@ -785,12 +785,15 @@ impl Backend for LogBackend {
         };
         let line = match op {
             SVL_STYLE_TARGET => return Ok(self.shared.style_target.load(Ordering::Relaxed)),
-            SVL_STYLE_CLASSES | SVL_STYLE_NAME | SVL_STYLE_INLINE | SVL_STYLE_OPACITY => {
+            SVL_STYLE_CLASSES | SVL_STYLE_NAME | SVL_STYLE_INLINE | SVL_STYLE_OPACITY | SVL_STYLE_TRANSFORM | SVL_STYLE_CLIP | SVL_STYLE_INERT => {
                 self.check_live(h)?;
                 let what = match op {
                     SVL_STYLE_CLASSES => "classes",
                     SVL_STYLE_NAME => "name",
                     SVL_STYLE_INLINE => "inline",
+                    SVL_STYLE_TRANSFORM => "transform",
+                    SVL_STYLE_CLIP => "clip",
+                    SVL_STYLE_INERT => "inert",
                     _ => "opacity",
                 };
                 format!("style #{h} {what} {}", t(text))

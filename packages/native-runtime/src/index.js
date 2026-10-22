@@ -18,6 +18,12 @@ import {
   current_boundary,
   destroy,
   destroyed as effectDestroyed,
+  pause,
+  resume,
+  set_intro,
+  transition as svelteTransition,
+  animation as svelteAnimation,
+  EFFECT_TRANSPARENT,
   flush,
   flushing_sync,
   init_dev,
@@ -33,6 +39,8 @@ import {
 // The X6 styling (classes, widget name, inline style, sheets, tokens) works on any node with `h`,
 // `tag`, `attrs` and `sc`: compiled components drive it through `attr`.
 import { bindElements, bindSetterHooks, forgetStyle, markStyleDirty, styleInserted } from './style.js';
+// TR1: transitions (the runtime node's Element facade, the animation player, the visual channels)
+import { RUNTIME_EVENTS, defineFacade } from './motion.js';
 import { ROW_OUTLETS, TOPLEVELS } from './bindings.generated.js';
 import { parseSetterValue, propOf } from '@svelters/style/runtime';
 // ABI v2.6 property observation (REACTIVITY.md section 7): installs `__svelters_changed` and the
@@ -92,6 +100,11 @@ class Native {
     this.slots = new Map(); // slot name (null = default) -> Slot
     this.attrs = {}; // class / id / style for the X6 styling (`attr`)
     this.sc = null; // what styling has been sent (./style.js)
+  }
+
+  /** Whether the native object exists (not destroyed by us, not dead natively). */
+  alive() {
+    return !this.dead && !this.destroyed;
   }
 
   /** The element tag (the X6 styling's kind table is keyed by tag). */
@@ -201,6 +214,9 @@ const unplaced = (n) => n.nested || n.attached;
 
 function firstNative(item) {
   if (item instanceof Native) return item.np && alive(item) && !unplaced(item) ? item : null;
+  // TR1: an outroing branch keeps its natives where they are, but is never an insertion anchor:
+  // live natives keep their relative order, new ones land after the outroing ones (as in Svelte)
+  if (item.outro) return null;
   for (const x of item.items) {
     const n = firstNative(x);
     if (n) return n;
@@ -600,6 +616,8 @@ const hkey = (signal, flags) => `${signal}\0${flags}`;
 
 // `listen` for flags 0, `listen_ex` (a 4th argument) otherwise.
 function hostListen(node, signal, on, flags) {
+  // TR1: `introstart` etc. are dispatched by the runtime itself (the node's `dispatchEvent`)
+  if (flags === 0 && RUNTIME_EVENTS.has(signal)) return;
   if (flags) node.host.listen(node.h, signal, on, flags);
   else node.host.listen(node.h, signal, on);
 }
@@ -673,6 +691,11 @@ export function bind(node, prop, signal, arg, get, setv) {
     node.last.set(prop, v);
     if (!Object.is(v, $.untrack(get))) setv(v);
   });
+  // the binding updates its state before the element's own handlers of the signal run, as with
+  // Svelte's DOM bindings (direct listeners) and event attributes (delegated, so later): a handler
+  // reads the new bound value
+  const list = node.handlers.get(hkey(signal, 0));
+  list.unshift(list.pop());
 }
 
 /**
@@ -690,6 +713,15 @@ export function track(node, prop, signal, arg) {
 }
 
 const handlersOf = (node, signal, flags) => [...(node.handlers.get(hkey(signal, flags)) ?? [])];
+
+// TR1: the `Element` slice Svelte's transition code uses (src/motion.js)
+defineFacade(Native.prototype, { handlers: (node, type) => handlersOf(node, type, 0) });
+
+/** TR1: whether `node` or a native ancestor is inert (outroing): its events are dropped. */
+function inertNode(node) {
+  for (let n = node; n; n = n.np) if (n.inertFlag) return true;
+  return false;
+}
 
 /**
  * The event object of a sync signal (`__svelters_dispatch_sync`) and of its deferred delivery:
@@ -736,6 +768,7 @@ export class NativeEvent {
 export function dispatch(h, signal, args = [], deferred = false, flags = 0) {
   const node = table().get(h);
   if (!node || !alive(node)) return;
+  if (inertNode(node)) return;
   if (deferred) {
     const ev = new NativeEvent(signal, signal, node, args, true);
     for (const fn of handlersOf(node, signal, flags)) {
@@ -757,6 +790,8 @@ export function dispatch(h, signal, args = [], deferred = false, flags = 0) {
 export function dispatch_sync(h, signal, args = [], flags = 0) {
   const node = table().get(h);
   if (!node || !alive(node)) throw new Error(`dispatchSync: unknown handle ${h}`);
+  // TR1: an outroing subtree is inert: the toolkit gets its default
+  if (inertNode(node)) return null;
   const ev = new NativeEvent(signal, signal, node, args, false);
   for (const fn of handlersOf(node, signal, flags)) {
     const r = fn.call(node, ev, ...args);
@@ -894,22 +929,93 @@ function allNatives(item, out = []) {
   return out;
 }
 
-export function if_block(container, test, consequent, alternate = null) {
-  const r = newRegion(container);
-  const owner = scope;
-  let shown;
-  let current = null;
-  block(() => {
-    const v = !!test();
-    if (v === shown) return;
-    shown = v;
-    const old = current;
-    const fn = v ? consequent : alternate;
-    // The new branch goes after the old one, which is torn down afterwards (same op order as
-    // Svelte's own if block: build, insert, then remove + destroy the old branch).
-    current = fn ? open(r, owner, fn) : null;
-    if (old) close(old);
+// ---- TR1: outros (Svelte's pause_effect / resume_effect on our branches) ----
+
+/** Removes a closed or finished branch region from its container's list. */
+function unlist(b) {
+  const list = b.owner.items;
+  const i = list.indexOf(b);
+  if (i >= 0) list.splice(i, 1);
+}
+
+/**
+ * Takes a branch away: its out transitions play first (Svelte's `pause_effect`: the subtree is
+ * inert, its natives stay in place and are skipped as insertion anchors), then the effect is
+ * destroyed, the natives removed and destroyed, and `done` called. Without transitions this is
+ * synchronous and the same as `close`. An ancestor destroyed meanwhile aborts the outro: the
+ * natives then go with the ancestor's scope and `done` never runs.
+ */
+function leave(b, done) {
+  if (!b.effect || effectDestroyed(b.effect)) {
+    close(b);
+    done?.();
+    return;
+  }
+  b.outro = true;
+  pause(b.effect, () => {
+    b.outro = false;
+    dispose(b.scope, b);
+    unlist(b);
+    done?.();
   });
+}
+
+/** Brings back an outroing branch (its intros reverse the outros from where they are). */
+function back(b) {
+  b.outro = false;
+  resume(b.effect);
+}
+
+const sameKey = (a, b) => a === b || (a !== a && b !== b);
+
+/**
+ * Svelte's `BranchManager` for one region: at most one branch per key on screen, plus the ones
+ * still outroing. `ensure(key, fn)` shows the branch for `key` (resuming it if it is outroing,
+ * else building it after the others) and lets every other branch leave. Keys compare with
+ * SameValueZero (a Map).
+ */
+class Branches {
+  constructor(r, owner) {
+    this.r = r;
+    this.owner = owner;
+    this.on = new Map();
+  }
+
+  ensure(key, fn, ...args) {
+    let cur = this.on.get(key);
+    if (cur) {
+      if (cur.outro) back(cur);
+    } else if (fn) {
+      // the new branch goes after the old ones, which leave afterwards (same op order as
+      // Svelte's own blocks: build, insert, then remove + destroy the old branch)
+      cur = open(this.r, this.owner, fn, newRegion(this.r), ...args);
+      this.on.set(key, cur);
+    }
+    for (const [k, b] of this.on) {
+      if (sameKey(k, key) || b.outro) continue;
+      leave(b, () => {
+        if (this.on.get(k) === b) this.on.delete(k);
+      });
+    }
+  }
+}
+
+/**
+ * `{#if}`. `elseif`: an `{:else if}` block, transparent for local transitions (Svelte's
+ * `EFFECT_TRANSPARENT`), so `{#if a}..{:else if b}<x transition:fade/>` plays when `a`/`b` change.
+ */
+export function if_block(container, test, consequent, alternate = null, elseif = false) {
+  const branches = new Branches(newRegion(container), scope);
+  let shown;
+  block(
+    () => {
+      const v = !!test();
+      if (v === shown) return;
+      shown = v;
+      branches.ensure(v, v ? consequent : alternate);
+    },
+    elseif ? EFFECT_TRANSPARENT : 0,
+  );
 }
 
 /** `each_block` flag: the collection reads a store, so its items are mutable sources (a store
@@ -921,31 +1027,91 @@ export function each_block(container, collection, key, render, fallback = null, 
   const r = newRegion(container);
   const owner = scope;
   let items = [];
+  // TR1: removed items still outroing, by key (keyed) or index: a key that comes back resumes its item
+  const gone = new Map();
   let fb = null;
   block(() => {
     const c = collection();
     const arr = Array.isArray(c) ? [...c] : Array.from(c ?? []);
     const self = active();
     $.untrack(() => {
-      if (arr.length && fb) {
-        close(fb);
-        fb = null;
+      if (arr.length && fb && !fb.outro) {
+        const f = fb;
+        leave(f, () => {
+          if (fb === f) fb = null;
+        });
       }
       const mutable = (flags & EACH_ITEM_MUTABLE) !== 0;
       const item = { render, mutable, collection };
-      items = key ? keyed(r, owner, items, arr, key, item) : indexed(r, owner, items, arr, item);
-      if (key) reorder(self, items.map((b) => b.effect));
-      if (!arr.length && fallback && !fb) fb = open(r, owner, fallback);
+      items = key ? keyed(r, owner, items, arr, key, item, gone) : indexed(r, owner, items, arr, item, gone);
+      if (key) reorder(self, r.items.map((b) => b.effect).filter(Boolean));
+      if (!arr.length && fallback) {
+        if (fb?.outro) back(fb);
+        else if (!fb) fb = open(r, owner, fallback);
+      }
     });
   });
 }
 
-/** Replaces the region's current branch: the new one is built first, then the old one goes. */
-function swap(r, owner, old, fn, ...args) {
-  const b = fn ? open(r, owner, fn, newRegion(r), ...args) : null;
-  if (old) close(old);
-  return b;
+/**
+ * TR1: removed each items leave together (Svelte's `pause_effects`): each is paused (its outros
+ * play) and all of them are destroyed once the last outro of the group ended. `gone` maps their
+ * keys to them meanwhile; a key that comes back is resumed (`revive`) and leaves the group.
+ */
+function leaveGroup(removed, gone) {
+  if (!removed.length) return;
+  const group = { pending: new Set(), done: [] };
+  for (const b of removed) {
+    b.outro = true;
+    b.group = group;
+    gone.set(b.key, b);
+    group.pending.add(b);
+  }
+  for (const b of removed) {
+    if (!b.effect || effectDestroyed(b.effect)) {
+      group.pending.delete(b);
+      group.done.push(b);
+      continue;
+    }
+    pause(
+      b.effect,
+      () => {
+        if (!group.pending.delete(b)) return;
+        group.done.push(b);
+        if (group.pending.size === 0) finishGroup(group, gone);
+      },
+      false,
+    );
+  }
+  if (group.pending.size === 0) finishGroup(group, gone);
 }
+
+/** Destroys the items of a leave group whose outros all ended. */
+function finishGroup(group, gone) {
+  const done = group.done;
+  group.done = [];
+  for (const d of done) {
+    if (gone.get(d.key) === d) gone.delete(d.key);
+    d.outro = false;
+    d.group = null;
+    close(d);
+  }
+}
+
+/** TR1: an outroing each item whose key is back: resumed, out of its leave group. */
+function revive(b, gone) {
+  gone.delete(b.key);
+  const g = b.group;
+  b.group = null;
+  if (g) {
+    g.pending.delete(b);
+    if (g.pending.size === 0 && g.done.length) finishGroup(g, gone);
+  }
+  back(b);
+}
+
+/** Outroing regions and the fallback: kept after the live items (they are never anchors). */
+const floating = (r, live) => r.items.filter((x) => !live.has(x));
 
 /**
  * `{#key expr}`: a branch rebuilt (new natives, then the old ones removed + destroyed) whenever
@@ -953,15 +1119,15 @@ function swap(r, owner, old, fn, ...args) {
  * identity).
  */
 export function key_block(container, getKey, render) {
-  const r = newRegion(container);
-  const owner = scope;
-  let current = null;
+  const branches = new Branches(newRegion(container), scope);
+  let has = false;
   let key;
   block(() => {
     const k = getKey();
-    if (current && (k === key || (k !== k && key !== key))) return;
+    if (has && sameKey(k, key)) return;
+    has = true;
     key = k;
-    current = swap(r, owner, current, render);
+    branches.ensure(k, render);
   });
 }
 
@@ -1037,18 +1203,18 @@ export function component(container, getComponent, props, bind) {
 }
 
 function swapping(container, get, render) {
-  const r = newRegion(container);
-  const owner = scope;
-  let current = null;
+  const branches = new Branches(newRegion(container), scope);
   let fn;
   let first = true;
+  // transparent (Svelte's snippet and svelte:component blocks): a local transition inside plays
+  // when the enclosing block changes
   block(() => {
     const s = get() ?? null;
     if (!first && s === fn) return;
     first = false;
     fn = s;
-    current = swap(r, owner, current, s && ((anchor) => render(s, anchor)));
-  });
+    branches.ensure(s, s && ((anchor) => render(s, anchor)));
+  }, EFFECT_TRANSPARENT);
 }
 
 /**
@@ -1174,7 +1340,8 @@ export function boundary(container, props) {
         }
       }
     });
-  });
+    // transparent for local transitions, as Svelte's boundary block
+  }, EFFECT_TRANSPARENT);
 }
 
 const PENDING = 0;
@@ -1195,17 +1362,15 @@ const is_promise = (v) => v != null && typeof v.then === 'function';
  * renders even when the same flush tears the block down (`{#if p}{#await p}` with `p` cleared).
  */
 export function await_block(container, getInput, pending, then, catch_) {
-  const r = newRegion(container);
-  const owner = scope;
+  const branches = new Branches(newRegion(container), scope);
   const value = $.state(undefined);
   const error = $.state(undefined);
   let shown = -1;
-  let current = null;
   const show = (s) => {
     if (s === shown) return;
     shown = s;
     const fn = s === PENDING ? pending : s === THEN ? then : catch_;
-    current = swap(r, owner, current, fn, s === THEN ? value : error);
+    branches.ensure(s, fn, s === THEN ? value : error);
   };
   block(() => {
     const input = getInput();
@@ -1263,16 +1428,31 @@ function openItem(r, owner, item, b, value, index) {
   return open(r, owner, (anchor) => item.render(anchor, b.item, b.index), b);
 }
 
-function indexed(r, owner, old, arr, item) {
+function indexed(r, owner, old, arr, item, gone) {
   const n = Math.min(old.length, arr.length);
   for (let i = 0; i < n; i++) $.set(old[i].item, arr[i]);
-  for (let i = old.length - 1; i >= arr.length; i--) close(old[i]);
+  const removed = [];
+  for (let i = old.length - 1; i >= arr.length; i--) {
+    old[i].key = i;
+    removed.push(old[i]);
+  }
+  leaveGroup(removed, gone);
   const out = old.slice(0, n);
-  for (let i = n; i < arr.length; i++) out.push(openItem(r, owner, item, newRegion(r), arr[i], i));
+  for (let i = n; i < arr.length; i++) {
+    const b = gone.get(i);
+    if (b) {
+      // TR1: an item still outroing at this index comes back with the new value
+      revive(b, gone);
+      $.set(b.item, arr[i]);
+      out.push(b);
+    } else out.push(openItem(r, owner, item, newRegion(r), arr[i], i));
+  }
+  // live items in order, then whatever is still outroing
+  r.items = [...out, ...floating(r, new Set(out))];
   return out;
 }
 
-function keyed(r, owner, old, arr, key, item) {
+function keyed(r, owner, old, arr, key, item, gone) {
   const keys = arr.map((v, i) => {
     const k = key(v, i);
     if (DEV) {
@@ -1286,7 +1466,26 @@ function keyed(r, owner, old, arr, key, item) {
   const byKey = new Map(old.map((b) => [b.key, b]));
   const oldIndex = new Map(old.map((b, i) => [b, i]));
   const wanted = new Set(keys);
-  for (const b of old) if (!wanted.has(b.key)) close(b);
+  // TR1 animate: (FLIP): where the items that stay are now (Svelte's each: measure before reconcile)
+  const toAnimate = [];
+  for (const b of old) {
+    if (wanted.has(b.key) && b.effect?.nodes?.a) {
+      b.effect.nodes.a.measure();
+      toAnimate.push(b);
+    }
+  }
+  leaveGroup(
+    old.filter((b) => !wanted.has(b.key)),
+    gone,
+  );
+  // outroing items whose key is back are resumed and moved into place like kept ones
+  for (const k of keys) {
+    const b = !byKey.has(k) && gone.get(k);
+    if (b) {
+      revive(b, gone);
+      byKey.set(k, b);
+    }
+  }
 
   const next = keys.map((k, i) => {
     const b = byKey.get(k);
@@ -1299,13 +1498,20 @@ function keyed(r, owner, old, arr, key, item) {
     nb.key = k;
     return nb;
   });
-  const stay = lis(next.map((b) => (b.effect ? oldIndex.get(b) : -1)));
-  r.items = next.slice();
+  const stay = lis(next.map((b) => (b.effect && oldIndex.has(b) ? oldIndex.get(b) : -1)));
+  r.items = [...next, ...floating(r, new Set(next))];
   // Moves back to front, so everything after position i is already in its final place (new items
   // have no natives yet and are skipped by nextNative). Then new items front to back: creation
   // order decides handle numbers, which must follow source order.
   for (let i = next.length - 1; i >= 0; i--) if (next[i].effect && !stay.has(i)) move(next[i]);
   for (let i = 0; i < next.length; i++) if (!next[i].effect) openItem(r, owner, item, next[i], arr[i], i);
+  // TR1 animate: the items that stayed play their animation from the measured rect, in Svelte's
+  // task queue after the update (the host's layout must be current by then: TR1 section 4)
+  if (toAnimate.length) {
+    queue_task(() => {
+      for (const b of toAnimate) if (b.effect && !effectDestroyed(b.effect) && !b.outro) b.effect.nodes?.a?.apply();
+    });
+  }
   return next;
 }
 
@@ -1341,6 +1547,475 @@ export function lis(a) {
 }
 
 // ---------------------------------------------------------------------------------------------
+// Spreads and <svelte:element> (SP1, runtime-contract.md "Spread attributes"): attributes resolved at
+// run time against the spec tables of `@svelters/native-runtime/kinds` (`svelters-compile --kinds`,
+// imported by a component only when it needs them), with the compiler's own resolution rules.
+
+/** The `class:` toggles (`{ name: on }`) and `style:` directives (`{ property: value }`) in a spread object. */
+export const CLASS = Symbol('class');
+export const STYLE = Symbol('style');
+/** Svelte's `createAttachmentKey()` symbols carry this description. */
+const ATTACHMENT_KEY = '@attach';
+
+const PROP_WRITABLE = 1;
+const PROP_READABLE = 2;
+const PROP_STRING_FORM = 8;
+
+const kindInfos = new WeakMap(); // kinds module -> Map(tag -> info | null)
+
+/** A tag's props (by JS and native name), events (by signal and `js_event` name) and bindings, merged over its chain once. */
+function kindInfo(K, tag) {
+  let m = kindInfos.get(K);
+  if (!m) kindInfos.set(K, (m = new Map()));
+  let info = m.get(tag);
+  if (info !== undefined) return info;
+  const id = Object.hasOwn(K.tags, tag) ? K.tags[tag] : null;
+  const k = id === null ? null : K.kinds[id];
+  if (!k) {
+    m.set(tag, null);
+    return null;
+  }
+  const props = new Map();
+  const names = [];
+  const events = new Map();
+  const signals = [];
+  const bindings = new Map();
+  for (const cid of k.c) {
+    const c = K.kinds[cid];
+    if (!c) continue;
+    for (const js of Object.keys(c.p)) {
+      const [native, flags, type, def, values, binding] = c.p[js];
+      const p = { js, native, flags, type, def, values: values || null };
+      if (!props.has(js)) props.set(js, p);
+      if (!props.has(native)) props.set(native, p);
+      names.push(js);
+      if (binding && !bindings.has(js)) bindings.set(js, binding);
+    }
+    if (c.b) for (const js of Object.keys(c.b)) if (!bindings.has(js)) bindings.set(js, c.b[js]);
+    for (const name of Object.keys(c.e)) {
+      const [js, sync, phases] = c.e[name];
+      const ev = { signal: name, sync: !!sync, phases };
+      if (!events.has(name)) events.set(name, ev);
+      if (js && !events.has(js)) events.set(js, ev);
+      signals.push(name);
+    }
+  }
+  const cls = props.get('class');
+  info = {
+    tag,
+    props,
+    names,
+    events,
+    signals,
+    bindings,
+    text: k.t ?? null,
+    top: k.top ?? null,
+    // a backend whose kinds have a `class` prop (the DOM conformance backend) gets `class` / `style`
+    // as props; elsewhere `class`, `id` and `style` drive the X6 styling (as the compiler decides)
+    classProp: cls && cls.flags & PROP_WRITABLE ? cls.js : null,
+  };
+  m.set(tag, info);
+  return info;
+}
+
+const warned = new Set();
+/** DEV: a key the compiler would have rejected on a static attribute, with its code and message. Once per message. */
+function specWarn(code, message) {
+  if (!DEV) return;
+  const k = `${code}\0${message}`;
+  if (warned.has(k)) return;
+  warned.add(k);
+  console.warn(`[svelters] ${code}: ${message}`);
+}
+
+/** Closest names (edit distance), as the compiler's suggestions. */
+function closest(name, candidates) {
+  const lev = (a, b) => {
+    const row = Array.from({ length: b.length + 1 }, (_, i) => i);
+    for (let i = 0; i < a.length; i++) {
+      let prev = row[0];
+      row[0] = i + 1;
+      for (let j = 0; j < b.length; j++) {
+        const cur = row[j + 1];
+        row[j + 1] = Math.min(prev + (a[i] === b[j] ? 0 : 1), row[j] + 1, cur + 1);
+        prev = cur;
+      }
+    }
+    return row[b.length];
+  };
+  const limit = Math.max(Math.ceil(name.length / 2), 2);
+  const scored = [...new Set(candidates)]
+    .filter((c) => c !== name)
+    .map((c) => [lev(name.toLowerCase(), c.toLowerCase()), c])
+    .filter(([d, c]) => d <= limit || (name.length >= 3 && (c.includes(name) || name.includes(c))))
+    .sort((a, b) => a[0] - b[0] || (a[1] < b[1] ? -1 : 1));
+  return scored.slice(0, 3).map(([, c]) => c);
+}
+
+const didYouMean = (sug) => (sug.length === 0 ? '' : sug.length === 1 ? ` (did you mean \`${sug[0]}\`?)` : ` (did you mean one of ${sug.map((s) => `\`${s}\``).join(', ')}?)`);
+
+function findEvent(K, info, name) {
+  const a = Object.hasOwn(K.aliases, name) ? K.aliases[name] : null;
+  if (a && info.events.has(a)) return info.events.get(a);
+  return info.events.get(name) ?? null;
+}
+
+/** `on<event>` / `on<event>capture` as the compiler resolves it (`listen_op`): `{ ev, flags }` or `{ code, message }`. */
+function resolveEvent(K, info, key) {
+  const stripped = key.length > 2 ? key.slice(2) : key;
+  const plain = findEvent(K, info, stripped) ?? findEvent(K, info, key);
+  if (plain) return { ev: plain, flags: 0 };
+  // Svelte's is_capture_event: `...capture`, except the pointer-capture events
+  const base = key.endsWith('capture') && key !== 'ongotpointercapture' && key !== 'onlostpointercapture' ? key.slice(0, -7) : null;
+  const target = base && base !== 'on' ? base : key;
+  const name = target.length > 2 ? target.slice(2) : target;
+  const ev = findEvent(K, info, name) ?? findEvent(K, info, target);
+  if (!ev) {
+    const names = [...info.signals, ...Object.keys(K.aliases).filter((a) => info.events.has(K.aliases[a]))];
+    return {
+      code: 'unknown_event',
+      message: `<${info.tag}> has no event \`${name}\` on ${K.backend}${didYouMean(closest(name, names).map((s) => `on${s}`))}`,
+    };
+  }
+  if (target === key) return { ev, flags: 0 };
+  if (!ev.phases.includes('capture')) {
+    const has = ev.phases.length ? `only ${ev.phases.join(', ')}` : 'no listen phases';
+    return { code: 'listen_phase_unsupported', message: `\`${ev.signal}\` of <${info.tag}> has ${has} on ${K.backend}, not \`capture\`` };
+  }
+  return { ev, flags: LISTEN_CAPTURE };
+}
+
+/** A string for a non-string prop, coerced as the compiler coerces a static attribute (`coerce_static`). */
+function coerce(p, s) {
+  const bad = (message) => ({ error: message });
+  const name = p.js;
+  switch (p.type) {
+    case 'bool':
+      if (s === 'true' || s === '') return { value: true };
+      if (s === 'false') return { value: false };
+      return bad(`\`${name}\` is a bool: expected true or false, got ${JSON.stringify(s)}`);
+    case 'i32':
+    case 'u32':
+    case 'i64': {
+      const t = s.trim();
+      const i = /^[-+]?0[xX][0-9a-fA-F]+$/.test(t) ? parseInt(t, 16) : /^[-+]?\d+$/.test(t) ? Number(t) : NaN;
+      if (!Number.isSafeInteger(i)) return bad(`\`${name}\` is an integer, got ${JSON.stringify(s)}`);
+      const [lo, hi] = p.type === 'i32' ? [-2147483648, 2147483647] : p.type === 'u32' ? [0, 4294967295] : [-Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER];
+      if (i < lo || i > hi) return bad(`\`${name}\`: ${i} is outside ${lo}..${hi}`);
+      return { value: i };
+    }
+    case 'f64': {
+      const f = s.trim() === '' ? NaN : Number(s);
+      if (!Number.isFinite(f)) return bad(`\`${name}\` is a number, got ${JSON.stringify(s)}`);
+      return { value: f };
+    }
+    case 'strlist':
+      return { value: s.split(/[ \t\n\r\f]+/).filter(Boolean) };
+    case 'enum':
+      if (p.values && !p.values.includes(s)) return bad(`\`${name}\`: ${JSON.stringify(s)} is not one of ${p.values.join(', ')}${didYouMean(closest(s, p.values))}`);
+      return { value: s };
+    case 'flags': {
+      if (!p.values) return bad(`\`${name}\`: flags cannot be named from a string here`);
+      const nicks = s.split(/[|\s]+/).filter(Boolean);
+      for (const n of nicks) if (!p.values.includes(n)) return bad(`\`${name}\`: ${JSON.stringify(n)} is not a flag${didYouMean(closest(n, p.values))}`);
+      return { value: nicks };
+    }
+    case 'object':
+    case 'record':
+    case 'boxed':
+      if (p.flags & PROP_STRING_FORM) return { value: s };
+      return bad(`\`${name}\` takes a native value and cannot be set from a string; pass an expression`);
+    case 'list':
+    case 'other':
+      return bad(`\`${name}\` takes a native value and cannot be set from a string; pass an expression`);
+    default:
+      return { value: s };
+  }
+}
+
+/** Svelte's `to_class`: the class string, the CSS scope class, then the `class:` toggles. */
+function toClass(value, hash, toggles) {
+  let out = value == null ? '' : clsx(value);
+  if (hash) out = out ? `${out} ${hash}` : hash;
+  if (toggles) out = class_name(out, null, Object.keys(toggles).map((k) => [k, !!toggles[k]]));
+  return out === '' ? null : out;
+}
+
+/** Svelte's `to_style` (without `!important` directives): `style` minus the properties the directives set, then the directives. */
+function toStyle(value, directives) {
+  if (!directives) return value == null || value === '' ? null : String(value);
+  const own = [];
+  const reserved = Object.keys(directives).map((n) => (n.startsWith('--') ? n : n.toLowerCase()));
+  if (value) {
+    for (const decl of String(value).replace(/\/\*.*?\*\//g, '').split(';')) {
+      const i = decl.indexOf(':');
+      if (i < 0) continue;
+      const name = decl.slice(0, i).trim();
+      if (!reserved.includes(name.startsWith('--') ? name : name.toLowerCase())) own.push(decl.trim());
+    }
+  }
+  let css = own.length ? `${own.join('; ')};` : '';
+  for (const k of Object.keys(directives)) {
+    const v = directives[k];
+    if (v != null && v !== '') css += `${css ? ' ' : ''}${k}: ${v};`;
+  }
+  return css === '' ? null : css;
+}
+
+/**
+ * The attributes of an element whose attributes are only known at run time (a spread, or any
+ * `<svelte:element>`): `fn()` returns them as one object in source order, as Svelte's
+ * `attribute_effect` (later keys win). A block effect applies each new object: props (strings
+ * coerced like static attributes), `on<event>` keys (one native connection per key, calling its
+ * current value), `class` / `style` (with the `CLASS` toggles, `STYLE` directives and the CSS scope
+ * class `css`), `parent:` child attributes and attachments. A key that goes away is reset to the
+ * spec default, else to the native value captured before the first write. Unknown keys warn in
+ * DEV (the compiler's code and message) and are skipped.
+ */
+export function spread(node, K, fn, deps = null, css = null) {
+  const info = kindInfo(K, node.kind);
+  if (!info) return;
+  const st = { node, K, info, css, cur: new Map(), seen: new Set(), conns: new Map(), attachments: new Map(), touched: new Set(), tracked: new Set() };
+  // the memoized call expressions of the object (Svelte's Memoizer): deriveds of their own
+  const ds = deps ? deps.map((d) => $.derived(d)) : null;
+  block(() => applySpread(st, (ds ? fn(...ds.map($.get)) : fn()) ?? {}));
+}
+
+function applySpread(st, next) {
+  const { node, info, K } = st;
+  const entries = new Map();
+  for (const k in next) entries.set(k, next[k]);
+  for (const k of st.cur.keys()) if (!entries.has(k)) entries.set(k, undefined);
+
+  // class and style (with their directives), as one value each
+  const native = info.classProp === null;
+  const toggles = next[CLASS];
+  if (entries.has('class') || toggles || st.css) {
+    const v = toClass(next.class, st.css, toggles);
+    if (native) attr(node, 'class', v);
+    else if (v !== null || st.cur.has('class')) set(node, info.classProp, v ?? '');
+    if (v !== null) st.cur.set('class', v);
+    else st.cur.delete('class');
+  }
+  const directives = next[STYLE];
+  if (entries.has('style') || directives) {
+    const v = toStyle(next.style, directives);
+    const p = native ? null : info.props.get('style');
+    if (native) attr(node, 'style', v);
+    else if (p && p.flags & PROP_WRITABLE && (v !== null || st.cur.has('style'))) set(node, p.js, v);
+    if (v !== null) st.cur.set('style', v);
+    else st.cur.delete('style');
+  }
+
+  for (const [key, value] of entries) {
+    if (key === 'class' || key === 'style') continue;
+    // unchanged; a nullish key is written once, the first time it appears (as an explicit attribute)
+    if (st.cur.has(key) ? Object.is(st.cur.get(key), value) : value == null && st.seen.has(key)) continue;
+    st.seen.add(key);
+    if (key.startsWith('$$') || key === 'slot') continue;
+    if (key.length > 2 && key.startsWith('on') && (st.conns.has(key) || typeof value === 'function' || !info.props.has(key))) {
+      spreadEvent(st, key, value);
+      continue;
+    }
+    if (value == null) st.cur.delete(key);
+    else st.cur.set(key, value);
+    if (key.startsWith('parent:')) {
+      child_attr(node, key.slice(7), value ?? null);
+      continue;
+    }
+    if (native && key === 'id') {
+      attr(node, 'id', value == null ? null : String(value));
+      continue;
+    }
+    // Svelte never writes a function as an attribute (a `children` snippet in `...rest`)
+    if (typeof value === 'function') continue;
+    const p = info.props.get(key);
+    if (!p) {
+      if (value != null) specWarn('unknown_property', `<${info.tag}> has no property \`${key}\` on ${K.backend}${didYouMean(closest(key, info.names))}`);
+      continue;
+    }
+    if (!(p.flags & PROP_WRITABLE)) {
+      if (value != null) specWarn('read_only_property', `property \`${p.js}\` of <${info.tag}> is read-only on ${K.backend}`);
+      continue;
+    }
+    setProp(st, p, value, !(key in next));
+  }
+
+  // attachments (`{@attach}` in the object, `createAttachmentKey()`): re-run when the function changes
+  const syms = new Set(Object.getOwnPropertySymbols(next).filter((s) => s.description === ATTACHMENT_KEY));
+  for (const [s, a] of st.attachments) {
+    if (!syms.has(s) || next[s] !== a.fn) {
+      destroy(a.effect);
+      st.attachments.delete(s);
+    }
+  }
+  for (const s of syms) {
+    const f = next[s];
+    if (!st.attachments.has(s) && f) st.attachments.set(s, { fn: f, effect: branch(() => $.attach(node, () => f)) });
+  }
+}
+
+/** Writes (or, for null/undefined, resets) a prop from a spread. */
+function setProp(st, p, value, gone = false) {
+  const { node, info } = st;
+  if (value == null && !st.touched.has(p.js)) {
+    if (gone) return;
+    // never written by this spread: the value goes through as an explicit attribute's would
+    st.touched.add(p.js);
+    if (p.def == null && p.flags & PROP_READABLE) captureOnly(node, p.js);
+    set(node, p.js, null);
+    return;
+  }
+  if (value == null) {
+    if (p.def != null) set(node, p.js, p.def);
+    else if (node.captured.has(p.js)) set(node, p.js, RESTORE);
+    else set(node, p.js, null);
+    return;
+  }
+  let v = value;
+  if (typeof v === 'string' && p.type !== 'string') {
+    const r = coerce(p, v);
+    if (r.error) {
+      specWarn('bad_attribute_value', `<${info.tag}> ${r.error}`);
+      return;
+    }
+    v = r.value;
+  } else if (p.type === 'string' && (typeof v === 'number' || typeof v === 'boolean')) {
+    // an attribute value, as Svelte writes it (`data-x={true}` is "true")
+    v = String(v);
+  }
+  if (!st.touched.has(p.js)) {
+    st.touched.add(p.js);
+    // no spec default to go back to: remember the native value before the first write
+    if (p.def == null && p.flags & PROP_READABLE) captureOnly(node, p.js);
+  }
+  set(node, p.js, v);
+  // a one-way prop the native side also edits: mirror native edits, as an explicit attribute does
+  const b = info.bindings.get(p.js);
+  if (b && !st.tracked.has(p.js)) {
+    st.tracked.add(p.js);
+    track(node, p.js, b[0], b[1]);
+  }
+}
+
+/**
+ * Reads the native value of `prop` once, for a later `set(node, prop, RESTORE)`. Unlike `capture`
+ * it does not count as the last written value: the spread's first write always goes out (the
+ * value read may be a property the host derives from something else, as a DOM input's `type`).
+ */
+function captureOnly(node, prop) {
+  if (node.captured.has(prop) || !alive(node)) return;
+  node.captured.set(prop, node.host.getProp(node.h, prop));
+}
+
+function spreadEvent(st, key, value) {
+  const { node } = st;
+  const c = st.conns.get(key);
+  if (value == null) {
+    st.cur.delete(key);
+    if (c) {
+      st.conns.delete(key);
+      off(node, c.signal, c.fn, c.flags);
+    }
+    return;
+  }
+  st.cur.set(key, value);
+  if (c) {
+    // a new handler for the same event: the connection calls the current one (Svelte does not
+    // re-listen either, sveltejs/svelte#11903)
+    c.value = value;
+    return;
+  }
+  const r = resolveEvent(st.K, st.info, key);
+  if (!r.ev) {
+    specWarn(r.code, r.message);
+    return;
+  }
+  const conn = { signal: r.ev.signal, flags: r.flags, value, fn: null };
+  conn.fn = function (...args) {
+    const f = conn.value;
+    if (typeof f === 'function') return f.apply(this, args);
+  };
+  st.conns.set(key, conn);
+  // owned by the spread, not the ownership scope: it outlives the effect run that registered it
+  const prev = scope;
+  scope = null;
+  try {
+    on(node, conn.signal, conn.fn, conn.flags);
+  } finally {
+    scope = prev;
+  }
+}
+
+/**
+ * Text children of a `<svelte:element>`: the kind's text-content prop (`label` of a label or
+ * button). A kind without one cannot hold text (DEV warning, as the compiler's `text_not_allowed`).
+ */
+export function text(node, K, value) {
+  const info = kindInfo(K, node.kind);
+  if (!info) return;
+  if (!info.text) {
+    specWarn('text_not_allowed', `<${info.tag}> cannot contain text on ${K.backend}`);
+    return;
+  }
+  set(node, info.text, value);
+}
+
+/**
+ * `<svelte:element this={tag}>` (Svelte's `element()`): a nullish or empty tag renders nothing; a
+ * different tag builds a new element (`render(node)` applies its attributes and builds its
+ * children, then it is appended) and disposes the old one; the same tag keeps it. A toplevel kind
+ * is created as a toplevel. A tag the backend does not have renders nothing (DEV warning).
+ */
+export function dynamic_element(container, getTag, render, K) {
+  swapping(
+    container,
+    () => {
+      const tag = getTag();
+      if (DEV && tag && typeof tag !== 'string') svelteError('svelte_element_invalid_this_value', 'The `this` prop on `<svelte:element>` must be a string, if defined');
+      return tag || null;
+    },
+    (tag, anchor) => {
+      const info = kindInfo(K, tag);
+      if (!info) {
+        specWarn('unknown_element', `<${tag}> is not an element of the ${K.backend} backend${didYouMean(closest(tag, Object.keys(K.tags)))}`);
+        return;
+      }
+      const node = info.top ? toplevel(tag, info.top[0] ?? null) : create(tag, null);
+      render(node);
+      append(anchor, node);
+    },
+  );
+}
+
+// TR1: transition:, in:, out:, animate:
+
+/** Svelte's `effect.nodes` on a branch of ours (`end: null`: Svelte never removes DOM for it). */
+function ensureNodes(e) {
+  if (e && !e.nodes) e.nodes = { start: null, end: null, a: null, t: null };
+  return e;
+}
+
+/**
+ * `transition:fn={params}` / `in:` / `out:` (flags: Svelte's TRANSITION_IN 1, TRANSITION_OUT 2,
+ * TRANSITION_GLOBAL 4). Svelte's own `$.transition` on the runtime node: it registers the manager
+ * on the running branch, which `pause_effect` / `resume_effect` play when our blocks take the
+ * branch away or bring it back.
+ */
+export function transition(flags, node, getFn, getParams) {
+  ensureNodes(active());
+  svelteTransition(flags, node, getFn, getParams ?? null);
+}
+
+/** `animate:fn={params}` on the only element of a keyed each item (FLIP: `measure` / `apply` in `keyed`). */
+export function animation(node, getFn, getParams) {
+  ensureNodes(active());
+  svelteAnimation(node, getFn, getParams ?? null);
+}
+
+export { NativeAnimation, computed } from './motion.js';
+
+// ---------------------------------------------------------------------------------------------
 // Mount
 
 /**
@@ -1349,7 +2024,7 @@ export function lis(a) {
  * removes the component's natives from it but never destroys it. Used by the DOM conformance
  * host (experiments/native-compiler/conformance).
  */
-export function mount(Component, { props = {}, target, transformError } = {}) {
+export function mount(Component, { props = {}, target, transformError, intro = true } = {}) {
   if (!host()) throw new Error('globalThis.__svelters_host is not defined');
   if (DEV) init_dev();
   globalThis.__svelters_dispatch = dispatch;
@@ -1370,7 +2045,10 @@ export function mount(Component, { props = {}, target, transformError } = {}) {
     // root component's init are then deferred to its $.pop(), i.e. run after its children's.
     dispose_root = building(() =>
       componentRoot(() => {
-        branch(() => {
+        // TR1: the root branch sits in a transparent block, as Svelte's mount renders the app in its
+        // (transparent) boundary block: a local intro at the top level of the root component plays
+        // when `intro` is set
+        block(() => branch(() => {
           // the root of the boundary chain (Svelte's mount renders the app in a boundary): carries
           // `transformError` for every <svelte:boundary>, handles nothing itself
           root_boundary(
@@ -1381,8 +2059,14 @@ export function mount(Component, { props = {}, target, transformError } = {}) {
               },
             }),
           );
-          exports = Component(root, props);
-        });
+          // Svelte's `should_intro` while the root component initialises (mount's `intro` option)
+          set_intro(intro);
+          try {
+            exports = Component(root, props);
+          } finally {
+            set_intro(true);
+          }
+        }), EFFECT_TRANSPARENT);
       }),
     );
   } catch (e) {

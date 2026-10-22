@@ -127,6 +127,66 @@ export class DomHost {
     return n[method](...args);
   }
 
+  /**
+   * The per-element style sink (ABI v2.3 `style`), only the TR1 visual channels: what a native
+   * transition shows, as the element's inline style. The X6 dialect ops are not used by the dom
+   * backend (its `class` / `style` are props): TARGET answers none.
+   */
+  style(op, h, text) {
+    if (op === 0) return 0;
+    const n = this.nodes.get(h);
+    if (!n || n.nodeType !== 1) return 0;
+    switch (op) {
+      case 4: // OPACITY
+        n.style.opacity = text ?? '';
+        return 0;
+      case 8: {
+        // TRANSFORM "tx ty sx sy ox oy"
+        if (text == null) {
+          n.style.transform = '';
+          n.style.transformOrigin = '';
+          return 0;
+        }
+        const [tx, ty, sx, sy, ox, oy] = text.split(' ').map(Number);
+        n.style.transform = `translate(${tx}px, ${ty}px) scale(${sx}, ${sy})`;
+        n.style.transformOrigin = ox === 0.5 && oy === 0.5 ? '' : `${ox * 100}% ${oy * 100}%`;
+        return 0;
+      }
+      case 9: {
+        // CLIP "w h" (px, -1 = unclipped)
+        const [w, hh] = text == null ? [-1, -1] : text.split(' ').map(Number);
+        n.style.overflow = text == null ? '' : 'hidden';
+        n.style.width = w >= 0 ? `${w}px` : '';
+        n.style.height = hh >= 0 ? `${hh}px` : '';
+        return 0;
+      }
+      case 10: // INERT
+        n.inert = text != null;
+        return 0;
+      default:
+        throw new Error(`unknown style op ${op}`);
+    }
+  }
+
+  /**
+   * TR1: the element's computed style, which the native ports of `svelte/transition` read where
+   * Svelte's read `getComputedStyle(node)` (jsdom: `opacity` is '' unless set inline, so Svelte's
+   * own `fade` animates `t * 0` there, and the samples expect it).
+   */
+  computedStyle(h) {
+    const n = this.nodes.get(h);
+    if (!n || n.nodeType !== 1) return null;
+    return n.ownerDocument.defaultView.getComputedStyle(n);
+  }
+
+  /** ABI v2.8 `bounds`: the element's rect (jsdom: zeros unless a test overrides getBoundingClientRect). */
+  bounds(h) {
+    const n = this.nodes.get(h);
+    if (!n || typeof n.getBoundingClientRect !== 'function') return null;
+    const r = n.getBoundingClientRect();
+    return [r.left, r.top, r.right - r.left, r.bottom - r.top];
+  }
+
   listen(h, signal, on) {
     const n = this.node(h);
     const key = `${h} ${signal}`;

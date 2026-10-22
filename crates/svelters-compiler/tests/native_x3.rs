@@ -142,12 +142,13 @@ fn static_spreads_and_attachments() {
     assert_eq!(codes(&r, Severity::Error), vec!["unknown_child_attr"]);
     let ok = src.replace(r#""parent:x": 1, "#, "");
     let out = js("gtk", &ok);
-    assert!(out.contains(r#"$n.on($$n3, "clicked", function (...$$args) { events["onclicked"]?.apply(this, $$args); });"#), "{out}");
-    assert!(out.contains(r#"$n.set($$n3, "label", events["label"])"#), "{out}");
+    // SP1: only an object literal is lowered key by key; a `const` object (its keys can change) and
+    // any other spread are resolved at run time (tests/sp1_spread.rs)
+    assert!(out.contains(r#"$n.on($$n4, "activate-link", () => {});"#), "{out}");
+    assert!(out.contains(r#"$n.spread($$n3, $$kinds, () => ({ ...(events) }));"#), "{out}");
     assert!(out.contains("$.attach($$n3, () => attach);"), "{out}");
-    // a spread whose keys are not static is still rejected
     let r = run("gtk", r#"<script>let p = $props();</script><window><button {...p} /></window>"#);
-    assert_eq!(codes(&r, Severity::Error), vec!["native_spread_unsupported"]);
+    assert!(codes(&r, Severity::Error).is_empty());
 }
 
 #[test]

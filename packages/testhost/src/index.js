@@ -4,6 +4,8 @@ import vm from 'node:vm';
 import fs from 'node:fs';
 
 const readSchema = (file) => JSON.parse(fs.readFileSync(new URL(file, import.meta.url), 'utf8'));
+/** `style` op numbers -> op-log names (ABI v2.3, v2.8). */
+const STYLE_OPS = { 1: 'classes', 2: 'name', 3: 'inline', 4: 'opacity', 8: 'transform', 9: 'clip', 10: 'inert' };
 /** Coarse prop types per toolkit vocabulary: `gtk` (the default) and `qt` (Qt-vocabulary fixtures). */
 export const schemas = { gtk: readSchema('./schema.json'), qt: readSchema('./schema.qt.json') };
 const defaultSchema = schemas.gtk;
@@ -251,6 +253,8 @@ export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
     getChildAttr(parent, child, nameRef) {
       return w(child).attrs?.get(nameRef) ?? null;
     },
+    // ABI v2.8 (TR1): geometry for `animate:` / crossfade / slide; the test host has no layout
+    // (absent unless a test installs `bounds`).
     // Styling (ABI v2.3). The op numbers and payload formats are in plans/architecture/backend-abi.md.
     // The test host speaks the CSS dialect (target 1), like the log backend.
     style(op, h, text) {
@@ -262,9 +266,13 @@ export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
         case 2:
         case 3:
         case 4:
+        // ABI v2.8 (TR1): the visual channels of transitions
+        case 8:
+        case 9:
+        case 10:
           if (h !== 0 && dead.has(h)) return 0;
           w(h);
-          lines.push(`style #${h} ${['classes', 'name', 'inline', 'opacity'][op - 1]} ${t}`);
+          lines.push(`style #${h} ${STYLE_OPS[op]} ${t}`);
           return 0;
         case 5: {
           const s = text === undefined || text === null ? null : String(text);

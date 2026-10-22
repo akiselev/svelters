@@ -36,6 +36,8 @@ window.matchMedia = vi.fn((media) => ({ matches: false, media, addEventListener(
 const { assert } = await import('chai');
 const { assert_html_equal, assert_html_equal_with_options } = await import('./shims/html-equal.mjs');
 const { DomHost } = await import('./dom-host.mjs');
+// TR1: Svelte's virtual animation clock (tests/animation-helpers.js), on the native player
+const { raf } = await import('./shims/animation-helpers.mjs');
 const { flushSync } = await import('svelte');
 const $ = await import('svelte/internal/client');
 const $n = await import('@svelters/native-runtime');
@@ -123,6 +125,8 @@ try {
   const target = window.document.querySelector('main');
   const host = new DomHost(window.document);
   globalThis.__svelters_host = host;
+  // shared.ts: "hack to support transition tests"
+  raf.reset();
 
   const mod = await import(pathToFileURL(path.join(dir, 'main.svelte')).href);
   logs.length = warnings.length = 0;
@@ -157,7 +161,7 @@ try {
         target,
         snapshot: undefined,
         window,
-        raf: { tick: () => flushSync() },
+        raf,
         compileOptions: {},
         logs,
         warnings,

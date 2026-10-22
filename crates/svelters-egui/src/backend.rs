@@ -199,6 +199,75 @@ impl EguiBackend {
         }
     }
 
+    // ---- TR1 visual channels ----
+
+    fn visual_op(&self, op: u32, h: svl_handle, text: Option<&str>) -> StrResult<()> {
+        fn nums<const N: usize>(text: &str, what: &str) -> StrResult<[f32; N]> {
+            let v: Vec<f32> = text.split_whitespace().map(str::parse::<f32>).collect::<Result<_, _>>().map_err(|_| format!("{what}: '{text}' is not {N} numbers"))?;
+            v.try_into().map_err(|_| format!("{what}: '{text}' is not {N} numbers").into())
+        }
+        let mut scene = self.0.scene.borrow_mut();
+        let n = scene.get_mut(h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
+        let before = n.vis;
+        match op {
+            SVL_STYLE_OPACITY => {
+                n.vis.opacity = match text {
+                    None => None,
+                    Some(t) => {
+                        let t = t.trim();
+                        let a = match t.strip_suffix('%') {
+                            Some(p) => p.parse::<f32>().map(|x| x / 100.0),
+                            None => t.parse::<f32>(),
+                        }
+                        .map_err(|_| format!("opacity: '{t}' is not a number"))?;
+                        (a < 1.0).then_some(a.max(0.0))
+                    }
+                }
+            }
+            SVL_STYLE_TRANSFORM => n.vis.transform = text.map(|t| nums::<6>(t, "transform")).transpose()?,
+            SVL_STYLE_CLIP => n.vis.clip = text.map(|t| nums::<2>(t, "clip")).transpose()?,
+            _ => n.vis.inert = text.is_some(),
+        }
+        if n.vis == before {
+            return Ok(());
+        }
+        if n.vis.clip != before.clip {
+            layout::restyle(n);
+            layout::invalidate(&mut scene, h);
+            self.0.layout_dirty.set(true);
+        }
+        drop(scene);
+        self.touched();
+        Ok(())
+    }
+
+    /// Runs a pending layout of `h`'s window now (`bounds`), when the window has been laid out
+    /// before (its size is known) and egui's fonts are available.
+    fn layout_now(&self, h: Handle) {
+        let Some(ctx) = self.ctx() else { return };
+        let mut scene = self.0.scene.borrow_mut();
+        let mut root = h;
+        while let Some(p) = scene.get(root).and_then(|n| n.parent) {
+            root = p;
+        }
+        let Some(size) = self.0.layout_size.borrow().get(&root).copied() else { return };
+        let m = layout::Metrics::new(&ctx);
+        let leaves: Vec<Handle> = std::mem::take(&mut *self.0.remeasure.borrow_mut());
+        if !leaves.is_empty() && layout::remeasure(&mut scene, &m, &leaves) {
+            self.0.layout_dirty.set(true);
+        }
+        if !self.0.layout_dirty.get() && !scene.n(root).cache.is_empty() {
+            return;
+        }
+        let measured = layout::compute(&mut scene, &m, root, size);
+        self.bump(|s| {
+            s.layouts += 1;
+            s.measured += measured as u64;
+        });
+        // other windows may be dirty too: the flag stays for the next pass (cached results make
+        // the repeat cheap)
+    }
+
     // ---- the frame ----
 
     /// One frame into `ui` (the root viewport's `Ui` in eframe and kittest, or a `Ui` of an
@@ -669,16 +738,45 @@ impl Backend for EguiBackend {
         }
     }
 
-    fn style(&self, op: u32, h: svl_handle, _text: Option<&str>) -> StrResult<i32> {
+    fn style(&self, op: u32, h: svl_handle, text: Option<&str>) -> StrResult<i32> {
         // G1: setter-only dialect (layout props are setters, D3); the cascade is G2.
         match op {
             SVL_STYLE_TARGET => Ok(SVL_STYLE_TARGET_NONE),
             SVL_STYLE_SHEET | SVL_STYLE_SCHEME => Ok(0),
+            // TR1 visual channels (opacity since v2.3, the rest v2.8): paint state on the node
+            SVL_STYLE_OPACITY | SVL_STYLE_TRANSFORM | SVL_STYLE_CLIP | SVL_STYLE_INERT => {
+                self.visual_op(op, h, text)?;
+                Ok(0)
+            }
             _ => {
                 self.kind_of(h)?;
                 Ok(0)
             }
         }
+    }
+
+    fn supports_bounds(&self) -> bool {
+        true
+    }
+
+    /// ABI v2.8: the node's rect in its window's content area. A dirty layout is brought up to date
+    /// first (synchronously, as Qt's `QLayout::activate`), so FLIP sees the new place at once. A
+    /// node outside a laid-out window reports 0, 0 and its measured size (leaves; 0 for boxes).
+    fn bounds(&self, h: svl_handle) -> StrResult<[f64; 4]> {
+        self.kind_of(h)?;
+        self.layout_now(h);
+        let scene = self.0.scene.borrow();
+        let n = scene.n(h);
+        if n.rect != egui::Rect::NOTHING {
+            let r = n.rect;
+            return Ok([r.min.x as f64, r.min.y as f64, r.width() as f64, r.height() as f64]);
+        }
+        let s = match (n.intrinsic, self.ctx()) {
+            (Some(s), _) => s,
+            (None, Some(ctx)) => layout::Metrics::new(&ctx).intrinsic(&n.w),
+            (None, None) => egui::Vec2::ZERO,
+        };
+        Ok([0.0, 0.0, s.x as f64, s.y as f64])
     }
 
     fn supports_observe(&self) -> bool {

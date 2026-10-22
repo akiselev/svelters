@@ -102,6 +102,8 @@ impl Inner {
                 };
                 w.set_opacity(o.clamp(0.0, 1.0));
             }
+            // ABI v2.8 (TR1): the visual channels of transitions (visual.rs)
+            SVL_STYLE_TRANSFORM | SVL_STYLE_CLIP | SVL_STYLE_INERT => self.visual_op(op, h, text)?,
             SVL_STYLE_SHEET => self.style_sheet(text),
             SVL_STYLE_SCHEME => self.style_scheme(text.unwrap_or("light")),
             other => return Err(format!("unknown style op {other}")),
