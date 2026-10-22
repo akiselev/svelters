@@ -1,8 +1,11 @@
-//! The eframe runner (`svl_backend.run`): a native window (glow) whose root viewport draws the
-//! backend, returning when it closes. Without the `eframe` feature, `run` fails with a pointer to
-//! embedding.
+//! The eframe runners: a native window (glow) whose root viewport draws the app, returning when it
+//! closes. [`run_desktop`] is the desktop order on an [`Embed`] (`run_app`); [`run_eframe`] is
+//! `svl_backend.run` for a host that owns the backend itself. Without the `eframe` feature, both
+//! fail with a pointer to embedding.
 
 use crate::backend::EguiBackend;
+#[cfg(feature = "eframe")]
+use crate::embed::Embed;
 use crate::scene::W;
 
 /// Title and inner size of the root window, if one is presented already (desktop order).
@@ -33,17 +36,51 @@ impl ::eframe::App for EframeApp {
 #[cfg(feature = "eframe")]
 pub(crate) fn run_eframe(b: &EguiBackend) -> Result<(), String> {
     let (title, size) = root_props(b);
+    let app = EframeApp { b: b.clone() };
+    run_native(title, size, Box::new(app))
+}
+
+#[cfg(feature = "eframe")]
+fn run_native(title: String, size: egui::Vec2, app: Box<dyn ::eframe::App>) -> Result<(), String> {
     let opts = ::eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default().with_title(title.clone()).with_inner_size(size),
         renderer: ::eframe::Renderer::Glow,
         ..Default::default()
     };
-    let app = EframeApp { b: b.clone() };
-    ::eframe::run_native(&title, opts, Box::new(move |_cc| Ok(Box::new(app)))).map_err(|e| format!("eframe: {e}"))
+    ::eframe::run_native(&title, opts, Box::new(move |_cc| Ok(app))).map_err(|e| format!("eframe: {e}"))
+}
+
+/// The desktop app on an [`Embed`]: `logic` from `App::logic`, the presented windows from `App::ui`.
+#[cfg(feature = "eframe")]
+struct DesktopApp {
+    embed: Embed,
+}
+
+#[cfg(feature = "eframe")]
+impl ::eframe::App for DesktopApp {
+    fn logic(&mut self, ctx: &egui::Context, _frame: &mut ::eframe::Frame) {
+        self.embed.logic(ctx);
+    }
+
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut ::eframe::Frame) {
+        self.embed.show_windows(ui);
+    }
+}
+
+/// Runs an embed whose app bundle is loaded (`Embed::load_app`) in an eframe window until it closes.
+#[cfg(feature = "eframe")]
+pub(crate) fn run_desktop(embed: Embed) -> Result<(), String> {
+    let (title, size) = root_props(embed.backend());
+    run_native(title, size, Box::new(DesktopApp { embed }))
 }
 
 #[cfg(not(feature = "eframe"))]
 pub(crate) fn run_eframe(_b: &EguiBackend) -> Result<(), String> {
     let _ = root_props;
     Err("svelters-egui was built without the `eframe` feature: embed it (EguiBackend::ui) instead".into())
+}
+
+#[cfg(not(feature = "eframe"))]
+pub(crate) fn run_desktop(_embed: crate::embed::Embed) -> Result<(), String> {
+    Err("svelters-egui was built without the `eframe` feature: embed it (Embed) instead".into())
 }

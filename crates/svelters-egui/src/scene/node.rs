@@ -27,6 +27,8 @@ pub struct Common {
     pub visible: bool,
     pub tooltip: String,
     pub accessible_name: String,
+    /// EM1 (ARCH-EMBED §4.4): the `anchor` prop.
+    pub anchor: String,
     pub width: Option<f64>,
     pub height: Option<f64>,
     pub min_width: Option<f64>,
@@ -55,6 +57,7 @@ impl Default for Common {
             visible: true,
             tooltip: String::new(),
             accessible_name: String::new(),
+            anchor: String::new(),
             width: None,
             height: None,
             min_width: None,
@@ -109,6 +112,12 @@ pub struct Node {
     pub had_focus: bool,
     /// TR1 visual channels (ABI v2.8 style ops): what a running transition shows.
     pub vis: Visual,
+    /// EM1 (ARCH-EMBED §4.4, §5.5; ARCH-SCENE §4.5 `core.root`): the embedded root whose tree this
+    /// node is in (0: none, e.g. a desktop window's tree or a detached node). Set for the subtree
+    /// when it is inserted (`ids::adopt`); its egui id derives from that root's base.
+    pub root: u32,
+    /// EM1: created by the embedder (a slot), not by JS: JS sees it as borrowed and cannot destroy it.
+    pub host_owned: bool,
 }
 
 /// The visual channels of a node (plans/milestones/TR1-transitions.md section 3.2). Paint-only

@@ -79,10 +79,7 @@ pub(crate) fn leaf(arena: &mut Arena, h: Handle, ui: &mut Ui, out: &mut Vec<Out>
         W::Box | W::Window { .. } => unreachable!("containers are not leaves"),
     };
     let n = arena.n_mut(h);
-    let mut resp = resp;
-    if let Some(name) = crate::a11y::name(n) {
-        resp = resp.accessible_name(name);
-    }
+    let mut resp = crate::a11y::decorate(resp, n);
     if !n.c.tooltip.is_empty() {
         resp = resp.on_hover_text(n.c.tooltip.clone());
     }

@@ -48,6 +48,8 @@ pub fn new_node(kind: usize, handle: Handle) -> Node {
         drawn: egui::Rect::NOTHING,
         had_focus: false,
         vis: Visual::default(),
+        root: 0,
+        host_owned: false,
     };
     crate::layout::restyle(&mut n);
     n

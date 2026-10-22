@@ -70,6 +70,9 @@ pub(crate) struct Inner {
     /// Title last sent per window viewport.
     pub titles: RefCell<std::collections::HashMap<Handle, String>>,
     pub stats: Cell<Stats>,
+    /// EM1: egui id base of each embedded root (`Node::root` → `ids::root_base`), read when a
+    /// subtree joins a root (`ids::adopt`).
+    pub root_bases: RefCell<std::collections::HashMap<u32, egui::Id>>,
 }
 
 /// The egui backend. Cheap to clone (one shared state); the clone given to [`BackendVtable::new`]
@@ -102,6 +105,7 @@ impl EguiBackend {
             closes: RefCell::new(Vec::new()),
             titles: RefCell::new(Default::default()),
             stats: Cell::new(Stats::default()),
+            root_bases: RefCell::new(Default::default()),
         }))
     }
 

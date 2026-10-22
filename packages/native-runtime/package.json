@@ -10,6 +10,7 @@
     "./core": "./src/core/index.js",
     "./core/tracing": "./src/core/tracing.js",
     "./svelte": "./src/svelte.js",
+    "./embed": { "types": "./types/embed.d.ts", "default": "./src/embed.js" },
     "./transition": "./src/transition.js",
     "./animate": "./src/animate.js",
     "./lists": "./src/lists.js",
