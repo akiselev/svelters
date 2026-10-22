@@ -139,7 +139,8 @@ impl Widget for Scrollbar {
         let mut tp = pc.part("thumb");
         tp.painter.rect_filled(b.thumb, t.px("border-radius").unwrap_or(0.0), fill);
         tp.record(paint::TraceKind::Box, b.thumb, fill, egui::Stroke::NONE, 0.0);
-        area
+        // hovering the thumb is hovering the scroll bar (its tooltip, `:hover`)
+        area.union(th)
     }
 
     fn a11y(&self, _cx: &A11yCx<'_>, node: &mut accesskit::Node) {
