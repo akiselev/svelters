@@ -14,10 +14,18 @@
 //! Writer lanes: OW0–OW7.
 
 pub mod button;
+pub mod checkbox;
+pub mod hyperlink;
+pub mod label;
 pub mod panel;
+mod parts;
+pub mod progress;
 pub mod scroll_area;
 pub mod scrollbar;
+pub mod separator;
 pub mod split_view;
+pub mod switch;
+pub mod toggle_button;
 
 /// OW2: the window's inner chrome (`windows.rs`).
 pub use crate::windows::WINDOW_UA;

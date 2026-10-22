@@ -27,7 +27,10 @@
 //! only the [`Grants`] it is given.
 
 pub mod client;
+pub mod clock;
 pub mod driver;
+#[cfg(feature = "run")]
+pub mod e2e;
 pub mod engine;
 pub mod role;
 pub mod rpc;
@@ -37,6 +40,9 @@ mod session;
 mod snapshot;
 
 pub use driver::{A11yNode, Driver};
+/// AU1b: `#[svelters_automation::test]`, one body in process or out of process (see [`e2e`]).
+#[cfg(feature = "run")]
+pub use svelters_macros::test;
 pub use selector::{Selector, TextMatch};
 pub use session::{
     ActOptions, ActResult, Expect, Grants, NodeInfo, Ref, RootInfo, Session, Target, Tier,

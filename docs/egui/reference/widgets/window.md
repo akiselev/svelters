@@ -42,9 +42,19 @@ A native window (the root viewport, or an immediate viewport); its children are 
 <!-- BEGIN GENERATED: events of kinds.Window (tools/docs/egui/gen_reference.py). Do not edit. -->
 | Attribute | Handler | When |
 |---|---|---|
+| `onclick` | `(e: SvlEvent<[number, number, number, number, number, number]>, target: number, phase: number, x: number, y: number, button: number, modifiers: number) => void` | The primary button was pressed and released; targets the innermost node that holds both points (EV1). `preventDefault` keeps the click from the widget. **Sync:** the handler runs before the frame's pass and gets an `SvlEvent` first. |
 | `onclose-request` | `(e: SvlEvent<[]>) => void` | The user asked to close the window; return true to keep it open. Runs before the frame's pass. **Sync:** the handler runs before the frame's pass and gets an `SvlEvent` first. |
+| `oncontextmenu` | `(e: SvlEvent<[number, number, number, number, number, number]>, target: number, phase: number, x: number, y: number, button: number, modifiers: number) => void` | The secondary button went down (EV1), after `pointerdown`. `preventDefault` keeps the press from egui (no context menu). **Sync:** the handler runs before the frame's pass and gets an `SvlEvent` first. |
+| `ondblclick` | `(e: SvlEvent<[number, number, number, number, number, number]>, target: number, phase: number, x: number, y: number, button: number, modifiers: number) => void` | A second click on the same node in a short time, after its `click` (EV1). **Sync:** the handler runs before the frame's pass and gets an `SvlEvent` first. |
+| `onfocusin` | `(e: SvlEvent<[number, number, number]>, target: number, phase: number, related: number) => void` | This node or a descendant took keyboard focus (EV1; after the frame that moved it). `related` is the node that lost it, 0 for none. **Sync:** the handler runs before the frame's pass and gets an `SvlEvent` first. |
+| `onfocusout` | `(e: SvlEvent<[number, number, number]>, target: number, phase: number, related: number) => void` | This node or a descendant lost keyboard focus (EV1). `related` is the node that took it, 0 for none. **Sync:** the handler runs before the frame's pass and gets an `SvlEvent` first. |
+| `onkeydown` | `(e: SvlEvent<[number, number, string, boolean, number]>, target: number, phase: number, key: string, repeat: boolean, modifiers: number) => void` | A key went down while this node or a descendant had focus (EV1); `key` is egui's key name. `preventDefault` keeps the key (and the text it types) from the focused widget. **Sync:** the handler runs before the frame's pass and gets an `SvlEvent` first. |
+| `onkeyup` | `(e: SvlEvent<[number, number, string, boolean, number]>, target: number, phase: number, key: string, repeat: boolean, modifiers: number) => void` | A key went up while this node or a descendant had focus (EV1). **Sync:** the handler runs before the frame's pass and gets an `SvlEvent` first. |
+| `onpointerdown` | `(e: SvlEvent<[number, number, number, number, number, number]>, target: number, phase: number, x: number, y: number, button: number, modifiers: number) => void` | A pointer button went down over this node or a descendant (EV1: capture, target, bubble). `preventDefault` keeps the press from egui (no click, drag or focus). **Sync:** the handler runs before the frame's pass and gets an `SvlEvent` first. |
+| `onpointerup` | `(e: SvlEvent<[number, number, number, number, number, number]>, target: number, phase: number, x: number, y: number, button: number, modifiers: number) => void` | A pointer button went up over this node or a descendant (EV1). `preventDefault` cancels the click. **Sync:** the handler runs before the frame's pass and gets an `SvlEvent` first. |
+| `onwheel` | `(e: SvlEvent<[number, number, number, number, number, number, number]>, target: number, phase: number, x: number, y: number, dx: number, dy: number, modifiers: number) => void` | The mouse wheel or a trackpad scrolled over this node (EV1); `dx`, `dy` in points. `preventDefault` keeps it from scrolling. **Sync:** the handler runs before the frame's pass and gets an `SvlEvent` first. |
 
-`on:close-request` works too, and a bare `on:<event>` on a component forwards the component's `on<event>` prop.
+`on:click` works too, and a bare `on:<event>` on a component forwards the component's `on<event>` prop.
 <!-- END GENERATED -->
 
 ## Methods
@@ -71,7 +81,7 @@ Call them through `bind:this`: `el.call('close')`.
 
 | Property | Applies | Theme default |
 |---|---|---|
-| `background-color` | yes | `var(--sv-bg)` |
+| `background-color` | yes | — |
 | `border-color` | yes | — |
 | `border-width` | yes | — |
 | `border-radius` | yes | — |

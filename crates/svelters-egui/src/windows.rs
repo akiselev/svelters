@@ -38,6 +38,8 @@ impl EguiBackend {
                     self.on_close_requested(&ctx, egui::ViewportId::ROOT, w);
                 }
                 self.window_chrome_ui(ui, w, &mut out);
+                // EV1 (SV7): overlays and viewport passes after the window's walk
+                crate::provider::pass::run_viewport_passes(&self.0.scene, ui);
             } else {
                 let vid = egui::ViewportId::from_hash_of(("svl-window", w));
                 let (title, size) = self.window_props(w);
@@ -47,6 +49,7 @@ impl EguiBackend {
                         self.on_close_requested(ui.ctx(), vid, w);
                     }
                     self.window_chrome_ui(ui, w, &mut out);
+                    crate::provider::pass::run_viewport_passes(&self.0.scene, ui);
                 });
             }
         }

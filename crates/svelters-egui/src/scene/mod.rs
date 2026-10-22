@@ -117,6 +117,9 @@ pub struct Scene {
     pub(crate) reveals: Vec<crate::widgets::scroll_area::Reveal>,
     /// OW2: stamps `Reveal::seq` (which scrollable's children set a request's rect).
     pub(crate) reveal_seq: u64,
+    /// EV1: the registered event filters (SV6), shared with the scene's cell so that a widget's
+    /// `dispatch` during the walk reaches them (`events.rs`).
+    pub(crate) filters: std::rc::Rc<std::cell::RefCell<crate::events::Registry>>,
 }
 
 impl Default for Scene {
@@ -142,6 +145,7 @@ impl Default for Scene {
             own: crate::widgets::KindSet::from_env().unwrap_or_default(),
             reveals: Vec::new(),
             reveal_seq: 0,
+            filters: Default::default(),
         }
     }
 }
@@ -290,6 +294,20 @@ impl Scene {
                     v.push(signal);
                 }
             }
+        }
+    }
+
+    /// EV1: true if the node listens to `signal` in the capture phase.
+    pub(crate) fn listens_capture(&self, i: usize, signal: u32) -> bool {
+        signal != 0 && self.cold(i).listen_capture.contains(&signal)
+    }
+
+    /// EV1: `listen_ex(.., SVL_LISTEN_CAPTURE)`.
+    pub(crate) fn set_listen_capture(&mut self, i: usize, signal: u32, on: bool) {
+        let v = &mut self.cold_mut(i).listen_capture;
+        v.retain(|&s| s != signal);
+        if on {
+            v.push(signal);
         }
     }
 

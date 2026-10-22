@@ -991,7 +991,8 @@ export class NativeEvent {
   }
 
   stopPropagation() {
-    if (this.cancelable) this.cancelBubble = true;
+    // EV1: a propagating event stops whether or not its default can be prevented
+    if (this.cancelable || this.bubbles) this.cancelBubble = true;
   }
 
   stopImmediatePropagation() {
@@ -1034,6 +1035,11 @@ export function targetNode(h) {
 function dispatchTo(node, signal, args, deferred, flags) {
   if (deferred) {
     const ev = new NativeEvent(signal, signal, node, args, true);
+    const shape = PROPAGATING.get(signal);
+    if (shape) {
+      propagatingEvent(ev, node, args, shape);
+      ev.cancelable = false; // the backend did not wait (EV1)
+    }
     for (const fn of handlersOf(node, signal, flags)) {
       fn.call(node, ev, ...args);
       if (ev.immediateStopped) break;
@@ -1059,8 +1065,66 @@ export function dispatch_sync(h, signal, args = [], flags = 0) {
   return dispatchSyncTo(node, signal, args, flags);
 }
 
+/**
+ * EV1: the DOM-style events a backend dispatches along its own tree (egui), one `call_sync` per
+ * node and phase. Their arguments start with `target` (a handle number) and `phase` (1 capture,
+ * 2 target, 3 bubble; +8 when an earlier listener prevented the default, +16 when not
+ * cancelable); the rest is per event. The event object gets the DOM fields, and the answer to the
+ * backend is a bit set: 1 stopPropagation, 2 preventDefault, 4 stopImmediatePropagation.
+ */
+export const PROPAGATING = new Map([
+  ['pointerdown', 'pointer'],
+  ['pointerup', 'pointer'],
+  ['click', 'pointer'],
+  ['dblclick', 'pointer'],
+  ['contextmenu', 'pointer'],
+  ['wheel', 'wheel'],
+  ['keydown', 'key'],
+  ['keyup', 'key'],
+  ['focusin', 'focus'],
+  ['focusout', 'focus'],
+]);
+
+function propagatingEvent(ev, node, args, shape) {
+  const t = table();
+  const p = args[1] | 0;
+  ev.target = t.get(args[0]) ?? node;
+  ev.currentTarget = node;
+  ev.eventPhase = p & 3;
+  ev.bubbles = true;
+  ev.cancelable = !(p & 16);
+  ev.defaultPrevented = !!(p & 8) && ev.cancelable;
+  const mods = (m) => {
+    ev.shiftKey = !!(m & 1);
+    ev.ctrlKey = !!(m & 2);
+    ev.altKey = !!(m & 4);
+    ev.metaKey = !!(m & 8);
+  };
+  if (shape === 'pointer') {
+    ev.x = ev.clientX = args[2];
+    ev.y = ev.clientY = args[3];
+    ev.button = args[4];
+    mods(args[5]);
+  } else if (shape === 'wheel') {
+    ev.x = ev.clientX = args[2];
+    ev.y = ev.clientY = args[3];
+    ev.deltaX = args[4];
+    ev.deltaY = args[5];
+    mods(args[6]);
+  } else if (shape === 'key') {
+    ev.key = args[2];
+    ev.repeat = !!args[3];
+    mods(args[4]);
+  } else {
+    ev.relatedTarget = args[2] ? (t.get(args[2]) ?? null) : null;
+    mods(0);
+  }
+}
+
 function dispatchSyncTo(node, signal, args, flags) {
   const ev = new NativeEvent(signal, signal, node, args, false);
+  const shape = PROPAGATING.get(signal);
+  if (shape) propagatingEvent(ev, node, args, shape);
   for (const fn of handlersOf(node, signal, flags)) {
     const r = fn.call(node, ev, ...args);
     if (r !== null && typeof r === 'object' && typeof r.then === 'function') {
@@ -1069,6 +1133,7 @@ function dispatchSyncTo(node, signal, args, flags) {
     if (ev.immediateStopped) break;
   }
   if (ev.result !== undefined) return ev.result;
+  if (shape) return (ev.cancelBubble ? 1 : 0) | (ev.defaultPrevented && !(args[1] & 8) ? 2 : 0) | (ev.immediateStopped ? 4 : 0);
   return ev.defaultPrevented || ev.cancelBubble ? true : null;
 }
 
