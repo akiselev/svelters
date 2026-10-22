@@ -724,6 +724,18 @@ export function on(node, signal, fn, flags = 0) {
   }
 }
 
+/** TR2: `on` for the runtime's own handlers: not tied to the current scope (it outlives the transition that asked). */
+function listenOutsideScope(node, signal, fn) {
+  const k = hkey(signal, 0);
+  let list = node.handlers.get(k);
+  if (!list) node.handlers.set(k, (list = []));
+  list.push(fn);
+  if (!node.listening.has(k) && alive(node)) {
+    node.listening.add(k);
+    hostListen(node, signal, true, 0);
+  }
+}
+
 function off(node, signal, fn, flags = 0) {
   const k = hkey(signal, flags);
   const list = node.handlers.get(k);
@@ -801,7 +813,7 @@ export function track(node, prop, signal, arg) {
 const handlersOf = (node, signal, flags) => [...(node.handlers.get(hkey(signal, flags)) ?? [])];
 
 // TR1: the `Element` slice Svelte's transition code uses (src/motion.js)
-defineFacade(Native.prototype, { handlers: (node, type) => handlersOf(node, type, 0) });
+defineFacade(Native.prototype, { handlers: (node, type) => handlersOf(node, type, 0), listen: listenOutsideScope });
 
 /** TR1: whether `node` or a native ancestor is inert (outroing): its events are dropped. */
 function inertNode(node) {
@@ -854,7 +866,8 @@ export class NativeEvent {
 export function dispatch(h, signal, args = [], deferred = false, flags = 0) {
   const node = table().get(h);
   if (!node || !alive(node)) return;
-  if (inertNode(node)) return;
+  // TR2: an exiting (inert) node still gets the end of its native outro
+  if (signal !== 'animationend' && inertNode(node)) return;
   if (dispatchHook) return dispatchHook(node, () => dispatchTo(node, signal, args, deferred, flags));
   dispatchTo(node, signal, args, deferred, flags);
 }

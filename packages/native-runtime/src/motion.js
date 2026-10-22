@@ -11,6 +11,9 @@
 //   transform -> SVL_STYLE_TRANSFORM (8)  "tx ty sx sy ox oy" (px, px, factors, origin as fractions)
 //   clip      -> SVL_STYLE_CLIP      (9)  "w h" px, -1 = that axis unclipped
 //   inert     -> SVL_STYLE_INERT     (10)  "1"
+// A backend that plays animations itself (egui: `style` answers 1 to OP_ANIMATE) gets each
+// animation's keyframes and timing once and reports its end with the `animationend` signal; no JS
+// runs per frame. Every other backend is driven by the player below, one style op per channel per frame.
 // Declarations without a channel are dropped (one dev warning per property). The frame clock is
 // Svelte's `raf` (requestAnimationFrame on the host's frame clock): a frame is requested only while
 // an animation runs.
@@ -21,6 +24,8 @@ export const OP_OPACITY = 4;
 export const OP_TRANSFORM = 8;
 export const OP_CLIP = 9;
 export const OP_INERT = 10;
+/** ABI v2.9 (TR2): an animation's keyframes and timing, sent once (JSON); the backend plays it. */
+export const OP_ANIMATE = 11;
 
 const CHANNELS = [
   ['opacity', OP_OPACITY],
@@ -252,6 +257,37 @@ export function animatesOpacity(node) {
 
 let ids = 0;
 
+/** Set by defineFacade: `listen(node, signal, fn)` registers a native signal handler (index.js `on`). */
+let listenSignal = null;
+
+/**
+ * Sends `a`'s keyframes and timing to a backend that animates natively. False if the host has no
+ * native animator (it refuses the op, or does not answer 1): the JS player runs the animation.
+ */
+function startNative(a) {
+  const node = a.target;
+  const hs = node.host;
+  if (typeof hs.style !== 'function' || !listenSignal || refused.get(hs)?.has(OP_ANIMATE)) return false;
+  const payload = JSON.stringify({ id: a.id, duration: a.duration, delay: a.delay, frames: a.frames });
+  let ok = false;
+  try {
+    ok = hs.style(OP_ANIMATE, node.h, payload) === 1;
+  } catch {
+    ok = false;
+  }
+  if (!ok) {
+    (refused.get(hs) ?? refused.set(hs, new Set()).get(hs)).add(OP_ANIMATE);
+    return false;
+  }
+  if (!node.animEnd) {
+    node.animEnd = true;
+    listenSignal(node, 'animationend', (id) => {
+      for (const x of node.vis?.anims ?? []) if (x.id === id) x._nativeEnd();
+    });
+  }
+  return true;
+}
+
 export class NativeAnimation {
   /**
    * `keyframes`: Svelte's keyframe objects (evenly spaced); `options`: `{ duration, delay }` or a
@@ -277,7 +313,12 @@ export class NativeAnimation {
     this._onfinish = null;
     this._finished = false;
     this.task = null;
+    this.native = false;
     vis(node).anims.push(this);
+    if (this.duration > 0 && this.frames.length > 0 && startNative(this)) {
+      this.native = true; // the backend samples it and reports the end
+      return;
+    }
     this._apply(0);
     if (this.duration > 0) {
       this.task = loop((now) => this._tick(now));
@@ -306,6 +347,14 @@ export class NativeAnimation {
 
   get onfinish() {
     return this._onfinish;
+  }
+
+  /** The backend reported the end (`animationend`): it keeps the last frame until `cancel`. */
+  _nativeEnd() {
+    if (this.playState !== 'running') return;
+    this.playState = 'finished';
+    this._finished = true;
+    this._onfinish?.();
   }
 
   _tick(now) {
@@ -345,6 +394,7 @@ export class NativeAnimation {
     this.playState = 'idle';
     this.task?.abort();
     this.task = null;
+    if (this.native) this._sendCancel();
     const v = this.target.vis;
     const i = v ? v.anims.indexOf(this) : -1;
     if (i >= 0) v.anims.splice(i, 1);
@@ -353,7 +403,27 @@ export class NativeAnimation {
 
   finish() {
     if (this.playState !== 'running') return;
+    if (this.native) {
+      // the backend cannot jump: take it off and hold the last frame through the JS channels
+      this._sendCancel();
+      this.native = false;
+      this._apply(1);
+      this.playState = 'finished';
+      this._finished = true;
+      this._onfinish?.();
+      return;
+    }
     this._tick(this.start + this.delay + this.duration);
+  }
+
+  _sendCancel() {
+    const node = this.target;
+    if (!node.alive()) return;
+    try {
+      node.host.style(OP_ANIMATE, node.h, JSON.stringify({ id: this.id, cancel: true }));
+    } catch {
+      // a dead handle or a host that dropped the animation with the node
+    }
   }
 }
 
@@ -501,7 +571,8 @@ export const RUNTIME_EVENTS = new Set(['introstart', 'introend', 'outrostart', '
  * Adds the `Element` slice Svelte's transition code uses to the runtime node class. `handlers(node,
  * type)` gives the node's handlers for a runtime event.
  */
-export function defineFacade(proto, { handlers }) {
+export function defineFacade(proto, { handlers, listen }) {
+  listenSignal = listen ?? null;
   Object.defineProperties(proto, {
     inert: {
       get() {

@@ -23,6 +23,7 @@ pub mod scene;
 pub mod spec;
 
 mod a11y;
+pub mod anim;
 mod events;
 mod frame;
 mod ids;
