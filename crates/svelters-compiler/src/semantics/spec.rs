@@ -40,6 +40,62 @@ pub struct Spec {
     /// `ParseOptions.native == false`. Only the DOM conformance backend sets it.
     #[serde(default)]
     pub html_syntax: bool,
+    /// CX3 (CADATOMIC.md SV3): the bind-target lowering table. A `bind:` whose bound expression
+    /// matches an entry lowers as it says (`link`: a store field tied to the prop in the host;
+    /// `draft`: calls to the source's `get`/`set`), so providers extend `bind:` with data, never code.
+    /// Fragments append to it.
+    #[serde(default)]
+    pub bind_sources: Vec<BindSourceSpec>,
+}
+
+/// CX3: one row of the bind-target lowering table.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct BindSourceSpec {
+    /// The import source of the bound expression's root identifier: exact (`svelters:app/task`,
+    /// `#drafts`), or a prefix ending in `/*` (`svelters:app/*`).
+    pub module: String,
+    /// The imported name: the marker function of a `draft` source (`slot`), `*` for any export.
+    pub export: String,
+    pub lowering: BindSourceLowering,
+    /// `draft`: the export of `module` the node's value is read with, `get(...args)`.
+    #[serde(default)]
+    pub get: Option<String>,
+    /// `draft`: the export of `module` a new value goes to, `set(...args, value)`.
+    #[serde(default)]
+    pub set: Option<String>,
+    #[serde(default)]
+    pub doc: String,
+}
+
+/// CX3: how a bind source lowers.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum BindSourceLowering {
+    /// `bind:prop={store.field}` with `store` an import of the module: `$n.bind_link(node, prop,
+    /// () => store, "field", fallback)`, a native link in the host (no JS per change); `fallback` is
+    /// the ordinary binding, for a host that refuses the link.
+    Link,
+    /// `bind:prop={marker(...args)}` with `marker` the source's export: a draft binding whose value is
+    /// `get(...args)` and whose changes (or commits, with `|commit`) call `set(...args, value)`.
+    Draft,
+}
+
+impl BindSourceSpec {
+    /// Whether the import (`module`, `export`) is this source.
+    pub fn matches(&self, module: &str, export: &str) -> bool {
+        let m = match self.module.strip_suffix('*') {
+            Some(prefix) => module.starts_with(prefix),
+            None => module == self.module,
+        };
+        m && (self.export == "*" || self.export == export)
+    }
+
+    fn check(&self, what: &str) -> Result<(), String> {
+        if self.lowering == BindSourceLowering::Draft && (self.get.is_none() || self.set.is_none() || self.export == "*") {
+            return Err(format!("{what}: draft bind source {}#{} needs `get`, `set` and a named export", self.module, self.export));
+        }
+        Ok(())
+    }
 }
 
 #[derive(Debug, Clone, Deserialize)]
@@ -422,6 +478,17 @@ pub struct BindingSpec {
     pub lifetime: BTreeMap<String, String>,
     #[serde(default)]
     pub provenance: String,
+    /// CX3: the kind's commit event for `bind:<prop>|commit` (Enter, blur, release), carrying the
+    /// committed value; absent when the kind has none (`|commit` is then `bind_commit_unsupported`).
+    #[serde(default)]
+    pub commit: Option<CommitSpec>,
+}
+
+/// CX3: where `bind:x|commit` takes its value: `args[arg]` of the commit event `event`.
+#[derive(Debug, Clone, PartialEq, Eq, Deserialize)]
+pub struct CommitSpec {
+    pub event: String,
+    pub arg: usize,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
@@ -576,6 +643,9 @@ impl Spec {
                 return Err(format!("semantic spec: tag {tag} names unknown kind {kind}"));
             }
         }
+        for b in &spec.bind_sources {
+            b.check("semantic spec")?;
+        }
         Ok(spec)
     }
 
@@ -593,6 +663,8 @@ impl Spec {
             tags: BTreeMap<String, String>,
             #[serde(default)]
             kinds: BTreeMap<String, KindSpec>,
+            #[serde(default)]
+            bind_sources: Vec<BindSourceSpec>,
         }
         let f: Fragment = serde_json::from_str(json).map_err(|e| format!("spec fragment: {e}"))?;
         if f.schema != SCHEMA {
@@ -629,6 +701,14 @@ impl Spec {
             if let Some(c) = self.kinds[id].chain.iter().find(|c| !self.kinds.contains_key(*c)) {
                 return Err(format!("spec fragment: kind {id} names unknown base {c}"));
             }
+        }
+        // CX3: bind sources append; the same (module, export, lowering) twice is an error
+        for b in f.bind_sources {
+            b.check("spec fragment")?;
+            if self.bind_sources.iter().any(|x| x.module == b.module && x.export == b.export && x.lowering == b.lowering) {
+                return Err(format!("spec fragment: bind source {}#{} is already declared", b.module, b.export));
+            }
+            self.bind_sources.push(b);
         }
         Ok(())
     }

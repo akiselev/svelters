@@ -260,13 +260,15 @@ bits! {
         const ATTACHED = 1 << 15;
         /// Has attached nodes (`NodeCold::attached` is not empty): the walk runs their hooks.
         const HAS_ATTACHED = 1 << 16;
+        /// CX3: a text field the user edited since its last `commit` (blur then commits).
+        const EDITED = 1 << 17;
         /// WG6/OW2 (QA13): `scroll-into-view` was called; the walk asks the scrollables around it
         /// to reveal it when it reaches it (`widgets::scroll_area::reveal_flagged`).
-        const WANT_SCROLL = 1 << 17;
+        const WANT_SCROLL = 1 << 18;
         /// WG6/OW2: a descendant has `WANT_SCROLL`: the walk does not cull this subtree.
-        const SCROLL_BELOW = 1 << 18;
+        const SCROLL_BELOW = 1 << 19;
         /// WG6/OW2: `scroll-into-view("center")`.
-        const SCROLL_CENTER = 1 << 19;
+        const SCROLL_CENTER = 1 << 21;
         /// SG4: the top of a provider's shadow subtree (ARCH-SCENE §4.4): its parent is the host
         /// provider node, which lays it out and draws it (`WidgetCx::children`); JS never sees it.
         const SHADOW = 1 << 20;

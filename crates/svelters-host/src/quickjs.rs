@@ -1218,6 +1218,28 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
                 },
             )?,
         )?;
+        // CX3: native links between a store field and a native prop (`core/links.rs`)
+        let w = core.clone();
+        host.set(
+            "link",
+            Function::new(
+                ctx.clone(),
+                move |ctx: Ctx<'js>, store: f64, field: String, node: f64, prop: String| -> Res<u32> {
+                    let c = core_of(&ctx, &w)?;
+                    let store = handle_of(&ctx, store)?;
+                    let node = handle_of(&ctx, node)?;
+                    op(&ctx, c.op_link(store, &field, node, &prop))
+                },
+            )?,
+        )?;
+        let w = core.clone();
+        host.set(
+            "unlink",
+            Function::new(ctx.clone(), move |ctx: Ctx<'js>, id: u32| -> Res<()> {
+                let c = core_of(&ctx, &w)?;
+                op(&ctx, c.op_unlink(id))
+            })?,
+        )?;
         let w = core.clone();
         host.set(
             "style",

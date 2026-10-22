@@ -145,6 +145,9 @@ struct State {
     autofocused: Vec<Id>,
     /// A default or cancel button to activate at its next paint (its node id).
     activate: Option<Id>,
+    /// CX3: a one-line text field (its widget id) whose Enter went to the default button: it still
+    /// commits at its next paint.
+    entered: Option<Id>,
     /// An edit command for a text field (its id) at its next paint, with the host's clipboard.
     cmd: Option<(Id, TextCommand, Option<Clip>)>,
     /// A Cut or Copy fed to field `id`: what it copies goes to this clipboard after it ran.
@@ -386,6 +389,9 @@ fn route(st: &mut State, focus: Option<Id>, keys: &[(Key, Modifiers)], ime: &[bo
             });
             if let Some(b) = button {
                 st.activate = Some(b.node_eid);
+                if let Some(e) = focused.filter(|e| enter && matches!(e.role, Role::Text { multiline: false })) {
+                    st.entered = Some(e.id);
+                }
                 plan.eat.push(key);
                 plan.repaint = true;
                 if focus.is_none() && plan.focus.is_none() {
@@ -690,6 +696,18 @@ pub(crate) fn take_activation(ui: &Ui, node_eid: Id) -> bool {
         let hit = st.activate == Some(node_eid);
         if hit {
             st.activate = None;
+        }
+        hit
+    })
+}
+
+/// CX3: for a one-line text field with widget id `id`: whether its Enter went to the default
+/// button this pass (the field still commits).
+pub(crate) fn take_entered(ui: &Ui, id: Id) -> bool {
+    with(ui.ctx(), |st| {
+        let hit = st.entered == Some(id);
+        if hit {
+            st.entered = None;
         }
         hit
     })

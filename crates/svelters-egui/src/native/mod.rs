@@ -18,6 +18,9 @@
 //! platform ([`Native::for_os`]): GTK on Linux and the BSDs. Windows and macOS keep egui's own
 //! behaviour until their references are captured (WG3 follow-ups).
 
+// FX3s: the GTK and Qt undo models, unused until svelters' own text field (see the module docs)
+#[allow(dead_code)]
+pub(crate) mod undo;
 pub mod words;
 
 use egui::text::{CCursor, CCursorRange};
@@ -449,7 +452,12 @@ impl TextFocus {
         }
         if now != before {
             st.store(ctx, id);
-            ctx.request_repaint();
+            // FX3: putting back the range the field had before this pass (egui collapses an
+            // unfocused field's selection on every pass) changes nothing on screen; a repaint for
+            // it would repaint forever while an unfocused GTK field holds a selection
+            if now != self.range {
+                ctx.request_repaint();
+            }
         }
     }
 }
