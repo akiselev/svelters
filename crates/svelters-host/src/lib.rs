@@ -588,6 +588,7 @@ impl<'a> Host<'a> {
         self.ensure_attached();
         let provider = self.compose_modules(provider)?;
         self.reloader.set_provider(provider.clone());
+        self.reloader.set_embedded();
         core::load_entry(&self.core, &self.engine, &provider).map_err(|e| self.core.map_error(e))
     }
 

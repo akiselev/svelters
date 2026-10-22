@@ -85,3 +85,35 @@ fn swapping_one_roots_component_leaves_the_other_roots_alone() {
     assert!(!ev.iter().any(|x| matches!(x, EmbedEvent::Faulted { .. } | EmbedEvent::Mounted(_))), "{ev:?}");
     let _ = (p1, p3);
 }
+
+#[test]
+fn a_full_reload_of_an_embedders_entry_is_refused_and_the_roots_stay() {
+    let dir = scratch("embed-refuse");
+    let mut cfg = SourceConfig::for_path(&dir).unwrap();
+    cfg.dev = true;
+    cfg.hmr = true;
+    let provider = Rc::new(SourceProvider::new(cfg).unwrap());
+    let ecfg = EmbedConfig {
+        id_salt: "h1r",
+        host: HostConfig { echo_console: false, echo_errors: false, quit_on_last_window: false, ..HostConfig::default() },
+        ..EmbedConfig::default()
+    };
+    let mut eh = EmbedHarness::new(egui::vec2(400.0, 300.0), ecfg).unwrap();
+    let e = eh.embed.clone();
+    let entry = e.load_from(provider).unwrap();
+    let s1 = e.create_slot("a", SlotOptions::fill());
+    eh.set_ui(move |e, ui| {
+        e.show_slot(ui, s1);
+    });
+    e.mount(MountSpec::new(entry, "Panel", s1, "p1").props(Props::new().with("title", "One"))).unwrap();
+    eh.run();
+    // a manifest change cannot be applied in place
+    let manifest = dir.join("package.json");
+    let text = std::fs::read_to_string(&manifest).unwrap();
+    std::fs::write(&manifest, text).unwrap();
+    let report = e.host().apply_changes(vec![manifest]).expect("an attempt ran");
+    assert!(!report.ok, "{report:?}");
+    assert!(report.error.as_ref().is_some_and(|x| x.message.contains("not applied in place")), "{report:?}");
+    eh.run();
+    assert!(eh.harness.query_by_label("Inc One").is_some(), "the root is still there");
+}
