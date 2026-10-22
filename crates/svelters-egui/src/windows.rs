@@ -1,7 +1,10 @@
 //! The `window` kind as a viewport: the presented windows are walked each pass, the first live one
-//! in the root viewport's `CentralPanel`, the others with `show_viewport_immediate`; their titles
-//! and sizes follow the window props, and a user close becomes a `close-request` decided before the
-//! next pass.
+//! in the root viewport, the others with `show_viewport_immediate`; their titles and sizes follow
+//! the window props, and a user close becomes a `close-request` decided before the next pass.
+//!
+//! OW2: the window's inner chrome (its background) is svelters' own: the window node's computed
+//! style over [`WINDOW_UA`] (`bg`, VS Code's chrome), painted by the box primitive. No egui
+//! `CentralPanel` or `Frame`.
 //!
 //! For the desktop runner and kittest; after EM1 an embedding host draws slots instead
 //! (ARCH-EMBED §9). Writer lane: EMBED.
@@ -9,6 +12,9 @@
 use crate::backend::EguiBackend;
 use crate::scene::{Handle, W};
 use crate::walk::Out;
+
+/// OW2: the window's background where no CSS sets one (VS Code's chrome, `bg`).
+pub const WINDOW_UA: crate::paint::Ua = crate::paint::Ua(&[crate::paint::UaRule::base(&[("background-color", crate::paint::UaValue::Token("bg"))])]);
 
 impl EguiBackend {
     /// The window shown in the root viewport: the first presented one still alive.
@@ -31,9 +37,7 @@ impl EguiBackend {
                 if ctx.input(|inp| inp.viewport().close_requested()) {
                     self.on_close_requested(&ctx, egui::ViewportId::ROOT, w);
                 }
-                egui::CentralPanel::default()
-                    .frame(egui::Frame::central_panel(ui.style()).inner_margin(0.0))
-                    .show(ui, |ui| self.window_ui(ui, w, &mut out));
+                self.window_chrome_ui(ui, w, &mut out);
                 // EV1 (SV7): overlays and viewport passes after the window's walk
                 crate::provider::pass::run_viewport_passes(&self.0.scene, ui);
             } else {
@@ -44,15 +48,34 @@ impl EguiBackend {
                     if ui.ctx().input(|inp| inp.viewport().close_requested()) {
                         self.on_close_requested(ui.ctx(), vid, w);
                     }
-                    egui::CentralPanel::default()
-                        .frame(egui::Frame::central_panel(ui.style()).inner_margin(0.0))
-                        .show(ui, |ui| self.window_ui(ui, w, &mut out));
+                    self.window_chrome_ui(ui, w, &mut out);
                     crate::provider::pass::run_viewport_passes(&self.0.scene, ui);
                 });
             }
         }
         self.0.pass_active.set(false);
         out
+    }
+
+    /// OW2: window `w`'s content in `ui`'s whole rect on its own background.
+    fn window_chrome_ui(&self, ui: &mut egui::Ui, w: Handle, out: &mut Vec<Out>) {
+        // the space left in `ui` (what egui's `CentralPanel` took): a host may draw above it
+        let rect = ui.available_rect_before_wrap();
+        {
+            let scene = self.0.scene.borrow();
+            if let Ok(id) = scene.live(w) {
+                let css = scene.style.computed(id).map(|c| &**c);
+                let dark = ui.ctx().theme() == egui::Theme::Dark;
+                let st = crate::paint::StyleView::new(css, WINDOW_UA, crate::provider::StateBits::NONE, dark);
+                let mut pc = crate::paint::PaintCx::new(ui.painter());
+                pc.target = (w, None);
+                crate::paint::paint_box(&mut pc, &st, rect);
+            }
+        }
+        let mut child = ui.new_child(egui::UiBuilder::new().max_rect(rect).id_salt(("svl-window", w)).layout(egui::Layout::top_down(egui::Align::Min)));
+        self.window_ui(&mut child, w, out);
+        // the window takes that space in `ui` (as the panel did), so a frame around `ui` fits it
+        ui.advance_cursor_after_rect(rect);
     }
 
     fn window_props(&self, w: Handle) -> (String, egui::Vec2) {

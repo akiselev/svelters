@@ -90,11 +90,19 @@ pub(crate) const ENGINE_PROPS: &[(&str, &str, &[&str])] = &[
     ("margin-right", "length", &[]),
     ("margin-top", "length", &[]),
     ("opacity", "number", &[]),
+    // OW2: scrolling (`widgets::scroll_area`; `overflow-*` also set taffy's overflow, so a scrolled
+    // box keeps its size while its content overflows)
+    ("overflow-x", "enum", &["visible", "hidden", "clip", "scroll", "auto"]),
+    ("overflow-y", "enum", &["visible", "hidden", "clip", "scroll", "auto"]),
+    ("overscroll-behavior", "enum", &["auto", "contain", "none"]),
     ("padding", "insets", &[]),
     ("padding-bottom", "length", &[]),
     ("padding-left", "length", &[]),
     ("padding-right", "length", &[]),
     ("padding-top", "length", &[]),
+    // OW2: the gap a revealed node keeps from the scroll area's edge; a classic bar's gutter
+    ("scroll-margin", "length", &[]),
+    ("scrollbar-gutter", "enum", &["auto", "stable"]),
     // OW-CSS (ARCH-WIDGETS §1.1): read by the paint primitives through `StyleView`
     ("background-image", "image", &[]),
     ("border-top-color", "color", &[]),
@@ -1367,7 +1375,9 @@ pub(crate) fn layout_style(s: &Scene, i: usize) -> taffy::Style {
     let mut st = crate::layout::style_of(s.common(i), w, &vis);
     let Some(c) = s.slots.id_at(i).and_then(|id| s.style.computed(id)) else { return st };
     let explicit = |name: &str| explicit_prop(s, i, name);
-    let container = w.is_container();
+    // (OW2: an own widget with children takes the box properties too)
+    let container = w.is_container()
+        || matches!(w, W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::CONTAINER) || x.entry().caps.contains(crate::provider::Caps::CUSTOM_LAYOUT));
     // CS5f: padding is taffy's for containers and for leaves padded around the widget
     let pad_ok = container || pads_outside(w);
     for (p, v) in c.iter() {
@@ -1421,6 +1431,23 @@ pub(crate) fn layout_style(s: &Scene, i: usize) -> taffy::Style {
             "top" => st.inset.top = lpa(v).unwrap_or(st.inset.top),
             "right" => st.inset.right = lpa(v).unwrap_or(st.inset.right),
             "bottom" => st.inset.bottom = lpa(v).unwrap_or(st.inset.bottom),
+            // OW2: a scrolled or clipped axis keeps the box from growing to its content
+            "overflow-x" | "overflow-y" => {
+                let o = match kw {
+                    Some("scroll" | "auto") => Some(taffy::Overflow::Scroll),
+                    Some("hidden") => Some(taffy::Overflow::Hidden),
+                    Some("clip") => Some(taffy::Overflow::Clip),
+                    // `visible` (the initial value) keeps what the props gave (a scroll area's axes)
+                    _ => None,
+                };
+                if let Some(o) = o {
+                    if p.name == "overflow-x" { st.overflow.x = o } else { st.overflow.y = o }
+                }
+            }
+            // OW2: classic scroll bars take a gutter beside the content (`scrollbar-w`)
+            "scrollbar-gutter" if kw == Some("stable") => {
+                st.scrollbar_width = crate::paint::StyleView::ua_only(crate::widgets::scroll_area::TRACK_UA, crate::provider::StateBits::NONE, true).px("width").unwrap_or(10.0);
+            }
             "visible" => {
                 if matches!(v, ComputedValue::Bool(false)) {
                     st.display = taffy::Display::None;
