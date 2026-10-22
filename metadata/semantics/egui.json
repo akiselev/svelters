@@ -4,6 +4,31 @@
   "framework": "egui 0.37 (svelters-egui; taffy 0.15 layout)",
   "kinds": {
     "Action": {
+      "a11y": {
+        "actions": [
+          "Click",
+          "Focus"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "label"
+        ],
+        "note": "Its `shortcut` is announced as the keyboard shortcut.",
+        "role": "Button",
+        "value": "checked or not, for a check or radio item",
+        "variants": [
+          {
+            "role": "CheckBox",
+            "when": "`checkable`"
+          },
+          {
+            "role": "RadioButton",
+            "when": "`group` is set"
+          }
+        ]
+      },
       "abstract": false,
       "bindings": {
         "checked": {
@@ -26,16 +51,20 @@
           }
         }
       },
+      "category": "menus",
       "chain": [
         "Action",
         "MenuEntry"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "",
       "doc": "A menu item: plain, a check item (`checkable`) or a radio item (`group`), with an optional `shortcut`. AccessKit role Button, CheckBox or RadioButton.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::Button (menu item)",
+      "paint": "none",
       "present": null,
       "props": {
         "checkable": {
@@ -161,11 +190,23 @@
           "sync_required": false
         }
       },
+      "states": [],
       "text_content": "label"
     },
     "Box": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "layout",
       "chain": [
         "Box",
         "Widget"
@@ -185,11 +226,14 @@
           }
         }
       },
+      "css_hidden": [],
+      "css_note": "",
       "doc": "A flexbox container laid out by taffy; draws nothing itself.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "taffy::Style (flexbox)",
+      "paint": "box",
       "present": null,
       "props": {
         "align-items": {
@@ -381,21 +425,91 @@
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {},
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over its box"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down over its box"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "an element inside it has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "Button": {
+      "a11y": {
+        "actions": [
+          "Click",
+          "Focus"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "text",
+          "tooltip (when `text` is empty)"
+        ],
+        "note": "",
+        "role": "Button",
+        "value": "selected, when `selected` is true",
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "buttons",
       "chain": [
         "Button",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "",
       "doc": "A push button.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::Button",
+      "paint": "stock",
       "present": null,
       "props": {
         "cancel": {
@@ -556,21 +670,108 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        },
+        {
+          "name": "selected",
+          "negated": [],
+          "pseudo": [
+            ":selected"
+          ],
+          "source": "prop",
+          "when": "`selected` is true"
+        }
+      ],
       "text_content": "text"
     },
     "Canvas": {
+      "a11y": {
+        "actions": [
+          "Click (with `onclicked`)",
+          "Focus (with `onclicked`)"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "tooltip"
+        ],
+        "note": "",
+        "role": "Canvas",
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "media",
       "chain": [
         "Canvas",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "The box paints under the drawing; the drawing's colours are the ones in `ops`.",
       "doc": "A drawing surface replaying the X8 display list (`ops`) that `@svelters/canvas` records, as GTK's and Qt's `canvas` do. Paths fill as simple polygons (no holes, nonzero = even-odd), `clip` cuts to the path's bounding box, `clearRect` paints the window background.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::Painter (X8 display list replay)",
+      "paint": "box",
       "present": null,
       "props": {
         "content-height": {
@@ -661,9 +862,84 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it takes clicks (`onclicked` is set) and has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "Checkbox": {
+      "a11y": {
+        "actions": [
+          "Click",
+          "Focus"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "text",
+          "tooltip (when `text` is empty)"
+        ],
+        "note": "",
+        "role": "CheckBox",
+        "value": "checked or not (`checked`)",
+        "variants": []
+      },
       "abstract": false,
       "bindings": {
         "checked": {
@@ -686,16 +962,20 @@
           }
         }
       },
+      "category": "inputs",
       "chain": [
         "Checkbox",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "",
       "doc": "A check box with a caption.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::Checkbox",
+      "paint": "stock",
       "present": null,
       "props": {
         "checked": {
@@ -765,9 +1045,92 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        },
+        {
+          "name": "checked",
+          "negated": [],
+          "pseudo": [
+            ":checked"
+          ],
+          "source": "prop",
+          "when": "`checked` is true"
+        }
+      ],
       "text_content": "text"
     },
     "CollapsingHeader": {
+      "a11y": {
+        "actions": [
+          "Click",
+          "Focus"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "text"
+        ],
+        "note": "The node is the header row; the body's children are announced in place while it is open.",
+        "role": "DisclosureTriangle",
+        "value": "expanded while `open`",
+        "variants": []
+      },
       "abstract": false,
       "bindings": {
         "open": {
@@ -790,6 +1153,7 @@
           }
         }
       },
+      "category": "containers",
       "chain": [
         "CollapsingHeader",
         "Box",
@@ -810,11 +1174,14 @@
           }
         }
       },
+      "css_hidden": [],
+      "css_note": "`:open` and `:expanded` do not match it yet: use `class:open={open}` with `bind:open`.",
       "doc": "A clickable header with a caret; its children (a flex box, indented) are shown and laid out only while `open`.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::CollapsingHeader (header) + taffy flexbox (body)",
+      "paint": "box",
       "present": null,
       "props": {
         "open": {
@@ -873,9 +1240,75 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over its box"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down over its box"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "an element inside it has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": "text"
     },
     "ColorPicker": {
+      "a11y": {
+        "actions": [
+          "Click",
+          "Focus"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "tooltip",
+          "\"Color\""
+        ],
+        "note": "",
+        "role": "ColorWell",
+        "value": "the colour",
+        "variants": []
+      },
       "abstract": false,
       "bindings": {
         "value": {
@@ -898,16 +1331,20 @@
           }
         }
       },
+      "category": "pickers",
       "chain": [
         "ColorPicker",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "The swatch shows the colour; the picker popup follows the theme.",
       "doc": "A colour swatch; clicking it opens egui's colour picker popup.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::color_picker::color_edit_button_hsva",
+      "paint": "box",
       "present": null,
       "props": {
         "alpha": {
@@ -971,9 +1408,83 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "ComboBox": {
+      "a11y": {
+        "actions": [
+          "Click",
+          "Focus"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "tooltip"
+        ],
+        "note": "Its open list is a `ListBox`. It shows no caption of its own: name it with `accessible-name` (or a `tooltip`).",
+        "role": "ComboBox",
+        "value": "the selected option's text",
+        "variants": []
+      },
       "abstract": false,
       "bindings": {
         "selected": {
@@ -996,16 +1507,20 @@
           }
         }
       },
+      "category": "inputs",
       "chain": [
         "ComboBox",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "`:focus` does not match it yet; use `:focus-within` on its container.",
       "doc": "A drop-down list: shows the selected option, picks one from a popup. Name it with `accessible-name` (it has no caption).",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::ComboBox",
+      "paint": "box",
       "present": null,
       "props": {
         "hint-text": {
@@ -1082,12 +1597,72 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "ContextMenu": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "attaches_to": "Widget",
       "bindings": {},
+      "category": "menus",
       "chain": [
         "ContextMenu",
         "MenuEntry"
@@ -1109,6 +1684,8 @@
           }
         }
       },
+      "css_hidden": [],
+      "css_note": "",
       "doc": "A menu that attaches to the element it is declared in and opens at the pointer on a secondary click on it (the innermost owner wins). `popup` opens it below its owner. The shortcuts of its actions are active while the owner is drawn.",
       "interface": false,
       "lifetime": "owned",
@@ -1135,15 +1712,33 @@
         }
       },
       "native": "egui::Popup (menu)",
+      "paint": "none",
       "present": null,
       "props": {},
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {},
+      "states": [],
       "text_content": null
     },
     "DatePicker": {
+      "a11y": {
+        "actions": [
+          "Click",
+          "Focus"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "the shown date"
+        ],
+        "note": "The calendar popup's controls are nodes of their own.",
+        "role": "Button",
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {
         "value": {
@@ -1166,16 +1761,20 @@
           }
         }
       },
+      "category": "pickers",
       "chain": [
         "DatePicker",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "The calendar popup follows the theme.",
       "doc": "A button showing a date; clicking it opens a calendar popup (Save/Cancel).",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui_extras::DatePickerButton",
+      "paint": "box",
       "present": null,
       "props": {
         "calendar-week": {
@@ -1251,9 +1850,85 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "DragValue": {
+      "a11y": {
+        "actions": [
+          "Focus",
+          "SetValue",
+          "Increment",
+          "Decrement"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "tooltip"
+        ],
+        "note": "",
+        "role": "SpinButton",
+        "value": "`value`",
+        "variants": []
+      },
       "abstract": false,
       "bindings": {
         "value": {
@@ -1276,16 +1951,20 @@
           }
         }
       },
+      "category": "inputs",
       "chain": [
         "DragValue",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "",
       "doc": "A number edited by dragging horizontally, the arrow keys, or typing after a click. Name it with `accessible-name` or `tooltip`.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::DragValue",
+      "paint": "box",
       "present": null,
       "props": {
         "decimals": {
@@ -1451,11 +2130,80 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "Frame": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "containers",
       "chain": [
         "Frame",
         "Box",
@@ -1476,11 +2224,14 @@
           }
         }
       },
+      "css_hidden": [],
+      "css_note": "Its `frame-style` paints over the CSS box (a style with a fill hides `background-color`); with `frame-style=\"none\"` CSS alone draws it.",
       "doc": "A flex box drawn inside an egui frame (background, border, rounding, inner margin), with an optional caption.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::Frame + taffy flexbox",
+      "paint": "box",
       "present": null,
       "props": {
         "frame-style": {
@@ -1531,11 +2282,71 @@
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {},
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over its box"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down over its box"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "an element inside it has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "Grid": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "layout",
       "chain": [
         "Grid",
         "Widget"
@@ -1555,11 +2366,14 @@
           }
         }
       },
+      "css_hidden": [],
+      "css_note": "",
       "doc": "A CSS grid container laid out by taffy: children fill the cells row by row (auto-placement); draws nothing itself.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "taffy::Style (CSS grid)",
+      "paint": "box",
       "present": null,
       "props": {
         "align-items": {
@@ -1699,21 +2513,90 @@
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {},
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over its box"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down over its box"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "an element inside it has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "Hyperlink": {
+      "a11y": {
+        "actions": [
+          "Click",
+          "Focus"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "text"
+        ],
+        "note": "",
+        "role": "Link",
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "buttons",
       "chain": [
         "Hyperlink",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "",
       "doc": "A link: text that opens `url` when clicked (AccessKit role `Link`).",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::Hyperlink",
+      "paint": "box",
       "present": null,
       "props": {
         "new-tab": {
@@ -1795,21 +2678,105 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": "text"
     },
     "Icon": {
+      "a11y": {
+        "actions": [
+          "Click (when it is a button)",
+          "Focus (when it is a button)"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "tooltip",
+          "name"
+        ],
+        "note": "",
+        "role": "Image",
+        "value": null,
+        "variants": [
+          {
+            "role": "Button",
+            "when": "`frame`, or an `onclicked` handler"
+          }
+        ]
+      },
       "abstract": false,
       "bindings": {},
+      "category": "display",
       "chain": [
         "Icon",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "The glyph takes `color`. With `frame`, it is drawn as a button and `:focus` matches.",
       "doc": "A glyph from an icon font the embedder registered (SVP6), by name or as text. With `frame` it is an icon button. Its accessible name is `accessible-name`, else `tooltip`, else `name`.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::Label / egui::Button (icon font glyph)",
+      "paint": "box",
       "present": null,
       "props": {
         "family": {
@@ -2004,21 +2971,99 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it takes clicks (`onclicked` is set) and has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "Image": {
+      "a11y": {
+        "actions": [
+          "Click (with `onclicked`)",
+          "Focus (with `onclicked`)"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "tooltip"
+        ],
+        "note": "",
+        "role": "Image",
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "media",
       "chain": [
         "Image",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "",
       "doc": "A picture from `source`, at its own size unless `width`/`height` say otherwise. AccessKit role `Image`, named by `accessible-name` or `tooltip`.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::Image",
+      "paint": "box",
       "present": null,
       "props": {
         "fit": {
@@ -2079,9 +3124,79 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it takes clicks (`onclicked` is set) and has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "InnerWindow": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [
+          "title"
+        ],
+        "note": "Its title bar's collapse and close buttons are `Button` nodes.",
+        "role": "Window",
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {
         "open": {
@@ -2104,6 +3219,7 @@
           }
         }
       },
+      "category": "overlays",
       "chain": [
         "InnerWindow",
         "Box",
@@ -2124,11 +3240,14 @@
           }
         }
       },
+      "css_hidden": [],
+      "css_note": "The window frame follows the theme; style its content through a child `box`.",
       "doc": "A floating window inside the viewport (`egui::Window`): movable, optionally resizable, collapsible and closable; its children are a flex box.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::Window",
+      "paint": "none",
       "present": null,
       "props": {
         "closable": {
@@ -2317,21 +3436,42 @@
           "sync_required": false
         }
       },
+      "states": [],
       "text_content": null
     },
     "Label": {
+      "a11y": {
+        "actions": [
+          "Click (with `onclicked`)",
+          "Focus (with `onclicked`)"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "text"
+        ],
+        "note": "",
+        "role": "Label",
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "display",
       "chain": [
         "Label",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "",
       "doc": "Static text.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::Label",
+      "paint": "box",
       "present": null,
       "props": {
         "font-weight": {
@@ -2424,11 +3564,86 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it takes clicks (`onclicked` is set) and has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": "text"
     },
     "Menu": {
+      "a11y": {
+        "actions": [
+          "Click",
+          "Focus"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "label"
+        ],
+        "note": "",
+        "role": "Button",
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "menus",
       "chain": [
         "Menu",
         "MenuEntry"
@@ -2450,11 +3665,14 @@
           }
         }
       },
+      "css_hidden": [],
+      "css_note": "",
       "doc": "A menu: a menu-bar button, or a submenu row inside another menu. Inside a `menu-button` its items are the button's menu (its label is unused).",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::containers::menu::{MenuButton, SubMenuButton}",
+      "paint": "none",
       "present": null,
       "props": {
         "label": {
@@ -2479,11 +3697,23 @@
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {},
+      "states": [],
       "text_content": "label"
     },
     "MenuBar": {
+      "a11y": {
+        "actions": [],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [],
+        "note": "Its menus are `Button` nodes.",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "menus",
       "chain": [
         "MenuBar",
         "Widget"
@@ -2505,20 +3735,88 @@
           }
         }
       },
+      "css_hidden": [],
+      "css_note": "",
       "doc": "A horizontal menu bar of `menu` children (and plain `action`s). One interact row high; it takes no width of its own, so it fills a column (align-items stretch) or needs `flex-grow` in a row. The shortcuts of its actions are active while it is drawn.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::MenuBar",
+      "paint": "box",
       "present": null,
       "props": {},
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {},
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "MenuButton": {
+      "a11y": {
+        "actions": [
+          "Click",
+          "Focus"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "label"
+        ],
+        "note": "",
+        "role": "Button",
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {
         "active": {
@@ -2541,6 +3839,7 @@
           }
         }
       },
+      "category": "menus",
       "chain": [
         "MenuButton",
         "Widget"
@@ -2562,6 +3861,8 @@
           }
         }
       },
+      "css_hidden": [],
+      "css_note": "The menu it opens is not styled by CSS.",
       "doc": "A button that opens a menu of its children (`action`, `menu`, `menu-separator`; a `menu` child's items are shown inline, as GTK's menu-button takes a menu). The shortcuts of its actions are active while it is drawn.",
       "interface": false,
       "lifetime": "owned",
@@ -2588,6 +3889,7 @@
         }
       },
       "native": "egui::containers::menu::MenuButton",
+      "paint": "box",
       "present": null,
       "props": {
         "active": {
@@ -2646,20 +3948,94 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": "label"
     },
     "MenuEntry": {
+      "a11y": {
+        "actions": [],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name"
+        ],
+        "note": "",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
       "abstract": true,
       "bindings": {},
+      "category": "base",
       "chain": [
         "MenuEntry"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "Menu entries are drawn by the menu that shows them; CSS reaches the menu's own content only.",
       "doc": "Common properties of the menu entries (`menu`, `action`, `menu-separator`, `context-menu`): drawn inside a menu, never laid out by taffy.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui menu entry",
+      "paint": "none",
       "present": null,
       "props": {
         "accessible-name": {
@@ -2752,30 +4128,56 @@
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {},
+      "states": [],
       "text_content": null
     },
     "MenuSeparator": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "menus",
       "chain": [
         "MenuSeparator",
         "MenuEntry"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "",
       "doc": "A line between menu items (a vertical one in a menu bar).",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::Separator",
+      "paint": "none",
       "present": null,
       "props": {},
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {},
+      "states": [],
       "text_content": null
     },
     "Modal": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {
         "open": {
@@ -2798,6 +4200,7 @@
           }
         }
       },
+      "category": "overlays",
       "chain": [
         "Modal",
         "Box",
@@ -2818,11 +4221,14 @@
           }
         }
       },
+      "css_hidden": [],
+      "css_note": "The dialog frame and backdrop follow the theme; style its content through a child `box`.",
       "doc": "An in-window modal dialog: a backdrop over the viewport that blocks the rest of the UI, its content centred, sized to fit (or `width`/`height`). The egui form of a modal dialog (no OS-modal windows on egui: EGUI.md §5).",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::Modal",
+      "paint": "none",
       "present": null,
       "props": {
         "dismissable": {
@@ -2909,9 +4315,20 @@
           "sync_required": false
         }
       },
+      "states": [],
       "text_content": null
     },
     "Panel": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {
         "size": {
@@ -2934,6 +4351,7 @@
           }
         }
       },
+      "category": "containers",
       "chain": [
         "Panel",
         "Box",
@@ -2954,11 +4372,19 @@
           }
         }
       },
+      "css_hidden": [
+        "background-color",
+        "border-color",
+        "border-width",
+        "border-radius"
+      ],
+      "css_note": "The panel fills its rect with `--sv-panel-bg` over the CSS box, so `background-color` and `border-*` rules are hidden: override the token instead.",
       "doc": "A side or top/bottom panel: a flex box with the panel background and a separator on its inner edge, optionally resizable. Place it at the edge of a row (left/right) or column (top/bottom).",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui panel look (`Visuals::panel_fill`, separator, resize grip) + taffy flexbox",
+      "paint": "box",
       "present": null,
       "props": {
         "resizable": {
@@ -3057,9 +4483,68 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over its box"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down over its box"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "an element inside it has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "Popup": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "attaches_to": "Widget",
       "bindings": {
@@ -3083,6 +4568,7 @@
           }
         }
       },
+      "category": "overlays",
       "chain": [
         "Popup",
         "Box",
@@ -3103,6 +4589,8 @@
           }
         }
       },
+      "css_hidden": [],
+      "css_note": "The popup's frame follows the theme; style its content through a child `box`.",
       "doc": "A popover anchored to its owner: the element it is declared in (attached), or the box it is placed in. Its children are a flex box sized to their content (or `width`/`height`), out of the owner's flow. GTK's `popover`.",
       "interface": false,
       "lifetime": "owned",
@@ -3129,6 +4617,7 @@
         }
       },
       "native": "egui::Popup",
+      "paint": "none",
       "present": null,
       "props": {
         "autohide": {
@@ -3221,21 +4710,40 @@
           "sync_required": false
         }
       },
+      "states": [],
       "text_content": null
     },
     "ProgressBar": {
+      "a11y": {
+        "actions": [],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "text",
+          "tooltip"
+        ],
+        "note": "",
+        "role": "ProgressIndicator",
+        "value": "`fraction`",
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "display",
       "chain": [
         "ProgressBar",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "The fill follows the theme's selection colour.",
       "doc": "A horizontal bar filled to `fraction`, as wide as its rect.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::ProgressBar",
+      "paint": "box",
       "present": null,
       "props": {
         "animate": {
@@ -3311,9 +4819,75 @@
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {},
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "RadioButton": {
+      "a11y": {
+        "actions": [
+          "Click",
+          "Focus"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "text",
+          "tooltip (when `text` is empty)"
+        ],
+        "note": "",
+        "role": "RadioButton",
+        "value": "checked or not (`checked`)",
+        "variants": []
+      },
       "abstract": false,
       "bindings": {
         "checked": {
@@ -3355,16 +4929,20 @@
           }
         }
       },
+      "category": "inputs",
       "chain": [
         "RadioButton",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "`:checked` does not match it yet: use `class:on={checked}`.",
       "doc": "One choice of several. Siblings are exclusive: a click checks it and unchecks the other radio buttons of the same parent. Bind `checked` per button, or `group` on every button with a `value` each.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::RadioButton",
+      "paint": "box",
       "present": null,
       "props": {
         "checked": {
@@ -3472,9 +5050,86 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": "text"
     },
     "RangeSlider": {
+      "a11y": {
+        "actions": [
+          "Focus",
+          "SetValue",
+          "Increment",
+          "Decrement"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "text",
+          "tooltip"
+        ],
+        "note": "Each handle is a `Slider` node of its own; with `show-value`, the two value boxes are `SpinButton` nodes.",
+        "role": "Slider",
+        "value": "`low` and `high`, one per handle",
+        "variants": []
+      },
       "abstract": false,
       "bindings": {
         "high": {
@@ -3516,16 +5171,20 @@
           }
         }
       },
+      "category": "inputs",
       "chain": [
         "RangeSlider",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "`:focus` follows its first focusable part (the low value box with `show-value`, else the rail).",
       "doc": "A horizontal slider with two handles selecting `low`..`high`; the handles meet but never cross.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::RangeSlider",
+      "paint": "box",
       "present": null,
       "props": {
         "high": {
@@ -3695,9 +5354,77 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "ScrollArea": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "Its scroll bars are `ScrollBar` nodes.",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {
         "scroll-x": {
@@ -3739,6 +5466,7 @@
           }
         }
       },
+      "category": "containers",
       "chain": [
         "ScrollArea",
         "Box",
@@ -3759,11 +5487,14 @@
           }
         }
       },
+      "css_hidden": [],
+      "css_note": "",
       "doc": "A flex box whose content scrolls when it overflows the area's size (taffy `overflow: scroll`); give it a size or let flex-grow size it.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::ScrollArea + taffy flexbox (content)",
+      "paint": "box",
       "present": null,
       "props": {
         "direction": {
@@ -3848,21 +5579,84 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over its box"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down over its box"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "an element inside it has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "Separator": {
+      "a11y": {
+        "actions": [],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [],
+        "note": "",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "display",
       "chain": [
         "Separator",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "The line itself follows the theme's separator colour.",
       "doc": "A thin line between items; fills its rect along its orientation.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::Separator",
+      "paint": "box",
       "present": null,
       "props": {
         "orientation": {
@@ -3891,11 +5685,71 @@
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {},
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "Sides": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "layout",
       "chain": [
         "Sides",
         "Widget"
@@ -3915,11 +5769,14 @@
           }
         }
       },
+      "css_hidden": [],
+      "css_note": "",
       "doc": "A row with its first child at the start and its second at the end (wrap several items in a `box`); with more children, the space is shared between them.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::Sides (taffy flex row, space-between)",
+      "paint": "box",
       "present": null,
       "props": {
         "align-items": {
@@ -3985,9 +5842,77 @@
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {},
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over its box"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down over its box"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "an element inside it has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "Slider": {
+      "a11y": {
+        "actions": [
+          "Focus",
+          "SetValue",
+          "Increment",
+          "Decrement"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "text",
+          "tooltip"
+        ],
+        "note": "With `show-value`, its value box is a separate `SpinButton` node.",
+        "role": "Slider",
+        "value": "`value`, within `min`..`max`",
+        "variants": []
+      },
       "abstract": false,
       "bindings": {
         "value": {
@@ -4010,16 +5935,20 @@
           }
         }
       },
+      "category": "inputs",
       "chain": [
         "Slider",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "",
       "doc": "A horizontal slider with an optional value box.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::Slider",
+      "paint": "stock",
       "present": null,
       "props": {
         "max": {
@@ -4168,21 +6097,96 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "Spinner": {
+      "a11y": {
+        "actions": [],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "tooltip"
+        ],
+        "note": "",
+        "role": "ProgressIndicator",
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "display",
       "chain": [
         "Spinner",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "",
       "doc": "A busy indicator.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::Spinner",
+      "paint": "box",
       "present": null,
       "props": {
         "size": {
@@ -4224,9 +6228,70 @@
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {},
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "SplitView": {
+      "a11y": {
+        "actions": [],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name"
+        ],
+        "note": "The node is the divider.",
+        "role": "Splitter",
+        "value": "the divider position, and its orientation",
+        "variants": []
+      },
       "abstract": false,
       "bindings": {
         "divider-position": {
@@ -4249,6 +6314,7 @@
           }
         }
       },
+      "category": "containers",
       "chain": [
         "SplitView",
         "Widget"
@@ -4268,11 +6334,14 @@
           }
         }
       },
+      "css_hidden": [],
+      "css_note": "The divider line follows the theme.",
       "doc": "Two panes (its first two children; more are not shown) split by a divider the user drags. `divider-position` is the first pane's size.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "two panes + a draggable divider (egui drag sense)",
+      "paint": "box",
       "present": null,
       "props": {
         "divider-position": {
@@ -4391,11 +6460,71 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over its box"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down over its box"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "an element inside it has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "Stack": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "layout",
       "chain": [
         "Stack",
         "Widget"
@@ -4415,11 +6544,14 @@
           }
         }
       },
+      "css_hidden": [],
+      "css_note": "",
       "doc": "Shows one of its children (GTK's `stack`, Qt's `stacked-widget`): the one anchored `visible-child-name`, else the one at `visible-index`. The others are neither drawn nor hit.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "synthetic (one child shown at a time)",
+      "paint": "box",
       "present": null,
       "props": {
         "homogeneous": {
@@ -4495,9 +6627,75 @@
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {},
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over its box"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down over its box"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "an element inside it has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "Switch": {
+      "a11y": {
+        "actions": [
+          "Click",
+          "Focus"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "text",
+          "tooltip (when `text` is empty)"
+        ],
+        "note": "",
+        "role": "Switch",
+        "value": "on or off (`active`)",
+        "variants": []
+      },
       "abstract": false,
       "bindings": {
         "active": {
@@ -4520,16 +6718,20 @@
           }
         }
       },
+      "category": "inputs",
       "chain": [
         "Switch",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "`:checked` does not match it yet: use `class:on={active}`.",
       "doc": "An on/off switch with a sliding knob (GTK's `switch`; WinUI's `toggle-switch`).",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "synthetic (egui toggle switch, AccessKit role `Switch`)",
+      "paint": "box",
       "present": null,
       "props": {
         "active": {
@@ -4599,11 +6801,85 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": "text"
     },
     "Tab": {
+      "a11y": {
+        "actions": [
+          "Click",
+          "Focus"
+        ],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [
+          "title"
+        ],
+        "note": "The node is its button in the parent's tab bar.",
+        "role": "Tab",
+        "value": "selected while its page is shown",
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "containers",
       "chain": [
         "Tab",
         "Box",
@@ -4624,11 +6900,14 @@
           }
         }
       },
+      "css_hidden": [],
+      "css_note": "Rules on `tab` style the page, not its button in the bar.",
       "doc": "A page of a `tab-view`: a flex box whose `title` is its tab's caption.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "taffy flexbox (a tab-view page)",
+      "paint": "box",
       "present": null,
       "props": {
         "closable": {
@@ -4682,9 +6961,68 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over its box"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down over its box"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "an element inside it has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "TabView": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "Each tab in its bar is a `Tab` node, selected for the shown page.",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {
         "selected": {
@@ -4707,6 +7045,7 @@
           }
         }
       },
+      "category": "containers",
       "chain": [
         "TabView",
         "Widget"
@@ -4726,11 +7065,14 @@
           }
         }
       },
+      "css_hidden": [],
+      "css_note": "The tab bar follows the theme; the shown page is a `tab`, styled as a box.",
       "doc": "Pages under a tab bar: each child (a `tab`) is a page titled by its `title`; only the `selected` one is laid out and drawn.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "tab bar (egui selectable labels) + the selected page",
+      "paint": "box",
       "present": null,
       "props": {
         "selected": {
@@ -4772,9 +7114,72 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over its box"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down over its box"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "an element inside it has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "Table": {
+      "a11y": {
+        "actions": [
+          "Focus"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name"
+        ],
+        "note": "Its keyboard part is a `Grid` node whose active descendant is the cursor cell; rows are `Row` nodes and cells `Cell` nodes. Multi-row selection marks it multiselectable.",
+        "role": "Table",
+        "value": "its row and column counts",
+        "variants": []
+      },
       "abstract": false,
       "bindings": {
         "current": {
@@ -4835,6 +7240,7 @@
           }
         }
       },
+      "category": "views",
       "chain": [
         "Table",
         "Widget"
@@ -4854,6 +7260,8 @@
           }
         }
       },
+      "css_hidden": [],
+      "css_note": "Rows, cells and headers follow the theme; the box paints under the whole table.",
       "doc": "A virtual table (`egui_table`): only the visible rows and columns are drawn. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`. Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it.",
       "interface": false,
       "lifetime": "owned",
@@ -4920,6 +7328,7 @@
         }
       },
       "native": "egui_table::Table",
+      "paint": "box",
       "present": null,
       "props": {
         "current": {
@@ -5195,16 +7604,80 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over its box"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down over its box"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "an element inside it has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "TableColumn": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [
+          "title"
+        ],
+        "note": "The table draws the header; the column has no node of its own.",
+        "role": "ColumnHeader",
+        "value": "the sort direction (`sort`)",
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "views",
       "chain": [
         "TableColumn",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "Data only: the table draws it.",
       "doc": "A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100) is the column's width; a user resize keeps its width until the prop changes.",
       "interface": false,
       "lifetime": "owned",
@@ -5231,6 +7704,7 @@
         }
       },
       "native": "egui_table::Column",
+      "paint": "none",
       "present": null,
       "props": {
         "align": {
@@ -5397,9 +7871,38 @@
           "sync_required": false
         }
       },
+      "states": [],
       "text_content": null
     },
     "TextEdit": {
+      "a11y": {
+        "actions": [
+          "Focus",
+          "SetValue",
+          "ReplaceSelectedText",
+          "SetTextSelection"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "hint-text",
+          "tooltip"
+        ],
+        "note": "",
+        "role": "TextInput",
+        "value": "the text",
+        "variants": [
+          {
+            "role": "MultilineTextInput",
+            "when": "`multiline`"
+          },
+          {
+            "role": "PasswordInput",
+            "when": "`password`"
+          }
+        ]
+      },
       "abstract": false,
       "bindings": {
         "text": {
@@ -5422,11 +7925,14 @@
           }
         }
       },
+      "category": "inputs",
       "chain": [
         "TextEdit",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "The field's fill follows the `--sv-input-bg` token; prefer the input tokens to rules.",
       "doc": "A single- or multi-line text field.",
       "interface": false,
       "lifetime": "owned",
@@ -5443,6 +7949,7 @@
         }
       },
       "native": "egui::TextEdit",
+      "paint": "stock",
       "present": null,
       "props": {
         "char-limit": {
@@ -5574,16 +8081,87 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "ToastHost": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "Each toast is an `Alert` node named by its text, with a `Dismiss` button.",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "overlays",
       "chain": [
         "ToastHost",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "The toasts are drawn over everything in the theme's look; CSS does not reach them.",
       "doc": "Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. `show` from JS (`bind:this`), `svelters_egui::toast::show` from Rust.",
       "interface": false,
       "lifetime": "owned",
@@ -5620,6 +8198,7 @@
         }
       },
       "native": "egui::Area (foreground) of egui::Frame toasts",
+      "paint": "none",
       "present": null,
       "props": {
         "corner": {
@@ -5704,9 +8283,80 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "ToggleButton": {
+      "a11y": {
+        "actions": [
+          "Click",
+          "Focus"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "text",
+          "tooltip (when `text` is empty)"
+        ],
+        "note": "",
+        "role": "Button",
+        "value": "selected while `checked`",
+        "variants": [
+          {
+            "role": "RadioButton",
+            "when": "`radio`"
+          }
+        ]
+      },
       "abstract": false,
       "bindings": {
         "checked": {
@@ -5729,16 +8379,20 @@
           }
         }
       },
+      "category": "buttons",
       "chain": [
         "ToggleButton",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "`:checked` does not match it yet: style the pressed look through a class (`class:on={checked}`).",
       "doc": "A button that stays pressed (`checked`). With `radio`, a row of them is a segmented control: a click checks one, the app unchecks the rest.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::Button (selected)",
+      "paint": "box",
       "present": null,
       "props": {
         "checked": {
@@ -5859,16 +8513,91 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": "text"
     },
     "TreeView": {
+      "a11y": {
+        "actions": [
+          "Focus"
+        ],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [
+          "accessible-name"
+        ],
+        "note": "Rows are `TreeItem` nodes with their level, `expanded` on expandable rows, `selected`, and their position and set size over the visible rows. The tree is one tab stop; the cursor row is its active descendant.",
+        "role": "Tree",
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "views",
       "chain": [
         "TreeView",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "Style the rows: each row is the element its row template renders.",
       "doc": "A virtualized tree: JS keeps the tree and flattens its visible rows into the list; children load when a node expands.",
       "interface": false,
       "lifetime": "owned",
@@ -5955,6 +8684,7 @@
         }
       },
       "native": "svelters_egui::kinds::treeview (a virtual-list with tree rows)",
+      "paint": "none",
       "present": null,
       "props": {
         "indent": {
@@ -6231,9 +8961,29 @@
           "sync_required": false
         }
       },
+      "states": [],
       "text_content": null
     },
     "VirtualList": {
+      "a11y": {
+        "actions": [
+          "Focus"
+        ],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [
+          "accessible-name"
+        ],
+        "note": "Rows are `ListItem` nodes (`ListBoxOption` when selectable) with their position in the set; the cursor row is the active descendant while the list has focus. Multi selection marks it multiselectable.",
+        "role": "List",
+        "value": "its row count (size of set)",
+        "variants": [
+          {
+            "role": "ListBox",
+            "when": "`selection` is not `none`"
+          }
+        ]
+      },
       "abstract": false,
       "bindings": {
         "selected": {
@@ -6275,11 +9025,14 @@
           }
         }
       },
+      "category": "views",
       "chain": [
         "VirtualList",
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "Style the rows: each row is the element its row template renders.",
       "doc": "A virtualized list (the M5 model-view protocol): JS keeps the items, the list asks for the rows it shows.",
       "interface": false,
       "lifetime": "owned",
@@ -6336,6 +9089,7 @@
         }
       },
       "native": "svelters_egui::kinds::virtuallist (recycled row slots over a VScroll)",
+      "paint": "none",
       "present": null,
       "props": {
         "layout": {
@@ -6567,20 +9321,37 @@
           "sync_required": false
         }
       },
+      "states": [],
       "text_content": null
     },
     "Widget": {
+      "a11y": {
+        "actions": [],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name"
+        ],
+        "note": "Each element page says what its own node is. Containers that only lay out (`box`, `grid`, ...) have no node: `anchor` and `invalid` reach AccessKit only on elements that have one.",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
       "abstract": true,
       "bindings": {},
+      "category": "base",
       "chain": [
         "Widget"
       ],
       "children": null,
+      "css_hidden": [],
+      "css_note": "What a given element paints is on its page: themed controls take their look per interaction state, other elements get a box.",
       "doc": "Common properties of everything placed in a window: state, tooltip, accessibility and its taffy item style.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "egui::Widget",
+      "paint": "box",
       "present": null,
       "props": {
         "accessible-name": {
@@ -7142,11 +9913,80 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     },
     "Window": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "The root node of its viewport's accessibility tree.",
+        "role": "Window",
+        "value": null,
+        "variants": []
+      },
       "abstract": false,
       "bindings": {},
+      "category": "containers",
       "chain": [
         "Window"
       ],
@@ -7165,6 +10005,8 @@
           }
         }
       },
+      "css_hidden": [],
+      "css_note": "The window's own background is the theme's panel colour; a `background-color` rule paints over it.",
       "doc": "A native window (the root viewport, or an immediate viewport); its children are laid out as a flex column.",
       "interface": false,
       "lifetime": "toplevel",
@@ -7191,6 +10033,7 @@
         }
       },
       "native": "egui::ViewportBuilder",
+      "paint": "box",
       "present": "present",
       "props": {
         "default-height": {
@@ -7295,6 +10138,44 @@
           "sync_required": false
         }
       },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over its box"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down over its box"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "an element inside it has keyboard focus"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
       "text_content": null
     }
   },
@@ -8521,6 +11402,93 @@
         "via": "setter"
       }
     },
+    "pseudo_classes": [
+      {
+        "name": "hover",
+        "negated": false,
+        "state": "hovered"
+      },
+      {
+        "name": "active",
+        "negated": false,
+        "state": "pressed"
+      },
+      {
+        "name": "focus",
+        "negated": false,
+        "state": "focused"
+      },
+      {
+        "name": "focus-within",
+        "negated": false,
+        "state": "focus-within"
+      },
+      {
+        "name": "disabled",
+        "negated": false,
+        "state": "disabled"
+      },
+      {
+        "name": "enabled",
+        "negated": true,
+        "state": "disabled"
+      },
+      {
+        "name": "checked",
+        "negated": false,
+        "state": "checked"
+      },
+      {
+        "name": "selected",
+        "negated": false,
+        "state": "selected"
+      },
+      {
+        "name": "open",
+        "negated": false,
+        "state": "open"
+      },
+      {
+        "name": "expanded",
+        "negated": false,
+        "state": "expanded"
+      },
+      {
+        "name": "invalid",
+        "negated": false,
+        "state": "invalid"
+      },
+      {
+        "name": "valid",
+        "negated": true,
+        "state": "invalid"
+      },
+      {
+        "name": "read-only",
+        "negated": false,
+        "state": "read-only"
+      },
+      {
+        "name": "read-write",
+        "negated": true,
+        "state": "read-only"
+      },
+      {
+        "name": "dragging",
+        "negated": false,
+        "state": "dragging"
+      },
+      {
+        "name": "exiting",
+        "negated": false,
+        "state": "exiting"
+      },
+      {
+        "name": "busy",
+        "negated": false,
+        "state": "busy"
+      }
+    ],
     "setter_selectors": [
       "type",
       "class",

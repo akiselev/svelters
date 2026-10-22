@@ -20,8 +20,10 @@ Inputs:
 
 What was made, all in `plans/research/icon-style/`:
 - `src.py`: the 24 samples as hand-written SVG path data (16 and 24 masters, plus 12, 14 and 20 masters for 6
-  of them), the badge composer, the open-choice variants, and a self-check of the grid rules. It writes `svg/`.
-- `svg/<size>/<id>.svg`: 66 masters plus 12 badge compositions.
+  of them), the badge composer, the open-choice variants, and a self-check of the grid rules. It writes
+  `<out>/<size>/<id>.svg`.
+- `svg/<size>/<id>.svg`: 66 masters plus 12 badge compositions. *(IC1 moved the 66 masters to
+  `tools/icons/samples/`, the toolchain's reference set; `tools/icons/icons.py build` makes the compositions.)*
 - `sheet.py` and **`contact-sheet.png`**: the approval sheet (§12).
 
 Where this guide and `ICONS.md` §3 differ, this guide is the newer proposal. The differences are listed in §13.
