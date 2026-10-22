@@ -4,12 +4,15 @@
 //! - [`trace`]: the `state #h {…}` trace writer for `tools/oplog-compare.mjs`.
 //! - [`golden`]: `conformance/golden/<platform>/<toolkit>-<version>.json`, capture and compare.
 //! - [`xtest`]: the XTEST user-path injector the GTK and Qt captures use.
+//! - [`win`]: the Windows user path (WG3w): `SendInput` and UI Automation, one driver for every fixture.
 //! - [`run_pin`]: drives one pin through a [`Driver`] (one per toolkit, in the tests of this crate,
 //!   `examples/counter-qt/tests/na_capture.rs` and this crate's egui measurement).
 
 pub mod golden;
 pub mod pins;
 pub mod trace;
+#[cfg(windows)]
+pub mod win;
 #[cfg(target_os = "linux")]
 pub mod xtest;
 
