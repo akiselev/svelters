@@ -63,6 +63,17 @@ selection, QW3 cell editors; QW17 sticky sections if cheap). Lane WG5a, branch `
   focus id (a `focusable_noninteractive` interact under the rows) has egui focus, consumes them from
   egui's input and sets a focus-lock filter for the arrows. Tab and Escape keep egui's meaning except
   inside an edit. Nothing in `focus.rs` or the key routing changed.
+- **EV3+ (merged from master before the push).** EV3 records `virtual-list` rows as the list's focus
+  stops (`focus::record_with`, `Role::List`: the rows claim the navigation keys, Space and Enter).
+  WG5a keeps that model: focus is on the **cursor row**; the stop is the cursor row when drawn, else
+  the first drawn row (EV3 used the selected position). The list's own focusable interact only holds
+  focus while the cursor row is not drawn (a jump such as End scrolls to it next frame) and hands
+  it to the row once drawn; Tab onto the list lands on the stop row. The table is not in EV3's
+  record (its focus id is unknown to EV3, so EV3 treats it as a host widget: no default/cancel
+  button on Enter/Escape). **Known gap:** a snippet editor's single-line `text-edit` inside a
+  dialog scope with a `default` or `cancel` button: EV3 may route Enter/Escape to that button
+  before the table sees them (a follow-up: the table should record its editor as claiming Enter,
+  Escape and Tab).
 - **No JS in the pass.** The table records edit starts, end requests and the cell's size in the pass;
   `realize_edits` (logic, after `realize_lists`) runs `editor-bind`, then for an end `editor-value`,
   the table's `commit` and `editor-unbind` through `call_sync`, then closes the edit, records a
@@ -120,14 +131,16 @@ renders it) but no provider kind is in this crate's tests.
 
 ## Verification (local, this lane)
 
-On the final code: `tools/dev/cargo-slot cargo check -p svelters-egui --all-targets` (clean);
-`cargo nextest run -p svelters-egui -E 'binary(wg5a) | test(/item_keys|views::selection|views::table/)'`
-(5 + 8 passed); `--test gallery_views` (5 passed, after `cargo build -p svelters-compiler --bin
-svelters-compile` and `pnpm --filter @svelters-fixtures/gallery-egui build`); `--test vlist --test views
---test observe --test widgets --test spec -E 'not test(list_view_runs_on_egui)'` (29 passed);
-`SVELTERS_UPDATE=1 … --test spec` (regenerated egui.json and egui.d.ts); `python3 -m pytest -q
-tools/metadata` (155 passed); `pnpm --filter @svelters/native-runtime test` (124 passed) and its
-`check` (svelte-check, 0 errors).
+After merging `origin/master` (1786957f: EV3+, DS1, Q2, H1b/H3c): `tools/dev/cargo-slot cargo check
+-p svelters-egui --all-targets` (clean); `SVELTERS_UPDATE=1 … --test spec` (generated files unchanged
+by it); `cargo build -p svelters-compiler --bin svelters-compile` and `pnpm --filter
+@svelters-fixtures/gallery-egui build`; `cargo nextest run -p svelters-egui` filtered to `binary(wg5a)
+| binary(gallery_views) | binary(vlist) | binary(views) | binary(observe) | binary(widgets) |
+binary(focus_keys) | test(/item_keys|views::selection|views::table/)`, without
+`list_view_runs_on_egui`: 54 passed (the list suites rerun after the EV3 focus fix: 19 passed).
+Before the merge: `python3 -m pytest -q tools/metadata` (155 passed), `pnpm --filter
+@svelters/native-runtime test` (124 passed) and its `check` (svelte-check, 0 errors); the runtime
+files did not change in the merge from my side.
 
 Not run locally: the rest of svelters-egui's tests, `list_view_runs_on_egui`, the workspace,
 conformance, the other backends, the other packages' tests. CI runs them.

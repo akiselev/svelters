@@ -876,11 +876,19 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         let W::VirtualList(v) = s.w(i) else { return None };
         v.placed(s)
     };
-    // WG5a: the list takes keyboard focus (a row click gives it); the rows are drawn over it
+    // WG5a: keyboard focus is on the cursor row (EV3: a row is the list's focus stop), or on the
+    // list itself while the cursor row is not drawn (scrolling to it); the rows are drawn over it
     let resp = ui.interact(r, list_id, egui::Sense::focusable_noninteractive());
-    let focused = resp.has_focus();
+    let placed_keys: Vec<u64> = {
+        let W::VirtualList(v) = s.w(i) else { return None };
+        placed.iter().filter(|&&(_, p)| p < v.len()).map(|&(_, p)| v.key_at(p)).collect()
+    };
+    let now_focused = ctx.memory(|m| m.focused());
+    let focused = resp.has_focus() || now_focused.is_some_and(|f| placed_keys.iter().any(|&k| list_id.with(("row", k)) == f));
     if focused {
-        item_keys::lock_arrows(ui, list_id);
+        if let Some(f) = now_focused {
+            item_keys::lock_arrows(ui, f);
+        }
         let keys = item_keys::read_keys(ui, true);
         if !keys.is_empty() {
             keys_input(s, i, &keys, out);
@@ -927,6 +935,7 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
     let mut covered: Vec<(f32, f32)> = Vec::with_capacity(placed.len());
     let sig_activate = super::signal_id(kind, "activate");
     let mut first_row = true; // EV3
+    let cursor_drawn = cursor.is_some_and(|c| placed_keys.contains(&c));
     for (n, pos) in placed {
         let Some(ni) = s.idx(n) else { continue };
         let rr = s.core[ni].rect.translate(origin);
@@ -958,9 +967,15 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         if focused && cursor == Some(key) {
             rows_ui.painter().rect_stroke(rr.shrink(1.0), 0.0, rows_ui.visuals().selection.stroke, egui::StrokeKind::Inside);
         }
+        // WG5a: focus follows the cursor row (from the list itself: Tab in, or after a jump);
+        // with no cursor yet, the list's tab stop takes it
+        let stop = if cursor_drawn { cursor == Some(key) } else { first_row };
+        if focused && !rresp.has_focus() && (cursor == Some(key) || (cursor.is_none() && stop)) {
+            rresp.request_focus();
+        }
         if rresp.clicked() {
-            // WG5a: a click focuses the list and goes through the keyed selection (Ctrl/Shift)
-            ctx.memory_mut(|m| m.request_focus(list_id));
+            // WG5a: a click focuses the row and goes through the keyed selection (Ctrl/Shift)
+            rresp.request_focus();
             let m = item_keys::mods(rows_ui.input(|inp| inp.modifiers));
             click_row(s, i, key, m, out);
             ctx.request_repaint();
@@ -968,10 +983,9 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         if rresp.double_clicked() && s.listens(i, sig_activate) {
             out.push(Out::Event(h, sig_activate, vec![Value::I64(pos as i64)]));
         }
-        if selectable {
-            // EV3: a selectable row takes focus and the list's keys; the selected row (else the
-            // first drawn) is the list's tab stop
-            let stop = if selected >= 0 { is_sel } else { first_row };
+        {
+            // EV3: a row takes focus and the list's keys; WG5a: the cursor row (else the first
+            // drawn) is the list's tab stop
             first_row = false;
             crate::focus::record_with(s, i, &rows_ui, &rresp, crate::focus::Role::List, stop);
         }
@@ -983,6 +997,11 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         s.core[ni].drawn = rr;
         crate::scene::hit::record(s, ni, &row_ui);
         drawn += 1;
+    }
+    // WG5a: the cursor row is not drawn this frame (a jump scrolls to it next frame): the list
+    // itself keeps focus meanwhile (egui drops focus from a widget that is not drawn)
+    if focused && cursor.is_some() && !cursor_drawn {
+        ctx.memory_mut(|m| m.request_focus(list_id));
     }
     // positions in view that no bound row covers: placeholders (R22's gate counts them)
     let mut unbound = 0u64;
