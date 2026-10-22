@@ -95,17 +95,16 @@ pub struct Mark {
     pub label: String,
 }
 
-/// `marks` as given: numbers, or `{ value, label }` objects.
-pub fn marks_of(v: &serde_json::Value) -> Vec<Mark> {
-    let one = |m: &serde_json::Value| match m {
-        serde_json::Value::Number(n) => n.as_f64().map(|value| Mark { value, label: String::new() }),
-        serde_json::Value::Object(o) => o.get("value").and_then(|x| x.as_f64()).map(|value| Mark { value, label: o.get("label").and_then(|l| l.as_str()).unwrap_or("").to_string() }),
-        _ => None,
-    };
-    match v {
-        serde_json::Value::Array(a) => a.iter().filter_map(one).filter(|m| m.value.is_finite()).collect(),
-        _ => Vec::new(),
-    }
+/// `marks`: values separated by commas, each optionally `value:label` (`"0:Low, 50, 100:High"`);
+/// values that do not parse are skipped.
+pub fn marks_of(s: &str) -> Vec<Mark> {
+    s.split(',')
+        .filter_map(|m| {
+            let (v, label) = m.split_once(':').unwrap_or((m, ""));
+            let value: f64 = v.trim().parse().ok()?;
+            value.is_finite().then(|| Mark { value, label: label.trim().to_string() })
+        })
+        .collect()
 }
 
 /// The rail's geometry in one pass.

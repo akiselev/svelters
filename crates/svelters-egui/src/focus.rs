@@ -76,7 +76,6 @@ pub(crate) enum Role {
     Text { multiline: bool },
     Button { default: bool, cancel: bool },
     Toggle,
-    Slider,
     /// LS1: a selectable `virtual-list` row (the list's tab stop is its selected row).
     List,
     /// WG5b: a `tree-view` (one tab stop, the list; its claims are `kinds::treeview::claims`).
@@ -231,7 +230,6 @@ pub(crate) fn claims(role: Role, key: Key, m: Modifiers, mac: bool) -> bool {
             // macOS moves and deletes by word with Option
             mac && m.alt && !command && matches!(key, Key::ArrowLeft | Key::ArrowRight | Key::Backspace | Key::Delete)
         }
-        Role::Slider => !command && !m.alt && nav,
         Role::List => !command && !m.alt && (nav || (!m.shift && matches!(key, Key::Space | Key::Enter))),
         Role::Tree => crate::kinds::treeview::claims(key, m),
         Role::Button { .. } | Role::Toggle => !command && !m.alt && !m.shift && matches!(key, Key::Space | Key::Enter),
@@ -549,7 +547,6 @@ pub(crate) fn record(arena: &Arena, i: usize, ui: &Ui, resp: &egui::Response) {
         W::Button { .. } => Role::Button { default: c.default_button, cancel: c.cancel_button },
         // OW0: an own widget replacing `button` keeps its EV3 role (default and cancel keys)
         W::Ext(x) if x.entry().replaces == Some("button") => Role::Button { default: c.default_button, cancel: c.cancel_button },
-        W::Slider { .. } | W::RangeSlider { .. } | W::DragValue { .. } => Role::Slider,
         W::Ext(x) => {
             let w = x.0.try_borrow();
             let claim = |k| w.as_ref().is_ok_and(|w| w.consume_key(k, Modifiers::NONE));
@@ -838,7 +835,6 @@ mod tests {
         assert!(!claims(t, Key::ArrowUp, Modifiers::NONE, false) && claims(m, Key::ArrowUp, Modifiers::NONE, false));
         // Option+arrows on macOS only
         assert!(claims(t, Key::ArrowLeft, Modifiers::ALT, true) && !claims(t, Key::ArrowLeft, Modifiers::ALT, false));
-        assert!(claims(Role::Slider, Key::ArrowLeft, Modifiers::NONE, false) && !claims(Role::Slider, Key::Z, CTRL, false));
         assert!(claims(Role::Toggle, Key::Space, Modifiers::NONE, false) && !claims(Role::Toggle, Key::Delete, Modifiers::NONE, false));
     }
 

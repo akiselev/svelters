@@ -23,7 +23,6 @@ pub enum W {
     Button { text: String, selected: bool, frame: bool, small: bool, weight: i64 },
     Checkbox { text: String, checked: bool },
     TextEdit { text: String, hint: String, multiline: bool, password: bool, char_limit: i64 },
-    Slider { value: f64, min: f64, max: f64, step: f64, text: String, show_value: bool },
     /// RA1: a provider kind's widget struct (`#[svelters::widget]`, `crate::provider`).
     Ext(crate::provider::ExtWidget),
     /// LS1: a `virtual-list` (`kinds/virtuallist.rs`): its rows are its children.
@@ -48,8 +47,6 @@ pub enum W {
     /// `value`: what the button stands for; with one, `checked` follows `group == value`.
     RadioButton { text: String, checked: bool, value: String, group: String },
     Switch { text: String, active: bool },
-    RangeSlider { low: f64, high: f64, min: f64, max: f64, step: f64, text: String, show_value: bool },
-    DragValue { value: f64, min: Option<f64>, max: Option<f64>, speed: f64, decimals: Option<i64>, prefix: String, suffix: String },
     Panel { side: &'static str, size: Option<f64>, resizable: bool, separator: bool },
     Sides,
     Frame { label: String, style: &'static str },
@@ -456,7 +453,6 @@ pub fn text_of(w: &W) -> &str {
         | W::Button { text, .. }
         | W::Checkbox { text, .. }
         | W::TextEdit { text, .. }
-        | W::Slider { text, .. }
         | W::ToggleButton { text, .. }
         | W::CollapsingHeader { text, .. } => text,
         W::Window { title, .. } | W::Tab { title, .. } | W::TableColumn { title, .. } => title,
@@ -468,9 +464,9 @@ pub fn text_of(w: &W) -> &str {
         W::Ext(x) => x.text(),
         W::Box | W::Separator { .. } | W::Grid { .. } | W::ScrollArea { .. } | W::VirtualList(_) => "",
         // WG2b
-        W::Hyperlink { text, .. } | W::RadioButton { text, .. } | W::Switch { text, .. } | W::RangeSlider { text, .. } | W::ProgressBar { text, .. } => text,
+        W::Hyperlink { text, .. } | W::RadioButton { text, .. } | W::Switch { text, .. } | W::ProgressBar { text, .. } => text,
         W::Frame { label, .. } => label,
-        W::DragValue { .. } | W::Panel { .. } | W::Sides | W::Stack { .. } | W::Image { .. } | W::Spinner { .. } | W::Canvas(_) => "",
+        W::Panel { .. } | W::Sides | W::Stack { .. } | W::Image { .. } | W::Spinner { .. } | W::Canvas(_) => "",
         W::Table(_) | W::TabView { .. } | W::SplitView { .. } | W::ToastHost(_) => "",
         W::Picker(p) => p.text(),
     }

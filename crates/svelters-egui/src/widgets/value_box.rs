@@ -393,7 +393,6 @@ impl ValueBox {
         if self.step.took_wheel() {
             ui.ctx().input_mut(|i| {
                 i.smooth_scroll_delta = egui::Vec2::ZERO;
-                i.raw_scroll_delta = egui::Vec2::ZERO;
             });
         }
         if focused {
@@ -420,7 +419,7 @@ impl ValueBox {
             let s = paint::StyleView::new(cfg.css, FIELD_UA, bits, cfg.dark);
             let g = paint::box_geom(&s, field);
             let caret = self.entry.caret_rect(ui.ctx(), &s, g.content);
-            ui.ctx().output_mut(|o| o.ime = Some(egui::output::IMEOutput { purpose: egui::IMEPurpose::Normal, rect: field, cursor_rect: caret }));
+            ui.ctx().output_mut(|o| o.ime = Some(egui::output::IMEOutput { purpose: egui::IMEPurpose::Normal, rect: field, cursor_rect: caret, should_interrupt_composition: false }));
         }
         BoxOut { resp, input, commit, submit, drag_started, drag_stopped, state: bits, repaint_after: None }
     }
@@ -435,8 +434,7 @@ impl ValueBox {
             return;
         }
         let s = paint::StyleView::new(cfg.css, FIELD_UA, self.bits, cfg.dark);
-        let mut pc = paint::PaintCx::new(ui.painter());
-        pc.target = (cfg.node, None);
+        let mut pc = paint::PaintCx::for_node(ui.painter(), cfg.node);
         // the field's box spans the buttons too (they sit inside it)
         let g = paint::paint_box(&mut pc, &s, cfg.rect);
         let content = if cfg.buttons { Rect::from_min_max(g.content.min, egui::pos2(field.max.x.max(g.content.min.x), g.content.max.y)) } else { g.content };
@@ -448,9 +446,8 @@ impl ValueBox {
             let gal = paint::text_galley(ui.ctx(), &s, &text, None);
             let clip = pc.painter.clip_rect().intersect(content.expand(1.0));
             let painter = pc.painter.with_clip_rect(clip);
-            let mut tc = paint::PaintCx::new(&painter);
-            tc.target = (cfg.node, Some("text"));
-            paint::paint_text(&mut tc, &s, &gal, content, align);
+            let mut tc = paint::PaintCx::for_node(&painter, cfg.node);
+            paint::paint_text(&mut tc.part("text"), &s, &gal, content, align);
         }
         if cfg.buttons {
             let side = cfg.rect.height();

@@ -50,7 +50,7 @@ pub struct DragValue {
     #[prop(rename = "commit")]
     commit_mode: bool,
     /// When the wheel steps: `focused` (default: over the field while it has focus), `hover`, `off`.
-    #[prop(default = "focused".to_string())]
+    #[prop(default = "focused".to_string(), enumeration = "focused|hover|off")]
     wheel: String,
     /// Stepping past one end goes to the other (Qt `wrapping`).
     #[prop]
@@ -62,10 +62,10 @@ pub struct DragValue {
     #[prop]
     accelerated: bool,
     /// `default`, or `adaptive` (Qt AdaptiveDecimalStepType: one decade below the value).
-    #[prop(default = "default".to_string())]
+    #[prop(default = "default".to_string(), enumeration = "default|adaptive")]
     step_type: String,
     /// An out-of-range typed value commits to the `nearest` bound (default) or the `previous` value.
-    #[prop(default = "nearest".to_string())]
+    #[prop(default = "nearest".to_string(), enumeration = "nearest|previous")]
     correction: String,
     /// Shown and focusable, not changed by the user (Qt `readOnly`).
     #[prop]

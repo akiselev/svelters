@@ -35,6 +35,10 @@ use crate::scene::W;
 /// tag per lane as each own widget passes its acceptance (ARCH-WIDGETS §6.2 step 2).
 pub const DEFAULT_OWN: &[&str] = &["button", "slider", "range-slider", "drag-value"];
 
+/// The built-in tags whose egui wrapper is deleted (§6.2 step 3): every switch gives them the own
+/// widget.
+pub const OWN_ONLY: &[&str] = &["slider", "range-slider", "drag-value"];
+
 /// Which built-in kinds get svelters' own widget (§6.2: the per-kind switch).
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
 pub enum KindSet {
@@ -55,8 +59,11 @@ impl KindSet {
         KindSet::Tags(tags.into_iter().map(|t| t.as_ref().to_string()).collect())
     }
 
-    /// Whether new `<tag>` nodes get the own widget (when one exists).
+    /// Whether new `<tag>` nodes get the own widget (when one exists). Always for [`OWN_ONLY`].
     pub fn contains(&self, tag: &str) -> bool {
+        if OWN_ONLY.contains(&tag) {
+            return true;
+        }
         match self {
             KindSet::Default => DEFAULT_OWN.contains(&tag),
             KindSet::All => true,

@@ -363,7 +363,7 @@ impl Element for Forced<'_> {
 
 /// Stock widgets: egui draws them with per-state `WidgetVisuals`.
 fn is_stock(w: &W) -> bool {
-    matches!(w, W::Button { .. } | W::Checkbox { .. } | W::Slider { .. } | W::TextEdit { .. })
+    matches!(w, W::Button { .. } | W::Checkbox { .. } | W::TextEdit { .. })
 }
 
 /// Whether two styles differ in what children inherit (inherited properties, custom properties).

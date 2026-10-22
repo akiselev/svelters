@@ -40,8 +40,6 @@ pub(crate) fn is_leaf(w: &W) -> bool {
         W::Hyperlink { .. }
             | W::RadioButton { .. }
             | W::Switch { .. }
-            | W::RangeSlider { .. }
-            | W::DragValue { .. }
             | W::Image { .. }
             | W::ProgressBar { .. }
             | W::Spinner { .. }
@@ -55,8 +53,6 @@ pub(crate) fn payload(id: &str) -> Option<W> {
         "Hyperlink" => W::Hyperlink { text: String::new(), url: String::new(), new_tab: false },
         "RadioButton" => W::RadioButton { text: String::new(), checked: false, value: String::new(), group: String::new() },
         "Switch" => W::Switch { text: String::new(), active: false },
-        "RangeSlider" => W::RangeSlider { low: 0.0, high: 100.0, min: 0.0, max: 100.0, step: 0.0, text: String::new(), show_value: true },
-        "DragValue" => W::DragValue { value: 0.0, min: None, max: None, speed: 1.0, decimals: None, prefix: String::new(), suffix: String::new() },
         "Panel" => W::Panel { side: "left", size: None, resizable: false, separator: true },
         "Sides" => W::Sides,
         "Frame" => W::Frame { label: String::new(), style: "group" },
@@ -90,7 +86,7 @@ fn set(w: &mut W, def: &PropDef, v: &Value) -> Result<Dirty, String> {
     let measure = Dirty::MEASURE;
     let none = Dirty::default();
     Ok(match (def.key, w) {
-        (P::Text, W::Hyperlink { text, .. } | W::RadioButton { text, .. } | W::Switch { text, .. } | W::RangeSlider { text, .. } | W::ProgressBar { text, .. }) => {
+        (P::Text, W::Hyperlink { text, .. } | W::RadioButton { text, .. } | W::Switch { text, .. } | W::ProgressBar { text, .. }) => {
             *text = as_str(v)?;
             measure
         }
@@ -120,61 +116,6 @@ fn set(w: &mut W, def: &PropDef, v: &Value) -> Result<Dirty, String> {
         (P::Active, W::Switch { active, .. }) => {
             *active = as_bool(v)?;
             none
-        }
-        (P::Low, W::RangeSlider { low, .. }) => {
-            *low = as_f64(v)?;
-            none
-        }
-        (P::High, W::RangeSlider { high, .. }) => {
-            *high = as_f64(v)?;
-            none
-        }
-        (P::Min, W::RangeSlider { min, .. }) => {
-            *min = as_f64(v)?;
-            none
-        }
-        (P::Max, W::RangeSlider { max, .. }) => {
-            *max = as_f64(v)?;
-            none
-        }
-        (P::Step, W::RangeSlider { step, .. }) => {
-            *step = finite_or(as_f64(v)?, 0.0).max(0.0);
-            none
-        }
-        (P::ShowValue, W::RangeSlider { show_value, .. }) => {
-            *show_value = as_bool(v)?;
-            measure
-        }
-        (P::Value, W::DragValue { value, .. }) => {
-            *value = as_f64(v)?;
-            measure
-        }
-        (P::Min, W::DragValue { min, .. }) => {
-            *min = as_len(v)?;
-            none
-        }
-        (P::Max, W::DragValue { max, .. }) => {
-            *max = as_len(v)?;
-            none
-        }
-        (P::Speed, W::DragValue { speed, .. }) => {
-            *speed = as_f64(v)?;
-            none
-        }
-        (P::Decimals, W::DragValue { decimals, .. }) => {
-            *decimals = match v {
-                Value::Null => None,
-                v => Some(as_i64(v)?.clamp(0, 15)),
-            };
-            measure
-        }
-        (P::Prefix, W::DragValue { prefix, .. }) => {
-            *prefix = as_str(v)?;
-            measure
-        }
-        (P::Suffix, W::DragValue { suffix, .. }) => {
-            *suffix = as_str(v)?;
-            measure
         }
         (P::Side, W::Panel { side, .. }) => {
             *side = as_enum(v, kinds::SIDE)?;
@@ -267,7 +208,7 @@ pub(crate) fn get_prop(w: &W, def: &PropDef) -> Option<Value> {
     }
     let s = |x: &str| Value::Str(x.to_string());
     Some(match (def.key, w) {
-        (P::Text, W::Hyperlink { text, .. } | W::RadioButton { text, .. } | W::Switch { text, .. } | W::RangeSlider { text, .. } | W::ProgressBar { text, .. }) => s(text),
+        (P::Text, W::Hyperlink { text, .. } | W::RadioButton { text, .. } | W::Switch { text, .. } | W::ProgressBar { text, .. }) => s(text),
         (P::Text, W::Frame { label, .. }) => s(label),
         (P::Url, W::Hyperlink { url, .. }) => s(url),
         (P::NewTab, W::Hyperlink { new_tab, .. }) => Value::Bool(*new_tab),
@@ -275,19 +216,6 @@ pub(crate) fn get_prop(w: &W, def: &PropDef) -> Option<Value> {
         (P::Choice, W::RadioButton { value, .. }) => s(value),
         (P::Group, W::RadioButton { group, .. }) => s(group),
         (P::Active, W::Switch { active, .. }) => Value::Bool(*active),
-        (P::Low, W::RangeSlider { low, .. }) => Value::F64(*low),
-        (P::High, W::RangeSlider { high, .. }) => Value::F64(*high),
-        (P::Min, W::RangeSlider { min, .. }) => Value::F64(*min),
-        (P::Max, W::RangeSlider { max, .. }) => Value::F64(*max),
-        (P::Step, W::RangeSlider { step, .. }) => Value::F64(*step),
-        (P::ShowValue, W::RangeSlider { show_value, .. }) => Value::Bool(*show_value),
-        (P::Value, W::DragValue { value, .. }) => Value::F64(*value),
-        (P::Min, W::DragValue { min, .. }) => len_value(*min),
-        (P::Max, W::DragValue { max, .. }) => len_value(*max),
-        (P::Speed, W::DragValue { speed, .. }) => Value::F64(*speed),
-        (P::Decimals, W::DragValue { decimals, .. }) => decimals.map_or(Value::Null, Value::I64),
-        (P::Prefix, W::DragValue { prefix, .. }) => s(prefix),
-        (P::Suffix, W::DragValue { suffix, .. }) => s(suffix),
         (P::Side, W::Panel { side, .. }) => s(side),
         (P::Size, W::Panel { size, .. }) => len_value(*size),
         (P::Resizable, W::Panel { resizable, .. }) => Value::Bool(*resizable),
@@ -324,7 +252,7 @@ pub(crate) fn style(c: &Common, w: &W, s: &mut taffy::Style) {
 /// The no-wrap size a WG2b leaf asks for (content + chrome); containers measure nothing.
 pub(crate) fn intrinsic(m: &Metrics, w: &W) -> Vec2 {
     match w {
-        W::Hyperlink { .. } | W::RadioButton { .. } | W::Switch { .. } | W::RangeSlider { .. } | W::DragValue { .. } => inputs::intrinsic(m, w),
+        W::Hyperlink { .. } | W::RadioButton { .. } | W::Switch { .. } => inputs::intrinsic(m, w),
         W::Image { .. } | W::ProgressBar { .. } | W::Spinner { .. } | W::Canvas(_) => media::intrinsic(m, w),
         _ => Vec2::ZERO,
     }
@@ -351,7 +279,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     let sig = |name: &str| kinds::signal_id(kind, name);
     let click_sense = arena.listens(i, sig("clicked"));
     let Painted { resp } = match arena.w(i) {
-        W::Hyperlink { .. } | W::RadioButton { .. } | W::Switch { .. } | W::RangeSlider { .. } | W::DragValue { .. } => inputs::paint(arena, i, ui, out),
+        W::Hyperlink { .. } | W::RadioButton { .. } | W::Switch { .. } => inputs::paint(arena, i, ui, out),
         _ => media::paint(arena, i, ui, out, click_sense),
     };
     let mut resp = crate::a11y::decorate(resp, &arena.n(h));

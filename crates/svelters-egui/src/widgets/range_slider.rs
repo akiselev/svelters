@@ -66,10 +66,10 @@ pub struct RangeSlider {
     #[prop]
     page_step: f64,
     /// `horizontal` (default) or `vertical`.
-    #[prop(default = "horizontal".to_string(), measure)]
+    #[prop(default = "horizontal".to_string(), measure, enumeration = "horizontal|vertical")]
     orientation: String,
     /// Tick marks: `none`, `before`, `after`, `both`.
-    #[prop(default = "none".to_string(), measure)]
+    #[prop(default = "none".to_string(), measure, enumeration = "none|before|after|both")]
     ticks: String,
     /// Between ticks; 0 for `page-step`.
     #[prop]
@@ -78,21 +78,21 @@ pub struct RangeSlider {
     #[prop]
     inverted: bool,
     /// `linear` (default) or `log`.
-    #[prop(default = "linear".to_string())]
+    #[prop(default = "linear".to_string(), enumeration = "linear|log")]
     scale: String,
     /// Commit-only mode: `low`/`high` move at the release.
     #[prop(rename = "commit")]
     commit_mode: bool,
     /// When the wheel steps: `focused` (default), `hover`, `off`.
-    #[prop(default = "focused".to_string())]
+    #[prop(default = "focused".to_string(), enumeration = "focused|hover|off")]
     wheel: String,
     /// The user moved a thumb (or the widget clamped a written value); carries both ends.
     #[event]
     changed: Event<Vec<f64>>,
     #[event]
-    input: Event<Vec<f64>>,
+    input: Event<()>,
     #[event]
-    commit: Event<Vec<f64>>,
+    commit: Event<()>,
     #[event]
     drag_started: Event<()>,
     #[event]
@@ -188,14 +188,13 @@ impl Widget for RangeSlider {
         let (lo, hi) = self.bounds();
         let vertical = self.orientation == "vertical";
         let rect = cx.rect();
-        let s = cx.style(UA);
-        let cap = if self.text.is_empty() { egui::Vec2::ZERO } else { paint::measure_text(ui.ctx(), &s, &self.text, AvailableSpace::MaxContent) };
+        let cap = if self.text.is_empty() { egui::Vec2::ZERO } else { paint::measure_text(ui.ctx(), &cx.style(UA), &self.text, AvailableSpace::MaxContent) };
         let bx = if self.show_value { self.box_size(ui.ctx(), dark).min(rect.size()) } else { egui::Vec2::ZERO };
         // [low box] rail [high box] [caption]; vertical: top to bottom, the high end first
         let (rail_rect, boxes, cap_rect) = {
             let main = |r: egui::Rect| if vertical { r.height() } else { r.width() };
-            let start = if bx.x > 0.0 { if vertical { bx.y } else { bx.x } + GAP } else { 0.0 };
-            let end = start + if cap.x > 0.0 { if vertical { cap.y } else { cap.x } + GAP } else { 0.0 };
+            let start = if bx.x > 0.0 { (if vertical { bx.y } else { bx.x }) + GAP } else { 0.0 };
+            let end = start + if cap.x > 0.0 { (if vertical { cap.y } else { cap.x }) + GAP } else { 0.0 };
             let len = (main(rect) - start - end).max(rail::THUMB);
             if vertical {
                 let rail_r = egui::Rect::from_min_size(egui::pos2(rect.min.x, rect.min.y + start), egui::vec2(rect.width(), len));
@@ -243,7 +242,7 @@ impl Widget for RangeSlider {
         let mut rb = StateBits::NONE;
         let rs = &mut self.st.rail_scrub;
         interact::run(ui, &rail_resp, &mut rb, &PartResponses::default(), |icx| rs.input(&sp, icx, &mut ri));
-        let mut apply = |k: usize, v: f64, l: &mut f64, h: &mut f64| {
+        let apply = |k: usize, v: f64, l: &mut f64, h: &mut f64| {
             if k == 0 {
                 *l = v.clamp(lo, *h);
             } else {
@@ -302,7 +301,6 @@ impl Widget for RangeSlider {
             if hd.step.took_wheel() {
                 ui.ctx().input_mut(|i| {
                     i.smooth_scroll_delta = egui::Vec2::ZERO;
-                    i.raw_scroll_delta = egui::Vec2::ZERO;
                 });
             }
             if tr.has_focus() {
@@ -379,10 +377,10 @@ impl Widget for RangeSlider {
                 cx.set(&mut self.high, h);
             }
             cx.dispatch(&self.changed, vec![l, h]);
-            cx.dispatch(&self.input, vec![l, h]);
+            cx.dispatch(&self.input, ());
         }
         if commit {
-            cx.dispatch(&self.commit, vec![l, h]);
+            cx.dispatch(&self.commit, ());
         }
         if stopped {
             cx.dispatch(&self.drag_stopped, ());
@@ -403,13 +401,14 @@ impl Widget for RangeSlider {
             r.paint_track(&mut pc, host, dark, h, Some((l, h)), "range");
             for (k, name) in [(0usize, "low-thumb"), (1usize, "high-thumb")] {
                 let hd = &self.st.h[k];
-                let mut b = host | (hd.bits & StateBits(StateBits::FOCUS_VISIBLE.0 | StateBits::PRESSED.0 | StateBits::DRAGGING.0 | StateBits::HOVERED.0));
+                let mut b = host | StateBits(hd.bits.0 & (StateBits::FOCUS_VISIBLE.0 | StateBits::PRESSED.0 | StateBits::DRAGGING.0 | StateBits::HOVERED.0));
                 if self.st.rail_scrub.dragging() && self.st.rail_target == k {
                     b |= StateBits::DRAGGING;
                 }
                 r.paint_thumb(&mut pc, name, b, dark, if k == 0 { l } else { h });
             }
             if !self.text.is_empty() {
+                let s = cx.style(UA);
                 let g = paint::text_galley(ui.ctx(), &s, &self.text, None);
                 paint::paint_text(&mut pc.part("label"), &s, &g, cap_rect, paint::Align::Start);
             }

@@ -165,7 +165,6 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
             | W::Button { text, .. }
             | W::Checkbox { text, .. }
             | W::TextEdit { text, .. }
-            | W::Slider { text, .. }
             | W::ToggleButton { text, .. }
             | W::CollapsingHeader { text, .. },
         ) => {
@@ -191,14 +190,6 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         }
         (P::Password, W::TextEdit { password, .. }) => *password = as_bool(v)?,
         (P::CharLimit, W::TextEdit { char_limit, .. }) => *char_limit = as_i64(v)?.max(0),
-        (P::Value, W::Slider { value, .. }) => *value = as_f64(v)?,
-        (P::Min, W::Slider { min, .. }) => *min = as_f64(v)?,
-        (P::Max, W::Slider { max, .. }) => *max = as_f64(v)?,
-        (P::Step, W::Slider { step, .. }) => *step = as_f64(v)?.max(0.0),
-        (P::ShowValue, W::Slider { show_value, .. }) => {
-            *show_value = as_bool(v)?;
-            d.insert(Dirty::MEASURE);
-        }
         (P::ListSelected | P::ListSelection | P::ListLayout | P::SelectedIds | P::RowDragType | P::RowDropTypes, W::VirtualList(l)) => crate::kinds::virtuallist::set(l, def.key, v)?,
         (P::RowHeight | P::TreeIndent, W::VirtualList(l)) => {
             crate::kinds::virtuallist::set(l, def.key, v)?;
@@ -372,11 +363,6 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Multiline, W::TextEdit { multiline, .. }) => Value::Bool(*multiline),
         (P::Password, W::TextEdit { password, .. }) => Value::Bool(*password),
         (P::CharLimit, W::TextEdit { char_limit, .. }) => Value::I64(*char_limit),
-        (P::Value, W::Slider { value, .. }) => Value::F64(*value),
-        (P::Min, W::Slider { min, .. }) => Value::F64(*min),
-        (P::Max, W::Slider { max, .. }) => Value::F64(*max),
-        (P::Step, W::Slider { step, .. }) => Value::F64(*step),
-        (P::ShowValue, W::Slider { show_value, .. }) => Value::Bool(*show_value),
         (P::ListSelected | P::ListSelection | P::ListLayout | P::SelectedIds | P::RowHeight | P::TreeIndent | P::RowDragType | P::RowDropTypes, W::VirtualList(l)) => {
             crate::kinds::virtuallist::get(l, def.key).ok_or_else(|| format!("{:?} is not a prop of <virtual-list>", def.key))?
         }

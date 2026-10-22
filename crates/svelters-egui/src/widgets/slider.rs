@@ -15,7 +15,6 @@ use super::value_box::{BoxCfg, Correction, ValueBox};
 use crate::interact::{Arrows, DragToValue, Focusable, Hoverable, Scale, Scrub, ScrubMode, ScrubParams, Step, StepParams, Steppable, Wheel};
 use crate::paint::{self, Ua, UaRule};
 use crate::provider::{A11yCx, AvailableSpace, Event, MeasureCx, Part, StateBits, Widget, WidgetCx};
-use svelters::JsonAny;
 
 /// The host's UA sheet: only the caption's text (the parts have their own, `rail.rs`).
 pub const UA: Ua = Ua(&[UaRule::base(&[])]);
@@ -46,18 +45,18 @@ pub struct Slider {
     #[prop]
     page_step: f64,
     /// `horizontal` (default) or `vertical` (max at the top).
-    #[prop(default = "horizontal".to_string(), measure)]
+    #[prop(default = "horizontal".to_string(), measure, enumeration = "horizontal|vertical")]
     orientation: String,
     /// Tick marks: `none` (default), `before` (above or left), `after`, `both` (Qt `tickPosition`).
-    #[prop(default = "none".to_string(), measure)]
+    #[prop(default = "none".to_string(), measure, enumeration = "none|before|after|both")]
     ticks: String,
     /// Between ticks; 0 for `page-step` (Qt `tickInterval`).
     #[prop]
     tick_interval: f64,
-    /// Marks on the rail: numbers or `{ value, label }`; drawn as ticks (with labels) instead of
-    /// the `tick-interval` ticks.
+    /// Marks on the rail, drawn as ticks (with labels) instead of the `tick-interval` ticks:
+    /// values separated by commas, each optionally `value:label` (`"0:Low, 50, 100:High"`).
     #[prop(measure)]
-    marks: JsonAny<serde_json::Value>,
+    marks: String,
     /// Dragging snaps to the nearest mark.
     #[prop]
     snap_to_marks: bool,
@@ -65,16 +64,16 @@ pub struct Slider {
     #[prop]
     inverted: bool,
     /// A press on the track off the thumb: `jump` there (default) or `page` toward it.
-    #[prop(default = "jump".to_string())]
+    #[prop(default = "jump".to_string(), enumeration = "jump|page")]
     track_click: String,
     /// `linear` (default) or `log` (both ends > 0).
-    #[prop(default = "linear".to_string())]
+    #[prop(default = "linear".to_string(), enumeration = "linear|log")]
     scale: String,
     /// Commit-only mode (Qt `tracking=false`): `value` moves at the release, not while dragging.
     #[prop(rename = "commit")]
     commit_mode: bool,
     /// When the wheel steps: `focused` (default), `hover`, `off`.
-    #[prop(default = "focused".to_string())]
+    #[prop(default = "focused".to_string(), enumeration = "focused|hover|off")]
     wheel: String,
     #[event]
     changed: Event<f64>,
@@ -144,7 +143,7 @@ impl Slider {
     }
 
     fn marks(&self) -> Vec<Mark> {
-        rail::marks_of(&self.marks.0)
+        rail::marks_of(&self.marks)
     }
 
     fn scrub_params(&self) -> ScrubParams {
@@ -241,8 +240,7 @@ impl Widget for Slider {
         }
         // layout: rail, value box, caption
         let rect = cx.rect();
-        let s = cx.style(UA);
-        let cap = if self.text.is_empty() { egui::Vec2::ZERO } else { paint::measure_text(ui.ctx(), &s, &self.text, AvailableSpace::MaxContent) };
+        let cap = if self.text.is_empty() { egui::Vec2::ZERO } else { paint::measure_text(ui.ctx(), &cx.style(UA), &self.text, AvailableSpace::MaxContent) };
         let vertical = self.vertical();
         let mut bx = if self.show_value { self.box_size(ui.ctx(), dark, RAIL_LEN) } else { egui::Vec2::ZERO };
         let (rail_rect, box_rect, cap_rect) = if vertical {
@@ -348,7 +346,6 @@ impl Widget for Slider {
         if self.stepper.took_wheel() {
             ui.ctx().input_mut(|i| {
                 i.smooth_scroll_delta = egui::Vec2::ZERO;
-                i.raw_scroll_delta = egui::Vec2::ZERO;
             });
         }
         if resp.has_focus() {
@@ -418,7 +415,11 @@ impl Widget for Slider {
             cx.dispatch(&self.drag_stopped, ());
         }
         // paint
-        let host = StateBits(cx.node().state().0) | StateBits(if cx.enabled() { 0 } else { StateBits::DISABLED.0 });
+        let mut host = StateBits::NONE;
+        for b in [StateBits::FOCUS_VISIBLE, StateBits::PRESSED, StateBits::DRAGGING, StateBits::HOVERED] {
+            host.set(b, cx.state(b));
+        }
+        host.set(StateBits::DISABLED, !cx.enabled());
         let shown = self.current();
         self.st.shown = shown;
         if ui.is_rect_visible(rect) {
@@ -426,10 +427,11 @@ impl Widget for Slider {
             let r = self.st.rail;
             r.paint_ticks(&mut pc, host, dark, self.tick_interval_or_page(), &marks);
             r.paint_track(&mut pc, host, dark, shown, None, "fill");
-            let mut tb = host & StateBits(StateBits::DISABLED.0 | StateBits::FOCUS_VISIBLE.0 | StateBits::PRESSED.0 | StateBits::DRAGGING.0);
+            let mut tb = StateBits(host.0 & (StateBits::DISABLED.0 | StateBits::FOCUS_VISIBLE.0 | StateBits::PRESSED.0 | StateBits::DRAGGING.0));
             tb.set(StateBits::HOVERED, ui.rect_contains_pointer(r.thumb(shown)) || self.scrub.dragging());
             r.paint_thumb(&mut pc, "thumb", tb, dark, shown);
             if !self.text.is_empty() {
+                let s = cx.style(UA);
                 let g = paint::text_galley(ui.ctx(), &s, &self.text, None);
                 paint::paint_text(&mut pc.part("label"), &s, &g, cap_rect, paint::Align::Start);
             }

@@ -355,16 +355,6 @@ impl Metrics {
                 let rows = if *multiline { 4.0 } else { 1.0 };
                 vec2(sp.text_edit_width, (rows * self.row_height() + 4.0).max(interact.y))
             }
-            W::Slider { text, show_value, .. } => {
-                let mut wdt = sp.slider_width;
-                if *show_value {
-                    wdt += sp.item_spacing.x + interact.x;
-                }
-                if !text.is_empty() {
-                    wdt += sp.item_spacing.x + self.text_size(text, None).x;
-                }
-                vec2(wdt, interact.y)
-            }
             W::Box | W::Window { .. } | W::Grid { .. } | W::ScrollArea { .. } | W::VirtualList(_) => Vec2::ZERO,
             // ---- WG2a ----
             W::Menu(x) => crate::menus::measure(self, x),
@@ -374,8 +364,6 @@ impl Metrics {
             W::Hyperlink { .. }
             | W::RadioButton { .. }
             | W::Switch { .. }
-            | W::RangeSlider { .. }
-            | W::DragValue { .. }
             | W::Panel { .. }
             | W::Sides
             | W::Frame { .. }

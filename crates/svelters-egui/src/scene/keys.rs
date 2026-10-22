@@ -95,6 +95,18 @@ macro_rules! field {
     )*};
 }
 
+/// OW1b: keys of an own widget's props (write by name; no borrowed read).
+macro_rules! own {
+    ($($N:ident: $T:ty = $name:literal;)*) => {$(
+        pub static $N: PropKey<$T> = {
+            fn g<'a>(_: &'a Common, _: &'a W) -> Option<&'a $T> {
+                None
+            }
+            PropKey::new($name, g)
+        };
+    )*};
+}
+
 /// Every element inside a window (the `Widget` base).
 pub mod widget {
     use super::*;
@@ -185,14 +197,17 @@ pub mod text_edit {
     }
 }
 
+/// OW1b: `slider` is an own widget (`crate::widgets::slider`): its fields live in the widget struct
+/// behind a `RefCell`, so these keys write (by name, the exact write path) but do not borrow on
+/// read (`NodeRef::get` is `None`; read with `get_value`).
 pub mod slider {
     use super::*;
-    field! {
-        VALUE: f64 = "value", Slider.value;
-        MIN: f64 = "min", Slider.min;
-        MAX: f64 = "max", Slider.max;
-        STEP: f64 = "step", Slider.step;
-        TEXT: String = "text", Slider.text;
-        SHOW_VALUE: bool = "show-value", Slider.show_value;
+    own! {
+        VALUE: f64 = "value";
+        MIN: f64 = "min";
+        MAX: f64 = "max";
+        STEP: f64 = "step";
+        TEXT: String = "text";
+        SHOW_VALUE: bool = "show-value";
     }
 }
