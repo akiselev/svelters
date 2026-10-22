@@ -10,7 +10,7 @@ provider passes) was not on master yet: see "SG4 stubs" below.
 
 | File | Content |
 |---|---|
-| `scene/virt.rs` (LISTS) | **`RowHeights`**: uniform rows with no storage (1M rows cost nothing), a Fenwick tree over all heights from the first height that differs; `offset`, `total`, `row_at`, `range`, `rect`, `splice`, `set_estimate`; offsets in `f64`. **`VScroll`**: a virtualiser's own offset; `advance(ctx, max)` decides a pass's offset once from the stored offset, pending scroll-bar drags and this pass's wheel input (R22); `reveal`. **`RowPool`** (`row`, `bound_in_order`, `release_unused`, `node_of`, `created`, `rebinds`) with R19's **`clears(&KEY)`**. **`RowSource`** (Rust model → realised rows: `len`, `key`, `template`, `uniform_height`, `build`, `bind`, `anchor`, `find_anchor`, `version`). **`VirtualChildren`** (§8.2's trait) and `a11y_row` (set size and position). `SceneRef::{virtual_rows, with_virtual, target_by_anchor, target_by_path, target_rect, target_anchor}`. **`PrepareCx`** (stub, below). |
+| `scene/virt.rs` (LISTS) | **`RowHeights`**: uniform rows with no storage (1M rows cost nothing), a Fenwick tree over all heights from the first height that differs; `offset`, `total`, `row_at`, `range`, `rect`, `splice`, `set_estimate`; offsets in `f64`. **`VScroll`**: a virtualiser's own offset; `advance(ctx, max)` decides a pass's offset once from the stored offset, pending scroll-bar drags and this pass's wheel input (R22); `reveal`. **`RowPool`** (`row`, `bound_in_order`, `release_except`, `release_unused`, `node_of`, `created`, `rebinds`) with R19's **`clears(&KEY)`**. **`RowSource`** (Rust model → realised rows: `len`, `key`, `template`, `uniform_height`, `build`, `bind`, `anchor`, `find_anchor`, `version`). **`VirtualChildren`** (§8.2's trait) `a11y_row` (set size and position) and `label_row_by_contents`. `SceneRef::{virtual_rows, with_virtual, target_by_anchor, target_by_path, target_rect, target_anchor}`. **`PrepareCx`** (stub, below). |
 | `kinds/virtuallist.rs` (LISTS) | The **`virtual-list`** kind (built-in, kind id appended to `KINDS`): props `selected`, `selection`, `layout`, `row-height`; methods `splice`, `count`, `scrollTo`, `setRow`, `rowAt`; sync signals `setup`, `bind`, `unbind`, `teardown`; async `activate`, `select`. `VList` state, the logic step `EguiBackend::realize_lists` (JS rows), `prepare_root` (Rust rows), `place_rows` (heights and anchoring after layout), `paint` (the walk). `SceneMut::{set_row_source, with_row_source, scroll_list_to}`, `SceneRef::{virtual_list, list_rows}`, `ListStats`. |
 | `layout.rs` | `vlist_layout`: the list sizes as an empty leaf (rows never reach its intrinsic size), lays out its bound rows at its width (measured, or the source's uniform height), hidden layout for unbound pool rows. |
 | `walk.rs`, `frame.rs`, `ops.rs`, `leaf.rs` (one-line hooks) | `paint_own` hands `virtual-list` to `virtuallist::paint`; `window_ui`/`slot_ui` call `prepare_root` before `layout_root`; `before_pass` calls `realize_lists` after the checkpoint and rAF; `call` routes `virtual-list` methods (with arguments) to `vlist_call`. |
@@ -30,7 +30,9 @@ not on egui (there is no native list model; LS2's Rust row-model trait replaces 
 decides **this frame's** offset first (`VScroll::advance`: stored offset + last pass's scroll-bar drags + this pass's
 wheel delta when the pointer is over the list's last drawn rect and no other layer is on top), then unbinds slots
 that left the window, sets up the slots it lacks and binds the positions that entered (`call_sync`; two rounds so a
-slot set up in round one is bound in round two). The walk draws with that same offset and consumes the wheel delta
+slot set up in round one is bound in round two). The window is the viewport plus two estimated rows each side, and never
+fewer rows than estimated rows need anywhere in the list (a margin cut at the top or bottom goes to the other side), so
+the slots set up at the top are all a fling needs. The walk draws with that same offset and consumes the wheel delta
 it took, so outer scroll areas do not scroll too. A bind that ran deferred (JS busy) leaves the row out of the drawn
 set and is bound again at the next logic; a position in view that no bound row covers is drawn as a placeholder and
 counted (`ListStats::unbound_drawn`), and asks for another frame.
@@ -44,7 +46,8 @@ reference `virtual-tree` does).
 **Rust rows (SG5 realised tier, ARCH-SCENE §10.2).** `SceneMut::set_row_source(list, source, RowPool::new())` makes a
 `virtual-list` show rows from a `RowSource`. In the walk, before the root's layout (`prepare_root`, phase `Ui`), the
 list decides the frame's offset and binds its window through the pool: a key that stays keeps its node, a new key
-takes a free row of its template, else `build` runs once. Rows are `Origin::Rust`-owned children of the list.
+takes a free row of its template, else `build` runs once. Rows whose keys leave the window are freed first
+(`RowPool::release_except`), so the keys that enter take them and a fling builds no rows. Rows are `Origin::Rust`-owned children of the list.
 
 **Layout and anchoring.** The list is a layout boundary: scrolling or rebinding relays out the list alone (cached rows
 are cache hits). Rows are measured at the list's width (`row-height` is the estimate and the minimum) into
@@ -53,7 +56,9 @@ place on screen, unless the list is at the top (CSS scroll anchoring's rule).
 
 **A11y (SV40 set size).** The list is a `ListBox` (or `List` with `selection="none"`) with `size_of_set`; each drawn
 row is a `ListBoxOption`/`ListItem` with `position_in_set`/`size_of_set` over the whole list and `selected`; the row's
-widgets are its children (`UiBuilder::accessibility_parent`). Painted rows use `virt::a11y_row`.
+widgets are its children (`UiBuilder::accessibility_parent`) and name it: the row is `labelled_by` the static texts
+painted in it (`virt::label_row_by_contents`; a list box option needs a name, and `get_by_label` finds the row).
+Painted rows use `virt::a11y_row`.
 
 **Queries, anchors, hit-tests.** `VirtualChildren` is answered by `virtual-list` (keys are the JS ids or the source's
 keys; anchors `row[<id>]` or the source's) and by provider kinds through `Widget::virtual_children`.
@@ -77,13 +82,13 @@ widgets), the list itself under them.
 
 | Gate (§14 SG5, LS1) | Test | Result |
 |---|---|---|
-| 2k-row realised grid creates ≤ 60 rows' nodes and none while scrolling | `tests/vlist.rs` `a_2k_row_list_binds_its_window_and_flings_without_unbound_rows` (JS protocol), `a_rust_row_source_realises_2k_rows_with_60_nodes` (Rust rows), `list_view_runs_on_egui` (real `<ListView>`) | RESULT_A |
-| R22: a fling through 2k rows never draws an unbound row | the same three: wheel flings to the end, every frame checks `unbound_drawn` and that each drawn row shows its own item | RESULT_B |
-| anchors resolve for off-screen rows | `a_rust_row_source_…` (`grid/row[param:p10]`), `examples/egui-kinds/tests/virt.rs` `a_1m_row_tree_…` | RESULT_C |
-| 10k-row painted tree: 0 JS entries, ≤ 1 ms scene time per frame | `virt.rs` `a_10k_row_painted_tree_scrolls_with_no_js_and_a_small_scene_time` (≤ 1 ms asserted in release; debug asserts ≤ 30 ms and prints the median) | RESULT_D |
-| 1M rows with a uniform height model | `virt.rs` `a_1m_row_tree_resolves_anchors_and_queries_off_screen` | RESULT_E |
-| scroll anchoring by key, `scrollTo`, `rowAt`, set-size a11y, select/activate | `vlist.rs` `scroll_to_anchoring_and_set_size`, `select_and_activate` | RESULT_F |
-| `RowHeights`, `reveal` | `scene/virt.rs` unit tests | RESULT_G |
+| 2k-row realised grid creates ≤ 60 rows' nodes and none while scrolling | `tests/vlist.rs` `a_2k_row_list_binds_its_window_and_flings_without_unbound_rows` (JS protocol), `a_rust_row_source_realises_2k_rows_with_60_nodes` (Rust rows), `list_view_runs_on_egui` (real `<ListView>`) | JS protocol and Rust rows: no setup or build during the fling, passed locally (debug); `list_view_runs_on_egui`: CI only (needs the built fixture) |
+| R22: a fling through 2k rows never draws an unbound row | the same three: wheel flings to the end, every frame checks `unbound_drawn` and that each drawn row shows its own item | passed locally (debug) (JS protocol, Rust rows); `<ListView>` in CI |
+| anchors resolve for off-screen rows | `a_rust_row_source_…` (`grid/row[param:p10]`), `examples/egui-kinds/tests/virt.rs` `a_1m_row_tree_…` | passed locally (debug) |
+| 10k-row painted tree: 0 JS entries, ≤ 1 ms scene time per frame | `virt.rs` `a_10k_row_painted_tree_scrolls_with_no_js_and_a_small_scene_time` (≤ 1 ms asserted in release; debug asserts ≤ 30 ms and prints the median) | passed locally (debug) (≤ 30 ms debug bound); the release bound not run locally |
+| 1M rows with a uniform height model | `virt.rs` `a_1m_row_tree_resolves_anchors_and_queries_off_screen` | passed locally (debug) |
+| scroll anchoring by key, `scrollTo`, `rowAt`, set-size a11y, select/activate | `vlist.rs` `scroll_to_anchoring_and_set_size`, `select_and_activate` | passed locally (debug) |
+| `RowHeights`, `reveal` | `scene/virt.rs` unit tests | passed locally (debug) |
 
 ## Not done
 
@@ -97,4 +102,8 @@ widgets), the list itself under them.
 
 ## Verification
 
-VERIFICATION
+Local, on the final code (LISTS2, 2026-10-22): `cargo check -p svelters-egui -p egui-kinds-example --all-targets`;
+`cargo nextest run -p svelters-egui -E '(binary(vlist) | test(/virt/)) & !test(list_view_runs_on_egui)'` (7 passed);
+`cargo nextest run -p egui-kinds-example -E 'binary(virt) | test(/virt/)'` (2 passed). Not run locally:
+`list_view_runs_on_egui` (needs `fixtures/lists-egui` built; CI's linux-gtk job builds it), release-mode timing,
+everything else (CI).
