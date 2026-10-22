@@ -5,7 +5,11 @@
 //! plus the widget chrome of their kind, before the pass, so the first frame is placed right.
 //! Layout runs only when something is dirty: a style prop, a structural change, a leaf whose
 //! measured size changed, or a new window size.
+//!
+//! Invalidation ([`invalidate`]) and the dirty flags live in `scene/dirty.rs` (ARCH-SCENE §13).
+//! Writer lanes: SCENE (the adapter), WIDGETS (per-kind measure), STYLE (computed style).
 
+pub use crate::scene::dirty::invalidate;
 use crate::scene::{Arena, Handle, Node, W};
 use egui::{Rect, Vec2, pos2, vec2};
 use taffy::prelude::*;
@@ -321,17 +325,6 @@ impl taffy::RoundTree for Tree<'_> {
     }
     fn get_hoisted_child_id(&self, _id: NodeId, _index: usize) -> NodeId {
         unreachable!("nothing is hoisted")
-    }
-}
-
-/// Clears the layout cache of `h` and its ancestors (a style or structure change below them).
-pub fn invalidate(arena: &mut Arena, mut h: Handle) {
-    while let Some(n) = arena.get_mut(h) {
-        n.cache.clear();
-        match n.parent {
-            Some(p) => h = p,
-            None => break,
-        }
     }
 }
 

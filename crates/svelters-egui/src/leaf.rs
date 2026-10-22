@@ -1,91 +1,15 @@
-//! The walk: paints the visible nodes as egui widgets at the rects taffy computed.
+//! Built-in leaf painting: one egui widget per leaf node at its rect, with its response turned into
+//! events and widget-side prop changes in the outbox.
 //!
-//! Pure apart from the outbox: on a discarded pass it runs again with no input, so nothing here
-//! counts or toggles anything except through widget responses (EGUI.md §2.1).
+//! Writer lane: WIDGETS.
 
 use crate::kinds;
 use crate::scene::{Arena, Handle, W};
-use egui::{Align, Layout, Ui, UiBuilder, Vec2};
+use crate::walk::Out;
+use egui::Ui;
 use svelters_abi::Value;
 
-/// What the walk produced for the host, flushed after the pass.
-#[derive(Debug, Clone, PartialEq)]
-pub enum Out {
-    Event(Handle, u32, Vec<Value>),
-    Changed(Handle, u32),
-}
-
-/// Paints node `h` (and its subtree) with rects offset by `origin` (the window content's screen
-/// position).
-pub fn paint(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
-    let n = arena.n(h);
-    if !n.c.visible {
-        return;
-    }
-    if !n.vis.is_identity() {
-        return paint_visual(arena, h, origin, ui, out);
-    }
-    paint_node(arena, h, origin, ui, out);
-}
-
-/// TR1 visual channels: the node's subtree in a child `Ui` with its opacity multiplied, its paint
-/// cut at the node's (clipped) rect, its shapes moved by the transform, and its events dropped while
-/// inert. The transform is visual only (egui's `with_visual_transform`): input still hits the
-/// layout rect, and a non-uniform scale is drawn uniform (the geometric mean).
-fn paint_visual(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
-    let n = arena.n(h);
-    let v = n.vis;
-    let r = n.rect.translate(origin);
-    let mut child = ui.new_child(UiBuilder::new().max_rect(ui.max_rect()).scope_id(n.id.with("vis")));
-    if let Some(o) = v.opacity {
-        child.multiply_opacity(o.clamp(0.0, 1.0));
-    }
-    if v.clip.is_some() {
-        child.set_clip_rect(ui.clip_rect().intersect(r));
-    }
-    let mut dropped = Vec::new();
-    let sink = if v.inert { &mut dropped } else { out };
-    match v.transform {
-        Some([tx, ty, sx, sy, ox, oy]) => {
-            let s = (sx * sy).abs().sqrt();
-            let o = r.min + egui::vec2(r.width() * ox, r.height() * oy);
-            let t = egui::emath::TSTransform::new(o.to_vec2() + egui::vec2(tx, ty) - o.to_vec2() * s, s);
-            child.with_visual_transform(t, |ui| paint_node(arena, h, origin, ui, sink));
-        }
-        None => paint_node(arena, h, origin, &mut child, sink),
-    }
-}
-
-fn paint_node(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
-    let n = arena.n(h);
-    let r = n.rect.translate(origin);
-    if matches!(n.w, W::Box | W::Window { .. }) {
-        // Containers draw nothing: cull whole subtrees outside the clip rect.
-        if !ui.is_rect_visible(r) {
-            return;
-        }
-        let kids = n.children.clone();
-        for c in kids {
-            paint(arena, c, origin, ui, out);
-        }
-        return;
-    }
-    if !ui.is_rect_visible(r) {
-        return;
-    }
-    let mut b = UiBuilder::new()
-        .max_rect(r)
-        // Never the widget's own id: a scope sharing it eats the widget's clicks (EGUI.md §1.4).
-        .scope_id(n.id.with("scope"))
-        .layout(Layout::left_to_right(Align::Center));
-    if !n.c.enabled {
-        b = b.disabled();
-    }
-    let mut child = ui.new_child(b);
-    leaf(arena, h, &mut child, out);
-}
-
-fn leaf(arena: &mut Arena, h: Handle, ui: &mut Ui, out: &mut Vec<Out>) {
+pub(crate) fn leaf(arena: &mut Arena, h: Handle, ui: &mut Ui, out: &mut Vec<Out>) {
     let n = arena.n_mut(h);
     let kind = n.kind;
     let sig = |name: &str| kinds::signal_id(kind, name);
@@ -156,12 +80,8 @@ fn leaf(arena: &mut Arena, h: Handle, ui: &mut Ui, out: &mut Vec<Out>) {
     };
     let n = arena.n_mut(h);
     let mut resp = resp;
-    if !n.c.accessible_name.is_empty() {
-        resp = resp.accessible_name(n.c.accessible_name.clone());
-    } else if let W::TextEdit { hint, .. } = &n.w
-        && !hint.is_empty()
-    {
-        resp = resp.accessible_name(hint.clone());
+    if let Some(name) = crate::a11y::name(n) {
+        resp = resp.accessible_name(name);
     }
     if !n.c.tooltip.is_empty() {
         resp = resp.on_hover_text(n.c.tooltip.clone());

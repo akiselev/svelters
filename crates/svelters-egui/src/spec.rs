@@ -1,6 +1,10 @@
 //! The egui semantic spec (`svelters-semantics/v0`, `metadata/semantics/egui.json`), generated from
 //! the kind table. `tests/spec.rs` fails when the checked-in file is stale
 //! (`SVELTERS_UPDATE=1 cargo test -p svelters-egui --test spec` rewrites it).
+//!
+//! The provenance strings below still name `src/kinds.rs`, the table's file before EG0 split it into
+//! `src/kinds/`: EG0 keeps the spec byte-identical. Writer lane: RUSTAPI (RA1 adds fragments and
+//! `IntrinsicElements`).
 
 use crate::kinds::{self, Def, KINDS, KindDef, Native, PropDef, Ty};
 use serde_json::{Map, Value as J, json};
