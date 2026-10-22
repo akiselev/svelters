@@ -61,9 +61,11 @@ fn goldens_are_current() {
 
 #[test]
 fn golden_files_round_trip() {
-    for g in goldens("linux").unwrap() {
-        let again = read_golden(&g.path).unwrap();
-        assert_eq!(again.pins.len(), g.pins.len());
+    for platform in ["linux", "macos", "windows"] {
+        for g in goldens(platform).unwrap() {
+            let again = read_golden(&g.path).unwrap();
+            assert_eq!(again.pins.len(), g.pins.len());
+        }
     }
 }
 

@@ -38,7 +38,14 @@ windows = { version = "0.62.2", features = [
 # `#[implement]` (the UIA focus-changed handler) names windows_core.
 windows-core = "0.62.2"
 
+# WG3m: the macOS user path (CGEvent, AX) and the fixture's run loop (src/macos.rs).
+[target.'cfg(target_os = "macos")'.dependencies]
+objc2 = "0.6.5"
+objc2-foundation = { version = "0.3.2", default-features = false, features = ["std", "NSString", "NSRange", "NSGeometry"] }
+
 [dev-dependencies]
+# The AppKit capture runs on the process's first thread (svelters_apple::testing::run_cases).
+svelters-apple.workspace = true
 svelters-abi.workspace = true
 # The egui measurement (tests/egui_measure.rs): the egui backend under kittest, no display.
 svelters-egui = { path = "../svelters-egui", features = ["kittest"] }
@@ -49,3 +56,8 @@ egui_kittest = "=0.37.0"
 [target.'cfg(target_os = "linux")'.dev-dependencies]
 svelters-gtk.workspace = true
 gtk = { workspace = true, features = ["v4_6"] }
+
+# WG3m: AppKit must run on the main thread, so no libtest harness; opt-in (NA_MACOS=1), macOS only.
+[[test]]
+name = "appkit_capture"
+harness = false
