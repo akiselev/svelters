@@ -40,6 +40,9 @@ pub const SLOT_PROXY: &str = "sv-slot";
 /// `css_scope`: the class the X6 sheets of this component are scoped with (the Vite plugin's
 /// Svelte-compiled CSS); every native element of the component carries it.
 pub fn lower<'a>(root: &'a Root, sem: &dyn PlatformSemantics, styles: Option<&'a StyleSheet>, css_scope: Option<&str>, diags: &mut Diagnostics) -> Component<'a> {
+    // D9 on egui (CS5e): a backend running the CSS engine gets `<style>` as CSS at run time; its
+    // rules are not matched or lowered here (inline `style=` setters still are).
+    let styles = if sem.style_engine_in_backend() { None } else { styles };
     let mut snippet_roots = HashMap::new();
     collect_snippets(&root.fragment, &mut snippet_roots);
     let mut l = Lower {

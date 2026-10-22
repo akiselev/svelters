@@ -497,6 +497,10 @@ pub struct StyleSpec {
     pub units: BTreeMap<String, UnitSpec>,
     #[serde(default)]
     pub properties: BTreeMap<String, StylePropSpec>,
+    /// `backend`: the backend runs the Rust CSS engine itself (egui, CS5e) and gets the sheets as
+    /// CSS, so `<style>` rules are not lowered to setters at compile time (D9 on egui).
+    #[serde(default)]
+    pub engine: String,
 }
 
 #[derive(Debug, Clone, Deserialize)]
