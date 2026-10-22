@@ -9,6 +9,7 @@ pub mod compile;
 pub mod diag;
 pub mod estree;
 pub mod lower;
+pub mod scoped_css;
 pub mod semantics;
 pub mod style;
 pub mod svelte;

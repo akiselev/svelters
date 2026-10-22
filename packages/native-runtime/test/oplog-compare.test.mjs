@@ -1,7 +1,7 @@
 // tools/oplog-compare.mjs: state comparison of op logs.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { compare } from '../../../tools/oplog-compare.mjs';
+import { compare, compareStates } from '../../../tools/oplog-compare.mjs';
 
 const base = `create window #1
 create label #2
@@ -56,4 +56,31 @@ test('ABI v2.6: observed props are state and `changed` lines are boundaries', ()
   assert.match(compare(o, o.replace('observe #2 label on\n', '')).problems[0], /before "changed #2 label"/);
   // observing and then dropping the observation ends in the same state as never observing
   assert.equal(compare(base.concat('observe #2 label on\nobserve #2 label off\n'), base).equal, true);
+});
+
+// WG3 trace writer: `state #h {...}` lines (observed native state at a checkpoint).
+const gtk = `create entry #4
+create button #7
+state #4 {"text":"foo bar","sel":[0,3],"caret":3,"focus":true}
+state #7 {"focus":false}
+`;
+const egui = `create text-edit #1
+create button #2
+state #1 {"focus":true,"sel":[0,3],"caret":3,"text":"foo bar"}
+state #2 {"focus":false}
+`;
+
+test('state lines are boundaries and part of the state, compared by content', () => {
+  assert.equal(compare(gtk, gtk.replace('{"text":"foo bar","sel":[0,3],"caret":3,"focus":true}', '{"focus":true,"caret":3,"sel":[0,3],"text":"foo bar"}')).equal, true);
+  const r = compare(gtk, gtk.replace('"sel":[0,3],"caret":3', '"sel":[3,3],"caret":3'));
+  assert.equal(r.equal, false);
+  assert.match(r.problems[0], /state #4/);
+});
+
+test('--states compares two toolkits by state lines only, handles matched by first appearance', () => {
+  assert.equal(compareStates(gtk, egui).equal, true);
+  const r = compareStates(gtk, egui.replace('"sel":[0,3]', '"sel":[3,0]'));
+  assert.equal(r.equal, false);
+  assert.match(r.problems[0], /state line 0 \(node 1\)/);
+  assert.equal(compareStates(gtk, egui.replace('state #2 {"focus":false}\n', '')).equal, false);
 });

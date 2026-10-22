@@ -39,6 +39,10 @@ fn counter_runs_under_kittest() {
     app.harness.get_by_label("Name").type_text("Ann");
     app.run();
     assert!(has(&app, "Hello Ann"));
+    // CS5e: `.row { flex-direction: row }` from the component's <style>, matched by the engine
+    // on the scoped classes the runtime sent: the text edit and the label share a row
+    let (te, hello) = (app.harness.get_by_label("Name").rect(), app.harness.get_by_label("Hello Ann").rect());
+    assert!(hello.min.x >= te.max.x && (hello.center().y - te.center().y).abs() < 4.0, "{te:?} {hello:?}");
 
     // bind:value on the slider, bind:checked on the checkbox
     app.harness.get_by_label("Level").set_value_accesskit(42.0);

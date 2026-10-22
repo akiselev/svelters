@@ -83,6 +83,9 @@ impl<P: PlatformSemantics> PlatformSemantics for Overlay<P> {
     fn is_setter_property(&self, name: &str) -> bool {
         self.inner.is_setter_property(name)
     }
+    fn style_engine_in_backend(&self) -> bool {
+        self.inner.style_engine_in_backend()
+    }
     fn style_declaration(&self, el: &ElementRef, parent: Option<&ElementRef>, name: &str, value: &[ValueToken]) -> Result<Option<StyleLowering>, Unresolved> {
         self.inner.style_declaration(el, parent, name, value)
     }

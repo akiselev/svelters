@@ -67,6 +67,9 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | WG4a table, tab-view, split-view, toast | IN PROGRESS | | branch `ci/wg4a`; tree-view after LS1 |
 | WG4b rfd dialogs, date/colour pickers, drag and drop | IN PROGRESS | | branch `ci/wg4b` |
 | WG1 SC1 egui widget subset | IN PROGRESS | | branch `ci/wg1`; grid, collapsing-header, toggle-button, combo-box, separator, scroll-area, icon, tooltip, invalid, a11y names; cadatomic FW1's acceptance depends on it |
+| WG3 native reference capture (pins 1-3, 7; GTK/Qt goldens) | DONE | 2026-10-22 | merged 59bc9f81; egui TextEdit matches 85/144 (GTK), 75/144 (Qt) |
+| WG3b GTK selection from inner GtkText, Qt 6.11 golden, pins 4-6 | IN PROGRESS | | branch `ci/wg3b` |
+| FX1 egui focus policy + word rules per native refs | IN PROGRESS | | branch `ci/fx1` |
 | CX1 in-process diagnostics (SV27) | IN PROGRESS | | branch `ci/cx1`; check-only compile, per-file incremental state, stable codes, `--check --json` |
 | Q1 module loader (`svelters-modules`) | DONE | 2026-10-22 | merged 6dbee841 |
 | CS0 Rust CSS engine (`svelters-style`) | DONE | 2026-10-22 | merged 1b6a754f |
@@ -76,9 +79,14 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | SV48 `Json<T>` error paths through tagged enums | IN PROGRESS | | branch `ci/sv48` |
 | H1 component HMR on the Rust loader | IN PROGRESS | | thinkpad-svelters, branch `ci/h1`, stacked on `ci/q1` |
 | H3 `$state` kept on HMR (SV36) | IN PROGRESS | | thinkpad-svelters, branch `ci/h3`, stacked on `ci/h1` |
-| TR2 native animator (SV13, SV37) | IN PROGRESS | | thinkpad-svelters, branch `ci/tr2`; ABI v2.9 allocates style op 11 `SVL_STYLE_ANIMATE` |
+| TR2 native animator (SV13, SV37) | DONE | 2026-10-22 | merged (this commit); ABI v2.9: style op 11 `SVL_STYLE_ANIMATE`; follow-ups TR2b, TR3 |
+| TR2b exiting (inert) subtrees leave the focus chain | DONE | 2026-10-22 | merged (this commit); exiting widgets use egui's noninteractive style during the outro |
+| TR3 profile per-frame `tick` transitions vs descriptors (SV14 in-process) | IN PROGRESS | | thinkpad-svelters, branch `ci/tr3` |
 | LD1 loader hooks + native module providers (SV22, SV25) | DONE | 2026-10-22 | merged 7e8909bb |
-| CS5e egui cascade | IN PROGRESS | | macbook-svelters, branch `ci/cs5e`, stacked on `ci/cs0` (+ `ci/wg1`, `ci/sg3`) |
+| CS5e egui cascade | DONE | 2026-10-22 | merged 9edf8e24 |
+| Q3w Q3's CSS port in compile() + CLI | DONE | 2026-10-22 | merged (this commit); `CompileOptions::scoped_css`, `--css`, Vite uses it for non-egui |
+| CS5f egui fonts in measure/paint, leaf padding, multi-value margin/padding | IN PROGRESS | | macbook-svelters, branch `ci/cs5f` |
+| CS5g egui box-shadow, compile-time egui `<style>` checks, CSS-size relayout boundaries | IN PROGRESS | | macbook-svelters, branch `ci/cs5g` |
 | Q3 Svelte CSS analyze/prune/scope in Rust | DONE | 2026-10-22 | merged 2441d69f; not yet wired into compile()/CLI |
 | G1 egui backend skeleton | DONE | 6f386b2f | `svelters-egui` (egui 0.37.0 + taffy 0.15.0 pinned, version provisional: D9 open): generational retained arena, taffy on the arena, host ops only edit the scene, events/changes queued during the pass and delivered after, `close-request` the one sync handler; elements `window`, `box`, `label`, `button`, `checkbox`, `text-edit`, `slider`; eframe runner, embed runner (`EguiBackend::ui` + `Host::start_with`, D1), kittest harness without a renderer (no GPU/display); observe `exact` on text/checked/value, others `set_only`; kind table → `metadata/semantics/egui.json` (freshness test), `--backend egui`, layout props in `<style>` (D3); `counter/if-toggle/keyed-list/timers-egui` fixtures replay; idle 0 frames/0 CPU over 5 s (CI test allows a ≤10-frame startup burst); 2.57 ms/kittest frame (debug); release binary 21.0 MB (15.6 stripped); merged master 2411/2411 nextest; open: G2 (styling/tokens, key/pointer sync handlers, per-side padding, %, scroll-area, menus, virtual lists, image snapshots), egui not in ledger/coverage/docs site, hot reload untested, timer-tick frame cost, "no styling support" warning; `plans/milestones/G1-egui-skeleton.md` |
 | FU1 follow-ups: GTK panic, `start` on AppKit/WinUI | DONE | f2c8a07b | GTK `set_prop`/`get_prop`/`call`/`listen` return -1 naming the runtime GType instead of panicking on handles outside the generated tables (`tests/foreign_kinds.rs`: `Gio.Menu`, `Gtk.MediaFile.new()`; failed on the old code); Qt/AppKit/WinUI don't have the pattern; ABI v2.7 `start` on AppKit (checkpoint on the first run-loop turn) and WinUI (dispatcher wake, pre-attach type events posted), host attached before mount on all four desktop backends; 3 start cases per platform; branch 2392/2392 nextest, CI green; open: Qt wrong-kind error doesn't name the runtime class, `start` on iOS/Android; `plans/milestones/FU1-gtk-panic-start.md` |

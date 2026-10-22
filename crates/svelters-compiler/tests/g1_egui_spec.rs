@@ -1,6 +1,7 @@
 //! G1: the egui spec (generated from crates/svelters-egui/src/kinds/) as a compile target:
 //! the counter twin compiles, `bind:` on widget-changed props lowers onto observation, layout
-//! props are setters in `<style>` (D3), and set-only props refuse a two-way binding.
+//! props are setters in `style=` (D3), `<style>` is left to the backend's CSS engine (D9 on egui,
+//! CS5e), and set-only props refuse a two-way binding.
 
 use svelters_compiler::compile::{CompileOptions, CompileResult, compile};
 use svelters_compiler::diag::Severity;
@@ -28,9 +29,8 @@ fn counter_twin_compiles_with_bindings_and_style_setters() {
     assert!(out.contains(r#"$n.toplevel("window", "present")"#), "{out}");
     assert!(out.contains(r#"$n.bind_prop($$n6, "text", () => $.get(name), ($$value) => { $.set(name, $$value); }, "changed", 0);"#), "{out}");
     assert!(out.contains(r#""value""#) && out.contains(r#""checked""#), "{out}");
-    // `.row { flex-direction: row; gap: 8px }` became setters at compile time
-    assert!(out.contains(r#"$n.set($$n5, "flex-direction", "row");"#), "{out}");
-    assert!(out.contains(r#"$n.set($$n5, "gap", 8.0);"#), "{out}");
+    // D9 on egui (CS5e): `.row { flex-direction: row; gap: 8px }` is the engine's, not setters
+    assert!(!out.contains(r#""flex-direction""#), "{out}");
 }
 
 #[test]
@@ -49,7 +49,15 @@ fn set_only_props_have_no_two_way_binding() {
 }
 
 #[test]
-fn style_setter_values_are_checked() {
-    let r = run("<window><box class=\"a\" /></window><style>.a { flex-direction: sideways; }</style>");
+fn inline_setter_values_are_checked() {
+    let r = run("<window><box style=\"flex-direction: sideways\" /></window>");
     assert!(!errors(&r).is_empty(), "an enum value outside the table is refused");
+}
+
+/// D9 on egui (CS5e): `<style>` rules are not matched at compile time, so states, combinators
+/// and `%` in setter properties compile (the engine resolves them at run time).
+#[test]
+fn style_rules_are_left_to_the_engine() {
+    let out = js("<window><box class=\"a\"><button /></box></window><style>.a > button:hover { width: 50%; } .a { gap: 4px; }</style>");
+    assert!(!out.contains(r#""gap""#) && !out.contains(r#""width""#), "{out}");
 }

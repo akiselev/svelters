@@ -434,12 +434,14 @@ export function sameValue(a, b) {
   return ka.length === kb.length && ka.every((k) => Object.hasOwn(b, k) && sameValue(a[k], b[k]));
 }
 
-export async function runBundle({ bundlePath, script, toolkit, styleDialect = toolkit === 'qt' ? 'qss' : 'css' }) {
+export async function runBundle({ bundlePath, script, toolkit, styleDialect = toolkit === 'qt' ? 'qss' : toolkit === 'egui' ? 'engine' : 'css' }) {
   const th = createTestHost({ toolkit });
-  if (styleDialect === 'qss') {
-    // answer the Qt dialect (style target 2), so the bundle applies the Qt style table
+  if (styleDialect === 'qss' || styleDialect === 'engine') {
+    // answer the Qt dialect (style target 2), so the bundle applies the Qt style table; or the
+    // engine target (4, egui since CS5e), so it sends raw CSS as egui gets it
     const style = th.host.style;
-    th.host.style = (op, h, text) => (op === 0 ? 2 : style(op, h, text));
+    const target = styleDialect === 'qss' ? 2 : 4;
+    th.host.style = (op, h, text) => (op === 0 ? target : style(op, h, text));
   }
   const timers = createTimers();
   const errors = [];
