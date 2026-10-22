@@ -4,10 +4,11 @@ Design: `plans/research/DESIGN.md` §1.5 (token table), §1.6 (egui `Style` mapp
 §4.1–4.3 (layers, one map with three outputs, where the defaults live), §5 (row DS1). Built on CS5e
 (`set_tokens`, the cascade), SG4, FX1 and INT1 on master. Lane: DS1 (STYLE writer), branch `ci/ds1`.
 
-**Decided (lane, from the brief):** DESIGN.md Q1 is answered as recommended: the base is **Dark Modern / Light
-Modern**; Dark 2026 / Light 2026 come later as themes through DS4's importer. The affordance overlay's token values are
-**on by default** (§0, §4.3; Q2 is still open for the user, and flipping the default is one line in
-`Theme::vscode`).
+**Decided (user, 2026-10-22, relayed by the coordinator):** DESIGN.md Q1: the base is VS Code **Modern** (Dark Modern /
+Light Modern). Dark 2026 / Light 2026 come later as themes through DS4's importer. Q2: affordances are **on by
+default**, and DS3 brings the switch back to exact VS Code. In DS1 that switch is `Theme::with_affordances(bool)`
+(default `true`): today it gates the overlay's token values, and DS3 hangs its `sv.affordance` sheet on the same
+flag. Q3 (icons) goes to a separate research lane. DS2–DS5 start after DS1 and VIS1 merge.
 
 ## What landed
 
