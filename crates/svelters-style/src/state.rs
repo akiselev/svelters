@@ -26,6 +26,16 @@ impl StateMask {
     pub const DRAGGING: StateMask = StateMask(1 << 11);
     pub const EXITING: StateMask = StateMask(1 << 12);
     pub const BUSY: StateMask = StateMask(1 << 13);
+    // ARCH-WIDGETS §2.2 (OW-CSS): bits 14–22; 23–31 stay free.
+    pub const FOCUS_VISIBLE: StateMask = StateMask(1 << 14);
+    pub const INDETERMINATE: StateMask = StateMask(1 << 15);
+    pub const PLACEHOLDER_SHOWN: StateMask = StateMask(1 << 16);
+    pub const DEFAULT: StateMask = StateMask(1 << 17);
+    pub const DROP_TARGET: StateMask = StateMask(1 << 18);
+    pub const CURRENT: StateMask = StateMask(1 << 19);
+    pub const BACKDROP: StateMask = StateMask(1 << 20);
+    pub const REQUIRED: StateMask = StateMask(1 << 21);
+    pub const USER_INVALID: StateMask = StateMask(1 << 22);
 
     /// The built-in states by the scene's names (`StateBits::BUILTIN`).
     pub const BUILTIN: &'static [(&'static str, StateMask)] = &[
@@ -43,6 +53,15 @@ impl StateMask {
         ("dragging", Self::DRAGGING),
         ("exiting", Self::EXITING),
         ("busy", Self::BUSY),
+        ("focus-visible", Self::FOCUS_VISIBLE),
+        ("indeterminate", Self::INDETERMINATE),
+        ("placeholder-shown", Self::PLACEHOLDER_SHOWN),
+        ("default", Self::DEFAULT),
+        ("drop-target", Self::DROP_TARGET),
+        ("current", Self::CURRENT),
+        ("backdrop", Self::BACKDROP),
+        ("required", Self::REQUIRED),
+        ("user-invalid", Self::USER_INVALID),
     ];
 
     pub const fn contains(self, other: StateMask) -> bool {
@@ -80,8 +99,10 @@ impl std::ops::BitOrAssign for StateMask {
 }
 
 /// The CSS pseudo-classes that test one built-in bit: `(name, bit, negated)`. `:enabled` is
-/// `:not(:disabled)`, `:valid` is `:not(:invalid)`, `:read-write` is `:not(:read-only)`.
-/// `:focus-visible` is not here: it is [`Element::is_focus_visible`](crate::Element::is_focus_visible).
+/// `:not(:disabled)`, `:valid` is `:not(:invalid)`, `:read-write` is `:not(:read-only)`,
+/// `:optional` is `:not(:required)`. `:focus-visible` is not here: it is
+/// [`Element::is_focus_visible`](crate::Element::is_focus_visible), which reads
+/// [`StateMask::FOCUS_VISIBLE`].
 pub const STATE_PSEUDO_CLASSES: &[(&str, StateMask, bool)] = &[
     ("hover", StateMask::HOVERED, false),
     ("active", StateMask::PRESSED, false),
@@ -100,6 +121,16 @@ pub const STATE_PSEUDO_CLASSES: &[(&str, StateMask, bool)] = &[
     ("dragging", StateMask::DRAGGING, false),
     ("exiting", StateMask::EXITING, false),
     ("busy", StateMask::BUSY, false),
+    // ARCH-WIDGETS §2.2 (OW-CSS)
+    ("indeterminate", StateMask::INDETERMINATE, false),
+    ("placeholder-shown", StateMask::PLACEHOLDER_SHOWN, false),
+    ("default", StateMask::DEFAULT, false),
+    ("drop-target", StateMask::DROP_TARGET, false),
+    ("current", StateMask::CURRENT, false),
+    ("backdrop", StateMask::BACKDROP, false),
+    ("required", StateMask::REQUIRED, false),
+    ("optional", StateMask::REQUIRED, true),
+    ("user-invalid", StateMask::USER_INVALID, false),
 ];
 
 /// Resolves provider state names (`:state(cad.pending)`) to their bit at parse time. The scene's

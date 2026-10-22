@@ -6996,11 +6996,127 @@
         "decl_type": "color",
         "via": "css"
       },
+      "background-image": {
+        "decl_type": "image",
+        "via": "css"
+      },
+      "border-bottom-color": {
+        "decl_type": "color",
+        "via": "css"
+      },
+      "border-bottom-left-radius": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "border-bottom-right-radius": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "border-bottom-style": {
+        "decl_type": "enum",
+        "values": [
+          "none",
+          "hidden",
+          "solid",
+          "dashed",
+          "dotted",
+          "double",
+          "groove",
+          "ridge",
+          "inset",
+          "outset"
+        ],
+        "via": "css"
+      },
+      "border-bottom-width": {
+        "decl_type": "length",
+        "via": "css"
+      },
       "border-color": {
         "decl_type": "color",
         "via": "css"
       },
+      "border-left-color": {
+        "decl_type": "color",
+        "via": "css"
+      },
+      "border-left-style": {
+        "decl_type": "enum",
+        "values": [
+          "none",
+          "hidden",
+          "solid",
+          "dashed",
+          "dotted",
+          "double",
+          "groove",
+          "ridge",
+          "inset",
+          "outset"
+        ],
+        "via": "css"
+      },
+      "border-left-width": {
+        "decl_type": "length",
+        "via": "css"
+      },
       "border-radius": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "border-right-color": {
+        "decl_type": "color",
+        "via": "css"
+      },
+      "border-right-style": {
+        "decl_type": "enum",
+        "values": [
+          "none",
+          "hidden",
+          "solid",
+          "dashed",
+          "dotted",
+          "double",
+          "groove",
+          "ridge",
+          "inset",
+          "outset"
+        ],
+        "via": "css"
+      },
+      "border-right-width": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "border-top-color": {
+        "decl_type": "color",
+        "via": "css"
+      },
+      "border-top-left-radius": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "border-top-right-radius": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "border-top-style": {
+        "decl_type": "enum",
+        "values": [
+          "none",
+          "hidden",
+          "solid",
+          "dashed",
+          "dotted",
+          "double",
+          "groove",
+          "ridge",
+          "inset",
+          "outset"
+        ],
+        "via": "css"
+      },
+      "border-top-width": {
         "decl_type": "length",
         "via": "css"
       },
@@ -7088,6 +7204,48 @@
         ],
         "type": "length",
         "via": "setter"
+      },
+      "cursor": {
+        "decl_type": "enum",
+        "values": [
+          "auto",
+          "default",
+          "none",
+          "context-menu",
+          "help",
+          "pointer",
+          "progress",
+          "wait",
+          "cell",
+          "crosshair",
+          "text",
+          "vertical-text",
+          "alias",
+          "copy",
+          "move",
+          "no-drop",
+          "not-allowed",
+          "grab",
+          "grabbing",
+          "all-scroll",
+          "col-resize",
+          "row-resize",
+          "n-resize",
+          "e-resize",
+          "s-resize",
+          "w-resize",
+          "ne-resize",
+          "nw-resize",
+          "se-resize",
+          "sw-resize",
+          "ew-resize",
+          "ns-resize",
+          "nesw-resize",
+          "nwse-resize",
+          "zoom-in",
+          "zoom-out"
+        ],
+        "via": "css"
       },
       "display": {
         "decl_type": "enum",
@@ -7496,6 +7654,10 @@
         "type": "length",
         "via": "setter"
       },
+      "letter-spacing": {
+        "decl_type": "length",
+        "via": "css"
+      },
       "margin": {
         "kinds": [
           "Widget"
@@ -7771,6 +7933,34 @@
         "decl_type": "number",
         "via": "css"
       },
+      "outline-color": {
+        "decl_type": "color",
+        "via": "css"
+      },
+      "outline-offset": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "outline-style": {
+        "decl_type": "enum",
+        "values": [
+          "none",
+          "auto",
+          "solid",
+          "dashed",
+          "dotted",
+          "double",
+          "groove",
+          "ridge",
+          "inset",
+          "outset"
+        ],
+        "via": "css"
+      },
+      "outline-width": {
+        "decl_type": "length",
+        "via": "css"
+      },
       "padding": {
         "kinds": [
           "Window",
@@ -7944,6 +8134,24 @@
         "type": "length",
         "via": "setter"
       },
+      "text-overflow": {
+        "decl_type": "enum",
+        "values": [
+          "clip",
+          "ellipsis"
+        ],
+        "via": "css"
+      },
+      "text-transform": {
+        "decl_type": "enum",
+        "values": [
+          "none",
+          "uppercase",
+          "lowercase",
+          "capitalize"
+        ],
+        "via": "css"
+      },
       "top": {
         "kinds": [
           "Widget"
@@ -7994,6 +8202,10 @@
         ],
         "type": "length",
         "via": "setter"
+      },
+      "transition": {
+        "decl_type": "transition",
+        "via": "css"
       },
       "visible": {
         "kinds": [

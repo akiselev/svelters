@@ -42,6 +42,10 @@ pub enum ValueType {
     FontWeight,
     /// `box-shadow`: `none` or a comma-separated list of shadows ([`crate::Shadow`]).
     Shadow,
+    /// `transition`: `none` or a comma-separated list ([`crate::Transition`]).
+    Transition,
+    /// `background-image`: `none` or one `linear-gradient()` ([`crate::LinearGradient`]).
+    Image,
     /// A value this engine keeps as text (`border`, untyped `box-shadow` and `via: css` values).
     Raw,
 }

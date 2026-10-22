@@ -80,6 +80,10 @@ pub enum ComputedValue {
     FontWeight(u16),
     /// `box-shadow`, painted first to last (the first is on top); empty = `none`.
     Shadows(Box<[Shadow]>),
+    /// `transition`; empty = `none`.
+    Transitions(Box<[Transition]>),
+    /// `background-image`; `None` = `none`.
+    Image(Option<Box<LinearGradient>>),
     Raw(Box<str>),
 }
 
@@ -134,9 +138,127 @@ impl fmt::Display for ComputedValue {
                 }
                 Ok(())
             }
+            ComputedValue::Transitions(list) if list.is_empty() => f.write_str("none"),
+            ComputedValue::Transitions(list) => {
+                for (i, t) in list.iter().enumerate() {
+                    if i > 0 {
+                        f.write_str(", ")?;
+                    }
+                    write!(f, "{} {}s {} {}s", t.property, t.duration, t.timing, t.delay)?;
+                }
+                Ok(())
+            }
+            ComputedValue::Image(None) => f.write_str("none"),
+            ComputedValue::Image(Some(g)) => {
+                write!(f, "linear-gradient({}deg", g.angle)?;
+                for st in g.stops.iter() {
+                    let [r, gr, b, _] = st.color.rgba8();
+                    write!(f, ", rgba({r}, {gr}, {b}, {}) {}%", st.color.a, st.position * 100.0)?;
+                }
+                f.write_str(")")
+            }
             ComputedValue::Raw(s) => f.write_str(s),
         }
     }
+}
+
+/// An easing function (CSS Easing 1).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum TimingFunction {
+    /// `cubic-bezier(x1, y1, x2, y2)`; `ease`, `ease-in`, `ease-out`, `ease-in-out` and `linear`
+    /// are its keywords.
+    CubicBezier(f32, f32, f32, f32),
+    /// `steps(n, jump-end | jump-start)`; `step-start`/`step-end` are its keywords.
+    Steps(u32, bool),
+}
+
+impl TimingFunction {
+    pub const LINEAR: TimingFunction = TimingFunction::CubicBezier(0.0, 0.0, 1.0, 1.0);
+    pub const EASE: TimingFunction = TimingFunction::CubicBezier(0.25, 0.1, 0.25, 1.0);
+
+    /// The eased progress at input progress `t` (0–1).
+    pub fn apply(self, t: f32) -> f32 {
+        let t = t.clamp(0.0, 1.0);
+        match self {
+            TimingFunction::Steps(n, start) => {
+                let n = n.max(1) as f32;
+                let k = if start { (t * n).ceil() } else { (t * n).floor() };
+                (k / n).clamp(0.0, 1.0)
+            }
+            TimingFunction::CubicBezier(x1, y1, x2, y2) => {
+                if x1 == y1 && x2 == y2 {
+                    return t; // linear
+                }
+                // solve x(s) = t for s by Newton, falling back to bisection
+                let bez = |a: f32, b: f32, s: f32| {
+                    let u = 1.0 - s;
+                    3.0 * u * u * s * a + 3.0 * u * s * s * b + s * s * s
+                };
+                let dbez = |a: f32, b: f32, s: f32| {
+                    let u = 1.0 - s;
+                    3.0 * u * u * a + 6.0 * u * s * (b - a) + 3.0 * s * s * (1.0 - b)
+                };
+                let mut s = t;
+                for _ in 0..8 {
+                    let x = bez(x1, x2, s) - t;
+                    if x.abs() < 1e-5 {
+                        return bez(y1, y2, s);
+                    }
+                    let d = dbez(x1, x2, s);
+                    if d.abs() < 1e-6 {
+                        break;
+                    }
+                    s = (s - x / d).clamp(0.0, 1.0);
+                }
+                let (mut lo, mut hi) = (0.0f32, 1.0f32);
+                s = t;
+                for _ in 0..30 {
+                    let x = bez(x1, x2, s);
+                    if (x - t).abs() < 1e-5 {
+                        break;
+                    }
+                    if x < t { lo = s } else { hi = s }
+                    s = (lo + hi) / 2.0;
+                }
+                bez(y1, y2, s)
+            }
+        }
+    }
+}
+
+impl fmt::Display for TimingFunction {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            TimingFunction::CubicBezier(a, b, c, d) => write!(f, "cubic-bezier({a}, {b}, {c}, {d})"),
+            TimingFunction::Steps(n, start) => write!(f, "steps({n}, {})", if *start { "jump-start" } else { "jump-end" }),
+        }
+    }
+}
+
+/// One `transition` entry: the property (a name, or `all`), the duration and delay in seconds and
+/// the easing.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Transition {
+    pub property: Box<str>,
+    pub duration: f32,
+    pub delay: f32,
+    pub timing: TimingFunction,
+}
+
+/// One colour stop of a gradient: the colour and its position (0–1 along the gradient line).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct GradientStop {
+    pub color: Color,
+    pub position: f32,
+}
+
+/// `linear-gradient()`: the gradient line's angle in degrees (CSS: `0deg` points up, `90deg`
+/// right; `to bottom` = 180) and two or more stops with resolved positions, in order. The box
+/// primitive paints two stops (ARCH-WIDGETS §1.1); more are kept for later.
+#[derive(Clone, Debug, PartialEq)]
+pub struct LinearGradient {
+    pub angle: f32,
+    pub stops: Box<[GradientStop]>,
 }
 
 /// What a value needs from the element being computed.
@@ -176,6 +298,10 @@ fn parse_typed<'i>(prop: &'static Prop, input: &mut Parser<'i>, cx: &ValueCx<'_>
         ValueType::Length => {
             if input.try_parse(|i| i.expect_ident_matching("auto")).is_ok() {
                 return Ok(ComputedValue::Auto);
+            }
+            // `letter-spacing: normal` and the `border-*-width` keywords
+            if let Some(px) = length_keyword(name, input) {
+                return Ok(ComputedValue::Length(Length::px(px)));
             }
             length(input, cx).map(ComputedValue::Length).map_err(|e| format!("{name}: {e}"))
         }
@@ -262,8 +388,242 @@ fn parse_typed<'i>(prop: &'static Prop, input: &mut Parser<'i>, cx: &ValueCx<'_>
             let list = input.parse_comma_separated(|i| shadow(i, cx).map_err(|e| ParseError::<String>::custom(format!("{name}: {e}")))).map_err(err_text)?;
             Ok(ComputedValue::Shadows(list.into()))
         }
+        ValueType::Transition => {
+            if input.try_parse(|i| i.expect_ident_matching("none")).is_ok() {
+                return Ok(ComputedValue::Transitions(Box::new([])));
+            }
+            let list = input.parse_comma_separated(|i| transition(i).map_err(|e| ParseError::<String>::custom(format!("{name}: {e}")))).map_err(err_text)?;
+            Ok(ComputedValue::Transitions(list.into()))
+        }
+        ValueType::Image => {
+            if input.try_parse(|i| i.expect_ident_matching("none")).is_ok() {
+                return Ok(ComputedValue::Image(None));
+            }
+            let g = input
+                .try_parse(|i| {
+                    i.expect_function_matching("linear-gradient")?;
+                    i.parse_nested_block(|i| linear_gradient(i, cx).map_err(ParseError::<String>::custom))
+                })
+                .map_err(|e| format!("{name}: {}", err_text(e)))?;
+            Ok(ComputedValue::Image(Some(Box::new(g))))
+        }
         ValueType::Raw => unreachable!("handled by parse_value"),
     }
+}
+
+/// Keyword lengths: `normal` for `letter-spacing`/`word-spacing` (0), `thin`/`medium`/`thick` for
+/// border and outline widths (1, 3, 5 px).
+fn length_keyword(prop: &str, input: &mut Parser<'_>) -> Option<f32> {
+    let state = input.state();
+    let k = match input.next() {
+        Ok(Token::Ident(k)) => k.to_ascii_lowercase(),
+        _ => {
+            input.reset(&state);
+            return None;
+        }
+    };
+    let px = match (k.as_str(), prop) {
+        ("normal", "letter-spacing" | "word-spacing") => Some(0.0),
+        (k, p) if p.ends_with("-width") && (p.starts_with("border") || p.starts_with("outline")) => border_width_keyword(k),
+        _ => None,
+    };
+    if px.is_none() {
+        input.reset(&state);
+    }
+    px
+}
+
+/// `thin`, `medium`, `thick` in px (CSS Backgrounds 3 §3.3).
+pub(crate) fn border_width_keyword(k: &str) -> Option<f32> {
+    match k {
+        "thin" => Some(1.0),
+        "medium" => Some(3.0),
+        "thick" => Some(5.0),
+        _ => None,
+    }
+}
+
+/// One `transition` entry: `[property] [duration] [timing] [delay]` in any order, the first time
+/// being the duration.
+fn transition(input: &mut Parser<'_>) -> VResult<Transition> {
+    let mut property: Option<Box<str>> = None;
+    let mut times: Vec<f32> = Vec::new();
+    let mut timing: Option<TimingFunction> = None;
+    while !input.is_exhausted() {
+        if times.len() < 2
+            && let Ok(t) = input.try_parse(time)
+        {
+            times.push(t);
+            continue;
+        }
+        if timing.is_none()
+            && let Ok(tf) = input.try_parse(timing_function)
+        {
+            timing = Some(tf);
+            continue;
+        }
+        if property.is_none()
+            && let Ok(p) = input.try_parse(|i| i.expect_ident_cloned())
+        {
+            let p = p.to_ascii_lowercase();
+            if p == "none" {
+                return Err("`none` is only valid alone".into());
+            }
+            property = Some(p.into());
+            continue;
+        }
+        return Err("expected a property, a duration, an easing function or a delay".into());
+    }
+    let duration = times.first().copied().unwrap_or(0.0);
+    if duration < 0.0 {
+        return Err("a duration cannot be negative".into());
+    }
+    Ok(Transition { property: property.unwrap_or_else(|| "all".into()), duration, delay: times.get(1).copied().unwrap_or(0.0), timing: timing.unwrap_or(TimingFunction::EASE) })
+}
+
+/// A `<time>` in seconds (`200ms`, `.2s`; a bare `0` too).
+fn time<'i>(input: &mut Parser<'i>) -> Result<f32, ParseError<()>> {
+    match input.next()?.clone() {
+        Token::Dimension { value, ref unit, .. } if unit.eq_ignore_ascii_case("s") => Ok(value),
+        Token::Dimension { value, ref unit, .. } if unit.eq_ignore_ascii_case("ms") => Ok(value / 1000.0),
+        Token::Number { value: 0.0, .. } => Ok(0.0),
+        _ => Err(ParseError::custom(())),
+    }
+}
+
+fn timing_function<'i>(input: &mut Parser<'i>) -> Result<TimingFunction, ParseError<()>> {
+    let t = input.next()?.clone();
+    match t {
+        Token::Ident(ref k) => Ok(match &*k.to_ascii_lowercase() {
+            "linear" => TimingFunction::LINEAR,
+            "ease" => TimingFunction::EASE,
+            "ease-in" => TimingFunction::CubicBezier(0.42, 0.0, 1.0, 1.0),
+            "ease-out" => TimingFunction::CubicBezier(0.0, 0.0, 0.58, 1.0),
+            "ease-in-out" => TimingFunction::CubicBezier(0.42, 0.0, 0.58, 1.0),
+            "step-start" => TimingFunction::Steps(1, true),
+            "step-end" => TimingFunction::Steps(1, false),
+            _ => return Err(ParseError::custom(())),
+        }),
+        Token::Function(ref f) if f.eq_ignore_ascii_case("cubic-bezier") => input.parse_nested_block(|i| {
+            let mut v = [0.0f32; 4];
+            for (k, slot) in v.iter_mut().enumerate() {
+                if k > 0 {
+                    i.expect_comma()?;
+                }
+                *slot = i.expect_number()?;
+            }
+            if !(0.0..=1.0).contains(&v[0]) || !(0.0..=1.0).contains(&v[2]) {
+                return Err(ParseError::custom(()));
+            }
+            Ok(TimingFunction::CubicBezier(v[0], v[1], v[2], v[3]))
+        }),
+        Token::Function(ref f) if f.eq_ignore_ascii_case("steps") => input.parse_nested_block(|i| {
+            let n = i.expect_integer()?;
+            if n < 1 {
+                return Err(ParseError::custom(()));
+            }
+            let start = if i.try_parse(|i| i.expect_comma()).is_ok() {
+                match &*i.expect_ident()?.to_ascii_lowercase() {
+                    "jump-start" | "start" => true,
+                    "jump-end" | "end" => false,
+                    _ => return Err(ParseError::custom(())),
+                }
+            } else {
+                false
+            };
+            Ok(TimingFunction::Steps(n as u32, start))
+        }),
+        _ => Err(ParseError::custom(())),
+    }
+}
+
+/// The inside of `linear-gradient(...)`: an optional angle or `to <side-or-corner>`, then two or
+/// more colour stops with optional percentages. Corners are taken as square boxes (`to top right`
+/// = 45deg).
+fn linear_gradient(input: &mut Parser<'_>, cx: &ValueCx<'_>) -> VResult<LinearGradient> {
+    let mut angle = 180.0f32;
+    let dir = input.try_parse(|i| -> Result<f32, ParseError<()>> {
+        match i.next()?.clone() {
+            Token::Dimension { value, ref unit, .. } => match &*unit.to_ascii_lowercase() {
+                "deg" => Ok(value),
+                "rad" => Ok(value.to_degrees()),
+                "grad" => Ok(value * 0.9),
+                "turn" => Ok(value * 360.0),
+                _ => Err(ParseError::custom(())),
+            },
+            Token::Number { value: 0.0, .. } => Ok(0.0),
+            Token::Ident(ref k) if k.eq_ignore_ascii_case("to") => {
+                let (mut v, mut h) = (None::<f32>, None::<f32>);
+                for _ in 0..2 {
+                    let Ok(k) = i.try_parse(|i| i.expect_ident_cloned()) else { break };
+                    match &*k.to_ascii_lowercase() {
+                        "top" if v.is_none() => v = Some(0.0),
+                        "bottom" if v.is_none() => v = Some(180.0),
+                        "left" if h.is_none() => h = Some(270.0),
+                        "right" if h.is_none() => h = Some(90.0),
+                        _ => return Err(ParseError::custom(())),
+                    }
+                }
+                match (v, h) {
+                    (Some(v), None) => Ok(v),
+                    (None, Some(h)) => Ok(h),
+                    (Some(0.0), Some(90.0)) => Ok(45.0),
+                    (Some(180.0), Some(90.0)) => Ok(135.0),
+                    (Some(180.0), Some(270.0)) => Ok(225.0),
+                    (Some(0.0), Some(270.0)) => Ok(315.0),
+                    _ => Err(ParseError::custom(())),
+                }
+            }
+            _ => Err(ParseError::custom(())),
+        }
+    });
+    if let Ok(a) = dir {
+        angle = a;
+        input.expect_comma().map_err(|_| "expected `,` after the gradient direction".to_string())?;
+    }
+    let mut stops: Vec<(Color, Option<f32>)> = Vec::new();
+    loop {
+        let c = color(input, cx)?;
+        let pos = input.try_parse(|i| i.expect_percentage()).ok();
+        stops.push((c, pos));
+        if input.is_exhausted() {
+            break;
+        }
+        input.expect_comma().map_err(|_| "expected `,` between colour stops".to_string())?;
+    }
+    if stops.len() < 2 {
+        return Err("a gradient needs at least two colour stops".into());
+    }
+    // positions: first 0, last 1 by default; the others spread evenly between their neighbours
+    let n = stops.len();
+    let mut pos: Vec<Option<f32>> = stops.iter().map(|s| s.1).collect();
+    pos[0] = pos[0].or(Some(0.0));
+    pos[n - 1] = pos[n - 1].or(Some(1.0));
+    let mut i = 1;
+    while i < n {
+        if pos[i].is_none() {
+            let start = i - 1;
+            let end = (i..n).find(|&k| pos[k].is_some()).unwrap_or(n - 1);
+            let (a, b) = (pos[start].unwrap_or(0.0), pos[end].unwrap_or(1.0));
+            for (k, slot) in pos.iter_mut().enumerate().take(end).skip(i) {
+                *slot = Some(a + (b - a) * (k - start) as f32 / (end - start) as f32);
+            }
+            i = end;
+        }
+        i += 1;
+    }
+    // a stop before an earlier one moves up to it
+    let mut last = 0.0f32;
+    let stops = stops
+        .iter()
+        .zip(pos)
+        .map(|((c, _), p)| {
+            let p = p.unwrap_or(last).max(last);
+            last = p;
+            GradientStop { color: *c, position: p }
+        })
+        .collect();
+    Ok(LinearGradient { angle, stops })
 }
 
 /// One shadow: `inset`, two to four lengths (x, y, blur, spread) and a colour, the lengths
