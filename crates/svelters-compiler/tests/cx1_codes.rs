@@ -23,9 +23,10 @@ fn is_code(s: &str) -> bool {
 
 /// The string literals of `src` that are written where a diagnostic code goes: the first argument
 /// of `error(`/`warning(`/`note(`/`native_error(`/`native_warning(`/`Unresolved::new(`, the second
-/// of the Svelte port's `e(node, ...)`/`w(node, ...)`, `code: "..."`, and `const X: &str = "..."`.
+/// of the Svelte port's `e(node, ...)`/`w(node, ...)`, `code: "..."`, `const X: &str = "..."`, and
+/// the first item of a `Some(("code", why))` tuple (`check_style_sheet`).
 fn codes_in(src: &str) -> Vec<String> {
-    const BEFORE: &[&str] = &["error(", "warning(", "note(", "native_error(", "native_warning(", "Unresolved::new(", "code:", "str =", "node,", "span,"];
+    const BEFORE: &[&str] = &["error(", "warning(", "note(", "native_error(", "native_warning(", "Unresolved::new(", "code:", "str =", "node,", "span,", "Some(("];
     let mut out = Vec::new();
     for (start, end) in string_literals(src) {
         let lit = &src[start..end];

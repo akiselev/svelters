@@ -81,7 +81,7 @@ components in the repo fits the 20 ms per keystroke budget (cadatomic AP6) about
 ## 3. Codes
 
 `crates/svelters-compiler/src/codes.rs` registers every code: short `code`, namespaced `id`,
-origin, usual severity, a one-line summary and the fix-it offered. 171 codes: 59 of svelters'
+origin, usual severity, a one-line summary and the fix-it offered. 172 codes: 60 of svelters'
 own (`svelters::<area>::<name>`, areas element, property, method, event, bind, reactivity, slot,
 child_attr, style, list, transition, feature) and 112 ported from Svelte (`svelte::<code>`, Svelte's
 message template, link to `https://svelte.dev/e/<code>`). Fifteen of the Svelte ones are Q3's
@@ -199,7 +199,10 @@ code. Later "did you mean" alternatives may name an element that does not fit th
 - The docs site build and link check (CI): the new page is Markdown with no internal
   links.
 - No backend (GTK/Qt/egui) or JS package tests: nothing outside `svelters-compiler` and the docs
-  changed.
+  changed. The first CI run (`js` 39796209252) caught `style_state_unsupported` unregistered (the
+  debug panic, in `experiments/native-compiler/compiled`): the scan missed codes written as
+  `Some(("code", why))`. Registered, and the scan now covers that form; after that edit only
+  `cx1_codes` ran locally (the `compiled` experiment needs `pnpm install`, left to CI).
 
 ## 10. Open points (recommendation taken)
 

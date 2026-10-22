@@ -99,6 +99,7 @@ Severities: **error** fails the build; **warning** does not (the observability w
 | `svelters::style::unsupported_selector` | `style_unsupported_selector` | error | A selector form native styles do not support (`*`, pseudo-elements, ...). |  |
 | `svelters::style::unsupported_combinator` | `style_unsupported_combinator` | error | A combinator other than descendant (whitespace) and child (`>`). |  |
 | `svelters::style::unsupported_at_rule` | `style_unsupported_at_rule` | error | A setter property inside an at-rule (`@media`, `@native`); setter properties are written with setProp, not CSS. |  |
+| `svelters::style::state_unsupported` | `style_state_unsupported` | error | A setter property in a rule whose selector has a state (`:hover`, ...); states are CSS-only. |  |
 | `svelters::style::unsupported_nesting` | `style_unsupported_nesting` | error | A setter property in a nested rule. |  |
 | `svelters::style::unsupported_important` | `style_unsupported_important` | error | `!important` is not supported; native styles apply by specificity and source order. | remove `!important` |
 | `svelters::style::unsupported_value` | `style_unsupported_value` | error | A value form native styles do not support (`,` or `/` lists, ...). |  |
