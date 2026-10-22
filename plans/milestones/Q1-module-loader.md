@@ -139,6 +139,12 @@ The exported path constants (`HIDDEN_MODULES`, `effectsPath`, …) keep their na
 
 ## Not done here (by design or later rows)
 
+- Security (user decision 2026-10-22, deny-by-default extension policy; design in SEC0, `ARCH-SECURITY.md`):
+  `SourceProvider` loads any file a specifier resolves to: absolute paths, `..` out of the app root, and
+  assets as path strings. That is right for the primary app host, and it adds no JS-reachable API. An
+  extension or isolate host must not get a bare `SourceProvider`. It goes through LD1's policy-carrying
+  `ComposedProvider`, where SEC0 adds a file-system scope next to `Visibility`.
+
 - `<style>` from source: Q3 (Svelte's CSS analyze/prune/scope in Rust). Until then the loader warns and the app
   runs unstyled; style-using apps keep the Vite path.
 - TypeScript entry points and the on-disk bytecode cache: Q2. CJS interop: not planned (load error with a hint).
