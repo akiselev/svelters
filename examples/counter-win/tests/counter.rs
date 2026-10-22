@@ -8,6 +8,9 @@
 /// (test name, `counter-win` arguments).
 const TESTS: &[(&str, &[&str])] = &[
     ("counter_win_selftest", &["--fixture", "counter-win", "--selftest", "--timeout", "30"]),
+    // WG3w: the UI thread starts its loop 3 s late (a slow first frame), so every startup timer is due at once;
+    // the read-back must still follow the driving (the CI flake "Count: 0").
+    ("counter_win_selftest_slow_start", &["--fixture", "counter-win", "--selftest", "--timeout", "30", "--stall-ms", "3000"]),
     ("winui_types_selftest", &["--fixture", "winui-types", "--selftest", "--timeout", "30"]),
     ("start_with_mounts_in_the_hook_while_pumping", &["--start-test", "start-with"]),
     ("run_with_mounts_in_the_hook_of_the_loop", &["--start-test", "run-with"]),

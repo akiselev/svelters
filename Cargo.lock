@@ -776,8 +776,10 @@ version = "0.0.0"
 dependencies = [
  "serde_json",
  "svelters-abi",
+ "svelters-conformance",
  "svelters-host",
  "svelters-winui",
+ "windows",
 ]
 
 [[package]]
@@ -4150,6 +4152,8 @@ dependencies = [
  "svelters-abi",
  "svelters-egui",
  "svelters-gtk",
+ "windows",
+ "windows-core 0.62.2",
  "x11rb",
 ]
 

@@ -11,6 +11,8 @@
 //! Writes `target/na/linux/gtk-<version>.json` and the per-pin traces; compares with
 //! `conformance/golden/linux/gtk-<version>.json` when it exists; `NA_UPDATE=1` rewrites it.
 
+#![cfg(target_os = "linux")]
+
 use gtk::prelude::*;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use svelters_conformance::golden::{Capture, finish};
