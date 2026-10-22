@@ -1,0 +1,54 @@
+{
+ "bindings:text": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::text",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "notify:Icon": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IconProperty",
+   "type": "object<Microsoft.UI.Xaml.Controls.IconElement>"
+  },
+  "rule": "O6"
+ },
+ "notify:Text": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TextProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "props:Icon": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IMenuFlyoutSubItem",
+   "samples": [
+    "Accept",
+    "Cancel"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Controls.IconElement>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Text": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IMenuFlyoutSubItem",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

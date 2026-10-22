@@ -1,0 +1,11 @@
+# WP-W: GTK Paned-like pane + content (NavigationView's building block)
+class: Microsoft.UI.Xaml.Controls.SplitView
+element: {}
+slots:
+  - name: content
+    prop: Content
+    default: true
+    provenance: "[ContentProperty(Name=\"Content\")] on SplitView (winmd); Content: UIElement, single child"
+  - name: pane
+    prop: Pane
+    provenance: "SplitView.Pane: UIElement (winmd), single child"

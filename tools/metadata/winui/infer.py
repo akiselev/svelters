@@ -60,14 +60,28 @@ SCALAR = {"bool", "i32", "f64", "string"}
 BINDABLE = SCALAR | {"nullable<bool>"}
 
 
+def _snake(name: str) -> str:
+    return re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower()
+
+
+def _value_types() -> dict[str, str]:
+    """The generator's value and object conversions (gen_backend.VALUE_TYPES), as wire class names (`corner_radius`)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("svelters_winui_gen_i", HERE / "gen_backend.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return {ref: _snake(t) for ref, t in mod.VALUE_TYPES.items()}
+
+
+VALUE_WIRES = _value_types()
+
+
 def wire(ref: str, types: dict) -> str | None:
     """The generator's wire class of a type ref (gen_backend.ty_of), or None when it has no conversion."""
-    if ref in SCALAR:
+    if ref in SCALAR or ref == "f32":
         return ref
-    if ref == "value<Microsoft.UI.Xaml.Thickness>":
-        return "thickness"
-    if ref == "nullable<bool>":
-        return "nullable_bool"
+    if ref in VALUE_WIRES:
+        return VALUE_WIRES[ref]
     m = re.fullmatch(r"enum<(.+)>", ref)
     if m and (types.get(m.group(1)) or {}).get("category") == "enum":
         return "enum"
@@ -85,6 +99,8 @@ class Rules:
         self.deny_events = [(re.compile(r["pattern"]), r["reason"]) for r in d.get("deny_events", [])]
         self.result_props = list(d.get("result_props", []))
         self.triggers = [(re.compile(r["pattern"]), r["trigger"]) for r in d.get("triggers", [])]
+        self.string_objects = [(re.compile(r["pattern"]), r["reason"]) for r in d.get("string_objects", [])]
+        self.method_args = dict(d.get("method_args") or {})
 
     @staticmethod
     def first(pats, name: str):
@@ -147,10 +163,13 @@ class Klass:
                 continue
             if w is None:
                 if ref == "variant" and p["access"]["write"]:
-                    # Content, Header, Tag, ...: exposing an object prop as a boxed string (`as: string`) is a choice.
+                    # Content, Header, Tag, ...: exposing an object prop as a boxed string (`as: string`) is a choice;
+                    # the rules' `string_objects` names make it (headers, titles, descriptions), the rest wait for review.
+                    why = Rules.first(self.rules.string_objects, full)
                     self.add("props", {"name": p["name"], "as": "string", "test": ["svelters", "winui"],
-                                       "provenance": f"rule P1: {full}: object, as a boxed string (winmd)"},
-                             0.6, "P1", {"type": ref}, "prop:object-as-string")
+                                       "provenance": f"rule P1: {full}: object, as a boxed string (winmd)"
+                                                     + (f"; string_objects: {why}" if why else "")},
+                             0.9 if why else 0.6, "P1", {"type": ref}, "prop:object-as-string")
                 else:
                     self.skip(f"prop:type:{ref.split('<')[0]}")
                 continue
@@ -253,7 +272,12 @@ class Klass:
                 continue
             rec = {"name": m["name"], "provenance": f"rule M1: {full}({', '.join(p['type']['ref'] for p in m['params'])}) -> "
                                                     f"{'void' if void else ret['ref']} (winmd)"}
-            if m["params"]:
+            if m["params"] and full in self.rules.method_args:
+                # The rules name arguments the call accepts on a new, unmounted element.
+                rec = {**rec, "args": list(self.rules.method_args[full])}
+                self.add("methods", rec, 0.9, "M1", {"params": [p["type"]["ref"] for p in m["params"]], "args": rec["args"]},
+                         "method:sampled-args")
+            elif m["params"]:
                 self.add("methods", rec, 0.6, "M1", {"params": [p["type"]["ref"] for p in m["params"]]}, "method:scalar-args")
             else:
                 self.add("methods", rec, 0.9, "M1", {"returns": None if void else ret["ref"]},
@@ -314,9 +338,11 @@ def run(rules: Rules | None = None) -> tuple[dict[str, str], dict[str, str], dic
     return files, evid, summary
 
 
-def record_fingerprints(files: dict[str, str]) -> dict[tuple[str, str, str], str]:
-    """(class short name, section, name) -> the fingerprint layers.py gives the inferred record (the ledger parks by it)."""
-    out = {}
+def record_fingerprints(files: dict[str, str], observe_files: dict[str, str] | None = None) -> dict[tuple[str, str, str], str]:
+    """(class short name, section, name) -> the fingerprint layers.py gives the inferred record (the ledger parks by it).
+    Observe facts: (owner, "observe", prop) -> the fingerprint of the stripped record (observe.Layers), as on GTK."""
+    import observe as obs
+    out = obs.layer_fingerprints(observe_files or {})
     for fname, text in files.items():
         doc = yaml.safe_load(text)
         for sec in ("props", "notify", "events", "methods", "bindings"):
@@ -325,13 +351,13 @@ def record_fingerprints(files: dict[str, str]) -> dict[tuple[str, str, str], str
     return out
 
 
-def prune_parked(files: dict[str, str], check: bool) -> bool:
+def prune_parked(files: dict[str, str], check: bool, observe_files: dict[str, str] | None = None) -> bool:
     """Drop parked facts whose inferred record changed or went away: they are tried again. True if stale."""
     path = OUT / "_parked.json"
     if not path.exists():
         return False
     doc = json.loads(path.read_text())
-    fps = record_fingerprints(files)
+    fps = record_fingerprints(files, observe_files)
     keep = [r for r in doc["parked"] if fps.get((r["kind"], r["section"], r["name"])) == r.get("record_fp")]
     if len(keep) == len(doc["parked"]):
         return False
@@ -362,14 +388,14 @@ def main() -> int:
         print("infer: the inferred layer breaks the override schema:", *errs[:20], sep="\n  ", file=sys.stderr)
         return 1
     want = {**files, **evid, "_review.json": json.dumps(summary, indent=1, sort_keys=True) + "\n"}
-    parked_stale = prune_parked(files, a.check)
-    have = {p.name for p in OUT.glob("*") if p.is_file() and p.name != "_parked.json"} if OUT.exists() else set()
-    stale = sorted([n for n, t in want.items() if not (OUT / n).exists() or (OUT / n).read_text() != t] + sorted(have - set(want)))
     # The observe layer (rules O5, O6, O8: tools/metadata/winui/observe_rules.py), milestone R0.
     import observe as obs
     import observe_rules
     orecs, oev, orev, oskip = observe_rules.infer(svmeta.load_yaml(RULES))
     ofiles = obs.inferred_files("winui", orecs, oev, orev, oskip, {k: v["confidence"] for k, v in oev.items()})
+    parked_stale = prune_parked(files, a.check, ofiles)
+    have = {p.name for p in OUT.glob("*") if p.is_file() and p.name != "_parked.json"} if OUT.exists() else set()
+    stale = sorted([n for n, t in want.items() if not (OUT / n).exists() or (OUT / n).read_text() != t] + sorted(have - set(want)))
     if a.check:
         for n in stale:
             print(f"infer: metadata/inferred/winui/{n} is stale (run tools/metadata/winui/infer.py)", file=sys.stderr)

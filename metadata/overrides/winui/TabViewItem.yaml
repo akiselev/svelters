@@ -1,0 +1,6 @@
+# WP-W: a tab: Header is the tab label (text children), the content slot is ContentControl's
+class: Microsoft.UI.Xaml.Controls.TabViewItem
+element:
+  text_prop: Header
+props:
+  - { name: Header, as: string, test: "Tab", provenance: "TabViewItem.Header: object (winmd); the tab label as boxed HSTRING" }

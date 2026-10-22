@@ -123,6 +123,169 @@ pub fn thickness_text(t: [f64; 4]) -> String {
     t.iter().map(|x| num(*x)).collect::<Vec<_>>().join(",")
 }
 
+/// `CornerRadius` as `[top_left, top_right, bottom_right, bottom_left]`: a number, `"u"`, `"tl,tr,br,bl"` (the XAML
+/// forms; `"a,b"` is not one of them) or a record/list of four in that order.
+pub fn corner_radius(v: &Value) -> R<[f64; 4]> {
+    let nums: Vec<f64> = match v {
+        Value::F64(_) | Value::I64(_) | Value::U64(_) => vec![to_f64(v)?],
+        Value::Str(s) => s
+            .split(|c: char| c == ',' || c.is_whitespace())
+            .filter(|p| !p.is_empty())
+            .map(|p| p.parse::<f64>().map_err(|_| format!("bad CornerRadius {s:?}: expected 1 or 4 numbers")))
+            .collect::<R<_>>()?,
+        Value::Record { fields, .. } | Value::List(fields) if fields.len() == 4 => fields.iter().map(to_f64).collect::<R<_>>()?,
+        Value::Map(kv) => {
+            let get = |k: &str| kv.iter().find(|(n, _)| n == k).map(|(_, v)| to_f64(v)).transpose().map(|o| o.unwrap_or(0.0));
+            return Ok([get("topLeft")?, get("topRight")?, get("bottomRight")?, get("bottomLeft")?]);
+        }
+        other => return Err(format!("expected a CornerRadius, got {}", shown(other))),
+    };
+    match nums[..] {
+        [u] => Ok([u; 4]),
+        [a, b, c, d] => Ok([a, b, c, d]),
+        _ => Err(format!("bad CornerRadius {}: expected 1 or 4 numbers", shown(v))),
+    }
+}
+
+/// A color as `[a, r, g, b]`: `#rgb`, `#rgba`, `#rrggbb`, `#rrggbbaa` (CSS order, alpha last), `transparent`, or a
+/// `{a, r, g, b}` record (the N4 `Windows.UI.Color` record) / map.
+pub fn color(v: &Value) -> R<[u8; 4]> {
+    let byte = |v: &Value| -> R<u8> {
+        let f = to_f64(v)?;
+        if (0.0..=255.0).contains(&f) && f.fract() == 0.0 { Ok(f as u8) } else { Err(format!("color channel {f} is not 0..255")) }
+    };
+    match v {
+        Value::Str(s) => {
+            let t = s.trim();
+            if t.eq_ignore_ascii_case("transparent") {
+                return Ok([0, 0, 0, 0]);
+            }
+            let hex = t.strip_prefix('#').ok_or_else(|| format!("bad color {s:?}: expected #rrggbb, #rrggbbaa, #rgb or transparent"))?;
+            let digits: Vec<u8> = hex
+                .chars()
+                .map(|c| c.to_digit(16).map(|d| d as u8))
+                .collect::<Option<_>>()
+                .ok_or_else(|| format!("bad color {s:?}: not hexadecimal"))?;
+            let pair = |i: usize| digits[i] * 16 + digits[i + 1];
+            match digits.len() {
+                3 => Ok([255, digits[0] * 17, digits[1] * 17, digits[2] * 17]),
+                4 => Ok([digits[3] * 17, digits[0] * 17, digits[1] * 17, digits[2] * 17]),
+                6 => Ok([255, pair(0), pair(2), pair(4)]),
+                8 => Ok([pair(6), pair(0), pair(2), pair(4)]),
+                _ => Err(format!("bad color {s:?}: expected 3, 4, 6 or 8 hex digits")),
+            }
+        }
+        Value::Record { fields, .. } if fields.len() == 4 => Ok([byte(&fields[0])?, byte(&fields[1])?, byte(&fields[2])?, byte(&fields[3])?]),
+        Value::Map(kv) => {
+            let get = |k: &str, d: u8| kv.iter().find(|(n, _)| n == k).map(|(_, v)| byte(v)).unwrap_or(Ok(d));
+            Ok([get("a", 255)?, get("r", 0)?, get("g", 0)?, get("b", 0)?])
+        }
+        other => Err(format!("expected a color (#rrggbb), got {}", shown(other))),
+    }
+}
+
+/// `#rrggbb` when opaque, else `#rrggbbaa` (lower case): the form the getters return.
+pub fn color_text([a, r, g, b]: [u8; 4]) -> String {
+    if a == 255 { format!("#{r:02x}{g:02x}{b:02x}") } else { format!("#{r:02x}{g:02x}{b:02x}{a:02x}") }
+}
+
+/// `FontWeight.Weight`: a number 1..999 or a CSS / XAML name (`bold`, `semi-bold`, `normal`, ...).
+pub fn font_weight(v: &Value) -> R<u16> {
+    const NAMES: &[(&str, u16)] = &[
+        ("thin", 100),
+        ("extralight", 200),
+        ("ultralight", 200),
+        ("light", 300),
+        ("semilight", 350),
+        ("normal", 400),
+        ("regular", 400),
+        ("medium", 500),
+        ("semibold", 600),
+        ("demibold", 600),
+        ("bold", 700),
+        ("extrabold", 800),
+        ("ultrabold", 800),
+        ("black", 900),
+        ("heavy", 900),
+        ("extrablack", 950),
+        ("ultrablack", 950),
+    ];
+    if let Value::Str(s) = v {
+        let n = s.trim().replace('-', "").to_ascii_lowercase();
+        if let Some((_, w)) = NAMES.iter().find(|(k, _)| *k == n) {
+            return Ok(*w);
+        }
+    }
+    let f = to_f64(v)?;
+    if (1.0..=999.0).contains(&f) && f.fract() == 0.0 { Ok(f as u16) } else { Err(format!("bad font weight {}: 1..999 or a name like bold", shown(v))) }
+}
+
+/// Days since 1970-01-01 of a proleptic Gregorian date (H. Hinnant's `days_from_civil`).
+fn days_from_civil(y: i64, m: i64, d: i64) -> i64 {
+    let y = if m <= 2 { y - 1 } else { y };
+    let era = (if y >= 0 { y } else { y - 399 }) / 400;
+    let yoe = y - era * 400;
+    let mp = (m + 9) % 12;
+    let doy = (153 * mp + 2) / 5 + d - 1;
+    let doe = yoe * 365 + yoe / 4 - yoe / 100 + doy;
+    era * 146097 + doe - 719468
+}
+
+/// A date-time as epoch milliseconds: a `Date` (`Value::DateTime`), a number of milliseconds, or an ISO 8601 string
+/// `YYYY-MM-DD[THH:MM[:SS[.mmm]]][Z|±HH:MM]` (no zone = UTC).
+pub fn datetime_ms(v: &Value) -> R<f64> {
+    match v {
+        Value::DateTime(ms) => Ok(*ms),
+        Value::Str(s) => iso_ms(s.trim()).ok_or_else(|| format!("bad date {s:?}: expected YYYY-MM-DD[THH:MM[:SS]][Z]")),
+        other => to_f64(other),
+    }
+}
+
+fn iso_ms(s: &str) -> Option<f64> {
+    let (date, rest) = s.split_at(s.find(['T', ' ']).unwrap_or(s.len()));
+    let mut dp = date.splitn(3, '-');
+    let y: i64 = dp.next()?.parse().ok()?;
+    let m: i64 = dp.next()?.parse().ok()?;
+    let d: i64 = dp.next()?.parse().ok()?;
+    if !(1..=12).contains(&m) || !(1..=31).contains(&d) {
+        return None;
+    }
+    let mut ms = days_from_civil(y, m, d) * 86_400_000;
+    let rest = rest.get(1..).unwrap_or("");
+    if !rest.is_empty() {
+        let zpos = rest.find(['Z', 'z', '+', '-']).unwrap_or(rest.len());
+        let (time, zone) = rest.split_at(zpos);
+        let mut tp = time.split(':');
+        let h: i64 = tp.next()?.parse().ok()?;
+        let mi: i64 = tp.next()?.parse().ok()?;
+        let sec: f64 = tp.next().map(|x| x.parse().ok()).unwrap_or(Some(0.0))?;
+        ms += h * 3_600_000 + mi * 60_000 + (sec * 1000.0).round() as i64;
+        if let Some(sign) = zone.chars().next().filter(|c| *c == '+' || *c == '-') {
+            let mut zp = zone[1..].split(':');
+            let zh: i64 = zp.next()?.parse().ok()?;
+            let zm: i64 = zp.next().map(|x| x.parse().ok()).unwrap_or(Some(0))?;
+            let off = zh * 3_600_000 + zm * 60_000;
+            ms -= if sign == '+' { off } else { -off };
+        }
+    }
+    Some(ms as f64)
+}
+
+/// A duration in milliseconds: a number, or `HH:MM[:SS]` text.
+pub fn timespan_ms(v: &Value) -> R<f64> {
+    if let Value::Str(s) = v
+        && s.contains(':')
+    {
+        let parts: Vec<f64> = s.trim().split(':').map(|p| p.parse::<f64>()).collect::<Result<_, _>>().map_err(|_| format!("bad duration {s:?}"))?;
+        return match parts[..] {
+            [h, m] => Ok((h * 3600.0 + m * 60.0) * 1000.0),
+            [h, m, sec] => Ok((h * 3600.0 + m * 60.0 + sec) * 1000.0),
+            _ => Err(format!("bad duration {s:?}: expected HH:MM or HH:MM:SS")),
+        };
+    }
+    to_f64(v)
+}
+
 /// `GridUnitType`: 0 Auto, 1 Pixel, 2 Star (winmd values).
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct GridLen {
@@ -226,6 +389,46 @@ mod tests {
         assert_eq!(thickness(&rec).unwrap(), [4.0, 1.0, 2.0, 3.0]);
         assert!(thickness(&s("1,2,3")).is_err());
         assert_eq!(thickness_text([1.0, 2.0, 3.5, 4.0]), "1,2,3.5,4");
+    }
+
+    #[test]
+    fn corner_radius_forms() {
+        assert_eq!(corner_radius(&s("4")).unwrap(), [4.0; 4]);
+        assert_eq!(corner_radius(&s("1,2,3,4")).unwrap(), [1.0, 2.0, 3.0, 4.0]);
+        assert!(corner_radius(&s("1,2")).is_err());
+    }
+
+    #[test]
+    fn colors() {
+        assert_eq!(color(&s("#ff0000")).unwrap(), [255, 255, 0, 0]);
+        assert_eq!(color(&s("#00ff0080")).unwrap(), [0x80, 0, 255, 0]);
+        assert_eq!(color(&s("#fff")).unwrap(), [255, 255, 255, 255]);
+        assert_eq!(color(&s("transparent")).unwrap(), [0, 0, 0, 0]);
+        assert!(color(&s("red")).is_err());
+        assert_eq!(color_text([255, 255, 0, 0]), "#ff0000");
+        assert_eq!(color_text([0x80, 0, 255, 0]), "#00ff0080");
+        let rec = Value::Record { ty: 1, fields: vec![Value::I64(255), Value::I64(1), Value::I64(2), Value::I64(3)] };
+        assert_eq!(color(&rec).unwrap(), [255, 1, 2, 3]);
+    }
+
+    #[test]
+    fn font_weights() {
+        assert_eq!(font_weight(&s("bold")).unwrap(), 700);
+        assert_eq!(font_weight(&s("semi-bold")).unwrap(), 600);
+        assert_eq!(font_weight(&Value::I64(300)).unwrap(), 300);
+        assert!(font_weight(&Value::I64(0)).is_err());
+    }
+
+    #[test]
+    fn dates_and_durations() {
+        assert_eq!(datetime_ms(&s("1970-01-02")).unwrap(), 86_400_000.0);
+        assert_eq!(datetime_ms(&s("2024-05-17T00:00:00Z")).unwrap(), 1_715_904_000_000.0);
+        assert_eq!(datetime_ms(&s("2024-05-17T02:00:00+02:00")).unwrap(), 1_715_904_000_000.0);
+        assert_eq!(datetime_ms(&s("2000-03-01T12:30")).unwrap(), 951_913_800_000.0);
+        assert_eq!(datetime_ms(&Value::DateTime(5.0)).unwrap(), 5.0);
+        assert!(datetime_ms(&s("tomorrow")).is_err());
+        assert_eq!(timespan_ms(&s("01:30")).unwrap(), 5_400_000.0);
+        assert_eq!(timespan_ms(&Value::F64(1000.0)).unwrap(), 1000.0);
     }
 
     #[test]

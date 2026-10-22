@@ -1,0 +1,24 @@
+{
+ "notify:NavigateUri": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "NavigateUriProperty",
+   "type": "object<Windows.Foundation.Uri>"
+  },
+  "rule": "O6"
+ },
+ "props:NavigateUri": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IHyperlinkButton",
+   "samples": [
+    "https://example.com/a",
+    "https://example.org/b"
+   ],
+   "type": "object<Windows.Foundation.Uri>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

@@ -1,0 +1,3 @@
+# WP-W: GTK Spinner / an indeterminate Qt QProgressBar
+class: Microsoft.UI.Xaml.Controls.ProgressRing
+element: {}

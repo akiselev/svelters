@@ -1,0 +1,5 @@
+class: Microsoft.UI.Xaml.Controls.SelectorBarItem
+element:
+  text_prop: Text
+props:
+  - { name: Text, test: "svelters", provenance: "SelectorBarItem.Text DP: string (winmd)" }

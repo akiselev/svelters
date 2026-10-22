@@ -1,0 +1,3 @@
+class: Microsoft.UI.Xaml.Controls.ListViewItem
+element:
+  text_prop: Content

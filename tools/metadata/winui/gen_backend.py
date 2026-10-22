@@ -86,6 +86,22 @@ Microsoft.UI.Dispatching.DispatcherQueueTimer::{Start, Stop, put_Interval, put_I
 Windows.Foundation.PropertyValue::{CreateString, CreateBoolean, CreateDouble, CreateInt32}
 Windows.Foundation.IPropertyValue::{get_Type, GetString, GetBoolean, GetDouble, GetInt32}
 Windows.Foundation.PropertyType
+Microsoft.UI.Xaml.CornerRadius
+Windows.UI.Color
+Windows.UI.Text.FontWeight
+Microsoft.UI.Xaml.Media.Brush::{}
+Microsoft.UI.Xaml.Media.SolidColorBrush::{CreateInstanceWithColor, get_Color}
+Microsoft.UI.Xaml.Media.FontFamily::{CreateInstanceWithName, get_Source}
+Windows.Foundation.Uri::{CreateUri, get_AbsoluteUri}
+Microsoft.UI.Xaml.Media.ImageSource::{}
+Microsoft.UI.Xaml.Media.Imaging.BitmapSource::{}
+Microsoft.UI.Xaml.Media.Imaging.BitmapImage::{CreateInstanceWithUriSource, get_UriSource}
+Microsoft.UI.Xaml.Controls.IconElement::{}
+Microsoft.UI.Xaml.Controls.SymbolIcon::{CreateInstanceWithSymbol, get_Symbol}
+Microsoft.UI.Xaml.Controls.FontIcon::{CreateInstance, get_Glyph, put_Glyph}
+Microsoft.UI.Xaml.Controls.Symbol
+Microsoft.UI.Xaml.UIElement::{get_XamlRoot, put_XamlRoot}
+Microsoft.UI.Xaml.XamlRoot::{}
 GetMessageW
 PeekMessageW
 TranslateMessage
@@ -99,7 +115,30 @@ RoInitialize
 RO_INIT_SINGLETHREADED
 """
 
-PRIM = {"bool": "Bool", "i32": "I32", "f64": "F64", "string": "Str"}
+PRIM = {"bool": "Bool", "i32": "I32", "f64": "F64", "string": "Str", "f32": "F32"}
+# Value and object types with a wire conversion in conv.rs (parse.rs for the text forms): native type ref -> wire type.
+# infer.py (`wire`) and gen_semantics.py (`wtype`) read this table too.
+VALUE_TYPES = {
+    "value<Microsoft.UI.Xaml.Thickness>": "Thickness",
+    "value<Microsoft.UI.Xaml.CornerRadius>": "CornerRadius",
+    "value<Windows.UI.Color>": "Color",
+    "value<Windows.UI.Text.FontWeight>": "FontWeight",
+    "value<Windows.Foundation.DateTime>": "DateTime",
+    "value<Windows.Foundation.TimeSpan>": "TimeSpan",
+    "object<Microsoft.UI.Xaml.Media.Brush>": "Brush",
+    "object<Microsoft.UI.Xaml.Media.SolidColorBrush>": "SolidBrush",
+    "object<Microsoft.UI.Xaml.Media.FontFamily>": "FontFamily",
+    "object<Windows.Foundation.Uri>": "Uri",
+    "object<Microsoft.UI.Xaml.Media.ImageSource>": "ImageSource",
+    "object<Microsoft.UI.Xaml.Controls.IconElement>": "Icon",
+    "nullable<bool>": "NullableBool",
+    "nullable<f64>": "NullableF64",
+    "nullable<value<Windows.Foundation.DateTime>>": "NullableDateTime",
+    "nullable<value<Windows.Foundation.TimeSpan>>": "NullableTimeSpan",
+    "nullable<value<Windows.UI.Color>>": "NullableColor",
+}
+# The Symbol enum an Icon value names (SymbolIcon).
+SYMBOL_ENUM = "Microsoft.UI.Xaml.Controls.Symbol"
 # Section of an override -> the fact id's member word.
 SINGULAR = {"props": "prop", "events": "event", "notify": "notify", "slots": "slot", "attached": "attr", "methods": "method",
             "bindings": "binding"}
@@ -273,10 +312,10 @@ class Model:
         m = re.fullmatch(r"enum<(.+)>", ref)
         if m:
             return {"t": "Enum", "enum": m.group(1)}
-        if ref == "value<Microsoft.UI.Xaml.Thickness>":
-            return {"t": "Thickness"}
-        if ref == "nullable<bool>":
-            return {"t": "NullableBool"}
+        if ref in VALUE_TYPES:
+            if VALUE_TYPES[ref] == "Icon":
+                return {"t": "Icon", "enum": SYMBOL_ENUM}
+            return {"t": VALUE_TYPES[ref]}
         raise GenError(f"{where}: native type {ref} has no conversion (add one to conv.rs and gen_backend.py, or use `custom`)")
 
     def _class(self, cls: str) -> None:
@@ -298,7 +337,7 @@ class Model:
             except GenError as ex:
                 self.unusable(cls, "props", p["name"], str(ex))
                 continue
-            if ty["t"] == "Enum":
+            if ty.get("enum"):
                 ty["index"] = self.enum_index(ty["enum"])
             self.props.append({"name": kebab(p["name"]), "native": p["name"], "class": cls, "ci": ci, "ty": ty,
                                "read": read, "write": write, "dp": bool(np.get("dependency_property")), "o": p, "file": f,
@@ -356,16 +395,11 @@ class Model:
             np = nprops.get(s["prop"])
             if np is None:
                 raise GenError(f"{where}: no property {s['prop']} on {cls}")
-            ref = np["type"]["ref"]
-            many = ref.endswith("Collection>") or ref.startswith("list<")
-            if many and ref != "object<Microsoft.UI.Xaml.Controls.UIElementCollection>":
-                raise GenError(f"{where}: only UIElementCollection is supported for collection slots, not {ref}")
-            if not many and ref not in ("variant", "object<Microsoft.UI.Xaml.UIElement>"):
-                raise GenError(f"{where}: single slots take object or UIElement, not {ref}")
+            elem, many = self.slot_elem(where, np["type"])
             if not many and not np["access"]["write"]:
                 raise GenError(f"{where}: {s['prop']} is read-only")
             self.slots.append({"name": s["name"], "native": s["prop"], "class": cls, "ci": ci, "many": many,
-                               "element_param": ref == "object<Microsoft.UI.Xaml.UIElement>", "default": bool(s.get("default")),
+                               "elem": elem, "default": bool(s.get("default")), "child": s.get("child", "text-block"),
                                "o": s, "file": f})
         nattached = {a["name"]: a for a in k["attached"]}
         for a in o.get("attached", []):
@@ -374,10 +408,10 @@ class Model:
             if na is None:
                 raise GenError(f"{where}: {cls} has no static Get{a['name']}/Set{a['name']} (winmd)")
             ty = self.ty_of(where, na["type"]["ref"], {})
-            if ty["t"] != "I32":
-                raise GenError(f"{where}: only i32 attached properties are supported so far")
+            if ty["t"] not in ("I32", "F64"):
+                raise GenError(f"{where}: only i32 and f64 attached properties are supported so far")
             self.attrs.append({"name": kebab(a["name"]), "native": a["name"], "class": cls, "ci": ci, "slot_name": a["slot"],
-                               "target": na["target"]["ref"], "default": a["default"], "o": a, "file": f})
+                               "target": na["target"]["ref"], "default": a["default"], "ty": ty, "o": a, "file": f})
         nmeth = {}
         for m in k["methods"]:
             nmeth.setdefault(m["name"], m)
@@ -387,16 +421,42 @@ class Model:
                 nm = nmeth.get(m["name"])
                 if nm is None:
                     raise GenError(f"{where}: no such method on {cls} (winmd)")
-                params = [{"name": p["name"], "ty": self.ty_of(where, p["type"]["ref"], {})} for p in nm["params"]]
-                ret = None if nm["returns"]["native"] == "void" else self.ty_of(where, nm["returns"]["ref"], {})
+                if m.get("custom"):
+                    # A hand-written call (custom.rs `<custom>(&Class, args) -> R<Value>`): async natives and the like.
+                    params, ret = [], None
+                else:
+                    params = [{"name": p["name"], "ty": self.ty_of(where, p["type"]["ref"], {})} for p in nm["params"]]
+                    ret = None if nm["returns"]["native"] == "void" else self.ty_of(where, nm["returns"]["ref"], {})
             except GenError as ex:
                 self.unusable(cls, "methods", m["name"], str(ex))
                 continue
             for ty in [p["ty"] for p in params] + ([ret] if ret else []):
-                if ty["t"] == "Enum":
+                if ty.get("enum"):
                     ty["index"] = self.enum_index(ty["enum"])
             self.methods.append({"name": kebab(m["name"]), "native": m["name"], "class": cls, "ci": ci, "params": params,
                                  "ret": ret, "o": m, "file": f, "origin": self.origin(cls, "methods", m["name"])})
+
+    # Collection classes a many-slot can hold, with their element type (the class implements IVector<T>).
+    COLLECTIONS = {"Microsoft.UI.Xaml.Controls.UIElementCollection": "Microsoft.UI.Xaml.UIElement",
+                   "Microsoft.UI.Xaml.Controls.ItemCollection": "object"}
+
+    def slot_elem(self, where: str, t: dict) -> tuple[str, bool]:
+        """(element type, many) of a slot property: a single child (`object`, UIElement or another class: the child is
+        cast to it), or a collection (`UIElementCollection`, `ItemCollection`, `IVector<T>`, `IObservableVector<T>`) of
+        elements of type T. The element type is a native class name or `object` (IInspectable)."""
+        ref, native = t["ref"], t["native"]
+        if ref == "variant":
+            return "object", False
+        m = re.fullmatch(r"object<([A-Za-z0-9_.]+)>", ref)
+        if m and m.group(1) in self.COLLECTIONS:
+            return self.COLLECTIONS[m.group(1)], True
+        m = re.fullmatch(r"Windows\.Foundation\.Collections\.I(?:Observable)?Vector<(.+)>", native)
+        if m:
+            return ("object" if m.group(1) == "object" else m.group(1)), True
+        m = re.fullmatch(r"object<([A-Za-z0-9_.]+)>", ref)
+        if m and m.group(1).startswith(("Microsoft.UI.Xaml.", "Windows.")) and "<" not in native:
+            return m.group(1), False
+        raise GenError(f"{where}: a slot is an object, a class or a collection of elements, not {native}")
 
     def prop_type_in_chain(self, cls: str, prop: str, where: str) -> str:
         for c in [cls] + self.classes[cls]["bases"]:
@@ -426,10 +486,8 @@ class Model:
 
 def ty_rs(ty: dict) -> str:
     t = ty["t"]
-    if t == "Enum":
-        return f"Ty::Enum({ty['index']})"
-    if t == "Custom":
-        return "Ty::Custom"
+    if t in ("Enum", "Icon"):
+        return f"Ty::{t}({ty['index']})"
     return f"Ty::{t}"
 
 
@@ -473,7 +531,7 @@ def gen_names(m: Model) -> str:
     o.append("pub static ATTRS: &[Attr] = &[\n")
     for a in m.attrs:
         o.append(f"    Attr {{ name: {rs_str(a['name'])}, native: {rs_str(a['native'])}, owner: {a['ci']}, slot: {a['slot'] + 1}, "
-                 f"default: {a['default']} }},\n")
+                 f"ty: {ty_rs(a['ty'])}, default: {float(a['default'])!r} }},\n")
     o.append("];\n\n")
     o.append("pub static METHODS: &[Method] = &[\n")
     for mt in m.methods:
@@ -494,9 +552,26 @@ def gen_names(m: Model) -> str:
 
 # ---- dispatch.rs ----------------------------------------------------------------------------------
 
+# Wire types converted by one conv.rs function pair `<fn>(v) -> R<T>` / `<fn>_value(T) -> Value` (value types) or
+# `<fn>(v) -> R<Option<T>>` / `<fn>_value(Option<IInspectable>) -> Value` (object types, null clears).
+VALUE_CONV = {"F32": "f32_", "CornerRadius": "corner_radius", "Color": "color", "FontWeight": "font_weight",
+              "DateTime": "datetime", "TimeSpan": "timespan"}
+OBJECT_CONV = {"Brush": "brush", "SolidBrush": "solid_brush", "FontFamily": "font_family", "Uri": "uri",
+               "ImageSource": "image_source"}
+NULLABLE_OF = {"NullableF64": "f64_", "NullableDateTime": "datetime", "NullableTimeSpan": "timespan", "NullableColor": "color"}
+
+
 def setter_expr(ty: dict, var: str = "v") -> str:
     """Rust expression converting the svl Value `v` into the native setter argument (or `?`-able result)."""
     t = ty["t"]
+    if t in VALUE_CONV:
+        return f"conv::{VALUE_CONV[t]}({var})?"
+    if t in OBJECT_CONV:
+        return f"conv::{OBJECT_CONV[t]}({var})?.as_ref()"
+    if t == "Icon":
+        return f"conv::icon({var}, &ENUMS[{ty['index']}])?.as_ref()"
+    if t in NULLABLE_OF:
+        return f"conv::nullable({var}, conv::{NULLABLE_OF[t]})?"
     if t == "Str":
         return f"&conv::hstring({var})?"
     if t == "Bool":
@@ -518,6 +593,17 @@ def setter_expr(ty: dict, var: str = "v") -> str:
 
 def getter_expr(ty: dict, call: str) -> str:
     t = ty["t"]
+    if t == "F32":
+        return f"Value::F64({call}.map_err(conv::err)? as f64)"
+    if t in VALUE_CONV:
+        return f"conv::{VALUE_CONV[t]}_value({call}.map_err(conv::err)?)"
+    if t in OBJECT_CONV:
+        return f"conv::{OBJECT_CONV[t]}_value({call}.ok().map(Into::into))"
+    if t == "Icon":
+        return f"conv::icon_value({call}.ok().map(Into::into), &ENUMS[{ty['index']}])"
+    if t in NULLABLE_OF:
+        val = "Value::F64" if t == "NullableF64" else f"conv::{NULLABLE_OF[t]}_value"
+        return f"{call}.ok().map_or(Value::Null, {val})"
     if t == "Str":
         return f"Value::Str({call}.map_err(conv::err)?.to_string_lossy())"
     if t == "Bool":
@@ -551,6 +637,12 @@ def payload_expr(item: dict, m: Model) -> str:
         return f"{call}.map(|x| Value::I64(x as i64)).unwrap_or(Value::Null)"
     if ref.startswith("enum<"):
         return f"{call}.map(|x| Value::I64(x.0 as i64)).unwrap_or(Value::Null)"
+    if ref in VALUE_TYPES and VALUE_TYPES[ref] in VALUE_CONV:
+        return f"{call}.map(conv::{VALUE_CONV[VALUE_TYPES[ref]]}_value).unwrap_or(Value::Null)"
+    if ref in VALUE_TYPES and VALUE_TYPES[ref] in NULLABLE_OF:
+        t = VALUE_TYPES[ref]
+        val = "Value::F64" if t == "NullableF64" else f"conv::{NULLABLE_OF[t]}_value"
+        return f"{call}.ok().map_or(Value::Null, {val})"
     raise GenError(f"payload {item['prop']}: type {ref} not supported")
 
 
@@ -644,41 +736,50 @@ def gen_dispatch(m: Model) -> str:
         o.append(f"    {e['fn']},\n")
     o.append("];\n\n")
     # slots
-    o.append("pub enum SlotOps {\n"
-             "    /// A single-child property (`Content`): set, read back.\n"
-             "    Single { set: fn(&IInspectable, Option<&IInspectable>) -> WinResult<()>, get: fn(&IInspectable) -> Option<IInspectable> },\n"
-             "    /// A `UIElementCollection` property (`Children`).\n"
-             "    Many { items: fn(&IInspectable) -> WinResult<crate::bindings::Microsoft::UI::Xaml::Controls::UIElementCollection> },\n"
-             "}\n\n")
-    o.append("pub static SLOT_OPS: &[SlotOps] = &[\n")
-    for s in m.slots:
+    o.append("pub use crate::slots::{ManyOps, SlotOps};\n\n")
+    for i, s in enumerate(m.slots):
+        if not s["many"]:
+            continue
+        cls = rs_path(s["class"])
+        elem = "IInspectable" if s["elem"] == "object" else rs_path(s["elem"])
+        o.append(f"fn slot{i}_items(p: &IInspectable) -> WinResult<windows_collections::IVector<{elem}>> {{\n"
+                 f"    p.cast::<{cls}>()?.{s['native']}()?.cast()\n}}\n")
+    o.append("\npub static SLOT_OPS: &[SlotOps] = &[\n")
+    for i, s in enumerate(m.slots):
         cls = rs_path(s["class"])
         if s["many"]:
-            o.append(f"    SlotOps::Many {{ items: |p| p.cast::<{cls}>()?.{s['native']}() }},\n")
-        elif s["element_param"]:
-            o.append(f"    SlotOps::Single {{\n        set: |p, c| {{\n"
-                     f"            let c = c.map(|c| c.cast::<crate::bindings::Microsoft::UI::Xaml::UIElement>()).transpose()?;\n"
-                     f"            p.cast::<{cls}>()?.Set{s['native']}(c.as_ref())\n        }},\n"
-                     f"        get: |p| p.cast::<{cls}>().ok()?.{s['native']}().ok().map(|c| c.into()),\n    }},\n")
-        else:
+            elem = "IInspectable" if s["elem"] == "object" else rs_path(s["elem"])
+            o.append(f"    crate::slots::many_ops!(slot{i}_items, {elem}),\n")
+        elif s["elem"] == "object":
             o.append(f"    SlotOps::Single {{\n        set: |p, c| p.cast::<{cls}>()?.Set{s['native']}(c),\n"
                      f"        get: |p| p.cast::<{cls}>().ok()?.{s['native']}().ok(),\n    }},\n")
+        else:
+            o.append(f"    SlotOps::Single {{\n        set: |p, c| {{\n"
+                     f"            let c = c.map(|c| c.cast::<{rs_path(s['elem'])}>()).transpose()?;\n"
+                     f"            p.cast::<{cls}>()?.Set{s['native']}(c.as_ref())\n        }},\n"
+                     f"        get: |p| p.cast::<{cls}>().ok()?.{s['native']}().ok().and_then(|c| c.cast::<IInspectable>().ok()),\n    }},\n")
     o.append("];\n\n")
-    # attrs
+    # attrs (Grid.Row: i32, Canvas.Left: f64)
     o.append("pub static ATTR_SET: &[fn(&IInspectable, &Value) -> R<()>] = &[\n")
     for a in m.attrs:
         target = a["target"][len("object<"):-1]
-        o.append(f"    |c, v| {rs_path(a['class'])}::Set{a['native']}(&c.cast::<{rs_path(target)}>().map_err(conv::err)?, conv::i32_(v)?).map_err(conv::err),\n")
+        conv_fn = "i32_" if a["ty"]["t"] == "I32" else "f64_"
+        o.append(f"    |c, v| {rs_path(a['class'])}::Set{a['native']}(&c.cast::<{rs_path(target)}>().map_err(conv::err)?, conv::{conv_fn}(v)?).map_err(conv::err),\n")
     o.append("];\n\npub static ATTR_GET: &[fn(&IInspectable) -> R<Value>] = &[\n")
     for a in m.attrs:
         target = a["target"][len("object<"):-1]
-        o.append(f"    |c| Ok(Value::I64({rs_path(a['class'])}::Get{a['native']}(&c.cast::<{rs_path(target)}>().map_err(conv::err)?).map_err(conv::err)? as i64)),\n")
+        wrap = ("Value::I64(", " as i64)") if a["ty"]["t"] == "I32" else ("Value::F64(", ")")
+        o.append(f"    |c| Ok({wrap[0]}{rs_path(a['class'])}::Get{a['native']}(&c.cast::<{rs_path(target)}>().map_err(conv::err)?).map_err(conv::err)?{wrap[1]}),\n")
     o.append("];\n\n")
     # methods
     for i, mt in enumerate(m.methods):
         cls = rs_path(mt["class"])
         fn = f"method{i}_{snake(short(mt['class']))}_{snake(mt['native'])}"
         mt["fn"] = fn
+        if mt["o"].get("custom"):
+            o.append(f"fn {fn}(o: &IInspectable, args: &[Value]) -> R<Value> {{\n"
+                     f"    custom::{mt['o']['custom']}(&o.cast::<{cls}>().map_err(conv::err)?, args)\n}}\n")
+            continue
         argv = []
         for j, p in enumerate(mt["params"]):
             argv.append(setter_expr(p["ty"], f"conv::arg(args, {j})?"))
@@ -755,10 +856,16 @@ def gen_filter(m: Model) -> str:
                     add(mech["args"])
     for s in m.slots:
         add(s["class"], f"get_{s['native']}") if s["many"] else add(s["class"], f"get_{s['native']}", f"put_{s['native']}")
+        if s["elem"] != "object":
+            add(s["elem"])
+        native = next(p["type"]["native"] for p in m.classes[s["class"]]["properties"] if p["name"] == s["native"])
+        if s["many"] and "<" not in native:
+            add(native)          # ItemCollection, UIElementCollection: the collection class itself
     for a in m.attrs:
         add(a["class"], f"Get{a['native']}", f"Set{a['native']}")
     for mt in m.methods:
-        add(mt["class"], mt["native"])
+        if not mt["o"].get("custom"):     # custom.rs calls it through the vtable (async natives need windows-future)
+            add(mt["class"], mt["native"])
     lines = []
     for cls in sorted(members):
         names = sorted(members[cls])
@@ -772,10 +879,57 @@ def gen_filter(m: Model) -> str:
 
 # ---- tests ----------------------------------------------------------------------------------------
 
+def color_text(v: str) -> str:
+    """parse.rs `color` then `color_text`: the read-back form of a color sample."""
+    h = str(v).strip().lower()
+    if h == "transparent":
+        return "#00000000"
+    h = h.lstrip("#")
+    if len(h) in (3, 4):
+        h = "".join(c * 2 for c in h)
+    return "#" + (h[:6] if len(h) == 8 and h[6:] == "ff" else h)
+
+
+def iso_ms(v) -> float:
+    """parse.rs `datetime_ms` of a sample: epoch milliseconds."""
+    import datetime as dt
+    if isinstance(v, (int, float)):
+        return float(v)
+    s = str(v).replace("Z", "+00:00")
+    d = dt.datetime.fromisoformat(s)
+    if d.tzinfo is None:
+        d = d.replace(tzinfo=dt.timezone.utc)
+    return float(round(d.timestamp() * 1000))
+
+
+def nums_text(v, n4: bool) -> str:
+    """Thickness / CornerRadius read-back text of a sample."""
+    parts = [x.strip() for x in str(v).split(",")]
+    if len(parts) == 1:
+        parts *= 4
+    elif len(parts) == 2 and not n4:
+        parts = [parts[0], parts[1], parts[0], parts[1]]
+    return ",".join(str(float(x)).removesuffix(".0") for x in parts)
+
+
 def expected_value(p: dict, v) -> str:
     """Rust `Value` the getter returns after setting test value v."""
     t = p["ty"]["t"]
-    if t in ("Str", "ObjectString"):
+    if v is None:
+        return "Value::Null"
+    if t in ("Color", "Brush", "SolidBrush", "NullableColor"):
+        return f"Value::Str({rs_str(color_text(v))}.into())"
+    if t in ("DateTime", "NullableDateTime"):
+        return f"Value::DateTime({iso_ms(v)!r})"
+    if t in ("TimeSpan", "NullableTimeSpan", "F32", "NullableF64"):
+        return f"Value::F64({float(v)!r})"
+    if t == "FontWeight":
+        return f"Value::I64({int(v)})"
+    if t == "CornerRadius":
+        return f"Value::Str({rs_str(nums_text(v, True))}.into())"
+    if t == "Icon":
+        return f"Value::Str({rs_str(kebab(str(v)))}.into())"
+    if t in ("Str", "ObjectString", "FontFamily", "Uri", "ImageSource"):
         return f"Value::Str({rs_str(str(v))}.into())"
     if t in ("Bool", "NullableBool"):
         return f"Value::Bool({str(bool(v)).lower()})"
@@ -786,12 +940,7 @@ def expected_value(p: dict, v) -> str:
     if t == "Enum":
         return f"Value::Str({rs_str(kebab(str(v)))}.into())"
     if t == "Thickness":
-        parts = [x.strip() for x in str(v).split(",")]
-        if len(parts) == 1:
-            parts *= 4
-        elif len(parts) == 2:
-            parts = [parts[0], parts[1], parts[0], parts[1]]
-        return f"Value::Str({rs_str(','.join(str(float(x)).removesuffix('.0') for x in parts))}.into())"
+        return f"Value::Str({rs_str(nums_text(v, False))}.into())"
     if t == "Custom":
         return f"Value::Str({rs_str(','.join(x.strip() for x in str(v).split(',')))}.into())"
     raise GenError(t)
@@ -799,9 +948,11 @@ def expected_value(p: dict, v) -> str:
 
 def test_value(p: dict, v) -> str:
     t = p["ty"]["t"]
+    if v is None:
+        return "Value::Null"
     if isinstance(v, bool):
         return f"Value::Bool({str(v).lower()})"
-    if isinstance(v, int) and t != "F64":
+    if isinstance(v, int) and t not in ("F64", "F32", "NullableF64", "TimeSpan", "NullableTimeSpan"):
         return f"Value::I64({v})"
     if isinstance(v, (int, float)):
         return f"Value::F64({float(v)!r})"
@@ -885,7 +1036,7 @@ def gen_tests(m: Model) -> str:
     for s in m.slots:
         k = first_kind(m, s["class"])
         name = f"slot_{snake(k['tag'])}_{snake(s['name'])}"
-        child = "text-block"
+        child = s["child"]
         if s["many"]:
             body = (f"    let mut h = Harness::new();\n    let p = h.create({rs_str(k['tag'])});\n"
                     f"    let a = h.create({rs_str(child)});\n    let b = h.create({rs_str(child)});\n"
@@ -904,20 +1055,23 @@ def gen_tests(m: Model) -> str:
                     f"    h.remove(p, a).unwrap();\n    assert!(h.slot_items(p, {rs_str(s['name'])}).is_empty());\n"
                     f"    h.insert(p, b, None, Some({rs_str(s['name'])})).unwrap();\n"
                     f"    assert_eq!(h.slot_items(p, {rs_str(s['name'])}), vec![b]);\n")
-        fact(s["class"], "slots", s["name"], name, {"o": s["o"], "many": s["many"]}, body)
+        fact(s["class"], "slots", s["name"], name, {"o": s["o"], "many": s["many"], "elem": s["elem"]}, body)
         add_test(name, body)
     for a in m.attrs:
         k = first_kind(m, a["class"])
         name = f"attr_{snake(k['tag'])}_{snake(a['native'])}"
+        val = (lambda x: f"Value::I64({int(x)})") if a["ty"]["t"] == "I32" else (lambda x: f"Value::F64({float(x)!r})")
         body = (f"    let mut h = Harness::new();\n    let p = h.create({rs_str(k['tag'])});\n"
                 f"    let c = h.create(\"text-block\");\n    h.insert(p, c, None, None).unwrap();\n"
-                f"    h.set_attr(p, c, {rs_str(a['name'])}, Value::I64({a['o']['test']})).unwrap();\n"
-                f"    assert_eq!(h.get_attr(p, c, {rs_str(a['name'])}).unwrap(), Value::I64({a['o']['test']}));\n"
+                f"    h.set_attr(p, c, {rs_str(a['name'])}, {val(a['o']['test'])}).unwrap();\n"
+                f"    assert_eq!(h.get_attr(p, c, {rs_str(a['name'])}).unwrap(), {val(a['o']['test'])});\n"
                 f"    h.set_attr(p, c, {rs_str(a['name'])}, Value::Null).unwrap();\n"
-                f"    assert_eq!(h.get_attr(p, c, {rs_str(a['name'])}).unwrap(), Value::I64({a['default']}));\n"
+                f"    assert_eq!(h.get_attr(p, c, {rs_str(a['name'])}).unwrap(), {val(a['default'])});\n"
                 f"    h.remove(p, c).unwrap();\n"
                 f"    h.set_attr(p, c, {rs_str(a['name'])}, Value::I64(1)).unwrap_err();\n")
-        fact(a["class"], "attached", a["native"], name, {"o": a["o"]}, body)
+        # The record without the wire type for i32 attrs keeps the pre-WP-W fingerprints of Grid.Row & co.
+        rec = {"o": a["o"]} if a["ty"]["t"] == "I32" else {"o": a["o"], "ty": a["ty"]["t"]}
+        fact(a["class"], "attached", a["native"], name, rec, body)
         add_test(name, body)
     for e in m.events:
         k = first_kind(m, e["class"])
@@ -938,6 +1092,12 @@ def gen_tests(m: Model) -> str:
         trig = e["o"].get("trigger")
         name = f"event_{snake(k['tag'])}_{snake(e['native'])}"
         inferred = e["origin"] == "inferred"
+        if e["o"].get("check"):
+            # A hand-written check in crates/svelters-winui/src/testing.rs (events a prop write cannot raise).
+            call = f"t::{e['o']['check']}()"
+            fact(e["class"], "events", e["native"], name, {"o": e["o"]}, [call, OBSERVE_FN_VERSION])
+            add_row(name, call)
+            continue
         if e["o"].get("close"):
             body = (f"    let mut h = Harness::new();\n    let w = h.create({tag});\n"
                     f"    h.call(w, \"activate\", &[]).unwrap();\n    h.listen(w, {rs_str(e['name'])}, true).unwrap();\n"
@@ -1005,14 +1165,28 @@ def gen_tests(m: Model) -> str:
         fact(e["class"], "events", e["native"], name, {"o": e["o"]}, body)
         add_test(name, body)
     for mt in m.methods:
-        if mt["origin"] != "inferred":
-            continue
         k = first_kind(m, mt["class"])
         name = f"method_{snake(k['tag'])}_{snake(mt['native'])}"
-        if mt["params"]:
+        if mt["o"].get("check"):
+            # A hand-written check in crates/svelters-winui/src/testing.rs (async natives, dialogs).
+            call = f"t::{mt['o']['check']}()"
+            fact(mt["class"], "methods", mt["native"], name, {"o": mt["o"]}, [call, OBSERVE_FN_VERSION])
+            add_row(name, call)
+            continue
+        args = mt["o"].get("args")
+        if mt["origin"] != "inferred" and args is None:
+            continue
+        if mt["params"] and args is None:
             m.unusable(mt["class"], "methods", mt["native"], f"{mt['file']}: method {mt['native']}: no generated test for arguments")
             continue
-        call = f"t::call0({rs_str(k['tag'])}, {rs_str(mt['name'])})"
+        if args is not None:
+            if len(args) != len(mt["params"]):
+                m.unusable(mt["class"], "methods", mt["native"], f"{mt['file']}: method {mt['native']}: {len(args)} test arguments for {len(mt['params'])} parameters")
+                continue
+            argv = ", ".join(test_value(p, v) for p, v in zip(mt["params"], args))
+            call = f"t::call_args({rs_str(k['tag'])}, {rs_str(mt['name'])}, &[{argv}])"
+        else:
+            call = f"t::call0({rs_str(k['tag'])}, {rs_str(mt['name'])})"
         fact(mt["class"], "methods", mt["native"], name, {"o": mt["o"], "ret": stable(mt["ret"])}, call)
         add_row(name, call)
     # A generic binding is verified by its change event's test (the notify test writes the prop and sees the callback).

@@ -1,0 +1,5 @@
+# WP-W: GTK DropDown / Qt QComboBox; items are combo-box-item elements (or strings) in ItemsControl's items slot
+class: Microsoft.UI.Xaml.Controls.ComboBox
+element: {}
+props:
+  - { name: Header, as: string, test: "Fruit", provenance: "ComboBox.Header: object (winmd); text header as boxed HSTRING" }

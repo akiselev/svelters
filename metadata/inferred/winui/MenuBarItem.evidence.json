@@ -1,0 +1,32 @@
+{
+ "bindings:title": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::title",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "notify:Title": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TitleProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "props:Title": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IMenuBarItem",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

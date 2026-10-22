@@ -66,6 +66,7 @@
           },
           "trigger": { "type": "string", "pattern": "^(invoke|mount|set:[A-Za-z]+=.*)$", "description": "How the generated test raises the event: automation-peer invoke, setting a prop, or `mount` (insert the element into an activated window). An inferred event without one gets a connect test (listen on and off: `verified: connect`)" },
           "asynchronous": { "type": "boolean", "description": "The toolkit raises the event later, not inside the triggering call" },
+          "check": { "type": "string", "pattern": "^[a-z_]+$", "description": "The generated test calls this hand-written check in crates/svelters-winui/src/testing.rs (events no prop write raises: dialogs, flyouts)" },
           "provenance": { "type": "string" }
         }
       }
@@ -78,8 +79,9 @@
         "required": ["name", "prop", "provenance"],
         "properties": {
           "name": { "type": "string", "pattern": "^[a-z][a-z-]*$" },
-          "prop": { "type": "string", "description": "Native property: a single child (object/UIElement) or a UIElementCollection" },
+          "prop": { "type": "string", "description": "Native property: a single child (object, UIElement or another class such as FlyoutBase: the child is cast to it) or a collection of elements (UIElementCollection, ItemCollection, IVector<T>, IObservableVector<T>)" },
           "default": { "type": "boolean" },
+          "child": { "type": "string", "description": "Tag of the element the generated slot test inserts (default text-block); a typed slot needs a child of its element type (menu-bar: menu-bar-item)" },
           "provenance": { "type": "string" }
         }
       }
@@ -92,10 +94,10 @@
         "additionalProperties": false,
         "required": ["name", "slot", "default", "provenance"],
         "properties": {
-          "name": { "type": "string", "description": "Attached property name (static Get<Name>/Set<Name> in winmd)" },
+          "name": { "type": "string", "description": "Attached property name (static Get<Name>/Set<Name> in winmd): i32 (Grid.Row) or f64 (Canvas.Left)" },
           "slot": { "type": "string" },
-          "default": { "type": "integer" },
-          "test": { "type": "integer" },
+          "default": { "type": "number" },
+          "test": { "type": "number" },
           "provenance": { "type": "string" }
         }
       }
@@ -108,6 +110,9 @@
         "required": ["name", "provenance"],
         "properties": {
           "name": { "type": "string" },
+          "custom": { "type": "string", "pattern": "^[a-z_]+$", "description": "Hand-written call custom::<custom>(&Class, args) -> R<Value> in crates/svelters-winui/src/custom.rs (async natives such as ContentDialog.ShowAsync)" },
+          "check": { "type": "string", "pattern": "^[a-z_]+$", "description": "The generated test calls this hand-written check in crates/svelters-winui/src/testing.rs instead of a generic one" },
+          "args": { "type": "array", "description": "Arguments the generated test passes, one per native parameter; the call must return without an error" },
           "provenance": { "type": "string" }
         }
       }

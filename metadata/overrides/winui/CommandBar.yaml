@@ -1,0 +1,13 @@
+# WP-W: GTK HeaderBar/ActionBar / Qt QToolBar
+class: Microsoft.UI.Xaml.Controls.CommandBar
+element: {}
+slots:
+  - name: primary-commands
+    prop: PrimaryCommands
+    default: true
+    child: app-bar-button
+    provenance: "[ContentProperty(Name=\"PrimaryCommands\")] on CommandBar (winmd); IObservableVector<ICommandBarElement> (app-bar-button, app-bar-toggle-button, app-bar-separator)"
+  - name: secondary-commands
+    prop: SecondaryCommands
+    child: app-bar-button
+    provenance: "CommandBar.SecondaryCommands: IObservableVector<ICommandBarElement> (winmd); the overflow menu"

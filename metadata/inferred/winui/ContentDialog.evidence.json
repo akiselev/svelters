@@ -1,0 +1,286 @@
+{
+ "bindings:close-button-text": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::close-button-text",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:default-button": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::default-button",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ContentDialogButton>"
+  },
+  "rule": "B1"
+ },
+ "bindings:full-size-desired": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::full-size-desired",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-primary-button-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-primary-button-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-secondary-button-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-secondary-button-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:primary-button-text": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::primary-button-text",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:secondary-button-text": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::secondary-button-text",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "events:CloseButtonClick": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.ContentDialogButtonClickEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ContentDialog, Microsoft.UI.Xaml.Controls.ContentDialogButtonClickEventArgs>",
+   "result": "Cancel",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Closed": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.ContentDialogClosedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ContentDialog, Microsoft.UI.Xaml.Controls.ContentDialogClosedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Closing": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.ContentDialogClosingEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ContentDialog, Microsoft.UI.Xaml.Controls.ContentDialogClosingEventArgs>",
+   "result": "Cancel",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Opened": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.ContentDialogOpenedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ContentDialog, Microsoft.UI.Xaml.Controls.ContentDialogOpenedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:PrimaryButtonClick": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.ContentDialogButtonClickEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ContentDialog, Microsoft.UI.Xaml.Controls.ContentDialogButtonClickEventArgs>",
+   "result": "Cancel",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:SecondaryButtonClick": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.ContentDialogButtonClickEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ContentDialog, Microsoft.UI.Xaml.Controls.ContentDialogButtonClickEventArgs>",
+   "result": "Cancel",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "methods:Hide": {
+  "confidence": 0.9,
+  "evidence": {
+   "returns": null
+  },
+  "rule": "M1"
+ },
+ "notify:CloseButtonText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CloseButtonTextProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:DefaultButton": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DefaultButtonProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ContentDialogButton>"
+  },
+  "rule": "O6"
+ },
+ "notify:FullSizeDesired": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FullSizeDesiredProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsPrimaryButtonEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsPrimaryButtonEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsSecondaryButtonEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsSecondaryButtonEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:PrimaryButtonText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PrimaryButtonTextProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:SecondaryButtonText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SecondaryButtonTextProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "props:CloseButtonText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IContentDialog",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:DefaultButton": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IContentDialog",
+   "samples": [
+    "Primary",
+    "None"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.ContentDialogButton>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FullSizeDesired": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IContentDialog",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsPrimaryButtonEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IContentDialog",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsSecondaryButtonEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IContentDialog",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:PrimaryButtonText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IContentDialog",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SecondaryButtonText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IContentDialog",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Title": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ }
+}

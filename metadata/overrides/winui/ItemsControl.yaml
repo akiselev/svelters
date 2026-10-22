@@ -1,0 +1,8 @@
+# WP-W: the items of every ItemsControl (combo-box, list-view, grid-view, ...): elements (combo-box-item, list-view-item,
+# any UIElement) or text. Not an element kind itself.
+class: Microsoft.UI.Xaml.Controls.ItemsControl
+slots:
+  - name: items
+    prop: Items
+    default: true
+    provenance: "[ContentProperty(Name=\"Items\")] on ItemsControl (winmd); Items: ItemCollection (IObservableVector<object>); InsertAt/RemoveAt/IndexOf"

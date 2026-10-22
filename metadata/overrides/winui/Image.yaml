@@ -1,0 +1,3 @@
+# WP-W: GTK Picture / Qt QLabel pixmap; Source is a URI string (a BitmapImage)
+class: Microsoft.UI.Xaml.Controls.Image
+element: {}

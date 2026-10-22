@@ -1,0 +1,32 @@
+{
+ "bindings:is-checked": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-checked",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "notify:IsChecked": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsCheckedProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "props:IsChecked": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IToggleMenuFlyoutItem",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

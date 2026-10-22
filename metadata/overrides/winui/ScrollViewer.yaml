@@ -1,0 +1,3 @@
+# WP-W: GTK ScrolledWindow / Qt QScrollArea; the content slot is ContentControl's
+class: Microsoft.UI.Xaml.Controls.ScrollViewer
+element: {}

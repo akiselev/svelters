@@ -1,0 +1,94 @@
+{
+ "bindings:keyboard-accelerator-text-override": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::keyboard-accelerator-text-override",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:text": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::text",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "events:Click": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:Icon": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IconProperty",
+   "type": "object<Microsoft.UI.Xaml.Controls.IconElement>"
+  },
+  "rule": "O6"
+ },
+ "notify:KeyboardAcceleratorTextOverride": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "KeyboardAcceleratorTextOverrideProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:Text": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TextProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "props:Icon": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IMenuFlyoutItem",
+   "samples": [
+    "Accept",
+    "Cancel"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Controls.IconElement>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:KeyboardAcceleratorTextOverride": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IMenuFlyoutItem",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Text": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IMenuFlyoutItem",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

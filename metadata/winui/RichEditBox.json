@@ -1,0 +1,756 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.IRichEditBoxFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": null,
+  "content_property_declared": null,
+  "dependency_properties": [
+    "AcceptsReturnProperty",
+    "CharacterCasingProperty",
+    "ClipboardCopyFormatProperty",
+    "DescriptionProperty",
+    "DesiredCandidateWindowAlignmentProperty",
+    "DisabledFormattingAcceleratorsProperty",
+    "HeaderProperty",
+    "HeaderTemplateProperty",
+    "HorizontalTextAlignmentProperty",
+    "InputScopeProperty",
+    "IsColorFontEnabledProperty",
+    "IsReadOnlyProperty",
+    "IsSpellCheckEnabledProperty",
+    "IsTextPredictionEnabledProperty",
+    "MaxLengthProperty",
+    "PlaceholderTextProperty",
+    "PreventKeyboardDisplayOnProgrammaticFocusProperty",
+    "ProofingMenuFlyoutProperty",
+    "SelectionFlyoutProperty",
+    "SelectionHighlightColorProperty",
+    "SelectionHighlightColorWhenNotFocusedProperty",
+    "TextAlignmentProperty",
+    "TextReadingOrderProperty",
+    "TextWrappingProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "GetLinguisticAlternativesAsync",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "Windows.Foundation.IAsyncOperation<Windows.Foundation.Collections.IVectorView<string>>",
+        "ref": "object<Windows.Foundation.IAsyncOperation>"
+      }
+    }
+  ],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.RichEditBox",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "RichEditBox"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "AcceptsReturn",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "CharacterCasing",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.CharacterCasing",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.CharacterCasing>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "ClipboardCopyFormat",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.RichEditClipboardFormat",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.RichEditClipboardFormat>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "Description",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "DesiredCandidateWindowAlignment",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.CandidateWindowAlignment",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.CandidateWindowAlignment>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "DisabledFormattingAccelerators",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.DisabledFormattingAccelerators",
+        "ref": "flags<Microsoft.UI.Xaml.Controls.DisabledFormattingAccelerators>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "Document",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Text.RichEditTextDocument",
+        "ref": "object<Microsoft.UI.Text.RichEditTextDocument>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "Header",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "HeaderTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DataTemplate",
+        "ref": "object<Microsoft.UI.Xaml.DataTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "HorizontalTextAlignment",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.TextAlignment",
+        "ref": "enum<Microsoft.UI.Xaml.TextAlignment>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "InputScope",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Input.InputScope",
+        "ref": "object<Microsoft.UI.Xaml.Input.InputScope>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "IsColorFontEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "IsReadOnly",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "IsSpellCheckEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "IsTextPredictionEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "MaxLength",
+      "origin": "winmd",
+      "type": {
+        "native": "i32",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "PlaceholderText",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "PreventKeyboardDisplayOnProgrammaticFocus",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "ProofingMenuFlyout",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase",
+        "ref": "object<Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "SelectionFlyout",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase",
+        "ref": "object<Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "SelectionHighlightColor",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.SolidColorBrush",
+        "ref": "object<Microsoft.UI.Xaml.Media.SolidColorBrush>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "SelectionHighlightColorWhenNotFocused",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.SolidColorBrush",
+        "ref": "object<Microsoft.UI.Xaml.Media.SolidColorBrush>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "TextAlignment",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.TextAlignment",
+        "ref": "enum<Microsoft.UI.Xaml.TextAlignment>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "TextDocument",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Text.RichEditTextDocument",
+        "ref": "object<Microsoft.UI.Text.RichEditTextDocument>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "TextReadingOrder",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.TextReadingOrder",
+        "ref": "enum<Microsoft.UI.Xaml.TextReadingOrder>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "TextWrapping",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.TextWrapping",
+        "ref": "enum<Microsoft.UI.Xaml.TextWrapping>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.Controls.CandidateWindowBoundsChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.CandidateWindowBoundsChangedEventArgs",
+          "name": "Bounds",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.Rect",
+            "ref": "value<Windows.Foundation.Rect>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.RichEditBox, Microsoft.UI.Xaml.Controls.CandidateWindowBoundsChangedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "CandidateWindowBoundsChanged",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.RichEditBox"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.ContextMenuEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ContextMenuEventArgs",
+          "name": "CursorLeft",
+          "settable": false,
+          "type": {
+            "native": "f64",
+            "ref": "f64"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ContextMenuEventArgs",
+          "name": "CursorTop",
+          "settable": false,
+          "type": {
+            "native": "f64",
+            "ref": "f64"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ContextMenuEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Controls.ContextMenuOpeningEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "ContextMenuOpening",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TextControlCopyingToClipboardEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextControlCopyingToClipboardEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.RichEditBox, Microsoft.UI.Xaml.Controls.TextControlCopyingToClipboardEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "CopyingToClipboard",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.RichEditBox"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TextControlCuttingToClipboardEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextControlCuttingToClipboardEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.RichEditBox, Microsoft.UI.Xaml.Controls.TextControlCuttingToClipboardEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "CuttingToClipboard",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.RichEditBox"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TextControlPasteEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextControlPasteEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Controls.TextControlPasteEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "Paste",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "SelectionChanged",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.RichEditBoxSelectionChangingEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.RichEditBoxSelectionChangingEventArgs",
+          "name": "Cancel",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.RichEditBoxSelectionChangingEventArgs",
+          "name": "SelectionLength",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.RichEditBoxSelectionChangingEventArgs",
+          "name": "SelectionStart",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.RichEditBox, Microsoft.UI.Xaml.Controls.RichEditBoxSelectionChangingEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "SelectionChanging",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.RichEditBox"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "TextChanged",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.RichEditBoxTextChangingEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.RichEditBoxTextChangingEventArgs",
+          "name": "IsContentChanging",
+          "settable": false,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.RichEditBox, Microsoft.UI.Xaml.Controls.RichEditBoxTextChangingEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "TextChanging",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.RichEditBox"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TextCompositionChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextCompositionChangedEventArgs",
+          "name": "Length",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextCompositionChangedEventArgs",
+          "name": "StartIndex",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.RichEditBox, Microsoft.UI.Xaml.Controls.TextCompositionChangedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "TextCompositionChanged",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.RichEditBox"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TextCompositionEndedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextCompositionEndedEventArgs",
+          "name": "Length",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextCompositionEndedEventArgs",
+          "name": "StartIndex",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.RichEditBox, Microsoft.UI.Xaml.Controls.TextCompositionEndedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "TextCompositionEnded",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.RichEditBox"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TextCompositionStartedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextCompositionStartedEventArgs",
+          "name": "Length",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TextCompositionStartedEventArgs",
+          "name": "StartIndex",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.RichEditBox, Microsoft.UI.Xaml.Controls.TextCompositionStartedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IRichEditBox",
+      "name": "TextCompositionStarted",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.RichEditBox"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

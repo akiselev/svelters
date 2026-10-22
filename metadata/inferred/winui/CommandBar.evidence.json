@@ -1,0 +1,102 @@
+{
+ "bindings:default-label-position": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::default-label-position",
+   "type": "enum<Microsoft.UI.Xaml.Controls.CommandBarDefaultLabelPosition>"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-dynamic-overflow-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-dynamic-overflow-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:overflow-button-visibility": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::overflow-button-visibility",
+   "type": "enum<Microsoft.UI.Xaml.Controls.CommandBarOverflowButtonVisibility>"
+  },
+  "rule": "B1"
+ },
+ "events:DynamicOverflowItemsChanging": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.DynamicOverflowItemsChangingEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.CommandBar, Microsoft.UI.Xaml.Controls.DynamicOverflowItemsChangingEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:DefaultLabelPosition": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DefaultLabelPositionProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.CommandBarDefaultLabelPosition>"
+  },
+  "rule": "O6"
+ },
+ "notify:IsDynamicOverflowEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsDynamicOverflowEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:OverflowButtonVisibility": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "OverflowButtonVisibilityProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.CommandBarOverflowButtonVisibility>"
+  },
+  "rule": "O6"
+ },
+ "props:DefaultLabelPosition": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICommandBar",
+   "samples": [
+    "Right",
+    "Bottom"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.CommandBarDefaultLabelPosition>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsDynamicOverflowEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICommandBar",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:OverflowButtonVisibility": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICommandBar",
+   "samples": [
+    "Visible",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.CommandBarOverflowButtonVisibility>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

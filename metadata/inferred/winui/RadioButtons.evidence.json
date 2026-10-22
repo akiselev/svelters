@@ -1,0 +1,79 @@
+{
+ "bindings:max-columns": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::max-columns",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "bindings:selected-index": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::selected-index",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "events:SelectionChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Controls.SelectionChangedEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:MaxColumns": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MaxColumnsProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectedIndex": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectedIndexProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "props:Header": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ },
+ "props:MaxColumns": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IRadioButtons",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectedIndex": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IRadioButtons",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

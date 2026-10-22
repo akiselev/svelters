@@ -1,0 +1,314 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.XamlContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.IInfoBarFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": "Content",
+  "content_property_declared": "Content",
+  "dependency_properties": [
+    "ActionButtonProperty",
+    "CloseButtonCommandParameterProperty",
+    "CloseButtonCommandProperty",
+    "CloseButtonStyleProperty",
+    "ContentProperty",
+    "ContentTemplateProperty",
+    "IconSourceProperty",
+    "IsClosableProperty",
+    "IsIconVisibleProperty",
+    "IsOpenProperty",
+    "MessageProperty",
+    "SeverityProperty",
+    "TemplateSettingsProperty",
+    "TitleProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:InfoBar",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.InfoBar",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "InfoBar"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+      "name": "ActionButton",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Primitives.ButtonBase",
+        "ref": "object<Microsoft.UI.Xaml.Controls.Primitives.ButtonBase>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+      "name": "CloseButtonCommand",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Input.ICommand",
+        "ref": "object<Microsoft.UI.Xaml.Input.ICommand>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+      "name": "CloseButtonCommandParameter",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+      "name": "CloseButtonStyle",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Style",
+        "ref": "object<Microsoft.UI.Xaml.Style>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+      "name": "Content",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+      "name": "ContentTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DataTemplate",
+        "ref": "object<Microsoft.UI.Xaml.DataTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+      "name": "IconSource",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.IconSource",
+        "ref": "object<Microsoft.UI.Xaml.Controls.IconSource>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+      "name": "IsClosable",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+      "name": "IsIconVisible",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+      "name": "IsOpen",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+      "name": "Message",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+      "name": "Severity",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.InfoBarSeverity",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.InfoBarSeverity>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+      "name": "TemplateSettings",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.InfoBarTemplateSettings",
+        "ref": "object<Microsoft.UI.Xaml.Controls.InfoBarTemplateSettings>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+      "name": "Title",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.InfoBar, object>",
+      "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+      "name": "CloseButtonClick",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.InfoBar"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.InfoBarClosedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.InfoBarClosedEventArgs",
+          "name": "Reason",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.InfoBarCloseReason",
+            "ref": "enum<Microsoft.UI.Xaml.Controls.InfoBarCloseReason>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.InfoBar, Microsoft.UI.Xaml.Controls.InfoBarClosedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+      "name": "Closed",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.InfoBar"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.InfoBarClosingEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.InfoBarClosingEventArgs",
+          "name": "Cancel",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.InfoBarClosingEventArgs",
+          "name": "Reason",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.InfoBarCloseReason",
+            "ref": "enum<Microsoft.UI.Xaml.Controls.InfoBarCloseReason>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.InfoBar, Microsoft.UI.Xaml.Controls.InfoBarClosingEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+      "name": "Closing",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.InfoBar"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

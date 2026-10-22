@@ -1,0 +1,318 @@
+{
+ "bindings:is-drop-down-open": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-drop-down-open",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-editable": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-editable",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-text-search-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-text-search-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:light-dismiss-overlay-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::light-dismiss-overlay-mode",
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>"
+  },
+  "rule": "B1"
+ },
+ "bindings:max-drop-down-height": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::max-drop-down-height",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:placeholder-text": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::placeholder-text",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:selection-changed-trigger": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::selection-changed-trigger",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ComboBoxSelectionChangedTrigger>"
+  },
+  "rule": "B1"
+ },
+ "bindings:text": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::text",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "events:DropDownClosed": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.EventHandler<object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:DropDownOpened": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.EventHandler<object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:TextSubmitted": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.ComboBoxTextSubmittedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ComboBox, Microsoft.UI.Xaml.Controls.ComboBoxTextSubmittedEventArgs>",
+   "result": "Handled",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:IsDropDownOpen": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsDropDownOpenProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsEditable": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsEditableProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsTextSearchEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsTextSearchEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:LightDismissOverlayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "LightDismissOverlayModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:MaxDropDownHeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MaxDropDownHeightProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:PlaceholderForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PlaceholderForegroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:PlaceholderText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PlaceholderTextProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectionChangedTrigger": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectionChangedTriggerProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ComboBoxSelectionChangedTrigger>"
+  },
+  "rule": "O6"
+ },
+ "notify:Text": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TextProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "props:Description": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ },
+ "props:Header": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ },
+ "props:IsDropDownOpen": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsEditable": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsSelectionBoxHighlighted": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false,
+   "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+   "type": "bool",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:IsTextSearchEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:LightDismissOverlayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+   "samples": [
+    "On",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MaxDropDownHeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+   "samples": [
+    48.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:PlaceholderForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:PlaceholderText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectionChangedTrigger": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+   "samples": [
+    "Always",
+    "Committed"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.ComboBoxSelectionChangedTrigger>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Text": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

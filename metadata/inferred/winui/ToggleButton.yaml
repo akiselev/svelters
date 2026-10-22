@@ -23,3 +23,48 @@ events:
   provenance: 'rule R1/R2: ToggleButton.Indeterminate: Microsoft.UI.Xaml.RoutedEventHandler (winmd); connect test'
 - name: Unchecked
   provenance: 'rule R1/R2: ToggleButton.Unchecked: Microsoft.UI.Xaml.RoutedEventHandler (winmd); connect test'
+bindings:
+- name: is-checked
+  direction: two_way
+  property: is-checked
+  type:
+    ref: bool
+    nullable: true
+  change:
+    signal: notify::is-checked
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance: 'rule B1: ToggleButton.IsChecked is read-write, scalar and a notifying DependencyProperty: notify::is-checked carries no value,
+    the renderer reads the prop and compares before set'
+- name: is-three-state
+  direction: two_way
+  property: is-three-state
+  type:
+    ref: bool
+    nullable: false
+  change:
+    signal: notify::is-three-state
+    role: any_change
+    value: prop
+  write:
+    natively_normalizes: false
+  echo:
+    strategy: none
+    compare_before_set: true
+    read_back: false
+  lifetime:
+    on_native_death: end_binding
+    on_stale_update: warn_noop
+    on_destroy: idempotent_disconnect
+  provenance: 'rule B1: ToggleButton.IsThreeState is read-write, scalar and a notifying DependencyProperty: notify::is-three-state carries no
+    value, the renderer reads the prop and compares before set'

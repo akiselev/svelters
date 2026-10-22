@@ -6,8 +6,9 @@
 #   3. ingest.py       winmd -> metadata/winui/*.json
 #   4. gen_backend.py  metadata + overrides -> crates/svelters-winui/src/generated/*, tests, bindings.filter
 #   5. bindgen         bindings.filter -> crates/svelters-winui/src/bindings.rs
+#   6. strip_inherited.py  drop the base-class members windows-bindgen repeats on every derived class (WP-W)
 #
-# Steps 3-5 are deterministic: rerunning them on the same inputs writes byte-identical files.
+# Steps 3-6 are deterministic: rerunning them on the same inputs writes byte-identical files.
 #   tools/metadata/winui/regen.sh            # all steps
 #   tools/metadata/winui/regen.sh --no-fetch # reuse target/winsdk (offline)
 set -euo pipefail
@@ -31,4 +32,5 @@ python3 "$here/gen_backend.py"
 grep -v '^#' crates/svelters-winui/bindings.filter > "$cache/filter.txt"
 "$tool" bindgen --out crates/svelters-winui/src/bindings.rs --filter-file "$cache/filter.txt" \
   --implement Microsoft.UI.Xaml.Markup.IXamlMetadataProvider -- "@$cache/winmds.txt"
+python3 "$here/strip_inherited.py" crates/svelters-winui/src/bindings.rs
 echo "regen: crates/svelters-winui/src/bindings.rs: $(wc -l < crates/svelters-winui/src/bindings.rs) lines"

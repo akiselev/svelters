@@ -111,11 +111,27 @@
   },
   "rule": "O6"
  },
+ "notify:FocusVisualPrimaryBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FocusVisualPrimaryBrushProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
  "notify:FocusVisualPrimaryThickness": {
   "confidence": 0.9,
   "evidence": {
    "dp": "FocusVisualPrimaryThicknessProperty",
    "type": "value<Microsoft.UI.Xaml.Thickness>"
+  },
+  "rule": "O6"
+ },
+ "notify:FocusVisualSecondaryBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FocusVisualSecondaryBrushProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
   },
   "rule": "O6"
  },
@@ -281,6 +297,16 @@
   },
   "rule": "P1"
  },
+ "props:BaseUri": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": false,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "type": "object<Windows.Foundation.Uri>",
+   "write": false
+  },
+  "rule": "P1"
+ },
  "props:FlowDirection": {
   "confidence": 0.9,
   "evidence": {
@@ -309,6 +335,20 @@
   },
   "rule": "P1"
  },
+ "props:FocusVisualPrimaryBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
  "props:FocusVisualPrimaryThickness": {
   "confidence": 0.9,
   "evidence": {
@@ -319,6 +359,20 @@
     "5"
    ],
    "type": "value<Microsoft.UI.Xaml.Thickness>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FocusVisualSecondaryBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.IFrameworkElement",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
    "write": true
   },
   "rule": "P1"

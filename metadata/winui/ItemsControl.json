@@ -1,0 +1,341 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.IItemsControlFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": "Items",
+  "content_property_declared": "Items",
+  "dependency_properties": [
+    "DisplayMemberPathProperty",
+    "GroupStyleSelectorProperty",
+    "IsGroupingProperty",
+    "ItemContainerStyleProperty",
+    "ItemContainerStyleSelectorProperty",
+    "ItemContainerTransitionsProperty",
+    "ItemTemplateProperty",
+    "ItemTemplateSelectorProperty",
+    "ItemsPanelProperty",
+    "ItemsSourceProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ItemsControl",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IItemsControl",
+      "name": "GroupHeaderContainerFromItemContainer",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "itemContainer",
+          "type": {
+            "native": "Microsoft.UI.Xaml.DependencyObject",
+            "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IItemContainerMapping",
+      "name": "ItemFromContainer",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "container",
+          "type": {
+            "native": "Microsoft.UI.Xaml.DependencyObject",
+            "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IItemContainerMapping",
+      "name": "ContainerFromItem",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "item",
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "returns": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IItemContainerMapping",
+      "name": "IndexFromContainer",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "container",
+          "type": {
+            "native": "Microsoft.UI.Xaml.DependencyObject",
+            "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "i32",
+        "ref": "i32"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IItemContainerMapping",
+      "name": "ContainerFromIndex",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "index",
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      }
+    }
+  ],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.ItemsControl",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "ItemsControl"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IItemsControl",
+      "name": "DisplayMemberPath",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.IItemsControl",
+      "name": "GroupStyle",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Collections.IObservableVector<Microsoft.UI.Xaml.Controls.GroupStyle>",
+        "ref": "object<Windows.Foundation.Collections.IObservableVector>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IItemsControl",
+      "name": "GroupStyleSelector",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.GroupStyleSelector",
+        "ref": "object<Microsoft.UI.Xaml.Controls.GroupStyleSelector>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IItemsControl",
+      "name": "IsGrouping",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.IItemsControl",
+      "name": "ItemContainerGenerator",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ItemContainerGenerator",
+        "ref": "object<Microsoft.UI.Xaml.Controls.ItemContainerGenerator>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IItemsControl",
+      "name": "ItemContainerStyle",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Style",
+        "ref": "object<Microsoft.UI.Xaml.Style>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IItemsControl",
+      "name": "ItemContainerStyleSelector",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.StyleSelector",
+        "ref": "object<Microsoft.UI.Xaml.Controls.StyleSelector>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IItemsControl",
+      "name": "ItemContainerTransitions",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.Animation.TransitionCollection",
+        "ref": "object<Microsoft.UI.Xaml.Media.Animation.TransitionCollection>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IItemsControl",
+      "name": "ItemTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DataTemplate",
+        "ref": "object<Microsoft.UI.Xaml.DataTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IItemsControl",
+      "name": "ItemTemplateSelector",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.DataTemplateSelector",
+        "ref": "object<Microsoft.UI.Xaml.Controls.DataTemplateSelector>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.IItemsControl",
+      "name": "Items",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ItemCollection",
+        "ref": "object<Microsoft.UI.Xaml.Controls.ItemCollection>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IItemsControl",
+      "name": "ItemsPanel",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ItemsPanelTemplate",
+        "ref": "object<Microsoft.UI.Xaml.Controls.ItemsPanelTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.IItemsControl",
+      "name": "ItemsPanelRoot",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Panel",
+        "ref": "object<Microsoft.UI.Xaml.Controls.Panel>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IItemsControl",
+      "name": "ItemsSource",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

@@ -1,0 +1,448 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.ICalendarDatePickerFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": null,
+  "content_property_declared": null,
+  "dependency_properties": [
+    "CalendarIdentifierProperty",
+    "CalendarViewStyleProperty",
+    "DateFormatProperty",
+    "DateProperty",
+    "DayOfWeekFormatProperty",
+    "DescriptionProperty",
+    "DisplayModeProperty",
+    "FirstDayOfWeekProperty",
+    "HeaderProperty",
+    "HeaderTemplateProperty",
+    "IsCalendarOpenProperty",
+    "IsGroupLabelVisibleProperty",
+    "IsOutOfScopeEnabledProperty",
+    "IsTodayHighlightedProperty",
+    "LightDismissOverlayModeProperty",
+    "MaxDateProperty",
+    "MinDateProperty",
+    "PlaceholderTextProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "SetDisplayDate",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "date",
+          "type": {
+            "native": "Windows.Foundation.DateTime",
+            "ref": "value<Windows.Foundation.DateTime>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "SetYearDecadeDisplayDimensions",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "columns",
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        },
+        {
+          "name": "rows",
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    }
+  ],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.CalendarDatePicker",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "CalendarDatePicker"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "CalendarIdentifier",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "CalendarViewStyle",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Style",
+        "ref": "object<Microsoft.UI.Xaml.Style>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "Date",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.IReference<Windows.Foundation.DateTime>",
+        "ref": "nullable<value<Windows.Foundation.DateTime>>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "DateFormat",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "DayOfWeekFormat",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "Description",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "DisplayMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.CalendarViewDisplayMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.CalendarViewDisplayMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "FirstDayOfWeek",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Globalization.DayOfWeek",
+        "ref": "enum<Windows.Globalization.DayOfWeek>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "Header",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "HeaderTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DataTemplate",
+        "ref": "object<Microsoft.UI.Xaml.DataTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "IsCalendarOpen",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "IsGroupLabelVisible",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "IsOutOfScopeEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "IsTodayHighlighted",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "LightDismissOverlayMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.LightDismissOverlayMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "MaxDate",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.DateTime",
+        "ref": "value<Windows.Foundation.DateTime>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "MinDate",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.DateTime",
+        "ref": "value<Windows.Foundation.DateTime>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "PlaceholderText",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.Controls.CalendarViewDayItemChangingEventArgs",
+      "args_methods": [
+        "RegisterUpdateCallback"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.CalendarViewDayItemChangingEventArgs",
+          "name": "InRecycleQueue",
+          "settable": false,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.CalendarViewDayItemChangingEventArgs",
+          "name": "Item",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.CalendarViewDayItem",
+            "ref": "object<Microsoft.UI.Xaml.Controls.CalendarViewDayItem>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.CalendarViewDayItemChangingEventArgs",
+          "name": "Phase",
+          "settable": false,
+          "type": {
+            "native": "u32",
+            "ref": "u32"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Controls.CalendarViewDayItemChangingEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "CalendarViewDayItemChanging",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.CalendarView"
+    },
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.EventHandler<object>",
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "Closed",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.CalendarDatePickerDateChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.CalendarDatePickerDateChangedEventArgs",
+          "name": "NewDate",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.IReference<Windows.Foundation.DateTime>",
+            "ref": "nullable<value<Windows.Foundation.DateTime>>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.CalendarDatePickerDateChangedEventArgs",
+          "name": "OldDate",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.IReference<Windows.Foundation.DateTime>",
+            "ref": "nullable<value<Windows.Foundation.DateTime>>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.CalendarDatePicker, Microsoft.UI.Xaml.Controls.CalendarDatePickerDateChangedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "DateChanged",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.CalendarDatePicker"
+    },
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.EventHandler<object>",
+      "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+      "name": "Opened",
+      "origin": "winmd",
+      "sender": "object"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

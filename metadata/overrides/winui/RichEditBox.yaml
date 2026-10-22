@@ -1,0 +1,5 @@
+# WP-W: GTK TextView / Qt QTextEdit (the document text is not exposed as a prop yet)
+class: Microsoft.UI.Xaml.Controls.RichEditBox
+element: {}
+props:
+  - { name: Header, as: string, test: "Notes", provenance: "RichEditBox.Header: object (winmd); text header as boxed HSTRING" }

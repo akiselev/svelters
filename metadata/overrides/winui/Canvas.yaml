@@ -1,0 +1,6 @@
+class: Microsoft.UI.Xaml.Controls.Canvas
+element: {}
+attached:
+  - { name: Left, slot: children, default: 0, test: 12, provenance: "Canvas.GetLeft/SetLeft(UIElement, f64) statics + LeftProperty (winmd)" }
+  - { name: Top, slot: children, default: 0, test: 8, provenance: "Canvas.GetTop/SetTop(UIElement, f64) statics + TopProperty (winmd)" }
+  - { name: ZIndex, slot: children, default: 0, test: 2, provenance: "Canvas.GetZIndex/SetZIndex(UIElement, i32) statics + ZIndexProperty (winmd)" }

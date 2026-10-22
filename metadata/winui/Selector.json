@@ -1,0 +1,153 @@
+{
+  "abstract": true,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.ItemsControl",
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [],
+  "content_property": "Items",
+  "content_property_declared": null,
+  "dependency_properties": [
+    "IsSynchronizedWithCurrentItemProperty",
+    "SelectedIndexProperty",
+    "SelectedItemProperty",
+    "SelectedValuePathProperty",
+    "SelectedValueProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:Selector",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.Primitives.Selector",
+    "namespace": "Microsoft.UI.Xaml.Controls.Primitives",
+    "short": "Selector"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.ISelector",
+      "name": "IsSynchronizedWithCurrentItem",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.IReference<bool>",
+        "ref": "nullable<bool>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.ISelector",
+      "name": "SelectedIndex",
+      "origin": "winmd",
+      "type": {
+        "native": "i32",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.ISelector",
+      "name": "SelectedItem",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.ISelector",
+      "name": "SelectedValue",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.ISelector",
+      "name": "SelectedValuePath",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs",
+          "name": "AddedItems",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.Collections.IVector<object>",
+            "ref": "list<variant>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs",
+          "name": "RemovedItems",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.Collections.IVector<object>",
+            "ref": "list<variant>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Controls.SelectionChangedEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.Primitives.ISelector",
+      "name": "SelectionChanged",
+      "origin": "winmd",
+      "sender": "object"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

@@ -1,0 +1,34 @@
+{
+ "notify:DisplayMemberPath": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DisplayMemberPathProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "props:DisplayMemberPath": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IItemsControl",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsGrouping": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IItemsControl",
+   "type": "bool",
+   "write": false
+  },
+  "rule": "P1"
+ }
+}

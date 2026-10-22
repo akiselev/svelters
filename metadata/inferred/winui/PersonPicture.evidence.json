@@ -1,0 +1,256 @@
+{
+ "bindings:badge-glyph": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::badge-glyph",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:badge-number": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::badge-number",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "bindings:badge-text": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::badge-text",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:display-name": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::display-name",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:initials": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::initials",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-group": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-group",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:prefer-small-image": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::prefer-small-image",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "notify:BadgeGlyph": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "BadgeGlyphProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:BadgeImageSource": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "BadgeImageSourceProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.ImageSource>"
+  },
+  "rule": "O6"
+ },
+ "notify:BadgeNumber": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "BadgeNumberProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:BadgeText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "BadgeTextProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:DisplayName": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DisplayNameProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:Initials": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "InitialsProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:IsGroup": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsGroupProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:PreferSmallImage": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PreferSmallImageProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:ProfilePicture": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ProfilePictureProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.ImageSource>"
+  },
+  "rule": "O6"
+ },
+ "props:BadgeGlyph": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IPersonPicture",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:BadgeImageSource": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IPersonPicture",
+   "samples": [
+    "https://example.com/a.png",
+    "https://example.org/b.png"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.ImageSource>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:BadgeNumber": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IPersonPicture",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:BadgeText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IPersonPicture",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:DisplayName": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IPersonPicture",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Initials": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IPersonPicture",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsGroup": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IPersonPicture",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:PreferSmallImage": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IPersonPicture",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ProfilePicture": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IPersonPicture",
+   "samples": [
+    "https://example.com/a.png",
+    "https://example.org/b.png"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.ImageSource>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

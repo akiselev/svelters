@@ -1,0 +1,387 @@
+{
+ "bindings:calendar-identifier": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::calendar-identifier",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:day-format": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::day-format",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:day-visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::day-visible",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:light-dismiss-overlay-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::light-dismiss-overlay-mode",
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>"
+  },
+  "rule": "B1"
+ },
+ "bindings:month-format": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::month-format",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:month-visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::month-visible",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:orientation": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::orientation",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Orientation>"
+  },
+  "rule": "B1"
+ },
+ "bindings:year-format": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::year-format",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:year-visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::year-visible",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "events:DateChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.DatePickerValueChangedEventArgs",
+   "delegate": "Windows.Foundation.EventHandler<Microsoft.UI.Xaml.Controls.DatePickerValueChangedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:SelectedDateChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.DatePickerSelectedValueChangedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.DatePicker, Microsoft.UI.Xaml.Controls.DatePickerSelectedValueChangedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:CalendarIdentifier": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CalendarIdentifierProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:Date": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DateProperty",
+   "type": "value<Windows.Foundation.DateTime>"
+  },
+  "rule": "O6"
+ },
+ "notify:DayFormat": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DayFormatProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:DayVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DayVisibleProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:LightDismissOverlayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "LightDismissOverlayModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:MaxYear": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MaxYearProperty",
+   "type": "value<Windows.Foundation.DateTime>"
+  },
+  "rule": "O6"
+ },
+ "notify:MinYear": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MinYearProperty",
+   "type": "value<Windows.Foundation.DateTime>"
+  },
+  "rule": "O6"
+ },
+ "notify:MonthFormat": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MonthFormatProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:MonthVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MonthVisibleProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:Orientation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "OrientationProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Orientation>"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectedDate": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectedDateProperty",
+   "type": "nullable<value<Windows.Foundation.DateTime>>"
+  },
+  "rule": "O6"
+ },
+ "notify:YearFormat": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "YearFormatProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:YearVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "YearVisibleProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "props:CalendarIdentifier": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Date": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+   "samples": [
+    "2024-05-17T00:00:00Z",
+    "2021-01-02T00:00:00Z"
+   ],
+   "type": "value<Windows.Foundation.DateTime>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:DayFormat": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:DayVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Header": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ },
+ "props:LightDismissOverlayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+   "samples": [
+    "On",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MaxYear": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+   "samples": [
+    "2024-05-17T00:00:00Z",
+    "2021-01-02T00:00:00Z"
+   ],
+   "type": "value<Windows.Foundation.DateTime>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MinYear": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+   "samples": [
+    "2024-05-17T00:00:00Z",
+    "2021-01-02T00:00:00Z"
+   ],
+   "type": "value<Windows.Foundation.DateTime>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MonthFormat": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MonthVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Orientation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+   "samples": [
+    "Horizontal",
+    "Vertical"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.Orientation>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectedDate": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+   "samples": [
+    "2024-05-17T00:00:00Z",
+    null
+   ],
+   "type": "nullable<value<Windows.Foundation.DateTime>>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:YearFormat": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:YearVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

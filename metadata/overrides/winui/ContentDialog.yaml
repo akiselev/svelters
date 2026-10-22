@@ -1,0 +1,19 @@
+# WP-W: GTK AlertDialog/Dialog / Qt QDialog. Put it in the tree (or anywhere: an uninserted dialog shows over the first
+# window), then call show-async(); the buttons raise primary-button-click / secondary-button-click / close-button-click
+# and `closed` carries the result. The content slot is ContentControl's.
+class: Microsoft.UI.Xaml.Controls.ContentDialog
+element: {}
+props:
+  - { name: Title, as: string, test: "Delete?", provenance: "ContentDialog.Title: object (winmd); text title as boxed HSTRING" }
+methods:
+  - name: ShowAsync
+    custom: content_dialog_show
+    check: content_dialog_show
+    provenance: "ContentDialog.ShowAsync() -> IAsyncOperation<ContentDialogResult> (winmd IContentDialog, vtable slot 55); fire and forget through custom.rs, the result comes with Closed"
+  - { name: Hide, provenance: "ContentDialog.Hide() (winmd IContentDialog): closes the dialog with ContentDialogResult.None" }
+events:
+  - { name: Opened, provenance: "ContentDialog.Opened: TypedEventHandler<ContentDialog, ContentDialogOpenedEventArgs> (winmd); raised when ShowAsync has shown it" }
+  - name: Closed
+    payload: [{ from: args, prop: Result, name: result }]
+    check: content_dialog_show
+    provenance: "ContentDialog.Closed: TypedEventHandler<ContentDialog, ContentDialogClosedEventArgs{Result}> (winmd); Result is ContentDialogResult (0 none, 1 primary, 2 secondary)"

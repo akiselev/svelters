@@ -1,0 +1,9 @@
+# WP-W: GTK InfoBar / Adw banner; Content holds extra elements
+class: Microsoft.UI.Xaml.Controls.InfoBar
+element:
+  text_prop: Message
+slots:
+  - name: content
+    prop: Content
+    default: true
+    provenance: "[ContentProperty(Name=\"Content\")] on InfoBar (winmd); Content: object, single child"
