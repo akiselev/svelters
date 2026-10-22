@@ -1,9 +1,11 @@
 //! IC1 (plans/milestones/IC1-icon-toolchain.md): icon SVGs through egui_extras' `SvgLoader` (resvg 0.45),
 //! compared with committed PNGs, so a loader, resvg or usvg-options change shows up here.
 //!
-//! The SVGs in `tests/icons/build/` are `tools/icons/icons.py build` output for a few prototype icons that
-//! cover the tone (`mcad.extrude`), a clip-path hatch (`mcad.section`), the results fringe in a clip-path
-//! (`sim.result.contour`) and composed badges with a mask knockout (`ecad.drc+check`, `sim.solve`).
+//! The SVGs in `tests/icons/build/` are `tools/icons/icons.py build` output for a few of IC0's style samples
+//! (`tools/icons/samples`, plans/research/ICON-STYLE.md). They cover the subject tone and the solid arrowhead
+//! (`mcad.extrude`, also at 12, 14 and 20 with its 1.25px stroke), a clip-path hatch (`mcad.section`), the
+//! results fringe in a clip-path (`sim.result`), a composed badge whose mask clears the corner cell
+//! (`mcad.extrude+remove`), and an `accent` part with a knocked-out mark (`chrome.warning`).
 //! `tools/icons/test_icons.py` checks that they match the tool's current output.
 //!
 //! The PNGs in `tests/icons/png/` are this test's own renders of the white (tint-ready) copies.
@@ -15,19 +17,23 @@ use std::sync::Arc;
 use egui::load::{ImagePoll, SizeHint};
 use egui::{Color32, ColorImage};
 
-/// (id, master, pixels): each icon at 16@1x and 16@2x, and the 24 masters at 24@1x.
+/// (id, master, pixels): the optical sizes at 1x, and 16@2x.
 const CASES: &[(&str, u32, u32)] = &[
+    ("mcad.extrude", 12, 12),
+    ("mcad.extrude", 14, 14),
     ("mcad.extrude", 16, 16),
     ("mcad.extrude", 16, 32),
+    ("mcad.extrude", 20, 20),
     ("mcad.extrude", 24, 24),
     ("mcad.section", 16, 16),
-    ("mcad.section", 16, 32),
-    ("sim.result.contour", 16, 16),
-    ("sim.result.contour", 24, 24),
-    ("ecad.drc+check", 16, 16),
-    ("ecad.drc+check", 16, 32),
-    ("sim.solve", 16, 16),
-    ("sim.solve", 24, 24),
+    ("mcad.section", 24, 24),
+    ("sim.result", 16, 16),
+    ("sim.result", 24, 24),
+    ("mcad.extrude+remove", 16, 16),
+    ("mcad.extrude+remove", 16, 32),
+    ("mcad.extrude+remove", 24, 24),
+    ("chrome.warning", 12, 12),
+    ("chrome.warning", 16, 16),
 ];
 
 /// Per-channel tolerance (premultiplied): rounding through the PNG's unmultiplied RGBA.
@@ -125,16 +131,26 @@ fn the_loader_draws_current_color_black() {
     assert!(inked.iter().all(|c| c.r() == 0 && c.g() == 0 && c.b() == 0), "currentColor is no longer black");
 }
 
-/// The badge knockout is a `<mask>`: in `ecad.drc+check` it clears the right-hand track around the check,
-/// so pixels that the base alone inks are empty in the composed icon.
+/// The badge knockout is a `<mask>` that clears the bottom-right 8x8 cell (ICON-STYLE §7.2): in
+/// `mcad.extrude+remove` the base's slab is inked there alone, and the composed icon keeps only the minus.
 #[test]
-fn the_badge_knockout_mask_clears_the_base() {
+fn the_badge_knockout_mask_clears_the_cell() {
     let ctx = context();
-    let composed = load(&ctx, "bytes://ic1/k/drc+check.svg".into(), read_svg("white", "ecad.drc+check", 16), 16);
-    // The base track: x 12..14 (2px copper centred on 13), full height. Under the check (y >= 9) the
-    // knockout must have cut it somewhere.
-    let at = |x: usize, y: usize| composed.pixels[y * 16 + x];
-    assert_eq!(at(12, 3).a(), 255, "the track above the badge is intact");
-    let cut = (9..16).any(|y| at(12, y).a() == 0 && at(13, y).a() == 0);
-    assert!(cut, "no knockout under the check badge: is <mask> still supported?");
+    let base = load(&ctx, "bytes://ic1/k/extrude.svg".into(), read_svg("white", "mcad.extrude", 16), 16);
+    let composed =
+        load(&ctx, "bytes://ic1/k/extrude+remove.svg".into(), read_svg("white", "mcad.extrude+remove", 16), 16);
+    let at = |img: &ColorImage, x: usize, y: usize| img.pixels[y * 16 + x].a();
+    // The minus glyph is the 1px line at y = 12.5: row 12. Every other row of the cell is cleared.
+    let cell: Vec<(usize, usize)> =
+        (8..16).flat_map(|y| (8..16).map(move |x| (x, y))).filter(|&(_, y)| y != 12).collect();
+    assert!(cell.iter().any(|&(x, y)| at(&base, x, y) > 0), "the base inks the cell");
+    // (x, y, alpha): a seam on the cell's edge row and column is the mask rects inheriting a stroke.
+    let left: Vec<_> = cell
+        .iter()
+        .map(|&(x, y)| (x, y, at(&composed, x, y)))
+        .filter(|&(_, _, a)| a > 0)
+        .collect();
+    assert!(left.is_empty(), "the knockout left base pixels in the cell (x, y, alpha): {left:?}");
+    assert_eq!(at(&composed, 12, 12), 255, "the minus is drawn");
+    assert_eq!(at(&composed, 7, 1), at(&base, 7, 1), "outside the cell the base is untouched");
 }

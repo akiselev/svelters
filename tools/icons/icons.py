@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
-"""IC1 icon toolchain: lint, build and contact sheets for a custom icon set (plans/research/ICONS.md §3, §5).
+"""IC1 icon toolchain: lint, build and contact sheets for cadatomic's icon style (plans/research/ICON-STYLE.md).
 
-    tools/icons/icons.py lint  <set>                       # the §3 rules; exit 1 on any finding
-    tools/icons/icons.py build <set> <out> [--only ids]    # badges composed, white copies, manifest, id code
+    tools/icons/icons.py lint  <set>                          # ICON-STYLE §10 L1-L13; exit 1 on any finding
+    tools/icons/icons.py build <set> <out> [--only ids]       # badges, HC tone, white copies, manifest, id code
     tools/icons/icons.py sheet <set> <out.png> [--codicons <dir>] [--zoom <zoom.png>] [--only ids] [--sizes 12,16]
-    tools/icons/icons.py hash  <set> [ids]                 # approval hashes for icons.toml
+    tools/icons/icons.py hash  <set> [ids]                    # approval hashes for icons.toml
 
-A set is a directory with `icons.toml` (see tools/icons/SPEC.md) and one `<px>/<id>.svg` directory of
-masters per optical size. The per-size rules (stroke widths and alignment, minimum gap, dash, badge box)
-come from tools/icons/sizes.toml, or the set's own sizes.toml. Badges come from
-tools/icons/badges/<px>/<name>.svg. lint, build and hash use
-the standard library only (Python 3.11+); sheet needs Pillow and rsvg-convert (or resvg with
---renderer resvg).
+A set is a directory with `icons.toml` (keys: tools/icons/SPEC.md) and one `<px>/<id>.svg` directory of masters
+per optical size. The rules (per-size strokes, gaps, counters, arrowheads, pads, badge cells, required masters,
+the accent allowlist) come from tools/icons/style.toml, or from the set's own style.toml. Badge glyphs come from
+tools/icons/badges/<px>/<name>.svg. lint, build and hash use the standard library only (Python 3.11+); sheet
+needs Pillow and rsvg-convert (or resvg with --renderer resvg).
 """
 import argparse
+import fnmatch
 import hashlib
 import io
 import json
@@ -29,32 +29,38 @@ import xml.etree.ElementTree as ET
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 BADGE_DIR = os.path.join(HERE, 'badges')
+STYLE_TOML = os.path.join(HERE, 'style.toml')
 SVG_NS = 'http://www.w3.org/2000/svg'
 ET.register_namespace('', SVG_NS)
 
-SIZES_TOML = os.path.join(HERE, 'sizes.toml')
-OPACITIES = {1.0, 0.4}
-FRINGE_OPACITIES = {0.2, 0.45}         # the results fringe, allowed only in `<domain>.result.*` ids
-BADGES = ('add', 'remove', 'run', 'check', 'error', 'settings', 'link', 'lock', 'queued', 'stale')
 KNOCKOUT_ID = 'badge-knockout'
-MAX_BYTES = 2048
+CLASSES = ('subject', 'accent', 'badge')
 DEFAULT_DOMAINS = ('chrome', 'vcs', 'status', 'doc', 'mcad', 'ecad', 'sim', 'select')
 ID_RE = re.compile(r'^[a-z][a-z0-9]*(\.[a-z0-9]+(-[a-z0-9]+)*)+$')
 
-ELEMENTS = {'svg', 'g', 'defs', 'path', 'rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon', 'mask',
-            'clipPath', 'title', 'desc'}
-SHAPES = {'path', 'rect', 'circle', 'ellipse', 'line', 'polyline', 'polygon'}
+# L2 (ICON-STYLE §3.1): the element and attribute allowlists.
+ELEMENTS = {'svg', 'g', 'defs', 'path', 'rect', 'circle', 'clipPath', 'mask'}
+SHAPES = {'path', 'rect', 'circle'}
 ATTRIBUTES = {'xmlns', 'width', 'height', 'viewBox', 'fill', 'stroke', 'stroke-width', 'stroke-linecap',
-              'stroke-linejoin', 'stroke-dasharray', 'stroke-miterlimit', 'fill-rule', 'clip-rule', 'opacity',
-              'fill-opacity', 'stroke-opacity', 'd', 'x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy', 'r', 'rx', 'ry',
-              'points', 'id', 'mask', 'clip-path', 'maskUnits', 'maskContentUnits', 'clipPathUnits'}
+              'stroke-linejoin', 'stroke-dasharray', 'fill-rule', 'clip-rule', 'opacity', 'fill-opacity',
+              'stroke-opacity', 'd', 'x', 'y', 'cx', 'cy', 'r', 'rx', 'ry', 'id', 'mask', 'clip-path', 'maskUnits',
+              'class'}
 INHERITED = ('fill', 'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin', 'stroke-dasharray')
 MASK_COLOURS = {'#fff', '#ffffff', 'white', '#000', '#000000', 'black'}
+# O1 (user, 2026-10-22): round terminals; butt for dashed lines, copper, gear teeth and ends on a pad or edge.
+CAPS = {'round', 'butt'}
+JOINS = {'round', 'miter'}                        # miter for copper traces (§3.1)
 EPS = 1e-6
+ANGLE_TOL = 0.01                                  # L7
 
 
 def local(tag):
     return tag.rsplit('}', 1)[-1]
+
+
+def phase(width):
+    """Where a stroke of this width centres to rasterise crisply: even whole widths on integers, others on .5."""
+    return 0.0 if abs(width - round(width)) < EPS and round(width) % 2 == 0 else 0.5
 
 
 # ---------------------------------------------------------------- path geometry
@@ -249,12 +255,91 @@ def frac(v):
     return v - math.floor(v)
 
 
-def on_phase(v, phase):
+def on_phase(v, ph):
     f = frac(v)
-    return abs(f - phase) < EPS or (phase == 0.0 and abs(f - 1.0) < EPS)
+    return abs(f - ph) < EPS or (ph == 0.0 and abs(f - 1.0) < EPS)
 
 
-# ---------------------------------------------------------------- lint
+def _fmt(v):
+    return f'{v:g}'
+
+
+def triangle(segs):
+    """The three vertices of a closed 3-point polygon path, else None."""
+    if len(segs) != 3 or any(s[0] != 'line' for s in segs):
+        return None
+    pts = [s[1] for s in segs]
+    if any(abs(segs[i][2][0] - segs[(i + 1) % 3][1][0]) > EPS or abs(segs[i][2][1] - segs[(i + 1) % 3][1][1]) > EPS
+           for i in range(3)):
+        return None
+    return pts
+
+
+def arrowhead(pts):
+    """(half_base, length) of an isosceles triangle with an axis-aligned base, else None."""
+    for i in range(3):
+        a, b, apex = pts[i], pts[(i + 1) % 3], pts[(i + 2) % 3]
+        if abs(a[1] - b[1]) < EPS:                                 # horizontal base
+            hb, mid, ln = abs(a[0] - b[0]) / 2, (a[0] + b[0]) / 2, abs(apex[1] - a[1])
+            if abs(apex[0] - mid) < EPS and ln > EPS:
+                return hb, ln
+        if abs(a[0] - b[0]) < EPS:                                 # vertical base
+            hb, mid, ln = abs(a[1] - b[1]) / 2, (a[1] + b[1]) / 2, abs(apex[0] - a[0])
+            if abs(apex[1] - mid) < EPS and ln > EPS:
+                return hb, ln
+    return None
+
+
+# ---------------------------------------------------------------- style and lint
+
+class SizeSpec:
+    """One optical size's rules, from a [size.<px>] table of style.toml."""
+
+    def __init__(self, px, t):
+        self.px = px
+        self.stroke = float(t['stroke'])
+        self.copper = float(t['copper']) if 'copper' in t else None
+        self.hatch = float(t['hatch']) if 'hatch' in t else None
+        self.pad = float(t.get('pad', 0))
+        self.min_gap = float(t.get('min_gap', 0))
+        self.min_counter = float(t.get('min_counter', 0))
+        self.arrowhead = float(t['arrowhead']) if 'arrowhead' in t else None
+        self.cut = t.get('cut')
+        self.tone = bool(t.get('tone', True))
+        self.badge = float(t.get('badge', 0))
+        self.dash = [float(v) for v in t.get('dash', [])]
+
+    def widths(self, clipped):
+        w = {self.stroke} | ({self.copper} if self.copper else set())
+        return w | ({self.hatch} if clipped and self.hatch else set())
+
+    def __repr__(self):
+        return f'SizeSpec({self.px})'
+
+
+class Style:
+    """style.toml: the per-size table and the set-wide rules."""
+
+    def __init__(self, path=STYLE_TOML):
+        with open(path, 'rb') as f:
+            t = tomllib.load(f)
+        self.path = path
+        self.specs = {int(px): SizeSpec(int(px), v) for px, v in sorted(t['size'].items(), key=lambda kv: int(kv[0]))}
+        self.max_bytes = int(t.get('max_bytes', 1536))
+        self.badges = tuple(t.get('badges', ()))
+        self.accent_ids = list(t.get('accent_ids', []))
+        self.fringe_ids = list(t.get('fringe_ids', []))
+        self.subject_outline = bool(t.get('subject_outline', False))
+        self.hc_tone = float(t.get('hc_tone', 0.4))
+        m = t.get('masters', {})
+        self.masters_all = [int(v) for v in m.get('all', [])]
+        self.masters_domains = {k: [int(x) for x in v] for k, v in m.get('domains', {}).items()}
+        self.masters_uses = {k: [int(x) for x in v] for k, v in m.get('uses', {}).items()}
+
+
+def globbed(icon, patterns):
+    return any(fnmatch.fnmatchcase(icon, p) for p in patterns)
+
 
 class Finding:
     def __init__(self, icon, size, rule, msg):
@@ -268,123 +353,114 @@ class Finding:
         return f'Finding({self})'
 
 
-def _fmt(v):
-    return f'{v:g}'
+def lint_svg(text, icon, spec, style, *, badge=False, built=False, free_angles=False, domains=DEFAULT_DOMAINS):
+    """Lint one SVG master against ICON-STYLE §10 for its size. Returns a list of Findings (empty when clean).
 
-
-class SizeSpec:
-    """One optical size's rules, from a [size.<px>] table of sizes.toml."""
-
-    def __init__(self, px, t):
-        self.px = px
-        self.required = bool(t.get('required', False))
-        centre = {'half': 0.5, 'whole': 0.0}
-        self.strokes = {float(s['width']): centre[s['centre']] for s in t['strokes']}
-        h = t.get('hatch')
-        self.hatch = {float(h['width']): centre[h['centre']]} if h else {}
-        self.min_gap = float(t.get('min_gap', 0))
-        self.dash = [float(v) for v in t.get('dash', [])]
-        self.badge = float(t['badge'])
-
-    def __repr__(self):
-        return f'SizeSpec({self.px})'
-
-
-def load_sizes(path=SIZES_TOML):
-    with open(path, 'rb') as f:
-        t = tomllib.load(f)
-    return {int(px): SizeSpec(int(px), v) for px, v in sorted(t['size'].items(), key=lambda kv: int(kv[0]))}
-
-
-def lint_svg(text, icon, spec, *, badge=False, domains=DEFAULT_DOMAINS):
-    """Lint one SVG master against its size's rules. Returns a list of Findings (empty when clean)."""
+    badge: a badge glyph (tools/icons/badges), which must stay inside the badge cell.
+    built: build output, which may carry the `badge` class and the knockout mask."""
     out = []
     size = spec.px
 
     def bad(rule, msg):
         out.append(Finding(icon, size, rule, msg))
 
-    if len(text.encode()) > MAX_BYTES:
-        bad('bytes', f'{len(text.encode())} bytes, budget {MAX_BYTES}')
+    if len(text.encode()) > style.max_bytes:
+        bad('L13', f'{len(text.encode())} bytes, budget {style.max_bytes}')
     if 'data:' in text:
-        bad('raster', 'data: URI (embedded raster or font)')
+        bad('L2', 'data: URI (embedded raster or font)')
     try:
         root = ET.fromstring(text)
     except ET.ParseError as e:
         bad('parse', str(e))
         return out
     if local(root.tag) != 'svg':
-        bad('root', f'root element is <{local(root.tag)}>')
+        bad('L1', f'root element is <{local(root.tag)}>')
         return out
+    # L1: the root
     vb = [float(v) for v in NUM_RE.findall(root.get('viewBox', ''))]
     if vb != [0, 0, size, size]:
-        bad('root', f'viewBox must be "0 0 {size} {size}", got {root.get("viewBox")!r}')
-    for dim in ('width', 'height'):
-        if root.get(dim) is not None and root.get(dim) != str(size):
-            bad('root', f'{dim}={root.get(dim)!r}, expected {size} (or none)')
+        bad('L1', f'viewBox must be "0 0 {size} {size}", got {root.get("viewBox")!r}')
+    want = {'width': str(size), 'height': str(size), 'fill': 'none', 'stroke': 'currentColor',
+            'stroke-width': _fmt(spec.stroke), 'stroke-linecap': 'round', 'stroke-linejoin': 'round'}
+    for k, v in want.items():
+        got = root.get(k)
+        same = got is not None and (got == v or (k == 'stroke-width' and _isnum(got) and abs(float(got) - spec.stroke) < EPS))
+        if not same:
+            bad('L1', f'root {k}={got!r}, expected {v!r}')
     if not badge:
-        if '+' in icon:
+        if '+' in icon and not built:
             bad('id', 'a source id has no "+": badge variants are composed by build')
-        elif not ID_RE.match(icon):
+        elif not ID_RE.match(icon.split('+')[0]):
             bad('id', 'ids are <domain>.<group>.<name>: lower-case dot-separated segments, words joined by "-"')
         elif icon.split('.')[0] not in domains:
             bad('id', f'domain {icon.split(".")[0]!r} is not one of {", ".join(domains)}')
-    result_id = '.result.' in f'.{icon}.' or icon.split('.')[-1] == 'result'
+    fringe = globbed(icon.split('+')[0], style.fringe_ids)
+    accent_ok = globbed(icon.split('+')[0], style.accent_ids)
     ids = set()
-    widths = spec.strokes
-    runs = []          # axis-aligned stroked segments, for the min_gap check: (axis, at, lo, hi, width, tag)
+    runs = []          # axis-aligned stroked segments for L10: (axis, at, lo, hi, width)
 
-    def walk(el, inh, in_defs, clipped, in_mask):
+    def walk(el, inh, classes, in_defs, clipped, in_mask):
         tag = local(el.tag)
         if tag not in ELEMENTS:
-            if tag == 'image':
-                bad('raster', '<image> (raster images are not allowed)')
-            else:
-                bad('element', f'<{tag}> is not allowed')
+            bad('L2', f'<{tag}> is not allowed' + (' (no raster images)' if tag == 'image' else ''))
             return
         if tag == 'svg' and el is not root:
-            bad('element', 'nested <svg>')
-        for name, value in el.attrib.items():
-            name = local(name) if name.startswith('{') else name
-            if name == 'transform' or name.endswith('Transform'):
-                bad('attribute', f'{name} on <{tag}> (no transforms: draw on the grid)')
-            elif name in ('style', 'class'):
-                bad('attribute', f'{name} on <{tag}> (presentation attributes only)')
-            elif name in ('href', 'filter') or name.startswith('on'):
-                bad('attribute', f'{name} on <{tag}> is not allowed')
-            elif name not in ATTRIBUTES:
-                bad('attribute', f'{name} on <{tag}> is not allowed')
+            bad('L2', 'nested <svg>')
+        for name in el.attrib:
+            short = local(name) if name.startswith('{') else name
+            if name.startswith('{') or short not in ATTRIBUTES:
+                why = {'transform': ' (no transforms: draw on the grid)', 'style': ' (presentation attributes only)',
+                       'href': ' (no references)'}.get(short, '')
+                bad('L2', f'{short} on <{tag}> is not allowed{why}')
         if el.get('id'):
             if el.get('id') in ids:
-                bad('ref-id', f'duplicate id {el.get("id")!r}')
-            if el.get('id') == KNOCKOUT_ID:
-                bad('ref-id', f'id {KNOCKOUT_ID!r} is reserved for badge composition')
+                bad('L2', f'duplicate id {el.get("id")!r}')
+            if el.get('id') == KNOCKOUT_ID and not built:
+                bad('L2', f'id {KNOCKOUT_ID!r} is reserved for badge composition')
             ids.add(el.get('id'))
-        for name in ('fill', 'stroke', 'color'):
+        # L3: colours
+        for name in ('fill', 'stroke'):
             v = el.get(name)
-            if v is None or v in ('none', 'currentColor'):
+            if v is None or v in ('none', 'currentColor') or (in_mask and v.lower() in MASK_COLOURS):
                 continue
-            if in_mask and v.lower() in MASK_COLOURS:
-                continue
-            bad('colour', f'{name}={v!r} on <{tag}>: currentColor only'
-                + (' (#fff/#000 inside <mask>)' if not in_mask else ''))
+            bad('L3', f'{name}={v!r} on <{tag}>: currentColor or none' + ('' if in_mask else ' (#fff/#000 inside <mask>)'))
+        # L4: classes
+        here = set(classes)
+        for c in (el.get('class') or '').split():
+            if c not in CLASSES:
+                bad('L4', f'class {c!r}: only subject, accent and badge')
+            elif c == 'badge' and not built:
+                bad('L4', 'class "badge" is added by build, never drawn')
+            elif c == 'accent' and not accent_ok:
+                bad('L4', f'class "accent" on {icon!r}, which is not on the accent allowlist (state glyphs only)')
+            here.add(c)
+        # L5: opacities and corners
         for name in ('opacity', 'fill-opacity', 'stroke-opacity'):
             v = el.get(name)
             if v is None:
                 continue
-            try:
-                f = float(v)
-            except ValueError:
-                bad('opacity', f'{name}={v!r} is not a number')
+            if not _isnum(v):
+                bad('L5', f'{name}={v!r} is not a number')
                 continue
-            ok = any(abs(f - o) < EPS for o in OPACITIES)
-            if not ok and result_id and any(abs(f - o) < EPS for o in FRINGE_OPACITIES):
-                ok = True
-            if not ok:
-                bad('opacity', f'{name}={v} on <{tag}>: 1 or .4 only'
-                    + (' (.2/.45 for the results fringe)' if result_id else ''))
-        if badge and tag in ('defs', 'mask', 'clipPath') or badge and (el.get('mask') or el.get('clip-path')):
-            bad('badge', 'badges are plain shapes: no defs, mask or clip-path')
+            f = float(v)
+            if abs(f - 1) < EPS or (fringe and any(abs(f - o) < EPS for o in (0.2, 0.45))):
+                continue
+            if abs(f - 0.4) < EPS:
+                if 'subject' not in here:
+                    bad('L5', f'{name}=.4 on <{tag}> outside class "subject"')
+                elif not spec.tone:
+                    bad('L5', f'no subject tone at {size}: draw the subject solid or as an outline')
+                continue
+            bad('L5', f'{name}={v} on <{tag}>: 1, or .4 on the subject' + (' (.2/.45 for the fringe)' if fringe else ''))
+        if tag == 'rect' and (el.get('rx') or el.get('ry')):
+            bad('L5', 'rx/ry: corners are square (O2: the 45-degree cut is drawn as a path)')
+        # L1 per element: terminals and joins (O1)
+        if el.get('stroke-linecap') and el.get('stroke-linecap') not in CAPS:
+            bad('L1', f'stroke-linecap={el.get("stroke-linecap")!r}: round, or butt for dashes, copper and teeth')
+        if el.get('stroke-linejoin') and el.get('stroke-linejoin') not in JOINS:
+            bad('L1', f'stroke-linejoin={el.get("stroke-linejoin")!r}: round, or miter for copper traces')
+        if badge and (tag in ('defs', 'mask', 'clipPath') or el.get('mask') or el.get('clip-path')):
+            bad('badge', 'badge glyphs are plain shapes: no defs, mask or clip-path')
         inh = dict(inh)
         for k in INHERITED:
             if el.get(k) is not None:
@@ -392,106 +468,175 @@ def lint_svg(text, icon, spec, *, badge=False, domains=DEFAULT_DOMAINS):
         here_clipped = clipped or el.get('clip-path') is not None
         if tag in ('defs', 'mask', 'clipPath'):
             if tag in ('mask', 'clipPath') and not in_defs:
-                bad('defs', f'<{tag}> outside <defs>')
+                bad('L2', f'<{tag}> outside <defs>')
             for ch in el:
                 if tag == 'defs' and local(ch.tag) not in ('mask', 'clipPath'):
-                    bad('defs', f'<defs> holds <{local(ch.tag)}>: masks and clip paths only')
-                walk(ch, inh, True, here_clipped, in_mask or tag == 'mask')
+                    bad('L2', f'<defs> holds <{local(ch.tag)}>: masks and clip paths only')
+                walk(ch, inh, here, True, here_clipped, in_mask or tag == 'mask')
             return
         if tag in SHAPES and not in_defs:
-            check_shape(el, tag, inh, here_clipped)
+            check_shape(el, tag, inh, here, here_clipped)
         for ch in el:
-            walk(ch, inh, in_defs, here_clipped, in_mask)
+            walk(ch, inh, here, in_defs, here_clipped, in_mask)
 
-    def check_shape(el, tag, inh, clipped):
+    def check_shape(el, tag, inh, classes, clipped):
         try:
             segs = shape_segments(el)
-        except (ValueError, TypeError) as e:
+        except (ValueError, TypeError, ZeroDivisionError) as e:
             bad('parse', f'<{tag}>: {e}')
             return
         stroked = inh.get('stroke', 'none') != 'none'
-        lo = size - spec.badge if badge else 0.0
-        if not clipped:
-            pts = [p for s in segs for p in ([s[1], s[2]] if s[0] == 'line' else s[2])]
-            for x, y in pts:
-                if not (lo - EPS <= x <= size + EPS and lo - EPS <= y <= size + EPS):
-                    bad('badge' if badge else 'bounds',
-                        f'<{tag}> reaches ({_fmt(x)}, {_fmt(y)}), outside '
-                        + (f'the badge area {_fmt(lo)}..{size}' if badge else f'0..{size}')
-                        + ('' if badge else ' (clip it, or keep it on the canvas)'))
-                    break
-        if not stroked:
-            return
-        try:
+        filled = inh.get('fill', 'none') != 'none'
+        w = 0.0
+        if stroked:
+            if not _isnum(inh.get('stroke-width', '1')):
+                bad('L9', f'stroke-width={inh.get("stroke-width")!r} is not a number')
+                return
             w = float(inh.get('stroke-width', '1'))
-        except ValueError:
-            bad('stroke-width', f'stroke-width={inh.get("stroke-width")!r} is not a number')
+        tri = triangle(segs) if tag == 'path' and filled and not stroked else None
+        # L4: a classed part is fill-only or stroke-only (a subject may keep its outline, pending ICR1)
+        if classes and stroked and filled and not ('subject' in classes and style.subject_outline):
+            bad('L4', f'<{tag}> in class {"/".join(sorted(classes))} is both filled and stroked: split the outline')
+        # L8: stroke centres within pad..size-pad, fills within half a pixel more; the ink stays on the canvas.
+        # Exempt (ICON-STYLE §3.2): heads (solid triangles), clipped parts, and the ends of open strokes (round
+        # caps may touch the edge; butt ends may end on it). A composed badge was linted as its own glyph.
+        in_badge = 'badge' in classes
+        if not clipped and not tri and not in_badge:
+            if badge:
+                lo, hi = size - spec.badge, size
+            else:
+                lo = spec.pad if stroked else spec.pad - 0.5
+                hi = size - lo
+            ends = {}
+            for sg in segs:
+                for p in (sg[1], sg[2] if sg[0] == 'line' else sg[2][-1]):
+                    k = (round(p[0], 4), round(p[1], 4))
+                    ends[k] = ends.get(k, 0) + 1
+            pts = [p for sg in segs for p in ([sg[1], sg[2]] if sg[0] == 'line' else [sg[1]] + sg[2])]
+            for x, y in pts:
+                end = stroked and tag == 'path' and ends.get((round(x, 4), round(y, 4))) == 1
+                if end:
+                    if not (-EPS <= x <= size + EPS and -EPS <= y <= size + EPS):
+                        bad('L8', f'<{tag}> ends at ({_fmt(x)}, {_fmt(y)}), off the canvas')
+                        break
+                    continue
+                if not (lo - EPS <= x <= hi + EPS and lo - EPS <= y <= hi + EPS):
+                    bad('badge' if badge else 'L8', f'<{tag}> reaches ({_fmt(x)}, {_fmt(y)}), outside '
+                        + (f'the badge cell {_fmt(lo)}..{size}' if badge else f'the live area {_fmt(lo)}..{_fmt(hi)}'))
+                    break
+                if stroked and not (-EPS <= x - w / 2 and x + w / 2 <= size + EPS
+                                    and -EPS <= y - w / 2 and y + w / 2 <= size + EPS):
+                    bad('L8', f'<{tag}> ink at ({_fmt(x)}, {_fmt(y)}) leaves the canvas')
+                    break
+        # L7: diagonals 45 degrees or 2:1, strokes and fills
+        if not free_angles:
+            for s in segs:
+                if s[0] != 'line':
+                    continue
+                dx, dy = abs(s[2][0] - s[1][0]), abs(s[2][1] - s[1][1])
+                if dx < EPS or dy < EPS:
+                    continue
+                r = dx / dy
+                if not any(abs(r - k) <= ANGLE_TOL * k for k in (1, 2, 0.5)):
+                    bad('L7', f'<{tag}> segment ({_fmt(s[1][0])},{_fmt(s[1][1])})->({_fmt(s[2][0])},{_fmt(s[2][1])}): '
+                        'diagonals are 45 degrees or 2:1')
+                    break
+        # L11: a solid head with 45-degree sides has half-base = length = the size's arrowhead
+        if tri and spec.arrowhead:
+            ah = arrowhead(tri)
+            if ah and abs(ah[0] - ah[1]) < 0.05 and abs(ah[0] - spec.arrowhead) > EPS:
+                bad('L11', f'arrowhead half-base {_fmt(ah[0])}: {size} heads are {_fmt(spec.arrowhead)} (§5.1)')
+        if not stroked:
+            # L6: fill-only edges on whole pixels
+            if filled and not clipped:
+                for s in segs:
+                    if s[0] != 'line':
+                        continue
+                    (x0, y0), (x1, y1) = s[1], s[2]
+                    if abs(y1 - y0) < EPS and abs(x1 - x0) > EPS and not on_phase(y0, 0.0):
+                        bad('L6', f'<{tag}> horizontal fill edge at y={_fmt(y0)}: fill edges lie on whole pixels')
+                        break
+                    if abs(x1 - x0) < EPS and abs(y1 - y0) > EPS and not on_phase(x0, 0.0):
+                        bad('L6', f'<{tag}> vertical fill edge at x={_fmt(x0)}: fill edges lie on whole pixels')
+                        break
             return
-        allowed = dict(widths)
-        if clipped:
-            allowed.update({k: v for k, v in spec.hatch.items() if k not in allowed})
-        match = [a for a in allowed if abs(w - a) < EPS]
-        if not match:
-            hatch = ''.join(f' ({_fmt(a)}px hatching inside a clip-path)' for a in spec.hatch if a not in widths)
-            bad('stroke-width', f'<{tag}> strokes {_fmt(w)}px; {size} masters use '
-                + ', '.join(_fmt(a) for a in sorted(widths)) + 'px' + hatch)
+        # L9: stroke widths
+        allowed = spec.widths(clipped)
+        if not any(abs(w - a) < EPS for a in allowed):
+            bad('L9', f'<{tag}> strokes {_fmt(w)}px; {size} masters use {_fmt(spec.stroke)}'
+                + (f', copper {_fmt(spec.copper)}' if spec.copper else '')
+                + (f', hatching {_fmt(spec.hatch)} inside a clip-path' if spec.hatch else ''))
             return
-        phase = allowed[match[0]]
+        ph = phase(w)
         dash = inh.get('stroke-dasharray')
         if dash and dash != 'none':
             vals = [float(v) for v in NUM_RE.findall(dash)]
-            if vals != spec.dash:
-                bad('dash', f'stroke-dasharray={dash!r}: centre lines use "{" ".join(_fmt(v) for v in spec.dash)}"')
+            if not spec.dash:
+                bad('L1', f'no dashed lines at {size}: draw the centre line solid')
+            elif vals != spec.dash:
+                bad('L1', f'stroke-dasharray={dash!r}: centre lines use "{" ".join(_fmt(v) for v in spec.dash)}"')
             if inh.get('stroke-linecap', 'butt') != 'butt':
-                bad('dash', 'dashed strokes use butt caps')
-        if tag in ('circle', 'ellipse'):
-            cx, cy = _num(el, 'cx'), _num(el, 'cy')
-            rx = _num(el, 'r') if tag == 'circle' else _num(el, 'rx')
-            ry = _num(el, 'r') if tag == 'circle' else _num(el, 'ry')
-            for v, what in ((cx - rx, 'left'), (cx + rx, 'right'), (cy - ry, 'top'), (cy + ry, 'bottom')):
-                if not on_phase(v, phase):
-                    bad('half-pixel', f'<{tag}> {what} edge at {_fmt(v)}: a {_fmt(w)}px stroke centres on '
-                        + ('.5' if phase else 'whole pixels'))
+                bad('L1', 'dashed strokes use butt caps')
+        if tag == 'circle':
+            cx, cy, r = _num(el, 'cx'), _num(el, 'cy'), _num(el, 'r')
+            for v, what in ((cx - r, 'left'), (cx + r, 'right'), (cy - r, 'top'), (cy + r, 'bottom')):
+                if not on_phase(v, ph):
+                    bad('L6', f'<circle> {what} extreme at {_fmt(v)}: a {_fmt(w)}px stroke centres on '
+                        + ('.5' if ph else 'whole pixels'))
                     break
+            if 2 * r - w < spec.min_counter - EPS:
+                bad('L10', f'<circle> r={_fmt(r)} leaves a {_fmt(2 * r - w)}px counter; {size} keeps {_fmt(spec.min_counter)}')
             return
+        if tag == 'rect':
+            cw, ch = _num(el, 'width') - w, _num(el, 'height') - w
+            if min(cw, ch) < spec.min_counter - EPS:
+                bad('L10', f'<rect> leaves a {_fmt(cw)}x{_fmt(ch)} counter; {size} keeps {_fmt(spec.min_counter)}')
         for s in segs:
             if s[0] != 'line':
                 continue
             (x0, y0), (x1, y1) = s[1], s[2]
             dx, dy = abs(x1 - x0), abs(y1 - y0)
-            if dx < EPS and dy < EPS:
+            if (dx < EPS) == (dy < EPS):
                 continue
-            if dy < EPS or dx < EPS:
-                v, axis = (y0, 'y') if dy < EPS else (x0, 'x')
-                if not on_phase(v, phase):
-                    bad('half-pixel', f'<{tag}> {"horizontal" if axis == "y" else "vertical"} stroke at '
-                        f'{axis}={_fmt(v)}: a {_fmt(w)}px stroke centres on ' + ('.5' if phase else 'whole pixels'))
-                a, b = (x0, x1) if axis == 'y' else (y0, y1)
-                runs.append((axis, v, min(a, b), max(a, b), w, tag))
-            elif not (abs(dx - dy) < EPS or abs(dx - 2 * dy) < EPS):
-                bad('diagonal-angle', f'<{tag}> segment ({_fmt(x0)},{_fmt(y0)})->({_fmt(x1)},{_fmt(y1)}): '
-                    'diagonals are 45 degrees or 2:1 (dx 2 : dy 1)')
+            v, axis = (y0, 'y') if dy < EPS else (x0, 'x')
+            if not on_phase(v, ph):
+                bad('L6', f'<{tag}> {"horizontal" if axis == "y" else "vertical"} stroke at {axis}={_fmt(v)}: '
+                    f'a {_fmt(w)}px stroke centres on ' + ('.5' if ph else 'whole pixels'))
+            a, b = (x0, x1) if axis == 'y' else (y0, y1)
+            if 'badge' not in classes:               # the base under the badge cell is masked away
+                runs.append((axis, v, min(a, b), max(a, b), w))
 
-    base = {'fill': root.get('fill', 'black'), 'stroke': 'none', 'stroke-width': '1'}
-    if root.get('fill') is None:
-        base['fill'] = 'black'
-        bad('colour', 'the root sets no fill: set fill="none" or fill="currentColor"')
-    walk(root, base, False, False, False)
-    # min_gap: two parallel strokes that run side by side for more than 1px keep a clear gap (a line
-    # ending in a hollow point marker touches the marker for 1px, which is the convention)
+    walk(root, {'fill': root.get('fill', 'black'), 'stroke': root.get('stroke', 'none'),
+                'stroke-width': root.get('stroke-width', '1')}, set(), False, False, False)
+    # L10: parallel strokes running side by side for longer than a counter keep the size's clear gap. (A line
+    # that ends in a hollow point marker runs inside the marker for half its span: that is the convention.)
     seen = set()
-    for i, (ax, at, lo, hi, w, tag) in enumerate(runs):
-        for ax2, at2, lo2, hi2, w2, tag2 in runs[i + 1:]:
+    reach = max(1.0, spec.min_counter)
+    for i, (ax, at, lo, hi, w) in enumerate(runs):
+        for ax2, at2, lo2, hi2, w2 in runs[i + 1:]:
             d = abs(at - at2)
-            if ax2 != ax or d < EPS or min(hi, hi2) - max(lo, lo2) < 1 + EPS:
+            if ax2 != ax or d < EPS or min(hi, hi2) - max(lo, lo2) < reach + EPS:
                 continue
             gap = d - (w + w2) / 2
             key = (ax, min(at, at2), max(at, at2))
             if gap < spec.min_gap - EPS and key not in seen:
                 seen.add(key)
-                bad('gap', f'{"horizontal" if ax == "y" else "vertical"} strokes at {ax}={_fmt(min(at, at2))} and '
-                    f'{_fmt(max(at, at2))} leave {_fmt(gap)}px clear; {size} masters keep {_fmt(spec.min_gap)}px')
+                bad('L10', f'{"horizontal" if ax == "y" else "vertical"} strokes at {ax}={_fmt(min(at, at2))} and '
+                    f'{_fmt(max(at, at2))} leave {_fmt(gap)}px clear; {size} keeps {_fmt(spec.min_gap)}')
     return out
+
+
+def _isnum(v):
+    try:
+        float(v)
+        return True
+    except (TypeError, ValueError):
+        return False
+
+
+# ---------------------------------------------------------------- sets
+
+MANIFEST_KEYS = {'metaphor', 'codicon', 'sizes', 'uses', 'badges', 'compose', 'allow', 'approved', 'free_angles'}
 
 
 class IconSet:
@@ -505,14 +650,17 @@ class IconSet:
         self.name = meta.get('name', os.path.basename(os.path.abspath(path)))
         self.licence = meta.get('licence')
         self.domains = tuple(meta.get('domains', DEFAULT_DOMAINS))
+        self.set_allow = meta.get('allow', [])
         self.icons = self.toml.get('icons', {})
-        own = os.path.join(path, 'sizes.toml')
-        self.specs = load_sizes(own if os.path.exists(own) else SIZES_TOML)
+        own = os.path.join(path, 'style.toml')
+        self.style = Style(own if os.path.exists(own) else STYLE_TOML)
+        self.specs = self.style.specs
 
     @property
     def sizes(self):
-        """The sizes this set draws: required ones plus every size with a master directory."""
-        return [px for px in self.specs if self.specs[px].required or os.path.isdir(os.path.join(self.path, str(px)))]
+        """The sizes this set draws: every size with a master directory, plus the ones every id needs."""
+        return [px for px in self.specs
+                if px in self.style.masters_all or os.path.isdir(os.path.join(self.path, str(px)))]
 
     def source(self, icon, size):
         p = os.path.join(self.path, str(size), icon + '.svg')
@@ -526,7 +674,12 @@ class IconSet:
         return self.icons.get(icon, {})
 
     def required(self, icon):
-        return sorted({px for px in self.specs if self.specs[px].required} | set(self.entry(icon).get('sizes', [])))
+        """L12: the masters an id must have (ICON-STYLE §5.2)."""
+        st, e = self.style, self.entry(icon)
+        req = set(st.masters_all) | set(st.masters_domains.get(icon.split('.')[0], []))
+        for u in e.get('uses', []):
+            req |= set(st.masters_uses.get(u, []))
+        return sorted(req | set(e.get('sizes', [])))
 
     def outputs(self):
         """Every id build emits, in sheet order: each icon, then its badge variants."""
@@ -554,47 +707,49 @@ def badge_source(name, size):
     return p if os.path.exists(p) else None
 
 
-def lint_badges(specs):
-    """Every size with a badges/<px>/ directory has all the badges, each inside its badge box."""
+def lint_badges(style):
+    """Every size with a badge cell and a badges/<px>/ directory has every badge, each inside the cell."""
     out = []
-    for size, spec in specs.items():
-        if not os.path.isdir(os.path.join(BADGE_DIR, str(size))):
+    for size, spec in style.specs.items():
+        if not spec.badge or not os.path.isdir(os.path.join(BADGE_DIR, str(size))):
             continue
-        for name in BADGES:
+        for name in style.badges:
             p = badge_source(name, size)
             if not p:
                 out.append(Finding('badge.' + name, size, 'badge', f'no {size} drawing in {BADGE_DIR}'))
                 continue
             with open(p) as f:
-                out += lint_svg(f.read(), 'badge.' + name, spec, badge=True)
+                out += lint_svg(f.read(), 'badge.' + name, spec, style, badge=True)
     return out
-
-
-MANIFEST_KEYS = {'metaphor', 'codicon', 'sizes', 'badges', 'compose', 'allow', 'approved'}
 
 
 def lint_set(s):
     """Lint every master, the manifest and the waivers. Returns the remaining Findings."""
     raw = []
+    st = s.style
     if not s.licence:
         raw.append(Finding('icons.toml', None, 'manifest', '[set] licence is missing (the custom set is CC-BY-4.0)'))
-    for d in os.listdir(s.path):
+    for d in sorted(os.listdir(s.path)):
         if os.path.isdir(os.path.join(s.path, d)) and d.isdigit() and int(d) not in s.specs:
-            raw.append(Finding(d + '/', None, 'size', f'{d}px has no [size.{d}] rules in sizes.toml'))
+            raw.append(Finding(d + '/', None, 'size', f'{d}px has no [size.{d}] table in style.toml'))
     for size in s.sizes:
         for icon in s.files(size):
             if icon not in s.icons:
                 raw.append(Finding(icon, size, 'orphan', 'no [icons."<id>"] entry in icons.toml'))
             with open(s.source(icon, size)) as f:
-                raw += lint_svg(f.read(), icon, s.specs[size], domains=s.domains)
-    known = set(BADGES)
+                raw += lint_svg(f.read(), icon, s.specs[size], st, domains=s.domains,
+                                free_angles=bool(s.entry(icon).get('free_angles')))
+    known = set(st.badges)
     for icon, e in s.icons.items():
         unknown = set(e) - MANIFEST_KEYS
         if unknown:
             raw.append(Finding(icon, None, 'manifest', f'unknown keys {sorted(unknown)}'))
+        for u in e.get('uses', []):
+            if u not in st.masters_uses:
+                raw.append(Finding(icon, None, 'manifest', f'uses {u!r} is not one of {sorted(st.masters_uses)}'))
         for px in e.get('sizes', []):
             if px not in s.specs:
-                raw.append(Finding(icon, None, 'size', f'sizes lists {px}, which sizes.toml does not define'))
+                raw.append(Finding(icon, None, 'size', f'sizes lists {px}, which style.toml does not define'))
         comp = e.get('compose')
         if comp:
             if any(s.source(icon, z) for z in s.specs):
@@ -602,40 +757,41 @@ def lint_set(s):
             if comp.get('base') not in s.icons or 'compose' in s.entry(comp.get('base')):
                 raw.append(Finding(icon, None, 'manifest', f'compose.base {comp.get("base")!r} is not a drawn icon'))
             if comp.get('badge') not in known:
-                raw.append(Finding(icon, None, 'badge', f'compose.badge {comp.get("badge")!r} is not one of {BADGES}'))
+                raw.append(Finding(icon, None, 'badge', f'compose.badge {comp.get("badge")!r} is not one of {st.badges}'))
             if not ID_RE.match(icon) or icon.split('.')[0] not in s.domains:
                 raw.append(Finding(icon, None, 'id', 'ids are <domain>.<group>.<name> in a known domain'))
         else:
             for px in s.required(icon):
                 if px in s.specs and not s.source(icon, px):
-                    raw.append(Finding(icon, px, 'master', f'{px}/{icon}.svg is missing (a required size)'))
-        # a badge variant exists at every size its base is drawn at, so the badge needs a drawing there
-        pairs = [(b, icon) for b in e.get('badges', [])] + ([(comp.get('badge'), comp.get('base'))] if comp else [])
-        for b, base in pairs:
+                    raw.append(Finding(icon, px, 'L12', f'{px}/{icon}.svg is missing (a required master, §5.2)'))
+        for b in e.get('badges', []):
             if b not in known:
-                raw.append(Finding(icon, None, 'badge', f'badge {b!r} is not one of {BADGES}'))
-                continue
-            for px in s.sizes:
-                if s.source(base, px) and not badge_source(b, px):
-                    raw.append(Finding(icon, px, 'badge', f'badge {b!r} has no {px} drawing in {BADGE_DIR}'))
+                raw.append(Finding(icon, None, 'badge', f'badge {b!r} is not one of {st.badges}'))
         if e.get('approved') and e['approved'] != s.approval_hash(icon):
             raw.append(Finding(icon, None, 'frozen', f'approved icon changed (now {s.approval_hash(icon)}); a '
                                'changed icon goes back to review: drop `approved` and say why in the batch notes'))
-    # waivers: allow = [{ rule = "...", size = 16 (optional), reason = "..." }]
+    # waivers: per icon `allow = [{ rule, size?, reason }]`, per set `[[set.allow]]` with `ids` globs
     out, used = [], set()
     for f in raw:
-        waivers = s.entry(f.icon).get('allow', []) if f.icon in s.icons else []
-        hit = next((w for w in waivers if w.get('rule') == f.rule and w.get('size', f.size) == f.size), None)
+        own = [(('icon', f.icon, k), w) for k, w in enumerate(s.entry(f.icon).get('allow', []))] if f.icon in s.icons else []
+        sets = [(('set', k), w) for k, w in enumerate(s.set_allow) if globbed(f.icon, w.get('ids', []))]
+        hit = next((key for key, w in own + sets
+                    if w.get('rule') == f.rule and w.get('size', f.size) == f.size), None)
         if hit:
-            used.add((f.icon, hit['rule'], hit.get('size')))
+            used.add(hit)
         else:
             out.append(f)
     for icon, e in s.icons.items():
-        for w in e.get('allow', []):
+        for k, w in enumerate(e.get('allow', [])):
             if not w.get('reason'):
                 out.append(Finding(icon, None, 'waiver', f'waiver for {w.get("rule")!r} has no reason'))
-            elif (icon, w.get('rule'), w.get('size')) not in used:
+            elif ('icon', icon, k) not in used:
                 out.append(Finding(icon, None, 'waiver-unused', f'waiver for {w.get("rule")!r} matches nothing'))
+    for k, w in enumerate(s.set_allow):
+        if not w.get('reason'):
+            out.append(Finding('icons.toml', None, 'waiver', f'set waiver for {w.get("rule")!r} has no reason'))
+        elif ('set', k) not in used:
+            out.append(Finding('icons.toml', None, 'waiver-unused', f'set waiver for {w.get("rule")!r} matches nothing'))
     rust = {}
     for icon in s.outputs():
         rust.setdefault(rust_const(icon), []).append(icon)
@@ -645,68 +801,31 @@ def lint_set(s):
     return out
 
 
-
-
 # ---------------------------------------------------------------- build
 
-def _tree(text):
-    return ET.fromstring(text)
-
-
-def _presentation(el):
-    return {k: el.get(k) for k in INHERITED if el.get(k) is not None}
-
-
-def _dilated(el, inh, out):
-    """Copy the badge shapes into the knockout mask, black and 1px wider on every side."""
-    tag = local(el.tag)
-    inh = dict(inh)
-    inh.update(_presentation(el))
-    if tag in SHAPES:
-        copy = ET.Element(el.tag, {k: v for k, v in el.attrib.items()
-                                   if k not in INHERITED and k not in ('opacity', 'fill-opacity', 'stroke-opacity')})
-        filled = inh.get('fill', 'black') != 'none'
-        stroked = inh.get('stroke', 'none') != 'none'
-        w = float(inh.get('stroke-width', '1')) if stroked else 0.0
-        cap = inh.get('stroke-linecap', 'butt')
-        copy.set('fill', '#000' if filled else 'none')
-        copy.set('stroke', '#000')
-        copy.set('stroke-width', _fmt(w + 2))
-        copy.set('stroke-linejoin', 'round')
-        copy.set('stroke-linecap', 'square' if cap == 'butt' and stroked else 'round')
-        out.append(copy)
-    for ch in el:
-        _dilated(ch, inh, out)
-
-
-def compose(base_text, badge_text, size, *, base_tone=False):
-    """The base icon with a badge in the bottom-right corner and a 1px knockout under it (ICONS.md §3.2)."""
-    base, badge = _tree(base_text), _tree(badge_text)
-    root = ET.Element(f'{{{SVG_NS}}}svg', {k: v for k, v in base.attrib.items()})
+def compose(base_text, badge_text, size, cell, *, base_tone=False):
+    """ICON-STYLE §7.2: the base in a mask that clears the bottom-right cell, then the glyph in class "badge"."""
+    base, badge = ET.fromstring(base_text), ET.fromstring(badge_text)
+    root = ET.Element(f'{{{SVG_NS}}}svg', dict(base.attrib))
     defs = ET.SubElement(root, f'{{{SVG_NS}}}defs')
     mask = ET.SubElement(defs, f'{{{SVG_NS}}}mask', {'id': KNOCKOUT_ID, 'maskUnits': 'userSpaceOnUse', 'x': '0',
                                                       'y': '0', 'width': str(size), 'height': str(size)})
-    ET.SubElement(mask, f'{{{SVG_NS}}}rect', {'width': str(size), 'height': str(size), 'fill': '#fff'})
-    knock = []
-    badge_inh = {'fill': badge.get('fill', 'black'), 'stroke': badge.get('stroke', 'none'),
-                 'stroke-width': badge.get('stroke-width', '1')}
-    badge_inh.update(_presentation(badge))
-    for ch in badge:
-        _dilated(ch, badge_inh, knock)
-    mask.extend(knock)
+    # The mask's rects set stroke="none": they would inherit the root's currentColor stroke, which (white in
+    # the tint-ready copies) draws a half-strength seam along the cell's edge.
+    ET.SubElement(mask, f'{{{SVG_NS}}}rect', {'width': str(size), 'height': str(size), 'fill': '#fff', 'stroke': 'none'})
+    c = _fmt(cell)
+    ET.SubElement(mask, f'{{{SVG_NS}}}rect', {'x': _fmt(size - cell), 'y': _fmt(size - cell), 'width': c,
+                                              'height': c, 'fill': '#000', 'stroke': 'none'})
     body = []
     for ch in base:
-        if local(ch.tag) == 'defs':
-            defs.extend(list(ch))
-        else:
-            body.append(ch)
+        (defs.extend(list(ch)) if local(ch.tag) == 'defs' else body.append(ch))
     g = ET.SubElement(root, f'{{{SVG_NS}}}g', {'mask': f'url(#{KNOCKOUT_ID})'})
     if base_tone:
+        g.set('class', 'subject')
         g.set('opacity', '.4')
     g.extend(body)
-    # the badge keeps its own presentation defaults, whatever the base root sets
-    bg = ET.SubElement(root, f'{{{SVG_NS}}}g', {k: v for k, v in badge.attrib.items()
-                                                if k in INHERITED or k in ('fill-rule',)})
+    bg = ET.SubElement(root, f'{{{SVG_NS}}}g', {'class': 'badge', **{k: v for k, v in badge.attrib.items()
+                                                                     if k in INHERITED and v != root.get(k)}})
     bg.extend(list(badge))
     return ET.tostring(root, encoding='unicode') + '\n'
 
@@ -716,12 +835,17 @@ def white(text):
     return text.replace('currentColor', '#fff')
 
 
+def high_contrast(text, tone):
+    """The HC copy: the subject tone rises from .4 (L5 guarantees .4 appears only on the subject)."""
+    return re.sub(r'((?:fill-|stroke-)?opacity)="0?\.4"', lambda m: f'{m.group(1)}="{_fmt(tone)}"', text)
+
+
 def rust_const(icon):
     return icon.upper().replace('+', '__').replace('.', '_').replace('-', '_')
 
 
 def render_outputs(s, only=None):
-    """{(id, size): svg text} for every output id (sources, badge variants and compositions)."""
+    """{(id, size): svg text} for every output id: sources, badge variants and compositions."""
     out = {}
 
     def read(p):
@@ -732,28 +856,31 @@ def render_outputs(s, only=None):
         if only and icon not in only:
             continue
         base, _, badge = icon.partition('+')
-        e = s.entry(base)
-        comp = e.get('compose')
+        comp = s.entry(base).get('compose')
         for size in s.sizes:
+            cell = s.specs[size].badge
             if badge:
                 src, b, tone = s.source(base, size), badge_source(badge, size), False
             elif comp:
                 src, b, tone = s.source(comp['base'], size), badge_source(comp['badge'], size), comp.get('base_tone', False)
             else:
-                src = s.source(icon, size)
-                if src:
-                    out[(icon, size)] = read(src)
+                if s.source(icon, size):
+                    out[(icon, size)] = read(s.source(icon, size))
                 continue
-            if src and b:
-                out[(icon, size)] = compose(read(src), read(b), size, base_tone=tone)
+            if src and b and cell:            # no badge cell (12, 14) or no glyph drawn yet: no variant there
+                out[(icon, size)] = compose(read(src), read(b), size, cell, base_tone=tone)
     return out
 
 
 def build(s, out_dir, only=None):
     outs = render_outputs(s, only)
     ids = [i for i in s.outputs() if any((i, z) in outs for z in s.sizes)]
+    tone = s.style.hc_tone
     for (icon, size), text in outs.items():
-        for sub, t in ((str(size), text), (os.path.join('white', str(size)), white(text))):
+        variants = ((str(size), text), (os.path.join('hc', str(size)), high_contrast(text, tone)),
+                    (os.path.join('white', str(size)), white(text)),
+                    (os.path.join('white', 'hc', str(size)), white(high_contrast(text, tone))))
+        for sub, t in variants:
             os.makedirs(os.path.join(out_dir, sub), exist_ok=True)
             with open(os.path.join(out_dir, sub, icon + '.svg'), 'w') as f:
                 f.write(t)
@@ -785,11 +912,47 @@ def build(s, out_dir, only=None):
     return ids
 
 
-# ---------------------------------------------------------------- contact sheet
+def pick_master(p, masters):
+    """ICON-STYLE §5.3 Z2: the master for a box of p physical pixels. Returns (master, drawn_px, offset, mode):
+    draw `master` at `drawn_px` pixels, `offset` px in from the box's top-left (Z1: the box is whole pixels)."""
+    cands = {m: (m, 1) for m in masters}
+    for m in masters:
+        cands.setdefault(2 * m, (m, 2))                  # virtual masters: m at x2 is crisp
+    if p in cands:
+        m, k = cands[p]
+        return m, p, 0, 'exact' if k == 1 else 'x2'
+    below = [c for c in cands if c <= p and p - c <= 2]
+    if below:
+        c = max(below)
+        return cands[c][0], c, (p - c) // 2, 'padded'
+    c = min(cands, key=lambda c: (abs(c - p), -c))
+    return cands[c][0], p, 0, 'scaled'
 
-THEMES = [('Dark Modern', '#1F1F1F', '#CCCCCC'), ('Light Modern', '#F8F8F8', '#3B3B3B')]
-CHROME = ['files', 'search', 'source-control', 'debug-alt', 'extensions', 'layers', 'filter', 'settings-gear',
-          'error', 'warning', 'pinned', 'eye']
+
+# ---------------------------------------------------------------- contact sheet
+# Absorbs plans/research/icon-style/sheet.py (IC0): root `color` instead of replacing currentColor, so the slot
+# classes resolve as ICR1's injected stylesheet will; the slot and fractional-zoom sections.
+
+# name, background (sideBar), icon, warning, error, success
+THEMES = [('Dark Modern', '#181818', '#CCCCCC', '#CCA700', '#F14C4C', '#73C991'),
+          ('Light Modern', '#F8F8F8', '#3B3B3B', '#BF8803', '#E51400', '#388A34')]
+CHROME = ['files', 'search', 'source-control', 'debug-alt', 'extensions', 'layers', 'filter', 'settings-gear']
+ZOOMS = (1.0, 1.1, 1.25, 1.5)
+
+
+def with_color(svg, fg, style=None):
+    svg = re.sub(r'<svg ', f'<svg color="{fg}" ', svg, count=1)
+    if style:
+        svg = re.sub(r'(<svg [^>]*>)', lambda m: m.group(1) + '<style>' + style + '</style>', svg, count=1)
+    return svg
+
+
+def placed(svg, box, size, ox, oy):
+    """The master drawn at `size` px with its origin at (ox, oy) inside a `box` px square (fractional ok)."""
+    inner = re.sub(r'<svg ([^>]*?)width="[^"]+" height="[^"]+"',
+                   lambda m: f'<svg {m.group(1)}x="{ox}" y="{oy}" width="{size}" height="{size}"', svg, count=1)
+    return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{box}" height="{box}" viewBox="0 0 {box} {box}">'
+            + inner + '</svg>')
 
 
 class Renderer:
@@ -800,11 +963,11 @@ class Renderer:
         if not shutil.which(tool):
             sys.exit(f'sheet: {tool} is not on PATH (--renderer rsvg needs librsvg2-bin; resvg needs `cargo install resvg`)')
 
-    def __call__(self, text, px, fg):
+    def __call__(self, text, px, fg, style=None):
         from PIL import Image
-        key = (text, px, fg)
+        key = (text, px, fg, style)
         if key not in self.cache:
-            svg = text.replace('currentColor', fg).encode()
+            svg = with_color(text, fg, style).encode()
             if self.kind == 'rsvg':
                 png = subprocess.run(['rsvg-convert', '-w', str(px), '-h', str(px)], input=svg,
                                      capture_output=True, check=True).stdout
@@ -829,8 +992,24 @@ def nearest_master(outs, icon, px, sizes):
     return outs[(icon, z)], False
 
 
+def slot_style(icon, text, theme):
+    """The slot colours the sheet demonstrates for an icon with an accent or a badge (ICON-STYLE §6)."""
+    _, _, warning, error, success = theme[1:]
+    rules = []
+    if 'class="accent"' in text:
+        c = success if re.search(r'\.(run|pass)', icon) else error if re.search(r'\.(error|stop|fail)', icon) else warning
+        rules.append(f'.accent{{color:{c}}}')
+    if 'class="badge"' in text:
+        b = icon.partition('+')[2]
+        c = {'warning': warning, 'remove': error, 'error': error, 'add': success, 'check': success,
+             'run': success}.get(b, warning)
+        rules.append(f'.badge{{color:{c}}}')
+    return ''.join(rules) or None
+
+
 def sheet(s, out_png, *, codicons=None, zoom=None, only=None, renderer='rsvg', sizes=None):
-    """One row per icon, laid out across every optical size at 1x and 2x, in Dark and Light Modern."""
+    """The approval sheet: one row per icon across every optical size at 1x and 2x, in Dark and Light Modern,
+    with the nearest codicon; then the badges, the colour slots and fractional zoom (ICON-STYLE §5.3)."""
     from PIL import Image, ImageDraw, ImageFont
     render = Renderer(renderer)
     font = ImageFont.load_default(size=11)
@@ -839,10 +1018,8 @@ def sheet(s, out_png, *, codicons=None, zoom=None, only=None, renderer='rsvg', s
     ids = [i for i in s.outputs() if any(k[0] == i for k in outs)]
 
     def codicon(name):
-        if not (codicons and name):
-            return None
-        p = os.path.join(codicons, name + '.svg')
-        if not os.path.exists(p):
+        p = os.path.join(codicons, name + '.svg') if codicons and name else None
+        if not (p and os.path.exists(p)):
             return None
         with open(p) as f:
             return f.read()
@@ -852,114 +1029,155 @@ def sheet(s, out_png, *, codicons=None, zoom=None, only=None, renderer='rsvg', s
     set_w = sum(c[2] for c in cells)
     label_w, gap, cname_w = 290, 16, 110
     panel_w = 8 + set_w + gap + sum(c[2] for c in ccells) + cname_w
-    row_h = max(2 * max(sizes) + 12, 48)
-    head_h, strip_h = 72, 104
-    badge_rows = [(b, {z: open(badge_source(b, z)).read() for z in sizes if badge_source(b, z)}) for b in BADGES]
-    badge_row = max(sizes) + 26
-    badge_h = 32 + badge_row * ((len(badge_rows) + 4) // 5)
-    H = head_h + strip_h + row_h * len(ids) + badge_h + 10
     W = label_w + 2 * panel_w
+    row_h = max(2 * max(sizes) + 12, 48)
+    slotted = [i for i in ids if any(slot_style(i, outs[k], THEMES[0]) for k in outs if k[0] == i)]
+    zoomed = [i for i in ids if '+' not in i and sum((i, z) in outs for z in sizes) >= 3][:8]
+    zoom_ps = [round(16 * z) for z in ZOOMS]
+    sections = [('head', 72 + 104), ('rows', row_h * len(ids)), ('badges', 32 + (max(sizes) + 26) * 3)]
+    if slotted:
+        sections.append(('slots', 16 + 70 * ((len(slotted) + 1) // 2)))
+    if zoomed:
+        sections.append(('zoom', 40 + 36 * len(zoomed)))
+    H = sum(h for _, h in sections) + 10
     img = Image.new('RGBA', (W, H), '#FFFFFF')
     d = ImageDraw.Draw(img)
-    d.text((8, 6), f'{s.name}: {len(ids)} icons, {s.licence}', fill='#000', font=font)
-    d.text((8, 22), 'sizes ' + ', '.join(map(str, sizes)) + ' at 1x, then at 2x', fill='#444', font=font)
-    d.text((8, 38), 'underlined cell: no master at that size\n(the nearest master, scaled)', fill='#888', font=font)
-    for t, (name, bg, fg) in enumerate(THEMES):
-        x0 = label_w + t * panel_w
-        d.rectangle([x0, 0, x0 + panel_w - 1, H], fill=bg)
-        d.text((x0 + 8, 6), name, fill=fg, font=font)
-        x = x0 + 8
-        for master, px, slot in cells:
-            d.text((x, head_h - 16), f'{master}', fill=fg, font=font)
-            if px == master == sizes[0] or px == 2 * master and master == sizes[0]:
-                d.text((x, head_h - 32), '@1x' if px == master else '@2x', fill=fg, font=font)
-            x += slot
-        d.text((x + gap, head_h - 16), 'nearest codicon', fill=fg, font=font)
-        # the toolbar strip: codicons chrome, then the set, at 16@1x and 16@2x
-        own = [('i', i) for i in ids if '+' not in i]
-        for k, scale in enumerate((1, 2)):
-            x, y = x0 + 8, head_h + k * 46
-            chrome = [('c', c) for c in CHROME[:(8 if scale == 1 else 4)]] if codicons else []
-            for kind, name_ in chrome + own:
-                text = codicon(name_) if kind == 'c' else nearest_master(outs, name_, 16, sizes)[0]
-                if text is None:
-                    continue
-                if x + 16 * scale > x0 + panel_w - 8:
-                    break
-                img.alpha_composite(render(text, 16 * scale, fg), (x, y + (40 - 16 * scale) // 2))
-                x += 16 * scale + (6 if scale == 1 else 8)
-    d.text((8, head_h + 4), 'toolbar strip @1x: codicons\nchrome, then the set at 16'
-           + ('' if codicons else '\n(no --codicons: set only)'), fill='#000', font=font)
-    d.text((8, head_h + 58), 'same @2x', fill='#000', font=font)
-    y = head_h + strip_h
-    for n, icon in enumerate(ids, 1):
-        base, _, badge = icon.partition('+')
-        e = s.entry(base)
-        drawn = [z for z in sizes if (icon, z) in outs]
-        state = 'approved' if e.get('approved') else 'draft'
-        d.text((8, y + 6), f'{n:>3}  {icon}', fill='#000', font=font)
-        d.text((8, y + 21), f'     {state}; masters ' + ', '.join(map(str, drawn)), fill='#666', font=font)
-        note = (f'= {base} + {badge} badge' if badge else
-                '= {base} + {badge} badge'.format(**e['compose']) if e.get('compose') else e.get('metaphor', ''))
-        d.text((8, y + 35), '     ' + note[:46], fill='#666', font=font)
-        cname = e.get('codicon', '')
-        ctext = codicon(cname)
-        for t, (name, bg, fg) in enumerate(THEMES):
-            x = label_w + t * panel_w + 8
-            for master, px, slot in cells:
-                text, own = nearest_master(outs, icon, master, sizes)
-                top = y + (row_h - px) // 2
-                img.alpha_composite(render(text, px, fg), (x + (slot - px) // 2, top))
-                if not own:
-                    d.line([x + 2, top + px + 2, x + slot - 4, top + px + 2], fill='#C05050', width=1)
-                x += slot
-            x += gap
-            if ctext:
-                for master, px, slot in ccells:
-                    img.alpha_composite(render(ctext, px, fg), (x + (slot - px) // 2, y + (row_h - px) // 2))
-                    x += slot
-            else:
-                x += sum(c[2] for c in ccells) if cname else 0
-            if cname:
-                lx = x if ctext else x - sum(c[2] for c in ccells)
-                d.text((lx, y + row_h // 2 - 6), cname if ctext else f'{cname}\n(not vendored)', fill=fg, font=font)
+    for t, th in enumerate(THEMES):
+        d.rectangle([label_w + t * panel_w, 0, label_w + (t + 1) * panel_w - 1, H], fill=th[1])
+
+    def ic(text, px, x, y, fg, style=None):
+        img.alpha_composite(render(text, px, fg, style), (int(x), int(y)))
+
+    y = 0
+    for name, h in sections:
         d.line([0, y, W, y], fill='#88888860')
-        y += row_h
-    d.line([0, y, W, y], fill='#88888860')
-    d.text((8, y + 8), 'badges (composed by build, 1x)', fill='#000', font=font)
-    y += 28
-    for k, (b, srcs) in enumerate(badge_rows):
-        col, row = k % 5, k // 5
-        for t, (name, bg, fg) in enumerate(THEMES):
-            x = label_w + t * panel_w + 8 + col * (panel_w - 16) // 5
-            d.text((x, y + row * badge_row), b, fill=fg, font=font)
-            xx = x
-            for master in sizes:
-                if master in srcs:
-                    img.alpha_composite(render(srcs[master], master, fg), (xx, y + row * badge_row + 16))
-                    xx += master + 6
+        if name == 'head':
+            d.text((8, 6), f'{s.name}: {len(ids)} icons, {s.licence}', fill='#000', font=font)
+            d.text((8, 22), 'sizes ' + ', '.join(map(str, sizes)) + ' at 1x, then at 2x', fill='#444', font=font)
+            d.text((8, 38), 'red underline: no master at that size\n(the nearest master, scaled)', fill='#888', font=font)
+            d.text((8, 76), 'toolbar strip @1x: codicons\nchrome, then the set at 16'
+                   + ('' if codicons else '\n(no --codicons: set only)'), fill='#000', font=font)
+            d.text((8, 130), 'same @2x', fill='#000', font=font)
+            own = [i for i in ids if '+' not in i]
+            for t, th in enumerate(THEMES):
+                x0 = label_w + t * panel_w
+                d.text((x0 + 8, 6), th[0], fill=th[2], font=font)
+                x = x0 + 8
+                for master, px, slot in cells:
+                    d.text((x, 56), str(master), fill=th[2], font=font)
+                    if master == sizes[0]:
+                        d.text((x, 40), '@1x' if px == master else '@2x', fill=th[2], font=font)
+                    x += slot
+                d.text((x + gap, 56), 'nearest codicon', fill=th[2], font=font)
+                for k, scale in enumerate((1, 2)):
+                    x, yy = x0 + 8, 72 + k * 46
+                    chrome = [codicon(c) for c in CHROME[:(8 if scale == 1 else 4)]] if codicons else []
+                    for text in [c for c in chrome if c] + [nearest_master(outs, i, 16, sizes)[0] for i in own]:
+                        if x + 16 * scale > x0 + panel_w - 8:
+                            break
+                        ic(text, 16 * scale, x, yy + (40 - 16 * scale) // 2, th[2])
+                        x += 16 * scale + (6 if scale == 1 else 8)
+        elif name == 'rows':
+            for n, icon in enumerate(ids, 1):
+                yy = y + (n - 1) * row_h
+                base, _, badge = icon.partition('+')
+                e = s.entry(base)
+                drawn = [z for z in sizes if (icon, z) in outs]
+                d.text((8, yy + 6), f'{n:>3}  {icon}', fill='#000', font=font)
+                d.text((8, yy + 21), f'     {"approved" if e.get("approved") else "draft"}; masters '
+                       + ', '.join(map(str, drawn)), fill='#666', font=font)
+                note = (f'= {base} + {badge} badge' if badge else
+                        '= {base} + {badge} badge'.format(**e['compose']) if e.get('compose') else e.get('metaphor', ''))
+                d.text((8, yy + 35), '     ' + note[:46], fill='#666', font=font)
+                cname = e.get('codicon', '')
+                ctext = codicon(cname)
+                for t, th in enumerate(THEMES):
+                    x = label_w + t * panel_w + 8
+                    for master, px, slot in cells:
+                        text, mine = nearest_master(outs, icon, master, sizes)
+                        top = yy + (row_h - px) // 2
+                        ic(text, px, x + (slot - px) // 2, top, th[2])
+                        if not mine:
+                            d.line([x + 2, top + px + 2, x + slot - 4, top + px + 2], fill='#C05050')
+                        x += slot
+                    x += gap
+                    if ctext:
+                        for master, px, slot in ccells:
+                            ic(ctext, px, x + (slot - px) // 2, yy + (row_h - px) // 2, th[2])
+                            x += slot
+                    if cname:
+                        d.text((x, yy + row_h // 2 - 6), cname if ctext else f'{cname}\n(not vendored)',
+                               fill=th[2], font=font)
+                d.line([0, yy, W, yy], fill='#88888840')
+        elif name == 'badges':
+            d.text((8, y + 8), 'badges (composed by build into\nthe bottom-right cell, 1x)', fill='#000', font=font)
+            bh = max(sizes) + 26
+            for k, b in enumerate(s.style.badges):
+                col, row = k % 4, k // 4
+                for t, th in enumerate(THEMES):
+                    x = label_w + t * panel_w + 8 + col * (panel_w - 16) // 4
+                    d.text((x, y + 8 + row * bh), b, fill=th[2], font=font)
+                    xx = x
+                    for master in sizes:
+                        if badge_source(b, master):
+                            with open(badge_source(b, master)) as f:
+                                ic(f.read(), master, xx, y + 24 + row * bh, th[2])
+                            xx += master + 6
+        elif name == 'slots':
+            d.text((8, y + 8), 'colour slots (ICON-STYLE 6):\ndefault, then the slot set;\n16@1x, 24@1x, 16@2x',
+                   fill='#000', font=font)
+            for k, icon in enumerate(slotted):
+                col, row = k % 2, k // 2
+                for t, th in enumerate(THEMES):
+                    x = label_w + t * panel_w + 8 + col * (panel_w - 16) // 2
+                    yy = y + 8 + row * 70
+                    d.text((x, yy), icon, fill=th[2], font=font)
+                    for st in (None, 'set'):
+                        for px, master, dx, dy in ((16, 16, 0, 18), (24, 24, 22, 14), (32, 16, 50, 14)):
+                            text = outs.get((icon, master))
+                            if text:
+                                ic(text, px, x + dx, yy + dy, th[2], slot_style(icon, text, th) if st else None)
+                        x += 90
+        elif name == 'zoom':
+            d.text((8, y + 8), 'zoom, 16pt: naive | rule (Z1, Z2)', fill='#000', font=font)
+            for t, th in enumerate(THEMES):
+                x = label_w + t * panel_w + 8
+                for z, p in zip(ZOOMS, zoom_ps):
+                    d.text((x, y + 8), f'{z}x  P={p}', fill=th[2], font=font)
+                    x += 2 * p + 26
+                for n, icon in enumerate(zoomed):
+                    x, yy = label_w + t * panel_w + 8, y + 26 + n * 36
+                    if t == 0:
+                        d.text((8, yy + 10), icon, fill='#000', font=font)
+                    masters = [z for z in sizes if (icon, z) in outs]
+                    for z, p in zip(ZOOMS, zoom_ps):
+                        naive = placed(outs[(icon, 16)], p + 1, 16 * z, 0.35, 0.35)
+                        ic(naive, p + 1, x, yy, th[2])
+                        m, drawn, off, mode = pick_master(p, masters)
+                        ic(placed(outs[(icon, m)], p, drawn, off, off), p, x + p + 8, yy, th[2])
+                        x += 2 * p + 26
+        y += h
     img.convert('RGB').save(out_png, optimize=True)
     if zoom:
         Z = 6
         block = sum(px * Z + 8 for px in sizes) + 16
         cols = max(1, 1600 // block)
-        zrows = (len(ids) + cols - 1) // cols
         cell_h = max(sizes) * Z + 22
-        zi = Image.new('RGB', (cols * block, zrows * cell_h), '#1F1F1F')
+        zi = Image.new('RGB', (cols * block, ((len(ids) + cols - 1) // cols) * cell_h), THEMES[0][1])
         zd = ImageDraw.Draw(zi)
         for n, icon in enumerate(ids):
             cx, cy = (n % cols) * block, (n // cols) * cell_h
             x = cx + 4
             for px in sizes:
-                text, own = nearest_master(outs, icon, px, sizes)
-                ic = render(text, px, '#CCCCCC')
-                bgc = Image.new('RGBA', ic.size, '#1F1F1F')
-                bgc.alpha_composite(ic)
+                text, mine = nearest_master(outs, icon, px, sizes)
+                im = render(text, px, THEMES[0][2])
+                bgc = Image.new('RGBA', im.size, THEMES[0][1])
+                bgc.alpha_composite(im)
                 zi.paste(bgc.resize((px * Z, px * Z), Image.NEAREST), (x, cy + 16))
-                if not own:
+                if not mine:
                     zd.line([x, cy + 16 + px * Z + 2, x + px * Z, cy + 16 + px * Z + 2], fill='#C05050')
                 x += px * Z + 8
-            zd.text((cx + 4, cy + 2), f'{n + 1} {icon}', fill='#CCCCCC', font=font)
+            zd.text((cx + 4, cy + 2), f'{n + 1} {icon}', fill=THEMES[0][2], font=font)
         zi.save(zoom, optimize=True)
     return ids
 
@@ -969,18 +1187,18 @@ def sheet(s, out_png, *, codicons=None, zoom=None, only=None, renderer='rsvg', s
 def main(argv=None):
     ap = argparse.ArgumentParser(prog='icons.py', description=__doc__.split('\n')[0])
     sub = ap.add_subparsers(dest='cmd', required=True)
-    p = sub.add_parser('lint', help='check a set against the ICONS.md §3 rules')
+    p = sub.add_parser('lint', help='check a set against ICON-STYLE §10 (L1-L13)')
     p.add_argument('set')
-    p = sub.add_parser('build', help='compose badges, write white copies, manifest.json and id code')
+    p = sub.add_parser('build', help='compose badges; write HC and white copies, manifest.json and id code')
     p.add_argument('set')
     p.add_argument('out')
     p.add_argument('--only', help='comma-separated output ids')
-    p = sub.add_parser('sheet', help='contact sheet PNG for review')
+    p = sub.add_parser('sheet', help='the approval contact sheet (PNG)')
     p.add_argument('set')
     p.add_argument('out')
     p.add_argument('--codicons', default=os.environ.get('CODICONS_DIR'),
                    help='a directory of codicons <name>.svg (vscode-codicons src/icons); default $CODICONS_DIR')
-    p.add_argument('--zoom', help='also write every size at 1x upscaled 6x (nearest) here')
+    p.add_argument('--zoom', help='also write every size at 1x, enlarged 6x (nearest), here')
     p.add_argument('--only', help='comma-separated output ids')
     p.add_argument('--sizes', help='comma-separated sizes to lay out (default: the sizes the set draws)')
     p.add_argument('--renderer', choices=('rsvg', 'resvg'), default='rsvg')
@@ -991,7 +1209,7 @@ def main(argv=None):
     s = IconSet(a.set)
     only = set(a.only.split(',')) if getattr(a, 'only', None) else None
     if a.cmd == 'lint':
-        findings = lint_badges(s.specs) + lint_set(s)
+        findings = lint_badges(s.style) + lint_set(s)
         for f in findings:
             print(f)
         n = sum(len(s.files(z)) for z in s.sizes)
