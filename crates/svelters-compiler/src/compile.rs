@@ -32,11 +32,15 @@ pub struct CompileOptions<'b> {
     /// Portability mode (`--backend gtk,qt,...`): the other platforms the same component is checked
     /// against; their answers only add `observability_differs` warnings (output stays per platform).
     pub portability: Vec<&'b dyn PlatformSemantics>,
+    /// Q3w (`--css`): scope the `<style>` with the Rust port of Svelte's CSS pipeline
+    /// ([`crate::scoped_css`]) and return it as [`CompileResult::css`], hashed with `css_scope`
+    /// (else Svelte's default hash of `filename`, which then also becomes the elements' scope class).
+    pub scoped_css: bool,
 }
 
 impl<'b> CompileOptions<'b> {
     pub fn new(filename: impl Into<String>, backend: &'b dyn PlatformSemantics) -> Self {
-        CompileOptions { filename: filename.into(), backend, dev: false, css_scope: None, target: &QuickJsHost, strict_native: false, portability: Vec::new() }
+        CompileOptions { filename: filename.into(), backend, dev: false, css_scope: None, target: &QuickJsHost, strict_native: false, portability: Vec::new(), scoped_css: false }
     }
 }
 
@@ -67,6 +71,10 @@ pub struct CompileResult {
     pub diagnostics: Vec<Diagnostic>,
     pub backend: String,
     pub timings: Timings,
+    /// With `CompileOptions::scoped_css`: the scoped `<style>` (None without one, or when the CSS
+    /// step failed).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub css: Option<crate::scoped_css::ScopedCss>,
 }
 
 impl CompileResult {
@@ -121,7 +129,7 @@ fn run_component(src: &str, opts: &CompileOptions, check: bool) -> CompileResult
     let mut timings = Timings::default();
     let backend = opts.backend.backend().to_string();
     let mut diags = Diagnostics::for_backend(&backend);
-    let done = |js, map, diags: Diagnostics, timings| CompileResult { js, map, diagnostics: diags.finish(src), backend: backend.clone(), timings };
+    let done = |js, map, diags: Diagnostics, timings| CompileResult { js, map, diagnostics: diags.finish(src), backend: backend.clone(), timings, css: None };
 
     let t = Instant::now();
     let mut root = match parse(src, &ParseOptions { loose: false, native: !opts.backend.html_syntax() }) {
@@ -152,9 +160,11 @@ fn run_component(src: &str, opts: &CompileOptions, check: bool) -> CompileResult
     timings.analyze_us = t.elapsed().as_micros() as u64;
 
     let t = Instant::now();
+    let css = if opts.scoped_css { crate::scoped_css::scoped_css(src, &root, &analysis, &opts.filename, opts.css_scope.as_deref(), opts.dev, &mut diags) } else { None };
+    let css_scope = opts.css_scope.as_deref().or(css.as_ref().map(|c| c.hash.as_str()));
     let is_setter = |name: &str| opts.backend.is_setter_property(name);
     let sheet = root.css.as_ref().map(|c| parse_style(&c.content.styles, c.content.start, &mut diags, &is_setter));
-    let ir = lower(&root, opts.backend, sheet.as_ref(), opts.css_scope.as_deref(), &mut diags);
+    let ir = lower(&root, opts.backend, sheet.as_ref(), css_scope, &mut diags);
     if analysis.template.has_await {
         crate::lower::template_await::check(&root, &mut diags);
     }
@@ -181,10 +191,11 @@ fn run_component(src: &str, opts: &CompileOptions, check: bool) -> CompileResult
     };
     let diags = rw.into_diagnostics();
     timings.generate_us = t.elapsed().as_micros() as u64;
-    match out {
+    let res = match out {
         Some((code, map)) if !diags.has_errors() => done(Some(code), Some(map), diags, timings),
         _ => done(None, None, diags, timings),
-    }
+    };
+    CompileResult { css, ..res }
 }
 
 /// Compiles a `.svelte.js` module (Svelte's `compileModule`, client output): runes in module
@@ -192,7 +203,7 @@ fn run_component(src: &str, opts: &CompileOptions, check: bool) -> CompileResult
 pub fn compile_module(src: &str, opts: &ModuleOptions) -> CompileResult {
     let mut timings = Timings::default();
     let mut diags = Diagnostics::default();
-    let done = |js, map, diags: Diagnostics, timings| CompileResult { js, map, diagnostics: diags.finish(src), backend: String::new(), timings };
+    let done = |js, map, diags: Diagnostics, timings| CompileResult { js, map, diagnostics: diags.finish(src), backend: String::new(), timings, css: None };
 
     let t = Instant::now();
     let mut comments = Vec::new();

@@ -12,6 +12,8 @@ svelters-abi.workspace = true
 [dev-dependencies]
 svelters-host.workspace = true
 serde_json.workspace = true
+# WG3: pins, golden files and the XTEST injector of the NA1 capture (tests/na_capture.rs).
+svelters-conformance.workspace = true
 
 [build-dependencies]
 svelters-qt-build.workspace = true
@@ -83,4 +85,8 @@ harness = false
 
 [[test]]
 name = "host_types"
+harness = false
+
+[[test]]
+name = "na_capture"
 harness = false

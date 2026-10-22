@@ -54,6 +54,9 @@ pub struct CheckOptions<'b> {
     pub dev: bool,
     /// Portability mode: other platforms the component is checked against (`observability_differs`).
     pub portability: Vec<&'b dyn PlatformSemantics>,
+    /// Run Q3w's CSS port over `<style>` (`CompileOptions::scoped_css`): its `css_*` errors and
+    /// `css_unused_selector` warnings are reported too.
+    pub scoped_css: bool,
 }
 
 /// What the file is, by its path.
@@ -198,6 +201,7 @@ struct Key {
     portability: Vec<(String, Option<u64>)>,
     strict_native: bool,
     dev: bool,
+    scoped_css: bool,
 }
 
 impl Key {
@@ -261,6 +265,7 @@ pub fn check_with(path: &str, source: &str, backend: &dyn PlatformSemantics, opt
         portability: opts.portability.iter().map(|p| (p.backend().to_string(), p.fingerprint())).collect(),
         strict_native: opts.strict_native,
         dev: opts.dev,
+        scoped_css: opts.scoped_css,
     };
     if let Some(last) = &state.last
         && key.reusable()
@@ -281,6 +286,7 @@ pub fn check_with(path: &str, source: &str, backend: &dyn PlatformSemantics, opt
             co.dev = opts.dev;
             co.strict_native = opts.strict_native;
             co.portability = opts.portability.clone();
+            co.scoped_css = opts.scoped_css;
             Some(check_component(source, &co))
         }
         FileKind::Module => Some(compile_module(source, &ModuleOptions { filename: path.to_string(), dev: opts.dev })),

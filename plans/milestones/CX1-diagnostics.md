@@ -15,7 +15,7 @@ Branch `ci/cx1`.
 pub fn check(path: &str, source: &str, backend: &dyn PlatformSemantics, state: &mut FileState) -> CheckResult;
 pub fn check_with(path: &str, source: &str, backend: &dyn PlatformSemantics, opts: &CheckOptions, state: &mut FileState) -> CheckResult;
 
-pub struct CheckOptions<'b> { pub strict_native: bool, pub dev: bool, pub portability: Vec<&'b dyn PlatformSemantics> }
+pub struct CheckOptions<'b> { pub strict_native: bool, pub dev: bool, pub portability: Vec<&'b dyn PlatformSemantics>, pub scoped_css: bool }
 pub struct FileState { .. }                 // one per file; new(), stats(), reset()
 pub struct CheckResult { pub path: String, pub kind: FileKind, pub diagnostics: Vec<CheckDiagnostic>, pub reuse: Reuse, pub timings: CheckTimings }
 pub enum FileKind { Component, Module, Other }          // by path: .svelte, .svelte.js, anything else
@@ -86,9 +86,10 @@ own (`svelters::<area>::<name>`, areas element, property, method, event, bind, r
 child_attr, style, list, transition, feature) and 112 ported from Svelte (`svelte::<code>`, Svelte's
 message template, link to `https://svelte.dev/e/<code>`). Fifteen of the Svelte ones are Q3's
 `css_*` codes (`svelte/css`, merged while CX1 ran), registered after the merge. They reach `compile`
-and `check` only as parse errors in HTML syntax (the DOM conformance spec); a native `<style>` is
-parsed by `crate::style` (`svelters::style::*`), and Q3's scoping pass reports them to callers of
-`compile_component_css`.
+and `check` as parse errors in HTML syntax (the DOM conformance spec), and with Q3w's
+`scoped_css` option (`CompileOptions::scoped_css`, `CheckOptions::scoped_css`, `--css`) from the CSS
+port's pass, which runs before lowering in both `compile` and `check_component`. A native
+`<style>` is otherwise parsed by `crate::style` (`svelters::style::*`).
 
 - Stability: an id is never renamed or reused. A code that stops being reported keeps its row
   (`style_unknown_declaration` is registered but not reported yet).
@@ -189,11 +190,11 @@ code. Later "did you mean" alternatives may name an element that does not fit th
 ## 9. Not run locally
 
 - The full compiler test suite and the workspace nextest (CI). Locally, after the last code edit
-  (the `css_*` rows, on the merge with Q3): `cargo check -p svelters-compiler --all-targets` and
-  `cargo nextest run -p svelters-compiler --test cx1_check --test cx1_codes --test fw1_forwarding`
-  (all pass). Earlier in the lane, before the capture fix-it change and the merges, also
-  `--lib --test r2_observe --test runes --test fx1_style` (all pass). Q3's `css_scope` test was not
-  run (no change to its code). `cx1_check`'s corpus test
+  (the merge with Q3w, which conflicted in `compile.rs` and the bin, and `CheckOptions::scoped_css`):
+  `cargo check -p svelters-compiler --all-targets` and `cargo nextest run -p svelters-compiler
+  --test cx1_check --test cx1_codes --test fw1_forwarding --test q3w_css_wiring` (24 pass). Earlier
+  in the lane, before the capture fix-it change and the merges, also `--lib --test r2_observe
+  --test runes --test fx1_style` (all pass). Q3's `css_scope` test was not run. `cx1_check`'s corpus test
   compiles every `.svelte` file under `tests/{fw1,r2,runes}`, `fixtures/` and `examples/` both ways.
 - Conformance (CI): diagnostics' codes and messages are unchanged, so no score change is expected.
 - The docs site build and link check (CI): the new page is Markdown with no internal
@@ -201,8 +202,8 @@ code. Later "did you mean" alternatives may name an element that does not fit th
 - No backend (GTK/Qt/egui) or JS package tests: nothing outside `svelters-compiler` and the docs
   changed. The first CI run (`js` 39796209252) caught `style_state_unsupported` unregistered (the
   debug panic, in `experiments/native-compiler/compiled`): the scan missed codes written as
-  `Some(("code", why))`. Registered, and the scan now covers that form; after that edit only
-  `cx1_codes` ran locally (the `compiled` experiment needs `pnpm install`, left to CI).
+  `Some(("code", why))`. Registered, and the scan now covers that form. The `compiled` experiment
+  needs `pnpm install` in the worktree and was left to CI.
 
 ## 10. Open points (recommendation taken)
 

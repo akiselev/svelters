@@ -12,6 +12,7 @@ pub mod diag;
 pub mod estree;
 mod fixits;
 pub mod lower;
+pub mod scoped_css;
 pub mod semantics;
 pub mod style;
 pub mod svelte;

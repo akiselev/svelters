@@ -309,3 +309,16 @@ fn fixes_in_the_corpus_resolve() {
     }
     assert!(n >= 5, "{n}");
 }
+
+#[test]
+fn scoped_css_diagnostics_reach_the_check() {
+    use svelters_compiler::check::{CheckOptions, check_with};
+    let src = "<label class=\"a\" label=\"x\" />\n<style>\n  .b { color: red; }\n</style>\n";
+    let mut st = FileState::new();
+    let plain = check("App.svelte", src, gtk(), &mut st);
+    assert_eq!(count(&plain, "css_unused_selector"), 0, "{:#?}", plain.diagnostics);
+    let opts = CheckOptions { scoped_css: true, ..Default::default() };
+    let scoped = check_with("App.svelte", src, gtk(), &opts, &mut st);
+    assert_eq!(scoped.reuse, Reuse::None);
+    assert_eq!(find(&scoped, "css_unused_selector").id, "svelte::css_unused_selector");
+}

@@ -1,0 +1,12 @@
+{
+  "id": "word-delete-fwd",
+  "pin": 1,
+  "title": "Delete the next word, repeatedly, from the start",
+  "setup": {
+    "fields": { "a": { "text": "foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end", "sel": [0, 0] }, "b": { "text": "second" } },
+    "focus": "a"
+  },
+  "steps": [
+    { "key": "delete-word-fwd", "repeat": 15 }
+  ]
+}
