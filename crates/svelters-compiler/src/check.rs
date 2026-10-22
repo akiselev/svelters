@@ -289,7 +289,7 @@ pub fn check_with(path: &str, source: &str, backend: &dyn PlatformSemantics, opt
             co.scoped_css = opts.scoped_css;
             Some(check_component(source, &co))
         }
-        FileKind::Module => Some(compile_module(source, &ModuleOptions { filename: path.to_string(), dev: opts.dev })),
+        FileKind::Module => Some(compile_module(source, &ModuleOptions { filename: path.to_string(), dev: opts.dev, hmr: false })),
         FileKind::Other => None,
     };
     let (raw, timings) = match res {

@@ -321,11 +321,6 @@ pub static KINDS: &[KindDef] = &[
     // ---- WG4b: appended (tables in `pickers.rs`) ----
     super::pickers::DATE_PICKER,
     super::pickers::COLOR_PICKER,
-
-
-
-
-
-
-
+    // ---- LS1: appended after INT1's kinds (`virtuallist.rs`) ----
+    super::virtuallist::DEF,
 ];

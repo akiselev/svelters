@@ -4139,6 +4139,7 @@ dependencies = [
  "directories",
  "inventory",
  "notify",
+ "open",
  "rayon",
  "rquickjs",
  "schemars",

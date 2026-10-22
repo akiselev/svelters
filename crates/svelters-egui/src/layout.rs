@@ -359,7 +359,7 @@ impl Metrics {
                 }
                 vec2(wdt, interact.y)
             }
-            W::Box | W::Window { .. } | W::Grid { .. } | W::ScrollArea { .. } => Vec2::ZERO,
+            W::Box | W::Window { .. } | W::Grid { .. } | W::ScrollArea { .. } | W::VirtualList(_) => Vec2::ZERO,
             // ---- WG2a ----
             W::Menu(x) => crate::menus::measure(self, x),
             W::Overlay(_) => Vec2::ZERO,
@@ -527,6 +527,9 @@ impl LayoutPartialTree for Tree<'_> {
                 }
                 return out;
             }
+            if matches!(tree.s.w(i), W::VirtualList(_)) {
+                return vlist_layout(tree, id, inputs);
+            }
             tree.leaf_layouts += 1;
             let m = tree.m;
             let s = &mut *tree.s;
@@ -562,6 +565,58 @@ impl LayoutPartialTree for Tree<'_> {
             out
         })
     }
+}
+
+/// LS1: a `virtual-list` sizes itself as an empty leaf (its rows never reach its intrinsic size,
+/// ARCH-SCENE §8.2 after slint §4) and, when it performs layout, lays out its bound rows only, at
+/// its width: each row measured to its content height (the list's `row-height` is the minimum) or
+/// at its row source's uniform height, then placed by the list's height model at
+/// `offset(pos) - scroll` (`kinds/virtuallist.rs` `place_rows`). Unbound rows get the hidden
+/// layout.
+fn vlist_layout(tree: &mut Tree<'_>, id: NodeId, inputs: LayoutInput) -> LayoutOutput {
+    use crate::kinds::virtuallist;
+    let i = ix(id);
+    let out = compute_leaf_layout(inputs, &tree.s.layout[i].style, |_, _| 0.0, |known, _| Size { width: known.width.unwrap_or(0.0), height: known.height.unwrap_or(0.0) });
+    if inputs.run_mode != RunMode::PerformLayout {
+        return out;
+    }
+    let (w, h) = (out.size.width, out.size.height);
+    let (placed, fixed, min_h) = {
+        let W::VirtualList(v) = tree.s.w(i) else { unreachable!("a virtual-list") };
+        (v.placed(tree.s), virtuallist::uniform_height(v), v.heights().estimate().min(v.row_height_points()))
+    };
+    for k in 0..tree.s.children[i].len() {
+        let c = tree.s.children[i][k];
+        if !placed.iter().any(|&(n, _)| n == c) {
+            compute_hidden_layout(tree, tid(c));
+        }
+    }
+    let mut measured = Vec::with_capacity(placed.len());
+    for (c, pos) in placed {
+        let r = tree.compute_child_layout(
+            tid(c),
+            LayoutInput {
+                run_mode: RunMode::PerformLayout,
+                sizing_mode: SizingMode::InherentSize,
+                axis: RequestedAxis::Both,
+                known_dimensions: Size { width: Some(w), height: fixed },
+                known_dimensions_are_definite: Size { width: true, height: fixed.is_some() },
+                parent_size: Size { width: Some(w), height: Some(h) },
+                available_space: Size { width: AvailableSpace::Definite(w), height: AvailableSpace::MaxContent },
+                vertical_margins_are_collapsible: Line::FALSE,
+            },
+        );
+        measured.push((c, pos, fixed.unwrap_or(r.size.height.max(min_h))));
+    }
+    let W::VirtualList(v) = tree.s.w_mut(i) else { unreachable!("a virtual-list") };
+    let places = virtuallist::place_rows(v, vec2(w, h), &measured);
+    for (k, (c, p, sz)) in places.into_iter().enumerate() {
+        let mut l = Layout::with_order(k as u32);
+        l.location = taffy::Point { x: p.x, y: p.y };
+        l.size = Size { width: sz.x, height: sz.y };
+        tree.set_unrounded_layout(tid(c), &l);
+    }
+    out
 }
 
 impl Tree<'_> {
