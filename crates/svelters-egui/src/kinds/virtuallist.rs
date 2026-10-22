@@ -1161,7 +1161,19 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         row_ui.set_clip_rect(clip);
         let mark = crate::scene::virt::widgets_in_layer(&ctx, row_ui.layer_id());
         crate::walk::paint_at(s, ni, origin, &mut row_ui, out);
-        crate::scene::virt::label_row_by_contents(&ctx, row_id, row_ui.layer_id(), mark);
+        // OW5a: a row whose contents are clipped away (partly scrolled out) is still named, by
+        // its type-ahead label or its position
+        if !crate::scene::virt::label_row_by_contents(&ctx, row_id, row_ui.layer_id(), mark) {
+            let name = match s.w(i) {
+                W::VirtualList(v) => v.label_at(pos).unwrap_or_else(|| format!("Row {}", pos + 1)),
+                _ => format!("Row {}", pos + 1),
+            };
+            ctx.accesskit_node_builder(row_id, |n| {
+                if n.label().is_none_or(|l| l.trim().is_empty()) {
+                    n.set_label(name);
+                }
+            });
+        }
         s.core[ni].drawn = rr;
         crate::scene::hit::record(s, ni, &row_ui);
         // R8: the cursor row's focus ring, over its contents
