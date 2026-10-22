@@ -112,6 +112,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | LS1 + SG5 virtual lists on egui (SV40, SV47) | DONE | 2026-10-22 | merged (this commit); `virtual-list`, RowPool (no rows built during a fling) |
 | TK1 one-file cases across backends (SV34) | DONE | 2026-10-22 | merged bf82674f |
 | SV48 `Json<T>` error paths through tagged enums | DONE | 2026-10-22 | merged (this commit) |
+| LD2 `<style>` on the live loader (egui) | DONE | 2026-10-22 | merged (this commit), CI green on ed52e2d5; source components compile `scoped_css` + a self-accepting `svelters-style:<id>` module; a style-only edit restyles without remount (state kept); non-egui backends still warn; follow-ups: Q4b (bundle scope class/sheet key from the logical id), extension `:global` sheets → SEC (deferred); OW1a's tests/own_widgets.rs TestSeparator now replaces `menu-separator` (OW3 takes it over) |
 | H1 component HMR on the Rust loader | DONE | 2026-10-22 | merged (this commit); follow-ups H1b (acceptExports propagation), D10 timers, swap budget |
 | H3 `$state` kept on HMR (SV36) | DONE | 2026-10-22 | merged (this commit); follow-ups H3c (children of an edited parent), $bindable fallback, bind:this exclusion |
 | H1b + H3c acceptExports propagation to importers; children's state kept when a parent is swapped | DONE | 2026-10-22 | merged (this commit) |
