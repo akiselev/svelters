@@ -59,6 +59,9 @@ Code's editor tests ported (MIT; keep its notice).
 (user, API or restore), an optional per-pane `max_size`, per-pane host data saved in the layout file, and a
 skip-on-restore flag for temporary panes (an active tool's, for example). Consumers match `PaneEvent` and
 `CloseReason` with a wildcard arm.
+berth BD1b (`9b11a1d`, `docs/DESIGN-DELTAS.md`) renamed `CloseReason::Host` to `Api`, added `Restore` and made the
+enum `#[non_exhaustive]`; `DockCommand::Close` now carries a reason. berth's DESIGN-DELTAS.md is the record of
+where berth departs from this doc.
 
 ## 0. Summary
 
@@ -1102,7 +1105,8 @@ pub enum PaneEvent {
     Closed { pane: PaneId, reason: CloseReason },
 }
 pub enum HiddenReason { InactiveTab, RegionCollapsed, OverlayClosed, CollapsedBySolver, WindowMinimized }
-pub enum CloseReason { User, WindowClosed, LayoutReplaced, Host }
+#[non_exhaustive]
+pub enum CloseReason { User, Api, Restore, WindowClosed, LayoutReplaced }   // berth BD1b (9b11a1d): Host → Api, + Restore
 ```
 
 **Per-frame order.** `DockUi::logic` runs once per frame, not per pass:
