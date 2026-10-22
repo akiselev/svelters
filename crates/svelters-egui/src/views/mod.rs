@@ -47,16 +47,15 @@ pub(crate) fn intrinsic(m: &Metrics, w: &W) -> Vec2 {
     }
 }
 
-/// Paints the view leaves (`toast-host`; a `table-column` draws nothing). False: not a view.
-pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> bool {
+/// Paints the view leaves (`toast-host`; a `table-column` draws nothing) and returns a response
+/// at the node's rect (EV2b's host response). `None`: not a view.
+pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> Option<egui::Response> {
     match arena.w(i) {
-        W::ToastHost(_) => {
-            toast::paint(arena, i, ui, out);
-            true
-        }
-        W::TableColumn { .. } => true,
-        _ => false,
+        W::ToastHost(_) => toast::paint(arena, i, ui, out),
+        W::TableColumn { .. } => {}
+        _ => return None,
     }
+    Some(ui.interact(ui.max_rect(), arena.core[i].egui_id.with("view"), egui::Sense::hover()))
 }
 
 /// Paints view container `i` at `r` (screen) with its children (`leaf::container`'s arm).

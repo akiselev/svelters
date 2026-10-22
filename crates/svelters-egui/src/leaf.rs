@@ -207,10 +207,11 @@ fn scroll(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, out: 
     }
 }
 
-/// Paints the leaf in slot `i` (the walk's index into the scene's columns).
-pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) {
-    if crate::views::leaf(arena, i, ui, out) {
-        return; // WG4a: toast-host, table-column
+/// Paints the leaf in slot `i` (the walk's index into the scene's columns); returns its response
+/// (EV2b: the host response of its behaviours).
+pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> egui::Response {
+    if let Some(resp) = crate::views::leaf(arena, i, ui, out) {
+        return resp; // WG4a: toast-host, table-column
     }
     let h = arena.slots.id_at(i).expect("live leaf").to_raw();
     let kind = arena.core[i].kind as usize;
@@ -395,4 +396,5 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             out.push(Out::Event(h, s, vec![v]));
         }
     }
+    resp
 }
