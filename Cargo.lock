@@ -3927,6 +3927,7 @@ dependencies = [
 name = "svelters-modules"
 version = "0.0.0"
 dependencies = [
+ "libloading",
  "serde",
  "serde_json",
  "svelters-compiler",

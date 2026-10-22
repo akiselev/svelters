@@ -1270,12 +1270,6 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
 
 // ---- module loading ----
 
-/// Host built-in modules: the app's Rust exports and the object core they import. Served before
-/// the provider is asked.
-fn is_builtin(name: &str) -> bool {
-    name == "svelters:core" || name.starts_with("svelters:app/")
-}
-
 /// The QuickJS side of a [`ModuleProvider`]: resolution.
 struct ProviderResolver {
     provider: Rc<dyn ModuleProvider>,
@@ -1297,9 +1291,6 @@ fn versioned(id: &str, versions: &Versions) -> String {
 
 impl Resolver for ProviderResolver {
     fn resolve<'js>(&mut self, _ctx: &Ctx<'js>, base: &str, name: &str, _attrs: Option<ImportAttributes<'js>>) -> Res<String> {
-        if is_builtin(name) {
-            return Ok(name.to_string());
-        }
         let id = self.provider.resolve(unversioned(base), name).map_err(|m| rquickjs::Error::new_resolving_message(base, name, m))?;
         Ok(versioned(&id, &self.versions))
     }
@@ -1315,11 +1306,6 @@ struct ProviderLoader {
 
 impl Loader for ProviderLoader {
     fn load<'js>(&mut self, ctx: &Ctx<'js>, name: &str, _attrs: Option<ImportAttributes<'js>>) -> Res<Module<'js, Declared>> {
-        if is_builtin(name) {
-            let source = crate::exports::builtin_module(name)
-                .ok_or_else(|| rquickjs::Error::new_loading_message(name, "no such module: this binary exports no such svelters:app module"))?;
-            return Module::declare(ctx.clone(), name, source);
-        }
         let code = self.provider.load(unversioned(name)).map_err(|m| rquickjs::Error::new_loading_message(name, m))?;
         declare(ctx, name, code, &self.core, self.hot)
     }
