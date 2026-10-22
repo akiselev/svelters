@@ -54,8 +54,9 @@ Design: `plans/research/HMR.md` §2.1, §3.2–3.5, §4 H1, §6; `plans/research
 - Not run: the upstream hmr conformance samples (`hmr-removal`, `hmr-each-keyed-unshift`, `hmr-dynamic-component`; no
   upstream checkout on this machine; the runner also needs `import.meta.hot` for the wrapper to apply there), the
   op-log fixture `fixtures/hmr` and its GTK/Qt replay, the GTK/Qt `watch` integration tests, #18079's scenario.
-- Dev timer attribution (HMR.md D10) lives in the host prelude: follow-up (coordinator: out of H1). Edit-to-UI time and memory per swap are not
-  measured; the budget defaults are guesses (D-note: measure with a 50-component app).
+- **Follow-up (D10)**: dev timer attribution lives in the host prelude; out of H1 (coordinator).
+- **Follow-up (budget)**: edit-to-UI time and memory per swap are not measured; `hmr_max_swaps` / `hmr_memory_fraction`
+  defaults are guesses until measured on a ~50-component app.
 - Embed mode (`load_entry*`): a change that cannot be applied in place is *not* turned into a full reload; the report
   has `ok == false` and a Host error, and the embedder decides (coordinator, 2026-10-22).
 - **H1b (follow-up)**: an `acceptExports` mismatch (another export changed) propagates to the importers instead of
