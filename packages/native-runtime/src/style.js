@@ -126,7 +126,10 @@ function ensureInit() {
 function sendScheme() {
   const pal = state.target === 'qss' ? paletteOf(state.tokens) : [];
   state.paletteKey = pal.join(SEP);
-  host().style(OP.SCHEME, 0, [state.scheme, ...pal].join(SEP));
+  // VIS1: the egui engine follows its own context's dark mode (the host app's theme) until the app
+  // chooses a scheme; 'auto' says so (the default 'light' would force light CSS in a dark app)
+  const scheme = state.target === 'engine' && !state.schemeChosen ? 'auto' : state.scheme;
+  host().style(OP.SCHEME, 0, [scheme, ...pal].join(SEP));
 }
 
 function collectDeclRules() {

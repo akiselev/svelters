@@ -27,3 +27,6 @@ egui_kittest = { version = "=0.37.0", optional = true }
 # The tests run the egui cases whatever features the build selects (CI builds this crate in one
 # command with `--no-default-features` meant for another package), as svelters-egui does.
 svelters-testkit = { path = ".", features = ["egui"] }
+# VIS1 (tests/vis1.rs): the colour scheme of the default look, and the review crops of `snapshots`.
+svelters-style.workspace = true
+image = { version = "0.25", default-features = false, features = ["png"] }

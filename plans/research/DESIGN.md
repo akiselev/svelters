@@ -237,6 +237,18 @@ These are independent of the scheme, except for density (§2.6).
 | `elev-0..4` | §2.5 | see §2.5 |
 | `motion-fast`, `motion`, `ease-out` | modernUI | 100ms, 150ms, `cubic-bezier(.22,1,.36,1)` |
 
+**VIS1 measured (2026-10-22, VS Code 1.133.0, `conformance/visual/vscode/*/metrics.json`).** The tables above
+hold, with these corrections (the values in use are `svelters_egui::vscode_look::{DARK, LIGHT}`):
+- text buttons are **12 px** (`.monaco-text-button{font-size:12px}`), 26 px tall; body text 13 px;
+- the secondary button border is `button.secondaryBorder`: `#CCCCCC26` dark, `#3B3B3B26` light (not `button.border`);
+- `checkbox.background` is `#F8F8F8` in Light Modern (the input fill is `#FFFFFF`); checkbox radius 3;
+- `inputOption.hoverBackground` is `#5A5D5E80` dark, `#B8B8B850` light; `toolbar.hoverBackground` dark is `#5A5D5E50`;
+- `menu.border` is `#454545` dark; the item under the pointer in a context menu is `#2A2D2E` dark, radius 6, 24 px;
+- menus and the select drop-down: radius 8, `0 0 12px rgba(0,0,0,.14)`; dialogs: radius 12, `0 0 20px rgba(0,0,0,.15)`;
+  hovers: radius 3, border `#CCCCCC33`/`#3B3B3B33`, 12 px text; toasts: radius 4, border `notificationToast.border`;
+- the input box is 25 px in the find widget and 27 px in the settings editor; select boxes 26 px;
+- VS Code shows a button's hover fill while it has focus (dark) and while the pointer is down: there is no pressed look.
+
 The importer (§4.4) also emits every resolved VS Code key as `--vscode-<key with . → ->` (the names VS Code gives
 webviews). A Svelte panel ported from a VS Code webview can then keep `var(--vscode-list-hoverBackground)`.
 

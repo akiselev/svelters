@@ -32,6 +32,8 @@ pub mod scene;
 pub mod spec;
 /// CS5e: the egui cascade (the Rust CSS engine on the scene).
 pub mod style;
+/// VIS1: the default look (VS Code Dark/Light Modern): egui Style, token tables, the base sheet.
+pub mod vscode_look;
 
 mod a11y;
 pub mod anim;

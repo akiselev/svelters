@@ -37,12 +37,12 @@ impl ::eframe::App for EframeApp {
 pub(crate) fn run_eframe(b: &EguiBackend) -> Result<(), String> {
     let (title, size) = root_props(b);
     let app = EframeApp { b: b.clone() };
-    run_native(title, size, Box::new(app))
-}
-
-#[cfg(feature = "eframe")]
-fn run_native(title: String, size: egui::Vec2, app: Box<dyn ::eframe::App>) -> Result<(), String> {
-    run_native_with(title, size, move |_ctx| app)
+    let b = b.clone();
+    run_native_with(title, size, move |ctx| {
+        // VIS1: the default look (VS Code Dark/Light Modern)
+        crate::vscode_look::apply(&b, ctx);
+        Box::new(app)
+    })
 }
 
 /// `make` gets eframe's context before the first frame (an embed attaches to it there).
@@ -86,6 +86,8 @@ pub(crate) fn run_desktop(embed: Embed) -> Result<(), String> {
     // the pass callbacks (R17 phases, the begin-pass plugin) are on eframe's context from frame 1
     run_native_with(title, size, move |ctx| {
         embed.attach(ctx);
+        // VIS1: the default look (VS Code Dark/Light Modern)
+        crate::vscode_look::apply(embed.backend(), ctx);
         Box::new(DesktopApp { embed })
     })
 }

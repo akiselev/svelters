@@ -4193,11 +4193,13 @@ name = "svelters-testkit"
 version = "0.0.0"
 dependencies = [
  "egui_kittest",
+ "image",
  "serde_json",
  "svelters-abi",
  "svelters-backend-log",
  "svelters-egui",
  "svelters-host",
+ "svelters-style",
  "svelters-testkit",
 ]
 

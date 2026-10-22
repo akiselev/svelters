@@ -1,0 +1,112 @@
+/* VIS1: the default look of each kind, VS Code 1.133 (Dark Modern / Light Modern), at theme origin
+   in the lowest layer: author <style> and cadatomic's `@layer cad` beat it. Colours are the --sv-*
+   tokens (vscode_look.rs: DARK / LIGHT, one :root per prefers-color-scheme). egui's Style
+   (vscode_look::egui_style) carries what every kind shares (control height 26, button padding 8x4,
+   radius 4, fonts 13/12/11); this sheet says what differs per kind. Measured references:
+   conformance/visual/vscode/<theme>/metrics.json. */
+@layer sv.base {
+  /* the secondary text button (.monaco-text-button.secondary); VS Code shows the hover fill while
+     the pointer is down, and has no pressed look */
+  button {
+    background-color: var(--sv-button2-bg);
+    color: var(--sv-button2-fg);
+    border-color: var(--sv-button2-border);
+    border-width: 1px;
+    border-radius: 4px;
+  }
+  button:hover,
+  button:active {
+    background-color: var(--sv-button2-hover);
+  }
+  /* the primary button (.monaco-text-button) */
+  button.primary {
+    background-color: var(--sv-button-bg);
+    color: var(--sv-button-fg);
+    border-color: var(--sv-button-border);
+  }
+  button.primary:hover,
+  button.primary:active {
+    background-color: var(--sv-button-hover);
+  }
+
+  /* fields: the input box, the select box, the number box */
+  text-edit,
+  combo-box,
+  drag-value {
+    background-color: var(--sv-control-bg);
+    color: var(--sv-control-fg);
+    border-color: var(--sv-control-border);
+    border-width: 1px;
+    border-radius: 4px;
+  }
+  text-edit:hover,
+  text-edit:active,
+  combo-box:hover,
+  combo-box:active,
+  drag-value:hover,
+  drag-value:active {
+    background-color: var(--sv-control-bg);
+    border-color: var(--sv-control-border);
+  }
+
+  /* a focused input box: focusBorder (VS Code draws it as a 1px outline over the border) */
+  text-edit:focus {
+    border-color: var(--sv-focus);
+  }
+
+  /* checkbox (.monaco-checkbox: 18x18, radius 3); radio buttons and switches take its colours
+     (VS Code has neither) */
+  checkbox,
+  radio-button,
+  switch {
+    background-color: var(--sv-checkbox-bg);
+    color: var(--sv-checkbox-fg);
+    border-color: var(--sv-control-border);
+    border-width: 1px;
+    border-radius: 3px;
+  }
+  checkbox:hover,
+  checkbox:active,
+  radio-button:hover,
+  radio-button:active,
+  switch:hover,
+  switch:active {
+    background-color: var(--sv-checkbox-bg);
+    border-color: var(--sv-control-border);
+  }
+
+  /* toggle-button: the input option toggle (.monaco-custom-toggle, radius 3); checked fills with
+     inputOption.activeBackground and its border */
+  toggle-button {
+    background-color: transparent;
+    color: var(--sv-checkbox-fg);
+    border-color: transparent;
+    border-width: 1px;
+    border-radius: 3px;
+  }
+  toggle-button:hover,
+  toggle-button:active {
+    background-color: var(--sv-toggle-hover);
+  }
+  toggle-button:checked {
+    background-color: var(--sv-toggle-on-bg);
+    color: var(--sv-toggle-on-fg);
+    border-color: var(--sv-toggle-on-border);
+  }
+
+  /* a frameless toggle-button is a list row (selectable label): list.hoverBackground, and
+     list.activeSelection{Background,Foreground} when checked */
+  toggle-button[frame="false"] {
+    border-color: transparent;
+    border-radius: 0px;
+  }
+  toggle-button[frame="false"]:hover,
+  toggle-button[frame="false"]:active {
+    background-color: var(--sv-list-hover);
+  }
+  toggle-button[frame="false"]:checked {
+    background-color: var(--sv-list-sel);
+    color: var(--sv-list-sel-fg);
+    border-color: transparent;
+  }
+}

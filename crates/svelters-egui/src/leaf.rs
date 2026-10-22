@@ -14,7 +14,8 @@ use svelters_abi::Value;
 /// `text` in the `text_style` font at `weight` (the plain text, so the style's font, at 400).
 fn weighted(ui: &Ui, text: &str, text_style: egui::TextStyle, weight: i64) -> WidgetText {
     if weight == 400 {
-        return text.into();
+        // the kind's text style, explicitly (VIS1: a plain string fell back to Body in buttons)
+        return egui::RichText::new(text).text_style(text_style).into();
     }
     egui::RichText::new(text).font(crate::fonts::text_font(ui.ctx(), ui.style(), text_style, weight, text)).into()
 }
@@ -308,7 +309,13 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         }
         // ---- WG1 ----
         W::ToggleButton { text, checked, radio, frame, weight } => {
-            let r = ui.add(egui::Button::new(weighted(ui, text, egui::TextStyle::Button, *weight)).selected(*checked).frame(*frame).min_size(size));
+            // a frameless toggle is a row: body text (VS Code lists 13 px, buttons 12 px)
+            let style = if *frame { egui::TextStyle::Button } else { egui::TextStyle::Body };
+            let mut b = egui::Button::new(weighted(ui, text, style, *weight)).selected(*checked).min_size(size);
+            // VIS1: a frameless toggle is a selectable row (`Button::selectable`): the frame shows
+            // under the pointer and while checked (a list row's hover and selection)
+            b = if *frame { b } else { b.frame(true).frame_when_inactive(*checked) };
+            let r = ui.add(b);
             if r.clicked() {
                 *checked = *radio || !*checked;
             }

@@ -295,7 +295,19 @@ impl Element for Forced<'_> {
 
 /// Stock widgets: egui draws them with per-state `WidgetVisuals`.
 fn is_stock(w: &W) -> bool {
-    matches!(w, W::Button { .. } | W::Checkbox { .. } | W::Slider { .. } | W::TextEdit { .. })
+    matches!(
+        w,
+        W::Button { .. }
+            | W::Checkbox { .. }
+            | W::Slider { .. }
+            | W::TextEdit { .. }
+            // VIS1: egui draws these with the state visuals too (the base sheet styles them)
+            | W::ToggleButton { .. }
+            | W::ComboBox { .. }
+            | W::RadioButton { .. }
+            | W::Switch { .. }
+            | W::DragValue { .. }
+    )
 }
 
 /// Whether two styles differ in what children inherit (inherited properties, custom properties).
@@ -530,6 +542,8 @@ impl Scene {
         }
         match self.w(i) {
             W::Checkbox { checked: true, .. } => b = b | StateBits::CHECKED,
+            // VIS1: the other two-state kinds match `:checked` too (the base sheet styles them)
+            W::ToggleButton { checked: true, .. } | W::RadioButton { checked: true, .. } | W::Switch { active: true, .. } => b = b | StateBits::CHECKED,
             W::Button { selected: true, .. } => b = b | StateBits::SELECTED,
             _ => {}
         }
@@ -640,6 +654,24 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
                     widget_visuals(&c, w);
                 }
             }
+        }
+        // VIS1: egui paints a selected button (`toggle-button` checked) with `Visuals::selection`,
+        // not the state visuals, so a `:checked` rule's fill and text colour go there too
+        if b.0 & (StateBits::CHECKED.0 | StateBits::SELECTED.0) != 0 {
+            let sel = &mut child.visuals_mut().selection;
+            if let Some(col) = color(&c, "background-color") {
+                sel.bg_fill = col;
+            }
+            if let Some(col) = color(&c, "color") {
+                sel.stroke.color = col;
+            }
+        }
+        // a focused text edit draws its frame with `selection.stroke`: the `:focus` border colour
+        if focused
+            && matches!(s.w(i), W::TextEdit { .. })
+            && let Some(col) = color(&c, "border-color")
+        {
+            child.visuals_mut().selection.stroke.color = col;
         }
     } else {
         paint_box(&c, r, child.painter());
@@ -1064,7 +1096,10 @@ impl Scene {
     }
 
     fn clear_sheets(&mut self) {
-        for (_, id) in std::mem::take(&mut self.style.sheets) {
+        // the backend's own look (`vscode_look`, `@tokens:sv-look:*`) is not the bundle's to clear
+        let (keep, gone): (Vec<_>, Vec<_>) = std::mem::take(&mut self.style.sheets).into_iter().partition(|(n, _)| n.starts_with("@tokens:sv-look"));
+        self.style.sheets = keep;
+        for (_, id) in gone {
             self.style.stylist.remove_sheet(id);
         }
         if self.style.active {
@@ -1101,7 +1136,7 @@ fn parse_classes(text: &str) -> Vec<Atom> {
 
 /// The text of a token sheet: `:root { --name: value; }`, under `@media (prefers-color-scheme)`
 /// when it is for one scheme.
-fn tokens_css(scheme: Option<ColorScheme>, map: &[(&str, &str)]) -> Result<String, String> {
+pub(crate) fn tokens_css(scheme: Option<ColorScheme>, map: &[(&str, &str)]) -> Result<String, String> {
     let mut body = String::new();
     for (k, v) in map {
         if !k.starts_with("--") {
@@ -1156,7 +1191,12 @@ impl EguiBackend {
                 return Ok(0);
             }
             SVL_STYLE_SCHEME => {
-                let scheme = text.and_then(|t| t.split(SVL_STYLE_SEP).next()).map(|s| if s == "dark" { ColorScheme::Dark } else { ColorScheme::Light });
+                // 'auto' (or anything else): follow egui's dark mode (VIS1)
+                let scheme = text.and_then(|t| t.split(SVL_STYLE_SEP).next()).and_then(|s| match s {
+                    "dark" => Some(ColorScheme::Dark),
+                    "light" => Some(ColorScheme::Light),
+                    _ => None,
+                });
                 self.0.scene.borrow_mut().style.scheme = scheme;
                 self.touch_all();
                 return Ok(0);
