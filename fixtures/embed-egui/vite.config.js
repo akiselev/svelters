@@ -14,6 +14,8 @@ export default defineConfig(
       Pane: 'src/Pane.svelte',
       Editor: 'src/Editor.svelte',
       Animator: 'src/Animator.svelte',
+      // WG1 (crates/svelters-egui/tests/widgets_panel.rs)
+      TaskPanel: 'src/TaskPanel.svelte',
     },
   }),
 );
