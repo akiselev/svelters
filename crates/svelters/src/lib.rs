@@ -130,6 +130,15 @@
 //! writes the exports plus `kinds.json` (the compiler's `--spec-fragment`, Vite `specFragments`) and
 //! `kinds.d.ts` (the `IntrinsicElements` typings). See `examples/egui-kinds` and
 //! `plans/milestones/RA1-widget-kinds.md`.
+//!
+//! # Native behaviours (EV2b)
+//!
+//! `#[svelters::behavior(namespace = "cad", name = "pick")]` on a struct makes it a behaviour that
+//! Svelte attaches to any element with `use:pick` (imported from `svelters:behaviors/cad`): `#[prop]`
+//! fields are the action's params, `#[event] x: Event<T>` fields its `onx` callbacks. The struct
+//! implements `svelters_egui::provider::Behavior` (`after_ui` runs after the host's `ui` every frame,
+//! in Rust). The dump adds `behaviors/<ns>.js` and `behaviors.d.ts`. See
+//! `plans/milestones/EV2b-behaviors.md`.
 
 pub use svelters_host::exports;
 pub use svelters_host::exports::{
@@ -138,7 +147,7 @@ pub use svelters_host::exports::{
 };
 /// The rayon `#[js(worker)]` exports run on (for [`exports::set_worker_pool`] and `par_iter` in jobs).
 pub use svelters_host::exports::offload::rayon;
-pub use svelters_macros::{Enum, Error, Events, Record, export, object, service, store, widget};
+pub use svelters_macros::{Enum, Error, Events, Record, behavior, export, object, service, store, widget};
 
 /// `use svelters::prelude::*;`
 pub mod prelude {
