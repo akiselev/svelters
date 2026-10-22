@@ -1752,8 +1752,7 @@ fn takes_input(w: &crate::scene::W) -> bool {
         | W::Canvas(_)
         | W::Table(_)
         | W::TabView { .. }
-        | W::ToastHost(_)
-        | W::Picker(_) => true,
+        | W::ToastHost(_) => true,
     }
 }
 

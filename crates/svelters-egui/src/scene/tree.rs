@@ -159,7 +159,6 @@ fn builtin_payload(kind: usize) -> Option<W> {
         "TabView" => W::TabView { selected: 0 },
         "Tab" => W::Tab { title: String::new(), closable: false },
         "ToastHost" => W::ToastHost(Box::default()),
-        id if kinds::pickers::is_picker(id) => W::Picker(kinds::pickers::Picker::new(id)), // WG4b
         // RA1: a provider kind's widget struct with its defaults
         _ => W::Ext(crate::provider::ExtWidget::new((kinds::KindRegistry::global().provider(kind)?.entry.new)())),
     })

@@ -382,7 +382,6 @@ impl Metrics {
             | W::Canvas(_) => crate::elements::intrinsic(self, w),
             // WG4a: the views' own size (`crate::views::intrinsic`)
             W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) => crate::views::intrinsic(self, w),
-            W::Picker(p) => p.measure(self), // WG4b
             // ---- WG1 ----
             W::ToggleButton { text, weight, .. } => {
                 let t = self.text_size_in(text, self.weighted(text, *weight), None);

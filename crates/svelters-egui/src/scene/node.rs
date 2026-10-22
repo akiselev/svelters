@@ -66,8 +66,6 @@ pub enum W {
     /// `vertical`: `orientation="vertical"` (panes stacked).
     /// `toast-host`: props and the toasts shown.
     ToastHost(std::boxed::Box<crate::views::toast::Toasts>),
-    /// WG4b: `date-picker`, `color-picker` (`kinds/pickers.rs`).
-    Picker(crate::kinds::pickers::Picker),
     /// RT2: an inline run (`span`, `b`, `i`, `code`, `a`: `kinds/rich.rs`), drawn by its label.
     /// `weight` 0 inherits; `anchor`: an `a` run (a link).
     Run { text: String, weight: i64, href: String, anchor: bool },
@@ -491,7 +489,6 @@ pub fn text_of(w: &W) -> &str {
         W::Frame { label, .. } => label,
         W::DragValue { .. } | W::Sides | W::Stack { .. } | W::Image { .. } | W::Spinner { .. } | W::Canvas(_) => "",
         W::Table(_) | W::TabView { .. } | W::ToastHost(_) => "",
-        W::Picker(p) => p.text(),
     }
 }
 
