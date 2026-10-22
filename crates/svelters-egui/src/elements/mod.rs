@@ -336,7 +336,7 @@ pub(crate) struct Painted {
 /// Paints WG2b leaf `i` (the walk's call through `leaf::leaf`): the widget, then what every leaf
 /// gets (accessible name, anchor, tooltip, `invalid` outline, focus request, the click and drag
 /// events). Value changes are announced by the widget functions ([`changed`]).
-pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) {
+pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> egui::Response {
     let h = arena.slots.id_at(i).expect("live leaf").to_raw();
     let kind = arena.core[i].kind as usize;
     let sig = |name: &str| kinds::signal_id(kind, name);
@@ -369,6 +369,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             out.push(Out::Event(h, s, vec![]));
         }
     }
+    resp
 }
 
 /// A widget-side change of props `keys` of node `i`: stamped and journaled, `prop_changed` when

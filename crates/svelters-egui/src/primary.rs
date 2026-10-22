@@ -119,7 +119,7 @@ pub fn text_edit(ui: &egui::Ui, out: &egui::text_edit::TextEditOutput, id: egui:
         return false;
     }
     let (Some(pos), Some(mut paste)) = (resp.interact_pointer_pos(), p.get()) else { return false };
-    let at = out.galley.cursor_from_pos(pos - out.galley_pos).index.min(text.chars().count());
+    let at = out.galley.cursor_from_pos(pos - out.galley_pos).index.0.min(text.chars().count());
     if char_limit > 0 {
         let room = char_limit.saturating_sub(text.chars().count());
         paste = paste.chars().take(room).collect();

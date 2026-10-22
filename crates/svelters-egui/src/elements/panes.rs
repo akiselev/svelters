@@ -53,7 +53,7 @@ pub(crate) fn style(c: &Common, w: &W, s: &mut Style) {
         }
         W::Sides => {
             s.flex_direction = FlexDirection::Row;
-            s.justify_content = Some(AlignContent::SPACE_BETWEEN);
+            s.justify_content = AlignContent::SPACE_BETWEEN;
         }
         W::Frame { label, style, .. } => {
             let m = frame_of(style, default_style()).map(|f| f.total_margin()).unwrap_or_default();
@@ -103,6 +103,7 @@ pub(crate) fn stack_layout<T: LayoutPartialTree + CacheTree>(tree: &mut T, id: N
                     sizing_mode: SizingMode::InherentSize,
                     axis: RequestedAxis::Both,
                     known_dimensions: known,
+                    known_dimensions_are_definite: Size { width: known.width.is_some(), height: known.height.is_some() },
                     parent_size: known,
                     available_space: avail,
                     vertical_margins_are_collapsible: Line::FALSE,
@@ -128,6 +129,7 @@ pub(crate) fn stack_layout<T: LayoutPartialTree + CacheTree>(tree: &mut T, id: N
                     sizing_mode: SizingMode::InherentSize,
                     axis: RequestedAxis::Both,
                     known_dimensions: Size { width: Some(inner.width), height: Some(inner.height) },
+                    known_dimensions_are_definite: Size { width: true, height: true },
                     parent_size: Size { width: Some(inner.width), height: Some(inner.height) },
                     available_space: Size { width: AvailableSpace::Definite(inner.width), height: AvailableSpace::Definite(inner.height) },
                     vertical_margins_are_collapsible: Line::FALSE,
@@ -145,7 +147,9 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut
     let (tip, invalid) = (c.tooltip.clone(), c.invalid);
     let id = arena.core[i].egui_id;
     match arena.w(i) {
-        W::Panel { .. } => ui.painter().rect_filled(r, 0.0, ui.visuals().panel_fill),
+        W::Panel { .. } => {
+            ui.painter().rect_filled(r, 0.0, ui.visuals().panel_fill);
+        }
         W::Frame { label, style } => {
             if let Some(f) = frame_of(style, ui.style()) {
                 // the frame fills the rect less its outer margin (laid out with the default margins)

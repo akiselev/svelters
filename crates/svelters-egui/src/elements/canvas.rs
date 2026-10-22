@@ -118,7 +118,7 @@ fn with_alpha(c: Color32, alpha: f32) -> Color32 {
 /// `ctx`'s fonts for text. `clear` is what `clearRect` paints.
 pub fn shapes(ctx: &egui::Context, origin: Pos2, clip: Rect, ops: &[J], clear: Color32) -> Drawn {
     let mut st = St {
-        tf: Tf([1.0, 0.0, 0.0, 1.0, origin.x as f64, origin.y as f64]),
+        tf: Tf::ID.then([1.0, 0.0, 0.0, 1.0, origin.x as f64, origin.y as f64]),
         fill: Color32::BLACK,
         stroke: Color32::BLACK,
         alpha: 1.0,
