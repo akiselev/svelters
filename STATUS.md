@@ -62,11 +62,11 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | SG2 extension columns, change journal | DONE | db7f62c5 | one column per `ExtKey` (`with_ext` 1.9 µs over 5k of 100k nodes, release), pull observers with `ChangeFilter`, replayable journal, `Damage`, ticks + `changed_since`, R19 Ext-Removed, 0 allocations per mutation without observers; `ExtBlock` is now a read view; `plans/milestones/SG2-ext-journal.md` |
 | EV2b native behaviours (`use:`) | DONE | 2026-10-22 | merged 747392a3; merge fix edefc916 |
 | SG3 scene queries, traversal, hit lists | DONE | (this merge) | queries by anchor/path/kind/tag/state/ext, `changed_since` (R14), `Cursor` + `visit`, hit lists + `hit_test` topmost-first with `HIT_TRANSPARENT`, provider `Hit::Part` (R13), R20; embed visibility/viewport journaled; `plans/milestones/SG3-queries-hit.md` |
-| WG2a menus, context menus, popup, modal/dialog roots, inner-window | IN PROGRESS | | branch `ci/wg2a`; widget set approved by the user 2026-10-22 (EGUI.md §5, §8) |
-| WG2b rest of Tier 0 (panel, sides, frame, stack, hyperlink, radio, switch, range-slider, drag-value, image, progress, spinner, canvas) | IN PROGRESS | | branch `ci/wg2b` |
-| WG4a table, tab-view, split-view, toast | IN PROGRESS | | branch `ci/wg4a`; tree-view after LS1 |
-| WG4b rfd dialogs, date/colour pickers, drag and drop | IN PROGRESS | | branch `ci/wg4b` |
-| WG1 SC1 egui widget subset | IN PROGRESS | | branch `ci/wg1`; grid, collapsing-header, toggle-button, combo-box, separator, scroll-area, icon, tooltip, invalid, a11y names; cadatomic FW1's acceptance depends on it |
+| WG2a menus, context menus, popup, modal/dialog roots, inner-window | DONE | 2026-10-22 | merged via INT1 (this commit, ci/int-widgets) |
+| WG2b rest of Tier 0 (panel, sides, frame, stack, hyperlink, radio, switch, range-slider, drag-value, image, progress, spinner, canvas) | DONE | 2026-10-22 | merged via INT1 (this commit, ci/int-widgets) |
+| WG4a table, tab-view, split-view, toast | DONE | 2026-10-22 | merged via INT1 (this commit, ci/int-widgets) |
+| WG4b rfd dialogs, date/colour pickers, drag and drop | DONE | 2026-10-22 | merged via INT1 (this commit, ci/int-widgets) |
+| WG1 SC1 egui widget subset (+ WG1b icon/font fallback) | DONE | 2026-10-22 | merged via INT1 (this commit, ci/int-widgets) |
 | WG3 native reference capture (pins 1-3, 7; GTK/Qt goldens) | DONE | 2026-10-22 | merged 59bc9f81; egui TextEdit matches 85/144 (GTK), 75/144 (Qt) |
 | WG3b GTK selection from inner GtkText, Qt 6.11 golden, pins 4-6 | DONE | 2026-10-22 | merged (this commit); egui vs native on all 18 scripts 159/243 (either toolkit); W4 decided: keep TextEdit, fix around it (FX3) |
 | FX2 egui focus policy + word rules per native refs (`svelters_egui::native`) | DONE | 2026-10-22 | merged (this commit); egui vs GTK 85→141/144, vs Qt 75→139/144; pin 3 double-click word select left |
