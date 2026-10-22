@@ -162,7 +162,20 @@ app that sets both, which is a conflicting use:
 
 ## 6. Gates
 
-GATES-PENDING
+Local gates, run on the merged tree:
+
+| gate | result |
+| --- | --- |
+| `pnpm install --frozen-lockfile` | ok |
+| `cargo build -p svelters-compiler` | ok |
+| `python3 tools/docs/build_ir.py && pnpm -r build` | ok |
+| `pnpm test` (after the toplevels test fix, `d2332581`) | exit 0. Compiled: 81 PASS, 0 FAIL. native-runtime 89/89, types 32, style 25, canvas 3, lists 2, pytest 155 passed and 1 skipped |
+| `pnpm docs:test` | 17/17 |
+| `cargo check --workspace --all-targets` | ok, no errors, no compiler warnings |
+| full nextest (`e1430389`) | **incomplete**: the coordinator stopped it at 2003 of 2464 tests, with 2003 passed and 0 failed |
+
+CI (section 7) ran the whole nextest suite on `e1430389` and passed: linux-gtk 2259 tests, with
+the known flake re-run.
 
 ## 7. CI
 
@@ -196,6 +209,7 @@ Earlier heads were red for reasons fixed since:
 
 ## 9. Open items
 
+- **Full local nextest.** It was stopped at 2003 of 2464 (none failing). CI's nextest is green.
 - **Full conformance run and baseline.** Run `UPSTREAM=... TIMEOUT_MS=60000 JOBS=6 node run.mjs
   --check`, then `--update-baseline`, on the merged tree, and commit `results.json`, `REPORT.md`
   and `baseline.json`. Expected: 573 / 774 with no regression (section 2). This was not done
