@@ -17,10 +17,18 @@
 use std::path::{Path, PathBuf};
 
 mod bundle;
+mod compose;
+#[cfg(feature = "dlopen")]
+mod dylib;
+mod native;
 #[cfg(feature = "source")]
 mod source;
 
 pub use bundle::BundleProvider;
+pub use compose::{ComposedProvider, SchemeHook, Visibility};
+#[cfg(feature = "dlopen")]
+pub use dylib::DylibModules;
+pub use native::{NativeModules, NativeRegistry, StaticModules, APP_PREFIX, CORE_ID};
 #[cfg(feature = "source")]
 pub use source::{Check, Entry, Overlay, SourceConfig, SourceProvider};
 

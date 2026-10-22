@@ -1,6 +1,7 @@
 //! Native modules: the Rust exports a binary registers, served as ES modules.
 
 use crate::{ModuleCode, ModuleId};
+use std::rc::Rc;
 
 /// The built-in module that the generated `svelters:app/*` modules import.
 pub const CORE_ID: &str = "svelters:core";
@@ -19,9 +20,9 @@ pub trait NativeModules {
 }
 
 /// Several [`NativeModules`] sets, asked in order of registration.
-#[derive(Default)]
+#[derive(Clone, Default)]
 pub struct NativeRegistry {
-    sets: Vec<Box<dyn NativeModules>>,
+    sets: Vec<Rc<dyn NativeModules>>,
 }
 
 impl NativeRegistry {
@@ -30,7 +31,7 @@ impl NativeRegistry {
     }
 
     pub fn add(&mut self, set: impl NativeModules + 'static) {
-        self.sets.push(Box::new(set));
+        self.sets.push(Rc::new(set));
     }
 
     pub fn ids(&self) -> Vec<ModuleId> {

@@ -23,6 +23,7 @@ pub trait SchemeHook {
 
 /// Which `svelters:app/*` modules an importer may see (SV25). `svelters:core` is always visible,
 /// because the generated modules import it.
+#[derive(Clone)]
 pub enum Visibility {
     All,
     /// Only these module names (`task` for `svelters:app/task`).
@@ -30,7 +31,7 @@ pub enum Visibility {
     /// Everything but these.
     Deny(Vec<String>),
     /// Decided per import: `(module name, importer id)`.
-    Filter(Box<dyn Fn(&str, &str) -> bool>),
+    Filter(Rc<dyn Fn(&str, &str) -> bool>),
 }
 
 impl Visibility {
@@ -212,7 +213,7 @@ mod tests {
         assert!(p.resolve("main.js", "svelters:app/task").is_ok());
         assert_eq!(p.resolve("main.js", "svelters:app/secret").unwrap_err(), "no such module: `svelters:app/secret`");
         assert!(p.resolve("main.js", "svelters:core").is_ok());
-        let p = composed(Visibility::Filter(Box::new(|m, importer| m != "secret" || importer == "trusted.js")));
+        let p = composed(Visibility::Filter(Rc::new(|m, importer| m != "secret" || importer == "trusted.js")));
         assert!(p.resolve("trusted.js", "svelters:app/secret").is_ok());
         assert!(p.resolve("main.js", "svelters:app/secret").is_err());
     }

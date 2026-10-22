@@ -3750,6 +3750,7 @@ dependencies = [
 name = "svelters-modules"
 version = "0.0.0"
 dependencies = [
+ "libloading",
  "oxc_resolver",
  "serde_json",
  "svelters-compiler",
