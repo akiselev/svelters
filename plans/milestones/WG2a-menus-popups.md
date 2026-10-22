@@ -98,7 +98,8 @@ inside a closed overlay is 0×0).
   rendered, found by role and label and driven by pointer, keyboard or AccessKit.
 - Gallery page `fixtures/gallery-egui-menus` (every kind of the family; `<!-- kinds: -->` header like the other
   galleries), run end to end on the QuickJS host by `tests/menus_app.rs` (`gallery_page_menus_and_popups`) and by
-  the TestHost (`expected.oplog`, `script.json`). It is its own fixture because there is no egui gallery app yet; it becomes a
+  the TestHost (`expected.oplog`, `script.json`). `tests/oplog_replay.rs` skips it (its generic replay cannot produce menu
+  and popup input natively; `menus_app.rs` does). It is its own fixture because there is no egui gallery app yet; it becomes a
   page of one when one exists.
 - `crates/svelters-compiler/tests/wg2a_egui_menus.rs`: the page compiles, attaching and nesting rules, unknown
   props.
@@ -112,7 +113,7 @@ inside a closed overlay is 0×0).
 ## Verification
 
 Local, after the last code change: `cargo check -p svelters-egui --all-targets` (clean);
-nextest `-p svelters-egui --test menus --test menus_app --test spec --test widgets` (22/22) and
+nextest `-p svelters-egui --test menus --test menus_app --test spec --test widgets --test oplog_replay` (23/23) and
 `-p svelters-compiler --test wg2a_egui_menus --test g1_egui_spec` (6/6, before the WG1 merge); the gallery's
 TestHost run (`expected.oplog` written with it). Not run locally: the full workspace, conformance, the other
 backends, the JS suites (CI).
