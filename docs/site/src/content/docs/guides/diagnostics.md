@@ -98,12 +98,12 @@ Severities: **error** fails the build; **warning** does not (the observability w
 | `svelters::style::syntax` | `style_syntax` | error | A syntax error in `<style>`. |  |
 | `svelters::style::unsupported_selector` | `style_unsupported_selector` | error | A selector form native styles do not support (`*`, pseudo-elements, ...). |  |
 | `svelters::style::unsupported_combinator` | `style_unsupported_combinator` | error | A combinator other than descendant (whitespace) and child (`>`). |  |
-| `svelters::style::unsupported_at_rule` | `style_unsupported_at_rule` | error | A setter property inside an at-rule (`@media`, `@native`); setter properties are written with setProp, not CSS. |  |
+| `svelters::style::unsupported_at_rule` | `style_unsupported_at_rule` | warning | A setter property inside an at-rule (`@media`, `@native`); setter properties are written with setProp, not CSS. |  |
 | `svelters::style::state_unsupported` | `style_state_unsupported` | error | A setter property in a rule whose selector has a state (`:hover`, ...); states are CSS-only. |  |
 | `svelters::style::unsupported_nesting` | `style_unsupported_nesting` | error | A setter property in a nested rule. |  |
 | `svelters::style::unsupported_important` | `style_unsupported_important` | error | `!important` is not supported; native styles apply by specificity and source order. | remove `!important` |
 | `svelters::style::unsupported_value` | `style_unsupported_value` | error | A value form native styles do not support (`,` or `/` lists, ...). |  |
-| `svelters::style::unknown_declaration` | `style_unknown_declaration` | error | A declaration no setter property or CSS property of the backend knows (reserved; not reported yet). |  |
+| `svelters::style::unknown_declaration` | `style_unknown_declaration` | warning | An unknown CSS property for this backend; the declaration is ignored. |  |
 | `svelters::style::not_applicable` | `style_not_applicable` | error | The declaration applies to other elements (or to the children of other elements) on this backend. |  |
 | `svelters::style::bad_value` | `style_bad_value` | error | A declaration's value cannot be converted to the property's type (or uses an unsupported unit). |  |
 | `svelters::style::conflicts_binding` | `style_conflicts_binding` | error | A style sets a property that is bound with `bind:` on the element. |  |

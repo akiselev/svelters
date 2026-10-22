@@ -91,8 +91,10 @@ and `check` as parse errors in HTML syntax (the DOM conformance spec), and with 
 port's pass, which runs before lowering in both `compile` and `check_component`. A native
 `<style>` is otherwise parsed by `crate::style` (`svelters::style::*`).
 
-- Stability: an id is never renamed or reused. A code that stops being reported keeps its row
-  (`style_unknown_declaration` is registered but not reported yet).
+- Stability: an id is never renamed or reused. A code that stops being reported keeps its row.
+  `style_unknown_declaration` is defined but not reported on master yet; CS5g (MacBook) will report
+  it as a warning for egui `<style>` values, and the row says so (coordinator, 2026-10-22, along
+  with `style_unsupported_at_rule` as a warning).
 - Enforcement: the `cx1_codes` test scans `src/` for codes in reporting positions and fails on an
   unregistered one, or on a registered one it no longer finds. `Diagnostics::push` resolves the id,
   and in a debug build an unregistered code panics with a message naming `codes.rs`. **Other lanes
