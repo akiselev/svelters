@@ -47,7 +47,7 @@ pub(super) fn intrinsic(m: &Metrics, w: &W) -> Vec2 {
     }
 }
 
-#[allow(clippy::disallowed_types)] // OW: wrapper until OW1a, OW1b
+#[allow(clippy::disallowed_types)] // OW: wrapper until VIS1c (hyperlink, switch, behind the switch), OW1b
 pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> Painted {
     let size = arena.core[i].rect.size();
     let enabled = arena.common(i).enabled;
@@ -206,7 +206,7 @@ fn uncaptioned_range(ui: &mut Ui, l: &mut f64, h: &mut f64, rail: std::ops::Rang
     .inner
 }
 
-#[allow(clippy::disallowed_types)] // OW: wrapper until OW1a
+#[allow(clippy::disallowed_types)] // OW: wrapper until VIS1c (behind the switch)
 /// `radio-button`: a click checks it, writes its `value` into `group`, and unchecks the sibling
 /// radio buttons (setting their `group` too when this one has a value).
 fn radio(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> Painted {

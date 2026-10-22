@@ -56,7 +56,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     let mut resp = ui.interact(ui.max_rect(), arena.core[i].egui_id.with("view"), egui::Sense::hover());
     let tip = arena.common(i).tooltip.clone();
     if !tip.is_empty() {
-        resp = resp.on_hover_text(tip);
+        resp = crate::widgets::tooltip::attach(ui, &resp, &tip, arena.own.contains("tooltip")); // OW3
     }
     // a toast-host's drawn rect is its toasts' area (`toast::paint`)
     if matches!(arena.w(i), W::TableColumn { .. }) {
