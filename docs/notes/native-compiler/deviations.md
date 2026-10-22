@@ -178,9 +178,10 @@ Semantics are specified in `runtime-contract.md` "Template blocks"; departures f
 
 ## Child attributes, phases, sync handlers (`lower/native_attrs.rs`, agent I1)
 
-- **Spreads with static keys** are expanded at compile time (`{...{ 'onnotify::x': f }}`, a
-  top-level `const` object literal); keys added to such an object at runtime are not seen (Svelte
-  would apply them). Shadowing of the const's name by a template binding is not detected.
+- **Spreads with static keys** are expanded at compile time only for an object literal
+  (`{...{ 'onnotify::x': f }}`). Since SP1 a top-level `const` object goes through the runtime
+  spread like any other expression, so keys added to it later are applied, as in Svelte (the old
+  deviation is gone). Runtime spreads: runtime-contract.md "Spread attributes".
 - **`listen()` import**: from `@svelters/native-runtime` (RT1: `@svelters/renderer` is gone),
   which provides `listen`, `NativeEvent`, `StaleHandleError`, `LISTEN_*`.
 - **Explicit default slot names** (`slot="center"` naming the default slot) are passed by name to
@@ -189,6 +190,20 @@ Semantics are specified in `runtime-contract.md` "Template blocks"; departures f
   host listen to `changed`.
 - **Child attribute op order** within one update can differ from the JS pipeline (render effects
   in source order, see "Template effect order"); the resulting state is the same.
+
+## Runtime spreads and `<svelte:element>` (SP1)
+
+- **Unknown keys** of a runtime spread (or any attribute of `<svelte:element>`) are skipped with a
+  DEV warning carrying the compiler's code (`unknown_property`, `unknown_event`, ...). Svelte would
+  set an attribute; a native element has no free-form attributes.
+- **A string for a typed prop** is coerced as a static attribute is (`"120"` to an integer); a value
+  that does not coerce is skipped with a DEV `bad_attribute_value` warning.
+- **A key that goes away** resets the prop to the spec default, else to the native value read before
+  the spread first wrote it. Svelte removes the attribute; a native prop cannot be removed.
+- **`<svelte:element>` bindings**: only `bind:this`. Other `bind:` directives need the kind's binding
+  plan at compile time (`dynamic_element_bind`).
+- **`this`** names a native tag of the backend; a tag it does not have renders nothing and warns in
+  DEV (Svelte would create an unknown HTML element).
 
 ## Rune transform (`transform/*`, `compile_module`; agent R2)
 
