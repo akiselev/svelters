@@ -20,7 +20,12 @@ fn scratch(name: &str) -> PathBuf {
     std::fs::create_dir_all(dir.join("src")).unwrap();
     std::fs::write(
         dir.join("package.json"),
-        r#"{ "name": "h3", "private": true, "type": "module", "svelters": { "toolkit": "egui", "embed": { "Panel": "src/Panel.svelte", "Pane": "src/Pane.svelte" } } }"#,
+        r#"{ "name": "h3", "private": true, "type": "module", "svelters": { "toolkit": "egui", "embed": { "Panel": "src/Panel.svelte", "Pane": "src/Pane.svelte", "Shell": "src/Shell.svelte" } } }"#,
+    )
+    .unwrap();
+    std::fs::write(
+        dir.join("src/Shell.svelte"),
+        "<script>\n  import Panel from './Panel.svelte';\n  let { name = 'Shell' } = $props();\n</script>\n<box gap={4}>\n  <label>{name} header</label>\n  <Panel title=\"A\" />\n  <Panel title=\"B\" />\n</box>\n",
     )
     .unwrap();
     for f in ["Panel.svelte", "Pane.svelte"] {
@@ -106,4 +111,43 @@ fn panel_state_survives_an_edit_in_every_root_and_resets_when_its_shape_changes(
 
     let ev = e.take_events();
     assert!(!ev.iter().any(|x| matches!(x, EmbedEvent::Faulted { .. } | EmbedEvent::Mounted(_))), "{ev:?}");
+}
+
+#[test]
+fn editing_a_parent_keeps_the_state_of_its_children() {
+    // H3c: Shell renders two Panels; editing Shell re-creates them, and each takes back its own `clicks`
+    let dir = scratch("parent-kept");
+    let mut cfg = SourceConfig::for_path(&dir).unwrap();
+    cfg.dev = true;
+    cfg.hmr = true;
+    let provider = Rc::new(SourceProvider::new(cfg).unwrap());
+    let ecfg = EmbedConfig {
+        id_salt: "h3c",
+        host: HostConfig { echo_console: false, echo_errors: false, quit_on_last_window: false, ..HostConfig::default() },
+        ..EmbedConfig::default()
+    };
+    let mut eh = EmbedHarness::new(egui::vec2(800.0, 600.0), ecfg).unwrap();
+    let e = eh.embed.clone();
+    let entry = e.load_from(provider).unwrap();
+    let s1 = e.create_slot("a", SlotOptions::fill());
+    eh.set_ui(move |e, ui| {
+        e.show_slot(ui, s1);
+    });
+    eh.run();
+    e.mount(MountSpec::new(entry, "Shell", s1, "shell")).unwrap();
+    eh.run();
+    for label in ["Inc A", "Inc A", "Inc B"] {
+        eh.harness.get_by_label(label).click();
+        eh.run();
+    }
+    assert!(eh.harness.query_by_label("A clicks: 2").is_some() && eh.harness.query_by_label("B clicks: 1").is_some());
+    let shell = dir.join("src/Shell.svelte");
+    let src = std::fs::read_to_string(&shell).unwrap().replace("header", "top");
+    std::fs::write(&shell, src).unwrap();
+    let report = e.host().apply_changes(vec![shell]).expect("a reload ran");
+    assert!(report.ok && report.fallback.is_none(), "{report:?}");
+    eh.run();
+    assert!(eh.harness.query_by_label("Shell top").is_some());
+    assert!(eh.harness.query_by_label("A clicks: 2").is_some(), "child A kept its $state");
+    assert!(eh.harness.query_by_label("B clicks: 1").is_some(), "child B kept its own $state");
 }
