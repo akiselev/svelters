@@ -71,3 +71,69 @@ export interface Splice {
 export declare function diffKeys(prev: readonly unknown[], next: readonly unknown[], maxOps?: number): Splice[];
 export declare function applySplices<T>(list: T[], ops: readonly Splice[]): T[];
 export declare function lis(seq: readonly number[]): number[];
+
+/** A visible row of a `<TreeView>`, as `flattenTree` returns it. */
+export interface TreeRow<T = any> {
+  key: unknown;
+  node: T;
+  /** 0 for roots. */
+  level: number;
+  expandable: boolean;
+  expanded: boolean;
+}
+
+export interface TreeViewProps<T = any> {
+  roots: readonly T[];
+  /** The node's children, an array or a Promise of one (loaded when the node first expands). Default `node.children`. */
+  children?: (node: T) => readonly T[] | Promise<readonly T[]> | null | undefined;
+  /** Whether the node shows a disclosure triangle. */
+  hasChildren?: (node: T) => boolean;
+  /** Default `node.id ?? node.key ?? node`. */
+  key?: (node: T) => unknown;
+  /** Type-ahead and the drag's `text/plain`. Default `node.label ?? node.name`. */
+  label?: (node: T) => string;
+  /** The drag's `rowDragType` entry. Default `JSON.stringify(key(node))`. */
+  rowData?: (node: T) => string;
+  /** `{#snippet row(node, level)}`; without it a row is a label. */
+  row?: (anchor: any, node: () => T, level: () => number) => void;
+  /** Shows the nodes that pass, and their ancestors (loaded children only). */
+  filter?: (node: T) => boolean;
+  selection?: 'none' | 'single' | 'multi';
+  /** `bind:selected`: the selected keys; keys hidden by a filter or a collapse stay selected. */
+  selected?: unknown[];
+  /** `bind:expanded`: the expanded keys. */
+  expanded?: unknown[];
+  'row-height'?: number;
+  /** Points per level. */
+  indent?: number;
+  /** Non-empty: rows drag, as this type (their `rowData`, a line each) plus `text/plain`. */
+  rowDragType?: string;
+  /** Non-empty: rows take drops of these types (`*`, `cad/*` patterns) and call `ondroprow`. */
+  rowDropTypes?: string;
+  onactivate?: (node: T, key: unknown) => void;
+  onselect?: (keys: unknown[]) => void;
+  onexpand?: (node: T, key: unknown) => void;
+  oncollapse?: (node: T, key: unknown) => void;
+  /** `key` is null for a drop below the last row. */
+  ondroprow?: (key: unknown, where: 'before' | 'after' | 'into', type: string, data: string, node: T | undefined) => void;
+  /** Ctrl+C; without it the selected rows go to `svelters:clipboard`. */
+  oncopy?: (nodes: T[]) => void;
+  [prop: string]: unknown;
+}
+
+/** `<TreeView>` (egui `tree-view`); `bind:this` gives `{ scrollTo(key), expand(key), collapse(key), controller() }`. */
+export declare function TreeView<T = any>(
+  anchor: any,
+  props: TreeViewProps<T>,
+): { scrollTo(key: unknown): void; expand(key: unknown): void; collapse(key: unknown): void; controller(): ListController };
+
+export declare function flattenTree<T = any>(
+  roots: readonly T[],
+  opts: {
+    key: (node: T) => unknown;
+    childrenOf: (node: T, load: boolean) => readonly T[] | undefined;
+    hasChildren: (node: T) => boolean;
+    expanded: ReadonlySet<unknown>;
+    filter?: (node: T) => boolean;
+  },
+): TreeRow<T>[];

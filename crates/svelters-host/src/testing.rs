@@ -2,6 +2,8 @@
 //!
 //! A fixture directory holds `dist/app.js`, `script.json` and `expected.oplog`
 //! (see `fixtures/README.md`). [`run_fixture`] skips a directory that lacks any of them.
+// ZU3: test support: reads fixtures from disk for tests, not run in an app.
+#![allow(clippy::disallowed_methods)]
 
 use crate::{ConsoleLine, Host, HostConfig, JsError};
 use std::path::{Path, PathBuf};

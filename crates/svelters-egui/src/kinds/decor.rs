@@ -32,6 +32,13 @@ static ICON_PROPS: &[PropDef] = &[
     ),
     optional("size", P::Size, Ty::F64, "Font size in points; null for the body size."),
     prop("font-weight", P::FontWeight, Ty::I64, Def::I64(400), FONT_WEIGHT_DOC),
+    optional(
+        "source",
+        P::Source,
+        Ty::Str,
+        "An image instead of the glyph: an `asset://` ref (an imported SVG or PNG), a file path or any uri an egui loader serves. Measured `size` (else the body size) square and fitted inside; when it does not load the placeholder box is drawn.",
+    ),
+    prop("tint", P::Tint, Ty::Bool, Def::Bool(true), "With `source`: tints the image with the text colour (SVG `currentColor` icons render white, then tint like a glyph); false keeps its own colours."),
     prop("frame", P::Frame, Ty::Bool, Def::Bool(false), "Draws it as a button (an icon button: role `Button`, takes focus)."),
     prop("selected", P::Selected, Ty::Bool, Def::Bool(false), "With `frame`: drawn as selected (a toggle look)."),
 ];

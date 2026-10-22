@@ -194,8 +194,8 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
             *show_value = as_bool(v)?;
             d.insert(Dirty::MEASURE);
         }
-        (P::ListSelected | P::ListSelection | P::ListLayout | P::SelectedIds, W::VirtualList(l)) => crate::kinds::virtuallist::set(l, def.key, v)?,
-        (P::RowHeight, W::VirtualList(l)) => {
+        (P::ListSelected | P::ListSelection | P::ListLayout | P::SelectedIds | P::RowDragType | P::RowDropTypes, W::VirtualList(l)) => crate::kinds::virtuallist::set(l, def.key, v)?,
+        (P::RowHeight | P::TreeIndent, W::VirtualList(l)) => {
             crate::kinds::virtuallist::set(l, def.key, v)?;
             d.insert(Dirty::LAYOUT);
         }
@@ -230,6 +230,11 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
             *size = as_len(v)?.filter(|s| *s > 0.0);
             d.insert(Dirty::MEASURE);
         }
+        (P::Source, W::Icon { source, .. }) => {
+            *source = as_str(v)?;
+            d.insert(Dirty::MEASURE);
+        }
+        (P::Tint, W::Icon { tint, .. }) => *tint = as_bool(v)?,
         (P::Frame, W::Icon { frame, .. }) => {
             *frame = as_bool(v)?;
             d.insert(Dirty::MEASURE);
@@ -361,7 +366,7 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Max, W::Slider { max, .. }) => Value::F64(*max),
         (P::Step, W::Slider { step, .. }) => Value::F64(*step),
         (P::ShowValue, W::Slider { show_value, .. }) => Value::Bool(*show_value),
-        (P::ListSelected | P::ListSelection | P::ListLayout | P::SelectedIds | P::RowHeight, W::VirtualList(l)) => {
+        (P::ListSelected | P::ListSelection | P::ListLayout | P::SelectedIds | P::RowHeight | P::TreeIndent | P::RowDragType | P::RowDropTypes, W::VirtualList(l)) => {
             crate::kinds::virtuallist::get(l, def.key).ok_or_else(|| format!("{:?} is not a prop of <virtual-list>", def.key))?
         }
         // ---- WG1 ----
@@ -372,6 +377,8 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Orientation, W::Separator { vertical }) => s(if *vertical { "vertical" } else { "horizontal" }),
         (P::Name, W::Icon { name, .. }) => s(name),
         (P::Glyph, W::Icon { glyph, .. }) => s(glyph),
+        (P::Source, W::Icon { source, .. }) => if source.is_empty() { Value::Null } else { s(source) },
+        (P::Tint, W::Icon { tint, .. }) => Value::Bool(*tint),
         (P::Family, W::Icon { family, .. }) => s(family),
         (P::Size, W::Icon { size, .. }) => len_value(*size),
         (P::GridTemplateColumns, W::Grid { columns, .. }) => s(columns),
