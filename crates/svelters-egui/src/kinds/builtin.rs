@@ -16,6 +16,9 @@ pub const POSITION: &[&str] = &["static", "relative", "absolute"];
 pub const JUSTIFY: &[&str] = &["start", "end", "center", "space-between", "space-around", "space-evenly"];
 pub const DIRECTION: &[&str] = &["column", "row", "column-reverse", "row-reverse"];
 pub const WRAP: &[&str] = &["nowrap", "wrap", "wrap-reverse"];
+/// EV3 (`crate::focus`): `contain`: Tab cycles inside while focus is in it; `dialog`: also takes
+/// focus when it appears and gives it back when it goes away.
+pub const FOCUS_SCOPE: &[&str] = &["none", "contain", "dialog"];
 pub const WRAP_MODE: &[&str] = &["wrap", "truncate", "extend"];
 
 pub(super) const FONT_WEIGHT_DOC: &str = "CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face.";
@@ -23,6 +26,7 @@ pub(super) const FONT_WEIGHT_DOC: &str = "CSS font weight (100-900). Drawn with 
 static WIDGET_PROPS: &[PropDef] = &[
     prop("enabled", P::Enabled, Ty::Bool, Def::Bool(true), "Takes input when true; drawn greyed out otherwise (`Ui::add_enabled`)."),
     layout("visible", P::Visible, Ty::Bool, Def::Bool(true), "Shown and laid out when true (`display: none` otherwise)."),
+    prop("autofocus", P::Autofocus, Ty::Bool, Def::Bool(false), "Takes keyboard focus when it first appears (in a `dialog` scope: when the dialog opens)."),
     prop("tooltip", P::Tooltip, Ty::Str, Def::Str(""), "Hover text (`Response::on_hover_text`); empty for none."),
     prop(
         "accessible-name",
@@ -92,6 +96,8 @@ static BUTTON_PROPS: &[PropDef] = &[
     prop("frame", P::Frame, Ty::Bool, Def::Bool(true), "Draws the button background and border."),
     prop("small", P::Small, Ty::Bool, Def::Bool(false), "No vertical padding (`Button::small`)."),
     prop("font-weight", P::FontWeight, Ty::I64, Def::I64(400), FONT_WEIGHT_DOC),
+    prop("default", P::Default, Ty::Bool, Def::Bool(false), "Enter activates it while focus is in its focus scope (or root) and the focused node does not take Enter itself."),
+    prop("cancel", P::Cancel, Ty::Bool, Def::Bool(false), "Escape activates it while focus is in its focus scope (or root)."),
 ];
 
 

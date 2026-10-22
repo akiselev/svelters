@@ -919,6 +919,11 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         n.set_size_of_set(len);
     });
     let focused = tree.is_some() && ctx.memory(|m| m.has_focus(list_id));
+    // EV3: the tree is one tab stop; focused, it takes its keys (`focus::Role::Tree`)
+    let tree_input = focused.then(|| super::treeview::tree_input(list_id, ui));
+    if tree.is_some() {
+        crate::focus::record_with(s, i, ui, &resp, crate::focus::Role::Tree, true);
+    }
     // wheel input: consumed when this frame's offset took it, else kept for the next frame
     if decided && taken != 0.0 {
         ui.input_mut(|inp| inp.smooth_scroll_delta.y -= taken);
@@ -952,6 +957,7 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         Some((.., drop_types)) if !drop_types.is_empty() => tree_drop_target(s, i, &placed, origin, r, clip, drop_types, ui, out, &emit),
         _ => None,
     };
+    let mut first_row = true; // EV3
     for (n, pos) in placed {
         let Some(ni) = s.idx(n) else { continue };
         let rr = s.core[ni].rect.translate(origin);
@@ -995,6 +1001,13 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
             if rresp.double_clicked() && s.listens(i, sig_activate) {
                 out.push(Out::Event(h, sig_activate, vec![Value::I64(pos as i64)]));
             }
+            if selectable {
+                // EV3: a selectable row takes focus and the list's keys; the selected row (else the
+                // first drawn) is the list's tab stop
+                let stop = if selected >= 0 { is_sel } else { first_row };
+                first_row = false;
+                crate::focus::record_with(s, i, &rows_ui, &rresp, crate::focus::Role::List, stop);
+            }
         }
         let mut row_ui = rows_ui.new_child(egui::UiBuilder::new().max_rect(rr).id_salt(("row", key)).accessibility_parent(row_id));
         row_ui.set_clip_rect(clip);
@@ -1023,8 +1036,8 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
             }
         }
     }
-    if focused {
-        tree_keys(s, i, list_id, &ctx, ui, out, &emit);
+    if let Some((keys, text)) = tree_input {
+        tree_keys(s, i, keys, text, &ctx, ui, out, &emit);
     }
     // positions in view that no bound row covers: placeholders (R22's gate counts them)
     let mut unbound = 0u64;

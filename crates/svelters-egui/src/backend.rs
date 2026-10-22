@@ -80,6 +80,11 @@ pub(crate) struct Inner {
     /// The viewport each embed slot's root is drawn in (`None`: hidden); roots not listed (windows)
     /// are drawn in the root viewport. Kept by `Embed` (`create_slot`, `set_viewport`, `set_visible`).
     pub root_vp: RefCell<std::collections::HashMap<RootIx, Option<egui::ViewportId>>>,
+    /// DS1: the installed theme (`set_theme`), its generation (bumped per install), and whether
+    /// the context still needs its Style (applied at the next logic).
+    pub theme: RefCell<Option<crate::theme::Theme>>,
+    pub theme_generation: Cell<u64>,
+    pub theme_pending: Cell<bool>,
 }
 
 /// The egui backend. Cheap to clone (one shared state); the clone given to [`BackendVtable::new`]
@@ -125,6 +130,9 @@ impl EguiBackend {
             anim: RefCell::new(Default::default()),
             touched: RefCell::new(Vec::new()),
             root_vp: RefCell::new(Default::default()),
+            theme: RefCell::new(None),
+            theme_generation: Cell::new(0),
+            theme_pending: Cell::new(false),
         }))
     }
 

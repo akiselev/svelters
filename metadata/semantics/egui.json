@@ -278,6 +278,28 @@
           ],
           "writable": true
         },
+        "focus-scope": {
+          "construct_only": false,
+          "default": "none",
+          "doc": "`contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away.",
+          "js": "focus-scope",
+          "native": "focus-scope",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Box:focus-scope",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "contain",
+            "dialog"
+          ],
+          "writable": true
+        },
         "gap": {
           "construct_only": false,
           "default": 0.0,
@@ -376,6 +398,40 @@
       "native": "egui::Button",
       "present": null,
       "props": {
+        "cancel": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Escape activates it while focus is in its focus scope (or root).",
+          "js": "cancel",
+          "native": "cancel",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Button:cancel",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "default": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Enter activates it while focus is in its focus scope (or root) and the focused node does not take Enter itself.",
+          "js": "default",
+          "native": "default",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Button:default",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "font-weight": {
           "construct_only": false,
           "default": 400,
@@ -6229,6 +6285,23 @@
           },
           "readable": true,
           "type": "string",
+          "writable": true
+        },
+        "autofocus": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Takes keyboard focus when it first appears (in a `dialog` scope: when the dialog opens).",
+          "js": "autofocus",
+          "native": "autofocus",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:autofocus",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         },
         "bottom": {

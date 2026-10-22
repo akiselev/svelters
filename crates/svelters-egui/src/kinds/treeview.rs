@@ -24,7 +24,8 @@
 //! goes to its first child, Left collapses an expanded node or goes to its parent, Space toggles
 //! the cursor's selection, Enter activates it, Ctrl+C raises `copy` (`TreeView` writes the selected
 //! rows to `svelters:clipboard`, the host's `Platform` clipboard), typed text is type-ahead on the
-//! row labels.
+//! row labels. The tree is one EV3 tab stop and claims these keys (`focus::Role::Tree`,
+//! [`claims`]), so a host keymap leaves them.
 //!
 //! **Drag and drop** of rows: with `row-drag-type`, dragging a row starts a [`DragPayload`] of the
 //! selected rows (or the dragged row, when it is not selected): the `row-drag-type` entry is the
@@ -442,21 +443,35 @@ pub(crate) fn tree_drop_target(s: &Scene, i: usize, placed: &[(NodeId, usize)], 
     Some(hit.map_or((DropAt::Into, None), |h| (h.1, Some(h.2))))
 }
 
-/// The focused tree's keys (EV3's `consume_key` replaces the event filtering once it lands).
-#[allow(clippy::too_many_arguments)]
-pub(crate) fn tree_keys(s: &mut Scene, i: usize, list_id: Id, ctx: &egui::Context, ui: &mut Ui, out: &mut Vec<Out>, emit: &Emit<'_>) {
-    ctx.memory_mut(|m| m.set_focus_lock_filter(list_id, egui::EventFilter { tab: false, horizontal_arrows: true, vertical_arrows: true, escape: false }));
+/// EV3 (`focus::Role::Tree`): the keys a focused tree takes, its [`TreeKey`]s and the keys that
+/// type a character (type-ahead). Alt chords stay the app's.
+pub(crate) fn claims(key: egui::Key, m: egui::Modifiers) -> bool {
+    if m.alt {
+        return false;
+    }
+    if TreeKey::of(key, m).is_some() {
+        return true;
+    }
+    let s = key.symbol_or_name();
+    !(m.command || m.ctrl || m.mac_cmd) && s.len() == 1 && s.as_bytes()[0].is_ascii_graphic()
+}
+
+/// The focused tree's input this pass: its key presses (EV3's `focus::record_with`, called right
+/// after with `Role::Tree`, takes them out of the input and reports them to the host keymap) and
+/// its type-ahead text and `Copy` events (taken out here). The arrows are also kept from egui's
+/// directional focus moves (egui's focus lock filter: it acts in `begin_pass`, before EV3).
+pub(crate) fn tree_input(list_id: Id, ui: &mut Ui) -> (Vec<(TreeKey, egui::Modifiers)>, String) {
+    ui.ctx().memory_mut(|m| m.set_focus_lock_filter(list_id, egui::EventFilter { tab: false, horizontal_arrows: true, vertical_arrows: true, escape: false }));
     let mut keys = Vec::new();
     let mut text = String::new();
     ui.input_mut(|inp| {
         inp.events.retain(|e| match e {
-            egui::Event::Key { key, pressed: true, modifiers, .. } => match TreeKey::of(*key, *modifiers) {
-                Some(k) => {
+            egui::Event::Key { key, pressed: true, modifiers, .. } => {
+                if let Some(k) = TreeKey::of(*key, *modifiers).filter(|_| claims(*key, *modifiers)) {
                     keys.push((k, *modifiers));
-                    false
                 }
-                None => true,
-            },
+                true
+            }
             egui::Event::Copy => {
                 keys.push((TreeKey::Copy, egui::Modifiers::COMMAND));
                 false
@@ -470,6 +485,12 @@ pub(crate) fn tree_keys(s: &mut Scene, i: usize, list_id: Id, ctx: &egui::Contex
             _ => true,
         })
     });
+    (keys, text)
+}
+
+/// Applies the focused tree's input ([`tree_input`]).
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn tree_keys(s: &mut Scene, i: usize, keys: Vec<(TreeKey, egui::Modifiers)>, text: String, ctx: &egui::Context, ui: &mut Ui, out: &mut Vec<Out>, emit: &Emit<'_>) {
     if keys.is_empty() && text.is_empty() {
         return;
     }

@@ -33,10 +33,19 @@ Branch `ci/wg5b`.
 - Layout: a row is laid out at `width - inset` and placed at `x = inset` (`VList::row_inset`,
   `(level + 1) * indent`); its full-width rect (selection fill, cursor outline, click and drag
   sense) is the list's x range.
-- Keys: only while the tree has focus (a row click requests it; the list node is focusable). The
-  tree sets a focus-lock filter for arrows and removes the events it handles from `InputState`.
-  **EV3 follow-up**: when EV3 (`Widget::consume_key`) lands on master, `tree_keys` should claim its
-  keys through it instead of filtering `inp.events`.
+- Keys: only while the tree has focus (a row click requests it; the list node is focusable).
+  **EV3 integration (done, 2026-10-22 re-merge onto master f1f5810b)**: the tree records its list
+  node with `focus::record_with(.., Role::Tree, tab_stop = true)` (one tab stop per tree, recorded
+  before its rows). `Role::Tree` is a small additive hook in `focus.rs` (one variant, one `claims`
+  arm) delegating to `kinds::treeview::claims`: the `TreeKey`s (arrows including Left/Right with
+  any of Shift/Ctrl, PageUp/PageDown, Home/End, Space, Enter, Ctrl+C) and the keys that type a
+  printable ASCII character (type-ahead); Alt chords are not claimed. EV3 takes the claimed key
+  presses out of the pass's input and reports them through `consumed_keys`/`shortcut_override`,
+  so a host keymap leaves them. `tree_input` reads the key presses just before that, and still
+  takes the type-ahead `Text` events and egui's `Copy` event (not key events, so EV3 doesn't
+  route them). The `InputState` key filtering is gone. The focus-lock filter on the arrows stays:
+  it isn't key routing but egui's guard against its own directional focus moves, which run in
+  `begin_pass` before EV3 and which EV3 does not cover.
 - Ctrl+C raises `copy`; `<TreeView>` writes the selected rows to `svelters:clipboard` (the host's
   `Platform` clipboard, the same one `Host::platform().clipboard` is): `rowDragType` (each row's
   `rowData`, a line each) and `text/plain` (labels). The backend has no handle on the host's
@@ -61,6 +70,14 @@ rows that left). The compiler treats it as an ordinary component (no `lower/list
 
 ## Tests (run locally, all passing)
 
+Re-merge onto master f1f5810b (EV3+, DS1): `cargo check -p svelters-egui --all-targets` (clean);
+nextest `--test treeview`, `--test focus_keys`, `--test spec` (`SVELTERS_UPDATE=1`: generated files
+unchanged from the auto-merge), `--test vlist` (all but `list_view_runs_on_egui`, which needs the
+built `fixtures/lists-egui/dist`: CI), `--lib kinds::treeview views::selection vlist`;
+`gen_props.py --check`, `gen_kinds.py --check` (under `tools/dev/headless`) clean.
+
+Original lane:
+
 - `cargo nextest run -p svelters-egui --test treeview` (2): lazy Promise children on Right,
   Right/Left (expand, first child, parent, collapse), Shift+Down, Ctrl+C to the clipboard,
   type-ahead, Enter, disclosure click, Ctrl+click, selection kept across a filter and back (SV46),
@@ -74,7 +91,7 @@ rows that left). The compiler treats it as an ordinary component (no `lower/list
 
 ## Not done / follow-ups
 
-- EV3 `consume_key` adoption (above).
+- ~~EV3 `consume_key` adoption~~: done in the re-merge (above).
 - Set sizes are over the whole flattened list, not per sibling group.
 - No AccessKit Expand/Collapse actions yet (keyboard and the triangle only).
 - `layout="grid"`-style options and per-row drag data from Rust row sources (a tree over a Rust

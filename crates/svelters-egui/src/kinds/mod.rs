@@ -41,7 +41,7 @@ mod panes;
 // WG4a (plans/milestones/WG4a-tier1-views.md)
 mod views;
 
-pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, POSITION, WRAP, WRAP_MODE};
+pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, FOCUS_SCOPE, JUSTIFY, KINDS, POSITION, WRAP, WRAP_MODE};
 pub use decor::ORIENTATION;
 pub use layouts::{JUSTIFY_ITEMS, SCROLL_DIRECTION};
 pub use menus::attaches_to;
@@ -112,6 +112,8 @@ pub enum P {
     Top,
     Right,
     Bottom,
+    // EV3: focus
+    Autofocus,
     // Box (and the window's content area)
     FlexDirection,
     FlexWrap,
@@ -121,6 +123,8 @@ pub enum P {
     Padding,
     AlignItems,
     JustifyContent,
+    /// EV3: the box's focus scope.
+    FocusScope,
     // Window
     Title,
     DefaultWidth,
@@ -260,6 +264,9 @@ pub enum P {
     TreeIndent,
     RowDragType,
     RowDropTypes,
+    /// EV3: a button's Enter and Escape roles.
+    Default,
+    Cancel,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }
