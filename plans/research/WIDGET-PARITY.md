@@ -28,6 +28,11 @@ them.
 
 ---
 
+
+**Decided (user, 2026-10-22):** Q1 the QStyle equivalent is Rust part painters selected in CSS (`background-image: paint(cad.knurl)` on a `::part()`), plus `style_as` and Policy overrides; Q2 scope is the IDE-relevant set now (all 223 MISSING items as OW acceptance, ~53 agent-days; the 25 OW-P2 items later); Q3 table cells: both per-column Rust cell renderers (default for large tables) and Svelte `{#snippet}` cells; Q4 inline rich text through child elements (`<b>`, `<i>`, `<code>`, `<a>`, `<span class>`) styled by CSS, no HTML/Markdown parser.
+
+**Decided (coordinator, 2026-10-22):** svelters ships generic `toolbar` and `status-bar` kinds, cadatomic builds its command strip and status sections on them; the completer is cadatomic's, svelters' half (caret-anchored popup + key forwarding) is OW4b; lane splits adopted: OW3b (toolbar, editable combo), OW4b (masks, validators, adornments, completer popup), OW5a (lists, tree incl. WG5b's tree-view, DnD), OW5b (table, header), OW5c (tabs), OW6b optional; new kinds `scrollbar`, `calendar`, `color-editor`, `dialog-buttons` in their lanes; P1-P10 styling rules go to OW-CSS/OW0b; container queries CS-CQ after OW-CSS. The **verify** items are checked by the lane that implements them. The state-bit gaps DOC1 found on today's egui wrappers (`:invalid`, `:open`, `:expanded`, `:read-only`, `:dragging`, `:busy`, `:checked` beyond checkbox, combo `:focus`) are acceptance for the own-widget replacements.
+
 ## 0. Summary
 
 1. **Configuration.** Today's kinds cover the core of every Qt widget, but this document finds 223 MISSING items
