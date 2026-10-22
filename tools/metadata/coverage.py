@@ -244,6 +244,7 @@ def winui_rows() -> list[dict]:
     m = gen.Model()
     man = ledger.manifest("winui")
     verified = ledger.verified_facts("winui")
+    pages = gallery_kinds("winui")
     rows = []
     for cls, k in sorted(m.classes.items(), key=lambda kv: gen.short(kv[0])):
         name = gen.short(cls)
@@ -261,7 +262,7 @@ def winui_rows() -> list[dict]:
             "signal_results": sum(1 for e in sigs if e["o"].get("result")),
             "bindings": len(m.ovr.get(cls, {}).get("bindings", [])),
             "verified": [sum(1 for f in facts if f in verified), len(facts)],
-            "inherited": 0, "gallery": None,
+            "inherited": 0, "gallery": pages.get(name),
             "lifetime": (kind["el"].get("lifetime") or "owned") if kind else None,
         })
     return rows

@@ -1,0 +1,97 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.IMenuFlyoutFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": "Items",
+  "content_property_declared": "Items",
+  "dependency_properties": [
+    "MenuFlyoutPresenterStyleProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:MenuFlyout",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IMenuFlyout",
+      "name": "ShowAt",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "targetElement",
+          "type": {
+            "native": "Microsoft.UI.Xaml.UIElement",
+            "ref": "object<Microsoft.UI.Xaml.UIElement>"
+          }
+        },
+        {
+          "name": "point",
+          "type": {
+            "native": "Windows.Foundation.Point",
+            "ref": "value<Windows.Foundation.Point>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    }
+  ],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.MenuFlyout",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "MenuFlyout"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.IMenuFlyout",
+      "name": "Items",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Controls.MenuFlyoutItemBase>",
+        "ref": "list<object<Microsoft.UI.Xaml.Controls.MenuFlyoutItemBase>>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IMenuFlyout",
+      "name": "MenuFlyoutPresenterStyle",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Style",
+        "ref": "object<Microsoft.UI.Xaml.Style>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

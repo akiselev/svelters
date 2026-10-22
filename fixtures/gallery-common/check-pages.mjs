@@ -21,8 +21,8 @@ const fail = (m) => {
 };
 if (!list.length) fail('no pages in src/pages');
 // Per toolkit: the gallery test file and the sidebar button's click signal.
-const TESTS = { appkit: 'examples/counter-mac/tests/gallery.rs' };
-const CLICK = { appkit: 'action' };
+const TESTS = { appkit: 'examples/counter-mac/tests/gallery.rs', winui: 'examples/counter-win/src/main.rs' };
+const CLICK = { appkit: 'action', winui: 'click' };
 const testsFile = TESTS[tk] ?? 'examples/counter/tests/gallery.rs';
 const tests = fs.readFileSync(path.join(dir, '../..', testsFile), 'utf8');
 for (const p of list) {

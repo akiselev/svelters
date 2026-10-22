@@ -1,0 +1,74 @@
+schema: svelters-observe-layer/v1
+toolkit: winui
+owner: Microsoft.UI.Xaml.Controls:TimePicker
+observe:
+- prop: ClockIdentifier
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: ClockIdentifierProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: Header
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: HeaderProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: HeaderTemplate
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: HeaderTemplateProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: LightDismissOverlayMode
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: LightDismissOverlayModeProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: MinuteIncrement
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: MinuteIncrementProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: SelectedTime
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: SelectedTimeProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: Time
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: TimeProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9

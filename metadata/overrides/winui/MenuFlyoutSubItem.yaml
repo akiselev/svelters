@@ -1,0 +1,11 @@
+class: Microsoft.UI.Xaml.Controls.MenuFlyoutSubItem
+element:
+  text_prop: Text
+slots:
+  - name: items
+    prop: Items
+    default: true
+    child: menu-flyout-item
+    provenance: "[ContentProperty(Name=\"Items\")] on MenuFlyoutSubItem (winmd); Items: IVector<MenuFlyoutItemBase>"
+props:
+  - { name: Text, test: "svelters", provenance: "MenuFlyoutSubItem.Text DP: string (winmd); the submenu's label" }

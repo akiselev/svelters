@@ -1,0 +1,222 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.XamlContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.IRadioButtonsFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": "Items",
+  "content_property_declared": "Items",
+  "dependency_properties": [
+    "HeaderProperty",
+    "HeaderTemplateProperty",
+    "ItemTemplateProperty",
+    "ItemsProperty",
+    "ItemsSourceProperty",
+    "MaxColumnsProperty",
+    "SelectedIndexProperty",
+    "SelectedItemProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RadioButtons",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IRadioButtons",
+      "name": "ContainerFromIndex",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "index",
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "Microsoft.UI.Xaml.UIElement",
+        "ref": "object<Microsoft.UI.Xaml.UIElement>"
+      }
+    }
+  ],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.RadioButtons",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "RadioButtons"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRadioButtons",
+      "name": "Header",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRadioButtons",
+      "name": "HeaderTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DataTemplate",
+        "ref": "object<Microsoft.UI.Xaml.DataTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRadioButtons",
+      "name": "ItemTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRadioButtons",
+      "name": "Items",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Collections.IVector<object>",
+        "ref": "list<variant>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRadioButtons",
+      "name": "ItemsSource",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRadioButtons",
+      "name": "MaxColumns",
+      "origin": "winmd",
+      "type": {
+        "native": "i32",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRadioButtons",
+      "name": "SelectedIndex",
+      "origin": "winmd",
+      "type": {
+        "native": "i32",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IRadioButtons",
+      "name": "SelectedItem",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs",
+          "name": "AddedItems",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.Collections.IVector<object>",
+            "ref": "list<variant>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs",
+          "name": "RemovedItems",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.Collections.IVector<object>",
+            "ref": "list<variant>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Controls.SelectionChangedEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.IRadioButtons",
+      "name": "SelectionChanged",
+      "origin": "winmd",
+      "sender": "object"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

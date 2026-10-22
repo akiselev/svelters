@@ -1,0 +1,18 @@
+# WP-W: GTK StackSidebar + Stack / Adw NavigationSplitView; menu-items hold navigation-view-item elements, the content slot is ContentControl's
+class: Microsoft.UI.Xaml.Controls.NavigationView
+element: {}
+slots:
+  - name: menu-items
+    prop: MenuItems
+    child: navigation-view-item
+    provenance: "NavigationView.MenuItems: IVector<object> (winmd); navigation-view-item elements"
+  - name: footer-menu-items
+    prop: FooterMenuItems
+    child: navigation-view-item
+    provenance: "NavigationView.FooterMenuItems: IVector<object> (winmd)"
+  - name: pane-header
+    prop: PaneHeader
+    provenance: "NavigationView.PaneHeader: UIElement (winmd), single child"
+  - name: pane-footer
+    prop: PaneFooter
+    provenance: "NavigationView.PaneFooter: UIElement (winmd), single child"

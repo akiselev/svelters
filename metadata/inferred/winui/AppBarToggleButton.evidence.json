@@ -1,0 +1,184 @@
+{
+ "bindings:dynamic-overflow-order": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::dynamic-overflow-order",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-compact": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-compact",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:keyboard-accelerator-text-override": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::keyboard-accelerator-text-override",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:label": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::label",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:label-position": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::label-position",
+   "type": "enum<Microsoft.UI.Xaml.Controls.CommandBarLabelPosition>"
+  },
+  "rule": "B1"
+ },
+ "notify:DynamicOverflowOrder": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DynamicOverflowOrderProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:Icon": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IconProperty",
+   "type": "object<Microsoft.UI.Xaml.Controls.IconElement>"
+  },
+  "rule": "O6"
+ },
+ "notify:IsCompact": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsCompactProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:KeyboardAcceleratorTextOverride": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "KeyboardAcceleratorTextOverrideProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:Label": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "LabelProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:LabelPosition": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "LabelPositionProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.CommandBarLabelPosition>"
+  },
+  "rule": "O6"
+ },
+ "props:DynamicOverflowOrder": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICommandBarElement",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Icon": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IAppBarToggleButton",
+   "samples": [
+    "Accept",
+    "Cancel"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Controls.IconElement>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsCompact": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICommandBarElement",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsInOverflow": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICommandBarElement",
+   "type": "bool",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:KeyboardAcceleratorTextOverride": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IAppBarToggleButton",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Label": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IAppBarToggleButton",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:LabelPosition": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IAppBarToggleButton",
+   "samples": [
+    "Collapsed",
+    "Default"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.CommandBarLabelPosition>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

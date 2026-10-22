@@ -1,3 +1,8 @@
 class: Microsoft.UI.Xaml.Controls.Button
 element:
   text_prop: Content
+slots:
+  - name: flyout
+    prop: Flyout
+    child: menu-flyout
+    provenance: "Button.Flyout: FlyoutBase (winmd), single child: shown when the button is clicked (drop-down-button opens it from its arrow) (WP-W)"

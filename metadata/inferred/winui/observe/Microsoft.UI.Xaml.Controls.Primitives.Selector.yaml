@@ -1,0 +1,54 @@
+schema: svelters-observe-layer/v1
+toolkit: winui
+owner: Microsoft.UI.Xaml.Controls.Primitives:Selector
+observe:
+- prop: IsSynchronizedWithCurrentItem
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: IsSynchronizedWithCurrentItemProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: SelectedIndex
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: SelectedIndexProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: SelectedItem
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: SelectedItemProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: SelectedValue
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: SelectedValueProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: SelectedValuePath
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: SelectedValuePathProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9

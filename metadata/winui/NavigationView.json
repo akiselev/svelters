@@ -1,0 +1,906 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.XamlContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.ContentControl",
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.INavigationViewFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": "Content",
+  "content_property_declared": null,
+  "dependency_properties": [
+    "AlwaysShowHeaderProperty",
+    "AutoSuggestBoxProperty",
+    "CompactModeThresholdWidthProperty",
+    "CompactPaneLengthProperty",
+    "ContentOverlayProperty",
+    "DisplayModeProperty",
+    "ExpandedModeThresholdWidthProperty",
+    "FooterMenuItemsProperty",
+    "FooterMenuItemsSourceProperty",
+    "HeaderProperty",
+    "HeaderTemplateProperty",
+    "IsBackButtonVisibleProperty",
+    "IsBackEnabledProperty",
+    "IsPaneOpenProperty",
+    "IsPaneToggleButtonVisibleProperty",
+    "IsPaneVisibleProperty",
+    "IsSettingsVisibleProperty",
+    "IsTitleBarAutoPaddingEnabledProperty",
+    "MenuItemContainerStyleProperty",
+    "MenuItemContainerStyleSelectorProperty",
+    "MenuItemTemplateProperty",
+    "MenuItemTemplateSelectorProperty",
+    "MenuItemsProperty",
+    "MenuItemsSourceProperty",
+    "OpenPaneLengthProperty",
+    "OverflowLabelModeProperty",
+    "PaneCustomContentProperty",
+    "PaneDisplayModeProperty",
+    "PaneFooterProperty",
+    "PaneHeaderProperty",
+    "PaneTitleProperty",
+    "PaneToggleButtonStyleProperty",
+    "SelectedItemProperty",
+    "SelectionFollowsFocusProperty",
+    "SettingsItemProperty",
+    "ShoulderNavigationEnabledProperty",
+    "TemplateSettingsProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NavigationView",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "MenuItemFromContainer",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "container",
+          "type": {
+            "native": "Microsoft.UI.Xaml.DependencyObject",
+            "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "ContainerFromMenuItem",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "item",
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "returns": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "Expand",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "item",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.NavigationViewItem",
+            "ref": "object<Microsoft.UI.Xaml.Controls.NavigationViewItem>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "Collapse",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "item",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.NavigationViewItem",
+            "ref": "object<Microsoft.UI.Xaml.Controls.NavigationViewItem>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    }
+  ],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.NavigationView",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "NavigationView"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "AlwaysShowHeader",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "AutoSuggestBox",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.AutoSuggestBox",
+        "ref": "object<Microsoft.UI.Xaml.Controls.AutoSuggestBox>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "CompactModeThresholdWidth",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "CompactPaneLength",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "ContentOverlay",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.UIElement",
+        "ref": "object<Microsoft.UI.Xaml.UIElement>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "DisplayMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "ExpandedModeThresholdWidth",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "FooterMenuItems",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Collections.IVector<object>",
+        "ref": "list<variant>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "FooterMenuItemsSource",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "Header",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "HeaderTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DataTemplate",
+        "ref": "object<Microsoft.UI.Xaml.DataTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "IsBackButtonVisible",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.NavigationViewBackButtonVisible>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "IsBackEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "IsPaneOpen",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "IsPaneToggleButtonVisible",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "IsPaneVisible",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "IsSettingsVisible",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "IsTitleBarAutoPaddingEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "MenuItemContainerStyle",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Style",
+        "ref": "object<Microsoft.UI.Xaml.Style>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "MenuItemContainerStyleSelector",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.StyleSelector",
+        "ref": "object<Microsoft.UI.Xaml.Controls.StyleSelector>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "MenuItemTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DataTemplate",
+        "ref": "object<Microsoft.UI.Xaml.DataTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "MenuItemTemplateSelector",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.DataTemplateSelector",
+        "ref": "object<Microsoft.UI.Xaml.Controls.DataTemplateSelector>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "MenuItems",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Collections.IVector<object>",
+        "ref": "list<variant>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "MenuItemsSource",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "OpenPaneLength",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "OverflowLabelMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.NavigationViewOverflowLabelMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.NavigationViewOverflowLabelMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "PaneCustomContent",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.UIElement",
+        "ref": "object<Microsoft.UI.Xaml.UIElement>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "PaneDisplayMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.NavigationViewPaneDisplayMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "PaneFooter",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.UIElement",
+        "ref": "object<Microsoft.UI.Xaml.UIElement>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "PaneHeader",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.UIElement",
+        "ref": "object<Microsoft.UI.Xaml.UIElement>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "PaneTitle",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "PaneToggleButtonStyle",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Style",
+        "ref": "object<Microsoft.UI.Xaml.Style>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "SelectedItem",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "SelectionFollowsFocus",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.NavigationViewSelectionFollowsFocus",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.NavigationViewSelectionFollowsFocus>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "SettingsItem",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "ShoulderNavigationEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.NavigationViewShoulderNavigationEnabled",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.NavigationViewShoulderNavigationEnabled>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "TemplateSettings",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.NavigationViewTemplateSettings",
+        "ref": "object<Microsoft.UI.Xaml.Controls.NavigationViewTemplateSettings>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.Controls.NavigationViewBackRequestedEventArgs",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, Microsoft.UI.Xaml.Controls.NavigationViewBackRequestedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "BackRequested",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.NavigationView"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.NavigationViewItemCollapsedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.NavigationViewItemCollapsedEventArgs",
+          "name": "CollapsedItem",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.NavigationViewItemCollapsedEventArgs",
+          "name": "CollapsedItemContainer",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.NavigationViewItemBase",
+            "ref": "object<Microsoft.UI.Xaml.Controls.NavigationViewItemBase>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, Microsoft.UI.Xaml.Controls.NavigationViewItemCollapsedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "Collapsed",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.NavigationView"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.NavigationViewDisplayModeChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.NavigationViewDisplayModeChangedEventArgs",
+          "name": "DisplayMode",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode",
+            "ref": "enum<Microsoft.UI.Xaml.Controls.NavigationViewDisplayMode>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, Microsoft.UI.Xaml.Controls.NavigationViewDisplayModeChangedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "DisplayModeChanged",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.NavigationView"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.NavigationViewItemExpandingEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.NavigationViewItemExpandingEventArgs",
+          "name": "ExpandingItem",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.NavigationViewItemExpandingEventArgs",
+          "name": "ExpandingItemContainer",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.NavigationViewItemBase",
+            "ref": "object<Microsoft.UI.Xaml.Controls.NavigationViewItemBase>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, Microsoft.UI.Xaml.Controls.NavigationViewItemExpandingEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "Expanding",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.NavigationView"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs",
+          "name": "InvokedItem",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs",
+          "name": "InvokedItemContainer",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.NavigationViewItemBase",
+            "ref": "object<Microsoft.UI.Xaml.Controls.NavigationViewItemBase>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs",
+          "name": "IsSettingsInvoked",
+          "settable": false,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs",
+          "name": "RecommendedNavigationTransitionInfo",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Media.Animation.NavigationTransitionInfo",
+            "ref": "object<Microsoft.UI.Xaml.Media.Animation.NavigationTransitionInfo>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, Microsoft.UI.Xaml.Controls.NavigationViewItemInvokedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "ItemInvoked",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.NavigationView"
+    },
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, object>",
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "PaneClosed",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.NavigationView"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.NavigationViewPaneClosingEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.NavigationViewPaneClosingEventArgs",
+          "name": "Cancel",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, Microsoft.UI.Xaml.Controls.NavigationViewPaneClosingEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "PaneClosing",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.NavigationView"
+    },
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, object>",
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "PaneOpened",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.NavigationView"
+    },
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, object>",
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView2",
+      "name": "PaneOpening",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.NavigationView"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs",
+          "name": "IsSettingsSelected",
+          "settable": false,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs",
+          "name": "RecommendedNavigationTransitionInfo",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Media.Animation.NavigationTransitionInfo",
+            "ref": "object<Microsoft.UI.Xaml.Media.Animation.NavigationTransitionInfo>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs",
+          "name": "SelectedItem",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs",
+          "name": "SelectedItemContainer",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.NavigationViewItemBase",
+            "ref": "object<Microsoft.UI.Xaml.Controls.NavigationViewItemBase>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.NavigationView, Microsoft.UI.Xaml.Controls.NavigationViewSelectionChangedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.INavigationView",
+      "name": "SelectionChanged",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.NavigationView"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

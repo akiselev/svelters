@@ -20,6 +20,40 @@ pub enum Ty {
     ObjectString,
     /// A hand-written converter in `custom.rs`.
     Custom,
+    /// `f32`: a number.
+    F32,
+    /// `Microsoft.UI.Xaml.CornerRadius`: a number, `"tl,tr,br,bl"` or a record; read back as `"tl,tr,br,bl"`.
+    CornerRadius,
+    /// `Windows.UI.Color`: `#rrggbb` / `#rrggbbaa` (CSS order) or an `{a, r, g, b}` record; read back as text.
+    Color,
+    /// `Microsoft.UI.Xaml.Media.Brush`: a color string, written as a SolidColorBrush; a solid brush reads back as its
+    /// color, any other brush as null.
+    Brush,
+    /// `Microsoft.UI.Xaml.Media.SolidColorBrush`: the same forms as [`Ty::Brush`].
+    SolidBrush,
+    /// `Windows.UI.Text.FontWeight`: a number (100..900) or a name (`bold`); read back as the number.
+    FontWeight,
+    /// `Microsoft.UI.Xaml.Media.FontFamily`: the family name (`Source`).
+    FontFamily,
+    /// `Windows.Foundation.DateTime`: a `Date`, epoch milliseconds or ISO 8601 text; read back as a `Date`.
+    DateTime,
+    /// `Windows.Foundation.TimeSpan`: milliseconds or `HH:MM[:SS]`; read back as milliseconds.
+    TimeSpan,
+    /// `Windows.Foundation.Uri`: the absolute URI text.
+    Uri,
+    /// `Microsoft.UI.Xaml.Media.ImageSource`: a URI, written as a BitmapImage; read back as its URI.
+    ImageSource,
+    /// `Microsoft.UI.Xaml.Controls.IconElement`: a `Symbol` name (index into ENUMS: a SymbolIcon) or any other text
+    /// (a FontIcon glyph); read back the same way.
+    Icon(u16),
+    /// `IReference<f64>`: null or a number.
+    NullableF64,
+    /// `IReference<DateTime>`: null or a date.
+    NullableDateTime,
+    /// `IReference<TimeSpan>`: null or milliseconds.
+    NullableTimeSpan,
+    /// `IReference<Color>`: null or a color.
+    NullableColor,
 }
 
 pub struct Kind {
@@ -72,7 +106,10 @@ pub struct Attr {
     pub owner: u16,
     /// Slot id (index + 1) the attribute belongs to.
     pub slot: u32,
-    pub default: i64,
+    /// `Ty::I32` or `Ty::F64` (Grid.Row, Canvas.Left).
+    pub ty: Ty,
+    /// The value `null` writes back.
+    pub default: f64,
 }
 
 pub struct Method {

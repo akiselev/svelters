@@ -540,6 +540,34 @@ pub fn call0(tag: &str, method: &str) {
     h.call(w, method, &[]).unwrap_or_else(|e| panic!("<{tag}> {method}(): {e}"));
 }
 
+/// A method with the arguments of its fact (`args` in the override or `method_args` in the rules) on a new `<tag>`
+/// returns without an error.
+pub fn call_args(tag: &str, method: &str, args: &[Value]) {
+    let mut h = Harness::new();
+    let w = h.create(tag);
+    h.call(w, method, args).unwrap_or_else(|e| panic!("<{tag}> {method}({args:?}): {e}"));
+}
+
+/// `<content-dialog>` (WP-W): inserted in a mounted panel, `show-async` opens it (`opened`), `hide` closes it and
+/// `closed` reports ContentDialogResult.None (0).
+pub fn content_dialog_show() {
+    let mut h = Harness::new();
+    let panel = h.create("stack-panel");
+    let d = h.create("content-dialog");
+    h.set(d, "title", Value::Str("Delete?".into())).unwrap_or_else(|e| panic!("title: {e}"));
+    h.insert(panel, d, None, None).unwrap_or_else(|e| panic!("insert: {e}"));
+    h.mount(panel);
+    h.listen(d, "opened", true).unwrap();
+    h.listen(d, "closed", true).unwrap();
+    h.call(d, "show-async", &[]).unwrap_or_else(|e| panic!("show-async: {e}"));
+    h.pump(600);
+    assert!(h.events(d, "opened") >= 1, "show-async did not open the dialog");
+    h.call(d, "hide", &[]).unwrap_or_else(|e| panic!("hide: {e}"));
+    h.pump(600);
+    assert!(h.events(d, "closed") >= 1, "hide did not close the dialog");
+    assert_eq!(h.last_args(d, "closed"), vec![Value::I64(0)], "closed carries ContentDialogResult.None");
+}
+
 // ---- Observe facts (milestone R4; plans/research/REACTIVITY.md 4.5) ----
 
 /// How an observe row checks its fact (`tools/metadata/winui/gen_backend.py` picks it from the fact).

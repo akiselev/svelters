@@ -1,0 +1,754 @@
+schema: svelters-observe-layer/v1
+toolkit: winui
+owner: Microsoft.UI.Xaml.Controls:CalendarView
+observe:
+- prop: BlackoutBackground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: BlackoutBackgroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: BlackoutForeground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: BlackoutForegroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: BlackoutStrikethroughBrush
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: BlackoutStrikethroughBrushProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: CalendarIdentifier
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: CalendarIdentifierProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: CalendarItemBackground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: CalendarItemBackgroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: CalendarItemBorderBrush
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: CalendarItemBorderBrushProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: CalendarItemBorderThickness
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: CalendarItemBorderThicknessProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: CalendarItemCornerRadius
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: CalendarItemCornerRadiusProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: CalendarItemDisabledBackground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: CalendarItemDisabledBackgroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: CalendarItemForeground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: CalendarItemForegroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: CalendarItemHoverBackground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: CalendarItemHoverBackgroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: CalendarItemPressedBackground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: CalendarItemPressedBackgroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: CalendarViewDayItemStyle
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: CalendarViewDayItemStyleProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: DayItemFontFamily
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: DayItemFontFamilyProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: DayItemFontSize
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: DayItemFontSizeProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: DayItemFontStyle
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: DayItemFontStyleProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: DayItemFontWeight
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: DayItemFontWeightProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: DayItemMargin
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: DayItemMarginProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: DayOfWeekFormat
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: DayOfWeekFormatProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: DisabledForeground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: DisabledForegroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: DisplayMode
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: DisplayModeProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: FirstDayOfWeek
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: FirstDayOfWeekProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: FirstOfMonthLabelFontFamily
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: FirstOfMonthLabelFontFamilyProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: FirstOfMonthLabelFontSize
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: FirstOfMonthLabelFontSizeProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: FirstOfMonthLabelFontStyle
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: FirstOfMonthLabelFontStyleProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: FirstOfMonthLabelFontWeight
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: FirstOfMonthLabelFontWeightProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: FirstOfMonthLabelMargin
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: FirstOfMonthLabelMarginProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: FirstOfYearDecadeLabelFontFamily
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: FirstOfYearDecadeLabelFontFamilyProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: FirstOfYearDecadeLabelFontSize
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: FirstOfYearDecadeLabelFontSizeProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: FirstOfYearDecadeLabelFontStyle
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: FirstOfYearDecadeLabelFontStyleProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: FirstOfYearDecadeLabelFontWeight
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: FirstOfYearDecadeLabelFontWeightProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: FirstOfYearDecadeLabelMargin
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: FirstOfYearDecadeLabelMarginProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: FocusBorderBrush
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: FocusBorderBrushProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: HorizontalDayItemAlignment
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: HorizontalDayItemAlignmentProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: HorizontalFirstOfMonthLabelAlignment
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: HorizontalFirstOfMonthLabelAlignmentProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: HoverBorderBrush
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: HoverBorderBrushProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: IsGroupLabelVisible
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: IsGroupLabelVisibleProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: IsOutOfScopeEnabled
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: IsOutOfScopeEnabledProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: IsTodayHighlighted
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: IsTodayHighlightedProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: MaxDate
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: MaxDateProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: MinDate
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: MinDateProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: MonthYearItemFontFamily
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: MonthYearItemFontFamilyProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: MonthYearItemFontSize
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: MonthYearItemFontSizeProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: MonthYearItemFontStyle
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: MonthYearItemFontStyleProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: MonthYearItemFontWeight
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: MonthYearItemFontWeightProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: MonthYearItemMargin
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: MonthYearItemMarginProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: NumberOfWeeksInView
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: NumberOfWeeksInViewProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: OutOfScopeBackground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: OutOfScopeBackgroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: OutOfScopeForeground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: OutOfScopeForegroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: OutOfScopeHoverForeground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: OutOfScopeHoverForegroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: OutOfScopePressedForeground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: OutOfScopePressedForegroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: PressedBorderBrush
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: PressedBorderBrushProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: PressedForeground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: PressedForegroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: SelectedBorderBrush
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: SelectedBorderBrushProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: SelectedDates
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: SelectedDatesProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: SelectedDisabledBorderBrush
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: SelectedDisabledBorderBrushProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: SelectedDisabledForeground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: SelectedDisabledForegroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: SelectedForeground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: SelectedForegroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: SelectedHoverBorderBrush
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: SelectedHoverBorderBrushProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: SelectedHoverForeground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: SelectedHoverForegroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: SelectedPressedBorderBrush
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: SelectedPressedBorderBrushProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: SelectedPressedForeground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: SelectedPressedForegroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: SelectionMode
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: SelectionModeProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: TemplateSettings
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: TemplateSettingsProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: TodayBackground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: TodayBackgroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: TodayBlackoutBackground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: TodayBlackoutBackgroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: TodayBlackoutForeground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: TodayBlackoutForegroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: TodayDisabledBackground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: TodayDisabledBackgroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: TodayFontWeight
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: TodayFontWeightProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: TodayForeground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: TodayForegroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: TodayHoverBackground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: TodayHoverBackgroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: TodayPressedBackground
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: TodayPressedBackgroundProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: TodaySelectedInnerBorderBrush
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: TodaySelectedInnerBorderBrushProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: VerticalDayItemAlignment
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: VerticalDayItemAlignmentProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: VerticalFirstOfMonthLabelAlignment
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: VerticalFirstOfMonthLabelAlignmentProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9

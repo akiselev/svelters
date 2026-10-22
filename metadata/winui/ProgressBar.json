@@ -1,0 +1,104 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.XamlContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.Primitives.RangeBase",
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.IProgressBarFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": null,
+  "content_property_declared": null,
+  "dependency_properties": [
+    "IsIndeterminateProperty",
+    "ShowErrorProperty",
+    "ShowPausedProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ProgressBar",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.ProgressBar",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "ProgressBar"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IProgressBar",
+      "name": "IsIndeterminate",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IProgressBar",
+      "name": "ShowError",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IProgressBar",
+      "name": "ShowPaused",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.IProgressBar",
+      "name": "TemplateSettings",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ProgressBarTemplateSettings",
+        "ref": "object<Microsoft.UI.Xaml.Controls.ProgressBarTemplateSettings>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

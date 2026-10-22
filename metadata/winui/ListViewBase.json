@@ -1,0 +1,962 @@
+{
+  "abstract": true,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.Primitives.Selector",
+    "Microsoft.UI.Xaml.Controls.ItemsControl",
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [],
+  "content_property": "Items",
+  "content_property_declared": null,
+  "dependency_properties": [
+    "CanDragItemsProperty",
+    "CanReorderItemsProperty",
+    "DataFetchSizeProperty",
+    "FooterProperty",
+    "FooterTemplateProperty",
+    "FooterTransitionsProperty",
+    "HeaderProperty",
+    "HeaderTemplateProperty",
+    "HeaderTransitionsProperty",
+    "IncrementalLoadingThresholdProperty",
+    "IncrementalLoadingTriggerProperty",
+    "IsActiveViewProperty",
+    "IsItemClickEnabledProperty",
+    "IsMultiSelectCheckBoxEnabledProperty",
+    "IsSwipeEnabledProperty",
+    "IsZoomedInViewProperty",
+    "ReorderModeProperty",
+    "SelectionModeProperty",
+    "SemanticZoomOwnerProperty",
+    "ShowsScrollingPlaceholdersProperty",
+    "SingleSelectionFollowsFocusProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ListViewBase",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "ScrollIntoView",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "item",
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "SelectAll",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "LoadMoreItemsAsync",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "Windows.Foundation.IAsyncOperation<Microsoft.UI.Xaml.Data.LoadMoreItemsResult>",
+        "ref": "object<Windows.Foundation.IAsyncOperation>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "ScrollIntoView",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "item",
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        },
+        {
+          "name": "alignment",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.ScrollIntoViewAlignment",
+            "ref": "enum<Microsoft.UI.Xaml.Controls.ScrollIntoViewAlignment>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "SetDesiredContainerUpdateDuration",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "duration",
+          "type": {
+            "native": "Windows.Foundation.TimeSpan",
+            "ref": "value<Windows.Foundation.TimeSpan>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "SelectRange",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "itemIndexRange",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Data.ItemIndexRange",
+            "ref": "object<Microsoft.UI.Xaml.Data.ItemIndexRange>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "DeselectRange",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "itemIndexRange",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Data.ItemIndexRange",
+            "ref": "object<Microsoft.UI.Xaml.Data.ItemIndexRange>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "IsDragSource",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "TryStartConnectedAnimationAsync",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "animation",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Media.Animation.ConnectedAnimation",
+            "ref": "object<Microsoft.UI.Xaml.Media.Animation.ConnectedAnimation>"
+          }
+        },
+        {
+          "name": "item",
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        },
+        {
+          "name": "elementName",
+          "type": {
+            "native": "string",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "native": "Windows.Foundation.IAsyncOperation<bool>",
+        "ref": "object<Windows.Foundation.IAsyncOperation>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "PrepareConnectedAnimation",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "key",
+          "type": {
+            "native": "string",
+            "ref": "string"
+          }
+        },
+        {
+          "name": "item",
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        },
+        {
+          "name": "elementName",
+          "type": {
+            "native": "string",
+            "ref": "string"
+          }
+        }
+      ],
+      "returns": {
+        "native": "Microsoft.UI.Xaml.Media.Animation.ConnectedAnimation",
+        "ref": "object<Microsoft.UI.Xaml.Media.Animation.ConnectedAnimation>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ISemanticZoomInformation",
+      "name": "InitializeViewChange",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ISemanticZoomInformation",
+      "name": "CompleteViewChange",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ISemanticZoomInformation",
+      "name": "MakeVisible",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "item",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.SemanticZoomLocation",
+            "ref": "object<Microsoft.UI.Xaml.Controls.SemanticZoomLocation>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ISemanticZoomInformation",
+      "name": "StartViewChangeFrom",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "source",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.SemanticZoomLocation",
+            "ref": "object<Microsoft.UI.Xaml.Controls.SemanticZoomLocation>"
+          }
+        },
+        {
+          "name": "destination",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.SemanticZoomLocation",
+            "ref": "object<Microsoft.UI.Xaml.Controls.SemanticZoomLocation>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ISemanticZoomInformation",
+      "name": "StartViewChangeTo",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "source",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.SemanticZoomLocation",
+            "ref": "object<Microsoft.UI.Xaml.Controls.SemanticZoomLocation>"
+          }
+        },
+        {
+          "name": "destination",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.SemanticZoomLocation",
+            "ref": "object<Microsoft.UI.Xaml.Controls.SemanticZoomLocation>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ISemanticZoomInformation",
+      "name": "CompleteViewChangeFrom",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "source",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.SemanticZoomLocation",
+            "ref": "object<Microsoft.UI.Xaml.Controls.SemanticZoomLocation>"
+          }
+        },
+        {
+          "name": "destination",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.SemanticZoomLocation",
+            "ref": "object<Microsoft.UI.Xaml.Controls.SemanticZoomLocation>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ISemanticZoomInformation",
+      "name": "CompleteViewChangeTo",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "source",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.SemanticZoomLocation",
+            "ref": "object<Microsoft.UI.Xaml.Controls.SemanticZoomLocation>"
+          }
+        },
+        {
+          "name": "destination",
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.SemanticZoomLocation",
+            "ref": "object<Microsoft.UI.Xaml.Controls.SemanticZoomLocation>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    }
+  ],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.ListViewBase",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "ListViewBase"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "CanDragItems",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "CanReorderItems",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "DataFetchSize",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "Footer",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "FooterTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DataTemplate",
+        "ref": "object<Microsoft.UI.Xaml.DataTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "FooterTransitions",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.Animation.TransitionCollection",
+        "ref": "object<Microsoft.UI.Xaml.Media.Animation.TransitionCollection>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "Header",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "HeaderTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DataTemplate",
+        "ref": "object<Microsoft.UI.Xaml.DataTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "HeaderTransitions",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.Animation.TransitionCollection",
+        "ref": "object<Microsoft.UI.Xaml.Media.Animation.TransitionCollection>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "IncrementalLoadingThreshold",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "IncrementalLoadingTrigger",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.IncrementalLoadingTrigger>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ISemanticZoomInformation",
+      "name": "IsActiveView",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "IsItemClickEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "IsMultiSelectCheckBoxEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "IsSwipeEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ISemanticZoomInformation",
+      "name": "IsZoomedInView",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "ReorderMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ListViewReorderMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.ListViewReorderMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "SelectedItems",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Collections.IVector<object>",
+        "ref": "list<variant>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "SelectedRanges",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Collections.IVectorView<Microsoft.UI.Xaml.Data.ItemIndexRange>",
+        "ref": "list<object<Microsoft.UI.Xaml.Data.ItemIndexRange>>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "SelectionMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ListViewSelectionMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.ListViewSelectionMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ISemanticZoomInformation",
+      "name": "SemanticZoomOwner",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.SemanticZoom",
+        "ref": "object<Microsoft.UI.Xaml.Controls.SemanticZoom>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "ShowsScrollingPlaceholders",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "SingleSelectionFollowsFocus",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.Controls.ChoosingGroupHeaderContainerEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ChoosingGroupHeaderContainerEventArgs",
+          "name": "Group",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ChoosingGroupHeaderContainerEventArgs",
+          "name": "GroupHeaderContainer",
+          "settable": true,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.ListViewBaseHeaderItem",
+            "ref": "object<Microsoft.UI.Xaml.Controls.ListViewBaseHeaderItem>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ChoosingGroupHeaderContainerEventArgs",
+          "name": "GroupIndex",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ListViewBase, Microsoft.UI.Xaml.Controls.ChoosingGroupHeaderContainerEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "ChoosingGroupHeaderContainer",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.ListViewBase"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.ChoosingItemContainerEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ChoosingItemContainerEventArgs",
+          "name": "IsContainerPrepared",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ChoosingItemContainerEventArgs",
+          "name": "Item",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ChoosingItemContainerEventArgs",
+          "name": "ItemContainer",
+          "settable": true,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.Primitives.SelectorItem",
+            "ref": "object<Microsoft.UI.Xaml.Controls.Primitives.SelectorItem>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ChoosingItemContainerEventArgs",
+          "name": "ItemIndex",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ListViewBase, Microsoft.UI.Xaml.Controls.ChoosingItemContainerEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "ChoosingItemContainer",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.ListViewBase"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.ContainerContentChangingEventArgs",
+      "args_methods": [
+        "RegisterUpdateCallback"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ContainerContentChangingEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ContainerContentChangingEventArgs",
+          "name": "InRecycleQueue",
+          "settable": false,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ContainerContentChangingEventArgs",
+          "name": "Item",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ContainerContentChangingEventArgs",
+          "name": "ItemContainer",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.Primitives.SelectorItem",
+            "ref": "object<Microsoft.UI.Xaml.Controls.Primitives.SelectorItem>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ContainerContentChangingEventArgs",
+          "name": "ItemIndex",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ContainerContentChangingEventArgs",
+          "name": "Phase",
+          "settable": false,
+          "type": {
+            "native": "u32",
+            "ref": "u32"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ListViewBase, Microsoft.UI.Xaml.Controls.ContainerContentChangingEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "ContainerContentChanging",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.ListViewBase"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.DragItemsCompletedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.DragItemsCompletedEventArgs",
+          "name": "DropResult",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DataPackageOperation>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.DragItemsCompletedEventArgs",
+          "name": "Items",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.Collections.IVectorView<object>",
+            "ref": "list<variant>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ListViewBase, Microsoft.UI.Xaml.Controls.DragItemsCompletedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "DragItemsCompleted",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.ListViewBase"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.DragItemsStartingEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.DragItemsStartingEventArgs",
+          "name": "Cancel",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.DragItemsStartingEventArgs",
+          "name": "Data",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackage",
+            "ref": "object<Windows.ApplicationModel.DataTransfer.DataPackage>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.DragItemsStartingEventArgs",
+          "name": "Items",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.Collections.IVector<object>",
+            "ref": "list<variant>"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Controls.DragItemsStartingEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "DragItemsStarting",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.ItemClickEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ItemClickEventArgs",
+          "name": "ClickedItem",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Controls.ItemClickEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.IListViewBase",
+      "name": "ItemClick",
+      "origin": "winmd",
+      "sender": "object"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

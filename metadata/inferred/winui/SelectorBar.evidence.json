@@ -1,0 +1,12 @@
+{
+ "events:SelectionChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.SelectorBarSelectionChangedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.SelectorBar, Microsoft.UI.Xaml.Controls.SelectorBarSelectionChangedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ }
+}

@@ -1,0 +1,9 @@
+# WP-W: GTK PopoverMenu / Qt QMenu. A FlyoutBase (DependencyObject, not a UIElement): it goes into a context-flyout or flyout slot
+class: Microsoft.UI.Xaml.Controls.MenuFlyout
+element: {}
+slots:
+  - name: items
+    prop: Items
+    default: true
+    child: menu-flyout-item
+    provenance: "[ContentProperty(Name=\"Items\")] on MenuFlyout (winmd); Items: IVector<MenuFlyoutItemBase>"

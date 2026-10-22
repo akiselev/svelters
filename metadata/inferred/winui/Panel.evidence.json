@@ -1,4 +1,26 @@
 {
+ "notify:Background": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "BackgroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "props:Background": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IPanel",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
  "props:IsItemsHost": {
   "confidence": 0.9,
   "evidence": {

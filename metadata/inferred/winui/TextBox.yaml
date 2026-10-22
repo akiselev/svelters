@@ -17,12 +17,26 @@ props:
   - Lower
   - Normal
   provenance: 'rule P1: TextBox.CharacterCasing: enum<Microsoft.UI.Xaml.Controls.CharacterCasing>, read-write DP (winmd); written and read back'
+- name: Description
+  as: string
+  test:
+  - svelters
+  - winui
+  provenance: 'rule P1: TextBox.Description: object, as a boxed string (winmd); string_objects: a header, title or description label; text is
+    the common case (an element goes through a slot where one exists)'
 - name: DesiredCandidateWindowAlignment
   test:
   - BottomEdge
   - Default
   provenance: 'rule P1: TextBox.DesiredCandidateWindowAlignment: enum<Microsoft.UI.Xaml.Controls.CandidateWindowAlignment>, read-write DP (winmd);
     written and read back'
+- name: Header
+  as: string
+  test:
+  - svelters
+  - winui
+  provenance: 'rule P1: TextBox.Header: object, as a boxed string (winmd); string_objects: a header, title or description label; text is the common
+    case (an element goes through a slot where one exists)'
 - name: HorizontalTextAlignment
   test:
   - Left
@@ -53,6 +67,11 @@ props:
   - 3
   - 7
   provenance: 'rule P1: TextBox.MaxLength: i32, read-write DP (winmd); written and read back'
+- name: PlaceholderForeground
+  test:
+  - '#ff0000'
+  - '#00ff0080'
+  provenance: 'rule P1: TextBox.PlaceholderForeground: object<Microsoft.UI.Xaml.Media.Brush>, read-write DP (winmd); written and read back'
 - name: PlaceholderText
   test:
   - svelters
@@ -68,6 +87,18 @@ props:
   - svelters
   - winui
   provenance: 'rule P1: TextBox.SelectedText: string, read-write (winmd); written and read back'
+- name: SelectionHighlightColor
+  test:
+  - '#ff0000'
+  - '#00ff0080'
+  provenance: 'rule P1: TextBox.SelectionHighlightColor: object<Microsoft.UI.Xaml.Media.SolidColorBrush>, read-write DP (winmd); written and read
+    back'
+- name: SelectionHighlightColorWhenNotFocused
+  test:
+  - '#ff0000'
+  - '#00ff0080'
+  provenance: 'rule P1: TextBox.SelectionHighlightColorWhenNotFocused: object<Microsoft.UI.Xaml.Media.SolidColorBrush>, read-write DP (winmd);
+    written and read back'
 - name: SelectionLength
   test:
   - 3
@@ -118,10 +149,17 @@ notify:
   provenance: 'rule O6: TextBox.IsTextPredictionEnabled is a DependencyProperty (TextBox.IsTextPredictionEnabledProperty, winmd): RegisterPropertyChangedCallback'
 - name: MaxLength
   provenance: 'rule O6: TextBox.MaxLength is a DependencyProperty (TextBox.MaxLengthProperty, winmd): RegisterPropertyChangedCallback'
+- name: PlaceholderForeground
+  provenance: 'rule O6: TextBox.PlaceholderForeground is a DependencyProperty (TextBox.PlaceholderForegroundProperty, winmd): RegisterPropertyChangedCallback'
 - name: PlaceholderText
   provenance: 'rule O6: TextBox.PlaceholderText is a DependencyProperty (TextBox.PlaceholderTextProperty, winmd): RegisterPropertyChangedCallback'
 - name: PreventKeyboardDisplayOnProgrammaticFocus
   provenance: 'rule O6: TextBox.PreventKeyboardDisplayOnProgrammaticFocus is a DependencyProperty (TextBox.PreventKeyboardDisplayOnProgrammaticFocusProperty,
+    winmd): RegisterPropertyChangedCallback'
+- name: SelectionHighlightColor
+  provenance: 'rule O6: TextBox.SelectionHighlightColor is a DependencyProperty (TextBox.SelectionHighlightColorProperty, winmd): RegisterPropertyChangedCallback'
+- name: SelectionHighlightColorWhenNotFocused
+  provenance: 'rule O6: TextBox.SelectionHighlightColorWhenNotFocused is a DependencyProperty (TextBox.SelectionHighlightColorWhenNotFocusedProperty,
     winmd): RegisterPropertyChangedCallback'
 - name: Text
   provenance: 'rule O6: TextBox.Text is a DependencyProperty (TextBox.TextProperty, winmd): RegisterPropertyChangedCallback'
@@ -193,6 +231,11 @@ methods:
   provenance: 'rule M1: TextBox.ClearUndoRedoHistory() -> void (winmd)'
 - name: Redo
   provenance: 'rule M1: TextBox.Redo() -> void (winmd)'
+- name: Select
+  provenance: 'rule M1: TextBox.Select(i32, i32) -> void (winmd)'
+  args:
+  - 1
+  - 2
 - name: SelectAll
   provenance: 'rule M1: TextBox.SelectAll() -> void (winmd)'
 - name: Undo

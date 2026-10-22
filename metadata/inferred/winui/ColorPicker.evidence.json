@@ -1,0 +1,596 @@
+{
+ "bindings:color-spectrum-components": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::color-spectrum-components",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ColorSpectrumComponents>"
+  },
+  "rule": "B1"
+ },
+ "bindings:color-spectrum-shape": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::color-spectrum-shape",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ColorSpectrumShape>"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-alpha-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-alpha-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-alpha-slider-visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-alpha-slider-visible",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-alpha-text-input-visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-alpha-text-input-visible",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-color-channel-text-input-visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-color-channel-text-input-visible",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-color-preview-visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-color-preview-visible",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-color-slider-visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-color-slider-visible",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-color-spectrum-visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-color-spectrum-visible",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-hex-input-visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-hex-input-visible",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-more-button-visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-more-button-visible",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:max-hue": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::max-hue",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "bindings:max-saturation": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::max-saturation",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "bindings:max-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::max-value",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "bindings:min-hue": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::min-hue",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "bindings:min-saturation": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::min-saturation",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "bindings:min-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::min-value",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "bindings:orientation": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::orientation",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Orientation>"
+  },
+  "rule": "B1"
+ },
+ "events:ColorChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.ColorChangedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ColorPicker, Microsoft.UI.Xaml.Controls.ColorChangedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:Color": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ColorProperty",
+   "type": "value<Windows.UI.Color>"
+  },
+  "rule": "O6"
+ },
+ "notify:ColorSpectrumComponents": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ColorSpectrumComponentsProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ColorSpectrumComponents>"
+  },
+  "rule": "O6"
+ },
+ "notify:ColorSpectrumShape": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ColorSpectrumShapeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ColorSpectrumShape>"
+  },
+  "rule": "O6"
+ },
+ "notify:IsAlphaEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsAlphaEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsAlphaSliderVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsAlphaSliderVisibleProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsAlphaTextInputVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsAlphaTextInputVisibleProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsColorChannelTextInputVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsColorChannelTextInputVisibleProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsColorPreviewVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsColorPreviewVisibleProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsColorSliderVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsColorSliderVisibleProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsColorSpectrumVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsColorSpectrumVisibleProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsHexInputVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsHexInputVisibleProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsMoreButtonVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsMoreButtonVisibleProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:MaxHue": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MaxHueProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:MaxSaturation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MaxSaturationProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:MaxValue": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MaxValueProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:MinHue": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MinHueProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:MinSaturation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MinSaturationProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:MinValue": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MinValueProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:Orientation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "OrientationProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Orientation>"
+  },
+  "rule": "O6"
+ },
+ "notify:PreviousColor": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PreviousColorProperty",
+   "type": "nullable<value<Windows.UI.Color>>"
+  },
+  "rule": "O6"
+ },
+ "props:Color": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "value<Windows.UI.Color>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ColorSpectrumComponents": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+   "samples": [
+    "ValueHue",
+    "HueValue"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.ColorSpectrumComponents>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ColorSpectrumShape": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+   "samples": [
+    "Ring",
+    "Box"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.ColorSpectrumShape>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsAlphaEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsAlphaSliderVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsAlphaTextInputVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsColorChannelTextInputVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsColorPreviewVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsColorSliderVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsColorSpectrumVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsHexInputVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsMoreButtonVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MaxHue": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MaxSaturation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MaxValue": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MinHue": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MinSaturation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MinValue": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Orientation": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker2",
+   "samples": [
+    "Horizontal",
+    "Vertical"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.Orientation>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:PreviousColor": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IColorPicker",
+   "samples": [
+    "#ff0000",
+    null
+   ],
+   "type": "nullable<value<Windows.UI.Color>>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

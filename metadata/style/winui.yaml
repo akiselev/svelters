@@ -2,8 +2,8 @@
 # WinUI has no stylesheet language we can feed at run time, so every property is a setter (a
 # DependencyProperty written with setProp) or a child attribute (an attached property written with
 # setChildAttr). `prop` / `attr` are the backend's kebab-case names (tools/metadata/winui).
-# Not yet wired into tools/metadata/style/style_table.py: that needs metadata/semantics/winui.json,
-# which the WinUI generator does not emit yet (docs/notes/win1-winui.md).
+# Colors are brushes on the native side: the color text (#rgb, #rrggbb, #rrggbbaa, transparent) becomes a
+# SolidColorBrush (svelters-winui conv.rs, WP-W).
 toolkit: winui
 dialect: none
 setter_selectors: [type, class, id]
@@ -22,6 +22,12 @@ properties:
   horizontal-alignment: { via: setter, prop: horizontal-alignment, type: enum, kinds: [FrameworkElement] }
   vertical-alignment: { via: setter, prop: vertical-alignment, type: enum, kinds: [FrameworkElement] }
   font-size: { via: setter, prop: font-size, type: length, kinds: [Control, TextBlock] }
+  color: { via: setter, prop: foreground, type: string, kinds: [Control, TextBlock], note: "a SolidColorBrush: #rgb, #rrggbb, #rrggbbaa or transparent; no named colors" }
+  background: { via: setter, prop: background, type: string, kinds: [Control, Panel, Border], note: "colour only (a SolidColorBrush), as color" }
+  border-color: { via: setter, prop: border-brush, type: string, kinds: [Control, Border], note: "a SolidColorBrush, as color" }
+  border-radius: { via: setter, prop: corner-radius, type: length, kinds: [Control, Border], note: "one radius for all four corners (CornerRadius)" }
+  font-family: { via: setter, prop: font-family, type: string, kinds: [Control, TextBlock], note: "one family name (FontFamily); no fallback list" }
+  font-weight: { via: setter, prop: font-weight, type: int, kinds: [Control, TextBlock], note: "numeric weights only (100-950, e.g. 400 or 700); no bold/normal keywords" }
   spacing: { via: setter, prop: spacing, type: length, kinds: [StackPanel] }
   row-spacing: { via: setter, prop: row-spacing, type: length, kinds: [Grid] }
   column-spacing: { via: setter, prop: column-spacing, type: length, kinds: [Grid] }

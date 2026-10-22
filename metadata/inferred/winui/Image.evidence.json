@@ -1,0 +1,96 @@
+{
+ "bindings:stretch": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::stretch",
+   "type": "enum<Microsoft.UI.Xaml.Media.Stretch>"
+  },
+  "rule": "B1"
+ },
+ "events:ImageFailed": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.ExceptionRoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.ExceptionRoutedEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:ImageOpened": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+   "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:NineGrid": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "NineGridProperty",
+   "type": "value<Microsoft.UI.Xaml.Thickness>"
+  },
+  "rule": "O6"
+ },
+ "notify:Source": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SourceProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.ImageSource>"
+  },
+  "rule": "O6"
+ },
+ "notify:Stretch": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "StretchProperty",
+   "type": "enum<Microsoft.UI.Xaml.Media.Stretch>"
+  },
+  "rule": "O6"
+ },
+ "props:NineGrid": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IImage",
+   "samples": [
+    "1,2,3,4",
+    "5"
+   ],
+   "type": "value<Microsoft.UI.Xaml.Thickness>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Source": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IImage",
+   "samples": [
+    "https://example.com/a.png",
+    "https://example.org/b.png"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.ImageSource>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Stretch": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IImage",
+   "samples": [
+    "Fill",
+    "None"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Media.Stretch>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

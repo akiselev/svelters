@@ -29,11 +29,27 @@
   },
   "rule": "R1/R2"
  },
+ "notify:Background": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "BackgroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
  "notify:BackgroundSizing": {
   "confidence": 0.9,
   "evidence": {
    "dp": "BackgroundSizingProperty",
    "type": "enum<Microsoft.UI.Xaml.Controls.BackgroundSizing>"
+  },
+  "rule": "O6"
+ },
+ "notify:BorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "BorderBrushProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
   },
   "rule": "O6"
  },
@@ -53,11 +69,35 @@
   },
   "rule": "O6"
  },
+ "notify:CornerRadius": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CornerRadiusProperty",
+   "type": "value<Microsoft.UI.Xaml.CornerRadius>"
+  },
+  "rule": "O6"
+ },
+ "notify:DefaultStyleResourceUri": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DefaultStyleResourceUriProperty",
+   "type": "object<Windows.Foundation.Uri>"
+  },
+  "rule": "O6"
+ },
  "notify:ElementSoundMode": {
   "confidence": 0.9,
   "evidence": {
    "dp": "ElementSoundModeProperty",
    "type": "enum<Microsoft.UI.Xaml.ElementSoundMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:FontFamily": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FontFamilyProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.FontFamily>"
   },
   "rule": "O6"
  },
@@ -82,6 +122,22 @@
   "evidence": {
    "dp": "FontStyleProperty",
    "type": "enum<Windows.UI.Text.FontStyle>"
+  },
+  "rule": "O6"
+ },
+ "notify:FontWeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FontWeightProperty",
+   "type": "value<Windows.UI.Text.FontWeight>"
+  },
+  "rule": "O6"
+ },
+ "notify:Foreground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ForegroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
   },
   "rule": "O6"
  },
@@ -157,6 +213,20 @@
   },
   "rule": "O6"
  },
+ "props:Background": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
  "props:BackgroundSizing": {
   "confidence": 0.9,
   "evidence": {
@@ -167,6 +237,20 @@
     "InnerBorderEdge"
    ],
    "type": "enum<Microsoft.UI.Xaml.Controls.BackgroundSizing>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:BorderBrush": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
    "write": true
   },
   "rule": "P1"
@@ -199,6 +283,34 @@
   },
   "rule": "P1"
  },
+ "props:CornerRadius": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    "4",
+    "1,2,3,4"
+   ],
+   "type": "value<Microsoft.UI.Xaml.CornerRadius>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:DefaultStyleResourceUri": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    "https://example.com/a",
+    "https://example.org/b"
+   ],
+   "type": "object<Windows.Foundation.Uri>",
+   "write": true
+  },
+  "rule": "P1"
+ },
  "props:ElementSoundMode": {
   "confidence": 0.9,
   "evidence": {
@@ -209,6 +321,20 @@
     "Default"
    ],
    "type": "enum<Microsoft.UI.Xaml.ElementSoundMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FontFamily": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    "Consolas",
+    "Segoe UI"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.FontFamily>",
    "write": true
   },
   "rule": "P1"
@@ -251,6 +377,34 @@
     "Normal"
    ],
    "type": "enum<Windows.UI.Text.FontStyle>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FontWeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    700,
+    300
+   ],
+   "type": "value<Windows.UI.Text.FontWeight>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Foreground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IControl",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
    "write": true
   },
   "rule": "P1"

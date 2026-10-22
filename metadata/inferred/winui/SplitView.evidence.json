@@ -1,0 +1,244 @@
+{
+ "bindings:compact-pane-length": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::compact-pane-length",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:display-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::display-mode",
+   "type": "enum<Microsoft.UI.Xaml.Controls.SplitViewDisplayMode>"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-pane-open": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-pane-open",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:light-dismiss-overlay-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::light-dismiss-overlay-mode",
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>"
+  },
+  "rule": "B1"
+ },
+ "bindings:open-pane-length": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::open-pane-length",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:pane-placement": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::pane-placement",
+   "type": "enum<Microsoft.UI.Xaml.Controls.SplitViewPanePlacement>"
+  },
+  "rule": "B1"
+ },
+ "events:PaneClosed": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.SplitView, object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:PaneClosing": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.SplitViewPaneClosingEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.SplitView, Microsoft.UI.Xaml.Controls.SplitViewPaneClosingEventArgs>",
+   "result": "Cancel",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:PaneOpened": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.SplitView, object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:PaneOpening": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.SplitView, object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:CompactPaneLength": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CompactPaneLengthProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:DisplayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DisplayModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.SplitViewDisplayMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:IsPaneOpen": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsPaneOpenProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:LightDismissOverlayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "LightDismissOverlayModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:OpenPaneLength": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "OpenPaneLengthProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:PaneBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PaneBackgroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "notify:PanePlacement": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PanePlacementProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.SplitViewPanePlacement>"
+  },
+  "rule": "O6"
+ },
+ "props:CompactPaneLength": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:DisplayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+   "samples": [
+    "Inline",
+    "Overlay"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.SplitViewDisplayMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsPaneOpen": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:LightDismissOverlayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+   "samples": [
+    "On",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:OpenPaneLength": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:PaneBackground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:PanePlacement": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ISplitView",
+   "samples": [
+    "Right",
+    "Left"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.SplitViewPanePlacement>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

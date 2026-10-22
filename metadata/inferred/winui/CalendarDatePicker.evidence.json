@@ -1,0 +1,452 @@
+{
+ "bindings:calendar-identifier": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::calendar-identifier",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:date-format": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::date-format",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:day-of-week-format": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::day-of-week-format",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:display-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::display-mode",
+   "type": "enum<Microsoft.UI.Xaml.Controls.CalendarViewDisplayMode>"
+  },
+  "rule": "B1"
+ },
+ "bindings:first-day-of-week": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::first-day-of-week",
+   "type": "enum<Windows.Globalization.DayOfWeek>"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-calendar-open": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-calendar-open",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-group-label-visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-group-label-visible",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-out-of-scope-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-out-of-scope-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-today-highlighted": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-today-highlighted",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:light-dismiss-overlay-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::light-dismiss-overlay-mode",
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>"
+  },
+  "rule": "B1"
+ },
+ "bindings:placeholder-text": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::placeholder-text",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "events:CalendarViewDayItemChanging": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.CalendarViewDayItemChangingEventArgs",
+   "delegate": "Microsoft.UI.Xaml.Controls.CalendarViewDayItemChangingEventHandler",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Closed": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.EventHandler<object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:DateChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.CalendarDatePickerDateChangedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.CalendarDatePicker, Microsoft.UI.Xaml.Controls.CalendarDatePickerDateChangedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Opened": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.EventHandler<object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:CalendarIdentifier": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CalendarIdentifierProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:Date": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DateProperty",
+   "type": "nullable<value<Windows.Foundation.DateTime>>"
+  },
+  "rule": "O6"
+ },
+ "notify:DateFormat": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DateFormatProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:DayOfWeekFormat": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DayOfWeekFormatProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:DisplayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DisplayModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.CalendarViewDisplayMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:FirstDayOfWeek": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "FirstDayOfWeekProperty",
+   "type": "enum<Windows.Globalization.DayOfWeek>"
+  },
+  "rule": "O6"
+ },
+ "notify:IsCalendarOpen": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsCalendarOpenProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsGroupLabelVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsGroupLabelVisibleProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsOutOfScopeEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsOutOfScopeEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsTodayHighlighted": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsTodayHighlightedProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:LightDismissOverlayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "LightDismissOverlayModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:MaxDate": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MaxDateProperty",
+   "type": "value<Windows.Foundation.DateTime>"
+  },
+  "rule": "O6"
+ },
+ "notify:MinDate": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MinDateProperty",
+   "type": "value<Windows.Foundation.DateTime>"
+  },
+  "rule": "O6"
+ },
+ "notify:PlaceholderText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PlaceholderTextProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "props:CalendarIdentifier": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Date": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+   "samples": [
+    "2024-05-17T00:00:00Z",
+    null
+   ],
+   "type": "nullable<value<Windows.Foundation.DateTime>>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:DateFormat": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:DayOfWeekFormat": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Description": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ },
+ "props:DisplayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+   "samples": [
+    "Year",
+    "Month"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.CalendarViewDisplayMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:FirstDayOfWeek": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+   "samples": [
+    "Monday",
+    "Sunday"
+   ],
+   "type": "enum<Windows.Globalization.DayOfWeek>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Header": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ },
+ "props:IsCalendarOpen": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsGroupLabelVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsOutOfScopeEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsTodayHighlighted": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:LightDismissOverlayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+   "samples": [
+    "On",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MaxDate": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+   "samples": [
+    "2024-05-17T00:00:00Z",
+    "2021-01-02T00:00:00Z"
+   ],
+   "type": "value<Windows.Foundation.DateTime>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MinDate": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+   "samples": [
+    "2024-05-17T00:00:00Z",
+    "2021-01-02T00:00:00Z"
+   ],
+   "type": "value<Windows.Foundation.DateTime>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:PlaceholderText": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ICalendarDatePicker",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

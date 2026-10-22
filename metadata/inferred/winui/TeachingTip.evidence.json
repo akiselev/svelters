@@ -1,0 +1,318 @@
+{
+ "bindings:hero-content-placement": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::hero-content-placement",
+   "type": "enum<Microsoft.UI.Xaml.Controls.TeachingTipHeroContentPlacementMode>"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-light-dismiss-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-light-dismiss-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-open": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-open",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:preferred-placement": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::preferred-placement",
+   "type": "enum<Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode>"
+  },
+  "rule": "B1"
+ },
+ "bindings:should-constrain-to-root-bounds": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::should-constrain-to-root-bounds",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:subtitle": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::subtitle",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:tail-visibility": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::tail-visibility",
+   "type": "enum<Microsoft.UI.Xaml.Controls.TeachingTipTailVisibility>"
+  },
+  "rule": "B1"
+ },
+ "bindings:title": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::title",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "events:ActionButtonClick": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TeachingTip, object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:CloseButtonClick": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TeachingTip, object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Closed": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TeachingTipClosedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TeachingTip, Microsoft.UI.Xaml.Controls.TeachingTipClosedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Closing": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TeachingTipClosingEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TeachingTip, Microsoft.UI.Xaml.Controls.TeachingTipClosingEventArgs>",
+   "result": "Cancel",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:HeroContentPlacement": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "HeroContentPlacementProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.TeachingTipHeroContentPlacementMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:IsLightDismissEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsLightDismissEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsOpen": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsOpenProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:PlacementMargin": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PlacementMarginProperty",
+   "type": "value<Microsoft.UI.Xaml.Thickness>"
+  },
+  "rule": "O6"
+ },
+ "notify:PreferredPlacement": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PreferredPlacementProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:ShouldConstrainToRootBounds": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ShouldConstrainToRootBoundsProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:Subtitle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SubtitleProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:TailVisibility": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TailVisibilityProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.TeachingTipTailVisibility>"
+  },
+  "rule": "O6"
+ },
+ "notify:Title": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TitleProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "props:ActionButtonContent": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ },
+ "props:CloseButtonContent": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ },
+ "props:HeroContentPlacement": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITeachingTip",
+   "samples": [
+    "Top",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.TeachingTipHeroContentPlacementMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsLightDismissEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITeachingTip",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsOpen": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITeachingTip",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:PlacementMargin": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITeachingTip",
+   "samples": [
+    "1,2,3,4",
+    "5"
+   ],
+   "type": "value<Microsoft.UI.Xaml.Thickness>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:PreferredPlacement": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITeachingTip",
+   "samples": [
+    "Top",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.TeachingTipPlacementMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ShouldConstrainToRootBounds": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITeachingTip",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Subtitle": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITeachingTip",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:TailVisibility": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITeachingTip",
+   "samples": [
+    "Visible",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.TeachingTipTailVisibility>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Title": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITeachingTip",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

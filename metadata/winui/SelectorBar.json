@@ -1,0 +1,85 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.XamlContract",
+    "version": 393216
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.ISelectorBarFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": "Items",
+  "content_property_declared": "Items",
+  "dependency_properties": [
+    "ItemsProperty",
+    "SelectedItemProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:SelectorBar",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.SelectorBar",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "SelectorBar"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ISelectorBar",
+      "name": "Items",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.Controls.SelectorBarItem>",
+        "ref": "list<object<Microsoft.UI.Xaml.Controls.SelectorBarItem>>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ISelectorBar",
+      "name": "SelectedItem",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.SelectorBarItem",
+        "ref": "object<Microsoft.UI.Xaml.Controls.SelectorBarItem>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.Controls.SelectorBarSelectionChangedEventArgs",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.SelectorBar, Microsoft.UI.Xaml.Controls.SelectorBarSelectionChangedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ISelectorBar",
+      "name": "SelectionChanged",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.SelectorBar"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

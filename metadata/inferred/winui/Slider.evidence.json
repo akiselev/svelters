@@ -127,6 +127,13 @@
   },
   "rule": "O6"
  },
+ "props:Header": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ },
  "props:IntermediateValue": {
   "confidence": 0.9,
   "evidence": {

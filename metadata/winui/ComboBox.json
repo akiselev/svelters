@@ -1,0 +1,347 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.Primitives.Selector",
+    "Microsoft.UI.Xaml.Controls.ItemsControl",
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.IComboBoxFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": "Items",
+  "content_property_declared": null,
+  "dependency_properties": [
+    "DescriptionProperty",
+    "HeaderProperty",
+    "HeaderTemplateProperty",
+    "IsDropDownOpenProperty",
+    "IsEditableProperty",
+    "IsTextSearchEnabledProperty",
+    "LightDismissOverlayModeProperty",
+    "MaxDropDownHeightProperty",
+    "PlaceholderForegroundProperty",
+    "PlaceholderTextProperty",
+    "SelectionChangedTriggerProperty",
+    "TextBoxStyleProperty",
+    "TextProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ComboBox",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.ComboBox",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "ComboBox"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "Description",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "Header",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "HeaderTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DataTemplate",
+        "ref": "object<Microsoft.UI.Xaml.DataTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "IsDropDownOpen",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "IsEditable",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "IsSelectionBoxHighlighted",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "IsTextSearchEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "LightDismissOverlayMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.LightDismissOverlayMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "MaxDropDownHeight",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "PlaceholderForeground",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Media.Brush",
+        "ref": "object<Microsoft.UI.Xaml.Media.Brush>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "PlaceholderText",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "SelectionBoxItem",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "SelectionBoxItemTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DataTemplate",
+        "ref": "object<Microsoft.UI.Xaml.DataTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "SelectionChangedTrigger",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ComboBoxSelectionChangedTrigger",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.ComboBoxSelectionChangedTrigger>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "TemplateSettings",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Primitives.ComboBoxTemplateSettings",
+        "ref": "object<Microsoft.UI.Xaml.Controls.Primitives.ComboBoxTemplateSettings>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "Text",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "TextBoxStyle",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Style",
+        "ref": "object<Microsoft.UI.Xaml.Style>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.EventHandler<object>",
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "DropDownClosed",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.EventHandler<object>",
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "DropDownOpened",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.ComboBoxTextSubmittedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ComboBoxTextSubmittedEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ComboBoxTextSubmittedEventArgs",
+          "name": "Text",
+          "settable": false,
+          "type": {
+            "native": "string",
+            "ref": "string"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ComboBox, Microsoft.UI.Xaml.Controls.ComboBoxTextSubmittedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IComboBox",
+      "name": "TextSubmitted",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.ComboBox"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

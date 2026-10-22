@@ -1,0 +1,8 @@
+class: Microsoft.UI.Xaml.Controls.SplitButton
+element:
+  text_prop: Content
+slots:
+  - name: flyout
+    prop: Flyout
+    child: menu-flyout
+    provenance: "SplitButton.Flyout: FlyoutBase (winmd), single child (a menu-flyout)"

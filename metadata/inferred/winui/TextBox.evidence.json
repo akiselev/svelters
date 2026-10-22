@@ -263,6 +263,20 @@
   },
   "rule": "M1"
  },
+ "methods:Select": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": [
+    1,
+    2
+   ],
+   "params": [
+    "i32",
+    "i32"
+   ]
+  },
+  "rule": "M1"
+ },
  "methods:SelectAll": {
   "confidence": 0.9,
   "evidence": {
@@ -349,6 +363,14 @@
   },
   "rule": "O6"
  },
+ "notify:PlaceholderForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PlaceholderForegroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
  "notify:PlaceholderText": {
   "confidence": 0.9,
   "evidence": {
@@ -362,6 +384,22 @@
   "evidence": {
    "dp": "PreventKeyboardDisplayOnProgrammaticFocusProperty",
    "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectionHighlightColor": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectionHighlightColorProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.SolidColorBrush>"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectionHighlightColorWhenNotFocused": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectionHighlightColorWhenNotFocusedProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.SolidColorBrush>"
   },
   "rule": "O6"
  },
@@ -455,6 +493,13 @@
   },
   "rule": "P1"
  },
+ "props:Description": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ },
  "props:DesiredCandidateWindowAlignment": {
   "confidence": 0.9,
   "evidence": {
@@ -466,6 +511,13 @@
    ],
    "type": "enum<Microsoft.UI.Xaml.Controls.CandidateWindowAlignment>",
    "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Header": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
   },
   "rule": "P1"
  },
@@ -553,6 +605,20 @@
   },
   "rule": "P1"
  },
+ "props:PlaceholderForeground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
  "props:PlaceholderText": {
   "confidence": 0.9,
   "evidence": {
@@ -591,6 +657,34 @@
     "winui"
    ],
    "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectionHighlightColor": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.SolidColorBrush>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectionHighlightColorWhenNotFocused": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITextBox",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.SolidColorBrush>",
    "write": true
   },
   "rule": "P1"

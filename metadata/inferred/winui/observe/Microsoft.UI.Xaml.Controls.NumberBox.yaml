@@ -1,0 +1,194 @@
+schema: svelters-observe-layer/v1
+toolkit: winui
+owner: Microsoft.UI.Xaml.Controls:NumberBox
+observe:
+- prop: AcceptsExpression
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: AcceptsExpressionProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: Description
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: DescriptionProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: Header
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: HeaderProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: HeaderTemplate
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: HeaderTemplateProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: IsWrapEnabled
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: IsWrapEnabledProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: LargeChange
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: LargeChangeProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: Maximum
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: MaximumProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: Minimum
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: MinimumProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: NumberFormatter
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: NumberFormatterProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: PlaceholderText
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: PlaceholderTextProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: PreventKeyboardDisplayOnProgrammaticFocus
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: PreventKeyboardDisplayOnProgrammaticFocusProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: SelectionFlyout
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: SelectionFlyoutProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: SelectionHighlightColor
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: SelectionHighlightColorProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: SmallChange
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: SmallChangeProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: SpinButtonPlacementMode
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: SpinButtonPlacementModeProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: Text
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: TextProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: TextReadingOrder
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: TextReadingOrderProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: ValidationMode
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: ValidationModeProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: Value
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: ValueProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9

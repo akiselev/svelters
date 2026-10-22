@@ -3,8 +3,212 @@
   "abstract": false,
   "bindings": 0,
   "dangerous": 0,
-  "element": "button",
+  "element": null,
   "gallery": null,
+  "inherited": 0,
+  "kind": "AppBar",
+  "lifetime": null,
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.AppBar",
+  "notify": 4,
+  "ownership": false,
+  "props": [
+   4,
+   5
+  ],
+  "props_annotated": 4,
+  "signal_results": 0,
+  "signals": [
+   4,
+   4
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   12,
+   12
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 5,
+  "dangerous": 0,
+  "element": "app-bar-button",
+  "gallery": "07-menus",
+  "inherited": 0,
+  "kind": "AppBarButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.AppBarButton",
+  "notify": 6,
+  "ownership": false,
+  "props": [
+   7,
+   8
+  ],
+  "props_annotated": 7,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   18,
+   18
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 2,
+  "dangerous": 0,
+  "element": "app-bar-separator",
+  "gallery": "07-menus",
+  "inherited": 0,
+  "kind": "AppBarSeparator",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.AppBarSeparator",
+  "notify": 2,
+  "ownership": false,
+  "props": [
+   3,
+   3
+  ],
+  "props_annotated": 3,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   7,
+   7
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 5,
+  "dangerous": 0,
+  "element": "app-bar-toggle-button",
+  "gallery": "07-menus",
+  "inherited": 0,
+  "kind": "AppBarToggleButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.AppBarToggleButton",
+  "notify": 6,
+  "ownership": false,
+  "props": [
+   7,
+   8
+  ],
+  "props_annotated": 7,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   18,
+   18
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 8,
+  "dangerous": 0,
+  "element": "auto-suggest-box",
+  "gallery": "02-input",
+  "inherited": 0,
+  "kind": "AutoSuggestBox",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.AutoSuggestBox",
+  "notify": 9,
+  "ownership": false,
+  "props": [
+   11,
+   12
+  ],
+  "props_annotated": 11,
+  "signal_results": 0,
+  "signals": [
+   3,
+   3
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   31,
+   31
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 1,
+  "dangerous": 0,
+  "element": "border",
+  "gallery": "00-layout",
+  "inherited": 0,
+  "kind": "Border",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.Border",
+  "notify": 6,
+  "ownership": true,
+  "props": [
+   6,
+   9
+  ],
+  "props_annotated": 6,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   14,
+   14
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": "button",
+  "gallery": "01-buttons",
   "inherited": 0,
   "kind": "Button",
   "lifetime": "owned",
@@ -14,7 +218,7 @@
   ],
   "native": "Microsoft.UI.Xaml.Controls.Button",
   "notify": 0,
-  "ownership": false,
+  "ownership": true,
   "props": [
    0,
    1
@@ -25,12 +229,12 @@
    0,
    0
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   0,
-   0
+   1,
+   1
   ]
  },
  {
@@ -69,10 +273,112 @@
  },
  {
   "abstract": false,
+  "bindings": 10,
+  "dangerous": 0,
+  "element": "calendar-date-picker",
+  "gallery": "03-pickers",
+  "inherited": 0,
+  "kind": "CalendarDatePicker",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   2
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.CalendarDatePicker",
+  "notify": 13,
+  "ownership": false,
+  "props": [
+   15,
+   18
+  ],
+  "props_annotated": 15,
+  "signal_results": 0,
+  "signals": [
+   4,
+   4
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   42,
+   42
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 21,
+  "dangerous": 0,
+  "element": "calendar-view",
+  "gallery": "03-pickers",
+  "inherited": 0,
+  "kind": "CalendarView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   2
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.CalendarView",
+  "notify": 72,
+  "ownership": false,
+  "props": [
+   72,
+   75
+  ],
+  "props_annotated": 72,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   167,
+   167
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": "canvas",
+  "gallery": "00-layout",
+  "inherited": 0,
+  "kind": "Canvas",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.Canvas",
+  "notify": 0,
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   3,
+   3
+  ]
+ },
+ {
+  "abstract": false,
   "bindings": 1,
   "dangerous": 0,
   "element": "check-box",
-  "gallery": null,
+  "gallery": "01-buttons",
   "inherited": 0,
   "kind": "CheckBox",
   "lifetime": "owned",
@@ -99,6 +405,142 @@
   "verified": [
    0,
    0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 18,
+  "dangerous": 0,
+  "element": "color-picker",
+  "gallery": "03-pickers",
+  "inherited": 0,
+  "kind": "ColorPicker",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.ColorPicker",
+  "notify": 20,
+  "ownership": false,
+  "props": [
+   20,
+   20
+  ],
+  "props_annotated": 20,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   59,
+   59
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 8,
+  "dangerous": 0,
+  "element": "combo-box",
+  "gallery": "02-input",
+  "inherited": 0,
+  "kind": "ComboBox",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.ComboBox",
+  "notify": 9,
+  "ownership": false,
+  "props": [
+   12,
+   17
+  ],
+  "props_annotated": 12,
+  "signal_results": 1,
+  "signals": [
+   3,
+   3
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   32,
+   32
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": "combo-box-item",
+  "gallery": "02-input",
+  "inherited": 0,
+  "kind": "ComboBoxItem",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.ComboBoxItem",
+  "notify": 0,
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 3,
+  "dangerous": 0,
+  "element": "command-bar",
+  "gallery": "07-menus",
+  "inherited": 0,
+  "kind": "CommandBar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.CommandBar",
+  "notify": 3,
+  "ownership": true,
+  "props": [
+   3,
+   7
+  ],
+  "props_annotated": 3,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 2,
+  "slots_own": 2,
+  "unexposed": null,
+  "verified": [
+   12,
+   12
   ]
  },
  {
@@ -136,6 +578,40 @@
   ]
  },
  {
+  "abstract": false,
+  "bindings": 7,
+  "dangerous": 0,
+  "element": "content-dialog",
+  "gallery": "08-dialogs",
+  "inherited": 0,
+  "kind": "ContentDialog",
+  "lifetime": "owned",
+  "methods": [
+   2,
+   3
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.ContentDialog",
+  "notify": 7,
+  "ownership": false,
+  "props": [
+   8,
+   18
+  ],
+  "props_annotated": 8,
+  "signal_results": 4,
+  "signals": [
+   6,
+   6
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   28,
+   28
+  ]
+ },
+ {
   "abstract": true,
   "bindings": 0,
   "dangerous": 0,
@@ -149,13 +625,13 @@
    2
   ],
   "native": "Microsoft.UI.Xaml.Controls.Control",
-  "notify": 15,
+  "notify": 22,
   "ownership": false,
   "props": [
-   15,
+   22,
    24
   ],
-  "props_annotated": 15,
+  "props_annotated": 22,
   "signal_results": 1,
   "signals": [
    3,
@@ -165,8 +641,42 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   33,
-   33
+   47,
+   47
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 9,
+  "dangerous": 0,
+  "element": "date-picker",
+  "gallery": "03-pickers",
+  "inherited": 0,
+  "kind": "DatePicker",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.DatePicker",
+  "notify": 13,
+  "ownership": false,
+  "props": [
+   14,
+   15
+  ],
+  "props_annotated": 14,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   38,
+   38
   ]
  },
  {
@@ -204,58 +714,126 @@
   ]
  },
  {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": "drop-down-button",
+  "gallery": "01-buttons",
+  "inherited": 0,
+  "kind": "DropDownButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.DropDownButton",
+  "notify": 0,
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 2,
+  "dangerous": 0,
+  "element": "expander",
+  "gallery": "00-layout",
+  "inherited": 0,
+  "kind": "Expander",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.Expander",
+  "notify": 2,
+  "ownership": false,
+  "props": [
+   3,
+   6
+  ],
+  "props_annotated": 3,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   9,
+   9
+  ]
+ },
+ {
   "abstract": true,
   "bindings": 0,
   "dangerous": 0,
   "element": null,
   "gallery": null,
   "inherited": 0,
-  "kind": "FrameworkElement",
+  "kind": "FlyoutBase",
   "lifetime": null,
   "methods": [
-   0,
-   3
+   1,
+   4
   ],
-  "native": "Microsoft.UI.Xaml.FrameworkElement",
-  "notify": 18,
+  "native": "Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase",
+  "notify": 7,
   "ownership": false,
   "props": [
-   22,
-   31
+   10,
+   15
   ],
-  "props_annotated": 22,
+  "props_annotated": 10,
   "signal_results": 1,
   "signals": [
-   8,
-   8
+   4,
+   4
   ],
   "slots": 0,
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   46,
-   46
+   22,
+   22
   ]
  },
  {
   "abstract": false,
-  "bindings": 3,
+  "bindings": 5,
   "dangerous": 0,
-  "element": "grid",
-  "gallery": null,
+  "element": "font-icon",
+  "gallery": "04-display",
   "inherited": 0,
-  "kind": "Grid",
+  "kind": "FontIcon",
   "lifetime": "owned",
   "methods": [
    0,
    0
   ],
-  "native": "Microsoft.UI.Xaml.Controls.Grid",
-  "notify": 5,
+  "native": "Microsoft.UI.Xaml.Controls.FontIcon",
+  "notify": 7,
   "ownership": false,
   "props": [
    7,
-   9
+   7
   ],
   "props_annotated": 7,
   "signal_results": 0,
@@ -278,18 +856,528 @@
   "element": null,
   "gallery": null,
   "inherited": 0,
-  "kind": "Panel",
+  "kind": "FrameworkElement",
+  "lifetime": null,
+  "methods": [
+   0,
+   3
+  ],
+  "native": "Microsoft.UI.Xaml.FrameworkElement",
+  "notify": 20,
+  "ownership": false,
+  "props": [
+   25,
+   31
+  ],
+  "props_annotated": 25,
+  "signal_results": 1,
+  "signals": [
+   8,
+   8
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   51,
+   51
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 3,
+  "dangerous": 0,
+  "element": "grid",
+  "gallery": "00-layout",
+  "inherited": 0,
+  "kind": "Grid",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.Grid",
+  "notify": 7,
+  "ownership": false,
+  "props": [
+   9,
+   9
+  ],
+  "props_annotated": 9,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   23,
+   23
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": "grid-view",
+  "gallery": "05-lists",
+  "inherited": 0,
+  "kind": "GridView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.GridView",
+  "notify": 0,
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": "grid-view-item",
+  "gallery": "05-lists",
+  "inherited": 0,
+  "kind": "GridViewItem",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.GridViewItem",
+  "notify": 0,
+  "ownership": false,
+  "props": [
+   0,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": "hyperlink-button",
+  "gallery": "01-buttons",
+  "inherited": 0,
+  "kind": "HyperlinkButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.HyperlinkButton",
+  "notify": 1,
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 1,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   2,
+   2
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "IconElement",
   "lifetime": null,
   "methods": [
    0,
    0
   ],
-  "native": "Microsoft.UI.Xaml.Controls.Panel",
+  "native": "Microsoft.UI.Xaml.Controls.IconElement",
+  "notify": 1,
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 1,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   2,
+   2
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 1,
+  "dangerous": 0,
+  "element": "image",
+  "gallery": "04-display",
+  "inherited": 0,
+  "kind": "Image",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   2
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.Image",
+  "notify": 3,
+  "ownership": false,
+  "props": [
+   3,
+   3
+  ],
+  "props_annotated": 3,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   9,
+   9
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 1,
+  "dangerous": 0,
+  "element": "info-badge",
+  "gallery": "04-display",
+  "inherited": 0,
+  "kind": "InfoBadge",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.InfoBadge",
+  "notify": 1,
+  "ownership": false,
+  "props": [
+   1,
+   3
+  ],
+  "props_annotated": 1,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   3,
+   3
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 6,
+  "dangerous": 0,
+  "element": "info-bar",
+  "gallery": "04-display",
+  "inherited": 0,
+  "kind": "InfoBar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.InfoBar",
+  "notify": 6,
+  "ownership": true,
+  "props": [
+   6,
+   14
+  ],
+  "props_annotated": 6,
+  "signal_results": 1,
+  "signals": [
+   3,
+   3
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   22,
+   22
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "ItemContainer",
+  "lifetime": null,
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.ItemContainer",
+  "notify": 1,
+  "ownership": false,
+  "props": [
+   1,
+   2
+  ],
+  "props_annotated": 1,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   2,
+   2
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "ItemsControl",
+  "lifetime": null,
+  "methods": [
+   0,
+   5
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.ItemsControl",
+  "notify": 1,
+  "ownership": true,
+  "props": [
+   2,
+   14
+  ],
+  "props_annotated": 2,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   4,
+   4
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": "list-view",
+  "gallery": "05-lists",
+  "inherited": 0,
+  "kind": "ListView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.ListView",
+  "notify": 0,
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "ListViewBase",
+  "lifetime": null,
+  "methods": [
+   3,
+   17
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.ListViewBase",
+  "notify": 14,
+  "ownership": false,
+  "props": [
+   15,
+   23
+  ],
+  "props_annotated": 15,
+  "signal_results": 2,
+  "signals": [
+   6,
+   6
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   38,
+   38
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": "list-view-item",
+  "gallery": "05-lists",
+  "inherited": 0,
+  "kind": "ListViewItem",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.ListViewItem",
+  "notify": 0,
+  "ownership": false,
+  "props": [
+   0,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": "menu-bar",
+  "gallery": "07-menus",
+  "inherited": 0,
+  "kind": "MenuBar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.MenuBar",
   "notify": 0,
   "ownership": true,
   "props": [
+   0,
+   1
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
    1,
-   5
+   1
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 1,
+  "dangerous": 0,
+  "element": "menu-bar-item",
+  "gallery": "07-menus",
+  "inherited": 0,
+  "kind": "MenuBarItem",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.MenuBarItem",
+  "notify": 1,
+  "ownership": true,
+  "props": [
+   1,
+   2
   ],
   "props_annotated": 1,
   "signal_results": 0,
@@ -301,8 +1389,552 @@
   "slots_own": 1,
   "unexposed": null,
   "verified": [
+   4,
+   4
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": "menu-flyout",
+  "gallery": "01-buttons",
+  "inherited": 0,
+  "kind": "MenuFlyout",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   1
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.MenuFlyout",
+  "notify": 0,
+  "ownership": true,
+  "props": [
+   0,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   1,
+   1
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 2,
+  "dangerous": 0,
+  "element": "menu-flyout-item",
+  "gallery": "01-buttons",
+  "inherited": 0,
+  "kind": "MenuFlyoutItem",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.MenuFlyoutItem",
+  "notify": 3,
+  "ownership": false,
+  "props": [
+   3,
+   6
+  ],
+  "props_annotated": 3,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   9,
+   9
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "MenuFlyoutItemBase",
+  "lifetime": null,
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.MenuFlyoutItemBase",
+  "notify": 0,
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": "menu-flyout-separator",
+  "gallery": "07-menus",
+  "inherited": 0,
+  "kind": "MenuFlyoutSeparator",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.MenuFlyoutSeparator",
+  "notify": 0,
+  "ownership": false,
+  "props": [
+   0,
+   0
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   0,
+   0
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 1,
+  "dangerous": 0,
+  "element": "menu-flyout-sub-item",
+  "gallery": "07-menus",
+  "inherited": 0,
+  "kind": "MenuFlyoutSubItem",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.MenuFlyoutSubItem",
+  "notify": 2,
+  "ownership": true,
+  "props": [
+   2,
+   3
+  ],
+  "props_annotated": 2,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   6,
+   6
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 17,
+  "dangerous": 0,
+  "element": "navigation-view",
+  "gallery": "06-navigation",
+  "inherited": 0,
+  "kind": "NavigationView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   4
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.NavigationView",
+  "notify": 17,
+  "ownership": true,
+  "props": [
+   19,
+   37
+  ],
+  "props_annotated": 19,
+  "signal_results": 1,
+  "signals": [
+   10,
+   10
+  ],
+  "slots": 4,
+  "slots_own": 4,
+  "unexposed": null,
+  "verified": [
+   67,
+   67
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 4,
+  "dangerous": 0,
+  "element": "navigation-view-item",
+  "gallery": "06-navigation",
+  "inherited": 0,
+  "kind": "NavigationViewItem",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.NavigationViewItem",
+  "notify": 5,
+  "ownership": true,
+  "props": [
+   6,
+   9
+  ],
+  "props_annotated": 6,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   16,
+   16
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "NavigationViewItemBase",
+  "lifetime": null,
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.NavigationViewItemBase",
+  "notify": 1,
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 1,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
    2,
    2
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 12,
+  "dangerous": 0,
+  "element": "number-box",
+  "gallery": "02-input",
+  "inherited": 0,
+  "kind": "NumberBox",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.NumberBox",
+  "notify": 13,
+  "ownership": false,
+  "props": [
+   15,
+   19
+  ],
+  "props_annotated": 15,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   41,
+   41
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Panel",
+  "lifetime": null,
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.Panel",
+  "notify": 1,
+  "ownership": true,
+  "props": [
+   2,
+   5
+  ],
+  "props_annotated": 2,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   4,
+   4
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 6,
+  "dangerous": 0,
+  "element": "password-box",
+  "gallery": "02-input",
+  "inherited": 0,
+  "kind": "PasswordBox",
+  "lifetime": "owned",
+  "methods": [
+   1,
+   2
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.PasswordBox",
+  "notify": 7,
+  "ownership": false,
+  "props": [
+   10,
+   15
+  ],
+  "props_annotated": 10,
+  "signal_results": 2,
+  "signals": [
+   4,
+   4
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   28,
+   28
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 7,
+  "dangerous": 0,
+  "element": "person-picture",
+  "gallery": "04-display",
+  "inherited": 0,
+  "kind": "PersonPicture",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.PersonPicture",
+  "notify": 9,
+  "ownership": false,
+  "props": [
+   9,
+   11
+  ],
+  "props_annotated": 9,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   25,
+   25
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 3,
+  "dangerous": 0,
+  "element": "progress-bar",
+  "gallery": "04-display",
+  "inherited": 0,
+  "kind": "ProgressBar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.ProgressBar",
+  "notify": 3,
+  "ownership": false,
+  "props": [
+   3,
+   4
+  ],
+  "props_annotated": 3,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   9,
+   9
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 5,
+  "dangerous": 0,
+  "element": "progress-ring",
+  "gallery": "04-display",
+  "inherited": 0,
+  "kind": "ProgressRing",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.ProgressRing",
+  "notify": 5,
+  "ownership": false,
+  "props": [
+   5,
+   6
+  ],
+  "props_annotated": 5,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   15,
+   15
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 1,
+  "dangerous": 0,
+  "element": "radio-button",
+  "gallery": "01-buttons",
+  "inherited": 0,
+  "kind": "RadioButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.RadioButton",
+  "notify": 1,
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 1,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   3,
+   3
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 2,
+  "dangerous": 0,
+  "element": "radio-buttons",
+  "gallery": "02-input",
+  "inherited": 0,
+  "kind": "RadioButtons",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   1
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.RadioButtons",
+  "notify": 1,
+  "ownership": true,
+  "props": [
+   3,
+   8
+  ],
+  "props_annotated": 3,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   7,
+   7
   ]
  },
  {
@@ -341,10 +1973,282 @@
  },
  {
   "abstract": false,
+  "bindings": 5,
+  "dangerous": 0,
+  "element": "rating-control",
+  "gallery": "02-input",
+  "inherited": 0,
+  "kind": "RatingControl",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.RatingControl",
+  "notify": 5,
+  "ownership": false,
+  "props": [
+   5,
+   8
+  ],
+  "props_annotated": 5,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   16,
+   16
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 2,
+  "dangerous": 0,
+  "element": "repeat-button",
+  "gallery": "01-buttons",
+  "inherited": 0,
+  "kind": "RepeatButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.Primitives.RepeatButton",
+  "notify": 2,
+  "ownership": false,
+  "props": [
+   2,
+   2
+  ],
+  "props_annotated": 2,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   6,
+   6
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 14,
+  "dangerous": 0,
+  "element": "rich-edit-box",
+  "gallery": "02-input",
+  "inherited": 0,
+  "kind": "RichEditBox",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   1
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.RichEditBox",
+  "notify": 16,
+  "ownership": false,
+  "props": [
+   18,
+   26
+  ],
+  "props_annotated": 18,
+  "signal_results": 5,
+  "signals": [
+   12,
+   12
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   60,
+   60
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 23,
+  "dangerous": 0,
+  "element": "scroll-viewer",
+  "gallery": "00-layout",
+  "inherited": 0,
+  "kind": "ScrollViewer",
+  "lifetime": "owned",
+  "methods": [
+   1,
+   8
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.ScrollViewer",
+  "notify": 25,
+  "ownership": false,
+  "props": [
+   36,
+   41
+  ],
+  "props_annotated": 36,
+  "signal_results": 0,
+  "signals": [
+   5,
+   5
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   90,
+   90
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "Selector",
+  "lifetime": null,
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.Primitives.Selector",
+  "notify": 1,
+  "ownership": false,
+  "props": [
+   1,
+   5
+  ],
+  "props_annotated": 1,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   3,
+   3
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": "selector-bar",
+  "gallery": "06-navigation",
+  "inherited": 0,
+  "kind": "SelectorBar",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.SelectorBar",
+  "notify": 0,
+  "ownership": true,
+  "props": [
+   0,
+   2
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   2,
+   2
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 1,
+  "dangerous": 0,
+  "element": "selector-bar-item",
+  "gallery": "06-navigation",
+  "inherited": 0,
+  "kind": "SelectorBarItem",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.SelectorBarItem",
+  "notify": 2,
+  "ownership": false,
+  "props": [
+   2,
+   2
+  ],
+  "props_annotated": 2,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   5,
+   5
+  ]
+ },
+ {
+  "abstract": true,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": null,
+  "gallery": null,
+  "inherited": 0,
+  "kind": "SelectorItem",
+  "lifetime": null,
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.Primitives.SelectorItem",
+  "notify": 1,
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 1,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   2,
+   2
+  ]
+ },
+ {
+  "abstract": false,
   "bindings": 9,
   "dangerous": 0,
   "element": "slider",
-  "gallery": null,
+  "gallery": "02-input",
   "inherited": 0,
   "kind": "Slider",
   "lifetime": "owned",
@@ -375,10 +2279,78 @@
  },
  {
   "abstract": false,
+  "bindings": 0,
+  "dangerous": 0,
+  "element": "split-button",
+  "gallery": "01-buttons",
+  "inherited": 0,
+  "kind": "SplitButton",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.SplitButton",
+  "notify": 0,
+  "ownership": true,
+  "props": [
+   0,
+   3
+  ],
+  "props_annotated": 0,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   2,
+   2
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 6,
+  "dangerous": 0,
+  "element": "split-view",
+  "gallery": "00-layout",
+  "inherited": 0,
+  "kind": "SplitView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.SplitView",
+  "notify": 7,
+  "ownership": true,
+  "props": [
+   7,
+   10
+  ],
+  "props_annotated": 7,
+  "signal_results": 1,
+  "signals": [
+   4,
+   4
+  ],
+  "slots": 2,
+  "slots_own": 2,
+  "unexposed": null,
+  "verified": [
+   26,
+   26
+  ]
+ },
+ {
+  "abstract": false,
   "bindings": 4,
   "dangerous": 0,
   "element": "stack-panel",
-  "gallery": null,
+  "gallery": "00-layout",
   "inherited": 0,
   "kind": "StackPanel",
   "lifetime": "owned",
@@ -387,13 +2359,13 @@
    3
   ],
   "native": "Microsoft.UI.Xaml.Controls.StackPanel",
-  "notify": 6,
+  "notify": 8,
   "ownership": false,
   "props": [
-   8,
+   10,
    10
   ],
-  "props_annotated": 8,
+  "props_annotated": 10,
   "signal_results": 0,
   "signals": [
    2,
@@ -403,8 +2375,144 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   20,
-   20
+   24,
+   24
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 1,
+  "dangerous": 0,
+  "element": "symbol-icon",
+  "gallery": "04-display",
+  "inherited": 0,
+  "kind": "SymbolIcon",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.SymbolIcon",
+  "notify": 1,
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 1,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   3,
+   3
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 8,
+  "dangerous": 0,
+  "element": "tab-view",
+  "gallery": "06-navigation",
+  "inherited": 0,
+  "kind": "TabView",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   2
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.TabView",
+  "notify": 8,
+  "ownership": true,
+  "props": [
+   8,
+   19
+  ],
+  "props_annotated": 8,
+  "signal_results": 3,
+  "signals": [
+   13,
+   13
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   37,
+   37
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 1,
+  "dangerous": 0,
+  "element": "tab-view-item",
+  "gallery": "06-navigation",
+  "inherited": 0,
+  "kind": "TabViewItem",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.TabViewItem",
+  "notify": 1,
+  "ownership": false,
+  "props": [
+   2,
+   5
+  ],
+  "props_annotated": 2,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   5,
+   5
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 8,
+  "dangerous": 0,
+  "element": "teaching-tip",
+  "gallery": "08-dialogs",
+  "inherited": 0,
+  "kind": "TeachingTip",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.TeachingTip",
+  "notify": 9,
+  "ownership": true,
+  "props": [
+   11,
+   21
+  ],
+  "props_annotated": 11,
+  "signal_results": 1,
+  "signals": [
+   4,
+   4
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   33,
+   33
   ]
  },
  {
@@ -412,7 +2520,7 @@
   "bindings": 17,
   "dangerous": 0,
   "element": "text-block",
-  "gallery": null,
+  "gallery": "00-layout",
   "inherited": 0,
   "kind": "TextBlock",
   "lifetime": "owned",
@@ -421,13 +2529,13 @@
    4
   ],
   "native": "Microsoft.UI.Xaml.Controls.TextBlock",
-  "notify": 18,
+  "notify": 22,
   "ownership": false,
   "props": [
-   21,
+   25,
    34
   ],
-  "props_annotated": 21,
+  "props_annotated": 25,
   "signal_results": 1,
   "signals": [
    3,
@@ -437,8 +2545,8 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   60,
-   60
+   68,
+   68
   ]
  },
  {
@@ -446,7 +2554,7 @@
   "bindings": 14,
   "dangerous": 0,
   "element": "text-box",
-  "gallery": null,
+  "gallery": "02-input",
   "inherited": 0,
   "kind": "TextBox",
   "lifetime": "owned",
@@ -455,13 +2563,13 @@
    10
   ],
   "native": "Microsoft.UI.Xaml.Controls.TextBox",
-  "notify": 14,
+  "notify": 17,
   "ownership": false,
   "props": [
-   21,
+   25,
    30
   ],
-  "props_annotated": 21,
+  "props_annotated": 25,
   "signal_results": 6,
   "signals": [
    13,
@@ -471,19 +2579,53 @@
   "slots_own": 0,
   "unexposed": null,
   "verified": [
-   64,
-   64
+   71,
+   71
   ]
  },
  {
   "abstract": false,
-  "bindings": 0,
+  "bindings": 2,
   "dangerous": 0,
-  "element": null,
-  "gallery": null,
+  "element": "time-picker",
+  "gallery": "03-pickers",
+  "inherited": 0,
+  "kind": "TimePicker",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.TimePicker",
+  "notify": 4,
+  "ownership": false,
+  "props": [
+   5,
+   7
+  ],
+  "props_annotated": 5,
+  "signal_results": 0,
+  "signals": [
+   2,
+   2
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   13,
+   13
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 2,
+  "dangerous": 0,
+  "element": "toggle-button",
+  "gallery": "01-buttons",
   "inherited": 0,
   "kind": "ToggleButton",
-  "lifetime": null,
+  "lifetime": "owned",
   "methods": [
    0,
    0
@@ -500,6 +2642,74 @@
   "signals": [
    3,
    3
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   9,
+   9
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 1,
+  "dangerous": 0,
+  "element": "toggle-menu-flyout-item",
+  "gallery": "07-menus",
+  "inherited": 0,
+  "kind": "ToggleMenuFlyoutItem",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.ToggleMenuFlyoutItem",
+  "notify": 1,
+  "ownership": false,
+  "props": [
+   1,
+   1
+  ],
+  "props_annotated": 1,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 0,
+  "slots_own": 0,
+  "unexposed": null,
+  "verified": [
+   3,
+   3
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 1,
+  "dangerous": 0,
+  "element": "toggle-switch",
+  "gallery": "01-buttons",
+  "inherited": 0,
+  "kind": "ToggleSwitch",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.ToggleSwitch",
+  "notify": 1,
+  "ownership": false,
+  "props": [
+   4,
+   8
+  ],
+  "props_annotated": 4,
+  "signal_results": 0,
+  "signals": [
+   1,
+   1
   ],
   "slots": 0,
   "slots_own": 0,
@@ -524,23 +2734,57 @@
   ],
   "native": "Microsoft.UI.Xaml.UIElement",
   "notify": 26,
-  "ownership": false,
+  "ownership": true,
   "props": [
-   28,
+   29,
    66
   ],
-  "props_annotated": 28,
+  "props_annotated": 29,
   "signal_results": 34,
   "signals": [
    40,
    40
   ],
-  "slots": 0,
-  "slots_own": 0,
+  "slots": 1,
+  "slots_own": 1,
   "unexposed": null,
   "verified": [
-   96,
-   96
+   98,
+   98
+  ]
+ },
+ {
+  "abstract": false,
+  "bindings": 2,
+  "dangerous": 0,
+  "element": "viewbox",
+  "gallery": "00-layout",
+  "inherited": 0,
+  "kind": "Viewbox",
+  "lifetime": "owned",
+  "methods": [
+   0,
+   0
+  ],
+  "native": "Microsoft.UI.Xaml.Controls.Viewbox",
+  "notify": 2,
+  "ownership": true,
+  "props": [
+   2,
+   3
+  ],
+  "props_annotated": 2,
+  "signal_results": 0,
+  "signals": [
+   0,
+   0
+  ],
+  "slots": 1,
+  "slots_own": 1,
+  "unexposed": null,
+  "verified": [
+   7,
+   7
   ]
  },
  {

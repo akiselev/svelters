@@ -1,6 +1,36 @@
 {
  "parked": [
   {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:binding:date-format",
+   "kind": "CalendarDatePicker",
+   "message": "<calendar-date-picker> date-format = Str(\"svelters\"): date-format: formatTemplate (HRESULT 0x80070057)",
+   "name": "date-format",
+   "record_fp": "b6ebc7b1260a183b",
+   "section": "bindings",
+   "test": "notify_calendar_date_picker_date_format",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:notify:DateFormat",
+   "kind": "CalendarDatePicker",
+   "message": "<calendar-date-picker> date-format = Str(\"svelters\"): date-format: formatTemplate (HRESULT 0x80070057)",
+   "name": "DateFormat",
+   "record_fp": "fad30443212b5113",
+   "section": "notify",
+   "test": "notify_calendar_date_picker_date_format",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:CalendarDatePicker:prop:DateFormat",
+   "kind": "CalendarDatePicker",
+   "message": "<calendar-date-picker> date-format = Str(\"svelters\"): date-format: formatTemplate (HRESULT 0x80070057)",
+   "name": "DateFormat",
+   "record_fp": "f1805bc58fb009f2",
+   "section": "props",
+   "test": "prop_calendar_date_picker_date_format",
+   "version": "2.3.9"
+  },
+  {
    "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:Control:notify:IsFocusEngaged",
    "kind": "Control",
    "message": "<button> is-focus-engaged = Bool(true): is-focus-engaged: Error: Control must be focused before setting IsFocusEngaged to true. (HRESULT 0x800F1000)",
@@ -18,6 +48,276 @@
    "record_fp": "f25633e18fea882d",
    "section": "props",
    "test": "prop_button_is_focus_engaged",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase:notify:ShowMode",
+   "kind": "FlyoutBase",
+   "message": "generator: inferred/winui/FlyoutBase.yaml: notify ShowMode: the prop is not exposed on Microsoft.UI.Xaml.Controls.Primitives.FlyoutBase",
+   "name": "ShowMode",
+   "record_fp": "078467228c84db9a",
+   "section": "notify",
+   "test": "(not generated)",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:FlyoutBase:prop:ShowMode",
+   "kind": "FlyoutBase",
+   "message": "assertion `left == right` failed: <menu-flyout> show-mode after writing Str(\"Auto\")\n  left: Str(\"standard\")\n right: Str(\"auto\")",
+   "name": "ShowMode",
+   "record_fp": "28057b538babe3ce",
+   "section": "props",
+   "test": "prop_menu_flyout_show_mode",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ListViewBase:method:SelectAll",
+   "kind": "ListViewBase",
+   "message": "<grid-view> select-all(): select-all(): SelectAll can be called only when the value of SelectionMode is Multiple or Extended. (HRESULT 0x80131515)",
+   "name": "SelectAll",
+   "record_fp": "eabc9e2bcc4d8560",
+   "section": "methods",
+   "test": "method_grid_view_select_all",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RadioButtons:prop:SelectedIndex:observe",
+   "kind": "Microsoft.UI.Xaml.Controls:RadioButtons",
+   "message": "<radio-buttons> selected-index: a native change was not announced",
+   "name": "SelectedIndex",
+   "record_fp": "7af7bf70e93502b6",
+   "section": "observe",
+   "test": "observe_radio_buttons_selected_index",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:binding:text-reading-order",
+   "kind": "NumberBox",
+   "message": "generator: NumberBox.yaml: bind:text-reading-order: property text-reading-order is not exposed",
+   "name": "text-reading-order",
+   "record_fp": "e7f129324bb201af",
+   "section": "bindings",
+   "test": "(not generated)",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:notify:TextReadingOrder",
+   "kind": "NumberBox",
+   "message": "generator: NumberBox.yaml: notify TextReadingOrder: the prop is not exposed on Microsoft.UI.Xaml.Controls.NumberBox",
+   "name": "TextReadingOrder",
+   "record_fp": "a96c8ee6ebee89d1",
+   "section": "notify",
+   "test": "(not generated)",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:NumberBox:prop:TextReadingOrder",
+   "kind": "NumberBox",
+   "message": "assertion `left == right` failed: <number-box> text-reading-order after writing Str(\"UseFlowDirection\")\n  left: Str(\"default\")\n right: Str(\"use-flow-direction\")",
+   "name": "TextReadingOrder",
+   "record_fp": "71cd54756fffe36e",
+   "section": "props",
+   "test": "prop_number_box_text_reading_order",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:binding:password-char",
+   "kind": "PasswordBox",
+   "message": "<password-box> password-char = Str(\"svelters\"): password-char: E_RUNTIME_SETVALUE (HRESULT 0x80070057)",
+   "name": "password-char",
+   "record_fp": "e814003015bc361a",
+   "section": "bindings",
+   "test": "notify_password_box_password_char",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:binding:text-reading-order",
+   "kind": "PasswordBox",
+   "message": "generator: PasswordBox.yaml: bind:text-reading-order: property text-reading-order is not exposed",
+   "name": "text-reading-order",
+   "record_fp": "3b70bfaa937040b8",
+   "section": "bindings",
+   "test": "(not generated)",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:notify:PasswordChar",
+   "kind": "PasswordBox",
+   "message": "<password-box> password-char = Str(\"svelters\"): password-char: E_RUNTIME_SETVALUE (HRESULT 0x80070057)",
+   "name": "PasswordChar",
+   "record_fp": "0e6b83ea0f5f8be7",
+   "section": "notify",
+   "test": "notify_password_box_password_char",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:notify:TextReadingOrder",
+   "kind": "PasswordBox",
+   "message": "generator: PasswordBox.yaml: notify TextReadingOrder: the prop is not exposed on Microsoft.UI.Xaml.Controls.PasswordBox",
+   "name": "TextReadingOrder",
+   "record_fp": "4dce36a9df8c9f91",
+   "section": "notify",
+   "test": "(not generated)",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:prop:PasswordChar",
+   "kind": "PasswordBox",
+   "message": "<password-box> password-char = Str(\"svelters\"): password-char: E_RUNTIME_SETVALUE (HRESULT 0x80070057)",
+   "name": "PasswordChar",
+   "record_fp": "fb73bd770cee7800",
+   "section": "props",
+   "test": "prop_password_box_password_char",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:PasswordBox:prop:TextReadingOrder",
+   "kind": "PasswordBox",
+   "message": "assertion `left == right` failed: <password-box> text-reading-order after writing Str(\"UseFlowDirection\")\n  left: Str(\"default\")\n right: Str(\"use-flow-direction\")",
+   "name": "TextReadingOrder",
+   "record_fp": "f82361642aff2bf7",
+   "section": "props",
+   "test": "prop_password_box_text_reading_order",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RadioButtons:notify:SelectedIndex",
+   "kind": "RadioButtons",
+   "message": "<radio-buttons> notify::selected-index: no callback after writing [I64(-1)]",
+   "name": "SelectedIndex",
+   "record_fp": "17b050b72c4e33ea",
+   "section": "notify",
+   "test": "notify_radio_buttons_selected_index",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:binding:placeholder-value",
+   "kind": "RatingControl",
+   "message": "generator: RatingControl.yaml: bind:placeholder-value: property placeholder-value is not exposed",
+   "name": "placeholder-value",
+   "record_fp": "1d3e85a88378d4dd",
+   "section": "bindings",
+   "test": "(not generated)",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:binding:value",
+   "kind": "RatingControl",
+   "message": "generator: RatingControl.yaml: bind:value: property value is not exposed",
+   "name": "value",
+   "record_fp": "054eb3be92ec4476",
+   "section": "bindings",
+   "test": "(not generated)",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:notify:PlaceholderValue",
+   "kind": "RatingControl",
+   "message": "generator: RatingControl.yaml: notify PlaceholderValue: the prop is not exposed on Microsoft.UI.Xaml.Controls.RatingControl",
+   "name": "PlaceholderValue",
+   "record_fp": "f1c56f5920491b69",
+   "section": "notify",
+   "test": "(not generated)",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:notify:Value",
+   "kind": "RatingControl",
+   "message": "generator: RatingControl.yaml: notify Value: the prop is not exposed on Microsoft.UI.Xaml.Controls.RatingControl",
+   "name": "Value",
+   "record_fp": "13686e68f9878023",
+   "section": "notify",
+   "test": "(not generated)",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:prop:PlaceholderValue",
+   "kind": "RatingControl",
+   "message": "assertion `left == right` failed: <rating-control> placeholder-value after writing F64(12.0)\n  left: F64(5.0)\n right: F64(12.0)",
+   "name": "PlaceholderValue",
+   "record_fp": "080119101ec89dbf",
+   "section": "props",
+   "test": "prop_rating_control_placeholder_value",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RatingControl:prop:Value",
+   "kind": "RatingControl",
+   "message": "assertion `left == right` failed: <rating-control> value after writing F64(12.0)\n  left: F64(5.0)\n right: F64(12.0)",
+   "name": "Value",
+   "record_fp": "adf65ca9a26b1759",
+   "section": "props",
+   "test": "prop_rating_control_value",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:binding:text-reading-order",
+   "kind": "RichEditBox",
+   "message": "generator: RichEditBox.yaml: bind:text-reading-order: property text-reading-order is not exposed",
+   "name": "text-reading-order",
+   "record_fp": "e71c48d6f78fb06c",
+   "section": "bindings",
+   "test": "(not generated)",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:notify:TextReadingOrder",
+   "kind": "RichEditBox",
+   "message": "generator: RichEditBox.yaml: notify TextReadingOrder: the prop is not exposed on Microsoft.UI.Xaml.Controls.RichEditBox",
+   "name": "TextReadingOrder",
+   "record_fp": "d5bd62c0ec4bc63a",
+   "section": "notify",
+   "test": "(not generated)",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:RichEditBox:prop:TextReadingOrder",
+   "kind": "RichEditBox",
+   "message": "assertion `left == right` failed: <rich-edit-box> text-reading-order after writing Str(\"UseFlowDirection\")\n  left: Str(\"default\")\n right: Str(\"use-flow-direction\")",
+   "name": "TextReadingOrder",
+   "record_fp": "eaa44ece177f9812",
+   "section": "props",
+   "test": "prop_rich_edit_box_text_reading_order",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:Selector:notify:IsSynchronizedWithCurrentItem",
+   "kind": "Selector",
+   "message": "<combo-box> is-synchronized-with-current-item = Bool(true): is-synchronized-with-current-item: The parameter is incorrect. (HRESULT 0x80070057)",
+   "name": "IsSynchronizedWithCurrentItem",
+   "record_fp": "45757a3dcf2ce29c",
+   "section": "notify",
+   "test": "notify_combo_box_is_synchronized_with_current_item",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:Selector:notify:SelectedIndex",
+   "kind": "Selector",
+   "message": "generator: inferred/winui/Selector.yaml: notify SelectedIndex: the prop is not exposed on Microsoft.UI.Xaml.Controls.Primitives.Selector",
+   "name": "SelectedIndex",
+   "record_fp": "0b63a0edc72f6580",
+   "section": "notify",
+   "test": "(not generated)",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:Selector:prop:IsSynchronizedWithCurrentItem",
+   "kind": "Selector",
+   "message": "<combo-box> is-synchronized-with-current-item = Bool(true): is-synchronized-with-current-item: The parameter is incorrect. (HRESULT 0x80070057)",
+   "name": "IsSynchronizedWithCurrentItem",
+   "record_fp": "75d1ced5615c59d2",
+   "section": "props",
+   "test": "prop_combo_box_is_synchronized_with_current_item",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls.Primitives:Selector:prop:SelectedIndex",
+   "kind": "Selector",
+   "message": "assertion `left == right` failed: <combo-box> selected-index after writing I64(3)\n  left: I64(-1)\n right: I64(3)",
+   "name": "SelectedIndex",
+   "record_fp": "586a272a0e216e1b",
+   "section": "props",
+   "test": "prop_combo_box_selected_index",
    "version": "2.3.9"
   },
   {
@@ -78,6 +378,36 @@
    "record_fp": "fcb1860ed8e6519d",
    "section": "props",
    "test": "prop_text_box_text_reading_order",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TimePicker:binding:clock-identifier",
+   "kind": "TimePicker",
+   "message": "<time-picker> clock-identifier = Str(\"svelters\"): clock-identifier: clock (HRESULT 0x80070057)",
+   "name": "clock-identifier",
+   "record_fp": "ccd7873256daf422",
+   "section": "bindings",
+   "test": "notify_time_picker_clock_identifier",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TimePicker:notify:ClockIdentifier",
+   "kind": "TimePicker",
+   "message": "<time-picker> clock-identifier = Str(\"svelters\"): clock-identifier: clock (HRESULT 0x80070057)",
+   "name": "ClockIdentifier",
+   "record_fp": "827c2a7a1286ecc8",
+   "section": "notify",
+   "test": "notify_time_picker_clock_identifier",
+   "version": "2.3.9"
+  },
+  {
+   "fact": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TimePicker:prop:ClockIdentifier",
+   "kind": "TimePicker",
+   "message": "<time-picker> clock-identifier = Str(\"svelters\"): clock-identifier: clock (HRESULT 0x80070057)",
+   "name": "ClockIdentifier",
+   "record_fp": "50671f22f220561e",
+   "section": "props",
+   "test": "prop_time_picker_clock_identifier",
    "version": "2.3.9"
   }
  ],

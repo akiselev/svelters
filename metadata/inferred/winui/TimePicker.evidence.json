@@ -1,0 +1,163 @@
+{
+ "bindings:clock-identifier": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::clock-identifier",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:light-dismiss-overlay-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::light-dismiss-overlay-mode",
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>"
+  },
+  "rule": "B1"
+ },
+ "bindings:minute-increment": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::minute-increment",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "events:SelectedTimeChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TimePickerSelectedValueChangedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TimePicker, Microsoft.UI.Xaml.Controls.TimePickerSelectedValueChangedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:TimeChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.TimePickerValueChangedEventArgs",
+   "delegate": "Windows.Foundation.EventHandler<Microsoft.UI.Xaml.Controls.TimePickerValueChangedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:ClockIdentifier": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ClockIdentifierProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:LightDismissOverlayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "LightDismissOverlayModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:MinuteIncrement": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MinuteIncrementProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectedTime": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectedTimeProperty",
+   "type": "nullable<value<Windows.Foundation.TimeSpan>>"
+  },
+  "rule": "O6"
+ },
+ "notify:Time": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TimeProperty",
+   "type": "value<Windows.Foundation.TimeSpan>"
+  },
+  "rule": "O6"
+ },
+ "props:ClockIdentifier": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITimePicker",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Header": {
+  "confidence": 0.9,
+  "evidence": {
+   "type": "variant"
+  },
+  "rule": "P1"
+ },
+ "props:LightDismissOverlayMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITimePicker",
+   "samples": [
+    "On",
+    "Auto"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MinuteIncrement": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITimePicker",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectedTime": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITimePicker",
+   "samples": [
+    3600000.0,
+    null
+   ],
+   "type": "nullable<value<Windows.Foundation.TimeSpan>>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Time": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.ITimePicker",
+   "samples": [
+    3600000.0,
+    7200000.0
+   ],
+   "type": "value<Windows.Foundation.TimeSpan>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

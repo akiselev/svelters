@@ -1,0 +1,62 @@
+{
+ "bindings:stretch": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::stretch",
+   "type": "enum<Microsoft.UI.Xaml.Media.Stretch>"
+  },
+  "rule": "B1"
+ },
+ "bindings:stretch-direction": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::stretch-direction",
+   "type": "enum<Microsoft.UI.Xaml.Controls.StretchDirection>"
+  },
+  "rule": "B1"
+ },
+ "notify:Stretch": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "StretchProperty",
+   "type": "enum<Microsoft.UI.Xaml.Media.Stretch>"
+  },
+  "rule": "O6"
+ },
+ "notify:StretchDirection": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "StretchDirectionProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.StretchDirection>"
+  },
+  "rule": "O6"
+ },
+ "props:Stretch": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IViewbox",
+   "samples": [
+    "Fill",
+    "None"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Media.Stretch>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:StretchDirection": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IViewbox",
+   "samples": [
+    "DownOnly",
+    "UpOnly"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.StretchDirection>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

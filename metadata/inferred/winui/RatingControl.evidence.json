@@ -1,0 +1,222 @@
+{
+ "bindings:caption": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::caption",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:initial-set-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::initial-set-value",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-clear-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-clear-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-read-only": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-read-only",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:max-rating": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::max-rating",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "bindings:placeholder-value": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::placeholder-value",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:value": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::value",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "events:ValueChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.RatingControl, object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:Caption": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CaptionProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:InitialSetValue": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "InitialSetValueProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:IsClearEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsClearEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsReadOnly": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsReadOnlyProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:MaxRating": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MaxRatingProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:PlaceholderValue": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "PlaceholderValueProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:Value": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ValueProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "props:Caption": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IRatingControl",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:InitialSetValue": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IRatingControl",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsClearEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IRatingControl",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsReadOnly": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IRatingControl",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MaxRating": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IRatingControl",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:PlaceholderValue": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IRatingControl",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Value": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IRatingControl",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

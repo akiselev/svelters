@@ -1,0 +1,5 @@
+# WP-W: GTK SpinButton / Qt QDoubleSpinBox
+class: Microsoft.UI.Xaml.Controls.NumberBox
+element: {}
+props:
+  - { name: Header, as: string, test: "Amount", provenance: "NumberBox.Header: object (winmd); text header as boxed HSTRING" }

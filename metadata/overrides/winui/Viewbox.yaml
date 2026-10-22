@@ -1,0 +1,7 @@
+class: Microsoft.UI.Xaml.Controls.Viewbox
+element: {}
+slots:
+  - name: child
+    prop: Child
+    default: true
+    provenance: "[ContentProperty(Name=\"Child\")] on Viewbox (winmd); Child: UIElement, single child"

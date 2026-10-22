@@ -1,0 +1,901 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.XamlContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.ITabViewFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": "TabItems",
+  "content_property_declared": "TabItems",
+  "dependency_properties": [
+    "AddTabButtonCommandParameterProperty",
+    "AddTabButtonCommandProperty",
+    "AllowDropTabsProperty",
+    "CanDragTabsProperty",
+    "CanReorderTabsProperty",
+    "CanTearOutTabsProperty",
+    "CloseButtonOverlayModeProperty",
+    "IsAddTabButtonVisibleProperty",
+    "SelectedIndexProperty",
+    "SelectedItemProperty",
+    "TabItemTemplateProperty",
+    "TabItemTemplateSelectorProperty",
+    "TabItemsProperty",
+    "TabItemsSourceProperty",
+    "TabStripFooterProperty",
+    "TabStripFooterTemplateProperty",
+    "TabStripHeaderProperty",
+    "TabStripHeaderTemplateProperty",
+    "TabWidthModeProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:TabView",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "ContainerFromItem",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "item",
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "returns": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "ContainerFromIndex",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "index",
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      }
+    }
+  ],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.TabView",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "TabView"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "AddTabButtonCommand",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Input.ICommand",
+        "ref": "object<Microsoft.UI.Xaml.Input.ICommand>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "AddTabButtonCommandParameter",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "AllowDropTabs",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "CanDragTabs",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "CanReorderTabs",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView2",
+      "name": "CanTearOutTabs",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "CloseButtonOverlayMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.TabViewCloseButtonOverlayMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "IsAddTabButtonVisible",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "SelectedIndex",
+      "origin": "winmd",
+      "type": {
+        "native": "i32",
+        "ref": "i32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "SelectedItem",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "TabItemTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DataTemplate",
+        "ref": "object<Microsoft.UI.Xaml.DataTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "TabItemTemplateSelector",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.DataTemplateSelector",
+        "ref": "object<Microsoft.UI.Xaml.Controls.DataTemplateSelector>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "TabItems",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Collections.IVector<object>",
+        "ref": "list<variant>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "TabItemsSource",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "TabStripFooter",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "TabStripFooterTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DataTemplate",
+        "ref": "object<Microsoft.UI.Xaml.DataTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "TabStripHeader",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "TabStripHeaderTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DataTemplate",
+        "ref": "object<Microsoft.UI.Xaml.DataTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "TabWidthMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.TabViewWidthMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.TabViewWidthMode>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, object>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "AddTabButtonClick",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TabView"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TabViewExternalTornOutTabsDroppedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewExternalTornOutTabsDroppedEventArgs",
+          "name": "DropIndex",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewExternalTornOutTabsDroppedEventArgs",
+          "name": "Items",
+          "settable": false,
+          "type": {
+            "native": "object[]",
+            "ref": "object<object[]>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewExternalTornOutTabsDroppedEventArgs",
+          "name": "Tabs",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.UIElement[]",
+            "ref": "object<Microsoft.UI.Xaml.UIElement[]>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, Microsoft.UI.Xaml.Controls.TabViewExternalTornOutTabsDroppedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView2",
+      "name": "ExternalTornOutTabsDropped",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TabView"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TabViewExternalTornOutTabsDroppingEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewExternalTornOutTabsDroppingEventArgs",
+          "name": "AllowDrop",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewExternalTornOutTabsDroppingEventArgs",
+          "name": "DropIndex",
+          "settable": false,
+          "type": {
+            "native": "i32",
+            "ref": "i32"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewExternalTornOutTabsDroppingEventArgs",
+          "name": "Items",
+          "settable": false,
+          "type": {
+            "native": "object[]",
+            "ref": "object<object[]>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewExternalTornOutTabsDroppingEventArgs",
+          "name": "Tabs",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.UIElement[]",
+            "ref": "object<Microsoft.UI.Xaml.UIElement[]>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, Microsoft.UI.Xaml.Controls.TabViewExternalTornOutTabsDroppingEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView2",
+      "name": "ExternalTornOutTabsDropping",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TabView"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs",
+          "name": "AddedItems",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.Collections.IVector<object>",
+            "ref": "list<variant>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.SelectionChangedEventArgs",
+          "name": "RemovedItems",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.Collections.IVector<object>",
+            "ref": "list<variant>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.Controls.SelectionChangedEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "SelectionChanged",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TabViewTabCloseRequestedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewTabCloseRequestedEventArgs",
+          "name": "Item",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewTabCloseRequestedEventArgs",
+          "name": "Tab",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.TabViewItem",
+            "ref": "object<Microsoft.UI.Xaml.Controls.TabViewItem>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, Microsoft.UI.Xaml.Controls.TabViewTabCloseRequestedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "TabCloseRequested",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TabView"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TabViewTabDragCompletedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewTabDragCompletedEventArgs",
+          "name": "DropResult",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DataPackageOperation>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewTabDragCompletedEventArgs",
+          "name": "Item",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewTabDragCompletedEventArgs",
+          "name": "Tab",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.TabViewItem",
+            "ref": "object<Microsoft.UI.Xaml.Controls.TabViewItem>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, Microsoft.UI.Xaml.Controls.TabViewTabDragCompletedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "TabDragCompleted",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TabView"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TabViewTabDragStartingEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewTabDragStartingEventArgs",
+          "name": "Cancel",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewTabDragStartingEventArgs",
+          "name": "Data",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackage",
+            "ref": "object<Windows.ApplicationModel.DataTransfer.DataPackage>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewTabDragStartingEventArgs",
+          "name": "Item",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewTabDragStartingEventArgs",
+          "name": "Tab",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.TabViewItem",
+            "ref": "object<Microsoft.UI.Xaml.Controls.TabViewItem>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, Microsoft.UI.Xaml.Controls.TabViewTabDragStartingEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "TabDragStarting",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TabView"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TabViewTabDroppedOutsideEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewTabDroppedOutsideEventArgs",
+          "name": "Item",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewTabDroppedOutsideEventArgs",
+          "name": "Tab",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.TabViewItem",
+            "ref": "object<Microsoft.UI.Xaml.Controls.TabViewItem>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, Microsoft.UI.Xaml.Controls.TabViewTabDroppedOutsideEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "TabDroppedOutside",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TabView"
+    },
+    {
+      "args": "Windows.Foundation.Collections.IVectorChangedEventArgs",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, Windows.Foundation.Collections.IVectorChangedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "TabItemsChanged",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TabView"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.DragEventArgs",
+      "args_methods": [
+        "GetDeferral",
+        "GetPosition"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "AcceptedOperation",
+          "settable": true,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DataPackageOperation>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "AllowedOperations",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DataPackageOperation>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "Data",
+          "settable": true,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackage",
+            "ref": "object<Windows.ApplicationModel.DataTransfer.DataPackage>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "DataView",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageView",
+            "ref": "object<Windows.ApplicationModel.DataTransfer.DataPackageView>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "DragUIOverride",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.DragUIOverride",
+            "ref": "object<Microsoft.UI.Xaml.DragUIOverride>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "Modifiers",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DragDrop.DragDropModifiers",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DragDrop.DragDropModifiers>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.DragEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "TabStripDragOver",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.DragEventArgs",
+      "args_methods": [
+        "GetDeferral",
+        "GetPosition"
+      ],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "AcceptedOperation",
+          "settable": true,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DataPackageOperation>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "AllowedOperations",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageOperation",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DataPackageOperation>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "Data",
+          "settable": true,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackage",
+            "ref": "object<Windows.ApplicationModel.DataTransfer.DataPackage>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "DataView",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DataPackageView",
+            "ref": "object<Windows.ApplicationModel.DataTransfer.DataPackageView>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "DragUIOverride",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.DragUIOverride",
+            "ref": "object<Microsoft.UI.Xaml.DragUIOverride>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "Handled",
+          "settable": true,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.DragEventArgs",
+          "name": "Modifiers",
+          "settable": false,
+          "type": {
+            "native": "Windows.ApplicationModel.DataTransfer.DragDrop.DragDropModifiers",
+            "ref": "flags<Windows.ApplicationModel.DataTransfer.DragDrop.DragDropModifiers>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.DragEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView",
+      "name": "TabStripDrop",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TabViewTabTearOutRequestedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewTabTearOutRequestedEventArgs",
+          "name": "Items",
+          "settable": false,
+          "type": {
+            "native": "object[]",
+            "ref": "object<object[]>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewTabTearOutRequestedEventArgs",
+          "name": "NewWindowId",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.WindowId",
+            "ref": "value<Microsoft.UI.WindowId>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewTabTearOutRequestedEventArgs",
+          "name": "Tabs",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.UIElement[]",
+            "ref": "object<Microsoft.UI.Xaml.UIElement[]>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, Microsoft.UI.Xaml.Controls.TabViewTabTearOutRequestedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView2",
+      "name": "TabTearOutRequested",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TabView"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.TabViewTabTearOutWindowRequestedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewTabTearOutWindowRequestedEventArgs",
+          "name": "Items",
+          "settable": false,
+          "type": {
+            "native": "object[]",
+            "ref": "object<object[]>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewTabTearOutWindowRequestedEventArgs",
+          "name": "NewWindowId",
+          "settable": true,
+          "type": {
+            "native": "Microsoft.UI.WindowId",
+            "ref": "value<Microsoft.UI.WindowId>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.TabViewTabTearOutWindowRequestedEventArgs",
+          "name": "Tabs",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.UIElement[]",
+            "ref": "object<Microsoft.UI.Xaml.UIElement[]>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.TabView, Microsoft.UI.Xaml.Controls.TabViewTabTearOutWindowRequestedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.ITabView2",
+      "name": "TabTearOutWindowRequested",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.TabView"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

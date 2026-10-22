@@ -1,0 +1,155 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.MenuFlyoutItemBase",
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.IMenuFlyoutItemFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": "Text",
+  "content_property_declared": "Text",
+  "dependency_properties": [
+    "CommandParameterProperty",
+    "CommandProperty",
+    "IconProperty",
+    "KeyboardAcceleratorTextOverrideProperty",
+    "TextProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:MenuFlyoutItem",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.MenuFlyoutItem",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "MenuFlyoutItem"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IMenuFlyoutItem",
+      "name": "Command",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Input.ICommand",
+        "ref": "object<Microsoft.UI.Xaml.Input.ICommand>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IMenuFlyoutItem",
+      "name": "CommandParameter",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IMenuFlyoutItem",
+      "name": "Icon",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.IconElement",
+        "ref": "object<Microsoft.UI.Xaml.Controls.IconElement>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IMenuFlyoutItem",
+      "name": "KeyboardAcceleratorTextOverride",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.IMenuFlyoutItem",
+      "name": "TemplateSettings",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Primitives.MenuFlyoutItemTemplateSettings",
+        "ref": "object<Microsoft.UI.Xaml.Controls.Primitives.MenuFlyoutItemTemplateSettings>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IMenuFlyoutItem",
+      "name": "Text",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.RoutedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.RoutedEventArgs",
+          "name": "OriginalSource",
+          "settable": false,
+          "type": {
+            "native": "object",
+            "ref": "variant"
+          }
+        }
+      ],
+      "delegate": "Microsoft.UI.Xaml.RoutedEventHandler",
+      "interface": "Microsoft.UI.Xaml.Controls.IMenuFlyoutItem",
+      "name": "Click",
+      "origin": "winmd",
+      "sender": "object"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

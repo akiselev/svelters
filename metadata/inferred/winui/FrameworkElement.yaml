@@ -17,6 +17,8 @@ props:
   - true
   - false
   provenance: 'rule P1: FrameworkElement.AllowFocusWhenDisabled: bool, read-write DP (winmd); written and read back'
+- name: BaseUri
+  provenance: 'rule P1: FrameworkElement.BaseUri: object<Windows.Foundation.Uri>, read-only (winmd); read test'
 - name: FlowDirection
   test:
   - RightToLeft
@@ -27,12 +29,24 @@ props:
   - 1,2,3,4
   - '5'
   provenance: 'rule P1: FrameworkElement.FocusVisualMargin: value<Microsoft.UI.Xaml.Thickness>, read-write DP (winmd); written and read back'
+- name: FocusVisualPrimaryBrush
+  test:
+  - '#ff0000'
+  - '#00ff0080'
+  provenance: 'rule P1: FrameworkElement.FocusVisualPrimaryBrush: object<Microsoft.UI.Xaml.Media.Brush>, read-write DP (winmd); written and read
+    back'
 - name: FocusVisualPrimaryThickness
   test:
   - 1,2,3,4
   - '5'
   provenance: 'rule P1: FrameworkElement.FocusVisualPrimaryThickness: value<Microsoft.UI.Xaml.Thickness>, read-write DP (winmd); written and read
     back'
+- name: FocusVisualSecondaryBrush
+  test:
+  - '#ff0000'
+  - '#00ff0080'
+  provenance: 'rule P1: FrameworkElement.FocusVisualSecondaryBrush: object<Microsoft.UI.Xaml.Media.Brush>, read-write DP (winmd); written and
+    read back'
 - name: FocusVisualSecondaryThickness
   test:
   - 1,2,3,4
@@ -114,8 +128,14 @@ notify:
   provenance: 'rule O6: FrameworkElement.FlowDirection is a DependencyProperty (FrameworkElement.FlowDirectionProperty, winmd): RegisterPropertyChangedCallback'
 - name: FocusVisualMargin
   provenance: 'rule O6: FrameworkElement.FocusVisualMargin is a DependencyProperty (FrameworkElement.FocusVisualMarginProperty, winmd): RegisterPropertyChangedCallback'
+- name: FocusVisualPrimaryBrush
+  provenance: 'rule O6: FrameworkElement.FocusVisualPrimaryBrush is a DependencyProperty (FrameworkElement.FocusVisualPrimaryBrushProperty, winmd):
+    RegisterPropertyChangedCallback'
 - name: FocusVisualPrimaryThickness
   provenance: 'rule O6: FrameworkElement.FocusVisualPrimaryThickness is a DependencyProperty (FrameworkElement.FocusVisualPrimaryThicknessProperty,
+    winmd): RegisterPropertyChangedCallback'
+- name: FocusVisualSecondaryBrush
+  provenance: 'rule O6: FrameworkElement.FocusVisualSecondaryBrush is a DependencyProperty (FrameworkElement.FocusVisualSecondaryBrushProperty,
     winmd): RegisterPropertyChangedCallback'
 - name: FocusVisualSecondaryThickness
   provenance: 'rule O6: FrameworkElement.FocusVisualSecondaryThickness is a DependencyProperty (FrameworkElement.FocusVisualSecondaryThicknessProperty,

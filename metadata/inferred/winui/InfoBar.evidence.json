@@ -1,0 +1,212 @@
+{
+ "bindings:is-closable": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-closable",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-icon-visible": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-icon-visible",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-open": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-open",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:message": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::message",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "bindings:severity": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::severity",
+   "type": "enum<Microsoft.UI.Xaml.Controls.InfoBarSeverity>"
+  },
+  "rule": "B1"
+ },
+ "bindings:title": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::title",
+   "type": "string"
+  },
+  "rule": "B1"
+ },
+ "events:CloseButtonClick": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.InfoBar, object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Closed": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.InfoBarClosedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.InfoBar, Microsoft.UI.Xaml.Controls.InfoBarClosedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:Closing": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.InfoBarClosingEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.InfoBar, Microsoft.UI.Xaml.Controls.InfoBarClosingEventArgs>",
+   "result": "Cancel",
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "notify:IsClosable": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsClosableProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsIconVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsIconVisibleProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsOpen": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsOpenProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:Message": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MessageProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "notify:Severity": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SeverityProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.InfoBarSeverity>"
+  },
+  "rule": "O6"
+ },
+ "notify:Title": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "TitleProperty",
+   "type": "string"
+  },
+  "rule": "O6"
+ },
+ "props:IsClosable": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsIconVisible": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsOpen": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Message": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Severity": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+   "samples": [
+    "Success",
+    "Informational"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.InfoBarSeverity>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Title": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IInfoBar",
+   "samples": [
+    "svelters",
+    "winui"
+   ],
+   "type": "string",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

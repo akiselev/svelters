@@ -1,0 +1,21 @@
+# WP-W: GTK Notebook / Qt QTabWidget
+class: Microsoft.UI.Xaml.Controls.TabView
+element: {}
+slots:
+  - name: tab-items
+    prop: TabItems
+    default: true
+    child: tab-view-item
+    provenance: "[ContentProperty(Name=\"TabItems\")] on TabView (winmd); TabItems: IVector<object> (tab-view-item elements)"
+props:
+  - { name: SelectedIndex, test: -1, provenance: "TabView.SelectedIndex DP: i32 (winmd); -1 = no selection (the only index valid with no tabs)" }
+bindings:
+  - name: selected-index
+    direction: two_way
+    property: selected-index
+    type: { ref: i32, nullable: false }
+    change: { signal: selection-changed, role: any_change, value: prop }
+    write: { natively_normalizes: false }
+    echo: { strategy: compare, compare_before_set: true, read_back: true }
+    lifetime: { on_native_death: end_binding, on_stale_update: warn_noop, on_destroy: idempotent_disconnect }
+    provenance: "TabView.SelectionChanged (SelectionChangedEventHandler, winmd) follows every selection change; the renderer reads selected-index back and compares before set"

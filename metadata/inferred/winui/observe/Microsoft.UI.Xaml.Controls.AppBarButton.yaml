@@ -1,0 +1,80 @@
+schema: svelters-observe-layer/v1
+toolkit: winui
+owner: Microsoft.UI.Xaml.Controls:AppBarButton
+observe:
+- prop: DynamicOverflowOrder
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: DynamicOverflowOrderProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: Icon
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: IconProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: IsCompact
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: IsCompactProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: IsInOverflow
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: IsInOverflowProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: KeyboardAcceleratorTextOverride
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: KeyboardAcceleratorTextOverrideProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: Label
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: LabelProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: LabelPosition
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: winmd
+    ref: 'O6: LabelPositionProperty is a DependencyProperty: RegisterPropertyChangedCallback'
+  - origin: rule
+    ref: no probe on Linux; verified by the R4 harness on the windows-winui job
+  confidence: 0.9
+- prop: TemplateSettings
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only plain property with no change event
+  confidence: 0.9

@@ -1,0 +1,4 @@
+class: Microsoft.UI.Xaml.Controls.DatePicker
+element: {}
+props:
+  - { name: Header, as: string, test: "Date", provenance: "DatePicker.Header: object (winmd); text header as boxed HSTRING" }

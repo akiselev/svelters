@@ -1,0 +1,903 @@
+{
+ "bindings:bring-into-view-on-focus-change": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::bring-into-view-on-focus-change",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:can-content-render-outside-bounds": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::can-content-render-outside-bounds",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:horizontal-anchor-ratio": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::horizontal-anchor-ratio",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:horizontal-scroll-bar-visibility": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::horizontal-scroll-bar-visibility",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ScrollBarVisibility>"
+  },
+  "rule": "B1"
+ },
+ "bindings:horizontal-scroll-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::horizontal-scroll-mode",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ScrollMode>"
+  },
+  "rule": "B1"
+ },
+ "bindings:horizontal-snap-points-alignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::horizontal-snap-points-alignment",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Primitives.SnapPointsAlignment>"
+  },
+  "rule": "B1"
+ },
+ "bindings:horizontal-snap-points-type": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::horizontal-snap-points-type",
+   "type": "enum<Microsoft.UI.Xaml.Controls.SnapPointsType>"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-deferred-scrolling-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-deferred-scrolling-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-horizontal-rail-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-horizontal-rail-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-horizontal-scroll-chaining-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-horizontal-scroll-chaining-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-scroll-inertia-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-scroll-inertia-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-vertical-rail-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-vertical-rail-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-vertical-scroll-chaining-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-vertical-scroll-chaining-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-zoom-chaining-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-zoom-chaining-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-zoom-inertia-enabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-zoom-inertia-enabled",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:reduce-viewport-for-core-input-view-occlusions": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::reduce-viewport-for-core-input-view-occlusions",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:vertical-anchor-ratio": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::vertical-anchor-ratio",
+   "type": "f64"
+  },
+  "rule": "B1"
+ },
+ "bindings:vertical-scroll-bar-visibility": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::vertical-scroll-bar-visibility",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ScrollBarVisibility>"
+  },
+  "rule": "B1"
+ },
+ "bindings:vertical-scroll-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::vertical-scroll-mode",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ScrollMode>"
+  },
+  "rule": "B1"
+ },
+ "bindings:vertical-snap-points-alignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::vertical-snap-points-alignment",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Primitives.SnapPointsAlignment>"
+  },
+  "rule": "B1"
+ },
+ "bindings:vertical-snap-points-type": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::vertical-snap-points-type",
+   "type": "enum<Microsoft.UI.Xaml.Controls.SnapPointsType>"
+  },
+  "rule": "B1"
+ },
+ "bindings:zoom-mode": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::zoom-mode",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ZoomMode>"
+  },
+  "rule": "B1"
+ },
+ "bindings:zoom-snap-points-type": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::zoom-snap-points-type",
+   "type": "enum<Microsoft.UI.Xaml.Controls.SnapPointsType>"
+  },
+  "rule": "B1"
+ },
+ "events:AnchorRequested": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.AnchorRequestedEventArgs",
+   "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ScrollViewer, Microsoft.UI.Xaml.Controls.AnchorRequestedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:DirectManipulationCompleted": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.EventHandler<object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:DirectManipulationStarted": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "object",
+   "delegate": "Windows.Foundation.EventHandler<object>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:ViewChanged": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.ScrollViewerViewChangedEventArgs",
+   "delegate": "Windows.Foundation.EventHandler<Microsoft.UI.Xaml.Controls.ScrollViewerViewChangedEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "events:ViewChanging": {
+  "confidence": 0.9,
+  "evidence": {
+   "args": "Microsoft.UI.Xaml.Controls.ScrollViewerViewChangingEventArgs",
+   "delegate": "Windows.Foundation.EventHandler<Microsoft.UI.Xaml.Controls.ScrollViewerViewChangingEventArgs>",
+   "result": null,
+   "trigger": null
+  },
+  "rule": "R1/R2"
+ },
+ "methods:InvalidateScrollInfo": {
+  "confidence": 0.9,
+  "evidence": {
+   "returns": null
+  },
+  "rule": "M1"
+ },
+ "notify:BringIntoViewOnFocusChange": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "BringIntoViewOnFocusChangeProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:CanContentRenderOutsideBounds": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "CanContentRenderOutsideBoundsProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:HorizontalAnchorRatio": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "HorizontalAnchorRatioProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:HorizontalScrollBarVisibility": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "HorizontalScrollBarVisibilityProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ScrollBarVisibility>"
+  },
+  "rule": "O6"
+ },
+ "notify:HorizontalScrollMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "HorizontalScrollModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ScrollMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:HorizontalSnapPointsAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "HorizontalSnapPointsAlignmentProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Primitives.SnapPointsAlignment>"
+  },
+  "rule": "O6"
+ },
+ "notify:HorizontalSnapPointsType": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "HorizontalSnapPointsTypeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.SnapPointsType>"
+  },
+  "rule": "O6"
+ },
+ "notify:IsDeferredScrollingEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsDeferredScrollingEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsHorizontalRailEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsHorizontalRailEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsHorizontalScrollChainingEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsHorizontalScrollChainingEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsScrollInertiaEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsScrollInertiaEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsVerticalRailEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsVerticalRailEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsVerticalScrollChainingEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsVerticalScrollChainingEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsZoomChainingEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsZoomChainingEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsZoomInertiaEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsZoomInertiaEnabledProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:MaxZoomFactor": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MaxZoomFactorProperty",
+   "type": "f32"
+  },
+  "rule": "O6"
+ },
+ "notify:MinZoomFactor": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "MinZoomFactorProperty",
+   "type": "f32"
+  },
+  "rule": "O6"
+ },
+ "notify:ReduceViewportForCoreInputViewOcclusions": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ReduceViewportForCoreInputViewOcclusionsProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:VerticalAnchorRatio": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "VerticalAnchorRatioProperty",
+   "type": "f64"
+  },
+  "rule": "O6"
+ },
+ "notify:VerticalScrollBarVisibility": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "VerticalScrollBarVisibilityProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ScrollBarVisibility>"
+  },
+  "rule": "O6"
+ },
+ "notify:VerticalScrollMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "VerticalScrollModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ScrollMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:VerticalSnapPointsAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "VerticalSnapPointsAlignmentProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.Primitives.SnapPointsAlignment>"
+  },
+  "rule": "O6"
+ },
+ "notify:VerticalSnapPointsType": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "VerticalSnapPointsTypeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.SnapPointsType>"
+  },
+  "rule": "O6"
+ },
+ "notify:ZoomMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ZoomModeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.ZoomMode>"
+  },
+  "rule": "O6"
+ },
+ "notify:ZoomSnapPointsType": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ZoomSnapPointsTypeProperty",
+   "type": "enum<Microsoft.UI.Xaml.Controls.SnapPointsType>"
+  },
+  "rule": "O6"
+ },
+ "props:BringIntoViewOnFocusChange": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:CanContentRenderOutsideBounds": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ComputedHorizontalScrollBarVisibility": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "type": "enum<Microsoft.UI.Xaml.Visibility>",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:ComputedVerticalScrollBarVisibility": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "type": "enum<Microsoft.UI.Xaml.Visibility>",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:ExtentHeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "type": "f64",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:ExtentWidth": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "type": "f64",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:HorizontalAnchorRatio": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:HorizontalOffset": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "type": "f64",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:HorizontalScrollBarVisibility": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    "Auto",
+    "Disabled"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.ScrollBarVisibility>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:HorizontalScrollMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    "Enabled",
+    "Disabled"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.ScrollMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:HorizontalSnapPointsAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    "Center",
+    "Near"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.Primitives.SnapPointsAlignment>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:HorizontalSnapPointsType": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    "Optional",
+    "None"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.SnapPointsType>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsDeferredScrollingEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsHorizontalRailEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsHorizontalScrollChainingEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsScrollInertiaEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsVerticalRailEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsVerticalScrollChainingEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsZoomChainingEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsZoomInertiaEnabled": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MaxZoomFactor": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    2.0,
+    4.0
+   ],
+   "type": "f32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:MinZoomFactor": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    2.0,
+    4.0
+   ],
+   "type": "f32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ReduceViewportForCoreInputViewOcclusions": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ScrollableHeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "type": "f64",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:ScrollableWidth": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "type": "f64",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:VerticalAnchorRatio": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    12.0,
+    24.0
+   ],
+   "type": "f64",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:VerticalOffset": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "type": "f64",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:VerticalScrollBarVisibility": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    "Auto",
+    "Disabled"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.ScrollBarVisibility>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:VerticalScrollMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    "Enabled",
+    "Disabled"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.ScrollMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:VerticalSnapPointsAlignment": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    "Center",
+    "Near"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.Primitives.SnapPointsAlignment>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:VerticalSnapPointsType": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    "Optional",
+    "None"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.SnapPointsType>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ViewportHeight": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "type": "f64",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:ViewportWidth": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "type": "f64",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:ZoomFactor": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "type": "f32",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:ZoomMode": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    "Enabled",
+    "Disabled"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.ZoomMode>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:ZoomSnapPointsType": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+   "samples": [
+    "Optional",
+    "None"
+   ],
+   "type": "enum<Microsoft.UI.Xaml.Controls.SnapPointsType>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

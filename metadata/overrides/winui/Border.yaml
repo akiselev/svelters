@@ -1,0 +1,8 @@
+# WP-W: a single-child decorator (GTK Frame, Qt QFrame); Background/BorderBrush/CornerRadius are the styling hooks
+class: Microsoft.UI.Xaml.Controls.Border
+element: {}
+slots:
+  - name: child
+    prop: Child
+    default: true
+    provenance: "[ContentProperty(Name=\"Child\")] on Border (winmd); Child: UIElement, single child"

@@ -1,0 +1,62 @@
+{
+ "bindings:delay": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::delay",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "bindings:interval": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::interval",
+   "type": "i32"
+  },
+  "rule": "B1"
+ },
+ "notify:Delay": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "DelayProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "notify:Interval": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IntervalProperty",
+   "type": "i32"
+  },
+  "rule": "O6"
+ },
+ "props:Delay": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IRepeatButton",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Interval": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.Primitives.IRepeatButton",
+   "samples": [
+    3,
+    7
+   ],
+   "type": "i32",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

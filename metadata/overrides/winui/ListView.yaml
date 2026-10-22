@@ -1,0 +1,3 @@
+# WP-W: GTK ListBox / Qt QListWidget with element items (list-view-item); virtual lists over @svelters/lists are not mapped yet
+class: Microsoft.UI.Xaml.Controls.ListView
+element: {}

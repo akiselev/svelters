@@ -1,0 +1,154 @@
+{
+ "bindings:has-unrealized-children": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::has-unrealized-children",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-child-selected": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-child-selected",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:is-expanded": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::is-expanded",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "bindings:selects-on-invoked": {
+  "confidence": 0.9,
+  "evidence": {
+   "notify": "notify::selects-on-invoked",
+   "type": "bool"
+  },
+  "rule": "B1"
+ },
+ "notify:HasUnrealizedChildren": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "HasUnrealizedChildrenProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:Icon": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IconProperty",
+   "type": "object<Microsoft.UI.Xaml.Controls.IconElement>"
+  },
+  "rule": "O6"
+ },
+ "notify:IsChildSelected": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsChildSelectedProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:IsExpanded": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "IsExpandedProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "notify:SelectsOnInvoked": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "SelectsOnInvokedProperty",
+   "type": "bool"
+  },
+  "rule": "O6"
+ },
+ "props:CompactPaneLength": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationViewItem",
+   "type": "f64",
+   "write": false
+  },
+  "rule": "P1"
+ },
+ "props:HasUnrealizedChildren": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationViewItem2",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:Icon": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationViewItem",
+   "samples": [
+    "Accept",
+    "Cancel"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Controls.IconElement>",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsChildSelected": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationViewItem2",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:IsExpanded": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationViewItem2",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ },
+ "props:SelectsOnInvoked": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.INavigationViewItem2",
+   "samples": [
+    true,
+    false
+   ],
+   "type": "bool",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

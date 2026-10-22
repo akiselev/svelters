@@ -1,0 +1,24 @@
+{
+ "notify:Foreground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dp": "ForegroundProperty",
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>"
+  },
+  "rule": "O6"
+ },
+ "props:Foreground": {
+  "confidence": 0.9,
+  "evidence": {
+   "dependency_property": true,
+   "interface": "Microsoft.UI.Xaml.Controls.IIconElement",
+   "samples": [
+    "#ff0000",
+    "#00ff0080"
+   ],
+   "type": "object<Microsoft.UI.Xaml.Media.Brush>",
+   "write": true
+  },
+  "rule": "P1"
+ }
+}

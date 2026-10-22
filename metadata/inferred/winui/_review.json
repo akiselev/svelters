@@ -1,10 +1,10 @@
 {
  "inferred": {
-  "bindings": 48,
-  "events": 76,
-  "methods": 8,
-  "notify": 121,
-  "props": 143
+  "bindings": 306,
+  "events": 182,
+  "methods": 17,
+  "notify": 522,
+  "props": 596
  },
  "promote_at": 0.9,
  "rows": [
@@ -18,6 +18,38 @@
   },
   {
    "band": "middle",
+   "class": "CalendarDatePicker",
+   "confidence": 0.6,
+   "name": "SetDisplayDate",
+   "pattern": "method:scalar-args",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "class": "CalendarDatePicker",
+   "confidence": 0.6,
+   "name": "SetYearDecadeDisplayDimensions",
+   "pattern": "method:scalar-args",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "class": "CalendarView",
+   "confidence": 0.6,
+   "name": "SetDisplayDate",
+   "pattern": "method:scalar-args",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "class": "CalendarView",
+   "confidence": 0.6,
+   "name": "SetYearDecadeDisplayDimensions",
+   "pattern": "method:scalar-args",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
    "class": "ContentControl",
    "confidence": 0.6,
    "name": "Content",
@@ -26,67 +58,270 @@
   },
   {
    "band": "middle",
-   "class": "Slider",
+   "class": "ContentDialog",
    "confidence": 0.6,
-   "name": "Header",
+   "name": "CloseButtonCommandParameter",
    "pattern": "prop:object-as-string",
    "section": "props"
   },
   {
    "band": "middle",
-   "class": "TextBox",
+   "class": "ContentDialog",
    "confidence": 0.6,
-   "name": "Select",
+   "name": "PrimaryButtonCommandParameter",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "ContentDialog",
+   "confidence": 0.6,
+   "name": "SecondaryButtonCommandParameter",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "InfoBar",
+   "confidence": 0.6,
+   "name": "CloseButtonCommandParameter",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "InfoBar",
+   "confidence": 0.6,
+   "name": "Content",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "ItemsControl",
+   "confidence": 0.6,
+   "name": "ItemsSource",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "ListViewBase",
+   "confidence": 0.6,
+   "name": "SetDesiredContainerUpdateDuration",
    "pattern": "method:scalar-args",
    "section": "methods"
   },
   {
    "band": "middle",
-   "class": "TextBox",
+   "class": "ListViewBase",
    "confidence": 0.6,
-   "name": "Description",
+   "name": "Footer",
    "pattern": "prop:object-as-string",
    "section": "props"
   },
   {
    "band": "middle",
-   "class": "TextBox",
+   "class": "MenuFlyoutItem",
    "confidence": 0.6,
-   "name": "Header",
+   "name": "CommandParameter",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "NavigationView",
+   "confidence": 0.6,
+   "name": "FooterMenuItemsSource",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "NavigationView",
+   "confidence": 0.6,
+   "name": "MenuItemsSource",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "NavigationView",
+   "confidence": 0.6,
+   "name": "SelectedItem",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "NavigationViewItem",
+   "confidence": 0.6,
+   "name": "MenuItemsSource",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "RadioButtons",
+   "confidence": 0.6,
+   "name": "ItemTemplate",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "RadioButtons",
+   "confidence": 0.6,
+   "name": "ItemsSource",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "RadioButtons",
+   "confidence": 0.6,
+   "name": "SelectedItem",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "ScrollViewer",
+   "confidence": 0.6,
+   "name": "ScrollToHorizontalOffset",
+   "pattern": "method:scalar-args",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "class": "ScrollViewer",
+   "confidence": 0.6,
+   "name": "ScrollToVerticalOffset",
+   "pattern": "method:scalar-args",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "class": "ScrollViewer",
+   "confidence": 0.6,
+   "name": "ZoomToFactor",
+   "pattern": "method:scalar-args",
+   "section": "methods"
+  },
+  {
+   "band": "middle",
+   "class": "Selector",
+   "confidence": 0.6,
+   "name": "SelectedItem",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "Selector",
+   "confidence": 0.6,
+   "name": "SelectedValue",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "SplitButton",
+   "confidence": 0.6,
+   "name": "CommandParameter",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "TabView",
+   "confidence": 0.6,
+   "name": "AddTabButtonCommandParameter",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "TabView",
+   "confidence": 0.6,
+   "name": "SelectedItem",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "TabView",
+   "confidence": 0.6,
+   "name": "TabItemsSource",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "TabView",
+   "confidence": 0.6,
+   "name": "TabStripFooter",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "TabView",
+   "confidence": 0.6,
+   "name": "TabStripHeader",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "TeachingTip",
+   "confidence": 0.6,
+   "name": "ActionButtonCommandParameter",
+   "pattern": "prop:object-as-string",
+   "section": "props"
+  },
+  {
+   "band": "middle",
+   "class": "TeachingTip",
+   "confidence": 0.6,
+   "name": "CloseButtonCommandParameter",
    "pattern": "prop:object-as-string",
    "section": "props"
   }
  ],
  "schema": "svelters-inferred-review/v1",
  "skipped": {
-  "binding:type:value": 5,
+  "binding:type:f32": 2,
+  "binding:type:nullable": 4,
+  "binding:type:object": 66,
+  "binding:type:value": 34,
   "event:denied": 2,
-  "method:denied": 14,
-  "method:overloaded": 2,
-  "method:param-type": 16,
+  "method:denied": 16,
+  "method:overloaded": 10,
+  "method:param-type": 30,
   "method:return:f32": 1,
   "method:return:i64": 1,
   "method:return:list": 1,
-  "method:return:object": 4,
+  "method:return:object": 16,
   "method:return:value": 1,
-  "method:return:variant": 4,
+  "method:return:variant": 6,
   "notify:no-notify-rule": 4,
-  "notify:read-only": 8,
+  "notify:read-only": 28,
   "prop:denied": 9,
-  "prop:type:f32": 1,
-  "prop:type:flags": 2,
-  "prop:type:list": 4,
-  "prop:type:object": 71,
-  "prop:type:value": 16
+  "prop:type:flags": 3,
+  "prop:type:list": 18,
+  "prop:type:object": 181,
+  "prop:type:value": 11,
+  "prop:type:variant": 2
  },
  "toolkit": "winui",
  "unreviewed": {
   "by_pattern": {
-   "middle:method:scalar-args": 1,
-   "middle:prop:object-as-string": 5
+   "middle:method:scalar-args": 8,
+   "middle:prop:object-as-string": 27
   },
   "low": 0,
-  "middle": 6
+  "middle": 35
  },
  "version": "2.3.9"
 }

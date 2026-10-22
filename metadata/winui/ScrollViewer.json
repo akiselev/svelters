@@ -1,0 +1,1195 @@
+{
+  "abstract": false,
+  "attached": [
+    {
+      "accessors": {
+        "get": "GetBringIntoViewOnFocusChange",
+        "set": "SetBringIntoViewOnFocusChange"
+      },
+      "dependency_property": true,
+      "name": "BringIntoViewOnFocusChange",
+      "origin": "winmd",
+      "target": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      },
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "accessors": {
+        "get": "GetCanContentRenderOutsideBounds",
+        "set": "SetCanContentRenderOutsideBounds"
+      },
+      "dependency_property": true,
+      "name": "CanContentRenderOutsideBounds",
+      "origin": "winmd",
+      "target": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      },
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "accessors": {
+        "get": "GetHorizontalScrollBarVisibility",
+        "set": "SetHorizontalScrollBarVisibility"
+      },
+      "dependency_property": true,
+      "name": "HorizontalScrollBarVisibility",
+      "origin": "winmd",
+      "target": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      },
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ScrollBarVisibility",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.ScrollBarVisibility>"
+      }
+    },
+    {
+      "accessors": {
+        "get": "GetHorizontalScrollMode",
+        "set": "SetHorizontalScrollMode"
+      },
+      "dependency_property": true,
+      "name": "HorizontalScrollMode",
+      "origin": "winmd",
+      "target": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      },
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ScrollMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.ScrollMode>"
+      }
+    },
+    {
+      "accessors": {
+        "get": "GetIsDeferredScrollingEnabled",
+        "set": "SetIsDeferredScrollingEnabled"
+      },
+      "dependency_property": true,
+      "name": "IsDeferredScrollingEnabled",
+      "origin": "winmd",
+      "target": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      },
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "accessors": {
+        "get": "GetIsHorizontalRailEnabled",
+        "set": "SetIsHorizontalRailEnabled"
+      },
+      "dependency_property": true,
+      "name": "IsHorizontalRailEnabled",
+      "origin": "winmd",
+      "target": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      },
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "accessors": {
+        "get": "GetIsHorizontalScrollChainingEnabled",
+        "set": "SetIsHorizontalScrollChainingEnabled"
+      },
+      "dependency_property": true,
+      "name": "IsHorizontalScrollChainingEnabled",
+      "origin": "winmd",
+      "target": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      },
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "accessors": {
+        "get": "GetIsScrollInertiaEnabled",
+        "set": "SetIsScrollInertiaEnabled"
+      },
+      "dependency_property": true,
+      "name": "IsScrollInertiaEnabled",
+      "origin": "winmd",
+      "target": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      },
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "accessors": {
+        "get": "GetIsVerticalRailEnabled",
+        "set": "SetIsVerticalRailEnabled"
+      },
+      "dependency_property": true,
+      "name": "IsVerticalRailEnabled",
+      "origin": "winmd",
+      "target": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      },
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "accessors": {
+        "get": "GetIsVerticalScrollChainingEnabled",
+        "set": "SetIsVerticalScrollChainingEnabled"
+      },
+      "dependency_property": true,
+      "name": "IsVerticalScrollChainingEnabled",
+      "origin": "winmd",
+      "target": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      },
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "accessors": {
+        "get": "GetIsZoomChainingEnabled",
+        "set": "SetIsZoomChainingEnabled"
+      },
+      "dependency_property": true,
+      "name": "IsZoomChainingEnabled",
+      "origin": "winmd",
+      "target": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      },
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "accessors": {
+        "get": "GetIsZoomInertiaEnabled",
+        "set": "SetIsZoomInertiaEnabled"
+      },
+      "dependency_property": true,
+      "name": "IsZoomInertiaEnabled",
+      "origin": "winmd",
+      "target": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      },
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "accessors": {
+        "get": "GetVerticalScrollBarVisibility",
+        "set": "SetVerticalScrollBarVisibility"
+      },
+      "dependency_property": true,
+      "name": "VerticalScrollBarVisibility",
+      "origin": "winmd",
+      "target": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      },
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ScrollBarVisibility",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.ScrollBarVisibility>"
+      }
+    },
+    {
+      "accessors": {
+        "get": "GetVerticalScrollMode",
+        "set": "SetVerticalScrollMode"
+      },
+      "dependency_property": true,
+      "name": "VerticalScrollMode",
+      "origin": "winmd",
+      "target": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      },
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ScrollMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.ScrollMode>"
+      }
+    },
+    {
+      "accessors": {
+        "get": "GetZoomMode",
+        "set": "SetZoomMode"
+      },
+      "dependency_property": true,
+      "name": "ZoomMode",
+      "origin": "winmd",
+      "target": {
+        "native": "Microsoft.UI.Xaml.DependencyObject",
+        "ref": "object<Microsoft.UI.Xaml.DependencyObject>"
+      },
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ZoomMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.ZoomMode>"
+      }
+    }
+  ],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.ContentControl",
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:default",
+      "native": "IActivationFactory.ActivateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": "Content",
+  "content_property_declared": null,
+  "dependency_properties": [
+    "BringIntoViewOnFocusChangeProperty",
+    "CanContentRenderOutsideBoundsProperty",
+    "ComputedHorizontalScrollBarVisibilityProperty",
+    "ComputedVerticalScrollBarVisibilityProperty",
+    "ExtentHeightProperty",
+    "ExtentWidthProperty",
+    "HorizontalAnchorRatioProperty",
+    "HorizontalOffsetProperty",
+    "HorizontalScrollBarVisibilityProperty",
+    "HorizontalScrollModeProperty",
+    "HorizontalSnapPointsAlignmentProperty",
+    "HorizontalSnapPointsTypeProperty",
+    "IsDeferredScrollingEnabledProperty",
+    "IsHorizontalRailEnabledProperty",
+    "IsHorizontalScrollChainingEnabledProperty",
+    "IsScrollInertiaEnabledProperty",
+    "IsVerticalRailEnabledProperty",
+    "IsVerticalScrollChainingEnabledProperty",
+    "IsZoomChainingEnabledProperty",
+    "IsZoomInertiaEnabledProperty",
+    "LeftHeaderProperty",
+    "MaxZoomFactorProperty",
+    "MinZoomFactorProperty",
+    "ReduceViewportForCoreInputViewOcclusionsProperty",
+    "ScrollableHeightProperty",
+    "ScrollableWidthProperty",
+    "TopHeaderProperty",
+    "TopLeftHeaderProperty",
+    "VerticalAnchorRatioProperty",
+    "VerticalOffsetProperty",
+    "VerticalScrollBarVisibilityProperty",
+    "VerticalScrollModeProperty",
+    "VerticalSnapPointsAlignmentProperty",
+    "VerticalSnapPointsTypeProperty",
+    "ViewportHeightProperty",
+    "ViewportWidthProperty",
+    "ZoomFactorProperty",
+    "ZoomModeProperty",
+    "ZoomSnapPointsProperty",
+    "ZoomSnapPointsTypeProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:ScrollViewer",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ScrollToHorizontalOffset",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "offset",
+          "type": {
+            "native": "f64",
+            "ref": "f64"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ScrollToVerticalOffset",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "offset",
+          "type": {
+            "native": "f64",
+            "ref": "f64"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ZoomToFactor",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "factor",
+          "type": {
+            "native": "f32",
+            "ref": "f32"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ChangeView",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "horizontalOffset",
+          "type": {
+            "native": "Windows.Foundation.IReference<f64>",
+            "ref": "nullable<f64>"
+          }
+        },
+        {
+          "name": "verticalOffset",
+          "type": {
+            "native": "Windows.Foundation.IReference<f64>",
+            "ref": "nullable<f64>"
+          }
+        },
+        {
+          "name": "zoomFactor",
+          "type": {
+            "native": "Windows.Foundation.IReference<f32>",
+            "ref": "nullable<f32>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ChangeView",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "horizontalOffset",
+          "type": {
+            "native": "Windows.Foundation.IReference<f64>",
+            "ref": "nullable<f64>"
+          }
+        },
+        {
+          "name": "verticalOffset",
+          "type": {
+            "native": "Windows.Foundation.IReference<f64>",
+            "ref": "nullable<f64>"
+          }
+        },
+        {
+          "name": "zoomFactor",
+          "type": {
+            "native": "Windows.Foundation.IReference<f32>",
+            "ref": "nullable<f32>"
+          }
+        },
+        {
+          "name": "disableAnimation",
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "InvalidateScrollInfo",
+      "origin": "winmd",
+      "params": [],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollAnchorProvider",
+      "name": "RegisterAnchorCandidate",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "element",
+          "type": {
+            "native": "Microsoft.UI.Xaml.UIElement",
+            "ref": "object<Microsoft.UI.Xaml.UIElement>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    },
+    {
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollAnchorProvider",
+      "name": "UnregisterAnchorCandidate",
+      "origin": "winmd",
+      "params": [
+        {
+          "name": "element",
+          "type": {
+            "native": "Microsoft.UI.Xaml.UIElement",
+            "ref": "object<Microsoft.UI.Xaml.UIElement>"
+          }
+        }
+      ],
+      "returns": {
+        "native": "void",
+        "ref": "object<void>"
+      }
+    }
+  ],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.ScrollViewer",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "ScrollViewer"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "BringIntoViewOnFocusChange",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "CanContentRenderOutsideBounds",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ComputedHorizontalScrollBarVisibility",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Visibility",
+        "ref": "enum<Microsoft.UI.Xaml.Visibility>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ComputedVerticalScrollBarVisibility",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Visibility",
+        "ref": "enum<Microsoft.UI.Xaml.Visibility>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": false,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollAnchorProvider",
+      "name": "CurrentAnchor",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.UIElement",
+        "ref": "object<Microsoft.UI.Xaml.UIElement>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ExtentHeight",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ExtentWidth",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "HorizontalAnchorRatio",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "HorizontalOffset",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "HorizontalScrollBarVisibility",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ScrollBarVisibility",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.ScrollBarVisibility>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "HorizontalScrollMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ScrollMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.ScrollMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "HorizontalSnapPointsAlignment",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Primitives.SnapPointsAlignment",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.Primitives.SnapPointsAlignment>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "HorizontalSnapPointsType",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.SnapPointsType",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.SnapPointsType>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "IsDeferredScrollingEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "IsHorizontalRailEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "IsHorizontalScrollChainingEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "IsScrollInertiaEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "IsVerticalRailEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "IsVerticalScrollChainingEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "IsZoomChainingEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "IsZoomInertiaEnabled",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "LeftHeader",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.UIElement",
+        "ref": "object<Microsoft.UI.Xaml.UIElement>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "MaxZoomFactor",
+      "origin": "winmd",
+      "type": {
+        "native": "f32",
+        "ref": "f32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "MinZoomFactor",
+      "origin": "winmd",
+      "type": {
+        "native": "f32",
+        "ref": "f32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ReduceViewportForCoreInputViewOcclusions",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ScrollableHeight",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ScrollableWidth",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "TopHeader",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.UIElement",
+        "ref": "object<Microsoft.UI.Xaml.UIElement>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "TopLeftHeader",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.UIElement",
+        "ref": "object<Microsoft.UI.Xaml.UIElement>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "VerticalAnchorRatio",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "VerticalOffset",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "VerticalScrollBarVisibility",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ScrollBarVisibility",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.ScrollBarVisibility>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "VerticalScrollMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ScrollMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.ScrollMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "VerticalSnapPointsAlignment",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Primitives.SnapPointsAlignment",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.Primitives.SnapPointsAlignment>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "VerticalSnapPointsType",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.SnapPointsType",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.SnapPointsType>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ViewportHeight",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ViewportWidth",
+      "origin": "winmd",
+      "type": {
+        "native": "f64",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ZoomFactor",
+      "origin": "winmd",
+      "type": {
+        "native": "f32",
+        "ref": "f32"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ZoomMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.ZoomMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.ZoomMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ZoomSnapPoints",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.Collections.IVector<f32>",
+        "ref": "list<f32>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ZoomSnapPointsType",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.SnapPointsType",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.SnapPointsType>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.Controls.AnchorRequestedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.AnchorRequestedEventArgs",
+          "name": "Anchor",
+          "settable": true,
+          "type": {
+            "native": "Microsoft.UI.Xaml.UIElement",
+            "ref": "object<Microsoft.UI.Xaml.UIElement>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.AnchorRequestedEventArgs",
+          "name": "AnchorCandidates",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.Collections.IVector<Microsoft.UI.Xaml.UIElement>",
+            "ref": "list<object<Microsoft.UI.Xaml.UIElement>>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.ScrollViewer, Microsoft.UI.Xaml.Controls.AnchorRequestedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "AnchorRequested",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.ScrollViewer"
+    },
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.EventHandler<object>",
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "DirectManipulationCompleted",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "object",
+      "args_methods": [],
+      "args_props": [],
+      "delegate": "Windows.Foundation.EventHandler<object>",
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "DirectManipulationStarted",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.ScrollViewerViewChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ScrollViewerViewChangedEventArgs",
+          "name": "IsIntermediate",
+          "settable": false,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.EventHandler<Microsoft.UI.Xaml.Controls.ScrollViewerViewChangedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ViewChanged",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.ScrollViewerViewChangingEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ScrollViewerViewChangingEventArgs",
+          "name": "FinalView",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.ScrollViewerView",
+            "ref": "object<Microsoft.UI.Xaml.Controls.ScrollViewerView>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ScrollViewerViewChangingEventArgs",
+          "name": "IsInertial",
+          "settable": false,
+          "type": {
+            "native": "bool",
+            "ref": "bool"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.ScrollViewerViewChangingEventArgs",
+          "name": "NextView",
+          "settable": false,
+          "type": {
+            "native": "Microsoft.UI.Xaml.Controls.ScrollViewerView",
+            "ref": "object<Microsoft.UI.Xaml.Controls.ScrollViewerView>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.EventHandler<Microsoft.UI.Xaml.Controls.ScrollViewerViewChangingEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IScrollViewer",
+      "name": "ViewChanging",
+      "origin": "winmd",
+      "sender": "object"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}

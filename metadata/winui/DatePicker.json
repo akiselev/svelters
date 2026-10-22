@@ -1,0 +1,328 @@
+{
+  "abstract": false,
+  "attached": [],
+  "availability": {
+    "contract": "Microsoft.UI.Xaml.WinUIContract",
+    "version": 65536
+  },
+  "bases": [
+    "Microsoft.UI.Xaml.Controls.Control",
+    "Microsoft.UI.Xaml.FrameworkElement",
+    "Microsoft.UI.Xaml.UIElement",
+    "Microsoft.UI.Xaml.DependencyObject"
+  ],
+  "constructors": [
+    {
+      "id": "ctor:composable",
+      "native": "Microsoft.UI.Xaml.Controls.IDatePickerFactory.CreateInstance",
+      "origin": "winmd"
+    }
+  ],
+  "content_property": "Header",
+  "content_property_declared": "Header",
+  "dependency_properties": [
+    "CalendarIdentifierProperty",
+    "DateProperty",
+    "DayFormatProperty",
+    "DayVisibleProperty",
+    "HeaderProperty",
+    "HeaderTemplateProperty",
+    "LightDismissOverlayModeProperty",
+    "MaxYearProperty",
+    "MinYearProperty",
+    "MonthFormatProperty",
+    "MonthVisibleProperty",
+    "OrientationProperty",
+    "SelectedDateProperty",
+    "YearFormatProperty",
+    "YearVisibleProperty"
+  ],
+  "id": "svelters-api:v1:type:winui:Microsoft.UI.Xaml.Controls:DatePicker",
+  "kind": "object",
+  "marshaling": "MarshalingType.2",
+  "methods": [],
+  "native": {
+    "name": "Microsoft.UI.Xaml.Controls.DatePicker",
+    "namespace": "Microsoft.UI.Xaml.Controls",
+    "short": "DatePicker"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+      "name": "CalendarIdentifier",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+      "name": "Date",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.DateTime",
+        "ref": "value<Windows.Foundation.DateTime>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+      "name": "DayFormat",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+      "name": "DayVisible",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+      "name": "Header",
+      "origin": "winmd",
+      "type": {
+        "native": "object",
+        "ref": "variant"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+      "name": "HeaderTemplate",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.DataTemplate",
+        "ref": "object<Microsoft.UI.Xaml.DataTemplate>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+      "name": "LightDismissOverlayMode",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.LightDismissOverlayMode",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.LightDismissOverlayMode>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+      "name": "MaxYear",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.DateTime",
+        "ref": "value<Windows.Foundation.DateTime>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+      "name": "MinYear",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.DateTime",
+        "ref": "value<Windows.Foundation.DateTime>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+      "name": "MonthFormat",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+      "name": "MonthVisible",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+      "name": "Orientation",
+      "origin": "winmd",
+      "type": {
+        "native": "Microsoft.UI.Xaml.Controls.Orientation",
+        "ref": "enum<Microsoft.UI.Xaml.Controls.Orientation>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+      "name": "SelectedDate",
+      "origin": "winmd",
+      "type": {
+        "native": "Windows.Foundation.IReference<Windows.Foundation.DateTime>",
+        "ref": "nullable<value<Windows.Foundation.DateTime>>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+      "name": "YearFormat",
+      "origin": "winmd",
+      "type": {
+        "native": "string",
+        "ref": "string"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "dependency_property": true,
+      "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+      "name": "YearVisible",
+      "origin": "winmd",
+      "type": {
+        "native": "bool",
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "signals": [
+    {
+      "args": "Microsoft.UI.Xaml.Controls.DatePickerValueChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.DatePickerValueChangedEventArgs",
+          "name": "NewDate",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.DateTime",
+            "ref": "value<Windows.Foundation.DateTime>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.DatePickerValueChangedEventArgs",
+          "name": "OldDate",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.DateTime",
+            "ref": "value<Windows.Foundation.DateTime>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.EventHandler<Microsoft.UI.Xaml.Controls.DatePickerValueChangedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+      "name": "DateChanged",
+      "origin": "winmd",
+      "sender": "object"
+    },
+    {
+      "args": "Microsoft.UI.Xaml.Controls.DatePickerSelectedValueChangedEventArgs",
+      "args_methods": [],
+      "args_props": [
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.DatePickerSelectedValueChangedEventArgs",
+          "name": "NewDate",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.IReference<Windows.Foundation.DateTime>",
+            "ref": "nullable<value<Windows.Foundation.DateTime>>"
+          }
+        },
+        {
+          "declared_on": "Microsoft.UI.Xaml.Controls.DatePickerSelectedValueChangedEventArgs",
+          "name": "OldDate",
+          "settable": false,
+          "type": {
+            "native": "Windows.Foundation.IReference<Windows.Foundation.DateTime>",
+            "ref": "nullable<value<Windows.Foundation.DateTime>>"
+          }
+        }
+      ],
+      "delegate": "Windows.Foundation.TypedEventHandler<Microsoft.UI.Xaml.Controls.DatePicker, Microsoft.UI.Xaml.Controls.DatePickerSelectedValueChangedEventArgs>",
+      "interface": "Microsoft.UI.Xaml.Controls.IDatePicker",
+      "name": "SelectedDateChanged",
+      "origin": "winmd",
+      "sender": "Microsoft.UI.Xaml.Controls.DatePicker"
+    }
+  ],
+  "source": {
+    "package": "microsoft.windowsappsdk.winui 2.3.9",
+    "winmd": "Microsoft.UI.Xaml.winmd"
+  },
+  "threading": "ThreadingModel.3",
+  "toolkit": "winui"
+}
