@@ -55,6 +55,10 @@ pub struct ReloadReport {
     /// H1: why a full reload ran although the app supports in-place updates (no accepting module,
     /// the swap budget, ...).
     pub fallback: Option<String>,
+    /// AS1: the assets whose files changed. Their importers did not re-run: the registry bumped
+    /// their versions and told the backend (egui forgets and repaints them). A change of assets
+    /// only is `ok` with `hot: Some([])`.
+    pub assets: Vec<svelters_modules::AssetRef>,
 }
 
 pub(crate) type SharedEngine = Rc<RefCell<Box<dyn JsEngine>>>;
@@ -174,7 +178,9 @@ impl Reloader {
         let Some(provider) = self.provider.borrow().clone() else { return Ok(()) };
         let mut watch = self.watch.borrow_mut();
         let Some(w) = watch.as_mut() else { return Ok(()) };
-        let files: HashSet<PathBuf> = provider.watch_files().into_iter().collect();
+        let mut files: HashSet<PathBuf> = provider.watch_files().into_iter().collect();
+        // AS1: and every file the asset registry served (imports, reads by Rust or JS).
+        files.extend(provider.assets().map(|a| a.watch_files()).unwrap_or_default());
         let mut first_err = None;
         for dir in files.iter().filter_map(|f| f.parent()) {
             if w.dirs.contains(dir) || !dir.is_dir() {
@@ -205,7 +211,24 @@ impl Reloader {
     /// changed files (`request`) always runs.
     pub(crate) fn reload(&self, core: &Rc<Core>, engine: &SharedEngine) -> Option<ReloadReport> {
         let provider = self.provider.borrow().clone()?;
-        let changed = std::mem::take(&mut *self.changed.lock().unwrap());
+        let mut changed = std::mem::take(&mut *self.changed.lock().unwrap());
+        // AS1: asset files first. A path that is only a served asset is consumed here and never
+        // reaches `invalidate`; one that is also a value module (`?raw`, `?bytes`) goes on to H1.
+        let assets = match provider.assets() {
+            Some(a) if !changed.is_empty() => a.changed(&changed),
+            _ => Vec::new(),
+        };
+        if !assets.is_empty() {
+            let reg = provider.assets().expect("checked above");
+            changed.retain(|p| !reg.serves(p) || !provider.modules_at(std::slice::from_ref(p)).is_empty());
+            core::assets_changed(core, engine, &assets);
+            if changed.is_empty() {
+                let generation = self.generation.get() + 1;
+                self.generation.set(generation);
+                let report = ReloadReport { generation, ok: true, elapsed: std::time::Duration::ZERO, error: None, hot: Some(Vec::new()), fallback: None, assets };
+                return Some(self.finish(core, &provider, report));
+            }
+        }
         let affected = provider.invalidate(&changed);
         // After a failure a source app retries on any change; a bundle still waits for its file.
         let retry = self.retry.load(Ordering::SeqCst) && provider.map_dir().is_none();
@@ -224,7 +247,7 @@ impl Reloader {
             if all_modules {
                 match core::hot_update(core, engine, &provider, &ids) {
                     Ok(HotOutcome::Applied { modules }) => {
-                        let report = ReloadReport { generation, ok: true, elapsed: t0.elapsed(), error: None, hot: Some(modules), fallback: None };
+                        let report = ReloadReport { generation, ok: true, elapsed: t0.elapsed(), error: None, hot: Some(modules), fallback: None, assets: assets.clone() };
                         return Some(self.finish(core, &provider, report));
                     }
                     Ok(HotOutcome::Reload(why)) => fallback = Some(why),
@@ -232,7 +255,7 @@ impl Reloader {
                         // the previous versions keep running; the next change retries
                         let e = core.map_error(e);
                         core.report(e.clone());
-                        let report = ReloadReport { generation, ok: false, elapsed: t0.elapsed(), error: Some(e), hot: Some(Vec::new()), fallback: None };
+                        let report = ReloadReport { generation, ok: false, elapsed: t0.elapsed(), error: Some(e), hot: Some(Vec::new()), fallback: None, assets: assets.clone() };
                         return Some(self.finish(core, &provider, report));
                     }
                 }
@@ -246,7 +269,7 @@ impl Reloader {
             let why = fallback.clone().unwrap_or_else(|| "a full reload was requested".into());
             let e = JsError::new(ErrorKind::Host, format!("not applied in place ({why}); a full reload would discard the embedded roots"));
             core.report(e.clone());
-            let report = ReloadReport { generation, ok: false, elapsed: t0.elapsed(), error: Some(e), hot: None, fallback };
+            let report = ReloadReport { generation, ok: false, elapsed: t0.elapsed(), error: Some(e), hot: None, fallback, assets: assets.clone() };
             return Some(self.finish(core, &provider, report));
         }
 
@@ -320,7 +343,7 @@ impl Reloader {
             }
         };
 
-        let report = ReloadReport { generation, ok: error.is_none(), elapsed: t0.elapsed(), error, hot: None, fallback };
+        let report = ReloadReport { generation, ok: error.is_none(), elapsed: t0.elapsed(), error, hot: None, fallback, assets: assets.clone() };
         Some(self.finish(core, &provider, report))
     }
 

@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import * as $ from 'svelte/internal/client';
 import { createTestHost } from '@svelters/testhost';
 import * as $n from '../src/index.js';
-import { ListView } from '../src/lists.js';
+import { ListView, flattenTree } from '../src/lists.js';
 
 function harness() {
   const th = createTestHost();
@@ -205,4 +205,25 @@ test('teardown: a removed list destroys every slot (content and outlet) and the 
   assert.ok(ops.includes('remove #1 #2'));
   assert.ok(ops.includes('remove #3 #4'));
   assert.equal(t.th.lines.filter((x) => x.startsWith('create')).length, t.th.lines.filter((x) => x.startsWith('destroy')).length + 1, 'only the window is left');
+});
+
+test('flattenTree: expanded nodes splice their loaded children in; a filter keeps the path to a match', () => {
+  const tree = [
+    { id: 'a', children: [{ id: 'a1', children: [{ id: 'a1x' }] }, { id: 'a2' }] },
+    { id: 'b', children: [{ id: 'b1' }] },
+  ];
+  const opts = (expanded, filter) => ({
+    key: (n) => n.id,
+    childrenOf: (n) => n.children,
+    hasChildren: (n) => !!n.children,
+    expanded: new Set(expanded),
+    filter,
+  });
+  const rows = (expanded, filter) => flattenTree(tree, opts(expanded, filter)).map((r) => `${r.key}:${r.level}${r.expandable ? (r.expanded ? '-' : '+') : ''}`);
+  assert.deepEqual(rows([]), ['a:0+', 'b:0+']);
+  assert.deepEqual(rows(['a', 'a1']), ['a:0-', 'a1:1-', 'a1x:2', 'a2:1', 'b:0+']);
+  // `a1x` matches deep inside: its ancestors stay, `a2` and `b` go
+  assert.deepEqual(rows(['a', 'a1'], (n) => n.id === 'a1x'), ['a:0-', 'a1:1-', 'a1x:2']);
+  // collapsed: the ancestor of the match stays, closed
+  assert.deepEqual(rows([], (n) => n.id === 'a1x'), ['a:0+']);
 });

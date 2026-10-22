@@ -58,7 +58,7 @@ jobs:
       - name: Build tests
         run: >
           cargo nextest run --no-run
-          -p svelters-abi -p svelters-backend-log -p svelters-host -p svelters-modules -p svelters-compiler -p svelters-gtk -p svelters -p exports-example -p svelters-egui -p egui-kinds-example -p svelters-testkit -p svelters-conformance
+          -p svelters-abi -p svelters-backend-log -p svelters-host -p svelters-modules -p svelters-compiler -p svelters-gtk -p svelters -p exports-example -p svelters-egui -p svelters-automation -p egui-kinds-example -p svelters-testkit -p svelters-conformance -p svelters-intl
           -p counter --no-default-features --features counter/gtk
 
       # ZU3 (plans/milestones/ZU3-ui-thread.md): the UI-thread lint. clippy.toml in svelters-host and
@@ -72,7 +72,7 @@ jobs:
         run: >
           xvfb-run -a -s "-screen 0 1920x1080x24" dbus-run-session --
           cargo nextest run --no-fail-fast
-          -p svelters-abi -p svelters-backend-log -p svelters-host -p svelters-modules -p svelters-compiler -p svelters-gtk -p svelters -p exports-example -p svelters-egui -p egui-kinds-example -p svelters-testkit -p svelters-conformance
+          -p svelters-abi -p svelters-backend-log -p svelters-host -p svelters-modules -p svelters-compiler -p svelters-gtk -p svelters -p exports-example -p svelters-egui -p svelters-automation -p egui-kinds-example -p svelters-testkit -p svelters-conformance -p svelters-intl
           -p counter --no-default-features --features counter/gtk
           -E 'not (package(counter) & test(/qt/))'
 

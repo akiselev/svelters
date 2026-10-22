@@ -168,7 +168,7 @@ impl ModuleProvider for ComposedProvider {
     }
 
     fn resolve(&self, base: &str, specifier: &str) -> Result<ModuleId, String> {
-        if specifier == CORE_ID {
+        if specifier == CORE_ID || specifier == crate::assets::MODULE_ID {
             return Ok(specifier.to_string());
         }
         if let Some(module) = specifier.strip_prefix(APP_PREFIX) {
@@ -194,6 +194,10 @@ impl ModuleProvider for ComposedProvider {
     }
 
     fn load(&self, id: &str) -> Result<ModuleCode, String> {
+        if id == crate::assets::MODULE_ID {
+            // AS1: always visible, like `svelters:core`: it reads only refs the importer was given.
+            return Ok(ModuleCode::Source { js: crate::assets::MODULE_JS.to_string(), map: None });
+        }
         if id == CORE_ID || id.starts_with(APP_PREFIX) {
             // The id passed `resolve`; a load by id alone (a cached graph) is gated again.
             // A module id reached by another route than `resolve` must not load either. A per-import
@@ -233,6 +237,10 @@ impl ModuleProvider for ComposedProvider {
 
     fn watch_files(&self) -> Vec<PathBuf> {
         self.inner.watch_files()
+    }
+
+    fn assets(&self) -> Option<std::sync::Arc<crate::Assets>> {
+        self.inner.assets()
     }
 
     fn invalidate(&self, changed: &[PathBuf]) -> bool {
