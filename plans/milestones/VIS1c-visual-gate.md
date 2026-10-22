@@ -9,32 +9,33 @@ itself, so the gate measures what the own widgets paint.
 ## 1. Result
 
 Score (passing checks / checks) per reference element and theme, with `KindSet::All` and
-`Theme::vscode(scheme, Normal).with_affordances(false)`. Windows references (what Linux CI checks):
+`Theme::vscode(scheme, Normal).with_affordances(false)`, on master `e832e001` (OW1a2 and OW3 merged).
+Windows references (what Linux CI checks):
 
 | element | lane | dark-modern | light-modern |
 |---|---|---|---|
 | button-primary | OW0 | 25/30 | 27/30 |
 | button-primary-dialog | OW0 | 10/13 | 11/13 |
 | button-secondary | OW0 | 21/30 | 22/30 |
-| checkbox | OW1a | 16/27 | 16/27 |
+| checkbox (incl. radio, compared with the check box) | OW1a, OW1a2 | 21/27 | 21/27 |
 | input | OW4 | 0/17 | 0/17 |
-| pane-header | OW1a2 | 0/4 | 0/4 |
+| pane-header | OW1a2 | 3/4 | 3/4 |
 | progress | OW1a | 1/2 | 1/2 |
 | sash | OW2 | 1/2 | 2/2 |
 | scrollbar | OW2 | 2/4 | 1/4 |
-| select | OW3 | 0/16 | 0/16 |
+| select | OW3 | 10/16 | 11/16 |
 | setting-row (label) | OW1a | 2/2 | 2/2 |
 | tab | OW5 | 0/12 | 0/12 |
 | toggle | OW1a | 8/18 | 8/18 |
-| **all** | | **86/177** | **90/177** |
+| **all** | | **104/177** | **109/177** |
 
 macOS references (what the macOS job checks): the same per element except light-modern button-primary 26/30
 (there VS Code's light primary button shows its hover fill on focus; on Windows it keeps the rest fill, as ours
-does) and light scrollbar 2/4 (the Windows capture missed the light thumb's hover colour); 176/354 overall in both.
+does) and light scrollbar 2/4 (the Windows capture missed the light thumb's hover colour); 213/354 overall in both.
 
-Of the 178 failing checks (Windows refs), 114 are kinds that still draw through their egui wrapper and trace
-nothing (input, select, tab, pane header, radio): they pass when their lane makes them own. The other 64 are the
-differences in §4.
+Of the 141 failing checks (Windows refs), 58 are kinds that still draw through their egui wrapper and trace
+nothing (`text-edit`, `tab-view`): they pass when OW4 and OW5 make them own. The other 83 are the differences in
+§4. Before the merge of OW1a2 and OW3 (master `d0542a3a`) the score was 176/354.
 
 ## 2. What is here
 
@@ -126,10 +127,12 @@ The probe table is `probes()` in `tests/vis1.rs` (node, state, part, reference i
 swaps a kind: its probes start measuring (no table change when the node and part names below hold), the lane looks
 at `report.md`, fixes what it owns, and records the new passes with `SVELTERS_UPDATE=1` for both refs. Contracts
 the probes assume:
-- OW1a2: `radio-button` paints its circle as `::part(indicator)` and the dot as `::part(dot)` (ARCH-WIDGETS §6.1);
-  `collapsing-header` paints its header row as the node's box with its caption as a `Text`.
-- OW3: `combo-box` paints its field as the node's box; ring as the node's outline.
-- OW4: `text-edit` the same; `invalid` changes the border colour.
+- OW1a2 (merged, measured): `radio-button` paints its circle as `::part(indicator)` and the dot as `::part(dot)`;
+  `collapsing-header` paints its header row as `::part(header)` and its caption as `::part(label)`.
+- OW3 (merged, measured): `combo-box` paints its field as the node's box, the shown option as `::part(label)`,
+  the ring as the node's outline.
+- OW4: `text-edit` paints its field as the node's box and its text as a `Text`; `invalid` changes the border
+  colour.
 - OW5: each `<tab>` node (`accessible-name` set on it) paints its own box and title (or OW5 changes the probe to a
   `tab` part of the `tab-view`). List rows have no probe yet: OW5 adds a list to `VisControls` and probes for
   `list-row` rest/hover/selected-focused/focused/selected-inactive (references captured).
@@ -184,8 +187,12 @@ failing checks unless the coordinator decides to drop them from the probes.
    `inputOption.hoverBackground`). Follows from 4.
 7. **Progress bar 4 px tall, VS Code 2 px** (`.monaco-progress-container`; VIS1 gap 7). Colour matches.
 8. Label: matches (13 px, foreground).
-9. OW1a2 (not own yet, 12 checks per theme): radio (vs the checkbox's box and colours), pane header (VS Code 22 px,
-   11 px bold uppercase; VIS1 gap 2).
+9. **Radio border**: the UA's `control-border` from the built-in theme (`#6B6B6B` dark, `#8A8A8A` light: the
+   affordance overlay's 3:1 boundary) vs the check box's `#3C3C3C`/`#CECECE`, ΔE 16/20. The UA token issue
+   (OW-CSS 2); the check box gets its border from the base sheet and matches.
+10. **Radio checked**: `toggle-on-bg`/`toggle-on-border` on-fill vs the check box's unchanged fill (VS Code has no
+   radio). Intentional (R17: the on state is filled). The dot colour matches the check mark's.
+11. **Pane header font 13 px, VS Code 11 px** (bold, uppercase; VIS1 gap 2). Height 22, fill and colour match.
 
 ### OW2 (scroll-area, split-view)
 
@@ -197,11 +204,22 @@ failing checks unless the coordinator decides to drop them from the probes.
 3. **Sash hover bar `#2488DB` dark vs `sash.hoverBorder` `#0078D4`**: the UA `focus` token (OW-CSS 2). Width 4 px
    matches.
 
-### OW3, OW4, OW5 (not own yet)
+### OW3 (select)
 
-`select` (OW3, 16 checks per theme), `input` (OW4, 17), `tab` (OW5, 12) fail as egui wrappers. VIS1's notes for
-them still hold: select chevron must be the `chevron-down` codicon (gap 8); disabled input must not dim (VS Code's
-settings box keeps full opacity, gap 3); tabs need the dirty dot, focused-group colours and close-on-hover (gap 6).
+1. **Border from the built-in theme**: `#6B6B6B`/`#8A8A8A` (UA `control-border`, affordance overlay) vs VS Code
+   `#3C3C3C`/`#CECECE` (`dropdown.border`), ΔE 16/20, on rest, hover and disabled. OW-CSS 2, or a base-sheet
+   `combo-box` rule like the check box's.
+2. **Vertical padding 3 px, VS Code 2 px** (`.monaco-select-box` padding 2/6). Height 26 matches.
+3. **Disabled at opacity 0.16** (VS Code's disabled select does not dim: opacity 1, same colours): the double
+   fade of OW0 1, plus R9's dimming.
+4. **Focus ring `#2488DB` dark**: the UA `focus` token (OW-CSS 2). Width 1 and offset −1 match.
+5. Menus, tooltip and the open drop-down have references but no probe yet (§3.5).
+
+### OW4, OW5 (not own yet)
+
+`input` (OW4, 17 checks per theme) and `tab` (OW5, 12) fail as egui wrappers. VIS1's notes for them still hold:
+disabled input must not dim (VS Code's settings box keeps full opacity, gap 3); tabs need the dirty dot,
+focused-group colours and close-on-hover (gap 6).
 
 ## 5. Kinds whose egui wrapper can go
 
@@ -213,24 +231,30 @@ fix in the own widget, listed above):
 |---|---|---|
 | `button` | measured on every probe; gaps OW0 1–5 are own-widget fixes | **can go** |
 | `checkbox` | measured on every probe; gaps OW1a 1–3 | **can go** |
+| `radio-button` | measured on every probe; gaps OW1a 9–10 (10 intentional) | **can go** |
 | `toggle-button` | measured on every probe; gaps OW1a 4–6 (4 intentional) | **can go** |
 | `progress-bar` | measured; height (OW1a 7) | **can go** |
 | `label` | passes | **can go** |
-| `switch`, `hyperlink`, `separator`, `spinner` | no VS Code reference, no VIS1c check | VIS1c does not gate them; their lane's acceptance decides |
+| `collapsing-header` | measured; font size (OW1a 11) | **can go** |
+| `combo-box` (select) | measured on every probe; gaps OW3 1–4 | **can go** |
+| `switch`, `hyperlink`, `separator`, `spinner`, `frame`, `icon`, `image` | no VS Code reference, no VIS1c check | VIS1c does not gate them; their lane's acceptance decides |
+| menus, `popup`, tooltips (OW3) | references captured, no probe yet (needs an open popup on the page) | not gated by VIS1c yet; the coordinator decides whether OW3's own acceptance suffices |
 | `scroll-area`, `scrollbar`, `split-view`, `panel` | measured | already deleted (OW2) |
-| `radio-button`, `collapsing-header`, `frame`, `slider`, `drag-value`, `combo-box`, `text-edit`, `tab-view`, menus, popups | not own yet | stays until its lane's probes pass |
+| `slider`, `drag-value` (OW1b), `text-edit` (OW4), `tab-view` (OW5), OW6/OW7 kinds | not own yet | stays until its lane's probes pass |
 
-Deleting wrappers is not done in this lane.
+Deleting wrappers is not done in this lane (coordinator's instruction). The OW1a2 and OW3 milestones expected
+VIS1c to delete them; that is now a separate step for the coordinator to assign.
 
 ## 6. Verification
 
 Local (WSL PC), after the last code edit:
 - `nextest -p svelters-testkit -E 'binary(vis1)'`: 3 pass; baselines recorded with `SVELTERS_UPDATE=1` for
-  `windows` and `VIS_REFS=macos` (176/354 each);
+  `windows` and `VIS_REFS=macos` (213/354 each, after the merge of master `e832e001`);
 - `cargo check -p svelters-egui -p svelters-testkit --all-targets`, and `-p svelters-testkit --features snapshots
   --tests` (the crop path compiles; not run: no local wgpu render);
-- `nextest -p svelters-egui` filtered to `binary(own_widgets) | binary(ow_css) | binary(ow1a) | binary(ow2) |
-  binary(theme)` (40 pass) and `binary(gallery) | binary(gallery_views)` (9 pass, with the new page in the gallery).
+- `nextest -p svelters-egui` filtered to the PaintTrace and theme users and the gallery: `binary(own_widgets) |
+  binary(ow_css) | binary(ow1a) | binary(ow1a2) | binary(ow2) | binary(ow3) | binary(theme) | binary(gallery) |
+  binary(gallery_views)` (69 pass, with the new page in the gallery), after the merge.
 
 Not run locally: the crops (`--features snapshots`), the full workspace suites, other backends, conformance. CI
 runs them.

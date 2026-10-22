@@ -202,8 +202,8 @@ fn probes() -> Vec<Probe> {
         Probe { over: &[("bg", Over::Var("--vscode-progressBar-background")), ("h", Over::Px(2.0))], ..p("progress:a", Rest, Some("fill"), ("progress", "rest"), &["h", "bg"], "OW1a") },
         // a label: the setting description's text
         p("label:a", Rest, None, ("setting-row", "rest"), &["fg", "fs"], "OW1a"),
-        // pane header (collapsed section header)
-        p("pane-header:a", Rest, None, ("pane-header", "rest"), &["h", "bg", "fg", "fs"], "OW1a2"),
+        // pane header (collapsed section header): the collapsing header's `::part(header)` row
+        p("pane-header:a", Rest, Some("header"), ("pane-header", "rest"), &["h", "bg", "fg", "fs"], "OW1a2"),
         // editor tabs
         p("tab:active", Rest, None, ("tab", "active"), &["h", "bg", "fg", "fs", "ta", "tw"], "OW5"),
         p("tab:inactive", Rest, None, ("tab", "inactive"), &["h", "bg", "fg", "ta"], "OW5"),
