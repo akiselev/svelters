@@ -32,6 +32,8 @@ def render() -> str:
                 e.update(prop=p["prop"], native=p["native"], type=p["type"], kinds=p["kinds"])
             elif p["via"] == "child-attr":
                 e.update(attr=p["attr"], type=p["type"], parents=p["parents"])
+            elif "decl_type" in p:
+                e["type"] = p["decl_type"]  # decl dialect: the value grammar
             if "tags" in p:
                 if p["tags"] not in sets:
                     sets.append(p["tags"])

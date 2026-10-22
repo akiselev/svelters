@@ -3,7 +3,12 @@
 import { STYLE_TABLES, TAG_SETS } from '../../../../packages/style/src/props.generated.js';
 
 const NAMES = { gtk: 'GTK 4', qt: 'Qt 6', appkit: 'AppKit', winui: 'WinUI 3' };
-const DIALECT = { css: 'GTK CSS', qss: 'QSS (Qt stylesheets)', none: 'none (setters only)' };
+const DIALECT = {
+  css: 'GTK CSS',
+  qss: 'QSS (Qt stylesheets)',
+  none: 'none (setters only)',
+  decl: 'decl (no stylesheet language: the runtime cascade engine matches the rules and the backend applies each declaration natively)',
+};
 const TYPE = {
   length: 'length (unitless or px)',
   int: 'integer',
@@ -12,12 +17,17 @@ const TYPE = {
   enum: 'one of the values',
   insets: '1 to 4 lengths (CSS order)',
   string: 'string',
+  color: 'colour (hex, rgb(), hsl(), basic names)',
+  border: 'width, solid / none, colour',
+  shadow: 'x y [blur] colour',
+  'font-weight': 'normal, bold or 100 to 900',
 };
 
 const esc = (s) => String(s).replace(/\|/g, '\\|');
 
 /** How a property is applied, as one cell. */
 export function appliedThrough(tk, e) {
+  if (e.via === 'css' && STYLE_TABLES[tk]?.dialect === 'decl') return 'native (decl)';
   if (e.via === 'css') return `${tk === 'qt' ? 'QSS' : tk === 'gtk' ? 'GTK CSS' : 'CSS'}${e.inlineOnly ? ' (`style=` / `style:` only)' : ''}`;
   if (e.via === 'setter') return `setter \`${e.prop}\``;
   return `child attribute \`${e.attr}\``;
@@ -63,14 +73,27 @@ export function renderStylingPages() {
       '| --- | --- | --- | --- | --- |',
       ...set.map(([n, e]) => `| \`${n}\` | ${appliedThrough(tk, e)} | ${appliesTo(e)} | ${esc(values(e))} | ${esc(e.note ?? '')} |`),
       '',
-      `## ${t.dialect === 'qss' ? 'QSS' : 'CSS'} properties`,
-      '',
-      `Translated to ${DIALECT[t.dialect]} and applied by the toolkit's style engine (states, \`@media\` and \`@native\` work here).`,
-      '',
-      '| Property | Applied through | Notes |',
-      '| --- | --- | --- |',
-      ...css.map(([n, e]) => `| \`${n}\` | ${appliedThrough(tk, e)} | ${esc(e.note ?? '')} |`),
-      '',
+      ...(t.dialect === 'decl'
+        ? [
+            '## Native properties (decl dialect)',
+            '',
+            "Matched by the runtime cascade engine against the element tree (descendant and child combinators, `:hover`, `:active`, `:focus`, `:disabled`, `:checked` on the last compound, `@media (prefers-color-scheme: dark)`, `var(--sv-*)` tokens) and applied by the backend; `color` and `font-*` are inherited as in CSS.",
+            '',
+            '| Property | Applied through | Values | Notes |',
+            '| --- | --- | --- | --- |',
+            ...css.map(([n, e]) => `| \`${n}\` | ${appliedThrough(tk, e)} | ${esc(e.type === 'enum' ? e.values.map((v) => `\`${v}\``).join(', ') : (TYPE[e.type] ?? e.type ?? ''))} | ${esc(e.note ?? '')} |`),
+            '',
+          ]
+        : [
+            `## ${t.dialect === 'qss' ? 'QSS' : 'CSS'} properties`,
+            '',
+            `Translated to ${DIALECT[t.dialect]} and applied by the toolkit's style engine (states, \`@media\` and \`@native\` work here).`,
+            '',
+            '| Property | Applied through | Notes |',
+            '| --- | --- | --- |',
+            ...css.map(([n, e]) => `| \`${n}\` | ${appliedThrough(tk, e)} | ${esc(e.note ?? '')} |`),
+            '',
+          ]),
     ];
     pages.set(`api/styling/${tk}.md`, lines.join('\n'));
   }

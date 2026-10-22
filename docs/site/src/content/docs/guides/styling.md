@@ -76,7 +76,8 @@ Each toolkit has a table, generated from `metadata/style/<toolkit>.yaml` and che
 
 - **GTK 4.** GTK CSS styles the widget's CSS nodes (`button`, `entry > text`, `scale > trough`) and its classes. Layout is not CSS in GTK: spacing, expansion, alignment and size requests are `GtkWidget` and container properties, so they are setter properties under their GObject names (`width-request`, `hexpand`, `halign`, `margin-start`, `spacing`). GTK CSS keeps `min-width` and `min-height` (a CSS minimum) and the CSS box `margin`; `margin-top` and `margin-bottom` are the widget margins, like `margin-start` and `margin-end`.
 - **Qt 6.** QSS styles widgets by class (`.QPushButton`) and the dynamic `class` property. Layout belongs to `QLayout`: `spacing`, `direction` and `contents-margins` are setters on `box-layout`, and a child's `stretch` and `alignment` in its layout are child attributes of the parent (the same as `parent:stretch`). `minimum-width`, `maximum-height` and friends are the `QWidget` properties; `min-width` is the QSS one.
-- **Planned toolkits.** WinUI 3 and UIKit have no stylesheet language Svelters can target, so their tables will be setters only (`dialect: none`), and their setter rules take element names, `.class` and, where the platform supports it, `#id`.
+- **AppKit.** No stylesheet language: the `decl` dialect (see [AppKit](#appkit-the-decl-dialect) below). Layout-ish properties are setters (`gap` is `NSStackView` spacing, `padding` its edge insets); everything else is applied natively by the backend from rules the runtime matches.
+- **Planned toolkits.** WinUI 3 and UIKit have no stylesheet language Svelters can target either; their tables are setters only (`dialect: none`) until they get a decl backend like AppKit's.
 
 Names are never translated between toolkits: `minimum-width` on GTK is reported as a Qt property, not mapped to `width-request`. A component that targets both toolkits writes both names; each toolkit applies its own and warns about the other's.
 
@@ -145,6 +146,39 @@ A rule whose declarations include setter properties becomes a setter rule for th
 | `minimum-width` | setter `minimum-width` | `QWidget` |
 | `spacing` | setter `spacing` | `box-layout` |
 | `stretch` | child attribute `stretch` | `box-layout` |
+
+## AppKit: the decl dialect
+
+AppKit has no stylesheet language, so a component's `<style>` is translated at build time into structured rules (selector, state, colour scheme, declarations) and a small cascade engine in the runtime does what a browser would: it matches the rules against the native element tree, orders them by specificity and source order, resolves `var(--sv-*)` tokens for the current scheme, inherits `color` and `font-*` from the parent, puts `style=` on top, and sends each element its declarations per state. The backend applies them natively and switches between the state blocks itself.
+
+```svelte
+<stack-view class="row" class:done={t.done} orientation="horizontal">
+  <button button-type="switch" title="" state={t.done ? 'on' : 'off'} onaction={() => toggle(t)} />
+  <text-field class="label" string-value={t.text} editable={false} bezeled={false} draws-background={false} />
+</stack-view>
+
+<style>
+  .row { gap: 10px; padding: 8px; border-radius: 6px; flex-grow: 0; }
+  .row:hover { background-color: rgba(127, 127, 127, 0.14); }
+  .label { font-size: 14px; color: var(--sv-fg); flex-grow: 1; }
+  .row.done .label { color: var(--sv-muted); text-decoration: line-through; }
+  .primary { background-color: var(--sv-accent); color: var(--sv-accent-fg); border-radius: 6px; }
+  .primary:disabled { opacity: 0.4; }
+</style>
+```
+
+The todo app (`fixtures/todo-mac`, `cargo run -p counter-mac -- --fixture todo-mac`), light and dark:
+
+| Light | Dark |
+| --- | --- |
+| ![AppKit todo app, light scheme](../../../assets/styling/appkit-light.png) | ![AppKit todo app, dark scheme](../../../assets/styling/appkit-dark.png) |
+
+- **Selectors.** Element names, `.class`, `#id`, descendant and child combinators, and one of `:hover`, `:active`, `:focus` (`:focus-visible` is the same), `:disabled`, `:checked` on the last compound. `@media (prefers-color-scheme: dark)` works; other `@media`, `+`, `~`, attribute selectors and pseudo-elements are errors.
+- **How properties land.** Text colour and fonts go to `textColor` / `font`; a button title or a decorated label becomes an attributed string (rebuilt when the text changes). Backgrounds, borders, `border-radius` and `box-shadow` use the view's layer; a bezeled text field draws its own background; a push button with a `background-color` gets a tinted bezel (`bezelColor`), and becomes flat (borderless, layer-backed) once it also has a border or radius. `width`, `height` and `min-`/`max-` are Auto Layout constraints; `flex-grow: 1` lets a stack view stretch an element along its axis, `flex-grow: 0` keeps the content size there, `align-self: stretch` fills the cross axis. The [AppKit reference](/api/styling/appkit/) lists every property.
+- **States.** `:hover` comes from a tracking area on the view, `:active` from the button cell's highlight, `:focus`, `:disabled` and `:checked` are re-read after every operation and window update. A state applies to the element it is written on: `.row:hover .label` is an error (only the subject may carry a state), and inherited properties do not follow a state into children.
+- **Colour scheme.** On startup the scheme follows the system appearance unless the app calls `setColorScheme`; switching it re-resolves the tokens and sets the application appearance, so unstyled controls follow.
+- **Restoring.** What a declaration replaced (a font, a colour, a bezel) is read once and written back when no declaration sets it any more.
+- **Scroll views.** A stack view as a scroll view's `document-view` is placed in a flipped container pinned to the clip view, so it scrolls from the top and sizes itself with Auto Layout.
 
 ## `style` and `style:`
 

@@ -106,10 +106,15 @@ pub const SVL_STYLE_INLINE: u32 = 3;
 pub const SVL_STYLE_OPACITY: u32 = 4;
 pub const SVL_STYLE_SHEET: u32 = 5;
 pub const SVL_STYLE_SCHEME: u32 = 6;
+/// ST2: an element's resolved declarations per state, for backends of the decl dialect (AppKit):
+/// blocks separated by `\x02`, each the state name (empty for the base) then `\x01prop:value` fields.
+pub const SVL_STYLE_DECLS: u32 = 7;
 /// `SVL_STYLE_TARGET` answers: the dialect the backend's sheets use.
 pub const SVL_STYLE_TARGET_NONE: i32 = 0;
 pub const SVL_STYLE_TARGET_CSS: i32 = 1;
 pub const SVL_STYLE_TARGET_QSS: i32 = 2;
+/// The decl dialect with the AppKit style table (`metadata/style/appkit.yaml`).
+pub const SVL_STYLE_TARGET_APPKIT: i32 = 3;
 /// Separator between the fields of a `style` payload string.
 pub const SVL_STYLE_SEP: char = '\u{1}';
 

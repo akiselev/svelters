@@ -1,19 +1,55 @@
-# Style properties of the AppKit backend (MAC1). Format: metadata/style/gtk.yaml.
-# AppKit has no stylesheet language: every property is a setter (a KVC property of the element,
-# `prop` is its kebab-case JS name) or a child attribute. Not yet consumed by
-# tools/metadata/style/gen_props.py (TOOLKITS = gtk, qt); the kinds are AppKit classes from
-# metadata/appkit and resolve along the superclass chain.
+# Style properties of the AppKit backend. Format: metadata/style/gtk.yaml.
+#
+# AppKit has no stylesheet language. Two kinds of property:
+#   via: setter   matched to elements at compile time and written with setProp (layout-ish KVC
+#                 properties: `gap` is NSStackView spacing). Static selectors only.
+#   via: css      the `decl` dialect (ST2): the translator turns the component's rules into
+#                 structured rules, the runtime cascade engine (@svelters/native-runtime/style)
+#                 matches them against the element tree (combinators, :hover/:active/:focus/
+#                 :disabled/:checked, @media (prefers-color-scheme: dark), var(--sv-*)) and sends
+#                 each element its resolved declarations per state; the backend applies them
+#                 natively (crates/svelters-appkit/src/style.rs) and switches state blocks itself.
+#                 `type` is the value grammar the translator checks (decl dialect only).
+# The kinds are AppKit classes from metadata/appkit and resolve along the superclass chain.
 toolkit: appkit
-dialect: none
+dialect: decl
 setter_selectors: [type, class, id]
 units:
   px: { scale: 1, provenance: "AppKit view geometry is in points (1 CSS px = 1 pt)" }
+  pt: { scale: 1, provenance: "AppKit font sizes and geometry are in points" }
 
 properties:
-  opacity: { via: setter, prop: alpha-value, type: number, kinds: [NSView] }
+  # ---- compile-time setters ----
   visibility-hidden: { via: setter, prop: hidden, type: bool, kinds: [NSView] }
   enabled: { via: setter, prop: enabled, type: bool, kinds: [NSControl] }
   gap: { via: setter, prop: spacing, type: length, kinds: [NSStackView] }
   flex-direction: { via: setter, prop: orientation, type: enum, kinds: [NSStackView], note: "row -> horizontal, column -> vertical (value map not yet written)" }
   padding: { via: setter, prop: edge-insets, type: insets, kinds: [NSStackView] }
   text-align: { via: setter, prop: alignment, type: enum, kinds: [NSTextField] }
+
+  # ---- runtime engine (decl dialect), applied by the backend ----
+  color: { via: css, type: color, note: "text colour: NSTextField/NSTextView textColor, NSButton title" }
+  background-color: { via: css, type: color, note: "layer background; text fields draw their own background; a button with a background loses its bezel" }
+  background: { via: css, type: color, note: "a colour only (no images or gradients)" }
+  border: { via: css, type: border, note: "width, style (solid | none) and colour" }
+  border-width: { via: css, type: length }
+  border-color: { via: css, type: color }
+  border-style: { via: css, type: enum, values: [solid, none] }
+  border-radius: { via: css, type: length, note: "one radius for all corners (layer cornerRadius)" }
+  box-shadow: { via: css, type: shadow, note: "one shadow: x y blur colour (layer shadow; no spread, no inset)" }
+  opacity: { via: css, type: number }
+  accent-color: { via: css, type: color, note: "bezelColor of push buttons, contentTintColor of other controls" }
+  font-size: { via: css, type: length }
+  font-weight: { via: css, type: font-weight }
+  font-family: { via: css, type: string, note: "a font name, or system-ui / monospace" }
+  font-style: { via: css, type: enum, values: [normal, italic] }
+  text-decoration: { via: css, type: enum, values: [none, underline, line-through] }
+  width: { via: css, type: length, note: "an Auto Layout constraint at priority 999 (a stack view's own constraints win a conflict)" }
+  height: { via: css, type: length }
+  min-width: { via: css, type: length }
+  min-height: { via: css, type: length }
+  max-width: { via: css, type: length }
+  max-height: { via: css, type: length }
+  flex-grow: { via: css, type: number, note: "0 hugs the content; > 0 lowers content hugging so a stack view stretches the element" }
+  align-self: { via: css, type: enum, values: [auto, stretch], note: "stretch lowers content hugging across the parent stack view's axis" }
+  cursor: { via: css, type: enum, values: [default, pointer, text] }

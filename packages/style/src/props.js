@@ -46,7 +46,7 @@ export function unknownProp(toolkit, name) {
     .slice(0, 3)
     .map(([n]) => n);
   const elsewhere = Object.keys(STYLE_TABLES).filter((t) => t !== toolkit && STYLE_TABLES[t].props[name]);
-  let msg = `property '${name}' is not a ${toolkit} style property`;
+  let msg = `property '${name}' is not ${/^[aeiou]/.test(toolkit) ? 'an' : 'a'} ${toolkit} style property`;
   if (elsewhere.length) msg += ` (it is one on ${elsewhere.join(', ')})`;
   if (near.length) msg += `; did you mean ${near.map((n) => `'${n}'`).join(', ')}?`;
   return msg;

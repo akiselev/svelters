@@ -1,6 +1,6 @@
 # Running the AppKit backend on a Mac (MAC1)
 
-Status: written on Linux (2026-10-17). None of this has run on a Mac yet; the point of these steps is to find out what breaks. Background: `docs/notes/mac1-appkit.md`.
+Status: written on Linux (2026-10-17); first run on a Mac 2026-10-21 (Intel, macOS 15.7, STATUS rows MAC2 and ST2). Node: if `corepack` is missing, `nvm install 22`. Background: `docs/notes/mac1-appkit.md`.
 
 **Minimum macOS: 11** (plans/research/REACTIVITY.md decision 13.10; `observe` on borrowed objects relies on the
 macOS 10.13 relaxed KVO unregistration). The macos-appkit CI job and `tools/dev/mac-cross` build with
