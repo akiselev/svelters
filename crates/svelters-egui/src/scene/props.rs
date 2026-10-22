@@ -172,6 +172,10 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
             *text = as_str(v)?;
             d.insert(Dirty::MEASURE);
         }
+        // RT2: runs (`crate::rich`; `Scene::set_value` remeasures their label)
+        (P::Text, W::Run { text, .. }) => *text = as_str(v)?,
+        (P::FontWeight, W::Run { weight, .. }) => *weight = if as_i64(v)? == 0 { 0 } else { as_weight(v)? },
+        (P::Href, W::Run { href, .. }) => *href = as_str(v)?,
         (P::WrapMode, W::Label { wrap, .. }) => {
             *wrap = as_enum(v, kinds::WRAP_MODE)?;
             d.insert(Dirty::MEASURE);
@@ -343,6 +347,8 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::DefaultWidth, W::Window { default_w, .. }) => Value::F64(*default_w),
         (P::DefaultHeight, W::Window { default_h, .. }) => Value::F64(*default_h),
         (P::Text, _) => s(n.text()),
+        (P::FontWeight, W::Run { weight, .. }) => Value::I64(*weight),
+        (P::Href, W::Run { href, .. }) => s(href),
         (P::WrapMode, W::Label { wrap, .. }) => s(wrap),
         (P::Selectable, W::Label { selectable, .. }) => Value::Bool(*selectable),
         (P::Selected, W::Button { selected, .. } | W::Icon { selected, .. }) => Value::Bool(*selected),

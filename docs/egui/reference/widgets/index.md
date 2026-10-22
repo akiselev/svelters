@@ -43,10 +43,16 @@ Text, icons and indicators that show something.
 
 | Element | What it is |
 |---|---|
+| [`<a>`](a.md) | An inline link: the `link` colour, underlined on hover (DESIGN R18), the pointer cursor (R10); focusable, activated by click, Enter or Space. |
+| [`<b>`](b.md) | Bold inline text (`font-weight: 700` from the theme's base sheet). |
+| [`<code>`](code.md) | Inline code: the monospace font on the field fill (theme's base sheet). |
+| [`<i>`](i.md) | Italic inline text (`font-style: italic` from the theme's base sheet). |
 | [`<icon>`](icon.md) | A glyph from an icon font the embedder registered (SVP6), by name or as text. |
-| [`<label>`](label.md) | Static text. |
+| [`<label>`](label.md) | Static text; with inline run children (`<b>`, `<i>`, `<code>`, `<a>`, `<span>`) one paragraph of styled runs (RT2). |
 | [`<progress-bar>`](progress-bar.md) | A horizontal bar filled to `fraction`, as wide as its rect. |
+| [`Run`](run.md) | Common properties of the inline runs (`span`, `b`, `i`, `code`, `a`): text inside a `label`, laid out with the label's other runs as one paragraph, never by taffy. |
 | [`<separator>`](separator.md) | A thin line between items; fills its rect along its orientation. |
+| [`<span>`](span.md) | An inline run of text in a `label`, styled by CSS (`label span.cls`). |
 | [`<spinner>`](spinner.md) | A busy indicator. |
 
 ## Containers

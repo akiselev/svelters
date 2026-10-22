@@ -25,6 +25,8 @@
 //! Writer lane: SCENE.
 
 pub(crate) mod access;
+pub(crate) mod compact;
+pub(crate) mod paint_cache;
 pub(crate) mod dirty;
 pub(crate) mod dump;
 pub(crate) mod ext;
@@ -60,7 +62,7 @@ use dump::Counters;
 use ext::{ExtColumns, ExtCx};
 use id::SlotTable;
 use journal::Journal;
-use node::{DEFAULT_COLD, LayoutBox, NodeCold, NodeCore, Payload};
+use node::{DEFAULT_COLD, DEFAULT_COMMON, LayoutBox, NodeCold, NodeCore, Payload};
 use std::sync::OnceLock;
 use tree::RootTable;
 
@@ -89,6 +91,16 @@ pub struct Scene {
     pub(crate) layout: Vec<LayoutBox>,
     pub(crate) payload: Vec<Payload>,
     pub(crate) cold: Vec<Option<Box<NodeCold>>>,
+    /// SG6: common props, interned (`None`: all defaults). Written only through
+    /// `Scene::set_common`.
+    pub(crate) common: Vec<Option<std::sync::Arc<Common>>>,
+    /// SG6: the shared taffy styles and common-prop sets (`compact.rs`).
+    pub(crate) styles: compact::Interner<taffy::Style>,
+    pub(crate) commons: compact::Interner<Common>,
+    /// SG6: the ink rect (root-relative) of the nodes with `NodeFlags::INK_OVERFLOW`, by slot.
+    pub(crate) ink: std::collections::HashMap<u32, egui::Rect>,
+    /// SG6: `WidgetCx::cached_shapes` storage.
+    pub(crate) paint_cache: paint_cache::PaintCache,
     /// Provider data: one column per `ExtKey` (SG2).
     pub(crate) ext: ExtColumns,
     /// Change records for observers (SG2).
@@ -131,6 +143,11 @@ impl Default for Scene {
             layout: Vec::new(),
             payload: Vec::new(),
             cold: Vec::new(),
+            common: Vec::new(),
+            styles: Default::default(),
+            commons: Default::default(),
+            ink: Default::default(),
+            paint_cache: Default::default(),
             ext: ExtColumns::default(),
             journal: Journal::default(),
             roots: RootTable::default(),
@@ -256,7 +273,26 @@ impl Scene {
     }
 
     pub(crate) fn common(&self, i: usize) -> &Common {
-        &self.cold(i).common
+        self.common[i].as_deref().unwrap_or(&DEFAULT_COMMON)
+    }
+
+    /// SG6: changes node `i`'s common props with `f`, then shares the result with equal sets.
+    pub(crate) fn set_common<R>(&mut self, i: usize, f: impl FnOnce(&mut Common) -> R) -> R {
+        // a copy, not `Arc::make_mut` (the table shares every set): a set already interned costs
+        // no allocation (`tests/scene.rs` mutations_allocate_nothing_without_observers)
+        let mut c = self.common(i).clone();
+        let r = f(&mut c);
+        self.common[i] = (c != Common::DEFAULT).then(|| {
+            let k = compact::common_key(&c);
+            self.commons.intern(c, k)
+        });
+        r
+    }
+
+    /// SG6: the shared `Arc` for taffy style `s`.
+    pub(crate) fn intern_style(&mut self, s: taffy::Style) -> std::sync::Arc<taffy::Style> {
+        let k = compact::style_key(&s);
+        self.styles.intern(s, k)
     }
 
     pub(crate) fn vis(&self, i: usize) -> Visual {

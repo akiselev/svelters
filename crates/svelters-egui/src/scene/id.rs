@@ -171,6 +171,11 @@ pub(crate) struct SlotTable {
 }
 
 impl SlotTable {
+    /// SG6: heap bytes (`SceneStats::bytes_by`).
+    pub fn bytes(&self) -> usize {
+        self.gens.capacity() * 4 + self.live.capacity() + self.free.capacity() * 4
+    }
+
     /// The slot of a live id.
     #[inline]
     pub fn index(&self, id: NodeId) -> Option<usize> {
