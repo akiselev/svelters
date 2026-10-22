@@ -976,6 +976,8 @@ export interface EguiElements {
     text?: string;
     /** CSS font weight (100-900) of this run and the runs in it; 0 (the default) inherits the enclosing run's or label's weight. `b` has 700 from the theme's base sheet. */
     'font-weight'?: number;
+    /** AccessKit name of an `a` run's link (defaults to its text); other runs are read as part of their label's text. */
+    'accessible-name'?: string;
   };
   /** Bold inline text (`font-weight: 700` from the theme's base sheet). */
   b: {
@@ -983,6 +985,8 @@ export interface EguiElements {
     text?: string;
     /** CSS font weight (100-900) of this run and the runs in it; 0 (the default) inherits the enclosing run's or label's weight. `b` has 700 from the theme's base sheet. */
     'font-weight'?: number;
+    /** AccessKit name of an `a` run's link (defaults to its text); other runs are read as part of their label's text. */
+    'accessible-name'?: string;
   };
   /** Italic inline text (`font-style: italic` from the theme's base sheet). */
   i: {
@@ -990,6 +994,8 @@ export interface EguiElements {
     text?: string;
     /** CSS font weight (100-900) of this run and the runs in it; 0 (the default) inherits the enclosing run's or label's weight. `b` has 700 from the theme's base sheet. */
     'font-weight'?: number;
+    /** AccessKit name of an `a` run's link (defaults to its text); other runs are read as part of their label's text. */
+    'accessible-name'?: string;
   };
   /** Inline code: the monospace font on the field fill (theme's base sheet). */
   code: {
@@ -997,6 +1003,8 @@ export interface EguiElements {
     text?: string;
     /** CSS font weight (100-900) of this run and the runs in it; 0 (the default) inherits the enclosing run's or label's weight. `b` has 700 from the theme's base sheet. */
     'font-weight'?: number;
+    /** AccessKit name of an `a` run's link (defaults to its text); other runs are read as part of their label's text. */
+    'accessible-name'?: string;
   };
   /** An inline link: the `link` colour, underlined on hover (DESIGN R18), the pointer cursor (R10); focusable, activated by click, Enter or Space. */
   a: {
@@ -1004,10 +1012,10 @@ export interface EguiElements {
     text?: string;
     /** CSS font weight (100-900) of this run and the runs in it; 0 (the default) inherits the enclosing run's or label's weight. `b` has 700 from the theme's base sheet. */
     'font-weight'?: number;
+    /** AccessKit name of an `a` run's link (defaults to its text); other runs are read as part of their label's text. */
+    'accessible-name'?: string;
     /** The link target. Without an `onclicked` handler a click opens it (as `hyperlink`'s `url`); with one, only the handler runs. */
     href?: string;
-    /** AccessKit name of the link; defaults to its text. */
-    'accessible-name'?: string;
     /** The link was activated (click, or Enter/Space while it has keyboard focus). */
     onclicked?: () => void;
   };

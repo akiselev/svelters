@@ -31,11 +31,11 @@ const WEIGHT_DOC: &str = "CSS font weight (100-900) of this run and the runs in 
 static RUN_PROPS: &[PropDef] = &[
     prop("text", P::Text, Ty::Str, Def::Str(""), "The run's own text, before its child runs (its text children fold into it)."),
     prop("font-weight", P::FontWeight, Ty::I64, Def::I64(0), WEIGHT_DOC),
+    prop("accessible-name", P::AccessibleName, Ty::Str, Def::Str(""), "AccessKit name of an `a` run's link (defaults to its text); other runs are read as part of their label's text."),
 ];
 
 static ANCHOR_PROPS: &[PropDef] = &[
     prop("href", P::Href, Ty::Str, Def::Str(""), "The link target. Without an `onclicked` handler a click opens it (as `hyperlink`'s `url`); with one, only the handler runs."),
-    prop("accessible-name", P::AccessibleName, Ty::Str, Def::Str(""), "AccessKit name of the link; defaults to its text."),
 ];
 
 static ANCHOR_SIGNALS: &[SignalDef] = &[signal("clicked", NONE, "The link was activated (click, or Enter/Space while it has keyboard focus).")];

@@ -29,6 +29,7 @@ Common properties of the inline runs (`span`, `b`, `i`, `code`, `a`): text insid
 <!-- BEGIN GENERATED: props of kinds.Run (tools/docs/egui/gen_reference.py). Do not edit. -->
 | Prop | Type | Default | `bind:` | Description |
 |---|---|---|---|---|
+| `accessible-name` | `string` | `""` | no | AccessKit name of an `a` run's link (defaults to its text); other runs are read as part of their label's text. |
 | `font-weight` | `number` | `0` | no | CSS font weight (100-900) of this run and the runs in it; 0 (the default) inherits the enclosing run's or label's weight. `b` has 700 from the theme's base sheet. |
 | `text` | `string` | `""` | no | The run's own text, before its child runs (its text children fold into it). |
 <!-- END GENERATED -->

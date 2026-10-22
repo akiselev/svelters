@@ -100,7 +100,8 @@ fn keyword(v: Option<&ComputedValue>) -> Option<&str> {
 
 /// The runs of label `i`, or `None` when it has no run children.
 pub fn collect(s: &Scene, i: usize) -> Option<Rich> {
-    if !matches!(s.w(i), W::Label { .. }) || s.children[i].is_empty() {
+    // a label without runs (no children, or only an attached context menu) is plain text
+    if !matches!(s.w(i), W::Label { .. }) || !s.children[i].iter().any(|&c| s.idx(c).is_some_and(|j| matches!(s.w(j), W::Run { .. }))) {
         return None;
     }
     let W::Label { text, weight, .. } = s.w(i) else { return None };

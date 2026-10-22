@@ -258,23 +258,6 @@
       "paint": "none",
       "present": null,
       "props": {
-        "accessible-name": {
-          "construct_only": false,
-          "default": "",
-          "doc": "AccessKit name of the link; defaults to its text.",
-          "js": "accessible-name",
-          "native": "accessible-name",
-          "nullable": false,
-          "observe": {
-            "class": "set_only",
-            "fact": "egui:Anchor:accessible-name",
-            "mechanism": "scene",
-            "verified": "weak"
-          },
-          "readable": true,
-          "type": "string",
-          "writable": true
-        },
         "href": {
           "construct_only": false,
           "default": "",
@@ -5798,6 +5781,23 @@
       "paint": "none",
       "present": null,
       "props": {
+        "accessible-name": {
+          "construct_only": false,
+          "default": "",
+          "doc": "AccessKit name of an `a` run's link (defaults to its text); other runs are read as part of their label's text.",
+          "js": "accessible-name",
+          "native": "accessible-name",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Run:accessible-name",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "font-weight": {
           "construct_only": false,
           "default": 0,

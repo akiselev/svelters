@@ -30,13 +30,13 @@ An inline link: the `link` colour, underlined on hover (DESIGN R18), the pointer
 <!-- BEGIN GENERATED: props of kinds.Anchor (tools/docs/egui/gen_reference.py). Do not edit. -->
 | Prop | Type | Default | `bind:` | Description |
 |---|---|---|---|---|
-| `accessible-name` | `string` | `""` | no | AccessKit name of the link; defaults to its text. |
 | `href` | `string` | `""` | no | The link target. Without an `onclicked` handler a click opens it (as `hyperlink`'s `url`); with one, only the handler runs. |
 
 From [`Run`](run.md):
 
 | Prop | Type | Default | `bind:` | Description |
 |---|---|---|---|---|
+| `accessible-name` | `string` | `""` | no | AccessKit name of an `a` run's link (defaults to its text); other runs are read as part of their label's text. |
 | `font-weight` | `number` | `0` | no | CSS font weight (100-900) of this run and the runs in it; 0 (the default) inherits the enclosing run's or label's weight. `b` has 700 from the theme's base sheet. |
 | `text` | `string` | `""` | no | The run's own text, before its child runs (its text children fold into it). |
 <!-- END GENERATED -->

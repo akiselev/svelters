@@ -421,6 +421,13 @@ impl Scene {
         if kinds::slot_of(pk).is_none() && kinds::attaches_to(kinds::kind(ck).id).is_none() {
             return Err(SceneError::Invalid(format!("<{}> takes no children", kinds::kind(pk).tag.unwrap_or("?"))));
         }
+        // RT2: a label and the runs take runs only (`kinds/rich.rs`)
+        if let Some(acc) = kinds::rich::slot_accepts(kinds::kind(pk).id)
+            && !acc.contains(&kinds::kind(ck).id)
+            && kinds::attaches_to(kinds::kind(ck).id).is_none()
+        {
+            return Err(SceneError::Invalid(format!("<{}> takes inline runs only (span, b, i, code, a), not <{}>", kinds::kind(pk).tag.unwrap_or("?"), kinds::kind(ck).tag.unwrap_or("?"))));
+        }
         if kinds::kind(ck).toplevel || self.core[ci].flags.contains(NodeFlags::ROOT) {
             return Err(SceneError::Invalid("a window cannot be inserted under another element".into()));
         }

@@ -410,7 +410,8 @@ pub fn closest<'a>(name: &str, candidates: impl IntoIterator<Item = &'a str>) ->
         .into_iter()
         .filter(|c| *c != name)
         .map(|c| (levenshtein(&name.to_lowercase(), &c.to_lowercase()), c))
-        .filter(|(d, c)| *d <= limit || (name.len() >= 3 && (c.contains(name) || name.contains(*c))))
+        // containment only between names of 3+ chars (RT2: `a`, `b`, `i` are in most tags)
+        .filter(|(d, c)| *d <= limit || (name.len() >= 3 && c.len() >= 3 && (c.contains(name) || name.contains(*c))))
         .collect();
     scored.sort();
     scored.dedup_by(|a, b| a.1 == b.1);
