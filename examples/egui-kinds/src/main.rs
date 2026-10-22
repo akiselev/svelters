@@ -19,12 +19,7 @@ fn main() -> ExitCode {
                 let dir = PathBuf::from(args.next().unwrap_or_else(|| ".svelters/app".into()));
                 return match svelters_egui::dump(&dir) {
                     Ok(r) => {
-                        println!(
-                            "{}: {} written, {} unchanged",
-                            dir.display(),
-                            r.written.len(),
-                            r.unchanged
-                        );
+                        println!("{}: {} written, {} unchanged", dir.display(), r.written.len(), r.unchanged);
                         ExitCode::SUCCESS
                     }
                     Err(e) => {
@@ -35,9 +30,7 @@ fn main() -> ExitCode {
             }
             "--bundle" => bundle = PathBuf::from(args.next().unwrap_or_default()),
             other => {
-                eprintln!(
-                    "unknown argument {other}\nusage: egui-kinds [--dump <dir>] [--bundle <app.js>]"
-                );
+                eprintln!("unknown argument {other}\nusage: egui-kinds [--dump <dir>] [--bundle <app.js>]");
                 return ExitCode::from(2);
             }
         }
@@ -46,10 +39,7 @@ fn main() -> ExitCode {
         && let Ok(r) = svelters_egui::dump(&egui_kinds_demo::dump_dir())
         && !r.written.is_empty()
     {
-        eprintln!(
-            "[egui-kinds] refreshed {} file(s): rebuild the app (pnpm build) to pick them up",
-            r.written.len()
-        );
+        eprintln!("[egui-kinds] refreshed {} file(s): rebuild the app (pnpm build) to pick them up", r.written.len());
     }
     match svelters_egui::run_app(&bundle, svelters_host::HostConfig::default()) {
         Ok(()) => ExitCode::SUCCESS,

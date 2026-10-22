@@ -13,10 +13,7 @@
 //!
 //! Writer lane: EMBED.
 
-use crate::embed::{
-    Embed, EmbedError, EntryId, MountSpec, Props, RootId, RootKey, RootOwner, SlotOptions,
-    with_current,
-};
+use crate::embed::{Embed, EmbedError, EntryId, MountSpec, Props, RootId, RootKey, RootOwner, SlotOptions, with_current};
 use std::collections::HashMap;
 
 /// Why berth closed a pane.
@@ -38,22 +35,10 @@ pub enum CloseReason {
 #[derive(Clone, Debug, PartialEq)]
 #[non_exhaustive]
 pub enum PaneEvent {
-    Shown {
-        pane: String,
-        viewport: egui::ViewportId,
-    },
-    Hidden {
-        pane: String,
-    },
-    MovedToViewport {
-        pane: String,
-        from: egui::ViewportId,
-        to: egui::ViewportId,
-    },
-    Closed {
-        pane: String,
-        reason: CloseReason,
-    },
+    Shown { pane: String, viewport: egui::ViewportId },
+    Hidden { pane: String },
+    MovedToViewport { pane: String, from: egui::ViewportId, to: egui::ViewportId },
+    Closed { pane: String, reason: CloseReason },
 }
 
 impl PaneEvent {
@@ -83,48 +68,26 @@ pub struct SvelteDock {
 
 impl SvelteDock {
     pub fn new(embed: Embed) -> SvelteDock {
-        SvelteDock {
-            embed,
-            roots: HashMap::new(),
-            pending: HashMap::new(),
-        }
+        SvelteDock { embed, roots: HashMap::new(), pending: HashMap::new() }
     }
 
     /// The host opens a pane with Svelte content (its view registry decides; the dock never mounts).
     /// The slot exists now, hidden; the root mounts when berth first shows the pane.
     pub fn open(&mut self, pane: &str, entry: EntryId, export: &str, props: Props) {
-        let slot = self
-            .embed
-            .create_slot(pane, SlotOptions::fill().label(pane));
+        let slot = self.embed.create_slot(pane, SlotOptions::fill().label(pane));
         self.embed.set_visible(slot, false);
-        self.pending.insert(
-            pane.to_string(),
-            Pending {
-                entry,
-                export: export.to_string(),
-                props,
-            },
-        );
+        self.pending.insert(pane.to_string(), Pending { entry, export: export.to_string(), props });
     }
 
     /// One pane event (from `App::logic`, after `dock.take_events()`, before `Embed::logic`).
     pub fn on_event(&mut self, ev: &PaneEvent) -> Result<(), EmbedError> {
-        let Some(slot) = self.embed.slot(ev.pane()) else {
-            return Ok(());
-        }; // not a Svelte pane
+        let Some(slot) = self.embed.slot(ev.pane()) else { return Ok(()) }; // not a Svelte pane
         match ev {
             PaneEvent::Shown { pane, viewport } => {
                 self.embed.set_viewport(slot, *viewport);
                 self.embed.set_visible(slot, true);
                 if let Some(p) = self.pending.remove(pane) {
-                    let spec = MountSpec {
-                        entry: p.entry,
-                        export: p.export.into(),
-                        slot,
-                        key: RootKey::from(pane.as_str()),
-                        props: p.props,
-                        owner: RootOwner::InProcess,
-                    };
+                    let spec = MountSpec { entry: p.entry, export: p.export.into(), slot, key: RootKey::from(pane.as_str()), props: p.props, owner: RootOwner::InProcess };
                     self.roots.insert(pane.clone(), self.embed.mount(spec)?);
                 }
             }
@@ -157,10 +120,7 @@ impl SvelteDock {
 
     /// The pane a root belongs to (to route `EmbedEvent`s: titles, close decisions).
     pub fn pane_of(&self, root: RootId) -> Option<&str> {
-        self.roots
-            .iter()
-            .find(|(_, r)| **r == root)
-            .map(|(p, _)| p.as_str())
+        self.roots.iter().find(|(_, r)| **r == root).map(|(p, _)| p.as_str())
     }
 
     /// berth's draw callback for a pane. It needs only the pane id, so a deferred viewport's

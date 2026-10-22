@@ -55,10 +55,7 @@ pub struct PropKey<T: 'static> {
 }
 
 impl<T: 'static> PropKey<T> {
-    pub const fn new(
-        name: &'static str,
-        get: for<'a> fn(&'a Common, &'a W) -> Option<&'a T>,
-    ) -> PropKey<T> {
+    pub const fn new(name: &'static str, get: for<'a> fn(&'a Common, &'a W) -> Option<&'a T>) -> PropKey<T> {
         PropKey { name, get }
     }
 

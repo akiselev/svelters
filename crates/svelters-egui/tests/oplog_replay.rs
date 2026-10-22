@@ -12,11 +12,7 @@ use svelters_abi::*;
 
 fn value_for(rig: &Rig, h: svl_handle, prop: &str, j: &serde_json::Value) -> Value {
     let id = rig.prop_id(h, prop);
-    let tag = rig
-        .br()
-        .describe(NameKind::Prop, rig.kind(h), id)
-        .map(|d| d.params[0].tag)
-        .unwrap_or(SVL_NULL);
+    let tag = rig.br().describe(NameKind::Prop, rig.kind(h), id).map(|d| d.params[0].tag).unwrap_or(SVL_NULL);
     match j {
         serde_json::Value::Null => Value::Null,
         serde_json::Value::Bool(b) => Value::Bool(*b),
@@ -32,17 +28,10 @@ fn replay(name: &str, log: &str) -> (usize, usize) {
     let mut map: HashMap<String, svl_handle> = HashMap::new();
     let mut observing: HashSet<(svl_handle, String)> = HashSet::new();
     let (mut events, mut changes) = (0, 0);
-    for (n, line) in log
-        .lines()
-        .enumerate()
-        .filter(|(_, l)| !l.trim().is_empty())
-    {
+    for (n, line) in log.lines().enumerate().filter(|(_, l)| !l.trim().is_empty()) {
         let ctx = format!("{name}:{}: {line}", n + 1);
         let parts: Vec<&str> = line.splitn(4, ' ').collect();
-        let hd = |t: &str| {
-            *map.get(t)
-                .unwrap_or_else(|| panic!("{ctx}: unknown handle {t}"))
-        };
+        let hd = |t: &str| *map.get(t).unwrap_or_else(|| panic!("{ctx}: unknown handle {t}"));
         match parts[0] {
             "create" => {
                 let h = rig.create(parts[1]);
@@ -55,14 +44,9 @@ fn replay(name: &str, log: &str) -> (usize, usize) {
                     t => Some(hd(t)),
                 };
                 assert_eq!(w[4], "slot=default", "{ctx}");
-                rig.br()
-                    .insert(hd(w[1]), hd(w[2]), before, 0)
-                    .unwrap_or_else(|e| panic!("{ctx}: {e}"));
+                rig.br().insert(hd(w[1]), hd(w[2]), before, 0).unwrap_or_else(|e| panic!("{ctx}: {e}"));
             }
-            "remove" => rig
-                .br()
-                .remove(hd(parts[1]), hd(parts[2]))
-                .unwrap_or_else(|e| panic!("{ctx}: {e}")),
+            "remove" => rig.br().remove(hd(parts[1]), hd(parts[2])).unwrap_or_else(|e| panic!("{ctx}: {e}")),
             "destroy" => {
                 let h = hd(parts[1]);
                 rig.br().destroy(h);
@@ -74,17 +58,11 @@ fn replay(name: &str, log: &str) -> (usize, usize) {
                 let v = value_for(&rig, h, parts[2], &j);
                 rig.set(h, parts[2], v.clone());
                 let back = rig.get(h, parts[2]);
-                assert!(
-                    back == v
-                        || matches!((&back, &v), (Value::F64(a), Value::I64(b)) if *a == *b as f64),
-                    "{ctx}: read back {back:?}"
-                );
+                assert!(back == v || matches!((&back, &v), (Value::F64(a), Value::I64(b)) if *a == *b as f64), "{ctx}: read back {back:?}");
             }
             "listen" => {
                 let on = parts[3].starts_with("on");
-                rig.br()
-                    .listen(hd(parts[1]), rig.signal_id(hd(parts[1]), parts[2]), on)
-                    .unwrap_or_else(|e| panic!("{ctx}: {e}"));
+                rig.br().listen(hd(parts[1]), rig.signal_id(hd(parts[1]), parts[2]), on).unwrap_or_else(|e| panic!("{ctx}: {e}"));
             }
             "observe" => {
                 let (h, on) = (hd(parts[1]), parts[3] == "on");
@@ -101,9 +79,7 @@ fn replay(name: &str, log: &str) -> (usize, usize) {
             }
             "style" => {
                 let br = rig.br();
-                let text = |s: &str| -> Option<String> {
-                    serde_json::from_str::<Option<String>>(s).unwrap()
-                };
+                let text = |s: &str| -> Option<String> { serde_json::from_str::<Option<String>>(s).unwrap() };
                 let r = match parts[1] {
                     "sheet" => br.style(SVL_STYLE_SHEET, 0, text(parts[3]).as_deref()),
                     "scheme" => br.style(SVL_STYLE_SCHEME, 0, text(parts[2]).as_deref()),
@@ -138,15 +114,12 @@ fn replay(name: &str, log: &str) -> (usize, usize) {
                 let sid = rig.signal_id(h, sig);
                 let got: Vec<_> = l.events.iter().filter(|e| e.0 == h && e.1 == sid).collect();
                 assert_eq!(got.len(), 1, "{ctx}: delivered {:?}", l.events);
-                let want: Vec<Value> = args
-                    .iter()
-                    .map(|a| match a {
-                        serde_json::Value::String(s) => Value::Str(s.clone()),
-                        serde_json::Value::Bool(b) => Value::Bool(*b),
-                        serde_json::Value::Number(n) => Value::F64(n.as_f64().unwrap()),
-                        o => panic!("{ctx}: arg {o}"),
-                    })
-                    .collect();
+                let want: Vec<Value> = args.iter().map(|a| match a {
+                    serde_json::Value::String(s) => Value::Str(s.clone()),
+                    serde_json::Value::Bool(b) => Value::Bool(*b),
+                    serde_json::Value::Number(n) => Value::F64(n.as_f64().unwrap()),
+                    o => panic!("{ctx}: arg {o}"),
+                }).collect();
                 assert_eq!(got[0].2, want, "{ctx}: event args");
                 events += 1;
             }
@@ -167,18 +140,12 @@ fn replay(name: &str, log: &str) -> (usize, usize) {
                             Value::Str(s) => s,
                             _ => unreachable!(),
                         };
-                        rig.harness
-                            .get_by_label(&name)
-                            .set_value_accesskit(j.as_f64().unwrap());
+                        rig.harness.get_by_label(&name).set_value_accesskit(j.as_f64().unwrap());
                         rig.run();
                     }
                     p => panic!("{ctx}: cannot change {p} natively"),
                 }
-                assert_eq!(
-                    rig.get(h, prop),
-                    value_for(&rig, h, prop, &j),
-                    "{ctx}: native value"
-                );
+                assert_eq!(rig.get(h, prop), value_for(&rig, h, prop, &j), "{ctx}: native value");
                 let l = rig.take();
                 let pid = rig.prop_id(h, prop);
                 let announced = l.changed.iter().filter(|c| **c == (h, pid)).count();
@@ -197,11 +164,7 @@ fn replay(name: &str, log: &str) -> (usize, usize) {
             if n.children.is_empty() && !n.is_window() && n.drawn != egui::Rect::NOTHING {
                 let laid = n.rect.size();
                 let drawn = n.drawn.size();
-                assert!(
-                    drawn.x <= laid.x + 1.0 && drawn.y <= laid.y + 1.0,
-                    "{name}: <{}> drawn {drawn:?} > laid out {laid:?}",
-                    n.tag()
-                );
+                assert!(drawn.x <= laid.x + 1.0 && drawn.y <= laid.y + 1.0, "{name}: <{}> drawn {drawn:?} > laid out {laid:?}", n.tag());
             }
         }
     });
@@ -221,21 +184,10 @@ fn replay_egui_fixtures() {
         .map(|e| e.file_name().to_string_lossy().to_string())
         .collect();
     names.sort();
-    assert_eq!(
-        names,
-        [
-            "counter-egui",
-            "if-toggle-egui",
-            "keyed-list-egui",
-            "motion-egui",
-            "timers-egui"
-        ]
-    );
+    assert_eq!(names, ["counter-egui", "if-toggle-egui", "keyed-list-egui", "motion-egui", "timers-egui"]);
     for name in names {
         let log = std::fs::read_to_string(dir.join(&name).join("expected.oplog")).unwrap();
         let (events, changes) = replay(&name, &log);
-        eprintln!(
-            "{name}: replayed, {events} native events and {changes} native changes delivered"
-        );
+        eprintln!("{name}: replayed, {events} native events and {changes} native changes delivered");
     }
 }

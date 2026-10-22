@@ -80,10 +80,7 @@ fn wait_gate(g: u32, cx: Option<&WorkCx>) {
 fn await_record(s: &str) {
     let end = Instant::now() + Duration::from_secs(20);
     while !recorded(s) {
-        assert!(
-            Instant::now() < end,
-            "timed out waiting for the record {s:?}"
-        );
+        assert!(Instant::now() < end, "timed out waiting for the record {s:?}");
         std::thread::sleep(Duration::from_millis(1));
     }
 }
@@ -93,12 +90,7 @@ fn note_ptr(tag: u32, p: *const f32) {
 }
 
 fn ptr(tag: u32) -> usize {
-    PTRS.lock()
-        .unwrap()
-        .iter()
-        .find(|(t, _)| *t == tag)
-        .unwrap_or_else(|| panic!("no pointer noted for {tag}"))
-        .1
+    PTRS.lock().unwrap().iter().find(|(t, _)| *t == tag).unwrap_or_else(|| panic!("no pointer noted for {tag}")).1
 }
 
 // ---- exports ----
@@ -151,11 +143,7 @@ pub fn make(n: u32, v: f32, tag: u32) -> Buffer<f32> {
 static SHARED: Mutex<Option<Arc<[f32]>>> = Mutex::new(None);
 
 fn shared() -> Arc<[f32]> {
-    SHARED
-        .lock()
-        .unwrap()
-        .get_or_insert_with(|| vec![1.0f32, 2.0, 3.0, 4.0].into())
-        .clone()
+    SHARED.lock().unwrap().get_or_insert_with(|| vec![1.0f32, 2.0, 3.0, 4.0].into()).clone()
 }
 
 /// A read-only view of the Rust `Arc`.
@@ -197,24 +185,17 @@ pub fn frame_double(mut f: Frame) -> Frame {
         *x *= 2.0;
     }
     let n = f.samples.len() as f32;
-    Frame {
-        id: f.id + 1,
-        stats: Some(vec![n, f.stats.as_ref().map_or(0.0, |s| s.len() as f32)].into()),
-        samples: f.samples,
-    }
+    Frame { id: f.id + 1, stats: Some(vec![n, f.stats.as_ref().map_or(0.0, |s| s.len() as f32)].into()), samples: f.samples }
 }
 
 /// Buffers in a list, of another element type.
 #[svelters::export(module = "buf")]
 #[js(worker)]
 pub fn lens(chunks: Vec<Buffer<u8>>) -> Vec<Buffer<u8>> {
-    chunks
-        .into_iter()
-        .map(|mut c| {
-            c.iter_mut().for_each(|b| *b = b.wrapping_add(1));
-            c
-        })
-        .collect()
+    chunks.into_iter().map(|mut c| {
+        c.iter_mut().for_each(|b| *b = b.wrapping_add(1));
+        c
+    }).collect()
 }
 
 /// Holds the buffer until gate `g` (ignoring cancellation), then drops it and returns its length.
@@ -270,11 +251,7 @@ pub fn burst(samples: Buffer<f32>) -> u32 {
 
 // ---- the test drives JS steps through a JS-thread async fn (E1) that resolves with a command ----
 
-type Chan = (
-    String,
-    std::collections::VecDeque<String>,
-    Option<std::task::Waker>,
-);
+type Chan = (String, std::collections::VecDeque<String>, Option<std::task::Waker>);
 static CMDS: Mutex<Vec<Chan>> = Mutex::new(Vec::new());
 
 fn with_chan<R>(chan: &str, f: impl FnOnce(&mut Chan) -> R) -> R {
@@ -334,12 +311,7 @@ globalThis.live = () => console.log('live', globalThis.__svelters_internal.trans
 // ---- harness ----
 
 fn pool() {
-    let _ = svelters::exports::set_worker_pool(
-        svelters::rayon::ThreadPoolBuilder::new()
-            .num_threads(16)
-            .build()
-            .unwrap(),
-    );
+    let _ = svelters::exports::set_worker_pool(svelters::rayon::ThreadPoolBuilder::new().num_threads(16).build().unwrap());
 }
 
 fn stage(name: &str, main: &str) -> PathBuf {
@@ -359,15 +331,13 @@ struct Run<'h, 'a> {
 impl Run<'_, '_> {
     fn jobs(&mut self) {
         self.host.drain_jobs();
-        self.lines
-            .extend(self.host.take_console().into_iter().map(|l| l.text));
+        self.lines.extend(self.host.take_console().into_iter().map(|l| l.text));
     }
 
     fn turn(&mut self) {
         self.host.checkpoint();
         self.host.drain_jobs();
-        self.lines
-            .extend(self.host.take_console().into_iter().map(|l| l.text));
+        self.lines.extend(self.host.take_console().into_iter().map(|l| l.text));
     }
 
     fn until(&mut self, what: &str, cond: impl Fn(&Host<'_>, &[String]) -> bool) {
@@ -377,12 +347,7 @@ impl Run<'_, '_> {
             if cond(self.host, &self.lines) {
                 return;
             }
-            assert!(
-                Instant::now() < end,
-                "timed out waiting for {what}\nlines: {:#?}\nerrors: {:#?}",
-                self.lines,
-                self.host.take_errors()
-            );
+            assert!(Instant::now() < end, "timed out waiting for {what}\nlines: {:#?}\nerrors: {:#?}", self.lines, self.host.take_errors());
             std::thread::sleep(Duration::from_millis(1));
         }
     }
@@ -396,11 +361,7 @@ impl Run<'_, '_> {
     }
 
     fn value(&self, prefix: &str) -> String {
-        self.lines
-            .iter()
-            .find_map(|l| l.strip_prefix(prefix))
-            .unwrap_or_else(|| panic!("no line {prefix:?}: {:#?}", self.lines))
-            .to_string()
+        self.lines.iter().find_map(|l| l.strip_prefix(prefix)).unwrap_or_else(|| panic!("no line {prefix:?}: {:#?}", self.lines)).to_string()
     }
 
     /// Runs `globalThis[cmd]()` in JS (one checkpoint).
@@ -432,13 +393,8 @@ fn with_host(name: &str, main: &str, f: impl FnOnce(&mut Run<'_, '_>)) {
     if let Err(e) = host.load_bundle(dir.join("main.js")) {
         panic!("load: {e}");
     }
-    let mut run = Run {
-        host: &host,
-        chan: name.to_string(),
-        lines: Vec::new(),
-    };
-    run.lines
-        .extend(host.take_console().into_iter().map(|l| l.text));
+    let mut run = Run { host: &host, chan: name.to_string(), lines: Vec::new() };
+    run.lines.extend(host.take_console().into_iter().map(|l| l.text));
     f(&mut run);
 }
 
@@ -488,26 +444,14 @@ globalThis.start = async () => {
             r.cmd("start");
             r.line("done");
             r.no_errors();
-            assert!(
-                r.has("detached 0 0"),
-                "the moved array is detached: {:?}",
-                r.lines
-            );
+            assert!(r.has("detached 0 0"), "the moved array is detached: {:?}", r.lines);
             assert!(r.has("result 16777216 6 10"), "{:?}", r.lines);
             assert!(r.has("again 0 16777216 6"), "{:?}", r.lines);
             assert!(r.has("alloc 0 21"), "{:?}", r.lines);
             // The worker scaled the very memory `pass` saw afterwards: no copy on the way back.
-            assert_eq!(
-                ptr(1),
-                ptr(2),
-                "JS buffer: worker and the round-tripped result share memory"
-            );
+            assert_eq!(ptr(1), ptr(2), "JS buffer: worker and the round-tripped result share memory");
             assert!(recorded("pass 2 js=true"));
-            assert_eq!(
-                ptr(3),
-                ptr(4),
-                "Rust-backed buffer: same allocation after the round trip"
-            );
+            assert_eq!(ptr(3), ptr(4), "Rust-backed buffer: same allocation after the round trip");
             assert!(recorded("pass 4 js=false"));
             // No large Rust allocation after the arrays were made: nothing was copied.
             let setup: u32 = r.value("big-setup ").parse().unwrap();
@@ -518,11 +462,7 @@ globalThis.start = async () => {
             assert_eq!(s.transferred, 2, "{s:?}");
             assert_eq!(s.returned, 2, "{s:?}");
             assert_eq!(s.reclaimed, 2, "{s:?}");
-            eprintln!(
-                "E2 round trip (64 MiB): {} | {} | stats {s:?}",
-                r.value("ms js "),
-                r.value("ms alloc ")
-            );
+            eprintln!("E2 round trip (64 MiB): {} | {} | stats {s:?}", r.value("ms js "), r.value("ms alloc "));
         },
     );
 }
@@ -559,22 +499,10 @@ globalThis.step3 = () => console.log('refs-after-gc', arcRefs());
             r.no_errors();
             assert!(r.has("make 4 1.5"), "{:?}", r.lines);
             assert!(r.has("made-back 0 9"), "{:?}", r.lines);
-            assert_eq!(
-                ptr(10),
-                ptr(11),
-                "a buffer Rust handed out comes back as the same allocation"
-            );
+            assert_eq!(ptr(10), ptr(11), "a buffer Rust handed out comes back as the same allocation");
             assert!(recorded("pass 11 js=false"));
-            assert!(
-                r.has("refs 1"),
-                "the view holds one Arc clone: {:?}",
-                r.lines
-            );
-            assert!(
-                r.has("write 1 false"),
-                "writes to a read-only view are ignored without an exception: {:?}",
-                r.lines
-            );
+            assert!(r.has("refs 1"), "the view holds one Arc clone: {:?}", r.lines);
+            assert!(r.has("write 1 false"), "writes to a read-only view are ignored without an exception: {:?}", r.lines);
             assert!(r.has("ours true false false"), "{:?}", r.lines);
             assert!(r.has("sum 3 10"), "{:?}", r.lines);
             let s = r.host.buffer_stats();
@@ -583,11 +511,7 @@ globalThis.step3 = () => console.log('refs-after-gc', arcRefs());
             r.host.collect_garbage();
             r.turn();
             r.cmd("step3");
-            assert!(
-                r.has("refs-after-gc 0"),
-                "the Arc is released when JS collects the view: {:?}",
-                r.lines
-            );
+            assert!(r.has("refs-after-gc 0"), "the Arc is released when JS collects the view: {:?}", r.lines);
             r.no_errors();
         },
     );
@@ -623,29 +547,15 @@ globalThis.go = () => {
             assert!(r.has("total 6"), "{:?}", r.lines);
             assert!(r.has("after 0 0"), "{:?}", r.lines);
             let reuse = r.value("reuse ");
-            assert!(
-                reuse.starts_with("TypeError") && reuse.contains("detached"),
-                "{reuse}"
-            );
+            assert!(reuse.starts_with("TypeError") && reuse.contains("detached"), "{reuse}");
             let bad = r.value("bad-arg ");
             assert!(bad.starts_with("TypeError") && bad.ends_with(" 4"), "{bad}");
             let twice = r.value("twice ");
-            assert!(
-                twice.contains("moved twice") && twice.ends_with(" 4"),
-                "{twice}"
-            );
+            assert!(twice.contains("moved twice") && twice.ends_with(" 4"), "{twice}");
             assert!(r.value("ro ").contains("read-only"), "{:?}", r.lines);
-            assert!(
-                r.value("elem ").contains("expected Float32Array"),
-                "{:?}",
-                r.lines
-            );
+            assert!(r.value("elem ").contains("expected Float32Array"), "{:?}", r.lines);
             assert!(r.value("ab ").contains("ArrayBuffer"), "{:?}", r.lines);
-            assert!(
-                r.value("arr ").contains("expected Float32Array"),
-                "{:?}",
-                r.lines
-            );
+            assert!(r.value("arr ").contains("expected Float32Array"), "{:?}", r.lines);
             assert!(r.has("ok-two 6 0"), "{:?}", r.lines);
         },
     );
@@ -717,11 +627,7 @@ globalThis.panics = () => burst(big()).catch((e) => console.log('panic', e.code)
             // Dropped on the worker but not freed there: no checkpoint ran since, so nothing was
             // released yet (the release waits for the JS thread).
             let s = r.host.buffer_stats();
-            assert_eq!(
-                (s.tokens_live, s.released),
-                (0, base),
-                "a worker never frees JS memory: {s:?}"
-            );
+            assert_eq!((s.tokens_live, s.released), (0, base), "a worker never frees JS memory: {s:?}");
             r.line("finished 1024");
             assert_eq!(r.transfers_live(), 0);
             assert_eq!(r.host.buffer_stats().released, base + 1);
@@ -732,11 +638,7 @@ globalThis.panics = () => burst(big()).catch((e) => console.log('panic', e.code)
             await_record("hr-start 502");
             r.cmd("abort502");
             assert!(r.has("abandoned cancelled"), "{:?}", r.lines);
-            assert_eq!(
-                r.transfers_live(),
-                1,
-                "memory stays pinned while the zombie job runs"
-            );
+            assert_eq!(r.transfers_live(), 1, "memory stays pinned while the zombie job runs");
             for _ in 0..3 {
                 r.turn();
             }
@@ -744,9 +646,7 @@ globalThis.panics = () => burst(big()).catch((e) => console.log('panic', e.code)
             open(502);
             await_record("hr-done 502");
             // The late result (the buffer itself) is dropped on the JS thread and the memory freed.
-            r.until("zombie done", |h, _| {
-                h.offload_stats().dropped >= dropped0 + 1
-            });
+            r.until("zombie done", |h, _| h.offload_stats().dropped >= dropped0 + 1);
             r.turn();
             assert_eq!(r.transfers_live(), 0);
             assert_eq!(r.host.buffer_stats().released, base + 2);
@@ -760,10 +660,7 @@ globalThis.panics = () => burst(big()).catch((e) => console.log('panic', e.code)
             assert!(r.has("queued cancelled"), "{:?}", r.lines);
             r.turn();
             assert_eq!(r.transfers_live(), 1, "the queued call's buffer is freed");
-            assert!(
-                !recorded("oat-start 504"),
-                "an aborted queued call never starts"
-            );
+            assert!(!recorded("oat-start 504"), "an aborted queued call never starts");
             open(503);
             r.line("first 1024");
             r.turn();
@@ -815,25 +712,12 @@ fn shutdown_waits_for_workers_and_leaks_a_runtime_still_in_use() {
         "coop-start 601",
     );
     await_record("coop-dropped 601");
-    assert_eq!(
-        leaked, 0,
-        "a cooperative worker released its buffer in time"
-    );
+    assert_eq!(leaked, 0, "a cooperative worker released its buffer in time");
     assert!(took < Duration::from_millis(900), "{took:?}");
 
-    let (took, leaked) = run(
-        "shutdown-stuck",
-        "import { hold } from 'svelters:app/buf';\nhold(new Float32Array(64), 602).catch(() => {});\n",
-        "hold-start 602",
-    );
-    assert_eq!(
-        leaked, 1,
-        "the runtime is leaked, not freed under the worker"
-    );
-    assert!(
-        took >= Duration::from_millis(900),
-        "waited for the grace period: {took:?}"
-    );
+    let (took, leaked) = run("shutdown-stuck", "import { hold } from 'svelters:app/buf';\nhold(new Float32Array(64), 602).catch(() => {});\n", "hold-start 602");
+    assert_eq!(leaked, 1, "the runtime is leaked, not freed under the worker");
+    assert!(took >= Duration::from_millis(900), "waited for the grace period: {took:?}");
     // The worker may still write its memory safely; let it finish.
     open(602);
     await_record("hold-dropped 602");
@@ -905,26 +789,12 @@ fn reload_with_a_transferred_buffer_in_flight() {
         assert!(host.take_errors().is_empty());
         (took, host.buffer_stats().leaked_runtimes - leaked)
     };
-    let (took, leaked) = reload(
-        "reload-coop",
-        "import { holdCoop } from 'svelters:app/buf';\nholdCoop(new Float32Array(64), 701).catch(() => {});\n",
-        "coop-start 701",
-    );
-    assert!(
-        recorded("coop-dropped 701"),
-        "the worker saw the cancel before the old runtime was dropped"
-    );
+    let (took, leaked) = reload("reload-coop", "import { holdCoop } from 'svelters:app/buf';\nholdCoop(new Float32Array(64), 701).catch(() => {});\n", "coop-start 701");
+    assert!(recorded("coop-dropped 701"), "the worker saw the cancel before the old runtime was dropped");
     assert_eq!(leaked, 0);
     assert!(took < Duration::from_millis(900), "{took:?}");
-    let (took, leaked) = reload(
-        "reload-stuck",
-        "import { hold } from 'svelters:app/buf';\nhold(new Float32Array(64), 702).catch(() => {});\n",
-        "hold-start 702",
-    );
-    assert_eq!(
-        leaked, 1,
-        "the old runtime is leaked while the worker holds its memory"
-    );
+    let (took, leaked) = reload("reload-stuck", "import { hold } from 'svelters:app/buf';\nhold(new Float32Array(64), 702).catch(() => {});\n", "hold-start 702");
+    assert_eq!(leaked, 1, "the old runtime is leaked while the worker holds its memory");
     assert!(took >= Duration::from_millis(900), "{took:?}");
     open(702);
     await_record("hold-dropped 702");
@@ -986,10 +856,7 @@ globalThis.start = async () => {
         |r| {
             r.cmd("start");
             r.until("costs", |_, l| l.iter().any(|x| x.starts_with("costs")));
-            println!(
-                "{}",
-                r.lines.iter().find(|x| x.starts_with("costs")).unwrap()
-            );
+            println!("{}", r.lines.iter().find(|x| x.starts_with("costs")).unwrap());
             println!("{:?}", r.host.buffer_stats());
             r.no_errors();
         },
@@ -998,15 +865,9 @@ globalThis.start = async () => {
 
 #[test]
 fn op_log_names_buffers_without_their_contents() {
-    let b = svelters_abi::BufferValue::whole(
-        svelters_abi::Elem::F32,
-        svelters_abi::BufData::Shared(Arc::new(Bytes(vec![0u8; 64]))),
-    );
+    let b = svelters_abi::BufferValue::whole(svelters_abi::Elem::F32, svelters_abi::BufData::Shared(Arc::new(Bytes(vec![0u8; 64]))));
     use svelters_abi::Value;
-    assert_eq!(
-        svelters_backend_log::json_string(&Value::List(vec![Value::Buffer(b), Value::I64(1)])),
-        "[\"<Float32Array 16>\",1]"
-    );
+    assert_eq!(svelters_backend_log::json_string(&Value::List(vec![Value::Buffer(b), Value::I64(1)])), "[\"<Float32Array 16>\",1]");
 }
 
 struct Bytes(Vec<u8>);
@@ -1025,24 +886,12 @@ unsafe impl svelters_abi::BufSource for Bytes {
 #[test]
 fn typings_mark_moved_and_read_only_buffers() {
     let ts = svelters::exports::typescript();
-    let m = ts
-        .split("declare module 'svelters:app/buf'")
-        .nth(1)
-        .expect("buf module");
+    let m = ts.split("declare module 'svelters:app/buf'").nth(1).expect("buf module");
     assert!(m.contains("import type { NativeObject, AsyncOptions, ReadonlyFloat32Array } from '@svelters/types/core';"), "{m}");
     assert!(m.contains("export function scale(samples: Float32Array, k: number, tag: number, options?: AsyncOptions): Promise<Float32Array>;"), "{m}");
-    assert!(
-        m.contains("@param samples moved to Rust: the array is detached"),
-        "{m}"
-    );
-    assert!(
-        m.contains("export function view(): ReadonlyFloat32Array;"),
-        "{m}"
-    );
-    assert!(
-        m.contains("export function isOurs(v: ReadonlyFloat32Array): boolean;"),
-        "{m}"
-    );
+    assert!(m.contains("@param samples moved to Rust: the array is detached"), "{m}");
+    assert!(m.contains("export function view(): ReadonlyFloat32Array;"), "{m}");
+    assert!(m.contains("export function isOurs(v: ReadonlyFloat32Array): boolean;"), "{m}");
     assert!(m.contains("export interface Frame { id: number; samples: Float32Array; stats?: ReadonlyFloat32Array | null; }"), "{m}");
     assert!(m.contains("export function lens(chunks: Uint8Array[], options?: AsyncOptions): Promise<Uint8Array[]>;"), "{m}");
 }

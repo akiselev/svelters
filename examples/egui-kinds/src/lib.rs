@@ -37,19 +37,9 @@ impl Dim {
         let t = text.trim();
         let split = t.find(|c: char| c.is_alphabetic()).unwrap_or(t.len());
         let (num, unit) = (t[..split].trim(), t[split..].trim());
-        let n: f64 = num
-            .parse()
-            .map_err(|_| format!("`{num}` is not a number"))?;
+        let n: f64 = num.parse().map_err(|_| format!("`{num}` is not a number"))?;
         let units = self.units();
-        let scale = if unit.is_empty() {
-            units[0].1
-        } else {
-            units
-                .iter()
-                .find(|(u, _)| *u == unit)
-                .ok_or_else(|| format!("unknown unit `{unit}`"))?
-                .1
-        };
+        let scale = if unit.is_empty() { units[0].1 } else { units.iter().find(|(u, _)| *u == unit).ok_or_else(|| format!("unknown unit `{unit}`"))?.1 };
         Ok(n * scale)
     }
 
@@ -58,11 +48,7 @@ impl Dim {
         let (u, s) = self.units()[0];
         let v = si / s;
         let v = (v * 1e6).round() / 1e6;
-        if units_shown {
-            format!("{v} {u}")
-        } else {
-            format!("{v}")
-        }
+        if units_shown { format!("{v} {u}") } else { format!("{v}") }
     }
 }
 
@@ -106,21 +92,14 @@ impl Widget for QuantityField {
     fn measure(&mut self, cx: &mut MeasureCx<'_>, avail: AvailableSpace) -> egui::Vec2 {
         let field = cx.text_field_size(&self.text, avail.width_or(160.0));
         let label = cx.text_size(&self.label, None);
-        let problem = if self.problem.is_some() {
-            cx.row_height()
-        } else {
-            0.0
-        };
+        let problem = if self.problem.is_some() { cx.row_height() } else { 0.0 };
         egui::vec2(field.x + label.x + 8.0, field.y + problem)
     }
 
     fn ui(&mut self, ui: &mut egui::Ui, cx: &mut WidgetCx<'_>) -> egui::Response {
         let focused = ui.ctx().memory(|m| m.has_focus(cx.id()));
         if !focused && self.shown != Some(self.value) {
-            self.text = self
-                .value
-                .map(|v| self.dim.format(v, self.units_shown))
-                .unwrap_or_default();
+            self.text = self.value.map(|v| self.dim.format(v, self.units_shown)).unwrap_or_default();
             self.shown = Some(self.value);
         }
         let mut resp = None;
@@ -128,20 +107,13 @@ impl Widget for QuantityField {
             ui.horizontal(|ui| {
                 ui.label(self.label.as_str());
                 let w = ui.available_width();
-                let r = ui.add(
-                    egui::TextEdit::singleline(&mut self.text)
-                        .id(cx.id())
-                        .desired_width(w),
-                );
+                let r = ui.add(egui::TextEdit::singleline(&mut self.text).id(cx.id()).desired_width(w));
                 if r.changed() {
                     cx.emit(&self.edited, self.text.clone());
                     self.parse_error = self.dim.parse(&self.text).is_err();
                     cx.set_state(&cad::INVALID, self.parse_error);
                 }
-                if r.lost_focus()
-                    && ui.input(|i| i.key_pressed(egui::Key::Enter))
-                    && !self.parse_error
-                {
+                if r.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) && !self.parse_error {
                     if let Ok(v) = self.dim.parse(&self.text) {
                         cx.set(&mut self.value, Some(v));
                         self.shown = None;

@@ -72,11 +72,7 @@ pub struct Budgets {
 
 impl Default for Budgets {
     fn default() -> Self {
-        Budgets {
-            warn: Duration::from_millis(8),
-            interrupt: Duration::from_millis(50),
-            mount: Duration::from_millis(500),
-        }
+        Budgets { warn: Duration::from_millis(8), interrupt: Duration::from_millis(50), mount: Duration::from_millis(500) }
     }
 }
 
@@ -89,9 +85,7 @@ pub struct FaultPolicy {
 
 impl Default for FaultPolicy {
     fn default() -> Self {
-        FaultPolicy {
-            handler_errors: Some((5, Duration::from_secs(10))),
-        }
+        FaultPolicy { handler_errors: Some((5, Duration::from_secs(10))) }
     }
 }
 
@@ -118,10 +112,7 @@ impl Default for EmbedConfig {
     fn default() -> Self {
         EmbedConfig {
             id_salt: "svelters",
-            host: HostConfig {
-                quit_on_last_window: false,
-                ..HostConfig::default()
-            },
+            host: HostConfig { quit_on_last_window: false, ..HostConfig::default() },
             budgets: Budgets::default(),
             faults: FaultPolicy::default(),
             timer_horizon: Duration::from_millis(50),
@@ -135,15 +126,7 @@ impl EmbedConfig {
     /// under its `turn_budget` (as before EM1), quitting when the last window goes if it says so.
     pub fn app(host: HostConfig) -> EmbedConfig {
         let b = host.turn_budget.unwrap_or(Duration::from_secs(24 * 3600));
-        EmbedConfig {
-            host,
-            budgets: Budgets {
-                warn: b,
-                interrupt: b,
-                mount: b,
-            },
-            ..EmbedConfig::default()
-        }
+        EmbedConfig { host, budgets: Budgets { warn: b, interrupt: b, mount: b }, ..EmbedConfig::default() }
     }
 }
 
@@ -248,10 +231,7 @@ impl Props {
     fn encoded(&self) -> Vec<(String, Value)> {
         let mut v = self.set.clone();
         if !self.delete.is_empty() {
-            v.push((
-                "$$delete".into(),
-                Value::List(self.delete.iter().map(|k| Value::Str(k.clone())).collect()),
-            ));
+            v.push(("$$delete".into(), Value::List(self.delete.iter().map(|k| Value::Str(k.clone())).collect())));
         }
         v
     }
@@ -318,20 +298,8 @@ pub struct MountSpec {
 }
 
 impl MountSpec {
-    pub fn new(
-        entry: EntryId,
-        export: impl Into<Cow<'static, str>>,
-        slot: SlotId,
-        key: impl Into<RootKey>,
-    ) -> MountSpec {
-        MountSpec {
-            entry,
-            export: export.into(),
-            slot,
-            key: key.into(),
-            props: Props::new(),
-            owner: RootOwner::InProcess,
-        }
+    pub fn new(entry: EntryId, export: impl Into<Cow<'static, str>>, slot: SlotId, key: impl Into<RootKey>) -> MountSpec {
+        MountSpec { entry, export: export.into(), slot, key: key.into(), props: Props::new(), owner: RootOwner::InProcess }
     }
     pub fn props(mut self, props: Props) -> MountSpec {
         self.props = props;
@@ -371,28 +339,15 @@ impl std::error::Error for EmbedError {}
 #[derive(Clone, Debug)]
 pub enum EmbedEvent {
     Mounted(RootId),
-    Faulted {
-        root: RootId,
-        error: RootError,
-    },
-    CloseDecided {
-        root: RootId,
-        allow: bool,
-    },
+    Faulted { root: RootId, error: RootError },
+    CloseDecided { root: RootId, allow: bool },
     /// JS wrote `root().title` or `root().dirty`: re-read [`Embed::root_info`].
     InfoChanged(RootId),
     /// `root().emit(name, value)`.
-    Emitted {
-        root: RootId,
-        name: String,
-        value: Value,
-    },
+    Emitted { root: RootId, name: String, value: Value },
     /// Reported, not fatal: a handler exception (`root` from the handle it was dispatched on), or an
     /// error with no root context (a timer, a shared microtask).
-    Error {
-        root: Option<RootId>,
-        error: JsError,
-    },
+    Error { root: Option<RootId>, error: JsError },
     /// Out of memory or another runtime-wide failure: every root faulted.
     RuntimeFaulted(JsError),
 }
@@ -473,12 +428,7 @@ impl Drop for EmbedInner {
         current::unregister(self.id);
         let salt = self.cfg.id_salt;
         self.salt_ctx.data_mut(|d| {
-            if let Some(s) = d
-                .get_temp_mut_or_default::<Salts>(salts_id())
-                .0
-                .iter()
-                .position(|x| x == salt)
-            {
+            if let Some(s) = d.get_temp_mut_or_default::<Salts>(salts_id()).0.iter().position(|x| x == salt) {
                 d.get_temp_mut_or_default::<Salts>(salts_id()).0.remove(s);
             }
         });
@@ -495,16 +445,11 @@ impl Embed {
             s.0.push(cfg.id_salt.to_string());
             clash
         });
-        debug_assert!(
-            !clash,
-            "svelters-egui: two embeds with the id salt '{}' in one egui Context",
-            cfg.id_salt
-        );
+        debug_assert!(!clash, "svelters-egui: two embeds with the id salt '{}' in one egui Context", cfg.id_salt);
         let backend = EguiBackend::new();
         backend.bind_ctx(ctx);
         let host = Host::new_owned(backend.clone(), cfg.host.clone()).map_err(EmbedError::Host)?;
-        host.start()
-            .map_err(|e| EmbedError::Host(JsError::new(ErrorKind::Host, e.to_string())))?;
+        host.start().map_err(|e| EmbedError::Host(JsError::new(ErrorKind::Host, e.to_string())))?;
         host.set_turn_budget(Some(cfg.budgets.interrupt));
         let id = EmbedId::next();
         let inner = Rc::new(EmbedInner {
@@ -512,10 +457,7 @@ impl Embed {
             host,
             backend,
             cfg,
-            st: RefCell::new(State {
-                next_root: 1,
-                ..State::default()
-            }),
+            st: RefCell::new(State { next_root: 1, ..State::default() }),
             probe: BusyProbe::default(),
             salt_ctx: ctx.clone(),
         });
@@ -603,18 +545,8 @@ impl Embed {
             (n.to_raw(), rix)
         };
         let slot = SlotId(h);
-        self.inner
-            .backend
-            .0
-            .root_vp
-            .borrow_mut()
-            .insert(rix, Some(egui::ViewportId::ROOT));
-        let scale = self
-            .inner
-            .backend
-            .ctx()
-            .map(|c| c.pixels_per_point())
-            .unwrap_or(1.0);
+        self.inner.backend.0.root_vp.borrow_mut().insert(rix, Some(egui::ViewportId::ROOT));
+        let scale = self.inner.backend.ctx().map(|c| c.pixels_per_point()).unwrap_or(1.0);
         let mut st = self.inner.st.borrow_mut();
         st.slot_keys.insert(key.clone(), slot);
         st.slots.insert(slot, Slot::new(key, opts, rix, scale));
@@ -640,9 +572,7 @@ impl Embed {
     /// running (§5.3).
     pub fn set_visible(&self, slot: SlotId, visible: bool) {
         let mut st = self.inner.st.borrow_mut();
-        let Some(s) = st.slots.get_mut(&slot) else {
-            return;
-        };
+        let Some(s) = st.slots.get_mut(&slot) else { return };
         if s.visible == visible {
             return;
         }
@@ -650,12 +580,7 @@ impl Embed {
         s.undrawn = 0;
         let (vp, rix) = (s.viewport, s.rix);
         drop(st);
-        self.inner
-            .backend
-            .0
-            .root_vp
-            .borrow_mut()
-            .insert(rix, visible.then_some(vp));
+        self.inner.backend.0.root_vp.borrow_mut().insert(rix, visible.then_some(vp));
         self.wake_viewport(vp);
     }
 
@@ -666,9 +591,7 @@ impl Embed {
     /// scroll), JS instances and `$state` are untouched.
     pub fn set_viewport(&self, slot: SlotId, viewport: egui::ViewportId) {
         let mut st = self.inner.st.borrow_mut();
-        let Some(s) = st.slots.get_mut(&slot) else {
-            return;
-        };
+        let Some(s) = st.slots.get_mut(&slot) else { return };
         if s.viewport == viewport {
             return;
         }
@@ -681,12 +604,7 @@ impl Embed {
         }
         let (visible, rix) = (s.visible, s.rix);
         drop(st);
-        self.inner
-            .backend
-            .0
-            .root_vp
-            .borrow_mut()
-            .insert(rix, visible.then_some(viewport));
+        self.inner.backend.0.root_vp.borrow_mut().insert(rix, visible.then_some(viewport));
         if let Some(ctx) = self.inner.backend.ctx() {
             ctx.request_repaint_of(old);
         }
@@ -698,9 +616,7 @@ impl Embed {
     /// Queues a mount. Errors only for a bad slot or entry, an occupied slot or a key in use.
     pub fn mount(&self, spec: MountSpec) -> Result<RootId, EmbedError> {
         if spec.owner != RootOwner::InProcess {
-            return Err(EmbedError::Unsupported(
-                "isolates (RootOwner::Isolate, SV15)",
-            ));
+            return Err(EmbedError::Unsupported("isolates (RootOwner::Isolate, SV15)"));
         }
         let mut st = self.inner.st.borrow_mut();
         if spec.entry.0 >= st.entries {
@@ -716,17 +632,7 @@ impl Embed {
         let id = RootId(st.next_root);
         st.next_root += 1;
         st.slots.get_mut(&spec.slot).unwrap().root = Some(id);
-        st.roots.insert(
-            id,
-            Root::new(
-                spec.key,
-                spec.entry,
-                spec.export.into_owned(),
-                spec.slot,
-                spec.owner,
-                &spec.props,
-            ),
-        );
+        st.roots.insert(id, Root::new(spec.key, spec.entry, spec.export.into_owned(), spec.slot, spec.owner, &spec.props));
         st.commands.push_back(Command::Mount(id));
         drop(st);
         self.repaint();
@@ -747,9 +653,7 @@ impl Embed {
     /// Unmounts the root (queued); its slot becomes empty.
     pub fn unmount(&self, root: RootId) {
         let mut st = self.inner.st.borrow_mut();
-        let Some(r) = st.roots.get_mut(&root) else {
-            return;
-        };
+        let Some(r) = st.roots.get_mut(&root) else { return };
         if matches!(r.state, RootState::Unmounting) {
             return;
         }
@@ -807,9 +711,7 @@ impl Embed {
     /// A slot of `vp` changed in a way its next draw and the next logic both see (visibility,
     /// viewport): a pass of `vp`, and of the root viewport too when `vp`'s passes run no logic.
     fn wake_viewport(&self, vp: egui::ViewportId) {
-        let Some(ctx) = self.inner.backend.ctx() else {
-            return;
-        };
+        let Some(ctx) = self.inner.backend.ctx() else { return };
         ctx.request_repaint_of(vp);
         if vp != egui::ViewportId::ROOT && !self.inner.cfg.prepass_plugin {
             ctx.request_repaint_of(egui::ViewportId::ROOT);
@@ -862,11 +764,7 @@ impl Embed {
         b.route_repaints(ctx, drawing);
         // R17: `write` fails from here to the end of the egui pass (the pass hooks return the scene
         // to `Idle`); `defer` runs at the next logic. A logic-only frame (no pass) ends in `Idle`.
-        b.0.scene.set_phase(if b.0.scene.in_pass() {
-            Phase::Ui
-        } else {
-            Phase::Idle
-        });
+        b.0.scene.set_phase(if b.0.scene.in_pass() { Phase::Ui } else { Phase::Idle });
         let dt = t0.elapsed();
         {
             let mut st = self.inner.st.borrow_mut();
@@ -876,10 +774,7 @@ impl Embed {
         }
         #[cfg(debug_assertions)]
         if dt > self.inner.cfg.budgets.warn * 4 && self.inner.cfg.host.echo_errors {
-            eprintln!(
-                "[svelters-egui] embed logic took {dt:?} (budget warn {:?})",
-                self.inner.cfg.budgets.warn
-            );
+            eprintln!("[svelters-egui] embed logic took {dt:?} (budget warn {:?})", self.inner.cfg.budgets.warn);
         }
         self.publish();
     }
@@ -892,58 +787,22 @@ impl Embed {
             let st = self.inner.st.borrow();
             let Some(s) = st.slots.get(&slot) else {
                 debug_assert!(false, "show_slot: a destroyed or foreign slot");
-                return SlotResponse {
-                    rect: egui::Rect::NOTHING,
-                    content_size: egui::Vec2::ZERO,
-                    state: RootState::Empty,
-                };
+                return SlotResponse { rect: egui::Rect::NOTHING, content_size: egui::Vec2::ZERO, state: RootState::Empty };
             };
-            (
-                s.key.clone(),
-                s.visible,
-                s.root,
-                s.opts.label.clone(),
-                s.opts.fault_ui.clone(),
-            )
+            (s.key.clone(), s.visible, s.root, s.opts.label.clone(), s.opts.fault_ui.clone())
         };
-        let state = root
-            .and_then(|r| {
-                self.inner
-                    .st
-                    .borrow()
-                    .roots
-                    .get(&r)
-                    .map(|r| r.state.clone())
-            })
-            .unwrap_or(RootState::Empty);
+        let state = root.and_then(|r| self.inner.st.borrow().roots.get(&r).map(|r| r.state.clone())).unwrap_or(RootState::Empty);
         if !visible {
-            self.warn_once(slot, slots::WARN_HIDDEN, |key| {
-                SlotWarning::DrawnWhileHidden { slot, key }
-            });
-            return SlotResponse {
-                rect: egui::Rect::NOTHING,
-                content_size: egui::Vec2::ZERO,
-                state: RootState::Hidden,
-            };
+            self.warn_once(slot, slots::WARN_HIDDEN, |key| SlotWarning::DrawnWhileHidden { slot, key });
+            return SlotResponse { rect: egui::Rect::NOTHING, content_size: egui::Vec2::ZERO, state: RootState::Hidden };
         }
         let pending_focus = self.note_drawn(ui, slot);
         let rect = ui.available_rect_before_wrap();
         if let (RootState::Faulted(err), Some(r)) = (&state, root) {
-            let mut child = ui.new_child(
-                egui::UiBuilder::new()
-                    .max_rect(rect)
-                    .scope_id(crate::ids::slot_id(self.salt(), &key).with("fault")),
-            );
+            let mut child = ui.new_child(egui::UiBuilder::new().max_rect(rect).scope_id(crate::ids::slot_id(self.salt(), &key).with("fault")));
             let reload = match &fault_ui {
                 FaultUi::Default => {
-                    let name = self
-                        .inner
-                        .st
-                        .borrow()
-                        .roots
-                        .get(&r)
-                        .map(|r| r.key.0.clone())
-                        .unwrap_or_default();
+                    let name = self.inner.st.borrow().roots.get(&r).map(|r| r.key.0.clone()).unwrap_or_default();
                     child.label(format!("{name} failed: {}", err.error.message));
                     child.button("Reload").clicked()
                 }
@@ -954,23 +813,11 @@ impl Embed {
                 self.restart_root(r);
             }
             self.publish();
-            return SlotResponse {
-                rect,
-                content_size: egui::Vec2::ZERO,
-                state,
-            };
+            return SlotResponse { rect, content_size: egui::Vec2::ZERO, state };
         }
         let b = &self.inner.backend;
-        let sid =
-            b.0.scene
-                .borrow()
-                .get(slot.0)
-                .map(|n| n.id)
-                .unwrap_or(egui::Id::NULL);
-        let mut builder = egui::UiBuilder::new()
-            .max_rect(rect)
-            .scope_id(sid)
-            .accessibility_role(egui::accesskit::Role::Group);
+        let sid = b.0.scene.borrow().get(slot.0).map(|n| n.id).unwrap_or(egui::Id::NULL);
+        let mut builder = egui::UiBuilder::new().max_rect(rect).scope_id(sid).accessibility_role(egui::accesskit::Role::Group);
         if let Some(l) = &label {
             builder = builder.accessibility_label(l.clone());
         }
@@ -983,9 +830,7 @@ impl Embed {
         b.0.in_frame.set(true);
         b.0.pass_active.set(true);
         let mut out = Vec::new();
-        let res = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            b.slot_ui(&mut child, slot.0, &mut out)
-        }));
+        let res = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| b.slot_ui(&mut child, slot.0, &mut out)));
         b.0.pass_active.set(false);
         ui.advance_cursor_after_rect(rect);
         let (drawn, content) = match res {
@@ -997,11 +842,7 @@ impl Embed {
                     .or_else(|| p.downcast_ref::<String>().cloned())
                     .unwrap_or_else(|| "panic".into());
                 if let Some(r) = root {
-                    self.fault_later(
-                        r,
-                        FaultCause::Panic,
-                        JsError::new(ErrorKind::Host, format!("panic while drawing: {msg}")),
-                    );
+                    self.fault_later(r, FaultCause::Panic, JsError::new(ErrorKind::Host, format!("panic while drawing: {msg}")));
                 }
                 (rect, egui::Vec2::ZERO)
             }
@@ -1022,11 +863,7 @@ impl Embed {
             self.repaint();
         }
         self.publish();
-        SlotResponse {
-            rect: drawn,
-            content_size: content,
-            state,
-        }
+        SlotResponse { rect: drawn, content_size: content, state }
     }
 
     /// The debug checks and the per-viewport fields of a slot being drawn in `ui` (visible): marks it
@@ -1043,22 +880,10 @@ impl Embed {
             s.warned &= !(slots::WARN_UNDRAWN | slots::WARN_HIDDEN);
             let rescaled = s.scale != ppp;
             s.scale = ppp;
-            (
-                (s.viewport != vp).then_some(s.viewport),
-                rescaled,
-                s.pending_focus.take(),
-                s.rix,
-            )
+            ((s.viewport != vp).then_some(s.viewport), rescaled, s.pending_focus.take(), s.rix)
         };
         if let Some(set) = wrong {
-            self.warn_once(slot, slots::WARN_VIEWPORT, |key| {
-                SlotWarning::WrongViewport {
-                    slot,
-                    key,
-                    set,
-                    drawn: vp,
-                }
-            });
+            self.warn_once(slot, slots::WARN_VIEWPORT, |key| SlotWarning::WrongViewport { slot, key, set, drawn: vp });
         }
         if rescaled {
             self.inner.backend.0.scene.borrow_mut().mark_full(rix);
@@ -1103,9 +928,7 @@ impl Embed {
     /// Records a debug-check warning once per slot and kind (until the slot behaves again).
     fn warn_once(&self, slot: SlotId, bit: u8, w: impl FnOnce(String) -> SlotWarning) {
         let mut st = self.inner.st.borrow_mut();
-        let Some(s) = st.slots.get_mut(&slot) else {
-            return;
-        };
+        let Some(s) = st.slots.get_mut(&slot) else { return };
         if s.warned & bit != 0 {
             return;
         }
@@ -1146,11 +969,7 @@ impl Embed {
         }
         let deferred = vp != egui::ViewportId::ROOT;
         let logic_here = deferred && self.inner.cfg.prepass_plugin;
-        self.inner.backend.set_logic_vp(if logic_here {
-            vp
-        } else {
-            egui::ViewportId::ROOT
-        });
+        self.inner.backend.set_logic_vp(if logic_here { vp } else { egui::ViewportId::ROOT });
         if logic_here {
             self.logic(ctx);
         }
@@ -1180,11 +999,7 @@ impl Embed {
             }
         }
         for (slot, passes) in late {
-            self.warn_once(slot, slots::WARN_UNDRAWN, |key| SlotWarning::NotDrawn {
-                slot,
-                key,
-                passes,
-            });
+            self.warn_once(slot, slots::WARN_UNDRAWN, |key| SlotWarning::NotDrawn { slot, key, passes });
         }
         self.inner.backend.set_logic_vp(egui::ViewportId::ROOT);
     }
@@ -1213,56 +1028,31 @@ impl Embed {
         let b = &self.inner.backend;
         let st = self.inner.st.borrow();
         let mut busy = Busy::empty();
-        busy.set(
-            Busy::EVENTS,
-            hb.events || hb.running || b.0.shared.wake.load(std::sync::atomic::Ordering::Acquire),
-        );
+        busy.set(Busy::EVENTS, hb.events || hb.running || b.0.shared.wake.load(std::sync::atomic::Ordering::Acquire));
         busy.set(Busy::CHANGES, hb.changes);
         busy.set(Busy::JOBS, hb.jobs);
         busy.set(Busy::OPS_IN_FLIGHT, hb.ops_in_flight > 0);
         busy.set(Busy::STORES, hb.stores);
         busy.set(Busy::FRAME, hb.frame || b.0.frame_pending.get());
         busy.set(Busy::OUTBOX, b.0.checkpoint_pending.get());
-        let info_pending = st
-            .roots
-            .values()
-            .any(|r| r.state.is_live() && r.sent.as_ref() != Some(&self.info_of(&st, r)));
+        let info_pending = st.roots.values().any(|r| r.state.is_live() && r.sent.as_ref() != Some(&self.info_of(&st, r)));
         busy.set(Busy::COMMANDS, !st.commands.is_empty() || info_pending);
-        busy.set(
-            Busy::MOUNTING,
-            st.roots
-                .values()
-                .any(|r| matches!(r.state, RootState::Mounting)),
-        );
+        busy.set(Busy::MOUNTING, st.roots.values().any(|r| matches!(r.state, RootState::Mounting)));
         // A visible slot with a root is stale until drawn once, then while its scene root has queued
         // layout work; leaves anywhere may wait to be remeasured (next logic).
         let scene = b.0.scene.borrow();
         let stale = st.slots.iter().any(|(id, s)| {
-            s.visible
-                && s.root.is_some()
-                && (s.rect.is_none() || scene.slot_root(id.0).is_some_and(|e| !e.dirty.is_empty()))
+            s.visible && s.root.is_some() && (s.rect.is_none() || scene.slot_root(id.0).is_some_and(|e| !e.dirty.is_empty()))
         });
-        let remeasure = scene
-            .roots
-            .iter()
-            .any(|(_, e)| !e.dirty.remeasure.is_empty());
+        let remeasure = scene.roots.iter().any(|(_, e)| !e.dirty.remeasure.is_empty());
         busy.set(Busy::LAYOUT, stale || remeasure);
         drop(scene);
         // R16: Rust writes deferred to the next logic, and announcements not delivered yet.
         busy |= settle::scene_busy(&b.0.scene);
         let now = Instant::now();
-        let next = [hb.next_timer, b.0.deadline.get()]
-            .into_iter()
-            .flatten()
-            .min();
-        busy.set(
-            Busy::TIMER_SOON,
-            next.is_some_and(|t| t <= now + self.inner.cfg.timer_horizon),
-        );
-        Settle {
-            busy,
-            next_timer: next,
-        }
+        let next = [hb.next_timer, b.0.deadline.get()].into_iter().flatten().min();
+        busy.set(Busy::TIMER_SOON, next.is_some_and(|t| t <= now + self.inner.cfg.timer_horizon));
+        Settle { busy, next_timer: next }
     }
 
     /// A `Send + Sync` mirror of [`Embed::settled`] for idle barriers on other threads.
@@ -1296,22 +1086,14 @@ impl Embed {
     }
 
     /// Last frame's screen rect of the node with `anchor="…"` in `root` (overlays, tutorials; SV7).
-    pub fn anchor_rect(
-        &self,
-        root: RootId,
-        anchor: &str,
-    ) -> Option<(egui::ViewportId, egui::Rect)> {
+    pub fn anchor_rect(&self, root: RootId, anchor: &str) -> Option<(egui::ViewportId, egui::Rect)> {
         let n = self.anchored(root, anchor)?;
         let st = self.inner.st.borrow();
         let s = st.slots.get(&st.roots.get(&root)?.slot)?;
         let origin = s.rect?.min.to_vec2();
         let scene = self.inner.backend.0.scene.borrow();
         let node = scene.get(n)?;
-        let r = if node.drawn != egui::Rect::NOTHING && node.children.is_empty() {
-            node.drawn
-        } else {
-            node.rect.translate(origin)
-        };
+        let r = if node.drawn != egui::Rect::NOTHING && node.children.is_empty() { node.drawn } else { node.rect.translate(origin) };
         Some((s.viewport, r))
     }
 
@@ -1328,13 +1110,11 @@ impl Embed {
         let slot = self.inner.st.borrow().roots.get(&root)?.slot;
         let scene = self.inner.backend.0.scene.borrow();
         let r = scene.core[scene.ix(scene.live(slot.0).ok()?)].root;
-        scene
-            .ids()
-            .find(|&id| {
-                let i = scene.ix(id);
-                scene.core[i].root == r && scene.common(i).anchor == anchor
-            })
-            .map(NodeId::to_raw)
+        scene.ids().find(|&id| {
+            let i = scene.ix(id);
+            scene.core[i].root == r && scene.common(i).anchor == anchor
+        })
+        .map(NodeId::to_raw)
     }
 
     /// Exports, op log, stats, interrupt flag: the underlying host.
@@ -1359,10 +1139,7 @@ impl Embed {
 
     fn info_of(&self, st: &State, r: &Root) -> SentInfo {
         let s = st.slots.get(&r.slot);
-        let size = s
-            .and_then(|s| s.rect)
-            .map(|x| x.size())
-            .unwrap_or(egui::Vec2::ZERO);
+        let size = s.and_then(|s| s.rect).map(|x| x.size()).unwrap_or(egui::Vec2::ZERO);
         SentInfo {
             key: r.key.0.clone(),
             visible: s.is_some_and(|s| s.visible),
@@ -1399,9 +1176,7 @@ impl Embed {
 
     fn apply_commands(&self) {
         loop {
-            let Some(cmd) = self.inner.st.borrow_mut().commands.pop_front() else {
-                break;
-            };
+            let Some(cmd) = self.inner.st.borrow_mut().commands.pop_front() else { break };
             match cmd {
                 Command::Mount(id) => self.do_mount(id),
                 Command::Props(id, patch) => {
@@ -1424,11 +1199,7 @@ impl Embed {
                         Some(_) => true,
                         None => continue,
                     };
-                    self.inner
-                        .st
-                        .borrow_mut()
-                        .events
-                        .push(EmbedEvent::CloseDecided { root: id, allow });
+                    self.inner.st.borrow_mut().events.push(EmbedEvent::CloseDecided { root: id, allow });
                 }
                 Command::Restart(id) => {
                     if self.state(id).is_some_and(|s| s.is_faulted()) {
@@ -1449,28 +1220,13 @@ impl Embed {
     }
 
     fn state(&self, id: RootId) -> Option<RootState> {
-        self.inner
-            .st
-            .borrow()
-            .roots
-            .get(&id)
-            .map(|r| r.state.clone())
+        self.inner.st.borrow().roots.get(&id).map(|r| r.state.clone())
     }
 
     fn do_mount(&self, id: RootId) {
-        let Some((entry, export, slot, props, key)) =
-            self.inner.st.borrow().roots.get(&id).and_then(|r| {
-                matches!(r.state, RootState::Mounting).then(|| {
-                    (
-                        r.entry,
-                        r.export.clone(),
-                        r.slot,
-                        r.props.clone(),
-                        r.key.0.clone(),
-                    )
-                })
-            })
-        else {
+        let Some((entry, export, slot, props, key)) = self.inner.st.borrow().roots.get(&id).and_then(|r| {
+            matches!(r.state, RootState::Mounting).then(|| (r.entry, r.export.clone(), r.slot, r.props.clone(), r.key.0.clone()))
+        }) else {
             return;
         };
         // The root's nodes take ids from its key as they are inserted (the attach hook).
@@ -1492,11 +1248,7 @@ impl Embed {
                 }
             }
             Err(e) => {
-                let cause = if e.kind == ErrorKind::Interrupted {
-                    FaultCause::Interrupt
-                } else {
-                    FaultCause::Render
-                };
+                let cause = if e.kind == ErrorKind::Interrupted { FaultCause::Interrupt } else { FaultCause::Render };
                 self.fault(id, cause, e);
             }
         }
@@ -1508,9 +1260,7 @@ impl Embed {
         }
         self.dispose(id);
         let mut st = self.inner.st.borrow_mut();
-        let Some(r) = st.roots.remove(&id) else {
-            return;
-        };
+        let Some(r) = st.roots.remove(&id) else { return };
         if let Some(s) = st.slots.get_mut(&r.slot)
             && s.root == Some(id)
         {
@@ -1533,14 +1283,9 @@ impl Embed {
     /// Disposes the root's JS (its natives, handlers, effects) and frees whatever is still under
     /// its slot. The root's table entry stays.
     fn dispose(&self, id: RootId) {
-        let Some(slot) = self.inner.st.borrow().roots.get(&id).map(|r| r.slot) else {
-            return;
-        };
+        let Some(slot) = self.inner.st.borrow().roots.get(&id).map(|r| r.slot) else { return };
         if let Err(e) = self.inner.host.unmount_root(id.0) {
-            self.inner.st.borrow_mut().events.push(EmbedEvent::Error {
-                root: Some(id),
-                error: e,
-            });
+            self.inner.st.borrow_mut().events.push(EmbedEvent::Error { root: Some(id), error: e });
         }
         // What a failed dispose left behind (a root interrupted mid-update) goes natively.
         let b = &self.inner.backend;
@@ -1558,14 +1303,7 @@ impl Embed {
             && let Some(host) = b.host()
         {
             for (i, &h) in dead.iter().enumerate() {
-                host.on_destroyed(
-                    h,
-                    if i == 0 {
-                        svelters_abi::SVL_GONE_OWNER
-                    } else {
-                        svelters_abi::SVL_GONE_PARENT
-                    },
-                );
+                host.on_destroyed(h, if i == 0 { svelters_abi::SVL_GONE_OWNER } else { svelters_abi::SVL_GONE_PARENT });
             }
         }
     }
@@ -1632,9 +1370,7 @@ impl Embed {
     }
 
     fn do_destroy_slot(&self, slot: SlotId) {
-        let Some(s) = self.inner.st.borrow_mut().slots.remove(&slot) else {
-            return;
-        };
+        let Some(s) = self.inner.st.borrow_mut().slots.remove(&slot) else { return };
         self.inner.st.borrow_mut().slot_keys.remove(&s.key);
         self.inner.backend.0.root_vp.borrow_mut().remove(&s.rix);
         if let Some(r) = s.root {
@@ -1645,24 +1381,13 @@ impl Embed {
         let dead: Vec<Handle> = {
             let mut scene = b.0.scene.borrow_mut();
             match scene.live(slot.0) {
-                Ok(n) => scene
-                    .free_subtree(n)
-                    .into_iter()
-                    .map(NodeId::to_raw)
-                    .collect(),
+                Ok(n) => scene.free_subtree(n).into_iter().map(NodeId::to_raw).collect(),
                 Err(_) => Vec::new(),
             }
         };
         if let Some(host) = b.host() {
             for (i, &h) in dead.iter().enumerate() {
-                host.on_destroyed(
-                    h,
-                    if i == 0 {
-                        svelters_abi::SVL_GONE_OWNER
-                    } else {
-                        svelters_abi::SVL_GONE_PARENT
-                    },
-                );
+                host.on_destroyed(h, if i == 0 { svelters_abi::SVL_GONE_OWNER } else { svelters_abi::SVL_GONE_PARENT });
             }
         }
     }
@@ -1684,19 +1409,14 @@ impl Embed {
 
     fn mark_faulted(&self, id: RootId, cause: FaultCause, error: JsError) -> bool {
         let mut st = self.inner.st.borrow_mut();
-        let Some(r) = st.roots.get_mut(&id) else {
-            return false;
-        };
+        let Some(r) = st.roots.get_mut(&id) else { return false };
         if r.state.is_faulted() || matches!(r.state, RootState::Unmounting) {
             return false;
         }
         let err = RootError { cause, error };
         r.state = RootState::Faulted(err.clone());
         st.stats.faults += 1;
-        st.events.push(EmbedEvent::Faulted {
-            root: id,
-            error: err,
-        });
+        st.events.push(EmbedEvent::Faulted { root: id, error: err });
         true
     }
 
@@ -1710,11 +1430,7 @@ impl Embed {
     }
 
     fn runtime_fault(&self, e: JsError) {
-        self.inner
-            .st
-            .borrow_mut()
-            .events
-            .push(EmbedEvent::RuntimeFaulted(e.clone()));
+        self.inner.st.borrow_mut().events.push(EmbedEvent::RuntimeFaulted(e.clone()));
         for id in self.roots() {
             self.fault(id, FaultCause::Runtime, e.clone());
         }
@@ -1744,19 +1460,12 @@ impl Embed {
                 (_, Some(r)) => {
                     let exceeded = {
                         let mut st = self.inner.st.borrow_mut();
-                        st.events.push(EmbedEvent::Error {
-                            root: Some(r),
-                            error: e.clone(),
-                        });
+                        st.events.push(EmbedEvent::Error { root: Some(r), error: e.clone() });
                         match (self.inner.cfg.faults.handler_errors, st.roots.get_mut(&r)) {
                             (Some((n, window)), Some(root)) => {
                                 let now = Instant::now();
                                 root.handler_errors.push_back(now);
-                                while root
-                                    .handler_errors
-                                    .front()
-                                    .is_some_and(|&t| now.duration_since(t) > window)
-                                {
+                                while root.handler_errors.front().is_some_and(|&t| now.duration_since(t) > window) {
                                     root.handler_errors.pop_front();
                                 }
                                 root.handler_errors.len() as u32 >= n
@@ -1768,17 +1477,12 @@ impl Embed {
                         self.fault(r, FaultCause::Handler, e);
                     }
                 }
-                (_, None) => self.inner.st.borrow_mut().events.push(EmbedEvent::Error {
-                    root: None,
-                    error: e,
-                }),
+                (_, None) => self.inner.st.borrow_mut().events.push(EmbedEvent::Error { root: None, error: e }),
             }
         }
         for m in self.inner.host.take_root_messages() {
             match m {
-                RootMessage::Fault { root, error } => {
-                    self.fault(RootId(root), FaultCause::Render, error)
-                }
+                RootMessage::Fault { root, error } => self.fault(RootId(root), FaultCause::Render, error),
                 RootMessage::Info { root, title, dirty } => {
                     let mut st = self.inner.st.borrow_mut();
                     if let Some(r) = st.roots.get_mut(&RootId(root)) {
@@ -1792,14 +1496,8 @@ impl Embed {
                     }
                 }
                 RootMessage::Emit { root, name, value } => {
-                    let value = serde_json::from_str(&value)
-                        .map(json_value)
-                        .unwrap_or(Value::Null);
-                    self.inner.st.borrow_mut().events.push(EmbedEvent::Emitted {
-                        root: RootId(root),
-                        name,
-                        value,
-                    });
+                    let value = serde_json::from_str(&value).map(json_value).unwrap_or(Value::Null);
+                    self.inner.st.borrow_mut().events.push(EmbedEvent::Emitted { root: RootId(root), name, value });
                 }
             }
         }
@@ -1807,9 +1505,5 @@ impl Embed {
 }
 
 fn viewport_name(v: egui::ViewportId) -> String {
-    if v == egui::ViewportId::ROOT {
-        "root".into()
-    } else {
-        format!("{:016x}", v.0.value())
-    }
+    if v == egui::ViewportId::ROOT { "root".into() } else { format!("{:016x}", v.0.value()) }
 }

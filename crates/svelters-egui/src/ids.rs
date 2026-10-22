@@ -31,9 +31,5 @@ pub(crate) fn root_base(salt: &str, key: &str) -> egui::Id {
 
 /// The id of node `h` (with `anchor`, empty if none) in a root whose base is `base`.
 pub(crate) fn rooted_id(base: egui::Id, h: u64, anchor: &str) -> egui::Id {
-    if anchor.is_empty() {
-        base.with(("h", h))
-    } else {
-        base.with(("a", anchor))
-    }
+    if anchor.is_empty() { base.with(("h", h)) } else { base.with(("a", anchor)) }
 }

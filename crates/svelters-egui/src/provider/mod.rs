@@ -41,10 +41,7 @@ mod state;
 pub use behavior::{__new_behavior, Behavior, BehaviorBox, BehaviorCx};
 
 pub use crate::scene::ext::{ExtBlock, ExtEntry, ExtId, ExtKey, ExtTicks, Storage};
-pub use state::{
-    IntoStateBits, StateBit, StateBitDef, StateBits, by_name as state_by_name,
-    registry as state_registry,
-};
+pub use state::{IntoStateBits, StateBit, StateBitDef, StateBits, by_name as state_by_name, registry as state_registry};
 
 use crate::scene::{Handle, Node, W};
 use crate::walk::Out;
@@ -67,10 +64,7 @@ pub mod __private {
 
     /// An index the generated tables do not have (an internal error).
     pub fn no_member(what: &str, i: usize) -> NativeError {
-        svelters_host::exports::__private::host_error(
-            "internal",
-            format!("no {what} #{i} on this kind"),
-        )
+        svelters_host::exports::__private::host_error("internal", format!("no {what} #{i} on this kind"))
     }
 }
 
@@ -200,8 +194,7 @@ pub trait KindDecl: Sized + 'static {
     #[doc(hidden)]
     fn __svelters_new() -> Self;
     #[doc(hidden)]
-    fn __svelters_set(&mut self, prop: usize, v: Value, cx: &CallCx<'_>)
-    -> Result<(), NativeError>;
+    fn __svelters_set(&mut self, prop: usize, v: Value, cx: &CallCx<'_>) -> Result<(), NativeError>;
     #[doc(hidden)]
     fn __svelters_reset(&mut self, prop: usize);
     #[doc(hidden)]
@@ -256,10 +249,7 @@ pub struct Event<T> {
 impl<T> Event<T> {
     #[doc(hidden)]
     pub const fn __new(index: u16) -> Self {
-        Event {
-            index,
-            _t: PhantomData,
-        }
+        Event { index, _t: PhantomData }
     }
     pub fn index(&self) -> usize {
         self.index as usize
@@ -289,12 +279,8 @@ impl MeasureCx<'_> {
     pub fn text_size(&self, text: &str, wrap: Option<f32>) -> egui::Vec2 {
         let font = self.font();
         self.ctx.fonts_mut(|f| match wrap {
-            Some(w) => f
-                .layout(text.to_string(), font, egui::Color32::WHITE, w.max(0.0))
-                .size(),
-            None => f
-                .layout_no_wrap(text.to_string(), font, egui::Color32::WHITE)
-                .size(),
+            Some(w) => f.layout(text.to_string(), font, egui::Color32::WHITE, w.max(0.0)).size(),
+            None => f.layout_no_wrap(text.to_string(), font, egui::Color32::WHITE).size(),
         })
     }
 
@@ -361,13 +347,8 @@ impl WidgetCx<'_> {
             return;
         }
         *field = v;
-        if let Some(i) = written_prop(
-            self.entry,
-            self.base,
-            field,
-            &mut self.changed,
-            &mut self.errors,
-        ) && self.entry.props[i].measure
+        if let Some(i) = written_prop(self.entry, self.base, field, &mut self.changed, &mut self.errors)
+            && self.entry.props[i].measure
         {
             self.remeasure = true;
         }
@@ -375,13 +356,7 @@ impl WidgetCx<'_> {
 
     /// Queues `payload` for the event's JS listeners (delivered after the pass, in order).
     pub fn emit<T: IntoJs>(&mut self, event: &Event<T>, payload: T) {
-        queue_emit(
-            self.entry,
-            event,
-            payload,
-            &mut self.emits,
-            &mut self.errors,
-        );
+        queue_emit(self.entry, event, payload, &mut self.emits, &mut self.errors);
     }
 
     /// The node's provider data for `key` (ARCH-EMBED §8.4).
@@ -390,12 +365,7 @@ impl WidgetCx<'_> {
     }
     /// The node's entry for `key`; writes are journaled with `Origin::Widget`.
     pub fn ext_mut<'b, T: 'static>(&'b mut self, key: &'b ExtKey<T>) -> ExtEntry<'b, T> {
-        ExtEntry::new(
-            self.ext.reborrow(),
-            key,
-            self.node,
-            crate::scene::Origin::Widget,
-        )
+        ExtEntry::new(self.ext.reborrow(), key, self.node, crate::scene::Origin::Widget)
     }
 
     /// Measures the node again before the next layout (its content size changed).
@@ -540,10 +510,7 @@ impl ExtWidget {
         b.as_any_mut().downcast_mut::<W>().map(f)
     }
     pub(crate) fn measure(&self, m: &crate::layout::Metrics, avail: AvailableSpace) -> egui::Vec2 {
-        let mut cx = MeasureCx {
-            ctx: &m.ctx,
-            style: &m.style,
-        };
+        let mut cx = MeasureCx { ctx: &m.ctx, style: &m.style };
         self.0.borrow_mut().measure(&mut cx, avail)
     }
 }
@@ -583,52 +550,33 @@ impl Node<'_> {
 /// `set_prop` of prop `i` of a provider node's widget `w` (the host already validated `v` against
 /// the prop's slot).
 pub(crate) fn set_prop(w: &W, i: usize, v: &Value) -> Result<crate::scene::Dirty, String> {
-    let W::Ext(x) = w else {
-        return Err("not a provider node".into());
-    };
+    let W::Ext(x) = w else { return Err("not a provider node".into()) };
     let mut w = x.0.borrow_mut();
     let entry = w.entry();
     let p = entry.props.get(i).ok_or_else(|| format!("no prop #{i}"))?;
     if matches!(v, Value::Null) && !nullable(entry, i) {
         w.reset_prop(i);
     } else {
-        svelters_host::exports::__private::with_cx(entry.namespace, |cx| {
-            w.set_prop(i, v.clone(), cx)
-        })
-        .map_err(|e| e.message)?;
+        svelters_host::exports::__private::with_cx(entry.namespace, |cx| w.set_prop(i, v.clone(), cx)).map_err(|e| e.message)?;
     }
-    Ok(if p.measure {
-        crate::scene::Dirty::MEASURE
-    } else {
-        crate::scene::Dirty::EMPTY
-    })
+    Ok(if p.measure { crate::scene::Dirty::MEASURE } else { crate::scene::Dirty::EMPTY })
 }
 
 fn nullable(entry: &KindEntry, i: usize) -> bool {
-    crate::kinds::KindRegistry::global()
-        .provider_type(entry.id, i)
-        .is_some_and(|t| t.slot.has(svelters_abi::SVL_D_NULLABLE))
+    crate::kinds::KindRegistry::global().provider_type(entry.id, i).is_some_and(|t| t.slot.has(svelters_abi::SVL_D_NULLABLE))
 }
 
 pub(crate) fn get_prop(n: &Node, i: usize) -> Result<Value, String> {
-    let W::Ext(x) = n.w else {
-        return Err("not a provider node".into());
-    };
+    let W::Ext(x) = n.w else { return Err("not a provider node".into()) };
     let w = x.0.borrow();
-    svelters_host::exports::__private::with_cx(w.entry().namespace, |cx| w.get_prop(i, cx))
-        .map_err(|e| e.message)
+    svelters_host::exports::__private::with_cx(w.entry().namespace, |cx| w.get_prop(i, cx)).map_err(|e| e.message)
 }
 
 /// Draws the provider node in slot `i` (the walk's index into the scene's columns): its `ui` in `ui`
 /// (a child `Ui` at the node's rect), then the a11y hook, then its writes as outbox entries
 /// (`prop_changed` for observed props, events for listeners). Returns the widget's response (the
 /// host response of its behaviours).
-pub(crate) fn paint(
-    arena: &mut crate::scene::Arena,
-    i: usize,
-    ui: &mut egui::Ui,
-    out: &mut Vec<Out>,
-) -> Option<egui::Response> {
+pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui, out: &mut Vec<Out>) -> Option<egui::Response> {
     use crate::scene::NodeFlags;
     let node = arena.slots.id_at(i).expect("live provider node");
     let h: Handle = node.to_raw();
@@ -645,36 +593,10 @@ pub(crate) fn paint(
     let base = wb.base();
     let mut state = arena.core[i].state;
     // the parts of the scene an ext write touches, disjoint from the payload borrowed above
-    let ext = crate::scene::ext::ExtCx {
-        cols: &mut arena.ext,
-        journal: &mut arena.journal,
-        core: &mut arena.core,
-        roots: &arena.roots,
-        tick: &mut arena.tick,
-        in_batch: arena.in_batch,
-    };
-    let mut cx = WidgetCx {
-        id,
-        rect,
-        enabled,
-        state: &mut state,
-        ext,
-        node,
-        entry,
-        base,
-        changed: Vec::new(),
-        emits: Vec::new(),
-        remeasure: false,
-        errors: Vec::new(),
-    };
+    let ext = crate::scene::ext::ExtCx { cols: &mut arena.ext, journal: &mut arena.journal, core: &mut arena.core, roots: &arena.roots, tick: &mut arena.tick, in_batch: arena.in_batch };
+    let mut cx = WidgetCx { id, rect, enabled, state: &mut state, ext, node, entry, base, changed: Vec::new(), emits: Vec::new(), remeasure: false, errors: Vec::new() };
     let mut resp = wb.ui(ui, &mut cx);
-    let WidgetCx {
-        changed,
-        emits,
-        remeasure,
-        errors,
-        ..
-    } = cx;
+    let WidgetCx { changed, emits, remeasure, errors, .. } = cx;
     drop(wb);
     // EM1: the accessible name and, for an anchored node, the anchor as AccessKit author id
     resp = crate::a11y::decorate(resp, &arena.n(h));
@@ -684,14 +606,9 @@ pub(crate) fn paint(
     }
     {
         let name = (!c.accessible_name.is_empty()).then_some(c.accessible_name.as_str());
-        let acx = A11yCx {
-            id: resp.id,
-            state,
-            name,
-        };
+        let acx = A11yCx { id: resp.id, state, name };
         let w = x.0.borrow();
-        ui.ctx()
-            .accesskit_node_builder(resp.id, |n| w.a11y(&acx, n));
+        ui.ctx().accesskit_node_builder(resp.id, |n| w.a11y(&acx, n));
     }
     if state != arena.core[i].state {
         let before = arena.core[i].state;
@@ -735,14 +652,7 @@ fn flush_writes(
     }
     for p in changed {
         let prop = reg.provider_prop_id(kind, p);
-        arena.record(
-            crate::scene::Change::Prop {
-                node,
-                prop: crate::scene::PropId(prop),
-                origin: crate::scene::Origin::Widget,
-            },
-            crate::scene::Origin::Widget,
-        );
+        arena.record(crate::scene::Change::Prop { node, prop: crate::scene::PropId(prop), origin: crate::scene::Origin::Widget }, crate::scene::Origin::Widget);
         if arena.observes(i, prop) {
             out.push(Out::Changed(h, prop));
         }

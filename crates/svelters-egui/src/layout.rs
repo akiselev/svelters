@@ -16,26 +16,16 @@ use crate::scene::id::IDX_MASK;
 use crate::scene::node::Payload;
 use crate::scene::{Common, Dirty, NodeFlags, NodeId as SceneId, RootIx, Scene, Visual, W};
 use egui::{Rect, Vec2, pos2, vec2};
-use taffy::prelude::{
-    AvailableSpace, Dimension, Display, FlexDirection, FlexWrap, Layout, LengthPercentage,
-    LengthPercentageAuto, Size, Style,
-};
+use taffy::prelude::{AvailableSpace, Dimension, Display, FlexDirection, FlexWrap, Layout, LengthPercentage, LengthPercentageAuto, Size, Style};
 use taffy::{
-    AlignContent, AlignItems, CacheTree, LayoutInput, LayoutOutput, LayoutPartialTree, Line,
-    NodeId, RequestedAxis, RunMode, SizingMode, compute_cached_layout, compute_flexbox_layout,
+    AlignContent, AlignItems, CacheTree, LayoutInput, LayoutOutput, LayoutPartialTree, Line, NodeId, RequestedAxis, RunMode, SizingMode, compute_cached_layout, compute_flexbox_layout,
     compute_hidden_layout, compute_leaf_layout, compute_root_layout, round_layout,
 };
 
 /// A node's taffy style from its props.
 pub fn style_of(c: &Common, w: &W, vis: &Visual) -> Style {
-    let len = |v: Option<f64>| {
-        v.map(|x| Dimension::length(x as f32))
-            .unwrap_or(Dimension::auto())
-    };
-    let lpa = |v: Option<f64>| {
-        v.map(|x| LengthPercentageAuto::length(x as f32))
-            .unwrap_or(LengthPercentageAuto::auto())
-    };
+    let len = |v: Option<f64>| v.map(|x| Dimension::length(x as f32)).unwrap_or(Dimension::auto());
+    let lpa = |v: Option<f64>| v.map(|x| LengthPercentageAuto::length(x as f32)).unwrap_or(LengthPercentageAuto::auto());
     let container = w.is_container();
     let mut s = Style {
         display: if !c.visible {
@@ -43,18 +33,9 @@ pub fn style_of(c: &Common, w: &W, vis: &Visual) -> Style {
         } else {
             Display::Flex
         },
-        size: Size {
-            width: len(c.width),
-            height: len(c.height),
-        },
-        min_size: Size {
-            width: lpa(c.min_width),
-            height: lpa(c.min_height),
-        },
-        max_size: Size {
-            width: lpa(c.max_width),
-            height: lpa(c.max_height),
-        },
+        size: Size { width: len(c.width), height: len(c.height) },
+        min_size: Size { width: lpa(c.min_width), height: lpa(c.min_height) },
+        max_size: Size { width: lpa(c.max_width), height: lpa(c.max_height) },
         flex_grow: c.flex_grow as f32,
         flex_shrink: c.flex_shrink as f32,
         flex_basis: len(c.flex_basis),
@@ -129,10 +110,7 @@ pub struct Metrics {
 
 impl Metrics {
     pub fn new(ctx: &egui::Context) -> Metrics {
-        Metrics {
-            ctx: ctx.clone(),
-            style: ctx.global_style(),
-        }
+        Metrics { ctx: ctx.clone(), style: ctx.global_style() }
     }
 
     fn font(&self) -> egui::FontId {
@@ -142,12 +120,8 @@ impl Metrics {
     fn text_size(&self, text: &str, wrap: Option<f32>) -> Vec2 {
         let font = self.font();
         self.ctx.fonts_mut(|f| match wrap {
-            Some(w) => f
-                .layout(text.to_string(), font, egui::Color32::WHITE, w.max(0.0))
-                .size(),
-            None => f
-                .layout_no_wrap(text.to_string(), font, egui::Color32::WHITE)
-                .size(),
+            Some(w) => f.layout(text.to_string(), font, egui::Color32::WHITE, w.max(0.0)).size(),
+            None => f.layout_no_wrap(text.to_string(), font, egui::Color32::WHITE).size(),
         })
     }
 
@@ -164,38 +138,21 @@ impl Metrics {
             W::Label { text, .. } => self.text_size(text, None),
             W::Button { text, small, .. } => {
                 let t = self.text_size(text, None);
-                let pad = if *small {
-                    vec2(sp.button_padding.x, 0.0)
-                } else {
-                    sp.button_padding
-                };
+                let pad = if *small { vec2(sp.button_padding.x, 0.0) } else { sp.button_padding };
                 let h = t.y + 2.0 * pad.y;
-                vec2(
-                    t.x + 2.0 * pad.x,
-                    if *small { h } else { h.max(interact.y) },
-                )
+                vec2(t.x + 2.0 * pad.x, if *small { h } else { h.max(interact.y) })
             }
             W::Checkbox { text, .. } => {
                 let t = self.text_size(text, None);
-                let icon = sp.icon_width
-                    + if text.is_empty() {
-                        0.0
-                    } else {
-                        sp.icon_spacing
-                    };
+                let icon = sp.icon_width + if text.is_empty() { 0.0 } else { sp.icon_spacing };
                 vec2(t.x + icon, t.y.max(interact.y))
             }
             W::TextEdit { multiline, .. } => {
                 // TextEdit's default margin is (4, 2)
                 let rows = if *multiline { 4.0 } else { 1.0 };
-                vec2(
-                    sp.text_edit_width,
-                    (rows * self.row_height() + 4.0).max(interact.y),
-                )
+                vec2(sp.text_edit_width, (rows * self.row_height() + 4.0).max(interact.y))
             }
-            W::Slider {
-                text, show_value, ..
-            } => {
+            W::Slider { text, show_value, .. } => {
                 let mut wdt = sp.slider_width;
                 if *show_value {
                     wdt += sp.item_spacing.x + interact.x;
@@ -213,14 +170,8 @@ impl Metrics {
     /// Height-for-width of a leaf at `width` (labels that wrap).
     fn wrapped(&self, w: &W, width: f32) -> Option<Vec2> {
         match w {
-            W::Label {
-                text, wrap: "wrap", ..
-            } => Some(self.text_size(text, Some(width))),
-            W::Ext(x)
-                if x.entry()
-                    .caps
-                    .contains(crate::provider::Caps::HEIGHT_FOR_WIDTH) =>
-            {
+            W::Label { text, wrap: "wrap", .. } => Some(self.text_size(text, Some(width))),
+            W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::HEIGHT_FOR_WIDTH) => {
                 Some(x.measure(self, crate::provider::AvailableSpace::Definite(width)))
             }
             _ => None,
@@ -293,9 +244,7 @@ impl LayoutPartialTree for Tree<'_> {
     }
     fn compute_child_layout(&mut self, id: NodeId, inputs: LayoutInput) -> LayoutOutput {
         // Hidden: `display: none`, or inside a hidden ancestor (taffy passes HIDDEN to children).
-        if inputs.run_mode == RunMode::PerformHiddenLayout
-            || self.s.layout[ix(id)].style.display == Display::None
-        {
+        if inputs.run_mode == RunMode::PerformHiddenLayout || self.s.layout[ix(id)].style.display == Display::None {
             return compute_hidden_layout(self, id);
         }
         compute_cached_layout(self, id, inputs, |tree, id, inputs| {
@@ -316,39 +265,24 @@ impl LayoutPartialTree for Tree<'_> {
                 fonts += 1;
                 m.intrinsic(w)
             });
-            let out = compute_leaf_layout(
-                inputs,
-                &lb.style,
-                |_, _| 0.0,
-                |known, avail| {
-                    if let Size {
-                        width: Some(w),
-                        height: Some(hh),
-                    } = known
-                    {
-                        return Size {
-                            width: w,
-                            height: hh,
-                        };
-                    }
-                    let limit = known.width.or(match avail.width {
-                        AvailableSpace::Definite(x) => Some(x),
-                        AvailableSpace::MinContent => Some(0.0),
-                        AvailableSpace::MaxContent => None,
-                    });
-                    let mut sz = intrinsic;
-                    if let Some(lim) = limit
-                        && lim < intrinsic.x
-                        && let Some(wr) = m.wrapped(w, lim)
-                    {
-                        sz = wr;
-                    }
-                    Size {
-                        width: known.width.unwrap_or(sz.x.ceil()),
-                        height: known.height.unwrap_or(sz.y.ceil()),
-                    }
-                },
-            );
+            let out = compute_leaf_layout(inputs, &lb.style, |_, _| 0.0, |known, avail| {
+                if let Size { width: Some(w), height: Some(hh) } = known {
+                    return Size { width: w, height: hh };
+                }
+                let limit = known.width.or(match avail.width {
+                    AvailableSpace::Definite(x) => Some(x),
+                    AvailableSpace::MinContent => Some(0.0),
+                    AvailableSpace::MaxContent => None,
+                });
+                let mut sz = intrinsic;
+                if let Some(lim) = limit
+                    && lim < intrinsic.x
+                    && let Some(wr) = m.wrapped(w, lim)
+                {
+                    sz = wr;
+                }
+                Size { width: known.width.unwrap_or(sz.x.ceil()), height: known.height.unwrap_or(sz.y.ceil()) }
+            });
             tree.fonts += fonts;
             out
         })
@@ -432,19 +366,9 @@ impl Tree<'_> {
     /// The whole tree under `top` for a content area of `size` (the top is definite: EGUI.md §1.3,
     /// an `auto` root re-lays out every row).
     fn whole(&mut self, top: SceneId, size: Vec2) {
-        self.s.layout[top.index() as usize].style.size = Size {
-            width: Dimension::length(size.x),
-            height: Dimension::length(size.y),
-        };
+        self.s.layout[top.index() as usize].style.size = Size { width: Dimension::length(size.x), height: Dimension::length(size.y) };
         let id = tid(top);
-        compute_root_layout(
-            self,
-            id,
-            Size {
-                width: AvailableSpace::Definite(size.x),
-                height: AvailableSpace::Definite(size.y),
-            },
-        );
+        compute_root_layout(self, id, Size { width: AvailableSpace::Definite(size.x), height: AvailableSpace::Definite(size.y) });
         round_layout(self, id);
     }
 
@@ -456,10 +380,7 @@ impl Tree<'_> {
         let parent_size = match self.s.core[i].parent {
             Some(p) => {
                 let pl = self.s.layout[p.index() as usize].unrounded;
-                Size {
-                    width: Some(pl.size.width),
-                    height: Some(pl.size.height),
-                }
+                Size { width: Some(pl.size.width), height: Some(pl.size.height) }
             }
             None => Size::NONE,
         };
@@ -469,19 +390,10 @@ impl Tree<'_> {
                 run_mode: RunMode::PerformLayout,
                 sizing_mode: SizingMode::InherentSize,
                 axis: RequestedAxis::Both,
-                known_dimensions: Size {
-                    width: Some(w),
-                    height: Some(h),
-                },
-                known_dimensions_are_definite: Size {
-                    width: true,
-                    height: true,
-                },
+                known_dimensions: Size { width: Some(w), height: Some(h) },
+                known_dimensions_are_definite: Size { width: true, height: true },
                 parent_size,
-                available_space: Size {
-                    width: AvailableSpace::Definite(w),
-                    height: AvailableSpace::Definite(h),
-                },
+                available_space: Size { width: AvailableSpace::Definite(w), height: AvailableSpace::Definite(h) },
                 vertical_margins_are_collapsible: Line::FALSE,
             },
         );
@@ -512,12 +424,7 @@ impl Tree<'_> {
 /// Lays out the whole tree under `top` for a content area of `size`, places it, and returns the
 /// number of leaf computations (0 when every cached result was reused).
 pub fn compute(scene: &mut Scene, m: &Metrics, top: SceneId, size: Vec2) -> usize {
-    let mut t = Tree {
-        s: scene,
-        m,
-        leaf_layouts: 0,
-        fonts: 0,
-    };
+    let mut t = Tree { s: scene, m, leaf_layouts: 0, fonts: 0 };
     t.whole(top, size);
     let (leaf, fonts) = (t.leaf_layouts, t.fonts);
     scene.counters.leaves_measured += fonts;
@@ -540,20 +447,11 @@ fn place(s: &mut Scene, top: SceneId, origin: egui::Pos2) -> u64 {
         if s.journal.wants(crate::scene::ChangeMask::LAYOUT) && s.core[i].rect != rect {
             let before = s.core[i].rect;
             if let Some(node) = s.slots.id_at(i) {
-                s.record(
-                    crate::scene::Change::Layout {
-                        node,
-                        before,
-                        after: rect,
-                    },
-                    crate::scene::Origin::Host,
-                );
+                s.record(crate::scene::Change::Layout { node, before, after: rect }, crate::scene::Origin::Host);
             }
         }
         s.core[i].rect = rect;
-        s.core[i]
-            .dirty
-            .remove(Dirty::LAYOUT | Dirty::DESC_LAYOUT | Dirty::CHILDREN);
+        s.core[i].dirty.remove(Dirty::LAYOUT | Dirty::DESC_LAYOUT | Dirty::CHILDREN);
         n += 1;
         for k in 0..s.children[i].len() {
             stack.push((s.children[i][k].index() as usize, min));
@@ -616,16 +514,8 @@ pub(crate) fn run_root(s: &mut Scene, m: &Metrics, r: RootIx, size: Vec2) -> Opt
             }
         }
     }
-    let mut t = Tree {
-        s,
-        m,
-        leaf_layouts: 0,
-        fonts: 0,
-    };
-    let mut run = LayoutRun {
-        full,
-        ..Default::default()
-    };
+    let mut t = Tree { s, m, leaf_layouts: 0, fonts: 0 };
+    let mut run = LayoutRun { full, ..Default::default() };
     if !full {
         for &b in &bs {
             if hidden(t.s, b) {
@@ -650,10 +540,7 @@ pub(crate) fn run_root(s: &mut Scene, m: &Metrics, r: RootIx, size: Vec2) -> Opt
         placed += place(s, top, pos2(0.0, 0.0));
     } else {
         for &b in &bs {
-            let o = s.core[b.index() as usize]
-                .parent
-                .map(|p| s.core[p.index() as usize].rect.min)
-                .unwrap_or(pos2(0.0, 0.0));
+            let o = s.core[b.index() as usize].parent.map(|p| s.core[p.index() as usize].rect.min).unwrap_or(pos2(0.0, 0.0));
             placed += place(s, b, o);
         }
     }
@@ -676,9 +563,7 @@ pub(crate) fn run_root(s: &mut Scene, m: &Metrics, r: RootIx, size: Vec2) -> Opt
 /// Re-measures root `r`'s queued leaves; invalidates layout only for the ones whose size changed (a
 /// counter going from 1 to 2 usually keeps its width: EGUI.md §1.3). True if any did.
 pub(crate) fn remeasure(s: &mut Scene, m: &Metrics, r: RootIx) -> bool {
-    let Some(e) = s.roots.get_mut(r) else {
-        return false;
-    };
+    let Some(e) = s.roots.get_mut(r) else { return false };
     let q = std::mem::take(&mut e.dirty.remeasure);
     let mut changed = false;
     for id in q {
@@ -693,8 +578,7 @@ pub(crate) fn remeasure(s: &mut Scene, m: &Metrics, r: RootIx) -> bool {
         s.counters.leaves_measured += 1;
         s.layout[i].intrinsic = Some(new);
         // A wrapping label that does not fit its last width may wrap differently with new text.
-        let wraps =
-            matches!(s.w(i), W::Label { wrap: "wrap", .. }) && new.x > s.core[i].rect.width() + 0.5;
+        let wraps = matches!(s.w(i), W::Label { wrap: "wrap", .. }) && new.x > s.core[i].rect.width() + 0.5;
         if old != Some(new) || wraps {
             changed = true;
             s.invalidate_content(id);
@@ -702,3 +586,4 @@ pub(crate) fn remeasure(s: &mut Scene, m: &Metrics, r: RootIx) -> bool {
     }
     changed
 }
+

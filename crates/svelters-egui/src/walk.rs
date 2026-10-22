@@ -23,25 +23,13 @@ pub enum Out {
 
 impl EguiBackend {
     pub(crate) fn assert_no_pass(&self, what: &str) {
-        assert!(
-            !self.0.pass_active.get(),
-            "svelters-egui: {what} during the egui pass (JS must not run while the scene is drawn)"
-        );
+        assert!(!self.0.pass_active.get(), "svelters-egui: {what} during the egui pass (JS must not run while the scene is drawn)");
     }
 
     /// Lays out root `r` if it has queued work: the whole root when new, resized or its top
     /// changed, else only its dirty boundaries (`layout::run_root`).
-    fn layout_root(
-        &self,
-        scene: &mut Arena,
-        ctx: &egui::Context,
-        r: crate::scene::RootIx,
-        size: Vec2,
-    ) {
-        let due = scene
-            .roots
-            .get(r)
-            .is_some_and(|e| e.size != Some(size) || !e.dirty.relayout.is_empty() || e.dirty.full);
+    fn layout_root(&self, scene: &mut Arena, ctx: &egui::Context, r: crate::scene::RootIx, size: Vec2) {
+        let due = scene.roots.get(r).is_some_and(|e| e.size != Some(size) || !e.dirty.relayout.is_empty() || e.dirty.full);
         if due {
             let m = layout::Metrics::new(ctx);
             if let Some(run) = layout::run_root(scene, &m, r, size) {
@@ -67,38 +55,22 @@ impl EguiBackend {
     /// again when its available size changed or its root queued work (style, structure, a changed
     /// measured size), only the dirty boundaries when the size is the same, whatever other slots
     /// and windows did. Returns the rect it took and the content size (its children's extent).
-    pub(crate) fn slot_ui(
-        &self,
-        ui: &mut egui::Ui,
-        slot: Handle,
-        out: &mut Vec<Out>,
-    ) -> (egui::Rect, Vec2) {
+    pub(crate) fn slot_ui(&self, ui: &mut egui::Ui, slot: Handle, out: &mut Vec<Out>) -> (egui::Rect, Vec2) {
         let rect = ui.available_rect_before_wrap();
         let mut scene = self.0.scene.borrow_mut();
         let id = scene.live(slot).expect("a live slot");
         let i = scene.ix(id);
         let r = scene.core[i].root;
         // leaves whose text changed after this frame's logic (a host op in a fault disposal)
-        if scene
-            .roots
-            .get(r)
-            .is_some_and(|e| !e.dirty.remeasure.is_empty())
-        {
+        if scene.roots.get(r).is_some_and(|e| !e.dirty.remeasure.is_empty()) {
             layout::remeasure(&mut scene, &layout::Metrics::new(ui.ctx()), r);
         }
         self.layout_root(&mut scene, ui.ctx(), r, rect.size());
         paint_at(&mut scene, i, rect.min.to_vec2(), ui, out);
         // what the content needs: the extent of the slot's children (laid out from its origin)
-        let content = scene.children[i]
-            .iter()
-            .map(|&c| scene.core[scene.ix(c)].rect)
-            .fold(Vec2::ZERO, |acc, r| {
-                if r == egui::Rect::NOTHING {
-                    acc
-                } else {
-                    acc.max(r.max.to_vec2())
-                }
-            });
+        let content = scene.children[i].iter().map(|&c| scene.core[scene.ix(c)].rect).fold(Vec2::ZERO, |acc, r| {
+            if r == egui::Rect::NOTHING { acc } else { acc.max(r.max.to_vec2()) }
+        });
         drop(scene);
         ui.allocate_rect(rect, egui::Sense::hover());
         (rect, content)
@@ -116,10 +88,7 @@ fn paint_at(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Ve
     if !arena.common(i).visible {
         return;
     }
-    if arena.core[i]
-        .flags
-        .contains(crate::scene::NodeFlags::HAS_VISUAL)
-    {
+    if arena.core[i].flags.contains(crate::scene::NodeFlags::HAS_VISUAL) {
         return paint_visual(arena, i, origin, ui, out);
     }
     paint_node(arena, i, origin, ui, out);
@@ -132,11 +101,7 @@ fn paint_at(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Ve
 fn paint_visual(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
     let v = arena.vis(i);
     let r = arena.core[i].rect.translate(origin);
-    let mut child = ui.new_child(
-        UiBuilder::new()
-            .max_rect(ui.max_rect())
-            .scope_id(arena.core[i].egui_id.with("vis")),
-    );
+    let mut child = ui.new_child(UiBuilder::new().max_rect(ui.max_rect()).scope_id(arena.core[i].egui_id.with("vis")));
     if let Some(o) = v.opacity {
         child.multiply_opacity(o.clamp(0.0, 1.0));
     }
@@ -149,10 +114,7 @@ fn paint_visual(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mu
         Some([tx, ty, sx, sy, ox, oy]) => {
             let s = (sx * sy).abs().sqrt();
             let o = r.min + egui::vec2(r.width() * ox, r.height() * oy);
-            let t = egui::emath::TSTransform::new(
-                o.to_vec2() + egui::vec2(tx, ty) - o.to_vec2() * s,
-                s,
-            );
+            let t = egui::emath::TSTransform::new(o.to_vec2() + egui::vec2(tx, ty) - o.to_vec2() * s, s);
             child.with_visual_transform(t, |ui| paint_node(arena, i, origin, ui, sink));
         }
         None => paint_node(arena, i, origin, &mut child, sink),

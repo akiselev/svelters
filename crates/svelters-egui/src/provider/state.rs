@@ -77,11 +77,7 @@ impl StateBits {
 
     /// The names of the set bits: built-ins by their name, provider bits as `<namespace>.<name>`.
     pub fn names(self) -> Vec<&'static str> {
-        let mut out: Vec<&'static str> = Self::BUILTIN
-            .iter()
-            .filter(|(_, b)| self.contains(*b))
-            .map(|(n, _)| *n)
-            .collect();
+        let mut out: Vec<&'static str> = Self::BUILTIN.iter().filter(|(_, b)| self.contains(*b)).map(|(n, _)| *n).collect();
         for (i, def) in registry().iter().enumerate() {
             if self.0 & (1u64 << (32 + i)) != 0 {
                 out.push(def.full);
@@ -111,19 +107,12 @@ pub struct StateBit {
 impl StateBit {
     #[doc(hidden)]
     pub const fn new(namespace: &'static str, name: &'static str, full: &'static str) -> StateBit {
-        StateBit {
-            namespace,
-            name,
-            full,
-        }
+        StateBit { namespace, name, full }
     }
 
     /// The bit, as a [`StateBits`] mask.
     pub fn bits(&self) -> StateBits {
-        let i = registry()
-            .iter()
-            .position(|d| d.full == self.full)
-            .expect("a state declared with state_bits! is registered");
+        let i = registry().iter().position(|d| d.full == self.full).expect("a state declared with state_bits! is registered");
         StateBits(1u64 << (32 + i))
     }
 }
@@ -139,23 +128,12 @@ inventory::collect!(StateBitDef);
 pub fn registry() -> &'static [&'static StateBit] {
     static R: OnceLock<Vec<&'static StateBit>> = OnceLock::new();
     R.get_or_init(|| {
-        let mut v: Vec<&'static StateBit> = inventory::iter::<StateBitDef>
-            .into_iter()
-            .map(|d| d.0)
-            .collect();
+        let mut v: Vec<&'static StateBit> = inventory::iter::<StateBitDef>.into_iter().map(|d| d.0).collect();
         v.sort_by_key(|d| d.full);
         for w in v.windows(2) {
-            assert!(
-                w[0].full != w[1].full,
-                "svelters-egui: provider state `{}` is declared twice",
-                w[0].full
-            );
+            assert!(w[0].full != w[1].full, "svelters-egui: provider state `{}` is declared twice", w[0].full);
         }
-        assert!(
-            v.len() <= 32,
-            "svelters-egui: {} provider states declared; bits 32-63 hold 32",
-            v.len()
-        );
+        assert!(v.len() <= 32, "svelters-egui: {} provider states declared; bits 32-63 hold 32", v.len());
         v
     })
 }
@@ -165,10 +143,7 @@ pub fn by_name(name: &str) -> Option<StateBits> {
     if let Some((_, b)) = StateBits::BUILTIN.iter().find(|(n, _)| *n == name) {
         return Some(*b);
     }
-    registry()
-        .iter()
-        .position(|d| d.full == name)
-        .map(|i| StateBits(1u64 << (32 + i)))
+    registry().iter().position(|d| d.full == name).map(|i| StateBits(1u64 << (32 + i)))
 }
 
 /// Anything that names state bits: a [`StateBits`] mask or a provider [`StateBit`].

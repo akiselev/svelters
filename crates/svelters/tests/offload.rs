@@ -34,22 +34,14 @@ fn recorded(s: &str) -> bool {
 /// The tests park jobs on gates, so the worker pool must have more threads than jobs parked at once,
 /// whatever the machine's core count (rayon's global pool has one per core).
 fn pool() {
-    let _ = svelters::exports::set_worker_pool(
-        svelters::rayon::ThreadPoolBuilder::new()
-            .num_threads(32)
-            .build()
-            .unwrap(),
-    );
+    let _ = svelters::exports::set_worker_pool(svelters::rayon::ThreadPoolBuilder::new().num_threads(32).build().unwrap());
 }
 
 /// Waits (without running checkpoints) until a job recorded `s`.
 fn await_record(s: &str) {
     let end = Instant::now() + Duration::from_secs(20);
     while !recorded(s) {
-        assert!(
-            Instant::now() < end,
-            "timed out waiting for the record {s:?}"
-        );
+        assert!(Instant::now() < end, "timed out waiting for the record {s:?}");
         std::thread::sleep(Duration::from_millis(1));
     }
 }
@@ -147,13 +139,7 @@ pub fn boom() -> u32 {
 #[js(blocking)]
 pub fn sleepy(ms: u32) -> String {
     std::thread::sleep(Duration::from_millis(ms as u64));
-    std::thread::current()
-        .name()
-        .unwrap_or("")
-        .split('-')
-        .take(2)
-        .collect::<Vec<_>>()
-        .join("-")
+    std::thread::current().name().unwrap_or("").split('-').take(2).collect::<Vec<_>>().join("-")
 }
 
 #[svelters::export(module = "work")]
@@ -237,12 +223,7 @@ impl Drop for Engine {
 impl Engine {
     #[js(constructor)]
     pub fn new(tag: u32) -> Engine {
-        Engine {
-            tag,
-            running: AtomicU32::new(0),
-            peak: AtomicU32::new(0),
-            started: AtomicU32::new(0),
-        }
+        Engine { tag, running: AtomicU32::new(0), peak: AtomicU32::new(0), started: AtomicU32::new(0) }
     }
 
     /// A new call cancels the previous one.
@@ -329,15 +310,13 @@ impl Run<'_, '_> {
     /// Runs queued JS jobs only (no checkpoint, so no completion is drained).
     fn jobs(&mut self) {
         self.host.drain_jobs();
-        self.lines
-            .extend(self.host.take_console().into_iter().map(|l| l.text));
+        self.lines.extend(self.host.take_console().into_iter().map(|l| l.text));
     }
 
     fn turn(&mut self) {
         self.host.checkpoint();
         self.host.drain_jobs();
-        self.lines
-            .extend(self.host.take_console().into_iter().map(|l| l.text));
+        self.lines.extend(self.host.take_console().into_iter().map(|l| l.text));
     }
 
     fn until(&mut self, what: &str, cond: impl Fn(&Host<'_>, &[String]) -> bool) {
@@ -347,12 +326,7 @@ impl Run<'_, '_> {
             if cond(self.host, &self.lines) {
                 return;
             }
-            assert!(
-                Instant::now() < end,
-                "timed out waiting for {what}\nlines: {:#?}\nerrors: {:#?}",
-                self.lines,
-                self.host.take_errors()
-            );
+            assert!(Instant::now() < end, "timed out waiting for {what}\nlines: {:#?}\nerrors: {:#?}", self.lines, self.host.take_errors());
             std::thread::sleep(Duration::from_millis(1));
         }
     }
@@ -381,12 +355,8 @@ fn with_host(name: &str, main: &str, f: impl FnOnce(&mut Run<'_, '_>, &LogBacken
     if let Err(e) = host.load_bundle(dir.join("main.js")) {
         panic!("load: {e}");
     }
-    let mut run = Run {
-        host: &host,
-        lines: Vec::new(),
-    };
-    run.lines
-        .extend(host.take_console().into_iter().map(|l| l.text));
+    let mut run = Run { host: &host, lines: Vec::new() };
+    run.lines.extend(host.take_console().into_iter().map(|l| l.text));
     f(&mut run, &log);
 }
 
@@ -459,18 +429,9 @@ gated(205).then(() => {
             // Rejected in the same turn as the abort, before any checkpoint drained a completion.
             r.jobs();
             assert_eq!(r.host.offload_stats().drains, 0);
-            let at = |s: &str| {
-                r.lines
-                    .iter()
-                    .position(|l| l == s)
-                    .unwrap_or_else(|| panic!("no {s}: {:?}", r.lines))
-            };
+            let at = |s: &str| r.lines.iter().position(|l| l == s).unwrap_or_else(|| panic!("no {s}: {:?}", r.lines));
             assert!(at("after-abort 1") < at("rejected NativeError svelters cancelled"));
-            assert!(
-                r.has("pre cancelled") && r.has("local cancelled"),
-                "{:?}",
-                r.lines
-            );
+            assert!(r.has("pre cancelled") && r.has("local cancelled"), "{:?}", r.lines);
             // The JS-thread future was dropped by the abort, on this thread.
             assert!(recorded("future-drop 204"));
             await_record("uc-start 202");
@@ -486,20 +447,10 @@ gated(205).then(() => {
             r.until("only the zombie left", |h, _| h.ops_in_flight() == 1);
             let objects = r.host.live_app_objects();
             open(201);
-            r.until("late result dropped", |h, _| {
-                h.ops_in_flight() == 0 && recorded("payload-drop 201")
-            });
+            r.until("late result dropped", |h, _| h.ops_in_flight() == 0 && recorded("payload-drop 201"));
             assert!(recorded("late-done 201"));
-            assert_eq!(
-                r.host.live_app_objects(),
-                objects,
-                "a dropped result mints no handle"
-            );
-            assert!(
-                r.host.offload_stats().dropped >= 2,
-                "{:?}",
-                r.host.offload_stats()
-            );
+            assert_eq!(r.host.live_app_objects(), objects, "a dropped result mints no handle");
+            assert!(r.host.offload_stats().dropped >= 2, "{:?}", r.host.offload_stats());
             assert!(!r.lines.iter().any(|l| l.contains("?!")), "{:?}", r.lines);
             r.no_errors();
         },
@@ -576,16 +527,12 @@ c.abort();
             await_record("preview-start 401");
             open(403);
             r.line("first superseded");
-            r.until("superseded worker saw the cancel", |_, _| {
-                recorded("saw-cancel 401")
-            });
+            r.until("superseded worker saw the cancel", |_, _| recorded("saw-cancel 401"));
             open(402);
             r.line("second 402");
             r.line("queued cancelled");
             // Two of the limited calls run; the others wait in order.
-            r.until("two running", |_, _| {
-                recorded("limited-start 411") && recorded("limited-start 412")
-            });
+            r.until("two running", |_, _| recorded("limited-start 411") && recorded("limited-start 412"));
             std::thread::sleep(Duration::from_millis(30));
             r.turn();
             assert!(!recorded("limited-start 413") && !recorded("limited-start 414"));
@@ -648,9 +595,7 @@ gated(701).then(() => c.abort());
             r.line("tokio-abort cancelled");
             r.line("tokio 5");
             // The aborted task's future is dropped at its next await; its slot is released.
-            r.until("aborted task gone", |h, _| {
-                h.ops_in_flight() == 0 && recorded("future-drop 60000")
-            });
+            r.until("aborted task gone", |h, _| h.ops_in_flight() == 0 && recorded("future-drop 60000"));
             r.no_errors();
         },
     );
@@ -698,17 +643,9 @@ localSlow().then((v) => console.log('slow again', v));
 "#,
         |r, _| {
             r.line("slow again 1");
-            let warns: Vec<_> = r
-                .lines
-                .iter()
-                .filter(|l| l.contains("blocked it for"))
-                .collect();
+            let warns: Vec<_> = r.lines.iter().filter(|l| l.contains("blocked it for")).collect();
             assert_eq!(warns.len(), 1, "warned once per member: {:?}", r.lines);
-            assert!(
-                warns[0].contains("app:work.localSlow") && warns[0].contains("#[js(worker)]"),
-                "{}",
-                warns[0]
-            );
+            assert!(warns[0].contains("app:work.localSlow") && warns[0].contains("#[js(worker)]"), "{}", warns[0]);
         },
     );
 }
@@ -729,10 +666,7 @@ console.log('v1');
     let vt = log.vtable();
     let host = Host::new(vt.backend_ref(), cfg).unwrap();
     host.load_bundle(dir.join("main.js")).unwrap();
-    let mut r = Run {
-        host: &host,
-        lines: Vec::new(),
-    };
+    let mut r = Run { host: &host, lines: Vec::new() };
     r.turn();
     assert!(r.has("v1"));
     assert_eq!(host.ops_in_flight(), 1);
@@ -758,9 +692,7 @@ console.log('v2');
     open(601);
     open(602);
     r.line("v2 gated 1204");
-    r.until("old result dropped", |h, _| {
-        h.ops_in_flight() == 0 && recorded("payload-drop 601")
-    });
+    r.until("old result dropped", |h, _| h.ops_in_flight() == 0 && recorded("payload-drop 601"));
     assert_eq!(host.offload_stats().dropped, dropped + 1);
     assert!(!r.lines.iter().any(|l| l.contains("?!")), "{:?}", r.lines);
     assert_eq!(host.live_app_objects(), 0);
@@ -787,14 +719,9 @@ fn typings_show_promises_and_options() {
     ] {
         assert!(dts.contains(want), "typings lack {want:?}:\n{dts}");
     }
-    let js =
-        svelters::exports::javascript("work", "@svelters/types/core", &|m| format!("./{m}.js"))
-            .unwrap();
+    let js = svelters::exports::javascript("work", "@svelters/types/core", &|m| format!("./{m}.js")).unwrap();
     assert!(js.contains("return callStaticAsync('app:work', 'latePayload', [g], options, (x) => wrapObject(Payload, x));"), "{js}");
-    assert!(
-        js.contains("return callAsync(this, 'preview', [g], options);"),
-        "{js}"
-    );
+    assert!(js.contains("return callAsync(this, 'preview', [g], options);"), "{js}");
     let json: serde_json::Value = serde_json::from_str(&svelters::exports::json()).unwrap();
     let fns = json["modules"][0]["functions"].as_array().unwrap();
     let f = |n: &str| fns.iter().find(|f| f["name"] == n).unwrap().clone();

@@ -68,11 +68,7 @@ fn lookup(id: Option<EmbedId>) -> Option<Embed> {
             let r = r.borrow();
             let want = id.or(r.current);
             let found = match want {
-                Some(w) => r
-                    .embeds
-                    .iter()
-                    .find(|(x, _)| *x == w)
-                    .and_then(|(_, e)| e.upgrade()),
+                Some(w) => r.embeds.iter().find(|(x, _)| *x == w).and_then(|(_, e)| e.upgrade()),
                 None => r.embeds.iter().find_map(|(_, e)| e.upgrade()),
             };
             found.map(|inner| Embed { inner })
@@ -114,11 +110,7 @@ pub struct SlotPainter {
 
 impl SlotPainter {
     pub(super) fn new(embed: EmbedId, slot: SlotId) -> SlotPainter {
-        SlotPainter {
-            embed,
-            slot,
-            thread: std::thread::current().id(),
-        }
+        SlotPainter { embed, slot, thread: std::thread::current().id() }
     }
 
     pub fn slot(&self) -> SlotId {
@@ -136,19 +128,13 @@ impl SlotPainter {
             off_thread();
             return None;
         }
-        with_embed(self.embed, |e| {
-            e.has_slot(self.slot).then(|| e.show_slot(ui, self.slot))
-        })
-        .flatten()
+        with_embed(self.embed, |e| e.has_slot(self.slot).then(|| e.show_slot(ui, self.slot))).flatten()
     }
 }
 
 fn off_thread() {
     static WARNED: AtomicBool = AtomicBool::new(false);
-    debug_assert!(
-        false,
-        "svelters-egui: SlotPainter::show called off the UI thread (deferred viewports must run on it)"
-    );
+    debug_assert!(false, "svelters-egui: SlotPainter::show called off the UI thread (deferred viewports must run on it)");
     if !WARNED.swap(true, Ordering::Relaxed) {
         eprintln!("[svelters-egui] SlotPainter::show called off the UI thread: nothing drawn");
     }
@@ -183,11 +169,7 @@ pub(super) fn install(e: &Embed, ctx: &egui::Context) {
             if std::thread::current().id() != thread {
                 return;
             }
-            let was = depth
-                .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |d| {
-                    Some(d.saturating_sub(1))
-                })
-                .unwrap_or(0);
+            let was = depth.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |d| Some(d.saturating_sub(1))).unwrap_or(0);
             with_embed(id, |e| e.end_pass(ui.ctx(), was <= 1));
         }),
     );

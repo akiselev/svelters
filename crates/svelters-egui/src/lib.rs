@@ -48,8 +48,7 @@ pub use spec::dump;
 /// (`#[svelters::behavior]`) needs.
 pub mod prelude {
     pub use crate::provider::{
-        A11yCx, AvailableSpace, Behavior, BehaviorCx, Caps, Event, ExtKey, IntoStateBits, KindDecl,
-        MeasureCx, StateBit, StateBits, Widget, WidgetCx,
+        A11yCx, AvailableSpace, Behavior, BehaviorCx, Caps, Event, ExtKey, IntoStateBits, KindDecl, MeasureCx, StateBit, StateBits, Widget, WidgetCx,
     };
     pub use crate::scene::{NodeMut, NodeRef};
     pub use egui;

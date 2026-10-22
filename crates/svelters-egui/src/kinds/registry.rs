@@ -54,18 +54,11 @@ impl KindRegistry {
 
     fn build() -> KindRegistry {
         use crate::provider::KindRef;
-        let mut entries: Vec<&'static crate::provider::KindEntry> = inventory::iter::<KindRef>
-            .into_iter()
-            .map(|r| r.0)
-            .collect();
+        let mut entries: Vec<&'static crate::provider::KindEntry> = inventory::iter::<KindRef>.into_iter().map(|r| r.0).collect();
         entries.sort_by_key(|e| e.id);
         let mut providers: Vec<ProviderKind> = Vec::with_capacity(entries.len());
         if entries.is_empty() {
-            return KindRegistry {
-                providers,
-                bases: Vec::new(),
-            }
-            .with_bases();
+            return KindRegistry { providers, bases: Vec::new() }.with_bases();
         }
         let schema = svelters_host::exports::schema();
         for e in entries {
@@ -76,21 +69,14 @@ impl KindRegistry {
                 e.tag
             );
             assert!(
-                providers
-                    .iter()
-                    .all(|p| p.entry.id != e.id && p.entry.tag != e.tag),
+                providers.iter().all(|p| p.entry.id != e.id && p.entry.tag != e.tag),
                 "svelters-egui: provider kind {} (<{}>) is registered twice (same spec id or tag)",
                 e.id,
                 e.tag
             );
             let types: Vec<TypeRef> = schema
                 .kind_types(e.id)
-                .unwrap_or_else(|| {
-                    panic!(
-                        "svelters-egui: provider kind {} has no types in the export schema",
-                        e.id
-                    )
-                })
+                .unwrap_or_else(|| panic!("svelters-egui: provider kind {} has no types in the export schema", e.id))
                 .to_vec();
             let props: Vec<PropDef> = e
                 .props
@@ -101,28 +87,14 @@ impl KindRegistry {
                     key: P::Ext(i as u16),
                     ty: Ty::Provider,
                     default: Def::Null,
-                    nullable: types
-                        .get(i)
-                        .is_some_and(|t| t.slot.has(svelters_abi::SVL_D_NULLABLE)),
-                    native: if p.bind {
-                        Native::Widget
-                    } else {
-                        Native::Never
-                    },
+                    nullable: types.get(i).is_some_and(|t| t.slot.has(svelters_abi::SVL_D_NULLABLE)),
+                    native: if p.bind { Native::Widget } else { Native::Never },
                     layout: false,
                     doc: p.docs,
                 })
                 .collect();
-            let signals: Vec<SignalDef> = e
-                .events
-                .iter()
-                .map(|ev| SignalDef {
-                    name: ev.name,
-                    args: leak(vec![(ev.name, Ty::Provider)]),
-                    sync: false,
-                    doc: ev.docs,
-                })
-                .collect();
+            let signals: Vec<SignalDef> =
+                e.events.iter().map(|ev| SignalDef { name: ev.name, args: leak(vec![(ev.name, Ty::Provider)]), sync: false, doc: ev.docs }).collect();
             let def: &'static KindDef = Box::leak(Box::new(KindDef {
                 id: e.id,
                 tag: Some(e.tag),
@@ -142,28 +114,13 @@ impl KindRegistry {
                 methods: &[],
                 doc: e.docs,
             }));
-            providers.push(ProviderKind {
-                entry: e,
-                def,
-                types: leak(types),
-            });
+            providers.push(ProviderKind { entry: e, def, types: leak(types) });
         }
-        KindRegistry {
-            providers,
-            bases: Vec::new(),
-        }
-        .with_bases()
+        KindRegistry { providers, bases: Vec::new() }.with_bases()
     }
 
     fn with_bases(mut self) -> KindRegistry {
-        self.bases = self
-            .indexes()
-            .map(|k| {
-                self.kind(k)
-                    .base
-                    .map(|b| self.kind_index(b).expect("base kind"))
-            })
-            .collect();
+        self.bases = self.indexes().map(|k| self.kind(k).base.map(|b| self.kind_index(b).expect("base kind"))).collect();
         self
     }
 
@@ -232,19 +189,12 @@ impl KindRegistry {
 
     /// The kind index of a provider kind's entry.
     pub fn provider_index(&self, id: &str) -> Option<usize> {
-        self.providers
-            .iter()
-            .position(|p| p.entry.id == id)
-            .map(|i| KINDS.len() + i)
+        self.providers.iter().position(|p| p.entry.id == id).map(|i| KINDS.len() + i)
     }
 
     /// The JS type of prop `i` of the provider kind with spec id `id`.
     pub fn provider_type(&self, id: &str, i: usize) -> Option<&TypeRef> {
-        self.providers
-            .iter()
-            .find(|p| p.entry.id == id)?
-            .types
-            .get(i)
+        self.providers.iter().find(|p| p.entry.id == id)?.types.get(i)
     }
 
     /// Index of a kind by id.
@@ -295,56 +245,38 @@ impl KindRegistry {
     pub fn find_prop(&self, kind: usize, name: &str) -> Option<(u32, &'static PropDef)> {
         self.chain_iter(kind).find_map(|k| {
             let props = self.kind(k).props;
-            props
-                .iter()
-                .position(|p| p.name == name)
-                .map(|i| (Self::member_id(k, i), &props[i]))
+            props.iter().position(|p| p.name == name).map(|i| (Self::member_id(k, i), &props[i]))
         })
     }
 
     /// The property definition behind an id, if `kind` has it.
     pub fn prop_def(&self, kind: usize, id: u32) -> Option<&'static PropDef> {
         let (owner, i) = self.split(id)?;
-        self.chain_iter(kind)
-            .any(|k| k == owner)
-            .then(|| self.kind(owner).props.get(i))
-            .flatten()
+        self.chain_iter(kind).any(|k| k == owner).then(|| self.kind(owner).props.get(i)).flatten()
     }
 
     pub fn find_signal(&self, kind: usize, name: &str) -> Option<(u32, &'static SignalDef)> {
         self.chain_iter(kind).find_map(|k| {
             let signals = self.kind(k).signals;
-            signals
-                .iter()
-                .position(|s| s.name == name)
-                .map(|i| (Self::member_id(k, i), &signals[i]))
+            signals.iter().position(|s| s.name == name).map(|i| (Self::member_id(k, i), &signals[i]))
         })
     }
 
     pub fn signal_def(&self, kind: usize, id: u32) -> Option<&'static SignalDef> {
         let (owner, i) = self.split(id)?;
-        self.chain_iter(kind)
-            .any(|k| k == owner)
-            .then(|| self.kind(owner).signals.get(i))
-            .flatten()
+        self.chain_iter(kind).any(|k| k == owner).then(|| self.kind(owner).signals.get(i)).flatten()
     }
 
     pub fn find_method(&self, kind: usize, name: &str) -> Option<(u32, &'static MethodDef)> {
         self.chain_iter(kind).find_map(|k| {
             let methods = self.kind(k).methods;
-            methods
-                .iter()
-                .position(|m| m.name == name)
-                .map(|i| (Self::member_id(k, i), &methods[i]))
+            methods.iter().position(|m| m.name == name).map(|i| (Self::member_id(k, i), &methods[i]))
         })
     }
 
     pub fn method_def(&self, kind: usize, id: u32) -> Option<&'static MethodDef> {
         let (owner, i) = self.split(id)?;
-        self.chain_iter(kind)
-            .any(|k| k == owner)
-            .then(|| self.kind(owner).methods.get(i))
-            .flatten()
+        self.chain_iter(kind).any(|k| k == owner).then(|| self.kind(owner).methods.get(i)).flatten()
     }
 
     /// The default slot of a container kind (slot id 1; 0 is "default" on the ABI).
@@ -369,23 +301,12 @@ impl KindRegistry {
 
     /// The id of prop `i` of provider kind `kind` (0 if out of range).
     pub fn provider_prop_id(&self, kind: usize, i: usize) -> u32 {
-        if self.provider(kind).is_some_and(|p| i < p.entry.props.len()) {
-            Self::member_id(kind, i)
-        } else {
-            0
-        }
+        if self.provider(kind).is_some_and(|p| i < p.entry.props.len()) { Self::member_id(kind, i) } else { 0 }
     }
 
     /// The id of event `i` of provider kind `kind` (0 if out of range).
     pub fn provider_signal_id(&self, kind: usize, i: usize) -> u32 {
-        if self
-            .provider(kind)
-            .is_some_and(|p| i < p.entry.events.len())
-        {
-            Self::member_id(kind, i)
-        } else {
-            0
-        }
+        if self.provider(kind).is_some_and(|p| i < p.entry.events.len()) { Self::member_id(kind, i) } else { 0 }
     }
 
     /// The host descriptor of prop `i` of provider kind `kind`: its export type's slot.
@@ -393,12 +314,7 @@ impl KindRegistry {
         let p = self.provider(kind)?;
         let name = p.entry.props.get(i)?.name;
         let slot = p.types.get(i)?.slot.clone().named(name);
-        Some(svelters_abi::MemberDesc {
-            name: name.to_string(),
-            params: vec![slot.clone()],
-            ret: slot,
-            flags: svelters_abi::SVL_M_OBSERVABLE,
-        })
+        Some(svelters_abi::MemberDesc { name: name.to_string(), params: vec![slot.clone()], ret: slot, flags: svelters_abi::SVL_M_OBSERVABLE })
     }
 }
 

@@ -18,17 +18,17 @@
 //! Writer lane: SCENE.
 
 use super::dump::{DumpOpts, SceneStats};
-use super::ext::{ExtBlock, ExtEntry, ExtKey, ExtTicks};
 use super::id::{Handle, KindId, NodeId, PropId, ProviderId, RootIx, Tick};
-use super::journal::{Change, ChangeFilter, ChangeSet, Observer};
 use super::keys::{PropKey, PropValue};
 use super::node::{Common, Dirty, NodeFlags, Owner, W};
+use super::ext::{ExtBlock, ExtEntry, ExtKey, ExtTicks};
+use super::journal::{Change, ChangeFilter, ChangeSet, Observer};
+use crate::provider::{IntoStateBits, StateBits};
 use super::props;
 use super::tree::TreeRoot;
 use super::{Member, Phase, Scene, member_bit};
 use crate::backend::EguiBackend;
 use crate::kinds;
-use crate::provider::{IntoStateBits, StateBits};
 use std::cell::{Ref, RefCell, RefMut};
 use std::rc::Rc;
 use std::sync::Arc;
@@ -80,10 +80,7 @@ impl std::fmt::Display for SceneError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             SceneError::Stale(h) => write!(f, "stale or foreign handle {h}"),
-            SceneError::NotOwner { node, owner } => write!(
-                f,
-                "{node} is owned by {owner:?}: not editable from this origin"
-            ),
+            SceneError::NotOwner { node, owner } => write!(f, "{node} is owned by {owner:?}: not editable from this origin"),
             SceneError::Invalid(m) => f.write_str(m),
         }
     }
@@ -124,11 +121,7 @@ struct PassClock {
 impl Default for PassClock {
     fn default() -> Self {
         static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
-        PassClock {
-            phase: AtomicU8::new(0),
-            depth: AtomicU32::new(0),
-            serial: NEXT.fetch_add(1, Ordering::Relaxed),
-        }
+        PassClock { phase: AtomicU8::new(0), depth: AtomicU32::new(0), serial: NEXT.fetch_add(1, Ordering::Relaxed) }
     }
 }
 
@@ -167,12 +160,7 @@ pub struct SceneHandle(Rc<SceneCell>);
 
 impl Default for SceneHandle {
     fn default() -> Self {
-        SceneHandle(Rc::new(SceneCell {
-            scene: RefCell::new(Scene::default()),
-            phase: Arc::default(),
-            deferred: RefCell::new(Vec::new()),
-            wake: RefCell::new(None),
-        }))
+        SceneHandle(Rc::new(SceneCell { scene: RefCell::new(Scene::default()), phase: Arc::default(), deferred: RefCell::new(Vec::new()), wake: RefCell::new(None) }))
     }
 }
 
@@ -210,11 +198,7 @@ impl SceneHandle {
             "svelters-scene",
             Arc::new(move |ui: &mut egui::Ui| {
                 if clock.depth.fetch_add(1, Ordering::Relaxed) == 0 {
-                    clock.set(if ui.ctx().viewport_id() == egui::ViewportId::ROOT {
-                        Phase::Idle
-                    } else {
-                        Phase::Ui
-                    });
+                    clock.set(if ui.ctx().viewport_id() == egui::ViewportId::ROOT { Phase::Idle } else { Phase::Ui });
                 }
             }),
         );
@@ -222,12 +206,7 @@ impl SceneHandle {
         ctx.on_end_pass(
             "svelters-scene",
             Arc::new(move |_ui: &mut egui::Ui| {
-                let was = clock
-                    .depth
-                    .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |d| {
-                        Some(d.saturating_sub(1))
-                    })
-                    .unwrap_or(0);
+                let was = clock.depth.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |d| Some(d.saturating_sub(1))).unwrap_or(0);
                 if was <= 1 {
                     clock.set(Phase::Idle);
                 }
@@ -251,11 +230,7 @@ impl SceneHandle {
 
     /// Prop changes Rust writes announced that the next logic delivers (R16: pending work).
     pub fn announcements_len(&self) -> usize {
-        self.0
-            .scene
-            .try_borrow()
-            .map(|s| s.announce.len())
-            .unwrap_or(0)
+        self.0.scene.try_borrow().map(|s| s.announce.len()).unwrap_or(0)
     }
 
     /// Read access, any phase. Panics if called while the scene is being mutated (inside a
@@ -272,11 +247,7 @@ impl SceneHandle {
 
     /// Write access in `Idle`/`Logic`, as one batch (one tick). `Err(SceneBusy)` in `Ui` (R17) or
     /// when the scene is already borrowed; use [`SceneHandle::defer`] there.
-    pub fn write<R>(
-        &self,
-        origin: ProviderId,
-        f: impl FnOnce(&mut SceneMut<'_>) -> R,
-    ) -> Result<R, SceneBusy> {
+    pub fn write<R>(&self, origin: ProviderId, f: impl FnOnce(&mut SceneMut<'_>) -> R) -> Result<R, SceneBusy> {
         if self.0.phase.get() == Phase::Ui {
             if let Ok(mut s) = self.0.scene.try_borrow_mut() {
                 s.counters.writes_busy += 1;
@@ -288,12 +259,7 @@ impl SceneHandle {
         Ok(r)
     }
 
-    fn write_now<R>(
-        &self,
-        origin: Origin,
-        label: &'static str,
-        f: impl FnOnce(&mut SceneMut<'_>) -> R,
-    ) -> Result<R, SceneBusy> {
+    fn write_now<R>(&self, origin: Origin, label: &'static str, f: impl FnOnce(&mut SceneMut<'_>) -> R) -> Result<R, SceneBusy> {
         let mut s = self.0.scene.try_borrow_mut().map_err(|_| SceneBusy)?;
         let outer = s.begin_batch(label);
         s.counters.writes += 1;
@@ -345,11 +311,7 @@ impl SceneHandle {
     pub(crate) fn take_announcements(&self) -> Vec<(Handle, u32)> {
         let mut s = self.borrow_mut();
         let all = std::mem::take(&mut s.announce);
-        let v: Vec<(Handle, u32)> = all
-            .into_iter()
-            .filter(|(id, _)| s.idx(*id).is_some())
-            .map(|(id, p)| (id.to_raw(), p))
-            .collect();
+        let v: Vec<(Handle, u32)> = all.into_iter().filter(|(id, _)| s.idx(*id).is_some()).map(|(id, p)| (id.to_raw(), p)).collect();
         s.counters.announced += v.len() as u64;
         v
     }
@@ -404,11 +366,7 @@ impl<'a> SceneRef<'a> {
 
     /// Every live node, in slot order (O(slots)).
     pub fn nodes(self) -> impl Iterator<Item = NodeRef<'a>> + 'a {
-        self.s.ids().map(move |id| NodeRef {
-            s: self.s,
-            id,
-            i: id.index() as usize,
-        })
+        self.s.ids().map(move |id| NodeRef { s: self.s, id, i: id.index() as usize })
     }
 
     /// The live nodes of element tag `tag`, in slot order (O(slots) until SG3's kind index).
@@ -432,28 +390,15 @@ impl<'a> SceneRef<'a> {
 
     /// Every node with a value for `key`, with the value: O(entries) for a sparse key, O(slots) for
     /// a dense one (ARCH-SCENE §6.3).
-    pub fn with_ext<T: 'static>(
-        self,
-        key: &ExtKey<T>,
-    ) -> impl Iterator<Item = (NodeRef<'a>, &'a T)> + use<'a, T> {
+    pub fn with_ext<T: 'static>(self, key: &ExtKey<T>) -> impl Iterator<Item = (NodeRef<'a>, &'a T)> + use<'a, T> {
         let s = self.s;
-        WithExt {
-            s,
-            it: s.ext.col(key).map(|c| c.values()),
-        }
+        WithExt { s, it: s.ext.col(key).map(|c| c.values()) }
     }
 
     /// [`SceneRef::with_ext`] with each entry's ticks (what was added or changed since a tick).
-    pub fn with_ext_ticks<T: 'static>(
-        self,
-        key: &ExtKey<T>,
-    ) -> impl Iterator<Item = (NodeRef<'a>, &'a T, ExtTicks)> + use<'a, T> {
+    pub fn with_ext_ticks<T: 'static>(self, key: &ExtKey<T>) -> impl Iterator<Item = (NodeRef<'a>, &'a T, ExtTicks)> + use<'a, T> {
         let s = self.s;
-        s.ext
-            .col(key)
-            .into_iter()
-            .flat_map(|c| c.iter())
-            .map(move |(id, v, t)| (NodeRef::at(s, id), v, t))
+        s.ext.col(key).into_iter().flat_map(|c| c.iter()).map(move |(id, v, t)| (NodeRef::at(s, id), v, t))
     }
 
     /// The number of nodes with a value for `key` (O(1)).
@@ -482,11 +427,7 @@ impl<'a> NodeRef<'a> {
     /// The live node `id`.
     #[inline]
     fn at(s: &'a Scene, id: NodeId) -> NodeRef<'a> {
-        NodeRef {
-            s,
-            id,
-            i: id.index() as usize,
-        }
+        NodeRef { s, id, i: id.index() as usize }
     }
     pub fn id(self) -> NodeId {
         self.id
@@ -509,25 +450,14 @@ impl<'a> NodeRef<'a> {
     }
     /// The light parent.
     pub fn parent(self) -> Option<NodeRef<'a>> {
-        self.s.core[self.i].parent.map(|p| NodeRef {
-            s: self.s,
-            id: p,
-            i: p.index() as usize,
-        })
+        self.s.core[self.i].parent.map(|p| NodeRef { s: self.s, id: p, i: p.index() as usize })
     }
     pub fn children(self) -> Children<'a> {
-        Children {
-            s: self.s,
-            it: self.s.children[self.i].iter(),
-        }
+        Children { s: self.s, it: self.s.children[self.i].iter() }
     }
     /// The subtree in pre-order, this node first.
     pub fn descendants(self) -> Descendants<'a> {
-        Descendants {
-            s: self.s,
-            stack: vec![self.id],
-            last: None,
-        }
+        Descendants { s: self.s, stack: vec![self.id], last: None }
     }
     /// The parent chain, nearest first.
     pub fn ancestors(self) -> impl Iterator<Item = NodeRef<'a>> + 'a {
@@ -577,15 +507,12 @@ impl<'a> NodeRef<'a> {
     }
     /// Untyped read by id, as the host reads (`get_prop`).
     pub fn value(self, prop: PropId) -> Result<Value, PropError> {
-        let def = kinds::prop_def(self.kind_index(), prop.0).ok_or_else(|| {
-            PropError::Unknown(format!("unknown prop id {} on <{}>", prop.0, self.tag()))
-        })?;
+        let def = kinds::prop_def(self.kind_index(), prop.0).ok_or_else(|| PropError::Unknown(format!("unknown prop id {} on <{}>", prop.0, self.tag())))?;
         props::get_prop(&self.view(), def).map_err(PropError::Invalid)
     }
     /// Untyped read by prop name.
     pub fn value_of(self, name: &str) -> Result<Value, PropError> {
-        let (_, def) = kinds::find_prop(self.kind_index(), name)
-            .ok_or_else(|| PropError::Unknown(format!("<{}> has no prop {name}", self.tag())))?;
+        let (_, def) = kinds::find_prop(self.kind_index(), name).ok_or_else(|| PropError::Unknown(format!("<{}> has no prop {name}", self.tag())))?;
         props::get_prop(&self.view(), def).map_err(PropError::Invalid)
     }
     /// The prop id of `name` on this node's kind.
@@ -669,11 +596,7 @@ impl<'a> Iterator for Children<'a> {
     type Item = NodeRef<'a>;
     fn next(&mut self) -> Option<NodeRef<'a>> {
         let s = self.s;
-        self.it.next().map(|&id| NodeRef {
-            s,
-            id,
-            i: id.index() as usize,
-        })
+        self.it.next().map(|&id| NodeRef { s, id, i: id.index() as usize })
     }
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.it.size_hint()
@@ -683,11 +606,7 @@ impl<'a> Iterator for Children<'a> {
 impl DoubleEndedIterator for Children<'_> {
     fn next_back(&mut self) -> Option<Self::Item> {
         let s = self.s;
-        self.it.next_back().map(|&id| NodeRef {
-            s,
-            id,
-            i: id.index() as usize,
-        })
+        self.it.next_back().map(|&id| NodeRef { s, id, i: id.index() as usize })
     }
 }
 
@@ -753,31 +672,22 @@ impl<'a> SceneMut<'a> {
 
     /// Creates a detached node owned by this origin.
     pub fn create(&mut self, kind: KindId) -> Result<NodeId, SceneError> {
-        let k = kinds::kind_of_id(kind.0)
-            .ok_or_else(|| SceneError::Invalid(format!("unknown kind id {}", kind.0)))?;
+        let k = kinds::kind_of_id(kind.0).ok_or_else(|| SceneError::Invalid(format!("unknown kind id {}", kind.0)))?;
         let owner = self.owner();
         self.s.create(k, owner)
     }
 
     /// [`SceneMut::create`] by element tag.
     pub fn create_tag(&mut self, tag: &str) -> Result<NodeId, SceneError> {
-        let k = kinds::tag_index(tag)
-            .ok_or_else(|| SceneError::Invalid(format!("unknown element <{tag}>")))?;
+        let k = kinds::tag_index(tag).ok_or_else(|| SceneError::Invalid(format!("unknown element <{tag}>")))?;
         let owner = self.owner();
         self.s.create(k, owner)
     }
 
     /// Moves `child` under `parent` before `before` (last when `None`). Both must be Rust- or
     /// Host-owned (S3), as must `child`'s old parent.
-    pub fn insert(
-        &mut self,
-        parent: NodeId,
-        child: NodeId,
-        before: Option<NodeId>,
-    ) -> Result<(), SceneError> {
-        self.s
-            .insert(parent, child, before, self.origin)
-            .map(|_| ())
+    pub fn insert(&mut self, parent: NodeId, child: NodeId, before: Option<NodeId>) -> Result<(), SceneError> {
+        self.s.insert(parent, child, before, self.origin).map(|_| ())
     }
 
     /// Detaches `child` from its parent (it stays alive).
@@ -795,19 +705,13 @@ impl<'a> SceneMut<'a> {
         if !matches!(self.origin, Origin::Js) {
             for n in SceneRef::new(self.s).get(id).expect("live").descendants() {
                 if n.owner() == Owner::Js {
-                    return Err(SceneError::NotOwner {
-                        node: n.id(),
-                        owner: Owner::Js,
-                    });
+                    return Err(SceneError::NotOwner { node: n.id(), owner: Owner::Js });
                 }
             }
             if let Some(p) = self.s.core[i].parent
                 && self.s.core[self.s.ix(p)].owner == Owner::Js
             {
-                return Err(SceneError::NotOwner {
-                    node: p,
-                    owner: Owner::Js,
-                });
+                return Err(SceneError::NotOwner { node: p, owner: Owner::Js });
             }
         }
         self.s.free_subtree_from(id, self.origin);
@@ -815,23 +719,11 @@ impl<'a> SceneMut<'a> {
     }
 
     /// Replaces `remove` children of `parent` from index `at` with `insert` (in order).
-    pub fn splice(
-        &mut self,
-        parent: NodeId,
-        at: usize,
-        remove: usize,
-        insert: &[NodeId],
-    ) -> Result<(), SceneError> {
-        let pi = self
-            .s
-            .idx(parent)
-            .ok_or(SceneError::Stale(parent.to_raw()))?;
+    pub fn splice(&mut self, parent: NodeId, at: usize, remove: usize, insert: &[NodeId]) -> Result<(), SceneError> {
+        let pi = self.s.idx(parent).ok_or(SceneError::Stale(parent.to_raw()))?;
         let kids = &self.s.children[pi];
         if at > kids.len() || at + remove > kids.len() {
-            return Err(SceneError::Invalid(format!(
-                "splice {at}+{remove} out of {} children",
-                kids.len()
-            )));
+            return Err(SceneError::Invalid(format!("splice {at}+{remove} out of {} children", kids.len())));
         }
         let gone: Vec<NodeId> = kids[at..at + remove].to_vec();
         for c in gone {
@@ -847,12 +739,7 @@ impl<'a> SceneMut<'a> {
     /// Mutation access to one live node.
     pub fn node(&mut self, id: NodeId) -> Option<NodeMut<'_>> {
         let i = self.s.idx(id)?;
-        Some(NodeMut {
-            s: self.s,
-            id,
-            i,
-            origin: self.origin,
-        })
+        Some(NodeMut { s: self.s, id, i, origin: self.origin })
     }
 
     /// Groups writes into one tick and one journal batch (`Change::Batch { label, .. }`). A `write`
@@ -875,11 +762,7 @@ pub struct NodeMut<'a> {
 
 impl NodeMut<'_> {
     pub fn read(&self) -> NodeRef<'_> {
-        NodeRef {
-            s: self.s,
-            id: self.id,
-            i: self.i,
-        }
+        NodeRef { s: self.s, id: self.id, i: self.i }
     }
 
     pub fn id(&self) -> NodeId {
@@ -888,14 +771,7 @@ impl NodeMut<'_> {
 
     /// Typed write through the exact path (R18: announced when observed, no events).
     pub fn set<T: PropValue>(&mut self, key: &PropKey<T>, v: T) -> Result<(), PropError> {
-        let (id, _) =
-            kinds::find_prop(self.s.core[self.i].kind as usize, key.name).ok_or_else(|| {
-                PropError::Unknown(format!(
-                    "<{}> has no prop {}",
-                    self.s.tag_at(self.i),
-                    key.name
-                ))
-            })?;
+        let (id, _) = kinds::find_prop(self.s.core[self.i].kind as usize, key.name).ok_or_else(|| PropError::Unknown(format!("<{}> has no prop {}", self.s.tag_at(self.i), key.name)))?;
         self.s.set_value(self.id, id, &v.into_value(), self.origin)
     }
 
@@ -906,10 +782,7 @@ impl NodeMut<'_> {
 
     /// Untyped write by prop name.
     pub fn set_by_name(&mut self, name: &str, v: &Value) -> Result<(), PropError> {
-        let (id, _) =
-            kinds::find_prop(self.s.core[self.i].kind as usize, name).ok_or_else(|| {
-                PropError::Unknown(format!("<{}> has no prop {name}", self.s.tag_at(self.i)))
-            })?;
+        let (id, _) = kinds::find_prop(self.s.core[self.i].kind as usize, name).ok_or_else(|| PropError::Unknown(format!("<{}> has no prop {name}", self.s.tag_at(self.i))))?;
         self.s.set_value(self.id, id, v, self.origin)
     }
 
@@ -950,9 +823,7 @@ impl NodeMut<'_> {
         if what.contains(Dirty::LAYOUT) {
             self.s.invalidate_content(self.id);
         }
-        self.s.core[self.i]
-            .dirty
-            .insert(what & (Dirty::PAINT | Dirty::A11Y));
+        self.s.core[self.i].dirty.insert(what & (Dirty::PAINT | Dirty::A11Y));
     }
 }
 
@@ -962,33 +833,20 @@ impl Scene {
     /// Writes prop `prop` of `id` from `origin`: stores it, marks the dirty bits (restyle and
     /// invalidation for layout props, remeasure for content), sets the `explicit` bit for a
     /// runtime's write, and queues `prop_changed` for an observed prop written by Rust (R18).
-    pub(crate) fn set_value(
-        &mut self,
-        id: NodeId,
-        prop: u32,
-        v: &Value,
-        origin: Origin,
-    ) -> Result<(), PropError> {
+    pub(crate) fn set_value(&mut self, id: NodeId, prop: u32, v: &Value, origin: Origin) -> Result<(), PropError> {
         let i = self.idx(id).ok_or(PropError::Stale(id.to_raw()))?;
         let kind = self.core[i].kind as usize;
         let tag = kinds::kind(kind).tag.unwrap_or("?");
-        let def = kinds::prop_def(kind, prop)
-            .ok_or_else(|| PropError::Unknown(format!("unknown prop id {prop} on <{tag}>")))?;
+        let def = kinds::prop_def(kind, prop).ok_or_else(|| PropError::Unknown(format!("unknown prop id {prop} on <{tag}>")))?;
         let announce = !matches!(origin, Origin::Js) && self.observes(i, prop);
-        let before = if announce {
-            props::get_prop(&self.get(id.to_raw()).expect("live"), def).ok()
-        } else {
-            None
-        };
+        let before = if announce { props::get_prop(&self.get(id.to_raw()).expect("live"), def).ok() } else { None };
         let d = {
             let w = match &mut self.payload[i] {
                 super::node::Payload::Builtin(w) => w,
                 super::node::Payload::Vacant => return Err(PropError::Stale(id.to_raw())),
             };
             if props::is_common(def.key) {
-                let c = &mut self.cold[i]
-                    .get_or_insert_with(|| Box::new(super::node::NodeCold::DEFAULT))
-                    .common;
+                let c = &mut self.cold[i].get_or_insert_with(|| Box::new(super::node::NodeCold::DEFAULT)).common;
                 props::set_prop(c, w, def, v)
             } else {
                 props::set_prop(&mut Common::default(), w, def, v)
@@ -996,14 +854,7 @@ impl Scene {
         }
         .map_err(|e| PropError::Invalid(format!("<{tag}> {}: {e}", def.name)))?;
         let t = self.stamp();
-        self.record(
-            Change::Prop {
-                node: id,
-                prop: PropId(prop),
-                origin,
-            },
-            origin,
-        );
+        self.record(Change::Prop { node: id, prop: PropId(prop), origin }, origin);
         let core = &mut self.core[i];
         core.changed = t;
         core.dirty.insert(Dirty::PAINT);
@@ -1050,9 +901,7 @@ impl Scene {
             return false;
         }
         self.cold_mut(i).vis = v;
-        self.core[i]
-            .flags
-            .set(NodeFlags::HAS_VISUAL, !v.is_identity());
+        self.core[i].flags.set(NodeFlags::HAS_VISUAL, !v.is_identity());
         self.core[i].dirty.insert(Dirty::PAINT);
         let t = self.stamp();
         self.core[i].changed = t;
@@ -1099,19 +948,14 @@ impl EguiBackend {
     /// A prop of a live node by name, as the host would read it.
     pub fn prop(&self, h: Handle, name: &str) -> Result<Value, String> {
         let scene = self.0.scene.borrow();
-        let n = SceneRef::new(&scene)
-            .get_raw(h)
-            .ok_or_else(|| format!("stale or foreign handle {h}"))?;
+        let n = SceneRef::new(&scene).get_raw(h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
         n.value_of(name).map_err(|e| e.to_string())
     }
 
     /// The live handles of kind `tag` in creation order of their slots (tests).
     pub fn handles_of(&self, tag: &str) -> Vec<Handle> {
         let scene = self.0.scene.borrow();
-        let mut v: Vec<Handle> = SceneRef::new(&scene)
-            .of_tag(tag)
-            .map(|n| n.id().to_raw())
-            .collect();
+        let mut v: Vec<Handle> = SceneRef::new(&scene).of_tag(tag).map(|n| n.id().to_raw()).collect();
         v.sort();
         v
     }

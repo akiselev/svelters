@@ -14,12 +14,7 @@ impl EguiBackend {
     /// The window shown in the root viewport: the first presented one still alive.
     pub fn root_window(&self) -> Option<Handle> {
         let scene = self.0.scene.borrow();
-        self.0
-            .windows
-            .borrow()
-            .iter()
-            .copied()
-            .find(|&w| scene.contains(w))
+        self.0.windows.borrow().iter().copied().find(|&w| scene.contains(w))
     }
 
     pub(crate) fn walk(&self, ui: &mut egui::Ui) -> Vec<Out> {
@@ -27,13 +22,7 @@ impl EguiBackend {
         let mut out = Vec::new();
         let windows: Vec<Handle> = {
             let scene = self.0.scene.borrow();
-            self.0
-                .windows
-                .borrow()
-                .iter()
-                .copied()
-                .filter(|&w| scene.contains(w))
-                .collect()
+            self.0.windows.borrow().iter().copied().filter(|&w| scene.contains(w)).collect()
         };
         self.0.pass_active.set(true);
         for (i, &w) in windows.iter().enumerate() {
@@ -48,9 +37,7 @@ impl EguiBackend {
             } else {
                 let vid = egui::ViewportId::from_hash_of(("svl-window", w));
                 let (title, size) = self.window_props(w);
-                let builder = egui::ViewportBuilder::default()
-                    .with_title(title)
-                    .with_inner_size(size);
+                let builder = egui::ViewportBuilder::default().with_title(title).with_inner_size(size);
                 ctx.show_viewport_immediate(vid, builder, |ui, _class| {
                     if ui.ctx().input(|inp| inp.viewport().close_requested()) {
                         self.on_close_requested(ui.ctx(), vid, w);
@@ -68,14 +55,7 @@ impl EguiBackend {
     fn window_props(&self, w: Handle) -> (String, egui::Vec2) {
         let scene = self.0.scene.borrow();
         match &scene.n(w).w {
-            W::Window {
-                title,
-                default_w,
-                default_h,
-            } => (
-                title.clone(),
-                egui::vec2(*default_w as f32, *default_h as f32),
-            ),
+            W::Window { title, default_w, default_h } => (title.clone(), egui::vec2(*default_w as f32, *default_h as f32)),
             _ => unreachable!(),
         }
     }

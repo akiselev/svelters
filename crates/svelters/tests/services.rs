@@ -51,11 +51,7 @@ fn wait(what: &str, cond: impl Fn() -> bool) {
 
 #[test]
 fn services_start_with_the_app_survive_reloads_and_stop_at_shutdown() {
-    assert_eq!(
-        TICKER_STARTS.load(Ordering::SeqCst),
-        0,
-        "nothing runs before the app starts"
-    );
+    assert_eq!(TICKER_STARTS.load(Ordering::SeqCst), 0, "nothing runs before the app starts");
     let dir = std::env::temp_dir().join(format!("svelters-services-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&dir);
     std::fs::create_dir_all(&dir).unwrap();
@@ -74,18 +70,12 @@ globalThis.report = () => console.log('v1 sees', globalThis.last > 0);
     // The first host starts the eager services; the lazy one waits for its import.
     assert_eq!(TICKER_STARTS.load(Ordering::SeqCst), 1);
     assert_eq!(LAZY_STARTS.load(Ordering::SeqCst), 0);
-    assert_eq!(
-        svelters::exports::service::running_services(),
-        vec!["svc/ticker".to_string()]
-    );
+    assert_eq!(svelters::exports::service::running_services(), vec!["svc/ticker".to_string()]);
     host.load_bundle(dir.join("main.js")).unwrap();
     let turn = || {
         host.checkpoint();
         host.drain_jobs();
-        host.take_console()
-            .into_iter()
-            .map(|l| l.text)
-            .collect::<Vec<_>>()
+        host.take_console().into_iter().map(|l| l.text).collect::<Vec<_>>()
     };
     let mut lines = Vec::new();
     let end = Instant::now() + Duration::from_secs(20);
@@ -124,16 +114,8 @@ console.log('lazy', idle.n);
         std::thread::sleep(Duration::from_millis(3));
     }
     assert!(lines.iter().any(|l| l == "lazy 42"), "{lines:?}");
-    assert_eq!(
-        TICKER_STARTS.load(Ordering::SeqCst),
-        1,
-        "a reload never restarts a service"
-    );
-    assert_eq!(
-        LAZY_STARTS.load(Ordering::SeqCst),
-        1,
-        "the lazy service started on its import"
-    );
+    assert_eq!(TICKER_STARTS.load(Ordering::SeqCst), 1, "a reload never restarts a service");
+    assert_eq!(LAZY_STARTS.load(Ordering::SeqCst), 1, "the lazy service started on its import");
     assert!(host.take_errors().is_empty());
 
     // Shutdown stops and joins the service thread.
@@ -141,8 +123,6 @@ console.log('lazy', idle.n);
     assert_eq!(report.services, 2);
     assert_eq!(report.joined, 1);
     assert!(report.timed_out.is_empty());
-    wait("ticker stopped", || {
-        TICKER_STOPPED.load(Ordering::SeqCst) == 1
-    });
+    wait("ticker stopped", || TICKER_STOPPED.load(Ordering::SeqCst) == 1);
     drop(host);
 }

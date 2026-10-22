@@ -103,11 +103,7 @@ impl fmt::Debug for Busy {
         if self.is_empty() {
             return f.write_str("Busy(settled)");
         }
-        let names: Vec<&str> = Busy::NAMES
-            .iter()
-            .filter(|(b, _)| self.contains(*b))
-            .map(|(_, n)| *n)
-            .collect();
+        let names: Vec<&str> = Busy::NAMES.iter().filter(|(b, _)| self.contains(*b)).map(|(_, n)| *n).collect();
         write!(f, "Busy({})", names.join(" | "))
     }
 }
@@ -152,9 +148,6 @@ impl BusyProbe {
 /// both wait for the next logic, so they keep the embed busy.
 pub(crate) fn scene_busy(scene: &SceneHandle) -> Busy {
     let mut b = Busy::empty();
-    b.set(
-        Busy::CHANGES,
-        scene.deferred_len() > 0 || scene.announcements_len() > 0,
-    );
+    b.set(Busy::CHANGES, scene.deferred_len() > 0 || scene.announcements_len() > 0);
     b
 }

@@ -29,17 +29,10 @@ impl HostCallbacks for Rec {
     fn checkpoint(&self) {
         self.0.borrow_mut().checkpoints += 1;
     }
-    fn call_sync(
-        &self,
-        h: svl_handle,
-        signal: svl_id,
-        _args: &[Value],
-    ) -> Result<Value, SyncError> {
+    fn call_sync(&self, h: svl_handle, signal: svl_id, _args: &[Value]) -> Result<Value, SyncError> {
         let mut l = self.0.borrow_mut();
         l.syncs.push((h, signal));
-        l.sync_answer
-            .clone()
-            .ok_or(SyncError::Failed("no answer".into()))
+        l.sync_answer.clone().ok_or(SyncError::Failed("no answer".into()))
     }
     fn on_destroyed(&self, h: svl_handle, reason: u32) {
         self.0.borrow_mut().gone.push((h, reason));
@@ -70,13 +63,7 @@ impl Rig {
         let harness = Harness::builder()
             .with_size(egui::vec2(480.0, 360.0))
             .build_ui_state(|ui, b: &mut EguiBackend| b.ui(ui), backend.clone());
-        Rig {
-            backend,
-            vt,
-            hv,
-            log,
-            harness,
-        }
+        Rig { backend, vt, hv, log, harness }
     }
 
     pub fn br(&self) -> BackendRef<'static> {
@@ -163,12 +150,7 @@ impl Rig {
         let pos = self.drawn(h).center();
         self.harness.hover_at(pos);
         for pressed in [true, false] {
-            self.harness.event(egui::Event::PointerButton {
-                pos,
-                button: egui::PointerButton::Primary,
-                pressed,
-                modifiers: egui::Modifiers::NONE,
-            });
+            self.harness.event(egui::Event::PointerButton { pos, button: egui::PointerButton::Primary, pressed, modifiers: egui::Modifiers::NONE });
         }
         self.harness.run();
     }
@@ -176,8 +158,7 @@ impl Rig {
     /// Focuses text edit `h`, selects everything and types `text` (one frame of input).
     pub fn type_into(&mut self, h: svl_handle, text: &str) {
         self.click(h);
-        self.harness
-            .key_press_modifiers(egui::Modifiers::COMMAND, egui::Key::A);
+        self.harness.key_press_modifiers(egui::Modifiers::COMMAND, egui::Key::A);
         self.harness.event(egui::Event::Text(text.to_string()));
         self.harness.run();
     }

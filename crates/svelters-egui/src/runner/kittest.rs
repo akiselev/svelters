@@ -35,54 +35,31 @@ pub struct TestApp {
 impl TestApp {
     /// Loads `bundle` with a quiet host config (console and errors are captured, not echoed).
     pub fn load(bundle: impl AsRef<Path>) -> Result<TestApp, String> {
-        TestApp::with_config(
-            bundle,
-            HostConfig {
-                echo_console: false,
-                echo_errors: false,
-                ..HostConfig::default()
-            },
-        )
+        TestApp::with_config(bundle, HostConfig { echo_console: false, echo_errors: false, ..HostConfig::default() })
     }
 
     pub fn with_config(bundle: impl AsRef<Path>, cfg: HostConfig) -> Result<TestApp, String> {
         // The harness's context does not exist yet: `logic` binds it at the first frame.
-        let embed = Embed::new(&egui::Context::default(), EmbedConfig::app(cfg))
-            .map_err(|e| e.to_string())?;
+        let embed = Embed::new(&egui::Context::default(), EmbedConfig::app(cfg)).map_err(|e| e.to_string())?;
         embed.load_app(bundle).map_err(|e| e.to_string())?;
         let backend = embed.backend().clone();
         let size = backend
             .root_window()
-            .and_then(|w| {
-                match backend
-                    .prop(w, "default-width")
-                    .ok()
-                    .zip(backend.prop(w, "default-height").ok())
-                {
-                    Some((svelters_abi::Value::F64(w), svelters_abi::Value::F64(h))) => {
-                        Some(egui::vec2(w as f32, h as f32))
-                    }
-                    _ => None,
-                }
+            .and_then(|w| match backend.prop(w, "default-width").ok().zip(backend.prop(w, "default-height").ok()) {
+                Some((svelters_abi::Value::F64(w), svelters_abi::Value::F64(h))) => Some(egui::vec2(w as f32, h as f32)),
+                _ => None,
             })
             .unwrap_or(egui::vec2(480.0, 360.0));
         // EM2 (the SG1 gap): the pass callbacks are on the harness's context before its first frame
         let attach = embed.clone();
-        let harness = Harness::builder()
-            .with_size(size)
-            .with_context_setup(move |ctx| attach.attach(ctx))
-            .build_ui_state(
-                |ui, e: &mut Embed| {
-                    e.logic(ui.ctx());
-                    e.show_windows(ui);
-                },
-                embed.clone(),
-            );
-        Ok(TestApp {
-            harness,
-            embed,
-            backend,
-        })
+        let harness = Harness::builder().with_size(size).with_context_setup(move |ctx| attach.attach(ctx)).build_ui_state(
+            |ui, e: &mut Embed| {
+                e.logic(ui.ctx());
+                e.show_windows(ui);
+            },
+            embed.clone(),
+        );
+        Ok(TestApp { harness, embed, backend })
     }
 
     pub fn host(&self) -> &Host<'static> {
@@ -96,11 +73,7 @@ impl TestApp {
 
     /// Errors JS reported so far (uncaught exceptions, rejected promises).
     pub fn errors(&self) -> Vec<String> {
-        self.host()
-            .take_errors()
-            .into_iter()
-            .map(|e| e.to_string())
-            .collect()
+        self.host().take_errors().into_iter().map(|e| e.to_string()).collect()
     }
 }
 

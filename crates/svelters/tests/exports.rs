@@ -64,10 +64,7 @@ impl Counter {
     /// Starts at `start`.
     #[js(constructor)]
     pub fn new(start: i64) -> Self {
-        Counter {
-            value: start,
-            not_send: Cell::new(0),
-        }
+        Counter { value: start, not_send: Cell::new(0) }
     }
     #[js(getter)]
     pub fn value(&self) -> i64 {
@@ -138,14 +135,7 @@ pub struct Library {
 impl Library {
     #[js(constructor)]
     pub fn new(titles: Vec<String>) -> Arc<Library> {
-        Arc::new(Library {
-            books: Mutex::new(
-                titles
-                    .into_iter()
-                    .map(|title| Arc::new(Book { title }))
-                    .collect(),
-            ),
-        })
+        Arc::new(Library { books: Mutex::new(titles.into_iter().map(|title| Arc::new(Book { title })).collect()) })
     }
     pub fn get(&self, i: u32) -> Option<Arc<Book>> {
         self.books.lock().unwrap().get(i as usize).cloned()
@@ -177,11 +167,7 @@ pub fn sum(xs: &[f64]) -> f64 {
 
 #[svelters::export(module = "lib")]
 pub fn scale(p: Point, k: f64) -> Point {
-    Point {
-        x: p.x * k,
-        y: p.y * k,
-        ..p
-    }
+    Point { x: p.x * k, y: p.y * k, ..p }
 }
 
 #[svelters::export(module = "lib")]
@@ -229,25 +215,12 @@ fn run(name: &str, main: &str, after: impl FnOnce(&Host<'_>)) -> Run {
     host.drain_jobs();
     after(&host);
     let lines = host.take_console().into_iter().map(|l| l.text).collect();
-    let errors = host
-        .take_errors()
-        .into_iter()
-        .map(|e| e.to_string())
-        .collect();
-    Run {
-        lines,
-        errors,
-        log: log.log(),
-    }
+    let errors = host.take_errors().into_iter().map(|e| e.to_string()).collect();
+    Run { lines, errors, log: log.log() }
 }
 
 fn has(r: &Run, line: &str) {
-    assert!(
-        r.lines.iter().any(|l| l == line),
-        "missing console line {line:?}\nlines: {:#?}\nerrors: {:#?}",
-        r.lines,
-        r.errors
-    );
+    assert!(r.lines.iter().any(|l| l == line), "missing console line {line:?}\nlines: {:#?}\nerrors: {:#?}", r.lines, r.errors);
 }
 
 #[test]
@@ -293,10 +266,7 @@ console.log('other', c instanceof Counter, c.nativeType);
     has(&r, "merge 42");
     has(&r, "greet hello svelte");
     has(&r, "sum 6.5");
-    has(
-        &r,
-        r#"scale {"x":3,"y":6,"weight":1,"label":null,"stamp":"7"} bigint"#,
-    );
+    has(&r, r#"scale {"x":3,"y":6,"weight":1,"label":null,"stamp":"7"} bigint"#);
     has(&r, "big true");
     has(&r, "range RangeError");
     has(&r, "int RangeError");
@@ -317,31 +287,11 @@ console.log('other', c instanceof Counter, c.nativeType);
     ] {
         let _ = line;
     }
-    assert!(
-        r.log.contains("construct #a1 app:lib.Counter [5]\n"),
-        "{}",
-        r.log
-    );
-    assert!(
-        r.log.contains("call #a1 app:lib.Counter.add [2]\n"),
-        "{}",
-        r.log
-    );
-    assert!(
-        r.log.contains("set #a1 app:lib.Counter.value 40\n"),
-        "{}",
-        r.log
-    );
-    assert!(
-        r.log.contains("static app:lib.Counter.zero [] #a2\n"),
-        "{}",
-        r.log
-    );
-    assert!(
-        r.log.contains("static app:lib.greet [\"svelte\"]\n"),
-        "{}",
-        r.log
-    );
+    assert!(r.log.contains("construct #a1 app:lib.Counter [5]\n"), "{}", r.log);
+    assert!(r.log.contains("call #a1 app:lib.Counter.add [2]\n"), "{}", r.log);
+    assert!(r.log.contains("set #a1 app:lib.Counter.value 40\n"), "{}", r.log);
+    assert!(r.log.contains("static app:lib.Counter.zero [] #a2\n"), "{}", r.log);
+    assert!(r.log.contains("static app:lib.greet [\"svelte\"]\n"), "{}", r.log);
 }
 
 #[test]
@@ -371,11 +321,7 @@ globalThis.keep = lib;
             host.collect_garbage();
             host.checkpoint();
             host.drain_jobs();
-            assert_eq!(
-                host.live_app_objects(),
-                3,
-                "lib + 2 books (the counters were disposed or collected)"
-            );
+            assert_eq!(host.live_app_objects(), 3, "lib + 2 books (the counters were disposed or collected)");
         },
     );
     assert!(r.errors.is_empty(), "{:#?}", r.errors);
@@ -384,15 +330,8 @@ globalThis.keep = lib;
     has(&r, "all a,b true");
     has(&r, "none null");
     has(&r, "disposed StaleHandleError");
-    assert!(
-        COUNTER_DROPS.load(Ordering::SeqCst) - counters_before >= 4,
-        "disposed + collected counters dropped in Rust"
-    );
-    assert_eq!(
-        BOOK_DROPS.load(Ordering::SeqCst),
-        books_before + 2,
-        "dropping the host released the library and its books"
-    );
+    assert!(COUNTER_DROPS.load(Ordering::SeqCst) - counters_before >= 4, "disposed + collected counters dropped in Rust");
+    assert_eq!(BOOK_DROPS.load(Ordering::SeqCst), books_before + 2, "dropping the host released the library and its books");
 }
 
 #[test]
@@ -417,11 +356,7 @@ globalThis.kept = new Counter(1);
     host.collect_garbage();
     host.checkpoint();
     host.drain_jobs();
-    assert_eq!(
-        host.live_app_objects(),
-        1,
-        "the collected wrappers released their objects"
-    );
+    assert_eq!(host.live_app_objects(), 1, "the collected wrappers released their objects");
     assert!(COUNTER_DROPS.load(Ordering::SeqCst) - before >= 4);
     assert!(host.take_errors().is_empty());
     drop(host);
@@ -455,18 +390,9 @@ fn schema_typings_and_json() {
     assert!(!dts.contains("privateHelper"));
     let json: serde_json::Value = serde_json::from_str(&svelters::exports::json()).unwrap();
     assert_eq!(json["schema"], "svelters-exports/1");
-    assert_eq!(
-        json["modules"][0]["classes"][1]["native"],
-        "app:lib.Counter"
-    );
-    let js =
-        svelters::exports::javascript("other", "@svelters/types/core", &|m| format!("./{m}.js"))
-            .unwrap();
-    assert!(
-        js.contains("import { Book as lib$Book, Library as lib$Library } from './lib.js';")
-            || js.contains("from './lib.js'"),
-        "{js}"
-    );
+    assert_eq!(json["modules"][0]["classes"][1]["native"], "app:lib.Counter");
+    let js = svelters::exports::javascript("other", "@svelters/types/core", &|m| format!("./{m}.js")).unwrap();
+    assert!(js.contains("import { Book as lib$Book, Library as lib$Library } from './lib.js';") || js.contains("from './lib.js'"), "{js}");
 }
 
 #[test]

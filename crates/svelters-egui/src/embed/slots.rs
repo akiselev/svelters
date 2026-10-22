@@ -121,18 +121,9 @@ pub enum SlotWarning {
     DrawnWhileHidden { slot: SlotId, key: String },
     /// A visible slot with a root was not drawn for this many passes of its viewport (the host
     /// forgot `set_visible(false)`, or draws it in another viewport).
-    NotDrawn {
-        slot: SlotId,
-        key: String,
-        passes: u32,
-    },
+    NotDrawn { slot: SlotId, key: String, passes: u32 },
     /// Drawn in a viewport other than the one set (`set_viewport`): repaints go to the wrong window.
-    WrongViewport {
-        slot: SlotId,
-        key: String,
-        set: egui::ViewportId,
-        drawn: egui::ViewportId,
-    },
+    WrongViewport { slot: SlotId, key: String, set: egui::ViewportId, drawn: egui::ViewportId },
 }
 
 pub(crate) const WARN_HIDDEN: u8 = 1;

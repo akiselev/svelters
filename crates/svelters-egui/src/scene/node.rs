@@ -17,42 +17,13 @@ use crate::provider::{ExtBlock, StateBits};
 /// Which egui widget a node shows, with the props the widget borrows mutably.
 #[derive(Clone, Debug, PartialEq)]
 pub enum W {
-    Window {
-        title: String,
-        default_w: f64,
-        default_h: f64,
-    },
+    Window { title: String, default_w: f64, default_h: f64 },
     Box,
-    Label {
-        text: String,
-        wrap: &'static str,
-        selectable: bool,
-    },
-    Button {
-        text: String,
-        selected: bool,
-        frame: bool,
-        small: bool,
-    },
-    Checkbox {
-        text: String,
-        checked: bool,
-    },
-    TextEdit {
-        text: String,
-        hint: String,
-        multiline: bool,
-        password: bool,
-        char_limit: i64,
-    },
-    Slider {
-        value: f64,
-        min: f64,
-        max: f64,
-        step: f64,
-        text: String,
-        show_value: bool,
-    },
+    Label { text: String, wrap: &'static str, selectable: bool },
+    Button { text: String, selected: bool, frame: bool, small: bool },
+    Checkbox { text: String, checked: bool },
+    TextEdit { text: String, hint: String, multiline: bool, password: bool, char_limit: i64 },
+    Slider { value: f64, min: f64, max: f64, step: f64, text: String, show_value: bool },
     /// RA1: a provider kind's widget struct (`#[svelters::widget]`, `crate::provider`).
     Ext(crate::provider::ExtWidget),
 }
@@ -144,12 +115,7 @@ pub struct Visual {
 }
 
 impl Visual {
-    pub const IDENTITY: Visual = Visual {
-        opacity: None,
-        transform: None,
-        clip: None,
-        inert: false,
-    };
+    pub const IDENTITY: Visual = Visual { opacity: None, transform: None, clip: None, inert: false };
     pub fn is_identity(&self) -> bool {
         *self == Visual::IDENTITY
     }
@@ -353,13 +319,7 @@ pub(crate) struct NodeCold {
 }
 
 impl NodeCold {
-    pub const DEFAULT: NodeCold = NodeCold {
-        common: Common::DEFAULT,
-        vis: Visual::IDENTITY,
-        observe: Vec::new(),
-        listen_overflow: Vec::new(),
-        attached: Vec::new(),
-    };
+    pub const DEFAULT: NodeCold = NodeCold { common: Common::DEFAULT, vis: Visual::IDENTITY, observe: Vec::new(), listen_overflow: Vec::new(), attached: Vec::new() };
 
     pub fn observes(&self, prop: u32) -> bool {
         prop != 0 && self.observe.iter().any(|&(p, c)| p == prop && c > 0)
@@ -407,11 +367,7 @@ impl Node<'_> {
 /// The text a node shows (window: its title).
 pub fn text_of(w: &W) -> &str {
     match w {
-        W::Label { text, .. }
-        | W::Button { text, .. }
-        | W::Checkbox { text, .. }
-        | W::TextEdit { text, .. }
-        | W::Slider { text, .. } => text,
+        W::Label { text, .. } | W::Button { text, .. } | W::Checkbox { text, .. } | W::TextEdit { text, .. } | W::Slider { text, .. } => text,
         W::Window { title, .. } => title,
         W::Box | W::Ext(_) => "",
     }

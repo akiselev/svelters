@@ -42,18 +42,11 @@ impl Scene {
     /// True if node `i`'s size cannot depend on its content.
     pub(crate) fn is_boundary(&self, i: usize) -> bool {
         let core = &self.core[i];
-        if core
-            .flags
-            .intersects(NodeFlags::ROOT | NodeFlags::LAYOUT_BOUNDARY)
-        {
+        if core.flags.intersects(NodeFlags::ROOT | NodeFlags::LAYOUT_BOUNDARY) {
             return true;
         }
         let c = self.common(i);
-        if c.width.is_none()
-            || c.height.is_none()
-            || self.vis(i).clip.is_some()
-            || c.align_self == "baseline"
-        {
+        if c.width.is_none() || c.height.is_none() || self.vis(i).clip.is_some() || c.align_self == "baseline" {
             return false;
         }
         if c.flex_shrink != 0.0 && (c.min_width.is_none() || c.min_height.is_none()) {
@@ -73,11 +66,7 @@ impl Scene {
         let mut first = true;
         loop {
             self.layout[i].cache.clear();
-            self.core[i].dirty.insert(if first {
-                Dirty::LAYOUT
-            } else {
-                Dirty::LAYOUT | Dirty::DESC_LAYOUT
-            });
+            self.core[i].dirty.insert(if first { Dirty::LAYOUT } else { Dirty::LAYOUT | Dirty::DESC_LAYOUT });
             first = false;
             if !root.is_detached() && self.is_boundary(i) {
                 self.queue_relayout(root, i);
@@ -110,16 +99,9 @@ impl Scene {
         if self.core[i].flags.contains(NodeFlags::IN_RELAYOUT) {
             return;
         }
-        let Some(id) = self.slots.id_at(i) else {
-            return;
-        };
+        let Some(id) = self.slots.id_at(i) else { return };
         self.core[i].flags.insert(NodeFlags::IN_RELAYOUT);
-        self.roots
-            .get_mut(root)
-            .expect("live root")
-            .dirty
-            .relayout
-            .push(id);
+        self.roots.get_mut(root).expect("live root").dirty.relayout.push(id);
     }
 
     /// The content a leaf measures changed: queue it for remeasure in a laid-out root; elsewhere
@@ -136,12 +118,7 @@ impl Scene {
         self.core[i].dirty.insert(Dirty::MEASURE);
         if !self.core[i].flags.contains(NodeFlags::IN_REMEASURE) {
             self.core[i].flags.insert(NodeFlags::IN_REMEASURE);
-            self.roots
-                .get_mut(root)
-                .expect("live root")
-                .dirty
-                .remeasure
-                .push(id);
+            self.roots.get_mut(root).expect("live root").dirty.remeasure.push(id);
         }
     }
 

@@ -90,10 +90,7 @@ impl RootTable {
         Some(e)
     }
     pub fn iter(&self) -> impl Iterator<Item = (RootIx, &RootEntry)> {
-        self.entries
-            .iter()
-            .enumerate()
-            .filter_map(|(i, e)| e.as_ref().map(|e| (RootIx(i as u32), e)))
+        self.entries.iter().enumerate().filter_map(|(i, e)| e.as_ref().map(|e| (RootIx(i as u32), e)))
     }
     pub fn len(&self) -> usize {
         self.entries.iter().filter(|e| e.is_some()).count()
@@ -108,46 +105,15 @@ pub(crate) struct Destroyed {
 
 fn builtin_payload(kind: usize) -> Option<W> {
     Some(match kinds::kind(kind).id {
-        "Window" => W::Window {
-            title: String::new(),
-            default_w: 480.0,
-            default_h: 360.0,
-        },
+        "Window" => W::Window { title: String::new(), default_w: 480.0, default_h: 360.0 },
         "Box" => W::Box,
-        "Label" => W::Label {
-            text: String::new(),
-            wrap: "wrap",
-            selectable: false,
-        },
-        "Button" => W::Button {
-            text: String::new(),
-            selected: false,
-            frame: true,
-            small: false,
-        },
-        "Checkbox" => W::Checkbox {
-            text: String::new(),
-            checked: false,
-        },
-        "TextEdit" => W::TextEdit {
-            text: String::new(),
-            hint: String::new(),
-            multiline: false,
-            password: false,
-            char_limit: 0,
-        },
-        "Slider" => W::Slider {
-            value: 0.0,
-            min: 0.0,
-            max: 100.0,
-            step: 0.0,
-            text: String::new(),
-            show_value: true,
-        },
+        "Label" => W::Label { text: String::new(), wrap: "wrap", selectable: false },
+        "Button" => W::Button { text: String::new(), selected: false, frame: true, small: false },
+        "Checkbox" => W::Checkbox { text: String::new(), checked: false },
+        "TextEdit" => W::TextEdit { text: String::new(), hint: String::new(), multiline: false, password: false, char_limit: 0 },
+        "Slider" => W::Slider { value: 0.0, min: 0.0, max: 100.0, step: 0.0, text: String::new(), show_value: true },
         // RA1: a provider kind's widget struct with its defaults
-        _ => W::Ext(crate::provider::ExtWidget::new(
-            (kinds::KindRegistry::global().provider(kind)?.entry.new)(),
-        )),
+        _ => W::Ext(crate::provider::ExtWidget::new((kinds::KindRegistry::global().provider(kind)?.entry.new)())),
     })
 }
 
@@ -167,12 +133,8 @@ fn origin_of(o: Owner) -> Origin {
 impl Scene {
     /// Creates a detached node of kind index `kind` (a window: a new root of its own).
     pub(crate) fn create(&mut self, kind: usize, owner: Owner) -> Result<NodeId, SceneError> {
-        let tag = (kind < kinds::KindRegistry::global().len())
-            .then(|| kinds::kind(kind).tag)
-            .flatten()
-            .ok_or_else(|| SceneError::Invalid(format!("unknown kind index {kind}")))?;
-        let w = builtin_payload(kind)
-            .ok_or_else(|| SceneError::Invalid(format!("<{tag}> is not creatable")))?;
+        let tag = (kind < kinds::KindRegistry::global().len()).then(|| kinds::kind(kind).tag).flatten().ok_or_else(|| SceneError::Invalid(format!("unknown kind index {kind}")))?;
+        let w = builtin_payload(kind).ok_or_else(|| SceneError::Invalid(format!("<{tag}> is not creatable")))?;
         let (id, fresh) = self.slots.alloc();
         let tick = self.stamp();
         let i = id.index() as usize;
@@ -182,11 +144,7 @@ impl Scene {
             Box::new(c)
         });
         let mut lb = LayoutBox::new();
-        lb.style = crate::layout::style_of(
-            cold.as_ref().map(|c| &c.common).unwrap_or(&Common::DEFAULT),
-            &w,
-            &super::Visual::IDENTITY,
-        );
+        lb.style = crate::layout::style_of(cold.as_ref().map(|c| &c.common).unwrap_or(&Common::DEFAULT), &w, &super::Visual::IDENTITY);
         let core = NodeCore::new(kind as u32, owner, crate::ids::node_id(id.to_raw()), tick);
         if fresh {
             self.core.push(core);
@@ -201,14 +159,7 @@ impl Scene {
             self.payload[i] = Payload::Builtin(w);
             self.cold[i] = cold;
         }
-        self.record(
-            Change::Created {
-                node: id,
-                kind: KindId(kinds::kind_id(kind)),
-                owner,
-            },
-            origin_of(owner),
-        );
+        self.record(Change::Created { node: id, kind: KindId(kinds::kind_id(kind)), owner }, origin_of(owner));
         if kinds::kind(kind).toplevel {
             self.add_root(TreeRoot::Window { node: id }, id);
         }
@@ -220,26 +171,10 @@ impl Scene {
     pub(crate) fn add_root(&mut self, kind: TreeRoot, top: NodeId) -> RootIx {
         let ti = self.ix(top);
         debug_assert!(self.core[ti].parent.is_none() && self.core[ti].root.is_detached());
-        let r = self.roots.add(RootEntry {
-            kind,
-            top,
-            dirty: RootDirty {
-                full: true,
-                ..Default::default()
-            },
-            size: None,
-            base: None,
-            viewport: egui::ViewportId::ROOT,
-        });
+        let r = self.roots.add(RootEntry { kind, top, dirty: RootDirty { full: true, ..Default::default() }, size: None, base: None, viewport: egui::ViewportId::ROOT });
         self.core[ti].flags.insert(NodeFlags::ROOT);
         self.set_root_subtree(top, r);
-        self.record(
-            Change::Root {
-                root: r,
-                what: RootChange::Added,
-            },
-            Origin::Host,
-        );
+        self.record(Change::Root { root: r, what: RootChange::Added }, Origin::Host);
         r
     }
 
@@ -247,9 +182,7 @@ impl Scene {
     /// keeps the root's viewport for damage routing. EM2 calls it from `set_visible`/`set_viewport`.
     #[allow(dead_code)]
     pub(crate) fn root_changed(&mut self, r: RootIx, what: RootChange) {
-        let Some(e) = self.roots.get_mut(r) else {
-            return;
-        };
+        let Some(e) = self.roots.get_mut(r) else { return };
         if let RootChange::Viewport(vp) = what {
             e.viewport = vp;
         }
@@ -268,16 +201,8 @@ impl Scene {
         if self.roots.get(r).is_none() {
             return;
         }
-        self.record(
-            Change::Root {
-                root: r,
-                what: RootChange::Removed,
-            },
-            Origin::Host,
-        );
-        let Some(e) = self.roots.remove(r) else {
-            return;
-        };
+        self.record(Change::Root { root: r, what: RootChange::Removed }, Origin::Host);
+        let Some(e) = self.roots.remove(r) else { return };
         if let Some(ti) = self.idx(e.top) {
             self.core[ti].flags.remove(NodeFlags::ROOT);
             self.set_root_subtree(e.top, RootIx::DETACHED);
@@ -304,9 +229,7 @@ impl Scene {
     /// Sets the egui id base of root `r` (EM1: a root mounted into a slot, `None` when unmounted).
     /// Nodes attached from now on take ids from it; the ones already in the root are re-derived.
     pub(crate) fn set_root_base(&mut self, r: RootIx, base: Option<egui::Id>) {
-        let Some(e) = self.roots.get_mut(r) else {
-            return;
-        };
+        let Some(e) = self.roots.get_mut(r) else { return };
         if e.base == base {
             return;
         }
@@ -382,9 +305,7 @@ impl Scene {
     /// is detached from its root when `detach_root`.
     fn unlink(&mut self, child: NodeId, detach_root: bool, origin: Origin) {
         let ci = self.ix(child);
-        let Some(p) = self.core[ci].parent else {
-            return;
-        };
+        let Some(p) = self.core[ci].parent else { return };
         if self.core[ci].flags.contains(NodeFlags::ATTACHED) {
             return self.unlink_attached(child, detach_root, origin); // EV2b (provider/behavior.rs)
         }
@@ -392,13 +313,7 @@ impl Scene {
         self.children[pi].retain(|&c| c != child);
         self.core[ci].parent = None;
         let t = self.stamp();
-        self.record(
-            Change::Removed {
-                parent: p,
-                node: child,
-            },
-            origin,
-        );
+        self.record(Change::Removed { parent: p, node: child }, origin);
         self.core[pi].dirty.insert(Dirty::CHILDREN);
         self.core[pi].changed = t;
         self.core[ci].changed = t;
@@ -410,13 +325,7 @@ impl Scene {
 
     /// Moves `child` under `parent`, before `before` (last when `None`). `Ok(false)`: nothing
     /// changed (`child` is `before` itself).
-    pub(crate) fn insert(
-        &mut self,
-        parent: NodeId,
-        child: NodeId,
-        before: Option<NodeId>,
-        origin: Origin,
-    ) -> Result<bool, SceneError> {
+    pub(crate) fn insert(&mut self, parent: NodeId, child: NodeId, before: Option<NodeId>, origin: Origin) -> Result<bool, SceneError> {
         let pi = self.idx(parent).ok_or(SceneError::Stale(parent.to_raw()))?;
         let ci = self.idx(child).ok_or(SceneError::Stale(child.to_raw()))?;
         let (pk, ck) = (self.core[pi].kind as usize, self.core[ci].kind as usize);
@@ -424,20 +333,13 @@ impl Scene {
             return self.insert_attached(parent, child, origin); // EV2b: a behaviour (provider/behavior.rs)
         }
         if kinds::slot_of(pk).is_none() {
-            return Err(SceneError::Invalid(format!(
-                "<{}> takes no children",
-                kinds::kind(pk).tag.unwrap_or("?")
-            )));
+            return Err(SceneError::Invalid(format!("<{}> takes no children", kinds::kind(pk).tag.unwrap_or("?"))));
         }
         if kinds::kind(ck).toplevel || self.core[ci].flags.contains(NodeFlags::ROOT) {
-            return Err(SceneError::Invalid(
-                "a window cannot be inserted under another element".into(),
-            ));
+            return Err(SceneError::Invalid("a window cannot be inserted under another element".into()));
         }
         if parent == child {
-            return Err(SceneError::Invalid(
-                "cannot insert an element into itself".into(),
-            ));
+            return Err(SceneError::Invalid("cannot insert an element into itself".into()));
         }
         self.may_edit(origin, &[parent, child])?;
         if let Some(old) = self.core[ci].parent {
@@ -447,9 +349,7 @@ impl Scene {
         let mut a = Some(parent);
         while let Some(x) = a {
             if x == child {
-                return Err(SceneError::Invalid(
-                    "cannot insert an element under its own descendant".into(),
-                ));
+                return Err(SceneError::Invalid("cannot insert an element under its own descendant".into()));
             }
             a = self.core[self.ix(x)].parent;
         }
@@ -458,16 +358,12 @@ impl Scene {
                 return Ok(false); // already in place
             }
             if self.idx(b).and_then(|bi| self.core[bi].parent) != Some(parent) {
-                return Err(SceneError::Invalid(format!(
-                    "handle {b} is not a child of {parent}"
-                )));
+                return Err(SceneError::Invalid(format!("handle {b} is not a child of {parent}")));
             }
         }
         self.unlink(child, false, origin);
         let kids = &mut self.children[pi];
-        let at = before
-            .and_then(|b| kids.iter().position(|&c| c == b))
-            .unwrap_or(kids.len());
+        let at = before.and_then(|b| kids.iter().position(|&c| c == b)).unwrap_or(kids.len());
         kids.insert(at, child);
         self.core[ci].parent = Some(parent);
         let t = self.stamp();
@@ -478,31 +374,17 @@ impl Scene {
         if self.core[ci].root != r {
             self.set_root_subtree(child, r);
         }
-        self.record(
-            Change::Inserted {
-                parent,
-                node: child,
-                before,
-            },
-            origin,
-        );
+        self.record(Change::Inserted { parent, node: child, before }, origin);
         self.invalidate_content(parent);
         Ok(true)
     }
 
     /// Takes `child` out of `parent`; it stays alive, detached.
-    pub(crate) fn remove(
-        &mut self,
-        parent: NodeId,
-        child: NodeId,
-        origin: Origin,
-    ) -> Result<(), SceneError> {
+    pub(crate) fn remove(&mut self, parent: NodeId, child: NodeId, origin: Origin) -> Result<(), SceneError> {
         self.idx(parent).ok_or(SceneError::Stale(parent.to_raw()))?;
         let ci = self.idx(child).ok_or(SceneError::Stale(child.to_raw()))?;
         if self.core[ci].parent != Some(parent) {
-            return Err(SceneError::Invalid(format!(
-                "handle {child} is not a child of {parent}"
-            )));
+            return Err(SceneError::Invalid(format!("handle {child} is not a child of {parent}")));
         }
         self.may_edit(origin, &[parent, child])?;
         self.unlink(child, true, origin);
@@ -525,13 +407,7 @@ impl Scene {
         let kids = std::mem::take(&mut self.children[i]);
         for &c in &kids {
             // orphaned: journaled while both are live
-            self.record(
-                Change::Removed {
-                    parent: id,
-                    node: c,
-                },
-                origin,
-            );
+            self.record(Change::Removed { parent: id, node: c }, origin);
         }
         for c in kids {
             let ki = self.ix(c);
@@ -541,10 +417,7 @@ impl Scene {
             }
         }
         self.orphan_attached(i, origin); // EV2b: its behaviours stay alive, detached
-        let d = Destroyed {
-            egui_id: self.core[i].egui_id,
-            was_window: matches!(self.w(i), W::Window { .. }),
-        };
+        let d = Destroyed { egui_id: self.core[i].egui_id, was_window: matches!(self.w(i), W::Window { .. }) };
         self.free_slot(i, origin);
         Ok(d)
     }
@@ -553,27 +426,10 @@ impl Scene {
     /// (`Destroyed`), then the columns.
     fn free_slot(&mut self, i: usize, origin: Origin) {
         if let Some(node) = self.slots.id_at(i) {
-            let Scene {
-                ext,
-                journal,
-                core,
-                roots,
-                tick,
-                ..
-            } = self;
+            let Scene { ext, journal, core, roots, tick, .. } = self;
             ext.free(i as u32, |k| {
                 if journal.wants_ext(k) {
-                    journal.record(
-                        core,
-                        roots,
-                        Change::Ext {
-                            node,
-                            ext: k,
-                            what: ExtChange::Removed,
-                        },
-                        origin,
-                        *tick,
-                    );
+                    journal.record(core, roots, Change::Ext { node, ext: k, what: ExtChange::Removed }, origin, *tick);
                 }
             });
             let kind = KindId(kinds::kind_id(self.core[i].kind as usize));
@@ -595,9 +451,7 @@ impl Scene {
 
     /// [`Scene::free_subtree`] journaled as written by `origin`.
     pub(crate) fn free_subtree_from(&mut self, top: NodeId, origin: Origin) -> Vec<NodeId> {
-        let Some(ti) = self.idx(top) else {
-            return Vec::new();
-        };
+        let Some(ti) = self.idx(top) else { return Vec::new() };
         self.unlink(top, true, origin);
         if self.core[ti].flags.contains(NodeFlags::ROOT) {
             let r = self.core[ti].root;

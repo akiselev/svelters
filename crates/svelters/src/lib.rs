@@ -141,24 +141,18 @@
 //! `plans/milestones/EV2b-behaviors.md`.
 
 pub use svelters_host::exports;
+pub use svelters_host::exports::{
+    Buffer, CallCx, Cancelled, Closed, Element, Emitter, EventSet, ExportError, ExportObject, FromJs, IntoJs, JsType, Json, JsonAny, NativeError, Obj, ServiceCx, Shared,
+    SharedObject, Sink, StopToken, Store, StoreHooks, StoreState, StoreStatic, Stream, TypeBuilder, TypeRef, UiObject, Value, WorkCx, channel,
+};
 /// The rayon `#[js(worker)]` exports run on (for [`exports::set_worker_pool`] and `par_iter` in jobs).
 pub use svelters_host::exports::offload::rayon;
-pub use svelters_host::exports::{
-    Buffer, CallCx, Cancelled, Closed, Element, Emitter, EventSet, ExportError, ExportObject,
-    FromJs, IntoJs, JsType, Json, JsonAny, NativeError, Obj, ServiceCx, Shared, SharedObject, Sink,
-    StopToken, Store, StoreHooks, StoreState, StoreStatic, Stream, TypeBuilder, TypeRef, UiObject,
-    Value, WorkCx, channel,
-};
-pub use svelters_macros::{
-    Enum, Error, Events, Record, behavior, export, object, service, store, widget,
-};
+pub use svelters_macros::{Enum, Error, Events, Record, behavior, export, object, service, store, widget};
 
 /// `use svelters::prelude::*;`
 pub mod prelude {
     pub use super::{
-        Buffer, Cancelled, Closed, Emitter, ExportError, Json, JsonAny, NativeError, Obj,
-        ServiceCx, Shared, Sink, StopToken, Store, StoreHooks, StoreStatic, Stream, WorkCx,
-        channel,
+        Buffer, Cancelled, Closed, Emitter, ExportError, Json, JsonAny, NativeError, Obj, ServiceCx, Shared, Sink, StopToken, Store, StoreHooks, StoreStatic, Stream, WorkCx, channel,
     };
     pub use std::sync::Arc;
 }

@@ -122,62 +122,23 @@ pub enum RootChange {
 #[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Debug)]
 pub enum Change {
-    Created {
-        node: NodeId,
-        kind: KindId,
-        owner: Owner,
-    },
+    Created { node: NodeId, kind: KindId, owner: Owner },
     /// `node` now is a light child of `parent`, before `before` (last if `None`). A move within or
     /// between parents is `Removed` then `Inserted`.
-    Inserted {
-        parent: NodeId,
-        node: NodeId,
-        before: Option<NodeId>,
-    },
-    Removed {
-        parent: NodeId,
-        node: NodeId,
-    },
+    Inserted { parent: NodeId, node: NodeId, before: Option<NodeId> },
+    Removed { parent: NodeId, node: NodeId },
     /// The node is freed (its children, if alive, were `Removed` first).
-    Destroyed {
-        node: NodeId,
-        kind: KindId,
-    },
-    Prop {
-        node: NodeId,
-        prop: PropId,
-        origin: Origin,
-    },
-    State {
-        node: NodeId,
-        before: StateBits,
-        after: StateBits,
-    },
-    Ext {
-        node: NodeId,
-        ext: ExtId,
-        what: ExtChange,
-    },
+    Destroyed { node: NodeId, kind: KindId },
+    Prop { node: NodeId, prop: PropId, origin: Origin },
+    State { node: NodeId, before: StateBits, after: StateBits },
+    Ext { node: NodeId, ext: ExtId, what: ExtChange },
     /// The node's `anchor` changed (also a `Prop` record); `root` is its root then.
-    Anchor {
-        node: NodeId,
-        root: RootIx,
-    },
+    Anchor { node: NodeId, root: RootIx },
     /// Its root-relative rect changed in a layout.
-    Layout {
-        node: NodeId,
-        before: egui::Rect,
-        after: egui::Rect,
-    },
-    Root {
-        root: RootIx,
-        what: RootChange,
-    },
+    Layout { node: NodeId, before: egui::Rect, after: egui::Rect },
+    Root { root: RootIx, what: RootChange },
     /// The records after it, up to the next `Batch`, are one batch (one tick).
-    Batch {
-        label: &'static str,
-        tick: Tick,
-    },
+    Batch { label: &'static str, tick: Tick },
 }
 
 impl Change {
@@ -285,10 +246,7 @@ impl ChangeFilter {
     }
     /// Only these kinds of change.
     pub fn only(what: ChangeMask) -> Self {
-        ChangeFilter {
-            what,
-            ..Self::default()
-        }
+        ChangeFilter { what, ..Self::default() }
     }
     /// Only `Ext` records of `key` (add more with [`ChangeFilter::ext`]).
     pub fn ext_of<T: 'static>(key: &ExtKey<T>) -> Self {
@@ -412,14 +370,8 @@ impl Queue {
         }
         match *c {
             Change::Ext { ext, .. } if !f.ext.is_empty() && !f.ext.contains(&ext) => return false,
-            Change::Prop { prop, .. } if !f.props.is_empty() && !f.props.contains(&prop) => {
-                return false;
-            }
-            Change::State { before, after, .. }
-                if !f.states.is_empty() && (before.0 ^ after.0) & f.states.0 == 0 =>
-            {
-                return false;
-            }
+            Change::Prop { prop, .. } if !f.props.is_empty() && !f.props.contains(&prop) => return false,
+            Change::State { before, after, .. } if !f.states.is_empty() && (before.0 ^ after.0) & f.states.0 == 0 => return false,
             _ => {}
         }
         if !self.kinds.is_empty()
@@ -436,14 +388,7 @@ impl Queue {
         }
     }
 
-    fn push(
-        &mut self,
-        core: &[NodeCore],
-        roots: &RootTable,
-        c: Change,
-        tick: u64,
-        batch: Option<&'static str>,
-    ) {
+    fn push(&mut self, core: &[NodeCore], roots: &RootTable, c: Change, tick: u64, batch: Option<&'static str>) {
         if self.overflowed {
             return;
         }
@@ -457,29 +402,20 @@ impl Queue {
             && self.last_batch != tick
         {
             self.last_batch = tick;
-            self.records.push(Change::Batch {
-                label,
-                tick: Tick(tick),
-            });
+            self.records.push(Change::Batch { label, tick: Tick(tick) });
         }
         self.records.push(c);
         // damage: where the subject was drawn, and what accessibility must look at again
         let Some(s) = c.subject() else { return };
         let sc = &core[s.index() as usize];
         if sc.drawn != egui::Rect::NOTHING {
-            let vp = roots
-                .get(sc.root)
-                .map_or(egui::ViewportId::ROOT, |e| e.viewport);
+            let vp = roots.get(sc.root).map_or(egui::ViewportId::ROOT, |e| e.viewport);
             match self.damage.repaint.iter_mut().find(|(v, _)| *v == vp) {
                 Some((_, r)) => *r = r.union(sc.drawn),
                 None => self.damage.repaint.push((vp, sc.drawn)),
             }
         }
-        if !matches!(
-            c,
-            Change::Created { .. } | Change::Destroyed { .. } | Change::Ext { .. }
-        ) && self.damage.a11y.last() != Some(&s)
-        {
+        if !matches!(c, Change::Created { .. } | Change::Destroyed { .. } | Change::Ext { .. }) && self.damage.a11y.last() != Some(&s) {
             self.damage.a11y.push(s);
         }
     }
@@ -490,11 +426,7 @@ impl Queue {
         damage.a11y.dedup();
         damage.relayout.sort();
         damage.relayout.dedup();
-        let set = ChangeSet {
-            records: std::mem::take(&mut self.records),
-            overflowed: self.overflowed,
-            damage,
-        };
+        let set = ChangeSet { records: std::mem::take(&mut self.records), overflowed: self.overflowed, damage };
         self.overflowed = false;
         set
     }
@@ -561,20 +493,8 @@ pub(crate) struct Journal {
 
 impl Journal {
     pub fn observe(&mut self, filter: ChangeFilter) -> Observer {
-        let kinds = filter
-            .kinds
-            .iter()
-            .filter_map(|k| kinds::kind_of_id(k.0))
-            .map(|k| k as u32)
-            .collect();
-        let q = Rc::new(RefCell::new(Queue {
-            filter,
-            kinds,
-            records: Vec::new(),
-            overflowed: false,
-            damage: Damage::default(),
-            last_batch: 0,
-        }));
+        let kinds = filter.kinds.iter().filter_map(|k| kinds::kind_of_id(k.0)).map(|k| k as u32).collect();
+        let q = Rc::new(RefCell::new(Queue { filter, kinds, records: Vec::new(), overflowed: false, damage: Damage::default(), last_batch: 0 }));
         self.observers.push(q.clone());
         self.recompute();
         Observer { q }
@@ -582,10 +502,7 @@ impl Journal {
 
     /// Live observers.
     pub fn len(&self) -> usize {
-        self.observers
-            .iter()
-            .filter(|q| Rc::strong_count(q) > 1)
-            .count()
+        self.observers.iter().filter(|q| Rc::strong_count(q) > 1).count()
     }
 
     fn recompute(&mut self) {
@@ -605,11 +522,7 @@ impl Journal {
                 }
             }
             if f.what.intersects(ChangeMask::STATE) {
-                self.states |= if f.states.is_empty() {
-                    u64::MAX
-                } else {
-                    f.states.0
-                };
+                self.states |= if f.states.is_empty() { u64::MAX } else { f.states.0 };
             }
         }
     }
@@ -632,14 +545,7 @@ impl Journal {
 
     /// Pushes `c` (written by `origin` at `tick`) onto every observer whose filter takes it. `core`
     /// is the scene's hot column, with every node `c` names still live.
-    pub fn record(
-        &mut self,
-        core: &[NodeCore],
-        roots: &RootTable,
-        c: Change,
-        origin: Origin,
-        tick: u64,
-    ) {
+    pub fn record(&mut self, core: &[NodeCore], roots: &RootTable, c: Change, origin: Origin, tick: u64) {
         let mask = c.mask();
         if !self.want.intersects(mask) {
             return;
@@ -671,10 +577,7 @@ impl Journal {
                 continue;
             }
             let mut q = q.borrow_mut();
-            if q.overflowed
-                || !q.filter.what.intersects(ChangeMask::LAYOUT)
-                || !q.filter.scope.is_none_or(|s| in_scope(core, s, b))
-            {
+            if q.overflowed || !q.filter.what.intersects(ChangeMask::LAYOUT) || !q.filter.scope.is_none_or(|s| in_scope(core, s, b)) {
                 continue;
             }
             if !q.kinds.is_empty() && !q.kinds.contains(&core[b.index() as usize].kind) {

@@ -25,57 +25,29 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         _ => None,
     };
     let resp = match arena.w_mut(i) {
-        W::Label {
-            text,
-            wrap,
-            selectable,
-        } => {
+        W::Label { text, wrap, selectable } => {
             let mode = match *wrap {
                 "truncate" => egui::TextWrapMode::Truncate,
                 "extend" => egui::TextWrapMode::Extend,
                 _ => egui::TextWrapMode::Wrap,
             };
-            let mut l = egui::Label::new(text.as_str())
-                .wrap_mode(mode)
-                .selectable(*selectable);
+            let mut l = egui::Label::new(text.as_str()).wrap_mode(mode).selectable(*selectable);
             if click_sense {
                 l = l.sense(egui::Sense::click());
             }
             ui.add(l)
         }
-        W::Button {
-            text,
-            selected,
-            frame,
-            small,
-        } => {
-            let mut btn = egui::Button::new(text.as_str())
-                .selected(*selected)
-                .frame(*frame)
-                .min_size(size);
+        W::Button { text, selected, frame, small } => {
+            let mut btn = egui::Button::new(text.as_str()).selected(*selected).frame(*frame).min_size(size);
             if *small {
                 btn = btn.small();
             }
             ui.add(btn)
         }
         W::Checkbox { text, checked } => ui.add(egui::Checkbox::new(checked, text.as_str())),
-        W::TextEdit {
-            text,
-            hint,
-            multiline,
-            password,
-            char_limit,
-        } => {
-            let mut te = if *multiline {
-                egui::TextEdit::multiline(text).desired_rows(4)
-            } else {
-                egui::TextEdit::singleline(text)
-            };
-            te = te
-                .id(node_id)
-                .desired_width(size.x)
-                .hint_text(hint.clone())
-                .password(*password);
+        W::TextEdit { text, hint, multiline, password, char_limit } => {
+            let mut te = if *multiline { egui::TextEdit::multiline(text).desired_rows(4) } else { egui::TextEdit::singleline(text) };
+            te = te.id(node_id).desired_width(size.x).hint_text(hint.clone()).password(*password);
             if *char_limit > 0 {
                 te = te.char_limit(*char_limit as usize);
             }
@@ -85,14 +57,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             }
             r
         }
-        W::Slider {
-            value,
-            min,
-            max,
-            step,
-            text,
-            show_value,
-        } => {
+        W::Slider { value, min, max, step, text, show_value } => {
             // The slider fills its rect: the rail takes what the value box and caption leave.
             let sp = ui.spacing().clone();
             let mut extra = 0.0;
@@ -101,11 +66,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             }
             if !text.is_empty() {
                 let font = egui::TextStyle::Body.resolve(ui.style());
-                let tw = ui.ctx().fonts_mut(|f| {
-                    f.layout_no_wrap(text.clone(), font, egui::Color32::WHITE)
-                        .size()
-                        .x
-                });
+                let tw = ui.ctx().fonts_mut(|f| f.layout_no_wrap(text.clone(), font, egui::Color32::WHITE).size().x);
                 extra += sp.item_spacing.x + tw;
             }
             // 4 points of slack: the value box can come out slightly wider than interact_size.x.
@@ -147,11 +108,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     let focused = resp.has_focus();
     let had_focus = arena.core[i].flags.contains(NodeFlags::HAD_FOCUS);
     if matches!(arena.w(i), W::TextEdit { .. }) && focused != had_focus {
-        fired.push(if focused {
-            "gained-focus"
-        } else {
-            "lost-focus"
-        });
+        fired.push(if focused { "gained-focus" } else { "lost-focus" });
     }
     arena.core[i].flags.set(NodeFlags::HAD_FOCUS, focused);
     for name in fired {
@@ -165,12 +122,8 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     // Compared with the value before the widget ran, so a slider clamping a host-set value into its
     // range is announced too (the binding's `natively_normalizes`).
     let changed = match arena.w(i) {
-        W::Checkbox { checked, .. } if Some(Value::Bool(*checked)) != before => {
-            Some((kinds::P::Checked, Value::Bool(*checked)))
-        }
-        W::Slider { value, .. } if Some(Value::F64(*value)) != before => {
-            Some((kinds::P::Value, Value::F64(*value)))
-        }
+        W::Checkbox { checked, .. } if Some(Value::Bool(*checked)) != before => Some((kinds::P::Checked, Value::Bool(*checked))),
+        W::Slider { value, .. } if Some(Value::F64(*value)) != before => Some((kinds::P::Value, Value::F64(*value))),
         W::TextEdit { .. } => text_changed.map(|t| (kinds::P::Text, Value::Str(t))),
         _ => None,
     };
@@ -181,14 +134,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         let prop = kinds::prop_id(kind, key);
         // SG2: journaled as a widget's prop write
         let node = arena.slots.id_at(i).expect("live leaf");
-        arena.record(
-            crate::scene::Change::Prop {
-                node,
-                prop: crate::scene::PropId(prop),
-                origin: crate::scene::Origin::Widget,
-            },
-            crate::scene::Origin::Widget,
-        );
+        arena.record(crate::scene::Change::Prop { node, prop: crate::scene::PropId(prop), origin: crate::scene::Origin::Widget }, crate::scene::Origin::Widget);
         let s = sig("changed");
         if arena.observes(i, prop) {
             out.push(Out::Changed(h, prop));

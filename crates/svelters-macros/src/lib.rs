@@ -8,10 +8,7 @@ use syn::parse::Parser;
 use syn::punctuated::Punctuated;
 use syn::spanned::Spanned;
 use syn::visit_mut::VisitMut;
-use syn::{
-    Attribute, Data, DeriveInput, Expr, Fields, FnArg, ImplItem, ItemFn, ItemImpl, ItemStruct, Lit,
-    Meta, Pat, ReturnType, Token, Type,
-};
+use syn::{Attribute, Data, DeriveInput, Expr, Fields, FnArg, ImplItem, ItemFn, ItemImpl, ItemStruct, Lit, Meta, Pat, ReturnType, Token, Type};
 
 // ---- naming ----
 
@@ -95,11 +92,7 @@ fn js_opts(attrs: &[Attribute]) -> syn::Result<Js> {
     let mut js = Js::default();
     for a in attrs.iter().filter(|a| a.path().is_ident("js")) {
         a.parse_nested_meta(|m| {
-            let id = m
-                .path
-                .get_ident()
-                .map(|i| i.to_string())
-                .unwrap_or_default();
+            let id = m.path.get_ident().map(|i| i.to_string()).unwrap_or_default();
             match id.as_str() {
                 "constructor" => js.constructor = true,
                 "getter" => js.getter = true,
@@ -110,11 +103,7 @@ fn js_opts(attrs: &[Attribute]) -> syn::Result<Js> {
                 "rename" => js.rename = Some(m.value()?.parse::<syn::LitStr>()?.value()),
                 "code" => js.code = Some(m.value()?.parse::<syn::LitStr>()?.value()),
                 "default" => {
-                    js.default = Some(if m.input.peek(Token![=]) {
-                        Some(m.value()?.parse::<Expr>()?)
-                    } else {
-                        None
-                    });
+                    js.default = Some(if m.input.peek(Token![=]) { Some(m.value()?.parse::<Expr>()?) } else { None });
                 }
                 "worker" => js.worker = true,
                 "blocking" => js.blocking = true,
@@ -164,9 +153,7 @@ fn last_ident(ty: &Type) -> Option<String> {
 /// The first type argument of the last path segment (`T` of `Sink<T>`).
 fn generic_arg(ty: &Type) -> Option<Type> {
     let Type::Path(p) = ty else { return None };
-    let syn::PathArguments::AngleBracketed(a) = &p.path.segments.last()?.arguments else {
-        return None;
-    };
+    let syn::PathArguments::AngleBracketed(a) = &p.path.segments.last()?.arguments else { return None };
     a.args.iter().find_map(|x| match x {
         syn::GenericArgument::Type(t) => Some(t.clone()),
         _ => None,
@@ -189,35 +176,22 @@ fn pascal(snake: &str) -> String {
 #[proc_macro_derive(Record, attributes(js))]
 pub fn derive_record(input: TokenStream) -> TokenStream {
     let input = syn::parse_macro_input!(input as DeriveInput);
-    record(input)
-        .unwrap_or_else(|e| e.to_compile_error())
-        .into()
+    record(input).unwrap_or_else(|e| e.to_compile_error()).into()
 }
 
 fn record(input: DeriveInput) -> syn::Result<Ts> {
     let name = &input.ident;
     if !input.generics.params.is_empty() {
-        return Err(syn::Error::new(
-            input.generics.span(),
-            "exported records cannot be generic",
-        ));
+        return Err(syn::Error::new(input.generics.span(), "exported records cannot be generic"));
     }
     let Data::Struct(ds) = &input.data else {
-        return Err(syn::Error::new(
-            input.span(),
-            "#[derive(svelters::Record)] needs a struct with named fields (a data enum is `#[derive(svelters::Enum)]` with `#[js(tag = \"kind\")]`)",
-        ));
+        return Err(syn::Error::new(input.span(), "#[derive(svelters::Record)] needs a struct with named fields (a data enum is `#[derive(svelters::Enum)]` with `#[js(tag = \"kind\")]`)"));
     };
     let Fields::Named(fields) = &ds.fields else {
-        return Err(syn::Error::new(
-            ds.fields.span(),
-            "#[derive(svelters::Record)] needs named fields",
-        ));
+        return Err(syn::Error::new(ds.fields.span(), "#[derive(svelters::Record)] needs named fields"));
     };
     let p = quote!(::svelters::__private);
-    let jsname = js_opts(&input.attrs)?
-        .rename
-        .unwrap_or_else(|| name.to_string());
+    let jsname = js_opts(&input.attrs)?.rename.unwrap_or_else(|| name.to_string());
     let tdocs = docs(&input.attrs);
     let mut names = Vec::new();
     let mut descs = Vec::new();
@@ -234,8 +208,7 @@ fn record(input: DeriveInput) -> syn::Result<Ts> {
         if o.bigint {
             d = quote!(#p::__private::bigint(#d));
         }
-        descs
-            .push(quote!(#p::FieldDef { name: #fname, ty: #d, optional: #optional, docs: #fdocs }));
+        descs.push(quote!(#p::FieldDef { name: #fname, ty: #d, optional: #optional, docs: #fdocs }));
         names.push(quote!((#fname, #optional)));
         let at = quote!(.map_err(|e| #p::__private::at(e, #fname))?);
         froms.push(match &o.default {
@@ -271,18 +244,13 @@ fn record(input: DeriveInput) -> syn::Result<Ts> {
 #[proc_macro_derive(Enum, attributes(js))]
 pub fn derive_enum(input: TokenStream) -> TokenStream {
     let input = syn::parse_macro_input!(input as DeriveInput);
-    enumeration(input)
-        .unwrap_or_else(|e| e.to_compile_error())
-        .into()
+    enumeration(input).unwrap_or_else(|e| e.to_compile_error()).into()
 }
 
 fn enumeration(input: DeriveInput) -> syn::Result<Ts> {
     let name = &input.ident;
     let Data::Enum(de) = &input.data else {
-        return Err(syn::Error::new(
-            input.span(),
-            "#[derive(svelters::Enum)] needs an enum",
-        ));
+        return Err(syn::Error::new(input.span(), "#[derive(svelters::Enum)] needs an enum"));
     };
     let p = quote!(::svelters::__private);
     let topts = js_opts(&input.attrs)?;
@@ -296,10 +264,7 @@ fn enumeration(input: DeriveInput) -> syn::Result<Ts> {
     let mut into = Vec::new();
     for (i, v) in de.variants.iter().enumerate() {
         if !matches!(v.fields, Fields::Unit) {
-            return Err(syn::Error::new(
-                v.span(),
-                "#[derive(svelters::Enum)] variants must be unit variants; a data enum needs `#[js(tag = \"kind\")]` on the enum",
-            ));
+            return Err(syn::Error::new(v.span(), "#[derive(svelters::Enum)] variants must be unit variants; a data enum needs `#[js(tag = \"kind\")]` on the enum"));
         }
         let o = js_opts(&v.attrs)?;
         values.push(o.rename.unwrap_or_else(|| kebab(&v.ident.to_string())));
@@ -332,18 +297,10 @@ fn enumeration(input: DeriveInput) -> syn::Result<Ts> {
 
 /// RA2: `#[derive(svelters::Enum)] #[js(tag = "kind")]`: unit, struct and newtype variants (a newtype's
 /// inner type is a record or another object: its fields sit next to the tag).
-fn tagged_enum(
-    input: &DeriveInput,
-    de: &syn::DataEnum,
-    tag: String,
-    rename: Option<String>,
-) -> syn::Result<Ts> {
+fn tagged_enum(input: &DeriveInput, de: &syn::DataEnum, tag: String, rename: Option<String>) -> syn::Result<Ts> {
     let name = &input.ident;
     if !input.generics.params.is_empty() {
-        return Err(syn::Error::new(
-            input.generics.span(),
-            "exported enums cannot be generic",
-        ));
+        return Err(syn::Error::new(input.generics.span(), "exported enums cannot be generic"));
     }
     let p = quote!(::svelters::__private);
     let jsname = rename.unwrap_or_else(|| name.to_string());
@@ -356,10 +313,7 @@ fn tagged_enum(
         let o = js_opts(&v.attrs)?;
         let vtag = o.rename.unwrap_or_else(|| kebab(&v.ident.to_string()));
         if tags.contains(&vtag) {
-            return Err(syn::Error::new(
-                v.span(),
-                format!("two variants have the tag `{vtag}`"),
-            ));
+            return Err(syn::Error::new(v.span(), format!("two variants have the tag `{vtag}`")));
         }
         tags.push(vtag.clone());
         let id = &v.ident;
@@ -377,10 +331,7 @@ fn tagged_enum(
                 into.push(quote!(#name::#id(__x) => #p::__private::tagged_inner(#tag, #vtag, #p::IntoJs::into_js(__x, cx)?, cx)?));
             }
             Fields::Unnamed(u) => {
-                return Err(syn::Error::new(
-                    u.span(),
-                    "a tagged variant is a unit, a struct variant or a newtype around a record (serde's internally tagged form has no tuples)",
-                ));
+                return Err(syn::Error::new(u.span(), "a tagged variant is a unit, a struct variant or a newtype around a record (serde's internally tagged form has no tuples)"));
             }
             Fields::Named(fields) => {
                 let mut fdefs = Vec::new();
@@ -390,25 +341,16 @@ fn tagged_enum(
                 for f in &fields.named {
                     let fo = js_opts(&f.attrs)?;
                     if fo.bigint {
-                        return Err(syn::Error::new(
-                            f.span(),
-                            "#[js(bigint)] is not supported inside a tagged variant (it crosses as a plain object): use a record field",
-                        ));
+                        return Err(syn::Error::new(f.span(), "#[js(bigint)] is not supported inside a tagged variant (it crosses as a plain object): use a record field"));
                     }
                     let fid = f.ident.as_ref().expect("named");
                     let ty = &f.ty;
                     let fname = fo.rename.clone().unwrap_or_else(|| camel(&fid.to_string()));
                     if fname == tag {
-                        return Err(syn::Error::new(
-                            f.span(),
-                            format!(
-                                "a field of a tagged variant cannot be named like the tag `{tag}`"
-                            ),
-                        ));
+                        return Err(syn::Error::new(f.span(), format!("a field of a tagged variant cannot be named like the tag `{tag}`")));
                     }
                     let fdocs = docs(&f.attrs);
-                    let optional =
-                        fo.default.is_some() || last_ident(ty).as_deref() == Some("Option");
+                    let optional = fo.default.is_some() || last_ident(ty).as_deref() == Some("Option");
                     fdefs.push(quote!(#p::FieldDef { name: #fname, ty: <#ty as #p::JsType>::describe(b), optional: #optional, docs: #fdocs }));
                     reads.push(match &fo.default {
                         Some(Some(e)) => quote!(#fid: __m.field_or::<#ty>(#fname, cx, || #e)?),
@@ -468,9 +410,7 @@ fn error(input: DeriveInput) -> syn::Result<Ts> {
             let mut arms = Vec::new();
             let mut codes = Vec::new();
             for v in &de.variants {
-                let c = js_opts(&v.attrs)?
-                    .code
-                    .unwrap_or_else(|| kebab(&v.ident.to_string()));
+                let c = js_opts(&v.attrs)?.code.unwrap_or_else(|| kebab(&v.ident.to_string()));
                 let id = &v.ident;
                 let pat = match &v.fields {
                     Fields::Unit => quote!(#name::#id),
@@ -483,9 +423,7 @@ fn error(input: DeriveInput) -> syn::Result<Ts> {
             (quote!(match self { #(#arms),* }.to_string()), codes)
         }
         _ => {
-            let c = js_opts(&input.attrs)?
-                .code
-                .unwrap_or_else(|| kebab(&name.to_string()));
+            let c = js_opts(&input.attrs)?.code.unwrap_or_else(|| kebab(&name.to_string()));
             (quote!(#c.to_string()), vec![c])
         }
     };
@@ -507,21 +445,14 @@ struct ObjectArgs {
 }
 
 fn object_args(attr: Ts) -> syn::Result<ObjectArgs> {
-    let mut a = ObjectArgs {
-        shared: false,
-        module: None,
-        name: None,
-    };
+    let mut a = ObjectArgs { shared: false, module: None, name: None };
     let metas = Punctuated::<Meta, Token![,]>::parse_terminated.parse2(attr)?;
     for m in metas {
         match &m {
             Meta::Path(p) if p.is_ident("shared") => a.shared = true,
             Meta::Path(p) if p.is_ident("ui") => a.shared = false,
             Meta::NameValue(nv) if nv.path.is_ident("module") || nv.path.is_ident("name") => {
-                let Expr::Lit(syn::ExprLit {
-                    lit: Lit::Str(s), ..
-                }) = &nv.value
-                else {
+                let Expr::Lit(syn::ExprLit { lit: Lit::Str(s), .. }) = &nv.value else {
                     return Err(syn::Error::new(nv.value.span(), "expected a string"));
                 };
                 if nv.path.is_ident("module") {
@@ -530,27 +461,15 @@ fn object_args(attr: Ts) -> syn::Result<ObjectArgs> {
                     a.name = Some(s.value());
                 }
             }
-            _ => {
-                return Err(syn::Error::new(
-                    m.span(),
-                    "expected `shared`, `module = \"...\"` or `name = \"...\"`",
-                ));
-            }
+            _ => return Err(syn::Error::new(m.span(), "expected `shared`, `module = \"...\"` or `name = \"...\"`")),
         }
     }
     Ok(a)
 }
 
 fn check_module(m: &str, span: Span) -> syn::Result<()> {
-    if m.is_empty()
-        || !m
-            .chars()
-            .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-' || c == '_')
-    {
-        return Err(syn::Error::new(
-            span,
-            "module names are lower-case identifiers: `svelters:app/<module>`",
-        ));
+    if m.is_empty() || !m.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-' || c == '_') {
+        return Err(syn::Error::new(span, "module names are lower-case identifiers: `svelters:app/<module>`"));
     }
     Ok(())
 }
@@ -561,9 +480,7 @@ fn check_module(m: &str, span: Span) -> syn::Result<()> {
 #[proc_macro_attribute]
 pub fn object(attr: TokenStream, item: TokenStream) -> TokenStream {
     let item = syn::parse_macro_input!(item as ItemStruct);
-    object_impl(attr.into(), item)
-        .unwrap_or_else(|e| e.to_compile_error())
-        .into()
+    object_impl(attr.into(), item).unwrap_or_else(|e| e.to_compile_error()).into()
 }
 
 fn object_impl(attr: Ts, item: ItemStruct) -> syn::Result<Ts> {
@@ -571,10 +488,7 @@ fn object_impl(attr: Ts, item: ItemStruct) -> syn::Result<Ts> {
     let module = a.module.ok_or_else(|| syn::Error::new(Span::call_site(), "#[svelters::object] needs `module = \"...\"` (the JS module is `svelters:app/<module>`)"))?;
     check_module(&module, item.span())?;
     if !item.generics.params.is_empty() {
-        return Err(syn::Error::new(
-            item.generics.span(),
-            "exported objects cannot be generic",
-        ));
+        return Err(syn::Error::new(item.generics.span(), "exported objects cannot be generic"));
     }
     let ty = &item.ident;
     let rust = ty.to_string();
@@ -583,8 +497,7 @@ fn object_impl(attr: Ts, item: ItemStruct) -> syn::Result<Ts> {
     let shared = a.shared;
     let p = quote!(::svelters::__private);
     let flavor = if shared {
-        let assert =
-            quote_spanned!(ty.span()=> const _: () = #p::__private::assert_shared::<#ty>(););
+        let assert = quote_spanned!(ty.span()=> const _: () = #p::__private::assert_shared::<#ty>(););
         quote! {
             #assert
             impl #p::ExportObject for #ty {
@@ -622,25 +535,16 @@ fn object_impl(attr: Ts, item: ItemStruct) -> syn::Result<Ts> {
     let mut emitters = Vec::new();
     for f in item.fields.iter() {
         if last_ident(&f.ty).as_deref() == Some("Emitter") {
-            let ev = generic_arg(&f.ty)
-                .ok_or_else(|| syn::Error::new(f.ty.span(), "expected `Emitter<E>`"))?;
+            let ev = generic_arg(&f.ty).ok_or_else(|| syn::Error::new(f.ty.span(), "expected `Emitter<E>`"))?;
             let fname = match &f.ident {
                 Some(i) => quote!(#i),
-                None => {
-                    return Err(syn::Error::new(
-                        f.span(),
-                        "an `Emitter<E>` field needs a name",
-                    ));
-                }
+                None => return Err(syn::Error::new(f.span(), "an `Emitter<E>` field needs a name")),
             };
             emitters.push((ev, fname));
         }
     }
     if emitters.len() > 1 {
-        return Err(syn::Error::new(
-            item.span(),
-            "an exported object has at most one `Emitter<E>` field (put every event in one enum)",
-        ));
+        return Err(syn::Error::new(item.span(), "an exported object has at most one `Emitter<E>` field (put every event in one enum)"));
     }
     let emitter = emitters.first().map(|(ev, fname)| {
         quote! {
@@ -733,15 +637,9 @@ enum Exec {
 
 fn exec_of(sig: &syn::Signature, js: &Js) -> syn::Result<Option<Exec>> {
     let span = sig.ident.span();
-    let picked = [js.worker, js.blocking, js.local, js.tokio]
-        .iter()
-        .filter(|x| **x)
-        .count();
+    let picked = [js.worker, js.blocking, js.local, js.tokio].iter().filter(|x| **x).count();
     if picked > 1 {
-        return Err(syn::Error::new(
-            span,
-            "pick one of #[js(worker)], #[js(blocking)], #[js(local)], #[js(tokio)]",
-        ));
+        return Err(syn::Error::new(span, "pick one of #[js(worker)], #[js(blocking)], #[js(local)], #[js(tokio)]"));
     }
     let exec = if sig.asyncness.is_some() {
         if js.worker || js.blocking {
@@ -754,10 +652,7 @@ fn exec_of(sig: &syn::Signature, js: &Js) -> syn::Result<Option<Exec>> {
     } else if js.tokio {
         return Err(syn::Error::new(span, "#[js(tokio)] needs an `async fn`"));
     } else if js.local {
-        return Err(syn::Error::new(
-            span,
-            "#[js(local)] is for an `async fn`; a plain fn already runs on the JS thread, synchronously",
-        ));
+        return Err(syn::Error::new(span, "#[js(local)] is for an `async fn`; a plain fn already runs on the JS thread, synchronously"));
     } else if js.worker {
         Some(Exec::Worker)
     } else if js.blocking {
@@ -766,16 +661,10 @@ fn exec_of(sig: &syn::Signature, js: &Js) -> syn::Result<Option<Exec>> {
         None
     };
     if exec.is_none() && (js.supersede || js.max_in_flight.is_some()) {
-        return Err(syn::Error::new(
-            span,
-            "#[js(supersede)] and #[js(max_in_flight)] apply to offloaded calls (#[js(worker)], #[js(blocking)], `async fn`)",
-        ));
+        return Err(syn::Error::new(span, "#[js(supersede)] and #[js(max_in_flight)] apply to offloaded calls (#[js(worker)], #[js(blocking)], `async fn`)"));
     }
     if exec.is_some() && (js.constructor || js.getter || js.setter) {
-        return Err(syn::Error::new(
-            span,
-            "constructors, getters and setters run synchronously: they cannot be offloaded or async",
-        ));
+        return Err(syn::Error::new(span, "constructors, getters and setters run synchronously: they cannot be offloaded or async"));
     }
     Ok(exec)
 }
@@ -793,10 +682,7 @@ fn member(
     let p = quote!(::svelters::__private);
     let exec = exec_of(sig, js)?;
     if !sig.generics.params.is_empty() {
-        return Err(syn::Error::new(
-            sig.generics.span(),
-            "exported functions cannot be generic",
-        ));
+        return Err(syn::Error::new(sig.generics.span(), "exported functions cannot be generic"));
     }
     let rust = sig.ident.to_string();
     let mut recv = Recv::None;
@@ -807,17 +693,11 @@ fn member(
                 if r.colon_token.is_some() {
                     // `self: Arc<Self>`
                     if last_ident(&r.ty).as_deref() != Some("Arc") {
-                        return Err(syn::Error::new(
-                            r.ty.span(),
-                            "the only typed receiver an export takes is `self: Arc<Self>` (shared objects)",
-                        ));
+                        return Err(syn::Error::new(r.ty.span(), "the only typed receiver an export takes is `self: Arc<Self>` (shared objects)"));
                     }
                     recv = Recv::Arc;
                 } else if r.reference.is_none() {
-                    return Err(syn::Error::new(
-                        r.span(),
-                        "exported methods cannot take `self` by value (the object stays owned by JS)",
-                    ));
+                    return Err(syn::Error::new(r.span(), "exported methods cannot take `self` by value (the object stays owned by JS)"));
                 } else if r.mutability.is_some() {
                     if matches!(exec, Some(Exec::Worker | Exec::Blocking | Exec::Tokio)) {
                         return Err(syn::Error::new(
@@ -849,16 +729,12 @@ fn member(
                                 "a `Sink<T>` parameter streams from offloaded work: add #[js(worker)] or #[js(blocking)], or make the fn `async` (use `sink.feed(x).await` there); a plain fn returns a `Stream<T>` instead",
                             ));
                         }
-                        let item = generic_arg(&ty)
-                            .ok_or_else(|| syn::Error::new(ty.span(), "expected `Sink<T>`"))?;
+                        let item = generic_arg(&ty).ok_or_else(|| syn::Error::new(ty.span(), "expected `Sink<T>`"))?;
                         ArgKind::Sink(item)
                     }
                     Type::Path(_) if last_ident(&ty).as_deref() == Some("WorkCx") => {
                         if exec.is_none() {
-                            return Err(syn::Error::new(
-                                ty.span(),
-                                "`WorkCx` is for offloaded calls: add #[js(worker)], #[js(blocking)], or make the fn `async`",
-                            ));
+                            return Err(syn::Error::new(ty.span(), "`WorkCx` is for offloaded calls: add #[js(worker)], #[js(blocking)], or make the fn `async`"));
                         }
                         ArgKind::Injected(ty)
                     }
@@ -873,19 +749,13 @@ fn member(
                         match &inner {
                             Type::Path(tp) if tp.path.is_ident("str") => {
                                 if r.mutability.is_some() {
-                                    return Err(syn::Error::new(
-                                        r.span(),
-                                        "`&mut str` cannot cross from JS",
-                                    ));
+                                    return Err(syn::Error::new(r.span(), "`&mut str` cannot cross from JS"));
                                 }
                                 ArgKind::ByRef(syn::parse_quote!(::std::string::String))
                             }
                             Type::Slice(s) => {
                                 if r.mutability.is_some() {
-                                    return Err(syn::Error::new(
-                                        r.span(),
-                                        "`&mut [T]` cannot borrow a JS array: take `svelters::Buffer<T>` (the typed array is moved, zero-copy) and return it",
-                                    ));
+                                    return Err(syn::Error::new(r.span(), "`&mut [T]` cannot borrow a JS array: take `svelters::Buffer<T>` (the typed array is moved, zero-copy) and return it"));
                                 }
                                 let e = &s.elem;
                                 ArgKind::ByRef(syn::parse_quote!(::std::vec::Vec<#e>))
@@ -896,11 +766,7 @@ fn member(
                     }
                     _ => ArgKind::Value(ty),
                 };
-                args.push(Arg {
-                    name,
-                    kind,
-                    bigint: o.bigint,
-                });
+                args.push(Arg { name, kind, bigint: o.bigint });
             }
         }
     }
@@ -916,16 +782,10 @@ fn member(
         quote!(Method)
     };
     if (js.getter || js.setter) && recv == Recv::None {
-        return Err(syn::Error::new(
-            sig.span(),
-            "getters and setters need a receiver (`&self`, or `&mut self` on UI objects)",
-        ));
+        return Err(syn::Error::new(sig.span(), "getters and setters need a receiver (`&self`, or `&mut self` on UI objects)"));
     }
     if js.constructor && recv != Recv::None {
-        return Err(syn::Error::new(
-            sig.span(),
-            "a #[js(constructor)] takes no receiver",
-        ));
+        return Err(syn::Error::new(sig.span(), "a #[js(constructor)] takes no receiver"));
     }
     let receiver = match recv {
         Recv::None => quote!(None),
@@ -949,15 +809,9 @@ fn member(
     let mut checks = Vec::new();
     let mut progress = quote!(::core::option::Option::None);
     let mut items = quote!(::core::option::Option::None);
-    let sinks = args
-        .iter()
-        .filter(|a| matches!(a.kind, ArgKind::Sink(_)))
-        .count();
+    let sinks = args.iter().filter(|a| matches!(a.kind, ArgKind::Sink(_))).count();
     if sinks > 1 {
-        return Err(syn::Error::new(
-            sig.span(),
-            "an export streams through at most one `Sink<T>`",
-        ));
+        return Err(syn::Error::new(sig.span(), "an export streams through at most one `Sink<T>`"));
     }
     for (i, a) in args.iter().enumerate() {
         let v = format_ident!("__a{i}");
@@ -980,9 +834,7 @@ fn member(
                 pass.push(quote!(#v));
                 items = quote!(#p::__private::item_type::<#t>(b));
                 if pooled {
-                    checks.push(
-                        quote_spanned!(t.span()=> #p::__private::assert_worker_send::<#t>();),
-                    );
+                    checks.push(quote_spanned!(t.span()=> #p::__private::assert_worker_send::<#t>();));
                 }
                 continue;
             }
@@ -990,9 +842,7 @@ fn member(
                 conv.push(quote!(let #v = <#t as #p::FromJs>::from_js(#next, cx).map_err(|e| #p::__private::at(e, #name))?;));
                 pass.push(quote!(#v));
                 if pooled {
-                    checks.push(
-                        quote_spanned!(t.span()=> #p::__private::assert_worker_send::<#t>();),
-                    );
+                    checks.push(quote_spanned!(t.span()=> #p::__private::assert_worker_send::<#t>();));
                 }
                 t.clone()
             }
@@ -1037,26 +887,16 @@ fn member(
             ));
         }
         if sinks > 0 {
-            return Err(syn::Error::new(
-                ret_ty.span(),
-                "take a `Sink<T>` or return a `Stream<T>`, not both",
-            ));
+            return Err(syn::Error::new(ret_ty.span(), "take a `Sink<T>` or return a `Stream<T>`, not both"));
         }
         if js.constructor || js.getter || js.setter {
-            return Err(syn::Error::new(
-                ret_ty.span(),
-                "constructors and accessors cannot return a stream",
-            ));
+            return Err(syn::Error::new(ret_ty.span(), "constructors and accessors cannot return a stream"));
         }
-        let item = generic_arg(&ret_ty)
-            .ok_or_else(|| syn::Error::new(ret_ty.span(), "expected `Stream<T>`"))?;
+        let item = generic_arg(&ret_ty).ok_or_else(|| syn::Error::new(ret_ty.span(), "expected `Stream<T>`"))?;
         items = quote!(#p::__private::item_type::<#item>(b));
     }
     if js.buffer.is_some() && sinks == 0 {
-        return Err(syn::Error::new(
-            sig.span(),
-            "#[js(buffer = n)] sizes a `Sink<T>` parameter; a `Stream<T>` result takes its buffer from `channel(n)`",
-        ));
+        return Err(syn::Error::new(sig.span(), "#[js(buffer = n)] sizes a `Sink<T>` parameter; a `Stream<T>` result takes its buffer from `channel(n)`"));
     }
     let mut ret_d = quote!(<#ret_ty as #p::JsType>::describe(b));
     let mut throws = quote!(<#ret_ty as #p::JsType>::throws());
@@ -1079,18 +919,13 @@ fn member(
     let offload = match exec {
         None if stream_ret => {
             let (recv_code, recv_arg) = match (recv, self_ty) {
-                (Recv::Arc, Some(st)) => (
-                    quote!(let __this = #p::__private::this_arc::<#st>(cx)?;),
-                    quote!(__this,),
-                ),
-                (Recv::Mut, Some(st)) => (
-                    quote!(let __this = #p::__private::this::<#st>(cx)?; let mut __s = #p::__private::borrow_mut::<#st>(&__this)?;),
-                    quote!(&mut *__s,),
-                ),
-                (Recv::Ref, Some(st)) => (
-                    quote!(let __this = #p::__private::this::<#st>(cx)?; let __s = <#st as #p::ExportObject>::__borrow(&__this)?;),
-                    quote!(&*__s,),
-                ),
+                (Recv::Arc, Some(st)) => (quote!(let __this = #p::__private::this_arc::<#st>(cx)?;), quote!(__this,)),
+                (Recv::Mut, Some(st)) => {
+                    (quote!(let __this = #p::__private::this::<#st>(cx)?; let mut __s = #p::__private::borrow_mut::<#st>(&__this)?;), quote!(&mut *__s,))
+                }
+                (Recv::Ref, Some(st)) => {
+                    (quote!(let __this = #p::__private::this::<#st>(cx)?; let __s = <#st as #p::ExportObject>::__borrow(&__this)?;), quote!(&*__s,))
+                }
                 _ => (Ts::new(), Ts::new()),
             };
             g.items.push(quote! {
@@ -1114,18 +949,13 @@ fn member(
         }
         None => {
             let (recv_code, recv_arg) = match (recv, self_ty) {
-                (Recv::Arc, Some(st)) => (
-                    quote!(let __this = #p::__private::this_arc::<#st>(cx)?;),
-                    quote!(__this,),
-                ),
-                (Recv::Mut, Some(st)) => (
-                    quote!(let __this = #p::__private::this::<#st>(cx)?; let mut __s = #p::__private::borrow_mut::<#st>(&__this)?;),
-                    quote!(&mut *__s,),
-                ),
-                (Recv::Ref, Some(st)) => (
-                    quote!(let __this = #p::__private::this::<#st>(cx)?; let __s = <#st as #p::ExportObject>::__borrow(&__this)?;),
-                    quote!(&*__s,),
-                ),
+                (Recv::Arc, Some(st)) => (quote!(let __this = #p::__private::this_arc::<#st>(cx)?;), quote!(__this,)),
+                (Recv::Mut, Some(st)) => {
+                    (quote!(let __this = #p::__private::this::<#st>(cx)?; let mut __s = #p::__private::borrow_mut::<#st>(&__this)?;), quote!(&mut *__s,))
+                }
+                (Recv::Ref, Some(st)) => {
+                    (quote!(let __this = #p::__private::this::<#st>(cx)?; let __s = <#st as #p::ExportObject>::__borrow(&__this)?;), quote!(&*__s,))
+                }
                 _ => (Ts::new(), Ts::new()),
             };
             g.items.push(quote! {
@@ -1150,9 +980,7 @@ fn member(
             let mut recv_arg = Ts::new();
             if let (true, Some(st)) = (recv != Recv::None, self_ty) {
                 if pooled {
-                    checks.push(
-                        quote_spanned!(st.span()=> #p::__private::assert_offload_self::<#st>();),
-                    );
+                    checks.push(quote_spanned!(st.span()=> #p::__private::assert_offload_self::<#st>();));
                 }
                 match recv {
                     Recv::Arc => {
@@ -1165,14 +993,12 @@ fn member(
                     }
                     Recv::Ref => {
                         recv_take = quote!(let __this = #p::__private::this::<#st>(cx)?;);
-                        recv_borrow =
-                            quote!(let __s = <#st as #p::ExportObject>::__borrow(&__this)?;);
+                        recv_borrow = quote!(let __s = <#st as #p::ExportObject>::__borrow(&__this)?;);
                         recv_arg = quote!(&*__s,);
                     }
                     Recv::Mut => {
                         recv_take = quote!(let __this = #p::__private::this::<#st>(cx)?;);
-                        recv_borrow =
-                            quote!(let mut __s = #p::__private::borrow_mut::<#st>(&__this)?;);
+                        recv_borrow = quote!(let mut __s = #p::__private::borrow_mut::<#st>(&__this)?;);
                         recv_arg = quote!(&mut *__s,);
                     }
                     Recv::None => {}
@@ -1180,11 +1006,7 @@ fn member(
             }
             let job = match exec {
                 Exec::Worker | Exec::Blocking => {
-                    let e = if exec == Exec::Worker {
-                        quote!(Worker)
-                    } else {
-                        quote!(Blocking)
-                    };
+                    let e = if exec == Exec::Worker { quote!(Worker) } else { quote!(Blocking) };
                     checks.push(quote_spanned!(ret_ty.span()=> #p::__private::assert_worker_send::<#ret_ty>();));
                     quote! {
                         #p::__private::pool_job::<#ret_ty>(#p::Exec::#e, move || -> #ret_ty { #call_path(#recv_arg #(#pass),*) })
@@ -1232,11 +1054,7 @@ fn member(
             quote!(::core::option::Option::Some(#p::OffloadDef { exec: #p::Exec::#e, start: #start, supersede: #supersede, max_in_flight: #max }))
         }
     };
-    let thunk_ref = if exec.is_some() || stream_ret {
-        quote!(#p::__private::offload_thunk)
-    } else {
-        quote!(#thunk)
-    };
+    let thunk_ref = if exec.is_some() || stream_ret { quote!(#p::__private::offload_thunk) } else { quote!(#thunk) };
     g.defs.push(quote! {
         #p::MemberDef {
             name: #jsname,
@@ -1252,6 +1070,7 @@ fn member(
     Ok(())
 }
 
+
 /// `#[svelters::export]` on an `impl` block of an exported object: every `pub fn` becomes a member.
 /// `#[svelters::export(module = "m")]` on a free function: a function of `svelters:app/m`.
 #[proc_macro_attribute]
@@ -1265,33 +1084,21 @@ pub fn export(attr: TokenStream, item: TokenStream) -> TokenStream {
     } else if let Ok(s) = syn::parse2::<syn::ItemStatic>(item.clone()) {
         export_static(attr, s)
     } else {
-        Err(syn::Error::new(
-            Span::call_site(),
-            "#[svelters::export] goes on an `impl` block, a free `fn` or a `static` (an app-wide store)",
-        ))
+        Err(syn::Error::new(Span::call_site(), "#[svelters::export] goes on an `impl` block, a free `fn` or a `static` (an app-wide store)"))
     };
     res.unwrap_or_else(|e| e.to_compile_error()).into()
 }
 
 fn export_impl(attr: Ts, mut imp: ItemImpl) -> syn::Result<Ts> {
     if !attr.is_empty() {
-        return Err(syn::Error::new(
-            attr.span(),
-            "#[svelters::export] on an impl block takes no arguments (the module comes from #[svelters::object])",
-        ));
+        return Err(syn::Error::new(attr.span(), "#[svelters::export] on an impl block takes no arguments (the module comes from #[svelters::object])"));
     }
     if imp.trait_.is_some() {
-        return Err(syn::Error::new(
-            imp.span(),
-            "exporting trait impls is not supported (E0)",
-        ));
+        return Err(syn::Error::new(imp.span(), "exporting trait impls is not supported (E0)"));
     }
     let self_ty = (*imp.self_ty).clone();
     let rust = quote!(#self_ty).to_string();
-    let mut g = Gen {
-        defs: Vec::new(),
-        items: Vec::new(),
-    };
+    let mut g = Gen { defs: Vec::new(), items: Vec::new() };
     let mut errors: Option<syn::Error> = None;
     for (idx, it) in imp.items.iter_mut().enumerate() {
         let ImplItem::Fn(f) = it else { continue };
@@ -1314,15 +1121,7 @@ fn export_impl(attr: Ts, mut imp: ItemImpl) -> syn::Result<Ts> {
         }
         let fdocs = docs(&f.attrs);
         let ident = f.sig.ident.clone();
-        if let Err(e) = member(
-            &mut g,
-            idx,
-            Some(&self_ty),
-            &mut f.sig,
-            &js,
-            &fdocs,
-            quote!(<#self_ty>::#ident),
-        ) {
+        if let Err(e) = member(&mut g, idx, Some(&self_ty), &mut f.sig, &js, &fdocs, quote!(<#self_ty>::#ident)) {
             match &mut errors {
                 Some(x) => x.combine(e),
                 None => errors = Some(e),
@@ -1348,20 +1147,12 @@ fn export_impl(attr: Ts, mut imp: ItemImpl) -> syn::Result<Ts> {
 
 fn export_fn(attr: Ts, mut f: ItemFn) -> syn::Result<Ts> {
     let a = object_args(attr)?;
-    let module = a.module.ok_or_else(|| {
-        syn::Error::new(
-            Span::call_site(),
-            "#[svelters::export] on a function needs `module = \"...\"`",
-        )
-    })?;
+    let module = a.module.ok_or_else(|| syn::Error::new(Span::call_site(), "#[svelters::export] on a function needs `module = \"...\"`"))?;
     check_module(&module, f.sig.span())?;
     let js = js_opts(&f.attrs)?;
     strip_js(&mut f.attrs);
     if js.constructor || js.getter || js.setter {
-        return Err(syn::Error::new(
-            f.sig.span(),
-            "free functions cannot be constructors or accessors",
-        ));
+        return Err(syn::Error::new(f.sig.span(), "free functions cannot be constructors or accessors"));
     }
     let mut js = js;
     if js.rename.is_none() {
@@ -1369,10 +1160,7 @@ fn export_fn(attr: Ts, mut f: ItemFn) -> syn::Result<Ts> {
     }
     let fdocs = docs(&f.attrs);
     let ident = f.sig.ident.clone();
-    let mut g = Gen {
-        defs: Vec::new(),
-        items: Vec::new(),
-    };
+    let mut g = Gen { defs: Vec::new(), items: Vec::new() };
     member(&mut g, 0, None, &mut f.sig, &js, &fdocs, quote!(#ident))?;
     let p = quote!(::svelters::__private);
     let items = &g.items;
@@ -1394,28 +1182,17 @@ fn export_fn(attr: Ts, mut f: ItemFn) -> syn::Result<Ts> {
 /// `export const <camelName>` of `svelters:app/m`, the same Rust object in every JS runtime.
 fn export_static(attr: Ts, mut item: syn::ItemStatic) -> syn::Result<Ts> {
     let a = object_args(attr)?;
-    let module = a.module.ok_or_else(|| {
-        syn::Error::new(
-            Span::call_site(),
-            "#[svelters::export] on a static needs `module = \"...\"`",
-        )
-    })?;
+    let module = a.module.ok_or_else(|| syn::Error::new(Span::call_site(), "#[svelters::export] on a static needs `module = \"...\"`"))?;
     check_module(&module, item.span())?;
     if !matches!(item.mutability, syn::StaticMutability::None) {
-        return Err(syn::Error::new(
-            item.span(),
-            "an exported static cannot be `mut`",
-        ));
+        return Err(syn::Error::new(item.span(), "an exported static cannot be `mut`"));
     }
     let js = js_opts(&item.attrs)?;
     strip_js(&mut item.attrs);
     let ident = &item.ident;
     let ty = &item.ty;
     let rust = ident.to_string();
-    let jsname = js
-        .rename
-        .or(a.name)
-        .unwrap_or_else(|| camel(&rust.to_lowercase()));
+    let jsname = js.rename.or(a.name).unwrap_or_else(|| camel(&rust.to_lowercase()));
     let vdocs = docs(&item.attrs);
     let p = quote!(::svelters::__private);
     Ok(quote! {
@@ -1441,18 +1218,12 @@ struct StoreArgs {
 }
 
 fn store_args(attr: Ts) -> syn::Result<StoreArgs> {
-    let mut a = StoreArgs {
-        module: None,
-        name: None,
-    };
+    let mut a = StoreArgs { module: None, name: None };
     let metas = Punctuated::<Meta, Token![,]>::parse_terminated.parse2(attr)?;
     for m in metas {
         match &m {
             Meta::NameValue(nv) if nv.path.is_ident("module") || nv.path.is_ident("name") => {
-                let Expr::Lit(syn::ExprLit {
-                    lit: Lit::Str(s), ..
-                }) = &nv.value
-                else {
+                let Expr::Lit(syn::ExprLit { lit: Lit::Str(s), .. }) = &nv.value else {
                     return Err(syn::Error::new(nv.value.span(), "expected a string"));
                 };
                 if nv.path.is_ident("module") {
@@ -1461,12 +1232,7 @@ fn store_args(attr: Ts) -> syn::Result<StoreArgs> {
                     a.name = Some(s.value());
                 }
             }
-            _ => {
-                return Err(syn::Error::new(
-                    m.span(),
-                    "expected `module = \"...\"` or `name = \"...\"`",
-                ));
-            }
+            _ => return Err(syn::Error::new(m.span(), "expected `module = \"...\"` or `name = \"...\"`")),
         }
     }
     Ok(a)
@@ -1499,9 +1265,7 @@ fn store_field_opts(attrs: &[Attribute]) -> syn::Result<(bool, bool)> {
 #[proc_macro_attribute]
 pub fn store(attr: TokenStream, item: TokenStream) -> TokenStream {
     let item = syn::parse_macro_input!(item as ItemStruct);
-    store_impl(attr.into(), item)
-        .unwrap_or_else(|e| e.to_compile_error())
-        .into()
+    store_impl(attr.into(), item).unwrap_or_else(|e| e.to_compile_error()).into()
 }
 
 fn store_impl(attr: Ts, mut item: ItemStruct) -> syn::Result<Ts> {
@@ -1509,22 +1273,13 @@ fn store_impl(attr: Ts, mut item: ItemStruct) -> syn::Result<Ts> {
     let module = a.module.ok_or_else(|| syn::Error::new(Span::call_site(), "#[svelters::store] needs `module = \"...\"` (the JS module is `svelters:app/<module>`)"))?;
     check_module(&module, item.span())?;
     if !item.generics.params.is_empty() {
-        return Err(syn::Error::new(
-            item.generics.span(),
-            "stores cannot be generic",
-        ));
+        return Err(syn::Error::new(item.generics.span(), "stores cannot be generic"));
     }
     let Fields::Named(fields) = &mut item.fields else {
-        return Err(syn::Error::new(
-            item.span(),
-            "#[svelters::store] needs a struct with named fields",
-        ));
+        return Err(syn::Error::new(item.span(), "#[svelters::store] needs a struct with named fields"));
     };
     if fields.named.is_empty() {
-        return Err(syn::Error::new(
-            item.span(),
-            "a store needs at least one field",
-        ));
+        return Err(syn::Error::new(item.span(), "a store needs at least one field"));
     }
     let ty = item.ident.clone();
     let rust = ty.to_string();
@@ -1544,13 +1299,9 @@ fn store_impl(attr: Ts, mut item: ItemStruct) -> syn::Result<Ts> {
     for (i, f) in fields.named.iter_mut().enumerate() {
         let (writable, proportional) = store_field_opts(&f.attrs)?;
         let o = js_opts(&f.attrs)?;
-        f.attrs
-            .retain(|a| !a.path().is_ident("store") && !a.path().is_ident("js"));
+        f.attrs.retain(|a| !a.path().is_ident("store") && !a.path().is_ident("js"));
         if o.bigint {
-            return Err(syn::Error::new(
-                f.span(),
-                "`#[js(bigint)]` store fields are not supported (E3): store a checked number (±2^53) or a string",
-            ));
+            return Err(syn::Error::new(f.span(), "`#[js(bigint)]` store fields are not supported (E3): store a checked number (±2^53) or a string"));
         }
         let id = f.ident.clone().expect("named");
         let fty = f.ty.clone();
@@ -1687,9 +1438,7 @@ fn store_impl(attr: Ts, mut item: ItemStruct) -> syn::Result<Ts> {
 #[proc_macro_attribute]
 pub fn service(attr: TokenStream, item: TokenStream) -> TokenStream {
     let item = syn::parse_macro_input!(item as ItemFn);
-    service_impl(attr.into(), item)
-        .unwrap_or_else(|e| e.to_compile_error())
-        .into()
+    service_impl(attr.into(), item).unwrap_or_else(|e| e.to_compile_error()).into()
 }
 
 fn service_impl(attr: Ts, mut f: ItemFn) -> syn::Result<Ts> {
@@ -1699,10 +1448,7 @@ fn service_impl(attr: Ts, mut f: ItemFn) -> syn::Result<Ts> {
         match &m {
             Meta::Path(p) if p.is_ident("lazy") => lazy = true,
             Meta::NameValue(nv) if nv.path.is_ident("module") || nv.path.is_ident("name") => {
-                let Expr::Lit(syn::ExprLit {
-                    lit: Lit::Str(s), ..
-                }) = &nv.value
-                else {
+                let Expr::Lit(syn::ExprLit { lit: Lit::Str(s), .. }) = &nv.value else {
                     return Err(syn::Error::new(nv.value.span(), "expected a string"));
                 };
                 if nv.path.is_ident("module") {
@@ -1711,40 +1457,21 @@ fn service_impl(attr: Ts, mut f: ItemFn) -> syn::Result<Ts> {
                     name = Some(s.value());
                 }
             }
-            _ => {
-                return Err(syn::Error::new(
-                    m.span(),
-                    "expected `module = \"...\"`, `name = \"...\"` or `lazy`",
-                ));
-            }
+            _ => return Err(syn::Error::new(m.span(), "expected `module = \"...\"`, `name = \"...\"` or `lazy`")),
         }
     }
-    let module = module.ok_or_else(|| {
-        syn::Error::new(
-            Span::call_site(),
-            "#[svelters::service] needs `module = \"...\"`",
-        )
-    })?;
+    let module = module.ok_or_else(|| syn::Error::new(Span::call_site(), "#[svelters::service] needs `module = \"...\"`"))?;
     check_module(&module, f.sig.span())?;
     let js = js_opts(&f.attrs)?;
     strip_js(&mut f.attrs);
     if f.sig.asyncness.is_some() {
-        return Err(syn::Error::new(
-            f.sig.span(),
-            "a service fn is synchronous: start long-running work with `cx.thread(...)` (or `cx.spawn(...)` with the `tokio` feature)",
-        ));
+        return Err(syn::Error::new(f.sig.span(), "a service fn is synchronous: start long-running work with `cx.thread(...)` (or `cx.spawn(...)` with the `tokio` feature)"));
     }
     if !f.sig.generics.params.is_empty() || f.sig.inputs.len() != 1 {
-        return Err(syn::Error::new(
-            f.sig.span(),
-            "a service is `fn name(cx: ServiceCx) -> V`",
-        ));
+        return Err(syn::Error::new(f.sig.span(), "a service is `fn name(cx: ServiceCx) -> V`"));
     }
     let ReturnType::Type(_, ret) = &f.sig.output else {
-        return Err(syn::Error::new(
-            f.sig.span(),
-            "a service returns what JS imports: a `Store<S>` or a shared object (`Arc<T>`)",
-        ));
+        return Err(syn::Error::new(f.sig.span(), "a service returns what JS imports: a `Store<S>` or a shared object (`Arc<T>`)"));
     };
     let ret = (**ret).clone();
     let ident = f.sig.ident.clone();
@@ -1784,30 +1511,19 @@ fn service_impl(attr: Ts, mut f: ItemFn) -> syn::Result<Ts> {
 #[proc_macro_derive(Events, attributes(js, event))]
 pub fn derive_events(input: TokenStream) -> TokenStream {
     let input = syn::parse_macro_input!(input as DeriveInput);
-    events(input)
-        .unwrap_or_else(|e| e.to_compile_error())
-        .into()
+    events(input).unwrap_or_else(|e| e.to_compile_error()).into()
 }
 
 fn events(input: DeriveInput) -> syn::Result<Ts> {
     let name = &input.ident;
     if !input.generics.params.is_empty() {
-        return Err(syn::Error::new(
-            input.generics.span(),
-            "event enums cannot be generic",
-        ));
+        return Err(syn::Error::new(input.generics.span(), "event enums cannot be generic"));
     }
     let Data::Enum(de) = &input.data else {
-        return Err(syn::Error::new(
-            input.span(),
-            "#[derive(svelters::Events)] needs an enum",
-        ));
+        return Err(syn::Error::new(input.span(), "#[derive(svelters::Events)] needs an enum"));
     };
     if de.variants.len() > 64 {
-        return Err(syn::Error::new(
-            input.span(),
-            "an event enum has at most 64 variants",
-        ));
+        return Err(syn::Error::new(input.span(), "an event enum has at most 64 variants"));
     }
     let p = quote!(::svelters::__private);
     let mut infos = Vec::new();
@@ -1829,45 +1545,30 @@ fn events(input: DeriveInput) -> syn::Result<Ts> {
         }
         let ename = o.rename.unwrap_or_else(|| kebab(&v.ident.to_string()));
         let vdocs = docs(&v.attrs);
-        infos
-            .push(quote!(#p::__private::EventInfo { name: #ename, latest: #latest, docs: #vdocs }));
+        infos.push(quote!(#p::__private::EventInfo { name: #ename, latest: #latest, docs: #vdocs }));
         let id = &v.ident;
         match &v.fields {
             Fields::Unit => {
                 index.push(quote!(#name::#id => #i));
-                payload.push(
-                    quote!(#name::#id => ::core::result::Result::Ok(::core::option::Option::None)),
-                );
+                payload.push(quote!(#name::#id => ::core::result::Result::Ok(::core::option::Option::None)));
                 describe.push(quote!(::core::option::Option::None));
             }
             Fields::Unnamed(u) if u.unnamed.len() == 1 => {
                 let t = &u.unnamed[0].ty;
                 index.push(quote!(#name::#id(..) => #i));
                 payload.push(quote!(#name::#id(__x) => ::core::result::Result::Ok(::core::option::Option::Some(#p::IntoJs::into_js(__x, cx)?))));
-                describe
-                    .push(quote!(::core::option::Option::Some(<#t as #p::JsType>::describe(b))));
+                describe.push(quote!(::core::option::Option::Some(<#t as #p::JsType>::describe(b))));
             }
             Fields::Unnamed(u) => {
-                return Err(syn::Error::new(
-                    u.span(),
-                    "an event passes one value: use one field, or named fields (a plain object)",
-                ));
+                return Err(syn::Error::new(u.span(), "an event passes one value: use one field, or named fields (a plain object)"));
             }
             Fields::Named(nf) => {
-                let ids: Vec<_> = nf
-                    .named
-                    .iter()
-                    .map(|f| f.ident.clone().expect("named"))
-                    .collect();
+                let ids: Vec<_> = nf.named.iter().map(|f| f.ident.clone().expect("named")).collect();
                 let mut keys = Vec::new();
                 let mut tys = Vec::new();
                 for f in &nf.named {
                     let fo = js_opts(&f.attrs)?;
-                    keys.push(
-                        fo.rename.unwrap_or_else(|| {
-                            camel(&f.ident.as_ref().expect("named").to_string())
-                        }),
-                    );
+                    keys.push(fo.rename.unwrap_or_else(|| camel(&f.ident.as_ref().expect("named").to_string())));
                     tys.push(f.ty.clone());
                 }
                 index.push(quote!(#name::#id { .. } => #i));
@@ -1973,12 +1674,7 @@ pub fn behavior(attr: TokenStream, item: TokenStream) -> TokenStream {
 }
 
 enum WidgetField {
-    Prop {
-        name: String,
-        bind: bool,
-        measure: bool,
-        default: Option<Expr>,
-    },
+    Prop { name: String, bind: bool, measure: bool, default: Option<Expr> },
     Event,
     State,
 }
@@ -1994,10 +1690,7 @@ fn caps_expr(e: &Expr, out: &mut Vec<syn::Ident>) -> syn::Result<()> {
             Ok(())
         }
         Expr::Paren(p) => caps_expr(&p.expr, out),
-        other => Err(syn::Error::new(
-            other.span(),
-            "caps: capability names joined with `|` (FOCUSABLE | EDITABLE)",
-        )),
+        other => Err(syn::Error::new(other.span(), "caps: capability names joined with `|` (FOCUSABLE | EDITABLE)")),
     }
 }
 
@@ -2043,9 +1736,7 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
             let e: Expr = m.value()?.parse()?;
             caps_expr(&e, &mut caps)?;
         } else {
-            return Err(
-                m.error("expected `namespace = \"...\"`, `tag = \"...\"` or `caps = A | B`")
-            );
+            return Err(m.error("expected `namespace = \"...\"`, `tag = \"...\"` or `caps = A | B`"));
         }
         Ok(())
     })
@@ -2135,28 +1826,16 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                         } else if m.path.is_ident("rename") {
                             rename = Some(m.value()?.parse::<syn::LitStr>()?.value());
                         } else {
-                            return Err(m.error(
-                                "#[prop] options: bind, measure, default = expr, rename = \"name\"",
-                            ));
+                            return Err(m.error("#[prop] options: bind, measure, default = expr, rename = \"name\""));
                         }
                         Ok(())
                     })?;
                 }
-                let js = rename.unwrap_or_else(|| {
-                    ident.to_string().trim_start_matches("r#").replace('_', "-")
-                });
-                kind = WidgetField::Prop {
-                    name: js,
-                    bind,
-                    measure,
-                    default,
-                };
+                let js = rename.unwrap_or_else(|| ident.to_string().trim_start_matches("r#").replace('_', "-"));
+                kind = WidgetField::Prop { name: js, bind, measure, default };
             } else if a.path().is_ident("event") {
                 if last_segment(&f.ty).is_none_or(|s| s.ident != "Event") {
-                    return Err(syn::Error::new(
-                        f.ty.span(),
-                        "an #[event] field has type `Event<T>`",
-                    ));
+                    return Err(syn::Error::new(f.ty.span(), "an #[event] field has type `Event<T>`"));
                 }
                 kind = WidgetField::Event;
             } else if a.path().is_ident("state") {
@@ -2186,12 +1865,7 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
     let mut event_i = 0u16;
     for (ident, ty, fdocs, kind) in &kinds {
         match kind {
-            WidgetField::Prop {
-                name: js,
-                bind,
-                measure,
-                default,
-            } => {
+            WidgetField::Prop { name: js, bind, measure, default } => {
                 let optional = last_segment(ty).is_some_and(|s| s.ident == "Option");
                 let required = default.is_none() && !optional;
                 let init = match default {
@@ -2216,20 +1890,14 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
             }
             WidgetField::Event => {
                 let js = ident.to_string().trim_start_matches("r#").replace('_', "-");
-                let payload = first_generic(ty).ok_or_else(|| {
-                    syn::Error::new(ty.span(), "an #[event] field has type `Event<T>`")
-                })?;
-                event_entries.push(
-                    quote! { ::svelters_egui::provider::EventEntry { name: #js, docs: #fdocs } },
-                );
+                let payload = first_generic(ty).ok_or_else(|| syn::Error::new(ty.span(), "an #[event] field has type `Event<T>`"))?;
+                event_entries.push(quote! { ::svelters_egui::provider::EventEntry { name: #js, docs: #fdocs } });
                 event_describe.push(quote! { b.ty::<#payload>() });
                 let i = event_i;
                 inits.push(quote! { #ident: ::svelters_egui::provider::Event::__new(#i) });
                 event_i += 1;
             }
-            WidgetField::State => {
-                inits.push(quote! { #ident: ::core::default::Default::default() })
-            }
+            WidgetField::State => inits.push(quote! { #ident: ::core::default::Default::default() }),
         }
     }
     let name_str = name.to_string();

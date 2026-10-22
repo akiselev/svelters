@@ -93,9 +93,7 @@ impl Scene {
         for (i, kids) in self.children.iter().enumerate() {
             bytes += kids.capacity() * size_of::<NodeId>();
             if let Some(cold) = &self.cold[i] {
-                bytes += size_of::<NodeCold>()
-                    + cold.common.tooltip.capacity()
-                    + cold.common.accessible_name.capacity();
+                bytes += size_of::<NodeCold>() + cold.common.tooltip.capacity() + cold.common.accessible_name.capacity();
             }
         }
         SceneStats {
@@ -144,13 +142,7 @@ impl Scene {
             }
             if opts.rects && c.rect != egui::Rect::NOTHING {
                 let r = c.rect;
-                out.push_str(&format!(
-                    " {{{} {} {} {}}}",
-                    r.min.x,
-                    r.min.y,
-                    r.width(),
-                    r.height()
-                ));
+                out.push_str(&format!(" {{{} {} {} {}}}", r.min.x, r.min.y, r.width(), r.height()));
             }
             if opts.dirty {
                 if !c.dirty.is_empty() {

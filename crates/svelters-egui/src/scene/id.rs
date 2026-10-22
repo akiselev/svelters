@@ -147,12 +147,7 @@ impl ProviderId {
     }
 
     pub fn name(self) -> &'static str {
-        provider_names()
-            .lock()
-            .unwrap()
-            .get(self.0 as usize)
-            .copied()
-            .unwrap_or("?")
+        provider_names().lock().unwrap().get(self.0 as usize).copied().unwrap_or("?")
     }
 }
 
@@ -185,10 +180,7 @@ impl SlotTable {
         let (i, fresh) = match self.free.pop() {
             Some(i) => (i as usize, false),
             None => {
-                assert!(
-                    self.gens.len() < MAX_SLOTS,
-                    "svelters-egui: more than 2^24 live nodes"
-                );
+                assert!(self.gens.len() < MAX_SLOTS, "svelters-egui: more than 2^24 live nodes");
                 self.gens.push(0);
                 self.live.push(false);
                 (self.gens.len() - 1, true)
@@ -242,11 +234,7 @@ mod tests {
         assert_eq!(id.generation(), 3);
         assert_eq!(NodeId::from_raw(id.to_raw()), Some(id));
         assert_eq!(NodeId::from_raw(0), None);
-        assert_eq!(
-            NodeId::from_raw(1 << 52),
-            None,
-            "app-export handles are not node ids"
-        );
+        assert_eq!(NodeId::from_raw(1 << 52), None, "app-export handles are not node ids");
         assert!(NodeId::new(MAX_SLOTS - 1, MAX_GEN - 1).to_raw() < 1 << 52);
     }
 
