@@ -247,14 +247,25 @@ impl VList {
         (self.heights.total() - self.view.y as f64).max(0.0)
     }
 
-    /// The positions to bind at this frame's offset: the viewport plus a margin.
+    /// The positions to bind at this frame's offset: the viewport plus a margin, and never fewer
+    /// rows than the most that estimated rows need anywhere in the list (a margin cut at the top or
+    /// bottom goes to the other side), so the rows set up at the top are enough while scrolling.
     fn window(&self) -> std::ops::Range<usize> {
         if self.view.y <= 0.0 {
             return 0..0;
         }
-        let m = OVERSCAN_ROWS * self.heights.estimate() as f64;
+        let est = self.heights.estimate() as f64;
+        let m = OVERSCAN_ROWS * est;
         let off = self.scroll.offset;
-        self.heights.range(off - m, off + self.view.y as f64 + m)
+        let r = self.heights.range(off - m, off + self.view.y as f64 + m);
+        let len = self.heights.len();
+        let n = ((self.view.y as f64 / est).ceil() as usize + 1 + 2 * OVERSCAN_ROWS as usize).min(len);
+        let (mut start, mut end) = (r.start, r.end.max(r.start + n));
+        if end > len {
+            end = len;
+            start = start.min(len - n);
+        }
+        start..end
     }
 
     /// Decides this pass's offset (R22) with a pending `scrollTo`. True if it changed.
@@ -714,6 +725,8 @@ pub(crate) fn prepare_root(s: &mut Scene, ctx: &egui::Context, r: RootIx) {
         let before = rows.pool.created();
         let mut m = SceneMut { s, origin: Origin::Rust(ProviderId::named("virtual-list")) };
         let mut bound = Vec::with_capacity(want.len());
+        let keys: std::collections::HashSet<u64> = want.clone().map(|p| rows.source.key(p)).collect();
+        rows.pool.release_except(&mut m, |k| keys.contains(&k));
         for pos in want {
             let key = rows.source.key(pos);
             let t = rows.source.template(pos);
@@ -858,7 +871,9 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         }
         let mut row_ui = rows_ui.new_child(egui::UiBuilder::new().max_rect(rr).id_salt(("row", key)).accessibility_parent(row_id));
         row_ui.set_clip_rect(clip);
+        let mark = crate::scene::virt::widgets_in_layer(&ctx, row_ui.layer_id());
         crate::walk::paint_at(s, ni, origin, &mut row_ui, out);
+        crate::scene::virt::label_row_by_contents(&ctx, row_id, row_ui.layer_id(), mark);
         s.core[ni].drawn = rr;
         crate::scene::hit::record(s, ni, &row_ui);
         drawn += 1;

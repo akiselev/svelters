@@ -395,6 +395,20 @@ impl RowPool {
         n
     }
 
+    /// Before a prepare's requests: rows bound to keys `keep` rejects (the keys leaving the
+    /// window) go to the free list now, with their [`RowPool::clears`] entries removed, so this
+    /// prepare's new keys take them instead of building rows.
+    pub fn release_except(&mut self, s: &mut SceneMut<'_>, keep: impl Fn(u64) -> bool) {
+        let gone: Vec<u64> = self.bound.keys().copied().filter(|&k| !keep(k)).collect();
+        for k in gone {
+            let Some((n, t)) = self.bound.remove(&k) else { continue };
+            for c in &self.clears {
+                c(s, n);
+            }
+            self.free.push((t, n));
+        }
+    }
+
     /// The rows requested by this prepare, in request order.
     pub fn bound_in_order(&self) -> impl Iterator<Item = NodeId> + '_ {
         self.order.iter().copied()
@@ -488,6 +502,50 @@ pub fn a11y_row(ctx: &egui::Context, id: egui::Id, index: usize, len: usize, f: 
         f(n);
         n.set_position_in_set(index + 1);
         n.set_size_of_set(len);
+    });
+}
+
+/// How many widgets this pass has registered on `layer` so far: the mark to pass to
+/// [`label_row_by_contents`] before painting a row's content.
+pub fn widgets_in_layer(ctx: &egui::Context, layer: egui::LayerId) -> usize {
+    ctx.viewport(|vp| vp.this_pass.widgets.get_layer(layer).count())
+}
+
+/// Names row `id` by its content (a list box option needs a name): the row is `labelled_by` the
+/// static texts registered on `layer` since `first` (else the named widgets), as testing-library's
+/// `getByLabelText` and a screen reader's name-from-contents expect. A row with a label of its own
+/// keeps it.
+pub fn label_row_by_contents(ctx: &egui::Context, id: egui::Id, layer: egui::LayerId, first: usize) {
+    use egui::accesskit::Role;
+    let named = |n: &egui::accesskit::Node| {
+        let t = if n.role() == Role::Label { n.value().or(n.label()) } else { n.label() };
+        t.is_some_and(|t| !t.trim().is_empty())
+    };
+    let (texts, others) = ctx.viewport(|vp| {
+        let Some(state) = &vp.this_pass.accesskit_state else { return (Vec::new(), Vec::new()) };
+        let (mut texts, mut others) = (Vec::new(), Vec::new());
+        for w in vp.this_pass.widgets.get_layer(layer).skip(first) {
+            if w.id == id {
+                continue;
+            }
+            let Some(n) = state.nodes.get(&w.id) else { continue };
+            if !named(n) {
+                continue;
+            }
+            let to = if n.role() == Role::Label { &mut texts } else { &mut others };
+            to.push(w.id.accesskit_id());
+        }
+        (texts, others)
+    });
+    let by = if texts.is_empty() { others } else { texts };
+    if by.is_empty() {
+        return;
+    }
+    ctx.accesskit_node_builder(id, |n| {
+        if n.label().is_none_or(|l| l.trim().is_empty()) {
+            n.clear_label();
+            n.set_labelled_by(by);
+        }
     });
 }
 

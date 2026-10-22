@@ -242,7 +242,9 @@ fn scroll_to_anchoring_and_set_size() {
     r.harness.run();
     r.check_rows(&ids);
     // set size and position on the rows' a11y nodes
-    let n = r.harness.get_by_label(&format!("Item {}", ids[at])).parent().expect("the row node");
+    let label = format!("Item {}", ids[at]);
+    // the row is labelled by its content: the query finds the row, not the label in it
+    let n = r.harness.get_by_label(&label);
     let node = n.accesskit_node();
     assert_eq!(node.size_of_set(), Some(ids.len()));
     assert_eq!(node.position_in_set(), Some(at + 1));
