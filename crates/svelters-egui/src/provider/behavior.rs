@@ -170,6 +170,10 @@ impl<B: Behavior + KindDecl> ErasedWidget for BehaviorBox<B> {
     fn busy(&self) -> bool {
         false
     }
+    fn hit_test(&self, _cx: &super::HitCx, _local: egui::Pos2) -> super::Hit {
+        // attached nodes are not painted, so they never own a point: it goes to the host
+        super::Hit::Miss
+    }
     fn as_any(&self) -> &dyn Any {
         &self.0
     }
