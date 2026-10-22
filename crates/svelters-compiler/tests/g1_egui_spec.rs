@@ -54,6 +54,17 @@ fn inline_setter_values_are_checked() {
     assert!(!errors(&r).is_empty(), "an enum value outside the table is refused");
 }
 
+/// CS5f: margin/padding are engine properties on egui (`insets`, 1 to 4 values). Inline `style=`
+/// keeps them in the text the runtime sends to the engine; it no longer lowers them to props. A
+/// `padding` attribute is still a prop.
+#[test]
+fn inline_margin_and_padding_go_to_the_engine() {
+    let out = js("<window><box style=\"padding: 4px 8px; margin: 1px 2px 3px 4px\" padding={2} /></window>");
+    assert!(out.contains("padding: 4px 8px"), "{out}");
+    assert!(out.contains("margin: 1px 2px 3px 4px"), "{out}");
+    assert!(out.contains(r#""padding", 2"#), "the attribute is a prop: {out}");
+}
+
 /// D9 on egui (CS5e): `<style>` rules are not matched at compile time, so states, combinators
 /// and `%` in setter properties compile (the engine resolves them at run time).
 #[test]

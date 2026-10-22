@@ -44,7 +44,7 @@ fn open(d: &E2e, page: &str) -> Result<(), Error> {
 }
 
 /// gallery.rs's `inputs_page_binds_every_value`, with locators.
-#[svelters_automation::test(app = "../../fixtures/gallery-egui/dist/app.js")]
+#[svelters_automation::test(app = "../../fixtures/gallery-egui")]
 fn gallery_inputs_page_binds_every_value(d: &mut E2e) -> TestResult {
     open(d, "inputs")?;
     expect(d.get_by_text_exact("group: a")).to_be_visible()?;
@@ -55,8 +55,10 @@ fn gallery_inputs_page_binds_every_value(d: &mut E2e) -> TestResult {
     expect(d.get_by_text_exact("checked: false true")).to_be_visible()?;
     d.get_by_role("switch", name("Wi-Fi")).click()?;
     expect(d.get_by_text_exact("active: true")).to_be_visible()?;
-    // Not here: gallery.rs's `bind:high` step. The range slider is one scene node ("Range") with two
-    // AccessKit handles; `input.set_value` has no handle target yet (AU1b milestone, follow-ups).
+    // gallery.rs's `bind:high` step: the range slider is one scene node ("Range") with two AccessKit
+    // handles; AU2b's `handle` picks one.
+    d.get_by_role("slider", name("Range")).set_value_handle("high", json!(60))?;
+    expect(d.get_by_text_exact("range: 10 to 60")).to_be_visible()?;
     d.get_by_role("spinbutton", name("Width")).set_value(json!(25))?;
     expect(d.get_by_text_exact("width: 10")).to_be_visible()?;
     d.get_by_role("link", name("Svelte")).click()?;
@@ -65,16 +67,17 @@ fn gallery_inputs_page_binds_every_value(d: &mut E2e) -> TestResult {
 }
 
 /// gallery.rs's `containers_page_lays_out_and_switches`, with locators.
-#[svelters_automation::test(app = "../../fixtures/gallery-egui/dist/app.js")]
+#[svelters_automation::test(app = "../../fixtures/gallery-egui")]
 fn gallery_containers_page_switches(d: &mut E2e) -> TestResult {
     open(d, "containers")?;
     for l in ["Panel 140", "Body", "Left side", "Inside the frame", "Stack page one"] {
         expect(d.get_by_text_exact(l)).to_be_visible()?;
     }
-    // Not here: "the other stack page is hidden". `visible` reads a stack's inactive child as visible
-    // (AU1b milestone, follow-ups), so only the switch's positive side is checked.
+    // AU2b: a stack's inactive page reads as hidden (`NodeRef::is_visible`).
+    expect(d.get_by_text_exact("Stack page two")).to_be_hidden()?;
     d.get_by_role("button", name("Show two")).click()?;
     expect(d.get_by_text_exact("Stack page two")).to_be_visible()?;
+    expect(d.get_by_text_exact("Stack page one")).to_be_hidden()?;
     let (panel, body) = (d.get_by_text_exact("Panel 140").info()?, d.get_by_text_exact("Body").info()?);
     let left = |v: &serde_json::Value| v["rect"][0].as_f64();
     if let (Some(p), Some(b)) = (left(&panel), left(&body)) {

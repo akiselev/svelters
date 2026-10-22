@@ -38,7 +38,6 @@ pub enum W {
     Grid { columns: String, justify_items: &'static str },
     CollapsingHeader { text: String, open: bool },
     /// `seen`: the offsets egui reported last frame (a differing `x`/`y` is a host write to apply).
-    ScrollArea { direction: &'static str, x: f64, y: f64, seen: Option<(f64, f64)> },
     // ---- WG2a (plans/milestones/WG2a-menus-popups.md) ----
     /// The menu family (`crate::menus`).
     Menu(crate::menus::MenuW),
@@ -51,7 +50,6 @@ pub enum W {
     Switch { text: String, active: bool },
     RangeSlider { low: f64, high: f64, min: f64, max: f64, step: f64, text: String, show_value: bool },
     DragValue { value: f64, min: Option<f64>, max: Option<f64>, speed: f64, decimals: Option<i64>, prefix: String, suffix: String },
-    Panel { side: &'static str, size: Option<f64>, resizable: bool, separator: bool },
     Sides,
     Frame { label: String, style: &'static str },
     Stack { name: String, index: i64, homogeneous: bool },
@@ -66,7 +64,6 @@ pub enum W {
     TabView { selected: i64 },
     Tab { title: String, closable: bool },
     /// `vertical`: `orientation="vertical"` (panes stacked).
-    SplitView { vertical: bool, position: Option<f64>, min_size: f64, resizable: bool },
     /// `toast-host`: props and the toasts shown.
     ToastHost(std::boxed::Box<crate::views::toast::Toasts>),
     /// WG4b: `date-picker`, `color-picker` (`kinds/pickers.rs`).
@@ -80,7 +77,7 @@ impl W {
     /// Containers lay out children with taffy (flexbox, or grid for `Grid`); `Box` and `Window`
     /// paint nothing themselves, the WG1 containers paint their chrome (`leaf::container`).
     pub fn is_container(&self) -> bool {
-        matches!(self, W::Box | W::Window { .. } | W::Grid { .. } | W::CollapsingHeader { .. } | W::ScrollArea { .. } | W::Overlay(_))
+        matches!(self, W::Box | W::Window { .. } | W::Grid { .. } | W::CollapsingHeader { .. } | W::Overlay(_))
             || crate::elements::is_container(self) // WG2b
             || crate::views::is_container(self) // WG4a
     }
@@ -266,6 +263,13 @@ bits! {
         const HAS_ATTACHED = 1 << 16;
         /// CX3: a text field the user edited since its last `commit` (blur then commits).
         const EDITED = 1 << 17;
+        /// WG6/OW2 (QA13): `scroll-into-view` was called; the walk asks the scrollables around it
+        /// to reveal it when it reaches it (`widgets::scroll_area::reveal_flagged`).
+        const WANT_SCROLL = 1 << 18;
+        /// WG6/OW2: a descendant has `WANT_SCROLL`: the walk does not cull this subtree.
+        const SCROLL_BELOW = 1 << 19;
+        /// WG6/OW2: `scroll-into-view("center")`.
+        const SCROLL_CENTER = 1 << 21;
         /// SG4: the top of a provider's shadow subtree (ARCH-SCENE §4.4): its parent is the host
         /// provider node, which lays it out and draws it (`WidgetCx::children`); JS never sees it.
         const SHADOW = 1 << 20;
@@ -481,12 +485,12 @@ pub fn text_of(w: &W) -> &str {
         W::Overlay(o) => &o.title,
         // OW0: an own widget replacing a built-in kind shows its text prop (a mirror kept by `set_prop`)
         W::Ext(x) => x.text(),
-        W::Box | W::Separator { .. } | W::Grid { .. } | W::ScrollArea { .. } | W::VirtualList(_) => "",
+        W::Box | W::Separator { .. } | W::Grid { .. } | W::VirtualList(_) => "",
         // WG2b
         W::Hyperlink { text, .. } | W::RadioButton { text, .. } | W::Switch { text, .. } | W::RangeSlider { text, .. } | W::ProgressBar { text, .. } => text,
         W::Frame { label, .. } => label,
-        W::DragValue { .. } | W::Panel { .. } | W::Sides | W::Stack { .. } | W::Image { .. } | W::Spinner { .. } | W::Canvas(_) => "",
-        W::Table(_) | W::TabView { .. } | W::SplitView { .. } | W::ToastHost(_) => "",
+        W::DragValue { .. } | W::Sides | W::Stack { .. } | W::Image { .. } | W::Spinner { .. } | W::Canvas(_) => "",
+        W::Table(_) | W::TabView { .. } | W::ToastHost(_) => "",
         W::Picker(p) => p.text(),
     }
 }

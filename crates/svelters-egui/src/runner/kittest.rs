@@ -82,6 +82,71 @@ impl TestApp {
         TestApp::loading(cfg, Some(step_dt), |embed| embed.load_app_from(provider))
     }
 
+    /// AU2b (E2E-INSPECTOR §2.4, `app.mount`): one component from source, mounted alone into a
+    /// fresh host. `component` is a `.svelte` file inside an app (the nearest package.json is its
+    /// root and toolkit config); it is loaded as a one-component embed entry whose export is
+    /// `export` (default: the file stem), mounted with `props` (a JSON object) into a slot that
+    /// fills a `size` window, as root `key`. Steps frames until the root is live; a mount that
+    /// throws fails here with the error. Change props later with `embed.set_root_props(root, ..)`.
+    #[cfg(feature = "source")]
+    pub fn mount_source(
+        component: impl AsRef<Path>,
+        export: Option<&str>,
+        props: serde_json::Value,
+        size: egui::Vec2,
+        step_dt: f32,
+        cfg: HostConfig,
+    ) -> Result<(TestApp, crate::embed::RootId), String> {
+        use crate::embed::{MountSpec, Props};
+        let path = component.as_ref();
+        let export = match export {
+            Some(e) => e.to_string(),
+            None => path.file_stem().and_then(|s| s.to_str()).ok_or_else(|| format!("{}: no file name", path.display()))?.to_string(),
+        };
+        let mut src = svelters_modules::SourceConfig::for_path(path)?;
+        // `for_path` resolved a component file to `Entry::App(<canonical path>)`.
+        let file = match &src.entry {
+            svelters_modules::Entry::App(f) if path.extension().is_some_and(|e| e == "svelte") => f.clone(),
+            _ => return Err(format!("{}: not a .svelte component file", path.display())),
+        };
+        src.backend = "egui".into();
+        src.entry = svelters_modules::Entry::Embed(vec![(export.clone(), file)]);
+        let provider = std::rc::Rc::new(svelters_modules::SourceProvider::new(src)?);
+        let (mut app, slot) = TestApp::embed_host(size, step_dt, cfg)?;
+        let entry = app.embed.load_from(provider).map_err(|e| e.to_string())?;
+        let root = app.embed.mount(MountSpec::new(entry, export, slot, "mount").props(Props::json(props))).map_err(|e| e.to_string())?;
+        for _ in 0..10 {
+            match app.embed.root_info(root).map(|r| r.state) {
+                Some(crate::embed::RootState::Mounting) | None => app.harness.step(),
+                Some(crate::embed::RootState::Faulted(f)) => return Err(format!("mount failed: {}", f.error)),
+                Some(_) => return Ok((app, root)),
+            }
+        }
+        Err("mount did not finish in 10 frames".into())
+    }
+
+    /// AU2b: an empty embed host whose window (`size`) is one slot, keyed `"mount"`, for
+    /// [`TestApp::mount_source`] (and a host started with nothing mounted yet).
+    pub fn embed_host(size: egui::Vec2, step_dt: f32, cfg: HostConfig) -> Result<(TestApp, crate::embed::SlotId), String> {
+        let host = HostConfig { quit_on_last_window: false, ..cfg };
+        let embed = Embed::new(&egui::Context::default(), EmbedConfig::app(host)).map_err(|e| e.to_string())?;
+        let slot = embed.create_slot("mount", crate::embed::SlotOptions::fill().label("mount"));
+        let backend = embed.backend().clone();
+        let attach = embed.clone();
+        let harness = Harness::builder()
+            .with_size(size)
+            .with_step_dt(step_dt)
+            .with_context_setup(move |ctx| attach.attach(ctx))
+            .build_ui_state(
+                move |ui, e: &mut Embed| {
+                    e.logic(ui.ctx());
+                    e.show_slot(ui, slot);
+                },
+                embed.clone(),
+            );
+        Ok((TestApp { harness, embed, backend }, slot))
+    }
+
     /// Q4b: an app loaded by `load`, which gets the [`Embed`] before anything is loaded (to set a
     /// bytecode cache, load a `.svb` through [`Embed::load_app_from`], time the load).
     pub fn with_loader(cfg: HostConfig, load: impl FnOnce(&Embed) -> Result<(), svelters_host::JsError>) -> Result<TestApp, String> {

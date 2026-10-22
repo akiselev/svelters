@@ -23,6 +23,10 @@
 //!   `calc()` through taffy's calc handles, per-side insets, `display: grid` and grid
 //!   placement). Paint properties go to a `RectShape` behind boxes and labels and to the child
 //!   `Ui`'s `Visuals` for stock widgets. Unset properties keep egui's `Visuals` (the defaults).
+//! - **Text and leaf padding** (CS5f). Leaves measure and paint with one egui style
+//!   ([`leaf_style`]), which holds the computed `font-size`, `font-family` and `font-weight` (through
+//!   `fonts::register_weight`) and, for buttons, the padding as `button_padding`. Other leaves are
+//!   padded around the widget ([`content_rect`]). A change of any of these remeasures the leaf.
 //!
 //! Precedence (CSS.md §2.8): a prop the runtime set (`NodeCore::explicit`) wins over every rule,
 //! then inline, then rules, then the native default.
@@ -43,7 +47,7 @@ use std::sync::{Arc, Mutex, OnceLock};
 use svelters_abi::*;
 use svelters_style::{
     Atom, ColorScheme, ComputeContext, Contrast, ComputedStyle, ComputedValue, DeclBlock, Diagnostic, Element, Length, MatchCaches, MediaEnv, Origin, ParseOptions, Reach, SheetId,
-    StateMask, StateNames, Stylesheet, Stylist,
+    Overlay, PseudoElement, StateMask, StateNames, Stylesheet, Stylist, Transitions,
 };
 
 /// `SVL_STYLE_TARGET` answer of a backend that runs the Rust engine itself: the runtime sends raw
@@ -70,21 +74,35 @@ pub(crate) const ENGINE_PROPS: &[(&str, &str, &[&str])] = &[
     ("box-shadow", "shadow", &[]),
     ("color", "color", &[]),
     ("display", "enum", &["flex", "grid", "none"]),
-    // computed and inherited (`em`); measuring and painting with it is deferred
+    // CS5f: computed and inherited; leaves measure and paint with them (`leaf_style`)
+    ("font-family", "raw", &[]),
     ("font-size", "length", &[]),
+    ("font-weight", "font-weight", &[]),
     ("grid-column", "raw", &[]),
     ("grid-row", "raw", &[]),
     ("grid-template-columns", "raw", &[]),
     ("grid-template-rows", "raw", &[]),
+    // CS5f: the shorthands take 1 to 4 values. Engine properties, not setters: inline `style=`
+    // reaches the engine as the inline block; a `margin`/`padding` attribute stays an explicit prop.
+    ("margin", "insets", &[]),
     ("margin-bottom", "length", &[]),
     ("margin-left", "length", &[]),
     ("margin-right", "length", &[]),
     ("margin-top", "length", &[]),
     ("opacity", "number", &[]),
+    // OW2: scrolling (`widgets::scroll_area`; `overflow-*` also set taffy's overflow, so a scrolled
+    // box keeps its size while its content overflows)
+    ("overflow-x", "enum", &["visible", "hidden", "clip", "scroll", "auto"]),
+    ("overflow-y", "enum", &["visible", "hidden", "clip", "scroll", "auto"]),
+    ("overscroll-behavior", "enum", &["auto", "contain", "none"]),
+    ("padding", "insets", &[]),
     ("padding-bottom", "length", &[]),
     ("padding-left", "length", &[]),
     ("padding-right", "length", &[]),
     ("padding-top", "length", &[]),
+    // OW2: the gap a revealed node keeps from the scroll area's edge; a classic bar's gutter
+    ("scroll-margin", "length", &[]),
+    ("scrollbar-gutter", "enum", &["auto", "stable"]),
     // OW-CSS (ARCH-WIDGETS §1.1): read by the paint primitives through `StyleView`
     ("background-image", "image", &[]),
     ("border-top-color", "color", &[]),
@@ -166,6 +184,12 @@ pub(crate) struct NodeStyle {
     computed: Option<Arc<ComputedStyle>>,
     /// Stock widgets: the style in egui's `inactive`, `hovered` and `active` states.
     states: Option<Arc<[Arc<ComputedStyle>; 3]>>,
+    /// OW-CSS: an own widget's `#[part]`s (its `KindEntry::parts`), kept from the last restyle
+    /// that saw the payload (it is taken out while the widget paints).
+    part_decl: &'static [crate::provider::PartEntry],
+    /// OW-CSS: the computed styles of its paint parts that a `::part()` rule can reach, as
+    /// (declaration index, name, style), restyled with the host.
+    parts: Vec<(u16, &'static str, Arc<ComputedStyle>)>,
 }
 
 /// The cascade's state in one scene.
@@ -193,6 +217,18 @@ pub(crate) struct SceneStyle {
     focus: Option<NodeId>,
     /// A walk-time restyle that needs another frame (an ancestor or a layout change).
     pub(crate) repaint: bool,
+    /// OW-CSS: running CSS transitions of nodes, and of own widgets' parts (by declaration index).
+    transitions: Transitions<NodeId>,
+    part_transitions: Transitions<(NodeId, u16)>,
+    /// Their samples at `now`: what paint reads over the computed style.
+    sampled: std::collections::HashMap<NodeId, Overlay>,
+    part_sampled: std::collections::HashMap<(NodeId, u16), Overlay>,
+    /// egui's input time at the last logic step (kittest's virtual clock in tests): transitions
+    /// start and are sampled at it.
+    pub(crate) now: f64,
+    /// Reduced motion (`EguiBackend::set_motion`): `prefers-reduced-motion: reduce` matches and
+    /// no transition runs.
+    pub(crate) reduced_motion: bool,
 }
 
 impl SceneStyle {
@@ -230,6 +266,12 @@ impl Default for SceneStyle {
             contrast: None,
             focus: None,
             repaint: false,
+            transitions: Transitions::new(),
+            part_transitions: Transitions::new(),
+            sampled: Default::default(),
+            part_sampled: Default::default(),
+            now: 0.0,
+            reduced_motion: false,
         }
     }
 }
@@ -242,18 +284,105 @@ impl SceneStyle {
         self.active
     }
 
-    /// OW0 hook for OW-CSS: the computed style of node `id`'s part `part` (`::part(name)`), as a
-    /// pseudo-element of the host. `None` until the engine computes part styles (OW-CSS); own
-    /// widgets then paint the part from its UA table, inheriting from the host.
+    /// The computed style of node `id`'s paint part `part` (`::part(name)`), as a pseudo-element
+    /// of the host (`Stylist::compute_pseudo`). `None` when no sheet has a rule ending in that
+    /// part: own widgets then paint the part from its UA table, inheriting from the host.
     pub(crate) fn part_computed(&self, id: NodeId, part: &str) -> Option<&Arc<ComputedStyle>> {
-        let _ = (id, part);
-        None
+        self.node(id)?.parts.iter().find(|(_, n, _)| *n == part).map(|(_, _, c)| c)
     }
 
-    /// OW0 hook for OW-CSS: every part style of node `id` (what `measure` sees).
+    /// Every part style of node `id` (what `measure` sees).
     pub(crate) fn part_styles(&self, id: NodeId) -> PartStyles {
-        let _ = id;
-        Vec::new()
+        self.node(id).map(|n| n.parts.iter().map(|(_, name, c)| (Box::from(*name), c.clone())).collect()).unwrap_or_default()
+    }
+
+    /// Node `id`'s running transitions at [`SceneStyle::now`] (empty: none), sorted by property.
+    pub(crate) fn overlay(&self, id: NodeId) -> &[(usize, ComputedValue)] {
+        self.sampled.get(&id).map_or(&[], |v| &v[..])
+    }
+
+    /// Part `part` of node `id`: its running transitions at [`SceneStyle::now`].
+    pub(crate) fn part_overlay(&self, id: NodeId, part: &str) -> &[(usize, ComputedValue)] {
+        let Some((k, _, _)) = self.node(id).and_then(|n| n.parts.iter().find(|(_, n, _)| *n == part)) else { return &[] };
+        self.part_sampled.get(&(id, *k)).map_or(&[], |v| &v[..])
+    }
+
+    /// Whether a CSS transition of a node or a part is running.
+    pub(crate) fn transitions_running(&self) -> bool {
+        !self.sampled.is_empty() || !self.part_sampled.is_empty()
+    }
+
+    /// The nodes with a running transition (theirs or a part's), possibly repeated.
+    pub(crate) fn transitioning_nodes(&self) -> impl Iterator<Item = NodeId> + '_ {
+        self.sampled.keys().copied().chain(self.part_sampled.keys().map(|k| k.0))
+    }
+
+    /// The logic step's clock: drops ended transitions and samples the running ones at `now`.
+    /// Returns whether any still run (their roots need frames).
+    pub(crate) fn step_transitions(&mut self, now: f64) -> bool {
+        self.now = now;
+        if !self.transitions_running() {
+            return false;
+        }
+        self.transitions.tick(now);
+        self.part_transitions.tick(now);
+        let SceneStyle { transitions, part_transitions, sampled, part_sampled, .. } = self;
+        sampled.clear();
+        sampled.extend(transitions.running_keys().filter_map(|k| Some((k, transitions.sample(k, now)?))));
+        part_sampled.clear();
+        part_sampled.extend(part_transitions.running_keys().filter_map(|k| Some((k, part_transitions.sample(k, now)?))));
+        self.transitions_running()
+    }
+
+    /// Records node `id`'s restyle for transitions: the host from `old` to its new style, and each
+    /// part from `old_parts` to its new one; what starts is sampled at once (paint this pass).
+    fn note_transitions(&mut self, id: NodeId, old: Option<&ComputedStyle>, old_parts: &[(u16, &'static str, Arc<ComputedStyle>)]) {
+        let now = self.now;
+        let instant = self.reduced_motion;
+        let SceneStyle { nodes, transitions, part_transitions, sampled, part_sampled, .. } = self;
+        let Some(ns) = nodes.get(id.index() as usize).filter(|n| n.id == Some(id)) else { return };
+        if let (Some(a), Some(b)) = (old, ns.computed.as_deref())
+            && !std::ptr::eq(a, b)
+        {
+            transitions.restyled(id, a, b, now, instant);
+            match transitions.sample(id, now) {
+                Some(o) => sampled.insert(id, o),
+                None => sampled.remove(&id),
+            };
+        }
+        for (k, _, b) in &ns.parts {
+            let Some((_, _, a)) = old_parts.iter().find(|(j, _, _)| j == k) else { continue };
+            if Arc::ptr_eq(a, b) {
+                continue;
+            }
+            let key = (id, *k);
+            part_transitions.restyled(key, a, b, now, instant);
+            match part_transitions.sample(key, now) {
+                Some(o) => part_sampled.insert(key, o),
+                None => part_sampled.remove(&key),
+            };
+        }
+    }
+
+    /// Ends every running transition (reduced motion switched on).
+    pub(crate) fn end_transitions(&mut self) {
+        self.transitions.clear();
+        self.part_transitions.clear();
+        self.sampled.clear();
+        self.part_sampled.clear();
+    }
+
+    /// Node `id` went away: forgets its transitions.
+    pub(crate) fn forget(&mut self, id: NodeId) {
+        if self.sampled.remove(&id).is_some() {
+            self.transitions.remove(id);
+        }
+        let parts = self.node(id).map_or(0, |n| n.part_decl.len());
+        for k in 0..parts as u16 {
+            if self.part_sampled.remove(&(id, k)).is_some() {
+                self.part_transitions.remove((id, k));
+            }
+        }
     }
 
     fn node(&self, id: NodeId) -> Option<&NodeStyle> {
@@ -431,6 +560,23 @@ fn is_stock(w: &W) -> bool {
     matches!(w, W::Button { .. } | W::Checkbox { .. } | W::Slider { .. } | W::TextEdit { .. })
 }
 
+/// Whether two part lists hold the same parts with equal styles.
+fn parts_eq(a: &[(u16, &'static str, Arc<ComputedStyle>)], b: &[(u16, &'static str, Arc<ComputedStyle>)]) -> bool {
+    a.len() == b.len() && a.iter().zip(b).all(|(x, y)| x.0 == y.0 && x.2 == y.2)
+}
+
+/// The part properties `measure` reads (box and text metrics): a change relayouts the host.
+const PART_LAYOUT_PROPS: &[&str] = &[
+    "padding-left", "padding-right", "padding-top", "padding-bottom", "padding", "border-width", "border-left-width", "border-right-width", "border-top-width", "border-bottom-width",
+    "font-size", "font-weight", "font-family", "font-style", "line-height", "letter-spacing", "text-transform", "width", "height", "min-width", "min-height", "display", "gap", "content",
+];
+
+/// Whether `b`'s parts differ from `a`'s in what layout reads (a part added or removed, or a
+/// [`PART_LAYOUT_PROPS`] value).
+fn parts_layout_differs(a: &[(u16, &'static str, Arc<ComputedStyle>)], b: &[(u16, &'static str, Arc<ComputedStyle>)]) -> bool {
+    a.len() != b.len() || a.iter().zip(b).any(|(x, y)| x.0 != y.0 || PART_LAYOUT_PROPS.iter().any(|p| x.2.get(p) != y.2.get(p)))
+}
+
 /// Whether two styles differ in what children inherit (inherited properties, custom properties).
 fn inherited_differs(a: Option<&ComputedStyle>, b: &ComputedStyle) -> bool {
     let Some(a) = a else { return true };
@@ -439,6 +585,24 @@ fn inherited_differs(a: Option<&ComputedStyle>, b: &ComputedStyle) -> bool {
 }
 
 impl Scene {
+    /// OW-CSS: the logic step's transition clock ([`SceneStyle::step_transitions`]). Every node
+    /// whose transitions ran this frame, including those that just ended, drops its cached shapes
+    /// (SG6's `WidgetCx::cached_shapes`): its paint changes every frame while it animates.
+    pub(crate) fn step_style_transitions(&mut self, now: f64) {
+        let ran: Vec<NodeId> = self.style.transitioning_nodes().collect();
+        self.style.step_transitions(now);
+        for id in ran {
+            if let Some(i) = self.idx(id) {
+                self.paint_cache.remove(i as u32);
+            }
+        }
+    }
+
+    /// OW-CSS: whether a CSS transition (of a node or an own widget's part) is running.
+    pub fn style_transitions_running(&self) -> bool {
+        self.style.transitions_running()
+    }
+
     /// Marks node `id` for the next logic restyle.
     pub(crate) fn mark_style(&mut self, id: NodeId) {
         if let Some(i) = self.idx(id)
@@ -508,23 +672,62 @@ impl Scene {
         } else {
             None
         };
+        // OW-CSS: an own widget's paint parts, as pseudo-elements of the host (W3)
+        let decl: &'static [crate::provider::PartEntry] = match self.w(i) {
+            W::Ext(x) => x.entry().parts,
+            _ => st.node(id).map_or(&[], |n| n.part_decl),
+        };
+        let mut parts = Vec::new();
+        for (k, p) in decl.iter().enumerate() {
+            let pe = PseudoElement::part(p.name);
+            if !p.node && st.stylist.has_pseudo_rules(&pe) {
+                parts.push((k as u16, p.name, Arc::new(st.stylist.compute_pseudo(n, &pe, &c, &st.cx, &mut caches))));
+            }
+        }
         caches.clear();
         self.style.caches = caches;
         let ns = self.style.node_mut(id);
+        ns.part_decl = decl;
         let changed = ns.computed.as_deref() != Some(&c) || ns.states.as_deref().map(|s| &s[..]) != states.as_deref().map(|s| &s[..]);
+        let parts_changed = !parts_eq(&ns.parts, &parts);
         let inherit = inherited_differs(ns.computed.as_deref(), &c);
-        if !changed {
+        if !changed && !parts_changed {
             return false;
         }
-        ns.computed = Some(Arc::new(c));
+        let relayout_parts = parts_changed && parts_layout_differs(&ns.parts, &parts);
+        // keep unchanged styles (their identity tells transitions what changed)
+        let old = if ns.computed.as_deref() != Some(&c) { ns.computed.replace(Arc::new(c)) } else { None };
         ns.states = states;
+        let old_parts = std::mem::take(&mut ns.parts);
+        for p in parts.iter_mut() {
+            if let Some((_, _, o)) = old_parts.iter().find(|(k, _, o)| *k == p.0 && **o == *p.2) {
+                p.2 = o.clone();
+            }
+        }
+        ns.parts = parts;
+        self.style.note_transitions(id, old.as_deref(), &old_parts);
         self.core[i].dirty.insert(Dirty::PAINT);
-        if matches!(self.w(i), W::Run { .. }) {
+        // SG6: a new style draws differently, whatever version the widget caches its shapes under
+        self.paint_cache.remove(i as u32);
+        let w = self.w(i);
+        if matches!(w, W::Run { .. }) {
             crate::rich::touched(self, i); // RT2: a run's font may have changed
+        } else if !w.is_container() && !matches!(w, W::Ext(_)) {
+            // CS5f: a leaf's font or padding changed: it measures again (a new size relays out).
+            // `old` is None when only its parts changed (OW-CSS): nothing of its own to compare.
+            if let Some(o) = old.as_deref() {
+                let new = self.style.computed(id).cloned();
+                if MEASURED_PROPS.iter().any(|p| o.get(p) != new.as_ref().and_then(|n| n.get(p))) {
+                    self.mark_measure(id);
+                    self.style.repaint = true;
+                }
+            }
         }
         let t = layout_style(self, i);
-        if t != *self.layout[i].style {
-            self.layout[i].style = self.intern_style(t);
+        if t != *self.layout[i].style || relayout_parts {
+            if t != *self.layout[i].style {
+                self.layout[i].style = self.intern_style(t);
+            }
             self.invalidate_style(id);
             self.style.repaint = true;
         }
@@ -722,11 +925,11 @@ pub(crate) fn before_container(s: &mut Scene, i: usize, r: egui::Rect, ui: &egui
     s.set_walk_state(i, b);
     let id = s.slots.id_at(i)?;
     let c = s.style.computed(id)?.clone();
-    paint_node_box(&c, s.core[i].state, id, r, ui.painter());
-    match c.get("opacity") {
-        Some(ComputedValue::Number(o)) if *o < 1.0 => Some(o.max(0.0)),
-        _ => None,
-    }
+    let dark = ui.ctx().theme() == egui::Theme::Dark;
+    let v = crate::paint::StyleView::new(Some(&c), crate::paint::Ua::NONE, s.core[i].state, dark).with_overlay(s.style.overlay(id));
+    crate::paint::paint_box(&mut crate::paint::PaintCx::for_node(ui.painter(), id.to_raw()), &v, r);
+    let o = v.opacity();
+    (o < 1.0).then_some(o)
 }
 
 /// OW0: an own widget's bits after its units ran (`WidgetCx::commit_state`): stored now
@@ -784,7 +987,9 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
             {
                 child.multiply_opacity(o.max(0.0));
             }
-            paint_node_box(&c, s.core[i].state, id, r, child.painter());
+            let dark = child.ctx().theme() == egui::Theme::Dark;
+            let v = crate::paint::StyleView::new(Some(&c), crate::paint::Ua::NONE, s.core[i].state, dark).with_overlay(s.style.overlay(id));
+            crate::paint::paint_box(&mut crate::paint::PaintCx::for_node(child.painter(), id.to_raw()), &v, r);
         }
         return;
     }
@@ -819,6 +1024,10 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
     {
         child.multiply_opacity(o.max(0.0));
     }
+    // CS5f: its font and button padding, as measured (`leaf_style`)
+    if let Some(st) = leaf_style(s, i, &child.ctx().clone(), child.style()) {
+        child.set_style(st);
+    }
     let states = s.style.node(id).and_then(|n| n.states.clone());
     if is_stock(s.w(i)) {
         let v = &mut child.visuals_mut().widgets;
@@ -842,8 +1051,10 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
         };
         stock_shadows(now, r, child);
     } else {
-        paint_node_box(&c, s.core[i].state, id, r, child.painter());
-        if let Some(col) = color(&c, "color") {
+        let dark = child.ctx().theme() == egui::Theme::Dark;
+        let v = crate::paint::StyleView::new(Some(&c), crate::paint::Ua::NONE, s.core[i].state, dark).with_overlay(s.style.overlay(id));
+        crate::paint::paint_box(&mut crate::paint::PaintCx::for_node(child.painter(), id.to_raw()), &v, r);
+        if let Some(col) = v.color("color").filter(|_| c.get("color").is_some()) {
             child.visuals_mut().override_text_color = Some(col);
         }
     }
@@ -864,14 +1075,6 @@ fn px(c: &ComputedStyle, name: &str) -> Option<f32> {
         Some(ComputedValue::Length(l)) => Some(l.px),
         _ => None,
     }
-}
-
-/// OW0: a box's outer shadows, background, border and inset shadows, behind its content, through
-/// the box primitive (`paint::paint_box`; traced as node `id`).
-fn paint_node_box(c: &ComputedStyle, state: StateBits, id: NodeId, r: egui::Rect, p: &egui::Painter) {
-    let dark = p.ctx().theme() == egui::Theme::Dark;
-    let s = crate::paint::StyleView::new(Some(c), crate::paint::Ua::NONE, state, dark);
-    crate::paint::paint_box(&mut crate::paint::PaintCx::for_node(p, id.to_raw()), &s, r);
 }
 
 /// A stock widget's outer shadows (CS5g) around its rect `r`, with its corner radius as egui draws
@@ -902,6 +1105,147 @@ fn widget_visuals(c: &ComputedStyle, v: &mut egui::style::WidgetVisuals) {
     if let Some(col) = color(c, "color") {
         v.fg_stroke.color = col;
     }
+}
+
+// ---- typography and leaf padding (CS5f) ----
+
+/// The computed properties a leaf is measured with: a change remeasures it.
+const MEASURED_PROPS: &[&str] = &["font-family", "font-size", "font-weight", "padding", "padding-bottom", "padding-left", "padding-right", "padding-top"];
+
+/// Leaves whose CSS padding goes inside egui's frame, as `Spacing::button_padding` (the button is
+/// the box). Other leaves are padded around the widget (taffy padding, drawn in the content box).
+fn pads_inside(w: &W) -> bool {
+    matches!(w, W::Button { .. } | W::ToggleButton { .. } | W::ComboBox { .. } | W::Icon { frame: true, .. })
+}
+
+/// Built-in leaves padded around the widget ([`content_rect`]).
+fn pads_outside(w: &W) -> bool {
+    !w.is_container() && !pads_inside(w) && !matches!(w, W::Ext(_))
+}
+
+/// Whether the runtime set prop `name` of node `i` explicitly (it wins over every rule).
+fn explicit_prop(s: &Scene, i: usize, name: &str) -> bool {
+    let kind = s.core[i].kind as usize;
+    kinds::find_prop(kind, name)
+        .and_then(|(id, _)| crate::scene::member_bit(kind, id, crate::scene::Member::Prop))
+        .is_some_and(|b| b < 64 && s.core[i].explicit & (1 << b) != 0)
+}
+
+/// Padding (top, right, bottom, left) in points: the `padding` shorthand, then the per-side
+/// longhands over it. `%` has no basis in a leaf's measure and counts as 0.
+fn padding_sides(c: &ComputedStyle) -> Option<[f32; 4]> {
+    let mut sides = match c.get("padding") {
+        Some(ComputedValue::Insets(v)) => Some(v.map(|l| l.px)),
+        _ => None,
+    };
+    for (k, name) in ["padding-top", "padding-right", "padding-bottom", "padding-left"].into_iter().enumerate() {
+        if let Some(ComputedValue::Length(l)) = c.get(name) {
+            sides.get_or_insert([0.0; 4])[k] = l.px;
+        }
+    }
+    sides
+}
+
+/// The first family of a `font-family` list the context can draw: the generic names map to egui's
+/// `Proportional` and `Monospace`, any other name to `FontFamily::Name` when the embedder bound it
+/// (`Context::set_fonts`). An unbound name is skipped, never drawn (egui would panic).
+fn resolve_family(ctx: &egui::Context, list: &str) -> Option<egui::FontFamily> {
+    for f in list.split(',') {
+        let name = f.trim().trim_matches(|c| c == '"' || c == '\'');
+        let fam = match name.to_ascii_lowercase().as_str() {
+            "" => continue,
+            "sans-serif" | "serif" | "system-ui" | "ui-sans-serif" | "ui-serif" | "proportional" => egui::FontFamily::Proportional,
+            "monospace" | "ui-monospace" => egui::FontFamily::Monospace,
+            _ => egui::FontFamily::Name(name.into()),
+        };
+        if crate::fonts::has_family(ctx, &fam) {
+            return Some(fam);
+        }
+    }
+    None
+}
+
+/// The text a leaf draws, for the weight family's glyph check.
+fn leaf_text(w: &W) -> &str {
+    match w {
+        W::Label { text, .. } | W::Button { text, .. } | W::ToggleButton { text, .. } | W::Checkbox { text, .. } | W::TextEdit { text, .. } | W::Slider { text, .. } => text,
+        _ => "",
+    }
+}
+
+/// The egui style leaf `i` measures (`layout.rs`) and paints ([`before_leaf`]) with under its
+/// computed style: every text style at the computed `font-size`, `font-family` (not Monospace) and
+/// `font-weight` (the family `fonts::register_weight` registered for the nearest weight; an explicit
+/// `font-weight` prop wins and is applied by the leaf), and for [`pads_inside`] kinds the CSS
+/// padding as `button_padding` (egui pads both sides alike: the mean of left/right and top/bottom).
+/// `None`: the base style as is.
+pub(crate) fn leaf_style(s: &Scene, i: usize, ctx: &egui::Context, base: &egui::Style) -> Option<egui::Style> {
+    if !s.style.active {
+        return None;
+    }
+    let w = s.w(i);
+    if w.is_container() || matches!(w, W::Ext(_)) {
+        return None;
+    }
+    let c = s.style.computed(s.slots.id_at(i)?)?;
+    let size = px(c, "font-size").filter(|v| *v > 0.0);
+    let family = match c.get("font-family") {
+        Some(ComputedValue::Raw(t)) => resolve_family(ctx, t),
+        _ => None,
+    };
+    let weight = match c.get("font-weight") {
+        Some(ComputedValue::FontWeight(v)) if *v != 400 && !explicit_prop(s, i, "font-weight") => Some(*v as i64),
+        _ => None,
+    };
+    let pad = if pads_inside(w) { padding_sides(c) } else { None };
+    if size.is_none() && family.is_none() && weight.is_none() && pad.is_none() {
+        return None;
+    }
+    let mut st = base.clone();
+    let text = leaf_text(w);
+    for (ts, f) in st.text_styles.iter_mut() {
+        if let Some(v) = size {
+            f.size = v;
+        }
+        if let Some(fam) = &family
+            && *ts != egui::TextStyle::Monospace
+        {
+            f.family = fam.clone();
+        }
+        if let Some(v) = weight {
+            f.family = crate::fonts::weighted_family(ctx, &f.family, v, text);
+        }
+    }
+    if let Some([t, r, b, l]) = pad {
+        st.spacing.button_padding = egui::vec2((l + r) / 2.0, (t + b) / 2.0);
+    }
+    Some(st)
+}
+
+/// The rect leaf `i`'s widget draws in: `r` less its CSS padding ([`pads_outside`] leaves; the
+/// padding is in its taffy style). SG6 keeps no resolved padding per node, so it is resolved here
+/// as taffy does for a flex child: `%` and `calc()` against the parent's content width.
+pub(crate) fn content_rect(s: &Scene, i: usize, r: egui::Rect) -> egui::Rect {
+    use taffy::ResolveOrZero;
+    if !s.style.active || !pads_outside(s.w(i)) {
+        return r;
+    }
+    let zero = taffy::LengthPercentage::length(0.0);
+    let pad = s.layout[i].style.padding;
+    if pad.left == zero && pad.right == zero && pad.top == zero && pad.bottom == zero {
+        return r;
+    }
+    let basis = s.core[i].parent.and_then(|q| s.idx(q)).map(|q| {
+        let w = s.core[q].rect.width();
+        let ps = &s.layout[q].style;
+        let side = |v: taffy::LengthPercentage| v.resolve_or_zero(Some(w), resolve_calc);
+        (w - side(ps.padding.left) - side(ps.padding.right) - side(ps.border.left) - side(ps.border.right)).max(0.0)
+    });
+    let side = |v: taffy::LengthPercentage| v.resolve_or_zero(basis, resolve_calc);
+    let p = taffy::Rect { left: side(pad.left), right: side(pad.right), top: side(pad.top), bottom: side(pad.bottom) };
+    let min = r.min + egui::vec2(p.left, p.top);
+    let max = (r.max - egui::vec2(p.right, p.bottom)).max(min);
+    egui::Rect::from_min_max(min, max)
 }
 
 // ---- layout ----
@@ -1049,13 +1393,12 @@ pub(crate) fn layout_style(s: &Scene, i: usize) -> taffy::Style {
     let vis = s.vis(i);
     let mut st = crate::layout::style_of(s.common(i), w, &vis);
     let Some(c) = s.slots.id_at(i).and_then(|id| s.style.computed(id)) else { return st };
-    let kind = s.core[i].kind as usize;
-    let explicit = |name: &str| {
-        kinds::find_prop(kind, name)
-            .and_then(|(id, _)| crate::scene::member_bit(kind, id, crate::scene::Member::Prop))
-            .is_some_and(|b| b < 64 && s.core[i].explicit & (1 << b) != 0)
-    };
-    let container = w.is_container();
+    let explicit = |name: &str| explicit_prop(s, i, name);
+    // (OW2: an own widget with children takes the box properties too)
+    let container = w.is_container()
+        || matches!(w, W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::CONTAINER) || x.entry().caps.contains(crate::provider::Caps::CUSTOM_LAYOUT));
+    // CS5f: padding is taffy's for containers and for leaves padded around the widget
+    let pad_ok = container || pads_outside(w);
     for (p, v) in c.iter() {
         // per-side insets yield to an explicit shorthand prop
         let owner = match p.name {
@@ -1085,8 +1428,9 @@ pub(crate) fn layout_style(s: &Scene, i: usize) -> taffy::Style {
             }
             "align-self" => st.align_self = kw.and_then(align),
             "margin" => {
-                if let Some(m) = lpa(v) {
-                    st.margin = taffy::Rect { left: m, right: m, top: m, bottom: m };
+                if let ComputedValue::Insets([t, r, b, l]) = v {
+                    let side = |x: &Length| lpa(&ComputedValue::Length(*x)).unwrap_or(taffy::LengthPercentageAuto::length(0.0));
+                    st.margin = taffy::Rect { top: side(t), right: side(r), bottom: side(b), left: side(l) };
                 }
             }
             "margin-top" => st.margin.top = lpa(v).unwrap_or(st.margin.top),
@@ -1106,6 +1450,23 @@ pub(crate) fn layout_style(s: &Scene, i: usize) -> taffy::Style {
             "top" => st.inset.top = lpa(v).unwrap_or(st.inset.top),
             "right" => st.inset.right = lpa(v).unwrap_or(st.inset.right),
             "bottom" => st.inset.bottom = lpa(v).unwrap_or(st.inset.bottom),
+            // OW2: a scrolled or clipped axis keeps the box from growing to its content
+            "overflow-x" | "overflow-y" => {
+                let o = match kw {
+                    Some("scroll" | "auto") => Some(taffy::Overflow::Scroll),
+                    Some("hidden") => Some(taffy::Overflow::Hidden),
+                    Some("clip") => Some(taffy::Overflow::Clip),
+                    // `visible` (the initial value) keeps what the props gave (a scroll area's axes)
+                    _ => None,
+                };
+                if let Some(o) = o {
+                    if p.name == "overflow-x" { st.overflow.x = o } else { st.overflow.y = o }
+                }
+            }
+            // OW2: classic scroll bars take a gutter beside the content (`scrollbar-w`)
+            "scrollbar-gutter" if kw == Some("stable") => {
+                st.scrollbar_width = crate::paint::StyleView::ua_only(crate::widgets::scroll_area::TRACK_UA, crate::provider::StateBits::NONE, true).px("width").unwrap_or(10.0);
+            }
             "visible" => {
                 if matches!(v, ComputedValue::Bool(false)) {
                     st.display = taffy::Display::None;
@@ -1124,6 +1485,15 @@ pub(crate) fn layout_style(s: &Scene, i: usize) -> taffy::Style {
                     if p.name == "grid-column" { st.grid_column = l } else { st.grid_row = l }
                 }
             }
+            "padding" if pad_ok => {
+                if let ComputedValue::Insets([t, r, b, l]) = v {
+                    st.padding = taffy::Rect { top: lp(t), right: lp(r), bottom: lp(b), left: lp(l) };
+                }
+            }
+            "padding-top" if pad_ok => st.padding.top = len_of(v).unwrap_or(st.padding.top),
+            "padding-right" if pad_ok => st.padding.right = len_of(v).unwrap_or(st.padding.right),
+            "padding-bottom" if pad_ok => st.padding.bottom = len_of(v).unwrap_or(st.padding.bottom),
+            "padding-left" if pad_ok => st.padding.left = len_of(v).unwrap_or(st.padding.left),
             _ if !container => {}
             "flex-direction" => {
                 st.flex_direction = match kw {
@@ -1158,15 +1528,6 @@ pub(crate) fn layout_style(s: &Scene, i: usize) -> taffy::Style {
             }
             "row-gap" => st.gap.height = len_of(v).unwrap_or(st.gap.height),
             "column-gap" => st.gap.width = len_of(v).unwrap_or(st.gap.width),
-            "padding" => {
-                if let Some(g) = len_of(v) {
-                    st.padding = taffy::Rect { left: g, right: g, top: g, bottom: g };
-                }
-            }
-            "padding-top" => st.padding.top = len_of(v).unwrap_or(st.padding.top),
-            "padding-right" => st.padding.right = len_of(v).unwrap_or(st.padding.right),
-            "padding-bottom" => st.padding.bottom = len_of(v).unwrap_or(st.padding.bottom),
-            "padding-left" => st.padding.left = len_of(v).unwrap_or(st.padding.left),
             "grid-template-columns" | "grid-template-rows" => {
                 if let ComputedValue::Raw(t) = v
                     && let Some(tracks) = template(t)
@@ -1301,6 +1662,10 @@ impl Scene {
         let mut env = MediaEnv { width: r.width(), height: r.height(), color_scheme: scheme, ..*self.style.stylist.media_env() };
         if let Some(c) = self.style.contrast {
             env.contrast = c;
+        }
+        env.reduced_motion = self.style.reduced_motion;
+        if env.reduced_motion && !self.style.stylist.media_env().reduced_motion {
+            self.style.end_transitions();
         }
         if env != *self.style.stylist.media_env() && !self.style.stylist.set_media(env).is_empty() {
             self.style.all = true;

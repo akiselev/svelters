@@ -4,7 +4,7 @@
 //! socket.
 //!
 //! ```text
-//! svelters-run <app dir | App.svelte | dist/app.js> --automation <unix:/path | /path | tcp:PORT> --headless
+//! svelters-run [<app dir | App.svelte | dist/app.js>] --automation <unix:/path | /path | tcp:PORT> --headless
 //!              [--clock virtual|real] [--seed N] [--step-ms 16]
 //! ```
 //!
@@ -17,26 +17,36 @@
 //! It prints `SVELTERS_AUTOMATION=<endpoint>` once it listens (`tcp:0` gets the real port). The
 //! `--automation` flag is the opt-in: automation is off in every svelters app until the app turns
 //! it on. Extra methods: `app.exit` (reply, then exit 0). `session.hello` adds an `app` object
-//! (`headless`, `clock`, `seed`, `frame_ms`).
+//! (`headless`, `clock`, `seed`, `frame_ms`, `mount`).
+//!
+//! AU2b (the TS runner's worker-scoped app, E2E-INSPECTOR §2.2/§2.4): `app.reset {seed?}` rebuilds
+//! the start app in a fresh host on a fresh clock; `app.mount {module, export?, props?, size?,
+//! seed?}` puts one `.svelte` component (compiled live) alone in a fresh host on a fresh clock;
+//! `app.set_props {props}` shallow-merges props into the mounted root. Each rebuild opens a new
+//! session (every grant) whose epoch is past the old one's. Without `<app>` the host starts empty,
+//! waiting for `app.mount`.
 
 use serde_json::{Value, json};
 use std::io::Write;
+use std::sync::Arc;
+use std::sync::atomic::AtomicBool;
 use std::time::Duration;
 use svelters_automation::clock::{ClockMode, Clocked, RealTime, VirtualClock};
 use svelters_automation::server::{Endpoint, Server};
-use svelters_automation::{Driver, Grants, Session};
+use svelters_automation::{Driver, Error, Grants, Session};
+use svelters_egui::embed::{Embed, Props, RootId};
 use svelters_egui::harness::TestApp;
 use svelters_host::{HostConfig, HostSched};
 
 struct Args {
-    app: String,
+    app: Option<String>,
     automation: Endpoint,
     clock: ClockMode,
     seed: Option<u64>,
     step_ms: f32,
 }
 
-const USAGE: &str = "usage: svelters-run <app> --automation <endpoint> --headless [--clock virtual|real] [--seed N] [--step-ms MS]";
+const USAGE: &str = "usage: svelters-run [<app>] --automation <endpoint> --headless [--clock virtual|real] [--seed N] [--step-ms MS]";
 
 fn args() -> Result<Args, String> {
     let mut it = std::env::args().skip(1);
@@ -77,7 +87,7 @@ fn args() -> Result<Args, String> {
         ));
     }
     Ok(Args {
-        app: app.ok_or_else(|| format!("no app given\n{USAGE}"))?,
+        app,
         automation: automation
             .ok_or_else(|| format!("--automation <endpoint> is required\n{USAGE}"))?,
         clock,
@@ -95,34 +105,145 @@ fn test_app(app: &str, dt: f32, cfg: HostConfig) -> Result<TestApp, String> {
     }
 }
 
-fn run() -> Result<(), String> {
-    let a = args()?;
-    // `--automation` is this process's opt-in.
-    svelters_automation::enable();
+/// What the host runs: the app it was started with, a mounted component (`app.mount`), or (no
+/// app given) an empty embed host waiting for `app.mount`.
+#[derive(Clone)]
+enum Content {
+    App(String),
+    Mount {
+        module: String,
+        export: Option<String>,
+        props: Value,
+        size: [f32; 2],
+    },
+    Empty,
+}
+
+/// One build of the host: the driver on a fresh clock, the interrupt flag and, for a mount, the
+/// embed and root that `app.set_props` patches.
+struct Built {
+    driver: Box<dyn Driver>,
+    interrupt: Arc<AtomicBool>,
+    mounted: Option<(Embed, RootId)>,
+}
+
+/// Builds `content` on a fresh host. AU2b: every build gets a new [`VirtualClock`] (it cannot be
+/// reset in place) whose [`VirtualClock::config`] gives the host its spawner, clock and seed, so a
+/// reset or a mount replays exactly like a fresh `svelters-run --seed N`.
+fn build(
+    content: &Content,
+    mode: ClockMode,
+    seed: Option<u64>,
+    step_ms: f32,
+) -> Result<Built, String> {
     let quiet = HostConfig {
         echo_console: false,
         echo_errors: false,
         ..HostConfig::default()
     };
-    let dt = a.step_ms / 1000.0;
-    let (driver, interrupt): (Box<dyn Driver>, _) = match a.clock {
+    let dt = step_ms / 1000.0;
+    let make = |cfg: HostConfig| -> Result<(TestApp, Option<RootId>), String> {
+        match content {
+            Content::App(app) => Ok((test_app(app, dt, cfg)?, None)),
+            Content::Mount {
+                module,
+                export,
+                props,
+                size,
+            } => {
+                let (app, root) = TestApp::mount_source(
+                    module,
+                    export.as_deref(),
+                    props.clone(),
+                    egui::vec2(size[0], size[1]),
+                    dt,
+                    cfg,
+                )?;
+                Ok((app, Some(root)))
+            }
+            Content::Empty => Ok((
+                TestApp::embed_host(egui::vec2(480.0, 360.0), dt, cfg)?.0,
+                None,
+            )),
+        }
+    };
+    let (driver, app_parts): (Box<dyn Driver>, _) = match mode {
         ClockMode::Virtual => {
-            let clock = VirtualClock::new(a.seed.unwrap_or(0));
-            let app = test_app(&a.app, dt, clock.config(quiet))?;
-            let interrupt = app.host().interrupt_flag();
-            (Box::new(Clocked::new(app, clock)), interrupt)
+            let clock = VirtualClock::new(seed.unwrap_or(0));
+            let (app, root) = make(clock.config(quiet))?;
+            let parts = (
+                app.host().interrupt_flag(),
+                root.map(|r| (app.embed.clone(), r)),
+            );
+            (Box::new(Clocked::new(app, clock)), parts)
         }
         ClockMode::Real => {
-            let sched = match a.seed {
+            let sched = match seed {
                 Some(s) => HostSched::default().seed(s),
                 None => HostSched::default(),
             };
-            let app = test_app(&a.app, dt, HostConfig { sched, ..quiet })?;
-            let interrupt = app.host().interrupt_flag();
-            (Box::new(RealTime::new(app)), interrupt)
+            let (app, root) = make(HostConfig { sched, ..quiet })?;
+            let parts = (
+                app.host().interrupt_flag(),
+                root.map(|r| (app.embed.clone(), r)),
+            );
+            (Box::new(RealTime::new(app)), parts)
         }
     };
-    let mut session = Session::new(driver, Grants::ALL).map_err(|e| e.to_string())?;
+    Ok(Built {
+        driver,
+        interrupt: app_parts.0,
+        mounted: app_parts.1,
+    })
+}
+
+fn rpc_err(e: String) -> Error {
+    Error::new("app.load", e)
+}
+
+/// `{seed}` of `app.reset`/`app.mount`: the given seed, else the one the host was started with.
+fn seed_param(p: &Value, default: Option<u64>) -> Result<Option<u64>, Error> {
+    match p.get("seed") {
+        None | Some(Value::Null) => Ok(default),
+        Some(v) => v
+            .as_u64()
+            .map(Some)
+            .ok_or_else(|| Error::new("params.invalid", "seed: want a non-negative integer")),
+    }
+}
+
+/// Replaces the session's driver with `built`: a new session (every grant, as at start), its epoch
+/// past the old one's so refs taken before the swap read as stale. The first settle is the
+/// client's to wait for.
+fn swap(
+    s: &mut Session<Box<dyn Driver>>,
+    built: Built,
+    server: &Server,
+) -> Result<Option<(Embed, RootId)>, Error> {
+    let epoch = s.epoch();
+    let mut next = Session::new(built.driver, Grants::ALL)?;
+    for _ in 0..=epoch {
+        next.bump_epoch();
+    }
+    *s = next;
+    server.set_interrupt(built.interrupt);
+    Ok(built.mounted)
+}
+
+fn run() -> Result<(), String> {
+    let a = args()?;
+    // `--automation` is this process's opt-in.
+    svelters_automation::enable();
+    let mut content = match &a.app {
+        Some(app) => Content::App(app.clone()),
+        None => Content::Empty,
+    };
+    let start = content.clone();
+    let mut seed = a.seed;
+    let built = build(&content, a.clock, seed, a.step_ms)?;
+    let interrupt = built.interrupt.clone();
+    let mut mounted = built.mounted;
+    let mut session = Session::new(built.driver, Grants::ALL).map_err(|e| e.to_string())?;
     // A slow first settle is the client's to see (`wait.settled`), not a start failure.
     let _ = session.wait_settled(10_000.0);
     let server = Server::start(&session, a.automation).map_err(|e| e.to_string())?;
@@ -144,8 +265,54 @@ fn run() -> Result<(), String> {
                 }
                 "session.hello" => {
                     let mut v = s.call(m, p)?;
-                    v["app"] = json!({"headless": true, "clock": a.clock.as_str(), "seed": s.driver().seed().or(a.seed), "frame_ms": s.driver().frame_ms()});
+                    v["app"] = json!({"headless": true, "clock": a.clock.as_str(), "seed": s.driver().seed().or(seed), "frame_ms": s.driver().frame_ms(), "mount": true});
                     Ok(v)
+                }
+                // AU2b: back to the app the host was started with, on a fresh host and clock.
+                "app.reset" => {
+                    seed = seed_param(p, a.seed)?;
+                    content = start.clone();
+                    let built = build(&content, a.clock, seed, a.step_ms).map_err(rpc_err)?;
+                    mounted = swap(s, built, &server)?;
+                    let frames = s.wait_settled(timeout_param(p))?;
+                    Ok(json!({"seed": seed, "frames": frames}))
+                }
+                // AU2b (§2.4): one component alone in a fresh host: `{module, export?, props?,
+                // size?: [w, h], seed?}`. `module` is a `.svelte` path inside an app.
+                "app.mount" => {
+                    let module = p
+                        .get("module")
+                        .and_then(Value::as_str)
+                        .ok_or_else(|| Error::new("params.invalid", "module: want a path"))?;
+                    let size = match p.get("size").and_then(Value::as_array) {
+                        Some(v) if v.len() == 2 => [
+                            v[0].as_f64().unwrap_or(480.0) as f32,
+                            v[1].as_f64().unwrap_or(360.0) as f32,
+                        ],
+                        _ => [480.0, 360.0],
+                    };
+                    seed = seed_param(p, a.seed)?;
+                    content = Content::Mount {
+                        module: module.to_string(),
+                        export: p.get("export").and_then(Value::as_str).map(str::to_string),
+                        props: p.get("props").cloned().unwrap_or_else(|| json!({})),
+                        size,
+                    };
+                    let built = build(&content, a.clock, seed, a.step_ms).map_err(rpc_err)?;
+                    mounted = swap(s, built, &server)?;
+                    let frames = s.wait_settled(timeout_param(p))?;
+                    Ok(json!({"root": "mount", "seed": seed, "frames": frames}))
+                }
+                // Shallow-merges `{props}` into the mounted root's props, then settles.
+                "app.set_props" => {
+                    let (embed, root) = mounted
+                        .as_ref()
+                        .ok_or_else(|| Error::new("capability.absent", "app.set_props: nothing is mounted (app.mount first)"))?;
+                    embed
+                        .set_root_props(*root, Props::json(p.get("props").cloned().unwrap_or_default()))
+                        .map_err(|e| Error::new("app.load", e.to_string()))?;
+                    let frames = s.wait_settled(timeout_param(p))?;
+                    Ok(json!({"frames": frames}))
                 }
                 _ => s.call(m, p),
             },
@@ -156,6 +323,10 @@ fn run() -> Result<(), String> {
     drop(server);
     std::thread::sleep(Duration::from_millis(50));
     Ok(())
+}
+
+fn timeout_param(p: &Value) -> f64 {
+    p.get("timeout").and_then(Value::as_f64).unwrap_or(10_000.0)
 }
 
 fn main() {

@@ -89,8 +89,8 @@ Call them through `bind:this`: `el.call('close')`.
 | `box-shadow` | yes (outer and inset) | — |
 | `opacity` | yes | — |
 
-**Layout properties** (as attributes or in CSS; an explicit attribute wins): `gap`, `padding`.
-Also in CSS only: `display`, `grid-column`, `grid-row`, `grid-template-columns`, `grid-template-rows`, `margin-bottom`, `margin-left`, `margin-right`, `margin-top`, `padding-bottom`, `padding-left`, `padding-right`, `padding-top`.
+**Layout properties** (as attributes or in CSS; an explicit attribute wins): `gap`.
+Also in CSS only: `display`, `grid-column`, `grid-row`, `margin-bottom`, `margin-left`, `margin-right`, `margin-top`.
 
 The window's own background is the theme's panel colour; a `background-color` rule paints over it.
 

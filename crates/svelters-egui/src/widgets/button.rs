@@ -215,8 +215,8 @@ impl Widget for Button {
             let framed = self.frame || host.state().intersects(StateBits(StateBits::HOVERED.0 | StateBits::PRESSED.0 | StateBits::SELECTED.0));
             let geom = if framed { cx.paint_box(ui, UA) } else { paint::box_geom(&host, cx.rect()) };
             let content = if self.small { geom.padding } else { geom.content };
-            let icon_v = host.part(cx.part_css("icon"), ICON_UA);
-            let label_v = host.part(cx.part_css("label"), Ua::NONE);
+            let icon_v = cx.part(&host, "icon", ICON_UA);
+            let label_v = cx.part(&host, "label", Ua::NONE);
             let (icon, label) = self.content(ui.ctx(), &icon_v, &label_v);
             let mut items = Vec::new();
             if let Some((_, size)) = &icon {
