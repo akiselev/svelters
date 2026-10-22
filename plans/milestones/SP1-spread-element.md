@@ -171,3 +171,36 @@ select-default-value-preserve-selection, select-default-value-single-observer (R
 compiler does not honour `svelte-ignore` for `state_snapshot_uncloneable`). Two failing samples now
 pass (directives, style-directive-memoize: `style:` directives on the dom backend through the
 spread path), so failing is 45 + 5 - 2 = 48.
+
+## 4. Evidence and gates
+
+Local, on the tree merged with origin/master (ST2, iOS simulator, Intel macOS 15), after the last
+code edit:
+
+- `pnpm install --frozen-lockfile` ok; `cargo check --workspace --all-targets` ok;
+  `cargo build -p svelters-compiler` ok.
+- `pnpm -r build`: failed on the first run only because the docs IR was not generated yet in this
+  worktree; ok after `tools/docs/build_ir.py`.
+- `pnpm test` ok (node tests 157 pass, 0 fail; the compiled cases include `gtk/spread` and
+  `qt/spread-qt`, op logs identical to the fixtures'); `build_ir.py && pnpm docs:test` ok (16/17 pass,
+  1 skipped).
+- Conformance `--check --update-baseline`: 591 / 774, +26 -0; `baseline.json` holds 591.
+- Targeted nextest: GTK and Qt op-log replay (`svelters-gtk`, `counter-qt` `oplog_replay`, 2/2),
+  `counter::integration` `spread_gtk` and `spread_qt` on the real toolkits (2/2).
+- The full local nextest did not finish: it waited on the old test lock and then was stopped on the
+  coordinator's order. The full suite ran on CI instead.
+
+CI on `ci/sp1` @ 6d6d463a, all green: js 39737281239, linux-gtk 39737281462, linux-qt
+39737281240, macos-appkit 39737281233, windows-winui 39737281241. linux-gtk's full nextest there
+included `sp1_spread` and the updated `native_x3`.
+
+## 5. Open items
+
+- No local full nextest run on the final tree (CI's is the evidence).
+- Failing conformance samples SP1 exposed but did not cause (CF1 buckets): form-default-value-spread
+  (F-dom-host), three `<select defaultValue>` samples (R-spec), state-snapshot-uncloneable-ignored
+  (`svelte-ignore` not honoured, F-dev-warn).
+- AppKit ST2 with spread `class`/`style`/`id` is verified by reading the code (the same `attr` path);
+  there is no Mac-host test with a spread.
+- Decision taken by the lane, to confirm: `{...constObject}` now goes through the runtime spread
+  (Svelte semantics, keys checked at run time) instead of being lowered and checked at compile time.
