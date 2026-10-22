@@ -36,6 +36,8 @@ use svelters_apple::objc::target::{self, SveltersTarget, TargetEvent};
 mod observe;
 #[path = "types.rs"]
 mod types;
+#[path = "style.rs"]
+mod style;
 
 use crate::types_table::TYPE_KIND_BASE;
 
@@ -139,6 +141,10 @@ pub(crate) struct Inner {
     type_kinds: RefCell<types::TypeKinds>,
     /// Async operations in flight, by completion callback id.
     pending: RefCell<HashMap<u64, types::Pending>>,
+    /// ST2: per-handle styles of the decl dialect (`style.rs`).
+    styles: RefCell<HashMap<u64, style::ElemStyle>>,
+    /// Observes NSWindowDidUpdateNotification while some element has a :focus/:disabled/:checked block.
+    style_window_observer: RefCell<Option<Retained<style::StyleTracker>>>,
 }
 
 thread_local! {
@@ -310,6 +316,8 @@ impl AppKitBackend {
             setting: Cell::new(None),
             type_kinds: RefCell::new(Default::default()),
             pending: RefCell::new(HashMap::new()),
+            styles: RefCell::new(HashMap::new()),
+            style_window_observer: RefCell::new(None),
         });
         observe::set_waker(inner.rl.waker());
         let weak = Rc::downgrade(&inner);
@@ -433,6 +441,54 @@ fn install_menu(mtm: MainThreadMarker, app: &NSApplication) {
         ]);
         let _: () = msg_send![app, setMainMenu: &*bar];
         let _: () = msg_send![app, setWindowsMenu: &*window];
+    }
+}
+
+define_class!(
+    // SAFETY: NSView has no subclassing requirements beyond the main thread; DocumentView does not implement Drop.
+    #[unsafe(super(objc2_app_kit::NSView, objc2_app_kit::NSResponder, NSObject))]
+    #[thread_kind = MainThreadOnly]
+    #[name = "SveltersDocumentView"]
+    struct DocumentView;
+
+    impl DocumentView {
+        #[unsafe(method(isFlipped))]
+        fn is_flipped(&self) -> bool {
+            true
+        }
+    }
+);
+
+/// A document view that sizes itself with Auto Layout: a stack or grid view (a plain view keeps the
+/// frame it is given; a text view manages its own frame in a scroll view).
+fn sizes_itself(c: &AnyObject) -> bool {
+    ["NSStackView", "NSGridView"].iter().any(|n| bridge::class_named(n).is_some_and(|k| bridge::is_kind(c, k)))
+}
+
+/// `document-view` of a scroll view for a view laid out by Auto Layout (a stack view): wrapped in a
+/// flipped view (content starts at the top) pinned to the clip view's top, leading and trailing
+/// edges, the child pinned to the wrapper's edges. The scroll view then scrolls the child's height.
+unsafe fn pin_document(mtm: MainThreadMarker, scroll: &AnyObject, c: &AnyObject) {
+    unsafe {
+        let wrap: Retained<DocumentView> = msg_send![DocumentView::alloc(mtm), init];
+        let w: &AnyObject = &wrap;
+        let _: () = msg_send![w, setTranslatesAutoresizingMaskIntoConstraints: false];
+        let _: () = msg_send![c, setTranslatesAutoresizingMaskIntoConstraints: false];
+        let _: () = msg_send![w, addSubview: c];
+        let _: () = msg_send![scroll, setDocumentView: w];
+        let clip: Retained<AnyObject> = msg_send![scroll, contentView];
+        let pin = |a: &AnyObject, b: &AnyObject, anchor: Sel| {
+            let x: *mut AnyObject = a.send_message(anchor, ());
+            let y: *mut AnyObject = b.send_message(anchor, ());
+            let k: Retained<AnyObject> = msg_send![x, constraintEqualToAnchor: y];
+            let _: () = msg_send![&*k, setActive: true];
+        };
+        for a in [sel!(leadingAnchor), sel!(trailingAnchor), sel!(topAnchor), sel!(bottomAnchor)] {
+            pin(c, w, a);
+        }
+        for a in [sel!(leadingAnchor), sel!(trailingAnchor), sel!(topAnchor)] {
+            pin(w, &clip, a);
+        }
     }
 }
 
@@ -717,6 +773,9 @@ impl Inner {
 
     fn native_insert(&self, p: &AnyObject, c: &AnyObject, before: Option<&AnyObject>, info: &SlotInfo) -> Result<(), String> {
         if !info.many {
+            if info.set == "setDocumentView:" && sizes_itself(c) {
+                return bridge::catch("document-view", || unsafe { pin_document(self.mtm, p, c) });
+            }
             return bridge::send_obj(p, info.set, Some(c));
         }
         match before {
@@ -747,7 +806,17 @@ impl Inner {
 
     fn native_remove(&self, p: &AnyObject, c: &AnyObject, info: &SlotInfo) -> Result<(), String> {
         if !info.many {
-            let cur = if info.get.is_empty() { None } else { bridge::kvc_get(p, info.get)? };
+            let mut cur = if info.get.is_empty() { None } else { bridge::kvc_get(p, info.get)? };
+            if info.set == "setDocumentView:" && cur.as_deref().is_some_and(|d| bridge::is_kind(d, <DocumentView as objc2::ClassType>::class())) {
+                // the flipped wrapper of pin_document: unwrap the child
+                let sup: Option<Retained<AnyObject>> = unsafe { msg_send![c, superview] };
+                if sup.as_deref().zip(cur.as_deref()).is_some_and(|(a, b)| std::ptr::eq(a, b)) {
+                    unsafe {
+                        let _: () = msg_send![c, removeFromSuperview];
+                    }
+                    cur = Some(unsafe { Retained::retain(c as *const AnyObject as *mut AnyObject) }.unwrap());
+                }
+            }
             if cur.as_deref().is_some_and(|x| std::ptr::eq(x, c)) || info.get.is_empty() {
                 match info.clear {
                     Clear::Nil => bridge::send_obj(p, info.set, None)?,
@@ -819,6 +888,7 @@ impl Inner {
 
     fn destroy(&self, h: u64) {
         self.drop_pending_of(h);
+        self.style_forget(h);
         let parent = self.table.borrow().get(h).and_then(|e| e.parent);
         let Some(e) = self.table.borrow_mut().take(h) else { return };
         self.by_ptr.borrow_mut().remove(&match &e.obj.obj {
@@ -944,6 +1014,7 @@ impl Inner {
                     self.post(token, sig, &args);
                 }
                 self.observed_fired(token, |o| o.action);
+                self.style_refresh_states(token);
             }
             TargetEvent::Notification { token, name, .. } => {
                 if let Some(sig) = self.listened(token, |s| s.via == Via::Notification && s.native == name) {
@@ -1300,7 +1371,11 @@ impl Backend for AppKitBackend {
     }
 
     fn insert(&self, parent: svl_handle, child: svl_handle, before: Option<svl_handle>, slot: svl_id) -> StrResult<()> {
-        objc2::rc::autoreleasepool(|_| self.inner.insert(parent, child, before, slot))
+        objc2::rc::autoreleasepool(|_| {
+            self.inner.insert(parent, child, before, slot)?;
+            self.inner.style_after_insert(child);
+            Ok(())
+        })
     }
 
     fn remove(&self, parent: svl_handle, child: svl_handle) -> StrResult<()> {
@@ -1312,7 +1387,15 @@ impl Backend for AppKitBackend {
     }
 
     fn set_prop(&self, h: svl_handle, prop: svl_id, v: &Value) -> StrResult<()> {
-        objc2::rc::autoreleasepool(|_| self.inner.set_prop(h, prop, v))
+        objc2::rc::autoreleasepool(|_| {
+            let r = self.inner.set_prop(h, prop, v);
+            self.inner.style_after_set(h);
+            r
+        })
+    }
+
+    fn style(&self, op: u32, h: svl_handle, text: Option<&str>) -> StrResult<i32> {
+        objc2::rc::autoreleasepool(|_| self.inner.style_op(op, h, text))
     }
 
     fn get_prop(&self, h: svl_handle, prop: svl_id) -> StrResult<Value> {

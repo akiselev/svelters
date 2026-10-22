@@ -25,7 +25,7 @@ import {
 } from './core/internal.js';
 // The X6 styling (classes, widget name, inline style, sheets, tokens) works on any node with `h`,
 // `tag`, `attrs` and `sc`: compiled components drive it through `attr`.
-import { bindElements, bindSetterHooks, forgetStyle, markStyleDirty } from './style.js';
+import { bindElements, bindSetterHooks, forgetStyle, markStyleDirty, styleInserted } from './style.js';
 import { ROW_OUTLETS, TOPLEVELS } from './bindings.generated.js';
 import { parseSetterValue, propOf } from '@svelters/style/runtime';
 // ABI v2.6 property observation (REACTIVITY.md section 7): installs `__svelters_changed` and the
@@ -234,11 +234,13 @@ function attach(node) {
     // an event controller or context menu: inserted into the element itself, no slot or position
     node.host.insert(parent.h, node.h, null, undefined);
     node.np = parent;
+    styleInserted(node);
     return;
   }
   const before = nextNative(node);
   node.host.insert(parent.h, node.h, before ? before.h : null, t.name ?? undefined);
   node.np = parent;
+  styleInserted(node);
   node.slotName = t.name;
   applyChildAttrs(node);
   if (pendingTops.length) settle();

@@ -17,7 +17,7 @@ svelters-host.workspace = true
 svelters-appkit = { workspace = true, features = ["exceptions"] }
 serde_json.workspace = true
 objc2 = "0.6.5"
-objc2-foundation = { version = "0.3.2", default-features = false, features = ["std", "NSString"] }
+objc2-foundation = { version = "0.3.2", default-features = false, features = ["std", "NSString", "NSGeometry", "NSRange"] }
 
 # AppKit must run on the process's first thread, so no libtest harness (it runs tests on worker
 # threads); svelters_apple::testing::run_cases speaks enough of the libtest CLI for cargo test and
@@ -46,4 +46,8 @@ harness = false
 # WP-A: the AppKit widget gallery (fixtures/gallery-appkit), one case per page, with screenshots.
 [[test]]
 name = "gallery"
+harness = false
+
+[[test]]
+name = "todo"
 harness = false

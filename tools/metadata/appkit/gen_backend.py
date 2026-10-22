@@ -85,7 +85,9 @@ class Model:
         enums = enum_doc["enums"]
         # the toolkit version of the ledger and the probe: the SDK the metadata was ingested from
         self.version = enum_doc["sdk"].removeprefix("MacOSX")
-        self.enums = {e["name"]: {"flags": e["flags"], "members": [(m["js"], m["value"]) for m in e["members"]]} for e in enums}
+        self.enums = {e["name"]: {"flags": e["flags"], "members": [(m["js"], m["value"]) for m in e["members"]],
+                                  # values on Intel where they differ (TARGET_ABI_USES_IOS_VALUES; ingest.py)
+                                  "x86_64": {m["js"]: m["x86_64"] for m in e["members"] if "x86_64" in m}} for e in enums}
         # ingested < inferred < manual (appkit_layers.py); origin[(class, section, name)] = (layer, record fingerprint)
         self.ov, self.origin, errs = layers.load()
         if errs:
@@ -294,7 +296,13 @@ def build(m: Model):
     o.append("pub static ENUMS: &[EnumInfo] = &[\n")
     for n, flags, mem in all_enums:
         ms = ", ".join(f"({rs(a)}, {v})" for a, v in mem)
-        o.append(f"    EnumInfo {{ name: {rs(n)}, flags: {str(flags).lower()}, members: &[{ms}] }},\n")
+        x86 = m.enums.get(n, {}).get("x86_64")
+        if x86:
+            xs = ", ".join(f"({rs(a)}, {x86.get(a, v)})" for a, v in mem)
+            ms_expr = f"if cfg!(target_arch = \"x86_64\") {{ &[{xs}] }} else {{ &[{ms}] }}"
+        else:
+            ms_expr = f"&[{ms}]"
+        o.append(f"    EnumInfo {{ name: {rs(n)}, flags: {str(flags).lower()}, members: {ms_expr} }},\n")
     o.append("];\n\n")
     o.append(f"pub static SIGNALS: &[SignalInfo] = &[\n{''.join(signals)}];\n\n")
     o.append(f"pub static METHODS: &[MethodInfo] = &[\n{''.join(methods)}];\n\n")

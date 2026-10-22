@@ -754,7 +754,7 @@ pub static ENUMS: &[EnumInfo] = &[
     EnumInfo { name: "NSTabState", flags: false, members: &[("selected-tab", 0), ("background-tab", 1), ("pressed-tab", 2)] },
     EnumInfo { name: "NSTabViewBorderType", flags: false, members: &[("none", 0), ("line", 1), ("bezel", 2)] },
     EnumInfo { name: "NSTabViewType", flags: false, members: &[("top-tabs-bezel-border", 0), ("left-tabs-bezel-border", 1), ("bottom-tabs-bezel-border", 2), ("right-tabs-bezel-border", 3), ("no-tabs-bezel-border", 4), ("no-tabs-line-border", 5), ("no-tabs-no-border", 6)] },
-    EnumInfo { name: "NSTextAlignment", flags: false, members: &[("left", 0), ("center", 1), ("right", 2), ("justified", 3), ("natural", 4)] },
+    EnumInfo { name: "NSTextAlignment", flags: false, members: if cfg!(target_arch = "x86_64") { &[("left", 0), ("center", 2), ("right", 1), ("justified", 3), ("natural", 4)] } else { &[("left", 0), ("center", 1), ("right", 2), ("justified", 3), ("natural", 4)] } },
     EnumInfo { name: "NSTextFieldBezelStyle", flags: false, members: &[("square-bezel", 0), ("rounded-bezel", 1)] },
     EnumInfo { name: "NSTextInputTraitType", flags: false, members: &[("default", 0), ("no", 1), ("yes", 2)] },
     EnumInfo { name: "NSTickMarkPosition", flags: false, members: &[("below", 0), ("above", 1), ("leading", 1), ("trailing", 0)] },

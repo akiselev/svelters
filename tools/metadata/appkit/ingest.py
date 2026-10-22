@@ -378,6 +378,21 @@ def main() -> int:
             "source": {"sdk": sdk_name, "target": a.target, "docs": f"https://developer.apple.com/documentation/appkit/{cls.lower()}?language=objc"},
         }
         outs[OUT / f"{cls}.json"] = rec
+    # Some enums take other values on Intel (`TARGET_ABI_USES_IOS_VALUES` is false only on x86-64:
+    # NSTextAlignment center/right, NSImageResizingMode): parse again for x86-64 and record the
+    # members whose value differs as `x86_64` (the generated tables pick by target_arch).
+    x86_target = re.sub(r"^[^-]+", "x86_64", a.target)
+    xargs = [x if x != a.target else x86_target for x in args]
+    tu_x86 = ci.Index.create().parse("ingest.m", args=xargs, unsaved_files=[("ingest.m", "#import <AppKit/AppKit.h>\n")],
+                                     options=ci.TranslationUnit.PARSE_SKIP_FUNCTION_BODIES | 0x1000)
+    ing_x86 = Ingest(ci, lib, tu_x86)
+    for name, e in ing.enums.items():
+        if ing_x86.enum_ref(name) is None:
+            continue
+        other = {m["native"]: m["value"] for m in ing_x86.enums[name]["members"]}
+        for m in e["members"]:
+            if m["native"] in other and other[m["native"]] != m["value"]:
+                m["x86_64"] = other[m["native"]]
     outs[OUT / "_enums.json"] = {"schema": "svelters-appkit-enums/v0", "sdk": sdk_name,
                                  "enums": [ing.enums[k] for k in sorted(ing.enums)]}
 
