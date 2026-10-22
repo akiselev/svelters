@@ -33,6 +33,47 @@ follow from them: SG0 goes into EG0 as the §13 file cut, and SG1–SG3 sit on S
 other SG milestone comes after SC1. cadatomic (main-cadatomic) reviews this doc for cadatomic's needs. Its
 corrections are recorded here once both coordinators agree.
 
+**cadatomic review (main-cadatomic, 2026-10-22), agreed by both coordinators.** Where an item below
+contradicts a section further down, the item wins. The milestone that implements it applies it.
+
+- Corrections:
+  - **R13** (§10.3): `ModelTree::hit_test` returns `Hit::Part(key)`. `Hit` has no `Virtual` variant.
+  - **R14** (§6.3/§6.5): add `Query::changed_since(tick)` to the Query API and to §16's stable list.
+  - **R15** (§16): read "once cadatomic pins svelters by sha"; cadatomic's svelters pin is still undecided.
+  - **R16** (§5.4/§7.2): `Busy` must cover all pending work:
+    - a non-empty `defer` queue sets CHANGES (or COMMANDS);
+    - a StateProvider whose `wants()` is true sets the PROVIDER bit (ARCH-EMBED R8) and requests a repaint of
+      its root's viewport, so the serving `logic` pass runs.
+
+    Otherwise wait-idle reports idle with work still queued.
+  - **R17** (§5.2): one `Ui` phase runs from the end of `logic` to the next `logic`. It covers `App::ui`
+    between `show_slot` calls and deferred-viewport closures, not just Walk. In it, `write` returns
+    `Err(SceneBusy)` and `defer` works (cadatomic K-1).
+  - **R18** (§5.3): a Rust `NodeMut::set` on a bound prop announces `prop_changed` only. It never fires the
+    kind's events (input, change, accepted), keeping cadatomic's one-command-path rule.
+  - **R19** (§8.2/§10.1): `RowPool::release_unused` must not leave stale ext entries on hidden rows:
+    - `RowPool::clears(&KEY)` declares the ext keys that `release_unused` removes;
+    - the PickProvider walkthrough tracks its marked set (or uses an Ext-Removed observer), so PICK_TARGET
+      and PICK_REJECTED are cleared on nodes that lost PRESENTS.
+  - **R20** (§7.4/§9): `hit_test(vp, …)` skips hit-list entries whose root's current viewport is not `vp`.
+    This covers the frame after `set_viewport`.
+- Missing needs, taken as recommended (overnight instruction, to revisit):
+  - **R21** (§7.5): `PassScope::Viewport`/`AllViewports` passes run from an explicit
+    `embed.show_viewport_passes(ui)`. The host calls it at the end of each viewport's ui (root and deferred),
+    because slots are drawn from berth's `pane_ui` (seam 4).
+  - **R22** (§8.2/§10.2): `PrepareCx` exposes this frame's scroll offset for a ScrollArea id (egui's
+    stored state plus this pass's pending scroll input), so realised rows don't lag a frame. Gate: a
+    kittest flings through 2k rows, and no frame draws an unbound row.
+  - **R23** (§6.1/§7.3): `register_state_provider(p)` returns a `ProviderHandle<P>`. Its
+    `with_mut(|p| …)` works in Logic and Idle, marks the provider wanting and requests the repaint (ties to
+    R16).
+  - **R24** (§10.3): examples select by id path (`by_path("tree/row[feature:1234]")`), never by label.
+
+cadatomic-side, no svelters action:
+- The 3D viewport's `hit_test` answers from the last completed (asynchronous) GPU pick readback.
+- cadatomic does not enable `unstable-scene` and keeps no golden scene dumps.
+- Its MCP gate waits for TK2's frozen snapshot schema.
+
 ## Binding inputs
 
 - **User (svelters CLAUDE.md, 2026-10-21/22):** one retained scene, owned by svelters-egui; cadatomic extends it
