@@ -42,6 +42,7 @@ impl EguiBackend {
     /// available rect.
     pub(crate) fn window_ui(&self, ui: &mut egui::Ui, w: Handle, out: &mut Vec<Out>) {
         let rect = ui.available_rect_before_wrap();
+        crate::focus::begin(ui.ctx()); // EV3: scopes, restore, default/cancel keys
         let mut scene = self.0.scene.borrow_mut();
         let id = scene.live(w).expect("a live window");
         let r = scene.core[scene.ix(id)].root;
@@ -59,6 +60,7 @@ impl EguiBackend {
     /// and windows did. Returns the rect it took and the content size (its children's extent).
     pub(crate) fn slot_ui(&self, ui: &mut egui::Ui, slot: Handle, out: &mut Vec<Out>) -> (egui::Rect, Vec2) {
         let rect = ui.available_rect_before_wrap();
+        crate::focus::begin(ui.ctx()); // EV3: scopes, restore, default/cancel keys
         let mut scene = self.0.scene.borrow_mut();
         let id = scene.live(slot).expect("a live slot");
         let i = scene.ix(id);
@@ -197,6 +199,9 @@ fn paint_own(
         if !ui.is_rect_visible(r) {
             return None;
         }
+        if !matches!(arena.w(i), crate::scene::W::Overlay(_)) {
+            crate::focus::record_scope(arena, i, ui); // EV3 (an overlay records itself when open)
+        }
         // CS5e: its state and box (background, border), and the opacity of its subtree
         let opacity = crate::style::before_container(arena, i, r, ui);
         let mut faded;
@@ -240,6 +245,9 @@ fn paint_own(
     };
     crate::kinds::dnd::node(arena, i, r, &mut child, out, crate::kinds::dnd::Part::Target); // WG4b
     crate::scene::hit::record(arena, i, &child); // SG3: the viewport's hit list
+    if let Some(r) = &resp {
+        crate::focus::record(arena, i, &child, r); // EV3: tab order, R11 key claims
+    }
     crate::overlays::paint_attached(arena, i, origin, ui, out); // WG2a: its context menu, popup
     resp
 }

@@ -829,6 +829,7 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
     let mut covered: Vec<(f32, f32)> = Vec::with_capacity(placed.len());
     let sig_select = super::signal_id(kind, "select");
     let sig_activate = super::signal_id(kind, "activate");
+    let mut first_row = true; // EV3
     for (n, pos) in placed {
         let Some(ni) = s.idx(n) else { continue };
         let rr = s.core[ni].rect.translate(origin);
@@ -868,6 +869,13 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         }
         if rresp.double_clicked() && s.listens(i, sig_activate) {
             out.push(Out::Event(h, sig_activate, vec![Value::I64(pos as i64)]));
+        }
+        if selectable {
+            // EV3: a selectable row takes focus and the list's keys; the selected row (else the
+            // first drawn) is the list's tab stop
+            let stop = if selected >= 0 { is_sel } else { first_row };
+            first_row = false;
+            crate::focus::record_with(s, i, &rows_ui, &rresp, crate::focus::Role::List, stop);
         }
         let mut row_ui = rows_ui.new_child(egui::UiBuilder::new().max_rect(rr).id_salt(("row", key)).accessibility_parent(row_id));
         row_ui.set_clip_rect(clip);

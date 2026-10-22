@@ -20,6 +20,7 @@ pub mod embed;
 pub mod elements;
 /// SVP6: font weights and icon name tables the embedder registers (WG1).
 pub mod fonts;
+pub mod focus;
 pub mod kinds;
 pub mod layout;
 /// W5: the Linux primary selection in the text kinds (select-to-copy, middle-click paste).

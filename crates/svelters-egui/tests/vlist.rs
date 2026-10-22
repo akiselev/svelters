@@ -442,3 +442,22 @@ fn list_view_runs_on_egui() {
     assert!(app.harness.query_by_label("Item 2000").is_some());
     assert!(app.errors().is_empty(), "{:?}", app.errors());
 }
+
+/// EV3: a focused row of a selectable list claims the navigation keys (R11), so a host keymap
+/// leaves them; `focus_info` names the list.
+#[test]
+fn a_focused_row_claims_the_navigation_keys() {
+    let mut r = ListRig::new();
+    r.splice(0, 0, 1..=50);
+    r.harness.run();
+    r.harness.key_press(egui::Key::Tab);
+    r.harness.run();
+    let ctx = r.harness.ctx.clone();
+    let info = r.backend.focus_info(&ctx);
+    assert_eq!(info.kind, Some("virtual-list"), "{info:?}");
+    assert_eq!(info.node, Some(r.id()));
+    let k = |m, key| egui::KeyboardShortcut::new(m, key);
+    assert!(r.backend.shortcut_override(&ctx, &k(egui::Modifiers::NONE, egui::Key::ArrowDown)));
+    assert!(r.backend.shortcut_override(&ctx, &k(egui::Modifiers::NONE, egui::Key::PageUp)));
+    assert!(!r.backend.shortcut_override(&ctx, &k(egui::Modifiers::COMMAND, egui::Key::Z)));
+}

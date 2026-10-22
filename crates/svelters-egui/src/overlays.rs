@@ -227,6 +227,7 @@ fn content(
     let r = Rect::from_min_size(at, sz);
     arena.core[i].drawn = r;
     ui.allocate_rect(r, Sense::hover());
+    crate::focus::record_scope(arena, i, ui); // EV3: a dialog focus scope
     crate::walk::paint_children(arena, i, origin, ui, out);
 }
 
