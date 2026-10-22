@@ -152,6 +152,8 @@ pub enum P {
     /// modal
     Dismissable,
     /// inner-window
+    DefaultX,
+    DefaultY,
     Closable,
     Collapsible,
     Resizable,

@@ -11,7 +11,7 @@
   let picking = $state(false);
   let filter = $state('');
   let confirming = $state(false);
-  let inspector = $state(true);
+  let inspector = $state(false);
   const add = (s) => (log += s + ';');
 </script>
 
@@ -37,17 +37,15 @@
         <action label="Copy" onactivate={() => add('copy')} />
         <action label="Paste" onactivate={() => add('paste')} />
       </menu-button>
-      <button onclicked={() => (picking = !picking)}>
-        Pick
-        <popup bind:open={picking} class="pop">
+      <button onclicked={() => (picking = !picking)}
+        >Pick<popup bind:open={picking} class="pop">
           <label>Filter</label>
           <text-edit hint-text="Filter text" bind:text={filter} />
         </popup>
       </button>
       <button onclicked={() => (confirming = true)}>Delete</button>
-      <button onclicked={() => (inspector = true)}>
-        Show inspector
-        <context-menu>
+      <button onclicked={() => (inspector = true)}
+        >Show inspector<context-menu>
           <action label="Hide inspector" onactivate={() => (inspector = false)} />
         </context-menu>
       </button>
@@ -57,7 +55,7 @@
       <label>It cannot be undone.</label>
       <button onclicked={() => { add('deleted'); confirming = false; }}>Confirm</button>
     </modal>
-    <inner-window bind:open={inspector} title="Inspector" default-width={220} default-height={120}>
+    <inner-window bind:open={inspector} title="Inspector" default-width={220} default-height={120} default-x={280} default-y={230}>
       <label>Selection: none</label>
     </inner-window>
   </box>

@@ -5,7 +5,7 @@
 //! `crate::overlays`.
 
 use super::builtin::NONE;
-use super::{Def, KindDef, MethodDef, P, PropDef, SignalDef, Ty, input, prop, signal};
+use super::{Def, KindDef, MethodDef, P, PropDef, SignalDef, Ty, input, optional, prop, signal};
 
 pub const POSITION: &[&str] = &["bottom", "top", "left", "right"];
 
@@ -85,6 +85,18 @@ static INNER_WINDOW_PROPS: &[PropDef] = &[
         Ty::F64,
         Def::F64(240.0),
         "Initial height in points.",
+    ),
+    optional(
+        "default-x",
+        P::DefaultX,
+        Ty::F64,
+        "Initial left edge in points (viewport coordinates); null: egui places it.",
+    ),
+    optional(
+        "default-y",
+        P::DefaultY,
+        Ty::F64,
+        "Initial top edge in points (viewport coordinates); null: egui places it.",
     ),
     prop(
         "closable",

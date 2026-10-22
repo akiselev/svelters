@@ -1345,6 +1345,40 @@
           "type": "f64",
           "writable": true
         },
+        "default-x": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Initial left edge in points (viewport coordinates); null: egui places it.",
+          "js": "default-x",
+          "native": "default-x",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:InnerWindow:default-x",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "default-y": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Initial top edge in points (viewport coordinates); null: egui places it.",
+          "js": "default-y",
+          "native": "default-y",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:InnerWindow:default-y",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
         "open": {
           "construct_only": false,
           "default": true,

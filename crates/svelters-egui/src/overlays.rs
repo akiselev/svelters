@@ -41,6 +41,9 @@ pub struct OverlayW {
     pub dismissable: bool,
     pub default_w: f64,
     pub default_h: f64,
+    /// `default-x`, `default-y` (both needed to place it).
+    pub default_x: Option<f64>,
+    pub default_y: Option<f64>,
     pub closable: bool,
     pub collapsible: bool,
     pub resizable: bool,
@@ -64,6 +67,8 @@ pub(crate) fn payload(id: &str) -> OverlayW {
         dismissable: true,
         default_w: 320.0,
         default_h: 240.0,
+        default_x: None,
+        default_y: None,
         closable: true,
         collapsible: true,
         resizable: true,
@@ -105,6 +110,20 @@ pub(crate) fn set_prop(o: &mut OverlayW, key: P, v: &Value) -> Result<(), String
         P::Dismissable => o.dismissable = as_bool(v)?,
         P::DefaultWidth => o.default_w = f(v)?,
         P::DefaultHeight => o.default_h = f(v)?,
+        P::DefaultX => {
+            o.default_x = if matches!(v, Value::Null) {
+                None
+            } else {
+                Some(f(v)?)
+            }
+        }
+        P::DefaultY => {
+            o.default_y = if matches!(v, Value::Null) {
+                None
+            } else {
+                Some(f(v)?)
+            }
+        }
         P::Closable => o.closable = as_bool(v)?,
         P::Collapsible => o.collapsible = as_bool(v)?,
         P::Resizable => o.resizable = as_bool(v)?,
@@ -122,6 +141,8 @@ pub(crate) fn get_prop(o: &OverlayW, key: P) -> Result<Value, String> {
         P::Dismissable => Value::Bool(o.dismissable),
         P::DefaultWidth => Value::F64(o.default_w),
         P::DefaultHeight => Value::F64(o.default_h),
+        P::DefaultX => o.default_x.map_or(Value::Null, Value::F64),
+        P::DefaultY => o.default_y.map_or(Value::Null, Value::F64),
         P::Closable => Value::Bool(o.closable),
         P::Collapsible => Value::Bool(o.collapsible),
         P::Resizable => Value::Bool(o.resizable),
@@ -284,6 +305,9 @@ fn overlay(
                     .default_size(vec2(o.default_w as f32, o.default_h as f32))
                     .collapsible(o.collapsible)
                     .resizable(o.resizable);
+                if let (Some(x), Some(y)) = (o.default_x, o.default_y) {
+                    w = w.default_pos(egui::pos2(x as f32, y as f32));
+                }
                 if o.closable {
                     w = w.open(&mut still);
                 }

@@ -21,7 +21,11 @@ fn bundle() -> std::path::PathBuf {
 fn status(app: &TestApp) -> String {
     app.harness
         .query_by_label_contains("S:")
-        .and_then(|n| n.accesskit_node().label())
+        .and_then(|n| {
+            n.accesskit_node()
+                .label()
+                .or_else(|| n.accesskit_node().value())
+        })
         .unwrap_or_default()
 }
 
@@ -43,11 +47,7 @@ fn click(app: &mut TestApp, label: &str, button: egui::PointerButton) {
 fn gallery_page_menus_and_popups() {
     let mut app = TestApp::load(bundle()).unwrap();
     app.run();
-    assert_eq!(status(&app), "S:|false|true|false|false||true");
-    assert!(
-        app.harness.query_by_label("Selection: none").is_some(),
-        "the inner window is open"
-    );
+    assert_eq!(status(&app), "S:|false|true|false|false||false");
 
     // menu bar: an action, a check item (bind:checked), a radio pick
     click(&mut app, "File", egui::PointerButton::Primary);
@@ -56,7 +56,7 @@ fn gallery_page_menus_and_popups() {
     click(&mut app, "Autosave", egui::PointerButton::Primary);
     click(&mut app, "Size", egui::PointerButton::Primary);
     click(&mut app, "Large", egui::PointerButton::Primary);
-    assert_eq!(status(&app), "S:open;|true|false|true|false||true");
+    assert_eq!(status(&app), "S:open;|true|false|true|false||false");
     // the accelerator
     app.harness
         .key_press_modifiers(egui::Modifiers::CTRL, egui::Key::Q);
@@ -69,10 +69,10 @@ fn gallery_page_menus_and_popups() {
 
     // menu-button: bind:active follows the user
     click(&mut app, "More", egui::PointerButton::Primary);
-    assert!(status(&app).ends_with("|true||true"), "{}", status(&app));
+    assert!(status(&app).ends_with("|true||false"), "{}", status(&app));
     click(&mut app, "Paste", egui::PointerButton::Primary);
     assert!(
-        status(&app).contains("paste;") && status(&app).ends_with("|false||true"),
+        status(&app).contains("paste;") && status(&app).ends_with("|false||false"),
         "{}",
         status(&app)
     );
@@ -87,7 +87,7 @@ fn gallery_page_menus_and_popups() {
         .get_by_role_and_label(Role::TextInput, "Filter text")
         .type_text("ab");
     app.run();
-    assert!(status(&app).ends_with("|ab|true"), "{}", status(&app));
+    assert!(status(&app).ends_with("|ab|false"), "{}", status(&app));
     app.harness.key_press(egui::Key::Escape);
     app.run();
     assert!(
@@ -102,7 +102,9 @@ fn gallery_page_menus_and_popups() {
     assert!(app.harness.query_by_label("It cannot be undone.").is_none());
     assert!(status(&app).contains("deleted;"), "{}", status(&app));
 
-    // context menu on a button hides the inner window
+    // the inner window, shown by a button, hidden by that button's context menu
+    click(&mut app, "Show inspector", egui::PointerButton::Primary);
+    assert!(app.harness.query_by_label("Selection: none").is_some());
     click(&mut app, "Show inspector", egui::PointerButton::Secondary);
     click(&mut app, "Hide inspector", egui::PointerButton::Primary);
     assert!(app.harness.query_by_label("Selection: none").is_none());

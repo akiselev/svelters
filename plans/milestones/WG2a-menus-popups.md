@@ -21,7 +21,7 @@ EGUI.md §5's (GTK's `menu-button` takes the same name; GTK's `popover` is `popu
 | `menu-button` | `containers::menu::MenuButton` | Widget | as `menu` (a `menu` child's items inline) | `label` (text content), `active` (methods `popup`, `popdown`) | `changed(active)` | `active` |
 | `popup` | `egui::Popup` | Box, attaches to Widget | Widget | `open` (false), `position` (bottom/top/left/right), `autohide` (true) (methods `popup`, `popdown`) | `changed(open)`, `closed` | `open` |
 | `modal` | `egui::Modal` | Box | Widget | `open` (true), `title`, `dismissable` (true) | `changed(open)`, `closed` | `open` |
-| `inner-window` | `egui::Window` | Box | Widget | `open` (true), `title`, `default-width` (320), `default-height` (240), `closable`, `collapsible`, `resizable` (all true) | `changed(open)`, `closed` | `open` |
+| `inner-window` | `egui::Window` | Box | Widget | `open` (true), `title`, `default-width` (320), `default-height` (240), `default-x`/`default-y` (null: egui places it), `closable`, `collapsible`, `resizable` (all true) | `changed(open)`, `closed` | `open` |
 
 `MenuEntry` (abstract) has `enabled`, `visible`, `tooltip`, `accessible-name`, `anchor`: menu entries are not
 widgets (a `box` does not accept one, and they have no layout props). The overlays derive from `Box`, so their
@@ -97,7 +97,7 @@ inside a closed overlay is 0×0).
   rendered, found by role and label and driven by pointer, keyboard or AccessKit.
 - Gallery page `fixtures/gallery-egui-menus` (every kind of the family; `<!-- kinds: -->` header like the other
   galleries), run end to end on the QuickJS host by `tests/menus_app.rs` (`gallery_page_menus_and_popups`) and by
-  the TestHost (`expected.oplog`). It is its own fixture because there is no egui gallery app yet; it becomes a
+  the TestHost (`expected.oplog`, `script.json`). It is its own fixture because there is no egui gallery app yet; it becomes a
   page of one when one exists.
 - `crates/svelters-compiler/tests/wg2a_egui_menus.rs`: the page compiles, attaching and nesting rules, unknown
   props.

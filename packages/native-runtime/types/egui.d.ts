@@ -486,6 +486,10 @@ export interface EguiElements {
     'default-width'?: number;
     /** Initial height in points. */
     'default-height'?: number;
+    /** Initial left edge in points (viewport coordinates); null: egui places it. */
+    'default-x'?: number | null;
+    /** Initial top edge in points (viewport coordinates); null: egui places it. */
+    'default-y'?: number | null;
     /** Shows a close button in the title bar. */
     closable?: boolean;
     /** The title bar can collapse it to the title. */
