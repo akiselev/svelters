@@ -43,6 +43,8 @@ impl SourceMaps {
         }
     }
 
+    // ZU3: error path only: reads a module's .map once, when a JS error's stack is mapped.
+    #[allow(clippy::disallowed_methods)]
     fn map_for(&mut self, module: &str) -> Option<&SourceMap> {
         if self.inline.contains_key(module) {
             return self.inline.get(module);

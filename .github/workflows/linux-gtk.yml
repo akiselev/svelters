@@ -61,6 +61,12 @@ jobs:
           -p svelters-abi -p svelters-backend-log -p svelters-host -p svelters-modules -p svelters-compiler -p svelters-gtk -p svelters -p exports-example -p svelters-egui -p egui-kinds-example -p svelters-testkit -p svelters-conformance
           -p counter --no-default-features --features counter/gtk
 
+      # ZU3 (plans/milestones/ZU3-ui-thread.md): the UI-thread lint. clippy.toml in svelters-host and
+      # svelters-egui lists blocking fs/process/wait calls; their lib.rs deny it, so a new call fails
+      # here unless it carries an `#[allow]` with a reason. No `-D warnings`: other lints stay advisory.
+      - name: clippy (UI-thread lint)
+        run: cargo clippy -p svelters-host -p svelters-egui --all-targets
+
       - name: nextest (GTK, egui, host, compiler)
         timeout-minutes: 30
         run: >

@@ -4,6 +4,8 @@
 //! The same JS serves two ways: [`dump`] writes `<module>.js` for bundlers (they import
 //! `@svelters/types/core` and sibling stubs as `./<module>.js`), and the QuickJS host serves it as the
 //! built-in module `svelters:app/<module>` (core from the built-in `svelters:core`).
+// ZU3: build-time codegen (`svelters exports` dump), not run in an app.
+#![allow(clippy::disallowed_methods)]
 
 use super::schema::{ClassSchema, MemberSchema, ModuleSchema, Schema, ValueSchema, schema};
 use super::{MemberKind, prop_key};
