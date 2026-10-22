@@ -18,6 +18,7 @@ members = [
     "crates/svelters-macros",
     "crates/svelters",
     "crates/svelters-testkit",
+    "crates/svelters-sched",
     "examples/counter",
     "examples/counter-qt",
     "examples/counter-mac",
@@ -44,6 +45,7 @@ svelters-appkit = { path = "crates/svelters-appkit" }
 svelters-winui = { path = "crates/svelters-winui" }
 svelters-egui = { path = "crates/svelters-egui" }
 svelters-testkit = { path = "crates/svelters-testkit" }
+svelters-sched = { path = "crates/svelters-sched" }
 svelters-compiler = { path = "crates/svelters-compiler" }
 svelters-modules = { path = "crates/svelters-modules", default-features = false }
 svelters-conformance = { path = "crates/svelters-conformance" }

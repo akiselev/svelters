@@ -176,6 +176,76 @@ pub fn find_fixtures(root: &Path) -> Vec<PathBuf> {
     dirs
 }
 
+// ---- SCHED1: a host driven by a deterministic scheduler ----
+
+/// The simulated frame interval of [`SchedHost`]'s `requestAnimationFrame`.
+pub const SCHED_FRAME: Duration = Duration::from_millis(16);
+
+/// SCHED1: a host on the log backend (attached through `start`, no script) driven by a
+/// [`svelters_sched::TestScheduler`]: its offloaded jobs are the scheduler's tasks, its timers and
+/// `performance.now()` run on the scheduler's clock, and every host wake gives its foreground a turn.
+/// A turn is what a toolkit loop does on a wake: the host's `checkpoint` callback (a pending reload
+/// first, then the checkpoint), and `frame` when a requested animation frame is due (frames come
+/// every [`SCHED_FRAME`] of simulated time).
+///
+/// ```ignore
+/// svelters_sched::run_seeds("my_test", 12, |s| {
+///     let h = SchedHost::new(s, quiet_config()).unwrap();
+///     h.host.load_bundle("main.js").unwrap();
+///     s.run_until_idle();
+///     assert!(h.console().contains(&"done".to_string()));
+/// });
+/// ```
+pub struct SchedHost {
+    pub host: std::rc::Rc<Host<'static>>,
+    pub log: LogBackend,
+    pub fg: svelters_sched::Foreground,
+}
+
+impl SchedHost {
+    /// `cfg` with `scripted: false` and every [`crate::HostSched`] hook from `s`.
+    pub fn new(s: &svelters_sched::TestScheduler, cfg: HostConfig) -> Result<SchedHost, JsError> {
+        use std::cell::Cell;
+        use std::rc::Rc;
+        let fg = s.foreground("host");
+        let cfg = HostConfig { scripted: false, sched: crate::HostSched::test(s, fg), ..cfg };
+        let log = LogBackend::new(Vec::new());
+        let host = Rc::new(Host::new_owned(log.clone(), cfg)?);
+        host.start().map_err(|e| JsError::new(crate::ErrorKind::Host, e.to_string()))?;
+        let weak = Rc::downgrade(&host);
+        let (clock, waker, key) = (s.handle(), s.waker(fg), svelters_sched::wake_key());
+        let frame_at: Cell<Option<Duration>> = Cell::new(None);
+        s.set_runner(fg, move || {
+            use svelters_sched::Clock;
+            let Some(host) = weak.upgrade() else { return };
+            // SAFETY: the callbacks live as long as `host`, which this turn holds.
+            let cb = unsafe { svelters_abi::HostRef::from_raw(host.host_callbacks()) };
+            cb.checkpoint();
+            let now = clock.now();
+            if frame_at.get().is_some_and(|at| now >= at) {
+                frame_at.set(None);
+                cb.frame();
+            }
+            if frame_at.get().is_none() && host.busy().frame {
+                let at = now + SCHED_FRAME;
+                frame_at.set(Some(at));
+                clock.wake_at(key, Some(at), &waker);
+            }
+        });
+        Ok(SchedHost { host, log, fg })
+    }
+
+    /// The console lines logged since the last call.
+    pub fn console(&self) -> Vec<String> {
+        self.host.take_console().into_iter().map(|l| l.text).collect()
+    }
+
+    /// The errors reported since the last call, as text.
+    pub fn errors(&self) -> Vec<String> {
+        self.host.take_errors().into_iter().map(|e| e.to_string()).collect()
+    }
+}
+
 /// The repository's `fixtures/` directory.
 pub fn default_fixtures_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures")

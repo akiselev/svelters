@@ -8,6 +8,8 @@ publish.workspace = true
 [dependencies]
 svelters-abi.workspace = true
 svelters-backend-log.workspace = true
+# SCHED1: the Spawner/Clock seams the host's job and wake hooks take (no dependencies of its own).
+svelters-sched.workspace = true
 rquickjs.workspace = true
 # Q1: the engine boundary (`ModuleProvider`) and the bundle provider; runners add `SourceProvider`.
 svelters-modules.workspace = true

@@ -17,7 +17,10 @@
 //!
 //! Threading: a `Host` is pinned to the thread that created it (the toolkit's main thread).
 //! The host starts no threads. Timers run on the toolkit: after each checkpoint the host arms the
-//! backend's one-shot `schedule_wake` for the earliest deadline.
+//! backend's one-shot `schedule_wake` for the earliest deadline. SCHED1: `HostConfig::sched`
+//! ([`HostSched`]) moves offloaded jobs to a `Spawner`, time and the timer wakeup to a `Clock`, and
+//! copies every wake to a `Waker`; `svelters_sched::TestScheduler` provides all three for
+//! deterministic tests (`testing::SchedHost`).
 
 pub mod bytecode;
 mod convert;
@@ -30,6 +33,7 @@ pub mod exports;
 pub mod platform;
 mod quickjs;
 mod reload;
+pub mod sched;
 mod sourcemap;
 pub mod testing;
 
@@ -39,6 +43,9 @@ pub use crate::engine::{
 };
 pub use crate::engine::HotOutcome;
 pub use crate::reload::ReloadReport;
+pub use crate::sched::HostSched;
+/// SCHED1: the `Spawner`/`Clock` seams and the deterministic `TestScheduler`.
+pub use svelters_sched;
 /// Q1: the module loader (providers; `SourceProvider` with its `source` feature).
 pub use svelters_modules as modules;
 pub use hooks::ModuleHooks;
@@ -113,7 +120,7 @@ impl HostCallbacks for Callbacks {
         // A live backend reports a native event from its loop and expects the host to schedule
         // the checkpoint that delivers it. Scripted backends call `checkpoint` themselves.
         if !self.core.cfg.scripted {
-            self.core.backend().wake();
+            self.core.wake();
         }
     }
 
@@ -142,7 +149,7 @@ impl HostCallbacks for Callbacks {
         // Marks (h, prop) dirty; the next checkpoint reads, compares and delivers it in one batch.
         // A live backend gets one wake per turn: on the first insert into an empty dirty set.
         if self.core.prop_changed(h, prop) && !self.core.cfg.scripted {
-            self.core.backend().wake();
+            self.core.wake();
         }
     }
 
@@ -161,7 +168,7 @@ impl HostCallbacks for Callbacks {
         self.core.native_gone(h, reason);
         // Delivering the death is a checkpoint's job; a live backend needs one scheduled.
         if !self.core.cfg.scripted {
-            self.core.backend().wake();
+            self.core.wake();
         }
     }
 }
@@ -224,6 +231,9 @@ impl<'a> Host<'a> {
         cfg: HostConfig,
         make: MakeEngine,
     ) -> Result<Host<'a>, JsError> {
+        if cfg.scripted && cfg.sched.clock.is_some() {
+            return Err(JsError::new(ErrorKind::Host, "HostConfig: `scripted` has its own virtual clock; a `sched.clock` needs scripted: false"));
+        }
         // E3: the app's services start with its first host (once per process; later hosts find them running).
         crate::exports::start_services();
         // SAFETY: `'a` ties the host to the backend borrow, so the erased reference cannot outlive it.
@@ -351,7 +361,7 @@ impl<'a> Host<'a> {
     /// Reloads at the next checkpoint, as if the watcher had fired (also wakes the backend).
     pub fn request_reload(&self) {
         self.reloader.request();
-        self.core.backend().wake();
+        self.core.wake();
     }
 
     /// Called after every reload attempt, successful or not, on the toolkit thread.
@@ -378,7 +388,7 @@ impl<'a> Host<'a> {
     pub fn run(&self) -> Result<(), AbiError> {
         let _disarm = DisarmStarted(&self.started);
         if self.arm_started() {
-            self.core.backend().wake();
+            self.core.wake();
         }
         self.started.active.set(true);
         let res = self.core.backend().run(&self.vt);
