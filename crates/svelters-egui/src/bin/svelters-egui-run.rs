@@ -63,7 +63,9 @@ fn main() {
     };
     // The desktop order on an Embed (EM1): the app mounts its windows; eframe's context is bound
     // at the first frame.
-    let cfg = svelters_egui::embed::EmbedConfig::app(svelters_host::HostConfig::default());
+    // DX2: the system clipboard and shell for `svelters:clipboard` and `svelters:shell`.
+    let host = svelters_host::HostConfig { platform: svelters_egui::platform::system(), ..svelters_host::HostConfig::default() };
+    let cfg = svelters_egui::embed::EmbedConfig::app(host);
     let embed = svelters_egui::Embed::new(&svelters_egui::egui::Context::default(), cfg).unwrap_or_else(|e| fail(e.to_string()));
     let loaded = match load {
         Load::Bundle(bundle) => embed.load_app(&bundle),

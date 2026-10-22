@@ -3888,6 +3888,7 @@ dependencies = [
 name = "svelters-egui"
 version = "0.0.0"
 dependencies = [
+ "arboard",
  "eframe",
  "egui",
  "egui_kittest",
@@ -3919,6 +3920,7 @@ version = "0.0.0"
 dependencies = [
  "inventory",
  "notify",
+ "open",
  "rayon",
  "rquickjs",
  "schemars",

@@ -24,6 +24,7 @@ mod core;
 mod engine;
 mod hooks;
 pub mod exports;
+pub mod platform;
 mod quickjs;
 mod reload;
 mod sourcemap;
@@ -38,6 +39,7 @@ pub use crate::reload::ReloadReport;
 /// Q1: the module loader (providers; `SourceProvider` with its `source` feature).
 pub use svelters_modules as modules;
 pub use hooks::ModuleHooks;
+pub use platform::{ClipboardBackend, ClipboardKind, MimeData, Platform, ShellBackend};
 pub use svelters_modules::{BundleProvider, ModuleCode, ModuleProvider};
 
 /// The provider of a built bundle; a missing entry is a load error.
@@ -265,6 +267,12 @@ impl<'a> Host<'a> {
     /// LD1: sets the extra schemes, native modules and `svelters:app/*` visibility that apply to the
     /// next load (`load_from`, `load_entry_from`, `load_bundle`, `load_entry`). The default serves
     /// this binary's exports and every `svelters:app/*` module.
+    /// DX2: the clipboard and shell this host's `svelters:clipboard` and `svelters:shell` use
+    /// (`HostConfig::platform`), for host-side callers: EV3's paste command, a Rust panel's copy.
+    pub fn platform(&self) -> &platform::Platform {
+        &self.core.cfg.platform
+    }
+
     pub fn set_module_hooks(&self, hooks: ModuleHooks) {
         *self.core.app_gate.borrow_mut() = Some(hooks.app_gate());
         *self.module_hooks.borrow_mut() = hooks;

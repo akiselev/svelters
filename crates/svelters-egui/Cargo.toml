@@ -9,7 +9,7 @@ description = "The egui backend (G1): a retained scene arena laid out by taffy a
 [features]
 default = ["eframe", "kittest", "source"]
 # The windowed runner (`Backend::run`): eframe with the glow renderer on X11/Wayland.
-eframe = ["dep:eframe"]
+eframe = ["dep:eframe", "dep:arboard"]
 # The headless test runner (`harness`): egui_kittest without a renderer, so no GPU and no display.
 kittest = ["dep:egui_kittest"]
 # Q1: apps loaded from source (`svelters-egui-run --entry`), compiled live by svelters-compiler.
@@ -31,6 +31,9 @@ unicode-general-category = "1.1"
 egui = { version = "=0.37.0", default-features = false, features = ["default_fonts"] }
 eframe = { version = "=0.37.0", optional = true, default-features = false, features = ["glow", "default_fonts", "x11", "wayland", "accesskit"] }
 egui_kittest = { version = "=0.37.0", optional = true }
+# DX2: the system clipboard (`platform::SystemClipboard`), the library egui-winit uses; its features
+# come from egui-winit's.
+arboard = { version = "3.6", optional = true, default-features = false }
 taffy = { version = "=0.15.0", default-features = false, features = ["std", "flexbox", "grid", "calc", "block_layout", "content_size"] }
 
 [dev-dependencies]
