@@ -1,0 +1,50 @@
+{
+  "set": "icons-proto",
+  "licence": "CC-BY-4.0",
+  "icons": {
+    "mcad.extrude": {
+      "sizes": [
+        16,
+        24
+      ],
+      "approved": false
+    },
+    "mcad.section": {
+      "sizes": [
+        16
+      ],
+      "approved": false
+    },
+    "ecad.drc+check": {
+      "sizes": [
+        16
+      ],
+      "codicon": "checklist",
+      "composed": {
+        "base": "ecad.drc",
+        "badge": "check"
+      },
+      "approved": false
+    },
+    "sim.solve": {
+      "sizes": [
+        16,
+        24
+      ],
+      "codicon": "run-all",
+      "composed": {
+        "base": "sim.mesh",
+        "badge": "run",
+        "base_tone": true
+      },
+      "approved": false
+    },
+    "sim.result.contour": {
+      "sizes": [
+        16,
+        24
+      ],
+      "approved": false
+    }
+  }
+}

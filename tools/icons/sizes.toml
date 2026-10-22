@@ -1,0 +1,57 @@
+# Per-size rules for tools/icons/icons.py (lint, build, sheet). One table per optical size; each size is its
+# own master, drawn on a `px`-square viewBox, with its own stroke weights and detail level.
+#
+# PLACEHOLDERS (IC1, 2026-10-22). The real values come from plans/research/ICON-STYLE.md (lane IC0). Only 16
+# and 24 match ICONS.md §3 today (1px / 1.5px on half-pixel centres); 12, 14, 20 and 32 are guesses that keep
+# the tool exercised. A set may override this file with its own `sizes.toml`.
+#
+# Keys:
+#   required  every icon must have this master (other sizes are optional, or required per icon through
+#             `sizes = [..]` in icons.toml)
+#   strokes   the allowed stroke widths and where their centres lie: "half" = on .5, "whole" = on integers
+#             (axis-aligned segments and circle/ellipse extremes are checked; diagonals must be 45 deg or 2:1)
+#   hatch     an extra width allowed only inside a clip-path (section and fixed-support hatching)
+#   min_gap   the smallest clear space, in px, between two parallel axis-aligned strokes that run side by side
+#             for more than 1px
+#   dash      the one allowed stroke-dasharray (centre lines; butt caps)
+#   badge     the badge box in the bottom-right corner (badge x badge px)
+
+[size.12]
+strokes = [{ width = 1, centre = "half", use = "outline" }, { width = 2, centre = "whole", use = "copper" }]
+min_gap = 1
+dash = [3, 1, 1, 1]
+badge = 6
+
+[size.14]
+strokes = [{ width = 1, centre = "half", use = "outline" }, { width = 2, centre = "whole", use = "copper" }]
+min_gap = 1
+dash = [3, 1, 1, 1]
+badge = 7
+
+[size.16]
+required = true
+strokes = [{ width = 1, centre = "half", use = "outline" }, { width = 2, centre = "whole", use = "copper" }]
+min_gap = 1
+dash = [4, 1, 1, 1]
+badge = 8
+
+[size.20]
+strokes = [{ width = 1.5, centre = "half", use = "outline" }, { width = 2, centre = "whole", use = "copper" }]
+hatch = { width = 1, centre = "half" }
+min_gap = 1
+dash = [5, 1.5, 1.5, 1.5]
+badge = 10
+
+[size.24]
+strokes = [{ width = 1.5, centre = "half", use = "outline" }, { width = 3, centre = "half", use = "copper" }]
+hatch = { width = 1, centre = "half" }
+min_gap = 1
+dash = [6, 1.5, 1.5, 1.5]
+badge = 12
+
+[size.32]
+strokes = [{ width = 2, centre = "whole", use = "outline" }, { width = 4, centre = "whole", use = "copper" }]
+hatch = { width = 1, centre = "half" }
+min_gap = 2
+dash = [8, 2, 2, 2]
+badge = 16
