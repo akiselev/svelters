@@ -9,6 +9,11 @@
 //! it is new, presented or resized; otherwise only the layout boundaries whose content changed, each
 //! at its last size ([`run_root`]). Placing rects walks children by index (no per-layout clones).
 //!
+//! WG1: `grid` is a taffy CSS grid ([`parse_grid_template`] reads its columns); `collapsing-header`
+//! is a flexbox whose top padding is its measured header and whose children get the hidden layout
+//! while it is closed; `scroll-area` is a flexbox with `overflow: scroll` on its axes (content
+//! overflows it, the walk scrolls it).
+//!
 //! Writer lanes: SCENE (the adapter), WIDGETS (per-kind measure), STYLE (computed style).
 
 pub use crate::scene::dirty::invalidate;
@@ -17,10 +22,144 @@ use crate::scene::node::Payload;
 use crate::scene::{Common, Dirty, NodeFlags, NodeId as SceneId, RootIx, Scene, Visual, W};
 use egui::{Rect, Vec2, pos2, vec2};
 use taffy::prelude::{AvailableSpace, Dimension, Display, FlexDirection, FlexWrap, Layout, LengthPercentage, LengthPercentageAuto, Size, Style};
+use taffy::style_helpers::{auto, fit_content, fr, length, max_content, min_content, minmax, percent, repeat};
 use taffy::{
-    AlignContent, AlignItems, CacheTree, LayoutInput, LayoutOutput, LayoutPartialTree, Line, NodeId, RequestedAxis, RunMode, SizingMode, compute_cached_layout, compute_flexbox_layout,
-    compute_hidden_layout, compute_leaf_layout, compute_root_layout, round_layout,
+    AlignContent, AlignItems, CacheTree, GridTemplateComponent, LayoutInput, LayoutOutput, LayoutPartialTree, Line, MaxTrackSizingFunction, MinTrackSizingFunction, NodeId, Overflow,
+    RequestedAxis, RunMode, SizingMode, TrackSizingFunction, compute_cached_layout, compute_flexbox_layout, compute_grid_layout, compute_hidden_layout, compute_leaf_layout,
+    compute_root_layout, round_layout,
 };
+
+/// egui's default `Spacing::indent` and `interact_size.y`: a collapsing header's body offsets
+/// before the first layout measures the real ones (`Tree::collapsing`).
+const DEFAULT_INDENT: f32 = 18.0;
+const DEFAULT_HEADER: f32 = 18.0;
+
+/// Parses a `grid-template-columns` value (the CSS subset in the `grid` kind's doc). Empty: no
+/// explicit columns (one implicit `auto` column).
+pub fn parse_grid_template(src: &str) -> Result<Vec<GridTemplateComponent<String>>, String> {
+    let mut out = Vec::new();
+    for item in split_top(src, |c| c.is_ascii_whitespace())? {
+        if let Some(inner) = call(&item, "repeat") {
+            let parts = split_top(inner, |c| c == ',')?;
+            let [count, tracks] = parts.as_slice() else { return Err(format!("`{item}`: repeat takes a count and tracks")) };
+            let n: u16 = count.trim().parse().ok().filter(|n| *n > 0).ok_or_else(|| format!("`{item}`: the count must be a positive integer"))?;
+            let tracks = split_top(tracks, |c| c.is_ascii_whitespace())?.iter().map(|t| track(t)).collect::<Result<Vec<_>, _>>()?;
+            if tracks.is_empty() {
+                return Err(format!("`{item}`: no tracks"));
+            }
+            out.push(repeat(n, tracks));
+        } else {
+            out.push(GridTemplateComponent::Single(track(&item)?));
+        }
+    }
+    Ok(out)
+}
+
+/// `name(args)` → `args`.
+fn call<'a>(s: &'a str, name: &str) -> Option<&'a str> {
+    s.strip_prefix(name)?.trim_start().strip_prefix('(')?.strip_suffix(')')
+}
+
+/// Splits at top-level separators (outside parentheses), dropping empty pieces.
+fn split_top(s: &str, sep: impl Fn(char) -> bool) -> Result<Vec<String>, String> {
+    let (mut out, mut cur, mut depth) = (Vec::new(), String::new(), 0i32);
+    for c in s.chars() {
+        match c {
+            '(' => depth += 1,
+            ')' => depth -= 1,
+            _ => {}
+        }
+        if depth < 0 {
+            return Err(format!("`{s}`: unbalanced parentheses"));
+        }
+        if depth == 0 && sep(c) {
+            if !cur.trim().is_empty() {
+                out.push(cur.trim().to_string());
+            }
+            cur.clear();
+        } else {
+            cur.push(c);
+        }
+    }
+    if depth != 0 {
+        return Err(format!("`{s}`: unbalanced parentheses"));
+    }
+    if !cur.trim().is_empty() {
+        out.push(cur.trim().to_string());
+    }
+    Ok(out)
+}
+
+enum Breadth {
+    Points(f32),
+    Percent(f32),
+    Fr(f32),
+}
+
+fn breadth(t: &str) -> Option<Breadth> {
+    let num = |s: &str| s.trim().parse::<f32>().ok().filter(|v| v.is_finite() && *v >= 0.0);
+    if let Some(v) = t.strip_suffix("fr") {
+        num(v).map(Breadth::Fr)
+    } else if let Some(v) = t.strip_suffix('%') {
+        num(v).map(Breadth::Percent)
+    } else {
+        num(t.strip_suffix("px").unwrap_or(t)).map(Breadth::Points)
+    }
+}
+
+fn track(t: &str) -> Result<TrackSizingFunction, String> {
+    let bad = || format!("`{t}` is not a grid track (auto, min-content, max-content, <n>fr, <n>px, <n>%, minmax(), fit-content())");
+    Ok(match t {
+        "auto" => auto(),
+        "min-content" => min_content(),
+        "max-content" => max_content(),
+        _ => {
+            if let Some(inner) = call(t, "minmax") {
+                let parts = split_top(inner, |c| c == ',')?;
+                let [a, b] = parts.as_slice() else { return Err(bad()) };
+                minmax(min_track(a).ok_or_else(bad)?, max_track(b).ok_or_else(bad)?)
+            } else if let Some(inner) = call(t, "fit-content") {
+                match breadth(inner.trim()).ok_or_else(bad)? {
+                    Breadth::Points(v) => fit_content(LengthPercentage::length(v)),
+                    Breadth::Percent(v) => fit_content(LengthPercentage::percent(v / 100.0)),
+                    Breadth::Fr(_) => return Err(bad()),
+                }
+            } else {
+                match breadth(t).ok_or_else(bad)? {
+                    Breadth::Points(v) => length(v),
+                    Breadth::Percent(v) => percent(v / 100.0),
+                    Breadth::Fr(v) => fr(v),
+                }
+            }
+        }
+    })
+}
+
+fn min_track(t: &str) -> Option<MinTrackSizingFunction> {
+    Some(match t.trim() {
+        "auto" => auto(),
+        "min-content" => min_content(),
+        "max-content" => max_content(),
+        t => match breadth(t)? {
+            Breadth::Points(v) => length(v),
+            Breadth::Percent(v) => percent(v / 100.0),
+            Breadth::Fr(_) => return None,
+        },
+    })
+}
+
+fn max_track(t: &str) -> Option<MaxTrackSizingFunction> {
+    Some(match t.trim() {
+        "auto" => auto(),
+        "min-content" => min_content(),
+        "max-content" => max_content(),
+        t => match breadth(t)? {
+            Breadth::Points(v) => length(v),
+            Breadth::Percent(v) => percent(v / 100.0),
+            Breadth::Fr(v) => fr(v),
+        },
+    })
+}
 
 /// A node's taffy style from its props.
 pub fn style_of(c: &Common, w: &W, vis: &Visual) -> Style {
@@ -30,6 +169,8 @@ pub fn style_of(c: &Common, w: &W, vis: &Visual) -> Style {
     let mut s = Style {
         display: if !c.visible {
             Display::None
+        } else if matches!(w, W::Grid { .. }) {
+            Display::Grid
         } else {
             Display::Flex
         },
@@ -99,6 +240,34 @@ pub fn style_of(c: &Common, w: &W, vis: &Visual) -> Style {
             _ => AlignContent::START,
         };
     }
+    match w {
+        W::Grid { columns, justify_items } => {
+            s.grid_template_columns = parse_grid_template(columns).unwrap_or_default();
+            s.justify_items = match *justify_items {
+                "start" => AlignItems::START,
+                "end" => AlignItems::END,
+                "center" => AlignItems::CENTER,
+                _ => AlignItems::STRETCH,
+            };
+        }
+        W::CollapsingHeader { .. } => {
+            // the header row above the body, the indent left of it (`Tree::collapsing` measures them)
+            s.padding.top = LengthPercentage::length(DEFAULT_HEADER + c.padding as f32);
+            s.padding.left = LengthPercentage::length(DEFAULT_INDENT + c.padding as f32);
+        }
+        W::ScrollArea { direction, .. } => {
+            let (x, y) = match *direction {
+                "horizontal" => (true, false),
+                "both" => (true, true),
+                _ => (false, true),
+            };
+            let o = |on: bool| if on { Overflow::Scroll } else { Overflow::Visible };
+            s.overflow = taffy::Point { x: o(x), y: o(y) };
+            // egui's scroll bars float over the content (`ScrollStyle::floating`)
+            s.scrollbar_width = 0.0;
+        }
+        _ => {}
+    }
     s
 }
 
@@ -118,7 +287,15 @@ impl Metrics {
     }
 
     fn text_size(&self, text: &str, wrap: Option<f32>) -> Vec2 {
-        let font = self.font();
+        self.text_size_in(text, self.font(), wrap)
+    }
+
+    /// The body font at `weight` (`crate::fonts`).
+    fn weighted(&self, weight: i64) -> egui::FontId {
+        crate::fonts::text_font(&self.ctx, &self.style, egui::TextStyle::Body, weight)
+    }
+
+    fn text_size_in(&self, text: &str, font: egui::FontId, wrap: Option<f32>) -> Vec2 {
         self.ctx.fonts_mut(|f| match wrap {
             Some(w) => f.layout(text.to_string(), font, egui::Color32::WHITE, w.max(0.0)).size(),
             None => f.layout_no_wrap(text.to_string(), font, egui::Color32::WHITE).size(),
@@ -135,9 +312,9 @@ impl Metrics {
         let sp = &self.style.spacing;
         let interact = sp.interact_size;
         match w {
-            W::Label { text, .. } => self.text_size(text, None),
-            W::Button { text, small, .. } => {
-                let t = self.text_size(text, None);
+            W::Label { text, weight, .. } => self.text_size_in(text, self.weighted(*weight), None),
+            W::Button { text, small, weight, .. } => {
+                let t = self.text_size_in(text, self.weighted(*weight), None);
                 let pad = if *small { vec2(sp.button_padding.x, 0.0) } else { sp.button_padding };
                 let h = t.y + 2.0 * pad.y;
                 vec2(t.x + 2.0 * pad.x, if *small { h } else { h.max(interact.y) })
@@ -162,15 +339,39 @@ impl Metrics {
                 }
                 vec2(wdt, interact.y)
             }
-            W::Box | W::Window { .. } => Vec2::ZERO,
+            W::Box | W::Window { .. } | W::Grid { .. } | W::ScrollArea { .. } => Vec2::ZERO,
             W::Ext(x) => x.measure(self, crate::provider::AvailableSpace::MaxContent),
+            // ---- WG1 ----
+            W::ToggleButton { text, weight, .. } => {
+                let t = self.text_size_in(text, self.weighted(*weight), None);
+                vec2(t.x + 2.0 * sp.button_padding.x, (t.y + 2.0 * sp.button_padding.y).max(interact.y))
+            }
+            W::ComboBox { options, hint, .. } => {
+                // the widest option (or the hint), the drop-down icon, the button padding
+                let widest = options.iter().chain(std::iter::once(hint)).map(|o| self.text_size(o, None).x).fold(0.0, f32::max);
+                let w = widest + sp.icon_spacing + sp.icon_width + 2.0 * sp.button_padding.x;
+                vec2(w.max(sp.combo_width), (self.row_height() + 2.0 * sp.button_padding.y).max(interact.y))
+            }
+            // egui's `Separator::default()` spacing
+            W::Separator { vertical: false } => vec2(0.0, 6.0),
+            W::Separator { vertical: true } => vec2(6.0, 0.0),
+            W::Icon { name, glyph, family, size, weight, frame, .. } => {
+                let font = crate::fonts::icon_font(&self.ctx, &self.style, family, *weight, *size);
+                let t = self.text_size_in(&crate::fonts::icon_text(family, name, glyph), font, None);
+                if *frame { vec2(t.x + 2.0 * sp.button_padding.x, (t.y + 2.0 * sp.button_padding.y).max(interact.y)) } else { t }
+            }
+            // the header row (`CollapsingHeader::begin`): indent, caption, padding
+            W::CollapsingHeader { text, .. } => {
+                let t = self.text_size(text, None);
+                vec2(sp.indent + t.x + sp.button_padding.x, t.y + 2.0 * sp.button_padding.y).max(interact)
+            }
         }
     }
 
     /// Height-for-width of a leaf at `width` (labels that wrap).
     fn wrapped(&self, w: &W, width: f32) -> Option<Vec2> {
         match w {
-            W::Label { text, wrap: "wrap", .. } => Some(self.text_size(text, Some(width))),
+            W::Label { text, wrap: "wrap", weight, .. } => Some(self.text_size_in(text, self.weighted(*weight), Some(width))),
             W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::HEIGHT_FOR_WIDTH) => {
                 Some(x.measure(self, crate::provider::AvailableSpace::Definite(width)))
             }
@@ -249,8 +450,11 @@ impl LayoutPartialTree for Tree<'_> {
         }
         compute_cached_layout(self, id, inputs, |tree, id, inputs| {
             let i = ix(id);
-            if tree.s.w(i).is_container() {
-                return compute_flexbox_layout(tree, id, inputs);
+            match tree.s.w(i) {
+                W::Grid { .. } => return compute_grid_layout(tree, id, inputs),
+                &W::CollapsingHeader { open, .. } => return tree.collapsing(id, open, inputs),
+                w if w.is_container() => return compute_flexbox_layout(tree, id, inputs),
+                _ => {}
             }
             tree.leaf_layouts += 1;
             let m = tree.m;
@@ -286,6 +490,62 @@ impl LayoutPartialTree for Tree<'_> {
             tree.fonts += fonts;
             out
         })
+    }
+}
+
+impl Tree<'_> {
+    /// WG1: a collapsing header. Its top padding is the measured header row and its left padding
+    /// the indent (both plus its own `padding`); open, it lays out its children as a flex box;
+    /// closed, it is a leaf of the header's size and its children get the hidden layout.
+    fn collapsing(&mut self, id: NodeId, open: bool, inputs: LayoutInput) -> LayoutOutput {
+        let i = ix(id);
+        let m = self.m;
+        let head = match self.s.layout[i].intrinsic {
+            Some(h) => h,
+            None => {
+                self.fonts += 1;
+                let h = m.intrinsic(self.s.w(i));
+                self.s.layout[i].intrinsic = Some(h);
+                h
+            }
+        };
+        let pad = self.s.common(i).padding as f32;
+        let indent = m.style.spacing.indent;
+        let st = &mut self.s.layout[i].style;
+        st.padding.top = LengthPercentage::length(head.y + pad);
+        st.padding.left = LengthPercentage::length(indent + pad);
+        if open {
+            return compute_flexbox_layout(self, id, inputs);
+        }
+        self.leaf_layouts += 1;
+        let out = compute_leaf_layout(inputs, &self.s.layout[i].style, |_, _| 0.0, |known, _| Size {
+            width: known.width.unwrap_or((head.x - indent).max(0.0).ceil()),
+            height: known.height.unwrap_or(0.0),
+        });
+        if inputs.run_mode == RunMode::PerformLayout {
+            for k in 0..self.s.children[i].len() {
+                let c = tid(self.s.children[i][k]);
+                compute_hidden_layout(self, c);
+            }
+        }
+        out
+    }
+}
+
+impl taffy::LayoutGridContainer for Tree<'_> {
+    type GridContainerStyle<'b>
+        = &'b Style
+    where
+        Self: 'b;
+    type GridItemStyle<'b>
+        = &'b Style
+    where
+        Self: 'b;
+    fn get_grid_container_style(&self, id: NodeId) -> Self::GridContainerStyle<'_> {
+        &self.s.layout[ix(id)].style
+    }
+    fn get_grid_child_style(&self, id: NodeId) -> Self::GridItemStyle<'_> {
+        &self.s.layout[ix(id)].style
     }
 }
 
