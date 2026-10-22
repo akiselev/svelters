@@ -31,7 +31,10 @@ A check box with a caption.
 | Prop | Type | Default | `bind:` | Description |
 |---|---|---|---|---|
 | `checked` | `boolean` | `false` | **yes**, on `changed` | Checked state; clicking toggles it. |
+| `icon` | `string` | `""` | no | An icon before the caption (a key, or `family:name`). |
+| `indeterminate` | `boolean` | `false` | **yes**, on `changed` | WIDGET-PARITY §2.2: partially checked (`bind:indeterminate`), shown as a dash. The app writes it; a click clears it and checks the box (Qt, GTK). |
 | `text` | `string` | `""` | no | The caption. |
+| `tristate` | `boolean` | `false` | no | The user cycles unchecked → checked → indeterminate (Qt's tristate). |
 
 Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessible-name`, `align-self`, `anchor`, `autofocus`, `bottom`, `drag-data`, `drag-type`, `drop-types`, `enabled`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `invalid`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `tooltip`, `top`, `visible`, `width`.
 <!-- END GENERATED -->

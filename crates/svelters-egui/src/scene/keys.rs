@@ -81,12 +81,31 @@ macro_rules! common {
     )*};
 }
 
+/// OW1a2: whether an own widget replacing `tag` stands for `W::<variant>` (`toggle-button` is
+/// `ToggleButton`): its typed keys read the own widget.
+fn replaces_variant(tag: Option<&str>, variant: &str) -> bool {
+    let Some(tag) = tag else { return false };
+    let mut camel = String::with_capacity(tag.len());
+    for part in tag.split('-') {
+        let mut c = part.chars();
+        if let Some(f) = c.next() {
+            camel.extend(f.to_uppercase());
+            camel.push_str(c.as_str());
+        }
+    }
+    camel == variant
+}
+
 macro_rules! field {
     ($($N:ident: $T:ty = $name:literal, $V:ident . $f:ident;)*) => {$(
         pub static $N: PropKey<$T> = {
             fn g<'a>(_: &'a Common, w: &'a W) -> Option<&'a $T> {
                 match w {
                     W::$V { $f, .. } => Some($f),
+                    // OW1a2: an own widget's `text`, through its text mirror
+                    W::Ext(x) if $name == "text" && replaces_variant(x.entry().replaces, stringify!($V)) => {
+                        (x.text_string() as &dyn std::any::Any).downcast_ref::<$T>()
+                    }
                     _ => None,
                 }
             }

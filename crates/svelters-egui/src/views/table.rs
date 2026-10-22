@@ -412,7 +412,7 @@ impl TableDelegate for Delegate<'_> {
         self.visible = Some(info.visible_rows.clone());
     }
 
-    #[allow(clippy::disallowed_types)] // OW: wrapper until OW1a
+    #[allow(clippy::disallowed_types)] // OW: wrapper until OW1a3
     fn header_cell_ui(&mut self, ui: &mut Ui, cell: &HeaderCellInfo) {
         let Some(c) = self.cols.get(cell.col_range.start) else {
             return;
@@ -489,7 +489,7 @@ impl TableDelegate for Delegate<'_> {
         }
     }
 
-    #[allow(clippy::disallowed_types)] // OW: wrapper until OW1a
+    #[allow(clippy::disallowed_types)] // OW: wrapper until OW1a3
     fn cell_ui(&mut self, ui: &mut Ui, cell: &CellInfo) {
         let full = ui.max_rect();
         self.cells.push((cell.row_nr, cell.col_nr, full, ui.clip_rect()));

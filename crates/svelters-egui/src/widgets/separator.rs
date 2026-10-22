@@ -4,7 +4,7 @@
 //! `border-color` and `border-width` (CSS), else the UA's; its margin is the node's padding.
 
 use crate::paint::{self, Ua, UaRule, UaValue::*};
-use crate::provider::{A11yCx, AvailableSpace, MeasureCx, Widget, WidgetCx};
+use crate::provider::{AvailableSpace, MeasureCx, Widget, WidgetCx};
 
 pub const UA: Ua = Ua(&[UaRule::base(&[("border-color", Token("border")), ("border-width", Token("stroke")), ("padding", Px(3.0))])]);
 
@@ -50,8 +50,6 @@ impl Widget for Separator {
         resp
     }
 
-    fn a11y(&self, _cx: &A11yCx<'_>, node: &mut egui::accesskit::Node) {
-        node.set_role(egui::accesskit::Role::Splitter);
-        node.set_orientation(if self.vertical() { egui::accesskit::Orientation::Vertical } else { egui::accesskit::Orientation::Horizontal });
-    }
+    // no AccessKit role: a separator is decoration, as egui's was (an unnamed `Splitter` would be
+    // announced as a resize handle)
 }
