@@ -83,6 +83,10 @@ digits is read as the decimal point (`1.5` is 1.5 in de-DE, `1.500` is 1500).
   through the alias table that Vite and the Rust source loader share): `locale`, a Svelte store
   (`$locale` re-renders on `Host::set_locale`), and `getLocale()`. Outside the host it holds the
   environment's locale.
+- Security (decided, coordinator, 2026-10-22): no policy hook in IN1. Formatting is pure, and the
+  locale is read-only from JS (`__svelters_intl` is frozen and non-writable, with no setter; the
+  change notifier is held by Rust) and set only by the host (`Host::set_locale`), so a policy hook
+  can be added later.
 
 ### egui: `svelters-egui`, feature `intl` (on by default)
 
@@ -208,3 +212,17 @@ were not run locally.
   packages/native-runtime/package.json).
 - **Not run locally**: the full nextest, the gates, conformance, pnpm tests of native-runtime,
   Linux and Windows builds.
+
+### Continuation (2026-10-22)
+
+- `__svelters_intl` was writable from JS through its `_changed(tag)` method. That method is gone:
+  the shim returns its notifier to Rust (`QjsEngine::intl_changed`), and the API object is frozen
+  and defined non-writable and non-configurable. `tests/js/intl.js` checks that the setters throw.
+- origin/master a52d437c (LISTS, SV48, DX2, H3) is merged. The conflicts in `quickjs.rs` (mod
+  list) and `packages/native-runtime/package.json` (exports, aliases) were resolved by keeping
+  both sides.
+- Passed locally after the merge: `cargo check -p svelters-host -p svelters-egui -p svelters-intl
+  --all-targets`, and nextest on svelters-egui `intl` (3 tests, including
+  `drag_value_shows_and_reads_the_locale` and the `2,50` slider), svelters-host `intl`
+  (`intl_in_quickjs`) and `modules a_locale_switch_re_renders_components_reading_locale`.
+- Still open from the list above: the size delta for §3 and a svelte-check of `svelters:intl`.
