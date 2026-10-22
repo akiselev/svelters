@@ -129,7 +129,7 @@ struct Claims {
 }
 
 fn claims_id(ctx: &egui::Context) -> Id {
-    Id::new("svelters-dnd-claims").with(ctx.viewport_id())
+    Id::unique("svelters-dnd-claims").with(ctx.viewport_id())
 }
 
 /// The claims rolled over to this pass.
