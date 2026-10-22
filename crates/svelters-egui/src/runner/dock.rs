@@ -135,4 +135,10 @@ impl SvelteDock {
         })
         .unwrap_or(false)
     }
+
+    /// The end of a viewport's ui, after berth drew its panes (root viewport and deferred ones):
+    /// the per-viewport scene passes (ARCH-SCENE R21).
+    pub fn viewport_done(ui: &mut egui::Ui) {
+        with_current(|e| e.show_viewport_passes(ui));
+    }
 }

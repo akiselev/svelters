@@ -1004,6 +1004,15 @@ impl Embed {
         self.inner.backend.set_logic_vp(egui::ViewportId::ROOT);
     }
 
+    /// ARCH-SCENE R21: the host calls this at the end of each viewport's ui (the root viewport's
+    /// `App::ui` and every deferred viewport's closure), after berth drew its panes, so that
+    /// `PassScope::Viewport`/`AllViewports` scene passes (overlays over every pane of the window)
+    /// run once per viewport. EM2 lands the call site; the passes themselves are SG4's
+    /// (`provider/pass.rs`): until then it only publishes the busy probe.
+    pub fn show_viewport_passes(&self, _ui: &mut egui::Ui) {
+        self.publish();
+    }
+
     /// The desktop runners' walk: presented `<window>`s (the root one in `ui`, the others as
     /// immediate viewports), for bundles loaded with [`Embed::load_app`].
     pub fn show_windows(&self, ui: &mut egui::Ui) {

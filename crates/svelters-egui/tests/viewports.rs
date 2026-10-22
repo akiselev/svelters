@@ -52,6 +52,7 @@ fn draw_panes(ui: &mut egui::Ui, layout: &Shared) {
             }
         });
     }
+    SvelteDock::viewport_done(ui);
     let f = ui.memory(|m| m.focused());
     layout.lock().unwrap().focused.insert(v, f);
 }
