@@ -182,6 +182,7 @@ pub fn queued(ctx: &egui::Context) -> usize {
     ctx.data(|d| d.get_temp::<Vec<Queued>>(queue_id()).map_or(0, |q| q.len()))
 }
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW1a, OW7
 /// Draws toast-host `i`: takes the Rust queue, ages the toasts, draws them in the corner area,
 /// then emits `closed`/`clicked`.
 pub(crate) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) {

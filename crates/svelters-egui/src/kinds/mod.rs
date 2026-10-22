@@ -20,6 +20,43 @@
 //! `#[svelters::widget]` (RA1). Writer lanes: WIDGETS (tables, one file per new family), RUSTAPI
 //! (`registry.rs`).
 
+/// EV1: the DOM-style input events every widget and window has, dispatched along the scene with
+/// capture, target and bubble phases (`crate::events`). Sync signals: each listener gets the event
+/// object first. Every one starts with `target` (the node the event is for, a handle number) and
+/// `phase` (1 capture, 2 target, 3 bubble; +8 when a listener before prevented the default).
+/// `$extra`: the kind's own signals, listed first.
+macro_rules! dom_signals {
+    ($($extra:expr),* $(,)?) => {
+        &[
+            $($extra,)*
+            $crate::kinds::SignalDef { name: "pointerdown", args: $crate::kinds::POINTER_ARGS, sync: true, doc: "A pointer button went down over this node or a descendant (EV1: capture, target, bubble). `preventDefault` keeps the press from egui (no click, drag or focus)." },
+            $crate::kinds::SignalDef { name: "pointerup", args: $crate::kinds::POINTER_ARGS, sync: true, doc: "A pointer button went up over this node or a descendant (EV1). `preventDefault` cancels the click." },
+            $crate::kinds::SignalDef { name: "click", args: $crate::kinds::POINTER_ARGS, sync: true, doc: "The primary button was pressed and released; targets the innermost node that holds both points (EV1). `preventDefault` keeps the click from the widget." },
+            $crate::kinds::SignalDef { name: "dblclick", args: $crate::kinds::POINTER_ARGS, sync: true, doc: "A second click on the same node in a short time, after its `click` (EV1)." },
+            $crate::kinds::SignalDef { name: "contextmenu", args: $crate::kinds::POINTER_ARGS, sync: true, doc: "The secondary button went down (EV1), after `pointerdown`. `preventDefault` keeps the press from egui (no context menu)." },
+            $crate::kinds::SignalDef { name: "wheel", args: $crate::kinds::WHEEL_ARGS, sync: true, doc: "The mouse wheel or a trackpad scrolled over this node (EV1); `dx`, `dy` in points. `preventDefault` keeps it from scrolling." },
+            $crate::kinds::SignalDef { name: "keydown", args: $crate::kinds::KEY_ARGS, sync: true, doc: "A key went down while this node or a descendant had focus (EV1); `key` is egui's key name. `preventDefault` keeps the key (and the text it types) from the focused widget." },
+            $crate::kinds::SignalDef { name: "keyup", args: $crate::kinds::KEY_ARGS, sync: true, doc: "A key went up while this node or a descendant had focus (EV1)." },
+            $crate::kinds::SignalDef { name: "focusin", args: $crate::kinds::FOCUS_ARGS, sync: true, doc: "This node or a descendant took keyboard focus (EV1; after the frame that moved it). `related` is the node that lost it, 0 for none." },
+            $crate::kinds::SignalDef { name: "focusout", args: $crate::kinds::FOCUS_ARGS, sync: true, doc: "This node or a descendant lost keyboard focus (EV1). `related` is the node that took it, 0 for none." },
+        ]
+    };
+}
+
+/// EV1: the arguments of the DOM-style events (`dom_signals!`).
+pub(crate) const POINTER_ARGS: &[(&str, Ty)] = &[("target", Ty::I64), ("phase", Ty::I64), ("x", Ty::F64), ("y", Ty::F64), ("button", Ty::I64), ("modifiers", Ty::I64)];
+pub(crate) const WHEEL_ARGS: &[(&str, Ty)] = &[("target", Ty::I64), ("phase", Ty::I64), ("x", Ty::F64), ("y", Ty::F64), ("dx", Ty::F64), ("dy", Ty::F64), ("modifiers", Ty::I64)];
+pub(crate) const KEY_ARGS: &[(&str, Ty)] = &[("target", Ty::I64), ("phase", Ty::I64), ("key", Ty::Str), ("repeat", Ty::Bool), ("modifiers", Ty::I64)];
+pub(crate) const FOCUS_ARGS: &[(&str, Ty)] = &[("target", Ty::I64), ("phase", Ty::I64), ("related", Ty::I64)];
+
+/// EV1: the names of the events `dom_signals!` declares (they propagate along the scene).
+pub const DOM_EVENTS: &[&str] = &["pointerdown", "pointerup", "click", "dblclick", "contextmenu", "wheel", "keydown", "keyup", "focusin", "focusout"];
+
+/// EV1: whether signal `name` is one of the propagating DOM-style events.
+pub fn is_dom_event(name: &str) -> bool {
+    DOM_EVENTS.contains(&name)
+}
+
 mod builtin;
 mod containers;
 /// DOC1: category, states, accessibility and paint of each kind, for the docs.
@@ -300,6 +337,7 @@ pub enum Native {
     Widget,
 }
 
+#[derive(Clone)]
 pub struct PropDef {
     pub name: &'static str,
     pub key: P,
@@ -312,6 +350,7 @@ pub struct PropDef {
     pub doc: &'static str,
 }
 
+#[derive(Clone)]
 pub struct SignalDef {
     pub name: &'static str,
     pub args: &'static [(&'static str, Ty)],
@@ -325,6 +364,7 @@ pub struct MethodDef {
     pub doc: &'static str,
 }
 
+#[derive(Clone)]
 pub struct KindDef {
     /// The kind's id in the spec (`kinds` keys) and in `resolve(SVL_KIND)`.
     pub id: &'static str,

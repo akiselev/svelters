@@ -147,6 +147,12 @@ impl TestApp {
         Ok((TestApp { harness, embed, backend }, slot))
     }
 
+    /// Q4b: an app loaded by `load`, which gets the [`Embed`] before anything is loaded (to set a
+    /// bytecode cache, load a `.svb` through [`Embed::load_app_from`], time the load).
+    pub fn with_loader(cfg: HostConfig, load: impl FnOnce(&Embed) -> Result<(), svelters_host::JsError>) -> Result<TestApp, String> {
+        TestApp::loading(cfg, None, load)
+    }
+
     fn loading(cfg: HostConfig, step_dt: Option<f32>, load: impl FnOnce(&Embed) -> Result<(), svelters_host::JsError>) -> Result<TestApp, String> {
         // The harness's context does not exist yet: `logic` binds it at the first frame.
         let embed = Embed::new(&egui::Context::default(), EmbedConfig::app(cfg)).map_err(|e| e.to_string())?;

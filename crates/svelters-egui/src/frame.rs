@@ -138,6 +138,7 @@ impl EguiBackend {
                 *slot = Some(ctx.clone());
             }
         }
+        crate::events::install(self, &ctx); // EV1: the input hook (once per context)
         if ctx.current_pass_index() == 0 {
             self.logic_pass(&ctx);
         }
@@ -177,6 +178,7 @@ impl EguiBackend {
     /// before the context it is drawn in exists).
     pub(crate) fn bind_ctx(&self, ctx: &egui::Context) {
         *self.0.shared.ctx.lock().unwrap() = Some(ctx.clone());
+        crate::events::install(self, ctx); // EV1: the input hook (once per context)
     }
 
     fn before_pass(&self, ctx: &egui::Context) {

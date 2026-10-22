@@ -39,6 +39,41 @@ pub fn role_of(n: NodeRef<'_>) -> &'static str {
         W::VirtualList(_) => "list",
         W::Frame { .. } => "group",
         W::ToastHost(_) => "alert",
+        // OW0: svelters' own widgets replace the built-in payloads behind the same tags
+        W::Ext(_) => role_of_tag(n.tag()),
+        _ => "generic",
+    }
+}
+
+/// The role of a built-in tag (an own widget, `crate::widgets` in svelters-egui, is matched by the
+/// tag it replaces).
+fn role_of_tag(tag: &str) -> &'static str {
+    match tag {
+        "window" => "window",
+        "label" => "label",
+        "button" | "toggle-button" | "collapsing-header" => "button",
+        "checkbox" => "checkbox",
+        "text-edit" => "textbox",
+        "slider" | "range-slider" => "slider",
+        "drag-value" => "spinbutton",
+        "radio-button" => "radio",
+        "combo-box" => "combobox",
+        "separator" => "separator",
+        "icon" | "image" => "img",
+        "grid" => "grid",
+        "scroll-area" => "scrollarea",
+        "menu-bar" | "menu" | "menu-button" | "action" => "menu",
+        "hyperlink" => "link",
+        "switch" => "switch",
+        "progress-bar" | "spinner" => "progressbar",
+        "canvas" => "canvas",
+        "table" => "table",
+        "table-column" => "columnheader",
+        "tab-view" => "tablist",
+        "tab" => "tab",
+        "virtual-list" => "list",
+        "frame" => "group",
+        "toast-host" => "alert",
         _ => "generic",
     }
 }

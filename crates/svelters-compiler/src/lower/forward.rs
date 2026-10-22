@@ -201,3 +201,9 @@ impl<'a> Lower<'a, '_, '_> {
         }
     }
 }
+
+/// EV1: `on:name|capture={h}` on an element: a handler and no modifier but `capture`. It lowers to
+/// the capture listener `onnamecapture={h}`; every other modifier stays unsupported.
+pub(super) fn capture_only(d: &Directive) -> bool {
+    d.expression.is_some() && !d.modifiers.is_empty() && d.modifiers.iter().all(|m| m == "capture")
+}

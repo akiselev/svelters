@@ -55,3 +55,35 @@ disallowed-methods = [
   { path = "rfd::FileDialog::save_file", reason = "modal dialog blocks the UI thread; use AsyncFileDialog", allow-invalid = true },
   { path = "rfd::MessageDialog::show", reason = "modal dialog blocks the UI thread; use AsyncMessageDialog", allow-invalid = true },
 ]
+
+# OW0 (ARCH-WIDGETS §3.1, plans/milestones/OW0-widget-foundation.md): svelters draws every widget
+# itself; egui is only the engine. Each egui widget wrapper still in use carries
+# `#[allow(clippy::disallowed_types)] // OW: wrapper until <lane>`; the count of those lines is the
+# migration's burn-down and reaches zero at OW-DONE. This list is svelters-egui's own
+# (crates/svelters-host has no widgets). Denied in the library (lib.rs).
+disallowed-types = [
+  { path = "egui::Button", reason = "OW: svelters draws its own widgets (own `button` (OW0))" },
+  { path = "egui::TextEdit", reason = "OW: svelters draws its own widgets (OW4)" },
+  { path = "egui::Checkbox", reason = "OW: svelters draws its own widgets (OW1a)" },
+  { path = "egui::RadioButton", reason = "OW: svelters draws its own widgets (OW1a)" },
+  { path = "egui::Slider", reason = "OW: svelters draws its own widgets (OW1b)" },
+  { path = "egui::DragValue", reason = "OW: svelters draws its own widgets (OW1b)" },
+  { path = "egui::ComboBox", reason = "OW: svelters draws its own widgets (OW3)" },
+  { path = "egui::ScrollArea", reason = "OW: svelters draws its own widgets (OW2)" },
+  { path = "egui::CollapsingHeader", reason = "OW: svelters draws its own widgets (OW1a)" },
+  { path = "egui::Popup", reason = "OW: svelters draws its own widgets (OW3)" },
+  { path = "egui::Modal", reason = "OW: svelters draws its own widgets (OW7)" },
+  { path = "egui::Window", reason = "OW: svelters draws its own widgets (OW7)" },
+  { path = "egui::ProgressBar", reason = "OW: svelters draws its own widgets (OW1a)" },
+  { path = "egui::Spinner", reason = "OW: svelters draws its own widgets (OW1a)" },
+  { path = "egui::Link", reason = "OW: svelters draws its own widgets (OW1a)" },
+  { path = "egui::Hyperlink", reason = "OW: svelters draws its own widgets (OW1a)" },
+  { path = "egui::Label", reason = "OW: svelters draws its own widgets (OW1a)" },
+  { path = "egui::Separator", reason = "OW: svelters draws its own widgets (OW1a)" },
+  { path = "egui::MenuBar", reason = "OW: svelters draws its own widgets (OW3)" },
+  { path = "egui::containers::menu::MenuButton", reason = "OW: svelters draws its own widgets (OW3)" },
+  { path = "egui::containers::menu::SubMenuButton", reason = "OW: svelters draws its own widgets (OW3)" },
+  { path = "egui::containers::menu::SubMenu", reason = "OW: svelters draws its own widgets (OW3)" },
+  { path = "egui_extras::DatePickerButton", reason = "OW: svelters draws its own widgets (OW6)" },
+  { path = "egui_table::Table", reason = "OW: svelters draws its own widgets (OW5b)" },
+]
