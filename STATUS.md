@@ -47,9 +47,21 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | WP-A AppKit widget parity (9/~56 elements → ~30+, slots, methods, observe facts, galleries) | DONE | 45823def | 30 elements (21 new tags: scroll/split/tab views, pop-up, combo box, segmented control, date picker, color well, image view, stepper, level indicator, search/token fields, path control, switch, text view, visual effect view, menu, menu item, panel), 32 classes ingested; props 662/679, signals 42/42, methods 79/120, slots 13, 38 two-way bindings; ledger 1396 verified + 4 parked; observe 336/691 verified; six-page gallery `fixtures/gallery-appkit` with `examples/counter-mac/tests/gallery.rs` screenshot tests in macos-appkit CI; local 2464/2464 nextest, pnpm test, docs:test; all 5 CI workflows green on b9080210; open: no width/height layout props on AppKit, panels only at root, no NSTableView list, no `bind:` for object-typed values, one unexplained gallery flake (run 39682526997); milestone `plans/milestones/WP-appkit-widgets.md` |
 | MAC2 first local Mac run (Intel, macOS 15.7, Xcode 26.3) | DONE | ed5ff0f4 | x86-64 BOOL (`c`) read as numbers on the reflective types path (BOOL_SELS from the facts); generated/types tests skip API newer than the running macOS (`os_at_least`, SDK_MACOS); app activated at launch (`activateIgnoringOtherApps:`; `activate` left it behind the terminal); Edit/Window menus (Cmd+C/V/X/A/Z did nothing in text fields); real-input pass over counter + gallery; iOS 26.3 simulator first run (`docs/notes/ios-sim-first-run.md`, `tools/dev/ios-sim-run`; rquickjs needs darwin bindings copied for iOS); open: gallery layout collapse, tri-state checkbox ordering, `style=` vs NSProgressIndicator `style` |
 | ST2 AppKit styling (decl dialect) + styled todo app | DONE | 1b0540b5 | user decision: runtime engine; `<style>` -> structured rules, runtime cascade engine (combinators, :hover/:active/:focus/:disabled/:checked, dark @media, var(--sv-*), inheritance, inline) -> `SVL_STYLE_DECLS` 7 -> AppKit applies natively (colours, fonts, layer background/border/radius/shadow, attributed text, constraints, hugging) and tracks states; scheme follows the system at startup and sets NSApp.appearance; stack views in scroll views pinned in a flipped document view; NSTextAlignment arch-dependent values (x86-64 vs arm64) in ingest + tables; `fixtures/todo-mac`, `tests/todo.rs` (5) in macos-appkit CI, decl.test.mjs (8); open items in `plans/milestones/ST2-appkit-styling.md` |
-| WP-W WinUI widget parity (8/87 elements → ~30+, slots, methods, observe facts, galleries) | IN PROGRESS | | lane agent in a worktree, branch `ci/wp-winui`; verified on CI |
-| FU3 follow-ups (Qt wake coalescing, Qt wrong-kind message, Qt replay of `changed`, `native_read_not_observable` shadowing, RT1 small items, NT0 GTK fact/invoker mismatches, stale observation baselines) | IN PROGRESS | | lane agent in a worktree, branch `ci/fu3` |
-| CF1 Svelte conformance (500/774: 168 rejected, 27 runtime errors, 76 mismatches) | IN PROGRESS | | lane agent in a worktree, branch `ci/cf1` |
+| WP-W WinUI widget parity (8/87 elements → ~30+, slots, methods, observe facts, galleries) | DONE | e296b595 | 65 element kinds (from 8); 585 props, 182 signals, 19 methods, 27 slots, 298 two-way bindings; 2240 verified ledger facts; observe 545/846; nine-page gallery with a selftest in windows-winui CI |
+| FU3 follow-ups (Qt wake coalescing, Qt wrong-kind message, Qt replay of `changed`, `native_read_not_observable` shadowing, RT1 small items, NT0 GTK fact/invoker mismatches, stale observation baselines) | DONE | 335dc84d | items 1–8: `{await}` in template unsupported, GTK type facts agree with the invoker, types members on older libraries, no observe-time baseline for native props and E3 store fields, deterministic flood test |
+| CF1 Svelte conformance (500/774: 168 rejected, 27 runtime errors, 76 mismatches) | DONE | a7cd805a | 500 → 565/774; expected rejections tracked in `expected.json` (161 by category); conformance runs in CI (`js.yml` job `conformance`, f4290a23) |
+| CF2 template effects in Svelte's order | DONE | cbe0ebdf | `template_effect` grouping per Svelte, op logs regenerated (77 of 79 reorderings, state-equal at every boundary) |
+| SP1 spread + `<svelte:element>`, TR1 transitions/animate/visual channels | DONE | 360fdeed | integrated onto CF2; ABI style ops transform/clip/inert; conformance 628/774 (baseline updated); `plans/milestones/SP1-spread-element.md`, `TR1-transitions.md` |
+| RA2 `Json<T>`, data enums, SV24 | DONE | 78d33256 | `Json<T>` typed from schemars, `JsonAny<T>`, `#[derive(svelters::Enum)] #[js(tag)]`, `NativeError` codes with paths, `&self` Schema codegen; open: path inside serde internally tagged enums (SV48, needed before cadatomic passes command args as `Json<T>`); `plans/milestones/RA2-json-values.md` |
+| EG0 svelters-egui module split (+ SG0) | DONE | aac6a8aa | ARCH-EMBED §9 / ARCH-SCENE §13 layout, no behaviour change, `egui.json` byte-identical; `plans/milestones/EG0-module-split.md` |
+| FW1c `on:` forwarding (compiler) | DONE | 2b6c7472 | bare `on:x` forwards the `onx` callback prop (user decision), `duplicate_event`, `note` severity, `Forward`/`ForwardFrom` typings, `fixtures/forward-events`; answers SV9; `plans/milestones/FW1-on-forwarding.md` |
+| RA1 Rust widget kinds (`#[svelters::widget]`) | DONE | 12f34937 | inventory registry, pack-62 ids, typed props/events/`#[state]`, `ExtKey`, provider state bits, spec fragments (`--spec-fragment`, Vite `specFragments`), `types/egui` typings, `examples/egui-kinds`; `plans/milestones/RA1-widget-kinds.md` |
+| EM1 embed core (SC1, svelters side) | DONE | ff04be32 | `Embed`: slots, roots, `logic`/`show_slot`, stable ids and anchors (AccessKit author ids), per-root faults (100 ms interrupt), `settled`/`BusyProbe`, `svelters:embed`, runner on `Embed`; `plans/milestones/EM1-embed-core.md` |
+| SG1 scene graph core | DONE | 8ce6d7d0 | columns + `NodeId`, owners and phases (R17 `SceneBusy`), per-root dirty + layout boundaries (1 boundary for a label change in 11k nodes), `SceneHandle` read/write/defer, R16/R18, generation retire at 2^28 (handle collision fix); reconciled with EM1; `plans/milestones/SG1-scene-core.md` |
+| EM2 deferred viewports | DONE | 2b0d144f | `SlotPainter`, begin-pass plugin, `set_viewport`/`move_root`, per-root rAF pause, `show_viewport_passes` call site, `harness::dock::SvelteDock` (berth adapter); DOCK-W2/W4 tests; `plans/milestones/EM2-viewports.md` |
+| SG2 extension columns, change journal | IN PROGRESS | | branch `ci/sg2` |
+| EV2b native behaviours (`use:`) | IN PROGRESS | | branch `ci/ev2b` |
+| SG3 scene queries, traversal, hit lists | QUEUED | | after SG2; last scene milestone on SC1's path (R14, R20) |
 | G1 egui backend skeleton | DONE | 6f386b2f | `svelters-egui` (egui 0.37.0 + taffy 0.15.0 pinned, version provisional: D9 open): generational retained arena, taffy on the arena, host ops only edit the scene, events/changes queued during the pass and delivered after, `close-request` the one sync handler; elements `window`, `box`, `label`, `button`, `checkbox`, `text-edit`, `slider`; eframe runner, embed runner (`EguiBackend::ui` + `Host::start_with`, D1), kittest harness without a renderer (no GPU/display); observe `exact` on text/checked/value, others `set_only`; kind table → `metadata/semantics/egui.json` (freshness test), `--backend egui`, layout props in `<style>` (D3); `counter/if-toggle/keyed-list/timers-egui` fixtures replay; idle 0 frames/0 CPU over 5 s (CI test allows a ≤10-frame startup burst); 2.57 ms/kittest frame (debug); release binary 21.0 MB (15.6 stripped); merged master 2411/2411 nextest; open: G2 (styling/tokens, key/pointer sync handlers, per-side padding, %, scroll-area, menus, virtual lists, image snapshots), egui not in ledger/coverage/docs site, hot reload untested, timer-tick frame cost, "no styling support" warning; `plans/milestones/G1-egui-skeleton.md` |
 | FU1 follow-ups: GTK panic, `start` on AppKit/WinUI | DONE | f2c8a07b | GTK `set_prop`/`get_prop`/`call`/`listen` return -1 naming the runtime GType instead of panicking on handles outside the generated tables (`tests/foreign_kinds.rs`: `Gio.Menu`, `Gtk.MediaFile.new()`; failed on the old code); Qt/AppKit/WinUI don't have the pattern; ABI v2.7 `start` on AppKit (checkpoint on the first run-loop turn) and WinUI (dispatcher wake, pre-attach type events posted), host attached before mount on all four desktop backends; 3 start cases per platform; branch 2392/2392 nextest, CI green; open: Qt wrong-kind error doesn't name the runtime class, `start` on iOS/Android; `plans/milestones/FU1-gtk-panic-start.md` |
 | N4-WinUI non-GUI types (winmd ingest) | DONE | 4ac26949 | `winmd-tool types` over 21 namespaces, 1,780 types classified (pure over the checked-in dump); 84 bound from 30 roots, members 979/1141 (85%); no per-member native code: generated `types_tables.rs` (IIDs, vtable slots, param types) + one invoker with 27 x64 call shapes; one SHARED handle per WinRT object, composable factories, statics, records, collections, events, reactive DP props, async → Promises (hop to UI thread), dispatcher-thread objects refused at minting; `svelters:winui/<namespace>` modules, `fixtures/winui-types`; WinUI ledger 585 facts (+45 type facts); branch CI green; open: 162 blocked members (arrays, iterators, callback params, static events), aarch64, async progress, brush element props from type objects, element events before `run`; `plans/milestones/N4-winui-types.md` |
@@ -73,7 +85,39 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | M6 release binding linker | QUEUED | | |
 | M7 egui | QUEUED | | |
 
-## Handoff (2026-10-19)
+## Handoff (2026-10-22)
+
+**Focus:** svelters + egui for cadatomic (CLAUDE.md "Current focus"). Architecture: `plans/research/ARCH-EMBED.md`,
+`ARCH-SCENE.md`, `ARCH-CRATES.md`. The user took every recommendation on 2026-10-22 ("we will revisit later").
+cadatomic's review items (R1–R24) are recorded in each doc's "Decided" section. svelters' part of SC1 (EG0 + EM1 + RA1)
+is merged, with SG1, EM2 and FW1c. Next: SG2 and EV2b (running), then SG3. After SC1: SG4–SG7, RA3, EM3.
+
+**Other machines:** the ThinkPad builds berth (`github.com/akiselev/berth`, dock: BD0–BD3 and BD5 immediate viewports
+done), the MacBook builds quire (`github.com/akiselev/quire`, editor: QE0–QE2 done, QE4 running). Both are owned by
+cadatomic's sessions under main-cadatomic.
+
+**To revisit with the user:** the defaults taken overnight (ARCH-* "Decided", FW1 §6, EV2b/SG2 notes); quire's E5
+re-highlight target (7.8 ms vs 2 ms on a 20k-line file); egui apps use `@svelters/native-runtime/types/egui`.
+
+**parasolid-rs:** origin/master stays `b9f8b46` (no force-push, user). Checkouts stay at `02c5699`; nobody pulls it.
+The ThinkPad's RE commits are on `wip/thinkpad-re-r37-r89`. The ThinkPad's auctions stack is stopped; restore with
+`systemctl --user start auctions-postgres auctions-embed auctions-rerank cloudflared-auction-watch && sudo systemctl start postgresql`.
+
+## Requests from cadatomic
+
+cadatomic's side is `docs/plan/04-kernel-requests.md` (SV table) in the cadatomic repo.
+
+| Request | State | Where |
+| --- | --- | --- |
+| SC1: one cadatomic panel rendered by Svelte | svelters side done (EM1, RA1, EG0); cadatomic side not started | EM1-embed-core.md |
+| SV2 native behaviours behind `use:` | IN PROGRESS (EV2b) | ARCH-EMBED §8.5 |
+| SV9 `on:` forwarding (C-2) | DONE (FW1c, 2b6c7472) | FW1-on-forwarding.md |
+| SV24 `&self` Schema codegen | DONE (RA2, 78d33256) | RA2-json-values.md |
+| SV48 error path inside serde internally tagged enums | QUEUED; required before a cadatomic package passes command args through `Json<T>` (main-cadatomic gives notice) | RA2-json-values.md "Open items" |
+| DK3/DK4 secondary windows for berth panes | svelters side done (EM2, 2b0d144f) | EM2-viewports.md |
+| Scene graph with full Rust access | SG1 done; SG2 running; SG3 queued | ARCH-SCENE.md §14 |
+
+## Handoff (2026-10-19, superseded)
 
 Reactivity R0–R4 all merged (2026-10-21); N4-AppKit and N4-WinUI merged 2026-10-21 (2335/2335 nextest on the merged tree). OV1, N3 and E0+G0 merged 2026-10-21. FU1, G1 and E1 merged 2026-10-22. FU2, E2 and E3 merged 2026-10-22. WP-A merged 2026-10-22. WP-W, FU3 and CF1 are running in worktrees. `master` is green: CL0, NT1 and RT1 merged 2026-10-19 (2070/2070 nextest, pnpm test, docs:test on the merged tree; CI green on each branch). NT2 merged too (fde5dbef). No lanes are running. Nested `pnpm` in package scripts needs `pnpm` on PATH (only `corepack pnpm` is installed); the docs smoke test reads a cached `docs/site/.generated/ir`, so rerun `tools/docs/build_ir.py` after merges.
 
