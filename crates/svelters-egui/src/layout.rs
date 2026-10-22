@@ -1113,15 +1113,16 @@ impl LayoutCx<'_> {
     /// border, a collapsing header's row and indent).
     pub fn padded_layout(&mut self, inputs: LayoutInput, add: [f32; 4]) -> LayoutOutput {
         let i = self.node.index() as usize;
-        let saved = self.s.layout[i].style.padding;
         let grow = |p: LengthPercentage, a: f32| match p.into_raw().tag() {
             taffy::style::CompactLength::LENGTH_TAG => LengthPercentage::length(p.into_raw().value() + a),
             _ => p,
         };
-        let st = &mut self.s.layout[i].style;
-        st.padding = taffy::Rect { left: grow(saved.left, add[0]), right: grow(saved.right, add[1]), top: grow(saved.top, add[2]), bottom: grow(saved.bottom, add[3]) };
+        let saved = self.s.layout[i].style.clone();
+        let st = std::sync::Arc::make_mut(&mut self.s.layout[i].style); // SG6: a copy for this run only
+        let p = st.padding;
+        st.padding = taffy::Rect { left: grow(p.left, add[0]), right: grow(p.right, add[1]), top: grow(p.top, add[2]), bottom: grow(p.bottom, add[3]) };
         let out = self.default_layout(inputs);
-        self.s.layout[i].style.padding = saved;
+        self.s.layout[i].style = saved;
         out
     }
 
@@ -1130,7 +1131,7 @@ impl LayoutCx<'_> {
     pub fn collapsed(&mut self, inputs: LayoutInput, size: egui::Vec2) -> LayoutOutput {
         let i = self.node.index() as usize;
         self.leaf_layouts += 1;
-        let out = compute_leaf_layout(inputs, &self.s.layout[i].style, |_, _| 0.0, |known, _| Size { width: known.width.unwrap_or(size.x.ceil()), height: known.height.unwrap_or(size.y.ceil()) });
+        let out = compute_leaf_layout(inputs, &*self.s.layout[i].style, |_, _| 0.0, |known, _| Size { width: known.width.unwrap_or(size.x.ceil()), height: known.height.unwrap_or(size.y.ceil()) });
         if inputs.run_mode == RunMode::PerformLayout {
             for k in 0..self.s.children[i].len() {
                 let c = tid(self.s.children[i][k]);

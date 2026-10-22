@@ -1,8 +1,8 @@
 # OW1a2: simple controls as svelters' own widgets (slice 2), and the default flip
 
 Lane OW1a2 (thinkpad, `ci/ow1a2`), 2026-10-22. Branched from `ci/ow1a` (slice 1, c92b9412) and merged
-with `ci/ow0` (OW0b, 6f013c72), then with `ci/ow1a` 8b754498, which carries master 2305a42d (OW0 and EV1
-merged). Design: ARCH-WIDGETS §1–§3, §6.1,
+with `ci/ow0` (OW0b, 6f013c72), then with `ci/ow1a` 8b754498 (master 2305a42d: OW0, EV1), then with master befca905 (OW1a slice 1,
+OW-CSS stage 1, RT2, SG6, LD3). Design: ARCH-WIDGETS §1–§3, §6.1,
 §6.2, §7.2 (OW1a row); WIDGET-PARITY §2.1–§2.3, §2.9, §2.10, §2.16, §5; DESIGN §1–§2. Slice 1's
 record is `OW1a-basic-widgets.md`. The coordinator split the rest of OW1a into OW1a2 (this lane) and
 OW1a3 (§6).
@@ -62,6 +62,32 @@ New pieces:
   (`indicator` or `track`, `icon`, `label`) in the host's content box, so `flex-direction`, `order`
   and `display: none` on the parts work. `parts::paint_chevron` is the R14 twistie (a path until
   ICR1; `content: icon(..)` on `::part(twistie)` replaces it, P2).
+
+### 1.1 OW0 API additions (coordinator, 2026-10-22)
+
+These are part of OW0's API. They merge with OW1a2 and need no ci/ow0 change.
+- **`WidgetCx::with_peer::<Wd>(id, |w, peer| …) -> Option<R>` and `PeerCx` (`set`, `emit`,
+  `focus`).** These are crate-level (`pub` items in a `pub(crate)` seam, not re-exported for
+  providers). It is a same-pass write to another own widget of type `Wd`, flushed through the
+  same `flush_writes` as the widget's own writes: announced props, queued events, and a repaint for
+  peers drawn earlier. It is the sibling-write seam: radio exclusivity, toggle-button `group` and
+  Roving use it now, and accordion (OW1a3) reuses it. Helpers: `WidgetCx::sibling_ids`, `tag_of`,
+  `focus_node`, `interact_at`.
+- **`provider::Args(Vec<Value>)`.** It is a payload of several args. The emit path spreads it
+  when the built-in row's signal has more than one arg (radio's `changed(checked, group)`).
+- **`LayoutCx::{padded_layout, collapsed, with_measure}`.** These are own containers' layout
+  helpers. Since SG6 they use a per-run copy of the node's `Arc<Style>`.
+
+### 1.2 Roving's API (for OW3, coordinator: the second lane to merge adopts the first's)
+
+The unit lives at `interact/roving.rs`:
+- `RovingParams { on: bool }`;
+- the intent `Rove::{By(i32), First, Last}`, with `Rove::target(at, len)` (wrapping);
+- the keys Up/Left −1, Down/Right +1, Home and End, which it claims while the host is focused.
+
+The widget owns the members, skips disabled items, and handles exclusivity and focus through
+`with_peer`. None of that is in the unit. OW3's optional wrap and disabled-skipping can extend
+`RovingParams` and `target` compatibly.
 
 ## 2. Acceptance
 
@@ -173,6 +199,13 @@ it now asserts the own geometry (§4).
   leaves the siblings alone.
 - **OW0b's test widget** (`own_widgets.rs`) replaces `menu-separator` now (ow1a-lane's fix, taken
   in the merge).
+
+### 4.1 WIDGET-PARITY deviation (coordinator accepted, 2026-10-22)
+
+Checkbox `changed` keeps its bool payload under `tristate`, and `indeterminate` is a bound prop that
+is announced on change. WIDGET-PARITY §2.2's `"partial"` payload would change the row's signal type.
+The coordinator adds this to WIDGET-PARITY's Decided block at merge, and revisits `"partial"` only if
+cadatomic needs it.
 
 ## 5. Pins and what was not run
 
