@@ -54,6 +54,18 @@ Decisions (each justified in its section; the true architecture choices are the 
 
 ---
 
+## Required reading for every widget lane (user, 2026-10-22)
+
+The user asked that every own-widget lane works from the UX research and its guidelines, not only from this design. Before writing a widget, read and follow:
+
+1. **plans/research/DESIGN.md** — the visual and interaction guidelines: §1 the VS Code Dark/Light Modern baseline (metrics, colour roles, typography, density, motion; §1.5 holds VIS1's measured corrections), §2 the affordance rules **R1-R18** (shadows and elevation for what is clickable, hover/press/focus-visible states, disabled-with-reason, scroll edge shadows, keyboard-only focus rings, sash handles), §4 the theme/token architecture, §6 the VIS1 conformance process. User decisions in §7: Modern base, affordances **on by default**.
+2. **plans/research/ICON-STYLE.md** (and ICONS.md) — the approved icon style (40% subject tone, 45-degree top-right cut on every frame, solid 90-degree arrowheads, round terminals), optical sizes 12/14/16/20/24/32+, colour-slot classes `subject`/`accent`/`badge` (the user loves the coloured accents), whole-pixel snapping at any zoom.
+3. **plans/research/QT-SURVEY.md** — the widget behaviours and affordances users expect from a desktop toolkit (QW/QA/QS rows), and **plans/research/WIDGET-PARITY.md** (being written) — per-widget Qt property and QSS sub-control/pseudo-state parity; your lane's parity rows are acceptance.
+4. **plans/research/ZED-LESSONS.md** §1 — frame budget, UI-thread rules, element/interactivity model.
+5. The VS Code references and the VIS1 gate (branch `ci/vis1`: `conformance/visual/vscode/`, `crates/svelters-testkit/tests/vis1.rs`, `plans/milestones/VIS1-visual-conformance.md` §8 with the nine visible gaps) and the native-behaviour goldens (`conformance/golden/{linux,windows,macos}`, pins 1-7, WG3/WG3b/WG3w milestones).
+
+Each lane's milestone record says which R-rules, parity rows, VIS1 checks and pins it satisfies.
+
 ## 1. Layers
 
 ### 1.1 Paint primitives (layer a)

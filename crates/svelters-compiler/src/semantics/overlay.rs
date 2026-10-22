@@ -119,6 +119,9 @@ impl<P: PlatformSemantics> PlatformSemantics for Overlay<P> {
     fn native_type(&self, module: &str, export: &str) -> Option<TypeRef> {
         self.inner.native_type(module, export)
     }
+    fn bind_source(&self, module: &str, export: &str, lowering: spec::BindSourceLowering) -> Option<&spec::BindSourceSpec> {
+        self.inner.bind_source(module, export, lowering)
+    }
     fn type_property(&self, ty: &TypeRef, prop: &str) -> Option<TypeProp> {
         self.inner.type_property(ty, prop)
     }

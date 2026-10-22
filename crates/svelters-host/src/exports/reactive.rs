@@ -16,7 +16,7 @@
 //!   An event nobody listens to is dropped at `emit`, before it is cloned or converted.
 //!
 //! Writers never call into the host: they set bits or queue payloads and wake the host's backend at most
-//! once per burst ([`WakeHandle`] is the one thread-safe backend entry point).
+//! once per burst (the host's waker: the backend's thread-safe `wake`, plus a scheduler's, SCHED1).
 
 use super::{AnyObj, CallCx, ExportObject, IntoJs, JsType, NativeError, SharedObject, TypeBuilder, TypeRef, Value};
 use std::collections::{HashMap, VecDeque};
@@ -24,7 +24,6 @@ use std::marker::PhantomData;
 use std::ops::Deref;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
 use std::sync::{Arc, Mutex, OnceLock, RwLock, RwLockReadGuard, RwLockWriteGuard, Weak};
-use svelters_abi::WakeHandle;
 
 fn lock<T>(m: &Mutex<T>) -> std::sync::MutexGuard<'_, T> {
     m.lock().unwrap_or_else(|e| e.into_inner())
@@ -55,18 +54,18 @@ pub(crate) struct Hub {
     q: Mutex<HubQueue>,
     wake_pending: AtomicBool,
     /// Cleared when the host goes away: later writes reach nobody (and wake nobody).
-    waker: Mutex<Option<WakeHandle>>,
+    waker: Mutex<Option<std::task::Waker>>,
 }
 
 impl Hub {
-    pub(crate) fn new(waker: WakeHandle) -> Arc<Hub> {
+    pub(crate) fn new(waker: std::task::Waker) -> Arc<Hub> {
         Arc::new(Hub { q: Mutex::new(HubQueue::default()), wake_pending: AtomicBool::new(false), waker: Mutex::new(Some(waker)) })
     }
 
     fn wake(&self) {
         if !self.wake_pending.swap(true, Ordering::AcqRel) {
             if let Some(w) = &*lock(&self.waker) {
-                w.wake();
+                w.wake_by_ref();
             }
         }
     }

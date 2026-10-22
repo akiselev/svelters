@@ -23,7 +23,7 @@ pub mod template_await;
 
 use crate::diag::Diagnostics;
 use crate::estree::{ArrayElement, Expression, Pattern, Span, Spanned};
-use crate::semantics::{BindLowering, ElementRef, Lifetime, PlatformSemantics, StyleLowering, Unresolved, codes, plan_bind};
+use crate::semantics::{BindLowering, ElementRef, Lifetime, PlatformSemantics, StyleLowering, Unresolved, codes, plan_bind, plan_bind_commit};
 use crate::style::{Combinator, ComplexSelector, Compound, StyleSheet, parse_value, split_declarations};
 use crate::svelte::ast::{
     Attribute, AttributeLike, AttributeValue, Element as AstElement, ExpressionTagNode, Fragment as AstFragment, FragmentNode, RenderTag,
@@ -70,6 +70,8 @@ pub fn lower<'a>(root: &'a Root, sem: &dyn PlatformSemantics, styles: Option<&'a
         kinds: false,
         animate_hosts: HashSet::new(),
         forwarding_noted: false,
+        bind_imports: Vec::new(),
+        drafts: Vec::new(),
     };
     l.check_style_sheet();
     let root_fragment = l.fragment(&root.fragment, &Parent::Root, &[]);
@@ -82,7 +84,17 @@ pub fn lower<'a>(root: &'a Root, sem: &dyn PlatformSemantics, styles: Option<&'a
             }
         }
     }
-    Component { root: root_fragment, elements: l.next_id, kinds: l.kinds }
+    Component { root: root_fragment, elements: l.next_id, kinds: l.kinds, bind_imports: l.bind_imports, drafts: l.drafts }
+}
+
+/// The modifier of a native element's `bind:` (at most one).
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum BindMod {
+    None,
+    /// `|nonreactive` (R2): native -> state once.
+    Nonreactive,
+    /// `|commit` (CX3): native -> state on the kind's commit event.
+    Commit,
 }
 
 enum Parent {
@@ -144,6 +156,20 @@ struct Lower<'a, 's, 'd> {
     animate_hosts: HashSet<u32>,
     /// FW1: `legacy_forwarding_lowered` was reported (once per component).
     forwarding_noted: bool,
+    /// CX3: modules of the draft bind sources used (`Component::bind_imports`).
+    bind_imports: Vec<String>,
+    /// CX3: draft bindings by the address of their call (`Component::drafts`).
+    drafts: Vec<(usize, Draft<'a>)>,
+}
+
+/// CX3: what the bound expression of a native `bind:` is, by the lowering table.
+enum BindVia<'a> {
+    /// An ordinary lvalue (state, a prop, a member expression).
+    Plain,
+    /// A `link` source: `obj.field`.
+    Link { obj: &'a Expression, field: String },
+    /// A `draft` source call (already recorded in `drafts`).
+    Draft,
 }
 
 fn sp(s: Span) -> (u32, u32) {
@@ -443,21 +469,29 @@ impl<'a> Lower<'a, '_, '_> {
         Some(Element { id, span, kind: er.tag.clone(), present: None, toplevel: false, show: None, attached: false, slot, class_expr: None, id_expr: None, ops: vec![op], children: Fragment::default() })
     }
 
-    /// The modifiers of a native element's `bind:` (REACTIVITY.md section 8.2): `Some(nonreactive)`,
-    /// or `None` after reporting `bind_modifier_invalid` for an unknown or repeated modifier (stock
-    /// Svelte ignores them silently; the native compiler must not).
-    fn native_bind_modifiers(&mut self, d: &crate::svelte::ast::Directive) -> Option<bool> {
+    /// The modifiers of a native element's `bind:` (REACTIVITY.md section 8.2, CX3): `|nonreactive`
+    /// or `|commit` (at most one), or `None` after reporting `bind_modifier_invalid` for an unknown,
+    /// repeated or conflicting modifier (stock Svelte ignores them silently; the native compiler
+    /// must not).
+    fn native_bind_modifiers(&mut self, d: &crate::svelte::ast::Directive) -> Option<BindMod> {
         let allowed = self.sem.bind_modifiers();
-        let mut nonreactive = false;
+        let mut got = BindMod::None;
         let mut ok = true;
         for m in &d.modifiers {
-            if m == "nonreactive" && allowed.contains(&"nonreactive") && !nonreactive {
-                nonreactive = true;
+            let this = match m.as_str() {
+                "nonreactive" => BindMod::Nonreactive,
+                "commit" => BindMod::Commit,
+                _ => BindMod::None,
+            };
+            if this != BindMod::None && allowed.contains(&m.as_str()) && got == BindMod::None {
+                got = this;
                 continue;
             }
             ok = false;
-            let msg = if m == "nonreactive" && nonreactive {
-                format!("`bind:{}`: `|nonreactive` is given twice", d.name)
+            let msg = if this != BindMod::None && got == this {
+                format!("`bind:{}`: `|{m}` is given twice", d.name)
+            } else if this != BindMod::None && got != BindMod::None && allowed.contains(&m.as_str()) {
+                format!("`bind:{}`: `|nonreactive` and `|commit` exclude each other (one reads once, the other on every commit)", d.name)
             } else if allowed.is_empty() {
                 format!("`bind:{}|{m}`: bindings take no modifiers on {}", d.name, self.sem.backend())
             } else {
@@ -465,16 +499,91 @@ impl<'a> Lower<'a, '_, '_> {
             };
             self.diags.native_error(codes::BIND_MODIFIER_INVALID, sp(d.span()), msg).hint(crate::diag::FixHint::Remove(format!("|{m}")));
         }
-        ok.then_some(nonreactive)
+        ok.then_some(got)
+    }
+
+    /// CX3: the bound expression of a native `bind:` against the spec's bind sources (the lowering
+    /// table): a call is a draft source or an error (`bind_source_invalid`, then `None`); a member of
+    /// an import a `link` source matches is a link; anything else is an ordinary lvalue.
+    fn bind_via(&mut self, d: &crate::svelte::ast::Directive, target: &'a Expression) -> Option<BindVia<'a>> {
+        use crate::semantics::spec::BindSourceLowering;
+        let import_of = |facts: &ScriptFacts, e: &Expression| match e {
+            Expression::Identifier(id) => facts.imports.get(&id.name).cloned(),
+            _ => None,
+        };
+        match target {
+            Expression::CallExpression(c) => {
+                let found = import_of(&self.script, &c.callee).and_then(|(m, e)| self.sem.bind_source(&m, &e, BindSourceLowering::Draft).cloned().map(|s| (m, s)));
+                let Some((module, src)) = found else {
+                    let declared: Vec<String> = self.sem_draft_sources();
+                    let msg = format!(
+                        "bind:{}: a call can only be bound when it is a draft bind source the spec declares{}",
+                        d.name,
+                        if declared.is_empty() { " (this spec declares none)".to_string() } else { format!(" ({})", declared.join(", ")) }
+                    );
+                    self.diags.native_error(codes::BIND_SOURCE_INVALID, sp(d.span()), msg).help("bind state, a prop or a store field; or import the source's marker function and call it here");
+                    return None;
+                };
+                let mut args = Vec::new();
+                for a in &c.arguments {
+                    match a {
+                        ArrayElement::Expression(e) => args.push(e),
+                        ArrayElement::Spread(_) => {
+                            self.diags.native_error(codes::BIND_SOURCE_INVALID, sp(d.span()), format!("bind:{}: a draft bind source takes no spread arguments", d.name));
+                            return None;
+                        }
+                    }
+                }
+                let ns = match self.bind_imports.iter().position(|m| *m == module) {
+                    Some(i) => i,
+                    None => {
+                        self.bind_imports.push(module);
+                        self.bind_imports.len() - 1
+                    }
+                };
+                let draft = Draft { ns, get: src.get.clone().unwrap_or_default(), set: src.set.clone().unwrap_or_default(), args };
+                self.drafts.push((target as *const Expression as usize, draft));
+                Some(BindVia::Draft)
+            }
+            Expression::MemberExpression(m) if !m.computed && !m.optional => {
+                let field = match &m.property {
+                    crate::estree::PropertyKey::Expression(e) => match e.as_ref() {
+                        Expression::Identifier(i) => i.name.clone(),
+                        _ => return Some(BindVia::Plain),
+                    },
+                    _ => return Some(BindVia::Plain),
+                };
+                match import_of(&self.script, &m.object) {
+                    Some((module, export)) if self.sem.bind_source(&module, &export, BindSourceLowering::Link).is_some() => Some(BindVia::Link { obj: &m.object, field }),
+                    _ => Some(BindVia::Plain),
+                }
+            }
+            _ => Some(BindVia::Plain),
+        }
+    }
+
+    /// The draft bind sources the spec declares, as `module#export` (for messages).
+    fn sem_draft_sources(&self) -> Vec<String> {
+        // the trait answers lookups only; list what the imports of this component could match
+        let mut out: Vec<String> = self
+            .script
+            .imports
+            .values()
+            .filter(|(m, e)| self.sem.bind_source(m, e, crate::semantics::spec::BindSourceLowering::Draft).is_some())
+            .map(|(m, e)| format!("`{e}` of {m}"))
+            .collect();
+        out.sort();
+        out.dedup();
+        out
     }
 
     /// `bind:this` and component bindings take no modifiers: `|nonreactive` has no meaning there.
     fn no_bind_modifiers(&mut self, d: &crate::svelte::ast::Directive, what: &str) {
         if let Some(m) = d.modifiers.first() {
-            let why = if m == "nonreactive" { "has no meaning" } else { "is not a binding modifier" };
+            let why = if m == "nonreactive" || m == "commit" { "has no meaning" } else { "is not a binding modifier" };
             self.diags
                 .native_error(codes::BIND_MODIFIER_INVALID, sp(d.span()), format!("`bind:{}|{}`: `|{m}` {why} on {what}", d.name, d.modifiers.join("|")))
-                .help("`|nonreactive` applies to bindings of native element properties only")
+                .help("`|nonreactive` and `|commit` apply to bindings of native element properties only")
                 .hint(crate::diag::FixHint::Remove(format!("|{m}")));
         }
     }
@@ -964,19 +1073,32 @@ impl<'a> Lower<'a, '_, '_> {
                 }
                 AttributeLike::BindDirective(d) => {
                     let Some(target) = &d.expression else { unreachable!("the parser synthesises bind:x shorthands") };
-                    let Some(nonreactive) = self.native_bind_modifiers(d) else { continue };
-                    match plan_bind(self.sem, &er, &d.name, nonreactive) {
+                    let Some(modifier) = self.native_bind_modifiers(d) else { continue };
+                    let Some(via) = self.bind_via(d, target) else { continue };
+                    let planned = match modifier {
+                        BindMod::Commit => plan_bind_commit(self.sem, &er, &d.name),
+                        m => plan_bind(self.sem, &er, &d.name, m == BindMod::Nonreactive),
+                    };
+                    match planned {
                         Ok(plan) => {
                             for w in &plan.warnings {
                                 w.report_warning(self.diags, sp(d.span()));
                             }
                             bound_props.push(plan.prop.clone());
                             let (prop, span) = (plan.prop, d.span());
-                            ops.push(match plan.lowering {
-                                BindLowering::Prop { fallback } => Op::BindProp { prop, fallback, target, span },
-                                BindLowering::Readonly => Op::BindReadonly { prop, target, span },
-                                BindLowering::Once { readonly } => Op::BindOnce { prop, readonly, target, span },
-                                BindLowering::Signal { signal, arg } => Op::Bind { prop, signal, arg, target, span },
+                            let linkable = matches!(plan.lowering, BindLowering::Prop { .. } | BindLowering::Signal { .. });
+                            let op = match plan.lowering {
+                                BindLowering::Prop { fallback } => Op::BindProp { prop: prop.clone(), fallback, target, span },
+                                BindLowering::Readonly => Op::BindReadonly { prop: prop.clone(), target, span },
+                                BindLowering::Once { readonly } => Op::BindOnce { prop: prop.clone(), readonly, target, span },
+                                BindLowering::Signal { signal, arg } => Op::Bind { prop: prop.clone(), signal, arg, target, span },
+                                BindLowering::Commit { signal, arg } => Op::BindCommit { prop: prop.clone(), signal, arg, target, span },
+                            };
+                            // CX3: a store field linked in the host; `|commit`, `|nonreactive` and
+                            // read-only props keep the JS binding (the link is two-way, every change)
+                            ops.push(match via {
+                                BindVia::Link { obj, field } if linkable => Op::BindLink { prop, obj, field, fallback: Box::new(op), span },
+                                _ => op,
                             });
                         }
                         Err(u) => u.report(self.diags, sp(d.span())),
@@ -1032,7 +1154,7 @@ impl<'a> Lower<'a, '_, '_> {
         // Actions go with them, in source order ("actions need to run after attribute updates in
         // order with bindings/events", Svelte's UseDirective visitor).
         let (binds, rest): (Vec<_>, Vec<_>) =
-            ops.into_iter().partition(|o| matches!(o, Op::Bind { .. } | Op::BindProp { .. } | Op::BindReadonly { .. } | Op::BindOnce { .. } | Op::Action { .. } | Op::Transition { .. } | Op::Animate { .. }));
+            ops.into_iter().partition(|o| matches!(o, Op::Bind { .. } | Op::BindProp { .. } | Op::BindReadonly { .. } | Op::BindOnce { .. } | Op::BindCommit { .. } | Op::BindLink { .. } | Op::Action { .. } | Op::Transition { .. } | Op::Animate { .. }));
         ops = rest;
         ops.extend(binds);
 
