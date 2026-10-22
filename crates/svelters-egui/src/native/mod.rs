@@ -120,6 +120,15 @@ pub struct Policy {
     /// When Space activates a focused button.
     pub space_activates_on: ActivateOn,
     pub button_order: ButtonOrder,
+    /// OW3: hover time on a submenu row before the submenu opens, and on another row before an
+    /// open submenu closes (Qt `SH_Menu_SubMenuPopupDelay`, GTK `gtk-menu-popup-delay` 225,
+    /// Windows `MenuShowDelay` 400).
+    pub submenu_delay_ms: u32,
+    /// OW3: after a tooltip hid, how long another one shows at once (Qt's fall-asleep timer, 2 s).
+    pub tooltip_follow_on_ms: u32,
+    /// OW3: a lone Alt press and release highlights the menu bar's first menu (Windows, KDE);
+    /// F10 does it everywhere.
+    pub alt_focuses_menu_bar: bool,
 }
 
 const GTK: Policy = Policy {
@@ -139,6 +148,9 @@ const GTK: Policy = Policy {
     scrollbars: Scrollbars::Overlay,
     space_activates_on: ActivateOn::Release,
     button_order: ButtonOrder::CancelOk,
+    submenu_delay_ms: 225,
+    tooltip_follow_on_ms: 1000,
+    alt_focuses_menu_bar: false,
 };
 
 const QT: Policy = Policy {
@@ -158,6 +170,9 @@ const QT: Policy = Policy {
     scrollbars: Scrollbars::Classic,
     space_activates_on: ActivateOn::Release,
     button_order: ButtonOrder::OkCancel,
+    submenu_delay_ms: 225,
+    tooltip_follow_on_ms: 2000,
+    alt_focuses_menu_bar: true,
 };
 
 const WINDOWS: Policy = Policy {
@@ -177,6 +192,9 @@ const WINDOWS: Policy = Policy {
     scrollbars: Scrollbars::Overlay,
     space_activates_on: ActivateOn::Release,
     button_order: ButtonOrder::OkCancel,
+    submenu_delay_ms: 400,
+    tooltip_follow_on_ms: 2000,
+    alt_focuses_menu_bar: true,
 };
 
 const MAC: Policy = Policy {
@@ -196,6 +214,9 @@ const MAC: Policy = Policy {
     scrollbars: Scrollbars::Overlay,
     space_activates_on: ActivateOn::Release,
     button_order: ButtonOrder::CancelOk,
+    submenu_delay_ms: 0,
+    tooltip_follow_on_ms: 1000,
+    alt_focuses_menu_bar: false,
 };
 
 const EGUI: Policy = Policy {
@@ -215,6 +236,9 @@ const EGUI: Policy = Policy {
     scrollbars: Scrollbars::Overlay,
     space_activates_on: ActivateOn::Press,
     button_order: ButtonOrder::OkCancel,
+    submenu_delay_ms: 200,
+    tooltip_follow_on_ms: 1000,
+    alt_focuses_menu_bar: false,
 };
 
 impl Native {

@@ -99,6 +99,11 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         return if matches!(w, W::Ext(_)) { crate::provider::set_prop(w, i as usize, v) } else { Ok(Dirty::EMPTY) };
     }
     if matches!(w, W::Ext(_)) && !is_common(def.key) {
+        if matches!(def.ty, Ty::StrList) {
+            // OW3: a list prop takes the row's forms (null, a list, a static whitespace-separated string)
+            let l = Value::List(as_str_list(v)?.into_iter().map(Value::Str).collect());
+            return crate::provider::set_replaced_prop(w, def, &l);
+        }
         return crate::provider::set_replaced_prop(w, def, v); // OW0: an own widget's field
     }
     let v = if matches!(v, Value::Null) && !def.nullable { default_value(def) } else { v.clone() };

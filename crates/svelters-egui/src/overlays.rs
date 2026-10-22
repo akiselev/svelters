@@ -49,6 +49,8 @@ pub struct OverlayW {
     pub resizable: bool,
     /// The layout generation of the subtree's last overlay layout (`layout::layout_overlay`).
     pub seen: u64,
+    /// OW3: a `popup` svelters draws itself (the own-widget switch held `popup` when it was created).
+    pub own: bool,
 }
 
 pub(crate) fn payload(id: &str) -> OverlayW {
@@ -73,6 +75,7 @@ pub(crate) fn payload(id: &str) -> OverlayW {
         collapsible: true,
         resizable: true,
         seen: 0,
+        own: false,
     }
 }
 
@@ -211,10 +214,19 @@ fn content(
     out: &mut Vec<Out>,
     size: [Option<f32>; 2],
 ) {
-    let m = Metrics::new(ui.ctx());
     let at = ui.available_rect_before_wrap().min;
+    let ctx = ui.ctx().clone();
+    let sz = lay_out(arena, i, origin, &ctx, at, size);
+    draw_content(arena, i, origin, ui, out, Rect::from_min_size(at, sz));
+}
+
+/// Lays out overlay `i`'s subtree with its top-left at `at` (screen; `size`: the definite axes);
+/// returns its size. Its children's rects stay root-relative (`origin`). Laying it out again at
+/// another place is cheap (taffy's cache).
+pub(crate) fn lay_out(arena: &mut Arena, i: usize, origin: Vec2, ctx: &egui::Context, at: egui::Pos2, size: [Option<f32>; 2]) -> Vec2 {
+    let m = Metrics::new(ctx);
     let Some(node) = arena.slots.id_at(i) else {
-        return;
+        return Vec2::ZERO;
     };
     let seen = match arena.w(i) {
         W::Overlay(o) => o.seen,
@@ -224,7 +236,11 @@ fn content(
     if let W::Overlay(o) = arena.w_mut(i) {
         o.seen = generation;
     }
-    let r = Rect::from_min_size(at, sz);
+    sz
+}
+
+/// Paints overlay `i`'s children (laid out at `r` by [`lay_out`]) in `ui`, allocating `r`.
+pub(crate) fn draw_content(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>, r: Rect) {
     arena.core[i].drawn = r;
     ui.allocate_rect(r, Sense::hover());
     crate::focus::record_scope(arena, i, ui); // EV3: a dialog focus scope
@@ -256,6 +272,10 @@ fn overlay(
     arena.core[i].drawn = Rect::NOTHING;
     if open {
         match o.kind {
+            // OW3: svelters' own popup surface (Anchored, Dismissable), behind the switch
+            OverlayKind::Popup if o.own => {
+                open = crate::widgets::popup::show(arena, i, origin, owner, &o, enabled, ui, out);
+            }
             OverlayKind::Popup => {
                 let align = match o.placement {
                     "top" => RectAlign::TOP_START,

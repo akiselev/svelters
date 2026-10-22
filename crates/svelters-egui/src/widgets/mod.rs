@@ -14,6 +14,11 @@
 //! Writer lanes: OW0–OW7.
 
 pub mod button;
+mod glyph;
+pub(crate) mod menu;
+pub(crate) mod popup;
+pub mod select;
+pub mod tooltip;
 
 use crate::scene::W;
 
@@ -64,6 +69,21 @@ impl KindSet {
     /// `SVELTERS_OWN_WIDGETS`, if set.
     pub fn from_env() -> Option<KindSet> {
         std::env::var("SVELTERS_OWN_WIDGETS").ok().map(|v| KindSet::parse(&v))
+    }
+}
+
+/// OW3: marks a new built-in payload `w` of tag `tag` as drawn by svelters when `set` holds the
+/// tag: the menu roots (`menu-bar`, `menu-button`, `context-menu`) and `popup` keep their payload
+/// (the WG2a data model: entries are scene children the root walks) and only their drawing and
+/// behaviour are ours ([`menu`], [`popup`]).
+pub(crate) fn mark_own(set: &KindSet, tag: &str, w: &mut W) {
+    if !set.contains(tag) {
+        return;
+    }
+    match w {
+        W::Menu(m) => m.set_own(true),
+        W::Overlay(o) if o.kind == crate::overlays::OverlayKind::Popup => o.own = true,
+        _ => {}
     }
 }
 

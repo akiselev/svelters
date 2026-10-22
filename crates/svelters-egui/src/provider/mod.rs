@@ -1009,7 +1009,10 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
     let c = arena.common(i);
     if !c.tooltip.is_empty() {
         // OW0 (DESIGN R9): an own widget shows its tooltip while disabled too (the reason)
-        resp = if !resp.enabled() && crate::style::is_own(arena.w(i)) { resp.on_disabled_hover_text(c.tooltip.clone()) } else { resp.on_hover_text(c.tooltip.clone()) };
+        resp = if arena.own.contains("tooltip") {
+            let tip = c.tooltip.clone();
+            crate::widgets::tooltip::attach(ui, &resp, &tip, true) // OW3
+        } else if !resp.enabled() && crate::style::is_own(arena.w(i)) { resp.on_disabled_hover_text(c.tooltip.clone()) } else { resp.on_hover_text(c.tooltip.clone()) };
     }
     let c = arena.common(i);
     {
