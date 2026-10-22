@@ -170,6 +170,10 @@ impl<B: Behavior + KindDecl> ErasedWidget for BehaviorBox<B> {
     fn busy(&self) -> bool {
         false
     }
+    fn hit_test(&self, _cx: &super::HitCx, _local: egui::Pos2) -> super::Hit {
+        // attached nodes are not painted, so they never own a point: it goes to the host
+        super::Hit::Miss
+    }
     fn as_any(&self) -> &dyn Any {
         &self.0
     }
@@ -184,11 +188,6 @@ impl<B: Behavior + KindDecl> ErasedWidget for BehaviorBox<B> {
     }
     fn behavior_ref(&self) -> Option<&dyn Behavior> {
         Some(&self.0)
-    }
-    // merge fix (WG4a merging master e07313e8): SG3's trait method, which EV2b's branch predates.
-    // A behaviour has no area of its own: its host node answers.
-    fn hit_test(&self, _cx: &super::HitCx, _local: egui::Pos2) -> super::Hit {
-        super::Hit::Node
     }
 }
 
