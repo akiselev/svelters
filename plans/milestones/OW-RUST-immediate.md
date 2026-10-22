@@ -170,7 +170,7 @@ become bits or classes: `active` → `SELECTED`, `group_focused` → `.focused` 
   does today.
 - **Transitions.** `imm` widgets have no CSS transitions yet: the scene samples them per node
   (`SceneStyle::overlay`), `imm` paints the computed end value at once. Settled frames are equal
-  (what the kittests compare). Per-id transitions for `imm` come when chrome needs them.
+  (what the kittests compare). **Follow-up (coordinator, 2026-10-22):** per-id CSS transitions for `imm` widgets and `imm::chrome` (a `Transitions<egui::Id>` sampled like `SceneStyle::overlay`).
 - **Host-box state for label and separator** (no `PAINTS_BOX`): the walk paints that box with the
   node's bits as of the start of the pass, `imm` with this pass's unit bits; equal once settled.
 - **Resolved by OW1a2** (findings of the first push): the checkbox's full-row host box and the
@@ -181,6 +181,7 @@ become bits or classes: `active` → `SELECTED`, `group_focused` → `.focused` 
 - **State storage.** Unit state lives in egui temp data under `id.with("svelters-imm")`. It stays
   until the context drops (egui temp data is not collected), a few bytes per widget id ever drawn.
   This is fine for chrome. A long list of `imm` rows with changing ids should use scene widgets.
+- **Stable cores.** `checkbox::paint_indicator`/`measure_indicator`, `button::paint`/`measure`, `label::layout`/`paint`/`measure`, `switch::paint`, `toggle_button::paint`/`measure`, `separator::paint`/`measure` keep their signatures; OW1a3 changes the `WidgetCx` call sites and the insides of `label::paint`/`layout`.
 - **Not done.** No `use:` adapters (OW1a3). No menu-button or tab kinds (OW3, OW5). No
   `ChromeMetrics` helper (berth's trait decides the fields first). OW-CSS stage 2 part styles reach
   `imm` through `SceneStyle::part_virtual` (one TODO).
