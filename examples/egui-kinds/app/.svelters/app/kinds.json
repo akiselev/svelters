@@ -1,5 +1,86 @@
 {
   "backend": "egui",
+  "behaviors": {
+    "cad.Pick": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "cad.Pick"
+      ],
+      "children": null,
+      "doc": "EV2b (ARCH-EMBED §8.5): a native behaviour, `use:pick` from `svelters:behaviors/cad`. While a pick\nruns (`active`), its host is a pick target (`cad.pick-target`), hovering it sets `cad.pick-hover`,\nand a click reports what the host presents. All of it runs in Rust every frame.",
+      "export": "pick",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "module": "svelters:behaviors/cad",
+      "native": "egui_kinds_demo::Pick",
+      "present": null,
+      "props": {
+        "accepts": {
+          "construct_only": false,
+          "default": [],
+          "doc": "The value kinds the host presents (the first one is reported).",
+          "js": "accepts",
+          "native": "accepts",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:cad.Pick:accepts",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "string[]",
+          "type": "other",
+          "writable": true
+        },
+        "active": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Whether a pick is running.",
+          "js": "active",
+          "native": "active",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:cad.Pick:active",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "egui_kinds_demo::Pick"
+      },
+      "signals": {
+        "picked": {
+          "args": [
+            {
+              "name": "picked",
+              "type": "other"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The host was clicked during a pick.",
+          "handler_result": "none",
+          "js_event": "picked",
+          "name": "picked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "tag": "cad.pick",
+      "text_content": null
+    }
+  },
   "caps": {
     "cad.QuantityField": [
       "focusable",

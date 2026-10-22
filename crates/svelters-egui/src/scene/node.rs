@@ -181,6 +181,11 @@ bits! {
         const IN_REMEASURE = 1 << 13;
         /// A root's top node (window, slot root).
         const ROOT = 1 << 14;
+        /// Attached to `parent` (a behaviour, EV2b): listed in the host's `NodeCold::attached`, not
+        /// among its light children; not laid out or painted (ARCH-SCENE §4.4).
+        const ATTACHED = 1 << 15;
+        /// Has attached nodes (`NodeCold::attached` is not empty): the walk runs their hooks.
+        const HAS_ATTACHED = 1 << 16;
     }
 }
 
@@ -311,10 +316,12 @@ pub(crate) struct NodeCold {
     pub observe: Vec<(u32, u32)>,
     /// Listened signals whose ordinal is ≥ 64.
     pub listen_overflow: Vec<u32>,
+    /// Attached nodes (behaviours, EV2b) in attach order; `NodeFlags::HAS_ATTACHED` when not empty.
+    pub attached: Vec<NodeId>,
 }
 
 impl NodeCold {
-    pub const DEFAULT: NodeCold = NodeCold { common: Common::DEFAULT, vis: Visual::IDENTITY, observe: Vec::new(), listen_overflow: Vec::new() };
+    pub const DEFAULT: NodeCold = NodeCold { common: Common::DEFAULT, vis: Visual::IDENTITY, observe: Vec::new(), listen_overflow: Vec::new(), attached: Vec::new() };
 
     pub fn observes(&self, prop: u32) -> bool {
         prop != 0 && self.observe.iter().any(|&(p, c)| p == prop && c > 0)

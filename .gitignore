@@ -1,4 +1,6 @@
 /target/
+# Any cargo build dir, at any depth (a crate-dir cargo run once created crates/*/target).
+target/
 node_modules/
 dist/
 *.log

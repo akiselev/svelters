@@ -297,7 +297,13 @@ impl Scene {
             if !r.is_detached() {
                 self.attached(x, r);
             }
-            stack.extend(self.children[xi].iter().rev().copied());
+            stack.extend(
+                self.children[xi]
+                    .iter()
+                    .chain(&self.cold(xi).attached)
+                    .rev()
+                    .copied(),
+            );
         }
         for (x, q) in requeue {
             let xi = self.ix(x);
@@ -321,7 +327,7 @@ impl Scene {
     }
 
     /// Checks that `origin` may change the structure under `parent` (and move `child`).
-    fn may_edit(&self, origin: Origin, nodes: &[NodeId]) -> Result<(), SceneError> {
+    pub(crate) fn may_edit(&self, origin: Origin, nodes: &[NodeId]) -> Result<(), SceneError> {
         if is_js(origin) {
             return Ok(());
         }
@@ -339,6 +345,9 @@ impl Scene {
     fn unlink(&mut self, child: NodeId, detach_root: bool, origin: Origin) {
         let ci = self.ix(child);
         let Some(p) = self.core[ci].parent else { return };
+        if self.core[ci].flags.contains(NodeFlags::ATTACHED) {
+            return self.unlink_attached(child, detach_root, origin); // EV2b (provider/behavior.rs)
+        }
         let pi = self.ix(p);
         self.children[pi].retain(|&c| c != child);
         self.core[ci].parent = None;
@@ -359,6 +368,9 @@ impl Scene {
         let pi = self.idx(parent).ok_or(SceneError::Stale(parent.to_raw()))?;
         let ci = self.idx(child).ok_or(SceneError::Stale(child.to_raw()))?;
         let (pk, ck) = (self.core[pi].kind as usize, self.core[ci].kind as usize);
+        if kinds::KindRegistry::global().attaches(ck) {
+            return self.insert_attached(parent, child, origin); // EV2b: a behaviour (provider/behavior.rs)
+        }
         if kinds::slot_of(pk).is_none() {
             return Err(SceneError::Invalid(format!("<{}> takes no children", kinds::kind(pk).tag.unwrap_or("?"))));
         }
@@ -478,6 +490,7 @@ impl Scene {
                 self.set_root_subtree(c, RootIx::DETACHED);
             }
         }
+        self.orphan_attached(i, origin); // EV2b: its behaviours stay alive, detached
         let d = Destroyed { egui_id: self.core[i].egui_id, was_window: matches!(self.w(i), W::Window { .. }) };
         self.free_slot(i, origin);
         Ok(d)
@@ -528,7 +541,14 @@ impl Scene {
         let mut stack = vec![top];
         while let Some(x) = stack.pop() {
             dead.push(x);
-            stack.extend(self.children[self.ix(x)].iter().rev().copied());
+            let xi = self.ix(x);
+            stack.extend(
+                self.children[xi]
+                    .iter()
+                    .chain(&self.cold(xi).attached)
+                    .rev()
+                    .copied(),
+            );
         }
         for &x in &dead {
             let xi = self.ix(x);
