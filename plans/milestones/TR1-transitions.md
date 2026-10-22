@@ -575,10 +575,21 @@ the runtime's `commit` already do for the inline opacity.
 - `pnpm test`: ok, 158/158 TAP tests and 294 fixture/compile checks;
 - `build_ir.py` + `pnpm docs:test`: ok, 17/17 and 11 Python tests;
 - full conformance `--check`: as above.
-- Full nextest: see the lane report. It runs under the shared lock and was still pending when this
-  record was written.
+- **Full nextest: not run on the final code (open item).** Two attempts were stopped: one queued
+  on the retired test lock, one killed on the coordinator's order. The TR1 tests were run on their
+  own: egui `motion`, `counter` and `oplog_replay`; GTK `style`; and Qt `style`
+  (`visual_channels_and_bounds`, `opacity_uses_a_graphics_effect`). They pass. CI nextest
+  (linux-gtk, linux-qt) is green on `b24422cf`.
 
-**CI** (`ci/tr1`): the heads `3da0b695` and `161c0ba4` ran all five workflows.
+**CI** (`ci/tr1`): all five workflows are green on `b24422cf`, the last code head. Run IDs:
+
+- js 39737149587;
+- linux-gtk 39737149586;
+- linux-qt 39737149604;
+- macos-appkit 39737149612;
+- windows-winui 39737151172.
+
+Earlier, the heads `3da0b695` and `161c0ba4` also ran all five workflows.
 
 - At `161c0ba4`, linux-gtk failed on two TR1 test bugs, both fixed in the next commits:
   - `visual_channels_and_bounds` assumed a vertical box;
