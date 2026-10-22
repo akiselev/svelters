@@ -3882,6 +3882,7 @@ dependencies = [
  "svelters-egui",
  "svelters-host",
  "svelters-modules",
+ "svelters-style",
  "taffy",
 ]
 
@@ -4030,6 +4031,7 @@ checksum = "3c8480887e8803986d96a7173729565520d4bbb721ad6b7ad6941a22897207aa"
 dependencies = [
  "serde",
  "slotmap",
+ "smallvec",
 ]
 
 [[package]]
