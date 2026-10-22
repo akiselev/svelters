@@ -473,6 +473,10 @@ pub trait RowSource: std::any::Any {
     fn version(&self) -> u64 {
         0
     }
+    /// WG5a: the text keyboard type-ahead matches for `row` (`None`: skipped).
+    fn label(&self, _row: usize) -> Option<String> {
+        None
+    }
 }
 
 // ---- painted rows ----
