@@ -4,6 +4,8 @@ use std::sync::{Arc, Mutex};
 
 /// E2: `svelters:app/dsp` (buffers).
 pub mod dsp;
+/// RA2: `svelters:app/intent` (serde values and data enums).
+pub mod intent;
 
 /// Where the debug binary writes `exports.json`, `app.d.ts` and the stubs: the app's `.svelters/app`.
 pub fn exports_dir() -> std::path::PathBuf {
@@ -20,6 +22,7 @@ pub fn link() {
     std::hint::black_box(Tally::new as fn(i64) -> Tally);
     std::hint::black_box(burst_size as fn() -> u32);
     std::hint::black_box(dsp::noise as fn(u32, u32) -> svelters::Buffer<f32>);
+    std::hint::black_box(intent::describe_pick as fn(intent::Pick) -> String);
 }
 
 /// How a tally counts.

@@ -20,6 +20,8 @@ svelters-abi.workspace = true
 svelters-host.workspace = true
 svelters-gtk.workspace = true
 gtk.workspace = true
+serde = { workspace = true, features = ["derive"] }
+schemars.workspace = true
 
 [dev-dependencies]
 svelters-backend-log.workspace = true

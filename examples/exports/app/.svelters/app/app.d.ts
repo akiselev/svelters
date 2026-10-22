@@ -91,6 +91,21 @@ declare module 'svelters:app/dsp' {
   export function waveform(): ReadonlyFloat32Array;
 }
 
+declare module 'svelters:app/intent' {
+  import type { NativeObject } from '@svelters/types/core';
+  /** What a pick accepts: a svelters data enum. */
+  export type Pick = { kind: 'face'; index: number; } | { kind: 'edge'; index: number; bothSides: boolean; } | { kind: 'nothing'; };
+  /** A command slot's state: serde's internally tagged form. */
+  export type SlotStatus = { kind: 'empty'; } | { kind: 'filled'; value: number; } | (Refusal & { kind: 'refused'; });
+  /** Why a command cannot run (shaped like cadatomic's `Refusal`, which lives in a headless crate). */
+  export type Refusal = { message: string; /** The reason id (`args.missing`). */ reason: string; slot?: string | null; };
+  /** The status of slot `slot` given `value`: refused when there is no value. */
+  export function check(slot: string, value?: number | null): SlotStatus;
+  export function describePick(p: Pick): string;
+  /** The refusal again, as a status (round-trips the serde value). */
+  export function refused(r: Refusal): SlotStatus;
+}
+
 declare module 'svelters:app/telemetry' {
   import type { NativeObject, AsyncOptions } from '@svelters/types/core';
   /**

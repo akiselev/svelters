@@ -1105,6 +1105,8 @@ name = "exports-example"
 version = "0.0.0"
 dependencies = [
  "gtk4",
+ "schemars",
+ "serde",
  "svelters",
  "svelters-abi",
  "svelters-backend-log",
