@@ -8,7 +8,8 @@ reasonably support (`:hover`, for example)?
 
 Inputs: the X6 and ST1 milestones and notes, `docs/notes/styling-gtk-css-qss.md` (GTK 4.22 / Qt 6.11 probes),
 `plans/research/EGUI.md` (D3, D5), the code on master `d110cb3d`, four survey passes (AppKit + UIKit, WinUI 3 +
-Android, egui 0.37 + taffy 0.15, Rust CSS crates) and two new probes (§3.7). Claims about a toolkit cite its docs or
+Android, egui 0.37 + taffy 0.15, Rust CSS crates), plus new probes: GTK/Qt specificity (§3.7) and crate builds
+(§2.1). Claims about a toolkit cite its docs or
 a probe. Where a claim comes from memory and not a doc, it says so.
 
 ## 0. Summary
@@ -140,6 +141,12 @@ it any more.
 3. **AppKit and WinUI never see classes, ids, sheets or tokens.** Their `style` vtable member is NULL
    (`svelters-abi/src/safe.rs:1139` returns "styling is not supported by this backend"). Only compile-time setter
    rules reach them. MATRIX.md's styling row (🟡 "style-table setters only, no stylesheet") is accurate.
+
+   There is also a probable bug, not run. The runtime's `targetOf()` (`native-runtime/src/style.js`) treats only
+   a *missing* `host.style` function as "no styling". But `host.style` always exists, and on these backends the
+   `TARGET` op throws. An AppKit or WinUI component with `class="…"` would then throw from `applyStyle` instead of
+   printing the one-time warning. No AppKit or WinUI example uses `class` today. egui is unaffected because it
+   answers `TARGET_NONE`.
 4. **The host already keeps half a tree.**
    - `CoreState` (`crates/svelters-host/src/core.rs:270`) has `handles: handle → kind id`,
      `tree: child → parent` (filled by `op_insert`, cleared by `op_remove`, used by reload teardown) and the
@@ -176,7 +183,70 @@ it any more.
 
 ### 2.1 Building blocks
 
-CRATES-PLACEHOLDER
+There are two probe builds for this note: `cssparser` + `selectors` with a hand-written element, and `lightningcss`
+alone. Both used `cargo-slot`, 4 jobs and a clean target, on a loaded machine (load average ~55), so the
+wall-clock times are inflated. The dependency counts and sizes are exact. `stylo` was not built; its numbers are
+from crates.io and its sources.
+
+| Crate | Version (date) | License | Gives | We'd still write | Cost | Verdict |
+|---|---|---|---|---|---|---|
+| `cssparser` | 0.38.0 (2026-09-07) | MPL-2.0 | the spec tokenizer; rule/declaration/`!important`/nested-block parsers; `ToCss` | rules, our property values, `@layer` | ~10 deps | **use** |
+| `selectors` | 0.41.0 (2026-09-30) | MPL-2.0 | selector parse + match through an `Element` trait; specificity; `:is/:where/:not/:has`, `:nth-child(… of S)`; nth and `:has` caches; bloom filter; `ElementSelectorFlags`; `SelectorVisitor` | `SelectorImpl`, the `Element` impl (~30 lines in the probe), rule index, cascade, invalidation | with cssparser: 27 deps; clean release build 2 min 7 s under load; **+142 KB** stripped over hello-world | **use, pinned exactly** |
+| `stylo` | 0.22.0 (14 releases in 2026) | MPL-2.0 | the whole browser cascade, computed values, `var()`/`calc()`, restyle hints, snapshot invalidation | ~1.5k lines of glue (Blitz's `stylo.rs`: `TDocument`/`TNode`/an 84-method `TElement`); per-node `ElementData` | 118 deps, ~137k lines + Mako templates, **python3 at build time** | no: the browser's property set, not our backends' |
+| `lightningcss` | 1.0.0-alpha.72 | MPL-2.0 | typed parse/minify/transform; typed colours, lengths, `calc()`, custom properties | matching and cascade (none; its `parcel_selectors` fork has `:has` as `unreachable!()`) | 47 deps; **15 min 48 s** clean build under load (730 s in the one crate); **+3.97 MB** stripped; pulls a second cssparser (0.37) | no; read its `values/` code for reference |
+| `cssparser-color` | 0.6.0 | MPL-2.0 | CSS Color 4 on cssparser tokens (relative colours, `color-mix`) | – | tiny | use |
+| `simplecss` | 0.2.2 | MIT/Apache | CSS2 parse + a 5-method matcher | everything from `:has` to `var()` | 1 dep | too limited |
+| `swc_css_parser`, `raffia` | 26.0 / 0.13 | Apache / MIT | full-fidelity ASTs | matching, cascade, values | swc_common stack | not needed |
+| taffy 0.15 style types | (in tree) | MIT | the layout target type (`stylo_taffy` shows a mapping) | the mapping | 0 | target |
+
+The probe matched three selectors against a three-node arena tree, with hover from our own state bits in
+`match_non_ts_pseudo_class`:
+
+- `.a.svelte-xyz > button:where(.svelte-xyz):hover` matched the button at specificity (0,3,1), which is Svelte's
+  scoped shape;
+- `box:has(> button:hover)` matched the box at (0,1,2);
+- `label:nth-child(2):is(label):not(.q)` matched the label at (0,2,2).
+
+The `Element` trait asks for tree navigation (parent, siblings, first child), `has_local_name`, `has_id`,
+`has_class`, `attr_matches`, `match_non_ts_pseudo_class`, `is_empty` and `is_root`. It also asks for a few
+shadow-DOM, slot and part hooks, which we answer with "no", plus `add_element_unique_hashes` for the bloom filter and
+`apply_selector_flags` for invalidation bookkeeping. Every one of them maps onto the `StyleTree` of §2.2.
+
+**Churn.** `selectors` had about 14 breaking 0.x releases in 16 months. The 0.38/0.41 bump alone removed
+`ParserInput` and the `location` in `ParseError`, so diagnostics must capture `current_source_location()`
+themselves. Pin the version, keep our own AST in front of it, and plan a small migration per bump. The compiler
+already does this with its acorn port.
+
+**Licence.** The workspace is MIT, and MPL-2.0 is file-level copyleft. Depending on these crates is fine, and they
+go into `THIRD_PARTY_NOTICES.md`. Copying lightningcss or Stylo source into our files would make those files MPL,
+so read them, don't copy them. bevy_flair's `calc/` is MIT.
+
+**Prior art.**
+
+- **bevy_flair 0.9** (2026-10-14, MIT/Apache) is the closest design: `cssparser` + `selectors` over a non-DOM tree
+  (the Bevy ECS).
+  - It supports `:has/:is/:where/:not`, nesting, `@layer`, `@media`, `@keyframes`, `var()` and `calc()`.
+  - Hover is a `Hovered` component copied into a per-entity state field.
+  - Invalidation is recorded while matching: visiting an element as parent, sibling or first child ORs a
+    "recalculate descendants / siblings / ancestors" bit into it. A change then re-matches the element plus the
+    relatives its bits name.
+  - It is coarse, simple, and has no bloom filter.
+- **Blitz** (Dioxus Native) uses all of Stylo + taffy 0.15 + parley. It records a hover change as a snapshot and
+  lets Stylo diff it against its invalidation map.
+- **GTK's own engine** is the same shape as our plan: a parallel `GtkCssNode` tree with name, classes and state
+  flags, invalidated through `GtkCssChange` bitmasks.
+- **Freya, Kas, Xilem, Iced and Slint** have no CSS.
+
+**Recommendation (D5).**
+
+- Use `cssparser` 0.38 + `selectors` 0.41 + `cssparser-color`, pinned.
+- Write our own sheet/rule parser with spans, rule index, cascade, inheritance, `var()` (cycles become "guaranteed
+  invalid") and computed values for the style-table property set. That is a few thousand lines.
+- Invalidation:
+  - v1 is bevy_flair's recorded relation bits via `apply_selector_flags`;
+  - v2 is a dependency map built with `SelectorVisitor` (class/id/attr/state → selectors), modelled on Stylo's
+    invalidation map without depending on it.
+- The compiler links the same crate for build-time parsing and diagnostics, and later for Q3's scoping port.
 
 ### 2.2 Where the tree lives
 
@@ -474,7 +544,7 @@ engine exists.
 
 | Feature | GTK 4 | Qt 6 | AppKit | WinUI 3 | egui |
 |---|---|---|---|---|---|
-| type | N, through the CSS name (lossy: 21 shared names); engine: S | N, `.QClass`; engine: S | E, engine (S) | E, engine (S) | E, engine (S) |
+| type | N, through the CSS name (lossy: 12 CSS names are shared by several kinds, X6 research §1.3); engine: S | N, `.QClass`; engine: S | E, engine (S) | E, engine (S) | E, engine (S) |
 | `.class` | N, `add_css_class` | N, `class` property + repolish (0.25 ms) | E, engine | E, engine | E, engine |
 | `#id` | N, widget name | N, objectName | E, engine | E, engine (mirror `Name` and `AutomationId` for UIA) | E, engine |
 | `[attr]`, `[attr="v"]` | ✗ native; E engine (S, M for non-observable props) | N, on Q_PROPERTY and dynamic properties (needs a repolish on change); engine | E, engine | E, engine | E, engine |
@@ -803,11 +873,12 @@ The order is CS0 → CS1 → (CS2 ∥ CS3 ∥ CS4 ∥ CS5) → CS6. CS2 can star
    **Recommended: (b) as CS6, after the engine.** It is the biggest single item and the main source of "looks
    different on each platform" (X6 §5.1).
 5. **D5 Parser and matcher crates** (§2.1).
-   - (a) `cssparser` + `selectors` from Servo.
-   - (b) `lightningcss`.
-   - (c) Our own.
+   - (a) **`cssparser` 0.38 + `selectors` 0.41**, pinned, with our own cascade and values: +142 KB, 27 deps.
+   - (b) `lightningcss`: +4 MB, a ~16 min clean build, and no matching anyway.
+   - (c) Stylo: 118 deps, python3 at build time, browser property set.
+   - (d) Extend our own subset parser.
 
-   Recommendation in §2.1.
+   **Recommended: (a).** (d) would re-implement `:has`, `:nth-child(of S)` and the bloom filter for no gain.
 6. **D6 Native-look policy.** Backgrounds and borders on controls that lose native drawing (QSS push buttons,
    bezeled AppKit buttons, WinUI state visuals):
    - (a) **Allow it with a warning.**
