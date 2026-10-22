@@ -252,6 +252,8 @@ fn style_json() -> J {
     }
     json!({
         "dialect": "none",
+        // CS5e: the backend runs the CSS engine; `<style>` reaches it as CSS (D9 on egui)
+        "engine": "backend",
         "properties": props,
         "setter_selectors": ["type", "class", "id"],
         "units": {"px": {"provenance": "egui points: 1px in a style sheet is one point", "scale": 1.0}},

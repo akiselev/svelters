@@ -258,6 +258,8 @@ export function nativeSheets(code, file, toolkit, warn = () => {}, specFragments
     warn(`<style> not translated: Svelte could not compile the component for its CSS: ${String(e.message).split('\n')[0]}`);
     return null;
   }
+  // egui runs the Rust CSS engine in process (CS5e): it gets the scoped CSS as Svelte wrote it
+  if (toolkit === 'egui') return r.css?.code?.trim() ? { scope, sheets: { css: r.css.code } } : null;
   const t = translateSheet(r.css?.code ?? '', toolkit, { native: native[toolkit] ?? [], setters: false, tags: tagsOf(toolkit, specFragments) });
   for (const d of t.diagnostics) if (d.level !== 'info') warn(formatDiagnostic(d));
   // decl dialect (AppKit): structured rules for the runtime cascade engine
