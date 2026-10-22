@@ -52,5 +52,7 @@ The tests cover this case with `t-editor`.
 Local, after the last code change: `cargo check -p svelters-egui --tests` and `cargo clippy -p svelters-egui
 --all-targets` (no new warnings); nextest under `tools/dev/headless`: `-p svelters-egui --test focus_keys`
 (13/13, the 4 `ev3b_*` and the 9 EV3 tests), `--lib ev3` (2/2), `-p egui-kinds-example --test methods` (4/4, the
-RA3 provider `text_input` path). Not run locally: the full workspace, conformance, the other backends, the JS
+RA3 provider `text_input` path). After merging master `52729604` (OW1a2: own widgets on by default, ZM1; no
+conflicts): `cargo check -p svelters-egui --all-targets` (clean), nextest `--test focus_keys --lib ev3` (15/15).
+Not run locally: the full workspace, conformance, the other backends, the JS
 suites (CI).
