@@ -17,6 +17,7 @@ pub mod button;
 pub mod checkbox;
 pub mod hyperlink;
 pub mod label;
+pub(crate) mod list_rows;
 pub mod panel;
 mod parts;
 pub mod progress;
