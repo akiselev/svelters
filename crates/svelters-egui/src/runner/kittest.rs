@@ -68,6 +68,15 @@ impl TestApp {
         TestApp::loading(HostConfig { echo_console: false, echo_errors: false, ..HostConfig::default() }, Some(step_dt), |embed| embed.load_app_from(provider))
     }
 
+    /// [`TestApp::from_source_stepped`] with a host config of the caller's (TR3: `timing: true`).
+    #[cfg(feature = "source")]
+    pub fn from_source_with(path: impl AsRef<Path>, step_dt: f32, cfg: HostConfig) -> Result<TestApp, String> {
+        let mut src = svelters_modules::SourceConfig::for_path(path.as_ref())?;
+        src.backend = "egui".into();
+        let provider = std::rc::Rc::new(svelters_modules::SourceProvider::new(src)?);
+        TestApp::loading(cfg, Some(step_dt), |embed| embed.load_app_from(provider))
+    }
+
     fn loading(cfg: HostConfig, step_dt: Option<f32>, load: impl FnOnce(&Embed) -> Result<(), svelters_host::JsError>) -> Result<TestApp, String> {
         // The harness's context does not exist yet: `logic` binds it at the first frame.
         let embed = Embed::new(&egui::Context::default(), EmbedConfig::app(cfg)).map_err(|e| e.to_string())?;
