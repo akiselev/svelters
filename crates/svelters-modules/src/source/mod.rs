@@ -291,6 +291,15 @@ impl Inner {
     fn resolve(&mut self, base: &str, specifier: &str) -> Result<ModuleId, String> {
         let (id, path) = if specifier == KINDS_SPECIFIER {
             (KINDS_ID.to_string(), None)
+        } else if let Some(ns) = specifier.strip_prefix("svelters:behaviors/") {
+            // EV2b: the app's native behaviours, the module of Svelte actions the app binary dumps
+            // (`svelters_egui::dump`), as vite.js maps it.
+            if ns.is_empty() || !ns.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_' || c == '-') {
+                return Err(format!("{specifier:?}: not a behaviour namespace"));
+            }
+            let p = self.cfg.root.join(".svelters/app/behaviors").join(format!("{ns}.js"));
+            let p = p.canonicalize().map_err(|e| format!("{specifier:?} -> {}: {e} (run the app binary's dump)", p.display()))?;
+            (p.to_string_lossy().into_owned(), Some(p))
         } else if let Some(p) = self.aliases.get(specifier) {
             let p = p.canonicalize().map_err(|e| format!("alias of {specifier:?} -> {}: {e}", p.display()))?;
             (p.to_string_lossy().into_owned(), Some(p))

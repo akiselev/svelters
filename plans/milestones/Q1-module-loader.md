@@ -37,6 +37,8 @@ pub trait ModuleProvider {                      // engine-agnostic; &self, inter
   - Resolution:
     - the runtime's alias table first (see below);
     - `@svelters/native-runtime/kinds` is generated with `semantics::kinds_module` from the same spec;
+    - `svelters:behaviors/<ns>` → `<root>/.svelters/app/behaviors/<ns>.js` (EV2b, the app binary's dump, as
+      `vite.js` maps it);
     - otherwise Node ESM resolution (`source/resolve.rs`) with Vite's client conditions: `browser, import,
       module, development|production, default`; main fields `module, main`; extensions `.mjs, .js, .json`;
       `exports` (conditions in the package's key order, `*` patterns, longest prefix), `imports` (`#`),
