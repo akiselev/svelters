@@ -137,8 +137,10 @@ impl Behavior for Pick {
   `&mut self` and the scene. `Descendants::with_shadow` can filter on `is_shadow()`.
 - **RA3:** containers with light children (`Caps::CONTAINER` + a slot) need the light/shadow split noted above;
   `cached_shapes` can sit on `WidgetCx` (it has the scene now).
-- **CS5e:** `position`/insets exist as props; the CSS engine maps onto them. Hoisting handles `absolute`; `fixed` is
-  not mapped.
+- **CS5e (landed first):** `position`/`left`/`top`/`right`/`bottom` are kind props (style table `via: setter`), and
+  `style.rs::layout_style` also maps their computed values onto the taffy style (small SG4 addition in the STYLE
+  file). In `layout.rs`, a container picks custom layout, then `display: grid` (CS5e), then flexbox, and runs the
+  out-of-flow pass after each. Hoisting handles `absolute`; `fixed` is not mapped.
 - **cadatomic:** berth's `PaneHost::viewport_done(&mut self, ui, window)` → `SvelteDock::viewport_done(ui)`.
 
 ## Verification
