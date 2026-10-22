@@ -32,7 +32,8 @@
 //! its children. Rows are `VirtualChildren` too (queries, anchors `row[<id>]`, `target_rect`).
 //!
 //! Not on egui (yet): N3 model mode (`model` prop: there is no native list model on egui; LS2's
-//! Rust row-model trait replaces it), `layout="grid"`, keyboard navigation.
+//! Rust row-model trait replaces it), `layout="grid"`, keyboard navigation (the `tree-view` has it:
+//! WG5b, `treeview.rs`, through `views::selection`).
 //!
 //! Writer lane: LISTS.
 
