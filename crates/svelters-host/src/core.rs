@@ -1033,14 +1033,17 @@ impl Core {
     }
 }
 
-/// Runs one checkpoint (see "Checkpoint semantics" in `backend-abi.md`):
-/// 0. read, compare and deliver the dirty observed properties as one `__svelters_changed` batch
+/// Runs one checkpoint (see "Checkpoint semantics" in `backend-abi.md`). Each task (a settle batch,
+/// an event, a timer callback) is followed by a job drain (a microtask checkpoint, as in the HTML
+/// event loop), except the change batch, which shares one drain with the first event:
+/// 1. settle offloaded calls (`offload::drain`: progress, results) and, if any settled, drain jobs;
+/// 2. read, compare and deliver the dirty observed properties as one `__svelters_changed` batch
 ///    (ABI v2.6), with no drain before the first event;
-/// 1. deliver queued events to JS, draining jobs after each;
-/// 2. fire due timers, draining jobs before the first (a timer starts on an empty microtask queue)
+/// 3. deliver queued events to JS, draining jobs after each;
+/// 4. fire due timers, draining jobs before the first (a timer starts on an empty microtask queue)
 ///    and after each;
-/// 3. drain remaining jobs, up to `max_jobs_per_checkpoint` in total;
-/// 4. `wake` if jobs or events remain, and arm the backend's one-shot wakeup for the earliest
+/// 5. drain remaining jobs, up to `max_jobs_per_checkpoint` in total;
+/// 6. `wake` if jobs or events remain, and arm the backend's one-shot wakeup for the earliest
 ///    timer deadline (`schedule_wake`).
 ///
 /// Ops reach the backend directly while JS runs (no batching in P). Scripted mode has its own
@@ -1054,9 +1057,25 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
         core.timing.set(t);
     }
     let mut eng = engine.borrow_mut();
+    let mut budget = core.cfg.max_jobs_per_checkpoint;
+    let mut pending = false;
+
+    let drain = |eng: &mut Box<dyn JsEngine>, budget: &mut usize| {
+        let st = eng.run_jobs(*budget);
+        *budget = budget.saturating_sub(st.ran);
+        core.report_all(eng.take_errors());
+        st.pending
+    };
+
     // E1 (egui-rust-exports.md §6.2): offloaded export calls settle first, so the changes, events
-    // and the one job drain below see their results in the same checkpoint.
-    offload::drain(core, &mut eng);
+    // and timers below see their results in the same checkpoint. A non-empty settle batch is a task
+    // of its own (REACTIVITY §5.3): its microtasks (`onProgress` reactions, resolutions) run before
+    // the first event or timer. SCHED1b's randomized schedules found an event handler running between
+    // a worker's `onProgress` and the microtask it queued, whenever a completion and a queued event met
+    // in one checkpoint. Scripted mode keeps its own stepping (an event step drains nothing).
+    if offload::drain(core, &mut eng) && !core.cfg.scripted {
+        pending |= drain(&mut eng, &mut budget);
+    }
     // E3 (§6.4): dirty store fields join the dirty set, queued `Emitter` events the event queue, so the
     // change batch and the events below carry them.
     reactive::collect(core);
@@ -1072,15 +1091,6 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
         core.process_releases();
         return;
     }
-    let mut budget = core.cfg.max_jobs_per_checkpoint;
-    let mut pending = false;
-
-    let drain = |eng: &mut Box<dyn JsEngine>, budget: &mut usize| {
-        let st = eng.run_jobs(*budget);
-        *budget = budget.saturating_sub(st.ran);
-        core.report_all(eng.take_errors());
-        st.pending
-    };
 
     // REACTIVITY.md §5.3: the batch of changed properties first, then the queued signal events,
     // with no job drain in between (handlers see the new state; Svelte flushes once after them).
@@ -1093,9 +1103,8 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     }
 
     let now = core.now();
-    // A timer callback is a new task: the microtasks of what this checkpoint delivered before it
-    // (settled offloaded calls and their progress callbacks, a change batch) run first, as in scripted
-    // mode. SCHED1's randomized schedules found a timer running between a worker's `onProgress` and
+    // A timer callback is a new task: the microtasks of what this checkpoint delivered before it (a
+    // change batch with no event after it) run first, as in scripted mode. SCHED1's randomized schedules found a timer running between a worker's `onProgress` and
     // the microtasks it queued, whenever a completion and a due timer met in one checkpoint.
     if core.next_timer_deadline().is_some_and(|d| d <= now) {
         pending |= drain(&mut eng, &mut budget);

@@ -264,3 +264,79 @@ log('sync end');
         lines
     }
 }
+
+/// SCHED1b: a settled offload batch is a task of its own. The `onProgress` callbacks and resolutions
+/// of one checkpoint's settle batch queue microtasks, and those run before the first queued event is
+/// delivered (REACTIVITY §5.3: a microtask drain after every task). Clicks are posted at random times
+/// against progress-reporting workers on a busy UI thread, so a completion and a click often meet in
+/// one checkpoint.
+#[test]
+fn progress_microtasks_run_before_a_queued_event() {
+    use std::rc::Rc;
+    use svelters_abi::{Backend, HostRef, NameKind};
+    const CLICKS: usize = 8;
+    const WORKERS: u32 = 6;
+    let mut between = 0;
+    let seeds = run_seeds("progress_microtasks_run_before_a_queued_event", 12, |s| {
+        s.set_job_delay(Duration::from_millis(6));
+        s.set_turn_time(Duration::from_millis(2));
+        let main = format!(
+            r#"import {{ simWork }} from 'svelters:app/sched';
+{MICROTASK_RULE}
+const h = globalThis.__svelters_host;
+const b = h.create('button');
+h.listen(b, 'clicked', true);
+log(`H ${{b}}`);
+let clicks = 0;
+let done = 0;
+globalThis.__svelters_dispatch = () => {{
+  macro(`event ${{clicks}}`);
+  log(`E ${{clicks++}} ${{done}}`);
+  later(() => log('M E'));
+}};
+for (let i = 0; i < {WORKERS}; i++)
+  simWork(i, {{ onProgress: () => later(() => log(`P ${{i}}`)) }}).then((v) => {{
+    done++;
+    log(`W ${{i}} ${{v}}`);
+  }});
+"#
+        );
+        let h = SchedHost::new(s, quiet()).unwrap();
+        h.host.load_bundle(stage("events", s.seed(), &main)).unwrap();
+        let mut lines = h.console();
+        let handle: u64 = lines.iter().find_map(|l| l.strip_prefix("H ")).expect("button handle").parse().unwrap();
+        let kind = h.log.resolve(NameKind::Kind, 0, "button");
+        let sig = h.log.resolve(NameKind::Signal, kind, "clicked");
+        for _ in 0..CLICKS {
+            let at = Duration::from_micros(s.random_below(8_000));
+            let host = Rc::downgrade(&h.host);
+            s.spawn_local_after(at, "click", move || {
+                let Some(host) = host.upgrade() else { return };
+                // SAFETY: the callbacks live as long as `host`, which this action holds.
+                let cb = unsafe { HostRef::from_raw(host.host_callbacks()) };
+                cb.post_event(handle, sig, &[]);
+            });
+        }
+        s.run_until_idle();
+        lines.extend(h.console());
+        let errors = h.errors();
+        assert!(errors.is_empty(), "{errors:#?}\n{lines:#?}");
+        assert!(bad_lines(&lines).is_empty(), "{:#?}\nall lines: {lines:#?}", bad_lines(&lines));
+        let events: Vec<usize> = lines.iter().filter_map(|l| l.strip_prefix("E ")).map(|l| l.split(' ').nth(1).unwrap().parse().unwrap()).collect();
+        assert_eq!(events.len(), CLICKS, "{lines:#?}");
+        // an event's own microtasks run before anything else
+        for (k, l) in lines.iter().enumerate() {
+            if l.starts_with("E ") {
+                assert_eq!(lines.get(k + 1).map(String::as_str), Some("M E"), "{lines:#?}");
+            }
+        }
+        for i in 0..WORKERS {
+            assert_eq!(lines.iter().filter(|l| **l == format!("P {i}")).count(), 1, "{lines:#?}");
+            assert_eq!(lines.iter().filter(|l| **l == format!("W {i} {}", i * 2)).count(), 1, "{lines:#?}");
+        }
+        between += events.iter().filter(|d| **d > 0 && **d < WORKERS as usize).count();
+    });
+    if seeds >= 12 {
+        assert!(between > 0, "no click landed while workers were still settling in {seeds} schedules");
+    }
+}

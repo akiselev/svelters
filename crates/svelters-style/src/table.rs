@@ -42,6 +42,13 @@ pub enum ValueType {
     FontWeight,
     /// `box-shadow`: `none` or a comma-separated list of shadows ([`crate::Shadow`]).
     Shadow,
+    /// `transition`: `none` or a comma-separated list ([`crate::Transition`]).
+    Transition,
+    /// `background-image`: `none`, one `linear-gradient()` ([`crate::LinearGradient`]) or a Rust
+    /// part painter, `paint(name)` (WIDGET-PARITY Q1).
+    Image,
+    /// `content` of a glyph part (WIDGET-PARITY P2): `none`, `icon(key)`, `url(…)` or `paint(name)`.
+    Content,
     /// A value this engine keeps as text (`border`, untyped `box-shadow` and `via: css` values).
     Raw,
 }
