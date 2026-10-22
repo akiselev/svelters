@@ -111,6 +111,8 @@ impl Invalidation {
                 *self.attrs.entry(local_name.clone()).or_default() |= reach
             }
             Component::AttributeOther(a) => *self.attrs.entry(a.local_name.clone()).or_default() |= reach,
+            // P1: a logical position is set by the widget, which restyles the part itself
+            Component::NonTSPseudoClass(crate::selector::PseudoClass::Logical(_)) => {}
             Component::NonTSPseudoClass(pc) => {
                 let bits = pc.bits();
                 match self.states.iter_mut().find(|(b, _)| *b == bits) {
