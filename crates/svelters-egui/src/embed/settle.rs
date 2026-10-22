@@ -2,6 +2,7 @@
 //! the next timer, and [`BusyProbe`] mirrors the bits for other threads (cadatomic's `IdleBarrier`
 //! takes `Fn() -> usize + Send + Sync` busy sources). Writer lane: EMBED.
 
+use crate::scene::SceneHandle;
 use std::fmt;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicU32, Ordering};
@@ -15,7 +16,9 @@ pub struct Busy(u32);
 impl Busy {
     /// Native events queued for JS (or a wake that will run a checkpoint).
     pub const EVENTS: Busy = Busy(1);
-    /// Observed props announced changed, not delivered yet.
+    /// Observed props announced changed, not delivered yet: widget changes in the host's queue,
+    /// Rust prop writes the scene announces at the next logic (R18), and Rust scene writes
+    /// deferred to the next logic (`SceneHandle::defer`; ARCH-SCENE R16).
     pub const CHANGES: Busy = Busy(2);
     /// Promise jobs queued.
     pub const JOBS: Busy = Busy(4);
@@ -38,7 +41,7 @@ impl Busy {
     /// A timer is due within the horizon (`EmbedConfig::timer_horizon`).
     pub const TIMER_SOON: Busy = Busy(2048);
     /// A provider reports work (`Widget::busy`, a wanting state provider; ARCH-EMBED R8, ARCH-SCENE
-    /// R16). Reserved for RA1/SG1: EM1 never sets it.
+    /// R16). Reserved: set once state providers land (SG4, R23); nothing sets it yet.
     pub const PROVIDER: Busy = Busy(4096);
 
     const NAMES: [(Busy, &'static str); 13] = [
@@ -139,4 +142,12 @@ impl BusyProbe {
     pub(crate) fn publish(&self, b: Busy) {
         self.0.store(b.0, Ordering::Release);
     }
+}
+
+/// The scene's pending work (ARCH-SCENE R16): deferred Rust writes and undelivered announcements
+/// both wait for the next logic, so they keep the embed busy.
+pub(crate) fn scene_busy(scene: &SceneHandle) -> Busy {
+    let mut b = Busy::empty();
+    b.set(Busy::CHANGES, scene.deferred_len() > 0 || scene.announcements_len() > 0);
+    b
 }

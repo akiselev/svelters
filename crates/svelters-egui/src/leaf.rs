@@ -82,19 +82,9 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         W::Box | W::Window { .. } => unreachable!("containers are not leaves"),
         W::Ext(_) => unreachable!("provider kinds are drawn by provider::paint"),
     };
-<<<<<<< HEAD
-    let mut resp = resp;
-    if let Some(name) = crate::a11y::name(&arena.n(h)) {
-        resp = resp.accessible_name(name);
-    }
+    let mut resp = crate::a11y::decorate(resp, &arena.n(h));
     if !arena.common(i).tooltip.is_empty() {
         resp = resp.on_hover_text(arena.common(i).tooltip.clone());
-=======
-    let n = arena.n_mut(h);
-    let mut resp = crate::a11y::decorate(resp, n);
-    if !n.c.tooltip.is_empty() {
-        resp = resp.on_hover_text(n.c.tooltip.clone());
->>>>>>> origin/master
     }
     let core = &mut arena.core[i];
     if core.flags.contains(NodeFlags::WANT_FOCUS) {

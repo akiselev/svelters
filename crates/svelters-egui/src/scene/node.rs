@@ -63,13 +63,13 @@ pub struct Common {
     pub justify_content: &'static str,
 }
 
-<<<<<<< HEAD
 impl Common {
     pub const DEFAULT: Common = Common {
         enabled: true,
         visible: true,
         tooltip: String::new(),
         accessible_name: String::new(),
+        anchor: String::new(),
         width: None,
         height: None,
         min_width: None,
@@ -96,80 +96,6 @@ impl Default for Common {
     fn default() -> Self {
         Common::DEFAULT
     }
-=======
-impl Default for Common {
-    fn default() -> Self {
-        Common {
-            enabled: true,
-            visible: true,
-            tooltip: String::new(),
-            accessible_name: String::new(),
-            anchor: String::new(),
-            width: None,
-            height: None,
-            min_width: None,
-            min_height: None,
-            max_width: None,
-            max_height: None,
-            flex_grow: 0.0,
-            flex_shrink: 1.0,
-            flex_basis: None,
-            align_self: "auto",
-            margin: 0.0,
-            flex_direction: "column",
-            flex_wrap: "nowrap",
-            gap: 0.0,
-            row_gap: None,
-            column_gap: None,
-            padding: 0.0,
-            align_items: "stretch",
-            justify_content: "start",
-        }
-    }
-}
-
-pub struct Node {
-    pub kind: usize,
-    pub handle: Handle,
-    pub parent: Option<Handle>,
-    pub children: Vec<Handle>,
-    pub id: egui::Id,
-    pub c: Common,
-    pub w: W,
-    /// Listened signal ids.
-    pub listen: Vec<u32>,
-    /// Observed prop ids with their nesting count.
-    pub observe: HashMap<u32, u32>,
-    /// Window: `present` was called.
-    pub presented: bool,
-    /// TextEdit: focus requested by `request-focus`, applied next pass.
-    pub want_focus: bool,
-    // ---- layout (taffy on the arena, see layout.rs) ----
-    pub style: taffy::Style,
-    pub cache: taffy::Cache,
-    pub unrounded: taffy::Layout,
-    pub layout: taffy::Layout,
-    /// No-wrap size of the leaf's content, measured with egui's fonts; None = measure again.
-    pub intrinsic: Option<egui::Vec2>,
-    /// Rect relative to the window's content origin (set by the layout pass).
-    pub rect: egui::Rect,
-    /// What the widget actually took last frame (screen coordinates).
-    pub drawn: egui::Rect,
-    /// Last frame's focus, for gained/lost-focus.
-    pub had_focus: bool,
-    /// TR1 visual channels (ABI v2.8 style ops): what a running transition shows.
-    pub vis: Visual,
-    /// EM1 (ARCH-EMBED §4.4, §5.5; ARCH-SCENE §4.5 `core.root`): the embedded root whose tree this
-    /// node is in (0: none, e.g. a desktop window's tree or a detached node). Set for the subtree
-    /// when it is inserted (`ids::adopt`); its egui id derives from that root's base.
-    pub root: u32,
-    /// EM1: created by the embedder (a slot), not by JS: JS sees it as borrowed and cannot destroy it.
-    pub host_owned: bool,
-    /// RA1: state bits (ARCH-EMBED §8.4; accessors in `provider/state.rs`).
-    pub state: crate::provider::StateBits,
-    /// RA1: provider data (ARCH-EMBED §8.4; accessors in `scene/ext.rs`).
-    pub ext: super::ext::ExtBlock,
->>>>>>> origin/master
 }
 
 /// The visual channels of a node (plans/milestones/TR1-transitions.md section 3.2). Paint-only

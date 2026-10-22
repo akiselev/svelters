@@ -26,49 +26,50 @@ impl EguiBackend {
         assert!(!self.0.pass_active.get(), "svelters-egui: {what} during the egui pass (JS must not run while the scene is drawn)");
     }
 
-    /// Lays out window `w`'s root if it has queued work (the whole root when new or resized, else
-    /// only its dirty boundaries) and paints its content in `ui`'s available rect.
-    pub(crate) fn window_ui(&self, ui: &mut egui::Ui, w: Handle, out: &mut Vec<Out>) {
-        let rect = ui.available_rect_before_wrap();
-        let size = rect.size();
-        let mut scene = self.0.scene.borrow_mut();
-        let id = scene.live(w).expect("a live window");
-        let r = scene.core[scene.ix(id)].root;
+    /// Lays out root `r` if it has queued work: the whole root when new, resized or its top
+    /// changed, else only its dirty boundaries (`layout::run_root`).
+    fn layout_root(&self, scene: &mut Arena, ctx: &egui::Context, r: crate::scene::RootIx, size: Vec2) {
         let due = scene.roots.get(r).is_some_and(|e| e.size != Some(size) || !e.dirty.relayout.is_empty() || e.dirty.full);
         if due {
-            let m = layout::Metrics::new(ui.ctx());
-            if let Some(run) = layout::run_root(&mut scene, &m, r, size) {
+            let m = layout::Metrics::new(ctx);
+            if let Some(run) = layout::run_root(scene, &m, r, size) {
                 self.count_layout(run);
             }
         }
+    }
+
+    /// Lays out window `w`'s root if it has queued work and paints its content in `ui`'s
+    /// available rect.
+    pub(crate) fn window_ui(&self, ui: &mut egui::Ui, w: Handle, out: &mut Vec<Out>) {
+        let rect = ui.available_rect_before_wrap();
+        let mut scene = self.0.scene.borrow_mut();
+        let id = scene.live(w).expect("a live window");
+        let r = scene.core[scene.ix(id)].root;
+        self.layout_root(&mut scene, ui.ctx(), r, rect.size());
         paint(&mut scene, w, rect.min.to_vec2(), ui, out);
         ui.allocate_rect(rect, egui::Sense::hover());
     }
-}
 
-impl EguiBackend {
     /// EM1: lays out (if needed) and paints slot `slot`'s subtree in `ui`'s available rect
-    /// (ARCH-EMBED §5.1 b–c). A slot is its own layout root: it is laid out again when its
-    /// available size changed or a change below it cleared its cache (style, structure, remeasure),
-    /// whatever other slots and windows did. Returns the rect it took and taffy's content size.
+    /// (ARCH-EMBED §5.1 b-c). A slot is its own scene root (`TreeRoot::Slot`): it is laid out
+    /// again when its available size changed or its root queued work (style, structure, a changed
+    /// measured size), only the dirty boundaries when the size is the same, whatever other slots
+    /// and windows did. Returns the rect it took and the content size (its children's extent).
     pub(crate) fn slot_ui(&self, ui: &mut egui::Ui, slot: Handle, out: &mut Vec<Out>) -> (egui::Rect, Vec2) {
         let rect = ui.available_rect_before_wrap();
-        let size = rect.size();
         let mut scene = self.0.scene.borrow_mut();
-        let stale = self.0.dirty.layout_size.borrow().get(&slot) != Some(&size);
-        if stale || scene.n(slot).cache.is_empty() {
-            let m = layout::Metrics::new(ui.ctx());
-            let measured = layout::compute(&mut scene, &m, slot, size);
-            self.0.dirty.layout_size.borrow_mut().insert(slot, size);
-            self.bump(|s| {
-                s.layouts += 1;
-                s.measured += measured as u64;
-            });
+        let id = scene.live(slot).expect("a live slot");
+        let i = scene.ix(id);
+        let r = scene.core[i].root;
+        // leaves whose text changed after this frame's logic (a host op in a fault disposal)
+        if scene.roots.get(r).is_some_and(|e| !e.dirty.remeasure.is_empty()) {
+            layout::remeasure(&mut scene, &layout::Metrics::new(ui.ctx()), r);
         }
-        paint(&mut scene, slot, rect.min.to_vec2(), ui, out);
+        self.layout_root(&mut scene, ui.ctx(), r, rect.size());
+        paint_at(&mut scene, i, rect.min.to_vec2(), ui, out);
         // what the content needs: the extent of the slot's children (laid out from its origin)
-        let content = scene.n(slot).children.iter().filter_map(|&c| scene.get(c)).fold(Vec2::ZERO, |acc, n| {
-            if n.rect == egui::Rect::NOTHING { acc } else { acc.max(n.rect.max.to_vec2()) }
+        let content = scene.children[i].iter().map(|&c| scene.core[scene.ix(c)].rect).fold(Vec2::ZERO, |acc, r| {
+            if r == egui::Rect::NOTHING { acc } else { acc.max(r.max.to_vec2()) }
         });
         drop(scene);
         ui.allocate_rect(rect, egui::Sense::hover());

@@ -7,8 +7,8 @@
 //! SG4 overlay roots through [`Scene::add_root`]. A node caches its root (`NodeCore::root`), set for
 //! the whole subtree when it moves between roots (O(subtree), once per such insert).
 //!
-//! EM1: [`Scene::attached`] is the attach hook (called for each node that enters a root), where the
-//! egui id derivation of ARCH-EMBED §4.4 goes. Writer lane: SCENE.
+//! [`Scene::attached`] is the attach hook (called for each node that enters a root): it derives the
+//! node's egui id from its root's id base (EM1, ARCH-EMBED §4.4, `ids.rs`). Writer lane: SCENE.
 
 use super::access::{Origin, SceneError};
 use super::dirty::RootDirty;
@@ -17,12 +17,15 @@ use super::node::{Dirty, LayoutBox, NodeCold, NodeCore, NodeFlags, Owner, Payloa
 use super::{Common, Scene};
 use crate::kinds;
 
-/// What a root is (ARCH-SCENE §4.5). EM1 adds `Slot`, SG4 `Overlay`.
+/// What a root is (ARCH-SCENE §4.5). SG4 adds `Overlay`.
 #[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub enum TreeRoot {
     /// A `window` node: a desktop window of the runner, or one shown in kittest.
     Window { node: NodeId },
+    /// An embed slot (EM1, ARCH-EMBED §4.1): a host-owned box, drawn by `Embed::show_slot`; the
+    /// root mounted into it is the runtime's subtree under `node`.
+    Slot { node: NodeId },
 }
 
 pub(crate) struct RootEntry {
@@ -31,6 +34,16 @@ pub(crate) struct RootEntry {
     pub dirty: RootDirty,
     /// The available size of its last layout (`None`: never laid out).
     pub size: Option<egui::Vec2>,
+    /// The egui id base of the root mounted here (EM1: `ids::root_base` of the embed's salt and the
+    /// root's key); `None`: nodes keep the unsalted `ids::node_id` (windows, empty slots).
+    pub base: Option<egui::Id>,
+}
+
+impl RootDirty {
+    /// No layout work queued.
+    pub fn is_empty(&self) -> bool {
+        !self.full && self.relayout.is_empty() && self.remeasure.is_empty()
+    }
 }
 
 impl RootEntry {
@@ -92,49 +105,9 @@ fn builtin_payload(kind: usize) -> Option<W> {
         "Checkbox" => W::Checkbox { text: String::new(), checked: false },
         "TextEdit" => W::TextEdit { text: String::new(), hint: String::new(), multiline: false, password: false, char_limit: 0 },
         "Slider" => W::Slider { value: 0.0, min: 0.0, max: 100.0, step: 0.0, text: String::new(), show_value: true },
-<<<<<<< HEAD
         // RA1: a provider kind's widget struct with its defaults
         _ => W::Ext(crate::provider::ExtWidget::new((kinds::KindRegistry::global().provider(kind)?.entry.new)())),
     })
-=======
-        other => match crate::kinds::KindRegistry::global().provider(kind) {
-            Some(p) => W::Ext(crate::provider::ExtWidget::new((p.entry.new)())),
-            None => unreachable!("not creatable: {other}"),
-        },
-    };
-    let mut c = Common::default();
-    if matches!(w, W::Window { .. }) {
-        c.padding = 8.0;
-    }
-    let mut n = Node {
-        kind,
-        handle,
-        parent: None,
-        children: Vec::new(),
-        id: crate::ids::node_id(handle),
-        c,
-        w,
-        listen: Vec::new(),
-        observe: HashMap::new(),
-        presented: false,
-        want_focus: false,
-        style: taffy::Style::default(),
-        cache: taffy::Cache::new(),
-        unrounded: taffy::Layout::with_order(0),
-        layout: taffy::Layout::with_order(0),
-        intrinsic: None,
-        rect: egui::Rect::NOTHING,
-        drawn: egui::Rect::NOTHING,
-        had_focus: false,
-        vis: Visual::default(),
-        root: 0,
-        host_owned: false,
-        state: Default::default(),
-        ext: Default::default(),
-    };
-    crate::layout::restyle(&mut n);
-    n
->>>>>>> origin/master
 }
 
 fn is_js(o: Origin) -> bool {
@@ -183,10 +156,17 @@ impl Scene {
     pub(crate) fn add_root(&mut self, kind: TreeRoot, top: NodeId) -> RootIx {
         let ti = self.ix(top);
         debug_assert!(self.core[ti].parent.is_none() && self.core[ti].root.is_detached());
-        let r = self.roots.add(RootEntry { kind, top, dirty: RootDirty { full: true, ..Default::default() }, size: None });
+        let r = self.roots.add(RootEntry { kind, top, dirty: RootDirty { full: true, ..Default::default() }, size: None, base: None });
         self.core[ti].flags.insert(NodeFlags::ROOT);
         self.set_root_subtree(top, r);
         r
+    }
+
+    /// The entry of the root whose top is the live node `h` (a slot's or a window's own root).
+    pub(crate) fn slot_root(&self, h: super::Handle) -> Option<&RootEntry> {
+        let id = NodeId::from_raw(h)?;
+        let i = self.idx(id)?;
+        self.roots.get(self.core[i].root).filter(|e| e.top == id)
     }
 
     /// Ends root `r`: its tree stays, detached.
@@ -198,9 +178,38 @@ impl Scene {
         }
     }
 
-    /// The attach hook: `id` just entered root `r` (EM1: derive its egui id here, ARCH-EMBED §4.4).
+    /// The attach hook: `id` just entered root `r`. Its egui id derives from the root's id base
+    /// (ARCH-EMBED §4.4): `base.with(("a", anchor))` when anchored, else `base.with(("h", handle))`;
+    /// in a root without a base, the unsalted `ids::node_id`. Host-owned nodes (slots) keep the id
+    /// the embed gave them. Deterministic, so a move within the root keeps the id.
     #[inline]
-    pub(crate) fn attached(&mut self, _id: NodeId, _r: RootIx) {}
+    pub(crate) fn attached(&mut self, id: NodeId, r: RootIx) {
+        let i = self.ix(id);
+        if self.core[i].owner == Owner::Host {
+            return;
+        }
+        let h = id.to_raw();
+        self.core[i].egui_id = match self.roots.get(r).and_then(|e| e.base) {
+            Some(base) => crate::ids::rooted_id(base, h, &self.common(i).anchor),
+            None => crate::ids::node_id(h),
+        };
+    }
+
+    /// Sets the egui id base of root `r` (EM1: a root mounted into a slot, `None` when unmounted).
+    /// Nodes attached from now on take ids from it; the ones already in the root are re-derived.
+    pub(crate) fn set_root_base(&mut self, r: RootIx, base: Option<egui::Id>) {
+        let Some(e) = self.roots.get_mut(r) else { return };
+        if e.base == base {
+            return;
+        }
+        e.base = base;
+        let top = e.top;
+        let mut stack = vec![top];
+        while let Some(x) = stack.pop() {
+            self.attached(x, r);
+            stack.extend(self.children[self.ix(x)].iter().copied());
+        }
+    }
 
     /// Sets the root cache of `top`'s subtree to `r`, moving queued work along (a queued node keeps
     /// its queue membership in an attached root; in a detached tree its work is dropped and its

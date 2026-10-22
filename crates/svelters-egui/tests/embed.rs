@@ -390,3 +390,46 @@ fn handler_exceptions_are_reported_then_fault_the_root_by_policy() {
     assert!(has(&eh, "fragile failed: handler threw"));
     assert!(matches!(e.root_info(o).unwrap().state, RootState::Live));
 }
+
+/// SG1 on EM1's frame: a slot is a host-owned scene root (`TreeRoot::Slot`, JS sees it borrowed);
+/// R17: from the end of `logic` to the end of the egui pass `write` fails and `defer` works, and
+/// the pass hooks return the scene to `Idle`; R16: deferred writes keep the embed busy until the
+/// next logic runs them.
+#[test]
+fn slot_roots_phases_and_deferred_work_follow_the_embed_frame() {
+    use std::cell::{Cell, RefCell};
+    use std::rc::Rc;
+    use svelters_egui::scene::{Owner, Phase, ProviderId, TreeRoot};
+    let (mut eh, entry) = rig();
+    let e = eh.embed.clone();
+    let slot = e.create_slot("panel", SlotOptions::fill());
+    let seen: Rc<RefCell<Vec<(Phase, bool)>>> = Rc::default();
+    let s2 = seen.clone();
+    eh.set_ui(move |e, ui| {
+        let scene = e.backend().scene();
+        s2.borrow_mut().push((scene.phase(), scene.write(ProviderId::APP, |_| ()).is_ok()));
+        e.show_slot(ui, slot);
+    });
+    mount(&e, entry, "Panel", slot, "panel", Props::new().with("title", "P").with("items", vec!["a"]));
+    eh.run();
+    assert!(has(&eh, "P: 0"));
+    let scene = e.backend().scene();
+    scene.read(|s| {
+        s.validate().unwrap();
+        let top = s.get_raw(slot.handle()).unwrap();
+        assert_eq!(top.owner(), Owner::Host);
+        assert!(s.roots().any(|(r, k)| r == top.root() && k == TreeRoot::Slot { node: top.id() }));
+        assert!(top.descendants().skip(1).all(|n| n.root() == top.root() && n.owner() == Owner::Js), "the root's nodes are in the slot's root");
+    });
+    assert!(seen.borrow().iter().all(|&(p, ok)| p == Phase::Ui && !ok), "R17: Ui and SceneBusy in the app's ui: {:?}", seen.borrow());
+    assert_eq!(scene.phase(), Phase::Idle, "the pass hooks end Ui with the pass");
+    assert!(scene.write(ProviderId::APP, |_| ()).is_ok());
+
+    let ran = Rc::new(Cell::new(false));
+    let r2 = ran.clone();
+    scene.defer(ProviderId::APP, move |_| r2.set(true));
+    assert!(e.settled().busy.contains(Busy::CHANGES), "R16: a deferred write is pending work");
+    eh.run();
+    assert!(ran.get() && scene.deferred_len() == 0);
+    assert!(e.settled().is_settled(), "{:?}", e.settled());
+}

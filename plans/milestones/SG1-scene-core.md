@@ -73,15 +73,8 @@ events, owner rules with a runtime's tree, defer across frames, boundary relayou
 
 ## Notes for the next lanes
 
-- **EM1**: the attach hook is `Scene::attached(id, root)` (`scene/tree.rs`); move `ids::node_id` there (it is still
-  called in `Scene::create`). Slot roots: add `TreeRoot::Slot { .. }` and call `Scene::add_root(kind, top)` /
-  `remove_root(r)`; layout per slot is `layout::remeasure(s, m, r)` then `layout::run_root(s, m, r, size)`, the same
-  calls `window_ui` makes. Phases: `SceneHandle::set_phase(Phase::Logic)` at the start of `Embed::logic`,
-  `run_deferred()` and the announcement flush (see `frame.rs::before_pass`), `Phase::Ui` at its end, `Phase::Idle`
-  at egui's end of pass (R17: cover the app's ui between slots and deferred viewports). **R16**: `Busy` lives in your
-  `embed/settle.rs`; `SceneHandle::deferred_len() > 0` must count as busy (CHANGES or COMMANDS), and a pending
-  announcement queue (`Scene::announce`, non-empty until flushed) as CHANGES. `RootEntry::size` replaces
-  `layout_size`; `NodeFlags::PRESENTED`, `WANT_FOCUS`, `HAD_FOCUS` replace the old node booleans.
+- **EM1** (landed on master first; merged here, see "The EM1 merge" below): slot roots, the attach hook's id
+  derivation, per-root slot layout, R16 in `Busy` and R17's phases on `Embed::logic`/`show_slot` are done.
 - **RA1** (landed first; merged here): provider widgets stay `W::Ext` inside `Payload::Builtin` (a separate
   `Payload::Widget` variant is a later cleanup, not needed by any caller). The scene reads kinds only through the
   registry (`kinds::kind(k)`, `KindRegistry::global().indexes()` for the `member_bit` table, `provider(k)` in
@@ -112,44 +105,63 @@ events, owner rules with a runtime's tree, defer across frames, boundary relayou
 - Not run locally: `--workspace` builds and tests (nothing outside this crate uses its Rust API), conformance, the
   other backends' suites. CI runs them.
 
-## Handoff: the EM1 merge (in progress)
+## The EM1 merge (resolved)
 
-State: `ci/sg1` was green at `ca26017a` (SG1 + RA1 merge; CI runs 39758049162 macos-appkit, 39758049086 linux-qt,
-39758049178 linux-gtk, 39758049103 windows-winui, 39758049123 js). The next commit on `ci/sg1` is a **WIP merge of
-origin/master `ff04be32` (EM1) with the conflicts still marked** (the SG1 lane ran out of budget). It does not
-build. To finish it, check out `ci/sg1`, resolve, and continue from there (do not reset: amend or add a fix-up commit).
+`ci/sg1` was green at `ca26017a` (SG1 + RA1). `01b64aae` merged master `ff04be32` (EM1) with the conflicts still
+marked; the next commit on `ci/sg1` resolves them (a new commit, no reset). Both lanes' intent is kept: EM1's
+`Embed` API and behaviour are unchanged, and its scene additions became SG1 columns and hooks.
 
-Conflicted (markers in the files): `frame.rs`, `leaf.rs`, `ops.rs`, `scene/node.rs`, `scene/tree.rs`. Auto-merged
-but written against the pre-SG1 `Arena`/`Node` (will not compile): `embed/mod.rs` (~38 sites: `scene.alloc` +
-`scene::new_node` for slot boxes, `get_mut`, `n.cache`, `n.children.clone()`, `n.root`, `n.c.anchor`,
-`tree::detach`/`tree::free_subtree(&mut Arena, Handle)`, `b.0.dirty.remeasure`/`layout_size`), `ids.rs`
-(`adopt`/`reanchor` walk `Node.root`), `walk.rs`, `a11y.rs` (`decorate(resp, n)`), `runner/*`, `tests/embed.rs`.
+| EM1 (pre-SG1 `Node`) | Now |
+|---|---|
+| `Node.root: u32` (the embed's `RootId`, set by `ids::adopt`) | `NodeCore::root: RootIx` into the root table. A slot is `TreeRoot::Slot { node }`, created with the slot (`Scene::add_root`) and ended by `Scene::free_subtree` when the slot is destroyed. The mounted root's id base is `RootEntry::base` (`Scene::set_root_base`, set by `do_mount`, cleared by `do_unmount`). `Embed::root_of_handle` maps node → `RootIx` → `TreeRoot::Slot` → slot → `Slot::root`; `anchored` scans the slot root's nodes. |
+| `Node.host_owned` | `Owner::Host` (`Scene::create(box, Owner::Host)`); `handle_info` answers `SVL_LIFE_BORROWED` for it. |
+| `Common.anchor` | unchanged (cold column), plus `P::Anchor` in `props::is_common` (it was missing: the write went to a throwaway `Common`) and `keys::widget::ANCHOR`. |
+| `ids::adopt` (insert op), `ids::reanchor` (anchor prop), `EguiBackend::root_bases` | SG1's attach hook `Scene::attached(id, r)`: `rooted_id(base, handle, anchor)` when the root has a base, else the unsalted `node_id`; host-owned nodes keep the id the embed gave them. `Scene::set_value` re-derives on `P::Anchor`; `set_root_base` re-derives the root's nodes. `root_bases` is gone. |
+| `layout_size`, `n.cache.is_empty()`, global `remeasure`/`layout_dirty` | `walk.rs::slot_ui`: `layout::remeasure` (if the slot root queued leaves) + `layout::run_root` when the size changed or the root has queued work; `window_ui` shares the `layout_root` helper. Content size from the children's `NodeCore::rect`. |
+| `tree::detach` + `tree::free_subtree(&mut Arena, Handle)` | `Scene::free_subtree(id)` (unlinks, ends a root, returns pre-order ids; `to_raw()` for `on_destroyed`). |
+| `a11y::name` in `leaf.rs` and `provider::paint` | `a11y::decorate(resp, &arena.n(h))` in both (anchored provider nodes get their author id too). |
 
-How to resolve, keeping both lanes' intent:
-- **Node fields → columns.** EM1's `Node.root: u32` (the slot handle of the embedded root, 0 = none) is SG1's
-  `NodeCore::root: RootIx` plus the root table: add `TreeRoot::Slot { node }` and create slot roots with
-  `Scene::add_root(TreeRoot::Slot { node }, top)` (end them with `remove_root`). Keep EM1's per-root id base
-  (`root_bases`) keyed by the slot handle, reachable from the `RootEntry` (`roots.get(r).top`). `Node.host_owned`
-  → `Owner::Host` (`Scene::create(kind, Owner::Host)` for slot boxes; `handle_info` answers `SVL_LIFE_BORROWED`
-  for `Owner::Host`). `Common.anchor` stays in `Common` (cold column) with EM1's `P::Anchor` arm in `props.rs`; the
-  `Node` view exposes `c.anchor` already.
-- **Re-iding.** EM1's `ids::adopt` (insert op) and `ids::reanchor` (anchor prop) belong in SG1's attach hook
-  `Scene::attached(id, root)` (`scene/tree.rs`, called for every node entering a root from `set_root_subtree`) and
-  in `Scene::set_value` for `P::Anchor`. The hook needs the root's id base: store it on `RootEntry` (e.g. a
-  `base: egui::Id` field set by EM1's slot creation) rather than in `Inner::root_bases`.
-- **Layout and Busy.** Slot layout = `layout::remeasure(s, m, r)` + `layout::run_root(s, m, r, size)` (what
-  `walk.rs::window_ui` does for windows). `Busy::LAYOUT` = the root's `RootDirty` is non-empty
-  (`relayout`/`remeasure`/`full`) or its size changed; replace the reads of `n.cache.is_empty()` and
-  `dirty.remeasure`. R16: `SceneHandle::deferred_len() > 0` and a non-empty `Scene::announce` count as busy.
-- **Slot teardown.** `tree::detach` + `tree::free_subtree` → `Scene::free_subtree(id)` (unlinks, ends the root,
-  returns the ids in pre-order; convert with `to_raw()` for `on_destroyed`); `layout_size` is gone (`RootEntry::size`).
-- **Frame.** EM1 split `ui` into `logic_pass` (JS) and `show_windows` (walk). SG1's phase calls go there:
-  `set_phase(Logic)` + `run_deferred()` + the announcement flush at the start of `logic_pass`/`before_pass`,
-  `set_phase(Ui)` at its end, `set_phase(Idle)` at the end of the egui pass (R17: `Embed` should do it at end of
-  pass, not at the end of `show_slot`). Keep SG1's per-root remeasure in `before_pass` and EM1's `bind_ctx` and
-  public `after_pass` (with SG1's deferred-repaint request).
-- **leaf.rs.** Keep SG1's index-based body and replace the `a11y::name` block with EM1's `a11y::decorate(resp,
-  &arena.n(h))` (adapt `decorate` to the `Node<'_>` view).
-- Then: `tools/dev/cargo-slot cargo check -p svelters-egui --all-targets`, `cargo check -p egui-kinds-example
-  --all-targets`, `cargo nextest run -p svelters-egui` (bundles: `pnpm --filter "./fixtures/*-egui" build` after
-  `cargo build -p svelters-compiler --bin svelters-compile`), push, all five workflows green.
+**R17 on EM1's split frame.** `EguiBackend::logic_pass` sets `Logic` (then deferred writes, announcements,
+closes, checkpoint, rAF, remeasure). `Embed::logic` sets `Logic` at its start and `Ui` at its end; a second
+call in the same pass, or a later pass of the frame, sets `Ui` and returns. The `Ui` phase ends at the end of the
+egui pass: `SceneHandle::hook_passes(ctx)` (from `Embed::new` and every `Embed::logic`, once per context)
+registers `on_begin_pass`/`on_end_pass` callbacks on a shared pass clock (`Arc<PassClock>`, atomics, because
+egui's callbacks are `Send + Sync`). The outermost pass ending sets `Idle`; a root-viewport pass starting at depth 0
+sets `Idle` (what a logic-only frame or a missed hook left); a deferred viewport's outermost pass runs in `Ui`;
+an immediate viewport's pass nests and changes nothing. A logic-only frame (`run_logic`, no pass) ends `Embed::logic`
+in `Idle`. The legacy `EguiBackend::ui` keeps its own whole-frame phases (`Ui` after logic, `Idle` when it returns).
+The first frame of an embed created on another context (the runners' `TestApp`/`run_app`) has no hooks yet: its
+logic ends in `Idle`.
+
+**R16.** `embed/settle.rs::scene_busy`: `SceneHandle::deferred_len() > 0` or a non-empty announcement queue
+(`SceneHandle::announcements_len`) sets `Busy::CHANGES`; `after_pass` already requests the repaint for deferred
+writes. `Busy::LAYOUT` is a visible mounted slot not drawn yet or whose root has queued work (`RootDirty::is_empty`),
+or any root with leaves to remeasure. `Busy::PROVIDER` stays reserved (state providers are SG4/R23).
+
+API changes against the two records: none to `Embed`, `EmbedHarness`, `TestApp` or the `scene::*` API listed above.
+Added: `TreeRoot::Slot`, `keys::widget::ANCHOR`, `SceneHandle::announcements_len`. Removed (crate-private):
+`EguiBackend::root_bases`, `ids::{adopt, reanchor, id_of}`.
+
+## Notes for SG2, SG3, EM2
+
+- **SG2**: `Scene::attached` and `set_root_base` change egui ids (journal them with the node's tick if a consumer
+  needs id changes). `set_root_base` walks the whole root; it runs only on mount and unmount.
+- **SG3**: `Embed::anchored` is a slot scan filtered by `NodeCore::root`; the per-root anchor index of §4.5
+  (`RootEntry::anchors`) belongs in `attached` and the `P::Anchor` arm of `set_value`, with `by_anchor` on top.
+- **EM2**: repaint routing can read node → `RootIx` → `TreeRoot::Slot { node }` → slot → viewport. Deferred
+  viewports already run in `Ui` (the pass hooks); `show_viewport_passes` (R21) goes after the walk in that phase.
+  `RootEntry` has no viewport or visibility yet: they live in EM1's `Slot` (§4.5 lists them on the root entry).
+
+## Verification (the EM1 merge, local)
+
+- New test `tests/embed.rs::slot_roots_phases_and_deferred_work_follow_the_embed_frame` (slot = `Owner::Host`
+  top of a `TreeRoot::Slot`, the root's nodes in it; R17 `Ui` + `SceneBusy` in the app's ui, `Idle` after the
+  pass; R16 `CHANGES` for a deferred write until the next logic).
+- `tools/dev/cargo-slot cargo check -p svelters-egui --all-targets` and `cargo check --workspace --all-targets`:
+  clean (pre-existing warnings in other crates only).
+- `tools/dev/cargo-slot cargo nextest run -p svelters-egui -p egui-kinds-example`: 41/41 (every SG1 test, the
+  property test, the 11k-node one-boundary test, `node_core_fits_112_bytes`, the egui tests and op-log replays,
+  EM1's 7 `tests/embed.rs` tests and RA1's `egui-kinds` tests unchanged), then the new embed test (fixtures built
+  with `pnpm --filter "./fixtures/*-egui" build` and `pnpm --filter ./examples/egui-kinds/app build` after
+  `cargo build -p svelters-compiler --bin svelters-compile`).
+- Not run locally: workspace tests, conformance, the JS packages' tests, the other backends. CI runs them.

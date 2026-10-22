@@ -23,8 +23,10 @@ use super::tree::TreeRoot;
 use super::{Member, Phase, Scene, member_bit};
 use crate::backend::EguiBackend;
 use crate::kinds;
-use std::cell::{Cell, Ref, RefCell, RefMut};
+use std::cell::{Ref, RefCell, RefMut};
 use std::rc::Rc;
+use std::sync::Arc;
+use std::sync::atomic::{AtomicU8, AtomicU32, Ordering};
 use svelters_abi::Value;
 
 /// Who wrote (recorded per change from SG2's journal on).
@@ -101,9 +103,45 @@ impl std::error::Error for PropError {}
 
 type Deferred = Box<dyn FnOnce(&mut SceneMut<'_>)>;
 
+/// The phase, shared with the egui pass hooks (`Send + Sync` callbacks, UI thread in practice).
+struct PassClock {
+    phase: AtomicU8,
+    /// egui passes running (an immediate viewport's pass nests in its parent's).
+    depth: AtomicU32,
+    /// Unique per scene: the key of its hooks in a context's data.
+    serial: u64,
+}
+
+impl Default for PassClock {
+    fn default() -> Self {
+        static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
+        PassClock { phase: AtomicU8::new(0), depth: AtomicU32::new(0), serial: NEXT.fetch_add(1, Ordering::Relaxed) }
+    }
+}
+
+impl PassClock {
+    fn get(&self) -> Phase {
+        match self.phase.load(Ordering::Relaxed) {
+            1 => Phase::Logic,
+            2 => Phase::Ui,
+            _ => Phase::Idle,
+        }
+    }
+    fn set(&self, p: Phase) {
+        self.phase.store(
+            match p {
+                Phase::Idle => 0,
+                Phase::Logic => 1,
+                Phase::Ui => 2,
+            },
+            Ordering::Relaxed,
+        );
+    }
+}
+
 pub(crate) struct SceneCell {
     scene: RefCell<Scene>,
-    phase: Cell<Phase>,
+    phase: Arc<PassClock>,
     deferred: RefCell<Vec<(ProviderId, Deferred)>>,
     /// Asks for a frame (set by the backend): queued work needs a logic pass.
     wake: RefCell<Option<Box<dyn Fn()>>>,
@@ -116,7 +154,7 @@ pub struct SceneHandle(Rc<SceneCell>);
 
 impl Default for SceneHandle {
     fn default() -> Self {
-        SceneHandle(Rc::new(SceneCell { scene: RefCell::new(Scene::default()), phase: Cell::new(Phase::Idle), deferred: RefCell::new(Vec::new()), wake: RefCell::new(None) }))
+        SceneHandle(Rc::new(SceneCell { scene: RefCell::new(Scene::default()), phase: Arc::default(), deferred: RefCell::new(Vec::new()), wake: RefCell::new(None) }))
     }
 }
 
@@ -133,6 +171,43 @@ impl SceneHandle {
         self.0.phase.set(p);
     }
 
+    /// True while an egui pass of a context with [`SceneHandle::hook_passes`] runs.
+    pub(crate) fn in_pass(&self) -> bool {
+        self.0.phase.depth.load(Ordering::Relaxed) > 0
+    }
+
+    /// R17 for embedders: ends the `Ui` phase at the end of the egui pass. Hooks `ctx`'s pass
+    /// begin and end (once per context): the outermost pass ending returns the scene to `Idle`; a
+    /// root viewport's outermost pass starts in `Idle` (whatever a logic-only frame left); a
+    /// deferred viewport's pass (outermost, not the root viewport) runs in `Ui`. An immediate
+    /// viewport's pass nests in its parent's and changes nothing.
+    pub(crate) fn hook_passes(&self, ctx: &egui::Context) {
+        let key = egui::Id::unique(("svelters-scene-pass-hooks", self.0.phase.serial));
+        if ctx.data(|d| d.get_temp::<bool>(key).is_some()) {
+            return;
+        }
+        ctx.data_mut(|d| d.insert_temp(key, true));
+        let clock = self.0.phase.clone();
+        ctx.on_begin_pass(
+            "svelters-scene",
+            Arc::new(move |ui: &mut egui::Ui| {
+                if clock.depth.fetch_add(1, Ordering::Relaxed) == 0 {
+                    clock.set(if ui.ctx().viewport_id() == egui::ViewportId::ROOT { Phase::Idle } else { Phase::Ui });
+                }
+            }),
+        );
+        let clock = self.0.phase.clone();
+        ctx.on_end_pass(
+            "svelters-scene",
+            Arc::new(move |_ui: &mut egui::Ui| {
+                let was = clock.depth.fetch_update(Ordering::Relaxed, Ordering::Relaxed, |d| Some(d.saturating_sub(1))).unwrap_or(0);
+                if was <= 1 {
+                    clock.set(Phase::Idle);
+                }
+            }),
+        );
+    }
+
     pub(crate) fn set_wake(&self, f: impl Fn() + 'static) {
         *self.0.wake.borrow_mut() = Some(Box::new(f));
     }
@@ -145,6 +220,11 @@ impl SceneHandle {
 
     pub fn phase(&self) -> Phase {
         self.0.phase.get()
+    }
+
+    /// Prop changes Rust writes announced that the next logic delivers (R16: pending work).
+    pub fn announcements_len(&self) -> usize {
+        self.0.scene.try_borrow().map(|s| s.announce.len()).unwrap_or(0)
     }
 
     /// Read access, any phase. Panics if called while the scene is being mutated (inside a
@@ -718,6 +798,13 @@ impl Scene {
         }
         if d.contains(Dirty::MEASURE) {
             self.mark_measure(id);
+        }
+        // EM1: the anchor salts the egui id (ARCH-EMBED §4.4): re-derive it in its root
+        if def.key == kinds::P::Anchor {
+            let r = self.core[i].root;
+            if !r.is_detached() {
+                self.attached(id, r);
+            }
         }
         if announce {
             let after = props::get_prop(&self.get(id.to_raw()).expect("live"), def).ok();

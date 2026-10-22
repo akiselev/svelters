@@ -15,8 +15,10 @@
 //! JS never runs during the walk: `checkpoint` and `call_sync` are only called before it, and the
 //! `pass_active` flag turns a violation into a panic.
 //!
-//! EM1 turns this into `Embed::logic` (closes, commands, checkpoint, rAF, remeasure, repaint routing
-//! per root; ARCH-EMBED §5). Writer lane: EMBED.
+//! EM1 splits it into `logic_pass` (JS; `Embed::logic` calls it after its queued commands) and
+//! `show_windows` (the walk); slots are drawn by `Embed::show_slot` (ARCH-EMBED §5). Phases
+//! (ARCH-SCENE R17): `Logic` from the start of `logic_pass`, `Ui` from the end of logic to the end of
+//! the egui pass (the legacy [`EguiBackend::ui`] ends it when it returns). Writer lane: EMBED.
 
 use crate::backend::EguiBackend;
 use crate::kinds;
@@ -98,24 +100,22 @@ impl EguiBackend {
             }
         }
         if ctx.current_pass_index() == 0 {
-<<<<<<< HEAD
-            self.bump(|s| s.frames += 1);
-            self.0.shared.frames.fetch_add(1, Ordering::Relaxed);
-            self.0.scene.set_phase(Phase::Logic);
-            self.before_pass(&ctx);
+            self.logic_pass(&ctx);
         }
         // R17: from the end of logic to the end of the pass, Rust writes are deferred.
         self.0.scene.set_phase(Phase::Ui);
-=======
-            self.logic_pass(&ctx);
-        }
         self.show_windows(ui);
+        // This call is the whole frame of the legacy backend: the pass ends here. (EM1's `Embed`
+        // keeps `Ui` until egui's end of pass, so the app's own ui between slots is covered.)
+        self.0.scene.set_phase(Phase::Idle);
     }
 
     /// The part of a frame that runs JS (EM1: `Embed::logic` calls it, after its queued commands):
-    /// counts the frame, then closes, checkpoint, rAF and remeasure. First pass only.
+    /// counts the frame, then (phase `Logic`) deferred scene writes, announcements, closes,
+    /// checkpoint, rAF and remeasure. First pass only. The caller sets `Ui` after it.
     pub(crate) fn logic_pass(&self, ctx: &egui::Context) {
         self.0.in_frame.set(true);
+        self.0.scene.set_phase(Phase::Logic);
         self.bump(|s| s.frames += 1);
         self.0.shared.frames.fetch_add(1, Ordering::Relaxed);
         self.before_pass(ctx);
@@ -127,12 +127,8 @@ impl EguiBackend {
     pub(crate) fn show_windows(&self, ui: &mut egui::Ui) {
         let ctx = ui.ctx().clone();
         self.0.in_frame.set(true);
->>>>>>> origin/master
         let out = self.walk(ui);
         self.after_pass(&ctx, out);
-        // This call is the whole frame of the legacy backend: the pass ends here. (EM1's `Embed`
-        // keeps `Ui` until egui's end of pass, so the app's own ui between slots is covered.)
-        self.0.scene.set_phase(Phase::Idle);
         self.0.in_frame.set(false);
     }
 

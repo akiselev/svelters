@@ -527,9 +527,8 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
     let mut resp = wb.ui(ui, &mut cx);
     let WidgetCx { changed, emits, remeasure, errors, .. } = cx;
     drop(wb);
-    if let Some(name) = crate::a11y::name(&arena.n(h)) {
-        resp = resp.accessible_name(name);
-    }
+    // EM1: the accessible name and, for an anchored node, the anchor as AccessKit author id
+    resp = crate::a11y::decorate(resp, &arena.n(h));
     let c = arena.common(i);
     if !c.tooltip.is_empty() {
         resp = resp.on_hover_text(c.tooltip.clone());

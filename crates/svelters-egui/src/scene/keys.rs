@@ -114,6 +114,7 @@ pub mod widget {
         FLEX_BASIS: Option<f64> = "flex-basis", flex_basis;
         ALIGN_SELF: &'static str = "align-self", align_self;
         MARGIN: f64 = "margin", margin;
+        ANCHOR: String = "anchor", anchor;
     }
 }
 

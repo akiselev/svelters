@@ -37,7 +37,7 @@ pub use settle::{Busy, BusyProbe, Settle};
 pub use slots::{FaultUi, SlotId, SlotOptions, SlotResponse, SlotSizing};
 
 use crate::backend::EguiBackend;
-use crate::scene::{Handle, tree};
+use crate::scene::{Handle, NodeId, Owner, Phase, TreeRoot};
 use roots::{Root, SentInfo};
 use slots::Slot;
 use std::borrow::Cow;
@@ -428,6 +428,7 @@ impl Embed {
         debug_assert!(!clash, "svelters-egui: two embeds with the id salt '{}' in one egui Context", cfg.id_salt);
         let backend = EguiBackend::new();
         backend.bind_ctx(ctx);
+        backend.0.scene.hook_passes(ctx);
         let host = Host::new_owned(backend.clone(), cfg.host.clone()).map_err(EmbedError::Host)?;
         host.start().map_err(|e| EmbedError::Host(JsError::new(ErrorKind::Host, e.to_string())))?;
         host.set_turn_budget(Some(cfg.budgets.interrupt));
@@ -481,12 +482,15 @@ impl Embed {
         }
         let id = crate::ids::slot_id(self.salt(), &key);
         let box_kind = crate::kinds::tag_index("box").expect("the box kind");
-        let h = self.inner.backend.0.scene.borrow_mut().alloc(|h| {
-            let mut n = crate::scene::new_node(box_kind, h);
-            n.host_owned = true;
-            n.id = id;
-            n
-        });
+        // A host-owned box (JS sees it borrowed), the top of its own scene root (ARCH-SCENE §4.5).
+        let h = {
+            let mut scene = self.inner.backend.0.scene.borrow_mut();
+            let n = scene.create(box_kind, Owner::Host).expect("a box");
+            let i = scene.ix(n);
+            scene.core[i].egui_id = id;
+            scene.add_root(TreeRoot::Slot { node: n }, n);
+            n.to_raw()
+        };
         let slot = SlotId(h);
         let mut st = self.inner.st.borrow_mut();
         st.slot_keys.insert(key.clone(), slot);
@@ -615,20 +619,25 @@ impl Embed {
     /// the host checkpoint, animation frames, remeasure, faults, repaints. The first pass of a
     /// frame only; later calls in the same pass are no-ops. All JS runs here.
     pub fn logic(&self, ctx: &egui::Context) {
+        let b = &self.inner.backend;
+        // R17: this frame's logic ran (or runs only in the first pass): the rest of the pass is `Ui`.
         if ctx.current_pass_index() != 0 {
+            b.0.scene.set_phase(Phase::Ui);
             return;
         }
         let pass = ctx.cumulative_pass_nr();
         {
             let mut st = self.inner.st.borrow_mut();
             if st.last_pass == Some(pass) {
+                b.0.scene.set_phase(Phase::Ui);
                 return;
             }
             st.last_pass = Some(pass);
         }
         let t0 = Instant::now();
-        let b = &self.inner.backend;
         b.bind_ctx(ctx);
+        b.0.scene.hook_passes(ctx);
+        b.0.scene.set_phase(Phase::Logic);
         b.0.in_frame.set(true);
         self.apply_commands();
         self.sync_info(ctx);
@@ -644,6 +653,9 @@ impl Embed {
         if !self.inner.st.borrow().commands.is_empty() {
             ctx.request_repaint();
         }
+        // R17: `write` fails from here to the end of the egui pass (the pass hooks return the scene
+        // to `Idle`); `defer` runs at the next logic. A logic-only frame (no pass) ends in `Idle`.
+        b.0.scene.set_phase(if b.0.scene.in_pass() { Phase::Ui } else { Phase::Idle });
         let dt = t0.elapsed();
         {
             let mut st = self.inner.st.borrow_mut();
@@ -763,13 +775,17 @@ impl Embed {
         let info_pending = st.roots.values().any(|r| r.state.is_live() && r.sent.as_ref() != Some(&self.info_of(&st, r)));
         busy.set(Busy::COMMANDS, !st.commands.is_empty() || info_pending);
         busy.set(Busy::MOUNTING, st.roots.values().any(|r| matches!(r.state, RootState::Mounting)));
+        // A visible slot with a root is stale until drawn once, then while its scene root has queued
+        // layout work; leaves anywhere may wait to be remeasured (next logic).
         let scene = b.0.scene.borrow();
         let stale = st.slots.iter().any(|(id, s)| {
-            s.visible
-                && s.root.is_some()
-                && (s.rect.is_none() || scene.get(id.0).is_some_and(|n| n.cache.is_empty() && !n.children.is_empty()))
+            s.visible && s.root.is_some() && (s.rect.is_none() || scene.slot_root(id.0).is_some_and(|e| !e.dirty.is_empty()))
         });
-        busy.set(Busy::LAYOUT, stale || !b.0.dirty.remeasure.borrow().is_empty());
+        let remeasure = scene.roots.iter().any(|(_, e)| !e.dirty.remeasure.is_empty());
+        busy.set(Busy::LAYOUT, stale || remeasure);
+        drop(scene);
+        // R16: Rust writes deferred to the next logic, and announcements not delivered yet.
+        busy |= settle::scene_busy(&b.0.scene);
         let now = Instant::now();
         let next = [hb.next_timer, b.0.deadline.get()].into_iter().flatten().min();
         busy.set(Busy::TIMER_SOON, next.is_some_and(|t| t <= now + self.inner.cfg.timer_horizon));
@@ -825,8 +841,17 @@ impl Embed {
     }
 
     fn anchored(&self, root: RootId, anchor: &str) -> Option<Handle> {
+        if anchor.is_empty() {
+            return None;
+        }
+        let slot = self.inner.st.borrow().roots.get(&root)?.slot;
         let scene = self.inner.backend.0.scene.borrow();
-        scene.handles().into_iter().find(|&h| scene.get(h).is_some_and(|n| n.root == root.0 && n.c.anchor == anchor))
+        let r = scene.core[scene.ix(scene.live(slot.0).ok()?)].root;
+        scene.ids().find(|&id| {
+            let i = scene.ix(id);
+            scene.core[i].root == r && scene.common(i).anchor == anchor
+        })
+        .map(NodeId::to_raw)
     }
 
     /// Exports, op log, stats, interrupt flag: the underlying host.
@@ -939,13 +964,8 @@ impl Embed {
         }) else {
             return;
         };
-        {
-            let b = &self.inner.backend;
-            b.0.root_bases.borrow_mut().insert(id.0, crate::ids::root_base(self.salt(), &key));
-            if let Some(n) = b.0.scene.borrow_mut().get_mut(slot.0) {
-                n.root = id.0;
-            }
-        }
+        // The root's nodes take ids from its key as they are inserted (the attach hook).
+        self.set_slot_base(slot, Some(crate::ids::root_base(self.salt(), &key)));
         let host = &self.inner.host;
         host.set_turn_budget(Some(self.inner.cfg.budgets.mount));
         let r = host.mount_root(entry.0, &export, id.0, slot.0, &props);
@@ -983,10 +1003,15 @@ impl Embed {
         }
         st.stats.unmounts += 1;
         drop(st);
-        let b = &self.inner.backend;
-        b.0.root_bases.borrow_mut().remove(&id.0);
-        if let Some(n) = b.0.scene.borrow_mut().get_mut(r.slot.0) {
-            n.root = 0;
+        self.set_slot_base(r.slot, None);
+    }
+
+    /// The egui id base of the root mounted in `slot` (its scene root's `base`).
+    fn set_slot_base(&self, slot: SlotId, base: Option<egui::Id>) {
+        let mut scene = self.inner.backend.0.scene.borrow_mut();
+        if let Ok(n) = scene.live(slot.0) {
+            let r = scene.core[scene.ix(n)].root;
+            scene.set_root_base(r, base);
         }
     }
 
@@ -999,20 +1024,21 @@ impl Embed {
         }
         // What a failed dispose left behind (a root interrupted mid-update) goes natively.
         let b = &self.inner.backend;
-        let kids: Vec<Handle> = b.0.scene.borrow().get(slot.0).map(|n| n.children.clone()).unwrap_or_default();
-        if !kids.is_empty() {
-            let mut dead = Vec::new();
-            {
-                let mut scene = b.0.scene.borrow_mut();
+        let mut dead = Vec::new();
+        {
+            let mut scene = b.0.scene.borrow_mut();
+            if let Ok(n) = scene.live(slot.0) {
+                let kids = scene.children[scene.ix(n)].clone();
                 for k in kids {
-                    tree::detach(&mut scene, k);
-                    dead.extend(tree::free_subtree(&mut scene, k));
+                    dead.extend(scene.free_subtree(k).into_iter().map(NodeId::to_raw));
                 }
             }
-            if let Some(host) = b.host() {
-                for (i, &h) in dead.iter().enumerate() {
-                    host.on_destroyed(h, if i == 0 { svelters_abi::SVL_GONE_OWNER } else { svelters_abi::SVL_GONE_PARENT });
-                }
+        }
+        if !dead.is_empty()
+            && let Some(host) = b.host()
+        {
+            for (i, &h) in dead.iter().enumerate() {
+                host.on_destroyed(h, if i == 0 { svelters_abi::SVL_GONE_OWNER } else { svelters_abi::SVL_GONE_PARENT });
             }
         }
     }
@@ -1024,8 +1050,14 @@ impl Embed {
             self.do_unmount(r);
         }
         let b = &self.inner.backend;
-        let dead = tree::free_subtree(&mut b.0.scene.borrow_mut(), slot.0);
-        b.0.dirty.layout_size.borrow_mut().remove(&slot.0);
+        // frees the box and anything left under it, and ends its scene root
+        let dead: Vec<Handle> = {
+            let mut scene = b.0.scene.borrow_mut();
+            match scene.live(slot.0) {
+                Ok(n) => scene.free_subtree(n).into_iter().map(NodeId::to_raw).collect(),
+                Err(_) => Vec::new(),
+            }
+        };
         if let Some(host) = b.host() {
             for (i, &h) in dead.iter().enumerate() {
                 host.on_destroyed(h, if i == 0 { svelters_abi::SVL_GONE_OWNER } else { svelters_abi::SVL_GONE_PARENT });
@@ -1077,10 +1109,17 @@ impl Embed {
         }
     }
 
-    /// The root that owns handle `h` (through the scene's per-node root), if it is ours.
+    /// The root that owns handle `h` (the node's scene root is one of our slots), if any.
     fn root_of_handle(&self, h: u64) -> Option<RootId> {
-        let r = self.inner.backend.0.scene.borrow().get(h).map(|n| n.root).filter(|&r| r != 0)?;
-        self.inner.st.borrow().roots.contains_key(&RootId(r)).then_some(RootId(r))
+        let slot = {
+            let scene = self.inner.backend.0.scene.borrow();
+            let n = scene.live(h).ok()?;
+            match scene.roots.get(scene.core[scene.ix(n)].root)?.kind {
+                TreeRoot::Slot { node } => SlotId(node.to_raw()),
+                _ => return None,
+            }
+        };
+        self.inner.st.borrow().slots.get(&slot)?.root
     }
 
     /// After the checkpoint: the host's errors (attributed through the handle they were
