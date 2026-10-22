@@ -123,6 +123,12 @@ pub struct Scene {
     /// OW0: which built-in kinds new nodes get as svelters' own widget (`crate::widgets`), from
     /// `SVELTERS_OWN_WIDGETS` or `EguiBackend::set_own_widgets`.
     pub(crate) own: crate::widgets::KindSet,
+    /// OW2: this pass's scroll requests (focus moves, `scroll-into-view`, AccessKit scroll actions
+    /// on descendants), answered by the scrollables around them after their children drew
+    /// (`crate::widgets::scroll_area`). Emptied when a window or slot starts drawing.
+    pub(crate) reveals: Vec<crate::widgets::scroll_area::Reveal>,
+    /// OW2: stamps `Reveal::seq` (which scrollable's children set a request's rect).
+    pub(crate) reveal_seq: u64,
     /// EV1: the registered event filters (SV6), shared with the scene's cell so that a widget's
     /// `dispatch` during the walk reaches them (`events.rs`).
     pub(crate) filters: std::rc::Rc<std::cell::RefCell<crate::events::Registry>>,
@@ -154,6 +160,8 @@ impl Default for Scene {
             style: Default::default(),
             taken_w: W::Box,
             own: crate::widgets::KindSet::from_env().unwrap_or_default(),
+            reveals: Vec::new(),
+            reveal_seq: 0,
             filters: Default::default(),
         }
     }

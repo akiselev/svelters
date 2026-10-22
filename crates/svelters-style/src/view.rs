@@ -6,8 +6,9 @@
 //! gives one with the store's interpolated values overlaid.
 
 use crate::computed::ComputedStyle;
-use crate::values::{Color, ComputedValue, Content, LinearGradient, Shadow, Transition};
+use crate::values::{Color, ComputedValue, Content, Gradient, LinearGradient, Shadow, Transition};
 use smallvec::SmallVec;
+use std::borrow::Cow;
 
 /// A box side, in CSS order.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -92,28 +93,60 @@ impl TextSettings {
     }
 }
 
+/// Values that override a computed style (running transitions' samples), as
+/// `(property index, value)` sorted by index. [`Transitions::sample`](crate::Transitions::sample)
+/// makes one; a scene keeps it per key for the frame and paints through
+/// [`StyleView::with_overlay`] or [`overlay_get`].
+pub type Overlay = Vec<(usize, ComputedValue)>;
+
+/// `base`'s value of property `index`, or `over`'s if it overrides it (`over` sorted by index).
+pub fn overlay_get_index<'a>(base: &'a ComputedStyle, over: &'a [(usize, ComputedValue)], index: usize) -> Option<&'a ComputedValue> {
+    match over.binary_search_by_key(&index, |(i, _)| *i) {
+        Ok(k) => Some(&over[k].1),
+        Err(_) => base.get_index(index),
+    }
+}
+
+/// [`overlay_get_index`] by property name.
+pub fn overlay_get<'a>(base: &'a ComputedStyle, over: &'a [(usize, ComputedValue)], name: &str) -> Option<&'a ComputedValue> {
+    base.table().index_of(name).and_then(|i| overlay_get_index(base, over, i))
+}
+
 /// A computed style with overridden values (running transitions).
 #[derive(Clone, Debug)]
 pub struct StyleView<'a> {
     base: &'a ComputedStyle,
     /// `(property index, value)`, sorted by index.
-    over: SmallVec<[(usize, ComputedValue); 4]>,
+    over: Cow<'a, [(usize, ComputedValue)]>,
 }
 
 impl<'a> StyleView<'a> {
     /// The style as computed (no transitions).
     pub fn new(base: &'a ComputedStyle) -> StyleView<'a> {
-        StyleView { base, over: SmallVec::new() }
+        StyleView { base, over: Cow::Borrowed(&[]) }
     }
 
-    pub(crate) fn with(base: &'a ComputedStyle, mut over: SmallVec<[(usize, ComputedValue); 4]>) -> StyleView<'a> {
+    pub(crate) fn with(base: &'a ComputedStyle, over: SmallVec<[(usize, ComputedValue); 4]>) -> StyleView<'a> {
+        let mut over = over.into_vec();
         over.sort_by_key(|(i, _)| *i);
-        StyleView { base, over }
+        StyleView { base, over: Cow::Owned(over) }
+    }
+
+    /// `base` under a borrowed overlay (sorted by property index, as
+    /// [`Transitions::sample`](crate::Transitions::sample) returns it).
+    pub fn with_overlay(base: &'a ComputedStyle, over: &'a [(usize, ComputedValue)]) -> StyleView<'a> {
+        debug_assert!(over.windows(2).all(|w| w[0].0 < w[1].0), "overlay not sorted by index");
+        StyleView { base, over: Cow::Borrowed(over) }
     }
 
     /// The computed style under the overlay.
     pub fn base(&self) -> &'a ComputedStyle {
         self.base
+    }
+
+    /// The overriding values, sorted by property index.
+    pub fn overlay(&self) -> &[(usize, ComputedValue)] {
+        &self.over
     }
 
     /// Whether any value is a transition's (not the computed value).
@@ -179,8 +212,16 @@ impl<'a> StyleView<'a> {
         self.color("background-color")
     }
 
-    /// `background-image: linear-gradient(...)`.
+    /// `background-image: linear-gradient(...)` (linear only; [`StyleView::gradient`] for both).
     pub fn background_image(&self) -> Option<&LinearGradient> {
+        match self.gradient() {
+            Some(Gradient::Linear(g)) => Some(g),
+            _ => None,
+        }
+    }
+
+    /// `background-image: linear-gradient(...) | radial-gradient(...)`.
+    pub fn gradient(&self) -> Option<&Gradient> {
         match self.get("background-image") {
             Some(ComputedValue::Image(Some(g))) => Some(g),
             _ => None,

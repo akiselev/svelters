@@ -19,14 +19,21 @@ mod glyph;
 pub mod hyperlink;
 pub mod label;
 pub(crate) mod menu;
+pub mod panel;
 mod parts;
 pub(crate) mod popup;
 pub mod progress;
+pub mod scroll_area;
+pub mod scrollbar;
 pub mod select;
 pub mod separator;
+pub mod split_view;
 pub mod switch;
 pub mod toggle_button;
 pub mod tooltip;
+
+/// OW2: the window's inner chrome (`windows.rs`).
+pub use crate::windows::WINDOW_UA;
 
 use crate::scene::W;
 
@@ -36,6 +43,11 @@ use crate::scene::W;
 /// OW3 adds the menu roots (`menu-bar`, `menu-button`, `context-menu`: their entries follow
 /// them), `popup`, `combo-box` and `tooltip` (no tag of its own: every kind's `tooltip` prop).
 pub const DEFAULT_OWN: &[&str] = &["button", "menu-bar", "menu-button", "context-menu", "popup", "combo-box", "tooltip"];
+
+/// The built-in tags whose egui wrapper is gone (deleted in the lane whose own widget passed its
+/// acceptance, §6.2 step 3) or never existed (`scrollbar`): always svelters' own, whatever the
+/// switch says.
+pub const OWN_ONLY: &[&str] = &["panel", "scroll-area", "scrollbar", "split-view"];
 
 /// Which built-in kinds get svelters' own widget (§6.2: the per-kind switch).
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -98,11 +110,50 @@ pub(crate) fn mark_own(set: &KindSet, tag: &str, w: &mut W) {
     }
 }
 
+/// OW2: an own widget with children (`CONTAINER` and `PAINTS_BOX`): it records its hit-list
+/// entry before drawing its children ([`WidgetCx::record_hit`]), so they are above it.
+///
+/// [`WidgetCx::record_hit`]: crate::provider::WidgetCx::record_hit
+pub(crate) fn is_own_container(w: &W) -> bool {
+    use crate::provider::Caps;
+    matches!(w, W::Ext(x) if x.entry().caps.contains(Caps::CONTAINER) && x.entry().caps.contains(Caps::PAINTS_BOX))
+}
+
+/// OW2: a nullable length prop (`panel`'s `size`, `split-view`'s `divider-position`): a value that
+/// is not a finite number reads as null (as the egui wrappers' `as_len` did: WG2b's bad-input
+/// test).
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct Len(pub Option<f64>);
+
+impl svelters_host::exports::JsType for Len {
+    fn describe(b: &mut svelters_host::exports::__private::TypeBuilder) -> svelters_host::exports::__private::TypeRef {
+        <Option<f64> as svelters_host::exports::JsType>::describe(b)
+    }
+}
+
+impl svelters_host::exports::FromJs for Len {
+    fn from_js(v: svelters_host::exports::Value, cx: &svelters_host::exports::CallCx<'_>) -> Result<Self, svelters_host::exports::NativeError> {
+        let v = <Option<f64> as svelters_host::exports::FromJs>::from_js(v, cx)?;
+        Ok(Len(v.filter(|x| x.is_finite())))
+    }
+}
+
+impl svelters_host::exports::IntoJs for Len {
+    fn into_js(self, cx: &svelters_host::exports::CallCx<'_>) -> Result<svelters_host::exports::Value, svelters_host::exports::NativeError> {
+        self.0.into_js(cx)
+    }
+}
+
+/// OW2: an enum prop read leniently (an unknown value is the default).
+pub(crate) fn pick<'a>(v: &str, allowed: &[&'a str], default: &'a str) -> &'a str {
+    allowed.iter().find(|a| **a == v).copied().unwrap_or(default)
+}
+
 /// The payload of a new node of built-in kind `kind` when `set` picks its own widget.
 pub(crate) fn own_payload(set: &KindSet, kind: usize) -> Option<W> {
     let reg = crate::kinds::KindRegistry::global();
     let tag = reg.kind(kind).tag?;
-    if !set.contains(tag) {
+    if !set.contains(tag) && !OWN_ONLY.contains(&tag) {
         return None;
     }
     let r = reg.replacement(kind)?;

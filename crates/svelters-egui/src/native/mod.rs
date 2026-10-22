@@ -129,6 +129,37 @@ pub struct Policy {
     /// OW3: a lone Alt press and release highlights the menu bar's first menu (Windows, KDE);
     /// F10 does it everywhere.
     pub alt_focuses_menu_bar: bool,
+    /// OW2: scroll gestures and sashes (`interact::Scrollable`, `interact::Resizable`).
+    pub scroll: ScrollPolicy,
+}
+
+/// OW2 (ARCH-WIDGETS §1.2, §3.3): how scrollables and sashes behave on a platform, beside
+/// [`Policy::kinetic`] and [`Policy::scrollbars`]. Sizes and colours are CSS (WIDGET-PARITY P9);
+/// this is timing and gesture behaviour only.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ScrollPolicy {
+    /// What a primary press on the track (beside the thumb) does.
+    pub track_click: TrackClick,
+    /// Shift+press on the track does the other [`TrackClick`] (GTK).
+    pub shift_track_click_inverts: bool,
+    /// Points one arrow key (or one scroll-bar arrow step) scrolls.
+    pub line: f32,
+    /// Overlay bars: how long they stay after the last scroll or hover, then fade out over
+    /// [`ScrollPolicy::bar_fade`] seconds (VS Code: 0.5 s, then 0.8 s).
+    pub bar_hold: f32,
+    pub bar_fade: f32,
+    /// R11: hovering a sash shows its hover bar and grip after this many seconds (VS Code 0.3 s).
+    pub sash_hover_delay: f32,
+}
+
+/// A primary press on the track (Qt `SH_ScrollBar_LeftClickAbsolutePosition`, GTK
+/// `gtk-primary-button-warps-slider`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TrackClick {
+    /// Scrolls one page towards the press, repeating while held.
+    Page,
+    /// Moves the thumb's centre to the press and drags it from there.
+    Jump,
 }
 
 const GTK: Policy = Policy {
@@ -151,6 +182,14 @@ const GTK: Policy = Policy {
     submenu_delay_ms: 225,
     tooltip_follow_on_ms: 1000,
     alt_focuses_menu_bar: false,
+    scroll: ScrollPolicy {
+        track_click: TrackClick::Jump,
+        shift_track_click_inverts: true,
+        line: 40.0,
+        bar_hold: 0.5,
+        bar_fade: 0.8,
+        sash_hover_delay: 0.3,
+    },
 };
 
 const QT: Policy = Policy {
@@ -173,6 +212,14 @@ const QT: Policy = Policy {
     submenu_delay_ms: 225,
     tooltip_follow_on_ms: 2000,
     alt_focuses_menu_bar: true,
+    scroll: ScrollPolicy {
+        track_click: TrackClick::Page,
+        shift_track_click_inverts: false,
+        line: 40.0,
+        bar_hold: 0.5,
+        bar_fade: 0.8,
+        sash_hover_delay: 0.3,
+    },
 };
 
 const WINDOWS: Policy = Policy {
@@ -195,6 +242,14 @@ const WINDOWS: Policy = Policy {
     submenu_delay_ms: 400,
     tooltip_follow_on_ms: 2000,
     alt_focuses_menu_bar: true,
+    scroll: ScrollPolicy {
+        track_click: TrackClick::Page,
+        shift_track_click_inverts: false,
+        line: 40.0,
+        bar_hold: 0.5,
+        bar_fade: 0.8,
+        sash_hover_delay: 0.3,
+    },
 };
 
 const MAC: Policy = Policy {
@@ -217,6 +272,14 @@ const MAC: Policy = Policy {
     submenu_delay_ms: 0,
     tooltip_follow_on_ms: 1000,
     alt_focuses_menu_bar: false,
+    scroll: ScrollPolicy {
+        track_click: TrackClick::Page,
+        shift_track_click_inverts: false,
+        line: 40.0,
+        bar_hold: 0.5,
+        bar_fade: 0.8,
+        sash_hover_delay: 0.3,
+    },
 };
 
 const EGUI: Policy = Policy {
@@ -239,6 +302,14 @@ const EGUI: Policy = Policy {
     submenu_delay_ms: 200,
     tooltip_follow_on_ms: 1000,
     alt_focuses_menu_bar: false,
+    scroll: ScrollPolicy {
+        track_click: TrackClick::Jump,
+        shift_track_click_inverts: false,
+        line: 40.0,
+        bar_hold: 0.5,
+        bar_fade: 0.8,
+        sash_hover_delay: 0.3,
+    },
 };
 
 impl Native {

@@ -85,7 +85,11 @@ Common properties of everything placed in a window: state, tooltip, accessibilit
 ## Methods
 
 <!-- BEGIN GENERATED: methods of kinds.Widget (tools/docs/egui/gen_reference.py). Do not edit. -->
-None.
+| Method | Returns | Description |
+|---|---|---|
+| `scroll-into-view` | `void` | `scroll-into-view(align?)`: scrolls the scroll areas around the node so it is visible on the next frame, innermost first; `align` is `nearest` (the default: the least scrolling, keeping the area's `scroll-margin`) or `center`. Qt's `ensureWidgetVisible`, the DOM's `scrollIntoView`. |
+
+Call them through `bind:this`: `el.call('scroll-into-view')`.
 <!-- END GENERATED -->
 
 ## Behaviour you need to know

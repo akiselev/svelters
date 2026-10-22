@@ -44,6 +44,7 @@ impl EguiBackend {
         let rect = ui.available_rect_before_wrap();
         crate::focus::begin(ui.ctx()); // EV3: scopes, restore, default/cancel keys
         let mut scene = self.0.scene.borrow_mut();
+        crate::widgets::scroll_area::begin_pass(&mut scene, ui.ctx()); // OW2: scroll requests
         let id = scene.live(w).expect("a live window");
         let r = scene.core[scene.ix(id)].root;
         crate::provider::pass::prepare_root(&mut scene, r); // SG4: Caps::PREPARE (§7.2 b)
@@ -62,6 +63,7 @@ impl EguiBackend {
         let rect = ui.available_rect_before_wrap();
         crate::focus::begin(ui.ctx()); // EV3: scopes, restore, default/cancel keys
         let mut scene = self.0.scene.borrow_mut();
+        crate::widgets::scroll_area::begin_pass(&mut scene, ui.ctx()); // OW2: scroll requests
         let id = scene.live(slot).expect("a live slot");
         let i = scene.ix(id);
         let r = scene.core[i].root;
@@ -195,6 +197,7 @@ fn paint_own(
         // LS1: rows at the list's scroll offset, clipped, with their a11y set size
         return crate::kinds::virtuallist::paint(arena, i, origin, ui, out);
     }
+    crate::widgets::scroll_area::reveal_flagged(arena, i, r); // OW2 (WG6 QA13): `scroll-into-view`
     if arena.w(i).is_container() {
         // Cull whole subtrees outside the clip rect (SG6: by their ink bounds)
         if cull(arena, i, origin, ui) {
@@ -225,7 +228,7 @@ fn paint_own(
         return None;
     }
     let mut b = UiBuilder::new()
-        .max_rect(r)
+        .max_rect(crate::style::content_rect(arena, i, r)) // CS5f: less a leaf's CSS padding
         // Never the widget's own id: a scope sharing it eats the widget's clicks (EGUI.md §1.4).
         .scope_id(arena.core[i].egui_id.with("scope"))
         .layout(Layout::left_to_right(Align::Center));
@@ -246,9 +249,14 @@ fn paint_own(
         Some(crate::leaf::leaf(arena, i, &mut child, out))
     };
     crate::kinds::dnd::node(arena, i, r, &mut child, out, crate::kinds::dnd::Part::Target); // WG4b
-    crate::scene::hit::record(arena, i, &child); // SG3: the viewport's hit list
+    // SG3: the viewport's hit list (OW2: an own container records itself under its children,
+    // `WidgetCx::record_hit`)
+    if !crate::widgets::is_own_container(arena.w(i)) {
+        crate::scene::hit::record(arena, i, &child);
+    }
     if let Some(r) = &resp {
         crate::focus::record(arena, i, &child, r); // EV3: tab order, R11 key claims
+        crate::widgets::scroll_area::note(arena, r); // OW2: scroll on focus, AccessKit scroll targets
     }
     crate::overlays::paint_attached(arena, i, origin, ui, out); // WG2a: its context menu, popup
     resp
@@ -265,7 +273,9 @@ pub(crate) fn culled(arena: &Arena, i: usize, origin: Vec2, ui: &Ui) -> bool {
 
 /// [`culled`], counted (`SceneStats::nodes_culled`).
 fn cull(arena: &mut Arena, i: usize, origin: Vec2, ui: &Ui) -> bool {
-    let c = culled(arena, i, origin, ui);
+    // OW2 (WG6 QA13): walked although outside the clip on a Tab pass, on the way to a
+    // `scroll-into-view`, or holding keyboard focus (`widgets::scroll_area::keep`)
+    let c = culled(arena, i, origin, ui) && !crate::widgets::scroll_area::keep(arena, i, ui);
     arena.counters.nodes_culled += c as u64;
     c
 }

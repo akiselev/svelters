@@ -4,17 +4,16 @@
 //!
 //! - [`table`]: `table` (egui_table) and its `table-column` children;
 //! - [`tabs`]: `tab-view` and its `tab` pages;
-//! - [`split`]: `split-view`;
 //! - [`toast`]: `toast-host` and the Rust API [`toast::show`].
 //!
 //! Layout ([`layout`]): the three containers size themselves like a leaf (props, flex, or their
 //! content's natural size) and place their children themselves: a table hides its columns, a
-//! tab-view lays out only its selected page under the bar, a split-view its two panes.
+//! tab-view lays out only its selected page under the bar (`split-view` is svelters' own since OW2:
+//! `widgets::split_view`).
 //!
 //! Writer lane: WIDGETS (WG4a).
 
 pub mod selection;
-pub(crate) mod split;
 pub(crate) mod table;
 pub(crate) mod tabs;
 pub mod toast;
@@ -34,7 +33,7 @@ use taffy::{
 
 /// The views that have children (`W::is_container`).
 pub(crate) fn is_container(w: &W) -> bool {
-    matches!(w, W::Table(_) | W::TabView { .. } | W::Tab { .. } | W::SplitView { .. })
+    matches!(w, W::Table(_) | W::TabView { .. } | W::Tab { .. })
 }
 
 /// The no-wrap size of a view that measures itself (only `table`; the others are sized by their
@@ -71,7 +70,6 @@ pub(crate) fn container(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: 
     match arena.w(i) {
         W::Table(_) => table::paint(arena, i, r, ui, out),
         W::TabView { .. } => tabs::paint(arena, i, r, origin, ui, out),
-        W::SplitView { .. } => split::paint(arena, i, r, origin, ui, out),
         _ => unreachable!("not a view container"),
     }
     let c = arena.common(i);
@@ -132,7 +130,7 @@ pub(crate) fn arity(name: &str, args: &[Value], min: usize, max: usize) -> StrRe
 // ---- layout ----
 
 /// Lays out view container `id`: its own size as a leaf (`natural` measures its content), then,
-/// when performing layout, its children (`tabs`, `split` and `table` say where).
+/// when performing layout, its children (`tabs` and `table` say where).
 pub(crate) fn layout(tree: &mut Tree<'_>, id: NodeId, inputs: LayoutInput) -> LayoutOutput {
     let i = ix(id);
     tree.leaf_layouts += 1;
@@ -142,12 +140,10 @@ pub(crate) fn layout(tree: &mut Tree<'_>, id: NodeId, inputs: LayoutInput) -> La
     enum V {
         Table(Vec2, Option<(crate::scene::NodeId, Vec2)>),
         Tabs(i64),
-        Split { vertical: bool, position: Option<f64>, min_size: f64 },
     }
     let v = match tree.s.w(i) {
         W::Table(t) => V::Table(table::intrinsic(tree.m, t), table::editor_place(t)),
         &W::TabView { selected } => V::Tabs(selected),
-        &W::SplitView { vertical, position, min_size, .. } => V::Split { vertical, position, min_size },
         _ => unreachable!("not a view container"),
     };
     let out = compute_leaf_layout(
@@ -161,7 +157,6 @@ pub(crate) fn layout(tree: &mut Tree<'_>, id: NodeId, inputs: LayoutInput) -> La
             let natural = match v {
                 V::Table(s, _) => Size { width: s.x, height: s.y },
                 V::Tabs(selected) => tabs::natural(tree, &kids, selected, avail),
-                V::Split { vertical, .. } => split::natural(tree, &kids, vertical, avail),
             };
             Size { width: known.width.unwrap_or(natural.width.ceil()), height: known.height.unwrap_or(natural.height.ceil()) }
         },
@@ -180,7 +175,6 @@ pub(crate) fn layout(tree: &mut Tree<'_>, id: NodeId, inputs: LayoutInput) -> La
                 }
             }
             V::Tabs(selected) => tabs::place(tree, &kids, selected, size),
-            V::Split { vertical, position, min_size } => split::place(tree, &kids, vertical, position, min_size, size),
         }
     }
     out

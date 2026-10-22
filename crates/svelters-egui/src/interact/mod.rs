@@ -26,7 +26,9 @@ pub mod dismiss;
 mod focus;
 mod hover;
 mod press;
+mod resize;
 pub mod roving;
+pub mod scroll;
 mod toggle;
 pub mod tooltip;
 pub mod typeahead;
@@ -34,6 +36,8 @@ pub mod typeahead;
 pub use focus::{Focus, FocusParams, Focusable};
 pub use hover::{Hover, Hoverable};
 pub use press::{Press, PressParams, Pressable};
+pub use resize::{Resizable, Resize, ResizeParams};
+pub use scroll::{BarGeom, Scroll, ScrollBy, ScrollParams, Scrollable};
 pub use toggle::{Toggle, ToggleParams, Toggleable};
 // OW3: floating surfaces, groups and tooltips
 pub use anchor::{AnchorParams, Anchored, Placed, Placement};
