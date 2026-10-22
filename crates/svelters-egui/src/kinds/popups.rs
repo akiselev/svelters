@@ -10,35 +10,123 @@ use super::{Def, KindDef, MethodDef, P, PropDef, SignalDef, Ty, input, prop, sig
 pub const POSITION: &[&str] = &["bottom", "top", "left", "right"];
 
 static POPUP_PROPS: &[PropDef] = &[
-    input("open", P::Open, Ty::Bool, Def::Bool(false), "Shown when true; the user closing it (Escape, a click outside with `autohide`) sets it false."),
-    prop("position", P::Position, Ty::Enum(POSITION), Def::Str("bottom"), "The side of its owner it opens on (egui moves it to another side when it does not fit)."),
-    prop("autohide", P::Autohide, Ty::Bool, Def::Bool(true), "A click outside closes it; with false only Escape, `popdown` or the app does."),
+    input(
+        "open",
+        P::Open,
+        Ty::Bool,
+        Def::Bool(false),
+        "Shown when true; the user closing it (Escape, a click outside with `autohide`) sets it false.",
+    ),
+    prop(
+        "position",
+        P::Position,
+        Ty::Enum(POSITION),
+        Def::Str("bottom"),
+        "The side of its owner it opens on (egui moves it to another side when it does not fit).",
+    ),
+    prop(
+        "autohide",
+        P::Autohide,
+        Ty::Bool,
+        Def::Bool(true),
+        "A click outside closes it; with false only Escape, `popdown` or the app does.",
+    ),
 ];
 
 static MODAL_PROPS: &[PropDef] = &[
-    input("open", P::Open, Ty::Bool, Def::Bool(true), "Shown when true (so `{#if}` alone can show it); the user dismissing it sets it false."),
-    prop("title", P::Title, Ty::Str, Def::Str(""), "A heading above the content; also the dialog's accessible name."),
-    prop("dismissable", P::Dismissable, Ty::Bool, Def::Bool(true), "Escape or a click on the backdrop closes it; with false only the app does."),
+    input(
+        "open",
+        P::Open,
+        Ty::Bool,
+        Def::Bool(true),
+        "Shown when true (so `{#if}` alone can show it); the user dismissing it sets it false.",
+    ),
+    prop(
+        "title",
+        P::Title,
+        Ty::Str,
+        Def::Str(""),
+        "A heading above the content; also the dialog's accessible name.",
+    ),
+    prop(
+        "dismissable",
+        P::Dismissable,
+        Ty::Bool,
+        Def::Bool(true),
+        "Escape or a click on the backdrop closes it; with false only the app does.",
+    ),
 ];
 
 static INNER_WINDOW_PROPS: &[PropDef] = &[
-    input("open", P::Open, Ty::Bool, Def::Bool(true), "Shown when true; the close button sets it false."),
-    prop("title", P::Title, Ty::Str, Def::Str(""), "The title bar text."),
-    prop("default-width", P::DefaultWidth, Ty::F64, Def::F64(320.0), "Initial width in points (a resizable window's content fills it)."),
-    prop("default-height", P::DefaultHeight, Ty::F64, Def::F64(240.0), "Initial height in points."),
-    prop("closable", P::Closable, Ty::Bool, Def::Bool(true), "Shows a close button in the title bar."),
-    prop("collapsible", P::Collapsible, Ty::Bool, Def::Bool(true), "The title bar can collapse it to the title."),
-    prop("resizable", P::Resizable, Ty::Bool, Def::Bool(true), "The user can resize it; the content is laid out at its size. Without it the window is as big as its content."),
+    input(
+        "open",
+        P::Open,
+        Ty::Bool,
+        Def::Bool(true),
+        "Shown when true; the close button sets it false.",
+    ),
+    prop(
+        "title",
+        P::Title,
+        Ty::Str,
+        Def::Str(""),
+        "The title bar text.",
+    ),
+    prop(
+        "default-width",
+        P::DefaultWidth,
+        Ty::F64,
+        Def::F64(320.0),
+        "Initial width in points (a resizable window's content fills it).",
+    ),
+    prop(
+        "default-height",
+        P::DefaultHeight,
+        Ty::F64,
+        Def::F64(240.0),
+        "Initial height in points.",
+    ),
+    prop(
+        "closable",
+        P::Closable,
+        Ty::Bool,
+        Def::Bool(true),
+        "Shows a close button in the title bar.",
+    ),
+    prop(
+        "collapsible",
+        P::Collapsible,
+        Ty::Bool,
+        Def::Bool(true),
+        "The title bar can collapse it to the title.",
+    ),
+    prop(
+        "resizable",
+        P::Resizable,
+        Ty::Bool,
+        Def::Bool(true),
+        "The user can resize it; the content is laid out at its size. Without it the window is as big as its content.",
+    ),
 ];
 
 static OVERLAY_SIGNALS: &[SignalDef] = &[
-    signal("changed", &[("open", Ty::Bool)], "The user (or `popup`/`popdown`) opened or closed it; carries `open`."),
+    signal(
+        "changed",
+        &[("open", Ty::Bool)],
+        "The user (or `popup`/`popdown`) opened or closed it; carries `open`.",
+    ),
     signal("closed", NONE, "The user (or `popdown`) closed it."),
 ];
 
 static POPUP_METHODS: &[MethodDef] = &[
-    MethodDef { name: "popup", doc: "Opens it (announced like a user open)." },
-    MethodDef { name: "popdown", doc: "Closes it (announced like a user close)." },
+    MethodDef {
+        name: "popup",
+        doc: "Opens it (announced like a user open).",
+    },
+    MethodDef {
+        name: "popdown",
+        doc: "Closes it (announced like a user close).",
+    },
 ];
 
 pub(super) const POPUP: KindDef = KindDef {

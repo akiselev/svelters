@@ -93,7 +93,13 @@ pub(crate) fn set_prop(o: &mut OverlayW, key: P, v: &Value) -> Result<(), String
         P::Title => o.title = as_str(v)?,
         P::Position if o.kind == OverlayKind::Popup => {
             let s = as_str(v)?;
-            o.position = crate::kinds::POSITION.iter().copied().find(|x| *x == s).ok_or_else(|| format!("`{s}` is not one of {}", crate::kinds::POSITION.join(", ")))?;
+            o.position = crate::kinds::POSITION
+                .iter()
+                .copied()
+                .find(|x| *x == s)
+                .ok_or_else(|| {
+                    format!("`{s}` is not one of {}", crate::kinds::POSITION.join(", "))
+                })?;
         }
         P::Autohide => o.autohide = as_bool(v)?,
         P::Dismissable => o.dismissable = as_bool(v)?,
@@ -128,14 +134,26 @@ pub(crate) fn get_prop(o: &OverlayW, key: P) -> Result<Value, String> {
 /// Where the owner of node `i` (its parent) was drawn: its widget's rect when it drew one this
 /// pass, else its layout rect at `origin`.
 fn owner_rect(arena: &Arena, i: usize, origin: Vec2) -> Rect {
-    let Some(p) = arena.core[i].parent.and_then(|p| arena.idx(p)) else { return Rect::NOTHING };
+    let Some(p) = arena.core[i].parent.and_then(|p| arena.idx(p)) else {
+        return Rect::NOTHING;
+    };
     let d = arena.core[p].drawn;
-    if d != Rect::NOTHING && d.is_positive() { d } else { arena.core[p].rect.translate(origin) }
+    if d != Rect::NOTHING && d.is_positive() {
+        d
+    } else {
+        arena.core[p].rect.translate(origin)
+    }
 }
 
 /// Paints out-of-flow node `i` (the walk reached it as a child): an overlay, or a context menu
 /// anchored to its parent. Menu entries outside a menu draw nothing.
-pub(crate) fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+pub(crate) fn paint_node(
+    arena: &mut Arena,
+    i: usize,
+    origin: Vec2,
+    ui: &mut Ui,
+    out: &mut Vec<Out>,
+) {
     let owner = owner_rect(arena, i, origin);
     match arena.w(i) {
         W::Overlay(_) => overlay(arena, i, origin, owner, ui, out),
@@ -145,10 +163,17 @@ pub(crate) fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui,
 }
 
 /// Paints the context menus and popups attached to leaf `i` (just drawn).
-pub(crate) fn paint_attached(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+pub(crate) fn paint_attached(
+    arena: &mut Arena,
+    i: usize,
+    origin: Vec2,
+    ui: &mut Ui,
+    out: &mut Vec<Out>,
+) {
     for k in 0..arena.children[i].len() {
         let c = arena.children[i][k].index() as usize;
-        let attached = matches!(arena.w(c), W::Menu(MenuW::Context { .. })) || matches!(arena.w(c), W::Overlay(o) if o.kind == OverlayKind::Popup);
+        let attached = matches!(arena.w(c), W::Menu(MenuW::Context { .. }))
+            || matches!(arena.w(c), W::Overlay(o) if o.kind == OverlayKind::Popup);
         if attached && arena.common(c).visible {
             paint_node(arena, c, origin, ui, out);
         }
@@ -157,10 +182,19 @@ pub(crate) fn paint_attached(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut
 
 /// Lays out overlay `i`'s subtree at `ui`'s cursor (`size`: the definite axes) and paints its
 /// children; allocates its size in `ui`.
-fn content(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>, size: [Option<f32>; 2]) {
+fn content(
+    arena: &mut Arena,
+    i: usize,
+    origin: Vec2,
+    ui: &mut Ui,
+    out: &mut Vec<Out>,
+    size: [Option<f32>; 2],
+) {
     let m = Metrics::new(ui.ctx());
     let at = ui.available_rect_before_wrap().min;
-    let Some(node) = arena.slots.id_at(i) else { return };
+    let Some(node) = arena.slots.id_at(i) else {
+        return;
+    };
     let seen = match arena.w(i) {
         W::Overlay(o) => o.seen,
         _ => 0,
@@ -177,7 +211,14 @@ fn content(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec
 
 /// Paints overlay `i` (open or not) anchored to `owner`, and announces a user (or `popup`/`popdown`)
 /// open or close.
-fn overlay(arena: &mut Arena, i: usize, origin: Vec2, owner: Rect, ui: &mut Ui, out: &mut Vec<Out>) {
+fn overlay(
+    arena: &mut Arena,
+    i: usize,
+    origin: Vec2,
+    owner: Rect,
+    ui: &mut Ui,
+    out: &mut Vec<Out>,
+) {
     let W::Overlay(o) = arena.w(i) else { return };
     let o = (**o).clone();
     let was = o.open;
@@ -199,11 +240,19 @@ fn overlay(arena: &mut Arena, i: usize, origin: Vec2, owner: Rect, ui: &mut Ui, 
                     "right" => RectAlign::RIGHT_START,
                     _ => RectAlign::BOTTOM_START,
                 };
-                let anchor = if owner.is_positive() { owner } else { Rect::from_min_size(owner.min, Vec2::ZERO) };
+                let anchor = if owner.is_positive() {
+                    owner
+                } else {
+                    Rect::from_min_size(owner.min, Vec2::ZERO)
+                };
                 let mut still = true;
                 egui::Popup::new(id.with("popup"), ctx.clone(), anchor, ui.layer_id())
                     .open_bool(&mut still)
-                    .close_behavior(if o.autohide { PopupCloseBehavior::CloseOnClickOutside } else { PopupCloseBehavior::IgnoreClicks })
+                    .close_behavior(if o.autohide {
+                        PopupCloseBehavior::CloseOnClickOutside
+                    } else {
+                        PopupCloseBehavior::IgnoreClicks
+                    })
                     .align(align)
                     .gap(4.0)
                     .show(|pui| {

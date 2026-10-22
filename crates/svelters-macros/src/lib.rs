@@ -1635,7 +1635,42 @@ fn events(input: DeriveInput) -> syn::Result<Ts> {
 #[proc_macro_attribute]
 pub fn widget(attr: TokenStream, item: TokenStream) -> TokenStream {
     let item = syn::parse_macro_input!(item as ItemStruct);
-    widget_impl(attr.into(), item).unwrap_or_else(|e| e.to_compile_error()).into()
+    widget_impl(attr.into(), item, false)
+        .unwrap_or_else(|e| e.to_compile_error())
+        .into()
+}
+
+// ---- #[svelters::behavior] (EV2b, ARCH-EMBED §8.5) ----
+
+/// A native behaviour for the egui backend, used from Svelte as `use:<name>`: an attached kind whose
+/// `#[prop]` fields are the action's params and whose `#[event] x: Event<T>` fields are the params'
+/// `on<x>` callbacks. The struct implements `svelters_egui::provider::Behavior` itself (`after_ui`
+/// runs after the host's `ui` every frame, in Rust).
+///
+/// ```ignore
+/// #[svelters::behavior(namespace = "cad", name = "pick")]
+/// pub struct Pick {
+///     /// The value kinds this host presents.
+///     #[prop] accepts: Vec<String>,
+///     #[event] picked: Event<PickRef>,
+///     #[state] hovered: bool,
+/// }
+/// ```
+///
+/// - `namespace` (required): the spec id is `<namespace>.<StructName>`, the action is exported by
+///   `svelters:behaviors/<namespace>`, and the params' named types are declared in
+///   `svelters:app/<namespace>`.
+/// - `name`: the JS export (default: the struct name in lowerCamelCase); the node's kind tag is
+///   `<namespace>.<name>`, which no template can write.
+/// - Fields as in `#[svelters::widget]` (`#[prop(default = expr, rename = "x")]`, `#[event]`,
+///   `#[state]`), without `bind` (no `bind:` through an action: report values with an event) or
+///   `measure`.
+#[proc_macro_attribute]
+pub fn behavior(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let item = syn::parse_macro_input!(item as ItemStruct);
+    widget_impl(attr.into(), item, true)
+        .unwrap_or_else(|e| e.to_compile_error())
+        .into()
 }
 
 enum WidgetField {
@@ -1676,13 +1711,25 @@ fn first_generic(ty: &Type) -> Option<&Type> {
     }
 }
 
-fn widget_impl(attr: Ts, mut item: ItemStruct) -> syn::Result<Ts> {
+fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts> {
+    let what = if behavior {
+        "#[svelters::behavior]"
+    } else {
+        "#[svelters::widget]"
+    };
     let mut namespace: Option<String> = None;
     let mut tag: Option<String> = None;
+    let mut bname: Option<String> = None;
     let mut caps: Vec<syn::Ident> = Vec::new();
     syn::meta::parser(|m| {
         if m.path.is_ident("namespace") {
             namespace = Some(m.value()?.parse::<syn::LitStr>()?.value());
+        } else if behavior {
+            if m.path.is_ident("name") {
+                bname = Some(m.value()?.parse::<syn::LitStr>()?.value());
+            } else {
+                return Err(m.error("expected `namespace = \"...\"` or `name = \"...\"`"));
+            }
         } else if m.path.is_ident("tag") {
             tag = Some(m.value()?.parse::<syn::LitStr>()?.value());
         } else if m.path.is_ident("caps") {
@@ -1695,21 +1742,65 @@ fn widget_impl(attr: Ts, mut item: ItemStruct) -> syn::Result<Ts> {
     })
     .parse2(attr)?;
     let name = item.ident.clone();
-    let namespace = namespace.ok_or_else(|| syn::Error::new(name.span(), "#[svelters::widget] needs `namespace = \"...\"`"))?;
-    if namespace.is_empty() || !namespace.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-') {
-        return Err(syn::Error::new(name.span(), "the namespace must be a plain name (`cad`)"));
+    let namespace = namespace.ok_or_else(|| {
+        syn::Error::new(name.span(), format!("{what} needs `namespace = \"...\"`"))
+    })?;
+    if namespace.is_empty()
+        || !namespace
+            .chars()
+            .all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-')
+    {
+        return Err(syn::Error::new(
+            name.span(),
+            "the namespace must be a plain name (`cad`)",
+        ));
     }
     if !item.generics.params.is_empty() {
-        return Err(syn::Error::new(item.generics.span(), "a widget struct cannot be generic"));
+        return Err(syn::Error::new(
+            item.generics.span(),
+            format!("a {what} struct cannot be generic"),
+        ));
     }
-    let tag = tag.unwrap_or_else(|| kebab(&name.to_string()));
-    if !tag.contains('-') || tag.chars().any(|c| c.is_ascii_uppercase()) {
-        return Err(syn::Error::new(name.span(), format!("tag `{tag}`: a provider tag is lower-case kebab-case with a dash (`quantity-field`); capitalised tags are Svelte components")));
+    let tag = if behavior {
+        let n = bname.unwrap_or_else(|| {
+            let s = name.to_string();
+            let mut c = s.chars();
+            c.next()
+                .map(|f| f.to_ascii_lowercase().to_string() + c.as_str())
+                .unwrap_or_default()
+        });
+        if n.is_empty()
+            || n.starts_with(|c: char| c.is_ascii_digit())
+            || !n
+                .chars()
+                .all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '$')
+        {
+            return Err(syn::Error::new(
+                name.span(),
+                format!(
+                    "behaviour name `{n}`: a JS identifier (it is the export of svelters:behaviors/{namespace})"
+                ),
+            ));
+        }
+        format!("{namespace}.{n}")
+    } else {
+        tag.unwrap_or_else(|| kebab(&name.to_string()))
+    };
+    if !behavior && (!tag.contains('-') || tag.chars().any(|c| c.is_ascii_uppercase())) {
+        return Err(syn::Error::new(
+            name.span(),
+            format!(
+                "tag `{tag}`: a provider tag is lower-case kebab-case with a dash (`quantity-field`); capitalised tags are Svelte components"
+            ),
+        ));
     }
     let id = format!("{namespace}.{name}");
     let kind_docs = docs(&item.attrs);
     let Fields::Named(fields) = &mut item.fields else {
-        return Err(syn::Error::new(item.span(), "#[svelters::widget] needs a struct with named fields"));
+        return Err(syn::Error::new(
+            item.span(),
+            format!("{what} needs a struct with named fields"),
+        ));
     };
 
     let mut kinds: Vec<(syn::Ident, Type, String, WidgetField)> = Vec::new();
@@ -1726,9 +1817,9 @@ fn widget_impl(attr: Ts, mut item: ItemStruct) -> syn::Result<Ts> {
                 let mut rename = None;
                 if matches!(a.meta, Meta::List(_)) {
                     a.parse_nested_meta(|m| {
-                        if m.path.is_ident("bind") {
+                        if m.path.is_ident("bind") && !behavior {
                             bind = true;
-                        } else if m.path.is_ident("measure") {
+                        } else if m.path.is_ident("measure") && !behavior {
                             measure = true;
                         } else if m.path.is_ident("default") {
                             default = Some(m.value()?.parse::<Expr>()?);
@@ -1810,6 +1901,17 @@ fn widget_impl(attr: Ts, mut item: ItemStruct) -> syn::Result<Ts> {
         }
     }
     let name_str = name.to_string();
+    let (new_body, attaches_to) = if behavior {
+        (
+            quote! { ::svelters_egui::provider::__new_behavior::<#name>() },
+            quote! { ::core::option::Option::Some("Widget") },
+        )
+    } else {
+        (
+            quote! { ::std::boxed::Box::new(<#name as ::svelters_egui::provider::KindDecl>::__svelters_new()) },
+            quote! { ::core::option::Option::None },
+        )
+    };
     Ok(quote! {
         #item
 
@@ -1820,7 +1922,7 @@ fn widget_impl(attr: Ts, mut item: ItemStruct) -> syn::Result<Ts> {
             static __SVL_EVENTS: &[::svelters_egui::provider::EventEntry] = &[#(#event_entries),*];
 
             fn __svl_new() -> ::std::boxed::Box<dyn ::svelters_egui::provider::ErasedWidget> {
-                ::std::boxed::Box::new(<#name as ::svelters_egui::provider::KindDecl>::__svelters_new())
+                #new_body
             }
 
             fn __svl_types(b: &mut __p::TypeBuilder) -> ::std::vec::Vec<__p::TypeRef> {
@@ -1838,6 +1940,7 @@ fn widget_impl(attr: Ts, mut item: ItemStruct) -> syn::Result<Ts> {
                 props: __SVL_PROPS,
                 events: __SVL_EVENTS,
                 new: __svl_new,
+                attaches_to: #attaches_to,
             };
 
             __p::inventory::submit! { ::svelters_egui::provider::KindRef(&__SVL_KIND) }

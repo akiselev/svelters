@@ -6,21 +6,56 @@
 //! `MenuEntry`, not `Widget`: they are never laid out by taffy and a box does not accept them.
 //! `context-menu` and `popup` attach to any element ([`attaches_to`], spec `attaches_to`).
 
-use super::builtin::NONE;
 use super::{Def, KindDef, MethodDef, P, PropDef, SignalDef, Ty, input, prop, signal};
 
 /// The children a menu container accepts (spec slot `accepts`).
 const MENU_ITEMS: &[&str] = &["Menu", "Action", "MenuSeparator"];
 
 static ENTRY_PROPS: &[PropDef] = &[
-    prop("enabled", P::Enabled, Ty::Bool, Def::Bool(true), "Can be picked when true; drawn greyed out otherwise."),
-    prop("visible", P::Visible, Ty::Bool, Def::Bool(true), "Shown in its menu when true."),
-    prop("tooltip", P::Tooltip, Ty::Str, Def::Str(""), "Hover text; empty for none."),
-    prop("accessible-name", P::AccessibleName, Ty::Str, Def::Str(""), "AccessKit name; the label by default."),
-    prop("anchor", P::Anchor, Ty::Str, Def::Str(""), "A name unique in its embedded root (AccessKit author id, `Embed::anchor_rect`)."),
+    prop(
+        "enabled",
+        P::Enabled,
+        Ty::Bool,
+        Def::Bool(true),
+        "Can be picked when true; drawn greyed out otherwise.",
+    ),
+    prop(
+        "visible",
+        P::Visible,
+        Ty::Bool,
+        Def::Bool(true),
+        "Shown in its menu when true.",
+    ),
+    prop(
+        "tooltip",
+        P::Tooltip,
+        Ty::Str,
+        Def::Str(""),
+        "Hover text; empty for none.",
+    ),
+    prop(
+        "accessible-name",
+        P::AccessibleName,
+        Ty::Str,
+        Def::Str(""),
+        "AccessKit name; the label by default.",
+    ),
+    prop(
+        "anchor",
+        P::Anchor,
+        Ty::Str,
+        Def::Str(""),
+        "A name unique in its embedded root (AccessKit author id, `Embed::anchor_rect`).",
+    ),
 ];
 
-static MENU_PROPS: &[PropDef] = &[prop("label", P::Text, Ty::Str, Def::Str(""), "The title: the menu-bar button, or the submenu row.")];
+static MENU_PROPS: &[PropDef] = &[prop(
+    "label",
+    P::Text,
+    Ty::Str,
+    Def::Str(""),
+    "The title: the menu-bar button, or the submenu row.",
+)];
 
 static ACTION_PROPS: &[PropDef] = &[
     prop("label", P::Text, Ty::Str, Def::Str(""), "The caption."),
@@ -31,8 +66,20 @@ static ACTION_PROPS: &[PropDef] = &[
         Def::Str(""),
         "Keyboard accelerator such as `Ctrl+O`, `Ctrl+Shift+S` or `F5`: shown right-aligned and active while the menu's owner (menu-bar, menu-button, context-menu) is drawn. Modifiers: `Ctrl`, `Shift`, `Alt`, `Cmd` (macOS command), `Primary` (Cmd on macOS, Ctrl elsewhere); keys are egui `Key` names. An unknown key is an error.",
     ),
-    prop("checkable", P::Checkable, Ty::Bool, Def::Bool(false), "A check item: picking it toggles `checked`."),
-    input("checked", P::Checked, Ty::Bool, Def::Bool(false), "Check or radio state; picking a check item toggles it, picking a radio item sets it."),
+    prop(
+        "checkable",
+        P::Checkable,
+        Ty::Bool,
+        Def::Bool(false),
+        "A check item: picking it toggles `checked`.",
+    ),
+    input(
+        "checked",
+        P::Checked,
+        Ty::Bool,
+        Def::Bool(false),
+        "Check or radio state; picking a check item toggles it, picking a radio item sets it.",
+    ),
     prop(
         "group",
         P::Group,
@@ -43,20 +90,44 @@ static ACTION_PROPS: &[PropDef] = &[
 ];
 
 static ACTION_SIGNALS: &[SignalDef] = &[
-    signal("toggled", &[("checked", Ty::Bool)], "The user changed `checked` (a check item, or a radio item turned on or off by a pick); carries the new state."),
-    signal("activate", &[("checked", Ty::Bool)], "The user picked it (click, Enter, or its shortcut); carries `checked` after the pick."),
+    signal(
+        "toggled",
+        &[("checked", Ty::Bool)],
+        "The user changed `checked` (a check item, or a radio item turned on or off by a pick); carries the new state.",
+    ),
+    signal(
+        "activate",
+        &[("checked", Ty::Bool)],
+        "The user picked it (click, Enter, or its shortcut); carries `checked` after the pick.",
+    ),
 ];
 
 static MENU_BUTTON_PROPS: &[PropDef] = &[
     prop("label", P::Text, Ty::Str, Def::Str(""), "The caption."),
-    input("active", P::Active, Ty::Bool, Def::Bool(false), "The menu is open; the user opening or closing it changes it, setting it opens or closes it."),
+    input(
+        "active",
+        P::Active,
+        Ty::Bool,
+        Def::Bool(false),
+        "The menu is open; the user opening or closing it changes it, setting it opens or closes it.",
+    ),
 ];
 
-static MENU_BUTTON_SIGNALS: &[SignalDef] = &[signal("changed", &[("active", Ty::Bool)], "The user opened or closed the menu; carries `active`.")];
+static MENU_BUTTON_SIGNALS: &[SignalDef] = &[signal(
+    "changed",
+    &[("active", Ty::Bool)],
+    "The user opened or closed the menu; carries `active`.",
+)];
 
 static POPUP_METHODS: &[MethodDef] = &[
-    MethodDef { name: "popup", doc: "Opens it (a context menu below its owner)." },
-    MethodDef { name: "popdown", doc: "Closes it." },
+    MethodDef {
+        name: "popup",
+        doc: "Opens it (a context menu below its owner).",
+    },
+    MethodDef {
+        name: "popdown",
+        doc: "Closes it.",
+    },
 ];
 
 pub(super) const MENU_ENTRY: KindDef = KindDef {
