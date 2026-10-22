@@ -648,6 +648,8 @@ impl Scene {
         self.payload[i] = Payload::Vacant;
         self.cold[i] = None;
         self.common[i] = None;
+        self.ink.remove(&(i as u32));
+        self.paint_cache.remove(i as u32);
         self.children[i] = Vec::new();
         self.core[i].flags = NodeFlags::EMPTY;
         self.counters.destroyed += 1;

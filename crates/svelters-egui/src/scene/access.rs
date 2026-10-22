@@ -887,6 +887,7 @@ impl Scene {
         .map_err(|e| PropError::Invalid(format!("<{tag}> {}: {e}", def.name)))?;
         let t = self.stamp();
         self.record(Change::Prop { node: id, prop: PropId(prop), origin }, origin);
+        self.paint_cache.remove(i as u32); // SG6: PAINT dirt drops the cached shapes
         let core = &mut self.core[i];
         core.changed = t;
         core.dirty.insert(Dirty::PAINT);

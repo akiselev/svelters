@@ -877,7 +877,9 @@ pub fn compute(scene: &mut Scene, m: &Metrics, top: SceneId, size: Vec2) -> usiz
 fn place(s: &mut Scene, top: SceneId, origin: egui::Pos2) -> u64 {
     let mut stack = vec![(top.index() as usize, origin)];
     let mut n = 0;
+    let mut order = Vec::new();
     while let Some((i, o)) = stack.pop() {
+        order.push(i);
         let l = s.layout[i].layout;
         let min = o + vec2(l.location.x, l.location.y);
         let rect = Rect::from_min_size(min, vec2(l.size.width, l.size.height));
@@ -908,7 +910,65 @@ fn place(s: &mut Scene, top: SceneId, origin: egui::Pos2) -> u64 {
             }
         }
     }
+    // SG6: ink bounds, children before parents, then up the ancestors while they change
+    for &i in order.iter().rev() {
+        ink(s, i);
+    }
+    let mut up = s.core[top.index() as usize].parent;
+    while let Some(p) = up.and_then(|p| s.idx(p)) {
+        if !ink(s, p) {
+            break;
+        }
+        up = s.core[p].parent;
+    }
     n
+}
+
+/// SG6 (ARCH-SCENE §7.3): node `i`'s ink rect, the root-relative rect its subtree paints in: its
+/// paint bounds (CS5g shadows) joined with its children's ink, except where it clips them (a scroll
+/// area, a virtual list, a `clip` channel). A transformed child (TR1) paints anywhere: its
+/// parent's ink is everything. Stored only when larger than the node's own bounds
+/// (`NodeFlags::INK_OVERFLOW`). Overlays and menus are out of flow and paint themselves. True if
+/// it changed.
+fn ink(s: &mut Scene, i: usize) -> bool {
+    let own = crate::style::paint_bounds(s, i, s.core[i].rect);
+    let mut ink = own;
+    let clips = matches!(s.w(i), W::ScrollArea { .. } | W::VirtualList(_)) || s.vis(i).clip.is_some();
+    if !clips {
+        for &c in &s.children[i] {
+            let ci = c.index() as usize;
+            if s.core[ci].rect == Rect::NOTHING || !s.common(ci).visible || crate::overlays::out_of_flow(s.w(ci)) {
+                continue;
+            }
+            if s.vis(ci).transform.is_some() {
+                ink = Rect::EVERYTHING;
+                break;
+            }
+            ink = ink.union(ink_of(s, ci));
+        }
+    }
+    let fits = ink == Rect::NOTHING || (own != Rect::NOTHING && own.contains_rect(ink));
+    let key = i as u32;
+    let before = s.ink.get(&key).copied();
+    if fits {
+        s.core[i].flags.remove(NodeFlags::INK_OVERFLOW);
+        s.ink.remove(&key);
+        before.is_some()
+    } else {
+        s.core[i].flags.insert(NodeFlags::INK_OVERFLOW);
+        s.ink.insert(key, ink);
+        before != Some(ink)
+    }
+}
+
+/// SG6: node `i`'s ink rect, root-relative (its paint bounds unless its subtree overflows them).
+pub(crate) fn ink_of(s: &Scene, i: usize) -> Rect {
+    if s.core[i].flags.contains(NodeFlags::INK_OVERFLOW)
+        && let Some(r) = s.ink.get(&(i as u32))
+    {
+        return *r;
+    }
+    crate::style::paint_bounds(s, i, s.core[i].rect)
 }
 
 /// SG4: an out-of-flow box (`position: absolute`, shown).

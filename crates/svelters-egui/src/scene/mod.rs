@@ -26,6 +26,7 @@
 
 pub(crate) mod access;
 pub(crate) mod compact;
+pub(crate) mod paint_cache;
 pub(crate) mod dirty;
 pub(crate) mod dump;
 pub(crate) mod ext;
@@ -96,6 +97,10 @@ pub struct Scene {
     /// SG6: the shared taffy styles and common-prop sets (`compact.rs`).
     pub(crate) styles: compact::Interner<taffy::Style>,
     pub(crate) commons: compact::Interner<Common>,
+    /// SG6: the ink rect (root-relative) of the nodes with `NodeFlags::INK_OVERFLOW`, by slot.
+    pub(crate) ink: std::collections::HashMap<u32, egui::Rect>,
+    /// SG6: `WidgetCx::cached_shapes` storage.
+    pub(crate) paint_cache: paint_cache::PaintCache,
     /// Provider data: one column per `ExtKey` (SG2).
     pub(crate) ext: ExtColumns,
     /// Change records for observers (SG2).
@@ -129,6 +134,8 @@ impl Default for Scene {
             common: Vec::new(),
             styles: Default::default(),
             commons: Default::default(),
+            ink: Default::default(),
+            paint_cache: Default::default(),
             ext: ExtColumns::default(),
             journal: Journal::default(),
             roots: RootTable::default(),

@@ -11,6 +11,9 @@ use super::node::{LayoutBox, NodeCold, NodeCore, NodeFlags, Owner, Payload};
 /// Work counters, cumulative since the scene was created.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub(crate) struct Counters {
+    /// SG6: nodes the walk visited and subtrees it culled (`walk::culled`), all passes.
+    pub nodes_walked: u64,
+    pub nodes_culled: u64,
     pub created: u64,
     pub destroyed: u64,
     /// Full layouts of a root.
@@ -55,6 +58,15 @@ pub struct SceneStats {
     pub styles_interned: usize,
     pub commons_interned: usize,
     pub layout_caches: usize,
+    /// SG6: nodes the walk visited, and subtrees (or leaves) it culled off screen, all passes.
+    pub nodes_walked: u64,
+    pub nodes_culled: u64,
+    /// SG6: nodes whose subtree paints outside their own bounds (`ink`, `NodeFlags::INK_OVERFLOW`).
+    pub ink_overflows: usize,
+    /// SG6: `WidgetCx::cached_shapes` entries, hits and misses.
+    pub paint_cached: usize,
+    pub paint_hits: u64,
+    pub paint_misses: u64,
     pub created: u64,
     pub destroyed: u64,
     pub layouts: u64,
@@ -122,6 +134,12 @@ impl Scene {
             custom_layouts: c.custom_layouts,
             leaf_layouts: c.leaf_layouts,
             nodes_placed: c.nodes_placed,
+            nodes_walked: c.nodes_walked,
+            nodes_culled: c.nodes_culled,
+            ink_overflows: self.ink.len(),
+            paint_cached: self.paint_cache.len(),
+            paint_hits: self.paint_cache.hits,
+            paint_misses: self.paint_cache.misses,
             writes: c.writes,
             writes_busy: c.writes_busy,
             deferred_run: c.deferred_run,

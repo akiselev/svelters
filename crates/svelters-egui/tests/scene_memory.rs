@@ -75,7 +75,9 @@ fn frame_time_10k() {
         t.elapsed().as_secs_f64() * 1e3 / frames as f64
     };
     time(&mut rig, 5, false);
+    let walked0 = rig.backend.scene().read(|s| s.stats().nodes_walked);
     let steady = time(&mut rig, 200, false);
+    let walked = (rig.backend.scene().read(|s| s.stats().nodes_walked) - walked0) / 200;
     let scroll = time(&mut rig, 200, true);
     // a label's text changes: the window relays out (no boundary below it)
     let leaves0 = rig.backend.scene().read(|s| s.stats().leaf_layouts);
@@ -88,6 +90,29 @@ fn frame_time_10k() {
     let st = rig.backend.scene().read(|s| s.stats());
     let leaves = (st.leaf_layouts - leaves0) / 20;
     println!(
-        "frame_time_10k: {live} nodes, first run {first:.1} ms, steady {steady:.3} ms/frame, scrolling {scroll:.3} ms/frame, relayout {relayout:.2} ms/frame ({leaves} leaf layouts), {st:?}"
+        "frame_time_10k: {live} nodes, first run {first:.1} ms, steady {steady:.3} ms/frame ({walked} nodes walked), scrolling {scroll:.3} ms/frame, relayout {relayout:.2} ms/frame ({leaves} leaf layouts), {st:?}"
     );
+    // culling: a frame walks the visible rows and the groups around them, not the grid
+    assert!(walked < 300, "{walked} nodes walked per frame of {live}");
+    assert!(st.nodes_culled > 0);
+}
+
+/// Ink bounds (ARCH-SCENE §7.3): a container scrolled off screen still paints a child that
+/// overflows it onto the screen (here an absolute box placed above its containing block); its
+/// own off-screen siblings stay culled.
+#[test]
+fn overflowing_child_of_an_offscreen_container_is_painted() {
+    let mut rig = Rig::new();
+    let (_w, col) = rig.window();
+    rig.leaf(col, "box", &[("height", Value::F64(1000.0)), ("flex-shrink", Value::F64(0.0))]);
+    let holder = rig.leaf(col, "box", &[("height", Value::F64(20.0)), ("flex-shrink", Value::F64(0.0)), ("position", Value::Str("relative".into()))]);
+    let inside = rig.leaf(holder, "label", &[("text", Value::Str("inside".into()))]);
+    let over = rig.leaf(holder, "label", &[("text", Value::Str("overflow".into())), ("position", Value::Str("absolute".into())), ("top", Value::F64(-950.0))]);
+    rig.run();
+    let r = rig.backend.with_scene(|s| s.n(holder).rect);
+    assert!(r.min.y > 900.0, "the holder is laid out off screen: {r:?}");
+    let d = rig.drawn(over);
+    assert!(d.is_positive() && d.max.y < 360.0, "the overflowing label is drawn on screen: {d:?}");
+    assert!(!rig.drawn(inside).is_positive(), "its off-screen sibling stays culled");
+    assert!(rig.backend.scene().read(|s| s.stats().ink_overflows) >= 1);
 }

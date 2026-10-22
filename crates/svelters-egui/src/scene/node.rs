@@ -263,6 +263,9 @@ bits! {
         /// SG4: the top of a provider's shadow subtree (ARCH-SCENE §4.4): its parent is the host
         /// provider node, which lays it out and draws it (`WidgetCx::children`); JS never sees it.
         const SHADOW = 1 << 20;
+        /// SG6: the subtree paints outside the node's own paint bounds; its ink rect (root-relative)
+        /// is in `Scene::ink` and the walk culls by it (`walk::culled`).
+        const INK_OVERFLOW = 1 << 21;
     }
 }
 
