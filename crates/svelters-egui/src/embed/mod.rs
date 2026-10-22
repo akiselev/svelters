@@ -1230,7 +1230,20 @@ impl Embed {
     /// EV3 (QT-SURVEY §2.3): what has keyboard focus in `ctx`'s current viewport, when it is a node
     /// of this embed, with its root. cadatomic's `TextFocus` layer reads it.
     pub fn focus_info(&self, ctx: &egui::Context) -> crate::focus::FocusInfo {
-        let mut info = self.backend().focus_info(ctx);
+        self.with_root(self.backend().focus_info(ctx))
+    }
+
+    /// EV3b: the text field of this embed that [`Embed::text_command`] acts on, with its root: the
+    /// focused one, else the last one that had focus while nothing or a menu item has it (a click
+    /// on host chrome, the Edit menu open), so the Edit menu enables Cut, Copy and Paste. A
+    /// built-in `text-edit`, an own text widget or a provider kind whose `Widget::text_input` is
+    /// `Some`. `None` once another widget took focus, or the field was removed, hidden or disabled.
+    pub fn last_text_field(&self, ctx: &egui::Context) -> Option<crate::focus::FocusInfo> {
+        self.backend().last_text_field(ctx).map(|i| self.with_root(i))
+    }
+
+    /// `info` with the root of its node filled in.
+    fn with_root(&self, mut info: crate::focus::FocusInfo) -> crate::focus::FocusInfo {
         if let Some(node) = info.node {
             let top = {
                 let scene = self.backend().0.scene.borrow();
@@ -1253,10 +1266,20 @@ impl Embed {
         self.backend().shortcut_override(ctx, chord)
     }
 
+    /// EV3b: [`Embed::shortcut_override`] for a press with its logical (typed) and physical key,
+    /// for a keymap with cadatomic KL1's Latin fallback: the typed key wins, and a Ctrl or Cmd
+    /// chord whose logical key is a symbol or a non-Latin letter is also asked with the physical
+    /// (Latin) key. True when the focused node claims either.
+    pub fn shortcut_override_press(&self, ctx: &egui::Context, logical: egui::Key, physical: Option<egui::Key>, modifiers: egui::Modifiers) -> bool {
+        self.backend().shortcut_override_press(ctx, logical, physical, modifiers)
+    }
+
     /// EV3 (QT-SURVEY §2.3 `text_command`): an Edit-menu command for the focused text field of this
-    /// embed (or the last one, when a click on host chrome took focus to nowhere). Cut, Copy and
-    /// Paste use the host's clipboard (DX2 `Host::platform()`, the one `svelters:clipboard` uses);
-    /// Cut and Copy also go to egui's. False when there is no such field.
+    /// embed (or the last one, when a click on host chrome or a menu took focus: see
+    /// [`Embed::last_text_field`]). Cut, Copy and Paste use the host's clipboard (DX2
+    /// `Host::platform()`, the one `svelters:clipboard` uses); Cut and Copy also go to egui's. A
+    /// provider kind with `Widget::text_input` gets it through `Widget::text_command` first (EV3b).
+    /// False when there is no such field: the host runs its own command.
     pub fn text_command(&self, ctx: &egui::Context, cmd: crate::focus::TextCommand) -> bool {
         // DX2: the clipboard JS uses (`Host::platform()`)
         let clip = crate::focus::Clip(self.host().platform().clipboard.clone());

@@ -19,6 +19,10 @@
 //!   use the host's clipboard (DX2, `Host::platform()`): Paste reads its text, Cut and Copy write
 //!   to it and to egui's (`OutputCommand::CopyText`); through the backend alone, egui's (Paste:
 //!   `ViewportCommand::RequestPaste`). [`TextCommand::Insert`] takes the text from the host.
+//!   EV3b: a provider kind with `Widget::text_input` gets them through `Widget::text_command`
+//!   first (its own undo); [`EguiBackend::last_text_field`] is the field they go to (the Edit
+//!   menu's enabled state), also while a menu item has focus; [`EguiBackend::shortcut_override_press`]
+//!   asks for a claim with the logical and the physical key (cadatomic KL1's Latin fallback).
 //! - **Default and cancel buttons** (`default`, `cancel` on `button`): Enter activates the default
 //!   button of the focused node's scope (its root when it has none), Escape the cancel button,
 //!   except while composing, while a popup is open, or when the focused node takes the key itself
@@ -275,10 +279,18 @@ fn route(st: &mut State, focus: Option<Id>, keys: &[(Key, Modifiers)], ime: &[bo
     let escape = keys.iter().any(|&(k, m)| is(k, m, Key::Escape));
     // egui drops focus on a plain Escape before anything runs (FX1 gives it back later)
     let f = if focus.is_none() && escape { st.prev.focused } else { focus };
-    if let Some(e) = st.prev.entry(f)
-        && matches!(e.role, Role::Text { .. })
-    {
-        st.last_text = Some(e.id);
+    // EV3b: the last text field (`last_text_field`, `text_command`'s fallback). Another widget
+    // taking focus ends it, unless a menu (an egui popup) is open: a menu item has keyboard focus
+    // while the Edit menu is used. A field not recorded in the last pass is removed, hidden,
+    // disabled or inert: it ends too.
+    match st.prev.entry(f) {
+        Some(e) if matches!(e.role, Role::Text { .. }) => st.last_text = Some(e.id),
+        Some(_) => st.last_text = None,
+        None if f.is_some() && f != st.last_text && st.popup.is_none() => st.last_text = None,
+        None => {}
+    }
+    if st.last_text.is_some() && st.prev.entry(st.last_text).is_none() {
+        st.last_text = None;
     }
 
     // an egui popup (a menu, svelters' or the host's) gives focus back when it closes: menus take
@@ -638,10 +650,36 @@ pub(crate) fn record_with(arena: &Arena, i: usize, ui: &Ui, resp: &egui::Respons
 
 /// Before text field `id` runs: feeds it a pending [`TextCommand`] as the input it stands for.
 pub(crate) fn before_text(ui: &Ui, id: Id) {
-    let ctx = ui.ctx();
-    let Some((cmd, clip)) = with(ctx, |st| if st.cmd.as_ref().is_some_and(|c| c.0 == id) { st.cmd.take().map(|c| (c.1, c.2)) } else { None }) else {
-        return;
-    };
+    if let Some(cmd) = take_command(ui.ctx(), id) {
+        feed(ui.ctx(), cmd);
+    }
+}
+
+/// The pending [`TextCommand`] for text field `id`, if any, taken. With the host's clipboard, a
+/// Paste comes back as the `Insert` of its text (nothing when it holds none), and a Cut or Copy
+/// arranges for what the field copies (egui's `CopyText`) to reach it ([`after_text`]).
+pub(crate) fn take_command(ctx: &Context, id: Id) -> Option<TextCommand> {
+    let (cmd, clip) = with(ctx, |st| if st.cmd.as_ref().is_some_and(|c| c.0 == id) { st.cmd.take().map(|c| (c.1, c.2)) } else { None })?;
+    match (cmd, clip) {
+        // DX2: the host's clipboard, the one `svelters:clipboard` reads
+        (TextCommand::Paste, Some(c)) => match c.0.read(ClipboardKind::Clipboard, &[TEXT_PLAIN]) {
+            Ok(data) => data.plain_text().filter(|t| !t.is_empty()).map(|t| TextCommand::Insert(t.to_string())),
+            Err(_) => None,
+        },
+        (cmd @ (TextCommand::Cut | TextCommand::Copy), Some(c)) => {
+            // egui's own copy (`OutputCommand::CopyText`, the integration's clipboard) stays; what
+            // the field copies also goes to the host's clipboard after it ran ([`after_text`])
+            with(ctx, |st| st.capture = Some((id, c)));
+            Some(cmd)
+        }
+        (cmd, _) => Some(cmd),
+    }
+}
+
+/// Feeds `cmd` to the text field about to run as the input it stands for, so egui's undoer and
+/// FX1's policy apply unchanged. Paste without the host's clipboard asks the integration
+/// (`ViewportCommand::RequestPaste`).
+pub(crate) fn feed(ctx: &Context, cmd: TextCommand) {
     let mac = ctx.os() == egui::os::OperatingSystem::Mac;
     // the modifiers the integration reports for the platform's command key
     let cmd_mods = if mac { Modifiers::MAC_CMD | Modifiers::COMMAND } else { Modifiers::CTRL | Modifiers::COMMAND };
@@ -651,29 +689,13 @@ pub(crate) fn before_text(ui: &Ui, id: Id) {
         TextCommand::Redo => key(Key::Z, cmd_mods | Modifiers::SHIFT),
         TextCommand::SelectAll => key(Key::A, cmd_mods),
         TextCommand::Delete => key(Key::Delete, Modifiers::NONE),
-        TextCommand::Cut | TextCommand::Copy => {
-            // egui's own copy (`OutputCommand::CopyText`, the integration's clipboard) stays; what
-            // the field copies also goes to the host's clipboard after it ran ([`after_text`])
-            if let Some(c) = clip {
-                with(ctx, |st| st.capture = Some((id, c)));
-            }
-            if cmd == TextCommand::Cut { Event::Cut } else { Event::Copy }
-        }
+        TextCommand::Cut => Event::Cut,
+        TextCommand::Copy => Event::Copy,
         TextCommand::Insert(text) => Event::Paste(text),
-        TextCommand::Paste => match clip {
-            // DX2: the host's clipboard, the one `svelters:clipboard` reads
-            Some(c) => match c.0.read(ClipboardKind::Clipboard, &[TEXT_PLAIN]) {
-                Ok(data) => match data.plain_text() {
-                    Some(t) if !t.is_empty() => Event::Paste(t.to_string()),
-                    _ => return,
-                },
-                Err(_) => return,
-            },
-            None => {
-                ctx.send_viewport_cmd(egui::ViewportCommand::RequestPaste);
-                return;
-            }
-        },
+        TextCommand::Paste => {
+            ctx.send_viewport_cmd(egui::ViewportCommand::RequestPaste);
+            return;
+        }
     };
     ctx.input_mut(|i| i.events.push(event));
 }
@@ -738,20 +760,57 @@ pub(crate) fn focused_node(ctx: &Context) -> Option<crate::scene::NodeId> {
     read(ctx, |st| st.cur.entry(Some(focus)).or_else(|| st.prev.entry(Some(focus))).map(|e| e.node))
 }
 
+/// KL1's Latin fallback (cadatomic `keylayout`) for a press: with Ctrl or Cmd, the physical key
+/// (US position) when the layout's logical key is a symbol (egui reports the physical key as the
+/// logical one for a non-Latin letter, so they are equal then). A Latin letter or digit is what
+/// the user typed and never turns into its physical neighbour.
+pub(crate) fn latin_fallback(logical: Key, physical: Option<Key>, m: Modifiers) -> Option<Key> {
+    let physical = physical?;
+    let command = m.command || m.ctrl || m.mac_cmd;
+    (command && physical != logical && !is_latin(logical)).then_some(physical)
+}
+
+/// A Latin letter or a digit (the keys KL1's typed-key rule keeps as typed).
+fn is_latin(k: Key) -> bool {
+    let n = k.name();
+    n.len() == 1 && (n.as_bytes()[0].is_ascii_uppercase() || n.as_bytes()[0].is_ascii_digit())
+}
+
 impl EguiBackend {
+    /// Whether `e` is (still) a node of this backend.
+    fn ours(&self, e: &Entry) -> bool {
+        let Ok(scene) = self.0.scene.try_borrow() else { return false };
+        scene.idx(e.node).is_some_and(|i| scene.core[i].egui_id == e.node_eid)
+    }
+
     /// The focused entry of this backend, from the latest record of `ctx`'s viewport.
     fn focused_entry(&self, ctx: &Context) -> Option<Entry> {
         let focus = ctx.memory(|m| m.focused())?;
         let e = read(ctx, |st| st.cur.entry(Some(focus)).or_else(|| st.prev.entry(Some(focus))).cloned())?;
-        let scene = self.0.scene.try_borrow().ok()?;
-        let i = scene.idx(e.node)?;
-        (scene.core[i].egui_id == e.node_eid).then_some(e)
+        self.ours(&e).then_some(e)
     }
 
-    /// What has keyboard focus in `ctx`'s viewport, if it is one of this backend's nodes
-    /// (QT-SURVEY §2.3 `focus_info`).
-    pub fn focus_info(&self, ctx: &Context) -> FocusInfo {
-        let Some(e) = self.focused_entry(ctx) else { return FocusInfo::default() };
+    /// The text field an edit command goes to: the focused one, else (nothing focused, or a menu
+    /// item while a menu is open: a click or the keys on host chrome) the last one that had focus.
+    /// The flag says it is the last one (not focused).
+    fn text_target(&self, ctx: &Context) -> Option<(Entry, bool)> {
+        let focus = ctx.memory(|m| m.focused());
+        if let Some(e) = self.focused_entry(ctx) {
+            return matches!(e.role, Role::Text { .. }).then_some((e, false));
+        }
+        let (recorded, last, popup) = read(ctx, |st| {
+            let recorded = st.cur.entry(focus).or_else(|| st.prev.entry(focus)).is_some();
+            let last = st.last_text.and_then(|t| st.prev.entry(Some(t)).or_else(|| st.cur.entry(Some(t))).cloned());
+            (recorded, last, st.popup.is_some())
+        });
+        let menu = !recorded && (popup || ctx.any_popup_open());
+        if focus.is_some() && !menu {
+            return None; // another widget has focus
+        }
+        last.filter(|e| self.ours(e)).map(|e| (e, true))
+    }
+
+    fn info(&self, ctx: &Context, e: &Entry) -> FocusInfo {
         let kind = self.0.scene.try_borrow().ok().and_then(|s| {
             let i = s.idx(e.node)?;
             crate::kinds::kind(s.core[i].kind as usize).tag
@@ -770,6 +829,24 @@ impl EguiBackend {
             scope: e.scoped.then_some(e.scope),
             root: None,
         }
+    }
+
+    /// What has keyboard focus in `ctx`'s viewport, if it is one of this backend's nodes
+    /// (QT-SURVEY §2.3 `focus_info`).
+    pub fn focus_info(&self, ctx: &Context) -> FocusInfo {
+        match self.focused_entry(ctx) {
+            Some(e) => self.info(ctx, &e),
+            None => FocusInfo::default(),
+        }
+    }
+
+    /// EV3b: the text field of this backend that [`EguiBackend::text_command`] acts on: the
+    /// focused one, else the last one that had focus while nothing or a menu has it (the Edit menu
+    /// enables Cut, Copy and Paste on it). `None` once another widget took focus, or the field was
+    /// removed, hidden or disabled. A built-in `text-edit`, an own text widget or a provider kind
+    /// whose `Widget::text_input` is `Some`.
+    pub fn last_text_field(&self, ctx: &Context) -> Option<FocusInfo> {
+        self.text_target(ctx).map(|(e, _)| self.info(ctx, &e))
     }
 
     /// Qt's `ShortcutOverride`: true when the focused node of this backend takes `chord` itself,
@@ -793,10 +870,20 @@ impl EguiBackend {
         }
     }
 
+    /// EV3b: [`EguiBackend::shortcut_override`] for a press with its logical (typed) and physical
+    /// key (cadatomic KL1). The typed key wins; a Ctrl or Cmd chord whose logical key is a symbol
+    /// or a non-Latin letter also asks for the physical (Latin) key, the stroke the keymap falls
+    /// back to.
+    pub fn shortcut_override_press(&self, ctx: &Context, logical: Key, physical: Option<Key>, modifiers: Modifiers) -> bool {
+        std::iter::once(logical)
+            .chain(latin_fallback(logical, physical, modifiers))
+            .any(|k| self.shortcut_override(ctx, &shortcut(k, modifiers)))
+    }
+
     /// Sends `cmd` to the focused text field of this backend in `ctx`'s viewport, or, when nothing
-    /// has focus (a click on host chrome such as a Rust menu took it), to the last text field that
-    /// had it, focusing it again. Applied when the field is next drawn. False when there is no
-    /// such field.
+    /// (or a menu item) has focus (a click on host chrome such as a Rust menu took it), to the last
+    /// text field that had it, focusing it again. Applied when the field is next drawn: a provider
+    /// kind's `Widget::text_command` gets it first. False when there is no such field.
     pub fn text_command(&self, ctx: &Context, cmd: TextCommand) -> bool {
         self.text_command_with(ctx, cmd, None)
     }
@@ -804,21 +891,11 @@ impl EguiBackend {
     /// [`EguiBackend::text_command`] with the host's clipboard (`Embed::text_command`): Paste reads
     /// it, Cut and Copy write to it as well as to egui's.
     pub(crate) fn text_command_with(&self, ctx: &Context, cmd: TextCommand, clip: Option<Clip>) -> bool {
-        let focus = ctx.memory(|m| m.focused());
-        let target = match self.focused_entry(ctx) {
-            Some(e) => matches!(e.role, Role::Text { .. }).then_some(e.id),
-            None if focus.is_none() => {
-                let last = read(ctx, |st| st.last_text.and_then(|t| st.prev.entry(Some(t)).or_else(|| st.cur.entry(Some(t))).cloned()));
-                let ours = last.filter(|e| self.0.scene.try_borrow().ok().and_then(|s| s.idx(e.node).map(|i| s.core[i].egui_id == e.node_eid)) == Some(true));
-                ours.map(|e| {
-                    ctx.memory_mut(|m| m.request_focus(e.id));
-                    e.id
-                })
-            }
-            None => None,
-        };
-        let Some(id) = target else { return false };
-        with(ctx, |st| st.cmd = Some((id, cmd, clip)));
+        let Some((e, last)) = self.text_target(ctx) else { return false };
+        if last {
+            ctx.memory_mut(|m| m.request_focus(e.id));
+        }
+        with(ctx, |st| st.cmd = Some((e.id, cmd, clip)));
         ctx.request_repaint();
         true
     }
