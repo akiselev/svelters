@@ -1226,6 +1226,7 @@ dependencies = [
  "jiff",
  "log",
  "profiling",
+ "resvg",
 ]
 
 [[package]]
