@@ -113,6 +113,8 @@ On every kind (Widget base): `invalid` (bool). On `label` and `button`: `font-we
   clean (after the last merge of origin/master).
 - `SVELTERS_UPDATE=1 tools/dev/cargo-slot cargo nextest run -p svelters-egui --test spec` regenerated the two
   generated files.
-- Local test results are in the lane report (`--test widgets --test widgets_panel --test spec --test observe`).
-- Not run locally: the full svelters-egui and egui-kinds-example suites, the workspace, conformance, the
-  other backends, the JS tests (CI runs them).
+- `tools/dev/cargo-slot cargo nextest run -p svelters-egui --test widgets --test widgets_panel`: 11/11 after
+  the last code change (bundle from `pnpm --filter ./fixtures/embed-egui build`); `--test spec --test observe`
+  passed on the code before the last test-only fixes.
+- Not run locally (coordinator's call): the full svelters-egui and egui-kinds-example suites, the workspace,
+  conformance, the other backends, the JS tests. CI runs them.
