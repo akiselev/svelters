@@ -5,8 +5,7 @@
 //!   app's status bar ([`status_tip`]).
 //! - QA14: the `cursor` prop ([`hover`], [`cursor_icon`]). CSS `cursor` in the style engine is DS2's.
 //! - QW13: `elide` on `label` ([`elide`]).
-//! - QW9: `combo-box` type-ahead ([`TypeAhead`]; WG5b's `KeySelect::type_ahead` is the same rule
-//!   for lists and trees).
+//! - QW9: `combo-box` type-ahead ([`combo_type_ahead`], on WG5a's `KeySelect::type_ahead`).
 //! - QA13: `scroll-into-view` ([`scroll_into_view`], applied by the walk: [`reveal`]); a widget that
 //!   takes focus scrolls itself into view, and a pass with Tab pressed culls nothing, so focus can
 //!   move by Tab to a widget outside the visible part of a scroll area ([`keep`]).
@@ -14,6 +13,7 @@
 //! Writer lane: WIDGETS.
 
 use crate::scene::{Arena, NodeFlags};
+use crate::views::selection::{KeySelect, Mode};
 use egui::{Color32, CursorIcon, FontId, Id, Rect, Response, Ui};
 
 /// Shows `tip` on hover whether the widget is enabled or not; also its accessible description.
@@ -106,36 +106,6 @@ pub(crate) fn reveal(arena: &mut Arena, i: usize, ui: &Ui, r: Rect) {
     }
 }
 
-/// QW9: a combo box's typed prefix (egui temp data, per node). The typed text resets after a
-/// pause of [`TypeAhead::RESET`] seconds; one character typed again cycles through the options
-/// that start with it.
-#[derive(Clone, Default)]
-pub(crate) struct TypeAhead {
-    typed: String,
-    at: f64,
-}
-
-impl TypeAhead {
-    pub const RESET: f64 = 1.0;
-
-    /// Text `text` typed at `now`: the option to select after `current` (`label(k)`: option k).
-    pub fn next(&mut self, n: usize, current: Option<usize>, text: &str, now: f64, label: impl Fn(usize) -> String) -> Option<usize> {
-        if n == 0 || text.is_empty() {
-            return None;
-        }
-        if now - self.at > Self::RESET {
-            self.typed.clear();
-        }
-        self.at = now;
-        self.typed.push_str(&text.to_lowercase());
-        let first = self.typed.chars().next();
-        let repeat = self.typed.chars().count() > 1 && self.typed.chars().all(|c| Some(c) == first);
-        let prefix: String = if repeat { first.into_iter().collect() } else { self.typed.clone() };
-        let start = current.map_or(0, |p| if prefix.chars().count() == 1 { p + 1 } else { p });
-        (0..n).map(|k| (start + k) % n).find(|&p| label(p).to_lowercase().starts_with(&prefix))
-    }
-}
-
 /// QW9: the option a focused combo box (`id`, showing `current` of `options`) selects from the text
 /// typed this pass, if any.
 pub(crate) fn combo_type_ahead(ui: &Ui, id: Id, options: &[String], current: Option<usize>) -> Option<usize> {
@@ -153,11 +123,14 @@ pub(crate) fn combo_type_ahead(ui: &Ui, id: Id, options: &[String], current: Opt
     }
     let now = ui.input(|i| i.time);
     let key = id.with("type-ahead");
-    let mut st = ui.ctx().data(|d| d.get_temp::<TypeAhead>(key)).unwrap_or_default();
-    let mut at = current;
+    // WG5a's `KeySelect` (the lists' and tables' rule), over the option indices
+    let mut st = ui.ctx().data(|d| d.get_temp::<KeySelect>(key)).unwrap_or_else(|| KeySelect::new(Mode::Single));
+    let ids: Vec<u64> = (0..options.len() as u64).collect();
+    st.cursor = current.map(|k| k as u64);
     for ch in text.chars() {
-        at = st.next(options.len(), at, &ch.to_string(), now, |k| options[k].clone()).or(at);
+        st.type_ahead(&ids, &ch.to_string(), now, |k| options[k as usize].clone());
     }
+    let at = st.cursor.map(|k| k as usize);
     ui.ctx().data_mut(|d| d.insert_temp(key, st));
     at.filter(|&k| Some(k) != current)
 }
@@ -260,21 +233,6 @@ mod tests {
         assert_eq!(elide_with(t, "start", 6.0, w), "….step");
         assert_eq!(elide_with(t, "middle", 0.0, w), "…");
         assert_eq!(elide_with("ab", "middle", 1.0, w), "…");
-    }
-
-    #[test]
-    fn wg6_type_ahead() {
-        let o = ["Apple", "Banana", "Blueberry", "Cherry", "blackberry"];
-        let l = |k: usize| o[k].to_string();
-        let mut t = TypeAhead::default();
-        assert_eq!(t.next(5, Some(0), "b", 0.0, l), Some(1));
-        assert_eq!(t.next(5, Some(1), "l", 0.1, l), Some(2), "bl: Blueberry");
-        assert_eq!(t.next(5, Some(2), "a", 0.2, l), Some(4), "bla: blackberry");
-        // after a pause, one repeated letter cycles
-        assert_eq!(t.next(5, Some(4), "b", 2.0, l), Some(1));
-        assert_eq!(t.next(5, Some(1), "b", 2.1, l), Some(2));
-        assert_eq!(t.next(5, Some(2), "b", 2.2, l), Some(4));
-        assert_eq!(t.next(5, Some(4), "z", 5.0, l), None);
     }
 
     #[test]

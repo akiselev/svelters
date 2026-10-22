@@ -162,7 +162,7 @@ fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut 
 /// host gets a response of its own at its rect, registered under its children.
 fn paint_host(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
     let r = arena.core[i].rect.translate(origin);
-    if !ui.is_rect_visible(r) {
+    if !ui.is_rect_visible(crate::style::paint_bounds(arena, i, r)) {
         return;
     }
     let container = arena.w(i).is_container();
@@ -196,8 +196,9 @@ fn paint_own(
     }
     crate::tips::reveal(arena, i, ui, r); // WG6 (QA13): `scroll-into-view`
     if arena.w(i).is_container() {
-        // Cull whole subtrees outside the clip rect (WG6: unless `tips::keep`).
-        if !ui.is_rect_visible(r) && !crate::tips::keep(arena, i, ui) {
+        // Cull whole subtrees outside the clip rect (CS5g: grown by the node's own shadows; WG6:
+        // unless `tips::keep`).
+        if !ui.is_rect_visible(crate::style::paint_bounds(arena, i, r)) && !crate::tips::keep(arena, i, ui) {
             return None;
         }
         if !matches!(arena.w(i), crate::scene::W::Overlay(_)) {
@@ -221,7 +222,7 @@ fn paint_own(
         crate::leaf::container(arena, i, r, origin, ui, out);
         return None;
     }
-    if !ui.is_rect_visible(r) && !crate::tips::keep(arena, i, ui) {
+    if !ui.is_rect_visible(crate::style::paint_bounds(arena, i, r)) && !crate::tips::keep(arena, i, ui) {
         return None;
     }
     let mut b = UiBuilder::new()

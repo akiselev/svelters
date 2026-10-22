@@ -4842,6 +4842,44 @@
     "Table": {
       "abstract": false,
       "bindings": {
+        "current": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "current",
+          "provenance": "svelters-egui: the egui_table::Table widget writes current into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "current-column": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "current-column",
+          "provenance": "svelters-egui: the egui_table::Table widget writes current-column into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
         "selected": {
           "compare_before_set": true,
           "direction": "two_way",
@@ -4881,7 +4919,7 @@
           }
         }
       },
-      "doc": "A virtual table (`egui_table`): only the visible rows and columns are drawn. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers). Give it a size or let flex-grow size it.",
+      "doc": "A virtual table (`egui_table`): only the visible rows and columns are drawn. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`. Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it.",
       "interface": false,
       "lifetime": "owned",
       "methods": {
@@ -4895,10 +4933,40 @@
             "type": "void"
           }
         },
+        "edit": {
+          "dispatch": "generated",
+          "doc": "`edit(rowId, column)`: starts editing that cell (its column must be `editable`).",
+          "native": "edit",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "end-edit": {
+          "dispatch": "generated",
+          "doc": "`end-edit(commit)`: ends the open edit; true commits (`commit`), false reverts.",
+          "native": "end-edit",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
         "scroll-to-row": {
           "dispatch": "generated",
           "doc": "`scroll-to-row(row)`: scrolls the row into view on the next frame.",
           "native": "scroll-to-row",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "set-ids": {
+          "dispatch": "generated",
+          "doc": "`set-ids(ids, labels?)`: the id of every row by position (and the text type-ahead matches); the row count is then `ids.length`. Selection, cursor and edits follow ids across sorts and filters. null: ids are positions again.",
+          "native": "set-ids",
           "params": [],
           "returns": {
             "nullable": false,
@@ -4919,6 +4987,40 @@
       "native": "egui_table::Table",
       "present": null,
       "props": {
+        "current": {
+          "construct_only": false,
+          "default": -1,
+          "doc": "The cursor row's id (keyboard focus inside the table), -1 for none.",
+          "js": "current",
+          "native": "current",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Table:current",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "current-column": {
+          "construct_only": false,
+          "default": 0,
+          "doc": "The cursor column (Left/Right move it; F2 and typing edit that cell).",
+          "js": "current-column",
+          "native": "current-column",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Table:current-column",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
         "overscan": {
           "construct_only": false,
           "default": 20,
@@ -4972,8 +5074,8 @@
         },
         "selected": {
           "construct_only": false,
-          "default": -1,
-          "doc": "The selected row, -1 for none; a click on a row (or the arrow keys) changes it.",
+          "default": null,
+          "doc": "The selected row ids (`bind:selected`); clicks (Ctrl/Shift with `selection=\"multi\"`) and the keyboard change it. Kept by id across `set-ids` (sorts, filters).",
           "js": "selected",
           "native": "selected",
           "nullable": false,
@@ -4983,8 +5085,31 @@
             "mechanism": "widget",
             "verified": "delivery"
           },
+          "of": "i64",
           "readable": true,
-          "type": "i64",
+          "type": "list",
+          "writable": true
+        },
+        "selection": {
+          "construct_only": false,
+          "default": "single",
+          "doc": "`single`, `multi` (Ctrl/Shift clicks and keys, ranges) or `none` (a cursor only).",
+          "js": "selection",
+          "native": "selection",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Table:selection",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "single",
+            "multi"
+          ],
           "writable": true
         },
         "sticky-columns": {
@@ -5034,7 +5159,7 @@
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "A row was double-clicked (or Enter pressed on the selection).",
+          "doc": "A row was double-clicked (a cell of a column that is not `editable`) or Enter pressed on the cursor row; carries its position.",
           "handler_result": "none",
           "js_event": "activated",
           "name": "activated",
@@ -5046,16 +5171,40 @@
           "args": [
             {
               "name": "selected",
-              "type": "i64"
+              "type": "list"
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "The user selected a row; carries its index.",
+          "doc": "The user changed the selection; carries the selected row ids (`bind:selected`).",
           "handler_result": "none",
           "js_event": "changed",
           "name": "changed",
           "phases": [],
           "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            },
+            {
+              "name": "column",
+              "type": "i64"
+            },
+            {
+              "name": "value",
+              "type": "other"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "An edit is committed: row id, column index, the editor's value. Accept by returning nothing; reject with `e.result = 'reason'` (shown under the cell) or `e.preventDefault()`: the cell reverts.",
+          "handler_result": "bool_stop",
+          "js_event": "commit",
+          "name": "commit",
+          "phases": [],
+          "sync": true,
           "sync_required": false
         },
         "header-clicked": {
@@ -5093,6 +5242,22 @@
           "phases": [],
           "sync": false,
           "sync_required": false
+        },
+        "selectionchange": {
+          "args": [
+            {
+              "name": "ids",
+              "type": "list"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user changed the selection; carries the selected row ids.",
+          "handler_result": "none",
+          "js_event": "selectionchange",
+          "name": "selectionchange",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
         }
       },
       "text_content": null
@@ -5108,7 +5273,28 @@
       "doc": "A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100) is the column's width; a user resize keeps its width until the prop changes.",
       "interface": false,
       "lifetime": "owned",
-      "methods": {},
+      "methods": {
+        "end-edit": {
+          "dispatch": "generated",
+          "doc": "`end-edit(commit)`: ends this column's open edit; true commits, false reverts.",
+          "native": "end-edit",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "set-editor": {
+          "dispatch": "generated",
+          "doc": "Runtime protocol: `set-editor(outlet)`, the realised editor snippet of this column (null drops it).",
+          "native": "set-editor",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
       "native": "egui_table::Column",
       "present": null,
       "props": {
@@ -5132,6 +5318,40 @@
             "center",
             "end"
           ],
+          "writable": true
+        },
+        "editable": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Its cells can be edited (F2, typing, double click); the editor is `editor`, else a text field.",
+          "js": "editable",
+          "native": "editable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TableColumn:editable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "editor": {
+          "construct_only": false,
+          "default": false,
+          "doc": "The cell editor, a snippet taking the edit (`{ row, column, value (bindable), typed, commit(), cancel() }`); realised once and rebound per edit.",
+          "js": "editor",
+          "native": "editor",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TableColumn:editor",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "other",
           "writable": true
         },
         "resizable": {
@@ -5194,7 +5414,54 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
-      "signals": {},
+      "signals": {
+        "editor-bind": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            },
+            {
+              "name": "value",
+              "type": "string"
+            },
+            {
+              "name": "typed",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Runtime protocol: an edit of this column's cell starts (the editor snippet's outlet is `set-editor`).",
+          "handler_result": "bool_stop",
+          "js_event": "editor-bind",
+          "name": "editor-bind",
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "editor-unbind": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "Runtime protocol: the edit ended; the editor stays realised for the next one.",
+          "handler_result": "bool_stop",
+          "js_event": "editor-unbind",
+          "name": "editor-unbind",
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "editor-value": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "Runtime protocol: the editor's value to commit (the handler sets `e.result`).",
+          "handler_result": "bool_stop",
+          "js_event": "editor-value",
+          "name": "editor-value",
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        }
+      },
       "text_content": null
     },
     "TextEdit": {
@@ -5717,6 +5984,25 @@
           "value": {
             "arg": 0
           }
+        },
+        "selected-ids": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "selected-ids",
+          "provenance": "svelters-egui: the svelters_egui::kinds::virtuallist (recycled row slots over a VScroll) widget writes selected-ids into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
         }
       },
       "chain": [
@@ -5770,7 +6056,7 @@
         },
         "splice": {
           "dispatch": "generated",
-          "doc": "`splice(pos, removed, ids)`: replaces `removed` ids at `pos` with `ids` (unique integers).",
+          "doc": "`splice(pos, removed, ids, labels?)`: replaces `removed` ids at `pos` with `ids` (unique integers); `labels` (strings, one per id) are what type-ahead matches.",
           "native": "splice",
           "params": [],
           "returns": {
@@ -5837,10 +6123,28 @@
           "type": "i64",
           "writable": true
         },
+        "selected-ids": {
+          "construct_only": false,
+          "default": null,
+          "doc": "The selected item ids (`bind:selected-ids`); kept by id across splices, sorts and filters.",
+          "js": "selected-ids",
+          "native": "selected-ids",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:VirtualList:selected-ids",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "of": "i64",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
         "selection": {
           "construct_only": false,
           "default": "single",
-          "doc": "`single`: a click selects a row (`select`); `none`: rows are not selectable.",
+          "doc": "`single`: a click or the keyboard selects a row (`select`); `multi`: Ctrl/Shift clicks and keys select several (`selectionchange`); `none`: rows are not selectable.",
           "js": "selection",
           "native": "selection",
           "nullable": false,
@@ -5854,7 +6158,8 @@
           "type": "enum",
           "values": [
             "none",
-            "single"
+            "single",
+            "multi"
           ],
           "writable": true
         }
@@ -5919,6 +6224,22 @@
           "handler_result": "none",
           "js_event": "select",
           "name": "select",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "selectionchange": {
+          "args": [
+            {
+              "name": "ids",
+              "type": "list"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user changed the selection; carries the selected ids.",
+          "handler_result": "none",
+          "js_event": "selectionchange",
+          "name": "selectionchange",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -6969,6 +7290,10 @@
         ],
         "type": "length",
         "via": "setter"
+      },
+      "box-shadow": {
+        "decl_type": "shadow",
+        "via": "css"
       },
       "color": {
         "decl_type": "color",

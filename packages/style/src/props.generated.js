@@ -270,6 +270,7 @@ export const STYLE_TABLES = {
       "border-radius": {"via": "css", "type": "length"},
       "border-width": {"via": "css", "type": "length"},
       "bottom": {"via": "setter", "prop": "bottom", "native": "bottom", "type": "length", "kinds": ["Widget"], "tags": 20},
+      "box-shadow": {"via": "css", "type": "shadow"},
       "color": {"via": "css", "type": "color"},
       "column-gap": {"via": "setter", "prop": "column-gap", "native": "column-gap", "type": "length", "kinds": ["Box", "Grid"], "tags": 21},
       "display": {"via": "css", "type": "enum", "values": ["flex", "grid", "none"]},
