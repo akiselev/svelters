@@ -9,5 +9,5 @@
     "skipLibCheck": true,
     "types": []
   },
-  "include": ["*.svelte", "*.ts", "../types/index.d.ts"]
+  "include": ["*.svelte", "*.ts", "../types/index.d.ts", "../types/assets.d.ts"]
 }

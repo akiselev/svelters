@@ -1,0 +1,31 @@
+[package]
+name = "svelters-intl"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "IN1: locale-aware number, plural, collation and date formatting over ICU4X, for the QuickJS Intl and the egui widgets"
+
+# ICU4X with no compiled data: everything loads from one postcard blob for a locale subset
+# (data/icu4x.postcard, made by tools/intl/gen-data.sh). The unstable APIs (the ECMA-402-shaped
+# date field bag, compact decimals, percent and currency formatters) are why every icu crate is
+# pinned exactly; advance them together with the blob.
+[dependencies]
+icu_locale_core = { version = "=2.4.0", default-features = false, features = ["alloc"] }
+icu_locale = { version = "=2.4.0", default-features = false, features = ["serde"] }
+icu_decimal = { version = "=2.4.0", default-features = false, features = ["serde", "unstable", "ryu"] }
+icu_plurals = { version = "=2.4.0", default-features = false, features = ["serde"] }
+icu_collator = { version = "=2.4.0", default-features = false, features = ["serde"] }
+icu_datetime = { version = "=2.4.0", default-features = false, features = ["serde", "unstable"] }
+icu_calendar = { version = "=2.4.0", default-features = false, features = ["serde"] }
+icu_time = { version = "=2.4.0", default-features = false, features = ["serde"] }
+icu_experimental = { version = "=0.7.0", default-features = false, features = ["serde"] }
+icu_provider = { version = "=2.4.0", features = ["serde", "deserialize_postcard_1", "sync"] }
+icu_provider_blob = { version = "=2.4.0", features = ["alloc"] }
+icu_provider_adapters = { version = "=2.4.0", default-features = false }
+fixed_decimal = { version = "0.7.3", features = ["ryu"] }
+writeable = "0.6"
+
+[features]
+# examples/size.rs only: links every formatter (the size probe in plans/milestones/IN1-intl.md).
+probe = []
