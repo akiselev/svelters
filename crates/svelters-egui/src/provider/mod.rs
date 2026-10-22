@@ -486,6 +486,11 @@ impl WidgetCx<'_> {
         crate::paint::StyleView::new(css, ua, self.state, self.dark)
     }
 
+    /// OW1b: the node's computed style (the cascade's), if a sheet reaches it.
+    pub fn computed(&self) -> Option<&svelters_style::ComputedStyle> {
+        self.s.style.computed(self.node).map(|c| &**c)
+    }
+
     /// A paint context on `ui`'s painter for this node (traced when the pass traces).
     pub fn paint_cx<'p>(&self, ui: &'p egui::Ui) -> crate::paint::PaintCx<'p> {
         let mut p = crate::paint::PaintCx::new(ui.painter());
@@ -1013,7 +1018,13 @@ fn flush_writes(
         let sig = reg.ext_signal_id(kind, e);
         if arena.listens(i, sig) {
             // OW0: an own widget's event keeps the built-in signal's arity (no args: no payload)
-            let args = if reg.provider(kind).is_none() && reg.signal_def(kind, sig).is_some_and(|d| d.args.is_empty()) { vec![] } else { vec![v] };
+            // (OW1b: a `Vec` payload spreads over a signal of several args, `changed(low, high)`)
+            let n = if reg.provider(kind).is_none() { reg.signal_def(kind, sig).map(|d| d.args.len()) } else { None };
+            let args = match (n, v) {
+                (Some(0), _) => vec![],
+                (Some(n), Value::List(l)) if n > 1 && l.len() == n => l,
+                (_, v) => vec![v],
+            };
             out.push(Out::Event(h, sig, args));
         }
     }

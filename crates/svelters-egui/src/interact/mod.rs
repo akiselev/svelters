@@ -21,13 +21,19 @@
 //! Disabled hosts: units other than [`Hoverable`] produce no intents (R9: disabled controls stay
 //! hoverable). Writer lane: OW.
 
+mod drag;
 mod focus;
 mod hover;
 mod press;
+mod scrub;
+mod step;
 
+pub use drag::{Axis, Drag, DragParams, Draggable};
 pub use focus::{Focus, FocusParams, Focusable};
 pub use hover::{Hover, Hoverable};
-pub use press::{Press, PressParams, Pressable};
+pub use press::{ACCEL_EVERY, ActivateOn, Press, PressParams, Pressable};
+pub use scrub::{DragToValue, Scale, Scrub, ScrubMode, ScrubParams};
+pub use step::{Arrows, POINTS_PER_STEP, Step, StepParams, Steppable, Wheel};
 
 use crate::native::Policy;
 use crate::provider::StateBits;

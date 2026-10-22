@@ -14,12 +14,26 @@
 //! Writer lanes: OW0–OW7.
 
 pub mod button;
+/// OW1b: `drag-value`.
+pub mod drag_value;
+/// OW1b: the interim one-line entry of the value boxes (OW4's TextInput replaces it).
+pub mod entry;
+/// OW1b: number formats (locale, decimals, affixes, special text) and the formatter registry.
+pub mod numfmt;
+/// OW1b: the rail of `slider` and `range-slider`.
+pub mod rail;
+/// OW1b: `range-slider`.
+pub mod range_slider;
+/// OW1b: `slider`.
+pub mod slider;
+/// OW1b: the number field of `drag-value` and the sliders' value boxes.
+pub mod value_box;
 
 use crate::scene::W;
 
 /// The built-in tags whose own widget is the default (the egui wrapper otherwise). Grows by one
 /// tag per lane as each own widget passes its acceptance (ARCH-WIDGETS §6.2 step 2).
-pub const DEFAULT_OWN: &[&str] = &[];
+pub const DEFAULT_OWN: &[&str] = &["slider", "range-slider", "drag-value"];
 
 /// Which built-in kinds get svelters' own widget (§6.2: the per-kind switch).
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
