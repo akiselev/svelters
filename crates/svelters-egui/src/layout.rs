@@ -382,9 +382,14 @@ impl Metrics {
             W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::SplitView { .. } | W::ToastHost(_) => crate::views::intrinsic(self, w),
             W::Picker(p) => p.measure(self), // WG4b
             // ---- WG1 ----
-            W::ToggleButton { text, weight, .. } => {
+            W::ToggleButton { text, weight, frame, .. } => {
                 let t = self.text_size_in(text, self.weighted(text, *weight), None);
-                vec2(t.x + 2.0 * sp.button_padding.x, (t.y + 2.0 * sp.button_padding.y).max(interact.y))
+                // a frameless toggle is a list row: the theme's `row-h` (VS Code 22)
+                let h = match crate::theme::applied(&self.ctx) {
+                    Some(th) if !*frame => th.metrics.row_h,
+                    _ => (t.y + 2.0 * sp.button_padding.y).max(interact.y),
+                };
+                vec2(t.x + 2.0 * sp.button_padding.x, h)
             }
             W::ComboBox { options, hint, .. } => {
                 // the widest option (or the hint), the drop-down icon, the button padding

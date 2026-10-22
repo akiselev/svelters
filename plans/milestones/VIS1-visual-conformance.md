@@ -9,7 +9,9 @@ proper base to start from." Lane VIS1, branch `ci/vis1`.
 | | Checks passing (both themes) |
 |---|---|
 | Before (egui's stock look, `VIS1_STOCK=1`) | 65 of 286 (23%) |
-| After (`svelters_egui::vscode_look`) | **263 of 286 (92%)**; the floor is 90% (DESIGN §6.5) |
+| After (VIS1, `svelters_egui::vscode_look`) | 263 of 286 (92%) |
+| After VIS1b (`svelters_egui::theme`, `Theme::vscode(..).with_affordances(false)`; tabs and progress fill) | 278 of 286 (97%) |
+| VIS1b with 22 more checks (`ta` text alignment, list-row `h`, focus-ring `oc`) | **292 of 308 (95%)**; the floor is 90% (DESIGN §6.5) |
 
 Contact sheets (VS Code 1.133 left, svelters-egui right, failed checks named per row):
 
@@ -77,27 +79,40 @@ python3 conformance/visual/tools/sheet.py dark-modern target/vis1/dark-modern /t
 
 ## 4. The default look (what changed)
 
-- `crates/svelters-egui/src/vscode_look.rs`: the token tables `DARK`/`LIGHT` (DESIGN §1.5 roles, values from the
-  captured `vars`), `egui_style(scheme)` (DESIGN §1.6: control height 26, button padding 8x4, radius 4, checkbox 18,
-  fonts 13/12/11, no hover expansion, pressed = hover, menu radius 8, dialog radius 12, VS Code's widget shadows,
-  pointing-hand cursor, disabled alpha 0.4, floating 10 px scrollbars) and `apply(backend, ctx)`.
-- `crates/svelters-egui/src/vscode_look/base.css`: the per-kind sheet, `@layer sv.base`, theme origin: secondary and
-  `.primary` buttons, fields (`text-edit`, `combo-box`, `drag-value`, focus border), checkbox/radio/switch, the input
-  option toggle (`toggle-button`), list rows (`toggle-button[frame="false"]`).
-- Applied by default in the eframe runners (`run_desktop`, `svl_backend.run`); an embedder calls
-  `vscode_look::apply` (or `apply_css` with its own egui style). Tests opt in (TK1's snapshots are unchanged).
-- Engine changes the look needed (`style.rs`, `leaf.rs`, runtime `style.js`):
+Since VIS1b the look is DS1's `svelters_egui::theme` (VIS1's own `vscode_look` module is gone):
+
+- **Data** (`crates/svelters-egui/src/theme/data/`): the VS Code keys VIS1 measured that DS1's sets lacked
+  (`button.secondaryBorder`, `checkbox.foreground`, `inputOption.hoverBackground`, `inputOption.activeForeground`,
+  `tab.hoverBackground`), High Contrast role values for them, `checkbox-radius` 3px in `shape.json`, and `button2-border`
+  in the affordance overlay (VS Code's `#CCCCCC26` is below R4's 3:1, so the overlay keeps DS1's control boundary).
+- **Roles and components** (`theme/mod.rs`): new roles `button2-border`, `check-bg`, `check-fg`, `toggle-hover`,
+  `toggle-on-fg`, `tab-hover-bg`; `button-border-color` now defaults to `button2-border`, `button-bg-active` to
+  `button2-hover` (VS Code has no pressed look), `checkbox-bg` to `check-bg` (Light Modern's check box fill is
+  `#F8F8F8`, not the input's), new `checkbox-fg`; `menu-radius` 8 and `window-radius` 12 (measured).
+- **`Theme::egui_style`** (`theme/egui_style.rs`): button text 12 px (`.monaco-text-button`), `bg_fill` (check boxes,
+  radios) kept under the pointer and while pressed, one stroke for every stock widget = `checkbox-border-color`,
+  VS Code's list scrollbars (floating 10 px, no rest track). `Theme::apply_to` also leaves an `Applied` (colours,
+  metrics) in the context's data for chrome painted outside the cascade.
+- **`theme/base.css`** (`@layer sv.base`): VIS1's per-kind rules on the theme's tokens: secondary and `.primary`
+  buttons (`--sv-accent*`, now that the runtime no longer sends `DEFAULT_TOKENS` to egui), fields (`text-edit`,
+  `combo-box`, `drag-value`, focus border), checkbox/radio/switch, the input option toggle (`toggle-button`), list rows
+  (`toggle-button[frame="false"]`).
+- **Runners**: `run_desktop` and `svl_backend.run` call `backend.set_theme(&Theme::vscode(scheme, Normal))` (scheme
+  from the context at start) unless the app installed a theme first. An embedder (cadatomic) calls `set_theme` itself.
+  Tests opt in (TK1's snapshots are unchanged).
+- **Chrome from the applied theme** (VIS1b): `tab-view` paints VS Code tabs (`tab-h` 35, `tab-*` colours, hover
+  `tab-hover-bg`, a 1 px `tab-active-marker` on top, the `border` hairline between tabs, the close button inside the
+  tab; egui's selectable buttons without a theme); progress bars fill with `progress`; the `invalid` outline uses
+  `invalid-border` (else `error_fg_color`).
+- Engine changes from VIS1 (`style.rs`, `leaf.rs`, runtime `style.js`):
   - `toggle-button`, `combo-box`, `radio-button`, `switch`, `drag-value` take per-state CSS visuals like the other
     stock widgets; the two-state kinds match `:checked`.
   - A `:checked` fill and colour also set `Visuals::selection` (egui paints selected buttons from it), and a focused
     `text-edit`'s border colour sets `selection.stroke` (egui's focused frame).
-  - The look's sheets (`@tokens:sv-look:*`) survive the runtime's "clear every sheet" at bundle start.
   - The runtime sent scheme `light` to egui unless the app chose one, forcing light CSS in a dark app; it now sends
     `auto` for the engine target and egui follows its context's dark mode.
   - A frameless `toggle-button` is a selectable row (`frame_when_inactive`: frame on hover and when checked, body
     text); button text uses `TextStyle::Button` explicitly (a plain string fell back to Body).
-  - The base sheet reads L3 tokens (`--sv-button-bg`, `--sv-checkbox-fg`, ...) instead of `--sv-accent`/`--sv-fg`,
-    because the runtime's `DEFAULT_TOKENS` still set those 16 names on egui (DS1 stops that).
 
 ## 5. Match per element (exact base, both themes)
 
@@ -112,40 +127,75 @@ python3 conformance/visual/tools/sheet.py dark-modern target/vis1/dark-modern /t
 | Input disabled | **deviation** | egui dims a disabled widget to 40%; VS Code's settings box does not dim |
 | Select box | match | |
 | List row (rest, hover, selected) | match | text is centred (egui buttons); VS Code is left aligned |
-| Pane header | **deviation** | 26 tall, 12 px; VS Code 22 px, 11 px bold uppercase (needs per-kind font size, CS5f, and `text-transform`, DS2) |
-| Tabs (`tab-view`) | **deviation** | tabs.rs paints selectable buttons (26 tall, selection fill); VS Code 35 px, `tab.*` colours and a top marker: needs tab tokens in tabs.rs (DS1 accessors) |
-| Progress fill | **deviation** | egui fills with `selection.bg_fill` (the list selection); VS Code `progressBar.background`: needs a fill colour from CSS |
+| Pane header | **deviation (DS2)** | 26 tall, 12 px; VS Code 22 px, 11 px bold uppercase: needs a per-kind font size and `text-transform`, left to DS2 |
+| Tabs (`tab-view`) | match (VIS1b) | 35 px, `tab.*` colours, hover, top marker; the dirty dot and the focused-group colours are not drawn |
+| Progress fill | match (VIS1b) | the applied theme's `progress`; a per-node CSS colour (`accent-color`, not in egui's style table yet) waits for DS2 |
 | Scrollbar, sash, switch, slider | review only | sheets; floating 10 px bars (VS Code lists), editor bars are 14 |
-| Menus, tooltip, toast, dialog | references captured | `window_fill`/`window_stroke`/radii/shadows set from them; not yet probed (needs an open popup in the page) |
+| Menus, tooltip, toast, dialog | references captured | `window_fill`/`window_stroke`/radii from them; not probed (needs an open popup in the page; VIS1b skipped it, see §8). DS1's dark `elev-3`/`elev-4` (`0 2px 8px #0000005C`, `0 8px 28px #00000080`) differ from the measured `0 0 12px rgba(0,0,0,.14)`/`0 0 20px rgba(0,0,0,.15)`; the light set matches |
 
 Focus rings beyond the input box (buttons, checkbox, select: VS Code's 1px `focusBorder` outline) need `outline`
 (DS2); FX1 draws focus only after keyboard focus.
 
 ## 6. Coordination
 
-- DS1 (`svelters_egui::theme`) supersedes `vscode_look`: its `Theme::vscode()` takes `DARK`/`LIGHT` and `base.css`,
-  `egui_style` becomes `Theme::egui_style`, and the runtime stops sending `DEFAULT_TOKENS` on egui (then the base
-  sheet can read `--sv-accent` and `--sv-fg` again). `ci/ds1` was not on origin when this lane finished.
+- DS1 (`svelters_egui::theme`) superseded `vscode_look`; VIS1b folded it in (§4). The gate checks VS Code's exact
+  colours (`with_affordances(false)`); the runners install the affordance overlay (on by default, DESIGN Q2).
+- Left to DS2: the pane header's 11 px uppercase (`font-size` per kind, `text-transform`), focus rings on buttons,
+  check boxes and selects (`outline`), a per-node progress colour (`accent-color` in egui's style table).
+- Left to DS3: the input box's disabled look (egui dims a disabled widget to 40%; VS Code's settings box does not).
 - DESIGN.md §1.5 corrections from the capture are listed there under "VIS1 measured".
 
-## 7. Verification (this lane, local)
+## 7. Verification
 
-- `nextest -p svelters-testkit --features snapshots -E 'binary(vis1)'` (lavapipe): both tests pass, 263/286.
-- `nextest -p svelters-egui` filtered to `style`, `gallery`, `gallery_views`, `wg4b` and `vscode_look`: 24 pass.
-- `node --test packages/native-runtime/test/style.test.mjs`: 4 pass.
-- Not run locally: the rest of the workspace suites, the other backends, conformance. CI runs them.
-- After merging origin/master (DS1, `eb393d06`): `binary(vis1)` still 263/286; svelters-egui filtered to `style`,
-  `theme`, `gallery`, `gallery_views`, `vscode_look`: 19 pass; runtime `style.test.mjs` + `style-engine.test.mjs`: 5 pass.
+VIS1 (local): `binary(vis1)` 263/286; svelters-egui filtered (`style`, `theme`, `gallery`, `gallery_views`, `wg4b`,
+`vscode_look`); runtime `style.test.mjs` + `style-engine.test.mjs`.
 
-## 8. Handoff (VIS1 agent at ~400k tokens, 2026-10-22)
+VIS1b (local, after its last edit and the merge of `origin/master` at `424ebcf4`):
+- `nextest -p svelters-testkit -E 'binary(vis1)'`: both pass, **278/286**; baseline recorded with `SVELTERS_UPDATE=1`
+  and `--features snapshots` (lavapipe), which also refreshed `report.md` and the "after" contact sheets.
+- `nextest -p svelters-egui` filtered to `test(/theme/)`, `binary(theme)`, `binary(views)`, `binary(style)`,
+  `binary(tier0)`: 31 pass (before the merge also `gallery_views`, `widgets`: pass; `widgets_panel` needs
+  `fixtures/embed-egui/dist`, not built here).
+- `cargo check -p svelters-egui -p svelters-testkit --all-targets`.
+- Not run locally: the rest of the workspace suites, the other backends, conformance, the gallery fixture rebuild
+  (the gate used the existing `fixtures/gallery-egui/dist`). CI runs them.
 
-State: `ci/vis1` pushed; CI was running at handoff (first runs on `eb393d06`: linux-gtk 39826285460, linux-qt
-39826285401, js 39826285469, windows-winui 39826285306, macos-appkit 39826285248). Next agent:
-1. Watch CI (`gh run watch <id> --interval 300`), fix what it reports in one batch, push again.
-2. Fold `vscode_look` into DS1's `theme` (merged on master): move the `DARK`/`LIGHT` values into
-   `theme/data/vscode-{dark,light}-modern.json` and the rules of `vscode_look/base.css` into `theme/base.css`, make
-   the runners call `backend.set_theme(&Theme::vscode(..))`, point `tests/vis1.rs` at `Theme`, drop `vscode_look`
-   and its `@tokens:sv-look` clear exception; the gate must stay at 263/286 or better.
-3. Add popup probes (menu, tooltip, toast, modal) to `VisControls` (references already captured); fix the tab
-   (tabs.rs: tab tokens, 35 px, top marker) and progress-fill deviations.
-4. Recapture with `conformance/visual/capture/` (see §2) if the references need new elements; VS Code is closed.
+## 8. Handoff
+
+**Stopped (user, 2026-10-22, relayed by svelters-agent):** svelters will draw all its widgets itself; egui stays only as
+painter, input, text shaping, layers and AccessKit. Mapping the theme onto egui's shared `Visuals` is superseded.
+`ci/vis1` is pushed as WIP (not waited on CI). Last CI seen: on `fd573ada` four green, macos-appkit failed in
+`counter-mac` `request_frame_delivers_one_frame` (a CADisplayLink timing assertion this lane does not touch).
+
+Done in VIS1b: the fold of `vscode_look` into `theme` (§4); VS Code tabs (`tab-h`, `tab.*` colours, top marker, the
+close codicon drawn as a cross inside the tab); progress bars as VS Code's square 2 px line in `progress`; list rows
+left aligned at `row-h` (themed); the `invalid` outline in `invalid-border`; gate checks `ta` (text alignment, list
+rows and tabs), list-row `h`, and `oc` (focus ring) on button, check box and select focus. Gate 292/308, baseline
+recorded (`SVELTERS_UPDATE=1`, `--features snapshots`), `report.md` and the "after" sheets refreshed. After the last
+edits only `binary(vis1)` and `cargo check -p svelters-egui` ran; the egui filtered suites ran before them.
+
+**Reuse for the own-widget lanes (keep intact; they are the acceptance tests):**
+- the VS Code 1.133 references: `conformance/visual/vscode/<theme>/` (crops, `metrics.json` with `items` and every
+  resolved `--vscode-*` in `vars`), and the capture scripts `conformance/visual/capture/` (§2);
+- the gate `crates/svelters-testkit/tests/vis1.rs`: the probe table (node, state, part, reference, checks), the
+  measurement from painted shapes (independent of egui widgets: it reads `RectShape`/`TextShape`), ΔE2000 colour
+  checks, the ratchet `conformance/visual/baseline.json` and the 90% floor; the contact sheets (`tools/sheet.py`);
+- the theme data and roles in `svelters_egui::theme` (DS1 plus the VIS1 keys of §4), which the new widgets should
+  paint from directly instead of through `Visuals`.
+
+**Visible gaps (the gate fails or does not measure them):**
+1. Focus rings: VS Code draws a 1 px `focusBorder` outline (offset 1-2 px on buttons, -1 px on check box, select,
+   list row); we draw none. The `oc` checks now fail on buttons, check box and select (8 checks); the input box's
+   passes. The gate compares VS Code's outline with our border, so an own-drawn ring needs `measure` to pick it up.
+2. Pane header: 26 px / 12 px vs 22 px / 11 px bold uppercase (`text-transform`).
+3. Disabled input: egui dims to 40%; VS Code's settings box does not dim.
+4. Light primary button on focus: hover fill (ΔE 2.9); VS Code keeps the rest fill in light.
+5. List rows: no icon or twistie on our page, so the text sits at the padding (8 px), not VS Code's 38 px; the gate
+   only checks left alignment. The crop margin (4 px) shows the neighbouring row, which reads as a bar on the edge.
+6. Tabs: no dirty dot, no focused-group colours, close button always shown (VS Code: active or hovered tab only);
+   the crops' 4 px margin shows the neighbouring tab's marker and the page's first line under the bar.
+7. Progress: the reference capture has no progress crop (only `progressBar.background` from `vars`), so only the
+   colour is checked; the 2 px height is not.
+8. Select chevron: ours a filled triangle, VS Code's the `chevron-down` codicon (ICR1/DS5).
+9. Menus, tooltip, toast, dialog: references captured, not probed; the dark popup and dialog shadows of DS1's data
+   differ from the measured ones (§5).

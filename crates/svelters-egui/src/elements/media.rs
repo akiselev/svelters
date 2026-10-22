@@ -24,12 +24,20 @@ fn image_size(ctx: &egui::Context, source: &str) -> Option<Vec2> {
     }
 }
 
+/// A themed progress bar without text: VS Code's 2px line.
+const PROGRESS_LINE: f32 = 2.0;
+
 pub(super) fn intrinsic(m: &Metrics, w: &W) -> Vec2 {
     let sp = &m.style.spacing;
     match w {
         // not loaded (missing file, unknown uri, not decoded yet): the placeholder's size
         W::Image { source, .. } if source.is_empty() => Vec2::ZERO,
         W::Image { source, .. } => image_size(&m.ctx, source).unwrap_or(Vec2::splat(PLACEHOLDER)),
+        // VS Code's progress bar is a 2px line (`.monaco-progress-container`); one that shows text
+        // keeps egui's height
+        W::ProgressBar { text, show_percentage, .. } if text.is_empty() && !*show_percentage && crate::theme::applied(&m.ctx).is_some() => {
+            vec2(sp.slider_width, PROGRESS_LINE)
+        }
         W::ProgressBar { .. } => vec2(sp.slider_width, sp.interact_size.y),
         W::Spinner { size, .. } => Vec2::splat(size.map_or(sp.interact_size.y, |s| s as f32)),
         W::Canvas(c) => vec2(c.content_w as f32, c.content_h as f32),
@@ -75,7 +83,8 @@ pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
             // VIS1: the applied theme's `progress` (progressBar.background); egui's own fill is
             // `Visuals::selection` (a per-node CSS colour, `accent-color`, waits for DS2)
             if let Some(t) = crate::theme::applied(ui.ctx()) {
-                bar = bar.fill(t.colors.progress);
+                // square, as VS Code's line
+                bar = bar.fill(t.colors.progress).corner_radius(0);
             }
             if !text.is_empty() {
                 bar = bar.text(text.as_str());

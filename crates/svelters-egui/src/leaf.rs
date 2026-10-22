@@ -321,7 +321,17 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         W::ToggleButton { text, checked, radio, frame, weight } => {
             // a frameless toggle is a row: body text (VS Code lists 13 px, buttons 12 px)
             let style = if *frame { egui::TextStyle::Button } else { egui::TextStyle::Body };
-            let mut b = egui::Button::new(weighted(ui, text, style, *weight)).selected(*checked).min_size(size);
+            let caption = weighted(ui, text, style, *weight);
+            let mut b = if *frame {
+                egui::Button::new(caption)
+            } else {
+                // VIS1: a list row's text is left aligned (the grow atom takes the rest), and the row
+                // may be lower than egui's interact height (the theme's `row-h`)
+                ui.spacing_mut().interact_size.y = size.y;
+                egui::Button::new((caption, egui::Atom::grow()))
+            }
+            .selected(*checked)
+            .min_size(size);
             // VIS1: a frameless toggle is a selectable row (`Button::selectable`): the frame shows
             // under the pointer and while checked (a list row's hover and selection)
             b = if *frame { b } else { b.frame(true).frame_when_inactive(*checked) };

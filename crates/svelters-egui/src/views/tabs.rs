@@ -98,6 +98,26 @@ fn themed_tab(ui: &mut Ui, t: &crate::theme::Applied, title: &str, on: bool, clo
     (resp, close)
 }
 
+/// The close button inside a themed tab: VS Code's 20px action box (the toolbar hover fill) around
+/// the 16px `close` codicon, drawn as its cross.
+fn themed_close(ui: &mut Ui, at: Rect, id: egui::Id, t: &crate::theme::Applied, on: bool) -> egui::Response {
+    let resp = ui.interact(at, id, Sense::click());
+    resp.widget_info(|| WidgetInfo::labeled(Role::Button, ui.is_enabled(), "×"));
+    if ui.is_rect_visible(at) {
+        let c = &t.colors;
+        let p = ui.painter();
+        if resp.hovered() {
+            p.rect_filled(at, t.metrics.radius, c.toolbar_hover);
+        }
+        let k = 4.0;
+        let stroke = Stroke::new(1.2, if on { c.tab_active_fg } else { c.tab_fg });
+        let m = at.center();
+        p.line_segment([m + vec2(-k, -k), m + vec2(k, k)], stroke);
+        p.line_segment([m + vec2(-k, k), m + vec2(k, -k)], stroke);
+    }
+    resp
+}
+
 /// Paints tab-view `i` at `r`: the bar, then the selected page (if the last layout placed it).
 pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
     let node = arena.slots.id_at(i).expect("live node");
@@ -153,10 +173,9 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut
                     if resp.middle_clicked() {
                         close.push(k);
                     }
-                    let x = egui::Button::new("×").small().frame(false);
-                    let x = match close_at {
-                        Some(at) => ui.put(at, x),
-                        None => ui.add(x),
+                    let x = match (close_at, &themed) {
+                        (Some(at), Some(t)) => themed_close(ui, at, id.with(("close", k)), t, on),
+                        _ => ui.add(egui::Button::new("×").small().frame(false)),
                     }
                     .on_hover_text("Close");
                     let x = x.accessible_name(format!("Close {title}"));

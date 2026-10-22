@@ -158,7 +158,7 @@ fn measure(shapes: &[ClippedShape], rect: Rect, part: Part) -> Value {
     let text = texts.first().map(|t| {
         let f = t.galley.job.sections.first().map(|s| s.format.clone()).unwrap_or_default();
         let col = t.override_text_color.unwrap_or(if f.color == Color32::PLACEHOLDER { t.fallback_color } else { f.color });
-        (col.gamma_multiply(t.opacity_factor), f.font_id.size, t.galley.text().to_string())
+        (col.gamma_multiply(t.opacity_factor), f.font_id.size, t.galley.text().to_string(), t.galley.rect.translate(t.pos.to_vec2()))
     });
     let (r, fill, stroke, radius) = chosen.unwrap_or((rect, Color32::TRANSPARENT, egui::Stroke::NONE, 0.0));
     json!({
@@ -171,6 +171,7 @@ fn measure(shapes: &[ClippedShape], rect: Rect, part: Part) -> Value {
         "fg": text.as_ref().map(|t| css(t.0)),
         "font_size": text.as_ref().map(|t| t.1),
         "text": text.as_ref().map(|t| t.2.clone()),
+        "text_rect": text.as_ref().map(|t| json!({ "x": t.3.min.x, "y": t.3.min.y, "w": t.3.width(), "h": t.3.height() })),
         "opacity": 1.0,
     })
 }
@@ -204,7 +205,9 @@ struct Probe {
     part: Part,
     /// The reference item (`<element>-<state>` in the capture).
     reference: &'static str,
-    /// Which checks apply: h(eight), r(adius), b(order width), bg, bc (border colour), fg, fs (font size).
+    /// Which checks apply: h(eight), r(adius), b(order width), bg, bc (border colour), fg, fs (font size),
+    /// oc (the focus ring's colour: VS Code's `outline`, against our border), ta (text alignment in the
+    /// widget: left, centre or right).
     checks: &'static [&'static str],
     /// A colour the reference crop missed, from the theme's resolved variables: (check, variable).
     var: Option<(&'static str, &'static str)>,
@@ -212,6 +215,9 @@ struct Probe {
 
 const FRAME: &[&str] = &["h", "r", "b", "bg", "bc", "fg", "fs"];
 const COLORS: &[&str] = &["bg", "bc", "fg"];
+/// VS Code draws focus as a 1px `focusBorder` outline; egui has none on buttons, check boxes and
+/// selects yet (DS2's `outline`), so these `oc` checks fail until it does.
+const FOCUS: &[&str] = &["bg", "bc", "fg", "oc"];
 
 #[rustfmt::skip]
 fn probes() -> Vec<Probe> {
@@ -223,17 +229,17 @@ fn probes() -> Vec<Probe> {
         p("button-primary:a", Rest, Frame, "button-primary-rest", FRAME),
         p("button-primary:a", Hover, Frame, "button-primary-hover", FRAME),
         p("button-primary:a", Pressed, Frame, "button-primary-hover", COLORS),
-        p("button-primary:a", Focus, Frame, "button-primary-focus", COLORS),
+        p("button-primary:a", Focus, Frame, "button-primary-focus", FOCUS),
         p("button-primary:disabled", Rest, Frame, "button-primary-disabled", &["h", "r", "bg", "fg"]),
         p("button-secondary:a", Rest, Frame, "button-secondary-rest", FRAME),
         p("button-secondary:a", Hover, Frame, "button-secondary-hover", FRAME),
         p("button-secondary:a", Pressed, Frame, "button-secondary-hover", COLORS),
-        p("button-secondary:a", Focus, Frame, "button-secondary-focus", COLORS),
+        p("button-secondary:a", Focus, Frame, "button-secondary-focus", FOCUS),
         p("button-secondary:disabled", Rest, Frame, "button-secondary-disabled", &["h", "r", "bg", "fg"]),
         // checkbox box (18x18 radius 3); radio buttons take the checkbox's colours
         p("checkbox:a", Rest, Box, "checkbox-rest", &["h", "r", "b", "bg", "bc"]),
         p("checkbox:a", Hover, Box, "checkbox-hover", &["h", "bg", "bc"]),
-        p("checkbox:a", Focus, Box, "checkbox-focus", &["bg", "bc"]),
+        p("checkbox:a", Focus, Box, "checkbox-focus", &["bg", "bc", "oc"]),
         p("checkbox:checked", Rest, Box, "checkbox-checked", &["h", "bg", "bc"]),
         p("checkbox:disabled", Rest, Box, "checkbox-disabled", &["h", "bg", "bc"]),
         p("radio:a", Rest, Box, "checkbox-rest", &["h", "bg", "bc"]),
@@ -251,16 +257,16 @@ fn probes() -> Vec<Probe> {
         // select box
         p("select:a", Rest, Frame, "select-rest", FRAME),
         p("select:a", Hover, Frame, "select-hover", FRAME),
-        p("select:a", Focus, Frame, "select-focus", &["h", "r", "b", "bg"]),
+        p("select:a", Focus, Frame, "select-focus", &["h", "r", "b", "bg", "oc"]),
         // list rows (selectable labels)
-        p("list-row:a", Rest, Frame, "list-row-rest", &["fg", "fs"]),
-        Probe { node: "list-row:a", state: Hover, part: Frame, reference: "list-row-hover", checks: &["bg", "fg", "fs"], var: Some(("bg", "--vscode-list-hoverBackground")) },
-        p("list-row:selected", Rest, Frame, "list-row-selected-focused", &["bg", "fg", "fs"]),
+        p("list-row:a", Rest, Frame, "list-row-rest", &["h", "fg", "fs", "ta"]),
+        Probe { node: "list-row:a", state: Hover, part: Frame, reference: "list-row-hover", checks: &["bg", "fg", "fs", "ta"], var: Some(("bg", "--vscode-list-hoverBackground")) },
+        p("list-row:selected", Rest, Frame, "list-row-selected-focused", &["h", "bg", "fg", "fs", "ta"]),
         // pane header (collapsed section header)
         p("pane-header:a", Rest, Frame, "pane-header-rest", &["h", "fs"]),
         // tabs
-        p("long.txt", Rest, Frame, "tab-active", &["h", "bg", "fg", "fs"]),
-        p("main.ts", Rest, Frame, "tab-inactive", &["h", "bg", "fg", "fs"]),
+        p("long.txt", Rest, Frame, "tab-active", &["h", "bg", "fg", "fs", "ta"]),
+        p("main.ts", Rest, Frame, "tab-inactive", &["h", "bg", "fg", "fs", "ta"]),
         p("main.ts", Hover, Frame, "tab-hover", &["bg", "fg"]),
         // progress fill
         Probe { node: "progress:a", state: Rest, part: Fill, reference: "progress-rest", checks: &["bg"], var: Some(("bg", "--vscode-progressBar-background")) },
@@ -423,6 +429,21 @@ struct Check {
     theirs: String,
 }
 
+/// Where a widget's text sits: `left`, `centre` or `right` (its side gaps within 2px of each other
+/// are centred), from `rect` and `text_rect`.
+fn text_align(m: &Value) -> Option<&'static str> {
+    let f = |o: &str, k: &str| m[o][k].as_f64();
+    let left = f("text_rect", "x")? - f("rect", "x")?;
+    let right = f("rect", "x")? + f("rect", "w")? - f("text_rect", "x")? - f("text_rect", "w")?;
+    Some(if (left - right).abs() <= 2.0 {
+        "centre"
+    } else if left < right {
+        "left"
+    } else {
+        "right"
+    })
+}
+
 fn compare(theme: &str, ours: &[Value], reference: &Value, backdrop: [f32; 4]) -> Vec<Check> {
     let refs: BTreeMap<String, &Value> = reference["items"].as_array().unwrap().iter().map(|i| (format!("{}-{}", i["element"].as_str().unwrap(), i["state"].as_str().unwrap()), &i["metrics"])).collect();
     let vars = &reference["vars"];
@@ -440,6 +461,10 @@ fn compare(theme: &str, ours: &[Value], reference: &Value, backdrop: [f32; 4]) -
             }
             let num = |v: &Value, path: &[&str]| path.iter().fold(v, |v, p| &v[*p]).as_f64();
             let (pass, o, t) = match k {
+                "ta" => {
+                    let (o, t) = (text_align(m), text_align(r));
+                    (o.is_some() && o == t, format!("{o:?}"), format!("{t:?}"))
+                }
                 "h" | "r" | "b" | "fs" => {
                     let path: &[&str] = match k {
                         "h" => &["rect", "h"],
