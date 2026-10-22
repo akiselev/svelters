@@ -21,6 +21,8 @@ WIDGET-PARITY §2.6/§2.7; ZED-LESSONS §1; VIS1 (`ci/vis1` record, §8 gaps); t
 | `slider` | `widgets/slider.rs` | Rail + optional value box + caption; units on the rail (`#[behavior]`: Hoverable, Focusable, DragToValue, Steppable). Extras: `page-step`, `orientation`, `ticks`, `tick-interval`, `marks`, `snap-to-marks`, `inverted`, `track-click`, `scale`, `commit`, `wheel`; events `input`, `commit`, `submit`. |
 | `range-slider` | `widgets/range_slider.rs` | Two thumbs, each a tab stop with its own units and an AccessKit `Slider` named `<name> low`/`<name> high` (name: `text`, else `accessible-name`, else `tooltip`); a press on the rail moves the nearer thumb; a value box at each end (`SpinButton`, labelled by its thumb). Extras: `page-step`, `orientation`, `ticks`, `tick-interval`, `inverted`, `scale`, `commit`, `wheel`; events `input`, `commit` (no payload: read `low`/`high`). |
 | Wrappers deleted | `leaf.rs`, `elements/{mod,inputs}.rs`, `scene/{node,tree,props,keys}.rs`, `layout.rs`, `a11y.rs`, `focus.rs`, `style.rs`, `embed/mod.rs`, `numeric.rs` | `W::Slider`, `W::RangeSlider`, `W::DragValue`, their egui calls, size copies, `focus::Role::Slider`, `numeric::{slider, drag_value, range_slider}`, and the `// OW: wrapper until OW1b` allow lines. CX3's drag-value commit stand-in is gone (the own widget raises `commit`). `widgets::OWN_ONLY` gives these tags the own widget under every switch (`KindSet::None` too). `keys::slider::*` still write; their borrowed read is `None` (the fields are in the widget struct). |
+| Automation | `svelters-automation` `role.rs`, `snapshot.rs` | Roles by tag for the own widgets (`slider`, `spinbutton`); snapshot values read by prop name (`NodeRef::value_of`). |
+| Generated | `metadata/semantics/egui.json`, `packages/native-runtime/types/egui.d.ts`, `docs/egui/reference/widgets/*` | Regenerated (`SVELTERS_UPDATE=1 … --test spec`, `gen_reference.py`): the extras; `drag-value`'s `bindings.value.commit` unchanged, `slider` gains one. The reference pages also pick up EV1's `Widget` events, which master had not regenerated. |
 | Provider | `provider/mod.rs` | `WidgetCx::computed()`; an own widget's `Vec` payload spreads over a row signal with several args (`changed(low, high)`). |
 
 ## The commit seam (FM1 QW7, ARCH-WIDGETS §2.4, CX3)
@@ -79,6 +81,9 @@ WIDGET-PARITY §2.6/§2.7; ZED-LESSONS §1; VIS1 (`ci/vis1` record, §8 gaps); t
   type, so WIDGET-PARITY's `[{ value, label }]` waits for record-typed extras.
 - **Escape in a value box** restores the text and the value from before the edit and keeps focus (Qt keeps
   focus; egui dropped it).
+- **Step buttons sense click and drag.** egui stops reporting a click-only press as "down on" after its click
+  time (0.8 s), which ended a held button's repeat after two steps; sensing drag keeps the press. OW0b's own
+  `button` with `repeat` has the same limit (left to its owner).
 - **The formatter/parser registry has no policy hook** (Rust-only registration, pure text functions; Svelte can
   only name a function the host registered), as IN1's decision for formatting. Recorded for ARCH-SECURITY.
 
