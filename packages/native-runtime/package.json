@@ -39,6 +39,7 @@
       "svelte/internal/client/dev/equality": "svelte/src/internal/client/dev/equality.js",
       "svelte/internal/client/loop": "svelte/src/internal/client/loop.js",
       "svelte/internal/client/render": "svelte/src/internal/client/render.js",
+      "svelte/internal/client/constants": "svelte/src/internal/client/constants.js",
       "svelte/internal/flags/index": "svelte/src/internal/flags/index.js",
       "@svelters/native-runtime": "./src/index.js",
       "@svelters/native-runtime/core": "./src/core/index.js",

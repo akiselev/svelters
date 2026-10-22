@@ -864,12 +864,18 @@ pub(crate) fn before_container(s: &mut Scene, i: usize, r: egui::Rect, ui: &egui
 /// widget paints this pass's state.
 pub(crate) fn set_own_state(s: &mut Scene, i: usize, bits: StateBits) {
     let before = s.core[i].state;
+    if !s.style.active {
+        // no cascade: the bits are kept for the widget (and queries), but nothing restyles, and
+        // interaction bits are not journaled, as for the stock leaves (no extra frames)
+        s.core[i].state = bits;
+        return;
+    }
     if bits != before {
         s.core[i].state = bits;
         let t = s.stamp();
         s.core[i].changed = t;
         s.core[i].dirty.insert(Dirty::PAINT);
-        s.record_state(i, before, SceneOrigin::Widget);
+        s.record_state(i, before, SceneOrigin::Style); // as the walk's bits: restyled here, not at the logic step
     }
     if !s.style.active {
         return;
@@ -1614,19 +1620,10 @@ mod tests {
     /// The engine's state bits are the scene's (CSS.md §2.3): same names, same bits.
     #[test]
     fn state_bit_tables_are_pinned_together() {
-        // OW0 adds bits 14-22 here and OW-CSS adds them to svelters-style (ARCH-WIDGETS §2.2), in
-        // two lanes: until both are merged, one table may run ahead of the other by those rows only.
-        // Every row both have is the same name on the same bit.
-        let n = StateMask::BUILTIN.len().min(StateBits::BUILTIN.len());
+        assert_eq!(StateMask::BUILTIN.len(), StateBits::BUILTIN.len());
         for ((a, ma), (b, mb)) in StateMask::BUILTIN.iter().zip(StateBits::BUILTIN) {
             assert_eq!((a, ma.0), (b, mb.0));
         }
-        let longer: Vec<u64> = if StateMask::BUILTIN.len() > n {
-            StateMask::BUILTIN[n..].iter().map(|(_, m)| m.0).collect()
-        } else {
-            StateBits::BUILTIN[n..].iter().map(|(_, m)| m.0).collect()
-        };
-        assert!(n >= 14 && longer.iter().all(|b| (1 << 14..=1 << 22).contains(b)), "the tables differ beyond OW0's bits 14-22");
     }
 
     #[test]

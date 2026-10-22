@@ -3,6 +3,7 @@
 use std::path::Path;
 use svelters_compiler::compile::{CompileOptions, CompileResult, ModuleOptions, compile, compile_module, strip_typescript_module};
 use svelters_compiler::diag::Severity;
+use svelters_compiler::scoped_css::ScopedCss;
 use svelters_compiler::semantics::SpecBackend;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -65,9 +66,19 @@ pub(crate) struct Output {
     pub(crate) js: String,
     pub(crate) map: Option<String>,
     pub(crate) warnings: Vec<String>,
+    /// LD2: a component's scoped `<style>` (Q3w), for the backend's style engine (egui). `None`
+    /// without one, when it is empty or `css="injected"`, and on the other backends.
+    pub(crate) css: Option<ScopedCss>,
 }
 
 impl Compiler {
+    /// LD2: this backend takes a component's scoped `<style>` as text (`registerStyles(id, { css })`,
+    /// installed by its style engine). The other backends get their sheets from the Vite build's JS
+    /// translator (`@svelters/style/build`), which the live loader does not run.
+    pub(crate) fn styles(&self) -> bool {
+        self.sem.spec().backend == "egui"
+    }
+
     /// Compiles a component or a runes module (without the error check): the raw result, for
     /// diagnostics.
     pub(crate) fn compile(&self, kind: Kind, path: &Path, src: &str) -> Option<CompileResult> {
@@ -77,6 +88,7 @@ impl Compiler {
                 let mut opts = CompileOptions::new(filename, &self.sem);
                 opts.dev = self.dev;
                 opts.hmr = self.hmr;
+                opts.scoped_css = self.styles();
                 Some(compile(src, &opts))
             }
             Kind::RunesModule => Some(compile_module(src, &ModuleOptions { filename, dev: self.dev, hmr: self.hmr })),
@@ -97,20 +109,22 @@ impl Compiler {
                     return Err(if errors.is_empty() { format!("{shown}: the compiler produced no output") } else { errors.join("\n") });
                 }
                 let mut warnings = rendered(Severity::Warning);
-                if kind == Kind::Component && has_style(&src) {
+                if kind == Kind::Component && !self.styles() && has_style(&src) {
                     warnings.push(format!(
-                        "{shown}: <style> is not applied when the app is loaded from source (until Q3 ports Svelte's CSS scoping to Rust); build with Vite to get its styles"
+                        "{shown}: <style> is applied from source on egui only ({} sheets are translated by the Vite build); build with Vite to get its styles",
+                        self.sem.spec().backend
                     ));
                 }
-                Ok(Output { js: res.js.unwrap_or_default(), map: res.map, warnings })
+                let css = res.css.filter(|c| !c.injected && !c.code.trim().is_empty());
+                Ok(Output { js: res.js.unwrap_or_default(), map: res.map, warnings, css })
             }
-            Kind::Js => Ok(Output { js: src, map: None, warnings: Vec::new() }),
+            Kind::Js => Ok(Output { js: src, map: None, warnings: Vec::new(), css: None }),
             Kind::Json => {
                 serde_json::from_str::<serde_json::Value>(&src).map_err(|e| format!("{shown}: invalid JSON: {e}"))?;
-                Ok(Output { js: format!("export default {};\n", src.trim()), map: None, warnings: Vec::new() })
+                Ok(Output { js: format!("export default {};\n", src.trim()), map: None, warnings: Vec::new(), css: None })
             }
             // `SourceProvider::check` of an asset file: nothing to compile.
-            Kind::Asset => Ok(Output { js: String::new(), map: None, warnings: Vec::new() }),
+            Kind::Asset => Ok(Output { js: String::new(), map: None, warnings: Vec::new(), css: None }),
             Kind::Unsupported(why) => Err(format!("{shown}: {why}")),
         }
     }
