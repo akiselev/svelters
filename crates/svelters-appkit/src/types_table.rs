@@ -5,7 +5,7 @@
 //! classes with their category, and the async members with the shape of their completion block. Every
 //! other member is reached reflectively (KVC, `NSInvocation`) by its selector, so it needs no table row.
 
-use crate::generated::types::{ASYNC, TYPE_CLASSES};
+use crate::generated::types::{ASYNC, BOOL_SELS, TYPE_CLASSES};
 
 /// Kind ids of non-GUI types (ObjC classes) start here; element kinds are small table indexes.
 pub const TYPE_KIND_BASE: u32 = 1 << 16;
@@ -47,6 +47,12 @@ pub fn type_class(name: &str) -> Option<&'static TypeClass> {
 /// The async member `sel` of `class` (static or instance), if the facts have one.
 pub fn async_member(class: &str, sel: &str, is_static: bool) -> Option<&'static AsyncMember> {
     ASYNC.iter().find(|a| a.class == class && a.sel == sel && a.is_static == is_static)
+}
+
+/// Whether selector or KVC key `sel` returns BOOL per the facts. On x86-64 the runtime encodes BOOL
+/// as `c` (signed char), so the reflective paths would otherwise read it back as a number.
+pub fn returns_bool(sel: &str) -> bool {
+    BOOL_SELS.binary_search(&sel).is_ok()
 }
 
 #[cfg(test)]

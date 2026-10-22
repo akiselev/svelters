@@ -1423,8 +1423,12 @@ impl Inner {
         let Some(cls) = self.class_of_kind(kind) else { return 0 };
         let js = if kind >= TYPE_KIND_BASE { svelters_apple::names::kebab(name) } else { name.to_string() };
         let Some((key, attrs)) = bridge::find_property(cls, &js).or_else(|| bridge::find_accessor(cls, &js)) else { return 0 };
+        let mut ty = attrs.ty;
+        if ty == enc::Ty::I(1) && kind >= TYPE_KIND_BASE && crate::types_table::returns_bool(&key) {
+            ty = enc::Ty::Bool; // BOOL is `c` on x86-64
+        }
         let mut d = self.dyn_props.borrow_mut();
-        d.push((kind, name.to_string(), DynProp { key, ty: attrs.ty, writable: !attrs.readonly }));
+        d.push((kind, name.to_string(), DynProp { key, ty, writable: !attrs.readonly }));
         DYN_BASE + d.len() as u32 - 1
     }
 

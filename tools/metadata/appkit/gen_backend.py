@@ -542,6 +542,10 @@ def select_tab_body(tag: str, s: dict) -> str:
             f'    assert!(h.take_events().iter().all(|e| e.1 != {n}), "not delivered after listen off");\n' + tail)
 
 
+# The project's minimum macOS (REACTIVITY.md 13.10); API up to it needs no run-time check.
+MIN_MACOS = (11, 0)
+
+
 def find_sample(m: Model, cls: str, prop: str):
     """(sample, expect) of the nearest prop record with a sample along the chain, else None."""
     for c in m.chain(cls):
@@ -571,10 +575,17 @@ def tests(m: Model) -> tuple[str, list[dict], list[dict]]:
                 if n not in readable:
                     raise GenError(f"{cls}: element.read_errors: unknown property {n}")
             errs_rs = "&[" + ", ".join(rs(n) for n in errs) + "]"
+            # Props newer than the running macOS don't exist there: skipped (the SDK is newer than the minimum).
+            newer = sorted({(p["js_name"], p["availability"]["since"]) for c in m.chain(cls) for p in m.meta[c]["properties"]
+                            if p.get("availability", {}).get("since")
+                            and tuple(int(x) for x in p["availability"]["since"].split(".")) > MIN_MACOS})
+            newer_rs = ("    let newer: &[(&str, &str)] = &[" + ", ".join(f"({rs(n)}, {rs(v)})" for n, v in newer) + "];\n") if newer else ""
+            skip_rs = ("        if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {\n            continue;\n        }\n") if newer else ""
             add(f"readable_{ident(cls)}", f"every readable table prop of <{el['tag']}> reads back without an error"
                 + (f" (an error from {', '.join(errs)})" if errs else ""),
-                f'    let o = h.create({rs(el["tag"])});\n    let mut bad = Vec::new();\n    let errs: &[&str] = {errs_rs};\n'
-                f'    for name in h.readable_props({rs(el["tag"])}) {{\n        match (h.get(o, name), errs.contains(&name)) {{\n'
+                f'    let o = h.create({rs(el["tag"])});\n    let mut bad = Vec::new();\n    let errs: &[&str] = {errs_rs};\n' + newer_rs +
+                f'    for name in h.readable_props({rs(el["tag"])}) {{\n' + skip_rs +
+                f'        match (h.get(o, name), errs.contains(&name)) {{\n'
                 f'            (Err(e), false) => bad.push(format!("{{name}}: {{e}}")),\n'
                 f'            (Ok(v), true) => bad.push(format!("{{name}}: read {{v:?}}, want an error (read_errors)")),\n'
                 f'            _ => {{}}\n        }}\n    }}\n'
