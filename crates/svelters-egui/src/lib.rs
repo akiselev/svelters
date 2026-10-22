@@ -34,6 +34,9 @@ pub mod scene;
 pub mod spec;
 /// CS5e: the egui cascade (the Rust CSS engine on the scene).
 pub mod style;
+/// DS1: the theme (VS Code's base look as one token map: the `:root` sheet, the egui Style,
+/// typed getters).
+pub mod theme;
 
 mod a11y;
 pub mod anim;

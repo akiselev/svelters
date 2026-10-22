@@ -363,6 +363,13 @@ this.
 | I5 | Licence of the custom set | CC-BY-4.0 or MIT, so extensions can match |
 | I6 | Keep Phosphor after migration? | No: drop it when §1.2's glyphs are covered |
 
+### Decided (main-cadatomic, 2026-10-22; recorded in cadatomic's register)
+
+- I1: codicons for the chrome, yes (DS5 starts on it). I6: drop Phosphor once its glyphs are covered (main-cadatomic decided I1 and I6; the user deferred both to it).
+- I2: the user approves each custom-icon batch at contact-sheet level; agents never approve their own icons.
+- I3: IEC 60617 by default, ANSI as an icon-theme swap. I4: mate is peg-in-slot. I5: the custom set is CC-BY-4.0.
+- cadatomic's IC2-IC4 and the Phosphor switch-over start after DS5 and IC1.
+
 ## Sources
 
 - Codicons: <https://github.com/microsoft/vscode-codicons> (licence CC-BY-4.0, `src/icons/`)

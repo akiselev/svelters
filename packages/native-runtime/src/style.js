@@ -10,8 +10,10 @@
 //
 // A backend that runs the Rust CSS engine itself (egui, CS5e; `SVL_STYLE_TARGET` answers 4) gets
 // raw CSS instead: the component sheets as Svelte scoped them (`css`), the user classes, the id, the
-// `style=` text untranslated and the tokens as a `:root` sheet. It matches, cascades and restyles
-// on its own, hover included; no setter rules run here.
+// `style=` text untranslated and the app's token overrides as a `:root` sheet. It matches, cascades
+// and restyles on its own, hover included; no setter rules run here. That backend owns the default
+// tokens and the colour scheme (DS1: its theme), so only `setTokens` overrides and a scheme the app
+// chose with `setColorScheme` are sent to it.
 //
 // Setter properties (the style table: `spacing`, `hexpand`, `minimum-width`, ...) are not CSS.
 // Stylesheets carry them as setter rules (`registerStyles(id, { ..., rules })`), matched here
@@ -116,12 +118,16 @@ function ensureInit() {
   // decl backends report the system appearance; it is the scheme unless the app chose one
   if (t === 'decl' && !state.schemeChosen) state.scheme = hs.style(OP.SCHEME, 0, null) === 1 ? 'dark' : 'light';
   state.tokens = resolveTokens(state.scheme, state.overrides);
-  state.tokensKey = JSON.stringify(state.tokens);
+  state.tokensKey = tokensKey();
   state.lastScheme = state.scheme;
-  sendScheme();
-  if (t === 'css' || t === 'engine') hs.style(OP.SHEET, 0, `${TOKENS_ID}${SEP}${renderGtkTokens(state.tokens)}`);
+  if (t !== 'engine' || state.schemeChosen) sendScheme();
+  if (t === 'css') hs.style(OP.SHEET, 0, `${TOKENS_ID}${SEP}${renderGtkTokens(state.tokens)}`);
+  if (t === 'engine' && Object.keys(state.overrides).length > 0) hs.style(OP.SHEET, 0, `${TOKENS_ID}${SEP}${renderGtkTokens(state.overrides)}`);
   return true;
 }
+
+/** What a token refresh compares: the whole set, or on an engine backend only the overrides. */
+const tokensKey = () => JSON.stringify(state.target === 'engine' ? state.overrides : state.tokens);
 
 function sendScheme() {
   const pal = state.target === 'qss' ? paletteOf(state.tokens) : [];
@@ -228,15 +234,22 @@ export function refresh() {
   if (!state.init) return; // nothing was sent yet: the first use picks the values up
   if (state.target === null) return;
   const tokens = resolveTokens(state.scheme, state.overrides);
-  const key = JSON.stringify(tokens);
-  const schemeChanged = state.lastScheme !== state.scheme;
   state.tokens = tokens;
-  if (key === state.tokensKey && !schemeChanged) return;
+  const key = tokensKey();
+  const schemeChanged = state.lastScheme !== state.scheme;
+  const tokensChanged = key !== state.tokensKey;
+  if (!tokensChanged && !schemeChanged) return;
   state.tokensKey = key;
   state.lastScheme = state.scheme;
-  if (state.target === 'css' || state.target === 'engine') {
-    // GTK: one small provider; var() in component CSS resolves natively (the engine's too).
+  if (state.target === 'css') {
+    // GTK: one small provider; var() in component CSS resolves natively.
     host().style(OP.SHEET, 0, `${TOKENS_ID}${SEP}${renderGtkTokens(tokens)}`);
+  }
+  if (state.target === 'engine') {
+    // the engine resolves var() itself; the backend's theme has the defaults, so only overrides
+    if (tokensChanged) host().style(OP.SHEET, 0, `${TOKENS_ID}${SEP}${renderGtkTokens(state.overrides)}`);
+    if (schemeChanged) sendScheme();
+    return;
   }
   sendScheme();
   if (state.target === 'qss') {
