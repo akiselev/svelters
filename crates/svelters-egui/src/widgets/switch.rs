@@ -11,7 +11,7 @@
 
 use super::{checkbox, parts};
 use crate::interact::{Focusable, Hoverable, Pressable, Toggle, ToggleParams, Toggleable};
-use crate::paint::{self, Align, Ua, UaRule, UaValue::*};
+use crate::paint::{Ua, UaRule, UaValue::*};
 use crate::provider::{A11yCx, AvailableSpace, Event, MeasureCx, StateBits, Widget, WidgetCx};
 
 /// The host: caption, gap, focus ring (around the track, R8: standalone controls 1 px at +1).
@@ -54,7 +54,7 @@ pub const KNOB: Ua = Ua(&[
 /// An on/off switch with a caption.
 // the `#[part]` fields name the kind\'s `::part()`s; nothing reads them (paint parts)
 #[allow(dead_code)]
-#[svelters::widget(namespace = "sv", replaces = "switch", caps = FOCUSABLE)]
+#[svelters::widget(namespace = "sv", replaces = "switch", caps = FOCUSABLE | PAINTS_BOX)]
 pub struct Switch {
     /// The caption (right of the track).
     #[prop(measure)]
@@ -89,7 +89,7 @@ impl Switch {
 
 impl Widget for Switch {
     fn measure(&mut self, cx: &mut MeasureCx<'_>, _avail: AvailableSpace) -> egui::Vec2 {
-        checkbox::measure_with_indicator(cx, UA, TRACK, &self.text, 20.0)
+        checkbox::measure_with_indicator(cx, UA, "track", TRACK, &self.text, "", false)
     }
 
     fn ui(&mut self, ui: &mut egui::Ui, cx: &mut WidgetCx<'_>) -> egui::Response {
@@ -104,24 +104,16 @@ impl Widget for Switch {
             }
         }
         if ui.is_rect_visible(cx.rect()) {
-            let host = cx.style(UA);
-            let tsz = parts::part_size(&host, TRACK, 20.0);
-            let (tr, lr) = checkbox::split(cx.rect(), tsz, parts::gap(&host, 8.0));
-            let mut pc = cx.paint_cx(ui);
-            let track = parts::part_view(&host, TRACK, false);
-            paint::paint_box(&mut pc.part("track"), &track, tr);
-            let knob = parts::part_view(&host, KNOB, false);
-            let d = parts::part_size(&host, KNOB, 12.0).x.min(tr.height());
-            let t = if parts::reduced_motion(ui.ctx()) { f32::from(u8::from(self.active)) } else { ui.ctx().animate_bool_responsive(cx.id().with("knob"), self.active) };
-            let inset = tr.height() / 2.0;
-            let x = egui::lerp((tr.left() + inset)..=(tr.right() - inset), t);
-            let color = knob.color("color").unwrap_or(egui::Color32::PLACEHOLDER);
-            parts::paint_dot(&mut pc.part("knob"), egui::pos2(x, tr.center().y), d / 2.0, color, egui::Stroke::NONE);
-            if !self.text.is_empty() {
-                let g = paint::text_galley(ui.ctx(), &host, &self.text, None);
-                paint::paint_text(&mut pc.part("label"), &host, &g, lr, Align::Start);
-            }
-            paint::paint_outline(&mut pc, &host, tr);
+            let (active, id) = (self.active, cx.id());
+            checkbox::paint_indicator_kind(ui, cx, UA, "track", TRACK, false, &self.text, "", |pc, host, tr| {
+                let knob = parts::part_view(host, KNOB, false);
+                let d = parts::part_size(host, KNOB, 12.0).x.min(tr.height());
+                let t = if parts::reduced_motion(ui.ctx()) { f32::from(u8::from(active)) } else { ui.ctx().animate_bool_responsive(id.with("knob"), active) };
+                let inset = tr.height() / 2.0;
+                let x = egui::lerp((tr.left() + inset)..=(tr.right() - inset), t);
+                let color = knob.color("color").unwrap_or(egui::Color32::PLACEHOLDER);
+                parts::paint_dot(&mut pc.part("knob"), egui::pos2(x, tr.center().y), d / 2.0, color, egui::Stroke::NONE);
+            });
         }
         let (enabled, on, text) = (cx.enabled(), self.active, &self.text);
         resp.widget_info(|| egui::WidgetInfo::selected(egui::Role::Switch, enabled, on, text));

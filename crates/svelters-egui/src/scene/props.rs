@@ -68,7 +68,7 @@ fn as_str_list(v: &Value) -> Result<Vec<String>, String> {
     }
 }
 
-fn as_weight(v: &Value) -> Result<i64, String> {
+pub(crate) fn as_weight(v: &Value) -> Result<i64, String> {
     let w = as_f64(v)?;
     if !(1.0..=1000.0).contains(&w) {
         return Err(format!("font-weight {w} is outside 1..=1000"));

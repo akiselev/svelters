@@ -143,7 +143,7 @@ fn collapsing(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, o
     }
 }
 
-#[allow(clippy::disallowed_types)] // OW: wrapper until OW0 (the `button` wrapper, behind the switch), OW1a (toggle-button, icon), OW1a, OW1b, OW3, OW4
+#[allow(clippy::disallowed_types)] // OW: wrapper until VIS1c (the button, label, checkbox, toggle-button, separator and icon wrappers, behind the switch), OW1b, OW3, OW4
 /// Paints the leaf in slot `i` (the walk's index into the scene's columns); returns its response
 /// (EV2b: the host response of its behaviours).
 pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> egui::Response {
@@ -504,7 +504,7 @@ fn registry_icon(ui: &mut Ui, css: Option<&svelters_style::ComputedStyle>, key: 
     r
 }
 
-#[allow(clippy::disallowed_types)] // OW: wrapper until OW0 (the `button` wrapper, behind the switch), OW1a (toggle-button, icon)
+#[allow(clippy::disallowed_types)] // OW: wrapper until VIS1c (the button and icon wrappers, behind the switch)
 /// AS1: an `icon` with a `source`: the image fitted inside the leaf's square (inside the padding of
 /// a framed one, whose button draws the state visuals), tinted with the text colour of its state;
 /// the placeholder box when the source does not load.

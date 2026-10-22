@@ -63,7 +63,12 @@ AS1's record (`AS1-asset-imports.md`: the SVG loader on resvg/usvg 0.45.1, `asse
     keyword or raw value was read, so a stylesheet's `content: icon(…)` never reached the primitive. OW-CSS
     stage 2 landed the same fix, and the merge kept its version.
   - `IconKey::key(name)` and `IconKey::registry_key()` were added.
-- **The `icon` kind** (`leaf.rs`, `layout.rs`): with no `source`, the family `icons` and a registered `name`, it
+- **OW1a2's own `icon` widget** (`widgets/image.rs`, the default since OW1a2), re-pointed at merge: a `name` that is
+  a registry key (family `icons`, or the own widget's default `""`) is measured with `paint::icon_size_sized` and
+  painted with `paint::paint_icon_sized`. Those are `icon_size`/`paint_icon` with the box side given by the
+  `size` prop (else 16) instead of the style. CSS `color` tints it and the host's `--icon-*` slots apply. AS1
+  `source`/`tint` and the font glyph path are unchanged. `paint::is_registered(ctx, key)` was added.
+- **The egui-wrapper `icon` kind** (`leaf.rs`, `layout.rs`, behind `SVELTERS_OWN_WIDGETS=none`): with no `source`, the family `icons` and a registered `name`, it
   draws from the registry.
   - It is measured as a square of `size` (else 16) and tinted with the text colour (CSS `color` through the
     visuals). The slots come from the node's computed style.

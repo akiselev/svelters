@@ -27,11 +27,11 @@ mod text;
 pub mod trace;
 
 pub use boxes::{BoxGeom, box_extra, box_geom, paint_box, paint_box_layers, paint_inset_shadows, paint_outline};
-pub use icon::{IconKey, content_icon, icon_size, icon_slots, paint_icon};
+pub use icon::{IconKey, content_icon, icon_size, icon_size_sized, icon_slots, is_registered, paint_icon, paint_icon_sized};
 pub use image::paint_image;
 pub use painters::{Orientation, PaintArgs, PartInfo, PartPainter, register_painter};
 pub use parts::{PartItem, layout_parts, measure_parts};
-pub use text::{Align, measure_text, paint_text, text_galley};
+pub use text::{Align, Elide, elide, elide_with, measure_text, paint_text, text_galley};
 pub use trace::{PaintTrace, TraceEntry, TraceKind};
 
 use crate::provider::StateBits;

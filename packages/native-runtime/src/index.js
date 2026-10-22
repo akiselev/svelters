@@ -959,6 +959,53 @@ const handlersOf = (node, signal, flags) => [...(node.handlers.get(hkey(signal, 
 // TR1: the `Element` slice Svelte's transition code uses (src/motion.js)
 defineFacade(Native.prototype, { handlers: (node, type) => handlersOf(node, type, 0), listen: listenOutsideScope });
 
+// RA3: the methods of a Rust-provided kind (pack 62, `#[svelters::widget] impl`) are members of its
+// nodes: `editor.revealLine(40)` is `editor.call('revealLine', 40)`. A member a node does not have
+// falls through to this prototype, which asks the host once per kind and name whether the kind
+// has such a method. Other kinds keep `call` only (their method names are the toolkit's).
+const PROVIDER_PACK = 62;
+const kindMethods = new WeakMap(); // host -> Map(kind tag -> { kid, fns: Map(name -> function | null) } | null)
+function providerMethod(node, name) {
+  const hs = node.host;
+  if (!hs || typeof hs.kindId !== 'function' || typeof hs.methodId !== 'function') return undefined;
+  let byKind = kindMethods.get(hs);
+  if (!byKind) kindMethods.set(hs, (byKind = new Map()));
+  let names = byKind.get(node.kind);
+  if (names === undefined) {
+    let kid = 0;
+    try {
+      kid = hs.kindId(node.kind);
+    } catch {}
+    names = kid >>> 22 === PROVIDER_PACK ? { kid, fns: new Map() } : null;
+    byKind.set(node.kind, names);
+  }
+  if (names === null) return undefined;
+  let fn = names.fns.get(name);
+  if (fn === undefined) {
+    let id = 0;
+    try {
+      id = hs.methodId(names.kid, name);
+    } catch {}
+    fn = id
+      ? function (...args) {
+          return this.call(name, ...args);
+        }
+      : null;
+    names.fns.set(name, fn);
+  }
+  return fn ?? undefined;
+}
+Object.setPrototypeOf(
+  Native.prototype,
+  new Proxy(Object.create(Object.getPrototypeOf(Native.prototype)), {
+    get(target, prop, receiver) {
+      const v = Reflect.get(target, prop, receiver);
+      if (v !== undefined || typeof prop !== 'string' || !(receiver instanceof Native)) return v;
+      return providerMethod(receiver, prop);
+    },
+  }),
+);
+
 /** TR1: whether `node` or a native ancestor is inert (outroing): its events are dropped. */
 function inertNode(node) {
   for (let n = node; n; n = n.np) if (n.inertFlag) return true;

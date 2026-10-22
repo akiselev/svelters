@@ -72,8 +72,19 @@ pub fn icon_slots(s: &StyleView) -> crate::icons::Slots {
 /// The icon's box: a registry icon's square (or its glyph), else its font glyph's size at
 /// `font-size`, else a square of that side when it cannot be drawn.
 pub fn icon_size(ctx: &egui::Context, s: &StyleView, key: &IconKey) -> egui::Vec2 {
+    icon_size_sized(ctx, s, key, None)
+}
+
+/// Whether `key` draws from `ctx`'s icon registry (the default family, a registered key).
+pub fn is_registered(ctx: &egui::Context, key: &IconKey) -> bool {
+    registered(ctx, key).is_some()
+}
+
+/// [`icon_size`] with a registry icon's side given (a widget's `size` prop) instead of the style's
+/// `width`/`height`/`font-size`.
+pub fn icon_size_sized(ctx: &egui::Context, s: &StyleView, key: &IconKey, side: Option<f32>) -> egui::Vec2 {
     if let Some(reg) = registered(ctx, key)
-        && let Some(v) = crate::icons::size(ctx, &reg, &key.name, icon_side(s))
+        && let Some(v) = crate::icons::size(ctx, &reg, &key.name, side.unwrap_or_else(|| icon_side(s)))
     {
         return v;
     }
@@ -121,6 +132,12 @@ pub fn content_icon(s: &StyleView, default: &IconKey) -> Option<IconKey> {
 /// drawn (never egui's missing-glyph box). A glyph part's `content` overrides `key` (P2:
 /// `content: icon(check)`, `content: none`, and `content: paint(name)` for a part painter).
 pub fn paint_icon(cx: &mut PaintCx, s: &StyleView, key: &IconKey, rect: Rect) {
+    paint_icon_sized(cx, s, key, rect, None);
+}
+
+/// [`paint_icon`] with a registry icon's side given (a widget's `size` prop) instead of the style's
+/// `width`/`height`/`font-size`.
+pub fn paint_icon_sized(cx: &mut PaintCx, s: &StyleView, key: &IconKey, rect: Rect, side: Option<f32>) {
     if let Some((_, p)) = super::painters::selected(s, "content") {
         cx.run_painter(&*p, s, rect);
         return;
@@ -130,7 +147,7 @@ pub fn paint_icon(cx: &mut PaintCx, s: &StyleView, key: &IconKey, rect: Rect) {
     let color = s.color("color").unwrap_or(egui::Color32::PLACEHOLDER);
     let ctx = cx.painter.ctx().clone();
     if let Some(reg) = registered(&ctx, key) {
-        let style = crate::icons::IconStyle { size: icon_side(s), color, slots: icon_slots(s), high_contrast: false };
+        let style = crate::icons::IconStyle { size: side.unwrap_or_else(|| icon_side(s)), color, slots: icon_slots(s), high_contrast: false };
         if let Some(p) = crate::icons::paint(cx.painter, &reg, &key.name, rect, &style) {
             cx.record(TraceKind::Icon, p.rect, p.tint, egui::Stroke::NONE, style.size);
             return;
