@@ -15,9 +15,10 @@
 //!   composes, every key is the field's.
 //! - **Edit commands** ([`TextCommand`], [`EguiBackend::text_command`]): Undo, Redo, Cut, Copy,
 //!   Paste, Select All and Delete sent to the focused text field, or to the last one when a click
-//!   on host chrome (a Rust menu) took focus to nowhere. Paste reads the clipboard through the
-//!   integration (`ViewportCommand::RequestPaste`); [`TextCommand::Insert`] takes the text from the
-//!   host (clipboard formats are DX2's).
+//!   on host chrome (a Rust menu) took focus to nowhere. Through [`crate::Embed::text_command`] they
+//!   use the host's clipboard (DX2, `Host::platform()`): Paste reads its text, Cut and Copy write
+//!   to it and to egui's (`OutputCommand::CopyText`); through the backend alone, egui's (Paste:
+//!   `ViewportCommand::RequestPaste`). [`TextCommand::Insert`] takes the text from the host.
 //! - **Default and cancel buttons** (`default`, `cancel` on `button`): Enter activates the default
 //!   button of the focused node's scope (its root when it has none), Escape the cancel button,
 //!   except while composing, while a popup is open, or when the focused node takes the key itself
@@ -31,6 +32,8 @@
 use crate::backend::EguiBackend;
 use crate::scene::{Arena, NodeId, W};
 use egui::{Context, Event, FocusDirection, Id, Key, KeyboardShortcut, Modifiers, Ui};
+use std::sync::Arc;
+use svelters_host::platform::{ClipboardBackend, ClipboardKind, MimeData, TEXT_PLAIN};
 
 /// An edit command for the focused text field (Qt's Edit menu reaching the focused `QLineEdit`).
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -136,8 +139,10 @@ struct State {
     autofocused: Vec<Id>,
     /// A default or cancel button to activate at its next paint (its node id).
     activate: Option<Id>,
-    /// An edit command for a text field (its id) at its next paint.
-    cmd: Option<(Id, TextCommand)>,
+    /// An edit command for a text field (its id) at its next paint, with the host's clipboard.
+    cmd: Option<(Id, TextCommand, Option<Clip>)>,
+    /// A Cut or Copy fed to field `id`: what it copies goes to this clipboard after it ran.
+    capture: Option<(Id, Clip)>,
     /// The field an input method is composing in.
     composing: Option<Id>,
     /// The last text field that had focus.
@@ -160,6 +165,16 @@ impl State {
             self.prev = std::mem::take(&mut self.cur);
             self.pass = pass;
         }
+    }
+}
+
+/// DX2's clipboard (`Host::platform().clipboard`), carried with a pending command.
+#[derive(Clone)]
+pub(crate) struct Clip(pub(crate) Arc<dyn ClipboardBackend>);
+
+impl std::fmt::Debug for Clip {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("Clip")
     }
 }
 
@@ -591,7 +606,7 @@ pub(crate) fn record(arena: &Arena, i: usize, ui: &Ui, resp: &egui::Response) {
 /// Before text field `id` runs: feeds it a pending [`TextCommand`] as the input it stands for.
 pub(crate) fn before_text(ui: &Ui, id: Id) {
     let ctx = ui.ctx();
-    let Some(cmd) = with(ctx, |st| if st.cmd.as_ref().is_some_and(|c| c.0 == id) { st.cmd.take().map(|c| c.1) } else { None }) else {
+    let Some((cmd, clip)) = with(ctx, |st| if st.cmd.as_ref().is_some_and(|c| c.0 == id) { st.cmd.take().map(|c| (c.1, c.2)) } else { None }) else {
         return;
     };
     let mac = ctx.os() == egui::os::OperatingSystem::Mac;
@@ -603,15 +618,49 @@ pub(crate) fn before_text(ui: &Ui, id: Id) {
         TextCommand::Redo => key(Key::Z, cmd_mods | Modifiers::SHIFT),
         TextCommand::SelectAll => key(Key::A, cmd_mods),
         TextCommand::Delete => key(Key::Delete, Modifiers::NONE),
-        TextCommand::Cut => Event::Cut,
-        TextCommand::Copy => Event::Copy,
-        TextCommand::Insert(text) => Event::Paste(text),
-        TextCommand::Paste => {
-            ctx.send_viewport_cmd(egui::ViewportCommand::RequestPaste);
-            return;
+        TextCommand::Cut | TextCommand::Copy => {
+            // egui's own copy (`OutputCommand::CopyText`, the integration's clipboard) stays; what
+            // the field copies also goes to the host's clipboard after it ran ([`after_text`])
+            if let Some(c) = clip {
+                with(ctx, |st| st.capture = Some((id, c)));
+            }
+            if cmd == TextCommand::Cut { Event::Cut } else { Event::Copy }
         }
+        TextCommand::Insert(text) => Event::Paste(text),
+        TextCommand::Paste => match clip {
+            // DX2: the host's clipboard, the one `svelters:clipboard` reads
+            Some(c) => match c.0.read(ClipboardKind::Clipboard, &[TEXT_PLAIN]) {
+                Ok(data) => match data.plain_text() {
+                    Some(t) if !t.is_empty() => Event::Paste(t.to_string()),
+                    _ => return,
+                },
+                Err(_) => return,
+            },
+            None => {
+                ctx.send_viewport_cmd(egui::ViewportCommand::RequestPaste);
+                return;
+            }
+        },
     };
     ctx.input_mut(|i| i.events.push(event));
+}
+
+/// After text field `id` ran: a Cut or Copy fed to it by a [`TextCommand`] writes what it copied
+/// (egui's last `CopyText` of the pass) to the host's clipboard too.
+pub(crate) fn after_text(ui: &Ui, id: Id) {
+    let ctx = ui.ctx();
+    let Some(clip) = with(ctx, |st| if st.capture.as_ref().is_some_and(|c| c.0 == id) { st.capture.take().map(|c| c.1) } else { None }) else {
+        return;
+    };
+    let copied = ctx.output(|o| {
+        o.commands.iter().rev().find_map(|c| match c {
+            egui::OutputCommand::CopyText(t) => Some(t.clone()),
+            _ => None,
+        })
+    });
+    if let Some(t) = copied {
+        let _ = clip.0.write(ClipboardKind::Clipboard, MimeData::text(t));
+    }
 }
 
 /// For a default or cancel button with node id `node_eid`: whether Enter or Escape activated it.
@@ -698,6 +747,12 @@ impl EguiBackend {
     /// had it, focusing it again. Applied when the field is next drawn. False when there is no
     /// such field.
     pub fn text_command(&self, ctx: &Context, cmd: TextCommand) -> bool {
+        self.text_command_with(ctx, cmd, None)
+    }
+
+    /// [`EguiBackend::text_command`] with the host's clipboard (`Embed::text_command`): Paste reads
+    /// it, Cut and Copy write to it as well as to egui's.
+    pub(crate) fn text_command_with(&self, ctx: &Context, cmd: TextCommand, clip: Option<Clip>) -> bool {
         let focus = ctx.memory(|m| m.focused());
         let target = match self.focused_entry(ctx) {
             Some(e) => matches!(e.role, Role::Text { .. }).then_some(e.id),
@@ -712,7 +767,7 @@ impl EguiBackend {
             None => None,
         };
         let Some(id) = target else { return false };
-        with(ctx, |st| st.cmd = Some((id, cmd)));
+        with(ctx, |st| st.cmd = Some((id, cmd, clip)));
         ctx.request_repaint();
         true
     }

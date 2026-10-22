@@ -375,3 +375,39 @@ fn ev3_focus_returns_after_a_menu_closes() {
     assert!(rig.harness.query_by_label("Copy").is_none(), "the menu closed");
     assert!(focused(&rig, "field"), "focus back in the field");
 }
+
+/// Through the embed, Cut, Copy and Paste use the host's clipboard (DX2 `Host::platform()`, the one
+/// `svelters:clipboard` uses; in-process under kittest), and Copy still reaches egui's.
+#[test]
+fn ev3_edit_commands_use_the_host_clipboard() {
+    use svelters_egui::harness::TestApp;
+    use svelters_host::platform::{ClipboardKind, MimeData};
+    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/motion-egui/src/FocusDialog.svelte");
+    let mut app = TestApp::from_source(path).unwrap();
+    app.run();
+    app.harness.get_by_label("Open").click();
+    app.run();
+    let ctx = app.harness.ctx.clone();
+    let clip = app.embed.host().platform().clipboard.clone();
+    let text = |clip: &std::sync::Arc<dyn svelters_host::platform::ClipboardBackend>| clip.read(ClipboardKind::Clipboard, &[]).unwrap().plain_text().map(str::to_string);
+    let run = |app: &mut TestApp, cmd: TextCommand| {
+        assert!(app.embed.text_command(&ctx, cmd));
+        app.run();
+    };
+    app.harness.event(egui::Event::Text("Ada".into()));
+    app.run();
+    run(&mut app, TextCommand::SelectAll);
+    run(&mut app, TextCommand::Copy);
+    assert_eq!(text(&clip).as_deref(), Some("Ada"), "Copy wrote the host's clipboard");
+    // what JS (or a Rust panel) put on the clipboard is what Paste inserts
+    clip.write(ClipboardKind::Clipboard, MimeData::text("Bob")).unwrap();
+    run(&mut app, TextCommand::SelectAll);
+    run(&mut app, TextCommand::Paste);
+    run(&mut app, TextCommand::SelectAll);
+    run(&mut app, TextCommand::Cut);
+    assert_eq!(text(&clip).as_deref(), Some("Bob"), "Cut wrote the host's clipboard");
+    run(&mut app, TextCommand::Paste);
+    app.harness.key_press(egui::Key::Enter);
+    app.run();
+    assert!(app.harness.query_by_label("Result: ok:Bob").is_some(), "{:?}", app.errors());
+}

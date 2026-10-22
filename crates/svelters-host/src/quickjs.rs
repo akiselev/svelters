@@ -23,6 +23,7 @@ use svelters_abi::{NameKind, Value as AV};
 
 mod buffers;
 mod conv;
+mod platform;
 use conv::QjsConv;
 
 /// Runtimes leaked on this thread because Rust still held one of their transferred buffers (E2).
@@ -1271,6 +1272,7 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
             })?,
         )?;
     }
+    platform::install(ctx, &host, &core)?;
     globals.set("__svelters_host", host)?;
 
     let prelude: Function = ctx.eval(PRELUDE)?;

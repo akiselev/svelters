@@ -1199,10 +1199,13 @@ impl Embed {
     }
 
     /// EV3 (QT-SURVEY §2.3 `text_command`): an Edit-menu command for the focused text field of this
-    /// embed (or the last one, when a click on host chrome took focus to nowhere). False when there
-    /// is none.
+    /// embed (or the last one, when a click on host chrome took focus to nowhere). Cut, Copy and
+    /// Paste use the host's clipboard (DX2 `Host::platform()`, the one `svelters:clipboard` uses);
+    /// Cut and Copy also go to egui's. False when there is no such field.
     pub fn text_command(&self, ctx: &egui::Context, cmd: crate::focus::TextCommand) -> bool {
-        self.backend().text_command(ctx, cmd)
+        // DX2: the clipboard JS uses (`Host::platform()`)
+        let clip = crate::focus::Clip(self.host().platform().clipboard.clone());
+        self.backend().text_command_with(ctx, cmd, Some(clip))
     }
 
     /// R11 `composing()`: an input method is composing in a svelters field of `ctx`'s viewport.

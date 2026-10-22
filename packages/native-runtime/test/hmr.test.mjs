@@ -138,3 +138,112 @@ test('each instance swaps independently of other components', () => {
   assert.equal(a.v, 'x2');
   assert.equal(b.v, 'y');
 });
+
+// ---- H3: $state kept across a swap ----
+
+/** A component whose init is what the compiler emits for `let n = $state(init)` under --hmr. */
+const stateComp = (init, text, seen) => {
+  function C($$anchor, $$props) {
+    $.push($$props, true);
+    const n = $.state($n.hmr_keep('n', () => init, () => $.get(n)));
+    const items = $.proxy($n.hmr_keep('items', () => [1], () => items));
+    seen?.push({ n, items });
+    label($$anchor, () => `${text}:${$.get(n)}:${items.length}`);
+    $.pop();
+    return {};
+  }
+  return C;
+};
+
+/** Mounts each wrapped component inside one window > box. */
+function mountAll(...Ws) {
+  $n.mount(($$anchor, $$props) => {
+    $.push($$props, true);
+    const w = $n.element('window', 'present');
+    const b = $n.element('box');
+    const c = $n.slot(b, null);
+    for (const W of Ws) W(c, {});
+    $n.append($n.slot(w, null), b);
+    $n.append($$anchor, w);
+    $.pop();
+  });
+}
+
+test('H3: a changed $state survives a swap, per instance; an untouched one runs the new initializer', () => {
+  const th = harness();
+  const seen = [];
+  const W = $n.hmr(stateComp(0, 'a', seen), 'S.svelte', 'sig1');
+  mountAll(W, W);
+  $.set(seen[0].n, 5);
+  seen[0].items.push(2);
+  // the second instance's n stays at its initial value: only changed values are carried (SV36)
+  const before = $n.hmrStats.statesKept;
+  W[$n.HMR].update($n.hmr(stateComp(100, 'b', seen), 'S.svelte', 'sig1'));
+  $.flush();
+  assert.equal(seen.length, 4);
+  const next = seen.slice(2);
+  const changed = next.find((x) => $.get(x.n) === 5);
+  assert.ok(changed, 'changed primitive is kept');
+  assert.deepEqual([...changed.items], [1, 2], 'proxy contents are kept');
+  assert.ok(next.some((x) => $.get(x.n) === 100 && x.items.length === 1), 'untouched instance takes the new initializer');
+  assert.equal($n.hmrStats.statesKept - before, 3, 'n and items of the first instance, items of the second (objects are always carried)');
+  assert.ok(th.lines.some((l) => l.includes('b:5:2')), th.lines.join('\n'));
+});
+
+test('H3: a different signature, null (@hmr:reset) or the global switch start fresh', () => {
+  harness();
+  for (const [sigB, off] of [['sig2', false], [null, false], ['sig1', true]]) {
+    const seen = [];
+    const A = $n.hmr(stateComp(0, 'a', seen), 'S.svelte', 'sig1');
+    mountAll(A);
+    $.set(seen[0].n, 7);
+    if (off) $n.setHmrPreserveState(false);
+    try {
+      A[$n.HMR].update($n.hmr(stateComp(1, 'b', seen), 'S.svelte', sigB));
+      $.flush();
+    } finally {
+      $n.setHmrPreserveState(true);
+    }
+    assert.equal($.get(seen[1].n), 1, `sig ${sigB} off=${off}`);
+  }
+});
+
+test('H3: a throwing new version rolls back and keeps the state for the next good one', () => {
+  harness();
+  const seen = [];
+  const A = $n.hmr(stateComp(0, 'a', seen), 'S.svelte', 'sig1');
+  mountAll(A);
+  $.set(seen[0].n, 3);
+  $n.setHmrReporter(() => {});
+  const bad = function Bad($$anchor, $$props) {
+    $.push($$props, true);
+    $n.hmr_keep('n', () => 0, () => 0);
+    throw new Error('boom');
+  };
+  A[$n.HMR].update($n.hmr(bad, 'S.svelte', 'sig1'));
+  $.flush();
+  A[$n.HMR].update($n.hmr(stateComp(0, 'c', seen), 'S.svelte', 'sig1'));
+  $.flush();
+  $n.setHmrReporter(null);
+  assert.equal($.get(seen[seen.length - 1].n), 3);
+});
+
+test('H3: module state — values and store objects survive a re-evaluation with the same signature', () => {
+  const hot = { data: {} };
+  const evalModule = (sig, init) => {
+    const m = $n.hmr_module(hot, sig);
+    let count;
+    const c = $.state(m.keep('count', () => init, () => $.get(c)));
+    const store = m.keep_object('store', () => ({ v: init }));
+    m.commit();
+    return { c, store };
+  };
+  const v1 = evalModule('s', 0);
+  $.set(v1.c, 4);
+  const v2 = evalModule('s', 0);
+  assert.equal($.get(v2.c), 4);
+  assert.equal(v2.store, v1.store, 'same store object');
+  const v3 = evalModule('other', 0);
+  assert.equal($.get(v3.c), 0);
+  assert.notEqual(v3.store, v2.store);
+});

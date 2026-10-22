@@ -27,6 +27,7 @@ pub mod layout;
 pub mod primary;
 /// FX1: native focus policy and word rules (GTK on Linux).
 pub mod native;
+pub mod platform;
 pub mod provider;
 pub mod runner;
 pub mod scene;

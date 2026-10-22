@@ -71,16 +71,16 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | WG3b GTK selection from inner GtkText, Qt 6.11 golden, pins 4-6 | DONE | 2026-10-22 | merged (this commit); egui vs native on all 18 scripts 159/243 (either toolkit); W4 decided: keep TextEdit, fix around it (FX3) |
 | FX2 egui focus policy + word rules per native refs (`svelters_egui::native`) | DONE | 2026-10-22 | merged (this commit); egui vs GTK 85→141/144, vs Qt 75→139/144; pin 3 double-click word select left |
 | DS0 UI design system research (VS Code baseline tokens + affordances) | DONE | 2026-10-22 | plans/research/DESIGN.md (merged next); lanes DS1-DS5 + VIS1 |
-| VIS1 visual conformance: gallery snapshots (TK1 wgpu path) vs VS Code references, default look of every kind | QUEUED | | starts when INT1 merges; uses DS0's tokens; VS Code is installed on the Windows host for reference screenshots |
+| VIS1 visual conformance: gallery snapshots vs VS Code references (captured via Code.exe + CDP on the Windows host), default look of every kind | IN PROGRESS | | branch `ci/vis1` |
 | FX3 egui undo grouping, clipboard keys (Ctrl/Shift+Insert, Shift+Delete), multiline paste, select-all→PRIMARY, Ctrl+Shift+U per native refs (pins 4-6) | QUEUED | | after INT1 |
-| DS1-DS5 theme module (one token map → CSS :root, egui Style, typed getters), engine gaps (outline, cursor, per-side borders, transitions), affordance sheet, VS Code theme importer, codicons | QUEUED | | DESIGN.md §lanes; DS1 first |
+| DS1 theme module (`svelters_egui::theme`: one token map → CSS :root, egui Style, typed getters; Dark/Light Modern + HC, densities) | IN PROGRESS | | branch `ci/ds1`; DS2-DS5 queued (engine gaps, affordance sheet, VS Code theme importer, codicons) |
 | WG3w Windows native references (Win32 EDIT, WinUI TextBox; pins 1-3, 7), egui on Windows, counter-win flake | IN PROGRESS | | branch `ci/wg3w`; builds via the WSL PC's Windows toolchain |
 | EV3+ keys and focus: focus scopes/restore, key routing (ShortcutOverride), edit commands to Svelte text fields, default/cancel buttons (QT-SURVEY §3) | QUEUED | | after FX1; key consumption via ARCH-EMBED R11 consume_key/composing(); edit commands through a host-callable API (cadatomic constraint) |
 | WG5a list/table interaction: keyboard nav, type-ahead, selection, cell editors | QUEUED | | after LISTS2 + SG4 |
 | WG6 widget polish: disabled tooltips, snippet tooltips, truncation, scrollIntoView, SVG, shortcut capture, OS file drops | QUEUED | | after INT1 |
 | WG5b tree-view | QUEUED | | after LISTS2 |
 | DX1 settings binding, persisted UI state, standard paths, console→tracing, crash context | DONE | 2026-10-22 | merged (this commit); decided (coordinator): UI-state id (root from RootKey, explicit anchors), `js[{category=…}]` filtering, external-change push and panic-time JS stacks as follow-ups, no dx-op policy now |
-| DX2 multi-format clipboard, open/reveal from JS | QUEUED | | independent |
+| DX2 multi-format clipboard (MimeData shared with DnD), svelters:clipboard / svelters:shell | DONE | 2026-10-22 | merged (this commit); DragPayload now holds MimeData; follow-up: fold W5 PrimarySelection onto ClipboardBackend |
 | IN1 Intl via ICU4X, locale-aware numbers | QUEUED | | MacBook, next free lane; locale and catalog come from the host (catalog.t); svelters formats numbers/dates |
 | CX1 in-process diagnostics (SV27) | DONE | 2026-10-22 | merged (this commit); `check()` API, incremental FileState, 172 registered codes, fix-its, `--check/--explain/--list-codes` |
 | Q1 module loader (`svelters-modules`) | DONE | 2026-10-22 | merged 6dbee841 |
@@ -90,7 +90,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | TK1 one-file cases across backends (SV34) | DONE | 2026-10-22 | merged bf82674f |
 | SV48 `Json<T>` error paths through tagged enums | IN PROGRESS | | branch `ci/sv48` |
 | H1 component HMR on the Rust loader | DONE | 2026-10-22 | merged (this commit); follow-ups H1b (acceptExports propagation), D10 timers, swap budget |
-| H3 `$state` kept on HMR (SV36) | IN PROGRESS | | thinkpad-svelters, branch `ci/h3`, stacked on `ci/h1` |
+| H3 `$state` kept on HMR (SV36) | DONE | 2026-10-22 | merged (this commit); follow-ups H3c (children of an edited parent), $bindable fallback, bind:this exclusion |
 | TR2 native animator (SV13, SV37) | DONE | 2026-10-22 | merged (this commit); ABI v2.9: style op 11 `SVL_STYLE_ANIMATE`; follow-ups TR2b, TR3 |
 | TR2b exiting (inert) subtrees leave the focus chain | DONE | 2026-10-22 | merged (this commit); exiting widgets use egui's noninteractive style during the outro |
 | TR3 profile per-frame `tick` transitions vs descriptors (SV14 in-process) | DONE | 2026-10-22 | merged (this commit); keyframes stay default, `tick(t)` stays JS; isolate half waits for ISOLATES |

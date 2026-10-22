@@ -1,7 +1,8 @@
 # EV3+: keys and focus on egui (focus scopes, restore, key claims, edit commands, default/cancel)
 
 Track: EVENTS (egui). Lane EV3+, branch `ci/ev3`, from master `3c7d67be`, merged with master `16da721d` (INT1's
-widget library: WG1, WG2a overlays and menus, WG2b, WG4a, WG4b; DX1). Design: `plans/research/QT-SURVEY.md`
+widget library: WG1, WG2a overlays and menus, WG2b, WG4a, WG4b; DX1), then with master `dcfdcc71` (H3, DX2: edit
+commands use DX2's clipboard). Design: `plans/research/QT-SURVEY.md`
 §2.3 (`focus_info`, `shortcut_override`, `text_command`), §2.4 (claims), §3 row 1 (acceptance); ARCH-EMBED R11
 (`consume_key`, `composing()`) and E-7 (no Enter or Escape to default/cancel buttons while composing). Builds on FX1
 (`svelters_egui::native`) and TR2b (inert subtrees leave the tab order). egui `Memory` and `TextEdit` are not
@@ -16,7 +17,7 @@ forked: everything sits before the first svelters node of a pass, after each lea
 | Leaf hooks | `leaf.rs` (+3 lines) | `text-edit`: a pending edit command is fed in before `TextEdit` runs; `button`: an Enter/Escape activation fires `clicked`. |
 | Props | `kinds/builtin.rs`, `kinds/containers.rs`, `kinds/mod.rs`, `scene/node.rs` (`Common`), `scene/props.rs` | `autofocus` (every widget), `focus-scope` (`box`: `none`, `contain`, `dialog`), `default` and `cancel` (`button`). Stored in `Common` (additive fields). |
 | Provider seam (R11) | `provider/mod.rs` | `Widget::consume_key(key, modifiers)` and `Widget::composing()`, both defaulted (additive), forwarded through `ErasedWidget`. |
-| Host API | `focus.rs` (`EguiBackend`), `embed/mod.rs` (`Embed`) | `focus_info(ctx) -> FocusInfo` (widget, node, kind, `text_input`, `multiline`, `composing`, scope; `Embed` adds the root), `shortcut_override(ctx, &KeyboardShortcut) -> bool`, `text_command(ctx, TextCommand) -> bool`, `composing(ctx)`; free `focus::consumed_keys(ctx)`, `focus::composing(ctx)`. |
+| Host API | `focus.rs` (`EguiBackend`), `embed/mod.rs` (`Embed`; Cut/Copy/Paste through `Host::platform()`), `leaf.rs` (`focus::after_text` after a `text-edit`) | `focus_info(ctx) -> FocusInfo` (widget, node, kind, `text_input`, `multiline`, `composing`, scope; `Embed` adds the root), `shortcut_override(ctx, &KeyboardShortcut) -> bool`, `text_command(ctx, TextCommand) -> bool`, `composing(ctx)`; free `focus::consumed_keys(ctx)`, `focus::composing(ctx)`. |
 | Generated | `metadata/semantics/egui.json`, `packages/native-runtime/types/egui.d.ts` | Regenerated (`SVELTERS_UPDATE=1 … --test spec`). Style tables unchanged (`gen_props.py --check`, `gen_kinds.py --check` clean: the new props are not layout props). |
 | Tests | `focus.rs` (unit), `tests/focus_keys.rs`, `fixtures/motion-egui/src/FocusDialog.svelte` (loaded from source only, like `Flip.svelte`) | See Tests. |
 
@@ -58,9 +59,14 @@ forked: everything sits before the first svelters node of a pass, after each lea
   chrome such as a Rust menu took it: egui surrenders focus on a click elsewhere), to the last text field that had
   focus, which is focused again. It is applied as the input it stands for when the field is next drawn
   (`Ctrl/Cmd+Z`, `Ctrl/Cmd+Shift+Z`, `Ctrl/Cmd+A`, `Delete`, `Event::Cut`, `Event::Copy`, `Event::Paste`), so
-  egui's undoer and FX1's policy apply unchanged. `Paste` asks the integration for the clipboard
-  (`ViewportCommand::RequestPaste`); `Insert` takes the host's text. Clipboard formats are DX2's. Returns false when
-  another widget has focus or there is no field.
+  egui's undoer and FX1's policy apply unchanged. **Clipboard (DX2):** `Embed::text_command` uses the host's
+  clipboard, `Host::platform().clipboard`, the one `svelters:clipboard` uses. Paste reads its `text/plain` and
+  inserts it. Cut and Copy write the copied text there, taken from egui's `OutputCommand::CopyText` after the field
+  ran. They also leave that output command in place, so egui's clipboard (egui-winit, arboard) gets it too. DX2's
+  desktop `SystemClipboard` is arboard as well, so both writes land in the same system clipboard, and a `text-edit`,
+  JS and Rust panels see one clipboard. `EguiBackend::text_command` (no host) keeps egui's path: Paste is
+  `ViewportCommand::RequestPaste`. `Insert` takes the host's text (another format chosen by the host). Returns
+  false when another widget has focus or there is no field.
 - **Default and cancel buttons.** Plain Enter activates the `default` button of the focused node's scope (its root
   when it is in none), plain Escape the `cancel` button: the key is taken out and the button fires `clicked` at its
   next paint. Not when the focused node takes the key itself (a button or check box, a multi-line field, a provider
@@ -79,6 +85,7 @@ forked: everything sits before the first svelters node of a pass, after each lea
 | Ctrl+Z in a `text-edit` reaches the field while the keymap stub sees `shortcut_override = true` (and not the key after) | `ev3_text_field_claims_keys_from_the_host_keymap` |
 | Enter activates the default button except while composing | `ev3_dialog_scope_focus_tab_default_cancel_restore`, `ev3_composing_holds_enter_and_every_key` |
 | Edit commands reach the focused field, and the last one after a click on host chrome | `ev3_text_commands_reach_the_focused_field` |
+| Cut, Copy and Paste through the host's clipboard (DX2) | `ev3_edit_commands_use_the_host_clipboard` |
 | Initial focus, `autofocus`, disabled nodes skipped | `ev3_autofocus_and_disabled_nodes_leave_the_chain` |
 | A WG2a `modal` is a dialog scope (initial focus, Tab, Enter, restore) | `ev3_modal_overlay_is_a_dialog_scope` |
 | Focus returns to the field after a menu closes | `ev3_focus_returns_after_a_menu_closes` |
@@ -110,3 +117,8 @@ warnings); nextest `-p svelters-egui --test focus_keys` (6/6), `--test native_fo
 built `dist/` bundles, CI); `gen_props.py --check`. `--test queries` and the gallery apps need the built `dist/`
 bundles (CI). `gen_kinds.py` (GTK/Qt tags) needs a display: not run. Not run locally: the full workspace, conformance, the
 other backends, the JS suites (CI).
+
+After merging master `dcfdcc71` (H3, DX2; no conflicts) and routing the clipboard: `cargo check -p svelters-egui
+-p svelters-host --all-targets` (clean); nextest `-p svelters-egui --test focus_keys` (11/11), `--lib ev3` (2/2),
+`--test clipboard` (DX2, 3/3), `--test spec` (3/3, current), `-p svelters-host platform` (4/4); `gen_props.py
+--check`.

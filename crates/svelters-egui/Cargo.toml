@@ -44,6 +44,8 @@ jiff = { version = "0.2.35", default-features = false, features = ["std"] }
 rfd = { version = "0.17.2", optional = true }
 # WG4b: the dialog functions are Rust exports (`#[svelters::export(module = "egui")]`).
 svelters = { path = "../svelters" }
+# DX2: the system clipboard (`platform::SystemClipboard`) on every desktop; Linux adds W5's features below.
+arboard = { version = "3.7", default-features = false }
 taffy = { version = "=0.15.0", default-features = false, features = ["std", "flexbox", "grid", "calc", "block_layout", "content_size"] }
 # WG2b: `image` decodes PNG (the version arboard locks).
 image = { version = "0.25", default-features = false, features = ["png"] }
