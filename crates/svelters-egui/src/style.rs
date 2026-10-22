@@ -1149,7 +1149,7 @@ fn resolve_family(ctx: &egui::Context, list: &str) -> Option<egui::FontFamily> {
 /// The text a leaf draws, for the weight family's glyph check.
 fn leaf_text(w: &W) -> &str {
     match w {
-        W::Label { text, .. } | W::Button { text, .. } | W::ToggleButton { text, .. } | W::Checkbox { text, .. } | W::TextEdit { text, .. } | W::Slider { text, .. } => text,
+        W::Label { text, .. } | W::Button { text, .. } | W::ToggleButton { text, .. } | W::Checkbox { text, .. } | W::TextEdit { text, .. } => text,
         _ => "",
     }
 }

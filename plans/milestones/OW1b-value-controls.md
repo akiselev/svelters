@@ -105,3 +105,15 @@ box parity, held-button repeat, slider keys/page/inverted/track-click/commit-on-
 slider thumbs), unit tests in `interact/{step,scrub,press}.rs`, `widgets/{numfmt,entry}.rs`. Existing tests that
 now run on the own widgets: `tier0` (range slider, drag-value, bad input), `observe::slider_clamp_is_announced`,
 `intl`, `scene`, `counter`, `gallery`, `bind_targets`, `spec`.
+
+## Merge of master (2026-10-22: OW-CSS stage 2, FX4, CS5f, OW2, WG3m, RA3)
+
+- Both lanes deleted egui wrappers (OW1b: `Slider`, `RangeSlider`, `DragValue`; OW2: `ScrollArea`, `Panel`,
+  `SplitView`), so the conflicting `W` arms are dropped on both sides. `OWN_ONLY` is the union of the two lists;
+  `DEFAULT_OWN` is master's (`button`). The interact unit list keeps OW1b's `drag`, `scrub`, `step` and OW2's
+  `resize`, `scroll`.
+- `focus::Role::Slider` stays (decided in the merge): OW2's sashes (`WidgetCx::record_part_focus`) use it for the
+  slider key set; OW1b's own sliders claim keys through `consume_key` (`Role::Ext`), so no `W` maps to it.
+- CS5f's `style::leaf_text` (weight-family glyph check) lost its `W::Slider` arm; own sliders are not in it
+  (their text is painted by the widget).
+- Generated files (spec, typings, gen_props, reference docs) regenerated: no changes after the merge.
