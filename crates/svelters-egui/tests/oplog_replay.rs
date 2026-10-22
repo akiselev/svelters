@@ -184,7 +184,7 @@ fn replay_egui_fixtures() {
         .map(|e| e.file_name().to_string_lossy().to_string())
         .collect();
     names.sort();
-    assert_eq!(names, ["counter-egui", "if-toggle-egui", "keyed-list-egui", "timers-egui"]);
+    assert_eq!(names, ["counter-egui", "if-toggle-egui", "keyed-list-egui", "motion-egui", "timers-egui"]);
     for name in names {
         let log = std::fs::read_to_string(dir.join(&name).join("expected.oplog")).unwrap();
         let (events, changes) = replay(&name, &log);
