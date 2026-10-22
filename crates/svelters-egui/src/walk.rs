@@ -124,16 +124,13 @@ fn paint_visual(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mu
 fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
     let r = arena.core[i].rect.translate(origin);
     if arena.w(i).is_container() {
-        // Containers draw nothing: cull whole subtrees outside the clip rect.
+        // Cull whole subtrees outside the clip rect.
         if !ui.is_rect_visible(r) {
             return;
         }
-        // By index, no clone: the walk never changes the structure (ARCH-SCENE §5.2).
-        for k in 0..arena.children[i].len() {
-            let c = arena.children[i][k].index() as usize;
-            paint_at(arena, c, origin, ui, out);
-        }
-        return;
+        // WG1: a container's tooltip and chrome (collapsing header, scroll area), then
+        // `paint_children`
+        return crate::leaf::container(arena, i, r, origin, ui, out);
     }
     if !ui.is_rect_visible(r) {
         return;
@@ -149,8 +146,20 @@ fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut 
     let mut child = ui.new_child(b);
     if matches!(arena.w(i), crate::scene::W::Ext(_)) {
         crate::provider::paint(arena, i, &mut child, out); // RA1: a provider kind
+        if arena.common(i).invalid {
+            crate::leaf::invalid_outline(&child, arena.core[i].drawn); // WG1
+        }
     } else {
         crate::leaf::leaf(arena, i, &mut child, out);
     }
     crate::scene::hit::record(arena, i, &child); // SG3: the viewport's hit list
+}
+
+/// Paints the children of container `i` (in order, by index: the walk never changes the
+/// structure, ARCH-SCENE §5.2). `leaf::container` calls it inside its chrome.
+pub(crate) fn paint_children(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+    for k in 0..arena.children[i].len() {
+        let c = arena.children[i][k].index() as usize;
+        paint_at(arena, c, origin, ui, out);
+    }
 }
