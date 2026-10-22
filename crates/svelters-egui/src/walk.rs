@@ -111,6 +111,11 @@ fn paint_visual(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mu
     if v.inert {
         // an exiting node leaves the accessibility tree
         ui.ctx().accesskit_node_builder(child.unique_id(), |b| b.set_hidden());
+        // TR2b: and out of focus traversal: a disabled widget senses nothing, so Tab skips it and a
+        // focused one loses focus. Disabled widgets are dimmed by `disabled_alpha`; it is 1 here, so
+        // the outro's own opacity is the only fade.
+        child.visuals_mut().disabled_alpha = 1.0;
+        child.disable();
     }
     let mut dropped = Vec::new();
     let sink = if v.inert { &mut dropped } else { out };
