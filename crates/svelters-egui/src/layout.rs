@@ -436,6 +436,12 @@ impl Metrics {
     }
 }
 
+/// CS5f: the metrics leaf `i` measures with when its computed style changes its font or button
+/// padding (`style::leaf_style`, which painting uses too).
+fn styled_metrics(s: &Scene, m: &Metrics, i: usize) -> Option<Metrics> {
+    crate::style::leaf_style(s, i, &m.ctx, &m.style).map(|st| Metrics { ctx: m.ctx.clone(), style: std::sync::Arc::new(st) })
+}
+
 // ---- the taffy adapter over the scene's columns ----
 
 #[inline]
@@ -547,7 +553,9 @@ impl LayoutPartialTree for Tree<'_> {
                 return vlist_layout(tree, id, inputs);
             }
             tree.leaf_layouts += 1;
-            let m = tree.m;
+            // CS5f: the leaf's computed font and padding
+            let styled = styled_metrics(tree.s, tree.m, i);
+            let m = styled.as_ref().unwrap_or(tree.m);
             let s = &mut *tree.s;
             if s.layout[i].intrinsic.is_none() {
                 crate::rich::refresh(s, i); // RT2: a rich label's runs, before it is measured
@@ -1284,9 +1292,11 @@ pub(crate) fn remeasure(s: &mut Scene, m: &Metrics, r: RootIx) -> bool {
         s.core[i].dirty.remove(Dirty::MEASURE);
         let old = s.layout[i].intrinsic.take();
         crate::rich::refresh(s, i); // RT2
+        // CS5f: the leaf's computed font and padding; OW0: the computed style for own widgets
+        let styled = styled_metrics(s, m, i);
         let css = s.slots.id_at(i).and_then(|id| s.style.computed(id)).cloned();
         let parts = s.slots.id_at(i).map(|id| s.style.part_styles(id)).unwrap_or_default();
-        let new = m.intrinsic_with(s.w(i), css.as_deref(), &parts);
+        let new = styled.as_ref().unwrap_or(m).intrinsic_with(s.w(i), css.as_deref(), &parts);
         s.counters.leaves_measured += 1;
         s.layout[i].intrinsic = Some(new);
         // A wrapping label that does not fit its last width may wrap differently with new text.

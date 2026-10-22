@@ -32,7 +32,6 @@ export const TAG_SETS = [
   ["box", "collapsing-header", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "tab"],
   ["box", "collapsing-header", "frame", "inner-window", "modal", "panel", "popup", "scroll-area", "tab"],
   ["box", "collapsing-header", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "sides", "tab", "window"],
-  ["box", "collapsing-header", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "sides", "stack", "tab", "window"],
 ];
 
 export const STYLE_TABLES = {
@@ -313,7 +312,7 @@ export const STYLE_TABLES = {
       "left": {"via": "setter", "prop": "left", "native": "left", "type": "length", "kinds": ["Widget"], "tags": 20},
       "letter-spacing": {"via": "css", "type": "length"},
       "line-height": {"via": "css", "type": "raw"},
-      "margin": {"via": "setter", "prop": "margin", "native": "margin", "type": "length", "kinds": ["Widget"], "tags": 20},
+      "margin": {"via": "css", "type": "insets"},
       "margin-bottom": {"via": "css", "type": "length"},
       "margin-left": {"via": "css", "type": "length"},
       "margin-right": {"via": "css", "type": "length"},
@@ -327,7 +326,7 @@ export const STYLE_TABLES = {
       "outline-offset": {"via": "css", "type": "length"},
       "outline-style": {"via": "css", "type": "enum", "values": ["none", "auto", "solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"]},
       "outline-width": {"via": "css", "type": "length"},
-      "padding": {"via": "setter", "prop": "padding", "native": "padding", "type": "length", "kinds": ["Window", "Box", "Grid", "Sides", "Stack"], "tags": 24},
+      "padding": {"via": "css", "type": "insets"},
       "padding-bottom": {"via": "css", "type": "length"},
       "padding-left": {"via": "css", "type": "length"},
       "padding-right": {"via": "css", "type": "length"},

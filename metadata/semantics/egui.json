@@ -12254,56 +12254,8 @@
         "via": "css"
       },
       "margin": {
-        "kinds": [
-          "Widget"
-        ],
-        "native": "margin",
-        "prop": "margin",
-        "tags": [
-          "box",
-          "button",
-          "canvas",
-          "checkbox",
-          "collapsing-header",
-          "color-picker",
-          "combo-box",
-          "date-picker",
-          "drag-value",
-          "frame",
-          "grid",
-          "hyperlink",
-          "icon",
-          "image",
-          "inner-window",
-          "label",
-          "menu-bar",
-          "menu-button",
-          "modal",
-          "panel",
-          "popup",
-          "progress-bar",
-          "radio-button",
-          "range-slider",
-          "scroll-area",
-          "separator",
-          "sides",
-          "slider",
-          "spinner",
-          "split-view",
-          "stack",
-          "switch",
-          "tab",
-          "tab-view",
-          "table",
-          "table-column",
-          "text-edit",
-          "toast-host",
-          "toggle-button",
-          "tree-view",
-          "virtual-list"
-        ],
-        "type": "length",
-        "via": "setter"
+        "decl_type": "insets",
+        "via": "css"
       },
       "margin-bottom": {
         "decl_type": "length",
@@ -12562,32 +12514,8 @@
         "via": "css"
       },
       "padding": {
-        "kinds": [
-          "Window",
-          "Box",
-          "Grid",
-          "Sides",
-          "Stack"
-        ],
-        "native": "padding",
-        "prop": "padding",
-        "tags": [
-          "box",
-          "collapsing-header",
-          "frame",
-          "grid",
-          "inner-window",
-          "modal",
-          "panel",
-          "popup",
-          "scroll-area",
-          "sides",
-          "stack",
-          "tab",
-          "window"
-        ],
-        "type": "length",
-        "via": "setter"
+        "decl_type": "insets",
+        "via": "css"
       },
       "padding-bottom": {
         "decl_type": "length",
