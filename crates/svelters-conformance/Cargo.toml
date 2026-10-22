@@ -32,6 +32,8 @@ windows = { version = "0.62.2", features = [
   "Win32_UI_Input_KeyboardAndMouse",
   "Win32_UI_WindowsAndMessaging",
 ] }
+# `#[implement]` (the UIA focus-changed handler) names windows_core.
+windows-core = "0.62.2"
 
 [dev-dependencies]
 svelters-abi.workspace = true
