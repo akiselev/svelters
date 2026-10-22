@@ -7,7 +7,7 @@
 #
 # The slots are shared by every repo on the machine (svelters, cadatomic, cadabra3, ...): any
 # wrapper that takes ${XDG_RUNTIME_DIR:-/tmp}/build-slots/slot-<n>.lock (n = 1..BUILD_SLOTS) with
-# flock joins the same pool. Heavy test runs also take build-slots/test.lock (see CLAUDE.md).
+# flock joins the same pool. Test runs need only a slot; there is no other machine-wide lock.
 #
 # Slot count and cores per slot, first match wins:
 #   SVELTERS_SLOTS / SVELTERS_SLOT_JOBS (env), BUILD_SLOTS / BUILD_SLOT_JOBS (env),
@@ -16,6 +16,16 @@
 # dir is per checkout (target/build), as .cargo/config.toml already says; sccache shares compiled
 # deps across them. macOS needs a flock binary (brew install flock).
 set -euo pipefail
+
+# Deadlock rules (every wrapper on the machine follows them):
+# 1. A command holds at most one slot. A nested call (a script that calls cargo-slot again, or
+#    cadatomic's cargo.sh from inside a slot) sees BUILD_SLOT_HELD and runs without a second slot.
+# 2. There is no other machine-wide lock: test runs need only a slot.
+# 3. A repo-level lock (cadatomic's .build.lock) is only ever taken before a slot, never while
+#    holding one.
+if [ -n "${BUILD_SLOT_HELD:-}" ]; then
+  exec "$@"
+fi
 
 env_slots=${BUILD_SLOTS:-} env_jobs=${BUILD_SLOT_JOBS:-}
 conf=${XDG_CONFIG_HOME:-$HOME/.config}/build-slots.env
@@ -34,6 +44,7 @@ while :; do
     exec {fd}>"$dir/slot-$i.lock"
     if flock -n "$fd"; then
       [ "$waited" -gt 0 ] && echo "cargo-slot: got slot $i after ${waited}s" >&2
+      export BUILD_SLOT_HELD=$i
       export CARGO_BUILD_JOBS=${CARGO_BUILD_JOBS:-$jobs}
       export NEXTEST_TEST_THREADS=${NEXTEST_TEST_THREADS:-$jobs}
       export CARGO_BUILD_BUILD_DIR=${CARGO_BUILD_BUILD_DIR:-target/build}

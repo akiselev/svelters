@@ -62,9 +62,11 @@ agents (worktree lanes) that share that machine's build slots.
   wrappers use the same lock files, so all repos on a machine share one pool. The slot count and
   cores per slot are set per machine in `~/.config/build-slots.env` (`BUILD_SLOTS`,
   `BUILD_SLOT_JOBS`); don't override them in a lane.
-- **Heavy test runs** also take the machine's test lock, always **after** the slot (cadatomic's
-  `scripts/cargo.sh` uses the same order; the other order can deadlock):
-  `tools/dev/cargo-slot flock ${XDG_RUNTIME_DIR:-/tmp}/build-slots/test.lock cargo nextest run --workspace --no-fail-fast`.
+- **No other locks.** Test runs need only a slot (`tools/dev/cargo-slot cargo nextest run --workspace
+  --no-fail-fast`); there is no separate test lock. Nested calls are safe: while a command holds a
+  slot, `BUILD_SLOT_HELD` is set and an inner `cargo-slot` (or cadatomic `cargo.sh`) runs without
+  taking a second one. Never wrap a slot-taking command in another lock: that is the only way to
+  deadlock the pool.
 - **Batch your builds.** While writing code, use only `cargo check` (through `cargo-slot`). Start
   full builds and test runs only once the whole feature and its tests are written, and fix bugs in
   large batches rather than one rebuild per fix. One gate run per batch.
@@ -80,7 +82,7 @@ tools/dev/cargo-slot cargo check --workspace --all-targets
 tools/dev/cargo-slot cargo build -p svelters-compiler
 pnpm -r build && pnpm test
 python3 tools/docs/build_ir.py && pnpm docs:test
-tools/dev/cargo-slot flock ${XDG_RUNTIME_DIR:-/tmp}/build-slots/test.lock cargo nextest run --workspace --no-fail-fast
+tools/dev/cargo-slot cargo nextest run --workspace --no-fail-fast
 ```
 
 Conformance (when the compiler or runtime changed): see `docs/notes/cf1-handoff.md`. Before you
