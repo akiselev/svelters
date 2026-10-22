@@ -17,6 +17,11 @@ svelters-winui.workspace = true
 [dev-dependencies]
 serde_json.workspace = true
 
+# tests/na_capture.rs (WG3w): the NA1 capture on WinUI TextBoxes through SendInput and UI Automation.
+[target.'cfg(windows)'.dev-dependencies]
+svelters-conformance = { path = "../../crates/svelters-conformance" }
+windows = { version = "0.62.2", features = ["Win32_Foundation"] }
+
 # Spawns the binary with --selftest (WinUI needs its own STA main thread): no libtest harness.
 [[test]]
 name = "counter"
