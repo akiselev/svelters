@@ -1,3 +1,5 @@
+> **Superseded** by `plans/milestones/FU3-followups.md` (the completion record). Kept for history.
+
 # FU3 handoff (follow-ups lane)
 
 Branch `ci/fu3`, based on local master 8e92af95. **origin/master has moved since (E2, E3, FU2 merged) and has
