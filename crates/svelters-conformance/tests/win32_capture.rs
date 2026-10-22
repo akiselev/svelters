@@ -76,9 +76,23 @@ fn dialog_font() -> HFONT {
 }
 
 /// The UI thread: the window, its controls and the dialog loop, until the window is destroyed.
-fn ui_thread(title: String, tx: mpsc::Sender<WinResult<isize>>) {
+fn ui_thread(title: String, layout: Option<String>, tx: mpsc::Sender<WinResult<isize>>) {
+    use windows::Win32::UI::Input::KeyboardAndMouse::{ActivateKeyboardLayout, GetKeyboardLayout, KLF_ACTIVATE, LoadKeyboardLayoutW};
     init_thread();
     register();
+    let before = unsafe { GetKeyboardLayout(0) };
+    if let Some(l) = &layout {
+        let wide: Vec<u16> = l.encode_utf16().chain([0]).collect();
+        if let Err(e) = unsafe { LoadKeyboardLayoutW(PCWSTR(wide.as_ptr()), KLF_ACTIVATE) } {
+            let _ = tx.send(Err(format!("LoadKeyboardLayoutW({l}): {e}")));
+            return;
+        }
+    }
+    let _restore = Restore(move || unsafe {
+        if layout.is_some() {
+            let _ = ActivateKeyboardLayout(before, Default::default());
+        }
+    });
     unsafe {
         let dpi = GetDpiForSystem();
         let s = |v: i32| v * dpi as i32 / 96;
@@ -130,6 +144,15 @@ fn ui_thread(title: String, tx: mpsc::Sender<WinResult<isize>>) {
     }
 }
 
+/// Runs its closure when dropped.
+struct Restore<F: FnMut()>(F);
+
+impl<F: FnMut()> Drop for Restore<F> {
+    fn drop(&mut self) {
+        (self.0)()
+    }
+}
+
 #[derive(Default)]
 struct Win32 {
     thread: Option<JoinHandle<()>>,
@@ -137,10 +160,11 @@ struct Win32 {
 }
 
 impl WinFixture for Win32 {
-    fn open(&mut self, title: &str) -> WinResult<HWND> {
+    fn open(&mut self, title: &str, layout: Option<&str>) -> WinResult<HWND> {
         let (tx, rx) = mpsc::channel();
         let t = title.to_string();
-        self.thread = Some(std::thread::spawn(move || ui_thread(t, tx)));
+        let l = layout.map(str::to_string);
+        self.thread = Some(std::thread::spawn(move || ui_thread(t, l, tx)));
         self.hwnd = rx.recv().map_err(|e| e.to_string())??;
         find_window(title, 5000)
     }

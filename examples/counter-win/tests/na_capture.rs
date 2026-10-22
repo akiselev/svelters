@@ -27,9 +27,13 @@ struct WinUi {
 }
 
 impl WinFixture for WinUi {
-    fn open(&mut self, title: &str) -> WinResult<HWND> {
+    fn open(&mut self, title: &str, layout: Option<&str>) -> WinResult<HWND> {
+        let mut args = vec!["--na-fixture", title];
+        if let Some(l) = layout {
+            args.extend(["--keyboard-layout", l]);
+        }
         let child = Command::new(env!("CARGO_BIN_EXE_counter-win"))
-            .args(["--na-fixture", title])
+            .args(args)
             .stdin(Stdio::piped())
             .stderr(Stdio::piped())
             .spawn()

@@ -3,7 +3,7 @@
 //! ```text
 //! counter-win [--fixture <name|dir>] [--selftest] [--report <json>] [--timeout <secs>]
 //! counter-win --start-test <start-with|run-with|preattach> [--report <json>]
-//! counter-win --na-fixture <title>
+//! counter-win --na-fixture <title> [--keyboard-layout <KLID>]
 //! ```
 //!
 //! `--stall-ms <ms>` blocks the UI thread for that long before the loop starts (a slow first frame), so every
@@ -58,11 +58,12 @@ mod win {
         timeout: f64,
         start_test: Option<String>,
         na_fixture: Option<String>,
+        keyboard_layout: Option<String>,
         stall_ms: u64,
     }
 
     fn parse() -> Result<Args, String> {
-        let mut a = Args { fixture: "counter-win".into(), selftest: false, report: None, timeout: 60.0, start_test: None, na_fixture: None, stall_ms: 0 };
+        let mut a = Args { fixture: "counter-win".into(), selftest: false, report: None, timeout: 60.0, start_test: None, na_fixture: None, keyboard_layout: None, stall_ms: 0 };
         let mut it = std::env::args().skip(1);
         while let Some(x) = it.next() {
             match x.as_str() {
@@ -72,6 +73,7 @@ mod win {
                 "--timeout" => a.timeout = it.next().ok_or("--timeout needs seconds")?.parse().map_err(|_| "bad --timeout")?,
                 "--start-test" => a.start_test = Some(it.next().ok_or("--start-test needs a mode")?),
                 "--na-fixture" => a.na_fixture = Some(it.next().ok_or("--na-fixture needs a title")?),
+                "--keyboard-layout" => a.keyboard_layout = Some(it.next().ok_or("--keyboard-layout needs a KLID")?),
                 "--stall-ms" => a.stall_ms = it.next().ok_or("--stall-ms needs milliseconds")?.parse().map_err(|_| "bad --stall-ms")?,
                 "-h" | "--help" => return Err("usage: counter-win [--fixture <name|dir>] [--selftest] [--report <json>] [--timeout <secs>]".into()),
                 other => return Err(format!("unknown argument {other:?}")),
@@ -565,8 +567,34 @@ mod win {
         if rep["ok"] == json!(true) { 0 } else { 1 }
     }
 
-    /// `--na-fixture <title>` (WG3w): the NA1 fixture window, until stdin closes.
-    fn na_fixture(b: &WinUiBackend, title: &str) -> i32 {
+    #[link(name = "user32")]
+    unsafe extern "system" {
+        fn LoadKeyboardLayoutW(klid: *const u16, flags: u32) -> isize;
+        fn ActivateKeyboardLayout(hkl: isize, flags: u32) -> isize;
+        fn GetKeyboardLayout(thread: u32) -> isize;
+    }
+
+    /// `--na-fixture <title>` (WG3w): the NA1 fixture window, until stdin closes. With `--keyboard-layout <KLID>`
+    /// the UI thread runs that keyboard layout (the dead-key pins: US-International) and restores the previous one
+    /// at the end.
+    fn na_fixture(b: &WinUiBackend, title: &str, layout: Option<&str>) -> i32 {
+        const KLF_ACTIVATE: u32 = 1;
+        let before = unsafe { GetKeyboardLayout(0) };
+        if let Some(l) = layout {
+            let wide: Vec<u16> = l.encode_utf16().chain([0]).collect();
+            if unsafe { LoadKeyboardLayoutW(wide.as_ptr(), KLF_ACTIVATE) } == 0 {
+                eprintln!("[counter-win] na-fixture: LoadKeyboardLayoutW({l}) failed");
+                return 3;
+            }
+        }
+        let code = na_fixture_run(b, title);
+        if layout.is_some() {
+            unsafe { ActivateKeyboardLayout(before, 0) };
+        }
+        code
+    }
+
+    fn na_fixture_run(b: &WinUiBackend, title: &str) -> i32 {
         let build = || -> Result<(), String> {
             let make = |tag: &str| -> Result<u64, String> {
                 let k = b.resolve(NameKind::Kind, 0, tag);
@@ -638,7 +666,7 @@ mod win {
         }
         if let Some(title) = &args.na_fixture {
             let _ = vt;
-            return na_fixture(&driver, title);
+            return na_fixture(&driver, title, args.keyboard_layout.as_deref());
         }
         let host = match Host::new(vt.backend_ref(), HostConfig::default()) {
             Ok(h) => Rc::new(h),

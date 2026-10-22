@@ -299,44 +299,24 @@ fn open_clipboard() -> WinResult<()> {
     Err("OpenClipboard: the clipboard stayed busy".into())
 }
 
-/// Activates keyboard layout `klid` (`"00020409"`, US-International) in the window's thread, loading it when
-/// needed. Returns the layout to restore and whether this call loaded the new one (to unload it after).
-pub fn switch_layout(hwnd: HWND, klid: &str) -> WinResult<(HKL, Option<HKL>)> {
-    unsafe {
-        let thread = GetWindowThreadProcessId(hwnd, None);
-        let before = GetKeyboardLayout(thread);
-        let n = GetKeyboardLayoutList(None).max(0) as usize;
-        let mut list = vec![HKL::default(); n];
-        GetKeyboardLayoutList(Some(&mut list));
-        let wide: Vec<u16> = klid.encode_utf16().chain([0]).collect();
-        let hkl = LoadKeyboardLayoutW(windows::core::PCWSTR(wide.as_ptr()), KLF_NOTELLSHELL).map_err(e("LoadKeyboardLayoutW"))?;
-        let loaded = (!list.contains(&hkl)).then_some(hkl);
-        activate_layout(hwnd, hkl)?;
-        Ok((before, loaded))
-    }
-}
+/// The keyboard layout of the dead-key pins on Windows (keys.json): US-International.
+pub const DEAD_KEY_LAYOUT: &str = "00020409";
 
-/// Asks the window's thread to activate `hkl` (`WM_INPUTLANGCHANGEREQUEST` to its focus window, as the shell's
-/// language switch does) and waits until it has.
-pub fn activate_layout(hwnd: HWND, hkl: HKL) -> WinResult<()> {
+/// Checks that the window's thread runs keyboard layout `klid` (the fixture activates it itself: a request
+/// from outside, `WM_INPUTLANGCHANGEREQUEST`, is not honoured for a layout outside the user's language list).
+pub fn check_layout(hwnd: HWND, klid: &str) -> WinResult<()> {
     unsafe {
+        let wide: Vec<u16> = klid.encode_utf16().chain([0]).collect();
+        let want = LoadKeyboardLayoutW(windows::core::PCWSTR(wide.as_ptr()), KLF_NOTELLSHELL).map_err(e("LoadKeyboardLayoutW"))?;
         let thread = GetWindowThreadProcessId(hwnd, None);
         for _ in 0..100 {
-            if GetKeyboardLayout(thread) == hkl {
+            if GetKeyboardLayout(thread) == want {
                 return Ok(());
             }
-            let mut gti = GUITHREADINFO { cbSize: std::mem::size_of::<GUITHREADINFO>() as u32, ..Default::default() };
-            let target = if GetGUIThreadInfo(thread, &mut gti).is_ok() && !gti.hwndFocus.is_invalid() { gti.hwndFocus } else { hwnd };
-            let _ = PostMessageW(Some(target), WM_INPUTLANGCHANGEREQUEST, WPARAM(0), LPARAM(hkl.0 as isize));
             sleep(20);
         }
-        Err(format!("keyboard layout {:?} did not activate in the fixture (it has {:?})", hkl, GetKeyboardLayout(thread)))
+        Err(format!("the fixture runs keyboard layout {:?}, not {klid} ({want:?})", GetKeyboardLayout(thread)))
     }
-}
-
-/// Milliseconds a click sequence waits so it never joins the previous one.
-pub fn click_gap() -> u64 {
-    (unsafe { GetDoubleClickTime() } as u64 + 200).max(700)
 }
 
 /// `count` clicks of button `n` (1 left, 2 middle) at a screen point (physical pixels), 40 ms apart.
@@ -691,8 +671,10 @@ impl Field {
 
 /// Opens and closes one fixture window per pin.
 pub trait WinFixture {
-    /// Creates the fixture window titled `title` and returns its handle (top-level, visible).
-    fn open(&mut self, title: &str) -> WinResult<HWND>;
+    /// Creates the fixture window titled `title` and returns its handle (top-level, visible). With `layout`
+    /// (a KLID, [`DEAD_KEY_LAYOUT`]) the fixture's UI thread activates that keyboard layout first and restores
+    /// the previous one when it closes.
+    fn open(&mut self, title: &str, layout: Option<&str>) -> WinResult<HWND>;
     fn close(&mut self) -> WinResult<()>;
 }
 
@@ -722,8 +704,7 @@ pub struct UiaDriver<F: WinFixture> {
     pub settings: Vec<(String, String)>,
     /// The pin's pseudo-anchors (`clipboard`, `primary`).
     observe: Vec<String>,
-    /// While a pin uses dead keys: the layout to restore and the one this driver loaded.
-    layout: Option<(HKL, Option<HKL>)>,
+
 }
 
 const HANDLES: [(&str, u64); 3] = [("a", 2), ("b", 3), ("c", 4)];
@@ -747,7 +728,6 @@ impl<F: WinFixture> UiaDriver<F> {
             evidence: FocusEvidence::default(),
             settings: Vec::new(),
             observe: Vec::new(),
-            layout: None,
         })
     }
 
@@ -870,7 +850,9 @@ impl<F: WinFixture> Driver for UiaDriver<F> {
     fn setup(&mut self, pin: &Pin) -> Result<(), String> {
         let title = format!("svelters-na {}", pin.id);
         self.trace = Trace::default();
-        self.hwnd = self.fixture.open(&title)?;
+        let dead = pin.actions.iter().any(|a| matches!(a, crate::pins::Action::Key { intent, .. } if intent.starts_with("dead-")));
+        let layout = dead.then_some(DEAD_KEY_LAYOUT);
+        self.hwnd = self.fixture.open(&title, layout)?;
         self.trace.create("window", 1);
         self.trace.set_str(1, "title", &title);
         bring_to_front(self.hwnd)?;
@@ -879,10 +861,9 @@ impl<F: WinFixture> Driver for UiaDriver<F> {
         // layout (the Windows row of keys.json) while a pin uses dead keys.
         set_clipboard(pin.setup.clipboard.as_deref())?;
         self.observe = pin.observe.clone();
-        let dead = pin.actions.iter().any(|a| matches!(a, crate::pins::Action::Key { intent, .. } if intent.starts_with("dead-")));
-        if dead {
-            self.layout = Some(switch_layout(self.hwnd, "00020409")?);
-            self.trace.call(1, "keyboardLayout", "[\"00020409\"]");
+        if let Some(l) = layout {
+            check_layout(self.hwnd, l)?;
+            self.trace.call(1, "keyboardLayout", &format!("[\"{l}\"]"));
         }
         if self.settings.is_empty() {
             self.settings = input_settings(self.hwnd);
@@ -1002,15 +983,6 @@ impl<F: WinFixture> Driver for UiaDriver<F> {
     }
 
     fn teardown(&mut self) -> Result<String, String> {
-        if let Some((before, loaded)) = self.layout.take() {
-            let restored = activate_layout(self.hwnd, before);
-            if let Some(hkl) = loaded {
-                unsafe {
-                    let _ = UnloadKeyboardLayout(hkl);
-                }
-            }
-            restored?;
-        }
         self.fields.clear();
         self.button = None;
         self.fixture.close()?;
