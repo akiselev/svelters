@@ -512,3 +512,27 @@ fn an_app_loads_from_its_release_bundle_without_its_sources() {
         pre.len()
     );
 }
+
+/// Q4b: a bundle names nothing of the machine that built it. The same app built from two
+/// checkouts at different paths gives the same bytes, so the same build id; neither names the
+/// checkout (the apps and their packages are under the repo).
+#[test]
+fn a_bundle_does_not_depend_on_the_checkout_path() {
+    use svelters_host::modules::svb::{self, BuildOptions, Svb};
+    let (a, b) = (counter_app("svb-path-a"), counter_app("svb-path-b-longer"));
+    let build = |app: &App| svb::build(SourceConfig::for_path(&app.dir).unwrap(), &BuildOptions::default()).unwrap();
+    let (x, y) = (build(&a), build(&b));
+    let (sx, sy) = (Svb::from_bytes(x.clone()).unwrap(), Svb::from_bytes(y.clone()).unwrap());
+    let entry = sx.module_js("svelters:entry").unwrap();
+    assert!(entry.contains("\"app/src/App.svelte\""), "{entry}");
+    assert_eq!(sx.index().modules["svelters:entry"].imports["app/src/App.svelte"], "app/src/App.svelte");
+    let root = repo();
+    for (bytes, dir) in [(&x, &root), (&y, &root)] {
+        let (text, dir) = (String::from_utf8_lossy(bytes), dir.to_string_lossy());
+        if let Some(at) = text.find(&*dir) {
+            panic!("the bundle names the build directory {dir}: …{}…", &text[at.saturating_sub(200)..(at + 200).min(text.len())]);
+        }
+    }
+    assert_eq!(sx.index().build, sy.index().build);
+    assert!(x == y, "the bundle bytes differ");
+}

@@ -53,7 +53,7 @@ pub fn build(cfg: SourceConfig, opts: &BuildOptions) -> Result<Vec<u8>, String> 
     let mut manifests = BTreeSet::new();
     while let Some(id) = queue.pop_front() {
         let logical = ids.id(&id)?;
-        let (js, map) = match provider.load(&id).map_err(|e| format!("{id}: {e}"))? {
+        let (mut js, map) = match provider.load(&id).map_err(|e| format!("{id}: {e}"))? {
             ModuleCode::Source { js, map } => (js, map),
             ModuleCode::Cached { .. } => return Err(format!("{id}: the source provider gave bytecode")),
         };
@@ -63,13 +63,24 @@ pub fn build(cfg: SourceConfig, opts: &BuildOptions) -> Result<Vec<u8>, String> 
                 continue;
             }
             let dep = provider.resolve(&id, &spec).map_err(|e| format!("{id}: {e}"))?;
-            imports.insert(spec, ids.id(&dep)?);
+            let logical_dep = ids.id(&dep)?;
+            if id == ENTRY_ID && Path::new(&spec).is_absolute() {
+                // Q4b: the generated entry names the app's files by build-machine path; the
+                // bundle's names them by logical id, so its bytes and build id are the same on
+                // every machine. (The entry quotes its specifiers as JSON strings.)
+                let lit = |s: &str| Value::String(s.to_string()).to_string();
+                js = js.replace(&lit(&spec), &lit(&logical_dep));
+                imports.insert(logical_dep.clone(), logical_dep);
+            } else {
+                imports.insert(spec, logical_dep);
+            }
             if visited.insert(dep.clone()) {
                 queue.push_back(dep);
             }
         }
         let mut entry = ModuleEntry { imports, ..ModuleEntry::default() };
         entry.js = w.blob(js.as_bytes());
+        let map = map.map(|m| logical_map(&m, &mut ids)).transpose()?;
         entry.map = map.map(|m| w.blob(m.as_bytes()));
         if let Some(path) = file_of(&id) {
             let rel = ids.rel(&path)?;
@@ -141,6 +152,21 @@ impl Logical {
             }
         }
     }
+}
+
+/// Q4b: `map` with its `sources` named by logical id (`app/src/App.svelte`) instead of the
+/// build machine's paths. Relative sources are kept.
+fn logical_map(map: &str, ids: &mut Logical) -> Result<String, String> {
+    let mut json: Value = serde_json::from_str(map).map_err(|e| format!("a source map: {e}"))?;
+    let Some(Value::Array(sources)) = json.get_mut("sources") else { return Ok(map.to_string()) };
+    let mut changed = false;
+    for s in sources.iter_mut() {
+        if let Some(p) = s.as_str().filter(|p| Path::new(p).is_absolute()) {
+            *s = Value::String(ids.id(p)?);
+            changed = true;
+        }
+    }
+    Ok(if changed { json.to_string() } else { map.to_string() })
 }
 
 /// The file behind a source provider id, if it is one.
