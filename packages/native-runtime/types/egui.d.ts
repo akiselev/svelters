@@ -370,8 +370,21 @@ export interface EguiElements {
     'bind:selected'?: number;
     /** Shown while `selected` is out of range. */
     'hint-text'?: string;
+    /** The list is open; the user opening or closing it changes it, setting it opens or closes it (QComboBox `showPopup`/`hidePopup`). */
+    open?: boolean;
+    'bind:open'?: boolean;
+    /** Rows shown before the list scrolls (QComboBox `maxVisibleItems`). */
+    'max-visible'?: number;
+    /** The wheel over the closed select changes the pick: `off` (default), `hover`, `focused`. */
+    wheel?: 'off' | 'hover' | 'focused';
     /** The user picked a row; carries its index. */
     onchanged?: (selected: number) => void;
+    /** The user picked an option, the same one or not (QComboBox `activated`); carries its index. */
+    onactivate?: (value: number) => void;
+    /** The current row of the open list moved (keyboard or pointer; `highlighted`). */
+    onhighlight?: (value: number) => void;
+    /** A pick finished the edit (§2.4); carries the index. */
+    oncommit?: (value: number) => void;
   };
   /** A thin line between items; fills its rect along its orientation. */
   separator: EguiWidgetProps & {
@@ -757,6 +770,8 @@ export interface EguiElements {
     ontoggled?: (checked: boolean) => void;
     /** The user picked it (click, Enter, or its shortcut); carries `checked` after the pick. */
     onactivate?: (checked: boolean) => void;
+    /** It became the open menu's current row (the pointer or the arrow keys; QAction `hovered`). Svelters' own menus only (OW3). */
+    onhover?: () => void;
   };
   /** A line between menu items (a vertical one in a menu bar). */
   'menu-separator': {
