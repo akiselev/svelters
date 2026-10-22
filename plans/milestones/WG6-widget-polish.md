@@ -39,3 +39,13 @@ hooks in `focus.rs`. Tests: `tests/wg6.rs`, unit tests in `tips.rs` and `kinds/d
   following the pointer, middle elision, `scroll-into-view` below the fold, key-sequence recording and
   clearing, combo type-ahead, a file drop from the OS as a uri-list.
 - Unit: `tips::tests` (elide modes, cursor names), `kinds::dnd::tests::wg6_drop_actions_and_uri_list`.
+
+## Run locally / not run
+
+- Run: `cargo check -p svelters-egui --all-targets --all-features` and clippy (no new warnings in WG6
+  files); nextest `-p svelters-egui`: `--test wg6` (7/7), `--test focus_keys`, `--test menus`, the `wg4b`
+  drop tests, `--test spec` (`SVELTERS_UPDATE=1`), `gallery_export_stubs_are_current`, the lib's `wg6_*`
+  and `dnd` units; `gen_props.py` (regenerated), `gen_kinds.py --check`.
+- Not run: `pnpm build` of `fixtures/gallery-egui` and `gallery_pages_drive_pickers_dnd_and_dialogs` (needs
+  the compiler build; the new page 43 is compiled first in CI), the rest of the svelters-egui suite, full
+  workspace nextest, conformance, other backends. CI runs them.
