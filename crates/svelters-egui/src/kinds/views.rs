@@ -179,7 +179,7 @@ static TOAST_HOST_SIGNALS: &[SignalDef] = &[
 static TOAST_HOST_METHODS: &[MethodDef] = &[
     MethodDef {
         name: "show",
-        doc: "`show(text, level = 'info', duration = the host's)`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed) and returns its id.",
+        doc: "`show(text, level = 'info', duration = the host's)`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed) and returns its id. `text` may be a run list (RT2): strings and `{text, b, i, code, href}` objects, drawn as one paragraph with the theme's run defaults; a click on a run with an `href` opens it.",
     },
     MethodDef { name: "dismiss", doc: "`dismiss(id)`: closes that toast (`closed(id, 'method')`)." },
     MethodDef { name: "clear", doc: "Closes every toast." },

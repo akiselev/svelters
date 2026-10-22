@@ -226,3 +226,65 @@ fn r_rules_css_on_the_own_button() {
     assert_eq!((ring.stroke.width, ring.stroke.color), (2.0, egui::Color32::from_rgb(255, 128, 0)));
     assert!(ring.rect.contains_rect(rig.drawn(b)) && ring.rect != rig.drawn(b), "offset +1");
 }
+
+/// A test-only own widget that caches its shapes (SG6) under a fixed version: it paints its CSS
+/// `background-color` as one rect.
+#[svelters::widget(namespace = "t", replaces = "menu-separator", caps = PAINTS_BOX)]
+pub struct CachedSwatch {}
+
+impl svelters_egui::provider::Widget for CachedSwatch {
+    fn measure(&mut self, _cx: &mut svelters_egui::provider::MeasureCx<'_>, _avail: svelters_egui::provider::AvailableSpace) -> egui::Vec2 {
+        egui::vec2(40.0, 20.0)
+    }
+    fn ui(&mut self, ui: &mut egui::Ui, cx: &mut svelters_egui::provider::WidgetCx<'_>) -> egui::Response {
+        let fill = cx.style(paint::Ua::NONE).color("background-color").unwrap_or(egui::Color32::TRANSPARENT);
+        cx.cached_shapes(ui.painter(), 0, |_p, r, shapes| shapes.push(egui::Shape::rect_filled(r, 0.0, fill)));
+        ui.interact(cx.rect(), cx.id(), egui::Sense::hover())
+    }
+}
+
+#[test]
+fn cached_shapes_follow_restyles_and_running_transitions() {
+    // SG6's cache is keyed by the widget's version only: a restyle and every frame of a running
+    // transition (and the one it ends on) must drop the entry
+    let mut rig = Rig::new();
+    rig.backend.set_own_widgets(KindSet::tags(["menu-separator"]));
+    let d = rig.backend.add_sheet(
+        "ow-css",
+        "menu-separator { background-color: rgb(0, 0, 0); transition: background-color 1s linear }
+         menu-separator.on { background-color: rgb(200, 0, 0) }
+         menu-separator.now { background-color: rgb(0, 0, 200); transition: none }",
+    );
+    assert!(d.is_empty(), "{d:?}");
+    let (_w, col) = rig.window();
+    let h = rig.leaf(col, "menu-separator", &[]);
+    rig.run();
+    let fill = |rig: &Rig| {
+        let r = rig.drawn(h);
+        rig.harness
+            .output()
+            .shapes
+            .iter()
+            .find_map(|c| match &c.shape {
+                egui::Shape::Rect(s) if s.rect == r => Some(s.fill),
+                _ => None,
+            })
+            .expect("the swatch")
+    };
+    assert_eq!(fill(&rig), egui::Color32::from_rgb(0, 0, 0));
+    // a restyle without a transition: the next frame shows it
+    rig.br().style(SVL_STYLE_CLASSES, h, Some("now")).unwrap();
+    rig.harness.step();
+    rig.harness.step();
+    assert_eq!(fill(&rig), egui::Color32::from_rgb(0, 0, 200));
+    // a running transition: a new colour every frame, and the end value at the end
+    rig.br().style(SVL_STYLE_CLASSES, h, Some("on")).unwrap();
+    let mut seen = Vec::new();
+    for _ in 0..7 {
+        rig.harness.step();
+        seen.push(fill(&rig).r());
+    }
+    assert!(seen.windows(2).take(3).all(|w| w[1] > w[0]), "{seen:?}");
+    assert_eq!(*seen.last().unwrap(), 200, "{seen:?}");
+    assert!(rig.backend.scene().read(|s| s.stats()).paint_hits > 0, "the cache is used when nothing changes");
+}

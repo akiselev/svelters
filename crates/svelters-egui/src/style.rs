@@ -206,6 +206,25 @@ pub(crate) struct SceneStyle {
     pub(crate) reduced_motion: bool,
 }
 
+impl SceneStyle {
+    /// SG6: heap bytes of the per-node data (`SceneStats::bytes_by`): the entries, their class
+    /// lists and the computed styles they own alone (a shared `Arc` counts once per owner's share).
+    pub(crate) fn bytes(&self) -> usize {
+        use std::mem::size_of;
+        let mut b = self.nodes.capacity() * size_of::<NodeStyle>() + self.dirty.capacity() * size_of::<NodeId>();
+        for n in &self.nodes {
+            b += n.classes.capacity() * size_of::<Atom>();
+            if let Some(c) = &n.computed {
+                b += size_of::<ComputedStyle>() / Arc::strong_count(c);
+            }
+            if let Some(s) = &n.states {
+                b += (3 * size_of::<ComputedStyle>()) / Arc::strong_count(s);
+            }
+        }
+        b
+    }
+}
+
 impl Default for SceneStyle {
     fn default() -> Self {
         SceneStyle {
@@ -541,6 +560,19 @@ fn inherited_differs(a: Option<&ComputedStyle>, b: &ComputedStyle) -> bool {
 }
 
 impl Scene {
+    /// OW-CSS: the logic step's transition clock ([`SceneStyle::step_transitions`]). Every node
+    /// whose transitions ran this frame, including those that just ended, drops its cached shapes
+    /// (SG6's `WidgetCx::cached_shapes`): its paint changes every frame while it animates.
+    pub(crate) fn step_style_transitions(&mut self, now: f64) {
+        let ran: Vec<NodeId> = self.style.transitioning_nodes().collect();
+        self.style.step_transitions(now);
+        for id in ran {
+            if let Some(i) = self.idx(id) {
+                self.paint_cache.remove(i as u32);
+            }
+        }
+    }
+
     /// OW-CSS: whether a CSS transition (of a node or an own widget's part) is running.
     pub fn style_transitions_running(&self) -> bool {
         self.style.transitions_running()
@@ -650,10 +682,15 @@ impl Scene {
         ns.parts = parts;
         self.style.note_transitions(id, old.as_deref(), &old_parts);
         self.core[i].dirty.insert(Dirty::PAINT);
+        // SG6: a new style draws differently, whatever version the widget caches its shapes under
+        self.paint_cache.remove(i as u32);
+        if matches!(self.w(i), W::Run { .. }) {
+            crate::rich::touched(self, i); // RT2: a run's font may have changed
+        }
         let t = layout_style(self, i);
-        if t != self.layout[i].style || relayout_parts {
-            if t != self.layout[i].style {
-                self.layout[i].style = t;
+        if t != *self.layout[i].style || relayout_parts {
+            if t != *self.layout[i].style {
+                self.layout[i].style = self.intern_style(t);
             }
             self.invalidate_style(id);
             self.style.repaint = true;
@@ -774,7 +811,7 @@ impl Scene {
     }
 
     /// Sets the walk-owned state bits of node `i` to `bits` (journaled; restyles what it reaches).
-    fn set_walk_state(&mut self, i: usize, bits: StateBits) {
+    pub(crate) fn set_walk_state(&mut self, i: usize, bits: StateBits) {
         let before = self.core[i].state;
         let after = StateBits((before.0 & !WALK_BITS.0) | (bits.0 & WALK_BITS.0));
         if after == before {

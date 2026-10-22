@@ -300,7 +300,7 @@ impl EguiBackend {
     /// ones drop and running ones are sampled for this frame's paint.
     fn transitions_step(&self, ctx: &egui::Context) {
         let now = ctx.input(|i| i.time);
-        self.0.scene.borrow_mut().style.step_transitions(now);
+        self.0.scene.borrow_mut().step_style_transitions(now);
     }
 
     /// OW-CSS: the viewports of the roots with a running CSS transition are asked for the next
