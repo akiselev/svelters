@@ -166,6 +166,15 @@ impl Sensor {
         n
     }
 
+    /// Emits `n` readings on the JS thread, in this one call: they all reach the hub before the next
+    /// checkpoint, so that checkpoint sees all of them (a worker burst may be split across checkpoints).
+    pub fn burst_now(&self, n: u32) -> u32 {
+        for i in 0..n {
+            self.events.emit(SensorEvent::Reading { value: i as f64 * 0.5, seq: i });
+        }
+        n
+    }
+
     /// Emits `reset`; returns how many hosts listened.
     pub fn reset(&self) -> u32 {
         self.events.emit(SensorEvent::Reset) as u32
@@ -607,14 +616,25 @@ fn an_event_flood_warns_once() {
 import { freshStats, Sensor } from 'svelters:app/rx';
 const sensor = new Sensor(freshStats());
 let n = 0;
-sensor.on('reading', () => n++);
+// Each flood is 1500 readings emitted synchronously in one JS call, so one checkpoint collects all of
+// them (a worker burst could be split across checkpoints under load and never pass the threshold). The
+// second flood is emitted while the first is delivered, so a later checkpoint collects it.
+sensor.on('reading', () => {
+  n++;
+  if (n === 1500) sensor.burstNow(1500);
+  if (n === 3000) console.log('readings', n);
+});
 globalThis.keep = sensor;
-sensor.burst(1500).then(() => sensor.burst(1500)).then(() => console.log('readings', n));
+sensor.burstNow(1500);
 "#,
         |r| {
+            let s0 = r.host.reactive_stats();
             r.line("readings 3000");
+            let s = r.host.reactive_stats();
+            assert_eq!(s.events - s0.events, 3000, "{s:?}");
+            assert!(s.collects - s0.collects >= 2, "two floods, two checkpoints: {s:?}");
             let warns: Vec<_> = r.lines.iter().filter(|l| l.contains("more than 1000 events")).collect();
-            assert_eq!(warns.len(), 1, "{:?}", r.lines);
+            assert_eq!(warns.len(), 1, "two floods of 1500, one warning: {:?}", r.lines);
             r.no_errors();
         },
     );
