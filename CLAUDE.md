@@ -33,6 +33,14 @@ Decisions already made by the user (2026-10-21):
 - egui stays at 0.37 and is upgraded together with cadatomic. The Svelte UI sources live in
   cadatomic. SC1 (one real cadatomic panel rendered by Svelte inside the running app) comes first.
 
+Decided by the user (2026-10-22): **extensions run under a security policy, deny by default.**
+cadatomic will serve high-security fields (aerospace and the like) that must strictly control what
+each extension can see and do. Every capability svelters gives an extension host (module visibility
+such as the `svelters:app/*` allow-list, native ops and handles, scene and data access, files,
+network, IPC) is granted by an explicit, auditable policy; an unconfigured extension gets nothing.
+New host, loader and scene APIs that an extension can reach must have a policy hook. The policy's
+design is ARCH-SECURITY's (open questions go to the user).
+
 ## Machines and sessions
 
 Rust builds are the bottleneck, so work is spread over three machines. Every machine runs several
@@ -91,7 +99,13 @@ other agent on the machine. **GitHub CI is the gate, not your machine.** The use
   build slots, `${XDG_RUNTIME_DIR:-/tmp}/build-slots/slot-<n>.lock`, shared with cadatomic's and
   cadabra3's wrappers. Slot count and cores per slot come from `~/.config/build-slots.env`; don't
   override them. There are **no other locks** (no test lock): never wrap a slot-taking command in
-  another lock. Nested calls are safe (`BUILD_SLOT_HELD`).
+  another lock. Nested calls are safe (`BUILD_SLOT_HELD`). Builds and tests take a slot;
+  `cargo check`/`clippy` take **none** (they run niced with 3 jobs), so never wait for a slot to
+  type-check. The coordinator checks a merge locally only when it combines lanes that touched the
+  same crate (`cargo check -p <that crate> --all-targets`, once); docs and disjoint merges get
+  nothing.
+- **Disk (WSL PC):** `df /` lies (the WSL disk is a growing file on C:); watch `df -h /mnt/c`.
+  When a lane is merged, delete its worktree's `target/`.
 - **While writing code:** `tools/dev/cargo-slot cargo check -p <crate you changed>` only, and only
   when you need the compiler's answer. Use `--workspace --all-targets` only after changing an API
   that other crates use.

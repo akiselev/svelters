@@ -8,6 +8,9 @@
 //!
 //! The binary dumps the compiler's spec fragment and the typings (`app/.svelters/app`); the app's
 //! Vite config compiles against the fragment, and svelte-check checks `App.svelte` against the typings.
+//!
+//! EV2b adds a native behaviour, [`Pick`]: `<label use:pick={{ accepts: ['mcad.face'], onpicked }}>`,
+//! imported from `svelters:behaviors/cad` (the dumped `behaviors/cad.js`, typed by `behaviors.d.ts`).
 
 use svelters_egui::prelude::*;
 
@@ -49,7 +52,7 @@ impl Dim {
     }
 }
 
-svelters_egui::state_bits! { pub mod cad { INVALID = "invalid" } }
+svelters_egui::state_bits! { pub mod cad { INVALID = "invalid", PICK_TARGET = "pick-target", PICK_HOVER = "pick-hover" } }
 
 /// A unit-aware numeric field: `<quantity-field dim="length" bind:value={x} onaccepted={…} />`.
 #[svelters::widget(namespace = "cad", tag = "quantity-field", caps = FOCUSABLE | EDITABLE)]
@@ -141,6 +144,79 @@ impl QuantityField {
     }
 }
 
+/// What a pick produced (EV2b's `picked` event).
+#[derive(svelters::Record, Clone, Debug, Default, PartialEq)]
+pub struct PickRef {
+    /// The value kind the host presents.
+    pub kind: String,
+    /// The host's text.
+    pub label: String,
+}
+
+/// EV2b (ARCH-EMBED §8.5): a native behaviour, `use:pick` from `svelters:behaviors/cad`. While a pick
+/// runs (`active`), its host is a pick target (`cad.pick-target`), hovering it sets `cad.pick-hover`,
+/// and a click reports what the host presents. All of it runs in Rust every frame.
+#[svelters::behavior(namespace = "cad", name = "pick")]
+pub struct Pick {
+    /// The value kinds the host presents (the first one is reported).
+    #[prop]
+    accepts: Vec<String>,
+    /// Whether a pick is running.
+    #[prop(default = true)]
+    active: bool,
+    /// The host was clicked during a pick.
+    #[event]
+    picked: Event<PickRef>,
+    /// How many frames the hook ran (Rust-only state).
+    #[state]
+    frames: u64,
+}
+
+impl Behavior for Pick {
+    fn sense(&self) -> egui::Sense {
+        if self.active {
+            egui::Sense::click()
+        } else {
+            egui::Sense::hover()
+        }
+    }
+
+    fn after_ui(&mut self, host: NodeRef<'_>, resp: &egui::Response, cx: &mut BehaviorCx<'_>) {
+        self.frames += 1;
+        cx.set_host_state(&cad::PICK_TARGET, self.active);
+        cx.set_host_state(&cad::PICK_HOVER, self.active && resp.hovered());
+        if self.active && resp.clicked() {
+            cx.emit(
+                &self.picked,
+                PickRef {
+                    kind: self.accepts.first().cloned().unwrap_or_default(),
+                    label: host.text().to_string(),
+                },
+            );
+        }
+    }
+
+    fn detached(&mut self, host: &mut NodeMut<'_>) {
+        host.set_state(&cad::PICK_TARGET, false);
+        host.set_state(&cad::PICK_HOVER, false);
+    }
+}
+
+impl Pick {
+    /// Frames the hook ran.
+    pub fn frames(&self) -> u64 {
+        self.frames
+    }
+    /// The `accepts` param.
+    pub fn accepts(&self) -> &[String] {
+        &self.accepts
+    }
+    /// The `active` param.
+    pub fn active(&self) -> bool {
+        self.active
+    }
+}
+
 /// Where the binary writes the typings, stubs and `kinds.json`: the app's `.svelters/app`.
 pub fn dump_dir() -> std::path::PathBuf {
     std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("app/.svelters/app")
@@ -154,4 +230,5 @@ pub fn bundle() -> std::path::PathBuf {
 /// Keeps this crate's registrations linked into binaries that only reach them through the registry.
 pub fn link() {
     std::hint::black_box(<QuantityField as KindDecl>::KIND);
+    std::hint::black_box(<Pick as KindDecl>::KIND);
 }

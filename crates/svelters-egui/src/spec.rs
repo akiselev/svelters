@@ -7,7 +7,10 @@
 //! - [`builtin_typings`]: `packages/native-runtime/types/egui.d.ts`, the built-in elements for
 //!   svelte-check (`svelteHTML.IntrinsicElements`, with `on<event>`, `on:<event>` and `bind:` keys);
 //! - [`kinds_typings`]: `kinds.d.ts`, the `IntrinsicElements` entries of the provider kinds;
-//! - [`dump`]: writes the exports (`exports.json`, `app.d.ts`, stubs), `kinds.json` and `kinds.d.ts`.
+//! - [`behavior_modules`] and [`behaviors_typings`]: the `svelters:behaviors/<namespace>` modules of
+//!   the behaviours (`#[svelters::behavior]`, EV2b) and their typings (`behaviors.d.ts`);
+//! - [`dump`]: writes the exports (`exports.json`, `app.d.ts`, stubs), `kinds.json`, `kinds.d.ts`,
+//!   `behaviors.d.ts` and `behaviors/<namespace>.js`.
 //!
 //! `tests/spec.rs` fails when `egui.json` or `egui.d.ts` is stale
 //! (`SVELTERS_UPDATE=1 cargo test -p svelters-egui --test spec` rewrites them). Writer lane: RUSTAPI.
@@ -335,14 +338,41 @@ fn provider_prop(j: &mut J, pk: &ProviderKind, i: usize) {
 
 /// The provider kinds of this binary as a `svelters-semantics/v0` fragment: `kinds` and `tags` only.
 /// `svelters-compile --spec-fragment kinds.json` merges it into the built-in egui spec (a tag or kind
-/// that is already there is an error, never a shadow).
+/// that is already there is an error, never a shadow). Behaviours (EV2b) are not elements: they are
+/// listed under `behaviors` (for tools; the compiler ignores the key), each with its kind, the
+/// `svelters:behaviors/<ns>` module and export, and `attaches_to`.
 pub fn fragment() -> J {
     let reg = KindRegistry::global();
-    let kinds: Map<String, J> = reg.providers().iter().map(|p| (p.entry.id.to_string(), kind_json(p.def))).collect();
-    let tags: Map<String, J> = reg.providers().iter().map(|p| (p.entry.tag.to_string(), json!(p.entry.id))).collect();
-    let caps: Map<String, J> = reg.providers().iter().map(|p| (p.entry.id.to_string(), json!(p.entry.caps.names()))).collect();
+    let kinds: Map<String, J> = reg
+        .elements()
+        .map(|p| (p.entry.id.to_string(), kind_json(p.def)))
+        .collect();
+    let tags: Map<String, J> = reg
+        .elements()
+        .map(|p| (p.entry.tag.to_string(), json!(p.entry.id)))
+        .collect();
+    let caps: Map<String, J> = reg
+        .elements()
+        .map(|p| (p.entry.id.to_string(), json!(p.entry.caps.names())))
+        .collect();
+    let behaviors: Map<String, J> = reg
+        .behaviors()
+        .map(|p| {
+            let mut j = kind_json(p.def);
+            let m = j.as_object_mut().expect("kind object");
+            m.insert("attaches_to".into(), json!(p.entry.attaches_to));
+            m.insert(
+                "module".into(),
+                json!(format!("svelters:behaviors/{}", p.entry.namespace)),
+            );
+            m.insert("export".into(), json!(p.entry.behavior_name()));
+            m.insert("tag".into(), json!(p.entry.tag));
+            (p.entry.id.to_string(), j)
+        })
+        .collect();
     json!({
         "backend": "egui",
+        "behaviors": behaviors,
         "caps": caps,
         "fragment": true,
         "kinds": kinds,
@@ -509,7 +539,7 @@ pub fn kinds_typings() -> String {
     let reg = KindRegistry::global();
     let mut s = String::from(TYPINGS_HEADER);
     s.push_str("import type { EguiAttrs, EguiWidgetProps, SvlEvent } from '@svelters/native-runtime/types/egui';\n");
-    let mut namespaces: Vec<&str> = reg.providers().iter().map(|p| p.entry.namespace).collect();
+    let mut namespaces: Vec<&str> = reg.elements().map(|p| p.entry.namespace).collect();
     namespaces.sort_unstable();
     namespaces.dedup();
     let schema = svelters_host::exports::schema();
@@ -522,7 +552,7 @@ pub fn kinds_typings() -> String {
         }
     }
     s.push_str("\ndeclare global {\n  namespace svelteHTML {\n    interface IntrinsicElements {\n");
-    for p in reg.providers() {
+    for p in reg.elements() {
         ts_doc(&mut s, "      ", p.entry.docs);
         let _ = writeln!(s, "      {}: EguiAttrs<EguiWidgetProps & {{", ts_key(p.entry.tag));
         ts_members(&mut s, "        ", p.def, Some(p));
@@ -532,12 +562,103 @@ pub fn kinds_typings() -> String {
     s
 }
 
+/// The namespaces that have behaviours, sorted.
+fn behavior_namespaces(reg: &KindRegistry) -> Vec<&'static str> {
+    let mut ns: Vec<&'static str> = reg.behaviors().map(|p| p.entry.namespace).collect();
+    ns.sort_unstable();
+    ns.dedup();
+    ns
+}
+
+/// The `svelters:behaviors/<namespace>` modules (EV2b, ARCH-EMBED §8.5): `(namespace, source)`, one
+/// `nativeBehavior` Svelte action per behaviour. Vite resolves the import to
+/// `<root>/.svelters/app/behaviors/<namespace>.js`.
+pub fn behavior_modules() -> Vec<(&'static str, String)> {
+    let reg = KindRegistry::global();
+    behavior_namespaces(reg)
+        .into_iter()
+        .map(|ns| {
+            let mut s = format!("// svelters:behaviors/{ns} - @generated by crates/svelters-egui/src/spec.rs from the egui kind registry. Do not edit.\n");
+            s.push_str("import { nativeBehavior } from '@svelters/native-runtime';\n");
+            for p in reg.behaviors().filter(|p| p.entry.namespace == ns) {
+                s.push('\n');
+                ts_doc(&mut s, "", p.entry.docs);
+                let events: Vec<String> = p.entry.events.iter().map(|e| format!("'{}'", e.name)).collect();
+                let _ = writeln!(s, "export const {} = nativeBehavior('{}', [{}]);", p.entry.behavior_name().unwrap_or("?"), p.entry.tag, events.join(", "));
+            }
+            (ns, s)
+        })
+        .collect()
+}
+
+/// `behaviors.d.ts`: an ambient `declare module 'svelters:behaviors/<namespace>'` per namespace with
+/// behaviours: each export is an `Action` whose params are the behaviour's props and its events'
+/// `on<event>` callbacks; the named types come from `svelters:app/<namespace>`.
+pub fn behaviors_typings() -> String {
+    let reg = KindRegistry::global();
+    let schema = svelters_host::exports::schema();
+    let mut s = String::from(TYPINGS_HEADER);
+    for ns in behavior_namespaces(reg) {
+        let _ = writeln!(s, "\ndeclare module 'svelters:behaviors/{ns}' {{");
+        s.push_str("  import type { Action } from 'svelte/action';\n");
+        if let Some(m) = schema.module(ns) {
+            let names: Vec<&str> = m.types.iter().map(|t| t.name.as_str()).collect();
+            if !names.is_empty() {
+                let _ = writeln!(
+                    s,
+                    "  import type {{ {} }} from 'svelters:app/{ns}';",
+                    names.join(", ")
+                );
+            }
+        }
+        for p in reg.behaviors().filter(|p| p.entry.namespace == ns) {
+            let name = p.entry.behavior_name().unwrap_or("?");
+            let _ = writeln!(
+                s,
+                "\n  /** The params of `use:{name}`: its props and its events' callbacks. */"
+            );
+            let _ = writeln!(s, "  export interface {}Params {{", p.entry.name);
+            ts_members(&mut s, "    ", p.def, Some(p));
+            s.push_str("  }\n");
+            ts_doc(&mut s, "  ", p.entry.docs);
+            let optional = if p.entry.props.iter().any(|q| q.required) {
+                ""
+            } else {
+                " | undefined"
+            };
+            let _ = writeln!(
+                s,
+                "  export const {name}: Action<any, {}Params{optional}>;",
+                p.entry.name
+            );
+        }
+        s.push_str("}\n");
+    }
+    s
+}
+
 /// Writes this binary's typings and specs into `dir` (an app's `.svelters/app`): the exports
 /// (`exports.json`, `app.d.ts`, one stub per module; `svelters_host::exports::dump`), `kinds.json`
-/// ([`fragment`]) and `kinds.d.ts` ([`kinds_typings`]). Only changed files are rewritten.
+/// ([`fragment`]), `kinds.d.ts` ([`kinds_typings`]) and, when the binary has behaviours,
+/// `behaviors.d.ts` ([`behaviors_typings`]) and `behaviors/<ns>.js` ([`behavior_modules`]). Only
+/// changed files are rewritten.
 pub fn dump(dir: &Path) -> std::io::Result<svelters_host::exports::DumpReport> {
     let mut report = svelters_host::exports::dump(dir)?;
-    for (name, text) in [("kinds.json", fragment_text()), ("kinds.d.ts", kinds_typings())] {
+    let mut files = vec![
+        ("kinds.json".to_string(), fragment_text()),
+        ("kinds.d.ts".to_string(), kinds_typings()),
+    ];
+    let modules = behavior_modules();
+    if !modules.is_empty() {
+        files.push(("behaviors.d.ts".to_string(), behaviors_typings()));
+        std::fs::create_dir_all(dir.join("behaviors"))?;
+    }
+    files.extend(
+        modules
+            .into_iter()
+            .map(|(ns, text)| (format!("behaviors/{ns}.js"), text)),
+    );
+    for (name, text) in files {
         let path = dir.join(name);
         if std::fs::read_to_string(&path).ok().as_deref() == Some(text.as_str()) {
             report.unchanged += 1;

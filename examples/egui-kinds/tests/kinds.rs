@@ -104,11 +104,19 @@ fn checked_in_kinds_json_and_typings_are_current() {
     let tmp = std::env::temp_dir().join(format!("svelters-egui-kinds-{}", std::process::id()));
     let _ = std::fs::remove_dir_all(&tmp);
     svelters_egui::dump(&tmp).unwrap();
-    for e in std::fs::read_dir(&tmp).unwrap().flatten() {
-        let name = e.file_name();
-        let want = std::fs::read_to_string(e.path()).unwrap();
-        let have = std::fs::read_to_string(dump_dir().join(&name)).unwrap_or_default();
-        assert!(have == want, "app/.svelters/app/{} is stale: run SVELTERS_UPDATE=1 cargo test -p egui-kinds-example --test kinds", name.to_string_lossy());
+    // every dumped file, also under `behaviors/` (EV2b)
+    let mut dirs = vec![PathBuf::new()];
+    while let Some(rel) = dirs.pop() {
+        for e in std::fs::read_dir(tmp.join(&rel)).unwrap().flatten() {
+            let name = rel.join(e.file_name());
+            if e.path().is_dir() {
+                dirs.push(name);
+                continue;
+            }
+            let want = std::fs::read_to_string(e.path()).unwrap();
+            let have = std::fs::read_to_string(dump_dir().join(&name)).unwrap_or_default();
+            assert!(have == want, "app/.svelters/app/{} is stale: run SVELTERS_UPDATE=1 cargo test -p egui-kinds-example --test kinds", name.display());
+        }
     }
     let _ = std::fs::remove_dir_all(&tmp);
 }
