@@ -90,6 +90,8 @@ impl Invalidation {
             }
             match iter.next_sequence() {
                 None => break,
+                // `host::part(x)`: the host compound is the subject (a part restyles with its host)
+                Some(Combinator::PseudoElement) => continue,
                 Some(Combinator::Child | Combinator::Descendant) => own |= Reach::DESCENDANTS,
                 Some(Combinator::NextSibling | Combinator::LaterSibling) => {
                     own |= Reach::LATER_SIBLINGS;

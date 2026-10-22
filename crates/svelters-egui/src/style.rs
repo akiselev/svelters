@@ -85,6 +85,45 @@ pub(crate) const ENGINE_PROPS: &[(&str, &str, &[&str])] = &[
     ("padding-left", "length", &[]),
     ("padding-right", "length", &[]),
     ("padding-top", "length", &[]),
+    // OW-CSS (ARCH-WIDGETS §1.1): read by the paint primitives through `StyleView`
+    ("background-image", "image", &[]),
+    ("border-top-color", "color", &[]),
+    ("border-top-style", "enum", &["none", "hidden", "solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"]),
+    ("border-top-width", "length", &[]),
+    ("border-right-color", "color", &[]),
+    ("border-right-style", "enum", &["none", "hidden", "solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"]),
+    ("border-right-width", "length", &[]),
+    ("border-bottom-color", "color", &[]),
+    ("border-bottom-style", "enum", &["none", "hidden", "solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"]),
+    ("border-bottom-width", "length", &[]),
+    ("border-left-color", "color", &[]),
+    ("border-left-style", "enum", &["none", "hidden", "solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"]),
+    ("border-left-width", "length", &[]),
+    ("border-top-left-radius", "length", &[]),
+    ("border-top-right-radius", "length", &[]),
+    ("border-bottom-right-radius", "length", &[]),
+    ("border-bottom-left-radius", "length", &[]),
+    // WIDGET-PARITY P2: what a glyph part draws
+    ("content", "content", &[]),
+    ("cursor", "enum", &["auto", "default", "none", "context-menu", "help", "pointer", "progress", "wait", "cell", "crosshair", "text", "vertical-text", "alias", "copy", "move", "no-drop", "not-allowed", "grab", "grabbing", "all-scroll", "col-resize", "row-resize", "n-resize", "e-resize", "s-resize", "w-resize", "ne-resize", "nw-resize", "se-resize", "sw-resize", "ew-resize", "ns-resize", "nesw-resize", "nwse-resize", "zoom-in", "zoom-out"]),
+    ("letter-spacing", "length", &[]),
+    ("outline-color", "color", &[]),
+    ("outline-offset", "length", &[]),
+    ("outline-style", "enum", &["none", "auto", "solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"]),
+    ("outline-width", "length", &[]),
+    // the text primitive's inputs (ARCH-WIDGETS §1.1); `font-family` and `line-height` stay text
+    // (a family list; a number or a length) for the primitive to read
+    ("font-family", "raw", &[]),
+    ("font-style", "enum", &["normal", "italic", "oblique"]),
+    ("font-weight", "font-weight", &[]),
+    ("line-height", "raw", &[]),
+    ("text-align", "enum", &["start", "end", "left", "right", "center", "justify"]),
+    // R18: links underline on hover
+    ("text-decoration-line", "enum", &["none", "underline", "overline", "line-through"]),
+    ("text-overflow", "enum", &["clip", "ellipsis"]),
+    ("text-transform", "enum", &["none", "uppercase", "lowercase", "capitalize"]),
+    ("transition", "transition", &[]),
+    ("white-space", "enum", &["normal", "nowrap", "pre", "pre-wrap", "pre-line", "break-spaces"]),
 ];
 
 /// The bits the walk owns: set from the pass's interaction and from props, never by providers.

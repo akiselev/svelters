@@ -9,11 +9,15 @@
 
 use crate::atom::Atom;
 use crate::sheet::Declaration;
+use crate::shorthand;
 use crate::table::{Prop, Table};
 use crate::values::{ComputedValue, Length, ValueCx, parse_value};
 use crate::var::{references, substitute};
 use std::collections::BTreeMap;
 use std::sync::Arc;
+
+/// A shorthand's longhands with their value text.
+type Expansion = Vec<(&'static str, String)>;
 
 /// Inputs that don't come from the tree.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -95,16 +99,29 @@ impl ComputedStyle {
 
 /// The cascade's last step: `decls` are the applicable declarations, lowest precedence first.
 pub(crate) fn compute(table: &'static Table, decls: &[&Declaration], parent: Option<&ComputedStyle>, cx: &ComputeContext) -> ComputedStyle {
-    // winners
-    let mut winners: Vec<Option<&Declaration>> = vec![None; table.props.len()];
+    // winners: a declaration of the property itself, or a shorthand that sets it (the longhand
+    // named second)
+    let mut winners: Vec<Option<(&Declaration, Option<&'static str>)>> = vec![None; table.props.len()];
     let mut custom_decls: BTreeMap<&str, &Declaration> = BTreeMap::new();
     for d in decls {
         if d.is_custom() {
             custom_decls.insert(&d.name, d);
-        } else if let Some(i) = table.index_of(&d.name) {
-            winners[i] = Some(d);
+            continue;
+        }
+        if let Some(longs) = shorthand::longhands_in(table, &d.name) {
+            for l in longs {
+                if let Some(i) = table.index_of(l) {
+                    winners[i] = Some((d, Some(l)));
+                }
+            }
+            continue;
+        }
+        if let Some(i) = table.index_of(&d.name) {
+            winners[i] = Some((d, None));
         }
     }
+    // a shorthand's expansion, once per declaration
+    let mut expanded: Vec<(*const Declaration, Option<Expansion>)> = Vec::new();
 
     let parent_custom = parent.map(|p| p.custom.clone()).unwrap_or_default();
     let custom = if custom_decls.is_empty() { parent_custom } else { Arc::new(resolve_customs(&custom_decls, &parent_custom)) };
@@ -130,8 +147,22 @@ pub(crate) fn compute(table: &'static Table, decls: &[&Declaration], parent: Opt
         }
         let v = match winners[i] {
             None => prop.is_inherited().then(|| parent_value(i)).flatten(),
-            Some(d) => {
-                let text = if d.has_var { substitute(&d.value, &mut |n| out.custom.get(n).map(|v| v.to_string())).ok() } else { Some(d.value.to_string()) };
+            Some((d, long)) => {
+                let full = if d.has_var { substitute(&d.value, &mut |n| out.custom.get(n).map(|v| v.to_string())).ok() } else { Some(d.value.to_string()) };
+                let text = match long {
+                    None => full,
+                    Some(l) => {
+                        let key = d as *const Declaration;
+                        let k = match expanded.iter().position(|(p, _)| *p == key) {
+                            Some(k) => k,
+                            None => {
+                                expanded.push((key, full.and_then(|t| shorthand::expand(&d.name, &t).ok())));
+                                expanded.len() - 1
+                            }
+                        };
+                        expanded[k].1.as_ref().and_then(|e| e.iter().find(|(n, _)| *n == l)).map(|(_, t)| t.clone())
+                    }
+                };
                 match text.as_deref().map(|t| t.trim().to_ascii_lowercase()) {
                     Some(k) if k == "inherit" => parent_value(i),
                     Some(k) if k == "initial" => None,
