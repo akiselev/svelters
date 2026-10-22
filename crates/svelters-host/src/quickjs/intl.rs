@@ -1,7 +1,7 @@
 //! IN1: the natives behind `Intl` (svelters-intl over ICU4X) and the JS shim that installs it
 //! (`intl.js`). Options cross as the JSON the shim validated; tags are canonical.
 
-use rquickjs::{Array, Ctx, Exception, Function, Object, Value};
+use rquickjs::{Array, Ctx, Exception, Function, Object, Persistent, Value};
 use serde_json::Value as J;
 use svelters_intl as intl;
 use svelters_intl::{IntlError, Locale};
@@ -188,8 +188,13 @@ fn local_time_zone() -> String {
     String::new()
 }
 
-/// Installs `Intl`, the locale-sensitive prototype methods and `__svelters_intl`.
-pub(super) fn install<'js>(ctx: &Ctx<'js>) -> Res<()> {
+/// The shim's private locale-change notifier. JS never sees it: the locale is read-only from JS
+/// and only `Host::set_locale` changes it.
+pub(super) type Changed = Persistent<Function<'static>>;
+
+/// Installs `Intl`, the locale-sensitive prototype methods and the read-only `__svelters_intl`;
+/// returns the notifier [`changed`] calls.
+pub(super) fn install<'js>(ctx: &Ctx<'js>) -> Res<Changed> {
     let n = Object::new(ctx.clone())?;
     n.set("current", Function::new(ctx.clone(), || intl::current().tag().to_string())?)?;
     n.set(
@@ -276,13 +281,12 @@ pub(super) fn install<'js>(ctx: &Ctx<'js>) -> Res<()> {
     )?;
     n.set("localTimeZone", Function::new(ctx.clone(), local_time_zone)?)?;
     let shim: Function = ctx.eval(SHIM)?;
-    shim.call::<_, ()>((n, ctx.globals()))
+    let changed: Function = shim.call((n, ctx.globals()))?;
+    Ok(Persistent::save(ctx, changed))
 }
 
 /// Tells JS the host changed the locale (`__svelters_intl` listeners, default formatters).
-pub(super) fn changed(ctx: &Ctx<'_>, tag: &str) -> Res<()> {
-    let api: Value = ctx.globals().get("__svelters_intl")?;
-    let Some(api) = api.as_object() else { return Ok(()) };
-    let f: Function = api.get("_changed")?;
+pub(super) fn changed(ctx: &Ctx<'_>, f: &Changed, tag: &str) -> Res<()> {
+    let f: Function = f.clone().restore(ctx)?;
     f.call::<_, ()>((tag,))
 }

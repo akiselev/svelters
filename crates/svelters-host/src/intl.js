@@ -1,6 +1,7 @@
 // IN1: `Intl` for QuickJS-NG (which has none), over svelters-intl (ICU4X) natives `n`.
 // Constructors validate options as ECMA-402 does where it is cheap; formatting runs in Rust.
-// The default locale is the host's (`Host::set_locale`); `__svelters_intl` reports its changes.
+// The default locale is the host's (`Host::set_locale`); `__svelters_intl` reports its changes
+// and is read-only from JS.
 // Deviations are listed in plans/milestones/IN1-intl.md.
 (function (n, global) {
   'use strict';
@@ -399,8 +400,10 @@
   // ---- the host's locale ----
 
   // `__svelters_intl` (used by `svelters:intl`): the host's current locale and a store-contract
-  // `subscribe`, so components re-render when the host switches language.
-  const api = {
+  // `subscribe`, so components re-render when the host switches language. Read-only from JS
+  // (frozen, non-writable): only Rust's `Host::set_locale` changes the locale, through the
+  // `changed` function this shim returns to Rust and never exposes to JS.
+  const api = Object.freeze({
     get locale() {
       return current;
     },
@@ -411,20 +414,21 @@
       listeners.add(entry);
       return () => listeners.delete(entry);
     },
-    _changed(tag) {
-      current = tag;
-      defaults = {};
-      let first;
-      for (const l of [...listeners]) {
-        try {
-          l.run(tag);
-        } catch (e) {
-          if (first === undefined) first = e;
-          else global.console.error(e);
-        }
+  });
+  Object.defineProperty(global, '__svelters_intl', { value: api, writable: false, configurable: false, enumerable: false });
+
+  return function changed(tag) {
+    current = tag;
+    defaults = {};
+    let first;
+    for (const l of [...listeners]) {
+      try {
+        l.run(tag);
+      } catch (e) {
+        if (first === undefined) first = e;
+        else global.console.error(e);
       }
-      if (first !== undefined) throw first;
-    },
+    }
+    if (first !== undefined) throw first;
   };
-  define(global, '__svelters_intl', api);
 });

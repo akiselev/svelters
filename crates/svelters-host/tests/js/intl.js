@@ -79,6 +79,15 @@ eq('toStringTag', Object.prototype.toString.call(new Intl.NumberFormat()), '[obj
 
 // the host's locale: a store-contract subscribe, seen by Rust's set_locale (tests/intl.rs)
 eq('host locale', __svelters_intl.locale, 'en-US');
+// read-only from JS: no setter, no notifier, not replaceable (only Host::set_locale changes it)
+(function () {
+  'use strict';
+  const api = __svelters_intl;
+  const tries = [() => (api.locale = 'fr'), () => (api._changed = () => {}), () => (globalThis.__svelters_intl = {}), () => delete globalThis.__svelters_intl];
+  eq('locale setters throw', tries.map((t) => { try { t(); return 'set'; } catch (e) { return e instanceof TypeError; } }), [true, true, true, true]);
+  eq('no notifier', Object.keys(api).concat(Object.getOwnPropertyNames(api)).filter((k) => k !== 'locale' && k !== 'subscribe'), []);
+  eq('still en-US', __svelters_intl.locale, 'en-US');
+})();
 globalThis.seen = [];
 __svelters_intl.subscribe((tag) => {
   seen.push(`${tag} ${(1234.5).toLocaleString()} ${new Intl.PluralRules().select(2)}`);
