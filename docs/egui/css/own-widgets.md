@@ -81,7 +81,7 @@ them has no effect yet. Style the host (`checkbox:checked { … }`) or wait for 
 
 ### List rows *(pending OW5a)*
 
-> **Pending.** This is OW5a on `ci/ow5a` (d80f80e5, record `plans/milestones/OW5a-lists-tree-dnd.md`), not
+> **Pending.** This is OW5a on `ci/ow5a` (record `plans/milestones/OW5a-lists-tree-dnd.md`, selector table as of cd7b7a38), not
 > on master yet.
 
 Pooled rows of `virtual-list` and `tree-view` are styled as `::part(row)`. Each drawn row's part style is
@@ -96,16 +96,30 @@ virtual-list::part(row):nth-child(even)               { background-color: rgba(2
 tree-view::part(row):has-children:expanded            { font-weight: 600; }
 ```
 
-- A row's states: `:hover`, `:active`, `:selected`, `:current` (the cursor row), `:focus`/`:focus-visible`
-  (the cursor row; visible with keyboard focus only), `:drop-target`, `:has-children`, `:expanded`,
-  `:disabled`, and `:focus-within` from the list (active vs inactive selection).
-- Row *nodes* (your row snippet's contents) mirror `:selected`, `:current`, `:drop-target`,
-  `:has-children` and `:expanded`, so `virtual-list:focus-within > :selected { color: … }` styles the text.
-- Other parts: `twistie` (the tree's chevron). Tokens: `list-hover`, `list-sel`, `list-sel-fg`,
-  `list-sel-inactive`, `list-drop`, `focus`, `twistie-w`, `icon`, `scroll-shadow`.
-- With no `::part(row)` rule, rows paint from the list's UA table. In Rust the API is
-  `Scene::part_at(list, "row", state, (pos, len))`. Results are cached per (node, part, state, position)
-  and dropped at any restyle.
+`tree-view` takes the same selectors as `virtual-list`:
+
+| Look | Selector |
+|---|---|
+| rest | `virtual-list::part(row)` |
+| hover | `virtual-list::part(row):hover` |
+| pressed | `virtual-list::part(row):active` |
+| active selection | `virtual-list:focus-within::part(row):selected` |
+| inactive selection | `virtual-list:not(:focus-within)::part(row):selected` |
+| cursor row | `virtual-list::part(row):current` |
+| keyboard focus ring (R8) | `virtual-list::part(row):focus-visible` |
+| drop into a row | `virtual-list::part(row):drop-target` |
+| stripes (1-based) | `virtual-list::part(row):nth-child(even)` |
+| tree rows | `tree-view::part(row):has-children`, `tree-view::part(row):expanded` |
+| tree chevron | `tree-view::part(twistie)` |
+| row contents | `virtual-list:focus-within > :selected { color: … }` (row nodes carry the same state bits) |
+| scroll bar | `::part(thumb-y)`, `::part(scrollbar-y)` |
+| other parts | `::part(placeholder)`, `::part(drop-line)` |
+
+- Tokens the defaults use: `list-hover`, `list-sel`, `list-sel-fg`, `list-sel-inactive`, `list-drop`,
+  `focus`, `twistie-w`, `icon`, `scroll-shadow`.
+- If no sheet has a row rule, nothing is computed and rows paint from the list's UA defaults. In Rust the
+  API is `Scene::part_at(list, "row", state, (pos, len))`. Results are cached per (node, part, state,
+  position) and dropped at any restyle.
 
 ## State pseudo-classes
 
