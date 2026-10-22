@@ -153,6 +153,13 @@ impl Resolver {
                 return Some(f);
             }
         }
+        // TypeScript's convention: `./util.js` names `util.ts` (`.mjs`: `.mts`), the file it compiles to
+        let name = p.to_string_lossy();
+        if let Some(stem) = name.strip_suffix(".js").or_else(|| name.strip_suffix(".mjs"))
+            && let Some(f) = self.file(Path::new(&format!("{stem}{}", if name.ends_with(".mjs") { ".mts" } else { ".ts" })))
+        {
+            return Some(f);
+        }
         if p.is_dir() {
             if let Some(m) = self.manifest(&p) {
                 for field in &self.main_fields {

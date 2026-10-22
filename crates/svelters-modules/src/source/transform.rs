@@ -1,7 +1,7 @@
 //! Turning one source file into an ES module, by kind.
 
 use std::path::Path;
-use svelters_compiler::compile::{CompileOptions, CompileResult, ModuleOptions, compile, compile_module};
+use svelters_compiler::compile::{CompileOptions, CompileResult, ModuleOptions, compile, compile_module, strip_typescript_module};
 use svelters_compiler::diag::Severity;
 use svelters_compiler::semantics::SpecBackend;
 
@@ -9,8 +9,10 @@ use svelters_compiler::semantics::SpecBackend;
 pub(crate) enum Kind {
     /// `.svelte`: `compile`.
     Component,
-    /// `.svelte.js`: `compile_module` (runes outside components).
+    /// `.svelte.js` / `.svelte.ts`: `compile_module` (runes outside components; TypeScript stripped).
     RunesModule,
+    /// `.ts` / `.mts`: the types stripped (`strip_typescript_module`).
+    Ts,
     /// `.js` / `.mjs`: as is.
     Js,
     /// `.json`: `export default <the JSON>`.
@@ -26,11 +28,15 @@ impl Kind {
         let name = path.file_name().and_then(|n| n.to_str()).unwrap_or("");
         if name.ends_with(".svelte") {
             Kind::Component
-        } else if name.ends_with(".svelte.js") {
+        } else if name.ends_with(".svelte.js") || name.ends_with(".svelte.ts") {
             Kind::RunesModule
-        } else if name.ends_with(".svelte.ts") || name.ends_with(".ts") || name.ends_with(".mts") || name.ends_with(".tsx") {
-            Kind::Unsupported("TypeScript modules are not loaded from source yet (Q2): build the app with Vite")
-        } else if name.ends_with(".cjs") {
+        } else if name.ends_with(".d.ts") || name.ends_with(".d.mts") {
+            Kind::Unsupported("a declaration file has no runtime code: import the module it describes, or use `import type`")
+        } else if name.ends_with(".ts") || name.ends_with(".mts") {
+            Kind::Ts
+        } else if name.ends_with(".tsx") || name.ends_with(".jsx") {
+            Kind::Unsupported("JSX is not supported by the module loader: write the UI as .svelte components")
+        } else if name.ends_with(".cjs") || name.ends_with(".cts") {
             Kind::Unsupported("CommonJS modules are not supported by the module loader (QuickJS has no `require`): use the package's ES module build")
         } else if name.ends_with(".css") {
             Kind::Unsupported("CSS imports are not supported by the module loader: put styles in a component's <style>")
@@ -73,6 +79,7 @@ impl Compiler {
                 Some(compile(src, &opts))
             }
             Kind::RunesModule => Some(compile_module(src, &ModuleOptions { filename, dev: self.dev, hmr: self.hmr })),
+            Kind::Ts => Some(strip_typescript_module(src, &filename)),
             _ => None,
         }
     }
@@ -81,7 +88,7 @@ impl Compiler {
         let shown = path.display().to_string();
         let kind = Kind::of(path);
         match kind {
-            Kind::Component | Kind::RunesModule => {
+            Kind::Component | Kind::RunesModule | Kind::Ts => {
                 let res = self.compile(kind, path, &src).expect("a compiled kind");
                 let rendered = |sev: Severity| res.diagnostics.iter().filter(|d| d.severity == sev).map(|d| d.render(&shown)).collect::<Vec<_>>();
                 if res.has_errors() || res.js.is_none() {
@@ -139,8 +146,12 @@ mod tests {
         assert_eq!(Kind::of(Path::new("/a/x.mjs")), Kind::Js);
         assert_eq!(Kind::of(Path::new("/a/data.json")), Kind::Json);
         assert_eq!(Kind::of(Path::new("/a/icon.png")), Kind::Asset);
-        assert!(matches!(Kind::of(Path::new("/a/x.ts")), Kind::Unsupported(_)));
-        assert!(matches!(Kind::of(Path::new("/a/x.svelte.ts")), Kind::Unsupported(_)));
+        assert_eq!(Kind::of(Path::new("/a/x.ts")), Kind::Ts);
+        assert_eq!(Kind::of(Path::new("/a/x.mts")), Kind::Ts);
+        assert_eq!(Kind::of(Path::new("/a/x.svelte.ts")), Kind::RunesModule);
+        assert!(matches!(Kind::of(Path::new("/a/x.d.ts")), Kind::Unsupported(_)));
+        assert!(matches!(Kind::of(Path::new("/a/x.tsx")), Kind::Unsupported(_)));
+        assert!(matches!(Kind::of(Path::new("/a/x.cts")), Kind::Unsupported(_)));
     }
 
     #[test]
