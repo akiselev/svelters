@@ -57,6 +57,8 @@ pub(crate) fn container(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: 
         w if crate::elements::is_container(w) => crate::elements::container(arena, i, r, origin, ui, out),
         W::CollapsingHeader { .. } => collapsing(arena, i, r, origin, ui, out),
         W::ScrollArea { .. } => scroll(arena, i, r, origin, ui, out),
+        // WG4a: table, tab-view, split-view (`crate::views`)
+        W::Table(_) | W::TabView { .. } | W::SplitView { .. } => crate::views::container(arena, i, r, origin, ui, out),
         _ => {
             let c = arena.common(i);
             if !c.tooltip.is_empty() {
@@ -216,6 +218,9 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     if crate::elements::is_leaf(arena.w(i)) {
         return crate::elements::leaf(arena, i, ui, out); // WG2b
     }
+    if let Some(resp) = crate::views::leaf(arena, i, ui, out) {
+        return resp; // WG4a: toast-host, table-column
+    }
     let h = arena.slots.id_at(i).expect("live leaf").to_raw();
     let kind = arena.core[i].kind as usize;
     let sig = |name: &str| kinds::signal_id(kind, name);
@@ -367,6 +372,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         | W::ProgressBar { .. }
         | W::Spinner { .. }
         | W::Canvas(_) => unreachable!("WG2b kinds are drawn by crate::elements"),
+        W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::SplitView { .. } | W::ToastHost(_) => unreachable!("WG4a views: crate::views"),
     };
     let mut resp = crate::a11y::decorate(resp, &arena.n(h));
     if !arena.common(i).tooltip.is_empty() {

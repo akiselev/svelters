@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "vite build",
-    "test": "vite build",
+    "build": "vite build && vite build --config vite.embed.config.js",
+    "test": "vite build && vite build --config vite.embed.config.js",
     "watch": "svelters-build --watch"
   },
   "dependencies": {

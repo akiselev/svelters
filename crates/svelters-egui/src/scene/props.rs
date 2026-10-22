@@ -236,6 +236,31 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         // paint-only: the walk applies a write that differs from what egui reported (`seen`)
         (P::ScrollX, W::ScrollArea { x, .. }) => *x = as_f64(v)?.max(0.0),
         (P::ScrollY, W::ScrollArea { y, .. }) => *y = as_f64(v)?.max(0.0),
+        // ---- WG4a (`kinds/views.rs`, `crate::views`) ----
+        (key, W::Table(t)) => d.insert(t.set(key, v)?),
+        (key, W::ToastHost(t)) => t.set(key, v)?,
+        (P::Title, W::Tab { title, .. } | W::TableColumn { title, .. }) => *title = as_str(v)?,
+        (P::Resizable, W::TableColumn { resizable, .. } | W::SplitView { resizable, .. }) => *resizable = as_bool(v)?,
+        (P::CellAlign, W::TableColumn { align, .. }) => *align = as_enum(v, kinds::CELL_ALIGN)?,
+        (P::Sort, W::TableColumn { sort, .. }) => *sort = as_enum(v, kinds::SORT)?,
+        (P::SelectedIndex, W::TabView { selected }) => {
+            *selected = as_i64(v)?;
+            // another page is laid out
+            d.insert(Dirty::LAYOUT);
+        }
+        (P::Closable, W::Tab { closable, .. }) => *closable = as_bool(v)?,
+        (P::Orientation, W::SplitView { vertical, .. }) => {
+            *vertical = as_enum(v, kinds::ORIENTATION)? == "vertical";
+            d.insert(Dirty::LAYOUT);
+        }
+        (P::Position, W::SplitView { position, .. }) => {
+            *position = as_len(v)?;
+            d.insert(Dirty::LAYOUT);
+        }
+        (P::MinSize, W::SplitView { min_size, .. }) => {
+            *min_size = as_f64(v)?.max(0.0);
+            d.insert(Dirty::LAYOUT);
+        }
         (key, w) => return Err(format!("{key:?} is not a prop of {w:?}")),
     }
     if def.layout {
@@ -317,6 +342,18 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::ScrollDirection, W::ScrollArea { direction, .. }) => s(direction),
         (P::ScrollX, W::ScrollArea { x, .. }) => Value::F64(*x),
         (P::ScrollY, W::ScrollArea { y, .. }) => Value::F64(*y),
+        // ---- WG4a ----
+        (key, W::Table(t)) => t.get(key).ok_or_else(|| format!("{key:?} is not a prop of <table>"))?,
+        (key, W::ToastHost(t)) => t.get(key).ok_or_else(|| format!("{key:?} is not a prop of <toast-host>"))?,
+        (P::Title, W::Tab { title, .. } | W::TableColumn { title, .. }) => s(title),
+        (P::Resizable, W::TableColumn { resizable, .. } | W::SplitView { resizable, .. }) => Value::Bool(*resizable),
+        (P::CellAlign, W::TableColumn { align, .. }) => s(align),
+        (P::Sort, W::TableColumn { sort, .. }) => s(sort),
+        (P::SelectedIndex, W::TabView { selected }) => Value::I64(*selected),
+        (P::Closable, W::Tab { closable, .. }) => Value::Bool(*closable),
+        (P::Orientation, W::SplitView { vertical, .. }) => s(if *vertical { "vertical" } else { "horizontal" }),
+        (P::Position, W::SplitView { position, .. }) => len_value(*position),
+        (P::MinSize, W::SplitView { min_size, .. }) => Value::F64(*min_size),
         (key, _) => return Err(format!("{key:?} is not a prop of <{}>", n.tag())),
     })
 }

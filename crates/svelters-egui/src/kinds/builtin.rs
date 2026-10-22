@@ -275,6 +275,13 @@ pub static KINDS: &[KindDef] = &[
     super::popups::POPUP,
     super::popups::MODAL,
     super::popups::INNER_WINDOW,
+    // WG4a
+    super::views::TABLE,
+    super::views::TABLE_COLUMN,
+    super::views::TAB_VIEW,
+    super::views::TAB,
+    super::views::SPLIT_VIEW,
+    super::views::TOAST_HOST,
 
 
 

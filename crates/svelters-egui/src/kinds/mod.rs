@@ -32,15 +32,24 @@ mod popups;
 mod inputs;
 mod media;
 mod panes;
+// WG4a (plans/milestones/WG4a-tier1-views.md)
+mod views;
 
 pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, WRAP, WRAP_MODE};
 pub use decor::ORIENTATION;
 pub use layouts::{JUSTIFY_ITEMS, SCROLL_DIRECTION};
-pub use menus::{attaches_to, slot_accepts};
+pub use menus::attaches_to;
 pub use popups::POSITION;
 pub use media::FIT;
 pub use panes::{FRAME_STYLE, SIDE};
+pub use views::{CELL_ALIGN, SORT, TOAST_CORNER, TOAST_LEVEL};
 pub use registry::{KindRegistry, PROVIDER_PACK, ProviderKind, kind};
+
+/// The kinds a slot of kind `id` accepts (spec `children.slots.*.accepts`): WG4a's `table` takes
+/// `table-column`s, WG2a's menu containers menu items, every other container any `Widget`.
+pub fn slot_accepts(id: &str) -> &'static [&'static str] {
+    views::slot_accepts(id).unwrap_or_else(|| menus::slot_accepts(id))
+}
 
 /// A property's value type (also its ABI tag).
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -201,6 +210,23 @@ pub enum P {
     Ops,
     ContentWidth,
     ContentHeight,
+    // WG4a (plans/milestones/WG4a-tier1-views.md; `kinds/views.rs`). Also reused there: `Title`
+    // (tab, table-column), `SelectedIndex` (tab-view, table), `Orientation` (split-view), and
+    // WG2a's `Resizable` (table-column, split-view), `Closable` (tab), `Position` (split-view).
+    /// table
+    RowCount,
+    RowHeight,
+    StickyColumns,
+    Striped,
+    Overscan,
+    /// table-column
+    CellAlign,
+    Sort,
+    /// split-view
+    MinSize,
+    /// toast-host
+    Corner,
+    Duration,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }

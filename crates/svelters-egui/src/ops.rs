@@ -192,6 +192,10 @@ impl Backend for EguiBackend {
     fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value> {
         let k = self.kind_of(h)?;
         let def = kinds::method_def(k, method).ok_or_else(|| format!("unknown method id {method}"))?;
+        // WG4a: the views' methods take arguments (`crate::views::call`)
+        if let Some(r) = crate::views::call(self, h, def.name, args) {
+            return r;
+        }
         if !args.is_empty() {
             return Err(format!("{} takes no arguments", def.name));
         }
