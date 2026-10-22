@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+# Waits for GitHub CI on a commit and prints one line per workflow run:
+#
+#   tools/dev/ci-wait <sha>            # waits until all five workflows finished
+#   tools/dev/ci-wait <sha> --once     # prints the current state and exits
+#   tools/dev/ci-wait <sha> --jobs     # after finishing, also lists failed jobs/steps
+#
+# No gh CLI and no credentials (user, 2026-10-22: don't use gh to access the user's account):
+# svelters is public, so this reads GitHub's public REST API with curl. Unauthenticated calls get
+# 60 per hour per IP, shared by every machine behind the same router, so it polls every 600 s
+# (CI_WAIT_INTERVAL) and sends the last ETag: an unchanged answer (304) doesn't count against the
+# limit. Run one waiter per sha, never several.
+#
+# Exit status: 0 when every run succeeded, 1 when any failed or was cancelled (or, with --once, GitHub
+# couldn't be read), 2 on usage errors, 3 with --once while runs are still pending.
+# Failure logs need an account; reproduce a failure by running that test locally (filtered).
+set -euo pipefail
+
+repo=${CI_WAIT_REPO:-akiselev/svelters}
+interval=${CI_WAIT_INTERVAL:-600}
+expect=${CI_WAIT_EXPECT:-5}
+sha=${1:-}
+mode=${2:-}
+[ -n "$sha" ] || { echo "usage: tools/dev/ci-wait <sha> [--once|--jobs]" >&2; exit 2; }
+case $sha in *[!0-9a-f]*) sha=$(git rev-parse "$sha") ;; esac
+[ ${#sha} -eq 40 ] || sha=$(git rev-parse "$sha")
+
+dir=$(mktemp -d)
+trap 'rm -rf "$dir"' EXIT
+api=https://api.github.com/repos/$repo
+
+fetch() { # url outfile: GET with the stored ETag; keeps the previous body on 304
+    local etag=() code
+    [ -s "$2.etag" ] && etag=(-H "If-None-Match: $(cat "$2.etag")")
+    code=$(curl -sS -o "$2.new" -D "$2.hdr" -w '%{http_code}' "${etag[@]}" \
+        -H 'Accept: application/vnd.github+json' "$1") || return 1
+    case $code in
+        200) mv "$2.new" "$2"; grep -i '^etag:' "$2.hdr" | cut -d' ' -f2- | tr -d '\r' > "$2.etag" ;;
+        304) ;;
+        *) echo "ci-wait: GitHub answered $code: $(head -c 300 "$2.new")" >&2; return 1 ;;
+    esac
+}
+
+summary() { # prints "workflow status conclusion run_id" and returns 0 done, 1 pending
+    python3 - "$1" "$expect" <<'EOF'
+import json, sys
+runs = json.load(open(sys.argv[1]))["workflow_runs"]
+latest = {}
+for r in runs:  # newest first: keep the newest attempt of each workflow
+    latest.setdefault(r["name"], r)
+for r in sorted(latest.values(), key=lambda r: r["name"]):
+    print(r["name"], r["status"], r["conclusion"], r["id"])
+done = len(latest) >= int(sys.argv[2]) and all(r["status"] == "completed" for r in latest.values())
+sys.exit(0 if done else 1)
+EOF
+}
+
+while :; do
+    if fetch "$api/actions/runs?head_sha=$sha&per_page=50" "$dir/runs"; then
+        if out=$(summary "$dir/runs"); then break; fi
+        [ "$mode" = --once ] && { echo "$out"; exit 3; }
+    fi
+    [ "$mode" = --once ] && exit 1
+    sleep "$interval"
+done
+echo "$out"
+if [ "$mode" = --jobs ]; then
+    for id in $(echo "$out" | awk '$3 != "success" { print $4 }'); do
+        fetch "$api/actions/runs/$id/jobs?per_page=100" "$dir/jobs-$id" || continue
+        python3 - "$dir/jobs-$id" <<'EOF'
+import json, sys
+for j in json.load(open(sys.argv[1]))["jobs"]:
+    if j["conclusion"] not in ("success", "skipped"):
+        steps = [s["name"] for s in j.get("steps", []) if s["conclusion"] == "failure"]
+        print("  failed:", j["name"], "->", ", ".join(steps) or j["conclusion"], j["html_url"])
+EOF
+    done
+fi
+! echo "$out" | awk '{ print $3 }' | grep -qv '^success$'
