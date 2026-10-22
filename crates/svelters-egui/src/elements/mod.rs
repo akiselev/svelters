@@ -356,7 +356,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     };
     let mut resp = crate::a11y::decorate(resp, &arena.n(h));
     if !arena.common(i).tooltip.is_empty() {
-        resp = resp.on_hover_text(arena.common(i).tooltip.clone());
+        resp = crate::tips::text(resp, &arena.common(i).tooltip);
     }
     if arena.common(i).invalid {
         crate::leaf::invalid_outline(ui, resp.rect);

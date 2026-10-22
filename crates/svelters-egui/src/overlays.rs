@@ -26,6 +26,8 @@ pub enum OverlayKind {
     Popup,
     Modal,
     InnerWindow,
+    /// WG6 (QA5): shown while its owner is hovered.
+    Tooltip,
 }
 
 /// An overlay node's typed props (the Box props are in `Common`).
@@ -55,6 +57,7 @@ pub(crate) fn payload(id: &str) -> OverlayW {
     let kind = match id {
         "Modal" => OverlayKind::Modal,
         "InnerWindow" => OverlayKind::InnerWindow,
+        "Tooltip" => OverlayKind::Tooltip,
         _ => OverlayKind::Popup,
     };
     OverlayW {
@@ -194,7 +197,7 @@ pub(crate) fn paint_attached(
     for k in 0..arena.children[i].len() {
         let c = arena.children[i][k].index() as usize;
         let attached = matches!(arena.w(c), W::Menu(MenuW::Context { .. }))
-            || matches!(arena.w(c), W::Overlay(o) if o.kind == OverlayKind::Popup);
+            || matches!(arena.w(c), W::Overlay(o) if matches!(o.kind, OverlayKind::Popup | OverlayKind::Tooltip));
         if attached && arena.common(c).visible {
             paint_node(arena, c, origin, ui, out);
         }
@@ -284,6 +287,14 @@ fn overlay(
                         content(arena, i, origin, pui, out, [None, None]);
                     });
                 open = still;
+            }
+            OverlayKind::Tooltip => {
+                // hover only, over the owner: it takes no input from the widget under it
+                // (shown whether the owner is enabled or not)
+                let r = ui.interact(owner, id.with("tooltip"), Sense::hover());
+                if egui::Tooltip::should_show_tooltip(&r, true) {
+                    egui::Tooltip::for_widget(&r).show(|tui| content(arena, i, origin, tui, out, [None, None]));
+                }
             }
             OverlayKind::Modal => {
                 let r = egui::Modal::new(id.with("modal")).show(&ctx, |mui| {

@@ -194,9 +194,10 @@ fn paint_own(
         // LS1: rows at the list's scroll offset, clipped, with their a11y set size
         return crate::kinds::virtuallist::paint(arena, i, origin, ui, out);
     }
+    crate::tips::reveal(arena, i, ui, r); // WG6 (QA13): `scroll-into-view`
     if arena.w(i).is_container() {
-        // Cull whole subtrees outside the clip rect.
-        if !ui.is_rect_visible(r) {
+        // Cull whole subtrees outside the clip rect (WG6: unless `tips::keep`).
+        if !ui.is_rect_visible(r) && !crate::tips::keep(arena, i, ui) {
             return None;
         }
         if !matches!(arena.w(i), crate::scene::W::Overlay(_)) {
@@ -214,12 +215,13 @@ fn paint_own(
             None => ui,
         };
         crate::kinds::dnd::node(arena, i, r, ui, out, crate::kinds::dnd::Part::Both); // WG4b: under the children
+        crate::tips::hover(arena, i, ui, r); // WG6: status tip, cursor (before the children's own)
         // WG1: a container's tooltip and chrome (collapsing header, scroll area), then
         // `paint_children`
         crate::leaf::container(arena, i, r, origin, ui, out);
         return None;
     }
-    if !ui.is_rect_visible(r) {
+    if !ui.is_rect_visible(r) && !crate::tips::keep(arena, i, ui) {
         return None;
     }
     let mut b = UiBuilder::new()
@@ -245,8 +247,12 @@ fn paint_own(
     };
     crate::kinds::dnd::node(arena, i, r, &mut child, out, crate::kinds::dnd::Part::Target); // WG4b
     crate::scene::hit::record(arena, i, &child); // SG3: the viewport's hit list
+    crate::tips::hover(arena, i, &child, resp.as_ref().map_or(r, |r| r.rect)); // WG6: status tip, cursor
     if let Some(r) = &resp {
         crate::focus::record(arena, i, &child, r); // EV3: tab order, R11 key claims
+        if r.gained_focus() {
+            r.scroll_to_me(None); // WG6 (QA13): scroll on focus (Tab, `request-focus`, a click)
+        }
     }
     crate::overlays::paint_attached(arena, i, origin, ui, out); // WG2a: its context menu, popup
     resp

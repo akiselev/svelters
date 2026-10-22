@@ -78,6 +78,48 @@ pub const COLOR_PICKER: KindDef = KindDef {
     doc: "A colour swatch; clicking it opens egui's colour picker popup.",
 };
 
+/// WG6 (QW10): `key-sequence-edit` (Qt's `QKeySequenceEdit`).
+static KEY_SEQ_PROPS: &[PropDef] = &[input(
+    "value",
+    P::Value,
+    Ty::Str,
+    Def::Str(""),
+    "The shortcut, `Ctrl+Shift+K` (modifiers `Ctrl`, `Alt`, `Shift`, `Cmd` in that order, then egui's key name, `Key::name`); `\"\"` for none. Click (or Space/Enter) and press a shortcut to record it; Escape cancels, Backspace or Delete clears it.",
+)];
+
+static KEY_SEQ_SIGNALS: &[SignalDef] = &[signal("changed", &[("value", Ty::Str)], "The user recorded or cleared a shortcut; carries it.")];
+
+pub const KEY_SEQUENCE_EDIT: KindDef = KindDef {
+    id: "KeySequenceEdit",
+    tag: Some("key-sequence-edit"),
+    native: "egui::Button",
+    base: Some("Widget"),
+    toplevel: false,
+    slot: None,
+    text_content: None,
+    present: None,
+    props: KEY_SEQ_PROPS,
+    signals: KEY_SEQ_SIGNALS,
+    methods: &[],
+    doc: "Records one keyboard shortcut (Qt's `QKeySequenceEdit`, one chord): a button showing the shortcut; while it records, it takes every key but Tab (EV3 `shortcut_override` answers true), so the app's own shortcuts do not fire.",
+};
+
+/// QW10: a shortcut as `key-sequence-edit` writes it.
+pub fn shortcut_text(key: egui::Key, m: egui::Modifiers) -> String {
+    let mut s = String::new();
+    for (on, name) in [(m.ctrl || (m.command && !m.mac_cmd), "Ctrl"), (m.alt, "Alt"), (m.shift, "Shift"), (m.mac_cmd, "Cmd")] {
+        if on {
+            s.push_str(name);
+            s.push('+');
+        }
+    }
+    s.push_str(key.name());
+    s
+}
+
+const KEY_SEQ_PROMPT: &str = "Press a shortcut…";
+const KEY_SEQ_NONE: &str = "None";
+
 /// The payload of a picker node.
 #[derive(Clone, Debug, PartialEq)]
 pub enum Picker {
@@ -93,6 +135,12 @@ pub enum Picker {
         alpha: &'static str,
         /// The popup's HSVA while the user edits (keeps the hue of greys); dropped on a host write.
         hsva: Option<Hsva>,
+    },
+    /// WG6 (QW10): `key-sequence-edit`.
+    KeySeq {
+        value: String,
+        /// Waiting for a key (after a click, until a key, Escape or losing focus).
+        recording: bool,
     },
 }
 
@@ -119,6 +167,7 @@ impl Picker {
     pub fn new(id: &str) -> Picker {
         match id {
             "DatePicker" => Picker::Date { value: String::new(), format: "%Y-%m-%d".into(), calendar_week: true },
+            "KeySequenceEdit" => Picker::KeySeq { value: String::new(), recording: false },
             _ => Picker::Color { rgba: [0, 0, 0, 255], alpha: "opaque", hsva: None },
         }
     }
@@ -128,13 +177,14 @@ impl Picker {
         match self {
             Picker::Date { value, .. } => Value::Str(value.clone()),
             Picker::Color { rgba, .. } => Value::Str(color_hex(*rgba)),
+            Picker::KeySeq { value, .. } => Value::Str(value.clone()),
         }
     }
 
     /// What the node shows as text (queries, dumps): the value.
     pub fn text(&self) -> &str {
         match self {
-            Picker::Date { value, .. } => value,
+            Picker::Date { value, .. } | Picker::KeySeq { value, .. } => value,
             Picker::Color { .. } => "",
         }
     }
@@ -168,6 +218,10 @@ impl Picker {
                 *rgba = parse_color(&s()?)?;
                 *hsva = None;
                 Ok(false)
+            }
+            (P::Value, Picker::KeySeq { value, .. }) => {
+                *value = s()?;
+                Ok(true)
             }
             (P::Alpha, Picker::Color { alpha, .. }) => {
                 let new = s()?;
@@ -234,6 +288,34 @@ impl Picker {
                 }
                 resp
             }
+            Picker::KeySeq { value, recording } => {
+                let text = if *recording { KEY_SEQ_PROMPT } else if value.is_empty() { KEY_SEQ_NONE } else { value.as_str() };
+                let resp = ui.add(egui::Button::new(text).selected(*recording).min_size(size));
+                if resp.clicked() {
+                    *recording = true;
+                    resp.request_focus();
+                }
+                if *recording && !resp.has_focus() && !resp.clicked() {
+                    *recording = false;
+                } else if *recording {
+                    let press = ui.input(|i| {
+                        i.events.iter().find_map(|e| match e {
+                            egui::Event::Key { key, pressed: true, repeat: false, modifiers, .. } => Some((*key, *modifiers)),
+                            _ => None,
+                        })
+                    });
+                    if let Some((key, m)) = press {
+                        let plain = !m.ctrl && !m.alt && !m.shift && !m.command && !m.mac_cmd;
+                        match key {
+                            egui::Key::Escape | egui::Key::Tab if plain => {}
+                            egui::Key::Backspace | egui::Key::Delete if plain => value.clear(),
+                            k => *value = shortcut_text(k, m),
+                        }
+                        *recording = false;
+                    }
+                }
+                resp
+            }
         }
     }
 
@@ -247,11 +329,19 @@ impl Picker {
                 egui::vec2(t.x + 2.0 * sp.button_padding.x, (t.y + 2.0 * sp.button_padding.y).max(sp.interact_size.y))
             }
             Picker::Color { .. } => sp.interact_size,
+            Picker::KeySeq { value, .. } => {
+                let font = egui::TextStyle::Button.resolve(&m.style);
+                let w = [KEY_SEQ_PROMPT, KEY_SEQ_NONE, value.as_str()]
+                    .iter()
+                    .map(|t| m.ctx.fonts_mut(|f| f.layout_no_wrap((*t).to_owned(), font.clone(), egui::Color32::WHITE).size()))
+                    .fold(egui::Vec2::ZERO, |a, b| a.max(b));
+                egui::vec2(w.x + 2.0 * sp.button_padding.x, (w.y + 2.0 * sp.button_padding.y).max(sp.interact_size.y))
+            }
         }
     }
 }
 
 /// The kind ids of the pickers (for `scene/tree.rs`).
 pub fn is_picker(id: &str) -> bool {
-    matches!(id, "DatePicker" | "ColorPicker")
+    matches!(id, "DatePicker" | "ColorPicker" | "KeySequenceEdit")
 }

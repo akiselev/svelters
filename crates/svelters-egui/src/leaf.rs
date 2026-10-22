@@ -64,7 +64,7 @@ pub(crate) fn container(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: 
             if !c.tooltip.is_empty() {
                 // hover only: it takes no clicks from the children drawn over it
                 let tip = c.tooltip.clone();
-                ui.interact(r, arena.core[i].egui_id.with("tip"), Sense::hover()).on_hover_text(tip);
+                crate::tips::text(ui.interact(r, arena.core[i].egui_id.with("tip"), Sense::hover()), &tip);
             }
             if arena.common(i).invalid {
                 invalid_outline(ui, r);
@@ -111,7 +111,7 @@ fn collapsing(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, o
     let mut resp = crate::a11y::decorate(resp, &arena.n(node.to_raw()));
     let c = arena.common(i);
     if !c.tooltip.is_empty() {
-        resp = resp.on_hover_text(c.tooltip.clone());
+        resp = crate::tips::text(resp, &c.tooltip);
     }
     if arena.common(i).invalid {
         invalid_outline(ui, hr);
@@ -183,9 +183,10 @@ fn scroll(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, out: 
         cui.set_min_size(content);
         let origin2 = cui.max_rect().min - rr.min;
         crate::walk::paint_children(arena, i, origin2, cui, out);
+        crate::kinds::dnd::auto_scroll(cui, r); // WG6 (QA9)
     });
     if !tip.is_empty() {
-        ui.interact(r, id.with("tip"), Sense::hover()).on_hover_text(tip);
+        crate::tips::text(ui.interact(r, id.with("tip"), Sense::hover()), &tip);
     }
     if invalid {
         invalid_outline(ui, r);
@@ -237,8 +238,23 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         _ => None,
     };
     let enabled = arena.common(i).enabled;
+    let tip_empty = arena.common(i).tooltip.is_empty();
     let resp = match arena.w_mut(i) {
-        W::Label { text, wrap, selectable, weight } => {
+        W::Label { text, selectable, weight, elide, .. } if *elide != "none" => {
+            // WG6 (QW13): one line cut at the start, middle or end (`crate::tips::elide`)
+            let font = if *weight == 400 { egui::TextStyle::Body.resolve(ui.style()) } else { crate::fonts::text_font(ui.ctx(), ui.style(), egui::TextStyle::Body, *weight, text) };
+            let shown = crate::tips::elide(ui, text, font, elide, size.x);
+            let cut = shown != *text;
+            let mut l = egui::Label::new(weighted(ui, &shown, egui::TextStyle::Body, *weight)).wrap_mode(egui::TextWrapMode::Extend).selectable(*selectable);
+            if click_sense {
+                l = l.sense(egui::Sense::click());
+            }
+            let full = text.clone();
+            let resp = ui.add(l).accessible_name(full.clone());
+            // the full text on hover, unless the app gave a tooltip
+            if cut && tip_empty { resp.on_hover_text(full) } else { resp }
+        }
+        W::Label { text, wrap, selectable, weight, .. } => {
             let mode = match *wrap {
                 "truncate" => egui::TextWrapMode::Truncate,
                 "extend" => egui::TextWrapMode::Extend,
@@ -333,6 +349,13 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
                     }
                 })
                 .response;
+            if r.has_focus() && idx == *selected {
+                // WG6 (QW9): typing selects the next option that starts with the typed text
+                let cur = usize::try_from(idx).ok().filter(|&k| k < options.len());
+                if let Some(k) = crate::tips::combo_type_ahead(ui, node_id, options, cur) {
+                    idx = k as i64;
+                }
+            }
             *selected = idx;
             r
         }
@@ -392,7 +415,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     };
     let mut resp = crate::a11y::decorate(resp, &arena.n(h));
     if !arena.common(i).tooltip.is_empty() {
-        resp = resp.on_hover_text(arena.common(i).tooltip.clone());
+        resp = crate::tips::text(resp, &arena.common(i).tooltip);
     }
     if arena.common(i).invalid {
         invalid_outline(ui, resp.rect);

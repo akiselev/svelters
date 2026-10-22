@@ -81,18 +81,22 @@ export interface EguiWidgetProps {
   right?: number | null;
   /** Inset from the containing block's bottom edge in points; null for auto. */
   bottom?: number | null;
+  /** Text for the app's status bar while the pointer is over the node, enabled or not (`svelters_egui::status_tip`); the innermost node with one wins. */
+  'status-tip'?: string;
+  /** The mouse cursor over the node (CSS names, `egui::CursorIcon`); `auto` keeps the widget's own. Inherited by the children that keep `auto`. */
+  cursor?: 'auto' | 'default' | 'none' | 'pointer' | 'text' | 'vertical-text' | 'move' | 'grab' | 'grabbing' | 'not-allowed' | 'no-drop' | 'crosshair' | 'cell' | 'wait' | 'progress' | 'help' | 'context-menu' | 'alias' | 'copy' | 'all-scroll' | 'zoom-in' | 'zoom-out' | 'col-resize' | 'row-resize' | 'ew-resize' | 'ns-resize' | 'nesw-resize' | 'nwse-resize' | 'n-resize' | 'e-resize' | 's-resize' | 'w-resize' | 'ne-resize' | 'nw-resize' | 'se-resize' | 'sw-resize';
   /** A native animation (TR2) finished; carries its id. The runtime listens to it itself. */
   onanimationend?: (id: number) => void;
   /** Drag source: the user started dragging this node (`drag-type` set). */
   'ondrag-begin'?: () => void;
-  /** Drag source: the drag ended; `dropped` is true when a target took it. */
-  'ondrag-end'?: (dropped: boolean) => void;
+  /** Drag source: the drag ended; `dropped` is true when a target took it, `action` how (`move`, `copy`, `link`; `none` when not dropped). */
+  'ondrag-end'?: (dropped: boolean, action: string) => void;
   /** Drop target: a drag it accepts entered it (`drop-types` set); carries the drag's type. */
   'ondrag-enter'?: (type: string) => void;
   /** Drop target: the drag left, was cancelled, or was dropped here (before `drop`). */
   'ondrag-leave'?: () => void;
-  /** Drop target: a drag it accepts was released over it; carries the type, the data and the point in the node's own points. */
-  ondrop?: (type: string, data: string, x: number, y: number) => void;
+  /** Drop target: a drag it accepts was released over it; carries the type, the data, the point in the node's own points and the drop action from the modifiers (`move`; `copy` with Ctrl, Option on macOS; `link` with Ctrl+Shift, Cmd+Option on macOS). Files dragged in from the OS arrive as `text/uri-list` (one `file://` URI per line) with `copy` on a target that accepts that type. */
+  ondrop?: (type: string, data: string, x: number, y: number, action: string) => void;
 }
 
 /** The built-in egui elements, by tag. */
@@ -143,6 +147,8 @@ export interface EguiElements {
     selectable?: boolean;
     /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
     'font-weight'?: number;
+    /** WG6: cuts a line too long for the width at the start, middle or end with `…` (one line; the full text is the accessible name and, without a `tooltip`, the hover text); `none` follows `wrap-mode`. */
+    elide?: 'none' | 'start' | 'middle' | 'end';
     /** Pressed and released (`Response::clicked`). */
     onclicked?: () => void;
   };
@@ -899,6 +905,35 @@ export interface EguiElements {
     onactivate?: (pos: number) => void;
     /** The user selected the item at `pos`. */
     onselect?: (pos: number) => void;
+  };
+  /** A rich tooltip: declared in an element (attached), its children are shown as that element's tooltip on hover, enabled or disabled (`Tooltip::for_enabled`/`for_disabled`). A flex box sized to its content, out of the owner's flow. Render a snippet into it for a reusable tooltip: `<tooltip>{@render tip()}</tooltip>`. A `tooltip` prop on the same element wins over it (one tooltip per layer). */
+  tooltip: EguiWidgetProps & {
+    /** Main axis of the box. */
+    'flex-direction'?: 'column' | 'row' | 'column-reverse' | 'row-reverse';
+    /** Whether children wrap onto more lines. */
+    'flex-wrap'?: 'nowrap' | 'wrap' | 'wrap-reverse';
+    /** Space between children on both axes, in points (row-gap and column-gap override it). */
+    gap?: number;
+    /** Space between rows in points; null to use `gap`. */
+    'row-gap'?: number | null;
+    /** Space between columns in points; null to use `gap`. */
+    'column-gap'?: number | null;
+    /** Inner spacing on all four sides, in points. */
+    padding?: number;
+    /** Cross-axis alignment of the children. */
+    'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
+    /** Main-axis distribution of the children. */
+    'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
+    'focus-scope'?: 'none' | 'contain' | 'dialog';
+  };
+  /** Records one keyboard shortcut (Qt's `QKeySequenceEdit`, one chord): a button showing the shortcut; while it records, it takes every key but Tab (EV3 `shortcut_override` answers true), so the app's own shortcuts do not fire. */
+  'key-sequence-edit': EguiWidgetProps & {
+    /** The shortcut, `Ctrl+Shift+K` (modifiers `Ctrl`, `Alt`, `Shift`, `Cmd` in that order, then egui's key name, `Key::name`); `""` for none. Click (or Space/Enter) and press a shortcut to record it; Escape cancels, Backspace or Delete clears it. */
+    value?: string;
+    'bind:value'?: string;
+    /** The user recorded or cleared a shortcut; carries it. */
+    onchanged?: (value: string) => void;
   };
 }
 

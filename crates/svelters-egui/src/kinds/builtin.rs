@@ -20,6 +20,15 @@ pub const WRAP: &[&str] = &["nowrap", "wrap", "wrap-reverse"];
 /// focus when it appears and gives it back when it goes away.
 pub const FOCUS_SCOPE: &[&str] = &["none", "contain", "dialog"];
 pub const WRAP_MODE: &[&str] = &["wrap", "truncate", "extend"];
+/// WG6 (QA14): CSS cursor names (`crate::tips::cursor_icon`); `auto` keeps the widget's own.
+pub const CURSOR: &[&str] = &[
+    "auto", "default", "none", "pointer", "text", "vertical-text", "move", "grab", "grabbing", "not-allowed", "no-drop",
+    "crosshair", "cell", "wait", "progress", "help", "context-menu", "alias", "copy", "all-scroll", "zoom-in", "zoom-out",
+    "col-resize", "row-resize", "ew-resize", "ns-resize", "nesw-resize", "nwse-resize", "n-resize", "e-resize",
+    "s-resize", "w-resize", "ne-resize", "nw-resize", "se-resize", "sw-resize",
+];
+/// WG6 (QW13): where a line too long for its width is cut (`…`); `none` follows `wrap-mode`.
+pub const ELIDE: &[&str] = &["none", "start", "middle", "end"];
 
 pub(super) const FONT_WEIGHT_DOC: &str = "CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face.";
 
@@ -81,6 +90,21 @@ static WIDGET_PROPS: &[PropDef] = &[
     length("top", P::Top, "Inset from the containing block's top edge in points; null for auto."),
     length("right", P::Right, "Inset from the containing block's right edge in points; null for auto."),
     length("bottom", P::Bottom, "Inset from the containing block's bottom edge in points; null for auto."),
+    // ---- WG6: appended (`crate::tips`) ----
+    prop(
+        "status-tip",
+        P::StatusTip,
+        Ty::Str,
+        Def::Str(""),
+        "Text for the app's status bar while the pointer is over the node, enabled or not (`svelters_egui::status_tip`); the innermost node with one wins.",
+    ),
+    prop(
+        "cursor",
+        P::Cursor,
+        Ty::Enum(CURSOR),
+        Def::Str("auto"),
+        "The mouse cursor over the node (CSS names, `egui::CursorIcon`); `auto` keeps the widget's own. Inherited by the children that keep `auto`.",
+    ),
 ];
 
 static LABEL_PROPS: &[PropDef] = &[
@@ -88,6 +112,13 @@ static LABEL_PROPS: &[PropDef] = &[
     prop("wrap-mode", P::WrapMode, Ty::Enum(WRAP_MODE), Def::Str("wrap"), "What a line longer than the width does (`egui::TextWrapMode`)."),
     prop("selectable", P::Selectable, Ty::Bool, Def::Bool(false), "The text can be selected and copied."),
     prop("font-weight", P::FontWeight, Ty::I64, Def::I64(400), FONT_WEIGHT_DOC),
+    prop(
+        "elide",
+        P::Elide,
+        Ty::Enum(ELIDE),
+        Def::Str("none"),
+        "WG6: cuts a line too long for the width at the start, middle or end with `…` (one line; the full text is the accessible name and, without a `tooltip`, the hover text); `none` follows `wrap-mode`.",
+    ),
 ];
 
 static BUTTON_PROPS: &[PropDef] = &[
@@ -132,13 +163,17 @@ static WIDGET_SIGNALS: &[SignalDef] = &[
     signal("animationend", &[("id", Ty::I64)], "A native animation (TR2) finished; carries its id. The runtime listens to it itself."),
     // WG4b: drag and drop on any node (`kinds/dnd.rs`)
     signal("drag-begin", NONE, "Drag source: the user started dragging this node (`drag-type` set)."),
-    signal("drag-end", &[("dropped", Ty::Bool)], "Drag source: the drag ended; `dropped` is true when a target took it."),
+    signal(
+        "drag-end",
+        &[("dropped", Ty::Bool), ("action", Ty::Str)],
+        "Drag source: the drag ended; `dropped` is true when a target took it, `action` how (`move`, `copy`, `link`; `none` when not dropped).",
+    ),
     signal("drag-enter", &[("type", Ty::Str)], "Drop target: a drag it accepts entered it (`drop-types` set); carries the drag's type."),
     signal("drag-leave", NONE, "Drop target: the drag left, was cancelled, or was dropped here (before `drop`)."),
     signal(
         "drop",
-        &[("type", Ty::Str), ("data", Ty::Str), ("x", Ty::F64), ("y", Ty::F64)],
-        "Drop target: a drag it accepts was released over it; carries the type, the data and the point in the node's own points.",
+        &[("type", Ty::Str), ("data", Ty::Str), ("x", Ty::F64), ("y", Ty::F64), ("action", Ty::Str)],
+        "Drop target: a drag it accepts was released over it; carries the type, the data, the point in the node's own points and the drop action from the modifiers (`move`; `copy` with Ctrl, Option on macOS; `link` with Ctrl+Shift, Cmd+Option on macOS). Files dragged in from the OS arrive as `text/uri-list` (one `file://` URI per line) with `copy` on a target that accepts that type.",
     ),
 ];
 
@@ -169,6 +204,12 @@ static SLIDER_SIGNALS: &[SignalDef] = &[
 
 
 
+/// WG6 (QA13): every node's methods (`crate::tips::scroll_into_view`).
+static WIDGET_METHODS: &[MethodDef] = &[MethodDef {
+    name: "scroll-into-view",
+    doc: "`scroll-into-view(align?)`: scrolls the enclosing scroll areas so the node is visible on the next frame; `align` is `nearest` (the default: the least scrolling) or `center` (`Ui::scroll_to_rect`). Qt's `ensureWidgetVisible`, the DOM's `scrollIntoView`.",
+}];
+
 static TEXT_EDIT_METHODS: &[MethodDef] = &[MethodDef { name: "request-focus", doc: "Moves keyboard focus here on the next frame." }];
 
 pub static KINDS: &[KindDef] = &[
@@ -183,7 +224,7 @@ pub static KINDS: &[KindDef] = &[
         present: None,
         props: WIDGET_PROPS,
         signals: WIDGET_SIGNALS,
-        methods: &[],
+        methods: WIDGET_METHODS,
         doc: "Common properties of everything placed in a window: state, tooltip, accessibility and its taffy item style.",
     },
     KindDef {
@@ -329,4 +370,7 @@ pub static KINDS: &[KindDef] = &[
     super::pickers::COLOR_PICKER,
     // ---- LS1: appended after INT1's kinds (`virtuallist.rs`) ----
     super::virtuallist::DEF,
+    // ---- WG6: appended (`popups.rs`) ----
+    super::popups::TOOLTIP,
+    super::pickers::KEY_SEQUENCE_EDIT,
 ];

@@ -341,12 +341,8 @@ fn shortcuts(arena: &mut Arena, root: usize, ui: &mut Ui, out: &mut Vec<Out>) {
 fn decorate(arena: &Arena, i: usize, resp: egui::Response) -> egui::Response {
     let h = arena.slots.id_at(i).expect("live node").to_raw();
     let resp = crate::a11y::decorate(resp, &arena.n(h));
-    let tip = &arena.common(i).tooltip;
-    if tip.is_empty() {
-        resp
-    } else {
-        resp.on_hover_text(tip.clone())
-    }
+    crate::tips::hovered(arena, i, &resp.ctx, resp.contains_pointer()); // WG6: status tip, cursor
+    crate::tips::text(resp, &arena.common(i).tooltip) // WG6: also on a disabled entry
 }
 
 /// Draws the menu entries under `parent` in `ui` (a menu bar, a menu popup). `flatten`: a `menu`

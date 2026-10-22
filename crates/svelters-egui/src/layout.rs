@@ -413,7 +413,7 @@ impl Metrics {
     /// Height-for-width of a leaf at `width` (labels that wrap).
     fn wrapped(&self, w: &W, width: f32) -> Option<Vec2> {
         match w {
-            W::Label { text, wrap: "wrap", weight, .. } => Some(self.text_size_in(text, self.weighted(text, *weight), Some(width))),
+            W::Label { text, wrap: "wrap", weight, elide: "none", .. } => Some(self.text_size_in(text, self.weighted(text, *weight), Some(width))),
             W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::HEIGHT_FOR_WIDTH) => {
                 Some(x.measure(self, crate::provider::AvailableSpace::Definite(width)))
             }
@@ -1186,7 +1186,7 @@ pub(crate) fn remeasure(s: &mut Scene, m: &Metrics, r: RootIx) -> bool {
         s.counters.leaves_measured += 1;
         s.layout[i].intrinsic = Some(new);
         // A wrapping label that does not fit its last width may wrap differently with new text.
-        let wraps = matches!(s.w(i), W::Label { wrap: "wrap", .. }) && new.x > s.core[i].rect.width() + 0.5;
+        let wraps = matches!(s.w(i), W::Label { wrap: "wrap", elide: "none", .. }) && new.x > s.core[i].rect.width() + 0.5;
         if old != Some(new) || wraps {
             changed = true;
             s.invalidate_content(id);

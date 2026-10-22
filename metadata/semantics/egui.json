@@ -2285,6 +2285,82 @@
       },
       "text_content": null
     },
+    "KeySequenceEdit": {
+      "abstract": false,
+      "bindings": {
+        "value": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": true,
+          "property": "value",
+          "provenance": "svelters-egui: the egui::Button widget writes value into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": true,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "KeySequenceEdit",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "Records one keyboard shortcut (Qt's `QKeySequenceEdit`, one chord): a button showing the shortcut; while it records, it takes every key but Tab (EV3 `shortcut_override` answers true), so the app's own shortcuts do not fire.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::Button",
+      "present": null,
+      "props": {
+        "value": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The shortcut, `Ctrl+Shift+K` (modifiers `Ctrl`, `Alt`, `Shift`, `Cmd` in that order, then egui's key name, `Key::name`); `\"\"` for none. Click (or Space/Enter) and press a shortcut to record it; Escape cancels, Backspace or Delete clears it.",
+          "js": "value",
+          "native": "value",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:KeySequenceEdit:value",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user recorded or cleared a shortcut; carries it.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
     "Label": {
       "abstract": false,
       "bindings": {},
@@ -2300,6 +2376,29 @@
       "native": "egui::Label",
       "present": null,
       "props": {
+        "elide": {
+          "construct_only": false,
+          "default": "none",
+          "doc": "WG6: cuts a line too long for the width at the start, middle or end with `…` (one line; the full text is the accessible name and, without a `tooltip`, the hover text); `none` follows `wrap-mode`.",
+          "js": "elide",
+          "native": "elide",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Label:elide",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "start",
+            "middle",
+            "end"
+          ],
+          "writable": true
+        },
         "font-weight": {
           "construct_only": false,
           "default": 400,
@@ -5560,6 +5659,43 @@
       },
       "text_content": "text"
     },
+    "Tooltip": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "Tooltip",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A rich tooltip: declared in an element (attached), its children are shown as that element's tooltip on hover, enabled or disabled (`Tooltip::for_enabled`/`for_disabled`). A flex box sized to its content, out of the owner's flow. Render a snippet into it for a reusable tooltip: `<tooltip>{@render tip()}</tooltip>`. A `tooltip` prop on the same element wins over it (one tooltip per layer).",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::Tooltip",
+      "present": null,
+      "props": {},
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {},
+      "text_content": null
+    },
     "VirtualList": {
       "abstract": false,
       "bindings": {
@@ -5852,7 +5988,18 @@
       "doc": "Common properties of everything placed in a window: state, tooltip, accessibility and its taffy item style.",
       "interface": false,
       "lifetime": "owned",
-      "methods": {},
+      "methods": {
+        "scroll-into-view": {
+          "dispatch": "generated",
+          "doc": "`scroll-into-view(align?)`: scrolls the enclosing scroll areas so the node is visible on the next frame; `align` is `nearest` (the default: the least scrolling) or `center` (`Ui::scroll_to_rect`). Qt's `ensureWidgetVisible`, the DOM's `scrollIntoView`.",
+          "native": "scroll-into-view",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
       "native": "egui::Widget",
       "present": null,
       "props": {
@@ -5947,6 +6094,61 @@
           },
           "readable": true,
           "type": "f64",
+          "writable": true
+        },
+        "cursor": {
+          "construct_only": false,
+          "default": "auto",
+          "doc": "The mouse cursor over the node (CSS names, `egui::CursorIcon`); `auto` keeps the widget's own. Inherited by the children that keep `auto`.",
+          "js": "cursor",
+          "native": "cursor",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:cursor",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "auto",
+            "default",
+            "none",
+            "pointer",
+            "text",
+            "vertical-text",
+            "move",
+            "grab",
+            "grabbing",
+            "not-allowed",
+            "no-drop",
+            "crosshair",
+            "cell",
+            "wait",
+            "progress",
+            "help",
+            "context-menu",
+            "alias",
+            "copy",
+            "all-scroll",
+            "zoom-in",
+            "zoom-out",
+            "col-resize",
+            "row-resize",
+            "ew-resize",
+            "ns-resize",
+            "nesw-resize",
+            "nwse-resize",
+            "n-resize",
+            "e-resize",
+            "s-resize",
+            "w-resize",
+            "ne-resize",
+            "nw-resize",
+            "se-resize",
+            "sw-resize"
+          ],
           "writable": true
         },
         "drag-data": {
@@ -6243,6 +6445,23 @@
           "type": "f64",
           "writable": true
         },
+        "status-tip": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Text for the app's status bar while the pointer is over the node, enabled or not (`svelters_egui::status_tip`); the innermost node with one wins.",
+          "js": "status-tip",
+          "native": "status-tip",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:status-tip",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "tooltip": {
           "construct_only": false,
           "default": "",
@@ -6348,10 +6567,14 @@
             {
               "name": "dropped",
               "type": "bool"
+            },
+            {
+              "name": "action",
+              "type": "string"
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "Drag source: the drag ended; `dropped` is true when a target took it.",
+          "doc": "Drag source: the drag ended; `dropped` is true when a target took it, `action` how (`move`, `copy`, `link`; `none` when not dropped).",
           "handler_result": "none",
           "js_event": "drag-end",
           "name": "drag-end",
@@ -6403,10 +6626,14 @@
             {
               "name": "y",
               "type": "f64"
+            },
+            {
+              "name": "action",
+              "type": "string"
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "Drop target: a drag it accepts was released over it; carries the type, the data and the point in the node's own points.",
+          "doc": "Drop target: a drag it accepts was released over it; carries the type, the data, the point in the node's own points and the drop action from the modifiers (`move`; `copy` with Ctrl, Option on macOS; `link` with Ctrl+Shift, Cmd+Option on macOS). Files dragged in from the OS arrive as `text/uri-list` (one `file://` URI per line) with `copy` on a target that accepts that type.",
           "handler_result": "none",
           "js_event": "drop",
           "name": "drop",
@@ -6600,7 +6827,8 @@
           "popup",
           "scroll-area",
           "sides",
-          "tab"
+          "tab",
+          "tooltip"
         ],
         "type": "enum",
         "values": [
@@ -6634,6 +6862,7 @@
           "icon",
           "image",
           "inner-window",
+          "key-sequence-edit",
           "label",
           "menu-bar",
           "menu-button",
@@ -6658,6 +6887,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tooltip",
           "virtual-list"
         ],
         "type": "enum",
@@ -6709,6 +6939,7 @@
           "icon",
           "image",
           "inner-window",
+          "key-sequence-edit",
           "label",
           "menu-bar",
           "menu-button",
@@ -6733,6 +6964,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tooltip",
           "virtual-list"
         ],
         "type": "length",
@@ -6759,7 +6991,8 @@
           "panel",
           "popup",
           "scroll-area",
-          "tab"
+          "tab",
+          "tooltip"
         ],
         "type": "length",
         "via": "setter"
@@ -6795,6 +7028,7 @@
           "icon",
           "image",
           "inner-window",
+          "key-sequence-edit",
           "label",
           "menu-bar",
           "menu-button",
@@ -6819,6 +7053,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tooltip",
           "virtual-list"
         ],
         "type": "length",
@@ -6839,7 +7074,8 @@
           "panel",
           "popup",
           "scroll-area",
-          "tab"
+          "tab",
+          "tooltip"
         ],
         "type": "enum",
         "values": [
@@ -6872,6 +7108,7 @@
           "icon",
           "image",
           "inner-window",
+          "key-sequence-edit",
           "label",
           "menu-bar",
           "menu-button",
@@ -6896,6 +7133,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tooltip",
           "virtual-list"
         ],
         "type": "number",
@@ -6923,6 +7161,7 @@
           "icon",
           "image",
           "inner-window",
+          "key-sequence-edit",
           "label",
           "menu-bar",
           "menu-button",
@@ -6947,6 +7186,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tooltip",
           "virtual-list"
         ],
         "type": "number",
@@ -6967,7 +7207,8 @@
           "panel",
           "popup",
           "scroll-area",
-          "tab"
+          "tab",
+          "tooltip"
         ],
         "type": "enum",
         "values": [
@@ -7002,6 +7243,7 @@
           "scroll-area",
           "sides",
           "tab",
+          "tooltip",
           "window"
         ],
         "type": "length",
@@ -7045,6 +7287,7 @@
           "icon",
           "image",
           "inner-window",
+          "key-sequence-edit",
           "label",
           "menu-bar",
           "menu-button",
@@ -7069,6 +7312,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tooltip",
           "virtual-list"
         ],
         "type": "length",
@@ -7089,7 +7333,8 @@
           "panel",
           "popup",
           "scroll-area",
-          "tab"
+          "tab",
+          "tooltip"
         ],
         "type": "enum",
         "values": [
@@ -7142,6 +7387,7 @@
           "icon",
           "image",
           "inner-window",
+          "key-sequence-edit",
           "label",
           "menu-bar",
           "menu-button",
@@ -7166,6 +7412,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tooltip",
           "virtual-list"
         ],
         "type": "length",
@@ -7193,6 +7440,7 @@
           "icon",
           "image",
           "inner-window",
+          "key-sequence-edit",
           "label",
           "menu-bar",
           "menu-button",
@@ -7217,6 +7465,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tooltip",
           "virtual-list"
         ],
         "type": "length",
@@ -7260,6 +7509,7 @@
           "icon",
           "image",
           "inner-window",
+          "key-sequence-edit",
           "label",
           "menu-bar",
           "menu-button",
@@ -7284,6 +7534,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tooltip",
           "virtual-list"
         ],
         "type": "length",
@@ -7311,6 +7562,7 @@
           "icon",
           "image",
           "inner-window",
+          "key-sequence-edit",
           "label",
           "menu-bar",
           "menu-button",
@@ -7335,6 +7587,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tooltip",
           "virtual-list"
         ],
         "type": "length",
@@ -7362,6 +7615,7 @@
           "icon",
           "image",
           "inner-window",
+          "key-sequence-edit",
           "label",
           "menu-bar",
           "menu-button",
@@ -7386,6 +7640,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tooltip",
           "virtual-list"
         ],
         "type": "length",
@@ -7413,6 +7668,7 @@
           "icon",
           "image",
           "inner-window",
+          "key-sequence-edit",
           "label",
           "menu-bar",
           "menu-button",
@@ -7437,6 +7693,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tooltip",
           "virtual-list"
         ],
         "type": "length",
@@ -7469,6 +7726,7 @@
           "sides",
           "stack",
           "tab",
+          "tooltip",
           "window"
         ],
         "type": "length",
@@ -7512,6 +7770,7 @@
           "icon",
           "image",
           "inner-window",
+          "key-sequence-edit",
           "label",
           "menu-bar",
           "menu-button",
@@ -7536,6 +7795,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tooltip",
           "virtual-list"
         ],
         "type": "enum",
@@ -7568,6 +7828,7 @@
           "icon",
           "image",
           "inner-window",
+          "key-sequence-edit",
           "label",
           "menu-bar",
           "menu-button",
@@ -7592,6 +7853,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tooltip",
           "virtual-list"
         ],
         "type": "length",
@@ -7614,7 +7876,8 @@
           "panel",
           "popup",
           "scroll-area",
-          "tab"
+          "tab",
+          "tooltip"
         ],
         "type": "length",
         "via": "setter"
@@ -7641,6 +7904,7 @@
           "icon",
           "image",
           "inner-window",
+          "key-sequence-edit",
           "label",
           "menu-bar",
           "menu-button",
@@ -7665,6 +7929,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tooltip",
           "virtual-list"
         ],
         "type": "length",
@@ -7692,6 +7957,7 @@
           "icon",
           "image",
           "inner-window",
+          "key-sequence-edit",
           "label",
           "menu-bar",
           "menu-button",
@@ -7716,6 +7982,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tooltip",
           "virtual-list"
         ],
         "type": "bool",
@@ -7743,6 +8010,7 @@
           "icon",
           "image",
           "inner-window",
+          "key-sequence-edit",
           "label",
           "menu-bar",
           "menu-button",
@@ -7767,6 +8035,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tooltip",
           "virtual-list"
         ],
         "type": "length",
@@ -7803,6 +8072,7 @@
     "icon": "Icon",
     "image": "Image",
     "inner-window": "InnerWindow",
+    "key-sequence-edit": "KeySequenceEdit",
     "label": "Label",
     "menu": "Menu",
     "menu-bar": "MenuBar",
@@ -7829,6 +8099,7 @@
     "text-edit": "TextEdit",
     "toast-host": "ToastHost",
     "toggle-button": "ToggleButton",
+    "tooltip": "Tooltip",
     "virtual-list": "VirtualList",
     "window": "Window"
   }

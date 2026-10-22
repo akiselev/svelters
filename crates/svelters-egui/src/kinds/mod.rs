@@ -40,7 +40,7 @@ mod panes;
 // WG4a (plans/milestones/WG4a-tier1-views.md)
 mod views;
 
-pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, FOCUS_SCOPE, JUSTIFY, KINDS, POSITION, WRAP, WRAP_MODE};
+pub use builtin::{ALIGN, ALIGN_SELF, CURSOR, DIRECTION, ELIDE, FOCUS_SCOPE, JUSTIFY, KINDS, POSITION, WRAP, WRAP_MODE};
 pub use decor::ORIENTATION;
 pub use layouts::{JUSTIFY_ITEMS, SCROLL_DIRECTION};
 pub use menus::attaches_to;
@@ -262,6 +262,10 @@ pub enum P {
     /// EV3: a button's Enter and Escape roles.
     Default,
     Cancel,
+    /// WG6: QA5 `status-tip`, QA14 `cursor`, QW13 `elide`.
+    StatusTip,
+    Cursor,
+    Elide,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }

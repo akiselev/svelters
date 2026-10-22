@@ -248,7 +248,7 @@ pub fn slot_accepts(id: &str) -> &'static [&'static str] {
 /// inserted into the element itself (`scene/tree.rs` accepts it under any node).
 pub fn attaches_to(id: &str) -> Option<&'static str> {
     match id {
-        "ContextMenu" | "Popup" => Some("Widget"),
+        "ContextMenu" | "Popup" | "Tooltip" => Some("Widget"),
         _ => None,
     }
 }

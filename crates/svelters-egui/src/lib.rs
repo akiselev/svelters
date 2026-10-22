@@ -48,6 +48,7 @@ mod leaf;
 mod menus;
 mod overlays;
 mod ops;
+pub mod tips;
 mod walk;
 // WG4a: state, layout and paint of the Tier 1 views (`kinds/views.rs`); `toast` is public
 mod views;
@@ -64,6 +65,7 @@ pub use runner::kittest as harness;
 
 pub use backend::{EguiBackend, Stats};
 pub use embed::Embed;
+pub use tips::status_tip;
 pub use spec::dump;
 
 /// `use svelters_egui::prelude::*;`: what a provider kind (`#[svelters::widget]`) or a behaviour

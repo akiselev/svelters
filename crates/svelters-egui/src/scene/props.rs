@@ -86,7 +86,7 @@ pub(crate) fn is_common(key: P) -> bool {
     use P::*;
     matches!(
         key,
-        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | Position | Left | Top | Right | Bottom | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid | DragType | DragData | DropTypes | Autofocus | FocusScope | Default | Cancel
+        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | Position | Left | Top | Right | Bottom | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid | DragType | DragData | DropTypes | Autofocus | FocusScope | Default | Cancel | StatusTip | Cursor
     )
 }
 
@@ -115,6 +115,8 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
             d.insert(Dirty::LAYOUT);
         }
         (P::Tooltip, _) => c.tooltip = as_str(v)?,
+        (P::StatusTip, _) => c.status_tip = as_str(v)?,
+        (P::Cursor, _) => c.cursor = as_enum(v, kinds::CURSOR)?,
         (P::AccessibleName, _) => c.accessible_name = as_str(v)?,
         (P::Anchor, _) => c.anchor = as_str(v)?,
         (P::Width, _) => c.width = as_len(v)?,
@@ -169,6 +171,10 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         }
         (P::WrapMode, W::Label { wrap, .. }) => {
             *wrap = as_enum(v, kinds::WRAP_MODE)?;
+            d.insert(Dirty::MEASURE);
+        }
+        (P::Elide, W::Label { elide, .. }) => {
+            *elide = as_enum(v, kinds::ELIDE)?;
             d.insert(Dirty::MEASURE);
         }
         (P::Selectable, W::Label { selectable, .. }) => *selectable = as_bool(v)?,
@@ -304,6 +310,8 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Enabled, _) => Value::Bool(c.enabled),
         (P::Visible, _) => Value::Bool(c.visible),
         (P::Tooltip, _) => s(&c.tooltip),
+        (P::StatusTip, _) => s(&c.status_tip),
+        (P::Cursor, _) => s(c.cursor),
         (P::AccessibleName, _) => s(&c.accessible_name),
         (P::Anchor, _) => s(&c.anchor),
         (P::Width, _) => len_value(c.width),
@@ -344,6 +352,7 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::DefaultHeight, W::Window { default_h, .. }) => Value::F64(*default_h),
         (P::Text, _) => s(n.text()),
         (P::WrapMode, W::Label { wrap, .. }) => s(wrap),
+        (P::Elide, W::Label { elide, .. }) => s(elide),
         (P::Selectable, W::Label { selectable, .. }) => Value::Bool(*selectable),
         (P::Selected, W::Button { selected, .. } | W::Icon { selected, .. }) => Value::Bool(*selected),
         (P::Frame, W::Button { frame, .. } | W::ToggleButton { frame, .. } | W::Icon { frame, .. }) => Value::Bool(*frame),

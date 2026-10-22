@@ -81,6 +81,10 @@ pub(crate) enum Role {
     List,
     /// A provider kind (its claims are asked through `Widget::consume_key`).
     Ext { enter: bool, escape: bool },
+    /// WG6 (QW10): a `key-sequence-edit` recording a shortcut: every key but a plain Tab.
+    Capture,
+    /// WG6 (QW9): a `combo-box`: Space and Enter, and the typed characters (type-ahead).
+    Combo,
     Other,
 }
 
@@ -229,6 +233,8 @@ pub(crate) fn claims(role: Role, key: Key, m: Modifiers, mac: bool) -> bool {
         Role::Slider => !command && !m.alt && nav,
         Role::List => !command && !m.alt && (nav || (!m.shift && matches!(key, Key::Space | Key::Enter))),
         Role::Button { .. } | Role::Toggle => !command && !m.alt && !m.shift && matches!(key, Key::Space | Key::Enter),
+        Role::Capture => !(key == Key::Tab && !command && !m.alt),
+        Role::Combo => !command && !m.alt && (matches!(key, Key::Space | Key::Enter) || key.name().len() == 1),
         Role::Ext { .. } | Role::Other => false,
     }
 }
@@ -539,6 +545,8 @@ pub(crate) fn record(arena: &Arena, i: usize, ui: &Ui, resp: &egui::Response) {
         W::TextEdit { multiline, .. } => Role::Text { multiline: *multiline },
         W::Button { .. } => Role::Button { default: c.default_button, cancel: c.cancel_button },
         W::Slider { .. } | W::RangeSlider { .. } | W::DragValue { .. } => Role::Slider,
+        W::Picker(crate::kinds::pickers::Picker::KeySeq { recording: true, .. }) => Role::Capture, // WG6
+        W::ComboBox { .. } => Role::Combo, // WG6 (QW9)
         W::Ext(x) => {
             let w = x.0.try_borrow();
             let claim = |k| w.as_ref().is_ok_and(|w| w.consume_key(k, Modifiers::NONE));

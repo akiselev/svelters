@@ -19,7 +19,7 @@ use crate::provider::{ExtBlock, StateBits};
 pub enum W {
     Window { title: String, default_w: f64, default_h: f64 },
     Box,
-    Label { text: String, wrap: &'static str, selectable: bool, weight: i64 },
+    Label { text: String, wrap: &'static str, selectable: bool, weight: i64, elide: &'static str },
     Button { text: String, selected: bool, frame: bool, small: bool, weight: i64 },
     Checkbox { text: String, checked: bool },
     TextEdit { text: String, hint: String, multiline: bool, password: bool, char_limit: i64 },
@@ -128,6 +128,10 @@ pub struct Common {
     /// EV3: a button activated by Enter (`default`) or Escape (`cancel`) in its scope.
     pub default_button: bool,
     pub cancel_button: bool,
+    /// WG6 (QA5, `crate::tips`): the `status-tip` prop.
+    pub status_tip: String,
+    /// WG6 (QA14): the `cursor` prop (a CSS cursor name; `auto`: the widget's own).
+    pub cursor: &'static str,
 }
 
 impl Common {
@@ -167,6 +171,8 @@ impl Common {
         focus_scope: "none",
         default_button: false,
         cancel_button: false,
+        status_tip: String::new(),
+        cursor: "auto",
     };
 }
 
@@ -260,6 +266,12 @@ bits! {
         const ATTACHED = 1 << 15;
         /// Has attached nodes (`NodeCold::attached` is not empty): the walk runs their hooks.
         const HAS_ATTACHED = 1 << 16;
+        /// WG6 (QA13): `scroll-into-view` was called; the walk scrolls to it when it reaches it.
+        const WANT_SCROLL = 1 << 17;
+        /// WG6: a descendant has `WANT_SCROLL`: the walk does not cull this subtree.
+        const SCROLL_BELOW = 1 << 18;
+        /// WG6: `scroll-into-view("center")`.
+        const SCROLL_CENTER = 1 << 19;
         /// SG4: the top of a provider's shadow subtree (ARCH-SCENE §4.4): its parent is the host
         /// provider node, which lays it out and draws it (`WidgetCx::children`); JS never sees it.
         const SHADOW = 1 << 20;

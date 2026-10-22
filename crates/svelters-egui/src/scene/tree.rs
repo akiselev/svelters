@@ -130,7 +130,7 @@ fn builtin_payload(kind: usize) -> Option<W> {
     Some(match kinds::kind(kind).id {
         "Window" => W::Window { title: String::new(), default_w: 480.0, default_h: 360.0 },
         "Box" => W::Box,
-        "Label" => W::Label { text: String::new(), wrap: "wrap", selectable: false, weight: 400 },
+        "Label" => W::Label { text: String::new(), wrap: "wrap", selectable: false, weight: 400, elide: "none" },
         "Button" => W::Button { text: String::new(), selected: false, frame: true, small: false, weight: 400 },
         "Checkbox" => W::Checkbox { text: String::new(), checked: false },
         "TextEdit" => W::TextEdit { text: String::new(), hint: String::new(), multiline: false, password: false, char_limit: 0 },
@@ -146,7 +146,7 @@ fn builtin_payload(kind: usize) -> Option<W> {
         "ScrollArea" => W::ScrollArea { direction: "vertical", x: 0.0, y: 0.0, seen: None },
         // WG2a: the defaults match the kind tables (`kinds/menus.rs`, `kinds/popups.rs`)
         id @ ("MenuEntry" | "MenuBar" | "Menu" | "Action" | "MenuSeparator" | "ContextMenu" | "MenuButton") => W::Menu(crate::menus::payload(id)),
-        id @ ("Popup" | "Modal" | "InnerWindow") => W::Overlay(Box::new(crate::overlays::payload(id))),
+        id @ ("Popup" | "Modal" | "InnerWindow" | "Tooltip") => W::Overlay(Box::new(crate::overlays::payload(id))),
         // WG2b: the defaults match the kind tables (`kinds/{inputs,panes,media}.rs`)
         "Hyperlink" | "RadioButton" | "Switch" | "RangeSlider" | "DragValue" | "Panel" | "Sides" | "Frame" | "Stack" | "Image" | "ProgressBar" | "Spinner" | "Canvas" => {
             crate::elements::payload(kinds::kind(kind).id)?

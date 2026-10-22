@@ -119,7 +119,7 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut
     ui.painter().hline(bar_rect.x_range(), line_y, ui.visuals().widgets.noninteractive.bg_stroke);
     let tip = arena.common(i).tooltip.clone();
     if !tip.is_empty() {
-        ui.interact(bar_rect, id.with("tip"), Sense::hover()).on_hover_text(tip);
+        crate::tips::text(ui.interact(bar_rect, id.with("tip"), Sense::hover()), &tip);
     }
     arena.core[i].drawn = r;
     crate::scene::hit::record(arena, i, ui);

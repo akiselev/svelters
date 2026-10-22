@@ -195,6 +195,22 @@ impl Backend for EguiBackend {
         if kinds::kind(k).tag == Some("virtual-list") {
             return Ok(self.vlist_call(h, def.name, args)?);
         }
+        // WG6 (QA13): every node's `scroll-into-view`
+        if def.name == "scroll-into-view" {
+            let center = match args {
+                [] => false,
+                [Value::Str(s)] if s == "nearest" => false,
+                [Value::Str(s)] if s == "center" => true,
+                _ => return Err("scroll-into-view takes an optional align: \"nearest\" or \"center\"".into()),
+            };
+            {
+                let mut scene = self.0.scene.borrow_mut();
+                let i = scene.ix(scene.live(h)?);
+                crate::tips::scroll_into_view(&mut scene, i, center);
+            }
+            self.touched(self.root_of(h));
+            return Ok(Value::Null);
+        }
         // WG4a: the views' methods take arguments (`crate::views::call`)
         if let Some(r) = crate::views::call(self, h, def.name, args) {
             return r;

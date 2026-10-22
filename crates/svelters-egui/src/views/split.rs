@@ -101,7 +101,7 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut
     let mut resp = crate::a11y::decorate(resp, &arena.n(h));
     let tip = arena.common(i).tooltip.clone();
     if !tip.is_empty() {
-        resp = resp.on_hover_text(tip);
+        resp = crate::tips::text(resp, &tip);
     }
     arena.core[i].drawn = r;
     crate::scene::hit::record(arena, i, ui);

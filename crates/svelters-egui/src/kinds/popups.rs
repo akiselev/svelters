@@ -156,6 +156,22 @@ pub(super) const POPUP: KindDef = KindDef {
     doc: "A popover anchored to its owner: the element it is declared in (attached), or the box it is placed in. Its children are a flex box sized to their content (or `width`/`height`), out of the owner's flow. GTK's `popover`.",
 };
 
+/// WG6 (QA5): a rich tooltip (Qt's rich-text tooltip, `{#snippet tooltip()}` in the survey).
+pub(super) const TOOLTIP: KindDef = KindDef {
+    id: "Tooltip",
+    tag: Some("tooltip"),
+    native: "egui::Tooltip",
+    base: Some("Box"),
+    toplevel: false,
+    slot: Some("children"),
+    text_content: None,
+    present: None,
+    props: &[],
+    signals: &[],
+    methods: &[],
+    doc: "A rich tooltip: declared in an element (attached), its children are shown as that element's tooltip on hover, enabled or disabled (`Tooltip::for_enabled`/`for_disabled`). A flex box sized to its content, out of the owner's flow. Render a snippet into it for a reusable tooltip: `<tooltip>{@render tip()}</tooltip>`. A `tooltip` prop on the same element wins over it (one tooltip per layer).",
+};
+
 pub(super) const MODAL: KindDef = KindDef {
     id: "Modal",
     tag: Some("modal"),
