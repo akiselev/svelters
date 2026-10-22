@@ -1,4 +1,9 @@
 //! [`SourceProvider`]: an app loaded from its sources, compiled live (Q1).
+//!
+//! LD3: the compiler's diagnostic types ([`Diagnostic`], [`Severity`], and the [`FixIt`]/[`TextEdit`]/
+//! [`FixHint`] of its fields) are re-exported at the crate root (`svelters_modules::Diagnostic`,
+//! `svelters_host::modules::Diagnostic`) with feature `source`, so a host reading [`Check`] needs no
+//! direct svelters-compiler dependency.
 
 mod aliases;
 pub(crate) mod build;
@@ -14,7 +19,7 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::hash::{Hash, Hasher};
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
-use svelters_compiler::diag::{Diagnostic, Severity};
+pub use svelters_compiler::diag::{Diagnostic, FixHint, FixIt, Severity, TextEdit};
 use svelters_compiler::semantics::{SpecBackend, kinds_module};
 use transform::{Compiler, Kind, Output};
 
