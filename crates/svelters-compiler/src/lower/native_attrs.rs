@@ -416,6 +416,7 @@ impl<'a> Lower<'a, '_, '_> {
         let mut binds: Vec<Op<'a>> = Vec::new();
         let mut transitions: SeenTransitions<'a> = (None, None);
         let mut subject = StyleSubject { tag: n.name.clone(), id: None, dynamic_id: None, static_classes: Vec::new(), cond_classes: Vec::new(), dynamic: None };
+        self.check_duplicate_events(&n.attributes, OnSite::Element("svelte:element"));
         for a in &n.attributes {
             match a {
                 AttributeLike::Attribute(at) if matches!(at.name.as_str(), "slot" | "data-slot") => match static_text(at) {
@@ -454,6 +455,12 @@ impl<'a> Lower<'a, '_, '_> {
                 AttributeLike::OnDirective(d) if d.modifiers.is_empty() && d.expression.is_some() => {
                     entries.push(SpreadEntry::Event { key: format!("on{}", d.name), handler: d.expression.as_ref().unwrap() });
                 }
+                // FW1: a bare `on:name` forwards the component's own callback prop
+                AttributeLike::OnDirective(d) if d.modifiers.is_empty() => {
+                    self.note_forwarding(d, OnSite::Element("svelte:element"));
+                    entries.push(SpreadEntry::Forward { key: format!("on{}", d.name) });
+                }
+                AttributeLike::OnDirective(d) => self.on_modifiers(d, OnSite::Element("svelte:element")),
                 AttributeLike::BindDirective(d) if d.name == "this" => {
                     let Some(target) = &d.expression else { unreachable!("the parser synthesises bind:x shorthands") };
                     self.no_bind_modifiers(d, "bind:this");
@@ -479,7 +486,6 @@ impl<'a> Lower<'a, '_, '_> {
                 }
                 other => {
                     let what = match other {
-                        AttributeLike::OnDirective(_) => "on: directives with modifiers or without a handler (use on<event>={handler})",
                         AttributeLike::AnimateDirective(_) => "animate: directives",
                         AttributeLike::LetDirective(_) => "let: directives",
                         _ => "this attribute",

@@ -359,6 +359,11 @@ impl Codegen<'_, '_> {
                         None => self.paren_expr(handler, Mode::Read),
                     }
                 }
+                // FW1: the component's own callback prop, re-read with the spread object
+                SpreadEntry::Forward { key } => {
+                    sep(&mut self.w);
+                    self.w.write(&format!("{}: {}", js_key(key), props_member(key)));
+                }
                 SpreadEntry::Spread(e) => {
                     sep(&mut self.w);
                     match self.memoized(e) {
@@ -663,6 +668,11 @@ impl Codegen<'_, '_> {
                 self.w.write("function (...$$args) { ");
                 self.paren_expr(object, Mode::Read);
                 self.w.write(&format!("[{}]?.apply(this, $$args); }}", js_str(key)));
+            }
+            // FW1: the component's own callback prop, read when the event fires (Svelte's
+            // handler for `onx={$$props.onx}`)
+            Handler::Forward { key } => {
+                self.w.write(&format!("function (...$$args) {{ {}?.apply(this, $$args); }}", props_member(key)));
             }
         }
         if *flags != 0 {
@@ -1622,6 +1632,10 @@ impl Codegen<'_, '_> {
                     let set = self.rw.assign(target, "$$value");
                     self.w.write(&format!("; }}, set {}($$value) {{ {set}; }}", js_key(name)));
                 }
+                // FW1: this component's own callback prop, passed through as a getter
+                ComponentProp::Forward { name } => {
+                    self.w.write(&format!("get {}() {{ return {}; }}", js_key(name), props_member(name)));
+                }
                 ComponentProp::Attach(e) => {
                     // Svelte's build_component: a reactive attachment is re-read by the attach effect
                     self.w.write("[$.attachment()]: ");
@@ -1791,6 +1805,12 @@ fn js_key(s: &str) -> String {
     let ident = s.chars().next().is_some_and(|c| c.is_ascii_alphabetic() || c == '_' || c == '$')
         && s.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '$');
     if ident { s.to_string() } else { js_str(s) }
+}
+
+/// FW1: `$$props.name` / `$$props["na-me"]`, the component's own (internal) props parameter.
+fn props_member(name: &str) -> String {
+    let key = js_key(name);
+    if key == name { format!("$$props.{name}") } else { format!("$$props[{key}]") }
 }
 
 fn escape_template(s: &str) -> String {

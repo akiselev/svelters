@@ -12,6 +12,7 @@
 //! native slot of the parent element without creating a native.
 
 pub mod ir;
+mod forward;
 mod native_attrs;
 pub use native_attrs::HELPERS_MODULE;
 mod lists;
@@ -28,6 +29,7 @@ use crate::svelte::ast::{
     Root, SnippetBlock, TextOrExpressionTag,
 };
 use ir::*;
+use forward::OnSite;
 use native_attrs::{animate_host, attr_value, ScriptFacts, CHILD_ATTR_PREFIX};
 use serde_json::Value as Json;
 use std::collections::{HashMap, HashSet};
@@ -59,6 +61,7 @@ pub fn lower<'a>(root: &'a Root, sem: &dyn PlatformSemantics, styles: Option<&'a
         list_views: lists::list_view_names(root),
         kinds: false,
         animate_hosts: HashSet::new(),
+        forwarding_noted: false,
     };
     l.check_style_sheet();
     let root_fragment = l.fragment(&root.fragment, &Parent::Root, &[]);
@@ -131,6 +134,8 @@ struct Lower<'a, 's, 'd> {
     kinds: bool,
     /// TR1: span starts of the elements that may carry `animate:` (the only element of a keyed each).
     animate_hosts: HashSet<u32>,
+    /// FW1: `legacy_forwarding_lowered` was reported (once per component).
+    forwarding_noted: bool,
 }
 
 fn sp(s: Span) -> (u32, u32) {
@@ -785,6 +790,7 @@ impl<'a> Lower<'a, '_, '_> {
         let mut inline_setters: Vec<(StyleLowering, Span)> = Vec::new();
         let mut style_span: Option<Span> = None;
         let mut show: Option<String> = None;
+        self.check_duplicate_events(&el.attributes, OnSite::Element(&el.name));
         for a in &el.attributes {
             match a {
                 // X7: how a toplevel is shown once it (and the enclosing toplevel) is in place
@@ -850,8 +856,25 @@ impl<'a> Lower<'a, '_, '_> {
                     let name = &at.name[CHILD_ATTR_PREFIX.len()..];
                     ops.extend(self.child_attr_op(attr_target.as_ref(), name, at));
                 }
+                // FW1: a bare `on:name` forwards the component's own callback prop, the listener
+                // `onname={$$props.onname}` (ARCH-EMBED §8.7)
+                AttributeLike::OnDirective(d) if d.modifiers.is_empty() && d.expression.is_none() => {
+                    let ns = d.name_span.map_or(sp(d.span()), sp);
+                    let key = format!("on{}", d.name);
+                    self.note_forwarding(d, OnSite::Element(&el.name));
+                    let op = self.listen_op(&er, &key, Handler::Forward { key: key.clone() }, d.span(), ns);
+                    if runtime_attrs {
+                        if op.is_some() {
+                            spread_at.get_or_insert(ops.len());
+                            entries.push(SpreadEntry::Forward { key });
+                        }
+                    } else {
+                        ops.extend(op);
+                    }
+                }
+                AttributeLike::OnDirective(d) if !d.modifiers.is_empty() => self.on_modifiers(d, OnSite::Element(&el.name)),
                 // Legacy `on:name={handler}` (deprecated in Svelte 5, still compiled in runes mode): a
-                // listener like `onname={handler}`; modifiers and bare forwarding are rejected below
+                // listener like `onname={handler}`
                 AttributeLike::OnDirective(d) if d.modifiers.is_empty() && d.expression.is_some() => {
                     let ns = d.name_span.map_or(sp(d.span()), sp);
                     let key = format!("on{}", d.name);
@@ -973,7 +996,6 @@ impl<'a> Lower<'a, '_, '_> {
                 other => {
                     let what = match other {
                         AttributeLike::AttachTag(_) => "{@attach}",
-                        AttributeLike::OnDirective(_) => "on: directives with modifiers or without a handler (use on<event>={handler})",
                         AttributeLike::UseDirective(_) => "use: actions",
                         AttributeLike::TransitionDirective(_) => "transitions",
                         AttributeLike::AnimateDirective(_) => "animate: directives",
@@ -1484,6 +1506,7 @@ impl<'a> Lower<'a, '_, '_> {
         let mut props = Vec::new();
         let mut binds = Vec::new();
         let mut slot = None;
+        self.check_duplicate_events(el.attributes, OnSite::Component(el.name));
         for a in el.attributes {
             match a {
                 AttributeLike::Attribute(at) if at.name == "slot" => slot = static_text(at),
@@ -1502,6 +1525,16 @@ impl<'a> Lower<'a, '_, '_> {
                 }
                 AttributeLike::SpreadAttribute(s) => props.push(ComponentProp::Spread(&s.expression)),
                 AttributeLike::AttachTag(t) => props.push(ComponentProp::Attach(&t.expression)),
+                // FW1: `on:name={h}` is the prop `onname={h}`; a bare `on:name` forwards this
+                // component's own callback prop to the child (ARCH-EMBED §8.7)
+                AttributeLike::OnDirective(d) if !d.modifiers.is_empty() => self.on_modifiers(d, OnSite::Component(el.name)),
+                AttributeLike::OnDirective(d) => match &d.expression {
+                    Some(e) => props.push(ComponentProp::Dynamic { name: format!("on{}", d.name), value: Dynamic::Expr(e) }),
+                    None => {
+                        self.note_forwarding(d, OnSite::Component(el.name));
+                        props.push(ComponentProp::Forward { name: format!("on{}", d.name) });
+                    }
+                },
                 other => {
                     self.diags.error("unsupported_feature", sp(other.span()), "this attribute kind is not supported on components by the native compiler yet");
                 }

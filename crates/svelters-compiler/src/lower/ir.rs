@@ -173,6 +173,8 @@ pub enum SpreadEntry<'a> {
     Attr { key: String, value: AttrValue<'a> },
     /// `on<event>: handler` (an inline function is hoisted, so it keeps its identity).
     Event { key: String, handler: &'a Expression },
+    /// FW1: a bare `on:<event>`, `key: $$props.key` (the component's own callback prop).
+    Forward { key: String },
     /// `...expr`.
     Spread(&'a Expression),
     /// `class:name={expr}`: `[$n.CLASS]: { name: expr }`.
@@ -187,6 +189,9 @@ pub enum SpreadEntry<'a> {
 pub enum Handler<'a> {
     Expr(&'a Expression),
     Member { object: &'a Expression, key: String },
+    /// FW1: a bare `on:<event>` inside a component forwards to the component's own callback prop
+    /// `key` (`$$props[key]`, read when the event fires; ARCH-EMBED §8.7).
+    Forward { key: String },
 }
 
 #[derive(Debug)]
@@ -366,6 +371,9 @@ pub enum ComponentProp<'a> {
     Bind { name: String, target: &'a Expression },
     /// `{...expr}`: an argument of Svelte's `$.spread_props` (a thunk when `expr` is reactive).
     Spread(&'a Expression),
+    /// FW1: a bare `on:<event>` on a child component, `get name() { return $$props.name; }`:
+    /// the child gets this component's own callback prop (ARCH-EMBED §8.7).
+    Forward { name: String },
     /// `{@attach expr}` on a component: Svelte's `[$.attachment()]: expr` prop (a symbol key the
     /// child spreads onto its element).
     Attach(&'a Expression),

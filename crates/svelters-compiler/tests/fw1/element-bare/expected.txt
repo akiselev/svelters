@@ -1,0 +1,31 @@
+backend: gtk
+
+## diagnostics
+note[legacy_forwarding_lowered] @9:31: `on:clicked` forwards this component's `onclicked` callback prop: the one handler its parent passes gets the event (legacy forwarding re-dispatched it to every listener; svelters has no component events)
+  help: for svelte-check, declare the prop in this component's `$props()` type, e.g. `Props & Forward<'button', 'clicked'>` (types from `@svelters/native-runtime/types`)
+
+## output.js
+import * as $ from '@svelters/native-runtime/core';
+import * as $n from '@svelters/native-runtime';
+
+export default function Input($$anchor, $$props) {
+	$.push($$props, true);
+	let count = $.state(0);
+	const $$n1 = $n.toplevel("window", "present");
+	const $$n2 = $n.element("box");
+	const $$n3 = $n.element("button");
+	$n.set($$n3, "label", "Forwarded");
+	$n.append($n.slot($$n2, null), $$n3);
+	const $$n4 = $n.element("button");
+	$n.set($$n4, "label", "Local");
+	$n.append($n.slot($$n2, null), $$n4);
+	const $$n5 = $n.toplevel("window", "present");
+	$n.set($$n5, "title", "Closing");
+	$n.append($n.slot($$n2, null), $$n5);
+	$n.append($n.slot($$n1, null), $$n2);
+	$n.append($$anchor, $$n1);
+	$n.on($$n3, "clicked", function (...$$args) { $$props.onclicked?.apply(this, $$args); });
+	$n.on($$n4, "clicked", () => $.update(count));
+	$n.on($$n5, "close-request", function (...$$args) { $$props["onclose-request"]?.apply(this, $$args); });
+	$.pop();
+}

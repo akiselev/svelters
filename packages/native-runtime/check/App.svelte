@@ -6,6 +6,8 @@
   let draft = $state('');
   let cursor = $state(0);
   let win = $state<import('../types/native').NativeElement>();
+  // FW1: the grandparent's handler reaches Toolbar's button through Panel's bare `on:clicked`
+  import Panel from './Panel.svelte';
 </script>
 
 <window title="Check" bind:this={win}>
@@ -16,6 +18,7 @@
     <!-- R2: a snapshot binding and a read-only observable one (observe.d.ts) -->
     <entry bind:text|nonreactive={draft} bind:cursor-position={cursor}></entry>
     <button onclicked={() => win?.call('present')}>Present</button>
+    <Panel title="Forwarded" onclicked={(e) => { count++; void e; }} />
     <button class="primary" class:active={count > 1} style:color="red" style="padding: 4px" id="styled">Styled</button>
   </box>
 </window>
