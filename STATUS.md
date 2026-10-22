@@ -61,7 +61,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | EM2 deferred viewports | DONE | 2b0d144f | `SlotPainter`, begin-pass plugin, `set_viewport`/`move_root`, per-root rAF pause, `show_viewport_passes` call site, `harness::dock::SvelteDock` (berth adapter); DOCK-W2/W4 tests; `plans/milestones/EM2-viewports.md` |
 | SG2 extension columns, change journal | DONE | db7f62c5 | one column per `ExtKey` (`with_ext` 1.9 µs over 5k of 100k nodes, release), pull observers with `ChangeFilter`, replayable journal, `Damage`, ticks + `changed_since`, R19 Ext-Removed, 0 allocations per mutation without observers; `ExtBlock` is now a read view; `plans/milestones/SG2-ext-journal.md` |
 | EV2b native behaviours (`use:`) | IN PROGRESS | | branch `ci/ev2b` |
-| SG3 scene queries, traversal, hit lists | IN PROGRESS | | branch `ci/sg3`; last scene milestone on SC1's path (R14, R20) |
+| SG3 scene queries, traversal, hit lists | DONE | (this merge) | queries by anchor/path/kind/tag/state/ext, `changed_since` (R14), `Cursor` + `visit`, hit lists + `hit_test` topmost-first with `HIT_TRANSPARENT`, provider `Hit::Part` (R13), R20; embed visibility/viewport journaled; `plans/milestones/SG3-queries-hit.md` |
 | WG1 SC1 egui widget subset | IN PROGRESS | | branch `ci/wg1`; grid, collapsing-header, toggle-button, combo-box, separator, scroll-area, icon, tooltip, invalid, a11y names; cadatomic FW1's acceptance depends on it |
 | CX1 in-process diagnostics (SV27) | IN PROGRESS | | branch `ci/cx1`; check-only compile, per-file incremental state, stable codes, `--check --json` |
 | Q1 module loader (`svelters-modules`) | IN PROGRESS | | thinkpad-svelters, branch `ci/q1` |
@@ -128,7 +128,7 @@ cadatomic's side is `docs/plan/04-kernel-requests.md` (SV table) in the cadatomi
 | SV24 `&self` Schema codegen | DONE (RA2, 78d33256) | RA2-json-values.md |
 | SV48 error path inside serde internally tagged enums | IN PROGRESS (`ci/sv48`); required before a cadatomic package passes command args through `Json<T>` (main-cadatomic gives notice) | RA2-json-values.md "Open items" |
 | DK3/DK4 secondary windows for berth panes | svelters side done (EM2, 2b0d144f) | EM2-viewports.md |
-| Scene graph with full Rust access | SG1, SG2 done; SG3 running | ARCH-SCENE.md §14 |
+| Scene graph with full Rust access | SG1, SG2, SG3 done (SC1 path complete); SG4, SG5 in progress | ARCH-SCENE.md §14 |
 
 ## Handoff (2026-10-19, superseded)
 
