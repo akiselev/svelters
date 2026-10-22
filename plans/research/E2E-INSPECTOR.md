@@ -619,6 +619,11 @@ file and calls `reload.apply`.
   (locators, auto-waiting, web-first assertions, fixtures, traces).
 - **Q3, inspector UI: Svelte in a protected root**, as recommended.
 
+**Agreed with main-cadatomic (2026-10-22):** cadatomic binds `dev.ui_inspector` to Ctrl+Shift+I (Cmd+Option+I on macOS),
+and F12 stays on its Developer tools. AU1 takes a host-supplied idle predicate, so `wait.*` never answers before
+cadatomic's IdleBarrier (jobs, sessions, BusyProbe). Any recording format from `journal.*`/`capture.*` stays separate
+from cadatomic's command log and ndjson scenarios (its one-recording rule).
+
 
 1. **Is the protocol in shipped builds?** cadatomic's pixel tier is a `compile_error!` in release builds (A8a-2). In-app
    agents and the self-modifying UI need the protocol in release, and the user wants e2e against the build as
