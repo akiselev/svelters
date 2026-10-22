@@ -342,6 +342,8 @@ fn owrust_disabled_keeps_its_shape_and_its_tooltip() {
     assert_eq!(t.plan.borrow().clicks, 0, "a disabled imm button never activates");
     let nodes: Vec<_> = t.rig.harness.query_all_by_role_and_label(Role::Button, "Off").collect();
     assert!(nodes.iter().all(|n| n.accesskit_node().is_disabled()));
+    // OW3's tooltip path: the imm host is described by its tooltip (R9: the reason)
+    assert!(nodes.iter().any(|n| n.accesskit_node().description().as_deref() == Some("Not now")), "imm: described by its tooltip");
 }
 
 #[test]
@@ -537,4 +539,18 @@ fn owrust_chrome_galley_in_the_style_colour_and_font() {
     assert!(font.size > 0.0, "font() gives the style's font: {font:?}");
     // an icon by key in a rect, traced as part `icon`
     assert!(trace::last(&b.rig.harness.ctx).entries.iter().any(|e| e.node == close_id.value() && e.part == Some("icon")), "the close icon");
+}
+
+#[test]
+fn owrust_tooltip_comes_up_through_ow3s_attach() {
+    let mut t = T::new("button", &[("text", s("Apply"))], true, Box::new(|ui, r, sv| imm::Button::new("Apply").tooltip("Applies it").show_at(ui, r, sv)));
+    native::override_policy(&t.rig.harness.ctx, |p| p.tooltip_delay_ms = 60_000);
+    let tip = |t: &T| t.rig.harness.query_all_by_label("Applies it").filter(|n| n.accesskit_node().role() == Role::Tooltip).count();
+    t.rig.harness.hover_at(t.rig.drawn(t.h).center() + OFFSET);
+    t.rig.harness.run();
+    assert_eq!(tip(&t), 0, "not before the platform delay (Tooltipable)");
+    native::override_policy(&t.rig.harness.ctx, |p| p.tooltip_delay_ms = 0);
+    t.rig.harness.run_steps(2);
+    t.rig.harness.run();
+    assert_eq!(tip(&t), 1, "the imm button's tooltip shows through tooltip::attach");
 }

@@ -129,6 +129,17 @@ pub fn ring(painter: &egui::Painter, id: egui::Id, st: &Styled, rect: egui::Rect
     paint::paint_outline(&mut cx(painter, id, None), &st.view(), rect);
 }
 
+/// A tooltip on the caller's response, the svelters way (OW3's `Tooltipable`: the platform delay,
+/// follow-on, hidden by a press, shown on a disabled control as its reason, R9). It also sets the
+/// response's AccessKit description, so it is not a paint call: berth (which owns AccessKit) calls
+/// it next to its own `widget_info`, not from inside a `ChromePainter` method.
+pub fn tooltip(ui: &egui::Ui, resp: &egui::Response, text: &str) -> egui::Response {
+    if text.is_empty() {
+        return resp.clone();
+    }
+    crate::widgets::tooltip::attach(ui, resp, text, true)
+}
+
 impl Sv {
     /// [`state`] and [`Sv::styled`] in one call: the element `el` of a foreign painter in the
     /// state its response and `props` give, over `ua` (`Ua::NONE` for chrome with no kind yet:

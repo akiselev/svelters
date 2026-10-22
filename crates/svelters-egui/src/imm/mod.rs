@@ -362,14 +362,10 @@ impl Ran {
         if let Some(r) = focus_role {
             crate::focus::record_foreign(&ui, &resp, r);
         }
+        // OW3: the own tooltip (Tooltipable: delay, follow-on, R9 on disabled hosts, AccessKit
+        // description), as a scene widget's
         match tooltip {
-            Some(t) if !t.is_empty() => {
-                if resp.enabled() {
-                    resp.on_hover_text(t)
-                } else {
-                    resp.on_disabled_hover_text(t)
-                }
-            }
+            Some(t) if !t.is_empty() => crate::widgets::tooltip::attach(&ui, &resp, t, true),
             _ => resp,
         }
     }

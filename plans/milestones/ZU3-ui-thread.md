@@ -38,7 +38,7 @@ three checks: a lint, a hang watchdog and a frame-time histogram. It does not ad
   | `host/exports/offload.rs` `blocking_loop` | the blocking pool's worker threads |
   | `host/exports/service.rs` `StopToken::wait`, `shutdown_services` | service threads; bounded join at shutdown |
   | `host/exports/stream.rs` `send` | producer side (workers), backpressure |
-  | `host/platform.rs` `reveal_system` | dbus-send on its own thread |
+  | `host/platform.rs` `reveal_system` | Linux/BSD: dbus-send on its own thread. macOS (`open -R`) and Windows (`explorer /select,`): a detached spawn, never waited on, once per user action, as `open::that_detached` does for open_url/open_path (FX5, 2026-10-22: the cfg'd sites were missed because CI's clippy runs on Linux only) |
   | `host/quickjs.rs` `Drop` | teardown, bounded `TRANSFER_GRACE` |
   | `host/reload.rs` `start_watch`, `sync_watch`, `Watch::drop` | watcher thread, the loader's reload, teardown |
   | `host/sourcemap.rs` `map_for` | error path only (one `.map` read per module) |
