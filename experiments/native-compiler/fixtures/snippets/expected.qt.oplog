@@ -3,58 +3,58 @@ set #1 window-title "Snippets"
 create box-layout #2
 set #2 direction "top-to-bottom"
 create label #3
-set #3 text "0: a"
 insert #2 #3 before=end slot=default
+set #3 text "0: a"
 create label #4
-set #4 text "1: b"
 insert #2 #4 before=end slot=default
+set #4 text "1: b"
 create box-layout #5
 set #5 direction "top-to-bottom"
 set #5 spacing 2
 create label #6
-set #6 text "Card #1"
 insert #5 #6 before=end slot=default
 create label #7
-set #7 text "plain 1"
 insert #5 #7 before=end slot=default
+set #7 text "plain 1"
 create push-button #8
-listen #8 clicked on
 set #8 text "Swap"
 insert #5 #8 before=end slot=default
 create push-button #9
-listen #9 clicked on
 set #9 text "More"
 insert #5 #9 before=end slot=default
+listen #8 clicked on
+listen #9 clicked on
 insert #2 #5 before=end slot=default
+set #6 text "Card #1"
 create push-button #10
-listen #10 clicked on
 set #10 text "Add"
 insert #2 #10 before=end slot=default
 insert #1 #2 before=end slot=default
+listen #10 clicked on
 call #1 present []
 event #8 clicked []
 create push-button #11
-set #11 text "bold 1"
 insert #5 #11 before=#8 slot=default
 create label #12
 set #12 text "!"
 insert #5 #12 before=#8 slot=default
+set #11 text "bold 1"
 remove #5 #7
 destroy #7
 event #9 clicked []
-set #6 text "Card #2"
 set #11 text "bold 2"
+set #6 text "Card #2"
 event #8 clicked []
 create label #13
-set #13 text "plain 2"
 insert #5 #13 before=#8 slot=default
+set #13 text "plain 2"
 remove #5 #11
 remove #5 #12
 destroy #11
 destroy #12
 event #10 clicked []
 create label #14
-set #14 text "0: z"
 insert #2 #14 before=#3 slot=default
+set #14 text "0: z"
 set #3 text "1: a"
 set #4 text "2: b"

@@ -10,30 +10,30 @@ create label #3
 set #3 text "Styled"
 insert #2 #3 before=end slot=default
 create push-button #4
-listen #4 clicked on
 set #4 text "Toggle"
 insert #2 #4 before=end slot=default
 create line-edit #5
 set #5 placeholder-text "type here"
 insert #2 #5 before=end slot=default
 create push-button #6
-listen #6 clicked on
 set #6 text "Theme"
 insert #2 #6 before=end slot=default
 create push-button #7
-listen #7 clicked on
 set #7 text "Accent"
 insert #2 #7 before=end slot=default
 insert #1 #2 before=end slot=default
+listen #4 clicked on
+listen #6 clicked on
+listen #7 clicked on
 call #1 present []
 style #1 classes "app svelte-f3c18059ba"
 style #2 classes "sv-k-box-layout card svelte-f3c18059ba"
-style #3 classes "sv-k-label title svelte-f3c18059ba"
 style #4 classes "primary svelte-f3c18059ba"
 style #4 name "toggle"
 style #5 classes "field svelte-f3c18059ba"
 style #6 classes "svelte-f3c18059ba"
 style #7 classes "svelte-f3c18059ba"
+style #3 classes "sv-k-label title svelte-f3c18059ba"
 event #4 clicked []
 style #3 classes "sv-k-label title svelte-f3c18059ba big"
 style #3 inline "color: #c01c28;"

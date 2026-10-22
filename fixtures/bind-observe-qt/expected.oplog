@@ -4,30 +4,30 @@ create box-layout #2
 set #2 direction "top-to-bottom"
 set #2 spacing 6
 create line-edit #3
-set #3 text "Ann"
-observe #3 text on
 insert #2 #3 before=end slot=default
 create line-edit #4
-set #4 text "Ann"
 insert #2 #4 before=end slot=default
 create push-button #5
-listen #5 clicked on
 set #5 text "native"
 insert #2 #5 before=end slot=default
 create push-button #6
-listen #6 clicked on
 set #6 text "state"
 insert #2 #6 before=end slot=default
 create label #7
-set #7 text "name Ann"
 insert #2 #7 before=end slot=default
 create label #8
-set #8 text "draft Ann"
 insert #2 #8 before=end slot=default
 create label #9
 set #9 text "size n/a"
 insert #2 #9 before=end slot=default
 insert #1 #2 before=end slot=default
+set #7 text "name Ann"
+set #8 text "draft Ann"
+set #3 text "Ann"
+observe #3 text on
+set #4 text "Ann"
+listen #5 clicked on
+listen #6 clicked on
 call #1 present []
 event #5 clicked []
 set #3 text "Zed"
@@ -36,7 +36,7 @@ changed #3 text "Kim"
 changed #4 text "Kim"
 set #7 text "name Kim"
 event #6 clicked []
-set #3 text "Bob"
-set #4 text "Bob"
 set #7 text "name Bob"
 set #8 text "draft Bob"
+set #3 text "Bob"
+set #4 text "Bob"

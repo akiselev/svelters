@@ -1,8 +1,8 @@
 create window #1
 set #1 title "Timers"
 create label #2
-set #2 label "waiting"
 insert #1 #2 before=end slot=default
+set #2 label "waiting"
 call #1 present []
 set #2 label "timer 1"
 set #2 label "timer 2"

@@ -1,23 +1,23 @@
 create window #1
 set #1 title "Classes"
 create box #2
-set #2 spacing 8
 create button #3
-set #3 height-request 36
 set #3 label "Save"
 insert #2 #3 before=end slot=default
 create button #4
 set #4 label "Other"
 insert #2 #4 before=end slot=default
 create button #5
-listen #5 clicked on
 set #5 label "Mode"
 insert #2 #5 before=end slot=default
 create button #6
-listen #6 clicked on
 set #6 label "Dense"
 insert #2 #6 before=end slot=default
 insert #1 #2 before=end slot=default
+set #2 spacing 8
+set #3 height-request 36
+listen #5 clicked on
+listen #6 clicked on
 call #1 present []
 style sheet "*" null
 style scheme "light" 0

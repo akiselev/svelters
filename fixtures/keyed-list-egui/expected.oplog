@@ -7,15 +7,11 @@ set #3 flex-direction "row"
 set #3 gap 6
 create text-edit #4
 set #4 hint-text "New item"
-set #4 text ""
-listen #4 changed on
 insert #3 #4 before=end slot=default
 create button #5
-listen #5 clicked on
 set #5 text "Add"
 insert #3 #5 before=end slot=default
 create button #6
-listen #6 clicked on
 set #6 text "Reverse"
 insert #3 #6 before=end slot=default
 insert #2 #3 before=end slot=default
@@ -25,49 +21,53 @@ set #8 gap 2
 insert #7 #8 before=end slot=default
 insert #2 #7 before=end slot=default
 insert #1 #2 before=end slot=default
+set #4 text ""
+listen #4 changed on
+listen #5 clicked on
+listen #6 clicked on
 call #1 present []
 event #4 changed ["alpha"]
 event #5 clicked []
-set #4 text ""
 create box #9
 set #9 flex-direction "row"
 set #9 gap 6
 create label #10
-set #10 text "alpha"
 insert #9 #10 before=end slot=default
 create button #11
-listen #11 clicked on
 set #11 text "Remove"
 insert #9 #11 before=end slot=default
 insert #8 #9 before=end slot=default
+set #10 text "alpha"
+listen #11 clicked on
+set #4 text ""
 event #4 changed ["beta"]
 event #5 clicked []
-set #4 text ""
 create box #12
 set #12 flex-direction "row"
 set #12 gap 6
 create label #13
-set #13 text "beta"
 insert #12 #13 before=end slot=default
 create button #14
-listen #14 clicked on
 set #14 text "Remove"
 insert #12 #14 before=end slot=default
 insert #8 #12 before=end slot=default
+set #13 text "beta"
+listen #14 clicked on
+set #4 text ""
 event #4 changed ["gamma"]
 event #5 clicked []
-set #4 text ""
 create box #15
 set #15 flex-direction "row"
 set #15 gap 6
 create label #16
-set #16 text "gamma"
 insert #15 #16 before=end slot=default
 create button #17
-listen #17 clicked on
 set #17 text "Remove"
 insert #15 #17 before=end slot=default
 insert #8 #15 before=end slot=default
+set #16 text "gamma"
+listen #17 clicked on
+set #4 text ""
 event #6 clicked []
 remove #8 #12
 insert #8 #12 before=#9 slot=default

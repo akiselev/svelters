@@ -1,47 +1,46 @@
 create window #1
-set #1 title "Typed"
 create box #2
 set #2 orientation "vertical"
 set #2 spacing 4
 create label #3
-set #3 label "2 shown (all)"
 insert #2 #3 before=end slot=default
 create box #4
 set #4 orientation "horizontal"
 set #4 spacing 4
 create label #5
-set #5 label "· Milk"
 insert #4 #5 before=end slot=default
 create button #6
-listen #6 clicked on
 set #6 label "Toggle"
 insert #4 #6 before=end slot=default
 insert #2 #4 before=end slot=default
+set #5 label "· Milk"
+listen #6 clicked on
 create box #7
 set #7 orientation "horizontal"
 set #7 spacing 4
 create label #8
-set #8 label "✓ Eggs"
 insert #7 #8 before=end slot=default
 create button #9
-listen #9 clicked on
 set #9 label "Toggle"
 insert #7 #9 before=end slot=default
 insert #2 #7 before=end slot=default
+set #8 label "✓ Eggs"
+listen #9 clicked on
 create button #10
-listen #10 clicked on
 set #10 label "Add"
 insert #2 #10 before=end slot=default
 create button #11
-listen #11 clicked on
 set #11 label "Filter"
 insert #2 #11 before=end slot=default
 insert #1 #2 before=end slot=default
+set #1 title "Typed"
+set #3 label "2 shown (all)"
+listen #10 clicked on
+listen #11 clicked on
 call #1 present []
 event #6 clicked []
 set #5 label "✓ Milk"
 event #11 clicked []
-set #3 label "0 shown (open)"
 remove #2 #4
 destroy #5
 destroy #6
@@ -50,42 +49,43 @@ remove #2 #7
 destroy #8
 destroy #9
 destroy #7
+set #3 label "0 shown (open)"
 event #10 clicked []
-set #3 label "1 shown (open)"
 create box #12
 set #12 orientation "horizontal"
 set #12 spacing 4
 create label #13
-set #13 label "· Bread"
 insert #12 #13 before=end slot=default
 create button #14
-listen #14 clicked on
 set #14 label "Toggle"
 insert #12 #14 before=end slot=default
 insert #2 #12 before=#10 slot=default
+set #13 label "· Bread"
+listen #14 clicked on
+set #3 label "1 shown (open)"
 event #11 clicked []
-set #3 label "3 shown (all)"
 create box #15
 set #15 orientation "horizontal"
 set #15 spacing 4
 create label #16
-set #16 label "✓ Milk"
 insert #15 #16 before=end slot=default
 create button #17
-listen #17 clicked on
 set #17 label "Toggle"
 insert #15 #17 before=end slot=default
 insert #2 #15 before=#12 slot=default
+set #16 label "✓ Milk"
+listen #17 clicked on
 create box #18
 set #18 orientation "horizontal"
 set #18 spacing 4
 create label #19
-set #19 label "✓ Eggs"
 insert #18 #19 before=end slot=default
 create button #20
-listen #20 clicked on
 set #20 label "Toggle"
 insert #18 #20 before=end slot=default
 insert #2 #18 before=#12 slot=default
+set #19 label "✓ Eggs"
+listen #20 clicked on
+set #3 label "3 shown (all)"
 event #20 clicked []
 set #19 label "· Eggs"

@@ -1,9 +1,9 @@
 create window #1
 set #1 title "Names x"
 create button #2
-listen #2 clicked on
-set #2 label "n1 = 1"
 insert #1 #2 before=end slot=default
+set #2 label "n1 = 1"
+listen #2 clicked on
 call #1 present []
 event #2 clicked []
 set #2 label "n1 = 2"

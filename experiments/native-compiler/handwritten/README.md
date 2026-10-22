@@ -22,9 +22,13 @@ node tools/oplog-compare.mjs fixtures/<name>/expected.oplog experiments/native-c
 | counter | identical log | 16 / 16 |
 | if-toggle | identical log | 32 / 32 |
 | timers | identical log | 9 / 9 |
-| keyed-list | state-equal at all 9 boundaries, order differs | 78 / 78 |
-| native-close | state-equal at all 4 boundaries, order differs | 28 / 28 |
-| keyed-stress | state-equal at the end (no boundaries: one checkpoint), order differs, one redundant op | 98 / 97 |
+| keyed-list | identical log (since CF2) | 78 / 78 |
+| native-close | predates the fixture's `bind:this` version (stale, not compared) | 28 / 28 |
+| keyed-stress | identical log (since CF2) | 98 / 98 |
+
+Since RT1 the fixtures' logs are recorded on the compiled path, so "identical" here means the
+compiler emits the hand-written shape. The notes below are the differences from the retired JS
+pipeline (Svelte's own output on the fork renderer) that led to it.
 
 ## Why the logs differ
 

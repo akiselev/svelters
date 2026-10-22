@@ -7,27 +7,21 @@ create box-layout #3
 set #3 direction "left-to-right"
 set #3 spacing 4
 create push-button #4
-listen #4 clicked on
 set #4 text "removeFirst"
 insert #3 #4 before=end slot=default
 create push-button #5
-listen #5 clicked on
 set #5 text "rename"
 insert #3 #5 before=end slot=default
 create push-button #6
-listen #6 clicked on
 set #6 text "select2"
 insert #3 #6 before=end slot=default
 create push-button #7
-listen #7 clicked on
 set #7 text "scrollEnd"
 insert #3 #7 before=end slot=default
 create push-button #8
-listen #8 clicked on
 set #8 text "toggle"
 insert #3 #8 before=end slot=default
 create label #9
-set #9 text "selected=-1 activated=-"
 insert #3 #9 before=end slot=default
 insert #2 #3 before=end slot=default
 create virtual-list #10
@@ -43,6 +37,12 @@ listen #10 activate on
 listen #10 select on
 insert #2 #10 before=end slot=default
 insert #1 #2 before=end slot=default
+set #9 text "selected=-1 activated=-"
+listen #4 clicked on
+listen #5 clicked on
+listen #6 clicked on
+listen #7 clicked on
+listen #8 clicked on
 call #1 present []
 call #10 splice [0,0,[1,2,3,4,5,6,7,8]]
 sync #10 setup [1]
@@ -58,26 +58,26 @@ create box-layout #13
 set #13 direction "left-to-right"
 set #13 spacing 6
 create label #14
-set #14 text "ctx 0: Item 1"
 insert #13 #14 before=end slot=default
 create push-button #15
-listen #15 clicked on
-set #15 text "clicks 0"
 insert #13 #15 before=end slot=default
 insert #11 #13 before=end slot=default
+set #14 text "ctx 0: Item 1"
+set #15 text "clicks 0"
+listen #15 clicked on
 result #10 null
 sync #10 bind [2,1,2,1]
 create box-layout #16
 set #16 direction "left-to-right"
 set #16 spacing 6
 create label #17
-set #17 text "ctx 1: Item 2"
 insert #16 #17 before=end slot=default
 create push-button #18
-listen #18 clicked on
-set #18 text "clicks 0"
 insert #16 #18 before=end slot=default
 insert #12 #16 before=end slot=default
+set #17 text "ctx 1: Item 2"
+set #18 text "clicks 0"
+listen #18 clicked on
 result #10 null
 event #15 clicked []
 set #15 text "clicks 1"

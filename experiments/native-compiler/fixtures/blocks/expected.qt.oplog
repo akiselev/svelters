@@ -3,50 +3,50 @@ set #1 window-title "Blocks"
 create box-layout #2
 set #2 direction "top-to-bottom"
 create line-edit #3
-set #3 text "fresh 1"
 insert #2 #3 before=end slot=default
+set #3 text "fresh 1"
 create label #4
-set #4 text "on / 1"
 insert #2 #4 before=end slot=default
 create label #5
-set #5 text "x: 20"
 insert #2 #5 before=end slot=default
+set #5 text "x: 20"
 create label #6
-set #6 text "y: 30"
 insert #2 #6 before=end slot=default
+set #6 text "y: 30"
 create label #7
-set #7 text "sync 42"
 insert #2 #7 before=end slot=default
+set #7 text "sync 42"
 create push-button #8
-listen #8 clicked on
 set #8 text "Next"
 insert #2 #8 before=end slot=default
 create push-button #9
-listen #9 clicked on
 set #9 text "Reload"
 insert #2 #9 before=end slot=default
 create push-button #10
-listen #10 clicked on
 set #10 text "Instant"
 insert #2 #10 before=end slot=default
 create push-button #11
-listen #11 clicked on
 set #11 text "Qty"
 insert #2 #11 before=end slot=default
 insert #1 #2 before=end slot=default
+set #4 text "on / 1"
+listen #8 clicked on
+listen #9 clicked on
+listen #10 clicked on
+listen #11 clicked on
 call #1 present []
 create label #12
 set #12 text "loading"
 insert #2 #12 before=#7 slot=default
 create label #13
-set #13 text "data 1"
 insert #2 #13 before=#7 slot=default
+set #13 text "data 1"
 remove #2 #12
 destroy #12
 event #8 clicked []
 create line-edit #14
-set #14 text "fresh 2"
 insert #2 #14 before=#4 slot=default
+set #14 text "fresh 2"
 remove #2 #3
 destroy #3
 set #4 text "off / 2"
@@ -57,14 +57,14 @@ insert #2 #15 before=#7 slot=default
 remove #2 #13
 destroy #13
 create label #16
-set #16 text "failed 2"
 insert #2 #16 before=#7 slot=default
+set #16 text "failed 2"
 remove #2 #15
 destroy #15
 event #10 clicked []
 create label #17
-set #17 text "instant"
 insert #2 #17 before=#7 slot=default
+set #17 text "instant"
 remove #2 #16
 destroy #16
 event #11 clicked []
@@ -73,8 +73,8 @@ event #8 clicked []
 event #8 clicked []
 event #9 clicked []
 create line-edit #18
-set #18 text "fresh 4"
 insert #2 #18 before=#4 slot=default
+set #18 text "fresh 4"
 remove #2 #14
 destroy #14
 set #4 text "late / 4"
@@ -84,7 +84,7 @@ insert #2 #19 before=#7 slot=default
 remove #2 #17
 destroy #17
 create label #20
-set #20 text "failed 4"
 insert #2 #20 before=#7 slot=default
+set #20 text "failed 4"
 remove #2 #19
 destroy #19

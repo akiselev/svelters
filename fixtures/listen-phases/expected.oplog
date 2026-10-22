@@ -3,15 +3,15 @@ set #1 title "Phases"
 create box #2
 set #2 orientation "vertical"
 create label #3
-set #3 label ""
 insert #2 #3 before=end slot=default
 create entry #4
 create event-controller-key #5
-listen #5 key-pressed on
-listen #5 key-pressed on capture
 insert #4 #5 before=end slot=default
 insert #2 #4 before=end slot=default
 insert #1 #2 before=end slot=default
+set #3 label ""
+listen #5 key-pressed on
+listen #5 key-pressed on capture
 call #1 present []
 listen #5 key-pressed on after
 sync #5 key-pressed [97,38,0] capture

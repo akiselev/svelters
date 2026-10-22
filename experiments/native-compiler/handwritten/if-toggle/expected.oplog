@@ -7,13 +7,13 @@ create box #3
 set #3 orientation "vertical"
 set #3 spacing 8
 create button #4
-listen #4 clicked on
 set #4 label "Toggle"
 insert #3 #4 before=end slot=default
 create label #5
 set #5 label "Hidden"
 insert #3 #5 before=end slot=default
 insert #1 #3 before=end slot=default
+listen #4 clicked on
 call #1 present []
 event #4 clicked []
 create label #6

@@ -1,24 +1,24 @@
 create main-window #1
 set #1 window-title "Classes"
 create box-layout #2
-set #2 spacing 8
-set #2 direction "left-to-right"
 create push-button #3
-set #3 minimum-height 36
 set #3 text "Save"
 insert #2 #3 before=end slot=default
 create push-button #4
 set #4 text "Other"
 insert #2 #4 before=end slot=default
 create push-button #5
-listen #5 clicked on
 set #5 text "Mode"
 insert #2 #5 before=end slot=default
 create push-button #6
-listen #6 clicked on
 set #6 text "Dense"
 insert #2 #6 before=end slot=default
 insert #1 #2 before=end slot=default
+set #2 spacing 8
+set #2 direction "left-to-right"
+set #3 minimum-height 36
+listen #5 clicked on
+listen #6 clicked on
 call #1 present []
 style sheet "*" null
 style scheme "light" 9

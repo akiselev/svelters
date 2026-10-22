@@ -13,22 +13,22 @@ create box-layout #6
 set #6 direction "top-to-bottom"
 set #6 spacing 6
 create text-edit #7
-set #7 document 1
 insert #6 #7 before=end slot=default
 create text-edit #8
-set #8 document 1
 insert #6 #8 before=end slot=default
 create label #9
+insert #6 #9 before=end slot=default
+create push-button #10
+insert #6 #10 before=end slot=default
+insert #5 #6 before=end slot=default
+call #4 host []
+set #7 document 1
+set #8 document 1
 listen #1 contents-changed on
 call #1 toPlainText []
 set #9 text "0 characters"
-insert #6 #9 before=end slot=default
-create push-button #10
 set #10 icon 3
-call #4 host []
 set #10 text null
-insert #6 #10 before=end slot=default
-insert #5 #6 before=end slot=default
 call #5 present []
 event #1 contents-changed []
 call #1 toPlainText []

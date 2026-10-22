@@ -1,27 +1,27 @@
 create window #1
-set #1 title "Slots"
 create header-bar #2
 create button #3
-listen #3 clicked on
 set #3 label "Add"
 insert #2 #3 before=end slot=default
 create button #4
-set #4 label "Undo 0"
 insert #2 #4 before=end slot=end
 create button #5
 set #5 label "Redo"
 insert #2 #5 before=end slot=end
+set #4 label "Undo 0"
 insert #1 #2 before=end slot=titlebar
+listen #3 clicked on
 create box #6
 set #6 orientation "vertical"
 create label #7
-set #7 label "0 items"
 insert #6 #7 before=end slot=default
 create button #8
-listen #8 clicked on
 set #8 label "Toggle"
 insert #6 #8 before=end slot=default
 insert #1 #6 before=end slot=default
+set #7 label "0 items"
+listen #8 clicked on
+set #1 title "Slots"
 call #1 present []
 event #3 clicked []
 set #4 label "Undo 1"
@@ -35,16 +35,16 @@ destroy #2
 event #8 clicked []
 create header-bar #9
 create button #10
-listen #10 clicked on
 set #10 label "Add"
 insert #9 #10 before=end slot=default
 create button #11
-set #11 label "Undo 1"
 insert #9 #11 before=end slot=end
 create button #12
 set #12 label "Redo"
 insert #9 #12 before=end slot=end
+set #11 label "Undo 1"
 insert #1 #9 before=end slot=titlebar
+listen #10 clicked on
 event #10 clicked []
 set #11 label "Undo 2"
 set #7 label "2 items"

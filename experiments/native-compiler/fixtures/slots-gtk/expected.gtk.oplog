@@ -2,13 +2,13 @@ create window #1
 set #1 title "Slots"
 create header-bar #2
 create button #3
-listen #3 clicked on
 set #3 label "Save"
 insert #2 #3 before=end slot=start
 insert #1 #2 before=end slot=titlebar
 create label #4
-set #4 label "0 saves"
 insert #1 #4 before=end slot=default
+set #4 label "0 saves"
+listen #3 clicked on
 call #1 present []
 event #3 clicked []
 create button #5

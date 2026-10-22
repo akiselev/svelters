@@ -5,22 +5,22 @@ set #2 direction "top-to-bottom"
 set #2 spacing 6
 create line-edit #3
 set #3 placeholder-text "Your name"
-listen #3 text-changed on
-set #3 text ""
-observe #3 text on
 insert #2 #3 before=end slot=default
 create label #4
-set #4 text "Nobody (0 edits)"
 insert #2 #4 before=end slot=default
 create push-button #5
-listen #5 clicked on
 set #5 text "Clear"
 insert #2 #5 before=end slot=default
 create push-button #6
-listen #6 clicked on
 set #6 text "Shout"
 insert #2 #6 before=end slot=default
 insert #1 #2 before=end slot=default
+set #4 text "Nobody (0 edits)"
+listen #3 text-changed on
+set #3 text ""
+observe #3 text on
+listen #5 clicked on
+listen #6 clicked on
 call #1 present []
 event #3 text-changed ["Ada"]
 set #4 text "Nobody (1 edits)"

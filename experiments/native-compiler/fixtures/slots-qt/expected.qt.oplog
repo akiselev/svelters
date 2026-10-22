@@ -3,15 +3,15 @@ set #1 window-title "Main window"
 create box-layout #2
 set #2 direction "top-to-bottom"
 create label #3
-set #3 text "Clicked 0 times"
 insert #2 #3 before=end slot=default
 create push-button #4
-listen #4 clicked on
 set #4 text "Click"
 insert #2 #4 before=end slot=default
 insert #1 #2 before=end slot=default
 create status-bar #5
 insert #1 #5 before=end slot=statusbar
+set #3 text "Clicked 0 times"
+listen #4 clicked on
 call #1 present []
 event #4 clicked []
 set #3 text "Clicked 1 times"

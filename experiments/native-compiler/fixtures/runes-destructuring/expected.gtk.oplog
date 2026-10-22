@@ -4,17 +4,17 @@ create box #2
 set #2 orientation "vertical"
 set #2 spacing 4
 create label #3
-set #3 label "LR size=1 area=1 perimeter=4 tags=none"
 insert #2 #3 before=end slot=default
 create button #4
-listen #4 clicked on
 set #4 label "Swap"
 insert #2 #4 before=end slot=default
 create button #5
-listen #5 clicked on
 set #5 label "Grow"
 insert #2 #5 before=end slot=default
 insert #1 #2 before=end slot=default
+set #3 label "LR size=1 area=1 perimeter=4 tags=none"
+listen #4 clicked on
+listen #5 clicked on
 call #1 present []
 event #4 clicked []
 set #3 label "RL size=1 area=1 perimeter=4 tags=none"
