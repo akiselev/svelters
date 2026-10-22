@@ -16,6 +16,8 @@ pub const CHILD_ATTR_PREFIX: &str = "parent:";
 #[derive(Default)]
 pub(super) struct ScriptFacts {
     pub listen: HashSet<String>,
+    /// CX3: every named import, local name -> (module, imported name): the roots bind sources match.
+    pub imports: HashMap<String, (String, String)>,
 }
 
 impl ScriptFacts {
@@ -26,9 +28,7 @@ impl ScriptFacts {
                 match stmt {
                     Statement::ImportDeclaration(d) => {
                         let crate::estree::LiteralNode::Literal(src) = &d.source;
-                        if !matches!(&src.value, LiteralValue::String(v) if v == HELPERS_MODULE) {
-                            continue;
-                        }
+                        let LiteralValue::String(module) = &src.value else { continue };
                         for sp in &d.specifiers {
                             if let crate::estree::ImportSpecifierKind::ImportSpecifier(is) = sp {
                                 let imported = match &is.imported {
@@ -38,9 +38,10 @@ impl ScriptFacts {
                                         _ => continue,
                                     },
                                 };
-                                if imported == "listen" {
+                                if imported == "listen" && module == HELPERS_MODULE {
                                     f.listen.insert(is.local.name.clone());
                                 }
+                                f.imports.insert(is.local.name.clone(), (module.clone(), imported));
                             }
                         }
                     }

@@ -32,6 +32,13 @@ pub(crate) fn derive(src: &str, d: &mut Diagnostic) {
     }
     match d.code {
         "read_only_property" | "bind_set_only" | "bind_not_observable" | "nonreactive_redundant" => one_way(d, text),
+        // CX3: a `bind:x|commit` the kind cannot commit: drop the modifier (bind on every change)
+        "bind_commit_unsupported" => {
+            if let Some(i) = text.find("|commit") {
+                let at = d.start + i as u32;
+                d.fixes.push(FixIt::new("remove `|commit`", vec![edit(at, at + 7, "")]));
+            }
+        }
         "block_invalid_elseif" => {
             let window = &src[start..src.len().min(start + 16)];
             if let Some(i) = window.find("elseif") {
