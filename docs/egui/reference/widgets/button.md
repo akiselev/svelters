@@ -34,6 +34,8 @@ A push button.
 | `default` | `boolean` | `false` | no | Enter activates it while focus is in its focus scope (or root) and the focused node does not take Enter itself. |
 | `font-weight` | `number` | `400` | no | CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. |
 | `frame` | `boolean` | `true` | no | Draws the button background and border. |
+| `icon` | `string` | `""` | no | An icon before the caption: an icon key (`name` in the `icons` family, or `family:name`). Its size, place and visibility are CSS on `::part(icon)` (P3). |
+| `repeat` | `boolean` | `false` | no | Held down, it activates again and again (`clicked` after 300 ms, then every 100 ms; QAbstractButton `autoRepeat`). |
 | `selected` | `boolean` | `false` | no | Drawn as selected (a toggle look); clicking does not change it. |
 | `small` | `boolean` | `false` | no | No vertical padding. |
 | `text` | `string` | `""` | no | The caption. |
@@ -48,11 +50,13 @@ Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessib
 |---|---|---|
 | `onclicked` | `() => void` | Pressed and released. |
 | `ondouble-clicked` | `() => void` | Double click. |
+| `onpress` | `() => void` | The primary button went down on it (QAbstractButton `pressed`). |
+| `onrelease` | `() => void` | It came up again, over the button or not (`released`). |
 | `onsecondary-clicked` | `() => void` | Right click. |
 
 `on:clicked` works too, and a bare `on:<event>` on a component forwards the component's `on<event>` prop.
 
-Plus the events of [`Widget`](widget.md#events): `onanimationend`, `ondrag-begin`, `ondrag-end`, `ondrag-enter`, `ondrag-leave`, `ondrop`.
+Plus the events of [`Widget`](widget.md#events): `onanimationend`, `onclick`, `oncontextmenu`, `ondblclick`, `ondrag-begin`, `ondrag-end`, `ondrag-enter`, `ondrag-leave`, `ondrop`, `onfocusin`, `onfocusout`, `onkeydown`, `onkeyup`, `onpointerdown`, `onpointerup`, `onwheel`.
 <!-- END GENERATED -->
 
 ## Methods
@@ -103,7 +107,7 @@ Full matrix: [css/properties](../../css/properties.md). States: below.
 | `:exiting` | it plays an out transition before it is removed | scene |
 | `:selected` | `selected` is true | prop |
 
-Never set on it (rules with them don't match): `:checked`, `:open`, `:expanded`, `:invalid`, `:read-only`, `:dragging`, `:busy`.
+Never set on it (rules with them don't match): `:checked`, `:open`, `:expanded`, `:invalid`, `:read-only`, `:dragging`, `:busy`, `:indeterminate`, `:placeholder-shown`, `:default`, `:drop-target`, `:current`, `:backdrop`, `:required`, `:user-invalid`, `:has-children`.
 
 States are tracked once the scene has a style input (a `<style>` block, `class`, `style=` or a theme).
 <!-- END GENERATED -->

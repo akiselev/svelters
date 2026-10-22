@@ -199,6 +199,7 @@ impl Picker {
         Picker::shown_date(value).strftime(format).to_string()
     }
 
+    #[allow(clippy::disallowed_types)] // OW: wrapper until OW6
     /// Paints the widget in `ui` (the node's rect); a user edit updates the payload, which
     /// `leaf.rs` compares with the value before the widget ran.
     pub fn ui(&mut self, ui: &mut egui::Ui, size: egui::Vec2) -> egui::Response {

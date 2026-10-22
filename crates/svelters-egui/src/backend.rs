@@ -88,6 +88,8 @@ pub(crate) struct Inner {
     /// RA3: what kind methods called from JS announced (`prop_changed`, events), sent after the next
     /// pass (`after_pass`) ahead of that pass's own.
     pub pending_out: RefCell<Vec<crate::walk::Out>>,
+    /// EV1: event dispatch state (presses, focus, late events per viewport; `events.rs`).
+    pub ev: RefCell<crate::events::BackendState>,
 }
 
 /// The egui backend. Cheap to clone (one shared state); the clone given to [`BackendVtable::new`]
@@ -137,6 +139,7 @@ impl EguiBackend {
             theme_generation: Cell::new(0),
             theme_pending: Cell::new(false),
             pending_out: RefCell::new(Vec::new()),
+            ev: RefCell::new(Default::default()),
         }))
     }
 

@@ -13,13 +13,15 @@ use svelters_egui::accessible_name;
 use svelters_egui::scene::{ChangeFilter, NodeId, NodeRef, Observer, SceneRef};
 
 /// What a session may do (§1.2). `os_input`, `clock` and `eval` are test-build grants (§6 Q1);
-/// AU1 has no method that needs them yet.
+/// AU1b adds `clock` (`clock.advance`); `os_input` and `eval` have no method yet.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
 pub struct Grants {
     pub read: bool,
     pub act: bool,
     /// Reads and acts may reach tooling roots (the inspector, agent panels) when asked.
     pub tooling: bool,
+    /// AU1b: `clock.advance` may move the virtual clock (a test-build grant).
+    pub clock: bool,
 }
 
 impl Grants {
@@ -27,16 +29,19 @@ impl Grants {
         read: true,
         act: false,
         tooling: false,
+        clock: false,
     };
     pub const ACT: Grants = Grants {
         read: true,
         act: true,
         tooling: false,
+        clock: false,
     };
     pub const ALL: Grants = Grants {
         read: true,
         act: true,
         tooling: true,
+        clock: true,
     };
 }
 
@@ -274,10 +279,11 @@ impl<D: Driver> Session<D> {
         Ok(json!({
             "protocol": PROTOCOL,
             "roots": roots,
-            "grants": {"read": self.grants.read, "act": self.grants.act, "tooling": self.grants.tooling},
+            "grants": {"read": self.grants.read, "act": self.grants.act, "tooling": self.grants.tooling, "clock": self.grants.clock},
             "capabilities": ["scene.query", "scene.node", "scene.snapshot", "a11y.tree", "app.roots", "input.click", "input.focus",
                 "input.fill", "input.set_value", "input.press", "input.type", "input.hover", "wait.settled", "wait.for",
-                "journal.subscribe", "journal.take", "capture.screenshot"],
+                "journal.subscribe", "journal.take", "capture.screenshot", "clock.now", "clock.advance"],
+            "clock": self.clock_json(),
         }))
     }
 
@@ -426,6 +432,41 @@ impl<D: Driver> Session<D> {
             Some(idle) if !idle() => Some("HOST".into()),
             _ => None,
         }
+    }
+
+    // ---- clock (AU1b) ----
+
+    fn clock_json(&self) -> Value {
+        let ms = self.driver.clock_ms();
+        json!({"mode": if ms.is_some() { "virtual" } else { "real" }, "ms": ms, "seed": self.driver.seed(), "session_ms": self.now_ms})
+    }
+
+    /// `clock.now`: `{mode: "virtual" | "real", ms, seed, session_ms}`. `ms` is the virtual clock's
+    /// time (`null` on the wall clock); `session_ms` the frame time this session ran.
+    pub fn clock_now(&self) -> Result<Value, Error> {
+        self.check(false)?;
+        Ok(self.clock_json())
+    }
+
+    /// `clock.advance {ms}`: lets `ms` of virtual time pass, frame by frame (timers fire, jobs
+    /// complete, animations run). Needs the `clock` grant and a virtual clock. Returns the frames run.
+    pub fn advance_clock(&mut self, ms: f64) -> Result<u32, Error> {
+        self.check(false)?;
+        if !self.grants.clock {
+            return Err(Error::new("grant.denied", "moving the clock needs the `clock` grant"));
+        }
+        if self.driver.clock_ms().is_none() {
+            return Err(Error::new("capability.absent", "this app runs on the wall clock (start it with a virtual clock)"));
+        }
+        if !(ms.is_finite() && ms >= 0.0) {
+            return Err(Error::new("params.invalid", "clock.advance wants ms >= 0"));
+        }
+        let (start, mut frames) = (self.now_ms, 0u32);
+        while self.now_ms - start < ms {
+            self.step();
+            frames += 1;
+        }
+        Ok(frames)
     }
 
     /// `wait.settled` (§1.6): steps frames until the app is settled; returns the frames it ran.
@@ -934,6 +975,15 @@ impl<D: Driver> Session<D> {
             "capture.screenshot" => {
                 let img = self.screenshot(p.get("selector").and_then(Value::as_str))?;
                 json!({"width": img.width(), "height": img.height()})
+            }
+            "clock.now" => self.clock_now()?,
+            "clock.advance" => {
+                let ms = p
+                    .get("ms")
+                    .and_then(Value::as_f64)
+                    .ok_or_else(|| Error::new("params.invalid", "clock.advance wants `ms`"))?;
+                let frames = self.advance_clock(ms)?;
+                json!({"frames": frames, "ms": self.driver.clock_ms()})
             }
             "journal.subscribe" => {
                 self.journal_subscribe(ChangeFilter::all())?;

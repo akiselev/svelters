@@ -50,8 +50,134 @@ impl ProviderKind {
 /// `tests/spec.rs`); provider definitions are leaked once, so every definition is `'static`.
 pub struct KindRegistry {
     providers: Vec<ProviderKind>,
+    /// OW0: own widgets that replace a built-in kind (`replaces = "<tag>"`), by built-in index.
+    replacements: Vec<Replacement>,
     /// The base kind index of each kind (SG2: member lookups walk the chain without allocating).
     bases: Vec<Option<usize>>,
+}
+
+/// OW0 (ARCH-WIDGETS §6.2): an own widget implementing built-in kind `kind`. The kind's row stays
+/// (tag, prop and signal ids); the struct's props and events are routed to it by name.
+pub struct Replacement {
+    /// The built-in kind index.
+    pub kind: usize,
+    pub entry: &'static crate::provider::KindEntry,
+    /// Struct prop `i` → the built-in prop id.
+    props: Vec<u32>,
+    /// Struct event `i` → the built-in signal id.
+    signals: Vec<u32>,
+    /// The struct's props the row lacks: extra props of the built-in kind, ids after the row's.
+    pub extra_props: &'static [PropDef],
+    /// The struct's events the row lacks: extra signals of the kind.
+    pub extra_signals: &'static [SignalDef],
+    /// The row with the extras appended (the compiler's spec and the typings).
+    pub merged: &'static KindDef,
+}
+
+impl Replacement {
+    /// Checks that the struct covers built-in kind `kind`'s own props (those not stored in
+    /// `Common`) and signals with the same names; its other props and events become extras of the
+    /// kind (a kind-table type each). Returns the routing.
+    fn new(reg: &KindRegistry, kind: usize, entry: &'static crate::provider::KindEntry) -> Result<Replacement, String> {
+        let def = reg.kind(kind);
+        let tag = def.tag.unwrap_or(def.id);
+        let mut errors = Vec::new();
+        for p in def.props.iter().filter(|p| !crate::scene::props::is_common(p.key)) {
+            if !entry.props.iter().any(|e| e.name == p.name) {
+                errors.push(format!("prop `{}` is missing", p.name));
+            }
+        }
+        for s in def.signals {
+            if !entry.events.iter().any(|e| e.name == s.name) {
+                errors.push(format!("event `{}` is missing", s.name));
+            }
+        }
+        // a fresh struct: the extras' defaults
+        let fresh = (entry.new)();
+        let mut extra_props: Vec<PropDef> = Vec::new();
+        let props: Vec<u32> = entry
+            .props
+            .iter()
+            .enumerate()
+            .map(|(i, e)| match reg.find_prop(kind, e.name) {
+                Some((id, d)) if !crate::scene::props::is_common(d.key) => id,
+                Some(_) => {
+                    errors.push(format!("prop `{}` is a common prop of every element", e.name));
+                    0
+                }
+                None => {
+                    let Some(ty) = row_ty(e.row_ty) else {
+                        errors.push(format!("extra prop `{}`: not a kind-table type (bool, integer, float, String, `enumeration`)", e.name));
+                        return 0;
+                    };
+                    let v = svelters_host::exports::__private::with_cx(entry.namespace, |cx| fresh.get_prop(i, cx)).unwrap_or(svelters_abi::Value::Null);
+                    let default = match v {
+                        svelters_abi::Value::Bool(b) => Def::Bool(b),
+                        svelters_abi::Value::I64(n) => Def::I64(n),
+                        svelters_abi::Value::F64(f) => Def::F64(f),
+                        svelters_abi::Value::Str(s) => Def::Str(Box::leak(s.into_boxed_str())),
+                        _ => Def::Null,
+                    };
+                    extra_props.push(PropDef {
+                        name: e.name,
+                        key: P::Ext(i as u16),
+                        ty,
+                        default,
+                        nullable: e.nullable,
+                        native: if e.bind { Native::Widget } else { Native::Never },
+                        layout: false,
+                        doc: e.docs,
+                    });
+                    KindRegistry::member_id(kind, def.props.len() + extra_props.len() - 1)
+                }
+            })
+            .collect();
+        let mut extra_signals: Vec<SignalDef> = Vec::new();
+        let signals: Vec<u32> = entry
+            .events
+            .iter()
+            .map(|e| match reg.find_signal(kind, e.name) {
+                Some((id, _)) => id,
+                None => {
+                    let args: &'static [(&'static str, Ty)] = match e.arg.map(row_ty) {
+                        None => &[],
+                        Some(Some(t)) => leak(vec![("value", t)]),
+                        Some(None) => {
+                            errors.push(format!("extra event `{}`: its payload is not a kind-table type", e.name));
+                            &[]
+                        }
+                    };
+                    extra_signals.push(SignalDef { name: e.name, args, sync: false, doc: e.docs });
+                    KindRegistry::member_id(kind, def.signals.len() + extra_signals.len() - 1)
+                }
+            })
+            .collect();
+        if errors.is_empty() {
+            let extra_props = leak(extra_props);
+            let extra_signals = leak(extra_signals);
+            let merged: &'static KindDef = Box::leak(Box::new(KindDef {
+                props: leak(def.props.iter().cloned().chain(extra_props.iter().cloned()).collect()),
+                signals: leak(def.signals.iter().cloned().chain(extra_signals.iter().cloned()).collect()),
+                ..def.clone()
+            }));
+            Ok(Replacement { kind, entry, props, signals, extra_props, extra_signals, merged })
+        } else {
+            Err(format!("svelters-egui: own widget {} does not replace <{tag}>: {}", entry.id, errors.join("; ")))
+        }
+    }
+}
+
+/// The kind-table type of an own widget's prop.
+fn row_ty(t: crate::provider::RowTy) -> Option<Ty> {
+    use crate::provider::RowTy as R;
+    Some(match t {
+        R::Bool => Ty::Bool,
+        R::I64 => Ty::I64,
+        R::F64 => Ty::F64,
+        R::Str => Ty::Str,
+        R::Enum(v) => Ty::Enum(v),
+        R::Other => return None,
+    })
 }
 
 static REGISTRY: std::sync::OnceLock<KindRegistry> = std::sync::OnceLock::new();
@@ -70,9 +196,12 @@ impl KindRegistry {
         use crate::provider::KindRef;
         let mut entries: Vec<&'static crate::provider::KindEntry> = inventory::iter::<KindRef>.into_iter().map(|r| r.0).collect();
         entries.sort_by_key(|e| e.id);
+        // OW0: own widgets replacing a built-in are routed after the bases are known
+        let own: Vec<&'static crate::provider::KindEntry> = entries.iter().copied().filter(|e| e.replaces.is_some()).collect();
+        entries.retain(|e| e.replaces.is_none());
         let mut providers: Vec<ProviderKind> = Vec::with_capacity(entries.len());
         if entries.is_empty() {
-            return KindRegistry { providers, bases: Vec::new() }.with_bases();
+            return KindRegistry { providers, replacements: Vec::new(), bases: Vec::new() }.with_bases().with_replacements(own);
         }
         let schema = svelters_host::exports::schema();
         // RA3: the kinds' methods, by spec id (one `#[svelters::widget] impl` per kind)
@@ -150,7 +279,48 @@ impl KindRegistry {
         if let Some(id) = methods.keys().next() {
             panic!("svelters-egui: #[svelters::widget] impl for {id}, which is not a registered provider kind");
         }
-        KindRegistry { providers, bases: Vec::new() }.with_bases()
+        KindRegistry { providers, replacements: Vec::new(), bases: Vec::new() }.with_bases().with_replacements(own)
+    }
+
+    /// OW0: routes each own widget to the built-in kind it replaces; a tag that is not a built-in,
+    /// a kind replaced twice or a struct that does not cover the row fails at startup.
+    fn with_replacements(mut self, own: Vec<&'static crate::provider::KindEntry>) -> KindRegistry {
+        for e in own {
+            let tag = e.replaces.expect("filtered");
+            let kind = KINDS.iter().position(|k| k.tag == Some(tag)).unwrap_or_else(|| panic!("svelters-egui: own widget {} replaces <{tag}>, which is not a built-in kind", e.id));
+            assert!(self.replacements.iter().all(|r| r.kind != kind), "svelters-egui: <{tag}> is replaced twice ({})", e.id);
+            let r = Replacement::new(&self, kind, e).unwrap_or_else(|m| panic!("{m}"));
+            self.replacements.push(r);
+        }
+        self
+    }
+
+    /// OW0: the own widget that replaces built-in kind `kind`, if any.
+    pub fn replacement(&self, kind: usize) -> Option<&Replacement> {
+        self.replacements.iter().find(|r| r.kind == kind)
+    }
+
+    /// OW0: every own widget that replaces a built-in kind.
+    pub fn replacements(&self) -> &[Replacement] {
+        &self.replacements
+    }
+
+    /// The id of prop `i` of the `W::Ext` struct of a node of kind `kind`: a provider kind's
+    /// member, or (OW0) the built-in prop an own widget's prop stands for. 0 if out of range.
+    pub fn ext_prop_id(&self, kind: usize, i: usize) -> u32 {
+        match self.replacement(kind) {
+            Some(r) => r.props.get(i).copied().unwrap_or(0),
+            None => self.provider_prop_id(kind, i),
+        }
+    }
+
+    /// The id of event `i` of the `W::Ext` struct of a node of kind `kind` (see
+    /// [`Self::ext_prop_id`]).
+    pub fn ext_signal_id(&self, kind: usize, i: usize) -> u32 {
+        match self.replacement(kind) {
+            Some(r) => r.signals.get(i).copied().unwrap_or(0),
+            None => self.provider_signal_id(kind, i),
+        }
     }
 
     fn with_bases(mut self) -> KindRegistry {
@@ -275,30 +445,59 @@ impl KindRegistry {
         (owner < self.len()).then_some((owner, i))
     }
 
+    /// OW0: the extra props of kind `k` (an own widget's props its built-in row lacks).
+    fn extra_props(&self, k: usize) -> &'static [PropDef] {
+        self.replacement(k).map_or(&[], |r| r.extra_props)
+    }
+
+    fn extra_signals(&self, k: usize) -> &'static [SignalDef] {
+        self.replacement(k).map_or(&[], |r| r.extra_signals)
+    }
+
+    /// The definition of kind `k` as the compiler and the typings see it: the row with an own
+    /// widget's extras appended (the row itself otherwise).
+    pub fn spec_kind(&self, k: usize) -> &'static KindDef {
+        self.replacement(k).map_or_else(|| self.kind(k), |r| r.merged)
+    }
+
     /// A property of `kind` (or a base) by name: its id and definition.
     pub fn find_prop(&self, kind: usize, name: &str) -> Option<(u32, &'static PropDef)> {
         self.chain_iter(kind).find_map(|k| {
             let props = self.kind(k).props;
-            props.iter().position(|p| p.name == name).map(|i| (Self::member_id(k, i), &props[i]))
+            props.iter().position(|p| p.name == name).map(|i| (Self::member_id(k, i), &props[i])).or_else(|| {
+                let extra = self.extra_props(k);
+                extra.iter().position(|p| p.name == name).map(|i| (Self::member_id(k, props.len() + i), &extra[i]))
+            })
         })
     }
 
     /// The property definition behind an id, if `kind` has it.
     pub fn prop_def(&self, kind: usize, id: u32) -> Option<&'static PropDef> {
         let (owner, i) = self.split(id)?;
-        self.chain_iter(kind).any(|k| k == owner).then(|| self.kind(owner).props.get(i)).flatten()
+        if !self.chain_iter(kind).any(|k| k == owner) {
+            return None;
+        }
+        let props = self.kind(owner).props;
+        props.get(i).or_else(|| self.extra_props(owner).get(i.checked_sub(props.len())?))
     }
 
     pub fn find_signal(&self, kind: usize, name: &str) -> Option<(u32, &'static SignalDef)> {
         self.chain_iter(kind).find_map(|k| {
             let signals = self.kind(k).signals;
-            signals.iter().position(|s| s.name == name).map(|i| (Self::member_id(k, i), &signals[i]))
+            signals.iter().position(|s| s.name == name).map(|i| (Self::member_id(k, i), &signals[i])).or_else(|| {
+                let extra = self.extra_signals(k);
+                extra.iter().position(|s| s.name == name).map(|i| (Self::member_id(k, signals.len() + i), &extra[i]))
+            })
         })
     }
 
     pub fn signal_def(&self, kind: usize, id: u32) -> Option<&'static SignalDef> {
         let (owner, i) = self.split(id)?;
-        self.chain_iter(kind).any(|k| k == owner).then(|| self.kind(owner).signals.get(i)).flatten()
+        if !self.chain_iter(kind).any(|k| k == owner) {
+            return None;
+        }
+        let signals = self.kind(owner).signals;
+        signals.get(i).or_else(|| self.extra_signals(owner).get(i.checked_sub(signals.len())?))
     }
 
     pub fn find_method(&self, kind: usize, name: &str) -> Option<(u32, &'static MethodDef)> {

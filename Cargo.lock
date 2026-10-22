@@ -4574,6 +4574,8 @@ dependencies = [
  "serde_json",
  "svelters-automation",
  "svelters-egui",
+ "svelters-host",
+ "svelters-macros",
  "svelters-style",
 ]
 

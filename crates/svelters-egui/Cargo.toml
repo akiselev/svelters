@@ -73,3 +73,5 @@ egui_extras = { version = "=0.37.0", default-features = false, features = ["svg"
 [lints.clippy]
 # ZU3: allowed for tests, examples and bins; lib.rs denies it for the library (see clippy.toml).
 disallowed_methods = "allow"
+# OW0: the same for the egui widget wrappers (lib.rs denies them in the library).
+disallowed_types = "allow"

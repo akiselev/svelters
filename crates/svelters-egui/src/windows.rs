@@ -34,6 +34,8 @@ impl EguiBackend {
                 egui::CentralPanel::default()
                     .frame(egui::Frame::central_panel(ui.style()).inner_margin(0.0))
                     .show(ui, |ui| self.window_ui(ui, w, &mut out));
+                // EV1 (SV7): overlays and viewport passes after the window's walk
+                crate::provider::pass::run_viewport_passes(&self.0.scene, ui);
             } else {
                 let vid = egui::ViewportId::from_hash_of(("svl-window", w));
                 let (title, size) = self.window_props(w);
@@ -45,6 +47,7 @@ impl EguiBackend {
                     egui::CentralPanel::default()
                         .frame(egui::Frame::central_panel(ui.style()).inner_margin(0.0))
                         .show(ui, |ui| self.window_ui(ui, w, &mut out));
+                    crate::provider::pass::run_viewport_passes(&self.0.scene, ui);
                 });
             }
         }

@@ -12,7 +12,7 @@ use std::time::Duration;
 use svelters_abi::Backend;
 use svelters_backend_log::{LogBackend, LogOptions};
 use svelters_host::modules::{SourceConfig, SourceProvider};
-use svelters_host::{ErrorKind, Host, HostConfig, ModuleProvider, ReloadReport};
+use svelters_host::{ErrorKind, Host, HostConfig, ModuleCode, ModuleProvider, ReloadReport};
 
 fn repo() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR")).join("../..").canonicalize().unwrap()
@@ -215,7 +215,52 @@ fn styles_are_reported_not_silently_dropped() {
     let (_log, host) = log_host(Duration::from_millis(100));
     host.load_from(provider.clone()).unwrap();
     let warnings: Vec<String> = host.take_console().into_iter().filter(|l| l.level == "warn").map(|l| l.text).collect();
-    assert!(warnings.iter().any(|w| w.contains("<style> is not applied")), "{warnings:?}");
+    // LD2: the live path applies `<style>` on egui; the other backends' sheets come from the Vite build
+    assert!(warnings.iter().any(|w| w.contains("<style> is applied from source on egui only")), "{warnings:?}");
+}
+
+/// LD2: on egui a component's scoped sheet is its own `svelters-style:` module (`registerStyles(id,
+/// { css })`, the sheet as text). A `<style>`-only edit selects that module alone for the in-place
+/// update; a markup edit selects the component alone.
+#[test]
+fn a_style_only_edit_reruns_only_the_sheet_module() {
+    let text = "<window><label>x</label></window>\n<style>\n  label { color: red; }\n</style>\n";
+    let app = App::new("ld2-sheet", text);
+    let mut cfg = SourceConfig::for_path(&app.dir).unwrap();
+    cfg.backend = "egui".into();
+    cfg.dev = true;
+    cfg.hmr = true;
+    let provider = Rc::new(SourceProvider::new(cfg).unwrap());
+    let (_log, host) = log_host(Duration::from_millis(100));
+    host.load_from(provider.clone()).unwrap();
+    let svelte = app.path("src/App.svelte");
+    let id = svelte.to_string_lossy().into_owned();
+    let sheet_id = format!("svelters-style:{id}");
+    let ModuleCode::Source { js, .. } = provider.load(&id).unwrap() else { panic!("source") };
+    assert!(js.contains(&format!("import {};", serde_json::Value::String(sheet_id.clone()))), "{js}");
+    let ModuleCode::Source { js: sheet, .. } = provider.load(&sheet_id).unwrap() else { panic!("source") };
+    assert!(sheet.contains("registerStyles(") && sheet.contains("color: red") && sheet.contains("svelte-"), "{sheet}");
+    assert!(sheet.contains("import.meta.hot.accept()"), "{sheet}");
+    // nothing else may import a component's sheet
+    assert!(provider.resolve(&app.path("src/other.js").to_string_lossy(), &sheet_id).is_err());
+
+    app.write("src/App.svelte", &text.replace("red", "blue"));
+    assert!(provider.invalidate(std::slice::from_ref(&svelte)));
+    assert_eq!(provider.modules_at(std::slice::from_ref(&svelte)), vec![sheet_id.clone()]);
+
+    app.write("src/App.svelte", &text.replace("red", "blue").replace(">x<", ">y<"));
+    assert!(provider.invalidate(std::slice::from_ref(&svelte)));
+    assert_eq!(provider.modules_at(std::slice::from_ref(&svelte)), vec![id.clone()]);
+    let warnings: Vec<String> = host.take_console().into_iter().filter(|l| l.level == "warn").map(|l| l.text).collect();
+    assert!(!warnings.iter().any(|w| w.contains("<style>")), "{warnings:?}");
+
+    // Q4: a release bundle names the sheet module after its component's logical id
+    use svelters_host::modules::svb::{self, BuildOptions, Svb};
+    let mut bcfg = SourceConfig::for_path(&app.dir).unwrap();
+    bcfg.backend = "egui".into();
+    let bundle = Svb::from_bytes(svb::build(bcfg, &BuildOptions::default()).unwrap()).unwrap();
+    let keys: Vec<&String> = bundle.index().modules.keys().collect();
+    assert!(keys.iter().any(|k| *k == "svelters-style:app/src/App.svelte"), "{keys:?}");
 }
 
 /// Q2: a `lang="ts"` component importing a `.ts` module (as `./util.js`, TypeScript's convention, and
@@ -511,4 +556,50 @@ fn an_app_loads_from_its_release_bundle_without_its_sources() {
         lean.len(),
         pre.len()
     );
+}
+
+/// Q4b: a bundle names nothing of the machine that built it. The same app built from two
+/// checkouts at different paths gives the same bytes, so the same build id; neither names the
+/// checkout (the apps and their packages are under the repo).
+#[test]
+fn a_bundle_does_not_depend_on_the_checkout_path() {
+    use svelters_host::modules::svb::{self, BuildOptions, Svb};
+    // Builds the app twice, from `a` and `b`: the same bytes, neither naming the checkout.
+    let same = |a: &App, b: &App, backend: Option<&str>| -> Svb {
+        let build = |app: &App| {
+            let mut cfg = SourceConfig::for_path(&app.dir).unwrap();
+            if let Some(be) = backend {
+                cfg.backend = be.into();
+            }
+            svb::build(cfg, &BuildOptions::default()).unwrap()
+        };
+        let (x, y) = (build(a), build(b));
+        let root = repo();
+        let root = root.to_string_lossy();
+        for bytes in [&x, &y] {
+            let text = String::from_utf8_lossy(bytes);
+            if let Some(at) = text.find(&*root) {
+                panic!("the bundle names the checkout {root}: …{}…", &text[at.saturating_sub(200)..(at + 200).min(text.len())]);
+            }
+        }
+        let (sx, sy) = (Svb::from_bytes(x.clone()).unwrap(), Svb::from_bytes(y.clone()).unwrap());
+        assert_eq!(sx.index().build, sy.index().build);
+        assert!(x == y, "the bundle bytes differ");
+        sx
+    };
+
+    // The counter: assets, JSON, a runes module, a behaviours module, the packages' source maps.
+    let sx = same(&counter_app("svb-path-a"), &counter_app("svb-path-b-longer"), None);
+    let entry = sx.module_js("svelters:entry").unwrap();
+    assert!(entry.contains("\"app/src/App.svelte\""), "{entry}");
+    assert_eq!(sx.index().modules["svelters:entry"].imports["app/src/App.svelte"], "app/src/App.svelte");
+
+    // LD2: a `<style>` on egui. The scope class and the sheet's key come from the logical id.
+    let styled = "<window><label>x</label></window>\n<style>\n  label { color: red; }\n</style>\n";
+    let sx = same(&App::new("svb-style-a", styled), &App::new("svb-style-b-longer", styled), Some("egui"));
+    let sheet_id = "svelters-style:app/src/App.svelte";
+    assert_eq!(sx.index().modules["app/src/App.svelte"].imports[sheet_id], sheet_id);
+    assert!(sx.module_js("app/src/App.svelte").unwrap().contains(&format!("import \"{sheet_id}\";")));
+    let sheet = sx.module_js(sheet_id).unwrap();
+    assert!(sheet.contains("registerStyles(\"app/src/App.svelte\"") && sheet.contains("svelte-") && sheet.contains("color: red"), "{sheet}");
 }

@@ -35,7 +35,8 @@ fn name_of(c: &Common, w: &W, text: &str) -> Option<String> {
     };
     // a node without text of its own (a combo box, a frameless icon button, a provider kind) is
     // named by its tooltip, as a `title` names an unlabelled HTML control
-    own.or_else(|| if text.is_empty() || matches!(w, W::ComboBox { .. } | W::Ext(_)) { some(&c.tooltip) } else { None })
+    // (a provider kind shows no text of its own: OW0's own widgets that replace a built-in do)
+    own.or_else(|| if text.is_empty() || matches!(w, W::ComboBox { .. }) { some(&c.tooltip) } else { None })
 }
 
 /// Everything AccessKit gets for leaf `n` on top of the widget's own node: its name and, when it

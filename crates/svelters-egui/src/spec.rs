@@ -136,7 +136,8 @@ fn kind_json(k: &KindDef) -> J {
                     "handler_result": if s.sync { "bool_stop" } else { "none" },
                     "js_event": s.name,
                     "name": s.name,
-                    "phases": [],
+                    // EV1: the DOM-style events propagate along the scene and take capture listeners
+                    "phases": if kinds::is_dom_event(s.name) { json!(["capture"]) } else { json!([]) },
                     "sync": s.sync,
                     "sync_required": false,
                 }),
@@ -447,10 +448,13 @@ fn style_json() -> J {
 
 /// The whole spec.
 pub fn semantics() -> J {
+    // OW0: a kind with an own widget lists the widget's extra props and signals too
+    let reg = KindRegistry::global();
     let kinds: Map<String, J> = KINDS
         .iter()
-        .map(|k| {
-            let mut j = kind_json(k);
+        .enumerate()
+        .map(|(i, k)| {
+            let mut j = kind_json(reg.spec_kind(i));
             add_docs(&mut j, k, None);
             (k.id.to_string(), j)
         })
@@ -689,6 +693,12 @@ fn ts_members(out: &mut String, indent: &str, k: &KindDef, provider: Option<&Pro
             None => s.args.iter().map(|(n, _)| n.replace('-', "_")).collect(),
         };
         let params: Vec<String> = names.iter().zip(&args).map(|(n, t)| format!("{n}: {t}")).collect();
+        // EV1: the DOM-style events get a `SvlUiEvent` (target, phase, point, key) and a capture form
+        if kinds::is_dom_event(s.name) {
+            let _ = writeln!(out, "{indent}{}?: (e: SvlUiEvent) => void;", ts_key(&format!("on{}", s.name)));
+            let _ = writeln!(out, "{indent}{}?: (e: SvlUiEvent) => void;", ts_key(&format!("on{}capture", s.name)));
+            continue;
+        }
         let params = if s.sync { std::iter::once(format!("e: SvlEvent<[{}]>", args.join(", "))).chain(params).collect::<Vec<_>>().join(", ") } else { params.join(", ") };
         let _ = writeln!(out, "{indent}{}?: ({params}) => void;", ts_key(&format!("on{}", s.name)));
     }
@@ -710,6 +720,39 @@ export interface SvlEvent<A extends unknown[] = unknown[]> {
   args: A;
   preventDefault(): void;
   stopPropagation(): void;
+}
+
+/** EV1: what a DOM-style event's handler gets (`pointerdown`, `click`, `wheel`, `keydown`, `focusin`, ...):
+ * dispatched along the scene in capture, target and bubble order. */
+export interface SvlUiEvent extends SvlEvent {
+  /** The node the event is for; `currentTarget` is the node whose listener runs. */
+  target: unknown;
+  currentTarget: unknown;
+  /** 1 capture, 2 at the target, 3 bubble. */
+  eventPhase: 1 | 2 | 3;
+  bubbles: true;
+  cancelable: boolean;
+  defaultPrevented: boolean;
+  stopImmediatePropagation(): void;
+  /** Pointer events and `wheel`: the point in the window's (or slot's viewport's) points. */
+  x?: number;
+  y?: number;
+  clientX?: number;
+  clientY?: number;
+  /** Pointer events: 0 primary, 1 middle, 2 secondary, 3 back, 4 forward. */
+  button?: number;
+  /** `wheel`: the scroll in points. */
+  deltaX?: number;
+  deltaY?: number;
+  /** Key events: egui's key name (`A`, `Enter`, `ArrowDown`), and whether it is an auto-repeat. */
+  key?: string;
+  repeat?: boolean;
+  /** Focus events: the node focus came from (`focusin`) or went to (`focusout`). */
+  relatedTarget?: unknown;
+  shiftKey: boolean;
+  ctrlKey: boolean;
+  altKey: boolean;
+  metaKey: boolean;
 }
 
 type ClassValue = string | null | undefined | false | ClassValue[] | { [name: string]: unknown };
@@ -773,7 +816,7 @@ pub fn builtin_typings() -> String {
         for b in bases.iter().rev().filter(|b| b.id != "Widget") {
             ts_members(&mut s, "    ", b, None);
         }
-        ts_members(&mut s, "    ", k, None);
+        ts_members(&mut s, "    ", KindRegistry::global().spec_kind(i), None);
         s.push_str("  };\n");
     }
     s.push_str("}\n");

@@ -46,6 +46,48 @@ pub trait Driver {
     fn screenshot(&mut self) -> Option<egui::ColorImage> {
         None
     }
+
+    /// AU1b: the virtual clock's milliseconds (`None`: the host keeps the wall clock). See
+    /// [`crate::clock::Clocked`].
+    fn clock_ms(&self) -> Option<f64> {
+        None
+    }
+
+    /// AU1b: the seed of the host's scheduler and `Math.random` (`None`: unseeded).
+    fn seed(&self) -> Option<u64> {
+        None
+    }
+}
+
+/// A boxed driver (`svelters-run` picks its clock at run time).
+impl<D: Driver + ?Sized> Driver for Box<D> {
+    fn scene(&self) -> SceneHandle {
+        (**self).scene()
+    }
+    fn busy(&self) -> Option<String> {
+        (**self).busy()
+    }
+    fn step(&mut self) {
+        (**self).step()
+    }
+    fn send(&mut self, event: egui::Event) {
+        (**self).send(event)
+    }
+    fn frame_ms(&self) -> f64 {
+        (**self).frame_ms()
+    }
+    fn a11y_nodes(&self) -> Vec<A11yNode> {
+        (**self).a11y_nodes()
+    }
+    fn screenshot(&mut self) -> Option<egui::ColorImage> {
+        (**self).screenshot()
+    }
+    fn clock_ms(&self) -> Option<f64> {
+        (**self).clock_ms()
+    }
+    fn seed(&self) -> Option<u64> {
+        (**self).seed()
+    }
 }
 
 #[cfg(feature = "kittest")]

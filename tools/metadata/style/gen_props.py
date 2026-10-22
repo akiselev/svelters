@@ -87,7 +87,7 @@ RS_VIA = {"css": "Css", "setter": "Setter", "child-attr": "ChildAttr"}
 RS_TYPE = {
     "length": "Length", "number": "Number", "int": "Int", "bool": "Bool", "string": "String",
     "enum": "Enum", "color": "Color", "insets": "Insets", "font-weight": "FontWeight",
-    "border": "Raw", "shadow": "Shadow",
+    "border": "Raw", "shadow": "Shadow", "transition": "Transition", "image": "Image", "content": "Content",
 }
 
 

@@ -3,8 +3,7 @@ backend: gtk
 ## diagnostics
 error[unsupported_feature] @7:11: `on:clicked|preventDefault|once`: event modifiers are not supported by the native compiler (runes mode has no modifiers)
   help: write `onclicked={(event) => { event.preventDefault(); h(event); }}` and, in the handler, ignore the calls after the first (`|once`)
-error[unsupported_feature] @8:11: `on:clicked|capture`: event modifiers are not supported by the native compiler (runes mode has no modifiers)
-  help: write `onclickedcapture={h}`
+error[listen_phase_unsupported] @8:11: `clicked` of <button> has only after on gtk, not `capture`; on GTK only event controllers have a capture phase
 error[unsupported_feature] @9:11: `on:clicked|stopPropagation`: event modifiers are not supported by the native compiler (runes mode has no modifiers)
   help: destructure the prop (`let { onclicked } = $props()`), then write `onclicked={(event) => { event.stopPropagation(); onclicked?.(event); }}`
 error[unsupported_feature] @10:10: `on:accepted|once`: event modifiers on a component are not supported by the native compiler (runes mode has no modifiers)

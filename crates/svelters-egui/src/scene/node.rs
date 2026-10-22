@@ -401,10 +401,12 @@ pub(crate) struct NodeCold {
     /// SG4: the out-of-flow (`position: absolute`) boxes this node is the containing block of, as
     /// taffy's last layout recorded them (`layout.rs`, `LayoutContainingBlock`).
     pub hoisted: Vec<NodeId>,
+    /// EV1: signals listened in the capture phase (`listen_ex` with `SVL_LISTEN_CAPTURE`).
+    pub listen_capture: Vec<u32>,
 }
 
 impl NodeCold {
-    pub const DEFAULT: NodeCold = NodeCold { common: Common::DEFAULT, vis: Visual::IDENTITY, observe: Vec::new(), listen_overflow: Vec::new(), attached: Vec::new(), hoisted: Vec::new() };
+    pub const DEFAULT: NodeCold = NodeCold { common: Common::DEFAULT, vis: Visual::IDENTITY, observe: Vec::new(), listen_overflow: Vec::new(), attached: Vec::new(), hoisted: Vec::new(), listen_capture: Vec::new() };
 
     pub fn observes(&self, prop: u32) -> bool {
         prop != 0 && self.observe.iter().any(|&(p, c)| p == prop && c > 0)
@@ -464,7 +466,9 @@ pub fn text_of(w: &W) -> &str {
         W::Icon { name, .. } => name,
         W::Menu(m) => m.label(),
         W::Overlay(o) => &o.title,
-        W::Box | W::Ext(_) | W::Separator { .. } | W::Grid { .. } | W::ScrollArea { .. } | W::VirtualList(_) => "",
+        // OW0: an own widget replacing a built-in kind shows its text prop (a mirror kept by `set_prop`)
+        W::Ext(x) => x.text(),
+        W::Box | W::Separator { .. } | W::Grid { .. } | W::ScrollArea { .. } | W::VirtualList(_) => "",
         // WG2b
         W::Hyperlink { text, .. } | W::RadioButton { text, .. } | W::Switch { text, .. } | W::RangeSlider { text, .. } | W::ProgressBar { text, .. } => text,
         W::Frame { label, .. } => label,

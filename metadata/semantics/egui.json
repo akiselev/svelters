@@ -588,6 +588,40 @@
           "type": "bool",
           "writable": true
         },
+        "icon": {
+          "construct_only": false,
+          "default": "",
+          "doc": "An icon before the caption: an icon key (`name` in the `icons` family, or `family:name`).\nIts size, place and visibility are CSS on `::part(icon)` (P3).",
+          "js": "icon",
+          "native": "icon",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Button:icon",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "repeat": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Held down, it activates again and again (`clicked` after 300 ms, then every 100 ms;\nQAbstractButton `autoRepeat`).",
+          "js": "repeat",
+          "native": "repeat",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Button:repeat",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "selected": {
           "construct_only": false,
           "default": false,
@@ -662,6 +696,28 @@
           "handler_result": "none",
           "js_event": "double-clicked",
           "name": "double-clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "press": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "The primary button went down on it (QAbstractButton `pressed`).",
+          "handler_result": "none",
+          "js_event": "press",
+          "name": "press",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "release": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "It came up again, over the button or not (`released`).",
+          "handler_result": "none",
+          "js_event": "release",
+          "name": "release",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -9894,6 +9950,120 @@
           "sync": false,
           "sync_required": false
         },
+        "click": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The primary button was pressed and released; targets the innermost node that holds both points (EV1). `preventDefault` keeps the click from the widget.",
+          "handler_result": "bool_stop",
+          "js_event": "click",
+          "name": "click",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "contextmenu": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The secondary button went down (EV1), after `pointerdown`. `preventDefault` keeps the press from egui (no context menu).",
+          "handler_result": "bool_stop",
+          "js_event": "contextmenu",
+          "name": "contextmenu",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "dblclick": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A second click on the same node in a short time, after its `click` (EV1).",
+          "handler_result": "bool_stop",
+          "js_event": "dblclick",
+          "name": "dblclick",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
         "drag-begin": {
           "args": [],
           "disconnect_on_drop": true,
@@ -9974,6 +10144,244 @@
           "name": "drop",
           "phases": [],
           "sync": false,
+          "sync_required": false
+        },
+        "focusin": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "related",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "This node or a descendant took keyboard focus (EV1; after the frame that moved it). `related` is the node that lost it, 0 for none.",
+          "handler_result": "bool_stop",
+          "js_event": "focusin",
+          "name": "focusin",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "focusout": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "related",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "This node or a descendant lost keyboard focus (EV1). `related` is the node that took it, 0 for none.",
+          "handler_result": "bool_stop",
+          "js_event": "focusout",
+          "name": "focusout",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "keydown": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "key",
+              "type": "string"
+            },
+            {
+              "name": "repeat",
+              "type": "bool"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A key went down while this node or a descendant had focus (EV1); `key` is egui's key name. `preventDefault` keeps the key (and the text it types) from the focused widget.",
+          "handler_result": "bool_stop",
+          "js_event": "keydown",
+          "name": "keydown",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "keyup": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "key",
+              "type": "string"
+            },
+            {
+              "name": "repeat",
+              "type": "bool"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A key went up while this node or a descendant had focus (EV1).",
+          "handler_result": "bool_stop",
+          "js_event": "keyup",
+          "name": "keyup",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "pointerdown": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A pointer button went down over this node or a descendant (EV1: capture, target, bubble). `preventDefault` keeps the press from egui (no click, drag or focus).",
+          "handler_result": "bool_stop",
+          "js_event": "pointerdown",
+          "name": "pointerdown",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "pointerup": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A pointer button went up over this node or a descendant (EV1). `preventDefault` cancels the click.",
+          "handler_result": "bool_stop",
+          "js_event": "pointerup",
+          "name": "pointerup",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "wheel": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "dx",
+              "type": "f64"
+            },
+            {
+              "name": "dy",
+              "type": "f64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The mouse wheel or a trackpad scrolled over this node (EV1); `dx`, `dy` in points. `preventDefault` keeps it from scrolling.",
+          "handler_result": "bool_stop",
+          "js_event": "wheel",
+          "name": "wheel",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
           "sync_required": false
         }
       },
@@ -10190,6 +10598,44 @@
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {
+        "click": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The primary button was pressed and released; targets the innermost node that holds both points (EV1). `preventDefault` keeps the click from the widget.",
+          "handler_result": "bool_stop",
+          "js_event": "click",
+          "name": "click",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
         "close-request": {
           "args": [],
           "disconnect_on_drop": true,
@@ -10198,6 +10644,320 @@
           "js_event": "close-request",
           "name": "close-request",
           "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "contextmenu": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The secondary button went down (EV1), after `pointerdown`. `preventDefault` keeps the press from egui (no context menu).",
+          "handler_result": "bool_stop",
+          "js_event": "contextmenu",
+          "name": "contextmenu",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "dblclick": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A second click on the same node in a short time, after its `click` (EV1).",
+          "handler_result": "bool_stop",
+          "js_event": "dblclick",
+          "name": "dblclick",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "focusin": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "related",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "This node or a descendant took keyboard focus (EV1; after the frame that moved it). `related` is the node that lost it, 0 for none.",
+          "handler_result": "bool_stop",
+          "js_event": "focusin",
+          "name": "focusin",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "focusout": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "related",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "This node or a descendant lost keyboard focus (EV1). `related` is the node that took it, 0 for none.",
+          "handler_result": "bool_stop",
+          "js_event": "focusout",
+          "name": "focusout",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "keydown": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "key",
+              "type": "string"
+            },
+            {
+              "name": "repeat",
+              "type": "bool"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A key went down while this node or a descendant had focus (EV1); `key` is egui's key name. `preventDefault` keeps the key (and the text it types) from the focused widget.",
+          "handler_result": "bool_stop",
+          "js_event": "keydown",
+          "name": "keydown",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "keyup": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "key",
+              "type": "string"
+            },
+            {
+              "name": "repeat",
+              "type": "bool"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A key went up while this node or a descendant had focus (EV1).",
+          "handler_result": "bool_stop",
+          "js_event": "keyup",
+          "name": "keyup",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "pointerdown": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A pointer button went down over this node or a descendant (EV1: capture, target, bubble). `preventDefault` keeps the press from egui (no click, drag or focus).",
+          "handler_result": "bool_stop",
+          "js_event": "pointerdown",
+          "name": "pointerdown",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "pointerup": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "button",
+              "type": "i64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A pointer button went up over this node or a descendant (EV1). `preventDefault` cancels the click.",
+          "handler_result": "bool_stop",
+          "js_event": "pointerup",
+          "name": "pointerup",
+          "phases": [
+            "capture"
+          ],
+          "sync": true,
+          "sync_required": false
+        },
+        "wheel": {
+          "args": [
+            {
+              "name": "target",
+              "type": "i64"
+            },
+            {
+              "name": "phase",
+              "type": "i64"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            },
+            {
+              "name": "dx",
+              "type": "f64"
+            },
+            {
+              "name": "dy",
+              "type": "f64"
+            },
+            {
+              "name": "modifiers",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The mouse wheel or a trackpad scrolled over this node (EV1); `dx`, `dy` in points. `preventDefault` keeps it from scrolling.",
+          "handler_result": "bool_stop",
+          "js_event": "wheel",
+          "name": "wheel",
+          "phases": [
+            "capture"
+          ],
           "sync": true,
           "sync_required": false
         }
@@ -10348,11 +11108,127 @@
         "decl_type": "color",
         "via": "css"
       },
+      "background-image": {
+        "decl_type": "image",
+        "via": "css"
+      },
+      "border-bottom-color": {
+        "decl_type": "color",
+        "via": "css"
+      },
+      "border-bottom-left-radius": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "border-bottom-right-radius": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "border-bottom-style": {
+        "decl_type": "enum",
+        "values": [
+          "none",
+          "hidden",
+          "solid",
+          "dashed",
+          "dotted",
+          "double",
+          "groove",
+          "ridge",
+          "inset",
+          "outset"
+        ],
+        "via": "css"
+      },
+      "border-bottom-width": {
+        "decl_type": "length",
+        "via": "css"
+      },
       "border-color": {
         "decl_type": "color",
         "via": "css"
       },
+      "border-left-color": {
+        "decl_type": "color",
+        "via": "css"
+      },
+      "border-left-style": {
+        "decl_type": "enum",
+        "values": [
+          "none",
+          "hidden",
+          "solid",
+          "dashed",
+          "dotted",
+          "double",
+          "groove",
+          "ridge",
+          "inset",
+          "outset"
+        ],
+        "via": "css"
+      },
+      "border-left-width": {
+        "decl_type": "length",
+        "via": "css"
+      },
       "border-radius": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "border-right-color": {
+        "decl_type": "color",
+        "via": "css"
+      },
+      "border-right-style": {
+        "decl_type": "enum",
+        "values": [
+          "none",
+          "hidden",
+          "solid",
+          "dashed",
+          "dotted",
+          "double",
+          "groove",
+          "ridge",
+          "inset",
+          "outset"
+        ],
+        "via": "css"
+      },
+      "border-right-width": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "border-top-color": {
+        "decl_type": "color",
+        "via": "css"
+      },
+      "border-top-left-radius": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "border-top-right-radius": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "border-top-style": {
+        "decl_type": "enum",
+        "values": [
+          "none",
+          "hidden",
+          "solid",
+          "dashed",
+          "dotted",
+          "double",
+          "groove",
+          "ridge",
+          "inset",
+          "outset"
+        ],
+        "via": "css"
+      },
+      "border-top-width": {
         "decl_type": "length",
         "via": "css"
       },
@@ -10441,6 +11317,52 @@
         ],
         "type": "length",
         "via": "setter"
+      },
+      "content": {
+        "decl_type": "content",
+        "via": "css"
+      },
+      "cursor": {
+        "decl_type": "enum",
+        "values": [
+          "auto",
+          "default",
+          "none",
+          "context-menu",
+          "help",
+          "pointer",
+          "progress",
+          "wait",
+          "cell",
+          "crosshair",
+          "text",
+          "vertical-text",
+          "alias",
+          "copy",
+          "move",
+          "no-drop",
+          "not-allowed",
+          "grab",
+          "grabbing",
+          "all-scroll",
+          "col-resize",
+          "row-resize",
+          "n-resize",
+          "e-resize",
+          "s-resize",
+          "w-resize",
+          "ne-resize",
+          "nw-resize",
+          "se-resize",
+          "sw-resize",
+          "ew-resize",
+          "ns-resize",
+          "nesw-resize",
+          "nwse-resize",
+          "zoom-in",
+          "zoom-out"
+        ],
+        "via": "css"
       },
       "display": {
         "decl_type": "enum",
@@ -10658,8 +11580,25 @@
         ],
         "via": "setter"
       },
+      "font-family": {
+        "decl_type": "raw",
+        "via": "css"
+      },
       "font-size": {
         "decl_type": "length",
+        "via": "css"
+      },
+      "font-style": {
+        "decl_type": "enum",
+        "values": [
+          "normal",
+          "italic",
+          "oblique"
+        ],
+        "via": "css"
+      },
+      "font-weight": {
+        "decl_type": "font-weight",
         "via": "css"
       },
       "gap": {
@@ -10853,6 +11792,14 @@
         ],
         "type": "length",
         "via": "setter"
+      },
+      "letter-spacing": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "line-height": {
+        "decl_type": "raw",
+        "via": "css"
       },
       "margin": {
         "kinds": [
@@ -11134,6 +12081,34 @@
         "decl_type": "number",
         "via": "css"
       },
+      "outline-color": {
+        "decl_type": "color",
+        "via": "css"
+      },
+      "outline-offset": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "outline-style": {
+        "decl_type": "enum",
+        "values": [
+          "none",
+          "auto",
+          "solid",
+          "dashed",
+          "dotted",
+          "double",
+          "groove",
+          "ridge",
+          "inset",
+          "outset"
+        ],
+        "via": "css"
+      },
+      "outline-width": {
+        "decl_type": "length",
+        "via": "css"
+      },
       "padding": {
         "kinds": [
           "Window",
@@ -11309,6 +12284,46 @@
         "type": "length",
         "via": "setter"
       },
+      "text-align": {
+        "decl_type": "enum",
+        "values": [
+          "start",
+          "end",
+          "left",
+          "right",
+          "center",
+          "justify"
+        ],
+        "via": "css"
+      },
+      "text-decoration-line": {
+        "decl_type": "enum",
+        "values": [
+          "none",
+          "underline",
+          "overline",
+          "line-through"
+        ],
+        "via": "css"
+      },
+      "text-overflow": {
+        "decl_type": "enum",
+        "values": [
+          "clip",
+          "ellipsis"
+        ],
+        "via": "css"
+      },
+      "text-transform": {
+        "decl_type": "enum",
+        "values": [
+          "none",
+          "uppercase",
+          "lowercase",
+          "capitalize"
+        ],
+        "via": "css"
+      },
       "top": {
         "kinds": [
           "Widget"
@@ -11361,6 +12376,10 @@
         "type": "length",
         "via": "setter"
       },
+      "transition": {
+        "decl_type": "transition",
+        "via": "css"
+      },
       "visible": {
         "kinds": [
           "Widget"
@@ -11412,6 +12431,18 @@
         ],
         "type": "bool",
         "via": "setter"
+      },
+      "white-space": {
+        "decl_type": "enum",
+        "values": [
+          "normal",
+          "nowrap",
+          "pre",
+          "pre-wrap",
+          "pre-line",
+          "break-spaces"
+        ],
+        "via": "css"
       },
       "width": {
         "kinds": [
@@ -11551,6 +12582,56 @@
         "name": "busy",
         "negated": false,
         "state": "busy"
+      },
+      {
+        "name": "indeterminate",
+        "negated": false,
+        "state": "indeterminate"
+      },
+      {
+        "name": "placeholder-shown",
+        "negated": false,
+        "state": "placeholder-shown"
+      },
+      {
+        "name": "default",
+        "negated": false,
+        "state": "default"
+      },
+      {
+        "name": "drop-target",
+        "negated": false,
+        "state": "drop-target"
+      },
+      {
+        "name": "current",
+        "negated": false,
+        "state": "current"
+      },
+      {
+        "name": "backdrop",
+        "negated": false,
+        "state": "backdrop"
+      },
+      {
+        "name": "required",
+        "negated": false,
+        "state": "required"
+      },
+      {
+        "name": "optional",
+        "negated": true,
+        "state": "required"
+      },
+      {
+        "name": "user-invalid",
+        "negated": false,
+        "state": "user-invalid"
+      },
+      {
+        "name": "has-children",
+        "negated": false,
+        "state": "has-children"
       }
     ],
     "setter_selectors": [
