@@ -18,6 +18,7 @@ pub mod checkbox;
 pub mod collapsing;
 pub mod frame;
 pub mod hyperlink;
+pub mod image;
 pub mod label;
 mod parts;
 pub mod progress;

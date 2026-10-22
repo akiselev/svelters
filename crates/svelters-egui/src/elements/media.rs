@@ -10,10 +10,10 @@ use egui::{Rect, Role, Sense, TextureOptions, Ui, Vec2, WidgetInfo, pos2, vec2};
 use svelters_abi::Value;
 
 /// The side of the square an `image` whose source did not load is measured at (points).
-const PLACEHOLDER: f32 = 16.0;
+pub(crate) const PLACEHOLDER: f32 = 16.0;
 
 /// The loaded size of an image source, in points (`None`: not loaded, or no source).
-fn image_size(ctx: &egui::Context, source: &str) -> Option<Vec2> {
+pub(crate) fn image_size(ctx: &egui::Context, source: &str) -> Option<Vec2> {
     if source.is_empty() {
         return None;
     }
