@@ -1,6 +1,6 @@
 # ST2: AppKit styling (the decl dialect) and a styled todo app
 
-State: DONE (2026-10-21, local Mac: Intel, macOS 15.7.5; CI runs the new todo suite on arm64 / macOS 26).
+State: DONE (1b0540b5, 2026-10-21, local Mac: Intel, macOS 15.7.5; CI runs the new todo suite on arm64 / macOS 26).
 User decision (2026-10-21): a runtime engine (states, dark scheme, tokens), not compile-time setters only.
 
 ## Why
