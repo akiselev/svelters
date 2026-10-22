@@ -19,6 +19,7 @@ use egui::{Color32, Rect, Stroke, pos2};
 
 /// A part's view: the host's computed style (`host_css`: true for parts the base sheet styles
 /// through the host rule) over the part's UA table, in the host's state.
+// TODO(OW-CSS `::part`): take the part's computed style here; no widget changes.
 pub(crate) fn part_view<'a>(host: &StyleView<'a>, ua: Ua, host_css: bool) -> StyleView<'a> {
     StyleView::new(if host_css { host.computed() } else { None }, ua, host.state(), host.is_dark())
 }

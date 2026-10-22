@@ -14,9 +14,11 @@ use crate::provider::{A11yCx, AvailableSpace, MeasureCx, StateBits, Widget, Widg
 
 pub const UA: Ua = Ua(&[UaRule::base(&[("text-align", Keyword("center")), ("width", Px(100.0))])]);
 
+// TODO(OW-CSS `::part`): a hard-coded part UA table; replace it with the part's computed style once the engine computes `::part()` styles (see `parts::part_view`).
 /// `::part(track)`.
 pub const TRACK: Ua = Ua(&[UaRule::base(&[("background-color", Token("control-bg")), ("border-radius", Px(2.0)), ("height", Px(4.0))])]);
 
+// TODO(OW-CSS `::part`): a hard-coded part UA table; replace it with the part's computed style once the engine computes `::part()` styles (see `parts::part_view`).
 /// `::part(fill)`.
 pub const FILL: Ua = Ua(&[UaRule::base(&[("background-color", Token("progress"))])]);
 

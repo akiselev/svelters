@@ -69,19 +69,17 @@ both implementations (ARCH-WIDGETS §6.2 steps 2–3).
 
 ### 2.3 WIDGET-PARITY OW1a rows (§5: 3.9 d)
 
-All are **deferred to slice 2**. The finding behind this: `Replacement::new` requires an own
-widget's props to equal the built-in row's. So every new prop has to be added to the KINDS row,
-the wrapper's `P` handling and the regenerated `egui.json`/`.d.ts` in the same change, or the own
-kind and the wrapper diverge.
+All are **deferred to OW1a2**, the fresh lane that takes the rest (coordinator, 2026-10-22). Q4
+rich text went to RT2. The how-to for each row is in §5.2.
 
 | Row (§) | Status |
 |---|---|
-| toggle-button `group` (§2.1) | deferred (needs a sibling-write seam; see radio below) |
-| checkbox `indeterminate`/`tristate` (§2.2) | deferred; Toggleable implements the semantics already |
+| toggle-button `group` (§2.1) | deferred (needs the sibling-write seam, §5.1) |
+| checkbox `indeterminate`/`tristate` (§2.2) | deferred; Toggleable already implements the semantics |
 | checkbox `icon`, `::part(label)` (§2.2) | `label` part painted and traced; `icon` deferred |
 | radio `icon`, label part, Roving (§2.3) | deferred with radio-button |
-| progress `value/min/max`, `indeterminate`, `orientation`, `inverted`, `format` (§2.9) | deferred; `track`/`fill`/`label` parts and the busy sweep done |
-| label `for`, selection props, Q4 inline rich text (§2.10) | deferred |
+| progress `value/min/max`, `indeterminate`, `orientation`, `inverted`, `format`, `::part(label)` (§2.9) | parts `track`/`fill`/`label` and the busy sweep done; the props are deferred |
+| label `for`, selection props (§2.10) | deferred; Q4 inline rich text → **RT2** (ci/rt2) |
 | frame `checkable`, accordion, header `icon`, header actions (§2.16) | deferred with frame/collapsing-header |
 
 ### 2.4 VIS1
@@ -124,27 +122,119 @@ Plus `interact::toggle::tests::ow1a_toggle_cycles`.
   the backend's `MotionConfig`, which a widget cannot reach. A follow-up should expose it on
   `WidgetCx`.
 
-## 5. Slice 2 (handoff)
+## 5. Handoff to OW1a2 (a fresh agent)
 
-In order:
-1. **radio-button**: own widget with Toggleable(radio) and Roving. It needs a **sibling-write
-   seam**: exclusivity writes `checked`/`group` on sibling nodes. `WidgetCx` writes only its own
-   node, so this needs a `cx.defer`-style write through `SceneHandle::defer`, or EV1. Ask the
-   coordinator which.
-2. **frame, collapsing-header** (containers). These need `layout.rs`'s `W::CollapsingHeader`
-   padding and `Tree::collapsing` moved to the own kind (`Caps::CONTAINER`/`CUSTOM_LAYOUT`), with
-   the `header` node part and `twistie` paint part, Expandable (`:expanded`), and R14.
-3. **icon, image**: own widgets on `paint_icon`/`paint_image` (take ICR1's IconRegistry if it is
-   on master).
-4. **Parity props** (§2.3 above): add each to its KINDS row, the wrapper's `P` handling and the
-   own struct together, then regenerate `metadata/semantics/egui.json` and the typings with their
-   generators.
-5. **Q4 inline rich text**: the compiler lowers `<b>`, `<i>`, `<code>`, `<a>` and `<span
-   class>` children of `label` (and string tooltips) into one layout job of styled runs (no markup
-   parser). The `link` signal carries `href`.
-6. **The flip**: run each kind's existing test files under both implementations (`tier0.rs`,
-   `widgets.rs`, `observe.rs`, `scene.rs`), add the tags to `DEFAULT_OWN`, delete the wrappers and
-   their `layout.rs` size copies, and add VIS1c checks.
+Start from master once this lane merges. Read ARCH-WIDGETS §1.2, §1.3, §6.1 and §6.2, and
+WIDGET-PARITY §2.1–§2.3, §2.9, §2.10, §2.16 and §5. Use the slice 1 files as the pattern:
+`widgets/checkbox.rs` (indicator kinds), `widgets/toggle_button.rs` (button-like),
+`widgets/parts.rs` (paint parts) and `tests/ow1a.rs` (tests on both implementations).
+
+### 5.1 Kinds left, in order
+
+1. **radio-button** (`widgets/radio.rs`). It reuses `checkbox::measure_with_indicator` and
+   `split` with a round `indicator` (radius 50 %) and a `dot` part (`parts::paint_dot`). Use
+   `Toggleable` with `radio: true` and `Hoverable`/`Focusable`/`Pressable`. The `changed` signal
+   carries **two** args (`checked`, `group`). The OW0 emit path wraps the payload in one arg
+   (`provider/mod.rs` "an own widget's event keeps the built-in signal's arity"), so add a
+   multi-arg payload there, or make the event's type a tuple that `IntoJs` spreads.
+   **Sibling-write seam:** the wrapper (`elements/inputs.rs::radio`) unchecks siblings and writes
+   their `group`. A `WidgetCx` writes only its own node, so this needs one of:
+   - a `WidgetCx::defer(f)` that forwards to `SceneHandle::defer` (`scene/access.rs:303`; it
+     applies next logic, so siblings repaint a frame late, as the wrapper's already do);
+   - or EV1's dispatch.
+   Ask the coordinator which. toggle-button `group` (§2.1) uses the same seam.
+   **Roving** (`interact/roving.rs`, ARCH §1.2 catalogue): arrows move focus and check within
+   the group (siblings with the same `group`, or the same parent when `group` is empty). The group
+   has one tab stop: only the checked button, or the first, is a tab stop (`FocusParams::tab_stop`).
+   Claims Up/Down/Left/Right.
+2. **frame** and **collapsing-header**: containers, with their own `layout.rs` cases.
+   - `layout.rs:271` (`W::CollapsingHeader`) pads the node by the header row and the indent. Move
+     it to the own kind's `measure`/style: header row height = `header-h` token, indent =
+     `indent` token, both through UA tables.
+   - `layout.rs:417` measures the header row.
+   - `layout.rs:515`/`:640` `Tree::collapsing` lays out the body only when `open`. The own kind
+     needs `Caps::CONTAINER | CUSTOM_LAYOUT` (or a `display: none` style on the children when
+     closed). Draw the children with `cx.children(ui)`.
+   - The header is a **node part** `header` (`#[part(node)]`, SG4 `insert_shadow`) with
+     Pressable/Focusable/Hoverable, plus the `Expandable` unit (new, `interact/expand.rs`:
+     owns `expanded`, claims Enter/Space, AccessKit `expanded` + Expand/Collapse). The `twistie`
+     paint part is a chevron (R14), a path until ICR1. Prop `open` (bind), signal `changed`.
+   - frame: `elements/panes.rs:58`/`:158` (`W::Frame { label, style }`, `frame_of` maps
+     `frame-style` to egui Frames). The own frame paints a box from a UA table per `frame-style`
+     (`group` = 1 px `border`, radius 4), the `caption` paint part, `Role::Group` named by the
+     label, and draws its children with `cx.children`. The padding the wrapper's
+     `elements::style` gives must move to the UA table (P9: no size constants).
+   - Parity: frame `checkable` (an indicator part like the checkbox; unchecked disables the
+     subtree), `accordion` (one open at a time: the sibling-write seam again), header `icon`,
+     header actions (`slot="end"` children shown on `:hover`/`:focus-within`).
+3. **icon**, **image**: wrappers in `leaf.rs:348` (`icon_image`) and `elements/media.rs`.
+   - Own `icon` paints with `paint::paint_icon` (font path) or `paint_image` (an AS1 `source`).
+     Take ICR1's `IconRegistry::resolve` if it is on master.
+   - Props: `family`, `name`, `glyph`, `size`, `source`, `tint`, `frame`, `selected`,
+     `font-weight`. Signals: `clicked`, `double-clicked`, `secondary-clicked`. Pressable only
+     when listened (`WidgetCx::listens`, as `label`). A framed icon is a button look (copy the
+     button UA).
+   - Keep the `icons.rs` tests' fallback behaviour (`icon_fallback_*`: placeholder square, warnings
+     through `fonts::report`).
+   - Own `image` paints `paint_image` with `fit` → object-fit.
+
+### 5.2 Parity props: declare them as extras on the own struct
+
+OW0b ships **superset props** (coordinator, 2026-10-22; the sha comes from the coordinator).
+- A `#[prop]` on a `replaces` struct that the KINDS row lacks becomes an extra prop of the
+  built-in tag. Types are inferred; enums use `#[prop(enumeration = "a|b")]`.
+- An extra `#[event]` becomes an extra signal.
+- The old wrapper ignores extras.
+- egui.json and egui.d.ts list extras regardless of the switch, so after adding one, **regenerate
+  those two files** with their generators and never hand-merge them.
+
+So **do not edit KINDS rows, `P` keys or wrappers** for parity props. Until the OW0b sha is on
+your base, 7eef7362 rejects extras at startup (`Replacement::new`, "has no others"). Wait for it,
+or as a stopgap add the prop to the row and regenerate.
+
+| Kind | Extras to declare | Behaviour |
+|---|---|---|
+| checkbox | `indeterminate: bool` (bind), `tristate: bool`, `icon: String` | pass to `ToggleParams`; `Toggle::Toggled` carries `indeterminate`, so write both props; with `tristate`, `changed` carries `"partial"` (WIDGET-PARITY §2.2; check the signal's arg type with the coordinator); paint `mark` as the dash when indeterminate (`parts::paint_mark(.., true)`) |
+| radio-button | `icon` | — |
+| toggle-button | `group: String` | exclusive set through the sibling-write seam + Roving |
+| progress-bar | `value`, `min`, `max` (f64), `indeterminate: bool`, `orientation` (`enumeration = "horizontal\|vertical"`), `inverted: bool`, `format: String` (`%p%`, `%v`, `%m`) | `fraction` stays; value/min/max is the alternative form; `indeterminate` = the busy sweep (alias of `animate`) + `:indeterminate`; vertical swaps the axes of `track`/`fill` |
+| label | `for: String` (an anchor; a click focuses the target; AccessKit `labelled_by`), selection props (§2.4 shapes) | `selectable` = a read-only TextInput on OW4's unit (or egui's text-selection helpers until then) |
+| frame | `checkable`, `checked` (bind), signal `changed` | — |
+| collapsing-header | `icon: String`, `accordion` group (name) | — |
+
+### 5.3 Rich text: RT2 (ci/rt2), not OW1a2
+
+RT2 adds:
+- run kinds `span`, `b`, `i`, `code`, `a` (abstract base `Run`, `kinds/rich.rs`);
+- a `runs` slot on `label`;
+- a `rich` field on `W::Label`;
+- the seam `crate::rich::layout_job(ctx, style, &Rich, colors, wrap, underline) -> LayoutJob`.
+
+The own label plugs it in at **one place**: `widgets/label.rs::Label::galley` (and `measure`).
+When the node has run children, build the galley from that `LayoutJob` instead of
+`text_galley`. Nothing else in the own label changes.
+
+### 5.4 Deleting the wrappers and flipping the default (per kind, last)
+
+1. Run the kind's existing test files under both implementations: `tier0.rs`, `widgets.rs`,
+   `observe.rs`, `scene.rs`, `style.rs` (prop states), `passes.rs`, and for checkbox
+   `observe.rs::widget_changes_are_announced_exactly_when_observed` and
+   `mutations_allocate_nothing_without_observers`. A `#[test_matrix]`-style helper in
+   `tests/common` (ARCH §6.2 step 2) is the cheap way.
+2. Add the tag to `widgets::DEFAULT_OWN`.
+3. Delete the wrapper:
+   - `leaf.rs` arms: Label 248, Checkbox 268, ToggleButton 320, Separator 347;
+   - `elements/inputs.rs`: Hyperlink, Switch, radio;
+   - `elements/media.rs`: ProgressBar, Spinner;
+   - the `W::` variants and their `scene/props.rs`/`elements/mod.rs` prop arms;
+   - `layout.rs` size copies;
+   - `style.rs:578` checkbox mirror;
+   - `embed/mod.rs:1683`/`:1699` lists;
+   - the `#[allow(clippy::disallowed_types)]` lines, which are the burn-down.
+4. Regenerate TK1 snapshot cases for the swapped kinds (sizes change on purpose, ARCH §6.2
+   step 4).
+5. VIS1c: move the kind's checks to own (`check-bg`/`check-fg`, `toggle-hover`/`toggle-on-fg`,
+   progress height gap 7) through PaintTrace (`node`, `part`).
 
 Not run locally: the full workspace nextest, the full gates, conformance, and the VIS1 gate (not
 on master). CI runs these.

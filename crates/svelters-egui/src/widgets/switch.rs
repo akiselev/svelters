@@ -26,6 +26,7 @@ pub const UA: Ua = Ua(&[
     UaRule::when(StateBits::FOCUS_VISIBLE, &[("outline-style", Keyword("solid"))]),
 ]);
 
+// TODO(OW-CSS `::part`): a hard-coded part UA table; replace it with the part's computed style once the engine computes `::part()` styles (see `parts::part_view`).
 /// `::part(track)`.
 pub const TRACK: Ua = Ua(&[
     UaRule::base(&[
@@ -41,6 +42,7 @@ pub const TRACK: Ua = Ua(&[
     UaRule::when(StateBits(StateBits::CHECKED.0 | StateBits::HOVERED.0), &[("background-color", Token("accent-hover")), ("border-color", Token("accent-hover"))]),
 ]);
 
+// TODO(OW-CSS `::part`): a hard-coded part UA table; replace it with the part's computed style once the engine computes `::part()` styles (see `parts::part_view`).
 /// `::part(knob)`: its colour and size.
 pub const KNOB: Ua = Ua(&[
     UaRule::base(&[("color", Token("fg")), ("width", Px(12.0)), ("height", Px(12.0))]),

@@ -5,7 +5,11 @@
 //! `wrap-mode`: `wrap` (height for width), `truncate` (one line, elided at the end with `…`;
 //! OW0b's text primitive adds `elide="middle"`/`"start"`), `extend` (one line, never wrapped).
 //! Deferred to OW1a slice 2 (milestone record): `selectable` (a read-only TextInput: it is
-//! accepted and stored, the text is not yet selectable), `for` (buddy), Q4 inline rich text.
+//! accepted and stored, the text is not yet selectable), `for` (buddy).
+//!
+//! Rich text is RT2's (ci/rt2): when the label has run children, paint the galley of
+//! `crate::rich::layout_job(ctx, style, &rich, colors, wrap, underline)` instead of
+//! `Label::galley` (the one place below that builds the galley; measure likewise).
 
 use crate::interact::{Hoverable, Pressable};
 use crate::paint::{self, Align, Ua, UaRule, UaValue::*};
