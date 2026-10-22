@@ -56,7 +56,7 @@ Plus the events of [`Widget`](widget.md#events): `onanimationend`, `onclick`, `o
 |---|---|---|
 | `clear` | `void` | Closes every toast. |
 | `dismiss` | `void` | `dismiss(id)`: closes that toast (`closed(id, 'method')`). |
-| `show` | `void` | `show(text, level = 'info', duration = the host's)`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed) and returns its id. |
+| `show` | `void` | `show(text, level = 'info', duration = the host's)`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed) and returns its id. `text` may be a run list (RT2): strings and `{text, b, i, code, href}` objects, drawn as one paragraph with the theme's run defaults; a click on a run with an `href` opens it. |
 
 Call them through `bind:this`: `el.call('clear')`.
 <!-- END GENERATED -->

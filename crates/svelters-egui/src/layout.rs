@@ -338,6 +338,8 @@ impl Metrics {
         let sp = &self.style.spacing;
         let interact = sp.interact_size;
         match w {
+            W::Label { rich: Some(r), .. } => crate::rich::measure(self, r, None), // RT2
+            W::Run { .. } => Vec2::ZERO, // drawn by its label
             W::Label { text, weight, .. } => self.text_size_in(text, self.weighted(text, *weight), None),
             W::Button { text, small, weight, .. } => {
                 let t = self.text_size_in(text, self.weighted(text, *weight), None);
@@ -424,6 +426,7 @@ impl Metrics {
     /// Height-for-width of a leaf at `width` (labels that wrap).
     fn wrapped(&self, w: &W, width: f32) -> Option<Vec2> {
         match w {
+            W::Label { rich: Some(r), wrap: "wrap", .. } => Some(crate::rich::measure(self, r, Some(width))), // RT2
             W::Label { text, wrap: "wrap", weight, .. } => Some(self.text_size_in(text, self.weighted(text, *weight), Some(width))),
             W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::HEIGHT_FOR_WIDTH) => {
                 Some(x.measure(self, crate::provider::AvailableSpace::Definite(width), None, &[]))
@@ -505,7 +508,7 @@ impl LayoutPartialTree for Tree<'_> {
         crate::style::resolve_calc(val, basis)
     }
     fn set_unrounded_layout(&mut self, id: NodeId, layout: &Layout) {
-        self.s.layout[ix(id)].unrounded = *layout;
+        self.s.layout[ix(id)].unrounded = crate::scene::compact::BoxRect::of(layout);
     }
     fn compute_child_layout(&mut self, id: NodeId, inputs: LayoutInput) -> LayoutOutput {
         // Hidden: `display: none`, or inside a hidden ancestor (taffy passes HIDDEN to children).
@@ -554,6 +557,9 @@ impl LayoutPartialTree for Tree<'_> {
             let styled = styled_metrics(tree.s, tree.m, i);
             let m = styled.as_ref().unwrap_or(tree.m);
             let s = &mut *tree.s;
+            if s.layout[i].intrinsic.is_none() {
+                crate::rich::refresh(s, i); // RT2: a rich label's runs, before it is measured
+            }
             let w = match &s.payload[i] {
                 Payload::Builtin(w) => w,
                 Payload::Vacant => unreachable!("vacant payload in layout"),
@@ -566,7 +572,7 @@ impl LayoutPartialTree for Tree<'_> {
                 fonts += 1;
                 m.intrinsic_with(w, css.as_deref(), &parts)
             });
-            let out = compute_leaf_layout(inputs, &lb.style, |_, _| 0.0, |known, avail| {
+            let out = compute_leaf_layout(inputs, &*lb.style, |_, _| 0.0, |known, avail| {
                 if let Size { width: Some(w), height: Some(hh) } = known {
                     return Size { width: w, height: hh };
                 }
@@ -599,7 +605,7 @@ impl LayoutPartialTree for Tree<'_> {
 fn vlist_layout(tree: &mut Tree<'_>, id: NodeId, inputs: LayoutInput) -> LayoutOutput {
     use crate::kinds::virtuallist;
     let i = ix(id);
-    let out = compute_leaf_layout(inputs, &tree.s.layout[i].style, |_, _| 0.0, |known, _| Size { width: known.width.unwrap_or(0.0), height: known.height.unwrap_or(0.0) });
+    let out = compute_leaf_layout(inputs, &*tree.s.layout[i].style, |_, _| 0.0, |known, _| Size { width: known.width.unwrap_or(0.0), height: known.height.unwrap_or(0.0) });
     if inputs.run_mode != RunMode::PerformLayout {
         return out;
     }
@@ -662,14 +668,19 @@ impl Tree<'_> {
         };
         let pad = self.s.common(i).padding as f32;
         let indent = m.style.spacing.indent;
+        let (top, left) = (LengthPercentage::length(head.y + pad), LengthPercentage::length(indent + pad));
         let st = &mut self.s.layout[i].style;
-        st.padding.top = LengthPercentage::length(head.y + pad);
-        st.padding.left = LengthPercentage::length(indent + pad);
+        if st.padding.top != top || st.padding.left != left {
+            // SG6: the header's own padding (unshares the interned style once)
+            let st = std::sync::Arc::make_mut(st);
+            st.padding.top = top;
+            st.padding.left = left;
+        }
         if open {
             return compute_flexbox_layout(self, id, inputs);
         }
         self.leaf_layouts += 1;
-        let out = compute_leaf_layout(inputs, &self.s.layout[i].style, |_, _| 0.0, |known, _| Size {
+        let out = compute_leaf_layout(inputs, &*self.s.layout[i].style, |_, _| 0.0, |known, _| Size {
             width: known.width.unwrap_or((head.x - indent).max(0.0).ceil()),
             height: known.height.unwrap_or(0.0),
         });
@@ -723,12 +734,21 @@ impl taffy::LayoutContainingBlock for Tree<'_> {
     }
 }
 
+/// SG6: true gives built-in leaves a layout cache too (the "before" of the milestone's layout
+/// benchmark).
+const CACHE_LEAVES: bool = false;
+
 impl CacheTree for Tree<'_> {
     fn cache_get(&mut self, id: NodeId, inputs: &LayoutInput) -> Option<LayoutOutput> {
         self.s.layout[ix(id)].cache.get(inputs)
     }
     fn cache_store(&mut self, id: NodeId, inputs: &LayoutInput, out: LayoutOutput) {
-        self.s.layout[ix(id)].cache.store(inputs, out)
+        // SG6: only nodes whose layout is not a built-in leaf's cheap rerun keep a cache
+        let i = ix(id);
+        let cached = !self.s.children[i].is_empty() || !matches!(&self.s.payload[i], Payload::Builtin(w) if !w.is_container() && !matches!(w, W::Ext(_)));
+        if cached || CACHE_LEAVES {
+            self.s.layout[i].cache.store(inputs, out)
+        }
     }
     fn cache_clear(&mut self, id: NodeId) {
         self.s.layout[ix(id)].cache.clear();
@@ -754,10 +774,10 @@ impl taffy::LayoutFlexboxContainer for Tree<'_> {
 
 impl taffy::RoundTree for Tree<'_> {
     fn get_unrounded_layout(&self, id: NodeId) -> Layout {
-        self.s.layout[ix(id)].unrounded
+        self.s.layout[ix(id)].unrounded.to_layout()
     }
     fn set_final_layout(&mut self, id: NodeId, layout: &Layout) {
-        self.s.layout[ix(id)].layout = *layout;
+        self.s.layout[ix(id)].layout = crate::scene::compact::BoxRect::of(layout);
     }
     fn is_out_of_flow(&self, id: NodeId) -> bool {
         out_of_flow(self.s, ix(id))
@@ -787,7 +807,11 @@ impl Tree<'_> {
     /// The whole tree under `top` for a content area of `size` (the top is definite: EGUI.md §1.3,
     /// an `auto` root re-lays out every row).
     fn whole(&mut self, top: SceneId, size: Vec2) {
-        self.s.layout[top.index() as usize].style.size = Size { width: Dimension::length(size.x), height: Dimension::length(size.y) };
+        let want = Size { width: Dimension::length(size.x), height: Dimension::length(size.y) };
+        let st = &mut self.s.layout[top.index() as usize].style;
+        if st.size != want {
+            std::sync::Arc::make_mut(st).size = want; // SG6: a root's own style (one per root)
+        }
         let id = tid(top);
         compute_root_layout(self, id, Size { width: AvailableSpace::Definite(size.x), height: AvailableSpace::Definite(size.y) });
         round_layout(self, id);
@@ -884,7 +908,9 @@ pub fn compute(scene: &mut Scene, m: &Metrics, top: SceneId, size: Vec2) -> usiz
 fn place(s: &mut Scene, top: SceneId, origin: egui::Pos2) -> u64 {
     let mut stack = vec![(top.index() as usize, origin)];
     let mut n = 0;
+    let mut order = Vec::new();
     while let Some((i, o)) = stack.pop() {
+        order.push(i);
         let l = s.layout[i].layout;
         let min = o + vec2(l.location.x, l.location.y);
         let rect = Rect::from_min_size(min, vec2(l.size.width, l.size.height));
@@ -915,7 +941,65 @@ fn place(s: &mut Scene, top: SceneId, origin: egui::Pos2) -> u64 {
             }
         }
     }
+    // SG6: ink bounds, children before parents, then up the ancestors while they change
+    for &i in order.iter().rev() {
+        ink(s, i);
+    }
+    let mut up = s.core[top.index() as usize].parent;
+    while let Some(p) = up.and_then(|p| s.idx(p)) {
+        if !ink(s, p) {
+            break;
+        }
+        up = s.core[p].parent;
+    }
     n
+}
+
+/// SG6 (ARCH-SCENE §7.3): node `i`'s ink rect, the root-relative rect its subtree paints in: its
+/// paint bounds (CS5g shadows) joined with its children's ink, except where it clips them (a scroll
+/// area, a virtual list, a `clip` channel). A TR1 transform is visual and changes without a
+/// layout, so it is not in the ink (as before SG6, a transformed node is culled by its layout
+/// bounds): an infinite ink would keep subtrees walked in clipped passes, where their widgets
+/// register for focus (`tests/animator.rs` tab_skips_exiting_nodes). Stored only when larger than the node's own bounds
+/// (`NodeFlags::INK_OVERFLOW`). Overlays and menus are out of flow and paint themselves. True if
+/// it changed.
+fn ink(s: &mut Scene, i: usize) -> bool {
+    let own = crate::style::paint_bounds(s, i, s.core[i].rect);
+    let mut ink = own;
+    // a node that is not laid out (hidden, not shown) paints nothing, whatever its children's
+    // last rects say
+    let clips = own == Rect::NOTHING || matches!(s.w(i), W::ScrollArea { .. } | W::VirtualList(_)) || s.vis(i).clip.is_some();
+    if !clips {
+        for &c in &s.children[i] {
+            let ci = c.index() as usize;
+            if s.core[ci].rect == Rect::NOTHING || !s.common(ci).visible || crate::overlays::out_of_flow(s.w(ci)) {
+                continue;
+            }
+            ink = ink.union(ink_of(s, ci));
+        }
+    }
+    let fits = ink == Rect::NOTHING || (own != Rect::NOTHING && own.contains_rect(ink));
+    let key = i as u32;
+    let before = s.ink.get(&key).copied();
+    if fits {
+        s.core[i].flags.remove(NodeFlags::INK_OVERFLOW);
+        s.ink.remove(&key);
+        before.is_some()
+    } else {
+        s.core[i].flags.insert(NodeFlags::INK_OVERFLOW);
+        s.ink.insert(key, ink);
+        before != Some(ink)
+    }
+}
+
+/// SG6: node `i`'s ink rect, root-relative (its paint bounds unless its subtree overflows them).
+pub(crate) fn ink_of(s: &Scene, i: usize) -> Rect {
+    if s.core[i].flags.contains(NodeFlags::INK_OVERFLOW)
+        && let Some(r) = s.ink.get(&(i as u32))
+    {
+        return *r;
+    }
+    crate::style::paint_bounds(s, i, s.core[i].rect)
 }
 
 /// SG4: an out-of-flow box (`position: absolute`, shown).
@@ -1020,7 +1104,7 @@ impl LayoutCx<'_> {
         let mut l = Layout::with_order(order);
         l.size = out.size;
         l.location = taffy::Point { x: at.x, y: at.y };
-        self.s.layout[child.index() as usize].unrounded = l;
+        self.s.layout[child.index() as usize].unrounded = crate::scene::compact::BoxRect::of(&l);
     }
     /// What the node would get without the cap: flexbox over its children from its style.
     pub fn default_layout(&mut self, inputs: LayoutInput) -> LayoutOutput {
@@ -1174,8 +1258,8 @@ pub(crate) fn layout_overlay(s: &mut Scene, m: &Metrics, top: SceneId, size: [Op
             stack.extend(s.children[k].iter().map(|c| c.index() as usize));
         }
     }
-    let saved = (s.layout[i].style.display, s.layout[i].style.size);
-    let st = &mut s.layout[i].style;
+    let saved = s.layout[i].style.clone();
+    let st = std::sync::Arc::make_mut(&mut s.layout[i].style); // SG6: a copy for this run only
     st.display = Display::Flex;
     if let Some(w) = size[0] {
         st.size.width = Dimension::length(w);
@@ -1187,7 +1271,7 @@ pub(crate) fn layout_overlay(s: &mut Scene, m: &Metrics, top: SceneId, size: [Op
     let mut t = Tree { s, m, leaf_layouts: 0, fonts: 0 };
     compute_root_layout(&mut t, tid(top), Size { width: avail(size[0]), height: avail(size[1]) });
     round_layout(&mut t, tid(top));
-    (s.layout[i].style.display, s.layout[i].style.size) = saved;
+    s.layout[i].style = saved;
     let l = s.layout[i].layout;
     place(s, top, at - vec2(l.location.x, l.location.y));
     (vec2(l.size.width, l.size.height), generation)
@@ -1207,6 +1291,7 @@ pub(crate) fn remeasure(s: &mut Scene, m: &Metrics, r: RootIx) -> bool {
         s.core[i].flags.remove(NodeFlags::IN_REMEASURE);
         s.core[i].dirty.remove(Dirty::MEASURE);
         let old = s.layout[i].intrinsic.take();
+        crate::rich::refresh(s, i); // RT2
         // CS5f: the leaf's computed font and padding; OW0: the computed style for own widgets
         let styled = styled_metrics(s, m, i);
         let css = s.slots.id_at(i).and_then(|id| s.style.computed(id)).cloned();

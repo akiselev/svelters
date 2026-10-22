@@ -1,4 +1,9 @@
 //! [`SourceProvider`]: an app loaded from its sources, compiled live (Q1).
+//!
+//! LD3: the compiler's diagnostic types ([`Diagnostic`], [`Severity`], and the [`FixIt`]/[`TextEdit`]/
+//! [`FixHint`] of its fields) are re-exported at the crate root (`svelters_modules::Diagnostic`,
+//! `svelters_host::modules::Diagnostic`) with feature `source`, so a host reading [`Check`] needs no
+//! direct svelters-compiler dependency.
 
 mod aliases;
 pub(crate) mod build;
@@ -14,7 +19,7 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::hash::{Hash, Hasher};
 use std::path::{Path, PathBuf};
 use std::sync::{Arc, Mutex};
-use svelters_compiler::diag::{Diagnostic, Severity};
+pub use svelters_compiler::diag::{Diagnostic, FixHint, FixIt, Severity, TextEdit};
 use svelters_compiler::semantics::{SpecBackend, kinds_module};
 use transform::{Compiler, Kind, Output};
 
@@ -239,7 +244,7 @@ impl SourceProvider {
     pub fn new(cfg: SourceConfig) -> Result<SourceProvider, String> {
         let runtime_dir = cfg.find_runtime()?;
         let aliases = Aliases::load(&runtime_dir)?;
-        let compiler = Compiler { sem: spec_backend(&cfg)?, dev: cfg.dev, hmr: cfg.hmr && cfg.dev };
+        let compiler = Compiler { sem: spec_backend(&cfg)?, dev: cfg.dev, hmr: cfg.hmr && cfg.dev, root: cfg.root.clone() };
         let resolver = resolver(cfg.dev);
         let p = SourceProvider {
             assets: Assets::for_app(&cfg.root),
@@ -402,8 +407,9 @@ impl Inner {
             return Ok(ModuleCode::Source { js: self.asset_module(kind, path)?, map: None });
         }
         if let Some(file) = id.strip_prefix(STYLE_PREFIX) {
+            let key = build::logical_id(&self.cfg.root, Path::new(file));
             let c = self.compiled(Path::new(file), overlay)?;
-            return Ok(ModuleCode::Source { js: style_module(file, c.css.as_deref().unwrap_or("")), map: None });
+            return Ok(ModuleCode::Source { js: style_module(&key, c.css.as_deref().unwrap_or("")), map: None });
         }
         let c = self.compiled(Path::new(id), overlay)?;
         Ok(ModuleCode::Source { js: c.js.clone(), map: c.map.clone() })
@@ -571,7 +577,7 @@ impl ModuleProvider for SourceProvider {
 /// LD2: a component's sheet module: registers its scoped sheet as text (what the Vite plugin emits
 /// for egui, `registerStyles(id, { css })`; the backend's style engine parses and installs it, `:state()`
 /// resolved against the host's registry) and accepts its own updates, so an edit replaces the sheet by
-/// id and the backend restyles.
+/// id and the backend restyles. Q4b: the id is the component's logical id (`app/src/App.svelte`).
 fn style_module(file: &str, css: &str) -> String {
     let lit = |s: &str| serde_json::Value::String(s.to_string()).to_string();
     format!(

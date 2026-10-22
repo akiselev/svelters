@@ -101,6 +101,7 @@ pub(crate) fn paint_at(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, o
     if !arena.common(i).visible {
         return;
     }
+    arena.counters.nodes_walked += 1; // SG6: diagnostics only (`SceneStats`), never read by the walk
     if arena.core[i].flags.contains(crate::scene::NodeFlags::HAS_VISUAL) {
         return paint_visual(arena, i, origin, ui, out);
     }
@@ -162,7 +163,7 @@ fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut 
 /// host gets a response of its own at its rect, registered under its children.
 fn paint_host(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
     let r = arena.core[i].rect.translate(origin);
-    if !ui.is_rect_visible(crate::style::paint_bounds(arena, i, r)) {
+    if cull(arena, i, origin, ui) {
         return;
     }
     let container = arena.w(i).is_container();
@@ -195,8 +196,8 @@ fn paint_own(
         return crate::kinds::virtuallist::paint(arena, i, origin, ui, out);
     }
     if arena.w(i).is_container() {
-        // Cull whole subtrees outside the clip rect (CS5g: grown by the node's own shadows).
-        if !ui.is_rect_visible(crate::style::paint_bounds(arena, i, r)) {
+        // Cull whole subtrees outside the clip rect (SG6: by their ink bounds)
+        if cull(arena, i, origin, ui) {
             return None;
         }
         if !matches!(arena.w(i), crate::scene::W::Overlay(_)) {
@@ -220,7 +221,7 @@ fn paint_own(
         crate::leaf::container(arena, i, r, origin, ui, out);
         return None;
     }
-    if !ui.is_rect_visible(crate::style::paint_bounds(arena, i, r)) {
+    if cull(arena, i, origin, ui) {
         return None;
     }
     let mut b = UiBuilder::new()
@@ -251,6 +252,22 @@ fn paint_own(
     }
     crate::overlays::paint_attached(arena, i, origin, ui, out); // WG2a: its context menu, popup
     resp
+}
+
+/// SG6 (ARCH-SCENE §7.3): the one culling predicate. True if node `i` (with its subtree) is not
+/// painted this pass: its ink bounds (`layout::ink_of`: its paint bounds, CS5g shadows, joined with
+/// any overflowing descendants) at `origin` are outside `ui`'s clip rect. Every cull in the walk
+/// asks it, so a rule that must keep nodes walked (a Tab pass reaching off-screen fields, WG6)
+/// goes here and nowhere else.
+pub(crate) fn culled(arena: &Arena, i: usize, origin: Vec2, ui: &Ui) -> bool {
+    !ui.is_rect_visible(crate::layout::ink_of(arena, i).translate(origin))
+}
+
+/// [`culled`], counted (`SceneStats::nodes_culled`).
+fn cull(arena: &mut Arena, i: usize, origin: Vec2, ui: &Ui) -> bool {
+    let c = culled(arena, i, origin, ui);
+    arena.counters.nodes_culled += c as u64;
+    c
 }
 
 /// Paints the children of container `i` (in order, by index: the walk never changes the
