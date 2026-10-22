@@ -62,3 +62,15 @@ Design: `plans/research/HMR.md` §2.4, §3.3 items 3–5, §3.4 "State registry"
   changed one needs `@hmr:reset`.
 - A keyed module `$state` that is a *primitive left unchanged* takes the new initializer; an object is always kept.
 - Module keys are by declaration name; two modules never share a registry (it is per module `import.meta.hot`).
+
+## Decided (coordinator, 2026-10-22)
+
+- Objects and proxies are always carried; no comparison with the initial value until a case needs it.
+- No build-time `hmr: { preserveState }` option now; add it with LI1 if cadatomic asks. The runtime switch stays.
+
+## Follow-ups
+
+- H3c: children of an edited parent kept by positional key (HMR.md D6 (b)).
+- `$bindable` fallback state, keyed as `prop:<name>` when the parent does not bind it (HMR.md D5).
+- Exclude `bind:this` targets at compile time instead of relying on the binding overwriting the restored handle.
+- Merge order: H1, then H3.
