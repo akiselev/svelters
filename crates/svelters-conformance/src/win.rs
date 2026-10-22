@@ -9,7 +9,7 @@
 //!   `TextRange.Select` for the selection (every setup selection is forward or collapsed), `SetFocus` for focus.
 //! - Keys: one `SendInput` batch per chord (modifiers down, key down and up, modifiers up) with virtual-key
 //!   codes and scan codes, the navigation keys flagged extended (else Shift+arrow reads as the numeric pad).
-//! - Clicks and drags: `SetCursorPos`, then button events through `SendInput`; the press point is 30% into the
+//! - Clicks and drags: absolute pointer moves and button events through `SendInput`; the press point is 30% into the
 //!   character (its UIA bounding rectangle), as on Linux. Before every click or drag the driver waits longer than
 //!   the double-click time, so a sequence never joins the previous one.
 //! - State: text from the document range; selection from `TextPattern.GetSelection`, its direction from
@@ -19,7 +19,7 @@
 //!   the foreground window. A focus-changed event handler records what UIA announced; the capture reports, per
 //!   checkpoint-to-checkpoint focus change, whether the last event named the new focus (`observe.focus`).
 //!
-//! The process is made per-monitor DPI aware, so UIA rectangles, `SetCursorPos` and the window share physical
+//! The process is made per-monitor DPI aware, so UIA rectangles, pointer input and the window share physical
 //! pixels. Input goes to the interactive desktop: a capture needs an unlocked session and nobody using the mouse.
 
 use crate::Driver;
@@ -134,8 +134,32 @@ pub fn key(chord: &Chord) -> WinResult<()> {
     send(&v)
 }
 
+/// Moves the pointer to a screen point (physical pixels) with an absolute `SendInput` move over the virtual
+/// desktop. `SetCursorPos` is not enough: it posts `WM_MOUSEMOVE` but no pointer input, so WinUI (which reads
+/// `WM_POINTER*`) never saw a drag. Normalized coordinates round, so the move is corrected until the cursor is
+/// exactly on the point.
 pub fn move_to(x: i32, y: i32) -> WinResult<()> {
-    unsafe { SetCursorPos(x, y) }.map_err(e("SetCursorPos"))
+    let (vx, vy, vw, vh) = unsafe {
+        (GetSystemMetrics(SM_XVIRTUALSCREEN), GetSystemMetrics(SM_YVIRTUALSCREEN), GetSystemMetrics(SM_CXVIRTUALSCREEN), GetSystemMetrics(SM_CYVIRTUALSCREEN))
+    };
+    let norm = |p: i32, o: i32, size: i32| (((p - o) as i64 * 65536 + size as i64 - 1) / size as i64) as i32;
+    let (mut nx, mut ny) = (norm(x, vx, vw), norm(y, vy, vh));
+    for _ in 0..4 {
+        let mut i = mouse_input(MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_VIRTUALDESK);
+        unsafe {
+            i.Anonymous.mi.dx = nx;
+            i.Anonymous.mi.dy = ny;
+        }
+        send(&[i])?;
+        let mut p = windows::Win32::Foundation::POINT::default();
+        unsafe { GetCursorPos(&mut p) }.map_err(e("GetCursorPos"))?;
+        if p.x == x && p.y == y {
+            return Ok(());
+        }
+        nx += (x - p.x) * (65536 / vw).max(1);
+        ny += (y - p.y) * (65536 / vh).max(1);
+    }
+    Err(format!("the pointer did not reach ({x}, {y})"))
 }
 
 pub fn button(down: bool) -> WinResult<()> {
