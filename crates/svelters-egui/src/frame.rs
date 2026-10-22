@@ -182,6 +182,8 @@ impl EguiBackend {
     }
 
     fn before_pass(&self, ctx: &egui::Context) {
+        // ZM1: a zoom asked for reaches the context; a changed scale remeasures the leaves (below)
+        self.follow_zoom(ctx);
         // ARCH-SCENE §7.2 step 2b: mutations deferred during the last frame (the runtime sees them
         // in this logic's checkpoint), then the prop changes Rust writes announced.
         self.0.scene.run_deferred();
