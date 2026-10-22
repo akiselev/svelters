@@ -23,6 +23,8 @@ use svelters_gtk::testing::{Harness, V, on_gtk, pump};
 struct Evidence {
     last: HashMap<(u64, String), String>,
     counts: BTreeMap<String, (u32, u32)>,
+    /// Checkpoints, and those where the entry's `cursor-position`/`selection-bound` equal the GtkText's.
+    agree: (u32, u32),
     unsupported: BTreeMap<String, String>,
 }
 
@@ -246,8 +248,19 @@ impl Driver for Gtk<'_> {
                 V::I64(n) => Ok(n as usize),
                 o => Err(format!("{o:?}")),
             };
-            let caret = n(self.h.get(e, "cursor-position"))?;
-            let anchor = n(self.h.get(e, "selection-bound"))?;
+            // The entry's own props come from GtkEditable's delegate forwarding, which reports the
+            // selection as (start, end) and loses its direction; the inner GtkText holds the real
+            // anchor (`selection-bound`) and moving end (`cursor-position`).
+            let ec = n(self.h.get(e, "cursor-position"))?;
+            let eb = n(self.h.get(e, "selection-bound"))?;
+            let t = self.text_widget(e);
+            let caret = t.property::<i32>("cursor-position") as usize;
+            let anchor = t.property::<i32>("selection-bound") as usize;
+            let c = &mut self.ev.agree;
+            c.0 += 1;
+            if ec == caret && eb == anchor {
+                c.1 += 1;
+            }
             let s = State {
                 text: Some(text),
                 sel: Some([anchor, caret]),
@@ -339,6 +352,13 @@ fn capture() {
             format!("{{\"unsupported\":{}}}", serde_json_str(m)),
         )
     }));
+    observe.push((
+        "entry-selection-direction".into(),
+        format!(
+            "{{\"checkpoints\":{},\"entry_equals_text\":{}}}",
+            d.ev.agree.0, d.ev.agree.1
+        ),
+    ));
     let cap = Capture {
         platform: "linux".into(),
         toolkit: "gtk".into(),

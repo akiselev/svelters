@@ -55,6 +55,11 @@ impl Egui {
             .with_os(egui::os::OperatingSystem::Nix)
             .with_step_dt(STEP)
             .build_ui_state(|ui, b: &mut EguiBackend| b.ui(ui), backend.clone());
+        // egui's bundled fonts have no CJK glyphs; kittest panics on a missing glyph, an app draws
+        // tofu. The pins' offsets do not depend on the glyphs.
+        harness
+            .ctx
+            .set_missing_glyph_policy(egui::MissingGlyphPolicy::Tofu);
         Egui {
             backend,
             vt,
@@ -386,7 +391,12 @@ fn egui_text_edit_against_native_goldens() {
             let _ = write!(
                 md,
                 " {} |",
-                g.as_ref().map_or("-".to_string(), |g| g.equal.to_string())
+                g.as_ref()
+                    .map_or("-".to_string(), |g| match g.diffs.first() {
+                        // the first differing step: later checkpoints of a pin build on earlier ones
+                        Some((i, after, ..)) => format!("{} (first: #{i} `{after}`)", g.equal),
+                        None => g.equal.to_string(),
+                    })
             );
         }
         let _ = writeln!(md, " {either} |");
