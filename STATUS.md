@@ -72,6 +72,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | FX2 egui focus policy + word rules per native refs (`svelters_egui::native`) | DONE | 2026-10-22 | merged (this commit); egui vs GTK 85→141/144, vs Qt 75→139/144; pin 3 double-click word select left |
 | DS0 UI design system research (VS Code baseline tokens + affordances) | DONE | 2026-10-22 | plans/research/DESIGN.md (merged next); lanes DS1-DS5 + VIS1 |
 | VIS1 visual conformance: gallery snapshots vs VS Code references (captured via Code.exe + CDP on the Windows host), default look of every kind | IN PROGRESS | | branch `ci/vis1` |
+| AU1-AU6 automation protocol (svelters-automation), out-of-process e2e runner, reload-aware automation, in-process inspector, traces/recorder, OS input runs | QUEUED | | plans/research/E2E-INSPECTOR.md; AU1 first |
 | FX3 egui undo grouping, clipboard keys (Ctrl/Shift+Insert, Shift+Delete), multiline paste, select-all→PRIMARY, Ctrl+Shift+U per native refs (pins 4-6) | QUEUED | | after INT1 |
 | DS1 theme module (`svelters_egui::theme`: one token map → CSS :root, egui Style, typed getters; Dark/Light Modern + HC, densities) | IN PROGRESS | | branch `ci/ds1`; DS2-DS5 queued (engine gaps, affordance sheet, VS Code theme importer, codicons) |
 | WG3w Windows native references (Win32 EDIT, WinUI TextBox; pins 1-3, 7), egui on Windows, counter-win flake | IN PROGRESS | | branch `ci/wg3w`; builds via the WSL PC's Windows toolchain |
