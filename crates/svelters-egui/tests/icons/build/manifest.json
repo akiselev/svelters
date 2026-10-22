@@ -1,0 +1,52 @@
+{
+  "set": "icon-style samples (IC0)",
+  "licence": "CC-BY-4.0",
+  "icons": {
+    "chrome.warning": {
+      "sizes": [
+        12,
+        14,
+        16,
+        20,
+        24
+      ],
+      "codicon": "warning",
+      "approved": false
+    },
+    "mcad.extrude": {
+      "sizes": [
+        12,
+        14,
+        16,
+        20,
+        24
+      ],
+      "approved": false
+    },
+    "mcad.extrude+remove": {
+      "sizes": [
+        16,
+        24
+      ],
+      "composed": {
+        "base": "mcad.extrude",
+        "badge": "remove"
+      },
+      "approved": false
+    },
+    "mcad.section": {
+      "sizes": [
+        16,
+        24
+      ],
+      "approved": false
+    },
+    "sim.result": {
+      "sizes": [
+        16,
+        24
+      ],
+      "approved": false
+    }
+  }
+}
