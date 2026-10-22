@@ -4,10 +4,13 @@
 //! Module map and ownership: docs/notes/native-compiler/modules.md.
 
 pub mod acorn;
+pub mod check;
 pub mod codegen;
+pub mod codes;
 pub mod compile;
 pub mod diag;
 pub mod estree;
+mod fixits;
 pub mod lower;
 pub mod semantics;
 pub mod style;

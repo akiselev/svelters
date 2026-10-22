@@ -53,6 +53,10 @@ pub struct Timings {
     pub analyze_us: u64,
     pub lower_us: u64,
     pub generate_us: u64,
+    /// The pipeline stopped before lowering (a syntax or scope error): the later phases' diagnostics
+    /// are missing, not absent (CX1's check carries the last complete ones over).
+    #[serde(skip)]
+    pub stopped: bool,
 }
 
 #[derive(Debug, Serialize)]
@@ -103,6 +107,17 @@ fn from_compile_error(diags: &mut Diagnostics, e: &CompileError) {
 }
 
 pub fn compile(src: &str, opts: &CompileOptions) -> CompileResult {
+    run_component(src, opts, false)
+}
+
+/// The diagnostics of [`compile`] without its output (CX1, `crate::check`): the same pipeline, but
+/// code generation runs as a traversal that writes nothing ([`crate::codegen::component::traverse`]),
+/// and `js`/`map` are `None`. The diagnostics are the same as [`compile`]'s (`cx1_check` tests).
+pub fn check_component(src: &str, opts: &CompileOptions) -> CompileResult {
+    run_component(src, opts, true)
+}
+
+fn run_component(src: &str, opts: &CompileOptions, check: bool) -> CompileResult {
     let mut timings = Timings::default();
     let backend = opts.backend.backend().to_string();
     let mut diags = Diagnostics::for_backend(&backend);
@@ -113,7 +128,7 @@ pub fn compile(src: &str, opts: &CompileOptions) -> CompileResult {
         Ok(r) => r,
         Err(e) => {
             from_compile_error(&mut diags, &e);
-            return done(None, None, diags, timings);
+            return done(None, None, diags, Timings { stopped: true, ..timings });
         }
     };
     // `lang="ts"`: Svelte's `remove_typescript_nodes`, plus the source ranges to strip
@@ -121,7 +136,7 @@ pub fn compile(src: &str, opts: &CompileOptions) -> CompileResult {
         Ok(s) => s,
         Err(e) => {
             from_compile_error(&mut diags, &e);
-            return done(None, None, diags, timings);
+            return done(None, None, diags, Timings { stopped: true, ..timings });
         }
     };
     timings.parse_us = t.elapsed().as_micros() as u64;
@@ -131,7 +146,7 @@ pub fn compile(src: &str, opts: &CompileOptions) -> CompileResult {
         Ok(a) => a,
         Err(e) => {
             from_compile_error(&mut diags, &e);
-            return done(None, None, diags, timings);
+            return done(None, None, diags, Timings { stopped: true, ..timings });
         }
     };
     timings.analyze_us = t.elapsed().as_micros() as u64;
@@ -158,13 +173,18 @@ pub fn compile(src: &str, opts: &CompileOptions) -> CompileResult {
     let mut rw = ScopeRewriter::with_options(src, &root, &analysis, diags, opts.dev, &opts.filename);
     rw.strip_typescript(ts_strip);
     let name = rw.component_name(&component_name(&opts.filename));
-    let (code, map) = generate(src, &ir, &rw, &name, &opts.filename, &opts.target.runtime_imports());
+    let out = if check {
+        crate::codegen::component::traverse(src, &ir, &rw, &name, &opts.target.runtime_imports());
+        None
+    } else {
+        Some(generate(src, &ir, &rw, &name, &opts.filename, &opts.target.runtime_imports()))
+    };
     let diags = rw.into_diagnostics();
     timings.generate_us = t.elapsed().as_micros() as u64;
-    if diags.has_errors() {
-        return done(None, None, diags, timings);
+    match out {
+        Some((code, map)) if !diags.has_errors() => done(Some(code), Some(map), diags, timings),
+        _ => done(None, None, diags, timings),
     }
-    done(Some(code), Some(map), diags, timings)
 }
 
 /// Compiles a `.svelte.js` module (Svelte's `compileModule`, client output): runes in module
@@ -180,7 +200,7 @@ pub fn compile_module(src: &str, opts: &ModuleOptions) -> CompileResult {
         Ok(p) => p,
         Err(e) => {
             from_compile_error(&mut diags, &e);
-            return done(None, None, diags, timings);
+            return done(None, None, diags, Timings { stopped: true, ..timings });
         }
     };
     timings.parse_us = t.elapsed().as_micros() as u64;
@@ -190,7 +210,7 @@ pub fn compile_module(src: &str, opts: &ModuleOptions) -> CompileResult {
         Ok(a) => a,
         Err(e) => {
             from_compile_error(&mut diags, &e);
-            return done(None, None, diags, timings);
+            return done(None, None, diags, Timings { stopped: true, ..timings });
         }
     };
     timings.analyze_us = t.elapsed().as_micros() as u64;

@@ -455,7 +455,7 @@ impl<'a> Lower<'a, '_, '_> {
             } else {
                 format!("`bind:{}|{m}`: unknown binding modifier `{m}` (native bindings take {})", d.name, allowed.iter().map(|a| format!("`|{a}`")).collect::<Vec<_>>().join(", "))
             };
-            self.diags.native_error(codes::BIND_MODIFIER_INVALID, sp(d.span()), msg);
+            self.diags.native_error(codes::BIND_MODIFIER_INVALID, sp(d.span()), msg).hint(crate::diag::FixHint::Remove(format!("|{m}")));
         }
         ok.then_some(nonreactive)
     }
@@ -466,7 +466,8 @@ impl<'a> Lower<'a, '_, '_> {
             let why = if m == "nonreactive" { "has no meaning" } else { "is not a binding modifier" };
             self.diags
                 .native_error(codes::BIND_MODIFIER_INVALID, sp(d.span()), format!("`bind:{}|{}`: `|{m}` {why} on {what}", d.name, d.modifiers.join("|")))
-                .help("`|nonreactive` applies to bindings of native element properties only");
+                .help("`|nonreactive` applies to bindings of native element properties only")
+                .hint(crate::diag::FixHint::Remove(format!("|{m}")));
         }
     }
 
