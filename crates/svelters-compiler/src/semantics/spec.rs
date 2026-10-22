@@ -36,6 +36,11 @@ pub struct Spec {
     /// text there is `text_not_allowed`.
     #[serde(default)]
     pub text_node: Option<TextNodeSpec>,
+    /// Optional (RT2, egui): inline text. In a text-content element whose slot takes `kind`, text
+    /// mixed with child elements lowers to elements of `kind` (the egui runs) instead of being
+    /// `text_content_children`; text alone still folds into the text-content prop.
+    #[serde(default)]
+    pub inline_text: Option<TextNodeSpec>,
     /// Optional: parse templates with HTML rules (void elements, implicit closing), i.e.
     /// `ParseOptions.native == false`. Only the DOM conformance backend sets it.
     #[serde(default)]

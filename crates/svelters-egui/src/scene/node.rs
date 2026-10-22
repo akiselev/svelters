@@ -19,7 +19,8 @@ use crate::provider::{ExtBlock, StateBits};
 pub enum W {
     Window { title: String, default_w: f64, default_h: f64 },
     Box,
-    Label { text: String, wrap: &'static str, selectable: bool, weight: i64 },
+    /// `rich`: RT2's runs when it has run children (`crate::rich`), refreshed when measured.
+    Label { text: String, wrap: &'static str, selectable: bool, weight: i64, rich: Option<Box<crate::rich::Rich>> },
     Button { text: String, selected: bool, frame: bool, small: bool, weight: i64 },
     Checkbox { text: String, checked: bool },
     TextEdit { text: String, hint: String, multiline: bool, password: bool, char_limit: i64 },
@@ -70,6 +71,9 @@ pub enum W {
     ToastHost(std::boxed::Box<crate::views::toast::Toasts>),
     /// WG4b: `date-picker`, `color-picker` (`kinds/pickers.rs`).
     Picker(crate::kinds::pickers::Picker),
+    /// RT2: an inline run (`span`, `b`, `i`, `code`, `a`: `kinds/rich.rs`), drawn by its label.
+    /// `weight` 0 inherits; `anchor`: an `a` run (a link).
+    Run { text: String, weight: i64, href: String, anchor: bool },
 }
 
 impl W {
@@ -450,6 +454,8 @@ impl Node<'_> {
 /// The text a node shows (window: its title).
 pub fn text_of(w: &W) -> &str {
     match w {
+        W::Label { rich: Some(r), .. } => &r.plain,
+        W::Run { text, .. } => text,
         W::Label { text, .. }
         | W::Button { text, .. }
         | W::Checkbox { text, .. }

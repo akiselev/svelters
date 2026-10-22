@@ -332,6 +332,8 @@ impl Metrics {
         let sp = &self.style.spacing;
         let interact = sp.interact_size;
         match w {
+            W::Label { rich: Some(r), .. } => crate::rich::measure(self, r, None), // RT2
+            W::Run { .. } => Vec2::ZERO, // drawn by its label
             W::Label { text, weight, .. } => self.text_size_in(text, self.weighted(text, *weight), None),
             W::Button { text, small, weight, .. } => {
                 let t = self.text_size_in(text, self.weighted(text, *weight), None);
@@ -418,6 +420,7 @@ impl Metrics {
     /// Height-for-width of a leaf at `width` (labels that wrap).
     fn wrapped(&self, w: &W, width: f32) -> Option<Vec2> {
         match w {
+            W::Label { rich: Some(r), wrap: "wrap", .. } => Some(crate::rich::measure(self, r, Some(width))), // RT2
             W::Label { text, wrap: "wrap", weight, .. } => Some(self.text_size_in(text, self.weighted(text, *weight), Some(width))),
             W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::HEIGHT_FOR_WIDTH) => {
                 Some(x.measure(self, crate::provider::AvailableSpace::Definite(width)))
@@ -538,6 +541,9 @@ impl LayoutPartialTree for Tree<'_> {
             tree.leaf_layouts += 1;
             let m = tree.m;
             let s = &mut *tree.s;
+            if s.layout[i].intrinsic.is_none() {
+                crate::rich::refresh(s, i); // RT2: a rich label's runs, before it is measured
+            }
             let w = match &s.payload[i] {
                 Payload::Builtin(w) => w,
                 Payload::Vacant => unreachable!("vacant payload in layout"),
@@ -1189,6 +1195,7 @@ pub(crate) fn remeasure(s: &mut Scene, m: &Metrics, r: RootIx) -> bool {
         s.core[i].flags.remove(NodeFlags::IN_REMEASURE);
         s.core[i].dirty.remove(Dirty::MEASURE);
         let old = s.layout[i].intrinsic.take();
+        crate::rich::refresh(s, i); // RT2
         let new = m.intrinsic(s.w(i));
         s.counters.leaves_measured += 1;
         s.layout[i].intrinsic = Some(new);

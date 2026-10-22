@@ -346,6 +346,11 @@ pub trait PlatformSemantics {
     fn text_node(&self) -> Option<(ElementRef, String)> {
         None
     }
+    /// RT2: inline text (spec `inline_text`): the run kind and its text property that text mixed
+    /// with child elements lowers to, in a text-content element whose slot takes that kind.
+    fn inline_text(&self) -> Option<(ElementRef, String)> {
+        None
+    }
     /// A `parent:<name>` attribute of a child placed in `parent`'s slot `slot`.
     fn child_attr(&self, _parent: &ElementRef, slot: &str, name: &str) -> Result<ChildAttrPlan, Unresolved> {
         Err(Unresolved::new(codes::UNKNOWN_CHILD_ATTR, format!("slot `{slot}` has no child attribute `{name}`")))

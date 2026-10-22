@@ -95,6 +95,10 @@ impl<P: PlatformSemantics> PlatformSemantics for Overlay<P> {
     fn text_node(&self) -> Option<(ElementRef, String)> {
         self.inner.text_node()
     }
+
+    fn inline_text(&self) -> Option<(ElementRef, String)> {
+        self.inner.inline_text()
+    }
     fn child_attr(&self, parent: &ElementRef, slot: &str, name: &str) -> Result<ChildAttrPlan, Unresolved> {
         self.inner.child_attr(parent, slot, name)
     }

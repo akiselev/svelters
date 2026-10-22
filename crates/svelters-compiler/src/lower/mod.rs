@@ -262,8 +262,12 @@ impl<'a> Lower<'a, '_, '_> {
     fn fragment(&mut self, f: &'a AstFragment, parent: &Parent, ancestors: &[StyleSubject<'a>]) -> Fragment<'a> {
         let const_ok = std::mem::take(&mut self.const_ok);
         let mut out = Fragment::default();
-        // A backend with text nodes (spec `text_node`): text runs become text elements.
-        let text_node = self.sem.text_node();
+        // A backend with text nodes (spec `text_node`): text runs become text elements. RT2: so
+        // do they in an element whose slot takes the inline-text kind (an egui `label`'s runs).
+        let text_node = self.sem.text_node().or_else(|| match parent {
+            Parent::Element(p, _) => self.inline_text_in(p),
+            Parent::Root | Parent::Detached => None,
+        });
         let entries = match &text_node {
             Some(_) => {
                 let parent_tag = match parent {
@@ -1075,7 +1079,10 @@ impl<'a> Lower<'a, '_, '_> {
         let forced = self.forced_slot.take();
         // A kind with a text prop folds text children into it; only element children (no text)
         // stay native children; text mixed with elements is an error (text_content).
-        let text_prop = self.sem.text_content(&er).cloned().filter(|_| !only_element_children(&el.fragment));
+        // RT2: text mixed with elements in an element that takes inline runs (spec `inline_text`)
+        // lowers to runs (`fragment`), not into the prop.
+        let inline = self.has_element(&el.fragment) && self.inline_text_in(&er).is_some();
+        let text_prop = self.sem.text_content(&er).cloned().filter(|_| !only_element_children(&el.fragment) && !inline);
         let children = if let Some(tc) = text_prop {
             self.text_content(el, &tc.js, &mut ops);
             // attached children (a context menu, an event controller) do not mix with the text:
@@ -1096,6 +1103,25 @@ impl<'a> Lower<'a, '_, '_> {
         self.forced_slot = forced;
 
         Some(Element { id, span: el.span(), kind: er.tag.clone(), present, toplevel, show, attached, slot, class_expr, id_expr, ops, children })
+    }
+
+    /// RT2: the run kind and prop bare text lowers to inside `parent` (spec `inline_text`), when
+    /// `parent`'s slot takes that kind.
+    fn inline_text_in(&self, parent: &ElementRef) -> Option<(ElementRef, String)> {
+        let (er, prop) = self.sem.inline_text()?;
+        self.sem.place_child(parent, &er, None).ok()?;
+        Some((er, prop))
+    }
+
+    /// RT2: whether `f` holds content other than text, `{expressions}` and `{#if}` blocks of those
+    /// (an element, a component, another block), not counting attaching kinds.
+    fn has_element(&self, f: &AstFragment) -> bool {
+        f.nodes.iter().any(|n| match n {
+            FragmentNode::Text(_) | FragmentNode::ExpressionTag(_) | FragmentNode::Comment(_) => false,
+            FragmentNode::IfBlock(b) => self.has_element(&b.consequent) || b.alternate.as_ref().is_some_and(|a| self.has_element(a)),
+            FragmentNode::RegularElement(c) => !self.attaches(&c.name),
+            _ => true,
+        })
     }
 
     /// Whether `tag` is a kind that attaches to its parent element (spec `attaches_to`).

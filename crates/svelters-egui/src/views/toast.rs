@@ -70,6 +70,8 @@ impl Level {
 pub struct Toast {
     pub id: i64,
     pub text: String,
+    /// RT2: the runs when `show` got a run list (`crate::rich::from_value`); `text` is their text.
+    pub runs: Option<crate::rich::Rich>,
     pub level: Level,
     /// Seconds; 0 = until closed.
     pub duration: f64,
@@ -116,14 +118,21 @@ impl Toasts {
     pub fn push(&mut self, text: String, level: Level, duration: Option<f64>) -> i64 {
         self.next += 1;
         let duration = duration.unwrap_or(self.duration).max(0.0);
-        self.list.push(Toast { id: self.next, text, level, duration, shown: None });
+        self.list.push(Toast { id: self.next, text, runs: None, level, duration, shown: None });
         self.next
     }
 
-    /// `show(text, level?, duration?)`.
+    /// `show(text, level?, duration?)`; RT2: `text` may be a run list (`crate::rich::from_value`).
     pub(crate) fn show(&mut self, args: &[Value]) -> StrResult<Value> {
         arity("show", args, 1, 3)?;
-        let text = as_str(&args[0])?;
+        let runs = match &args[0] {
+            Value::List(_) => Some(crate::rich::from_value(&args[0]).map_err(|e| format!("show text: {e}"))?),
+            _ => None,
+        };
+        let text = match &runs {
+            Some(r) => r.plain.clone(),
+            None => as_str(&args[0])?,
+        };
         let level = match arg(args, 1) {
             Value::Null => Level::Info,
             v => Level::of(as_enum(v, TOAST_LEVEL).map_err(|e| format!("show level: {e}"))?),
@@ -132,7 +141,11 @@ impl Toasts {
             Value::Null => None,
             v => Some(as_f64(v).map_err(|e| format!("show duration: {e}"))?),
         };
-        Ok(Value::I64(self.push(text, level, duration)))
+        let id = self.push(text, level, duration);
+        if let Some(t) = self.list.last_mut() {
+            t.runs = runs;
+        }
+        Ok(Value::I64(id))
     }
 
     /// `dismiss(id)`: false if no such toast is shown.
@@ -219,7 +232,22 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
                     ui.horizontal(|ui| {
                         let (dot, _) = ui.allocate_exact_size(vec2(4.0, ui.text_style_height(&egui::TextStyle::Body)), Sense::hover());
                         ui.painter().rect_filled(dot, 2.0, accent);
-                        let body = ui.add(egui::Label::new(toast.text.as_str()).wrap().selectable(false).sense(Sense::click()));
+                        let body = match &toast.runs {
+                            // RT2: one paragraph of plain runs (`crate::rich`); a click on a
+                            // run with an `href` opens it
+                            Some(r) => {
+                                let colors = crate::rich::Colors { text: ui.visuals().text_color(), link: ui.visuals().hyperlink_color };
+                                let job = crate::rich::layout_job(ui.ctx(), ui.style(), r, colors, None, None);
+                                let (pos, galley, resp) = egui::Label::new(job).wrap().selectable(false).sense(Sense::click()).layout_in_ui(ui);
+                                ui.painter().galley(pos, galley.clone(), colors.text);
+                                let href = resp.interact_pointer_pos().filter(|_| resp.clicked()).and_then(|p| r.href_at(&galley, p - pos));
+                                if let Some(h) = href {
+                                    ui.ctx().open_url(egui::OpenUrl::same_tab(h));
+                                }
+                                resp
+                            }
+                            None => ui.add(egui::Label::new(toast.text.as_str()).wrap().selectable(false).sense(Sense::click())),
+                        };
                         let close = ui.add(egui::Button::new("×").small().frame(false)).on_hover_text("Dismiss").accessible_name("Dismiss");
                         (body.clicked(), close.clicked())
                     })

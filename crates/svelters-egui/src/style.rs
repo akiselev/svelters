@@ -70,8 +70,12 @@ pub(crate) const ENGINE_PROPS: &[(&str, &str, &[&str])] = &[
     ("box-shadow", "shadow", &[]),
     ("color", "color", &[]),
     ("display", "enum", &["flex", "grid", "none"]),
+    // RT2: read by the runs of a rich label (`crate::rich`)
+    ("font-family", "raw", &[]),
     // computed and inherited (`em`); measuring and painting with it is deferred
     ("font-size", "length", &[]),
+    ("font-style", "enum", &["normal", "italic", "oblique"]),
+    ("font-weight", "font-weight", &[]),
     ("grid-column", "raw", &[]),
     ("grid-row", "raw", &[]),
     ("grid-template-columns", "raw", &[]),
@@ -85,6 +89,7 @@ pub(crate) const ENGINE_PROPS: &[(&str, &str, &[&str])] = &[
     ("padding-left", "length", &[]),
     ("padding-right", "length", &[]),
     ("padding-top", "length", &[]),
+    ("text-decoration-line", "enum", &["none", "underline", "line-through"]),
 ];
 
 /// The bits the walk owns: set from the pass's interaction and from props, never by providers.
@@ -402,6 +407,9 @@ impl Scene {
         ns.computed = Some(Arc::new(c));
         ns.states = states;
         self.core[i].dirty.insert(Dirty::PAINT);
+        if matches!(self.w(i), W::Run { .. }) {
+            crate::rich::touched(self, i); // RT2: a run's font may have changed
+        }
         let t = layout_style(self, i);
         if t != self.layout[i].style {
             self.layout[i].style = t;
@@ -524,7 +532,7 @@ impl Scene {
     }
 
     /// Sets the walk-owned state bits of node `i` to `bits` (journaled; restyles what it reaches).
-    fn set_walk_state(&mut self, i: usize, bits: StateBits) {
+    pub(crate) fn set_walk_state(&mut self, i: usize, bits: StateBits) {
         let before = self.core[i].state;
         let after = StateBits((before.0 & !WALK_BITS.0) | (bits.0 & WALK_BITS.0));
         if after == before {

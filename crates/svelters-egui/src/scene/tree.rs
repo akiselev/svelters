@@ -130,7 +130,9 @@ fn builtin_payload(kind: usize) -> Option<W> {
     Some(match kinds::kind(kind).id {
         "Window" => W::Window { title: String::new(), default_w: 480.0, default_h: 360.0 },
         "Box" => W::Box,
-        "Label" => W::Label { text: String::new(), wrap: "wrap", selectable: false, weight: 400 },
+        "Label" => W::Label { text: String::new(), wrap: "wrap", selectable: false, weight: 400, rich: None },
+        // RT2 (`kinds/rich.rs`)
+        "Span" | "Bold" | "Italic" | "Code" | "Anchor" => W::Run { text: String::new(), weight: 0, href: String::new(), anchor: kinds::kind(kind).id == "Anchor" },
         "Button" => W::Button { text: String::new(), selected: false, frame: true, small: false, weight: 400 },
         "Checkbox" => W::Checkbox { text: String::new(), checked: false },
         "TextEdit" => W::TextEdit { text: String::new(), hint: String::new(), multiline: false, password: false, char_limit: 0 },
@@ -393,6 +395,7 @@ impl Scene {
         let pi = self.ix(p);
         self.children[pi].retain(|&c| c != child);
         self.core[ci].parent = None;
+        crate::rich::touched(self, pi); // RT2: a run left its label
         self.core[ci].flags.remove(NodeFlags::SHADOW); // SG4: no longer a shadow top
         let t = self.stamp();
         self.record(Change::Removed { parent: p, node: child }, origin);
@@ -461,6 +464,7 @@ impl Scene {
         }
         self.record(Change::Inserted { parent, node: child, before }, origin);
         self.invalidate_content(parent);
+        crate::rich::touched(self, pi); // RT2: a run joined a label
         Ok(true)
     }
 
