@@ -220,7 +220,7 @@ pub(crate) fn family_for(ctx: &egui::Context, base: &FontFamily, weight: i64) ->
 
 /// [`family_for`], unless that family lacks a character of `text`: then `base` (reported once per
 /// family and character).
-fn weighted_family(ctx: &egui::Context, base: &FontFamily, weight: i64, text: &str) -> FontFamily {
+pub(crate) fn weighted_family(ctx: &egui::Context, base: &FontFamily, weight: i64, text: &str) -> FontFamily {
     let fam = family_for(ctx, base, weight);
     if fam == *base {
         return fam;

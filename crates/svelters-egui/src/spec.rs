@@ -39,7 +39,7 @@ fn ty_name(ty: Ty) -> &'static str {
         Ty::I64 => "i64",
         Ty::Str => "string",
         Ty::Enum(_) => "enum",
-        Ty::StrList | Ty::IdList => "list",
+        Ty::StrList | Ty::IdList | Ty::NumList => "list",
         Ty::Snippet => "other",
         Ty::Provider => "other",
     }
@@ -88,6 +88,9 @@ fn prop_json(k: &KindDef, p: &PropDef) -> J {
     }
     if p.ty == Ty::IdList {
         m.insert("of".into(), json!("i64"));
+    }
+    if p.ty == Ty::NumList {
+        m.insert("of".into(), json!("f64"));
     }
     m.insert("writable".into(), json!(true));
     J::Object(m)
@@ -596,7 +599,7 @@ fn ts_of(ty: Ty) -> String {
         Ty::Str => "string".into(),
         Ty::Enum(values) => values.iter().map(|v| format!("'{v}'")).collect::<Vec<_>>().join(" | "),
         Ty::StrList => "string[]".into(),
-        Ty::IdList => "number[]".into(),
+        Ty::IdList | Ty::NumList => "number[]".into(),
         Ty::Snippet => "((...args: any[]) => any) | null".into(),
         Ty::Provider => "unknown".into(),
     }

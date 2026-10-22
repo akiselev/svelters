@@ -90,8 +90,10 @@ None.
 | `box-shadow` | yes (outer and inset) | — |
 | `opacity` | yes | — |
 
-**Layout properties** (as attributes or in CSS; an explicit attribute wins): `align-items`, `align-self`, `bottom`, `column-gap`, `flex-basis`, `flex-direction`, `flex-grow`, `flex-shrink`, `flex-wrap`, `gap`, `height`, `justify-content`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `padding`, `position`, `right`, `row-gap`, `top`, `visible`, `width`.
-Also in CSS only: `display`, `grid-column`, `grid-row`, `grid-template-columns`, `grid-template-rows`, `margin-bottom`, `margin-left`, `margin-right`, `margin-top`, `padding-bottom`, `padding-left`, `padding-right`, `padding-top`.
+**Layout properties** (as attributes or in CSS; an explicit attribute wins): `align-items`, `align-self`, `bottom`, `column-gap`, `flex-basis`, `flex-direction`, `flex-grow`, `flex-shrink`, `flex-wrap`, `gap`, `height`, `justify-content`, `left`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `row-gap`, `top`, `visible`, `width`.
+Also in CSS only: `display`, `grid-column`, `grid-row`, `margin-bottom`, `margin-left`, `margin-right`, `margin-top`.
+
+`overflow-x`/`overflow-y` (`hidden`, `scroll`, `auto`) override `direction` per axis; `overscroll-behavior: contain` keeps the wheel from chaining to an outer area; `scroll-margin` is the gap `scroll-into-view` and focus keep; `scrollbar-gutter: stable` (or `--sv-scrollbar-mode: classic`) gives classic bars in a gutter. Provider states `:state(sv.overflow-top)`, `-bottom`, `-left`, `-right` match while content lies beyond that edge; the theme draws R15's edge shadows as an inset `box-shadow` on `:state(sv.overflow-top)`/`(sv.overflow-left)`, painted over the content. The bars and thumbs are parts (`scrollbar-x`/`-y`, `thumb-x`/`-y`, `corner`, `shadow-*`), painted from VS Code's `scrollbarSlider.*` tokens until `::part()` reaches them.
 
 Full matrix: [css/properties](../../css/properties.md). States: below.
 <!-- END GENERATED -->
@@ -117,10 +119,13 @@ States are tracked once the scene has a style input (a `<style>` block, `class`,
 <!-- BEGIN GENERATED: a11y of kinds.ScrollArea (tools/docs/egui/gen_reference.py). Do not edit. -->
 | | |
 |---|---|
-| Role | none of its own; its content is announced in place |
+| Role | `ScrollView` |
+| Name | `accessible-name` |
+| Value | `scroll-x`, `scroll-y` and their ranges |
+| Actions | `ScrollUp`, `ScrollDown`, `ScrollLeft`, `ScrollRight`, `SetScrollOffset` |
 | `anchor`, `invalid` | not announced on this element (`anchor` still keys its ids) |
 
-Its scroll bars are `ScrollBar` nodes.
+svelters' own (OW2): the node carries the scroll offsets and their ranges and takes ScrollUp/Down/Left/Right and SetScrollOffset; its bars are `ScrollBar` nodes with their value; ScrollIntoView on a descendant scrolls it into view.
 <!-- END GENERATED -->
 
 ## Testing

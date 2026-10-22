@@ -88,7 +88,7 @@ pub use menus::attaches_to;
 pub use popups::PLACEMENT;
 pub use media::FIT;
 pub use panes::{FRAME_STYLE, SIDE};
-pub use views::{CELL_ALIGN, SORT, TABLE_SELECTION, TOAST_CORNER, TOAST_LEVEL};
+pub use views::{CELL_ALIGN, COMMIT_MODE, SORT, TABLE_SELECTION, TOAST_CORNER, TOAST_LEVEL};
 pub use registry::{KindRegistry, PROVIDER_PACK, ProviderKind, kind};
 pub use virtuallist::{ListStats, VList};
 
@@ -111,6 +111,8 @@ pub enum Ty {
     StrList,
     /// WG5a: a list of row ids (`number[]`; the ABI's `SVL_LIST` of `SVL_I64`): item-view selections.
     IdList,
+    /// OW2: a list of numbers (`number[]`; the ABI's `SVL_LIST` of `SVL_F64`): split-view `sizes`.
+    NumList,
     /// WG5a: a Svelte snippet (a function), kept by the JS runtime; the backend sees `true` while
     /// one is set (`table-column`'s `editor`).
     Snippet,
@@ -327,6 +329,13 @@ pub enum P {
     Cancel,
     /// RT2: an `a` run's link target
     Href,
+    /// OW2: split-view (N panes)
+    Sizes,
+    // `collapsible` reuses inner-window's `Collapsible`
+    RestoreOnDoubleClick,
+    CommitMode,
+    /// OW2: scrollbar
+    PageSize,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }
