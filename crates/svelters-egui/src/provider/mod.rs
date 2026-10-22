@@ -35,6 +35,7 @@ mod pass;
 mod state;
 
 pub use crate::scene::ext::{ExtBlock, ExtEntry, ExtId, ExtKey, ExtTicks, Storage};
+pub use crate::scene::{Hit, HitCx};
 pub use state::{IntoStateBits, StateBit, StateBitDef, StateBits, by_name as state_by_name, registry as state_registry};
 
 use crate::scene::{Handle, Node, W};
@@ -214,6 +215,13 @@ pub trait Widget: 'static {
     fn busy(&self) -> bool {
         false
     }
+    /// What is at `local` (relative to the drawn rect's top left), for `SceneRef::hit_test`
+    /// (ARCH-SCENE §7.4, R13). Asked only for kinds with `Caps::HIT_TEST`, from last pass's rect:
+    /// `Hit::Part(key)` names a part only this kind interprets (a row key, a pick id), `Hit::Miss`
+    /// lets the point through to what is below.
+    fn hit_test(&self, _cx: &HitCx, _local: egui::Pos2) -> Hit {
+        Hit::Node
+    }
 }
 
 /// An `on<name>` event of a kind. The macro gives each `#[event]` field its index; [`WidgetCx::emit`]
@@ -382,6 +390,7 @@ pub trait ErasedWidget: Any {
     fn ui(&mut self, ui: &mut egui::Ui, cx: &mut WidgetCx<'_>) -> egui::Response;
     fn a11y(&self, cx: &A11yCx<'_>, node: &mut egui::accesskit::Node);
     fn busy(&self) -> bool;
+    fn hit_test(&self, cx: &HitCx, local: egui::Pos2) -> Hit;
     fn as_any(&self) -> &dyn Any;
     fn as_any_mut(&mut self) -> &mut dyn Any;
     /// The struct's address (field offsets are relative to it).
@@ -412,6 +421,9 @@ impl<T: Widget + KindDecl> ErasedWidget for T {
     }
     fn busy(&self) -> bool {
         Widget::busy(self)
+    }
+    fn hit_test(&self, cx: &HitCx, local: egui::Pos2) -> Hit {
+        Widget::hit_test(self, cx, local)
     }
     fn as_any(&self) -> &dyn Any {
         self
