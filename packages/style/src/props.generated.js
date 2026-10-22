@@ -265,6 +265,7 @@ export const STYLE_TABLES = {
       "border-color": {"via": "css", "type": "color"},
       "border-radius": {"via": "css", "type": "length"},
       "border-width": {"via": "css", "type": "length"},
+      "box-shadow": {"via": "css", "type": "shadow"},
       "color": {"via": "css", "type": "color"},
       "column-gap": {"via": "setter", "prop": "column-gap", "native": "column-gap", "type": "length", "kinds": ["Box"], "tags": 6},
       "display": {"via": "css", "type": "enum", "values": ["flex", "grid", "none"]},

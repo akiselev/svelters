@@ -245,6 +245,7 @@ pub static EGUI: Table = Table {
         Prop { name: "border-color", via: Via::Css, target: "", ty: ValueType::Color, values: &[], tags: &[], inline_only: false },
         Prop { name: "border-radius", via: Via::Css, target: "", ty: ValueType::Length, values: &[], tags: &[], inline_only: false },
         Prop { name: "border-width", via: Via::Css, target: "", ty: ValueType::Length, values: &[], tags: &[], inline_only: false },
+        Prop { name: "box-shadow", via: Via::Css, target: "", ty: ValueType::Shadow, values: &[], tags: &[], inline_only: false },
         Prop { name: "color", via: Via::Css, target: "", ty: ValueType::Color, values: &[], tags: &[], inline_only: false },
         Prop { name: "column-gap", via: Via::Setter, target: "column-gap", ty: ValueType::Length, values: &[], tags: &["box"], inline_only: false },
         Prop { name: "display", via: Via::Css, target: "", ty: ValueType::Enum, values: &["flex", "grid", "none"], tags: &[], inline_only: false },

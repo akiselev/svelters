@@ -31,6 +31,9 @@
 //!
 //! Writer lane: STYLE.
 
+mod shadow;
+pub(crate) use shadow::paint_bounds;
+
 use crate::backend::EguiBackend;
 use crate::kinds;
 use crate::scene::{Change, ChangeFilter, ChangeMask, Dirty, Handle, NodeId, NodeRef, Observer, Origin as SceneOrigin, Scene, StateBits, W};
@@ -56,6 +59,8 @@ pub(crate) const ENGINE_PROPS: &[(&str, &str, &[&str])] = &[
     ("border-color", "color", &[]),
     ("border-radius", "length", &[]),
     ("border-width", "length", &[]),
+    // CS5g: painted around boxes and stock widgets (`style/shadow.rs`)
+    ("box-shadow", "shadow", &[]),
     ("color", "color", &[]),
     ("display", "enum", &["flex", "grid", "none"]),
     // computed and inherited (`em`); measuring and painting with it is deferred
@@ -641,6 +646,12 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
                 }
             }
         }
+        // CS5g: the shadows of this pass's state, behind the widget
+        let now = match &states {
+            Some(st) => &st[if pressed { 2 } else if hovered { 1 } else { 0 }],
+            None => &c,
+        };
+        stock_shadows(now, r, child);
     } else {
         paint_box(&c, r, child.painter());
         if let Some(col) = color(&c, "color") {
@@ -666,8 +677,16 @@ fn px(c: &ComputedStyle, name: &str) -> Option<f32> {
     }
 }
 
-/// A box's background and border, behind its content.
+/// A box's outer shadows, background, border and inset shadows, behind its content.
 fn paint_box(c: &ComputedStyle, r: egui::Rect, p: &egui::Painter) {
+    let radius = px(c, "border-radius").unwrap_or(0.0);
+    shadow::paint(c, r, radius, false, p);
+    paint_fill(c, r, radius, p);
+    shadow::paint(c, r, radius, true, p);
+}
+
+/// A box's background and border.
+fn paint_fill(c: &ComputedStyle, r: egui::Rect, radius: f32, p: &egui::Painter) {
     let fill = color(c, "background-color");
     let bw = px(c, "border-width").unwrap_or(0.0);
     let stroke = match color(c, "border-color") {
@@ -677,8 +696,17 @@ fn paint_box(c: &ComputedStyle, r: egui::Rect, p: &egui::Painter) {
     if fill.is_none() && stroke.is_none() {
         return;
     }
-    let radius = px(c, "border-radius").unwrap_or(0.0);
     p.add(egui::epaint::RectShape::new(r, radius, fill.unwrap_or(egui::Color32::TRANSPARENT), stroke.unwrap_or(egui::Stroke::NONE), egui::StrokeKind::Inside));
+}
+
+/// A stock widget's outer shadows (CS5g) around its rect `r`, with its corner radius as egui draws
+/// it. Inset shadows would paint under the widget's own background, so stock widgets skip them.
+fn stock_shadows(c: &ComputedStyle, r: egui::Rect, child: &egui::Ui) {
+    if shadow::shadows(c).is_none() {
+        return;
+    }
+    let radius = px(c, "border-radius").unwrap_or_else(|| child.visuals().widgets.inactive.corner_radius.average());
+    shadow::paint(c, r, radius, false, child.painter());
 }
 
 /// A stock widget's visuals in one interaction state from that state's computed style.
