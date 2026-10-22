@@ -79,7 +79,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | WG5a list/table interaction: keyboard nav, type-ahead, selection, cell editors | QUEUED | | after LISTS2 + SG4 |
 | WG6 widget polish: disabled tooltips, snippet tooltips, truncation, scrollIntoView, SVG, shortcut capture, OS file drops | QUEUED | | after INT1 |
 | WG5b tree-view | QUEUED | | after LISTS2 |
-| DX1 settings binding, persisted UI state, standard paths, console to tracing, JS crash context | QUEUED | | ThinkPad, next free lane; binds to a host-supplied store only (cadatomic U5 layers, UI-layout file); no svelters-owned persistence |
+| DX1 settings binding, persisted UI state, standard paths, console→tracing, crash context | DONE | 2026-10-22 | merged (this commit); decided (coordinator): UI-state id (root from RootKey, explicit anchors), `js[{category=…}]` filtering, external-change push and panic-time JS stacks as follow-ups, no dx-op policy now |
 | DX2 multi-format clipboard, open/reveal from JS | QUEUED | | independent |
 | IN1 Intl via ICU4X, locale-aware numbers | QUEUED | | MacBook, next free lane; locale and catalog come from the host (catalog.t); svelters formats numbers/dates |
 | CX1 in-process diagnostics (SV27) | DONE | 2026-10-22 | merged (this commit); `check()` API, incremental FileState, 172 registered codes, fix-its, `--check/--explain/--list-codes` |
