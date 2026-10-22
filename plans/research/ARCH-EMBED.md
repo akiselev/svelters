@@ -41,6 +41,9 @@ The user took every recommendation, to be revisited later:
   state) and commits `text.edit` at undo-group close (9); shared `Document` + per-view `EditorView` (10).
 - Corrections agreed by the coordinators: CRATES §4.1 is the canonical `PaneEvent`; this doc's §7.1 drops
   `CloseRequested`; CRATES uses this doc's method names; `Widget::busy`; key consumption via `consume_key`.
+- `PaneEvent` stays open to additions (user, 2026-10-22; cadatomic `b8e074e`): close reasons (user, API,
+  restore), per-pane `max_size`, per-pane host data in the layout file, skip-on-restore for temporary panes.
+  The §7.1 adapter matches with a wildcard arm.
 
 Work starts now: EG0 → EM1 ∥ RA1, with RA2 and FW1 alongside (§10).
 
