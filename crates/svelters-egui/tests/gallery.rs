@@ -103,3 +103,17 @@ fn media_page_draws() {
     let errors = app.errors();
     assert!(errors.is_empty(), "{errors:?}");
 }
+
+#[test]
+fn own_buttons_page_styles_parts_from_css() {
+    // OW-CSS: the own button's parts and boxes styled by the page's <style>
+    let mut app = open("own buttons");
+    for b in ["Pill", "Accent", "Tab", "Glow"] {
+        app.harness.get_by_role_and_label(Role::Button, b);
+    }
+    app.harness.get_by_role_and_label(Role::Button, "Accent").click();
+    app.harness.run_steps(4);
+    assert!(has(&app, "clicks: 1"));
+    let errors = app.errors();
+    assert!(errors.is_empty(), "{errors:?}");
+}

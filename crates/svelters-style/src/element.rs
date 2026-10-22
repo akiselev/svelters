@@ -126,6 +126,8 @@ impl<E: Element> selectors::Element for Node<E> {
             PseudoClass::State { bit, negated, .. } => state.intersects(*bit) != *negated,
             PseudoClass::FocusVisible => self.0.is_focus_visible(),
             PseudoClass::Provider { bit, .. } => state.intersects(*bit),
+            // only after `::part()`, tested by the cascade against the part's logical position (P1)
+            PseudoClass::Logical(_) => false,
         }
     }
 

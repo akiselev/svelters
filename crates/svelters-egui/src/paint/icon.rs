@@ -87,17 +87,22 @@ pub fn icon_size(ctx: &egui::Context, s: &StyleView, key: &IconKey) -> egui::Vec
 /// name in `default`'s family) when its style sets one, else `default`. `None` for
 /// `content: none`.
 pub fn content_icon(s: &StyleView, default: &IconKey) -> Option<IconKey> {
-    // the engine's typed value (OW-CSS stage 1: `content` is `ValueType::Content`)
-    match s.computed().and_then(|c| c.get("content")) {
-        Some(svelters_style::ComputedValue::Content(svelters_style::Content::None)) => return None,
-        Some(svelters_style::ComputedValue::Content(svelters_style::Content::Icon(k))) => {
-            let k = k.trim_matches(['"', '\'']);
-            return Some(match k.split_once(':') {
-                Some((f, n)) => IconKey::new(f, n),
-                None => IconKey::new(default.family.clone(), k),
-            });
+    let key = |k: &str| match k.split_once(':') {
+        Some((f, n)) => IconKey::new(f, n),
+        None => IconKey::new(default.family.clone(), k),
+    };
+    // the engine's typed value (OW-CSS P2); a UA table's keyword text below
+    match s.css("content") {
+        Some(svelters_style::ComputedValue::Content(c)) => {
+            return match c {
+                svelters_style::Content::None => None,
+                svelters_style::Content::Icon(k) => Some(key(k)),
+                // url(): images are the image primitive's; paint(): the painter ran instead
+                _ => Some(default.clone()),
+            };
         }
-        _ => {}
+        Some(_) => return Some(default.clone()),
+        None => {}
     }
     match s.keyword("content") {
         Some("none") => None,

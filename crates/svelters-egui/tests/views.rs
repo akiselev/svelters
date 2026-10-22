@@ -131,7 +131,8 @@ fn split_view_places_two_panes_and_the_divider_moves_them() {
     let (ra, rb, rs) = (r.rect(a), r.rect(b), r.rect(sv));
     // null position: half each, the divider between
     assert!((ra.width() - rb.width()).abs() <= 1.0, "{ra:?} {rb:?}");
-    assert!((rb.min.x - ra.max.x - 6.0).abs() < 0.5, "a 6pt divider: {ra:?} {rb:?}");
+    // OW2 (R11): a 1pt sash line between the panes (its 4pt hit area overlaps them)
+    assert!((rb.min.x - ra.max.x - 1.0).abs() < 0.5, "a 1pt sash: {ra:?} {rb:?}");
     assert!((ra.height() - rs.height()).abs() < 0.5);
     assert!(r.h.harness.get_by_label("Left pane").rect().max.x <= r.h.harness.get_by_label("Right pane").rect().min.x);
 
@@ -172,7 +173,7 @@ fn split_view_places_two_panes_and_the_divider_moves_them() {
     r.run();
     let (ra, rb) = (r.rect(a), r.rect(b));
     assert_eq!(ra.height(), 60.0);
-    assert!(rb.min.y >= ra.max.y + 5.5 && (ra.width() - rb.width()).abs() < 0.5, "{ra:?} {rb:?}");
+    assert!(rb.min.y >= ra.max.y + 0.5 && (ra.width() - rb.width()).abs() < 0.5, "{ra:?} {rb:?}");
 }
 
 fn rows(first: usize, n: usize, cols: usize) -> Value {

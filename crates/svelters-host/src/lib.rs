@@ -41,7 +41,7 @@ pub mod sched;
 mod sourcemap;
 pub mod testing;
 
-pub use crate::core::{ConsoleLine, HostConfig, OffloadStats, ReactiveStats, Timing};
+pub use crate::core::{BudgetInterrupt, ConsoleLine, HostConfig, OffloadStats, ReactiveStats, Timing};
 pub use crate::engine::{
     BufferStats, ChangedProp, ErrorKind, HostBusy, JobStatus, JsEngine, JsError, OpOutcome, OpSettle, RootMessage,
 };
@@ -645,6 +645,12 @@ impl<'a> Host<'a> {
 
     pub fn turn_budget(&self) -> Option<Duration> {
         self.core.budget.get()
+    }
+
+    /// The last entry into JS that the turn budget stopped, as the host measured it: the budget
+    /// and how late after the deadline the abort returned (FX4). `None` until one is stopped.
+    pub fn last_interrupt(&self) -> Option<BudgetInterrupt> {
+        self.core.last_interrupt.get()
     }
 
     // ---- EM1: roots (ARCH-EMBED §4.2/§4.3) ----
