@@ -34,6 +34,9 @@ fn every_prop_is_observable_and_host_writes_never_echo() {
                     kinds::Ty::I64 => Value::I64(3),
                     // WG1: a grid template is validated on write
                     kinds::Ty::Str if p.name == "grid-template-columns" => Value::Str("1fr 2fr".into()),
+                    // WG4b: the pickers' values are validated on write
+                    kinds::Ty::Str if tag == "date-picker" && p.name == "value" => Value::Str("2026-10-22".into()),
+                    kinds::Ty::Str if tag == "color-picker" && p.name == "value" => Value::Str("#123456".into()),
                     kinds::Ty::Str => Value::Str("x".into()),
                     kinds::Ty::Enum(vals) => Value::Str(vals[vals.len() - 1].into()),
                     kinds::Ty::StrList => Value::List(vec![Value::Str("x".into())]),
