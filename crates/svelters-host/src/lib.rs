@@ -22,6 +22,7 @@
 mod convert;
 mod core;
 mod engine;
+mod hooks;
 pub mod exports;
 mod quickjs;
 mod reload;
@@ -35,6 +36,7 @@ pub use crate::engine::{
 pub use crate::reload::ReloadReport;
 /// Q1: the module loader (providers; `SourceProvider` with its `source` feature).
 pub use svelters_modules as modules;
+pub use hooks::ModuleHooks;
 pub use svelters_modules::{BundleProvider, ModuleCode, ModuleProvider};
 
 /// The provider of a built bundle; a missing entry is a load error.
@@ -181,6 +183,8 @@ pub struct Host<'a> {
     vt: HostVtable,
     reloader: Rc<Reloader>,
     started: Rc<Started>,
+    /// LD1: extra schemes, native modules and the `svelters:app/*` filter for every load.
+    module_hooks: RefCell<ModuleHooks>,
     /// The hook registered by `on_started`, armed by the next `run`/`start`.
     on_started: RefCell<Option<StartedHook<'a>>>,
     /// The backend was attached through `start` and not detached since.
@@ -235,6 +239,7 @@ impl<'a> Host<'a> {
             vt,
             reloader,
             started,
+            module_hooks: RefCell::new(ModuleHooks::default()),
             on_started: RefCell::new(None),
             attached: Cell::new(false),
             _backend: PhantomData,
@@ -256,12 +261,25 @@ impl<'a> Host<'a> {
         self.load_from(bundle_provider(path.as_ref())?)
     }
 
+    /// LD1: sets the extra schemes, native modules and `svelters:app/*` visibility that apply to the
+    /// next load (`load_from`, `load_entry_from`, `load_bundle`, `load_entry`). The default serves
+    /// this binary's exports and every `svelters:app/*` module.
+    pub fn set_module_hooks(&self, hooks: ModuleHooks) {
+        *self.core.app_gate.borrow_mut() = Some(hooks.app_gate());
+        *self.module_hooks.borrow_mut() = hooks;
+    }
+
+    fn compose_modules(&self, inner: Rc<dyn ModuleProvider>) -> Result<Rc<dyn ModuleProvider>, JsError> {
+        self.module_hooks.borrow().compose(inner).map_err(|m| JsError::new(ErrorKind::Host, m))
+    }
+
     /// Q1: loads and evaluates the entry module of `provider` ([`BundleProvider`], or
     /// `svelters_modules::SourceProvider` for an app compiled from source), resolving and loading
     /// every import through it. Remembered for hot reload, like [`Host::load_bundle`]; load errors
     /// (compiler diagnostics included) are returned with their stacks mapped to the sources.
     pub fn load_from(&self, provider: Rc<dyn ModuleProvider>) -> Result<(), JsError> {
         self.ensure_attached();
+        let provider = self.compose_modules(provider)?;
         self.reloader.set_provider(provider.clone());
         core::load_bundle(&self.core, &self.engine, &provider).map_err(|e| self.core.map_error(e))
     }
@@ -554,6 +572,7 @@ impl<'a> Host<'a> {
     /// [`Host::load_entry`] from a module provider (Q1): an embed entry compiled from source.
     pub fn load_entry_from(&self, provider: Rc<dyn ModuleProvider>) -> Result<u32, JsError> {
         self.ensure_attached();
+        let provider = self.compose_modules(provider)?;
         core::load_entry(&self.core, &self.engine, &provider).map_err(|e| self.core.map_error(e))
     }
 
