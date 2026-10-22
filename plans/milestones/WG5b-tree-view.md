@@ -92,6 +92,17 @@ Original lane:
 ## Not done / follow-ups
 
 - ~~EV3 `consume_key` adoption~~: done in the re-merge (above).
+- **Ctrl+C through the host clipboard (coordinator, 2026-10-22: follow-up).** The coordinator
+  wants the tree's copy written through EV3's route (`Host::platform()`'s clipboard, mirrored into
+  egui's) instead of `svelters:clipboard` from `<TreeView>`, keeping the `copy` signal. Not done in
+  the re-merge because it is more than a small change: EV3's host-clipboard route exists only for
+  `Embed::text_command` (the embed hands `focus::Clip` to the command; a key press has no `Clip`),
+  and nothing reachable from a kind's paint (scene, walk, `EguiBackend`) holds the host's
+  `Platform`. It needs (1) the embed to make its `Clip` reachable from the walk (per embed, since
+  embeds share a context), (2) a multi-MIME write (`row-drag-type` data plus `text/plain`; EV3's
+  `Clip` writes text), and (3) a rule for the app's `copy` handler replacing the default payload
+  (JS runs after the pass). Today both routes reach the same `Platform` clipboard (the one
+  `Embed::text_command` uses), so desktop has one clipboard, but two write routes.
 - Set sizes are over the whole flattened list, not per sibling group.
 - No AccessKit Expand/Collapse actions yet (keyboard and the triangle only).
 - `layout="grid"`-style options and per-row drag data from Rust row sources (a tree over a Rust
