@@ -3,7 +3,8 @@
 Lane OW1a (thinkpad, `ci/ow1a`), 2026-10-22. Branched from `ci/ow0` at 7eef7362 (OW0a, the API
 slice) and merged with `origin/master` 91fcf421. No newer ci/ow0 commits existed when this was
 pushed. Re-based for the final push on **OW0b** (ci/ow0 6f013c72, which includes master 95f376ce)
-by merge; slice 1 needed no code change for OW0b's API breaks. Design: ARCH-WIDGETS §1–§3, §6.1, §7.2 (OW1a row), WIDGET-PARITY §2.1–§2.3, §2.9, §2.10,
+by merge, then on ci/ow0 bb4bfa77 (OW0b's linux-gtk fix + master 5e3bef68 with OW-CSS stage 1); slice 1
+needed no code change for either. Design: ARCH-WIDGETS §1–§3, §6.1, §7.2 (OW1a row), WIDGET-PARITY §2.1–§2.3, §2.9, §2.10,
 §2.16, §5, DESIGN §1–§2.
 
 **Status: slice 1 of 2.** The lead accepted the split (ow1a-lane → team-lead, 2026-10-22). Slice 1
