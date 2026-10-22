@@ -371,6 +371,8 @@ pub struct WidgetCx<'a> {
     emits: Vec<(usize, Value)>,
     remeasure: bool,
     errors: Vec<String>,
+    /// EV1: the pass's context (repaints asked by behaviours' filters during `dispatch`).
+    ctx: egui::Context,
 }
 
 impl WidgetCx<'_> {
@@ -444,6 +446,36 @@ impl WidgetCx<'_> {
     /// Queues `payload` for the event's JS listeners (delivered after the pass, in order).
     pub fn emit<T: IntoJs>(&mut self, event: &Event<T>, payload: T) {
         queue_emit(self.entry, event, payload, &mut self.emits, &mut self.errors);
+    }
+
+    /// EV1 (ARCH-WIDGETS §1.2, §2.3): dispatches a user-visible event of this widget (a unit's
+    /// intent: a press, a toggle, a selection change) along the node's path through the scene's
+    /// Rust filters (SV6: registered [`EventFilter`](crate::events::EventFilter)s and the
+    /// behaviours' [`Behavior::filter`], capture, target, bubble) **before** the default action,
+    /// then queues `payload` for the event's JS listener (as [`WidgetCx::emit`], delivered after
+    /// the pass) unless a filter stopped it. Apply the default action only when the outcome is not
+    /// [`prevented`](crate::events::Outcome::prevented):
+    ///
+    /// ```ignore
+    /// if !cx.dispatch(&self.clicked, ()).prevented() { self.activate(cx) }
+    /// ```
+    pub fn dispatch<T: IntoJs>(&mut self, event: &Event<T>, payload: T) -> crate::events::Outcome {
+        let name = self.entry.events.get(event.index()).map_or("?", |e| e.name);
+        let (o, runs) = crate::events::dispatch_signal(self.s, self.node, name);
+        if !runs.is_empty() {
+            // behaviours on this node may change its bits: keep them in this cx's copy
+            let before = self.s.core[self.i].state;
+            for r in runs {
+                behavior::apply(self.s, r, Some(&self.ctx), self.out);
+            }
+            let after = self.s.core[self.i].state;
+            let changed = before.0 ^ after.0;
+            self.state = StateBits((self.state.0 & !changed) | (after.0 & changed));
+        }
+        if !o.stopped {
+            self.emit(event, payload);
+        }
+        o
     }
 
     /// The node's provider data for `key` (ARCH-EMBED §8.4).
@@ -754,6 +786,7 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
             emits: Vec::new(),
             remeasure: false,
             errors: Vec::new(),
+            ctx: ui.ctx().clone(),
         };
         let resp = w.ui(ui, &mut cx);
         let WidgetCx { state, changed, emits, remeasure, errors, .. } = cx;

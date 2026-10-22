@@ -455,6 +455,10 @@ impl<'a> Lower<'a, '_, '_> {
                 AttributeLike::OnDirective(d) if d.modifiers.is_empty() && d.expression.is_some() => {
                     entries.push(SpreadEntry::Event { key: format!("on{}", d.name), handler: d.expression.as_ref().unwrap() });
                 }
+                // EV1: `on:name|capture={h}` is the capture listener `onnamecapture={h}`
+                AttributeLike::OnDirective(d) if super::forward::capture_only(d) => {
+                    entries.push(SpreadEntry::Event { key: format!("on{}capture", d.name), handler: d.expression.as_ref().unwrap() });
+                }
                 // FW1: a bare `on:name` forwards the component's own callback prop
                 AttributeLike::OnDirective(d) if d.modifiers.is_empty() => {
                     self.note_forwarding(d, OnSite::Element("svelte:element"));

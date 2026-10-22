@@ -219,6 +219,9 @@ pub(crate) struct Registry {
     next: u64,
     providers: Vec<ProviderEntry>,
     passes: Vec<PassEntry>,
+    /// EV1: the pass each viewport last ran its viewport passes in (they run once per pass, from
+    /// the windows' walk or the host's `show_viewport_passes`, whichever comes first).
+    vp_ran: Vec<(egui::ViewportId, u64)>,
 }
 
 impl SceneHandle {
@@ -357,6 +360,15 @@ pub(crate) fn run_root_passes(h: &SceneHandle, ui: &mut egui::Ui, r: RootIx, rec
 /// R21: the `Viewport(vp)` and `AllViewports` passes over `ui`'s max rect.
 pub(crate) fn run_viewport_passes(h: &SceneHandle, ui: &mut egui::Ui) -> usize {
     let vp = ui.ctx().viewport_id();
+    {
+        let pass = ui.ctx().cumulative_pass_nr();
+        let mut r = h.cell().passes.borrow_mut();
+        match r.vp_ran.iter_mut().find(|(v, _)| *v == vp) {
+            Some((_, p)) if *p == pass => return 0,
+            Some((_, p)) => *p = pass,
+            None => r.vp_ran.push((vp, pass)),
+        }
+    }
     let list = passes_for(h, |sc| matches!(sc, PassScope::AllViewports) || sc == PassScope::Viewport(vp));
     let rect = ui.max_rect();
     for (k, (p, order)) in list.iter().enumerate() {

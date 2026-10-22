@@ -128,7 +128,7 @@ static SLIDER_PROPS: &[PropDef] = &[
 
 pub(super) const NONE: &[(&str, Ty)] = &[];
 
-static WIDGET_SIGNALS: &[SignalDef] = &[
+static WIDGET_SIGNALS: &[SignalDef] = dom_signals![
     signal("animationend", &[("id", Ty::I64)], "A native animation (TR2) finished; carries its id. The runtime listens to it itself."),
     // WG4b: drag and drop on any node (`kinds/dnd.rs`)
     signal("drag-begin", NONE, "Drag source: the user started dragging this node (`drag-type` set)."),
@@ -139,7 +139,7 @@ static WIDGET_SIGNALS: &[SignalDef] = &[
         "drop",
         &[("type", Ty::Str), ("data", Ty::Str), ("x", Ty::F64), ("y", Ty::F64)],
         "Drop target: a drag it accepts was released over it; carries the type, the data and the point in the node's own points.",
-    ),
+    )
 ];
 
 static CLICK_SIGNALS: &[SignalDef] = &[signal("clicked", NONE, "Pressed and released (`Response::clicked`).")];

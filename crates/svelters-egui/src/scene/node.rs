@@ -399,10 +399,12 @@ pub(crate) struct NodeCold {
     /// SG4: the out-of-flow (`position: absolute`) boxes this node is the containing block of, as
     /// taffy's last layout recorded them (`layout.rs`, `LayoutContainingBlock`).
     pub hoisted: Vec<NodeId>,
+    /// EV1: signals listened in the capture phase (`listen_ex` with `SVL_LISTEN_CAPTURE`).
+    pub listen_capture: Vec<u32>,
 }
 
 impl NodeCold {
-    pub const DEFAULT: NodeCold = NodeCold { common: Common::DEFAULT, vis: Visual::IDENTITY, observe: Vec::new(), listen_overflow: Vec::new(), attached: Vec::new(), hoisted: Vec::new() };
+    pub const DEFAULT: NodeCold = NodeCold { common: Common::DEFAULT, vis: Visual::IDENTITY, observe: Vec::new(), listen_overflow: Vec::new(), attached: Vec::new(), hoisted: Vec::new(), listen_capture: Vec::new() };
 
     pub fn observes(&self, prop: u32) -> bool {
         prop != 0 && self.observe.iter().any(|&(p, c)| p == prop && c > 0)

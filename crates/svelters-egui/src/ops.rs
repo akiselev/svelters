@@ -244,6 +244,23 @@ impl Backend for EguiBackend {
         Ok(())
     }
 
+    /// EV1: `listen_ex` with `SVL_LISTEN_CAPTURE` on the DOM-style events (`on<event>capture`);
+    /// they are dispatched along the scene (`crate::events`). No other phase has a meaning here.
+    fn listen_ex(&self, h: svl_handle, signal: svl_id, on: bool, flags: u32) -> StrResult<()> {
+        let mut scene = self.0.scene.borrow_mut();
+        let i = scene.ix(scene.live(h)?);
+        let kind = scene.core[i].kind as usize;
+        let def = kinds::signal_def(kind, signal).ok_or_else(|| format!("unknown signal id {signal} on <{}>", scene.tag_at(i)))?;
+        if flags != SVL_LISTEN_CAPTURE {
+            return Err(format!("`{}` of <{}>: egui has no listen phase {flags:#x} (only capture, on the DOM-style events)", def.name, scene.tag_at(i)));
+        }
+        if !kinds::is_dom_event(def.name) {
+            return Err(format!("`{}` of <{}> has no capture phase on egui: only the DOM-style events ({}) propagate", def.name, scene.tag_at(i), kinds::DOM_EVENTS.join(", ")));
+        }
+        scene.set_listen_capture(i, signal, on);
+        Ok(())
+    }
+
     fn handle_info(&self, h: svl_handle) -> StrResult<svl_handle_info> {
         let k = self.kind_of(h)?;
         let host_owned = {
