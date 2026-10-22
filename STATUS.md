@@ -76,9 +76,9 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | DS1 theme module (`svelters_egui::theme`: one token map → CSS :root, egui Style, typed getters; Dark/Light Modern + HC, densities) | IN PROGRESS | | branch `ci/ds1`; DS2-DS5 queued (engine gaps, affordance sheet, VS Code theme importer, codicons) |
 | WG3w Windows native references (Win32 EDIT, WinUI TextBox; pins 1-3, 7), egui on Windows, counter-win flake | IN PROGRESS | | branch `ci/wg3w`; builds via the WSL PC's Windows toolchain |
 | EV3+ keys and focus: focus scopes/restore, key routing (ShortcutOverride), edit commands to Svelte text fields, default/cancel buttons (QT-SURVEY §3) | QUEUED | | after FX1; key consumption via ARCH-EMBED R11 consume_key/composing(); edit commands through a host-callable API (cadatomic constraint) |
-| WG5a list/table interaction: keyboard nav, type-ahead, selection, cell editors | QUEUED | | after LISTS2 + SG4 |
+| WG5a list/table interaction: keyboard nav, type-ahead, selection, cell editors | QUEUED | | unblocked (LISTS + SG4 merged) |
 | WG6 widget polish: disabled tooltips, snippet tooltips, truncation, scrollIntoView, SVG, shortcut capture, OS file drops | QUEUED | | after INT1 |
-| WG5b tree-view | QUEUED | | after LISTS2 |
+| WG5b tree-view | QUEUED | | unblocked (LISTS merged) |
 | DX1 settings binding, persisted UI state, standard paths, console→tracing, crash context | DONE | 2026-10-22 | merged (this commit); decided (coordinator): UI-state id (root from RootKey, explicit anchors), `js[{category=…}]` filtering, external-change push and panic-time JS stacks as follow-ups, no dx-op policy now |
 | DX2 multi-format clipboard (MimeData shared with DnD), svelters:clipboard / svelters:shell | DONE | 2026-10-22 | merged (this commit); DragPayload now holds MimeData; follow-up: fold W5 PrimarySelection onto ClipboardBackend |
 | IN1 Intl via ICU4X, locale-aware numbers | QUEUED | | MacBook, next free lane; locale and catalog come from the host (catalog.t); svelters formats numbers/dates |
@@ -86,7 +86,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | Q1 module loader (`svelters-modules`) | DONE | 2026-10-22 | merged 6dbee841 |
 | CS0 Rust CSS engine (`svelters-style`) | DONE | 2026-10-22 | merged 1b6a754f |
 | SG4 provider passes (R16 provider half, R21, R23) | DONE | 2026-10-22 | merged (this commit); provider layout/prepare, shadow children, StateProvider (R16/R23), ScenePass + R21 `show_viewport_passes`, overlay roots, `position: absolute` |
-| LS1 + SG5 virtual lists on egui (SV40, SV47) | IN PROGRESS | | branch `ci/lists`, stacked on `ci/sg3` (+ `ci/sg4`) |
+| LS1 + SG5 virtual lists on egui (SV40, SV47) | DONE | 2026-10-22 | merged (this commit); `virtual-list`, RowPool (no rows built during a fling) |
 | TK1 one-file cases across backends (SV34) | DONE | 2026-10-22 | merged bf82674f |
 | SV48 `Json<T>` error paths through tagged enums | DONE | 2026-10-22 | merged (this commit) |
 | H1 component HMR on the Rust loader | DONE | 2026-10-22 | merged (this commit); follow-ups H1b (acceptExports propagation), D10 timers, swap budget |
