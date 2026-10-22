@@ -1,7 +1,7 @@
 # OW5a: lists, tree and DnD as own widgets (first slice)
 
 Lane `ci/ow5a` (thinkpad), from `origin/master` (d0542a3a, then 2cf3f4db) with `origin/ci/ow1a2` merged
-(Expandable, `parts::paint_chevron`). Design: `plans/research/ARCH-WIDGETS.md` §6.1 (`virtual-list`, DnD
+(Expandable, `parts::paint_chevron`); OW1a2 then merged to master as ba5f7239, which is merged here. Design: `plans/research/ARCH-WIDGETS.md` §6.1 (`virtual-list`, DnD
 rows) and §7.2 (OW5); look from DESIGN.md R6, R8, R10, R14, R15 and §4 tokens; acceptance rows from
 WIDGET-PARITY §2.18 (OW5a). Coordinator decision (2026-10-22): pooled rows are `list::part(row)`, styled
 per row through `Stylist::compute_pseudo_at(…, Some((i, n)), …)`.
@@ -142,10 +142,8 @@ the `wg4b.rs` assertions are updated.
 - `kinds/mod.rs`: `P::ExpandOn`, `P::RootDecorated`.
 - `scene/props.rs`: their arms.
 - `theme/base.css`: the OW5a rules above.
-- **Merge fix for the coordinator.** RA3 (master) added `MeasureCx::id`, and OW1a2's
-  `LayoutCx::with_measure` builds a `MeasureCx` without it. The fix in `layout.rs` is
-  `id: egui::Id::unique(("svelters-egui.measure", self.node.to_raw()))`. Master needs the same line when
-  OW1a2 merges.
+- `layout.rs`: no change after the merge. RA3's `MeasureCx::id` in OW1a2's `with_measure` is master's own fix
+  (ba5f7239, `Id::new(("svelters-egui.measure", node))`), taken as is.
 
 ## DESIGN rules satisfied
 
@@ -227,6 +225,42 @@ gate (not on master). CI is the gate.
 
 - **OW5a1 follow-ups** (below): proposed for a fresh agent.
 - **OW5a2** comes after OW5b (see the decision above).
+
+## OW5a1b handoff (for a fresh agent; coordinator-approved 2026-10-22)
+
+Start from `ci/ow5a` (or master once it merges) and read this record first. **Keep the `Scene::part_at` row design exactly as
+built**; DOC2 and VIS1c cite it. Items, in a sensible order:
+
+1. **DragSource / DropTarget units.** Move `kinds/dnd.rs`'s per-node source and target halves into `interact/dnd.rs` `Unit`s
+   (intents: `DragBegin`, `DragEnd { dropped, action }`, `Enter(type)`, `Leave`, `Drop { type, data, at, action }`).
+   - Keep the signal shapes, including `drop`'s 5th arg and `drag-end`'s 2nd.
+   - The `ghost` and the file-drop highlight should paint from UA tables (`::part(ghost)`, `::part(drop-line)`) instead of
+     egui `Visuals`.
+2. **List row DnD.** `row-drag-type`/`row-drop-types` on `virtual-list`.
+   - Generalise `tree_drop_target`/the tree's drag start in `virtuallist.rs`; the props already exist in `P`.
+   - Add `internal-move` (reorder within the list, a `move(from, to)` signal).
+   - Add DnD auto-expand on trees: hovering an `into` target expands it after `Policy::double_click_ms`-like delay
+     (Qt `autoExpandDelay`).
+3. **Selection.** `selection="toggle"` (a click toggles, no modifier) and `"range"` (Shift only) in
+   `views/selection.rs` `Mode`; WG5a and the table share it, so keep their tests green.
+   - Also gate the tree's click selection (`selection-changed`) through `list_rows::allowed`.
+4. **`bind:current`** on list and tree. A new prop holds the cursor's id and is announced through `leaf::widget_changed`;
+   `:current` is already on the rows.
+5. **Smaller items:**
+   - the `scrollTo(pos, hint)` hint (`nearest`/`top`/`bottom`/`center`; `VScroll::reveal` takes the alignment);
+   - Ctrl+C `copy` on `virtual-list` (`item_keys::Input::Copy`);
+   - `uniform-rows` (skip measuring: `RowHeights::uniform`);
+   - `slot="empty"` (a child shown when `count() == 0`; needs RA3's container slots);
+   - `row-hovered`;
+   - the "selection follows the context click" Policy row;
+   - expand helpers in `svelters:views/tree` (`expandAll`, `collapseAll`, `expandToDepth`, JS side, `@svelters/lists`).
+6. **Acceptance.**
+   - Keep green: this record's tests, `vlist.rs`, `wg5a.rs`, `treeview.rs`, `wg4b.rs`, `scene_memory`, the sweeps.
+   - Add one test per item above.
+   - Then flip the WIDGET-PARITY §2.18 rows marked "not done" here.
+
+OW5a2 (grid layout, rubber band, sticky section headers, multi-column tree, rename in place, expand animation) is a
+separate later lane, after OW5b.
 
 ## Not done (OW5a1 follow-ups)
 
