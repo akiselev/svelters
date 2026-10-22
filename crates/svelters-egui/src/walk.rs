@@ -189,6 +189,7 @@ fn paint_own(
             }
             None => ui,
         };
+        crate::kinds::dnd::node(arena, i, r, ui, out, crate::kinds::dnd::Part::Both); // WG4b: under the children
         // WG1: a container's tooltip and chrome (collapsing header, scroll area), then
         // `paint_children`
         crate::leaf::container(arena, i, r, origin, ui, out);
@@ -208,6 +209,7 @@ fn paint_own(
     let mut child = ui.new_child(b);
     // CS5e: this pass's state, the restyle it reaches, then the computed visuals on `child`
     crate::style::before_leaf(arena, i, r, &mut child);
+    crate::kinds::dnd::node(arena, i, r, &mut child, out, crate::kinds::dnd::Part::Source); // WG4b: under the widget
     let resp = if matches!(arena.w(i), crate::scene::W::Ext(_)) {
         let resp = crate::provider::paint(arena, i, &mut child, out); // RA1: a provider kind
         if arena.common(i).invalid {
@@ -217,6 +219,7 @@ fn paint_own(
     } else {
         Some(crate::leaf::leaf(arena, i, &mut child, out))
     };
+    crate::kinds::dnd::node(arena, i, r, &mut child, out, crate::kinds::dnd::Part::Target); // WG4b
     crate::scene::hit::record(arena, i, &child); // SG3: the viewport's hit list
     crate::overlays::paint_attached(arena, i, origin, ui, out); // WG2a: its context menu, popup
     resp

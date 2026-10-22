@@ -53,6 +53,16 @@ static WIDGET_PROPS: &[PropDef] = &[
         Def::Bool(false),
         "Marks the value as invalid: an outline in the error colour (`Visuals::error_fg_color`) and AccessKit `invalid`. The app sets it; the widget never does.",
     ),
+    // WG4b: drag and drop on any node (`dnd.rs`)
+    prop("drag-type", P::DragType, Ty::Str, Def::Str(""), "Makes the node a drag source: the payload's type, a MIME-like string (`cad/part`); empty for none."),
+    prop("drag-data", P::DragData, Ty::Str, Def::Str(""), "The drag payload's data (JSON for structured data); `drop` delivers it."),
+    prop(
+        "drop-types",
+        P::DropTypes,
+        Ty::Str,
+        Def::Str(""),
+        "Makes the node a drop target: the drag types it accepts, separated by spaces or commas (`*` any, `cad/*` a prefix); empty for none.",
+    ),
 ];
 
 static LABEL_PROPS: &[PropDef] = &[
@@ -98,7 +108,19 @@ static SLIDER_PROPS: &[PropDef] = &[
 
 pub(super) const NONE: &[(&str, Ty)] = &[];
 
-static WIDGET_SIGNALS: &[SignalDef] = &[signal("animationend", &[("id", Ty::I64)], "A native animation (TR2) finished; carries its id. The runtime listens to it itself.")];
+static WIDGET_SIGNALS: &[SignalDef] = &[
+    signal("animationend", &[("id", Ty::I64)], "A native animation (TR2) finished; carries its id. The runtime listens to it itself."),
+    // WG4b: drag and drop on any node (`kinds/dnd.rs`)
+    signal("drag-begin", NONE, "Drag source: the user started dragging this node (`drag-type` set)."),
+    signal("drag-end", &[("dropped", Ty::Bool)], "Drag source: the drag ended; `dropped` is true when a target took it."),
+    signal("drag-enter", &[("type", Ty::Str)], "Drop target: a drag it accepts entered it (`drop-types` set); carries the drag's type."),
+    signal("drag-leave", NONE, "Drop target: the drag left, was cancelled, or was dropped here (before `drop`)."),
+    signal(
+        "drop",
+        &[("type", Ty::Str), ("data", Ty::Str), ("x", Ty::F64), ("y", Ty::F64)],
+        "Drop target: a drag it accepts was released over it; carries the type, the data and the point in the node's own points.",
+    ),
+];
 
 static CLICK_SIGNALS: &[SignalDef] = &[signal("clicked", NONE, "Pressed and released (`Response::clicked`).")];
 
@@ -282,6 +304,9 @@ pub static KINDS: &[KindDef] = &[
     super::views::TAB,
     super::views::SPLIT_VIEW,
     super::views::TOAST_HOST,
+    // ---- WG4b: appended (tables in `pickers.rs`) ----
+    super::pickers::DATE_PICKER,
+    super::pickers::COLOR_PICKER,
 
 
 

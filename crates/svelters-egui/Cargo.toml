@@ -7,13 +7,16 @@ publish.workspace = true
 description = "The egui backend (G1): a retained scene arena laid out by taffy and painted through egui each frame"
 
 [features]
-default = ["eframe", "kittest", "source"]
+default = ["eframe", "kittest", "source", "dialogs"]
 # The windowed runner (`Backend::run`): eframe with the glow renderer on X11/Wayland.
 eframe = ["dep:eframe"]
 # The headless test runner (`harness`): egui_kittest without a renderer, so no GPU and no display.
 kittest = ["dep:egui_kittest"]
 # Q1: apps loaded from source (`svelters-egui-run --entry`), compiled live by svelters-compiler.
 source = ["dep:svelters-modules", "svelters-modules/source"]
+# WG4b: native file and message dialogs (`svelters:app/egui`) through rfd; without it they reject with
+# `unsupported` unless a `DialogBackend` is installed.
+dialogs = ["dep:rfd"]
 
 [dependencies]
 svelters-abi.workspace = true
@@ -32,6 +35,13 @@ egui_kittest = { version = "=0.37.0", optional = true }
 # WG4a: `table` (EGUI.md §5 Tier 1). A same-week crate of egui 0.37.0 (version rule 4): it links our
 # one egui copy (`cargo tree -d -i egui` stays empty). Moves with the egui pin.
 egui_table = "=0.11.0"
+# WG4b: `date-picker` (EGUI.md §5: same-week crates only; egui_extras moves with egui).
+egui_extras = { version = "=0.37.0", default-features = false, features = ["datepicker"] }
+jiff = { version = "0.2.35", default-features = false, features = ["std"] }
+# WG4b: native dialogs. rfd has no egui dependency, so it never holds the egui pin back.
+rfd = { version = "0.17.2", optional = true }
+# WG4b: the dialog functions are Rust exports (`#[svelters::export(module = "egui")]`).
+svelters = { path = "../svelters" }
 taffy = { version = "=0.15.0", default-features = false, features = ["std", "flexbox", "grid", "calc", "block_layout", "content_size"] }
 # WG2b: `image` decodes PNG (the version arboard locks).
 image = { version = "0.25", default-features = false, features = ["png"] }

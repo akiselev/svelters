@@ -86,7 +86,7 @@ pub(crate) fn is_common(key: P) -> bool {
     use P::*;
     matches!(
         key,
-        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid
+        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid | DragType | DragData | DropTypes
     )
 }
 
@@ -137,6 +137,8 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (P::AlignItems, _) => c.align_items = as_enum(v, kinds::ALIGN)?,
         (P::JustifyContent, _) => c.justify_content = as_enum(v, kinds::JUSTIFY)?,
         (P::Invalid, _) => c.invalid = as_bool(v)?,
+        // WG4b: drag and drop on any node (`kinds/dnd.rs`), before the per-payload catch-alls
+        (P::DragType | P::DragData | P::DropTypes, _) => crate::kinds::dnd::set(c, def.key, as_str(v)?),
         // WG2a: the menu family and the overlays (`crate::menus`, `crate::overlays`)
         (key, W::Menu(m)) => d = crate::menus::set_prop(m, key, v)?,
         (key, W::Overlay(o)) => crate::overlays::set_prop(o, key, v)?,
@@ -261,6 +263,12 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
             *min_size = as_f64(v)?.max(0.0);
             d.insert(Dirty::LAYOUT);
         }
+        // WG4b: the pickers' fields (`kinds/pickers.rs`)
+        (key, W::Picker(p)) => {
+            if p.set(key, v)? {
+                d.insert(Dirty::MEASURE);
+            }
+        }
         (key, w) => return Err(format!("{key:?} is not a prop of {w:?}")),
     }
     if def.layout {
@@ -304,6 +312,7 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::AlignItems, _) => s(c.align_items),
         (P::JustifyContent, _) => s(c.justify_content),
         (P::Invalid, _) => Value::Bool(c.invalid),
+        (P::DragType | P::DragData | P::DropTypes, _) => s(crate::kinds::dnd::get(c, def.key)), // WG4b
         // WG2a
         (key, W::Menu(m)) => crate::menus::get_prop(m, key)?,
         (key, W::Overlay(o)) => crate::overlays::get_prop(o, key)?,
@@ -354,6 +363,7 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Orientation, W::SplitView { vertical, .. }) => s(if *vertical { "vertical" } else { "horizontal" }),
         (P::Position, W::SplitView { position, .. }) => len_value(*position),
         (P::MinSize, W::SplitView { min_size, .. }) => Value::F64(*min_size),
+        (key, W::Picker(p)) => p.get(key).ok_or_else(|| format!("{key:?} is not a prop of <{}>", n.tag()))?, // WG4b
         (key, _) => return Err(format!("{key:?} is not a prop of <{}>", n.tag())),
     })
 }

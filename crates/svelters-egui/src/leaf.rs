@@ -232,6 +232,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         W::Checkbox { checked, .. } | W::ToggleButton { checked, .. } => Some(Value::Bool(*checked)),
         W::Slider { value, .. } => Some(Value::F64(*value)),
         W::ComboBox { selected, .. } => Some(Value::I64(*selected)),
+        W::Picker(p) => Some(p.value()), // WG4b
         _ => None,
     };
     let enabled = arena.common(i).enabled;
@@ -373,6 +374,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         | W::Spinner { .. }
         | W::Canvas(_) => unreachable!("WG2b kinds are drawn by crate::elements"),
         W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::SplitView { .. } | W::ToastHost(_) => unreachable!("WG4a views: crate::views"),
+        W::Picker(p) => p.ui(ui, size), // WG4b (`kinds/pickers.rs`)
     };
     let mut resp = crate::a11y::decorate(resp, &arena.n(h));
     if !arena.common(i).tooltip.is_empty() {
@@ -420,6 +422,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         W::ComboBox { selected, .. } if Some(Value::I64(*selected)) != before => Some((kinds::P::SelectedIndex, Value::I64(*selected))),
         W::Slider { value, .. } if Some(Value::F64(*value)) != before => Some((kinds::P::Value, Value::F64(*value))),
         W::TextEdit { .. } => text_changed.map(|t| (kinds::P::Text, Value::Str(t))),
+        W::Picker(p) if Some(p.value()) != before => Some((kinds::P::Value, p.value())), // WG4b
         _ => None,
     };
     if let Some((key, v)) = changed {

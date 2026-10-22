@@ -14,6 +14,7 @@
 //! (`render`, `harness`, `layout::invalidate`) are kept as re-exports.
 
 pub mod backend;
+pub mod dialogs;
 pub mod embed;
 /// WG2b's Tier 0 kinds (payloads, paint, measure; the canvas replay and the PNG image loader).
 pub mod elements;
@@ -74,3 +75,5 @@ pub use svelters_style;
 
 /// The egui this backend is built against (re-exported so apps and packs link the same copy).
 pub use egui;
+pub use egui_extras;
+pub use kinds::dnd::DragPayload;

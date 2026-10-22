@@ -15,6 +15,7 @@
   "devDependencies": {
     "@svelters/build": "workspace:*",
     "@svelters/native-runtime": "workspace:*",
+    "@svelters/types": "workspace:*",
     "vite": "8.3.4"
   },
   "svelters": {

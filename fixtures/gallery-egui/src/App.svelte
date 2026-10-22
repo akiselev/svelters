@@ -1,7 +1,9 @@
 <script>
-  // egui widget gallery: a sidebar of family pages (src/pages/*.svelte, sorted by file name) and the
-  // selected page on the right. crates/svelters-egui/tests/gallery.rs opens every page by its
-  // sidebar button (labelled with the page's title) and drives it with kittest.
+  // egui widget gallery: a sidebar of every page in src/pages/ (sorted by file name; a page's title is
+  // its file name without the number prefix) and the selected page on the right. The WIDGETS lanes add
+  // pages by adding files: WG2b 20-22, WG4b 40-42, WG4a's identifier-named pages (also embed exports,
+  // vite.embed.config.js). crates/svelters-egui/tests/{gallery,wg4b}.rs open pages by their sidebar
+  // button and drive them with kittest; tests/gallery_views.rs mounts the embed exports.
   const modules = import.meta.glob('./pages/*.svelte', { eager: true });
   const pages = Object.keys(modules)
     .sort()

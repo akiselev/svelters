@@ -66,6 +66,8 @@ pub enum W {
     SplitView { vertical: bool, position: Option<f64>, min_size: f64, resizable: bool },
     /// `toast-host`: props and the toasts shown.
     ToastHost(std::boxed::Box<crate::views::toast::Toasts>),
+    /// WG4b: `date-picker`, `color-picker` (`kinds/pickers.rs`).
+    Picker(crate::kinds::pickers::Picker),
 }
 
 impl W {
@@ -108,6 +110,8 @@ pub struct Common {
     pub justify_content: &'static str,
     /// WG1: the `invalid` prop.
     pub invalid: bool,
+    /// WG4b: `drag-type`, `drag-data`, `drop-types` (`kinds/dnd.rs`); `None` while all are empty.
+    pub dnd: Option<Box<crate::kinds::dnd::Dnd>>,
 }
 
 impl Common {
@@ -137,6 +141,7 @@ impl Common {
         align_items: "stretch",
         justify_content: "start",
         invalid: false,
+        dnd: None,
     };
 }
 
@@ -431,6 +436,7 @@ pub fn text_of(w: &W) -> &str {
         W::Frame { label, .. } => label,
         W::DragValue { .. } | W::Panel { .. } | W::Sides | W::Stack { .. } | W::Image { .. } | W::Spinner { .. } | W::Canvas(_) => "",
         W::Table(_) | W::TabView { .. } | W::SplitView { .. } | W::ToastHost(_) => "",
+        W::Picker(p) => p.text(),
     }
 }
 
