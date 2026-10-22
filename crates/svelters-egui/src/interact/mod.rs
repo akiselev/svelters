@@ -246,7 +246,11 @@ pub fn run(ui: &egui::Ui, resp: &egui::Response, state: &mut StateBits, parts: &
     let ctx = ui.ctx();
     let policy = &crate::native::policy_of(ctx);
     let enabled = ui.is_enabled();
-    let snap = Resp::of(resp);
+    let mut snap = Resp::of(resp);
+    if !enabled {
+        // egui senses nothing on a disabled widget; R9 keeps it hoverable (tooltip, reason)
+        snap.contains_pointer |= ui.rect_contains_pointer(resp.rect);
+    }
     let mut focus = FocusCx { has: snap.has_focus, ..FocusCx::default() };
     ctx.input(|inp| {
         focus.pointer_pressed = inp.pointer.any_pressed();

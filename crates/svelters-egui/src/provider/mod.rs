@@ -499,6 +499,8 @@ impl WidgetCx<'_> {
     /// requests are applied after, then [`WidgetCx::commit_state`] restyles in the same frame.
     pub fn run_units(&mut self, ui: &egui::Ui, resp: &egui::Response, f: impl FnOnce(&mut crate::interact::InputCx<'_>)) -> crate::interact::FocusCx {
         let parts = crate::interact::PartResponses::default();
+        // the prop-mirror bit the units' rules depend on, also when no sheet runs the cascade
+        self.state.set(StateBits::DISABLED, !self.enabled);
         let fc = crate::interact::run(ui, resp, &mut self.state, &parts, f);
         self.commit_state();
         fc
