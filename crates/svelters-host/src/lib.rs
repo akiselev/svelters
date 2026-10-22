@@ -19,6 +19,10 @@
 //! The host starts no threads. Timers run on the toolkit: after each checkpoint the host arms the
 //! backend's one-shot `schedule_wake` for the earliest deadline.
 
+// ZU3: no blocking file, process or wait calls on the UI thread (list in clippy.toml). Unit tests
+// are exempt; the legitimate I/O sites carry `#[allow(clippy::disallowed_methods)]` with a reason.
+#![cfg_attr(not(test), deny(clippy::disallowed_methods))]
+
 pub mod bytecode;
 mod convert;
 mod core;
