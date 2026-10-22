@@ -243,6 +243,7 @@ pub(crate) struct ListBar {
 }
 
 impl ListBar {
+    #[allow(clippy::too_many_arguments)]
     /// Runs the bar on list `li` (rect `r`, response `resp`) at `offset` of `total` points: returns
     /// the offset change it asks for.
     pub(crate) fn run(&mut self, s: &mut Scene, li: usize, ui: &egui::Ui, resp: &egui::Response, r: Rect, offset: f64, total: f64) -> f64 {
