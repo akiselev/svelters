@@ -43,6 +43,11 @@ pub struct Panel {
 }
 
 impl Panel {
+    /// Its inner edge can be dragged.
+    pub fn is_resizable(&self) -> bool {
+        self.resizable
+    }
+
     fn side(&self) -> &'static str {
         pick(&self.side, crate::kinds::SIDE, "left")
     }

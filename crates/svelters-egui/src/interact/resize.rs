@@ -68,6 +68,7 @@ pub struct Resizable {
     restore: Option<f32>,
     focused: bool,
     focus_visible: bool,
+    last_click: Option<f64>,
     now: f64,
     delay: f32,
 }
@@ -182,7 +183,14 @@ impl Unit for Resizable {
                     out.push(Resize::Commit { size: self.size });
                 }
             }
-            if p.double_click && r.double_clicked {
+            // the click count is ours (W2): two clicks within the platform's double-click time
+            let mut double = r.double_clicked;
+            if r.clicked {
+                let within = self.last_click.is_some_and(|t| (cx.now - t) * 1000.0 <= cx.policy.double_click_ms as f64);
+                double |= within;
+                self.last_click = if within { None } else { Some(cx.now) };
+            }
+            if p.double_click && double {
                 self.toggle_collapse(p, out);
             }
             if self.focused {

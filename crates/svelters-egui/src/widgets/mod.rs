@@ -19,6 +19,9 @@ pub mod scroll_area;
 pub mod scrollbar;
 pub mod split_view;
 
+/// OW2: the window's inner chrome (`windows.rs`).
+pub use crate::windows::WINDOW_UA;
+
 use crate::scene::W;
 
 /// The built-in tags whose own widget is the default (the egui wrapper otherwise). Grows by one

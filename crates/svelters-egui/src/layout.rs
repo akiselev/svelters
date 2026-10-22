@@ -30,7 +30,7 @@ use egui::{Rect, Vec2, pos2, vec2};
 use taffy::prelude::{AvailableSpace, Dimension, Display, FlexDirection, FlexWrap, Layout, LengthPercentage, LengthPercentageAuto, Position, Size, Style};
 use taffy::style_helpers::{auto, fit_content, fr, length, max_content, min_content, minmax, percent, repeat};
 use taffy::{
-    AlignContent, AlignItems, CacheTree, GridTemplateComponent, LayoutInput, LayoutOutput, LayoutPartialTree, Line, MaxTrackSizingFunction, MinTrackSizingFunction, NodeId, Overflow,
+    AlignContent, AlignItems, CacheTree, GridTemplateComponent, LayoutInput, LayoutOutput, LayoutPartialTree, Line, MaxTrackSizingFunction, MinTrackSizingFunction, NodeId,
     RequestedAxis, RunMode, SizingMode, TrackSizingFunction, compute_cached_layout, compute_flexbox_layout, compute_grid_layout, compute_hidden_layout, compute_leaf_layout,
     compute_oof_layout, compute_root_layout, round_layout,
 };
@@ -279,17 +279,6 @@ pub fn style_of(c: &Common, w: &W, vis: &Visual) -> Style {
             s.padding.top = LengthPercentage::length(DEFAULT_HEADER + c.padding as f32);
             s.padding.left = LengthPercentage::length(DEFAULT_INDENT + c.padding as f32);
         }
-        W::ScrollArea { direction, .. } => {
-            let (x, y) = match *direction {
-                "horizontal" => (true, false),
-                "both" => (true, true),
-                _ => (false, true),
-            };
-            let o = |on: bool| if on { Overflow::Scroll } else { Overflow::Visible };
-            s.overflow = taffy::Point { x: o(x), y: o(y) };
-            // egui's scroll bars float over the content (`ScrollStyle::floating`)
-            s.scrollbar_width = 0.0;
-        }
         // WG2b: `panel`, `sides`, `frame` (`crate::elements::panes`)
         w if crate::elements::is_container(w) => crate::elements::style(c, w, &mut s),
         _ => {}
@@ -371,7 +360,7 @@ impl Metrics {
                 }
                 vec2(wdt, interact.y)
             }
-            W::Box | W::Window { .. } | W::Grid { .. } | W::ScrollArea { .. } | W::VirtualList(_) => Vec2::ZERO,
+            W::Box | W::Window { .. } | W::Grid { .. } | W::VirtualList(_) => Vec2::ZERO,
             // ---- WG2a ----
             W::Menu(x) => crate::menus::measure(self, x),
             W::Overlay(_) => Vec2::ZERO,
@@ -382,7 +371,6 @@ impl Metrics {
             | W::Switch { .. }
             | W::RangeSlider { .. }
             | W::DragValue { .. }
-            | W::Panel { .. }
             | W::Sides
             | W::Frame { .. }
             | W::Stack { .. }
@@ -391,7 +379,7 @@ impl Metrics {
             | W::Spinner { .. }
             | W::Canvas(_) => crate::elements::intrinsic(self, w),
             // WG4a: the views' own size (`crate::views::intrinsic`)
-            W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::SplitView { .. } | W::ToastHost(_) => crate::views::intrinsic(self, w),
+            W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) => crate::views::intrinsic(self, w),
             W::Picker(p) => p.measure(self), // WG4b
             // ---- WG1 ----
             W::ToggleButton { text, weight, .. } => {
@@ -516,8 +504,8 @@ impl LayoutPartialTree for Tree<'_> {
             let i = ix(id);
             // the WIDGETS containers with their own layout
             match tree.s.w(i) {
-                // WG4a: table (columns hidden), tab-view (the selected page), split-view (two panes)
-                W::Table(_) | W::TabView { .. } | W::SplitView { .. } => return crate::views::layout(tree, id, inputs),
+                // WG4a: table (columns hidden), tab-view (the selected page)
+                W::Table(_) | W::TabView { .. } => return crate::views::layout(tree, id, inputs),
                 &W::CollapsingHeader { open, .. } => return tree.collapsing(id, open, inputs),
                 // WG2b: one child shown at a time (`crate::elements::panes`)
                 W::Stack { .. } => {
@@ -529,8 +517,10 @@ impl LayoutPartialTree for Tree<'_> {
             // SG4: a provider with children (shadow children) or its own layout is a container
             let custom = provider_caps(tree.s, i).is_some_and(|c| c.contains(crate::provider::Caps::CUSTOM_LAYOUT));
             // (OW0: an own widget replacing a built-in leaf stays a leaf: its children are attached
-            // overlays, as on the built-in)
-            let provider_box = custom || (matches!(tree.s.w(i), W::Ext(x) if x.entry().replaces.is_none()) && !tree.s.children[i].is_empty());
+            // overlays, as on the built-in; OW2: one replacing a container, `Caps::CONTAINER`, is one)
+            let provider_box = custom
+                || (matches!(tree.s.w(i), W::Ext(x) if x.entry().replaces.is_none() || x.entry().caps.contains(crate::provider::Caps::CONTAINER))
+                    && !tree.s.children[i].is_empty());
             if tree.s.w(i).is_container() || provider_box {
                 let mut out = if custom {
                     tree.custom_layout(id, inputs)

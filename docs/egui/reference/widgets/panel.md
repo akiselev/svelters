@@ -83,7 +83,7 @@ None.
 
 | Property | Applies | Theme default |
 |---|---|---|
-| `background-color` | no: its own drawing covers it | — |
+| `background-color` | no: its own drawing covers it | `var(--sv-bg)` |
 | `border-color` | no: its own drawing covers it | — |
 | `border-width` | no: its own drawing covers it | — |
 | `border-radius` | no: its own drawing covers it | — |
@@ -94,7 +94,7 @@ None.
 **Layout properties** (as attributes or in CSS; an explicit attribute wins): `align-items`, `align-self`, `bottom`, `column-gap`, `flex-basis`, `flex-direction`, `flex-grow`, `flex-shrink`, `flex-wrap`, `gap`, `height`, `justify-content`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `padding`, `position`, `right`, `row-gap`, `top`, `visible`, `width`.
 Also in CSS only: `display`, `grid-column`, `grid-row`, `grid-template-columns`, `grid-template-rows`, `margin-bottom`, `margin-left`, `margin-right`, `margin-top`, `padding-bottom`, `padding-left`, `padding-right`, `padding-top`.
 
-The panel fills its rect with `--sv-panel-bg` over the CSS box, so `background-color` and `border-*` rules are hidden: override the token instead.
+svelters' own (OW2): its box is CSS (`background-color` defaults to `--sv-bg`); the inner-edge line (`::part(separator)`, `border`) and the sash's hover bar (`focus`) paint from the theme until `::part()` reaches them.
 
 Full matrix: [css/properties](../../css/properties.md). States: below.
 <!-- END GENERATED -->
@@ -120,8 +120,11 @@ States are tracked once the scene has a style input (a `<style>` block, `class`,
 <!-- BEGIN GENERATED: a11y of kinds.Panel (tools/docs/egui/gen_reference.py). Do not edit. -->
 | | |
 |---|---|
-| Role | none of its own; its content is announced in place |
+| Role | `Pane` |
+| Name | `accessible-name` |
 | `anchor`, `invalid` | not announced on this element (`anchor` still keys its ids) |
+
+svelters' own (OW2): a `Pane`; a `resizable` panel's inner edge is a `Splitter` node with its size and bounds (arrows and Home/End while focused).
 <!-- END GENERATED -->
 
 ## Testing

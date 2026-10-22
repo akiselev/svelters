@@ -255,18 +255,11 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
             // its own size changes: restyle and relayout from its parent (SG1's style change)
             d.insert(Dirty::LAYOUT);
         }
-        (P::ScrollDirection, W::ScrollArea { direction, .. }) => {
-            *direction = as_enum(v, kinds::SCROLL_DIRECTION)?;
-            d.insert(Dirty::LAYOUT);
-        }
-        // paint-only: the walk applies a write that differs from what egui reported (`seen`)
-        (P::ScrollX, W::ScrollArea { x, .. }) => *x = as_f64(v)?.max(0.0),
-        (P::ScrollY, W::ScrollArea { y, .. }) => *y = as_f64(v)?.max(0.0),
         // ---- WG4a (`kinds/views.rs`, `crate::views`) ----
         (key, W::Table(t)) => d.insert(t.set(key, v)?),
         (key, W::ToastHost(t)) => t.set(key, v)?,
         (P::Title, W::Tab { title, .. } | W::TableColumn { title, .. }) => *title = as_str(v)?,
-        (P::Resizable, W::TableColumn { resizable, .. } | W::SplitView { resizable, .. }) => *resizable = as_bool(v)?,
+        (P::Resizable, W::TableColumn { resizable, .. }) => *resizable = as_bool(v)?,
         (P::CellAlign, W::TableColumn { align, .. }) => *align = as_enum(v, kinds::CELL_ALIGN)?,
         (P::Sort, W::TableColumn { sort, .. }) => *sort = as_enum(v, kinds::SORT)?,
         (P::Editable, W::TableColumn { editable, .. }) => *editable = as_bool(v)?,
@@ -278,18 +271,6 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
             d.insert(Dirty::LAYOUT);
         }
         (P::Closable, W::Tab { closable, .. }) => *closable = as_bool(v)?,
-        (P::Orientation, W::SplitView { vertical, .. }) => {
-            *vertical = as_enum(v, kinds::ORIENTATION)? == "vertical";
-            d.insert(Dirty::LAYOUT);
-        }
-        (P::DividerPosition, W::SplitView { position, .. }) => {
-            *position = as_len(v)?;
-            d.insert(Dirty::LAYOUT);
-        }
-        (P::MinSize, W::SplitView { min_size, .. }) => {
-            *min_size = as_f64(v)?.max(0.0);
-            d.insert(Dirty::LAYOUT);
-        }
         // WG4b: the pickers' fields (`kinds/pickers.rs`)
         (key, W::Picker(p)) => {
             if p.set(key, v)? {
@@ -395,23 +376,17 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::GridTemplateColumns, W::Grid { columns, .. }) => s(columns),
         (P::JustifyItems, W::Grid { justify_items, .. }) => s(justify_items),
         (P::Open, W::CollapsingHeader { open, .. }) => Value::Bool(*open),
-        (P::ScrollDirection, W::ScrollArea { direction, .. }) => s(direction),
-        (P::ScrollX, W::ScrollArea { x, .. }) => Value::F64(*x),
-        (P::ScrollY, W::ScrollArea { y, .. }) => Value::F64(*y),
         // ---- WG4a ----
         (key, W::Table(t)) => t.get(key).ok_or_else(|| format!("{key:?} is not a prop of <table>"))?,
         (key, W::ToastHost(t)) => t.get(key).ok_or_else(|| format!("{key:?} is not a prop of <toast-host>"))?,
         (P::Title, W::Tab { title, .. } | W::TableColumn { title, .. }) => s(title),
-        (P::Resizable, W::TableColumn { resizable, .. } | W::SplitView { resizable, .. }) => Value::Bool(*resizable),
+        (P::Resizable, W::TableColumn { resizable, .. }) => Value::Bool(*resizable),
         (P::CellAlign, W::TableColumn { align, .. }) => s(align),
         (P::Sort, W::TableColumn { sort, .. }) => s(sort),
         (P::Editable, W::TableColumn { editable, .. }) => Value::Bool(*editable),
         (P::Editor, W::TableColumn { editor, .. }) => Value::Bool(*editor),
         (P::SelectedIndex, W::TabView { selected }) => Value::I64(*selected),
         (P::Closable, W::Tab { closable, .. }) => Value::Bool(*closable),
-        (P::Orientation, W::SplitView { vertical, .. }) => s(if *vertical { "vertical" } else { "horizontal" }),
-        (P::DividerPosition, W::SplitView { position, .. }) => len_value(*position),
-        (P::MinSize, W::SplitView { min_size, .. }) => Value::F64(*min_size),
         (key, W::Picker(p)) => p.get(key).ok_or_else(|| format!("{key:?} is not a prop of <{}>", n.tag()))?, // WG4b
         (key, _) => return Err(format!("{key:?} is not a prop of <{}>", n.tag())),
     })

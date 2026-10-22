@@ -989,6 +989,24 @@ export interface EguiElements {
     /** A drag was dropped `before`, `after` or `into` row `id` (-1: below the last row), as the entry of `type` it took. */
     'ondrop-row'?: (id: number, where: string, type: string, data: string) => void;
   };
+  /** A standalone scroll bar (Qt's `QScrollBar`) for a view that scrolls itself (a canvas, a plot, cadatomic's viewport): `value` from `min` to `max`, the thumb sized by `page`. It looks like a scroll area's bar (overlay, VS Code's `scrollbarSlider.*`), always shown. */
+  scrollbar: EguiWidgetProps & {
+    /** The position, from `min` to `max` (`bind:value`): the start of the visible part of what it scrolls. */
+    value?: number;
+    'bind:value'?: number;
+    /** The smallest value. */
+    min?: number;
+    /** The largest value (the content's size less `page`). */
+    max?: number;
+    /** The visible part's size: the thumb's length in proportion, and what a press on the track scrolls. */
+    page?: number;
+    /** What AccessKit's Increment and Decrement move. */
+    step?: number;
+    /** `vertical` or `horizontal`. */
+    orientation?: 'horizontal' | 'vertical';
+    /** The user moved it (thumb, track, wheel, AccessKit); carries the new value. */
+    onchanged?: (value: number) => void;
+  };
 }
 
 type ElementAttrs<Tag extends string> = Tag extends keyof svelteHTML.IntrinsicElements ? svelteHTML.IntrinsicElements[Tag] : {};

@@ -4407,9 +4407,11 @@
         "actions": [],
         "author_id": null,
         "invalid": false,
-        "name_from": [],
-        "note": "",
-        "role": null,
+        "name_from": [
+          "accessible-name"
+        ],
+        "note": "svelters' own (OW2): a `Pane`; a `resizable` panel's inner edge is a `Splitter` node with its size and bounds (arrows and Home/End while focused).",
+        "role": "Pane",
         "value": null,
         "variants": []
       },
@@ -4462,7 +4464,7 @@
         "border-width",
         "border-radius"
       ],
-      "css_note": "The panel fills its rect with `--sv-panel-bg` over the CSS box, so `background-color` and `border-*` rules are hidden: override the token instead.",
+      "css_note": "svelters' own (OW2): its box is CSS (`background-color` defaults to `--sv-bg`); the inner-edge line (`::part(separator)`, `border`) and the sash's hover bar (`focus`) paint from the theme until `::part()` reaches them.",
       "doc": "A side or top/bottom panel: a flex box with the panel background and a separator on its inner edge, optionally resizable. Place it at the edge of a row (left/right) or column (top/bottom).",
       "interface": false,
       "lifetime": "owned",
@@ -5500,13 +5502,21 @@
     },
     "ScrollArea": {
       "a11y": {
-        "actions": [],
+        "actions": [
+          "ScrollUp",
+          "ScrollDown",
+          "ScrollLeft",
+          "ScrollRight",
+          "SetScrollOffset"
+        ],
         "author_id": null,
         "invalid": false,
-        "name_from": [],
-        "note": "Its scroll bars are `ScrollBar` nodes.",
-        "role": null,
-        "value": null,
+        "name_from": [
+          "accessible-name"
+        ],
+        "note": "svelters' own (OW2): the node carries the scroll offsets and their ranges and takes ScrollUp/Down/Left/Right and SetScrollOffset; its bars are `ScrollBar` nodes with their value; ScrollIntoView on a descendant scrolls it into view.",
+        "role": "ScrollView",
+        "value": "`scroll-x`, `scroll-y` and their ranges",
         "variants": []
       },
       "abstract": false,
@@ -5572,7 +5582,7 @@
         }
       },
       "css_hidden": [],
-      "css_note": "",
+      "css_note": "`overflow-x`/`overflow-y` (`hidden`, `scroll`, `auto`) override `direction` per axis; `overscroll-behavior: contain` keeps the wheel from chaining to an outer area; `scroll-margin` is the gap `scroll-into-view` and focus keep; `scrollbar-gutter: stable` (or `--sv-scrollbar-mode: classic`) gives classic bars in a gutter. Provider states `:state(sv.overflow-top)`, `-bottom`, `-left`, `-right` match while content lies beyond that edge; the theme draws R15's edge shadows as an inset `box-shadow` on `:state(sv.overflow-top)`/`(sv.overflow-left)`, painted over the content. The bars and thumbs are parts (`scrollbar-x`/`-y`, `thumb-x`/`-y`, `corner`, `shadow-*`), painted from VS Code's `scrollbarSlider.*` tokens until `::part()` reaches them.",
       "doc": "A flex box whose content scrolls when it overflows the area's size (taffy `overflow: scroll`); give it a size or let flex-grow size it.",
       "interface": false,
       "lifetime": "owned",
@@ -5690,6 +5700,241 @@
           ],
           "source": "scene",
           "when": "an element inside it has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
+      "text_content": null
+    },
+    "Scrollbar": {
+      "a11y": {
+        "actions": [
+          "Increment",
+          "Decrement",
+          "ScrollUp",
+          "ScrollDown"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name"
+        ],
+        "note": "",
+        "role": "ScrollBar",
+        "value": "`value` in `min`..`max`, with its step",
+        "variants": []
+      },
+      "abstract": false,
+      "bindings": {
+        "value": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": true,
+          "property": "value",
+          "provenance": "svelters-egui: the svelters' own (Scrollable; OW2) widget writes value into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": true,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "category": "containers",
+      "chain": [
+        "Scrollbar",
+        "Widget"
+      ],
+      "children": null,
+      "css_hidden": [],
+      "css_note": "Its track and thumb (`::part(scrollbar)`, `::part(thumb)`) paint from VS Code's `scrollbarSlider.*` tokens until `::part()` reaches them; its thickness is `scrollbar-w`.",
+      "doc": "A standalone scroll bar (Qt's `QScrollBar`) for a view that scrolls itself (a canvas, a plot, cadatomic's viewport): `value` from `min` to `max`, the thumb sized by `page`. It looks like a scroll area's bar (overlay, VS Code's `scrollbarSlider.*`), always shown.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "svelters' own (Scrollable; OW2)",
+      "paint": "provider",
+      "present": null,
+      "props": {
+        "max": {
+          "construct_only": false,
+          "default": 100.0,
+          "doc": "The largest value (the content's size less `page`).",
+          "js": "max",
+          "native": "max",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Scrollbar:max",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "min": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "The smallest value.",
+          "js": "min",
+          "native": "min",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Scrollbar:min",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "orientation": {
+          "construct_only": false,
+          "default": "vertical",
+          "doc": "`vertical` or `horizontal`.",
+          "js": "orientation",
+          "native": "orientation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Scrollbar:orientation",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ],
+          "writable": true
+        },
+        "page": {
+          "construct_only": false,
+          "default": 10.0,
+          "doc": "The visible part's size: the thumb's length in proportion, and what a press on the track scrolls.",
+          "js": "page",
+          "native": "page",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Scrollbar:page",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "step": {
+          "construct_only": false,
+          "default": 1.0,
+          "doc": "What AccessKit's Increment and Decrement move.",
+          "js": "step",
+          "native": "step",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Scrollbar:step",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "value": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "The position, from `min` to `max` (`bind:value`): the start of the visible part of what it scrolls.",
+          "js": "value",
+          "native": "value",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Scrollbar:value",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user moved it (thumb, track, wheel, AccessKit); carries the new value.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
         },
         {
           "name": "disabled",
@@ -6371,9 +6616,9 @@
         "name_from": [
           "accessible-name"
         ],
-        "note": "The node is the divider.",
-        "role": "Splitter",
-        "value": "the divider position, and its orientation",
+        "note": "svelters' own (OW2): each sash between two panes is a `Splitter` node named by the split view (else `Resize pane <n>`), in the tab order, with the size of the pane before it, its bounds and step; arrows (Shift: ×5), Home/End and Enter (collapse) work while it is focused.",
+        "role": "Group",
+        "value": null,
         "variants": []
       },
       "abstract": false,
@@ -6438,7 +6683,7 @@
         }
       },
       "css_hidden": [],
-      "css_note": "The divider line follows the theme.",
+      "css_note": "The sashes (`::part(sash)`, `::part(grip)`) paint from the theme's `border` (the 1 px line), `sash-w` (the hit area and hover bar) and `focus` (R11's hover bar after 300 ms) until `::part()` reaches them.",
       "doc": "Panes (its children) side by side or stacked, split by sashes the user drags or moves with the keys (R11: a 1 px line, a 4 px hit area, a focus-coloured bar and grip after 300 ms of hover). `divider-position` is the first pane's size; `sizes` every pane's.",
       "interface": false,
       "lifetime": "owned",
@@ -10491,6 +10736,7 @@
           "radio-button",
           "range-slider",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
@@ -10567,6 +10813,7 @@
           "radio-button",
           "range-slider",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
@@ -10658,6 +10905,7 @@
           "radio-button",
           "range-slider",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
@@ -10736,6 +10984,7 @@
           "radio-button",
           "range-slider",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
@@ -10788,6 +11037,7 @@
           "radio-button",
           "range-slider",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
@@ -10911,6 +11161,7 @@
           "radio-button",
           "range-slider",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
@@ -11009,6 +11260,7 @@
           "radio-button",
           "range-slider",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
@@ -11061,6 +11313,7 @@
           "radio-button",
           "range-slider",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
@@ -11129,6 +11382,7 @@
           "radio-button",
           "range-slider",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
@@ -11181,6 +11435,7 @@
           "radio-button",
           "range-slider",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
@@ -11233,6 +11488,7 @@
           "radio-button",
           "range-slider",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
@@ -11285,6 +11541,7 @@
           "radio-button",
           "range-slider",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
@@ -11307,6 +11564,37 @@
       },
       "opacity": {
         "decl_type": "number",
+        "via": "css"
+      },
+      "overflow-x": {
+        "decl_type": "enum",
+        "values": [
+          "visible",
+          "hidden",
+          "clip",
+          "scroll",
+          "auto"
+        ],
+        "via": "css"
+      },
+      "overflow-y": {
+        "decl_type": "enum",
+        "values": [
+          "visible",
+          "hidden",
+          "clip",
+          "scroll",
+          "auto"
+        ],
+        "via": "css"
+      },
+      "overscroll-behavior": {
+        "decl_type": "enum",
+        "values": [
+          "auto",
+          "contain",
+          "none"
+        ],
         "via": "css"
       },
       "padding": {
@@ -11385,6 +11673,7 @@
           "radio-button",
           "range-slider",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
@@ -11442,6 +11731,7 @@
           "radio-button",
           "range-slider",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
@@ -11484,6 +11774,18 @@
         "type": "length",
         "via": "setter"
       },
+      "scroll-margin": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "scrollbar-gutter": {
+        "decl_type": "enum",
+        "values": [
+          "auto",
+          "stable"
+        ],
+        "via": "css"
+      },
       "top": {
         "kinds": [
           "Widget"
@@ -11516,6 +11818,7 @@
           "radio-button",
           "range-slider",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
@@ -11568,6 +11871,7 @@
           "radio-button",
           "range-slider",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
@@ -11620,6 +11924,7 @@
           "radio-button",
           "range-slider",
           "scroll-area",
+          "scrollbar",
           "separator",
           "sides",
           "slider",
@@ -11770,6 +12075,7 @@
     "radio-button": "RadioButton",
     "range-slider": "RangeSlider",
     "scroll-area": "ScrollArea",
+    "scrollbar": "Scrollbar",
     "separator": "Separator",
     "sides": "Sides",
     "slider": "Slider",

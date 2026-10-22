@@ -71,7 +71,7 @@ Call them through `bind:this`: `el.call('close')`.
 
 | Property | Applies | Theme default |
 |---|---|---|
-| `background-color` | yes | — |
+| `background-color` | yes | `var(--sv-bg)` |
 | `border-color` | yes | — |
 | `border-width` | yes | — |
 | `border-radius` | yes | — |

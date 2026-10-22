@@ -1038,7 +1038,7 @@ pub(crate) fn layout_style(s: &Scene, i: usize) -> taffy::Style {
                     Some("scroll" | "auto") => Some(taffy::Overflow::Scroll),
                     Some("hidden") => Some(taffy::Overflow::Hidden),
                     Some("clip") => Some(taffy::Overflow::Clip),
-                    Some("visible") => Some(taffy::Overflow::Visible),
+                    // `visible` (the initial value) keeps what the props gave (a scroll area's axes)
                     _ => None,
                 };
                 if let Some(o) = o {
