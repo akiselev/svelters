@@ -34,6 +34,7 @@ publish = false
 [workspace.dependencies]
 svelters-abi = { path = "crates/svelters-abi" }
 svelters-host = { path = "crates/svelters-host" }
+svelters-style = { path = "crates/svelters-style" }
 svelters-backend-log = { path = "crates/svelters-backend-log" }
 svelters-gtk = { path = "crates/svelters-gtk" }
 svelters-qt-build = { path = "crates/svelters-qt-build" }

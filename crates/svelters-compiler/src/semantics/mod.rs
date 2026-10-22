@@ -314,6 +314,11 @@ pub trait PlatformSemantics {
     fn text_content(&self, el: &ElementRef) -> Option<&PropertySpec>;
     /// The style table entry of `name` (None: not a style property of this backend).
     fn style_property(&self, name: &str) -> Option<&StylePropSpec>;
+    /// True if the backend matches and cascades `<style>` rules itself (the spec's
+    /// `style.engine: "backend"`, egui since CS5e): the compiler leaves the rules alone.
+    fn style_engine_in_backend(&self) -> bool {
+        false
+    }
     /// Whether `name` is a setter or child-attr property here (the compiler's part of a sheet;
     /// `css` declarations go to the X6 translator).
     fn is_setter_property(&self, name: &str) -> bool {

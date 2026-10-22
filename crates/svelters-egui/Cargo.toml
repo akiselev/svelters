@@ -22,6 +22,8 @@ dialogs = ["dep:rfd"]
 svelters-abi.workspace = true
 svelters-host.workspace = true
 svelters-modules = { workspace = true, optional = true }
+# CS5e: the CSS engine (selectors, cascade, computed style) runs in process on the scene.
+svelters-style.workspace = true
 serde_json.workspace = true
 # RA1: provider kinds (`#[svelters::widget]`) and states register with inventory (ARCH-EMBED D2(a)).
 inventory = "0.3"
@@ -37,7 +39,7 @@ jiff = { version = "0.2.35", default-features = false, features = ["std"] }
 rfd = { version = "0.17.2", optional = true }
 # WG4b: the dialog functions are Rust exports (`#[svelters::export(module = "egui")]`).
 svelters = { path = "../svelters" }
-taffy = { version = "=0.15.0", default-features = false, features = ["std", "flexbox", "grid", "block_layout", "content_size"] }
+taffy = { version = "=0.15.0", default-features = false, features = ["std", "flexbox", "grid", "calc", "block_layout", "content_size"] }
 
 [dev-dependencies]
 # The tests use the kittest harness and the eframe runner whatever features the build selects

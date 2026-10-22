@@ -169,9 +169,20 @@ fn paint_own(
         if !ui.is_rect_visible(r) {
             return None;
         }
+        // CS5e: its state and box (background, border), and the opacity of its subtree
+        let opacity = crate::style::before_container(arena, i, r, ui);
+        let mut faded;
+        let ui = match opacity {
+            Some(o) => {
+                faded = ui.new_child(UiBuilder::new().max_rect(ui.max_rect()).scope_id(arena.core[i].egui_id.with("css")));
+                faded.multiply_opacity(o);
+                &mut faded
+            }
+            None => ui,
+        };
+        crate::kinds::dnd::node(arena, i, r, ui, out, crate::kinds::dnd::Part::Both); // WG4b: under the children
         // WG1: a container's tooltip and chrome (collapsing header, scroll area), then
         // `paint_children`
-        crate::kinds::dnd::node(arena, i, r, ui, out, crate::kinds::dnd::Part::Both); // WG4b: under the children
         crate::leaf::container(arena, i, r, origin, ui, out);
         return None;
     }
@@ -187,6 +198,8 @@ fn paint_own(
         b = b.disabled();
     }
     let mut child = ui.new_child(b);
+    // CS5e: this pass's state, the restyle it reaches, then the computed visuals on `child`
+    crate::style::before_leaf(arena, i, r, &mut child);
     crate::kinds::dnd::node(arena, i, r, &mut child, out, crate::kinds::dnd::Part::Source); // WG4b: under the widget
     let resp = if matches!(arena.w(i), crate::scene::W::Ext(_)) {
         let resp = crate::provider::paint(arena, i, &mut child, out); // RA1: a provider kind
