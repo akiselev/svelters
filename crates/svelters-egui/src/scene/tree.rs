@@ -126,6 +126,7 @@ fn builtin_payload(kind: usize) -> Option<W> {
         "Grid" => W::Grid { columns: "auto 1fr".into(), justify_items: "stretch" },
         "CollapsingHeader" => W::CollapsingHeader { text: String::new(), open: false },
         "ScrollArea" => W::ScrollArea { direction: "vertical", x: 0.0, y: 0.0, seen: None },
+        id if kinds::pickers::is_picker(id) => W::Picker(kinds::pickers::Picker::new(id)), // WG4b
         // RA1: a provider kind's widget struct with its defaults
         _ => W::Ext(crate::provider::ExtWidget::new((kinds::KindRegistry::global().provider(kind)?.entry.new)())),
     })

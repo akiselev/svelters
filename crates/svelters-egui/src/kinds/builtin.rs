@@ -53,6 +53,16 @@ static WIDGET_PROPS: &[PropDef] = &[
         Def::Bool(false),
         "Marks the value as invalid: an outline in the error colour (`Visuals::error_fg_color`) and AccessKit `invalid`. The app sets it; the widget never does.",
     ),
+    // WG4b: drag and drop on any node (`dnd.rs`)
+    prop("drag-type", P::DragType, Ty::Str, Def::Str(""), "Makes the node a drag source: the payload's type, a MIME-like string (`cad/part`); empty for none."),
+    prop("drag-data", P::DragData, Ty::Str, Def::Str(""), "The drag payload's data (JSON for structured data); `drop` delivers it."),
+    prop(
+        "drop-types",
+        P::DropTypes,
+        Ty::Str,
+        Def::Str(""),
+        "Makes the node a drop target: the drag types it accepts, separated by spaces or commas (`*` any, `cad/*` a prefix); empty for none.",
+    ),
 ];
 
 static LABEL_PROPS: &[PropDef] = &[
@@ -138,7 +148,7 @@ pub static KINDS: &[KindDef] = &[
         text_content: None,
         present: None,
         props: WIDGET_PROPS,
-        signals: &[],
+        signals: super::dnd::DND_SIGNALS,
         methods: &[],
         doc: "Common properties of everything placed in a window: state, tooltip, accessibility and its taffy item style.",
     },
@@ -248,6 +258,9 @@ pub static KINDS: &[KindDef] = &[
     super::layouts::GRID,
     super::layouts::COLLAPSING_HEADER,
     super::layouts::SCROLL_AREA,
+    // ---- WG4b: appended (tables in `pickers.rs`) ----
+    super::pickers::DATE_PICKER,
+    super::pickers::COLOR_PICKER,
 
 
 

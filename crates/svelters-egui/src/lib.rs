@@ -14,6 +14,7 @@
 //! (`render`, `harness`, `layout::invalidate`) are kept as re-exports.
 
 pub mod backend;
+pub mod dialogs;
 pub mod embed;
 /// SVP6: font weights and icon name tables the embedder registers (WG1).
 pub mod fonts;
@@ -57,3 +58,5 @@ pub use runner::run_app;
 
 /// The egui this backend is built against (re-exported so apps and packs link the same copy).
 pub use egui;
+pub use egui_extras;
+pub use kinds::dnd::DragPayload;

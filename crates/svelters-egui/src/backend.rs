@@ -93,6 +93,7 @@ impl Default for EguiBackend {
 
 impl EguiBackend {
     pub fn new() -> EguiBackend {
+        crate::dialogs::link(); // WG4b: keeps `svelters:app/egui` registered
         let shared = Arc::new(Shared::default());
         let scene = SceneHandle::default();
         // Rust writes, deferred writes and their announcements need a logic pass: ask for a frame.

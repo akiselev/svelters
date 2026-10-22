@@ -341,6 +341,7 @@ impl Metrics {
             }
             W::Box | W::Window { .. } | W::Grid { .. } | W::ScrollArea { .. } => Vec2::ZERO,
             W::Ext(x) => x.measure(self, crate::provider::AvailableSpace::MaxContent),
+            W::Picker(p) => p.measure(self), // WG4b
             // ---- WG1 ----
             W::ToggleButton { text, weight, .. } => {
                 let t = self.text_size_in(text, self.weighted(*weight), None);

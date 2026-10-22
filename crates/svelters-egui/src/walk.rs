@@ -130,6 +130,7 @@ fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut 
         }
         // WG1: a container's tooltip and chrome (collapsing header, scroll area), then
         // `paint_children`
+        crate::kinds::dnd::node(arena, i, r, ui, out); // WG4b: before the children, which stay on top
         return crate::leaf::container(arena, i, r, origin, ui, out);
     }
     if !ui.is_rect_visible(r) {
@@ -152,6 +153,7 @@ fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut 
     } else {
         crate::leaf::leaf(arena, i, &mut child, out);
     }
+    crate::kinds::dnd::node(arena, i, r, &mut child, out); // WG4b: drag and drop
     crate::scene::hit::record(arena, i, &child); // SG3: the viewport's hit list
 }
 

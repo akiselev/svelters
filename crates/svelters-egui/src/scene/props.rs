@@ -86,7 +86,7 @@ pub(crate) fn is_common(key: P) -> bool {
     use P::*;
     matches!(
         key,
-        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid
+        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid | DragType | DragData | DropTypes
     )
 }
 
@@ -224,6 +224,13 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         // paint-only: the walk applies a write that differs from what egui reported (`seen`)
         (P::ScrollX, W::ScrollArea { x, .. }) => *x = as_f64(v)?.max(0.0),
         (P::ScrollY, W::ScrollArea { y, .. }) => *y = as_f64(v)?.max(0.0),
+        // WG4b: drag and drop on any node (`kinds/dnd.rs`), the pickers' fields (`kinds/pickers.rs`)
+        (P::DragType | P::DragData | P::DropTypes, _) => crate::kinds::dnd::set(c, def.key, as_str(v)?),
+        (key, W::Picker(p)) => {
+            if p.set(key, v)? {
+                d.insert(Dirty::MEASURE);
+            }
+        }
         (key, w) => return Err(format!("{key:?} is not a prop of {w:?}")),
     }
     if def.layout {
@@ -299,6 +306,8 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::ScrollDirection, W::ScrollArea { direction, .. }) => s(direction),
         (P::ScrollX, W::ScrollArea { x, .. }) => Value::F64(*x),
         (P::ScrollY, W::ScrollArea { y, .. }) => Value::F64(*y),
+        (P::DragType | P::DragData | P::DropTypes, _) => s(crate::kinds::dnd::get(c, def.key)), // WG4b
+        (key, W::Picker(p)) => p.get(key).ok_or_else(|| format!("{key:?} is not a prop of <{}>", n.tag()))?, // WG4b
         (key, _) => return Err(format!("{key:?} is not a prop of <{}>", n.tag())),
     })
 }

@@ -36,6 +36,8 @@ pub enum W {
     CollapsingHeader { text: String, open: bool },
     /// `seen`: the offsets egui reported last frame (a differing `x`/`y` is a host write to apply).
     ScrollArea { direction: &'static str, x: f64, y: f64, seen: Option<(f64, f64)> },
+    /// WG4b: `date-picker`, `color-picker` (`kinds/pickers.rs`).
+    Picker(crate::kinds::pickers::Picker),
 }
 
 impl W {
@@ -76,6 +78,8 @@ pub struct Common {
     pub justify_content: &'static str,
     /// WG1: the `invalid` prop.
     pub invalid: bool,
+    /// WG4b: `drag-type`, `drag-data`, `drop-types` (`kinds/dnd.rs`); `None` while all are empty.
+    pub dnd: Option<Box<crate::kinds::dnd::Dnd>>,
 }
 
 impl Common {
@@ -105,6 +109,7 @@ impl Common {
         align_items: "stretch",
         justify_content: "start",
         invalid: false,
+        dnd: None,
     };
 }
 
@@ -385,6 +390,7 @@ pub fn text_of(w: &W) -> &str {
         W::ComboBox { options, selected, .. } => usize::try_from(*selected).ok().and_then(|i| options.get(i)).map_or("", |s| s.as_str()),
         W::Icon { name, .. } => name,
         W::Box | W::Ext(_) | W::Separator { .. } | W::Grid { .. } | W::ScrollArea { .. } => "",
+        W::Picker(p) => p.text(),
     }
 }
 
