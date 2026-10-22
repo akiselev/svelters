@@ -11,7 +11,7 @@ use svelters_egui::kinds::{self, KindRegistry};
 fn fn_form_wrap_and_container_kinds_are_registered() {
     egui_kinds_demo::link();
     let reg = KindRegistry::global();
-    for (tag, id) in [("level-meter", "cad.LevelMeter"), ("step-count", "cad.StepCount"), ("drag-value", "cad.DragValueKind"), ("collapsing-section", "cad.CollapsingSection")] {
+    for (tag, id) in [("level-meter", "cad.LevelMeter"), ("step-count", "cad.StepCount"), ("wrapped-drag-value", "cad.DragValueKind"), ("collapsing-section", "cad.CollapsingSection")] {
         let k = reg.tag_index(tag).unwrap_or_else(|| panic!("{tag}"));
         assert_eq!(reg.provider(k).unwrap().entry.id, id);
     }

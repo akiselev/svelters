@@ -136,3 +136,32 @@ fn object_handle_props_reach_the_kind() {
     let errors = app.errors();
     assert!(errors.is_empty(), "{errors:?}");
 }
+
+/// CX3 on a provider kind: `<quantity-field>`'s `commit` event has `value`'s shape, so the fragment
+/// gives `bindings.value.commit`, and `bind:value|commit` compiles and updates its source only when
+/// Enter commits, not on every keystroke.
+#[test]
+fn bind_commit_on_a_provider_kind() {
+    egui_kinds_demo::link();
+    let f = svelters_egui::spec::fragment();
+    assert_eq!(f["kinds"]["cad.QuantityField"]["bindings"]["value"]["commit"], serde_json::json!({"event": "commit", "arg": 0}));
+    assert!(f["kinds"]["cad.StepCount"]["bindings"].as_object().is_some_and(|b| b.is_empty()), "no commit event: no binding");
+    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("app/src/Methods.svelte");
+    let mut app = TestApp::from_source(path).unwrap();
+    app.run();
+    assert!(has(&app, "depth 0.002"), "{:#?}", app.harness.root());
+    let field = app.harness.get_by_role_and_label(Role::TextInput, "Depth");
+    assert_eq!(field.value().as_deref(), Some("2 mm"));
+    field.focus();
+    app.run();
+    app.harness.key_press_modifiers(egui::Modifiers::COMMAND, egui::Key::A);
+    app.harness.get_by_role_and_label(Role::TextInput, "Depth").type_text("7 mm");
+    app.run();
+    assert!(has(&app, "depth 0.002"), "typing does not commit");
+    app.harness.key_press(egui::Key::Enter);
+    app.run();
+    app.run();
+    assert!(has(&app, "depth 0.007"), "{:#?}", app.harness.root());
+    let errors = app.errors();
+    assert!(errors.is_empty(), "{errors:?}");
+}

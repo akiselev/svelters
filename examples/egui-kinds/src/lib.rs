@@ -75,6 +75,9 @@ pub struct QuantityField {
     /// Enter committed a parsable entry; carries the SI value.
     #[event]
     accepted: Event<f64>,
+    /// RA3 (CX3): the committed value, for `bind:value|commit` (same shape as `value`).
+    #[event]
+    commit: Event<f64>,
     /// The text changed (every keystroke); carries the raw text.
     #[event]
     edited: Event<String>,
@@ -121,6 +124,7 @@ impl Widget for QuantityField {
                         cx.set(&mut self.value, Some(v));
                         self.shown = None;
                         cx.emit(&self.accepted, v);
+                        cx.emit(&self.commit, v);
                     }
                 }
                 resp = Some(r);
@@ -179,6 +183,7 @@ impl QuantityField {
         cx.set(&mut self.value, Some(v));
         self.shown = None;
         cx.emit(&self.accepted, v);
+        cx.emit(&self.commit, v);
         Some(v)
     }
 
@@ -270,9 +275,9 @@ pub fn step_count(ui: &mut egui::Ui, #[prop(bind)] count: &mut i64) -> egui::Res
 }
 
 svelters::wrap_widget! {
-    /// RA3, `wrap_widget!`: egui's `DragValue`, `<drag-value bind:value={x} speed={0.1} suffix=" mm" />`.
+    /// RA3, `wrap_widget!`: egui's `DragValue`, `<wrapped-drag-value bind:value={x} speed={0.1} suffix=" mm" />`.
     /// egui writes `value` in place; the macro announces the change (`bind:value` is exact).
-    #[widget(namespace = "cad", tag = "drag-value")]
+    #[widget(namespace = "cad", tag = "wrapped-drag-value")]
     pub struct DragValueKind {
         /// The value.
         #[prop(bind)]

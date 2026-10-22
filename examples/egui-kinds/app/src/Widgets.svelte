@@ -1,5 +1,5 @@
 <script lang="ts">
-  // RA3: the fn form (<level-meter>, <step-count>), wrap_widget! (<drag-value>) and a container
+  // RA3: the fn form (<level-meter>, <step-count>), wrap_widget! (<wrapped-drag-value>) and a container
   // kind (<collapsing-section>), all defined in examples/egui-kinds/src/lib.rs.
   // examples/egui-kinds/tests/widgets.rs loads this file from source.
   let level = $state(0.25);
@@ -13,7 +13,7 @@
   <box class="column">
     <level-meter {level} label="Load" />
     <step-count bind:count />
-    <drag-value bind:value={x} speed={0.5} suffix=" mm" />
+    <wrapped-drag-value bind:value={x} speed={0.5} suffix=" mm" />
     <collapsing-section title="Advanced" bind:open>
       <label>inside one</label>
       <label>inside two</label>

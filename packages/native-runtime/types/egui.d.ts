@@ -2,6 +2,8 @@
 // An egui app's tsconfig: "types": ["@svelters/native-runtime/types/egui"] (instead of
 // "@svelters/native-runtime/types", GTK's), plus the app's dumped .svelters/app/{app,kinds}.d.ts.
 import type { Component, ComponentProps, SvelteComponent } from 'svelte';
+/** The value of `bind:this` on an element (a provider kind with methods extends it: `kinds.d.ts`). */
+export type { NativeElement } from './native';
 
 /** What a sync signal's handler gets first; the signal's arguments follow it (and are its `args`). A plain
  * signal's handler gets the arguments only. */

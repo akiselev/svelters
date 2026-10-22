@@ -9,6 +9,7 @@
   let accepted = $state(0);
   let edits = $state(0);
   let result = $state('none');
+  let depth: number | null = $state(0.002);
 </script>
 
 <window title="Methods" default-width={360} default-height={240}>
@@ -23,6 +24,8 @@
     />
     <label>width {width} accepted {accepted} edits {edits}</label>
     <label>result {result}</label>
+    <quantity-field label="Depth" dim="length" bind:value|commit={depth} />
+    <label>depth {depth}</label>
     <button onclicked={() => (result = `parses ${field?.setText('40 mm')}`)}>Set text</button>
     <button onclicked={() => (result = `bad ${field?.call('setText', 'forty')}`)}>Set bad</button>
     <button onclicked={() => (result = `committed ${field?.commit()}`)}>Commit</button>

@@ -27,8 +27,8 @@ impl CodeEditor {
 
 | Piece | Where |
 |---|---|
-| `#[svelters::widget]` on an inherent `impl`: every `pub fn` with `&self`/`&mut self` is a method, JS name lowerCamelCase (`#[js(rename)]`, `#[js(skip)]`); params `FromJs`, result `IntoJs`; a `&mut MethodCx` param (anywhere) is the context. Names that are members of every runtime node (`call`, `tag`, `style`, `then`, …) are rejected at compile time | `crates/svelters-macros/src/lib.rs` (`widget_methods`) |
-| `MethodEntry`, `KindMethods` (inventory), `MethodCx` (`id`, `node`, `scene`, `rect`, `state`/`set_state`, `set` exact write, `emit`, `ext`/`ext_mut`, `request_focus`, `request_measure`), `call` | `crates/svelters-egui/src/provider/methods.rs` |
+| `#[svelters::widget]` on an inherent `impl`: every fn with `&self`/`&mut self` (pub or not) is a method, JS name lowerCamelCase, `#[method(rename = "revealLine")]` / `#[method(skip)]` (cadatomic K1's spelling; `#[js(rename/skip)]` too); fns without a receiver stay Rust-only; params `FromJs` (`Json<T>` for serde values), result `IntoJs` (`()` is void; `Result<T, E>` with `E: svelters::Error` throws the error in JS as a native error with its code); a `&mut MethodCx` param (anywhere) is the context. Names that are members of every runtime node (`call`, `tag`, `style`, `then`, …) are rejected at compile time | `crates/svelters-macros/src/lib.rs` (`widget_methods`) |
+| `MethodEntry`, `KindMethods` (inventory), `MethodCx` (`id`, `node`, `scene`, `rect`, `state`/`set_state`, `set` exact write, `emit`, `ext`/`ext_mut`, `request_focus`, `request_measure`, `request_repaint`), `call` (a method's `NativeError` goes back as `Value::Error`, so JS gets `domain`/`code`) | `crates/svelters-egui/src/provider/methods.rs` |
 | Method types in the export schema: a `KindTypesDef` keyed `<spec id>#methods` (each method's params, then its result), so records/enums/`Json<T>` work as for props | macro + `KindDecl::__NAMESPACE`/`__METHODS_KEY` |
 | Registry: `ProviderKind::methods`/`method_types`/`method(i)`, `KindDef.methods` filled, `provider_method_desc` (host `MemberDesc`: named param slots, trailing `Option`s optional, `SVL_M_THROWS`), `provider_method_index`; duplicate impl blocks or an impl for an unregistered kind panic at startup | `kinds/registry.rs` |
 | Backend: `describe(Method)` answers provider methods (the host checks argument count and types before Rust runs); `call` dispatches to `methods::call` | `ops.rs` |
@@ -61,6 +61,30 @@ inserts children into it. taffy lays them out from the node's style, or the kind
 rect. Stored per node in an unjournaled ext column (`ExtColumns::cache_mut`, new: caches only), counted in
 `SceneStats::shape_cache_hits`/`shape_cache_misses`.
 
+### 5. Object-handle props (K1 gap 1)
+
+`#[prop] doc: Option<Obj<DocHandle>>` works: the host's exported-object table is shared (`Core::apps` is an `Rc`)
+and pushed on a thread-local scope for every host op (`exports::objects::scope` in `Core::timed` and
+`take_changes`), and `__private::with_cx` uses the innermost one. So a provider's `set_prop`, `get_prop` (the
+observation read-back) and method arguments convert `Obj<T>`/`Arc<T>`. Outside an op (event payloads emitted
+during a pass) the table is still empty, so object event payloads do not convert yet. Example: `<doc-title doc>`.
+
+### 6. `Widget::text_input` (K1 gap 2)
+
+`fn text_input(&self) -> Option<bool>` (`Some(multiline)`, default `None`): a provider whose egui text field has
+the node's id is recorded as `Role::Text { multiline }` for EV3 (text-field key rules, R11), and
+`provider::paint` runs `focus::before_text`/`after_text` around its `ui`, so `Embed::text_command` (the Edit
+menu's Cut, Copy, Paste, Undo, Select All, Insert) reaches it as the input events they stand for. This is the
+TextInput unit's entry point of ARCH-WIDGETS (OW4 builds the unit itself for `text-edit`).
+
+### 7. `bind:x|commit` on provider kinds (CX3)
+
+The CX3 rule is one function now, `spec::commit_binding` (the commit event has the shape of the prop's change
+event): built-ins compare signal arguments, provider kinds compare the `commit` event's payload type with the
+prop's type without nullability. A provider bound prop with such an event gets a `bindings.<prop>` entry
+(`event: "commit"`, `commit: {"event": "commit", "arg": 0}`); bound props without one still have no entry and
+lower onto observation. `<quantity-field>` has `#[event] commit: Event<f64>`.
+
 ## Decisions taken inside the design (no doc settled them)
 
 1. **Method declaration: `#[svelters::widget]` on the kind's `impl` block**, matching `#[svelters::export]` on an impl;
@@ -72,8 +96,9 @@ rect. Stored per node in an unjournaled ext column (`ExtColumns::cache_mut`, new
 4. **Methods run between passes and never run JS.** Their JS-visible writes are delivered after the next pass, as a
    widget's own are; method results return synchronously. No async methods (an `async`/offloaded kind method can
    come later through the export offload machinery).
-5. **Errors**: a `NativeError` from a method (argument conversion included) reaches JS as an `Error` whose message is
-   `<tag>.<method>: <message>`; the backend ABI carries strings only, so the code is not kept.
+5. **Errors**: a `NativeError` from a method (its `Err`, or an argument that did not convert) reaches JS as a native
+   error (`SVL_ERROR`: domain `app:<namespace>`, the `svelters::Error` code), message `<tag>.<method>: <message>`.
+   Argument count and primitive type errors are the host's `TypeError`s, before Rust runs.
 6. **Security**: every method call goes through `provider::methods::call`, the place a policy check (ARCH-SECURITY,
    deny by default) belongs. No hook is built (security work is cut); nothing bypasses that function.
 7. **Container slot**: only the default slot (`children`). Named slots (`#[slot(name = "header-extra")]`) are not built.
@@ -96,8 +121,9 @@ rect. Stored per node in an unjournaled ext column (`ExtColumns::cache_mut`, new
 - **SV23** (dynamic export modules from a descriptor, publisher generations): not started. It needs LOADER's resolver
   for `svelters:app/*` (soft dependency LD1) and a `Schema` built from a descriptor rather than `inventory`; see
   "Open" below.
-- Named container slots; `WidgetCx::store`/`object` (Rust reads of stores/objects); object handles (`Obj<T>`) in kind
-  props and method arguments (conversions still use `with_cx`, without the host's object table).
+- Named container slots; `WidgetCx::store`/`object` (Rust reads of stores/objects); object values in event payloads
+  and object *results* of kind methods (JS would get a bare handle, not the class wrapper).
+- K1 gap 3 (deep `$state.snapshot` of nested arrays in record props) is RT1's, not touched here.
 - Async kind methods; methods on behaviours (the macro accepts them, nothing calls them yet).
 
 ## Open

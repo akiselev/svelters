@@ -213,14 +213,45 @@ fn kind_json(k: &KindDef) -> J {
             // the change event's shape (the coordinator's seam: the committed value where the change
             // event carries the live one). A `commit` of another shape (a table's cell edit) is not
             // a commit of this prop.
-            if let (Some(c), Some(s)) = (k.signals.iter().find(|s| s.name == "commit"), sig)
-                && c.args == s.args
-            {
-                b["commit"] = json!({"event": "commit", "arg": arg});
+            if let Some(c) = commit_binding(k.signals.iter().find(|s| s.name == "commit").map(|c| c.args), sig.map(|s| s.args), arg) {
+                b["commit"] = c;
             }
             (p.name.to_string(), b)
         })
         .collect();
+    // RA3: a provider kind's bound props lower onto observation (exact); one with a `commit` event
+    // whose payload has the prop's type also gets a binding for `bind:<prop>|commit`, by the same
+    // rule (`commit_binding`; a provider prop's change shape is its type)
+    let bindings: Map<String, J> = match provider {
+        None => bindings,
+        Some(pk) => k
+            .props
+            .iter()
+            .enumerate()
+            .filter(|(_, p)| p.native == Native::Widget)
+            .filter_map(|(i, p)| {
+                let commit = pk.entry.events.iter().position(|e| e.name == "commit").and_then(|e| pk.event_type(e)).map(provider_shape);
+                let c = commit_binding(commit, pk.types.get(i).map(provider_shape), 0)?;
+                Some((
+                    p.name.to_string(),
+                    json!({
+                        "commit": c,
+                        "compare_before_set": true,
+                        "direction": "two_way",
+                        "echo": "none",
+                        "event": "commit",
+                        "lifetime": {"on_destroy": "idempotent_disconnect", "on_native_death": "end_binding", "on_stale_update": "warn_noop"},
+                        "natively_normalizes": false,
+                        "property": p.name,
+                        "provenance": format!("svelters-egui: {} writes {} with cx.set (observed, exact); its `commit` event carries the committed value", pk.entry.rust, p.name),
+                        "read_back": false,
+                        "sync_signals_on_set": [],
+                        "value": {"arg": 0},
+                    }),
+                ))
+            })
+            .collect(),
+    };
     let children = k.slot.map(|slot| {
         json!({
             "default_slot": slot,
@@ -487,6 +518,20 @@ fn value_json(v: &Value) -> J {
         Value::Map(entries) => J::Object(entries.iter().map(|(k, v)| (k.clone(), value_json(v))).collect()),
         _ => J::Null,
     }
+}
+
+/// CX3: the `commit` entry of a binding (`bind:<prop>|commit`) when the kind's `commit` event has
+/// the shape of the prop's change event (its arguments; for a provider kind, its value type), with
+/// the committed value at `arg`. A `commit` of another shape (a table's cell edit) is not a commit
+/// of this prop.
+fn commit_binding<S: PartialEq>(commit: Option<S>, change: Option<S>, arg: usize) -> Option<J> {
+    (commit.is_some() && commit == change).then(|| json!({"event": "commit", "arg": arg}))
+}
+
+/// RA3: a provider value's change shape: its JS type without nullability (`Option<f64>` commits an
+/// `f64`).
+fn provider_shape(t: &svelters_host::exports::TypeRef) -> String {
+    t.ts.strip_suffix(" | null").unwrap_or(&t.ts).to_string()
 }
 
 /// Fills a provider prop's type, values, range, default and observability from its Rust type and its
