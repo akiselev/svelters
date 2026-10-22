@@ -19,8 +19,8 @@ export default function Input($$anchor, $$props) {
     $.set(empty, [], true);
   }
 	const $$n1 = $n.element("label");
-	$.template_effect(() => $n.set($$n1, "label", `${never} ${obj.n} ${arr.length} ${$.get(changed)} ${$.get(rawChanged).big} ${$.get(empty)}`));
 	$n.track($$n1, "label", "notify::label", -1);
 	$n.append($$anchor, $$n1);
+	$.template_effect(() => $n.set($$n1, "label", `${never} ${obj.n} ${arr.length} ${$.get(changed)} ${$.get(rawChanged).big} ${$.get(empty)}`));
 	$.pop();
 }

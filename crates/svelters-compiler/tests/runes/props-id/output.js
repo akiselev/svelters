@@ -14,8 +14,8 @@ export default function Input($$anchor, $$props) {
     e(e().x = 1, true);
   }
 	const $$n1 = $n.element("label");
-	$.template_effect(() => $n.set($$n1, "label", `${uid} ${$$props.a} ${b()} ${c()} ${d()} ${e()} ${$$props.f} ${$$props["g-h"]} ${rest.z}`));
 	$n.track($$n1, "label", "notify::label", -1);
 	$n.append($$anchor, $$n1);
+	$.template_effect(() => $n.set($$n1, "label", `${uid} ${$$props.a} ${b()} ${c()} ${d()} ${e()} ${$$props.f} ${$$props["g-h"]} ${rest.z}`));
 	$.pop();
 }

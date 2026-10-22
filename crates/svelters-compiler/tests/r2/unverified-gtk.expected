@@ -1,8 +1,8 @@
 == gtk
 unverified-gtk.svelte:7:9: warning[bind_observation_unverified] (gtk): bind:is-active on <window>: `is-active` is exact on gtk (fact Gtk:Window:is-active), but no native change has been seen delivered (its test only checks that the observation installs), so the bound value could go stale
   help: read it explicitly where it matters (node.getProp), or opt out with `|nonreactive`; verifying the fact (metadata/observe) removes this warning
-$n.bind_readonly($$n1, "is-active", ($$value) => { $.set(f, $$value); });
 $n.bind_prop($$n3, "text", () => $.get(s), ($$value) => { $.set(s, $$value); }, "changed", 0);
+$n.bind_readonly($$n1, "is-active", ($$value) => { $.set(f, $$value); });
 == gtk --strict-native
 unverified-gtk.svelte:7:9: error[bind_observation_unverified] (gtk): bind:is-active on <window>: `is-active` is exact on gtk (fact Gtk:Window:is-active), but no native change has been seen delivered (its test only checks that the observation installs), so the bound value could go stale
   help: read it explicitly where it matters (node.getProp), or opt out with `|nonreactive`; verifying the fact (metadata/observe) removes this warning

@@ -21,8 +21,8 @@ export default function Input($$anchor, $$props) {
     $.set(count, 1);
   }
 	const $$n1 = $n.element("label");
-	$.template_effect(() => $n.set($$n1, "label", `${$.get(count)} ${$.get(d)} ${items.length}`));
 	$n.track($$n1, "label", "notify::label", -1);
 	$n.append($$anchor, $$n1);
+	$.template_effect(() => $n.set($$n1, "label", `${$.get(count)} ${$.get(d)} ${items.length}`));
 	$.pop();
 }

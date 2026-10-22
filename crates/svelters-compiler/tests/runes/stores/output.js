@@ -20,12 +20,12 @@ export default function Input($$anchor, $$props) {
     $.store_mutate(user, $.untrack($user).tags[0] = 'y', $.untrack($user));
   }
 	const $$n1 = $n.element("label");
-	$.template_effect(() => $n.set($$n1, "label", `${$count()} ${$user().name} ${$theme()}`));
 	$n.track($$n1, "label", "notify::label", -1);
 	$n.append($$anchor, $$n1);
 	const $$n2 = $n.element("entry");
-	$n.bind_prop($$n2, "text", () => $user().name, ($$value) => { $.store_mutate(user, $.untrack($user).name = $$value, $.untrack($user)); }, "changed", 0);
 	$n.append($$anchor, $$n2);
+	$.template_effect(() => $n.set($$n1, "label", `${$count()} ${$user().name} ${$theme()}`));
+	$n.bind_prop($$n2, "text", () => $user().name, ($$value) => { $.store_mutate(user, $.untrack($user).name = $$value, $.untrack($user)); }, "changed", 0);
 	$.pop();
 	$$cleanup();
 }

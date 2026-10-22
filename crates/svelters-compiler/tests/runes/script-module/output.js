@@ -13,8 +13,8 @@ export default function Input($$anchor, $$props) {
 	shared.total += 1;
 	let local = $.derived(() => ($.get(instances) * 2));
 	const $$n1 = $n.element("label");
-	$.template_effect(($0) => $n.set($$n1, "label", $0), [() => (`${$.get(instances)} ${shared.total} ${$.get(local)} ${untrack(() => 1)}`)]);
 	$n.track($$n1, "label", "notify::label", -1);
 	$n.append($$anchor, $$n1);
+	$.template_effect(($0) => $n.set($$n1, "label", $0), [() => (`${$.get(instances)} ${shared.total} ${$.get(local)} ${untrack(() => 1)}`)]);
 	$.pop();
 }
