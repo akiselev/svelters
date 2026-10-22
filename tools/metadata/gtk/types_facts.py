@@ -267,6 +267,10 @@ class Conv:
             if inner is None:
                 raise Blocked("alias")
             return self.named(inner.get("name"), tns, ctype, by_ref)
+        if c in ("enum", "flags") and el.get(GL + "get-type") is None:
+            # FU3: the invoker converts enums and flags through their GType (names <-> values); GLib.UriFlags,
+            # KeyFileFlags, SeekType, Graphene.EulerOrder... have none (gi.rs: "type has no GType").
+            raise Blocked("enum without GType")
         if c == "enum":
             return {"k": "enum", "t": n}
         if c == "flags":
@@ -306,6 +310,11 @@ class Conv:
                 raise Blocked("nested array")
             if a.get("name") in ("GLib.ByteArray", "GLib.Array", "GLib.PtrArray"):
                 raise Blocked("garray")
+            # FU3: a struct element without its own C type is stored by value in the typelib (Pango.Font
+            # get_languages: `PangoLanguage**` with a bare `Language` element), which the invoker refuses.
+            en = self.g.q(inner.get("name"), ns)
+            if not inner.get(CNS + "type") and self.cats.get(en) in ("record", "value", "transient"):
+                raise Blocked("struct by value")
             et = self.elem(inner, ns)
             if a.get("length") is not None:
                 return {"k": "array", "elem": et, "len": int(a.get("length"))}
@@ -465,6 +474,15 @@ def sig_of(m: ET.Element, ns: str, cv: Conv, g: Gir, name_over: str | None = Non
                 ty = {"k": "callback", "t": tn, "scope": scope, "sig": callback_sig(g, cv, tn, objects)}
             else:
                 ty = cv.slot(p, ns, by_ref=caller_alloc and direction == "out")
+                # FU3: what the invoker (crates/svelters-gtk/src/gi.rs) refuses in out and inout cells.
+                if caller_alloc and direction == "out" and ty["k"] not in ("boxed", "record"):
+                    raise Blocked("caller-allocated out value")
+                if direction == "inout" and ty["k"] in ("array", "list"):
+                    raise Blocked("inout array")
+                ct = (t.get(CNS + "type") if t is not None else "") or ""
+                if direction != "in" and not caller_alloc and ty["k"] in ("boxed", "record") and ct.count("*") == 1:
+                    # the cell holds the struct itself (Gsk.Path.get_next: inout `GskPathPoint*`)
+                    raise Blocked("struct by value")
             if ty["k"] == "void":
                 raise Blocked("void parameter")
             entry = {"name": p.get("name"), "js": camel(p.get("name")), "type": ty}

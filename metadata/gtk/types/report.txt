@@ -11,7 +11,7 @@ Gtk               1        10       134        22         0         1         8 
 total             6       108       327        26         2         7        82       111       248       105       159        20        77
 
 == bound scope (types with a JS class or shape), by namespace and category
-  GLib        15  value 15
+  GLib        14  value 14
   GObject      3  object 2, value 1
   Gio         57  model 2, object 45, value 10
   Gdk         27  object 20, record 2, value 5
@@ -19,20 +19,20 @@ total             6       108       327        26         2         7        82 
   Pango       17  model 2, object 6, value 9
   Graphene    16  record 3, value 13
   Gtk        167  model 22, object 134, record 1, value 10
-  total      309
+  total      308
 
 == members of bound types: bound / blocked
-  GLib      members   283  bound   176 ( 62%)  blocked  107
+  GLib      members   213  bound   123 ( 57%)  blocked   90
   GObject   members    45  bound    21 ( 46%)  blocked   24
-  Gio       members   843  bound   752 ( 89%)  blocked   91
+  Gio       members   843  bound   747 ( 88%)  blocked   96
   Gdk       members   374  bound   351 ( 93%)  blocked   23
-  Gsk       members    80  bound    73 ( 91%)  blocked    7
-  Pango     members   217  bound   192 ( 88%)  blocked   25
-  Graphene  members   285  bound   278 ( 97%)  blocked    7
+  Gsk       members    80  bound    71 ( 88%)  blocked    9
+  Pango     members   217  bound   191 ( 88%)  blocked   26
+  Graphene  members   290  bound   269 ( 92%)  blocked   21
   Gtk       members  2014  bound  1893 ( 93%)  blocked  121
-  VALUE mutators hidden by the rules: 261
+  VALUE mutators hidden by the rules: 255
   residual hand list (undecided mutators, hidden until decided): 0 methods in 0 types
-  blocking reasons: variant 146, struct by value 54, gpointer 33, fundamental 31, hash table 20, callback 16, unbound 13, type:needs-override:Pango.Rectangle 10, gerror 9, async 6, type:needs-override:Gsk.ColorStop 5, type:needs-override:Gio.OutputVector 4, type:needs-override:Gtk.CssLocation 4, type:needs-override:Gtk.PageRange 4
+  blocking reasons: variant 110, struct by value 57, enum without GType 34, gpointer 32, fundamental 31, hash table 19, callback 16, unbound 13, type:needs-override:Pango.Rectangle 10, caller-allocated out value 9, gerror 8, type:needs-override:Gsk.ColorStop 5, async 4, type:needs-override:Gio.OutputVector 4
 
 == curated set
   Gdk.Clipboard            object  bound   13 blocked   3 hidden   0

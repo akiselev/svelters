@@ -503,8 +503,6 @@
      ],
      "native": "Gio.Application",
      "signature": [
-      "GLib.OptionArg",
-      "GLib.OptionFlags",
       "GLib.OptionGroup",
       "GObject.Object",
       "Gio.Action",
@@ -802,7 +800,6 @@
      ],
      "native": "Gio.FileIOStream",
      "signature": [
-      "GLib.SeekType",
       "Gio.Cancellable",
       "Gio.FileInfo"
      ]
@@ -862,7 +859,6 @@
      ],
      "native": "Gio.FileInputStream",
      "signature": [
-      "GLib.SeekType",
       "Gio.Cancellable",
       "Gio.FileInfo"
      ]
@@ -895,7 +891,6 @@
      ],
      "native": "Gio.FileOutputStream",
      "signature": [
-      "GLib.SeekType",
       "Gio.Cancellable",
       "Gio.FileInfo"
      ]
@@ -1157,7 +1152,6 @@
      "imports": [],
      "native": "Gio.Seekable",
      "signature": [
-      "GLib.SeekType",
       "Gio.Cancellable"
      ]
     },
@@ -1343,10 +1337,7 @@
      "implements": [],
      "imports": [],
      "native": "GLib.KeyFile",
-     "signature": [
-      "GLib.Bytes",
-      "GLib.KeyFileFlags"
-     ]
+     "signature": []
     },
     "OptionGroup": {
      "category": "value",
@@ -1386,9 +1377,7 @@
      "implements": [],
      "imports": [],
      "native": "GLib.TimeZone",
-     "signature": [
-      "GLib.TimeType"
-     ]
+     "signature": []
     },
     "Tree": {
      "category": "value",
@@ -1409,23 +1398,7 @@
      ],
      "native": "GLib.Uri",
      "signature": [
-      "GLib.Bytes",
-      "GLib.UriFlags",
-      "GLib.UriHideFlags"
-     ]
-    },
-    "Variant": {
-     "category": "value",
-     "extends": null,
-     "file": "glib/Variant.js",
-     "implements": [],
-     "imports": [
       "GLib.Bytes"
-     ],
-     "native": "GLib.Variant",
-     "signature": [
-      "GLib.Bytes",
-      "GLib.VariantClass"
      ]
     },
     "VariantBuilder": {
@@ -1527,7 +1500,6 @@
      ],
      "native": "Graphene.Euler",
      "signature": [
-      "Graphene.EulerOrder",
       "Graphene.Matrix",
       "Graphene.Quaternion",
       "Graphene.Vec3"
@@ -1628,7 +1600,6 @@
       "Graphene.Box",
       "Graphene.Plane",
       "Graphene.Point3D",
-      "Graphene.RayIntersectionKind",
       "Graphene.Sphere",
       "Graphene.Triangle",
       "Graphene.Vec3"
@@ -4476,8 +4447,7 @@
       "Pango.FontDescription",
       "Pango.FontFace",
       "Pango.FontMap",
-      "Pango.FontMetrics",
-      "Pango.Language"
+      "Pango.FontMetrics"
      ],
      "native": "Pango.Font",
      "signature": [

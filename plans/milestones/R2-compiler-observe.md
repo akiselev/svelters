@@ -189,7 +189,8 @@ echo of our own `setProp`; the unit tests drive changes through `TestHost.native
 
 ### Open items
 
-- Silent reveals on other props (like the QAction `checkable`/`checked` case): a baseline read while a value is
+- **Resolved in FU3** (no observe-time baseline; `last` starts unknown, REACTIVITY.md §5.2): silent reveals on
+  other props (like the QAction `checkable`/`checked` case): a baseline read while a value is
   latent gives a stale `last`. R3/R1 owners: consider re-reading `last` after structural ops (insert) or listing
   such causes as `missed` in the facts.
 - The Qt op-log replay still treats `changed` as a no-op (the GTK one produces it natively).

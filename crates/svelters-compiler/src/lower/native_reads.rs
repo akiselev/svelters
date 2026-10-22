@@ -7,22 +7,29 @@
 //! ([`PlatformSemantics::native_type`]). A read counts when it is in a template expression (outside
 //! event handlers and other functions) or in the body of `$derived(...)`, `$derived.by(...)`,
 //! `$effect(...)` or `$effect.pre(...)`. Method calls, writes, and reads inside `untrack(...)` are
-//! not reads. Unknown receivers, unknown props and props without a fact are silent. Not handled:
-//! shadowing of `obj` by a nested binding of the same name, `bind:this` targets (element nodes read
-//! natively through methods, which are snapshots by design) and callback parameters.
+//! not reads. Unknown receivers, unknown props and props without a fact are silent.
+//!
+//! Scope-aware (FU3): a receiver counts only when the component's scope analysis resolves that
+//! identifier to the top-level `const` binding itself, so a nested binding of the same name (an
+//! `{#each}` item or index, a snippet parameter, `{@const}`, a local or parameter of a function) is a
+//! different object and stays silent. Not handled: `bind:this` targets (element nodes read natively
+//! through methods, which are snapshots by design) and callback parameters.
 
 use crate::diag::Diagnostics;
-use crate::estree::{ArrayElement, Expression, ImportSpecifierKind, LiteralNode, LiteralValue, ModuleExportName, Pattern, PropertyKey, Spanned, Statement, VariableKind};
+use crate::estree::{ArrayElement, Expression, Identifier, ImportSpecifierKind, LiteralNode, LiteralValue, ModuleExportName, Pattern, PropertyKey, Spanned, Statement, VariableKind};
 use crate::semantics::{PlatformSemantics, TypeRef, codes, spec::ObsClass};
 use crate::svelte::ast::Root;
+use crate::svelte::scope::BindingId;
+use crate::svelte::scope::analyze::ComponentScopeAnalysis;
 use crate::svelte::scope::walk::{NodeRef, array_element_ref, expr_ref, fragment_node_ref};
 use std::collections::HashMap;
 
-pub fn check(root: &Root, sem: &dyn PlatformSemantics, diags: &mut Diagnostics) {
+pub fn check(root: &Root, analysis: &ComponentScopeAnalysis<'_>, sem: &dyn PlatformSemantics, diags: &mut Diagnostics) {
     let Some(script) = &root.instance else { return };
     // local import name -> (module, export)
     let mut imports: HashMap<String, (String, String)> = HashMap::new();
-    let mut typed: HashMap<String, TypeRef> = HashMap::new();
+    // the top-level binding of each wrapper -> its class
+    let mut typed: HashMap<BindingId, TypeRef> = HashMap::new();
     for stmt in &script.content.body {
         match stmt {
             Statement::ImportDeclaration(d) => {
@@ -50,8 +57,9 @@ pub fn check(root: &Root, sem: &dyn PlatformSemantics, diags: &mut Diagnostics) 
                         && let Expression::Identifier(c) = n.callee.as_ref()
                         && let Some((m, e)) = imports.get(&c.name)
                         && let Some(t) = sem.native_type(m, e)
+                        && let Some(b) = analysis.arena.get(analysis.instance.scope, &id.name)
                     {
-                        typed.insert(id.name.clone(), t);
+                        typed.insert(b, t);
                     }
                 }
             }
@@ -61,7 +69,7 @@ pub fn check(root: &Root, sem: &dyn PlatformSemantics, diags: &mut Diagnostics) 
     if typed.is_empty() {
         return;
     }
-    let mut w = Reads { sem, typed: &typed, diags };
+    let mut w = Reads { sem, typed: &typed, analysis, diags };
     for n in &root.fragment.nodes {
         w.walk(fragment_node_ref(n), true);
     }
@@ -70,8 +78,17 @@ pub fn check(root: &Root, sem: &dyn PlatformSemantics, diags: &mut Diagnostics) 
 
 struct Reads<'s, 'd> {
     sem: &'s dyn PlatformSemantics,
-    typed: &'s HashMap<String, TypeRef>,
+    typed: &'s HashMap<BindingId, TypeRef>,
+    analysis: &'s ComponentScopeAnalysis<'s>,
     diags: &'d mut Diagnostics,
+}
+
+impl<'s> Reads<'s, '_> {
+    /// The wrapper class `ident` refers to: only when it resolves to a wrapper's own top-level binding.
+    fn wrapper(&self, ident: &Identifier) -> Option<&'s TypeRef> {
+        let typed: &'s HashMap<BindingId, TypeRef> = self.typed;
+        self.analysis.arena.resolve(ident).and_then(|b| typed.get(&b))
+    }
 }
 
 fn rune(callee: &Expression) -> bool {
@@ -141,7 +158,7 @@ impl Reads<'_, '_> {
                 if reactive
                     && !m.computed
                     && let Expression::Identifier(o) = m.object.as_ref()
-                    && let Some(ty) = self.typed.get(&o.name)
+                    && let Some(ty) = self.wrapper(o)
                     && let PropertyKey::Expression(p) = &m.property
                     && let Expression::Identifier(p) = p.as_ref()
                 {

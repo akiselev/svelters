@@ -27,6 +27,7 @@ Every rule of REACTIVITY.md §5.2; the contract is written down in `plans/archit
 
 - `Observed { count, name, proportional, last, force }` per (h, prop id). The 0→1 transition calls the backend and reads a
   baseline `last` (unless proportional), so a GTK re-notify of an identical value is dropped from the start.
+  (FU3 removed the baseline read: `last` starts unknown; see REACTIVITY.md §5.2 "No observe-time baseline".)
 - Dirty set: `Vec` + `HashSet`, first-announcement order; `prop_changed` returns true on the first insert into an empty
   set, and `Callbacks::prop_changed` wakes the backend then (one wake per turn).
 - `take_changes` reads each dirty pair still observed (`get_prop`, never JS), compares (`same_value`: handles by id,

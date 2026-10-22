@@ -541,10 +541,10 @@ SVL_M_OBSERVABLE = 64
 
 | Rule | Detail |
 |---|---|
-| refcount | per (h, prop); 0→1 calls `observe(on)`, 1→0 calls `observe(off)`. Several JS layers (wrapper getters, element bindings) share one native connection |
+| refcount | per (h, prop); 0→1 calls `observe(on)`, 1→0 calls `observe(off)`. Several JS layers (wrapper getters, element bindings) share one native connection. 0→1 reads nothing: `last` starts unknown (FU3, see below) |
 | coalescing | `prop_changed` inserts into an ordered dirty set (insertion order, deduplicated) and calls `backend.wake()` on the first insert of a turn |
 | read | at the checkpoint the host calls `get_prop` natively for each dirty (h, prop). `value_cost: proportional` props are not read; they are delivered as invalidation only |
-| compare | with `last[(h, prop)]`, the last value delivered **or** read back after our own `set_prop`. Equal → dropped. Handles compare by id, strings by content, records and lists deeply, f64 by bits (NaN equals NaN). `BOXED`/VALUE results always count as changed: each read mints a new handle |
+| compare | with `last[(h, prop)]`, the last value delivered **or** read back after our own `set_prop`; unknown before either, so the first announcement is always delivered. Equal → dropped. Handles compare by id, strings by content, records and lists deeply, f64 by bits (NaN equals NaN). `BOXED`/VALUE results always count as changed: each read mints a new handle |
 | batch | one JS call per checkpoint, `globalThis.__svelters_changed([h, prop, value, h, prop, value, ...])` (`value` is `undefined` for proportional props), **before** the queued signal events, and with no job drain between the batch and the first event |
 | set path | after a successful `set_prop` on an observed (h, prop), the host reads it back once and stores it as `last`. Our echo is then dropped, and a normalized value is delivered once |
 | sync handlers | before `call_sync` runs JS, the host flushes the dirty set into an invalidation batch (no drain), so `$derived` values read inside the sync handler are fresh. This extends the rule in signals-and-slots §1.5.4 |
@@ -553,6 +553,16 @@ SVL_M_OBSERVABLE = 64
 
 **Op log:** `observe #h prop on|off` and `changed #h prop <json>`. **Host ops:**
 `host.observe(h, prop, on)`.
+
+**No observe-time baseline (FU3).** Until FU3 the 0→1 transition read the prop once as the baseline `last`. That
+value is not what JS believes when JS wrote one the toolkit has not taken (clamped, latent, ignored until an insert:
+the Qt radio-action case found while merging R1, `plans/milestones/R2-compiler-observe.md`), and a later change
+back to it compared equal and was dropped, leaving JS stale. Now `last` is only ever a value JS was told (delivered
+or read back and delivered after our own write), so compare never hides a change from JS. Cost: the first
+announcement after observation starts is delivered even when it changes nothing (a GTK re-notify of an identical
+set): one extra delivery per observation, which Svelte drops for an equal primitive. A toolkit that changes a value
+with no notification at all still leaves JS stale until the next announcement; that is a `missed` fact, not a
+compare problem.
 
 ### 5.3 Timing relative to Svelte's scheduler
 

@@ -7,7 +7,6 @@ import { FontDescription } from './FontDescription.js';
 import { FontFace } from './FontFace.js';
 import { FontMap } from './FontMap.js';
 import { FontMetrics } from './FontMetrics.js';
-import { Language } from './Language.js';
 
 export class Font extends GObject_Object {
   static native = 'Pango.Font';
@@ -38,10 +37,6 @@ export class Font extends GObject_Object {
 
   getFontMap() {
     return wrapObject(FontMap, call(this, 'get_font_map', []));
-  }
-
-  getLanguages() {
-    return (call(this, 'get_languages', []))?.map((e) => wrapValue(Language, e)) ?? null;
   }
 
   getMetrics(language = null) {

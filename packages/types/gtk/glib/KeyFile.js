@@ -98,32 +98,6 @@ export class KeyFile extends NativeValue {
     return call(this, 'has_group', [groupName]);
   }
 
-  loadFromBytes(bytes, flags) {
-    return call(this, 'load_from_bytes', [bytes, flags]);
-  }
-
-  loadFromData(data, length, flags) {
-    return call(this, 'load_from_data', [data, length, flags]);
-  }
-
-  loadFromDataDirs(file, flags) {
-    const __res = call(this, 'load_from_data_dirs', [file, flags]);
-    return { ret: __res.ret, fullPath: __res.full_path };
-  }
-
-  loadFromDirs(file, searchDirs, flags) {
-    const __res = call(this, 'load_from_dirs', [file, searchDirs, flags]);
-    return { ret: __res.ret, fullPath: __res.full_path };
-  }
-
-  loadFromFile(file, flags) {
-    return call(this, 'load_from_file', [file, flags]);
-  }
-
-  loadUnixConfigurations(project, etcSubdir, runSubdir, usrSubdir, configName, configSuffix, flags) {
-    return call(this, 'load_unix_configurations', [project, etcSubdir, runSubdir, usrSubdir, configName, configSuffix, flags]);
-  }
-
   saveToFile(filename) {
     return call(this, 'save_to_file', [filename]);
   }

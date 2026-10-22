@@ -30,16 +30,6 @@ export class InputStream extends GObject_Object {
     return call(this, 'is_closed', []);
   }
 
-  read(cancellable = null) {
-    const __res = call(this, 'read', [cancellable]);
-    return { ret: __res.ret, buffer: __res.buffer };
-  }
-
-  readAll(cancellable = null) {
-    const __res = call(this, 'read_all', [cancellable]);
-    return { ret: __res.ret, buffer: __res.buffer, bytesRead: __res.bytes_read };
-  }
-
   readBytes(count, cancellable = null) {
     return wrapValue(Bytes, call(this, 'read_bytes', [count, cancellable]));
   }

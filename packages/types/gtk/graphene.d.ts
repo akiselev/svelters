@@ -66,16 +66,12 @@ declare module 'svelters:gtk/graphene' {
       getBeta(): number;
       /** `get_gamma`, since 1.10 */
       getGamma(): number;
-      /** `get_order`, since 1.2 */
-      getOrder(): string;
       /** `get_x`, since 1.2 */
       getX(): number;
       /** `get_y`, since 1.2 */
       getY(): number;
       /** `get_z`, since 1.2 */
       getZ(): number;
-      /** `reorder`, since 1.2 */
-      reorder(order: string): { res: Euler };
       /** `to_matrix`, since 1.2 */
       toMatrix(): { res: Matrix };
       /** `to_quaternion`, since 1.10 */
@@ -143,8 +139,6 @@ declare module 'svelters:gtk/graphene' {
       projectRectBounds(r: Record<string, number>): { res: Record<string, number> };
       /** `to_2d`, since 1.0 */
       to2d(): { ret: boolean; xx: number; yx: number; xy: number; yy: number; x0: number; y0: number };
-      /** `to_float`, since 1.0 */
-      toFloat(): { v: number[] };
       /** `transform_bounds`, since 1.0 */
       transformBounds(r: Record<string, number>): { res: Record<string, number> };
       /** `transform_box`, since 1.2 */
@@ -290,12 +284,6 @@ declare module 'svelters:gtk/graphene' {
       getOrigin(): { origin: Point3D };
       /** `get_position_at`, since 1.4 */
       getPositionAt(t: number): { position: Point3D };
-      /** `intersect_box`, since 1.10 */
-      intersectBox(b: Box): { ret: string; tOut: number };
-      /** `intersect_sphere`, since 1.10 */
-      intersectSphere(s: Sphere): { ret: string; tOut: number };
-      /** `intersect_triangle`, since 1.10 */
-      intersectTriangle(t: Triangle): { ret: string; tOut: number };
       /** `intersects_box`, since 1.10 */
       intersectsBox(b: Box): boolean;
       /** `intersects_sphere`, since 1.10 */
@@ -401,8 +389,6 @@ declare module 'svelters:gtk/graphene' {
       scale(factor: number): { res: Vec2 };
       /** `subtract`, since 1.0 */
       subtract(b: Vec2): { res: Vec2 };
-      /** `to_float`, since 1.0 */
-      toFloat(): { dest: number[] };
   }
 
   /** `Graphene.Vec3`, value */
@@ -466,8 +452,6 @@ declare module 'svelters:gtk/graphene' {
       scale(factor: number): { res: Vec3 };
       /** `subtract`, since 1.0 */
       subtract(b: Vec3): { res: Vec3 };
-      /** `to_float`, since 1.0 */
-      toFloat(): { dest: number[] };
   }
 
   /** `Graphene.Vec4`, value */
@@ -527,7 +511,5 @@ declare module 'svelters:gtk/graphene' {
       scale(factor: number): { res: Vec4 };
       /** `subtract`, since 1.0 */
       subtract(b: Vec4): { res: Vec4 };
-      /** `to_float`, since 1.0 */
-      toFloat(): { dest: number[] };
   }
 }

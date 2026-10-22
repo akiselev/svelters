@@ -1,0 +1,2 @@
+unsupported_feature: `await` in a template expression is not supported by the native compiler yet @7:19
+unsupported_feature: `await` in a template expression is not supported by the native compiler yet @8:13

@@ -101,6 +101,13 @@ fn diagnostics_gtk() {
     golden("diagnostics-gtk");
 }
 
+/// FU3: a nested binding of the wrapper's name (each item, snippet parameter, `{@const}`, a local or a
+/// parameter of a `$derived.by` function) is a different object: no `native_read_not_observable` for it.
+#[test]
+fn shadowing_gtk() {
+    golden("shadowing-gtk");
+}
+
 #[test]
 fn unverified_gtk() {
     golden("unverified-gtk");

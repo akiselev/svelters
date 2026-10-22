@@ -47,7 +47,8 @@ pub static TELEMETRY_STATS: StoreStatic<Telemetry> = StoreStatic::new();   // ne
 - **Host side** (`crates/svelters-host/src/core/reactive.rs`): a store object is an ordinary app object (class
   kind `app:<m>.<Name>`, one getter per field, one setter per writable field). `host.observe(h, field, true)`
   subscribes this host to the store (first use) and refcounts (h, prop) in R1's `observed` table with the
-  field's current value as the baseline `last`. Non-store app props still answer `false`.
+  field's current value as the baseline `last` (FU3 removed the baseline read: `last` starts unknown, as for native
+  props; REACTIVITY.md §5.2). Non-store app props still answer `false`.
 - **Checkpoint order**: (1) offload drain (E1); **(1b) `reactive::collect`**: the dirty masks of the notified
   subscriptions are taken and every dirty field that is observed is inserted into R1's dirty set; queued events
   become event-queue entries; (2) `take_changes` reads each dirty store field through its getter (a clone under

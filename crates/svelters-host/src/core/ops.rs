@@ -721,10 +721,13 @@ impl Core {
                 let proportional = desc.is_some_and(|d| d.flags & SVL_M_PROPORTIONAL != 0);
                 match self.backend.observe(h, p, true) {
                     Ok(()) => {
-                        // The baseline `last`: a notification that changes nothing (GTK re-notifies an
-                        // identical set) is then dropped from the start.
-                        let last = if proportional { None } else { self.read_last(h, p) };
-                        let o = Observed { count: 1, name, proportional, last, force: false };
+                        // No baseline (FU3): `last` starts unknown. A value read here is not what JS
+                        // believes when JS wrote one the toolkit has not taken (clamped, latent, ignored
+                        // until an insert), and using it made a later change back to it compare equal
+                        // and vanish. So the first announcement is always delivered (at worst once more
+                        // than needed: Svelte drops an equal primitive), and from then on `last` is what
+                        // JS was told, or what our own write read back.
+                        let o = Observed { count: 1, name, proportional, last: None, force: false };
                         self.st.borrow_mut().observed.insert((h, p), o);
                         Ok(true)
                     }

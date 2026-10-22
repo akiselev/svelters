@@ -4,13 +4,19 @@
 // at run time, so the backend links against the minimum GTK.
 
 unsafe extern "C" {
+    fn gtk_at_context_get_type() -> usize;
     fn gtk_about_dialog_get_type() -> usize;
+    fn gtk_accessible_get_type() -> usize;
+    fn gtk_accessible_range_get_type() -> usize;
+    fn gtk_accessible_text_get_type() -> usize;
     fn gtk_action_bar_get_type() -> usize;
+    fn gtk_actionable_get_type() -> usize;
     fn gtk_activate_action_get_type() -> usize;
     fn gtk_adjustment_get_type() -> usize;
     fn gtk_alert_dialog_get_type() -> usize;
     fn gtk_alternative_trigger_get_type() -> usize;
     fn gtk_any_filter_get_type() -> usize;
+    fn gtk_app_chooser_get_type() -> usize;
     fn gtk_app_chooser_button_get_type() -> usize;
     fn gtk_app_chooser_dialog_get_type() -> usize;
     fn gtk_app_chooser_widget_get_type() -> usize;
@@ -24,15 +30,21 @@ unsafe extern "C" {
     fn gtk_bool_filter_get_type() -> usize;
     fn gtk_box_get_type() -> usize;
     fn gtk_box_layout_get_type() -> usize;
+    fn gtk_buildable_get_type() -> usize;
     fn gtk_builder_get_type() -> usize;
     fn gtk_builder_cscope_get_type() -> usize;
     fn gtk_builder_list_item_factory_get_type() -> usize;
+    fn gtk_builder_scope_get_type() -> usize;
     fn gtk_button_get_type() -> usize;
     fn gtk_cclosure_expression_get_type() -> usize;
     fn gtk_calendar_get_type() -> usize;
     fn gtk_callback_action_get_type() -> usize;
+    fn gtk_cell_area_get_type() -> usize;
     fn gtk_cell_area_box_get_type() -> usize;
     fn gtk_cell_area_context_get_type() -> usize;
+    fn gtk_cell_editable_get_type() -> usize;
+    fn gtk_cell_layout_get_type() -> usize;
+    fn gtk_cell_renderer_get_type() -> usize;
     fn gtk_cell_renderer_accel_get_type() -> usize;
     fn gtk_cell_renderer_combo_get_type() -> usize;
     fn gtk_cell_renderer_pixbuf_get_type() -> usize;
@@ -47,6 +59,7 @@ unsafe extern "C" {
     fn gtk_check_button_get_type() -> usize;
     fn gtk_closure_expression_get_type() -> usize;
     fn gtk_color_button_get_type() -> usize;
+    fn gtk_color_chooser_get_type() -> usize;
     fn gtk_color_chooser_dialog_get_type() -> usize;
     fn gtk_color_chooser_widget_get_type() -> usize;
     fn gtk_color_dialog_get_type() -> usize;
@@ -63,6 +76,7 @@ unsafe extern "C" {
     fn gtk_constraint_guide_get_type() -> usize;
     fn gtk_constraint_layout_get_type() -> usize;
     fn gtk_constraint_layout_child_get_type() -> usize;
+    fn gtk_constraint_target_get_type() -> usize;
     fn gtk_css_provider_get_type() -> usize;
     fn gtk_custom_filter_get_type() -> usize;
     fn gtk_custom_layout_get_type() -> usize;
@@ -76,11 +90,13 @@ unsafe extern "C" {
     fn gtk_drop_down_get_type() -> usize;
     fn gtk_drop_target_get_type() -> usize;
     fn gtk_drop_target_async_get_type() -> usize;
+    fn gtk_editable_get_type() -> usize;
     fn gtk_editable_label_get_type() -> usize;
     fn gtk_emoji_chooser_get_type() -> usize;
     fn gtk_entry_get_type() -> usize;
     fn gtk_entry_buffer_get_type() -> usize;
     fn gtk_entry_completion_get_type() -> usize;
+    fn gtk_event_controller_get_type() -> usize;
     fn gtk_event_controller_focus_get_type() -> usize;
     fn gtk_event_controller_key_get_type() -> usize;
     fn gtk_event_controller_legacy_get_type() -> usize;
@@ -88,6 +104,8 @@ unsafe extern "C" {
     fn gtk_event_controller_scroll_get_type() -> usize;
     fn gtk_every_filter_get_type() -> usize;
     fn gtk_expander_get_type() -> usize;
+    fn gtk_expression_get_type() -> usize;
+    fn gtk_file_chooser_get_type() -> usize;
     fn gtk_file_chooser_dialog_get_type() -> usize;
     fn gtk_file_chooser_native_get_type() -> usize;
     fn gtk_file_chooser_widget_get_type() -> usize;
@@ -103,12 +121,14 @@ unsafe extern "C" {
     fn gtk_flow_box_get_type() -> usize;
     fn gtk_flow_box_child_get_type() -> usize;
     fn gtk_font_button_get_type() -> usize;
+    fn gtk_font_chooser_get_type() -> usize;
     fn gtk_font_chooser_dialog_get_type() -> usize;
     fn gtk_font_chooser_widget_get_type() -> usize;
     fn gtk_font_dialog_get_type() -> usize;
     fn gtk_font_dialog_button_get_type() -> usize;
     fn gtk_frame_get_type() -> usize;
     fn gtk_gl_area_get_type() -> usize;
+    fn gtk_gesture_get_type() -> usize;
     fn gtk_gesture_click_get_type() -> usize;
     fn gtk_gesture_drag_get_type() -> usize;
     fn gtk_gesture_long_press_get_type() -> usize;
@@ -124,6 +144,7 @@ unsafe extern "C" {
     fn gtk_grid_layout_child_get_type() -> usize;
     fn gtk_grid_view_get_type() -> usize;
     fn gtk_header_bar_get_type() -> usize;
+    fn gtk_im_context_get_type() -> usize;
     fn gtk_im_context_simple_get_type() -> usize;
     fn gtk_im_multicontext_get_type() -> usize;
     fn gtk_icon_paintable_get_type() -> usize;
@@ -134,8 +155,11 @@ unsafe extern "C" {
     fn gtk_inscription_get_type() -> usize;
     fn gtk_keyval_trigger_get_type() -> usize;
     fn gtk_label_get_type() -> usize;
+    fn gtk_layout_child_get_type() -> usize;
+    fn gtk_layout_manager_get_type() -> usize;
     fn gtk_level_bar_get_type() -> usize;
     fn gtk_link_button_get_type() -> usize;
+    fn gtk_list_base_get_type() -> usize;
     fn gtk_list_box_get_type() -> usize;
     fn gtk_list_box_row_get_type() -> usize;
     fn gtk_list_header_get_type() -> usize;
@@ -146,14 +170,19 @@ unsafe extern "C" {
     fn gtk_lock_button_get_type() -> usize;
     fn gtk_map_list_model_get_type() -> usize;
     fn gtk_media_controls_get_type() -> usize;
+    fn gtk_media_file_get_type() -> usize;
+    fn gtk_media_stream_get_type() -> usize;
     fn gtk_menu_button_get_type() -> usize;
     fn gtk_message_dialog_get_type() -> usize;
     fn gtk_mnemonic_action_get_type() -> usize;
     fn gtk_mnemonic_trigger_get_type() -> usize;
     fn gtk_mount_operation_get_type() -> usize;
+    fn gtk_multi_filter_get_type() -> usize;
     fn gtk_multi_selection_get_type() -> usize;
     fn gtk_multi_sorter_get_type() -> usize;
     fn gtk_named_action_get_type() -> usize;
+    fn gtk_native_get_type() -> usize;
+    fn gtk_native_dialog_get_type() -> usize;
     fn gtk_never_trigger_get_type() -> usize;
     fn gtk_no_selection_get_type() -> usize;
     fn gtk_notebook_get_type() -> usize;
@@ -161,6 +190,7 @@ unsafe extern "C" {
     fn gtk_nothing_action_get_type() -> usize;
     fn gtk_numeric_sorter_get_type() -> usize;
     fn gtk_object_expression_get_type() -> usize;
+    fn gtk_orientable_get_type() -> usize;
     fn gtk_overlay_get_type() -> usize;
     fn gtk_overlay_layout_get_type() -> usize;
     fn gtk_overlay_layout_child_get_type() -> usize;
@@ -179,6 +209,7 @@ unsafe extern "C" {
     fn gtk_print_dialog_get_type() -> usize;
     fn gtk_print_job_get_type() -> usize;
     fn gtk_print_operation_get_type() -> usize;
+    fn gtk_print_operation_preview_get_type() -> usize;
     fn gtk_print_settings_get_type() -> usize;
     fn gtk_print_unix_dialog_get_type() -> usize;
     fn gtk_printer_get_type() -> usize;
@@ -187,18 +218,25 @@ unsafe extern "C" {
     fn gtk_range_get_type() -> usize;
     fn gtk_recent_manager_get_type() -> usize;
     fn gtk_revealer_get_type() -> usize;
+    fn gtk_root_get_type() -> usize;
     fn gtk_scale_get_type() -> usize;
     fn gtk_scale_button_get_type() -> usize;
+    fn gtk_scrollable_get_type() -> usize;
     fn gtk_scrollbar_get_type() -> usize;
     fn gtk_scrolled_window_get_type() -> usize;
     fn gtk_search_bar_get_type() -> usize;
     fn gtk_search_entry_get_type() -> usize;
+    fn gtk_section_model_get_type() -> usize;
     fn gtk_selection_filter_model_get_type() -> usize;
+    fn gtk_selection_model_get_type() -> usize;
     fn gtk_separator_get_type() -> usize;
     fn gtk_settings_get_type() -> usize;
     fn gtk_shortcut_get_type() -> usize;
+    fn gtk_shortcut_action_get_type() -> usize;
     fn gtk_shortcut_controller_get_type() -> usize;
     fn gtk_shortcut_label_get_type() -> usize;
+    fn gtk_shortcut_manager_get_type() -> usize;
+    fn gtk_shortcut_trigger_get_type() -> usize;
     fn gtk_shortcuts_group_get_type() -> usize;
     fn gtk_shortcuts_section_get_type() -> usize;
     fn gtk_shortcuts_shortcut_get_type() -> usize;
@@ -223,7 +261,9 @@ unsafe extern "C" {
     fn gtk_string_object_get_type() -> usize;
     fn gtk_string_sorter_get_type() -> usize;
     fn gtk_style_context_get_type() -> usize;
+    fn gtk_style_provider_get_type() -> usize;
     fn gtk_switch_get_type() -> usize;
+    fn gtk_symbolic_paintable_get_type() -> usize;
     fn gtk_text_get_type() -> usize;
     fn gtk_text_buffer_get_type() -> usize;
     fn gtk_text_child_anchor_get_type() -> usize;
@@ -233,13 +273,17 @@ unsafe extern "C" {
     fn gtk_text_view_get_type() -> usize;
     fn gtk_toggle_button_get_type() -> usize;
     fn gtk_tooltip_get_type() -> usize;
+    fn gtk_tree_drag_dest_get_type() -> usize;
+    fn gtk_tree_drag_source_get_type() -> usize;
     fn gtk_tree_expander_get_type() -> usize;
     fn gtk_tree_list_model_get_type() -> usize;
     fn gtk_tree_list_row_get_type() -> usize;
     fn gtk_tree_list_row_sorter_get_type() -> usize;
+    fn gtk_tree_model_get_type() -> usize;
     fn gtk_tree_model_filter_get_type() -> usize;
     fn gtk_tree_model_sort_get_type() -> usize;
     fn gtk_tree_selection_get_type() -> usize;
+    fn gtk_tree_sortable_get_type() -> usize;
     fn gtk_tree_store_get_type() -> usize;
     fn gtk_tree_view_get_type() -> usize;
     fn gtk_tree_view_column_get_type() -> usize;
@@ -247,6 +291,7 @@ unsafe extern "C" {
     fn gtk_video_get_type() -> usize;
     fn gtk_viewport_get_type() -> usize;
     fn gtk_volume_button_get_type() -> usize;
+    fn gtk_widget_get_type() -> usize;
     fn gtk_widget_paintable_get_type() -> usize;
     fn gtk_window_get_type() -> usize;
     fn gtk_window_controls_get_type() -> usize;
@@ -258,14 +303,21 @@ unsafe extern "C" {
 /// Must run after `gtk::init`.
 pub fn ensure_registered(gtype: &str) {
     match gtype {
+        "GtkATContext" => { unsafe { gtk_at_context_get_type() }; }
         "GtkAboutDialog" => { unsafe { gtk_about_dialog_get_type() }; }
+        "GtkAccessible" => { unsafe { gtk_accessible_get_type() }; }
         "GtkAccessibleHyperlink" => { crate::compat::call_get_type(c"gtk_accessible_hyperlink_get_type"); }
+        "GtkAccessibleHypertext" => { crate::compat::call_get_type(c"gtk_accessible_hypertext_get_type"); }
+        "GtkAccessibleRange" => { unsafe { gtk_accessible_range_get_type() }; }
+        "GtkAccessibleText" => { unsafe { gtk_accessible_text_get_type() }; }
         "GtkActionBar" => { unsafe { gtk_action_bar_get_type() }; }
+        "GtkActionable" => { unsafe { gtk_actionable_get_type() }; }
         "GtkActivateAction" => { unsafe { gtk_activate_action_get_type() }; }
         "GtkAdjustment" => { unsafe { gtk_adjustment_get_type() }; }
         "GtkAlertDialog" => { unsafe { gtk_alert_dialog_get_type() }; }
         "GtkAlternativeTrigger" => { unsafe { gtk_alternative_trigger_get_type() }; }
         "GtkAnyFilter" => { unsafe { gtk_any_filter_get_type() }; }
+        "GtkAppChooser" => { unsafe { gtk_app_chooser_get_type() }; }
         "GtkAppChooserButton" => { unsafe { gtk_app_chooser_button_get_type() }; }
         "GtkAppChooserDialog" => { unsafe { gtk_app_chooser_dialog_get_type() }; }
         "GtkAppChooserWidget" => { unsafe { gtk_app_chooser_widget_get_type() }; }
@@ -279,15 +331,21 @@ pub fn ensure_registered(gtype: &str) {
         "GtkBoolFilter" => { unsafe { gtk_bool_filter_get_type() }; }
         "GtkBox" => { unsafe { gtk_box_get_type() }; }
         "GtkBoxLayout" => { unsafe { gtk_box_layout_get_type() }; }
+        "GtkBuildable" => { unsafe { gtk_buildable_get_type() }; }
         "GtkBuilder" => { unsafe { gtk_builder_get_type() }; }
         "GtkBuilderCScope" => { unsafe { gtk_builder_cscope_get_type() }; }
         "GtkBuilderListItemFactory" => { unsafe { gtk_builder_list_item_factory_get_type() }; }
+        "GtkBuilderScope" => { unsafe { gtk_builder_scope_get_type() }; }
         "GtkButton" => { unsafe { gtk_button_get_type() }; }
         "GtkCClosureExpression" => { unsafe { gtk_cclosure_expression_get_type() }; }
         "GtkCalendar" => { unsafe { gtk_calendar_get_type() }; }
         "GtkCallbackAction" => { unsafe { gtk_callback_action_get_type() }; }
+        "GtkCellArea" => { unsafe { gtk_cell_area_get_type() }; }
         "GtkCellAreaBox" => { unsafe { gtk_cell_area_box_get_type() }; }
         "GtkCellAreaContext" => { unsafe { gtk_cell_area_context_get_type() }; }
+        "GtkCellEditable" => { unsafe { gtk_cell_editable_get_type() }; }
+        "GtkCellLayout" => { unsafe { gtk_cell_layout_get_type() }; }
+        "GtkCellRenderer" => { unsafe { gtk_cell_renderer_get_type() }; }
         "GtkCellRendererAccel" => { unsafe { gtk_cell_renderer_accel_get_type() }; }
         "GtkCellRendererCombo" => { unsafe { gtk_cell_renderer_combo_get_type() }; }
         "GtkCellRendererPixbuf" => { unsafe { gtk_cell_renderer_pixbuf_get_type() }; }
@@ -302,6 +360,7 @@ pub fn ensure_registered(gtype: &str) {
         "GtkCheckButton" => { unsafe { gtk_check_button_get_type() }; }
         "GtkClosureExpression" => { unsafe { gtk_closure_expression_get_type() }; }
         "GtkColorButton" => { unsafe { gtk_color_button_get_type() }; }
+        "GtkColorChooser" => { unsafe { gtk_color_chooser_get_type() }; }
         "GtkColorChooserDialog" => { unsafe { gtk_color_chooser_dialog_get_type() }; }
         "GtkColorChooserWidget" => { unsafe { gtk_color_chooser_widget_get_type() }; }
         "GtkColorDialog" => { unsafe { gtk_color_dialog_get_type() }; }
@@ -318,6 +377,7 @@ pub fn ensure_registered(gtype: &str) {
         "GtkConstraintGuide" => { unsafe { gtk_constraint_guide_get_type() }; }
         "GtkConstraintLayout" => { unsafe { gtk_constraint_layout_get_type() }; }
         "GtkConstraintLayoutChild" => { unsafe { gtk_constraint_layout_child_get_type() }; }
+        "GtkConstraintTarget" => { unsafe { gtk_constraint_target_get_type() }; }
         "GtkCssProvider" => { unsafe { gtk_css_provider_get_type() }; }
         "GtkCustomFilter" => { unsafe { gtk_custom_filter_get_type() }; }
         "GtkCustomLayout" => { unsafe { gtk_custom_layout_get_type() }; }
@@ -331,11 +391,13 @@ pub fn ensure_registered(gtype: &str) {
         "GtkDropDown" => { unsafe { gtk_drop_down_get_type() }; }
         "GtkDropTarget" => { unsafe { gtk_drop_target_get_type() }; }
         "GtkDropTargetAsync" => { unsafe { gtk_drop_target_async_get_type() }; }
+        "GtkEditable" => { unsafe { gtk_editable_get_type() }; }
         "GtkEditableLabel" => { unsafe { gtk_editable_label_get_type() }; }
         "GtkEmojiChooser" => { unsafe { gtk_emoji_chooser_get_type() }; }
         "GtkEntry" => { unsafe { gtk_entry_get_type() }; }
         "GtkEntryBuffer" => { unsafe { gtk_entry_buffer_get_type() }; }
         "GtkEntryCompletion" => { unsafe { gtk_entry_completion_get_type() }; }
+        "GtkEventController" => { unsafe { gtk_event_controller_get_type() }; }
         "GtkEventControllerFocus" => { unsafe { gtk_event_controller_focus_get_type() }; }
         "GtkEventControllerKey" => { unsafe { gtk_event_controller_key_get_type() }; }
         "GtkEventControllerLegacy" => { unsafe { gtk_event_controller_legacy_get_type() }; }
@@ -343,6 +405,8 @@ pub fn ensure_registered(gtype: &str) {
         "GtkEventControllerScroll" => { unsafe { gtk_event_controller_scroll_get_type() }; }
         "GtkEveryFilter" => { unsafe { gtk_every_filter_get_type() }; }
         "GtkExpander" => { unsafe { gtk_expander_get_type() }; }
+        "GtkExpression" => { unsafe { gtk_expression_get_type() }; }
+        "GtkFileChooser" => { unsafe { gtk_file_chooser_get_type() }; }
         "GtkFileChooserDialog" => { unsafe { gtk_file_chooser_dialog_get_type() }; }
         "GtkFileChooserNative" => { unsafe { gtk_file_chooser_native_get_type() }; }
         "GtkFileChooserWidget" => { unsafe { gtk_file_chooser_widget_get_type() }; }
@@ -358,12 +422,14 @@ pub fn ensure_registered(gtype: &str) {
         "GtkFlowBox" => { unsafe { gtk_flow_box_get_type() }; }
         "GtkFlowBoxChild" => { unsafe { gtk_flow_box_child_get_type() }; }
         "GtkFontButton" => { unsafe { gtk_font_button_get_type() }; }
+        "GtkFontChooser" => { unsafe { gtk_font_chooser_get_type() }; }
         "GtkFontChooserDialog" => { unsafe { gtk_font_chooser_dialog_get_type() }; }
         "GtkFontChooserWidget" => { unsafe { gtk_font_chooser_widget_get_type() }; }
         "GtkFontDialog" => { unsafe { gtk_font_dialog_get_type() }; }
         "GtkFontDialogButton" => { unsafe { gtk_font_dialog_button_get_type() }; }
         "GtkFrame" => { unsafe { gtk_frame_get_type() }; }
         "GtkGLArea" => { unsafe { gtk_gl_area_get_type() }; }
+        "GtkGesture" => { unsafe { gtk_gesture_get_type() }; }
         "GtkGestureClick" => { unsafe { gtk_gesture_click_get_type() }; }
         "GtkGestureDrag" => { unsafe { gtk_gesture_drag_get_type() }; }
         "GtkGestureLongPress" => { unsafe { gtk_gesture_long_press_get_type() }; }
@@ -379,6 +445,7 @@ pub fn ensure_registered(gtype: &str) {
         "GtkGridLayoutChild" => { unsafe { gtk_grid_layout_child_get_type() }; }
         "GtkGridView" => { unsafe { gtk_grid_view_get_type() }; }
         "GtkHeaderBar" => { unsafe { gtk_header_bar_get_type() }; }
+        "GtkIMContext" => { unsafe { gtk_im_context_get_type() }; }
         "GtkIMContextSimple" => { unsafe { gtk_im_context_simple_get_type() }; }
         "GtkIMMulticontext" => { unsafe { gtk_im_multicontext_get_type() }; }
         "GtkIconPaintable" => { unsafe { gtk_icon_paintable_get_type() }; }
@@ -389,8 +456,11 @@ pub fn ensure_registered(gtype: &str) {
         "GtkInscription" => { unsafe { gtk_inscription_get_type() }; }
         "GtkKeyvalTrigger" => { unsafe { gtk_keyval_trigger_get_type() }; }
         "GtkLabel" => { unsafe { gtk_label_get_type() }; }
+        "GtkLayoutChild" => { unsafe { gtk_layout_child_get_type() }; }
+        "GtkLayoutManager" => { unsafe { gtk_layout_manager_get_type() }; }
         "GtkLevelBar" => { unsafe { gtk_level_bar_get_type() }; }
         "GtkLinkButton" => { unsafe { gtk_link_button_get_type() }; }
+        "GtkListBase" => { unsafe { gtk_list_base_get_type() }; }
         "GtkListBox" => { unsafe { gtk_list_box_get_type() }; }
         "GtkListBoxRow" => { unsafe { gtk_list_box_row_get_type() }; }
         "GtkListHeader" => { unsafe { gtk_list_header_get_type() }; }
@@ -401,14 +471,19 @@ pub fn ensure_registered(gtype: &str) {
         "GtkLockButton" => { unsafe { gtk_lock_button_get_type() }; }
         "GtkMapListModel" => { unsafe { gtk_map_list_model_get_type() }; }
         "GtkMediaControls" => { unsafe { gtk_media_controls_get_type() }; }
+        "GtkMediaFile" => { unsafe { gtk_media_file_get_type() }; }
+        "GtkMediaStream" => { unsafe { gtk_media_stream_get_type() }; }
         "GtkMenuButton" => { unsafe { gtk_menu_button_get_type() }; }
         "GtkMessageDialog" => { unsafe { gtk_message_dialog_get_type() }; }
         "GtkMnemonicAction" => { unsafe { gtk_mnemonic_action_get_type() }; }
         "GtkMnemonicTrigger" => { unsafe { gtk_mnemonic_trigger_get_type() }; }
         "GtkMountOperation" => { unsafe { gtk_mount_operation_get_type() }; }
+        "GtkMultiFilter" => { unsafe { gtk_multi_filter_get_type() }; }
         "GtkMultiSelection" => { unsafe { gtk_multi_selection_get_type() }; }
         "GtkMultiSorter" => { unsafe { gtk_multi_sorter_get_type() }; }
         "GtkNamedAction" => { unsafe { gtk_named_action_get_type() }; }
+        "GtkNative" => { unsafe { gtk_native_get_type() }; }
+        "GtkNativeDialog" => { unsafe { gtk_native_dialog_get_type() }; }
         "GtkNeverTrigger" => { unsafe { gtk_never_trigger_get_type() }; }
         "GtkNoSelection" => { unsafe { gtk_no_selection_get_type() }; }
         "GtkNotebook" => { unsafe { gtk_notebook_get_type() }; }
@@ -416,6 +491,7 @@ pub fn ensure_registered(gtype: &str) {
         "GtkNothingAction" => { unsafe { gtk_nothing_action_get_type() }; }
         "GtkNumericSorter" => { unsafe { gtk_numeric_sorter_get_type() }; }
         "GtkObjectExpression" => { unsafe { gtk_object_expression_get_type() }; }
+        "GtkOrientable" => { unsafe { gtk_orientable_get_type() }; }
         "GtkOverlay" => { unsafe { gtk_overlay_get_type() }; }
         "GtkOverlayLayout" => { unsafe { gtk_overlay_layout_get_type() }; }
         "GtkOverlayLayoutChild" => { unsafe { gtk_overlay_layout_child_get_type() }; }
@@ -435,6 +511,7 @@ pub fn ensure_registered(gtype: &str) {
         "GtkPrintDialog" => { unsafe { gtk_print_dialog_get_type() }; }
         "GtkPrintJob" => { unsafe { gtk_print_job_get_type() }; }
         "GtkPrintOperation" => { unsafe { gtk_print_operation_get_type() }; }
+        "GtkPrintOperationPreview" => { unsafe { gtk_print_operation_preview_get_type() }; }
         "GtkPrintSettings" => { unsafe { gtk_print_settings_get_type() }; }
         "GtkPrintUnixDialog" => { unsafe { gtk_print_unix_dialog_get_type() }; }
         "GtkPrinter" => { unsafe { gtk_printer_get_type() }; }
@@ -443,18 +520,25 @@ pub fn ensure_registered(gtype: &str) {
         "GtkRange" => { unsafe { gtk_range_get_type() }; }
         "GtkRecentManager" => { unsafe { gtk_recent_manager_get_type() }; }
         "GtkRevealer" => { unsafe { gtk_revealer_get_type() }; }
+        "GtkRoot" => { unsafe { gtk_root_get_type() }; }
         "GtkScale" => { unsafe { gtk_scale_get_type() }; }
         "GtkScaleButton" => { unsafe { gtk_scale_button_get_type() }; }
+        "GtkScrollable" => { unsafe { gtk_scrollable_get_type() }; }
         "GtkScrollbar" => { unsafe { gtk_scrollbar_get_type() }; }
         "GtkScrolledWindow" => { unsafe { gtk_scrolled_window_get_type() }; }
         "GtkSearchBar" => { unsafe { gtk_search_bar_get_type() }; }
         "GtkSearchEntry" => { unsafe { gtk_search_entry_get_type() }; }
+        "GtkSectionModel" => { unsafe { gtk_section_model_get_type() }; }
         "GtkSelectionFilterModel" => { unsafe { gtk_selection_filter_model_get_type() }; }
+        "GtkSelectionModel" => { unsafe { gtk_selection_model_get_type() }; }
         "GtkSeparator" => { unsafe { gtk_separator_get_type() }; }
         "GtkSettings" => { unsafe { gtk_settings_get_type() }; }
         "GtkShortcut" => { unsafe { gtk_shortcut_get_type() }; }
+        "GtkShortcutAction" => { unsafe { gtk_shortcut_action_get_type() }; }
         "GtkShortcutController" => { unsafe { gtk_shortcut_controller_get_type() }; }
         "GtkShortcutLabel" => { unsafe { gtk_shortcut_label_get_type() }; }
+        "GtkShortcutManager" => { unsafe { gtk_shortcut_manager_get_type() }; }
+        "GtkShortcutTrigger" => { unsafe { gtk_shortcut_trigger_get_type() }; }
         "GtkShortcutsGroup" => { unsafe { gtk_shortcuts_group_get_type() }; }
         "GtkShortcutsSection" => { unsafe { gtk_shortcuts_section_get_type() }; }
         "GtkShortcutsShortcut" => { unsafe { gtk_shortcuts_shortcut_get_type() }; }
@@ -479,8 +563,10 @@ pub fn ensure_registered(gtype: &str) {
         "GtkStringObject" => { unsafe { gtk_string_object_get_type() }; }
         "GtkStringSorter" => { unsafe { gtk_string_sorter_get_type() }; }
         "GtkStyleContext" => { unsafe { gtk_style_context_get_type() }; }
+        "GtkStyleProvider" => { unsafe { gtk_style_provider_get_type() }; }
         "GtkSvg" => { crate::compat::call_get_type(c"gtk_svg_get_type"); }
         "GtkSwitch" => { unsafe { gtk_switch_get_type() }; }
+        "GtkSymbolicPaintable" => { unsafe { gtk_symbolic_paintable_get_type() }; }
         "GtkText" => { unsafe { gtk_text_get_type() }; }
         "GtkTextBuffer" => { unsafe { gtk_text_buffer_get_type() }; }
         "GtkTextChildAnchor" => { unsafe { gtk_text_child_anchor_get_type() }; }
@@ -490,13 +576,17 @@ pub fn ensure_registered(gtype: &str) {
         "GtkTextView" => { unsafe { gtk_text_view_get_type() }; }
         "GtkToggleButton" => { unsafe { gtk_toggle_button_get_type() }; }
         "GtkTooltip" => { unsafe { gtk_tooltip_get_type() }; }
+        "GtkTreeDragDest" => { unsafe { gtk_tree_drag_dest_get_type() }; }
+        "GtkTreeDragSource" => { unsafe { gtk_tree_drag_source_get_type() }; }
         "GtkTreeExpander" => { unsafe { gtk_tree_expander_get_type() }; }
         "GtkTreeListModel" => { unsafe { gtk_tree_list_model_get_type() }; }
         "GtkTreeListRow" => { unsafe { gtk_tree_list_row_get_type() }; }
         "GtkTreeListRowSorter" => { unsafe { gtk_tree_list_row_sorter_get_type() }; }
+        "GtkTreeModel" => { unsafe { gtk_tree_model_get_type() }; }
         "GtkTreeModelFilter" => { unsafe { gtk_tree_model_filter_get_type() }; }
         "GtkTreeModelSort" => { unsafe { gtk_tree_model_sort_get_type() }; }
         "GtkTreeSelection" => { unsafe { gtk_tree_selection_get_type() }; }
+        "GtkTreeSortable" => { unsafe { gtk_tree_sortable_get_type() }; }
         "GtkTreeStore" => { unsafe { gtk_tree_store_get_type() }; }
         "GtkTreeView" => { unsafe { gtk_tree_view_get_type() }; }
         "GtkTreeViewColumn" => { unsafe { gtk_tree_view_column_get_type() }; }
@@ -505,6 +595,7 @@ pub fn ensure_registered(gtype: &str) {
         "GtkVideo" => { unsafe { gtk_video_get_type() }; }
         "GtkViewport" => { unsafe { gtk_viewport_get_type() }; }
         "GtkVolumeButton" => { unsafe { gtk_volume_button_get_type() }; }
+        "GtkWidget" => { unsafe { gtk_widget_get_type() }; }
         "GtkWidgetPaintable" => { unsafe { gtk_widget_paintable_get_type() }; }
         "GtkWindow" => { unsafe { gtk_window_get_type() }; }
         "GtkWindowControls" => { unsafe { gtk_window_controls_get_type() }; }

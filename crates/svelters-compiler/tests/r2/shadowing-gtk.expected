@@ -1,0 +1,15 @@
+== gtk
+shadowing-gtk.svelte:18:12: warning[native_read_not_observable] (gtk): `tag.font` reads `font` of TextTag, which is only partially observed on gtk: side effects of setting other properties are not announced
+  help: read it where it is needed (an event handler), or mark the snapshot with `untrack(() => ...)`
+shadowing-gtk.svelte:38:34: warning[native_read_not_observable] (gtk): `tag.font` reads `font` of TextTag, which is only partially observed on gtk: side effects of setting other properties are not announced
+  help: read it where it is needed (an event handler), or mark the snapshot with `untrack(() => ...)`
+shadowing-gtk.svelte:40:19: warning[native_read_not_observable] (gtk): `tag.font` reads `font` of TextTag, which is only partially observed on gtk: side effects of setting other properties are not announced
+  help: read it where it is needed (an event handler), or mark the snapshot with `untrack(() => ...)`
+== gtk --strict-native
+shadowing-gtk.svelte:18:12: error[native_read_not_observable] (gtk): `tag.font` reads `font` of TextTag, which is only partially observed on gtk: side effects of setting other properties are not announced
+  help: read it where it is needed (an event handler), or mark the snapshot with `untrack(() => ...)`
+shadowing-gtk.svelte:38:34: error[native_read_not_observable] (gtk): `tag.font` reads `font` of TextTag, which is only partially observed on gtk: side effects of setting other properties are not announced
+  help: read it where it is needed (an event handler), or mark the snapshot with `untrack(() => ...)`
+shadowing-gtk.svelte:40:19: error[native_read_not_observable] (gtk): `tag.font` reads `font` of TextTag, which is only partially observed on gtk: side effects of setting other properties are not announced
+  help: read it where it is needed (an event handler), or mark the snapshot with `untrack(() => ...)`
+(no output: errors)

@@ -25,7 +25,9 @@ behavioural fixtures `experiments/native-compiler/fixtures/runes-*`.
 | `<script module>` (runes, exports, imports) | yes | hoisted above the component |
 | Instance `export function` / `export const` / `export { a as b }` | yes | `$$exports` object, `return $.pop($$exports)` |
 | `.svelte.js` modules (`compile_module`, CLI `--module`, Vite plugin) | yes | `client_module` shape |
-| `.svelte.ts`, `<script lang="ts">` | no | TypeScript parser not ported yet |
+| `<script lang="ts">` (and TypeScript in its template expressions) | yes | parsed by the acorn-typescript port; the types are stripped from the output (`svelte/ts.rs`); enums, decorators, accessor fields, constructor parameter properties and value namespaces are `typescript_invalid_feature`, as upstream (`deviations.md`) |
+| `.svelte.ts` modules | no | `compile_module` parses JavaScript only |
+| `{await p}` in a template expression (Svelte's experimental async) | no | `unsupported_feature` (FU3; it used to compile into an `await` inside a non-async effect); an `await` inside a template function (an `async` handler) and `{#await p}` blocks are fine |
 | Legacy mode (`export let`, `$:`, stores as state) | no | `legacy_export_invalid`; runes mode is forced |
 
 ## Native template attributes (X2/X3 renderer contract)

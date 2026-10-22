@@ -37,10 +37,6 @@ export class Application extends GObject_Object {
     call(this, 'activate', []);
   }
 
-  addMainOption(longName, shortName, flags, arg, description, argDescription = null) {
-    call(this, 'add_main_option', [longName, shortName, flags, arg, description, argDescription]);
-  }
-
   addOptionGroup(group) {
     call(this, 'add_option_group', [group]);
   }

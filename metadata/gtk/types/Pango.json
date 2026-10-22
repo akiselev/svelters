@@ -804,7 +804,8 @@
    "abstract": true,
    "blocked": {
     "get_features": "unknown type HarfBuzz.feature_t",
-    "get_glyph_extents": "type:needs-override:Pango.Rectangle"
+    "get_glyph_extents": "type:needs-override:Pango.Rectangle",
+    "get_languages": "struct by value"
    },
    "builder": false,
    "category": "object",
@@ -874,21 +875,6 @@
      },
      "ret_nullable": true,
      "since": "1.10"
-    },
-    {
-     "js": "getLanguages",
-     "name": "get_languages",
-     "params": [],
-     "ret": {
-      "elem": {
-       "k": "boxed",
-       "t": "Pango.Language"
-      },
-      "k": "array",
-      "len": "zero"
-     },
-     "ret_nullable": true,
-     "since": "1.50"
     },
     {
      "js": "getMetrics",

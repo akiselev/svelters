@@ -67,8 +67,9 @@ export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
   const dead = new Set(); // handles that died (destroyed or gone): teardown-shaped ops on them are no-ops
   // ABI v2.6 observations: `${h}:${prop}` -> { count, name, last }. Like the QuickJS host, only the
   // 0->1 and 1->0 transitions reach the "backend" (the log), and a native change is delivered only
-  // when its value differs from `last`: the value at the first observation, after our own setProp,
-  // or as last delivered (REACTIVITY.md section 5.2; the TestHost has no proportional props).
+  // when its value differs from `last`: unknown at the first observation (the first change is always
+  // delivered, FU3), then the value after our own setProp or as last delivered (REACTIVITY.md section
+  // 5.2; the TestHost has no proportional props).
   const observed = new Map();
   const forgetObserved = (h) => {
     for (const k of [...observed.keys()]) if (k.startsWith(`${h}:`)) observed.delete(k);
@@ -218,7 +219,8 @@ export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
       if (on) {
         if (o) o.count++;
         else {
-          observed.set(key, { count: 1, name: typeof propRef === 'string' ? propRef : name, last: w(h).props.get(name) ?? null });
+          // `last` starts unknown (undefined; values are never undefined): no baseline, as in the QuickJS host (FU3).
+          observed.set(key, { count: 1, name: typeof propRef === 'string' ? propRef : name, last: undefined });
           lines.push(`observe #${h} ${name} on`);
         }
         return true;

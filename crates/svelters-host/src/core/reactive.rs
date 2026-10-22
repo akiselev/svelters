@@ -3,7 +3,7 @@
 //!
 //! - **Stores.** `host.observe(h, field, true)` on a store object subscribes this host to the store (one
 //!   [`StoreSub`] per handle: a dirty mask per 64 fields) and refcounts (h, field) in the same `observed`
-//!   table as native props, with the field's current value as the baseline. Writers on any thread set
+//!   table as native props, with `last` unknown at first (no baseline read, FU3: as for native props). Writers on any thread set
 //!   bits and wake the host once ([`Hub`]). At the checkpoint, [`collect`] folds the dirty fields that are
 //!   observed into the dirty set; `take_changes` reads them (the getter: a clone under the read lock),
 //!   compares them with `last` and delivers the changed ones in the one `__svelters_changed` batch.
@@ -122,8 +122,9 @@ impl Core {
                 Name::Str(s) => s.to_string(),
                 Name::Id(_) => field.name.to_string(),
             };
-            let last = if field.proportional { None } else { self.read_last(h, p) };
-            let o = Observed { count: 1, name, proportional: field.proportional, last, force: false };
+            // No baseline (FU3, as `op_observe`): JS may hold a value read before a writer thread changed
+            // the field, so `last` starts unknown and the first marked change is always delivered.
+            let o = Observed { count: 1, name, proportional: field.proportional, last: None, force: false };
             self.st.borrow_mut().observed.insert((h, p), o);
             Ok(true)
         } else {

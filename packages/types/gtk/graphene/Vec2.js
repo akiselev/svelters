@@ -101,9 +101,4 @@ export class Vec2 extends NativeValue {
     const __res = call(this, 'subtract', [b]);
     return { res: wrapValue(Vec2, __res.res) };
   }
-
-  toFloat() {
-    const __res = call(this, 'to_float', []);
-    return { dest: __res.dest };
-  }
 }

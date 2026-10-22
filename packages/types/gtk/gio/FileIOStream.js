@@ -34,10 +34,6 @@ export class FileIOStream extends IOStream {
     return call(this, 'can_truncate', []);
   }
 
-  seek(offset, type, cancellable = null) {
-    return call(this, 'seek', [offset, type, cancellable]);
-  }
-
   tell() {
     return call(this, 'tell', []);
   }

@@ -427,7 +427,15 @@
   },
   "Euler": {
    "abstract": false,
-   "blocked": {},
+   "blocked": {
+    "get_order": "enum without GType",
+    "init_from_matrix": "enum without GType",
+    "init_from_quaternion": "enum without GType",
+    "init_from_radians": "enum without GType",
+    "init_from_vec3": "enum without GType",
+    "init_with_order": "enum without GType",
+    "reorder": "enum without GType"
+   },
    "builder": false,
    "category": "value",
    "constructors": [
@@ -446,12 +454,7 @@
    "gtype": "GrapheneEuler",
    "hidden": [
     "init",
-    "init_from_euler",
-    "init_from_matrix",
-    "init_from_quaternion",
-    "init_from_radians",
-    "init_from_vec3",
-    "init_with_order"
+    "init_from_euler"
    ],
    "interfaces": [],
    "kind": "boxed",
@@ -503,16 +506,6 @@
      "since": "1.10"
     },
     {
-     "js": "getOrder",
-     "name": "get_order",
-     "params": [],
-     "ret": {
-      "k": "enum",
-      "t": "Graphene.EulerOrder"
-     },
-     "since": "1.2"
-    },
-    {
      "js": "getX",
      "name": "get_x",
      "params": [],
@@ -536,33 +529,6 @@
      "params": [],
      "ret": {
       "k": "float"
-     },
-     "since": "1.2"
-    },
-    {
-     "js": "reorder",
-     "name": "reorder",
-     "params": [
-      {
-       "js": "order",
-       "name": "order",
-       "type": {
-        "k": "enum",
-        "t": "Graphene.EulerOrder"
-       }
-      },
-      {
-       "dir": "out",
-       "js": "res",
-       "name": "res",
-       "type": {
-        "k": "boxed",
-        "t": "Graphene.Euler"
-       }
-      }
-     ],
-     "ret": {
-      "k": "void"
      },
      "since": "1.2"
     },
@@ -631,7 +597,6 @@
    "properties": [],
    "qualified": "Graphene.Euler",
    "refs": [
-    "Graphene.EulerOrder",
     "Graphene.Matrix",
     "Graphene.Quaternion",
     "Graphene.Vec3"
@@ -644,7 +609,9 @@
   },
   "Matrix": {
    "abstract": false,
-   "blocked": {},
+   "blocked": {
+    "to_float": "caller-allocated out value"
+   },
    "builder": false,
    "category": "value",
    "constructors": [
@@ -1228,29 +1195,6 @@
      ],
      "ret": {
       "k": "bool"
-     },
-     "since": "1.0"
-    },
-    {
-     "js": "toFloat",
-     "name": "to_float",
-     "params": [
-      {
-       "dir": "out",
-       "js": "v",
-       "name": "v",
-       "type": {
-        "elem": {
-         "k": "float"
-        },
-        "fixed": true,
-        "k": "array",
-        "len": 16
-       }
-      }
-     ],
-     "ret": {
-      "k": "void"
      },
      "since": "1.0"
     },
@@ -2891,7 +2835,11 @@
   },
   "Ray": {
    "abstract": false,
-   "blocked": {},
+   "blocked": {
+    "intersect_box": "enum without GType",
+    "intersect_sphere": "enum without GType",
+    "intersect_triangle": "enum without GType"
+   },
    "builder": false,
    "category": "value",
    "constructors": [
@@ -3063,87 +3011,6 @@
      "since": "1.4"
     },
     {
-     "js": "intersectBox",
-     "name": "intersect_box",
-     "params": [
-      {
-       "js": "b",
-       "name": "b",
-       "type": {
-        "k": "boxed",
-        "t": "Graphene.Box"
-       }
-      },
-      {
-       "dir": "out",
-       "js": "tOut",
-       "name": "t_out",
-       "type": {
-        "k": "float"
-       }
-      }
-     ],
-     "ret": {
-      "k": "enum",
-      "t": "Graphene.RayIntersectionKind"
-     },
-     "since": "1.10"
-    },
-    {
-     "js": "intersectSphere",
-     "name": "intersect_sphere",
-     "params": [
-      {
-       "js": "s",
-       "name": "s",
-       "type": {
-        "k": "boxed",
-        "t": "Graphene.Sphere"
-       }
-      },
-      {
-       "dir": "out",
-       "js": "tOut",
-       "name": "t_out",
-       "type": {
-        "k": "float"
-       }
-      }
-     ],
-     "ret": {
-      "k": "enum",
-      "t": "Graphene.RayIntersectionKind"
-     },
-     "since": "1.10"
-    },
-    {
-     "js": "intersectTriangle",
-     "name": "intersect_triangle",
-     "params": [
-      {
-       "js": "t",
-       "name": "t",
-       "type": {
-        "k": "boxed",
-        "t": "Graphene.Triangle"
-       }
-      },
-      {
-       "dir": "out",
-       "js": "tOut",
-       "name": "t_out",
-       "type": {
-        "k": "float"
-       }
-      }
-     ],
-     "ret": {
-      "k": "enum",
-      "t": "Graphene.RayIntersectionKind"
-     },
-     "since": "1.10"
-    },
-    {
      "js": "intersectsBox",
      "name": "intersects_box",
      "params": [
@@ -3208,7 +3075,6 @@
     "Graphene.Box",
     "Graphene.Plane",
     "Graphene.Point3D",
-    "Graphene.RayIntersectionKind",
     "Graphene.Sphere",
     "Graphene.Triangle",
     "Graphene.Vec3"
@@ -4541,7 +4407,9 @@
   },
   "Vec2": {
    "abstract": false,
-   "blocked": {},
+   "blocked": {
+    "to_float": "caller-allocated out value"
+   },
    "builder": false,
    "category": "value",
    "constructors": [
@@ -4914,29 +4782,6 @@
       "k": "void"
      },
      "since": "1.0"
-    },
-    {
-     "js": "toFloat",
-     "name": "to_float",
-     "params": [
-      {
-       "dir": "out",
-       "js": "dest",
-       "name": "dest",
-       "type": {
-        "elem": {
-         "k": "float"
-        },
-        "fixed": true,
-        "k": "array",
-        "len": 2
-       }
-      }
-     ],
-     "ret": {
-      "k": "void"
-     },
-     "since": "1.0"
     }
    ],
    "name": "Vec2",
@@ -4995,7 +4840,9 @@
   },
   "Vec3": {
    "abstract": false,
-   "blocked": {},
+   "blocked": {
+    "to_float": "caller-allocated out value"
+   },
    "builder": false,
    "category": "value",
    "constructors": [
@@ -5506,29 +5353,6 @@
       "k": "void"
      },
      "since": "1.0"
-    },
-    {
-     "js": "toFloat",
-     "name": "to_float",
-     "params": [
-      {
-       "dir": "out",
-       "js": "dest",
-       "name": "dest",
-       "type": {
-        "elem": {
-         "k": "float"
-        },
-        "fixed": true,
-        "k": "array",
-        "len": 3
-       }
-      }
-     ],
-     "ret": {
-      "k": "void"
-     },
-     "since": "1.0"
     }
    ],
    "name": "Vec3",
@@ -5600,7 +5424,9 @@
   },
   "Vec4": {
    "abstract": false,
-   "blocked": {},
+   "blocked": {
+    "to_float": "caller-allocated out value"
+   },
    "builder": false,
    "category": "value",
    "constructors": [
@@ -6024,29 +5850,6 @@
        "type": {
         "k": "boxed",
         "t": "Graphene.Vec4"
-       }
-      }
-     ],
-     "ret": {
-      "k": "void"
-     },
-     "since": "1.0"
-    },
-    {
-     "js": "toFloat",
-     "name": "to_float",
-     "params": [
-      {
-       "dir": "out",
-       "js": "dest",
-       "name": "dest",
-       "type": {
-        "elem": {
-         "k": "float"
-        },
-        "fixed": true,
-        "k": "array",
-        "len": 4
        }
       }
      ],

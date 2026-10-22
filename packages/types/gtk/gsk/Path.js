@@ -36,16 +36,6 @@ export class Path extends NativeValue {
     return { ret: __res.ret, result: wrapValue(PathPoint, __res.result) };
   }
 
-  getNext(point) {
-    const __res = call(this, 'get_next', [point]);
-    return { ret: __res.ret, point: wrapValue(PathPoint, __res.point) };
-  }
-
-  getPrevious(point) {
-    const __res = call(this, 'get_previous', [point]);
-    return { ret: __res.ret, point: wrapValue(PathPoint, __res.point) };
-  }
-
   getStartPoint() {
     const __res = call(this, 'get_start_point', []);
     return { ret: __res.ret, result: wrapValue(PathPoint, __res.result) };

@@ -166,6 +166,15 @@ impl Sensor {
         n
     }
 
+    /// Emits `n` readings on the JS thread, in this one call: they all reach the hub before the next
+    /// checkpoint, so that checkpoint sees all of them (a worker burst may be split across checkpoints).
+    pub fn burst_now(&self, n: u32) -> u32 {
+        for i in 0..n {
+            self.events.emit(SensorEvent::Reading { value: i as f64 * 0.5, seq: i });
+        }
+        n
+    }
+
     /// Emits `reset`; returns how many hosts listened.
     pub fn reset(&self) -> u32 {
         self.events.emit(SensorEvent::Reset) as u32
@@ -407,6 +416,8 @@ bump(s, 10000, 1).then((v) => console.log('done', v));
     );
 }
 
+/// `update` marks every field. The first marked change after `observe` is always delivered (no baseline,
+/// FU3: `last` starts unknown, as for native props); from then on the compare drops the unchanged ones.
 #[test]
 fn update_marks_every_field_and_the_compare_drops_the_unchanged() {
     with_host(
@@ -416,6 +427,12 @@ fn update_marks_every_field_and_the_compare_drops_the_unchanged() {
 import {{ freshStats, touchAll }} from 'svelters:app/rx';
 const s = freshStats();
 for (const p of ['count', 'energy', 'running', 'speed', 'label']) H.observe(s.svlHandle, p, true);
+const watch = globalThis.__svelters_changed;
+let again = true;
+globalThis.__svelters_changed = (b) => {{
+  watch(b);
+  if (again) {{ again = false; touchAll(s); console.log('touched again'); }}
+}};
 touchAll(s);
 console.log('touched');
 "
@@ -423,11 +440,17 @@ console.log('touched');
         |r| {
             let s0 = r.host.reactive_stats();
             r.turn();
+            assert!(r.has("touched"));
+            assert_eq!(r.count("batch "), 1, "the first announcement after observe is delivered: {:?}", r.lines);
+            assert_eq!(r.count("changed "), 5, "{:?}", r.lines);
+            assert!(r.has("touched again"), "{:?}", r.lines);
+            let s1 = r.host.reactive_stats();
+            assert_eq!(s1.store_delivered - s0.store_delivered, 5, "{s1:?}");
+            r.turn();
             r.turn();
             let s = r.host.reactive_stats();
-            assert!(r.has("touched"));
-            assert_eq!(r.count("batch "), 0, "nothing changed: {:?}", r.lines);
-            assert_eq!(s.store_unchanged - s0.store_unchanged, 5, "{s:?}");
+            assert_eq!(r.count("batch "), 1, "nothing changed the second time: {:?}", r.lines);
+            assert_eq!(s.store_unchanged - s1.store_unchanged, 5, "{s:?}");
             r.no_errors();
         },
     );
@@ -593,14 +616,25 @@ fn an_event_flood_warns_once() {
 import { freshStats, Sensor } from 'svelters:app/rx';
 const sensor = new Sensor(freshStats());
 let n = 0;
-sensor.on('reading', () => n++);
+// Each flood is 1500 readings emitted synchronously in one JS call, so one checkpoint collects all of
+// them (a worker burst could be split across checkpoints under load and never pass the threshold). The
+// second flood is emitted while the first is delivered, so a later checkpoint collects it.
+sensor.on('reading', () => {
+  n++;
+  if (n === 1500) sensor.burstNow(1500);
+  if (n === 3000) console.log('readings', n);
+});
 globalThis.keep = sensor;
-sensor.burst(1500).then(() => sensor.burst(1500)).then(() => console.log('readings', n));
+sensor.burstNow(1500);
 "#,
         |r| {
+            let s0 = r.host.reactive_stats();
             r.line("readings 3000");
+            let s = r.host.reactive_stats();
+            assert_eq!(s.events - s0.events, 3000, "{s:?}");
+            assert!(s.collects - s0.collects >= 2, "two floods, two checkpoints: {s:?}");
             let warns: Vec<_> = r.lines.iter().filter(|l| l.contains("more than 1000 events")).collect();
-            assert_eq!(warns.len(), 1, "{:?}", r.lines);
+            assert_eq!(warns.len(), 1, "two floods of 1500, one warning: {:?}", r.lines);
             r.no_errors();
         },
     );
