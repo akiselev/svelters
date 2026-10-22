@@ -15,7 +15,7 @@ use cssparser::{
     RuleBodyParser, StyleSheetParser, Token,
 };
 use selectors::parser::ParseRelative;
-use std::cell::{Cell, RefCell};
+use std::cell::RefCell;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicU32, Ordering};
 
@@ -96,8 +96,8 @@ impl Stylesheet {
         let cx = Ctx::new(opts);
         let mut input = Parser::new(text);
         let mut p = RulesParser { cx: &cx, nested_in: None, layer: None, media: Vec::new(), decls_only: false };
-        let mut iter = StyleSheetParser::new(&mut input, &mut p);
-        while let Some(r) = iter.next() {
+        let iter = StyleSheetParser::new(&mut input, &mut p);
+        for r in iter {
             if let Err((e, _, loc)) = r {
                 cx.diags.borrow_mut().push(Diagnostic::error(loc, describe(&e)));
             }
@@ -114,12 +114,11 @@ struct Ctx<'o> {
     rules: RefCell<Vec<Option<Rule>>>,
     layers: RefCell<Vec<Atom>>,
     diags: RefCell<Vec<Diagnostic>>,
-    _anon: Cell<u32>,
 }
 
 impl<'o> Ctx<'o> {
     fn new(opts: &'o ParseOptions<'o>) -> Self {
-        Ctx { opts, rules: RefCell::new(Vec::new()), layers: RefCell::new(Vec::new()), diags: RefCell::new(Vec::new()), _anon: Cell::new(0) }
+        Ctx { opts, rules: RefCell::new(Vec::new()), layers: RefCell::new(Vec::new()), diags: RefCell::new(Vec::new()) }
     }
 
     fn declare_layer(&self, name: &Atom) {
@@ -201,8 +200,8 @@ impl<'a, 'o> RulesParser<'a, 'o> {
             Some(sel) => self.child(None, layer, media).style_block(sel, start, input),
             None => {
                 let mut body = self.child(None, layer, media);
-                let mut iter = RuleBodyParser::new(input, &mut body);
-                while let Some(r) = iter.next() {
+                let iter = RuleBodyParser::new(input, &mut body);
+                for r in iter {
                     if let Err((e, _, loc)) = r {
                         self.cx.diags.borrow_mut().push(Diagnostic::error(loc, describe(&e)));
                     }
@@ -241,8 +240,8 @@ impl<'a, 'o> RulesParser<'a, 'o> {
 fn collect_body<'i>(p: &mut RulesParser<'_, '_>, input: &mut Parser<'i>) -> Vec<Declaration> {
     let cx = p.cx;
     let mut decls = Vec::new();
-    let mut iter = RuleBodyParser::new(input, p);
-    while let Some(r) = iter.next() {
+    let iter = RuleBodyParser::new(input, p);
+    for r in iter {
         match r {
             Ok(Item::Decl(d)) => decls.push(d),
             Ok(Item::Done) => {}

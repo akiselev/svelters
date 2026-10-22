@@ -92,7 +92,7 @@ impl Tree {
         let mut stack: Vec<(usize, usize)> = Vec::new(); // (indent, node)
         for line in outline.lines().filter(|l| !l.trim().is_empty()) {
             let indent = line.len() - line.trim_start().len();
-            let mut parts = line.trim().split_whitespace();
+            let mut parts = line.split_whitespace();
             let head = parts.next().unwrap();
             let mut d = Data::default();
             for s in parts {
