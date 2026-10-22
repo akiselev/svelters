@@ -179,6 +179,7 @@ pub struct EventEntry {
 }
 
 /// One `#[part]` of a kind (ARCH-WIDGETS §1.3): `::part(name)` in CSS.
+#[derive(Debug)]
 pub struct PartEntry {
     /// The part name, the field name in kebab-case.
     pub name: &'static str,
@@ -519,10 +520,17 @@ impl WidgetCx<'_> {
         self.s.style.part_computed(self.node, name).map(|c| &**c)
     }
 
-    /// The node's style over `ua` in its current state: what the paint primitives read.
+    /// The node's style over `ua` in its current state, with its running CSS transitions: what
+    /// the paint primitives read.
     pub fn style(&self, ua: crate::paint::Ua) -> crate::paint::StyleView<'_> {
         let css = self.s.style.computed(self.node).map(|c| &**c);
-        crate::paint::StyleView::new(css, ua, self.state, self.dark)
+        crate::paint::StyleView::new(css, ua, self.state, self.dark).with_overlay(self.s.style.overlay(self.node))
+    }
+
+    /// OW-CSS: part `name`'s view under `host` (this node's [`WidgetCx::style`]): its
+    /// `::part(name)` style over `ua`, with the part's running transitions, inheriting from the host.
+    pub fn part<'v>(&'v self, host: &'v crate::paint::StyleView<'v>, name: &str, ua: crate::paint::Ua) -> crate::paint::StyleView<'v> {
+        host.part(self.part_css(name), ua).with_overlay(self.s.style.part_overlay(self.node, name))
     }
 
     /// A paint context on `ui`'s painter for this node (traced when the pass traces).
