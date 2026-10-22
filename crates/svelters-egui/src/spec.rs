@@ -678,6 +678,8 @@ pub fn behaviors_typings() -> String {
     s
 }
 
+// ZU3: build-time dump of typings and specs (`--dump-types`), not run per frame.
+#[allow(clippy::disallowed_methods)]
 /// Writes this binary's typings and specs into `dir` (an app's `.svelters/app`): the exports
 /// (`exports.json`, `app.d.ts`, one stub per module; `svelters_host::exports::dump`), `kinds.json`
 /// ([`fragment`]), `kinds.d.ts` ([`kinds_typings`]) and, when the binary has behaviours,
