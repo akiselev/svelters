@@ -224,14 +224,14 @@ impl Stylist {
         self.match_candidates(el, candidates, None, caches)
     }
 
-    /// Whether any registered rule has a selector ending in `pseudo` (a widget skips computing a
-    /// part's style when none does).
+    /// Whether any registered rule has a selector ending in a pseudo-element that `pseudo` matches
+    /// (a widget skips computing a part's style when none does).
     pub fn has_pseudo_rules(&self, pseudo: &PseudoElement) -> bool {
-        self.index.pseudo.iter().any(|&(r, s)| self.entries[r as usize].rule.selectors.slice()[s as usize].pseudo_element() == Some(pseudo))
+        self.index.pseudo.iter().any(|&(r, s)| self.entries[r as usize].rule.selectors.slice()[s as usize].pseudo_element().is_some_and(|p| pseudo.matched_by(p)))
     }
 
     fn match_candidates<E: Element>(&self, el: E, candidates: Vec<(u32, u16)>, pseudo: Option<&PseudoElement>, caches: &mut MatchCaches) -> Vec<MatchedRule> {
-        let wanted = |p: &PseudoElement| Some(p) == pseudo;
+        let wanted = |p: &PseudoElement| pseudo.is_some_and(|mine| mine.matched_by(p));
         let mut cx = MatchingContext::new(
             if pseudo.is_some() { MatchingMode::ForStatelessPseudoElement } else { MatchingMode::Normal },
             None,
@@ -251,7 +251,9 @@ impl Stylist {
                 continue;
             }
             let sel = &e.rule.selectors.slice()[s as usize];
-            if pseudo.is_some() && sel.pseudo_element() != pseudo {
+            if let Some(mine) = pseudo
+                && !sel.pseudo_element().is_some_and(|p| mine.matched_by(p))
+            {
                 continue;
             }
             if selectors::matching::matches_selector(sel, 0, None, &node, &mut cx) {

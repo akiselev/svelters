@@ -58,7 +58,7 @@ fn new_state_pseudo_classes() {
         assert_eq!(ids(sel), *want, "{sel}");
     }
     // bits 14–22 in the documented order
-    let names: Vec<&str> = StateMask::BUILTIN[14..].iter().map(|(n, _)| *n).collect();
+    let names: Vec<&str> = StateMask::BUILTIN[14..23].iter().map(|(n, _)| *n).collect();
     assert_eq!(names, ["focus-visible", "indeterminate", "placeholder-shown", "default", "drop-target", "current", "backdrop", "required", "user-invalid"]);
     for (i, (_, m)) in StateMask::BUILTIN.iter().enumerate() {
         assert_eq!(m.0, 1 << i);
@@ -304,4 +304,64 @@ fn text_primitive_properties() {
     assert_eq!(v.keyword("text-decoration-line"), Some("underline"));
     assert_eq!(v.get("line-height"), Some(&ComputedValue::Raw("1.4".into())));
     assert_eq!(StyleView::new(&form).keyword("text-decoration-line"), None, "not inherited");
+}
+
+#[test]
+fn multi_name_parts_and_has_children() {
+    // P10: a part with several names matches rules for any subset; P5: :has-children (bit 23)
+    let s = stylist(
+        "calendar::part(day) { color: rgb(1, 1, 1) }
+         calendar::part(day today) { background-color: rgb(0, 0, 255) }
+         calendar::part(day weekend) { color: rgb(255, 0, 0) }
+         row:has-children { cursor: pointer }",
+    );
+    let tree = Tree::parse("window\n  calendar#c\n  row#r :has-children\n  row#leaf");
+    let cx = ComputeContext::default();
+    let mut caches = MatchCaches::new();
+    let host = style_of(&s, &tree, "c");
+    let today = s.compute_pseudo(tree.by_id("c"), &PseudoElement::parts(&["today", "day"]), &host, &cx, &mut caches);
+    let v = StyleView::new(&today);
+    assert_eq!((v.color("color"), v.background()), (Some(rgb(1, 1, 1)), Some(rgb(0, 0, 255))));
+    let weekend = s.compute_pseudo(tree.by_id("c"), &PseudoElement::parts(&["day", "weekend"]), &host, &cx, &mut caches);
+    let v = StyleView::new(&weekend);
+    assert_eq!((v.color("color"), v.background()), (Some(rgb(255, 0, 0)), None));
+    assert!(s.has_pseudo_rules(&PseudoElement::parts(&["day", "today", "weekend"])));
+    assert!(!s.has_pseudo_rules(&PseudoElement::part("today")), "`day today` needs both names");
+    assert_eq!(StyleView::new(&style_of(&s, &tree, "r")).cursor(), Some("pointer"));
+    assert_eq!(StyleView::new(&style_of(&s, &tree, "leaf")).cursor(), None);
+    assert_eq!(StateMask::BUILTIN[23], ("has-children", StateMask::HAS_CHILDREN));
+    assert_eq!(StateMask::HAS_CHILDREN.0, 1 << 23);
+}
+
+#[test]
+fn glyph_content_and_part_painters() {
+    // P2 glyphs from CSS; WIDGET-PARITY Q1 painters selected with paint(name)
+    let s = stylist(
+        "checkbox:checked::part(mark) { content: icon(check) }
+         checkbox:indeterminate::part(mark) { content: icon(dash) }
+         combo-box::part(chevron) { content: url(\"asset://icons/chev.svg\") }
+         slider::part(thumb) { background-image: paint(cad.knurl) }
+         slider::part(track) { content: paint(cad.ticks) }
+         button::part(mark) { content: none }",
+    );
+    let tree = Tree::parse("window\n  checkbox#a :checked\n  checkbox#b :indeterminate\n  combo-box#c\n  slider#s");
+    let cx = ComputeContext::default();
+    let mut caches = MatchCaches::new();
+    let part = |id: &str, p: &str| {
+        let host = style_of(&s, &tree, id);
+        s.compute_pseudo(tree.by_id(id), &PseudoElement::part(p), &host, &cx, &mut MatchCaches::new())
+    };
+    let _ = &mut caches;
+    assert_eq!(StyleView::new(&part("a", "mark")).content(), Some(&Content::Icon("check".into())));
+    assert_eq!(StyleView::new(&part("b", "mark")).content(), Some(&Content::Icon("dash".into())));
+    assert_eq!(StyleView::new(&part("c", "chevron")).content(), Some(&Content::Url("asset://icons/chev.svg".into())));
+    let thumb = part("s", "thumb");
+    assert_eq!(StyleView::new(&thumb).background_painter(), Some("cad.knurl"));
+    assert_eq!(StyleView::new(&thumb).background_image(), None);
+    assert_eq!(StyleView::new(&part("s", "track")).content(), Some(&Content::Paint("cad.ticks".into())));
+    // bad values are errors
+    let mut st = Stylist::new(&tables::EGUI);
+    let sheet = Stylesheet::parse("a { content: icon() } b { background-image: paint(1x) } c { content: \"\" }", &ParseOptions::default());
+    let (_, diags) = st.add_sheet(&sheet, Origin::Author);
+    assert_eq!(diags.iter().filter(|d| d.severity == Severity::Error).count(), 3, "{diags:?}");
 }

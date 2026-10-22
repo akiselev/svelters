@@ -45,4 +45,4 @@ pub use shorthand::LINE_STYLES;
 pub use table::{Dialect, Prop, Table, ValueType, Via};
 pub use transition::Transitions;
 pub use view::{BorderSide, Outline, Side, StyleView, TextSettings};
-pub use values::{Color, ComputedValue, GradientStop, Length, LinearGradient, Shadow, TimingFunction, Transition};
+pub use values::{Color, ComputedValue, Content, GradientStop, Length, LinearGradient, Shadow, TimingFunction, Transition};

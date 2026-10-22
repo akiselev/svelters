@@ -290,6 +290,7 @@ export const STYLE_TABLES = {
       "box-shadow": {"via": "css", "type": "shadow"},
       "color": {"via": "css", "type": "color"},
       "column-gap": {"via": "setter", "prop": "column-gap", "native": "column-gap", "type": "length", "kinds": ["Box", "Grid"], "tags": 21},
+      "content": {"via": "css", "type": "content"},
       "cursor": {"via": "css", "type": "enum", "values": ["auto", "default", "none", "context-menu", "help", "pointer", "progress", "wait", "cell", "crosshair", "text", "vertical-text", "alias", "copy", "move", "no-drop", "not-allowed", "grab", "grabbing", "all-scroll", "col-resize", "row-resize", "n-resize", "e-resize", "s-resize", "w-resize", "ne-resize", "nw-resize", "se-resize", "sw-resize", "ew-resize", "ns-resize", "nesw-resize", "nwse-resize", "zoom-in", "zoom-out"]},
       "display": {"via": "css", "type": "enum", "values": ["flex", "grid", "none"]},
       "flex-basis": {"via": "setter", "prop": "flex-basis", "native": "flex-basis", "type": "length", "kinds": ["Widget"], "tags": 20},

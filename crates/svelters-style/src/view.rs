@@ -6,7 +6,7 @@
 //! gives one with the store's interpolated values overlaid.
 
 use crate::computed::ComputedStyle;
-use crate::values::{Color, ComputedValue, LinearGradient, Shadow, Transition};
+use crate::values::{Color, ComputedValue, Content, LinearGradient, Shadow, Transition};
 use smallvec::SmallVec;
 
 /// A box side, in CSS order.
@@ -183,6 +183,22 @@ impl<'a> StyleView<'a> {
     pub fn background_image(&self) -> Option<&LinearGradient> {
         match self.get("background-image") {
             Some(ComputedValue::Image(Some(g))) => Some(g),
+            _ => None,
+        }
+    }
+
+    /// `background-image: paint(name)`: the Rust part painter to draw the background with.
+    pub fn background_painter(&self) -> Option<&str> {
+        match self.get("background-image") {
+            Some(ComputedValue::Painter(n)) => Some(n),
+            _ => None,
+        }
+    }
+
+    /// `content` of a glyph part (P2); unset is `None` (the widget's default glyph, if any).
+    pub fn content(&self) -> Option<&Content> {
+        match self.get("content") {
+            Some(ComputedValue::Content(c)) => Some(c),
             _ => None,
         }
     }

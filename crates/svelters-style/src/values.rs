@@ -84,6 +84,11 @@ pub enum ComputedValue {
     Transitions(Box<[Transition]>),
     /// `background-image`; `None` = `none`.
     Image(Option<Box<LinearGradient>>),
+    /// `background-image: paint(name)`: the registered Rust part painter `name` (`cad.knurl`)
+    /// draws the background (WIDGET-PARITY Q1; the registry is OW0b's).
+    Painter(Box<str>),
+    /// `content` of a glyph part (P2).
+    Content(Content),
     Raw(Box<str>),
 }
 
@@ -148,6 +153,11 @@ impl fmt::Display for ComputedValue {
                 }
                 Ok(())
             }
+            ComputedValue::Painter(n) => write!(f, "paint({n})"),
+            ComputedValue::Content(Content::None) => f.write_str("none"),
+            ComputedValue::Content(Content::Icon(k)) => write!(f, "icon({k})"),
+            ComputedValue::Content(Content::Url(u)) => write!(f, "url({u:?})"),
+            ComputedValue::Content(Content::Paint(n)) => write!(f, "paint({n})"),
             ComputedValue::Image(None) => f.write_str("none"),
             ComputedValue::Image(Some(g)) => {
                 write!(f, "linear-gradient({}deg", g.angle)?;
@@ -160,6 +170,18 @@ impl fmt::Display for ComputedValue {
             ComputedValue::Raw(s) => f.write_str(s),
         }
     }
+}
+
+/// What a glyph part draws (WIDGET-PARITY P2): `content: none | icon(key) | url(…) | paint(name)`.
+#[derive(Clone, Debug, PartialEq)]
+pub enum Content {
+    None,
+    /// An icon key for the icon registry (`check`, `chevron-down`, `cad.extrude`).
+    Icon(Box<str>),
+    /// An asset URL (`asset://…`).
+    Url(Box<str>),
+    /// A registered Rust part painter.
+    Paint(Box<str>),
 }
 
 /// An easing function (CSS Easing 1).
@@ -399,6 +421,9 @@ fn parse_typed<'i>(prop: &'static Prop, input: &mut Parser<'i>, cx: &ValueCx<'_>
             if input.try_parse(|i| i.expect_ident_matching("none")).is_ok() {
                 return Ok(ComputedValue::Image(None));
             }
+            if let Ok(n) = input.try_parse(|i| dotted_fn(i, "paint")) {
+                return Ok(ComputedValue::Painter(n.into()));
+            }
             let g = input
                 .try_parse(|i| {
                     i.expect_function_matching("linear-gradient")?;
@@ -407,8 +432,36 @@ fn parse_typed<'i>(prop: &'static Prop, input: &mut Parser<'i>, cx: &ValueCx<'_>
                 .map_err(|e| format!("{name}: {}", err_text(e)))?;
             Ok(ComputedValue::Image(Some(Box::new(g))))
         }
+        ValueType::Content => {
+            if input.try_parse(|i| i.expect_ident_matching("none")).is_ok() {
+                return Ok(ComputedValue::Content(Content::None));
+            }
+            if let Ok(k) = input.try_parse(|i| dotted_fn(i, "icon")) {
+                return Ok(ComputedValue::Content(Content::Icon(k.into())));
+            }
+            if let Ok(k) = input.try_parse(|i| dotted_fn(i, "paint")) {
+                return Ok(ComputedValue::Content(Content::Paint(k.into())));
+            }
+            match input.expect_url_or_string() {
+                Ok(u) if !u.is_empty() => Ok(ComputedValue::Content(Content::Url(u.as_ref().into()))),
+                _ => Err(format!("{name}: expected none, icon(key), url(…) or paint(name)")),
+            }
+        }
         ValueType::Raw => unreachable!("handled by parse_value"),
     }
+}
+
+/// `name(a.b-c)`: a function with one dotted name (an icon key or a painter name).
+fn dotted_fn<'i>(input: &mut Parser<'i>, name: &str) -> Result<String, ParseError<()>> {
+    input.expect_function_matching(name)?;
+    input.parse_nested_block(|i| {
+        let start = i.position();
+        i.expect_ident()?;
+        while i.try_parse(|i| i.expect_delim('.')).is_ok() {
+            i.expect_ident()?;
+        }
+        Ok(i.slice_from(start).trim().to_string())
+    })
 }
 
 /// Keyword lengths: `normal` for `letter-spacing`/`word-spacing` (0), `thin`/`medium`/`thick` for

@@ -81,8 +81,10 @@ impl selectors::parser::NonTSPseudoClass for PseudoClass {
 /// none may follow the pseudo-element, as in CSS for `::part()` of a paint part.
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub enum PseudoElement {
-    /// `::part(name)`: a named part of a widget, either a shadow node or paint-only.
-    Part(Atom),
+    /// `::part(name …)`: a named part of a widget, either a shadow node or paint-only. A part
+    /// carries one or more names (WIDGET-PARITY P10: `day today`); a selector's names must all be
+    /// among the part's. Kept sorted and deduplicated.
+    Part(Box<[Atom]>),
     /// `::placeholder`: a text field's placeholder text.
     Placeholder,
     /// `::selection`: selected text (`color`, `background-color`).
@@ -92,14 +94,40 @@ pub enum PseudoElement {
 impl PseudoElement {
     /// `::part(name)`.
     pub fn part(name: &str) -> PseudoElement {
-        PseudoElement::Part(Atom::new(name))
+        PseudoElement::Part(Box::new([Atom::new(name)]))
+    }
+
+    /// A part with several names (`::part(day today weekend)` matches rules for any subset).
+    pub fn parts(names: &[&str]) -> PseudoElement {
+        let mut v: Vec<Atom> = names.iter().map(|n| Atom::new(n)).collect();
+        v.sort();
+        v.dedup();
+        PseudoElement::Part(v.into())
+    }
+
+    /// Whether a selector's pseudo-element `sel` matches this one (the element's): the same kind,
+    /// and for parts, every name of `sel` among this part's names.
+    pub fn matched_by(&self, sel: &PseudoElement) -> bool {
+        match (self, sel) {
+            (PseudoElement::Part(mine), PseudoElement::Part(want)) => want.iter().all(|w| mine.contains(w)),
+            (a, b) => a == b,
+        }
     }
 }
 
 impl ToCss for PseudoElement {
     fn to_css<W: fmt::Write>(&self, dest: &mut W) -> fmt::Result {
         match self {
-            PseudoElement::Part(n) => write!(dest, "::part({n})"),
+            PseudoElement::Part(n) => {
+                dest.write_str("::part(")?;
+                for (i, a) in n.iter().enumerate() {
+                    if i > 0 {
+                        dest.write_str(" ")?;
+                    }
+                    write!(dest, "{a}")?;
+                }
+                dest.write_str(")")
+            }
             PseudoElement::Placeholder => dest.write_str("::placeholder"),
             PseudoElement::Selection => dest.write_str("::selection"),
         }
@@ -203,9 +231,13 @@ impl<'i> selectors::Parser<'i> for SelectorParser<'_> {
         if !name.eq_ignore_ascii_case("part") {
             return Err(ParseError::custom(StyleParseError::UnknownPseudo(format!("::{name}()"))));
         }
-        // one part name (CSS allows a list meaning "all of them"; widgets name one part each)
-        let part = input.expect_ident()?.clone();
-        Ok(PseudoElement::Part(Atom::new(&part)))
+        // one or more names: the part must have all of them (P10)
+        let mut names = vec![input.expect_ident()?.to_string()];
+        while let Ok(n) = input.try_parse(|i| i.expect_ident_cloned()) {
+            names.push(n.to_string());
+        }
+        let names: Vec<&str> = names.iter().map(String::as_str).collect();
+        Ok(PseudoElement::parts(&names))
     }
 }
 

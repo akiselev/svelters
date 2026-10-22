@@ -10558,6 +10558,10 @@
         "type": "length",
         "via": "setter"
       },
+      "content": {
+        "decl_type": "content",
+        "via": "css"
+      },
       "cursor": {
         "decl_type": "enum",
         "values": [
@@ -11863,6 +11867,11 @@
         "name": "user-invalid",
         "negated": false,
         "state": "user-invalid"
+      },
+      {
+        "name": "has-children",
+        "negated": false,
+        "state": "has-children"
       }
     ],
     "setter_selectors": [
