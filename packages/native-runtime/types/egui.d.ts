@@ -341,12 +341,10 @@ export interface EguiElements {
     /** A column header was clicked (sort on it in JS and set the column's `sort`). */
     'onheader-clicked'?: (column: number) => void;
   };
-  /** A column of its parent `table` (data only: not laid out or drawn as a node). */
-  'table-column': {
+  /** A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100) is the column's width; a user resize keeps its width until the prop changes. */
+  'table-column': EguiWidgetProps & {
     /** The header text. */
     title?: string;
-    /** Width in points. A user resize keeps its width until this prop changes. */
-    width?: number;
     /** Its right edge can be dragged (double-click: fit the content). */
     resizable?: boolean;
     /** Horizontal alignment of its cells. */

@@ -268,20 +268,8 @@ impl Backend for EguiBackend {
     }
 
     fn style(&self, op: u32, h: svl_handle, text: Option<&str>) -> StrResult<i32> {
-        // G1: setter-only dialect (layout props are setters, D3); the cascade is G2.
-        match op {
-            SVL_STYLE_TARGET => Ok(SVL_STYLE_TARGET_NONE),
-            SVL_STYLE_SHEET | SVL_STYLE_SCHEME => Ok(0),
-            // TR1 visual channels (opacity since v2.3, the rest v2.8): paint state on the node
-            SVL_STYLE_OPACITY | SVL_STYLE_TRANSFORM | SVL_STYLE_CLIP | SVL_STYLE_INERT => {
-                self.visual_op(op, h, text)?;
-                Ok(0)
-            }
-            _ => {
-                self.kind_of(h)?;
-                Ok(0)
-            }
-        }
+        // CS5e: the Rust CSS engine in process (`style.rs`); TR1's visual channels go through it.
+        self.style_op(op, h, text)
     }
 
     fn supports_bounds(&self) -> bool {

@@ -2096,10 +2096,11 @@
       "abstract": false,
       "bindings": {},
       "chain": [
-        "TableColumn"
+        "TableColumn",
+        "Widget"
       ],
       "children": null,
-      "doc": "A column of its parent `table` (data only: not laid out or drawn as a node).",
+      "doc": "A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100) is the column's width; a user resize keeps its width until the prop changes.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
@@ -2182,23 +2183,6 @@
           },
           "readable": true,
           "type": "string",
-          "writable": true
-        },
-        "width": {
-          "construct_only": false,
-          "default": 100.0,
-          "doc": "Width in points. A user resize keeps its width until this prop changes.",
-          "js": "width",
-          "native": "width",
-          "nullable": false,
-          "observe": {
-            "class": "set_only",
-            "fact": "egui:TableColumn:width",
-            "mechanism": "scene",
-            "verified": "weak"
-          },
-          "readable": true,
-          "type": "f64",
           "writable": true
         }
       },
@@ -3150,6 +3134,7 @@
   },
   "style": {
     "dialect": "none",
+    "engine": "backend",
     "properties": {
       "align-items": {
         "kinds": [
@@ -3197,6 +3182,7 @@
           "tab",
           "tab-view",
           "table",
+          "table-column",
           "text-edit",
           "toast-host",
           "toggle-button"
@@ -3211,6 +3197,26 @@
           "baseline"
         ],
         "via": "setter"
+      },
+      "background-color": {
+        "decl_type": "color",
+        "via": "css"
+      },
+      "border-color": {
+        "decl_type": "color",
+        "via": "css"
+      },
+      "border-radius": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "border-width": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "color": {
+        "decl_type": "color",
+        "via": "css"
       },
       "column-gap": {
         "kinds": [
@@ -3228,6 +3234,15 @@
         ],
         "type": "length",
         "via": "setter"
+      },
+      "display": {
+        "decl_type": "enum",
+        "values": [
+          "flex",
+          "grid",
+          "none"
+        ],
+        "via": "css"
       },
       "flex-basis": {
         "kinds": [
@@ -3251,6 +3266,7 @@
           "tab",
           "tab-view",
           "table",
+          "table-column",
           "text-edit",
           "toast-host",
           "toggle-button"
@@ -3301,6 +3317,7 @@
           "tab",
           "tab-view",
           "table",
+          "table-column",
           "text-edit",
           "toast-host",
           "toggle-button"
@@ -3330,6 +3347,7 @@
           "tab",
           "tab-view",
           "table",
+          "table-column",
           "text-edit",
           "toast-host",
           "toggle-button"
@@ -3357,6 +3375,10 @@
         ],
         "via": "setter"
       },
+      "font-size": {
+        "decl_type": "length",
+        "via": "css"
+      },
       "gap": {
         "kinds": [
           "Window",
@@ -3376,17 +3398,21 @@
         "type": "length",
         "via": "setter"
       },
+      "grid-column": {
+        "decl_type": "raw",
+        "via": "css"
+      },
+      "grid-row": {
+        "decl_type": "raw",
+        "via": "css"
+      },
       "grid-template-columns": {
-        "kinds": [
-          "Grid"
-        ],
-        "native": "grid-template-columns",
-        "prop": "grid-template-columns",
-        "tags": [
-          "grid"
-        ],
-        "type": "string",
-        "via": "setter"
+        "decl_type": "raw",
+        "via": "css"
+      },
+      "grid-template-rows": {
+        "decl_type": "raw",
+        "via": "css"
       },
       "height": {
         "kinds": [
@@ -3410,6 +3436,7 @@
           "tab",
           "tab-view",
           "table",
+          "table-column",
           "text-edit",
           "toast-host",
           "toggle-button"
@@ -3480,12 +3507,29 @@
           "tab",
           "tab-view",
           "table",
+          "table-column",
           "text-edit",
           "toast-host",
           "toggle-button"
         ],
         "type": "length",
         "via": "setter"
+      },
+      "margin-bottom": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "margin-left": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "margin-right": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "margin-top": {
+        "decl_type": "length",
+        "via": "css"
       },
       "max-height": {
         "kinds": [
@@ -3509,6 +3553,7 @@
           "tab",
           "tab-view",
           "table",
+          "table-column",
           "text-edit",
           "toast-host",
           "toggle-button"
@@ -3538,6 +3583,7 @@
           "tab",
           "tab-view",
           "table",
+          "table-column",
           "text-edit",
           "toast-host",
           "toggle-button"
@@ -3567,6 +3613,7 @@
           "tab",
           "tab-view",
           "table",
+          "table-column",
           "text-edit",
           "toast-host",
           "toggle-button"
@@ -3596,12 +3643,17 @@
           "tab",
           "tab-view",
           "table",
+          "table-column",
           "text-edit",
           "toast-host",
           "toggle-button"
         ],
         "type": "length",
         "via": "setter"
+      },
+      "opacity": {
+        "decl_type": "number",
+        "via": "css"
       },
       "padding": {
         "kinds": [
@@ -3621,6 +3673,22 @@
         ],
         "type": "length",
         "via": "setter"
+      },
+      "padding-bottom": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "padding-left": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "padding-right": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "padding-top": {
+        "decl_type": "length",
+        "via": "css"
       },
       "row-gap": {
         "kinds": [
@@ -3661,6 +3729,7 @@
           "tab",
           "tab-view",
           "table",
+          "table-column",
           "text-edit",
           "toast-host",
           "toggle-button"
@@ -3690,6 +3759,7 @@
           "tab",
           "tab-view",
           "table",
+          "table-column",
           "text-edit",
           "toast-host",
           "toggle-button"

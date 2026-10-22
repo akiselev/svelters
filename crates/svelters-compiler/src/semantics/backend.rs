@@ -437,6 +437,10 @@ impl PlatformSemantics for SpecBackend {
         self.spec.style.properties.get(name)
     }
 
+    fn style_engine_in_backend(&self) -> bool {
+        self.spec.style.engine == "backend"
+    }
+
     fn style_declaration(&self, el: &ElementRef, parent: Option<&ElementRef>, name: &str, value: &[ValueToken]) -> Result<Option<StyleLowering>, Unresolved> {
         let Some(p) = self.spec.style.properties.get(name) else { return Ok(None) };
         let list = |tags: &[String]| tags.iter().map(|t| format!("<{t}>")).collect::<Vec<_>>().join(", ");

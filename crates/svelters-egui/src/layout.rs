@@ -443,6 +443,10 @@ impl LayoutPartialTree for Tree<'_> {
     fn get_core_container_style(&self, id: NodeId) -> Self::CoreContainerStyle<'_> {
         &self.s.layout[ix(id)].style
     }
+    /// CS5e: `calc()` lengths of the computed style (`style.rs` interns them).
+    fn resolve_calc_value(&self, val: *const (), basis: f32) -> f32 {
+        crate::style::resolve_calc(val, basis)
+    }
     fn set_unrounded_layout(&mut self, id: NodeId, layout: &Layout) {
         self.s.layout[ix(id)].unrounded = *layout;
     }
@@ -458,7 +462,13 @@ impl LayoutPartialTree for Tree<'_> {
                 // WG4a: table (columns hidden), tab-view (the selected page), split-view (two panes)
                 W::Table(_) | W::TabView { .. } | W::SplitView { .. } => return crate::views::layout(tree, id, inputs),
                 &W::CollapsingHeader { open, .. } => return tree.collapsing(id, open, inputs),
-                w if w.is_container() => return compute_flexbox_layout(tree, id, inputs),
+                w if w.is_container() => {
+                    // CS5e: `display: grid` from the computed style
+                    if tree.s.layout[i].style.display == Display::Grid {
+                        return compute_grid_layout(tree, id, inputs);
+                    }
+                    return compute_flexbox_layout(tree, id, inputs);
+                }
                 _ => {}
             }
             tree.leaf_layouts += 1;

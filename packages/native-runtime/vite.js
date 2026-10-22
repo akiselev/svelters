@@ -10,71 +10,98 @@ import fs from 'node:fs';
 import { createHash } from 'node:crypto';
 import { compile as svelteCompile, parse as svelteParse } from 'svelte/compiler';
 import { extractNative, translateSheet } from '@svelters/style/build';
-import { typesAliases } from '@svelters/types/vite';
 import { formatDiagnostic } from '@svelters/style/runtime';
+
+/**
+ * The runtime's alias table (`"svelters": { "aliases" }` in this package's package.json), shared with
+ * the Rust module loader (crates/svelters-modules) so the two cannot drift. A key is a specifier
+ * (matched with or without `.js`) or a pattern with one `*` (one path segment); a value is `./<path>`
+ * in this package or `<package>/<path>`, a file inside a dependency found through node_modules
+ * without its exports map (Svelte hides the internal modules the core adapter imports).
+ */
+export const ALIAS_TABLE = JSON.parse(fs.readFileSync(new URL('./package.json', import.meta.url), 'utf8')).svelters.aliases;
+
+const here = path.dirname(fileURLToPath(import.meta.url));
+
+/** The directory of package `name` as Node finds it from `from` (the first `node_modules/<name>` up). */
+function packageDir(from, name) {
+  for (let dir = from; ; dir = path.dirname(dir)) {
+    const candidate = path.join(dir, 'node_modules', name);
+    if (fs.existsSync(candidate)) return fs.realpathSync(candidate);
+    if (path.dirname(dir) === dir) throw new Error(`@svelters/native-runtime: alias package ${name} is not installed (pnpm install)`);
+  }
+}
+
+/** An alias table value as an absolute path (a pattern's `*` is kept). */
+function aliasTarget(value) {
+  if (value.startsWith('./')) return path.join(here, value.slice(2));
+  const n = value.startsWith('@') ? 2 : 1;
+  const parts = value.split('/');
+  return path.join(packageDir(here, parts.slice(0, n).join('/')), ...parts.slice(n));
+}
+
+/** Every alias, resolved: specifier (or pattern) -> absolute path. */
+export const ALIASES = Object.fromEntries(Object.entries(ALIAS_TABLE).map(([k, v]) => [k, aliasTarget(v)]));
 
 /** The specifier src/core/svelte.js imports for block/branch/destroy_effect/component_root. */
 export const EFFECTS_SPECIFIER = 'svelte/internal/client/reactivity/effects';
 
 /** Absolute path of this package's runtime entry (`$n` in generated code). */
-export const runtimePath = fileURLToPath(new URL('./src/index.js', import.meta.url));
+export const runtimePath = ALIASES['@svelters/native-runtime'];
 
 /** The core generated code imports as `$` (`@svelters/native-runtime/core`, RUNTIME.md phase 1). */
-export const corePath = fileURLToPath(new URL('./src/core/index.js', import.meta.url));
+export const corePath = ALIASES['@svelters/native-runtime/core'];
 
 /** The implementation of `@svelters/lists` (`ListView`, virtualized native lists). */
-export const listsPath = fileURLToPath(new URL('./src/lists.js', import.meta.url));
+export const listsPath = ALIASES['@svelters/lists'];
 
 /** EM1: `@svelters/native-runtime/embed` (installs `__svelters_embed`), also `svelters:embed` (`root()`). */
-export const embedPath = fileURLToPath(new URL('./src/embed.js', import.meta.url));
+export const embedPath = ALIASES['@svelters/native-runtime/embed'];
 
 /** The X6 styling runtime (`registerStyles`, `setColorScheme`, `setTokens`): `@svelters/native-runtime/style`. */
-export const stylePath = fileURLToPath(new URL('./src/style.js', import.meta.url));
+export const stylePath = ALIASES['@svelters/native-runtime/style'];
 
 /** Absolute path of Svelte's effects module (hidden by the package's exports map). */
-export const effectsPath = path.join(
-  path.dirname(createRequire(import.meta.url).resolve('svelte/internal/client')),
-  'reactivity/effects.js',
-);
+export const effectsPath = ALIASES[EFFECTS_SPECIFIER];
 
 /** Svelte's microtask queue (`queue_micro_task`, drained by `flushSync`), used by `boundary`. */
 export const TASK_SPECIFIER = 'svelte/internal/client/dom/task';
-export const taskPath = path.join(path.dirname(effectsPath), '../dom/task.js');
+export const taskPath = ALIASES[TASK_SPECIFIER];
 
 /** Svelte's component context (`getAllContexts` / `setContext` for list rows, src/lists.js). */
 export const CONTEXT_SPECIFIER = 'svelte/internal/client/context';
-export const contextPath = path.join(path.dirname(effectsPath), '../context.js');
+export const contextPath = ALIASES[CONTEXT_SPECIFIER];
 
 /** Svelte's `capture` / `unset_context` (an `{#await}` callback renders under its block, as Svelte's). */
 export const ASYNC_SPECIFIER = 'svelte/internal/client/reactivity/async';
-export const asyncPath = path.join(path.dirname(effectsPath), 'async.js');
+export const asyncPath = ALIASES[ASYNC_SPECIFIER];
 
 /** Svelte's batches: `is_flushing_sync` (a settled `{#await}` flushes unless a flushSync runs). */
 export const BATCH_SPECIFIER = 'svelte/internal/client/reactivity/batch';
-export const batchPath = path.join(path.dirname(effectsPath), 'batch.js');
+export const batchPath = ALIASES[BATCH_SPECIFIER];
 
 /** Svelte's runtime flags (`enable_tracing_mode_flag`, for `@svelters/native-runtime/core/tracing`). */
 export const FLAGS_SPECIFIER = 'svelte/internal/flags/index';
-export const flagsPath = path.join(path.dirname(effectsPath), '../../flags/index.js');
+export const flagsPath = ALIASES[FLAGS_SPECIFIER];
 
 /** Svelte's DEV array patches (`state_proxy_equality_mismatch`), installed by Svelte's DOM init. */
 export const EQUALITY_SPECIFIER = 'svelte/internal/client/dev/equality';
-export const equalityPath = path.join(path.dirname(effectsPath), '../dev/equality.js');
+export const equalityPath = ALIASES[EQUALITY_SPECIFIER];
 
 /** Svelte's `loop` (TR1: the animation player's frame task). */
 export const LOOP_SPECIFIER = 'svelte/internal/client/loop';
-export const loopPath = path.join(path.dirname(effectsPath), '../loop.js');
+export const loopPath = ALIASES[LOOP_SPECIFIER];
 
 /** Svelte's `set_should_intro` (TR1: `mount`'s `intro` option). */
 export const RENDER_SPECIFIER = 'svelte/internal/client/render';
-export const renderPath = path.join(path.dirname(effectsPath), '../render.js');
+export const renderPath = ALIASES[RENDER_SPECIFIER];
 
 /** Svelte's client entry (what `svelte` resolves to with the browser condition), for src/svelte.js. */
 export const SVELTE_CLIENT_SPECIFIER = 'svelte/index-client';
-export const svelteClientPath = path.join(path.dirname(effectsPath), '../../../index-client.js');
+export const svelteClientPath = ALIASES[SVELTE_CLIENT_SPECIFIER];
 
 /** `svelte` as app code sees it: Svelte's client API with a native `mount`/`unmount` (src/svelte.js). */
-export const svelteFacadePath = fileURLToPath(new URL('./src/svelte.js', import.meta.url));
+export const svelteFacadePath = ALIASES.svelte;
 
 /** Every hidden Svelte module the runtime imports (src/core/svelte.js, src/svelte.js): specifier -> absolute path. */
 export const HIDDEN_MODULES = {
@@ -91,13 +118,22 @@ export const HIDDEN_MODULES = {
 };
 
 /** TR1: `svelte/transition` and `svelte/animate` as app code sees them: native ports of Svelte's built-ins. */
-export const transitionPath = fileURLToPath(new URL('./src/transition.js', import.meta.url));
-export const animatePath = fileURLToPath(new URL('./src/animate.js', import.meta.url));
+export const transitionPath = ALIASES['svelte/transition'];
+export const animatePath = ALIASES['svelte/animate'];
 
 /** What generated code imports when a component uses `$inspect.trace` in dev. */
-export const tracingPath = fileURLToPath(new URL('./src/core/tracing.js', import.meta.url));
+export const tracingPath = ALIASES['@svelters/native-runtime/core/tracing'];
 
 const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** `resolve.alias` entries for the alias table: exact keys with an optional `.js`, `*` as one segment. */
+export function runtimeAliases() {
+  return Object.entries(ALIASES).map(([key, target]) => {
+    if (!key.includes('*')) return { find: new RegExp(`^${escapeRegExp(key)}(\\.js)?$`), replacement: target };
+    const [prefix, suffix] = key.split('*');
+    return { find: new RegExp(`^${escapeRegExp(prefix)}([^/]+)${escapeRegExp(suffix)}$`), replacement: target.replace('*', '$1') };
+  });
+}
 
 /**
  * Vite config for one app: `entry` (relative to `root`) -> `<root>/<outDir>/app.js`, es2022, not
@@ -112,27 +148,11 @@ export function nativeConfig(root, { entry = 'main.js', outDir = 'dist', plugins
     resolve: {
       conditions: ['browser'],
       alias: [
-        // the hidden Svelte modules of the core adapter
-        ...Object.entries(HIDDEN_MODULES).map(([find, replacement]) => ({ find: new RegExp(`^${escapeRegExp(find)}(\\.js)?$`), replacement })),
-        // `import { mount, flushSync } from 'svelte'`: Svelte's client API, mount/unmount native
-        { find: /^svelte$/, replacement: svelteFacadePath },
-        // TR1: Svelte's built-in transitions read the DOM (getComputedStyle); the native ports read
-        // the runtime node's visuals and the host's geometry
-        { find: /^svelte\/transition$/, replacement: transitionPath },
-        { find: /^svelte\/animate$/, replacement: animatePath },
-        // generated components import the runtime from wherever the .svelte file lives
-        { find: /^@svelters\/native-runtime$/, replacement: runtimePath },
-        { find: /^@svelters\/native-runtime\/core$/, replacement: corePath },
-        { find: /^@svelters\/native-runtime\/core\/tracing$/, replacement: tracingPath },
-        // the styling API (`setColorScheme`, `setTokens`), also for apps that do not depend on it
-        { find: /^@svelters\/native-runtime\/style$/, replacement: registerPath },
-        // EM1: the embed entry and `import { root } from 'svelters:embed'` (one module instance)
-        { find: /^(@svelters\/native-runtime\/embed|svelters:embed)$/, replacement: embedPath },
-        // virtualized lists: `import { ListView } from '@svelters/lists'` gets the native
-        // implementation (same component API and host protocol, see src/lists.js)
-        { find: /^@svelters\/(native-runtime\/)?lists$/, replacement: listsPath },
-        // generated non-UI types: `import { File } from 'svelters:gtk/gio'`
-        ...typesAliases(),
+        // the runtime's alias table (package.json): Svelte's hidden modules for the core adapter, the
+        // `svelte` facade with a native mount, the native transition ports, the runtime's own entry
+        // points (generated components import them from wherever the .svelte file lives), the embed
+        // entry, the native lists and the generated non-UI types (`svelters:gtk/gio`)
+        ...runtimeAliases(),
         // the app's Rust exports (E0): `import { Simulation } from 'svelters:app/sim'` gets the stub the
         // app binary dumped into <root>/.svelters/app (svelters::exports::dump); the QuickJS host also
         // serves the same module itself when a bundle leaves the import external
@@ -258,6 +278,8 @@ export function nativeSheets(code, file, toolkit, warn = () => {}, specFragments
     warn(`<style> not translated: Svelte could not compile the component for its CSS: ${String(e.message).split('\n')[0]}`);
     return null;
   }
+  // egui runs the Rust CSS engine in process (CS5e): it gets the scoped CSS as Svelte wrote it
+  if (toolkit === 'egui') return r.css?.code?.trim() ? { scope, sheets: { css: r.css.code } } : null;
   const t = translateSheet(r.css?.code ?? '', toolkit, { native: native[toolkit] ?? [], setters: false, tags: tagsOf(toolkit, specFragments) });
   for (const d of t.diagnostics) if (d.level !== 'info') warn(formatDiagnostic(d));
   // decl dialect (AppKit): structured rules for the runtime cascade engine

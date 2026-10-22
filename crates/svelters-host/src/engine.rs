@@ -7,7 +7,7 @@
 //! implementation.
 
 use std::fmt;
-use std::path::Path;
+use std::rc::Rc;
 use svelters_abi::{NativeError, SlotDesc, Value};
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -174,10 +174,14 @@ pub struct OpSettle {
     pub outcome: OpOutcome,
 }
 
+/// Where an engine's modules come from (Q1): a built bundle or the app's sources.
+pub use svelters_modules::ModuleProvider;
+
 pub trait JsEngine {
-    /// Evaluates the entry module. Imports resolve relative to the entry file's directory and may
-    /// not leave it. Jobs may remain queued afterwards.
-    fn load_module(&mut self, entry: &Path) -> Result<(), JsError>;
+    /// Evaluates the provider's entry module; its imports are resolved and loaded through the
+    /// provider (host built-ins, `svelters:core` and `svelters:app/*`, first). Jobs may remain
+    /// queued afterwards.
+    fn load_module(&mut self, provider: Rc<dyn ModuleProvider>) -> Result<(), JsError>;
 
     /// Calls `globalThis.__svelters_dispatch(handle, signal, args, deferred, flags)`. `deferred`
     /// marks a sync signal that could not run synchronously (its result is ignored); `flags` are
@@ -253,8 +257,8 @@ pub trait JsEngine {
 
     /// EM1: evaluates an ESM entry like [`JsEngine::load_module`] and keeps its module namespace;
     /// returns its index (0, 1, ...) for [`JsEngine::mount_root`].
-    fn load_entry(&mut self, entry: &Path) -> Result<u32, JsError> {
-        let _ = entry;
+    fn load_entry(&mut self, provider: Rc<dyn ModuleProvider>) -> Result<u32, JsError> {
+        let _ = provider;
         Err(JsError::new(ErrorKind::Host, "this engine does not keep entries (embedding)"))
     }
 
