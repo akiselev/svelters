@@ -115,3 +115,36 @@ Run locally (thinkpadx1, after merging origin/master with EV3+): `cargo check -p
 test(egui_text_edit_against_native_goldens) | binary(focus_keys)'` (26 tests, all pass) and
 `-E 'binary(clipboard) | binary(animator)'` (10, pass). Not run locally: the rest of the svelters-egui and
 svelters-testkit suites (TK1 snapshots included), every other crate, conformance; CI runs them.
+
+## Handoff (2026-10-22): stopped, svelters draws its own widgets
+
+Stopped by the user's decision (via the coordinator): svelters will draw all its own widgets, and egui stays
+the engine only (painter, input, text shaping, layers, AccessKit). FX3 ends at `ci/fx3` e6e8c5e6 plus this
+note. It was merged with origin/master at c41dca7a (EV3+). It was **not** merged with later master (424ebcf4:
+CS5g, WG5a cell editors) and has no clippy run (ZU3). CI was started on e6e8c5e6 and not waited for.
+
+**Done** (all measured and tested locally, see above): undo grouping (GTK and Qt), the CUA chords, line breaks
+kept by a paste, GTK PRIMARY (cleared on collapse, middle click without paste), Ctrl+Shift+U hex entry, Enter
+keeping focus, the W5 fold onto `ClipboardBackend`, the double middle-click paste, FX1's repaint loop, and the
+egui_measure per-pass output fix. **Not done**: EV3 seams for the hex entry (`composing`, claiming
+Ctrl+Shift+U, Enter reaching the default button); CRLF through Ctrl+V; GTK's redo selection (undo-edits #19);
+GTK dead keys.
+
+**Carry over to the own-widget text field** (keep these intact; they don't depend on egui's `TextEdit`):
+
+- `crates/svelters-egui/src/native/undo.rs`: the undo models (`History`, `UndoRules::{Gtk, Qt}`, `EditKind`,
+  `Snap`, `splice`). They are pure: a field feeds them text and selection before and after each edit, plus caret
+  moves, and they answer Undo and Redo. The `fx3_undo_*` unit tests replay pin 4 against both goldens.
+- The behaviour spec in "Behaviour, per toolkit" above, and the `Policy` switches in `native/mod.rs`
+  (`undo`, `cua_clipboard_keys`, `paste_keeps_breaks`, `primary_clears_on_collapse`, `ctrl_shift_u`,
+  `enter_keeps_focus`). An own field implements them directly instead of rewriting input around `TextEdit`.
+- `native/edit.rs`: the key mapping (chords to commands, the hex entry state machine, giving keys back for
+  EV3's claim). Its event rewriting exists only because `TextEdit` reads the input; an own field reads the keys
+  itself.
+- `primary.rs`: the PRIMARY provider over `ClipboardBackend` (`install_backend`, `use_system`, `clear`).
+- Tests: `crates/svelters-egui/tests/native_edit.rs` (`fx3_*`: chords, undo through keys, hex entry and Enter,
+  line breaks, one middle-click paste, PRIMARY cleared, unfocused selection settles). They drive the `text-edit`
+  kind through real input, so they should keep passing against the own field unchanged.
+- Pins 4–6 (`conformance/pins/4-*`, `5-*`, `6-*`), the goldens, WG3b's reference numbers
+  (`WG3-native-references.md`), and `egui_measure.rs` with its `FLOOR` ratchet (GTK 232, Qt 235 of 243).
+  Keep feeding keys one event per kittest step (`Egui::press`): a step keeps only its last pass's output.
