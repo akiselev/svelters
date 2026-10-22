@@ -179,7 +179,8 @@ fn replay_egui_fixtures() {
         .filter_map(|e| e.ok())
         .filter(|e| {
             let pkg = std::fs::read_to_string(e.path().join("package.json")).unwrap_or_default();
-            e.path().join("expected.oplog").exists() && pkg.contains("\"toolkit\": \"egui\"")
+            // WG2a: the menus gallery's native input (menus, popups) is driven by tests/menus_app.rs
+            e.path().join("expected.oplog").exists() && pkg.contains("\"toolkit\": \"egui\"") && e.file_name() != "gallery-egui-menus"
         })
         .map(|e| e.file_name().to_string_lossy().to_string())
         .collect();

@@ -150,26 +150,36 @@ fn kind_json(k: &KindDef) -> J {
     // `exact`/`delivery` (written only through `WidgetCx::set`), so `bind:` lowers onto observation.
     // The value is the `changed` argument named like the prop (WG1: `scroll-area`'s carries both
     // offsets), else argument 0.
-    let changed_args = k.signals.iter().find(|s| s.name == "changed").map_or(&[][..], |s| s.args);
+    // WG2a: a kind without `changed` binds through its first signal with an argument named like the
+    // prop (`action`'s `toggled`, as on GTK and Qt).
+    let bind_signal = |p: &PropDef| {
+        k.signals.iter().find(|s| s.name == "changed").or_else(|| k.signals.iter().find(|s| s.args.iter().any(|(n, _)| *n == p.name)))
+    };
     let bindings: Map<String, J> = k
         .props
         .iter()
         .filter(|p| p.native == Native::Widget && provider.is_none())
         .map(|p| {
-            let arg = changed_args.iter().position(|(n, _)| *n == p.name).unwrap_or(0);
+            let sig = bind_signal(p);
+            let event = sig.map_or("changed", |s| s.name);
+            let arg = sig.map_or(&[][..], |s| s.args).iter().position(|(n, _)| *n == p.name).unwrap_or(0);
             // the widget itself changes a written value (a slider's range, a scroll offset's extent)
-            let normalizes = matches!(p.key, kinds::P::Value | kinds::P::ScrollX | kinds::P::ScrollY);
+            let normalizes = matches!(p.key, kinds::P::Value | kinds::P::ScrollX | kinds::P::ScrollY)
+                // WG2b: a range slider keeps low <= high within its bounds; a radio button with a
+                // `value` derives `checked` from `group`
+                || matches!(p.key, kinds::P::Low | kinds::P::High)
+                || (k.id == "RadioButton" && p.key == kinds::P::Checked);
             (
                 p.name.to_string(),
                 json!({
                     "compare_before_set": true,
                     "direction": "two_way",
                     "echo": "none",
-                    "event": "changed",
+                    "event": event,
                     "lifetime": {"on_destroy": "idempotent_disconnect", "on_native_death": "end_binding", "on_stale_update": "warn_noop"},
                     "natively_normalizes": normalizes,
                     "property": p.name,
-                    "provenance": format!("svelters-egui: the {} widget writes {} into the node during the pass; `changed` carries it (arg 0), set_prop never announces", k.native, p.name),
+                    "provenance": format!("svelters-egui: the {} widget writes {} into the node during the pass; `{event}` carries it (arg 0), set_prop never announces", k.native, p.name),
                     "read_back": normalizes,
                     "sync_signals_on_set": [],
                     "value": {"arg": arg},
@@ -181,10 +191,10 @@ fn kind_json(k: &KindDef) -> J {
         json!({
             "default_slot": slot,
             "policy": "ordered",
-            "slots": {slot: {"accepts": ["Widget"], "attrs": {}, "many": true, "order": "before_sibling", "route_by_kind": false}},
+            "slots": {slot: {"accepts": kinds::slot_accepts(k.id), "attrs": {}, "many": true, "order": "before_sibling", "route_by_kind": false}},
         })
     });
-    json!({
+    let mut kj = json!({
         "abstract": k.tag.is_none(),
         "bindings": bindings,
         "chain": chain,
@@ -199,7 +209,12 @@ fn kind_json(k: &KindDef) -> J {
         "provenance": {"kind": if provider.is_some() { k.native } else { "crates/svelters-egui/src/kinds/builtin.rs" }},
         "signals": signals,
         "text_content": k.text_content,
-    })
+    });
+    // WG2a: `context-menu` and `popup` attach to the element they are declared in
+    if let Some(t) = kinds::attaches_to(k.id) {
+        kj.as_object_mut().expect("kind object").insert("attaches_to".into(), json!(t));
+    }
+    kj
 }
 
 /// The style table (D3): every layout prop is a setter, so `<style>` rules can use the CSS names
@@ -520,7 +535,7 @@ export type ForwardFrom<C extends Component<any, any> | SvelteComponent, Event e
 type WithAttrs<E> = { [K in keyof E]: EguiAttrs<E[K]> };
 // Tags that are also HTML elements keep svelte-check's own HTML entry, which `extends` cannot
 // override; it merges `HTMLAttributes` into each of them, so their egui props go there.
-type EguiHtmlNamedProps = EguiAttrs<EguiElements['button']> & EguiAttrs<EguiElements['label']>;
+type EguiHtmlNamedProps = EguiAttrs<EguiElements['button']> & EguiAttrs<EguiElements['label']> & EguiAttrs<EguiElements['table']>;
 
 declare global {
   namespace svelteHTML {

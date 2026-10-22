@@ -6,7 +6,14 @@
 //! focus. Every step is one action followed by one checkpoint; `repeat: n` runs the pair n times.
 //! Actions: `{"key": intent, "shift": bool}`, `{"click": anchor, "at": offset, "count": n}` (on a
 //! button `at` is omitted: the click lands at its centre), `{"drag": anchor, "from", "to", "count"}`
-//! (`count` presses at `from`, the last one held while the pointer moves to `to`).
+//! (`count` presses at `from`, the last one held while the pointer moves to `to`). A click takes
+//! `"button": 2` for the middle button (X11 primary-selection paste). `{"type": text}` types the
+//! text one key per character (WG3b, pins 4-6).
+//!
+//! Optional (WG3b): `setup.clipboard` puts that text on the system clipboard before the user path,
+//! owned by another client (the capture's X connection; egui's driver keeps it as the text
+//! egui-winit would read); `observe: ["clipboard", "primary"]` adds those two pseudo-anchors to
+//! every checkpoint: the text the CLIPBOARD and PRIMARY selections hold ("" without an owner).
 
 use serde_json::Value;
 use std::collections::BTreeMap;
@@ -16,6 +23,9 @@ use std::path::{Path, PathBuf};
 pub const FIELDS: [&str; 2] = ["a", "b"];
 pub const BUTTON: &str = "c";
 pub const BUTTON_LABEL: &str = "Done";
+/// The pseudo-anchors a pin can observe besides the fixture's nodes.
+pub const CLIPBOARD: &str = "clipboard";
+pub const PRIMARY: &str = "primary";
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Field {
@@ -44,6 +54,8 @@ pub struct Setup {
     /// By anchor (`a`, `b`); a field the pin does not list is empty.
     pub fields: BTreeMap<String, Field>,
     pub focus: Option<String>,
+    /// Text on the system clipboard when the user path starts (owned by another client).
+    pub clipboard: Option<String>,
 }
 
 impl Setup {
@@ -65,6 +77,12 @@ pub enum Action {
         target: String,
         at: Option<usize>,
         count: u32,
+        /// 1 primary, 2 middle.
+        button: u32,
+    },
+    /// Types the text, one key per character.
+    Type {
+        text: String,
     },
     Drag {
         target: String,
@@ -83,14 +101,21 @@ impl Action {
             }
             Action::Click {
                 target,
-                at: Some(at),
+                at,
                 count,
-            } => format!("click {target}@{at} x{count}"),
-            Action::Click {
-                target,
-                at: None,
-                count,
-            } => format!("click {target} x{count}"),
+                button,
+            } => {
+                let b = if *button == 2 {
+                    "middle-click"
+                } else {
+                    "click"
+                };
+                match at {
+                    Some(at) => format!("{b} {target}@{at} x{count}"),
+                    None => format!("{b} {target} x{count}"),
+                }
+            }
+            Action::Type { text } => format!("type {}", serde_json::to_string(text).unwrap()),
             Action::Drag {
                 target,
                 from,
@@ -110,6 +135,8 @@ pub struct Pin {
     pub setup: Setup,
     /// Expanded: one checkpoint follows each action.
     pub actions: Vec<Action>,
+    /// Pseudo-anchors observed at every checkpoint besides the nodes ([`CLIPBOARD`], [`PRIMARY`]).
+    pub observe: Vec<String>,
     /// The file's text (fingerprinted).
     pub source: String,
 }
@@ -157,6 +184,18 @@ pub fn parse_pin(source: &str) -> Result<Pin, String> {
         }
     }
     let focus = v["setup"]["focus"].as_str().map(str::to_string);
+    let clipboard = match v["setup"].get("clipboard") {
+        None => None,
+        Some(Value::String(t)) => Some(t.clone()),
+        Some(o) => return Err(ctx(format!("bad clipboard {o}"))),
+    };
+    let mut observe = Vec::new();
+    for o in v["observe"].as_array().into_iter().flatten() {
+        match o.as_str() {
+            Some(n @ (CLIPBOARD | PRIMARY)) => observe.push(n.to_string()),
+            _ => return Err(ctx(format!("unknown observable {o}"))),
+        }
+    }
     let mut actions = Vec::new();
     for s in v["steps"]
         .as_array()
@@ -185,10 +224,24 @@ pub fn parse_pin(source: &str) -> Result<Pin, String> {
                 .map(|x| as_u(x, "at"))
                 .transpose()
                 .map_err(ctx)?;
+            let button = s
+                .get("button")
+                .map(|x| as_u(x, "button"))
+                .transpose()
+                .map_err(ctx)?
+                .unwrap_or(1) as u32;
+            if !matches!(button, 1 | 2) {
+                return Err(ctx(format!("button {button}: 1 or 2")));
+            }
             Action::Click {
                 target: t.to_string(),
                 at,
                 count,
+                button,
+            }
+        } else if let Some(t) = s["type"].as_str() {
+            Action::Type {
+                text: t.to_string(),
             }
         } else if let Some(t) = s["drag"].as_str() {
             Action::Drag {
@@ -208,8 +261,13 @@ pub fn parse_pin(source: &str) -> Result<Pin, String> {
         id,
         pin,
         title,
-        setup: Setup { fields, focus },
+        setup: Setup {
+            fields,
+            focus,
+            clipboard,
+        },
         actions,
+        observe,
         source: source.replace("\r\n", "\n"),
     })
 }

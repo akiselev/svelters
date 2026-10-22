@@ -70,11 +70,18 @@ pub struct HostConfig {
     /// Ask the backend to quit once the last toplevel handle is gone (after the first one was
     /// created). The host, not the toolkit, decides when the app ends. Ignored in scripted mode.
     pub quit_on_last_window: bool,
+    /// H1: a runtime that applied this many in-place module swaps is replaced by a full reload at
+    /// the next change (replaced module versions are not freed while the runtime lives). 0: no limit.
+    pub hmr_max_swaps: u32,
+    /// H1: ... or when its heap is above this fraction of `memory_limit`.
+    pub hmr_memory_fraction: f32,
 }
 
 impl Default for HostConfig {
     fn default() -> Self {
         HostConfig {
+            hmr_max_swaps: 200,
+            hmr_memory_fraction: 0.5,
             memory_limit: 256 * 1024 * 1024,
             max_stack_size: 1024 * 1024,
             turn_budget: Some(Duration::from_secs(10)),
@@ -328,6 +335,8 @@ pub(crate) struct Core {
     /// Depth of native-callback invocations in progress (see `callbacks.rs`).
     cb_depth: Cell<u32>,
     pub(crate) maps: RefCell<SourceMaps>,
+    /// DX1: the app's settings, UI state and paths (`Host::set_dx`).
+    pub(crate) dx: RefCell<Option<Rc<crate::dx::Dx>>>,
     /// App exports (E0): this host's exported Rust objects.
     pub(crate) apps: crate::exports::objects::AppObjects,
     /// LD1: whether an `svelters:app/<module>` export is reachable by `construct` and `callStatic`,
@@ -385,6 +394,7 @@ impl Core {
             maps: RefCell::default(),
             apps: Default::default(),
             app_gate: RefCell::new(None),
+            dx: RefCell::new(None),
             op_log: RefCell::new(None),
             ops: offload::OpTable::new(crate::exports::offload::Completions::new(backend.wake_handle())),
             reactive: reactive::Reactive::new(crate::exports::reactive::Hub::new(backend.wake_handle())),
@@ -402,7 +412,8 @@ impl Core {
     }
 
     /// Runs one host op, adding its duration to the timing counters when enabled.
-    fn timed<R>(&self, f: impl FnOnce() -> R) -> R {
+    fn timed<R>(&self, name: &'static str, f: impl FnOnce() -> R) -> R {
+        crate::crash::note_op(name);
         if !self.cfg.timing {
             return f();
         }
@@ -488,6 +499,7 @@ impl Core {
         if self.cfg.echo_errors {
             eprintln!("[svelters] {err}");
         }
+        crate::crash::note_error(err.to_string());
         self.st.borrow_mut().errors.push(err);
     }
 
@@ -503,13 +515,45 @@ impl Core {
         } else {
             text
         };
+        self.emit(level, None, text);
+    }
+
+    /// DX1: one JS log record (`console.*`, or `logger(category)`): to `tracing` (target `js`, the
+    /// category a field), to stderr when echoing, and to the console buffer.
+    pub(crate) fn emit(&self, level: &str, category: Option<&str>, text: String) {
+        let cat = category.unwrap_or("");
+        match level {
+            "error" => tracing::error!(target: "js", category = cat, "{text}"),
+            "warn" => tracing::warn!(target: "js", category = cat, "{text}"),
+            "debug" => tracing::debug!(target: "js", category = cat, "{text}"),
+            "trace" => tracing::trace!(target: "js", category = cat, "{text}"),
+            _ => tracing::info!(target: "js", category = cat, "{text}"),
+        }
         if self.cfg.echo_console {
-            eprintln!("[{level}] {text}");
+            match category {
+                Some(c) => eprintln!("[{level}] {c}: {text}"),
+                None => eprintln!("[{level}] {text}"),
+            }
         }
         self.st.borrow_mut().console.push(ConsoleLine {
             level: level.to_string(),
             text,
         });
+    }
+
+    /// DX1: the `__svelters_host.dx` op. Errors are `(code, message)`.
+    pub(crate) fn dx_op(&self, op: &str, a: &str, b: &str) -> Result<String, (&'static str, String)> {
+        if op == "log" {
+            let (level, cat) = a.split_once('\n').unwrap_or((a, ""));
+            let text = if matches!(level, "error" | "warn" | "trace") { self.maps.borrow_mut().map_text(b) } else { b.to_string() };
+            self.emit(level, Some(cat), text);
+            return Ok(String::new());
+        }
+        let dx = self.dx.borrow().clone();
+        match dx {
+            Some(dx) => dx.op(op, a, b),
+            None => Err(crate::dx::unavailable()),
+        }
     }
 
     pub(crate) fn take_errors(&self) -> Vec<JsError> {
@@ -1244,6 +1288,35 @@ pub(crate) fn load_bundle(
     if res.is_ok() && !core.cfg.scripted {
         let st = eng.run_jobs(core.cfg.max_jobs_per_checkpoint);
         pending = st.pending;
+    }
+    core.report_all(eng.take_errors());
+    drop(eng);
+    core.sync_sched();
+    if !core.cfg.scripted && (pending || core.has_events()) {
+        core.backend.wake();
+    }
+    res
+}
+
+/// H1: applies a source change in place (see [`JsEngine::hot_update`]); runs the jobs that
+/// flush the swapped components' effects.
+pub(crate) fn hot_update(
+    core: &Core,
+    engine: &RefCell<Box<dyn JsEngine>>,
+    provider: &Rc<dyn crate::engine::ModuleProvider>,
+    ids: &[String],
+) -> Result<crate::engine::HotOutcome, JsError> {
+    let Some(_guard) = core.enter() else {
+        return Err(JsError::new(ErrorKind::Host, "hot_update called while JS is running"));
+    };
+    let mut eng = engine.borrow_mut();
+    let res = eng.hot_update(provider.clone(), ids);
+    for w in provider.take_warnings() {
+        core.console("warn", w);
+    }
+    let mut pending = false;
+    if matches!(res, Ok(crate::engine::HotOutcome::Applied { .. })) && !core.cfg.scripted {
+        pending = eng.run_jobs(core.cfg.max_jobs_per_checkpoint).pending;
     }
     core.report_all(eng.take_errors());
     drop(eng);

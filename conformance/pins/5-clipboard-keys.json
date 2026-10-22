@@ -1,0 +1,27 @@
+{
+  "id": "clipboard-keys",
+  "pin": 5,
+  "title": "Copy, cut and paste with Ctrl+C/X/V and with Ctrl+Insert, Shift+Delete, Shift+Insert; the clipboard after each step",
+  "setup": {
+    "fields": { "a": { "text": "copy this text", "sel": [0, 4] }, "b": { "text": "other" } },
+    "focus": "a",
+    "clipboard": "seed"
+  },
+  "observe": ["clipboard"],
+  "steps": [
+    { "key": "copy" },
+    { "key": "line-end" },
+    { "key": "paste" },
+    { "key": "left", "shift": true, "repeat": 4 },
+    { "key": "cut" },
+    { "key": "line-start" },
+    { "key": "paste" },
+    { "key": "select-all" },
+    { "key": "copy-alt" },
+    { "key": "line-end" },
+    { "key": "paste-alt" },
+    { "key": "left", "shift": true, "repeat": 3 },
+    { "key": "cut-alt" },
+    { "key": "paste" }
+  ]
+}

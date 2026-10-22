@@ -30,12 +30,18 @@
 //! - `#[svelters::behavior]` registers a behaviour the same way (EV2b, ARCH-EMBED §8.5): an attached
 //!   kind ([`KindEntry::attaches_to`]) whose struct implements [`Behavior`] instead of [`Widget`],
 //!   used from Svelte as `use:name` (`behavior.rs`).
+//! - SG4 (ARCH-SCENE §7.3): the walk takes a widget's payload out of the scene while its code runs
+//!   ([`with_taken`]), so [`WidgetCx::scene`] reads the rest of the scene, [`WidgetCx::children`]
+//!   draws its shadow children, and a panic drops the widget (a fresh one replaces it) and faults
+//!   its root only. Opt-in hooks by capability: [`Widget::layout`] (`CUSTOM_LAYOUT`),
+//!   [`Widget::prepare`] (`PREPARE`), [`Widget::hit_test`] (`HIT_TEST`, SG3).
 //!
 //! Files: this one holds the trait, the contexts and the registration types; `state.rs` the state
-//! bits; `behavior.rs` the behaviours (EVENTS, EV2b); `pass.rs` is SG4's. Writer lane: RUSTAPI (RA1, RA3).
+//! bits; `behavior.rs` the behaviours (EVENTS, EV2b); `pass.rs` (SG4: `StateProvider`, `ScenePass`,
+//! `PrepareCx`) is SCENE's. Writer lane: RUSTAPI (RA1, RA3).
 
 pub(crate) mod behavior;
-mod pass;
+pub(crate) mod pass;
 mod state;
 
 pub use behavior::{__new_behavior, Behavior, BehaviorBox, BehaviorCx};
@@ -245,7 +251,22 @@ pub trait Widget: 'static {
     fn hit_test(&self, _cx: &HitCx, _local: egui::Pos2) -> Hit {
         Hit::Node
     }
+    /// SG4, `Caps::CUSTOM_LAYOUT` (ARCH-SCENE §7.3): lays out this node's children (its shadow
+    /// children) itself; taffy lays out the rest of the tree. Called with taffy's inputs: in a
+    /// `RunMode::ComputeSize` run only the size is wanted, in `PerformLayout` place each child with
+    /// [`LayoutCx::place`]. Without the cap (or by default) the node's children get flexbox from
+    /// its style. Unstable (§16): taffy's types.
+    fn layout(&mut self, cx: &mut LayoutCx<'_>, inputs: crate::taffy::LayoutInput) -> crate::taffy::LayoutOutput {
+        cx.default_layout(inputs)
+    }
+    /// SG4, `Caps::PREPARE` (ARCH-SCENE §7.2 step b, §8.2): runs before its root's layout every
+    /// frame the root is drawn, with last frame's visible rect: build or rebind shadow children
+    /// here (a virtualiser's rows) through [`PrepareCx::scene`].
+    fn prepare(&mut self, _cx: &mut PrepareCx<'_>) {}
 }
+
+pub use crate::layout::LayoutCx;
+pub use pass::{PassCx, PassHandle, PassScope, PrepareCx, ProviderCx, ProviderHandle, ScenePass, StateProvider};
 
 /// An `on<name>` event of a kind. The macro gives each `#[event]` field its index; [`WidgetCx::emit`]
 /// delivers a payload to the JS listeners after the pass.
@@ -309,18 +330,26 @@ impl MeasureCx<'_> {
     }
 }
 
-/// What [`Widget::ui`] gets: the node's id, rect and state, and the queued writes back to the scene
-/// and JS.
+/// What [`Widget::ui`] gets: the node's id, rect and state, read access to the whole scene, the
+/// node's children to draw, and the queued writes back to the scene and JS.
+///
+/// SG4 (ARCH-SCENE §7.3): the walk takes the widget's payload out of the scene while `ui` runs,
+/// so the cx can hand out the rest of the scene ([`WidgetCx::scene`]) while the widget has
+/// `&mut self`, with no `unsafe`. Writes are limited to the node itself (state bits, ext data,
+/// `set`, events): everything else goes through `SceneHandle::defer` (S9).
 pub struct WidgetCx<'a> {
+    s: &'a mut crate::scene::Scene,
+    i: usize,
     id: egui::Id,
     rect: egui::Rect,
     enabled: bool,
-    state: &'a mut StateBits,
-    /// The scene's extension columns and journal (SG2), borrowed apart from the payload being drawn.
-    ext: crate::scene::ext::ExtCx<'a>,
+    state: StateBits,
     node: crate::scene::NodeId,
     entry: &'static KindEntry,
     base: usize,
+    /// The walk's origin (root-relative rects + origin = screen) and outbox, for `children`.
+    origin: egui::Vec2,
+    out: &'a mut Vec<Out>,
     changed: Vec<usize>,
     emits: Vec<(usize, Value)>,
     remeasure: bool,
@@ -347,6 +376,39 @@ impl WidgetCx<'_> {
         self.state.set(bits.state_bits(), on);
     }
 
+    /// SG4: the whole scene, read-only, while this widget is borrowed. This node's own payload is
+    /// out while `ui` runs: through the scene it reads as an empty box (`NodeRef::widget` is `None`);
+    /// its props, state (as of the start of the pass), ext data and children read normally.
+    pub fn scene(&self) -> crate::scene::SceneRef<'_> {
+        crate::scene::SceneRef::new(self.s)
+    }
+    /// SG4: this node (see [`WidgetCx::scene`]).
+    pub fn node(&self) -> crate::scene::NodeRef<'_> {
+        crate::scene::NodeRef::at(self.s, self.node)
+    }
+    /// SG4: the node's children (its shadow children, ARCH-SCENE §4.4), in layout order.
+    pub fn child_ids(&self) -> &[crate::scene::NodeId] {
+        &self.s.children[self.i]
+    }
+    /// SG4: draws every child of this node at the rect layout gave it, in order (a container
+    /// provider's content). Their responses go to the outbox and the hit list like any node's.
+    pub fn children(&mut self, ui: &mut egui::Ui) {
+        for k in 0..self.s.children[self.i].len() {
+            let c = self.s.children[self.i][k].index() as usize;
+            crate::walk::paint_child(self.s, c, self.origin, ui, self.out);
+        }
+    }
+    /// SG4: draws one child of this node (a row of a pool); false if `id` is not one of them.
+    pub fn child(&mut self, ui: &mut egui::Ui, id: crate::scene::NodeId) -> bool {
+        match self.s.idx(id) {
+            Some(c) if self.s.core[c].parent == Some(self.node) => {
+                crate::walk::paint_child(self.s, c, self.origin, ui, self.out);
+                true
+            }
+            _ => false,
+        }
+    }
+
     /// The exact write of a prop field (ARCH-EMBED §8.2, SV10): stores `v` and, if it differs,
     /// announces `prop_changed` after the pass to an observer (`bind:`). Only `#[prop]` fields of the
     /// widget being drawn are props; a write to any other field is stored and not announced.
@@ -369,11 +431,11 @@ impl WidgetCx<'_> {
 
     /// The node's provider data for `key` (ARCH-EMBED §8.4).
     pub fn ext<T: 'static>(&self, key: &ExtKey<T>) -> Option<&T> {
-        self.ext.cols.get(key, self.node.index())
+        self.s.ext.get(key, self.node.index())
     }
     /// The node's entry for `key`; writes are journaled with `Origin::Widget`.
     pub fn ext_mut<'b, T: 'static>(&'b mut self, key: &'b ExtKey<T>) -> ExtEntry<'b, T> {
-        ExtEntry::new(self.ext.reborrow(), key, self.node, crate::scene::Origin::Widget)
+        ExtEntry::new(self.s.ext_cx(), key, self.node, crate::scene::Origin::Widget)
     }
 
     /// Measures the node again before the next layout (its content size changed).
@@ -449,6 +511,8 @@ pub trait ErasedWidget: Any {
     fn a11y(&self, cx: &A11yCx<'_>, node: &mut egui::accesskit::Node);
     fn busy(&self) -> bool;
     fn hit_test(&self, cx: &HitCx, local: egui::Pos2) -> Hit;
+    fn layout(&mut self, cx: &mut LayoutCx<'_>, inputs: crate::taffy::LayoutInput) -> crate::taffy::LayoutOutput;
+    fn prepare(&mut self, cx: &mut PrepareCx<'_>);
     fn as_any(&self) -> &dyn Any;
     fn as_any_mut(&mut self) -> &mut dyn Any;
     /// The struct's address (field offsets are relative to it).
@@ -489,6 +553,12 @@ impl<T: Widget + KindDecl> ErasedWidget for T {
     }
     fn hit_test(&self, cx: &HitCx, local: egui::Pos2) -> Hit {
         Widget::hit_test(self, cx, local)
+    }
+    fn layout(&mut self, cx: &mut LayoutCx<'_>, inputs: crate::taffy::LayoutInput) -> crate::taffy::LayoutOutput {
+        Widget::layout(self, cx, inputs)
+    }
+    fn prepare(&mut self, cx: &mut PrepareCx<'_>) {
+        Widget::prepare(self, cx)
     }
     fn as_any(&self) -> &dyn Any {
         self
@@ -584,32 +654,77 @@ pub(crate) fn get_prop(n: &Node, i: usize) -> Result<Value, String> {
     svelters_host::exports::__private::with_cx(w.entry().namespace, |cx| w.get_prop(i, cx)).map_err(|e| e.message)
 }
 
+/// Runs `f` on the provider widget of node `i` with its payload taken out of the scene (SG4,
+/// ARCH-SCENE §7.3), so `f` may also have the scene. The payload goes back afterwards. If `f`
+/// panics, the widget is dropped and a fresh one of the same kind (props at their defaults) takes
+/// its place, so the scene stays whole while the panic unwinds to the walk's `catch_unwind`, which
+/// faults the root (ARCH-EMBED §6.2). `None` if node `i` holds no provider widget (or it is out).
+pub(crate) fn with_taken<R>(s: &mut crate::scene::Scene, i: usize, f: impl FnOnce(&mut dyn ErasedWidget, &mut crate::scene::Scene) -> R) -> Option<R> {
+    use crate::scene::node::Payload;
+    if !matches!(s.payload[i], Payload::Builtin(W::Ext(_))) {
+        return None;
+    }
+    let payload = std::mem::replace(&mut s.payload[i], Payload::Vacant);
+    let Payload::Builtin(W::Ext(x)) = &payload else { unreachable!("checked above") };
+    let entry = x.entry();
+    let in_batch = s.in_batch;
+    let r = {
+        let mut wb = x.0.borrow_mut();
+        std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| f(&mut **wb, s)))
+    };
+    match r {
+        Ok(r) => {
+            s.payload[i] = payload;
+            Some(r)
+        }
+        Err(p) => {
+            if !in_batch {
+                s.abort_batch();
+            }
+            s.payload[i] = Payload::Builtin(W::Ext(ExtWidget::new((entry.new)())));
+            s.counters.provider_panics += 1;
+            drop(payload);
+            std::panic::resume_unwind(p)
+        }
+    }
+}
+
 /// Draws the provider node in slot `i` (the walk's index into the scene's columns): its `ui` in `ui`
-/// (a child `Ui` at the node's rect), then the a11y hook, then its writes as outbox entries
-/// (`prop_changed` for observed props, events for listeners). Returns the widget's response (the
-/// host response of its behaviours).
-pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui, out: &mut Vec<Out>) -> Option<egui::Response> {
+/// (a child `Ui` at the node's rect) with the payload taken out (SG4), then the a11y hook, then its
+/// writes as outbox entries (`prop_changed` for observed props, events for listeners). `origin` is
+/// the walk's (for `WidgetCx::children`). Returns the widget's response (the host response of its
+/// behaviours, EV2b).
+pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui, origin: egui::Vec2, out: &mut Vec<Out>) -> Option<egui::Response> {
     use crate::scene::NodeFlags;
     let node = arena.slots.id_at(i).expect("live provider node");
     let h: Handle = node.to_raw();
     let rect = ui.max_rect();
     let enabled = arena.common(i).enabled;
     let id = arena.core[i].egui_id;
-    // The payload and the ext column are disjoint fields: the widget borrows its node's ext data.
-    let x = match &arena.payload[i] {
-        crate::scene::node::Payload::Builtin(W::Ext(x)) => x,
-        _ => return None,
-    };
-    let mut wb = x.0.borrow_mut();
-    let entry = wb.entry();
-    let base = wb.base();
-    let mut state = arena.core[i].state;
-    // the parts of the scene an ext write touches, disjoint from the payload borrowed above
-    let ext = crate::scene::ext::ExtCx { cols: &mut arena.ext, journal: &mut arena.journal, core: &mut arena.core, roots: &arena.roots, tick: &mut arena.tick, in_batch: arena.in_batch };
-    let mut cx = WidgetCx { id, rect, enabled, state: &mut state, ext, node, entry, base, changed: Vec::new(), emits: Vec::new(), remeasure: false, errors: Vec::new() };
-    let mut resp = wb.ui(ui, &mut cx);
-    let WidgetCx { changed, emits, remeasure, errors, .. } = cx;
-    drop(wb);
+    let state0 = arena.core[i].state;
+    let ran = with_taken(arena, i, |w, s| {
+        let mut cx = WidgetCx {
+            s,
+            i,
+            id,
+            rect,
+            enabled,
+            state: state0,
+            node,
+            entry: w.entry(),
+            base: w.base(),
+            origin,
+            out: &mut *out,
+            changed: Vec::new(),
+            emits: Vec::new(),
+            remeasure: false,
+            errors: Vec::new(),
+        };
+        let resp = w.ui(ui, &mut cx);
+        let WidgetCx { state, changed, emits, remeasure, errors, .. } = cx;
+        (resp, state, changed, emits, remeasure, errors)
+    });
+    let Some((mut resp, state, changed, emits, remeasure, errors)) = ran else { return None };
     // EM1: the accessible name and, for an anchored node, the anchor as AccessKit author id
     resp = crate::a11y::decorate(resp, &arena.n(h));
     let c = arena.common(i);
@@ -619,8 +734,10 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
     {
         let name = (!c.accessible_name.is_empty()).then_some(c.accessible_name.as_str());
         let acx = A11yCx { id: resp.id, state, name };
-        let w = x.0.borrow();
-        ui.ctx().accesskit_node_builder(resp.id, |n| w.a11y(&acx, n));
+        if let crate::scene::node::Payload::Builtin(W::Ext(x)) = &arena.payload[i] {
+            let w = x.0.borrow();
+            ui.ctx().accesskit_node_builder(resp.id, |n| w.a11y(&acx, n));
+        }
     }
     if state != arena.core[i].state {
         let before = arena.core[i].state;

@@ -1041,6 +1041,19 @@ pub(crate) fn layout_style(s: &Scene, i: usize) -> taffy::Style {
             "margin-right" => st.margin.right = lpa(v).unwrap_or(st.margin.right),
             "margin-bottom" => st.margin.bottom = lpa(v).unwrap_or(st.margin.bottom),
             "margin-left" => st.margin.left = lpa(v).unwrap_or(st.margin.left),
+            // SG4: out-of-flow positioning (`layout.rs` hoists absolute boxes)
+            "position" => {
+                st.position = match kw {
+                    Some("absolute") => taffy::Position::Absolute,
+                    Some("relative") => taffy::Position::Relative,
+                    Some("static") => taffy::Position::Static,
+                    _ => st.position,
+                }
+            }
+            "left" => st.inset.left = lpa(v).unwrap_or(st.inset.left),
+            "top" => st.inset.top = lpa(v).unwrap_or(st.inset.top),
+            "right" => st.inset.right = lpa(v).unwrap_or(st.inset.right),
+            "bottom" => st.inset.bottom = lpa(v).unwrap_or(st.inset.bottom),
             "visible" => {
                 if matches!(v, ComputedValue::Bool(false)) {
                     st.display = taffy::Display::None;
@@ -1272,6 +1285,11 @@ impl EguiBackend {
                     }
                 }
                 return Ok(0);
+            }
+            // TR2: answers 1 = the runtime hands this backend the animation (any other answer: it plays it)
+            SVL_STYLE_ANIMATE => {
+                self.animate_op(h, text)?;
+                return Ok(1);
             }
             SVL_STYLE_SHEET => {
                 let mut s = self.0.scene.borrow_mut();

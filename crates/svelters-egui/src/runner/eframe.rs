@@ -52,6 +52,8 @@ fn run_native_with(
     size: egui::Vec2,
     make: impl FnOnce(&egui::Context) -> Box<dyn ::eframe::App> + 'static,
 ) -> Result<(), String> {
+    // W5: the system primary selection for the text kinds (Linux; a no-op elsewhere)
+    crate::primary::use_system();
     let opts = ::eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default().with_title(title.clone()).with_inner_size(size),
         renderer: ::eframe::Renderer::Glow,

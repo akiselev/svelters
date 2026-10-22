@@ -80,6 +80,8 @@ function configFacts(text) {
     error: /^\s*error\s*:/m.test(text),
     // compileOptions.dev (passed to svelters-compile as --dev)
     dev: /\bcompileOptions\s*:\s*\{[^}]*\bdev\s*:\s*true/.test(text),
+    // compileOptions.hmr (passed as --hmr)
+    hmr: /\bcompileOptions\s*:\s*\{[^}]*\bhmr\s*:\s*true/.test(text),
   };
 }
 
@@ -103,9 +105,9 @@ function walk(dir, rel = '') {
   return out;
 }
 
-function compileFile(src, name, dev) {
+function compileFile(src, name, dev, hmr = false) {
   return new Promise((resolve) => {
-    execFile(bin, ['--spec', spec, '--json', ...(dev ? ['--dev'] : []), '--filename', name, src], { maxBuffer: 64 << 20 }, (err, stdout, stderr) => {
+    execFile(bin, ['--spec', spec, '--json', ...(dev ? ['--dev'] : []), ...(hmr ? ['--hmr'] : []), '--filename', name, src], { maxBuffer: 64 << 20 }, (err, stdout, stderr) => {
       try {
         resolve(JSON.parse(stdout));
       } catch {
@@ -174,7 +176,7 @@ async function prepare(name) {
       continue;
     }
     if (!f.endsWith('.svelte') && !f.endsWith('.svelte.js')) continue;
-    const res = await compileFile(path.join(src, f), f, facts.dev);
+    const res = await compileFile(path.join(src, f), f, facts.dev, facts.hmr);
     const errs = res.diagnostics.filter((d) => d.severity === 'error').map((d) => ({ file: f, code: d.code, message: d.message, line: d.line, column: d.column }));
     diags.push(...errs);
     if (res.js) {

@@ -141,3 +141,15 @@ On every kind (Widget base): `invalid` (bool). On `label` and `button`: `font-we
 - `… nextest run -p svelters-egui --test widgets fallback icons_resolve font_weight every_kind`: 7/7.
 - Not run locally: `widgets_panel` (its icon button now draws a placeholder, `icons` is unbound there),
   `viewports` (`take_warnings`), the rest of the suite. CI runs them.
+
+### WG1b: testkit_gtk on the GTK 4.14 job (svelters-host fix)
+
+`counter::testkit testkit_gtk` failed `gtk/transition` with "virtual clock: timers did not quiesce" on
+every try in ci/wg1's gtk-4-14 job (master flaked there too). Cause: QuickJS-NG's `JS_NewContext`
+installs its own wall-clock `performance`, so the prelude's `typeof performance === 'undefined'`
+guard never installed TK1's virtual `native.now()`; Svelte's `raf.now` read wall time while frames
+fired on the virtual clock, and a 120 ms fade outlasted `max_virtual_timer_fires` on a fast runner.
+The prelude now always installs `performance = { now: native.now }` (virtual in scripted mode, wall
+time otherwise). Test: `svelters-host --test host scripted_performance_now_is_the_virtual_clock`
+(fails with the old guard: 0.24 ms elapsed across a 1 s virtual timer). Local: that test, the
+scripted host/sync_frame tests and `testkit_gtk` (GTK 4.24) pass.

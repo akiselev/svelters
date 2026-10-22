@@ -36,13 +36,47 @@ pub enum W {
     CollapsingHeader { text: String, open: bool },
     /// `seen`: the offsets egui reported last frame (a differing `x`/`y` is a host write to apply).
     ScrollArea { direction: &'static str, x: f64, y: f64, seen: Option<(f64, f64)> },
+    // ---- WG2a (plans/milestones/WG2a-menus-popups.md) ----
+    /// The menu family (`crate::menus`).
+    Menu(crate::menus::MenuW),
+    /// `popup`, `modal`, `inner-window`: a flex box shown out of flow (`crate::overlays`).
+    Overlay(Box<crate::overlays::OverlayW>),
+    // ---- WG2b (plans/milestones/WG2b-tier0-controls.md; `crate::elements`) ----
+    Hyperlink { text: String, url: String, new_tab: bool },
+    /// `value`: what the button stands for; with one, `checked` follows `group == value`.
+    RadioButton { text: String, checked: bool, value: String, group: String },
+    Switch { text: String, active: bool },
+    RangeSlider { low: f64, high: f64, min: f64, max: f64, step: f64, text: String, show_value: bool },
+    DragValue { value: f64, min: Option<f64>, max: Option<f64>, speed: f64, decimals: Option<i64>, prefix: String, suffix: String },
+    Panel { side: &'static str, size: Option<f64>, resizable: bool, separator: bool },
+    Sides,
+    Frame { label: String, style: &'static str },
+    Stack { name: String, index: i64, homogeneous: bool },
+    Image { source: String, fit: &'static str },
+    ProgressBar { fraction: f64, text: String, show_percentage: bool, animate: bool },
+    Spinner { spinning: bool, size: Option<f64> },
+    Canvas(Box<crate::elements::canvas::Canvas>),
+    // ---- WG4a (plans/milestones/WG4a-tier1-views.md; state and paint in `crate::views`) ----
+    /// `table`: props, the JS data window and what the last frame asked for.
+    Table(std::boxed::Box<crate::views::table::TableState>),
+    TableColumn { title: String, resizable: bool, align: &'static str, sort: &'static str },
+    TabView { selected: i64 },
+    Tab { title: String, closable: bool },
+    /// `vertical`: `orientation="vertical"` (panes stacked).
+    SplitView { vertical: bool, position: Option<f64>, min_size: f64, resizable: bool },
+    /// `toast-host`: props and the toasts shown.
+    ToastHost(std::boxed::Box<crate::views::toast::Toasts>),
+    /// WG4b: `date-picker`, `color-picker` (`kinds/pickers.rs`).
+    Picker(crate::kinds::pickers::Picker),
 }
 
 impl W {
     /// Containers lay out children with taffy (flexbox, or grid for `Grid`); `Box` and `Window`
     /// paint nothing themselves, the WG1 containers paint their chrome (`leaf::container`).
     pub fn is_container(&self) -> bool {
-        matches!(self, W::Box | W::Window { .. } | W::Grid { .. } | W::CollapsingHeader { .. } | W::ScrollArea { .. })
+        matches!(self, W::Box | W::Window { .. } | W::Grid { .. } | W::CollapsingHeader { .. } | W::ScrollArea { .. } | W::Overlay(_))
+            || crate::elements::is_container(self) // WG2b
+            || crate::views::is_container(self) // WG4a
     }
 }
 
@@ -76,6 +110,15 @@ pub struct Common {
     pub justify_content: &'static str,
     /// WG1: the `invalid` prop.
     pub invalid: bool,
+    /// WG4b: `drag-type`, `drag-data`, `drop-types` (`kinds/dnd.rs`); `None` while all are empty.
+    pub dnd: Option<Box<crate::kinds::dnd::Dnd>>,
+    /// SG4: `position` (`static`, `relative`, `absolute`): taffy's out-of-flow boxes, hoisted to
+    /// their containing block (`layout.rs`).
+    pub position: &'static str,
+    pub left: Option<f64>,
+    pub top: Option<f64>,
+    pub right: Option<f64>,
+    pub bottom: Option<f64>,
 }
 
 impl Common {
@@ -105,6 +148,12 @@ impl Common {
         align_items: "stretch",
         justify_content: "start",
         invalid: false,
+        dnd: None,
+        position: "static",
+        left: None,
+        top: None,
+        right: None,
+        bottom: None,
     };
 }
 
@@ -198,6 +247,9 @@ bits! {
         const ATTACHED = 1 << 15;
         /// Has attached nodes (`NodeCold::attached` is not empty): the walk runs their hooks.
         const HAS_ATTACHED = 1 << 16;
+        /// SG4: the top of a provider's shadow subtree (ARCH-SCENE §4.4): its parent is the host
+        /// provider node, which lays it out and draws it (`WidgetCx::children`); JS never sees it.
+        const SHADOW = 1 << 20;
     }
 }
 
@@ -312,7 +364,8 @@ impl LayoutBox {
 /// `Behavior`, EM1 `Slot`.
 #[derive(Clone, Debug)]
 pub(crate) enum Payload {
-    /// A freed slot, or a payload taken out while its own code runs (SG4).
+    /// A freed slot, or a payload taken out while its own code runs (SG4: a provider's `ui`,
+    /// `layout`, `prepare`); a taken-out payload reads as an empty box (`Scene::w`).
     Vacant,
     Builtin(W),
 }
@@ -330,10 +383,13 @@ pub(crate) struct NodeCold {
     pub listen_overflow: Vec<u32>,
     /// Attached nodes (behaviours, EV2b) in attach order; `NodeFlags::HAS_ATTACHED` when not empty.
     pub attached: Vec<NodeId>,
+    /// SG4: the out-of-flow (`position: absolute`) boxes this node is the containing block of, as
+    /// taffy's last layout recorded them (`layout.rs`, `LayoutContainingBlock`).
+    pub hoisted: Vec<NodeId>,
 }
 
 impl NodeCold {
-    pub const DEFAULT: NodeCold = NodeCold { common: Common::DEFAULT, vis: Visual::IDENTITY, observe: Vec::new(), listen_overflow: Vec::new(), attached: Vec::new() };
+    pub const DEFAULT: NodeCold = NodeCold { common: Common::DEFAULT, vis: Visual::IDENTITY, observe: Vec::new(), listen_overflow: Vec::new(), attached: Vec::new(), hoisted: Vec::new() };
 
     pub fn observes(&self, prop: u32) -> bool {
         prop != 0 && self.observe.iter().any(|&(p, c)| p == prop && c > 0)
@@ -388,10 +444,18 @@ pub fn text_of(w: &W) -> &str {
         | W::Slider { text, .. }
         | W::ToggleButton { text, .. }
         | W::CollapsingHeader { text, .. } => text,
-        W::Window { title, .. } => title,
+        W::Window { title, .. } | W::Tab { title, .. } | W::TableColumn { title, .. } => title,
         W::ComboBox { options, selected, .. } => usize::try_from(*selected).ok().and_then(|i| options.get(i)).map_or("", |s| s.as_str()),
         W::Icon { name, .. } => name,
+        W::Menu(m) => m.label(),
+        W::Overlay(o) => &o.title,
         W::Box | W::Ext(_) | W::Separator { .. } | W::Grid { .. } | W::ScrollArea { .. } => "",
+        // WG2b
+        W::Hyperlink { text, .. } | W::RadioButton { text, .. } | W::Switch { text, .. } | W::RangeSlider { text, .. } | W::ProgressBar { text, .. } => text,
+        W::Frame { label, .. } => label,
+        W::DragValue { .. } | W::Panel { .. } | W::Sides | W::Stack { .. } | W::Image { .. } | W::Spinner { .. } | W::Canvas(_) => "",
+        W::Table(_) | W::TabView { .. } | W::SplitView { .. } | W::ToastHost(_) => "",
+        W::Picker(p) => p.text(),
     }
 }
 

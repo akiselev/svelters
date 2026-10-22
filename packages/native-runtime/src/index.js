@@ -35,6 +35,8 @@ import {
   reorder,
   root as componentRoot,
   root_boundary,
+  HMR,
+  FILENAME,
 } from './core/internal.js';
 // The X6 styling (classes, widget name, inline style, sheets, tokens) works on any node with `h`,
 // `tag`, `attrs` and `sc`: compiled components drive it through `attr`.
@@ -724,6 +726,18 @@ export function on(node, signal, fn, flags = 0) {
   }
 }
 
+/** TR2: `on` for the runtime's own handlers: not tied to the current scope (it outlives the transition that asked). */
+function listenOutsideScope(node, signal, fn) {
+  const k = hkey(signal, 0);
+  let list = node.handlers.get(k);
+  if (!list) node.handlers.set(k, (list = []));
+  list.push(fn);
+  if (!node.listening.has(k) && alive(node)) {
+    node.listening.add(k);
+    hostListen(node, signal, true, 0);
+  }
+}
+
 function off(node, signal, fn, flags = 0) {
   const k = hkey(signal, flags);
   const list = node.handlers.get(k);
@@ -801,7 +815,7 @@ export function track(node, prop, signal, arg) {
 const handlersOf = (node, signal, flags) => [...(node.handlers.get(hkey(signal, flags)) ?? [])];
 
 // TR1: the `Element` slice Svelte's transition code uses (src/motion.js)
-defineFacade(Native.prototype, { handlers: (node, type) => handlersOf(node, type, 0) });
+defineFacade(Native.prototype, { handlers: (node, type) => handlersOf(node, type, 0), listen: listenOutsideScope });
 
 /** TR1: whether `node` or a native ancestor is inert (outroing): its events are dropped. */
 function inertNode(node) {
@@ -854,7 +868,8 @@ export class NativeEvent {
 export function dispatch(h, signal, args = [], deferred = false, flags = 0) {
   const node = table().get(h);
   if (!node || !alive(node)) return;
-  if (inertNode(node)) return;
+  // TR2: an exiting (inert) node still gets the end of its native outro
+  if (signal !== 'animationend' && inertNode(node)) return;
   if (dispatchHook) return dispatchHook(node, () => dispatchTo(node, signal, args, deferred, flags));
   dispatchTo(node, signal, args, deferred, flags);
 }
@@ -1311,6 +1326,104 @@ function svelteError(code, message) {
  */
 export function component(container, getComponent, props, bind) {
   swapping(container, getComponent, (c, anchor) => bind(c(anchor, props)));
+}
+
+// ---- H1: component HMR (Svelte 5 semantics, plans/research/HMR.md sections 2.1, 3.4) ----
+
+export { HMR, FILENAME };
+
+/** Where a rolled-back swap is reported: `(id, error)`; the host sets it. Default: console. */
+let hmrReporter = null;
+export function setHmrReporter(fn) {
+  hmrReporter = fn;
+}
+
+/** Counters the host reads for its swap budget (HMR.md 3.2): swaps applied, rollbacks. */
+export const hmrStats = { swaps: 0, rollbacks: 0, failed: new Set() };
+
+function reportHmr(id, error) {
+  hmrStats.rollbacks++;
+  hmrStats.failed.add(id);
+  if (hmrReporter) hmrReporter(id, error);
+  else console.error(`[hmr] ${id}: update failed, kept the previous version:`, error);
+}
+
+/**
+ * `$n.hmr(Component, id)`: Svelte's `$.hmr` on regions. Each call (= instance) keeps one region at
+ * its anchor and a block effect that reads the shared `current` source; when it changes, the new
+ * version is built in a fresh branch after the old one, and only when it initialised without
+ * throwing does the old one leave. A throwing new version is torn down and the old one stays
+ * (rollback, which upstream cannot do), and the failure is reported. The anchor, the props object
+ * and the `instance` object (refilled, so a parent's `bind:this` stays valid) are kept.
+ */
+export function hmr(fn, id = fn?.[FILENAME] ?? 'component') {
+  const current = $.state(fn);
+
+  function wrapper(anchor, props) {
+    let component = null;
+    let live = null;
+    let ran = false;
+    const instance = {};
+    const r = newRegion(anchor);
+    const owner = scope;
+    block(() => {
+      const next = $.get(current);
+      if (component === next) return;
+      const prevBranch = live;
+      const nb = newRegion(r);
+      nb.scope = new Scope(owner);
+      const prevScope = scope;
+      scope = nb.scope;
+      let result;
+      try {
+        // intros are suppressed while a version is replaced
+        if (ran) set_intro(false);
+        building(() => {
+          nb.effect = branch(() => {
+            result = next(nb, props);
+          });
+        });
+      } catch (e) {
+        scope = prevScope;
+        if (ran) set_intro(true);
+        // a failed first render has nothing to roll back to: it propagates like any init error
+        if (!prevBranch) throw e;
+        // the partial branch's effect is already destroyed by Svelte; drop its natives and scope
+        dispose(nb.scope, nb);
+        unlist(nb);
+        // the live version stays; the next edit retries
+        reportHmr(id, e);
+        return;
+      }
+      scope = prevScope;
+      if (ran) set_intro(true);
+      component = next;
+      live = nb;
+      if (prevBranch) {
+        for (const k in instance) delete instance[k];
+        hmrStats.swaps++;
+        hmrStats.failed.delete(id);
+        close(prevBranch);
+      }
+      if (result) Object.defineProperties(instance, Object.getOwnPropertyDescriptors(result));
+    }, EFFECT_TRANSPARENT);
+    ran = true;
+    return instance;
+  }
+
+  wrapper[FILENAME] = fn[FILENAME];
+  wrapper[HMR] = {
+    fn,
+    current,
+    id,
+    update(incoming) {
+      // the first version's source drives every instance's block (upstream's "first version wins"):
+      // later imports point their `current` at it, else block effects would pile up
+      $.set(wrapper[HMR].current, incoming[HMR].fn);
+      incoming[HMR].current = wrapper[HMR].current;
+    },
+  };
+  return wrapper;
 }
 
 function swapping(container, get, render) {
@@ -2124,7 +2237,7 @@ export function animation(node, getFn, getParams) {
   svelteAnimation(node, getFn, getParams ?? null);
 }
 
-export { NativeAnimation, computed } from './motion.js';
+export { NativeAnimation, computed, setReducedMotion } from './motion.js';
 
 // ---------------------------------------------------------------------------------------------
 // Mount

@@ -45,6 +45,7 @@ impl EguiBackend {
         let mut scene = self.0.scene.borrow_mut();
         let id = scene.live(w).expect("a live window");
         let r = scene.core[scene.ix(id)].root;
+        crate::provider::pass::prepare_root(&mut scene, r); // SG4: Caps::PREPARE (§7.2 b)
         self.layout_root(&mut scene, ui.ctx(), r, rect.size());
         paint(&mut scene, w, rect.min.to_vec2(), ui, out);
         ui.allocate_rect(rect, egui::Sense::hover());
@@ -65,6 +66,7 @@ impl EguiBackend {
         if scene.roots.get(r).is_some_and(|e| !e.dirty.remeasure.is_empty()) {
             layout::remeasure(&mut scene, &layout::Metrics::new(ui.ctx()), r);
         }
+        crate::provider::pass::prepare_root(&mut scene, r); // SG4: Caps::PREPARE (§7.2 b)
         self.layout_root(&mut scene, ui.ctx(), r, rect.size());
         paint_at(&mut scene, i, rect.min.to_vec2(), ui, out);
         // what the content needs: the extent of the slot's children (laid out from its origin)
@@ -84,7 +86,14 @@ pub fn paint(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut 
     paint_at(arena, i, origin, ui, out);
 }
 
-fn paint_at(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+/// SG4: a provider's `WidgetCx::children`/`child` draws its children through the walk.
+pub(crate) fn paint_child(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+    paint_at(arena, i, origin, ui, out);
+}
+
+/// `pub(crate)` for the WG4a views, which draw one child at a time (`crate::views`), and WG2b's
+/// `crate::elements`.
+pub(crate) fn paint_at(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
     if !arena.common(i).visible {
         return;
     }
@@ -108,6 +117,15 @@ fn paint_visual(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mu
     if v.clip.is_some() {
         child.set_clip_rect(ui.clip_rect().intersect(r));
     }
+    if v.inert {
+        // an exiting node leaves the accessibility tree
+        ui.ctx().accesskit_node_builder(child.unique_id(), |b| b.set_hidden());
+        // TR2b: and out of focus traversal: a disabled widget senses nothing, so Tab skips it and a
+        // focused one loses focus. Disabled widgets are dimmed by `disabled_alpha`; it is 1 here, so
+        // the outro's own opacity is the only fade.
+        child.visuals_mut().disabled_alpha = 1.0;
+        child.disable();
+    }
     let mut dropped = Vec::new();
     let sink = if v.inert { &mut dropped } else { out };
     match v.transform {
@@ -122,6 +140,10 @@ fn paint_visual(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mu
 }
 
 fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+    // WG2a: overlays and menu entries are out of flow: they paint themselves, anchored to the parent
+    if crate::overlays::out_of_flow(arena.w(i)) {
+        return crate::overlays::paint_node(arena, i, origin, ui, out);
+    }
     // EV2b: a host with behaviours (`use:`) runs their `after_ui` hooks around its own paint
     if arena.core[i]
         .flags
@@ -180,6 +202,7 @@ fn paint_own(
             }
             None => ui,
         };
+        crate::kinds::dnd::node(arena, i, r, ui, out, crate::kinds::dnd::Part::Both); // WG4b: under the children
         // WG1: a container's tooltip and chrome (collapsing header, scroll area), then
         // `paint_children`
         crate::leaf::container(arena, i, r, origin, ui, out);
@@ -199,8 +222,9 @@ fn paint_own(
     let mut child = ui.new_child(b);
     // CS5e: this pass's state, the restyle it reaches, then the computed visuals on `child`
     crate::style::before_leaf(arena, i, r, &mut child);
+    crate::kinds::dnd::node(arena, i, r, &mut child, out, crate::kinds::dnd::Part::Source); // WG4b: under the widget
     let resp = if matches!(arena.w(i), crate::scene::W::Ext(_)) {
-        let resp = crate::provider::paint(arena, i, &mut child, out); // RA1: a provider kind
+        let resp = crate::provider::paint(arena, i, &mut child, origin, out); // RA1: a provider kind
         if arena.common(i).invalid {
             crate::leaf::invalid_outline(&child, arena.core[i].drawn); // WG1
         }
@@ -208,7 +232,9 @@ fn paint_own(
     } else {
         Some(crate::leaf::leaf(arena, i, &mut child, out))
     };
+    crate::kinds::dnd::node(arena, i, r, &mut child, out, crate::kinds::dnd::Part::Target); // WG4b
     crate::scene::hit::record(arena, i, &child); // SG3: the viewport's hit list
+    crate::overlays::paint_attached(arena, i, origin, ui, out); // WG2a: its context menu, popup
     resp
 }
 

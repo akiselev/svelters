@@ -1,5 +1,6 @@
 //! TR1 on egui: `transition:fade` / `fly` / `slide` (fixtures/motion-egui) on the real QuickJS host,
-//! driven by kittest frames in real time. The outro shows through the visual channels (opacity,
+//! driven by kittest frames on a virtual clock (TR2: the egui scene plays the keyframes itself, at egui's
+//! time, which kittest advances by 1/60 s per frame). The outro shows through the visual channels (opacity,
 //! transform, clip, inert on the scene node), the elements go when it ends, and then the app is
 //! idle again: no frame asks for another.
 
@@ -24,7 +25,7 @@ fn visuals(app: &TestApp) -> Vec<Visual> {
     app.backend.with_scene(|s| s.handles().into_iter().map(|h| s.get(h).unwrap().vis).collect())
 }
 
-/// Steps frames in real time (16 ms apart) until `done`, recording the channels seen on the way.
+/// Steps frames (16.7 ms of virtual time apart) until `done`, recording the channels seen on the way.
 fn animate(app: &mut TestApp, done: impl Fn(&TestApp) -> bool) -> (u32, Vec<Visual>) {
     let start = Instant::now();
     let mut steps = 0;
@@ -34,14 +35,13 @@ fn animate(app: &mut TestApp, done: impl Fn(&TestApp) -> bool) -> (u32, Vec<Visu
         app.harness.step();
         steps += 1;
         seen.extend(visuals(app).into_iter().filter(|v| !v.is_identity()));
-        std::thread::sleep(Duration::from_millis(16));
     }
     (steps, seen)
 }
 
 #[test]
 fn outro_and_intro_play_through_the_channels_then_idle() {
-    let mut app = TestApp::load(bundle("motion-egui")).unwrap();
+    let mut app = TestApp::load_stepped(bundle("motion-egui"), 1.0 / 60.0).unwrap();
     app.run();
     assert!(has(&app, "Faded") && has(&app, "Flown") && has(&app, "Slid"));
     assert!(visuals(&app).iter().all(Visual::is_identity), "no intro on the first render (local transitions)");

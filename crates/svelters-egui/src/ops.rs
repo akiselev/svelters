@@ -25,7 +25,8 @@ impl EguiBackend {
         }
         let mut scene = self.0.scene.borrow_mut();
         let id = scene.live(h)?;
-        let mut vis = scene.vis(scene.ix(id));
+        // an animated node's static visual is the base under its animations (TR2)
+        let mut vis = self.0.anim.borrow().static_of(h).unwrap_or_else(|| scene.vis(scene.ix(id)));
         match op {
             SVL_STYLE_OPACITY => {
                 vis.opacity = match text {
@@ -45,12 +46,45 @@ impl EguiBackend {
             SVL_STYLE_CLIP => vis.clip = text.map(|t| nums::<2>(t, "clip")).transpose()?,
             _ => vis.inert = text.is_some(),
         }
+        if let Some(composed) = self.0.anim.borrow_mut().set_base(h, vis) {
+            vis = composed;
+        }
         if !scene.set_visual(id, vis) {
             return Ok(());
         }
         let r = scene.core[scene.ix(id)].root;
         drop(scene);
         self.touched(Some(r));
+        Ok(())
+    }
+
+    /// TR2: `SVL_STYLE_ANIMATE`. A start samples the first keyframe at once and asks for frames;
+    /// the logic pass steps it from then on (`animate_step`).
+    pub(crate) fn animate_op(&self, h: svl_handle, text: Option<&str>) -> StrResult<()> {
+        let cmd = crate::anim::parse(text.ok_or("animate: needs the animation text")?)?;
+        let mut scene = self.0.scene.borrow_mut();
+        let id = scene.live(h)?;
+        let i = scene.ix(id);
+        let composed = {
+            let mut a = self.0.anim.borrow_mut();
+            match cmd {
+                crate::anim::Cmd::Start(spec) => {
+                    let base = a.static_of(h).unwrap_or_else(|| scene.vis(i));
+                    Some(a.start(h, base, spec))
+                }
+                crate::anim::Cmd::Cancel(n) => a.cancel(h, n),
+            }
+        };
+        let r = scene.core[i].root;
+        if let Some(v) = composed {
+            scene.set_visual(id, v);
+        }
+        drop(scene);
+        self.touched(Some(r));
+        // the step that advances it runs in the logic pass of the root viewport
+        if let Some(ctx) = self.ctx() {
+            ctx.request_repaint_of(self.logic_vp());
+        }
         Ok(())
     }
 
@@ -133,6 +167,7 @@ impl Backend for EguiBackend {
         if d.was_window {
             self.0.windows.borrow_mut().retain(|&w| w != h);
         }
+        self.0.anim.borrow_mut().forget(h);
         self.touched(r);
     }
 
@@ -157,6 +192,10 @@ impl Backend for EguiBackend {
     fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value> {
         let k = self.kind_of(h)?;
         let def = kinds::method_def(k, method).ok_or_else(|| format!("unknown method id {method}"))?;
+        // WG4a: the views' methods take arguments (`crate::views::call`)
+        if let Some(r) = crate::views::call(self, h, def.name, args) {
+            return r;
+        }
         if !args.is_empty() {
             return Err(format!("{} takes no arguments", def.name));
         }
@@ -177,6 +216,12 @@ impl Backend for EguiBackend {
                 let mut scene = self.0.scene.borrow_mut();
                 let i = scene.ix(scene.live(h)?);
                 scene.core[i].flags.insert(NodeFlags::WANT_FOCUS);
+            }
+            // WG2a: context-menu, menu-button, popup (applied and announced at the next pass)
+            "popup" | "popdown" => {
+                let mut scene = self.0.scene.borrow_mut();
+                let i = scene.ix(scene.live(h)?);
+                crate::menus::call(&mut scene, i, def.name == "popup");
             }
             other => return Err(format!("method {other} is not implemented")),
         }

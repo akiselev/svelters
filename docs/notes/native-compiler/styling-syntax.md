@@ -3,7 +3,8 @@
 **ST1 (2026-10-17).** A `<style>` holds two kinds of declarations, decided by the backend's style
 table (`metadata/style/<backend>.yaml`, the `style` section of `metadata/semantics/*.json`):
 setter / child-attr properties are the compiler's, CSS properties go to the X6 translator in the
-Vite plugin (Svelte scopes them; `--css-scope` gives the compiler the scope class).
+Vite plugin (the compiler scopes them with its port of Svelte's CSS pipeline, `--css`, Q3w; stock Svelte
+still does for egui; `--css-scope` gives the compiler the scope class).
 `style::parse_style` reads the whole sheet but reports a problem below only when it touches a
 setter declaration: a CSS-only rule, value or at-rule is never reported here. `#id` selectors are
 accepted (specificity is `(ids, classes + states, types)`), units are `px` or none, and a rule with

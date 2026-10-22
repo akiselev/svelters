@@ -10,6 +10,9 @@ use super::{Def, KindDef, MethodDef, P, PropDef, SignalDef, Ty, input, layout, l
 
 pub const ALIGN: &[&str] = &["start", "end", "center", "stretch", "baseline"];
 pub const ALIGN_SELF: &[&str] = &["auto", "start", "end", "center", "stretch", "baseline"];
+/// SG4: `position` (`absolute`: out of flow, placed by `left`/`top`/`right`/`bottom` in the nearest
+/// positioned ancestor, else the root).
+pub const POSITION: &[&str] = &["static", "relative", "absolute"];
 pub const JUSTIFY: &[&str] = &["start", "end", "center", "space-between", "space-around", "space-evenly"];
 pub const DIRECTION: &[&str] = &["column", "row", "column-reverse", "row-reverse"];
 pub const WRAP: &[&str] = &["nowrap", "wrap", "wrap-reverse"];
@@ -53,6 +56,27 @@ static WIDGET_PROPS: &[PropDef] = &[
         Def::Bool(false),
         "Marks the value as invalid: an outline in the error colour (`Visuals::error_fg_color`) and AccessKit `invalid`. The app sets it; the widget never does.",
     ),
+    // WG4b: drag and drop on any node (`dnd.rs`)
+    prop("drag-type", P::DragType, Ty::Str, Def::Str(""), "Makes the node a drag source: the payload's type, a MIME-like string (`cad/part`); empty for none."),
+    prop("drag-data", P::DragData, Ty::Str, Def::Str(""), "The drag payload's data (JSON for structured data); `drop` delivers it."),
+    prop(
+        "drop-types",
+        P::DropTypes,
+        Ty::Str,
+        Def::Str(""),
+        "Makes the node a drop target: the drag types it accepts, separated by spaces or commas (`*` any, `cad/*` a prefix); empty for none.",
+    ),
+    layout(
+        "position",
+        P::Position,
+        Ty::Enum(POSITION),
+        Def::Str("static"),
+        "`absolute` takes the node out of the flow and places it by `left`/`top`/`right`/`bottom` inside its containing block: the nearest `relative` or `absolute` ancestor, else the root.",
+    ),
+    length("left", P::Left, "Inset from the containing block's left edge in points (`position: absolute` or `relative`); null for auto."),
+    length("top", P::Top, "Inset from the containing block's top edge in points; null for auto."),
+    length("right", P::Right, "Inset from the containing block's right edge in points; null for auto."),
+    length("bottom", P::Bottom, "Inset from the containing block's bottom edge in points; null for auto."),
 ];
 
 static LABEL_PROPS: &[PropDef] = &[
@@ -98,6 +122,20 @@ static SLIDER_PROPS: &[PropDef] = &[
 
 pub(super) const NONE: &[(&str, Ty)] = &[];
 
+static WIDGET_SIGNALS: &[SignalDef] = &[
+    signal("animationend", &[("id", Ty::I64)], "A native animation (TR2) finished; carries its id. The runtime listens to it itself."),
+    // WG4b: drag and drop on any node (`kinds/dnd.rs`)
+    signal("drag-begin", NONE, "Drag source: the user started dragging this node (`drag-type` set)."),
+    signal("drag-end", &[("dropped", Ty::Bool)], "Drag source: the drag ended; `dropped` is true when a target took it."),
+    signal("drag-enter", &[("type", Ty::Str)], "Drop target: a drag it accepts entered it (`drop-types` set); carries the drag's type."),
+    signal("drag-leave", NONE, "Drop target: the drag left, was cancelled, or was dropped here (before `drop`)."),
+    signal(
+        "drop",
+        &[("type", Ty::Str), ("data", Ty::Str), ("x", Ty::F64), ("y", Ty::F64)],
+        "Drop target: a drag it accepts was released over it; carries the type, the data and the point in the node's own points.",
+    ),
+];
+
 static CLICK_SIGNALS: &[SignalDef] = &[signal("clicked", NONE, "Pressed and released (`Response::clicked`).")];
 
 pub(super) static BUTTON_SIGNALS: &[SignalDef] = &[
@@ -138,7 +176,7 @@ pub static KINDS: &[KindDef] = &[
         text_content: None,
         present: None,
         props: WIDGET_PROPS,
-        signals: &[],
+        signals: WIDGET_SIGNALS,
         methods: &[],
         doc: "Common properties of everything placed in a window: state, tooltip, accessibility and its taffy item style.",
     },
@@ -248,6 +286,41 @@ pub static KINDS: &[KindDef] = &[
     super::layouts::GRID,
     super::layouts::COLLAPSING_HEADER,
     super::layouts::SCROLL_AREA,
+    // ---- WG2b: appended after WG1 (tables in `inputs.rs`, `panes.rs`, `media.rs`) ----
+    super::inputs::HYPERLINK,
+    super::inputs::RADIO_BUTTON,
+    super::inputs::SWITCH,
+    super::inputs::RANGE_SLIDER,
+    super::inputs::DRAG_VALUE,
+    super::panes::PANEL,
+    super::panes::SIDES,
+    super::panes::FRAME,
+    super::panes::STACK,
+    super::media::IMAGE,
+    super::media::PROGRESS_BAR,
+    super::media::SPINNER,
+    super::media::CANVAS,
+    // ---- WG2a: appended after WG2b (tables in `menus.rs`, `popups.rs`) ----
+    super::menus::MENU_ENTRY,
+    super::menus::MENU_BAR,
+    super::menus::MENU,
+    super::menus::ACTION,
+    super::menus::MENU_SEPARATOR,
+    super::menus::CONTEXT_MENU,
+    super::menus::MENU_BUTTON,
+    super::popups::POPUP,
+    super::popups::MODAL,
+    super::popups::INNER_WINDOW,
+    // WG4a
+    super::views::TABLE,
+    super::views::TABLE_COLUMN,
+    super::views::TAB_VIEW,
+    super::views::TAB,
+    super::views::SPLIT_VIEW,
+    super::views::TOAST_HOST,
+    // ---- WG4b: appended (tables in `pickers.rs`) ----
+    super::pickers::DATE_PICKER,
+    super::pickers::COLOR_PICKER,
 
 
 

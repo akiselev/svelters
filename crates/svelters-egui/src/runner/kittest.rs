@@ -38,8 +38,13 @@ impl TestApp {
         TestApp::with_config(bundle, HostConfig { echo_console: false, echo_errors: false, ..HostConfig::default() })
     }
 
+    /// [`TestApp::load`] on a virtual clock of `step_dt` seconds per frame (see [`TestApp::from_source_stepped`]).
+    pub fn load_stepped(bundle: impl AsRef<Path>, step_dt: f32) -> Result<TestApp, String> {
+        TestApp::loading(HostConfig { echo_console: false, echo_errors: false, ..HostConfig::default() }, Some(step_dt), |embed| embed.load_app(bundle))
+    }
+
     pub fn with_config(bundle: impl AsRef<Path>, cfg: HostConfig) -> Result<TestApp, String> {
-        TestApp::loading(cfg, |embed| embed.load_app(bundle))
+        TestApp::loading(cfg, None, |embed| embed.load_app(bundle))
     }
 
     /// Q1: the app at `path` (an app directory or a file in it) loaded from source, compiled live
@@ -49,10 +54,30 @@ impl TestApp {
         let mut src = svelters_modules::SourceConfig::for_path(path.as_ref())?;
         src.backend = "egui".into();
         let provider = std::rc::Rc::new(svelters_modules::SourceProvider::new(src)?);
-        TestApp::loading(HostConfig { echo_console: false, echo_errors: false, ..HostConfig::default() }, |embed| embed.load_app_from(provider))
+        TestApp::loading(HostConfig { echo_console: false, echo_errors: false, ..HostConfig::default() }, None, |embed| embed.load_app_from(provider))
     }
 
-    fn loading(cfg: HostConfig, load: impl FnOnce(&Embed) -> Result<(), svelters_host::JsError>) -> Result<TestApp, String> {
+    /// TR2: [`TestApp::from_source`] on a virtual clock of `step_dt` seconds per frame. egui's time
+    /// (what the native animator reads) advances by exactly that per `step`, so an animation of
+    /// 120 ms takes the same number of frames on every machine. (kittest's default is 0.25 s.)
+    #[cfg(feature = "source")]
+    pub fn from_source_stepped(path: impl AsRef<Path>, step_dt: f32) -> Result<TestApp, String> {
+        let mut src = svelters_modules::SourceConfig::for_path(path.as_ref())?;
+        src.backend = "egui".into();
+        let provider = std::rc::Rc::new(svelters_modules::SourceProvider::new(src)?);
+        TestApp::loading(HostConfig { echo_console: false, echo_errors: false, ..HostConfig::default() }, Some(step_dt), |embed| embed.load_app_from(provider))
+    }
+
+    /// [`TestApp::from_source_stepped`] with a host config of the caller's (TR3: `timing: true`).
+    #[cfg(feature = "source")]
+    pub fn from_source_with(path: impl AsRef<Path>, step_dt: f32, cfg: HostConfig) -> Result<TestApp, String> {
+        let mut src = svelters_modules::SourceConfig::for_path(path.as_ref())?;
+        src.backend = "egui".into();
+        let provider = std::rc::Rc::new(svelters_modules::SourceProvider::new(src)?);
+        TestApp::loading(cfg, Some(step_dt), |embed| embed.load_app_from(provider))
+    }
+
+    fn loading(cfg: HostConfig, step_dt: Option<f32>, load: impl FnOnce(&Embed) -> Result<(), svelters_host::JsError>) -> Result<TestApp, String> {
         // The harness's context does not exist yet: `logic` binds it at the first frame.
         let embed = Embed::new(&egui::Context::default(), EmbedConfig::app(cfg)).map_err(|e| e.to_string())?;
         load(&embed).map_err(|e| e.to_string())?;
@@ -66,7 +91,11 @@ impl TestApp {
             .unwrap_or(egui::vec2(480.0, 360.0));
         // EM2 (the SG1 gap): the pass callbacks are on the harness's context before its first frame
         let attach = embed.clone();
-        let harness = Harness::builder().with_size(size).with_context_setup(move |ctx| attach.attach(ctx)).build_ui_state(
+        let mut builder = Harness::builder().with_size(size);
+        if let Some(dt) = step_dt {
+            builder = builder.with_step_dt(dt);
+        }
+        let harness = builder.with_context_setup(move |ctx| attach.attach(ctx)).build_ui_state(
             |ui, e: &mut Embed| {
                 e.logic(ui.ctx());
                 e.show_windows(ui);

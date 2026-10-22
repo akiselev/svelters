@@ -11,7 +11,7 @@ use svelters_abi::Value;
 
 // ---- values ----
 
-fn as_bool(v: &Value) -> Result<bool, String> {
+pub(crate) fn as_bool(v: &Value) -> Result<bool, String> {
     match v {
         Value::Bool(b) => Ok(*b),
         Value::I64(i) => Ok(*i != 0),
@@ -19,7 +19,7 @@ fn as_bool(v: &Value) -> Result<bool, String> {
     }
 }
 
-fn as_f64(v: &Value) -> Result<f64, String> {
+pub(crate) fn as_f64(v: &Value) -> Result<f64, String> {
     match v {
         Value::F64(f) => Ok(*f),
         Value::I64(i) => Ok(*i as f64),
@@ -28,7 +28,7 @@ fn as_f64(v: &Value) -> Result<f64, String> {
     }
 }
 
-fn as_i64(v: &Value) -> Result<i64, String> {
+pub(crate) fn as_i64(v: &Value) -> Result<i64, String> {
     match v {
         Value::I64(i) => Ok(*i),
         Value::F64(f) if f.fract() == 0.0 => Ok(*f as i64),
@@ -36,7 +36,7 @@ fn as_i64(v: &Value) -> Result<i64, String> {
     }
 }
 
-fn as_str(v: &Value) -> Result<String, String> {
+pub(crate) fn as_str(v: &Value) -> Result<String, String> {
     match v {
         Value::Str(s) => Ok(s.clone()),
         Value::Null => Ok(String::new()),
@@ -46,12 +46,12 @@ fn as_str(v: &Value) -> Result<String, String> {
     }
 }
 
-fn as_enum(v: &Value, values: &'static [&'static str]) -> Result<&'static str, String> {
+pub(crate) fn as_enum(v: &Value, values: &'static [&'static str]) -> Result<&'static str, String> {
     let s = as_str(v)?;
     values.iter().copied().find(|x| *x == s).ok_or_else(|| format!("`{s}` is not one of {}", values.join(", ")))
 }
 
-fn as_len(v: &Value) -> Result<Option<f64>, String> {
+pub(crate) fn as_len(v: &Value) -> Result<Option<f64>, String> {
     match v {
         Value::Null => Ok(None),
         v => as_f64(v).map(Some),
@@ -76,7 +76,7 @@ fn as_weight(v: &Value) -> Result<i64, String> {
     Ok(w.round() as i64)
 }
 
-fn len_value(v: Option<f64>) -> Value {
+pub(crate) fn len_value(v: Option<f64>) -> Value {
     v.map(Value::F64).unwrap_or(Value::Null)
 }
 
@@ -86,7 +86,7 @@ pub(crate) fn is_common(key: P) -> bool {
     use P::*;
     matches!(
         key,
-        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid
+        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | Position | Left | Top | Right | Bottom | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid | DragType | DragData | DropTypes
     )
 }
 
@@ -98,6 +98,15 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
     }
     let v = if matches!(v, Value::Null) && !def.nullable { default_value(def) } else { v.clone() };
     let v = &v;
+    // WG2b: its kinds' own props (`crate::elements`); the `Widget`/`Box` props fall through
+    if let Some(r) = crate::elements::set_prop(w, def, v) {
+        return r.map(|mut d| {
+            if def.layout {
+                d.insert(Dirty::LAYOUT);
+            }
+            d
+        });
+    }
     let mut d = Dirty::default();
     match (def.key, &mut *w) {
         (P::Enabled, _) => c.enabled = as_bool(v)?,
@@ -119,6 +128,11 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (P::FlexBasis, _) => c.flex_basis = as_len(v)?,
         (P::AlignSelf, _) => c.align_self = as_enum(v, kinds::ALIGN_SELF)?,
         (P::Margin, _) => c.margin = as_f64(v)?,
+        (P::Position, _) => c.position = as_enum(v, kinds::POSITION)?,
+        (P::Left, _) => c.left = as_len(v)?,
+        (P::Top, _) => c.top = as_len(v)?,
+        (P::Right, _) => c.right = as_len(v)?,
+        (P::Bottom, _) => c.bottom = as_len(v)?,
         (P::FlexDirection, _) => c.flex_direction = as_enum(v, kinds::DIRECTION)?,
         (P::FlexWrap, _) => c.flex_wrap = as_enum(v, kinds::WRAP)?,
         (P::Gap, _) => c.gap = as_f64(v)?,
@@ -128,6 +142,11 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (P::AlignItems, _) => c.align_items = as_enum(v, kinds::ALIGN)?,
         (P::JustifyContent, _) => c.justify_content = as_enum(v, kinds::JUSTIFY)?,
         (P::Invalid, _) => c.invalid = as_bool(v)?,
+        // WG4b: drag and drop on any node (`kinds/dnd.rs`), before the per-payload catch-alls
+        (P::DragType | P::DragData | P::DropTypes, _) => crate::kinds::dnd::set(c, def.key, as_str(v)?),
+        // WG2a: the menu family and the overlays (`crate::menus`, `crate::overlays`)
+        (key, W::Menu(m)) => d = crate::menus::set_prop(m, key, v)?,
+        (key, W::Overlay(o)) => crate::overlays::set_prop(o, key, v)?,
         (P::Title, W::Window { title, .. }) => *title = as_str(v)?,
         (P::DefaultWidth, W::Window { default_w, .. }) => *default_w = as_f64(v)?,
         (P::DefaultHeight, W::Window { default_h, .. }) => *default_h = as_f64(v)?,
@@ -224,6 +243,37 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         // paint-only: the walk applies a write that differs from what egui reported (`seen`)
         (P::ScrollX, W::ScrollArea { x, .. }) => *x = as_f64(v)?.max(0.0),
         (P::ScrollY, W::ScrollArea { y, .. }) => *y = as_f64(v)?.max(0.0),
+        // ---- WG4a (`kinds/views.rs`, `crate::views`) ----
+        (key, W::Table(t)) => d.insert(t.set(key, v)?),
+        (key, W::ToastHost(t)) => t.set(key, v)?,
+        (P::Title, W::Tab { title, .. } | W::TableColumn { title, .. }) => *title = as_str(v)?,
+        (P::Resizable, W::TableColumn { resizable, .. } | W::SplitView { resizable, .. }) => *resizable = as_bool(v)?,
+        (P::CellAlign, W::TableColumn { align, .. }) => *align = as_enum(v, kinds::CELL_ALIGN)?,
+        (P::Sort, W::TableColumn { sort, .. }) => *sort = as_enum(v, kinds::SORT)?,
+        (P::SelectedIndex, W::TabView { selected }) => {
+            *selected = as_i64(v)?;
+            // another page is laid out
+            d.insert(Dirty::LAYOUT);
+        }
+        (P::Closable, W::Tab { closable, .. }) => *closable = as_bool(v)?,
+        (P::Orientation, W::SplitView { vertical, .. }) => {
+            *vertical = as_enum(v, kinds::ORIENTATION)? == "vertical";
+            d.insert(Dirty::LAYOUT);
+        }
+        (P::DividerPosition, W::SplitView { position, .. }) => {
+            *position = as_len(v)?;
+            d.insert(Dirty::LAYOUT);
+        }
+        (P::MinSize, W::SplitView { min_size, .. }) => {
+            *min_size = as_f64(v)?.max(0.0);
+            d.insert(Dirty::LAYOUT);
+        }
+        // WG4b: the pickers' fields (`kinds/pickers.rs`)
+        (key, W::Picker(p)) => {
+            if p.set(key, v)? {
+                d.insert(Dirty::MEASURE);
+            }
+        }
         (key, w) => return Err(format!("{key:?} is not a prop of {w:?}")),
     }
     if def.layout {
@@ -235,6 +285,9 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
 pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
     if let P::Ext(i) = def.key {
         return crate::provider::get_prop(n, i as usize); // RA1: a provider kind's field
+    }
+    if let Some(v) = crate::elements::get_prop(n.w, def) {
+        return Ok(v); // WG2b: its kinds' own props
     }
     let c = &n.c;
     let s = |x: &str| Value::Str(x.to_string());
@@ -255,6 +308,11 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::FlexBasis, _) => len_value(c.flex_basis),
         (P::AlignSelf, _) => s(c.align_self),
         (P::Margin, _) => Value::F64(c.margin),
+        (P::Position, _) => s(c.position),
+        (P::Left, _) => len_value(c.left),
+        (P::Top, _) => len_value(c.top),
+        (P::Right, _) => len_value(c.right),
+        (P::Bottom, _) => len_value(c.bottom),
         (P::FlexDirection, _) => s(c.flex_direction),
         (P::FlexWrap, _) => s(c.flex_wrap),
         (P::Gap, _) => Value::F64(c.gap),
@@ -264,6 +322,10 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::AlignItems, _) => s(c.align_items),
         (P::JustifyContent, _) => s(c.justify_content),
         (P::Invalid, _) => Value::Bool(c.invalid),
+        (P::DragType | P::DragData | P::DropTypes, _) => s(crate::kinds::dnd::get(c, def.key)), // WG4b
+        // WG2a
+        (key, W::Menu(m)) => crate::menus::get_prop(m, key)?,
+        (key, W::Overlay(o)) => crate::overlays::get_prop(o, key)?,
         (P::Title, W::Window { title, .. }) => s(title),
         (P::DefaultWidth, W::Window { default_w, .. }) => Value::F64(*default_w),
         (P::DefaultHeight, W::Window { default_h, .. }) => Value::F64(*default_h),
@@ -299,6 +361,19 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::ScrollDirection, W::ScrollArea { direction, .. }) => s(direction),
         (P::ScrollX, W::ScrollArea { x, .. }) => Value::F64(*x),
         (P::ScrollY, W::ScrollArea { y, .. }) => Value::F64(*y),
+        // ---- WG4a ----
+        (key, W::Table(t)) => t.get(key).ok_or_else(|| format!("{key:?} is not a prop of <table>"))?,
+        (key, W::ToastHost(t)) => t.get(key).ok_or_else(|| format!("{key:?} is not a prop of <toast-host>"))?,
+        (P::Title, W::Tab { title, .. } | W::TableColumn { title, .. }) => s(title),
+        (P::Resizable, W::TableColumn { resizable, .. } | W::SplitView { resizable, .. }) => Value::Bool(*resizable),
+        (P::CellAlign, W::TableColumn { align, .. }) => s(align),
+        (P::Sort, W::TableColumn { sort, .. }) => s(sort),
+        (P::SelectedIndex, W::TabView { selected }) => Value::I64(*selected),
+        (P::Closable, W::Tab { closable, .. }) => Value::Bool(*closable),
+        (P::Orientation, W::SplitView { vertical, .. }) => s(if *vertical { "vertical" } else { "horizontal" }),
+        (P::DividerPosition, W::SplitView { position, .. }) => len_value(*position),
+        (P::MinSize, W::SplitView { min_size, .. }) => Value::F64(*min_size),
+        (key, W::Picker(p)) => p.get(key).ok_or_else(|| format!("{key:?} is not a prop of <{}>", n.tag()))?, // WG4b
         (key, _) => return Err(format!("{key:?} is not a prop of <{}>", n.tag())),
     })
 }

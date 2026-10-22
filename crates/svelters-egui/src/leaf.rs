@@ -53,8 +53,12 @@ pub(crate) fn widget_changed(arena: &mut Arena, i: usize, keys: &[kinds::P], arg
 /// rects): its tooltip and `invalid` outline, and WG1's chrome.
 pub(crate) fn container(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
     match arena.w(i) {
+        // WG2b: `panel`, `sides`, `frame`, `stack`
+        w if crate::elements::is_container(w) => crate::elements::container(arena, i, r, origin, ui, out),
         W::CollapsingHeader { .. } => collapsing(arena, i, r, origin, ui, out),
         W::ScrollArea { .. } => scroll(arena, i, r, origin, ui, out),
+        // WG4a: table, tab-view, split-view (`crate::views`)
+        W::Table(_) | W::TabView { .. } | W::SplitView { .. } => crate::views::container(arena, i, r, origin, ui, out),
         _ => {
             let c = arena.common(i);
             if !c.tooltip.is_empty() {
@@ -208,6 +212,15 @@ fn scroll(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, out: 
 /// Paints the leaf in slot `i` (the walk's index into the scene's columns); returns its response
 /// (EV2b: the host response of its behaviours).
 pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> egui::Response {
+    if matches!(arena.w(i), W::Menu(_)) {
+        return crate::menus::leaf(arena, i, ui, out); // WG2a: menu-bar, menu-button
+    }
+    if crate::elements::is_leaf(arena.w(i)) {
+        return crate::elements::leaf(arena, i, ui, out); // WG2b
+    }
+    if let Some(resp) = crate::views::leaf(arena, i, ui, out) {
+        return resp; // WG4a: toast-host, table-column
+    }
     let h = arena.slots.id_at(i).expect("live leaf").to_raw();
     let kind = arena.core[i].kind as usize;
     let sig = |name: &str| kinds::signal_id(kind, name);
@@ -215,10 +228,12 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     let node_id = arena.core[i].egui_id;
     let click_sense = arena.listens(i, sig("clicked"));
     let mut text_changed = None;
+    let mut text_focus = None; // FX1: the field's focus and selection before it ran
     let before = match arena.w(i) {
         W::Checkbox { checked, .. } | W::ToggleButton { checked, .. } => Some(Value::Bool(*checked)),
         W::Slider { value, .. } => Some(Value::F64(*value)),
         W::ComboBox { selected, .. } => Some(Value::I64(*selected)),
+        W::Picker(p) => Some(p.value()), // WG4b
         _ => None,
     };
     let enabled = arena.common(i).enabled;
@@ -236,21 +251,34 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             ui.add(l)
         }
         W::Button { text, selected, frame, small, weight } => {
+            crate::native::focus_visible(ui); // FX1
             let mut btn = egui::Button::new(weighted(ui, text, egui::TextStyle::Button, *weight)).selected(*selected).frame(*frame).min_size(size);
             if *small {
                 btn = btn.small();
             }
             ui.add(btn)
         }
-        W::Checkbox { text, checked } => ui.add(egui::Checkbox::new(checked, text.as_str())),
+        W::Checkbox { text, checked } => {
+            crate::native::focus_visible(ui); // FX1
+            ui.add(egui::Checkbox::new(checked, text.as_str()))
+        }
         W::TextEdit { text, hint, multiline, password, char_limit } => {
+            // FX1: native Escape and word keys before egui's TextEdit runs (crate::native)
+            crate::native::keep_focus_on_escape(ui, node_id);
+            text_focus = Some(crate::native::TextFocus::before(ui, node_id));
+            if crate::native::text_keys(ui, node_id, text, *password) {
+                text_changed = Some(text.clone());
+            }
             let mut te = if *multiline { egui::TextEdit::multiline(text).desired_rows(4) } else { egui::TextEdit::singleline(text) };
             te = te.id(node_id).desired_width(size.x).hint_text(hint.clone()).password(*password);
             if *char_limit > 0 {
                 te = te.char_limit(*char_limit as usize);
             }
-            let r = ui.add(te);
-            if r.changed() {
+            let o = te.show(ui);
+            // W5: the Linux primary selection (select-to-copy, middle-click paste)
+            let pasted = crate::primary::text_edit(ui, &o, node_id, text, *password, (*char_limit).max(0) as usize);
+            let r = o.response.response;
+            if r.changed() || pasted {
                 text_changed = Some(text.clone());
             }
             r
@@ -342,6 +370,22 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         }
         W::Box | W::Window { .. } | W::Grid { .. } | W::CollapsingHeader { .. } | W::ScrollArea { .. } => unreachable!("containers are not leaves"),
         W::Ext(_) => unreachable!("provider kinds are drawn by provider::paint"),
+        W::Menu(_) | W::Overlay(_) => unreachable!("WG2a kinds are drawn by crate::menus and crate::overlays"),
+        W::Hyperlink { .. }
+        | W::RadioButton { .. }
+        | W::Switch { .. }
+        | W::RangeSlider { .. }
+        | W::DragValue { .. }
+        | W::Panel { .. }
+        | W::Sides
+        | W::Frame { .. }
+        | W::Stack { .. }
+        | W::Image { .. }
+        | W::ProgressBar { .. }
+        | W::Spinner { .. }
+        | W::Canvas(_) => unreachable!("WG2b kinds are drawn by crate::elements"),
+        W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::SplitView { .. } | W::ToastHost(_) => unreachable!("WG4a views: crate::views"),
+        W::Picker(p) => p.ui(ui, size), // WG4b (`kinds/pickers.rs`)
     };
     let mut resp = crate::a11y::decorate(resp, &arena.n(h));
     if !arena.common(i).tooltip.is_empty() {
@@ -351,10 +395,21 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         invalid_outline(ui, resp.rect);
     }
     let core = &mut arena.core[i];
-    if core.flags.contains(NodeFlags::WANT_FOCUS) {
+    let requested = core.flags.contains(NodeFlags::WANT_FOCUS);
+    if requested {
         core.flags.remove(NodeFlags::WANT_FOCUS);
         resp.request_focus();
     }
+    // FX1: native focus policy after the widget ran (crate::native)
+    match (arena.w(i), text_focus) {
+        (W::TextEdit { text, multiline, .. }, Some(f)) => f.after(ui, &resp, text.chars().count(), *multiline, requested),
+        (W::Button { .. } | W::Checkbox { .. }, _) => crate::native::after_toggle(ui, &resp),
+        _ => {}
+    }
+    if !matches!(arena.w(i), W::TextEdit { .. }) {
+        crate::native::keep_focus_on_escape(ui, resp.id);
+    }
+    let core = &mut arena.core[i];
     core.drawn = resp.rect;
     let mut fired: Vec<&str> = Vec::new();
     for (yes, name) in [
@@ -389,6 +444,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         W::ComboBox { selected, .. } if Some(Value::I64(*selected)) != before => Some((kinds::P::SelectedIndex, Value::I64(*selected))),
         W::Slider { value, .. } if Some(Value::F64(*value)) != before => Some((kinds::P::Value, Value::F64(*value))),
         W::TextEdit { .. } => text_changed.map(|t| (kinds::P::Text, Value::Str(t))),
+        W::Picker(p) if Some(p.value()) != before => Some((kinds::P::Value, p.value())), // WG4b
         _ => None,
     };
     if let Some((key, v)) = changed {

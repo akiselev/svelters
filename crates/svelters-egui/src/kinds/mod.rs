@@ -12,23 +12,47 @@
 //!
 //! Files (ARCH-EMBED §9): this one holds the table types, the id scheme and [`KindRegistry`];
 //! `builtin.rs` the built-in table [`KINDS`] with the `Widget` base and the leaves; `containers.rs`
-//! the `window` and `box` tables; WG1's families `controls.rs`, `decor.rs`, `layouts.rs`;
+//! the `window` and `box` tables; WG1's families `controls.rs`, `decor.rs`, `layouts.rs`; WG2b's
+//! `inputs.rs`, `panes.rs`, `media.rs`; WG2a's `menus.rs`, `popups.rs`; WG4a's `views.rs`; WG4b's
+//! `pickers.rs` (`date-picker`, `color-picker`) and `dnd.rs` (drag and drop on any node);
 //! `registry.rs` [`KindRegistry`] with the provider kinds of
 //! `#[svelters::widget]` (RA1). Writer lanes: WIDGETS (tables, one file per new family), RUSTAPI
 //! (`registry.rs`).
 
 mod builtin;
 mod containers;
+pub mod dnd;
+pub mod pickers;
 mod registry;
 // WG1 families
 mod controls;
 mod decor;
 mod layouts;
+// WG2a families (plans/milestones/WG2a-menus-popups.md)
+mod menus;
+mod popups;
+// WG2b families (plans/milestones/WG2b-tier0-controls.md)
+mod inputs;
+mod media;
+mod panes;
+// WG4a (plans/milestones/WG4a-tier1-views.md)
+mod views;
 
-pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, WRAP, WRAP_MODE};
+pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, POSITION, WRAP, WRAP_MODE};
 pub use decor::ORIENTATION;
 pub use layouts::{JUSTIFY_ITEMS, SCROLL_DIRECTION};
+pub use menus::attaches_to;
+pub use popups::PLACEMENT;
+pub use media::FIT;
+pub use panes::{FRAME_STYLE, SIDE};
+pub use views::{CELL_ALIGN, SORT, TOAST_CORNER, TOAST_LEVEL};
 pub use registry::{KindRegistry, PROVIDER_PACK, ProviderKind, kind};
+
+/// The kinds a slot of kind `id` accepts (spec `children.slots.*.accepts`): WG4a's `table` takes
+/// `table-column`s, WG2a's menu containers menu items, every other container any `Widget`.
+pub fn slot_accepts(id: &str) -> &'static [&'static str] {
+    views::slot_accepts(id).unwrap_or_else(|| menus::slot_accepts(id))
+}
 
 /// A property's value type (also its ABI tag).
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -78,6 +102,12 @@ pub enum P {
     FlexBasis,
     AlignSelf,
     Margin,
+    // SG4: out-of-flow positioning
+    Position,
+    Left,
+    Top,
+    Right,
+    Bottom,
     // Box (and the window's content area)
     FlexDirection,
     FlexWrap,
@@ -134,6 +164,89 @@ pub enum P {
     Glyph,
     Family,
     Size,
+    // WG2a (plans/milestones/WG2a-menus-popups.md)
+    /// action
+    Shortcut,
+    Checkable,
+    Group,
+    /// menu-button
+    Active,
+    /// popup (`placement`: SG4's `position` is the CSS one)
+    Placement,
+    Autohide,
+    /// modal
+    Dismissable,
+    /// inner-window
+    DefaultX,
+    DefaultY,
+    Closable,
+    Collapsible,
+    Resizable,
+    // WG2b (plans/milestones/WG2b-tier0-controls.md); `panel` and `spinner` reuse `Size`
+    /// hyperlink
+    Url,
+    NewTab,
+    /// radio-button: its `value`, and the group's chosen value
+    Choice,
+    // `group` (radio-button), `active` (switch) and `resizable` (panel) reuse WG2a's keys
+    /// range-slider
+    Low,
+    High,
+    /// drag-value
+    Speed,
+    Decimals,
+    Prefix,
+    Suffix,
+    /// panel
+    Side,
+    ShowSeparator,
+    /// frame
+    FrameStyle,
+    /// stack
+    VisibleChildName,
+    VisibleIndex,
+    Homogeneous,
+    /// image
+    Source,
+    Fit,
+    /// progress-bar
+    Fraction,
+    ShowPercentage,
+    Animate,
+    /// spinner
+    Spinning,
+    /// canvas
+    Ops,
+    ContentWidth,
+    ContentHeight,
+    // WG4a (plans/milestones/WG4a-tier1-views.md; `kinds/views.rs`). Also reused there: `Title`
+    // (tab, table-column), `SelectedIndex` (tab-view, table), `Orientation` (split-view), and
+    // WG2a's `Resizable` (table-column, split-view), `Closable` (tab).
+    /// table
+    RowCount,
+    RowHeight,
+    StickyColumns,
+    Striped,
+    Overscan,
+    /// table-column
+    CellAlign,
+    Sort,
+    /// split-view (`divider-position`: SG4's `position` is the CSS one)
+    DividerPosition,
+    MinSize,
+    /// toast-host
+    Corner,
+    Duration,
+    // WG4b (plans/milestones/WG4b-dialogs-pickers-dnd.md)
+    /// Widget: drag and drop (`kinds/dnd.rs`).
+    DragType,
+    DragData,
+    DropTypes,
+    /// date-picker
+    Format,
+    CalendarWeek,
+    /// color-picker
+    Alpha,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }
