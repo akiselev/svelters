@@ -27,6 +27,8 @@ pub mod assets;
 pub mod backend;
 pub mod dialogs;
 pub mod embed;
+/// EV1: capture and bubbling of the DOM-style events, Rust event filters (SV6), overlays (SV7).
+pub mod events;
 /// WG2b's Tier 0 kinds (payloads, paint, measure; the canvas replay and the PNG image loader).
 pub mod elements;
 /// SVP6: font weights and icon name tables the embedder registers (WG1).
@@ -59,7 +61,6 @@ mod a11y;
 /// AU1: the accessible name the automation selectors share with AccessKit.
 pub use a11y::accessible_name;
 pub mod anim;
-mod events;
 mod frame;
 mod ids;
 mod leaf;
@@ -95,6 +96,7 @@ pub mod prelude {
     /// OW0: units and primitives for own widgets.
     pub use crate::interact::{Focusable, Hoverable, Intents, Pressable, Unit};
     pub use crate::paint::{StyleView, Ua, UaRule, UaValue};
+    pub use crate::events::{At, EventFilter, EventKind, EventPhase, FilterScope, Flow, Overlay, OverlayCx, SceneEvent};
     pub use crate::scene::{NodeId, NodeMut, NodeRef, SceneMut, SceneRef};
     pub use egui;
 }

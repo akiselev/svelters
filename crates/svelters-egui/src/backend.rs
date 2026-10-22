@@ -85,6 +85,8 @@ pub(crate) struct Inner {
     pub theme: RefCell<Option<crate::theme::Theme>>,
     pub theme_generation: Cell<u64>,
     pub theme_pending: Cell<bool>,
+    /// EV1: event dispatch state (presses, focus, late events per viewport; `events.rs`).
+    pub ev: RefCell<crate::events::BackendState>,
 }
 
 /// The egui backend. Cheap to clone (one shared state); the clone given to [`BackendVtable::new`]
@@ -133,6 +135,7 @@ impl EguiBackend {
             theme: RefCell::new(None),
             theme_generation: Cell::new(0),
             theme_pending: Cell::new(false),
+            ev: RefCell::new(Default::default()),
         }))
     }
 

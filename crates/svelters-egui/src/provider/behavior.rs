@@ -32,8 +32,8 @@
 //! action creates the attached node, sets the params as props (only the ones that changed on an
 //! update: one `set_prop` per changed param) and listens to the `on<event>` callbacks of the params.
 //!
-//! Hooks: `sense`, `before_ui` and `paint_over` (SG4), `after_ui`, `detached`. ARCH-SCENE §7.3's
-//! `filter` is EV1's.
+//! Hooks: `sense`, `before_ui` and `paint_over` (SG4), `after_ui`, `detached`, and `filter` (EV1,
+//! SV6: the host's events before Svelte sees them).
 //!
 //! Writer lane: EVENTS (EV2b).
 
@@ -79,6 +79,18 @@ pub trait Behavior: 'static {
     /// The behaviour leaves its host (the `use:` action's destroy, or a move): undo what it set on
     /// the host (its state bits, its ext entries). Writes are journaled as `Origin::Widget`.
     fn detached(&mut self, _host: &mut NodeMut<'_>) {}
+
+    /// EV1 (SV6): an event filter on the host. Sees every DOM-style event
+    /// ([`SceneEvent`](crate::events::SceneEvent): pointer, click, wheel, key, focus) whose path
+    /// passes the host, before any Svelte listener runs: with `ev.phase` `Capture` when the target is
+    /// a descendant, `Target` when it is the host. [`Flow::Consume`](crate::events::Flow) ends the
+    /// event there: no Svelte listener sees it and, for a cancelable event, egui's widgets do not
+    /// either (the input is taken out before the pass). Runs before the frame's pass, in Rust:
+    /// writes and events go through `cx` as in the other hooks (`cx.rect()` is the host's last
+    /// drawn rect).
+    fn filter(&mut self, _host: NodeRef<'_>, _ev: &crate::events::SceneEvent, _cx: &mut BehaviorCx<'_>) -> crate::events::Flow {
+        crate::events::Flow::Pass
+    }
 }
 
 /// What [`Behavior::after_ui`] gets: the host's id, rect and state, and the queued writes. (A
@@ -94,6 +106,10 @@ pub struct BehaviorCx<'a> {
     writes: Vec<HostWrite>,
     errors: Vec<String>,
     repaint: bool,
+    /// EV1: the scene the hook runs against (read-only), for `dispatch`.
+    scene: &'a Scene,
+    /// EV1: what other behaviours' filters did during this hook's `dispatch`es, applied after it.
+    deferred: Vec<HookRun>,
     _a: PhantomData<&'a mut ()>,
 }
 
@@ -144,6 +160,22 @@ impl BehaviorCx<'_> {
     /// Asks for another frame (an animation the behaviour drives).
     pub fn request_repaint(&mut self) {
         self.repaint = true;
+    }
+    /// EV1 (ARCH-WIDGETS §1.2): dispatches a user-visible event of this behaviour (a unit's
+    /// intent: a press, a toggle) along its host's path through the scene's Rust filters (SV6:
+    /// registered [`EventFilter`](crate::events::EventFilter)s and the other behaviours'
+    /// [`Behavior::filter`], in capture, target and bubble order) **before** the default action,
+    /// then queues `payload` for the event's JS listener (as [`BehaviorCx::emit`]) unless a filter
+    /// stopped it. Skip the default action when the outcome is
+    /// [`prevented`](crate::events::Outcome::prevented).
+    pub fn dispatch<T: IntoJs>(&mut self, event: &Event<T>, payload: T) -> crate::events::Outcome {
+        let name = self.entry.events.get(event.index()).map_or("?", |e| e.name);
+        let (o, runs) = crate::events::dispatch_signal(self.scene, self.host, name);
+        self.deferred.extend(runs);
+        if !o.stopped {
+            self.emit(event, payload);
+        }
+        o
     }
 }
 
@@ -261,6 +293,100 @@ pub(crate) fn around(
     hooks(arena, i, resp.id, resp.rect, &resp.ctx, out, &mut |bh, host, cx| bh.paint_over(host, &painter, cx));
 }
 
+/// What one hook of one behaviour did (EV1: run against a read-only scene, applied after).
+pub(crate) struct HookRun {
+    host_i: usize,
+    host: NodeId,
+    bi: usize,
+    before: StateBits,
+    after: StateBits,
+    writes: Vec<HostWrite>,
+    emits: Vec<(usize, Value)>,
+    errors: Vec<String>,
+    repaint: bool,
+    deferred: Vec<HookRun>,
+}
+
+/// Runs `call` on the behaviour in slot `bi` (attached to the host in slot `i`) against `scene`,
+/// with the host's id and rect; `None` when it is not a behaviour or is borrowed (its own hook is
+/// running).
+fn run_one(
+    scene: &Scene,
+    i: usize,
+    bi: usize,
+    id: egui::Id,
+    rect: egui::Rect,
+    call: &mut dyn FnMut(&mut dyn Behavior, NodeRef<'_>, &mut BehaviorCx<'_>),
+) -> Option<HookRun> {
+    let host = scene.slots.id_at(i)?;
+    let b = scene.slots.id_at(bi)?;
+    let Payload::Builtin(W::Ext(x)) = &scene.payload[bi] else {
+        return None;
+    };
+    let mut wb = x.0.try_borrow_mut().ok()?;
+    let entry = wb.entry();
+    let bh = wb.behavior()?;
+    let before = scene.core[i].state;
+    let mut cx = BehaviorCx {
+        node: b,
+        host,
+        id,
+        rect,
+        state: before,
+        entry,
+        emits: Vec::new(),
+        writes: Vec::new(),
+        errors: Vec::new(),
+        repaint: false,
+        scene,
+        deferred: Vec::new(),
+        _a: PhantomData,
+    };
+    let host_ref = SceneRef::new(scene).get(host)?;
+    call(bh, host_ref, &mut cx);
+    let BehaviorCx { state, emits, writes, errors, repaint, deferred, .. } = cx;
+    Some(HookRun { host_i: i, host, bi, before, after: state, writes, emits, errors, repaint, deferred })
+}
+
+/// Applies a [`HookRun`]: what the hook's own dispatches deferred first, then its host state bits
+/// (only the bits it changed, journaled), host writes, events and errors.
+pub(crate) fn apply(arena: &mut Scene, r: HookRun, ctx: Option<&egui::Context>, out: &mut Vec<Out>) {
+    let HookRun { host_i: i, host, bi, before, after, writes, emits, errors, repaint, deferred } = r;
+    for d in deferred {
+        apply(arena, d, ctx, out);
+    }
+    if arena.idx(host) != Some(i) {
+        return;
+    }
+    let changed = before.0 ^ after.0;
+    if changed != 0 {
+        let cur = arena.core[i].state;
+        let new = StateBits((cur.0 & !changed) | (after.0 & changed));
+        if new != cur {
+            arena.core[i].state = new;
+            let t = arena.stamp();
+            arena.core[i].changed = t;
+            arena.core[i].dirty.insert(crate::scene::Dirty::PAINT);
+            arena.record_state(i, cur, Origin::Widget);
+        }
+    }
+    if !writes.is_empty() {
+        let mut sm = SceneMut {
+            s: arena,
+            origin: Origin::Widget,
+        };
+        if let Some(mut n) = sm.node(host) {
+            for w in writes {
+                w(&mut n);
+            }
+        }
+    }
+    flush_writes(arena, bi, Vec::new(), emits, errors, out);
+    if repaint && let Some(ctx) = ctx {
+        ctx.request_repaint();
+    }
+}
+
 /// Runs one hook (`call`) of each behaviour attached to slot `i`, with the host's id and rect, and
 /// applies what each one wrote (host state, host writes, events) after it.
 fn hooks(
@@ -272,72 +398,39 @@ fn hooks(
     out: &mut Vec<Out>,
     call: &mut dyn FnMut(&mut dyn Behavior, NodeRef<'_>, &mut BehaviorCx<'_>),
 ) {
-    let host = arena.slots.id_at(i).expect("live host");
     let mut k = 0;
     // the attached list cannot change during the hooks (host writes are not structural)
     while k < arena.cold(i).attached.len() {
         let b = arena.cold(i).attached[k];
         k += 1;
         let Some(bi) = arena.idx(b) else { continue };
-        let ran = {
-            let scene: &Scene = arena;
-            let Payload::Builtin(W::Ext(x)) = &scene.payload[bi] else {
-                continue;
-            };
-            let Ok(mut wb) = x.0.try_borrow_mut() else {
-                continue;
-            };
-            let entry = wb.entry();
-            let Some(bh) = wb.behavior() else { continue };
-            let mut cx = BehaviorCx {
-                node: b,
-                host,
-                id,
-                rect,
-                state: scene.core[i].state,
-                entry,
-                emits: Vec::new(),
-                writes: Vec::new(),
-                errors: Vec::new(),
-                repaint: false,
-                _a: PhantomData,
-            };
-            let host_ref = SceneRef::new(scene).get(host).expect("live host");
-            call(bh, host_ref, &mut cx);
-            cx
-        };
-        let BehaviorCx {
-            state,
-            emits,
-            writes,
-            errors,
-            repaint,
-            ..
-        } = ran;
-        if state != arena.core[i].state {
-            let before = arena.core[i].state;
-            arena.core[i].state = state;
-            let t = arena.stamp();
-            arena.core[i].changed = t;
-            arena.core[i].dirty.insert(crate::scene::Dirty::PAINT);
-            arena.record_state(i, before, Origin::Widget);
-        }
-        if !writes.is_empty() {
-            let mut sm = SceneMut {
-                s: arena,
-                origin: Origin::Widget,
-            };
-            if let Some(mut n) = sm.node(host) {
-                for w in writes {
-                    w(&mut n);
-                }
-            }
-        }
-        flush_writes(arena, bi, Vec::new(), emits, errors, out);
-        if repaint {
-            ctx.request_repaint();
+        if let Some(r) = run_one(arena, i, bi, id, rect, call) {
+            apply(arena, r, Some(ctx), out);
         }
     }
+}
+
+/// EV1 (SV6): runs [`Behavior::filter`] of each behaviour attached to slot `i` (in attach order)
+/// for `ev` against a read-only scene, until one stops the event; what they did is pushed on
+/// `runs` (applied by the caller). Returns the flows they answered.
+pub(crate) fn filter(scene: &Scene, i: usize, ev: &crate::events::SceneEvent, runs: &mut Vec<HookRun>) -> Vec<crate::events::Flow> {
+    let mut flows = Vec::new();
+    if !scene.core[i].flags.contains(NodeFlags::HAS_ATTACHED) {
+        return flows;
+    }
+    let (id, rect) = (scene.core[i].egui_id, scene.core[i].drawn);
+    for &b in scene.attached_of(i) {
+        let Some(bi) = scene.idx(b) else { continue };
+        let mut flow = crate::events::Flow::Pass;
+        if let Some(r) = run_one(scene, i, bi, id, rect, &mut |bh, host, cx| flow = bh.filter(host, ev, cx)) {
+            runs.push(r);
+        }
+        flows.push(flow);
+        if flow.stops() {
+            break;
+        }
+    }
+    flows
 }
 
 // ---- the scene's attached lists (called from `scene/tree.rs`) ----
