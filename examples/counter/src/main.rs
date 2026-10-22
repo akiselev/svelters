@@ -261,10 +261,12 @@ fn run(setup: Setup) -> Result<Json, String> {
         failures.push(format!("watch: timed out after {:?} waiting for reload {}", args.timeout, args.reload_exit.unwrap_or(0)));
     }
     let mut dump_all = Json::Null;
+    let mut checkpoint_dumps = Vec::new();
     let (mut dump, steps) = match driver.as_ref().map(|d| d.report()) {
         Some(r) => {
             failures.extend(r.failures);
             dump_all = r.dump_all.unwrap_or(Json::Null);
+            checkpoint_dumps = r.checkpoint_dumps;
             (r.dump.unwrap_or(Json::Null), r.steps)
         }
         None => (Json::Null, Vec::new()),
@@ -284,6 +286,7 @@ fn run(setup: Setup) -> Result<Json, String> {
         "console": console,
         "dump": dump,
         "dump_all": dump_all,
+        "checkpoint_dumps": checkpoint_dumps,
         "reloads": reloads.borrow().clone(),
         "native_toplevels": native_toplevels.get(),
         "threads": thread_names(),

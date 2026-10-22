@@ -509,6 +509,20 @@ impl Embed {
         let host = &self.inner.host;
         host.set_turn_budget(self.inner.cfg.host.turn_budget);
         let r = host.load_entry(bundle);
+        self.loaded(r)
+    }
+
+    /// [`Embed::load`] from a module provider (Q1): an embed entry compiled from source
+    /// (`svelters_host::modules::SourceProvider`).
+    pub fn load_from(&self, provider: std::rc::Rc<dyn svelters_host::ModuleProvider>) -> Result<EntryId, JsError> {
+        let host = &self.inner.host;
+        host.set_turn_budget(self.inner.cfg.host.turn_budget);
+        let r = host.load_entry_from(provider);
+        self.loaded(r)
+    }
+
+    fn loaded(&self, r: Result<u32, JsError>) -> Result<EntryId, JsError> {
+        let host = &self.inner.host;
         host.set_turn_budget(Some(self.inner.cfg.budgets.interrupt));
         let n = r?;
         self.inner.st.borrow_mut().entries = n + 1;
@@ -521,6 +535,15 @@ impl Embed {
         let host = &self.inner.host;
         host.set_turn_budget(self.inner.cfg.host.turn_budget);
         let r = host.load_bundle(bundle);
+        host.set_turn_budget(Some(self.inner.cfg.budgets.interrupt));
+        r
+    }
+
+    /// [`Embed::load_app`] from a module provider (Q1): an app compiled from source.
+    pub fn load_app_from(&self, provider: std::rc::Rc<dyn svelters_host::ModuleProvider>) -> Result<(), JsError> {
+        let host = &self.inner.host;
+        host.set_turn_budget(self.inner.cfg.host.turn_budget);
+        let r = host.load_from(provider);
         host.set_turn_budget(Some(self.inner.cfg.budgets.interrupt));
         r
     }
