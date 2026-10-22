@@ -33,6 +33,8 @@ export interface EguiWidgetProps {
   enabled?: boolean;
   /** Shown and laid out when true (`display: none` otherwise). */
   visible?: boolean;
+  /** Takes keyboard focus when it first appears (in a `dialog` scope: when the dialog opens). */
+  autofocus?: boolean;
   /** Hover text (`Response::on_hover_text`); empty for none. */
   tooltip?: string;
   /** AccessKit name (`Response::accessible_name`); inputs default to their hint or text. */
@@ -128,6 +130,8 @@ export interface EguiElements {
     'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
     /** Main-axis distribution of the children. */
     'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
+    'focus-scope'?: 'none' | 'contain' | 'dialog';
   };
   /** Static text. */
   label: EguiWidgetProps & {
@@ -154,6 +158,10 @@ export interface EguiElements {
     small?: boolean;
     /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
     'font-weight'?: number;
+    /** Enter activates it while focus is in its focus scope (or root) and the focused node does not take Enter itself. */
+    default?: boolean;
+    /** Escape activates it while focus is in its focus scope (or root). */
+    cancel?: boolean;
     /** Pressed and released (`Response::clicked`). */
     onclicked?: () => void;
     /** Double click (`Response::double_clicked`). */
@@ -308,6 +316,8 @@ export interface EguiElements {
     'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
     /** Main-axis distribution of the children. */
     'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
+    'focus-scope'?: 'none' | 'contain' | 'dialog';
     /** The header's caption (also its accessible name). */
     text?: string;
     /** Shows the children; a click on the header (or Enter/Space on it) toggles it. */
@@ -334,6 +344,8 @@ export interface EguiElements {
     'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
     /** Main-axis distribution of the children. */
     'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
+    'focus-scope'?: 'none' | 'contain' | 'dialog';
     /** The axes that scroll (taffy `overflow: scroll` on them). */
     direction?: 'vertical' | 'horizontal' | 'both';
     /** Horizontal offset in points; scrolling changes it, and a write scrolls (clamped to the content). */
@@ -454,6 +466,8 @@ export interface EguiElements {
     'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
     /** Main-axis distribution of the children. */
     'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
+    'focus-scope'?: 'none' | 'contain' | 'dialog';
     /** The edge of the parent it belongs to: the separator and the resize grip are on the opposite edge, and `size` is its width (left, right) or height (top, bottom). */
     side?: 'left' | 'right' | 'top' | 'bottom';
     /** Width (left, right) or height (top, bottom) in points; null for its content's. Dragging the grip of a `resizable` panel changes it, within `min-*`/`max-*`. */
@@ -493,6 +507,8 @@ export interface EguiElements {
     'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
     /** Main-axis distribution of the children. */
     'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
+    'focus-scope'?: 'none' | 'contain' | 'dialog';
     /** A caption above the content (GTK's `Gtk.Frame:label`); empty for none. */
     label?: string;
     /** The egui frame drawn around the content: `egui::Frame::group`, `canvas`, `window`, `menu`, `popup`, `side_top_panel` (`panel`), or no chrome (`none`). Its inner margin adds to `padding`. */
@@ -649,6 +665,8 @@ export interface EguiElements {
     'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
     /** Main-axis distribution of the children. */
     'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
+    'focus-scope'?: 'none' | 'contain' | 'dialog';
     /** Shown when true; the user closing it (Escape, a click outside with `autohide`) sets it false. */
     open?: boolean;
     'bind:open'?: boolean;
@@ -679,6 +697,8 @@ export interface EguiElements {
     'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
     /** Main-axis distribution of the children. */
     'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
+    'focus-scope'?: 'none' | 'contain' | 'dialog';
     /** Shown when true (so `{#if}` alone can show it); the user dismissing it sets it false. */
     open?: boolean;
     'bind:open'?: boolean;
@@ -709,6 +729,8 @@ export interface EguiElements {
     'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
     /** Main-axis distribution of the children. */
     'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
+    'focus-scope'?: 'none' | 'contain' | 'dialog';
     /** Shown when true; the close button sets it false. */
     open?: boolean;
     'bind:open'?: boolean;
@@ -794,6 +816,8 @@ export interface EguiElements {
     'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
     /** Main-axis distribution of the children. */
     'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
+    'focus-scope'?: 'none' | 'contain' | 'dialog';
     /** The tab's caption (also its accessible name). */
     title?: string;
     /** The tab shows a close button (`close-requested`). */
@@ -851,6 +875,30 @@ export interface EguiElements {
     alpha?: 'opaque' | 'blend' | 'blend-or-additive';
     /** The user edited the colour; carries it (CSS hex, once per frame while dragging). */
     onchanged?: (value: string) => void;
+  };
+  /** A virtualized list (the M5 model-view protocol): JS keeps the items, the list asks for the rows it shows. */
+  'virtual-list': EguiWidgetProps & {
+    /** The selected position, -1 for none. Setting it never raises `select`. */
+    selected?: number;
+    'bind:selected'?: number;
+    /** `single`: a click selects a row (`select`); `none`: rows are not selectable. */
+    selection?: 'none' | 'single';
+    /** `list` (egui draws `grid` as a list for now). */
+    layout?: 'list' | 'grid';
+    /** The height a row is assumed to have before it is measured, and its minimum, in points. */
+    'row-height'?: number;
+    /** Row slot `row` was created: give it content with `setRow`. */
+    onsetup?: (e: SvlEvent<[number]>, row: number) => void;
+    /** Slot `row` now shows item `id` at `pos`; `gen` counts the binds of the slot. */
+    onbind?: (e: SvlEvent<[number, number, number, number]>, row: number, pos: number, id: number, gen: number) => void;
+    /** Slot `row` no longer shows binding `gen`. */
+    onunbind?: (e: SvlEvent<[number, number]>, row: number, gen: number) => void;
+    /** Slot `row` is gone: release its widget. */
+    onteardown?: (e: SvlEvent<[number]>, row: number) => void;
+    /** The user activated the item at `pos` (double click). */
+    onactivate?: (pos: number) => void;
+    /** The user selected the item at `pos`. */
+    onselect?: (pos: number) => void;
   };
 }
 

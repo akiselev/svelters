@@ -215,6 +215,8 @@ impl EguiBackend {
         {
             host.frame();
         }
+        // LS1: lists bind the rows this frame draws (call_sync), at this frame's offset (R22)
+        self.realize_lists(ctx);
         // ARCH-SCENE §7.2 step 6 (SG4): state providers that want to run, each one batch. What they
         // changed repaints the visible roots once (route_repaints); one still wanting asks for
         // another logic (R16).
@@ -230,6 +232,8 @@ impl EguiBackend {
         // Writes the checkpoint's handlers and the state providers made through `SceneHandle` are
         // announced now.
         self.flush_announcements();
+        // DS1: a theme installed since the last logic reaches the context's Style.
+        self.apply_pending_theme(ctx);
         // ARCH-SCENE §7.2 step 7 (CS5e): restyle what this logic's changes reach.
         self.restyle_pending(ctx);
         self.animate_step(ctx);

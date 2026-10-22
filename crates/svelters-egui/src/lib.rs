@@ -20,19 +20,25 @@ pub mod embed;
 pub mod elements;
 /// SVP6: font weights and icon name tables the embedder registers (WG1).
 pub mod fonts;
+pub mod focus;
 pub mod kinds;
 pub mod layout;
 /// W5: the Linux primary selection in the text kinds (select-to-copy, middle-click paste).
 pub mod primary;
 /// FX1: native focus policy and word rules (GTK on Linux).
 pub mod native;
+pub mod platform;
 pub mod provider;
 pub mod runner;
 pub mod scene;
 pub mod spec;
 /// CS5e: the egui cascade (the Rust CSS engine on the scene).
 pub mod style;
-/// VIS1: the default look (VS Code Dark/Light Modern): egui Style, token tables, the base sheet.
+/// DS1: the theme (VS Code's base look as one token map: the `:root` sheet, the egui Style,
+/// typed getters).
+pub mod theme;
+/// VIS1: the default look the runners apply (VS Code Dark/Light Modern, measured): egui Style,
+/// token tables, the base sheet. To fold into DS1's `theme` (plans/milestones/VIS1-visual-conformance.md §6).
 pub mod vscode_look;
 
 mod a11y;

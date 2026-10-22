@@ -3,7 +3,7 @@
 //! fixes the kind ids.
 
 use super::builtin::NONE;
-use super::{ALIGN, DIRECTION, Def, JUSTIFY, MethodDef, P, PropDef, SignalDef, Ty, WRAP, layout, length, prop};
+use super::{ALIGN, DIRECTION, Def, FOCUS_SCOPE, JUSTIFY, MethodDef, P, PropDef, SignalDef, Ty, WRAP, layout, length, prop};
 
 pub(super) static BOX_PROPS: &[PropDef] = &[
     layout("flex-direction", P::FlexDirection, Ty::Enum(DIRECTION), Def::Str("column"), "Main axis of the box."),
@@ -14,6 +14,13 @@ pub(super) static BOX_PROPS: &[PropDef] = &[
     layout("padding", P::Padding, Ty::F64, Def::F64(0.0), "Inner spacing on all four sides, in points."),
     layout("align-items", P::AlignItems, Ty::Enum(ALIGN), Def::Str("stretch"), "Cross-axis alignment of the children."),
     layout("justify-content", P::JustifyContent, Ty::Enum(JUSTIFY), Def::Str("start"), "Main-axis distribution of the children."),
+    prop(
+        "focus-scope",
+        P::FocusScope,
+        Ty::Enum(FOCUS_SCOPE),
+        Def::Str("none"),
+        "`contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away.",
+    ),
 ];
 
 pub(super) static WINDOW_PROPS: &[PropDef] = &[

@@ -266,6 +266,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         W::TextEdit { text, hint, multiline, password, char_limit } => {
             // FX1: native Escape and word keys before egui's TextEdit runs (crate::native)
             crate::native::keep_focus_on_escape(ui, node_id);
+            crate::focus::before_text(ui, node_id); // EV3: a pending edit command
             text_focus = Some(crate::native::TextFocus::before(ui, node_id));
             if crate::native::text_keys(ui, node_id, text, *password) {
                 text_changed = Some(text.clone());
@@ -276,6 +277,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
                 te = te.char_limit(*char_limit as usize);
             }
             let o = te.show(ui);
+            crate::focus::after_text(ui, node_id); // EV3: a Cut or Copy command to the host's clipboard
             // W5: the Linux primary selection (select-to-copy, middle-click paste)
             let pasted = crate::primary::text_edit(ui, &o, node_id, text, *password, (*char_limit).max(0) as usize);
             let r = o.response.response;
@@ -377,6 +379,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         }
         W::Box | W::Window { .. } | W::Grid { .. } | W::CollapsingHeader { .. } | W::ScrollArea { .. } => unreachable!("containers are not leaves"),
         W::Ext(_) => unreachable!("provider kinds are drawn by provider::paint"),
+        W::VirtualList(_) => unreachable!("lists are drawn by kinds::virtuallist::paint"),
         W::Menu(_) | W::Overlay(_) => unreachable!("WG2a kinds are drawn by crate::menus and crate::overlays"),
         W::Hyperlink { .. }
         | W::RadioButton { .. }
@@ -419,8 +422,10 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     let core = &mut arena.core[i];
     core.drawn = resp.rect;
     let mut fired: Vec<&str> = Vec::new();
+    // EV3: Enter or Escape on a default or cancel button of the focused scope
+    let activated = matches!(arena.w(i), W::Button { .. }) && crate::focus::take_activation(ui, node_id);
     for (yes, name) in [
-        (resp.clicked(), "clicked"),
+        (resp.clicked() || activated, "clicked"),
         (resp.double_clicked(), "double-clicked"),
         (resp.secondary_clicked(), "secondary-clicked"),
         (resp.drag_started(), "drag-started"),

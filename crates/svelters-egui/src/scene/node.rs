@@ -26,6 +26,8 @@ pub enum W {
     Slider { value: f64, min: f64, max: f64, step: f64, text: String, show_value: bool },
     /// RA1: a provider kind's widget struct (`#[svelters::widget]`, `crate::provider`).
     Ext(crate::provider::ExtWidget),
+    /// LS1: a `virtual-list` (`kinds/virtuallist.rs`): its rows are its children.
+    VirtualList(Box<crate::kinds::VList>),
     // ---- WG1 (plans/milestones/WG1-sc1-widgets.md) ----
     ToggleButton { text: String, checked: bool, radio: bool, frame: bool, weight: i64 },
     ComboBox { options: Vec<String>, selected: i64, hint: String },
@@ -119,6 +121,13 @@ pub struct Common {
     pub top: Option<f64>,
     pub right: Option<f64>,
     pub bottom: Option<f64>,
+    /// EV3 (`crate::focus`): focus this node when it first appears.
+    pub autofocus: bool,
+    /// EV3: a box's focus scope (`none`, `contain`, `dialog`).
+    pub focus_scope: &'static str,
+    /// EV3: a button activated by Enter (`default`) or Escape (`cancel`) in its scope.
+    pub default_button: bool,
+    pub cancel_button: bool,
 }
 
 impl Common {
@@ -154,6 +163,10 @@ impl Common {
         top: None,
         right: None,
         bottom: None,
+        autofocus: false,
+        focus_scope: "none",
+        default_button: false,
+        cancel_button: false,
     };
 }
 
@@ -449,7 +462,7 @@ pub fn text_of(w: &W) -> &str {
         W::Icon { name, .. } => name,
         W::Menu(m) => m.label(),
         W::Overlay(o) => &o.title,
-        W::Box | W::Ext(_) | W::Separator { .. } | W::Grid { .. } | W::ScrollArea { .. } => "",
+        W::Box | W::Ext(_) | W::Separator { .. } | W::Grid { .. } | W::ScrollArea { .. } | W::VirtualList(_) => "",
         // WG2b
         W::Hyperlink { text, .. } | W::RadioButton { text, .. } | W::Switch { text, .. } | W::RangeSlider { text, .. } | W::ProgressBar { text, .. } => text,
         W::Frame { label, .. } => label,

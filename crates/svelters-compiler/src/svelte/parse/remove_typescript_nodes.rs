@@ -44,6 +44,12 @@ pub fn remove_typescript_nodes(root: &mut Root, src: &str, strip: Option<&mut Ts
     Ok(())
 }
 
+/// SVELTERS: `remove_typescript_nodes` on a whole TypeScript module (`.ts`, `.svelte.ts`), which
+/// upstream leaves to a preprocessor (vite-plugin-svelte's esbuild); same rules as a `lang="ts"` script.
+pub fn remove_typescript_nodes_program(program: &mut Program, src: &str, strip: Option<&mut TsStrip>) -> R<()> {
+    Rt { src, strip }.stmts(&mut program.body)
+}
+
 /// Removes TypeScript from one (unwrapped) expression, e.g. a template expression parsed alone.
 pub fn remove_typescript_nodes_expression(expr: &mut Expression, src: &str, strip: Option<&mut TsStrip>) -> R<()> {
     Rt { src, strip }.expr(expr)

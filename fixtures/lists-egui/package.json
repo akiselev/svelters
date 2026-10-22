@@ -1,0 +1,21 @@
+{
+  "name": "@svelters-fixtures/lists-egui",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "watch": "svelters-build --watch"
+  },
+  "dependencies": {
+    "@svelters/lists": "workspace:*",
+    "svelte": "5.57.2"
+  },
+  "devDependencies": {
+    "@svelters/build": "workspace:*",
+    "vite": "8.3.4"
+  },
+  "svelters": {
+    "toolkit": "egui"
+  }
+}

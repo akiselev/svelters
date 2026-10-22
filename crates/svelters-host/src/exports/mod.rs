@@ -165,6 +165,8 @@ pub struct TypeBuilder {
     pub(crate) json_used: BTreeMap<String, Vec<String>>,
     /// RA2: definitions the named types on `stack` refer to.
     json_stack: Vec<Vec<String>>,
+    /// SV48: names of svelters' own types that JSON definitions must not take (see [`json::json_ident`]).
+    pub(crate) json_reserved: std::collections::BTreeSet<String>,
 }
 
 impl TypeBuilder {
@@ -181,6 +183,7 @@ impl TypeBuilder {
             json_gen: schemars::SchemaGenerator::new(schemars::generate::SchemaSettings::draft2020_12()),
             json_used: BTreeMap::new(),
             json_stack: Vec::new(),
+            json_reserved: Default::default(),
         }
     }
 
@@ -200,9 +203,10 @@ impl TypeBuilder {
     /// declared types of the module.
     pub fn json_schema<T: schemars::JsonSchema + ?Sized>(&mut self) -> TypeRef {
         let s = self.json_gen.subschema_for::<T>();
-        let mut refs = Vec::new();
+        let mut refs = json::Refs::new(&self.json_reserved);
         let ts = json::schema_ts(s.as_value(), &mut refs);
-        for r in &refs {
+        let names = refs.names;
+        for r in &names {
             self.note_json_use(r);
         }
         TypeRef::new(json::json_slot(), ts)

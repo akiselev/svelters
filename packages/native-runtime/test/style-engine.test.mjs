@@ -1,6 +1,7 @@
 // CS5e: a backend that runs the Rust CSS engine itself (egui; `SVL_STYLE_TARGET` answers 4) gets
 // raw CSS: component sheets as Svelte scoped them, user classes, the id, the untranslated `style=`
-// text and the tokens as a `:root` sheet. No setter rules run in JS.
+// text and the app's token overrides as a `:root` sheet (DS1: the backend's theme owns the default
+// tokens and the scheme). No setter rules run in JS.
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import * as $ from 'svelte/internal/client';
@@ -11,7 +12,7 @@ const style = th.host.style;
 th.host.style = (op, h, text) => (op === 0 ? 4 : style(op, h, text));
 globalThis.__svelters_host = th.host;
 const $n = await import('../src/index.js');
-const { registerStyles, setTokens } = await import('../src/style.js');
+const { registerStyles, setTokens, setColorScheme } = await import('../src/style.js');
 
 const flush = () => new Promise((res) => setImmediate(res));
 const take = () => th.lines.splice(0).join('\n');
@@ -32,7 +33,8 @@ test('sheets, classes, id and inline style reach an engine backend as CSS', asyn
   registerStyles('App.svelte', { css: 'button.svelte-x:hover { background-color: red; width: 50%; }\n' });
   let log = take();
   assert.match(log, /style sheet "\*" null/, 'stale sheets cleared once');
-  assert.match(log, /style sheet "@tokens" ":root \{\\n  --sv-/, 'tokens as a :root sheet');
+  assert.ok(!/@tokens/.test(log), 'no default tokens: the backend owns them');
+  assert.ok(!/style scheme/.test(log), 'no scheme until the app chooses one');
   assert.match(log, /style sheet "App.svelte" "button.svelte-x:hover \{ background-color: red; width: 50%; \}\\n"/);
   const b = mount((c) => {
     const b = $n.element('button');
@@ -53,5 +55,12 @@ test('sheets, classes, id and inline style reach an engine backend as CSS', asyn
   assert.match(take(), /classes "primary svelte-x on"/);
   setTokens({ '--sv-accent': '#ff0000' });
   await flush();
-  assert.match(take(), /style sheet "@tokens" ".*--sv-accent: #ff0000;/);
+  log = take();
+  assert.match(log, /style sheet "@tokens" ":root \{\\n  --sv-accent: #ff0000;\\n\}\\n"/, 'only the override');
+  assert.ok(!/style scheme/.test(log));
+  setColorScheme('dark');
+  await flush();
+  log = take();
+  assert.match(log, /style scheme "dark"/, 'a chosen scheme reaches the backend');
+  assert.ok(!/@tokens/.test(log), 'tokens unchanged');
 });

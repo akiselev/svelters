@@ -15,6 +15,7 @@
 //! the `window` and `box` tables; WG1's families `controls.rs`, `decor.rs`, `layouts.rs`; WG2b's
 //! `inputs.rs`, `panes.rs`, `media.rs`; WG2a's `menus.rs`, `popups.rs`; WG4a's `views.rs`; WG4b's
 //! `pickers.rs` (`date-picker`, `color-picker`) and `dnd.rs` (drag and drop on any node);
+//! LISTS' `virtuallist.rs` (`virtual-list`);
 //! `registry.rs` [`KindRegistry`] with the provider kinds of
 //! `#[svelters::widget]` (RA1). Writer lanes: WIDGETS (tables, one file per new family), RUSTAPI
 //! (`registry.rs`).
@@ -24,6 +25,7 @@ mod containers;
 pub mod dnd;
 pub mod pickers;
 mod registry;
+pub(crate) mod virtuallist;
 // WG1 families
 mod controls;
 mod decor;
@@ -38,7 +40,7 @@ mod panes;
 // WG4a (plans/milestones/WG4a-tier1-views.md)
 mod views;
 
-pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, POSITION, WRAP, WRAP_MODE};
+pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, FOCUS_SCOPE, JUSTIFY, KINDS, POSITION, WRAP, WRAP_MODE};
 pub use decor::ORIENTATION;
 pub use layouts::{JUSTIFY_ITEMS, SCROLL_DIRECTION};
 pub use menus::attaches_to;
@@ -47,6 +49,7 @@ pub use media::FIT;
 pub use panes::{FRAME_STYLE, SIDE};
 pub use views::{CELL_ALIGN, SORT, TOAST_CORNER, TOAST_LEVEL};
 pub use registry::{KindRegistry, PROVIDER_PACK, ProviderKind, kind};
+pub use virtuallist::{ListStats, VList};
 
 /// The kinds a slot of kind `id` accepts (spec `children.slots.*.accepts`): WG4a's `table` takes
 /// `table-column`s, WG2a's menu containers menu items, every other container any `Widget`.
@@ -108,6 +111,8 @@ pub enum P {
     Top,
     Right,
     Bottom,
+    // EV3: focus
+    Autofocus,
     // Box (and the window's content area)
     FlexDirection,
     FlexWrap,
@@ -117,6 +122,8 @@ pub enum P {
     Padding,
     AlignItems,
     JustifyContent,
+    /// EV3: the box's focus scope.
+    FocusScope,
     // Window
     Title,
     DefaultWidth,
@@ -247,6 +254,14 @@ pub enum P {
     CalendarWeek,
     /// color-picker
     Alpha,
+    // `virtual-list` (LISTS LS1, `virtuallist.rs`)
+    ListSelected,
+    ListSelection,
+    ListLayout,
+    // `row-height` reuses WG4a's `RowHeight`
+    /// EV3: a button's Enter and Escape roles.
+    Default,
+    Cancel,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }
