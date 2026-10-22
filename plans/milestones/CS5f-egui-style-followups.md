@@ -44,6 +44,10 @@ an `!important` author rule now beats them, as in CSS. Attributes (`padding={8}`
 - `Cargo.toml`: taffy features of CS5e (`grid`, `calc`, …) are kept.
 - `egui.json` and `props.generated.js` were taken from WG1 in the merge and regenerated in the CS5f commit.
 
+WG1 later merged CS5e itself (`ef0584a7`) and resolved these hunks the same way. The lane merged it again,
+with one formatting-only conflict in `layout.rs` (WG1's form kept) and regenerated tables, and then merged
+`origin/master` (WG3), which conflicted nowhere.
+
 ## Acceptance
 
 - `tests/style_text.rs::fonts_remeasure_and_repaint`: `font-size: 28px` added by a class change remeasures (the layout
