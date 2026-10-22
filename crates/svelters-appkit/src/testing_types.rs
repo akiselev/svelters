@@ -214,6 +214,31 @@ fn check_kind(name: &str, kind: Kind, v: &Value) {
     assert!(ok, "{name}: a {kind} slot read {v:?}");
 }
 
+/// On a macOS older than the SDK the facts came from, members newer than the OS are absent: those are
+/// logged and skipped. On a current macOS (CI) every member must exist.
+fn older_than_sdk() -> bool {
+    !svelters_apple::objc::bridge::os_at_least(crate::generated::types::SDK_MACOS)
+}
+
+/// Whether `sel` is missing from `cls` (instance) or its metaclass (`is_static`) on an older macOS.
+fn absent_here(cls: &str, sel: &str, is_static: bool) -> bool {
+    if !older_than_sdk() {
+        return false;
+    }
+    let c = class(cls);
+    let s = svelters_apple::objc::bridge::sel(sel);
+    let found = if is_static {
+        let meta = unsafe { &*(c as *const AnyClass as *const objc2::runtime::AnyObject) };
+        svelters_apple::objc::bridge::responds(meta, s)
+    } else {
+        c.instance_method(s).is_some()
+    };
+    if !found {
+        eprintln!("{cls} {}{sel}: absent on this macOS (older than SDK {}), skipped", if is_static { "+" } else { "-" }, crate::generated::types::SDK_MACOS);
+    }
+    !found
+}
+
 fn read_ok(what: &str, r: Result<Value, String>) -> Option<Value> {
     match r {
         Ok(v) => Some(v),
@@ -256,6 +281,9 @@ pub fn props(s: &Spec) {
     let before = h.backend.handles();
     let x = subject(h, s);
     for (key, getter, writable, kind) in s.props {
+        if absent_here(s.class, getter, false) {
+            continue;
+        }
         let what = format!("{}.{key}", s.class);
         let v = if s.value { read_ok(&what, h.call(x, getter, vec![])) } else { read_ok(&what, h.get(x, key)) };
         let Some(v) = v else { continue };
@@ -276,6 +304,9 @@ pub fn methods(s: &Spec) {
     let before = h.backend.handles();
     let x = subject(h, s);
     for sel in s.readers {
+        if absent_here(s.class, sel, false) {
+            continue;
+        }
         read_ok(&format!("-[{} {sel}]", s.class), h.call(x, sel, vec![]));
     }
     h.release_since(&before);
@@ -352,6 +383,10 @@ pub fn members(m: &Members) {
             missing.push(format!("prop {key}"));
         }
     }
+    if !missing.is_empty() && older_than_sdk() {
+        eprintln!("{}: absent on this macOS (older than SDK {}), skipped: {missing:?}", m.class, crate::generated::types::SDK_MACOS);
+        return;
+    }
     assert!(missing.is_empty(), "{}: not found on this macOS: {missing:?}", m.class);
 }
 
@@ -362,6 +397,9 @@ pub fn asyncs(s: &Spec) {
     let _g = h.case_guard();
     let k = h.type_kind(s.class);
     for (sel, is_static, args) in s.asyncs {
+        if absent_here(s.class, sel, *is_static) {
+            continue;
+        }
         let d = h.method_desc(k, sel).unwrap_or_else(|| panic!("{}.{sel}: no descriptor", s.class));
         assert!(d.flags & SVL_M_ASYNC != 0, "{}.{sel}: SVL_M_ASYNC", s.class);
         assert_eq!(d.flags & SVL_M_STATIC != 0, *is_static, "{}.{sel}: static flag", s.class);

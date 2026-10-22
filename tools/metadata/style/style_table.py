@@ -19,7 +19,9 @@ ROOT = Path(__file__).resolve().parents[3]
 STYLE = ROOT / "metadata/style"
 
 VIAS = {"css", "setter", "child-attr"}
-DIALECTS = {"css", "qss", "none"}
+DIALECTS = {"css", "qss", "none", "decl"}
+# Value grammars of `via: css` properties in the `decl` dialect (checked by the X6 translator).
+DECL_TYPES = {"color", "length", "number", "enum", "string", "border", "shadow", "font-weight"}
 SELECTORS = {"type", "class", "id"}
 # setter / child-attr value type -> native property types it can target
 TYPES = {
@@ -106,10 +108,19 @@ def build(toolkit: str, doc: dict, tags: dict[str, str], kinds: dict[str, dict])
         if via not in VIAS:
             _fail(f"{w}: via must be one of {sorted(VIAS)}")
         if via == "css":
-            _keys(w, rec, {"via", "note", "inline_only"})
+            decl = doc["dialect"] == "decl"
+            _keys(w, rec, {"via", "note", "inline_only"} | ({"type", "values"} if decl else set()))
             if doc["dialect"] == "none":
                 _fail(f"{w}: {toolkit} has no native styling dialect; only setters and child attributes")
             out = {"via": "css"}
+            if decl:
+                if rec.get("type") not in DECL_TYPES:
+                    _fail(f"{w}: type must be one of {sorted(DECL_TYPES)} in the decl dialect")
+                out["decl_type"] = rec["type"]  # not `type`: the compiler reads that as a setter value kind
+                if rec["type"] == "enum":
+                    if not rec.get("values"):
+                        _fail(f"{w}: an enum needs values")
+                    out["values"] = list(rec["values"])
             if rec.get("inline_only"):
                 out["inline_only"] = True
         elif via == "setter":
