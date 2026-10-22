@@ -678,6 +678,8 @@ fn own_ts(o: &serde_json::Map<String, J>, refs: &mut Refs<'_>) -> Option<String>
         types
             .into_iter()
             .map(|t| match t {
+                // AS1: an `AssetRef` field
+                "string" if o.get("format").and_then(J::as_str) == Some("svelters-asset") => "import('@svelters/native-runtime/assets').Asset | string".to_string(),
                 "string" => "string".to_string(),
                 "number" | "integer" => "number".to_string(),
                 "boolean" => "boolean".to_string(),

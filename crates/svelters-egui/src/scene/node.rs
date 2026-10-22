@@ -32,7 +32,7 @@ pub enum W {
     ToggleButton { text: String, checked: bool, radio: bool, frame: bool, weight: i64 },
     ComboBox { options: Vec<String>, selected: i64, hint: String },
     Separator { vertical: bool },
-    Icon { name: String, glyph: String, family: String, size: Option<f64>, weight: i64, frame: bool, selected: bool },
+    Icon { name: String, glyph: String, family: String, size: Option<f64>, weight: i64, frame: bool, selected: bool, source: String, tint: bool },
     /// A CSS grid container (`columns` is `grid-template-columns`, validated on write).
     Grid { columns: String, justify_items: &'static str },
     CollapsingHeader { text: String, open: bool },

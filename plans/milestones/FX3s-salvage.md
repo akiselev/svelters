@@ -24,6 +24,11 @@ With the per-pass counter, the stock egui and policy runs change only on `primar
 | all 18 scripts (native policy runs) | 192 / 197 | **193 / 200** |
 
 Stock egui: 133 / 136. The `primary` floor is raised to (6, 8), the measured values. No other floor changes.
+Measured again after merging origin/master with WG3w (1b604e3a, 7f43bf39): Linux unchanged (193 / 200).
+WG3w's Windows run (`egui_text_edit_against_windows_goldens`, pins 1–3 and 7) uses the same driver, so
+it gets the per-pass collection too. It measures **48** (Win32 `EDIT`) / **70** (WinUI) / 70 (either) of 144,
+the same as WG3w recorded. That test is measurement-only and has no floors, so none were added. The W5 PRIMARY
+provider is installed only in the Linux (`Nix`) runs, because Windows has no PRIMARY.
 WG3b's `clipboard-keys` copy-alt miss (#12) remains on master: Ctrl+Insert is not mapped by egui on Linux.
 The fix was FX3's CUA chord, which was left behind.
 
@@ -39,6 +44,6 @@ The fix was FX3's CUA chord, which was left behind.
 
 Local (thinkpadx1): `cargo clippy -p svelters-egui --all-targets` (no warnings in the changed files);
 `cargo nextest run -p svelters-egui -E 'test(fx1_) | test(primary) | test(middle_click) | test(fx3_)'` (12 pass);
-`cargo nextest run -p svelters-conformance -E 'test(egui_text_edit_against_native_goldens)'` (pass, numbers above).
+`cargo check -p svelters-egui -p svelters-conformance --all-targets`; `cargo nextest run -p svelters-conformance -E 'binary(egui_measure)'` (both tests pass on the merged tree, numbers above).
 Both new tests were checked to fail with their fix removed. Not run locally: everything else (CI runs it).
 `cargo clippy -p svelters-conformance` stops on a clippy error in `svelters-gtk` that is already on master.

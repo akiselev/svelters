@@ -26,6 +26,7 @@ pub mod dnd;
 pub mod pickers;
 mod registry;
 pub(crate) mod virtuallist;
+pub mod treeview;
 // WG1 families
 mod controls;
 mod decor;
@@ -221,6 +222,8 @@ pub enum P {
     /// image
     Source,
     Fit,
+    /// icon (AS1)
+    Tint,
     /// progress-bar
     Fraction,
     ShowPercentage,
@@ -275,6 +278,10 @@ pub enum P {
     /// table-column: a Svelte `editor` snippet is set
     Editor,
     // `row-height` reuses WG4a's `RowHeight`
+    // `tree-view` (WG5b, `treeview.rs`)
+    TreeIndent,
+    RowDragType,
+    RowDropTypes,
     /// EV3: a button's Enter and Escape roles.
     Default,
     Cancel,
