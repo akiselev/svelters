@@ -19,6 +19,8 @@ source = ["dep:svelters-modules", "svelters-modules/source"]
 svelters-abi.workspace = true
 svelters-host.workspace = true
 svelters-modules = { workspace = true, optional = true }
+# CS5e: the CSS engine (selectors, cascade, computed style) runs in process on the scene.
+svelters-style.workspace = true
 serde_json.workspace = true
 # RA1: provider kinds (`#[svelters::widget]`) and states register with inventory (ARCH-EMBED D2(a)).
 inventory = "0.3"
@@ -27,7 +29,7 @@ inventory = "0.3"
 egui = { version = "=0.37.0", default-features = false, features = ["default_fonts"] }
 eframe = { version = "=0.37.0", optional = true, default-features = false, features = ["glow", "default_fonts", "x11", "wayland", "accesskit"] }
 egui_kittest = { version = "=0.37.0", optional = true }
-taffy = { version = "=0.15.0", default-features = false, features = ["std", "flexbox", "grid", "block_layout", "content_size"] }
+taffy = { version = "=0.15.0", default-features = false, features = ["std", "flexbox", "grid", "calc", "block_layout", "content_size"] }
 
 [dev-dependencies]
 # The tests use the kittest harness and the eframe runner whatever features the build selects

@@ -446,6 +446,10 @@ impl LayoutPartialTree for Tree<'_> {
     fn get_core_container_style(&self, id: NodeId) -> Self::CoreContainerStyle<'_> {
         &self.s.layout[ix(id)].style
     }
+    /// CS5e: `calc()` lengths of the computed style (`style.rs` interns them).
+    fn resolve_calc_value(&self, val: *const (), basis: f32) -> f32 {
+        crate::style::resolve_calc(val, basis)
+    }
     fn set_unrounded_layout(&mut self, id: NodeId, layout: &Layout) {
         self.s.layout[ix(id)].unrounded = *layout;
     }
@@ -459,7 +463,13 @@ impl LayoutPartialTree for Tree<'_> {
             match tree.s.w(i) {
                 W::Grid { .. } => return compute_grid_layout(tree, id, inputs),
                 &W::CollapsingHeader { open, .. } => return tree.collapsing(id, open, inputs),
-                w if w.is_container() => return compute_flexbox_layout(tree, id, inputs),
+                w if w.is_container() => {
+                    // CS5e: `display: grid` from the computed style
+                    if tree.s.layout[i].style.display == Display::Grid {
+                        return compute_grid_layout(tree, id, inputs);
+                    }
+                    return compute_flexbox_layout(tree, id, inputs);
+                }
                 _ => {}
             }
             tree.leaf_layouts += 1;
@@ -538,23 +548,6 @@ impl Tree<'_> {
     }
 }
 
-impl taffy::LayoutGridContainer for Tree<'_> {
-    type GridContainerStyle<'b>
-        = &'b Style
-    where
-        Self: 'b;
-    type GridItemStyle<'b>
-        = &'b Style
-    where
-        Self: 'b;
-    fn get_grid_container_style(&self, id: NodeId) -> Self::GridContainerStyle<'_> {
-        &self.s.layout[ix(id)].style
-    }
-    fn get_grid_child_style(&self, id: NodeId) -> Self::GridItemStyle<'_> {
-        &self.s.layout[ix(id)].style
-    }
-}
-
 impl taffy::LayoutContainingBlock for Tree<'_> {
     type OofItemStyle<'b>
         = &'b Style
@@ -593,6 +586,23 @@ impl taffy::LayoutFlexboxContainer for Tree<'_> {
         &self.s.layout[ix(id)].style
     }
     fn get_flexbox_child_style(&self, id: NodeId) -> Self::FlexboxItemStyle<'_> {
+        &self.s.layout[ix(id)].style
+    }
+}
+
+impl taffy::LayoutGridContainer for Tree<'_> {
+    type GridContainerStyle<'b>
+        = &'b Style
+    where
+        Self: 'b;
+    type GridItemStyle<'b>
+        = &'b Style
+    where
+        Self: 'b;
+    fn get_grid_container_style(&self, id: NodeId) -> Self::GridContainerStyle<'_> {
+        &self.s.layout[ix(id)].style
+    }
+    fn get_grid_child_style(&self, id: NodeId) -> Self::GridItemStyle<'_> {
         &self.s.layout[ix(id)].style
     }
 }

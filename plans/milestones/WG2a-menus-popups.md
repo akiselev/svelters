@@ -4,7 +4,9 @@ Design: `plans/research/EGUI.md` §5 (the element catalog the user approved as t
 2026-10-22, fast-tracked; §8), the X4 vocabulary (`plans/milestones/X4-menus.md`, `fixtures/menus`) and N1
 naming. Lane WG2a (WIDGETS), branch `ci/wg2a`, from master `950678d4`; merged WG1 (`origin/ci/wg1` up to
 `66fcd9df`: `Common::invalid`, `leaf::container`/`walk::paint_children`, `a11y::name` fallbacks, `Ty::StrList`)
-and master up to `0318f453` (EV2b, CS0, Q3, the cargo-slot and artifact rules). Its diff against master
+and master up to `9e8b242b` (EV2b, CS0, Q3, Q1, LD1, TK1, CS5e, the cargo-slot and artifact rules; the
+WG1/CS5e overlaps in `walk.rs` and `layout.rs` resolved here: CS5e's container opacity around WG1's chrome, WG1's
+grid and collapsing header before CS5e's computed `display: grid`, one `LayoutGridContainer`). Its diff against master
 therefore also carries WG1 until WG1 merges.
 
 ## Elements
@@ -114,6 +116,6 @@ inside a closed overlay is 0×0).
 
 Local, after the last code change: `cargo check -p svelters-egui --all-targets` (clean);
 nextest `-p svelters-egui --test menus --test menus_app --test spec --test widgets --test oplog_replay` (23/23) and
-`-p svelters-compiler --test wg2a_egui_menus --test g1_egui_spec` (6/6, before the WG1 merge); the gallery's
+`-p svelters-compiler --test wg2a_egui_menus --test g1_egui_spec` (7/7); the gallery's
 TestHost run (`expected.oplog` written with it). Not run locally: the full workspace, conformance, the other
 backends, the JS suites (CI).

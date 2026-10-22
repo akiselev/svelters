@@ -891,7 +891,8 @@ impl Scene {
 
     /// Rebuilds node `i`'s taffy style from its props.
     pub(crate) fn restyle(&mut self, i: usize) {
-        self.layout[i].style = crate::layout::style_of(self.common(i), self.w(i), &self.vis(i));
+        // CS5e: the props, overlaid by the computed style where the runtime set nothing
+        self.layout[i].style = crate::style::layout_style(self, i);
     }
 
     /// Sets the TR1 visual channels; a changed clip restyles. False if nothing changed.

@@ -1,9 +1,12 @@
+style sheet "*" null
+style scheme "light" 0
+style sheet "@tokens" ":root {\n  --sv-bg: #f6f5f4;\n  --sv-fg: #2e3436;\n  --sv-surface: #ffffff;\n  --sv-border: #cdc7c2;\n  --sv-accent: #3584e4;\n  --sv-accent-hover: #1c71d8;\n  --sv-accent-fg: #ffffff;\n  --sv-muted: #77767b;\n  --sv-danger: #c01c28;\n  --sv-radius: 6px;\n  --sv-space-1: 4px;\n  --sv-space-2: 8px;\n  --sv-space-3: 12px;\n  --sv-space-4: 16px;\n  --sv-font-size: 11pt;\n  --sv-font-family: sans-serif;\n}\n"
+style sheet "fixtures/gallery-egui-menus/src/App.svelte" "\n  .page.svelte-c86df7296a {\n    gap: 8px;\n  }\n  .row.svelte-c86df7296a {\n    flex-direction: row;\n    align-items: center;\n    gap: 8px;\n  }\n  .pop.svelte-c86df7296a {\n    padding: 6px;\n    gap: 6px;\n  }\n"
 create window #1
 set #1 title "Menus and popups"
 set #1 default-width 520
 set #1 default-height 400
 create box #2
-set #2 gap 8
 create menu-bar #3
 create menu #4
 set #4 label "File"
@@ -41,9 +44,6 @@ insert #11 #13 before=end slot=default
 insert #3 #11 before=end slot=default
 insert #2 #3 before=end slot=default
 create box #14
-set #14 gap 8
-set #14 align-items "center"
-set #14 flex-direction "row"
 create menu-button #15
 set #15 label "More"
 create action #16
@@ -56,8 +56,6 @@ insert #14 #15 before=end slot=default
 create button #18
 set #18 text "Pick"
 create popup #19
-set #19 gap 6
-set #19 padding 6
 create label #20
 set #20 text "Filter"
 insert #19 #20 before=end slot=default
@@ -82,8 +80,6 @@ create label #26
 insert #2 #26 before=end slot=default
 create modal #27
 set #27 title "Delete the file?"
-set #27 gap 6
-set #27 padding 6
 create label #28
 set #28 text "It cannot be undone."
 insert #27 #28 before=end slot=default
@@ -130,13 +126,37 @@ observe #27 open on
 set #30 open false
 observe #30 open on
 call #1 present []
-style sheet "*" null
-style scheme "light" 0
-style sheet "@tokens" ":root {\n  --sv-bg: #f6f5f4;\n  --sv-fg: #2e3436;\n  --sv-surface: #ffffff;\n  --sv-border: #cdc7c2;\n  --sv-accent: #3584e4;\n  --sv-accent-hover: #1c71d8;\n  --sv-accent-fg: #ffffff;\n  --sv-muted: #77767b;\n  --sv-danger: #c01c28;\n  --sv-radius: 6px;\n  --sv-space-1: 4px;\n  --sv-space-2: 8px;\n  --sv-space-3: 12px;\n  --sv-space-4: 16px;\n  --sv-font-size: 11pt;\n  --sv-font-family: sans-serif;\n}\n"
-style #2 classes "page"
-style #14 classes "row"
-style #19 classes "pop"
-style #27 classes "pop"
+style #1 classes "svelte-c86df7296a"
+style #2 classes "page svelte-c86df7296a"
+style #3 classes "svelte-c86df7296a"
+style #4 classes "svelte-c86df7296a"
+style #5 classes "svelte-c86df7296a"
+style #6 classes "svelte-c86df7296a"
+style #7 classes "svelte-c86df7296a"
+style #8 classes "svelte-c86df7296a"
+style #9 classes "svelte-c86df7296a"
+style #10 classes "svelte-c86df7296a"
+style #11 classes "svelte-c86df7296a"
+style #12 classes "svelte-c86df7296a"
+style #13 classes "svelte-c86df7296a"
+style #14 classes "row svelte-c86df7296a"
+style #15 classes "svelte-c86df7296a"
+style #16 classes "svelte-c86df7296a"
+style #17 classes "svelte-c86df7296a"
+style #18 classes "svelte-c86df7296a"
+style #19 classes "pop svelte-c86df7296a"
+style #20 classes "svelte-c86df7296a"
+style #21 classes "svelte-c86df7296a"
+style #22 classes "svelte-c86df7296a"
+style #23 classes "svelte-c86df7296a"
+style #24 classes "svelte-c86df7296a"
+style #25 classes "svelte-c86df7296a"
+style #26 classes "svelte-c86df7296a"
+style #27 classes "pop svelte-c86df7296a"
+style #28 classes "svelte-c86df7296a"
+style #29 classes "svelte-c86df7296a"
+style #30 classes "svelte-c86df7296a"
+style #31 classes "svelte-c86df7296a"
 event #5 activate [false]
 set #26 text "S:open;|false|true|false|false||false"
 changed #6 checked true
