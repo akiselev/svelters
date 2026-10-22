@@ -6738,6 +6738,10 @@
         "type": "length",
         "via": "setter"
       },
+      "box-shadow": {
+        "decl_type": "shadow",
+        "via": "css"
+      },
       "color": {
         "decl_type": "color",
         "via": "css"
