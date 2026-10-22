@@ -909,6 +909,10 @@ OW-CSS, OW1a, OW1b, OW2 and OW4 phase a start the same day on three machines.
 
 ## 8. Open questions for the user
 
+**Decided (user, 2026-10-22):** Q1 Rust kinds composed from behaviour units, with the same units as `use:` actions for Svelte composites; Q2 egui's `Ui::interact` for picking, drag capture and focus memory only, every behaviour rule ours; Q3 `::part()`, `::placeholder`, `::selection` and the new pseudo-classes are a public, stable styling API; Q4 widgets VS Code lacks follow DESIGN R1-R18 with Fluent 2 metrics on VS Code tokens, checked by rule-based VIS1 checks; Q5 yes, an immediate-mode Rust layer (OW-RUST, after OW1a) so cadatomic's Rust shell chrome uses the same units, primitives and CSS. All five as recommended below.
+
+**Decided (coordinator, 2026-10-22):** OW-CSS (thinkpad) adds state bits 14-22 and their pseudo-classes in `svelters-style` only, numbered as §2.2; OW0a adds them in `provider/state.rs` only; the pin test reconciles the tables at merge. FX1 `native/words.rs` and FX3 `native/undo.rs` move into `quire-text` with their tests; svelters deletes its copies when OW4 switches to `quire-text` by rev.
+
 Only architecture choices; each has a recommendation, and lanes proceed on the recommendation
 until answered (the coordinator brings them together).
 
