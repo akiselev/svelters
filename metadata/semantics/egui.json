@@ -3,6 +3,166 @@
   "event_aliases": {},
   "framework": "egui 0.37 (svelters-egui; taffy 0.15 layout)",
   "kinds": {
+    "Action": {
+      "abstract": false,
+      "bindings": {
+        "checked": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "toggled",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "checked",
+          "provenance": "svelters-egui: the egui::Button (menu item) widget writes checked into the node during the pass; `toggled` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "Action",
+        "MenuEntry"
+      ],
+      "children": null,
+      "doc": "A menu item: plain, a check item (`checkable`) or a radio item (`group`), with an optional `shortcut`. AccessKit role Button, CheckBox or RadioButton.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::Button (menu item)",
+      "present": null,
+      "props": {
+        "checkable": {
+          "construct_only": false,
+          "default": false,
+          "doc": "A check item: picking it toggles `checked`.",
+          "js": "checkable",
+          "native": "checkable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Action:checkable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "checked": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Check or radio state; picking a check item toggles it, picking a radio item sets it.",
+          "js": "checked",
+          "native": "checked",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Action:checked",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "group": {
+          "construct_only": false,
+          "default": "",
+          "doc": "A radio item: the actions of one parent with the same group form an exclusive set; picking one checks it and unchecks the others (each announced).",
+          "js": "group",
+          "native": "group",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Action:group",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "label": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The caption.",
+          "js": "label",
+          "native": "label",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Action:label",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "shortcut": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Keyboard accelerator such as `Ctrl+O`, `Ctrl+Shift+S` or `F5`: shown right-aligned and active while the menu's owner (menu-bar, menu-button, context-menu) is drawn. Modifiers: `Ctrl`, `Shift`, `Alt`, `Cmd` (macOS command), `Primary` (Cmd on macOS, Ctrl elsewhere); keys are egui `Key` names. An unknown key is an error.",
+          "js": "shortcut",
+          "native": "shortcut",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Action:shortcut",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "activate": {
+          "args": [
+            {
+              "name": "checked",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user picked it (click, Enter, or its shortcut); carries `checked` after the pick.",
+          "handler_result": "none",
+          "js_event": "activate",
+          "name": "activate",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "toggled": {
+          "args": [
+            {
+              "name": "checked",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user changed `checked` (a check item, or a radio item turned on or off by a pick); carries the new state.",
+          "handler_result": "none",
+          "js_event": "toggled",
+          "name": "toggled",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": "label"
+    },
     "Box": {
       "abstract": false,
       "bindings": {},
@@ -659,6 +819,104 @@
       },
       "text_content": "text"
     },
+    "ColorPicker": {
+      "abstract": false,
+      "bindings": {
+        "value": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": true,
+          "property": "value",
+          "provenance": "svelters-egui: the egui::color_picker::color_edit_button_hsva widget writes value into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": true,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "ColorPicker",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A colour swatch; clicking it opens egui's colour picker popup.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::color_picker::color_edit_button_hsva",
+      "present": null,
+      "props": {
+        "alpha": {
+          "construct_only": false,
+          "default": "opaque",
+          "doc": "Whether the popup edits alpha (`egui::color_picker::Alpha`): `opaque` hides it, `blend` edits it, `blend-or-additive` also offers additive.",
+          "js": "alpha",
+          "native": "alpha",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ColorPicker:alpha",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "opaque",
+            "blend",
+            "blend-or-additive"
+          ],
+          "writable": true
+        },
+        "value": {
+          "construct_only": false,
+          "default": "#000000",
+          "doc": "The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted). Editing it in the popup changes it.",
+          "js": "value",
+          "native": "value",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:ColorPicker:value",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user edited the colour; carries it (CSS hex, once per frame while dragging).",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
     "ComboBox": {
       "abstract": false,
       "bindings": {
@@ -760,6 +1018,175 @@
           ],
           "disconnect_on_drop": true,
           "doc": "The user picked a row; carries its index.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
+    "ContextMenu": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "ContextMenu",
+        "MenuEntry"
+      ],
+      "children": {
+        "default_slot": "items",
+        "policy": "ordered",
+        "slots": {
+          "items": {
+            "accepts": [
+              "Menu",
+              "Action",
+              "MenuSeparator"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A menu that attaches to the element it is declared in and opens at the pointer on a secondary click on it (the innermost owner wins). `popup` opens it below its owner. The shortcuts of its actions are active while the owner is drawn.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "popdown": {
+          "dispatch": "generated",
+          "doc": "Closes it.",
+          "native": "popdown",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "popup": {
+          "dispatch": "generated",
+          "doc": "Opens it (a context menu below its owner).",
+          "native": "popup",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "egui::Popup (menu)",
+      "present": null,
+      "props": {},
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {},
+      "text_content": null
+    },
+    "DatePicker": {
+      "abstract": false,
+      "bindings": {
+        "value": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": true,
+          "property": "value",
+          "provenance": "svelters-egui: the egui_extras::DatePickerButton widget writes value into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": true,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "DatePicker",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A button showing a date; clicking it opens a calendar popup (Save/Cancel).",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui_extras::DatePickerButton",
+      "present": null,
+      "props": {
+        "calendar-week": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shows ISO week numbers in the calendar.",
+          "js": "calendar-week",
+          "native": "calendar-week",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DatePicker:calendar-week",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "format": {
+          "construct_only": false,
+          "default": "%Y-%m-%d",
+          "doc": "How the button shows the date (`strftime`, jiff's `civil::Date::strftime`).",
+          "js": "format",
+          "native": "format",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DatePicker:format",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "value": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The date, ISO 8601 (`2026-10-22`); `\"\"` for none (the button shows today). Picking a day and pressing Save changes it.",
+          "js": "value",
+          "native": "value",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:DatePicker:value",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user saved a date; carries it (ISO 8601).",
           "handler_result": "none",
           "js_event": "changed",
           "name": "changed",
@@ -1564,6 +1991,244 @@
       },
       "text_content": null
     },
+    "InnerWindow": {
+      "abstract": false,
+      "bindings": {
+        "open": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "open",
+          "provenance": "svelters-egui: the egui::Window widget writes open into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "InnerWindow",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A floating window inside the viewport (`egui::Window`): movable, optionally resizable, collapsible and closable; its children are a flex box.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::Window",
+      "present": null,
+      "props": {
+        "closable": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shows a close button in the title bar.",
+          "js": "closable",
+          "native": "closable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:InnerWindow:closable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "collapsible": {
+          "construct_only": false,
+          "default": true,
+          "doc": "The title bar can collapse it to the title.",
+          "js": "collapsible",
+          "native": "collapsible",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:InnerWindow:collapsible",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "default-height": {
+          "construct_only": false,
+          "default": 240.0,
+          "doc": "Initial height in points.",
+          "js": "default-height",
+          "native": "default-height",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:InnerWindow:default-height",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "default-width": {
+          "construct_only": false,
+          "default": 320.0,
+          "doc": "Initial width in points (a resizable window's content fills it).",
+          "js": "default-width",
+          "native": "default-width",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:InnerWindow:default-width",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "default-x": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Initial left edge in points (viewport coordinates); null: egui places it.",
+          "js": "default-x",
+          "native": "default-x",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:InnerWindow:default-x",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "default-y": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Initial top edge in points (viewport coordinates); null: egui places it.",
+          "js": "default-y",
+          "native": "default-y",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:InnerWindow:default-y",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "open": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shown when true; the close button sets it false.",
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:InnerWindow:open",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "resizable": {
+          "construct_only": false,
+          "default": true,
+          "doc": "The user can resize it; the content is laid out at its size. Without it the window is as big as its content.",
+          "js": "resizable",
+          "native": "resizable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:InnerWindow:resizable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "title": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The title bar text.",
+          "js": "title",
+          "native": "title",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:InnerWindow:title",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "open",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user (or `popup`/`popdown`) opened or closed it; carries `open`.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "closed": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "The user (or `popdown`) closed it.",
+          "handler_result": "none",
+          "js_event": "closed",
+          "name": "closed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
     "Label": {
       "abstract": false,
       "bindings": {},
@@ -1670,6 +2335,491 @@
         }
       },
       "text_content": "text"
+    },
+    "Menu": {
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "Menu",
+        "MenuEntry"
+      ],
+      "children": {
+        "default_slot": "items",
+        "policy": "ordered",
+        "slots": {
+          "items": {
+            "accepts": [
+              "Menu",
+              "Action",
+              "MenuSeparator"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A menu: a menu-bar button, or a submenu row inside another menu. Inside a `menu-button` its items are the button's menu (its label is unused).",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::containers::menu::{MenuButton, SubMenuButton}",
+      "present": null,
+      "props": {
+        "label": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The title: the menu-bar button, or the submenu row.",
+          "js": "label",
+          "native": "label",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Menu:label",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {},
+      "text_content": "label"
+    },
+    "MenuBar": {
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "MenuBar",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "items",
+        "policy": "ordered",
+        "slots": {
+          "items": {
+            "accepts": [
+              "Menu",
+              "Action",
+              "MenuSeparator"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A horizontal menu bar of `menu` children (and plain `action`s). One interact row high; it takes no width of its own, so it fills a column (align-items stretch) or needs `flex-grow` in a row. The shortcuts of its actions are active while it is drawn.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::MenuBar",
+      "present": null,
+      "props": {},
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {},
+      "text_content": null
+    },
+    "MenuButton": {
+      "abstract": false,
+      "bindings": {
+        "active": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "active",
+          "provenance": "svelters-egui: the egui::containers::menu::MenuButton widget writes active into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "MenuButton",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "items",
+        "policy": "ordered",
+        "slots": {
+          "items": {
+            "accepts": [
+              "Menu",
+              "Action",
+              "MenuSeparator"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A button that opens a menu of its children (`action`, `menu`, `menu-separator`; a `menu` child's items are shown inline, as GTK's menu-button takes a menu). The shortcuts of its actions are active while it is drawn.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "popdown": {
+          "dispatch": "generated",
+          "doc": "Closes it.",
+          "native": "popdown",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "popup": {
+          "dispatch": "generated",
+          "doc": "Opens it (a context menu below its owner).",
+          "native": "popup",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "egui::containers::menu::MenuButton",
+      "present": null,
+      "props": {
+        "active": {
+          "construct_only": false,
+          "default": false,
+          "doc": "The menu is open; the user opening or closing it changes it, setting it opens or closes it.",
+          "js": "active",
+          "native": "active",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:MenuButton:active",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "label": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The caption.",
+          "js": "label",
+          "native": "label",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:MenuButton:label",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "active",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user opened or closed the menu; carries `active`.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": "label"
+    },
+    "MenuEntry": {
+      "abstract": true,
+      "bindings": {},
+      "chain": [
+        "MenuEntry"
+      ],
+      "children": null,
+      "doc": "Common properties of the menu entries (`menu`, `action`, `menu-separator`, `context-menu`): drawn inside a menu, never laid out by taffy.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui menu entry",
+      "present": null,
+      "props": {
+        "accessible-name": {
+          "construct_only": false,
+          "default": "",
+          "doc": "AccessKit name; the label by default.",
+          "js": "accessible-name",
+          "native": "accessible-name",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:MenuEntry:accessible-name",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "anchor": {
+          "construct_only": false,
+          "default": "",
+          "doc": "A name unique in its embedded root (AccessKit author id, `Embed::anchor_rect`).",
+          "js": "anchor",
+          "native": "anchor",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:MenuEntry:anchor",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "enabled": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Can be picked when true; drawn greyed out otherwise.",
+          "js": "enabled",
+          "native": "enabled",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:MenuEntry:enabled",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "tooltip": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Hover text; empty for none.",
+          "js": "tooltip",
+          "native": "tooltip",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:MenuEntry:tooltip",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "visible": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shown in its menu when true.",
+          "js": "visible",
+          "native": "visible",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:MenuEntry:visible",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {},
+      "text_content": null
+    },
+    "MenuSeparator": {
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "MenuSeparator",
+        "MenuEntry"
+      ],
+      "children": null,
+      "doc": "A line between menu items (a vertical one in a menu bar).",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::Separator",
+      "present": null,
+      "props": {},
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {},
+      "text_content": null
+    },
+    "Modal": {
+      "abstract": false,
+      "bindings": {
+        "open": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "open",
+          "provenance": "svelters-egui: the egui::Modal widget writes open into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "Modal",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "An in-window modal dialog: a backdrop over the viewport that blocks the rest of the UI, its content centred, sized to fit (or `width`/`height`). The egui form of a modal dialog (no OS-modal windows on egui: EGUI.md §5).",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::Modal",
+      "present": null,
+      "props": {
+        "dismissable": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Escape or a click on the backdrop closes it; with false only the app does.",
+          "js": "dismissable",
+          "native": "dismissable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Modal:dismissable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "open": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shown when true (so `{#if}` alone can show it); the user dismissing it sets it false.",
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Modal:open",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "title": {
+          "construct_only": false,
+          "default": "",
+          "doc": "A heading above the content; also the dialog's accessible name.",
+          "js": "title",
+          "native": "title",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Modal:title",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "open",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user (or `popup`/`popdown`) opened or closed it; carries `open`.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "closed": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "The user (or `popdown`) closed it.",
+          "handler_result": "none",
+          "js_event": "closed",
+          "name": "closed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
     },
     "Panel": {
       "abstract": false,
@@ -1812,6 +2962,170 @@
           "handler_result": "none",
           "js_event": "changed",
           "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
+    "Popup": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {
+        "open": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "open",
+          "provenance": "svelters-egui: the egui::Popup widget writes open into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "Popup",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A popover anchored to its owner: the element it is declared in (attached), or the box it is placed in. Its children are a flex box sized to their content (or `width`/`height`), out of the owner's flow. GTK's `popover`.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "popdown": {
+          "dispatch": "generated",
+          "doc": "Closes it (announced like a user close).",
+          "native": "popdown",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "popup": {
+          "dispatch": "generated",
+          "doc": "Opens it (announced like a user open).",
+          "native": "popup",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "egui::Popup",
+      "present": null,
+      "props": {
+        "autohide": {
+          "construct_only": false,
+          "default": true,
+          "doc": "A click outside closes it; with false only Escape, `popdown` or the app does.",
+          "js": "autohide",
+          "native": "autohide",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Popup:autohide",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "open": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Shown when true; the user closing it (Escape, a click outside with `autohide`) sets it false.",
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Popup:open",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "position": {
+          "construct_only": false,
+          "default": "bottom",
+          "doc": "The side of its owner it opens on (egui moves it to another side when it does not fit).",
+          "js": "position",
+          "native": "position",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Popup:position",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "bottom",
+            "top",
+            "left",
+            "right"
+          ],
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "open",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user (or `popup`/`popdown`) opened or closed it; carries `open`.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "closed": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "The user (or `popdown`) closed it.",
+          "handler_result": "none",
+          "js_event": "closed",
+          "name": "closed",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -2822,6 +4136,173 @@
       "signals": {},
       "text_content": null
     },
+    "SplitView": {
+      "abstract": false,
+      "bindings": {
+        "position": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "position",
+          "provenance": "svelters-egui: the two panes + a draggable divider (egui drag sense) widget writes position into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "SplitView",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "panes",
+        "policy": "ordered",
+        "slots": {
+          "panes": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "Two panes (its first two children; more are not shown) split by a divider the user drags. `position` is the first pane's size.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "two panes + a draggable divider (egui drag sense)",
+      "present": null,
+      "props": {
+        "min-size": {
+          "construct_only": false,
+          "default": 32.0,
+          "doc": "Smallest size of either pane, in points.",
+          "js": "min-size",
+          "native": "min-size",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:SplitView:min-size",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "orientation": {
+          "construct_only": false,
+          "default": "horizontal",
+          "doc": "`horizontal`: the panes side by side (a vertical divider); `vertical`: one above the other.",
+          "js": "orientation",
+          "native": "orientation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:SplitView:orientation",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ],
+          "writable": true
+        },
+        "position": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Size of the first pane in points along the split; null for half. Dragging the divider changes it (`bind:position`); it is clamped by `min-size` when laid out.",
+          "js": "position",
+          "native": "position",
+          "nullable": true,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:SplitView:position",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "resizable": {
+          "construct_only": false,
+          "default": true,
+          "doc": "The divider can be dragged.",
+          "js": "resizable",
+          "native": "resizable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:SplitView:resizable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "position",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user dragged the divider; carries the first pane's new size.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "drag-started": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "A divider drag began.",
+          "handler_result": "none",
+          "js_event": "drag-started",
+          "name": "drag-started",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "drag-stopped": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "A divider drag ended.",
+          "handler_result": "none",
+          "js_event": "drag-stopped",
+          "name": "drag-stopped",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
     "Stack": {
       "abstract": false,
       "bindings": {},
@@ -3030,6 +4511,537 @@
       },
       "text_content": "text"
     },
+    "Tab": {
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "Tab",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A page of a `tab-view`: a flex box whose `title` is its tab's caption.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "taffy flexbox (a tab-view page)",
+      "present": null,
+      "props": {
+        "closable": {
+          "construct_only": false,
+          "default": false,
+          "doc": "The tab shows a close button (`close-requested`).",
+          "js": "closable",
+          "native": "closable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Tab:closable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "title": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The tab's caption (also its accessible name).",
+          "js": "title",
+          "native": "title",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Tab:title",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "close-requested": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "The tab's close button was clicked (or middle click on the tab); remove the tab to close it.",
+          "handler_result": "none",
+          "js_event": "close-requested",
+          "name": "close-requested",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
+    "TabView": {
+      "abstract": false,
+      "bindings": {
+        "selected": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "selected",
+          "provenance": "svelters-egui: the tab bar (egui selectable labels) + the selected page widget writes selected into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "TabView",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "pages",
+        "policy": "ordered",
+        "slots": {
+          "pages": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "Pages under a tab bar: each child (a `tab`) is a page titled by its `title`; only the `selected` one is laid out and drawn.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "tab bar (egui selectable labels) + the selected page",
+      "present": null,
+      "props": {
+        "selected": {
+          "construct_only": false,
+          "default": 0,
+          "doc": "Index of the shown page; a click on a tab changes it.",
+          "js": "selected",
+          "native": "selected",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:TabView:selected",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "selected",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user picked a tab; carries its index.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
+    "Table": {
+      "abstract": false,
+      "bindings": {
+        "selected": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "selected",
+          "provenance": "svelters-egui: the egui_table::Table widget writes selected into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "Table",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "columns",
+        "policy": "ordered",
+        "slots": {
+          "columns": {
+            "accepts": [
+              "TableColumn"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A virtual table (`egui_table`): only the visible rows and columns are drawn. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers). Give it a size or let flex-grow size it.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "clear-rows": {
+          "dispatch": "generated",
+          "doc": "Drops the data window (every row draws empty until `set-rows`).",
+          "native": "clear-rows",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "scroll-to-row": {
+          "dispatch": "generated",
+          "doc": "`scroll-to-row(row)`: scrolls the row into view on the next frame.",
+          "native": "scroll-to-row",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "set-rows": {
+          "dispatch": "generated",
+          "doc": "`set-rows(first, rows)`: the data window, rows `first..first + rows.length`, each row a list of cell values (strings, numbers, booleans; null for empty). Replaces the previous window.",
+          "native": "set-rows",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "egui_table::Table",
+      "present": null,
+      "props": {
+        "overscan": {
+          "construct_only": false,
+          "default": 20,
+          "doc": "Rows beyond the visible ones that `range` asks for on each side (data ready before it scrolls into view).",
+          "js": "overscan",
+          "native": "overscan",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Table:overscan",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "row-count": {
+          "construct_only": false,
+          "default": 0,
+          "doc": "Number of rows (the scroll extent). Rows without data yet are drawn empty.",
+          "js": "row-count",
+          "native": "row-count",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Table:row-count",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "row-height": {
+          "construct_only": false,
+          "default": 20.0,
+          "doc": "Height of every row (and of the header row), in points.",
+          "js": "row-height",
+          "native": "row-height",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Table:row-height",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "selected": {
+          "construct_only": false,
+          "default": -1,
+          "doc": "The selected row, -1 for none; a click on a row (or the arrow keys) changes it.",
+          "js": "selected",
+          "native": "selected",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Table:selected",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "sticky-columns": {
+          "construct_only": false,
+          "default": 0,
+          "doc": "Number of leading columns that do not scroll horizontally.",
+          "js": "sticky-columns",
+          "native": "sticky-columns",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Table:sticky-columns",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "striped": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Alternate rows get a faint background.",
+          "js": "striped",
+          "native": "striped",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Table:striped",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "activated": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A row was double-clicked (or Enter pressed on the selection).",
+          "handler_result": "none",
+          "js_event": "activated",
+          "name": "activated",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "changed": {
+          "args": [
+            {
+              "name": "selected",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user selected a row; carries its index.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "header-clicked": {
+          "args": [
+            {
+              "name": "column",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A column header was clicked (sort on it in JS and set the column's `sort`).",
+          "handler_result": "none",
+          "js_event": "header-clicked",
+          "name": "header-clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "range": {
+          "args": [
+            {
+              "name": "first",
+              "type": "i64"
+            },
+            {
+              "name": "last",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The rows the table needs data for changed: `first..=last` (the visible rows plus `overscan`); answer with `set-rows`.",
+          "handler_result": "none",
+          "js_event": "range",
+          "name": "range",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
+    "TableColumn": {
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "TableColumn",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100) is the column's width; a user resize keeps its width until the prop changes.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui_table::Column",
+      "present": null,
+      "props": {
+        "align": {
+          "construct_only": false,
+          "default": "start",
+          "doc": "Horizontal alignment of its cells.",
+          "js": "align",
+          "native": "align",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TableColumn:align",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "start",
+            "center",
+            "end"
+          ],
+          "writable": true
+        },
+        "resizable": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Its right edge can be dragged (double-click: fit the content).",
+          "js": "resizable",
+          "native": "resizable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TableColumn:resizable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "sort": {
+          "construct_only": false,
+          "default": "none",
+          "doc": "The sort arrow its header shows (the data is sorted by JS).",
+          "js": "sort",
+          "native": "sort",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TableColumn:sort",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "ascending",
+            "descending"
+          ],
+          "writable": true
+        },
+        "title": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The header text.",
+          "js": "title",
+          "native": "title",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TableColumn:title",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {},
+      "text_content": null
+    },
     "TextEdit": {
       "abstract": false,
       "bindings": {
@@ -3200,6 +5212,136 @@
           "handler_result": "none",
           "js_event": "lost-focus",
           "name": "lost-focus",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
+    "ToastHost": {
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "ToastHost",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. `show` from JS (`bind:this`), `svelters_egui::toast::show` from Rust.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "clear": {
+          "dispatch": "generated",
+          "doc": "Closes every toast.",
+          "native": "clear",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "dismiss": {
+          "dispatch": "generated",
+          "doc": "`dismiss(id)`: closes that toast (`closed(id, 'method')`).",
+          "native": "dismiss",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "show": {
+          "dispatch": "generated",
+          "doc": "`show(text, level = 'info', duration = the host's)`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed) and returns its id.",
+          "native": "show",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "egui::Area (foreground) of egui::Frame toasts",
+      "present": null,
+      "props": {
+        "corner": {
+          "construct_only": false,
+          "default": "bottom-right",
+          "doc": "The viewport corner the toasts stack in.",
+          "js": "corner",
+          "native": "corner",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ToastHost:corner",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "bottom-right",
+            "bottom-left",
+            "top-right",
+            "top-left"
+          ],
+          "writable": true
+        },
+        "duration": {
+          "construct_only": false,
+          "default": 4.0,
+          "doc": "Seconds a toast stays when `show` gives none; 0 keeps it until closed.",
+          "js": "duration",
+          "native": "duration",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ToastHost:duration",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "clicked": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A toast's body was clicked.",
+          "handler_result": "none",
+          "js_event": "clicked",
+          "name": "clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "closed": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "reason",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A toast went away: `reason` is `timeout`, `dismissed` (its close button), `method` (`dismiss`/`clear`).",
+          "handler_result": "none",
+          "js_event": "closed",
+          "name": "closed",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -3428,6 +5570,57 @@
           "observe": {
             "class": "set_only",
             "fact": "egui:Widget:anchor",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "drag-data": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The drag payload's data (JSON for structured data); `drop` delivers it.",
+          "js": "drag-data",
+          "native": "drag-data",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:drag-data",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "drag-type": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Makes the node a drag source: the payload's type, a MIME-like string (`cad/part`); empty for none.",
+          "js": "drag-type",
+          "native": "drag-type",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:drag-type",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "drop-types": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Makes the node a drop target: the drag types it accepts, separated by spaces or commas (`*` any, `cad/*` a prefix); empty for none.",
+          "js": "drop-types",
+          "native": "drop-types",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:drop-types",
             "mechanism": "scene",
             "verified": "weak"
           },
@@ -3677,7 +5870,106 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
-      "signals": {},
+      "signals": {
+        "animationend": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A native animation (TR2) finished; carries its id. The runtime listens to it itself.",
+          "handler_result": "none",
+          "js_event": "animationend",
+          "name": "animationend",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "drag-begin": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "Drag source: the user started dragging this node (`drag-type` set).",
+          "handler_result": "none",
+          "js_event": "drag-begin",
+          "name": "drag-begin",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "drag-end": {
+          "args": [
+            {
+              "name": "dropped",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Drag source: the drag ended; `dropped` is true when a target took it.",
+          "handler_result": "none",
+          "js_event": "drag-end",
+          "name": "drag-end",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "drag-enter": {
+          "args": [
+            {
+              "name": "type",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Drop target: a drag it accepts entered it (`drop-types` set); carries the drag's type.",
+          "handler_result": "none",
+          "js_event": "drag-enter",
+          "name": "drag-enter",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "drag-leave": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "Drop target: the drag left, was cancelled, or was dropped here (before `drop`).",
+          "handler_result": "none",
+          "js_event": "drag-leave",
+          "name": "drag-leave",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "drop": {
+          "args": [
+            {
+              "name": "type",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "string"
+            },
+            {
+              "name": "x",
+              "type": "f64"
+            },
+            {
+              "name": "y",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Drop target: a drag it accepts was released over it; carries the type, the data and the point in the node's own points.",
+          "handler_result": "none",
+          "js_event": "drop",
+          "name": "drop",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
       "text_content": null
     },
     "Window": {
@@ -3857,9 +6149,13 @@
           "collapsing-header",
           "frame",
           "grid",
+          "inner-window",
+          "modal",
           "panel",
+          "popup",
           "scroll-area",
-          "sides"
+          "sides",
+          "tab"
         ],
         "type": "enum",
         "values": [
@@ -3883,15 +6179,22 @@
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-picker",
           "combo-box",
+          "date-picker",
           "drag-value",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
           "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "range-slider",
@@ -3900,9 +6203,15 @@
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
           "switch",
+          "tab",
+          "tab-view",
+          "table",
+          "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button"
         ],
         "type": "enum",
@@ -3948,8 +6257,12 @@
           "collapsing-header",
           "frame",
           "grid",
+          "inner-window",
+          "modal",
           "panel",
-          "scroll-area"
+          "popup",
+          "scroll-area",
+          "tab"
         ],
         "type": "length",
         "via": "setter"
@@ -3975,15 +6288,22 @@
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-picker",
           "combo-box",
+          "date-picker",
           "drag-value",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
           "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "range-slider",
@@ -3992,9 +6312,15 @@
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
           "switch",
+          "tab",
+          "tab-view",
+          "table",
+          "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button"
         ],
         "type": "length",
@@ -4010,8 +6336,12 @@
           "box",
           "collapsing-header",
           "frame",
+          "inner-window",
+          "modal",
           "panel",
-          "scroll-area"
+          "popup",
+          "scroll-area",
+          "tab"
         ],
         "type": "enum",
         "values": [
@@ -4034,15 +6364,22 @@
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-picker",
           "combo-box",
+          "date-picker",
           "drag-value",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
           "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "range-slider",
@@ -4051,9 +6388,15 @@
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
           "switch",
+          "tab",
+          "tab-view",
+          "table",
+          "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button"
         ],
         "type": "number",
@@ -4071,15 +6414,22 @@
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-picker",
           "combo-box",
+          "date-picker",
           "drag-value",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
           "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "range-slider",
@@ -4088,9 +6438,15 @@
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
           "switch",
+          "tab",
+          "tab-view",
+          "table",
+          "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button"
         ],
         "type": "number",
@@ -4106,8 +6462,12 @@
           "box",
           "collapsing-header",
           "frame",
+          "inner-window",
+          "modal",
           "panel",
-          "scroll-area"
+          "popup",
+          "scroll-area",
+          "tab"
         ],
         "type": "enum",
         "values": [
@@ -4135,9 +6495,13 @@
           "collapsing-header",
           "frame",
           "grid",
+          "inner-window",
+          "modal",
           "panel",
+          "popup",
           "scroll-area",
           "sides",
+          "tab",
           "window"
         ],
         "type": "length",
@@ -4171,15 +6535,22 @@
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-picker",
           "combo-box",
+          "date-picker",
           "drag-value",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
           "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "range-slider",
@@ -4188,9 +6559,15 @@
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
           "switch",
+          "tab",
+          "tab-view",
+          "table",
+          "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button"
         ],
         "type": "length",
@@ -4206,8 +6583,12 @@
           "box",
           "collapsing-header",
           "frame",
+          "inner-window",
+          "modal",
           "panel",
-          "scroll-area"
+          "popup",
+          "scroll-area",
+          "tab"
         ],
         "type": "enum",
         "values": [
@@ -4250,15 +6631,22 @@
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-picker",
           "combo-box",
+          "date-picker",
           "drag-value",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
           "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "range-slider",
@@ -4267,9 +6655,15 @@
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
           "switch",
+          "tab",
+          "tab-view",
+          "table",
+          "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button"
         ],
         "type": "length",
@@ -4303,15 +6697,22 @@
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-picker",
           "combo-box",
+          "date-picker",
           "drag-value",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
           "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "range-slider",
@@ -4320,9 +6721,15 @@
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
           "switch",
+          "tab",
+          "tab-view",
+          "table",
+          "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button"
         ],
         "type": "length",
@@ -4340,15 +6747,22 @@
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-picker",
           "combo-box",
+          "date-picker",
           "drag-value",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
           "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "range-slider",
@@ -4357,9 +6771,15 @@
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
           "switch",
+          "tab",
+          "tab-view",
+          "table",
+          "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button"
         ],
         "type": "length",
@@ -4377,15 +6797,22 @@
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-picker",
           "combo-box",
+          "date-picker",
           "drag-value",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
           "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "range-slider",
@@ -4394,9 +6821,15 @@
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
           "switch",
+          "tab",
+          "tab-view",
+          "table",
+          "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button"
         ],
         "type": "length",
@@ -4414,15 +6847,22 @@
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-picker",
           "combo-box",
+          "date-picker",
           "drag-value",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
           "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "range-slider",
@@ -4431,9 +6871,15 @@
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
           "switch",
+          "tab",
+          "tab-view",
+          "table",
+          "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button"
         ],
         "type": "length",
@@ -4458,10 +6904,14 @@
           "collapsing-header",
           "frame",
           "grid",
+          "inner-window",
+          "modal",
           "panel",
+          "popup",
           "scroll-area",
           "sides",
           "stack",
+          "tab",
           "window"
         ],
         "type": "length",
@@ -4495,8 +6945,12 @@
           "collapsing-header",
           "frame",
           "grid",
+          "inner-window",
+          "modal",
           "panel",
-          "scroll-area"
+          "popup",
+          "scroll-area",
+          "tab"
         ],
         "type": "length",
         "via": "setter"
@@ -4513,15 +6967,22 @@
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-picker",
           "combo-box",
+          "date-picker",
           "drag-value",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
           "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "range-slider",
@@ -4530,9 +6991,15 @@
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
           "switch",
+          "tab",
+          "tab-view",
+          "table",
+          "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button"
         ],
         "type": "bool",
@@ -4550,15 +7017,22 @@
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-picker",
           "combo-box",
+          "date-picker",
           "drag-value",
           "frame",
           "grid",
           "hyperlink",
           "icon",
           "image",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
           "panel",
+          "popup",
           "progress-bar",
           "radio-button",
           "range-slider",
@@ -4567,9 +7041,15 @@
           "sides",
           "slider",
           "spinner",
+          "split-view",
           "stack",
           "switch",
+          "tab",
+          "tab-view",
+          "table",
+          "table-column",
           "text-edit",
+          "toast-host",
           "toggle-button"
         ],
         "type": "length",
@@ -4589,20 +7069,31 @@
     }
   },
   "tags": {
+    "action": "Action",
     "box": "Box",
     "button": "Button",
     "canvas": "Canvas",
     "checkbox": "Checkbox",
     "collapsing-header": "CollapsingHeader",
+    "color-picker": "ColorPicker",
     "combo-box": "ComboBox",
+    "context-menu": "ContextMenu",
+    "date-picker": "DatePicker",
     "drag-value": "DragValue",
     "frame": "Frame",
     "grid": "Grid",
     "hyperlink": "Hyperlink",
     "icon": "Icon",
     "image": "Image",
+    "inner-window": "InnerWindow",
     "label": "Label",
+    "menu": "Menu",
+    "menu-bar": "MenuBar",
+    "menu-button": "MenuButton",
+    "menu-separator": "MenuSeparator",
+    "modal": "Modal",
     "panel": "Panel",
+    "popup": "Popup",
     "progress-bar": "ProgressBar",
     "radio-button": "RadioButton",
     "range-slider": "RangeSlider",
@@ -4611,9 +7102,15 @@
     "sides": "Sides",
     "slider": "Slider",
     "spinner": "Spinner",
+    "split-view": "SplitView",
     "stack": "Stack",
     "switch": "Switch",
+    "tab": "Tab",
+    "tab-view": "TabView",
+    "table": "Table",
+    "table-column": "TableColumn",
     "text-edit": "TextEdit",
+    "toast-host": "ToastHost",
     "toggle-button": "ToggleButton",
     "window": "Window"
   }
