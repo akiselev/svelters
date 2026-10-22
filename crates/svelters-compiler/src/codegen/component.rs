@@ -185,6 +185,18 @@ impl Codegen<'_, '_> {
         }
     }
 
+    /// The body of an arrow `() => e`: an object literal is parenthesized (`{#each { length: 5 }}`),
+    /// else it would be read as a block.
+    fn thunk_body(&mut self, e: &Expression) {
+        if matches!(e, Expression::ObjectExpression(_)) {
+            self.w.write("(");
+            self.expr_text(e, Mode::Read);
+            self.w.write(")");
+        } else {
+            self.expr_text(e, Mode::Read);
+        }
+    }
+
     /// `get, set` of a binding: the functions of `bind:x={get, set}` (Svelte >= 5.9), else accessors
     /// of the bound lvalue.
     fn bind_accessors(&mut self, target: &Expression) {
@@ -223,18 +235,40 @@ impl Codegen<'_, '_> {
         }
     }
 
+    /// A fragment as Svelte's Fragment visitor builds it: the items in place (`init`: elements with
+    /// their static writes, blocks, components), then the fragment's single `$.template_effect`
+    /// with every reactive write of its elements (`update`), then their events and bindings
+    /// (`after_update`), then the appends of the toplevels it declares (see [`Frag`]).
     fn fragment(&mut self, f: &Fragment, container: &str) {
         if std::mem::take(&mut self.root_fragment) {
             self.consts(&f.consts);
         } else {
             self.decls(f);
         }
+        let mut fr = Frag::default();
         for item in &f.items {
-            self.item(item, container);
+            self.item(item, container, &mut fr);
         }
         self.debugs(f);
-        if DEFER_TEMPLATE_EFFECTS {
-            self.deferred_ops(f);
+        self.close(fr);
+    }
+
+    /// The end of a fragment: its template effect, events and bindings, toplevel appends.
+    fn close(&mut self, fr: Frag) {
+        self.template_effect(&fr.update);
+        for a in &fr.after {
+            match a.op {
+                Op::Listen { .. } => {
+                    self.line();
+                    self.listen(&a.node, a.op, a.memo.as_deref());
+                }
+                op => self.op(&a.node, op),
+            }
+        }
+        for (container, n, span) in &fr.tops {
+            self.line();
+            self.w.map(span.start);
+            self.w.write(&format!("$n.append({container}, {n});"));
         }
     }
 
@@ -249,9 +283,9 @@ impl Codegen<'_, '_> {
         }
     }
 
-    fn item(&mut self, item: &Item, container: &str) {
+    fn item<'f>(&mut self, item: &'f Item<'f>, container: &str, fr: &mut Frag<'f>) {
         match item {
-            Item::Element(e) => self.element(e, container),
+            Item::Element(e) => self.element(e, container, fr),
             Item::If(b) => self.if_block(b, container),
             Item::Each(b) => self.each_block(b, container),
             Item::Key(b) => self.key_block(b, container),
@@ -261,7 +295,13 @@ impl Codegen<'_, '_> {
         }
     }
 
-    fn element(&mut self, e: &Element, container: &str) {
+    /// An element, as Svelte's RegularElement visitor orders it: its static writes now, its
+    /// reactive writes into the fragment's template effect and its events after it (both before
+    /// its children's), then the children, then its actions, attachments and `bind:this`, and its
+    /// bindings after the template effect (after its children's). Children that declare snippets
+    /// or `{@const}`s get a JS block of their own, which is a fragment of its own (Svelte: a block
+    /// with its own memoizer and template effect).
+    fn element<'f>(&mut self, e: &'f Element<'f>, container: &str, fr: &mut Frag<'f>) {
         let n = format!("$$n{}", e.id + 1); // `$$` is reserved by Svelte, so user bindings cannot collide
         self.line();
         self.w.map(e.span.start);
@@ -288,74 +328,367 @@ impl Codegen<'_, '_> {
             self.dynamic(i);
             self.w.write(" ?? \"\"));");
         }
+        let mut own_init = Vec::new();
+        let mut own_after = Vec::new();
         for op in &e.ops {
-            if !(DEFER_TEMPLATE_EFFECTS && self.is_deferred(op)) {
-                self.op(&n, op);
+            match self.phase(op) {
+                Phase::Init => self.op(&n, op),
+                Phase::Update => {
+                    self.update_prefix(&n, op);
+                    fr.update.push((n.clone(), op));
+                }
+                Phase::Event => {
+                    let memo = self.handler_memo(op);
+                    fr.after.push(After { node: n.clone(), op, memo });
+                }
+                Phase::ElementInit => own_init.push(op),
+                Phase::Binding => own_after.push(op),
             }
         }
-        // children grouped per slot container
-        self.fragment_children(&e.children, &n);
-        self.line();
-        self.w.map(e.span.start);
-        self.w.write(&format!("$n.append({container}, {n});"));
-    }
-
-    /// Render effects of a fragment's elements are created after its blocks and components, as
-    /// Svelte's single `$.template_effect` at the end of each fragment (so a parent's template
-    /// expressions are evaluated after its children's components initialised).
-    fn is_deferred(&self, op: &Op) -> bool {
-        match op {
-            Op::SetDynamic { value, .. } => self.dynamic_reactive(value),
-            Op::ChildAttr { value: AttrValue::Dynamic(value), .. } => self.dynamic_reactive(value),
-            Op::Token { cond, .. } => !cond.is_empty(),
-            Op::StyleProp { .. } => true,
-            Op::Classes { dynamic, toggles, .. } => dynamic.is_some() || !toggles.is_empty(),
-            Op::WidgetName { value: AttrValue::Dynamic(value), .. } => self.dynamic_reactive(value),
-            Op::InlineStyle { dynamic, directives, .. } => dynamic.is_some() || !directives.is_empty(),
-            Op::StyleSetter { .. } => true,
-            _ => false,
-        }
-    }
-
-    /// The deferred ops of the elements of `f` (and of their children, except children in their
-    /// own JS block, which flush their own).
-    fn deferred_ops(&mut self, f: &Fragment) {
-        for item in &f.items {
-            if let Item::Element(e) = item {
-                let n = format!("$$n{}", e.id + 1);
-                for op in &e.ops {
-                    if self.is_deferred(op) {
-                        self.op(&n, op);
-                    }
-                }
-                if !scoped(&e.children) {
-                    self.deferred_ops(&e.children);
-                }
+        let append = |g: &mut Self, fr: &mut Frag<'f>| {
+            // a toplevel is shown when appended: after its fragment's writes, as Svelte appends a
+            // fragment to its anchor last
+            if e.toplevel {
+                fr.tops.push((container.to_string(), n.clone(), e.span));
+            } else {
+                g.line();
+                g.w.map(e.span.start);
+                g.w.write(&format!("$n.append({container}, {n});"));
             }
-        }
-    }
-
-    fn fragment_children(&mut self, f: &Fragment, parent: &str) {
-        // snippets declared among an element's children get their own JS block scope
-        let scoped = scoped(f);
-        if scoped {
+        };
+        if scoped(&e.children) {
             self.line();
             self.w.write("{");
             self.w.indent();
-        }
-        self.decls(f);
-        for item in &f.items {
-            let c = format!("$n.slot({parent}, {})", item.slot().as_deref().map_or("null".to_string(), js_str));
-            self.item(item, &c);
-        }
-        self.debugs(f);
-        if scoped && DEFER_TEMPLATE_EFFECTS {
-            self.deferred_ops(f);
-        }
-        if scoped {
+            self.decls(&e.children);
+            let mut inner = Frag::default();
+            self.children(&e.children, &n, &mut inner);
+            self.element_init(&n, &own_init);
+            append(self, fr);
+            inner.after.extend(own_after.into_iter().map(|op| After { node: n.clone(), op, memo: None }));
+            self.close(inner);
             self.w.dedent();
             self.line();
             self.w.write("}");
+        } else {
+            self.children(&e.children, &n, fr);
+            self.element_init(&n, &own_init);
+            append(self, fr);
+            fr.after.extend(own_after.into_iter().map(|op| After { node: n.clone(), op, memo: None }));
+        }
+    }
+
+    /// The items of an element's children, each placed in its slot of `parent`.
+    fn children<'f>(&mut self, f: &'f Fragment<'f>, parent: &str, fr: &mut Frag<'f>) {
+        for item in &f.items {
+            let c = format!("$n.slot({parent}, {})", item.slot().as_deref().map_or("null".to_string(), js_str));
+            self.item(item, &c, fr);
+        }
+        self.debugs(f);
+    }
+
+    fn element_init(&mut self, n: &str, ops: &[&Op]) {
+        for op in ops {
+            self.op(n, op);
+        }
+    }
+
+    /// Where an op goes in its fragment (Svelte's `init` / `update` / `after_update`).
+    fn phase(&self, op: &Op) -> Phase {
+        match op {
+            Op::SetDynamic { value, .. } | Op::ChildAttr { value: AttrValue::Dynamic(value), .. } | Op::WidgetName { value: AttrValue::Dynamic(value), .. } => {
+                if self.dynamic_reactive(value) { Phase::Update } else { Phase::Init }
+            }
+            Op::Token { cond, .. } if !cond.is_empty() => Phase::Update,
+            Op::Classes { dynamic, toggles, .. } if dynamic.is_some() || !toggles.is_empty() => Phase::Update,
+            Op::InlineStyle { dynamic, directives, .. } if dynamic.is_some() || !directives.is_empty() => Phase::Update,
+            Op::StyleProp { .. } | Op::StyleSetter { .. } => Phase::Update,
+            Op::Listen { .. } => Phase::Event,
+            Op::ListenAttach { .. } | Op::Attach { .. } | Op::Action { .. } | Op::BindThis { .. } => Phase::ElementInit,
+            Op::Bind { .. } | Op::BindProp { .. } | Op::BindReadonly { .. } | Op::BindOnce { .. } => Phase::Binding,
+            _ => Phase::Init,
+        }
+    }
+
+    /// The fragment's single `$.template_effect` over its reactive writes, in element order. Call
+    /// expressions are its memoized dependencies (Svelte's `Memoizer`):
+    /// `$.template_effect(($0) => .., [() => f(x)])` runs `f(x)` in a derived of its own, so it is
+    /// not called again when only another value of the fragment changes.
+    fn template_effect(&mut self, update: &[(String, &Op)]) {
+        if update.is_empty() {
+            return;
+        }
+        let mut memo: Vec<&Expression> = Vec::new();
+        for (_, op) in update {
+            self.memo_exprs(op, &mut memo);
+        }
+        self.memo = memo.iter().enumerate().map(|(i, e)| (*e as *const Expression as usize, format!("${i}"))).collect();
+        let params: Vec<String> = (0..memo.len()).map(|i| format!("${i}")).collect();
+        self.line();
+        self.w.write(&format!("$.template_effect(({}) => ", params.join(", ")));
+        if let [(n, op)] = update {
+            self.update(n, op);
+        } else {
+            self.w.write("{");
+            self.w.indent();
+            for (n, op) in update {
+                self.line();
+                self.update(n, op);
+                self.w.write(";");
+            }
+            self.w.dedent();
+            self.line();
+            self.w.write("}");
+        }
+        self.memo.clear();
+        if !memo.is_empty() {
+            self.w.write(", [");
+            for (i, e) in memo.iter().enumerate() {
+                if i > 0 {
+                    self.w.write(", ");
+                }
+                self.w.write("() => ");
+                self.paren_expr(e, Mode::Read);
+            }
+            self.w.write("]");
+        }
+        self.w.write(");");
+    }
+
+    /// The call expressions an update op memoizes (Svelte's `has_call`), each once.
+    fn memo_exprs<'e>(&self, op: &'e Op, out: &mut Vec<&'e Expression>) {
+        let mut add = |e: &'e Expression, out: &mut Vec<&'e Expression>| {
+            if self.rw.has_call(e) && !out.iter().any(|x| std::ptr::eq(*x, e)) {
+                out.push(e);
+            }
+        };
+        let dynamic = |d: &'e Dynamic, out: &mut Vec<&'e Expression>, add: &mut dyn FnMut(&'e Expression, &mut Vec<&'e Expression>)| match d {
+            Dynamic::Expr(e) => add(e, out),
+            Dynamic::Template(parts) => {
+                for p in parts {
+                    if let TemplatePart::Expr(e) = p {
+                        add(e, out);
+                    }
+                }
+            }
+            Dynamic::Member { .. } => {}
+        };
+        let cond = |c: &'e Cond, out: &mut Vec<&'e Expression>, add: &mut dyn FnMut(&'e Expression, &mut Vec<&'e Expression>)| {
+            for a in c {
+                if let CondAtom::Expr(e) = a {
+                    add(e, out);
+                }
+            }
+        };
+        match op {
+            Op::SetDynamic { value, .. } | Op::ChildAttr { value: AttrValue::Dynamic(value), .. } | Op::WidgetName { value: AttrValue::Dynamic(value), .. } => dynamic(value, out, &mut add),
+            Op::Classes { toggles, .. } => {
+                for (_, e) in toggles {
+                    add(e, out);
+                }
+            }
+            Op::InlineStyle { dynamic: d, directives, .. } => {
+                if let Some(d) = d {
+                    dynamic(d, out, &mut add);
+                }
+                for (_, v) in directives {
+                    if let AttrValue::Dynamic(d) = v {
+                        dynamic(d, out, &mut add);
+                    }
+                }
+            }
+            Op::StyleSetter { value, fallback: (candidates, _), .. } => {
+                dynamic(value, out, &mut add);
+                for (c, _) in candidates {
+                    cond(c, out, &mut add);
+                }
+            }
+            Op::Token { cond: c, .. } => cond(c, out, &mut add),
+            Op::StyleProp { candidates, .. } => {
+                for (c, _) in candidates {
+                    cond(c, out, &mut add);
+                }
+            }
+            _ => {}
+        }
+    }
+
+    /// Svelte's build_event_handler: a handler expression that calls something is memoized
+    /// (`onclick={make(x)}` runs `make` once per change, not once per event). The derived is
+    /// declared with the element (`init`), the listener comes after the template effect.
+    fn handler_memo(&mut self, op: &Op) -> Option<String> {
+        match op {
+            Op::Listen { handler: Handler::Expr(h), .. } if !is_function(h) && self.rw.has_call(h) => {
+                self.tmp += 1;
+                let id = format!("$$handler{}", self.tmp);
+                self.line();
+                self.w.write(&format!("const {id} = $.derived(() => "));
+                self.paren_expr(h, Mode::Read);
+                self.w.write(");");
+                Some(id)
+            }
+            _ => None,
+        }
+    }
+
+    /// `$n.on(node, signal, handler[, flags]);` of an `Op::Listen` (`memo`: its handler derived).
+    fn listen(&mut self, n: &str, op: &Op, memo: Option<&str>) {
+        let Op::Listen { signal, handler, flags, span, .. } = op else { unreachable!() };
+        self.w.map(span.start);
+        self.w.write(&format!("$n.on({n}, {}, ", js_str(signal)));
+        match handler {
+            Handler::Expr(h) => {
+                // the event as Svelte's `$.apply` names it: type, plus `capture`
+                let event = if flags & 2 != 0 { format!("{signal}capture") } else { signal.clone() };
+                self.handler(h, memo, &event)
+            }
+            Handler::Member { object, key } => {
+                // a property of a spread object, read when the event fires
+                self.w.write("function (...$$args) { ");
+                self.paren_expr(object, Mode::Read);
+                self.w.write(&format!("[{}]?.apply(this, $$args); }}", js_str(key)));
+            }
+        }
+        if *flags != 0 {
+            self.w.write(&format!(", {flags}"));
+        }
+        self.w.write(");");
+    }
+
+    /// The init statements of an update op, written with its element: the native value a
+    /// style-driven write falls back to is captured before the template effect writes it.
+    fn update_prefix(&mut self, n: &str, op: &Op) {
+        match op {
+            Op::StyleSetter { target, fallback: (_, Fallback::Restore), .. } => {
+                self.line();
+                self.w.write(&format!("$n.capture({n}, {});", js_str(target)));
+            }
+            Op::StyleProp { prop, fallback: Fallback::Restore, .. } => {
+                self.line();
+                self.w.write(&format!("$n.capture({n}, {});", js_str(prop)));
+            }
+            // the widget starts at the spec's native default: don't write it redundantly
+            Op::StyleProp { prop, fallback: Fallback::Default(d), .. } if !d.is_null() => {
+                self.line();
+                self.w.write(&format!("$n.assume({n}, {}, {d});", js_str(prop)));
+            }
+            _ => {}
+        }
+    }
+
+    /// The statement of an update op in the fragment's template effect (no `;`).
+    fn update(&mut self, n: &str, op: &Op) {
+        match op {
+            Op::SetDynamic { prop, value, span } => {
+                self.w.map(span.start);
+                self.w.write(&format!("$n.set({n}, {}, ", js_str(prop)));
+                self.dynamic(value);
+                self.w.write(")");
+            }
+            Op::ChildAttr { name, value: AttrValue::Dynamic(d), span } => {
+                self.w.map(span.start);
+                self.w.write(&format!("$n.child_attr({n}, {}, ", js_str(name)));
+                self.dynamic(d);
+                self.w.write(")");
+            }
+            Op::WidgetName { value: AttrValue::Dynamic(d), span } => {
+                self.w.map(span.start);
+                self.w.write(&format!("$n.attr({n}, \"id\", "));
+                self.dynamic(d);
+                self.w.write(")");
+            }
+            Op::Classes { base, dynamic, toggles, span } => {
+                self.w.map(span.start);
+                self.w.write(&format!("$n.attr({n}, \"class\", $n.class_name({}, ", js_str(base)));
+                match dynamic {
+                    Some(id) => self.w.write(&format!("$.get(c{})", id + 1)),
+                    None => self.w.write("null"),
+                }
+                self.w.write(", [");
+                for (i, (name, e)) in toggles.iter().enumerate() {
+                    if i > 0 {
+                        self.w.write(", ");
+                    }
+                    self.w.write(&format!("[{}, !!", js_str(name)));
+                    self.memo_or_paren(e);
+                    self.w.write("]");
+                }
+                self.w.write("]))");
+            }
+            Op::InlineStyle { base, dynamic, directives, span } => {
+                self.w.map(span.start);
+                self.w.write(&format!("$n.attr({n}, \"style\", $n.style_text("));
+                match dynamic {
+                    Some(d) => self.dynamic(d),
+                    None => self.w.write(&js_str(base)),
+                }
+                self.w.write(", [");
+                for (i, (name, v)) in directives.iter().enumerate() {
+                    if i > 0 {
+                        self.w.write(", ");
+                    }
+                    self.w.write(&format!("[{}, ", js_str(name)));
+                    match v {
+                        AttrValue::Static(j) => self.json(j),
+                        AttrValue::Dynamic(d) => self.dynamic(d),
+                    }
+                    self.w.write("]");
+                }
+                self.w.write("]))");
+            }
+            Op::StyleSetter { name, target, child_attr, backend, value, fallback: (candidates, fallback), span } => {
+                self.w.map(span.start);
+                let f = if *child_attr { "child_attr" } else { "set" };
+                self.w.write(&format!("$n.{f}({n}, {}, $n.setter_value({}, {}, ", js_str(target), js_str(backend), js_str(name)));
+                self.dynamic(value);
+                self.w.write(")");
+                if !candidates.is_empty() || *fallback != Fallback::Default(Json::Null) {
+                    self.w.write(" ?? ");
+                    self.candidates(candidates, fallback);
+                }
+                self.w.write(")");
+            }
+            Op::Token { prop, token, cond, span } => {
+                self.w.map(span.start);
+                self.w.write(&format!("$n.token({n}, {}, {}, ", js_str(prop), js_str(token)));
+                self.cond(cond);
+                self.w.write(")");
+            }
+            Op::StyleProp { prop, child_attr, candidates, fallback, guarded, span } => {
+                self.w.map(span.start);
+                let f = match (*child_attr, *guarded) {
+                    (true, false) => "child_attr",
+                    (false, false) => "set",
+                    (true, true) => "rule_attr",
+                    (false, true) => "rule_set",
+                };
+                self.w.write(&format!("$n.{f}({n}, {}, ", js_str(prop)));
+                for (c, v) in candidates {
+                    if c.is_empty() {
+                        self.json(v);
+                        self.w.write(")");
+                        return;
+                    }
+                    self.cond(c);
+                    self.w.write(" ? ");
+                    self.json(v);
+                    self.w.write(" : ");
+                }
+                match fallback {
+                    Fallback::Default(d) => self.json(d),
+                    Fallback::Restore => self.w.write("$n.RESTORE"),
+                }
+                self.w.write(")");
+            }
+            _ => unreachable!("not an update op"),
+        }
+    }
+
+    /// `(e)`, or the effect parameter holding its memoized value.
+    fn memo_or_paren(&mut self, e: &Expression) {
+        match self.memoized(e) {
+            Some(id) => self.w.write(&id),
+            None => self.paren_expr(e, Mode::Read),
         }
     }
 
@@ -372,41 +705,7 @@ impl Codegen<'_, '_> {
                 self.w.map(span.start);
                 self.dynamic_call(&format!("$n.set({n}, {}, ", js_str(prop)), value);
             }
-            Op::Listen { signal, handler, flags, span, .. } => {
-                // Svelte's build_event_handler: a handler expression that calls something is
-                // memoized (`onclick={make(x)}` runs `make` once per change, not once per event)
-                let memo = match handler {
-                    Handler::Expr(h) if !is_function(h) && self.rw.has_call(h) => {
-                        self.tmp += 1;
-                        let id = format!("$$handler{}", self.tmp);
-                        self.w.write(&format!("const {id} = $.derived(() => "));
-                        self.paren_expr(h, Mode::Read);
-                        self.w.write(");");
-                        self.line();
-                        Some(id)
-                    }
-                    _ => None,
-                };
-                self.w.map(span.start);
-                self.w.write(&format!("$n.on({n}, {}, ", js_str(signal)));
-                match handler {
-                    Handler::Expr(h) => {
-                        // the event as Svelte's `$.apply` names it: type, plus `capture`
-                        let event = if flags & 2 != 0 { format!("{signal}capture") } else { signal.clone() };
-                        self.handler(h, memo.as_deref(), &event)
-                    }
-                    Handler::Member { object, key } => {
-                        // a property of a spread object, read when the event fires
-                        self.w.write("function (...$$args) { ");
-                        self.paren_expr(object, Mode::Read);
-                        self.w.write(&format!("[{}]?.apply(this, $$args); }}", js_str(key)));
-                    }
-                }
-                if *flags != 0 {
-                    self.w.write(&format!(", {flags}"));
-                }
-                self.w.write(");");
-            }
+            Op::Listen { .. } => unreachable!("events are written after the template effect"),
             Op::ListenAttach { signal, handler, flags, span } => {
                 self.w.map(span.start);
                 self.w.write(&format!("$.attach({n}, () => $n.listen({}, ", js_str(signal)));
@@ -437,21 +736,7 @@ impl Codegen<'_, '_> {
                     self.w.write(&format!("$n.attr({n}, \"class\", {});", js_str(base)));
                     return;
                 }
-                self.w.write(&format!("$.template_effect(() => $n.attr({n}, \"class\", $n.class_name({}, ", js_str(base)));
-                match dynamic {
-                    Some(id) => self.w.write(&format!("$.get(c{})", id + 1)),
-                    None => self.w.write("null"),
-                }
-                self.w.write(", [");
-                for (i, (name, e)) in toggles.iter().enumerate() {
-                    if i > 0 {
-                        self.w.write(", ");
-                    }
-                    self.w.write(&format!("[{}, !!", js_str(name)));
-                    self.paren_expr(e, Mode::Read);
-                    self.w.write("]");
-                }
-                self.w.write("])));");
+                unreachable!("a dynamic class is an update");
             }
             Op::WidgetName { value, span } => {
                 self.w.map(span.start);
@@ -470,41 +755,9 @@ impl Codegen<'_, '_> {
                     self.w.write(&format!("$n.attr({n}, \"style\", {});", js_str(base)));
                     return;
                 }
-                self.w.write(&format!("$.template_effect(() => $n.attr({n}, \"style\", $n.style_text("));
-                match dynamic {
-                    Some(d) => self.dynamic(d),
-                    None => self.w.write(&js_str(base)),
-                }
-                self.w.write(", [");
-                for (i, (name, v)) in directives.iter().enumerate() {
-                    if i > 0 {
-                        self.w.write(", ");
-                    }
-                    self.w.write(&format!("[{}, ", js_str(name)));
-                    match v {
-                        AttrValue::Static(j) => self.json(j),
-                        AttrValue::Dynamic(d) => self.dynamic(d),
-                    }
-                    self.w.write("]");
-                }
-                self.w.write("])));");
+                unreachable!("a dynamic inline style is an update");
             }
-            Op::StyleSetter { name, target, child_attr, backend, value, fallback: (candidates, fallback), span } => {
-                self.w.map(span.start);
-                let f = if *child_attr { "child_attr" } else { "set" };
-                if *fallback == Fallback::Restore {
-                    self.w.write(&format!("$n.capture({n}, {});", js_str(target)));
-                    self.line();
-                }
-                self.w.write(&format!("$.template_effect(() => $n.{f}({n}, {}, $n.setter_value({}, {}, ", js_str(target), js_str(backend), js_str(name)));
-                self.dynamic(value);
-                self.w.write(")");
-                if !candidates.is_empty() || *fallback != Fallback::Default(Json::Null) {
-                    self.w.write(" ?? ");
-                    self.candidates(candidates, fallback);
-                }
-                self.w.write("));");
-            }
+            Op::StyleSetter { .. } => unreachable!("a style setter is an update"),
             Op::Explicit { props, attrs } => {
                 let list = |v: &[String]| v.iter().map(|x| js_str(x)).collect::<Vec<_>>().join(", ");
                 self.w.write(&format!("$n.explicit({n}, [{}], [{}]);", list(props), list(attrs)));
@@ -577,49 +830,10 @@ impl Codegen<'_, '_> {
             }
             Op::Token { prop, token, cond, span } => {
                 self.w.map(span.start);
-                if cond.is_empty() {
-                    self.w.write(&format!("$n.token({n}, {}, {}, true);", js_str(prop), js_str(token)));
-                } else {
-                    self.w.write(&format!("$.template_effect(() => $n.token({n}, {}, {}, ", js_str(prop), js_str(token)));
-                    self.cond(cond);
-                    self.w.write("));");
-                }
+                assert!(cond.is_empty(), "a conditional token is an update");
+                self.w.write(&format!("$n.token({n}, {}, {}, true);", js_str(prop), js_str(token)));
             }
-            Op::StyleProp { prop, child_attr, candidates, fallback, guarded, span } => {
-                self.w.map(span.start);
-                let f = match (*child_attr, *guarded) {
-                    (true, false) => "child_attr",
-                    (false, false) => "set",
-                    (true, true) => "rule_attr",
-                    (false, true) => "rule_set",
-                };
-                match fallback {
-                    Fallback::Restore => self.w.write(&format!("$n.capture({n}, {});", js_str(prop))),
-                    // the widget starts at the spec's native default: don't write it redundantly
-                    Fallback::Default(d) if !d.is_null() => self.w.write(&format!("$n.assume({n}, {}, {d});", js_str(prop))),
-                    Fallback::Default(_) => {}
-                }
-                if !matches!(fallback, Fallback::Default(d) if d.is_null()) {
-                    self.line();
-                }
-                self.w.write(&format!("$.template_effect(() => $n.{f}({n}, {}, ", js_str(prop)));
-                for (c, v) in candidates {
-                    if c.is_empty() {
-                        self.json(v);
-                        self.w.write("));");
-                        return;
-                    }
-                    self.cond(c);
-                    self.w.write(" ? ");
-                    self.json(v);
-                    self.w.write(" : ");
-                }
-                match fallback {
-                    Fallback::Default(d) => self.json(d),
-                    Fallback::Restore => self.w.write("$n.RESTORE"),
-                }
-                self.w.write("));");
-            }
+            Op::StyleProp { .. } => unreachable!("a style-driven prop is an update"),
         }
     }
 
@@ -653,7 +867,7 @@ impl Codegen<'_, '_> {
             match a {
                 CondAtom::Expr(e) => {
                     self.w.write("!!");
-                    self.paren_expr(e, Mode::Read);
+                    self.memo_or_paren(e);
                 }
                 CondAtom::Class { element, class } => self.w.write(&format!("$.get(c{}).has({})", element + 1, js_str(class))),
                 CondAtom::Id { element, id } => self.w.write(&format!("$.get(i{}) === {}", element + 1, js_str(id))),
@@ -688,48 +902,15 @@ impl Codegen<'_, '_> {
         }
     }
 
-    /// `call_head` + the value + `)`: a one-off write, or a render effect when the value is
-    /// reactive. Call expressions of the value (`has_call`) are the effect's memoized dependencies
-    /// (Svelte's `Memoizer`): `$.template_effect(($0) => .., [() => f(x)])` runs `f(x)` in a
-    /// derived of its own, so it is not called again when only another part changes.
+    /// `call_head` + the value + `);`: the one-off write of a value that reads no state (a
+    /// reactive one is written by the fragment's template effect, see `update`).
     fn dynamic_call(&mut self, call_head: &str, d: &Dynamic) {
-        let reactive = self.dynamic_reactive(d);
-        let mut memo: Vec<&Expression> = Vec::new();
-        if reactive {
-            match d {
-                Dynamic::Expr(e) if self.rw.has_call(e) => memo.push(e),
-                Dynamic::Template(parts) => memo.extend(parts.iter().filter_map(|p| match p {
-                    TemplatePart::Expr(e) if self.rw.has_call(e) => Some(*e),
-                    _ => None,
-                })),
-                _ => {}
-            }
-            let params: Vec<String> = (0..memo.len()).map(|i| format!("${i}")).collect();
-            self.w.write(&format!("$.template_effect(({}) => ", params.join(", ")));
-        }
-        self.memo = memo.iter().enumerate().map(|(i, e)| (*e as *const Expression as usize, format!("${i}"))).collect();
         self.w.write(call_head);
         self.dynamic(d);
-        self.memo.clear();
-        self.w.write(")");
-        if reactive {
-            if !memo.is_empty() {
-                self.w.write(", [");
-                for (i, e) in memo.iter().enumerate() {
-                    if i > 0 {
-                        self.w.write(", ");
-                    }
-                    self.w.write("() => ");
-                    self.paren_expr(e, Mode::Read);
-                }
-                self.w.write("]");
-            }
-            self.w.write(")");
-        }
-        self.w.write(";");
+        self.w.write(");");
     }
 
-    /// The effect parameter holding `e`'s memoized value, while `dynamic_call` writes an effect.
+    /// The effect parameter holding `e`'s memoized value, while `template_effect` writes an effect.
     fn memoized(&self, e: &Expression) -> Option<String> {
         let addr = e as *const Expression as usize;
         self.memo.iter().find(|(a, _)| *a == addr).map(|(_, id)| id.clone())
@@ -817,7 +998,7 @@ impl Codegen<'_, '_> {
         self.line();
         self.w.map(b.span.start);
         self.w.write(&format!("$n.if_block({container}, () => "));
-        self.expr_text(b.test, Mode::Read);
+        self.thunk_body(b.test);
         self.w.write(", ($$anchor) => {");
         self.w.indent();
         self.fragment(&b.consequent, "$$anchor");
@@ -850,7 +1031,7 @@ impl Codegen<'_, '_> {
         self.line();
         self.w.map(b.span.start);
         self.w.write(&format!("$n.each_block({container}, () => "));
-        self.expr_text(b.collection, Mode::Read);
+        self.thunk_body(b.collection);
         self.w.write(", ");
         match b.key {
             Some(k) => {
@@ -1309,13 +1490,44 @@ impl Codegen<'_, '_> {
     }
 }
 
-/// Svelte creates a fragment's render effects after its blocks and components (one
-/// `$.template_effect` at the end of the fragment), so a parent's template expressions run after
-/// its children's components initialised (Svelte's `lifecycle-render-order-for-children*`).
-/// Off: deferring moves every reactive prop write after the element's insertion, which changes
-/// the GTK/Qt op logs (`experiments/native-compiler/compiled` expected logs and hand-written
-/// references); enabling it is a decision for the op-log owners (deviations.md).
-const DEFER_TEMPLATE_EFFECTS: bool = false;
+/// What a fragment writes after its items, as Svelte's Fragment visitor: one `$.template_effect`
+/// with every reactive write of its elements (`update`), created after its blocks and components,
+/// so a parent's template expressions run after its children's components initialised (Svelte's
+/// `lifecycle-render-order-for-children*`), and an unrelated change re-runs them all (each
+/// runtime write skips an unchanged value); then the events and bindings (`after_update`), so a
+/// binding's first write sees the element's other props; then the appends of the toplevels the
+/// fragment declares (Svelte appends a fragment to its anchor last; appending a toplevel shows
+/// it, which must see its props).
+#[derive(Default)]
+struct Frag<'f> {
+    /// (element variable, reactive op), in element order.
+    update: Vec<(String, &'f Op<'f>)>,
+    after: Vec<After<'f>>,
+    /// (container, element variable, element span) of toplevels.
+    tops: Vec<(String, String, Span)>,
+}
+
+/// An event or binding of an element, written after the template effect.
+struct After<'f> {
+    node: String,
+    op: &'f Op<'f>,
+    /// The handler derived of an event (declared with the element).
+    memo: Option<String>,
+}
+
+/// Where an op is written (Svelte's `init` / `update` / `after_update`, element-level `init`).
+enum Phase {
+    /// With the element, in attribute order.
+    Init,
+    /// In the fragment's template effect.
+    Update,
+    /// After the template effect, before the children's events (Svelte: event attributes).
+    Event,
+    /// After the element's children (Svelte: actions, attachments, `bind:this`).
+    ElementInit,
+    /// After the template effect, after the children's events and bindings (Svelte: `bind:`).
+    Binding,
+}
 
 /// Whether an element's children are emitted in their own JS block (they declare snippets or
 /// `{@const}`s).

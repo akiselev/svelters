@@ -416,6 +416,14 @@ export function set(node, prop, value) {
     value = node.captured.get(prop);
   }
   if (!alive(node)) return;
+  // a tracked prop (`track`): `last` follows the native edits, so the template effect running
+  // again with the value it wrote before (another value of its fragment changed) must not write
+  // it over the user's edit. Svelte's DOM setters compare with the last value they were given too.
+  const req = node.requested;
+  if (req?.has(prop)) {
+    if (Object.is(req.get(prop), value)) return;
+    req.set(prop, value);
+  }
   if (node.last.has(prop) && Object.is(node.last.get(prop), value)) return;
   node.last.set(prop, value);
   node.host.setProp(node.h, prop, value);
@@ -621,6 +629,8 @@ export function listen(type, handler, options = {}) {
   };
 }
 
+const NOT_REQUESTED = Symbol('not requested');
+
 const reported = (node, prop, arg, args) => (arg >= 0 ? args[arg] : node.host.getProp(node.h, prop));
 
 /** Two-way binding: `prop` follows `get()`, and `signal` reports native changes to `setv`. */
@@ -640,6 +650,8 @@ export function bind(node, prop, signal, arg, get, setv) {
  * make the host listen by itself.
  */
 export function track(node, prop, signal, arg) {
+  // `set` compares with the last value it was given (no value yet: NOT_REQUESTED)
+  (node.requested ??= new Map()).set(prop, NOT_REQUESTED);
   let list = node.passive.get(signal);
   if (!list) node.passive.set(signal, (list = []));
   list.push((...args) => void node.last.set(prop, reported(node, prop, arg, args)));
