@@ -562,6 +562,8 @@ fn spawn_blocking(f: Box<dyn FnOnce() + Send>) {
     pool.cv.notify_one();
 }
 
+// ZU3: the blocking pool's worker loop runs on its own threads, never the UI thread.
+#[allow(clippy::disallowed_methods)]
 fn blocking_loop() {
     let pool = blocking_pool();
     loop {

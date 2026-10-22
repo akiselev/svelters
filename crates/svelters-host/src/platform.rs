@@ -363,6 +363,8 @@ fn check_url(url: &str) -> Result<(), ShellError> {
     if ok { Ok(()) } else { Err(ShellError::Invalid(format!("not a URL with a scheme: {url:?}"))) }
 }
 
+// ZU3: debt: one stat on the UI thread per shell open (a user action).
+#[allow(clippy::disallowed_methods)]
 fn check_path(path: &Path, exists: bool) -> Result<(), ShellError> {
     if !path.is_absolute() {
         return Err(ShellError::Invalid(format!("not an absolute path: {}", path.display())));
@@ -413,6 +415,8 @@ fn reveal_system(path: &Path) -> Result<(), ShellError> {
         .map_err(|e| ShellError::Failed(format!("explorer /select: {e}")))
 }
 
+// ZU3: dbus-send runs on its own svelters-reveal thread.
+#[allow(clippy::disallowed_methods)]
 #[cfg(not(any(target_os = "macos", windows)))]
 fn reveal_system(path: &Path) -> Result<(), ShellError> {
     // ShowItems on a thread: dbus-send waits for the reply, and a desktop without FileManager1

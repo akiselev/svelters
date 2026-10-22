@@ -6,6 +6,8 @@
 use crate::backend::EguiBackend;
 #[cfg(feature = "eframe")]
 use crate::embed::Embed;
+#[cfg(feature = "eframe")]
+use svelters_host::dx::FrameMonitor;
 use crate::scene::W;
 
 /// Title and inner size of the root window, if one is presented already (desktop order).
@@ -23,12 +25,20 @@ fn root_props(b: &EguiBackend) -> (String, egui::Vec2) {
 #[cfg(feature = "eframe")]
 struct EframeApp {
     b: EguiBackend,
+    /// ZU3: hang watchdog and frame times (`svelters_host::dx::frames`); `None` when off.
+    frames: Option<FrameMonitor>,
 }
 
 #[cfg(feature = "eframe")]
 impl ::eframe::App for EframeApp {
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut ::eframe::Frame) {
+        if let Some(m) = &mut self.frames {
+            m.begin();
+        }
         self.b.ui(ui);
+        if let Some(m) = &mut self.frames {
+            m.end();
+        }
     }
 }
 
@@ -36,7 +46,8 @@ impl ::eframe::App for EframeApp {
 #[cfg(feature = "eframe")]
 pub(crate) fn run_eframe(b: &EguiBackend) -> Result<(), String> {
     let (title, size) = root_props(b);
-    let app = EframeApp { b: b.clone() };
+    // created here, on the thread that runs the event loop (the UI thread)
+    let app = EframeApp { b: b.clone(), frames: FrameMonitor::from_env() };
     run_native(title, size, Box::new(app))
 }
 
@@ -66,16 +77,27 @@ fn run_native_with(
 #[cfg(feature = "eframe")]
 struct DesktopApp {
     embed: Embed,
+    /// ZU3: a frame is `logic` then `ui`; `None` when off.
+    frames: Option<FrameMonitor>,
 }
 
 #[cfg(feature = "eframe")]
 impl ::eframe::App for DesktopApp {
     fn logic(&mut self, ctx: &egui::Context, _frame: &mut ::eframe::Frame) {
+        if let Some(m) = &mut self.frames {
+            m.begin();
+        }
         self.embed.logic(ctx);
     }
 
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut ::eframe::Frame) {
+        if let Some(m) = &mut self.frames {
+            m.begin(); // no-op after `logic`
+        }
         self.embed.show_windows(ui);
+        if let Some(m) = &mut self.frames {
+            m.end();
+        }
     }
 }
 
@@ -86,7 +108,7 @@ pub(crate) fn run_desktop(embed: Embed) -> Result<(), String> {
     // the pass callbacks (R17 phases, the begin-pass plugin) are on eframe's context from frame 1
     run_native_with(title, size, move |ctx| {
         embed.attach(ctx);
-        Box::new(DesktopApp { embed })
+        Box::new(DesktopApp { embed, frames: FrameMonitor::from_env() })
     })
 }
 

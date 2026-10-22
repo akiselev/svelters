@@ -30,9 +30,18 @@ open = "5.3"
 # E1: `#[js(tokio)] async fn` exports (feature `tokio`).
 tokio = { version = "1.47", optional = true, default-features = false, features = ["rt", "rt-multi-thread"] }
 
+[target.'cfg(unix)'.dependencies]
+# ZU3: the hang watchdog samples the UI thread's stack (a signal plus `trace_unsynchronized`).
+libc = "0.2"
+backtrace = "0.3"
+
 [dev-dependencies]
 # Q1 tests load apps from source.
 svelters-modules = { workspace = true, features = ["source"] }
 
 [features]
 tokio = ["dep:tokio"]
+
+[lints.clippy]
+# ZU3: allowed for tests, examples and bins; lib.rs denies it for the library (see clippy.toml).
+disallowed_methods = "allow"

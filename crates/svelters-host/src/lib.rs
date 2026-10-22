@@ -22,6 +22,10 @@
 //! copies every wake to a `Waker`; `svelters_sched::TestScheduler` provides all three for
 //! deterministic tests (`testing::SchedHost`).
 
+// ZU3: no blocking file, process or wait calls on the UI thread (list in clippy.toml). Unit tests
+// are exempt; the legitimate I/O sites carry `#[allow(clippy::disallowed_methods)]` with a reason.
+#![cfg_attr(not(test), deny(clippy::disallowed_methods))]
+
 pub mod bytecode;
 mod convert;
 mod core;

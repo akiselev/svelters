@@ -24,6 +24,8 @@
 //! - **Trust.** The checksum detects damage, not tampering: the directory is the app's own cache,
 //!   written by this process, and is as trusted as the app's binary (QUICKJS-RUNTIME §3.5: never
 //!   read bytecode from users). Bytecode that comes with an extension bundle is not this cache.
+// ZU3: the module loader's bytecode cache: file I/O while loading modules (startup, reload), never per frame.
+#![allow(clippy::disallowed_methods)]
 
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicU64, Ordering};
