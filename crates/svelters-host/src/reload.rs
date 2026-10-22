@@ -1,12 +1,16 @@
-//! Hot reload: watch the bundle file and swap the running app for the new build without leaving
+//! Hot reload: watch the app's files and swap the running app for the new version without leaving
 //! the process or the toolkit loop.
 //!
-//! A watcher thread (inotify through `notify`) debounces file events, sets a flag and calls the
-//! backend's thread-safe `wake`. The next checkpoint, on the toolkit thread, sees the flag and
-//! reloads before doing any other work:
+//! The module provider names the files to watch (Q1): a bundle and its map, or the module graph
+//! of an app loaded from source plus its manifests. A watcher thread (inotify through `notify`)
+//! on their directories keeps the events for those files, debounces them, sets a flag and calls
+//! the backend's thread-safe `wake`. The next checkpoint, on the toolkit thread, sees the flag,
+//! asks the provider whether the changed files affect the app (`invalidate`) and reloads before
+//! doing any other work:
 //!
 //! 1. Set aside the old toplevels and the old runtime's timers and drop queued events.
-//! 2. Create a fresh JS runtime and load the bundle into it. The new app creates and presents its
+//! 2. Create a fresh JS runtime and load the app into it (unchanged modules come from the
+//!    provider's transform cache). The new app creates and presents its
 //!    windows while the old ones are still up, so the toolkit loop never sees zero windows.
 //! 3. If the load succeeds, drop the old runtime and destroy the old toplevels with the ordinary
 //!    destroy op, descendants first.
@@ -14,18 +18,19 @@
 //!    put the previous runtime and its timers back, print the source-mapped error and keep
 //!    running the previous version until the next change.
 //!
-//! This is a full reload: all JS state is lost. A reload never invokes Cargo.
+//! This is a full reload: all JS state is lost. A reload never invokes Cargo. After each attempt the
+//! watched set follows the new module graph; after a failed one, any change in a watched directory
+//! retries (the fix may be a file the graph does not reach yet).
 
 use crate::core::{self, Core, Timers};
-use crate::engine::{ErrorKind, JsEngine, JsError};
+use crate::engine::{ErrorKind, JsEngine, JsError, ModuleProvider};
 use notify::{EventKind, RecommendedWatcher, RecursiveMode, Watcher};
 use std::cell::{Cell, RefCell};
 use std::collections::HashSet;
-use std::ffi::OsString;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::rc::Rc;
-use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::{Arc, Mutex};
 use std::sync::mpsc::{self, RecvTimeoutError};
 use std::thread::JoinHandle;
 use std::time::{Duration, Instant};
@@ -53,7 +58,11 @@ pub(crate) type MakeEngine = Rc<dyn Fn(&Rc<Core>) -> Result<Box<dyn JsEngine>, J
 pub(crate) struct Reloader {
     make: MakeEngine,
     pending: Arc<AtomicBool>,
-    bundle: RefCell<Option<PathBuf>>,
+    provider: RefCell<Option<Rc<dyn ModuleProvider>>>,
+    /// Watched files that changed since the last reload (filled by the watcher thread).
+    changed: Arc<Mutex<Vec<PathBuf>>>,
+    /// The last attempt failed: any event in a watched directory counts.
+    retry: Arc<AtomicBool>,
     watch: RefCell<Option<Watch>>,
     hook: RefCell<Option<Rc<dyn Fn(&ReloadReport)>>>,
     generation: Cell<u64>,
@@ -64,15 +73,17 @@ impl Reloader {
         Rc::new(Reloader {
             make,
             pending: Arc::new(AtomicBool::new(false)),
-            bundle: RefCell::new(None),
+            provider: RefCell::new(None),
+            changed: Arc::default(),
+            retry: Arc::default(),
             watch: RefCell::new(None),
             hook: RefCell::new(None),
             generation: Cell::new(0),
         })
     }
 
-    pub(crate) fn set_bundle(&self, path: &Path) {
-        *self.bundle.borrow_mut() = Some(std::path::absolute(path).unwrap_or_else(|_| path.to_path_buf()));
+    pub(crate) fn set_provider(&self, provider: Rc<dyn ModuleProvider>) {
+        *self.provider.borrow_mut() = Some(provider);
     }
 
     pub(crate) fn set_hook(&self, f: Rc<dyn Fn(&ReloadReport)>) {
@@ -88,34 +99,32 @@ impl Reloader {
         self.pending.swap(false, Ordering::SeqCst)
     }
 
-    /// Starts watching the bundle recorded by `set_bundle`. The thread only sets the flag and
-    /// calls `wake`.
+    /// Starts watching the files of the provider recorded by `set_provider`. The thread only
+    /// records changed paths, sets the flag and calls `wake`.
     pub(crate) fn start_watch(&self, wake: WakeHandle) -> Result<(), JsError> {
         let host_err = |m: String| JsError::new(ErrorKind::Host, m);
-        let bundle = self
-            .bundle
-            .borrow()
-            .clone()
-            .ok_or_else(|| host_err("watch: load a bundle first".into()))?;
-        let dir = bundle.parent().ok_or_else(|| host_err("watch: bundle has no directory".into()))?.to_path_buf();
-        let name = bundle.file_name().ok_or_else(|| host_err("watch: bundle has no file name".into()))?.to_os_string();
-        let mut map_name: OsString = name.clone();
-        map_name.push(".map");
-
+        if self.provider.borrow().is_none() {
+            return Err(host_err("watch: load an app first".into()));
+        }
+        let files: Arc<Mutex<HashSet<PathBuf>>> = Arc::default();
         let (tx, rx) = mpsc::channel::<()>();
-        let mut watcher: RecommendedWatcher = notify::recommended_watcher(move |res: notify::Result<notify::Event>| {
+        let (filter, changed, retry) = (files.clone(), self.changed.clone(), self.retry.clone());
+        let watcher: RecommendedWatcher = notify::recommended_watcher(move |res: notify::Result<notify::Event>| {
             let Ok(ev) = res else { return };
             if !matches!(ev.kind, EventKind::Create(_) | EventKind::Modify(_) | EventKind::Remove(_)) {
                 return;
             }
-            if ev.paths.iter().any(|p| p.file_name().is_some_and(|n| n == name || n == map_name)) {
+            let all = retry.load(Ordering::SeqCst);
+            let hits: Vec<PathBuf> = {
+                let files = filter.lock().unwrap();
+                ev.paths.into_iter().filter(|p| all || files.contains(p)).collect()
+            };
+            if !hits.is_empty() {
+                changed.lock().unwrap().extend(hits);
                 let _ = tx.send(());
             }
         })
-        .map_err(|e| host_err(format!("watch {}: {e}", dir.display())))?;
-        watcher
-            .watch(&dir, RecursiveMode::NonRecursive)
-            .map_err(|e| host_err(format!("watch {}: {e}", dir.display())))?;
+        .map_err(|e| host_err(format!("watch: {e}")))?;
 
         let pending = self.pending.clone();
         let thread = std::thread::Builder::new()
@@ -134,8 +143,33 @@ impl Reloader {
                 }
             })
             .map_err(|e| host_err(format!("spawn watch thread: {e}")))?;
-        *self.watch.borrow_mut() = Some(Watch { watcher: Some(watcher), thread: Some(thread) });
-        Ok(())
+        *self.watch.borrow_mut() = Some(Watch { watcher: Some(watcher), thread: Some(thread), files, dirs: HashSet::new() });
+        self.sync_watch().map_err(host_err)
+    }
+
+    /// Points the watcher at the provider's current files: their directories, non-recursively.
+    fn sync_watch(&self) -> Result<(), String> {
+        let Some(provider) = self.provider.borrow().clone() else { return Ok(()) };
+        let mut watch = self.watch.borrow_mut();
+        let Some(w) = watch.as_mut() else { return Ok(()) };
+        let files: HashSet<PathBuf> = provider.watch_files().into_iter().collect();
+        let mut first_err = None;
+        for dir in files.iter().filter_map(|f| f.parent()) {
+            if w.dirs.contains(dir) || !dir.is_dir() {
+                continue;
+            }
+            match w.watcher.as_mut().map(|x| x.watch(dir, RecursiveMode::NonRecursive)) {
+                Some(Ok(())) => {
+                    w.dirs.insert(dir.to_path_buf());
+                }
+                Some(Err(e)) => {
+                    first_err.get_or_insert_with(|| format!("watch {}: {e}", dir.display()));
+                }
+                None => {}
+            }
+        }
+        *w.files.lock().unwrap() = files;
+        first_err.map_or(Ok(()), Err)
     }
 
     /// Stops the watcher thread (joins it, so the backend may be dropped afterwards).
@@ -143,12 +177,17 @@ impl Reloader {
         self.watch.borrow_mut().take();
     }
 
-    /// Swaps the running app for a fresh load of the bundle. Must not be called while JS runs.
+    /// Swaps the running app for a fresh load from its provider. Must not be called while JS
+    /// runs. Does nothing when the changed files do not affect the app (the provider decides: a
+    /// bundle that is mid-write, a file the graph no longer reaches). A reload requested without
+    /// changed files (`request`) always runs.
     pub(crate) fn reload(&self, core: &Rc<Core>, engine: &SharedEngine) -> Option<ReloadReport> {
-        let path = self.bundle.borrow().clone()?;
-        // A build that clears its output directory first is mid-write: the file's reappearance is
-        // another event, so wait for it instead of reporting a failure.
-        if !path.is_file() {
+        let provider = self.provider.borrow().clone()?;
+        let changed = std::mem::take(&mut *self.changed.lock().unwrap());
+        let affected = provider.invalidate(&changed);
+        // After a failure a source app retries on any change; a bundle still waits for its file.
+        let retry = self.retry.load(Ordering::SeqCst) && provider.map_dir().is_none();
+        if !changed.is_empty() && !affected && !retry {
             return None;
         }
         let t0 = Instant::now();
@@ -169,7 +208,7 @@ impl Reloader {
         let stash = core.reactive_stash();
         let loaded = (self.make)(core).and_then(|fresh| {
             let old_engine = std::mem::replace(&mut *engine.borrow_mut(), fresh);
-            match core::load_bundle(core, engine, &path) {
+            match core::load_bundle(core, engine, &provider) {
                 Ok(()) => Ok(old_engine),
                 Err(e) => {
                     *engine.borrow_mut() = old_engine;
@@ -226,11 +265,15 @@ impl Reloader {
         };
 
         let report = ReloadReport { generation, ok: error.is_none(), elapsed: t0.elapsed(), error };
+        self.retry.store(!report.ok, Ordering::SeqCst);
+        if let Err(e) = self.sync_watch() {
+            core.console("warn", format!("svelters: {e}"));
+        }
         if core.cfg.echo_console {
             if report.ok {
                 eprintln!(
                     "[svelters] reloaded {} in {:.1} ms (#{generation})",
-                    path.display(),
+                    provider.describe(),
                     report.elapsed.as_secs_f64() * 1e3
                 );
             } else {
@@ -248,6 +291,10 @@ impl Reloader {
 struct Watch {
     watcher: Option<RecommendedWatcher>,
     thread: Option<JoinHandle<()>>,
+    /// The files whose events count (shared with the watcher's callback).
+    files: Arc<Mutex<HashSet<PathBuf>>>,
+    /// The directories watched so far.
+    dirs: HashSet<PathBuf>,
 }
 
 impl Drop for Watch {

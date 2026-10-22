@@ -327,7 +327,7 @@ pub(crate) struct Core {
     cb_engine: RefCell<Option<Rc<dyn CallbackEngine>>>,
     /// Depth of native-callback invocations in progress (see `callbacks.rs`).
     cb_depth: Cell<u32>,
-    maps: RefCell<SourceMaps>,
+    pub(crate) maps: RefCell<SourceMaps>,
     /// App exports (E0): this host's exported Rust objects.
     pub(crate) apps: crate::exports::objects::AppObjects,
     /// Where app-export calls are logged (the op log of a test harness), if anywhere.
@@ -1217,11 +1217,12 @@ fn checkpoint_scripted(core: &Core, eng: &mut Box<dyn JsEngine>) {
     }
 }
 
-/// Loads the entry module under the re-entry guard, then drains jobs.
+/// Loads the provider's entry module under the re-entry guard, then drains jobs. The provider's
+/// warnings (compiler warnings, skipped styles) go to the console.
 pub(crate) fn load_bundle(
     core: &Core,
     engine: &RefCell<Box<dyn JsEngine>>,
-    entry: &std::path::Path,
+    provider: &Rc<dyn crate::engine::ModuleProvider>,
 ) -> Result<(), JsError> {
     let Some(_guard) = core.enter() else {
         return Err(JsError::new(
@@ -1229,9 +1230,12 @@ pub(crate) fn load_bundle(
             "load_bundle called while JS is running",
         ));
     };
-    core.maps.borrow_mut().set_entry(entry);
+    core.maps.borrow_mut().begin(provider.map_dir(), &provider.entry());
     let mut eng = engine.borrow_mut();
-    let res = eng.load_module(entry);
+    let res = eng.load_module(provider.clone());
+    for w in provider.take_warnings() {
+        core.console("warn", w);
+    }
     let mut pending = false;
     if res.is_ok() && !core.cfg.scripted {
         let st = eng.run_jobs(core.cfg.max_jobs_per_checkpoint);
@@ -1250,14 +1254,17 @@ pub(crate) fn load_bundle(
 pub(crate) fn load_entry(
     core: &Core,
     engine: &RefCell<Box<dyn JsEngine>>,
-    entry: &std::path::Path,
+    provider: &Rc<dyn crate::engine::ModuleProvider>,
 ) -> Result<u32, JsError> {
     let Some(_guard) = core.enter() else {
         return Err(JsError::new(ErrorKind::Host, "load_entry called while JS is running"));
     };
-    core.maps.borrow_mut().set_entry(entry);
+    core.maps.borrow_mut().begin(provider.map_dir(), &provider.entry());
     let mut eng = engine.borrow_mut();
-    let res = eng.load_entry(entry);
+    let res = eng.load_entry(provider.clone());
+    for w in provider.take_warnings() {
+        core.console("warn", w);
+    }
     let st = eng.run_jobs(core.cfg.max_jobs_per_checkpoint);
     core.report_all(eng.take_errors());
     drop(eng);
