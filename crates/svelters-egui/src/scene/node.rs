@@ -36,6 +36,16 @@ pub enum W {
     CollapsingHeader { text: String, open: bool },
     /// `seen`: the offsets egui reported last frame (a differing `x`/`y` is a host write to apply).
     ScrollArea { direction: &'static str, x: f64, y: f64, seen: Option<(f64, f64)> },
+    // ---- WG4a (plans/milestones/WG4a-tier1-views.md; state and paint in `crate::views`) ----
+    /// `table`: props, the JS data window and what the last frame asked for.
+    Table(std::boxed::Box<crate::views::table::TableState>),
+    TableColumn { title: String, width: f64, resizable: bool, align: &'static str, sort: &'static str },
+    TabView { selected: i64 },
+    Tab { title: String, closable: bool },
+    /// `vertical`: `orientation="vertical"` (panes stacked).
+    SplitView { vertical: bool, position: Option<f64>, min_size: f64, resizable: bool },
+    /// `toast-host`: props and the toasts shown.
+    ToastHost(std::boxed::Box<crate::views::toast::Toasts>),
 }
 
 impl W {
@@ -43,6 +53,7 @@ impl W {
     /// paint nothing themselves, the WG1 containers paint their chrome (`leaf::container`).
     pub fn is_container(&self) -> bool {
         matches!(self, W::Box | W::Window { .. } | W::Grid { .. } | W::CollapsingHeader { .. } | W::ScrollArea { .. })
+            || crate::views::is_container(self) // WG4a
     }
 }
 
@@ -381,10 +392,11 @@ pub fn text_of(w: &W) -> &str {
         | W::Slider { text, .. }
         | W::ToggleButton { text, .. }
         | W::CollapsingHeader { text, .. } => text,
-        W::Window { title, .. } => title,
+        W::Window { title, .. } | W::Tab { title, .. } | W::TableColumn { title, .. } => title,
         W::ComboBox { options, selected, .. } => usize::try_from(*selected).ok().and_then(|i| options.get(i)).map_or("", |s| s.as_str()),
         W::Icon { name, .. } => name,
         W::Box | W::Ext(_) | W::Separator { .. } | W::Grid { .. } | W::ScrollArea { .. } => "",
+        W::Table(_) | W::TabView { .. } | W::SplitView { .. } | W::ToastHost(_) => "",
     }
 }
 

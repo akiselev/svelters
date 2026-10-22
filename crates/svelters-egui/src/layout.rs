@@ -286,7 +286,7 @@ impl Metrics {
         egui::TextStyle::Body.resolve(&self.style)
     }
 
-    fn text_size(&self, text: &str, wrap: Option<f32>) -> Vec2 {
+    pub(crate) fn text_size(&self, text: &str, wrap: Option<f32>) -> Vec2 {
         self.text_size_in(text, self.font(), wrap)
     }
 
@@ -302,7 +302,7 @@ impl Metrics {
         })
     }
 
-    fn row_height(&self) -> f32 {
+    pub(crate) fn row_height(&self) -> f32 {
         let font = self.font();
         self.ctx.fonts_mut(|f| f.row_height(&font))
     }
@@ -341,6 +341,8 @@ impl Metrics {
             }
             W::Box | W::Window { .. } | W::Grid { .. } | W::ScrollArea { .. } => Vec2::ZERO,
             W::Ext(x) => x.measure(self, crate::provider::AvailableSpace::MaxContent),
+            // WG4a: the views' own size (`crate::views::intrinsic`)
+            W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::SplitView { .. } | W::ToastHost(_) => crate::views::intrinsic(self, w),
             // ---- WG1 ----
             W::ToggleButton { text, weight, .. } => {
                 let t = self.text_size_in(text, self.weighted(*weight), None);
@@ -383,23 +385,24 @@ impl Metrics {
 // ---- the taffy adapter over the scene's columns ----
 
 #[inline]
-fn ix(id: NodeId) -> usize {
+pub(crate) fn ix(id: NodeId) -> usize {
     (u64::from(id) & IDX_MASK) as usize
 }
 
 #[inline]
-fn tid(id: SceneId) -> NodeId {
+pub(crate) fn tid(id: SceneId) -> NodeId {
     NodeId::from(id.to_raw())
 }
 
-/// The scene seen as a taffy tree for one layout run.
-struct Tree<'a> {
-    s: &'a mut Scene,
-    m: &'a Metrics,
+/// The scene seen as a taffy tree for one layout run (`pub(crate)` for the WG4a views' own
+/// container layouts, `crate::views::layout`).
+pub(crate) struct Tree<'a> {
+    pub(crate) s: &'a mut Scene,
+    pub(crate) m: &'a Metrics,
     /// Leaf computations (cache misses).
-    leaf_layouts: u64,
+    pub(crate) leaf_layouts: u64,
     /// Leaves measured with egui's fonts.
-    fonts: u64,
+    pub(crate) fonts: u64,
 }
 
 pub struct ChildIter<'a>(std::slice::Iter<'a, SceneId>);
@@ -452,6 +455,8 @@ impl LayoutPartialTree for Tree<'_> {
             let i = ix(id);
             match tree.s.w(i) {
                 W::Grid { .. } => return compute_grid_layout(tree, id, inputs),
+                // WG4a: table (columns hidden), tab-view (the selected page), split-view (two panes)
+                W::Table(_) | W::TabView { .. } | W::SplitView { .. } => return crate::views::layout(tree, id, inputs),
                 &W::CollapsingHeader { open, .. } => return tree.collapsing(id, open, inputs),
                 w if w.is_container() => return compute_flexbox_layout(tree, id, inputs),
                 _ => {}

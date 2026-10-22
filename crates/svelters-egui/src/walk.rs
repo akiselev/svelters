@@ -84,7 +84,8 @@ pub fn paint(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut 
     paint_at(arena, i, origin, ui, out);
 }
 
-fn paint_at(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+/// `pub(crate)` for the WG4a views, which draw one child at a time (`crate::views`).
+pub(crate) fn paint_at(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
     if !arena.common(i).visible {
         return;
     }

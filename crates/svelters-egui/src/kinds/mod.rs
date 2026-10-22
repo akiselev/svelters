@@ -24,10 +24,13 @@ mod registry;
 mod controls;
 mod decor;
 mod layouts;
+// WG4a (plans/milestones/WG4a-tier1-views.md)
+mod views;
 
 pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, WRAP, WRAP_MODE};
 pub use decor::ORIENTATION;
 pub use layouts::{JUSTIFY_ITEMS, SCROLL_DIRECTION};
+pub use views::{CELL_ALIGN, SORT, TOAST_CORNER, TOAST_LEVEL};
 pub use registry::{KindRegistry, PROVIDER_PACK, ProviderKind, kind};
 
 /// A property's value type (also its ABI tag).
@@ -134,6 +137,28 @@ pub enum P {
     Glyph,
     Family,
     Size,
+    // WG4a (plans/milestones/WG4a-tier1-views.md; `kinds/views.rs`). Also reused there: `Title`
+    // (tab, table-column), `SelectedIndex` (tab-view, table), `Orientation` (split-view).
+    /// table
+    RowCount,
+    RowHeight,
+    StickyColumns,
+    Striped,
+    Overscan,
+    /// table-column
+    ColumnWidth,
+    CellAlign,
+    Sort,
+    /// table-column, split-view
+    Resizable,
+    /// tab
+    Closable,
+    /// split-view
+    Position,
+    MinSize,
+    /// toast-host
+    Corner,
+    Duration,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }

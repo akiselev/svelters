@@ -30,7 +30,7 @@ pub(crate) fn invalid_outline(ui: &Ui, rect: Rect) {
 
 /// A widget-side change of props `keys` of node `i`: stamped and journaled, `prop_changed` when
 /// observed, then the kind's `changed` event with `args` when listened.
-fn widget_changed(arena: &mut Arena, i: usize, keys: &[kinds::P], args: Vec<Value>, out: &mut Vec<Out>) {
+pub(crate) fn widget_changed(arena: &mut Arena, i: usize, keys: &[kinds::P], args: Vec<Value>, out: &mut Vec<Out>) {
     let node = arena.slots.id_at(i).expect("live node");
     let h = node.to_raw();
     let kind = arena.core[i].kind as usize;
@@ -55,6 +55,8 @@ pub(crate) fn container(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: 
     match arena.w(i) {
         W::CollapsingHeader { .. } => collapsing(arena, i, r, origin, ui, out),
         W::ScrollArea { .. } => scroll(arena, i, r, origin, ui, out),
+        // WG4a: table, tab-view, split-view (`crate::views`)
+        W::Table(_) | W::TabView { .. } | W::SplitView { .. } => crate::views::container(arena, i, r, origin, ui, out),
         _ => {
             let c = arena.common(i);
             if !c.tooltip.is_empty() {
@@ -207,6 +209,9 @@ fn scroll(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, out: 
 
 /// Paints the leaf in slot `i` (the walk's index into the scene's columns).
 pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) {
+    if crate::views::leaf(arena, i, ui, out) {
+        return; // WG4a: toast-host, table-column
+    }
     let h = arena.slots.id_at(i).expect("live leaf").to_raw();
     let kind = arena.core[i].kind as usize;
     let sig = |name: &str| kinds::signal_id(kind, name);
@@ -324,6 +329,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         }
         W::Box | W::Window { .. } | W::Grid { .. } | W::CollapsingHeader { .. } | W::ScrollArea { .. } => unreachable!("containers are not leaves"),
         W::Ext(_) => unreachable!("provider kinds are drawn by provider::paint"),
+        W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::SplitView { .. } | W::ToastHost(_) => unreachable!("WG4a views: crate::views"),
     };
     let mut resp = crate::a11y::decorate(resp, &arena.n(h));
     if !arena.common(i).tooltip.is_empty() {

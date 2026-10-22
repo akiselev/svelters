@@ -32,6 +32,9 @@ mod leaf;
 mod ops;
 mod style;
 mod walk;
+// WG4a: state, layout and paint of the Tier 1 views (`kinds/views.rs`); `toast` is public
+mod views;
+pub use views::toast;
 mod windows;
 
 /// The walk's outbox and paint entry point, at their pre-EG0 path (now `walk.rs`).
