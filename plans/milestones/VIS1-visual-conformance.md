@@ -134,3 +134,18 @@ Focus rings beyond the input box (buttons, checkbox, select: VS Code's 1px `focu
 - `nextest -p svelters-egui` filtered to `style`, `gallery`, `gallery_views`, `wg4b` and `vscode_look`: 24 pass.
 - `node --test packages/native-runtime/test/style.test.mjs`: 4 pass.
 - Not run locally: the rest of the workspace suites, the other backends, conformance. CI runs them.
+- After merging origin/master (DS1, `eb393d06`): `binary(vis1)` still 263/286; svelters-egui filtered to `style`,
+  `theme`, `gallery`, `gallery_views`, `vscode_look`: 19 pass; runtime `style.test.mjs` + `style-engine.test.mjs`: 5 pass.
+
+## 8. Handoff (VIS1 agent at ~400k tokens, 2026-10-22)
+
+State: `ci/vis1` pushed; CI was running at handoff (first runs on `eb393d06`: linux-gtk 39826285460, linux-qt
+39826285401, js 39826285469, windows-winui 39826285306, macos-appkit 39826285248). Next agent:
+1. Watch CI (`gh run watch <id> --interval 300`), fix what it reports in one batch, push again.
+2. Fold `vscode_look` into DS1's `theme` (merged on master): move the `DARK`/`LIGHT` values into
+   `theme/data/vscode-{dark,light}-modern.json` and the rules of `vscode_look/base.css` into `theme/base.css`, make
+   the runners call `backend.set_theme(&Theme::vscode(..))`, point `tests/vis1.rs` at `Theme`, drop `vscode_look`
+   and its `@tokens:sv-look` clear exception; the gate must stay at 263/286 or better.
+3. Add popup probes (menu, tooltip, toast, modal) to `VisControls` (references already captured); fix the tab
+   (tabs.rs: tab tokens, 35 px, top marker) and progress-fill deviations.
+4. Recapture with `conformance/visual/capture/` (see §2) if the references need new elements; VS Code is closed.
