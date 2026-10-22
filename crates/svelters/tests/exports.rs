@@ -7,7 +7,8 @@ use std::path::PathBuf;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::{Arc, Mutex};
 use svelters_backend_log::LogBackend;
-use svelters_host::{Host, testing::fixture_config};
+use svelters_host::modules::Visibility;
+use svelters_host::{Host, ModuleHooks, testing::fixture_config};
 
 static COUNTER_DROPS: AtomicUsize = AtomicUsize::new(0);
 static BOOK_DROPS: AtomicUsize = AtomicUsize::new(0);
@@ -201,6 +202,10 @@ struct Run {
 }
 
 fn run(name: &str, main: &str, after: impl FnOnce(&Host<'_>)) -> Run {
+    run_with(name, main, None, after)
+}
+
+fn run_with(name: &str, main: &str, hooks: Option<ModuleHooks>, after: impl FnOnce(&Host<'_>)) -> Run {
     let dir = stage(name, main);
     let (cfg, _) = fixture_config();
     let log = LogBackend::new(Vec::new());
@@ -208,6 +213,9 @@ fn run(name: &str, main: &str, after: impl FnOnce(&Host<'_>)) -> Run {
     let host = Host::new(vt.backend_ref(), cfg).unwrap();
     let sink = log.clone();
     host.set_op_log(move |l| sink.append_line(l));
+    if let Some(h) = hooks {
+        host.set_module_hooks(h);
+    }
     if let Err(e) = host.load_bundle(dir.join("main.js")) {
         panic!("load: {e}");
     }
@@ -424,4 +432,26 @@ import('svelters:app/nope').catch((e) => console.log('module', String(e).include
     has(&r, "member TypeError app:lib has no method 'nope'");
     has(&r, "kind true");
     has(&r, "module true");
+}
+
+/// LD1/SEC: `construct` and `callStatic` reach an export with no import, so the extension policy
+/// gates them too: denied by default for an isolate host, allowed once its module is allowed.
+#[test]
+fn ops_without_an_import_obey_the_extension_policy() {
+    const MAIN: &str = r#"
+const h = globalThis.__svelters_host;
+try { h.construct('app:lib.Counter', [5]); console.log('construct ok'); } catch (e) { console.log('construct denied', e.message.startsWith("unknown kind 'app:lib.Counter'"), e.message.includes('lib,') || e.message.endsWith('lib)')); }
+try { console.log('static ok', h.callStatic('app:lib', 'greet', ['x'])); } catch (e) { console.log('static denied', e.message.startsWith("unknown kind 'app:lib'")); }
+"#;
+    let open = run_with("policy-open", MAIN, Some(ModuleHooks::default()), |_| {});
+    has(&open, "construct ok");
+    assert!(open.lines.iter().any(|l| l.starts_with("static ok")), "{:#?}", open.lines);
+
+    let denied = run_with("policy-isolate", MAIN, Some(ModuleHooks::isolate()), |_| {});
+    has(&denied, "construct denied true false");
+    has(&denied, "static denied true");
+
+    let allowed = run_with("policy-allowed", MAIN, Some(ModuleHooks::isolate().visibility(Visibility::Allow(vec!["lib".into()]))), |_| {});
+    has(&allowed, "construct ok");
+    assert!(allowed.lines.iter().any(|l| l.starts_with("static ok")), "{:#?}", allowed.lines);
 }
