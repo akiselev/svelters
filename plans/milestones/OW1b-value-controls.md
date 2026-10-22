@@ -117,3 +117,6 @@ now run on the own widgets: `tier0` (range slider, drag-value, bad input), `obse
 - CS5f's `style::leaf_text` (weight-family glyph check) lost its `W::Slider` arm; own sliders are not in it
   (their text is painted by the widget).
 - Generated files (spec, typings, gen_props, reference docs) regenerated: no changes after the merge.
+- CI (linux-gtk) found `scene::mutations_allocate_nothing_without_observers` allocating once per round: RA3's
+  `with_cx` built an `Rc<AppObjects>` per call outside a host op, and the test's `slider` write now goes through
+  it (an own widget). Fixed in `svelters-host` `__private::with_cx`: the fallback table is on the stack again.
