@@ -275,7 +275,7 @@ fn term(input: &mut Parser<'_>, cx: &ValueCx<'_>, want_len: bool) -> VResult<Lin
         Token::Number { value, .. } if want_len => Ok(Lin::len(value, 0.0)),
         Token::Function(ref f) if is_math(f) => {
             let f = f.to_ascii_lowercase();
-            input.parse_nested_block(|i| math_fn(&f, i, cx).map_err(|e| ParseError::<String>::custom(e))).map_err(err_text)
+            input.parse_nested_block(|i| math_fn(&f, i, cx).map_err(ParseError::<String>::custom)).map_err(err_text)
         }
         _ => {
             input.reset(&loc);
@@ -300,13 +300,13 @@ fn math_fn(name: &str, input: &mut Parser<'_>, cx: &ValueCx<'_>) -> VResult<Lin>
         "calc" => sum(input, cx),
         "min" | "max" => {
             let args = input
-                .parse_comma_separated(|i| sum(i, cx).map_err(|e| ParseError::<String>::custom(e)))
+                .parse_comma_separated(|i| sum(i, cx).map_err(ParseError::<String>::custom))
                 .map_err(err_text)?;
             pick(&args, name == "min")
         }
         "clamp" => {
             let args = input
-                .parse_comma_separated(|i| sum(i, cx).map_err(|e| ParseError::<String>::custom(e)))
+                .parse_comma_separated(|i| sum(i, cx).map_err(ParseError::<String>::custom))
                 .map_err(err_text)?;
             let [lo, v, hi] = args[..] else { return Err("clamp() takes three arguments".into()) };
             let v = pick(&[lo, v], false)?;
@@ -340,15 +340,11 @@ fn pick(args: &[Lin], min: bool) -> VResult<Lin> {
 
 fn sum(input: &mut Parser<'_>, cx: &ValueCx<'_>) -> VResult<Lin> {
     let mut acc = product(input, cx)?;
-    loop {
-        let sign = match input.try_parse(|i| match i.next() {
-            Ok(Token::Delim('+')) => Ok(1.0),
-            Ok(Token::Delim('-')) => Ok(-1.0),
-            _ => Err(()),
-        }) {
-            Ok(s) => s,
-            Err(_) => break,
-        };
+    while let Ok(sign) = input.try_parse(|i| match i.next() {
+        Ok(Token::Delim('+')) => Ok(1.0),
+        Ok(Token::Delim('-')) => Ok(-1.0),
+        _ => Err(()),
+    }) {
         let rhs = product(input, cx)?;
         if rhs.is_len != acc.is_len {
             return Err("calc() adds a number to a length".into());
@@ -363,15 +359,11 @@ fn sum(input: &mut Parser<'_>, cx: &ValueCx<'_>) -> VResult<Lin> {
 
 fn product(input: &mut Parser<'_>, cx: &ValueCx<'_>) -> VResult<Lin> {
     let mut acc = math_leaf(input, cx)?;
-    loop {
-        let op = match input.try_parse(|i| match i.next() {
-            Ok(Token::Delim('*')) => Ok('*'),
-            Ok(Token::Delim('/')) => Ok('/'),
-            _ => Err(()),
-        }) {
-            Ok(op) => op,
-            Err(_) => break,
-        };
+    while let Ok(op) = input.try_parse(|i| match i.next() {
+        Ok(Token::Delim('*')) => Ok('*'),
+        Ok(Token::Delim('/')) => Ok('/'),
+        _ => Err(()),
+    }) {
         let rhs = math_leaf(input, cx)?;
         acc = match op {
             '*' if !rhs.is_len => acc.scale(rhs.num),
@@ -388,10 +380,10 @@ fn product(input: &mut Parser<'_>, cx: &ValueCx<'_>) -> VResult<Lin> {
 fn math_leaf(input: &mut Parser<'_>, cx: &ValueCx<'_>) -> VResult<Lin> {
     let state = input.state();
     match input.next().map_err(|_| "calc(): expected a value".to_string())?.clone() {
-        Token::ParenthesisBlock => input.parse_nested_block(|i| sum(i, cx).map_err(|e| ParseError::<String>::custom(e))).map_err(err_text),
+        Token::ParenthesisBlock => input.parse_nested_block(|i| sum(i, cx).map_err(ParseError::<String>::custom)).map_err(err_text),
         Token::Function(ref f) if is_math(f) => {
             let f = f.to_ascii_lowercase();
-            input.parse_nested_block(|i| math_fn(&f, i, cx).map_err(|e| ParseError::<String>::custom(e))).map_err(err_text)
+            input.parse_nested_block(|i| math_fn(&f, i, cx).map_err(ParseError::<String>::custom)).map_err(err_text)
         }
         Token::Ident(ref k) if k.eq_ignore_ascii_case("pi") => Ok(Lin::number(std::f32::consts::PI)),
         Token::Ident(ref k) if k.eq_ignore_ascii_case("e") => Ok(Lin::number(std::f32::consts::E)),
