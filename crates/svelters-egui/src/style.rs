@@ -1025,15 +1025,26 @@ pub(crate) fn leaf_style(s: &Scene, i: usize, ctx: &egui::Context, base: &egui::
 }
 
 /// The rect leaf `i`'s widget draws in: `r` less its CSS padding ([`pads_outside`] leaves; the
-/// padding is in its taffy layout).
+/// padding is in its taffy style). SG6 keeps no resolved padding per node, so it is resolved here
+/// as taffy does for a flex child: `%` and `calc()` against the parent's content width.
 pub(crate) fn content_rect(s: &Scene, i: usize, r: egui::Rect) -> egui::Rect {
-    if !s.style.active {
+    use taffy::ResolveOrZero;
+    if !s.style.active || !pads_outside(s.w(i)) {
         return r;
     }
-    let p = s.layout[i].layout.padding;
-    if p.left == 0.0 && p.right == 0.0 && p.top == 0.0 && p.bottom == 0.0 {
+    let zero = taffy::LengthPercentage::length(0.0);
+    let pad = s.layout[i].style.padding;
+    if pad.left == zero && pad.right == zero && pad.top == zero && pad.bottom == zero {
         return r;
     }
+    let basis = s.core[i].parent.and_then(|q| s.idx(q)).map(|q| {
+        let w = s.core[q].rect.width();
+        let ps = &s.layout[q].style;
+        let side = |v: taffy::LengthPercentage| v.resolve_or_zero(Some(w), resolve_calc);
+        (w - side(ps.padding.left) - side(ps.padding.right) - side(ps.border.left) - side(ps.border.right)).max(0.0)
+    });
+    let side = |v: taffy::LengthPercentage| v.resolve_or_zero(basis, resolve_calc);
+    let p = taffy::Rect { left: side(pad.left), right: side(pad.right), top: side(pad.top), bottom: side(pad.bottom) };
     let min = r.min + egui::vec2(p.left, p.top);
     let max = (r.max - egui::vec2(p.right, p.bottom)).max(min);
     egui::Rect::from_min_max(min, max)
