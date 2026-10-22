@@ -46,12 +46,16 @@ node (an outroing one is inert; every other event is dropped).
   frame, so it is a virtual clock; `from_source_stepped(path, 1.0/60.0)` makes an animation take the
   same number of frames everywhere. (TK1's `performance.now()` virtual clock stays JS's; the two
   agree only in real time. `currentTime`, which Svelte reads to reverse an animation, uses JS's
-  clock; under kittest the two diverge, and a reversal there is approximate.)
+  clock; under kittest the two diverge, and a reversal there is approximate: accepted, coordinator
+  decision 2026-10-22.)
 - **D2 Gap after idle.** An animator with nothing running ignores the time that passed; the next
   step after a start only sets the baseline.
-- **D3 Reduced motion** is a backend setting (`set_motion`), not read from the OS yet: every
-  animation jumps to its last keyframe and ends at the next frame (events and the DOM-like
-  lifecycle stay the same; only the motion is gone). The JS fallback player ignores it.
+- **D3 Reduced motion** is a backend setting (`set_motion`): every animation jumps to its last
+  keyframe and ends at the next frame (events and lifecycle stay; only the motion goes). TR1's JS
+  player honours the same idea through `setReducedMotion(on)` (or `globalThis.__svelters_reduced_motion`),
+  tested in `transitions.test.mjs`. Reading the OS preference stays with the embedder (cadatomic or
+  the runner calls `set_motion`); egui 0.37 and winit expose no such preference, so the eframe
+  runner does not call it (coordinator decision, 2026-10-22).
 - **D4 Slow-motion** is a factor on the animation clock (`slow: 0.1` plays at a tenth of the
   speed), for debugging.
 - **D5 Demand per root and viewport (SV37).** `animate_demand` asks for a frame only of the
@@ -68,8 +72,8 @@ node (an outroing one is inert; every other event is dropped).
 ## 4. Not done
 
 - The `performance.now()`/JS clock and the egui clock are separate (D1).
-- Reduced motion is not wired to the OS preference or to the JS fallback.
-- Tab focus still reaches an exiting node.
+- Reduced motion is not read from the OS (see D3).
+- **TR2b (follow-up):** Tab focus still reaches an exiting node.
 - Implicit CSS `transition:` declarations (soft dependency on STYLE CS5e).
 - SV14 (profile per-frame `tick`) is not started: `tick(t)` transitions have no keyframes and stay
   on the JS path.

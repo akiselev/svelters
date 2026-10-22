@@ -2137,7 +2137,7 @@ export function animation(node, getFn, getParams) {
   svelteAnimation(node, getFn, getParams ?? null);
 }
 
-export { NativeAnimation, computed } from './motion.js';
+export { NativeAnimation, computed, setReducedMotion } from './motion.js';
 
 // ---------------------------------------------------------------------------------------------
 // Mount

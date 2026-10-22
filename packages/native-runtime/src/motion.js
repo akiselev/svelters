@@ -257,6 +257,13 @@ export function animatesOpacity(node) {
 
 let ids = 0;
 
+let reducedMotion = false;
+/** Reduced motion (TR2): the JS player jumps every animation to its last frame and ends it at once. The egui backend has its own (`EguiBackend::set_motion`). */
+export function setReducedMotion(on) {
+  reducedMotion = !!on;
+}
+export const prefersReducedMotion = () => reducedMotion || globalThis.__svelters_reduced_motion === true;
+
 /** Set by defineFacade: `listen(node, signal, fn)` registers a native signal handler (index.js `on`). */
 let listenSignal = null;
 
@@ -306,6 +313,11 @@ export class NativeAnimation {
     }
     this.duration = Math.max(0, Math.round(+duration || 0));
     this.delay = +delay || 0;
+    const reduced = prefersReducedMotion();
+    if (reduced) {
+      this.duration = 0;
+      this.delay = 0;
+    }
     this.start = raf.now();
     this.playState = 'running';
     this.cur = null;
@@ -319,7 +331,7 @@ export class NativeAnimation {
       this.native = true; // the backend samples it and reports the end
       return;
     }
-    this._apply(0);
+    this._apply(reduced ? 1 : 0);
     if (this.duration > 0) {
       this.task = loop((now) => this._tick(now));
     }

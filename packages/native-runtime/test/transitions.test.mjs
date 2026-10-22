@@ -214,3 +214,22 @@ test('a tick transition runs JS per frame and ends', async () => {
   assert.match(take(), /remove #\d+ #\d+|destroy #\d+/);
   assert.equal(ev.outroend, 1);
 });
+
+test('TR2: reduced motion ends the JS-played outro at once, with the last frame', async () => {
+  const { setReducedMotion } = $n;
+  setReducedMotion(true);
+  try {
+    const { show, ev } = mountIf(BOTH, fade, { duration: 400 });
+    await flush();
+    take();
+    $.set(show, false);
+    $.flush();
+    await flush();
+    frames(2);
+    await flush();
+    assert.equal(ev.outroend, 1, 'ended within two frames of a 400 ms outro');
+    assert.match(take(), /remove #\d+ #\d+|destroy #\d+/);
+  } finally {
+    setReducedMotion(false);
+  }
+});
