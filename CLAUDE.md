@@ -144,11 +144,12 @@ other agent on the machine. **GitHub CI is the gate, not your machine.** The use
 1. Merge `origin/master` into your branch; on generated-file conflicts rerun only that generator.
 2. `pnpm install --frozen-lockfile` if the lockfile changed, then `tools/dev/cargo-slot cargo check
    -p <crates you changed> --all-targets`, plus the filtered tests above.
-3. Push `ci/<lane>` and get all five CI workflows green. Wait for CI with one
-   `gh run watch <id> --interval 300` per run (or a `gh run list` loop sleeping 300 s); never poll faster. Every
-   session on all three machines shares one GitHub API limit (5,000 requests an hour), and faster polling has used
-   it up. Report the sha, the CI run ids, and what you
-   did not run.
+3. Push `ci/<lane>` and get all five CI workflows green. Wait for CI with **one**
+   `tools/dev/ci-wait <sha> --jobs` per sha (it polls every 600 s, prints each workflow's result and run id, and
+   lists failed jobs and steps). **Never use the `gh` CLI** (user, 2026-10-22: don't use gh to access the user's
+   account): `ci-wait` reads the public API with no credentials, and all three machines share its 60 requests an
+   hour, so never poll faster or run a second waiter. Failure logs need an account: reproduce a failure by running
+   that test locally, filtered. Report the sha, the CI run ids, and what you did not run.
 
 ## Git safety
 
