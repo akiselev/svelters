@@ -32,6 +32,9 @@ mod events;
 mod frame;
 mod ids;
 mod leaf;
+// WG2a: menus and overlays (plans/milestones/WG2a-menus-popups.md)
+mod menus;
+mod overlays;
 mod ops;
 mod walk;
 mod windows;

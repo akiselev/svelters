@@ -8,7 +8,7 @@ use common::Rig;
 use egui::accesskit::Role;
 use egui_kittest::kittest::{NodeT, Queryable};
 use svelters_abi::*;
-use svelters_egui::kinds::KINDS;
+use svelters_egui::kinds::{self, KINDS};
 
 fn s(v: &str) -> Value {
     Value::Str(v.into())
@@ -415,6 +415,11 @@ fn invalid_reaches_accesskit() {
 fn every_kind_has_a_tooltip_and_inputs_are_named() {
     for k in KINDS.iter() {
         let (Some(tag), false) = (k.tag, k.toplevel) else { continue };
+        // WG2a: menu entries (not widgets) and the overlays (out of flow) are covered by tests/menus.rs
+        let widget = kinds::chain(kinds::tag_index(tag).unwrap()).contains(&kinds::kind_index("Widget").unwrap());
+        if !widget || matches!(tag, "popup" | "modal" | "inner-window") {
+            continue;
+        }
         let mut rig = Rig::new();
         rig.harness.ctx.all_styles_mut(|st| st.interaction.tooltip_delay = 0.0);
         let (_w, col) = rig.window();
@@ -422,8 +427,8 @@ fn every_kind_has_a_tooltip_and_inputs_are_named() {
         let probe = rig.leaf(col, "label", &[("text", s("probe"))]);
         let tip = format!("tip of {tag}");
         let h = rig.leaf(col, tag, &[("tooltip", s(&tip)), ("width", Value::F64(120.0)), ("height", Value::F64(30.0))]);
-        if k.text_content.is_some() {
-            rig.set(h, "text", s(tag));
+        if let Some(t) = k.text_content {
+            rig.set(h, t, s(tag));
         }
         if tag == "icon" {
             rig.set(h, "glyph", s("+"));

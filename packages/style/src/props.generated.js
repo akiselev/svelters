@@ -27,10 +27,10 @@ export const TAG_SETS = [
   ["app-bar-button", "app-bar-separator", "app-bar-toggle-button", "auto-suggest-box", "border", "button", "calendar-date-picker", "calendar-view", "canvas", "check-box", "color-picker", "combo-box", "combo-box-item", "command-bar", "content-dialog", "date-picker", "drop-down-button", "expander", "font-icon", "grid", "grid-view", "grid-view-item", "hyperlink-button", "image", "info-badge", "info-bar", "list-view", "list-view-item", "menu-bar", "menu-bar-item", "menu-flyout-item", "menu-flyout-separator", "menu-flyout-sub-item", "navigation-view", "navigation-view-item", "number-box", "password-box", "person-picture", "progress-bar", "progress-ring", "radio-button", "radio-buttons", "rating-control", "repeat-button", "rich-edit-box", "scroll-viewer", "selector-bar", "selector-bar-item", "slider", "split-button", "split-view", "stack-panel", "symbol-icon", "tab-view", "tab-view-item", "teaching-tip", "text-block", "text-box", "time-picker", "toggle-button", "toggle-menu-flyout-item", "toggle-switch", "viewbox"],
   ["app-bar-button", "app-bar-separator", "app-bar-toggle-button", "auto-suggest-box", "button", "calendar-date-picker", "calendar-view", "check-box", "color-picker", "combo-box", "combo-box-item", "command-bar", "content-dialog", "date-picker", "drop-down-button", "expander", "grid", "grid-view", "grid-view-item", "hyperlink-button", "info-badge", "info-bar", "list-view", "list-view-item", "menu-bar", "menu-bar-item", "menu-flyout-item", "menu-flyout-separator", "menu-flyout-sub-item", "navigation-view", "navigation-view-item", "number-box", "password-box", "person-picture", "progress-bar", "progress-ring", "radio-button", "radio-buttons", "rating-control", "repeat-button", "rich-edit-box", "scroll-viewer", "selector-bar", "selector-bar-item", "slider", "split-button", "split-view", "stack-panel", "tab-view", "tab-view-item", "teaching-tip", "text-box", "time-picker", "toggle-button", "toggle-menu-flyout-item", "toggle-switch"],
   ["stack-panel"],
-  ["box", "collapsing-header", "grid", "scroll-area"],
-  ["box", "button", "checkbox", "collapsing-header", "combo-box", "grid", "icon", "label", "scroll-area", "separator", "slider", "text-edit", "toggle-button"],
-  ["box", "collapsing-header", "scroll-area"],
-  ["box", "collapsing-header", "grid", "scroll-area", "window"],
+  ["box", "collapsing-header", "grid", "inner-window", "modal", "popup", "scroll-area"],
+  ["box", "button", "checkbox", "collapsing-header", "combo-box", "grid", "icon", "inner-window", "label", "menu-bar", "menu-button", "modal", "popup", "scroll-area", "separator", "slider", "text-edit", "toggle-button"],
+  ["box", "collapsing-header", "inner-window", "modal", "popup", "scroll-area"],
+  ["box", "collapsing-header", "grid", "inner-window", "modal", "popup", "scroll-area", "window"],
 ];
 
 export const STYLE_TABLES = {

@@ -126,6 +126,10 @@ fn paint_visual(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mu
 }
 
 fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+    // WG2a: overlays and menu entries are out of flow: they paint themselves, anchored to the parent
+    if crate::overlays::out_of_flow(arena.w(i)) {
+        return crate::overlays::paint_node(arena, i, origin, ui, out);
+    }
     // EV2b: a host with behaviours (`use:`) runs their `after_ui` hooks around its own paint
     if arena.core[i]
         .flags
@@ -213,6 +217,7 @@ fn paint_own(
         Some(crate::leaf::leaf(arena, i, &mut child, out))
     };
     crate::scene::hit::record(arena, i, &child); // SG3: the viewport's hit list
+    crate::overlays::paint_attached(arena, i, origin, ui, out); // WG2a: its context menu, popup
     resp
 }
 

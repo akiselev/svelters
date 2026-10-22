@@ -24,10 +24,15 @@ mod registry;
 mod controls;
 mod decor;
 mod layouts;
+// WG2a families (plans/milestones/WG2a-menus-popups.md)
+mod menus;
+mod popups;
 
 pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, WRAP, WRAP_MODE};
 pub use decor::ORIENTATION;
 pub use layouts::{JUSTIFY_ITEMS, SCROLL_DIRECTION};
+pub use menus::{attaches_to, slot_accepts};
+pub use popups::POSITION;
 pub use registry::{KindRegistry, PROVIDER_PACK, ProviderKind, kind};
 
 /// A property's value type (also its ABI tag).
@@ -134,6 +139,24 @@ pub enum P {
     Glyph,
     Family,
     Size,
+    // WG2a (plans/milestones/WG2a-menus-popups.md)
+    /// action
+    Shortcut,
+    Checkable,
+    Group,
+    /// menu-button
+    Active,
+    /// popup
+    Position,
+    Autohide,
+    /// modal
+    Dismissable,
+    /// inner-window
+    DefaultX,
+    DefaultY,
+    Closable,
+    Collapsible,
+    Resizable,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }

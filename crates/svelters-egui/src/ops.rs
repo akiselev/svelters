@@ -213,6 +213,12 @@ impl Backend for EguiBackend {
                 let i = scene.ix(scene.live(h)?);
                 scene.core[i].flags.insert(NodeFlags::WANT_FOCUS);
             }
+            // WG2a: context-menu, menu-button, popup (applied and announced at the next pass)
+            "popup" | "popdown" => {
+                let mut scene = self.0.scene.borrow_mut();
+                let i = scene.ix(scene.live(h)?);
+                crate::menus::call(&mut scene, i, def.name == "popup");
+            }
             other => return Err(format!("method {other} is not implemented")),
         }
         self.touched(self.root_of(h));
