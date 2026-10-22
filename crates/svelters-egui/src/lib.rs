@@ -35,6 +35,8 @@ pub mod spec;
 pub mod style;
 
 mod a11y;
+/// AU1: the accessible name the automation selectors share with AccessKit.
+pub use a11y::accessible_name;
 pub mod anim;
 mod events;
 mod frame;

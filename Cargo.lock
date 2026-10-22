@@ -4054,6 +4054,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "svelters-automation"
+version = "0.0.0"
+dependencies = [
+ "egui",
+ "egui_kittest",
+ "serde_json",
+ "svelters-automation",
+ "svelters-egui",
+ "svelters-style",
+]
+
+[[package]]
 name = "svelters-backend-log"
 version = "0.0.0"
 dependencies = [
