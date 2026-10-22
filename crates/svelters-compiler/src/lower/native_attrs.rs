@@ -525,3 +525,90 @@ impl<'a> Lower<'a, '_, '_> {
 fn returns_bool(body: &[Statement]) -> bool {
     body.iter().any(|s| matches!(s, Statement::ReturnStatement(r) if r.argument.as_ref().is_some_and(|a| bool_literal(a).is_some())))
 }
+
+// ---------------------------------------------------------------------------------------------
+// TR1: transitions and animations
+
+/// The element `animate:` may sit on: the only element child of an each body (Svelte ignores
+/// comments, `{@const}` and whitespace when counting).
+pub(super) fn animate_host(body: &crate::svelte::ast::Fragment) -> Option<&crate::svelte::ast::Element> {
+    use crate::svelte::ast::FragmentNode;
+    let mut el = None;
+    for n in &body.nodes {
+        match n {
+            FragmentNode::Comment(_) | FragmentNode::ConstTag(_) | FragmentNode::DeclarationTag(_) => {}
+            FragmentNode::Text(t) if t.data.trim().is_empty() => {}
+            FragmentNode::RegularElement(e) if el.is_none() => el = Some(e),
+            _ => return None,
+        }
+    }
+    el
+}
+
+type SeenTransitions<'a> = (Option<&'a crate::svelte::ast::TransitionDirective>, Option<&'a crate::svelte::ast::TransitionDirective>);
+
+impl<'a> Lower<'a, '_, '_> {
+    /// `transition:` / `in:` / `out:`: Svelte's flags (TRANSITION_IN 1, TRANSITION_OUT 2,
+    /// TRANSITION_GLOBAL 4), its duplicate / conflict checks, and its modifiers (`local`, `global`).
+    pub(super) fn transition_op(&mut self, d: &'a crate::svelte::ast::TransitionDirective, seen: &mut SeenTransitions<'a>) -> Option<Op<'a>> {
+        let kind = |t: &crate::svelte::ast::TransitionDirective| {
+            if t.intro {
+                if t.outro { "transition" } else { "in" }
+            } else {
+                "out"
+            }
+        };
+        let existing = if d.intro && seen.0.is_some() {
+            seen.0
+        } else if d.outro && seen.1.is_some() {
+            seen.1
+        } else {
+            None
+        };
+        if let Some(ex) = existing {
+            let (a, b) = (kind(ex), kind(d));
+            if a == b {
+                self.diags.error("transition_duplicate", sp(d.span()), format!("Cannot use multiple `{a}:` directives on a single element"));
+            } else {
+                // Svelte's argument order: (existing kind, this kind)
+                self.diags.error("transition_conflict", sp(d.span()), format!("Cannot use `{a}:` alongside existing `{b}:` directive"));
+            }
+            return None;
+        }
+        if d.intro {
+            seen.0 = Some(d);
+        }
+        if d.outro {
+            seen.1 = Some(d);
+        }
+        if let Some(m) = d.modifiers.iter().find(|m| *m != "local" && *m != "global") {
+            self.diags.error("transition_modifier_invalid", sp(d.span()), format!("`{m}` is not a transition modifier (`local` or `global`)"));
+            return None;
+        }
+        let mut flags = 0;
+        if d.intro {
+            flags |= 1;
+        }
+        if d.outro {
+            flags |= 2;
+        }
+        if d.modifiers.iter().any(|m| m == "global") {
+            flags |= 4;
+        }
+        Some(Op::Transition { flags, name: d.name.clone(), arg: d.expression.as_ref(), span: d.span() })
+    }
+
+    /// `animate:` on the only element of an each block without a key (Svelte's animation_missing_key).
+    pub(super) fn missing_key_animate(&mut self, e: &crate::svelte::ast::Element) {
+        use crate::svelte::ast::AttributeLike;
+        for a in &e.attributes {
+            if let AttributeLike::AnimateDirective(d) = a {
+                self.diags.error(
+                    "animation_missing_key",
+                    sp(d.span()),
+                    "An element that uses the `animate:` directive must be the only child of a keyed `{#each ...}` block. Did you forget to add a key to your each block?",
+                );
+            }
+        }
+    }
+}

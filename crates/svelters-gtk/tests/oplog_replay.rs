@@ -214,6 +214,9 @@ fn replay(name: &str, log: String) {
                             "name" => SVL_STYLE_NAME,
                             "inline" => SVL_STYLE_INLINE,
                             "opacity" => SVL_STYLE_OPACITY,
+                            "transform" => SVL_STYLE_TRANSFORM,
+                            "clip" => SVL_STYLE_CLIP,
+                            "inert" => SVL_STYLE_INERT,
                             other => panic!("{ctx}: unknown style op {other}"),
                         };
                         let t = text(parse_val(parts[3]));

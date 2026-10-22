@@ -58,6 +58,14 @@ export const flagsPath = path.join(path.dirname(effectsPath), '../../flags/index
 export const EQUALITY_SPECIFIER = 'svelte/internal/client/dev/equality';
 export const equalityPath = path.join(path.dirname(effectsPath), '../dev/equality.js');
 
+/** Svelte's `loop` (TR1: the animation player's frame task). */
+export const LOOP_SPECIFIER = 'svelte/internal/client/loop';
+export const loopPath = path.join(path.dirname(effectsPath), '../loop.js');
+
+/** Svelte's `set_should_intro` (TR1: `mount`'s `intro` option). */
+export const RENDER_SPECIFIER = 'svelte/internal/client/render';
+export const renderPath = path.join(path.dirname(effectsPath), '../render.js');
+
 /** Svelte's client entry (what `svelte` resolves to with the browser condition), for src/svelte.js. */
 export const SVELTE_CLIENT_SPECIFIER = 'svelte/index-client';
 export const svelteClientPath = path.join(path.dirname(effectsPath), '../../../index-client.js');
@@ -75,7 +83,13 @@ export const HIDDEN_MODULES = {
   [FLAGS_SPECIFIER]: flagsPath,
   [SVELTE_CLIENT_SPECIFIER]: svelteClientPath,
   [EQUALITY_SPECIFIER]: equalityPath,
+  [LOOP_SPECIFIER]: loopPath,
+  [RENDER_SPECIFIER]: renderPath,
 };
+
+/** TR1: `svelte/transition` and `svelte/animate` as app code sees them: native ports of Svelte's built-ins. */
+export const transitionPath = fileURLToPath(new URL('./src/transition.js', import.meta.url));
+export const animatePath = fileURLToPath(new URL('./src/animate.js', import.meta.url));
 
 /** What generated code imports when a component uses `$inspect.trace` in dev. */
 export const tracingPath = fileURLToPath(new URL('./src/core/tracing.js', import.meta.url));
@@ -99,6 +113,10 @@ export function nativeConfig(root, { entry = 'main.js', outDir = 'dist', plugins
         ...Object.entries(HIDDEN_MODULES).map(([find, replacement]) => ({ find: new RegExp(`^${escapeRegExp(find)}(\\.js)?$`), replacement })),
         // `import { mount, flushSync } from 'svelte'`: Svelte's client API, mount/unmount native
         { find: /^svelte$/, replacement: svelteFacadePath },
+        // TR1: Svelte's built-in transitions read the DOM (getComputedStyle); the native ports read
+        // the runtime node's visuals and the host's geometry
+        { find: /^svelte\/transition$/, replacement: transitionPath },
+        { find: /^svelte\/animate$/, replacement: animatePath },
         // generated components import the runtime from wherever the .svelte file lives
         { find: /^@svelters\/native-runtime$/, replacement: runtimePath },
         { find: /^@svelters\/native-runtime\/core$/, replacement: corePath },

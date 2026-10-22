@@ -4,7 +4,10 @@
 
 use gtk::gdk;
 use gtk::prelude::*;
-use svelters_abi::{SVL_STYLE_CLASSES, SVL_STYLE_INLINE, SVL_STYLE_NAME, SVL_STYLE_OPACITY, SVL_STYLE_SCHEME, SVL_STYLE_SHEET, SVL_STYLE_TARGET};
+use svelters_abi::{
+    SVL_STYLE_CLASSES, SVL_STYLE_CLIP, SVL_STYLE_INERT, SVL_STYLE_INLINE, SVL_STYLE_NAME, SVL_STYLE_OPACITY, SVL_STYLE_SCHEME, SVL_STYLE_SHEET, SVL_STYLE_TARGET,
+    SVL_STYLE_TRANSFORM,
+};
 use svelters_gtk::testing::{on_gtk, pump, Harness};
 
 const SEP: &str = "\u{1}";
@@ -160,6 +163,38 @@ fn opacity_goes_through_the_widget_api() {
         h.style(SVL_STYLE_OPACITY, label, None).unwrap();
         pump(60);
         assert!((h.widget(label).opacity() - 1.0).abs() < 0.01);
+    });
+}
+
+/// TR1 (ABI v2.8): the transform and clip channels are CSS on the widget's own provider (the
+/// clip squashes the widget into the clipped width, D3), inert turns off targeting and focus, and
+/// `bounds` reports the allocation in the window.
+#[test]
+fn visual_channels_and_bounds() {
+    on_gtk(|| {
+        let (h, label, button) = app();
+        let before = h.bounds(button).unwrap();
+        assert!(before[2] > 0.0 && before[3] > 0.0, "a laid-out button has a size: {before:?}");
+        let l = h.bounds(label).unwrap();
+        assert!(before[0] >= l[0] + l[2] - 0.5, "the button is right of the label (a horizontal box): {before:?} vs {l:?}");
+
+        h.style(SVL_STYLE_TRANSFORM, label, Some("10 -4 0.5 0.5 0.5 0.5")).unwrap();
+        h.style(SVL_STYLE_INERT, label, Some("1")).unwrap();
+        let w = h.widget(label);
+        assert!(!w.can_target() && !w.can_focus(), "inert");
+        h.style(SVL_STYLE_CLIP, label, Some(&format!("{} -1", (l[2] / 2.0).round()))).unwrap();
+        pump(100);
+        let after = h.bounds(button).unwrap();
+        assert!(after[0] < before[0] - 1.0, "the clipped label gives its space back: {after:?} vs {before:?}");
+        assert!(h.style_errors().is_empty(), "{:?}", h.style_errors());
+
+        for op in [SVL_STYLE_TRANSFORM, SVL_STYLE_CLIP, SVL_STYLE_INERT] {
+            h.style(op, label, None).unwrap();
+        }
+        pump(100);
+        assert!(w.can_target(), "inert lifted");
+        let back = h.bounds(button).unwrap();
+        assert!((back[0] - before[0]).abs() < 0.5, "layout restored: {back:?} vs {before:?}");
     });
 }
 

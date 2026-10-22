@@ -89,6 +89,9 @@ fn replay(name: &str, log: &str) -> (usize, usize) {
                             "name" => SVL_STYLE_NAME,
                             "inline" => SVL_STYLE_INLINE,
                             "opacity" => SVL_STYLE_OPACITY,
+                            "transform" => SVL_STYLE_TRANSFORM,
+                            "clip" => SVL_STYLE_CLIP,
+                            "inert" => SVL_STYLE_INERT,
                             o => panic!("{ctx}: style op {o}"),
                         };
                         br.style(op, hd(parts[1]), text(parts[3]).as_deref())
@@ -181,7 +184,7 @@ fn replay_egui_fixtures() {
         .map(|e| e.file_name().to_string_lossy().to_string())
         .collect();
     names.sort();
-    assert_eq!(names, ["counter-egui", "if-toggle-egui", "keyed-list-egui", "timers-egui"]);
+    assert_eq!(names, ["counter-egui", "if-toggle-egui", "keyed-list-egui", "motion-egui", "timers-egui"]);
     for name in names {
         let log = std::fs::read_to_string(dir.join(&name).join("expected.oplog")).unwrap();
         let (events, changes) = replay(&name, &log);
