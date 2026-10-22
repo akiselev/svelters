@@ -18,6 +18,7 @@ static TABLE: Table = Table {
     units: &[("px", 1.0)],
     props: &[
         prop("background", Via::Css, ValueType::Raw, &[]),
+        prop("box-shadow", Via::Setter, ValueType::Shadow, &[]),
         prop("color", Via::Setter, ValueType::Color, &[]),
         prop("flex-direction", Via::Setter, ValueType::Enum, &["row", "column"]),
         prop("font-size", Via::Setter, ValueType::Length, &[]),
@@ -284,4 +285,26 @@ fn percent_stays_percent_without_font_size() {
     let ok = stylist.compute(tree.by_id("ok"), None, None, &ComputeContext::default(), &mut MatchCaches::new());
     assert_eq!(ok.get("width"), Some(&ComputedValue::Length(Length { px: -20.0, percent: 50.0 })));
     assert_eq!(ok.get("gap"), Some(&ComputedValue::Length(Length::percent(10.0))));
+}
+
+/// CS5g: `box-shadow` is typed: `em` from the element's font, `currentcolor` (omitted) from its
+/// inherited `color`, `var()` inside the list; a bad value is a table error at its position (on
+/// AppKit too: its decl dialect types `box-shadow` as a shadow).
+#[test]
+fn shadows_compute_and_check() {
+    let s = setup(&[(Origin::Author, ".card { color: red; font-size: 10px } button { --c: blue; box-shadow: 0 1em 2px var(--c), inset 1px 1px }")]);
+    let ok = s.style("ok");
+    let Some(ComputedValue::Shadows(list)) = ok.get("box-shadow") else { panic!("{:?}", ok.get("box-shadow")) };
+    assert_eq!(list.len(), 2);
+    assert_eq!((list[0].y, list[0].blur, list[0].color.unwrap().rgba8()), (10.0, 2.0, [0, 0, 255, 255]));
+    assert!(list[1].inset);
+    assert_eq!(list[1].color.unwrap().rgba8(), [255, 0, 0, 255], "currentcolor");
+    assert_eq!(s.style("card").get("box-shadow"), None, "box-shadow doesn't inherit");
+
+    let mut stylist = Stylist::new(Table::for_toolkit("appkit").unwrap());
+    let sheet = Stylesheet::parse("a {\n  box-shadow: 1px 2px -3px red;\n}", &ParseOptions::default());
+    let (_, diags) = stylist.add_sheet(&sheet, Origin::Author);
+    assert_eq!(diags.len(), 1, "{diags:?}");
+    assert_eq!((diags[0].severity, diags[0].line, diags[0].column), (Severity::Error, 2, 3), "{diags:?}");
+    assert!(diags[0].message.contains("negative"), "{diags:?}");
 }
