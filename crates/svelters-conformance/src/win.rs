@@ -867,8 +867,17 @@ impl<F: WinFixture> Driver for UiaDriver<F> {
         set_clipboard(pin.setup.clipboard.as_deref())?;
         self.observe = pin.observe.clone();
         if let Some(l) = layout {
-            check_layout(self.hwnd, l)?;
-            self.trace.call(1, "keyboardLayout", &format!("[\"{l}\"]"));
+            // Windows 8 and later activate only layouts in the user's language list: without US-International
+            // there, the dead-key pin runs on the active layout and the golden's settings say so.
+            match check_layout(self.hwnd, l) {
+                Ok(()) => self.trace.call(1, "keyboardLayout", &format!("[\"{l}\"]")),
+                Err(err) => {
+                    if !self.settings.iter().any(|(k, _)| k == "deadKeyLayout") {
+                        let v = format!("{l} not activated ({err}); the dead-key pin ran on the active layout");
+                        self.settings.push(("deadKeyLayout".into(), serde_json::to_string(&v).unwrap()));
+                    }
+                }
+            }
         }
         if self.settings.is_empty() {
             self.settings = input_settings(self.hwnd);
