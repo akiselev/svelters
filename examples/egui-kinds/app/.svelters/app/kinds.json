@@ -1018,7 +1018,7 @@
       "children": null,
       "css_hidden": [],
       "css_note": "Provider states match as `:state(<namespace>.<name>)`.",
-      "doc": "RA3, the paint cache: `<spark-line values={[…]} />` builds its shapes through\n`cx.cached_shapes`, so they are rebuilt only when `values` (its version) or its size change.",
+      "doc": "RA3 (on SG6's paint cache): `<spark-line values={[…]} />` builds its shapes through\n`cx.cached_shapes`, so they are rebuilt only when `values` (its version) or its size change.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},

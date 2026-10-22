@@ -76,7 +76,7 @@ declare global {
         /** The text changed (every keystroke); carries the raw text. */
         onedited?: (value: string) => void;
       }>;
-      /** RA3, the paint cache: `<spark-line values={[…]} />` builds its shapes through `cx.cached_shapes`, so they are rebuilt only when `values` (its version) or its size change. */
+      /** RA3 (on SG6's paint cache): `<spark-line values={[…]} />` builds its shapes through `cx.cached_shapes`, so they are rebuilt only when `values` (its version) or its size change. */
       'spark-line': EguiAttrs<EguiWidgetProps & {
         /** The samples, drawn left to right, scaled to their range. */
         values: number[];

@@ -56,10 +56,11 @@ inserts children into it. taffy lays them out from the node's style, or the kind
 
 ### 4. `cached_shapes`
 
-`WidgetCx::cached_shapes(ui, version, |shapes, size| …)`: shapes relative to the rect's top left, rebuilt only when
-`version`, the rect size or `pixels_per_point` change; otherwise the cached shapes are painted again, moved to the
-rect. Stored per node in an unjournaled ext column (`ExtColumns::cache_mut`, new: caches only), counted in
-`SceneStats::shape_cache_hits`/`shape_cache_misses`.
+SG6 landed its own paint cache (`WidgetCx::cached_shapes(painter, version, |painter, rect, shapes| …)`, keyed on
+version, size, `pixels_per_point` and the theme, counted in `SceneStats::paint_hits`/`paint_misses`) while RA3 was
+open. Decided (lane, 2026-10-22, on merging origin/master befca905): RA3's version (`cache_mut` ext column,
+`shape_cache_hits`/`shape_cache_misses`) was dropped; `<spark-line>` and `paint_cache_hit_rate` use SG6's, so a
+provider kind built by the RA3 macros is covered by SG6's cache unchanged.
 
 ### 5. Object-handle props (K1 gap 1)
 
@@ -105,8 +106,7 @@ lower onto observation. `<quantity-field>` has `#[event] commit: Event<f64>`.
 6. **Security**: every method call goes through `provider::methods::call`, the place a policy check (ARCH-SECURITY,
    deny by default) belongs. No hook is built (security work is cut); nothing bypasses that function.
 7. **Container slot**: only the default slot (`children`). Named slots (`#[slot(name = "header-extra")]`) are not built.
-8. **`cached_shapes` takes a `Vec<egui::Shape>`**, not a `Painter` (egui has no recording painter); the version covers
-   theme changes (the cache key adds only size and scale).
+8. **`cached_shapes` is SG6's** (see section 4); RA3 adds no paint cache of its own.
 
 ## Tests
 
