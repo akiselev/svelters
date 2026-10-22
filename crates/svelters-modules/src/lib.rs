@@ -34,7 +34,7 @@ pub use compose::{ComposedProvider, ExtensionPolicy, NativeAccess, SchemeHook, V
 pub use dylib::DylibModules;
 pub use native::{NativeModules, NativeRegistry, StaticModules, APP_PREFIX, CORE_ID};
 #[cfg(feature = "source")]
-pub use source::{Check, Entry, Overlay, SourceConfig, SourceProvider};
+pub use source::{Check, Diagnostic, Entry, FixHint, FixIt, Overlay, Severity, SourceConfig, SourceProvider, TextEdit};
 pub use svb::{Svb, SvbProvider};
 
 /// A module's name in the engine: what [`ModuleProvider::resolve`] returns and

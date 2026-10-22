@@ -86,6 +86,45 @@ fn swapping_one_roots_component_leaves_the_other_roots_alone() {
     let _ = (p1, p3);
 }
 
+/// LD3: loading from source in hot mode reports no error. hot.js imports the first version of
+/// every module by id, generated ones too (`svelters:entry`, a component's `svelters-style:` sheet);
+/// that import used to go through the provider's specifier resolution and fail, an
+/// `EmbedEvent::Error` "Error resolving module 'svelters:entry' from 'eval_script'" on every load.
+#[test]
+fn loading_from_source_in_hot_mode_reports_no_error() {
+    let dir = scratch("embed-hot-load");
+    // a sheet, so the component imports a generated `svelters-style:` module too
+    let panel = dir.join("src/Panel.svelte");
+    let src = std::fs::read_to_string(&panel).unwrap() + "\n<style>\n  label { color: #ff0000; }\n</style>\n";
+    std::fs::write(&panel, src).unwrap();
+    let mut cfg = SourceConfig::for_path(&dir).unwrap();
+    cfg.dev = true;
+    cfg.hmr = true;
+    let provider = Rc::new(SourceProvider::new(cfg).unwrap());
+    let ecfg = EmbedConfig {
+        id_salt: "ld3",
+        host: HostConfig { echo_console: false, echo_errors: false, quit_on_last_window: false, ..HostConfig::default() },
+        ..EmbedConfig::default()
+    };
+    let mut eh = EmbedHarness::new(egui::vec2(400.0, 300.0), ecfg).unwrap();
+    let e = eh.embed.clone();
+    let entry = e.load_from(provider).unwrap();
+    let s1 = e.create_slot("a", SlotOptions::fill());
+    eh.set_ui(move |e, ui| {
+        e.show_slot(ui, s1);
+    });
+    e.mount(MountSpec::new(entry, "Panel", s1, "p1").props(Props::new().with("title", "One"))).unwrap();
+    eh.run();
+    assert!(eh.harness.query_by_label("Inc One").is_some());
+    let errors: Vec<String> = e.take_events().into_iter().filter_map(|x| match x {
+        EmbedEvent::Error { error, .. } => Some(error.to_string()),
+        _ => None,
+    }).collect();
+    assert!(errors.is_empty(), "{errors:?}");
+    let errors: Vec<String> = e.host().take_errors().into_iter().map(|x| x.to_string()).collect();
+    assert!(errors.is_empty(), "{errors:?}");
+}
+
 #[test]
 fn a_full_reload_of_an_embedders_entry_is_refused_and_the_roots_stay() {
     let dir = scratch("embed-refuse");

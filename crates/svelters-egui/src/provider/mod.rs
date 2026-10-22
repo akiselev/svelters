@@ -560,6 +560,15 @@ impl WidgetCx<'_> {
     pub fn rect(&self) -> egui::Rect {
         self.rect
     }
+    /// SG6 (ARCH-EMBED §8.2 D3, ARCH-SCENE §8.3): the opt-in paint cache. `paint` draws the
+    /// widget's shapes into `shapes` for a rect of the node's size at the origin (it may use the
+    /// painter for text layout); they are kept while `version`, the size, `pixels_per_point` and
+    /// the theme stay the same, and replayed at the node's rect with `painter`. Bump `version`
+    /// when what the widget draws changes; a prop write drops the entry. Saves shape building and
+    /// text layout, not egui's tessellation. True if the cached shapes were used.
+    pub fn cached_shapes(&mut self, painter: &egui::Painter, version: u64, paint: impl FnOnce(&egui::Painter, egui::Rect, &mut Vec<egui::Shape>)) -> bool {
+        self.s.paint_cache.paint(self.i as u32, version, painter, self.rect, paint)
+    }
     pub fn enabled(&self) -> bool {
         self.enabled
     }
