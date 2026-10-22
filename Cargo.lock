@@ -4677,6 +4677,7 @@ dependencies = [
  "svelters-backend-log",
  "svelters-intl",
  "svelters-modules",
+ "svelters-sched",
  "tokio",
  "tracing",
 ]
@@ -4729,6 +4730,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "svelters-sched"
+version = "0.0.0"
+
+[[package]]
 name = "svelters-style"
 version = "0.0.0"
 dependencies = [
@@ -4745,6 +4750,7 @@ version = "0.0.0"
 dependencies = [
  "egui_kittest",
  "serde_json",
+ "svelters",
  "svelters-abi",
  "svelters-backend-log",
  "svelters-egui",

@@ -1,0 +1,11 @@
+[package]
+name = "svelters-sched"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "SCHED1: the Spawner and Clock seams for off-thread work and time, and a seeded deterministic TestScheduler (ZED-LESSONS §6.1)"
+
+# No dependencies on purpose: quire, berth and cadatomic implement `Spawner`/`Clock` (or drive their
+# tests with `TestScheduler`) without pulling in the host or QuickJS.
+[dependencies]

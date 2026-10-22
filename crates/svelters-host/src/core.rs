@@ -83,11 +83,16 @@ pub struct HostConfig {
     /// ([`crate::platform::Platform::headless`]) touches nothing of the system; a desktop runner
     /// installs the system ones (svelters-egui's `platform::system()`).
     pub platform: crate::platform::Platform,
+    /// SCHED1: where offloaded jobs run, what time it is, and who else hears the host's wakes
+    /// ([`crate::HostSched`]; empty: rayon, the wall clock, the backend). A clock excludes `scripted`
+    /// (which has its own virtual clock): `Host::new` refuses both.
+    pub sched: crate::sched::HostSched,
 }
 
 impl Default for HostConfig {
     fn default() -> Self {
         HostConfig {
+            sched: crate::sched::HostSched::default(),
             hmr_max_swaps: 200,
             hmr_memory_fraction: 0.5,
             platform: crate::platform::Platform::default(),
@@ -371,10 +376,16 @@ pub(crate) struct Core {
     pub(crate) root_msgs: RefCell<Vec<RootMessage>>,
     /// IN1: a locale change made while JS was running, delivered by the next checkpoint.
     pub(crate) pending_locale: RefCell<Option<String>>,
+    /// SCHED1: the backend's wake plus `cfg.sched.wake` (see `sched.rs`); every host wake goes here.
+    waker: std::task::Waker,
+    wake_state: Arc<crate::sched::HostWake>,
+    /// SCHED1: this host's key for `Clock::wake_at`.
+    wake_key: u64,
 }
 
-/// Held while JS runs. See the module docs on re-entrancy.
-pub(crate) struct JsGuard<'a>(&'a Core, Option<Instant>);
+/// Held while JS runs. See the module docs on re-entrancy. The third field is the spawner this
+/// thread had before the entry (SCHED1: `exports::worker()` futures polled in JS use the host's).
+pub(crate) struct JsGuard<'a>(&'a Core, Option<Instant>, Option<Option<Arc<dyn svelters_sched::Spawner>>>);
 
 impl Drop for JsGuard<'_> {
     fn drop(&mut self) {
@@ -384,9 +395,12 @@ impl Drop for JsGuard<'_> {
             t.js_ns += t0.elapsed().as_nanos() as u64;
             c.timing.set(t);
         }
+        if let Some(prev) = self.2.take() {
+            crate::exports::offload::swap_thread_spawner(prev);
+        }
         c.busy.set(c.busy.get() - 1);
         if c.busy.get() == 0 && c.deferred.replace(false) {
-            c.backend.wake();
+            c.wake();
         }
     }
 }
@@ -394,6 +408,7 @@ impl Drop for JsGuard<'_> {
 impl Core {
     pub(crate) fn new(backend: BackendRef<'static>, cfg: HostConfig) -> Core {
         let turn_budget = cfg.turn_budget;
+        let (waker, wake_state) = crate::sched::host_waker(backend.wake_handle(), cfg.sched.wake.clone());
         Core {
             backend,
             cfg,
@@ -417,12 +432,30 @@ impl Core {
             bytecode: RefCell::new(None),
             bytecode_explicit: Cell::new(false),
             op_log: RefCell::new(None),
-            ops: offload::OpTable::new(crate::exports::offload::Completions::new(backend.wake_handle())),
-            reactive: reactive::Reactive::new(crate::exports::reactive::Hub::new(backend.wake_handle())),
+            ops: offload::OpTable::new(crate::exports::offload::Completions::new(waker.clone())),
+            reactive: reactive::Reactive::new(crate::exports::reactive::Hub::new(waker.clone())),
             budget: Cell::new(turn_budget),
             root_msgs: RefCell::new(Vec::new()),
             pending_locale: RefCell::new(None),
+            waker,
+            wake_state,
+            wake_key: svelters_sched::wake_key(),
         }
+    }
+
+    /// The host is going away: its waker (clones of which a scheduler may still hold) reaches nobody.
+    pub(crate) fn detach_waker(&self) {
+        self.wake_state.detach();
+    }
+
+    /// Asks for a checkpoint: the backend's `wake`, and the scheduler's when one drives this host.
+    pub(crate) fn wake(&self) {
+        self.waker.wake_by_ref();
+    }
+
+    /// SCHED1: the spawner offloaded jobs go to, if the embedder or a test set one.
+    pub(crate) fn spawner(&self) -> Option<&Arc<dyn svelters_sched::Spawner>> {
+        self.cfg.sched.spawner.as_ref()
     }
 
     pub(crate) fn take_timing(&self) -> Timing {
@@ -485,7 +518,9 @@ impl Core {
 
     /// The timer clock: wall time, or the virtual clock in scripted mode.
     pub(crate) fn now(&self) -> Instant {
-        if self.cfg.scripted {
+        if let Some(c) = &self.cfg.sched.clock {
+            self.epoch + c.now()
+        } else if self.cfg.scripted {
             self.epoch + self.vnow.get()
         } else {
             Instant::now()
@@ -496,6 +531,9 @@ impl Core {
     /// (TR1) advance with the virtual 16 ms frames instead of the wall clock and end after a fixed
     /// number of frames. `None` outside scripted mode (wall time).
     pub(crate) fn virtual_ms(&self) -> Option<f64> {
+        if let Some(c) = &self.cfg.sched.clock {
+            return Some(c.now().as_secs_f64() * 1000.0);
+        }
         self.cfg.scripted.then(|| self.vnow.get().as_secs_f64() * 1000.0)
     }
 
@@ -511,7 +549,8 @@ impl Core {
             return None;
         }
         self.busy.set(1);
-        Some(JsGuard(self, self.cfg.timing.then(Instant::now)))
+        let prev = self.spawner().map(|s| crate::exports::offload::swap_thread_spawner(Some(s.clone())));
+        Some(JsGuard(self, self.cfg.timing.then(Instant::now), prev))
     }
 
     // ---- sinks ----
@@ -788,7 +827,7 @@ impl Core {
             }
         };
         if wake && !self.cfg.scripted {
-            self.backend.wake();
+            self.wake();
         }
     }
 
@@ -919,6 +958,11 @@ impl Core {
             return;
         }
         self.armed.set(deadline);
+        // SCHED1: the clock's own wakeup (the backend's would count wall time).
+        if let Some(c) = &self.cfg.sched.clock {
+            c.wake_at(self.wake_key, deadline.map(|d| d.saturating_duration_since(self.epoch)), &self.waker);
+            return;
+        }
         let ms = match deadline {
             Some(d) => {
                 let left = d.saturating_duration_since(Instant::now());
@@ -933,7 +977,10 @@ impl Core {
     /// Cancels any pending backend wakeup. Called when the host goes away.
     pub(crate) fn disarm(&self) {
         if self.armed.replace(None).is_some() {
-            self.backend.schedule_wake(-1);
+            match &self.cfg.sched.clock {
+                Some(c) => c.wake_at(self.wake_key, None, &self.waker),
+                None => self.backend.schedule_wake(-1),
+            }
         }
     }
 
@@ -975,7 +1022,8 @@ impl Core {
 /// 0. read, compare and deliver the dirty observed properties as one `__svelters_changed` batch
 ///    (ABI v2.6), with no drain before the first event;
 /// 1. deliver queued events to JS, draining jobs after each;
-/// 2. fire due timers, draining jobs after each;
+/// 2. fire due timers, draining jobs before the first (a timer starts on an empty microtask queue)
+///    and after each;
 /// 3. drain remaining jobs, up to `max_jobs_per_checkpoint` in total;
 /// 4. `wake` if jobs or events remain, and arm the backend's one-shot wakeup for the earliest
 ///    timer deadline (`schedule_wake`).
@@ -1030,6 +1078,13 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     }
 
     let now = core.now();
+    // A timer callback is a new task: the microtasks of what this checkpoint delivered before it
+    // (settled offloaded calls and their progress callbacks, a change batch) run first, as in scripted
+    // mode. SCHED1's randomized schedules found a timer running between a worker's `onProgress` and
+    // the microtasks it queued, whenever a completion and a due timer met in one checkpoint.
+    if core.next_timer_deadline().is_some_and(|d| d <= now) {
+        pending |= drain(&mut eng, &mut budget);
+    }
     for (id, seq) in core.timers_take_due(now) {
         if !core.timer_begin_fire(id, seq, now) {
             continue;
@@ -1048,7 +1103,7 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     core.process_releases();
     core.sync_sched();
     if pending || core.has_events() {
-        core.backend.wake();
+        core.wake();
     }
     core.quit_if_last_window_gone();
 }
@@ -1089,7 +1144,7 @@ pub(crate) fn frame(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     drop(eng);
     core.sync_sched();
     if st.pending || core.has_events() {
-        core.backend.wake();
+        core.wake();
     }
     core.quit_if_last_window_gone();
 }
@@ -1126,7 +1181,7 @@ pub(crate) fn call_sync(
             flags,
         });
         if !core.cfg.scripted {
-            core.backend.wake();
+            core.wake();
         }
         return Err(SyncError::Busy);
     }
@@ -1154,7 +1209,7 @@ pub(crate) fn call_sync(
     let pending = eng.run_jobs(0).pending;
     drop(eng);
     if pending && !core.cfg.scripted {
-        core.backend.wake();
+        core.wake();
     }
     Ok(result)
 }
@@ -1352,7 +1407,7 @@ pub(crate) fn load_bundle(
     drop(eng);
     core.sync_sched();
     if !core.cfg.scripted && (pending || core.has_events()) {
-        core.backend.wake();
+        core.wake();
     }
     res
 }
@@ -1381,7 +1436,7 @@ pub(crate) fn hot_update(
     drop(eng);
     core.sync_sched();
     if !core.cfg.scripted && (pending || core.has_events()) {
-        core.backend.wake();
+        core.wake();
     }
     res
 }
@@ -1420,7 +1475,7 @@ pub(crate) fn load_entry(
     drop(eng);
     core.sync_sched();
     if st.pending || core.has_events() {
-        core.backend.wake();
+        core.wake();
     }
     res
 }
@@ -1452,7 +1507,7 @@ pub(crate) fn root_call<R>(
     core.process_releases();
     core.sync_sched();
     if st.pending || core.has_events() {
-        core.backend.wake();
+        core.wake();
     }
     res
 }
