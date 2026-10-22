@@ -918,6 +918,19 @@ pub(crate) fn layout_style(s: &Scene, i: usize) -> taffy::Style {
             "margin-right" => st.margin.right = lpa(v).unwrap_or(st.margin.right),
             "margin-bottom" => st.margin.bottom = lpa(v).unwrap_or(st.margin.bottom),
             "margin-left" => st.margin.left = lpa(v).unwrap_or(st.margin.left),
+            // SG4: out-of-flow positioning (`layout.rs` hoists absolute boxes)
+            "position" => {
+                st.position = match kw {
+                    Some("absolute") => taffy::Position::Absolute,
+                    Some("relative") => taffy::Position::Relative,
+                    Some("static") => taffy::Position::Static,
+                    _ => st.position,
+                }
+            }
+            "left" => st.inset.left = lpa(v).unwrap_or(st.inset.left),
+            "top" => st.inset.top = lpa(v).unwrap_or(st.inset.top),
+            "right" => st.inset.right = lpa(v).unwrap_or(st.inset.right),
+            "bottom" => st.inset.bottom = lpa(v).unwrap_or(st.inset.bottom),
             "visible" => {
                 if matches!(v, ComputedValue::Bool(false)) {
                     st.display = taffy::Display::None;

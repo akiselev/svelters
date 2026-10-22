@@ -98,6 +98,16 @@ pub enum Target {
     Virtual(VNodeId),
 }
 
+impl Target {
+    /// The node: itself, or the host of a virtual part.
+    pub fn node(self) -> NodeId {
+        match self {
+            Target::Node(n) => n,
+            Target::Virtual(v) => v.host,
+        }
+    }
+}
+
 /// A kind's ABI id (ARCH-EMBED §8.1).
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 pub struct KindId(pub svl_id);

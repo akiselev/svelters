@@ -45,6 +45,7 @@ impl EguiBackend {
         let mut scene = self.0.scene.borrow_mut();
         let id = scene.live(w).expect("a live window");
         let r = scene.core[scene.ix(id)].root;
+        crate::provider::pass::prepare_root(&mut scene, r); // SG4: Caps::PREPARE (§7.2 b)
         self.layout_root(&mut scene, ui.ctx(), r, rect.size());
         paint(&mut scene, w, rect.min.to_vec2(), ui, out);
         ui.allocate_rect(rect, egui::Sense::hover());
@@ -65,6 +66,7 @@ impl EguiBackend {
         if scene.roots.get(r).is_some_and(|e| !e.dirty.remeasure.is_empty()) {
             layout::remeasure(&mut scene, &layout::Metrics::new(ui.ctx()), r);
         }
+        crate::provider::pass::prepare_root(&mut scene, r); // SG4: Caps::PREPARE (§7.2 b)
         self.layout_root(&mut scene, ui.ctx(), r, rect.size());
         paint_at(&mut scene, i, rect.min.to_vec2(), ui, out);
         // what the content needs: the extent of the slot's children (laid out from its origin)
@@ -81,6 +83,11 @@ impl EguiBackend {
 /// position).
 pub fn paint(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
     let i = arena.ix(arena.live(h).expect("live node"));
+    paint_at(arena, i, origin, ui, out);
+}
+
+/// SG4: a provider's `WidgetCx::children`/`child` draws its children through the walk.
+pub(crate) fn paint_child(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
     paint_at(arena, i, origin, ui, out);
 }
 
@@ -111,6 +118,11 @@ fn paint_visual(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mu
     if v.inert {
         // an exiting node leaves the accessibility tree
         ui.ctx().accesskit_node_builder(child.unique_id(), |b| b.set_hidden());
+        // TR2b: and out of focus traversal: a disabled widget senses nothing, so Tab skips it and a
+        // focused one loses focus. Disabled widgets are dimmed by `disabled_alpha`; it is 1 here, so
+        // the outro's own opacity is the only fade.
+        child.visuals_mut().disabled_alpha = 1.0;
+        child.disable();
     }
     let mut dropped = Vec::new();
     let sink = if v.inert { &mut dropped } else { out };
@@ -206,7 +218,7 @@ fn paint_own(
     // CS5e: this pass's state, the restyle it reaches, then the computed visuals on `child`
     crate::style::before_leaf(arena, i, r, &mut child);
     let resp = if matches!(arena.w(i), crate::scene::W::Ext(_)) {
-        crate::provider::paint(arena, i, &mut child, out) // RA1: a provider kind
+        crate::provider::paint(arena, i, &mut child, origin, out) // RA1: a provider kind
     } else {
         Some(crate::leaf::leaf(arena, i, &mut child, out))
     };

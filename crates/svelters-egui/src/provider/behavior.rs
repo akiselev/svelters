@@ -32,8 +32,8 @@
 //! action creates the attached node, sets the params as props (only the ones that changed on an
 //! update: one `set_prop` per changed param) and listens to the `on<event>` callbacks of the params.
 //!
-//! Hooks now: `sense`, `after_ui`, `detached`. ARCH-SCENE §7.3's `before_ui` and `paint_over` are
-//! SG4's, `filter` is EV1's.
+//! Hooks: `sense`, `before_ui` and `paint_over` (SG4), `after_ui`, `detached`. ARCH-SCENE §7.3's
+//! `filter` is EV1's.
 //!
 //! Writer lane: EVENTS (EV2b).
 
@@ -66,6 +66,15 @@ pub trait Behavior: 'static {
     /// host (state bits, ext data) and the behaviour's own events go through `cx`
     /// and are applied after the hook.
     fn after_ui(&mut self, host: NodeRef<'_>, resp: &egui::Response, cx: &mut BehaviorCx<'_>);
+
+    /// SG4 (ARCH-SCENE §7.3): runs before the host's `ui`, every frame the host is drawn, with the
+    /// host's layout rect (`cx.rect()`, screen) and its egui id. State bits set here apply before
+    /// the host draws (a tutorial gate, a disabled look); other writes are applied after the hook.
+    fn before_ui(&mut self, _host: NodeRef<'_>, _cx: &mut BehaviorCx<'_>) {}
+
+    /// SG4 (ARCH-SCENE §7.3): paints over the host (decorations, badges, pick highlights) after its
+    /// `ui` (for a container, after its children) and the `after_ui` hooks, on the host's layer.
+    fn paint_over(&mut self, _host: NodeRef<'_>, _painter: &egui::Painter, _cx: &mut BehaviorCx<'_>) {}
 
     /// The behaviour leaves its host (the `use:` action's destroy, or a move): undo what it set on
     /// the host (its state bits, its ext entries). Writes are journaled as `Origin::Widget`.
@@ -174,6 +183,11 @@ impl<B: Behavior + KindDecl> ErasedWidget for BehaviorBox<B> {
         // attached nodes are not painted, so they never own a point: it goes to the host
         super::Hit::Miss
     }
+    // never called: attached nodes are not laid out
+    fn layout(&mut self, cx: &mut super::LayoutCx<'_>, inputs: crate::taffy::LayoutInput) -> crate::taffy::LayoutOutput {
+        cx.default_layout(inputs)
+    }
+    fn prepare(&mut self, _cx: &mut super::PrepareCx<'_>) {}
     fn as_any(&self) -> &dyn Any {
         &self.0
     }
@@ -227,6 +241,9 @@ pub(crate) fn around(
     container: bool,
 ) {
     let want = sense(arena, i);
+    // SG4: before_ui, with the host's rect and id
+    let (id, rect) = (arena.core[i].egui_id, ui.max_rect());
+    hooks(arena, i, id, rect, ui.ctx(), out, &mut |bh, host, cx| bh.before_ui(host, cx));
     let bg = container.then(|| ui.interact(ui.max_rect(), arena.core[i].egui_id, want));
     let own = paint(arena, out);
     let resp = match (bg, own) {
@@ -235,11 +252,23 @@ pub(crate) fn around(
         (None, Some(r)) => r,
         (None, None) => return,
     };
-    after_ui(arena, i, &resp, out);
+    hooks(arena, i, resp.id, resp.rect, &resp.ctx, out, &mut |bh, host, cx| bh.after_ui(host, &resp, cx));
+    // SG4: paint_over, on top of the host (and a container's children)
+    let painter = ui.painter().clone();
+    hooks(arena, i, resp.id, resp.rect, &resp.ctx, out, &mut |bh, host, cx| bh.paint_over(host, &painter, cx));
 }
 
-/// Runs the `after_ui` hooks of the behaviours attached to slot `i` with the host's response.
-fn after_ui(arena: &mut Scene, i: usize, resp: &egui::Response, out: &mut Vec<Out>) {
+/// Runs one hook (`call`) of each behaviour attached to slot `i`, with the host's id and rect, and
+/// applies what each one wrote (host state, host writes, events) after it.
+fn hooks(
+    arena: &mut Scene,
+    i: usize,
+    id: egui::Id,
+    rect: egui::Rect,
+    ctx: &egui::Context,
+    out: &mut Vec<Out>,
+    call: &mut dyn FnMut(&mut dyn Behavior, NodeRef<'_>, &mut BehaviorCx<'_>),
+) {
     let host = arena.slots.id_at(i).expect("live host");
     let mut k = 0;
     // the attached list cannot change during the hooks (host writes are not structural)
@@ -260,8 +289,8 @@ fn after_ui(arena: &mut Scene, i: usize, resp: &egui::Response, out: &mut Vec<Ou
             let mut cx = BehaviorCx {
                 node: b,
                 host,
-                id: resp.id,
-                rect: resp.rect,
+                id,
+                rect,
                 state: scene.core[i].state,
                 entry,
                 emits: Vec::new(),
@@ -271,7 +300,7 @@ fn after_ui(arena: &mut Scene, i: usize, resp: &egui::Response, out: &mut Vec<Ou
                 _a: PhantomData,
             };
             let host_ref = SceneRef::new(scene).get(host).expect("live host");
-            bh.after_ui(host_ref, resp, &mut cx);
+            call(bh, host_ref, &mut cx);
             cx
         };
         let BehaviorCx {
@@ -303,7 +332,7 @@ fn after_ui(arena: &mut Scene, i: usize, resp: &egui::Response, out: &mut Vec<Ou
         }
         flush_writes(arena, bi, Vec::new(), emits, errors, out);
         if repaint {
-            resp.ctx.request_repaint();
+            ctx.request_repaint();
         }
     }
 }
