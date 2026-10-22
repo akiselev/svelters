@@ -412,10 +412,11 @@ fn items(
                             label.clone()
                         };
                         let mut b = egui::Button::new(text);
-                        if let Some(sc) = sc {
+                        if let Some(sc) = sc.clone() {
                             b = b.shortcut_text(sc);
                         }
                         let r = ui.add_enabled(enabled, b);
+                        // named by the label alone; the accelerator is AccessKit's keyboard shortcut
                         if check {
                             let role = if radio {
                                 Role::RadioButton
@@ -423,6 +424,11 @@ fn items(
                                 Role::CheckBox
                             };
                             r.widget_info(|| WidgetInfo::selected(role, enabled, checked, &label));
+                        } else {
+                            r.widget_info(|| WidgetInfo::labeled(Role::Button, enabled, &label));
+                        }
+                        if let Some(sc) = sc {
+                            ui.ctx().accesskit_node_builder(r.id, |n| n.set_keyboard_shortcut(sc));
                         }
                         r
                     }

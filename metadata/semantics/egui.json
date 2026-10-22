@@ -3,6 +3,166 @@
   "event_aliases": {},
   "framework": "egui 0.37 (svelters-egui; taffy 0.15 layout)",
   "kinds": {
+    "Action": {
+      "abstract": false,
+      "bindings": {
+        "checked": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "toggled",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "checked",
+          "provenance": "svelters-egui: the egui::Button (menu item) widget writes checked into the node during the pass; `toggled` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "Action",
+        "MenuEntry"
+      ],
+      "children": null,
+      "doc": "A menu item: plain, a check item (`checkable`) or a radio item (`group`), with an optional `shortcut`. AccessKit role Button, CheckBox or RadioButton.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::Button (menu item)",
+      "present": null,
+      "props": {
+        "checkable": {
+          "construct_only": false,
+          "default": false,
+          "doc": "A check item: picking it toggles `checked`.",
+          "js": "checkable",
+          "native": "checkable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Action:checkable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "checked": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Check or radio state; picking a check item toggles it, picking a radio item sets it.",
+          "js": "checked",
+          "native": "checked",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Action:checked",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "group": {
+          "construct_only": false,
+          "default": "",
+          "doc": "A radio item: the actions of one parent with the same group form an exclusive set; picking one checks it and unchecks the others (each announced).",
+          "js": "group",
+          "native": "group",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Action:group",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "label": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The caption.",
+          "js": "label",
+          "native": "label",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Action:label",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "shortcut": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Keyboard accelerator such as `Ctrl+O`, `Ctrl+Shift+S` or `F5`: shown right-aligned and active while the menu's owner (menu-bar, menu-button, context-menu) is drawn. Modifiers: `Ctrl`, `Shift`, `Alt`, `Cmd` (macOS command), `Primary` (Cmd on macOS, Ctrl elsewhere); keys are egui `Key` names. An unknown key is an error.",
+          "js": "shortcut",
+          "native": "shortcut",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Action:shortcut",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "activate": {
+          "args": [
+            {
+              "name": "checked",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user picked it (click, Enter, or its shortcut); carries `checked` after the pick.",
+          "handler_result": "none",
+          "js_event": "activate",
+          "name": "activate",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "toggled": {
+          "args": [
+            {
+              "name": "checked",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user changed `checked` (a check item, or a radio item turned on or off by a pick); carries the new state.",
+          "handler_result": "none",
+          "js_event": "toggled",
+          "name": "toggled",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": "label"
+    },
     "Box": {
       "abstract": false,
       "bindings": {},
@@ -216,6 +376,23 @@
       "native": "egui::Button",
       "present": null,
       "props": {
+        "font-weight": {
+          "construct_only": false,
+          "default": 400,
+          "doc": "CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face.",
+          "js": "font-weight",
+          "native": "font-weight",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Button:font-weight",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
         "frame": {
           "construct_only": false,
           "default": true,
@@ -429,6 +606,831 @@
       },
       "text_content": "text"
     },
+    "CollapsingHeader": {
+      "abstract": false,
+      "bindings": {
+        "open": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "open",
+          "provenance": "svelters-egui: the egui::CollapsingHeader (header) + taffy flexbox (body) widget writes open into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "CollapsingHeader",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A clickable header with a caret; its children (a flex box, indented) are shown and laid out only while `open`.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::CollapsingHeader (header) + taffy flexbox (body)",
+      "present": null,
+      "props": {
+        "open": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Shows the children; a click on the header (or Enter/Space on it) toggles it.",
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:CollapsingHeader:open",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "text": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The header's caption (also its accessible name).",
+          "js": "text",
+          "native": "text",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:CollapsingHeader:text",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "open",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user opened or closed it; carries the new state.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": "text"
+    },
+    "ComboBox": {
+      "abstract": false,
+      "bindings": {
+        "selected": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "selected",
+          "provenance": "svelters-egui: the egui::ComboBox widget writes selected into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "ComboBox",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A drop-down list: shows the selected option, picks one from a popup. Name it with `accessible-name` (it has no caption).",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::ComboBox",
+      "present": null,
+      "props": {
+        "hint-text": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Shown while `selected` is out of range.",
+          "js": "hint-text",
+          "native": "hint-text",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ComboBox:hint-text",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "options": {
+          "construct_only": false,
+          "default": null,
+          "doc": "The choices, in order (the popup's rows).",
+          "js": "options",
+          "native": "options",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ComboBox:options",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "selected": {
+          "construct_only": false,
+          "default": 0,
+          "doc": "Index of the chosen option; picking a row changes it. Out of range shows no text.",
+          "js": "selected",
+          "native": "selected",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:ComboBox:selected",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "selected",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user picked a row; carries its index.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
+    "ContextMenu": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "ContextMenu",
+        "MenuEntry"
+      ],
+      "children": {
+        "default_slot": "items",
+        "policy": "ordered",
+        "slots": {
+          "items": {
+            "accepts": [
+              "Menu",
+              "Action",
+              "MenuSeparator"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A menu that attaches to the element it is declared in and opens at the pointer on a secondary click on it (the innermost owner wins). `popup` opens it below its owner. The shortcuts of its actions are active while the owner is drawn.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "popdown": {
+          "dispatch": "generated",
+          "doc": "Closes it.",
+          "native": "popdown",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "popup": {
+          "dispatch": "generated",
+          "doc": "Opens it (a context menu below its owner).",
+          "native": "popup",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "egui::Popup (menu)",
+      "present": null,
+      "props": {},
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {},
+      "text_content": null
+    },
+    "Grid": {
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "Grid",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A CSS grid container laid out by taffy: children fill the cells row by row (auto-placement); draws nothing itself.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "taffy::Style (CSS grid)",
+      "present": null,
+      "props": {
+        "align-items": {
+          "construct_only": false,
+          "default": "stretch",
+          "doc": "Vertical alignment of each child in its cell.",
+          "js": "align-items",
+          "native": "align-items",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Grid:align-items",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "start",
+            "end",
+            "center",
+            "stretch",
+            "baseline"
+          ],
+          "writable": true
+        },
+        "column-gap": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Space between columns in points; null to use `gap`.",
+          "js": "column-gap",
+          "native": "column-gap",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Grid:column-gap",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "gap": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Space between rows and between columns, in points (row-gap and column-gap override it).",
+          "js": "gap",
+          "native": "gap",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Grid:gap",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "grid-template-columns": {
+          "construct_only": false,
+          "default": "auto 1fr",
+          "doc": "The column tracks, CSS syntax: `auto`, `min-content`, `max-content`, `<n>fr`, `<n>px` (or a bare number: points), `<n>%`, `minmax(a, b)`, `fit-content(<len>)`, `repeat(<n>, tracks)`. Rows are implicit (`auto`). The default is a form: a label column and a field column.",
+          "js": "grid-template-columns",
+          "native": "grid-template-columns",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Grid:grid-template-columns",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "justify-items": {
+          "construct_only": false,
+          "default": "stretch",
+          "doc": "Horizontal alignment of each child in its cell.",
+          "js": "justify-items",
+          "native": "justify-items",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Grid:justify-items",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "start",
+            "end",
+            "center",
+            "stretch"
+          ],
+          "writable": true
+        },
+        "padding": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Inner spacing on all four sides, in points.",
+          "js": "padding",
+          "native": "padding",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Grid:padding",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "row-gap": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Space between rows in points; null to use `gap`.",
+          "js": "row-gap",
+          "native": "row-gap",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Grid:row-gap",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {},
+      "text_content": null
+    },
+    "Icon": {
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "Icon",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A glyph from an icon font the embedder registered (SVP6), by name or as text. With `frame` it is an icon button. Its accessible name is `accessible-name`, else `tooltip`, else `name`.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::Label / egui::Button (icon font glyph)",
+      "present": null,
+      "props": {
+        "family": {
+          "construct_only": false,
+          "default": "icons",
+          "doc": "The registered font family (`egui::FontFamily::Name`) holding the glyphs; the proportional family if it is not registered.",
+          "js": "family",
+          "native": "family",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Icon:family",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "font-weight": {
+          "construct_only": false,
+          "default": 400,
+          "doc": "CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face.",
+          "js": "font-weight",
+          "native": "font-weight",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Icon:font-weight",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "frame": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Draws it as a button (an icon button: role `Button`, takes focus).",
+          "js": "frame",
+          "native": "frame",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Icon:frame",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "glyph": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The glyph itself (text), when `name` is empty or not in the table.",
+          "js": "glyph",
+          "native": "glyph",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Icon:glyph",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "name": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The glyph's name in the family's name table (`svelters_egui::fonts::register_icons`); also the default accessible name.",
+          "js": "name",
+          "native": "name",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Icon:name",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "selected": {
+          "construct_only": false,
+          "default": false,
+          "doc": "With `frame`: drawn as selected (a toggle look).",
+          "js": "selected",
+          "native": "selected",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Icon:selected",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "size": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Font size in points; null for the body size.",
+          "js": "size",
+          "native": "size",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Icon:size",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "clicked": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "Pressed and released (`Response::clicked`).",
+          "handler_result": "none",
+          "js_event": "clicked",
+          "name": "clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "double-clicked": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "Double click (`Response::double_clicked`).",
+          "handler_result": "none",
+          "js_event": "double-clicked",
+          "name": "double-clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "secondary-clicked": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "Right click (`Response::secondary_clicked`).",
+          "handler_result": "none",
+          "js_event": "secondary-clicked",
+          "name": "secondary-clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
+    "InnerWindow": {
+      "abstract": false,
+      "bindings": {
+        "open": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "open",
+          "provenance": "svelters-egui: the egui::Window widget writes open into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "InnerWindow",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A floating window inside the viewport (`egui::Window`): movable, optionally resizable, collapsible and closable; its children are a flex box.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::Window",
+      "present": null,
+      "props": {
+        "closable": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shows a close button in the title bar.",
+          "js": "closable",
+          "native": "closable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:InnerWindow:closable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "collapsible": {
+          "construct_only": false,
+          "default": true,
+          "doc": "The title bar can collapse it to the title.",
+          "js": "collapsible",
+          "native": "collapsible",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:InnerWindow:collapsible",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "default-height": {
+          "construct_only": false,
+          "default": 240.0,
+          "doc": "Initial height in points.",
+          "js": "default-height",
+          "native": "default-height",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:InnerWindow:default-height",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "default-width": {
+          "construct_only": false,
+          "default": 320.0,
+          "doc": "Initial width in points (a resizable window's content fills it).",
+          "js": "default-width",
+          "native": "default-width",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:InnerWindow:default-width",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "open": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shown when true; the close button sets it false.",
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:InnerWindow:open",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "resizable": {
+          "construct_only": false,
+          "default": true,
+          "doc": "The user can resize it; the content is laid out at its size. Without it the window is as big as its content.",
+          "js": "resizable",
+          "native": "resizable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:InnerWindow:resizable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "title": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The title bar text.",
+          "js": "title",
+          "native": "title",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:InnerWindow:title",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "open",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user (or `popup`/`popdown`) opened or closed it; carries `open`.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "closed": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "The user (or `popdown`) closed it.",
+          "handler_result": "none",
+          "js_event": "closed",
+          "name": "closed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
     "Label": {
       "abstract": false,
       "bindings": {},
@@ -444,6 +1446,23 @@
       "native": "egui::Label",
       "present": null,
       "props": {
+        "font-weight": {
+          "construct_only": false,
+          "default": 400,
+          "doc": "CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face.",
+          "js": "font-weight",
+          "native": "font-weight",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Label:font-weight",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
         "selectable": {
           "construct_only": false,
           "default": false,
@@ -518,6 +1537,851 @@
         }
       },
       "text_content": "text"
+    },
+    "Menu": {
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "Menu",
+        "MenuEntry"
+      ],
+      "children": {
+        "default_slot": "items",
+        "policy": "ordered",
+        "slots": {
+          "items": {
+            "accepts": [
+              "Menu",
+              "Action",
+              "MenuSeparator"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A menu: a menu-bar button, or a submenu row inside another menu. Inside a `menu-button` its items are the button's menu (its label is unused).",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::containers::menu::{MenuButton, SubMenuButton}",
+      "present": null,
+      "props": {
+        "label": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The title: the menu-bar button, or the submenu row.",
+          "js": "label",
+          "native": "label",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Menu:label",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {},
+      "text_content": "label"
+    },
+    "MenuBar": {
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "MenuBar",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "items",
+        "policy": "ordered",
+        "slots": {
+          "items": {
+            "accepts": [
+              "Menu",
+              "Action",
+              "MenuSeparator"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A horizontal menu bar of `menu` children (and plain `action`s). One interact row high; it takes no width of its own, so it fills a column (align-items stretch) or needs `flex-grow` in a row. The shortcuts of its actions are active while it is drawn.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::MenuBar",
+      "present": null,
+      "props": {},
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {},
+      "text_content": null
+    },
+    "MenuButton": {
+      "abstract": false,
+      "bindings": {
+        "active": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "active",
+          "provenance": "svelters-egui: the egui::containers::menu::MenuButton widget writes active into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "MenuButton",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "items",
+        "policy": "ordered",
+        "slots": {
+          "items": {
+            "accepts": [
+              "Menu",
+              "Action",
+              "MenuSeparator"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A button that opens a menu of its children (`action`, `menu`, `menu-separator`; a `menu` child's items are shown inline, as GTK's menu-button takes a menu). The shortcuts of its actions are active while it is drawn.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "popdown": {
+          "dispatch": "generated",
+          "doc": "Closes it.",
+          "native": "popdown",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "popup": {
+          "dispatch": "generated",
+          "doc": "Opens it (a context menu below its owner).",
+          "native": "popup",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "egui::containers::menu::MenuButton",
+      "present": null,
+      "props": {
+        "active": {
+          "construct_only": false,
+          "default": false,
+          "doc": "The menu is open; the user opening or closing it changes it, setting it opens or closes it.",
+          "js": "active",
+          "native": "active",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:MenuButton:active",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "label": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The caption.",
+          "js": "label",
+          "native": "label",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:MenuButton:label",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "active",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user opened or closed the menu; carries `active`.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": "label"
+    },
+    "MenuEntry": {
+      "abstract": true,
+      "bindings": {},
+      "chain": [
+        "MenuEntry"
+      ],
+      "children": null,
+      "doc": "Common properties of the menu entries (`menu`, `action`, `menu-separator`, `context-menu`): drawn inside a menu, never laid out by taffy.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui menu entry",
+      "present": null,
+      "props": {
+        "accessible-name": {
+          "construct_only": false,
+          "default": "",
+          "doc": "AccessKit name; the label by default.",
+          "js": "accessible-name",
+          "native": "accessible-name",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:MenuEntry:accessible-name",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "anchor": {
+          "construct_only": false,
+          "default": "",
+          "doc": "A name unique in its embedded root (AccessKit author id, `Embed::anchor_rect`).",
+          "js": "anchor",
+          "native": "anchor",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:MenuEntry:anchor",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "enabled": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Can be picked when true; drawn greyed out otherwise.",
+          "js": "enabled",
+          "native": "enabled",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:MenuEntry:enabled",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "tooltip": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Hover text; empty for none.",
+          "js": "tooltip",
+          "native": "tooltip",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:MenuEntry:tooltip",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "visible": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shown in its menu when true.",
+          "js": "visible",
+          "native": "visible",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:MenuEntry:visible",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {},
+      "text_content": null
+    },
+    "MenuSeparator": {
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "MenuSeparator",
+        "MenuEntry"
+      ],
+      "children": null,
+      "doc": "A line between menu items (a vertical one in a menu bar).",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::Separator",
+      "present": null,
+      "props": {},
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {},
+      "text_content": null
+    },
+    "Modal": {
+      "abstract": false,
+      "bindings": {
+        "open": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "open",
+          "provenance": "svelters-egui: the egui::Modal widget writes open into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "Modal",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "An in-window modal dialog: a backdrop over the viewport that blocks the rest of the UI, its content centred, sized to fit (or `width`/`height`). The egui form of a modal dialog (no OS-modal windows on egui: EGUI.md §5).",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::Modal",
+      "present": null,
+      "props": {
+        "dismissable": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Escape or a click on the backdrop closes it; with false only the app does.",
+          "js": "dismissable",
+          "native": "dismissable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Modal:dismissable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "open": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shown when true (so `{#if}` alone can show it); the user dismissing it sets it false.",
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Modal:open",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "title": {
+          "construct_only": false,
+          "default": "",
+          "doc": "A heading above the content; also the dialog's accessible name.",
+          "js": "title",
+          "native": "title",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Modal:title",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "open",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user (or `popup`/`popdown`) opened or closed it; carries `open`.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "closed": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "The user (or `popdown`) closed it.",
+          "handler_result": "none",
+          "js_event": "closed",
+          "name": "closed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
+    "Popup": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {
+        "open": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "open",
+          "provenance": "svelters-egui: the egui::Popup widget writes open into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "Popup",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A popover anchored to its owner: the element it is declared in (attached), or the box it is placed in. Its children are a flex box sized to their content (or `width`/`height`), out of the owner's flow. GTK's `popover`.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "popdown": {
+          "dispatch": "generated",
+          "doc": "Closes it (announced like a user close).",
+          "native": "popdown",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "popup": {
+          "dispatch": "generated",
+          "doc": "Opens it (announced like a user open).",
+          "native": "popup",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "egui::Popup",
+      "present": null,
+      "props": {
+        "autohide": {
+          "construct_only": false,
+          "default": true,
+          "doc": "A click outside closes it; with false only Escape, `popdown` or the app does.",
+          "js": "autohide",
+          "native": "autohide",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Popup:autohide",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "open": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Shown when true; the user closing it (Escape, a click outside with `autohide`) sets it false.",
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Popup:open",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "position": {
+          "construct_only": false,
+          "default": "bottom",
+          "doc": "The side of its owner it opens on (egui moves it to another side when it does not fit).",
+          "js": "position",
+          "native": "position",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Popup:position",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "bottom",
+            "top",
+            "left",
+            "right"
+          ],
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "open",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user (or `popup`/`popdown`) opened or closed it; carries `open`.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "closed": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "The user (or `popdown`) closed it.",
+          "handler_result": "none",
+          "js_event": "closed",
+          "name": "closed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
+    "ScrollArea": {
+      "abstract": false,
+      "bindings": {
+        "scroll-x": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": true,
+          "property": "scroll-x",
+          "provenance": "svelters-egui: the egui::ScrollArea + taffy flexbox (content) widget writes scroll-x into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": true,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "scroll-y": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": true,
+          "property": "scroll-y",
+          "provenance": "svelters-egui: the egui::ScrollArea + taffy flexbox (content) widget writes scroll-y into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": true,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 1
+          }
+        }
+      },
+      "chain": [
+        "ScrollArea",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "doc": "A flex box whose content scrolls when it overflows the area's size (taffy `overflow: scroll`); give it a size or let flex-grow size it.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::ScrollArea + taffy flexbox (content)",
+      "present": null,
+      "props": {
+        "direction": {
+          "construct_only": false,
+          "default": "vertical",
+          "doc": "The axes that scroll (taffy `overflow: scroll` on them).",
+          "js": "direction",
+          "native": "direction",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ScrollArea:direction",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "vertical",
+            "horizontal",
+            "both"
+          ],
+          "writable": true
+        },
+        "scroll-x": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Horizontal offset in points; scrolling changes it, and a write scrolls (clamped to the content).",
+          "js": "scroll-x",
+          "native": "scroll-x",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:ScrollArea:scroll-x",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "scroll-y": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Vertical offset in points; scrolling changes it, and a write scrolls (clamped to the content).",
+          "js": "scroll-y",
+          "native": "scroll-y",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:ScrollArea:scroll-y",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "scroll-x",
+              "type": "f64"
+            },
+            {
+              "name": "scroll-y",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user scrolled (or a write was clamped); carries the new offsets.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
+    "Separator": {
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "Separator",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A thin line between items; fills its rect along its orientation.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::Separator",
+      "present": null,
+      "props": {
+        "orientation": {
+          "construct_only": false,
+          "default": "horizontal",
+          "doc": "A horizontal line (in a column) or a vertical one (in a row).",
+          "js": "orientation",
+          "native": "orientation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Separator:orientation",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ],
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {},
+      "text_content": null
     },
     "Slider": {
       "abstract": false,
@@ -879,6 +2743,161 @@
       },
       "text_content": null
     },
+    "ToggleButton": {
+      "abstract": false,
+      "bindings": {
+        "checked": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "checked",
+          "provenance": "svelters-egui: the egui::Button (selected) widget writes checked into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "ToggleButton",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A button that stays pressed (`checked`). With `radio`, a row of them is a segmented control: a click checks one, the app unchecks the rest.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui::Button (selected)",
+      "present": null,
+      "props": {
+        "checked": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Pressed state; a click toggles it (with `radio`, a click only sets it).",
+          "js": "checked",
+          "native": "checked",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:ToggleButton:checked",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "font-weight": {
+          "construct_only": false,
+          "default": 400,
+          "doc": "CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face.",
+          "js": "font-weight",
+          "native": "font-weight",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ToggleButton:font-weight",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "frame": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Draws the button background and border.",
+          "js": "frame",
+          "native": "frame",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ToggleButton:frame",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "radio": {
+          "construct_only": false,
+          "default": false,
+          "doc": "One of a segmented group: a click checks it and never unchecks it (`Ui::selectable_value`); AccessKit role `RadioButton`. The app unchecks the others.",
+          "js": "radio",
+          "native": "radio",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ToggleButton:radio",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "text": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The caption.",
+          "js": "text",
+          "native": "text",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ToggleButton:text",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "checked",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user toggled it; carries the new state.",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "clicked": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "Pressed and released (also when a `radio` click left it checked).",
+          "handler_result": "none",
+          "js_event": "clicked",
+          "name": "clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": "text"
+    },
     "Widget": {
       "abstract": true,
       "bindings": {},
@@ -1035,6 +3054,23 @@
           },
           "readable": true,
           "type": "f64",
+          "writable": true
+        },
+        "invalid": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Marks the value as invalid: an outline in the error colour (`Visuals::error_fg_color`) and AccessKit `invalid`. The app sets it; the widget never does.",
+          "js": "invalid",
+          "native": "invalid",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:invalid",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         },
         "margin": {
@@ -1345,12 +3381,19 @@
     "properties": {
       "align-items": {
         "kinds": [
-          "Box"
+          "Box",
+          "Grid"
         ],
         "native": "align-items",
         "prop": "align-items",
         "tags": [
-          "box"
+          "box",
+          "collapsing-header",
+          "grid",
+          "inner-window",
+          "modal",
+          "popup",
+          "scroll-area"
         ],
         "type": "enum",
         "values": [
@@ -1372,9 +3415,21 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
+          "grid",
+          "icon",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
+          "popup",
+          "scroll-area",
+          "separator",
           "slider",
-          "text-edit"
+          "text-edit",
+          "toggle-button"
         ],
         "type": "enum",
         "values": [
@@ -1389,12 +3444,19 @@
       },
       "column-gap": {
         "kinds": [
-          "Box"
+          "Box",
+          "Grid"
         ],
         "native": "column-gap",
         "prop": "column-gap",
         "tags": [
-          "box"
+          "box",
+          "collapsing-header",
+          "grid",
+          "inner-window",
+          "modal",
+          "popup",
+          "scroll-area"
         ],
         "type": "length",
         "via": "setter"
@@ -1409,9 +3471,21 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
+          "grid",
+          "icon",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
+          "popup",
+          "scroll-area",
+          "separator",
           "slider",
-          "text-edit"
+          "text-edit",
+          "toggle-button"
         ],
         "type": "length",
         "via": "setter"
@@ -1423,7 +3497,12 @@
         "native": "flex-direction",
         "prop": "flex-direction",
         "tags": [
-          "box"
+          "box",
+          "collapsing-header",
+          "inner-window",
+          "modal",
+          "popup",
+          "scroll-area"
         ],
         "type": "enum",
         "values": [
@@ -1444,9 +3523,21 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
+          "grid",
+          "icon",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
+          "popup",
+          "scroll-area",
+          "separator",
           "slider",
-          "text-edit"
+          "text-edit",
+          "toggle-button"
         ],
         "type": "number",
         "via": "setter"
@@ -1461,9 +3552,21 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
+          "grid",
+          "icon",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
+          "popup",
+          "scroll-area",
+          "separator",
           "slider",
-          "text-edit"
+          "text-edit",
+          "toggle-button"
         ],
         "type": "number",
         "via": "setter"
@@ -1475,7 +3578,12 @@
         "native": "flex-wrap",
         "prop": "flex-wrap",
         "tags": [
-          "box"
+          "box",
+          "collapsing-header",
+          "inner-window",
+          "modal",
+          "popup",
+          "scroll-area"
         ],
         "type": "enum",
         "values": [
@@ -1488,15 +3596,34 @@
       "gap": {
         "kinds": [
           "Window",
-          "Box"
+          "Box",
+          "Grid"
         ],
         "native": "gap",
         "prop": "gap",
         "tags": [
           "box",
+          "collapsing-header",
+          "grid",
+          "inner-window",
+          "modal",
+          "popup",
+          "scroll-area",
           "window"
         ],
         "type": "length",
+        "via": "setter"
+      },
+      "grid-template-columns": {
+        "kinds": [
+          "Grid"
+        ],
+        "native": "grid-template-columns",
+        "prop": "grid-template-columns",
+        "tags": [
+          "grid"
+        ],
+        "type": "string",
         "via": "setter"
       },
       "height": {
@@ -1509,9 +3636,21 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
+          "grid",
+          "icon",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
+          "popup",
+          "scroll-area",
+          "separator",
           "slider",
-          "text-edit"
+          "text-edit",
+          "toggle-button"
         ],
         "type": "length",
         "via": "setter"
@@ -1523,7 +3662,12 @@
         "native": "justify-content",
         "prop": "justify-content",
         "tags": [
-          "box"
+          "box",
+          "collapsing-header",
+          "inner-window",
+          "modal",
+          "popup",
+          "scroll-area"
         ],
         "type": "enum",
         "values": [
@@ -1533,6 +3677,24 @@
           "space-between",
           "space-around",
           "space-evenly"
+        ],
+        "via": "setter"
+      },
+      "justify-items": {
+        "kinds": [
+          "Grid"
+        ],
+        "native": "justify-items",
+        "prop": "justify-items",
+        "tags": [
+          "grid"
+        ],
+        "type": "enum",
+        "values": [
+          "start",
+          "end",
+          "center",
+          "stretch"
         ],
         "via": "setter"
       },
@@ -1546,9 +3708,21 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
+          "grid",
+          "icon",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
+          "popup",
+          "scroll-area",
+          "separator",
           "slider",
-          "text-edit"
+          "text-edit",
+          "toggle-button"
         ],
         "type": "length",
         "via": "setter"
@@ -1563,9 +3737,21 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
+          "grid",
+          "icon",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
+          "popup",
+          "scroll-area",
+          "separator",
           "slider",
-          "text-edit"
+          "text-edit",
+          "toggle-button"
         ],
         "type": "length",
         "via": "setter"
@@ -1580,9 +3766,21 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
+          "grid",
+          "icon",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
+          "popup",
+          "scroll-area",
+          "separator",
           "slider",
-          "text-edit"
+          "text-edit",
+          "toggle-button"
         ],
         "type": "length",
         "via": "setter"
@@ -1597,9 +3795,21 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
+          "grid",
+          "icon",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
+          "popup",
+          "scroll-area",
+          "separator",
           "slider",
-          "text-edit"
+          "text-edit",
+          "toggle-button"
         ],
         "type": "length",
         "via": "setter"
@@ -1614,9 +3824,21 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
+          "grid",
+          "icon",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
+          "popup",
+          "scroll-area",
+          "separator",
           "slider",
-          "text-edit"
+          "text-edit",
+          "toggle-button"
         ],
         "type": "length",
         "via": "setter"
@@ -1624,12 +3846,19 @@
       "padding": {
         "kinds": [
           "Window",
-          "Box"
+          "Box",
+          "Grid"
         ],
         "native": "padding",
         "prop": "padding",
         "tags": [
           "box",
+          "collapsing-header",
+          "grid",
+          "inner-window",
+          "modal",
+          "popup",
+          "scroll-area",
           "window"
         ],
         "type": "length",
@@ -1637,12 +3866,19 @@
       },
       "row-gap": {
         "kinds": [
-          "Box"
+          "Box",
+          "Grid"
         ],
         "native": "row-gap",
         "prop": "row-gap",
         "tags": [
-          "box"
+          "box",
+          "collapsing-header",
+          "grid",
+          "inner-window",
+          "modal",
+          "popup",
+          "scroll-area"
         ],
         "type": "length",
         "via": "setter"
@@ -1657,9 +3893,21 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
+          "grid",
+          "icon",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
+          "popup",
+          "scroll-area",
+          "separator",
           "slider",
-          "text-edit"
+          "text-edit",
+          "toggle-button"
         ],
         "type": "bool",
         "via": "setter"
@@ -1674,9 +3922,21 @@
           "box",
           "button",
           "checkbox",
+          "collapsing-header",
+          "combo-box",
+          "grid",
+          "icon",
+          "inner-window",
           "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
+          "popup",
+          "scroll-area",
+          "separator",
           "slider",
-          "text-edit"
+          "text-edit",
+          "toggle-button"
         ],
         "type": "length",
         "via": "setter"
@@ -1695,12 +3955,28 @@
     }
   },
   "tags": {
+    "action": "Action",
     "box": "Box",
     "button": "Button",
     "checkbox": "Checkbox",
+    "collapsing-header": "CollapsingHeader",
+    "combo-box": "ComboBox",
+    "context-menu": "ContextMenu",
+    "grid": "Grid",
+    "icon": "Icon",
+    "inner-window": "InnerWindow",
     "label": "Label",
+    "menu": "Menu",
+    "menu-bar": "MenuBar",
+    "menu-button": "MenuButton",
+    "menu-separator": "MenuSeparator",
+    "modal": "Modal",
+    "popup": "Popup",
+    "scroll-area": "ScrollArea",
+    "separator": "Separator",
     "slider": "Slider",
     "text-edit": "TextEdit",
+    "toggle-button": "ToggleButton",
     "window": "Window"
   }
 }

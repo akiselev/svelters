@@ -61,6 +61,8 @@ export interface EguiWidgetProps {
   margin?: number;
   /** A name unique in its embedded root: the node's egui id derives from it (stable across runs, not only across reorders), it is the AccessKit author id, and `Embed::anchor_rect` finds it. Changing it drops the node's egui memory. */
   anchor?: string;
+  /** Marks the value as invalid: an outline in the error colour (`Visuals::error_fg_color`) and AccessKit `invalid`. The app sets it; the widget never does. */
+  invalid?: boolean;
 }
 
 /** The built-in egui elements, by tag. */
@@ -107,6 +109,8 @@ export interface EguiElements {
     'wrap-mode'?: 'wrap' | 'truncate' | 'extend';
     /** The text can be selected and copied. */
     selectable?: boolean;
+    /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
+    'font-weight'?: number;
     /** Pressed and released (`Response::clicked`). */
     onclicked?: () => void;
   };
@@ -120,6 +124,8 @@ export interface EguiElements {
     frame?: boolean;
     /** No vertical padding (`Button::small`). */
     small?: boolean;
+    /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
+    'font-weight'?: number;
     /** Pressed and released (`Response::clicked`). */
     onclicked?: () => void;
     /** Double click (`Response::double_clicked`). */
@@ -180,6 +186,316 @@ export interface EguiElements {
     'ondrag-started'?: () => void;
     /** A drag on the slider ended. */
     'ondrag-stopped'?: () => void;
+  };
+  /** A button that stays pressed (`checked`). With `radio`, a row of them is a segmented control: a click checks one, the app unchecks the rest. */
+  'toggle-button': EguiWidgetProps & {
+    /** The caption. */
+    text?: string;
+    /** Pressed state; a click toggles it (with `radio`, a click only sets it). */
+    checked?: boolean;
+    'bind:checked'?: boolean;
+    /** One of a segmented group: a click checks it and never unchecks it (`Ui::selectable_value`); AccessKit role `RadioButton`. The app unchecks the others. */
+    radio?: boolean;
+    /** Draws the button background and border. */
+    frame?: boolean;
+    /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
+    'font-weight'?: number;
+    /** The user toggled it; carries the new state. */
+    onchanged?: (checked: boolean) => void;
+    /** Pressed and released (also when a `radio` click left it checked). */
+    onclicked?: () => void;
+  };
+  /** A drop-down list: shows the selected option, picks one from a popup. Name it with `accessible-name` (it has no caption). */
+  'combo-box': EguiWidgetProps & {
+    /** The choices, in order (the popup's rows). */
+    options?: string[];
+    /** Index of the chosen option; picking a row changes it. Out of range shows no text. */
+    selected?: number;
+    'bind:selected'?: number;
+    /** Shown while `selected` is out of range. */
+    'hint-text'?: string;
+    /** The user picked a row; carries its index. */
+    onchanged?: (selected: number) => void;
+  };
+  /** A thin line between items; fills its rect along its orientation. */
+  separator: EguiWidgetProps & {
+    /** A horizontal line (in a column) or a vertical one (in a row). */
+    orientation?: 'horizontal' | 'vertical';
+  };
+  /** A glyph from an icon font the embedder registered (SVP6), by name or as text. With `frame` it is an icon button. Its accessible name is `accessible-name`, else `tooltip`, else `name`. */
+  icon: EguiWidgetProps & {
+    /** The glyph's name in the family's name table (`svelters_egui::fonts::register_icons`); also the default accessible name. */
+    name?: string;
+    /** The glyph itself (text), when `name` is empty or not in the table. */
+    glyph?: string;
+    /** The registered font family (`egui::FontFamily::Name`) holding the glyphs; the proportional family if it is not registered. */
+    family?: string;
+    /** Font size in points; null for the body size. */
+    size?: number | null;
+    /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
+    'font-weight'?: number;
+    /** Draws it as a button (an icon button: role `Button`, takes focus). */
+    frame?: boolean;
+    /** With `frame`: drawn as selected (a toggle look). */
+    selected?: boolean;
+    /** Pressed and released (`Response::clicked`). */
+    onclicked?: () => void;
+    /** Double click (`Response::double_clicked`). */
+    'ondouble-clicked'?: () => void;
+    /** Right click (`Response::secondary_clicked`). */
+    'onsecondary-clicked'?: () => void;
+  };
+  /** A CSS grid container laid out by taffy: children fill the cells row by row (auto-placement); draws nothing itself. */
+  grid: EguiWidgetProps & {
+    /** The column tracks, CSS syntax: `auto`, `min-content`, `max-content`, `<n>fr`, `<n>px` (or a bare number: points), `<n>%`, `minmax(a, b)`, `fit-content(<len>)`, `repeat(<n>, tracks)`. Rows are implicit (`auto`). The default is a form: a label column and a field column. */
+    'grid-template-columns'?: string;
+    /** Space between rows and between columns, in points (row-gap and column-gap override it). */
+    gap?: number;
+    /** Space between rows in points; null to use `gap`. */
+    'row-gap'?: number | null;
+    /** Space between columns in points; null to use `gap`. */
+    'column-gap'?: number | null;
+    /** Inner spacing on all four sides, in points. */
+    padding?: number;
+    /** Vertical alignment of each child in its cell. */
+    'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
+    /** Horizontal alignment of each child in its cell. */
+    'justify-items'?: 'start' | 'end' | 'center' | 'stretch';
+  };
+  /** A clickable header with a caret; its children (a flex box, indented) are shown and laid out only while `open`. */
+  'collapsing-header': EguiWidgetProps & {
+    /** Main axis of the box. */
+    'flex-direction'?: 'column' | 'row' | 'column-reverse' | 'row-reverse';
+    /** Whether children wrap onto more lines. */
+    'flex-wrap'?: 'nowrap' | 'wrap' | 'wrap-reverse';
+    /** Space between children on both axes, in points (row-gap and column-gap override it). */
+    gap?: number;
+    /** Space between rows in points; null to use `gap`. */
+    'row-gap'?: number | null;
+    /** Space between columns in points; null to use `gap`. */
+    'column-gap'?: number | null;
+    /** Inner spacing on all four sides, in points. */
+    padding?: number;
+    /** Cross-axis alignment of the children. */
+    'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
+    /** Main-axis distribution of the children. */
+    'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** The header's caption (also its accessible name). */
+    text?: string;
+    /** Shows the children; a click on the header (or Enter/Space on it) toggles it. */
+    open?: boolean;
+    'bind:open'?: boolean;
+    /** The user opened or closed it; carries the new state. */
+    onchanged?: (open: boolean) => void;
+  };
+  /** A flex box whose content scrolls when it overflows the area's size (taffy `overflow: scroll`); give it a size or let flex-grow size it. */
+  'scroll-area': EguiWidgetProps & {
+    /** Main axis of the box. */
+    'flex-direction'?: 'column' | 'row' | 'column-reverse' | 'row-reverse';
+    /** Whether children wrap onto more lines. */
+    'flex-wrap'?: 'nowrap' | 'wrap' | 'wrap-reverse';
+    /** Space between children on both axes, in points (row-gap and column-gap override it). */
+    gap?: number;
+    /** Space between rows in points; null to use `gap`. */
+    'row-gap'?: number | null;
+    /** Space between columns in points; null to use `gap`. */
+    'column-gap'?: number | null;
+    /** Inner spacing on all four sides, in points. */
+    padding?: number;
+    /** Cross-axis alignment of the children. */
+    'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
+    /** Main-axis distribution of the children. */
+    'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** The axes that scroll (taffy `overflow: scroll` on them). */
+    direction?: 'vertical' | 'horizontal' | 'both';
+    /** Horizontal offset in points; scrolling changes it, and a write scrolls (clamped to the content). */
+    'scroll-x'?: number;
+    'bind:scroll-x'?: number;
+    /** Vertical offset in points; scrolling changes it, and a write scrolls (clamped to the content). */
+    'scroll-y'?: number;
+    'bind:scroll-y'?: number;
+    /** The user scrolled (or a write was clamped); carries the new offsets. */
+    onchanged?: (scroll_x: number, scroll_y: number) => void;
+  };
+  /** A horizontal menu bar of `menu` children (and plain `action`s). One interact row high; it takes no width of its own, so it fills a column (align-items stretch) or needs `flex-grow` in a row. The shortcuts of its actions are active while it is drawn. */
+  'menu-bar': EguiWidgetProps & {
+  };
+  /** A menu: a menu-bar button, or a submenu row inside another menu. Inside a `menu-button` its items are the button's menu (its label is unused). */
+  menu: {
+    /** Can be picked when true; drawn greyed out otherwise. */
+    enabled?: boolean;
+    /** Shown in its menu when true. */
+    visible?: boolean;
+    /** Hover text; empty for none. */
+    tooltip?: string;
+    /** AccessKit name; the label by default. */
+    'accessible-name'?: string;
+    /** A name unique in its embedded root (AccessKit author id, `Embed::anchor_rect`). */
+    anchor?: string;
+    /** The title: the menu-bar button, or the submenu row. */
+    label?: string;
+  };
+  /** A menu item: plain, a check item (`checkable`) or a radio item (`group`), with an optional `shortcut`. AccessKit role Button, CheckBox or RadioButton. */
+  action: {
+    /** Can be picked when true; drawn greyed out otherwise. */
+    enabled?: boolean;
+    /** Shown in its menu when true. */
+    visible?: boolean;
+    /** Hover text; empty for none. */
+    tooltip?: string;
+    /** AccessKit name; the label by default. */
+    'accessible-name'?: string;
+    /** A name unique in its embedded root (AccessKit author id, `Embed::anchor_rect`). */
+    anchor?: string;
+    /** The caption. */
+    label?: string;
+    /** Keyboard accelerator such as `Ctrl+O`, `Ctrl+Shift+S` or `F5`: shown right-aligned and active while the menu's owner (menu-bar, menu-button, context-menu) is drawn. Modifiers: `Ctrl`, `Shift`, `Alt`, `Cmd` (macOS command), `Primary` (Cmd on macOS, Ctrl elsewhere); keys are egui `Key` names. An unknown key is an error. */
+    shortcut?: string;
+    /** A check item: picking it toggles `checked`. */
+    checkable?: boolean;
+    /** Check or radio state; picking a check item toggles it, picking a radio item sets it. */
+    checked?: boolean;
+    'bind:checked'?: boolean;
+    /** A radio item: the actions of one parent with the same group form an exclusive set; picking one checks it and unchecks the others (each announced). */
+    group?: string;
+    /** The user changed `checked` (a check item, or a radio item turned on or off by a pick); carries the new state. */
+    ontoggled?: (checked: boolean) => void;
+    /** The user picked it (click, Enter, or its shortcut); carries `checked` after the pick. */
+    onactivate?: (checked: boolean) => void;
+  };
+  /** A line between menu items (a vertical one in a menu bar). */
+  'menu-separator': {
+    /** Can be picked when true; drawn greyed out otherwise. */
+    enabled?: boolean;
+    /** Shown in its menu when true. */
+    visible?: boolean;
+    /** Hover text; empty for none. */
+    tooltip?: string;
+    /** AccessKit name; the label by default. */
+    'accessible-name'?: string;
+    /** A name unique in its embedded root (AccessKit author id, `Embed::anchor_rect`). */
+    anchor?: string;
+  };
+  /** A menu that attaches to the element it is declared in and opens at the pointer on a secondary click on it (the innermost owner wins). `popup` opens it below its owner. The shortcuts of its actions are active while the owner is drawn. */
+  'context-menu': {
+    /** Can be picked when true; drawn greyed out otherwise. */
+    enabled?: boolean;
+    /** Shown in its menu when true. */
+    visible?: boolean;
+    /** Hover text; empty for none. */
+    tooltip?: string;
+    /** AccessKit name; the label by default. */
+    'accessible-name'?: string;
+    /** A name unique in its embedded root (AccessKit author id, `Embed::anchor_rect`). */
+    anchor?: string;
+  };
+  /** A button that opens a menu of its children (`action`, `menu`, `menu-separator`; a `menu` child's items are shown inline, as GTK's menu-button takes a menu). The shortcuts of its actions are active while it is drawn. */
+  'menu-button': EguiWidgetProps & {
+    /** The caption. */
+    label?: string;
+    /** The menu is open; the user opening or closing it changes it, setting it opens or closes it. */
+    active?: boolean;
+    'bind:active'?: boolean;
+    /** The user opened or closed the menu; carries `active`. */
+    onchanged?: (active: boolean) => void;
+  };
+  /** A popover anchored to its owner: the element it is declared in (attached), or the box it is placed in. Its children are a flex box sized to their content (or `width`/`height`), out of the owner's flow. GTK's `popover`. */
+  popup: EguiWidgetProps & {
+    /** Main axis of the box. */
+    'flex-direction'?: 'column' | 'row' | 'column-reverse' | 'row-reverse';
+    /** Whether children wrap onto more lines. */
+    'flex-wrap'?: 'nowrap' | 'wrap' | 'wrap-reverse';
+    /** Space between children on both axes, in points (row-gap and column-gap override it). */
+    gap?: number;
+    /** Space between rows in points; null to use `gap`. */
+    'row-gap'?: number | null;
+    /** Space between columns in points; null to use `gap`. */
+    'column-gap'?: number | null;
+    /** Inner spacing on all four sides, in points. */
+    padding?: number;
+    /** Cross-axis alignment of the children. */
+    'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
+    /** Main-axis distribution of the children. */
+    'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** Shown when true; the user closing it (Escape, a click outside with `autohide`) sets it false. */
+    open?: boolean;
+    'bind:open'?: boolean;
+    /** The side of its owner it opens on (egui moves it to another side when it does not fit). */
+    position?: 'bottom' | 'top' | 'left' | 'right';
+    /** A click outside closes it; with false only Escape, `popdown` or the app does. */
+    autohide?: boolean;
+    /** The user (or `popup`/`popdown`) opened or closed it; carries `open`. */
+    onchanged?: (open: boolean) => void;
+    /** The user (or `popdown`) closed it. */
+    onclosed?: () => void;
+  };
+  /** An in-window modal dialog: a backdrop over the viewport that blocks the rest of the UI, its content centred, sized to fit (or `width`/`height`). The egui form of a modal dialog (no OS-modal windows on egui: EGUI.md §5). */
+  modal: EguiWidgetProps & {
+    /** Main axis of the box. */
+    'flex-direction'?: 'column' | 'row' | 'column-reverse' | 'row-reverse';
+    /** Whether children wrap onto more lines. */
+    'flex-wrap'?: 'nowrap' | 'wrap' | 'wrap-reverse';
+    /** Space between children on both axes, in points (row-gap and column-gap override it). */
+    gap?: number;
+    /** Space between rows in points; null to use `gap`. */
+    'row-gap'?: number | null;
+    /** Space between columns in points; null to use `gap`. */
+    'column-gap'?: number | null;
+    /** Inner spacing on all four sides, in points. */
+    padding?: number;
+    /** Cross-axis alignment of the children. */
+    'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
+    /** Main-axis distribution of the children. */
+    'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** Shown when true (so `{#if}` alone can show it); the user dismissing it sets it false. */
+    open?: boolean;
+    'bind:open'?: boolean;
+    /** A heading above the content; also the dialog's accessible name. */
+    title?: string;
+    /** Escape or a click on the backdrop closes it; with false only the app does. */
+    dismissable?: boolean;
+    /** The user (or `popup`/`popdown`) opened or closed it; carries `open`. */
+    onchanged?: (open: boolean) => void;
+    /** The user (or `popdown`) closed it. */
+    onclosed?: () => void;
+  };
+  /** A floating window inside the viewport (`egui::Window`): movable, optionally resizable, collapsible and closable; its children are a flex box. */
+  'inner-window': EguiWidgetProps & {
+    /** Main axis of the box. */
+    'flex-direction'?: 'column' | 'row' | 'column-reverse' | 'row-reverse';
+    /** Whether children wrap onto more lines. */
+    'flex-wrap'?: 'nowrap' | 'wrap' | 'wrap-reverse';
+    /** Space between children on both axes, in points (row-gap and column-gap override it). */
+    gap?: number;
+    /** Space between rows in points; null to use `gap`. */
+    'row-gap'?: number | null;
+    /** Space between columns in points; null to use `gap`. */
+    'column-gap'?: number | null;
+    /** Inner spacing on all four sides, in points. */
+    padding?: number;
+    /** Cross-axis alignment of the children. */
+    'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
+    /** Main-axis distribution of the children. */
+    'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** Shown when true; the close button sets it false. */
+    open?: boolean;
+    'bind:open'?: boolean;
+    /** The title bar text. */
+    title?: string;
+    /** Initial width in points (a resizable window's content fills it). */
+    'default-width'?: number;
+    /** Initial height in points. */
+    'default-height'?: number;
+    /** Shows a close button in the title bar. */
+    closable?: boolean;
+    /** The title bar can collapse it to the title. */
+    collapsible?: boolean;
+    /** The user can resize it; the content is laid out at its size. Without it the window is as big as its content. */
+    resizable?: boolean;
+    /** The user (or `popup`/`popdown`) opened or closed it; carries `open`. */
+    onchanged?: (open: boolean) => void;
+    /** The user (or `popdown`) closed it. */
+    onclosed?: () => void;
   };
 }
 

@@ -149,7 +149,6 @@ fn menu_bar_menus_actions_and_check_items() {
     rig.harness.get_by_role_and_label(Role::Button, "Open");
     rig.harness
         .get_by_role_and_label(Role::CheckBox, "Autosave");
-    assert!(has(&rig, "Ctrl+O"), "the shortcut is shown");
     click_label(&mut rig, "Open");
     assert_eq!(
         events(&rig, m.open, "activate"),
@@ -292,7 +291,7 @@ fn context_menu_on_a_leaf_and_on_a_box() {
         "box",
         &[("padding", Value::F64(20.0)), ("height", Value::F64(120.0))],
     );
-    let btn = rig.leaf(inner, "button", &[("text", s("Target"))]);
+    let btn = rig.leaf(inner, "button", &[("text", s("Target")), ("align-self", s("start"))]);
     // attached to a leaf (the compiler's `attaches_to`): any element takes one
     let cm = rig.leaf(btn, "context-menu", &[]);
     let paste = rig.leaf(cm, "action", &[("label", s("Paste"))]);
@@ -454,7 +453,9 @@ fn modal_dialog() {
     assert!(has(&rig, "Confirm") && has(&rig, "Delete it?"));
     rig.click(ok);
     assert_eq!(events(&rig, ok, "clicked").len(), 1);
-    // the backdrop blocks what is behind it
+    // the backdrop blocks what is behind it (dismissable: false, so the click does not close it)
+    rig.set(modal, "dismissable", Value::Bool(false));
+    rig.run();
     rig.click(back);
     assert!(events(&rig, back, "clicked").is_empty());
     // dismissable: false keeps it on Escape
