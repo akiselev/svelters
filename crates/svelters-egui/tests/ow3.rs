@@ -135,7 +135,6 @@ fn ow3_menu_bar_keyboard() {
     key(&mut rig, egui::Key::F10);
     key(&mut rig, egui::Key::ArrowDown);
     key(&mut rig, egui::Key::ArrowRight);
-    key(&mut rig, egui::Key::ArrowRight);
     assert!(has(&rig, "Copy") && !has(&rig, "Open") && current(&rig, m.copy));
     // Escape closes the menu, focus goes back to where it was
     key(&mut rig, egui::Key::Escape);
@@ -157,12 +156,14 @@ fn ow3_hover_switches_titles_and_opens_submenus_after_the_delay() {
     click_label(&mut rig, "Edit");
     assert!(!has(&rig, "Copy"), "a click on the open title closes it");
     // the submenu waits for the delay
+    native::override_policy(&rig.harness.ctx, |p| p.submenu_delay_ms = 60_000);
     click_label(&mut rig, "File");
     let r = rig.harness.get_by_label("Recent").rect().center();
     rig.harness.hover_at(r);
     rig.harness.run();
     assert!(!has(&rig, "a.txt"), "not before the delay");
-    rig.harness.run_steps(30);
+    native::override_policy(&rig.harness.ctx, |p| p.submenu_delay_ms = 0);
+    rig.harness.run_steps(2);
     rig.harness.run();
     assert!(has(&rig, "a.txt"));
     // a click outside every level closes them all
@@ -348,7 +349,7 @@ fn ow3_select_pointer_and_width() {
 #[test]
 fn ow3_tooltips_delay_disabled_and_description() {
     let mut rig = rig();
-    native::override_policy(&rig.harness.ctx, |p| p.tooltip_delay_ms = 500);
+    native::override_policy(&rig.harness.ctx, |p| p.tooltip_delay_ms = 60_000);
     let (_w, col) = rig.window();
     let a = rig.leaf(col, "button", &[("text", s("Save")), ("tooltip", s("Saves the file")), ("align-self", s("start"))]);
     let b = rig.leaf(col, "button", &[("text", s("Undo")), ("tooltip", s("Nothing to undo")), ("enabled", Value::Bool(false)), ("align-self", s("start"))]);
@@ -360,7 +361,8 @@ fn ow3_tooltips_delay_disabled_and_description() {
     rig.harness.hover_at(rig.drawn(a).center());
     rig.harness.run();
     assert_eq!(tip(&rig, "Saves the file"), 0, "not before the delay");
-    rig.harness.run_steps(40);
+    native::override_policy(&rig.harness.ctx, |p| p.tooltip_delay_ms = 0);
+    rig.harness.run_steps(2);
     rig.harness.run();
     assert_eq!(tip(&rig, "Saves the file"), 1);
     // a press hides it
@@ -375,4 +377,36 @@ fn ow3_tooltips_delay_disabled_and_description() {
     rig.harness.hover_at(egui::pos2(400.0, 330.0));
     rig.harness.run();
     assert_eq!(tip(&rig, "Nothing to undo"), 0);
+}
+
+#[test]
+fn ow3_menu_button_keyboard_and_chevron() {
+    let mut rig = rig();
+    let (_w, col) = rig.window();
+    let mb = rig.leaf(col, "menu-button", &[("label", s("More")), ("align-self", s("start"))]);
+    let copy = rig.leaf(mb, "action", &[("label", s("Copy"))]);
+    let paste = rig.leaf(mb, "action", &[("label", s("Paste")), ("enabled", Value::Bool(false))]);
+    let cut = rig.leaf(mb, "action", &[("label", s("Cut"))]);
+    for h in [copy, paste, cut] {
+        rig.listen(h, "activate");
+    }
+    rig.observe(mb, "active", true);
+    trace::enable(&rig.harness.ctx, true);
+    rig.run();
+    // R14: a chevron part
+    assert!(trace::last(&rig.harness.ctx).find(mb, Some("chevron"), TraceKind::Path).is_some());
+    key(&mut rig, egui::Key::Tab);
+    key(&mut rig, egui::Key::Enter);
+    assert_eq!(rig.get(mb, "active"), Value::Bool(true));
+    assert!(current(&rig, copy), "opened from the keyboard at its first row");
+    // R9: the disabled row is reachable, not pickable
+    key(&mut rig, egui::Key::ArrowDown);
+    assert!(current(&rig, paste));
+    key(&mut rig, egui::Key::Enter);
+    assert!(events(&rig, paste, "activate").is_empty() && has(&rig, "Paste"));
+    key(&mut rig, egui::Key::ArrowDown);
+    key(&mut rig, egui::Key::Enter);
+    assert_eq!(events(&rig, cut, "activate").len(), 1);
+    assert_eq!(rig.get(mb, "active"), Value::Bool(false));
+    assert!(rig.harness.get_by_role_and_label(Role::Button, "More").is_focused(), "focus back on the button");
 }

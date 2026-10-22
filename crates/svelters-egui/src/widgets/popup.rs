@@ -89,13 +89,25 @@ pub(crate) struct Grab {
     /// The focus before the grab.
     pub restore: Option<Id>,
     pub active: bool,
+    /// The focus when the last pointer press began (a text field drops focus on a press
+    /// elsewhere, before the click that opens the surface).
+    pub pressed: Option<Id>,
 }
 
 impl Grab {
+    /// Notes the focus at a pointer press of this pass (call it every pass, before [`Grab::take`]).
+    pub fn note_press(&mut self, ctx: &egui::Context) {
+        if !self.active && ctx.input(|i| i.pointer.any_pressed()) {
+            self.pressed = crate::focus::pass_start_focus(ctx);
+        }
+    }
+
     /// Takes keyboard focus for `id`.
     pub fn take(&mut self, ctx: &egui::Context, id: Id) {
         if !self.active {
-            self.restore = ctx.memory(|m| m.focused()).filter(|f| *f != id);
+            let pointer = ctx.input(|i| i.pointer.any_click() || i.pointer.any_released());
+            let now = ctx.memory(|m| m.focused());
+            self.restore = now.or(if pointer { self.pressed } else { None }).filter(|f| *f != id);
             self.active = true;
         }
         ctx.memory_mut(|m| m.request_focus(id));

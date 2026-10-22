@@ -207,7 +207,8 @@ impl<'a> Menu<'a> {
     fn load(arena: &'a mut Arena, root: usize, ui: &Ui, out: &'a mut Vec<Out>) -> Menu<'a> {
         let ctx = ui.ctx().clone();
         let key = arena.core[root].egui_id.with("ow3-menu");
-        let st = ctx.data(|d| d.get_temp::<State>(key)).unwrap_or_default();
+        let mut st = ctx.data(|d| d.get_temp::<State>(key)).unwrap_or_default();
+        st.grab.note_press(&ctx);
         let delay = crate::native::policy_of(&ctx).submenu_delay_ms as f64 / 1000.0;
         let now = ctx.input(|i| i.time);
         let dark = popup::dark(&ctx);
@@ -314,7 +315,8 @@ impl<'a> Menu<'a> {
 
     /// The keys of this pass for the deepest level (the menu holds focus).
     fn keys(&mut self, bar: Option<&[Row]>) {
-        if !self.is_open() || !self.ctx.memory(|m| m.has_focus(self.focus)) {
+        // (not in the pass it opened: the key that opened it is not a pick)
+        if !self.is_open() || self.st.opened == self.ctx.cumulative_pass_nr() || !self.ctx.memory(|m| m.has_focus(self.focus)) {
             return;
         }
         let (keys, texts) = self.ctx.input(|i| {
@@ -754,7 +756,11 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         _ => return ui.response(),
     };
     let h = arena.slots.id_at(i).expect("live node").to_raw();
-    let resp = crate::a11y::decorate(resp, &arena.n(h));
+    let mut resp = crate::a11y::decorate(resp, &arena.n(h));
+    let tip = arena.common(i).tooltip.clone();
+    if !tip.is_empty() {
+        resp = super::tooltip::attach(ui, &resp, &tip, arena.own.contains("tooltip"));
+    }
     if arena.common(i).invalid {
         crate::leaf::invalid_outline(ui, resp.rect);
     }
@@ -847,9 +853,6 @@ fn bar(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> egui::Re
                 ctx.input_mut(|inp| inp.consume_key(Modifiers::NONE, k));
             }
         }
-        if m.st.bar_keys {
-            m.st.grab.keep(ui, m.focus, rect);
-        }
     }
     if m.st.bar_keys && !ctx.memory(|mm| mm.has_focus(m.focus)) && !m.is_open() {
         m.st.bar_keys = false; // focus went elsewhere (a click on a field)
@@ -910,6 +913,9 @@ fn bar(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> egui::Re
         if is_open {
             anchor = Some(r);
         }
+    }
+    if m.st.bar_keys && !m.is_open() {
+        m.st.grab.keep(ui, m.focus, rect); // the bar holds the keyboard (F10) with no menu open
     }
     if let Some(a) = anchor {
         let rects = m.paint(a, Placement::BOTTOM_START, Some(0.0));
@@ -1042,7 +1048,6 @@ pub(crate) fn context(arena: &mut Arena, i: usize, owner: Rect, ui: &mut Ui, out
     if enabled {
         menus::shortcuts(arena, i, ui, out);
     }
-    let owner_id = arena.core[i].parent.and_then(|p| arena.idx(p)).map(|p| arena.core[p].egui_id);
     let mut m = Menu::load(arena, i, ui, out);
     let ctx = m.ctx.clone();
     if enabled
@@ -1056,8 +1061,10 @@ pub(crate) fn context(arena: &mut Arena, i: usize, owner: Rect, ui: &mut Ui, out
         m.open(i, false, false);
     }
     // FM1 QA8: the context-menu keys on the focused owner
-    let focused_owner = owner_id.is_some_and(|o| ctx.memory(|mm| mm.has_focus(o)));
-    if enabled && focused_owner && !m.is_open() && ctx.input_mut(|inp| inp.consume_key(Modifiers::SHIFT, Key::F10) || inp.consume_key(Modifiers::NONE, Key::Menu)) {
+    // (the focused widget drawn in the owner: its response id need not be the node id)
+    let focused_owner = owner.is_positive() && ctx.memory(|mm| mm.focused()).and_then(|f| ctx.read_response(f)).is_some_and(|r| r.layer_id == ui.layer_id() && owner.contains(r.rect.center()));
+    if enabled && focused_owner && !m.is_open() && ctx.input(|inp| inp.key_pressed(Key::Menu) || inp.events.iter().any(|e| matches!(e, egui::Event::Key { key: Key::F10, pressed: true, modifiers, .. } if modifiers.shift_only()))) && menus::claim(&ctx, owner.area()) {
+        ctx.input_mut(|inp| inp.consume_key(Modifiers::SHIFT, Key::F10) || inp.consume_key(Modifiers::NONE, Key::Menu));
         m.st.anchor = Some(popup::point(owner.left_bottom()));
         m.open(i, false, true);
     }

@@ -101,10 +101,9 @@ pub(crate) fn attach(ui: &Ui, resp: &egui::Response, text: &str, own: bool) -> e
     if host.unit.shown()
         && let Some(at) = host.at
     {
-        let area = resp.rect.area();
+        let (area, pass) = (resp.rect.area(), ctx.cumulative_pass_nr());
         ctx.data_mut(|d| {
             let s: &mut Shared = d.get_temp_mut_or_default(shared_id());
-            let pass = ctx.cumulative_pass_nr();
             if s.pending.as_ref().is_none_or(|p| p.pass != pass || area <= p.area) {
                 s.pending = Some(Pending { pass, area, text: text.to_string(), at, host: resp.id });
             }

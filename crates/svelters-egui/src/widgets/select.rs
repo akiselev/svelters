@@ -191,6 +191,7 @@ impl Widget for Select {
     fn ui(&mut self, ui: &mut egui::Ui, cx: &mut WidgetCx<'_>) -> egui::Response {
         let ctx = ui.ctx().clone();
         let list_id = cx.id().with("ow3-list");
+        self.grab.note_press(&ctx);
         // the host opened or closed it (`open`, `bind:open`)
         if self.open && !self.was_open {
             self.set_open(cx, true, false);
@@ -230,7 +231,7 @@ impl Widget for Select {
                         }
                     }
                     Key::Space if typing => {}
-                    Key::Enter | Key::Space | Key::F4 => {
+                    Key::F4 => {
                         self.set_open(cx, true, true);
                         self.opened = ctx.cumulative_pass_nr();
                     }
@@ -269,10 +270,12 @@ impl Widget for Select {
                 ctx.input_mut(|i| i.smooth_scroll_delta = egui::Vec2::ZERO);
             }
         }
-        // a click (or AccessKit `Click`) opens or closes it
-        if enabled && fired.pressable.iter().any(|p| p.is_click()) {
+        // a click, AccessKit `Click`, or Enter/Space on the focused select (egui reports them as clicks)
+        let kb = ctx.input(|i| i.key_pressed(Key::Enter) || i.key_pressed(Key::Space));
+        let typing_space = ctx.input(|i| i.key_pressed(Key::Space)) && self.typeahead.typing(&tp, now);
+        if enabled && fired.pressable.iter().any(|p| p.is_click()) && !typing_space {
             let open = !self.open;
-            self.set_open(cx, open, false);
+            self.set_open(cx, open, kb);
             if open {
                 self.opened = ctx.cumulative_pass_nr();
             }
@@ -285,7 +288,8 @@ impl Widget for Select {
             if !self.was_open || !self.grab.active {
                 self.grab.take(&ctx, list_id);
             }
-            if ctx.memory(|m| m.has_focus(list_id)) {
+            // (not in the pass it opened: the key that opened it is not a pick)
+            if self.was_open && ctx.memory(|m| m.has_focus(list_id)) {
                 let (keys, texts) = ctx.input(|i| {
                     let keys: Vec<Key> = i.events.iter().filter_map(|e| match e {
                         egui::Event::Key { key, pressed: true, modifiers, .. } if !modifiers.ctrl && !modifiers.command => Some(*key),

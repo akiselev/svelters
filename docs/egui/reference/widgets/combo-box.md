@@ -31,8 +31,11 @@ A drop-down list: shows the selected option, picks one from a popup. Name it wit
 | Prop | Type | Default | `bind:` | Description |
 |---|---|---|---|---|
 | `hint-text` | `string` | `""` | no | Shown while `selected` is out of range. |
+| `max-visible` | `number` | `30` | no | Rows shown before the list scrolls (QComboBox `maxVisibleItems`). |
+| `open` | `boolean` | `false` | **yes**, on `changed` | The list is open; the user opening or closing it changes it, setting it opens or closes it (QComboBox `showPopup`/`hidePopup`). |
 | `options` | `string[]` | `null` | no | The choices, in order (the popup's rows). |
 | `selected` | `number` | `0` | **yes**, on `changed` | Index of the chosen option; picking a row changes it. Out of range shows no text. |
+| `wheel` | `'off' \| 'hover' \| 'focused'` | `"off"` | no | The wheel over the closed select changes the pick: `off` (default), `hover`, `focused`. |
 
 Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessible-name`, `align-self`, `anchor`, `autofocus`, `bottom`, `drag-data`, `drag-type`, `drop-types`, `enabled`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `invalid`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `tooltip`, `top`, `visible`, `width`.
 <!-- END GENERATED -->
@@ -42,11 +45,14 @@ Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessib
 <!-- BEGIN GENERATED: events of kinds.ComboBox (tools/docs/egui/gen_reference.py). Do not edit. -->
 | Attribute | Handler | When |
 |---|---|---|
+| `onactivate` | `(value: number) => void` | The user picked an option, the same one or not (QComboBox `activated`); carries its index. |
 | `onchanged` | `(selected: number) => void` | The user picked a row; carries its index. |
+| `oncommit` | `(value: number) => void` | A pick finished the edit (§2.4); carries the index. |
+| `onhighlight` | `(value: number) => void` | The current row of the open list moved (keyboard or pointer; `highlighted`). |
 
-`on:changed` works too, and a bare `on:<event>` on a component forwards the component's `on<event>` prop.
+`on:activate` works too, and a bare `on:<event>` on a component forwards the component's `on<event>` prop.
 
-Plus the events of [`Widget`](widget.md#events): `onanimationend`, `ondrag-begin`, `ondrag-end`, `ondrag-enter`, `ondrag-leave`, `ondrop`.
+Plus the events of [`Widget`](widget.md#events): `onanimationend`, `onclick`, `oncontextmenu`, `ondblclick`, `ondrag-begin`, `ondrag-end`, `ondrag-enter`, `ondrag-leave`, `ondrop`, `onfocusin`, `onfocusout`, `onkeydown`, `onkeyup`, `onpointerdown`, `onpointerup`, `onwheel`.
 <!-- END GENERATED -->
 
 ## Methods

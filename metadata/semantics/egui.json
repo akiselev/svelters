@@ -1551,6 +1551,25 @@
       },
       "abstract": false,
       "bindings": {
+        "open": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "open",
+          "provenance": "svelters-egui: the egui::ComboBox widget writes open into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
         "selected": {
           "compare_before_set": true,
           "direction": "two_way",
@@ -1604,6 +1623,40 @@
           "type": "string",
           "writable": true
         },
+        "max-visible": {
+          "construct_only": false,
+          "default": 30,
+          "doc": "Rows shown before the list scrolls (QComboBox `maxVisibleItems`).",
+          "js": "max-visible",
+          "native": "max-visible",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ComboBox:max-visible",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "open": {
+          "construct_only": false,
+          "default": false,
+          "doc": "The list is open; the user opening or closing it changes it, setting it opens or closes it\n(QComboBox `showPopup`/`hidePopup`).",
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:ComboBox:open",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "options": {
           "construct_only": false,
           "default": null,
@@ -1638,12 +1691,50 @@
           "readable": true,
           "type": "i64",
           "writable": true
+        },
+        "wheel": {
+          "construct_only": false,
+          "default": "off",
+          "doc": "The wheel over the closed select changes the pick: `off` (default), `hover`, `focused`.",
+          "js": "wheel",
+          "native": "wheel",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ComboBox:wheel",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "off",
+            "hover",
+            "focused"
+          ],
+          "writable": true
         }
       },
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {
+        "activate": {
+          "args": [
+            {
+              "name": "value",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user picked an option, the same one or not (QComboBox `activated`); carries its index.",
+          "handler_result": "none",
+          "js_event": "activate",
+          "name": "activate",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "changed": {
           "args": [
             {
@@ -1656,6 +1747,38 @@
           "handler_result": "none",
           "js_event": "changed",
           "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A pick finished the edit (§2.4); carries the index.",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "highlight": {
+          "args": [
+            {
+              "name": "value",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The current row of the open list moved (keyboard or pointer; `highlighted`).",
+          "handler_result": "none",
+          "js_event": "highlight",
+          "name": "highlight",
           "phases": [],
           "sync": false,
           "sync_required": false
