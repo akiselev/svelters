@@ -1659,6 +1659,8 @@ fn takes_input(w: &crate::scene::W) -> bool {
     use crate::scene::W;
     match w {
         W::Button { .. } | W::Checkbox { .. } | W::TextEdit { .. } | W::Slider { .. } => true,
+        // scrolls and selects (LS1)
+        W::VirtualList(_) => true,
         W::Label { selectable, .. } => *selectable,
         W::Ext(x) => {
             let c = x.entry().caps;

@@ -47,6 +47,7 @@ impl EguiBackend {
         let id = scene.live(w).expect("a live window");
         let r = scene.core[scene.ix(id)].root;
         crate::provider::pass::prepare_root(&mut scene, r); // SG4: Caps::PREPARE (§7.2 b)
+        crate::kinds::virtuallist::prepare_root(&mut scene, ui.ctx(), r); // SG5: Rust rows bound before layout
         self.layout_root(&mut scene, ui.ctx(), r, rect.size());
         paint(&mut scene, w, rect.min.to_vec2(), ui, out);
         ui.allocate_rect(rect, egui::Sense::hover());
@@ -69,6 +70,7 @@ impl EguiBackend {
             layout::remeasure(&mut scene, &layout::Metrics::new(ui.ctx()), r);
         }
         crate::provider::pass::prepare_root(&mut scene, r); // SG4: Caps::PREPARE (§7.2 b)
+        crate::kinds::virtuallist::prepare_root(&mut scene, ui.ctx(), r); // SG5: Rust rows bound before layout
         self.layout_root(&mut scene, ui.ctx(), r, rect.size());
         paint_at(&mut scene, i, rect.min.to_vec2(), ui, out);
         // what the content needs: the extent of the slot's children (laid out from its origin)
@@ -188,6 +190,10 @@ fn paint_own(
     out: &mut Vec<Out>,
 ) -> Option<egui::Response> {
     let r = arena.core[i].rect.translate(origin);
+    if matches!(arena.w(i), crate::scene::W::VirtualList(_)) {
+        // LS1: rows at the list's scroll offset, clipped, with their a11y set size
+        return crate::kinds::virtuallist::paint(arena, i, origin, ui, out);
+    }
     if arena.w(i).is_container() {
         // Cull whole subtrees outside the clip rect.
         if !ui.is_rect_visible(r) {

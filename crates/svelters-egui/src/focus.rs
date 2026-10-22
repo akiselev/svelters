@@ -77,6 +77,8 @@ pub(crate) enum Role {
     Button { default: bool, cancel: bool },
     Toggle,
     Slider,
+    /// LS1: a selectable `virtual-list` row (the list's tab stop is its selected row).
+    List,
     /// A provider kind (its claims are asked through `Widget::consume_key`).
     Ext { enter: bool, escape: bool },
     Other,
@@ -94,6 +96,8 @@ pub(crate) struct Entry {
     scoped: bool,
     role: Role,
     autofocus: bool,
+    /// In the tab chain (a list is one stop however many rows it shows).
+    tab_stop: bool,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -223,6 +227,7 @@ pub(crate) fn claims(role: Role, key: Key, m: Modifiers, mac: bool) -> bool {
             mac && m.alt && !command && matches!(key, Key::ArrowLeft | Key::ArrowRight | Key::Backspace | Key::Delete)
         }
         Role::Slider => !command && !m.alt && nav,
+        Role::List => !command && !m.alt && (nav || (!m.shift && matches!(key, Key::Space | Key::Enter))),
         Role::Button { .. } | Role::Toggle => !command && !m.alt && !m.shift && matches!(key, Key::Space | Key::Enter),
         Role::Ext { .. } | Role::Other => false,
     }
@@ -305,7 +310,7 @@ fn route(st: &mut State, focus: Option<Id>, keys: &[(Key, Modifiers)], ime: &[bo
         let opener = if inside { None } else { focus.or(plan.focus).or(before) };
         st.openers.push((s.id, opener));
         if !inside {
-            let mut members = prev.entries.iter().filter(|e| e.scoped && e.scope == s.id);
+            let mut members = prev.entries.iter().filter(|e| e.scoped && e.tab_stop && e.scope == s.id);
             let target = members.clone().find(|e| e.autofocus).or_else(|| members.next());
             if let Some(t) = target {
                 plan.focus = Some(t.id);
@@ -346,7 +351,7 @@ fn route(st: &mut State, focus: Option<Id>, keys: &[(Key, Modifiers)], ime: &[bo
     for &(key, m) in keys {
         if key == Key::Tab && (!m.any() || m.shift_only()) && !plan.cancel_tab {
             let Some(s) = scope_of(true) else { continue };
-            let chain: Vec<Id> = prev.entries.iter().filter(|e| e.scoped && e.scope == s).map(|e| e.id).collect();
+            let chain: Vec<Id> = prev.entries.iter().filter(|e| e.scoped && e.tab_stop && e.scope == s).map(|e| e.id).collect();
             if chain.is_empty() {
                 continue;
             }
@@ -529,7 +534,6 @@ pub(crate) fn record(arena: &Arena, i: usize, ui: &Ui, resp: &egui::Response) {
     if !ui.is_enabled() || !resp.sense.is_focusable() {
         return;
     }
-    let ctx = ui.ctx();
     let c = arena.common(i);
     let role = match arena.w(i) {
         W::TextEdit { multiline, .. } => Role::Text { multiline: *multiline },
@@ -544,6 +548,17 @@ pub(crate) fn record(arena: &Arena, i: usize, ui: &Ui, resp: &egui::Response) {
         _ if resp.sense.senses_click() => Role::Toggle,
         _ => Role::Other,
     };
+    record_with(arena, i, ui, resp, role, true);
+}
+
+/// [`record`] with the role given: LS1's `virtual-list` records each selectable row it draws
+/// (`node` is the list), one of them as the tab stop.
+pub(crate) fn record_with(arena: &Arena, i: usize, ui: &Ui, resp: &egui::Response, role: Role, tab_stop: bool) {
+    if !ui.is_enabled() || !resp.sense.is_focusable() {
+        return;
+    }
+    let ctx = ui.ctx();
+    let c = arena.common(i);
     let (scope, scoped) = scope_of(arena, i);
     let entry = Entry {
         id: resp.id,
@@ -552,7 +567,8 @@ pub(crate) fn record(arena: &Arena, i: usize, ui: &Ui, resp: &egui::Response) {
         scope,
         scoped,
         role,
-        autofocus: c.autofocus,
+        autofocus: c.autofocus && tab_stop,
+        tab_stop,
     };
     let focused = resp.has_focus();
     let pass = ctx.cumulative_pass_nr();
@@ -812,6 +828,7 @@ mod tests {
             scoped,
             role,
             autofocus: false,
+            tab_stop: true,
         }
     }
 

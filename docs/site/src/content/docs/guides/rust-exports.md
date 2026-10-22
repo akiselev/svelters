@@ -85,8 +85,8 @@ pub enum SlotStatus { Empty, Filled { value: f64 }, Refused(Refusal) }
 pub fn check(slot: String, value: Option<f64>) -> Json<SlotStatus> { /* … */ }
 ```
 
-The typings come from the type's JSON Schema. Every named schema a module uses is declared in that module, so the union
-above narrows in TypeScript like any other:
+The typings come from the type's JSON Schema. Every named schema a module uses is declared in that module (as
+`<Name>Json` if a svelters type or class already has the name), so the union above narrows in TypeScript like any other:
 
 ```ts
 import { check, type SlotStatus } from 'svelters:app/intent';
@@ -107,6 +107,8 @@ function label(s: SlotStatus): string {
 
 A value that does not fit its Rust type throws a `NativeError` with `domain: 'svelters'`. The `code` says what was
 wrong, and the message starts with the path from the parameter, for example ``at layer.shapes[1]: missing field `h` ``.
+The path reaches inside serde's tagged, untagged and flattened enums and structs too, for example
+``at args.body.extent.depth: invalid type: string "big", expected f64``.
 
 | `code` | Cause |
 |---|---|

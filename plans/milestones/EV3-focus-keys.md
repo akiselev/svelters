@@ -2,7 +2,7 @@
 
 Track: EVENTS (egui). Lane EV3+, branch `ci/ev3`, from master `3c7d67be`, merged with master `16da721d` (INT1's
 widget library: WG1, WG2a overlays and menus, WG2b, WG4a, WG4b; DX1), then with master `dcfdcc71` (H3, DX2: edit
-commands use DX2's clipboard). Design: `plans/research/QT-SURVEY.md`
+commands use DX2's clipboard), then with master `a52d437c` (LISTS: `virtual-list` rows get a key role). Design: `plans/research/QT-SURVEY.md`
 §2.3 (`focus_info`, `shortcut_override`, `text_command`), §2.4 (claims), §3 row 1 (acceptance); ARCH-EMBED R11
 (`consume_key`, `composing()`) and E-7 (no Enter or Escape to default/cancel buttons while composing). Builds on FX1
 (`svelters_egui::native`) and TR2b (inert subtrees leave the tab order). egui `Memory` and `TextEdit` are not
@@ -46,8 +46,10 @@ forked: everything sits before the first svelters node of a pass, after each lea
   Tab, Escape and F-keys (Enter, Up/Down and PageUp/Down only when multi-line); with Ctrl/Cmd A, C, V, X, Y, Z,
   Left/Right, Home/End, BackSpace, Delete, Insert (Up/Down when multi-line); on macOS Option+Left/Right/BackSpace/
   Delete. `slider`, `range-slider` and `drag-value` claim the navigation keys; `button` and every other clickable
-  leaf (check box, toggle, switch, radio, menu button, combo box) Space and Enter; a provider kind what its
-  `consume_key` says. After the focused node ran, its claimed key events are taken out of the pass's input (so a
+  leaf (check box, toggle, switch, radio, menu button, combo box) Space and Enter; a selectable `virtual-list`
+  row (LS1) Up/Down/Home/End/PageUp/PageDown, Space and Enter (the rows are recorded by `kinds/virtuallist.rs`
+  with the list as their node, and only the selected row, else the first drawn one, is a tab stop: a list is one
+  stop in a scope); a provider kind what its `consume_key` says (WG5b's `tree-view` adopts it). After the focused node ran, its claimed key events are taken out of the pass's input (so a
   keymap or a menu shortcut later in the pass never sees them) and listed in `focus::consumed_keys(ctx)` for that
   pass. A host keymap that runs before the content asks `shortcut_override(ctx, chord)` (Qt's `ShortcutOverride`).
 - **Composing (R11 `composing()`, E-7).** From a non-empty `Ime::Preedit` in the focused field until a commit, an
@@ -86,6 +88,7 @@ forked: everything sits before the first svelters node of a pass, after each lea
 | Enter activates the default button except while composing | `ev3_dialog_scope_focus_tab_default_cancel_restore`, `ev3_composing_holds_enter_and_every_key` |
 | Edit commands reach the focused field, and the last one after a click on host chrome | `ev3_text_commands_reach_the_focused_field` |
 | Cut, Copy and Paste through the host's clipboard (DX2) | `ev3_edit_commands_use_the_host_clipboard` |
+| A focused `virtual-list` row claims the navigation keys | `tests/vlist.rs` `a_focused_row_claims_the_navigation_keys` |
 | Initial focus, `autofocus`, disabled nodes skipped | `ev3_autofocus_and_disabled_nodes_leave_the_chain` |
 | A WG2a `modal` is a dialog scope (initial focus, Tab, Enter, restore) | `ev3_modal_overlay_is_a_dialog_scope` |
 | Focus returns to the field after a menu closes | `ev3_focus_returns_after_a_menu_closes` |
@@ -122,3 +125,9 @@ After merging master `dcfdcc71` (H3, DX2; no conflicts) and routing the clipboar
 -p svelters-host --all-targets` (clean); nextest `-p svelters-egui --test focus_keys` (11/11), `--lib ev3` (2/2),
 `--test clipboard` (DX2, 3/3), `--test spec` (3/3, current), `-p svelters-host platform` (4/4); `gen_props.py
 --check`.
+
+After merging master `a52d437c` (LISTS; a conflict in the `P` keys of `kinds/mod.rs`, both sides kept; `egui.json`
+and `egui.d.ts` regenerated, unchanged from the auto-merge; `gen_kinds.py --check` under `tools/dev/headless` and
+`gen_props.py --check` clean): `cargo check -p svelters-egui --all-targets` (clean); nextest `--test focus_keys`
+(11/11), `--lib ev3` (2/2), `--test vlist` (14/15: `list_view_runs_on_egui` needs the built
+`fixtures/lists-egui/dist`, CI), `--test spec` (3/3).

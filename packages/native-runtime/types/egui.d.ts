@@ -876,6 +876,30 @@ export interface EguiElements {
     /** The user edited the colour; carries it (CSS hex, once per frame while dragging). */
     onchanged?: (value: string) => void;
   };
+  /** A virtualized list (the M5 model-view protocol): JS keeps the items, the list asks for the rows it shows. */
+  'virtual-list': EguiWidgetProps & {
+    /** The selected position, -1 for none. Setting it never raises `select`. */
+    selected?: number;
+    'bind:selected'?: number;
+    /** `single`: a click selects a row (`select`); `none`: rows are not selectable. */
+    selection?: 'none' | 'single';
+    /** `list` (egui draws `grid` as a list for now). */
+    layout?: 'list' | 'grid';
+    /** The height a row is assumed to have before it is measured, and its minimum, in points. */
+    'row-height'?: number;
+    /** Row slot `row` was created: give it content with `setRow`. */
+    onsetup?: (e: SvlEvent<[number]>, row: number) => void;
+    /** Slot `row` now shows item `id` at `pos`; `gen` counts the binds of the slot. */
+    onbind?: (e: SvlEvent<[number, number, number, number]>, row: number, pos: number, id: number, gen: number) => void;
+    /** Slot `row` no longer shows binding `gen`. */
+    onunbind?: (e: SvlEvent<[number, number]>, row: number, gen: number) => void;
+    /** Slot `row` is gone: release its widget. */
+    onteardown?: (e: SvlEvent<[number]>, row: number) => void;
+    /** The user activated the item at `pos` (double click). */
+    onactivate?: (pos: number) => void;
+    /** The user selected the item at `pos`. */
+    onselect?: (pos: number) => void;
+  };
 }
 
 type ElementAttrs<Tag extends string> = Tag extends keyof svelteHTML.IntrinsicElements ? svelteHTML.IntrinsicElements[Tag] : {};

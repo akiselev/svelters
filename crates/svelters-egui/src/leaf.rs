@@ -372,6 +372,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         }
         W::Box | W::Window { .. } | W::Grid { .. } | W::CollapsingHeader { .. } | W::ScrollArea { .. } => unreachable!("containers are not leaves"),
         W::Ext(_) => unreachable!("provider kinds are drawn by provider::paint"),
+        W::VirtualList(_) => unreachable!("lists are drawn by kinds::virtuallist::paint"),
         W::Menu(_) | W::Overlay(_) => unreachable!("WG2a kinds are drawn by crate::menus and crate::overlays"),
         W::Hyperlink { .. }
         | W::RadioButton { .. }
