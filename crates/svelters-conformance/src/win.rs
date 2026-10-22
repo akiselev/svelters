@@ -163,10 +163,8 @@ pub fn move_to(x: i32, y: i32) -> WinResult<()> {
     let mut seen = Vec::new();
     for _ in 0..8 {
         let mut i = mouse_input(MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_VIRTUALDESK);
-        unsafe {
-            i.Anonymous.mi.dx = nx;
-            i.Anonymous.mi.dy = ny;
-        }
+        i.Anonymous.mi.dx = nx;
+        i.Anonymous.mi.dy = ny;
         send(&[i])?;
         sleep(5);
         let mut p = windows::Win32::Foundation::POINT::default();
