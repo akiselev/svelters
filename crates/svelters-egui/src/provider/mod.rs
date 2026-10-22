@@ -471,19 +471,13 @@ pub struct WidgetCx<'a> {
     errors: Vec<String>,
     /// OW0: UA tokens resolve in the dark scheme.
     dark: bool,
+    /// EV1: the pass's context (repaints asked by behaviours' filters during `dispatch`).
+    ctx: egui::Context,
 }
 
-/// OW0: what [`WidgetCx::dispatch`] reports. EV1 runs Rust filters (capture, target, bubble)
-/// before the widget's default action; until it lands the event goes straight to JS and nothing
-/// is prevented.
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
-#[non_exhaustive]
-pub struct Dispatched {
-    /// A filter called `prevent_default`: skip the widget's default action.
-    pub prevented: bool,
-    /// A filter stopped propagation.
-    pub stopped: bool,
-}
+/// What [`WidgetCx::dispatch`] reports (OW0's name for EV1's [`Outcome`](crate::events::Outcome)):
+/// `prevented` skips the widget's default action, `stopped` means a filter stopped propagation.
+pub type Dispatched = crate::events::Outcome;
 
 impl WidgetCx<'_> {
     // ---- OW0: own widgets (ARCH-WIDGETS §1.3, §2.3) ----
@@ -556,14 +550,6 @@ impl WidgetCx<'_> {
         crate::paint::paint_text(&mut self.paint_cx(ui), &s, &g, content, crate::paint::Align::of(&s, align));
     }
 
-    /// Dispatches a user event of the widget (a press, a toggle) before its default action. OW0:
-    /// a direct emit (as [`WidgetCx::emit`]); EV1 replaces the body with its propagation through
-    /// Rust filters, which may prevent the default action, keeping this signature.
-    pub fn dispatch<T: IntoJs>(&mut self, event: &Event<T>, payload: T) -> Dispatched {
-        self.emit(event, payload);
-        Dispatched::default()
-    }
-
     /// The node's egui id (use it for the widget's own id: focus and memory follow the node).
     pub fn id(&self) -> egui::Id {
         self.id
@@ -634,6 +620,36 @@ impl WidgetCx<'_> {
     /// Queues `payload` for the event's JS listeners (delivered after the pass, in order).
     pub fn emit<T: IntoJs>(&mut self, event: &Event<T>, payload: T) {
         queue_emit(self.entry, event, payload, &mut self.emits, &mut self.errors);
+    }
+
+    /// EV1 (ARCH-WIDGETS §1.2, §2.3): dispatches a user-visible event of this widget (a unit's
+    /// intent: a press, a toggle, a selection change) along the node's path through the scene's
+    /// Rust filters (SV6: registered [`EventFilter`](crate::events::EventFilter)s and the
+    /// behaviours' [`Behavior::filter`], capture, target, bubble) **before** the default action,
+    /// then queues `payload` for the event's JS listener (as [`WidgetCx::emit`], delivered after
+    /// the pass) unless a filter stopped it. Apply the default action only when the outcome is not
+    /// [`prevented`](crate::events::Outcome::prevented):
+    ///
+    /// ```ignore
+    /// if !cx.dispatch(&self.clicked, ()).prevented() { self.activate(cx) }
+    /// ```
+    pub fn dispatch<T: IntoJs>(&mut self, event: &Event<T>, payload: T) -> Dispatched {
+        let name = self.entry.events.get(event.index()).map_or("?", |e| e.name);
+        let (o, runs) = crate::events::dispatch_signal(self.s, self.node, name);
+        if !runs.is_empty() {
+            // behaviours on this node may change its bits: keep them in this cx's copy
+            let before = self.s.core[self.i].state;
+            for r in runs {
+                behavior::apply(self.s, r, Some(&self.ctx), self.out);
+            }
+            let after = self.s.core[self.i].state;
+            let changed = before.0 ^ after.0;
+            self.state = StateBits((self.state.0 & !changed) | (after.0 & changed));
+        }
+        if !o.stopped {
+            self.emit(event, payload);
+        }
+        o
     }
 
     /// The node's provider data for `key` (ARCH-EMBED §8.4).
@@ -986,6 +1002,7 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
             remeasure: false,
             errors: Vec::new(),
             dark,
+            ctx: ui.ctx().clone(),
         };
         let resp = w.ui(ui, &mut cx);
         let WidgetCx { state, changed, emits, remeasure, errors, .. } = cx;

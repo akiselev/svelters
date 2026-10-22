@@ -107,6 +107,10 @@ struct Logical {
 
 impl Logical {
     fn id(&mut self, id: &str) -> Result<String, String> {
+        // LD2: a component's sheet module is named after its component
+        if let Some(component) = id.strip_prefix(super::STYLE_PREFIX) {
+            return Ok(format!("{}{}", super::STYLE_PREFIX, self.id(component)?));
+        }
         let (p, query) = id.split_once('?').map_or((id, None), |(p, q)| (p, Some(q)));
         if !Path::new(p).is_absolute() {
             return Ok(id.to_string()); // generated: `svelters:entry`, `svelters:kinds`

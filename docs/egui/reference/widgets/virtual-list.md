@@ -105,7 +105,7 @@ Full matrix: [css/properties](../../css/properties.md). States: below.
 <!-- BEGIN GENERATED: states of kinds.VirtualList (tools/docs/egui/gen_reference.py). Do not edit. -->
 No built-in state is set on it.
 
-Never set on it (rules with them don't match): `:hover`, `:active`, `:focus`, `:focus-within`, `:disabled`, `:checked`, `:selected`, `:open`, `:expanded`, `:invalid`, `:read-only`, `:dragging`, `:exiting`, `:busy`.
+Never set on it (rules with them don't match): `:hover`, `:active`, `:focus`, `:focus-within`, `:disabled`, `:checked`, `:selected`, `:open`, `:expanded`, `:invalid`, `:read-only`, `:dragging`, `:exiting`, `:busy`, `:indeterminate`, `:placeholder-shown`, `:default`, `:drop-target`, `:current`, `:backdrop`, `:required`, `:user-invalid`, `:has-children`.
 <!-- END GENERATED -->
 
 ## Accessibility

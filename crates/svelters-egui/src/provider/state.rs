@@ -36,26 +36,18 @@ impl StateBits {
     pub const DRAGGING: StateBits = StateBits(1 << 11);
     pub const EXITING: StateBits = StateBits(1 << 12);
     pub const BUSY: StateBits = StateBits(1 << 13);
-    // OW0 (ARCH-WIDGETS §2.2): the own widgets' states. OW-CSS adds the same rows, with the same
-    // bits, to svelters-style's table and its pseudo-classes.
-    /// `:focus-visible`: focused by keyboard or program while the last input was a key (Focusable).
+    // ARCH-WIDGETS §2.2 (OW-CSS): bits 14–22.
     pub const FOCUS_VISIBLE: StateBits = StateBits(1 << 14);
-    /// `:indeterminate`: a tristate check box in its third state, a progress bar without a value.
     pub const INDETERMINATE: StateBits = StateBits(1 << 15);
-    /// `:placeholder-shown`: an empty text field showing its placeholder (TextInput).
     pub const PLACEHOLDER_SHOWN: StateBits = StateBits(1 << 16);
-    /// `:default`: the scope's default button (the `default` prop).
     pub const DEFAULT: StateBits = StateBits(1 << 17);
-    /// `:drop-target`: a drag it accepts is over it (DropTarget; GTK's `:drop(active)`).
     pub const DROP_TARGET: StateBits = StateBits(1 << 18);
-    /// `:current`: the keyboard cursor item of a list or table (Selectable), distinct from selected.
     pub const CURRENT: StateBits = StateBits(1 << 19);
-    /// `:backdrop`: its viewport does not have the OS focus (GTK's name).
     pub const BACKDROP: StateBits = StateBits(1 << 20);
-    /// `:required`: the `required` prop (FM1 QW8).
     pub const REQUIRED: StateBits = StateBits(1 << 21);
-    /// `:user-invalid`: invalid, shown only after the user's first commit.
     pub const USER_INVALID: StateBits = StateBits(1 << 22);
+    // WIDGET-PARITY P5 (OW-CSS): tree rows with children; 24–31 stay free.
+    pub const HAS_CHILDREN: StateBits = StateBits(1 << 23);
 
     /// The built-in names, by bit.
     pub const BUILTIN: &'static [(&'static str, StateBits)] = &[
@@ -82,6 +74,7 @@ impl StateBits {
         ("backdrop", Self::BACKDROP),
         ("required", Self::REQUIRED),
         ("user-invalid", Self::USER_INVALID),
+        ("has-children", Self::HAS_CHILDREN),
     ];
 
     pub const fn contains(self, other: StateBits) -> bool {

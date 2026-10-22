@@ -153,6 +153,8 @@ pub(crate) struct SceneCell {
     wake: RefCell<Option<Box<dyn Fn()>>>,
     /// SG4: registered state providers and scene passes (`provider/pass.rs`).
     pub(crate) passes: RefCell<crate::provider::pass::Registry>,
+    /// EV1: registered event filters (SV6, `events.rs`).
+    pub(crate) events: Rc<RefCell<crate::events::Registry>>,
 }
 
 /// The scene of one embed (today: one `EguiBackend`). `Rc`, `!Send`: UI thread only. From
@@ -162,7 +164,9 @@ pub struct SceneHandle(Rc<SceneCell>);
 
 impl Default for SceneHandle {
     fn default() -> Self {
-        SceneHandle(Rc::new(SceneCell { scene: RefCell::new(Scene::default()), phase: Arc::default(), deferred: RefCell::new(Vec::new()), wake: RefCell::new(None), passes: RefCell::default() }))
+        let scene = Scene::default();
+        let events = scene.filters.clone();
+        SceneHandle(Rc::new(SceneCell { scene: RefCell::new(scene), phase: Arc::default(), deferred: RefCell::new(Vec::new()), wake: RefCell::new(None), passes: RefCell::default(), events }))
     }
 }
 

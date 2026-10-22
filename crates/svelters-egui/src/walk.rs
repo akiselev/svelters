@@ -202,6 +202,7 @@ fn paint_own(
         if !matches!(arena.w(i), crate::scene::W::Overlay(_)) {
             crate::focus::record_scope(arena, i, ui); // EV3 (an overlay records itself when open)
         }
+        crate::scene::hit::record_box(arena, i, r, ui); // EV1: a click on the box itself targets it
         // CS5e: its state and box (background, border), and the opacity of its subtree
         let opacity = crate::style::before_container(arena, i, r, ui);
         let mut faded;
