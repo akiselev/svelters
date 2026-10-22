@@ -1169,6 +1169,44 @@ impl Embed {
         self.inner.probe.clone()
     }
 
+    /// EV3 (QT-SURVEY §2.3): what has keyboard focus in `ctx`'s current viewport, when it is a node
+    /// of this embed, with its root. cadatomic's `TextFocus` layer reads it.
+    pub fn focus_info(&self, ctx: &egui::Context) -> crate::focus::FocusInfo {
+        let mut info = self.backend().focus_info(ctx);
+        if let Some(node) = info.node {
+            let top = {
+                let scene = self.backend().0.scene.borrow();
+                let mut at = node;
+                while let Some(p) = scene.idx(at).and_then(|i| scene.core[i].parent) {
+                    at = p;
+                }
+                at
+            };
+            info.root = self.inner.st.borrow().slots.get(&SlotId(top.to_raw())).and_then(|s| s.root);
+        }
+        info
+    }
+
+    /// EV3, Qt's `ShortcutOverride` (ARCH-EMBED R11 `consume_key`): true when the focused node of
+    /// this embed takes `chord` itself (Ctrl+Z, Del and the arrows in a text field; every key while
+    /// an input method composes), so the host keymap must leave it. Keys the focused node took in
+    /// the current pass are also in [`crate::focus::consumed_keys`].
+    pub fn shortcut_override(&self, ctx: &egui::Context, chord: &egui::KeyboardShortcut) -> bool {
+        self.backend().shortcut_override(ctx, chord)
+    }
+
+    /// EV3 (QT-SURVEY §2.3 `text_command`): an Edit-menu command for the focused text field of this
+    /// embed (or the last one, when a click on host chrome took focus to nowhere). False when there
+    /// is none.
+    pub fn text_command(&self, ctx: &egui::Context, cmd: crate::focus::TextCommand) -> bool {
+        self.backend().text_command(ctx, cmd)
+    }
+
+    /// R11 `composing()`: an input method is composing in a svelters field of `ctx`'s viewport.
+    pub fn composing(&self, ctx: &egui::Context) -> bool {
+        crate::focus::composing(ctx)
+    }
+
     pub fn take_events(&self) -> Vec<EmbedEvent> {
         std::mem::take(&mut self.inner.st.borrow_mut().events)
     }

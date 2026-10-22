@@ -20,7 +20,7 @@ mod builtin;
 mod containers;
 mod registry;
 
-pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, POSITION, WRAP, WRAP_MODE};
+pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, FOCUS_SCOPE, JUSTIFY, KINDS, POSITION, WRAP, WRAP_MODE};
 pub use registry::{KindRegistry, PROVIDER_PACK, ProviderKind, kind};
 
 /// A property's value type (also its ABI tag).
@@ -75,6 +75,8 @@ pub enum P {
     Top,
     Right,
     Bottom,
+    // EV3: focus
+    Autofocus,
     // Box (and the window's content area)
     FlexDirection,
     FlexWrap,
@@ -84,6 +86,8 @@ pub enum P {
     Padding,
     AlignItems,
     JustifyContent,
+    /// EV3: the box's focus scope.
+    FocusScope,
     // Window
     Title,
     DefaultWidth,
@@ -105,6 +109,9 @@ pub enum P {
     Max,
     Step,
     ShowValue,
+    /// EV3: a button's Enter and Escape roles.
+    Default,
+    Cancel,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }

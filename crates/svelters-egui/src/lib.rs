@@ -15,6 +15,7 @@
 
 pub mod backend;
 pub mod embed;
+pub mod focus;
 pub mod kinds;
 pub mod layout;
 /// FX1: native focus policy and word rules (GTK on Linux).

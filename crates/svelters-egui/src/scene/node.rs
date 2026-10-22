@@ -70,6 +70,13 @@ pub struct Common {
     pub top: Option<f64>,
     pub right: Option<f64>,
     pub bottom: Option<f64>,
+    /// EV3 (`crate::focus`): focus this node when it first appears.
+    pub autofocus: bool,
+    /// EV3: a box's focus scope (`none`, `contain`, `dialog`).
+    pub focus_scope: &'static str,
+    /// EV3: a button activated by Enter (`default`) or Escape (`cancel`) in its scope.
+    pub default_button: bool,
+    pub cancel_button: bool,
 }
 
 impl Common {
@@ -103,6 +110,10 @@ impl Common {
         top: None,
         right: None,
         bottom: None,
+        autofocus: false,
+        focus_scope: "none",
+        default_button: false,
+        cancel_button: false,
     };
 }
 

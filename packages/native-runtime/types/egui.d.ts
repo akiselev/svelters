@@ -33,6 +33,8 @@ export interface EguiWidgetProps {
   enabled?: boolean;
   /** Shown and laid out when true (`display: none` otherwise). */
   visible?: boolean;
+  /** Takes keyboard focus when it first appears (in a `dialog` scope: when the dialog opens). */
+  autofocus?: boolean;
   /** Hover text (`Response::on_hover_text`); empty for none. */
   tooltip?: string;
   /** AccessKit name (`Response::accessible_name`); inputs default to their hint or text. */
@@ -110,6 +112,8 @@ export interface EguiElements {
     'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
     /** Main-axis distribution of the children. */
     'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
+    'focus-scope'?: 'none' | 'contain' | 'dialog';
   };
   /** Static text. */
   label: EguiWidgetProps & {
@@ -132,6 +136,10 @@ export interface EguiElements {
     frame?: boolean;
     /** No vertical padding (`Button::small`). */
     small?: boolean;
+    /** Enter activates it while focus is in its focus scope (or root) and the focused node does not take Enter itself. */
+    default?: boolean;
+    /** Escape activates it while focus is in its focus scope (or root). */
+    cancel?: boolean;
     /** Pressed and released (`Response::clicked`). */
     onclicked?: () => void;
     /** Double click (`Response::double_clicked`). */
