@@ -27,5 +27,11 @@ pub fn run_app(bundle: &std::path::Path, cfg: svelters_host::HostConfig) -> Resu
     // eframe creates the real context later: `logic` binds it at the first frame.
     let embed = Embed::new(&egui::Context::default(), EmbedConfig::app(cfg)).map_err(|e| e.to_string())?;
     embed.load_app(bundle).map_err(|e| e.to_string())?;
+    run_desktop(embed)
+}
+
+/// Runs an embed whose app bundle is loaded ([`Embed::load_app`]) in an eframe window until the app
+/// quits (`svelters-egui-run`).
+pub fn run_desktop(embed: Embed) -> Result<(), String> {
     self::eframe::run_desktop(embed)
 }

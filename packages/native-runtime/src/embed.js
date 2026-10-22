@@ -80,7 +80,8 @@ class RootHandle {
   }
   set title(v) {
     v = String(v);
-    if (this.#r.info.title === v) return;
+    // untracked: an effect that sets the title must not depend on it
+    if ($.untrack(() => this.#r.info.title) === v) return;
     this.#r.info.title = v;
     host().rootInfo(this.#r.id, v, null);
   }
@@ -89,7 +90,7 @@ class RootHandle {
   }
   set dirty(v) {
     v = !!v;
-    if (this.#r.info.dirty === v) return;
+    if ($.untrack(() => this.#r.info.dirty) === v) return;
     this.#r.info.dirty = v;
     host().rootInfo(this.#r.id, null, v);
   }
@@ -152,11 +153,13 @@ const baseCancel = globalThis.cancelAnimationFrame;
 const rafOwner = new Map();
 let rafId = 2 ** 30;
 
+// `r.visible` is a plain mirror of `r.info.visible`: reading the reactive field here would make the
+// effect that called requestAnimationFrame depend on the root's visibility.
 function armRoot(r) {
-  if (r.rafBase != null || r.raf.size === 0 || !r.info.visible) return;
+  if (r.rafBase != null || r.raf.size === 0 || !r.visible) return;
   r.rafBase = baseRaf((ts) => {
     r.rafBase = null;
-    if (!roots.has(r.id) || !r.info.visible) return; // hidden meanwhile: held until shown
+    if (!roots.has(r.id) || !r.visible) return; // hidden meanwhile: held until shown
     const batch = [...r.raf];
     r.raf.clear();
     let first;
@@ -204,6 +207,7 @@ const api = {
       id,
       info: $.proxy({ key: '', visible: true, width: 0, height: 0, scale: 1, viewport: '', focused: false, title: '', dirty: false }),
       props: $.proxy(props ?? {}),
+      visible: true,
       raf: new Map(),
       rafBase: null,
       closers: new Set(),
@@ -249,9 +253,10 @@ const api = {
   info(id, patch) {
     const r = roots.get(id);
     if (!r) return;
+    if ('visible' in patch) r.visible = !!patch.visible;
     within(r, () => {
       for (const k of Object.keys(patch)) {
-        if (r.info[k] !== patch[k]) r.info[k] = patch[k];
+        if ($.untrack(() => r.info[k]) !== patch[k]) r.info[k] = patch[k];
       }
       flushSync();
     });

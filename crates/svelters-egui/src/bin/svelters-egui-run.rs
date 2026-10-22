@@ -30,18 +30,19 @@ fn main() {
         eprintln!("usage: svelters-egui-run [--idle-report <ms>] <dist/app.js>");
         std::process::exit(2);
     };
-    let backend = svelters_egui::EguiBackend::new();
-    let vt = backend.vtable();
-    let host = svelters_host::Host::new(vt.backend_ref(), svelters_host::HostConfig::default()).unwrap_or_else(|e| {
+    // The desktop order on an Embed (EM1): the bundle's App mounts its windows; eframe's context is
+    // bound at the first frame.
+    let cfg = svelters_egui::embed::EmbedConfig::app(svelters_host::HostConfig::default());
+    let embed = svelters_egui::Embed::new(&svelters_egui::egui::Context::default(), cfg).unwrap_or_else(|e| {
         eprintln!("{e}");
         std::process::exit(1)
     });
-    if let Err(e) = host.load_bundle(&bundle) {
+    if let Err(e) = embed.load_app(&bundle) {
         eprintln!("{e}");
         std::process::exit(1);
     }
     if let Some(ms) = idle_ms {
-        let frames = backend.frame_counter();
+        let frames = embed.backend().frame_counter();
         std::thread::spawn(move || {
             // Settled: the first frames are drawn and no frame came for 1 s (up to 30 s on a slow,
             // loaded machine).
@@ -65,7 +66,7 @@ fn main() {
             std::process::exit(if f0 > 0 { 0 } else { 3 });
         });
     }
-    if let Err(e) = host.run() {
+    if let Err(e) = svelters_egui::runner::run_desktop(embed) {
         eprintln!("{e}");
         std::process::exit(1);
     }

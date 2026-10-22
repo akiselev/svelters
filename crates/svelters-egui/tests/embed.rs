@@ -160,6 +160,10 @@ fn ids_are_stable_across_a_keyed_reorder_a_second_root_and_a_second_embed() {
     let ids = |eh: &EmbedHarness| ["A: 0", "A item y", "Inc A", "A clicks: 0"].map(|l| node(eh, l));
     let before = ids(&eh);
     let anchor_y = e.anchor_id(r1, "item-y").unwrap();
+    // AccessKit: the anchor is the author id; the slot is a group named by its key
+    assert_eq!(eh.harness.get_by_label("A item y").accesskit_node().author_id(), Some("item-y"));
+    assert_eq!(eh.harness.get_by_label("A: 0").accesskit_node().author_id(), Some("heading"));
+    assert_eq!(eh.harness.get_by_label("A clicks: 0").accesskit_node().author_id(), None);
     assert_ne!(e.anchor_id(r1, "item-x").unwrap(), anchor_y);
 
     // keyed reorder: the same nodes move
@@ -356,4 +360,33 @@ fn idle_is_zero_frames_with_five_slots() {
     e.set_visible(slots[0], true);
     eh.run();
     assert!(has(&eh, "P0 visible: true"));
+}
+
+#[test]
+fn handler_exceptions_are_reported_then_fault_the_root_by_policy() {
+    let (mut eh, entry) = rig();
+    let e = eh.embed.clone();
+    let fragile = e.create_slot("fragile", SlotOptions::fill());
+    let other = e.create_slot("other", SlotOptions::fill());
+    columns(&mut eh, vec![fragile, other]);
+    let f = mount(&e, entry, "Fragile", fragile, "fragile", Props::new());
+    let o = mount(&e, entry, "Panel", other, "other", Props::new().with("title", "Other"));
+    eh.run();
+    e.take_events();
+    for i in 1..=5 {
+        eh.harness.get_by_label("Throw").click();
+        eh.run();
+        let ev = e.take_events();
+        let errors = ev.iter().filter(|x| matches!(x, EmbedEvent::Error { root: Some(r), error } if *r == f && error.message == "handler threw")).count();
+        assert_eq!(errors, 1, "click {i}: {ev:?}");
+        let fs = faults(&ev);
+        if i < 5 {
+            assert!(fs.is_empty(), "click {i}: {fs:?}");
+            assert!(has(&eh, "Fragile ok"));
+        } else {
+            assert_eq!(fs.iter().map(|x| (x.0, x.1)).collect::<Vec<_>>(), vec![(f, FaultCause::Handler)]);
+        }
+    }
+    assert!(has(&eh, "fragile failed: handler threw"));
+    assert!(matches!(e.root_info(o).unwrap().state, RootState::Live));
 }
