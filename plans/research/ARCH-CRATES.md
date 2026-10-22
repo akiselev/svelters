@@ -54,6 +54,12 @@ berth, with behaviour tests derived from KDDockWidgets' test suite (reimplemente
 GPL/commercial) and egui_tiles/egui_dock as further references. The MacBook builds quire on ropey, with VS
 Code's editor tests ported (MIT; keep its notice).
 
+**`PaneEvent` is not closed (user, 2026-10-22; cadatomic `b8e074e`).** R1 makes §4.1 the canonical
+*definition* of `PaneEvent`; it does not freeze the event set. berth adds a close reason on close events
+(user, API or restore), an optional per-pane `max_size`, per-pane host data saved in the layout file, and a
+skip-on-restore flag for temporary panes (an active tool's, for example). Consumers match `PaneEvent` and
+`CloseReason` with a wildcard arm.
+
 ## 0. Summary
 
 1. **Two repositories, each a headless core plus an egui renderer.**
