@@ -169,6 +169,12 @@ static SLIDER_SIGNALS: &[SignalDef] = &[
 
 
 
+/// OW2 (WG6 QA13): every node's methods (`widgets::scroll_area::scroll_into_view`).
+static WIDGET_METHODS: &[MethodDef] = &[MethodDef {
+    name: "scroll-into-view",
+    doc: "`scroll-into-view(align?)`: scrolls the scroll areas around the node so it is visible on the next frame, innermost first; `align` is `nearest` (the default: the least scrolling, keeping the area's `scroll-margin`) or `center`. Qt's `ensureWidgetVisible`, the DOM's `scrollIntoView`.",
+}];
+
 static TEXT_EDIT_METHODS: &[MethodDef] = &[MethodDef { name: "request-focus", doc: "Moves keyboard focus here on the next frame." }];
 
 pub static KINDS: &[KindDef] = &[
@@ -183,7 +189,7 @@ pub static KINDS: &[KindDef] = &[
         present: None,
         props: WIDGET_PROPS,
         signals: WIDGET_SIGNALS,
-        methods: &[],
+        methods: WIDGET_METHODS,
         doc: "Common properties of everything placed in a window: state, tooltip, accessibility and its taffy item style.",
     },
     KindDef {

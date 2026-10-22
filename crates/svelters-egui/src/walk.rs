@@ -44,6 +44,7 @@ impl EguiBackend {
         let rect = ui.available_rect_before_wrap();
         crate::focus::begin(ui.ctx()); // EV3: scopes, restore, default/cancel keys
         let mut scene = self.0.scene.borrow_mut();
+        crate::widgets::scroll_area::begin_pass(&mut scene, ui.ctx()); // OW2: scroll requests
         let id = scene.live(w).expect("a live window");
         let r = scene.core[scene.ix(id)].root;
         crate::provider::pass::prepare_root(&mut scene, r); // SG4: Caps::PREPARE (§7.2 b)
@@ -62,6 +63,7 @@ impl EguiBackend {
         let rect = ui.available_rect_before_wrap();
         crate::focus::begin(ui.ctx()); // EV3: scopes, restore, default/cancel keys
         let mut scene = self.0.scene.borrow_mut();
+        crate::widgets::scroll_area::begin_pass(&mut scene, ui.ctx()); // OW2: scroll requests
         let id = scene.live(slot).expect("a live slot");
         let i = scene.ix(id);
         let r = scene.core[i].root;
@@ -194,9 +196,11 @@ fn paint_own(
         // LS1: rows at the list's scroll offset, clipped, with their a11y set size
         return crate::kinds::virtuallist::paint(arena, i, origin, ui, out);
     }
+    crate::widgets::scroll_area::reveal_flagged(arena, i, r); // OW2 (WG6 QA13): `scroll-into-view`
     if arena.w(i).is_container() {
-        // Cull whole subtrees outside the clip rect (CS5g: grown by the node's own shadows).
-        if !ui.is_rect_visible(crate::style::paint_bounds(arena, i, r)) {
+        // Cull whole subtrees outside the clip rect (CS5g: grown by the node's own shadows; OW2:
+        // not on a Tab pass or on the way to a `scroll-into-view`).
+        if !ui.is_rect_visible(crate::style::paint_bounds(arena, i, r)) && !crate::widgets::scroll_area::keep(arena, i, ui) {
             return None;
         }
         if !matches!(arena.w(i), crate::scene::W::Overlay(_)) {
@@ -219,7 +223,7 @@ fn paint_own(
         crate::leaf::container(arena, i, r, origin, ui, out);
         return None;
     }
-    if !ui.is_rect_visible(crate::style::paint_bounds(arena, i, r)) {
+    if !ui.is_rect_visible(crate::style::paint_bounds(arena, i, r)) && !crate::widgets::scroll_area::keep(arena, i, ui) {
         return None;
     }
     let mut b = UiBuilder::new()
@@ -244,9 +248,14 @@ fn paint_own(
         Some(crate::leaf::leaf(arena, i, &mut child, out))
     };
     crate::kinds::dnd::node(arena, i, r, &mut child, out, crate::kinds::dnd::Part::Target); // WG4b
-    crate::scene::hit::record(arena, i, &child); // SG3: the viewport's hit list
+    // SG3: the viewport's hit list (OW2: an own container records itself under its children,
+    // `WidgetCx::record_hit`)
+    if !crate::widgets::is_own_container(arena.w(i)) {
+        crate::scene::hit::record(arena, i, &child);
+    }
     if let Some(r) = &resp {
         crate::focus::record(arena, i, &child, r); // EV3: tab order, R11 key claims
+        crate::widgets::scroll_area::note(arena, r); // OW2: scroll on focus, AccessKit scroll targets
     }
     crate::overlays::paint_attached(arena, i, origin, ui, out); // WG2a: its context menu, popup
     resp

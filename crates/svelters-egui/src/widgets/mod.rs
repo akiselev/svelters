@@ -14,12 +14,13 @@
 //! Writer lanes: OW0–OW7.
 
 pub mod button;
+pub mod scroll_area;
 
 use crate::scene::W;
 
 /// The built-in tags whose own widget is the default (the egui wrapper otherwise). Grows by one
 /// tag per lane as each own widget passes its acceptance (ARCH-WIDGETS §6.2 step 2).
-pub const DEFAULT_OWN: &[&str] = &[];
+pub const DEFAULT_OWN: &[&str] = &["scroll-area"];
 
 /// Which built-in kinds get svelters' own widget (§6.2: the per-kind switch).
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -65,6 +66,15 @@ impl KindSet {
     pub fn from_env() -> Option<KindSet> {
         std::env::var("SVELTERS_OWN_WIDGETS").ok().map(|v| KindSet::parse(&v))
     }
+}
+
+/// OW2: an own widget with children (`CONTAINER` and `PAINTS_BOX`): it records its hit-list
+/// entry before drawing its children ([`WidgetCx::record_hit`]), so they are above it.
+///
+/// [`WidgetCx::record_hit`]: crate::provider::WidgetCx::record_hit
+pub(crate) fn is_own_container(w: &W) -> bool {
+    use crate::provider::Caps;
+    matches!(w, W::Ext(x) if x.entry().caps.contains(Caps::CONTAINER) && x.entry().caps.contains(Caps::PAINTS_BOX))
 }
 
 /// The payload of a new node of built-in kind `kind` when `set` picks its own widget.

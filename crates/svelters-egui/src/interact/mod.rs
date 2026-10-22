@@ -24,10 +24,14 @@
 mod focus;
 mod hover;
 mod press;
+mod resize;
+pub mod scroll;
 
 pub use focus::{Focus, FocusParams, Focusable};
 pub use hover::{Hover, Hoverable};
 pub use press::{Press, PressParams, Pressable};
+pub use resize::{Resizable, Resize, ResizeParams};
+pub use scroll::{BarGeom, Scroll, ScrollBy, ScrollParams, Scrollable};
 
 use crate::native::Policy;
 use crate::provider::StateBits;

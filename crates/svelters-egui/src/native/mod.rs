@@ -37,7 +37,7 @@ pub enum Native {
 }
 
 /// What a [`Native`] does, one switch per behaviour WG3 measured.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Policy {
     /// Word movement and deletion rules; `None`: egui's.
     pub words: Option<WordRules>,
@@ -58,6 +58,62 @@ pub struct Policy {
     pub focus_on_click: bool,
     /// Escape leaves keyboard focus where it is (egui drops it).
     pub escape_keeps_focus: bool,
+    /// OW2: scrolling and sashes (`interact::Scrollable`, `interact::Resizable`).
+    pub scroll: ScrollPolicy,
+}
+
+/// OW2 (ARCH-WIDGETS §1.2, §3.3): how scrollables and sashes behave on a platform. Sizes and
+/// colours are CSS (WIDGET-PARITY P9); this is timing and gesture behaviour only.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct ScrollPolicy {
+    /// Who continues a trackpad flick after the fingers leave.
+    pub kinetic: Kinetic,
+    /// Bars over the content (fading) or beside it (a gutter, always shown when it overflows).
+    pub bar: BarMode,
+    /// What a primary press on the track (beside the thumb) does.
+    pub track_click: TrackClick,
+    /// Shift+press on the track does the other [`TrackClick`] (GTK).
+    pub shift_track_click_inverts: bool,
+    /// Points one arrow key (or one scroll-bar arrow step) scrolls.
+    pub line: f32,
+    /// Overlay bars: how long they stay after the last scroll or hover, then fade out over
+    /// [`ScrollPolicy::bar_fade`] seconds (VS Code: 0.5 s, then 0.8 s).
+    pub bar_hold: f32,
+    pub bar_fade: f32,
+    /// R11: hovering a sash shows its hover bar and grip after this many seconds (VS Code 0.3 s).
+    pub sash_hover_delay: f32,
+}
+
+/// Who continues a trackpad flick (ARCH-WIDGETS §3.3).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Kinetic {
+    /// The OS sends momentum events after the fingers lift (macOS, Windows precision touchpads).
+    Os,
+    /// svelters decays the release velocity itself (Linux touchpads through libinput, as GTK).
+    Own,
+    /// No momentum (Qt widgets without `QScroller`).
+    None,
+}
+
+/// Where scroll bars sit (`--sv-scrollbar-mode` / `scrollbar-gutter`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum BarMode {
+    /// Over the content, thumb only, shown while hovered or scrolling and then faded (VS Code,
+    /// GTK 4, macOS).
+    Overlay,
+    /// Beside the content in a gutter with a track, shown whenever the content overflows (Qt
+    /// Fusion, Windows classic).
+    Classic,
+}
+
+/// A primary press on the track (Qt `SH_ScrollBar_LeftClickAbsolutePosition`, GTK
+/// `gtk-primary-button-warps-slider`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum TrackClick {
+    /// Scrolls one page towards the press, repeating while held.
+    Page,
+    /// Moves the thumb's centre to the press and drags it from there.
+    Jump,
 }
 
 const GTK: Policy = Policy {
@@ -69,6 +125,16 @@ const GTK: Policy = Policy {
     one_selection_owner: true,
     focus_on_click: true,
     escape_keeps_focus: true,
+    scroll: ScrollPolicy {
+        kinetic: Kinetic::Own,
+        bar: BarMode::Overlay,
+        track_click: TrackClick::Jump,
+        shift_track_click_inverts: true,
+        line: 40.0,
+        bar_hold: 0.5,
+        bar_fade: 0.8,
+        sash_hover_delay: 0.3,
+    },
 };
 
 const QT: Policy = Policy {
@@ -80,6 +146,16 @@ const QT: Policy = Policy {
     one_selection_owner: false,
     focus_on_click: true,
     escape_keeps_focus: true,
+    scroll: ScrollPolicy {
+        kinetic: Kinetic::None,
+        bar: BarMode::Classic,
+        track_click: TrackClick::Page,
+        shift_track_click_inverts: false,
+        line: 40.0,
+        bar_hold: 0.5,
+        bar_fade: 0.8,
+        sash_hover_delay: 0.3,
+    },
 };
 
 const EGUI: Policy = Policy {
@@ -91,6 +167,16 @@ const EGUI: Policy = Policy {
     one_selection_owner: false,
     focus_on_click: false,
     escape_keeps_focus: false,
+    scroll: ScrollPolicy {
+        kinetic: Kinetic::Os,
+        bar: BarMode::Overlay,
+        track_click: TrackClick::Jump,
+        shift_track_click_inverts: false,
+        line: 40.0,
+        bar_hold: 0.5,
+        bar_fade: 0.8,
+        sash_hover_delay: 0.3,
+    },
 };
 
 impl Native {

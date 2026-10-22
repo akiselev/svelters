@@ -294,6 +294,11 @@ pub trait Widget: 'static {
     fn layout(&mut self, cx: &mut LayoutCx<'_>, inputs: crate::taffy::LayoutInput) -> crate::taffy::LayoutOutput {
         cx.default_layout(inputs)
     }
+    /// OW2: adjusts the node's taffy style after its props and before its computed CSS (a
+    /// scroll area's `overflow`, a panel's `size`). Called when the node is restyled: a prop write
+    /// that changes it must make the scene restyle the node (`Dirty::LAYOUT`). Unstable (§16):
+    /// taffy's types.
+    fn taffy_style(&self, _style: &mut crate::taffy::Style) {}
     /// SG4, `Caps::PREPARE` (ARCH-SCENE §7.2 step b, §8.2): runs before its root's layout every
     /// frame the root is drawn, with last frame's visible rect: build or rebind shadow children
     /// here (a virtualiser's rows) through [`PrepareCx::scene`].
@@ -443,6 +448,14 @@ impl WidgetCx<'_> {
         fc
     }
 
+    /// OW2: [`WidgetCx::run_units`] with the responses of the node's parts (a scroll area's thumbs
+    /// and tracks, a split view's sashes), for units that read them (`InputCx::parts`).
+    pub fn run_units_with(&mut self, ui: &egui::Ui, resp: &egui::Response, parts: &crate::interact::PartResponses, f: impl FnOnce(&mut crate::interact::InputCx<'_>)) -> crate::interact::FocusCx {
+        let fc = crate::interact::run(ui, resp, &mut self.state, parts, f);
+        self.commit_state();
+        fc
+    }
+
     /// Writes the bits set so far to the node now (journaled) and restyles what the change
     /// reaches, so this pass paints the new state (`:hover`, `:active`, `:focus-visible` never
     /// lag; §2.3). Also moves `:focus-within` with `focused`.
@@ -531,6 +544,58 @@ impl WidgetCx<'_> {
             crate::walk::paint_child(self.s, c, self.origin, ui, self.out);
         }
     }
+    /// OW2: draws every child moved by `offset` (a scrollable passes minus its scroll offset) in
+    /// `ui`, whose clip rect the caller set (the viewport). Culling and the hit list follow `ui`'s
+    /// clip, so hidden parts of children neither paint nor hit.
+    pub fn children_offset(&mut self, ui: &mut egui::Ui, offset: egui::Vec2) {
+        let origin = self.origin + offset;
+        for k in 0..self.s.children[self.i].len() {
+            let c = self.s.children[self.i][k].index() as usize;
+            crate::walk::paint_child(self.s, c, origin, ui, self.out);
+        }
+    }
+
+    /// OW2: records the node in the viewport's hit list now, at its rect in `ui`'s clip: an own
+    /// container calls it before drawing its children, so they are hit above it.
+    pub fn record_hit(&mut self, ui: &egui::Ui) {
+        self.s.core[self.i].drawn = self.rect;
+        crate::scene::hit::record(self.s, self.i, ui);
+    }
+
+    /// OW2: the node's rect from layout, in its root's coordinates (unscrolled content
+    /// coordinates; `rect()` is where it is on screen).
+    pub fn layout_rect(&self) -> egui::Rect {
+        self.s.core[self.i].rect
+    }
+
+    /// OW2: how far the children's layout rects reach from this node's top left (a scrollable's
+    /// content size, before its padding is added).
+    pub fn children_extent(&self) -> egui::Vec2 {
+        let rr = self.s.core[self.i].rect;
+        let mut ext = egui::Vec2::ZERO;
+        for &c in &self.s.children[self.i] {
+            let Some(ci) = self.s.idx(c) else { continue };
+            if !self.s.common(ci).visible {
+                continue;
+            }
+            let cr = self.s.core[ci].rect;
+            if cr != egui::Rect::NOTHING && cr.is_finite() {
+                ext = ext.max(cr.max - rr.min);
+            }
+        }
+        ext
+    }
+
+    /// OW0/OW2: UA tokens resolve in the dark scheme.
+    pub fn dark(&self) -> bool {
+        self.dark
+    }
+
+    /// OW2: the scene, writable, for the crate's own widgets (scroll requests).
+    pub(crate) fn scene_mut(&mut self) -> &mut crate::scene::Scene {
+        self.s
+    }
+
     /// SG4: draws one child of this node (a row of a pool); false if `id` is not one of them.
     pub fn child(&mut self, ui: &mut egui::Ui, id: crate::scene::NodeId) -> bool {
         match self.s.idx(id) {
@@ -647,6 +712,7 @@ pub trait ErasedWidget: Any {
     fn virtual_children(&self) -> Option<&dyn crate::scene::VirtualChildren>;
     fn layout(&mut self, cx: &mut LayoutCx<'_>, inputs: crate::taffy::LayoutInput) -> crate::taffy::LayoutOutput;
     fn prepare(&mut self, cx: &mut PrepareCx<'_>);
+    fn taffy_style(&self, _style: &mut crate::taffy::Style) {}
     fn as_any(&self) -> &dyn Any;
     fn as_any_mut(&mut self) -> &mut dyn Any;
     /// The struct's address (field offsets are relative to it).
@@ -704,6 +770,9 @@ impl<T: Widget + KindDecl> ErasedWidget for T {
     }
     fn prepare(&mut self, cx: &mut PrepareCx<'_>) {
         Widget::prepare(self, cx)
+    }
+    fn taffy_style(&self, style: &mut crate::taffy::Style) {
+        Widget::taffy_style(self, style)
     }
     fn as_any(&self) -> &dyn Any {
         self
@@ -821,11 +890,17 @@ pub(crate) fn set_replaced_prop(w: &mut W, def: &crate::kinds::PropDef, v: &Valu
         };
         d.insert(crate::scene::Dirty::MEASURE);
     }
-    if def.layout {
+    // OW2: props that change the own widget's taffy style or how it lays out its children, as
+    // the wrappers' writes did (`Widget::taffy_style`, `Caps::CUSTOM_LAYOUT`)
+    use crate::kinds::P;
+    if def.layout || matches!(def.key, P::ScrollDirection | P::Side | P::Size | P::Orientation | P::DividerPosition | P::MinSize) || OW2_LAYOUT_PROPS.contains(&def.name) {
         d.insert(crate::scene::Dirty::LAYOUT);
     }
     Ok(d)
 }
+
+/// OW2: further own-widget props whose writes relayout (by name: new props of the replaced rows).
+const OW2_LAYOUT_PROPS: &[&str] = &["sizes", "collapsible"];
 
 /// OW0: a read of built-in prop `def` from an own widget that replaces the kind.
 pub(crate) fn get_replaced_prop(x: &ExtWidget, def: &crate::kinds::PropDef) -> Result<Value, String> {
@@ -983,7 +1058,13 @@ fn flush_writes(
         let sig = reg.ext_signal_id(kind, e);
         if arena.listens(i, sig) {
             // OW0: an own widget's event keeps the built-in signal's arity (no args: no payload)
-            let args = if reg.provider(kind).is_none() && reg.signal_def(kind, sig).is_some_and(|d| d.args.is_empty()) { vec![] } else { vec![v] };
+            // (OW2: a list payload spreads over a built-in signal of several args: `changed(x, y)`)
+            let n = if reg.provider(kind).is_none() { reg.signal_def(kind, sig).map(|d| d.args.len()) } else { None };
+            let args = match (n, v) {
+                (Some(0), _) => vec![],
+                (Some(n), Value::List(l)) if n > 1 && l.len() == n => l,
+                (_, v) => vec![v],
+            };
             out.push(Out::Event(h, sig, args));
         }
     }

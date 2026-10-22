@@ -209,6 +209,12 @@ pub fn style_of(c: &Common, w: &W, vis: &Visual) -> Style {
         inset: taffy::Rect { left: lpa(c.left), right: lpa(c.right), top: lpa(c.top), bottom: lpa(c.bottom) },
         ..Style::default()
     };
+    // OW2: an own widget's own part of its style (a scroll area's overflow, a panel's size)
+    if let W::Ext(x) = w
+        && let Ok(b) = x.0.try_borrow()
+    {
+        b.taffy_style(&mut s);
+    }
     // TR1 clip channel: the node occupies at most the clipped size (paint is cut at it, render.rs)
     if let Some([cw, ch]) = vis.clip {
         if cw >= 0.0 {

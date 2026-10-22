@@ -708,6 +708,12 @@ pub fn composing(ctx: &Context) -> bool {
     read(ctx, |st| st.composing.is_some())
 }
 
+/// OW2: the scene node holding keyboard focus in `ctx`'s viewport (from the latest record).
+pub(crate) fn focused_node(ctx: &Context) -> Option<crate::scene::NodeId> {
+    let focus = ctx.memory(|m| m.focused())?;
+    read(ctx, |st| st.cur.entry(Some(focus)).or_else(|| st.prev.entry(Some(focus))).map(|e| e.node))
+}
+
 impl EguiBackend {
     /// The focused entry of this backend, from the latest record of `ctx`'s viewport.
     fn focused_entry(&self, ctx: &Context) -> Option<Entry> {
