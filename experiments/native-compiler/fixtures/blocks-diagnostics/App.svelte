@@ -1,4 +1,4 @@
-<!-- Deliberately invalid: snippet/block/spread validations (each line exercises one; the destructuring ones compile since CF1 and stay as positive cases). -->
+<!-- Deliberately invalid: snippet/block/spread validations (each line exercises one; the destructuring ones compile since CF1 and the spread since SP1; they stay as positive cases). -->
 <script>
   let props = $state({ label: 'x' });
   let items = $state([1, 2]);

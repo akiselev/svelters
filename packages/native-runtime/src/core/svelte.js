@@ -8,7 +8,16 @@
 // ./index.js re-exports the compiler-facing contract from here; ./internal.js the internals the
 // block machinery uses. Phase 2 replaces this file with an own core behind the same two modules.
 import * as $ from 'svelte/internal/client';
-import { block as svelteBlock, branch as svelteBranch, component_root, destroy_effect } from 'svelte/internal/client/reactivity/effects';
+import {
+  block as svelteBlock,
+  branch as svelteBranch,
+  component_root,
+  destroy_effect,
+  pause_effect,
+  resume_effect,
+} from 'svelte/internal/client/reactivity/effects';
+import { loop as svelteLoop } from 'svelte/internal/client/loop';
+import { set_should_intro } from 'svelte/internal/client/render';
 import { queue_micro_task } from 'svelte/internal/client/dom/task';
 import { getAllContexts, setContext } from 'svelte/internal/client/context';
 import { capture, unset_context } from 'svelte/internal/client/reactivity/async';
@@ -51,6 +60,7 @@ export {
   props_id,
   bind_this,
   attach,
+  attachment,
   action,
   noop,
   // stores
@@ -79,6 +89,12 @@ export {
 export const BOUNDARY_EFFECT = 1 << 7;
 export const DESTROYED = 1 << 14;
 export const DESTROYING = 1 << 25;
+/** TR1: a paused (outroing) subtree; Svelte's scheduler skips it. */
+export const INERT = 1 << 13;
+/** TR1: the block effect has run once (local intros only play in blocks that already ran). */
+export const REACTION_RAN = 1 << 15;
+/** TR1: a block that is looked through for local transitions (else-if, snippet, dynamic component, boundary). */
+export const EFFECT_TRANSPARENT = 1 << 16;
 
 /** `fn` in a root effect (Svelte's `component_root`); returns the dispose function. */
 export const root = component_root;
@@ -88,6 +104,25 @@ export const block = svelteBlock;
 export const branch = svelteBranch;
 /** Destroys an effect and its children (teardowns run). */
 export const destroy = destroy_effect;
+/**
+ * TR1: Svelte's `pause_effect(effect, done, destroy)`: marks the subtree inert, plays the out
+ * transitions that belong to it (local ones up to the next non-transparent block, global ones
+ * anywhere), then destroys it (when `destroy`) and calls `done`. Synchronous without transitions.
+ */
+export const pause = pause_effect;
+/** TR1: Svelte's `resume_effect`: un-pauses a paused subtree and plays its intros (reversal). */
+export const resume = resume_effect;
+/** TR1: whether `effect` is paused or inside a paused subtree (outroing). */
+export const inert = (effect) => effect !== null && (effect.f & INERT) !== 0;
+/** TR1: Svelte's `should_intro` (render.js): intros of the root component's first render play when true. */
+export const set_intro = set_should_intro;
+/** TR1: Svelte's `raf` (timing.js: `tick` = requestAnimationFrame, `now` = performance.now in the browser build). */
+export const raf = $.raf;
+/** TR1: Svelte's `loop(fn)`: `fn(now)` on every frame of `raf` until it returns false; `{ abort }`. */
+export const loop = svelteLoop;
+/** TR1: Svelte's `$.transition` / `$.animation` (dom/elements/transitions.js) on a runtime node. */
+export const transition = $.transition;
+export const animation = $.animation;
 /** The effect running now, or null. */
 export const active = () => $.active_effect;
 /** Whether `effect` is destroyed or being destroyed. */

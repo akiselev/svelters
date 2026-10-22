@@ -613,10 +613,19 @@ impl Rewriter for ScopeRewriter<'_> {
             Some(b) => read_text(&self.cx.transform_of(b), first),
             None => first.to_string(),
         };
-        match rest {
-            Some(r) => format!("{read}.{r}"),
-            None => read,
+        // Svelte's parse_directive_name: a part that is not an identifier is a computed member
+        // (`use:a.b.c-d` -> `a.b["c-d"]`)
+        let mut out = read;
+        for part in rest.into_iter().flat_map(|r| r.split('.')) {
+            let ident = part.chars().next().is_some_and(|c| c.is_alphabetic() || c == '_' || c == '$') && part.chars().all(|c| c.is_alphanumeric() || c == '_' || c == '$');
+            if ident {
+                out.push('.');
+                out.push_str(part);
+            } else {
+                out.push_str(&format!("[{}]", serde_json::Value::String(part.to_string())));
+            }
         }
+        out
     }
 
     fn destructure(&self, pattern: &Pattern, initial: &str, derived_arrays: bool) -> crate::codegen::component::Destructured {

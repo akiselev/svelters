@@ -664,6 +664,17 @@ impl Core {
         })
     }
 
+    /// ABI v2.8 (TR1): the layout rect of a widget; `None` for a dead handle or a backend without
+    /// geometry.
+    pub(crate) fn op_bounds(&self, h: svl_handle) -> Result<Option<[f64; 4]>, OpError> {
+        self.timed(|| {
+            if self.live_kind(h)?.is_none() {
+                return Ok(None);
+            }
+            self.backend.bounds(h).map_err(|e| self.backend_err(e))
+        })
+    }
+
     pub(crate) fn op_listen(&self, h: svl_handle, signal: Name<'_>, on: bool, flags: u32) -> Result<(), OpError> {
         self.timed(|| {
             if crate::exports::is_app_handle(h) {

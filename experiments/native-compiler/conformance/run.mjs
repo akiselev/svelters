@@ -21,7 +21,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { execFile, spawn } from 'node:child_process';
-import { compilerPath } from '@svelters/native-runtime/vite';
+import { compilerPath, kindsModule } from '@svelters/native-runtime/vite';
 
 const here = import.meta.dirname;
 const repo = path.resolve(here, '../../..');
@@ -203,6 +203,8 @@ const names = fs
   .filter((n) => !filters.length || filters.some((f) => n.includes(f)))
   .sort();
 fs.mkdirSync(outDir, { recursive: true });
+// `@svelters/native-runtime/kinds` (spreads, <svelte:element>) for the dom spec; hooks.mjs resolves it here
+fs.writeFileSync(path.join(outDir, '_kinds.js'), kindsModule({ spec }));
 
 const results = {};
 let next = 0;

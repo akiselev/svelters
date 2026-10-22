@@ -35,6 +35,7 @@ mod menus;
 pub(crate) use menus::signal_name as menus_signal_name;
 mod observe;
 mod style;
+mod visual;
 mod vlist;
 mod wake;
 use extras::CallErr;
@@ -1639,6 +1640,7 @@ impl GtkBackend {
             call_static: Some(b_call_static),
             observe: Some(b_observe),
             start: Some(b_start),
+            bounds: Some(b_bounds),
         });
         Ok(GtkBackend { vtable, ctl })
     }
@@ -2010,6 +2012,25 @@ unsafe extern "C" fn b_run(p: *mut c_void, host: *const svl_host) -> c_int {
     // wakeup) that fire later must not call into it.
     c.host.store(std::ptr::null_mut(), Ordering::Release);
     rc
+}
+
+/// ABI v2.8 (TR1): the layout rect of a widget in its root (natural size when not allocated).
+unsafe extern "C" fn b_bounds(p: *mut c_void, h: svl_handle, out: *mut f64) -> c_int {
+    let c = unsafe { ctl(p) };
+    match catch_unwind(AssertUnwindSafe(|| c.local.bounds_of(h))) {
+        Ok(Ok(r)) => {
+            unsafe { std::ptr::copy_nonoverlapping(r.as_ptr(), out, 4) };
+            0
+        }
+        Ok(Err(e)) => {
+            c.local.set_error(e);
+            -1
+        }
+        Err(_) => {
+            c.local.set_error("internal panic in svelters-gtk".into());
+            -1
+        }
+    }
 }
 
 /// ABI v2.7: attaches the host without running the loop (GTK is initialised by `GtkBackend::new`);

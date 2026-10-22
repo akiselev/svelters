@@ -35,12 +35,15 @@ const src = (rel) => fs.readFileSync(path.join(client, rel), 'utf8');
 const $ = await import(pathToFileURL(require.resolve('svelte/internal/client')).href);
 const { emittedNames } = await import(pathToFileURL(path.join(runtimeDir, 'test/core-contract.mjs')).href);
 for (const n of emittedNames()) check(typeof $[n] === 'function', `svelte/internal/client has no function \`${n}\` (the compiler emits $.${n})`);
-for (const n of ['flush', 'tick', 'clsx']) check(typeof $[n] === 'function', `svelte/internal/client has no function \`${n}\``);
+for (const n of ['flush', 'tick', 'clsx', 'transition', 'animation']) check(typeof $[n] === 'function', `svelte/internal/client has no function \`${n}\``);
 check('active_effect' in $, 'svelte/internal/client no longer exports `active_effect`');
 
 // 2. the hidden modules the adapter imports (vite.js HIDDEN_MODULES)
 const hidden = {
-  'reactivity/effects.js': ['block', 'branch', 'component_root', 'destroy_effect'],
+  'reactivity/effects.js': ['block', 'branch', 'component_root', 'destroy_effect', 'pause_effect', 'resume_effect'],
+  // TR1: the animation player's frame task, and `mount`'s `intro`
+  'loop.js': ['loop'],
+  'render.js': ['set_should_intro'],
   'dom/task.js': ['queue_micro_task'],
   'context.js': ['getAllContexts', 'setContext'],
   'reactivity/async.js': ['capture', 'unset_context'],
@@ -68,7 +71,7 @@ for (const [file, names] of Object.entries(hidden)) {
 // 3. effect flag bits the adapter sets and reads
 const core = await import(pathToFileURL(path.join(runtimeDir, 'src/core/svelte.js')).href);
 const constants = await import(pathToFileURL(path.join(client, 'constants.js')).href);
-for (const n of ['BOUNDARY_EFFECT', 'DESTROYED', 'DESTROYING']) {
+for (const n of ['BOUNDARY_EFFECT', 'DESTROYED', 'DESTROYING', 'INERT', 'REACTION_RAN', 'EFFECT_TRANSPARENT']) {
   check(constants[n] === core[n], `constants.js ${n} is ${constants[n]}, the adapter uses ${core[n]}`);
 }
 
@@ -93,8 +96,19 @@ for (const f of ['f', 'b', 'first', 'last', 'next', 'prev', 'parent']) {
   check(new RegExp(`^\\s*${f}\\s*[:,]`, 'm').test(literal), `create_effect's effect object has no field \`${f}\``);
 }
 
+// 6. TR1: what Svelte's transitions.js uses on an element (the runtime node's facade, src/motion.js)
+//    and on `raf`; a new member here needs a facade member before the bump
+{
+  const t = src('dom/elements/transitions.js');
+  const used = new Set([...t.matchAll(/\belement\.([A-Za-z_]+)/g)].map((m) => m[1]));
+  const FACADE = new Set(['inert', 'style', 'animate', 'dispatchEvent', 'getBoundingClientRect', 'getAnimations']);
+  for (const m of used) check(FACADE.has(m), `transitions.js uses element.${m}, which the runtime node's facade (src/motion.js) lacks`);
+  check(/nodes\.t \?\?= \[\]/.test(t) && /nodes\.a \?\?=/.test(t), 'transitions.js no longer registers managers on effect.nodes.t / .a');
+  check(typeof $.raf?.tick === 'function' && typeof $.raf?.now === 'function' && $.raf?.tasks instanceof Set, 'svelte/internal/client `raf` no longer has tick/now/tasks');
+}
+
 if (failures.length) {
   console.error(`check-svelte-internals: ${failures.length} problem(s) with svelte ${version}:\n  ${failures.join('\n  ')}`);
   process.exit(1);
 }
-console.log(`check-svelte-internals: svelte ${version} provides everything the core adapter uses (${emittedNames().length} contract names, ${Object.values(hidden).flat().length} hidden-module functions, 3 flags, ${core.BOUNDARY_MEMBERS.length} Boundary members)`);
+console.log(`check-svelte-internals: svelte ${version} provides everything the core adapter uses (${emittedNames().length} contract names, ${Object.values(hidden).flat().length} hidden-module functions, 6 flags, ${core.BOUNDARY_MEMBERS.length} Boundary members)`);

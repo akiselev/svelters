@@ -749,6 +749,15 @@ impl Harness {
         })
     }
 
+    /// ABI v2.8 `bounds`: the widget's rect in its root (x, y, width, height).
+    pub fn bounds(&self, h: u64) -> Result<[f64; 4], String> {
+        let vt = self.vt();
+        let f = vt.bounds.expect("bounds");
+        let mut out = [0.0f64; 4];
+        let rc = unsafe { f(vt.self_, h, out.as_mut_ptr()) };
+        if rc < 0 { Err(self.err()) } else { Ok(out) }
+    }
+
     /// CSS parse errors the backend's providers reported since the last call.
     pub fn style_errors(&self) -> Vec<String> {
         self.backend.take_style_errors()
