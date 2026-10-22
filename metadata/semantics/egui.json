@@ -952,6 +952,23 @@
           "type": "string",
           "writable": true
         },
+        "bottom": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Inset from the containing block's bottom edge in points; null for auto.",
+          "js": "bottom",
+          "native": "bottom",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:bottom",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
         "enabled": {
           "construct_only": false,
           "default": true,
@@ -1030,6 +1047,23 @@
           "observe": {
             "class": "set_only",
             "fact": "egui:Widget:height",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "left": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Inset from the containing block's left edge in points (`position: absolute` or `relative`); null for auto.",
+          "js": "left",
+          "native": "left",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:left",
             "mechanism": "scene",
             "verified": "weak"
           },
@@ -1122,6 +1156,45 @@
           "type": "f64",
           "writable": true
         },
+        "position": {
+          "construct_only": false,
+          "default": "static",
+          "doc": "`absolute` takes the node out of the flow and places it by `left`/`top`/`right`/`bottom` inside its containing block: the nearest `relative` or `absolute` ancestor, else the root.",
+          "js": "position",
+          "native": "position",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:position",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "static",
+            "relative",
+            "absolute"
+          ],
+          "writable": true
+        },
+        "right": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Inset from the containing block's right edge in points; null for auto.",
+          "js": "right",
+          "native": "right",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:right",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
         "tooltip": {
           "construct_only": false,
           "default": "",
@@ -1137,6 +1210,23 @@
           },
           "readable": true,
           "type": "string",
+          "writable": true
+        },
+        "top": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Inset from the containing block's top edge in points; null for auto.",
+          "js": "top",
+          "native": "top",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:top",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
           "writable": true
         },
         "visible": {
@@ -1387,6 +1477,23 @@
         ],
         "via": "setter"
       },
+      "bottom": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "bottom",
+        "prop": "bottom",
+        "tags": [
+          "box",
+          "button",
+          "checkbox",
+          "label",
+          "slider",
+          "text-edit"
+        ],
+        "type": "length",
+        "via": "setter"
+      },
       "column-gap": {
         "kinds": [
           "Box"
@@ -1536,6 +1643,23 @@
         ],
         "via": "setter"
       },
+      "left": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "left",
+        "prop": "left",
+        "tags": [
+          "box",
+          "button",
+          "checkbox",
+          "label",
+          "slider",
+          "text-edit"
+        ],
+        "type": "length",
+        "via": "setter"
+      },
       "margin": {
         "kinds": [
           "Widget"
@@ -1635,6 +1759,45 @@
         "type": "length",
         "via": "setter"
       },
+      "position": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "position",
+        "prop": "position",
+        "tags": [
+          "box",
+          "button",
+          "checkbox",
+          "label",
+          "slider",
+          "text-edit"
+        ],
+        "type": "enum",
+        "values": [
+          "static",
+          "relative",
+          "absolute"
+        ],
+        "via": "setter"
+      },
+      "right": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "right",
+        "prop": "right",
+        "tags": [
+          "box",
+          "button",
+          "checkbox",
+          "label",
+          "slider",
+          "text-edit"
+        ],
+        "type": "length",
+        "via": "setter"
+      },
       "row-gap": {
         "kinds": [
           "Box"
@@ -1643,6 +1806,23 @@
         "prop": "row-gap",
         "tags": [
           "box"
+        ],
+        "type": "length",
+        "via": "setter"
+      },
+      "top": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "top",
+        "prop": "top",
+        "tags": [
+          "box",
+          "button",
+          "checkbox",
+          "label",
+          "slider",
+          "text-edit"
         ],
         "type": "length",
         "via": "setter"
