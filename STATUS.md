@@ -69,7 +69,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | WG1 SC1 egui widget subset | IN PROGRESS | | branch `ci/wg1`; grid, collapsing-header, toggle-button, combo-box, separator, scroll-area, icon, tooltip, invalid, a11y names; cadatomic FW1's acceptance depends on it |
 | WG3 native reference capture (pins 1-3, 7; GTK/Qt goldens) | DONE | 2026-10-22 | merged 59bc9f81; egui TextEdit matches 85/144 (GTK), 75/144 (Qt) |
 | WG3b GTK selection from inner GtkText, Qt 6.11 golden, pins 4-6 | IN PROGRESS | | branch `ci/wg3b` |
-| FX1 egui focus policy + word rules per native refs | IN PROGRESS | | branch `ci/fx1` |
+| FX2 egui focus policy + word rules per native refs (`svelters_egui::native`) | DONE | 2026-10-22 | merged (this commit); egui vs GTK 85→141/144, vs Qt 75→139/144; pin 3 double-click word select left |
 | WG3w Windows native references (Win32 EDIT, WinUI TextBox; pins 1-3, 7), egui on Windows, counter-win flake | IN PROGRESS | | branch `ci/wg3w`; builds via the WSL PC's Windows toolchain |
 | EV3+ keys and focus: focus scopes/restore, key routing (ShortcutOverride), edit commands to Svelte text fields, default/cancel buttons (QT-SURVEY §3) | QUEUED | | after FX1; key consumption via ARCH-EMBED R11 consume_key/composing(); edit commands through a host-callable API (cadatomic constraint) |
 | WG5a list/table interaction: keyboard nav, type-ahead, selection, cell editors | QUEUED | | after LISTS2 + SG4 |
