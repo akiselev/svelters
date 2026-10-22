@@ -238,7 +238,7 @@ impl Codegen<'_, '_> {
     /// A fragment as Svelte's Fragment visitor builds it: the items in place (`init`: elements with
     /// their static writes, blocks, components), then the fragment's single `$.template_effect`
     /// with every reactive write of its elements (`update`), then their events and bindings
-    /// (`after_update`), then the appends of the toplevels it declares (see [`Frag`]).
+    /// (`after_update`) (see [`Frag`]).
     fn fragment(&mut self, f: &Fragment, container: &str) {
         if std::mem::take(&mut self.root_fragment) {
             self.consts(&f.consts);
@@ -253,7 +253,7 @@ impl Codegen<'_, '_> {
         self.close(fr);
     }
 
-    /// The end of a fragment: its template effect, events and bindings, toplevel appends.
+    /// The end of a fragment: its template effect, then its events and bindings.
     fn close(&mut self, fr: Frag) {
         self.template_effect(&fr.update);
         for a in &fr.after {
@@ -264,11 +264,6 @@ impl Codegen<'_, '_> {
                 }
                 op => self.op(&a.node, op),
             }
-        }
-        for (container, n, span) in &fr.tops {
-            self.line();
-            self.w.map(span.start);
-            self.w.write(&format!("$n.append({container}, {n});"));
         }
     }
 
@@ -345,16 +340,12 @@ impl Codegen<'_, '_> {
                 Phase::Binding => own_after.push(op),
             }
         }
-        let append = |g: &mut Self, fr: &mut Frag<'f>| {
-            // a toplevel is shown when appended: after its fragment's writes, as Svelte appends a
-            // fragment to its anchor last
-            if e.toplevel {
-                fr.tops.push((container.to_string(), n.clone(), e.span));
-            } else {
-                g.line();
-                g.w.map(e.span.start);
-                g.w.write(&format!("$n.append({container}, {n});"));
-            }
+        // (a toplevel appended at the root is shown when the outermost build returns: the
+        // runtime's `showTop`, so after its fragment's template effect, in document order)
+        let append = |g: &mut Self| {
+            g.line();
+            g.w.map(e.span.start);
+            g.w.write(&format!("$n.append({container}, {n});"));
         };
         if scoped(&e.children) {
             self.line();
@@ -364,7 +355,7 @@ impl Codegen<'_, '_> {
             let mut inner = Frag::default();
             self.children(&e.children, &n, &mut inner);
             self.element_init(&n, &own_init);
-            append(self, fr);
+            append(self);
             inner.after.extend(own_after.into_iter().map(|op| After { node: n.clone(), op, memo: None }));
             self.close(inner);
             self.w.dedent();
@@ -373,7 +364,7 @@ impl Codegen<'_, '_> {
         } else {
             self.children(&e.children, &n, fr);
             self.element_init(&n, &own_init);
-            append(self, fr);
+            append(self);
             fr.after.extend(own_after.into_iter().map(|op| After { node: n.clone(), op, memo: None }));
         }
     }
@@ -1495,16 +1486,12 @@ impl Codegen<'_, '_> {
 /// so a parent's template expressions run after its children's components initialised (Svelte's
 /// `lifecycle-render-order-for-children*`), and an unrelated change re-runs them all (each
 /// runtime write skips an unchanged value); then the events and bindings (`after_update`), so a
-/// binding's first write sees the element's other props; then the appends of the toplevels the
-/// fragment declares (Svelte appends a fragment to its anchor last; appending a toplevel shows
-/// it, which must see its props).
+/// binding's first write sees the element's other props.
 #[derive(Default)]
 struct Frag<'f> {
     /// (element variable, reactive op), in element order.
     update: Vec<(String, &'f Op<'f>)>,
     after: Vec<After<'f>>,
-    /// (container, element variable, element span) of toplevels.
-    tops: Vec<(String, String, Span)>,
 }
 
 /// An event or binding of an element, written after the template effect.

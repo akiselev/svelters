@@ -141,11 +141,14 @@ Semantics are specified in `runtime-contract.md` "Template blocks"; departures f
   Svelte. A keyed each destructures inside its key function instead of in its parameter list.
 - **Top-level snippets** follow Svelte: before the instance script, or at module level when
   they reference nothing of the instance (`can_hoist_snippet`).
-- **Template effect order**: Svelte creates one `$.template_effect` per fragment after its blocks
-  and components, so a parent's template expressions run after its children initialised. Here
-  each reactive prop write is its own render effect created in element order
-  (`codegen/component.rs` `DEFER_TEMPLATE_EFFECTS`, off: turning it on reorders GTK/Qt op logs).
-  Observable only through side effects in template expressions (`lifecycle-render-order-*`).
+- **Template effects** follow Svelte since CF2: one `$.template_effect` per fragment, created
+  after its blocks and components, then the events and bindings (Svelte's `after_update`), with
+  the fragment's call expressions memoized as its dependencies (runtime-contract.md "Shape of
+  generated code"). Departures: the init order of an element is native (its children are inserted
+  into it, then it into its parent, before the template effect: Svelte clones the whole template
+  first, then appends the fragment last); a toplevel shown at the root is shown when the outermost
+  build returns (Svelte has no toplevels). A reactive `{@const}`/snippet scope inside an element
+  is its own fragment (Svelte: the element's children in a block with their own effect).
 - **Dynamic components** (`<Comp />` with `Comp` state/prop/each item/snippet param, or
   `<obj.Comp />`) render through `$n.snippet` (Svelte's `$.component`), re-created when the
   function changes. `<svelte:component this={expr}>` likewise (always dynamic).
@@ -187,8 +190,8 @@ Semantics are specified in `runtime-contract.md` "Template blocks"; departures f
   `insert`, as the renderer does (they used to be normalised to the default slot).
 - **`track` is passive** (renderer parity): a one-way `text={x}` with no listener no longer makes the
   host listen to `changed`.
-- **Child attribute op order** within one update can differ from the JS pipeline (render effects
-  in source order, see "Template effect order"); the resulting state is the same.
+- **Child attribute op order** within one update follows the fragment's template effect (element
+  order, as Svelte's output the JS pipeline ran).
 
 ## Rune transform (`transform/*`, `compile_module`; agent R2)
 

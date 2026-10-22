@@ -28,12 +28,10 @@ node tools/oplog-compare.mjs fixtures/<name>/expected.oplog experiments/native-c
 
 ## Why the logs differ
 
-- **Effect order within an update** (keyed-list `set #4 text ""`, native-close
-  `set #3 label "child open"`). Our template effects are created in source order (the contract's
-  initial op order), and Svelte runs dirty render effects in effect-tree order, so the entry's
-  text effect runs before the `{#each}` below it and the label before the `{#if}`. Svelte's own
-  output groups a fragment's template effects after its blocks, so the JS pipeline updates the
-  blocks first. Same ops, same final state per step.
+- **Effect order within an update.** Before CF2 our template effects were created in source
+  order, so the entry's text effect ran before the `{#each}` below it (keyed-list) and the label
+  before the `{#if}` (native-close). Since CF2 a fragment's template effect comes after its blocks
+  and its events after that, as in Svelte's own output, which the JS pipeline ran.
 - **Which items move** (keyed-list Reverse, every keyed-stress step). Our keyed each keeps a
   longest increasing subsequence in place and moves the rest back to front; Svelte's algorithm
   picks other items. Move counts are equal here (keyed-list reverse: 2 vs 2; keyed-stress: 18

@@ -23,8 +23,9 @@ export default function App($$anchor, $$props) {
   const n1 = $n.element('window', 'present');
   $n.set(n1, 'title', 'Timers');
   const n2 = $n.element('label');
-  $.template_effect(() => $n.set(n2, 'label', $.get(status) ?? ''));
   $n.append($n.slot(n1, null), n2);
   $n.append($$anchor, n1);
+  // the fragment's template effect (Svelte's order)
+  $.template_effect(() => $n.set(n2, 'label', $.get(status) ?? ''));
   $.pop();
 }

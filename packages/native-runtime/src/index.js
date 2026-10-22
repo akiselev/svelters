@@ -322,6 +322,36 @@ function pickMethod(node, names) {
  */
 function showTop(node) {
   node.shown = true;
+  if (depth > 0) shows.push(node);
+  else presentTop(node);
+}
+
+/**
+ * Builds in progress (`mount`, block branches). A toplevel shown during one is shown when the
+ * outermost returns: after the template effect of its fragment, which runs after the fragment's
+ * blocks and components (Svelte's order), wrote its props, and in document order (a toplevel
+ * in a block shown after the toplevel declared before the block). A failed build shows nothing.
+ */
+let depth = 0;
+let shows = [];
+
+function building(fn) {
+  depth++;
+  let ok = false;
+  try {
+    const r = fn();
+    ok = true;
+    return r;
+  } finally {
+    if (--depth === 0 && shows.length) {
+      const list = shows;
+      shows = [];
+      if (ok) for (const n of list) if (alive(n)) presentTop(n);
+    }
+  }
+}
+
+function presentTop(node) {
   const spec = Object.hasOwn(TOPLEVELS, node.kind) ? TOPLEVELS[node.kind] : null;
   const mode = node.top.show ?? (spec?.dialog ? 'modal' : 'modeless');
   if (mode === 'none') return;
@@ -816,7 +846,9 @@ function open(parent, owner, fn, b = newRegion(parent), ...args) {
   const prev = scope;
   scope = b.scope;
   try {
-    b.effect = branch(() => fn(b, ...args));
+    building(() => {
+      b.effect = branch(() => fn(b, ...args));
+    });
   } finally {
     scope = prev;
   }
@@ -1334,21 +1366,23 @@ export function mount(Component, { props = {}, target, transformError } = {}) {
   try {
     // In a branch, as Svelte's mount does (through its boundary): user effects created during the
     // root component's init are then deferred to its $.pop(), i.e. run after its children's.
-    dispose_root = componentRoot(() => {
-      branch(() => {
-        // the root of the boundary chain (Svelte's mount renders the app in a boundary): carries
-        // `transformError` for every <svelte:boundary>, handles nothing itself
-        root_boundary(
-          boundary_handler({
-            transform_error: transformError ?? ((e) => e),
-            error(e) {
-              throw e;
-            },
-          }),
-        );
-        exports = Component(root, props);
-      });
-    });
+    dispose_root = building(() =>
+      componentRoot(() => {
+        branch(() => {
+          // the root of the boundary chain (Svelte's mount renders the app in a boundary): carries
+          // `transformError` for every <svelte:boundary>, handles nothing itself
+          root_boundary(
+            boundary_handler({
+              transform_error: transformError ?? ((e) => e),
+              error(e) {
+                throw e;
+              },
+            }),
+          );
+          exports = Component(root, props);
+        });
+      }),
+    );
   } catch (e) {
     // a failed first render: tear down what it already created (natives inserted under the
     // root or target, handlers, effects) before the error leaves mount
