@@ -58,6 +58,8 @@ pub(crate) struct Compiler {
     pub(crate) dev: bool,
     /// Components get the `--hmr` wrapper (needs `dev`).
     pub(crate) hmr: bool,
+    /// The app root: a component's scope class is derived from its logical id (Q4b).
+    pub(crate) root: std::path::PathBuf,
 }
 
 /// A transformed module: its code, map and warnings, or the error that stops the load.
@@ -89,6 +91,12 @@ impl Compiler {
                 opts.dev = self.dev;
                 opts.hmr = self.hmr;
                 opts.scoped_css = self.styles();
+                if opts.scoped_css {
+                    // Q4b: the scope class (`svelte-<hash>`) of the logical id (`app/src/App.svelte`),
+                    // not of the build machine's path, so it is the same on every machine.
+                    let id = super::build::logical_id(&self.root, path);
+                    opts.css_scope = Some(format!("svelte-{}", svelters_compiler::svelte::css::hash(&id)));
+                }
                 Some(compile(src, &opts))
             }
             Kind::RunesModule => Some(compile_module(src, &ModuleOptions { filename, dev: self.dev, hmr: self.hmr })),
@@ -175,7 +183,7 @@ mod tests {
 
     #[test]
     fn json_and_assets() {
-        let c = Compiler { sem: SpecBackend::builtin("gtk").unwrap(), dev: false, hmr: false };
+        let c = Compiler { sem: SpecBackend::builtin("gtk").unwrap(), dev: false, hmr: false, root: "/app".into() };
         let out = c.transform(Path::new("/a/d.json"), "{\"n\": 1}\n".into()).unwrap();
         assert_eq!(out.js, "export default {\"n\": 1};\n");
         assert!(c.transform(Path::new("/a/d.json"), "{n: 1}".into()).unwrap_err().contains("invalid JSON"));

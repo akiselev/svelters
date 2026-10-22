@@ -553,6 +553,13 @@ impl WidgetCx<'_> {
         crate::paint::paint_text(&mut self.paint_cx(ui), &s, &g, content, crate::paint::Align::of(&s, align));
     }
 
+    /// OW1a: whether a runtime listens to `event` on this node (a label senses clicks only then).
+    pub fn listens<T>(&self, event: &Event<T>) -> bool {
+        let kind = self.s.core[self.i].kind as usize;
+        let sig = crate::kinds::KindRegistry::global().ext_signal_id(kind, event.index());
+        self.s.listens(self.i, sig)
+    }
+
     /// The node's egui id (use it for the widget's own id: focus and memory follow the node).
     pub fn id(&self) -> egui::Id {
         self.id

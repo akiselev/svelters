@@ -48,7 +48,7 @@ Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessib
 <!-- BEGIN GENERATED: events of kinds.Box (tools/docs/egui/gen_reference.py). Do not edit. -->
 No events of its own.
 
-Plus the events of [`Widget`](widget.md#events): `onanimationend`, `ondrag-begin`, `ondrag-end`, `ondrag-enter`, `ondrag-leave`, `ondrop`.
+Plus the events of [`Widget`](widget.md#events): `onanimationend`, `onclick`, `oncontextmenu`, `ondblclick`, `ondrag-begin`, `ondrag-end`, `ondrag-enter`, `ondrag-leave`, `ondrop`, `onfocusin`, `onfocusout`, `onkeydown`, `onkeyup`, `onpointerdown`, `onpointerup`, `onwheel`.
 <!-- END GENERATED -->
 
 ## Methods

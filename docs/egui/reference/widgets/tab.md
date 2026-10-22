@@ -59,7 +59,7 @@ Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessib
 
 `on:close-requested` works too, and a bare `on:<event>` on a component forwards the component's `on<event>` prop.
 
-Plus the events of [`Widget`](widget.md#events): `onanimationend`, `ondrag-begin`, `ondrag-end`, `ondrag-enter`, `ondrag-leave`, `ondrop`.
+Plus the events of [`Widget`](widget.md#events): `onanimationend`, `onclick`, `oncontextmenu`, `ondblclick`, `ondrag-begin`, `ondrag-end`, `ondrag-enter`, `ondrag-leave`, `ondrop`, `onfocusin`, `onfocusout`, `onkeydown`, `onkeyup`, `onpointerdown`, `onpointerup`, `onwheel`.
 <!-- END GENERATED -->
 
 ## Methods
