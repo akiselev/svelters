@@ -228,6 +228,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     let node_id = arena.core[i].egui_id;
     let click_sense = arena.listens(i, sig("clicked"));
     let mut text_changed = None;
+    let mut text_focus = None; // FX1: the field's focus and selection before it ran
     let before = match arena.w(i) {
         W::Checkbox { checked, .. } | W::ToggleButton { checked, .. } => Some(Value::Bool(*checked)),
         W::Slider { value, .. } => Some(Value::F64(*value)),
@@ -250,14 +251,24 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             ui.add(l)
         }
         W::Button { text, selected, frame, small, weight } => {
+            crate::native::focus_visible(ui); // FX1
             let mut btn = egui::Button::new(weighted(ui, text, egui::TextStyle::Button, *weight)).selected(*selected).frame(*frame).min_size(size);
             if *small {
                 btn = btn.small();
             }
             ui.add(btn)
         }
-        W::Checkbox { text, checked } => ui.add(egui::Checkbox::new(checked, text.as_str())),
+        W::Checkbox { text, checked } => {
+            crate::native::focus_visible(ui); // FX1
+            ui.add(egui::Checkbox::new(checked, text.as_str()))
+        }
         W::TextEdit { text, hint, multiline, password, char_limit } => {
+            // FX1: native Escape and word keys before egui's TextEdit runs (crate::native)
+            crate::native::keep_focus_on_escape(ui, node_id);
+            text_focus = Some(crate::native::TextFocus::before(ui, node_id));
+            if crate::native::text_keys(ui, node_id, text, *password) {
+                text_changed = Some(text.clone());
+            }
             let mut te = if *multiline { egui::TextEdit::multiline(text).desired_rows(4) } else { egui::TextEdit::singleline(text) };
             te = te.id(node_id).desired_width(size.x).hint_text(hint.clone()).password(*password);
             if *char_limit > 0 {
@@ -384,10 +395,21 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         invalid_outline(ui, resp.rect);
     }
     let core = &mut arena.core[i];
-    if core.flags.contains(NodeFlags::WANT_FOCUS) {
+    let requested = core.flags.contains(NodeFlags::WANT_FOCUS);
+    if requested {
         core.flags.remove(NodeFlags::WANT_FOCUS);
         resp.request_focus();
     }
+    // FX1: native focus policy after the widget ran (crate::native)
+    match (arena.w(i), text_focus) {
+        (W::TextEdit { text, multiline, .. }, Some(f)) => f.after(ui, &resp, text.chars().count(), *multiline, requested),
+        (W::Button { .. } | W::Checkbox { .. }, _) => crate::native::after_toggle(ui, &resp),
+        _ => {}
+    }
+    if !matches!(arena.w(i), W::TextEdit { .. }) {
+        crate::native::keep_focus_on_escape(ui, resp.id);
+    }
+    let core = &mut arena.core[i];
     core.drawn = resp.rect;
     let mut fired: Vec<&str> = Vec::new();
     for (yes, name) in [

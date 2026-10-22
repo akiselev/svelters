@@ -24,6 +24,8 @@ pub mod kinds;
 pub mod layout;
 /// W5: the Linux primary selection in the text kinds (select-to-copy, middle-click paste).
 pub mod primary;
+/// FX1: native focus policy and word rules (GTK on Linux).
+pub mod native;
 pub mod provider;
 pub mod runner;
 pub mod scene;

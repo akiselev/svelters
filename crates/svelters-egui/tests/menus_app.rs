@@ -40,6 +40,9 @@ fn click(app: &mut TestApp, label: &str, button: egui::PointerButton) {
             modifiers: egui::Modifiers::NONE,
         });
     }
+    // FX1's focus on click (GTK policy on Linux) plus a modal opening restyle `:focus` for a few
+    // passes (6 to settle for "Delete"), more than `run`'s 4: step twice first.
+    app.harness.run_steps(2);
     app.run();
 }
 

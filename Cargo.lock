@@ -4080,6 +4080,7 @@ dependencies = [
  "svelters-modules",
  "svelters-style",
  "taffy",
+ "unicode-general-category",
 ]
 
 [[package]]
