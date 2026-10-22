@@ -1,6 +1,6 @@
 # egui: exposing the app's own Rust types, functions and widgets to Svelte
 
-Status: research proposal, 2026-10-21, for M7 (egui). **E0, E1, E2 and E3 are implemented** (`plans/milestones/E0-rust-exports.md`, `plans/milestones/E1-exports-offload.md`, `plans/milestones/E2-exports-buffers.md`, `plans/milestones/E3-exports-reactive.md`: as built, deviations, measurements); E4 and E5 are not.
+Status: research proposal, 2026-10-21, for M7 (egui). **E0, E1, E2 and E3 are implemented** (`plans/milestones/E0-rust-exports.md`, `plans/milestones/E1-exports-offload.md`, `plans/milestones/E2-exports-buffers.md`, `plans/milestones/E3-exports-reactive.md`: as built, deviations, measurements), and so is **RA2** (`Json<T>`, `#[js(tag)]` data enums, codegen over a `&Schema`; `plans/milestones/RA2-json-values.md`, §5.5); E4 and E5 are not.
 
 - **Scope:** how the developer of an all-Rust svelters-egui app exposes their own types, functions, background services and egui widgets to Svelte/TS, with compute offloaded to Rust threads.
 - **Not in scope:** the retained scene graph that the egui backend renders. Another lane is designing it; §7.4 lists only the interface this design needs from it.
@@ -220,8 +220,8 @@ pub struct SimParams {
 #[derive(svelters::Enum, Clone, Copy, Debug)]
 pub enum Integrator { Euler, Verlet, Rk4 }       // 'euler' | 'verlet' | 'rk4'
 
-#[derive(svelters::Record, Clone)]
-#[js(tag = "kind")]                              // data enum → discriminated union
+#[derive(svelters::Enum, Clone)]
+#[js(tag = "kind")]                              // data enum → discriminated union (RA2)
 pub enum Source { Point { x: f32, y: f32 }, Disc { x: f32, y: f32, r: f32 } }
 
 #[derive(svelters::Record)]
@@ -366,7 +366,7 @@ Notes on the surface:
   - On the UI thread a call is synchronous: it reuses `invoke_callback`, with re-entrancy rules as today.
   - On a worker the call is posted to the UI queue and blocks the worker until the JS thread answers. If it is called during a checkpoint that waits on that worker, it would deadlock, so worker calls carry a timeout and the docs steer towards `async` variants (`async fn force(...)`).
   - **Treat this as the least important item.** Callbacks into JS from hot compute loops are an anti-pattern: 20 µs per settle (§4), plus the interpreter.
-- **Serde escape hatch:** `Json<T>` with `T: Serialize + DeserializeOwned` crosses as a structured value typed `unknown`, or typed through `specta::Type` when the `specta` feature is on. That lets existing domain types cross without new derives.
+- **Serde escape hatch (RA2, built):** `Json<T>` with `T: Serialize + DeserializeOwned + schemars::JsonSchema` crosses as a structured value, typed from `T`'s JSON Schema; `JsonAny<T>` needs only serde and is typed `unknown`. That lets existing domain types cross without new derives (§5.5).
 
 ### 5.3 Type mapping (Rust → JS → TS)
 
@@ -380,7 +380,8 @@ Notes on the surface:
 | `HashMap<String, T>`/`BTreeMap` | object | `Record<string, T>` | |
 | `#[derive(Record)] struct` | plain object | `interface` | copied; `#[js(default)]` → optional field |
 | `#[derive(Enum)]` unit | string | string-literal union | kebab-case |
-| `#[derive(Record)] enum` | object with tag | discriminated union | `#[js(tag = "kind")]`, serde-like |
+| `#[derive(Enum)] #[js(tag = "kind")] enum` | object with tag | discriminated union | RA2: unit, struct and newtype variants; serde's internally tagged form |
+| `Json<T>` (serde + `JsonSchema`) | plain value | from the JSON Schema | RA2: never JSON text; `JsonAny<T>` is `unknown` |
 | `Result<T, E: Into<NativeError>>` | value / throw / reject | `T` | `#[derive(svelters::Error)]` → codes from variants |
 | `SystemTime`, `chrono::DateTime` | `Date` | `Date` | `SVL_T_DATETIME` |
 | `egui::Color32`, `Vec2`/`Pos2`, `Rect` | records | `Color`, `Point`, `Rect` from `values.d.ts` | shared shapes (NON-GUI-TYPES §3.1 record shapes) |
@@ -417,6 +418,39 @@ pub enum BufData {
   - The token is `Send`, but its `Drop` posts to the JS thread's release queue. The memory belongs to the JS allocator and must be freed there.
   - Lesson 3: the worker never frees it.
   - Returned from a worker as a `Buffer`, it becomes the same ArrayBuffer again (probe: `out[0] = 6`, `input length 0`).
+
+### 5.5 Serde values and data enums (RA2, built)
+
+`plans/milestones/RA2-json-values.md` has the as-built details; ARCH-EMBED §8.6 places them in the one type system.
+
+- **`Json<T>`.** `T: Serialize + DeserializeOwned + JsonSchema` (schemars 1, as cadatomic uses). The slot is a variant slot,
+  so the host converts the JS value structurally (objects become maps, integral numbers `I64`) and a serde `Deserializer`
+  over the owned `Value` reads `T`. Out, `serde_json::to_value` and a map per object. No JSON text crosses.
+- **Typings from the JSON Schema.** One `schemars::SchemaGenerator` (draft 2020-12) per schema build, so `$defs` names are
+  unique. `Json<T>` is typed as its `$ref` or inline schema; every definition a module uses, closed over its own `$ref`s,
+  is declared there as `export type Name = …;`, with `description`s as doc comments. `exports.json` lists them as
+  `kind: "json"` types with the schema itself (`schema`), for run-time descriptors later. Object properties come in the
+  schema's (alphabetical) order.
+- **Data enums.** `#[derive(svelters::Enum)]` with `#[js(tag = "kind")]`: unit (`{ kind: 'empty' }`), struct
+  (`{ kind: 'circle'; r: number }`, fields camelCase, `Option`/`#[js(default)]` optional) and newtype variants around a
+  record (`{ kind: 'pt' } & Pt`). Tags are kebab-case (`#[js(rename)]`). The value crosses as a map, so a union works in
+  parameters, results, record fields, lists and options; records and unit enums inside it are read by name.
+  `exports.json` has `kind: "union"`, `tag` and `variants`.
+- **Errors.** A JS value that does not fit throws `NativeError { domain: 'svelters', code, message }`:
+
+  | code | when |
+  |---|---|
+  | `type` | a wrong type (`"big"` for an `f64`) |
+  | `range` | an integer out of range (`300` for a `u8`) |
+  | `missing-field` | a required field, or the tag, is missing |
+  | `unknown-variant` | a tag or unit-enum name that names no variant |
+  | `unknown-field` | serde's `deny_unknown_fields` |
+  | `invalid` | a serde `custom` error (`try_from`, validation) |
+
+  The message starts with the path from the parameter: ``at l.shapes[1]: missing field `h` ``. Inside a serde internally
+  tagged enum the path stops at the enum (serde buffers its content).
+- **Codegen over a value (SV24).** `Schema::{typescript, json, javascript, dump}` take `&self`; the free functions call
+  them on `schema()`.
 
 ## 6. Threading and compute offload
 
@@ -563,6 +597,7 @@ impl StoreHooks for SimStats { fn on_write(&mut self, field: Field, v: &Value) -
 | re-entrant `&mut self` call (a JS callback calls back into the same ui object) | `NativeError { code: 'busy' }`, never a `RefCell` panic |
 | abort | `NativeError { domain: 'svelters', code: 'cancelled' }`, **settled immediately**; the late worker result is dropped, and transferred buffers are released on the JS thread when the job ends |
 | owner disposed or runtime reloaded | `code: 'disposed'` (NT1's rule) |
+| a `Json<T>` or data-enum argument that does not fit (RA2) | `NativeError { domain: 'svelters', code: 'type' \| 'range' \| 'missing-field' \| 'unknown-variant' \| 'unknown-field' \| 'invalid', message: 'at <path>: …' }` (§5.5) |
 
 `catch_unwind` needs `panic = "unwind"`. Under `panic = "abort"`, the docs say a panic in an export ends the app.
 

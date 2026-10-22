@@ -1,10 +1,11 @@
-//! Typings, JS stubs and the `svelters-exports/1` JSON, generated from the [`Schema`].
+//! Typings, JS stubs and the `svelters-exports/1` JSON, generated from a [`Schema`] value (SV24: the
+//! methods of [`Schema`]; the free functions use this process's [`schema()`]).
 //!
 //! The same JS serves two ways: [`dump`] writes `<module>.js` for bundlers (they import
 //! `@svelters/types/core` and sibling stubs as `./<module>.js`), and the QuickJS host serves it as the
 //! built-in module `svelters:app/<module>` (core from the built-in `svelters:core`).
 
-use super::schema::{ClassSchema, MemberSchema, ModuleSchema, ValueSchema, schema};
+use super::schema::{ClassSchema, MemberSchema, ModuleSchema, Schema, ValueSchema, schema};
 use super::{MemberKind, prop_key};
 use serde_json::{Value as Json, json};
 use std::fmt::Write as _;
@@ -44,11 +45,50 @@ fn shape(m: &MemberSchema) -> String {
     }
 }
 
-/// The JS module `svelters:app/<module>`. `core` is the specifier of `@svelters/types/core`;
-/// `sibling` maps another module name to its specifier.
+/// The JS module `svelters:app/<module>` of this process's schema ([`Schema::javascript`]).
 pub fn javascript(module: &str, core: &str, sibling: &dyn Fn(&str) -> String) -> Option<String> {
-    let m = schema().module(module)?;
-    Some(js_module(m, core, sibling))
+    schema().javascript(module, core, sibling)
+}
+
+/// `app.d.ts` of this process's schema ([`Schema::typescript`]).
+pub fn typescript() -> String {
+    schema().typescript()
+}
+
+/// The `svelters-exports/1` JSON of this process's schema ([`Schema::json`]).
+pub fn json() -> String {
+    schema().json()
+}
+
+/// [`Schema::dump`] of this process's schema.
+pub fn dump(dir: &Path) -> std::io::Result<DumpReport> {
+    schema().dump(dir)
+}
+
+impl Schema {
+    /// The JS module `svelters:app/<module>`. `core` is the specifier of `@svelters/types/core`;
+    /// `sibling` maps another module name to its specifier.
+    pub fn javascript(&self, module: &str, core: &str, sibling: &dyn Fn(&str) -> String) -> Option<String> {
+        let m = self.module(module)?;
+        Some(js_module(m, core, sibling))
+    }
+
+    /// `app.d.ts`: one `declare module 'svelters:app/<module>'` per module.
+    pub fn typescript(&self) -> String {
+        typescript_of(self)
+    }
+
+    /// The `svelters-exports/1` JSON (what `svelters-compile` reads for app module types).
+    pub fn json(&self) -> String {
+        json_of(self)
+    }
+
+    /// Writes `exports.json`, `app.d.ts` and one `<module>.js` per module into `dir` (for Vite,
+    /// svelte-check and the compiler), rewriting only files whose content changed. Stale module files
+    /// from removed modules are deleted.
+    pub fn dump(&self, dir: &Path) -> std::io::Result<DumpReport> {
+        dump_of(self, dir)
+    }
 }
 
 fn js_module(m: &ModuleSchema, core: &str, sibling: &dyn Fn(&str) -> String) -> String {
@@ -304,10 +344,9 @@ fn ts_ret(m: &MemberSchema) -> String {
     if m.offload.is_some() { format!("Promise<{}>", m.sig.ret.ts) } else { m.sig.ret.ts.clone() }
 }
 
-/// `app.d.ts`: one `declare module 'svelters:app/<module>'` per module.
-pub fn typescript() -> String {
+fn typescript_of(schema: &Schema) -> String {
     let mut s = format!("// {HEADER}\n");
-    for m in &schema().modules {
+    for m in &schema.modules {
         let _ = writeln!(s, "\ndeclare module 'svelters:app/{}' {{", m.name);
         let members = || m.functions.iter().chain(m.classes.iter().flat_map(|c| c.methods.iter().chain(c.statics.iter())));
         let mut core = vec!["NativeObject".to_string()];
@@ -444,9 +483,8 @@ fn member_json(m: &MemberSchema) -> Json {
     })
 }
 
-/// The `svelters-exports/1` JSON (what `svelters-compile` reads for app module types).
-pub fn json() -> String {
-    let modules: Vec<Json> = schema()
+fn json_of(schema: &Schema) -> String {
+    let modules: Vec<Json> = schema
         .modules
         .iter()
         .map(|m| {
@@ -496,13 +534,30 @@ pub fn json() -> String {
                     "type": v.member.sig.ret.ts,
                     "docs": v.member.docs.trim(),
                 })).collect::<Vec<_>>(),
-                "types": m.types.iter().map(|t| json!({
-                    "name": t.name,
-                    "kind": t.kind,
-                    "docs": t.docs.trim(),
-                    "fields": t.fields.iter().map(|(n, ty, opt)| json!({"name": n, "type": ty, "optional": opt})).collect::<Vec<_>>(),
-                    "values": t.values,
-                })).collect::<Vec<_>>(),
+                "types": m.types.iter().map(|t| {
+                    let mut j = json!({
+                        "name": t.name,
+                        "kind": t.kind,
+                        "docs": t.docs.trim(),
+                        "fields": t.fields.iter().map(|(n, ty, opt)| json!({"name": n, "type": ty, "optional": opt})).collect::<Vec<_>>(),
+                        "values": t.values,
+                    });
+                    // RA2: tagged unions and JSON Schema definitions.
+                    if let Some(tag) = &t.tag {
+                        j["tag"] = json!(tag);
+                        j["variants"] = json!(t.variants.iter().map(|v| json!({
+                            "name": v.name,
+                            "docs": v.docs.trim(),
+                            "fields": v.fields.iter().map(|(n, ty, opt)| json!({"name": n, "type": ty, "optional": opt})).collect::<Vec<_>>(),
+                            "inner": v.inner,
+                        })).collect::<Vec<_>>());
+                    }
+                    if let Some(s) = &t.schema {
+                        j["type"] = json!(t.decl.split_once(" = ").map_or("", |(_, ts)| ts.trim_end_matches(';')));
+                        j["schema"] = s.clone();
+                    }
+                    j
+                }).collect::<Vec<_>>(),
             })
         })
         .collect();
@@ -519,13 +574,10 @@ pub struct DumpReport {
     pub unchanged: usize,
 }
 
-/// Writes `exports.json`, `app.d.ts` and one `<module>.js` per module into `dir` (for Vite,
-/// svelte-check and the compiler), rewriting only files whose content changed. Stale module files
-/// from removed modules are deleted.
-pub fn dump(dir: &Path) -> std::io::Result<DumpReport> {
+fn dump_of(schema: &Schema, dir: &Path) -> std::io::Result<DumpReport> {
     std::fs::create_dir_all(dir)?;
-    let mut files: Vec<(PathBuf, String)> = vec![(dir.join("exports.json"), json()), (dir.join("app.d.ts"), typescript())];
-    for m in &schema().modules {
+    let mut files: Vec<(PathBuf, String)> = vec![(dir.join("exports.json"), schema.json()), (dir.join("app.d.ts"), schema.typescript())];
+    for m in &schema.modules {
         files.push((dir.join(format!("{}.js", m.name)), js_module(m, "@svelters/types/core", &|o| format!("./{o}.js"))));
     }
     let mut report = DumpReport::default();

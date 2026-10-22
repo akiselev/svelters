@@ -630,6 +630,221 @@
       "values": []
     },
     {
+      "classes": [],
+      "functions": [
+        {
+          "async": false,
+          "docs": "The status of slot `slot` given `value`: refused when there is no value.",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "check",
+          "params": [
+            {
+              "name": "slot",
+              "optional": false,
+              "type": "string"
+            },
+            {
+              "name": "value",
+              "optional": true,
+              "type": "number | null"
+            }
+          ],
+          "progress": null,
+          "readonly": false,
+          "returns": "SlotStatus",
+          "runsOn": "ui",
+          "rust": "check",
+          "stream": null,
+          "supersede": false,
+          "throws": [],
+          "writeonly": false
+        },
+        {
+          "async": false,
+          "docs": "",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "describePick",
+          "params": [
+            {
+              "name": "p",
+              "optional": false,
+              "type": "Pick"
+            }
+          ],
+          "progress": null,
+          "readonly": false,
+          "returns": "string",
+          "runsOn": "ui",
+          "rust": "describe_pick",
+          "stream": null,
+          "supersede": false,
+          "throws": [],
+          "writeonly": false
+        },
+        {
+          "async": false,
+          "docs": "The refusal again, as a status (round-trips the serde value).",
+          "kind": "static",
+          "maxInFlight": 0,
+          "name": "refused",
+          "params": [
+            {
+              "name": "r",
+              "optional": false,
+              "type": "Refusal"
+            }
+          ],
+          "progress": null,
+          "readonly": false,
+          "returns": "SlotStatus",
+          "runsOn": "ui",
+          "rust": "refused",
+          "stream": null,
+          "supersede": false,
+          "throws": [],
+          "writeonly": false
+        }
+      ],
+      "name": "intent",
+      "specifier": "svelters:app/intent",
+      "types": [
+        {
+          "docs": "What a pick accepts: a svelters data enum.",
+          "fields": [],
+          "kind": "union",
+          "name": "Pick",
+          "tag": "kind",
+          "values": [],
+          "variants": [
+            {
+              "docs": "",
+              "fields": [
+                {
+                  "name": "index",
+                  "optional": false,
+                  "type": "number"
+                }
+              ],
+              "inner": null,
+              "name": "face"
+            },
+            {
+              "docs": "",
+              "fields": [
+                {
+                  "name": "index",
+                  "optional": false,
+                  "type": "number"
+                },
+                {
+                  "name": "bothSides",
+                  "optional": false,
+                  "type": "boolean"
+                }
+              ],
+              "inner": null,
+              "name": "edge"
+            },
+            {
+              "docs": "",
+              "fields": [],
+              "inner": null,
+              "name": "nothing"
+            }
+          ]
+        },
+        {
+          "docs": "A command slot's state: serde's internally tagged form.",
+          "fields": [],
+          "kind": "json",
+          "name": "SlotStatus",
+          "schema": {
+            "description": "A command slot's state: serde's internally tagged form.",
+            "oneOf": [
+              {
+                "properties": {
+                  "kind": {
+                    "const": "empty",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "type": "object"
+              },
+              {
+                "properties": {
+                  "kind": {
+                    "const": "filled",
+                    "type": "string"
+                  },
+                  "value": {
+                    "format": "double",
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "kind",
+                  "value"
+                ],
+                "type": "object"
+              },
+              {
+                "$ref": "#/$defs/Refusal",
+                "properties": {
+                  "kind": {
+                    "const": "refused",
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "kind"
+                ],
+                "type": "object"
+              }
+            ]
+          },
+          "type": "{ kind: 'empty'; } | { kind: 'filled'; value: number; } | (Refusal & { kind: 'refused'; })",
+          "values": []
+        },
+        {
+          "docs": "Why a command cannot run (shaped like cadatomic's `Refusal`, which lives in a headless crate).",
+          "fields": [],
+          "kind": "json",
+          "name": "Refusal",
+          "schema": {
+            "description": "Why a command cannot run (shaped like cadatomic's `Refusal`, which lives in a headless crate).",
+            "properties": {
+              "message": {
+                "type": "string"
+              },
+              "reason": {
+                "description": "The reason id (`args.missing`).",
+                "type": "string"
+              },
+              "slot": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "reason",
+              "message"
+            ],
+            "type": "object"
+          },
+          "type": "{ message: string; /** The reason id (`args.missing`). */ reason: string; slot?: string | null; }",
+          "values": []
+        }
+      ],
+      "values": []
+    },
+    {
       "classes": [
         {
           "constructor": null,

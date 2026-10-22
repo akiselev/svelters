@@ -84,6 +84,8 @@ struct Js {
     max_in_flight: Option<u32>,
     // E3 streams
     buffer: Option<usize>,
+    // RA2 data enums
+    tag: Option<String>,
 }
 
 fn js_opts(attrs: &[Attribute]) -> syn::Result<Js> {
@@ -122,7 +124,13 @@ fn js_opts(attrs: &[Attribute]) -> syn::Result<Js> {
                     }
                     js.buffer = Some(n);
                 }
-                "tag" => return Err(m.error("data enums (#[js(tag)]) are not supported yet (E0): use a record with an enum field")),
+                "tag" => {
+                    let t = m.value()?.parse::<syn::LitStr>()?.value();
+                    if t.is_empty() {
+                        return Err(m.error("the tag key cannot be empty"));
+                    }
+                    js.tag = Some(t);
+                }
                 _ => return Err(m.error(format!("unknown #[js] option `{id}`"))),
             }
             Ok(())
@@ -177,7 +185,7 @@ fn record(input: DeriveInput) -> syn::Result<Ts> {
         return Err(syn::Error::new(input.generics.span(), "exported records cannot be generic"));
     }
     let Data::Struct(ds) = &input.data else {
-        return Err(syn::Error::new(input.span(), "#[derive(svelters::Record)] needs a struct with named fields (data enums are not supported in E0)"));
+        return Err(syn::Error::new(input.span(), "#[derive(svelters::Record)] needs a struct with named fields (a data enum is `#[derive(svelters::Enum)]` with `#[js(tag = \"kind\")]`)"));
     };
     let Fields::Named(fields) = &ds.fields else {
         return Err(syn::Error::new(ds.fields.span(), "#[derive(svelters::Record)] needs named fields"));
@@ -185,7 +193,7 @@ fn record(input: DeriveInput) -> syn::Result<Ts> {
     let p = quote!(::svelters::__private);
     let jsname = js_opts(&input.attrs)?.rename.unwrap_or_else(|| name.to_string());
     let tdocs = docs(&input.attrs);
-    let n = fields.named.len();
+    let mut names = Vec::new();
     let mut descs = Vec::new();
     let mut froms = Vec::new();
     let mut intos = Vec::new();
@@ -201,10 +209,12 @@ fn record(input: DeriveInput) -> syn::Result<Ts> {
             d = quote!(#p::__private::bigint(#d));
         }
         descs.push(quote!(#p::FieldDef { name: #fname, ty: #d, optional: #optional, docs: #fdocs }));
+        names.push(quote!((#fname, #optional)));
+        let at = quote!(.map_err(|e| #p::__private::at(e, #fname))?);
         froms.push(match &o.default {
-            Some(Some(e)) => quote!(#id: #p::__private::or_default::<#ty>(__f.next().unwrap_or(#p::Value::Null), cx, || #e)?),
-            Some(None) => quote!(#id: #p::__private::or_default::<#ty>(__f.next().unwrap_or(#p::Value::Null), cx, ::core::default::Default::default)?),
-            None => quote!(#id: <#ty as #p::FromJs>::from_js(__f.next().unwrap_or(#p::Value::Null), cx)?),
+            Some(Some(e)) => quote!(#id: #p::__private::or_default::<#ty>(__f.next().unwrap_or(#p::Value::Null), cx, || #e)#at),
+            Some(None) => quote!(#id: #p::__private::or_default::<#ty>(__f.next().unwrap_or(#p::Value::Null), cx, ::core::default::Default::default)#at),
+            None => quote!(#id: <#ty as #p::FromJs>::from_js(__f.next().unwrap_or(#p::Value::Null), cx)#at),
         });
         intos.push(quote!(#p::IntoJs::into_js(self.#id, cx)?));
     }
@@ -216,7 +226,7 @@ fn record(input: DeriveInput) -> syn::Result<Ts> {
         }
         impl #p::FromJs for #name {
             fn from_js(v: #p::Value, cx: &#p::CallCx<'_>) -> ::core::result::Result<Self, #p::NativeError> {
-                let mut __f = #p::__private::record_fields(v, #n)?;
+                let mut __f = #p::__private::record_fields(v, &[#(#names),*])?;
                 ::core::result::Result::Ok(#name { #(#froms),* })
             }
         }
@@ -229,7 +239,8 @@ fn record(input: DeriveInput) -> syn::Result<Ts> {
 }
 
 /// `#[derive(svelters::Enum)]` on a unit-only enum: a string-literal union of the kebab-case variant
-/// names (`#[js(rename)]` per variant).
+/// names (`#[js(rename)]` per variant). With `#[js(tag = "kind")]` (RA2) the variants may carry data:
+/// a discriminated union of plain objects, serde's internally tagged form (`{ kind: 'circle', r: 1 }`).
 #[proc_macro_derive(Enum, attributes(js))]
 pub fn derive_enum(input: TokenStream) -> TokenStream {
     let input = syn::parse_macro_input!(input as DeriveInput);
@@ -242,14 +253,18 @@ fn enumeration(input: DeriveInput) -> syn::Result<Ts> {
         return Err(syn::Error::new(input.span(), "#[derive(svelters::Enum)] needs an enum"));
     };
     let p = quote!(::svelters::__private);
-    let jsname = js_opts(&input.attrs)?.rename.unwrap_or_else(|| name.to_string());
+    let topts = js_opts(&input.attrs)?;
+    if let Some(tag) = topts.tag {
+        return tagged_enum(&input, de, tag, topts.rename);
+    }
+    let jsname = topts.rename.unwrap_or_else(|| name.to_string());
     let tdocs = docs(&input.attrs);
     let mut values = Vec::new();
     let mut from = Vec::new();
     let mut into = Vec::new();
     for (i, v) in de.variants.iter().enumerate() {
         if !matches!(v.fields, Fields::Unit) {
-            return Err(syn::Error::new(v.span(), "#[derive(svelters::Enum)] variants must be unit variants"));
+            return Err(syn::Error::new(v.span(), "#[derive(svelters::Enum)] variants must be unit variants; a data enum needs `#[js(tag = \"kind\")]` on the enum"));
         }
         let o = js_opts(&v.attrs)?;
         values.push(o.rename.unwrap_or_else(|| kebab(&v.ident.to_string())));
@@ -266,7 +281,7 @@ fn enumeration(input: DeriveInput) -> syn::Result<Ts> {
         }
         impl #p::FromJs for #name {
             fn from_js(v: #p::Value, _cx: &#p::CallCx<'_>) -> ::core::result::Result<Self, #p::NativeError> {
-                ::core::result::Result::Ok(match #p::__private::enum_index(v)? {
+                ::core::result::Result::Ok(match #p::__private::enum_value(v, &[#(#values),*])? {
                     #(#from,)*
                     other => return ::core::result::Result::Err(#p::__private::bad_enum(#jsname, other)),
                 })
@@ -275,6 +290,104 @@ fn enumeration(input: DeriveInput) -> syn::Result<Ts> {
         impl #p::IntoJs for #name {
             fn into_js(self, cx: &#p::CallCx<'_>) -> ::core::result::Result<#p::Value, #p::NativeError> {
                 ::core::result::Result::Ok(#p::Value::Enum { ty: #p::__private::record_type::<Self>(cx)?, value: match self { #(#into),* } })
+            }
+        }
+    })
+}
+
+/// RA2: `#[derive(svelters::Enum)] #[js(tag = "kind")]`: unit, struct and newtype variants (a newtype's
+/// inner type is a record or another object: its fields sit next to the tag).
+fn tagged_enum(input: &DeriveInput, de: &syn::DataEnum, tag: String, rename: Option<String>) -> syn::Result<Ts> {
+    let name = &input.ident;
+    if !input.generics.params.is_empty() {
+        return Err(syn::Error::new(input.generics.span(), "exported enums cannot be generic"));
+    }
+    let p = quote!(::svelters::__private);
+    let jsname = rename.unwrap_or_else(|| name.to_string());
+    let tdocs = docs(&input.attrs);
+    let mut variants = Vec::new();
+    let mut tags = Vec::new();
+    let mut from = Vec::new();
+    let mut into = Vec::new();
+    for v in &de.variants {
+        let o = js_opts(&v.attrs)?;
+        let vtag = o.rename.unwrap_or_else(|| kebab(&v.ident.to_string()));
+        if tags.contains(&vtag) {
+            return Err(syn::Error::new(v.span(), format!("two variants have the tag `{vtag}`")));
+        }
+        tags.push(vtag.clone());
+        let id = &v.ident;
+        let vdocs = docs(&v.attrs);
+        match &v.fields {
+            Fields::Unit => {
+                variants.push(quote!(#p::VariantDef { name: #vtag, docs: #vdocs, fields: ::std::vec::Vec::new(), inner: ::core::option::Option::None }));
+                from.push(quote!(#vtag => #name::#id));
+                into.push(quote!(#name::#id => #p::__private::tagged_value(#tag, #vtag, ::std::vec::Vec::new())));
+            }
+            Fields::Unnamed(u) if u.unnamed.len() == 1 => {
+                let ty = &u.unnamed[0].ty;
+                variants.push(quote!(#p::VariantDef { name: #vtag, docs: #vdocs, fields: ::std::vec::Vec::new(), inner: ::core::option::Option::Some(<#ty as #p::JsType>::describe(b)) }));
+                from.push(quote!(#vtag => #name::#id(__m.rest::<#ty>(cx)?)));
+                into.push(quote!(#name::#id(__x) => #p::__private::tagged_inner(#tag, #vtag, #p::IntoJs::into_js(__x, cx)?, cx)?));
+            }
+            Fields::Unnamed(u) => {
+                return Err(syn::Error::new(u.span(), "a tagged variant is a unit, a struct variant or a newtype around a record (serde's internally tagged form has no tuples)"));
+            }
+            Fields::Named(fields) => {
+                let mut fdefs = Vec::new();
+                let mut reads = Vec::new();
+                let mut binds = Vec::new();
+                let mut writes = Vec::new();
+                for f in &fields.named {
+                    let fo = js_opts(&f.attrs)?;
+                    if fo.bigint {
+                        return Err(syn::Error::new(f.span(), "#[js(bigint)] is not supported inside a tagged variant (it crosses as a plain object): use a record field"));
+                    }
+                    let fid = f.ident.as_ref().expect("named");
+                    let ty = &f.ty;
+                    let fname = fo.rename.clone().unwrap_or_else(|| camel(&fid.to_string()));
+                    if fname == tag {
+                        return Err(syn::Error::new(f.span(), format!("a field of a tagged variant cannot be named like the tag `{tag}`")));
+                    }
+                    let fdocs = docs(&f.attrs);
+                    let optional = fo.default.is_some() || last_ident(ty).as_deref() == Some("Option");
+                    fdefs.push(quote!(#p::FieldDef { name: #fname, ty: <#ty as #p::JsType>::describe(b), optional: #optional, docs: #fdocs }));
+                    reads.push(match &fo.default {
+                        Some(Some(e)) => quote!(#fid: __m.field_or::<#ty>(#fname, cx, || #e)?),
+                        Some(None) => quote!(#fid: __m.field_or::<#ty>(#fname, cx, ::core::default::Default::default)?),
+                        None => quote!(#fid: __m.field::<#ty>(#fname, #optional, cx)?),
+                    });
+                    binds.push(quote!(#fid));
+                    writes.push(quote!((#fname, #p::IntoJs::into_js(#fid, cx)?)));
+                }
+                variants.push(quote!(#p::VariantDef { name: #vtag, docs: #vdocs, fields: ::std::vec![#(#fdefs),*], inner: ::core::option::Option::None }));
+                from.push(quote!(#vtag => #name::#id { #(#reads),* }));
+                into.push(quote!(#name::#id { #(#binds),* } => #p::__private::tagged_value(#tag, #vtag, ::std::vec![#(#writes),*])));
+            }
+        }
+    }
+    Ok(quote! {
+        impl #p::JsType for #name {
+            fn describe(b: &mut #p::TypeBuilder) -> #p::TypeRef {
+                b.union::<Self>(#jsname, #tdocs, #tag, |b| ::std::vec![#(#variants),*])
+            }
+        }
+        impl #p::FromJs for #name {
+            fn from_js(v: #p::Value, cx: &#p::CallCx<'_>) -> ::core::result::Result<Self, #p::NativeError> {
+                #[allow(unused_mut)]
+                let mut __m = #p::__private::tagged(v, #tag, #jsname)?;
+                let __t = ::core::mem::take(&mut __m.tag);
+                let __r = match __t.as_str() {
+                    #(#from,)*
+                    _ => return ::core::result::Result::Err(__m.unknown(&__t, &[#(#tags),*])),
+                };
+                ::core::result::Result::Ok(__r)
+            }
+        }
+        impl #p::IntoJs for #name {
+            fn into_js(self, cx: &#p::CallCx<'_>) -> ::core::result::Result<#p::Value, #p::NativeError> {
+                let _ = cx;
+                ::core::result::Result::Ok(match self { #(#into),* })
             }
         }
     })
@@ -726,7 +839,7 @@ fn member(
                 continue;
             }
             ArgKind::Value(t) => {
-                conv.push(quote!(let #v = <#t as #p::FromJs>::from_js(#next, cx)?;));
+                conv.push(quote!(let #v = <#t as #p::FromJs>::from_js(#next, cx).map_err(|e| #p::__private::at(e, #name))?;));
                 pass.push(quote!(#v));
                 if pooled {
                     checks.push(quote_spanned!(t.span()=> #p::__private::assert_worker_send::<#t>();));
@@ -734,7 +847,7 @@ fn member(
                 t.clone()
             }
             ArgKind::ByRef(t) => {
-                conv.push(quote!(let #v = <#t as #p::FromJs>::from_js(#next, cx)?;));
+                conv.push(quote!(let #v = <#t as #p::FromJs>::from_js(#next, cx).map_err(|e| #p::__private::at(e, #name))?;));
                 pass.push(quote!(&#v));
                 t.clone()
             }

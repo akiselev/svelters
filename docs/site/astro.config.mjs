@@ -32,6 +32,7 @@ export default defineConfig({
             guide('guides/native-models', 'Native models in lists'),
             guide('guides/events', 'Events and modifiers'),
             guide('guides/bindings', 'Bindings'),
+            guide('guides/rust-exports', 'Rust exports'),
             guide('guides/styling', 'Styling'),
             guide('guides/annotation-workflow', 'Metadata and annotations'),
             guide('guides/platforms', 'Platform status'),

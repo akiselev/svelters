@@ -84,17 +84,37 @@ pub struct ValueSchema {
 /// A module function.
 pub type FnSchema = MemberSchema;
 
-/// A declared record or enum type.
+/// A declared type: a record, an enum, a tagged union (RA2) or a JSON Schema definition (RA2).
 pub struct TypeSchema {
+    /// 0 for a JSON Schema definition.
     pub id: svl_id,
     pub name: String,
     pub docs: String,
+    /// `record`, `enum`, `union` (`#[js(tag)]` data enum) or `json` (a `$defs` entry of a `Json<T>`).
     pub kind: &'static str,
     pub decl: String,
     /// Records: (name, ts type, optional).
     pub fields: Vec<(String, String, bool)>,
     /// Enums: the values.
     pub values: Vec<String>,
+    /// Unions: the tag key.
+    pub tag: Option<String>,
+    /// Unions: the variants, in declaration order.
+    pub variants: Vec<VariantSchema>,
+    /// JSON definitions: the JSON Schema (draft 2020-12; `$ref`s point at `#/$defs/<name>`).
+    pub schema: Option<serde_json::Value>,
+}
+
+/// RA2: one variant of a tagged union.
+#[derive(Clone, Debug)]
+pub struct VariantSchema {
+    /// The tag value.
+    pub name: String,
+    pub docs: String,
+    /// Struct variants: (name, ts type, optional).
+    pub fields: Vec<(String, String, bool)>,
+    /// Newtype variants: the inner type (its fields sit next to the tag).
+    pub inner: Option<String>,
 }
 
 /// One `svelters:app/<module>`.
@@ -324,6 +344,7 @@ fn build() -> Schema {
     }
 
     // Declared types per module: the used ones, closed over their dependencies.
+    let defs = b.json_gen.definitions().clone();
     for m in &mut modules {
         let mut order: Vec<TypeId> = Vec::new();
         let mut todo: Vec<TypeId> = b.used.get(&m.name).cloned().unwrap_or_default();
@@ -342,8 +363,50 @@ fn build() -> Schema {
         m.types = order
             .iter()
             .filter_map(|t| b.named.get(t))
-            .map(|n| TypeSchema { id: n.id, name: n.name.clone(), docs: n.docs.clone(), kind: n.kind, decl: n.decl.clone(), fields: n.fields.clone(), values: if n.kind == "enum" { n.values.clone() } else { Vec::new() } })
+            .map(|n| TypeSchema {
+                id: n.id,
+                name: n.name.clone(),
+                docs: n.docs.clone(),
+                kind: n.kind,
+                decl: n.decl.clone(),
+                fields: n.fields.clone(),
+                values: if n.kind == "enum" { n.values.clone() } else { Vec::new() },
+                tag: n.tag.clone(),
+                variants: n.variants.clone(),
+                schema: None,
+            })
             .collect();
+        // RA2: the JSON Schema definitions the module (or its declared types) refers to, closed over
+        // their own `$ref`s.
+        let mut json_todo: Vec<String> = b.json_used.get(&m.name).cloned().unwrap_or_default();
+        json_todo.extend(order.iter().filter_map(|t| b.named.get(t)).flat_map(|n| n.json_deps.iter().cloned()));
+        let mut json_done: Vec<String> = Vec::new();
+        let mut i = 0;
+        while i < json_todo.len() {
+            let name = json_todo[i].clone();
+            i += 1;
+            if json_done.contains(&name) {
+                continue;
+            }
+            json_done.push(name.clone());
+            let Some(def) = defs.get(&name) else { continue };
+            let mut refs = Vec::new();
+            let ts = json::schema_ts(def, &mut refs);
+            json_todo.extend(refs);
+            let docs = def.get("description").and_then(serde_json::Value::as_str).unwrap_or_default().to_string();
+            m.types.push(TypeSchema {
+                id: 0,
+                name: json::ts_ident(&name),
+                docs,
+                kind: "json",
+                decl: format!("type {} = {ts};", json::ts_ident(&name)),
+                fields: Vec::new(),
+                values: Vec::new(),
+                tag: None,
+                variants: Vec::new(),
+                schema: Some(def.clone()),
+            });
+        }
         m.imports = b.imports.get(&m.name).cloned().unwrap_or_default();
     }
 
@@ -368,7 +431,10 @@ fn build() -> Schema {
     let mut types = HashMap::new();
     for (t, n) in &b.named {
         type_ids.insert(*t, n.id);
-        types.insert(n.id, n.desc.clone());
+        // A tagged union crosses as a plain map: the host needs no type info for it.
+        if n.kind != "union" {
+            types.insert(n.id, n.desc.clone());
+        }
     }
     for (t, (id, d)) in &b.anon {
         type_ids.insert(*t, *id);
@@ -469,7 +535,7 @@ impl Schema {
 
     /// A stable fingerprint of the JS-visible schema (the JSON dump's hash).
     pub fn fingerprint(&self) -> String {
-        let j = super::json();
+        let j = self.json();
         let mut h: u64 = 0xcbf29ce484222325;
         for b in j.bytes() {
             h ^= b as u64;

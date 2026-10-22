@@ -15,6 +15,7 @@
 
 pub(crate) mod buffers;
 mod codegen;
+pub mod json;
 pub(crate) mod objects;
 pub mod offload;
 pub mod reactive;
@@ -25,11 +26,12 @@ pub mod stream;
 pub use buffers::{Buffer, Element, Shared};
 pub(crate) use codegen::builtin_module;
 pub use codegen::{DumpReport, dump, dump_if_debug, javascript, json, typescript};
+pub use json::{Json, JsonAny};
 pub use offload::{Cancelled, CancelledFuture, Exec, Spawned, WorkCx, blocking, set_worker_pool, worker};
 #[cfg(feature = "tokio")]
 pub use offload::set_tokio_handle;
 pub use reactive::{Emitter, EventInfo, EventSet, ExportStatic, Store, StoreField, StoreHooks, StoreState, StoreStatic};
-pub use schema::{ClassSchema, EventSchema, FnSchema, MemberSchema, ModuleSchema, Schema, StoreSchema, TypeSchema, ValueSchema, schema};
+pub use schema::{ClassSchema, EventSchema, FnSchema, MemberSchema, ModuleSchema, Schema, StoreSchema, TypeSchema, ValueSchema, VariantSchema, schema};
 pub use service::{ServiceCx, StopToken, shutdown_services, start_services};
 pub use stream::{Closed, Sink, Stream, TrySendError, channel};
 
@@ -109,7 +111,18 @@ pub struct FieldDef {
     pub docs: &'static str,
 }
 
-/// A declared TypeScript type (record interface or enum union).
+/// One variant of a `#[derive(Enum)] #[js(tag = "...")]` data enum (RA2).
+pub struct VariantDef {
+    /// The tag value (kebab-case, or `#[js(rename)]`).
+    pub name: &'static str,
+    pub docs: &'static str,
+    /// Named fields (a struct variant).
+    pub fields: Vec<FieldDef>,
+    /// A newtype variant's inner type: its fields sit next to the tag.
+    pub inner: Option<TypeRef>,
+}
+
+/// A declared TypeScript type (record interface, enum union or tagged union).
 #[derive(Clone, Debug)]
 pub(crate) struct NamedType {
     pub id: svl_id,
@@ -123,6 +136,13 @@ pub(crate) struct NamedType {
     pub kind: &'static str,
     pub fields: Vec<(String, String, bool)>,
     pub values: Vec<String>,
+    /// The JS expression wrapping a raw value (objects inside), if any.
+    pub wrap: Option<String>,
+    /// RA2 tagged unions: the tag key and the variants.
+    pub tag: Option<String>,
+    pub variants: Vec<schema::VariantSchema>,
+    /// RA2: JSON Schema definitions this type refers to (`Json<T>` fields).
+    pub json_deps: Vec<String>,
 }
 
 /// Builds descriptors while the schema is collected; generated `describe` functions call it.
@@ -139,6 +159,12 @@ pub struct TypeBuilder {
     pub(crate) classes: HashMap<TypeId, (svl_id, &'static str, &'static str)>,
     /// Stack of named types being described (records refer to the types of their fields).
     stack: Vec<Vec<TypeId>>,
+    /// RA2: the JSON Schemas of `Json<T>` types, one generator for the whole schema (unique `$defs`).
+    pub(crate) json_gen: schemars::SchemaGenerator,
+    /// RA2: JSON Schema definitions each module refers to (closed over their `$ref`s when emitted).
+    pub(crate) json_used: BTreeMap<String, Vec<String>>,
+    /// RA2: definitions the named types on `stack` refer to.
+    json_stack: Vec<Vec<String>>,
 }
 
 impl TypeBuilder {
@@ -152,7 +178,34 @@ impl TypeBuilder {
             imports: BTreeMap::new(),
             classes,
             stack: Vec::new(),
+            json_gen: schemars::SchemaGenerator::new(schemars::generate::SchemaSettings::draft2020_12()),
+            json_used: BTreeMap::new(),
+            json_stack: Vec::new(),
         }
+    }
+
+    fn note_json_use(&mut self, name: &str) {
+        if let Some(top) = self.json_stack.last_mut() {
+            if !top.iter().any(|n| n == name) {
+                top.push(name.to_string());
+            }
+        }
+        let list = self.json_used.entry(self.module.clone()).or_default();
+        if !list.iter().any(|n| n == name) {
+            list.push(name.to_string());
+        }
+    }
+
+    /// RA2: a `Json<T>`: a structured value typed from `T`'s JSON Schema. Named schemas become
+    /// declared types of the module.
+    pub fn json_schema<T: schemars::JsonSchema + ?Sized>(&mut self) -> TypeRef {
+        let s = self.json_gen.subschema_for::<T>();
+        let mut refs = Vec::new();
+        let ts = json::schema_ts(s.as_value(), &mut refs);
+        for r in &refs {
+            self.note_json_use(r);
+        }
+        TypeRef::new(json::json_slot(), ts)
     }
 
     fn mint(&mut self) -> svl_id {
@@ -197,10 +250,16 @@ impl TypeBuilder {
             kind: "record",
             fields: Vec::new(),
             values: Vec::new(),
+            wrap: None,
+            tag: None,
+            variants: Vec::new(),
+            json_deps: Vec::new(),
         });
         self.stack.push(Vec::new());
+        self.json_stack.push(Vec::new());
         let defs = fields(self);
         let deps = self.stack.pop().unwrap_or_default();
+        let json_deps = self.json_stack.pop().unwrap_or_default();
         let mut slots = Vec::with_capacity(defs.len());
         let mut decl = format!("interface {name} {{");
         let mut wraps = Vec::new();
@@ -225,17 +284,95 @@ impl TypeBuilder {
         n.decl = decl;
         n.desc.fields = slots;
         n.deps = deps;
+        n.json_deps = json_deps;
         n.fields = shown;
         if !wraps.is_empty() {
-            // Stored as the record's wrapper; looked up by `record_wrap`.
-            n.values = vec![format!("(x) => {{ if (x !== null) {{ {} }} return x; }}", wraps.join(" "))];
+            n.wrap = Some(format!("(x) => {{ if (x !== null) {{ {} }} return x; }}", wraps.join(" ")));
         }
         self.note_use(t);
         TypeRef { slot: SlotDesc::new(SVL_RECORD).typed(id), ts: name.to_string(), wrap: self.record_wrap(t) }
     }
 
     fn record_wrap(&self, t: TypeId) -> Option<String> {
-        self.named.get(&t).filter(|n| n.kind == "record").and_then(|n| n.values.first().cloned())
+        self.named.get(&t).and_then(|n| n.wrap.clone())
+    }
+
+    /// RA2: a `#[derive(Enum)] #[js(tag = "...")]` data enum: a discriminated union of plain objects
+    /// (serde's internally tagged form), copied across as a map.
+    pub fn union<T: 'static>(&mut self, name: &str, docs: &str, tag: &str, variants: impl FnOnce(&mut TypeBuilder) -> Vec<VariantDef>) -> TypeRef {
+        let t = TypeId::of::<T>();
+        if let Some(n) = self.named.get(&t) {
+            let r = TypeRef { slot: SlotDesc::new(SVL_MAP), ts: n.name.clone(), wrap: n.wrap.clone() };
+            self.note_use(t);
+            return r;
+        }
+        let id = self.mint();
+        self.named.insert(t, NamedType {
+            id,
+            name: name.to_string(),
+            docs: docs.to_string(),
+            decl: String::new(),
+            desc: TypeDesc { name: name.to_string(), kind: SVL_MAP, scope: 0, members: Vec::new(), fields: Vec::new(), ret: SlotDesc::new(SVL_NULL) },
+            deps: Vec::new(),
+            kind: "union",
+            fields: Vec::new(),
+            values: Vec::new(),
+            wrap: None,
+            tag: Some(tag.to_string()),
+            variants: Vec::new(),
+            json_deps: Vec::new(),
+        });
+        self.stack.push(Vec::new());
+        self.json_stack.push(Vec::new());
+        let defs = variants(self);
+        let deps = self.stack.pop().unwrap_or_default();
+        let json_deps = self.json_stack.pop().unwrap_or_default();
+        let tag_key = prop_key(tag);
+        let mut members = Vec::new();
+        let mut shown = Vec::new();
+        let mut cases = Vec::new();
+        for v in &defs {
+            let mut obj = format!("{{ {tag_key}: '{}';", v.name);
+            let mut wraps = Vec::new();
+            for f in &v.fields {
+                let doc = if f.docs.is_empty() { String::new() } else { format!(" /** {} */", f.docs.trim()) };
+                obj.push_str(&format!("{doc} {}{}: {};", prop_key(f.name), if f.optional { "?" } else { "" }, f.ty.ts));
+                if let Some(w) = &f.ty.wrap {
+                    wraps.push(format!("if (x[{0:?}] != null) x[{0:?}] = ({w})(x[{0:?}]);", f.name));
+                }
+            }
+            obj.push_str(" }");
+            match &v.inner {
+                Some(inner) => {
+                    members.push(format!("({obj} & {})", inner.ts));
+                    if let Some(w) = &inner.wrap {
+                        wraps.push(format!("({w})(x);"));
+                    }
+                }
+                None => members.push(obj),
+            }
+            if !wraps.is_empty() {
+                cases.push(format!("case '{}': {} break;", v.name, wraps.join(" ")));
+            }
+            shown.push(schema::VariantSchema {
+                name: v.name.to_string(),
+                docs: v.docs.to_string(),
+                fields: v.fields.iter().map(|f| (f.name.to_string(), f.ty.ts.clone(), f.optional)).collect(),
+                inner: v.inner.as_ref().map(|i| i.ts.clone()),
+            });
+        }
+        let union = if members.is_empty() { "never".to_string() } else { members.join(" | ") };
+        let n = self.named.get_mut(&t).expect("placeholder");
+        n.decl = format!("type {name} = {union};");
+        n.deps = deps;
+        n.json_deps = json_deps;
+        n.variants = shown;
+        if !cases.is_empty() {
+            n.wrap = Some(format!("(x) => {{ if (x !== null) {{ switch (x[{tag:?}]) {{ {} }} }} return x; }}", cases.join(" ")));
+        }
+        let wrap = n.wrap.clone();
+        self.note_use(t);
+        TypeRef { slot: SlotDesc::new(SVL_MAP), ts: name.to_string(), wrap }
     }
 
     /// A `#[derive(Enum)]` unit enum: one of the kebab-case strings `values` (variant index order).
@@ -259,6 +396,10 @@ impl TypeBuilder {
             kind: "enum",
             fields: Vec::new(),
             values: values.iter().map(|v| v.to_string()).collect(),
+            wrap: None,
+            tag: None,
+            variants: Vec::new(),
+            json_deps: Vec::new(),
         });
         self.note_use(t);
         TypeRef::new(SlotDesc::new(SVL_ENUM).typed(id), name)
@@ -548,13 +689,129 @@ pub mod __private {
         }
     }
 
-    /// Positional fields of a record value.
-    pub fn record_fields(v: Value, n: usize) -> Result<std::vec::IntoIter<Value>, NativeError> {
+    /// Positional fields of a record value: `(name, optional)` per field. A plain object (a record inside
+    /// a map, a tagged union or a `Json` value, RA2) is read by name; a missing required field is a
+    /// `missing-field` error.
+    pub fn record_fields(v: Value, names: &[(&str, bool)]) -> Result<std::vec::IntoIter<Value>, NativeError> {
         match v {
-            Value::Record { fields, .. } if fields.len() == n => Ok(fields.into_iter()),
-            Value::List(fields) if fields.len() == n => Ok(fields.into_iter()),
+            Value::Record { fields, .. } if fields.len() == names.len() => Ok(fields.into_iter()),
+            Value::List(fields) if fields.len() == names.len() => Ok(fields.into_iter()),
+            Value::Map(mut entries) => {
+                let mut out = Vec::with_capacity(names.len());
+                for (name, optional) in names {
+                    match entries.iter().position(|(k, _)| k == name) {
+                        Some(i) => out.push(entries.swap_remove(i).1),
+                        None if *optional => out.push(Value::Null),
+                        None => return Err(host_error("missing-field", format!("missing field `{name}`"))),
+                    }
+                }
+                Ok(out.into_iter())
+            }
             other => Err(mismatch("record", &other)),
         }
+    }
+
+    /// RA2: prefixes the path of a value error (`type`, `range`, `missing-field`, ...) with a field or
+    /// parameter name: `at shape.r: ...`.
+    pub fn at(e: NativeError, seg: &str) -> NativeError {
+        super::json::at(e, seg)
+    }
+
+    /// A unit enum value: its index, or (inside a plain object, RA2) its name.
+    pub fn enum_value(v: Value, values: &[&str]) -> Result<i64, NativeError> {
+        match v {
+            Value::Enum { value, .. } | Value::I64(value) => Ok(value),
+            Value::Str(s) => values
+                .iter()
+                .position(|x| *x == s)
+                .map(|i| i as i64)
+                .ok_or_else(|| host_error("unknown-variant", format!("unknown variant `{s}`, expected {}", one_of(values)))),
+            other => Err(mismatch("enum value", &other)),
+        }
+    }
+
+    fn one_of(values: &[&str]) -> String {
+        values.iter().map(|v| format!("`{v}`")).collect::<Vec<_>>().join(", ")
+    }
+
+    /// RA2: a tagged union value being read (`#[derive(Enum)] #[js(tag = "...")]`).
+    pub struct Tagged {
+        pub tag: String,
+        key: &'static str,
+        fields: Vec<(String, Value)>,
+    }
+
+    /// Splits a plain object into its tag and the other fields.
+    pub fn tagged(v: Value, key: &'static str, ty: &str) -> Result<Tagged, NativeError> {
+        let mut fields = match v {
+            Value::Map(m) => m,
+            other => return Err(host_error("type", format!("expected {ty} (an object with a `{key}` tag), got {other:?}"))),
+        };
+        let Some(i) = fields.iter().position(|(k, _)| k == key) else {
+            return Err(host_error("missing-field", format!("missing field `{key}` (the tag of {ty})")));
+        };
+        match fields.remove(i).1 {
+            Value::Str(tag) => Ok(Tagged { tag, key, fields }),
+            other => Err(at(host_error("type", format!("expected a string tag, got {other:?}")), key)),
+        }
+    }
+
+    impl Tagged {
+        fn take(&mut self, name: &str) -> Option<Value> {
+            let i = self.fields.iter().position(|(k, _)| k == name)?;
+            Some(self.fields.swap_remove(i).1)
+        }
+
+        /// A field of a struct variant; `optional` fields may be missing (`null`).
+        pub fn field<T: FromJs>(&mut self, name: &str, optional: bool, cx: &CallCx<'_>) -> Result<T, NativeError> {
+            match self.take(name) {
+                Some(v) => T::from_js(v, cx).map_err(|e| at(e, name)),
+                None if optional => T::from_js(Value::Null, cx).map_err(|e| at(e, name)),
+                None => Err(host_error("missing-field", format!("missing field `{name}`"))),
+            }
+        }
+
+        /// A `#[js(default)]` field.
+        pub fn field_or<T: FromJs>(&mut self, name: &str, cx: &CallCx<'_>, default: impl FnOnce() -> T) -> Result<T, NativeError> {
+            match self.take(name) {
+                None | Some(Value::Null) => Ok(default()),
+                Some(v) => T::from_js(v, cx).map_err(|e| at(e, name)),
+            }
+        }
+
+        /// A newtype variant's inner value: the fields next to the tag.
+        pub fn rest<T: FromJs>(self, cx: &CallCx<'_>) -> Result<T, NativeError> {
+            T::from_js(Value::Map(self.fields), cx)
+        }
+
+        /// The error for a tag that names no variant.
+        pub fn unknown(&self, tag: &str, expected: &[&str]) -> NativeError {
+            at(host_error("unknown-variant", format!("unknown variant `{tag}`, expected one of {}", one_of(expected))), self.key)
+        }
+    }
+
+    /// RA2: a struct or unit variant as a plain object: the tag first, then the fields.
+    pub fn tagged_value(key: &str, tag: &str, fields: Vec<(&str, Value)>) -> Value {
+        let mut m = Vec::with_capacity(fields.len() + 1);
+        m.push((key.to_string(), Value::Str(tag.to_string())));
+        m.extend(fields.into_iter().map(|(k, v)| (k.to_string(), v)));
+        Value::Map(m)
+    }
+
+    /// RA2: a newtype variant as a plain object: the tag next to the inner record's fields.
+    pub fn tagged_inner(key: &str, tag: &str, inner: Value, cx: &CallCx<'_>) -> Result<Value, NativeError> {
+        let fields: Vec<(String, Value)> = match inner {
+            Value::Map(m) => m,
+            Value::Record { ty, fields } => {
+                let desc = cx.schema.type_desc(ty).ok_or_else(|| host_error("type", "a newtype variant's record is not in the export schema"))?;
+                desc.fields.iter().map(|f| f.name.clone().unwrap_or_default()).zip(fields).collect()
+            }
+            other => return Err(host_error("type", format!("a newtype variant of a tagged union needs a record or an object inside, got {other:?}"))),
+        };
+        let mut m = Vec::with_capacity(fields.len() + 1);
+        m.push((key.to_string(), Value::Str(tag.to_string())));
+        m.extend(fields.into_iter().filter(|(k, _)| k != key));
+        Ok(Value::Map(m))
     }
 
     /// A field that may be missing: `default()` when the value is null.
@@ -635,7 +892,10 @@ macro_rules! int_type {
                     Value::F64(f) if f.fract() == 0.0 => <$t>::try_from(*f as i128).ok(),
                     _ => None,
                 };
-                r.ok_or_else(|| host_error("range", format!("{v:?} does not fit {}", stringify!($t))))
+                r.ok_or_else(|| match &v {
+                    Value::I64(_) | Value::U64(_) | Value::F64(_) => host_error("range", format!("{} does not fit {}", number(&v), stringify!($t))),
+                    _ => mismatch("integer", &v),
+                })
             }
         }
         impl IntoJs for $t {
@@ -648,6 +908,16 @@ macro_rules! int_type {
             }
         }
     )*};
+}
+
+/// A number value as JS would print it.
+fn number(v: &Value) -> String {
+    match v {
+        Value::I64(i) => i.to_string(),
+        Value::U64(u) => u.to_string(),
+        Value::F64(f) => f.to_string(),
+        other => format!("{other:?}"),
+    }
 }
 
 const SAFE: f64 = 9_007_199_254_740_991.0;
@@ -804,7 +1074,7 @@ impl<T: JsType + 'static> JsType for Vec<T> {
 impl<T: FromJs + 'static> FromJs for Vec<T> {
     fn from_js(v: Value, cx: &CallCx<'_>) -> Result<Self, NativeError> {
         match v {
-            Value::List(items) => items.into_iter().map(|i| T::from_js(i, cx)).collect(),
+            Value::List(items) => items.into_iter().enumerate().map(|(n, i)| T::from_js(i, cx).map_err(|e| json::at(e, &format!("[{n}]")))).collect(),
             other => Err(mismatch("array", &other)),
         }
     }
@@ -831,7 +1101,13 @@ macro_rules! map_type {
         impl<T: FromJs> FromJs for std::collections::$m<String, T> {
             fn from_js(v: Value, cx: &CallCx<'_>) -> Result<Self, NativeError> {
                 match v {
-                    Value::Map(entries) => entries.into_iter().map(|(k, v)| Ok((k, T::from_js(v, cx)?))).collect(),
+                    Value::Map(entries) => entries
+                        .into_iter()
+                        .map(|(k, v)| {
+                            let x = T::from_js(v, cx).map_err(|e| json::at(e, &k))?;
+                            Ok((k, x))
+                        })
+                        .collect(),
                     other => Err(mismatch("object", &other)),
                 }
             }
