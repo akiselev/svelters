@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Fails when build artifacts are tracked (or staged, with --staged): any path inside a `target/`
+# directory, or any file over 8 MB. Run by .githooks/pre-commit and by CI (js.yml).
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+if [ "${1:-}" = "--staged" ]; then
+  paths=$(git diff --cached --name-only --diff-filter=AM)
+else
+  paths=$(git ls-files)
+fi
+bad=$(printf '%s\n' "$paths" | grep -E '(^|/)target/' || true)
+big=""
+while IFS= read -r p; do
+  [ -n "$p" ] && [ -f "$p" ] || continue
+  s=$(wc -c <"$p")
+  [ "$s" -gt 8388608 ] && big+="$p ($s bytes)"$'\n'
+done <<<"$paths"
+if [ -n "$bad" ] || [ -n "$big" ]; then
+  echo "check-no-artifacts: build artifacts must not be committed." >&2
+  [ -n "$bad" ] && { echo "Paths inside a target/ directory:" >&2; printf '%s\n' "$bad" | head -20 >&2; }
+  [ -n "$big" ] && { echo "Files over 8 MB:" >&2; printf '%s' "$big" >&2; }
+  exit 1
+fi

@@ -56,6 +56,8 @@ pub struct SceneStats {
     pub announced: u64,
     /// Live change observers (SG2).
     pub observers: usize,
+    /// Entries in the per-viewport hit lists (SG3).
+    pub hit_entries: usize,
 }
 
 /// What [`Scene::dump`] prints besides tag, id and children.
@@ -113,6 +115,7 @@ impl Scene {
             deferred_run: c.deferred_run,
             announced: c.announced,
             observers: self.journal.len(),
+            hit_entries: self.hits.len(),
         }
     }
 

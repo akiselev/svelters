@@ -152,4 +152,5 @@ fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut 
     } else {
         crate::leaf::leaf(arena, i, &mut child, out);
     }
+    crate::scene::hit::record(arena, i, &child); // SG3: the viewport's hit list
 }

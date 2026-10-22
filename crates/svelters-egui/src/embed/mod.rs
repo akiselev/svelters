@@ -581,6 +581,8 @@ impl Embed {
         let (vp, rix) = (s.viewport, s.rix);
         drop(st);
         self.inner.backend.0.root_vp.borrow_mut().insert(rix, visible.then_some(vp));
+        // journaled; hit-testing skips a hidden root (ARCH-SCENE SG3)
+        self.inner.backend.0.scene.borrow_mut().root_changed(rix, crate::scene::RootChange::Visible(visible));
         self.wake_viewport(vp);
     }
 
@@ -605,6 +607,8 @@ impl Embed {
         let (visible, rix) = (s.visible, s.rix);
         drop(st);
         self.inner.backend.0.root_vp.borrow_mut().insert(rix, visible.then_some(viewport));
+        // journaled; per-root damage and R20 (hit_test skips the old viewport's entries) read it
+        self.inner.backend.0.scene.borrow_mut().root_changed(rix, crate::scene::RootChange::Viewport(viewport));
         if let Some(ctx) = self.inner.backend.ctx() {
             ctx.request_repaint_of(old);
         }
@@ -1110,11 +1114,8 @@ impl Embed {
         let slot = self.inner.st.borrow().roots.get(&root)?.slot;
         let scene = self.inner.backend.0.scene.borrow();
         let r = scene.core[scene.ix(scene.live(slot.0).ok()?)].root;
-        scene.ids().find(|&id| {
-            let i = scene.ix(id);
-            scene.core[i].root == r && scene.common(i).anchor == anchor
-        })
-        .map(NodeId::to_raw)
+        // the root's anchor map (ARCH-SCENE SG3)
+        crate::scene::SceneRef::new(&scene).by_anchor(r, anchor).map(|n| n.id().to_raw())
     }
 
     /// Exports, op log, stats, interrupt flag: the underlying host.
@@ -1230,7 +1231,7 @@ impl Embed {
             return;
         };
         // The root's nodes take ids from its key as they are inserted (the attach hook).
-        self.set_slot_base(slot, Some(crate::ids::root_base(self.salt(), &key)));
+        self.set_slot_base(slot, Some(&key));
         let host = &self.inner.host;
         host.set_turn_budget(Some(self.inner.cfg.budgets.mount));
         let r = host.mount_root(entry.0, &export, id.0, slot.0, &props);
@@ -1271,12 +1272,15 @@ impl Embed {
         self.set_slot_base(r.slot, None);
     }
 
-    /// The egui id base of the root mounted in `slot` (its scene root's `base`).
-    fn set_slot_base(&self, slot: SlotId, base: Option<egui::Id>) {
+    /// The egui id base of the root mounted in `slot` under `key` (its scene root's `base`), and
+    /// the key itself (`SceneRef::by_path`).
+    fn set_slot_base(&self, slot: SlotId, key: Option<&str>) {
+        let base = key.map(|k| crate::ids::root_base(self.salt(), k));
         let mut scene = self.inner.backend.0.scene.borrow_mut();
         if let Ok(n) = scene.live(slot.0) {
             let r = scene.core[scene.ix(n)].root;
             scene.set_root_base(r, base);
+            scene.set_root_key(r, key);
         }
     }
 
@@ -1327,7 +1331,7 @@ impl Embed {
             }
             (from, key, live)
         };
-        self.set_slot_base(to, Some(crate::ids::root_base(self.salt(), &key)));
+        self.set_slot_base(to, Some(&key));
         {
             let mut scene = self.inner.backend.0.scene.borrow_mut();
             if let (Ok(f), Ok(t)) = (scene.live(from.0), scene.live(to.0)) {
