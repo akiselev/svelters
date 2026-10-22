@@ -348,6 +348,27 @@ fn u16_len(s: &str) -> usize {
     s.encode_utf16().count()
 }
 
+/// Where a field reading's selection direction came from.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Direction {
+    /// An empty selection: no direction to read.
+    Collapsed = 0,
+    /// The system caret of the field's own window (Win32 `EDIT`).
+    SystemCaret = 1,
+    /// `TextPattern2.GetCaretRange`.
+    CaretRange = 2,
+    /// Not observable (an unfocused `EDIT`): recorded forward.
+    Unknown = 3,
+}
+
+impl FocusEvidence {
+    /// The golden `observe` entry for the directions.
+    pub fn directions_json(&self) -> String {
+        let d = self.directions;
+        format!("{{\"collapsed\":{},\"system-caret\":{},\"caret-range\":{},\"unknown\":{}}}", d[0], d[1], d[2], d[3])
+    }
+}
+
 /// A text field's patterns.
 struct Field {
     el: IUIAutomationElement,
@@ -402,8 +423,33 @@ impl Field {
         }
     }
 
-    /// `[anchor, caret]` in UTF-16 offsets, and whether the direction came from the caret range.
-    fn sel16(&self) -> WinResult<([usize; 2], bool)> {
+    /// For a field with its own window (a Win32 `EDIT`) that owns the system caret: whether the caret sits on the
+    /// selection start `s` (UTF-16), compared by x with `EM_POSFROMCHAR`. `None` when the field has no window or
+    /// does not own the caret (not focused).
+    fn system_caret_at_start(&self, s: usize) -> Option<bool> {
+        const EM_POSFROMCHAR: u32 = 0x00D6;
+        unsafe {
+            let hwnd = self.el.CurrentNativeWindowHandle().ok().filter(|h| !h.is_invalid())?;
+            let mut gti = GUITHREADINFO { cbSize: std::mem::size_of::<GUITHREADINFO>() as u32, ..Default::default() };
+            GetGUIThreadInfo(GetWindowThreadProcessId(hwnd, None), &mut gti).ok()?;
+            if gti.hwndCaret != hwnd {
+                return None;
+            }
+            let p = SendMessageW(hwnd, EM_POSFROMCHAR, Some(WPARAM(s)), None).0 as u32;
+            if p == u32::MAX {
+                return None;
+            }
+            let x = (p & 0xffff) as i16 as i32;
+            Some((x - gti.rcCaret.left).abs() <= 1)
+        }
+    }
+
+    /// `[anchor, caret]` in UTF-16 offsets, and where the direction of a non-empty selection came from.
+    ///
+    /// The direction: for a field with its own window, the system caret (the Win32 EDIT proxy's
+    /// `TextPattern2.GetCaretRange` reports the selection end whatever the caret, so it is not used there);
+    /// otherwise `TextPattern2.GetCaretRange`. With neither (an unfocused EDIT), the selection reads forward.
+    fn sel16(&self) -> WinResult<([usize; 2], Direction)> {
         unsafe {
             let ranges = self.text.GetSelection().map_err(e("GetSelection"))?;
             let n = ranges.Length().map_err(e("selection length"))?;
@@ -412,14 +458,25 @@ impl Field {
             }
             let r = ranges.GetElement(0).map_err(e("selection range"))?;
             let (s, t) = (self.offset(&r, TextPatternRangeEndpoint_Start)?, self.offset(&r, TextPatternRangeEndpoint_End)?);
+            if s == t {
+                return Ok(([s, t], Direction::Collapsed));
+            }
+            let has_window = self.el.CurrentNativeWindowHandle().is_ok_and(|h| !h.is_invalid());
+            if has_window {
+                return Ok(match self.system_caret_at_start(s) {
+                    Some(true) => ([t, s], Direction::SystemCaret),
+                    Some(false) => ([s, t], Direction::SystemCaret),
+                    None => ([s, t], Direction::Unknown),
+                });
+            }
             if let Some(t2) = &self.text2 {
                 let mut active = BOOL(0);
                 if let Ok(c) = t2.GetCaretRange(&mut active) {
                     let caret = self.offset(&c, TextPatternRangeEndpoint_Start)?;
-                    return Ok((if caret == s && s != t { [t, s] } else { [s, t] }, true));
+                    return Ok((if caret == s { [t, s] } else { [s, t] }, Direction::CaretRange));
                 }
             }
-            Ok(([s, t], false))
+            Ok(([s, t], Direction::Unknown))
         }
     }
 
@@ -453,8 +510,8 @@ pub trait WinFixture {
 pub struct FocusEvidence {
     pub changes: u32,
     pub announced: u32,
-    /// Checkpoints whose selection direction came from `TextPattern2.GetCaretRange`, of all field readings.
-    pub caret_ranges: (u32, u32),
+    /// Field readings at checkpoints by where the selection's direction came from, indexed by [`Direction`].
+    pub directions: [u32; 4],
 }
 
 pub struct UiaDriver<F: WinFixture> {
@@ -466,8 +523,8 @@ pub struct UiaDriver<F: WinFixture> {
     button: Option<IUIAutomationElement>,
     last_focus: Option<Option<String>>,
     seen_events: u32,
-    /// Field readings of the last `read`, and how many took their direction from the caret range.
-    reading: (u32, u32),
+    /// Field readings of the last `read` by [`Direction`].
+    reading: [u32; 4],
     pub evidence: FocusEvidence,
     /// The settings read at the first setup.
     pub settings: Vec<(String, String)>,
@@ -490,7 +547,7 @@ impl<F: WinFixture> UiaDriver<F> {
             button: None,
             last_focus: None,
             seen_events: 0,
-            reading: (0, 0),
+            reading: [0; 4],
             evidence: FocusEvidence::default(),
             settings: Vec::new(),
         })
@@ -568,12 +625,9 @@ impl<F: WinFixture> UiaDriver<F> {
     fn read_field(&mut self, anchor: &str) -> WinResult<State> {
         let f = self.field(anchor)?;
         let text = f.text()?;
-        let ([a, c], from_caret) = f.sel16()?;
+        let ([a, c], dir) = f.sel16()?;
         let focus = self.focused()?.as_deref() == Some(anchor);
-        self.reading.1 += 1;
-        if from_caret {
-            self.reading.0 += 1;
-        }
+        self.reading[dir as usize] += 1;
         Ok(State { sel: Some([utf16_to_scalar(&text, a), utf16_to_scalar(&text, c)]), text: Some(text), focus })
     }
 
@@ -599,7 +653,7 @@ impl<F: WinFixture> UiaDriver<F> {
     }
 
     fn read(&mut self) -> WinResult<Checkpoint> {
-        self.reading = (0, 0);
+        self.reading = [0; 4];
         let mut cp = Vec::new();
         for a in FIELDS {
             cp.push((a.to_string(), self.read_field(a)?));
@@ -702,8 +756,9 @@ impl<F: WinFixture> Driver for UiaDriver<F> {
             }
             prev = cur;
         }
-        self.evidence.caret_ranges.0 += self.reading.0;
-        self.evidence.caret_ranges.1 += self.reading.1;
+        for (d, r) in self.evidence.directions.iter_mut().zip(self.reading) {
+            *d += r;
+        }
         let focus = prev.iter().find(|(_, s)| s.focus).map(|(a, _)| a.clone());
         if let Some(last) = &self.last_focus
             && *last != focus
@@ -732,11 +787,52 @@ impl<F: WinFixture> Driver for UiaDriver<F> {
     }
 }
 
-/// `POINT` helper for fixtures.
-pub fn client_to_screen(hwnd: HWND, x: i32, y: i32) -> (i32, i32) {
-    let mut p = POINT { x, y };
+/// The file version (`major.minor.build.revision`) of a file, from its version resource.
+pub fn file_version(path: &str) -> Option<String> {
+    use windows::Win32::Storage::FileSystem::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VS_FIXEDFILEINFO, VerQueryValueW};
+    let wide: Vec<u16> = path.encode_utf16().chain([0]).collect();
+    let pw = windows::core::PCWSTR(wide.as_ptr());
     unsafe {
-        let _ = windows::Win32::Graphics::Gdi::ClientToScreen(hwnd, &mut p);
+        let size = GetFileVersionInfoSizeW(pw, None);
+        if size == 0 {
+            return None;
+        }
+        let mut data = vec![0u8; size as usize];
+        GetFileVersionInfoW(pw, None, size, data.as_mut_ptr().cast()).ok()?;
+        let mut p: *mut std::ffi::c_void = std::ptr::null_mut();
+        let mut len = 0u32;
+        if !VerQueryValueW(data.as_ptr().cast(), windows::core::w!("\\"), &mut p, &mut len).as_bool() || p.is_null() {
+            return None;
+        }
+        let fi = &*(p as *const VS_FIXEDFILEINFO);
+        Some(format!("{}.{}.{}.{}", fi.dwFileVersionMS >> 16, fi.dwFileVersionMS & 0xffff, fi.dwFileVersionLS >> 16, fi.dwFileVersionLS & 0xffff))
     }
-    (p.x, p.y)
+}
+
+/// The path of the module named `name` (file name, any case: `comctl32.dll`) loaded in process `pid`.
+pub fn module_path(pid: u32, name: &str) -> Option<String> {
+    use windows::Win32::Foundation::{CloseHandle, HMODULE};
+    use windows::Win32::System::ProcessStatus::{EnumProcessModulesEx, GetModuleFileNameExW, LIST_MODULES_ALL};
+    use windows::Win32::System::Threading::{OpenProcess, PROCESS_QUERY_INFORMATION, PROCESS_VM_READ};
+    unsafe {
+        let h = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, false, pid).ok()?;
+        let mut mods = vec![HMODULE::default(); 1024];
+        let mut needed = 0u32;
+        let size = (mods.len() * std::mem::size_of::<HMODULE>()) as u32;
+        let mut out = None;
+        if EnumProcessModulesEx(h, mods.as_mut_ptr(), size, &mut needed, LIST_MODULES_ALL).is_ok() {
+            let n = (needed as usize / std::mem::size_of::<HMODULE>()).min(mods.len());
+            for m in &mods[..n] {
+                let mut buf = [0u16; 1024];
+                let len = GetModuleFileNameExW(Some(h), Some(*m), &mut buf) as usize;
+                let path = String::from_utf16_lossy(&buf[..len]);
+                if path.rsplit('\\').next().is_some_and(|f| f.eq_ignore_ascii_case(name)) {
+                    out = Some(path);
+                    break;
+                }
+            }
+        }
+        let _ = CloseHandle(h);
+        out
+    }
 }

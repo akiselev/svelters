@@ -18,10 +18,10 @@ use std::thread::JoinHandle;
 use svelters_conformance::golden::{Capture, finish};
 use svelters_conformance::pins::{BUTTON_LABEL, Keys, load_pins};
 use svelters_conformance::run_pin;
-use svelters_conformance::win::{UiaDriver, WinFixture, WinResult, find_window, init_thread, os_build, post_close};
+use svelters_conformance::win::{UiaDriver, WinFixture, WinResult, file_version, find_window, init_thread, module_path, os_build, post_close};
 use windows::Win32::Foundation::{HWND, LPARAM, LRESULT, RECT, WPARAM};
 use windows::Win32::Graphics::Gdi::{COLOR_BTNFACE, CreateFontIndirectW, HFONT};
-use windows::Win32::System::LibraryLoader::{GetModuleFileNameW, GetModuleHandleW};
+use windows::Win32::System::LibraryLoader::GetModuleHandleW;
 use windows::Win32::UI::Controls::{ICC_STANDARD_CLASSES, INITCOMMONCONTROLSEX, InitCommonControlsEx};
 use windows::Win32::UI::HiDpi::{AdjustWindowRectExForDpi, GetDpiForSystem};
 use windows::Win32::UI::WindowsAndMessaging::*;
@@ -154,29 +154,11 @@ impl WinFixture for Win32 {
     }
 }
 
-/// The loaded comctl32.dll: its path and file version (`major.minor.build.revision`).
+/// The loaded comctl32.dll: its path and file version.
 fn comctl32() -> (String, String) {
-    use windows::Win32::Storage::FileSystem::{GetFileVersionInfoSizeW, GetFileVersionInfoW, VS_FIXEDFILEINFO, VerQueryValueW};
-    unsafe {
-        let Ok(m) = GetModuleHandleW(w!("comctl32.dll")) else { return ("not loaded".into(), "unknown".into()) };
-        let mut buf = [0u16; 520];
-        let n = GetModuleFileNameW(Some(m), &mut buf) as usize;
-        let path = String::from_utf16_lossy(&buf[..n]);
-        let pw = PCWSTR(buf.as_ptr());
-        let size = GetFileVersionInfoSizeW(pw, None);
-        let mut data = vec![0u8; size as usize];
-        if size == 0 || GetFileVersionInfoW(pw, None, size, data.as_mut_ptr().cast()).is_err() {
-            return (path, "unknown".into());
-        }
-        let mut p: *mut std::ffi::c_void = std::ptr::null_mut();
-        let mut len = 0u32;
-        if !VerQueryValueW(data.as_ptr().cast(), w!("\\"), &mut p, &mut len).as_bool() || p.is_null() {
-            return (path, "unknown".into());
-        }
-        let fi = &*(p as *const VS_FIXEDFILEINFO);
-        let v = format!("{}.{}.{}.{}", fi.dwFileVersionMS >> 16, fi.dwFileVersionMS & 0xffff, fi.dwFileVersionLS >> 16, fi.dwFileVersionLS & 0xffff);
-        (path, v)
-    }
+    let path = module_path(std::process::id(), "comctl32.dll").unwrap_or_else(|| "not loaded".into());
+    let v = file_version(&path).unwrap_or_else(|| "unknown".into());
+    (path, v)
 }
 
 #[test]
@@ -218,7 +200,7 @@ fn win32_edit_capture() {
         settings,
         observe: vec![
             ("focus".into(), format!("{{\"changes\":{},\"announced\":{}}}", ev.changes, ev.announced)),
-            ("caret-range".into(), format!("{{\"readings\":{},\"from-caret-range\":{}}}", ev.caret_ranges.1, ev.caret_ranges.0)),
+            ("direction".into(), ev.directions_json()),
         ],
         pins: results,
     };

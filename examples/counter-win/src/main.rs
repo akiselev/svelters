@@ -3,6 +3,7 @@
 //! ```text
 //! counter-win [--fixture <name|dir>] [--selftest] [--report <json>] [--timeout <secs>]
 //! counter-win --start-test <start-with|run-with|preattach> [--report <json>]
+//! counter-win --na-fixture <title>
 //! ```
 //!
 //! Without `--selftest` it opens the window and runs until the user closes it. `--selftest`
@@ -16,6 +17,11 @@
 //! reports the same way: `start-with` mounts in `Host::start_with`'s hook while it pumps messages
 //! (no `run`), then `stop` detaches; `run-with` mounts in `Host::run_with`'s hook from inside `run`;
 //! `preattach` is the desktop order without `attach_host` (`load_bundle` attaches before mount).
+//!
+//! `--na-fixture <title>` (WG3w) opens the NA1 fixture of the WinUI capture (`tests/na_capture.rs`): a window
+//! titled `<title>` holding two `TextBox`es and a `Button` (`Done`) in a vertical `StackPanel`, made through the
+//! backend's ABI (no JavaScript, no bundle). It runs until its stdin closes; the capture drives it from outside
+//! through `SendInput` and UI Automation.
 //!
 //! Build the bundle first: `pnpm install && pnpm --filter ./fixtures/counter-win build`.
 //! Setup on Windows: docs/notes/windows-setup.md.
@@ -48,10 +54,11 @@ mod win {
         report: Option<PathBuf>,
         timeout: f64,
         start_test: Option<String>,
+        na_fixture: Option<String>,
     }
 
     fn parse() -> Result<Args, String> {
-        let mut a = Args { fixture: "counter-win".into(), selftest: false, report: None, timeout: 60.0, start_test: None };
+        let mut a = Args { fixture: "counter-win".into(), selftest: false, report: None, timeout: 60.0, start_test: None, na_fixture: None };
         let mut it = std::env::args().skip(1);
         while let Some(x) = it.next() {
             match x.as_str() {
@@ -60,6 +67,7 @@ mod win {
                 "--report" => a.report = Some(it.next().ok_or("--report needs a value")?.into()),
                 "--timeout" => a.timeout = it.next().ok_or("--timeout needs seconds")?.parse().map_err(|_| "bad --timeout")?,
                 "--start-test" => a.start_test = Some(it.next().ok_or("--start-test needs a mode")?),
+                "--na-fixture" => a.na_fixture = Some(it.next().ok_or("--na-fixture needs a title")?),
                 "-h" | "--help" => return Err("usage: counter-win [--fixture <name|dir>] [--selftest] [--report <json>] [--timeout <secs>]".into()),
                 other => return Err(format!("unknown argument {other:?}")),
             }
@@ -397,6 +405,52 @@ mod win {
         if rep["ok"] == json!(true) { 0 } else { 1 }
     }
 
+    /// `--na-fixture <title>` (WG3w): the NA1 fixture window, until stdin closes.
+    fn na_fixture(b: &WinUiBackend, title: &str) -> i32 {
+        let build = || -> Result<(), String> {
+            let make = |tag: &str| -> Result<u64, String> {
+                let k = b.resolve(NameKind::Kind, 0, tag);
+                if k == 0 {
+                    return Err(format!("no kind <{tag}>"));
+                }
+                b.create(k)
+            };
+            let win = make("window")?;
+            set(b, win, "title", Value::Str(title.into()))?;
+            let panel = make("stack-panel")?;
+            set(b, panel, "orientation", Value::Str("vertical".into()))?;
+            set(b, panel, "spacing", Value::Str("8".into()))?;
+            set(b, panel, "padding", Value::Str("16".into()))?;
+            for _ in 0..2 {
+                let tb = make("text-box")?;
+                b.insert(panel, tb, None, 0)?;
+            }
+            let button = make("button")?;
+            set(b, button, "content", Value::Str("Done".into()))?;
+            b.insert(panel, button, None, 0)?;
+            b.insert(win, panel, None, 0)?;
+            let kind = b.handle_info(win)?.kind;
+            b.call(win, b.resolve(NameKind::Method, kind, "activate"), &[])?;
+            Ok(())
+        };
+        if let Err(e) = build() {
+            eprintln!("[counter-win] na-fixture: {e}");
+            return 3;
+        }
+        let open = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(true));
+        let flag = open.clone();
+        std::thread::spawn(move || {
+            let mut sink = Vec::new();
+            let _ = std::io::Read::read_to_end(&mut std::io::stdin(), &mut sink);
+            flag.store(false, std::sync::atomic::Ordering::SeqCst);
+        });
+        while open.load(std::sync::atomic::Ordering::SeqCst) {
+            b.pump(20);
+        }
+        b.shutdown();
+        0
+    }
+
     pub fn main() -> i32 {
         let args = match parse() {
             Ok(a) => a,
@@ -421,6 +475,10 @@ mod win {
         let vt: &'static BackendVtable = Box::leak(Box::new(BackendVtable::new(backend)));
         if let Some(mode) = &args.start_test {
             return start_test(mode, &driver, vt, &args);
+        }
+        if let Some(title) = &args.na_fixture {
+            let _ = vt;
+            return na_fixture(&driver, title);
         }
         let host = match Host::new(vt.backend_ref(), HostConfig::default()) {
             Ok(h) => Rc::new(h),
