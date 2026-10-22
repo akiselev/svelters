@@ -11,7 +11,7 @@ use svelters_abi::Value;
 
 // ---- values ----
 
-fn as_bool(v: &Value) -> Result<bool, String> {
+pub(crate) fn as_bool(v: &Value) -> Result<bool, String> {
     match v {
         Value::Bool(b) => Ok(*b),
         Value::I64(i) => Ok(*i != 0),
@@ -19,7 +19,7 @@ fn as_bool(v: &Value) -> Result<bool, String> {
     }
 }
 
-fn as_f64(v: &Value) -> Result<f64, String> {
+pub(crate) fn as_f64(v: &Value) -> Result<f64, String> {
     match v {
         Value::F64(f) => Ok(*f),
         Value::I64(i) => Ok(*i as f64),
@@ -28,7 +28,7 @@ fn as_f64(v: &Value) -> Result<f64, String> {
     }
 }
 
-fn as_i64(v: &Value) -> Result<i64, String> {
+pub(crate) fn as_i64(v: &Value) -> Result<i64, String> {
     match v {
         Value::I64(i) => Ok(*i),
         Value::F64(f) if f.fract() == 0.0 => Ok(*f as i64),
@@ -36,7 +36,7 @@ fn as_i64(v: &Value) -> Result<i64, String> {
     }
 }
 
-fn as_str(v: &Value) -> Result<String, String> {
+pub(crate) fn as_str(v: &Value) -> Result<String, String> {
     match v {
         Value::Str(s) => Ok(s.clone()),
         Value::Null => Ok(String::new()),
@@ -46,12 +46,12 @@ fn as_str(v: &Value) -> Result<String, String> {
     }
 }
 
-fn as_enum(v: &Value, values: &'static [&'static str]) -> Result<&'static str, String> {
+pub(crate) fn as_enum(v: &Value, values: &'static [&'static str]) -> Result<&'static str, String> {
     let s = as_str(v)?;
     values.iter().copied().find(|x| *x == s).ok_or_else(|| format!("`{s}` is not one of {}", values.join(", ")))
 }
 
-fn as_len(v: &Value) -> Result<Option<f64>, String> {
+pub(crate) fn as_len(v: &Value) -> Result<Option<f64>, String> {
     match v {
         Value::Null => Ok(None),
         v => as_f64(v).map(Some),
@@ -76,7 +76,7 @@ fn as_weight(v: &Value) -> Result<i64, String> {
     Ok(w.round() as i64)
 }
 
-fn len_value(v: Option<f64>) -> Value {
+pub(crate) fn len_value(v: Option<f64>) -> Value {
     v.map(Value::F64).unwrap_or(Value::Null)
 }
 
@@ -98,6 +98,15 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
     }
     let v = if matches!(v, Value::Null) && !def.nullable { default_value(def) } else { v.clone() };
     let v = &v;
+    // WG2b: its kinds' own props (`crate::elements`); the `Widget`/`Box` props fall through
+    if let Some(r) = crate::elements::set_prop(w, def, v) {
+        return r.map(|mut d| {
+            if def.layout {
+                d.insert(Dirty::LAYOUT);
+            }
+            d
+        });
+    }
     let mut d = Dirty::default();
     match (def.key, &mut *w) {
         (P::Enabled, _) => c.enabled = as_bool(v)?,
@@ -238,6 +247,9 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
 pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
     if let P::Ext(i) = def.key {
         return crate::provider::get_prop(n, i as usize); // RA1: a provider kind's field
+    }
+    if let Some(v) = crate::elements::get_prop(n.w, def) {
+        return Ok(v); // WG2b: its kinds' own props
     }
     let c = &n.c;
     let s = |x: &str| Value::Str(x.to_string());

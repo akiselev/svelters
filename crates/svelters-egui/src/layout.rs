@@ -266,6 +266,8 @@ pub fn style_of(c: &Common, w: &W, vis: &Visual) -> Style {
             // egui's scroll bars float over the content (`ScrollStyle::floating`)
             s.scrollbar_width = 0.0;
         }
+        // WG2b: `panel`, `sides`, `frame` (`crate::elements::panes`)
+        w if crate::elements::is_container(w) => crate::elements::style(c, w, &mut s),
         _ => {}
     }
     s
@@ -341,6 +343,20 @@ impl Metrics {
             }
             W::Box | W::Window { .. } | W::Grid { .. } | W::ScrollArea { .. } => Vec2::ZERO,
             W::Ext(x) => x.measure(self, crate::provider::AvailableSpace::MaxContent),
+            // ---- WG2b (`crate::elements`) ----
+            W::Hyperlink { .. }
+            | W::RadioButton { .. }
+            | W::Switch { .. }
+            | W::RangeSlider { .. }
+            | W::DragValue { .. }
+            | W::Panel { .. }
+            | W::Sides
+            | W::Frame { .. }
+            | W::Stack { .. }
+            | W::Image { .. }
+            | W::ProgressBar { .. }
+            | W::Spinner { .. }
+            | W::Canvas(_) => crate::elements::intrinsic(self, w),
             // ---- WG1 ----
             W::ToggleButton { text, weight, .. } => {
                 let t = self.text_size_in(text, self.weighted(text, *weight), None);
@@ -459,6 +475,11 @@ impl LayoutPartialTree for Tree<'_> {
             match tree.s.w(i) {
                 W::Grid { .. } => return compute_grid_layout(tree, id, inputs),
                 &W::CollapsingHeader { open, .. } => return tree.collapsing(id, open, inputs),
+                // WG2b: one child shown at a time (`crate::elements::panes`)
+                W::Stack { .. } => {
+                    let (pick, style) = (crate::elements::panes::stack_pick(tree.s, i), tree.s.layout[i].style.clone());
+                    return crate::elements::panes::stack_layout(tree, id, inputs, &style, pick);
+                }
                 // CS5e: `display: grid` from the computed style
                 w if w.is_container() && tree.s.layout[i].style.display == Display::Grid => return compute_grid_layout(tree, id, inputs),
                 w if w.is_container() => return compute_flexbox_layout(tree, id, inputs),

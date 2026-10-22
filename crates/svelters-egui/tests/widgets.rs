@@ -433,6 +433,10 @@ fn every_kind_has_a_tooltip_and_inputs_are_named() {
         if tag == "icon" {
             rig.set(h, "glyph", s("+"));
         }
+        if tag == "spinner" {
+            // a spinning spinner repaints every frame: `run` would never settle
+            rig.set(h, "spinning", Value::Bool(false));
+        }
         rig.run();
         let origin = rig.drawn(probe).min - rig.backend.with_scene(|sc| sc.n(probe).rect.min);
         // a leaf's response rect (a label is as wide as its text), else the node's laid-out rect

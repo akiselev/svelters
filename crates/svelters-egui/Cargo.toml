@@ -30,9 +30,17 @@ egui = { version = "=0.37.0", default-features = false, features = ["default_fon
 eframe = { version = "=0.37.0", optional = true, default-features = false, features = ["glow", "default_fonts", "x11", "wayland", "accesskit"] }
 egui_kittest = { version = "=0.37.0", optional = true }
 taffy = { version = "=0.15.0", default-features = false, features = ["std", "flexbox", "grid", "calc", "block_layout", "content_size"] }
+# WG2b: `image` decodes PNG (the version arboard locks).
+image = { version = "0.25", default-features = false, features = ["png"] }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+# W5: the system primary selection (`primary::use_system`), the arboard egui-winit already locks.
+arboard = { version = "3.7", default-features = false, features = ["wayland-data-control"] }
 
 [dev-dependencies]
 # The tests use the kittest harness and the eframe runner whatever features the build selects
 # (CI builds this crate in one command with `--no-default-features` meant for another package).
 svelters-egui = { path = ".", features = ["eframe", "kittest", "source"] }
 egui_kittest = "=0.37.0"
+# WG2b: the image tests encode their PNGs
+image = { version = "0.25", default-features = false, features = ["png"] }

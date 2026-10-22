@@ -53,6 +53,8 @@ pub(crate) fn widget_changed(arena: &mut Arena, i: usize, keys: &[kinds::P], arg
 /// rects): its tooltip and `invalid` outline, and WG1's chrome.
 pub(crate) fn container(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
     match arena.w(i) {
+        // WG2b: `panel`, `sides`, `frame`, `stack`
+        w if crate::elements::is_container(w) => crate::elements::container(arena, i, r, origin, ui, out),
         W::CollapsingHeader { .. } => collapsing(arena, i, r, origin, ui, out),
         W::ScrollArea { .. } => scroll(arena, i, r, origin, ui, out),
         _ => {
@@ -211,6 +213,9 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     if matches!(arena.w(i), W::Menu(_)) {
         return crate::menus::leaf(arena, i, ui, out); // WG2a: menu-bar, menu-button
     }
+    if crate::elements::is_leaf(arena.w(i)) {
+        return crate::elements::leaf(arena, i, ui, out); // WG2b
+    }
     let h = arena.slots.id_at(i).expect("live leaf").to_raw();
     let kind = arena.core[i].kind as usize;
     let sig = |name: &str| kinds::signal_id(kind, name);
@@ -252,8 +257,11 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             if *char_limit > 0 {
                 te = te.char_limit(*char_limit as usize);
             }
-            let r = ui.add(te);
-            if r.changed() {
+            let o = te.show(ui);
+            // W5: the Linux primary selection (select-to-copy, middle-click paste)
+            let pasted = crate::primary::text_edit(ui, &o, node_id, text, *password, (*char_limit).max(0) as usize);
+            let r = o.response.response;
+            if r.changed() || pasted {
                 text_changed = Some(text.clone());
             }
             r
@@ -346,6 +354,19 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         W::Box | W::Window { .. } | W::Grid { .. } | W::CollapsingHeader { .. } | W::ScrollArea { .. } => unreachable!("containers are not leaves"),
         W::Ext(_) => unreachable!("provider kinds are drawn by provider::paint"),
         W::Menu(_) | W::Overlay(_) => unreachable!("WG2a kinds are drawn by crate::menus and crate::overlays"),
+        W::Hyperlink { .. }
+        | W::RadioButton { .. }
+        | W::Switch { .. }
+        | W::RangeSlider { .. }
+        | W::DragValue { .. }
+        | W::Panel { .. }
+        | W::Sides
+        | W::Frame { .. }
+        | W::Stack { .. }
+        | W::Image { .. }
+        | W::ProgressBar { .. }
+        | W::Spinner { .. }
+        | W::Canvas(_) => unreachable!("WG2b kinds are drawn by crate::elements"),
     };
     let mut resp = crate::a11y::decorate(resp, &arena.n(h));
     if !arena.common(i).tooltip.is_empty() {

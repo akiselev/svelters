@@ -250,7 +250,21 @@ pub static KINDS: &[KindDef] = &[
     super::layouts::GRID,
     super::layouts::COLLAPSING_HEADER,
     super::layouts::SCROLL_AREA,
-    // ---- WG2a: appended (tables in `menus.rs`, `popups.rs`) ----
+    // ---- WG2b: appended after WG1 (tables in `inputs.rs`, `panes.rs`, `media.rs`) ----
+    super::inputs::HYPERLINK,
+    super::inputs::RADIO_BUTTON,
+    super::inputs::SWITCH,
+    super::inputs::RANGE_SLIDER,
+    super::inputs::DRAG_VALUE,
+    super::panes::PANEL,
+    super::panes::SIDES,
+    super::panes::FRAME,
+    super::panes::STACK,
+    super::media::IMAGE,
+    super::media::PROGRESS_BAR,
+    super::media::SPINNER,
+    super::media::CANVAS,
+    // ---- WG2a: appended after WG2b (tables in `menus.rs`, `popups.rs`) ----
     super::menus::MENU_ENTRY,
     super::menus::MENU_BAR,
     super::menus::MENU,

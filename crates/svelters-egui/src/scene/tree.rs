@@ -129,6 +129,10 @@ fn builtin_payload(kind: usize) -> Option<W> {
         // WG2a: the defaults match the kind tables (`kinds/menus.rs`, `kinds/popups.rs`)
         id @ ("MenuEntry" | "MenuBar" | "Menu" | "Action" | "MenuSeparator" | "ContextMenu" | "MenuButton") => W::Menu(crate::menus::payload(id)),
         id @ ("Popup" | "Modal" | "InnerWindow") => W::Overlay(Box::new(crate::overlays::payload(id))),
+        // WG2b: the defaults match the kind tables (`kinds/{inputs,panes,media}.rs`)
+        "Hyperlink" | "RadioButton" | "Switch" | "RangeSlider" | "DragValue" | "Panel" | "Sides" | "Frame" | "Stack" | "Image" | "ProgressBar" | "Spinner" | "Canvas" => {
+            crate::elements::payload(kinds::kind(kind).id)?
+        }
         // RA1: a provider kind's widget struct with its defaults
         _ => W::Ext(crate::provider::ExtWidget::new((kinds::KindRegistry::global().provider(kind)?.entry.new)())),
     })

@@ -3888,9 +3888,11 @@ dependencies = [
 name = "svelters-egui"
 version = "0.0.0"
 dependencies = [
+ "arboard",
  "eframe",
  "egui",
  "egui_kittest",
+ "image",
  "inventory",
  "serde_json",
  "svelters-abi",
