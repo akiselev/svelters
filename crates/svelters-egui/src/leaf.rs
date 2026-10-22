@@ -77,6 +77,7 @@ pub(crate) fn leaf(arena: &mut Arena, h: Handle, ui: &mut Ui, out: &mut Vec<Out>
             ui.add(s)
         }
         W::Box | W::Window { .. } => unreachable!("containers are not leaves"),
+        W::Ext(_) => unreachable!("provider kinds are drawn by provider::paint"),
     };
     let n = arena.n_mut(h);
     let mut resp = crate::a11y::decorate(resp, n);

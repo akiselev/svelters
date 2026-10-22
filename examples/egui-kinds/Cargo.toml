@@ -1,0 +1,26 @@
+[package]
+name = "egui-kinds-example"
+edition.workspace = true
+version.workspace = true
+license.workspace = true
+publish.workspace = true
+description = "RA1: an app crate defines its own native egui widget kind in Rust (<quantity-field>) and uses it from Svelte, typed"
+
+[lib]
+name = "egui_kinds_demo"
+path = "src/lib.rs"
+
+[[bin]]
+name = "egui-kinds"
+path = "src/main.rs"
+
+[dependencies]
+svelters = { path = "../../crates/svelters" }
+svelters-egui.workspace = true
+svelters-host.workspace = true
+
+[dev-dependencies]
+svelters-abi.workspace = true
+svelters-compiler = { path = "../../crates/svelters-compiler" }
+egui_kittest = "=0.37.0"
+serde_json.workspace = true

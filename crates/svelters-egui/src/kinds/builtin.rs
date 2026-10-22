@@ -1,8 +1,5 @@
 //! The built-in kind table [`KINDS`] (its order is the kind ids: index + 1), with the tables of the
 //! `Widget` base and the leaves. The `window` and `box` tables are in `containers.rs`.
-//!
-//! The spec still names `crates/svelters-egui/src/kinds.rs` as its provenance: `egui.json` stays
-//! byte-identical across EG0 (`spec.rs`).
 
 use super::containers::{BOX_PROPS, WINDOW_METHODS, WINDOW_PROPS, WINDOW_SIGNALS};
 use super::{Def, KindDef, MethodDef, P, PropDef, SignalDef, Ty, input, layout, length, prop, signal};

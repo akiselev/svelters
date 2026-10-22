@@ -178,9 +178,10 @@ const KINDS_ID = '\0svelters-kinds';
  * `@svelters/native-runtime/kinds` resolves to (docs/notes/native-compiler/runtime-contract.md
  * "Spread attributes").
  */
-export function kindsModule({ backend = 'gtk', spec } = {}) {
+export function kindsModule({ backend = 'gtk', spec, specFragments = [] } = {}) {
   const args = ['--kinds', '--backend', backend];
   if (spec) args.push('--spec', spec);
+  for (const f of specFragments) args.push('--spec-fragment', f);
   return execFileSync(compilerPath(), args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
 }
 const STYLE_TAG = /<style(\s[^>]*)?>([\s\S]*?)<\/style>/;
@@ -219,21 +220,26 @@ export function withoutBindings(src) {
  * for the toolkit's dialect.
  */
 const tagCache = new Map();
-/** The element tags of a backend (metadata/semantics/<backend>.json), for selector checks. */
-function tagsOf(backend) {
-  if (!tagCache.has(backend)) {
+/**
+ * The element tags of a backend (metadata/semantics/<backend>.json) plus those of its spec fragments
+ * (RA1 provider kinds), for selector checks.
+ */
+function tagsOf(backend, specFragments = []) {
+  const key = [backend, ...specFragments].join('\0');
+  if (!tagCache.has(key)) {
     let tags = null;
     try {
       tags = Object.keys(JSON.parse(fs.readFileSync(path.join(repoRoot, "metadata/semantics", `${backend}.json`), "utf8")).tags ?? {});
+      for (const f of specFragments) tags.push(...Object.keys(JSON.parse(fs.readFileSync(f, 'utf8')).tags ?? {}));
     } catch {
       tags = null;
     }
-    tagCache.set(backend, tags);
+    tagCache.set(key, tags);
   }
-  return tagCache.get(backend);
+  return tagCache.get(key);
 }
 
-export function nativeSheets(code, file, toolkit, warn = () => {}) {
+export function nativeSheets(code, file, toolkit, warn = () => {}, specFragments = []) {
   const m = STYLE_TAG.exec(code);
   if (!m || /\blang\s*=/.test(m[1] ?? '')) return null;
   const { css, native, errors } = extractNative(m[2]);
@@ -248,7 +254,7 @@ export function nativeSheets(code, file, toolkit, warn = () => {}) {
     warn(`<style> not translated: Svelte could not compile the component for its CSS: ${String(e.message).split('\n')[0]}`);
     return null;
   }
-  const t = translateSheet(r.css?.code ?? '', toolkit, { native: native[toolkit] ?? [], setters: false, tags: tagsOf(toolkit) });
+  const t = translateSheet(r.css?.code ?? '', toolkit, { native: native[toolkit] ?? [], setters: false, tags: tagsOf(toolkit, specFragments) });
   for (const d of t.diagnostics) if (d.level !== 'info') warn(formatDiagnostic(d));
   // decl dialect (AppKit): structured rules for the runtime cascade engine
   if (t.declRules) return t.declRules.length ? { scope, sheets: { decl: t.declRules } } : null;
@@ -261,9 +267,11 @@ export function nativeSheets(code, file, toolkit, warn = () => {}) {
  * backend, and `.svelte.js` modules (runes outside components: Svelte's `compileModule`).
  * Diagnostics become Vite errors/warnings with positions; the compiler's source map maps
  * generated code back to the source. `dev: true` keeps `$inspect` / `$inspect.trace` and labels
- * signals (Svelte's `dev` option); otherwise they are stripped.
+ * signals (Svelte's `dev` option); otherwise they are stripped. `specFragments` (RA1): spec fragments
+ * merged into the backend's spec (`svelters-compile --spec-fragment`), such as the `kinds.json` an
+ * egui app binary dumps for its Rust-provided kinds.
  */
-export function svelteNative({ backend = 'gtk', spec, dev = false } = {}) {
+export function svelteNative({ backend = 'gtk', spec, specFragments = [], dev = false } = {}) {
   const bin = compilerPath();
   return {
     name: 'svelters-native-compiler',
@@ -274,7 +282,7 @@ export function svelteNative({ backend = 'gtk', spec, dev = false } = {}) {
       return id === KINDS_SPECIFIER ? KINDS_ID : null;
     },
     load(id) {
-      return id === KINDS_ID ? kindsModule({ backend, spec }) : null;
+      return id === KINDS_ID ? kindsModule({ backend, spec, specFragments }) : null;
     },
     transform(code, id) {
       const file = id.split('?')[0];
@@ -282,8 +290,9 @@ export function svelteNative({ backend = 'gtk', spec, dev = false } = {}) {
       if (!isModule && !file.endsWith('.svelte')) return null;
       const args = isModule ? ['--module', '--json', '--filename', file] : ['--backend', backend, '--json', '--filename', file];
       if (spec && !isModule) args.push('--spec', spec);
+      if (!isModule) for (const f of specFragments) args.push('--spec-fragment', f);
       // CSS declarations of <style> go to the X6 translator (GTK CSS / QSS), scoped like Svelte's
-      const css = isModule ? null : nativeSheets(code, file, backend, (message) => this.warn({ message }));
+      const css = isModule ? null : nativeSheets(code, file, backend, (message) => this.warn({ message }), specFragments);
       if (css) args.push('--css-scope', css.scope);
       if (dev) args.push('--dev');
       args.push('-');

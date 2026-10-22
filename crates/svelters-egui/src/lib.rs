@@ -42,6 +42,15 @@ pub use runner::kittest as harness;
 
 pub use backend::{EguiBackend, Stats};
 pub use embed::Embed;
+pub use spec::dump;
+
+/// `use svelters_egui::prelude::*;`: what a provider kind (`#[svelters::widget]`) needs.
+pub mod prelude {
+    pub use crate::provider::{
+        A11yCx, AvailableSpace, Caps, Event, ExtKey, IntoStateBits, KindDecl, MeasureCx, StateBit, StateBits, Widget, WidgetCx,
+    };
+    pub use egui;
+}
 pub use runner::run_app;
 
 /// The egui this backend is built against (re-exported so apps and packs link the same copy).

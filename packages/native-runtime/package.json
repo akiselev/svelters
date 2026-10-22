@@ -17,6 +17,7 @@
     "./style": { "types": "./src/style.d.ts", "default": "./src/style.js" },
     "./bindings": "./src/bindings.generated.js",
     "./types": { "types": "./types/index.d.ts" },
+    "./types/egui": { "types": "./types/egui.d.ts" },
     "./vite": "./vite.js"
   },
   "dependencies": {

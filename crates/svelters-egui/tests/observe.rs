@@ -34,6 +34,7 @@ fn every_prop_is_observable_and_host_writes_never_echo() {
                     kinds::Ty::I64 => Value::I64(3),
                     kinds::Ty::Str => Value::Str("x".into()),
                     kinds::Ty::Enum(vals) => Value::Str(vals[vals.len() - 1].into()),
+                    kinds::Ty::Provider => continue, // RA1: no provider kinds in this binary
                 };
                 br.set_prop(h, id, &v).unwrap();
                 assert_eq!(br.get_prop(h, id).unwrap(), v, "{tag}.{} reads back", p.name);

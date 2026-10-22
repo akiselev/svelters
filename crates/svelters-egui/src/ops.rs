@@ -5,7 +5,7 @@
 //! takes the style ops. Writer: shared (changes small).
 
 use crate::backend::EguiBackend;
-use crate::kinds::{self, KINDS};
+use crate::kinds;
 use crate::layout;
 use crate::scene::{self, Handle, tree};
 use std::sync::Arc;
@@ -79,7 +79,7 @@ impl Backend for EguiBackend {
     }
 
     fn create(&self, kind: svl_id) -> StrResult<svl_handle> {
-        let k = kinds::kind_of_id(kind).filter(|&k| KINDS[k].tag.is_some()).ok_or_else(|| format!("unknown kind id {kind}"))?;
+        let k = kinds::kind_of_id(kind).filter(|&k| kinds::kind(k).tag.is_some()).ok_or_else(|| format!("unknown kind id {kind}"))?;
         let h = self.0.scene.borrow_mut().alloc(|h| scene::new_node(k, h));
         Ok(h)
     }
@@ -88,12 +88,12 @@ impl Backend for EguiBackend {
         let pk = self.kind_of(parent)?;
         let ck = self.kind_of(child)?;
         if kinds::slot_of(pk).is_none() {
-            return Err(format!("<{}> takes no children", KINDS[pk].tag.unwrap_or("?")));
+            return Err(format!("<{}> takes no children", kinds::kind(pk).tag.unwrap_or("?")));
         }
         if slot > 1 {
-            return Err(format!("unknown slot id {slot} on <{}>", KINDS[pk].tag.unwrap_or("?")));
+            return Err(format!("unknown slot id {slot} on <{}>", kinds::kind(pk).tag.unwrap_or("?")));
         }
-        if KINDS[ck].toplevel {
+        if kinds::kind(ck).toplevel {
             return Err("a window cannot be inserted under another element".into());
         }
         if parent == child {
@@ -208,7 +208,7 @@ impl Backend for EguiBackend {
             // EM1: a slot belongs to the embedder; JS mounts into it but cannot destroy it
             lifetime: if host_owned {
                 SVL_LIFE_BORROWED
-            } else if KINDS[k].toplevel {
+            } else if kinds::kind(k).toplevel {
                 SVL_LIFE_TOPLEVEL
             } else {
                 SVL_LIFE_OWNED
@@ -337,7 +337,12 @@ impl Backend for EguiBackend {
         if what != NameKind::Prop {
             return None;
         }
-        let def = kinds::prop_def(kinds::kind_of_id(kind)?, member)?;
+        let k = kinds::kind_of_id(kind)?;
+        let def = kinds::prop_def(k, member)?;
+        if let kinds::P::Ext(i) = def.key {
+            // RA1: a provider prop is described by its Rust type (`JsType`).
+            return kinds::KindRegistry::global().provider_member_desc(k, i as usize);
+        }
         let mut slot = SlotDesc::new(scene::tag_of(def.ty)).named(def.name);
         if def.nullable {
             slot = slot.flags(SVL_D_NULLABLE);

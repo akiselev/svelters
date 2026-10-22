@@ -158,6 +158,14 @@ Minimal scene additions, for SG1 to reconcile into its columns:
 - Provider widgets: use `Node.id` (salted, stable across moves) as their egui id, and call `a11y::decorate` (or
   the same author-id call) on their response so anchors reach AccessKit.
 - `Widget::busy()` should set `Busy::PROVIDER` in `Embed::settled` (ARCH-EMBED R8).
+- After the RA1 merge: `provider::paint` (`provider/mod.rs`) still applies only `a11y::name`; switch it to
+  `a11y::decorate(resp, n)` so anchored provider nodes get their author id (RA1's file, not changed here).
+- Exported Rust objects in widget payloads (coordinator's question): EM1 gives no call context for that. Its host
+  entries (`core::root_call`: mount, props, info, unmount, close) hold the JS guard only around the call into
+  `__svelters_embed` in `logic`; `show_slot` and the walk never enter the host, so a provider converting there
+  has no host scope. What would work: the embed opening a host scope (an `exports::__private::with_cx`-like guard
+  on the embed's `Host`) around `show_slot`'s walk, or converting at `set_prop` time (inside the host op). Either
+  is a small follow-up once RA1 says which shape it wants; `Embed::host()` is the handle to build it on.
 
 ## Notes for EM2
 
@@ -176,5 +184,9 @@ Minimal scene additions, for SG1 to reconcile into its columns:
   `--test embed` 7/7 after the handler-policy test was added; both before the merge of origin/master (FW1), with
   the egui fixtures and `embed-egui` built locally (`pnpm --filter './fixtures/*-egui' build`).
 - `pnpm --filter @svelters/native-runtime test` (102 tests) before `test/embed.test.mjs`; `embed.test.mjs` 3/3.
-- Not run locally: workspace tests, svelters-host tests, conformance, the JS package suite after the merge, the
-  other backends. CI runs them.
+- After merging origin/master (RA1 12f34937, FW1): conflicts in `lib.rs`, `ops.rs`, `scene/{node,tree}.rs`,
+  `packages/build/index.js` resolved as unions; `egui.json` and `types/egui.d.ts` regenerated
+  (`SVELTERS_UPDATE=1 … --test spec`); `pnpm install --frozen-lockfile` clean; compiler and egui fixtures
+  rebuilt; `cargo nextest run -p svelters-egui` 25/25.
+- Not run locally: workspace tests, svelters-host tests, conformance, the full JS package suite after the merges,
+  the other backends. CI runs them.

@@ -146,5 +146,9 @@ fn paint_node(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut
         b = b.disabled();
     }
     let mut child = ui.new_child(b);
-    crate::leaf::leaf(arena, h, &mut child, out);
+    if matches!(arena.n(h).w, W::Ext(_)) {
+        crate::provider::paint(arena, h, &mut child, out); // RA1: a provider kind
+    } else {
+        crate::leaf::leaf(arena, h, &mut child, out);
+    }
 }
