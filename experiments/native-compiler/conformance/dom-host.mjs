@@ -140,7 +140,7 @@ export class DomHost {
       case 4: // OPACITY
         n.style.opacity = text ?? '';
         return 0;
-      case 7: {
+      case 8: {
         // TRANSFORM "tx ty sx sy ox oy"
         if (text == null) {
           n.style.transform = '';
@@ -152,7 +152,7 @@ export class DomHost {
         n.style.transformOrigin = ox === 0.5 && oy === 0.5 ? '' : `${ox * 100}% ${oy * 100}%`;
         return 0;
       }
-      case 8: {
+      case 9: {
         // CLIP "w h" (px, -1 = unclipped)
         const [w, hh] = text == null ? [-1, -1] : text.split(' ').map(Number);
         n.style.overflow = text == null ? '' : 'hidden';
@@ -160,7 +160,7 @@ export class DomHost {
         n.style.height = hh >= 0 ? `${hh}px` : '';
         return 0;
       }
-      case 9: // INERT
+      case 10: // INERT
         n.inert = text != null;
         return 0;
       default:

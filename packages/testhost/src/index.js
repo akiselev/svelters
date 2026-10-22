@@ -4,10 +4,9 @@ import vm from 'node:vm';
 import fs from 'node:fs';
 
 const readSchema = (file) => JSON.parse(fs.readFileSync(new URL(file, import.meta.url), 'utf8'));
-/** Coarse prop types per toolkit vocabulary: `gtk` (the default) and `qt` (Qt-vocabulary fixtures). */
-
 /** `style` op numbers -> op-log names (ABI v2.3, v2.8). */
-const STYLE_OPS = { 1: 'classes', 2: 'name', 3: 'inline', 4: 'opacity', 7: 'transform', 8: 'clip', 9: 'inert' };
+const STYLE_OPS = { 1: 'classes', 2: 'name', 3: 'inline', 4: 'opacity', 8: 'transform', 9: 'clip', 10: 'inert' };
+/** Coarse prop types per toolkit vocabulary: `gtk` (the default) and `qt` (Qt-vocabulary fixtures). */
 export const schemas = { gtk: readSchema('./schema.json'), qt: readSchema('./schema.qt.json') };
 const defaultSchema = schemas.gtk;
 
@@ -266,9 +265,9 @@ export function createTestHost({ schema: schemaOpt, toolkit } = {}) {
         case 3:
         case 4:
         // ABI v2.8 (TR1): the visual channels of transitions
-        case 7:
         case 8:
         case 9:
+        case 10:
           if (h !== 0 && dead.has(h)) return 0;
           w(h);
           lines.push(`style #${h} ${STYLE_OPS[op]} ${t}`);

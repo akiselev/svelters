@@ -586,6 +586,21 @@ class Gen:
                                 f"shape: \"{m['async']['shape']}\", args: {len(m['params'])} }},\n")
         L += sorted(rows)
         L.append("];\n")
+        # On x86-64 the runtime encodes BOOL as `c` (signed char), so the reflective paths can't tell it
+        # from an integer; these selectors and KVC keys return BOOL per the facts (plus NSObject's own).
+        bools = set(NSOBJECT_BOOL_SELS)
+        for t in self.types.values():
+            bools.update(m["sel"] for m in t["methods"] if m["ret"].get("k") == "bool")
+            for p in t["props"]:
+                if p["type"]["k"] == "bool":
+                    bools.update((p["getter"], p["key"]))
+        sdk = json.loads((ROOT / "metadata/appkit/_enums.json").read_text())["sdk"].removeprefix("MacOSX")
+        L.append(f"\n/// The macOS SDK the facts were read against: on an older macOS, its newer members are absent.\n")
+        L.append(f"pub const SDK_MACOS: &str = \"{sdk}\";\n")
+        L.append("\n/// Selectors and KVC keys whose value is BOOL (sorted; see `types_table::returns_bool`).\n")
+        L.append("pub static BOOL_SELS: &[&str] = &[\n")
+        L += [f"    \"{s}\",\n" for s in sorted(bools)]
+        L.append("];\n")
         return "".join(L)
 
     def files(self) -> dict[Path, str]:
@@ -614,6 +629,9 @@ class Gen:
 # ---- generated tests and ledger facts (appended to gen_types.py by hand; see Gen.tests / Gen.facts) ----
 TESTS = ROOT / "examples/counter-mac/tests/types.rs"
 FACTS_OUT = ROOT / "metadata/appkit/types/facts.json"
+# BOOL members of the NSObject protocol, callable on every type but not in the facts.
+NSOBJECT_BOOL_SELS = ("isEqual:", "isKindOfClass:", "isMemberOfClass:", "respondsToSelector:", "conformsToProtocol:", "isProxy")
+
 DENY = re.compile(r"^(clear|remove|undo|redo|prepare|begin|end|disable|enable|write|declare|add|set|register|load|unmount|open|"
                   r"synchronize|reset|flush|perform|start|stop|cancel|invalidate|release|retain|copy|mutableCopy|make|create|"
                   r"discard|recache|lock|unlock|display|draw|run|send|post|become|resign|close|terminate|hide|unhide|activate|"

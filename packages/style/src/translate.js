@@ -17,6 +17,7 @@ import { diag, parseDeclarations, translateDecls } from './decls.js';
 import { KINDS } from './kinds.generated.js';
 import { STYLE_TABLES, appliesTo } from './props.js';
 import { DEFAULT_TOKEN_NAMES, PSEUDO } from './vocab.js';
+import { translateDeclSheet } from './decl.js';
 
 export { KINDS };
 
@@ -89,6 +90,11 @@ export function extractNative(source) {
  * @returns {{ css: string, dark: string, rules: SetterRule[], diagnostics: import('./decls.js').Diagnostic[] }}
  */
 export function translateSheet(cssText, toolkit, opts = {}) {
+  if (STYLE_TABLES[toolkit]?.dialect === 'decl') {
+    // no stylesheet language: structured rules for the runtime cascade engine (decl.js)
+    const r = translateDeclSheet(cssText, toolkit, { parseCss, tags: opts.tags, knownTokens: opts.knownTokens ?? DEFAULT_TOKEN_NAMES });
+    return { css: '', dark: '', rules: [], declRules: r.rules, diagnostics: r.diagnostics };
+  }
   const kinds = opts.kinds ?? KINDS;
   const knownTokens = new Set(opts.knownTokens ?? DEFAULT_TOKEN_NAMES);
   const diagnostics = [];

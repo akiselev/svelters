@@ -20,6 +20,7 @@ import {
   appliesTo,
   byPrecedence,
   formatDiagnostic,
+  parseSetterValue,
   propOf,
   ruleMatches,
   inlineToNative,
@@ -28,17 +29,31 @@ import {
   renderQss,
   resolveTokens,
   usesTokens,
+  byCascade,
+  declDecls,
+  expandDecl,
+  parseDeclarations,
+  replaceVars,
+  selectorMatches,
 } from '@svelters/style/runtime';
 import { animatesOpacity } from './motion.js';
 
-const OP = { TARGET: 0, CLASSES: 1, NAME: 2, INLINE: 3, OPACITY: 4, SHEET: 5, SCHEME: 6 };
+const OP = { TARGET: 0, CLASSES: 1, NAME: 2, INLINE: 3, OPACITY: 4, SHEET: 5, SCHEME: 6, DECLS: 7 };
+/** `SVL_STYLE_TARGET` answers: 1 GTK CSS, 2 QSS, 3 the decl dialect of AppKit (a toolkit per code). */
+const DECL_TOOLKITS = { 3: 'appkit' };
+/** Properties an element inherits from its parent when no rule of its own sets them (as in CSS). */
+const INHERITED = ['color', 'font-size', 'font-weight', 'font-family', 'font-style'];
+/** Separators of the DECLS payload: blocks, then fields inside a block (state, then `prop:value`). */
+const BLOCK = '\u0002';
 const TOKENS_ID = '@tokens';
 
 const host = () => globalThis.__svelters_host;
 
 const state = {
-  /** undefined: not asked yet; 'css' | 'qss' | null (no styling support). */
+  /** undefined: not asked yet; 'css' | 'qss' | 'decl' | null (no styling support). */
   target: undefined,
+  declToolkit: null, // 'appkit' when target is 'decl'
+  declRules: [], // decl rules of every sheet, in cascade order (ascending)
   init: false,
   sheets: new Map(), // id -> { gtk, qt, qtDark, rules, seq, sent }
   seq: 0, // registration counter: later sheets win ties in rule order
@@ -69,7 +84,8 @@ function targetOf() {
     return null;
   }
   const t = hs.style(OP.TARGET, 0, null);
-  state.target = t === 1 ? 'css' : t === 2 ? 'qss' : null;
+  state.target = t === 1 ? 'css' : t === 2 ? 'qss' : DECL_TOOLKITS[t] ? 'decl' : null;
+  state.declToolkit = DECL_TOOLKITS[t] ?? null;
   return state.target;
 }
 
@@ -90,6 +106,8 @@ function ensureInit() {
   }
   const hs = host();
   hs.style(OP.SHEET, 0, null); // clears every sheet a previous bundle registered
+  // decl backends report the system appearance; it is the scheme unless the app chose one
+  if (t === 'decl' && !state.schemeChosen) state.scheme = hs.style(OP.SCHEME, 0, null) === 1 ? 'dark' : 'light';
   state.tokens = resolveTokens(state.scheme, state.overrides);
   state.tokensKey = JSON.stringify(state.tokens);
   state.lastScheme = state.scheme;
@@ -104,6 +122,12 @@ function sendScheme() {
   host().style(OP.SCHEME, 0, [state.scheme, ...pal].join(SEP));
 }
 
+function collectDeclRules() {
+  const all = [];
+  for (const e of state.sheets.values()) for (const r of e.decl ?? []) all.push({ ...r, order: e.seq * 1e6 + r.order });
+  state.declRules = all.sort(byCascade);
+}
+
 function sheetText(entry) {
   if (state.target === 'css') return entry.gtk ?? '';
   let t = renderQss(entry.qt ?? '', state.tokens);
@@ -112,6 +136,7 @@ function sheetText(entry) {
 }
 
 function pushSheet(id, entry) {
+  if (state.target === 'decl') return;
   const text = sheetText(entry);
   if (entry.sent === text) return;
   entry.sent = text;
@@ -128,16 +153,21 @@ export const hasSheets = () => state.sheets.size > 0;
 export function registerStyles(id, sheets) {
   const first = state.sheets.size === 0;
   const prev = state.sheets.get(id);
-  const entry = { gtk: sheets.gtk ?? '', qt: sheets.qt ?? '', qtDark: sheets.qtDark ?? '', rules: sheets.rules ?? null, seq: state.seq++, sent: undefined };
+  const entry = { gtk: sheets.gtk ?? '', qt: sheets.qt ?? '', qtDark: sheets.qtDark ?? '', rules: sheets.rules ?? null, decl: sheets.decl ?? null, seq: state.seq++, sent: undefined };
   state.sheets.set(id, entry);
   if (!ensureInit()) return;
+  if (state.target === 'decl') {
+    collectDeclRules();
+    for (const el of state.elements()) markStyleDirty(el);
+    return;
+  }
   pushSheet(id, entry);
   const rulesChanged = entry.rules !== null || (prev?.rules ?? null) !== null;
   if (rulesChanged) collectRules();
   if (first || rulesChanged) for (const el of state.elements()) markStyleDirty(el);
 }
 
-const toolkitOf = () => (state.target === 'css' ? 'gtk' : state.target === 'qss' ? 'qt' : null);
+const toolkitOf = () => (state.target === 'css' ? 'gtk' : state.target === 'qss' ? 'qt' : state.target === 'decl' ? state.declToolkit : null);
 
 /** Rebuilds the active toolkit's setter rules from every registered sheet. */
 function collectRules() {
@@ -169,6 +199,7 @@ export const getTokens = () => resolveTokens(state.scheme, state.overrides);
 /** Switches the colour scheme ('light' | 'dark'): tokens, palette and dark sheets follow. */
 export function setColorScheme(scheme) {
   if (scheme !== 'light' && scheme !== 'dark') throw new TypeError(`colour scheme must be 'light' or 'dark', not ${scheme}`);
+  state.schemeChosen = true;
   if (state.scheme === scheme) return;
   state.scheme = scheme;
   scheduleRefresh();
@@ -203,6 +234,7 @@ export function refresh() {
     for (const [id, entry] of state.sheets) pushSheet(id, entry);
     for (const el of state.tokenEls) if (el.h != null) markStyleDirty(el);
   }
+  if (state.target === 'decl') for (const el of state.elements()) if (el.sc) markStyleDirty(el);
 }
 
 // ---- element hooks ----
@@ -239,8 +271,9 @@ export function applyStyle(el) {
   if (el.h == null) return;
   const a = el.attrs;
   const hasAny = a.class != null || a.style != null || a.id != null;
-  if (!hasAny && !el.sc && !(hasSheets() && (KINDS[el.tag]?.ambiguous || state.ruleTags.has(el.tag)))) return;
+  if (!hasAny && !el.sc && !(hasSheets() && (KINDS[el.tag]?.ambiguous || state.ruleTags.has(el.tag) || state.target === 'decl'))) return;
   if (!ensureInit()) return;
+  if (state.target === 'decl') return applyDecl(el);
   const hs = host();
   const sc = (el.sc ??= { classes: '', name: '', inline: '', opacity: '', setters: null });
 
@@ -369,9 +402,139 @@ export function markStyleDirty(el) {
 
 function flushDirty() {
   dirtyQueued = false;
-  const els = [...dirty];
+  let els = [...dirty];
   dirty.clear();
+  if (state.target === 'decl') els = withDescendants(els);
   for (const el of els) if (el.h != null) applyStyle(el);
+}
+
+/**
+ * `els` and every live element below one of them, parents before children (descendant selectors
+ * and inherited properties of a subtree depend on its ancestors).
+ */
+function withDescendants(els) {
+  const want = new Set(els);
+  const all = [...state.elements()];
+  const depth = new Map();
+  const depthOf = (el) => {
+    let d = depth.get(el);
+    if (d === undefined) {
+      d = el.np ? depthOf(el.np) + 1 : 0;
+      depth.set(el, d);
+    }
+    return d;
+  };
+  const under = new Map();
+  const isUnder = (el) => {
+    if (want.has(el)) return true;
+    let r = under.get(el);
+    if (r === undefined) {
+      r = el.np ? isUnder(el.np) : false;
+      under.set(el, r);
+    }
+    return r;
+  };
+  return all.filter(isUnder).sort((a, b) => depthOf(a) - depthOf(b));
+}
+
+// ---- the decl dialect (AppKit): a cascade engine over the native element tree ----
+
+const declClasses = (el) => classList(el.attrs.class);
+
+/** The native ancestor chain of `el`, outermost first, `el` last: [{ tag, classes, id }]. */
+function chainOf(el) {
+  const out = [];
+  for (let n = el; n; n = n.np) out.push({ tag: n.tag, classes: declClasses(n), id: n.attrs.id == null ? null : String(n.attrs.id) });
+  return out.reverse();
+}
+
+/** Inline `style=` of a decl element: [prop, value] (setter properties are left to the setter path). */
+function inlineDecls(el, text) {
+  const key = `decl|${text}`;
+  let r = state.inlineCache.get(key);
+  if (!r) {
+    const d = declDecls(parseDeclarations(text), state.declToolkit, { where: 'inline' });
+    for (const x of d.diagnostics) if (x.level !== 'info') warnOnce(`${formatDiagnostic(x)} (in style="${text}")`);
+    const setters = [];
+    for (const x of d.setters) {
+      const v = parseSetterValue(state.declToolkit, x.prop, x.entry, x.value);
+      if (v.error) warnOnce(`${v.error} (in style="${text}")`);
+      else setters.push({ name: x.prop, entry: x.entry, value: v.value });
+    }
+    r = { decls: d.decls, setters };
+    if (state.inlineCache.size > 2000) state.inlineCache.clear();
+    state.inlineCache.set(key, r);
+  }
+  return r;
+}
+
+/**
+ * Computes `el`'s declarations per state and sends them when they changed. The base block is the
+ * cascade of the matching rules without a state (dark rules too while the scheme is dark), the
+ * inherited text properties of the parent, and the inline style on top; a state block holds the
+ * declarations of the matching rules with that state, minus what the inline style sets (inline
+ * style wins over every rule, as on the web). `var()` is resolved here with the active tokens and
+ * the custom properties set on the element and its ancestors.
+ */
+function applyDecl(el) {
+  const sc = (el.sc ??= { decl: undefined, computed: null, vars: null, setters: null });
+  const chain = chainOf(el);
+  const scheme = state.scheme;
+  const base = new Map();
+  const states = new Map();
+  for (const r of state.declRules) {
+    if (r.dark && scheme !== 'dark') continue;
+    if (!selectorMatches(r.sel, chain)) continue;
+    const into = r.state ? states.get(r.state) ?? states.set(r.state, new Map()).get(r.state) : base;
+    for (const [p, v] of r.decls) into.set(p, v);
+  }
+  const styleText = el.attrs.style == null ? '' : String(el.attrs.style).trim();
+  const inline = styleText ? inlineDecls(el, styleText) : { decls: [], setters: [] };
+  for (const [p, v] of inline.decls) base.set(p, v);
+  // custom properties: the token set, then the ancestors', then the element's own
+  const parentVars = el.np?.sc?.vars ?? null;
+  let vars = parentVars ?? state.tokens;
+  const own = [...base].filter(([p]) => p.startsWith('--'));
+  if (own.length) {
+    vars = { ...vars };
+    for (const [p, v] of own) vars[p] = v;
+  }
+  sc.vars = vars === state.tokens ? null : vars;
+  const resolve = (v) => replaceVars(v, (name, fb) => vars?.[name] ?? state.tokens?.[name] ?? (fb === null ? '' : resolve(fb)));
+  const block = (m) => {
+    const out = new Map();
+    for (const [p, v] of m) {
+      if (p.startsWith('--')) continue;
+      for (const [q, w] of expandDecl(p, resolve(v))) out.set(q, w);
+    }
+    return out;
+  };
+  const computed = block(base);
+  const parent = el.np?.sc?.computed ?? null;
+  if (parent) for (const p of INHERITED) if (!computed.has(p) && parent.has(p)) computed.set(p, parent.get(p));
+  sc.computed = computed;
+  const inlineProps = new Set(inline.decls.map(([p]) => p));
+  let text = [...computed].map(([p, v]) => `\u0001${p}:${v}`).join('');
+  for (const st of ['hover', 'focus', 'checked', 'active', 'disabled']) {
+    const m = states.get(st);
+    if (!m) continue;
+    for (const p of inlineProps) m.delete(p);
+    const b = block(m);
+    if (b.size) text += `${BLOCK}${st}${[...b].map(([p, v]) => `\u0001${p}:${v}`).join('')}`;
+  }
+  if (text !== sc.decl) {
+    if (text || sc.decl) host().style(OP.DECLS, el.h, text || null);
+    sc.decl = text;
+  }
+  if (inline.setters.length || sc.setters) {
+    sc.inlineSetters = inline.setters;
+    applySetters(el, sc, declClasses(el), el.attrs.id == null ? '' : String(el.attrs.id));
+  }
+}
+
+/** The runtime calls this after inserting `el` under a native parent (descendant selectors change). */
+export function styleInserted(el) {
+  if (state.target === 'decl' && hasSheets()) markStyleDirty(el);
 }
 
 /** Forgets per-element style bookkeeping when the native widget is destroyed. */

@@ -1,0 +1,186 @@
+#!/usr/bin/env bash
+# Build a Rust binary for the iOS simulator, wrap it in a minimal .app, install it on a simulator
+# device, launch it with its stdout/stderr on the console, and optionally take a screenshot.
+# macOS + Xcode only (docs/notes/ios-sim-first-run.md).
+#
+#   tools/dev/ios-sim-run                                  # the ios_probe, shows its UI, Ctrl-C to stop
+#   tools/dev/ios-sim-run --wait 'SV-DONE' --screenshot /tmp/probe.png -- --selftest
+#   tools/dev/ios-sim-run --manifest-path examples/foo/Cargo.toml --bin foo --device 'iPhone 17 Pro'
+#   tools/dev/ios-sim-run --exe path/to/prebuilt --name foo
+#
+# Options:
+#   --manifest-path P   cargo manifest to build (default: the ios_probe)
+#   --bin NAME          binary to build/bundle (default: the package name / file name)
+#   --exe PATH          skip cargo; bundle this already-built simulator executable
+#   --release           cargo --release
+#   --name NAME         app/executable name (default: the binary name)
+#   --bundle-id ID      CFBundleIdentifier (default: dev.svelters.<name>)
+#   --device D          simulator device name or UDID (default: iPhone 17); booted if needed
+#   --min-ios V         deployment target (default 17.0, decision I9)
+#   --no-launch-screen  omit UILaunchScreen from Info.plist (legacy letterboxed mode)
+#   --resources DIR     copy DIR's contents into the .app (e.g. a JS bundle)
+#   --env K=V           environment for the app (passed as SIMCTL_CHILD_K=V); repeatable
+#   --wait REGEX        wait until a console line matches, then screenshot/stop (exit 1 on timeout)
+#   --timeout SECS      for --wait and for the app to exit on its own (default 60)
+#   --screenshot FILE   PNG of the device after --wait matched (or after launch + 3 s)
+#   --keep-running      do not terminate the app when done
+#   --shutdown          shut the device down at the end if this script booted it
+#   --out DIR           where the .app and console log go (default: /tmp/svelters-ios)
+#   -- ARGS...          arguments for the app
+set -euo pipefail
+
+here=$(cd "$(dirname "$0")/../.." && pwd)
+manifest="$here/docs/notes/scripts/mobile/ios_probe/Cargo.toml"
+bin="" exe="" release="" name="" bundle_id="" device="iPhone 17" min_ios="17.0"
+launch_screen=1 resources="" wait_re="" timeout=60 shot="" keep=0 shutdown=0 out=/tmp/svelters-ios
+envs=() args=()
+while (($#)); do
+  case "$1" in
+    --manifest-path) manifest=$2; shift 2 ;;
+    --bin) bin=$2; shift 2 ;;
+    --exe) exe=$2; shift 2 ;;
+    --release) release=--release; shift ;;
+    --name) name=$2; shift 2 ;;
+    --bundle-id) bundle_id=$2; shift 2 ;;
+    --device) device=$2; shift 2 ;;
+    --min-ios) min_ios=$2; shift 2 ;;
+    --no-launch-screen) launch_screen=0; shift ;;
+    --resources) resources=$2; shift 2 ;;
+    --env) envs+=("$2"); shift 2 ;;
+    --wait) wait_re=$2; shift 2 ;;
+    --timeout) timeout=$2; shift 2 ;;
+    --screenshot) shot=$2; shift 2 ;;
+    --keep-running) keep=1; shift ;;
+    --shutdown) shutdown=1; shift ;;
+    --out) out=$2; shift 2 ;;
+    --) shift; args=("$@"); break ;;
+    -h|--help) sed -n '2,/^set -euo/p' "$0" | sed '$d; s/^# \{0,1\}//'; exit 0 ;;
+    *) echo "ios-sim-run: unknown option $1" >&2; exit 2 ;;
+  esac
+done
+
+# The simulator runs the host architecture: x86_64-apple-ios on Intel, aarch64-apple-ios-sim on
+# Apple silicon.
+case "$(uname -m)" in
+  x86_64) target=x86_64-apple-ios ;;
+  arm64) target=aarch64-apple-ios-sim ;;
+  *) echo "ios-sim-run: unsupported host $(uname -m)" >&2; exit 2 ;;
+esac
+
+# 1. Build.
+if [[ -z "$exe" ]]; then
+  export IPHONEOS_DEPLOYMENT_TARGET="$min_ios"
+  bargs=(--manifest-path "$manifest" --target "$target" $release)
+  [[ -n "$bin" ]] && bargs+=(--bin "$bin")
+  cargo build "${bargs[@]}" >&2
+  tdir=$(cargo metadata --manifest-path "$manifest" --format-version 1 --no-deps |
+         python3 -c 'import json,sys; print(json.load(sys.stdin)["target_directory"])')
+  if [[ -z "$bin" ]]; then
+    bin=$(cargo metadata --manifest-path "$manifest" --format-version 1 --no-deps |
+          python3 -c 'import json,sys; m=json.load(sys.stdin); print([t["name"] for p in m["packages"] for t in p["targets"] if "bin" in t["kind"]][0])')
+  fi
+  profile=debug; [[ -n "$release" ]] && profile=release
+  exe="$tdir/$target/$profile/$bin"
+fi
+[[ -f "$exe" ]] || { echo "ios-sim-run: no executable at $exe" >&2; exit 1; }
+name=${name:-$(basename "$exe")}
+bundle_id=${bundle_id:-dev.svelters.${name//_/-}}
+
+# 2. Bundle: Name.app/{Name, Info.plist, resources...}. The scene manifest names the scene
+# delegate class the binary registers (SveltersSceneDelegate).
+app="$out/$name.app"
+rm -rf "$app"; mkdir -p "$app"
+cp "$exe" "$app/$name"
+[[ -n "$resources" ]] && cp -R "$resources"/. "$app"/
+ls_entry=""
+((launch_screen)) && ls_entry='<key>UILaunchScreen</key><dict/>'
+cat > "$app/Info.plist" <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>CFBundleIdentifier</key><string>$bundle_id</string>
+  <key>CFBundleExecutable</key><string>$name</string>
+  <key>CFBundleName</key><string>$name</string>
+  <key>CFBundlePackageType</key><string>APPL</string>
+  <key>CFBundleVersion</key><string>1</string>
+  <key>CFBundleShortVersionString</key><string>0.0.1</string>
+  <key>CFBundleSupportedPlatforms</key><array><string>iPhoneSimulator</string></array>
+  <key>MinimumOSVersion</key><string>$min_ios</string>
+  <key>UIDeviceFamily</key><array><integer>1</integer><integer>2</integer></array>
+  <key>UIRequiredDeviceCapabilities</key><array/>
+  $ls_entry
+  <key>UIApplicationSceneManifest</key><dict>
+    <key>UIApplicationSupportsMultipleScenes</key><false/>
+    <key>UISceneConfigurations</key><dict>
+      <key>UIWindowSceneSessionRoleApplication</key><array><dict>
+        <key>UISceneConfigurationName</key><string>Default</string>
+        <key>UISceneDelegateClassName</key><string>SveltersSceneDelegate</string>
+      </dict></array>
+    </dict>
+  </dict>
+</dict></plist>
+EOF
+plutil -lint -s "$app/Info.plist"
+# The simulator does not check signatures on Intel, but arm64 simulator binaries must carry one
+# (the linker's ad-hoc signature usually suffices); sign the bundle ad hoc either way.
+codesign --force --sign - --timestamp=none "$app" >/dev/null 2>&1 || echo "ios-sim-run: ad-hoc codesign failed (continuing)" >&2
+
+# 3. Device: resolve the name to a UDID among available devices, boot it if needed.
+udid=$(xcrun simctl list devices available -j | python3 -c '
+import json, sys
+want = sys.argv[1]
+devs = [d for rt, ds in json.load(sys.stdin)["devices"].items() if "iOS" in rt for d in ds]
+m = [d for d in devs if d["udid"] == want] or [d for d in devs if d["name"] == want]
+print(m[-1]["udid"] if m else "")' "$device")
+[[ -n "$udid" ]] || { echo "ios-sim-run: no available iOS simulator device '$device'" >&2; exit 1; }
+state=$(xcrun simctl list devices -j | python3 -c '
+import json, sys
+for ds in json.load(sys.stdin)["devices"].values():
+    for d in ds:
+        if d["udid"] == sys.argv[1]: print(d["state"])' "$udid")
+booted_here=0
+if [[ "$state" != Booted ]]; then
+  echo "ios-sim-run: booting $device ($udid)" >&2
+  xcrun simctl boot "$udid"
+  booted_here=1
+fi
+xcrun simctl bootstatus "$udid" -b >/dev/null
+
+finish() {
+  ((keep)) || xcrun simctl terminate "$udid" "$bundle_id" >/dev/null 2>&1 || true
+  if ((shutdown && booted_here)); then xcrun simctl shutdown "$udid" || true; fi
+}
+trap finish EXIT
+
+# 4. Install and launch with the console attached.
+xcrun simctl install "$udid" "$app"
+for kv in ${envs[@]+"${envs[@]}"}; do export "SIMCTL_CHILD_$kv"; done
+log="$out/$name.console.log"
+: > "$log"
+echo "ios-sim-run: launching $bundle_id on $device; console -> $log" >&2
+xcrun simctl launch --console --terminate-running-process "$udid" "$bundle_id" ${args[@]+"${args[@]}"} > "$log" 2>&1 &
+lpid=$!
+tail -n +1 -f "$log" & tpid=$!
+trap 'kill $tpid 2>/dev/null; finish' EXIT
+
+status=0
+if [[ -n "$wait_re" ]]; then
+  deadline=$((SECONDS + timeout))
+  until grep -Eq -- "$wait_re" "$log"; do
+    if ! kill -0 "$lpid" 2>/dev/null; then echo "ios-sim-run: app exited before /$wait_re/" >&2; status=1; break; fi
+    if ((SECONDS > deadline)); then echo "ios-sim-run: timeout waiting for /$wait_re/" >&2; status=1; break; fi
+    sleep 0.2
+  done
+elif [[ -n "$shot" ]]; then
+  sleep 3
+fi
+[[ -n "$shot" ]] && xcrun simctl io "$udid" screenshot "$shot" >&2
+if [[ -n "$wait_re" || -n "$shot" ]]; then
+  # Give a self-exiting app its time, then stop it.
+  deadline=$((SECONDS + timeout))
+  while kill -0 "$lpid" 2>/dev/null && ((SECONDS < deadline)) && ((keep == 0)); do sleep 0.2; done
+else
+  wait "$lpid" || status=$?
+fi
+sleep 0.3
+exit "$status"

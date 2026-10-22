@@ -8,9 +8,9 @@
 // The player maps each frame's CSS declarations onto four visual channels, delivered through the
 // per-element inline style sink (`host.style`, ABI v2.3 ops + v2.8 additions):
 //   opacity   -> SVL_STYLE_OPACITY   (4)  "0".."1"
-//   transform -> SVL_STYLE_TRANSFORM (7)  "tx ty sx sy ox oy" (px, px, factors, origin as fractions)
-//   clip      -> SVL_STYLE_CLIP      (8)  "w h" px, -1 = that axis unclipped
-//   inert     -> SVL_STYLE_INERT     (9)  "1"
+//   transform -> SVL_STYLE_TRANSFORM (8)  "tx ty sx sy ox oy" (px, px, factors, origin as fractions)
+//   clip      -> SVL_STYLE_CLIP      (9)  "w h" px, -1 = that axis unclipped
+//   inert     -> SVL_STYLE_INERT     (10)  "1"
 // Declarations without a channel are dropped (one dev warning per property). The frame clock is
 // Svelte's `raf` (requestAnimationFrame on the host's frame clock): a frame is requested only while
 // an animation runs.
@@ -18,9 +18,9 @@ import { DEV } from 'esm-env';
 import { loop, queue_task, raf } from './core/internal.js';
 
 export const OP_OPACITY = 4;
-export const OP_TRANSFORM = 7;
-export const OP_CLIP = 8;
-export const OP_INERT = 9;
+export const OP_TRANSFORM = 8;
+export const OP_CLIP = 9;
+export const OP_INERT = 10;
 
 const CHANNELS = [
   ['opacity', OP_OPACITY],

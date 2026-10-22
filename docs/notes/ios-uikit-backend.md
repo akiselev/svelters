@@ -8,7 +8,8 @@ reactivity design (`plans/research/REACTIVITY.md`, in progress) needs, and a fir
 
 Marks: **[verified]** = checked here (probe compiled, file inspected). **[docs]** = from Apple's
 documentation or headers. **[unverified]** = from memory or secondary sources; confirm on a
-simulator. Nothing in this note has run on iOS.
+simulator. Nothing in this note has run on iOS. **Update 2026-10-21:** the probe ran on the iOS 26.3
+simulator; per-claim results are in `ios-sim-first-run.md`.
 
 Probe: `docs/notes/scripts/mobile/ios_probe/` (a scene delegate, a KVO observer, target-action on
 every slice control, `UIStackView`, `CADisplayLink` in common modes, `UIApplication::main`).

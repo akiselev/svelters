@@ -85,7 +85,9 @@ class Model:
         enums = enum_doc["enums"]
         # the toolkit version of the ledger and the probe: the SDK the metadata was ingested from
         self.version = enum_doc["sdk"].removeprefix("MacOSX")
-        self.enums = {e["name"]: {"flags": e["flags"], "members": [(m["js"], m["value"]) for m in e["members"]]} for e in enums}
+        self.enums = {e["name"]: {"flags": e["flags"], "members": [(m["js"], m["value"]) for m in e["members"]],
+                                  # values on Intel where they differ (TARGET_ABI_USES_IOS_VALUES; ingest.py)
+                                  "x86_64": {m["js"]: m["x86_64"] for m in e["members"] if "x86_64" in m}} for e in enums}
         # ingested < inferred < manual (appkit_layers.py); origin[(class, section, name)] = (layer, record fingerprint)
         self.ov, self.origin, errs = layers.load()
         if errs:
@@ -294,7 +296,13 @@ def build(m: Model):
     o.append("pub static ENUMS: &[EnumInfo] = &[\n")
     for n, flags, mem in all_enums:
         ms = ", ".join(f"({rs(a)}, {v})" for a, v in mem)
-        o.append(f"    EnumInfo {{ name: {rs(n)}, flags: {str(flags).lower()}, members: &[{ms}] }},\n")
+        x86 = m.enums.get(n, {}).get("x86_64")
+        if x86:
+            xs = ", ".join(f"({rs(a)}, {x86.get(a, v)})" for a, v in mem)
+            ms_expr = f"if cfg!(target_arch = \"x86_64\") {{ &[{xs}] }} else {{ &[{ms}] }}"
+        else:
+            ms_expr = f"&[{ms}]"
+        o.append(f"    EnumInfo {{ name: {rs(n)}, flags: {str(flags).lower()}, members: {ms_expr} }},\n")
     o.append("];\n\n")
     o.append(f"pub static SIGNALS: &[SignalInfo] = &[\n{''.join(signals)}];\n\n")
     o.append(f"pub static METHODS: &[MethodInfo] = &[\n{''.join(methods)}];\n\n")
@@ -542,6 +550,10 @@ def select_tab_body(tag: str, s: dict) -> str:
             f'    assert!(h.take_events().iter().all(|e| e.1 != {n}), "not delivered after listen off");\n' + tail)
 
 
+# The project's minimum macOS (REACTIVITY.md 13.10); API up to it needs no run-time check.
+MIN_MACOS = (11, 0)
+
+
 def find_sample(m: Model, cls: str, prop: str):
     """(sample, expect) of the nearest prop record with a sample along the chain, else None."""
     for c in m.chain(cls):
@@ -571,10 +583,17 @@ def tests(m: Model) -> tuple[str, list[dict], list[dict]]:
                 if n not in readable:
                     raise GenError(f"{cls}: element.read_errors: unknown property {n}")
             errs_rs = "&[" + ", ".join(rs(n) for n in errs) + "]"
+            # Props newer than the running macOS don't exist there: skipped (the SDK is newer than the minimum).
+            newer = sorted({(p["js_name"], p["availability"]["since"]) for c in m.chain(cls) for p in m.meta[c]["properties"]
+                            if p.get("availability", {}).get("since")
+                            and tuple(int(x) for x in p["availability"]["since"].split(".")) > MIN_MACOS})
+            newer_rs = ("    let newer: &[(&str, &str)] = &[" + ", ".join(f"({rs(n)}, {rs(v)})" for n, v in newer) + "];\n") if newer else ""
+            skip_rs = ("        if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {\n            continue;\n        }\n") if newer else ""
             add(f"readable_{ident(cls)}", f"every readable table prop of <{el['tag']}> reads back without an error"
                 + (f" (an error from {', '.join(errs)})" if errs else ""),
-                f'    let o = h.create({rs(el["tag"])});\n    let mut bad = Vec::new();\n    let errs: &[&str] = {errs_rs};\n'
-                f'    for name in h.readable_props({rs(el["tag"])}) {{\n        match (h.get(o, name), errs.contains(&name)) {{\n'
+                f'    let o = h.create({rs(el["tag"])});\n    let mut bad = Vec::new();\n    let errs: &[&str] = {errs_rs};\n' + newer_rs +
+                f'    for name in h.readable_props({rs(el["tag"])}) {{\n' + skip_rs +
+                f'        match (h.get(o, name), errs.contains(&name)) {{\n'
                 f'            (Err(e), false) => bad.push(format!("{{name}}: {{e}}")),\n'
                 f'            (Ok(v), true) => bad.push(format!("{{name}}: read {{v:?}}, want an error (read_errors)")),\n'
                 f'            _ => {{}}\n        }}\n    }}\n'

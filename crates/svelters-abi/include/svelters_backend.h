@@ -182,12 +182,14 @@ enum {
   SVL_STYLE_OPACITY = 4,  /* widget h: "0".."1" through the widget API */
   SVL_STYLE_SHEET = 5,    /* h = 0: "id\x01text" component sheet; "@tokens" is the token layer */
   SVL_STYLE_SCHEME = 6,   /* h = 0: "light"|"dark" then "\x01role=#rrggbb" palette pairs */
-  /* ABI v2.8 (TR1 visual channels: per-frame values of transitions; a backend without one answers < 0) */
-  SVL_STYLE_TRANSFORM = 7, /* widget h: "tx ty sx sy ox oy" (px, px, factors, origin as fractions of the size); NULL = identity */
-  SVL_STYLE_CLIP = 8,      /* widget h: "w h" px the element occupies and is cut at, -1 = axis unclipped; NULL = none */
-  SVL_STYLE_INERT = 9      /* widget h: "1" = no pointer input or focus (an outroing element); NULL = restore */
+  SVL_STYLE_DECLS = 7,    /* ST2, decl-dialect backends: "\x02"-separated state blocks of "\x01prop:value" fields */
+  /* ABI v2.8 (TR1 visual channels: per-frame values of transitions; a backend without one answers < 0
+   * and the runtime drops that channel: timing, events and removal still run) */
+  SVL_STYLE_TRANSFORM = 8, /* widget h: "tx ty sx sy ox oy" (px, px, factors, origin as fractions of the size); NULL = identity */
+  SVL_STYLE_CLIP = 9,      /* widget h: "w h" px the element occupies and is cut at, -1 = axis unclipped; NULL = none */
+  SVL_STYLE_INERT = 10     /* widget h: "1" = no pointer input or focus (an outroing element); NULL = restore */
 };
-enum { SVL_STYLE_TARGET_NONE = 0, SVL_STYLE_TARGET_CSS = 1, SVL_STYLE_TARGET_QSS = 2 };
+enum { SVL_STYLE_TARGET_NONE = 0, SVL_STYLE_TARGET_CSS = 1, SVL_STYLE_TARGET_QSS = 2, SVL_STYLE_TARGET_APPKIT = 3 };
 #define SVL_SIGNAL_FLAGS_SHIFT 28
 #define SVL_SIGNAL_ID_MASK 0x0FFFFFFFu
 

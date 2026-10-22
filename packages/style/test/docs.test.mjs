@@ -43,7 +43,16 @@ test('the generated reference pages list every property of their toolkit', () =>
   }
 });
 
-for (const tk of ['appkit', 'winui']) {
+test('appkit has the decl dialect: setters plus typed native properties, and a generated reference page', () => {
+  const t = STYLE_TABLES.appkit;
+  assert.equal(t.dialect, 'decl');
+  for (const [n, e] of Object.entries(t.props)) if (e.via === 'css') assert.ok(e.type, `${n}: a decl property has a value type`);
+  const md = renderStylingPages().get('api/styling/appkit.md');
+  assert.match(md, /Native styling dialect: decl/);
+  assert.match(md, /\| `border-radius` \| native \(decl\) \|/);
+});
+
+for (const tk of ['winui']) {
   test(`${tk} has setters only and a generated reference page`, () => {
     const t = STYLE_TABLES[tk];
     assert.equal(t.dialect, 'none');
