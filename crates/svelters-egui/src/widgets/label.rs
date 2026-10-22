@@ -38,29 +38,39 @@ pub struct Label {
     press: Pressable,
 }
 
-impl Label {
-    fn galley(&self, ctx: &egui::Context, s: &paint::StyleView<'_>, width: Option<f32>) -> std::sync::Arc<egui::Galley> {
-        match (self.wrap_mode.as_str(), width) {
-            ("truncate", Some(w)) => {
-                let color = s.color("color").unwrap_or(egui::Color32::PLACEHOLDER);
-                let mut job = egui::text::LayoutJob::simple(self.text.clone(), egui::FontId::proportional(s.font_size()), color, w.max(0.0));
-                job.wrap.max_rows = 1;
-                job.wrap.break_anywhere = true;
-                ctx.fonts_mut(|f| f.layout_job(job))
-            }
-            ("wrap", Some(w)) => paint::text_galley(ctx, s, &self.text, Some(w)),
-            _ => paint::text_galley(ctx, s, &self.text, None),
+/// The galley of `text` under `s` for `wrap_mode` (`wrap`, `truncate`, `extend`) at `width`.
+fn galley(ctx: &egui::Context, s: &paint::StyleView<'_>, text: &str, wrap_mode: &str, width: Option<f32>) -> std::sync::Arc<egui::Galley> {
+    match (wrap_mode, width) {
+        ("truncate", Some(w)) => {
+            let color = s.color("color").unwrap_or(egui::Color32::PLACEHOLDER);
+            let mut job = egui::text::LayoutJob::simple(text.to_string(), egui::FontId::proportional(s.font_size()), color, w.max(0.0));
+            job.wrap.max_rows = 1;
+            job.wrap.break_anywhere = true;
+            ctx.fonts_mut(|f| f.layout_job(job))
         }
+        ("wrap", Some(w)) => paint::text_galley(ctx, s, text, Some(w)),
+        _ => paint::text_galley(ctx, s, text, None),
     }
+}
+
+/// Its size under `s` (with the `font-weight` prop) in `avail`.
+pub(crate) fn measure(ctx: &egui::Context, s: &paint::StyleView<'_>, text: &str, wrap_mode: &str, avail: AvailableSpace) -> egui::Vec2 {
+    match (wrap_mode, avail) {
+        ("wrap", AvailableSpace::Definite(w)) => paint::measure_text(ctx, s, text, AvailableSpace::Definite(w)),
+        _ => paint::measure_text(ctx, s, text, AvailableSpace::MaxContent),
+    }
+}
+
+/// Paints `text` in `r` under `s`. The kind and `imm::Label` (OW-RUST) call it.
+pub(crate) fn paint(pc: &mut paint::PaintCx<'_>, ctx: &egui::Context, s: &paint::StyleView<'_>, r: egui::Rect, text: &str, wrap_mode: &str) {
+    let w = (wrap_mode != "extend").then(|| r.width());
+    let g = galley(ctx, s, text, wrap_mode, w);
+    paint::paint_text(pc, s, &g, r, Align::of(s, Align::Start));
 }
 
 impl Widget for Label {
     fn measure(&mut self, cx: &mut MeasureCx<'_>, avail: AvailableSpace) -> egui::Vec2 {
-        let s = cx.style(UA).with_font_weight(Some(self.font_weight));
-        match (self.wrap_mode.as_str(), avail) {
-            ("wrap", AvailableSpace::Definite(w)) => paint::measure_text(cx.ctx, &s, &self.text, AvailableSpace::Definite(w)),
-            _ => paint::measure_text(cx.ctx, &s, &self.text, AvailableSpace::MaxContent),
-        }
+        measure(cx.ctx, &cx.style(UA).with_font_weight(Some(self.font_weight)), &self.text, &self.wrap_mode, avail)
     }
 
     fn ui(&mut self, ui: &mut egui::Ui, cx: &mut WidgetCx<'_>) -> egui::Response {
@@ -73,9 +83,7 @@ impl Widget for Label {
         }
         if ui.is_rect_visible(cx.rect()) {
             let s = cx.style(UA).with_font_weight(Some(self.font_weight));
-            let w = (self.wrap_mode != "extend").then(|| cx.rect().width());
-            let g = self.galley(ui.ctx(), &s, w);
-            paint::paint_text(&mut cx.paint_cx(ui), &s, &g, cx.rect(), Align::of(&s, Align::Start));
+            paint(&mut cx.paint_cx(ui), ui.ctx(), &s, cx.rect(), &self.text, &self.wrap_mode);
         }
         let (enabled, text) = (cx.enabled(), &self.text);
         resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Label, enabled, text));

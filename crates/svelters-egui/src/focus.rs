@@ -90,8 +90,9 @@ pub(crate) enum Role {
 pub(crate) struct Entry {
     /// The widget's egui id (focus is on it).
     id: Id,
-    node: NodeId,
-    /// The node's own egui id (a scene `Node.id`).
+    /// `None`: a widget drawn without a scene node (OW-RUST's `imm`, host chrome).
+    node: Option<NodeId>,
+    /// The node's own egui id (a scene `Node.id`; the widget's id for `imm`).
     node_eid: Id,
     /// The nearest focus scope's id, else the root node's.
     scope: Id,
@@ -568,12 +569,11 @@ pub(crate) fn record_with(arena: &Arena, i: usize, ui: &Ui, resp: &egui::Respons
     if !ui.is_enabled() || !resp.sense.is_focusable() {
         return;
     }
-    let ctx = ui.ctx();
     let c = arena.common(i);
     let (scope, scoped) = scope_of(arena, i);
     let entry = Entry {
         id: resp.id,
-        node: arena.slots.id_at(i).expect("live leaf"),
+        node: Some(arena.slots.id_at(i).expect("live leaf")),
         node_eid: arena.core[i].egui_id,
         scope,
         scoped,
@@ -581,6 +581,36 @@ pub(crate) fn record_with(arena: &Arena, i: usize, ui: &Ui, resp: &egui::Respons
         autofocus: c.autofocus && tab_stop,
         tab_stop,
     };
+    let ext = match arena.w(i) {
+        W::Ext(x) => Some(x),
+        _ => None,
+    };
+    push_entry(ui, resp, entry, ext);
+}
+
+/// The focus scope of widgets drawn without a scene node (host chrome): never a dialog, and no
+/// default or cancel button is in it.
+fn foreign_scope() -> Id {
+    Id::unique("svelters-egui/imm/chrome")
+}
+
+/// OW-RUST: [`record`] for a widget drawn without a scene node (`crate::imm`): in the tab order
+/// in paint order with the scene's widgets (egui's focus traversal), outside every focus scope,
+/// and, while focused, its `role`'s keys (Space and Enter for buttons and toggles) taken out of
+/// the pass's input (R11), as a scene widget's.
+pub(crate) fn record_foreign(ui: &Ui, resp: &egui::Response, role: Role) {
+    if !ui.is_enabled() || !resp.sense.is_focusable() {
+        return;
+    }
+    let entry = Entry { id: resp.id, node: None, node_eid: resp.id, scope: foreign_scope(), scoped: false, role, autofocus: false, tab_stop: true };
+    push_entry(ui, resp, entry, None);
+}
+
+/// Records `entry` for this pass and, when it has focus, takes the keys it claims (`ext`: a
+/// provider kind's `consume_key`, else its role's) out of the pass's input.
+fn push_entry(ui: &Ui, resp: &egui::Response, entry: Entry, ext: Option<&crate::provider::ExtWidget>) {
+    let ctx = ui.ctx();
+    let role = entry.role;
     let focused = resp.has_focus();
     let pass = ctx.cumulative_pass_nr();
     let composing = with(ctx, |st| {
@@ -596,10 +626,6 @@ pub(crate) fn record_with(arena: &Arena, i: usize, ui: &Ui, resp: &egui::Respons
     }
     // R11: the focused node's keys are its; nothing later in the pass sees them
     let mac = ctx.os() == egui::os::OperatingSystem::Mac;
-    let ext = match arena.w(i) {
-        W::Ext(x) => Some(x),
-        _ => None,
-    };
     let composing = composing || ext.is_some_and(|x| x.0.try_borrow().is_ok_and(|w| w.composing()));
     let taken: Vec<KeyboardShortcut> = ctx.input_mut(|inp| {
         let mut taken = Vec::new();
@@ -726,13 +752,19 @@ pub fn composing(ctx: &Context) -> bool {
     read(ctx, |st| st.composing.is_some())
 }
 
+/// OW-RUST: the focused widget when it is one drawn without a scene node (`imm`).
+fn foreign_focused(ctx: &Context) -> Option<Entry> {
+    let focus = ctx.memory(|m| m.focused())?;
+    read(ctx, |st| st.cur.entry(Some(focus)).or_else(|| st.prev.entry(Some(focus))).filter(|e| e.node.is_none()).cloned())
+}
+
 impl EguiBackend {
     /// The focused entry of this backend, from the latest record of `ctx`'s viewport.
     fn focused_entry(&self, ctx: &Context) -> Option<Entry> {
         let focus = ctx.memory(|m| m.focused())?;
         let e = read(ctx, |st| st.cur.entry(Some(focus)).or_else(|| st.prev.entry(Some(focus))).cloned())?;
         let scene = self.0.scene.try_borrow().ok()?;
-        let i = scene.idx(e.node)?;
+        let i = scene.idx(e.node?)?;
         (scene.core[i].egui_id == e.node_eid).then_some(e)
     }
 
@@ -741,7 +773,7 @@ impl EguiBackend {
     pub fn focus_info(&self, ctx: &Context) -> FocusInfo {
         let Some(e) = self.focused_entry(ctx) else { return FocusInfo::default() };
         let kind = self.0.scene.try_borrow().ok().and_then(|s| {
-            let i = s.idx(e.node)?;
+            let i = s.idx(e.node?)?;
             crate::kinds::kind(s.core[i].kind as usize).tag
         });
         let (text_input, multiline) = match e.role {
@@ -750,7 +782,7 @@ impl EguiBackend {
         };
         FocusInfo {
             widget: Some(e.id),
-            node: Some(e.node),
+            node: e.node,
             kind,
             text_input,
             multiline,
@@ -763,15 +795,18 @@ impl EguiBackend {
     /// Qt's `ShortcutOverride`: true when the focused node of this backend takes `chord` itself,
     /// so a host keymap must leave it (Ctrl+Z, Del and the arrows in a text field; every key
     /// while composing).
+    ///
+    /// OW-RUST: also for a focused `imm` widget of host chrome (a Rust-drawn button keeps Space
+    /// and Enter).
     pub fn shortcut_override(&self, ctx: &Context, chord: &KeyboardShortcut) -> bool {
-        let Some(e) = self.focused_entry(ctx) else { return false };
+        let Some(e) = self.focused_entry(ctx).or_else(|| foreign_focused(ctx)) else { return false };
         if read(ctx, |st| st.composing == Some(e.id)) {
             return true;
         }
         match e.role {
             Role::Ext { .. } => {
                 let Ok(scene) = self.0.scene.try_borrow() else { return false };
-                let Some(i) = scene.idx(e.node) else { return false };
+                let Some(i) = e.node.and_then(|n| scene.idx(n)) else { return false };
                 match scene.w(i) {
                     W::Ext(x) => x.0.try_borrow().is_ok_and(|w| w.composing() || w.consume_key(chord.logical_key, chord.modifiers)),
                     _ => false,
@@ -797,7 +832,7 @@ impl EguiBackend {
             Some(e) => matches!(e.role, Role::Text { .. }).then_some(e.id),
             None if focus.is_none() => {
                 let last = read(ctx, |st| st.last_text.and_then(|t| st.prev.entry(Some(t)).or_else(|| st.cur.entry(Some(t))).cloned()));
-                let ours = last.filter(|e| self.0.scene.try_borrow().ok().and_then(|s| s.idx(e.node).map(|i| s.core[i].egui_id == e.node_eid)) == Some(true));
+                let ours = last.filter(|e| self.0.scene.try_borrow().ok().and_then(|s| e.node.and_then(|n| s.idx(n)).map(|i| s.core[i].egui_id == e.node_eid)) == Some(true));
                 ours.map(|e| {
                     ctx.memory_mut(|m| m.request_focus(e.id));
                     e.id

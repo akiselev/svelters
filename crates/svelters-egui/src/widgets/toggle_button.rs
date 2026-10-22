@@ -6,7 +6,7 @@
 //! and a 1 px `toggle-on-border` (VS Code's `inputOption.active*`, VIS1 `toggle-on-fg`).
 
 use crate::interact::{Focusable, Hoverable, Pressable, Toggle, ToggleParams, Toggleable};
-use crate::paint::{self, Align, Ua, UaRule, UaValue::*};
+use crate::paint::{self, Align, PaintCx, StyleView, Ua, UaRule, UaValue::*};
 use crate::provider::{A11yCx, AvailableSpace, Event, MeasureCx, StateBits, Widget, WidgetCx};
 
 pub const UA: Ua = Ua(&[
@@ -68,10 +68,26 @@ impl ToggleButton {
     }
 }
 
+/// Paints the toggle button at `rect` under `host` (its style in this pass's state, without the
+/// `font-weight` prop): box (when framed, hovered, pressed or checked), caption, focus ring. The
+/// kind and `imm::ToggleButton` (OW-RUST) call it.
+pub(crate) fn paint(pc: &mut PaintCx<'_>, ctx: &egui::Context, host: &StyleView, rect: egui::Rect, text: &str, frame: bool, font_weight: i64) {
+    let framed = frame || host.state().intersects(StateBits(StateBits::HOVERED.0 | StateBits::PRESSED.0 | StateBits::CHECKED.0));
+    let geom = if framed { paint::paint_box(pc, host, rect) } else { paint::box_geom(host, rect) };
+    let s = host.with_font_weight(Some(font_weight));
+    let g = paint::text_galley(ctx, &s, text, None);
+    paint::paint_text(pc, &s, &g, geom.content, Align::of(&s, Align::Center));
+    paint::paint_outline(pc, host, rect);
+}
+
+/// Its size under `host` (at rest, with the `font-weight` prop).
+pub(crate) fn measure(ctx: &egui::Context, host: &StyleView, text: &str) -> egui::Vec2 {
+    paint::measure_text(ctx, host, text, AvailableSpace::MaxContent) + paint::box_extra(host)
+}
+
 impl Widget for ToggleButton {
     fn measure(&mut self, cx: &mut MeasureCx<'_>, _avail: AvailableSpace) -> egui::Vec2 {
-        let s = cx.style(UA).with_font_weight(Some(self.font_weight));
-        paint::measure_text(cx.ctx, &s, &self.text, AvailableSpace::MaxContent) + paint::box_extra(&s)
+        measure(cx.ctx, &cx.style(UA).with_font_weight(Some(self.font_weight)), &self.text)
     }
 
     fn ui(&mut self, ui: &mut egui::Ui, cx: &mut WidgetCx<'_>) -> egui::Response {
@@ -86,11 +102,7 @@ impl Widget for ToggleButton {
             }
         }
         if ui.is_rect_visible(cx.rect()) {
-            let st = cx.style(UA);
-            let framed = self.frame || st.state().intersects(StateBits(StateBits::HOVERED.0 | StateBits::PRESSED.0 | StateBits::CHECKED.0));
-            let geom = if framed { cx.paint_box(ui, UA) } else { paint::box_geom(&st, cx.rect()) };
-            cx.paint_text(ui, UA, &self.text, geom.content, Some(self.font_weight), Align::Center);
-            cx.paint_outline(ui, UA);
+            paint(&mut cx.paint_cx(ui), ui.ctx(), &cx.style(UA), cx.rect(), &self.text, self.frame, self.font_weight);
         }
         let role = if self.radio { egui::Role::RadioButton } else { egui::Role::Button };
         let (enabled, on, text) = (cx.enabled(), self.checked, &self.text);

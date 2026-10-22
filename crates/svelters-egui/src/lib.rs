@@ -56,6 +56,8 @@ pub mod style;
 pub mod theme;
 /// OW0: svelters' own widgets (ARCH-WIDGETS §1.3) and the own-widget switch (§6.2).
 pub mod widgets;
+/// OW-RUST: the own widgets in immediate mode, for Rust chrome with no scene node (ARCH-WIDGETS Q5).
+pub mod imm;
 
 mod a11y;
 /// AU1: the accessible name the automation selectors share with AccessKit.

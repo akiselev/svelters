@@ -10,7 +10,7 @@
 
 use super::parts;
 use crate::interact::{Focusable, Hoverable, Pressable, Toggle, ToggleParams, Toggleable};
-use crate::paint::{self, Align, Ua, UaRule, UaValue::*};
+use crate::paint::{self, Align, PaintCx, StyleView, Ua, UaRule, UaValue::*};
 use crate::provider::{A11yCx, AvailableSpace, Event, MeasureCx, StateBits, Widget, WidgetCx};
 
 /// The host: the caption's colour and font, the gap, the focus ring (drawn around the indicator).
@@ -91,13 +91,37 @@ pub(crate) fn split(r: egui::Rect, ind: egui::Vec2, gap: f32) -> (egui::Rect, eg
 
 /// Indicator, gap and caption: what a toggle with an indicator measures.
 pub(crate) fn measure_with_indicator(cx: &MeasureCx<'_>, ua: Ua, ind: Ua, text: &str, default: f32) -> egui::Vec2 {
-    let s = cx.style(ua);
-    let isz = parts::part_size(&s, ind, default);
+    measure_indicator(cx.ctx, &cx.style(ua), ind, text, default)
+}
+
+/// [`measure_with_indicator`] under `s` (the host's style at rest): the kind's and `imm`'s.
+pub(crate) fn measure_indicator(ctx: &egui::Context, s: &StyleView, ind: Ua, text: &str, default: f32) -> egui::Vec2 {
+    let isz = parts::part_size(s, ind, default);
     if text.is_empty() {
         return isz;
     }
-    let t = paint::measure_text(cx.ctx, &s, text, AvailableSpace::MaxContent);
-    egui::vec2(isz.x + parts::gap(&s, 6.0) + t.x, isz.y.max(t.y))
+    let t = paint::measure_text(ctx, s, text, AvailableSpace::MaxContent);
+    egui::vec2(isz.x + parts::gap(s, 6.0) + t.x, isz.y.max(t.y))
+}
+
+/// Paints the check box at `rect` under `host` (its style in this pass's state): the indicator
+/// box, the mark when `checked`, the caption, the focus ring around the indicator. The kind and
+/// `imm::Checkbox` (OW-RUST) call it.
+pub(crate) fn paint(pc: &mut PaintCx<'_>, ctx: &egui::Context, host: &StyleView, rect: egui::Rect, text: &str, checked: bool) {
+    let isz = parts::part_size(host, INDICATOR, 18.0);
+    let (ir, tr) = split(rect, isz, parts::gap(host, 6.0));
+    let ind = parts::part_view(host, INDICATOR, true);
+    paint::paint_box(&mut pc.part("indicator"), &ind, ir);
+    if checked {
+        let mark = parts::part_view(host, MARK, false);
+        let color = mark.color("color").unwrap_or(egui::Color32::PLACEHOLDER);
+        parts::paint_mark(&mut pc.part("mark"), ir, color, false);
+    }
+    if !text.is_empty() {
+        let g = paint::text_galley(ctx, host, text, None);
+        paint::paint_text(&mut pc.part("label"), host, &g, tr, Align::Start);
+    }
+    paint::paint_outline(pc, host, ir);
 }
 
 impl Widget for Checkbox {
@@ -118,22 +142,7 @@ impl Widget for Checkbox {
             }
         }
         if ui.is_rect_visible(cx.rect()) {
-            let host = cx.style(UA);
-            let isz = parts::part_size(&host, INDICATOR, 18.0);
-            let (ir, tr) = split(cx.rect(), isz, parts::gap(&host, 6.0));
-            let mut pc = cx.paint_cx(ui);
-            let ind = parts::part_view(&host, INDICATOR, true);
-            paint::paint_box(&mut pc.part("indicator"), &ind, ir);
-            if self.checked {
-                let mark = parts::part_view(&host, MARK, false);
-                let color = mark.color("color").unwrap_or(egui::Color32::PLACEHOLDER);
-                parts::paint_mark(&mut pc.part("mark"), ir, color, false);
-            }
-            if !self.text.is_empty() {
-                let g = paint::text_galley(ui.ctx(), &host, &self.text, None);
-                paint::paint_text(&mut pc.part("label"), &host, &g, tr, Align::Start);
-            }
-            paint::paint_outline(&mut pc, &host, ir);
+            paint(&mut cx.paint_cx(ui), ui.ctx(), &cx.style(UA), cx.rect(), &self.text, self.checked);
         }
         let (enabled, checked, text) = (cx.enabled(), self.checked, &self.text);
         resp.widget_info(|| egui::WidgetInfo::selected(egui::Role::CheckBox, enabled, checked, text));

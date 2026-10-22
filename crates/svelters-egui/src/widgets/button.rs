@@ -8,7 +8,8 @@
 //! `Common`; Enter or Escape in the focus scope activate it through `focus::take_activation`).
 
 use crate::interact::{Focusable, Hoverable, Press, PressParams, Pressable};
-use crate::paint::{self, Align, IconKey, PartItem, StyleView, Ua, UaRule, UaValue::*};
+use crate::paint::{self, Align, IconKey, PaintCx, PartItem, StyleView, Ua, UaRule, UaValue::*};
+use svelters_style::ComputedStyle;
 use crate::provider::{A11yCx, AvailableSpace, Event, MeasureCx, Part, StateBits, Widget, WidgetCx};
 
 /// The button's UA sheet (ARCH-WIDGETS §1.1), with DESIGN's affordance rules on by default:
@@ -114,10 +115,27 @@ impl Button {
         PressParams { repeat: self.repeat.then_some((0.3, 0.1)), ..PressParams::default() }
     }
 
+    fn look(&self) -> Look<'_> {
+        Look { text: &self.text, icon: &self.icon, frame: self.frame, small: self.small }
+    }
+}
+
+/// What a button shows, from its props: the kind's and `imm::Button`'s (OW-RUST) one input to
+/// [`measure`] and [`paint`].
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct Look<'a> {
+    pub text: &'a str,
+    /// An icon key (`name` in the `icons` family, or `family:name`); empty for none.
+    pub icon: &'a str,
+    pub frame: bool,
+    pub small: bool,
+}
+
+impl Look<'_> {
     fn icon_key(&self) -> Option<IconKey> {
         (!self.icon.is_empty()).then(|| match self.icon.split_once(':') {
             Some((f, n)) => IconKey::new(f, n),
-            None => IconKey::new("icons", self.icon.as_str()),
+            None => IconKey::new("icons", self.icon),
         })
     }
 
@@ -128,9 +146,63 @@ impl Button {
             let size = paint::icon_size(ctx, icon, &k);
             (k, size)
         });
-        let label = (!self.text.is_empty()).then(|| paint::text_galley(ctx, label, &self.text, None));
+        let label = (!self.text.is_empty()).then(|| paint::text_galley(ctx, label, self.text, None));
         (icon, label)
     }
+}
+
+/// The button's size under `host` (its style at rest, with the `font-weight` prop) and its parts'
+/// computed styles (`::part(icon)`, `::part(label)`).
+pub(crate) fn measure(ctx: &egui::Context, host: &StyleView, icon_css: Option<&ComputedStyle>, label_css: Option<&ComputedStyle>, look: &Look) -> egui::Vec2 {
+    let icon_v = host.part(icon_css, ICON_UA);
+    let label_v = host.part(label_css, Ua::NONE);
+    let (icon, label) = look.content(ctx, &icon_v, &label_v);
+    let mut items = Vec::new();
+    if let Some((_, size)) = &icon {
+        items.push(PartItem { name: "icon", style: &icon_v, content: *size });
+    }
+    if let Some(g) = &label {
+        items.push(PartItem { name: "label", style: &label_v, content: line_size(&label_v, g) });
+    }
+    let mut size = paint::measure_parts(host, &items);
+    if items.is_empty() {
+        // an empty button keeps one line's height
+        size.y = host.px("line-height").unwrap_or(host.font_size());
+    }
+    let mut extra = paint::box_extra(host);
+    if look.small {
+        let [_, _, pt, pb] = host.sides("padding");
+        extra.y -= pt + pb;
+    }
+    size + extra
+}
+
+/// Paints the button at `rect` under `host` (its style in this pass's state): box (when framed),
+/// icon and label parts laid out by CSS, the focus ring last. The kind and `imm::Button` call it.
+pub(crate) fn paint(pc: &mut PaintCx<'_>, ctx: &egui::Context, host: &StyleView, icon_css: Option<&ComputedStyle>, label_css: Option<&ComputedStyle>, rect: egui::Rect, look: &Look) {
+    let framed = look.frame || host.state().intersects(StateBits(StateBits::HOVERED.0 | StateBits::PRESSED.0 | StateBits::SELECTED.0));
+    let geom = if framed { paint::paint_box(pc, host, rect) } else { paint::box_geom(host, rect) };
+    let content = if look.small { geom.padding } else { geom.content };
+    let icon_v = host.part(icon_css, ICON_UA);
+    let label_v = host.part(label_css, Ua::NONE);
+    let (icon, label) = look.content(ctx, &icon_v, &label_v);
+    let mut items = Vec::new();
+    if let Some((_, size)) = &icon {
+        items.push(PartItem { name: "icon", style: &icon_v, content: *size });
+    }
+    if let Some(g) = &label {
+        items.push(PartItem { name: "label", style: &label_v, content: line_size(&label_v, g) });
+    }
+    let rects = paint::layout_parts(host, content, &items);
+    for (item, r) in items.iter().zip(rects) {
+        let Some(r) = r else { continue };
+        match (item.name, &icon, &label) {
+            ("icon", Some((k, _)), _) => paint::paint_icon(&mut pc.part("icon"), item.style, k, r),
+            ("label", _, Some(g)) => paint::paint_text(&mut pc.part("label"), item.style, g, r, Align::Center),
+            _ => {}
+        }
+    }
+    paint::paint_outline(pc, host, rect);
 }
 
 /// The height of a single label line under `s` (`line-height`, else the galley's).
@@ -141,27 +213,7 @@ fn line_size(s: &StyleView, g: &egui::Galley) -> egui::Vec2 {
 impl Widget for Button {
     fn measure(&mut self, cx: &mut MeasureCx<'_>, _avail: AvailableSpace) -> egui::Vec2 {
         let host = cx.style(UA).with_font_weight(Some(self.font_weight));
-        let icon_v = host.part(cx.part_css("icon"), ICON_UA);
-        let label_v = host.part(cx.part_css("label"), Ua::NONE);
-        let (icon, label) = self.content(cx.ctx, &icon_v, &label_v);
-        let mut items = Vec::new();
-        if let Some((_, size)) = &icon {
-            items.push(PartItem { name: "icon", style: &icon_v, content: *size });
-        }
-        if let Some(g) = &label {
-            items.push(PartItem { name: "label", style: &label_v, content: line_size(&label_v, g) });
-        }
-        let mut size = paint::measure_parts(&host, &items);
-        if items.is_empty() {
-            // an empty button keeps one line's height
-            size.y = host.px("line-height").unwrap_or(host.font_size());
-        }
-        let mut extra = paint::box_extra(&host);
-        if self.small {
-            let [_, _, pt, pb] = host.sides("padding");
-            extra.y -= pt + pb;
-        }
-        size + extra
+        measure(cx.ctx, &host, cx.part_css("icon"), cx.part_css("label"), &self.look())
     }
 
     fn ui(&mut self, ui: &mut egui::Ui, cx: &mut WidgetCx<'_>) -> egui::Response {
@@ -212,30 +264,7 @@ impl Widget for Button {
             ui.multiply_opacity(host.opacity());
         }
         if ui.is_rect_visible(cx.rect()) {
-            let framed = self.frame || host.state().intersects(StateBits(StateBits::HOVERED.0 | StateBits::PRESSED.0 | StateBits::SELECTED.0));
-            let geom = if framed { cx.paint_box(ui, UA) } else { paint::box_geom(&host, cx.rect()) };
-            let content = if self.small { geom.padding } else { geom.content };
-            let icon_v = host.part(cx.part_css("icon"), ICON_UA);
-            let label_v = host.part(cx.part_css("label"), Ua::NONE);
-            let (icon, label) = self.content(ui.ctx(), &icon_v, &label_v);
-            let mut items = Vec::new();
-            if let Some((_, size)) = &icon {
-                items.push(PartItem { name: "icon", style: &icon_v, content: *size });
-            }
-            if let Some(g) = &label {
-                items.push(PartItem { name: "label", style: &label_v, content: line_size(&label_v, g) });
-            }
-            let rects = paint::layout_parts(&host, content, &items);
-            let mut pc = cx.paint_cx(ui);
-            for (item, r) in items.iter().zip(rects) {
-                let Some(r) = r else { continue };
-                match (item.name, &icon, &label) {
-                    ("icon", Some((k, _)), _) => paint::paint_icon(&mut pc.part("icon"), item.style, k, r),
-                    ("label", _, Some(g)) => paint::paint_text(&mut pc.part("label"), item.style, g, r, Align::Center),
-                    _ => {}
-                }
-            }
-            cx.paint_outline(ui, UA);
+            paint(&mut cx.paint_cx(ui), ui.ctx(), &host, cx.part_css("icon"), cx.part_css("label"), cx.rect(), &self.look());
         }
         let (enabled, selected, text) = (cx.enabled(), self.selected, &self.text);
         resp.widget_info(|| egui::WidgetInfo::selected(egui::Role::Button, enabled, selected, text));

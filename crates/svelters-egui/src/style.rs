@@ -186,6 +186,9 @@ pub(crate) struct SceneStyle {
     focus: Option<NodeId>,
     /// A walk-time restyle that needs another frame (an ancestor or a layout change).
     pub(crate) repaint: bool,
+    /// OW-RUST: bumped whenever every node restyles (sheets, media, fonts): `imm`'s cache of
+    /// virtual-element styles is valid while it holds.
+    generation: u64,
 }
 
 impl Default for SceneStyle {
@@ -204,6 +207,7 @@ impl Default for SceneStyle {
             contrast: None,
             focus: None,
             repaint: false,
+            generation: 0,
         }
     }
 }
@@ -249,6 +253,26 @@ impl SceneStyle {
     /// The computed style of a live node.
     pub(crate) fn computed(&self, id: NodeId) -> Option<&Arc<ComputedStyle>> {
         self.node(id)?.computed.as_ref()
+    }
+
+    /// OW-RUST: the restyle generation (see [`SceneStyle::generation`]'s field).
+    pub(crate) fn generation(&self) -> u64 {
+        self.generation
+    }
+
+    /// OW-RUST: the computed style of `el`, an element that is not a scene node (`imm`'s virtual
+    /// element: tag, classes, state), from the scene's sheets and media, inheriting `parent`.
+    pub(crate) fn compute_virtual<E: Element>(&self, el: E, parent: Option<&ComputedStyle>) -> ComputedStyle {
+        self.stylist.compute(el, parent, None, &self.cx, &mut MatchCaches::new())
+    }
+
+    /// OW-RUST hook for OW-CSS stage 2: the style of a virtual element's part (`::part(name)`).
+    /// `None` while [`SceneStyle::part_computed`] is: `imm` widgets paint parts exactly as scene
+    /// nodes do.
+    // TODO(OW-CSS `::part`): `stylist.compute_pseudo` when `part_computed` computes parts.
+    pub(crate) fn part_virtual<E: Element>(&self, el: E, host: &ComputedStyle, part: &str) -> Option<ComputedStyle> {
+        let _ = (el, host, part);
+        None
     }
 }
 
@@ -535,6 +559,7 @@ impl Scene {
             }
         }
         if std::mem::take(&mut self.style.all) {
+            self.style.generation += 1;
             self.style.dirty.clear();
             let ids: Vec<NodeId> = (0..self.core.len()).filter_map(|i| self.slots.id_at(i)).collect();
             for id in ids {
