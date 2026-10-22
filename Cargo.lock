@@ -3832,6 +3832,7 @@ dependencies = [
  "svelters-backend-log",
  "svelters-egui",
  "svelters-host",
+ "svelters-testkit",
 ]
 
 [[package]]

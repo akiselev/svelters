@@ -14,6 +14,7 @@ Track: TESTKIT (`plans/research/TRACKS.md` §2.1). Request: SV34 (`plans/researc
 | `checkpoint_dumps` in the driver report (the settled tree at each `checkpoint` step) | `examples/counter/src/{driver,main}.rs` |
 | Case builder `svelters-cases` and the portable kit (`svelters:testkit`) | `packages/testkit` (new package `@svelters/testkit`) |
 | svelters' cases, ratchet, snapshots | `tests/cases/{counter,bind-text,keyed-each,transition}.svelte`, `baseline.json`, `snapshots/*.png` |
+| Host fix: `performance.now()` reads the virtual clock in scripted mode (`Core::virtual_ms`). Scripted animation frames are virtual 16 ms timers, but `now` was wall time, so a transition on the log backend ended only if 120 ms of wall time passed before `max_virtual_timer_fires` (it did locally, not on CI: "timers did not quiesce") | `crates/svelters-host/src/{core,quickjs}.rs` |
 | CI | `linux-gtk.yml` (`-p svelters-testkit` in the gtk job; new job `egui-snapshots` on lavapipe), `linux-qt.yml` (builds the cases) |
 
 Result matrix (all local runs, see §6): every case passes on `log-gtk`, `log-qt`, `egui`, `gtk` and `qt`; the egui
