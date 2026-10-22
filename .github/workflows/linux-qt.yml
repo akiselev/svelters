@@ -87,3 +87,4 @@ jobs:
             target/p5/
             target/testkit/
             target/*.png
+            target/na/

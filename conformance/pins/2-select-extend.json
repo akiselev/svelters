@@ -1,0 +1,17 @@
+{
+  "id": "select-extend",
+  "pin": 2,
+  "title": "Selection extension and its anchor: Shift+arrows across the anchor, Shift+word, Shift+Home/End",
+  "setup": {
+    "fields": { "a": { "text": "hello brave new world", "sel": [8, 8] }, "b": { "text": "second" } },
+    "focus": "a"
+  },
+  "steps": [
+    { "key": "right", "shift": true, "repeat": 2 },
+    { "key": "left", "shift": true, "repeat": 4 },
+    { "key": "word-next", "shift": true, "repeat": 2 },
+    { "key": "word-prev", "shift": true, "repeat": 3 },
+    { "key": "line-end", "shift": true },
+    { "key": "line-start", "shift": true }
+  ]
+}

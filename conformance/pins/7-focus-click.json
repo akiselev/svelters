@@ -1,0 +1,17 @@
+{
+  "id": "focus-click",
+  "pin": 7,
+  "title": "Focus by click: into the other field, onto the button, then Tab and Shift+Tab from there",
+  "setup": {
+    "fields": { "a": { "text": "first", "sel": [2, 2] }, "b": { "text": "second", "sel": [1, 1] } },
+    "focus": "a"
+  },
+  "steps": [
+    { "click": "b", "at": 3, "count": 1 },
+    { "click": "c", "count": 1 },
+    { "key": "tab" },
+    { "key": "backtab" },
+    { "key": "backtab" },
+    { "key": "escape" }
+  ]
+}
