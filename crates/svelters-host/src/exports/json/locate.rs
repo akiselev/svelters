@@ -229,10 +229,11 @@ impl<'s> Locator<'s, '_> {
         // An untagged enum is about the innermost value that fits none of its variants: look below first.
         let custom = matches!(self.hint, Hint::Custom);
         for alt in self.alts(v, parts) {
-            if prefix.is_empty() && !custom {
-                if let Some(p) = self.here(v, &alt, path) {
-                    return Some(p);
-                }
+            if prefix.is_empty()
+                && !custom
+                && let Some(p) = self.here(v, &alt, path)
+            {
+                return Some(p);
             }
             if prefix.is_empty() && self.shallow {
                 continue;
@@ -376,10 +377,10 @@ fn scalar_ok(v: &Value, s: &J) -> bool {
     if o.get("const").is_some_and(|c| !eq(v, c)) {
         return false;
     }
-    if let Some(J::Array(e)) = o.get("enum") {
-        if !e.iter().any(|c| eq(v, c)) {
-            return false;
-        }
+    if let Some(J::Array(e)) = o.get("enum")
+        && !e.iter().any(|c| eq(v, c))
+    {
+        return false;
     }
     if let Some(n) = number(v) {
         let bound = |k: &str| o.get(k).and_then(J::as_f64);

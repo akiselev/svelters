@@ -236,7 +236,7 @@ mod frames {
 
     /// Whether an error made now is about the innermost frame's value itself.
     pub(super) fn exact() -> bool {
-        FRAMES.with(|f| f.borrow().last().map_or(true, |fr| fr.visiting > 0 && !fr.drained))
+        FRAMES.with(|f| f.borrow().last().is_none_or(|fr|fr.visiting > 0 && !fr.drained))
     }
 
     /// A value handed to serde (the root, a list element, an object value, a variant's content).
