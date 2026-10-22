@@ -57,8 +57,11 @@ pub fn paint_box(cx: &mut PaintCx, s: &StyleView, border_box: Rect) -> BoxGeom {
     let bw = cx.snap_width(bl.max(br).max(bt).max(bb));
     let bc = s.color("border-top-color").or_else(|| s.color("border-color")).unwrap_or(egui::Color32::TRANSPARENT);
     let stroke = if bw > 0.0 && bc.a() > 0 { Stroke::new(bw, bc) } else { Stroke::NONE };
-    if fill.a() > 0 || stroke.width > 0.0 {
-        cx.painter.add(egui::epaint::RectShape::new(r, radius, fill, stroke, egui::StrokeKind::Inside));
+    // WIDGET-PARITY Q1: `background-image: paint(name)` between the inset shadows and the border
+    let painter = super::painters::selected(s, "background-image");
+    let first = if painter.is_some() { Stroke::NONE } else { stroke };
+    if fill.a() > 0 || first.width > 0.0 {
+        cx.painter.add(egui::epaint::RectShape::new(r, radius, fill, first, egui::StrokeKind::Inside));
     }
     cx.record(TraceKind::Box, r, fill, stroke, 0.0);
     if let Some(list) = shadows.as_deref() {
@@ -68,6 +71,14 @@ pub fn paint_box(cx: &mut PaintCx, s: &StyleView, border_box: Rect) -> BoxGeom {
             for sh in inset {
                 p.add(sh);
             }
+        }
+    }
+    if let Some((_, p)) = painter {
+        let clipped = cx.painter.with_clip_rect(cx.painter.clip_rect().intersect(r));
+        let mut pc = PaintCx { painter: &clipped, ppp: cx.ppp, trace: cx.trace.as_deref_mut(), target: cx.target, sink: cx.sink.clone(), tag: cx.tag, args: cx.args };
+        pc.run_painter(&*p, s, g.padding);
+        if stroke.width > 0.0 {
+            cx.painter.add(egui::epaint::RectShape::new(r, radius, egui::Color32::TRANSPARENT, stroke, egui::StrokeKind::Inside));
         }
     }
     g

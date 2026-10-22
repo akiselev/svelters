@@ -292,7 +292,9 @@ fn style_json() -> J {
 
 /// The whole spec.
 pub fn semantics() -> J {
-    let kinds: Map<String, J> = KINDS.iter().map(|k| (k.id.to_string(), kind_json(k))).collect();
+    // OW0: a kind with an own widget lists the widget's extra props and signals too
+    let reg = KindRegistry::global();
+    let kinds: Map<String, J> = KINDS.iter().enumerate().map(|(i, k)| (k.id.to_string(), kind_json(reg.spec_kind(i)))).collect();
     let tags: Map<String, J> = KINDS.iter().filter_map(|k| k.tag.map(|t| (t.to_string(), json!(k.id)))).collect();
     json!({
         "backend": "egui",
@@ -572,7 +574,7 @@ pub fn builtin_typings() -> String {
         for b in bases.iter().rev().filter(|b| b.id != "Widget") {
             ts_members(&mut s, "    ", b, None);
         }
-        ts_members(&mut s, "    ", k, None);
+        ts_members(&mut s, "    ", KindRegistry::global().spec_kind(i), None);
         s.push_str("  };\n");
     }
     s.push_str("}\n");

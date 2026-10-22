@@ -169,9 +169,26 @@ impl Default for SceneStyle {
     }
 }
 
+/// OW0: the computed styles of one node's paint parts (`::part(name)`), by part name.
+pub(crate) type PartStyles = Vec<(Box<str>, Arc<ComputedStyle>)>;
+
 impl SceneStyle {
     pub(crate) fn is_active(&self) -> bool {
         self.active
+    }
+
+    /// OW0 hook for OW-CSS: the computed style of node `id`'s part `part` (`::part(name)`), as a
+    /// pseudo-element of the host. `None` until the engine computes part styles (OW-CSS); own
+    /// widgets then paint the part from its UA table, inheriting from the host.
+    pub(crate) fn part_computed(&self, id: NodeId, part: &str) -> Option<&Arc<ComputedStyle>> {
+        let _ = (id, part);
+        None
+    }
+
+    /// OW0 hook for OW-CSS: every part style of node `id` (what `measure` sees).
+    pub(crate) fn part_styles(&self, id: NodeId) -> PartStyles {
+        let _ = id;
+        Vec::new()
     }
 
     fn node(&self, id: NodeId) -> Option<&NodeStyle> {
@@ -253,6 +270,13 @@ impl Element for NodeRef<'_> {
     fn tag(&self) -> &str {
         NodeRef::tag(*self)
     }
+    /// OW0: a provider kind declared with `style_as = "<tag>"`.
+    fn style_as(&self) -> Option<&str> {
+        match self.s.w(self.i) {
+            W::Ext(x) => x.entry().style_as,
+            _ => None,
+        }
+    }
     fn id(&self) -> Option<&str> {
         self.s.style.node(NodeRef::id(*self))?.name.as_deref()
     }
@@ -311,6 +335,9 @@ impl Element for Forced<'_> {
     }
     fn tag(&self) -> &str {
         Element::tag(&self.n)
+    }
+    fn style_as(&self) -> Option<&str> {
+        Element::style_as(&self.n)
     }
     fn id(&self) -> Option<&str> {
         Element::id(&self.n)

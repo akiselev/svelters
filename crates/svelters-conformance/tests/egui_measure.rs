@@ -524,6 +524,8 @@ fn run(native: Native, pins: &[Pin], keys: &Keys) -> Vec<svelters_conformance::g
         Native::Egui => "egui",
         Native::Gtk => "egui-gtk",
         Native::Qt => "egui-qt",
+        Native::Windows => "egui-windows",
+        Native::Mac => "egui-mac",
     };
     let cap = Capture {
         platform: "linux".into(),

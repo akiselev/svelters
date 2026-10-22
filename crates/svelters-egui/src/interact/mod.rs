@@ -244,7 +244,7 @@ impl InputCx<'_> {
 /// This is all a foreign painter needs (OW-RUST, berth's `ChromePainter`): no scene, no JS.
 pub fn run(ui: &egui::Ui, resp: &egui::Response, state: &mut StateBits, parts: &PartResponses, f: impl FnOnce(&mut InputCx<'_>)) -> FocusCx {
     let ctx = ui.ctx();
-    let policy = crate::native::get(ctx).policy();
+    let policy = &crate::native::policy_of(ctx);
     let enabled = ui.is_enabled();
     let snap = Resp::of(resp);
     let mut focus = FocusCx { has: snap.has_focus, ..FocusCx::default() };

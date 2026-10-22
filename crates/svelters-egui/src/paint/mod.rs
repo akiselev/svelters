@@ -21,12 +21,16 @@
 mod boxes;
 mod icon;
 mod image;
+pub mod painters;
+mod parts;
 mod text;
 pub mod trace;
 
 pub use boxes::{BoxGeom, box_extra, box_geom, paint_box, paint_outline};
-pub use icon::{IconKey, icon_size, paint_icon};
+pub use icon::{IconKey, content_icon, icon_size, paint_icon};
 pub use image::paint_image;
+pub use painters::{Orientation, PaintArgs, PartInfo, PartPainter, register_painter};
+pub use parts::{PartItem, layout_parts, measure_parts};
 pub use text::{Align, measure_text, paint_text, text_galley};
 pub use trace::{PaintTrace, TraceEntry, TraceKind};
 
@@ -64,12 +68,16 @@ pub struct PaintCx<'a> {
     pub target: (u64, Option<&'static str>),
     /// The scene's per-pass trace ([`trace::enable`]), when `trace` is `None`: debug builds only.
     sink: Option<egui::Context>,
+    /// The host's tag, for part painters ([`PartInfo::tag`]).
+    pub tag: &'a str,
+    /// What a part painter selected in CSS gets for the part being painted (set by the widget).
+    pub args: PaintArgs<'a>,
 }
 
 impl<'a> PaintCx<'a> {
     /// Painting into `painter` at its context's scale, untraced.
     pub fn new(painter: &'a egui::Painter) -> PaintCx<'a> {
-        PaintCx { painter, ppp: painter.pixels_per_point(), trace: None, target: (0, None), sink: None }
+        PaintCx { painter, ppp: painter.pixels_per_point(), trace: None, target: (0, None), sink: None, tag: "", args: PaintArgs::None }
     }
 
     /// Painting for scene node `node` (`NodeId::to_raw()`): traced into the context's per-pass
@@ -85,7 +93,14 @@ impl<'a> PaintCx<'a> {
 
     /// The same painter and trace for part `part` of the current target.
     pub fn part(&mut self, part: &'static str) -> PaintCx<'_> {
-        PaintCx { painter: self.painter, ppp: self.ppp, trace: self.trace.as_deref_mut(), target: (self.target.0, Some(part)), sink: self.sink.clone() }
+        PaintCx { painter: self.painter, ppp: self.ppp, trace: self.trace.as_deref_mut(), target: (self.target.0, Some(part)), sink: self.sink.clone(), tag: self.tag, args: PaintArgs::None }
+    }
+
+    /// Calls the part painter `p` for the current target in `rect`.
+    pub(crate) fn run_painter(&mut self, p: &dyn PartPainter, s: &StyleView, rect: egui::Rect) {
+        let (tag, part, args) = (self.tag, self.target.1, self.args);
+        let info = PartInfo::new(tag, part, s.state(), self.ppp);
+        p.paint(self, s, rect, &info, &args);
     }
 
     pub(crate) fn record(&mut self, kind: TraceKind, rect: egui::Rect, fill: Color32, stroke: egui::Stroke, font_size: f32) {
@@ -165,11 +180,8 @@ impl Ua {
         UaRule::when(StateBits::DISABLED, &[("color", UaValue::Token("disabled-fg"))]),
     ]);
 
-    fn find(&self, name: &str, state: StateBits) -> Option<UaValue> {
-        let hit = |rules: &[UaRule]| {
-            rules.iter().rev().filter(|r| state.contains(r.when) && !state.intersects(r.unless)).find_map(|r| r.decls.iter().find(|(n, _)| *n == name).map(|(_, v)| *v))
-        };
-        hit(self.0).or_else(|| hit(Ua::ROOT.0))
+    fn find_own(&self, name: &str, state: StateBits) -> Option<UaValue> {
+        self.0.iter().rev().filter(|r| state.contains(r.when) && !state.intersects(r.unless)).find_map(|r| r.decls.iter().find(|(n, _)| *n == name).map(|(_, v)| *v))
     }
 }
 
@@ -180,10 +192,23 @@ fn ua_theme(dark: bool) -> &'static crate::theme::Theme {
     if dark { DARK.get_or_init(crate::theme::Theme::dark_modern) } else { LIGHT.get_or_init(crate::theme::Theme::light_modern) }
 }
 
+/// The properties a part (or child) inherits from its host when nothing sets them on it.
+const INHERITED: &[&str] = &["color", "font-size", "font-weight", "font-family", "font-style", "line-height", "letter-spacing", "text-align", "text-transform", "white-space", "cursor", "visibility"];
+
 // ---- the style view ----
+
+/// Where a property's value came from.
+#[derive(Clone, Copy)]
+enum Got<'a> {
+    Css(&'a ComputedValue),
+    Ua(UaValue, bool),
+}
 
 /// What primitives read: one node's (or part's) computed style, the widget's UA table under it,
 /// and the state the UA rules match. Copy, borrowed: build one per paint.
+///
+/// Resolution of a property: the computed style, then the UA table, then (inherited properties
+/// only) the parent view ([`StyleView::with_parent`]: a part's host), then [`Ua::ROOT`].
 ///
 /// DS2/OW-CSS hook: running transitions will be applied here (the view interpolates a property
 /// between the painted and the computed value at paint time); today it reads the computed value.
@@ -194,11 +219,12 @@ pub struct StyleView<'a> {
     state: StateBits,
     dark: bool,
     weight: Option<u16>,
+    parent: Option<&'a StyleView<'a>>,
 }
 
 impl std::fmt::Debug for StyleView<'_> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("StyleView").field("css", &self.css.is_some()).field("state", &self.state).field("dark", &self.dark).finish()
+        f.debug_struct("StyleView").field("css", &self.css.is_some()).field("state", &self.state).field("dark", &self.dark).field("parent", &self.parent.is_some()).finish()
     }
 }
 
@@ -206,13 +232,25 @@ impl<'a> StyleView<'a> {
     /// `css` (the cascade's computed style, `None` when no sheet reaches the node) over `ua`, in
     /// `state`; `dark` picks the scheme UA tokens resolve in.
     pub fn new(css: Option<&'a ComputedStyle>, ua: Ua, state: StateBits, dark: bool) -> StyleView<'a> {
-        StyleView { css, ua, state, dark, weight: None }
+        StyleView { css, ua, state, dark, weight: None, parent: None }
     }
 
     /// The UA table alone (no cascade): a foreign painter's styled control (OW-RUST, berth's
     /// `ChromePainter`).
     pub fn ua_only(ua: Ua, state: StateBits, dark: bool) -> StyleView<'static> {
-        StyleView { css: None, ua, state, dark, weight: None }
+        StyleView { css: None, ua, state, dark, weight: None, parent: None }
+    }
+
+    /// A part's view: its own computed style (`::part(name)`, `None` until a rule reaches it) and
+    /// UA table, inheriting from this view (its host). The part shares the host's state.
+    pub fn part(&'a self, css: Option<&'a ComputedStyle>, ua: Ua) -> StyleView<'a> {
+        StyleView { css, ua, state: self.state, dark: self.dark, weight: None, parent: Some(self) }
+    }
+
+    /// With `parent` to inherit from.
+    pub fn with_parent(mut self, parent: &'a StyleView<'a>) -> StyleView<'a> {
+        self.parent = Some(parent);
+        self
     }
 
     /// With a `font-weight` that beats CSS (a kind's `font-weight` prop, which the runtime set).
@@ -241,17 +279,24 @@ impl<'a> StyleView<'a> {
         self.css.and_then(|c| c.get(name))
     }
 
-    fn ua_color(&self, name: &str) -> Option<Color32> {
-        match self.ua.find(name, self.state)? {
-            UaValue::Token(t) => ua_theme(self.dark).color(t),
-            UaValue::Color(c) => Some(c),
-            _ => None,
+    fn get(&self, name: &str) -> Option<Got<'a>> {
+        if let Some(v) = self.css(name) {
+            return Some(Got::Css(v));
         }
+        if let Some(v) = self.ua.find_own(name, self.state) {
+            return Some(Got::Ua(v, self.dark));
+        }
+        if let Some(p) = self.parent
+            && INHERITED.contains(&name)
+        {
+            return p.get(name);
+        }
+        Ua::ROOT.find_own(name, self.state).map(|v| Got::Ua(v, self.dark))
     }
 
-    fn ua_px(&self, name: &str) -> Option<f32> {
-        match self.ua.find(name, self.state)? {
-            UaValue::Token(t) => ua_theme(self.dark).px(t),
+    fn ua_px_of(v: UaValue, dark: bool) -> Option<f32> {
+        match v {
+            UaValue::Token(t) => ua_theme(dark).px(t),
             UaValue::Px(p) | UaValue::Number(p) => Some(p),
             _ => None,
         }
@@ -259,55 +304,66 @@ impl<'a> StyleView<'a> {
 
     /// A colour property (`background-color`, `color`, `border-top-color`, `outline-color`).
     pub fn color(&self, name: &str) -> Option<Color32> {
-        match self.css(name) {
-            Some(ComputedValue::Color(k)) => {
+        match self.get(name)? {
+            Got::Css(ComputedValue::Color(k)) => {
                 let [r, g, b, a] = k.rgba8();
                 Some(Color32::from_rgba_unmultiplied(r, g, b, a))
             }
-            _ => self.ua_color(name),
+            Got::Css(_) => None,
+            Got::Ua(UaValue::Token(t), dark) => ua_theme(dark).color(t),
+            Got::Ua(UaValue::Color(c), _) => Some(c),
+            Got::Ua(..) => None,
         }
     }
 
     /// A length in points (`border-radius`, `padding-left`, `font-size`, `outline-offset`).
     pub fn px(&self, name: &str) -> Option<f32> {
-        match self.css(name) {
-            Some(ComputedValue::Length(l)) => Some(l.px),
-            Some(ComputedValue::Number(n)) => Some(*n),
-            _ => self.ua_px(name),
+        match self.get(name)? {
+            Got::Css(ComputedValue::Length(l)) => Some(l.px),
+            Got::Css(ComputedValue::Number(n)) => Some(*n),
+            Got::Css(_) => None,
+            Got::Ua(v, dark) => Self::ua_px_of(v, dark),
         }
     }
 
     /// A number (`opacity`).
     pub fn number(&self, name: &str) -> Option<f32> {
-        match self.css(name) {
-            Some(ComputedValue::Number(n)) => Some(*n),
-            Some(ComputedValue::Int(n)) => Some(*n as f32),
-            _ => self.ua_px(name),
+        match self.get(name)? {
+            Got::Css(ComputedValue::Number(n)) => Some(*n),
+            Got::Css(ComputedValue::Int(n)) => Some(*n as f32),
+            Got::Css(_) => None,
+            Got::Ua(v, dark) => Self::ua_px_of(v, dark),
         }
     }
 
-    /// A keyword (`text-align`, `outline-style`, `white-space`).
+    /// A keyword or raw value (`text-align`, `outline-style`, `content`, `background-image`).
     pub fn keyword(&self, name: &str) -> Option<&'a str> {
-        match self.css(name) {
-            Some(ComputedValue::Keyword(k)) => Some(k),
-            Some(ComputedValue::Raw(r)) => Some(r),
-            Some(ComputedValue::String(s)) => Some(s),
-            _ => match self.ua.find(name, self.state)? {
-                UaValue::Keyword(k) => Some(k),
-                _ => None,
-            },
+        match self.get(name)? {
+            Got::Css(ComputedValue::Keyword(k)) => Some(k),
+            Got::Css(ComputedValue::Raw(r)) => Some(r),
+            Got::Css(ComputedValue::String(s)) => Some(s),
+            Got::Css(_) => None,
+            Got::Ua(UaValue::Keyword(k), _) => Some(k),
+            Got::Ua(..) => None,
         }
     }
 
-    /// `font-weight` (1–1000): the kind's prop, else CSS, else 400.
+    /// `font-weight` (1–1000): the kind's prop, else CSS, else the UA table, else inherited, else 400.
     pub fn font_weight(&self) -> i64 {
         if let Some(w) = self.weight {
             return w as i64;
         }
         match self.css("font-weight") {
-            Some(ComputedValue::FontWeight(w)) => *w as i64,
-            Some(ComputedValue::Number(n)) => *n as i64,
-            _ => self.ua_px("font-weight").map_or(400, |w| w as i64),
+            Some(ComputedValue::FontWeight(w)) => return *w as i64,
+            Some(ComputedValue::Number(n)) => return *n as i64,
+            _ => {}
+        }
+        if let Some(v) = self.ua.find_own("font-weight", self.state).and_then(|v| Self::ua_px_of(v, self.dark)) {
+            return v as i64;
+        }
+        match self.parent {
+            Some(p) => p.font_weight(),
+            None => 400,
         }
     }
 
@@ -321,7 +377,7 @@ impl<'a> StyleView<'a> {
         if let Some(ComputedValue::Shadows(l)) = self.css("box-shadow") {
             return (!l.is_empty()).then(|| Cow::Borrowed(&**l));
         }
-        match self.ua.find("box-shadow", self.state)? {
+        match self.ua.find_own("box-shadow", self.state)? {
             UaValue::Shadows(l) if !l.is_empty() => Some(Cow::Borrowed(l)),
             UaValue::Token(t) => {
                 let s = ua_theme(self.dark).shadow(t)?;
@@ -357,8 +413,13 @@ impl<'a> StyleView<'a> {
         self.number("opacity").unwrap_or(1.0).clamp(0.0, 1.0)
     }
 
-    /// One side group (`padding`, `border-width`) as [left, right, top, bottom]: the longhands
-    /// (`padding-left`, `border-left-width`), else the shorthand.
+    /// `display: none`.
+    pub fn is_hidden(&self) -> bool {
+        self.keyword("display") == Some("none")
+    }
+
+    /// One side group (`padding`, `border-width`, `margin`) as [left, right, top, bottom]: the
+    /// longhands (`padding-left`, `border-left-width`), else the shorthand.
     pub fn sides(&self, group: &str) -> [f32; 4] {
         let names: [String; 4] = match group {
             "border-width" => ["border-left-width", "border-right-width", "border-top-width", "border-bottom-width"].map(String::from),
@@ -373,7 +434,7 @@ impl<'a> StyleView<'a> {
         for (k, n) in names.iter().enumerate() {
             out[k] = match self.css(n) {
                 Some(ComputedValue::Length(l)) => l.px,
-                _ => all.map(|a| a[k]).or(one).or_else(|| self.ua_px(n)).unwrap_or(0.0),
+                _ => all.map(|a| a[k]).or(one).or_else(|| self.ua.find_own(n, self.state).and_then(|v| Self::ua_px_of(v, self.dark))).unwrap_or(0.0),
             };
         }
         out
