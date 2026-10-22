@@ -82,7 +82,8 @@ pub fn paint_box_layers(cx: &mut PaintCx, s: &StyleView, border_box: Rect, inset
     if gradient.is_some() && painter.is_none() && stroke.width > 0.0 {
         cx.painter.add(egui::epaint::RectShape::new(r, cr, Color32::TRANSPARENT, stroke, egui::StrokeKind::Inside));
     }
-    cx.record(TraceKind::Box, r, fill, stroke, 0.0);
+    let [pl, pr, pt, pb] = s.sides("padding");
+    cx.record_entry(super::TraceEntry { node: cx.target.0, part: cx.target.1, kind: TraceKind::Box, rect: r, fill, stroke, font_size: 0.0, radius: cr.nw as f32, padding: [pt, pr, pb, pl], opacity: 1.0 });
     if inset {
         paint_inset_shadows(cx, s, border_box);
     }
@@ -200,5 +201,5 @@ pub fn paint_outline(cx: &mut PaintCx, s: &StyleView, border_box: Rect) {
     let radius = (s.px("border-radius").unwrap_or(0.0) + off.max(0.0)).max(0.0);
     let stroke = Stroke::new(w, col);
     cx.painter.add(egui::epaint::RectShape::new(r, radius, egui::Color32::TRANSPARENT, stroke, egui::StrokeKind::Outside));
-    cx.record(TraceKind::Outline, r, egui::Color32::TRANSPARENT, stroke, 0.0);
+    cx.record_entry(super::TraceEntry { node: cx.target.0, part: cx.target.1, kind: TraceKind::Outline, rect: r, fill: egui::Color32::TRANSPARENT, stroke, font_size: 0.0, radius, padding: [0.0; 4], opacity: 1.0 });
 }

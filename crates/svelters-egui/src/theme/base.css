@@ -62,6 +62,16 @@
   button:active {
     background-color: var(--sv-button-bg-active);
   }
+  /* VIS1c: VS Code's primary button (`button.background`, `button.border`, `button.foreground`);
+     pressed keeps the hover fill, as VS Code does */
+  button.primary {
+    background-color: var(--sv-accent);
+    border-color: var(--sv-button-border);
+    color: var(--sv-accent-fg);
+  }
+  button.primary:hover {
+    background-color: var(--sv-accent-hover);
+  }
 
   checkbox {
     background-color: var(--sv-checkbox-bg);
