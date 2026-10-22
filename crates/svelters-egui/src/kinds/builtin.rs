@@ -1,5 +1,9 @@
 //! The built-in kind table [`KINDS`] (its order is the kind ids: index + 1), with the tables of the
 //! `Widget` base and the leaves. The `window` and `box` tables are in `containers.rs`.
+//!
+//! WG1 (plans/milestones/WG1-sc1-widgets.md) appended its kinds at the end of [`KINDS`] (their
+//! tables are one file per family: `controls.rs`, `decor.rs`, `layouts.rs`), and `invalid` and
+//! `font-weight` at the end of the tables here, so every earlier kind and member id is unchanged.
 
 use super::containers::{BOX_PROPS, WINDOW_METHODS, WINDOW_PROPS, WINDOW_SIGNALS};
 use super::{Def, KindDef, MethodDef, P, PropDef, SignalDef, Ty, input, layout, length, prop, signal};
@@ -10,6 +14,8 @@ pub const JUSTIFY: &[&str] = &["start", "end", "center", "space-between", "space
 pub const DIRECTION: &[&str] = &["column", "row", "column-reverse", "row-reverse"];
 pub const WRAP: &[&str] = &["nowrap", "wrap", "wrap-reverse"];
 pub const WRAP_MODE: &[&str] = &["wrap", "truncate", "extend"];
+
+pub(super) const FONT_WEIGHT_DOC: &str = "CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face.";
 
 static WIDGET_PROPS: &[PropDef] = &[
     prop("enabled", P::Enabled, Ty::Bool, Def::Bool(true), "Takes input when true; drawn greyed out otherwise (`Ui::add_enabled`)."),
@@ -40,12 +46,20 @@ static WIDGET_PROPS: &[PropDef] = &[
         Def::Str(""),
         "A name unique in its embedded root: the node's egui id derives from it (stable across runs, not only across reorders), it is the AccessKit author id, and `Embed::anchor_rect` finds it. Changing it drops the node's egui memory.",
     ),
+    prop(
+        "invalid",
+        P::Invalid,
+        Ty::Bool,
+        Def::Bool(false),
+        "Marks the value as invalid: an outline in the error colour (`Visuals::error_fg_color`) and AccessKit `invalid`. The app sets it; the widget never does.",
+    ),
 ];
 
 static LABEL_PROPS: &[PropDef] = &[
     prop("text", P::Text, Ty::Str, Def::Str(""), "The text."),
     prop("wrap-mode", P::WrapMode, Ty::Enum(WRAP_MODE), Def::Str("wrap"), "What a line longer than the width does (`egui::TextWrapMode`)."),
     prop("selectable", P::Selectable, Ty::Bool, Def::Bool(false), "The text can be selected and copied."),
+    prop("font-weight", P::FontWeight, Ty::I64, Def::I64(400), FONT_WEIGHT_DOC),
 ];
 
 static BUTTON_PROPS: &[PropDef] = &[
@@ -53,7 +67,12 @@ static BUTTON_PROPS: &[PropDef] = &[
     prop("selected", P::Selected, Ty::Bool, Def::Bool(false), "Drawn as selected (a toggle look); clicking does not change it."),
     prop("frame", P::Frame, Ty::Bool, Def::Bool(true), "Draws the button background and border."),
     prop("small", P::Small, Ty::Bool, Def::Bool(false), "No vertical padding (`Button::small`)."),
+    prop("font-weight", P::FontWeight, Ty::I64, Def::I64(400), FONT_WEIGHT_DOC),
 ];
+
+
+
+
 
 static CHECKBOX_PROPS: &[PropDef] = &[
     prop("text", P::Text, Ty::Str, Def::Str(""), "The caption."),
@@ -83,7 +102,7 @@ static WIDGET_SIGNALS: &[SignalDef] = &[signal("animationend", &[("id", Ty::I64)
 
 static CLICK_SIGNALS: &[SignalDef] = &[signal("clicked", NONE, "Pressed and released (`Response::clicked`).")];
 
-static BUTTON_SIGNALS: &[SignalDef] = &[
+pub(super) static BUTTON_SIGNALS: &[SignalDef] = &[
     signal("clicked", NONE, "Pressed and released (`Response::clicked`)."),
     signal("double-clicked", NONE, "Double click (`Response::double_clicked`)."),
     signal("secondary-clicked", NONE, "Right click (`Response::secondary_clicked`)."),
@@ -105,6 +124,8 @@ static SLIDER_SIGNALS: &[SignalDef] = &[
     signal("drag-started", NONE, "A drag on the slider began."),
     signal("drag-stopped", NONE, "A drag on the slider ended."),
 ];
+
+
 
 static TEXT_EDIT_METHODS: &[MethodDef] = &[MethodDef { name: "request-focus", doc: "Moves keyboard focus here on the next frame." }];
 
@@ -221,4 +242,19 @@ pub static KINDS: &[KindDef] = &[
         methods: &[],
         doc: "A horizontal slider with an optional value box.",
     },
+    // ---- WG1: appended, so the ids above stay (tables in `controls.rs`, `decor.rs`, `layouts.rs`) ----
+    super::controls::TOGGLE_BUTTON,
+    super::controls::COMBO_BOX,
+    super::decor::SEPARATOR,
+    super::decor::ICON,
+    super::layouts::GRID,
+    super::layouts::COLLAPSING_HEADER,
+    super::layouts::SCROLL_AREA,
+
+
+
+
+
+
+
 ];

@@ -35,6 +35,7 @@ fn ty_name(ty: Ty) -> &'static str {
         Ty::I64 => "i64",
         Ty::Str => "string",
         Ty::Enum(_) => "enum",
+        Ty::StrList => "list",
         Ty::Provider => "other",
     }
 }
@@ -76,6 +77,9 @@ fn prop_json(k: &KindDef, p: &PropDef) -> J {
     m.insert("type".into(), json!(ty_name(p.ty)));
     if let Ty::Enum(values) = p.ty {
         m.insert("values".into(), json!(values));
+    }
+    if p.ty == Ty::StrList {
+        m.insert("of".into(), json!("string"));
     }
     m.insert("writable".into(), json!(true));
     J::Object(m)
@@ -144,11 +148,17 @@ fn kind_json(k: &KindDef) -> J {
     // Two-way bindings for what the widget changes: the `changed` signal carries the new value;
     // the scene never echoes a host write. Provider kinds declare none: their bound props are
     // `exact`/`delivery` (written only through `WidgetCx::set`), so `bind:` lowers onto observation.
+    // The value is the `changed` argument named like the prop (WG1: `scroll-area`'s carries both
+    // offsets), else argument 0.
+    let changed_args = k.signals.iter().find(|s| s.name == "changed").map_or(&[][..], |s| s.args);
     let bindings: Map<String, J> = k
         .props
         .iter()
         .filter(|p| p.native == Native::Widget && provider.is_none())
         .map(|p| {
+            let arg = changed_args.iter().position(|(n, _)| *n == p.name).unwrap_or(0);
+            // the widget itself changes a written value (a slider's range, a scroll offset's extent)
+            let normalizes = matches!(p.key, kinds::P::Value | kinds::P::ScrollX | kinds::P::ScrollY);
             (
                 p.name.to_string(),
                 json!({
@@ -157,12 +167,12 @@ fn kind_json(k: &KindDef) -> J {
                     "echo": "none",
                     "event": "changed",
                     "lifetime": {"on_destroy": "idempotent_disconnect", "on_native_death": "end_binding", "on_stale_update": "warn_noop"},
-                    "natively_normalizes": p.key == kinds::P::Value,
+                    "natively_normalizes": normalizes,
                     "property": p.name,
                     "provenance": format!("svelters-egui: the {} widget writes {} into the node during the pass; `changed` carries it (arg 0), set_prop never announces", k.native, p.name),
-                    "read_back": p.key == kinds::P::Value,
+                    "read_back": normalizes,
                     "sync_signals_on_set": [],
-                    "value": {"arg": 0},
+                    "value": {"arg": arg},
                 }),
             )
         })
@@ -209,6 +219,7 @@ fn style_json() -> J {
                 let value = match p.ty {
                     Ty::Bool => "bool",
                     Ty::Enum(_) => "enum",
+                    Ty::Str => "string",
                     Ty::F64 if matches!(p.key, kinds::P::FlexGrow | kinds::P::FlexShrink) => "number",
                     _ => "length",
                 };
@@ -424,6 +435,7 @@ fn ts_of(ty: Ty) -> String {
         Ty::F64 | Ty::I64 => "number".into(),
         Ty::Str => "string".into(),
         Ty::Enum(values) => values.iter().map(|v| format!("'{v}'")).collect::<Vec<_>>().join(" | "),
+        Ty::StrList => "string[]".into(),
         Ty::Provider => "unknown".into(),
     }
 }
