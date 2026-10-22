@@ -175,7 +175,7 @@ pub static APPKIT: Table = Table {
         Prop { name: "border-radius", via: Via::Css, target: "", ty: ValueType::Length, values: &[], tags: &[], inline_only: false },
         Prop { name: "border-style", via: Via::Css, target: "", ty: ValueType::Enum, values: &["solid", "none"], tags: &[], inline_only: false },
         Prop { name: "border-width", via: Via::Css, target: "", ty: ValueType::Length, values: &[], tags: &[], inline_only: false },
-        Prop { name: "box-shadow", via: Via::Css, target: "", ty: ValueType::Raw, values: &[], tags: &[], inline_only: false },
+        Prop { name: "box-shadow", via: Via::Css, target: "", ty: ValueType::Shadow, values: &[], tags: &[], inline_only: false },
         Prop { name: "color", via: Via::Css, target: "", ty: ValueType::Color, values: &[], tags: &[], inline_only: false },
         Prop { name: "cursor", via: Via::Css, target: "", ty: ValueType::Enum, values: &["default", "pointer", "text"], tags: &[], inline_only: false },
         Prop { name: "enabled", via: Via::Setter, target: "enabled", ty: ValueType::Bool, values: &[], tags: &["button", "color-well", "combo-box", "date-picker", "image-view", "level-indicator", "path-control", "pop-up-button", "search-field", "secure-text-field", "segmented-control", "slider", "stepper", "switch", "text-field", "token-field"], inline_only: false },

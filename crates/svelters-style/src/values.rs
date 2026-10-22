@@ -1,5 +1,5 @@
 //! Computed values and their parsers: lengths with `calc()`/`min()`/`max()`/`clamp()`, colours
-//! (CSS Color 4 through `cssparser-color`), keywords, numbers and insets.
+//! (CSS Color 4 through `cssparser-color`), keywords, numbers, insets and `box-shadow` lists.
 
 use crate::table::{Prop, Table, ValueType};
 use cssparser::{ParseError, Parser, Token};
@@ -46,6 +46,21 @@ impl Color {
     }
 }
 
+/// One `box-shadow` layer (CSS Backgrounds 3 §7.1), lengths in the toolkit's unit.
+#[derive(Clone, Copy, Debug, Default, PartialEq)]
+pub struct Shadow {
+    pub x: f32,
+    pub y: f32,
+    /// The blur radius (≥ 0): the penumbra reaches `blur` on each side of the shadow's edge.
+    pub blur: f32,
+    /// Grows (or, negative, shrinks) the shadow before the blur.
+    pub spread: f32,
+    /// The colour; `None` = `currentcolor` where the table has no `color` to resolve it with (the
+    /// backend's text colour).
+    pub color: Option<Color>,
+    pub inset: bool,
+}
+
 /// A property's computed value, typed by its table entry's [`ValueType`].
 #[derive(Clone, Debug, PartialEq)]
 pub enum ComputedValue {
@@ -63,6 +78,8 @@ pub enum ComputedValue {
     Insets([Length; 4]),
     /// 1–1000.
     FontWeight(u16),
+    /// `box-shadow`, painted first to last (the first is on top); empty = `none`.
+    Shadows(Box<[Shadow]>),
     Raw(Box<str>),
 }
 
@@ -97,6 +114,26 @@ impl fmt::Display for ComputedValue {
                 Ok(())
             }
             ComputedValue::FontWeight(w) => write!(f, "{w}"),
+            ComputedValue::Shadows(list) if list.is_empty() => f.write_str("none"),
+            ComputedValue::Shadows(list) => {
+                for (i, s) in list.iter().enumerate() {
+                    if i > 0 {
+                        f.write_str(", ")?;
+                    }
+                    if s.inset {
+                        f.write_str("inset ")?;
+                    }
+                    write!(f, "{}px {}px {}px {}px", s.x, s.y, s.blur, s.spread)?;
+                    match s.color {
+                        Some(c) => {
+                            let [r, g, b, _] = c.rgba8();
+                            write!(f, " rgba({r}, {g}, {b}, {})", c.a)?;
+                        }
+                        None => f.write_str(" currentcolor")?,
+                    }
+                }
+                Ok(())
+            }
             ComputedValue::Raw(s) => f.write_str(s),
         }
     }
@@ -218,8 +255,71 @@ fn parse_typed<'i>(prop: &'static Prop, input: &mut Parser<'i>, cx: &ValueCx<'_>
             }
             Ok(ComputedValue::FontWeight(n.round() as u16))
         }
+        ValueType::Shadow => {
+            if input.try_parse(|i| i.expect_ident_matching("none")).is_ok() {
+                return Ok(ComputedValue::Shadows(Box::new([])));
+            }
+            let list = input.parse_comma_separated(|i| shadow(i, cx).map_err(|e| ParseError::<String>::custom(format!("{name}: {e}")))).map_err(err_text)?;
+            Ok(ComputedValue::Shadows(list.into()))
+        }
         ValueType::Raw => unreachable!("handled by parse_value"),
     }
+}
+
+/// One shadow: `inset`, two to four lengths (x, y, blur, spread) and a colour, the lengths
+/// together and the other two before or after them, in any order.
+fn shadow(input: &mut Parser<'_>, cx: &ValueCx<'_>) -> VResult<Shadow> {
+    let mut lens: Option<Vec<f32>> = None;
+    let mut color: Option<Option<Color>> = None;
+    let mut inset = false;
+    while !input.is_exhausted() {
+        if !inset && input.try_parse(|i| i.expect_ident_matching("inset")).is_ok() {
+            inset = true;
+            continue;
+        }
+        if lens.is_none() {
+            let mut v = Vec::new();
+            while v.len() < 4 {
+                // a length unless the next value is a colour or `inset`
+                let state = input.state();
+                let is_len = match input.next() {
+                    Ok(Token::Number { .. }) | Ok(Token::Dimension { .. }) | Ok(Token::Percentage { .. }) => true,
+                    Ok(Token::Function(f)) => is_math(f),
+                    _ => false,
+                };
+                input.reset(&state);
+                if !is_len {
+                    break;
+                }
+                let l = length(input, cx)?;
+                if l.percent != 0.0 {
+                    return Err("a shadow takes lengths, not percentages".into());
+                }
+                v.push(l.px);
+            }
+            if !v.is_empty() {
+                if v.len() < 2 {
+                    return Err("a shadow needs at least two lengths (x and y)".into());
+                }
+                if v.get(2).is_some_and(|b| *b < 0.0) {
+                    return Err("the blur radius cannot be negative".into());
+                }
+                lens = Some(v);
+                continue;
+            }
+        }
+        if color.is_none() {
+            if input.try_parse(|i| i.expect_ident_matching("currentcolor")).is_ok() {
+                color = Some(cx.current_color);
+                continue;
+            }
+            color = Some(Some(self::color(input, cx).map_err(|_| "expected inset, lengths (x y [blur [spread]]) or a colour".to_string())?));
+            continue;
+        }
+        return Err("unexpected input after the shadow".into());
+    }
+    let Some(v) = lens else { return Err("a shadow needs at least two lengths (x and y)".into()) };
+    Ok(Shadow { x: v[0], y: v[1], blur: v.get(2).copied().unwrap_or(0.0), spread: v.get(3).copied().unwrap_or(0.0), color: color.unwrap_or(cx.current_color), inset })
 }
 
 fn ident(input: &mut Parser<'_>) -> VResult<String> {
@@ -523,6 +623,7 @@ mod tests {
     static INS: Prop = p("padding", ValueType::Insets, &[]);
     static DIR: Prop = p("flex-direction", ValueType::Enum, &["row", "column"]);
     static FW: Prop = p("font-weight", ValueType::FontWeight, &[]);
+    static SH: Prop = p("box-shadow", ValueType::Shadow, &[]);
     static TABLE: Table = Table { toolkit: "t", dialect: Dialect::None, setter_selectors: &[], units: &[("px", 1.0), ("pt", 2.0)], props: &[] };
 
     fn cx() -> ValueCx<'static> {
@@ -593,5 +694,41 @@ mod tests {
         assert!(v(&COL, "currentcolor").is_err());
         let with = ValueCx { current_color: Some(Color { r: 1.0, g: 0.0, b: 0.0, a: 1.0 }), ..cx() };
         assert_eq!(parse_value(&COL, "currentColor", &with), Ok(ComputedValue::Color(Color { r: 1.0, g: 0.0, b: 0.0, a: 1.0 })));
+    }
+
+    #[test]
+    fn shadows() {
+        let list = |t: &str| match v(&SH, t) {
+            Ok(ComputedValue::Shadows(l)) => l.into_vec(),
+            other => panic!("{t}: {other:?}"),
+        };
+        let black = Some(Color { r: 0.0, g: 0.0, b: 0.0, a: 1.0 });
+        assert_eq!(list("none"), []);
+        assert_eq!(list("2px 3px"), [Shadow { x: 2.0, y: 3.0, ..Shadow::default() }]);
+        assert_eq!(list("1px 2px 4px 1em black"), [Shadow { x: 1.0, y: 2.0, blur: 4.0, spread: 10.0, color: black, inset: false }]);
+        // colour and `inset` before or after the lengths; unitless lengths are px (setter grammar)
+        assert_eq!(list("black inset 0 1 2 -3"), [Shadow { x: 0.0, y: 1.0, blur: 2.0, spread: -3.0, color: black, inset: true }]);
+        let two = list("0 1px 2px rgb(0 0 0 / 50%), inset 0 0 0 1px #ff0000");
+        assert_eq!(two.len(), 2);
+        assert_eq!(two[0].color.unwrap().rgba8(), [0, 0, 0, 128]);
+        assert!(two[1].inset && two[1].spread == 1.0 && two[1].color.unwrap().rgba8() == [255, 0, 0, 255]);
+        assert_eq!(list("calc(1px + 1px) 2px")[0].x, 2.0);
+        // currentcolor (explicit or omitted) is the element's colour, or None without one
+        let red = Color { r: 1.0, g: 0.0, b: 0.0, a: 1.0 };
+        let with = ValueCx { current_color: Some(red), ..cx() };
+        assert_eq!(parse_value(&SH, "1px 1px", &with), Ok(ComputedValue::Shadows(Box::new([Shadow { x: 1.0, y: 1.0, color: Some(red), ..Shadow::default() }]))));
+        assert_eq!(list("1px 1px currentColor")[0].color, None);
+        assert_eq!(v(&SH, "1px 2px 3px 4px red").unwrap().to_string(), "1px 2px 3px 4px rgba(255, 0, 0, 1)");
+        assert_eq!(v(&SH, "none").unwrap().to_string(), "none");
+        assert!(v(&SH, "1px 2px -3px red").unwrap_err().contains("negative"));
+        assert!(v(&SH, "10% 2px").unwrap_err().contains("percentages"));
+        assert!(v(&SH, "1px").unwrap_err().contains("two lengths"));
+        assert!(v(&SH, "red").unwrap_err().contains("two lengths"));
+        assert!(v(&SH, "1px 2px 3px 4px 5px").is_err());
+        assert!(v(&SH, "1px 2px red blue").is_err());
+        assert!(v(&SH, "1px 2px nope").is_err());
+        assert!(v(&SH, "1px 2px,").is_err());
+        assert!(v(&SH, "none, 1px 1px").is_err());
+        assert!(v(&SH, "1in 2px").unwrap_err().contains("unit 'in'"));
     }
 }
