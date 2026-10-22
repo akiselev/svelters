@@ -29,47 +29,21 @@ pub(crate) fn first(position: Option<f64>, min_size: f64, main: f32) -> f32 {
 }
 
 /// Natural size: the panes side by side (or stacked) with the divider between.
-pub(crate) fn natural(
-    tree: &mut Tree<'_>,
-    kids: &[NodeId],
-    vertical: bool,
-    avail: Size<AvailableSpace>,
-) -> Size<f32> {
+pub(crate) fn natural(tree: &mut Tree<'_>, kids: &[NodeId], vertical: bool, avail: Size<AvailableSpace>) -> Size<f32> {
     let mut main = 0.0;
     let mut cross: f32 = 0.0;
     for &c in kids.iter().take(2) {
         let s = measure_child(tree, c, avail);
-        let (m, x) = if vertical {
-            (s.height, s.width)
-        } else {
-            (s.width, s.height)
-        };
+        let (m, x) = if vertical { (s.height, s.width) } else { (s.width, s.height) };
         main += m;
         cross = cross.max(x);
     }
     main += DIVIDER;
-    if vertical {
-        Size {
-            width: cross,
-            height: main,
-        }
-    } else {
-        Size {
-            width: main,
-            height: cross,
-        }
-    }
+    if vertical { Size { width: cross, height: main } } else { Size { width: main, height: cross } }
 }
 
 /// The panes at their sizes; extra children hidden.
-pub(crate) fn place(
-    tree: &mut Tree<'_>,
-    kids: &[NodeId],
-    vertical: bool,
-    position: Option<f64>,
-    min_size: f64,
-    size: Size<f32>,
-) {
+pub(crate) fn place(tree: &mut Tree<'_>, kids: &[NodeId], vertical: bool, position: Option<f64>, min_size: f64, size: Size<f32>) {
     let main = if vertical { size.height } else { size.width };
     let p = first(position, min_size, main);
     let rest = (main - p - DIVIDER).max(0.0);
@@ -82,47 +56,16 @@ pub(crate) fn place(
                 continue;
             }
         };
-        let (xy, sz) = if vertical {
-            (
-                (0.0, at),
-                Size {
-                    width: size.width,
-                    height: m,
-                },
-            )
-        } else {
-            (
-                (at, 0.0),
-                Size {
-                    width: m,
-                    height: size.height,
-                },
-            )
-        };
+        let (xy, sz) = if vertical { ((0.0, at), Size { width: size.width, height: m }) } else { ((at, 0.0), Size { width: m, height: size.height }) };
         place_child(tree, c, k as u32, xy, sz);
     }
 }
 
 /// Paints split-view `i` at `r`: the panes, then the divider (drag, keys, cursor).
-pub(crate) fn paint(
-    arena: &mut Arena,
-    i: usize,
-    r: Rect,
-    origin: Vec2,
-    ui: &mut Ui,
-    out: &mut Vec<Out>,
-) {
+pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
     let node = arena.slots.id_at(i).expect("live node");
     let h = node.to_raw();
-    let W::SplitView {
-        vertical,
-        position,
-        min_size,
-        resizable,
-    } = *arena.w(i)
-    else {
-        unreachable!()
-    };
+    let W::SplitView { vertical, position, min_size, resizable } = *arena.w(i) else { unreachable!() };
     for k in 0..arena.children[i].len().min(2) {
         let c = arena.ix(arena.children[i][k]);
         crate::walk::paint_at(arena, c, origin, ui, out);
@@ -136,39 +79,19 @@ pub(crate) fn paint(
     };
     let enabled = arena.common(i).enabled && resizable;
     let id = arena.core[i].egui_id.with("divider");
-    let resp = ui.interact(
-        div,
-        id,
-        if enabled {
-            Sense::drag()
-        } else {
-            Sense::hover()
-        },
-    );
+    let resp = ui.interact(div, id, if enabled { Sense::drag() } else { Sense::hover() });
     if enabled && (resp.hovered() || resp.dragged()) {
-        ui.ctx().set_cursor_icon(if vertical {
-            CursorIcon::ResizeVertical
-        } else {
-            CursorIcon::ResizeHorizontal
-        });
+        ui.ctx().set_cursor_icon(if vertical { CursorIcon::ResizeVertical } else { CursorIcon::ResizeHorizontal });
     }
     let name = arena.common(i).accessible_name.clone();
     resp.widget_info(|| WidgetInfo::labeled(Role::Splitter, enabled, &name));
     ui.ctx().accesskit_node_builder(resp.id, |b| {
         b.set_role(Role::Splitter);
         b.set_numeric_value(p as f64);
-        b.set_orientation(if vertical {
-            egui::accesskit::Orientation::Horizontal
-        } else {
-            egui::accesskit::Orientation::Vertical
-        });
+        b.set_orientation(if vertical { egui::accesskit::Orientation::Horizontal } else { egui::accesskit::Orientation::Vertical });
     });
     let v = ui.style().interact(&resp);
-    let stroke = if resp.hovered() || resp.dragged() || resp.has_focus() {
-        v.fg_stroke
-    } else {
-        ui.visuals().widgets.noninteractive.bg_stroke
-    };
+    let stroke = if resp.hovered() || resp.dragged() || resp.has_focus() { v.fg_stroke } else { ui.visuals().widgets.noninteractive.bg_stroke };
     let c = div.center();
     if vertical {
         ui.painter().hline(div.x_range(), c.y, stroke);
@@ -187,30 +110,18 @@ pub(crate) fn paint(
         && resp.dragged()
         && let Some(ptr) = resp.interact_pointer_pos()
     {
-        let at = if vertical {
-            ptr.y - r.min.y
-        } else {
-            ptr.x - r.min.x
-        } - DIVIDER / 2.0;
+        let at = if vertical { ptr.y - r.min.y } else { ptr.x - r.min.x } - DIVIDER / 2.0;
         want = Some(at);
     }
     if enabled && resp.has_focus() {
-        let (less, more) = if vertical {
-            (egui::Key::ArrowUp, egui::Key::ArrowDown)
-        } else {
-            (egui::Key::ArrowLeft, egui::Key::ArrowRight)
-        };
-        let d =
-            ui.input(|inp| (inp.key_pressed(more) as i32 - inp.key_pressed(less) as i32) as f32);
+        let (less, more) = if vertical { (egui::Key::ArrowUp, egui::Key::ArrowDown) } else { (egui::Key::ArrowLeft, egui::Key::ArrowRight) };
+        let d = ui.input(|inp| (inp.key_pressed(more) as i32 - inp.key_pressed(less) as i32) as f32);
         if d != 0.0 {
             want = Some(p + d * STEP);
         }
     }
     let sig = |name: &str| kinds::signal_id(arena.core[i].kind as usize, name);
-    for (yes, name) in [
-        (resp.drag_started(), "drag-started"),
-        (resp.drag_stopped(), "drag-stopped"),
-    ] {
+    for (yes, name) in [(resp.drag_started(), "drag-started"), (resp.drag_stopped(), "drag-stopped")] {
         let s = sig(name);
         if yes && arena.listens(i, s) {
             out.push(Out::Event(h, s, vec![]));
@@ -224,13 +135,7 @@ pub(crate) fn paint(
             }
             arena.invalidate_content(node);
             ui.ctx().request_repaint();
-            crate::leaf::widget_changed(
-                arena,
-                i,
-                &[kinds::P::Position],
-                vec![Value::F64(np as f64)],
-                out,
-            );
+            crate::leaf::widget_changed(arena, i, &[kinds::P::Position], vec![Value::F64(np as f64)], out);
         }
     }
 }

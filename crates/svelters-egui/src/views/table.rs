@@ -72,11 +72,7 @@ impl TableState {
             P::SelectedIndex => self.selected = as_i64(v)?.max(-1),
             _ => return Err(format!("{key:?} is not a prop of <table>")),
         }
-        Ok(if key == P::RowHeight {
-            Dirty::MEASURE
-        } else {
-            Dirty::EMPTY
-        })
+        Ok(if key == P::RowHeight { Dirty::MEASURE } else { Dirty::EMPTY })
     }
 
     pub(crate) fn get(&self, key: P) -> Option<Value> {
@@ -102,9 +98,7 @@ impl TableState {
             Value::List(rows) => rows,
             Value::Null => &Vec::new(),
             other => {
-                return Err(format!(
-                    "set-rows rows: expected a list of rows, got {other:?}"
-                ));
+                return Err(format!("set-rows rows: expected a list of rows, got {other:?}"));
             }
         };
         let mut out = Vec::with_capacity(rows.len());
@@ -113,9 +107,7 @@ impl TableState {
                 Value::List(cells) => out.push(cells.iter().map(cell_text).collect()),
                 Value::Null => out.push(Vec::new()),
                 other => {
-                    return Err(format!(
-                        "set-rows row {k}: expected a list of cells, got {other:?}"
-                    ));
+                    return Err(format!("set-rows row {k}: expected a list of cells, got {other:?}"));
                 }
             }
         }
@@ -204,33 +196,36 @@ impl TableDelegate for Delegate<'_> {
             return;
         };
         let rect = ui.max_rect();
-        let resp = ui.interact(
-            rect,
-            ui.scope_id().with("head"),
-            if self.enabled {
-                Sense::click()
-            } else {
-                Sense::hover()
-            },
-        );
+        let resp = ui.interact(rect, ui.scope_id().with("head"), if self.enabled { Sense::click() } else { Sense::hover() });
         if resp.hovered() {
-            ui.painter()
-                .rect_filled(rect, 0.0, ui.visuals().widgets.hovered.weak_bg_fill);
+            ui.painter().rect_filled(rect, 0.0, ui.visuals().widgets.hovered.weak_bg_fill);
         }
-        let arrow = match c.sort {
-            "ascending" => " ⏶",
-            "descending" => " ⏷",
-            _ => "",
-        };
         ui.add_space(CELL_MARGIN);
-        ui.add(
-            egui::Label::new(egui::RichText::new(format!("{}{arrow}", c.title)).strong())
-                .selectable(false),
-        );
+        let label = ui.add(egui::Label::new(egui::RichText::new(c.title.as_str()).strong()).selectable(false));
+        // the sort arrow, painted (the default fonts have no arrow glyphs)
+        let dir = match c.sort {
+            "ascending" => Some(egui::accesskit::SortDirection::Ascending),
+            "descending" => Some(egui::accesskit::SortDirection::Descending),
+            _ => None,
+        };
+        if let Some(d) = dir {
+            let s = 4.0;
+            let ctr = egui::pos2(label.rect.right() + 4.0 + s, rect.center().y);
+            let (tip, l, r) = if d == egui::accesskit::SortDirection::Ascending {
+                (ctr - vec2(0.0, s), ctr + vec2(-s, s * 0.6), ctr + vec2(s, s * 0.6))
+            } else {
+                (ctr + vec2(0.0, s), ctr - vec2(s, s * 0.6), ctr + vec2(s, -s * 0.6))
+            };
+            let color = ui.visuals().strong_text_color();
+            ui.painter().add(egui::Shape::convex_polygon(vec![tip, l, r], color, egui::Stroke::NONE));
+        }
         let title = c.title.clone();
         ui.ctx().accesskit_node_builder(resp.id, |b| {
             b.set_role(Role::ColumnHeader);
             b.set_label(title);
+            if let Some(d) = dir {
+                b.set_sort_direction(d);
+            }
         });
         if resp.clicked() {
             self.header = Some(cell.col_range.start);
@@ -248,11 +243,7 @@ impl TableDelegate for Delegate<'_> {
         if self.enabled {
             let resp = ui.interact(rect, ui.scope_id().with("click"), Sense::click());
             if resp.hovered() && row as i64 != self.t.selected {
-                ui.painter().rect_filled(
-                    rect,
-                    0.0,
-                    v.widgets.hovered.weak_bg_fill.gamma_multiply(0.5),
-                );
+                ui.painter().rect_filled(rect, 0.0, v.widgets.hovered.weak_bg_fill.gamma_multiply(0.5));
             }
             if resp.clicked() {
                 self.clicked = Some(row);
@@ -302,47 +293,23 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
         .filter_map(|&c| {
             let ci = arena.ix(c);
             match arena.w(ci) {
-                W::TableColumn {
-                    title,
-                    width,
-                    resizable,
-                    align,
-                    sort,
-                } => Some(Col {
-                    id: arena.core[ci].egui_id,
-                    title: title.clone(),
-                    width: *width,
-                    resizable: *resizable,
-                    align,
-                    sort,
-                }),
+                W::TableColumn { title, width, resizable, align, sort } => {
+                    Some(Col { id: arena.core[ci].egui_id, title: title.clone(), width: *width, resizable: *resizable, align, sort })
+                }
                 _ => None,
             }
         })
         .collect();
-    let W::Table(t) = arena.w_mut(i) else {
-        unreachable!()
-    };
+    let W::Table(t) = arena.w_mut(i) else { unreachable!() };
     let t: &mut TableState = t;
     let row_h = t.row_height as f32;
-    let mut b = UiBuilder::new()
-        .max_rect(r)
-        .scope_id(id.with("scope"))
-        .layout(Layout::top_down(Align::Min));
+    let mut b = UiBuilder::new().max_rect(r).scope_id(id.with("scope")).layout(Layout::top_down(Align::Min));
     if !enabled {
         b = b.disabled();
     }
     let mut tui = ui.new_child(b);
     tui.set_clip_rect(ui.clip_rect().intersect(r));
-    let columns: Vec<Column> = cols
-        .iter()
-        .map(|c| {
-            Column::new(c.width as f32)
-                .id(c.id)
-                .resizable(c.resizable)
-                .range(16.0..=f32::INFINITY)
-        })
-        .collect();
+    let columns: Vec<Column> = cols.iter().map(|c| Column::new(c.width as f32).id(c.id).resizable(c.resizable).range(16.0..=f32::INFINITY)).collect();
     let mut table = egui_table::Table::new()
         .id_salt(id.with("table"))
         .num_rows(t.row_count as u64)
@@ -364,28 +331,9 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
     }
     t.applied = cols.iter().map(|c| (c.id, c.width)).collect();
     state.store(tui.ctx(), tid);
-    let mut d = Delegate {
-        cols: &cols,
-        t,
-        row_h,
-        enabled,
-        visible: None,
-        clicked: None,
-        activated: None,
-        header: None,
-    };
-    let resp = if cols.is_empty() {
-        tui.allocate_rect(r, Sense::hover())
-    } else {
-        table.show(&mut tui, &mut d)
-    };
-    let Delegate {
-        visible,
-        clicked,
-        activated,
-        header,
-        ..
-    } = d;
+    let mut d = Delegate { cols: &cols, t, row_h, enabled, visible: None, clicked: None, activated: None, header: None };
+    let resp = if cols.is_empty() { tui.allocate_rect(r, Sense::hover()) } else { table.show(&mut tui, &mut d) };
+    let Delegate { visible, clicked, activated, header, .. } = d;
     let name = arena.common(i).accessible_name.clone();
     tui.ctx().accesskit_node_builder(resp.id, |b| {
         b.set_role(Role::Table);
@@ -402,9 +350,7 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
     arena.core[i].drawn = r;
     crate::scene::hit::record(arena, i, ui);
     let sig = |name: &str| kinds::signal_id(kind, name);
-    let W::Table(t) = arena.w_mut(i) else {
-        unreachable!()
-    };
+    let W::Table(t) = arena.w_mut(i) else { unreachable!() };
     let mut events: Vec<(u32, Vec<Value>)> = Vec::new();
     // the data the table needs: the visible rows and `overscan` on each side
     if let Some(v) = visible
@@ -416,10 +362,7 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
         let last = (v.end.max(v.start + 1) - 1 + o).min(last_row);
         if t.asked != Some((first, last)) {
             t.asked = Some((first, last));
-            events.push((
-                sig("range"),
-                vec![Value::I64(first as i64), Value::I64(last as i64)],
-            ));
+            events.push((sig("range"), vec![Value::I64(first as i64), Value::I64(last as i64)]));
         }
     }
     let sel = clicked.filter(|&row| row as i64 != t.selected);
@@ -438,12 +381,6 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
         }
     }
     if let Some(row) = sel {
-        crate::leaf::widget_changed(
-            arena,
-            i,
-            &[P::SelectedIndex],
-            vec![Value::I64(row as i64)],
-            out,
-        );
+        crate::leaf::widget_changed(arena, i, &[P::SelectedIndex], vec![Value::I64(row as i64)], out);
     }
 }

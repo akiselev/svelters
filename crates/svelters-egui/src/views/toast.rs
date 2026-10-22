@@ -36,6 +36,16 @@ impl Level {
         }
     }
 
+    /// The name capitalized, as the toast's AccessKit label starts (`Warning: Disk full`).
+    pub fn title(self) -> &'static str {
+        match self {
+            Level::Info => "Info",
+            Level::Success => "Success",
+            Level::Warning => "Warning",
+            Level::Error => "Error",
+        }
+    }
+
     fn of(name: &str) -> Level {
         match name {
             "success" => Level::Success,
@@ -80,13 +90,7 @@ pub struct Toasts {
 
 impl Default for Toasts {
     fn default() -> Self {
-        Toasts {
-            corner: "bottom-right",
-            duration: 4.0,
-            list: Vec::new(),
-            next: 0,
-            closed: Vec::new(),
-        }
+        Toasts { corner: "bottom-right", duration: 4.0, list: Vec::new(), next: 0, closed: Vec::new() }
     }
 }
 
@@ -112,13 +116,7 @@ impl Toasts {
     pub fn push(&mut self, text: String, level: Level, duration: Option<f64>) -> i64 {
         self.next += 1;
         let duration = duration.unwrap_or(self.duration).max(0.0);
-        self.list.push(Toast {
-            id: self.next,
-            text,
-            level,
-            duration,
-            shown: None,
-        });
+        self.list.push(Toast { id: self.next, text, level, duration, shown: None });
         self.next
     }
 
@@ -174,11 +172,7 @@ fn queue_id() -> Id {
 /// Shows a toast from Rust in `ctx`'s viewport: the first `toast-host` drawn there takes it on its
 /// next frame (`duration`: seconds, `None` for the host's, 0 until closed). A repaint is requested.
 pub fn show(ctx: &egui::Context, text: impl Into<String>, level: Level, duration: Option<f64>) {
-    let q = Queued {
-        text: text.into(),
-        level,
-        duration,
-    };
+    let q = Queued { text: text.into(), level, duration };
     ctx.data_mut(|d| d.get_temp_mut_or_default::<Vec<Queued>>(queue_id()).push(q));
     ctx.request_repaint();
 }
@@ -197,11 +191,8 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
     let id = arena.core[i].egui_id;
     let ctx = ui.ctx().clone();
     let now = ui.input(|inp| inp.time);
-    let queued: Vec<Queued> =
-        ctx.data_mut(|d| std::mem::take(d.get_temp_mut_or_default::<Vec<Queued>>(queue_id())));
-    let W::ToastHost(t) = arena.w_mut(i) else {
-        unreachable!()
-    };
+    let queued: Vec<Queued> = ctx.data_mut(|d| std::mem::take(d.get_temp_mut_or_default::<Vec<Queued>>(queue_id())));
+    let W::ToastHost(t) = arena.w_mut(i) else { unreachable!() };
     for q in queued {
         t.push(q.text, q.level, q.duration);
     }
@@ -217,71 +208,54 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
     let mut area_rect = egui::Rect::NOTHING;
     if !t.list.is_empty() {
         let list = &mut t.list;
-        let r = egui::Area::new(id.with("toasts"))
-            .order(egui::Order::Foreground)
-            .anchor(align, dir)
-            .interactable(true)
-            .show(&ctx, |ui| {
-                ui.set_max_width(360.0);
-                let mut gone = Vec::new();
-                for toast in list.iter_mut() {
-                    let shown = *toast.shown.get_or_insert(now);
-                    let accent = toast.level.color(ui.visuals());
-                    let fr = egui::Frame::popup(ui.style())
-                        .inner_margin(egui::Margin::symmetric(10, 8))
-                        .show(ui, |ui| {
-                            ui.horizontal(|ui| {
-                                let (dot, _) = ui.allocate_exact_size(
-                                    vec2(4.0, ui.text_style_height(&egui::TextStyle::Body)),
-                                    Sense::hover(),
-                                );
-                                ui.painter().rect_filled(dot, 2.0, accent);
-                                ui.add(
-                                    egui::Label::new(toast.text.as_str())
-                                        .wrap()
-                                        .selectable(false),
-                                );
-                                let x = ui
-                                    .add(egui::Button::new("×").small().frame(false))
-                                    .on_hover_text("Dismiss")
-                                    .accessible_name("Dismiss");
-                                x.clicked()
-                            })
-                            .inner
-                        });
-                    let body = ui.interact(
-                        fr.response.rect,
-                        id.with(("toast", toast.id)),
-                        Sense::click(),
-                    );
-                    ui.ctx().accesskit_node_builder(body.id, |b| {
-                        b.set_role(egui::Role::Alert);
-                        b.set_label(toast.text.clone());
-                    });
-                    if fr.inner {
-                        gone.push((toast.id, "dismissed"));
-                        continue;
-                    }
-                    if body.clicked() {
-                        clicked.push(toast.id);
-                    }
-                    if toast.duration > 0.0 {
-                        let mut left = shown + toast.duration - now;
-                        if body.hovered() && left < 1.0 {
-                            // hovering holds it open
-                            toast.shown = Some(shown + (1.0 - left));
-                            left = 1.0;
-                        }
-                        if left <= 0.0 {
-                            gone.push((toast.id, "timeout"));
-                        } else {
-                            next_wake = Some(next_wake.map_or(left, |w: f64| w.min(left)));
-                        }
-                    }
-                    ui.add_space(6.0);
+        let r = egui::Area::new(id.with("toasts")).order(egui::Order::Foreground).anchor(align, dir).interactable(true).show(&ctx, |ui| {
+            ui.set_max_width(360.0);
+            let mut gone = Vec::new();
+            for toast in list.iter_mut() {
+                let shown = *toast.shown.get_or_insert(now);
+                let accent = toast.level.color(ui.visuals());
+                // the text takes the body's clicks; the close button sits beside it (no overlap)
+                let fr = egui::Frame::popup(ui.style()).inner_margin(egui::Margin::symmetric(10, 8)).show(ui, |ui| {
+                    ui.horizontal(|ui| {
+                        let (dot, _) = ui.allocate_exact_size(vec2(4.0, ui.text_style_height(&egui::TextStyle::Body)), Sense::hover());
+                        ui.painter().rect_filled(dot, 2.0, accent);
+                        let body = ui.add(egui::Label::new(toast.text.as_str()).wrap().selectable(false).sense(Sense::click()));
+                        let close = ui.add(egui::Button::new("×").small().frame(false)).on_hover_text("Dismiss").accessible_name("Dismiss");
+                        (body.clicked(), close.clicked())
+                    })
+                    .inner
+                });
+                // the toast itself: an Alert named by its level and text (hover only: it takes no
+                // clicks from its text or close button)
+                let alert = ui.interact(fr.response.rect, id.with(("toast", toast.id)), Sense::hover());
+                let label = format!("{}: {}", toast.level.title(), toast.text);
+                alert.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Alert, true, &label));
+                let (body_clicked, dismissed) = fr.inner;
+                if dismissed {
+                    gone.push((toast.id, "dismissed"));
+                    continue;
                 }
-                gone
-            });
+                if body_clicked {
+                    clicked.push(toast.id);
+                }
+                let hovered = alert.hovered();
+                if toast.duration > 0.0 {
+                    let mut left = shown + toast.duration - now;
+                    if hovered && left < 1.0 {
+                        // hovering holds it open
+                        toast.shown = Some(shown + (1.0 - left));
+                        left = 1.0;
+                    }
+                    if left <= 0.0 {
+                        gone.push((toast.id, "timeout"));
+                    } else {
+                        next_wake = Some(next_wake.map_or(left, |w: f64| w.min(left)));
+                    }
+                }
+                ui.add_space(6.0);
+            }
+            gone
+        });
         area_rect = r.response.rect;
         let gone = r.inner;
         list.retain(|t| !gone.iter().any(|(id, _)| *id == t.id));
@@ -298,11 +272,7 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
     let (s_closed, s_clicked) = (sig("closed"), sig("clicked"));
     if arena.listens(i, s_closed) {
         for (tid, reason) in closed {
-            out.push(Out::Event(
-                h,
-                s_closed,
-                vec![Value::I64(tid), Value::Str(reason.to_string())],
-            ));
+            out.push(Out::Event(h, s_closed, vec![Value::I64(tid), Value::Str(reason.to_string())]));
         }
     }
     if arena.listens(i, s_clicked) {

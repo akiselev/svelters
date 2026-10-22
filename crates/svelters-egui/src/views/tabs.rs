@@ -27,21 +27,13 @@ fn page(selected: i64, n: usize) -> Option<usize> {
 }
 
 /// Natural size: the selected page's, plus the bar.
-pub(crate) fn natural(
-    tree: &mut Tree<'_>,
-    kids: &[NodeId],
-    selected: i64,
-    avail: Size<AvailableSpace>,
-) -> Size<f32> {
+pub(crate) fn natural(tree: &mut Tree<'_>, kids: &[NodeId], selected: i64, avail: Size<AvailableSpace>) -> Size<f32> {
     let bar = bar_height(tree.m);
     let p = match page(selected, kids.len()) {
         Some(k) => measure_child(tree, kids[k], shrink(avail, 0.0, bar)),
         None => Size::ZERO,
     };
-    Size {
-        width: p.width.max(120.0),
-        height: p.height + bar,
-    }
+    Size { width: p.width.max(120.0), height: p.height + bar }
 }
 
 /// The selected page fills the area under the bar; the others are hidden.
@@ -50,16 +42,7 @@ pub(crate) fn place(tree: &mut Tree<'_>, kids: &[NodeId], selected: i64, size: S
     let shown = page(selected, kids.len());
     for (k, &c) in kids.iter().enumerate() {
         if Some(k) == shown {
-            place_child(
-                tree,
-                c,
-                k as u32,
-                (0.0, bar),
-                Size {
-                    width: size.width,
-                    height: (size.height - bar).max(0.0),
-                },
-            );
+            place_child(tree, c, k as u32, (0.0, bar), Size { width: size.width, height: (size.height - bar).max(0.0) });
         } else {
             hide(tree, c);
         }
@@ -71,26 +54,15 @@ fn caption(arena: &Arena, c: usize, k: usize) -> (String, bool) {
     match arena.w(c) {
         W::Tab { title, closable } if !title.is_empty() => (title.clone(), *closable),
         W::Tab { closable, .. } => (format!("Tab {}", k + 1), *closable),
-        _ if !arena.common(c).accessible_name.is_empty() => {
-            (arena.common(c).accessible_name.clone(), false)
-        }
+        _ if !arena.common(c).accessible_name.is_empty() => (arena.common(c).accessible_name.clone(), false),
         _ => (format!("Tab {}", k + 1), false),
     }
 }
 
 /// Paints tab-view `i` at `r`: the bar, then the selected page (if the last layout placed it).
-pub(crate) fn paint(
-    arena: &mut Arena,
-    i: usize,
-    r: Rect,
-    origin: Vec2,
-    ui: &mut Ui,
-    out: &mut Vec<Out>,
-) {
+pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
     let node = arena.slots.id_at(i).expect("live node");
-    let W::TabView { selected } = *arena.w(i) else {
-        unreachable!()
-    };
+    let W::TabView { selected } = *arena.w(i) else { unreachable!() };
     let n = arena.children[i].len();
     let shown = page(selected, n);
     let id = arena.core[i].egui_id;
@@ -99,25 +71,16 @@ pub(crate) fn paint(
     let bar = match shown {
         Some(k) => {
             let pr = arena.core[arena.ix(arena.children[i][k])].rect;
-            if pr == Rect::NOTHING {
-                bar_height(&Metrics::new(ui.ctx()))
-            } else {
-                pr.min.y - arena.core[i].rect.min.y
-            }
+            if pr == Rect::NOTHING { bar_height(&Metrics::new(ui.ctx())) } else { pr.min.y - arena.core[i].rect.min.y }
         }
         None => bar_height(&Metrics::new(ui.ctx())),
     };
     let laid_out = !arena.core[i].dirty.contains(Dirty::LAYOUT);
-    let pages: Vec<(String, bool)> = (0..n)
-        .map(|k| caption(arena, arena.ix(arena.children[i][k]), k))
-        .collect();
+    let pages: Vec<(String, bool)> = (0..n).map(|k| caption(arena, arena.ix(arena.children[i][k]), k)).collect();
     let bar_rect = Rect::from_min_size(r.min, vec2(r.width(), bar));
     let mut pick = None;
     let mut close = Vec::new();
-    let mut b = UiBuilder::new()
-        .max_rect(bar_rect)
-        .scope_id(id.with("bar"))
-        .layout(egui::Layout::left_to_right(egui::Align::Center));
+    let mut b = UiBuilder::new().max_rect(bar_rect).scope_id(id.with("bar")).layout(egui::Layout::left_to_right(egui::Align::Center));
     if !enabled {
         b = b.disabled();
     }
@@ -145,9 +108,7 @@ pub(crate) fn paint(
                     if resp.middle_clicked() {
                         close.push(k);
                     }
-                    let x = ui
-                        .add(egui::Button::new("×").small().frame(false))
-                        .on_hover_text("Close");
+                    let x = ui.add(egui::Button::new("×").small().frame(false)).on_hover_text("Close");
                     let x = x.accessible_name(format!("Close {title}"));
                     if x.clicked() {
                         close.push(k);
@@ -155,15 +116,10 @@ pub(crate) fn paint(
                 }
             }
         });
-    ui.painter().hline(
-        bar_rect.x_range(),
-        line_y,
-        ui.visuals().widgets.noninteractive.bg_stroke,
-    );
+    ui.painter().hline(bar_rect.x_range(), line_y, ui.visuals().widgets.noninteractive.bg_stroke);
     let tip = arena.common(i).tooltip.clone();
     if !tip.is_empty() {
-        ui.interact(bar_rect, id.with("tip"), Sense::hover())
-            .on_hover_text(tip);
+        ui.interact(bar_rect, id.with("tip"), Sense::hover()).on_hover_text(tip);
     }
     arena.core[i].drawn = r;
     crate::scene::hit::record(arena, i, ui);
@@ -182,13 +138,7 @@ pub(crate) fn paint(
         // another page is laid out next frame
         arena.invalidate_style(node);
         ui.ctx().request_repaint();
-        crate::leaf::widget_changed(
-            arena,
-            i,
-            &[kinds::P::SelectedIndex],
-            vec![Value::I64(k as i64)],
-            out,
-        );
+        crate::leaf::widget_changed(arena, i, &[kinds::P::SelectedIndex], vec![Value::I64(k as i64)], out);
     }
     // (on the frame of a click, the page laid out before it)
     if laid_out && let Some(k) = shown {

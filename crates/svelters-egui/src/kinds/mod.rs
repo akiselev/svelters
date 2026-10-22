@@ -30,7 +30,7 @@ mod views;
 pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, WRAP, WRAP_MODE};
 pub use decor::ORIENTATION;
 pub use layouts::{JUSTIFY_ITEMS, SCROLL_DIRECTION};
-pub use views::{CELL_ALIGN, SORT, TOAST_CORNER, TOAST_LEVEL};
+pub use views::{CELL_ALIGN, SORT, TOAST_CORNER, TOAST_LEVEL, slot_accepts};
 pub use registry::{KindRegistry, PROVIDER_PACK, ProviderKind, kind};
 
 /// A property's value type (also its ABI tag).

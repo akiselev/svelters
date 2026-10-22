@@ -13,9 +13,7 @@
 //! - `toast-host`: draws the toasts of its viewport in a corner; `show(text, level?, duration?)`
 //!   from JS (`bind:this`) or `svelters_egui::toast::show` from Rust.
 
-use super::{
-    Def, KindDef, MethodDef, Native, ORIENTATION, P, PropDef, SignalDef, Ty, input, prop, signal,
-};
+use super::{Def, KindDef, MethodDef, Native, ORIENTATION, P, PropDef, SignalDef, Ty, input, prop, signal};
 
 pub const CELL_ALIGN: &[&str] = &["start", "center", "end"];
 pub const SORT: &[&str] = &["none", "ascending", "descending"];
@@ -24,37 +22,19 @@ pub const TOAST_LEVEL: &[&str] = &["info", "success", "warning", "error"];
 
 const NONE: &[(&str, Ty)] = &[];
 
+/// The kind a container's slot accepts (the spec's `slots.<name>.accepts`): a `table` takes only
+/// `table-column`s, every other container any `Widget`.
+pub fn slot_accepts(k: &KindDef) -> &'static str {
+    if k.id == "Table" { "TableColumn" } else { "Widget" }
+}
+
 // ---- table ----
 
 static TABLE_PROPS: &[PropDef] = &[
-    prop(
-        "row-count",
-        P::RowCount,
-        Ty::I64,
-        Def::I64(0),
-        "Number of rows (the scroll extent). Rows without data yet are drawn empty.",
-    ),
-    prop(
-        "row-height",
-        P::RowHeight,
-        Ty::F64,
-        Def::F64(20.0),
-        "Height of every row (and of the header row), in points.",
-    ),
-    prop(
-        "sticky-columns",
-        P::StickyColumns,
-        Ty::I64,
-        Def::I64(0),
-        "Number of leading columns that do not scroll horizontally.",
-    ),
-    prop(
-        "striped",
-        P::Striped,
-        Ty::Bool,
-        Def::Bool(true),
-        "Alternate rows get a faint background.",
-    ),
+    prop("row-count", P::RowCount, Ty::I64, Def::I64(0), "Number of rows (the scroll extent). Rows without data yet are drawn empty."),
+    prop("row-height", P::RowHeight, Ty::F64, Def::F64(20.0), "Height of every row (and of the header row), in points."),
+    prop("sticky-columns", P::StickyColumns, Ty::I64, Def::I64(0), "Number of leading columns that do not scroll horizontally."),
+    prop("striped", P::Striped, Ty::Bool, Def::Bool(true), "Alternate rows get a faint background."),
     prop(
         "overscan",
         P::Overscan,
@@ -62,13 +42,7 @@ static TABLE_PROPS: &[PropDef] = &[
         Def::I64(20),
         "Rows beyond the visible ones that `range` asks for on each side (data ready before it scrolls into view).",
     ),
-    input(
-        "selected",
-        P::SelectedIndex,
-        Ty::I64,
-        Def::I64(-1),
-        "The selected row, -1 for none; a click on a row (or the arrow keys) changes it.",
-    ),
+    input("selected", P::SelectedIndex, Ty::I64, Def::I64(-1), "The selected row, -1 for none; a click on a row (or the arrow keys) changes it."),
 ];
 
 static TABLE_SIGNALS: &[SignalDef] = &[
@@ -77,21 +51,9 @@ static TABLE_SIGNALS: &[SignalDef] = &[
         &[("first", Ty::I64), ("last", Ty::I64)],
         "The rows the table needs data for changed: `first..=last` (the visible rows plus `overscan`); answer with `set-rows`.",
     ),
-    signal(
-        "changed",
-        &[("selected", Ty::I64)],
-        "The user selected a row; carries its index.",
-    ),
-    signal(
-        "activated",
-        &[("row", Ty::I64)],
-        "A row was double-clicked (or Enter pressed on the selection).",
-    ),
-    signal(
-        "header-clicked",
-        &[("column", Ty::I64)],
-        "A column header was clicked (sort on it in JS and set the column's `sort`).",
-    ),
+    signal("changed", &[("selected", Ty::I64)], "The user selected a row; carries its index."),
+    signal("activated", &[("row", Ty::I64)], "A row was double-clicked (or Enter pressed on the selection)."),
+    signal("header-clicked", &[("column", Ty::I64)], "A column header was clicked (sort on it in JS and set the column's `sort`)."),
 ];
 
 static TABLE_METHODS: &[MethodDef] = &[
@@ -99,86 +61,31 @@ static TABLE_METHODS: &[MethodDef] = &[
         name: "set-rows",
         doc: "`set-rows(first, rows)`: the data window, rows `first..first + rows.length`, each row a list of cell values (strings, numbers, booleans; null for empty). Replaces the previous window.",
     },
-    MethodDef {
-        name: "clear-rows",
-        doc: "Drops the data window (every row draws empty until `set-rows`).",
-    },
-    MethodDef {
-        name: "scroll-to-row",
-        doc: "`scroll-to-row(row)`: scrolls the row into view on the next frame.",
-    },
+    MethodDef { name: "clear-rows", doc: "Drops the data window (every row draws empty until `set-rows`)." },
+    MethodDef { name: "scroll-to-row", doc: "`scroll-to-row(row)`: scrolls the row into view on the next frame." },
 ];
 
 static TABLE_COLUMN_PROPS: &[PropDef] = &[
     prop("title", P::Title, Ty::Str, Def::Str(""), "The header text."),
-    prop(
-        "width",
-        P::ColumnWidth,
-        Ty::F64,
-        Def::F64(100.0),
-        "Width in points. A user resize keeps its width until this prop changes.",
-    ),
-    prop(
-        "resizable",
-        P::Resizable,
-        Ty::Bool,
-        Def::Bool(true),
-        "Its right edge can be dragged (double-click: fit the content).",
-    ),
-    prop(
-        "align",
-        P::CellAlign,
-        Ty::Enum(CELL_ALIGN),
-        Def::Str("start"),
-        "Horizontal alignment of its cells.",
-    ),
-    prop(
-        "sort",
-        P::Sort,
-        Ty::Enum(SORT),
-        Def::Str("none"),
-        "The sort arrow its header shows (the data is sorted by JS).",
-    ),
+    prop("width", P::ColumnWidth, Ty::F64, Def::F64(100.0), "Width in points. A user resize keeps its width until this prop changes."),
+    prop("resizable", P::Resizable, Ty::Bool, Def::Bool(true), "Its right edge can be dragged (double-click: fit the content)."),
+    prop("align", P::CellAlign, Ty::Enum(CELL_ALIGN), Def::Str("start"), "Horizontal alignment of its cells."),
+    prop("sort", P::Sort, Ty::Enum(SORT), Def::Str("none"), "The sort arrow its header shows (the data is sorted by JS)."),
 ];
 
 // ---- tab-view ----
 
-static TAB_VIEW_PROPS: &[PropDef] = &[input(
-    "selected",
-    P::SelectedIndex,
-    Ty::I64,
-    Def::I64(0),
-    "Index of the shown page; a click on a tab changes it.",
-)];
+static TAB_VIEW_PROPS: &[PropDef] = &[input("selected", P::SelectedIndex, Ty::I64, Def::I64(0), "Index of the shown page; a click on a tab changes it.")];
 
-static TAB_VIEW_SIGNALS: &[SignalDef] = &[signal(
-    "changed",
-    &[("selected", Ty::I64)],
-    "The user picked a tab; carries its index.",
-)];
+static TAB_VIEW_SIGNALS: &[SignalDef] = &[signal("changed", &[("selected", Ty::I64)], "The user picked a tab; carries its index.")];
 
 static TAB_PROPS: &[PropDef] = &[
-    prop(
-        "title",
-        P::Title,
-        Ty::Str,
-        Def::Str(""),
-        "The tab's caption (also its accessible name).",
-    ),
-    prop(
-        "closable",
-        P::Closable,
-        Ty::Bool,
-        Def::Bool(false),
-        "The tab shows a close button (`close-requested`).",
-    ),
+    prop("title", P::Title, Ty::Str, Def::Str(""), "The tab's caption (also its accessible name)."),
+    prop("closable", P::Closable, Ty::Bool, Def::Bool(false), "The tab shows a close button (`close-requested`)."),
 ];
 
-static TAB_SIGNALS: &[SignalDef] = &[signal(
-    "close-requested",
-    NONE,
-    "The tab's close button was clicked (or middle click on the tab); remove the tab to close it.",
-)];
+static TAB_SIGNALS: &[SignalDef] =
+    &[signal("close-requested", NONE, "The tab's close button was clicked (or middle click on the tab); remove the tab to close it.")];
 
 // ---- split-view ----
 
@@ -200,28 +107,12 @@ static SPLIT_VIEW_PROPS: &[PropDef] = &[
         layout: false,
         doc: "Size of the first pane in points along the split; null for half. Dragging the divider changes it (`bind:position`); it is clamped by `min-size` when laid out.",
     },
-    prop(
-        "min-size",
-        P::MinSize,
-        Ty::F64,
-        Def::F64(32.0),
-        "Smallest size of either pane, in points.",
-    ),
-    prop(
-        "resizable",
-        P::Resizable,
-        Ty::Bool,
-        Def::Bool(true),
-        "The divider can be dragged.",
-    ),
+    prop("min-size", P::MinSize, Ty::F64, Def::F64(32.0), "Smallest size of either pane, in points."),
+    prop("resizable", P::Resizable, Ty::Bool, Def::Bool(true), "The divider can be dragged."),
 ];
 
 static SPLIT_VIEW_SIGNALS: &[SignalDef] = &[
-    signal(
-        "changed",
-        &[("position", Ty::F64)],
-        "The user dragged the divider; carries the first pane's new size.",
-    ),
+    signal("changed", &[("position", Ty::F64)], "The user dragged the divider; carries the first pane's new size."),
     signal("drag-started", NONE, "A divider drag began."),
     signal("drag-stopped", NONE, "A divider drag ended."),
 ];
@@ -229,20 +120,8 @@ static SPLIT_VIEW_SIGNALS: &[SignalDef] = &[
 // ---- toast-host ----
 
 static TOAST_HOST_PROPS: &[PropDef] = &[
-    prop(
-        "corner",
-        P::Corner,
-        Ty::Enum(TOAST_CORNER),
-        Def::Str("bottom-right"),
-        "The viewport corner the toasts stack in.",
-    ),
-    prop(
-        "duration",
-        P::Duration,
-        Ty::F64,
-        Def::F64(4.0),
-        "Seconds a toast stays when `show` gives none; 0 keeps it until closed.",
-    ),
+    prop("corner", P::Corner, Ty::Enum(TOAST_CORNER), Def::Str("bottom-right"), "The viewport corner the toasts stack in."),
+    prop("duration", P::Duration, Ty::F64, Def::F64(4.0), "Seconds a toast stays when `show` gives none; 0 keeps it until closed."),
 ];
 
 static TOAST_HOST_SIGNALS: &[SignalDef] = &[
@@ -259,14 +138,8 @@ static TOAST_HOST_METHODS: &[MethodDef] = &[
         name: "show",
         doc: "`show(text, level = 'info', duration = the host's)`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed) and returns its id.",
     },
-    MethodDef {
-        name: "dismiss",
-        doc: "`dismiss(id)`: closes that toast (`closed(id, 'method')`).",
-    },
-    MethodDef {
-        name: "clear",
-        doc: "Closes every toast.",
-    },
+    MethodDef { name: "dismiss", doc: "`dismiss(id)`: closes that toast (`closed(id, 'method')`)." },
+    MethodDef { name: "clear", doc: "Closes every toast." },
 ];
 
 pub(super) const TABLE: KindDef = KindDef {

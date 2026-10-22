@@ -181,7 +181,7 @@ fn kind_json(k: &KindDef) -> J {
         json!({
             "default_slot": slot,
             "policy": "ordered",
-            "slots": {slot: {"accepts": ["Widget"], "attrs": {}, "many": true, "order": "before_sibling", "route_by_kind": false}},
+            "slots": {slot: {"accepts": [kinds::slot_accepts(k)], "attrs": {}, "many": true, "order": "before_sibling", "route_by_kind": false}},
         })
     });
     json!({
