@@ -330,6 +330,9 @@ pub(crate) struct Core {
     pub(crate) maps: RefCell<SourceMaps>,
     /// App exports (E0): this host's exported Rust objects.
     pub(crate) apps: crate::exports::objects::AppObjects,
+    /// LD1: whether an `svelters:app/<module>` export is reachable by `construct` and `callStatic`,
+    /// which need no import. Set by `Host::set_module_hooks` from the extension policy.
+    pub(crate) app_gate: RefCell<Option<Rc<dyn Fn(&str) -> bool>>>,
     /// Where app-export calls are logged (the op log of a test harness), if anywhere.
     pub(crate) op_log: RefCell<Option<Rc<dyn Fn(&str)>>>,
     /// Offloaded app-export calls in flight (E1) and the completion queue workers post to.
@@ -381,6 +384,7 @@ impl Core {
             cb_depth: Cell::new(0),
             maps: RefCell::default(),
             apps: Default::default(),
+            app_gate: RefCell::new(None),
             op_log: RefCell::new(None),
             ops: offload::OpTable::new(crate::exports::offload::Completions::new(backend.wake_handle())),
             reactive: reactive::Reactive::new(crate::exports::reactive::Hub::new(backend.wake_handle())),

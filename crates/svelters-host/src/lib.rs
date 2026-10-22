@@ -265,6 +265,7 @@ impl<'a> Host<'a> {
     /// next load (`load_from`, `load_entry_from`, `load_bundle`, `load_entry`). The default serves
     /// this binary's exports and every `svelters:app/*` module.
     pub fn set_module_hooks(&self, hooks: ModuleHooks) {
+        *self.core.app_gate.borrow_mut() = Some(hooks.app_gate());
         *self.module_hooks.borrow_mut() = hooks;
     }
 

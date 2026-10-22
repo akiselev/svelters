@@ -35,7 +35,9 @@ pub enum Visibility {
 }
 
 impl Visibility {
-    fn permits(&self, module: &str, importer: &str) -> bool {
+    /// Whether `module` (`task` for `svelters:app/task`) is visible to `importer`. The ops path
+    /// (`construct`, `callStatic`) has no importer and passes `""`.
+    pub fn permits(&self, module: &str, importer: &str) -> bool {
         match self {
             Visibility::All => true,
             Visibility::Allow(names) => names.iter().any(|n| n == module),
@@ -187,6 +189,13 @@ impl ModuleProvider for ComposedProvider {
     fn load(&self, id: &str) -> Result<ModuleCode, String> {
         if id == CORE_ID || id.starts_with(APP_PREFIX) {
             // The id passed `resolve`; a load by id alone (a cached graph) is gated again.
+            // A module id reached by another route than `resolve` must not load either. A per-import
+            // `Filter` needs an importer, so it is checked at `resolve` only.
+            if let Some(module) = id.strip_prefix(APP_PREFIX) {
+                if !matches!(self.policy.visibility, Visibility::Filter(_)) && !self.policy.visibility.permits(module, "") {
+                    return Err(format!("no such module: `{id}`"));
+                }
+            }
             if id != CORE_ID && !self.natives.serves(id) {
                 if !(self.extra.serves(id) && self.policy.native_modules.permits(id)) {
                     return Err(format!("no such module: `{id}`"));
@@ -297,6 +306,14 @@ mod tests {
         let p = composed(Visibility::Filter(Rc::new(|m, importer| m != "secret" || importer == "trusted.js")));
         assert!(p.resolve("trusted.js", "svelters:app/secret").is_ok());
         assert!(p.resolve("main.js", "svelters:app/secret").is_err());
+    }
+
+    #[test]
+    fn load_rechecks_visibility_of_app_exports() {
+        let p = composed(Visibility::Allow(vec!["task".into()]));
+        assert!(p.load("svelters:app/task").is_ok());
+        assert_eq!(p.load("svelters:app/secret").unwrap_err(), "no such module: `svelters:app/secret`");
+        assert!(p.load("svelters:core").is_ok());
     }
 
     #[test]

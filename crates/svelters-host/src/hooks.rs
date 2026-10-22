@@ -73,6 +73,12 @@ impl ModuleHooks {
         self
     }
 
+    /// The gate for ops that reach an export without an import: the policy's visibility, with no importer.
+    pub(crate) fn app_gate(&self) -> Rc<dyn Fn(&str) -> bool> {
+        let v = self.policy.visibility.clone();
+        Rc::new(move |module| v.permits(module, ""))
+    }
+
     pub(crate) fn compose(&self, inner: Rc<dyn ModuleProvider>) -> Result<Rc<dyn ModuleProvider>, String> {
         let mut p = ComposedProvider::new(inner).natives(self.natives.clone()).extra_natives(self.extra.clone()).policy(self.policy.clone());
         for h in &self.schemes {

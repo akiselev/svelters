@@ -24,6 +24,9 @@ Spec: `plans/research/TRACKS.md` §2.1 (LOADER, row LD1), `plans/research/QUICKJ
 
 - User decision (2026-10-22, relayed by the coordinator): extensions run under a deny-by-default, auditable security policy; SEC0 (`ARCH-SECURITY.md`) designs it. LD1 leaves the hooks only. `ExtensionPolicy` (`#[non_exhaustive]`, in `svelters-modules/src/compose.rs`) holds `visibility` and `native_modules` (`NativeAccess`: `All`, `Allow(ids)`, `Deny`) and grows with SEC0. `ExtensionPolicy::open()` is the primary host; `deny_all()` is `ModuleHooks::isolate()`: no app module visible, no added native module loadable. The gate covers sets added with `ModuleHooks::natives` (dlopen'd, embedder's); the app's own exports are governed by visibility. SEC0 slot: a file-system scope. `SourceProvider` loads any path it resolves, so an extension host must reach it only through a `ComposedProvider` that carries the policy.
 
+- Security fix (coordinator, from ARCH-SECURITY §5): `construct('app:mod.T')` and `callStatic('app:mod', ..)` reach an export with no import, so they are gated by the same policy. `Host::set_module_hooks` also sets `Core::app_gate` (the policy's visibility, importer `""`); `app_construct` and `app_call_static` check it (`apps.rs`, `app_gate_kind`) and fail with the same `unknown kind` text as a missing export, listing only the visible modules. Denied by default for `ModuleHooks::isolate()`. `ComposedProvider::load` re-checks the visibility of app exports too (not for `Visibility::Filter`, which needs an importer and is checked at `resolve`).
+- Deferred to SEC1 (not one-line hooks): a `principal` on `ModuleHooks` passed to `Visibility::Filter` and `SchemeHook`; a typed internal denial carrying the capability (the JS message stays "no such module"); an on-evaluate callback (id, principal, content hash); gating instance methods and properties of objects a visible export returns from a hidden module; the `Policy` gate in `ExtensionPolicy`.
+
 ## Decided (LD1)
 
 - Q3 option (b), as recommended in TRACKS §6: static modules always, dlopen behind the `dlopen` feature, which cadatomic leaves off. The feature adds `libloading` (already in the lockfile).
@@ -39,5 +42,7 @@ Spec: `plans/research/TRACKS.md` §2.1 (LOADER, row LD1), `plans/research/QUICKJ
 ## Tests
 
 - `svelters-modules`: `compose::tests` (routing, visibility, hidden-looks-absent, reserved/duplicate schemes).
+- `crates/svelters/tests/exports.rs::ops_without_an_import_obey_the_extension_policy`: `construct` and `callStatic` of an app kind are denied for `isolate()` and work once the module is allowed (and by default on the primary host).
+- `compose::tests::load_rechecks_visibility_of_app_exports`.
 - `crates/svelters-host/tests/hooks.rs`: both policy defaults (primary sees all; `isolate()` sees no app module and loads no added native module until allowed, and a visible module stays denied while the native gate is closed); a scheme and an extra native module load through a `Host`; an unregistered scheme is a load error; the filter hides a module; a reserved scheme is refused.
 - Not tested: `DylibModules` (needs a built cdylib fixture; checked with `cargo check --features dlopen` only).

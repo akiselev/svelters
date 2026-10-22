@@ -27,10 +27,29 @@ fn type_err(msg: String) -> OpError {
 
 impl Core {
     pub(crate) fn app_kind(&self, name: &str) -> Result<svl_id, String> {
-        schema().kind(name).ok_or_else(|| format!("unknown kind '{name}': no such Rust export in this binary (svelters:app modules: {})", {
-            let ms: Vec<&str> = schema().modules.iter().map(|m| m.name.as_str()).collect();
+        schema().kind(name).ok_or_else(|| self.unknown_app_kind(name))
+    }
+
+    /// The error for an app kind that does not exist or is not visible to this host: the same text,
+    /// listing only the visible modules, so a policy does not reveal what it hides.
+    fn unknown_app_kind(&self, name: &str) -> String {
+        format!("unknown kind '{name}': no such Rust export in this binary (svelters:app modules: {})", {
+            let ms: Vec<&str> = schema().modules.iter().map(|m| m.name.as_str()).filter(|m| self.app_module_visible(m)).collect();
             if ms.is_empty() { "none".to_string() } else { ms.join(", ") }
-        }))
+        })
+    }
+
+    fn app_module_visible(&self, module: &str) -> bool {
+        self.app_gate.borrow().as_ref().is_none_or(|g| g(module))
+    }
+
+    /// Imports are gated by the module provider; `construct` and `callStatic` reach an export with
+    /// no import, so they ask the same policy here.
+    fn app_gate_kind(&self, kind: svl_id) -> Result<(), OpError> {
+        match schema().module_of(kind) {
+            Some(m) if !self.app_module_visible(&m.name) => Err(type_err(self.unknown_app_kind(&self.app_kind_name(kind)))),
+            _ => Ok(()),
+        }
     }
 
     fn app_kind_name(&self, kind: svl_id) -> String {
@@ -159,6 +178,7 @@ impl Core {
     where
         E: JsReader + JsWriter<V = <E as JsReader>::V>,
     {
+        self.app_gate_kind(kind)?;
         let Some(c) = schema().class(kind) else {
             return Err(type_err(format!("{} is a module, not a class: it cannot be constructed", self.app_kind_name(kind))));
         };
@@ -199,6 +219,7 @@ impl Core {
     where
         E: JsReader + JsWriter<V = <E as JsReader>::V> + JsPromises,
     {
+        self.app_gate_kind(kind)?;
         let m = self.app_resolve(NameKind::Method, kind, method)?;
         let kname = || self.app_kind_name(kind);
         if m.kind == MemberKind::Method {
