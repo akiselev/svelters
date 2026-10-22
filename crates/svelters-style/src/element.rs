@@ -30,6 +30,11 @@ pub trait Element: Copy + Debug {
     fn first_child(&self) -> Option<Self>;
     /// The element's tag (`button`, `quantity-field`), matched case-sensitively by type selectors.
     fn tag(&self) -> &str;
+    /// A second tag type selectors match (OW0, WIDGET-PARITY §4.3 `style_as`): an app's own kind
+    /// styled like a built-in (`cad-slider` matched by `slider` rules and parts).
+    fn style_as(&self) -> Option<&str> {
+        None
+    }
     /// The `#id` (the `NAME` style op; the scene's `anchor` is a different thing).
     fn id(&self) -> Option<&str>;
     fn has_class(&self, name: &str) -> bool;
@@ -39,10 +44,13 @@ pub trait Element: Copy + Debug {
     fn attr(&self, name: &str) -> Option<Cow<'_, str>>;
     fn state(&self) -> StateMask;
 
-    /// `:focus-visible`. The default is "focused", which is right for nodes only the keyboard can
-    /// focus; a tree that tracks the focus reason overrides it.
+    /// `:focus-visible`. The default reads [`StateMask::FOCUS_VISIBLE`] (the Focusable unit sets it
+    /// from the focus reason, ARCH-WIDGETS §2.2) and, for a tree that never sets that bit, falls
+    /// back to "focused" (right for nodes only the keyboard can focus). A tree that sets the bit
+    /// for some nodes and not others overrides this to read the bit alone.
     fn is_focus_visible(&self) -> bool {
-        self.state().contains(StateMask::FOCUSED)
+        let s = self.state();
+        s.contains(StateMask::FOCUS_VISIBLE) || s.contains(StateMask::FOCUSED)
     }
 }
 
@@ -86,7 +94,7 @@ impl<E: Element> selectors::Element for Node<E> {
         false
     }
     fn has_local_name(&self, local_name: &str) -> bool {
-        self.0.tag() == local_name
+        self.0.tag() == local_name || self.0.style_as() == Some(local_name)
     }
     fn has_namespace(&self, ns: &str) -> bool {
         ns.is_empty()
@@ -121,8 +129,11 @@ impl<E: Element> selectors::Element for Node<E> {
         }
     }
 
-    fn match_pseudo_element(&self, pe: &PseudoElement, _cx: &mut MatchingContext<'_, Impl>) -> bool {
-        match *pe {}
+    fn match_pseudo_element(&self, _pe: &PseudoElement, _cx: &mut MatchingContext<'_, Impl>) -> bool {
+        // A pseudo-element's rules match only through `Stylist::compute_pseudo` (stateless
+        // pseudo-element mode, which consumes the pseudo before the element is asked); the
+        // element itself is never its own pseudo-element.
+        false
     }
 
     fn apply_selector_flags(&self, _flags: ElementSelectorFlags) {

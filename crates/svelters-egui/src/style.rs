@@ -31,7 +31,7 @@
 //!
 //! Writer lane: STYLE.
 
-mod shadow;
+pub(crate) mod shadow;
 pub(crate) use shadow::paint_bounds;
 
 use crate::backend::EguiBackend;
@@ -85,12 +85,68 @@ pub(crate) const ENGINE_PROPS: &[(&str, &str, &[&str])] = &[
     ("padding-left", "length", &[]),
     ("padding-right", "length", &[]),
     ("padding-top", "length", &[]),
+    // OW-CSS (ARCH-WIDGETS §1.1): read by the paint primitives through `StyleView`
+    ("background-image", "image", &[]),
+    ("border-top-color", "color", &[]),
+    ("border-top-style", "enum", &["none", "hidden", "solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"]),
+    ("border-top-width", "length", &[]),
+    ("border-right-color", "color", &[]),
+    ("border-right-style", "enum", &["none", "hidden", "solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"]),
+    ("border-right-width", "length", &[]),
+    ("border-bottom-color", "color", &[]),
+    ("border-bottom-style", "enum", &["none", "hidden", "solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"]),
+    ("border-bottom-width", "length", &[]),
+    ("border-left-color", "color", &[]),
+    ("border-left-style", "enum", &["none", "hidden", "solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"]),
+    ("border-left-width", "length", &[]),
+    ("border-top-left-radius", "length", &[]),
+    ("border-top-right-radius", "length", &[]),
+    ("border-bottom-right-radius", "length", &[]),
+    ("border-bottom-left-radius", "length", &[]),
+    // WIDGET-PARITY P2: what a glyph part draws
+    ("content", "content", &[]),
+    ("cursor", "enum", &["auto", "default", "none", "context-menu", "help", "pointer", "progress", "wait", "cell", "crosshair", "text", "vertical-text", "alias", "copy", "move", "no-drop", "not-allowed", "grab", "grabbing", "all-scroll", "col-resize", "row-resize", "n-resize", "e-resize", "s-resize", "w-resize", "ne-resize", "nw-resize", "se-resize", "sw-resize", "ew-resize", "ns-resize", "nesw-resize", "nwse-resize", "zoom-in", "zoom-out"]),
+    ("letter-spacing", "length", &[]),
+    ("outline-color", "color", &[]),
+    ("outline-offset", "length", &[]),
+    ("outline-style", "enum", &["none", "auto", "solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"]),
+    ("outline-width", "length", &[]),
+    // the text primitive's inputs (ARCH-WIDGETS §1.1); `font-family` and `line-height` stay text
+    // (a family list; a number or a length) for the primitive to read
+    ("font-family", "raw", &[]),
+    ("font-style", "enum", &["normal", "italic", "oblique"]),
+    ("font-weight", "font-weight", &[]),
+    ("line-height", "raw", &[]),
+    ("text-align", "enum", &["start", "end", "left", "right", "center", "justify"]),
+    // R18: links underline on hover
+    ("text-decoration-line", "enum", &["none", "underline", "overline", "line-through"]),
+    ("text-overflow", "enum", &["clip", "ellipsis"]),
+    ("text-transform", "enum", &["none", "uppercase", "lowercase", "capitalize"]),
+    ("transition", "transition", &[]),
+    ("white-space", "enum", &["normal", "nowrap", "pre", "pre-wrap", "pre-line", "break-spaces"]),
 ];
 
 /// The bits the walk owns: set from the pass's interaction and from props, never by providers.
 pub(crate) const WALK_BITS: StateBits = StateBits(
-    StateBits::HOVERED.0 | StateBits::PRESSED.0 | StateBits::FOCUSED.0 | StateBits::FOCUS_WITHIN.0 | StateBits::DISABLED.0 | StateBits::CHECKED.0 | StateBits::SELECTED.0 | StateBits::EXITING.0,
+    StateBits::HOVERED.0
+        | StateBits::PRESSED.0
+        | StateBits::FOCUSED.0
+        | StateBits::FOCUS_WITHIN.0
+        | StateBits::DISABLED.0
+        | StateBits::CHECKED.0
+        | StateBits::SELECTED.0
+        | StateBits::EXITING.0
+        | StateBits::FOCUS_VISIBLE.0,
 );
+
+/// OW0: the walk-owned bits an own widget (`Caps::PAINTS_BOX`) keeps itself: its units' and its
+/// prop mirror's. The walk sets only `disabled` and `exiting` on it.
+const OWN_KEEPS: StateBits = StateBits(WALK_BITS.0 & !(StateBits::DISABLED.0 | StateBits::EXITING.0));
+
+/// OW0: an own widget draws itself (`crate::paint`) and owns its interaction bits.
+pub(crate) fn is_own(w: &W) -> bool {
+    matches!(w, W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::PAINTS_BOX))
+}
 
 /// One node's style inputs and outputs.
 #[derive(Debug, Default)]
@@ -171,9 +227,26 @@ impl Default for SceneStyle {
     }
 }
 
+/// OW0: the computed styles of one node's paint parts (`::part(name)`), by part name.
+pub(crate) type PartStyles = Vec<(Box<str>, Arc<ComputedStyle>)>;
+
 impl SceneStyle {
     pub(crate) fn is_active(&self) -> bool {
         self.active
+    }
+
+    /// OW0 hook for OW-CSS: the computed style of node `id`'s part `part` (`::part(name)`), as a
+    /// pseudo-element of the host. `None` until the engine computes part styles (OW-CSS); own
+    /// widgets then paint the part from its UA table, inheriting from the host.
+    pub(crate) fn part_computed(&self, id: NodeId, part: &str) -> Option<&Arc<ComputedStyle>> {
+        let _ = (id, part);
+        None
+    }
+
+    /// OW0 hook for OW-CSS: every part style of node `id` (what `measure` sees).
+    pub(crate) fn part_styles(&self, id: NodeId) -> PartStyles {
+        let _ = id;
+        Vec::new()
     }
 
     fn node(&self, id: NodeId) -> Option<&NodeStyle> {
@@ -255,6 +328,13 @@ impl Element for NodeRef<'_> {
     fn tag(&self) -> &str {
         NodeRef::tag(*self)
     }
+    /// OW0: a provider kind declared with `style_as = "<tag>"`.
+    fn style_as(&self) -> Option<&str> {
+        match self.s.w(self.i) {
+            W::Ext(x) => x.entry().style_as,
+            _ => None,
+        }
+    }
     fn id(&self) -> Option<&str> {
         self.s.style.node(NodeRef::id(*self))?.name.as_deref()
     }
@@ -273,6 +353,11 @@ impl Element for NodeRef<'_> {
     }
     fn state(&self) -> StateMask {
         StateMask(NodeRef::state(*self).0)
+    }
+    /// OW0: the `focus-visible` bit (own widgets: Focusable's rule; stock leaves: the walk sets it
+    /// with `focused`, as before).
+    fn is_focus_visible(&self) -> bool {
+        NodeRef::state(*self).contains(StateBits::FOCUS_VISIBLE)
     }
 }
 
@@ -309,6 +394,9 @@ impl Element for Forced<'_> {
     fn tag(&self) -> &str {
         Element::tag(&self.n)
     }
+    fn style_as(&self) -> Option<&str> {
+        Element::style_as(&self.n)
+    }
     fn id(&self) -> Option<&str> {
         Element::id(&self.n)
     }
@@ -323,6 +411,9 @@ impl Element for Forced<'_> {
     }
     fn state(&self) -> StateMask {
         if self.n.id() == self.subject { StateMask(self.state.0) } else { Element::state(&self.n) }
+    }
+    fn is_focus_visible(&self) -> bool {
+        self.state().contains(StateMask(StateBits::FOCUS_VISIBLE.0))
     }
 }
 
@@ -615,16 +706,49 @@ pub(crate) fn before_container(s: &mut Scene, i: usize, r: egui::Rect, ui: &egui
     }
     let hovered = ui.rect_contains_pointer(r);
     let pressed = hovered && ui.ctx().input(|inp| inp.pointer.primary_down());
-    let mut b = s.prop_bits(i) | StateBits(s.core[i].state.0 & (StateBits::FOCUSED.0 | StateBits::FOCUS_WITHIN.0));
+    let mut b = s.prop_bits(i) | StateBits(s.core[i].state.0 & (StateBits::FOCUSED.0 | StateBits::FOCUS_WITHIN.0 | StateBits::FOCUS_VISIBLE.0));
     b.set(StateBits::HOVERED, hovered);
     b.set(StateBits::PRESSED, pressed);
     s.set_walk_state(i, b);
     let id = s.slots.id_at(i)?;
     let c = s.style.computed(id)?.clone();
-    paint_box(&c, r, ui.painter());
+    paint_node_box(&c, s.core[i].state, id, r, ui.painter());
     match c.get("opacity") {
         Some(ComputedValue::Number(o)) if *o < 1.0 => Some(o.max(0.0)),
         _ => None,
+    }
+}
+
+/// OW0: an own widget's bits after its units ran (`WidgetCx::commit_state`): stored now
+/// (journaled), the restyle they reach run now, and `:focus-within` moved with `focused`, so the
+/// widget paints this pass's state.
+pub(crate) fn set_own_state(s: &mut Scene, i: usize, bits: StateBits) {
+    let before = s.core[i].state;
+    if !s.style.active {
+        // no cascade: the bits are kept for the widget (and queries), but nothing restyles, and
+        // interaction bits are not journaled, as for the stock leaves (no extra frames)
+        s.core[i].state = bits;
+        return;
+    }
+    if bits != before {
+        s.core[i].state = bits;
+        let t = s.stamp();
+        s.core[i].changed = t;
+        s.core[i].dirty.insert(Dirty::PAINT);
+        s.record_state(i, before, SceneOrigin::Style); // as the walk's bits: restyled here, not at the logic step
+    }
+    if !s.style.active {
+        return;
+    }
+    let Some(id) = s.slots.id_at(i) else { return };
+    if bits != before {
+        let reach = s.style.stylist.invalidation().state_changed(StateMask(before.0), StateMask(bits.0));
+        s.restyle_reached_now(id, reach);
+    }
+    if bits.contains(StateBits::FOCUSED) {
+        s.set_focus(Some(id));
+    } else if s.style.focus == Some(id) {
+        s.set_focus(None);
     }
 }
 
@@ -635,6 +759,15 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
         return;
     }
     let Some(id) = s.slots.id_at(i) else { return };
+    if is_own(s.w(i)) {
+        // OW0: its units set hover, press and focus during its `ui` (`WidgetCx::run_units`), and
+        // it paints its own box: only the prop bits here
+        // (and `opacity`: `StyleView::opacity`, CSS over its UA table)
+        let b = s.prop_bits(i) | StateBits(s.core[i].state.0 & OWN_KEEPS.0);
+        s.set_walk_state(i, b);
+        let _ = child;
+        return;
+    }
     // the id the widget takes: TextEdit's is the node's (leaf.rs), the others the child's first
     // auto id; providers draw with the node's id
     let wid = match s.w(i) {
@@ -653,6 +786,7 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
     b.set(StateBits::HOVERED, hovered);
     b.set(StateBits::PRESSED, pressed);
     b.set(StateBits::FOCUSED, focused);
+    b.set(StateBits::FOCUS_VISIBLE, focused);
     s.set_walk_state(i, b);
     if focused {
         s.set_focus(Some(id));
@@ -688,7 +822,7 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
         };
         stock_shadows(now, r, child);
     } else {
-        paint_box(&c, r, child.painter());
+        paint_node_box(&c, s.core[i].state, id, r, child.painter());
         if let Some(col) = color(&c, "color") {
             child.visuals_mut().override_text_color = Some(col);
         }
@@ -712,26 +846,12 @@ fn px(c: &ComputedStyle, name: &str) -> Option<f32> {
     }
 }
 
-/// A box's outer shadows, background, border and inset shadows, behind its content.
-fn paint_box(c: &ComputedStyle, r: egui::Rect, p: &egui::Painter) {
-    let radius = px(c, "border-radius").unwrap_or(0.0);
-    shadow::paint(c, r, radius, false, p);
-    paint_fill(c, r, radius, p);
-    shadow::paint(c, r, radius, true, p);
-}
-
-/// A box's background and border.
-fn paint_fill(c: &ComputedStyle, r: egui::Rect, radius: f32, p: &egui::Painter) {
-    let fill = color(c, "background-color");
-    let bw = px(c, "border-width").unwrap_or(0.0);
-    let stroke = match color(c, "border-color") {
-        Some(col) if bw > 0.0 => Some(egui::Stroke::new(bw, col)),
-        _ => None,
-    };
-    if fill.is_none() && stroke.is_none() {
-        return;
-    }
-    p.add(egui::epaint::RectShape::new(r, radius, fill.unwrap_or(egui::Color32::TRANSPARENT), stroke.unwrap_or(egui::Stroke::NONE), egui::StrokeKind::Inside));
+/// OW0: a box's outer shadows, background, border and inset shadows, behind its content, through
+/// the box primitive (`paint::paint_box`; traced as node `id`).
+fn paint_node_box(c: &ComputedStyle, state: StateBits, id: NodeId, r: egui::Rect, p: &egui::Painter) {
+    let dark = p.ctx().theme() == egui::Theme::Dark;
+    let s = crate::paint::StyleView::new(Some(c), crate::paint::Ua::NONE, state, dark);
+    crate::paint::paint_box(&mut crate::paint::PaintCx::for_node(p, id.to_raw()), &s, r);
 }
 
 /// A stock widget's outer shadows (CS5g) around its rect `r`, with its corner radius as egui draws

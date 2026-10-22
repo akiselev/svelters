@@ -32,7 +32,7 @@ pub(super) static WINDOW_PROPS: &[PropDef] = &[
     layout("gap", P::Gap, Ty::F64, Def::F64(0.0), "Space between the window's children, in points."),
 ];
 
-pub(super) static WINDOW_SIGNALS: &[SignalDef] = &[SignalDef {
+pub(super) static WINDOW_SIGNALS: &[SignalDef] = dom_signals![SignalDef {
     name: "close-request",
     args: NONE,
     sync: true,

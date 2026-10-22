@@ -59,6 +59,7 @@ fn caption(arena: &Arena, c: usize, k: usize) -> (String, bool) {
     }
 }
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW2, OW5c
 /// Paints tab-view `i` at `r`: the bar, then the selected page (if the last layout placed it).
 pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
     let node = arena.slots.id_at(i).expect("live node");

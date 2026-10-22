@@ -1631,6 +1631,20 @@ fn events(input: DeriveInput) -> syn::Result<Ts> {
 ///   `FromJs + IntoJs + Clone` (`IntoJs` for reads), so records, enums, `Option`, `Vec`, `Json<T>`.
 /// - Props without `default` and state fields start at `Default::default()`.
 ///
+/// Own widgets (OW0, ARCH-WIDGETS §1.3):
+/// - `#[behavior] press: Pressable` (or `#[behavior(params = method)]`, a `fn(&self) -> Params`):
+///   a behaviour unit (`svelters_egui::interact::Unit`) run in declaration order by the generated
+///   `self.run_units(cx, ui, &resp)`, which returns a `<Name>Fired` struct with one field of
+///   intents per unit; also generated: `units_sense()`, `units_a11y(node)`,
+///   `units_claims(key, mods)` and `units_next_frame()`.
+/// - `#[part] mark: Part` (a paint part) and `#[part(node)] thumb: Part` (a node part): the
+///   `::part(name)` names of the kind, in kebab-case.
+/// - `replaces = "<tag>"` (svelters-egui only): the struct implements that built-in kind; the tag
+///   is the built-in's, and props and events are routed to the kind's row by name. Props and
+///   events the row lacks become extras of the kind (`#[prop(enumeration = "a|b")]` for an enum).
+/// - `style_as = "<tag>"`: the kind is also matched by the built-in's type selector (the theme
+///   styles `cad-slider` as a `slider`; parts of the same names get the built-in's part rules).
+///
 /// The generated code names `::svelters_egui`, so the crate depends on `svelters-egui` too.
 #[proc_macro_attribute]
 pub fn widget(attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -1673,10 +1687,34 @@ pub fn behavior(attr: TokenStream, item: TokenStream) -> TokenStream {
         .into()
 }
 
+/// OW0: the kind-table type of a prop or event payload of an own widget (what an extra prop of a
+/// replaced built-in kind is in the compiler's spec): from the Rust type, or `enumeration`.
+fn row_ty(ty: &Type, enumeration: &Option<Vec<String>>) -> (Ts, bool) {
+    if let Some(values) = enumeration {
+        return (quote! { ::svelters_egui::provider::RowTy::Enum(&[#(#values),*]) }, false);
+    }
+    let (inner, nullable) = match last_segment(ty) {
+        Some(s) if s.ident == "Option" => (first_generic(ty).unwrap_or(ty), true),
+        _ => (ty, false),
+    };
+    let t = match last_segment(inner).map(|s| s.ident.to_string()).as_deref() {
+        Some("bool") => quote! { Bool },
+        Some("i64" | "i32" | "u32" | "u16" | "u8" | "i16" | "i8" | "usize" | "isize" | "u64") => quote! { I64 },
+        Some("f64" | "f32") => quote! { F64 },
+        Some("String" | "str") => quote! { Str },
+        _ => quote! { Other },
+    };
+    (quote! { ::svelters_egui::provider::RowTy::#t }, nullable)
+}
+
 enum WidgetField {
-    Prop { name: String, bind: bool, measure: bool, default: Option<Expr> },
+    Prop { name: String, bind: bool, measure: bool, default: Option<Expr>, enumeration: Option<Vec<String>> },
     Event,
     State,
+    /// OW0: a behaviour unit, with the method giving its params.
+    Behavior { params: Option<syn::Ident> },
+    /// OW0: a part, `node` for a node part.
+    Part { name: String, node: bool },
 }
 
 fn caps_expr(e: &Expr, out: &mut Vec<syn::Ident>) -> syn::Result<()> {
@@ -1721,6 +1759,8 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
     let mut tag: Option<String> = None;
     let mut bname: Option<String> = None;
     let mut caps: Vec<syn::Ident> = Vec::new();
+    let mut replaces: Option<String> = None;
+    let mut style_as: Option<String> = None;
     syn::meta::parser(|m| {
         if m.path.is_ident("namespace") {
             namespace = Some(m.value()?.parse::<syn::LitStr>()?.value());
@@ -1735,8 +1775,12 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
         } else if m.path.is_ident("caps") {
             let e: Expr = m.value()?.parse()?;
             caps_expr(&e, &mut caps)?;
+        } else if m.path.is_ident("replaces") {
+            replaces = Some(m.value()?.parse::<syn::LitStr>()?.value());
+        } else if m.path.is_ident("style_as") {
+            style_as = Some(m.value()?.parse::<syn::LitStr>()?.value());
         } else {
-            return Err(m.error("expected `namespace = \"...\"`, `tag = \"...\"` or `caps = A | B`"));
+            return Err(m.error("expected `namespace = \"...\"`, `tag = \"...\"`, `caps = A | B` or `replaces = \"<tag>\"`"));
         }
         Ok(())
     })
@@ -1784,9 +1828,14 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
         }
         format!("{namespace}.{n}")
     } else {
-        tag.unwrap_or_else(|| kebab(&name.to_string()))
+        tag.or_else(|| replaces.clone()).unwrap_or_else(|| kebab(&name.to_string()))
     };
-    if !behavior && (!tag.contains('-') || tag.chars().any(|c| c.is_ascii_uppercase())) {
+    if let Some(r) = &replaces
+        && *r != tag
+    {
+        return Err(syn::Error::new(name.span(), format!("`replaces = \"{r}\"`: the tag is the replaced built-in's (`{r}`), not `{tag}`")));
+    }
+    if !behavior && replaces.is_none() && (!tag.contains('-') || tag.chars().any(|c| c.is_ascii_uppercase())) {
         return Err(syn::Error::new(
             name.span(),
             format!(
@@ -1815,9 +1864,13 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                 let mut measure = false;
                 let mut default = None;
                 let mut rename = None;
+                let mut enumeration = None;
                 if matches!(a.meta, Meta::List(_)) {
                     a.parse_nested_meta(|m| {
-                        if m.path.is_ident("bind") && !behavior {
+                        if m.path.is_ident("enumeration") {
+                            let v = m.value()?.parse::<syn::LitStr>()?.value();
+                            enumeration = Some(v.split('|').map(|x| x.trim().to_string()).filter(|x| !x.is_empty()).collect());
+                        } else if m.path.is_ident("bind") && !behavior {
                             bind = true;
                         } else if m.path.is_ident("measure") && !behavior {
                             measure = true;
@@ -1826,13 +1879,13 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                         } else if m.path.is_ident("rename") {
                             rename = Some(m.value()?.parse::<syn::LitStr>()?.value());
                         } else {
-                            return Err(m.error("#[prop] options: bind, measure, default = expr, rename = \"name\""));
+                            return Err(m.error("#[prop] options: bind, measure, default = expr, rename = \"name\", enumeration = \"a|b\""));
                         }
                         Ok(())
                     })?;
                 }
                 let js = rename.unwrap_or_else(|| ident.to_string().trim_start_matches("r#").replace('_', "-"));
-                kind = WidgetField::Prop { name: js, bind, measure, default };
+                kind = WidgetField::Prop { name: js, bind, measure, default, enumeration };
             } else if a.path().is_ident("event") {
                 if last_segment(&f.ty).is_none_or(|s| s.ident != "Event") {
                     return Err(syn::Error::new(f.ty.span(), "an #[event] field has type `Event<T>`"));
@@ -1840,6 +1893,41 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                 kind = WidgetField::Event;
             } else if a.path().is_ident("state") {
                 kind = WidgetField::State;
+            } else if a.path().is_ident("behavior") && !behavior {
+                let mut params = None;
+                if matches!(a.meta, Meta::List(_)) {
+                    a.parse_nested_meta(|m| {
+                        if m.path.is_ident("params") {
+                            params = Some(m.value()?.parse::<syn::Ident>()?);
+                            Ok(())
+                        } else {
+                            Err(m.error("#[behavior] options: params = method"))
+                        }
+                    })?;
+                }
+                kind = WidgetField::Behavior { params };
+            } else if a.path().is_ident("part") && !behavior {
+                let mut node = false;
+                let mut pname: Option<String> = None;
+                if matches!(a.meta, Meta::List(_)) {
+                    a.parse_nested_meta(|m| {
+                        if m.path.is_ident("node") {
+                            node = true;
+                            Ok(())
+                        } else if m.path.is_ident("paint") {
+                            Ok(())
+                        } else if m.path.is_ident("name") {
+                            pname = Some(m.value()?.parse::<syn::LitStr>()?.value());
+                            Ok(())
+                        } else {
+                            Err(m.error("#[part] options: node, paint, name = \"part-name\""))
+                        }
+                    })?;
+                }
+                let js = pname.unwrap_or_else(|| ident.to_string().trim_start_matches("r#").replace('_', "-"));
+                kind = WidgetField::Part { name: js, node };
+                // a paint part is only a name: its field is never read
+                keep.push(syn::parse_quote!(#[allow(dead_code)]));
             } else {
                 keep.push(a);
             }
@@ -1863,10 +1951,14 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
     let mut gets = Vec::new();
     let mut prop_i = 0usize;
     let mut event_i = 0u16;
+    // OW0: behaviour units and parts
+    let mut part_entries = Vec::new();
+    let mut unit_fields: Vec<(syn::Ident, Type, Ts)> = Vec::new();
     for (ident, ty, fdocs, kind) in &kinds {
         match kind {
-            WidgetField::Prop { name: js, bind, measure, default } => {
+            WidgetField::Prop { name: js, bind, measure, default, enumeration } => {
                 let optional = last_segment(ty).is_some_and(|s| s.ident == "Option");
+                let (rty, nullable) = row_ty(ty, enumeration);
                 let required = default.is_none() && !optional;
                 let init = match default {
                     Some(d) => quote! { ::core::convert::Into::into(#d) },
@@ -1875,7 +1967,7 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                 prop_entries.push(quote! {
                     ::svelters_egui::provider::PropEntry {
                         name: #js, docs: #fdocs, bind: #bind, required: #required, measure: #measure,
-                        offset: ::core::mem::offset_of!(#name, #ident),
+                        offset: ::core::mem::offset_of!(#name, #ident), row_ty: #rty, nullable: #nullable,
                     }
                 });
                 describe.push(quote! { b.ty::<#ty>() });
@@ -1891,15 +1983,108 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
             WidgetField::Event => {
                 let js = ident.to_string().trim_start_matches("r#").replace('_', "-");
                 let payload = first_generic(ty).ok_or_else(|| syn::Error::new(ty.span(), "an #[event] field has type `Event<T>`"))?;
-                event_entries.push(quote! { ::svelters_egui::provider::EventEntry { name: #js, docs: #fdocs } });
+                let arg = match payload {
+                    Type::Tuple(t) if t.elems.is_empty() => quote! { ::core::option::Option::None },
+                    other => {
+                        let (t, _) = row_ty(other, &None);
+                        quote! { ::core::option::Option::Some(#t) }
+                    }
+                };
+                event_entries.push(quote! { ::svelters_egui::provider::EventEntry { name: #js, docs: #fdocs, arg: #arg } });
                 event_describe.push(quote! { b.ty::<#payload>() });
                 let i = event_i;
                 inits.push(quote! { #ident: ::svelters_egui::provider::Event::__new(#i) });
                 event_i += 1;
             }
             WidgetField::State => inits.push(quote! { #ident: ::core::default::Default::default() }),
+            WidgetField::Behavior { params } => {
+                inits.push(quote! { #ident: ::core::default::Default::default() });
+                let p = match params {
+                    Some(m) => quote! { self.#m() },
+                    None => quote! { <<#ty as ::svelters_egui::interact::Unit>::Params as ::core::default::Default>::default() },
+                };
+                unit_fields.push((ident.clone(), ty.clone(), p));
+            }
+            WidgetField::Part { name: js, node } => {
+                inits.push(quote! { #ident: ::core::default::Default::default() });
+                part_entries.push(quote! { ::svelters_egui::provider::PartEntry { name: #js, docs: #fdocs, node: #node } });
+            }
         }
     }
+    let vis = &item.vis;
+    let units_impl = if unit_fields.is_empty() {
+        quote! {}
+    } else {
+        let fired = syn::Ident::new(&format!("{name}Fired"), name.span());
+        let idents: Vec<&syn::Ident> = unit_fields.iter().map(|(i, _, _)| i).collect();
+        let tys: Vec<&Type> = unit_fields.iter().map(|(_, t, _)| t).collect();
+        let params: Vec<&Ts> = unit_fields.iter().map(|(_, _, p)| p).collect();
+        let pnames: Vec<syn::Ident> = idents.iter().map(|i| syn::Ident::new(&format!("__p_{i}"), i.span())).collect();
+        let fired_doc = format!("The intents of [`{name}`]'s behaviour units in one pass (`run_units`), one field per unit.");
+        quote! {
+            #[doc = #fired_doc]
+            #[allow(dead_code)]
+            #vis struct #fired {
+                #( pub #idents: ::svelters_egui::interact::Intents<<#tys as ::svelters_egui::interact::Unit>::Intent>, )*
+            }
+
+            #[allow(dead_code)]
+            impl #name {
+                /// What the units sense, merged (pass it to `cx.interact`).
+                #vis fn units_sense(&self) -> ::svelters_egui::egui::Sense {
+                    #( let #pnames = #params; )*
+                    ::svelters_egui::egui::Sense::hover() #( | ::svelters_egui::interact::Unit::sense(&self.#idents, &#pnames) )*
+                }
+
+                /// Runs the units in declaration order on `resp` (the node's `cx.interact`), sets
+                /// their state bits and restyles in the same frame; returns their intents.
+                #vis fn run_units(&mut self, cx: &mut ::svelters_egui::provider::WidgetCx<'_>, ui: &::svelters_egui::egui::Ui, resp: &::svelters_egui::egui::Response) -> #fired {
+                    #( let #pnames = #params; )*
+                    let mut __fired = #fired { #( #idents: ::core::default::Default::default(), )* };
+                    {
+                        let __f = &mut __fired;
+                        #( let #idents = &mut self.#idents; )*
+                        cx.run_units(ui, resp, |__icx| {
+                            #( ::svelters_egui::interact::Unit::input(#idents, &#pnames, __icx, &mut __f.#idents); )*
+                        });
+                    }
+                    if let ::core::option::Option::Some(__d) = self.units_next_frame() {
+                        ui.ctx().request_repaint_after(__d);
+                    }
+                    __fired
+                }
+
+                /// The units' part of the node's AccessKit node.
+                #vis fn units_a11y(&self, node: &mut ::svelters_egui::egui::accesskit::Node) {
+                    #( ::svelters_egui::interact::Unit::a11y(&self.#idents, &#params, node); )*
+                }
+
+                /// EV3 R11: whether a unit claims `key` while the node is focused.
+                #vis fn units_claims(&self, key: ::svelters_egui::egui::Key, m: ::svelters_egui::egui::Modifiers) -> bool {
+                    false #( || ::svelters_egui::interact::Unit::claims(&self.#idents, &#params, key, m) )*
+                }
+
+                /// The soonest frame a unit needs without input.
+                #vis fn units_next_frame(&self) -> ::core::option::Option<::std::time::Duration> {
+                    [#( ::svelters_egui::interact::Unit::next_frame(&self.#idents) ),*].into_iter().flatten().min()
+                }
+            }
+        }
+    };
+    let replaces_tokens = match &replaces {
+        Some(r) => quote! { ::core::option::Option::Some(#r) },
+        None => quote! { ::core::option::Option::None },
+    };
+    let style_as_tokens = match &style_as {
+        Some(r) => quote! { ::core::option::Option::Some(#r) },
+        None => quote! { ::core::option::Option::None },
+    };
+    // an own widget replacing a built-in takes the row's types: no export-schema module of its own
+    let types_submit = if replaces.is_some() {
+        quote! {}
+    } else {
+        quote! { __p::inventory::submit! { __p::KindTypesDef { module: #namespace, kind: #id, describe: __svl_types } } }
+    };
     let name_str = name.to_string();
     let (new_body, attaches_to) = if behavior {
         (
@@ -1920,11 +2105,13 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
 
             static __SVL_PROPS: &[::svelters_egui::provider::PropEntry] = &[#(#prop_entries),*];
             static __SVL_EVENTS: &[::svelters_egui::provider::EventEntry] = &[#(#event_entries),*];
+            static __SVL_PARTS: &[::svelters_egui::provider::PartEntry] = &[#(#part_entries),*];
 
             fn __svl_new() -> ::std::boxed::Box<dyn ::svelters_egui::provider::ErasedWidget> {
                 #new_body
             }
 
+            #[allow(dead_code)]
             fn __svl_types(b: &mut __p::TypeBuilder) -> ::std::vec::Vec<__p::TypeRef> {
                 ::std::vec![#(#describe,)* #(#event_describe),*]
             }
@@ -1941,10 +2128,13 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                 events: __SVL_EVENTS,
                 new: __svl_new,
                 attaches_to: #attaches_to,
+                replaces: #replaces_tokens,
+                style_as: #style_as_tokens,
+                parts: __SVL_PARTS,
             };
 
             __p::inventory::submit! { ::svelters_egui::provider::KindRef(&__SVL_KIND) }
-            __p::inventory::submit! { __p::KindTypesDef { module: #namespace, kind: #id, describe: __svl_types } }
+            #types_submit
 
             impl ::svelters_egui::provider::KindDecl for #name {
                 const KIND: &'static ::svelters_egui::provider::KindEntry = &__SVL_KIND;
@@ -1977,5 +2167,77 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                 }
             }
         };
+
+        #units_impl
+    })
+}
+
+/// AU1b: `#[svelters_automation::test(app = "...", seed = 3, iterations = 20, clock = "virtual",
+/// step_ms = 16)]` on `fn name(d: &mut E2e) -> TestResult`: a `#[test]` that runs the body once per
+/// seed on a fresh app, in process (kittest) or, with `SVELTERS_E2E=process`, out of process
+/// (`svelters-run`). See `svelters_automation::e2e`. `app` is relative to the test crate's
+/// `CARGO_MANIFEST_DIR`; the other arguments are optional (seed 0, 1 iteration, virtual clock,
+/// 16 ms frames). Generated code names `::svelters_automation::e2e::*`.
+#[proc_macro_attribute]
+pub fn test(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let item = syn::parse_macro_input!(item as ItemFn);
+    test_impl(attr.into(), item).unwrap_or_else(|e| e.to_compile_error()).into()
+}
+
+fn test_impl(attr: Ts, item: ItemFn) -> syn::Result<Ts> {
+    let (mut app, mut seed, mut iterations, mut clock, mut step_ms) = (None::<syn::LitStr>, None::<Expr>, None::<Expr>, None::<syn::LitStr>, None::<Expr>);
+    let parser = syn::meta::parser(|m| {
+        let key = m.path.get_ident().map(|i| i.to_string()).unwrap_or_default();
+        match key.as_str() {
+            "app" => app = Some(m.value()?.parse()?),
+            "seed" => seed = Some(m.value()?.parse()?),
+            "iterations" => iterations = Some(m.value()?.parse()?),
+            "clock" => {
+                let c: syn::LitStr = m.value()?.parse()?;
+                if c.value() != "virtual" && c.value() != "real" {
+                    return Err(syn::Error::new(c.span(), "clock: \"virtual\" or \"real\""));
+                }
+                clock = Some(c);
+            }
+            "step_ms" => step_ms = Some(m.value()?.parse()?),
+            _ => return Err(m.error("svelters::test: expected app, seed, iterations, clock or step_ms")),
+        }
+        Ok(())
+    });
+    parser.parse2(attr)?;
+    let app = app.ok_or_else(|| syn::Error::new(Span::call_site(), "svelters::test: `app = \"<dir or App.svelte>\"` is required"))?;
+    if item.sig.inputs.len() != 1 || item.sig.asyncness.is_some() {
+        return Err(syn::Error::new(item.sig.span(), "svelters::test: the body is `fn name(d: &mut E2e) -> TestResult`"));
+    }
+    let ItemFn { attrs, vis, sig, block } = item;
+    let name = &sig.ident;
+    let name_s = name.to_string();
+    let mut inner = sig.clone();
+    inner.ident = format_ident!("__svelters_test_body");
+    let mut sets = Vec::new();
+    if let Some(s) = seed {
+        sets.push(quote! { spec.seed = (#s) as u64; });
+    }
+    if let Some(n) = iterations {
+        sets.push(quote! { spec.iterations = (#n) as u64; });
+    }
+    if let Some(c) = clock {
+        sets.push(quote! { spec.clock = #c; });
+    }
+    if let Some(ms) = step_ms {
+        sets.push(quote! { spec.step_ms = (#ms) as f64; });
+    }
+    // The built-in `#[test]` by path: a `use svelters_automation::test;` would shadow the bare name.
+    Ok(quote! {
+        #[::core::prelude::v1::test]
+        #(#attrs)*
+        #vis fn #name() {
+            #inner #block
+            #[allow(unused_mut)]
+            let mut spec = ::svelters_automation::e2e::TestSpec::new(#name_s, #app, env!("CARGO_MANIFEST_DIR"));
+            #(#sets)*
+            spec.run_bin = option_env!("CARGO_BIN_EXE_svelters-run");
+            ::svelters_automation::e2e::run(spec, __svelters_test_body);
+        }
     })
 }

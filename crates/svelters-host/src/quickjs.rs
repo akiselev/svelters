@@ -39,6 +39,27 @@ const TRANSFER_GRACE: Duration = Duration::from_secs(1);
 
 const PRELUDE: &str = include_str!("prelude.js");
 
+/// AU1b (`HostSched::seed`): replaces `Math.random` with sfc32 seeded from the two 32-bit halves of
+/// the seed, warmed up, giving 53-bit doubles. Installed only when a seed is set.
+const SEEDED_RANDOM: &str = r#"(function (g, lo, hi) {
+  'use strict';
+  let a = lo >>> 0, b = hi >>> 0, c = 0x9e3779b9, d = (lo ^ hi ^ 0x85ebca6b) >>> 0;
+  const next = () => {
+    const t = (((a + b) | 0) + d) | 0;
+    d = (d + 1) | 0;
+    a = b ^ (b >>> 9);
+    b = (c + (c << 3)) | 0;
+    c = (c << 21) | (c >>> 11);
+    c = (c + t) | 0;
+    return t >>> 0;
+  };
+  for (let i = 0; i < 15; i++) next();
+  const random = function random() {
+    return ((next() >>> 5) * 67108864 + (next() >>> 6)) / 9007199254740992;
+  };
+  Object.defineProperty(g.Math, 'random', { value: random, writable: true, configurable: true, enumerable: false });
+})"#;
+
 type Res<T> = rquickjs::Result<T>;
 
 thread_local! {
@@ -1359,7 +1380,11 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
     globals.set("__svelters_host", host)?;
 
     let prelude: Function = ctx.eval(PRELUDE)?;
-    prelude.call::<_, ()>((native, globals))?;
+    prelude.call::<_, ()>((native, globals.clone()))?;
+    if let Some(seed) = core.upgrade().and_then(|c| c.cfg.sched.seed) {
+        let seeded: Function = ctx.eval(SEEDED_RANDOM)?;
+        seeded.call::<_, ()>((globals, seed as u32, (seed >> 32) as u32))?;
+    }
     Ok(())
 }
 
