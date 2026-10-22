@@ -101,6 +101,7 @@ export class ListController {
     this.keys = []; // key per position
     this.ids = []; // native id per position
     this.entries = new Map(); // key -> id
+    this.keyOf = opts.keepIds ? new Map() : null; // keepIds (TreeView): id -> key, ids kept for good
     this.list = []; // current items snapshot, by position
     this.nextId = 1;
     this.slots = new Map(); // row slot -> { outlet, unmountOutlet, unmountRow, item, index, id, pos, gen }
@@ -151,9 +152,11 @@ export class ListController {
   }
 
   #applyOps(ops, newKeys) {
-    const present = new Set(newKeys);
-    for (const k of this.keys) if (!present.has(k)) this.entries.delete(k);
-    for (const k of newKeys) if (!this.entries.has(k)) this.entries.set(k, this.nextId++);
+    if (!this.keyOf) {
+      const present = new Set(newKeys);
+      for (const k of this.keys) if (!present.has(k)) this.entries.delete(k);
+    }
+    for (const k of newKeys) if (!this.entries.has(k)) this.idOf(k);
     for (const op of ops) {
       const ids = op.add.map((k) => this.entries.get(k));
       this.ids = spliceArray(this.ids, op.pos, op.removed, ids);
@@ -358,6 +361,20 @@ export class ListController {
     this.opts.onactivate?.(pos, this.model ? this.itemAt(pos, null) : this.list[pos]);
   }
 
+  /**
+   * The native id of `key`, minted when it has none. With `keepIds` an id is never reissued, so the
+   * native selection (by id) keeps keys that are filtered out or collapsed away (SV46).
+   */
+  idOf(key) {
+    let id = this.entries.get(key);
+    if (id === undefined) {
+      id = this.nextId++;
+      this.entries.set(key, id);
+      this.keyOf?.set(id, key);
+    }
+    return id;
+  }
+
   /** Position of the first item with `key`, or -1. */
   indexOfKey(key) {
     return this.keys.indexOf(key);
@@ -451,4 +468,315 @@ export function ListView($$anchor, $$props) {
     return ctl;
   }
   return $.pop({ scrollTo, controller });
+}
+
+// ---- TreeView (WG5b) ----
+
+const TREE_PROPS = new Set([
+  '$$slots', '$$events', '$$legacy', 'roots', 'children', 'hasChildren', 'key', 'label', 'rowData', 'row', 'filter',
+  'selection', 'selected', 'expanded', 'row-height', 'indent', 'rowDragType', 'rowDropTypes',
+  'onactivate', 'onselect', 'onexpand', 'oncollapse', 'ondroprow', 'oncopy',
+]);
+
+const treeKey = (node) => (node !== null && typeof node === 'object' ? (node.id ?? node.key ?? node) : node);
+const treeLabel = (node) => (node !== null && typeof node === 'object' ? String(node.label ?? node.name ?? treeKey(node)) : String(node));
+const treeChildren = (node) => (node !== null && typeof node === 'object' ? node.children : undefined);
+
+/**
+ * Flattens the visible rows of a tree: each root, and the children of every expanded node (those
+ * loaded: `childrenOf(node)` returns an array, or undefined while loading). With `filter`, a node
+ * shows when it passes or one of its loaded descendants does (the path to a match stays).
+ * Returns `[{ key, node, level, expandable, expanded }]` in display order.
+ */
+export function flattenTree(roots, { key, childrenOf, hasChildren, expanded, filter }) {
+  const out = [];
+  const keep = filter ? new Map() : null;
+  // with a filter: does `node` (or a loaded descendant) pass? (expanded or not: a match deep in a
+  // collapsed node keeps the node, so the user can open it)
+  const passes = (node, seen) => {
+    const k = key(node);
+    if (keep.has(k)) return keep.get(k);
+    if (seen.has(k)) return false;
+    seen.add(k);
+    let ok = !!filter(node);
+    const kids = childrenOf(node, false);
+    if (Array.isArray(kids)) for (const c of kids) if (passes(c, seen)) ok = true;
+    keep.set(k, ok);
+    return ok;
+  };
+  const walk = (nodes, level, seen) => {
+    for (const node of nodes ?? []) {
+      if (keep && !passes(node, new Set())) continue;
+      const k = key(node);
+      if (seen.has(k)) continue; // a cycle, or a key twice
+      seen.add(k);
+      const expandable = !!hasChildren(node);
+      const open = expandable && expanded.has(k);
+      out.push({ key: k, node, level, expandable, expanded: open });
+      if (open) {
+        const kids = childrenOf(node, true);
+        if (Array.isArray(kids)) walk(kids, level + 1, seen);
+      }
+    }
+  };
+  walk(Array.isArray(roots) ? roots : Array.from(roots ?? []), 0, new Set());
+  return out;
+}
+
+/**
+ * `<TreeView roots children hasChildren key label row filter selection bind:selected
+ * bind:expanded row-height indent rowDragType rowDropTypes onactivate onselect onexpand oncollapse
+ * ondroprow oncopy ...rest>`: a virtualized tree on the native `tree-view` (egui, WG5b). It keeps
+ * the tree and flattens its visible rows into the list (`ListController`): expanding a node splices
+ * its children in after it.
+ *
+ * - `children(node)`: the node's children, an array or a Promise of one (lazy: called when the node
+ *   first expands; a Promise's result is cached per key until `roots` changes). Default
+ *   `node.children`.
+ * - `hasChildren(node)`: whether it shows a disclosure triangle. Default: `children` is a
+ *   function, a Promise or a non-empty array, else whether `node.children` exists.
+ * - `key(node)` (default `node.id ?? node.key ?? node`), `label(node)` (type-ahead and the drag's
+ *   `text/plain`; default `node.label ?? node.name`), `rowData(node)` (the drag's `rowDragType`
+ *   entry, default `JSON.stringify(key)`).
+ * - `row` snippet: `(node, level)`; without it a row is a label.
+ * - `selection`: `none`, `single`, `multi`. `bind:selected`: the selected keys (an array). Keys
+ *   filtered out or under a collapsed node stay selected (SV46).
+ * - `bind:expanded`: the expanded keys (an array).
+ * - `filter(node)`: shows the nodes that pass, and their ancestors.
+ * - `ondroprow(key, where, type, data)`: `where` is `before`, `after` or `into`; `key` is null for
+ *   a drop below the last row. A drag from this tree carries `rowData` of each row, a line each.
+ * - `oncopy(nodes)`: Ctrl+C; without it the selected rows are written to `svelters:clipboard`
+ *   (`rowDragType` and `text/plain`).
+ *
+ * Returns `{ scrollTo(key), expand(key), collapse(key), controller() }`.
+ */
+export function TreeView($$anchor, $$props) {
+  $.push($$props, true);
+  installSyncDispatch();
+  const keyOf = $.prop($$props, 'key', 3, treeKey);
+  const labelOf = $.prop($$props, 'label', 3, treeLabel);
+  const selection = $.prop($$props, 'selection', 3, 'single');
+  const selected = $.prop($$props, 'selected', 31, () => []);
+  const expanded = $.prop($$props, 'expanded', 31, () => []);
+  const rowHeight = $.prop($$props, 'row-height', 3, 24);
+  const indent = $.prop($$props, 'indent', 3, 16);
+  const rest = $.rest_props($$props, TREE_PROPS);
+
+  // lazily loaded children by key: an array once loaded, a Promise while loading
+  const loaded = new Map();
+  const loadedVer = $.state(0);
+  let loadedFor = undefined; // the roots `loaded` belongs to
+
+  const childrenFn = () => $$props.children ?? treeChildren;
+  const hasChildren = (node) => {
+    if ($$props.hasChildren) return $$props.hasChildren(node);
+    if ($$props.children) {
+      // lazy: expandable until its children loaded empty
+      const v = loaded.get(keyOf()(node));
+      return Array.isArray(v) ? v.length > 0 : true;
+    }
+    const c = treeChildren(node);
+    return Array.isArray(c) ? c.length > 0 : c != null;
+  };
+  /** The children of `node` now: an array, or undefined while a Promise loads (`load`: start it). */
+  const childrenOf = (node, load) => {
+    const k = keyOf()(node);
+    if (loaded.has(k)) {
+      const v = loaded.get(k);
+      return Array.isArray(v) ? v : undefined;
+    }
+    if (!load) {
+      // a filter looks at loaded children only: never starts a load
+      if ($$props.children) return undefined;
+      const c = treeChildren(node);
+      return Array.isArray(c) ? c : undefined;
+    }
+    const c = childrenFn()(node);
+    if ($$props.children && Array.isArray(c)) loaded.set(k, c);
+    if (c && typeof c.then === 'function') {
+      loaded.set(k, c);
+      c.then(
+        (kids) => {
+          if (loaded.get(k) !== c) return;
+          loaded.set(k, Array.from(kids ?? []));
+          $.set(loadedVer, loadedVer.v + 1);
+        },
+        (err) => {
+          if (loaded.get(k) === c) loaded.delete(k);
+          console.error('TreeView: children failed', err);
+        },
+      );
+      return undefined;
+    }
+    return c == null ? [] : Array.from(c);
+  };
+
+  const contexts = getAllContexts();
+  const ctl = new ListController({
+    keepIds: true,
+    key: (entry) => entry.key,
+    row: () => treeRow,
+    context: () => contexts,
+    onactivate: (_pos, entry) => entry && $$props.onactivate?.(entry.node, entry.key),
+  });
+  /** The row snippet: the app's `row(node, level)` or a label. */
+  function treeRow($$anchor, entry) {
+    const snippet = $$props.row;
+    if (snippet) {
+      snippet($$anchor, () => entry()?.node, () => entry()?.level ?? 0);
+      return;
+    }
+    const l = element('label');
+    $.template_effect(() => set(l, 'text', entry() ? labelOf()(entry().node) : ''));
+    append($$anchor, l);
+  }
+
+  const view = element('tree-view');
+  $.template_effect(() => set(view, 'selection', selection()));
+  $.template_effect(() => set(view, 'row-height', rowHeight()));
+  $.template_effect(() => set(view, 'indent', indent()));
+  $.template_effect(() => set(view, 'row-drag-type', $$props.rowDragType ?? ''));
+  $.template_effect(() => set(view, 'row-drop-types', $$props.rowDropTypes ?? ''));
+  let restKeys = [];
+  $.template_effect(() => {
+    const keys = Object.keys(rest).filter((k) => !(k.startsWith('on') && typeof rest[k] === 'function'));
+    for (const k of restKeys) if (!keys.includes(k)) set(view, k, null);
+    for (const k of keys) set(view, k, rest[k]);
+    restKeys = keys;
+  });
+
+  let flat = []; // the rows shown, by position
+  let sent = new Map(); // key -> the `setNodes` facts last sent for it
+  const entryOfId = (id) => {
+    const k = ctl.keyOf.get(id);
+    return k === undefined ? undefined : flat[ctl.indexOfKey(k)];
+  };
+
+  function setExpanded(key, open) {
+    const cur = expanded() ?? [];
+    const has = cur.includes(key);
+    if (open === has) return;
+    expanded(open ? [...cur, key] : cur.filter((k) => k !== key));
+  }
+
+  on(view, 'setup', lifecycle((r) => ctl.setup(r)));
+  on(view, 'bind', lifecycle((r, pos, id, gen) => ctl.bind(r, pos, id, gen)));
+  on(view, 'unbind', lifecycle((r, gen) => ctl.unbind(r, gen)));
+  on(view, 'teardown', lifecycle((r) => ctl.teardown(r)));
+  on(view, 'activate', (pos) => ctl.activate(pos));
+  on(view, 'expand', (id) => {
+    const e = entryOfId(id);
+    if (!e) return;
+    setExpanded(e.key, true);
+    $$props.onexpand?.(e.node, e.key);
+  });
+  on(view, 'collapse', (id) => {
+    const e = entryOfId(id);
+    if (!e) return;
+    setExpanded(e.key, false);
+    $$props.oncollapse?.(e.node, e.key);
+  });
+  let lastSel = null; // the keys last read from or sent to the view: not echoed back
+  on(view, 'selection-changed', () => {
+    const ids = view.call('selection') ?? [];
+    const keys = [];
+    for (const id of ids) {
+      const k = ctl.keyOf.get(id);
+      if (k !== undefined) keys.push(k);
+    }
+    lastSel = ids.join(',');
+    selected(keys);
+    $$props.onselect?.(keys);
+  });
+  on(view, 'drop-row', (id, where, type, data) => {
+    const e = id < 0 ? undefined : entryOfId(id);
+    $$props.ondroprow?.(e ? e.key : null, where, type, data, e?.node);
+  });
+  on(view, 'copy', () => {
+    const keys = new Set(selected() ?? []);
+    const nodes = flat.filter((e) => keys.has(e.key)).map((e) => e.node);
+    if ($$props.oncopy) {
+      $$props.oncopy(nodes);
+      return;
+    }
+    const h = globalThis.__svelters_host;
+    if (!h || typeof h.clipboardWrite !== 'function') return;
+    const entries = [];
+    if ($$props.rowDragType) entries.push([$$props.rowDragType, nodes.map(rowDataOf).join('\n')]);
+    entries.push(['text/plain', nodes.map((n) => labelOf()(n)).join('\n')]);
+    h.clipboardWrite('clipboard', entries);
+  });
+  const rowDataOf = (node) => ($$props.rowData ? String($$props.rowData(node)) : JSON.stringify(keyOf()(node)));
+  append($$anchor, view);
+  ctl.attach(view);
+
+  // the visible rows: re-flattened when the roots, the expanded keys, a load or the filter change
+  $.user_effect(() => {
+    const roots = $$props.roots;
+    const open = new Set(expanded() ?? []);
+    $.get(loadedVer);
+    const filter = $$props.filter;
+    const key = keyOf();
+    const label = labelOf();
+    if (roots !== loadedFor) {
+      loaded.clear();
+      loadedFor = roots;
+    }
+    flat = flattenTree(roots, { key, childrenOf, hasChildren, expanded: open, filter });
+    ctl.update(flat);
+    // the tree facts of the rows whose facts changed (and forget the rows that left)
+    $.untrack(() => {
+      if (view.handle == null) return;
+      const ids = [], levels = [], flags = [], labels = [], data = [];
+      const next = new Map();
+      const drag = !!$$props.rowDragType;
+      for (const e of flat) {
+        const id = ctl.idOf(e.key);
+        const f = (e.expandable ? 1 : 0) | (e.expanded ? 2 : 0);
+        const lab = label(e.node);
+        const d = drag ? rowDataOf(e.node) : '';
+        const fact = `${id}\u0000${e.level}\u0000${f}\u0000${lab}\u0000${d}`;
+        next.set(e.key, fact);
+        if (sent.get(e.key) === fact) continue;
+        ids.push(id);
+        levels.push(e.level);
+        flags.push(f);
+        labels.push(lab);
+        data.push(d);
+      }
+      for (const k of sent.keys()) {
+        if (next.has(k)) continue;
+        ids.push(ctl.idOf(k));
+        levels.push(-1);
+        flags.push(0);
+        labels.push('');
+        data.push('');
+      }
+      sent = next;
+      if (ids.length) view.call('setNodes', ids, levels, flags, labels, data);
+    });
+  });
+  // the selection, from the app (keys) to the view (ids)
+  $.user_effect(() => {
+    const keys = selected() ?? [];
+    $.untrack(() => {
+      const ids = keys.map((k) => ctl.idOf(k));
+      if (view.handle == null || lastSel === ids.join(',')) return;
+      lastSel = ids.join(',');
+      view.call('setSelection', ids);
+    });
+  });
+  $.user_effect(() => () => ctl.detach());
+
+  /** Scrolls the row of `key` into view (when it is shown). */
+  function scrollTo(key) {
+    const pos = ctl.indexOfKey(key);
+    if (pos >= 0 && view.handle != null) view.call('scrollTo', pos);
+  }
+  return $.pop({
+    scrollTo,
+    expand: (key) => setExpanded(key, true),
+    collapse: (key) => setExpanded(key, false),
+    controller: () => ctl,
+  });
 }

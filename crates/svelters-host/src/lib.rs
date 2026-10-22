@@ -19,6 +19,10 @@
 //! The host starts no threads. Timers run on the toolkit: after each checkpoint the host arms the
 //! backend's one-shot `schedule_wake` for the earliest deadline.
 
+// ZU3: no blocking file, process or wait calls on the UI thread (list in clippy.toml). Unit tests
+// are exempt; the legitimate I/O sites carry `#[allow(clippy::disallowed_methods)]` with a reason.
+#![cfg_attr(not(test), deny(clippy::disallowed_methods))]
+
 pub mod bytecode;
 mod convert;
 mod core;
@@ -44,6 +48,9 @@ pub use svelters_modules as modules;
 pub use hooks::ModuleHooks;
 pub use platform::{ClipboardBackend, ClipboardKind, MimeData, Platform, ShellBackend};
 pub use svelters_modules::{BundleProvider, ModuleCode, ModuleProvider};
+/// IN1: locale-aware formatting and parsing (ICU4X), the same the host's `Intl` uses.
+#[cfg(feature = "intl")]
+pub use svelters_intl as intl;
 
 /// The provider of a built bundle; a missing entry is a load error.
 fn bundle_provider(path: &Path) -> Result<Rc<dyn ModuleProvider>, JsError> {
@@ -226,6 +233,11 @@ impl<'a> Host<'a> {
     ) -> Result<Host<'a>, JsError> {
         // E3: the app's services start with its first host (once per process; later hosts find them running).
         crate::exports::start_services();
+        // IN1: the configured locale is the thread's current one before JS starts.
+        #[cfg(feature = "intl")]
+        if let Some(tag) = &cfg.locale {
+            svelters_intl::set_current(tag).map_err(|e| JsError::new(ErrorKind::Host, e.to_string()))?;
+        }
         // SAFETY: `'a` ties the host to the backend borrow, so the erased reference cannot outlive it.
         let backend_static = unsafe { backend.erase_lifetime() };
         let core = Rc::new(Core::new(backend_static, cfg));
@@ -689,6 +701,31 @@ impl<'a> Host<'a> {
     /// Setting this flag from any thread interrupts the running script once.
     pub fn interrupt_flag(&self) -> Arc<AtomicBool> {
         self.core.interrupt.clone()
+    }
+
+    /// IN1: switches the locale at runtime. The host owns the locale (svelters ships no catalog):
+    /// this sets the thread's current locale ([`intl::set_current`], read by `Intl` defaults,
+    /// `toLocaleString` and the egui numeric widgets) and tells JS, whose `svelters:intl` `locale`
+    /// store (`__svelters_intl.subscribe`) re-renders the components that read it. Delivered now
+    /// (one entry into JS, then a job drain), or by the next checkpoint when called while JS runs
+    /// (from a Rust export). Takes BCP 47 tags and POSIX names; returns the canonical tag.
+    #[cfg(feature = "intl")]
+    pub fn set_locale(&self, tag: &str) -> Result<String, JsError> {
+        let l = svelters_intl::set_current(tag).map_err(|e| JsError::new(ErrorKind::Host, e.to_string()))?;
+        let tag = l.tag().to_string();
+        if self.core.js_running() {
+            *self.core.pending_locale.borrow_mut() = Some(tag.clone());
+            self.core.backend().wake();
+            return Ok(tag);
+        }
+        core::root_call(&self.core, &self.engine, None, |e| e.locale_changed(&tag)).map_err(|e| self.core.map_error(e))?;
+        Ok(tag)
+    }
+
+    /// IN1: the current locale's canonical tag (the thread's, see [`Host::set_locale`]).
+    #[cfg(feature = "intl")]
+    pub fn locale(&self) -> String {
+        svelters_intl::current().tag().to_string()
     }
 }
 

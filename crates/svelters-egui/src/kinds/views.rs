@@ -17,6 +17,8 @@ use super::{Def, KindDef, MethodDef, Native, ORIENTATION, P, PropDef, SignalDef,
 
 pub const CELL_ALIGN: &[&str] = &["start", "center", "end"];
 pub const SORT: &[&str] = &["none", "ascending", "descending"];
+/// WG5a: `table`'s `selection` (the same modes as `virtual-list`'s).
+pub const TABLE_SELECTION: &[&str] = &["none", "single", "multi"];
 pub const TOAST_CORNER: &[&str] = &["bottom-right", "bottom-left", "top-right", "top-left"];
 pub const TOAST_LEVEL: &[&str] = &["info", "success", "warning", "error"];
 
@@ -42,7 +44,17 @@ static TABLE_PROPS: &[PropDef] = &[
         Def::I64(20),
         "Rows beyond the visible ones that `range` asks for on each side (data ready before it scrolls into view).",
     ),
-    input("selected", P::SelectedIndex, Ty::I64, Def::I64(-1), "The selected row, -1 for none; a click on a row (or the arrow keys) changes it."),
+    // WG5a: selection keyed by row id (a row's id is its position until `set-ids`)
+    input(
+        "selected",
+        P::SelectedIds,
+        Ty::IdList,
+        Def::Null,
+        "The selected row ids (`bind:selected`); clicks (Ctrl/Shift with `selection=\"multi\"`) and the keyboard change it. Kept by id across `set-ids` (sorts, filters).",
+    ),
+    prop("selection", P::ListSelection, Ty::Enum(TABLE_SELECTION), Def::Str("single"), "`single`, `multi` (Ctrl/Shift clicks and keys, ranges) or `none` (a cursor only)."),
+    input("current", P::CurrentRow, Ty::I64, Def::I64(-1), "The cursor row's id (keyboard focus inside the table), -1 for none."),
+    input("current-column", P::CurrentColumn, Ty::I64, Def::I64(0), "The cursor column (Left/Right move it; F2 and typing edit that cell)."),
 ];
 
 static TABLE_SIGNALS: &[SignalDef] = &[
@@ -51,8 +63,15 @@ static TABLE_SIGNALS: &[SignalDef] = &[
         &[("first", Ty::I64), ("last", Ty::I64)],
         "The rows the table needs data for changed: `first..=last` (the visible rows plus `overscan`); answer with `set-rows`.",
     ),
-    signal("changed", &[("selected", Ty::I64)], "The user selected a row; carries its index."),
-    signal("activated", &[("row", Ty::I64)], "A row was double-clicked (or Enter pressed on the selection)."),
+    signal("changed", &[("selected", Ty::IdList)], "The user changed the selection; carries the selected row ids (`bind:selected`)."),
+    signal("selectionchange", &[("ids", Ty::IdList)], "The user changed the selection; carries the selected row ids."),
+    signal("activated", &[("row", Ty::I64)], "A row was double-clicked (a cell of a column that is not `editable`) or Enter pressed on the cursor row; carries its position."),
+    SignalDef {
+        name: "commit",
+        args: &[("row", Ty::I64), ("column", Ty::I64), ("value", Ty::Provider)],
+        sync: true,
+        doc: "An edit is committed: row id, column index, the editor's value. Accept by returning nothing; reject with `e.result = 'reason'` (shown under the cell) or `e.preventDefault()`: the cell reverts.",
+    },
     signal("header-clicked", &[("column", Ty::I64)], "A column header was clicked (sort on it in JS and set the column's `sort`)."),
 ];
 
@@ -63,6 +82,12 @@ static TABLE_METHODS: &[MethodDef] = &[
     },
     MethodDef { name: "clear-rows", doc: "Drops the data window (every row draws empty until `set-rows`)." },
     MethodDef { name: "scroll-to-row", doc: "`scroll-to-row(row)`: scrolls the row into view on the next frame." },
+    MethodDef {
+        name: "set-ids",
+        doc: "`set-ids(ids, labels?)`: the id of every row by position (and the text type-ahead matches); the row count is then `ids.length`. Selection, cursor and edits follow ids across sorts and filters. null: ids are positions again.",
+    },
+    MethodDef { name: "edit", doc: "`edit(rowId, column)`: starts editing that cell (its column must be `editable`)." },
+    MethodDef { name: "end-edit", doc: "`end-edit(commit)`: ends the open edit; true commits (`commit`), false reverts." },
 ];
 
 static TABLE_COLUMN_PROPS: &[PropDef] = &[
@@ -70,6 +95,25 @@ static TABLE_COLUMN_PROPS: &[PropDef] = &[
     prop("resizable", P::Resizable, Ty::Bool, Def::Bool(true), "Its right edge can be dragged (double-click: fit the content)."),
     prop("align", P::CellAlign, Ty::Enum(CELL_ALIGN), Def::Str("start"), "Horizontal alignment of its cells."),
     prop("sort", P::Sort, Ty::Enum(SORT), Def::Str("none"), "The sort arrow its header shows (the data is sorted by JS)."),
+    prop("editable", P::Editable, Ty::Bool, Def::Bool(false), "Its cells can be edited (F2, typing, double click); the editor is `editor`, else a text field."),
+    prop(
+        "editor",
+        P::Editor,
+        Ty::Snippet,
+        Def::Bool(false),
+        "The cell editor, a snippet taking the edit (`{ row, column, value (bindable), typed, commit(), cancel() }`); realised once and rebound per edit.",
+    ),
+];
+
+static TABLE_COLUMN_SIGNALS: &[SignalDef] = &[
+    SignalDef { name: "editor-bind", args: &[("row", Ty::I64), ("value", Ty::Str), ("typed", Ty::Str)], sync: true, doc: "Runtime protocol: an edit of this column's cell starts (the editor snippet's outlet is `set-editor`)." },
+    SignalDef { name: "editor-value", args: &[], sync: true, doc: "Runtime protocol: the editor's value to commit (the handler sets `e.result`)." },
+    SignalDef { name: "editor-unbind", args: &[], sync: true, doc: "Runtime protocol: the edit ended; the editor stays realised for the next one." },
+];
+
+static TABLE_COLUMN_METHODS: &[MethodDef] = &[
+    MethodDef { name: "set-editor", doc: "Runtime protocol: `set-editor(outlet)`, the realised editor snippet of this column (null drops it)." },
+    MethodDef { name: "end-edit", doc: "`end-edit(commit)`: ends this column's open edit; true commits, false reverts." },
 ];
 
 // ---- tab-view ----
@@ -153,7 +197,7 @@ pub(super) const TABLE: KindDef = KindDef {
     props: TABLE_PROPS,
     signals: TABLE_SIGNALS,
     methods: TABLE_METHODS,
-    doc: "A virtual table (`egui_table`): only the visible rows and columns are drawn. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers). Give it a size or let flex-grow size it.",
+    doc: "A virtual table (`egui_table`): only the visible rows and columns are drawn. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`. Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it.",
 };
 
 pub(super) const TABLE_COLUMN: KindDef = KindDef {
@@ -166,8 +210,8 @@ pub(super) const TABLE_COLUMN: KindDef = KindDef {
     text_content: None,
     present: None,
     props: TABLE_COLUMN_PROPS,
-    signals: &[],
-    methods: &[],
+    signals: TABLE_COLUMN_SIGNALS,
+    methods: TABLE_COLUMN_METHODS,
     doc: "A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100) is the column's width; a user resize keeps its width until the prop changes.",
 };
 

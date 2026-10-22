@@ -41,6 +41,29 @@ pub enum SlotStatus {
     Refused(Refusal),
 }
 
+// ---- AS1: asset refs ----
+
+#[derive(Serialize, Deserialize, JsonSchema, Clone, Debug, PartialEq)]
+pub struct Icon {
+    pub icon: svelters::AssetRef,
+    pub name: String,
+}
+
+#[svelters::export(module = "assets")]
+pub fn asset_path(a: svelters::AssetRef) -> String {
+    format!("{} {}", a.root(), a.path())
+}
+
+#[svelters::export(module = "assets")]
+pub fn make_asset(path: String) -> svelters::AssetRef {
+    svelters::AssetRef::new("app", &path).unwrap()
+}
+
+#[svelters::export(module = "assets")]
+pub fn icon_label(i: Json<Icon>) -> String {
+    format!("{} {}", i.0.icon.path(), i.0.name)
+}
+
 fn refusal() -> Refusal {
     Refusal {
         reason: "args.missing".into(),
@@ -331,6 +354,35 @@ console.log('inner', err(() => describeStatus({ kind: 'filled', value: 'big' }))
     has(&r, "type NativeError svelters type at r.message: invalid type: integer `7`, expected a string");
     has(&r, "enum NativeError svelters unknown-variant at r.severity: unknown variant `fatal`, expected one of `info`, `error`");
     has(&r, r#"inner NativeError svelters type at s.value: invalid type: string "big", expected f64"#);
+}
+
+/// AS1: an `Asset` handle crosses as its ref (a parameter, a `Json<T>` field); an `AssetRef` result
+/// comes back as the handle; a string that is not a ref is refused.
+#[test]
+fn asset_refs_round_trip() {
+    let r = run(
+        "assets",
+        &format!(
+            "{ERR}{}",
+            r#"
+import { assetPath, makeAsset, iconLabel } from 'svelters:app/assets';
+import { asset, isAsset } from 'svelters:assets';
+const a = asset('src/icon.svg');
+console.log('param', assetPath(a), '|', assetPath('asset://ext.acme/x.png'));
+const m = makeAsset('icons/../gear.svg');
+console.log('result', isAsset(m), String(m), m === asset('gear.svg'));
+console.log('json', iconLabel({ icon: a, name: 'gear' }));
+console.log('bad', err(() => assetPath('/abs/x.svg')));
+"#
+        ),
+    );
+    assert!(r.errors.is_empty(), "{:#?}", r.errors);
+    has(&r, "param app src/icon.svg | ext.acme x.png");
+    has(&r, "result true asset://app/gear.svg true");
+    has(&r, "json src/icon.svg gear");
+    assert!(r.lines.iter().any(|l| l.starts_with("bad NativeError svelters type") && l.contains("not an asset ref")), "{:#?}", r.lines);
+    let ts = svelters::exports::typescript();
+    assert!(ts.contains("import('@svelters/native-runtime/assets').Asset"), "{ts}");
 }
 
 #[test]

@@ -1,0 +1,22 @@
+# TC-EVAL bench: quire-core (Document + EditorView) against an egui-TextEdit-like String field.
+# Not a svelters workspace member (its own [workspace] below). Run from the svelters checkout root:
+#   tools/dev/cargo-slot cargo run --release --manifest-path plans/research/tc-eval/Cargo.toml
+# Results: plans/research/TC-EVAL.md.
+[package]
+name = "tc-eval"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[dependencies]
+# cadatomic's pin of quire (private repo; cargo needs GitHub access, or a db cached by cadatomic).
+quire-core = { git = "https://github.com/akiselev/quire", rev = "2087b4354f76c439d2d729661e8b2fa7d7de86b0" }
+ropey = { version = "1.6.1", default-features = false, features = ["simd"] }
+# For svelters-egui's native/words.rs, included by #[path] (the String baseline's word rules).
+unicode-general-category = "1.1"
+
+[profile.release]
+debug = false
+codegen-units = 16

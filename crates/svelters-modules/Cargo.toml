@@ -9,6 +9,7 @@ publish.workspace = true
 [dependencies]
 serde_json.workspace = true
 serde = { workspace = true, optional = true }
+schemars = { workspace = true, optional = true }
 svelters-compiler = { workspace = true, optional = true }
 libloading = { version = "0.8", optional = true }
 
@@ -18,7 +19,9 @@ default = ["source"]
 # `preserve_order` on every crate in the build) and compiles `.svelte`/`.svelte.js` with
 # svelters-compiler. Without it the crate is the engine boundary only (`ModuleProvider`,
 # `BundleProvider`), which is what svelters-host links.
-source = ["dep:svelters-compiler", "dep:serde"]
+source = ["dep:svelters-compiler", "serde"]
+# AS1: `AssetRef` as `Serialize`/`Deserialize`/`JsonSchema` (a string, format `svelters-asset`).
+serde = ["dep:serde", "dep:schemars"]
 # LD1: `DylibModules` loads native modules from dlopen'd libraries. Off by default: cadatomic runs
 # third-party native code out of process only (TRACKS §6 Q3).
 dlopen = ["dep:libloading"]

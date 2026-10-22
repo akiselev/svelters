@@ -8,7 +8,7 @@
 //! - A boundary is a node whose size cannot depend on its content: a root's top, a node flagged
 //!   [`NodeFlags::LAYOUT_BOUNDARY`], or a node with a definite width and height that cannot be
 //!   shrunk below them by its automatic minimum size (`flex-shrink: 0`, or definite min sizes) and
-//!   is not baseline-aligned. Relayout of a boundary (`layout.rs`) runs at its last size.
+//!   is not baseline-aligned, in its taffy style (props and CSS alike). Relayout of a boundary (`layout.rs`) runs at its last size.
 //! - A text change queues the leaf in `remeasure`; only a changed measured size invalidates.
 //! - Detached trees have no queues: invalidation clears caches up to their top, so they are laid
 //!   out fresh when attached.
@@ -39,21 +39,23 @@ pub fn invalidate(scene: &mut Scene, h: super::Handle) {
 }
 
 impl Scene {
-    /// True if node `i`'s size cannot depend on its content.
+    /// True if node `i`'s size cannot depend on its content. Read from the node's taffy style, so
+    /// a size from CSS counts as well as one from props (CS5g).
     pub(crate) fn is_boundary(&self, i: usize) -> bool {
         let core = &self.core[i];
         if core.flags.intersects(NodeFlags::ROOT | NodeFlags::LAYOUT_BOUNDARY) {
             return true;
         }
-        let c = self.common(i);
-        if c.width.is_none() || c.height.is_none() || self.vis(i).clip.is_some() || c.align_self == "baseline" {
+        let st = &self.layout[i].style;
+        let px = |t: usize| t == taffy::CompactLength::LENGTH_TAG;
+        if !px(st.size.width.tag()) || !px(st.size.height.tag()) || self.vis(i).clip.is_some() || st.align_self == Some(taffy::AlignItems::BASELINE) {
             return false;
         }
-        if c.flex_shrink != 0.0 && (c.min_width.is_none() || c.min_height.is_none()) {
+        if st.flex_shrink != 0.0 && (!px(st.min_size.width.into_raw().tag()) || !px(st.min_size.height.into_raw().tag())) {
             return false;
         }
         match core.parent.and_then(|p| self.idx(p)) {
-            Some(pi) => self.common(pi).align_items != "baseline",
+            Some(pi) => self.layout[pi].style.align_items != taffy::AlignItems::BASELINE,
             None => true,
         }
     }

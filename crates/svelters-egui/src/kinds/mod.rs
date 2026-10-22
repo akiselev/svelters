@@ -63,6 +63,7 @@ pub mod dnd;
 pub mod pickers;
 mod registry;
 pub(crate) mod virtuallist;
+pub mod treeview;
 // WG1 families
 mod controls;
 mod decor;
@@ -84,7 +85,7 @@ pub use menus::attaches_to;
 pub use popups::PLACEMENT;
 pub use media::FIT;
 pub use panes::{FRAME_STYLE, SIDE};
-pub use views::{CELL_ALIGN, SORT, TOAST_CORNER, TOAST_LEVEL};
+pub use views::{CELL_ALIGN, SORT, TABLE_SELECTION, TOAST_CORNER, TOAST_LEVEL};
 pub use registry::{KindRegistry, PROVIDER_PACK, ProviderKind, kind};
 pub use virtuallist::{ListStats, VList};
 
@@ -105,6 +106,11 @@ pub enum Ty {
     Enum(&'static [&'static str]),
     /// WG1: a list of strings (`string[]`; the ABI's `SVL_LIST` of `SVL_STR`).
     StrList,
+    /// WG5a: a list of row ids (`number[]`; the ABI's `SVL_LIST` of `SVL_I64`): item-view selections.
+    IdList,
+    /// WG5a: a Svelte snippet (a function), kept by the JS runtime; the backend sees `true` while
+    /// one is set (`table-column`'s `editor`).
+    Snippet,
     /// RA1: a provider kind's prop or event payload, typed by its Rust type's `JsType` description
     /// ([`KindRegistry::provider_type`]).
     Provider,
@@ -253,6 +259,8 @@ pub enum P {
     /// image
     Source,
     Fit,
+    /// icon (AS1)
+    Tint,
     /// progress-bar
     Fraction,
     ShowPercentage,
@@ -295,7 +303,22 @@ pub enum P {
     ListSelected,
     ListSelection,
     ListLayout,
+    // WG5a (plans/milestones/WG5a-list-table-interaction.md): item-view selection and editing
+    /// virtual-list, table: the selected row ids (`bind:selected` on table, `selected-ids` on the list)
+    SelectedIds,
+    /// table: the cursor row's id (-1: none)
+    CurrentRow,
+    /// table: the cursor column
+    CurrentColumn,
+    /// table-column: its cells can be edited
+    Editable,
+    /// table-column: a Svelte `editor` snippet is set
+    Editor,
     // `row-height` reuses WG4a's `RowHeight`
+    // `tree-view` (WG5b, `treeview.rs`)
+    TreeIndent,
+    RowDragType,
+    RowDropTypes,
     /// EV3: a button's Enter and Escape roles.
     Default,
     Cancel,
