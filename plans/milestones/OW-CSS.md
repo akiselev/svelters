@@ -157,10 +157,17 @@ To reproduce:
 
 ## Handoff (context limit reached)
 
-State: `ci/ow-css` pushed with the engine stage and P2/P5/P10/`paint()`. All svelters-style tests pass (55), as do the egui pin and spec tests. The JS `packages/style` golden is refreshed. Stage-1 CI: macos-appkit green, js red on the golden, fixed in this push.
+State: `ci/ow-css` pushed with the engine stage and P2/P5/P10/`paint()`. All svelters-style tests pass (55), as do the egui pin and spec tests. The JS `packages/style` golden is refreshed. CI: cd9a6bc3 4/5 green (linux-gtk caught the `border-width` uniform regression, fixed in 9f8a2545).
+
+**Stage 2 starts from `ci/ow0` 6f013c72 (OW0b).** What OW0b gives and expects:
+- **Part styles** go through OW0b's hooks `SceneStyle::part_computed(id, part)` and `part_styles(id)`. They return `None` until OW-CSS fills them: compute each part with `Stylist::compute_pseudo(node, &PseudoElement::part(name), &host, …)` (multi-name parts: `PseudoElement::parts`), and store it next to `NodeStyle::computed`, restyled whenever the host restyles.
+- **Keep `Element::style_as`**, the defaulted method OW0b added to svelters-style's `Element`, when merging.
+- **`paint(name)` mismatch.** OW0b's `paint::painters::selected` reads `background-image` with `StyleView::keyword` and parses the text `paint(name)`. In OW-CSS the value is typed (`ComputedValue::Painter(name)`, and `ComputedValue::Content(Content::Paint(name))` for `content`), so `keyword()` returns `None`. On merge, make `selected` match the typed values (or teach `paint::StyleView::keyword` to return `Painter`'s name), and keep OW-CSS's typed `background-image`/`content` rows in `ENGINE_PROPS`.
+- **Breaking:** `paint::StyleView::shadows()` returns `Option<Cow<[Shadow]>>`.
+- Per-side borders and gradients are OW-CSS's to feed. `paint_box` reads them through `paint::StyleView`; the typed getters (`border_side`, `radii`, `background_image`) are on `svelters_style::StyleView`.
 
 Next, in order:
-1. **Wire to OW0 (`ci/ow0` 7eef7362).** OW0a's `paint::StyleView` holds `css: Option<&'a ComputedStyle>` with a UA fallback and is `Copy`. Make that field `Option<&'a svelters_style::StyleView<'a>>`, so the view stays `Copy`, and change its private `css(name)` to `self.css.and_then(|v| v.get(name))`. Build the `svelters_style::StyleView` per node at paint with `scene.transitions.view(key, &computed, ctx.input(|i| i.time))`. Then:
+1. **Wire to OW0 (`ci/ow0` 6f013c72).** OW0a's `paint::StyleView` holds `css: Option<&'a ComputedStyle>` with a UA fallback and is `Copy`. Make that field `Option<&'a svelters_style::StyleView<'a>>`, so the view stays `Copy`, and change its private `css(name)` to `self.css.and_then(|v| v.get(name))`. Build the `svelters_style::StyleView` per node at paint with `scene.transitions.view(key, &computed, ctx.input(|i| i.time))`. Then:
    - put `Transitions<NodeId>` (parts: `Transitions<(NodeId, u16)>`) on `SceneStyle`;
    - call `restyled(id, &old, &new, now, reduced_motion)` where the walk swaps a node's `computed` (`style.rs` `NodeStyle::computed`);
    - call `tick(now)` once per frame, and request a repaint of the running keys' roots (TR2 `running_roots`);
