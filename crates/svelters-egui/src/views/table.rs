@@ -412,6 +412,7 @@ impl TableDelegate for Delegate<'_> {
         self.visible = Some(info.visible_rows.clone());
     }
 
+    #[allow(clippy::disallowed_types)] // OW: wrapper until OW1a
     fn header_cell_ui(&mut self, ui: &mut Ui, cell: &HeaderCellInfo) {
         let Some(c) = self.cols.get(cell.col_range.start) else {
             return;
@@ -488,6 +489,7 @@ impl TableDelegate for Delegate<'_> {
         }
     }
 
+    #[allow(clippy::disallowed_types)] // OW: wrapper until OW1a
     fn cell_ui(&mut self, ui: &mut Ui, cell: &CellInfo) {
         let full = ui.max_rect();
         self.cells.push((cell.row_nr, cell.col_nr, full, ui.clip_rect()));
@@ -612,6 +614,7 @@ fn next_editable(cols: &[Col], len: u64, pos: u64, col: usize, step: i32) -> Opt
     }
 }
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW5b
 /// Paints table `i` at `r`: egui_table with the columns of its children and its data window, the
 /// open editor, then its events (`range`, `selectionchange`, `activated`, `header-clicked`).
 pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut Vec<Out>) {
@@ -895,6 +898,7 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
     }
 }
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW4
 /// Draws the open edit's editor over its cell (the built-in text field, or the column's snippet
 /// outlet), moves focus into it once, and turns Enter/Escape/Tab and focus leaving it into an end
 /// request (handled in logic). Returns whether another frame is needed for it.

@@ -464,7 +464,9 @@ pub fn text_of(w: &W) -> &str {
         W::Icon { name, .. } => name,
         W::Menu(m) => m.label(),
         W::Overlay(o) => &o.title,
-        W::Box | W::Ext(_) | W::Separator { .. } | W::Grid { .. } | W::ScrollArea { .. } | W::VirtualList(_) => "",
+        // OW0: an own widget replacing a built-in kind shows its text prop (a mirror kept by `set_prop`)
+        W::Ext(x) => x.text(),
+        W::Box | W::Separator { .. } | W::Grid { .. } | W::ScrollArea { .. } | W::VirtualList(_) => "",
         // WG2b
         W::Hyperlink { text, .. } | W::RadioButton { text, .. } | W::Switch { text, .. } | W::RangeSlider { text, .. } | W::ProgressBar { text, .. } => text,
         W::Frame { label, .. } => label,

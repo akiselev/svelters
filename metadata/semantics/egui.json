@@ -588,6 +588,40 @@
           "type": "bool",
           "writable": true
         },
+        "icon": {
+          "construct_only": false,
+          "default": "",
+          "doc": "An icon before the caption: an icon key (`name` in the `icons` family, or `family:name`).\nIts size, place and visibility are CSS on `::part(icon)` (P3).",
+          "js": "icon",
+          "native": "icon",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Button:icon",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "repeat": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Held down, it activates again and again (`clicked` after 300 ms, then every 100 ms;\nQAbstractButton `autoRepeat`).",
+          "js": "repeat",
+          "native": "repeat",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Button:repeat",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "selected": {
           "construct_only": false,
           "default": false,
@@ -662,6 +696,28 @@
           "handler_result": "none",
           "js_event": "double-clicked",
           "name": "double-clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "press": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "The primary button went down on it (QAbstractButton `pressed`).",
+          "handler_result": "none",
+          "js_event": "press",
+          "name": "press",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "release": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "It came up again, over the button or not (`released`).",
+          "handler_result": "none",
+          "js_event": "release",
+          "name": "release",
           "phases": [],
           "sync": false,
           "sync_required": false

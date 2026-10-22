@@ -47,6 +47,7 @@ pub(super) fn intrinsic(m: &Metrics, w: &W) -> Vec2 {
     }
 }
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW1a, OW1b
 pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> Painted {
     let size = arena.core[i].rect.size();
     let enabled = arena.common(i).enabled;
@@ -167,6 +168,7 @@ pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
     Painted { resp }
 }
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW1b
 /// A `range-slider` with value boxes and no caption. egui's `RangeSlider` names its value boxes
 /// only by its caption (its `Slider` names an uncaptioned box by the slider), so here the rail is
 /// drawn without boxes and the two boxes are added around it, each labelled by the rail, which the
@@ -204,6 +206,7 @@ fn uncaptioned_range(ui: &mut Ui, l: &mut f64, h: &mut f64, rail: std::ops::Rang
     .inner
 }
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW1a
 /// `radio-button`: a click checks it, writes its `value` into `group`, and unchecks the sibling
 /// radio buttons (setting their `group` too when this one has a value).
 fn radio(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> Painted {

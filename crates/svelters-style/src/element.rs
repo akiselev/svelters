@@ -30,6 +30,11 @@ pub trait Element: Copy + Debug {
     fn first_child(&self) -> Option<Self>;
     /// The element's tag (`button`, `quantity-field`), matched case-sensitively by type selectors.
     fn tag(&self) -> &str;
+    /// A second tag type selectors match (OW0, WIDGET-PARITY §4.3 `style_as`): an app's own kind
+    /// styled like a built-in (`cad-slider` matched by `slider` rules and parts).
+    fn style_as(&self) -> Option<&str> {
+        None
+    }
     /// The `#id` (the `NAME` style op; the scene's `anchor` is a different thing).
     fn id(&self) -> Option<&str>;
     fn has_class(&self, name: &str) -> bool;
@@ -89,7 +94,7 @@ impl<E: Element> selectors::Element for Node<E> {
         false
     }
     fn has_local_name(&self, local_name: &str) -> bool {
-        self.0.tag() == local_name
+        self.0.tag() == local_name || self.0.style_as() == Some(local_name)
     }
     fn has_namespace(&self, ns: &str) -> bool {
         ns.is_empty()

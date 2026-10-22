@@ -60,6 +60,7 @@ pub fn fit_rect(fit: &str, r: Rect, img: Vec2) -> (Rect, Rect) {
     (Rect::from_center_size(r.center(), img * scale), full)
 }
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW1a
 pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>, click_sense: bool) -> Painted {
     let r = ui.max_rect();
     let enabled = arena.common(i).enabled;

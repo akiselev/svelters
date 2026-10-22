@@ -218,6 +218,9 @@ impl Stylist {
         if let Some(v) = self.index.tags.get(el.tag()) {
             candidates.extend_from_slice(v);
         }
+        if let Some(v) = el.style_as().and_then(|t| self.index.tags.get(t)) {
+            candidates.extend_from_slice(v);
+        }
         candidates.extend_from_slice(&self.index.universal);
         candidates.sort_unstable();
         candidates.dedup();

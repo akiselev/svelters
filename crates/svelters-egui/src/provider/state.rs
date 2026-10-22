@@ -116,6 +116,12 @@ impl std::ops::BitOr for StateBits {
     }
 }
 
+impl std::ops::BitOrAssign for StateBits {
+    fn bitor_assign(&mut self, rhs: StateBits) {
+        self.0 |= rhs.0;
+    }
+}
+
 /// A provider state, declared with [`state_bits!`](crate::state_bits). Its bit (32–63) comes from
 /// the registry built at startup from every declared state, sorted by full name, so a binary always
 /// gets the same bits.
