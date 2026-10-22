@@ -104,3 +104,70 @@ through the same decl parsing (setter properties included). Not tested on a Mac 
 TestHost has no decl styling); the macos-appkit CI runs ST2's own tests on the merged tree.
 
 
+
+## 2. What changed
+
+- **Compiler** (`crates/svelters-compiler`): `semantics/kinds.rs` (`kinds_module`, the runtime
+  spec tables) and `svelters-compile --kinds`; `lower/native_attrs.rs` / `lower/mod.rs` (a runtime
+  spread collects every attribute of the element into `Op::Spread` in source order; class/style/id,
+  `class:` and `style:` go into it when the styling is native; `<svelte:element>` lowers to
+  `Item::Dynamic`; `{@attach}` on components is a `ComponentProp::Attach`; `{...constObject}` is no
+  longer lowered statically); `codegen/component.rs` (`$n.spread` with hoisted handlers and memoized
+  call expressions, `$n.dynamic_element`, `$n.text`, the `$$kinds` import, Svelte's
+  `[$.attachment()]` prop).
+- **Runtime** (`packages/native-runtime`): `spread`, `dynamic_element`, `text`, `CLASS`, `STYLE` in
+  `src/index.js`; `bind` moves the binding's own handler before the element's handlers of the same
+  signal; `vite.js` resolves `@svelters/native-runtime/kinds` to a virtual module (`kindsModule`,
+  `KINDS_SPECIFIER`). The dom test spec (`metadata/semantics/dom.json`, `gen_dom.py`) gained the
+  `data-attr`, `data-red`, `data-rest`, `data-count` attributes the spread samples set.
+- **Conformance** (`experiments/native-compiler/conformance`): `run.mjs` writes `out/_kinds.js` for the
+  dom spec, `hooks.mjs` resolves the specifier to it; `expected.json` loses the `spread` and
+  `svelte-element` categories.
+- **Fixtures and tests**: `fixtures/spread` and `fixtures/spread-qt` (new: a spread with props, a
+  string coerced to an integer, an event, keys that go away, `<svelte:element>` changing tag and going
+  to null); `experiments/native-compiler/compiled/cases.mjs` (`spread`, `spread-qt`);
+  `crates/svelters-gtk/tests/oplog_replay.rs` replays `set ... null` (a reset nullable prop);
+  `examples/counter/tests/integration.rs` `spread_gtk` / `spread_qt` (real toolkits);
+  `crates/svelters-compiler/tests/sp1_spread.rs` (GTK and Qt: object shape and order, static
+  literal, explicit-attribute errors next to a spread, `<svelte:element>` codegen,
+  `dynamic_element_bind`, the kinds module); `native_x3.rs` updated for const objects;
+  `packages/native-runtime/test/spread.test.mjs` (6 tests: order and coercion, restore of a prop
+  without default, event connections, alias/class/style/parent:, memoized deps, dynamic element).
+  `experiments/native-compiler/fixtures/blocks-diagnostics` no longer expects
+  `native_spread_unsupported`.
+- **Docs**: runtime-contract.md "Spread attributes" (new section) and "Spreads with static keys";
+  language-subset.md; deviations.md (SP1 section; the const-object deviation is gone);
+  `docs/site/.../guides/svelte-support.md` (spread: works; `<svelte:element>`: works; conformance
+  count).
+
+## 3. Conformance: before -> after
+
+565 / 774 (CF1 baseline) -> **591 / 774**, +26 -0. Expected rejections 161 -> 132; failing 45 -> 48.
+
+Newly passing (26): attachment-component-falsy, attachment-spread, attachment-spread-stable,
+attribute-spread-call-expression, attribute-spread-reactivitiy, bind-and-spread,
+bind-and-spread-precedence, bind-state-property, bind-value-input-type-dynamic,
+binding-interop-derived, deferred-events-consistency-3, directives,
+dynamic-spread-and-attribute-directive, event-attribute-after-binding, event-attribute-spread,
+event-attribute-spread-update, event-spread-rerun, select-falsy-value, select-spread-option-selected,
+snippet-select, spread-element-input-select, spread-props, spread-props-2, style-directive-memoize,
+svelte-element-draggable, value-attribute-isolated-update-spread.
+
+Expected entries moved (the `spread` and `svelte-element` categories are removed):
+
+| sample | was | now | why |
+| --- | --- | --- | --- |
+| attachment-component, attachment-component-spread, action-void-element, attachment-svelte-element | spread / svelte-element | dom-node (own `match`) | the attachment or action uses `textContent`, `nodeName`, `value` of a DOM node |
+| clsx, style-update, element-is-attribute, svelte-element-custom-element-css-hash, svg-attribute-case | spread / svelte-element | foreign-element | custom elements, `is=`, SVG |
+| event-attribute-delegation-4, -5, event-attribute-spread-collision, event-listener-spread, snippet-spread | spread | legacy | `on:` directives, `<slot>` |
+| dynamic-element-transition | svelte-element | transition | |
+| svelte-element-css-hash | svelte-element | dom-css (own `match`) | the scoping hash class |
+| svelte-meta-dynamic | svelte-element | dom-meta | |
+
+No longer expected and now failing for reasons outside SP1, already CF1 buckets (5): form-default-value-spread
+(F-dom-host: form default value, fails like form-default-value), form-default-value-select,
+select-default-value-preserve-selection, select-default-value-single-observer (R-spec: no
+`<select defaultValue>` in the dom test spec), state-snapshot-uncloneable-ignored (F-dev-warn: the
+compiler does not honour `svelte-ignore` for `state_snapshot_uncloneable`). Two failing samples now
+pass (directives, style-directive-memoize: `style:` directives on the dom backend through the
+spread path), so failing is 45 + 5 - 2 = 48.
