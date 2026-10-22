@@ -35,13 +35,15 @@ pub(super) fn intrinsic(m: &Metrics, w: &W) -> Vec2 {
             }
             vec2(wd, interact.y)
         }
-        W::DragValue { value, decimals, prefix, suffix, .. } => {
+        W::DragValue { value, decimals, prefix, suffix, buttons, .. } => {
             let shown = match decimals {
                 Some(d) => format!("{prefix}{value:.*}{suffix}", *d as usize),
                 None => format!("{prefix}{value}{suffix}"),
             };
             let t = text_size(m, &shown);
-            vec2((t.x + 2.0 * sp.button_padding.x).max(interact.x), interact.y)
+            // FM1: two square step buttons after the number
+            let steppers = if *buttons { 2.0 * interact.y } else { 0.0 };
+            vec2((t.x + 2.0 * sp.button_padding.x).max(interact.x) + steppers, interact.y)
         }
         _ => Vec2::ZERO,
     }
@@ -55,6 +57,9 @@ pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
     }
     // the props the widget changed and the `changed` arguments, announced after the borrow
     let mut pending: Option<(Vec<P>, Vec<Value>)> = None;
+    // FM1: a `drag-value` commit (its value), announced after `changed`
+    let mut committed: Option<f64> = None;
+    let state_key = arena.core[i].egui_id.with("fm1-drag-value");
     let resp = match arena.w_mut(i) {
         W::Hyperlink { text, url, new_tab } => {
             let shown = if text.is_empty() { url.clone() } else { text.clone() };
@@ -119,12 +124,28 @@ pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
             }
             r
         }
-        W::DragValue { value, min, max, speed, decimals, prefix, suffix } => {
+        W::DragValue { value, min, max, speed, decimals, prefix, suffix, step, buttons, commit: commit_only, wheel } => {
             // a NaN bound is no bound; a NaN value shows (and drags from) 0 or the lower bound
             let (lo, hi) = (min.filter(|m| !m.is_nan()), max.filter(|m| !m.is_nan()));
-            let mut v = if value.is_nan() { lo.filter(|m| m.is_finite()).unwrap_or(0.0) } else { *value };
-            let before = v;
-            let mut d = egui::DragValue::new(&mut v).speed(finite_or(*speed, 1.0)).min_size(size);
+            let held = if value.is_nan() { lo.filter(|m| m.is_finite()).unwrap_or(0.0) } else { *value };
+            // FM1 (QW7): the interaction state of this node (`DragState`)
+            let mut st: DragState = ui.data(|d| d.get_temp(state_key)).unwrap_or_default();
+            let mut v = st.draft.unwrap_or(held);
+            let shown = v;
+            let focused = enabled && st.id.is_some_and(|id| ui.memory(|m| m.has_focus(id)));
+            // Up/Down and PageUp/PageDown step by `step` (egui's own arrows step by `speed`): taken
+            // before the widget runs
+            let mut steps = 0.0;
+            if focused {
+                ui.input_mut(|inp| {
+                    let mut n = |k| inp.count_and_consume_key(egui::Modifiers::NONE, k) as f64;
+                    steps += n(egui::Key::ArrowUp) - n(egui::Key::ArrowDown) + 10.0 * (n(egui::Key::PageUp) - n(egui::Key::PageDown));
+                });
+            }
+            let full = egui::Rect::from_min_size(ui.max_rect().min, size);
+            let bw = if *buttons { full.height().min(full.width() / 3.0) } else { 0.0 };
+            let field = egui::Rect::from_min_max(full.min, pos2(full.max.x - 2.0 * bw, full.max.y));
+            let mut d = egui::DragValue::new(&mut v).speed(finite_or(*speed, 1.0)).min_size(field.size()).update_while_editing(!*commit_only);
             if lo.is_some() || hi.is_some() {
                 d = d.range(lo.unwrap_or(f64::NEG_INFINITY)..=hi.unwrap_or(f64::INFINITY));
             }
@@ -137,11 +158,65 @@ pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
             if !suffix.is_empty() {
                 d = d.suffix(suffix.clone());
             }
-            let r = ui.add(d);
-            if v != before {
-                *value = v;
-                pending = Some((vec![P::Value], vec![Value::F64(v)]));
+            let mut r = if *buttons { ui.put(field, d) } else { ui.add(d) };
+            if *buttons {
+                for (k, dir) in [(0.0, -1.0), (1.0, 1.0)] {
+                    let b = egui::Rect::from_min_size(pos2(field.max.x + k * bw, full.min.y), vec2(bw, full.height()));
+                    let br = step_button(ui, b, state_key.with(k as u8), dir > 0.0);
+                    if br.clicked() {
+                        steps += dir;
+                    }
+                    // the node's rect and hover (tooltip) cover its buttons; the field keeps the id
+                    r.rect = r.rect.union(br.rect);
+                }
             }
+            if *wheel && focused && r.contains_pointer() {
+                let notches = wheel_notches(ui, &mut st.wheel);
+                if notches != 0.0 {
+                    steps += notches;
+                }
+                // the scroll is the field's, not an enclosing scroll area's
+                ui.input_mut(|inp| inp.smooth_scroll_delta = Vec2::ZERO);
+            }
+            if steps != 0.0 {
+                let s = if step.is_finite() && *step > 0.0 { *step } else { 1.0 };
+                v = round_step(v + steps * s, *decimals);
+                if let Some(l) = lo {
+                    v = v.max(l);
+                }
+                if let Some(h) = hi {
+                    v = v.min(h);
+                }
+                ui.ctx().request_repaint();
+            }
+            // the value before this interaction (a drag or a focus), the one a commit compares with
+            if (r.drag_started() || r.gained_focus()) && st.base.is_none() {
+                st.base = Some(held);
+            }
+            let ends = r.drag_stopped() || r.lost_focus();
+            let at_commit = steps != 0.0 || ends;
+            let next = if *commit_only {
+                if v != shown || steps != 0.0 {
+                    st.draft = Some(v);
+                }
+                if at_commit { st.draft.take().unwrap_or(held) } else { held }
+            } else {
+                v
+            };
+            if next != *value && !(next.is_nan() && value.is_nan()) {
+                *value = next;
+                pending = Some((vec![P::Value], vec![Value::F64(next)]));
+            }
+            if at_commit {
+                let base = st.base.unwrap_or(held);
+                if next != base {
+                    committed = Some(next);
+                }
+                // a step inside a drag or an edit starts the next comparison from here
+                st.base = if ends || !(r.dragged() || r.has_focus()) { None } else { Some(next) };
+            }
+            st.id = Some(r.id);
+            ui.data_mut(|d| d.insert_temp(state_key, st));
             r
         }
         _ => unreachable!("not an input kind"),
@@ -149,7 +224,74 @@ pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
     if let Some((keys, args)) = pending {
         changed(arena, i, &keys, args, out);
     }
+    if let Some(v) = committed {
+        super::emit(arena, i, "commit", vec![Value::F64(v)], out);
+    }
     Painted { resp }
+}
+
+/// FM1 (QW7): what a `drag-value` keeps between passes (egui temp data, by node).
+#[derive(Clone, Copy, Debug, Default)]
+struct DragState {
+    /// The widget's egui id last pass (its focus is asked before it runs).
+    id: Option<egui::Id>,
+    /// `commit` mode: the value shown while the user is between commits.
+    draft: Option<f64>,
+    /// The value when the current drag or edit began.
+    base: Option<f64>,
+    /// Wheel points not yet a whole notch (touchpads scroll in points).
+    wheel: f32,
+}
+
+/// Points of smooth scrolling that make one wheel step.
+const WHEEL_NOTCH: f32 = 40.0;
+
+/// The wheel steps of this pass: up is +1 per line (or page, or [`WHEEL_NOTCH`] points).
+fn wheel_notches(ui: &Ui, acc: &mut f32) -> f64 {
+    let mut n = 0.0;
+    ui.input(|inp| {
+        for e in &inp.events {
+            if let egui::Event::MouseWheel { unit, delta, .. } = e {
+                match unit {
+                    egui::MouseWheelUnit::Point => {
+                        *acc += delta.y;
+                        while acc.abs() >= WHEEL_NOTCH {
+                            let s = acc.signum();
+                            n += s as f64;
+                            *acc -= s * WHEEL_NOTCH;
+                        }
+                    }
+                    _ if delta.y != 0.0 => n += delta.y.signum() as f64 * delta.y.abs().round().max(1.0) as f64,
+                    _ => {}
+                }
+            }
+        }
+    });
+    n
+}
+
+/// `x` without the float noise a sum of steps leaves (`0.1 + 0.2`), at `decimals` when fixed.
+fn round_step(x: f64, decimals: Option<i64>) -> f64 {
+    if !x.is_finite() {
+        return x;
+    }
+    let d = decimals.map_or(10, |d| d.clamp(0, 15) as usize);
+    format!("{x:.d$}").parse().unwrap_or(x)
+}
+
+/// A − (`plus` false) or + step button of a `drag-value`: painted, clickable, not focusable (the
+/// field is the one tab stop).
+fn step_button(ui: &mut Ui, rect: egui::Rect, id: egui::Id, plus: bool) -> egui::Response {
+    let resp = ui.interact(rect, id, Sense::CLICK);
+    let vis = ui.style().interact(&resp);
+    ui.painter().rect(rect.shrink(0.5), vis.corner_radius, vis.weak_bg_fill, vis.bg_stroke, egui::StrokeKind::Inside);
+    let c = rect.center();
+    let a = (rect.height() * 0.2).max(2.0);
+    ui.painter().line_segment([c - vec2(a, 0.0), c + vec2(a, 0.0)], vis.fg_stroke);
+    if plus {
+        ui.painter().line_segment([c - vec2(0.0, a), c + vec2(0.0, a)], vis.fg_stroke);
+    }
+    resp
 }
 
 /// A `range-slider` with value boxes and no caption. egui's `RangeSlider` names its value boxes

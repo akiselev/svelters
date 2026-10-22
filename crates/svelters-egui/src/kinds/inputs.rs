@@ -86,10 +86,26 @@ static DRAG_VALUE_PROPS: &[PropDef] = &[
     },
     prop("prefix", P::Prefix, Ty::Str, Def::Str(""), "Text before the number (`x: `)."),
     prop("suffix", P::Suffix, Ty::Str, Def::Str(""), "Text after the number (` mm`)."),
+    // FM1 (QW7): Qt's QSpinBox/QDoubleSpinBox
+    prop("step", P::Step, Ty::F64, Def::F64(1.0), "What a step adds or takes away: Up/Down while focused, a step button, a wheel notch. PageUp/PageDown step ten times."),
+    prop("buttons", P::StepButtons, Ty::Bool, Def::Bool(false), "Shows a − and a + step button at the right end (not tab stops)."),
+    prop(
+        "commit",
+        P::Commit,
+        Ty::Bool,
+        Def::Bool(false),
+        "Commit-only (Qt `keyboardTracking=false`): `value` and `changed` follow the user only at a commit (drag released, Enter or focus lost after typing, a step); in between the widget shows a draft. `commit` fires either way.",
+    ),
+    prop("wheel", P::Wheel, Ty::Bool, Def::Bool(true), "The mouse wheel steps the value while the pointer is over it and it has focus (the scroll is not passed on)."),
 ];
 
 static DRAG_VALUE_SIGNALS: &[SignalDef] = &[
-    signal("changed", &[("value", Ty::F64)], "The user changed it; carries the new value."),
+    signal("changed", &[("value", Ty::F64)], "The user changed it; carries the new value (with `commit`, only at a commit)."),
+    signal(
+        "commit",
+        &[("value", Ty::F64)],
+        "The user finished a change: a drag released, Enter or focus lost after typing, or a step (keys, buttons, wheel). Carries the committed value; fires only when it differs from the value before. `bind:value|commit` binds through it.",
+    ),
     signal("drag-started", NONE, "A drag on it began."),
     signal("drag-stopped", NONE, "A drag on it ended."),
 ];

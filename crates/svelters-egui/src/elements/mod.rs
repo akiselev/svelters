@@ -56,7 +56,7 @@ pub(crate) fn payload(id: &str) -> Option<W> {
         "RadioButton" => W::RadioButton { text: String::new(), checked: false, value: String::new(), group: String::new() },
         "Switch" => W::Switch { text: String::new(), active: false },
         "RangeSlider" => W::RangeSlider { low: 0.0, high: 100.0, min: 0.0, max: 100.0, step: 0.0, text: String::new(), show_value: true },
-        "DragValue" => W::DragValue { value: 0.0, min: None, max: None, speed: 1.0, decimals: None, prefix: String::new(), suffix: String::new() },
+        "DragValue" => W::DragValue { value: 0.0, min: None, max: None, speed: 1.0, decimals: None, prefix: String::new(), suffix: String::new(), step: 1.0, buttons: false, commit: false, wheel: true },
         "Panel" => W::Panel { side: "left", size: None, resizable: false, separator: true },
         "Sides" => W::Sides,
         "Frame" => W::Frame { label: String::new(), style: "group" },
@@ -176,6 +176,23 @@ fn set(w: &mut W, def: &PropDef, v: &Value) -> Result<Dirty, String> {
             *suffix = as_str(v)?;
             measure
         }
+        // FM1 (QW7)
+        (P::Step, W::DragValue { step, .. }) => {
+            *step = finite_or(as_f64(v)?, 1.0).abs();
+            none
+        }
+        (P::StepButtons, W::DragValue { buttons, .. }) => {
+            *buttons = as_bool(v)?;
+            measure
+        }
+        (P::Commit, W::DragValue { commit, .. }) => {
+            *commit = as_bool(v)?;
+            none
+        }
+        (P::Wheel, W::DragValue { wheel, .. }) => {
+            *wheel = as_bool(v)?;
+            none
+        }
         (P::Side, W::Panel { side, .. }) => {
             *side = as_enum(v, kinds::SIDE)?;
             Dirty::LAYOUT
@@ -288,6 +305,10 @@ pub(crate) fn get_prop(w: &W, def: &PropDef) -> Option<Value> {
         (P::Decimals, W::DragValue { decimals, .. }) => decimals.map_or(Value::Null, Value::I64),
         (P::Prefix, W::DragValue { prefix, .. }) => s(prefix),
         (P::Suffix, W::DragValue { suffix, .. }) => s(suffix),
+        (P::Step, W::DragValue { step, .. }) => Value::F64(*step),
+        (P::StepButtons, W::DragValue { buttons, .. }) => Value::Bool(*buttons),
+        (P::Commit, W::DragValue { commit, .. }) => Value::Bool(*commit),
+        (P::Wheel, W::DragValue { wheel, .. }) => Value::Bool(*wheel),
         (P::Side, W::Panel { side, .. }) => s(side),
         (P::Size, W::Panel { size, .. }) => len_value(*size),
         (P::Resizable, W::Panel { resizable, .. }) => Value::Bool(*resizable),
@@ -395,6 +416,15 @@ pub(crate) fn finite_or(x: f64, fallback: f64) -> f64 {
 
 /// A widget-side change of props `keys` of node `i` (stamped, journaled, `prop_changed` when
 /// observed, then `changed` with `args` when listened): WG1's `leaf::widget_changed`.
+/// FM1: event `name` of node `i`'s kind with `args`, when listened (`commit`, `submit`).
+pub(crate) fn emit(arena: &Arena, i: usize, name: &str, args: Vec<Value>, out: &mut Vec<Out>) {
+    let s = crate::kinds::signal_id(arena.core[i].kind as usize, name);
+    if arena.listens(i, s) {
+        let h = arena.slots.id_at(i).expect("live node").to_raw();
+        out.push(Out::Event(h, s, args));
+    }
+}
+
 pub(crate) fn changed(arena: &mut Arena, i: usize, keys: &[P], args: Vec<Value>, out: &mut Vec<Out>) {
     crate::leaf::widget_changed(arena, i, keys, args, out);
 }

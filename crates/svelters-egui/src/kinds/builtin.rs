@@ -98,6 +98,13 @@ static BUTTON_PROPS: &[PropDef] = &[
     prop("font-weight", P::FontWeight, Ty::I64, Def::I64(400), FONT_WEIGHT_DOC),
     prop("default", P::Default, Ty::Bool, Def::Bool(false), "Enter activates it while focus is in its focus scope (or root) and the focused node does not take Enter itself."),
     prop("cancel", P::Cancel, Ty::Bool, Def::Bool(false), "Escape activates it while focus is in its focus scope (or root)."),
+    prop(
+        "dialog-role",
+        P::DialogRole,
+        Ty::Enum(crate::forms::BUTTON_ROLE),
+        Def::Str("auto"),
+        "FM1: its place in a parent box's `button-order` (`auto`: `accept` when `default`, `reject` when `cancel`, else `action`).",
+    ),
 ];
 
 
@@ -115,6 +122,15 @@ static TEXT_EDIT_PROPS: &[PropDef] = &[
     prop("multiline", P::Multiline, Ty::Bool, Def::Bool(false), "Several lines (`TextEdit::multiline`); Enter inserts a newline."),
     prop("password", P::Password, Ty::Bool, Def::Bool(false), "Hides the characters."),
     prop("char-limit", P::CharLimit, Ty::I64, Def::I64(0), "Maximum number of characters; 0 for none."),
+    // FM1 (QW8): Qt's QLineEdit + QValidator, reduced
+    prop("read-only", P::ReadOnly, Ty::Bool, Def::Bool(false), "The text can be selected and copied but not edited (Qt `readOnly`; still a tab stop, unlike `enabled = false`)."),
+    prop(
+        "pattern",
+        P::Pattern,
+        Ty::Str,
+        Def::Str(""),
+        "A regular expression the whole text must match (HTML `pattern`, anchored; `regex-lite` syntax); empty for none, and empty text always passes. Text that does not match is outlined as invalid (AccessKit `invalid`) and does not `submit` or `commit`. A pattern that does not compile is an error.",
+    ),
 ];
 
 static SLIDER_PROPS: &[PropDef] = &[
@@ -157,6 +173,12 @@ static CHECKBOX_SIGNALS: &[SignalDef] = &[
 
 static TEXT_EDIT_SIGNALS: &[SignalDef] = &[
     signal("changed", &[("text", Ty::Str)], "The user edited the text; carries the new text (once per frame)."),
+    signal("submit", &[("text", Ty::Str)], "FM1: Enter in a one-line field (Qt `returnPressed`; also when Enter goes on to the `default` button). Not while the text fails `pattern`."),
+    signal(
+        "commit",
+        &[("text", Ty::Str)],
+        "FM1: the user finished editing (Qt `editingFinished`): Enter in a one-line field, or focus lost after an edit. Not while the text fails `pattern`. `bind:text|commit` binds through it.",
+    ),
     signal("gained-focus", NONE, "Took keyboard focus."),
     signal("lost-focus", NONE, "Lost keyboard focus."),
 ];

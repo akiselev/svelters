@@ -29,6 +29,8 @@ serde_json.workspace = true
 inventory = "0.3"
 # FX1: Unicode general categories for the native (Pango) word rules (`native/words.rs`).
 unicode-general-category = "1.1"
+# FM1 (QW8): `text-edit` `pattern` (linear-time regex, no dependencies; the full `regex` is not needed)
+regex-lite = "0.1"
 # D9 (provisional, plans/milestones/G1-egui-skeleton.md): one egui minor per svelters-egui line,
 # pinned exactly. All egui crates move together.
 egui = { version = "=0.37.0", default-features = false, features = ["default_fonts"] }

@@ -132,6 +132,8 @@ export interface EguiElements {
     'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
     /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
     'focus-scope'?: 'none' | 'contain' | 'dialog';
+    /** FM1 (Qt `QDialogButtonBox`): lays its children out in a platform's dialog button order (`platform`: Windows, macOS, or GNOME on Linux; or one of `windows`, `macos`, `gnome`, `kde`) by each button's `dialog-role`, in place of tree order. Help and reset come first, then other children (a spacer with `flex-grow`), then the rest. Tree order (and Tab) is unchanged. */
+    'button-order'?: 'none' | 'platform' | 'windows' | 'macos' | 'gnome' | 'kde';
   };
   /** Static text. */
   label: EguiWidgetProps & {
@@ -162,6 +164,8 @@ export interface EguiElements {
     default?: boolean;
     /** Escape activates it while focus is in its focus scope (or root). */
     cancel?: boolean;
+    /** FM1: its place in a parent box's `button-order` (`auto`: `accept` when `default`, `reject` when `cancel`, else `action`). */
+    'dialog-role'?: 'auto' | 'accept' | 'reject' | 'destructive' | 'apply' | 'reset' | 'help' | 'action';
     /** Pressed and released (`Response::clicked`). */
     onclicked?: () => void;
     /** Double click (`Response::double_clicked`). */
@@ -194,8 +198,16 @@ export interface EguiElements {
     password?: boolean;
     /** Maximum number of characters; 0 for none. */
     'char-limit'?: number;
+    /** The text can be selected and copied but not edited (Qt `readOnly`; still a tab stop, unlike `enabled = false`). */
+    'read-only'?: boolean;
+    /** A regular expression the whole text must match (HTML `pattern`, anchored; `regex-lite` syntax); empty for none, and empty text always passes. Text that does not match is outlined as invalid (AccessKit `invalid`) and does not `submit` or `commit`. A pattern that does not compile is an error. */
+    pattern?: string;
     /** The user edited the text; carries the new text (once per frame). */
     onchanged?: (text: string) => void;
+    /** FM1: Enter in a one-line field (Qt `returnPressed`; also when Enter goes on to the `default` button). Not while the text fails `pattern`. */
+    onsubmit?: (text: string) => void;
+    /** FM1: the user finished editing (Qt `editingFinished`): Enter in a one-line field, or focus lost after an edit. Not while the text fails `pattern`. `bind:text|commit` binds through it. */
+    oncommit?: (text: string) => void;
     /** Took keyboard focus. */
     'ongained-focus'?: () => void;
     /** Lost keyboard focus. */
@@ -318,6 +330,8 @@ export interface EguiElements {
     'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
     /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
     'focus-scope'?: 'none' | 'contain' | 'dialog';
+    /** FM1 (Qt `QDialogButtonBox`): lays its children out in a platform's dialog button order (`platform`: Windows, macOS, or GNOME on Linux; or one of `windows`, `macos`, `gnome`, `kde`) by each button's `dialog-role`, in place of tree order. Help and reset come first, then other children (a spacer with `flex-grow`), then the rest. Tree order (and Tab) is unchanged. */
+    'button-order'?: 'none' | 'platform' | 'windows' | 'macos' | 'gnome' | 'kde';
     /** The header's caption (also its accessible name). */
     text?: string;
     /** Shows the children; a click on the header (or Enter/Space on it) toggles it. */
@@ -346,6 +360,8 @@ export interface EguiElements {
     'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
     /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
     'focus-scope'?: 'none' | 'contain' | 'dialog';
+    /** FM1 (Qt `QDialogButtonBox`): lays its children out in a platform's dialog button order (`platform`: Windows, macOS, or GNOME on Linux; or one of `windows`, `macos`, `gnome`, `kde`) by each button's `dialog-role`, in place of tree order. Help and reset come first, then other children (a spacer with `flex-grow`), then the rest. Tree order (and Tab) is unchanged. */
+    'button-order'?: 'none' | 'platform' | 'windows' | 'macos' | 'gnome' | 'kde';
     /** The axes that scroll (taffy `overflow: scroll` on them). */
     direction?: 'vertical' | 'horizontal' | 'both';
     /** Horizontal offset in points; scrolling changes it, and a write scrolls (clamped to the content). */
@@ -441,8 +457,18 @@ export interface EguiElements {
     prefix?: string;
     /** Text after the number (` mm`). */
     suffix?: string;
-    /** The user changed it; carries the new value. */
+    /** What a step adds or takes away: Up/Down while focused, a step button, a wheel notch. PageUp/PageDown step ten times. */
+    step?: number;
+    /** Shows a − and a + step button at the right end (not tab stops). */
+    buttons?: boolean;
+    /** Commit-only (Qt `keyboardTracking=false`): `value` and `changed` follow the user only at a commit (drag released, Enter or focus lost after typing, a step); in between the widget shows a draft. `commit` fires either way. */
+    commit?: boolean;
+    /** The mouse wheel steps the value while the pointer is over it and it has focus (the scroll is not passed on). */
+    wheel?: boolean;
+    /** The user changed it; carries the new value (with `commit`, only at a commit). */
     onchanged?: (value: number) => void;
+    /** The user finished a change: a drag released, Enter or focus lost after typing, or a step (keys, buttons, wheel). Carries the committed value; fires only when it differs from the value before. `bind:value|commit` binds through it. */
+    oncommit?: (value: number) => void;
     /** A drag on it began. */
     'ondrag-started'?: () => void;
     /** A drag on it ended. */
@@ -468,6 +494,8 @@ export interface EguiElements {
     'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
     /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
     'focus-scope'?: 'none' | 'contain' | 'dialog';
+    /** FM1 (Qt `QDialogButtonBox`): lays its children out in a platform's dialog button order (`platform`: Windows, macOS, or GNOME on Linux; or one of `windows`, `macos`, `gnome`, `kde`) by each button's `dialog-role`, in place of tree order. Help and reset come first, then other children (a spacer with `flex-grow`), then the rest. Tree order (and Tab) is unchanged. */
+    'button-order'?: 'none' | 'platform' | 'windows' | 'macos' | 'gnome' | 'kde';
     /** The edge of the parent it belongs to: the separator and the resize grip are on the opposite edge, and `size` is its width (left, right) or height (top, bottom). */
     side?: 'left' | 'right' | 'top' | 'bottom';
     /** Width (left, right) or height (top, bottom) in points; null for its content's. Dragging the grip of a `resizable` panel changes it, within `min-*`/`max-*`. */
@@ -509,6 +537,8 @@ export interface EguiElements {
     'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
     /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
     'focus-scope'?: 'none' | 'contain' | 'dialog';
+    /** FM1 (Qt `QDialogButtonBox`): lays its children out in a platform's dialog button order (`platform`: Windows, macOS, or GNOME on Linux; or one of `windows`, `macos`, `gnome`, `kde`) by each button's `dialog-role`, in place of tree order. Help and reset come first, then other children (a spacer with `flex-grow`), then the rest. Tree order (and Tab) is unchanged. */
+    'button-order'?: 'none' | 'platform' | 'windows' | 'macos' | 'gnome' | 'kde';
     /** A caption above the content (GTK's `Gtk.Frame:label`); empty for none. */
     label?: string;
     /** The egui frame drawn around the content: `egui::Frame::group`, `canvas`, `window`, `menu`, `popup`, `side_top_panel` (`panel`), or no chrome (`none`). Its inner margin adds to `padding`. */
@@ -667,6 +697,8 @@ export interface EguiElements {
     'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
     /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
     'focus-scope'?: 'none' | 'contain' | 'dialog';
+    /** FM1 (Qt `QDialogButtonBox`): lays its children out in a platform's dialog button order (`platform`: Windows, macOS, or GNOME on Linux; or one of `windows`, `macos`, `gnome`, `kde`) by each button's `dialog-role`, in place of tree order. Help and reset come first, then other children (a spacer with `flex-grow`), then the rest. Tree order (and Tab) is unchanged. */
+    'button-order'?: 'none' | 'platform' | 'windows' | 'macos' | 'gnome' | 'kde';
     /** Shown when true; the user closing it (Escape, a click outside with `autohide`) sets it false. */
     open?: boolean;
     'bind:open'?: boolean;
@@ -699,6 +731,8 @@ export interface EguiElements {
     'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
     /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
     'focus-scope'?: 'none' | 'contain' | 'dialog';
+    /** FM1 (Qt `QDialogButtonBox`): lays its children out in a platform's dialog button order (`platform`: Windows, macOS, or GNOME on Linux; or one of `windows`, `macos`, `gnome`, `kde`) by each button's `dialog-role`, in place of tree order. Help and reset come first, then other children (a spacer with `flex-grow`), then the rest. Tree order (and Tab) is unchanged. */
+    'button-order'?: 'none' | 'platform' | 'windows' | 'macos' | 'gnome' | 'kde';
     /** Shown when true (so `{#if}` alone can show it); the user dismissing it sets it false. */
     open?: boolean;
     'bind:open'?: boolean;
@@ -731,6 +765,8 @@ export interface EguiElements {
     'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
     /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
     'focus-scope'?: 'none' | 'contain' | 'dialog';
+    /** FM1 (Qt `QDialogButtonBox`): lays its children out in a platform's dialog button order (`platform`: Windows, macOS, or GNOME on Linux; or one of `windows`, `macos`, `gnome`, `kde`) by each button's `dialog-role`, in place of tree order. Help and reset come first, then other children (a spacer with `flex-grow`), then the rest. Tree order (and Tab) is unchanged. */
+    'button-order'?: 'none' | 'platform' | 'windows' | 'macos' | 'gnome' | 'kde';
     /** Shown when true; the close button sets it false. */
     open?: boolean;
     'bind:open'?: boolean;
@@ -770,6 +806,22 @@ export interface EguiElements {
     /** The selected row, -1 for none; a click on a row (or the arrow keys) changes it. */
     selected?: number;
     'bind:selected'?: number;
+    /** A header click sorts on that column: `sort-column` becomes it, `sort-order` ascending, or flips when it already was (the rows are still sorted by JS, on `sort-changed`). */
+    sortable?: boolean;
+    /** The column (child index) the header shows sorted, -1 for none: then each column's own `sort` shows. */
+    'sort-column'?: number;
+    'bind:sort-column'?: number;
+    /** The order shown on `sort-column`. */
+    'sort-order'?: 'none' | 'ascending' | 'descending';
+    'bind:sort-order'?: 'none' | 'ascending' | 'descending';
+    /** A right click on the header opens a menu that hides and shows the `hideable` columns. */
+    'column-menu'?: boolean;
+    /** The hidden columns, by `name` (a column without one by its child index, `"2"`). The column menu changes it. */
+    'hidden-columns'?: string[];
+    'bind:hidden-columns'?: string[];
+    /** The header as JSON (Qt `saveState`): `{"widths":{name:points},"hidden":[name],"sort":{"column":name,"order":…}}`. The table writes it after the user resizes, hides or sorts; setting it (a saved one) restores them. Columns are named as in `hidden-columns`. */
+    'header-state'?: string;
+    'bind:header-state'?: string;
     /** The rows the table needs data for changed: `first..=last` (the visible rows plus `overscan`); answer with `set-rows`. */
     onrange?: (first: number, last: number) => void;
     /** The user selected a row; carries its index. */
@@ -778,6 +830,12 @@ export interface EguiElements {
     onactivated?: (row: number) => void;
     /** A column header was clicked (sort on it in JS and set the column's `sort`). */
     'onheader-clicked'?: (column: number) => void;
+    /** FM1: a header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS). */
+    'onsort-changed'?: (sort_column: number, sort_order: 'none' | 'ascending' | 'descending') => void;
+    /** FM1: the column menu hid or showed a column; carries the hidden columns. */
+    'oncolumns-changed'?: (hidden_columns: string[]) => void;
+    /** FM1: the user resized, hid or sorted; carries the new `header-state` (save it). */
+    'onheader-state-changed'?: (header_state: string) => void;
   };
   /** A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100) is the column's width; a user resize keeps its width until the prop changes. */
   'table-column': EguiWidgetProps & {
@@ -787,8 +845,12 @@ export interface EguiElements {
     resizable?: boolean;
     /** Horizontal alignment of its cells. */
     align?: 'start' | 'center' | 'end';
-    /** The sort arrow its header shows (the data is sorted by JS). */
+    /** The sort arrow its header shows (the data is sorted by JS) while the table's `sort-column` is -1. */
     sort?: 'none' | 'ascending' | 'descending';
+    /** FM1: its name in `hidden-columns` and `header-state` (empty: its child index). */
+    name?: string;
+    /** FM1: the column menu lists it (it can be hidden). */
+    hideable?: boolean;
   };
   /** Pages under a tab bar: each child (a `tab`) is a page titled by its `title`; only the `selected` one is laid out and drawn. */
   'tab-view': EguiWidgetProps & {
@@ -818,6 +880,8 @@ export interface EguiElements {
     'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
     /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
     'focus-scope'?: 'none' | 'contain' | 'dialog';
+    /** FM1 (Qt `QDialogButtonBox`): lays its children out in a platform's dialog button order (`platform`: Windows, macOS, or GNOME on Linux; or one of `windows`, `macos`, `gnome`, `kde`) by each button's `dialog-role`, in place of tree order. Help and reset come first, then other children (a spacer with `flex-grow`), then the rest. Tree order (and Tab) is unchanged. */
+    'button-order'?: 'none' | 'platform' | 'windows' | 'macos' | 'gnome' | 'kde';
     /** The tab's caption (also its accessible name). */
     title?: string;
     /** The tab shows a close button (`close-requested`). */

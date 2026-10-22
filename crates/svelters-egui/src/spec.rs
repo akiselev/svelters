@@ -152,8 +152,20 @@ fn kind_json(k: &KindDef) -> J {
     // offsets), else argument 0.
     // WG2a: a kind without `changed` binds through its first signal with an argument named like the
     // prop (`action`'s `toggled`, as on GTK and Qt).
+    // FM1: a `changed` that does not carry the prop gives way to a signal that does (a `table`'s
+    // `sort-changed`, `columns-changed`, `header-state-changed`).
+    let carries = |s: &kinds::SignalDef, p: &PropDef| s.args.iter().any(|(n, _)| *n == p.name);
     let bind_signal = |p: &PropDef| {
-        k.signals.iter().find(|s| s.name == "changed").or_else(|| k.signals.iter().find(|s| s.args.iter().any(|(n, _)| *n == p.name)))
+        let changed = k.signals.iter().find(|s| s.name == "changed");
+        changed
+            .filter(|s| carries(s, p))
+            .or_else(|| k.signals.iter().find(|s| s.name != "commit" && carries(s, p)))
+            .or(changed)
+    };
+    // FM1: the kind's `commit` event for the prop (`bind:value|commit`, CX3): a `commit` signal
+    // whose argument is named like the prop.
+    let commit_of = |p: &PropDef| {
+        k.signals.iter().find(|s| s.name == "commit").and_then(|s| s.args.iter().position(|(n, _)| *n == p.name)).map(|arg| json!({"event": "commit", "arg": arg}))
     };
     let bindings: Map<String, J> = k
         .props
@@ -169,9 +181,7 @@ fn kind_json(k: &KindDef) -> J {
                 // `value` derives `checked` from `group`
                 || matches!(p.key, kinds::P::Low | kinds::P::High)
                 || (k.id == "RadioButton" && p.key == kinds::P::Checked);
-            (
-                p.name.to_string(),
-                json!({
+            let mut b = json!({
                     "compare_before_set": true,
                     "direction": "two_way",
                     "echo": "none",
@@ -183,8 +193,11 @@ fn kind_json(k: &KindDef) -> J {
                     "read_back": normalizes,
                     "sync_signals_on_set": [],
                     "value": {"arg": arg},
-                }),
-            )
+                });
+            if let Some(c) = commit_of(p) {
+                b["commit"] = c;
+            }
+            (p.name.to_string(), b)
         })
         .collect();
     let children = k.slot.map(|slot| {

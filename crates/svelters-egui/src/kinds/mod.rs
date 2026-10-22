@@ -42,6 +42,8 @@ mod views;
 
 pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, FOCUS_SCOPE, JUSTIFY, KINDS, POSITION, WRAP, WRAP_MODE};
 pub use decor::ORIENTATION;
+/// FM1 (QW11): a box's `button-order`: `none` or a platform layout.
+pub const BUTTON_ORDER: &[&str] = &["none", "platform", "windows", "macos", "gnome", "kde"];
 pub use layouts::{JUSTIFY_ITEMS, SCROLL_DIRECTION};
 pub use menus::attaches_to;
 pub use popups::PLACEMENT;
@@ -262,6 +264,26 @@ pub enum P {
     /// EV3: a button's Enter and Escape roles.
     Default,
     Cancel,
+    // FM1 (plans/milestones/FM1-form-widgets.md)
+    /// drag-value: step buttons, commit-only mode, wheel steps (`step` reuses the slider's key)
+    StepButtons,
+    Commit,
+    Wheel,
+    /// box: dialog button order; button: its role there
+    ButtonOrder,
+    DialogRole,
+    /// text-edit
+    ReadOnly,
+    Pattern,
+    /// table: header sorting, hidden columns, saved header state; table-column: `hideable`
+    /// (`name` reuses the icon's key)
+    Sortable,
+    SortColumn,
+    SortOrder,
+    ColumnMenu,
+    HiddenColumns,
+    HeaderState,
+    Hideable,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }

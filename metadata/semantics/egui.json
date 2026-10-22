@@ -216,6 +216,31 @@
           ],
           "writable": true
         },
+        "button-order": {
+          "construct_only": false,
+          "default": "none",
+          "doc": "FM1 (Qt `QDialogButtonBox`): lays its children out in a platform's dialog button order (`platform`: Windows, macOS, or GNOME on Linux; or one of `windows`, `macos`, `gnome`, `kde`) by each button's `dialog-role`, in place of tree order. Help and reset come first, then other children (a spacer with `flex-grow`), then the rest. Tree order (and Tab) is unchanged.",
+          "js": "button-order",
+          "native": "button-order",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Box:button-order",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "platform",
+            "windows",
+            "macos",
+            "gnome",
+            "kde"
+          ],
+          "writable": true
+        },
         "column-gap": {
           "construct_only": false,
           "default": null,
@@ -430,6 +455,33 @@
           },
           "readable": true,
           "type": "bool",
+          "writable": true
+        },
+        "dialog-role": {
+          "construct_only": false,
+          "default": "auto",
+          "doc": "FM1: its place in a parent box's `button-order` (`auto`: `accept` when `default`, `reject` when `cancel`, else `action`).",
+          "js": "dialog-role",
+          "native": "dialog-role",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Button:dialog-role",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "auto",
+            "accept",
+            "reject",
+            "destructive",
+            "apply",
+            "reset",
+            "help",
+            "action"
+          ],
           "writable": true
         },
         "font-weight": {
@@ -1257,6 +1309,10 @@
       "abstract": false,
       "bindings": {
         "value": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
           "compare_before_set": true,
           "direction": "two_way",
           "echo": "none",
@@ -1288,6 +1344,40 @@
       "native": "egui::DragValue",
       "present": null,
       "props": {
+        "buttons": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Shows a − and a + step button at the right end (not tab stops).",
+          "js": "buttons",
+          "native": "buttons",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:buttons",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "commit": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Commit-only (Qt `keyboardTracking=false`): `value` and `changed` follow the user only at a commit (drag released, Enter or focus lost after typing, a step); in between the widget shows a draft. `commit` fires either way.",
+          "js": "commit",
+          "native": "commit",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:commit",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "decimals": {
           "construct_only": false,
           "default": null,
@@ -1373,6 +1463,23 @@
           "type": "f64",
           "writable": true
         },
+        "step": {
+          "construct_only": false,
+          "default": 1.0,
+          "doc": "What a step adds or takes away: Up/Down while focused, a step button, a wheel notch. PageUp/PageDown step ten times.",
+          "js": "step",
+          "native": "step",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:step",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
         "suffix": {
           "construct_only": false,
           "default": "",
@@ -1406,6 +1513,23 @@
           "readable": true,
           "type": "f64",
           "writable": true
+        },
+        "wheel": {
+          "construct_only": false,
+          "default": true,
+          "doc": "The mouse wheel steps the value while the pointer is over it and it has focus (the scroll is not passed on).",
+          "js": "wheel",
+          "native": "wheel",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:wheel",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
         }
       },
       "provenance": {
@@ -1420,10 +1544,26 @@
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "The user changed it; carries the new value.",
+          "doc": "The user changed it; carries the new value (with `commit`, only at a commit).",
           "handler_result": "none",
           "js_event": "changed",
           "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user finished a change: a drag released, Enter or focus lost after typing, or a step (keys, buttons, wheel). Carries the committed value; fires only when it differs from the value before. `bind:value|commit` binds through it.",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -4743,6 +4883,44 @@
     "Table": {
       "abstract": false,
       "bindings": {
+        "header-state": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "header-state-changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "header-state",
+          "provenance": "svelters-egui: the egui_table::Table widget writes header-state into the node during the pass; `header-state-changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "hidden-columns": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "columns-changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "hidden-columns",
+          "provenance": "svelters-egui: the egui_table::Table widget writes hidden-columns into the node during the pass; `columns-changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
         "selected": {
           "compare_before_set": true,
           "direction": "two_way",
@@ -4760,6 +4938,44 @@
           "sync_signals_on_set": [],
           "value": {
             "arg": 0
+          }
+        },
+        "sort-column": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "sort-changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "sort-column",
+          "provenance": "svelters-egui: the egui_table::Table widget writes sort-column into the node during the pass; `sort-changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "sort-order": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "sort-changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "sort-order",
+          "provenance": "svelters-egui: the egui_table::Table widget writes sort-order into the node during the pass; `sort-changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 1
           }
         }
       },
@@ -4820,6 +5036,58 @@
       "native": "egui_table::Table",
       "present": null,
       "props": {
+        "column-menu": {
+          "construct_only": false,
+          "default": true,
+          "doc": "A right click on the header opens a menu that hides and shows the `hideable` columns.",
+          "js": "column-menu",
+          "native": "column-menu",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Table:column-menu",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "header-state": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The header as JSON (Qt `saveState`): `{\"widths\":{name:points},\"hidden\":[name],\"sort\":{\"column\":name,\"order\":…}}`. The table writes it after the user resizes, hides or sorts; setting it (a saved one) restores them. Columns are named as in `hidden-columns`.",
+          "js": "header-state",
+          "native": "header-state",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Table:header-state",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "hidden-columns": {
+          "construct_only": false,
+          "default": null,
+          "doc": "The hidden columns, by `name` (a column without one by its child index, `\"2\"`). The column menu changes it.",
+          "js": "hidden-columns",
+          "native": "hidden-columns",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Table:hidden-columns",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
         "overscan": {
           "construct_only": false,
           "default": 20,
@@ -4886,6 +5154,62 @@
           },
           "readable": true,
           "type": "i64",
+          "writable": true
+        },
+        "sort-column": {
+          "construct_only": false,
+          "default": -1,
+          "doc": "The column (child index) the header shows sorted, -1 for none: then each column's own `sort` shows.",
+          "js": "sort-column",
+          "native": "sort-column",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Table:sort-column",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "sort-order": {
+          "construct_only": false,
+          "default": "none",
+          "doc": "The order shown on `sort-column`.",
+          "js": "sort-order",
+          "native": "sort-order",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Table:sort-order",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "ascending",
+            "descending"
+          ],
+          "writable": true
+        },
+        "sortable": {
+          "construct_only": false,
+          "default": false,
+          "doc": "A header click sorts on that column: `sort-column` becomes it, `sort-order` ascending, or flips when it already was (the rows are still sorted by JS, on `sort-changed`).",
+          "js": "sortable",
+          "native": "sortable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Table:sortable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         },
         "sticky-columns": {
@@ -4959,6 +5283,22 @@
           "sync": false,
           "sync_required": false
         },
+        "columns-changed": {
+          "args": [
+            {
+              "name": "hidden-columns",
+              "type": "list"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "FM1: the column menu hid or showed a column; carries the hidden columns.",
+          "handler_result": "none",
+          "js_event": "columns-changed",
+          "name": "columns-changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "header-clicked": {
           "args": [
             {
@@ -4971,6 +5311,22 @@
           "handler_result": "none",
           "js_event": "header-clicked",
           "name": "header-clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "header-state-changed": {
+          "args": [
+            {
+              "name": "header-state",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "FM1: the user resized, hid or sorted; carries the new `header-state` (save it).",
+          "handler_result": "none",
+          "js_event": "header-state-changed",
+          "name": "header-state-changed",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -4991,6 +5347,26 @@
           "handler_result": "none",
           "js_event": "range",
           "name": "range",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "sort-changed": {
+          "args": [
+            {
+              "name": "sort-column",
+              "type": "i64"
+            },
+            {
+              "name": "sort-order",
+              "type": "enum"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "FM1: a header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS).",
+          "handler_result": "none",
+          "js_event": "sort-changed",
+          "name": "sort-changed",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -5035,6 +5411,40 @@
           ],
           "writable": true
         },
+        "hideable": {
+          "construct_only": false,
+          "default": true,
+          "doc": "FM1: the column menu lists it (it can be hidden).",
+          "js": "hideable",
+          "native": "hideable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TableColumn:hideable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "name": {
+          "construct_only": false,
+          "default": "",
+          "doc": "FM1: its name in `hidden-columns` and `header-state` (empty: its child index).",
+          "js": "name",
+          "native": "name",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TableColumn:name",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "resizable": {
           "construct_only": false,
           "default": true,
@@ -5055,7 +5465,7 @@
         "sort": {
           "construct_only": false,
           "default": "none",
-          "doc": "The sort arrow its header shows (the data is sorted by JS).",
+          "doc": "The sort arrow its header shows (the data is sorted by JS) while the table's `sort-column` is -1.",
           "js": "sort",
           "native": "sort",
           "nullable": false,
@@ -5102,6 +5512,10 @@
       "abstract": false,
       "bindings": {
         "text": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
           "compare_before_set": true,
           "direction": "two_way",
           "echo": "none",
@@ -5212,6 +5626,40 @@
           "type": "bool",
           "writable": true
         },
+        "pattern": {
+          "construct_only": false,
+          "default": "",
+          "doc": "A regular expression the whole text must match (HTML `pattern`, anchored; `regex-lite` syntax); empty for none, and empty text always passes. Text that does not match is outlined as invalid (AccessKit `invalid`) and does not `submit` or `commit`. A pattern that does not compile is an error.",
+          "js": "pattern",
+          "native": "pattern",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:pattern",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "read-only": {
+          "construct_only": false,
+          "default": false,
+          "doc": "The text can be selected and copied but not edited (Qt `readOnly`; still a tab stop, unlike `enabled = false`).",
+          "js": "read-only",
+          "native": "read-only",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:read-only",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "text": {
           "construct_only": false,
           "default": "",
@@ -5250,6 +5698,22 @@
           "sync": false,
           "sync_required": false
         },
+        "commit": {
+          "args": [
+            {
+              "name": "text",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "FM1: the user finished editing (Qt `editingFinished`): Enter in a one-line field, or focus lost after an edit. Not while the text fails `pattern`. `bind:text|commit` binds through it.",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "gained-focus": {
           "args": [],
           "disconnect_on_drop": true,
@@ -5268,6 +5732,22 @@
           "handler_result": "none",
           "js_event": "lost-focus",
           "name": "lost-focus",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "submit": {
+          "args": [
+            {
+              "name": "text",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "FM1: Enter in a one-line field (Qt `returnPressed`; also when Enter goes on to the `default` button). Not while the text fails `pattern`.",
+          "handler_result": "none",
+          "js_event": "submit",
+          "name": "submit",
           "phases": [],
           "sync": false,
           "sync_required": false

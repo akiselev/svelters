@@ -43,6 +43,31 @@ static TABLE_PROPS: &[PropDef] = &[
         "Rows beyond the visible ones that `range` asks for on each side (data ready before it scrolls into view).",
     ),
     input("selected", P::SelectedIndex, Ty::I64, Def::I64(-1), "The selected row, -1 for none; a click on a row (or the arrow keys) changes it."),
+    // FM1 (QW4): Qt's QHeaderView (sort indicator, hidden sections, saveState/restoreState)
+    prop(
+        "sortable",
+        P::Sortable,
+        Ty::Bool,
+        Def::Bool(false),
+        "A header click sorts on that column: `sort-column` becomes it, `sort-order` ascending, or flips when it already was (the rows are still sorted by JS, on `sort-changed`).",
+    ),
+    input("sort-column", P::SortColumn, Ty::I64, Def::I64(-1), "The column (child index) the header shows sorted, -1 for none: then each column's own `sort` shows."),
+    input("sort-order", P::SortOrder, Ty::Enum(SORT), Def::Str("none"), "The order shown on `sort-column`."),
+    prop("column-menu", P::ColumnMenu, Ty::Bool, Def::Bool(true), "A right click on the header opens a menu that hides and shows the `hideable` columns."),
+    input(
+        "hidden-columns",
+        P::HiddenColumns,
+        Ty::StrList,
+        Def::Null,
+        "The hidden columns, by `name` (a column without one by its child index, `\"2\"`). The column menu changes it.",
+    ),
+    input(
+        "header-state",
+        P::HeaderState,
+        Ty::Str,
+        Def::Str(""),
+        "The header as JSON (Qt `saveState`): `{\"widths\":{name:points},\"hidden\":[name],\"sort\":{\"column\":name,\"order\":…}}`. The table writes it after the user resizes, hides or sorts; setting it (a saved one) restores them. Columns are named as in `hidden-columns`.",
+    ),
 ];
 
 static TABLE_SIGNALS: &[SignalDef] = &[
@@ -54,6 +79,13 @@ static TABLE_SIGNALS: &[SignalDef] = &[
     signal("changed", &[("selected", Ty::I64)], "The user selected a row; carries its index."),
     signal("activated", &[("row", Ty::I64)], "A row was double-clicked (or Enter pressed on the selection)."),
     signal("header-clicked", &[("column", Ty::I64)], "A column header was clicked (sort on it in JS and set the column's `sort`)."),
+    signal(
+        "sort-changed",
+        &[("sort-column", Ty::I64), ("sort-order", Ty::Enum(SORT))],
+        "FM1: a header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS).",
+    ),
+    signal("columns-changed", &[("hidden-columns", Ty::StrList)], "FM1: the column menu hid or showed a column; carries the hidden columns."),
+    signal("header-state-changed", &[("header-state", Ty::Str)], "FM1: the user resized, hid or sorted; carries the new `header-state` (save it)."),
 ];
 
 static TABLE_METHODS: &[MethodDef] = &[
@@ -69,7 +101,9 @@ static TABLE_COLUMN_PROPS: &[PropDef] = &[
     prop("title", P::Title, Ty::Str, Def::Str(""), "The header text."),
     prop("resizable", P::Resizable, Ty::Bool, Def::Bool(true), "Its right edge can be dragged (double-click: fit the content)."),
     prop("align", P::CellAlign, Ty::Enum(CELL_ALIGN), Def::Str("start"), "Horizontal alignment of its cells."),
-    prop("sort", P::Sort, Ty::Enum(SORT), Def::Str("none"), "The sort arrow its header shows (the data is sorted by JS)."),
+    prop("sort", P::Sort, Ty::Enum(SORT), Def::Str("none"), "The sort arrow its header shows (the data is sorted by JS) while the table's `sort-column` is -1."),
+    prop("name", P::Name, Ty::Str, Def::Str(""), "FM1: its name in `hidden-columns` and `header-state` (empty: its child index)."),
+    prop("hideable", P::Hideable, Ty::Bool, Def::Bool(true), "FM1: the column menu lists it (it can be hidden)."),
 ];
 
 // ---- tab-view ----

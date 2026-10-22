@@ -31,6 +31,11 @@ pub(crate) fn invalid_outline(ui: &Ui, rect: Rect) {
 /// A widget-side change of props `keys` of node `i`: stamped and journaled, `prop_changed` when
 /// observed, then the kind's `changed` event with `args` when listened.
 pub(crate) fn widget_changed(arena: &mut Arena, i: usize, keys: &[kinds::P], args: Vec<Value>, out: &mut Vec<Out>) {
+    widget_changed_via(arena, i, keys, "changed", args, out);
+}
+
+/// [`widget_changed`] announced through the kind's event `signal` (FM1: a `table`'s `sort-changed`).
+pub(crate) fn widget_changed_via(arena: &mut Arena, i: usize, keys: &[kinds::P], signal: &str, args: Vec<Value>, out: &mut Vec<Out>) {
     let node = arena.slots.id_at(i).expect("live node");
     let h = node.to_raw();
     let kind = arena.core[i].kind as usize;
@@ -43,7 +48,7 @@ pub(crate) fn widget_changed(arena: &mut Arena, i: usize, keys: &[kinds::P], arg
             out.push(Out::Changed(h, prop));
         }
     }
-    let s = kinds::signal_id(kind, "changed");
+    let s = kinds::signal_id(kind, signal);
     if arena.listens(i, s) {
         out.push(Out::Event(h, s, args));
     }
@@ -262,15 +267,24 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             crate::native::focus_visible(ui); // FX1
             ui.add(egui::Checkbox::new(checked, text.as_str()))
         }
-        W::TextEdit { text, hint, multiline, password, char_limit } => {
+        W::TextEdit { text, hint, multiline, password, char_limit, read_only, .. } => {
             // FX1: native Escape and word keys before egui's TextEdit runs (crate::native)
             crate::native::keep_focus_on_escape(ui, node_id);
             crate::focus::before_text(ui, node_id); // EV3: a pending edit command
             text_focus = Some(crate::native::TextFocus::before(ui, node_id));
-            if crate::native::text_keys(ui, node_id, text, *password) {
+            if !*read_only && crate::native::text_keys(ui, node_id, text, *password) {
                 text_changed = Some(text.clone());
             }
-            let mut te = if *multiline { egui::TextEdit::multiline(text).desired_rows(4) } else { egui::TextEdit::singleline(text) };
+            // FM1 (QW8): a read-only field edits a copy egui cannot change (`&str` is an immutable
+            // `TextBuffer`): selection, copy and the caret still work
+            let fixed_src = if *read_only { text.clone() } else { String::new() };
+            let mut fixed: &str = fixed_src.as_str();
+            let buf: &mut dyn egui::TextBuffer = if *read_only {
+                &mut fixed
+            } else {
+                &mut *text
+            };
+            let mut te = if *multiline { egui::TextEdit::multiline(buf).desired_rows(4) } else { egui::TextEdit::singleline(buf) };
             te = te.id(node_id).desired_width(size.x).hint_text(hint.clone()).password(*password);
             if *char_limit > 0 {
                 te = te.char_limit(*char_limit as usize);
@@ -278,9 +292,10 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             let o = te.show(ui);
             crate::focus::after_text(ui, node_id); // EV3: a Cut or Copy command to the host's clipboard
             // W5: the Linux primary selection (select-to-copy, middle-click paste)
-            let pasted = crate::primary::text_edit(ui, &o, node_id, text, *password, (*char_limit).max(0) as usize);
+            let pasted = !*read_only && crate::primary::text_edit(ui, &o, node_id, text, *password, (*char_limit).max(0) as usize);
             let r = o.response.response;
-            if r.changed() || pasted {
+            // a read-only field's `TextEdit` may still say changed (its copy never is)
+            if (r.changed() && !*read_only) || pasted {
                 text_changed = Some(text.clone());
             }
             r
@@ -394,7 +409,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     if !arena.common(i).tooltip.is_empty() {
         resp = resp.on_hover_text(arena.common(i).tooltip.clone());
     }
-    if arena.common(i).invalid {
+    if arena.common(i).invalid || crate::forms::text_rejected(arena.w(i)) {
         invalid_outline(ui, resp.rect);
     }
     let core = &mut arena.core[i];
@@ -434,6 +449,8 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         fired.push(if focused { "gained-focus" } else { "lost-focus" });
     }
     arena.core[i].flags.set(NodeFlags::HAD_FOCUS, focused);
+    // FM1 (QW8): `submit` and `commit` (after `changed`, below)
+    let finished = crate::forms::text_finished(arena, i, ui, &resp, node_id, had_focus, text_changed.is_some());
     for name in fired {
         let s = sig(name);
         if arena.listens(i, s) {
@@ -467,6 +484,11 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         if arena.listens(i, s) {
             out.push(Out::Event(h, s, vec![v]));
         }
+    }
+    for name in finished {
+        let W::TextEdit { text, .. } = arena.w(i) else { break };
+        let t = Value::Str(text.clone());
+        crate::elements::emit(arena, i, name, vec![t], out);
     }
     resp
 }

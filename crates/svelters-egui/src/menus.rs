@@ -516,6 +516,29 @@ fn claim(ctx: &egui::Context, area: f32) -> bool {
     })
 }
 
+/// FM1 (QA8): where context menu `i` opens from the keyboard: below the focused node, when the
+/// focused node is its owner or inside it and no context menu nearer to it is attached between.
+fn keyboard_target(arena: &Arena, i: usize, ctx: &egui::Context) -> Option<egui::Pos2> {
+    let owner = arena.core[i].parent?;
+    let (node, eid) = crate::focus::focused_node(ctx)?;
+    let f = arena.idx(node).filter(|&f| arena.core[f].egui_id == eid)?;
+    // the nearest node from the focused one up that has a context menu
+    let mut at = Some(node);
+    while let Some(n) = at {
+        let k = arena.idx(n)?;
+        let has_menu = arena.children[k].iter().any(|&c| matches!(arena.w(arena.ix(c)), W::Menu(MenuW::Context { .. })));
+        if has_menu {
+            if n != owner {
+                return None;
+            }
+            let d = arena.core[f].drawn;
+            return Some(if d.is_positive() { d.left_bottom() } else { ctx.pointer_interact_pos().unwrap_or_default() });
+        }
+        at = arena.core[k].parent;
+    }
+    None
+}
+
 /// Paints `context-menu` node `i` attached to an owner drawn at `owner` (screen): a secondary click
 /// on the owner (in `ui`'s layer, not covered) opens it at the pointer; `popup()` below the owner.
 pub(crate) fn context(arena: &mut Arena, i: usize, owner: Rect, ui: &mut Ui, out: &mut Vec<Out>) {
@@ -539,6 +562,20 @@ pub(crate) fn context(arena: &mut Arena, i: usize, owner: Rect, ui: &mut Ui, out
         && let Some(pos) = ctx.pointer_interact_pos()
     {
         ctx.data_mut(|d| d.insert_temp(at_key, pos));
+        set = Some(SetOpenCommand::Bool(true));
+    }
+    // FM1 (QA8): the Menu key or Shift+F10 while focus is in the owner (and no nearer context
+    // menu) opens it below the focused node
+    if enabled
+        && set.is_none()
+        && ui.input(|inp| inp.key_pressed(egui::Key::Menu) || (inp.modifiers.matches_exact(egui::Modifiers::SHIFT) && inp.key_pressed(egui::Key::F10)))
+        && let Some(at) = keyboard_target(arena, i, &ctx)
+    {
+        ui.input_mut(|inp| {
+            inp.consume_key(egui::Modifiers::NONE, egui::Key::Menu);
+            inp.consume_key(egui::Modifiers::SHIFT, egui::Key::F10);
+        });
+        ctx.data_mut(|d| d.insert_temp(at_key, at));
         set = Some(SetOpenCommand::Bool(true));
     }
     match cmd {

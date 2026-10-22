@@ -22,7 +22,8 @@ pub enum W {
     Label { text: String, wrap: &'static str, selectable: bool, weight: i64 },
     Button { text: String, selected: bool, frame: bool, small: bool, weight: i64 },
     Checkbox { text: String, checked: bool },
-    TextEdit { text: String, hint: String, multiline: bool, password: bool, char_limit: i64 },
+    /// FM1 (QW8): `read-only`, `pattern`.
+    TextEdit { text: String, hint: String, multiline: bool, password: bool, char_limit: i64, read_only: bool, pattern: Option<std::boxed::Box<crate::forms::Pattern>> },
     Slider { value: f64, min: f64, max: f64, step: f64, text: String, show_value: bool },
     /// RA1: a provider kind's widget struct (`#[svelters::widget]`, `crate::provider`).
     Ext(crate::provider::ExtWidget),
@@ -49,7 +50,8 @@ pub enum W {
     RadioButton { text: String, checked: bool, value: String, group: String },
     Switch { text: String, active: bool },
     RangeSlider { low: f64, high: f64, min: f64, max: f64, step: f64, text: String, show_value: bool },
-    DragValue { value: f64, min: Option<f64>, max: Option<f64>, speed: f64, decimals: Option<i64>, prefix: String, suffix: String },
+    /// FM1 (QW7): `step`, `buttons`, `commit`, `wheel`.
+    DragValue { value: f64, min: Option<f64>, max: Option<f64>, speed: f64, decimals: Option<i64>, prefix: String, suffix: String, step: f64, buttons: bool, commit: bool, wheel: bool },
     Panel { side: &'static str, size: Option<f64>, resizable: bool, separator: bool },
     Sides,
     Frame { label: String, style: &'static str },
@@ -61,7 +63,8 @@ pub enum W {
     // ---- WG4a (plans/milestones/WG4a-tier1-views.md; state and paint in `crate::views`) ----
     /// `table`: props, the JS data window and what the last frame asked for.
     Table(std::boxed::Box<crate::views::table::TableState>),
-    TableColumn { title: String, resizable: bool, align: &'static str, sort: &'static str },
+    /// FM1 (QW4): `name`, `hideable`.
+    TableColumn { title: String, resizable: bool, align: &'static str, sort: &'static str, name: String, hideable: bool },
     TabView { selected: i64 },
     Tab { title: String, closable: bool },
     /// `vertical`: `orientation="vertical"` (panes stacked).
@@ -128,6 +131,10 @@ pub struct Common {
     /// EV3: a button activated by Enter (`default`) or Escape (`cancel`) in its scope.
     pub default_button: bool,
     pub cancel_button: bool,
+    /// FM1 (QW11): a box's `button-order` (`crate::kinds::BUTTON_ORDER`).
+    pub button_order: &'static str,
+    /// FM1: a button's `dialog-role` in a box with a `button-order` (`crate::forms::BUTTON_ROLE`).
+    pub dialog_role: &'static str,
 }
 
 impl Common {
@@ -167,6 +174,8 @@ impl Common {
         focus_scope: "none",
         default_button: false,
         cancel_button: false,
+        button_order: "none",
+        dialog_role: "auto",
     };
 }
 

@@ -143,6 +143,9 @@ struct State {
     autofocused: Vec<Id>,
     /// A default or cancel button to activate at its next paint (its node id).
     activate: Option<Id>,
+    /// FM1 (QW8): the focused node (its node id) whose Enter went to the default button: a one-line
+    /// `text-edit` still reports it as `submit`.
+    entered: Option<Id>,
     /// An edit command for a text field (its id) at its next paint, with the host's clipboard.
     cmd: Option<(Id, TextCommand, Option<Clip>)>,
     /// A Cut or Copy fed to field `id`: what it copies goes to this clipboard after it ran.
@@ -207,10 +210,11 @@ pub(crate) fn claims(role: Role, key: Key, m: Modifiers, mac: bool) -> bool {
     match role {
         Role::Text { multiline } => {
             if !command && !m.alt {
-                // typing and editing keys; Tab moves focus, Escape and F-keys stay the app's, and
+                // typing and editing keys; Tab moves focus, Escape, Menu and F-keys stay the app's, and
                 // Enter in a one-line field goes to the default button
                 return match key {
-                    Key::Tab | Key::Escape => false,
+                    // FM1 (QA8): the Menu key opens the context menu
+                    Key::Tab | Key::Escape | Key::Menu => false,
                     Key::Enter => multiline,
                     Key::ArrowUp | Key::ArrowDown | Key::PageUp | Key::PageDown => multiline,
                     k => !is_function_key(k),
@@ -383,6 +387,9 @@ fn route(st: &mut State, focus: Option<Id>, keys: &[(Key, Modifiers)], ime: &[bo
             });
             if let Some(b) = button {
                 st.activate = Some(b.node_eid);
+                if enter {
+                    st.entered = focused.map(|e| e.node_eid);
+                }
                 plan.eat.push(key);
                 plan.repaint = true;
                 if focus.is_none() && plan.focus.is_none() {
@@ -685,6 +692,25 @@ pub(crate) fn take_activation(ui: &Ui, node_eid: Id) -> bool {
         let hit = st.activate == Some(node_eid);
         if hit {
             st.activate = None;
+        }
+        hit
+    })
+}
+
+/// FM1 (QA8): the scene node that has keyboard focus in `ctx`'s viewport (with its egui id, to
+/// check it against the arena asking), from the latest record.
+pub(crate) fn focused_node(ctx: &Context) -> Option<(NodeId, Id)> {
+    let focus = ctx.memory(|m| m.focused())?;
+    read(ctx, |st| st.cur.entry(Some(focus)).or_else(|| st.prev.entry(Some(focus))).map(|e| (e.node, e.node_eid)))
+}
+
+/// FM1 (QW8): for a one-line `text-edit` with node id `node_eid`: whether its Enter went to the
+/// default button this pass (the field never saw it, but it is still a submit).
+pub(crate) fn take_enter(ui: &Ui, node_eid: Id) -> bool {
+    with(ui.ctx(), |st| {
+        let hit = st.entered == Some(node_eid);
+        if hit {
+            st.entered = None;
         }
         hit
     })

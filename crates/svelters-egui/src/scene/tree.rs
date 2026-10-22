@@ -133,7 +133,7 @@ fn builtin_payload(kind: usize) -> Option<W> {
         "Label" => W::Label { text: String::new(), wrap: "wrap", selectable: false, weight: 400 },
         "Button" => W::Button { text: String::new(), selected: false, frame: true, small: false, weight: 400 },
         "Checkbox" => W::Checkbox { text: String::new(), checked: false },
-        "TextEdit" => W::TextEdit { text: String::new(), hint: String::new(), multiline: false, password: false, char_limit: 0 },
+        "TextEdit" => W::TextEdit { text: String::new(), hint: String::new(), multiline: false, password: false, char_limit: 0, read_only: false, pattern: None },
         "Slider" => W::Slider { value: 0.0, min: 0.0, max: 100.0, step: 0.0, text: String::new(), show_value: true },
         "VirtualList" => W::VirtualList(Box::default()),
         // WG1: the defaults match the kind tables (`kinds/builtin.rs`, `kinds/containers.rs`)
@@ -153,7 +153,7 @@ fn builtin_payload(kind: usize) -> Option<W> {
         }
         // WG4a: the defaults match `kinds/views.rs`
         "Table" => W::Table(Box::default()),
-        "TableColumn" => W::TableColumn { title: String::new(), resizable: true, align: "start", sort: "none" },
+        "TableColumn" => W::TableColumn { title: String::new(), resizable: true, align: "start", sort: "none", name: String::new(), hideable: true },
         "TabView" => W::TabView { selected: 0 },
         "Tab" => W::Tab { title: String::new(), closable: false },
         "SplitView" => W::SplitView { vertical: false, position: None, min_size: 32.0, resizable: true },

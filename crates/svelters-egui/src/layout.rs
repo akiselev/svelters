@@ -445,13 +445,39 @@ pub(crate) struct Tree<'a> {
     pub(crate) fonts: u64,
 }
 
-pub struct ChildIter<'a>(std::slice::Iter<'a, SceneId>);
+pub enum ChildIter<'a> {
+    Tree(std::slice::Iter<'a, SceneId>),
+    /// FM1 (QW11): a box with a `button-order`, its children in that order.
+    Arranged(std::vec::IntoIter<SceneId>),
+}
 
 impl Iterator for ChildIter<'_> {
     type Item = NodeId;
     fn next(&mut self) -> Option<NodeId> {
-        self.0.next().map(|&c| tid(c))
+        match self {
+            ChildIter::Tree(it) => it.next().map(|&c| tid(c)),
+            ChildIter::Arranged(it) => it.next().map(tid),
+        }
     }
+}
+
+/// FM1 (QW11): the children of box `i` in its `button-order` (`None` without one): taffy lays
+/// them out in this order, the scene keeps tree order.
+fn arranged(s: &Scene, i: usize) -> Option<Vec<SceneId>> {
+    let order = s.common(i).button_order;
+    if order == "none" || !matches!(s.w(i), W::Box) {
+        return None;
+    }
+    let kids = &s.children[i];
+    let roles: Vec<Option<&str>> = kids
+        .iter()
+        .map(|&c| {
+            let ci = s.ix(c);
+            let cm = s.common(ci);
+            matches!(s.w(ci), W::Button { .. }).then(|| crate::forms::resolve_role(cm.dialog_role, cm.default_button, cm.cancel_button))
+        })
+        .collect();
+    Some(crate::forms::arrange(order, &roles).into_iter().map(|k| kids[k]).collect())
 }
 
 impl taffy::TraversePartialTree for Tree<'_> {
@@ -461,13 +487,19 @@ impl taffy::TraversePartialTree for Tree<'_> {
         Self: 'b;
 
     fn child_ids(&self, id: NodeId) -> Self::ChildIter<'_> {
-        ChildIter(self.s.children[ix(id)].iter())
+        match arranged(self.s, ix(id)) {
+            Some(v) => ChildIter::Arranged(v.into_iter()),
+            None => ChildIter::Tree(self.s.children[ix(id)].iter()),
+        }
     }
     fn child_count(&self, id: NodeId) -> usize {
         self.s.children[ix(id)].len()
     }
     fn get_child_id(&self, id: NodeId, index: usize) -> NodeId {
-        tid(self.s.children[ix(id)][index])
+        match arranged(self.s, ix(id)) {
+            Some(v) => tid(v[index]),
+            None => tid(self.s.children[ix(id)][index]),
+        }
     }
 }
 

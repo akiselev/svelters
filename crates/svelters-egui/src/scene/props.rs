@@ -58,7 +58,7 @@ pub(crate) fn as_len(v: &Value) -> Result<Option<f64>, String> {
     }
 }
 
-fn as_str_list(v: &Value) -> Result<Vec<String>, String> {
+pub(crate) fn as_str_list(v: &Value) -> Result<Vec<String>, String> {
     match v {
         Value::Null => Ok(Vec::new()),
         Value::List(items) => items.iter().map(as_str).collect(),
@@ -86,7 +86,7 @@ pub(crate) fn is_common(key: P) -> bool {
     use P::*;
     matches!(
         key,
-        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | Position | Left | Top | Right | Bottom | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid | DragType | DragData | DropTypes | Autofocus | FocusScope | Default | Cancel
+        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | Position | Left | Top | Right | Bottom | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid | DragType | DragData | DropTypes | Autofocus | FocusScope | Default | Cancel | ButtonOrder | DialogRole
     )
 }
 
@@ -145,6 +145,15 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (P::FocusScope, _) => c.focus_scope = as_enum(v, kinds::FOCUS_SCOPE)?,
         (P::Default, W::Button { .. }) => c.default_button = as_bool(v)?,
         (P::Cancel, W::Button { .. }) => c.cancel_button = as_bool(v)?,
+        // FM1 (QW11): the order changes the parent's layout (the dirty mark reaches it)
+        (P::ButtonOrder, W::Box) => {
+            c.button_order = as_enum(v, kinds::BUTTON_ORDER)?;
+            d.insert(Dirty::LAYOUT);
+        }
+        (P::DialogRole, W::Button { .. }) => {
+            c.dialog_role = as_enum(v, crate::forms::BUTTON_ROLE)?;
+            d.insert(Dirty::LAYOUT);
+        }
         (P::Invalid, _) => c.invalid = as_bool(v)?,
         // WG4b: drag and drop on any node (`kinds/dnd.rs`), before the per-payload catch-alls
         (P::DragType | P::DragData | P::DropTypes, _) => crate::kinds::dnd::set(c, def.key, as_str(v)?),
@@ -186,6 +195,9 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         }
         (P::Password, W::TextEdit { password, .. }) => *password = as_bool(v)?,
         (P::CharLimit, W::TextEdit { char_limit, .. }) => *char_limit = as_i64(v)?.max(0),
+        // FM1 (QW8)
+        (P::ReadOnly, W::TextEdit { read_only, .. }) => *read_only = as_bool(v)?,
+        (P::Pattern, W::TextEdit { pattern, .. }) => *pattern = crate::forms::Pattern::new(&as_str(v)?)?.map(std::boxed::Box::new),
         (P::Value, W::Slider { value, .. }) => *value = as_f64(v)?,
         (P::Min, W::Slider { min, .. }) => *min = as_f64(v)?,
         (P::Max, W::Slider { max, .. }) => *max = as_f64(v)?,
@@ -259,6 +271,9 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (P::Resizable, W::TableColumn { resizable, .. } | W::SplitView { resizable, .. }) => *resizable = as_bool(v)?,
         (P::CellAlign, W::TableColumn { align, .. }) => *align = as_enum(v, kinds::CELL_ALIGN)?,
         (P::Sort, W::TableColumn { sort, .. }) => *sort = as_enum(v, kinds::SORT)?,
+        // FM1 (QW4)
+        (P::Name, W::TableColumn { name, .. }) => *name = as_str(v)?,
+        (P::Hideable, W::TableColumn { hideable, .. }) => *hideable = as_bool(v)?,
         (P::SelectedIndex, W::TabView { selected }) => {
             *selected = as_i64(v)?;
             // another page is laid out
@@ -334,6 +349,8 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::FocusScope, _) => s(c.focus_scope),
         (P::Default, W::Button { .. }) => Value::Bool(c.default_button),
         (P::Cancel, W::Button { .. }) => Value::Bool(c.cancel_button),
+        (P::ButtonOrder, W::Box) => s(c.button_order),
+        (P::DialogRole, W::Button { .. }) => s(c.dialog_role),
         (P::Invalid, _) => Value::Bool(c.invalid),
         (P::DragType | P::DragData | P::DropTypes, _) => s(crate::kinds::dnd::get(c, def.key)), // WG4b
         // WG2a
@@ -353,6 +370,8 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Multiline, W::TextEdit { multiline, .. }) => Value::Bool(*multiline),
         (P::Password, W::TextEdit { password, .. }) => Value::Bool(*password),
         (P::CharLimit, W::TextEdit { char_limit, .. }) => Value::I64(*char_limit),
+        (P::ReadOnly, W::TextEdit { read_only, .. }) => Value::Bool(*read_only),
+        (P::Pattern, W::TextEdit { pattern, .. }) => s(pattern.as_ref().map_or("", |p| p.source())),
         (P::Value, W::Slider { value, .. }) => Value::F64(*value),
         (P::Min, W::Slider { min, .. }) => Value::F64(*min),
         (P::Max, W::Slider { max, .. }) => Value::F64(*max),
@@ -384,6 +403,8 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Resizable, W::TableColumn { resizable, .. } | W::SplitView { resizable, .. }) => Value::Bool(*resizable),
         (P::CellAlign, W::TableColumn { align, .. }) => s(align),
         (P::Sort, W::TableColumn { sort, .. }) => s(sort),
+        (P::Name, W::TableColumn { name, .. }) => s(name),
+        (P::Hideable, W::TableColumn { hideable, .. }) => Value::Bool(*hideable),
         (P::SelectedIndex, W::TabView { selected }) => Value::I64(*selected),
         (P::Closable, W::Tab { closable, .. }) => Value::Bool(*closable),
         (P::Orientation, W::SplitView { vertical, .. }) => s(if *vertical { "vertical" } else { "horizontal" }),

@@ -21,6 +21,13 @@ pub(super) static BOX_PROPS: &[PropDef] = &[
         Def::Str("none"),
         "`contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away.",
     ),
+    prop(
+        "button-order",
+        P::ButtonOrder,
+        Ty::Enum(super::BUTTON_ORDER),
+        Def::Str("none"),
+        "FM1 (Qt `QDialogButtonBox`): lays its children out in a platform's dialog button order (`platform`: Windows, macOS, or GNOME on Linux; or one of `windows`, `macos`, `gnome`, `kde`) by each button's `dialog-role`, in place of tree order. Help and reset come first, then other children (a spacer with `flex-grow`), then the rest. Tree order (and Tab) is unchanged.",
+    ),
 ];
 
 pub(super) static WINDOW_PROPS: &[PropDef] = &[
