@@ -250,7 +250,15 @@ fn dock_w4_a_root_moved_between_viewports_keeps_caret_focus_and_instances() {
     assert_eq!(e.stats().mounts, mounts, "no remount");
     assert_eq!(inits(&e.take_events()), 0, "no new component instance");
     // root().viewport reached JS (the layout event)
-    assert!(e.backend().with_scene(|s| s.handles().iter().any(|&h| matches!(&s.n(h).w, svelters_egui::scene::W::Label { text, .. } if text.starts_with("in ") && text.contains("focused true") && !text.contains("in root")))));
+    // (a label's text, the own widget's or the egui wrapper's)
+    assert!(e.backend().with_scene(|s| s.handles().iter().any(|&h| {
+        let text = match &s.n(h).w {
+            svelters_egui::scene::W::Label { text, .. } => text.as_str(),
+            svelters_egui::scene::W::Ext(x) if x.entry().replaces == Some("label") => x.text(),
+            _ => "",
+        };
+        text.starts_with("in ") && text.contains("focused true") && !text.contains("in root")
+    })));
 
     // typing in window 2 goes on where the caret was
     r.vps.type_text(vp(2), "d");

@@ -726,6 +726,12 @@ pub fn consumed_keys(ctx: &Context) -> Vec<KeyboardShortcut> {
     read(ctx, |st| if st.consumed_pass == pass { st.consumed.clone() } else { Vec::new() })
 }
 
+/// OW3: the keyboard focus when this pass began (before a press took it from a text field): what
+/// an own menu or list gives focus back to when it closes.
+pub(crate) fn pass_start_focus(ctx: &Context) -> Option<Id> {
+    read(ctx, |st| st.last_focus)
+}
+
 /// Whether an input method is composing in a svelters text field of `ctx`'s viewport (R11
 /// `composing()`): no Enter or Escape to default or cancel buttons, every key is the field's.
 pub fn composing(ctx: &Context) -> bool {

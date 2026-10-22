@@ -61,12 +61,24 @@ pub(crate) fn paint_fill(cx: &mut PaintCx<'_>, r: Rect, radius: f32, fill: Color
     cx.record(TraceKind::Path, r, fill, Stroke::NONE, 0.0);
 }
 
-/// The host's `gap` (between an indicator and the caption).
-pub(crate) fn gap(s: &StyleView<'_>, default: f32) -> f32 {
-    s.px("gap").or_else(|| s.px("column-gap")).unwrap_or(default)
-}
-
 /// `prefers-reduced-motion`: animations (the busy sweep, the spinner, the knob) are static.
 pub(crate) fn reduced_motion(ctx: &egui::Context) -> bool {
     ctx.global_style().animation_time <= 0.0
+}
+
+/// A chevron in `r` (DESIGN R14: what opens something shows one): pointing right, or down when
+/// `open`. A path until ICR1 ships the codicon (`chevron-right`); a part's `content: icon(..)`
+/// replaces it (P2).
+pub(crate) fn paint_chevron(cx: &mut PaintCx<'_>, r: Rect, color: Color32, open: bool) {
+    let w = cx.snap_width((r.width() / 12.0).max(1.0));
+    let stroke = Stroke::new(w, color);
+    let c = r.center();
+    let h = r.width().min(r.height()) * 0.2;
+    let pts = if open {
+        vec![pos2(c.x - 2.0 * h, c.y - h), pos2(c.x, c.y + h), pos2(c.x + 2.0 * h, c.y - h)]
+    } else {
+        vec![pos2(c.x - h, c.y - 2.0 * h), pos2(c.x + h, c.y), pos2(c.x - h, c.y + 2.0 * h)]
+    };
+    cx.painter.add(egui::Shape::line(pts, stroke));
+    cx.record(TraceKind::Path, r, color, stroke, 0.0);
 }

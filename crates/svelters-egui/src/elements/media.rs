@@ -5,21 +5,22 @@ use crate::kinds;
 use crate::layout::Metrics;
 use crate::scene::{Arena, W};
 use crate::walk::Out;
-use egui::load::{SizeHint, TexturePoll};
+use egui::load::{ImagePoll, SizeHint, TexturePoll};
 use egui::{Rect, Role, Sense, TextureOptions, Ui, Vec2, WidgetInfo, pos2, vec2};
 use svelters_abi::Value;
 
 /// The side of the square an `image` whose source did not load is measured at (points).
-const PLACEHOLDER: f32 = 16.0;
+pub(crate) const PLACEHOLDER: f32 = 16.0;
 
-/// The loaded size of an image source, in points (`None`: not loaded, or no source).
-fn image_size(ctx: &egui::Context, source: &str) -> Option<Vec2> {
+/// The loaded size of an image source, in points (`None`: not loaded, or no source). From the
+/// image loaders (no texture: ZM1 draws an SVG at its physical size, below).
+pub(crate) fn image_size(ctx: &egui::Context, source: &str) -> Option<Vec2> {
     if source.is_empty() {
         return None;
     }
     images::install(ctx);
-    match ctx.try_load_texture(&images::uri_of(source), TextureOptions::default(), SizeHint::default()) {
-        Ok(TexturePoll::Ready { texture }) => Some(texture.size),
+    match ctx.try_load_image(&images::uri_of(source), SizeHint::default()) {
+        Ok(ImagePoll::Ready { image }) => Some(image.source_size),
         _ => None,
     }
 }
@@ -60,7 +61,7 @@ pub fn fit_rect(fit: &str, r: Rect, img: Vec2) -> (Rect, Rect) {
     (Rect::from_center_size(r.center(), img * scale), full)
 }
 
-#[allow(clippy::disallowed_types)] // OW: wrapper until OW1a
+#[allow(clippy::disallowed_types)] // OW: wrapper until VIS1c (behind the switch)
 pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>, click_sense: bool) -> Painted {
     let r = ui.max_rect();
     let enabled = arena.common(i).enabled;
@@ -104,7 +105,10 @@ fn image(arena: &mut Arena, i: usize, ui: &mut Ui, r: Rect, source: &str, fit: &
     let loaded = image_size(ui.ctx(), source);
     if let Some(size) = loaded {
         let (dest, uv) = fit_rect(fit, r, size);
-        if let Ok(TexturePoll::Ready { texture }) = ui.ctx().try_load_texture(&images::uri_of(source), TextureOptions::default(), SizeHint::default()) {
+        // ZM1: an SVG renders at the physical size it is drawn at (zoom, HiDPI); a PNG ignores it
+        let ppp = ui.ctx().pixels_per_point();
+        let hint = SizeHint::Size { width: (dest.width() * ppp).round().max(1.0) as u32, height: (dest.height() * ppp).round().max(1.0) as u32, maintain_aspect_ratio: true };
+        if let Ok(TexturePoll::Ready { texture }) = ui.ctx().try_load_texture(&images::uri_of(source), TextureOptions::default(), hint) {
             let tint = if enabled { egui::Color32::WHITE } else { egui::Color32::from_gray(128) };
             ui.painter().with_clip_rect(r.intersect(ui.clip_rect())).image(texture.id, dest, uv, tint);
         }
