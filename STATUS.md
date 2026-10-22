@@ -91,7 +91,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | H3 `$state` kept on HMR (SV36) | IN PROGRESS | | thinkpad-svelters, branch `ci/h3`, stacked on `ci/h1` |
 | TR2 native animator (SV13, SV37) | DONE | 2026-10-22 | merged (this commit); ABI v2.9: style op 11 `SVL_STYLE_ANIMATE`; follow-ups TR2b, TR3 |
 | TR2b exiting (inert) subtrees leave the focus chain | DONE | 2026-10-22 | merged (this commit); exiting widgets use egui's noninteractive style during the outro |
-| TR3 profile per-frame `tick` transitions vs descriptors (SV14 in-process) | IN PROGRESS | | thinkpad-svelters, branch `ci/tr3` |
+| TR3 profile per-frame `tick` transitions vs descriptors (SV14 in-process) | DONE | 2026-10-22 | merged (this commit); keyframes stay default, `tick(t)` stays JS; isolate half waits for ISOLATES |
 | LD1 loader hooks + native module providers (SV22, SV25) | DONE | 2026-10-22 | merged 7e8909bb |
 | CS5e egui cascade | DONE | 2026-10-22 | merged 9edf8e24 |
 | Q3w Q3's CSS port in compile() + CLI | DONE | 2026-10-22 | merged (this commit); `CompileOptions::scoped_css`, `--css`, Vite uses it for non-egui |
