@@ -85,6 +85,9 @@ pub(crate) struct Inner {
     pub theme: RefCell<Option<crate::theme::Theme>>,
     pub theme_generation: Cell<u64>,
     pub theme_pending: Cell<bool>,
+    /// RA3: what kind methods called from JS announced (`prop_changed`, events), sent after the next
+    /// pass (`after_pass`) ahead of that pass's own.
+    pub pending_out: RefCell<Vec<crate::walk::Out>>,
 }
 
 /// The egui backend. Cheap to clone (one shared state); the clone given to [`BackendVtable::new`]
@@ -133,6 +136,7 @@ impl EguiBackend {
             theme: RefCell::new(None),
             theme_generation: Cell::new(0),
             theme_pending: Cell::new(false),
+            pending_out: RefCell::new(Vec::new()),
         }))
     }
 

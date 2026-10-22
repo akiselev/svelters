@@ -380,6 +380,17 @@ impl ExtColumns {
         self.cols.get_mut(key.id().0 as usize)?.as_deref_mut()?.as_any_mut().downcast_mut::<Column<T>>()
     }
 
+    /// `node`'s value for `key`, inserted with `f` if it has none, **not journaled**: for caches a
+    /// node keeps for its own drawing (RA3 `WidgetCx::cached_shapes`), never for state anyone
+    /// observes. The entry goes with the node like any other.
+    pub(crate) fn cache_mut<T: 'static>(&mut self, key: &ExtKey<T>, node: NodeId, f: impl FnOnce() -> T) -> &mut T {
+        let col = self.col_or_insert(key);
+        if col.get(node.index()).is_none() {
+            col.insert(node, f(), Tick(0));
+        }
+        col.get_mut(node.index()).expect("just inserted")
+    }
+
     fn col_or_insert<T: 'static>(&mut self, key: &ExtKey<T>) -> &mut Column<T> {
         let k = key.id().0 as usize;
         if self.cols.len() <= k {

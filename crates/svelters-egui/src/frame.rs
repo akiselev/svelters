@@ -354,7 +354,12 @@ impl EguiBackend {
 
     /// Flushes `out` to the host (queues only: `post_event`/`prop_changed` run no JS) and requests
     /// the repaints pending work needs. Also called by `Embed` after its logic and each slot.
-    pub(crate) fn after_pass(&self, ctx: &egui::Context, out: Vec<Out>) {
+    pub(crate) fn after_pass(&self, ctx: &egui::Context, mut out: Vec<Out>) {
+        // RA3: kind methods' writes since the last pass go first
+        let pending = std::mem::take(&mut *self.0.pending_out.borrow_mut());
+        if !pending.is_empty() {
+            out.splice(0..0, pending);
+        }
         if !out.is_empty() {
             if let Some(host) = self.host() {
                 for o in out {

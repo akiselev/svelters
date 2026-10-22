@@ -36,15 +36,20 @@
 //!   its root only. Opt-in hooks by capability: [`Widget::layout`] (`CUSTOM_LAYOUT`),
 //!   [`Widget::prepare`] (`PREPARE`), [`Widget::hit_test`] (`HIT_TEST`, SG3).
 //!
+//! - `#[svelters::widget] impl T { pub fn … }` (RA3) gives a kind methods JS calls on the element
+//!   (`methods.rs`, [`MethodCx`]).
+//!
 //! Files: this one holds the trait, the contexts and the registration types; `state.rs` the state
-//! bits; `behavior.rs` the behaviours (EVENTS, EV2b); `pass.rs` (SG4: `StateProvider`, `ScenePass`,
+//! bits; `methods.rs` the kind methods (RA3); `behavior.rs` the behaviours (EVENTS, EV2b); `pass.rs` (SG4: `StateProvider`, `ScenePass`,
 //! `PrepareCx`) is SCENE's. Writer lane: RUSTAPI (RA1, RA3).
 
 pub(crate) mod behavior;
+pub(crate) mod methods;
 pub(crate) mod pass;
 mod state;
 
 pub use behavior::{__new_behavior, Behavior, BehaviorBox, BehaviorCx};
+pub use methods::{__kind_of, __this, KindMethods, MethodCx, MethodEntry, types_key as methods_types_key};
 
 pub use crate::scene::ext::{ExtBlock, ExtEntry, ExtId, ExtKey, ExtTicks, Storage};
 pub use crate::scene::{Hit, HitCx};
@@ -198,6 +203,12 @@ inventory::collect!(KindRef);
 /// Implemented by `#[svelters::widget]`: the struct's entry and its typed prop table.
 pub trait KindDecl: Sized + 'static {
     const KIND: &'static KindEntry;
+    /// The kind's namespace (`KindEntry::namespace`), as a constant for generated statics.
+    #[doc(hidden)]
+    const __NAMESPACE: &'static str;
+    /// RA3: the key the types of the kind's methods are registered under (`methods_types_key`).
+    #[doc(hidden)]
+    const __METHODS_KEY: &'static str;
     #[doc(hidden)]
     fn __svelters_new() -> Self;
     #[doc(hidden)]
@@ -280,6 +291,14 @@ pub trait Widget: 'static {
     fn composing(&self) -> bool {
         false
     }
+    /// RA3 (ARCH-WIDGETS TextInput unit): `Some(multiline)` when the widget is a text input whose
+    /// egui text field has the node's id (`cx.id()`). EV3's edit commands (the Edit menu's Cut,
+    /// Copy, Paste, Undo, Select All: `Embed::text_command`) then reach it as the input events they
+    /// stand for, fed just before its `ui`, and it gets the text-field key rules (R11). `None` (the
+    /// default): not a text input.
+    fn text_input(&self) -> Option<bool> {
+        None
+    }
 }
 
 pub use crate::layout::LayoutCx;
@@ -314,6 +333,8 @@ impl<T> std::fmt::Debug for Event<T> {
 pub struct MeasureCx<'a> {
     pub ctx: &'a egui::Context,
     pub style: &'a egui::Style,
+    /// RA3: an id for the widget's measuring (stable per node, apart from its drawing ids).
+    pub id: egui::Id,
 }
 
 impl MeasureCx<'_> {
@@ -344,6 +365,24 @@ impl MeasureCx<'_> {
     /// A single-line text field `width` wide (`TextEdit`'s margin is (4, 2)).
     pub fn text_field_size(&self, _text: &str, width: f32) -> egui::Vec2 {
         egui::vec2(width, (self.row_height() + 4.0).max(self.interact_size().y))
+    }
+
+    /// RA3: the size `add` takes when it runs in an invisible, disabled sizing-pass `Ui` `avail`
+    /// wide (egui's own way to size a widget before showing it): what the fn form and
+    /// `wrap_widget!` measure with, so the measured size is the drawn one. Nothing is painted and
+    /// no input is sensed; the `Ui`'s ids derive from [`MeasureCx::id`].
+    pub fn sizing_pass(&self, avail: AvailableSpace, add: impl FnOnce(&mut egui::Ui)) -> egui::Vec2 {
+        let width = match avail {
+            AvailableSpace::Definite(w) => w,
+            AvailableSpace::MinContent => 0.0,
+            AvailableSpace::MaxContent => 16384.0,
+        };
+        let max = egui::Rect::from_min_size(egui::Pos2::ZERO, egui::vec2(width, 16384.0));
+        let builder = egui::UiBuilder::new().max_rect(max).sizing_pass().invisible().layout(egui::Layout::left_to_right(egui::Align::Min));
+        let mut ui = egui::Ui::new(self.ctx.clone(), self.id, builder);
+        ui.set_style(std::sync::Arc::new(self.style.clone()));
+        add(&mut ui);
+        ui.min_rect().size()
     }
 }
 
@@ -459,7 +498,45 @@ impl WidgetCx<'_> {
     pub fn request_measure(&mut self) {
         self.remeasure = true;
     }
+
+    /// RA3, the opt-in paint cache (ARCH-EMBED §8.2, §13 D3). `paint` pushes the node's shapes in
+    /// coordinates relative to the rect's top left, for a rect of the given size; it runs only when
+    /// `version`, the rect's size or the scale changed since the cached paint. Otherwise the cached
+    /// shapes are painted again, moved to where the rect is now. `version` covers everything the
+    /// shapes depend on (the props drawn, the theme): bump it when any of them changes. Interaction
+    /// stays in `ui` (egui fuses paint and input; this caches only the painting).
+    pub fn cached_shapes(&mut self, ui: &egui::Ui, version: u64, paint: impl FnOnce(&mut Vec<egui::Shape>, egui::Vec2)) {
+        let rect = self.rect;
+        let ppp = ui.ctx().pixels_per_point();
+        let key = (version, rect.size(), ppp);
+        let cache = self.s.ext.cache_mut(&SHAPE_CACHE, self.node, ShapeCache::default);
+        let hit = cache.key == Some(key);
+        if !hit {
+            cache.shapes.clear();
+            paint(&mut cache.shapes, rect.size());
+            cache.key = Some(key);
+        }
+        let offset = rect.min.to_vec2();
+        ui.painter().extend(cache.shapes.iter().cloned().map(|mut s| {
+            s.translate(offset);
+            s
+        }));
+        if hit {
+            self.s.counters.shape_cache_hits += 1;
+        } else {
+            self.s.counters.shape_cache_misses += 1;
+        }
+    }
 }
+
+/// RA3: a node's cached shapes (`WidgetCx::cached_shapes`), relative to its rect's top left.
+#[derive(Default)]
+struct ShapeCache {
+    key: Option<(u64, egui::Vec2, f32)>,
+    shapes: Vec<egui::Shape>,
+}
+
+static SHAPE_CACHE: ExtKey<ShapeCache> = ExtKey::new("svelters.shape-cache");
 
 /// The prop a `cx.set` wrote (by the field's offset in the struct at `base`), recorded once in
 /// `changed`; an error for a field that is not a `#[prop]`.
@@ -550,6 +627,10 @@ pub trait ErasedWidget: Any {
     fn composing(&self) -> bool {
         false
     }
+    /// RA3: [`Widget::text_input`].
+    fn text_input(&self) -> Option<bool> {
+        None
+    }
 }
 
 impl<T: Widget + KindDecl> ErasedWidget for T {
@@ -604,6 +685,9 @@ impl<T: Widget + KindDecl> ErasedWidget for T {
     fn composing(&self) -> bool {
         Widget::composing(self)
     }
+    fn text_input(&self) -> Option<bool> {
+        Widget::text_input(self)
+    }
 }
 
 /// The payload of a provider node (`W::Ext`). A `RefCell` so layout can measure through `&W`.
@@ -627,8 +711,10 @@ impl ExtWidget {
         b.as_any_mut().downcast_mut::<W>().map(f)
     }
     pub(crate) fn measure(&self, m: &crate::layout::Metrics, avail: AvailableSpace) -> egui::Vec2 {
-        let mut cx = MeasureCx { ctx: &m.ctx, style: &m.style };
-        self.0.borrow_mut().measure(&mut cx, avail)
+        let mut w = self.0.borrow_mut();
+        let id = egui::Id::unique(("svelters-egui.measure", w.base()));
+        let mut cx = MeasureCx { ctx: &m.ctx, style: &m.style, id };
+        w.measure(&mut cx, avail)
     }
 }
 
@@ -737,6 +823,11 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
     let enabled = arena.common(i).enabled;
     let id = arena.core[i].egui_id;
     let state0 = arena.core[i].state;
+    // RA3: a provider text input gets EV3's pending edit command before its `ui`
+    let text_input = matches!(&arena.payload[i], crate::scene::node::Payload::Builtin(W::Ext(x)) if x.0.try_borrow().is_ok_and(|w| w.text_input().is_some()));
+    if text_input {
+        crate::focus::before_text(ui, id);
+    }
     let ran = with_taken(arena, i, |w, s| {
         let mut cx = WidgetCx {
             s,
@@ -760,6 +851,9 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
         (resp, state, changed, emits, remeasure, errors)
     });
     let Some((mut resp, state, changed, emits, remeasure, errors)) = ran else { return None };
+    if text_input {
+        crate::focus::after_text(ui, id);
+    }
     // EM1: the accessible name and, for an anchored node, the anchor as AccessKit author id
     resp = crate::a11y::decorate(resp, &arena.n(h));
     let c = arena.common(i);
