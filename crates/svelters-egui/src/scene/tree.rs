@@ -18,7 +18,7 @@ use super::access::{Origin, SceneError};
 use super::dirty::RootDirty;
 use super::id::{KindId, NodeId, RootIx};
 use super::journal::{Change, ExtChange, RootChange};
-use super::node::{Dirty, LayoutBox, NodeCold, NodeCore, NodeFlags, Owner, Payload, W};
+use super::node::{Dirty, LayoutBox, NodeCore, NodeFlags, Owner, Payload, W};
 use super::{Common, Scene};
 use crate::kinds;
 
@@ -130,7 +130,9 @@ fn builtin_payload(kind: usize) -> Option<W> {
     Some(match kinds::kind(kind).id {
         "Window" => W::Window { title: String::new(), default_w: 480.0, default_h: 360.0 },
         "Box" => W::Box,
-        "Label" => W::Label { text: String::new(), wrap: "wrap", selectable: false, weight: 400 },
+        "Label" => W::Label { text: String::new(), wrap: "wrap", selectable: false, weight: 400, rich: None },
+        // RT2 (`kinds/rich.rs`)
+        "Span" | "Bold" | "Italic" | "Code" | "Anchor" => W::Run { text: String::new(), weight: 0, href: String::new(), anchor: kinds::kind(kind).id == "Anchor" },
         "Button" => W::Button { text: String::new(), selected: false, frame: true, small: false, weight: 400 },
         "Checkbox" => W::Checkbox { text: String::new(), checked: false },
         "TextEdit" => W::TextEdit { text: String::new(), hint: String::new(), multiline: false, password: false, char_limit: 0 },
@@ -189,30 +191,45 @@ impl Scene {
         let (id, fresh) = self.slots.alloc();
         let tick = self.stamp();
         let i = id.index() as usize;
-        let cold = matches!(w, W::Window { .. }).then(|| {
-            let mut c = NodeCold::DEFAULT;
-            c.common.padding = 8.0;
-            Box::new(c)
+        // SG6: a window's padding is its only non-default common prop at creation (interned)
+        let common = matches!(w, W::Window { .. }).then(|| {
+            let c = Common { padding: 8.0, ..Common::DEFAULT };
+            let k = super::compact::common_key(&c);
+            self.commons.intern(c, k)
         });
-        let mut lb = LayoutBox::new();
-        lb.style = crate::layout::style_of(cold.as_ref().map(|c| &c.common).unwrap_or(&Common::DEFAULT), &w, &super::Visual::IDENTITY);
+        let style = crate::layout::style_of(common.as_deref().unwrap_or(&Common::DEFAULT), &w, &super::Visual::IDENTITY);
+        let lb = LayoutBox::new(self.intern_style(style));
         let mut core = NodeCore::new(kind as u32, owner, crate::ids::node_id(id.to_raw()), tick);
         if matches!(w, W::VirtualList(_)) {
             // LS1: a list's size never depends on its rows; scrolling relays out the list alone
             core.flags.insert(NodeFlags::LAYOUT_BOUNDARY);
         }
         if fresh {
+            // SG6: the columns grow by a quarter, not double (ARCH-SCENE §8.5 counts capacity)
+            fn grow<T>(v: &mut Vec<T>) {
+                if v.len() == v.capacity() {
+                    v.reserve_exact((v.capacity() / 4).max(64));
+                }
+            }
+            grow(&mut self.core);
+            grow(&mut self.children);
+            grow(&mut self.layout);
+            grow(&mut self.payload);
+            grow(&mut self.cold);
+            grow(&mut self.common);
             self.core.push(core);
             self.children.push(Vec::new());
             self.layout.push(lb);
             self.payload.push(Payload::Builtin(w));
-            self.cold.push(cold);
+            self.cold.push(None);
+            self.common.push(common);
         } else {
             self.core[i] = core;
             self.children[i] = Vec::new();
             self.layout[i] = lb;
             self.payload[i] = Payload::Builtin(w);
-            self.cold[i] = cold;
+            self.cold[i] = None;
+            self.common[i] = common;
         }
         self.index.add(kind as u32, id);
         self.record(Change::Created { node: id, kind: KindId(kinds::kind_id(kind)), owner }, origin_of(owner));
@@ -330,7 +347,7 @@ impl Scene {
             self.core[xi].root = r;
             // SG3: the anchor maps follow the node
             if old != r
-                && let Some(a) = self.cold[xi].as_deref().map(|c| c.common.anchor.as_str()).filter(|a| !a.is_empty())
+                && let Some(a) = self.common[xi].as_deref().map(|c| c.anchor.as_str()).filter(|a| !a.is_empty())
             {
                 super::query::index_anchor(&mut self.roots, old, x, a, false);
                 super::query::index_anchor(&mut self.roots, r, x, a, true);
@@ -396,6 +413,7 @@ impl Scene {
         let pi = self.ix(p);
         self.children[pi].retain(|&c| c != child);
         self.core[ci].parent = None;
+        crate::rich::touched(self, pi); // RT2: a run left its label
         self.core[ci].flags.remove(NodeFlags::SHADOW); // SG4: no longer a shadow top
         let t = self.stamp();
         self.record(Change::Removed { parent: p, node: child }, origin);
@@ -420,6 +438,13 @@ impl Scene {
         // WG2a: a kind that attaches (`context-menu`, `popup`) goes under any element
         if kinds::slot_of(pk).is_none() && kinds::attaches_to(kinds::kind(ck).id).is_none() {
             return Err(SceneError::Invalid(format!("<{}> takes no children", kinds::kind(pk).tag.unwrap_or("?"))));
+        }
+        // RT2: a label and the runs take runs only (`kinds/rich.rs`)
+        if let Some(acc) = kinds::rich::slot_accepts(kinds::kind(pk).id)
+            && !acc.contains(&kinds::kind(ck).id)
+            && kinds::attaches_to(kinds::kind(ck).id).is_none()
+        {
+            return Err(SceneError::Invalid(format!("<{}> takes inline runs only (span, b, i, code, a), not <{}>", kinds::kind(pk).tag.unwrap_or("?"), kinds::kind(ck).tag.unwrap_or("?"))));
         }
         if kinds::kind(ck).toplevel || self.core[ci].flags.contains(NodeFlags::ROOT) {
             return Err(SceneError::Invalid("a window cannot be inserted under another element".into()));
@@ -464,6 +489,7 @@ impl Scene {
         }
         self.record(Change::Inserted { parent, node: child, before }, origin);
         self.invalidate_content(parent);
+        crate::rich::touched(self, pi); // RT2: a run joined a label
         Ok(true)
     }
 
@@ -629,13 +655,16 @@ impl Scene {
             // SG3: out of the indexes, after the records
             self.index.remove(self.core[i].kind, node);
             let r = self.core[i].root;
-            if let Some(a) = self.cold[i].as_deref().map(|c| c.common.anchor.as_str()).filter(|a| !a.is_empty()) {
+            if let Some(a) = self.common[i].as_deref().map(|c| c.anchor.as_str()).filter(|a| !a.is_empty()) {
                 super::query::index_anchor(&mut self.roots, r, node, a, false);
             }
         }
         self.slots.free(i);
         self.payload[i] = Payload::Vacant;
         self.cold[i] = None;
+        self.common[i] = None;
+        self.ink.remove(&(i as u32));
+        self.paint_cache.remove(i as u32);
         self.children[i] = Vec::new();
         self.core[i].flags = NodeFlags::EMPTY;
         self.counters.destroyed += 1;

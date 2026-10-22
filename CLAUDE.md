@@ -130,6 +130,8 @@ other agent on the machine. **GitHub CI is the gate, not your machine.** The use
 - `tools/dev/headless` runs GTK/Qt tests under Xvfb. macOS needs `flock` (`brew install flock`).
 - Never run `tmux kill-server` or kill processes you didn't start: other sessions and lanes run in the same tmux
   server (on 2026-10-22 a `kill-server` killed macbook-svelters mid-lane). Kill only your own named session.
+  Stop a process only by a pid you started; never `pkill -f`/`killall` on a pattern (on 2026-10-22
+  `pkill -f "cargo-slot cargo"` killed every lane's builds on the MacBook).
 - Start Claude sessions inside a repo, never in `~/projects` itself: rust-analyzer there loads every
   project (23 GB, ~50 parallel `cargo check`s).
 
@@ -145,13 +147,15 @@ other agent on the machine. **GitHub CI is the gate, not your machine.** The use
 2. `pnpm install --frozen-lockfile` if the lockfile changed, then `tools/dev/cargo-slot cargo check
    -p <crates you changed> --all-targets`, plus the filtered tests above.
 3. Push `ci/<lane>` and get all five CI workflows green. Wait for CI with one
-   `gh run watch <id> --interval 300` per run (or a `gh run list` loop sleeping 300 s); never poll faster. Every
-   session on all three machines shares one GitHub API limit (5,000 requests an hour), and faster polling has used
-   it up. Report the sha, the CI run ids, and what you
-   did not run.
+   `gh run watch <id> --interval 300` per run (or a `gh run list` loop sleeping 300 s; or `tools/dev/ci-wait <sha>
+   --jobs`, which needs no credentials); never poll faster. Every session on all three machines shares one GitHub
+   API limit (5,000 requests an hour), and faster polling has used it up. Report the sha, the CI run ids, and what
+   you did not run.
 
 ## Git safety
 
+- **Committed files never use our credentials** (user, 2026-10-22): no `gh auth` calls, tokens, credential
+  helpers or account-specific auth in scripts, build files or CI config. Agents may use `gh` interactively.
 - **Never commit build artifacts.** Any `target/` directory (at any depth) is ignored and rejected:
   `.githooks/pre-commit` runs `tools/dev/check-no-artifacts --staged` (enable once per checkout with
   `git config core.hooksPath .githooks`), and CI's js job runs it on every push. Run cargo from the checkout root.

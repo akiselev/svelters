@@ -152,7 +152,7 @@ pub(crate) fn layout(tree: &mut Tree<'_>, id: NodeId, inputs: LayoutInput) -> La
     };
     let out = compute_leaf_layout(
         inputs,
-        &style,
+        &*style,
         |_, _| 0.0,
         |known, avail| {
             if let Size { width: Some(w), height: Some(h) } = known {

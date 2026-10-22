@@ -27,12 +27,14 @@ mod focus;
 mod hover;
 mod press;
 pub mod roving;
+mod toggle;
 pub mod tooltip;
 pub mod typeahead;
 
 pub use focus::{Focus, FocusParams, Focusable};
 pub use hover::{Hover, Hoverable};
 pub use press::{Press, PressParams, Pressable};
+pub use toggle::{Toggle, ToggleParams, Toggleable};
 // OW3: floating surfaces, groups and tooltips
 pub use anchor::{AnchorParams, Anchored, Placed, Placement};
 pub use dismiss::{Dismiss, DismissParams, Dismissable};

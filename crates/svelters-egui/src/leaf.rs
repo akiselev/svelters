@@ -250,8 +250,19 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         _ => None,
     };
     let enabled = arena.common(i).enabled;
-    let resp = match arena.w_mut(i) {
-        W::Label { text, wrap, selectable, weight } => {
+    // RT2: a label with run children is one paragraph of styled runs (`crate::rich`)
+    let rich_wrap = match arena.w(i) {
+        W::Label { wrap, .. } if !arena.children[i].is_empty() => Some(*wrap),
+        _ => None,
+    };
+    let painted = rich_wrap.and_then(|wrap| crate::rich::paint(arena, i, ui, wrap, if click_sense { egui::Sense::click() } else { egui::Sense::hover() }));
+    let mut links_activated = Vec::new();
+    let resp = if let Some(p) = painted {
+        links_activated = p.activated;
+        p.resp
+    } else {
+        match arena.w_mut(i) {
+        W::Label { text, wrap, selectable, weight, .. } => {
             let mode = match *wrap {
                 "truncate" => egui::TextWrapMode::Truncate,
                 "extend" => egui::TextWrapMode::Extend,
@@ -409,6 +420,8 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         | W::Canvas(_) => unreachable!("WG2b kinds are drawn by crate::elements"),
         W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::SplitView { .. } | W::ToastHost(_) => unreachable!("WG4a views: crate::views"),
         W::Picker(p) => p.ui(ui, size), // WG4b (`kinds/pickers.rs`)
+        W::Run { .. } => unreachable!("RT2: runs are drawn by their label (crate::rich)"),
+        }
     };
     let mut resp = crate::a11y::decorate(resp, &arena.n(h));
     if !arena.common(i).tooltip.is_empty() {
@@ -458,6 +471,16 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         let s = sig(name);
         if arena.listens(i, s) {
             out.push(Out::Event(h, s, vec![]));
+        }
+    }
+    // RT2: an activated `a` run: its `clicked` handler, else its `href` opens (as a hyperlink's)
+    for (node, href) in links_activated {
+        let Some(j) = arena.idx(node) else { continue };
+        let s = kinds::signal_id(arena.core[j].kind as usize, "clicked");
+        if arena.listens(j, s) {
+            out.push(Out::Event(node.to_raw(), s, vec![]));
+        } else if !href.is_empty() {
+            ui.ctx().open_url(egui::OpenUrl::same_tab(href));
         }
     }
     // Widget-side value changes: the node already holds the new value (the widget wrote the
