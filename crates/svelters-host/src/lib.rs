@@ -21,6 +21,8 @@
 
 mod convert;
 mod core;
+pub mod crash;
+pub mod dx;
 mod engine;
 mod hooks;
 pub mod exports;
@@ -260,6 +262,12 @@ impl<'a> Host<'a> {
     /// count as "started"; `run` attaches the same callbacks again, `Drop` detaches.
     pub fn load_bundle(&self, path: impl AsRef<Path>) -> Result<(), JsError> {
         self.load_from(bundle_provider(path.as_ref())?)
+    }
+
+    /// DX1: supplies the settings backend, UI-state backend and paths that `svelters:settings`,
+    /// `svelters:paths` and `svelters:log` use. Without it those modules load but their calls fail.
+    pub fn set_dx(&self, dx: dx::Dx) {
+        *self.core.dx.borrow_mut() = Some(Rc::new(dx));
     }
 
     /// LD1: sets the extra schemes, native modules and `svelters:app/*` visibility that apply to the

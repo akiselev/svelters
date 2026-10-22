@@ -14,9 +14,16 @@
 //! (`render`, `harness`, `layout::invalidate`) are kept as re-exports.
 
 pub mod backend;
+pub mod dialogs;
 pub mod embed;
+/// WG2b's Tier 0 kinds (payloads, paint, measure; the canvas replay and the PNG image loader).
+pub mod elements;
+/// SVP6: font weights and icon name tables the embedder registers (WG1).
+pub mod fonts;
 pub mod kinds;
 pub mod layout;
+/// W5: the Linux primary selection in the text kinds (select-to-copy, middle-click paste).
+pub mod primary;
 /// FX1: native focus policy and word rules (GTK on Linux).
 pub mod native;
 pub mod provider;
@@ -32,8 +39,14 @@ mod events;
 mod frame;
 mod ids;
 mod leaf;
+// WG2a: menus and overlays (plans/milestones/WG2a-menus-popups.md)
+mod menus;
+mod overlays;
 mod ops;
 mod walk;
+// WG4a: state, layout and paint of the Tier 1 views (`kinds/views.rs`); `toast` is public
+mod views;
+pub use views::toast;
 mod windows;
 
 /// The walk's outbox and paint entry point, at their pre-EG0 path (now `walk.rs`).
@@ -64,5 +77,7 @@ pub use svelters_style;
 
 /// The egui this backend is built against (re-exported so apps and packs link the same copy).
 pub use egui;
+pub use egui_extras;
+pub use kinds::dnd::DragPayload;
 /// The taffy the scene is laid out with (SG4: `Widget::layout`, `LayoutCx`; unstable, ARCH-SCENE §16).
 pub use taffy;

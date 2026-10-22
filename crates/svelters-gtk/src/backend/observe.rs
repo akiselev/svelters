@@ -17,6 +17,10 @@
 //! moves the handler to the new object and reports the property changed (its value comes from the
 //! new object now).
 //!
+//! GtkEditable `cursor-position` and `selection-bound` of a delegating editable (GtkEntry) are watched
+//! on its delegate, the inner GtkText, where the backend also reads them (`editable_delegate`, WG3b).
+//! The delegate is fixed for the widget's lifetime, so there is nothing to re-target.
+//!
 //! Echo (REACTIVITY.md §5.4): the host drops the echo of its own writes by comparing with the value
 //! it read back, except for proportional properties, which it never reads. For those the backend
 //! drops the `notify` of the (handle, prop) it is writing in `set_prop` ([`EchoGuard`]); other
@@ -51,6 +55,8 @@ enum Target {
     /// `notify::<target>` on the forwarded-to object (`cur`), plus `notify::<via>` on the element
     /// (`retarget`), which moves the first one when the element's `via` property changes.
     Via { retarget: glib::SignalHandlerId, cur: ViaSlot },
+    /// `notify::<prop>` on the editable's delegate (`editable_delegate`).
+    Delegate(ViaSlot),
 }
 
 pub(super) struct Observer {
@@ -72,6 +78,7 @@ fn disconnect(o: Observer, obj: &glib::Object) {
             obj.disconnect(retarget);
             drop_via(&cur);
         }
+        Target::Delegate(cur) => drop_via(&cur),
     }
 }
 
@@ -213,6 +220,8 @@ enum Watch {
     /// A forwarded property: the element, its `via` property, the forwarded-to object and the
     /// target property's canonical name.
     Via { elem: glib::Object, via: &'static str, target: glib::Object, name: String },
+    /// A GtkEditable property watched on the editable's delegate (`editable_delegate`).
+    Delegate(glib::Object, String),
 }
 
 impl Inner {
@@ -231,6 +240,7 @@ impl Inner {
             Some(_) => return Err(unsupported("properties of this service kind cannot be observed")),
         }
         let (obj, kind) = self.obj_of(h).map_err(failed)?;
+        let mut delegate = false;
         let (target, name, via) = if prop >= reflect::DYN_BASE {
             let ps = self.reflect.borrow().prop(prop).cloned().ok_or_else(|| failed("unknown property"))?;
             if !obj.type_().is_a(ps.owner_type()) {
@@ -246,7 +256,10 @@ impl Inner {
             if p.flags & F_VIRTUAL != 0 {
                 return Err(unsupported(format!("{} is computed by svelters, not a GObject property: it has no notify", p.name)));
             }
-            if p.flags & F_VIA != 0 {
+            if let Some(d) = editable_delegate(&obj, p) {
+                delegate = true;
+                (d, p.name.to_string(), None)
+            } else if p.flags & F_VIA != 0 {
                 (via_object(&obj, p.via, p.name).map_err(failed)?, p.target.to_string(), Some(p.via))
             } else {
                 (obj.clone(), p.name.to_string(), None)
@@ -265,6 +278,7 @@ impl Inner {
         let name = ps.name().to_string();
         Ok(match via {
             Some(via) => Watch::Via { elem: obj, via, target, name },
+            None if delegate => Watch::Delegate(target, name),
             None => Watch::Own(target, name),
         })
     }
@@ -289,8 +303,9 @@ impl Inner {
                 Some(obj) => disconnect(o, &obj),
                 // The element is gone: its own handlers went with it, a forwarded target may not have.
                 None => {
-                    if let Target::Via { cur, .. } = &o.target {
-                        drop_via(cur);
+                    match &o.target {
+                        Target::Via { cur, .. } | Target::Delegate(cur) => drop_via(cur),
+                        Target::Own(_) => {}
                     }
                 }
             }
@@ -308,6 +323,10 @@ impl Inner {
         let r = Reporter { host: self.host.clone(), main: self.main_thread, h, prop };
         let target = match self.observed_target(h, prop)? {
             Watch::Own(obj, name) => Target::Own(r.connect(&obj, &name)),
+            Watch::Delegate(d, name) => {
+                let id = r.connect(&d, &name);
+                Target::Delegate(Arc::new(Mutex::new(Some((d.downgrade().into(), id)))))
+            }
             Watch::Via { elem, via, target, name } => {
                 let id = r.connect(&target, &name);
                 let cur: ViaSlot = Arc::new(Mutex::new(Some((target.downgrade().into(), id))));

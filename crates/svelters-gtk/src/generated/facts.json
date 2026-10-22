@@ -3000,7 +3000,7 @@
   },
   {
    "fact": "svelters-api:v1:type:gtk:Gtk:Editable:method:select_region",
-   "fingerprint": "08fcaa2beccff2c8",
+   "fingerprint": "68bacb99b431358a",
    "kind": "Editable",
    "name": "select_region",
    "origin": "manual",
