@@ -309,8 +309,8 @@ fn hit_test_returns_the_topmost_and_honours_hit_transparent() {
     // a higher layer order beats draw order
     foreground.set(true);
     h.run();
-    let pos = scene.read(|s| s.get(b_under).unwrap().drawn().unwrap().left_top() + egui::vec2(4.0, 4.0));
-    eprintln!("{:?} {:?} {pos:?}", scene.read(|s| s.get(b_under).unwrap().drawn()), scene.read(|s| s.get(b_over).unwrap().drawn()));
+    // (the area is placed without the panel's margin: take a point inside both buttons)
+    let pos = scene.read(|s| s.get(b_under).unwrap().drawn().unwrap().intersect(s.get(b_over).unwrap().drawn().unwrap()).center());
     assert_eq!(hits(&scene, top, pos), vec![b_under, b_over], "the foreground area is on top");
     scene.read(|s| assert!(s.stats().hit_entries >= 2));
 }
