@@ -511,9 +511,23 @@ impl<'a> NodeRef<'a> {
         self.s.is_boundary(self.i)
     }
     /// Shown: the `visible` prop of this node and its ancestors, and its root's visibility (the
-    /// embed's `set_visible`; a detached node is not shown).
+    /// embed's `set_visible`; a detached node is not shown). AU2b: a `stack`'s children other than
+    /// the one it shows are not shown either (they are neither laid out nor drawn).
     pub fn is_visible(self) -> bool {
-        self.s.common(self.i).visible && self.ancestors().all(|a| a.s.common(a.i).visible) && self.s.roots.get(self.root()).is_some_and(|e| e.visible)
+        self.s.common(self.i).visible
+            && self.ancestors().all(|a| a.s.common(a.i).visible)
+            && !self.in_hidden_stack_page()
+            && self.s.roots.get(self.root()).is_some_and(|e| e.visible)
+    }
+
+    /// Some ancestor (or this node) is a `stack` child that its stack does not show.
+    fn in_hidden_stack_page(self) -> bool {
+        std::iter::once(self).chain(self.ancestors()).any(|n| {
+            n.parent().is_some_and(|p| {
+                matches!(p.s.w(p.i), W::Stack { .. })
+                    && p.s.children[p.i].iter().position(|&c| c == n.id).is_some_and(|k| crate::elements::panes::stack_pick(p.s, p.i).visible != Some(k))
+            })
+        })
     }
     /// The tick of this node's last change.
     pub fn changed(self) -> Tick {

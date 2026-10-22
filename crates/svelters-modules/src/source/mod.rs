@@ -1,6 +1,7 @@
 //! [`SourceProvider`]: an app loaded from its sources, compiled live (Q1).
 
 mod aliases;
+mod glob;
 pub(crate) mod build;
 mod resolve;
 mod transform;
@@ -419,6 +420,10 @@ impl Inner {
             return Ok(&self.cache[path]);
         }
         let Output { mut js, map, warnings, css } = self.compiler.transform(path, src)?;
+        // AU2b: Vite's `import.meta.glob`, expanded against the files there now.
+        if let Some(expanded) = glob::expand(&js, path)? {
+            js = expanded;
+        }
         self.warnings.extend(warnings);
         let css = css.map(|c| c.code);
         if css.is_some() {

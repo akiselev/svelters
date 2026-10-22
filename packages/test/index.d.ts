@@ -49,7 +49,7 @@ export class Locator {
   hover(opts?: ActOptions): Promise<unknown>;
   focus(opts?: ActOptions): Promise<unknown>;
   fill(text: string, opts?: ActOptions): Promise<unknown>;
-  setValue(value: number, opts?: ActOptions): Promise<unknown>;
+  setValue(value: number, opts?: ActOptions & { handle?: string | number }): Promise<unknown>;
   all(): Promise<NodeInfo[]>;
   count(): Promise<number>;
   info(): Promise<NodeInfo>;

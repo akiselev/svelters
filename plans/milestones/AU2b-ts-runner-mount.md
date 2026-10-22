@@ -22,6 +22,14 @@ runner (E2E-INSPECTOR §6 Q2, decided by the user), `mount` (§2.4) and `app.res
 | Tests | `packages/test/test/runner.test.js` | On a mock host (`test/mock-host.mjs`, NDJSON JSON-RPC in Node, so the js job runs them without Rust): seeds and overrides, fixture names, args/discovery/replay, two workers with one launch each and resets between tests (`e2e-mock/pass`, one file in TypeScript using `mount`), a failing seed's print and replay, a crash and a hang failing alone, retries. With `SVELTERS_RUN`: the runner on the real host, `test/e2e/counter.e2e.js` (counter, reset between tests, a 30 s timer under `clock.advance`, the seed replaying `Math.random` across `app.reset`) and `test/e2e/mount.e2e.js` (Panel mounted with props, clicked, `setProps` keeping its count; a mounted component on the virtual clock). |
 | CI | linux-gtk: step "e2e runner (svelters-run, counter fixture)" | `SVELTERS_RUN=$GITHUB_WORKSPACE/target/debug/svelters-run pnpm --filter @svelters/test test`, after nextest. Cheap: "Build tests" already builds svelters-run (svelters-automation's integration tests need the binary), so it costs the test time only (~10 s locally). The js job runs the mock tests through `pnpm -r test` and skips the real-host ones. |
 
+## Added to the lane (coordinator): AU1b's follow-ups
+
+| Item | Fix | Proof |
+|---|---|---|
+| `wait.for visible` read a `<stack>`'s inactive child as visible | `NodeRef::is_visible` (svelters-egui scene) also checks that no ancestor-or-self is a `stack` child its stack does not show (`stack_pick`, the layout's own choice). Every user gets it: `wait.for`, actionability, snapshots, the query `visible` filter, providers. | `svelters-automation/tests/e2e.rs::gallery_containers_page_switches` checks "Stack page two" hidden before the switch and "Stack page one" hidden after. |
+| `input.set_value` had no handle target on a two-handle `range-slider` | `input.set_value {handle}`: `Session::set_value_handle` picks the AccessKit slider inside the node's rect whose label ends with `handle` (`"high"`), or the n-th handle left to right (`"1"`, or a number); `node.not_found` lists the handles when none matches. Rust `Locator::set_value_handle`, TS `setValue(v, { handle })`. | `gallery_inputs_page_binds_every_value` restores gallery.rs's `bind:high` step (`range: 10 to 60`). |
+| `import.meta.glob` on the live loader | `svelters-modules/src/source/glob.rs`: after compiling a module, `SourceProvider` replaces each call with an object keyed `"./pages/a.svelte"` (sorted): eager → appended `import * as` (or `{ name as }` with `import:`), lazy → `() => import(..)`. Patterns: relative literals or arrays, `*`, `?`, `**`, `{a,b}`, `!` exclusions. `query`/`as`/`base` fail with a clear error. The file list is read when the importing module compiles. | `glob::tests` (unit), and both gallery e2e tests now run from source (`app = "../../fixtures/gallery-egui"`, not `dist/app.js`), in process and with `SVELTERS_E2E=process`. |
+
 ## Decisions and deviations
 
 - **Our own runner, no dependencies** (Q2). The runner is Node built-ins only (`child_process.fork`, IPC); no
@@ -42,11 +50,15 @@ runner (E2E-INSPECTOR §6 Q2, decided by the user), `mount` (§2.4) and `app.res
 - Traces on failure (§2.6) and `toHaveScreenshot`: AU5 / pixels over the wire.
 - `expect.poll`, sharding across machines beyond `--shard`, a watch/UI mode.
 - Windowed `svelters-run`, `events`/`log`/`perf` streams: as in AU1b.
+- `import.meta.glob` and HMR: a page file added while the app runs appears when the importing module is next
+  compiled (its own edit or a reload), not by itself (no directory watch).
 
 ## Handoff
 
-- Files: `crates/svelters-automation/src/bin/svelters-run.rs`, `crates/svelters-egui/src/runner/kittest.rs`
-  (`mount_source`, `embed_host`), `fixtures/counter-egui/src/Panel.svelte`, `packages/test/{index.js, index.d.ts,
+- Files: `crates/svelters-automation/src/bin/svelters-run.rs`, `crates/svelters-automation/src/{session.rs, e2e.rs}`
+  (`set_value_handle`), `crates/svelters-automation/tests/e2e.rs`, `crates/svelters-egui/src/runner/kittest.rs`
+  (`mount_source`, `embed_host`), `crates/svelters-egui/src/scene/access.rs` (`is_visible`),
+  `crates/svelters-modules/src/source/{glob.rs, mod.rs}`, `fixtures/counter-egui/src/Panel.svelte`, `packages/test/{index.js, index.d.ts,
   package.json, bin/, runner/, test/runner.test.js, test/mock-host.mjs, test/e2e/, test/e2e-mock/}`,
   `.github/workflows/linux-gtk.yml`, and this record. `STATUS.md` is left for the coordinator.
 - Run: `SVELTERS_RUN=$PWD/target/debug/svelters-run node packages/test/bin/svelters-e2e.mjs packages/test/test/e2e`.

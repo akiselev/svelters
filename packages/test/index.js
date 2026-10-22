@@ -153,8 +153,9 @@ export class Locator {
   fill(text, opts) {
     return this.#act('input.fill', { text }, opts);
   }
-  setValue(value, opts) {
-    return this.#act('input.set_value', { value }, opts);
+  /** `opts.handle`: one handle of a multi-handle widget (`'low'`/`'high'` of a range-slider). */
+  setValue(value, opts = {}) {
+    return this.#act('input.set_value', { value, handle: opts.handle }, opts);
   }
 
   /** Every node that matches now (no waiting). */
