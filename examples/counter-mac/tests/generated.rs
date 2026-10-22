@@ -26,7 +26,11 @@ mod cases {
         let o = h.create("box");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("prefers-compact-control-size-metrics", "26.0")];
         for name in h.readable_props("box") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -98,7 +102,11 @@ mod cases {
         let o = h.create("button");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("border-shape", "26.0"), ("prefers-compact-control-size-metrics", "26.0"), ("tint-prominence", "26.0")];
         for name in h.readable_props("button") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -209,7 +217,11 @@ mod cases {
         let o = h.create("color-well");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("color-well-style", "13.0"), ("image", "13.0"), ("maximum-linear-exposure", "26.0"), ("prefers-compact-control-size-metrics", "26.0"), ("pulldown-action", "13.0"), ("pulldown-target", "13.0"), ("supports-alpha", "14.0")];
         for name in h.readable_props("color-well") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -252,7 +264,11 @@ mod cases {
         let o = h.create("combo-box");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("allows-writing-tools", "15.2"), ("allows-writing-tools-affordance", "15.4"), ("placeholder-attributed-strings", "26.0"), ("placeholder-strings", "26.0"), ("prefers-compact-control-size-metrics", "26.0"), ("resolves-natural-alignment-with-base-writing-direction", "26.0")];
         for name in h.readable_props("combo-box") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -456,7 +472,11 @@ mod cases {
         let o = h.create("date-picker");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("prefers-compact-control-size-metrics", "26.0")];
         for name in h.readable_props("date-picker") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -536,7 +556,11 @@ mod cases {
         let o = h.create("image-view");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("image-dynamic-range", "14.0"), ("preferred-image-dynamic-range", "14.0"), ("prefers-compact-control-size-metrics", "26.0")];
         for name in h.readable_props("image-view") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -607,7 +631,11 @@ mod cases {
         let o = h.create("level-indicator");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("prefers-compact-control-size-metrics", "26.0")];
         for name in h.readable_props("level-indicator") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -687,7 +715,11 @@ mod cases {
         let o = h.create("menu");
         let mut bad = Vec::new();
         let errs: &[&str] = &["properties-to-update"];
+        let newer: &[(&str, &str)] = &[("automatically-inserts-writing-tools-items", "15.2"), ("presentation-style", "14.0"), ("selected-items", "14.0"), ("selection-mode", "14.0")];
         for name in h.readable_props("menu") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -829,7 +861,11 @@ mod cases {
         let o = h.create("menu-item");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("allows-automatic-key-equivalent-localization", "12.0"), ("allows-automatic-key-equivalent-mirroring", "12.0"), ("badge", "14.0"), ("section-header", "14.0"), ("subtitle", "14.4")];
         for name in h.readable_props("menu-item") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -989,7 +1025,11 @@ mod cases {
         let o = h.create("panel");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("cascading-reference-frame", "15.0"), ("has-active-window-sharing-session", "13.3")];
         for name in h.readable_props("panel") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -1042,7 +1082,11 @@ mod cases {
         let o = h.create("path-control");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("prefers-compact-control-size-metrics", "26.0")];
         for name in h.readable_props("path-control") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -1095,7 +1139,11 @@ mod cases {
         let o = h.create("pop-up-button");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("alters-state-of-selected-item", "15.0"), ("border-shape", "26.0"), ("prefers-compact-control-size-metrics", "26.0"), ("tint-prominence", "26.0"), ("uses-item-from-menu", "15.0")];
         for name in h.readable_props("pop-up-button") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -1207,7 +1255,11 @@ mod cases {
         let o = h.create("progress-indicator");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("observed-progress", "14.0"), ("prefers-compact-control-size-metrics", "26.0")];
         for name in h.readable_props("progress-indicator") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -1294,7 +1346,11 @@ mod cases {
         let o = h.create("scroll-view");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("prefers-compact-control-size-metrics", "26.0")];
         for name in h.readable_props("scroll-view") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -1382,7 +1438,11 @@ mod cases {
         let o = h.create("search-field");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("allows-writing-tools", "15.2"), ("allows-writing-tools-affordance", "15.4"), ("placeholder-attributed-strings", "26.0"), ("placeholder-strings", "26.0"), ("prefers-compact-control-size-metrics", "26.0"), ("resolves-natural-alignment-with-base-writing-direction", "26.0")];
         for name in h.readable_props("search-field") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -1435,7 +1495,11 @@ mod cases {
         let o = h.create("secure-text-field");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("allows-writing-tools", "15.2"), ("allows-writing-tools-affordance", "15.4"), ("placeholder-attributed-strings", "26.0"), ("placeholder-strings", "26.0"), ("prefers-compact-control-size-metrics", "26.0"), ("resolves-natural-alignment-with-base-writing-direction", "26.0")];
         for name in h.readable_props("secure-text-field") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -1470,7 +1534,11 @@ mod cases {
         let o = h.create("segmented-control");
         let mut bad = Vec::new();
         let errs: &[&str] = &["double-value-for-selected-segment"];
+        let newer: &[(&str, &str)] = &[("border-shape", "26.0"), ("prefers-compact-control-size-metrics", "26.0")];
         for name in h.readable_props("segmented-control") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -1541,7 +1609,11 @@ mod cases {
         let o = h.create("slider");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("neutral-value", "26.0"), ("prefers-compact-control-size-metrics", "26.0"), ("tint-prominence", "26.0")];
         for name in h.readable_props("slider") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -1621,7 +1693,11 @@ mod cases {
         let o = h.create("split-view");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("prefers-compact-control-size-metrics", "26.0")];
         for name in h.readable_props("split-view") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -1724,7 +1800,11 @@ mod cases {
         let o = h.create("stack-view");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("prefers-compact-control-size-metrics", "26.0")];
         for name in h.readable_props("stack-view") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -1816,7 +1896,11 @@ mod cases {
         let o = h.create("stepper");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("prefers-compact-control-size-metrics", "26.0")];
         for name in h.readable_props("stepper") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -1887,7 +1971,11 @@ mod cases {
         let o = h.create("switch");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("prefers-compact-control-size-metrics", "26.0")];
         for name in h.readable_props("switch") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -1937,7 +2025,11 @@ mod cases {
         let o = h.create("tab-view");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("prefers-compact-control-size-metrics", "26.0")];
         for name in h.readable_props("tab-view") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -2211,7 +2303,11 @@ mod cases {
         let o = h.create("text-field");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("allows-writing-tools", "15.2"), ("allows-writing-tools-affordance", "15.4"), ("placeholder-attributed-strings", "26.0"), ("placeholder-strings", "26.0"), ("prefers-compact-control-size-metrics", "26.0"), ("resolves-natural-alignment-with-base-writing-direction", "26.0")];
         for name in h.readable_props("text-field") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -2330,7 +2426,11 @@ mod cases {
         let o = h.create("text-view");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("allowed-writing-tools-result-options", "15.0"), ("inline-prediction-type", "14.0"), ("math-expression-completion-type", "15.0"), ("prefers-compact-control-size-metrics", "26.0"), ("text-content-storage", "12.0"), ("text-highlight-attributes", "15.0"), ("text-layout-manager", "12.0"), ("writing-tools-active", "15.0"), ("writing-tools-behavior", "15.0")];
         for name in h.readable_props("text-view") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -2504,7 +2604,11 @@ mod cases {
         let o = h.create("token-field");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("allows-writing-tools", "15.2"), ("allows-writing-tools-affordance", "15.4"), ("placeholder-attributed-strings", "26.0"), ("placeholder-strings", "26.0"), ("prefers-compact-control-size-metrics", "26.0"), ("resolves-natural-alignment-with-base-writing-direction", "26.0")];
         for name in h.readable_props("token-field") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -2548,7 +2652,11 @@ mod cases {
         let o = h.create("view");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("prefers-compact-control-size-metrics", "26.0")];
         for name in h.readable_props("view") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -2674,7 +2782,11 @@ mod cases {
         let o = h.create("visual-effect-view");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("prefers-compact-control-size-metrics", "26.0")];
         for name in h.readable_props("visual-effect-view") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),
@@ -2736,7 +2848,11 @@ mod cases {
         let o = h.create("window");
         let mut bad = Vec::new();
         let errs: &[&str] = &[];
+        let newer: &[(&str, &str)] = &[("cascading-reference-frame", "15.0"), ("has-active-window-sharing-session", "13.3")];
         for name in h.readable_props("window") {
+            if newer.iter().any(|(n, v)| *n == name && !svelters_apple::objc::bridge::os_at_least(v)) {
+                continue;
+            }
             match (h.get(o, name), errs.contains(&name)) {
                 (Err(e), false) => bad.push(format!("{name}: {e}")),
                 (Ok(v), true) => bad.push(format!("{name}: read {v:?}, want an error (read_errors)")),

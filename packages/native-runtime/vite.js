@@ -180,6 +180,21 @@ export function withoutBindings(src) {
  * setter declarations (the Rust compiler matches those itself). Returns null when nothing remains
  * for the toolkit's dialect.
  */
+const tagCache = new Map();
+/** The element tags of a backend (metadata/semantics/<backend>.json), for selector checks. */
+function tagsOf(backend) {
+  if (!tagCache.has(backend)) {
+    let tags = null;
+    try {
+      tags = Object.keys(JSON.parse(fs.readFileSync(path.join(repoRoot, "metadata/semantics", `${backend}.json`), "utf8")).tags ?? {});
+    } catch {
+      tags = null;
+    }
+    tagCache.set(backend, tags);
+  }
+  return tagCache.get(backend);
+}
+
 export function nativeSheets(code, file, toolkit, warn = () => {}) {
   const m = STYLE_TAG.exec(code);
   if (!m || /\blang\s*=/.test(m[1] ?? '')) return null;
@@ -195,8 +210,10 @@ export function nativeSheets(code, file, toolkit, warn = () => {}) {
     warn(`<style> not translated: Svelte could not compile the component for its CSS: ${String(e.message).split('\n')[0]}`);
     return null;
   }
-  const t = translateSheet(r.css?.code ?? '', toolkit, { native: native[toolkit] ?? [], setters: false });
+  const t = translateSheet(r.css?.code ?? '', toolkit, { native: native[toolkit] ?? [], setters: false, tags: tagsOf(toolkit) });
   for (const d of t.diagnostics) if (d.level !== 'info') warn(formatDiagnostic(d));
+  // decl dialect (AppKit): structured rules for the runtime cascade engine
+  if (t.declRules) return t.declRules.length ? { scope, sheets: { decl: t.declRules } } : null;
   if (!t.css.trim() && !t.dark.trim()) return null;
   return { scope, sheets: toolkit === 'qt' ? { qt: t.css, qtDark: t.dark } : { [toolkit]: t.css } };
 }

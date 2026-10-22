@@ -1,0 +1,3 @@
+# .cargo/config.toml puts build-dir under {workspace-root}/target, i.e. here for this standalone probe.
+target/
+Cargo.lock

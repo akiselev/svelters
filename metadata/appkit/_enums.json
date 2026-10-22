@@ -1439,12 +1439,14 @@
         {
           "js": "center",
           "native": "NSTextAlignmentCenter",
-          "value": 1
+          "value": 1,
+          "x86_64": 2
         },
         {
           "js": "right",
           "native": "NSTextAlignmentRight",
-          "value": 2
+          "value": 2,
+          "x86_64": 1
         },
         {
           "js": "justified",

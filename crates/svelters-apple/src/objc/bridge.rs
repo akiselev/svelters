@@ -41,6 +41,18 @@ pub fn erase<T: objc2::Message>(r: Retained<T>) -> Retained<AnyObject> {
     unsafe { Retained::cast_unchecked(r) }
 }
 
+/// Whether the running macOS is at least `version` ("26.0", "10.15.4"). The tables come from a newer SDK
+/// than the minimum macOS, so API newer than the running OS is simply absent there.
+pub fn os_at_least(version: &str) -> bool {
+    let mut parts = version.split('.').map(|p| p.parse::<isize>().unwrap_or(0));
+    let want = objc2_foundation::NSOperatingSystemVersion {
+        majorVersion: parts.next().unwrap_or(0),
+        minorVersion: parts.next().unwrap_or(0),
+        patchVersion: parts.next().unwrap_or(0),
+    };
+    objc2_foundation::NSProcessInfo::processInfo().isOperatingSystemAtLeastVersion(want)
+}
+
 pub fn class_named(name: &str) -> Option<&'static AnyClass> {
     let c = CString::new(name).ok()?;
     AnyClass::get(&c)
