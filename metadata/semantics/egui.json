@@ -11818,6 +11818,51 @@
         "name": "busy",
         "negated": false,
         "state": "busy"
+      },
+      {
+        "name": "indeterminate",
+        "negated": false,
+        "state": "indeterminate"
+      },
+      {
+        "name": "placeholder-shown",
+        "negated": false,
+        "state": "placeholder-shown"
+      },
+      {
+        "name": "default",
+        "negated": false,
+        "state": "default"
+      },
+      {
+        "name": "drop-target",
+        "negated": false,
+        "state": "drop-target"
+      },
+      {
+        "name": "current",
+        "negated": false,
+        "state": "current"
+      },
+      {
+        "name": "backdrop",
+        "negated": false,
+        "state": "backdrop"
+      },
+      {
+        "name": "required",
+        "negated": false,
+        "state": "required"
+      },
+      {
+        "name": "optional",
+        "negated": true,
+        "state": "required"
+      },
+      {
+        "name": "user-invalid",
+        "negated": false,
+        "state": "user-invalid"
       }
     ],
     "setter_selectors": [
