@@ -493,6 +493,9 @@ impl Scene {
         ns.computed = Some(Arc::new(c));
         ns.states = states;
         self.core[i].dirty.insert(Dirty::PAINT);
+        if matches!(self.w(i), W::Run { .. }) {
+            crate::rich::touched(self, i); // RT2: a run's font may have changed
+        }
         let t = layout_style(self, i);
         if t != self.layout[i].style {
             self.layout[i].style = t;
@@ -615,7 +618,7 @@ impl Scene {
     }
 
     /// Sets the walk-owned state bits of node `i` to `bits` (journaled; restyles what it reaches).
-    fn set_walk_state(&mut self, i: usize, bits: StateBits) {
+    pub(crate) fn set_walk_state(&mut self, i: usize, bits: StateBits) {
         let before = self.core[i].state;
         let after = StateBits((before.0 & !WALK_BITS.0) | (bits.0 & WALK_BITS.0));
         if after == before {

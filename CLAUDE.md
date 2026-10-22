@@ -130,6 +130,8 @@ other agent on the machine. **GitHub CI is the gate, not your machine.** The use
 - `tools/dev/headless` runs GTK/Qt tests under Xvfb. macOS needs `flock` (`brew install flock`).
 - Never run `tmux kill-server` or kill processes you didn't start: other sessions and lanes run in the same tmux
   server (on 2026-10-22 a `kill-server` killed macbook-svelters mid-lane). Kill only your own named session.
+  Stop a process only by a pid you started; never `pkill -f`/`killall` on a pattern (on 2026-10-22
+  `pkill -f "cargo-slot cargo"` killed every lane's builds on the MacBook).
 - Start Claude sessions inside a repo, never in `~/projects` itself: rust-analyzer there loads every
   project (23 GB, ~50 parallel `cargo check`s).
 

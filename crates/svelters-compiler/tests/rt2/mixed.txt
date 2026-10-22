@@ -1,0 +1,39 @@
+## input
+<script>let name = $state("Ada"); function go() {}</script>
+<window><box><label>Hello <b>{name}</b>, see <a href="https://svelters.dev" onclicked={go}>the docs</a>.</label></box></window>
+
+## diagnostics
+
+## js
+import * as $ from '@svelters/native-runtime/core';
+import * as $n from '@svelters/native-runtime';
+
+export default function App($$anchor, $$props) {
+	$.push($$props, true);
+	let name = "Ada";
+	function go() {}
+	const $$n1 = $n.toplevel("window", "present");
+	const $$n2 = $n.element("box");
+	const $$n3 = $n.element("label");
+	const $$n4 = $n.element("span");
+	$n.set($$n4, "text", "Hello ");
+	$n.append($n.slot($$n3, null), $$n4);
+	const $$n5 = $n.element("b");
+	$n.append($n.slot($$n3, null), $$n5);
+	const $$n6 = $n.element("span");
+	$n.set($$n6, "text", ", see ");
+	$n.append($n.slot($$n3, null), $$n6);
+	const $$n7 = $n.element("a");
+	$n.set($$n7, "href", "https://svelters.dev");
+	$n.set($$n7, "text", "the docs");
+	$n.append($n.slot($$n3, null), $$n7);
+	const $$n8 = $n.element("span");
+	$n.set($$n8, "text", ".");
+	$n.append($n.slot($$n3, null), $$n8);
+	$n.append($n.slot($$n2, null), $$n3);
+	$n.append($n.slot($$n1, null), $$n2);
+	$n.append($$anchor, $$n1);
+	$.template_effect(() => $n.set($$n5, "text", `${name ?? ''}`));
+	$n.on($$n7, "clicked", function (...$$args) { go?.apply(this, $$args); });
+	$.pop();
+}

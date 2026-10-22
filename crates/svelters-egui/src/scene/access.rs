@@ -905,6 +905,9 @@ impl Scene {
         if d.contains(Dirty::MEASURE) {
             self.mark_measure(id);
         }
+        if matches!(self.w(i), W::Run { .. }) {
+            crate::rich::touched(self, i); // RT2: the label shows the run
+        }
         // EM1: the anchor salts the egui id (ARCH-EMBED §4.4): re-derive it in its root
         if def.key == kinds::P::Anchor {
             let r = self.core[i].root;

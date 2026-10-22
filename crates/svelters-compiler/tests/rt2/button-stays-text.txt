@@ -1,0 +1,5 @@
+## input
+<window><box><button>Go <b>x</b></button></box></window>
+
+## diagnostics
+Error[text_content_children] @1:25: <button> mixes text and elements: on egui its text children set `text`, so it cannot also hold child elements

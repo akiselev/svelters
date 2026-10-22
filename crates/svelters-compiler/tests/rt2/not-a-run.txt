@@ -1,0 +1,5 @@
+## input
+<window><box><label>Go <button>x</button></label></box></window>
+
+## diagnostics
+Error[slot_rejects_child] @1:25: slot `runs` of <label> accepts Span | Bold | Italic | Code | Anchor, not <button> (egui::Button)
