@@ -568,7 +568,9 @@ export function set(node, prop, value) {
     return;
   }
   if (value == null) node.snippets?.delete(prop);
-  node.host.setProp(node.h, prop, value);
+  // WG5a: a `$state` array is a Proxy, which the host's list conversion does not read as an
+  // array: a list prop (`bind:selected` ids) is written as a plain copy
+  node.host.setProp(node.h, prop, Array.isArray(value) ? Array.from(value) : value);
 }
 
 // ---------------------------------------------------------------------------------------------

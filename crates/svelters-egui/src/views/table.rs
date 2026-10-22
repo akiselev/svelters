@@ -797,7 +797,7 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
         t.error = None;
     }
     // ---- the editor ----
-    let editor = paint_editor(arena, i, &cols, &cells, &mut tui);
+    let editor = paint_editor(arena, i, &cols, &cells, &mut tui, out);
     let W::Table(t) = arena.w_mut(i) else { unreachable!() };
     if editor {
         ctx.request_repaint();
@@ -898,7 +898,7 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
 /// Draws the open edit's editor over its cell (the built-in text field, or the column's snippet
 /// outlet), moves focus into it once, and turns Enter/Escape/Tab and focus leaving it into an end
 /// request (handled in logic). Returns whether another frame is needed for it.
-fn paint_editor(arena: &mut Arena, i: usize, cols: &[Col], cells: &[(u64, usize, Rect, Rect)], ui: &mut Ui) -> bool {
+fn paint_editor(arena: &mut Arena, i: usize, cols: &[Col], cells: &[(u64, usize, Rect, Rect)], ui: &mut Ui, out: &mut Vec<Out>) -> bool {
     let table = arena.slots.id_at(i).expect("live node");
     let id = arena.core[i].egui_id;
     let ctx = ui.ctx().clone();
@@ -949,7 +949,8 @@ fn paint_editor(arena: &mut Arena, i: usize, cols: &[Col], cells: &[(u64, usize,
         let laid = arena.core[oi].rect;
         if laid.width() > 0.0 {
             let at = cr.min.to_vec2() - laid.min.to_vec2();
-            crate::walk::paint_at(arena, oi, at, &mut eui, &mut Vec::new());
+            // the editor's own events and prop changes (its `bind:`s) go out with the table's
+            crate::walk::paint_at(arena, oi, at, &mut eui, out);
             arena.core[oi].drawn = cr;
         }
         widgets = ctx.viewport(|vp| vp.this_pass.widgets.get_layer(layer).skip(mark).filter(|w| w.sense.is_focusable() && w.enabled).map(|w| w.id).collect());
