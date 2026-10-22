@@ -557,3 +557,49 @@ fn an_app_loads_from_its_release_bundle_without_its_sources() {
         pre.len()
     );
 }
+
+/// Q4b: a bundle names nothing of the machine that built it. The same app built from two
+/// checkouts at different paths gives the same bytes, so the same build id; neither names the
+/// checkout (the apps and their packages are under the repo).
+#[test]
+fn a_bundle_does_not_depend_on_the_checkout_path() {
+    use svelters_host::modules::svb::{self, BuildOptions, Svb};
+    // Builds the app twice, from `a` and `b`: the same bytes, neither naming the checkout.
+    let same = |a: &App, b: &App, backend: Option<&str>| -> Svb {
+        let build = |app: &App| {
+            let mut cfg = SourceConfig::for_path(&app.dir).unwrap();
+            if let Some(be) = backend {
+                cfg.backend = be.into();
+            }
+            svb::build(cfg, &BuildOptions::default()).unwrap()
+        };
+        let (x, y) = (build(a), build(b));
+        let root = repo();
+        let root = root.to_string_lossy();
+        for bytes in [&x, &y] {
+            let text = String::from_utf8_lossy(bytes);
+            if let Some(at) = text.find(&*root) {
+                panic!("the bundle names the checkout {root}: …{}…", &text[at.saturating_sub(200)..(at + 200).min(text.len())]);
+            }
+        }
+        let (sx, sy) = (Svb::from_bytes(x.clone()).unwrap(), Svb::from_bytes(y.clone()).unwrap());
+        assert_eq!(sx.index().build, sy.index().build);
+        assert!(x == y, "the bundle bytes differ");
+        sx
+    };
+
+    // The counter: assets, JSON, a runes module, a behaviours module, the packages' source maps.
+    let sx = same(&counter_app("svb-path-a"), &counter_app("svb-path-b-longer"), None);
+    let entry = sx.module_js("svelters:entry").unwrap();
+    assert!(entry.contains("\"app/src/App.svelte\""), "{entry}");
+    assert_eq!(sx.index().modules["svelters:entry"].imports["app/src/App.svelte"], "app/src/App.svelte");
+
+    // LD2: a `<style>` on egui. The scope class and the sheet's key come from the logical id.
+    let styled = "<window><label>x</label></window>\n<style>\n  label { color: red; }\n</style>\n";
+    let sx = same(&App::new("svb-style-a", styled), &App::new("svb-style-b-longer", styled), Some("egui"));
+    let sheet_id = "svelters-style:app/src/App.svelte";
+    assert_eq!(sx.index().modules["app/src/App.svelte"].imports[sheet_id], sheet_id);
+    assert!(sx.module_js("app/src/App.svelte").unwrap().contains(&format!("import \"{sheet_id}\";")));
+    let sheet = sx.module_js(sheet_id).unwrap();
+    assert!(sheet.contains("registerStyles(\"app/src/App.svelte\"") && sheet.contains("svelte-") && sheet.contains("color: red"), "{sheet}");
+}

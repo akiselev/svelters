@@ -14,9 +14,9 @@ sources:
 # `<label>`
 
 <!-- BEGIN GENERATED: summary of kinds.Label (tools/docs/egui/gen_reference.py). Do not edit. -->
-Static text.
+Static text; with inline run children (`<b>`, `<i>`, `<code>`, `<a>`, `<span>`) one paragraph of styled runs (RT2).
 
-**Base:** [`Widget`](widget.md) · **Children:** none · **Text content:** sets `text`
+**Base:** [`Widget`](widget.md) · **Children:** [`span`](span.md), [`b`](b.md), [`i`](i.md), [`code`](code.md), [`a`](a.md) · **Text content:** sets `text`
 <!-- END GENERATED -->
 
 <!-- TODO(DOC7): when to use it, and what to use instead. -->
@@ -75,7 +75,7 @@ None.
 | `border-color` | yes | — |
 | `border-width` | yes | — |
 | `border-radius` | yes | — |
-| `color` | yes (its text) | — |
+| `color` | inherited by its children | — |
 | `box-shadow` | yes (outer and inset) | — |
 | `opacity` | yes | — |
 
