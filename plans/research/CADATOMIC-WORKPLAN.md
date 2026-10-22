@@ -26,8 +26,8 @@ Read at:
 - **cadatomic uses the SC1 slice of svelters-egui and little else.** It embeds one `Embed` with one slot and one
   root (the task panel), exports one module through E0/E3, registers one RA1 kind (`<quantity-field>`, with
   provider state bits and primary selection) and registers the embed's `BusyProbe` with its `IdleBarrier`. Of the
-  roughly twenty capabilities merged since, it uses none yet (§1). Three of the gaps are real workarounds, not
-  just unused features:
+  roughly twenty capabilities merged since, it uses only three WG1 kinds and DX2's headless platform (§1). Three
+  of the gaps are real workarounds, not just unused features:
   1. the Svelte panel is **built by Vite** into `ui/dist/embed.js` (`scripts/build-ui.sh` links `node_modules` into
      the sibling svelters checkout), where the Rust loader (Q1), TS (Q2), CSS (Q3w) and HMR (H1/H3) now load the
      same sources live;
