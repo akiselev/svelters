@@ -71,6 +71,9 @@ pub(crate) struct Reloader {
     watch: RefCell<Option<Watch>>,
     hook: RefCell<Option<Rc<dyn Fn(&ReloadReport)>>>,
     generation: Cell<u64>,
+    /// An embedder's entries are loaded (`load_entry`): a full reload would discard them, so it is
+    /// refused (the embedder decides what to do).
+    embedded: Cell<bool>,
 }
 
 impl Reloader {
@@ -84,7 +87,12 @@ impl Reloader {
             watch: RefCell::new(None),
             hook: RefCell::new(None),
             generation: Cell::new(0),
+            embedded: Cell::new(false),
         })
+    }
+
+    pub(crate) fn set_embedded(&self) {
+        self.embedded.set(true);
     }
 
     pub(crate) fn set_provider(&self, provider: Rc<dyn ModuleProvider>) {
@@ -227,6 +235,15 @@ impl Reloader {
             } else {
                 fallback = Some("a changed file is not a module of the app".into());
             }
+        }
+
+        if self.embedded.get() {
+            // the runtime holds the embedder's entries and roots: replacing it is the embedder's call
+            let why = fallback.clone().unwrap_or_else(|| "a full reload was requested".into());
+            let e = JsError::new(ErrorKind::Host, format!("not applied in place ({why}); a full reload would discard the embedded roots"));
+            core.report(e.clone());
+            let report = ReloadReport { generation, ok: false, elapsed: t0.elapsed(), error: Some(e), hot: None, fallback };
+            return Some(self.finish(core, &provider, report));
         }
 
         let old_roots: HashSet<u64> = core.roots().into_iter().collect();

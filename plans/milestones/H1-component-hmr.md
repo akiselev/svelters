@@ -56,8 +56,10 @@ Design: `plans/research/HMR.md` §2.1, §3.2–3.5, §4 H1, §6; `plans/research
   op-log fixture `fixtures/hmr` and its GTK/Qt replay, the GTK/Qt `watch` integration tests, #18079's scenario.
 - Dev timer attribution (HMR.md D10) lives in the host prelude: follow-up (coordinator: out of H1). Edit-to-UI time and memory per swap are not
   measured; the budget defaults are guesses (D-note: measure with a 50-component app).
-- The full-reload fallback is not supported for an embedder's entries (`load_entry`); embed apps must accept their
-  changes (documented on `Host::apply_changes`).
+- Embed mode (`load_entry*`): a change that cannot be applied in place is *not* turned into a full reload; the report
+  has `ok == false` and a Host error, and the embedder decides (coordinator, 2026-10-22).
+- **H1b (follow-up)**: an `acceptExports` mismatch (another export changed) propagates to the importers instead of
+  falling back to a full reload.
 - Per-module source maps for swapped versions: maps are stored by versioned name when declared; the M2b open item (a
   failed reload replacing the running bundle's map) is not touched.
 - Style updates (H2), `$state` keeping (H3), native UI state (H4) are later milestones.
