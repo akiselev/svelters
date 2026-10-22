@@ -128,6 +128,17 @@ fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut 
         if !ui.is_rect_visible(r) {
             return;
         }
+        // CS5e: its state and box (background, border), and the opacity of its subtree
+        let opacity = crate::style::before_container(arena, i, r, ui);
+        let mut faded;
+        let ui = match opacity {
+            Some(o) => {
+                faded = ui.new_child(UiBuilder::new().max_rect(ui.max_rect()).scope_id(arena.core[i].egui_id.with("css")));
+                faded.multiply_opacity(o);
+                &mut faded
+            }
+            None => ui,
+        };
         // By index, no clone: the walk never changes the structure (ARCH-SCENE §5.2).
         for k in 0..arena.children[i].len() {
             let c = arena.children[i][k].index() as usize;
@@ -147,6 +158,8 @@ fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut 
         b = b.disabled();
     }
     let mut child = ui.new_child(b);
+    // CS5e: this pass's state, the restyle it reaches, then the computed visuals on `child`
+    crate::style::before_leaf(arena, i, r, &mut child);
     if matches!(arena.w(i), crate::scene::W::Ext(_)) {
         crate::provider::paint(arena, i, &mut child, out); // RA1: a provider kind
     } else {

@@ -103,6 +103,8 @@ pub struct Scene {
     /// Prop changes to announce to the host (`prop_changed`), from Rust writes (R18); flushed by the
     /// frame's logic.
     pub(crate) announce: Vec<(NodeId, u32)>,
+    /// CS5e: the cascade's sheets, per-node classes, inline blocks and computed styles (`style.rs`).
+    pub(crate) style: crate::style::SceneStyle,
 }
 
 impl Default for Scene {
@@ -123,6 +125,7 @@ impl Default for Scene {
             in_batch: false,
             counters: Counters::default(),
             announce: Vec::new(),
+            style: Default::default(),
         }
     }
 }

@@ -58,6 +58,8 @@ pub(crate) const ENGINE_PROPS: &[(&str, &str, &[&str])] = &[
     ("border-width", "length", &[]),
     ("color", "color", &[]),
     ("display", "enum", &["flex", "grid", "none"]),
+    // computed and inherited (`em`); measuring and painting with it is deferred
+    ("font-size", "length", &[]),
     ("grid-column", "raw", &[]),
     ("grid-row", "raw", &[]),
     ("grid-template-columns", "raw", &[]),
@@ -139,10 +141,6 @@ impl SceneStyle {
         self.active
     }
 
-    pub(crate) fn stylist(&self) -> &Stylist {
-        &self.stylist
-    }
-
     fn node(&self, id: NodeId) -> Option<&NodeStyle> {
         self.nodes.get(id.index() as usize).filter(|n| n.id == Some(id))
     }
@@ -204,7 +202,7 @@ fn sibling<'a>(n: NodeRef<'a>, delta: isize) -> Option<NodeRef<'a>> {
 
 impl Element for NodeRef<'_> {
     fn key(&self) -> NonZeroU64 {
-        key_of(self.id())
+        key_of(NodeRef::id(*self))
     }
     fn parent(&self) -> Option<Self> {
         NodeRef::parent(*self)
@@ -335,6 +333,7 @@ impl Scene {
         if !self.style.active {
             self.style.active = true;
             self.style.all = true;
+            self.observe_for_style();
         }
     }
 
@@ -871,10 +870,10 @@ pub(crate) fn layout_style(s: &Scene, i: usize) -> taffy::Style {
         match p.name {
             "width" => st.size.width = dim(v).unwrap_or(st.size.width),
             "height" => st.size.height = dim(v).unwrap_or(st.size.height),
-            "min-width" => st.min_size.width = lpa(v).map(Into::into).unwrap_or(st.min_size.width),
-            "min-height" => st.min_size.height = lpa(v).map(Into::into).unwrap_or(st.min_size.height),
-            "max-width" => st.max_size.width = lpa(v).map(Into::into).unwrap_or(st.max_size.width),
-            "max-height" => st.max_size.height = lpa(v).map(Into::into).unwrap_or(st.max_size.height),
+            "min-width" => st.min_size.width = lpa(v).unwrap_or(st.min_size.width),
+            "min-height" => st.min_size.height = lpa(v).unwrap_or(st.min_size.height),
+            "max-width" => st.max_size.width = lpa(v).unwrap_or(st.max_size.width),
+            "max-height" => st.max_size.height = lpa(v).unwrap_or(st.max_size.height),
             "flex-basis" => st.flex_basis = dim(v).unwrap_or(st.flex_basis),
             "flex-grow" | "flex-shrink" => {
                 if let ComputedValue::Number(n) = v {
@@ -925,16 +924,16 @@ pub(crate) fn layout_style(s: &Scene, i: usize) -> taffy::Style {
                     _ => taffy::FlexWrap::NoWrap,
                 }
             }
-            "align-items" => st.align_items = kw.and_then(align),
+            "align-items" => st.align_items = kw.and_then(align).unwrap_or(taffy::AlignItems::STRETCH),
             "justify-content" => {
-                st.justify_content = Some(match kw {
+                st.justify_content = match kw {
                     Some("end") => taffy::AlignContent::END,
                     Some("center") => taffy::AlignContent::CENTER,
                     Some("space-between") => taffy::AlignContent::SPACE_BETWEEN,
                     Some("space-around") => taffy::AlignContent::SPACE_AROUND,
                     Some("space-evenly") => taffy::AlignContent::SPACE_EVENLY,
                     _ => taffy::AlignContent::START,
-                })
+                }
             }
             "gap" => {
                 if let Some(g) = len_of(v) {
@@ -965,13 +964,13 @@ pub(crate) fn layout_style(s: &Scene, i: usize) -> taffy::Style {
     // TR1's clip channel caps what CSS asked for
     if let Some([cw, ch]) = vis.clip {
         if cw >= 0.0 {
-            st.max_size.width = taffy::Dimension::length(cw);
-            st.min_size.width = taffy::Dimension::length(0.0);
+            st.max_size.width = taffy::LengthPercentageAuto::length(cw);
+            st.min_size.width = taffy::LengthPercentageAuto::length(0.0);
             st.size.width = taffy::Dimension::auto();
         }
         if ch >= 0.0 {
-            st.max_size.height = taffy::Dimension::length(ch);
-            st.min_size.height = taffy::Dimension::length(0.0);
+            st.max_size.height = taffy::LengthPercentageAuto::length(ch);
+            st.min_size.height = taffy::LengthPercentageAuto::length(0.0);
             st.size.height = taffy::Dimension::auto();
         }
     }
