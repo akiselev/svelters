@@ -427,3 +427,195 @@ ensure `effect.nodes`, then call Svelte's `$.transition` / `$.animation`.
 - **D4 `animate:` outroing items.**
   - Recommended: they keep their place (no `fix()`) until removed.
   - Alternative: hide them at once (`opacity 0`) so the FLIP looks cleaner.
+
+## 9. As built
+
+Branch `ci/tr1`. Sections 0–8 above are the design; they still hold except where this section
+says otherwise.
+
+**Runtime** (`packages/native-runtime`):
+
+- `src/core/svelte.js` takes Svelte's `transition`, `animation`, `pause_effect`, `resume_effect`,
+  `set_should_intro`, `raf` and `loop`. `tools/check-svelte-internals.mjs` asserts them.
+- The blocks (`if_block`, `key_block`, snippets, dynamic components, `await`, each) pause
+  outroing branches instead of disposing them, and resume them when their key comes back. An
+  outroing region is skipped as an insertion anchor. `{:else if}` is transparent.
+- `src/motion.js` is the whole animated-value path: the `Element` facade, the WAAPI-style player
+  `NativeAnimation`, the CSS-declaration-to-channel parser, per-node composition with the inline
+  `opacity` base, and `bounds`/`computed`. It is about 540 lines with no cascade or selectors, so a
+  style engine can take it over later as one unit (the CSS deferral of 2026-10-21).
+- `src/transition.js` and `src/animate.js` are native ports of `svelte/transition` (`fade`, `fly`,
+  `slide`, `scale`, `blur` as its opacity part, `crossfade`) and `svelte/animate` (`flip`). The
+  build (`vite.js`) and the conformance hooks alias the Svelte modules to them. `draw` is not
+  exported (SVG only).
+- Events of an inert (outroing) node or its descendants are dropped in `__svelters_dispatch`, and
+  sync handlers get the toolkit default. This needs nothing from the backend.
+
+**Compiler:** `transition:`/`in:`/`out:` (with `|local`/`|global`), `animate:` (with Svelte's
+placement checks), `on{intro,outro}{start,end}` on every native element, and `elseif` for
+`{:else if}`. The changes are in `lower/native_attrs.rs`, `lower/mod.rs`, `transform/mod.rs` and
+small emits in `codegen/component.rs`.
+
+**ABI v2.8** (`plans/architecture/backend-abi.md`, "ABI v2.8 additive"):
+
+- three style op codes, `SVL_STYLE_TRANSFORM` 8, `SVL_STYLE_CLIP` 9 and `SVL_STYLE_INERT` 10;
+- one nullable member, `bounds`, at the end of `svl_backend`;
+- `SVL_ABI_VERSION` stays 3, as for v2.1–v2.7.
+
+The design numbered the ops 7, 8 and 9. ST2 took 7 for `SVL_STYLE_DECLS` on master first, so TR1
+uses 8, 9 and 10. This merge also adds ST2's `SVL_STYLE_DECLS` and `SVL_STYLE_TARGET_APPKIT` to
+the C header, which ST2 had added only to the Rust constants. `BackendRef::bounds` returns
+`Ok(None)` for a NULL member. The `Backend` trait gets `supports_bounds`/`bounds` with
+defaults, so trait backends (AppKit, WinUI, log) publish NULL.
+
+**Fallback.** A backend that rejects a channel op loses that channel only. `motion.js` `send`
+records the refused op per host, warns once in dev, and never sends it again. The transition's
+timing, events and `tick` still run, and the element is still removed when its outro ends. With a
+NULL `bounds`, `animate:` does not move and `slide` starts from size 0. The runtime test "a
+backend without a channel" checks this.
+
+**Backends:**
+
+- **GTK** (`crates/svelters-gtk/src/backend/visual.rs`, new):
+  - transform and clip are CSS on a provider owned by the widget;
+  - clip is approximated with a negative margin plus a scale (D3);
+  - inert sets `can-target`/`can-focus`;
+  - `bounds` uses `compute_bounds` against the root, or `measure`.
+- **Qt** (`tools/metadata/qt/templates/backend.cpp.in`):
+  - `SvlVisualEffect` is a `QGraphicsOpacityEffect` subclass that also paints the source pixmap
+    through a `QTransform`. It is dropped at rest, so nothing renders offscreen while idle;
+  - clip sets `maximumWidth`/`Height`, and the original is restored afterwards;
+  - inert sets `WA_TransparentForMouseEvents` and `NoFocus`;
+  - `bounds` calls `QLayout::activate`, then `mapTo(window)`;
+  - test hook `svl_qt_visual`.
+- **egui** (`crates/svelters-egui`):
+  - the channels are `scene::Visual` on the node;
+  - paint (`render.rs` `paint_visual`) multiplies the subtree's opacity, cuts paint at the clipped
+    rect, applies the transform through `Ui::with_visual_transform`, and drops the events of an
+    inert subtree;
+  - clip also caps the node's taffy max size, so siblings move (`layout.rs`);
+  - `bounds` brings a dirty window layout up to date synchronously, then returns the node's rect;
+  - the backend requests a repaint only when a channel value changes.
+- **Log backend, TestHost, egui and GTK op-log replay:** `style #h transform|clip|inert` lines.
+
+## 10. Per-backend support
+
+| Backend | fade (opacity) | fly / scale (transform) | slide (clip) | inert | `bounds`: `animate:flip`, crossfade | Without the feature |
+| --- | --- | --- | --- | --- | --- | --- |
+| DOM (conformance host) | yes | yes | yes | yes (`el.inert`) | `getBoundingClientRect` (zeros in jsdom) | — |
+| egui | yes | yes. Visual only: input still hits the layout rect. A non-uniform scale is drawn uniform (geometric mean) | yes. Taffy max size plus clip rect | yes (the subtree's events dropped) | yes, synchronous (layout run on demand) | — |
+| GTK 4 | yes | yes (per-widget CSS) | approximated (D3) | yes | rects yes. FLIP does not move: GTK allocates later, so `apply` reads the old rect | `animate:flip` is a no-op (follow-up F2) |
+| Qt 6 | yes | yes (custom effect) | yes (max size) | yes | yes, synchronous (`activate`) | — |
+| AppKit | no: ops accepted and ignored | no | no | runtime only | no (NULL) | timing, events and removal still run |
+| WinUI | no: no `style` member, every channel dropped | no | no | runtime only | no (NULL) | timing, events and removal still run |
+| Log backend / TestHost | op-log lines | op-log lines | op-log lines | op-log lines | NULL (a test can install `host.bounds`) | — |
+
+iOS and Android were not evaluated. They get the same fallback, because the runtime treats any
+refused op or missing member the same way.
+
+**ST2 on AppKit:** no conflict. ST2 sends an element's inline `opacity` inside `SVL_STYLE_DECLS`.
+TR1's player sends `SVL_STYLE_OPACITY` directly, which AppKit's `style_op` ignores (`_ => Ok(0)`),
+so a transition cannot overwrite ST2's resolved `alphaValue`. When AppKit gets real channels
+(follow-up F4), each channel op must compose with the DECLS base and restore it, as Qt's effect and
+the runtime's `commit` already do for the inline opacity.
+
+## 11. Evidence
+
+- **Runtime:** `packages/native-runtime/test/transitions.test.mjs`, 7 tests on a virtual `raf`:
+  - an outro defers removal and the element is inert;
+  - per-frame opacity ops, `outrostart`/`outroend`, and no frame requested once nothing animates;
+  - an intro rises from 0 to the base value;
+  - reversal resumes the same element (no new natives, inert lifted);
+  - `|global` intros play with `mount(..., { intro: true })` and local ones do not;
+  - `fly` sends transform ops and `slide` clip ops (from `host.bounds`);
+  - the channel fallback;
+  - a `tick` transition.
+- **egui:** `crates/svelters-egui/tests/motion.rs` runs `fixtures/motion-egui` on the real QuickJS
+  host under kittest, in real time:
+  - the outro shows on the scene nodes: opacity strictly between 0 and 1, a transform with
+    `ty > 0`, a clip and inert;
+  - the elements are removed and `outroend` reaches JS;
+  - `run()` is then 1 step with no repaint requested;
+  - the intro ends at identity channels and is idle again;
+  - `bounds_report_the_layout_rect` checks the rects.
+  - `fixtures/motion-egui` is in the egui op-log replay.
+- **GTK:** `crates/svelters-gtk/tests/style.rs` `visual_channels_and_bounds`:
+  - transform, inert, and a clip that gives width back to the sibling;
+  - restore;
+  - `bounds` before and after.
+- **Qt:** `examples/counter-qt/tests/style.rs` `visual_channels_and_bounds`:
+  - transform, clip and inert read back through `svl_qt_visual`;
+  - opacity and transform share one effect;
+  - `bounds`;
+  - everything back to identity, with no effect left at rest.
+- **Idle CPU (egui):**
+  - kittest: after the outro and after the intro, one step settles with no repaint requested;
+  - `svelters-egui-run --idle-report 2000 fixtures/motion-egui/dist/app.js` under
+    `tools/dev/headless`: `{"frames_before":5,"frames":0,"cpu_ms":0.0,"wall_ms":2000}`.
+  - The frame clock asks for one frame per request, and Svelte's `loop` requests one only while a
+    task runs, so an app that is not animating draws nothing.
+
+## 13. Follow-ups
+
+Ordered by value for the egui path (cadatomic) first.
+
+- **F1 Native descriptor timelines on egui (cadatomic SV13).** Today the JS player interpolates
+  each frame and sends channel ops. Instead, the scene node could hold the keyframes and the
+  timeline (`SVL_STYLE_*` timeline op, section 5), with egui ticking it and JS getting a `t()`
+  read-back for reversal. That removes the per-frame host crossing for `css` transitions. `tick`
+  transitions still need JS.
+- **F2 GTK FLIP.** `bounds` right after a keyed move returns the old allocation, so `flip` sees no
+  movement. Run `apply` from the next `requestAnimationFrame` when the host reports a stale layout
+  (section 4). This needs either a "layout pending" bit from `bounds` or always deferring on GTK.
+- **F3 Reduced motion and a slow-motion factor (SV13, SV37).** One knob in `motion.js`: duration 0
+  (or a jump to the end) under reduced motion, and `raf.now` scaled for slow motion. Wire it to the
+  platform setting per backend (GTK `gtk-enable-animations`, egui `Style::animation_time`).
+- **F4 AppKit and WinUI channels.**
+  - AppKit: `alphaValue`, `layer.affineTransform`, a height constraint with `clipsToBounds`, and
+    `bounds` from `convertRect:toView:nil`, all composed with ST2's DECLS base.
+  - WinUI: a `style` member with `Opacity`, `Translation`/`Scale`, `Clip`, and `bounds` from
+    `TransformToVisual`.
+  - Until then both run transitions with no visuals (section 10).
+- **F5 Gallery "Motion" page** (section 7) on GTK and Qt with screenshot tests. Not built: the
+  egui fixture is the end-to-end proof.
+- **F6 A QuickJS host run on GTK and Qt with real frames** (section 7). Covered today by the egui
+  e2e test, the backend-level channel tests and the runtime tests, but not end to end on GTK or Qt.
+- **F7 Per-frame profiling (SV14).** Section 5 is an estimate from R1 numbers. Measure a 50-element
+  fade and fly through the host on egui and GTK (`css` vs `tick`) before deciding whether `tick`
+  is allowed in cadatomic.
+- **F8 Animation demand per root/window (SV37).** `raf` is per host, so one animating root keeps
+  every window of that host ticking (egui repaints the root viewport). Track demand per root.
+- **F9 egui transform input.** `with_visual_transform` moves only the paint. Hit-testing a moving
+  element uses its layout rect. This is fine for transitions (outroing elements are inert), but not
+  for `animate:flip` mid-flight clicks.
+- **F10 The blur channel** (op 11, unassigned), and `transform-origin` in px.
+- **F11 The 4 remaining `transition` samples:** they read expandos and attributes off DOM elements
+  (`node.setAttribute`, `node.foo` read back from the `div`). This is the `bind:this` design
+  (transition functions get the runtime node). They stay expected rejections.
+
+## 14. cadatomic requests (docs/plan/04-kernel-requests.md)
+
+| Request | Status after TR1 | What TR1 gives | What remains |
+| --- | --- | --- | --- |
+| SV13: an animator in the scene, transitions as descriptors (duration, delay, easing, keyframes over animatable props), intro, outro with exiting nodes, `animate:flip`, implicit property transitions, reduced motion, a virtual clock for tests | **partial** | <ul><li>Svelte's own semantics (intro, outro, reversal, `\|global`, delay, events).</li><li>Exiting nodes kept and inert until `outroend`.</li><li>Keyframes from `css(t)` over four animatable channels (opacity, transform, clip, inert), held as paint state on the egui scene node.</li><li>`animate:flip` on egui with synchronous `bounds`.</li><li>A virtual clock in JS tests (`raf` patched).</li></ul> | <ul><li>The timeline lives in JS, not in the scene: descriptors are interpolated by the JS player and sent per frame (F1).</li><li>No implicit property transitions (CSS `transition:`, CSS lane, deferred).</li><li>No reduced motion (F3).</li><li>The egui kittest test runs in real time: no virtual host clock.</li></ul> |
+| SV14: profile per-frame `tick` callbacks (in-process and from an isolate) against descriptors | **not done** | `tick` transitions work (JS per frame, test "a tick transition"). | <ul><li>The profile itself (F7).</li><li>No isolate host exists yet (SV15).</li></ul> |
+| SV37: animation demand per root and window, and a slow-motion factor | **not done** | Demand is per host: a frame is requested only while some animation runs, and idle is 0 frames. | <ul><li>Per-root and per-window demand (F8).</li><li>A slow-motion factor (F3).</li></ul> |
+
+## 15. Decisions for the user
+
+D1–D4 (section 8) are still open. The implementation follows the recommended option of each:
+
+- fade everywhere a backend has opacity;
+- unsupported CSS dropped with one dev warning;
+- the GTK squash for `slide`;
+- outroing items of an animated list keep their place.
+
+New:
+
+- **D5 `tick` transitions in cadatomic (SV14).** They work, but they run JS every frame. Decide
+  after F7's profile. Meanwhile cadatomic can lint them away; the runtime does not forbid them.
+- **D6 Where the egui timeline lives (SV13, F1).**
+  - Recommended: keep the JS player (Svelte's semantics for free) until F7 shows a cost.
+  - Then add a native timeline op the player can hand `css` keyframes to.
+- **D7 Priority of F4 (AppKit and WinUI channels) against the egui items** F1, F3 and F8, given the
+  cadatomic pivot. Recommended: egui first.
