@@ -1,19 +1,90 @@
-//! Node creation and tree edits: [`new_node`] and the scene half of the host's insert, remove and
-//! destroy ops (their kind checks, repaint and window bookkeeping stay in `ops.rs`), plus freeing a
-//! closed window's subtree.
+//! Tree edits through one path (ARCH-SCENE §6.4, §12): create, insert, remove, destroy and the
+//! subtree free of a native close, for every origin. `ops.rs` calls them with [`Origin::Js`] and
+//! `SceneMut` with the Rust origin, so the kind checks, the owner checks (S3: Rust edits only Rust-
+//! and Host-owned structure), the cycle check, the root cache and the invalidation are in one place.
 //!
-//! SG1 routes every edit through one path (`SceneMut` with an `Origin`: cycle check, owner check,
-//! root cache, roots table, journal; ARCH-SCENE §6.4, §12) and makes `new_node` `tree::create`
-//! (no egui id until attach). Writer lane: SCENE.
+//! Also the root table (§4.5): every window is a root from its creation; EM1 adds slot roots and
+//! SG4 overlay roots through [`Scene::add_root`]. A node caches its root (`NodeCore::root`), set for
+//! the whole subtree when it moves between roots (O(subtree), once per such insert).
+//!
+//! EM1: [`Scene::attached`] is the attach hook (called for each node that enters a root), where the
+//! egui id derivation of ARCH-EMBED §4.4 goes. Writer lane: SCENE.
 
-use super::dirty::invalidate;
-use super::node::{Common, Node, Visual, W};
-use super::{Arena, Handle};
-use crate::kinds::KINDS;
-use std::collections::HashMap;
+use super::access::{Origin, SceneError};
+use super::dirty::RootDirty;
+use super::id::{NodeId, RootIx};
+use super::node::{Dirty, LayoutBox, NodeCold, NodeCore, NodeFlags, Owner, Payload, W};
+use super::{Common, Scene};
+use crate::kinds::{self, KINDS};
 
-pub fn new_node(kind: usize, handle: Handle) -> Node {
-    let w = match KINDS[kind].id {
+/// What a root is (ARCH-SCENE §4.5). EM1 adds `Slot`, SG4 `Overlay`.
+#[non_exhaustive]
+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+pub enum TreeRoot {
+    /// A `window` node: a desktop window of the runner, or one shown in kittest.
+    Window { node: NodeId },
+}
+
+pub(crate) struct RootEntry {
+    pub kind: TreeRoot,
+    pub top: NodeId,
+    pub dirty: RootDirty,
+    /// The available size of its last layout (`None`: never laid out).
+    pub size: Option<egui::Vec2>,
+}
+
+impl RootEntry {
+    pub fn laid_out(&self) -> bool {
+        self.size.is_some()
+    }
+}
+
+#[derive(Default)]
+pub(crate) struct RootTable {
+    entries: Vec<Option<RootEntry>>,
+    free: Vec<u32>,
+}
+
+impl RootTable {
+    pub fn get(&self, r: RootIx) -> Option<&RootEntry> {
+        self.entries.get(r.0 as usize).and_then(Option::as_ref)
+    }
+    pub fn get_mut(&mut self, r: RootIx) -> Option<&mut RootEntry> {
+        self.entries.get_mut(r.0 as usize).and_then(Option::as_mut)
+    }
+    fn add(&mut self, e: RootEntry) -> RootIx {
+        match self.free.pop() {
+            Some(i) => {
+                self.entries[i as usize] = Some(e);
+                RootIx(i)
+            }
+            None => {
+                self.entries.push(Some(e));
+                RootIx(self.entries.len() as u32 - 1)
+            }
+        }
+    }
+    fn remove(&mut self, r: RootIx) -> Option<RootEntry> {
+        let e = self.entries.get_mut(r.0 as usize)?.take()?;
+        self.free.push(r.0);
+        Some(e)
+    }
+    pub fn iter(&self) -> impl Iterator<Item = (RootIx, &RootEntry)> {
+        self.entries.iter().enumerate().filter_map(|(i, e)| e.as_ref().map(|e| (RootIx(i as u32), e)))
+    }
+    pub fn len(&self) -> usize {
+        self.entries.iter().filter(|e| e.is_some()).count()
+    }
+}
+
+/// What `destroy` leaves for the caller's own cleanup (egui memory, window lists).
+pub(crate) struct Destroyed {
+    pub egui_id: egui::Id,
+    pub was_window: bool,
+}
+
+fn builtin_payload(kind: usize) -> Option<W> {
+    Some(match KINDS[kind].id {
         "Window" => W::Window { title: String::new(), default_w: 480.0, default_h: 360.0 },
         "Box" => W::Box,
         "Label" => W::Label { text: String::new(), wrap: "wrap", selectable: false },
@@ -21,121 +92,262 @@ pub fn new_node(kind: usize, handle: Handle) -> Node {
         "Checkbox" => W::Checkbox { text: String::new(), checked: false },
         "TextEdit" => W::TextEdit { text: String::new(), hint: String::new(), multiline: false, password: false, char_limit: 0 },
         "Slider" => W::Slider { value: 0.0, min: 0.0, max: 100.0, step: 0.0, text: String::new(), show_value: true },
-        other => unreachable!("not creatable: {other}"),
-    };
-    let mut c = Common::default();
-    if matches!(w, W::Window { .. }) {
-        c.padding = 8.0;
-    }
-    let mut n = Node {
-        kind,
-        handle,
-        parent: None,
-        children: Vec::new(),
-        id: crate::ids::node_id(handle),
-        c,
-        w,
-        listen: Vec::new(),
-        observe: HashMap::new(),
-        presented: false,
-        want_focus: false,
-        style: taffy::Style::default(),
-        cache: taffy::Cache::new(),
-        unrounded: taffy::Layout::with_order(0),
-        layout: taffy::Layout::with_order(0),
-        intrinsic: None,
-        rect: egui::Rect::NOTHING,
-        drawn: egui::Rect::NOTHING,
-        had_focus: false,
-        vis: Visual::default(),
-    };
-    crate::layout::restyle(&mut n);
-    n
+        _ => return None,
+    })
 }
 
-/// Takes `child` out of its parent's children (if it has a parent), invalidating the parent's layout.
-pub(crate) fn detach(scene: &mut Arena, child: Handle) {
-    if let Some(p) = scene.get(child).and_then(|n| n.parent) {
-        if let Some(pn) = scene.get_mut(p) {
-            pn.children.retain(|&c| c != child);
-        }
-        invalidate(scene, p);
-        scene.n_mut(child).parent = None;
-    }
+fn is_js(o: Origin) -> bool {
+    matches!(o, Origin::Js)
 }
 
-/// Moves `child` under `parent`, before `before` (last when `None`). The kind checks are the
-/// caller's. `Ok(false)`: nothing changed (`child` is `before` itself).
-pub(crate) fn insert(scene: &mut Arena, parent: Handle, child: Handle, before: Option<Handle>) -> Result<bool, String> {
-    // A parent inside the child's own subtree would make a cycle.
-    let mut a = Some(parent);
-    while let Some(x) = a {
-        if x == child {
-            return Err("cannot insert an element under its own descendant".into());
+impl Scene {
+    /// Creates a detached node of kind index `kind` (a window: a new root of its own).
+    pub(crate) fn create(&mut self, kind: usize, owner: Owner) -> Result<NodeId, SceneError> {
+        let tag = KINDS.get(kind).and_then(|k| k.tag).ok_or_else(|| SceneError::Invalid(format!("unknown kind index {kind}")))?;
+        let w = builtin_payload(kind).ok_or_else(|| SceneError::Invalid(format!("<{tag}> is not creatable")))?;
+        let (id, fresh) = self.slots.alloc();
+        let tick = self.stamp();
+        let i = id.index() as usize;
+        let cold = matches!(w, W::Window { .. }).then(|| {
+            let mut c = NodeCold::DEFAULT;
+            c.common.padding = 8.0;
+            Box::new(c)
+        });
+        let mut lb = LayoutBox::new();
+        lb.style = crate::layout::style_of(cold.as_ref().map(|c| &c.common).unwrap_or(&Common::DEFAULT), &w, &super::Visual::IDENTITY);
+        let core = NodeCore::new(kind as u32, owner, crate::ids::node_id(id.to_raw()), tick);
+        if fresh {
+            self.core.push(core);
+            self.children.push(Vec::new());
+            self.layout.push(lb);
+            self.payload.push(Payload::Builtin(w));
+            self.cold.push(cold);
+        } else {
+            self.core[i] = core;
+            self.children[i] = Vec::new();
+            self.layout[i] = lb;
+            self.payload[i] = Payload::Builtin(w);
+            self.cold[i] = cold;
         }
-        a = scene.n(x).parent;
+        if KINDS[kind].toplevel {
+            self.add_root(TreeRoot::Window { node: id }, id);
+        }
+        self.counters.created += 1;
+        Ok(id)
     }
-    if let Some(b) = before {
-        if b == child {
-            return Ok(false); // already in place
-        }
-        if scene.get(b).and_then(|n| n.parent) != Some(parent) {
-            return Err(format!("handle #{b} is not a child of #{parent}"));
-        }
-    }
-    detach(scene, child);
-    let pn = scene.n_mut(parent);
-    let at = before.and_then(|b| pn.children.iter().position(|&c| c == b)).unwrap_or(pn.children.len());
-    pn.children.insert(at, child);
-    scene.n_mut(child).parent = Some(parent);
-    invalidate(scene, parent);
-    Ok(true)
-}
 
-/// Takes `child` out of `parent`.
-pub(crate) fn remove(scene: &mut Arena, parent: Handle, child: Handle) -> Result<(), String> {
-    if !scene.contains(parent) || !scene.contains(child) {
-        return Err("stale or foreign handle".into());
+    /// Makes the parentless node `top` the top of a new root. EM1 uses it for slot roots.
+    pub(crate) fn add_root(&mut self, kind: TreeRoot, top: NodeId) -> RootIx {
+        let ti = self.ix(top);
+        debug_assert!(self.core[ti].parent.is_none() && self.core[ti].root.is_detached());
+        let r = self.roots.add(RootEntry { kind, top, dirty: RootDirty { full: true, ..Default::default() }, size: None });
+        self.core[ti].flags.insert(NodeFlags::ROOT);
+        self.set_root_subtree(top, r);
+        r
     }
-    if scene.n(child).parent != Some(parent) {
-        return Err(format!("handle #{child} is not a child of #{parent}"));
-    }
-    detach(scene, child);
-    Ok(())
-}
 
-/// Detaches and frees `h`; `None` if it is not live. Children still attached are orphaned: the
-/// host destroys them itself.
-pub(crate) fn destroy(scene: &mut Arena, h: Handle) -> Option<Node> {
-    if !scene.contains(h) {
-        return None;
-    }
-    detach(scene, h);
-    let kids = std::mem::take(&mut scene.n_mut(h).children);
-    for c in kids {
-        if let Some(cn) = scene.get_mut(c) {
-            cn.parent = None;
+    /// Ends root `r`: its tree stays, detached.
+    pub(crate) fn remove_root(&mut self, r: RootIx) {
+        let Some(e) = self.roots.remove(r) else { return };
+        if let Some(ti) = self.idx(e.top) {
+            self.core[ti].flags.remove(NodeFlags::ROOT);
+            self.set_root_subtree(e.top, RootIx::DETACHED);
         }
     }
-    scene.free(h)
-}
 
-/// Frees `w` and its whole subtree; returns the freed handles in pre-order (empty if `w` is not
-/// live).
-pub(crate) fn free_subtree(scene: &mut Arena, w: Handle) -> Vec<Handle> {
-    let mut dead = Vec::new();
-    if !scene.contains(w) {
-        return dead;
-    }
-    fn collect(s: &Arena, h: Handle, out: &mut Vec<Handle>) {
-        out.push(h);
-        for &c in &s.n(h).children {
-            collect(s, c, out);
+    /// The attach hook: `id` just entered root `r` (EM1: derive its egui id here, ARCH-EMBED §4.4).
+    #[inline]
+    pub(crate) fn attached(&mut self, _id: NodeId, _r: RootIx) {}
+
+    /// Sets the root cache of `top`'s subtree to `r`, moving queued work along (a queued node keeps
+    /// its queue membership in an attached root; in a detached tree its work is dropped and its
+    /// caches cleared up to the top, so it is laid out fresh when it is attached again).
+    pub(crate) fn set_root_subtree(&mut self, top: NodeId, r: RootIx) {
+        let mut stack = vec![top];
+        let mut requeue: Vec<(NodeId, NodeFlags)> = Vec::new();
+        while let Some(x) = stack.pop() {
+            let xi = self.ix(x);
+            self.core[xi].root = r;
+            let q = self.core[xi].flags & (NodeFlags::IN_RELAYOUT | NodeFlags::IN_REMEASURE);
+            if !q.is_empty() {
+                requeue.push((x, q));
+            }
+            if !r.is_detached() {
+                self.attached(x, r);
+            }
+            stack.extend(self.children[xi].iter().rev().copied());
+        }
+        for (x, q) in requeue {
+            let xi = self.ix(x);
+            if r.is_detached() {
+                self.core[xi].flags.remove(q);
+                self.core[xi].dirty.remove(Dirty::MEASURE);
+                if q.contains(NodeFlags::IN_REMEASURE) {
+                    self.layout[xi].intrinsic = None;
+                }
+                self.invalidate_content(x);
+            } else {
+                let e = &mut self.roots.get_mut(r).expect("live root").dirty;
+                if q.contains(NodeFlags::IN_RELAYOUT) {
+                    e.relayout.push(x);
+                }
+                if q.contains(NodeFlags::IN_REMEASURE) {
+                    e.remeasure.push(x);
+                }
+            }
         }
     }
-    collect(scene, w, &mut dead);
-    for &h in &dead {
-        scene.free(h);
+
+    /// Checks that `origin` may change the structure under `parent` (and move `child`).
+    fn may_edit(&self, origin: Origin, nodes: &[NodeId]) -> Result<(), SceneError> {
+        if is_js(origin) {
+            return Ok(());
+        }
+        for &n in nodes {
+            let owner = self.core[self.ix(n)].owner;
+            if owner == Owner::Js {
+                return Err(SceneError::NotOwner { node: n, owner });
+            }
+        }
+        Ok(())
     }
-    dead
+
+    /// Takes `child` out of its parent's children, invalidating the parent's layout; its subtree
+    /// is detached from its root when `detach_root`.
+    fn unlink(&mut self, child: NodeId, detach_root: bool) {
+        let ci = self.ix(child);
+        let Some(p) = self.core[ci].parent else { return };
+        let pi = self.ix(p);
+        self.children[pi].retain(|&c| c != child);
+        self.core[ci].parent = None;
+        let t = self.stamp();
+        self.core[pi].dirty.insert(Dirty::CHILDREN);
+        self.core[pi].changed = t;
+        self.core[ci].changed = t;
+        self.invalidate_content(p);
+        if detach_root && !self.core[ci].root.is_detached() {
+            self.set_root_subtree(child, RootIx::DETACHED);
+        }
+    }
+
+    /// Moves `child` under `parent`, before `before` (last when `None`). `Ok(false)`: nothing
+    /// changed (`child` is `before` itself).
+    pub(crate) fn insert(&mut self, parent: NodeId, child: NodeId, before: Option<NodeId>, origin: Origin) -> Result<bool, SceneError> {
+        let pi = self.idx(parent).ok_or(SceneError::Stale(parent.to_raw()))?;
+        let ci = self.idx(child).ok_or(SceneError::Stale(child.to_raw()))?;
+        let (pk, ck) = (self.core[pi].kind as usize, self.core[ci].kind as usize);
+        if kinds::slot_of(pk).is_none() {
+            return Err(SceneError::Invalid(format!("<{}> takes no children", KINDS[pk].tag.unwrap_or("?"))));
+        }
+        if KINDS[ck].toplevel || self.core[ci].flags.contains(NodeFlags::ROOT) {
+            return Err(SceneError::Invalid("a window cannot be inserted under another element".into()));
+        }
+        if parent == child {
+            return Err(SceneError::Invalid("cannot insert an element into itself".into()));
+        }
+        self.may_edit(origin, &[parent, child])?;
+        if let Some(old) = self.core[ci].parent {
+            self.may_edit(origin, &[old])?;
+        }
+        // A parent inside the child's own subtree would make a cycle.
+        let mut a = Some(parent);
+        while let Some(x) = a {
+            if x == child {
+                return Err(SceneError::Invalid("cannot insert an element under its own descendant".into()));
+            }
+            a = self.core[self.ix(x)].parent;
+        }
+        if let Some(b) = before {
+            if b == child {
+                return Ok(false); // already in place
+            }
+            if self.idx(b).and_then(|bi| self.core[bi].parent) != Some(parent) {
+                return Err(SceneError::Invalid(format!("handle {b} is not a child of {parent}")));
+            }
+        }
+        self.unlink(child, false);
+        let kids = &mut self.children[pi];
+        let at = before.and_then(|b| kids.iter().position(|&c| c == b)).unwrap_or(kids.len());
+        kids.insert(at, child);
+        self.core[ci].parent = Some(parent);
+        let t = self.stamp();
+        self.core[pi].dirty.insert(Dirty::CHILDREN);
+        self.core[pi].changed = t;
+        self.core[ci].changed = t;
+        let r = self.core[pi].root;
+        if self.core[ci].root != r {
+            self.set_root_subtree(child, r);
+        }
+        self.invalidate_content(parent);
+        Ok(true)
+    }
+
+    /// Takes `child` out of `parent`; it stays alive, detached.
+    pub(crate) fn remove(&mut self, parent: NodeId, child: NodeId, origin: Origin) -> Result<(), SceneError> {
+        self.idx(parent).ok_or(SceneError::Stale(parent.to_raw()))?;
+        let ci = self.idx(child).ok_or(SceneError::Stale(child.to_raw()))?;
+        if self.core[ci].parent != Some(parent) {
+            return Err(SceneError::Invalid(format!("handle {child} is not a child of {parent}")));
+        }
+        self.may_edit(origin, &[parent, child])?;
+        self.unlink(child, true);
+        Ok(())
+    }
+
+    /// Detaches and frees `id`. Its children are orphaned (detached, alive): a runtime destroys them
+    /// itself. A root's top ends its root.
+    pub(crate) fn destroy(&mut self, id: NodeId, origin: Origin) -> Result<Destroyed, SceneError> {
+        let i = self.idx(id).ok_or(SceneError::Stale(id.to_raw()))?;
+        self.may_edit(origin, &[id])?;
+        if let Some(p) = self.core[i].parent {
+            self.may_edit(origin, &[p])?;
+        }
+        self.unlink(id, true);
+        if self.core[i].flags.contains(NodeFlags::ROOT) {
+            let r = self.core[i].root;
+            self.remove_root(r);
+        }
+        let kids = std::mem::take(&mut self.children[i]);
+        for c in kids {
+            let ki = self.ix(c);
+            self.core[ki].parent = None;
+            if !self.core[ki].root.is_detached() {
+                self.set_root_subtree(c, RootIx::DETACHED);
+            }
+        }
+        let d = Destroyed { egui_id: self.core[i].egui_id, was_window: matches!(self.w(i), W::Window { .. }) };
+        self.free_slot(i);
+        Ok(d)
+    }
+
+    fn free_slot(&mut self, i: usize) {
+        self.slots.free(i);
+        self.payload[i] = Payload::Vacant;
+        self.cold[i] = None;
+        self.children[i] = Vec::new();
+        self.core[i].flags = NodeFlags::EMPTY;
+        self.counters.destroyed += 1;
+    }
+
+    /// Frees `top` and its whole subtree (a native close); returns the freed ids in pre-order
+    /// (empty if `top` is not live).
+    pub(crate) fn free_subtree(&mut self, top: NodeId) -> Vec<NodeId> {
+        let Some(ti) = self.idx(top) else { return Vec::new() };
+        self.unlink(top, true);
+        if self.core[ti].flags.contains(NodeFlags::ROOT) {
+            let r = self.core[ti].root;
+            self.remove_root(r);
+        }
+        let mut dead = Vec::new();
+        let mut stack = vec![top];
+        while let Some(x) = stack.pop() {
+            dead.push(x);
+            stack.extend(self.children[self.ix(x)].iter().rev().copied());
+        }
+        for &x in &dead {
+            let xi = self.ix(x);
+            self.free_slot(xi);
+        }
+        dead
+    }
 }

@@ -1,10 +1,11 @@
 //! Built-in prop get/set: the ABI value conversions, [`set_prop`] and [`get_prop`] over the typed
-//! fields of [`Node`], [`default_value`] and [`tag_of`].
+//! fields of a node ([`Common`] and [`W`]), [`default_value`] and [`tag_of`].
 //!
-//! SG1 turns prop effects into `Dirty` bits from the kind table and adds built-in `PropKey`s
-//! (ARCH-SCENE §5.3, §12). Writer lane: WIDGETS.
+//! SG1: `set_prop` returns [`Dirty`] bits (LAYOUT for layout props, MEASURE for content a leaf
+//! measures); the scene's write path (`access.rs`, `Scene::set_value`) applies them, restyles and
+//! announces. The typed built-in keys are in `keys.rs`. Writer lane: WIDGETS.
 
-use super::node::{Dirty, Node, W};
+use super::node::{Common, Dirty, Node, W};
 use crate::kinds::{self, Def, P, Ty};
 use svelters_abi::Value;
 
@@ -62,16 +63,26 @@ fn len_value(v: Option<f64>) -> Value {
 }
 
 /// Writes a prop. `Null` resets it to its default.
-pub fn set_prop(n: &mut Node, def: &kinds::PropDef, v: &Value) -> Result<Dirty, String> {
+/// True for the props stored in [`Common`] (every kind has them).
+pub(crate) fn is_common(key: P) -> bool {
+    use P::*;
+    matches!(
+        key,
+        Enabled | Visible | Tooltip | AccessibleName | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent
+    )
+}
+
+/// Writes a prop into a node's common props `c` and widget fields `w`. `Null` resets it to its
+/// default. Returns what the node needs (the caller restyles on LAYOUT).
+pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> Result<Dirty, String> {
     let v = if matches!(v, Value::Null) && !def.nullable { default_value(def) } else { v.clone() };
     let v = &v;
     let mut d = Dirty::default();
-    let c = &mut n.c;
-    match (def.key, &mut n.w) {
+    match (def.key, &mut *w) {
         (P::Enabled, _) => c.enabled = as_bool(v)?,
         (P::Visible, _) => {
             c.visible = as_bool(v)?;
-            d.style = true;
+            d.insert(Dirty::LAYOUT);
         }
         (P::Tooltip, _) => c.tooltip = as_str(v)?,
         (P::AccessibleName, _) => c.accessible_name = as_str(v)?,
@@ -99,24 +110,24 @@ pub fn set_prop(n: &mut Node, def: &kinds::PropDef, v: &Value) -> Result<Dirty, 
         (P::DefaultHeight, W::Window { default_h, .. }) => *default_h = as_f64(v)?,
         (P::Text, W::Label { text, .. } | W::Button { text, .. } | W::Checkbox { text, .. } | W::TextEdit { text, .. } | W::Slider { text, .. }) => {
             *text = as_str(v)?;
-            d.measure = true;
+            d.insert(Dirty::MEASURE);
         }
         (P::WrapMode, W::Label { wrap, .. }) => {
             *wrap = as_enum(v, kinds::WRAP_MODE)?;
-            d.measure = true;
+            d.insert(Dirty::MEASURE);
         }
         (P::Selectable, W::Label { selectable, .. }) => *selectable = as_bool(v)?,
         (P::Selected, W::Button { selected, .. }) => *selected = as_bool(v)?,
         (P::Frame, W::Button { frame, .. }) => *frame = as_bool(v)?,
         (P::Small, W::Button { small, .. }) => {
             *small = as_bool(v)?;
-            d.measure = true;
+            d.insert(Dirty::MEASURE);
         }
         (P::Checked, W::Checkbox { checked, .. }) => *checked = as_bool(v)?,
         (P::HintText, W::TextEdit { hint, .. }) => *hint = as_str(v)?,
         (P::Multiline, W::TextEdit { multiline, .. }) => {
             *multiline = as_bool(v)?;
-            d.measure = true;
+            d.insert(Dirty::MEASURE);
         }
         (P::Password, W::TextEdit { password, .. }) => *password = as_bool(v)?,
         (P::CharLimit, W::TextEdit { char_limit, .. }) => *char_limit = as_i64(v)?.max(0),
@@ -126,13 +137,12 @@ pub fn set_prop(n: &mut Node, def: &kinds::PropDef, v: &Value) -> Result<Dirty, 
         (P::Step, W::Slider { step, .. }) => *step = as_f64(v)?.max(0.0),
         (P::ShowValue, W::Slider { show_value, .. }) => {
             *show_value = as_bool(v)?;
-            d.measure = true;
+            d.insert(Dirty::MEASURE);
         }
-        (key, _) => return Err(format!("{key:?} is not a prop of <{}>", n.tag())),
+        (key, w) => return Err(format!("{key:?} is not a prop of {w:?}")),
     }
     if def.layout {
-        d.style = true;
-        crate::layout::restyle(n);
+        d.insert(Dirty::LAYOUT);
     }
     Ok(d)
 }

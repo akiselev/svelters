@@ -13,9 +13,7 @@
 //!
 //! EM1 rebuilds the runners on `Embed` (`embed/`), which takes over this state per root and slot.
 
-use crate::scene::Arena;
-use crate::scene::Handle;
-use crate::scene::dirty::DirtyFlags;
+use crate::scene::{Handle, SceneHandle};
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
@@ -48,7 +46,8 @@ pub struct Stats {
 }
 
 pub(crate) struct Inner {
-    pub scene: RefCell<Arena>,
+    /// The scene (ARCH-SCENE): columns, roots and per-root layout queues, behind its handle.
+    pub scene: SceneHandle,
     pub host: Cell<*const svl_host>,
     pub shared: Arc<Shared>,
     pub deadline: Cell<Option<Instant>>,
@@ -61,8 +60,6 @@ pub(crate) struct Inner {
     pub quitting: Cell<bool>,
     /// Presented windows in presentation order (the first live one is the root viewport).
     pub windows: RefCell<Vec<Handle>>,
-    /// Remeasure list, layout-dirty flag and last layout size per window (`scene/dirty.rs`).
-    pub dirty: DirtyFlags,
     /// The user asked to close these windows (seen during a pass); decided before the next one.
     pub close_requests: RefCell<Vec<Handle>>,
     /// `close` was called on these windows.
@@ -85,10 +82,19 @@ impl Default for EguiBackend {
 
 impl EguiBackend {
     pub fn new() -> EguiBackend {
+        let shared = Arc::new(Shared::default());
+        let scene = SceneHandle::default();
+        // Rust writes, deferred writes and their announcements need a logic pass: ask for a frame.
+        let wake = shared.clone();
+        scene.set_wake(move || {
+            if let Some(ctx) = wake.ctx.lock().unwrap().as_ref() {
+                ctx.request_repaint();
+            }
+        });
         EguiBackend(Rc::new(Inner {
-            scene: RefCell::new(Arena::default()),
+            scene,
             host: Cell::new(std::ptr::null()),
-            shared: Arc::new(Shared::default()),
+            shared,
             deadline: Cell::new(None),
             frame_pending: Cell::new(false),
             checkpoint_pending: Cell::new(false),
@@ -97,7 +103,6 @@ impl EguiBackend {
             first_frame_done: Cell::new(false),
             quitting: Cell::new(false),
             windows: RefCell::new(Vec::new()),
-            dirty: DirtyFlags::new(),
             close_requests: RefCell::new(Vec::new()),
             closes: RefCell::new(Vec::new()),
             titles: RefCell::new(Default::default()),

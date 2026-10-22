@@ -1,5 +1,7 @@
-//! The host ops: `impl Backend for EguiBackend`. Tree edits go through `scene/tree.rs`, prop values
-//! through `scene/props.rs`; this file adds the kind checks, the layout flags and the repaint.
+//! The host ops: `impl Backend for EguiBackend`. Every scene edit goes through the scene's one write
+//! path with `Origin::Js` (`scene/tree.rs`, `Scene::set_value`: kind and cycle checks, root cache,
+//! dirty bits and per-root queues); this file adds the window list, egui memory cleanup and the
+//! repaint.
 //!
 //! Also the TR1 visual channels of the `style` op (`visual_op`), until the STYLE lane's `style.rs`
 //! takes the style ops. Writer: shared (changes small).
@@ -7,7 +9,7 @@
 use crate::backend::EguiBackend;
 use crate::kinds::{self, KINDS};
 use crate::layout;
-use crate::scene::{self, Handle, tree};
+use crate::scene::{self, Handle, NodeFlags, Origin};
 use std::sync::Arc;
 use std::sync::atomic::Ordering;
 use std::time::{Duration, Instant};
@@ -22,11 +24,11 @@ impl EguiBackend {
             v.try_into().map_err(|_| format!("{what}: '{text}' is not {N} numbers").into())
         }
         let mut scene = self.0.scene.borrow_mut();
-        let n = scene.get_mut(h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
-        let before = n.vis;
+        let id = scene.live(h)?;
+        let mut vis = scene.vis(scene.ix(id));
         match op {
             SVL_STYLE_OPACITY => {
-                n.vis.opacity = match text {
+                vis.opacity = match text {
                     None => None,
                     Some(t) => {
                         let t = t.trim();
@@ -39,17 +41,12 @@ impl EguiBackend {
                     }
                 }
             }
-            SVL_STYLE_TRANSFORM => n.vis.transform = text.map(|t| nums::<6>(t, "transform")).transpose()?,
-            SVL_STYLE_CLIP => n.vis.clip = text.map(|t| nums::<2>(t, "clip")).transpose()?,
-            _ => n.vis.inert = text.is_some(),
+            SVL_STYLE_TRANSFORM => vis.transform = text.map(|t| nums::<6>(t, "transform")).transpose()?,
+            SVL_STYLE_CLIP => vis.clip = text.map(|t| nums::<2>(t, "clip")).transpose()?,
+            _ => vis.inert = text.is_some(),
         }
-        if n.vis == before {
+        if !scene.set_visual(id, vis) {
             return Ok(());
-        }
-        if n.vis.clip != before.clip {
-            layout::restyle(n);
-            layout::invalidate(&mut scene, h);
-            self.0.dirty.layout_dirty.set(true);
         }
         drop(scene);
         self.touched();
@@ -59,7 +56,9 @@ impl EguiBackend {
     // ---- ops helpers ----
 
     pub(crate) fn kind_of(&self, h: Handle) -> Result<usize, String> {
-        self.0.scene.borrow().get(h).map(|n| n.kind).ok_or_else(|| format!("stale or foreign handle {h}"))
+        let scene = self.0.scene.borrow();
+        let id = scene.live(h)?;
+        Ok(scene.core[scene.ix(id)].kind as usize)
     }
 }
 
@@ -80,67 +79,67 @@ impl Backend for EguiBackend {
 
     fn create(&self, kind: svl_id) -> StrResult<svl_handle> {
         let k = kinds::kind_of_id(kind).filter(|&k| KINDS[k].tag.is_some()).ok_or_else(|| format!("unknown kind id {kind}"))?;
-        let h = self.0.scene.borrow_mut().alloc(|h| scene::new_node(k, h));
-        Ok(h)
+        let id = self.0.scene.borrow_mut().create(k, scene::Owner::Js).map_err(|e| e.to_string())?;
+        Ok(id.to_raw())
     }
 
     fn insert(&self, parent: svl_handle, child: svl_handle, before: Option<svl_handle>, slot: svl_id) -> StrResult<()> {
         let pk = self.kind_of(parent)?;
-        let ck = self.kind_of(child)?;
-        if kinds::slot_of(pk).is_none() {
-            return Err(format!("<{}> takes no children", KINDS[pk].tag.unwrap_or("?")));
-        }
-        if slot > 1 {
+        self.kind_of(child)?;
+        if slot > 1 && kinds::slot_of(pk).is_some() {
             return Err(format!("unknown slot id {slot} on <{}>", KINDS[pk].tag.unwrap_or("?")));
         }
-        if KINDS[ck].toplevel {
-            return Err("a window cannot be inserted under another element".into());
-        }
-        if parent == child {
-            return Err("cannot insert an element into itself".into());
-        }
-        if !tree::insert(&mut self.0.scene.borrow_mut(), parent, child, before)? {
+        let changed = {
+            let mut scene = self.0.scene.borrow_mut();
+            let (p, c) = (scene.live(parent)?, scene.live(child)?);
+            let b = before.map(|b| scene::NodeId::from_raw(b).ok_or_else(|| format!("handle #{b} is not a child of #{parent}"))).transpose()?;
+            scene.insert(p, c, b, Origin::Js).map_err(|e| e.to_string())?
+        };
+        if !changed {
             return Ok(()); // already in place
         }
-        self.0.dirty.layout_dirty.set(true);
         self.touched();
         Ok(())
     }
 
     fn remove(&self, parent: svl_handle, child: svl_handle) -> StrResult<()> {
-        tree::remove(&mut self.0.scene.borrow_mut(), parent, child)?;
-        self.0.dirty.layout_dirty.set(true);
+        {
+            let mut scene = self.0.scene.borrow_mut();
+            let (Some(p), Some(c)) = (scene::NodeId::from_raw(parent), scene::NodeId::from_raw(child)) else {
+                return Err("stale or foreign handle".into());
+            };
+            scene.remove(p, c, Origin::Js).map_err(|e| e.to_string())?;
+        }
         self.touched();
         Ok(())
     }
 
     fn destroy(&self, h: svl_handle) {
         // Children still attached are orphaned: the host destroys them itself.
-        let Some(n) = tree::destroy(&mut self.0.scene.borrow_mut(), h) else { return };
+        let d = {
+            let mut scene = self.0.scene.borrow_mut();
+            let Ok(id) = scene.live(h) else { return };
+            match scene.destroy(id, Origin::Js) {
+                Ok(d) => d,
+                Err(_) => return,
+            }
+        };
         // Ephemeral widget state (cursor, scroll, animations) lives in egui memory under the node.
         if let Some(ctx) = self.ctx() {
-            ctx.memory_mut(|m| m.data.remove::<egui::text_edit::TextEditState>(n.id));
+            ctx.memory_mut(|m| m.data.remove::<egui::text_edit::TextEditState>(d.egui_id));
         }
-        if n.is_window() {
+        if d.was_window {
             self.0.windows.borrow_mut().retain(|&w| w != h);
         }
-        self.0.dirty.layout_dirty.set(true);
         self.touched();
     }
 
     fn set_prop(&self, h: svl_handle, prop: svl_id, v: &Value) -> StrResult<()> {
-        let mut scene = self.0.scene.borrow_mut();
-        let n = scene.get_mut(h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
-        let def = kinds::prop_def(n.kind, prop).ok_or_else(|| format!("unknown prop id {prop} on <{}>", n.tag()))?;
-        // Host writes never announce a change: there is no echo to suppress (EGUI.md §1.4).
-        let d = scene::set_prop(n, def, v).map_err(|e| format!("<{}> {}: {e}", n.tag(), def.name))?;
-        if d.style {
-            layout::invalidate(&mut scene, h);
-            self.0.dirty.layout_dirty.set(true);
-        }
-        drop(scene);
-        if d.measure {
-            self.0.dirty.remeasure.borrow_mut().push(h);
+        {
+            let mut scene = self.0.scene.borrow_mut();
+            let id = scene.live(h)?;
+            // Host writes never announce a change: there is no echo to suppress (EGUI.md §1.4).
+            scene.set_value(id, prop, v, Origin::Js).map_err(|e| e.to_string())?;
         }
         self.touched();
         Ok(())
@@ -150,7 +149,7 @@ impl Backend for EguiBackend {
         let scene = self.0.scene.borrow();
         let n = scene.get(h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
         let def = kinds::prop_def(n.kind, prop).ok_or_else(|| format!("unknown prop id {prop} on <{}>", n.tag()))?;
-        scene::get_prop(n, def)
+        scene::get_prop(&n, def)
     }
 
     fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value> {
@@ -165,11 +164,18 @@ impl Backend for EguiBackend {
                 if !ws.contains(&h) {
                     ws.push(h);
                 }
-                self.0.scene.borrow_mut().n_mut(h).presented = true;
-                self.0.dirty.layout_dirty.set(true);
+                let mut scene = self.0.scene.borrow_mut();
+                let i = scene.ix(scene.live(h)?);
+                scene.core[i].flags.insert(NodeFlags::PRESENTED);
+                let r = scene.core[i].root;
+                scene.mark_full(r);
             }
             "close" => self.0.closes.borrow_mut().push(h),
-            "request-focus" => self.0.scene.borrow_mut().n_mut(h).want_focus = true,
+            "request-focus" => {
+                let mut scene = self.0.scene.borrow_mut();
+                let i = scene.ix(scene.live(h)?);
+                scene.core[i].flags.insert(NodeFlags::WANT_FOCUS);
+            }
             other => return Err(format!("method {other} is not implemented")),
         }
         self.touched();
@@ -178,15 +184,10 @@ impl Backend for EguiBackend {
 
     fn listen(&self, h: svl_handle, signal: svl_id, on: bool) -> StrResult<()> {
         let mut scene = self.0.scene.borrow_mut();
-        let n = scene.get_mut(h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
-        kinds::signal_def(n.kind, signal).ok_or_else(|| format!("unknown signal id {signal} on <{}>", n.tag()))?;
-        if on {
-            if !n.listen.contains(&signal) {
-                n.listen.push(signal);
-            }
-        } else {
-            n.listen.retain(|&s| s != signal);
-        }
+        let i = scene.ix(scene.live(h)?);
+        let kind = scene.core[i].kind as usize;
+        kinds::signal_def(kind, signal).ok_or_else(|| format!("unknown signal id {signal} on <{}>", scene.tag_at(i)))?;
+        scene.set_listen(i, signal, on);
         drop(scene);
         self.touched(); // a listener can change a widget's sense
         Ok(())
@@ -292,18 +293,10 @@ impl Backend for EguiBackend {
 
     fn observe(&self, h: svl_handle, prop: svl_id, on: bool) -> Result<(), ObserveError> {
         let mut scene = self.0.scene.borrow_mut();
-        let n = scene.get_mut(h).ok_or_else(|| ObserveError::Failed(format!("stale or foreign handle {h}")))?;
-        kinds::prop_def(n.kind, prop).ok_or_else(|| ObserveError::Failed(format!("unknown prop id {prop} on <{}>", n.tag())))?;
+        let i = scene.live(h).map(|id| scene.ix(id)).map_err(ObserveError::Failed)?;
+        kinds::prop_def(scene.core[i].kind as usize, prop).ok_or_else(|| ObserveError::Failed(format!("unknown prop id {prop} on <{}>", scene.tag_at(i))))?;
         // Every prop is exact: the scene is the only place a value changes.
-        let c = n.observe.entry(prop).or_insert(0);
-        if on {
-            *c += 1;
-        } else {
-            *c = c.saturating_sub(1);
-            if *c == 0 {
-                n.observe.remove(&prop);
-            }
-        }
+        scene.observe(i, prop, on);
         Ok(())
     }
 

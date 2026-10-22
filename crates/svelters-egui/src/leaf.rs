@@ -4,23 +4,26 @@
 //! Writer lane: WIDGETS.
 
 use crate::kinds;
-use crate::scene::{Arena, Handle, W};
+use crate::scene::{Arena, NodeFlags, W};
 use crate::walk::Out;
 use egui::Ui;
 use svelters_abi::Value;
 
-pub(crate) fn leaf(arena: &mut Arena, h: Handle, ui: &mut Ui, out: &mut Vec<Out>) {
-    let n = arena.n_mut(h);
-    let kind = n.kind;
+/// Paints the leaf in slot `i` (the walk's index into the scene's columns).
+pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) {
+    let h = arena.slots.id_at(i).expect("live leaf").to_raw();
+    let kind = arena.core[i].kind as usize;
     let sig = |name: &str| kinds::signal_id(kind, name);
-    let size = n.rect.size();
+    let size = arena.core[i].rect.size();
+    let node_id = arena.core[i].egui_id;
+    let click_sense = arena.listens(i, sig("clicked"));
     let mut text_changed = None;
-    let before = match &n.w {
+    let before = match arena.w(i) {
         W::Checkbox { checked, .. } => Some(Value::Bool(*checked)),
         W::Slider { value, .. } => Some(Value::F64(*value)),
         _ => None,
     };
-    let resp = match &mut n.w {
+    let resp = match arena.w_mut(i) {
         W::Label { text, wrap, selectable } => {
             let mode = match *wrap {
                 "truncate" => egui::TextWrapMode::Truncate,
@@ -28,7 +31,7 @@ pub(crate) fn leaf(arena: &mut Arena, h: Handle, ui: &mut Ui, out: &mut Vec<Out>
                 _ => egui::TextWrapMode::Wrap,
             };
             let mut l = egui::Label::new(text.as_str()).wrap_mode(mode).selectable(*selectable);
-            if n.listen.contains(&sig("clicked")) {
+            if click_sense {
                 l = l.sense(egui::Sense::click());
             }
             ui.add(l)
@@ -43,7 +46,7 @@ pub(crate) fn leaf(arena: &mut Arena, h: Handle, ui: &mut Ui, out: &mut Vec<Out>
         W::Checkbox { text, checked } => ui.add(egui::Checkbox::new(checked, text.as_str())),
         W::TextEdit { text, hint, multiline, password, char_limit } => {
             let mut te = if *multiline { egui::TextEdit::multiline(text).desired_rows(4) } else { egui::TextEdit::singleline(text) };
-            te = te.id(n.id).desired_width(size.x).hint_text(hint.clone()).password(*password);
+            te = te.id(node_id).desired_width(size.x).hint_text(hint.clone()).password(*password);
             if *char_limit > 0 {
                 te = te.char_limit(*char_limit as usize);
             }
@@ -78,19 +81,19 @@ pub(crate) fn leaf(arena: &mut Arena, h: Handle, ui: &mut Ui, out: &mut Vec<Out>
         }
         W::Box | W::Window { .. } => unreachable!("containers are not leaves"),
     };
-    let n = arena.n_mut(h);
     let mut resp = resp;
-    if let Some(name) = crate::a11y::name(n) {
+    if let Some(name) = crate::a11y::name(&arena.n(h)) {
         resp = resp.accessible_name(name);
     }
-    if !n.c.tooltip.is_empty() {
-        resp = resp.on_hover_text(n.c.tooltip.clone());
+    if !arena.common(i).tooltip.is_empty() {
+        resp = resp.on_hover_text(arena.common(i).tooltip.clone());
     }
-    if n.want_focus {
-        n.want_focus = false;
+    let core = &mut arena.core[i];
+    if core.flags.contains(NodeFlags::WANT_FOCUS) {
+        core.flags.remove(NodeFlags::WANT_FOCUS);
         resp.request_focus();
     }
-    n.drawn = resp.rect;
+    core.drawn = resp.rect;
     let mut fired: Vec<&str> = Vec::new();
     for (yes, name) in [
         (resp.clicked(), "clicked"),
@@ -104,13 +107,14 @@ pub(crate) fn leaf(arena: &mut Arena, h: Handle, ui: &mut Ui, out: &mut Vec<Out>
         }
     }
     let focused = resp.has_focus();
-    if matches!(n.w, W::TextEdit { .. }) && focused != n.had_focus {
+    let had_focus = arena.core[i].flags.contains(NodeFlags::HAD_FOCUS);
+    if matches!(arena.w(i), W::TextEdit { .. }) && focused != had_focus {
         fired.push(if focused { "gained-focus" } else { "lost-focus" });
     }
-    n.had_focus = focused;
+    arena.core[i].flags.set(NodeFlags::HAD_FOCUS, focused);
     for name in fired {
         let s = sig(name);
-        if n.listens(s) {
+        if arena.listens(i, s) {
             out.push(Out::Event(h, s, vec![]));
         }
     }
@@ -118,19 +122,19 @@ pub(crate) fn leaf(arena: &mut Arena, h: Handle, ui: &mut Ui, out: &mut Vec<Out>
     // field); announce it if observed (exact, no echo), then the `changed` event.
     // Compared with the value before the widget ran, so a slider clamping a host-set value into its
     // range is announced too (the binding's `natively_normalizes`).
-    let changed = match &n.w {
+    let changed = match arena.w(i) {
         W::Checkbox { checked, .. } if Some(Value::Bool(*checked)) != before => Some((kinds::P::Checked, Value::Bool(*checked))),
         W::Slider { value, .. } if Some(Value::F64(*value)) != before => Some((kinds::P::Value, Value::F64(*value))),
         W::TextEdit { .. } => text_changed.map(|t| (kinds::P::Text, Value::Str(t))),
         _ => None,
     };
     if let Some((key, v)) = changed {
-        let prop = kinds::prop_id(n.kind, key);
+        let prop = kinds::prop_id(kind, key);
         let s = sig("changed");
-        if n.observes(prop) {
+        if arena.observes(i, prop) {
             out.push(Out::Changed(h, prop));
         }
-        if n.listens(s) {
+        if arena.listens(i, s) {
             out.push(Out::Event(h, s, vec![v]));
         }
     }

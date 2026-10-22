@@ -10,7 +10,7 @@
 
 use crate::backend::EguiBackend;
 use crate::layout;
-use crate::scene::{Arena, Handle, W};
+use crate::scene::{Arena, Handle};
 use egui::{Align, Layout, Ui, UiBuilder, Vec2};
 use svelters_abi::Value;
 
@@ -26,51 +26,51 @@ impl EguiBackend {
         assert!(!self.0.pass_active.get(), "svelters-egui: {what} during the egui pass (JS must not run while the scene is drawn)");
     }
 
-    /// Lays out (if needed) and paints window `w`'s content in `ui`'s available rect.
+    /// Lays out window `w`'s root if it has queued work (the whole root when new or resized, else
+    /// only its dirty boundaries) and paints its content in `ui`'s available rect.
     pub(crate) fn window_ui(&self, ui: &mut egui::Ui, w: Handle, out: &mut Vec<Out>) {
         let rect = ui.available_rect_before_wrap();
         let size = rect.size();
         let mut scene = self.0.scene.borrow_mut();
-        let stale = self.0.dirty.layout_dirty.get() || self.0.dirty.layout_size.borrow().get(&w) != Some(&size);
-        if stale || scene.n(w).cache.is_empty() {
+        let id = scene.live(w).expect("a live window");
+        let r = scene.core[scene.ix(id)].root;
+        let due = scene.roots.get(r).is_some_and(|e| e.size != Some(size) || !e.dirty.relayout.is_empty() || e.dirty.full);
+        if due {
             let m = layout::Metrics::new(ui.ctx());
-            let measured = layout::compute(&mut scene, &m, w, size);
-            self.0.dirty.layout_size.borrow_mut().insert(w, size);
-            self.bump(|s| {
-                s.layouts += 1;
-                s.measured += measured as u64;
-            });
+            if let Some(run) = layout::run_root(&mut scene, &m, r, size) {
+                self.count_layout(run);
+            }
         }
         paint(&mut scene, w, rect.min.to_vec2(), ui, out);
         ui.allocate_rect(rect, egui::Sense::hover());
-        drop(scene);
-        // Every window shown this frame is laid out; a later window resets the flag too.
-        self.0.dirty.layout_dirty.set(false);
     }
 }
 
 /// Paints node `h` (and its subtree) with rects offset by `origin` (the window content's screen
 /// position).
 pub fn paint(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
-    let n = arena.n(h);
-    if !n.c.visible {
+    let i = arena.ix(arena.live(h).expect("live node"));
+    paint_at(arena, i, origin, ui, out);
+}
+
+fn paint_at(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+    if !arena.common(i).visible {
         return;
     }
-    if !n.vis.is_identity() {
-        return paint_visual(arena, h, origin, ui, out);
+    if arena.core[i].flags.contains(crate::scene::NodeFlags::HAS_VISUAL) {
+        return paint_visual(arena, i, origin, ui, out);
     }
-    paint_node(arena, h, origin, ui, out);
+    paint_node(arena, i, origin, ui, out);
 }
 
 /// TR1 visual channels: the node's subtree in a child `Ui` with its opacity multiplied, its paint
 /// cut at the node's (clipped) rect, its shapes moved by the transform, and its events dropped while
 /// inert. The transform is visual only (egui's `with_visual_transform`): input still hits the
 /// layout rect, and a non-uniform scale is drawn uniform (the geometric mean).
-fn paint_visual(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
-    let n = arena.n(h);
-    let v = n.vis;
-    let r = n.rect.translate(origin);
-    let mut child = ui.new_child(UiBuilder::new().max_rect(ui.max_rect()).scope_id(n.id.with("vis")));
+fn paint_visual(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+    let v = arena.vis(i);
+    let r = arena.core[i].rect.translate(origin);
+    let mut child = ui.new_child(UiBuilder::new().max_rect(ui.max_rect()).scope_id(arena.core[i].egui_id.with("vis")));
     if let Some(o) = v.opacity {
         child.multiply_opacity(o.clamp(0.0, 1.0));
     }
@@ -84,23 +84,23 @@ fn paint_visual(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &m
             let s = (sx * sy).abs().sqrt();
             let o = r.min + egui::vec2(r.width() * ox, r.height() * oy);
             let t = egui::emath::TSTransform::new(o.to_vec2() + egui::vec2(tx, ty) - o.to_vec2() * s, s);
-            child.with_visual_transform(t, |ui| paint_node(arena, h, origin, ui, sink));
+            child.with_visual_transform(t, |ui| paint_node(arena, i, origin, ui, sink));
         }
-        None => paint_node(arena, h, origin, &mut child, sink),
+        None => paint_node(arena, i, origin, &mut child, sink),
     }
 }
 
-fn paint_node(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
-    let n = arena.n(h);
-    let r = n.rect.translate(origin);
-    if matches!(n.w, W::Box | W::Window { .. }) {
+fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+    let r = arena.core[i].rect.translate(origin);
+    if arena.w(i).is_container() {
         // Containers draw nothing: cull whole subtrees outside the clip rect.
         if !ui.is_rect_visible(r) {
             return;
         }
-        let kids = n.children.clone();
-        for c in kids {
-            paint(arena, c, origin, ui, out);
+        // By index, no clone: the walk never changes the structure (ARCH-SCENE §5.2).
+        for k in 0..arena.children[i].len() {
+            let c = arena.children[i][k].index() as usize;
+            paint_at(arena, c, origin, ui, out);
         }
         return;
     }
@@ -110,11 +110,11 @@ fn paint_node(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut
     let mut b = UiBuilder::new()
         .max_rect(r)
         // Never the widget's own id: a scope sharing it eats the widget's clicks (EGUI.md §1.4).
-        .scope_id(n.id.with("scope"))
+        .scope_id(arena.core[i].egui_id.with("scope"))
         .layout(Layout::left_to_right(Align::Center));
-    if !n.c.enabled {
+    if !arena.common(i).enabled {
         b = b.disabled();
     }
     let mut child = ui.new_child(b);
-    crate::leaf::leaf(arena, h, &mut child, out);
+    crate::leaf::leaf(arena, i, &mut child, out);
 }
