@@ -118,7 +118,7 @@ impl T {
 
     /// The scene node's and the `imm` widget's shapes, as painted in the last pass.
     fn both(&self) -> (Vec<Shape>, Vec<Shape>) {
-        let scene = self.shapes(self.h as u64, self.rig.drawn(self.h).min);
+        let scene = self.shapes(self.h, self.rig.drawn(self.h).min);
         let imm = self.shapes(self.imm_id(), self.imm_rect().min);
         (scene, imm)
     }
@@ -156,14 +156,14 @@ impl T {
         // hover the scene node, record; hover the imm widget, record
         self.hover(sc);
         assert!(self.scene_state().contains(StateBits::HOVERED), "{what}: scene hovered");
-        let scene = self.shapes(self.h as u64, self.rig.drawn(self.h).min);
+        let scene = self.shapes(self.h, self.rig.drawn(self.h).min);
         self.hover(ic);
         assert!(self.imm_state().contains(StateBits::HOVERED), "{what}: imm hovered");
         let imm = self.shapes(self.imm_id(), self.imm_rect().min);
         assert_eq!(scene, imm, "{what} hovered: scene vs imm paint");
         // held down
         self.press_at(sc, true);
-        let scene = self.shapes(self.h as u64, self.rig.drawn(self.h).min);
+        let scene = self.shapes(self.h, self.rig.drawn(self.h).min);
         let scene_pressed = self.scene_state().contains(StateBits::PRESSED);
         self.press_at(sc, false);
         self.press_at(ic, true);
@@ -249,7 +249,7 @@ fn owrust_icon_paints_as_the_button_icon_part() {
     // `::part(icon)` (same UA table, same primitive)
     let t = T::new("button", &[("text", s("Save")), ("icon", s("codicons:save"))], true, Box::new(|ui, r, sv| imm::Icon::new("codicons:save").label("Save").show_at(ui, r, sv)));
     let trace = trace::last(&t.rig.harness.ctx);
-    let part = trace.find(t.h as u64, Some("icon"), TraceKind::Icon).copied();
+    let part = trace.find(t.h, Some("icon"), TraceKind::Icon).copied();
     let icon = trace.entries.iter().find(|e| e.node == t.imm_id()).copied();
     match (part, icon) {
         (Some(p), Some(i)) => {
@@ -341,7 +341,7 @@ fn owrust_focus_tab_order_focus_visible_and_key_claims() {
     t.rig.harness.key_press(egui::Key::Tab);
     t.rig.run();
     assert!(t.scene_state().contains(StateBits::FOCUS_VISIBLE), "Tab focuses the scene button, ring shown");
-    let scene = t.shapes(t.h as u64, t.rig.drawn(t.h).min);
+    let scene = t.shapes(t.h, t.rig.drawn(t.h).min);
     assert!(scene.iter().any(|e| e.0 == TraceKind::Outline), "the scene button's focus ring");
     t.rig.harness.key_press(egui::Key::Tab);
     t.rig.run();
