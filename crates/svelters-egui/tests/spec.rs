@@ -41,6 +41,21 @@ fn checked_in_typings_are_current() {
     );
 }
 
+/// DOC1: every built-in kind has exactly one docs row (`kinds/docs.rs`) and every row names a kind,
+/// so a new kind can't reach `egui.json` (and the widget reference) without its category, states,
+/// accessibility and paint.
+#[test]
+fn every_kind_has_one_docs_row() {
+    use svelters_egui::kinds::docs::KIND_DOCS;
+    for k in KINDS {
+        let n = KIND_DOCS.iter().filter(|d| d.id == k.id).count();
+        assert_eq!(n, 1, "kind {} has {n} rows in kinds/docs.rs (want 1)", k.id);
+    }
+    for d in KIND_DOCS {
+        assert!(KINDS.iter().any(|k| k.id == d.id), "kinds/docs.rs has a row for unknown kind {}", d.id);
+    }
+}
+
 #[test]
 fn kind_table_is_consistent() {
     for (i, k) in KINDS.iter().enumerate() {

@@ -12,6 +12,10 @@
 //! - [`dump`]: writes the exports (`exports.json`, `app.d.ts`, stubs), `kinds.json`, `kinds.d.ts`,
 //!   `behaviors.d.ts` and `behaviors/<namespace>.js`.
 //!
+//! Each element kind also carries the docs fields `category`, `states`, `a11y`, `paint`,
+//! `css_hidden` and `css_note` ([`kinds::docs`], DOC1), which `tools/docs/egui/gen_reference.py` renders into the
+//! widget reference; the compiler ignores them.
+//!
 //! `tests/spec.rs` fails when `egui.json` or `egui.d.ts` is stale
 //! (`SVELTERS_UPDATE=1 cargo test -p svelters-egui --test spec` rewrites them). Writer lane: RUSTAPI.
 
@@ -221,6 +225,91 @@ fn kind_json(k: &KindDef) -> J {
     kj
 }
 
+// ---- DOC1: the docs fields (`kinds/docs.rs`) ----
+
+/// The pseudo-classes that match built-in state `name` (`StateBits::BUILTIN`): `(name, negated)`.
+fn pseudo_classes(name: &str) -> Vec<(&'static str, bool)> {
+    let Some((_, bit)) = crate::scene::StateBits::BUILTIN.iter().find(|(n, _)| *n == name) else {
+        panic!("svelters-egui: kinds/docs.rs names unknown state {name}");
+    };
+    svelters_style::STATE_PSEUDO_CLASSES.iter().filter(|(_, m, _)| m.0 == bit.0).map(|(n, _, neg)| (*n, *neg)).collect()
+}
+
+fn state_json(name: &str, source: kinds::docs::Source, when: &str) -> J {
+    let pc = pseudo_classes(name);
+    let pick = |neg: bool| pc.iter().filter(|(_, n)| *n == neg).map(|(p, _)| format!(":{p}")).collect::<Vec<_>>();
+    json!({"name": name, "pseudo": pick(false), "negated": pick(true), "source": source.name(), "when": when})
+}
+
+/// The built-in states a kind gets: its walk's (`style.rs`), then its own.
+fn states_json(d: &kinds::docs::KindDoc, has_enabled: bool) -> J {
+    use kinds::docs::{Focus, Source, Walk};
+    let mut v: Vec<J> = Vec::new();
+    match d.walk {
+        Walk::Leaf(focus) => {
+            v.push(state_json("hovered", Source::Response, "the pointer is over it"));
+            v.push(state_json("pressed", Source::Response, "the primary button is down on it"));
+            match focus {
+                Focus::Yes => v.push(state_json("focused", Source::Response, "it has keyboard focus")),
+                Focus::Clickable => v.push(state_json("focused", Source::Response, "it takes clicks (`onclicked` is set) and has keyboard focus")),
+                Focus::Never => {}
+            }
+            v.push(state_json("focus-within", Source::Scene, "it, or an element inside it, has keyboard focus"));
+        }
+        Walk::Container => {
+            v.push(state_json("hovered", Source::Response, "the pointer is over its box"));
+            v.push(state_json("pressed", Source::Response, "the primary button is down over its box"));
+            v.push(state_json("focus-within", Source::Scene, "an element inside it has keyboard focus"));
+        }
+        Walk::None => {}
+    }
+    if d.walk != Walk::None {
+        if has_enabled {
+            v.push(state_json("disabled", Source::Prop, "`enabled` is false"));
+        }
+        v.push(state_json("exiting", Source::Scene, "it plays an out transition before it is removed"));
+    }
+    for s in d.states {
+        v.push(state_json(s.name, s.source, s.when));
+    }
+    J::Array(v)
+}
+
+fn a11y_json(a: &kinds::docs::A11yDoc) -> J {
+    let variants: Vec<J> = a.variants.iter().map(|(role, when)| json!({"role": role, "when": when})).collect();
+    json!({
+        "actions": a.actions,
+        "author_id": if a.decorated { Some("anchor") } else { None },
+        "invalid": a.decorated,
+        "name_from": a.name_from,
+        "note": a.note,
+        "role": a.role,
+        "value": a.value,
+        "variants": variants,
+    })
+}
+
+/// Adds the docs fields of kind `k` to its spec object `kj`.
+fn add_docs(kj: &mut J, k: &KindDef, provider: Option<&ProviderKind>) {
+    let own;
+    let d = match provider {
+        Some(pk) => {
+            own = kinds::docs::provider_doc(pk.entry.caps.contains(crate::provider::Caps::FOCUSABLE));
+            &own
+        }
+        None => kinds::docs::kind_doc(k.id).unwrap_or_else(|| panic!("svelters-egui: kind {} has no row in kinds/docs.rs", k.id)),
+    };
+    // `:disabled` follows `enabled`, which only kinds under `Widget` have (not `window`)
+    let has_enabled = kinds::kind_index(k.id).is_none_or(|i| kinds::find_prop(i, "enabled").is_some());
+    let m = kj.as_object_mut().expect("kind object");
+    m.insert("a11y".into(), a11y_json(&d.a11y));
+    m.insert("category".into(), json!(d.category.name()));
+    m.insert("css_hidden".into(), json!(kinds::docs::css_hidden(k.id)));
+    m.insert("css_note".into(), json!(d.css_note));
+    m.insert("paint".into(), json!(d.paint.name()));
+    m.insert("states".into(), states_json(d, has_enabled));
+}
+
 /// The style table (D3): every layout prop is a setter, so `<style>` rules can use the CSS names
 /// on egui. Visual properties (the backend cascade) are G2.
 fn style_json() -> J {
@@ -285,6 +374,15 @@ fn style_json() -> J {
         // CS5e: the backend runs the CSS engine; `<style>` reaches it as CSS (D9 on egui)
         "engine": "backend",
         "properties": props,
+        // DOC1: the state pseudo-classes and the built-in state each reads (`:enabled` is
+        // `:disabled` negated)
+        "pseudo_classes": svelters_style::STATE_PSEUDO_CLASSES
+            .iter()
+            .map(|(n, m, neg)| {
+                let state = crate::scene::StateBits::BUILTIN.iter().find(|(_, b)| b.0 == m.0).map(|(s, _)| *s);
+                json!({"name": n, "negated": neg, "state": state})
+            })
+            .collect::<Vec<_>>(),
         "setter_selectors": ["type", "class", "id"],
         "units": {"px": {"provenance": "egui points: 1px in a style sheet is one point", "scale": 1.0}},
     })
@@ -292,7 +390,14 @@ fn style_json() -> J {
 
 /// The whole spec.
 pub fn semantics() -> J {
-    let kinds: Map<String, J> = KINDS.iter().map(|k| (k.id.to_string(), kind_json(k))).collect();
+    let kinds: Map<String, J> = KINDS
+        .iter()
+        .map(|k| {
+            let mut j = kind_json(k);
+            add_docs(&mut j, k, None);
+            (k.id.to_string(), j)
+        })
+        .collect();
     let tags: Map<String, J> = KINDS.iter().filter_map(|k| k.tag.map(|t| (t.to_string(), json!(k.id)))).collect();
     json!({
         "backend": "egui",
@@ -389,7 +494,11 @@ pub fn fragment() -> J {
     let reg = KindRegistry::global();
     let kinds: Map<String, J> = reg
         .elements()
-        .map(|p| (p.entry.id.to_string(), kind_json(p.def)))
+        .map(|p| {
+            let mut j = kind_json(p.def);
+            add_docs(&mut j, p.def, Some(p));
+            (p.entry.id.to_string(), j)
+        })
         .collect();
     let tags: Map<String, J> = reg
         .elements()
