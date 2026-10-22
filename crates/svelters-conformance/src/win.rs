@@ -35,7 +35,7 @@ use windows::Win32::UI::Accessibility::*;
 use windows::Win32::UI::HiDpi::{DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2, GetDpiForWindow, SetProcessDpiAwarenessContext};
 use windows::Win32::UI::Input::KeyboardAndMouse::*;
 use windows::Win32::UI::WindowsAndMessaging::*;
-use windows::core::{BOOL, BSTR, Interface, implement};
+use windows::core::{BOOL, BSTR, implement};
 
 pub type WinResult<T> = Result<T, String>;
 
@@ -105,7 +105,7 @@ fn send(inputs: &[INPUT]) -> WinResult<()> {
         return Err(format!(
             "SendInput sent {n} of {} events ({}; a locked session or a higher-integrity foreground window blocks input)",
             inputs.len(),
-            windows::core::Error::from_win32()
+            windows::core::Error::from_thread()
         ));
     }
     Ok(())
