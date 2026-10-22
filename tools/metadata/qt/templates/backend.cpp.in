@@ -29,6 +29,9 @@
 #include <QtGui/QFontMetricsF>
 #include <QtCore/QJsonArray>
 #include <QtCore/QJsonDocument>
+#include <QtCore/QJsonObject>
+#include <QtGui/QGuiApplication>
+#include <QtGui/QStyleHints>
 #include <QtCore/QJsonValue>
 #include <QtCore/QRegularExpression>
 #include <QtCore/QStringList>
@@ -2060,6 +2063,108 @@ extern "C" int svl_qt_grid_cell(svl_handle grid, svl_handle child, int *row, int
 extern "C" int svl_qt_close(svl_handle h) {
   auto *w = qobject_cast<QWidget *>(debug_obj(h));
   return w && w->close() ? 0 : -1;
+}
+
+// ---- WG3 native-reference hooks (conformance/, plans/milestones/WG3-native-references.md) ----------
+// What the capture observes that the ABI cannot read: a QLineEdit's selection anchor (selectionStart is
+// not a property), and where a character sits, for XTEST clicks. Offsets cross as Unicode scalar values;
+// Qt counts UTF-16 units.
+namespace {
+int na_u16_to_scalar(const QString &s, int u) {
+  int n = 0;
+  for (int i = 0; i < u && i < s.size(); ++i)
+    if (!s.at(i).isLowSurrogate()) ++n;
+  return n;
+}
+int na_scalar_to_u16(const QString &s, int n) {
+  int i = 0;
+  for (int k = 0; k < n && i < s.size(); ++k) i += (s.at(i).isHighSurrogate() && i + 1 < s.size()) ? 2 : 1;
+  return i;
+}
+}  // namespace
+
+// The observed state of the widget behind `h` as compact JSON: for a QLineEdit
+// {"text","anchor","caret","u16caret","focus"} (offsets in scalars; u16caret is what `cursor-position`
+// reports), otherwise {"focus"}. Focus: QWidget::hasFocus in an active window. Valid until the next call.
+extern "C" const char *svl_qt_na_state(svl_handle h) {
+  static std::string buf;
+  auto *w = qobject_cast<QWidget *>(debug_obj(h));
+  if (!w) return "";
+  QJsonObject o;
+  if (auto *e = qobject_cast<QLineEdit *>(w)) {
+    const QString t = e->text();
+    const int caret = e->cursorPosition();
+    int anchor = caret;
+    if (e->hasSelectedText()) anchor = caret == e->selectionStart() ? e->selectionEnd() : e->selectionStart();
+    o.insert("text", t);
+    o.insert("anchor", na_u16_to_scalar(t, anchor));
+    o.insert("caret", na_u16_to_scalar(t, caret));
+    o.insert("u16caret", caret);
+  }
+  o.insert("focus", w->hasFocus() && w->window()->isActiveWindow());
+  buf = QJsonDocument(o).toJson(QJsonDocument::Compact).toStdString();
+  return buf.c_str();
+}
+
+// A point in the coordinates of the widget's top-level window (its X window) to click at: inside the
+// character at scalar `offset` of a QLineEdit, just left of its centre, so a single click puts the caret
+// before it (the last x that QLineEdit::cursorPositionAt maps to `offset`); past the end for the text's
+// length; the centre for `offset` < 0 or another widget. 0, or -1 for an unknown handle.
+extern "C" int svl_qt_na_point(svl_handle h, int offset, double *x, double *y) {
+  auto *w = qobject_cast<QWidget *>(debug_obj(h));
+  if (!w) return -1;
+  QPoint p(w->width() / 2, w->height() / 2);
+  if (auto *e = qobject_cast<QLineEdit *>(w); e && offset >= 0) {
+    const QString t = e->text();
+    const int u = na_scalar_to_u16(t, offset);
+    int best = -1, first = -1;
+    for (int px = 0; px < e->width(); ++px) {
+      if (e->cursorPositionAt(QPoint(px, p.y())) == u) {
+        if (first < 0) first = px;
+        best = px;
+      }
+    }
+    if (best >= 0) p.setX(u >= t.size() ? first + 3 : best - 1);
+  }
+  const QPoint g = w->mapTo(w->window(), p);
+  *x = g.x();
+  *y = g.y();
+  return 0;
+}
+
+// Capture setup: the selection of a QLineEdit in scalars ([anchor, caret]; the cursor ends at `caret`),
+// and with `focus` the widget takes the keyboard focus programmatically (Qt::OtherFocusReason, which does
+// not select all) in its activated window.
+extern "C" int svl_qt_na_setup(svl_handle h, int focus, int anchor, int caret) {
+  auto *w = qobject_cast<QWidget *>(debug_obj(h));
+  if (!w) return -1;
+  if (focus) {
+    w->window()->activateWindow();
+    w->setFocus(Qt::OtherFocusReason);
+  }
+  if (auto *e = qobject_cast<QLineEdit *>(w); e && anchor >= 0) {
+    const QString t = e->text();
+    const int a = na_scalar_to_u16(t, anchor), c = na_scalar_to_u16(t, caret);
+    if (a == c) e->setCursorPosition(c);
+    else e->setSelection(a, c - a);
+  }
+  return 0;
+}
+
+// The style hints that decide the captured behaviour, as compact JSON.
+extern "C" const char *svl_qt_na_settings(void) {
+  static std::string buf;
+  ensure_app();
+  const QStyleHints *s = QGuiApplication::styleHints();
+  QJsonObject o;
+  o.insert("mouseDoubleClickInterval", s->mouseDoubleClickInterval());
+  o.insert("mouseDoubleClickDistance", s->mouseDoubleClickDistance());
+  o.insert("startDragDistance", s->startDragDistance());
+  o.insert("platform", QGuiApplication::platformName());
+  o.insert("qtVersion", QString::fromLatin1(qVersion()));
+  o.insert("style", QApplication::style() ? QApplication::style()->name() : QString());
+  buf = QJsonDocument(o).toJson(QJsonDocument::Compact).toStdString();
+  return buf.c_str();
 }
 
 // Number of top-level widgets that still exist (pending deleteLater included until the loop runs).

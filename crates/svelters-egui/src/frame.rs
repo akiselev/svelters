@@ -217,6 +217,8 @@ impl EguiBackend {
         }
         // Writes the checkpoint's handlers made through `SceneHandle` are announced now.
         self.flush_announcements();
+        // ARCH-SCENE §7.2 step 7 (CS5e): restyle what this logic's changes reach.
+        self.restyle_pending(ctx);
         self.animate_step(ctx);
         // Remeasure leaves whose text changed, per root; only a size change queues a relayout.
         let mut scene = self.0.scene.borrow_mut();
@@ -364,6 +366,10 @@ impl EguiBackend {
             ctx.request_repaint_of(egui::ViewportId::ROOT);
         }
         self.animate_demand(ctx);
+        // CS5e: a walk-time restyle that shows next frame (an ancestor, a layout change)
+        if std::mem::take(&mut self.0.scene.borrow_mut().style.repaint) {
+            ctx.request_repaint_of(vp);
+        }
         // R16: deferred scene writes are pending work; the next logic runs them.
         if self.0.scene.deferred_len() > 0 {
             ctx.request_repaint_of(vp);

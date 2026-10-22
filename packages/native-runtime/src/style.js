@@ -8,6 +8,11 @@
 // Nothing is sent until an app uses styling (a sheet is registered, or an element has a class,
 // style or id), so apps without styles keep their op logs unchanged.
 //
+// A backend that runs the Rust CSS engine itself (egui, CS5e; `SVL_STYLE_TARGET` answers 4) gets
+// raw CSS instead: the component sheets as Svelte scoped them (`css`), the user classes, the id, the
+// `style=` text untranslated and the tokens as a `:root` sheet. It matches, cascades and restyles
+// on its own, hover included; no setter rules run here.
+//
 // Setter properties (the style table: `spacing`, `hexpand`, `minimum-width`, ...) are not CSS.
 // Stylesheets carry them as setter rules (`registerStyles(id, { ..., rules })`), matched here
 // against each element's tag, classes and id whenever those change; `style=` / `style:` carry them
@@ -41,6 +46,8 @@ import { animatesOpacity } from './motion.js';
 const OP = { TARGET: 0, CLASSES: 1, NAME: 2, INLINE: 3, OPACITY: 4, SHEET: 5, SCHEME: 6, DECLS: 7 };
 /** `SVL_STYLE_TARGET` answers: 1 GTK CSS, 2 QSS, 3 the decl dialect of AppKit (a toolkit per code). */
 const DECL_TOOLKITS = { 3: 'appkit' };
+/** `SVL_STYLE_TARGET` answer of a backend running the Rust engine in process (egui, CS5e). */
+const ENGINE = 4;
 /** Properties an element inherits from its parent when no rule of its own sets them (as in CSS). */
 const INHERITED = ['color', 'font-size', 'font-weight', 'font-family', 'font-style'];
 /** Separators of the DECLS payload: blocks, then fields inside a block (state, then `prop:value`). */
@@ -50,7 +57,7 @@ const TOKENS_ID = '@tokens';
 const host = () => globalThis.__svelters_host;
 
 const state = {
-  /** undefined: not asked yet; 'css' | 'qss' | 'decl' | null (no styling support). */
+  /** undefined: not asked yet; 'css' | 'qss' | 'decl' | 'engine' | null (no styling support). */
   target: undefined,
   declToolkit: null, // 'appkit' when target is 'decl'
   declRules: [], // decl rules of every sheet, in cascade order (ascending)
@@ -84,7 +91,7 @@ function targetOf() {
     return null;
   }
   const t = hs.style(OP.TARGET, 0, null);
-  state.target = t === 1 ? 'css' : t === 2 ? 'qss' : DECL_TOOLKITS[t] ? 'decl' : null;
+  state.target = t === 1 ? 'css' : t === 2 ? 'qss' : t === ENGINE ? 'engine' : DECL_TOOLKITS[t] ? 'decl' : null;
   state.declToolkit = DECL_TOOLKITS[t] ?? null;
   return state.target;
 }
@@ -112,7 +119,7 @@ function ensureInit() {
   state.tokensKey = JSON.stringify(state.tokens);
   state.lastScheme = state.scheme;
   sendScheme();
-  if (t === 'css') hs.style(OP.SHEET, 0, `${TOKENS_ID}${SEP}${renderGtkTokens(state.tokens)}`);
+  if (t === 'css' || t === 'engine') hs.style(OP.SHEET, 0, `${TOKENS_ID}${SEP}${renderGtkTokens(state.tokens)}`);
   return true;
 }
 
@@ -130,6 +137,7 @@ function collectDeclRules() {
 
 function sheetText(entry) {
   if (state.target === 'css') return entry.gtk ?? '';
+  if (state.target === 'engine') return entry.css ?? '';
   let t = renderQss(entry.qt ?? '', state.tokens);
   if (state.scheme === 'dark' && entry.qtDark) t += renderQss(entry.qtDark, state.tokens);
   return t;
@@ -153,7 +161,7 @@ export const hasSheets = () => state.sheets.size > 0;
 export function registerStyles(id, sheets) {
   const first = state.sheets.size === 0;
   const prev = state.sheets.get(id);
-  const entry = { gtk: sheets.gtk ?? '', qt: sheets.qt ?? '', qtDark: sheets.qtDark ?? '', rules: sheets.rules ?? null, decl: sheets.decl ?? null, seq: state.seq++, sent: undefined };
+  const entry = { gtk: sheets.gtk ?? '', qt: sheets.qt ?? '', qtDark: sheets.qtDark ?? '', css: sheets.css ?? '', rules: sheets.rules ?? null, decl: sheets.decl ?? null, seq: state.seq++, sent: undefined };
   state.sheets.set(id, entry);
   if (!ensureInit()) return;
   if (state.target === 'decl') {
@@ -162,6 +170,7 @@ export function registerStyles(id, sheets) {
     return;
   }
   pushSheet(id, entry);
+  if (state.target === 'engine') return; // the backend restyles its own nodes
   const rulesChanged = entry.rules !== null || (prev?.rules ?? null) !== null;
   if (rulesChanged) collectRules();
   if (first || rulesChanged) for (const el of state.elements()) markStyleDirty(el);
@@ -225,8 +234,8 @@ export function refresh() {
   if (key === state.tokensKey && !schemeChanged) return;
   state.tokensKey = key;
   state.lastScheme = state.scheme;
-  if (state.target === 'css') {
-    // GTK: one small provider; var() in component CSS resolves natively.
+  if (state.target === 'css' || state.target === 'engine') {
+    // GTK: one small provider; var() in component CSS resolves natively (the engine's too).
     host().style(OP.SHEET, 0, `${TOKENS_ID}${SEP}${renderGtkTokens(tokens)}`);
   }
   sendScheme();
@@ -274,6 +283,7 @@ export function applyStyle(el) {
   if (!hasAny && !el.sc && !(hasSheets() && (KINDS[el.tag]?.ambiguous || state.ruleTags.has(el.tag) || state.target === 'decl'))) return;
   if (!ensureInit()) return;
   if (state.target === 'decl') return applyDecl(el);
+  if (state.target === 'engine') return applyEngine(el);
   const hs = host();
   const sc = (el.sc ??= { classes: '', name: '', inline: '', opacity: '', setters: null });
 
@@ -315,6 +325,28 @@ export function applyStyle(el) {
     }
   }
   if (state.rules.length || sc.inlineSetters?.length || sc.setters) applySetters(el, sc, list, name);
+}
+
+/** Engine backends (CS5e): the user classes, the id and the raw `style=` text, each when it changed. */
+function applyEngine(el) {
+  const a = el.attrs;
+  const hs = host();
+  const sc = (el.sc ??= { classes: '', name: '', inline: '' });
+  const classes = classList(a.class).join(' ');
+  if (classes !== sc.classes) {
+    sc.classes = classes;
+    nativeOf(hs, OP.CLASSES, el.h, classes);
+  }
+  const name = a.id == null ? '' : String(a.id);
+  if (name !== sc.name) {
+    sc.name = name;
+    nativeOf(hs, OP.NAME, el.h, name);
+  }
+  const inline = a.style == null ? '' : String(a.style).trim();
+  if (inline !== sc.inline) {
+    sc.inline = inline;
+    nativeOf(hs, OP.INLINE, el.h, inline);
+  }
 }
 
 /** The runtime's hooks into the element (index.js): explicit props and child attributes. */

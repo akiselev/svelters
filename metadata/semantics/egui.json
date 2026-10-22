@@ -1359,6 +1359,7 @@
   },
   "style": {
     "dialect": "none",
+    "engine": "backend",
     "properties": {
       "align-items": {
         "kinds": [
@@ -1404,6 +1405,26 @@
         ],
         "via": "setter"
       },
+      "background-color": {
+        "decl_type": "color",
+        "via": "css"
+      },
+      "border-color": {
+        "decl_type": "color",
+        "via": "css"
+      },
+      "border-radius": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "border-width": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "color": {
+        "decl_type": "color",
+        "via": "css"
+      },
       "column-gap": {
         "kinds": [
           "Box"
@@ -1415,6 +1436,15 @@
         ],
         "type": "length",
         "via": "setter"
+      },
+      "display": {
+        "decl_type": "enum",
+        "values": [
+          "flex",
+          "grid",
+          "none"
+        ],
+        "via": "css"
       },
       "flex-basis": {
         "kinds": [
@@ -1502,6 +1532,10 @@
         ],
         "via": "setter"
       },
+      "font-size": {
+        "decl_type": "length",
+        "via": "css"
+      },
       "gap": {
         "kinds": [
           "Window",
@@ -1515,6 +1549,22 @@
         ],
         "type": "length",
         "via": "setter"
+      },
+      "grid-column": {
+        "decl_type": "raw",
+        "via": "css"
+      },
+      "grid-row": {
+        "decl_type": "raw",
+        "via": "css"
+      },
+      "grid-template-columns": {
+        "decl_type": "raw",
+        "via": "css"
+      },
+      "grid-template-rows": {
+        "decl_type": "raw",
+        "via": "css"
       },
       "height": {
         "kinds": [
@@ -1569,6 +1619,22 @@
         ],
         "type": "length",
         "via": "setter"
+      },
+      "margin-bottom": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "margin-left": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "margin-right": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "margin-top": {
+        "decl_type": "length",
+        "via": "css"
       },
       "max-height": {
         "kinds": [
@@ -1638,6 +1704,10 @@
         "type": "length",
         "via": "setter"
       },
+      "opacity": {
+        "decl_type": "number",
+        "via": "css"
+      },
       "padding": {
         "kinds": [
           "Window",
@@ -1651,6 +1721,22 @@
         ],
         "type": "length",
         "via": "setter"
+      },
+      "padding-bottom": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "padding-left": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "padding-right": {
+        "decl_type": "length",
+        "via": "css"
+      },
+      "padding-top": {
+        "decl_type": "length",
+        "via": "css"
       },
       "row-gap": {
         "kinds": [

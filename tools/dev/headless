@@ -21,7 +21,9 @@ export GDK_BACKEND=x11 QT_QPA_PLATFORM=xcb GSK_RENDERER=${GSK_RENDERER:-cairo}
 unset WAYLAND_DISPLAY
 
 # Already on a virtual display: one this script started, or CI's own xvfb-run.
-if [ -n "${DISPLAY:-}" ] && { [ "${SVELTERS_HEADLESS_DISPLAY:-}" = "$DISPLAY" ] || [ -n "${CI:-}" ]; }; then
+# SVELTERS_HEADLESS_FORCE=1 starts a private one anyway: the WG3 native-reference capture injects
+# X input with XTEST, which goes to the whole display, so it must not share one with other tests.
+if [ "${SVELTERS_HEADLESS_FORCE:-}" != 1 ] && [ -n "${DISPLAY:-}" ] && { [ "${SVELTERS_HEADLESS_DISPLAY:-}" = "$DISPLAY" ] || [ -n "${CI:-}" ]; }; then
   exec "$@"
 fi
 
@@ -63,7 +65,7 @@ done
 trap ':' USR1
 
 export DISPLAY=":$n" SVELTERS_HEADLESS_DISPLAY=":$n"
-unset XAUTHORITY
+unset XAUTHORITY SVELTERS_HEADLESS_FORCE
 "$@" &
 child=$!
 trap 'kill -TERM "$child" 2>/dev/null; exit 143' TERM
