@@ -1,8 +1,9 @@
-//! `svelters-compile --backend gtk|qt|appkit|winui|egui[,...] [--spec path.json] [--spec-fragment kinds.json]... [--target quickjs-host|node-vite] [--strict-native] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file | ->`
+//! `svelters-compile --backend gtk|qt|appkit|winui|egui[,...] [--spec path.json] [--spec-fragment kinds.json]... [--target quickjs-host|node-vite] [--strict-native] [--filename name] [--dev] [--hmr] [--module] [--css-scope class] [--json] <file | ->`
 //!
 //! Compiles a component (or, with `--module` or a `.svelte.js` input, a module with runes).
 //! `--backend gtk,qt,appkit,winui` is the portability mode: the output is for the first platform, the
 //! others add `observability_differs` warnings. `--strict-native` makes the observability warnings errors.
+//! `--hmr` (dev only) wraps the component for in-place replacement (`$n.hmr`, `import.meta.hot.acceptExports`).
 //! Prints the generated JS (or, with `--json`, `{js, map, diagnostics, backend, timings}`).
 //! Diagnostics go to stderr; exit status 1 when there are errors.
 //! `--kinds` prints the runtime spec tables of the (first) backend instead (`@svelters/native-runtime/kinds`,
@@ -15,7 +16,7 @@ use svelters_compiler::compile::{CompileOptions, ModuleOptions, compile, compile
 use svelters_compiler::semantics::SpecBackend;
 use svelters_compiler::target::builtin_target;
 
-const USAGE: &str = "usage: svelters-compile --backend gtk|qt|appkit|winui|egui[,...] [--spec spec.json] [--spec-fragment kinds.json]... [--target quickjs-host|node-vite] [--strict-native] [--filename name] [--dev] [--module] [--css-scope class] [--json] <file.svelte | file.svelte.js | ->\n       svelters-compile --kinds --backend gtk|qt|appkit|winui|egui [--spec spec.json] [--spec-fragment kinds.json]...";
+const USAGE: &str = "usage: svelters-compile --backend gtk|qt|appkit|winui|egui[,...] [--spec spec.json] [--spec-fragment kinds.json]... [--target quickjs-host|node-vite] [--strict-native] [--filename name] [--dev] [--hmr] [--module] [--css-scope class] [--json] <file.svelte | file.svelte.js | ->\n       svelters-compile --kinds --backend gtk|qt|appkit|winui|egui [--spec spec.json] [--spec-fragment kinds.json]...";
 
 fn main() {
     let mut backend = "gtk".to_string();
@@ -24,6 +25,7 @@ fn main() {
     let mut filename: Option<String> = None;
     let mut json = false;
     let mut dev = false;
+    let mut hmr = false;
     let mut module = false;
     let mut css_scope: Option<String> = None;
     let mut strict_native = false;
@@ -39,6 +41,7 @@ fn main() {
             "--filename" => filename = args.next(),
             "--json" => json = true,
             "--dev" => dev = true,
+            "--hmr" => hmr = true,
             "--module" => module = true,
             "--css-scope" => css_scope = args.next(),
             "--strict-native" => strict_native = true,
@@ -96,6 +99,7 @@ fn main() {
         let target = builtin_target(&target).unwrap_or_else(|| fail(format!("unknown --target {target:?} (known: quickjs-host, node-vite)")));
         let mut opts = CompileOptions::new(filename.clone(), &sem);
         opts.dev = dev;
+        opts.hmr = hmr;
         opts.css_scope = css_scope;
         opts.strict_native = strict_native;
         opts.target = target;

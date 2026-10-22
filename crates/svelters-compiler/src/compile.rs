@@ -32,11 +32,14 @@ pub struct CompileOptions<'b> {
     /// Portability mode (`--backend gtk,qt,...`): the other platforms the same component is checked
     /// against; their answers only add `observability_differs` warnings (output stays per platform).
     pub portability: Vec<&'b dyn PlatformSemantics>,
+    /// `--hmr` (dev only): the component is wrapped for in-place replacement
+    /// (`if (import.meta.hot) { C = $n.hmr(C, id); ... }`); `filename` is the component id.
+    pub hmr: bool,
 }
 
 impl<'b> CompileOptions<'b> {
     pub fn new(filename: impl Into<String>, backend: &'b dyn PlatformSemantics) -> Self {
-        CompileOptions { filename: filename.into(), backend, dev: false, css_scope: None, target: &QuickJsHost, strict_native: false, portability: Vec::new() }
+        CompileOptions { filename: filename.into(), backend, dev: false, css_scope: None, target: &QuickJsHost, strict_native: false, portability: Vec::new(), hmr: false }
     }
 }
 
@@ -158,7 +161,7 @@ pub fn compile(src: &str, opts: &CompileOptions) -> CompileResult {
     let mut rw = ScopeRewriter::with_options(src, &root, &analysis, diags, opts.dev, &opts.filename);
     rw.strip_typescript(ts_strip);
     let name = rw.component_name(&component_name(&opts.filename));
-    let (code, map) = generate(src, &ir, &rw, &name, &opts.filename, &opts.target.runtime_imports());
+    let (code, map) = generate(src, &ir, &rw, &name, &opts.filename, &opts.target.runtime_imports(), opts.hmr);
     let diags = rw.into_diagnostics();
     timings.generate_us = t.elapsed().as_micros() as u64;
     if diags.has_errors() {

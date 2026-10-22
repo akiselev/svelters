@@ -128,7 +128,7 @@ pub struct Codegen<'a, 's> {
 }
 
 /// Generates the whole module. `name` is the component function name.
-pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, filename: &str, imports: &crate::target::RuntimeImports) -> (String, String) {
+pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, filename: &str, imports: &crate::target::RuntimeImports, hmr: bool) -> (String, String) {
     let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, root_fragment: false, memo: Vec::new(), name, _p: std::marker::PhantomData };
     if rw.tracing() {
         g.w.write(&format!("import '{}/tracing';\n", imports.core));
@@ -144,7 +144,7 @@ pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, file
         g.snippet(s);
         g.w.newline();
     }
-    g.w.write(&format!("\nexport default function {name}($$anchor, $$props) {{"));
+    g.w.write(&format!("\n{}function {name}($$anchor, $$props) {{", if hmr { "" } else { "export default " }));
     g.w.indent();
     g.w.newline();
     g.w.write("$.push($$props, true);");
@@ -161,6 +161,12 @@ pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, file
     g.w.dedent();
     g.w.newline();
     g.w.write("}\n");
+    if hmr {
+        let id = serde_json::to_string(filename).expect("string serializes");
+        g.w.write(&format!(
+            "\nif (import.meta.hot) {{\n\t{name} = $n.hmr({name}, {id});\n\timport.meta.hot.acceptExports([\"default\"], (m) => m && {name}[$n.HMR].update(m.default));\n}}\n\nexport default {name};\n"
+        ));
+    }
     let out = filename.rsplit('/').next().unwrap_or(filename).replace(".svelte", ".js");
     g.w.finish(filename, src, &out)
 }

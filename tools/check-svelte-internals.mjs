@@ -36,6 +36,7 @@ const $ = await import(pathToFileURL(require.resolve('svelte/internal/client')).
 const { emittedNames } = await import(pathToFileURL(path.join(runtimeDir, 'test/core-contract.mjs')).href);
 for (const n of emittedNames()) check(typeof $[n] === 'function', `svelte/internal/client has no function \`${n}\` (the compiler emits $.${n})`);
 for (const n of ['flush', 'tick', 'clsx', 'transition', 'animation']) check(typeof $[n] === 'function', `svelte/internal/client has no function \`${n}\``);
+check(typeof $.HMR === 'symbol' && typeof $.FILENAME === 'symbol', 'svelte/internal/client no longer exports the HMR / FILENAME symbols');
 check('active_effect' in $, 'svelte/internal/client no longer exports `active_effect`');
 
 // 2. the hidden modules the adapter imports (vite.js HIDDEN_MODULES)
