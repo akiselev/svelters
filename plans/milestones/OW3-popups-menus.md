@@ -233,7 +233,8 @@ tooltip text whether it shows or not, so R9's reason is read.
   - Each needs a new `P` key or method in the WG2a tables; IDE-relevant but not blocking SC1:
     `group-optional`, `status-tip` (no status bar yet), `menu-separator label` (sections),
     `action default`, `menu` `changed` (aboutToShow), `popup(x, y)`.
-  - Waits for OW2's Scrollable: scrollable tall menus.
+  - Scrollable tall menus: OW2's Scrollable is on master now, but wiring it in is not small (see
+    "Merge with master (OW3m)").
   - Also deferred: `slot="end"` corner widgets, widgets inside menus, and split and delayed
     menu-buttons (OW3b).
   - Select:
@@ -327,8 +328,48 @@ All local runs used `cargo-slot`.
 4. Delete the egui menu, popup, combo and tooltip wrappers in VIS1c.
 5. Unify `widgets/glyph.rs` with OW1a's `widgets/parts.rs` path glyphs.
 6. Reconcile `Roving` with OW1a2's.
-7. Tooltip call sites in the views (`table` cells, `virtual-list` rows, `split-view`, `tabs`,
-   `toast`) belong to OW5 and OW7. They still use `on_hover_text`.
+7. Tooltip call sites in the views (`table` cells, `virtual-list` rows, `tabs`, `toast`) belong
+   to OW5 and OW7. They still use `on_hover_text`. (`split-view` is OW2's own widget now, so its
+   tooltip goes through `tooltip::attach`.)
+8. Scrollable tall menus on OW2's `Scrollable` (see "Merge with master (OW3m)").
+
+## Merge with master (OW3m)
+
+Lane OW3m merged master d0542a3a (OW-CSS stage 2, FX4, CS5f, OW2) into `ci/ow3` on 2026-10-22.
+
+- **Conflicts**, all resolved by keeping both sides:
+  - the `interact` and `widgets` module lists (`roving` beside OW2's `resize` and `scroll`; `menu`
+    and `select` beside `panel`, `scroll_area` and `scrollbar`);
+  - `Policy`: OW3's `submenu_delay_ms`, `tooltip_follow_on_ms` and `alt_focuses_menu_bar`, then
+    OW2's `scroll: ScrollPolicy`, in all five tables;
+  - `widgets/mod.rs`: OW3's `mark_own` beside OW2's `is_own_container`, `Len` and `pick`;
+  - `leaf.rs`: OW2 deleted the egui scroll-area wrapper, which OW3 had moved to
+    `tooltip::attach`. The deletion wins: the own scroll-area is an own widget, so it gets its
+    tooltip through `provider/mod.rs`, which already calls `tooltip::attach`.
+- **Generated files** were not hand-merged. `spec` (with `SVELTERS_UPDATE=1`), `gen_props.py`
+  and `gen_reference.py` were rerun and changed nothing, and their `--check` runs pass.
+- **Tall menus** still do not scroll. OW2's `Scrollable` needs `InputCx`, the bar geometry and
+  post-order wheel chaining. A menu level is an `egui::Area` whose rows are scene nodes laid out
+  in `Menu::level`, not a taffy subtree. Wiring the two together means:
+  - clamping the level to `anchor::bounds`;
+  - a per-level offset in the menu state;
+  - clipping, and hit-testing only the visible rows;
+  - keeping the current row in view on Roving moves;
+  - scroller arrows (QMenu `scrollable`).
+  That is a feature with its own tests, not a merge fix, so it stays a follow-up (item 8).
+- **Run locally after the merge** (all through `cargo-slot`; egui under `headless`):
+  - `cargo check -p svelters-egui --all-targets`;
+  - `cargo clippy -p svelters-egui --all-targets`, which raised no new warning in the merged
+    files;
+  - nextest `-p svelters-egui` with `--test menus --test ow3 --test widgets --test own_widgets
+    --test ow2 --test style --test style_text --test ow_css --test theme --test focus_keys`:
+    80 of 80 green. The `from_source` tests pass now that `pnpm install` ran;
+  - `--test spec`, 4 of 4.
+  `widgets_panel` failed locally only because the `embed-egui` fixture was not built (CI builds
+  it).
+- **Not run locally:** `menus_app.rs` and `widgets_panel.rs` (both need built fixtures), the
+  full workspace, conformance, the other backends, `svelters-automation` and
+  `examples/egui-kinds`.
 
 ## Push and CI
 
