@@ -273,7 +273,7 @@ The host refcounts observations per (handle, prop) and calls the backend only on
 
 ## Checkpoint semantics
 
-1. Deliver the batch of changed observed properties (`__svelters_changed`), then the queued native events.
+1. Settle offloaded export calls (progress callbacks, results), then deliver the batch of changed observed properties (`__svelters_changed`), the queued native events and due timers. JS jobs (microtasks) are drained after every task: after a settle batch, after each event and after each timer callback, as in the HTML event loop. Only the change batch shares its drain with the first event, so handlers see the new state and Svelte flushes once.
 2. Run Svelte effects and QuickJS jobs, up to a bounded number (`max_jobs_per_checkpoint`).
 3. Apply the resulting tree and property operations through the vtable.
 4. If jobs remain, call `backend->wake()` and return to the toolkit loop.

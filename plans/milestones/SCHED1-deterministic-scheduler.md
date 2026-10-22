@@ -126,6 +126,7 @@ fn my_race() {
 | `e1_async_exports_race_abort` | `crates/svelters/tests/sched.rs` | 6 calls (worker with progress, JS-thread `async fn` with random yields and an inner `worker()`, blocking) against aborts at random times. Each call settles exactly once: `cancelled` if the abort ran first, else the right value. No progress after settle. Every async future is dropped. No ops left. Across seeds, each kind both wins and loses its race |
 | `timers_race_promises_and_completions` | same | 6 one-shots, an interval, a nested timer and 4 progress-reporting workers, on a busy UI thread. Timers fire in (deadline, registration) order, never before their deadline on the simulated `performance.now()`, and each timer's microtasks run before anything else. The interval runs 3 times, at least 4 ms apart |
 | `the_same_seed_replays_a_host_run_exactly` | same | the same seed gives the same console, turns and end time; different seeds differ |
+| `progress_microtasks_run_before_a_queued_event` (SCHED1b) | same | 8 clicks (`post_event` on a raw-ops log-backend button) at random times against 6 progress-reporting workers, on a busy UI thread. No event starts with a microtask of an earlier task pending; each event's own microtask runs right after it; each progress and result arrives once. Coverage: clicks land while workers are still settling |
 | `hmr_reload_races_a_pending_import` | `crates/svelters-host/tests/sched.rs` | an app from source (plain JS, needs `pnpm install` only for the provider's runtime aliases). A dynamic `import()` is held pending 3 ms by top-level await, against an in-place swap of a self-accepting module and a full reload, at random times. Every reload succeeds. The app ends on the newest versions, with exactly one import result in the surviving runtime. Coverage: both a full reload and a swap land while the import is pending |
 | `a_scheduler_clock_excludes_scripted_mode` | same | config validation |
 | `a_wake_still_queued_when_the_host_goes_reaches_nobody` | same | dropping the host and its due timer wake, at the same instant in either order |
@@ -146,6 +147,14 @@ fn my_race() {
 - **SEED=14** of the timers test failed only on float rounding in the test (4 ms intervals measured as
   3.9999999); the test now has a tolerance.
 - The HMR (300 seeds) and egui (300 seeds) tests found nothing.
+- **SEED=0** of `progress_microtasks_run_before_a_queued_event` (SCHED1b, the first schedule) found
+  **the second host bug of the same class**, the one the question below predicted: a live checkpoint
+  delivered queued events right after `offload::drain` with no job drain, so an event handler ran
+  between a worker's `onProgress` and the microtask it queued (`P 5` came after `E 2`, which logged
+  `VIOLATION event 2 started with 1 microtask(s) of an earlier task pending`; events 4 and 5 likewise).
+  **Fixed** in `core::checkpoint`: a non-empty settle batch is a task of its own, and jobs drain after
+  it, before the change batch, events and timers (`offload::drain` now returns whether it settled
+  anything). With the fix the test passes 300 seeds.
 
 ## Not covered yet (follow-ups)
 
@@ -164,8 +173,20 @@ fn my_race() {
    drive that budget too.
 7. Miri on `svelters-sched` in CI (Zed runs its scheduler under Miri). It has no `unsafe`, so the value
    is low.
+8. **Done (SCHED1b):** settle batch before queued events; see the question below and "Seeds found".
+9. Scripted mode still steps its own way: a checkpoint with a change batch or events delivers them and
+   drains nothing (the next step drains), so in a fixture a settle batch's microtasks can still run after
+   an event handler of the same step. SCHED1b left it unchanged so fixture op logs stay stable; the live
+   checkpoint is what apps run.
+10. `max_jobs_per_checkpoint` is shared by every drain of a checkpoint. A settle drain that uses it up
+    leaves later events without a drain (as a long event drain already could); the leftover jobs run at
+    the next checkpoint.
 
-## Question for the coordinator
+## Question for the coordinator (answered)
+
+**Decided (coordinator, 2026-10-22):** yes. A non-empty settle batch is its own task, and JS jobs drain
+after it, before the first queued event, as in the HTML event loop (a microtask checkpoint after every
+task). REACTIVITY §5.3 now states the drain after each task as the rule. Done in SCHED1b.
 
 **Should settled offload batches be a separate task from queued events?** A checkpoint settles
 completions and progress (`offload::drain`), delivers the change batch, then delivers events with
