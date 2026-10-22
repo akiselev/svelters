@@ -2,8 +2,10 @@
 //! every frame), [`LayoutBox`] (taffy data), [`Payload`] (the kind's behaviour: built-in [`W`] today,
 //! provider widgets from RA1) and the rare, lazily boxed [`NodeCold`] (common props, visual channels,
 //! observation counts). Plus the bit sets [`NodeFlags`] and [`Dirty`], and [`Owner`]. State bits are
-//! RA1's [`StateBits`] (`provider/state.rs`), stored in `NodeCore`; RA1's per-node provider data
-//! ([`ExtBlock`]) is the scene's `ext` column until SG2's per-key columns.
+//! RA1's [`StateBits`] (`provider/state.rs`), stored in `NodeCore`. Provider data ([`ExtKey`]) lives
+//! in one column per key (`ext.rs`, SG2), not here.
+//!
+//! [`ExtKey`]: crate::provider::ExtKey
 //!
 //! [`Node`] is a borrowed read view over the columns of one node, kept for the pre-SG1 read paths
 //! (`with_scene(|s| s.n(h).children)` in tests and the eframe runner).
@@ -150,6 +152,7 @@ macro_rules! bits {
         }
     };
 }
+pub(crate) use bits;
 
 bits! {
     /// Per-node flags. The public ones may be set from Rust ([`crate::scene::NodeMut::set_flags`]);
@@ -333,8 +336,9 @@ pub struct Node<'a> {
     pub vis: Visual,
     /// State bits (RA1).
     pub state: StateBits,
-    /// Provider data (RA1; read with `ext`, `ext_block`).
-    pub ext: &'a ExtBlock,
+    /// Provider data (read with `ext`, `ext_block`): a view of this node's entries in the scene's
+    /// extension columns (SG2).
+    pub ext: ExtBlock<'a>,
     pub rect: egui::Rect,
     pub drawn: egui::Rect,
     pub presented: bool,

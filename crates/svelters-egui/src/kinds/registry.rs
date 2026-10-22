@@ -36,6 +36,8 @@ impl ProviderKind {
 /// `tests/spec.rs`); provider definitions are leaked once, so every definition is `'static`.
 pub struct KindRegistry {
     providers: Vec<ProviderKind>,
+    /// The base kind index of each kind (SG2: member lookups walk the chain without allocating).
+    bases: Vec<Option<usize>>,
 }
 
 static REGISTRY: std::sync::OnceLock<KindRegistry> = std::sync::OnceLock::new();
@@ -56,7 +58,7 @@ impl KindRegistry {
         entries.sort_by_key(|e| e.id);
         let mut providers: Vec<ProviderKind> = Vec::with_capacity(entries.len());
         if entries.is_empty() {
-            return KindRegistry { providers };
+            return KindRegistry { providers, bases: Vec::new() }.with_bases();
         }
         let schema = svelters_host::exports::schema();
         for e in entries {
@@ -109,7 +111,17 @@ impl KindRegistry {
             }));
             providers.push(ProviderKind { entry: e, def, types: leak(types) });
         }
-        KindRegistry { providers }
+        KindRegistry { providers, bases: Vec::new() }.with_bases()
+    }
+
+    fn with_bases(mut self) -> KindRegistry {
+        self.bases = self.indexes().map(|k| self.kind(k).base.map(|b| self.kind_index(b).expect("base kind"))).collect();
+        self
+    }
+
+    /// The kind and its bases, most derived first, without allocating.
+    pub fn chain_iter(&self, kind: usize) -> impl Iterator<Item = usize> + '_ {
+        std::iter::successors(Some(kind), move |&k| self.bases.get(k).copied().flatten())
     }
 
     /// The built-in kinds, by index (provider kinds follow at `KINDS.len() + local`: [`Self::kind`]).
@@ -171,14 +183,7 @@ impl KindRegistry {
 
     /// The kind and its bases, most derived first.
     pub fn chain(&self, kind: usize) -> Vec<usize> {
-        let mut out = vec![kind];
-        let mut k = self.kind(kind);
-        while let Some(b) = k.base {
-            let i = self.kind_index(b).expect("base kind");
-            out.push(i);
-            k = self.kind(i);
-        }
-        out
+        self.chain_iter(kind).collect()
     }
 
     // ---- ids ----
@@ -212,7 +217,7 @@ impl KindRegistry {
 
     /// A property of `kind` (or a base) by name: its id and definition.
     pub fn find_prop(&self, kind: usize, name: &str) -> Option<(u32, &'static PropDef)> {
-        self.chain(kind).into_iter().find_map(|k| {
+        self.chain_iter(kind).find_map(|k| {
             let props = self.kind(k).props;
             props.iter().position(|p| p.name == name).map(|i| (Self::member_id(k, i), &props[i]))
         })
@@ -221,11 +226,11 @@ impl KindRegistry {
     /// The property definition behind an id, if `kind` has it.
     pub fn prop_def(&self, kind: usize, id: u32) -> Option<&'static PropDef> {
         let (owner, i) = self.split(id)?;
-        self.chain(kind).contains(&owner).then(|| self.kind(owner).props.get(i)).flatten()
+        self.chain_iter(kind).any(|k| k == owner).then(|| self.kind(owner).props.get(i)).flatten()
     }
 
     pub fn find_signal(&self, kind: usize, name: &str) -> Option<(u32, &'static SignalDef)> {
-        self.chain(kind).into_iter().find_map(|k| {
+        self.chain_iter(kind).find_map(|k| {
             let signals = self.kind(k).signals;
             signals.iter().position(|s| s.name == name).map(|i| (Self::member_id(k, i), &signals[i]))
         })
@@ -233,11 +238,11 @@ impl KindRegistry {
 
     pub fn signal_def(&self, kind: usize, id: u32) -> Option<&'static SignalDef> {
         let (owner, i) = self.split(id)?;
-        self.chain(kind).contains(&owner).then(|| self.kind(owner).signals.get(i)).flatten()
+        self.chain_iter(kind).any(|k| k == owner).then(|| self.kind(owner).signals.get(i)).flatten()
     }
 
     pub fn find_method(&self, kind: usize, name: &str) -> Option<(u32, &'static MethodDef)> {
-        self.chain(kind).into_iter().find_map(|k| {
+        self.chain_iter(kind).find_map(|k| {
             let methods = self.kind(k).methods;
             methods.iter().position(|m| m.name == name).map(|i| (Self::member_id(k, i), &methods[i]))
         })
@@ -245,12 +250,12 @@ impl KindRegistry {
 
     pub fn method_def(&self, kind: usize, id: u32) -> Option<&'static MethodDef> {
         let (owner, i) = self.split(id)?;
-        self.chain(kind).contains(&owner).then(|| self.kind(owner).methods.get(i)).flatten()
+        self.chain_iter(kind).any(|k| k == owner).then(|| self.kind(owner).methods.get(i)).flatten()
     }
 
     /// The default slot of a container kind (slot id 1; 0 is "default" on the ABI).
     pub fn slot_of(&self, kind: usize) -> Option<&'static str> {
-        self.chain(kind).into_iter().find_map(|k| self.kind(k).slot)
+        self.chain_iter(kind).find_map(|k| self.kind(k).slot)
     }
 
     /// The signal id of `name` on `kind`, or 0.

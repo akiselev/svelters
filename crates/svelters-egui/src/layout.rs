@@ -442,7 +442,15 @@ fn place(s: &mut Scene, top: SceneId, origin: egui::Pos2) -> u64 {
     while let Some((i, o)) = stack.pop() {
         let l = s.layout[i].layout;
         let min = o + vec2(l.location.x, l.location.y);
-        s.core[i].rect = Rect::from_min_size(min, vec2(l.size.width, l.size.height));
+        let rect = Rect::from_min_size(min, vec2(l.size.width, l.size.height));
+        // SG2: `Layout` records, only when an observer wants them
+        if s.journal.wants(crate::scene::ChangeMask::LAYOUT) && s.core[i].rect != rect {
+            let before = s.core[i].rect;
+            if let Some(node) = s.slots.id_at(i) {
+                s.record(crate::scene::Change::Layout { node, before, after: rect }, crate::scene::Origin::Host);
+            }
+        }
+        s.core[i].rect = rect;
         s.core[i].dirty.remove(Dirty::LAYOUT | Dirty::DESC_LAYOUT | Dirty::CHILDREN);
         n += 1;
         for k in 0..s.children[i].len() {
@@ -534,6 +542,13 @@ pub(crate) fn run_root(s: &mut Scene, m: &Metrics, r: RootIx, size: Vec2) -> Opt
         for &b in &bs {
             let o = s.core[b.index() as usize].parent.map(|p| s.core[p.index() as usize].rect.min).unwrap_or(pos2(0.0, 0.0));
             placed += place(s, b, o);
+        }
+    }
+    // SG2: `Damage::relayout` for observers of this root's layout
+    if s.journal.wants(crate::scene::ChangeMask::LAYOUT) {
+        let laid: Vec<SceneId> = if full { vec![top] } else { bs.clone() };
+        for b in laid {
+            s.journal.laid_out(&s.core, b);
         }
     }
     let c = &mut s.counters;

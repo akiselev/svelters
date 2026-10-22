@@ -34,7 +34,7 @@ mod behavior;
 mod pass;
 mod state;
 
-pub use crate::scene::ext::{ExtBlock, ExtEntry, ExtId, ExtKey, Storage};
+pub use crate::scene::ext::{ExtBlock, ExtEntry, ExtId, ExtKey, ExtTicks, Storage};
 pub use state::{IntoStateBits, StateBit, StateBitDef, StateBits, by_name as state_by_name, registry as state_registry};
 
 use crate::scene::{Handle, Node, W};
@@ -285,7 +285,9 @@ pub struct WidgetCx<'a> {
     rect: egui::Rect,
     enabled: bool,
     state: &'a mut StateBits,
-    ext: &'a mut ExtBlock,
+    /// The scene's extension columns and journal (SG2), borrowed apart from the payload being drawn.
+    ext: crate::scene::ext::ExtCx<'a>,
+    node: crate::scene::NodeId,
     entry: &'static KindEntry,
     base: usize,
     changed: Vec<usize>,
@@ -347,10 +349,11 @@ impl WidgetCx<'_> {
 
     /// The node's provider data for `key` (ARCH-EMBED §8.4).
     pub fn ext<T: 'static>(&self, key: &ExtKey<T>) -> Option<&T> {
-        self.ext.get(key)
+        self.ext.cols.get(key, self.node.index())
     }
+    /// The node's entry for `key`; writes are journaled with `Origin::Widget`.
     pub fn ext_mut<'b, T: 'static>(&'b mut self, key: &'b ExtKey<T>) -> ExtEntry<'b, T> {
-        ExtEntry::new(self.ext, key)
+        ExtEntry::new(self.ext.reborrow(), key, self.node, crate::scene::Origin::Widget)
     }
 
     /// Measures the node again before the next layout (its content size changed).
@@ -523,7 +526,9 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
     let entry = wb.entry();
     let base = wb.base();
     let mut state = arena.core[i].state;
-    let mut cx = WidgetCx { id, rect, enabled, state: &mut state, ext: &mut arena.ext[i], entry, base, changed: Vec::new(), emits: Vec::new(), remeasure: false, errors: Vec::new() };
+    // the parts of the scene an ext write touches, disjoint from the payload borrowed above
+    let ext = crate::scene::ext::ExtCx { cols: &mut arena.ext, journal: &mut arena.journal, core: &mut arena.core, roots: &arena.roots, tick: &mut arena.tick, in_batch: arena.in_batch };
+    let mut cx = WidgetCx { id, rect, enabled, state: &mut state, ext, node, entry, base, changed: Vec::new(), emits: Vec::new(), remeasure: false, errors: Vec::new() };
     let mut resp = wb.ui(ui, &mut cx);
     let WidgetCx { changed, emits, remeasure, errors, .. } = cx;
     drop(wb);
@@ -540,9 +545,11 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
         ui.ctx().accesskit_node_builder(resp.id, |n| w.a11y(&acx, n));
     }
     if state != arena.core[i].state {
+        let before = arena.core[i].state;
         arena.core[i].state = state;
         let t = arena.stamp();
         arena.core[i].changed = t;
+        arena.record_state(i, before, crate::scene::Origin::Widget);
     }
     let core = &mut arena.core[i];
     if core.flags.contains(NodeFlags::WANT_FOCUS) {
@@ -557,6 +564,7 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
     }
     for p in changed {
         let prop = reg.provider_prop_id(kind, p);
+        arena.record(crate::scene::Change::Prop { node, prop: crate::scene::PropId(prop), origin: crate::scene::Origin::Widget }, crate::scene::Origin::Widget);
         if arena.observes(i, prop) {
             out.push(Out::Changed(h, prop));
         }

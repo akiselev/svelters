@@ -54,6 +54,8 @@ pub struct SceneStats {
     pub writes_busy: u64,
     pub deferred_run: u64,
     pub announced: u64,
+    /// Live change observers (SG2).
+    pub observers: usize,
 }
 
 /// What [`Scene::dump`] prints besides tag, id and children.
@@ -63,6 +65,10 @@ pub struct DumpOpts {
     pub rects: bool,
     /// Dirty bits and scene flags.
     pub dirty: bool,
+    /// State bits by name (built-ins and provider states).
+    pub state: bool,
+    /// The extension keys present, by name (SG2).
+    pub ext: bool,
 }
 
 impl Scene {
@@ -82,7 +88,8 @@ impl Scene {
             + self.children.capacity() * size_of::<Vec<NodeId>>()
             + self.layout.capacity() * size_of::<LayoutBox>()
             + self.payload.capacity() * size_of::<Payload>()
-            + self.cold.capacity() * size_of::<Option<Box<NodeCold>>>();
+            + self.cold.capacity() * size_of::<Option<Box<NodeCold>>>()
+            + self.ext.bytes();
         for (i, kids) in self.children.iter().enumerate() {
             bytes += kids.capacity() * size_of::<NodeId>();
             if let Some(cold) = &self.cold[i] {
@@ -105,11 +112,12 @@ impl Scene {
             writes_busy: c.writes_busy,
             deferred_run: c.deferred_run,
             announced: c.announced,
+            observers: self.journal.len(),
         }
     }
 
     /// `top`'s subtree, one node per line, indented by depth:
-    /// `<tag> #id [owner] "text" {x y w h} dirty(…) flags(…)`.
+    /// `<tag> #id [owner] "text" {x y w h} dirty(…) flags(…) state(…) ext(…)`.
     pub(crate) fn dump(&self, top: NodeId, opts: DumpOpts) -> String {
         let mut out = String::new();
         if self.idx(top).is_none() {
@@ -147,6 +155,13 @@ impl Scene {
                 if self.is_boundary(i) {
                     out.push_str(" boundary");
                 }
+            }
+            if opts.state && c.state != crate::provider::StateBits::NONE {
+                out.push_str(&format!(" state({})", c.state.names().join("|")));
+            }
+            if opts.ext && self.ext.has_any(i as u32) {
+                let names: Vec<&str> = self.ext.ids_at(i as u32).map(|k| k.name()).collect();
+                out.push_str(&format!(" ext({})", names.join(",")));
             }
             out.push('\n');
             for &k in self.children[i].iter().rev() {

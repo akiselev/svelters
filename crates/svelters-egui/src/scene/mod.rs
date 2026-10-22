@@ -16,7 +16,9 @@
 //! | `dirty.rs` | dirty bits, layout boundaries, per-root queues |
 //! | `access.rs` | [`SceneHandle`], [`SceneRef`], [`NodeRef`], [`SceneMut`], [`NodeMut`], errors |
 //! | `dump.rs` | [`SceneRef::dump`], [`SceneStats`] |
-//! | `ext.rs`, `journal.rs`, `query.rs`, `hit.rs`, `virt.rs` | seams for SG2–SG5 |
+//! | `ext.rs` | [`ExtKey`] and one typed column per key (sparse or dense), [`ExtEntry`], [`ExtTicks`] (SG2) |
+//! | `journal.rs` | [`Change`], [`Observer`], [`ChangeFilter`], [`ChangeSet`], [`Damage`] (SG2) |
+//! | `query.rs`, `hit.rs`, `virt.rs` | seams for SG3–SG5 |
 //!
 //! Writer lane: SCENE.
 
@@ -28,6 +30,8 @@ pub(crate) mod hit;
 pub(crate) mod id;
 pub mod keys;
 pub(crate) mod journal;
+#[cfg(test)]
+mod journal_tests;
 pub(crate) mod node;
 pub(crate) mod props;
 pub(crate) mod query;
@@ -37,17 +41,20 @@ pub(crate) mod tree;
 pub(crate) mod virt;
 
 pub use access::{Children, Descendants, NodeMut, NodeRef, Origin, PropError, SceneBusy, SceneError, SceneHandle, SceneMut, SceneRef};
+pub use journal::{Change, ChangeFilter, ChangeMask, ChangeSet, Damage, ExtChange, Observer, OriginMask, RootChange, Scope};
 pub use dump::{DumpOpts, SceneStats};
 pub use id::{Handle, KindId, NodeId, PropId, ProviderId, RootIx, Target, Tick, VNodeId};
 pub use keys::{PropKey, PropValue};
-pub use crate::provider::{ExtBlock, ExtEntry, ExtId, ExtKey, IntoStateBits, StateBits};
+pub use crate::provider::{ExtBlock, ExtEntry, ExtId, ExtKey, ExtTicks, IntoStateBits, StateBit, StateBits, Storage};
 pub use node::{Common, Dirty, Node, NodeFlags, Owner, Visual, W};
 pub use props::{default_value, get_prop, set_prop, tag_of};
 pub use tree::TreeRoot;
 
 use crate::kinds;
 use dump::Counters;
+use ext::{ExtColumns, ExtCx};
 use id::SlotTable;
+use journal::Journal;
 use node::{DEFAULT_COLD, LayoutBox, NodeCold, NodeCore, Payload};
 use std::sync::OnceLock;
 use tree::RootTable;
@@ -77,8 +84,10 @@ pub struct Scene {
     pub(crate) layout: Vec<LayoutBox>,
     pub(crate) payload: Vec<Payload>,
     pub(crate) cold: Vec<Option<Box<NodeCold>>>,
-    /// RA1's per-node provider data (`ExtKey`); SG2 turns it into one column per key.
-    pub(crate) ext: Vec<ExtBlock>,
+    /// Provider data: one column per `ExtKey` (SG2).
+    pub(crate) ext: ExtColumns,
+    /// Change records for observers (SG2).
+    pub(crate) journal: Journal,
     pub(crate) roots: RootTable,
     pub(crate) tick: u64,
     pub(crate) in_batch: bool,
@@ -97,7 +106,8 @@ impl Default for Scene {
             layout: Vec::new(),
             payload: Vec::new(),
             cold: Vec::new(),
-            ext: Vec::new(),
+            ext: ExtColumns::default(),
+            journal: Journal::default(),
             roots: RootTable::default(),
             tick: 0,
             in_batch: false,
@@ -132,6 +142,51 @@ impl Scene {
             self.tick += 1;
         }
         id::Tick(self.tick)
+    }
+
+    // ---- journal ----
+
+    /// Journals `c`, written by `origin`, if a live observer could want it (one mask test when none
+    /// does). Every node `c` names must still be live.
+    #[inline]
+    pub(crate) fn record(&mut self, c: journal::Change, origin: Origin) {
+        if self.journal.wants(c.mask()) {
+            self.journal.record(&self.core, &self.roots, c, origin, self.tick);
+        }
+    }
+
+    /// Journals a state change of node `i` (by the union of the observers' state-bit interests).
+    pub(crate) fn record_state(&mut self, i: usize, before: StateBits, origin: Origin) {
+        let after = self.core[i].state;
+        if self.journal.wants_state(before, after)
+            && let Some(node) = self.slots.id_at(i)
+        {
+            self.journal.record(&self.core, &self.roots, journal::Change::State { node, before, after }, origin, self.tick);
+        }
+    }
+
+    /// The disjoint parts an extension write needs.
+    pub(crate) fn ext_cx(&mut self) -> ExtCx<'_> {
+        ExtCx { cols: &mut self.ext, journal: &mut self.journal, core: &mut self.core, roots: &self.roots, tick: &mut self.tick, in_batch: self.in_batch }
+    }
+
+    /// Enters an explicit batch (one tick, one `Change::Batch` marker): returns whether it is the
+    /// outermost one, to pass to [`Scene::end_batch`].
+    pub(crate) fn begin_batch(&mut self, label: &'static str) -> bool {
+        if self.in_batch {
+            return false;
+        }
+        self.tick += 1;
+        self.in_batch = true;
+        self.journal.batch = Some(label);
+        true
+    }
+
+    pub(crate) fn end_batch(&mut self, outer: bool) {
+        if outer {
+            self.in_batch = false;
+            self.journal.batch = None;
+        }
     }
 
     // ---- columns ----
@@ -222,7 +277,7 @@ impl Scene {
             w: self.w(i),
             vis: self.vis(i),
             state: c.state,
-            ext: &self.ext[i],
+            ext: ExtBlock::new(&self.ext, i as u32),
             rect: c.rect,
             drawn: c.drawn,
             presented: c.flags.contains(NodeFlags::PRESENTED),
@@ -269,7 +324,7 @@ impl Scene {
         let mut live = 0;
         for i in 0..self.slots.capacity() {
             let Some(id) = self.slots.id_at(i) else {
-                if !matches!(self.payload[i], Payload::Vacant) || !self.children[i].is_empty() || self.cold[i].is_some() || !self.ext[i].is_empty() {
+                if !matches!(self.payload[i], Payload::Vacant) || !self.children[i].is_empty() || self.cold[i].is_some() || self.ext.has_any(i as u32) {
                     errs.push(format!("free slot {i} keeps data"));
                 }
                 continue;
@@ -357,6 +412,11 @@ impl Scene {
                 }
             } else if c.flags.intersects(NodeFlags::IN_RELAYOUT | NodeFlags::IN_REMEASURE) {
                 errs.push(format!("{id}: detached but queued {:?}", c.flags));
+            }
+        }
+        for (k, id) in self.ext.entries() {
+            if self.idx(id).is_none() {
+                errs.push(format!("ext {}: entry of a freed node {id}", k.name()));
             }
         }
         if live != self.len() {

@@ -116,7 +116,7 @@ fn layout_oracle(s: &mut Scene, m: &Metrics, size: egui::Vec2, ctx: &str) {
         let fresh = s.core[s.ix(id)].rect;
         if fresh != incremental[k] {
             let top = s.roots.get(s.core[s.ix(id)].root).unwrap().top;
-            panic!("{ctx}: {id} <{}> incremental {:?} != from scratch {fresh:?}\n{}", s.tag_at(s.ix(id)), incremental[k], s.dump(top, DumpOpts { rects: true, dirty: true }));
+            panic!("{ctx}: {id} <{}> incremental {:?} != from scratch {fresh:?}\n{}", s.tag_at(s.ix(id)), incremental[k], s.dump(top, DumpOpts { rects: true, dirty: true, ..Default::default() }));
         }
     }
 }
