@@ -86,6 +86,9 @@ GitHub CI is the gate.
   (`set_own_widgets(KindSet::None)`); `tests/style_text.rs` pins its button checks to the wrapper. The own button's
   typography is OW0's (not checked here). In `layout.rs::remeasure`, CS5f's styled metrics go through OW0's
   `intrinsic_with`, the same way the tree measure does.
+- **`style::content_rect` after SG6.** SG6 stores no resolved padding per node, so `content_rect` resolves the
+  leaf's taffy padding itself (`ResolveOrZero`, `%`/`calc()` against the parent's content width, as taffy does for a
+  flex child). RT2: a restyled rich run goes to `rich::touched`; other leaves take CS5f's measured-props check.
 - **Provider (`Ext`) leaves get no CSS font or padding.** Their measure and paint are the provider's own (RA1). A
   provider can read `EguiBackend::computed_style`.
 - **The collapsing header's caption** is not restyled (it is a container; its header font is the global one).
