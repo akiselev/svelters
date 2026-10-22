@@ -666,12 +666,18 @@ pub(crate) fn before_container(s: &mut Scene, i: usize, r: egui::Rect, ui: &egui
 /// widget paints this pass's state.
 pub(crate) fn set_own_state(s: &mut Scene, i: usize, bits: StateBits) {
     let before = s.core[i].state;
+    if !s.style.active {
+        // no cascade: the bits are kept for the widget (and queries), but nothing restyles, and
+        // interaction bits are not journaled, as for the stock leaves (no extra frames)
+        s.core[i].state = bits;
+        return;
+    }
     if bits != before {
         s.core[i].state = bits;
         let t = s.stamp();
         s.core[i].changed = t;
         s.core[i].dirty.insert(Dirty::PAINT);
-        s.record_state(i, before, SceneOrigin::Widget);
+        s.record_state(i, before, SceneOrigin::Style); // as the walk's bits: restyled here, not at the logic step
     }
     if !s.style.active {
         return;
