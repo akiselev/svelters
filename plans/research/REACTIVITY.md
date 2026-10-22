@@ -568,13 +568,24 @@ compare problem.
 
 ```text
 native change ──prop_changed──▶ dirty set ──wake──▶ checkpoint:
+   0.  settle offloaded calls; drain        (only if any settled: onProgress, results; a task of its own)
    1a. read + compare + build batch         (native only)
    1b. __svelters_changed(batch)            (subscribers' update(): version bumps, no flush yet)
-   1c. queued signal events, as today       (handlers see the new state)
+   1c. first queued signal event            (handlers see the new state)
    2.  drain: Svelte flushes once           (effects re-run, read live, emit ops)
+   2b. each further event, then a drain; due timers: a drain before the first and after each
    3.  ops applied; next wake if work remains
 ```
 
+- **A job drain after every task is the rule** (Decided (coordinator, 2026-10-22), SCHED1b). A task is a
+  settle batch (step 0), an event, or a timer callback. As in the HTML event loop's microtask checkpoint
+  after every task, the microtasks one task queued run before the next task starts. The one exception is
+  1b: the change batch and the first event share one drain, so handlers see the new state and Svelte
+  flushes once. SCHED1's seeded schedules found both violations of the rule in the live checkpoint: a
+  due timer (SCHED1) and a queued event (SCHED1b) ran between a worker's `onProgress` and the microtask
+  it queued. Tests: `timers_race_promises_and_completions` and
+  `progress_microtasks_run_before_a_queued_event` (`crates/svelters/tests/sched.rs`). Scripted fixtures
+  keep their own stepping: an event step drains nothing, and the next step drains.
 - **Latency:** one main-loop turn after the native change, the same as `on*` handlers.
 - **JS writes then reads in the same turn:** the getter reads live, so it is consistent.
 - **Native changes while JS runs** (a host op emits notify synchronously) are only marked dirty. They
