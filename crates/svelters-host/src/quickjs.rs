@@ -159,6 +159,11 @@ pub(crate) struct QjsEngine {
     rt: Runtime,
     base: Instant,
     deadline_ns: Arc<AtomicU64>,
+    /// Set by the interrupt handler when it stopped a script at `deadline_ns` (not for the external
+    /// flag); `disarm` turns it into `Core::last_interrupt`.
+    deadline_hit: Arc<AtomicBool>,
+    /// The budget `arm` armed (for `Core::last_interrupt`).
+    armed_budget: std::cell::Cell<Option<Duration>>,
     async_errors: Rc<RefCell<Vec<JsError>>>,
     core: Rc<Core>,
     callbacks: Rc<QjsCallbacks>,
@@ -202,15 +207,21 @@ impl QjsEngine {
 
         let base = Instant::now();
         let deadline_ns = Arc::new(AtomicU64::new(0));
+        let deadline_hit = Arc::new(AtomicBool::new(false));
         {
             let dl = deadline_ns.clone();
+            let hit = deadline_hit.clone();
             let flag: Arc<AtomicBool> = core.interrupt.clone();
             rt.set_interrupt_handler(Some(Box::new(move || {
                 if flag.swap(false, Ordering::Relaxed) {
                     return true;
                 }
                 let d = dl.load(Ordering::Relaxed);
-                d != 0 && base.elapsed().as_nanos() as u64 >= d
+                let stop = d != 0 && base.elapsed().as_nanos() as u64 >= d;
+                if stop {
+                    hit.store(true, Ordering::Relaxed);
+                }
+                stop
             })));
         }
 
@@ -260,6 +271,8 @@ impl QjsEngine {
             rt,
             base,
             deadline_ns,
+            deadline_hit,
+            armed_budget: std::cell::Cell::new(None),
             async_errors,
             core: core.clone(),
             callbacks,
@@ -271,16 +284,21 @@ impl QjsEngine {
     }
 
     fn arm(&self) {
-        let d = self
-            .core
-            .budget
-            .get()
-            .map_or(0, |b| (self.base.elapsed() + b).as_nanos() as u64);
+        let budget = self.core.budget.get();
+        let d = budget.map_or(0, |b| (self.base.elapsed() + b).as_nanos() as u64);
+        self.armed_budget.set(budget);
+        self.deadline_hit.store(false, Ordering::Relaxed);
         self.deadline_ns.store(d, Ordering::Relaxed);
     }
 
     fn disarm(&self) {
-        self.deadline_ns.store(0, Ordering::Relaxed);
+        let d = self.deadline_ns.swap(0, Ordering::Relaxed);
+        if self.deadline_hit.swap(false, Ordering::Relaxed) && d != 0 {
+            let late = Duration::from_nanos((self.base.elapsed().as_nanos() as u64).saturating_sub(d));
+            if let Some(budget) = self.armed_budget.get() {
+                self.core.last_interrupt.set(Some(crate::core::BudgetInterrupt { budget, late }));
+            }
+        }
     }
 
     fn call_guarded<R>(&self, f: impl for<'js> FnOnce(&Ctx<'js>) -> Res<R>) -> Result<R, JsError> {
