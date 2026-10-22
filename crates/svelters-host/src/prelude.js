@@ -22,9 +22,11 @@
     trace: logger('trace'),
   };
 
-  if (typeof global.performance === 'undefined') {
-    global.performance = { now: () => native.now() };
-  }
+  // Always ours: QuickJS-NG installs its own `performance` (wall clock, `now` not writable), which
+  // would keep scripted hosts' animations on wall time while their frames fire on the virtual clock
+  // (a transition then outlasts `max_virtual_timer_fires` on a fast machine). `native.now()` is the
+  // virtual clock in scripted mode and the wall clock otherwise.
+  global.performance = { now: () => native.now() };
 
   if (typeof global.queueMicrotask !== 'function') {
     global.queueMicrotask = (cb) => {
