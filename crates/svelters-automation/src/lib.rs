@@ -17,14 +17,22 @@
 //! - [`Session::call`]: the same methods as JSON (`scene.query {selector}` …), the schema AU2's
 //!   IPC transport and cadatomic's socket server carry unchanged.
 //!
+//! - **Out of process** (AU2): [`server::Server`] carries [`Session::call`] unchanged as NDJSON
+//!   JSON-RPC 2.0 ([`rpc`]) over a local socket, on IO threads the UI thread never waits for;
+//!   [`client::Client`] and [`client::App`] are its Rust side, `svelters-run` (feature `run`) the
+//!   headless reference host.
+//!
 //! **Off by default** (the user's decision, §6 Q1): nothing answers until the app calls
 //! [`enable`] (cadatomic: its settings page; tests: [`Session::for_test`]), and each session gets
 //! only the [`Grants`] it is given.
 
+pub mod client;
 pub mod driver;
 pub mod engine;
 pub mod role;
+pub mod rpc;
 pub mod selector;
+pub mod server;
 mod session;
 mod snapshot;
 

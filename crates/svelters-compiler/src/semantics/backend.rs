@@ -236,11 +236,15 @@ impl PlatformSemantics for SpecBackend {
 
     fn bind_modifiers(&self) -> &[&'static str] {
         // the DOM conformance spec has no native bindings to opt out of
-        if self.spec.html_syntax { &[] } else { &["nonreactive"] }
+        if self.spec.html_syntax { &[] } else { &["nonreactive", "commit"] }
     }
 
     fn native_type(&self, module: &str, export: &str) -> Option<TypeRef> {
         self.types.as_ref()?.native_type(module, export)
+    }
+
+    fn bind_source(&self, module: &str, export: &str, lowering: super::spec::BindSourceLowering) -> Option<&super::spec::BindSourceSpec> {
+        self.spec.bind_sources.iter().find(|b| b.lowering == lowering && b.matches(module, export))
     }
 
     fn type_property(&self, ty: &TypeRef, prop: &str) -> Option<TypeProp> {
@@ -346,6 +350,7 @@ impl PlatformSemantics for SpecBackend {
                 read_back: b.read_back,
                 natively_normalizes: b.natively_normalizes,
                 sync_signals_on_set: b.sync_signals_on_set.clone(),
+                commit: b.commit.as_ref().map(|c| (c.event.clone(), c.arg)),
             });
         }
         let prop = name;

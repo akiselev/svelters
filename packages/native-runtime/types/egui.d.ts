@@ -200,6 +200,10 @@ export interface EguiElements {
     'ongained-focus'?: () => void;
     /** Lost keyboard focus. */
     'onlost-focus'?: () => void;
+    /** The user committed the text: Enter in a one-line field (also when a default button takes it), or losing focus after an edit since the last commit; carries the text. */
+    oncommit?: (text: string) => void;
+    /** Enter in a one-line field (also when a default button takes it); carries the text. Fires after `commit`. */
+    onsubmit?: (text: string) => void;
   };
   /** A horizontal slider with an optional value box. */
   slider: EguiWidgetProps & {
@@ -451,6 +455,8 @@ export interface EguiElements {
     'ondrag-started'?: () => void;
     /** A drag on it ended. */
     'ondrag-stopped'?: () => void;
+    /** The user committed a value: a drag ended, or a change made otherwise (arrow keys, a typed value applied on Enter or blur); carries the value. */
+    oncommit?: (value: number) => void;
   };
   /** A side or top/bottom panel: a flex box with the panel background and a separator on its inner edge, optionally resizable. Place it at the edge of a row (left/right) or column (top/bottom). */
   panel: EguiWidgetProps & {

@@ -177,9 +177,7 @@ fn kind_json(k: &KindDef) -> J {
                 // `value` derives `checked` from `group`
                 || matches!(p.key, kinds::P::Low | kinds::P::High)
                 || (k.id == "RadioButton" && p.key == kinds::P::Checked);
-            (
-                p.name.to_string(),
-                json!({
+            let mut b = json!({
                     "compare_before_set": true,
                     "direction": "two_way",
                     "echo": "none",
@@ -191,8 +189,17 @@ fn kind_json(k: &KindDef) -> J {
                     "read_back": normalizes,
                     "sync_signals_on_set": [],
                     "value": {"arg": arg},
-                }),
-            )
+                });
+            // CX3: `bind:<prop>|commit` updates its source on the kind's `commit` signal when it has
+            // the change event's shape (the coordinator's seam: the committed value where the change
+            // event carries the live one). A `commit` of another shape (a table's cell edit) is not
+            // a commit of this prop.
+            if let (Some(c), Some(s)) = (k.signals.iter().find(|s| s.name == "commit"), sig)
+                && c.args == s.args
+            {
+                b["commit"] = json!({"event": "commit", "arg": arg});
+            }
+            (p.name.to_string(), b)
         })
         .collect();
     let children = k.slot.map(|slot| {
@@ -401,6 +408,14 @@ pub fn semantics() -> J {
     let tags: Map<String, J> = KINDS.iter().filter_map(|k| k.tag.map(|t| (t.to_string(), json!(k.id)))).collect();
     json!({
         "backend": "egui",
+        // CX3: the lowering table. `bind:prop={store.field}` on a Rust store (E3) is a native link in
+        // the host (`host.link`): no JS per change. Draft sources come from provider fragments.
+        "bind_sources": [{
+            "doc": "A writable field of a Rust store (#[svelters::store]) bound to a native prop: linked in the host, both ways, with no JS per change.",
+            "export": "*",
+            "lowering": "link",
+            "module": "svelters:app/*",
+        }],
         "event_aliases": {},
         "framework": "egui 0.37 (svelters-egui; taffy 0.15 layout)",
         // RT2: text mixed with runs in a `label` lowers to `span` runs (`kinds/rich.rs`)
@@ -525,7 +540,7 @@ pub fn fragment() -> J {
             (p.entry.id.to_string(), j)
         })
         .collect();
-    json!({
+    let mut f = json!({
         "backend": "egui",
         "behaviors": behaviors,
         "caps": caps,
@@ -534,7 +549,18 @@ pub fn fragment() -> J {
         "schema": "svelters-semantics/v0",
         "source": {"generator": "crates/svelters-egui/src/spec.rs (svelters_egui::dump)"},
         "tags": tags,
-    })
+    });
+    // CX3: draft bind sources the app's crates declare (only when there are any, so a fragment of
+    // kinds alone is unchanged)
+    let mut sources: Vec<&crate::provider::BindSourceDef> = inventory::iter::<crate::provider::BindSourceDef>.into_iter().collect();
+    sources.sort_by_key(|b| (b.module, b.export));
+    if !sources.is_empty() {
+        f["bind_sources"] = sources
+            .iter()
+            .map(|b| json!({"doc": b.doc, "export": b.export, "get": b.get, "lowering": "draft", "module": b.module, "set": b.set}))
+            .collect();
+    }
+    f
 }
 
 /// [`fragment`] as written to `kinds.json`.
