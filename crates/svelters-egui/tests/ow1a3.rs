@@ -171,3 +171,56 @@ fn ow1a3_part_rules_paint_the_indicator_kinds() {
         assert_eq!(part_fill(&rig, h, part, *kind), Some(red), "{tag}::part({part}) {{ {prop} }}");
     }
 }
+
+use svelters_egui::provider::{AvailableSpace, FocusStop, MeasureCx, Widget, WidgetCx};
+
+/// A test-only provider kind with three focusable parts (it replaces `menu-separator` in this
+/// test binary only): two tab stops with the role `Tab`, and one that Tab skips.
+#[svelters::widget(namespace = "t", replaces = "menu-separator")]
+pub struct ThreeStops {}
+
+impl Widget for ThreeStops {
+    fn measure(&mut self, _cx: &mut MeasureCx<'_>, _avail: AvailableSpace) -> egui::Vec2 {
+        egui::vec2(90.0, 20.0)
+    }
+    fn ui(&mut self, ui: &mut egui::Ui, cx: &mut WidgetCx<'_>) -> egui::Response {
+        let r = cx.rect();
+        for (k, name) in ["one", "two", "three"].into_iter().enumerate() {
+            let pr = egui::Rect::from_min_size(r.min + vec2(30.0 * k as f32, 0.0), vec2(30.0, r.height()));
+            let resp = ui.interact(pr, cx.id().with(name), egui::Sense::click());
+            resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Unknown, true, name));
+            if resp.clicked() {
+                resp.request_focus();
+            }
+            cx.focus_stop(ui, &resp, FocusStop::new(egui::accesskit::Role::Tab).tab_stop(k < 2));
+        }
+        ui.interact(r, cx.id(), egui::Sense::hover())
+    }
+}
+
+#[test]
+fn ow1a3_a_provider_kind_registers_focus_stops_with_a_role() {
+    use egui_kittest::kittest::Queryable;
+    let mut rig = Rig::new();
+    rig.backend.set_own_widgets(svelters_egui::widgets::KindSet::All);
+    let (_w, col) = rig.window();
+    let h = rig.leaf(col, "menu-separator", &[]);
+    rig.run();
+    assert!(own(&rig, h));
+    let focused = |rig: &Rig| ["one", "two", "three"].into_iter().find(|n| rig.harness.get_by_role_and_label(egui::accesskit::Role::Tab, n).is_focused());
+    rig.harness.key_press(egui::Key::Tab);
+    rig.run();
+    assert_eq!(focused(&rig), Some("one"), "Tab reaches the first stop, an AccessKit Tab");
+    rig.harness.key_press(egui::Key::Tab);
+    rig.run();
+    assert_eq!(focused(&rig), Some("two"));
+    // a click focuses a stop Tab skips (Tab skips it in EV3's scoped chains: dialogs, scopes)
+    let three = rig.harness.get_by_role_and_label(egui::accesskit::Role::Tab, "three").rect();
+    let at = three.center();
+    rig.harness.hover_at(egui::pos2(at.x as f32, at.y as f32));
+    for pressed in [true, false] {
+        rig.harness.event(Event::PointerButton { pos: egui::pos2(at.x as f32, at.y as f32), button: PointerButton::Primary, pressed, modifiers: Modifiers::NONE });
+    }
+    rig.run();
+    assert_eq!(focused(&rig), Some("three"));
+}
