@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Runs a command in the Windows clone of this repo from WSL: the WSL PC builds and tests Windows targets.
+#
+#   tools/dev/win sync                                   # bring this checkout's branch into the clone
+#   tools/dev/win cargo test -p counter-win --test counter
+#   tools/dev/win cargo check -p svelters-conformance --tests
+#   tools/dev/win '$env:NA_UPDATE=1; cargo test -p svelters-conformance --test win_capture'
+#
+# The clone is a plain git.exe clone on the Windows filesystem (SVELTERS_WIN_CLONE, default
+# C:\Users\dev\projects\svelters-win): building through \\wsl$ or from /mnt/c paths into WSL's filesystem is slow
+# and breaks builds. `sync` fetches the current branch from this checkout's git directory (so unpushed commits
+# arrive) and fast-forwards the clone to it; it never resets or discards anything there.
+#
+# The arguments are one PowerShell command line, run in the clone. A cargo build or test takes one of the
+# machine's build slots through tools/dev/cargo-slot (the Windows compiler shares the same cores), and cargo.exe
+# gets the slot's job count; cargo check/clippy/metadata/tree take no slot and run with 3 jobs.
+set -euo pipefail
+here=$(cd "$(dirname "$0")/../.." && pwd)
+clone=${SVELTERS_WIN_CLONE:-'C:\Users\dev\projects\svelters-win'}
+ps=${SVELTERS_WIN_POWERSHELL:-/mnt/c/Windows/System32/WindowsPowerShell/v1.0/powershell.exe}
+
+run_ps() {
+  # From a Windows path: a WSL cwd becomes a UNC working directory for powershell.exe.
+  cd /mnt/c
+  export WSLENV=${WSLENV:+$WSLENV:}CARGO_BUILD_JOBS
+  exec "$ps" -NoProfile -NonInteractive -Command "\$ErrorActionPreference='Continue'; Set-Location '$clone'; $*; exit \$LASTEXITCODE"
+}
+
+if [ "${1:-}" = --in-slot ]; then
+  shift
+  run_ps "$@"
+fi
+
+if [ "${1:-}" = sync ]; then
+  branch=$(git -C "$here" rev-parse --abbrev-ref HEAD)
+  common=$(cd "$here" && cd "$(git rev-parse --git-common-dir)" && pwd)
+  src=$(wslpath -w "$common")
+  run_ps "git -c safe.directory='*' fetch --quiet '$src' 'refs/heads/${branch}:refs/remotes/wsl/${branch}'; if (\$LASTEXITCODE) { exit \$LASTEXITCODE }; git switch --quiet '$branch' 2>\$null; if (\$LASTEXITCODE) { git switch --quiet -c '$branch' 'wsl/$branch' }; git merge --ff-only --quiet 'wsl/$branch'; git log --oneline -1"
+fi
+
+if [ "${1:-}" = cargo ] && [[ "${2:-}" =~ ^(check|clippy|metadata|tree|locate-project)$ ]]; then
+  export CARGO_BUILD_JOBS=${CHECK_JOBS:-3}
+  run_ps "$@"
+fi
+if [ "${1:-}" = cargo ] || [[ "$*" == *cargo\ * ]]; then
+  exec "$here/tools/dev/cargo-slot" "$0" --in-slot "$@"
+fi
+run_ps "$@"
