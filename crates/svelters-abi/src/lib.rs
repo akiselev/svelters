@@ -115,6 +115,11 @@ pub const SVL_STYLE_TRANSFORM: u32 = 8;
 pub const SVL_STYLE_CLIP: u32 = 9;
 /// ABI v2.8 (TR1): `"1"`: no pointer input or focus (an outroing element); `None` restores.
 pub const SVL_STYLE_INERT: u32 = 10;
+/// ABI v2.9 (TR2): an animation's keyframes and timing, sent once: JSON `{"id":n,"duration":ms,
+/// "delay":ms,"frames":[{"opacity":o,"transform":[6],"clip":[2]},..]}`, or `{"id":n,"cancel":true}`.
+/// The backend interpolates and reports the end with the `animationend` signal (argument: the id).
+/// A backend without it refuses the op (an error) and the runtime plays the animation itself.
+pub const SVL_STYLE_ANIMATE: u32 = 11;
 /// `SVL_STYLE_TARGET` answers: the dialect the backend's sheets use.
 pub const SVL_STYLE_TARGET_NONE: i32 = 0;
 pub const SVL_STYLE_TARGET_CSS: i32 = 1;
