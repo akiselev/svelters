@@ -462,6 +462,13 @@ impl Core {
         }
     }
 
+    /// `performance.now()` in scripted mode: the virtual clock in milliseconds, so animations
+    /// (TR1) advance with the virtual 16 ms frames instead of the wall clock and end after a fixed
+    /// number of frames. `None` outside scripted mode (wall time).
+    pub(crate) fn virtual_ms(&self) -> Option<f64> {
+        self.cfg.scripted.then(|| self.vnow.get().as_secs_f64() * 1000.0)
+    }
+
     pub(crate) fn backend(&self) -> BackendRef<'static> {
         self.backend
     }
