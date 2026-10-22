@@ -84,9 +84,9 @@ pub struct Icon {
     size: Option<f64>,
     #[prop(measure, default = 400)]
     font_weight: i64,
-    /// AS1: an image instead of a glyph.
+    /// AS1: an image instead of a glyph (null: none).
     #[prop(measure)]
-    source: String,
+    source: Option<String>,
     /// With `source`: tinted with the colour.
     #[prop(default = true)]
     tint: bool,
@@ -121,10 +121,13 @@ impl Icon {
     fn ua(&self) -> Ua {
         if self.frame { button::UA } else { ICON_UA }
     }
+    fn src(&self) -> &str {
+        self.source.as_deref().unwrap_or("")
+    }
     /// The glyph's side or text size under `s`.
     fn content(&self, ctx: &egui::Context, s: &paint::StyleView<'_>) -> (Vec2, Option<(egui::FontId, String)>) {
         let size = self.size.filter(|v| v.is_finite() && *v > 0.0).or(Some(f64::from(s.font_size())));
-        if !self.source.is_empty() {
+        if !self.src().is_empty() {
             return (Vec2::splat(size.unwrap_or(16.0) as f32), None);
         }
         match crate::fonts::icon_look(ctx, &ctx.global_style(), &self.family, &self.name, &self.glyph, self.font_weight, size) {
@@ -188,9 +191,9 @@ impl Widget for Icon {
             let (csize, glyph) = self.content(ui.ctx(), &host);
             let mut pc = cx.paint_cx(ui);
             let r = Rect::from_center_size(content.center(), csize.min(content.size().max(Vec2::ZERO)).max(Vec2::splat(1.0)));
-            if !self.source.is_empty() {
+            if !self.src().is_empty() {
                 let tint = if self.tint { color } else { egui::Color32::WHITE };
-                if !paint_source(&mut pc, ui.ctx(), &self.source, "contain", r, tint) && crate::elements::media::image_size(ui.ctx(), &self.source).is_none() {
+                if !paint_source(&mut pc, ui.ctx(), self.src(), "contain", r, tint) && crate::elements::media::image_size(ui.ctx(), self.src()).is_none() {
                     let pv = paint::StyleView::ua_only(PLACEHOLDER_UA, host.state(), host.is_dark());
                     placeholder(&mut pc, r, r.width().min(r.height()), pv.color("color").unwrap_or(color), false);
                 }

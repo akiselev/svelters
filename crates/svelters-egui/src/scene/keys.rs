@@ -87,6 +87,8 @@ macro_rules! field {
             fn g<'a>(_: &'a Common, w: &'a W) -> Option<&'a $T> {
                 match w {
                     W::$V { $f, .. } => Some($f),
+                    // OW1a2: an own widget's `text`, through its text mirror
+                    W::Ext(x) if $name == "text" => (x.text_string() as &dyn std::any::Any).downcast_ref::<$T>(),
                     _ => None,
                 }
             }

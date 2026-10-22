@@ -914,6 +914,10 @@ impl ExtWidget {
     pub fn text(&self) -> &str {
         &self.1
     }
+    /// [`Self::text`], as the `String` typed keys read (`scene::keys`).
+    pub(crate) fn text_string(&self) -> &String {
+        &self.1
+    }
     pub fn entry(&self) -> &'static KindEntry {
         self.0.borrow().entry()
     }
