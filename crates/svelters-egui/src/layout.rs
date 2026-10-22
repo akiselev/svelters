@@ -364,7 +364,7 @@ impl Metrics {
             }
             W::Box | W::Window { .. } | W::Grid { .. } | W::VirtualList(_) => Vec2::ZERO,
             // ---- WG2a ----
-            W::Menu(x) => crate::menus::measure(self, x),
+            W::Menu(x) => crate::menus::measure(self, x, css),
             W::Overlay(_) => Vec2::ZERO,
             W::Ext(x) => x.measure(self, crate::provider::AvailableSpace::MaxContent, css, parts),
             // ---- WG2b (`crate::elements`) ----

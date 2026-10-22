@@ -70,7 +70,8 @@ pub(crate) fn container(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: 
             if !c.tooltip.is_empty() {
                 // hover only: it takes no clicks from the children drawn over it
                 let tip = c.tooltip.clone();
-                ui.interact(r, arena.core[i].egui_id.with("tip"), Sense::hover()).on_hover_text(tip);
+                let tr = ui.interact(r, arena.core[i].egui_id.with("tip"), Sense::hover());
+                crate::widgets::tooltip::attach(ui, &tr, &tip, arena.own.contains("tooltip")); // OW3
             }
             if arena.common(i).invalid {
                 invalid_outline(ui, r);
@@ -117,7 +118,8 @@ fn collapsing(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, o
     let mut resp = crate::a11y::decorate(resp, &arena.n(node.to_raw()));
     let c = arena.common(i);
     if !c.tooltip.is_empty() {
-        resp = resp.on_hover_text(c.tooltip.clone());
+        let own = arena.own.contains("tooltip");
+        resp = crate::widgets::tooltip::attach(ui, &resp, &arena.common(i).tooltip, own); // OW3
     }
     if arena.common(i).invalid {
         invalid_outline(ui, hr);
@@ -358,7 +360,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     };
     let mut resp = crate::a11y::decorate(resp, &arena.n(h));
     if !arena.common(i).tooltip.is_empty() {
-        resp = resp.on_hover_text(arena.common(i).tooltip.clone());
+        resp = crate::widgets::tooltip::attach(ui, &resp, &arena.common(i).tooltip, arena.own.contains("tooltip")); // OW3
     }
     if arena.common(i).invalid {
         invalid_outline(ui, resp.rect);

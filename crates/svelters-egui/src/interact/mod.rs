@@ -21,14 +21,19 @@
 //! Disabled hosts: units other than [`Hoverable`] produce no intents (R9: disabled controls stay
 //! hoverable). Writer lane: OW.
 
+pub mod anchor;
+pub mod dismiss;
 mod expand;
 mod focus;
 mod hover;
 mod press;
-mod roving;
 mod resize;
+pub mod roving;
+pub mod roving_list;
 pub mod scroll;
 mod toggle;
+pub mod tooltip;
+pub mod typeahead;
 
 pub use expand::{Expand, ExpandParams, Expandable};
 pub use focus::{Focus, FocusParams, Focusable};
@@ -38,6 +43,12 @@ pub use roving::{Rove, Roving, RovingParams};
 pub use resize::{Resizable, Resize, ResizeParams};
 pub use scroll::{BarGeom, Scroll, ScrollBy, ScrollParams, Scrollable};
 pub use toggle::{Toggle, ToggleParams, Toggleable};
+// OW3: floating surfaces, groups and tooltips
+pub use anchor::{AnchorParams, Anchored, Placed, Placement};
+pub use dismiss::{Dismiss, DismissParams, Dismissable};
+pub use roving_list::{Move, RovingList, RovingListParams};
+pub use tooltip::{Tip, TooltipParams, Tooltipable};
+pub use typeahead::{Search, Typeahead, TypeaheadParams};
 
 use crate::native::Policy;
 use crate::provider::StateBits;
