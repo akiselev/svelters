@@ -189,6 +189,8 @@ fn separators_fill_along_their_orientation() {
 #[test]
 fn scroll_area_scrolls_and_binds_its_offset() {
     let mut rig = Rig::new();
+    // a scroll lands in one frame (no smooth-scroll animation outlasting `Harness::run`)
+    rig.harness.ctx.all_styles_mut(|st| st.scroll_animation = egui::style::ScrollAnimation::none());
     let (_w, col) = rig.window();
     let sa = rig.leaf(col, "scroll-area", &[("height", Value::F64(100.0)), ("gap", Value::F64(2.0))]);
     let rows: Vec<_> = (0..30).map(|i| rig.leaf(sa, "label", &[("text", s(&format!("Row {i}")))])).collect();
@@ -316,6 +318,8 @@ fn every_kind_has_a_tooltip_and_inputs_are_named() {
         rig.run();
         rig.harness.hover_at(pos);
         rig.run();
-        assert!(rig.harness.query_by_label(&tip).is_some() || rig.harness.query_by_label_contains(&tip).is_some(), "<{tag}>: no tooltip shown");
+        // the tooltip's label (an input without a caption is also named by its tooltip: two nodes)
+        let shown = rig.harness.query_all_by_label(&tip).filter(|n| n.accesskit_node().role() == Role::Label).count();
+        assert_eq!(shown, 1, "<{tag}>: no tooltip shown");
     }
 }
