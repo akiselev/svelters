@@ -136,10 +136,21 @@ impl SvelteDock {
         .unwrap_or(false)
     }
 
-    /// The end of a viewport's ui, after berth drew its panes (root viewport and deferred ones):
-    /// the per-viewport scene passes (ARCH-SCENE R21; berth's `DeferredHost::viewport_done(ui,
-    /// window)` calls this). Through the thread-local entry point, so it works inside a deferred
-    /// viewport's closure. Returns how many passes ran.
+    /// The end of a viewport's ui, after berth drew its panes (root, immediate and deferred
+    /// windows): the per-viewport scene passes (ARCH-SCENE R21). berth (7bd2d32) calls its host's
+    /// `PaneHost::viewport_done(&mut self, ui, window)` once per window per pass; the adapter's impl
+    /// is this call:
+    ///
+    /// ```ignore
+    /// impl PaneHost for SvelteDock {
+    ///     fn viewport_done(&mut self, ui: &mut egui::Ui, _window: WindowId) {
+    ///         SvelteDock::viewport_done(ui); // = svelters_egui::embed::show_viewport_passes(ui)
+    ///     }
+    /// }
+    /// ```
+    ///
+    /// Through the thread-local entry point, so it works inside a deferred viewport's closure (no
+    /// `&Embed` there). Returns how many passes ran.
     pub fn viewport_done(ui: &mut egui::Ui) -> usize {
         crate::embed::show_viewport_passes(ui)
     }
