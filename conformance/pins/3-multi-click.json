@@ -1,0 +1,24 @@
+{
+  "id": "multi-click",
+  "pin": 3,
+  "title": "Single, double and triple clicks, double-click-drag by words, plain drag, a click into the other field",
+  "setup": {
+    "fields": { "a": { "text": "foo bar-baz qux.quux 日本語 end", "sel": [0, 0] }, "b": { "text": "second field" } },
+    "focus": "a"
+  },
+  "steps": [
+    { "click": "a", "at": 5, "count": 1 },
+    { "click": "a", "at": 5, "count": 2 },
+    { "click": "a", "at": 7, "count": 2 },
+    { "click": "a", "at": 3, "count": 2 },
+    { "click": "a", "at": 14, "count": 2 },
+    { "click": "a", "at": 22, "count": 2 },
+    { "click": "a", "at": 9, "count": 3 },
+    { "drag": "a", "from": 5, "to": 13, "count": 2 },
+    { "drag": "a", "from": 13, "to": 2, "count": 2 },
+    { "click": "a", "at": 25, "count": 1 },
+    { "drag": "a", "from": 1, "to": 9, "count": 1 },
+    { "click": "b", "at": 3, "count": 1 },
+    { "click": "b", "at": 3, "count": 2 }
+  ]
+}

@@ -86,3 +86,4 @@ jobs:
             target/gallery/
             target/p5/
             target/*.png
+            target/na/
