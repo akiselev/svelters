@@ -30,7 +30,7 @@ pub(crate) fn invalid_outline(ui: &Ui, rect: Rect) {
 
 /// A widget-side change of props `keys` of node `i`: stamped and journaled, `prop_changed` when
 /// observed, then the kind's `changed` event with `args` when listened.
-fn widget_changed(arena: &mut Arena, i: usize, keys: &[kinds::P], args: Vec<Value>, out: &mut Vec<Out>) {
+pub(crate) fn widget_changed(arena: &mut Arena, i: usize, keys: &[kinds::P], args: Vec<Value>, out: &mut Vec<Out>) {
     let node = arena.slots.id_at(i).expect("live node");
     let h = node.to_raw();
     let kind = arena.core[i].kind as usize;

@@ -205,7 +205,8 @@ fn scroll_area_scrolls_and_binds_its_offset() {
     let top3 = rig.drawn(rows[3]).top();
 
     rig.harness.get_by_label("Row 1").scroll_down();
-    rig.run();
+    // kinetic scrolling and the spring-back of an overscroll take frames
+    rig.harness.run_steps(40);
     let l = rig.take();
     let y = rig.prop_id(sa, "scroll-y");
     assert!(l.changed.contains(&(sa, y)), "{:?}", l.changed);
@@ -216,12 +217,12 @@ fn scroll_area_scrolls_and_binds_its_offset() {
     assert!(rig.drawn(rows[r]).top() < rig.backend.with_scene(|sc| sc.n(rows[r]).rect.top()) + area.top() - rig.backend.with_scene(|sc| sc.n(sa).rect.top()) - 10.0, "row {r} moved up");
 
     rig.set(sa, "scroll-y", Value::F64(40.0));
-    rig.run();
+    rig.harness.run_steps(40);
     assert!(rig.take().changed.is_empty(), "a host write within range is not echoed");
     assert!((rig.drawn(rows[3]).top() - (top3 - 40.0)).abs() < 1.0, "{:?} vs {top3}", rig.drawn(rows[3]));
 
     rig.set(sa, "scroll-y", Value::F64(1.0e6));
-    rig.run();
+    rig.harness.run_steps(40);
     let l = rig.take();
     assert_eq!(l.changed, vec![(sa, y)], "clamped: announced");
     let Value::F64(max) = rig.get(sa, "scroll-y") else { panic!() };
@@ -309,6 +310,9 @@ fn every_kind_has_a_tooltip_and_inputs_are_named() {
         let h = rig.leaf(col, tag, &[("tooltip", s(&tip)), ("width", Value::F64(120.0)), ("height", Value::F64(30.0))]);
         if k.text_content.is_some() {
             rig.set(h, "text", s(tag));
+        }
+        if tag == "icon" {
+            rig.set(h, "glyph", s("+"));
         }
         rig.run();
         let origin = rig.drawn(probe).min - rig.backend.with_scene(|sc| sc.n(probe).rect.min);

@@ -23,6 +23,15 @@ fn summary(eh: &EmbedHarness) -> String {
     a.value().or_else(|| a.label()).unwrap_or_default().to_string()
 }
 
+/// Clicks text field `label`, selects all and types `text` (one frame of input), as a user would.
+fn type_into(eh: &mut EmbedHarness, label: &str, text: &str) {
+    eh.harness.get_by_role_and_label(Role::TextInput, label).click();
+    eh.run();
+    eh.harness.key_press_modifiers(egui::Modifiers::COMMAND, egui::Key::A);
+    eh.harness.event(egui::Event::Text(text.to_string()));
+    eh.run();
+}
+
 #[test]
 fn task_panel_form_drives_state_through_every_widget() {
     svelters_egui::fonts::register_icons("icons", [("gear", "*")]);
@@ -57,10 +66,9 @@ fn task_panel_form_drives_state_through_every_widget() {
     assert!(eh.harness.query_by_label("Offset").is_none(), "Placement starts collapsed");
 
     // bind:text + a derived `invalid`
-    eh.harness.get_by_label("Height").type_text("20 mm");
-    eh.run();
+    type_into(&mut eh, "Height", "20 mm");
     assert!(summary(&eh).contains("x 20 mm valid true"), "{}", summary(&eh));
-    assert_eq!(eh.harness.get_by_label("Height").accesskit_node().data().invalid(), None);
+    assert_eq!(eh.harness.get_by_role_and_label(Role::TextInput, "Height").accesskit_node().data().invalid(), None);
 
     // a segmented radio group
     eh.harness.get_by_role_and_label(Role::RadioButton, "+X").click();
@@ -83,10 +91,8 @@ fn task_panel_form_drives_state_through_every_widget() {
     eh.harness.get_by_role_and_label(Role::DisclosureTriangle, "Placement").click();
     eh.run();
     assert!(summary(&eh).contains("placement true"), "{}", summary(&eh));
-    eh.harness.get_by_role_and_label(Role::TextInput, "Offset").type_text("5");
-    eh.run();
-    let s = summary(&eh);
-    assert!(s.contains("offset 05") || s.contains("offset 50"), "{s}");
+    type_into(&mut eh, "Offset", "5");
+    assert!(summary(&eh).contains("offset 5 "), "{}", summary(&eh));
 
     // the icon button and bind:checked
     eh.harness.get_by_role_and_label(Role::Button, "Settings").click();
