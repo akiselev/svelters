@@ -59,8 +59,9 @@ AS1's record (`AS1-asset-imports.md`: the SVG loader on resvg/usvg 0.45.1, `asse
   - The registry icon's box is the part's `width`/`height`, else its `font-size` (the button's `::part(icon)` UA
     is 16px).
   - The slots come from the part's inherited custom properties `--icon-subject/-accent/-badge` (`icon_slots`).
-  - `content_icon` now reads the engine's typed `ComputedValue::Content` (`none`, `icon(key)`). Before this, only
-    a keyword or raw value was read, so a stylesheet's `content: icon(…)` never reached the primitive.
+  - `content_icon` reads the engine's typed `ComputedValue::Content` (`none`, `icon(key)`). Before this, only a
+    keyword or raw value was read, so a stylesheet's `content: icon(…)` never reached the primitive. OW-CSS
+    stage 2 landed the same fix, and the merge kept its version.
   - `IconKey::key(name)` and `IconKey::registry_key()` were added.
 - **The `icon` kind** (`leaf.rs`, `layout.rs`): with no `source`, the family `icons` and a registered `name`, it
   draws from the registry.
