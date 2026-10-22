@@ -316,7 +316,8 @@ pub fn switch_layout(hwnd: HWND, klid: &str) -> WinResult<(HKL, Option<HKL>)> {
     }
 }
 
-/// Asks the window's thread to activate `hkl` and waits until it has.
+/// Asks the window's thread to activate `hkl` (`WM_INPUTLANGCHANGEREQUEST` to its focus window, as the shell's
+/// language switch does) and waits until it has.
 pub fn activate_layout(hwnd: HWND, hkl: HKL) -> WinResult<()> {
     unsafe {
         let thread = GetWindowThreadProcessId(hwnd, None);
@@ -324,7 +325,9 @@ pub fn activate_layout(hwnd: HWND, hkl: HKL) -> WinResult<()> {
             if GetKeyboardLayout(thread) == hkl {
                 return Ok(());
             }
-            let _ = PostMessageW(Some(hwnd), WM_INPUTLANGCHANGEREQUEST, WPARAM(0), LPARAM(hkl.0 as isize));
+            let mut gti = GUITHREADINFO { cbSize: std::mem::size_of::<GUITHREADINFO>() as u32, ..Default::default() };
+            let target = if GetGUIThreadInfo(thread, &mut gti).is_ok() && !gti.hwndFocus.is_invalid() { gti.hwndFocus } else { hwnd };
+            let _ = PostMessageW(Some(target), WM_INPUTLANGCHANGEREQUEST, WPARAM(0), LPARAM(hkl.0 as isize));
             sleep(20);
         }
         Err(format!("keyboard layout {:?} did not activate in the fixture (it has {:?})", hkl, GetKeyboardLayout(thread)))
