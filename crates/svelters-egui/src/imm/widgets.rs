@@ -22,11 +22,13 @@ struct Common {
     id: Option<egui::Id>,
     enabled: bool,
     tooltip: Option<String>,
+    /// EM1: the accessible name, over the widget's own.
+    name: Option<String>,
 }
 
 impl Common {
     fn new(tag: &'static str) -> Common {
-        Common { el: El::new(tag), id: None, enabled: true, tooltip: None }
+        Common { el: El::new(tag), id: None, enabled: true, tooltip: None, name: None }
     }
     fn enabled(&self, ui: &egui::Ui) -> bool {
         self.enabled && ui.is_enabled()
@@ -54,6 +56,11 @@ macro_rules! common_setters {
         /// Disabled: no intents, `:disabled`, out of the Tab order, still hoverable (R9).
         pub fn enabled(mut self, on: bool) -> Self {
             self.c.enabled = on;
+            self
+        }
+        /// Its accessible name (EM1 `accessible-name`), over its own (the caption).
+        pub fn accessible_name(mut self, n: impl Into<String>) -> Self {
+            self.c.name = Some(n.into());
             self
         }
         /// A tooltip (shown while disabled too: the reason, R9).
@@ -166,7 +173,7 @@ impl Button {
         let cursor = host.cursor();
         let (selected, text) = (self.selected, self.text.as_str());
         let info = || egui::WidgetInfo::selected(egui::Role::Button, enabled, selected, text);
-        out.inner = ran.finish(cursor, Some(&info), |n| n.set_role(accesskit::Role::Button), true, Some(FocusRole::Button { default: false, cancel: false }), self.c.tooltip.as_deref());
+        out.inner = ran.finish(cursor, Some(&info), |n| n.set_role(accesskit::Role::Button), true, Some(FocusRole::Button { default: false, cancel: false }), self.c.name.as_deref(), self.c.tooltip.as_deref());
         out
     }
 }
@@ -199,14 +206,15 @@ impl<'a> Checkbox<'a> {
 
     pub fn show_at(self, ui: &mut egui::Ui, rect: egui::Rect, sv: &Sv) -> Response {
         let Checkbox { c, checked, text } = self;
-        let (ran, mut out) = toggle(ui, &c, rect, checked, ToggleParams { checked: *checked, ..ToggleParams::default() });
+        let (mut ran, mut out) = toggle(ui, &c, rect, checked, ToggleParams { checked: *checked, ..ToggleParams::default() });
         let st = sv.styled(ui.ctx(), &c.el, checkbox::UA, ran.state);
+        ran.host_box("checkbox", &st, rect);
         if ran.ui.is_rect_visible(rect) {
             checkbox::paint(&mut ran.paint_cx("checkbox"), ui.ctx(), &st.view(), rect, &text, *checked);
         }
         let (enabled, on) = (c.enabled(ui), *checked);
         let info = || egui::WidgetInfo::selected(egui::Role::CheckBox, enabled, on, &text);
-        out.inner = ran.finish(st.view().cursor(), Some(&info), |n| n.set_role(accesskit::Role::CheckBox), true, Some(FocusRole::Toggle), c.tooltip.as_deref());
+        out.inner = ran.finish(st.view().cursor(), Some(&info), |n| n.set_role(accesskit::Role::CheckBox), true, Some(FocusRole::Toggle), c.name.as_deref(), c.tooltip.as_deref());
         out
     }
 }
@@ -255,14 +263,15 @@ impl<'a> Switch<'a> {
 
     pub fn show_at(self, ui: &mut egui::Ui, rect: egui::Rect, sv: &Sv) -> Response {
         let Switch { c, active, text } = self;
-        let (ran, mut out) = toggle(ui, &c, rect, active, ToggleParams { checked: *active, ..ToggleParams::default() });
+        let (mut ran, mut out) = toggle(ui, &c, rect, active, ToggleParams { checked: *active, ..ToggleParams::default() });
         let st = sv.styled(ui.ctx(), &c.el, switch::UA, ran.state);
+        ran.host_box("switch", &st, rect);
         if ran.ui.is_rect_visible(rect) {
             switch::paint(&mut ran.paint_cx("switch"), ui.ctx(), &st.view(), rect, ran.resp.id, &text, *active);
         }
         let (enabled, on) = (c.enabled(ui), *active);
         let info = || egui::WidgetInfo::selected(egui::Role::Switch, enabled, on, &text);
-        out.inner = ran.finish(st.view().cursor(), Some(&info), |n| n.set_role(accesskit::Role::Switch), true, Some(FocusRole::Toggle), c.tooltip.as_deref());
+        out.inner = ran.finish(st.view().cursor(), Some(&info), |n| n.set_role(accesskit::Role::Switch), true, Some(FocusRole::Toggle), c.name.as_deref(), c.tooltip.as_deref());
         out
     }
 }
@@ -316,7 +325,7 @@ impl<'a> ToggleButton<'a> {
         let (enabled, on) = (c.enabled(ui), *checked);
         let (role, a11y_role) = if radio { (egui::Role::RadioButton, accesskit::Role::RadioButton) } else { (egui::Role::Button, accesskit::Role::Button) };
         let info = || egui::WidgetInfo::selected(role, enabled, on, &text);
-        out.inner = ran.finish(st.view().cursor(), Some(&info), |n| n.set_role(a11y_role), true, Some(FocusRole::Toggle), c.tooltip.as_deref());
+        out.inner = ran.finish(st.view().cursor(), Some(&info), |n| n.set_role(a11y_role), true, Some(FocusRole::Toggle), c.name.as_deref(), c.tooltip.as_deref());
         out
     }
 }
@@ -370,10 +379,11 @@ impl Label {
         let id = widget_id(ui, self.c.id);
         let enabled = self.c.enabled(ui);
         let press = self.click.then(PressParams::default);
-        let ran = run(ui, id, rect, enabled, Compose { hover: true, focus: None, press, toggle: None }, StateBits::NONE);
+        let mut ran = run(ui, id, rect, enabled, Compose { hover: true, focus: None, press, toggle: None }, StateBits::NONE);
         let mut out = resp(ran.resp.clone(), ran.state);
         out.activated = self.click && ran.press.iter().any(Press::is_click);
         let st = sv.styled(ui.ctx(), &self.c.el, label::UA, ran.state);
+        ran.host_box("label", &st, rect);
         if ran.ui.is_rect_visible(rect) {
             let s = st.view().with_font_weight(Some(self.font_weight));
             label::paint(&mut ran.paint_cx("label"), ui.ctx(), &s, rect, &self.text, self.wrap_mode);
@@ -389,6 +399,7 @@ impl Label {
             },
             false,
             None,
+            self.c.name.as_deref(),
             self.c.tooltip.as_deref(),
         );
         out
@@ -427,9 +438,10 @@ impl Separator {
     pub fn show_at(self, ui: &mut egui::Ui, rect: egui::Rect, sv: &Sv) -> Response {
         let id = widget_id(ui, self.c.id);
         let enabled = self.c.enabled(ui);
-        let ran = run(ui, id, rect, enabled, Compose::default(), StateBits::NONE);
+        let mut ran = run(ui, id, rect, enabled, Compose::default(), StateBits::NONE);
         let out = resp(ran.resp.clone(), ran.state);
         let st = sv.styled(ui.ctx(), &self.c.el, separator::UA, ran.state);
+        ran.host_box("separator", &st, rect);
         if ran.ui.is_rect_visible(rect) {
             separator::paint(&mut ran.paint_cx("separator"), &st.view(), rect, self.vertical);
         }
@@ -443,6 +455,7 @@ impl Separator {
             },
             false,
             None,
+            self.c.name.as_deref(),
             self.c.tooltip.as_deref(),
         );
         Response { inner, ..out }
@@ -510,6 +523,7 @@ impl Icon {
             },
             false,
             None,
+            self.c.name.as_deref(),
             self.c.tooltip.as_deref(),
         );
         Response { inner, ..out }

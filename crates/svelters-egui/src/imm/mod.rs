@@ -19,11 +19,15 @@
 //! let bar = sv.within(El::new("toolbar").class("main"));   // `.main button { … }` reaches these
 //! if imm::Button::new("Save").icon("save").show(ui, &bar).clicked() { … }
 //! imm::Checkbox::new(&mut wrap, "Wrap").show(ui, &bar);
-//! imm::Button::new("×").class("tab-close").show_at(ui, rect, &bar);  // berth: berth lays out
+//! imm::Button::new("").icon("codicons:close").class("tab-close").show_at(ui, rect, &bar); // berth lays out
+//! // paint-only chrome on the caller's own response (a draggable tab):
+//! let st = sv.chrome(ui, &tab_resp, &El::new("tab").class("pinned"), Ua::NONE, StateBits::SELECTED);
+//! let geom = imm::chrome::surface(ui.painter(), tab_resp.id, &st, rect);
 //! ```
 //!
 //! Writer lane: OW-RUST.
 
+pub mod chrome;
 mod el;
 mod widgets;
 
@@ -284,10 +288,24 @@ impl Ran {
         p
     }
 
+    /// For a kind without `Caps::PAINTS_BOX` (checkbox, switch, label, separator): the box the
+    /// walk paints behind it from its CSS alone (`style::before_leaf`: background, border,
+    /// shadows; no UA table), and its CSS `opacity` on the widget's `Ui`. Nothing without a
+    /// cascade.
+    pub fn host_box(&mut self, tag: &str, st: &Styled, rect: egui::Rect) {
+        let Some(css) = st.css.as_deref() else { return };
+        let s = StyleView::new(Some(css), Ua::NONE, self.state, st.dark);
+        if s.opacity() < 1.0 {
+            self.ui.multiply_opacity(s.opacity());
+        }
+        crate::paint::paint_box(&mut self.paint_cx(tag), &s, rect);
+    }
+
     /// After painting: AccessKit (`info`, then `a11y` and, with `units_a11y`, the units'
     /// properties and actions, as the kind's `Widget::a11y`), EV3's focus record with
-    /// `focus_role`'s key claims, the R10 cursor and the tooltip (R9: also on a disabled widget,
+    /// `focus_role`'s key claims, the accessible `name` (EM1), the R10 cursor and the tooltip (R9: also on a disabled widget,
     /// the reason). Returns the response.
+    #[allow(clippy::too_many_arguments)] // one call per widget kind; each argument is a kind's choice
     pub fn finish(
         self,
         cursor: Option<egui::CursorIcon>,
@@ -295,6 +313,7 @@ impl Ran {
         a11y: impl FnOnce(&mut egui::accesskit::Node),
         units_a11y: bool,
         focus_role: Option<crate::focus::Role>,
+        name: Option<&str>,
         tooltip: Option<&str>,
     ) -> egui::Response {
         let Ran { ui, resp, state, units, compose: c, .. } = self;
@@ -306,6 +325,11 @@ impl Ran {
         if let Some(info) = info {
             resp.widget_info(info);
         }
+        // EM1: an accessible name over the widget's own (as `a11y::decorate`)
+        let resp = match name {
+            Some(n) if !n.is_empty() => resp.accessible_name(n),
+            _ => resp,
+        };
         {
             let u = lock(&units);
             let (fp, pp, tp) = (c.focus.unwrap_or_default(), c.press.unwrap_or_default(), c.toggle.unwrap_or_default());
