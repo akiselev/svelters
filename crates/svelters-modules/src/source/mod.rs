@@ -417,19 +417,9 @@ impl Inner {
         if self.cache.get(path).is_some_and(|c| c.hash == hash) {
             return Ok(&self.cache[path]);
         }
-        let shown = path.display();
         let Output { mut js, map, warnings, css } = self.compiler.transform(path, src)?;
         self.warnings.extend(warnings);
-        let css = match css {
-            // ARCH-SECURITY §6 (Q2/Q3 row): an extension's `:global(…)` rules may apply only within its
-            // own roots. Until the style engine scopes a sheet to a principal, a confined app's sheet
-            // with global rules is not installed (deny by default).
-            Some(c) if self.cfg.confine && c.has_global => {
-                self.warnings.push(format!("{shown}: <style> has :global rules, which an extension may not install yet (ARCH-SECURITY); the sheet is not applied"));
-                None
-            }
-            c => c.map(|c| c.code),
-        };
+        let css = css.map(|c| c.code);
         if css.is_some() {
             let spec = serde_json::Value::String(format!("{STYLE_PREFIX}{}", path.to_string_lossy())).to_string();
             js.push_str(&format!("\nimport {spec};\n"));
