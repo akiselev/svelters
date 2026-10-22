@@ -1,4 +1,17 @@
-//! Runs a compiled bundle in an eframe window: `svelters-egui-run <dist/app.js>`.
+//! Runs an app in an eframe window:
+//!
+//! ```text
+//! svelters-egui-run [--bundle] <dist/app.js>          # a bundle built by Vite
+//! svelters-egui-run --entry <app dir | file> [--dev]  # from source, compiled live (Q1)
+//!                   [--watch] [--idle-report <ms>]
+//! ```
+//!
+//! `--entry` takes an app directory (its `src/App.svelte`, or its package.json `embed` entry), a
+//! `.svelte` file (mounted as the App) or a `.js`/`.svelte.js` module (evaluated as is); the app's
+//! package.json `"svelters"` field gives the spec fragments. Components are compiled for egui.
+//! `--dev` compiles with Svelte's `dev` and resolves the `development` condition. `--watch`
+//! reloads in place when a file of the app changes (a bundle: the bundle; from source: the module
+//! graph).
 //!
 //! `--idle-report <ms>`: after the app has settled (first frames drawn, then 1 s without one), counts the frames drawn and the CPU time
 //! the process used over `<ms>`, prints one JSON line (`{"frames":..,"cpu_ms":..,"wall_ms":..}`) and
@@ -15,31 +28,58 @@ fn cpu_ms() -> Option<f64> {
     Some(ticks * 1000.0 / 100.0) // USER_HZ is 100 on Linux
 }
 
+enum Load {
+    Bundle(std::path::PathBuf),
+    Entry(std::path::PathBuf),
+}
+
+const USAGE: &str = "usage: svelters-egui-run [--idle-report <ms>] [--watch] ([--bundle] <dist/app.js> | --entry <app dir|file> [--dev])";
+
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let mut bundle = None;
-    let mut idle_ms = None;
+    let (mut load, mut idle_ms, mut dev, mut watch) = (None, None, false, false);
     let mut it = args.iter();
     while let Some(a) = it.next() {
         match a.as_str() {
             "--idle-report" => idle_ms = it.next().and_then(|v| v.parse::<u64>().ok()),
-            _ => bundle = Some(std::path::PathBuf::from(a)),
+            "--bundle" => load = it.next().map(|p| Load::Bundle(p.into())),
+            "--entry" => load = it.next().map(|p| Load::Entry(p.into())),
+            "--dev" => dev = true,
+            "--watch" => watch = true,
+            "-h" | "--help" => {
+                eprintln!("{USAGE}");
+                std::process::exit(0);
+            }
+            _ => load = Some(Load::Bundle(a.into())),
         }
     }
-    let Some(bundle) = bundle else {
-        eprintln!("usage: svelters-egui-run [--idle-report <ms>] <dist/app.js>");
+    let Some(load) = load else {
+        eprintln!("{USAGE}");
         std::process::exit(2);
     };
-    // The desktop order on an Embed (EM1): the bundle's App mounts its windows; eframe's context is
-    // bound at the first frame.
-    let cfg = svelters_egui::embed::EmbedConfig::app(svelters_host::HostConfig::default());
-    let embed = svelters_egui::Embed::new(&svelters_egui::egui::Context::default(), cfg).unwrap_or_else(|e| {
+    let fail = |e: String| -> ! {
         eprintln!("{e}");
         std::process::exit(1)
-    });
-    if let Err(e) = embed.load_app(&bundle) {
-        eprintln!("{e}");
-        std::process::exit(1);
+    };
+    // The desktop order on an Embed (EM1): the app mounts its windows; eframe's context is bound
+    // at the first frame.
+    let cfg = svelters_egui::embed::EmbedConfig::app(svelters_host::HostConfig::default());
+    let embed = svelters_egui::Embed::new(&svelters_egui::egui::Context::default(), cfg).unwrap_or_else(|e| fail(e.to_string()));
+    let loaded = match load {
+        Load::Bundle(bundle) => embed.load_app(&bundle),
+        Load::Entry(entry) => {
+            let mut cfg = svelters_host::modules::SourceConfig::for_path(&entry).unwrap_or_else(|e| fail(e));
+            cfg.backend = "egui".into();
+            cfg.dev = dev;
+            let provider = svelters_host::modules::SourceProvider::new(cfg).unwrap_or_else(|e| fail(e));
+            embed.load_app_from(std::rc::Rc::new(provider))
+        }
+    };
+    if let Err(e) = loaded {
+        fail(e.to_string());
+    }
+    if watch && let Err(e) = embed.host().watch() {
+        fail(e.to_string());
     }
     if let Some(ms) = idle_ms {
         let frames = embed.backend().frame_counter();

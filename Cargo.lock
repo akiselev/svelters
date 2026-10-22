@@ -3883,6 +3883,7 @@ dependencies = [
  "svelters-abi",
  "svelters-egui",
  "svelters-host",
+ "svelters-modules",
  "taffy",
 ]
 
@@ -3911,6 +3912,7 @@ dependencies = [
  "sourcemap",
  "svelters-abi",
  "svelters-backend-log",
+ "svelters-modules",
  "tokio",
 ]
 
@@ -3921,6 +3923,16 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 2.0.119",
+]
+
+[[package]]
+name = "svelters-modules"
+version = "0.0.0"
+dependencies = [
+ "libloading",
+ "serde",
+ "serde_json",
+ "svelters-compiler",
 ]
 
 [[package]]

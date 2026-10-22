@@ -22,6 +22,7 @@
 mod convert;
 mod core;
 mod engine;
+mod hooks;
 pub mod exports;
 mod quickjs;
 mod reload;
@@ -33,6 +34,15 @@ pub use crate::engine::{
     BufferStats, ChangedProp, ErrorKind, HostBusy, JobStatus, JsEngine, JsError, OpOutcome, OpSettle, RootMessage,
 };
 pub use crate::reload::ReloadReport;
+/// Q1: the module loader (providers; `SourceProvider` with its `source` feature).
+pub use svelters_modules as modules;
+pub use hooks::ModuleHooks;
+pub use svelters_modules::{BundleProvider, ModuleCode, ModuleProvider};
+
+/// The provider of a built bundle; a missing entry is a load error.
+fn bundle_provider(path: &Path) -> Result<Rc<dyn ModuleProvider>, JsError> {
+    Ok(Rc::new(BundleProvider::new(path).map_err(|m| JsError::new(ErrorKind::Load, m))?))
+}
 
 use crate::core::Core;
 use crate::reload::{MakeEngine, Reloader};
@@ -173,6 +183,8 @@ pub struct Host<'a> {
     vt: HostVtable,
     reloader: Rc<Reloader>,
     started: Rc<Started>,
+    /// LD1: extra schemes, native modules and the `svelters:app/*` filter for every load.
+    module_hooks: RefCell<ModuleHooks>,
     /// The hook registered by `on_started`, armed by the next `run`/`start`.
     on_started: RefCell<Option<StartedHook<'a>>>,
     /// The backend was attached through `start` and not detached since.
@@ -227,6 +239,7 @@ impl<'a> Host<'a> {
             vt,
             reloader,
             started,
+            module_hooks: RefCell::new(ModuleHooks::default()),
             on_started: RefCell::new(None),
             attached: Cell::new(false),
             _backend: PhantomData,
@@ -245,13 +258,35 @@ impl<'a> Host<'a> {
     /// calling `invoke_callback` while a model is built, a wake) reach it. That pre-attach does not
     /// count as "started"; `run` attaches the same callbacks again, `Drop` detaches.
     pub fn load_bundle(&self, path: impl AsRef<Path>) -> Result<(), JsError> {
-        self.ensure_attached();
-        self.reloader.set_bundle(path.as_ref());
-        core::load_bundle(&self.core, &self.engine, path.as_ref()).map_err(|e| self.core.map_error(e))
+        self.load_from(bundle_provider(path.as_ref())?)
     }
 
-    /// Hot reload: watches the bundle loaded by `load_bundle` (and its `.map`) and reloads it in
-    /// this process whenever it changes, see `reload.rs`. Requires a backend whose `wake` can be
+    /// LD1: sets the extra schemes, native modules and `svelters:app/*` visibility that apply to the
+    /// next load (`load_from`, `load_entry_from`, `load_bundle`, `load_entry`). The default serves
+    /// this binary's exports and every `svelters:app/*` module.
+    pub fn set_module_hooks(&self, hooks: ModuleHooks) {
+        *self.core.app_gate.borrow_mut() = Some(hooks.app_gate());
+        *self.module_hooks.borrow_mut() = hooks;
+    }
+
+    fn compose_modules(&self, inner: Rc<dyn ModuleProvider>) -> Result<Rc<dyn ModuleProvider>, JsError> {
+        self.module_hooks.borrow().compose(inner).map_err(|m| JsError::new(ErrorKind::Host, m))
+    }
+
+    /// Q1: loads and evaluates the entry module of `provider` ([`BundleProvider`], or
+    /// `svelters_modules::SourceProvider` for an app compiled from source), resolving and loading
+    /// every import through it. Remembered for hot reload, like [`Host::load_bundle`]; load errors
+    /// (compiler diagnostics included) are returned with their stacks mapped to the sources.
+    pub fn load_from(&self, provider: Rc<dyn ModuleProvider>) -> Result<(), JsError> {
+        self.ensure_attached();
+        let provider = self.compose_modules(provider)?;
+        self.reloader.set_provider(provider.clone());
+        core::load_bundle(&self.core, &self.engine, &provider).map_err(|e| self.core.map_error(e))
+    }
+
+    /// Hot reload: watches the files of the app loaded by `load_bundle` or `load_from` (a bundle
+    /// and its `.map`; an app from source: its module graph and manifests) and reloads it in this
+    /// process whenever one of them changes, see `reload.rs`. Requires a backend whose `wake` can be
     /// called from another thread, and a running loop (`run`) to deliver the reload.
     pub fn watch(&self) -> Result<(), JsError> {
         self.reloader.start_watch(self.core.backend().wake_handle())
@@ -531,8 +566,14 @@ impl<'a> Host<'a> {
     /// (`svelteConfig({ embed })`): it exports components and installs `__svelters_embed`. Not
     /// watched for reload. Returns the entry's index.
     pub fn load_entry(&self, path: impl AsRef<Path>) -> Result<u32, JsError> {
+        self.load_entry_from(bundle_provider(path.as_ref())?)
+    }
+
+    /// [`Host::load_entry`] from a module provider (Q1): an embed entry compiled from source.
+    pub fn load_entry_from(&self, provider: Rc<dyn ModuleProvider>) -> Result<u32, JsError> {
         self.ensure_attached();
-        core::load_entry(&self.core, &self.engine, path.as_ref()).map_err(|e| self.core.map_error(e))
+        let provider = self.compose_modules(provider)?;
+        core::load_entry(&self.core, &self.engine, &provider).map_err(|e| self.core.map_error(e))
     }
 
     /// Mounts export `export` of entry `entry` into the native node `target` (an embedder's slot)
