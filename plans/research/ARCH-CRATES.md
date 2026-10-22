@@ -39,6 +39,21 @@ How to read the citations:
 - `kapi-handoff`, `kapi-migration` and `m1-seam-readiness` were read and contain nothing for either crate.
 - Claims not checked in source are marked [unverified].
 
+## Decided (user, 2026-10-22)
+
+The user took every recommendation in §7 (O1–O14), to be revisited later: names `berth`
+(`berth-core`, `egui_berth`) and `quire` (`quire-core`, `quire-syntax`, `egui_quire`); MIT OR Apache-2.0;
+git tags only; host applies intents plus `auto_apply`; immediate viewports first; four pane events; left,
+right and bottom regions; highlighter by E5; `<code-editor>` wrapper in cadatomic; host-owned undo for
+documents; ropey 1.6 behind `Text`; VS Code keymap as data; cross-window drag without the winit fork
+except Wayland; the crate owns the layout format.
+
+Plus the seam decisions and corrections recorded in `ARCH-EMBED.md` "Decided" and cadatomic `ecd49c5`
+(R1–R12). Repos: `github.com/akiselev/berth` and `github.com/akiselev/quire` (private). The ThinkPad builds
+berth, with behaviour tests derived from KDDockWidgets' test suite (reimplemented, not copied: KDDW is
+GPL/commercial) and egui_tiles/egui_dock as further references. The MacBook builds quire on ropey, with VS
+Code's editor tests ported (MIT; keep its notice).
+
 ## 0. Summary
 
 1. **Two repositories, each a headless core plus an egui renderer.**

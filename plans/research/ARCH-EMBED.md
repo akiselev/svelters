@@ -29,6 +29,21 @@ Short names for cadatomic sources (all under `~/projects/cadatomic/docs/`):
 Docking's experiments W1–W13 are written **DOCK-W*n*** here. workspace-document-versioning reuses the names W1–W6
 for requirements, so the prefix keeps them apart.
 
+## Decided (user, 2026-10-22)
+
+The user took every recommendation, to be revisited later:
+
+- D1–D11: option (a) each. D12: default `request_repaint()`, measured in EM2.
+- Seam items (main-cadatomic's review, recorded with corrections R1–R12 in cadatomic `ecd49c5`):
+  close flow through `request_close` → host dirty guard → `DockCommand::Close` (2); lazy mount on first
+  `Shown` with a pending table (3); cadatomic owns the per-frame order, `prepass_plugin = false`, one root
+  frame per interaction in deferred windows (4); the editor applies input transactions in the widget (`&mut`
+  state) and commits `text.edit` at undo-group close (9); shared `Document` + per-view `EditorView` (10).
+- Corrections agreed by the coordinators: CRATES §4.1 is the canonical `PaneEvent`; this doc's §7.1 drops
+  `CloseRequested`; CRATES uses this doc's method names; `Widget::busy`; key consumption via `consume_key`.
+
+Work starts now: EG0 → EM1 ∥ RA1, with RA2 and FW1 alongside (§10).
+
 ## 0. Summary
 
 1. **A slot is a free-standing root of the arena, drawn wherever the host calls `show_slot(ui, slot)`.** Rust
