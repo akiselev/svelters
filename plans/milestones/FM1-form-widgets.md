@@ -1,6 +1,7 @@
 # FM1: form widget gaps on egui (QW7, QW8, QW4, QW11, QA8)
 
-Track: WIDGETS (egui). Lane FM1, branch `ci/fm1`, from master `1786957f`. Priority P0 (coordinator).
+Track: WIDGETS (egui). Lane FM1, branch `ci/fm1`, from master `1786957f`, merged with master `ed3d0a5f`
+(WG5a's table keyboard, keyed selection and cell editors; CS5g; ZU3). Priority P0 (coordinator).
 Sources: `plans/research/QT-SURVEY.md` §1 rows QW4, QW7, QW8, QW11, QA8, and the EV3+ follow-ups
 (`plans/milestones/EV3-focus-keys.md`, "Platform button order", "QA8"). Builds on EV3+ (`focus.rs`: key
 claims, default/cancel buttons), WG2b (`drag-value`), WG4a (`table`), WG2a (`context-menu`). Does not touch
@@ -116,6 +117,10 @@ needs the built gallery fixture (`pnpm build`) and is left to CI.
   already works). Sorting stays JS's (the table owns only the indicator state).
 - **QW7:** no auto-repeat while a step button is held, no wrap, no special-value text. The step buttons are
   not in the AccessKit tree (the spin button's own Increment/Decrement actions are).
+- **Hidden columns and WG5a:** egui_table gets only the shown columns, so WG5a's `cur_col`, `current-column`
+  and edits count shown columns; `TableState::col_map` maps them to data columns for cell text, the editor's
+  value and the committed write (`data_col`), and Tab skips hidden columns. `current-column` is therefore a
+  shown-column index while columns are hidden.
 - **QW8:** no input masks, no `fixup`, no intermediate state (Qt's Intermediate is "fails `pattern`" here);
   no clear button.
 - **QA8:** the opened menu does not move keyboard focus into its first item (WG2a's arrow navigation applies

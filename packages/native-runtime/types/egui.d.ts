@@ -791,7 +791,7 @@ export interface EguiElements {
     /** The user (or `popdown`) closed it. */
     onclosed?: () => void;
   };
-  /** A virtual table (`egui_table`): only the visible rows and columns are drawn. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers). Give it a size or let flex-grow size it. */
+  /** A virtual table (`egui_table`): only the visible rows and columns are drawn. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`. Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it. */
   table: EguiWidgetProps & {
     /** Number of rows (the scroll extent). Rows without data yet are drawn empty. */
     'row-count'?: number;
@@ -803,9 +803,17 @@ export interface EguiElements {
     striped?: boolean;
     /** Rows beyond the visible ones that `range` asks for on each side (data ready before it scrolls into view). */
     overscan?: number;
-    /** The selected row, -1 for none; a click on a row (or the arrow keys) changes it. */
-    selected?: number;
-    'bind:selected'?: number;
+    /** The selected row ids (`bind:selected`); clicks (Ctrl/Shift with `selection="multi"`) and the keyboard change it. Kept by id across `set-ids` (sorts, filters). */
+    selected?: number[];
+    'bind:selected'?: number[];
+    /** `single`, `multi` (Ctrl/Shift clicks and keys, ranges) or `none` (a cursor only). */
+    selection?: 'none' | 'single' | 'multi';
+    /** The cursor row's id (keyboard focus inside the table), -1 for none. */
+    current?: number;
+    'bind:current'?: number;
+    /** The cursor column (Left/Right move it; F2 and typing edit that cell). */
+    'current-column'?: number;
+    'bind:current-column'?: number;
     /** A header click sorts on that column: `sort-column` becomes it, `sort-order` ascending, or flips when it already was (the rows are still sorted by JS, on `sort-changed`). */
     sortable?: boolean;
     /** The column (child index) the header shows sorted, -1 for none: then each column's own `sort` shows. */
@@ -824,10 +832,14 @@ export interface EguiElements {
     'bind:header-state'?: string;
     /** The rows the table needs data for changed: `first..=last` (the visible rows plus `overscan`); answer with `set-rows`. */
     onrange?: (first: number, last: number) => void;
-    /** The user selected a row; carries its index. */
-    onchanged?: (selected: number) => void;
-    /** A row was double-clicked (or Enter pressed on the selection). */
+    /** The user changed the selection; carries the selected row ids (`bind:selected`). */
+    onchanged?: (selected: number[]) => void;
+    /** The user changed the selection; carries the selected row ids. */
+    onselectionchange?: (ids: number[]) => void;
+    /** A row was double-clicked (a cell of a column that is not `editable`) or Enter pressed on the cursor row; carries its position. */
     onactivated?: (row: number) => void;
+    /** An edit is committed: row id, column index, the editor's value. Accept by returning nothing; reject with `e.result = 'reason'` (shown under the cell) or `e.preventDefault()`: the cell reverts. */
+    oncommit?: (e: SvlEvent<[number, number, unknown]>, row: number, column: number, value: unknown) => void;
     /** A column header was clicked (sort on it in JS and set the column's `sort`). */
     'onheader-clicked'?: (column: number) => void;
     /** FM1: a header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS). */
@@ -847,10 +859,20 @@ export interface EguiElements {
     align?: 'start' | 'center' | 'end';
     /** The sort arrow its header shows (the data is sorted by JS) while the table's `sort-column` is -1. */
     sort?: 'none' | 'ascending' | 'descending';
+    /** Its cells can be edited (F2, typing, double click); the editor is `editor`, else a text field. */
+    editable?: boolean;
+    /** The cell editor, a snippet taking the edit (`{ row, column, value (bindable), typed, commit(), cancel() }`); realised once and rebound per edit. */
+    editor?: ((...args: any[]) => any) | null;
     /** FM1: its name in `hidden-columns` and `header-state` (empty: its child index). */
     name?: string;
     /** FM1: the column menu lists it (it can be hidden). */
     hideable?: boolean;
+    /** Runtime protocol: an edit of this column's cell starts (the editor snippet's outlet is `set-editor`). */
+    'oneditor-bind'?: (e: SvlEvent<[number, string, string]>, row: number, value: string, typed: string) => void;
+    /** Runtime protocol: the editor's value to commit (the handler sets `e.result`). */
+    'oneditor-value'?: (e: SvlEvent<[]>) => void;
+    /** Runtime protocol: the edit ended; the editor stays realised for the next one. */
+    'oneditor-unbind'?: (e: SvlEvent<[]>) => void;
   };
   /** Pages under a tab bar: each child (a `tab`) is a page titled by its `title`; only the `selected` one is laid out and drawn. */
   'tab-view': EguiWidgetProps & {
@@ -945,8 +967,11 @@ export interface EguiElements {
     /** The selected position, -1 for none. Setting it never raises `select`. */
     selected?: number;
     'bind:selected'?: number;
-    /** `single`: a click selects a row (`select`); `none`: rows are not selectable. */
-    selection?: 'none' | 'single';
+    /** `single`: a click or the keyboard selects a row (`select`); `multi`: Ctrl/Shift clicks and keys select several (`selectionchange`); `none`: rows are not selectable. */
+    selection?: 'none' | 'single' | 'multi';
+    /** The selected item ids (`bind:selected-ids`); kept by id across splices, sorts and filters. */
+    'selected-ids'?: number[];
+    'bind:selected-ids'?: number[];
     /** `list` (egui draws `grid` as a list for now). */
     layout?: 'list' | 'grid';
     /** The height a row is assumed to have before it is measured, and its minimum, in points. */
@@ -963,6 +988,8 @@ export interface EguiElements {
     onactivate?: (pos: number) => void;
     /** The user selected the item at `pos`. */
     onselect?: (pos: number) => void;
+    /** The user changed the selection; carries the selected ids. */
+    onselectionchange?: (ids: number[]) => void;
   };
 }
 

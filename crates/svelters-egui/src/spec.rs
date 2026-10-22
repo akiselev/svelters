@@ -35,7 +35,8 @@ fn ty_name(ty: Ty) -> &'static str {
         Ty::I64 => "i64",
         Ty::Str => "string",
         Ty::Enum(_) => "enum",
-        Ty::StrList => "list",
+        Ty::StrList | Ty::IdList => "list",
+        Ty::Snippet => "other",
         Ty::Provider => "other",
     }
 }
@@ -80,6 +81,9 @@ fn prop_json(k: &KindDef, p: &PropDef) -> J {
     }
     if p.ty == Ty::StrList {
         m.insert("of".into(), json!("string"));
+    }
+    if p.ty == Ty::IdList {
+        m.insert("of".into(), json!("i64"));
     }
     m.insert("writable".into(), json!(true));
     J::Object(m)
@@ -464,6 +468,8 @@ fn ts_of(ty: Ty) -> String {
         Ty::Str => "string".into(),
         Ty::Enum(values) => values.iter().map(|v| format!("'{v}'")).collect::<Vec<_>>().join(" | "),
         Ty::StrList => "string[]".into(),
+        Ty::IdList => "number[]".into(),
+        Ty::Snippet => "((...args: any[]) => any) | null".into(),
         Ty::Provider => "unknown".into(),
     }
 }
@@ -691,6 +697,8 @@ pub fn behaviors_typings() -> String {
     s
 }
 
+// ZU3: build-time dump of typings and specs (`--dump-types`), not run per frame.
+#[allow(clippy::disallowed_methods)]
 /// Writes this binary's typings and specs into `dir` (an app's `.svelters/app`): the exports
 /// (`exports.json`, `app.d.ts`, one stub per module; `svelters_host::exports::dump`), `kinds.json`
 /// ([`fragment`]), `kinds.d.ts` ([`kinds_typings`]) and, when the binary has behaviours,

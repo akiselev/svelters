@@ -36,6 +36,17 @@ pub(crate) fn widget_changed(arena: &mut Arena, i: usize, keys: &[kinds::P], arg
 
 /// [`widget_changed`] announced through the kind's event `signal` (FM1: a `table`'s `sort-changed`).
 pub(crate) fn widget_changed_via(arena: &mut Arena, i: usize, keys: &[kinds::P], signal: &str, args: Vec<Value>, out: &mut Vec<Out>) {
+    props_changed(arena, i, keys, out);
+    let h = arena.slots.id_at(i).expect("live node").to_raw();
+    let s = kinds::signal_id(arena.core[i].kind as usize, signal);
+    if arena.listens(i, s) {
+        out.push(Out::Event(h, s, args));
+    }
+}
+
+/// WG5a: the stamp, journal and `prop_changed` half of [`widget_changed`], without the `changed`
+/// signal (a prop the user changed that `changed` does not carry: a table's cursor).
+pub(crate) fn props_changed(arena: &mut Arena, i: usize, keys: &[kinds::P], out: &mut Vec<Out>) {
     let node = arena.slots.id_at(i).expect("live node");
     let h = node.to_raw();
     let kind = arena.core[i].kind as usize;
@@ -47,10 +58,6 @@ pub(crate) fn widget_changed_via(arena: &mut Arena, i: usize, keys: &[kinds::P],
         if arena.observes(i, prop) {
             out.push(Out::Changed(h, prop));
         }
-    }
-    let s = kinds::signal_id(kind, signal);
-    if arena.listens(i, s) {
-        out.push(Out::Event(h, s, args));
     }
 }
 

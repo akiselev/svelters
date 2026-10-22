@@ -64,7 +64,7 @@ pub enum W {
     /// `table`: props, the JS data window and what the last frame asked for.
     Table(std::boxed::Box<crate::views::table::TableState>),
     /// FM1 (QW4): `name`, `hideable`.
-    TableColumn { title: String, resizable: bool, align: &'static str, sort: &'static str, name: String, hideable: bool },
+    TableColumn { title: String, resizable: bool, align: &'static str, sort: &'static str, editable: bool, editor: bool, name: String, hideable: bool },
     TabView { selected: i64 },
     Tab { title: String, closable: bool },
     /// `vertical`: `orientation="vertical"` (panes stacked).

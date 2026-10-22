@@ -206,7 +206,7 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
             *show_value = as_bool(v)?;
             d.insert(Dirty::MEASURE);
         }
-        (P::ListSelected | P::ListSelection | P::ListLayout, W::VirtualList(l)) => crate::kinds::virtuallist::set(l, def.key, v)?,
+        (P::ListSelected | P::ListSelection | P::ListLayout | P::SelectedIds, W::VirtualList(l)) => crate::kinds::virtuallist::set(l, def.key, v)?,
         (P::RowHeight, W::VirtualList(l)) => {
             crate::kinds::virtuallist::set(l, def.key, v)?;
             d.insert(Dirty::LAYOUT);
@@ -271,6 +271,9 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (P::Resizable, W::TableColumn { resizable, .. } | W::SplitView { resizable, .. }) => *resizable = as_bool(v)?,
         (P::CellAlign, W::TableColumn { align, .. }) => *align = as_enum(v, kinds::CELL_ALIGN)?,
         (P::Sort, W::TableColumn { sort, .. }) => *sort = as_enum(v, kinds::SORT)?,
+        (P::Editable, W::TableColumn { editable, .. }) => *editable = as_bool(v)?,
+        // WG5a: the runtime writes `true` while a snippet is set (a function never reaches the backend)
+        (P::Editor, W::TableColumn { editor, .. }) => *editor = !matches!(v, Value::Null | Value::Bool(false)),
         // FM1 (QW4)
         (P::Name, W::TableColumn { name, .. }) => *name = as_str(v)?,
         (P::Hideable, W::TableColumn { hideable, .. }) => *hideable = as_bool(v)?,
@@ -377,7 +380,7 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Max, W::Slider { max, .. }) => Value::F64(*max),
         (P::Step, W::Slider { step, .. }) => Value::F64(*step),
         (P::ShowValue, W::Slider { show_value, .. }) => Value::Bool(*show_value),
-        (P::ListSelected | P::ListSelection | P::ListLayout | P::RowHeight, W::VirtualList(l)) => {
+        (P::ListSelected | P::ListSelection | P::ListLayout | P::SelectedIds | P::RowHeight, W::VirtualList(l)) => {
             crate::kinds::virtuallist::get(l, def.key).ok_or_else(|| format!("{:?} is not a prop of <virtual-list>", def.key))?
         }
         // ---- WG1 ----
@@ -403,6 +406,8 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Resizable, W::TableColumn { resizable, .. } | W::SplitView { resizable, .. }) => Value::Bool(*resizable),
         (P::CellAlign, W::TableColumn { align, .. }) => s(align),
         (P::Sort, W::TableColumn { sort, .. }) => s(sort),
+        (P::Editable, W::TableColumn { editable, .. }) => Value::Bool(*editable),
+        (P::Editor, W::TableColumn { editor, .. }) => Value::Bool(*editor),
         (P::Name, W::TableColumn { name, .. }) => s(name),
         (P::Hideable, W::TableColumn { hideable, .. }) => Value::Bool(*hideable),
         (P::SelectedIndex, W::TabView { selected }) => Value::I64(*selected),
@@ -432,7 +437,8 @@ pub fn tag_of(ty: Ty) -> u16 {
         Ty::F64 => svelters_abi::SVL_F64,
         Ty::I64 => svelters_abi::SVL_I64,
         Ty::Str | Ty::Enum(_) => svelters_abi::SVL_STR,
-        Ty::StrList => svelters_abi::SVL_LIST,
+        Ty::StrList | Ty::IdList => svelters_abi::SVL_LIST,
+        Ty::Snippet => svelters_abi::SVL_BOOL,
         // RA1: described per prop by its Rust type (`KindRegistry::provider_member_desc`)
         Ty::Provider => svelters_abi::SVL_NULL,
     }

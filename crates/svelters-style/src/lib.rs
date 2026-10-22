@@ -39,4 +39,4 @@ pub use selector::{Impl, PseudoClass, Selector, SelectorList, SelectorParser, pa
 pub use sheet::{DeclBlock, Declaration, ParseOptions, Rule, Stylesheet};
 pub use state::{STATE_PSEUDO_CLASSES, StateMask, StateNames};
 pub use table::{Dialect, Prop, Table, ValueType, Via};
-pub use values::{Color, ComputedValue, Length};
+pub use values::{Color, ComputedValue, Length, Shadow};
