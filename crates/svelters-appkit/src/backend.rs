@@ -375,22 +375,64 @@ impl AppKitBackend {
     }
 }
 
-/// A minimal main menu: the application menu with Quit (Cmd+Q), which stops `[NSApp run]` so the
-/// host's `run` returns.
+/// The default main menu: the application menu (Hide, Hide Others, Show All, Quit; Quit stops
+/// `[NSApp run]` so the host's `run` returns), Edit and Window. Key equivalents only reach a text
+/// field through menu items, so without Edit, Cmd+C/V/X/A/Z did nothing in any text field. The
+/// items have no target: the action goes to the first responder (the focused field's editor).
 fn install_menu(mtm: MainThreadMarker, app: &NSApplication) {
     let _ = mtm;
+    const CMD: usize = 1 << 20;
+    const OPT: usize = 1 << 19;
+    const SHIFT: usize = 1 << 17;
+    unsafe fn item(title: &str, action: Option<Sel>, key: &str, mods: usize) -> Retained<AnyObject> {
+        let title = NSString::from_str(title);
+        let key = NSString::from_str(key);
+        let alloc: objc2::rc::Allocated<AnyObject> = unsafe { msg_send![class!(NSMenuItem), alloc] };
+        let it: Retained<AnyObject> = unsafe { msg_send![alloc, initWithTitle: &*title, action: action, keyEquivalent: &*key] };
+        if !key.is_empty() {
+            let _: () = unsafe { msg_send![&*it, setKeyEquivalentModifierMask: mods] };
+        }
+        it
+    }
+    unsafe fn submenu(bar: &AnyObject, title: &str, items: Vec<Option<Retained<AnyObject>>>) -> Retained<AnyObject> {
+        let top = unsafe { item(title, None, "", 0) };
+        let t = NSString::from_str(title);
+        let alloc: objc2::rc::Allocated<AnyObject> = unsafe { msg_send![class!(NSMenu), alloc] };
+        let menu: Retained<AnyObject> = unsafe { msg_send![alloc, initWithTitle: &*t] };
+        for it in items {
+            let it = it.unwrap_or_else(|| unsafe { msg_send![class!(NSMenuItem), separatorItem] });
+            let _: () = unsafe { msg_send![&*menu, addItem: &*it] };
+        }
+        let _: () = unsafe { msg_send![&*top, setSubmenu: &*menu] };
+        let _: () = unsafe { msg_send![bar, addItem: &*top] };
+        menu
+    }
     unsafe {
         let bar: Retained<AnyObject> = msg_send![class!(NSMenu), new];
-        let item: Retained<AnyObject> = msg_send![class!(NSMenuItem), new];
-        let _: () = msg_send![&*bar, addItem: &*item];
-        let menu: Retained<AnyObject> = msg_send![class!(NSMenu), new];
-        let title = NSString::from_str("Quit");
-        let key = NSString::from_str("q");
-        let alloc: objc2::rc::Allocated<AnyObject> = msg_send![class!(NSMenuItem), alloc];
-        let quit: Retained<AnyObject> = msg_send![alloc, initWithTitle: &*title, action: sel!(stop:), keyEquivalent: &*key];
-        let _: () = msg_send![&*menu, addItem: &*quit];
-        let _: () = msg_send![&*item, setSubmenu: &*menu];
+        submenu(&bar, "", vec![
+            Some(item("Hide", Some(sel!(hide:)), "h", CMD)),
+            Some(item("Hide Others", Some(sel!(hideOtherApplications:)), "h", CMD | OPT)),
+            Some(item("Show All", Some(sel!(unhideAllApplications:)), "", 0)),
+            None,
+            Some(item("Quit", Some(sel!(stop:)), "q", CMD)),
+        ]);
+        submenu(&bar, "Edit", vec![
+            Some(item("Undo", Some(sel!(undo:)), "z", CMD)),
+            Some(item("Redo", Some(sel!(redo:)), "z", CMD | SHIFT)),
+            None,
+            Some(item("Cut", Some(sel!(cut:)), "x", CMD)),
+            Some(item("Copy", Some(sel!(copy:)), "c", CMD)),
+            Some(item("Paste", Some(sel!(paste:)), "v", CMD)),
+            Some(item("Delete", Some(sel!(delete:)), "", 0)),
+            Some(item("Select All", Some(sel!(selectAll:)), "a", CMD)),
+        ]);
+        let window = submenu(&bar, "Window", vec![
+            Some(item("Minimize", Some(sel!(performMiniaturize:)), "m", CMD)),
+            Some(item("Zoom", Some(sel!(performZoom:)), "", 0)),
+            Some(item("Close", Some(sel!(performClose:)), "w", CMD)),
+        ]);
         let _: () = msg_send![app, setMainMenu: &*bar];
+        let _: () = msg_send![app, setWindowsMenu: &*window];
     }
 }
 
@@ -1072,12 +1114,11 @@ impl Inner {
     fn run(&self, host: *const svl_host) -> Result<(), String> {
         self.host.set(host);
         let app = NSApplication::sharedApplication(self.mtm);
+        // `activate` (macOS 14+) is only a request the system ignores unless the active app yields, so
+        // an app started from a terminal stayed behind it (keys like Cmd+Q went to the terminal). The
+        // deprecated `activateIgnoringOtherApps:` still brings it forward (checked on macOS 15.7).
         unsafe {
-            if bridge::responds(&app, sel!(activate)) {
-                let _: () = msg_send![&*app, activate];
-            } else {
-                let _: () = msg_send![&*app, activateIgnoringOtherApps: true];
-            }
+            let _: () = msg_send![&*app, activateIgnoringOtherApps: true];
         }
         // A checkpoint as soon as the loop runs (jobs the bundle left pending).
         self.rl.waker().wake();
