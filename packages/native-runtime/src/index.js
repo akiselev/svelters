@@ -50,6 +50,8 @@ import { parseSetterValue, propOf } from '@svelters/style/runtime';
 export { observeProp, trackProp, trackLocal, invalidateProp } from './observe.js';
 // R2: `bind:` lowered onto observation (./bind-observe.js, over the tracker API of ./observe.js).
 export { bind_once, bind_prop, bind_readonly } from './bind-observe.js';
+// CX3: a `bind:` on a Rust store field linked to the prop in the host (no JS per change).
+export { bind_link } from './bind-observe.js';
 
 /** `set(node, prop, RESTORE)` writes the value `capture(node, prop)` read. */
 export const RESTORE = Symbol('svelters.RESTORE');
@@ -880,6 +882,16 @@ export function bind(node, prop, signal, arg, get, setv) {
   // reads the new bound value
   const list = node.handlers.get(hkey(signal, 0));
   list.unshift(list.pop());
+}
+
+/**
+ * CX3 `bind:prop|commit`: `prop` follows `get()`; the native value reaches `setv` only when the
+ * kind's commit event `signal` fires (Enter, blur, release), from its `args[arg]`. Nothing observes
+ * `prop`, so edits between commits run no JS; a state write meanwhile replaces the uncommitted
+ * text. The binding runs before the element's own handlers of the commit event.
+ */
+export function bind_commit(node, prop, get, setv, signal, arg) {
+  bind(node, prop, signal, arg, get, setv);
 }
 
 /**

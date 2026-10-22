@@ -202,7 +202,7 @@ Meaning rules:
 - One idea per icon; at most 3 distinct elements at 16px. Prefer the convention engineers already know.
 
 For each icon output: the id, one line naming the metaphor, the SVG. Then render the batch with
-`tools/icons/sheet` and Read the PNG. For every icon answer: (1) at 16@1x, what would a CAD/EDA user call it?
+`tools/icons/icons.py sheet` and Read the PNG. For every icon answer: (1) at 16@1x, what would a CAD/EDA user call it?
 If the answer is not the id's meaning, redraw. (2) Does it look like a neighbour (anchor, stamp, key, gift
 box...)? (3) Is its weight equal to the codicons in the toolbar strip? (4) Are all its strokes crisp at 16@1x?
 Iterate at most 3 times, then list the icons you are unsure of for human review.
@@ -324,7 +324,7 @@ compete, plus a final pass on the contact sheet.
    budget.
 2. **Generator prompt** = §4.1, plus a per-batch list of ids, inventory rows and neighbouring approved icons as
    style anchors.
-3. **Render-and-review loop** (like VIS1): the agent draws, runs `tools/icons/sheet` (render.py generalised),
+3. **Render-and-review loop** (like VIS1): the agent draws, runs `tools/icons/icons.py sheet` (render.py generalised),
    Reads the PNG, answers the four questions per icon, and iterates at most 3 times. The sheet always includes
    the codicons toolbar strip.
 4. **Human approval**: a domain human (the user, or whoever cadatomic names) approves each batch's contact

@@ -20,6 +20,21 @@ pub struct Component<'a> {
     /// Some element resolves attributes at run time (`Op::Spread`, `Item::Dynamic`): the module
     /// imports the spec tables (`@svelters/native-runtime/kinds`) as `$$kinds`.
     pub kinds: bool,
+    /// CX3: modules of draft bind sources, imported as `$$bind_source_<index>` (namespace imports).
+    pub bind_imports: Vec<String>,
+    /// CX3: draft bindings, by the address of their bound expression (the call): codegen writes
+    /// the source's accessors instead of the expression's.
+    pub drafts: Vec<(usize, Draft<'a>)>,
+}
+
+/// CX3: a draft binding `bind:prop={marker(...args)}`: `get` is
+/// `() => $$bind_source_<ns>.<get>(...args)`, `set` is `(v) => $$bind_source_<ns>.<set>(...args, v)`.
+#[derive(Debug, Clone)]
+pub struct Draft<'a> {
+    pub ns: usize,
+    pub get: String,
+    pub set: String,
+    pub args: Vec<&'a Expression>,
 }
 
 /// A run of template content. Generated code declares `consts` first (`{@const}`, source order),
@@ -128,6 +143,11 @@ pub enum Op<'a> {
     BindReadonly { prop: String, target: &'a Expression, span: Span },
     /// `$n.bind_once(node, prop, get, set, readonly)`: `bind:prop|nonreactive`.
     BindOnce { prop: String, readonly: bool, target: &'a Expression, span: Span },
+    /// CX3 `$n.bind_commit(node, prop, get, set, signal, arg)`: `bind:prop|commit`.
+    BindCommit { prop: String, signal: String, arg: i64, target: &'a Expression, span: Span },
+    /// CX3 `$n.bind_link(node, prop, () => obj, field, () => { <fallback> })`: a `link` bind source
+    /// (`bind:prop={store.field}`); `fallback` is the planned binding op, for a host that refuses.
+    BindLink { prop: String, obj: &'a Expression, field: String, fallback: Box<Op<'a>>, span: Span },
     /// `bind:this={target}`: Svelte's `$.bind_this(node, set, get)` with the runtime node.
     BindThis { target: &'a Expression, span: Span },
     /// `$n.track(node, prop, signal, arg)` for a one-way prop the native side also edits.

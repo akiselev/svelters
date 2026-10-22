@@ -443,3 +443,72 @@ fn a_locale_switch_re_renders_components_reading_locale() {
     assert!(log.log().contains("\"de-DE: 1.234,5\""), "{}", log.log());
     assert!(host.take_errors().is_empty());
 }
+
+/// Q4: an app built into a release bundle (`.svb`) loads from the bundle alone, with its source
+/// tree deleted: JS, import tables, assets (`icon.text()` reads the bundle) and the dumped
+/// behaviours module. The first launch fills the bytecode cache (AS-O2 (a)); a precompiled bundle
+/// is read as bytecode and compiles nothing. A bundle without sources loads the same.
+#[test]
+fn an_app_loads_from_its_release_bundle_without_its_sources() {
+    use std::sync::Arc;
+    use svelters_host::modules::svb::{self, BuildOptions, FileRole, Svb};
+    let app = counter_app("svb");
+    let build = |sources: bool| svb::build(SourceConfig::for_path(&app.dir).unwrap(), &BuildOptions { sources, ..BuildOptions::default() }).unwrap();
+    let (full, lean) = (build(true), build(false));
+    let out = repo().join("target/q4");
+    let _ = std::fs::remove_dir_all(&out);
+    std::fs::create_dir_all(&out).unwrap();
+    std::fs::write(out.join("app.svb"), &full).unwrap();
+    std::fs::remove_dir_all(&app.dir).unwrap();
+
+    let svb = Arc::new(Svb::open(&out.join("app.svb")).unwrap());
+    let ix = svb.index();
+    assert_eq!(ix.entry, "svelters:entry");
+    assert!(ix.modules["app/src/App.svelte"].imports.contains_key("./state.svelte.js"));
+    assert!(ix.modules.keys().any(|k| k.starts_with("app/node_modules/svelte/src/")), "{:#?}", ix.modules.keys());
+    assert!(ix.modules.keys().any(|k| k.starts_with("app/node_modules/@svelters/native-runtime/")), "{:#?}", ix.modules.keys());
+    assert_eq!(svb.file("src/icon.png"), Some(&b"not really a png"[..]));
+    assert_eq!(svb.file("src/App.svelte"), Some(COUNTER.as_bytes()));
+    assert_eq!(ix.files["package.json"].role, FileRole::Manifest);
+    let lean_svb = Svb::from_bytes(lean.clone()).unwrap();
+    assert!(lean_svb.index().files.values().all(|f| f.role != FileRole::Source));
+    assert_eq!(lean_svb.index().modules.keys().collect::<Vec<_>>(), ix.modules.keys().collect::<Vec<_>>());
+
+    let cache_dir = out.join("bytecode-cache");
+    let launch = |svb: Arc<Svb>| {
+        let (log, host) = log_host(Duration::from_millis(200));
+        host.set_bytecode_cache(Some(&cache_dir)).unwrap();
+        let p = host.load_svb(svb).unwrap();
+        host.run().unwrap();
+        (log.log(), p.bytecode_loads(), host.bytecode_cache().unwrap().writes())
+    };
+    let check = |oplog: &str| {
+        assert!(oplog.contains("\"Count: 41\""), "{oplog}");
+        assert!(oplog.contains("\"asset\""), "{oplog}");
+    };
+    let (oplog, loads, writes) = launch(svb.clone());
+    check(&oplog);
+    assert_eq!(loads, 0);
+    assert!(writes > 10, "the first launch fills the bytecode cache ({writes})");
+
+    let pre = svelters_host::bytecode::precompile(&svb).unwrap();
+    let pre_svb = Arc::new(Svb::from_bytes(pre.clone()).unwrap());
+    assert_eq!(pre_svb.index().stamp.engine_build.as_deref(), Some(svelters_host::bytecode::stamp().as_str()));
+    let _ = std::fs::remove_dir_all(&cache_dir);
+    let (oplog, loads, writes) = launch(pre_svb.clone());
+    check(&oplog);
+    assert_eq!(loads as usize, pre_svb.index().modules.len(), "every module is read as bundle bytecode");
+    // Only host-served JS (`svelters:assets`) is not in the bundle and goes through the cache.
+    assert!(writes <= 1, "no bundle module is compiled ({writes} cache writes)");
+
+    let _ = std::fs::remove_dir_all(&cache_dir);
+    let (oplog, _, _) = launch(Arc::new(lean_svb));
+    check(&oplog);
+    eprintln!(
+        "Q4 sizes: {} modules; with sources {} B, without {} B, precompiled {} B",
+        ix.modules.len(),
+        full.len(),
+        lean.len(),
+        pre.len()
+    );
+}

@@ -289,6 +289,16 @@ impl<'a> Host<'a> {
         self.load_from(bundle_provider(path.as_ref())?)
     }
 
+    /// Q4: loads an app from a release bundle (`.svb`, [`svelters_modules::Svb`]). Its bytecode is
+    /// read when this engine wrote it ([`bytecode::precompile`]); otherwise its JavaScript is
+    /// compiled through the bytecode cache, as for any provider. No file system is needed besides
+    /// that cache.
+    pub fn load_svb(&self, svb: Arc<svelters_modules::Svb>) -> Result<Rc<svelters_modules::SvbProvider>, JsError> {
+        let provider = Rc::new(svelters_modules::SvbProvider::new(svb).map_err(|m| JsError::new(ErrorKind::Load, m))?.engine_build(bytecode::stamp()));
+        self.load_from(provider.clone())?;
+        Ok(provider)
+    }
+
     /// DX1: supplies the settings backend, UI-state backend and paths that `svelters:settings`,
     /// `svelters:paths` and `svelters:log` use. Without it those modules load but their calls fail.
     ///
