@@ -89,6 +89,9 @@ fn replay(name: &str, log: &str) -> (usize, usize) {
                             "name" => SVL_STYLE_NAME,
                             "inline" => SVL_STYLE_INLINE,
                             "opacity" => SVL_STYLE_OPACITY,
+                            "transform" => SVL_STYLE_TRANSFORM,
+                            "clip" => SVL_STYLE_CLIP,
+                            "inert" => SVL_STYLE_INERT,
                             o => panic!("{ctx}: style op {o}"),
                         };
                         br.style(op, hd(parts[1]), text(parts[3]).as_deref())

@@ -1436,6 +1436,175 @@ void style_apply() {
 
 QString style_str(const svl_value *v) { return QString::fromUtf8(static_cast<const char *>(v->u.s.ptr), static_cast<qsizetype>(v->u.s.len)); }
 
+// ---- TR1 visual channels (ABI v2.8): the per-frame values of transitions ----------------------
+// One graphics effect per widget carries opacity and transform: a QGraphicsOpacityEffect (so the
+// opacity path and its readers stay as they were) that, while a transform is set, paints the
+// source pixmap through it. Clip is maximumWidth/Height (the layout gives the space back, the
+// content is cut or squeezed); inert is WA_TransparentForMouseEvents + NoFocus.
+class SvlVisualEffect : public QGraphicsOpacityEffect {
+ public:
+  explicit SvlVisualEffect(QObject *parent) : QGraphicsOpacityEffect(parent) { setOpacity(1.0); }
+  bool tf = false;
+  double tx = 0, ty = 0, sx = 1, sy = 1, ox = 0.5, oy = 0.5;
+  QTransform transformFor(const QRectF &r) const {
+    const QPointF o(r.x() + r.width() * ox, r.y() + r.height() * oy);
+    QTransform t;
+    t.translate(o.x() + tx, o.y() + ty);
+    t.scale(sx, sy);
+    t.translate(-o.x(), -o.y());
+    return t;
+  }
+  // updateBoundingRect is protected on QGraphicsEffect
+  void transformChanged() {
+    updateBoundingRect();
+    update();
+  }
+
+ protected:
+  QRectF boundingRectFor(const QRectF &r) const override { return tf ? transformFor(r).mapRect(r) : r; }
+  void draw(QPainter *p) override {
+    if (!tf) {
+      QGraphicsOpacityEffect::draw(p);
+      return;
+    }
+    QPoint offset;
+    const QPixmap pm = sourcePixmap(Qt::LogicalCoordinates, &offset, QGraphicsEffect::NoPad);
+    if (pm.isNull()) return;
+    const QRectF r = sourceBoundingRect(Qt::LogicalCoordinates);
+    p->save();
+    p->setOpacity(p->opacity() * opacity());
+    p->setRenderHint(QPainter::SmoothPixmapTransform, true);
+    p->setWorldTransform(transformFor(r), true);
+    p->drawPixmap(offset, pm);
+    p->restore();
+  }
+};
+
+SvlVisualEffect *visual_fx(QWidget *w, bool create) {
+  auto *fx = dynamic_cast<SvlVisualEffect *>(w->graphicsEffect());
+  if (!fx && create) {
+    // an opacity effect someone else set: carry its opacity over
+    const auto *old = qobject_cast<QGraphicsOpacityEffect *>(w->graphicsEffect());
+    const double a = old ? old->opacity() : 1.0;
+    fx = new SvlVisualEffect(w);
+    fx->setOpacity(a);
+    w->setGraphicsEffect(fx);
+  }
+  return fx;
+}
+
+// Drops the effect once it does nothing (opacity 1, no transform): no offscreen rendering at rest.
+void visual_prune(QWidget *w) {
+  auto *fx = dynamic_cast<SvlVisualEffect *>(w->graphicsEffect());
+  if (fx && !fx->tf && fx->opacity() >= 1.0) w->setGraphicsEffect(nullptr);
+}
+
+bool parse_nums(const QString &text, double *out, int n) {
+  const QStringList parts = text.split(QLatin1Char(' '), Qt::SkipEmptyParts);
+  if (parts.size() != n) return false;
+  for (int i = 0; i < n; ++i) {
+    bool ok = false;
+    out[i] = parts[i].toDouble(&ok);
+    if (!ok) return false;
+  }
+  return true;
+}
+
+int visual_op(QWidget *w, uint32_t op, bool has, const QString &text) {
+  if (op == SVL_STYLE_TRANSFORM) {
+    if (!has) {
+      if (auto *fx = visual_fx(w, false)) {
+        fx->tf = false;
+        fx->transformChanged();
+      }
+      visual_prune(w);
+      return 0;
+    }
+    double t[6];
+    if (!parse_nums(text, t, 6)) return fail("style: transform is not 6 numbers");
+    auto *fx = visual_fx(w, true);
+    fx->tf = true;
+    fx->tx = t[0];
+    fx->ty = t[1];
+    fx->sx = t[2];
+    fx->sy = t[3];
+    fx->ox = t[4];
+    fx->oy = t[5];
+    fx->transformChanged();
+    return 0;
+  }
+  if (op == SVL_STYLE_CLIP) {
+    // the widget's own maximum size, saved before the first clip and restored after the last
+    const char *saved = "_svl_clip_saved";
+    QVariant orig = w->property(saved);
+    if (!has) {
+      if (orig.isValid()) {
+        const QSize s = orig.toSize();
+        w->setMaximumSize(s);
+        w->setProperty(saved, QVariant());
+      }
+      return 0;
+    }
+    double c[2];
+    if (!parse_nums(text, c, 2)) return fail("style: clip is not 2 numbers");
+    if (!orig.isValid()) {
+      orig = QVariant(w->maximumSize());
+      w->setProperty(saved, orig);
+    }
+    const QSize s = orig.toSize();
+    w->setMaximumWidth(c[0] >= 0 ? qMin(s.width(), static_cast<int>(std::lround(c[0]))) : s.width());
+    w->setMaximumHeight(c[1] >= 0 ? qMin(s.height(), static_cast<int>(std::lround(c[1]))) : s.height());
+    return 0;
+  }
+  // SVL_STYLE_INERT
+  const char *saved = "_svl_inert_focus";
+  if (has) {
+    if (!w->property(saved).isValid()) {
+      w->setProperty(saved, static_cast<int>(w->focusPolicy()));
+      w->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+      w->setFocusPolicy(Qt::NoFocus);
+    }
+  } else if (w->property(saved).isValid()) {
+    w->setFocusPolicy(static_cast<Qt::FocusPolicy>(w->property(saved).toInt()));
+    w->setProperty(saved, QVariant());
+    w->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+  }
+  return 0;
+}
+
+// ABI v2.8 bounds: the widget's rect in its window, after the window's layout is brought up to
+// date (QLayout::activate: synchronous), or (0, 0, sizeHint) while it is not shown.
+int b_bounds(void *, svl_handle h, double *out) {
+  TimeScope timing_;
+  try {
+    Entry *e = find(h);
+    if (!e) return fail("bounds: stale or unknown handle");
+    auto *w = qobject_cast<QWidget *>(e->obj.data());
+    if (!w) return fail("bounds: not a widget");
+    if (!w->isVisible()) {
+      const QSize s = w->sizeHint().expandedTo(w->minimumSizeHint());
+      out[0] = out[1] = 0;
+      out[2] = s.isValid() ? s.width() : 0;
+      out[3] = s.isValid() ? s.height() : 0;
+      return 0;
+    }
+    QWidget *win = w->window();
+    if (win && win->layout()) win->layout()->activate();
+    for (QWidget *p = w->parentWidget(); p && p != win; p = p->parentWidget())
+      if (p->layout()) p->layout()->activate();
+    const QPoint pos = win && win != w ? w->mapTo(win, QPoint(0, 0)) : QPoint(0, 0);
+    out[0] = pos.x();
+    out[1] = pos.y();
+    out[2] = w->width();
+    out[3] = w->height();
+    return 0;
+  } catch (const std::exception &ex) {
+    return fail(std::string("bounds: ") + ex.what());
+  } catch (...) {
+    return fail("bounds: unknown C++ exception");
+  }
+}
+
 int b_style(void *, uint32_t op, svl_handle h, const svl_value *v) {
   TimeScope timing_;
   ensure_app();
@@ -1469,20 +1638,26 @@ int b_style(void *, uint32_t op, svl_handle h, const svl_value *v) {
             const double a = has ? text.toDouble(&ok) : 1.0;
             if (!ok) return fail("style: opacity is not a number");
             if (!has || a >= 1.0) {
-              w->setGraphicsEffect(nullptr);
+              // TR1: the effect may still carry a transform
+              if (auto *fx = visual_fx(w, false)) fx->setOpacity(1.0);
+              visual_prune(w);
             } else {
-              auto *fx = qobject_cast<QGraphicsOpacityEffect *>(w->graphicsEffect());
-              if (!fx) {
-                fx = new QGraphicsOpacityEffect(w);
-                w->setGraphicsEffect(fx);
-              }
-              fx->setOpacity(a < 0.0 ? 0.0 : a);
+              visual_fx(w, true)->setOpacity(a < 0.0 ? 0.0 : a);
             }
           }
         } else {
           return fail("style: inline style and opacity need a widget");
         }
         return 0;
+      }
+      case SVL_STYLE_TRANSFORM:
+      case SVL_STYLE_CLIP:
+      case SVL_STYLE_INERT: {
+        Entry *e = find(h);
+        if (!e) return fail("style: stale or unknown handle");
+        auto *w = qobject_cast<QWidget *>(e->obj.data());
+        if (!w) return fail("style: transform, clip and inert need a widget");
+        return visual_op(w, op, has, text);
       }
       case SVL_STYLE_SHEET: {
         style_ensure_fusion();
@@ -1608,7 +1783,8 @@ const svl_backend kBackend = {SVL_ABI_VERSION, &g, b_resolve, b_create, b_insert
                               b_set_child_attr, b_get_child_attr, b_listen_ex, b_style,
                               /* ABI v2.5 (N2) */ b_construct, b_call_static,
                               /* ABI v2.6 */ b_observe,
-                              /* ABI v2.7 */ b_start};
+                              /* ABI v2.7 */ b_start,
+                              /* ABI v2.8 */ b_bounds};
 
 }  // namespace
 
@@ -1761,6 +1937,23 @@ extern "C" double svl_qt_opacity(svl_handle h) {
   if (!w) return -1.0;
   auto *fx = qobject_cast<QGraphicsOpacityEffect *>(w->graphicsEffect());
   return fx ? fx->opacity() : 1.0;
+}
+
+// TR1 (tests): the visual channels of `h`: tx, ty, sx, sy (identity without a transform), the
+// maximum width and height, and 1 when inert (mouse-transparent).
+extern "C" int svl_qt_visual(svl_handle h, double *out) {
+  auto *w = qobject_cast<QWidget *>(debug_obj(h));
+  if (!w) return -1;
+  auto *fx = dynamic_cast<SvlVisualEffect *>(w->graphicsEffect());
+  const bool tf = fx && fx->tf;
+  out[0] = tf ? fx->tx : 0;
+  out[1] = tf ? fx->ty : 0;
+  out[2] = tf ? fx->sx : 1;
+  out[3] = tf ? fx->sy : 1;
+  out[4] = w->maximumWidth();
+  out[5] = w->maximumHeight();
+  out[6] = w->testAttribute(Qt::WA_TransparentForMouseEvents) ? 1 : 0;
+  return 0;
 }
 
 // Triggers every QAction of the widget behind `h` (a menu's items), as a click on each would.

@@ -1,4 +1,4 @@
-/* svelters backend ABI, version 3 (draft; additive tail members: 2.1 request_frame, frame; 2.2 set_child_attr, get_child_attr, listen_ex; 2.5 construct, call_static, SVL_LIFE_SHARED, SVL_T_TYPE; 2.6 observe, prop_changed, SVL_M_OBSERVABLE, SVL_M_PROPORTIONAL; 2.7 start). Source of truth: plans/architecture/backend-abi.md
+/* svelters backend ABI, version 3 (draft; additive tail members: 2.1 request_frame, frame; 2.2 set_child_attr, get_child_attr, listen_ex; 2.5 construct, call_static, SVL_LIFE_SHARED, SVL_T_TYPE; 2.6 observe, prop_changed, SVL_M_OBSERVABLE, SVL_M_PROPORTIONAL; 2.7 start; 2.8 bounds, SVL_STYLE_TRANSFORM/CLIP/INERT). Source of truth: plans/architecture/backend-abi.md
  *
  * v3 = the value model from docs/notes/js-native-serdes.md section 5.1 on top of v2 (timers, handle
  * lifetime). */
@@ -181,7 +181,11 @@ enum {
   SVL_STYLE_INLINE = 3,   /* widget h: declaration lines in the backend's dialect */
   SVL_STYLE_OPACITY = 4,  /* widget h: "0".."1" through the widget API */
   SVL_STYLE_SHEET = 5,    /* h = 0: "id\x01text" component sheet; "@tokens" is the token layer */
-  SVL_STYLE_SCHEME = 6    /* h = 0: "light"|"dark" then "\x01role=#rrggbb" palette pairs */
+  SVL_STYLE_SCHEME = 6,   /* h = 0: "light"|"dark" then "\x01role=#rrggbb" palette pairs */
+  /* ABI v2.8 (TR1 visual channels: per-frame values of transitions; a backend without one answers < 0) */
+  SVL_STYLE_TRANSFORM = 7, /* widget h: "tx ty sx sy ox oy" (px, px, factors, origin as fractions of the size); NULL = identity */
+  SVL_STYLE_CLIP = 8,      /* widget h: "w h" px the element occupies and is cut at, -1 = axis unclipped; NULL = none */
+  SVL_STYLE_INERT = 9      /* widget h: "1" = no pointer input or focus (an outroing element); NULL = restore */
 };
 enum { SVL_STYLE_TARGET_NONE = 0, SVL_STYLE_TARGET_CSS = 1, SVL_STYLE_TARGET_QSS = 2 };
 #define SVL_SIGNAL_FLAGS_SHIFT 28
@@ -346,6 +350,12 @@ typedef struct svl_backend {
    * when nothing is attached. The host treats its first callback (or the return of `start`) as
    * "toolkit up". */
   int (*start)(void *self, const svl_host *host);
+
+  /* ABI v2.8 (may be NULL: no geometry; `animate:` and crossfade then do not move). The layout rect
+   * of `h` in its toplevel's coordinates, logical px: out[0..4] = x, y, width, height. A widget
+   * that has not been laid out yet reports x = y = 0 and its natural size. 0 = ok, < 0 = error
+   * (last_error). */
+  int (*bounds)(void *self, svl_handle h, double *out);
 } svl_backend;
 
 /* Values written to `out` by a backend stay valid until the backend's next call. A backend returning an

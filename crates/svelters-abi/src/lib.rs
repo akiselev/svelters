@@ -106,6 +106,12 @@ pub const SVL_STYLE_INLINE: u32 = 3;
 pub const SVL_STYLE_OPACITY: u32 = 4;
 pub const SVL_STYLE_SHEET: u32 = 5;
 pub const SVL_STYLE_SCHEME: u32 = 6;
+/// ABI v2.8 (TR1): `"tx ty sx sy ox oy"` translate (px), scale, origin (fractions); `None` = identity.
+pub const SVL_STYLE_TRANSFORM: u32 = 7;
+/// ABI v2.8 (TR1): `"w h"` px the element occupies and is cut at (`-1`: that axis unclipped); `None` = none.
+pub const SVL_STYLE_CLIP: u32 = 8;
+/// ABI v2.8 (TR1): `"1"`: no pointer input or focus (an outroing element); `None` restores.
+pub const SVL_STYLE_INERT: u32 = 9;
 /// `SVL_STYLE_TARGET` answers: the dialect the backend's sheets use.
 pub const SVL_STYLE_TARGET_NONE: i32 = 0;
 pub const SVL_STYLE_TARGET_CSS: i32 = 1;
@@ -331,6 +337,9 @@ pub struct svl_backend {
     /// once (`0` ok, `< 0` + `last_error` failure). The caller then drives the loop and the backend
     /// calls the host exactly as from `run`. `start(self, NULL)` detaches the host. Optional.
     pub start: Option<unsafe extern "C" fn(*mut c_void, *const svl_host) -> c_int>,
+    /// ABI v2.8: the layout rect of a handle in its toplevel (x, y, width, height into `out[4]`,
+    /// logical px; natural size at 0, 0 when not laid out yet). Optional.
+    pub bounds: Option<unsafe extern "C" fn(*mut c_void, svl_handle, *mut f64) -> c_int>,
 }
 
 // Backends are driven from the UI thread; `wake` is the only thread-safe entry point.

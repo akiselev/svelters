@@ -1044,6 +1044,16 @@ impl<'a> BackendRef<'a> {
         self.check(unsafe { f(b.self_, host.as_raw()) })
     }
 
+    /// ABI v2.8: the layout rect of `h` (x, y, width, height); `Ok(None)` when the backend has no
+    /// geometry (`bounds` is NULL).
+    pub fn bounds(&self, h: svl_handle) -> AbiResult<Option<[f64; 4]>> {
+        let b = self.b();
+        let Some(f) = b.bounds else { return Ok(None) };
+        let mut out = [0.0f64; 4];
+        self.check(unsafe { f(b.self_, h, out.as_mut_ptr()) })?;
+        Ok(Some(out))
+    }
+
     /// ABI v2.7: `start(NULL)`: the backend makes no host callback afterwards. A no-op without `start`.
     pub fn detach(&self) {
         let b = self.b();
@@ -1448,6 +1458,19 @@ pub trait Backend: 'static {
         Err("start is not supported by this backend".into())
     }
 
+    // ---- v2.8 ----
+
+    /// Whether this backend implements [`Backend::bounds`]; the vtable publishes the member only
+    /// when this is true.
+    fn supports_bounds(&self) -> bool {
+        false
+    }
+    /// ABI v2.8: the layout rect of `h` in its toplevel's coordinates (x, y, width, height, logical
+    /// px); a widget not laid out yet reports 0, 0 and its natural size.
+    fn bounds(&self, _h: svl_handle) -> StrResult<[f64; 4]> {
+        Err("bounds is not supported by this backend".into())
+    }
+
     // ---- v3 ----
 
     /// `SVL_CAP_*` bits.
@@ -1738,6 +1761,15 @@ unsafe extern "C" fn t_start(s: *mut c_void, host: *const svl_host) -> c_int {
     s.rc(|b| b.start(Some(&host)))
 }
 
+unsafe extern "C" fn t_bounds(s: *mut c_void, h: svl_handle, out: *mut f64) -> c_int {
+    let s = unsafe { shim(s) };
+    s.rc(|b| {
+        let r = b.bounds(h)?;
+        unsafe { std::ptr::copy_nonoverlapping(r.as_ptr(), out, 4) };
+        Ok(())
+    })
+}
+
 unsafe extern "C" fn t_wake(s: *mut c_void) {
     // Touch only the `waker` field: the other fields are not thread-safe.
     let waker: &Waker = unsafe { &*ptr::addr_of!((*(s as *const Shim)).waker) };
@@ -1826,6 +1858,7 @@ impl BackendVtable {
         let constructs = backend.supports_construct();
         let observes = backend.supports_observe();
         let starts = backend.supports_start();
+        let bounds = backend.supports_bounds();
         let shim = Box::into_raw(Box::new(Shim {
             waker,
             backend: Box::new(backend),
@@ -1864,6 +1897,7 @@ impl BackendVtable {
             call_static: constructs.then_some(t_call_static as _),
             observe: observes.then_some(t_observe as _),
             start: starts.then_some(t_start as _),
+            bounds: bounds.then_some(t_bounds as _),
         });
         BackendVtable { raw, shim }
     }
