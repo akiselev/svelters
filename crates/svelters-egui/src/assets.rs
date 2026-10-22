@@ -21,7 +21,7 @@ use svelters_modules::{AssetBytes, AssetRef, Assets, Subscription};
 const SVG_MIME: &str = "image/svg+xml";
 
 /// `currentColor` icons render white, then tint to the node's text colour like a glyph.
-const SVG_STYLE: &str = "svg { color: #fff }";
+pub(crate) const SVG_STYLE: &str = "svg { color: #fff }";
 
 fn lock<T>(m: &Mutex<T>) -> MutexGuard<'_, T> {
     m.lock().unwrap_or_else(|p| p.into_inner())
@@ -245,10 +245,11 @@ fn percent_decode(s: &str) -> Result<Vec<u8>, String> {
 
 // ---- svg ----
 
-/// usvg options: `currentColor` white, and no reads outside the document (only `data:` hrefs).
-fn svg_options() -> resvg::usvg::Options<'static> {
+/// usvg options: the injected `style_sheet` (`SVG_STYLE`: `currentColor` white; ICR1's colour
+/// slots), and no reads outside the document (only `data:` hrefs).
+pub(crate) fn svg_options(style_sheet: &str) -> resvg::usvg::Options<'static> {
     let mut o = resvg::usvg::Options::default();
-    o.style_sheet = Some(SVG_STYLE.to_string());
+    o.style_sheet = Some(style_sheet.to_string());
     o.image_href_resolver.resolve_string = Box::new(|_, _| None);
     o
 }
@@ -256,9 +257,14 @@ fn svg_options() -> resvg::usvg::Options<'static> {
 /// Rasterises an SVG at `hint` (the logic of egui_extras' loader: the hint is in pixels, the SVG's
 /// own size in points).
 fn rasterize(svg: &[u8], hint: SizeHint) -> Result<ColorImage, String> {
+    rasterize_styled(svg, hint, SVG_STYLE)
+}
+
+/// [`rasterize`] with another injected style sheet (ICR1's colour slots, `crate::icons`).
+pub(crate) fn rasterize_styled(svg: &[u8], hint: SizeHint, style_sheet: &str) -> Result<ColorImage, String> {
     use resvg::tiny_skia::Pixmap;
     use resvg::usvg::{Transform, Tree};
-    let tree = Tree::from_data(svg, &svg_options()).map_err(|e| e.to_string())?;
+    let tree = Tree::from_data(svg, &svg_options(style_sheet)).map_err(|e| e.to_string())?;
     let src = Vec2::new(tree.size().width(), tree.size().height());
     if src.x <= 0.0 || src.y <= 0.0 {
         return Err("empty svg".into());

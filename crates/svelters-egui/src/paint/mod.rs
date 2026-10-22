@@ -27,7 +27,7 @@ mod text;
 pub mod trace;
 
 pub use boxes::{BoxGeom, box_extra, box_geom, paint_box, paint_outline};
-pub use icon::{IconKey, content_icon, icon_size, paint_icon};
+pub use icon::{IconKey, content_icon, icon_size, icon_slots, paint_icon};
 pub use image::paint_image;
 pub use painters::{Orientation, PaintArgs, PartInfo, PartPainter, register_painter};
 pub use parts::{PartItem, layout_parts, measure_parts};

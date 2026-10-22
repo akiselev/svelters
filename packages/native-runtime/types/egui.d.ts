@@ -363,15 +363,15 @@ export interface EguiElements {
     /** A horizontal line (in a column) or a vertical one (in a row). */
     orientation?: 'horizontal' | 'vertical';
   };
-  /** A glyph from an icon font the embedder registered (SVP6), by name or as text. With `frame` it is an icon button. Its accessible name is `accessible-name`, else `tooltip`, else `name`. */
+  /** An icon from the icon registry by key (ICR1), or a glyph from an icon font the embedder registered (SVP6), by name or as text. With `frame` it is an icon button. Its accessible name is `accessible-name`, else `tooltip`, else `name`. */
   icon: EguiWidgetProps & {
-    /** The glyph's name in the family's name table (`svelters_egui::fonts::register_icons`); also the default accessible name. */
+    /** An icon registry key (`file.save`, `debug.step-over`; `svelters_egui::icons`) when `family` is `icons` and the key is registered: drawn from its SVG masters (optical size by physical pixels), tinted by CSS `color`, with the `--icon-subject`/`--icon-accent`/`--icon-badge` colour slots. Otherwise the glyph's name in the family's name table (`svelters_egui::fonts::register_icons`). Also the default accessible name. */
     name?: string;
     /** The glyph itself (text), when `name` is empty or not in the table. */
     glyph?: string;
     /** The registered font family (`egui::FontFamily::Name`) holding the glyphs; empty for the proportional family. A family with no fonts, a name not in its table or a glyph no font has draws an outlined placeholder box (`svelters_egui::fonts::FontWarning`). */
     family?: string;
-    /** Font size in points; null for the body size. */
+    /** Font size in points; null for the body size (16 for a registry icon). */
     size?: number | null;
     /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
     'font-weight'?: number;

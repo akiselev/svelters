@@ -247,6 +247,14 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         _ => None,
     };
     let enabled = arena.common(i).enabled;
+    // ICR1: an `icon` whose name is a registry key draws from the registry with its computed style
+    // (the `--icon-*` slots)
+    let icon_css = match arena.w(i) {
+        W::Icon { name, family, source, .. } if source.is_empty() && crate::icons::is_registry_icon(ui.ctx(), family, name) => {
+            Some(arena.slots.id_at(i).and_then(|id| arena.style.computed(id)).cloned())
+        }
+        _ => None,
+    };
     let resp = match arena.w_mut(i) {
         W::Label { text, wrap, selectable, weight } => {
             let mode = match *wrap {
@@ -354,6 +362,9 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         }
         W::Separator { vertical } => ui.add(if *vertical { egui::Separator::default().vertical() } else { egui::Separator::default().horizontal() }),
         W::Icon { source, tint, frame, selected, .. } if !source.is_empty() => icon_image(ui, source, *tint, *frame, *selected, size, click_sense),
+        W::Icon { name, size: pt, frame, selected, .. } if let Some(css) = &icon_css => {
+            registry_icon(ui, css.as_deref(), name, *pt, *frame, *selected, size, click_sense)
+        }
         W::Icon { name, glyph, family, size: pt, weight, frame, selected, .. } => {
             use crate::fonts::IconLook;
             // a family, name or glyph the fonts cannot draw: an outlined box instead (never egui's
@@ -506,6 +517,43 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         }
     }
     resp
+}
+
+/// ICR1: an `icon` drawn from the icon registry (`crate::icons`): `size` points (else 16), tinted
+/// with the text colour (CSS `color`), the `--icon-*` slots from its computed style.
+#[allow(clippy::too_many_arguments)]
+fn registry_icon(ui: &mut Ui, css: Option<&svelters_style::ComputedStyle>, key: &str, pt: Option<f64>, frame: bool, selected: bool, size: Vec2, click_sense: bool) -> egui::Response {
+    // a framed one is an icon button: clickable, painted with the button's visuals (no egui widget)
+    let sense = if click_sense || frame { Sense::click() } else { Sense::hover() };
+    let r = ui.allocate_exact_size(size, sense).1;
+    let color = if frame {
+        let v = ui.style().interact_selectable(&r, selected);
+        if ui.is_rect_visible(r.rect) {
+            ui.painter().rect(r.rect.expand(v.expansion), v.corner_radius, v.weak_bg_fill, v.bg_stroke, egui::StrokeKind::Inside);
+        }
+        ui.visuals().override_text_color.unwrap_or(v.fg_stroke.color)
+    } else {
+        ui.visuals().text_color()
+    };
+    if ui.is_rect_visible(r.rect) {
+        let get = |n: &str| css.and_then(|c| c.custom(n));
+        let slots = crate::icons::Slots::from_css(get("--icon-subject"), get("--icon-accent"), get("--icon-badge"));
+        let style = crate::icons::IconStyle { size: pt.map_or(crate::icons::DEFAULT_SIZE, |p| p as f32), color, slots, high_contrast: false };
+        let reg = crate::icons::registry(ui.ctx());
+        let painter = ui.painter().with_clip_rect(r.rect.intersect(ui.clip_rect()));
+        if crate::icons::paint(&painter, &reg, key, r.rect, &style).is_none() {
+            let rect = Rect::from_center_size(r.rect.center(), Vec2::splat(style.size));
+            painter.rect_stroke(rect, 1.0, egui::Stroke::new(1.0, color), egui::StrokeKind::Inside);
+        }
+    }
+    {
+        let role = if click_sense || frame { Role::Button } else { Role::Image };
+        ui.ctx().accesskit_node_builder(r.id, |b| {
+            b.set_role(role);
+            b.clear_value();
+        });
+    }
+    r
 }
 
 #[allow(clippy::disallowed_types)] // OW: wrapper until OW0 (the `button` wrapper, behind the switch), OW1a (toggle-button, icon)

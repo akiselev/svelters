@@ -43,7 +43,7 @@ Text, icons and indicators that show something.
 
 | Element | What it is |
 |---|---|
-| [`<icon>`](icon.md) | A glyph from an icon font the embedder registered (SVP6), by name or as text. |
+| [`<icon>`](icon.md) | An icon from the icon registry by key (ICR1), or a glyph from an icon font the embedder registered (SVP6), by name or as text. |
 | [`<label>`](label.md) | Static text. |
 | [`<progress-bar>`](progress-bar.md) | A horizontal bar filled to `fraction`, as wide as its rect. |
 | [`<separator>`](separator.md) | A thin line between items; fills its rect along its orientation. |
