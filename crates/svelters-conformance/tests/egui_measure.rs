@@ -20,6 +20,13 @@
 //! a dead key composes with the next letter or gives the Compose table's accent on Space; a key
 //! that does not compose cancels it and goes through alone [model, not measured on winit].
 //! Ctrl+Shift+U reaches egui as a plain key (the hex entry is a GTK and IBus feature).
+//!
+//! FX3: a kittest `step` runs one pass per queued event and keeps only the last pass's output, so
+//! keys are fed one event per step ([`Egui::press`]) and every pass's clipboard and PRIMARY writes
+//! are collected. As eframe on Linux, `ViewportCommand::RequestPaste` (Shift+Insert under the native
+//! policies) pastes the clipboard (CRLF turned into LF) in the next pass, and the runner's PRIMARY
+//! provider (W5, `primary::use_system`) is installed: it and egui's `TextSelectionSettled` write
+//! the same PRIMARY.
 
 use egui::OutputCommand;
 use egui::text::{CCursor, CCursorRange};
@@ -27,6 +34,7 @@ use egui::text_edit::TextEditState;
 use egui_kittest::Harness;
 use egui_kittest::kittest::Queryable;
 use std::fmt::Write as _;
+use std::sync::{Arc, Mutex};
 use svelters_abi::*;
 use svelters_conformance::golden::{Capture, PinGap, compare, finish, goldens};
 use svelters_conformance::pins::{
@@ -52,16 +60,32 @@ const FLOOR: &[(&str, usize, usize)] = &[
     ("multi-click", 11, 9),
     ("focus-tab", 9, 9),
     ("focus-click", 7, 7),
-    // WG3b's pins 4-6 at their first measurement (egui's own undo, clipboard and IME; FX3 raises them)
-    ("undo-typing", 6, 11),
-    ("undo-edits", 12, 10),
-    ("undo-paste", 6, 6),
-    ("clipboard-keys", 12, 12),
+    // WG3b's pins 4-6, FX3 (undo grouping, CUA chords, PRIMARY, Ctrl+Shift+U). GTK's undo-edits
+    // misses #19 (a redo that selects the last character); paste-multiline stays at 1 because
+    // egui-winit and eframe turn CRLF into LF before svelters sees the paste; GTK's dead-keys are
+    // its simple input context (not FX3's)
+    ("undo-typing", 11, 11),
+    ("undo-edits", 20, 21),
+    ("undo-paste", 10, 10),
+    ("clipboard-keys", 20, 20),
     ("paste-multiline", 1, 1),
-    ("primary", 5, 5),
+    ("primary", 8, 8),
     ("dead-keys", 8, 12),
-    ("unicode-entry", 1, 1),
+    ("unicode-entry", 13, 13),
 ];
+
+/// The system PRIMARY as the eframe runner's W5 provider sees it (`primary::use_system`).
+#[derive(Clone, Default)]
+struct Primary(Arc<Mutex<String>>);
+
+impl svelters_egui::primary::PrimarySelection for Primary {
+    fn set(&self, text: &str) {
+        *self.0.lock().unwrap() = text.to_string();
+    }
+    fn get(&self) -> Option<String> {
+        Some(self.0.lock().unwrap().clone())
+    }
+}
 
 struct Rec;
 impl HostCallbacks for Rec {
@@ -85,9 +109,10 @@ struct Egui {
     win: u64,
     fields: Vec<(String, u64)>,
     button: u64,
-    /// What egui-winit's clipboard would hold: the system clipboard and PRIMARY.
+    /// What egui-winit's clipboard would hold: the system clipboard and PRIMARY (shared with the
+    /// W5 provider, [`Primary`]).
     clipboard: String,
-    primary: String,
+    primary: Arc<Mutex<String>>,
     /// The pin's selection pseudo-anchors.
     selections: Vec<String>,
     /// A dead key waiting for the next key (`acute`, `diaeresis`, `grave`).
@@ -129,6 +154,8 @@ impl Egui {
             .ctx
             .set_missing_glyph_policy(egui::MissingGlyphPolicy::Tofu);
         svelters_egui::native::set(&harness.ctx, native);
+        let primary = Primary::default();
+        svelters_egui::primary::install(primary.clone());
         Egui {
             backend,
             vt,
@@ -138,21 +165,51 @@ impl Egui {
             fields: vec![],
             button: 0,
             clipboard: String::new(),
-            primary: String::new(),
+            primary: primary.0,
             selections: vec![],
             dead: None,
         }
     }
 
-    /// The clipboard and PRIMARY writes of the last frame (egui-winit's `handle_platform_output`).
+    /// The clipboard and PRIMARY writes of the last frame (egui-winit's `handle_platform_output`),
+    /// and a requested paste (eframe's `ActionRequested::Paste`: an `Event::Paste` for the next pass).
     fn collect(&mut self) {
         for c in &self.harness.output().platform_output.commands {
             match c {
                 OutputCommand::CopyText(t) => self.clipboard = t.clone(),
-                OutputCommand::TextSelectionSettled(t) => self.primary = t.clone(),
+                OutputCommand::TextSelectionSettled(t) => *self.primary.lock().unwrap() = t.clone(),
                 _ => {}
             }
         }
+        let paste = self.harness.output().viewport_output.values().any(|v| {
+            v.commands.iter().any(|c| matches!(c, egui::ViewportCommand::RequestPaste))
+        });
+        if paste {
+            let t = self.clipboard.replace("\r\n", "\n");
+            if !t.is_empty() {
+                self.harness.event(egui::Event::Paste(t));
+            }
+        }
+    }
+
+    /// `key_press_modifiers`, one pass per event as kittest runs them, collecting each pass's
+    /// output (a `step` keeps only its last pass's: a copy made on the key press was lost).
+    fn press(&mut self, mods: egui::Modifiers, key: egui::Key) {
+        let key_event = |pressed| egui::Event::Key { key, physical_key: None, pressed, repeat: false, modifiers: mods };
+        for e in [
+            egui::Event::ModifiersChanged(mods),
+            key_event(true),
+            key_event(false),
+            egui::Event::ModifiersChanged(egui::Modifiers::NONE),
+        ] {
+            self.harness.event(e);
+            self.harness.step();
+            self.collect();
+        }
+    }
+
+    fn primary(&self) -> String {
+        self.primary.lock().unwrap().clone()
     }
 
     fn text_event(&mut self, c: char) {
@@ -266,10 +323,11 @@ impl Egui {
             modifiers: egui::Modifiers::NONE,
         });
         // egui-winit: a middle press pastes PRIMARY (X11, Wayland)
-        if pressed && button == egui::PointerButton::Middle && !self.primary.is_empty() {
+        let primary = self.primary();
+        if pressed && button == egui::PointerButton::Middle && !primary.is_empty() {
             self.harness.event(egui::Event::MiddleClickPaste {
                 pos,
-                text: self.primary.clone(),
+                text: primary,
             });
         }
         self.frames(1);
@@ -336,7 +394,7 @@ impl Driver for Egui {
         self.win = win;
         self.button = b;
         self.clipboard = pin.setup.clipboard.clone().unwrap_or_default();
-        self.primary = String::new();
+        *self.primary.lock().unwrap() = String::new();
         self.selections = pin.observe.clone();
         self.dead = None;
         self.frames(3);
@@ -395,7 +453,7 @@ impl Driver for Egui {
                     self.harness.event(egui::Event::Paste(t));
                 }
             }
-            _ => self.harness.key_press_modifiers(mods, k),
+            _ => self.press(mods, k),
         }
         self.frames(3);
         Ok(())
@@ -487,7 +545,7 @@ impl Driver for Egui {
             let t = if name == CLIPBOARD {
                 self.clipboard.clone()
             } else {
-                self.primary.clone()
+                self.primary()
             };
             let s = State::selection(t);
             self.trace.state(selection_handle(&name), &s);

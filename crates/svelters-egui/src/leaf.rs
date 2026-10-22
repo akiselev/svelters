@@ -266,7 +266,10 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             // FX1: native Escape and word keys before egui's TextEdit runs (crate::native)
             crate::native::keep_focus_on_escape(ui, node_id);
             text_focus = Some(crate::native::TextFocus::before(ui, node_id));
-            if crate::native::text_keys(ui, node_id, text, *password) {
+            // FX3: undo/redo, the CUA chords, line breaks in a paste, Ctrl+Shift+U
+            let limit = (*char_limit).max(0) as usize;
+            let (edit, edited) = crate::native::edit::before(ui, node_id, text, *multiline, *password, limit);
+            if crate::native::text_keys(ui, node_id, text, *password) || edited {
                 text_changed = Some(text.clone());
             }
             let mut te = if *multiline { egui::TextEdit::multiline(text).desired_rows(4) } else { egui::TextEdit::singleline(text) };
@@ -274,9 +277,14 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             if *char_limit > 0 {
                 te = te.char_limit(*char_limit as usize);
             }
+            if !*multiline && crate::native::policy(ui).enter_keeps_focus {
+                te = te.return_key(None); // FX3: Enter keeps focus (GTK, Qt)
+            }
+            crate::primary::note_egui_paste(ui.ctx());
             let o = te.show(ui);
             // W5: the Linux primary selection (select-to-copy, middle-click paste)
-            let pasted = crate::primary::text_edit(ui, &o, node_id, text, *password, (*char_limit).max(0) as usize);
+            let pasted = crate::primary::text_edit(ui, &o, node_id, text, *password, limit);
+            crate::native::edit::after(ui, edit, &o, text, *password);
             let r = o.response.response;
             if r.changed() || pasted {
                 text_changed = Some(text.clone());

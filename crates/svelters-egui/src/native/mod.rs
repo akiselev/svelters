@@ -12,17 +12,23 @@
 //! - after a `TextEdit` ran: select-all on keyboard focus-in, the unfocused selection kept or
 //!   collapsed, one selection owner at a time (X11 PRIMARY) ([`TextFocus`]);
 //! - after a button or check box ran: a press focuses it ([`after_toggle`]), drawn unfocused until
-//!   focus leaves it ([`focus_visible`], GTK's `:focus-visible`).
+//!   focus leaves it ([`focus_visible`], GTK's `:focus-visible`);
+//! - FX3 (WG3b's pins 4–6): undo grouping, the CUA clipboard chords, line breaks kept by a paste,
+//!   PRIMARY emptied when a selection collapses, Ctrl+Shift+U hex entry and Enter keeping focus
+//!   ([`edit`], [`undo`]).
 //!
 //! Which toolkit is followed is a per-context setting ([`set`], [`get`]); the default comes from the
 //! platform ([`Native::for_os`]): GTK on Linux and the BSDs. Windows and macOS keep egui's own
 //! behaviour until their references are captured (WG3 follow-ups).
 
+pub(crate) mod edit;
+pub mod undo;
 pub mod words;
 
 use egui::text::{CCursor, CCursorRange};
 use egui::text_edit::TextEditState;
 use egui::{Event, Id, Key, Modifiers, Ui};
+pub use undo::UndoRules;
 pub use words::WordRules;
 
 /// The toolkit whose behaviour the built-in leaves follow.
@@ -58,6 +64,31 @@ pub struct Policy {
     pub focus_on_click: bool,
     /// Escape leaves keyboard focus where it is (egui drops it).
     pub escape_keeps_focus: bool,
+    /// FX3: undo grouping; `None`: egui's (time-based `Undoer`).
+    pub undo: Option<UndoRules>,
+    /// Ctrl+Insert copies, Shift+Insert pastes, Shift+Delete cuts (egui-winit maps them on Windows
+    /// only).
+    pub cua_clipboard_keys: bool,
+    /// A paste into a single-line field keeps its line breaks (egui turns them into spaces).
+    pub paste_keeps_breaks: bool,
+    /// A focused field whose selection collapses empties the PRIMARY selection (GTK; Qt leaves
+    /// the last text there).
+    pub primary_clears_on_collapse: bool,
+    /// What Ctrl+Shift+U does in a text field.
+    pub ctrl_shift_u: ShiftU,
+    /// Enter in a single-line field keeps keyboard focus (egui ends editing and drops it).
+    pub enter_keeps_focus: bool,
+}
+
+/// Ctrl+Shift+U in a text field ([`Policy::ctrl_shift_u`]).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ShiftU {
+    /// egui's: Ctrl+U, delete to the line start (it ignores Shift).
+    Egui,
+    /// Nothing (Qt without an input method).
+    Nothing,
+    /// Hex Unicode entry (GTK's built-in input method; IBus has the same).
+    HexEntry,
 }
 
 const GTK: Policy = Policy {
@@ -69,6 +100,12 @@ const GTK: Policy = Policy {
     one_selection_owner: true,
     focus_on_click: true,
     escape_keeps_focus: true,
+    undo: Some(UndoRules::Gtk),
+    cua_clipboard_keys: true,
+    paste_keeps_breaks: true,
+    primary_clears_on_collapse: true,
+    ctrl_shift_u: ShiftU::HexEntry,
+    enter_keeps_focus: true,
 };
 
 const QT: Policy = Policy {
@@ -80,6 +117,12 @@ const QT: Policy = Policy {
     one_selection_owner: false,
     focus_on_click: true,
     escape_keeps_focus: true,
+    undo: Some(UndoRules::Qt),
+    cua_clipboard_keys: true,
+    paste_keeps_breaks: true,
+    primary_clears_on_collapse: false,
+    ctrl_shift_u: ShiftU::Nothing,
+    enter_keeps_focus: true,
 };
 
 const EGUI: Policy = Policy {
@@ -91,6 +134,12 @@ const EGUI: Policy = Policy {
     one_selection_owner: false,
     focus_on_click: false,
     escape_keeps_focus: false,
+    undo: None,
+    cua_clipboard_keys: false,
+    paste_keeps_breaks: false,
+    primary_clears_on_collapse: false,
+    ctrl_shift_u: ShiftU::Egui,
+    enter_keeps_focus: false,
 };
 
 impl Native {
@@ -130,7 +179,7 @@ pub fn get(ctx: &egui::Context) -> Native {
     ctx.data(|d| d.get_temp(setting_id())).unwrap_or_else(|| Native::for_os(ctx.os()))
 }
 
-fn policy(ui: &Ui) -> &'static Policy {
+pub(crate) fn policy(ui: &Ui) -> &'static Policy {
     get(ui.ctx()).policy()
 }
 

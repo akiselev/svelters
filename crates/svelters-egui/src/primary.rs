@@ -3,10 +3,16 @@
 //! middle click pastes the primary selection at the pointer. Linux only: elsewhere [`SUPPORTED`]
 //! is false and nothing here runs.
 //!
-//! The selection itself is a [`PrimarySelection`] provider. The eframe runner installs the system
-//! one ([`use_system`], arboard's `LinuxClipboardKind::Primary`); an embedder that owns its window
-//! calls [`use_system`] or [`install`]s its own; tests install a fake. Without a provider the text
-//! kinds behave as plain egui.
+//! The selection itself is a [`PrimarySelection`] provider. FX3 folded it onto DX2's clipboard: any
+//! [`ClipboardBackend`] is one ([`install_backend`], its [`ClipboardKind::Primary`]), and the eframe
+//! runner installs the system one ([`use_system`]: [`crate::platform::SystemClipboard`], the
+//! backend `Host::platform()` uses on the desktop). An embedder that owns its window calls
+//! [`use_system`] or installs its own; tests install a fake. Without a provider the text kinds
+//! behave as plain egui.
+//!
+//! egui 0.37 has PRIMARY of its own under egui-winit (`OutputCommand::TextSelectionSettled`,
+//! `Event::MiddleClickPaste`): when the integration sent `MiddleClickPaste`, `TextEdit` has pasted
+//! already and [`text_edit`] does not paste a second time.
 //!
 //! Text kinds call [`text_edit`] with their `TextEditOutput`: built-in `text-edit` does, and a
 //! provider kind built on `egui::TextEdit` (`#[svelters::widget]`) can too.
@@ -15,6 +21,7 @@
 //! until WG3's goldens measure the gap (W4).
 
 use std::sync::{Arc, Mutex};
+use svelters_host::platform::{ClipboardBackend, ClipboardKind, MimeData, TEXT_PLAIN};
 
 /// True where the primary selection exists (Linux).
 pub const SUPPORTED: bool = cfg!(target_os = "linux");
@@ -50,48 +57,54 @@ pub fn provider() -> Option<Arc<dyn PrimarySelection>> {
     PROVIDER.lock().unwrap().clone()
 }
 
-/// Installs the system primary selection (X11 or Wayland, through arboard) unless a provider is
-/// installed already. False where it is not supported or not available (no display).
-pub fn use_system() -> bool {
-    #[cfg(target_os = "linux")]
-    {
-        let mut p = PROVIDER.lock().unwrap();
-        if p.is_some() {
-            return true;
-        }
-        match system::System::new() {
-            Some(s) => {
-                *p = Some(Arc::new(s));
-                true
-            }
-            None => false,
-        }
+/// A [`ClipboardBackend`]'s PRIMARY as the provider.
+struct Backend(Arc<dyn ClipboardBackend>);
+
+impl PrimarySelection for Backend {
+    fn set(&self, text: &str) {
+        let _ = self.0.write(ClipboardKind::Primary, MimeData::text(text));
     }
-    #[cfg(not(target_os = "linux"))]
-    false
+    fn get(&self) -> Option<String> {
+        self.0.read(ClipboardKind::Primary, &[TEXT_PLAIN]).ok()?.plain_text().map(str::to_string)
+    }
 }
 
-#[cfg(target_os = "linux")]
-mod system {
-    use arboard::{Clipboard, GetExtLinux, LinuxClipboardKind, SetExtLinux};
-    use std::sync::Mutex;
-
-    pub(super) struct System(Mutex<Clipboard>);
-
-    impl System {
-        pub(super) fn new() -> Option<System> {
-            Clipboard::new().ok().map(|c| System(Mutex::new(c)))
-        }
+/// Installs `clipboard`'s [`ClipboardKind::Primary`] as the process's primary selection (DX2's
+/// clipboard, e.g. `Host::platform().clipboard`).
+pub fn install_backend(clipboard: Arc<dyn ClipboardBackend>) {
+    if SUPPORTED {
+        *PROVIDER.lock().unwrap() = Some(Arc::new(Backend(clipboard)));
     }
+}
 
-    impl super::PrimarySelection for System {
-        fn set(&self, text: &str) {
-            let _ = self.0.lock().unwrap().set().clipboard(LinuxClipboardKind::Primary).text(text.to_string());
-        }
-        fn get(&self) -> Option<String> {
-            self.0.lock().unwrap().get().clipboard(LinuxClipboardKind::Primary).text().ok()
-        }
+/// Installs the system primary selection (X11 or Wayland: [`crate::platform::SystemClipboard`])
+/// unless a provider is installed already. False where it is not supported or not available (no
+/// display).
+pub fn use_system() -> bool {
+    if !SUPPORTED {
+        return false;
     }
+    let mut p = PROVIDER.lock().unwrap();
+    if p.is_some() {
+        return true;
+    }
+    let system = crate::platform::SystemClipboard::new();
+    if system.formats(ClipboardKind::Primary).is_err() {
+        return false;
+    }
+    *p = Some(Arc::new(Backend(Arc::new(system))));
+    true
+}
+
+fn last_id(id: egui::Id) -> egui::Id {
+    id.with("svelters-primary")
+}
+
+/// FX3 (GTK): field `id`'s selection collapsed, so the primary selection is emptied.
+pub(crate) fn clear(ui: &egui::Ui, id: egui::Id) {
+    let Some(p) = provider() else { return };
+    p.set("");
+    ui.data_mut(|d| d.remove::<String>(last_id(id)));
 }
 
 /// Applies the primary selection to a text field after it ran: copies a new non-empty selection
@@ -101,7 +114,7 @@ mod system {
 pub fn text_edit(ui: &egui::Ui, out: &egui::text_edit::TextEditOutput, id: egui::Id, text: &mut String, password: bool, char_limit: usize) -> bool {
     let Some(p) = provider() else { return false };
     let resp = &out.response.response;
-    let last = id.with("svelters-primary");
+    let last = last_id(id);
     // select-to-copy: a selection that differs from the last one copied
     if !password
         && let Some(range) = out.cursor_range
@@ -116,6 +129,10 @@ pub fn text_edit(ui: &egui::Ui, out: &egui::text_edit::TextEditOutput, id: egui:
     }
     // middle-click paste at the pointer
     if !resp.clicked_by(egui::PointerButton::Middle) || !resp.enabled() {
+        return false;
+    }
+    // egui-winit sent `MiddleClickPaste` with the press, and `TextEdit` pasted it
+    if ui.ctx().data(|d| d.get_temp::<bool>(egui_pasted_id())).unwrap_or(false) {
         return false;
     }
     let (Some(pos), Some(mut paste)) = (resp.interact_pointer_pos(), p.get()) else { return false };
@@ -135,4 +152,22 @@ pub fn text_edit(ui: &egui::Ui, out: &egui::text_edit::TextEditOutput, id: egui:
     resp.request_focus();
     ui.ctx().request_repaint();
     true
+}
+
+fn egui_pasted_id() -> egui::Id {
+    egui::Id::unique("svelters-egui/primary/egui-pasted")
+}
+
+/// Before a text kind runs: notes whether the integration sent `MiddleClickPaste` for the current
+/// middle press (egui's `TextEdit` pastes it on the press; [`text_edit`] would paste again on the
+/// release). A press resets it; the event sets it (with the press, or in a pass after it).
+/// Idempotent within a pass.
+pub(crate) fn note_egui_paste(ctx: &egui::Context) {
+    let (press, egui) = ctx.input(|i| {
+        let press = i.events.iter().any(|e| matches!(e, egui::Event::PointerButton { button: egui::PointerButton::Middle, pressed: true, .. }));
+        (press, i.events.iter().any(|e| matches!(e, egui::Event::MiddleClickPaste { .. })))
+    });
+    if press || egui {
+        ctx.data_mut(|d| d.insert_temp(egui_pasted_id(), egui));
+    }
 }
