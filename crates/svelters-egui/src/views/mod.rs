@@ -13,6 +13,7 @@
 //!
 //! Writer lane: WIDGETS (WG4a).
 
+pub mod selection;
 pub(crate) mod split;
 pub(crate) mod table;
 pub(crate) mod tabs;
