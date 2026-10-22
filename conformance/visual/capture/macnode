@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# VIS1m: winnode for macOS. Runs a Node script inside the VS Code app (ELECTRON_RUN_AS_NODE), next to
+# the VS Code that setup-macos.sh launched. Usage: VIS_ROOT=/tmp/vis1m macnode /tmp/vis1m/cdp.js js 'document.title'
+export ELECTRON_RUN_AS_NODE=1
+exec "${VSCODE_APP:-/tmp/vis1m-vscode/Visual Studio Code.app}/Contents/MacOS/Code" "$@"

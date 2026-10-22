@@ -1,6 +1,8 @@
 // VIS1: captures VS Code reference crops and computed metrics, one theme per run, from a VS Code
 // started by `setup.sh --launch` (clean profile, workspace C:\vis1\ws). Runs on Windows inside
-// Code.exe as Node: `VIS_THEME=dark-modern winnode C:\vis1\capture.js`.
+// Code.exe as Node: `VIS_THEME=dark-modern winnode C:\vis1\capture.js`. On macOS (VIS1m):
+// `setup-macos.sh --launch`, then `VIS_THEME=dark-modern VIS_ROOT=/tmp/vis1m VIS_SCALE=2 macnode
+// /tmp/vis1m/capture.js` (Cmd instead of Ctrl, crops named `@2x` at the Retina display's own scale).
 //
 // Every element is a real workbench widget (the explorer tree, editor tabs, the find widget, the
 // settings editor, a custom dialog, a notification toast, a context menu, a hover), never a DOM copy:
@@ -9,7 +11,8 @@
 // state is a CSS pseudo-class, also forced with CSS.forcePseudoState so the crop is deterministic.
 // Disabled states use VS Code's own `disabled` class on the real widget.
 //
-// Output: C:\vis1\out\<theme>\<element>-<state>.png (1x crops, element rect + 4px) and metrics.json
+// Output: C:\vis1\out\<theme>\<element>-<state>.png (1x crops, element rect + 4px; `-<state>@<n>x.png`
+// at VIS_SCALE n) and metrics.json
 // ({ meta, items: [{ element, state, how, metrics, png }], vars }).
 'use strict';
 const fs = require('node:fs');
@@ -21,8 +24,13 @@ const THEMES = {
   'light-modern': 'Default Light Modern',
 };
 const theme = process.env.VIS_THEME || 'dark-modern';
-const OUT = path.join('C:\\vis1\\out', theme);
-const SETTINGS = 'C:\\vis1\\ud\\User\\settings.json';
+const ROOT = process.env.VIS_ROOT || 'C:\\vis1';
+const OUT = path.join(ROOT, 'out', theme);
+const SETTINGS = path.join(ROOT, 'ud', 'User', 'settings.json');
+// the device pixel ratio the crops are taken at (Windows: 1, forced; macOS Retina: 2, native)
+const SCALE = Number(process.env.VIS_SCALE || 1);
+// the platform's command modifier (Cmd+F, Cmd+A on macOS)
+const MOD = process.platform === 'darwin' ? 'meta' : 'ctrl';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 let c;
@@ -53,7 +61,7 @@ async function capture(element, state, sel, { text, how = 'rest', pad = 4, clipS
     items.push({ element, state, how, selector: sel, metrics: null });
     return null;
   }
-  const png = `${element}-${state}.png`;
+  const png = `${element}-${state}${SCALE === 1 ? '' : `@${SCALE}x`}.png`;
   const r = m.clip;
   const x = Math.max(0, Math.floor(r.x) - pad), y = Math.max(0, Math.floor(r.y) - pad);
   await c.shot(path.join(OUT, png), { x, y, width: Math.ceil(r.w) + 2 * pad, height: Math.ceil(r.h) + 2 * pad });
@@ -149,8 +157,8 @@ async function main() {
   c = await Cdp.connect();
   await sleep(2000);
   // a reload shows the "extensions are disabled" toast again (the notification toast reference)
-  // (DPR 1 first: the emulation outlives the reload, so the workbench lays out at 1x from the start)
-  if (Math.abs((await c.eval("devicePixelRatio")) - 1) > 0.01) await c.dpr(1);
+  // (DPR SCALE first: the emulation outlives the reload, so the workbench lays out at it from the start)
+  if (Math.abs((await c.eval("devicePixelRatio")) - SCALE) > 0.01) await c.dpr(SCALE);
   // (CDP's Page.reload breaks the workbench; VS Code's own reload goes through its main process)
   await c.eval(PAGE_HELPERS);
   for (let i = 0; i < 3; i++) await c.key('Escape');
@@ -163,7 +171,7 @@ async function main() {
     c.close();
     await sleep(3000);
     c = await Cdp.connect();
-    if (Math.abs((await c.eval("devicePixelRatio")) - 1) > 0.01) await c.dpr(1);
+    if (Math.abs((await c.eval("devicePixelRatio")) - SCALE) > 0.01) await c.dpr(SCALE);
     await c.waitFor(`!!document.querySelector('.monaco-workbench .explorer-folders-view')`, 30000);
   }
   await sleep(3000);
@@ -245,7 +253,7 @@ async function main() {
 
   // ---- the find widget: input box, input-option toggles ----
   await js(`__vis.q('.editor-instance .monaco-editor textarea')?.focus()`);
-  await c.key('f', ['ctrl']);
+  await c.key('f', [MOD]);
   await sleep(500);
   const findInput = '.find-widget .monaco-findInput .monaco-inputbox';
   await capture('input', 'focus', findInput, { text: 'textarea, input', how: 'the find input, focused, empty (placeholder)' });
@@ -267,7 +275,7 @@ async function main() {
   // validation error: regex on, an invalid pattern
   await js(`__vis.all('.find-widget .monaco-custom-toggle').find((t) => /Regular/.test(t.getAttribute('aria-label') || t.title)).click()`);
   await js(`__vis.q('.find-widget textarea, .find-widget input').focus()`);
-  await c.key('a', ['ctrl']);
+  await c.key('a', [MOD]);
   await c.type('(');
   await sleep(500);
   await capture('input', 'invalid', findInput, { text: 'textarea, input', how: 'regex on, pattern "("' });
@@ -384,7 +392,7 @@ async function main() {
   })()`);
   items.push({ element: 'progress', state: 'rest', how: 'computed style of the hidden bar; colour = --vscode-progressBar-background', metrics: progress && { rect: { w: null, h: parseFloat(progress.height) }, bg: progress.bit_bg || vars['--vscode-progressBar-background'] } });
 
-  fs.writeFileSync(path.join(OUT, 'metrics.json'), JSON.stringify({ meta: { ...meta, vscode: '1.133.0', scale: 1 }, items, vars }, null, 1));
+  fs.writeFileSync(path.join(OUT, 'metrics.json'), JSON.stringify({ meta: { ...meta, vscode: '1.133.0', scale: SCALE, platform: process.platform }, items, vars }, null, 1));
   log(`wrote ${items.length} items to ${OUT}`);
   c.close();
 }

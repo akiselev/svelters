@@ -6,7 +6,7 @@
 //   node cdp.js js '<expression>'          prints the JSON value
 //   node cdp.js jsfile <file.js>          the same, the expression read from a file
 //   node cdp.js shot <out.png> [x y w h]   a screenshot (CSS px, at DPR 1)
-//   node cdp.js key <key> [mods]           mods: ctrl,shift,alt
+//   node cdp.js key <key> [mods]           mods: ctrl,shift,alt,meta
 //   node cdp.js type <text>
 //   node cdp.js click <x> <y> [right]
 //   node cdp.js move <x> <y>
@@ -70,6 +70,9 @@ class Cdp {
         // measured once: a 100 px clip at scale 1 comes back (display scale) px wide
         const r = await this.send('Page.captureScreenshot', { format: 'png', clip: { x: 0, y: 0, width: 100, height: 10, scale: 1 } });
         this.zoom = Buffer.from(r.data, 'base64').readUInt32BE(16) / 100;
+        // image px per CSS px is devicePixelRatio (1 on Windows; 2 at the macOS Retina scale), so the
+        // CSS-to-DIP factor is the measured one over it
+        this.zoom /= await this.eval('devicePixelRatio');
       }
       const f = this.zoom;
       p.clip = { x: clip.x / f, y: clip.y / f, width: clip.width / f, height: clip.height / f, scale: 1 };
@@ -78,7 +81,8 @@ class Cdp {
     fs.writeFileSync(file, Buffer.from(r.data, 'base64'));
   }
   async key(key, mods = []) {
-    const m = (mods.includes('alt') ? 1 : 0) | (mods.includes('ctrl') ? 2 : 0) | (mods.includes('shift') ? 8 : 0);
+    const m =
+      (mods.includes('alt') ? 1 : 0) | (mods.includes('ctrl') ? 2 : 0) | (mods.includes('meta') ? 4 : 0) | (mods.includes('shift') ? 8 : 0);
     const named = {
       Enter: [13, 'Enter', '\r'], Escape: [27, 'Escape'], Tab: [9, 'Tab'], ArrowDown: [40, 'ArrowDown'],
       ArrowUp: [38, 'ArrowUp'], ArrowRight: [39, 'ArrowRight'], ArrowLeft: [37, 'ArrowLeft'], F1: [112, 'F1'],
@@ -89,7 +93,7 @@ class Cdp {
     else {
       code = key.toUpperCase().charCodeAt(0);
       k = key;
-      text = m & 2 ? undefined : key;
+      text = m & 6 ? undefined : key;
     }
     const base = { modifiers: m, windowsVirtualKeyCode: code, key: k, code: k.length === 1 ? 'Key' + k.toUpperCase() : k };
     await this.send('Input.dispatchKeyEvent', { type: text ? 'keyDown' : 'rawKeyDown', text, ...base });

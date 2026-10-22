@@ -55,6 +55,63 @@ To refresh: `conformance/visual/capture/setup.sh --launch` (background), then
 `VIS_THEME=dark-modern conformance/visual/capture/winnode 'C:\vis1\capture.js'` (and `light-modern`), and copy
 `/mnt/c/vis1/out/<theme>/` to `conformance/visual/vscode/<theme>/`.
 
+### 2b. macOS references (VIS1m, 2026-10-22, macbook)
+
+The same `capture.js`, run on macOS against the same VS Code build (1.133.0, commit `a5b5009513`), so the two
+platforms' references differ only by platform. Stored in `conformance/visual/vscode-macos/{dark-modern,light-modern}/`:
+
+- `<element>-<state>@2x.png` and `metrics.json`: the Retina display's own scale (DPR 2, `window.zoomLevel` 0);
+- `<element>-<state>.png` and `metrics@1x.json`: DPR 1 through `window.zoomLevel` log(0.5)/log(1.2) (−3.80). Unlike
+  Windows' 125% display, every computed border is a whole 1 px there, so the 1x set is kept (borders render crisp).
+
+Metrics are in CSS px either way. Apart from two timing-dependent items (below), the style metrics of the 1x and 2x
+captures are identical, and so are the `--vscode-*` variables.
+
+**How.** `capture/setup-macos.sh --launch` writes the profile and workspace under `$VIS_ROOT` (default `/tmp/vis1m`)
+and starts `$VSCODE_APP` (a separate copy of 1.133.0: the official darwin zip from
+`update.code.visualstudio.com/1.133.0/darwin/stable`, signed by Microsoft (team `UBF8T346G9`), unpacked anywhere;
+never the installed VS Code or its profile) with its own `--user-data-dir`, `--extensions-dir` and
+`--remote-debugging-port=9229`. `capture/macnode` runs a script inside that app as Node, as `winnode` does on
+Windows. On macOS the loopback port is reachable directly, so nothing else is needed:
+
+```sh
+conformance/visual/capture/setup-macos.sh --launch &          # VIS_ZOOM=-3.8017840169239308 for the 1x set
+VIS_THEME=dark-modern VIS_ROOT=/tmp/vis1m VIS_SCALE=2 conformance/visual/capture/macnode /tmp/vis1m/capture.js
+# then copy /tmp/vis1m/out/<theme>/ to conformance/visual/vscode-macos/<theme>/
+```
+
+Changes to the shared scripts, with the Windows behaviour unchanged:
+- `capture.js` takes `VIS_ROOT` (default `C:\vis1`) and `VIS_SCALE` (default 1, the forced DPR); `@<n>x` file names
+  when it is not 1; Cmd instead of Ctrl on macOS; `meta.scale` and `meta.platform` record the run.
+- `cdp.js` has a `meta` modifier. The crop clip is converted from CSS px with the measured factor divided by
+  `devicePixelRatio`, which is 1 on Windows, so nothing changes there.
+
+All 68 items were captured in both themes, including the custom context menu (`window.menuStyle: custom` applies on
+macOS too), the select drop-down and the custom dialog. The two whole-area crops (`settings-editor-open`,
+`dialog-modal-block-rest`) are left out, as in the Windows set (their metrics are in `metrics.json`).
+
+**macOS against Windows** (both themes, 67 shared items):
+- All 3158 (dark) and 3160 (light) `--vscode-*` variables are identical. So are background and foreground colours,
+  border widths and colours, radii, padding and font sizes.
+- **Font**: `-apple-system, "system-ui", sans-serif` (SF) instead of `"Segoe WPC", "Segoe UI"`, at the same sizes.
+  Text runs about 7% wider (the primary button's label: 187 px against 175), and buttons grow with it.
+- **Settings inputs** are 25 px tall against 27 (the number box and the text box), and the setting label's line
+  is 15 px against 17.
+- **Menus** are narrower (264 px against 322 for the same items): keybindings show as ⌘/⌥/⇧ glyphs (`⌥⌘R`), not
+  `Shift+Alt+R`.
+- Sizes of the sash, scrollbar, editor group, settings editor and modal block follow the window (1440×900 here).
+
+**Stability.** A second 2x capture reproduced 54 of 67 crops byte for byte, and all metrics but four. The four are
+timing: the explorer row's hover background (missed on the second run; the Windows reference missed it too and
+records it transparent), the dirty tab's label colour (red once TypeScript's error decoration for the typed `x`
+arrives, white before), the editor scrollbar track caught mid-fade, and the find widget's match counter. The committed
+2x set is the first run, which caught the intended state each time; the 1x dark set has the white tab label and the
+missed hover. The find input's `focus` and `filled-focus` states show text seeded from the editor (`line`), as on
+Windows (`editor.find.seedSearchStringFromSelection`), not an empty box with its placeholder.
+
+Not done here: the High Contrast themes (as on Windows), and our renders at 2x (TK1 runs at 1x and 2x on Linux;
+comparing against these needs the macOS font in the renders, which a Linux CI job does not have).
+
 ## 3. Our side
 
 - **Page**: `fixtures/gallery-egui/src/pages/VisControls.svelte` (an embed export): every kind in its static states,
