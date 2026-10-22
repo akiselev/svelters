@@ -144,22 +144,25 @@ pub fn move_to(x: i32, y: i32) -> WinResult<()> {
     };
     let norm = |p: i32, o: i32, size: i32| (((p - o) as i64 * 65536 + size as i64 - 1) / size as i64) as i32;
     let (mut nx, mut ny) = (norm(x, vx, vw), norm(y, vy, vh));
-    for _ in 0..4 {
+    let mut seen = Vec::new();
+    for _ in 0..8 {
         let mut i = mouse_input(MOUSEEVENTF_MOVE | MOUSEEVENTF_ABSOLUTE | MOUSEEVENTF_VIRTUALDESK);
         unsafe {
             i.Anonymous.mi.dx = nx;
             i.Anonymous.mi.dy = ny;
         }
         send(&[i])?;
+        sleep(5);
         let mut p = windows::Win32::Foundation::POINT::default();
         unsafe { GetCursorPos(&mut p) }.map_err(e("GetCursorPos"))?;
         if p.x == x && p.y == y {
             return Ok(());
         }
+        seen.push((p.x, p.y));
         nx += (x - p.x) * (65536 / vw).max(1);
         ny += (y - p.y) * (65536 / vh).max(1);
     }
-    Err(format!("the pointer did not reach ({x}, {y})"))
+    Err(format!("the pointer did not reach ({x}, {y}): it went to {seen:?} (virtual screen {vx},{vy} {vw}x{vh})"))
 }
 
 pub fn button(down: bool) -> WinResult<()> {
