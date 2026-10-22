@@ -73,7 +73,7 @@ node (an outroing one is inert; every other event is dropped).
 
 - The `performance.now()`/JS clock and the egui clock are separate (D1).
 - Reduced motion is not read from the OS (see D3).
-- **TR2b (follow-up):** Tab focus still reaches an exiting node.
+- Tab focus reaching an exiting node: fixed in TR2b (`TR2b-focus-exiting.md`).
 - Implicit CSS `transition:` declarations (soft dependency on STYLE CS5e).
 - SV14 (profile per-frame `tick`) is not started: `tick(t)` transitions have no keyframes and stay
   on the JS path.
