@@ -185,6 +185,47 @@ impl BytecodeCache {
     }
 }
 
+/// Q4: `precompile` (ASSETS.md §4.2): a copy of `svb` with every module's bytecode written by
+/// this engine and stamped with [`stamp`], so a launch reads no JavaScript. Runs inside the binary
+/// that will read the bytecode (a build-dependency QuickJS may differ in features or target).
+/// Modules are compiled only, never evaluated, in a fresh runtime.
+pub fn precompile(svb: &svelters_modules::Svb) -> Result<Vec<u8>, String> {
+    let rt = rquickjs::Runtime::new().map_err(|e| e.to_string())?;
+    // QuickJS loads a module's imports when it is compiled: resolve them through the bundle's import
+    // tables and hand host modules over as empty stubs (nothing is linked or evaluated).
+    let imports = PrecompileImports(std::rc::Rc::new(svb.index().modules.iter().map(|(k, m)| (k.clone(), m.imports.clone())).collect()));
+    rt.set_loader(imports.clone(), imports);
+    let ctx = rquickjs::Context::full(&rt).map_err(|e| e.to_string())?;
+    let mut out = std::collections::BTreeMap::new();
+    ctx.with(|ctx| {
+        for id in svb.index().modules.keys() {
+            let js = svb.module_js(id)?;
+            let fail = |e: rquickjs::Error| format!("{id}: {}", if matches!(e, rquickjs::Error::Exception) { format!("{:?}", ctx.catch()) } else { e.to_string() });
+            let m = rquickjs::Module::declare(ctx.clone(), id.as_str(), js).map_err(fail)?;
+            out.insert(id.clone(), m.write(write_options()).map_err(fail)?);
+        }
+        Ok::<_, String>(())
+    })?;
+    svb.with_bytecode(out, stamp())
+}
+
+/// [`precompile`]'s module loading: a bundle's import tables, with stubs for what is not in it.
+#[derive(Clone)]
+struct PrecompileImports(std::rc::Rc<std::collections::BTreeMap<String, std::collections::BTreeMap<String, String>>>);
+
+impl rquickjs::loader::Resolver for PrecompileImports {
+    fn resolve<'js>(&mut self, _ctx: &rquickjs::Ctx<'js>, base: &str, name: &str, _attrs: Option<rquickjs::loader::ImportAttributes<'js>>) -> rquickjs::Result<String> {
+        Ok(self.0.get(base).and_then(|m| m.get(name)).cloned().unwrap_or_else(|| format!("stub:{name}")))
+    }
+}
+
+impl rquickjs::loader::Loader for PrecompileImports {
+    fn load<'js>(&mut self, ctx: &rquickjs::Ctx<'js>, name: &str, _attrs: Option<rquickjs::loader::ImportAttributes<'js>>) -> rquickjs::Result<rquickjs::Module<'js, rquickjs::module::Declared>> {
+        // Every module is declared by `precompile` itself; this one only has to exist.
+        rquickjs::Module::declare(ctx.clone(), name, "")
+    }
+}
+
 /// `MAGIC, key, fnv(js), len(payload), fnv(payload), len(name), name, payload` (little-endian).
 fn encode(key: u64, name: &str, js: &str, payload: &[u8]) -> Vec<u8> {
     let mut out = Vec::with_capacity(48 + name.len() + payload.len());
