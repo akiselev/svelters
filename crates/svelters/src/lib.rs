@@ -141,6 +141,8 @@
 //! `plans/milestones/EV2b-behaviors.md`.
 
 pub use svelters_host::exports;
+/// AS1: an asset ref (`asset://<root>/<path>`), as an export parameter, result or `Json<T>` field.
+pub use svelters_host::modules::{AssetRef, Assets};
 pub use svelters_host::exports::{
     Buffer, CallCx, Cancelled, Closed, Element, Emitter, EventSet, ExportError, ExportObject, FromJs, IntoJs, JsType, Json, JsonAny, NativeError, Obj, ServiceCx, Shared,
     SharedObject, Sink, StopToken, Store, StoreHooks, StoreState, StoreStatic, Stream, TypeBuilder, TypeRef, UiObject, Value, WorkCx, channel,

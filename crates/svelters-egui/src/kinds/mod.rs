@@ -221,6 +221,8 @@ pub enum P {
     /// image
     Source,
     Fit,
+    /// icon (AS1)
+    Tint,
     /// progress-bar
     Fraction,
     ShowPercentage,

@@ -513,6 +513,16 @@ impl JsEngine for QjsEngine {
         })
     }
 
+    fn assets_changed(&mut self, refs: &[String]) -> Result<(), JsError> {
+        self.call_guarded(|ctx| {
+            let f: Value = ctx.globals().get("__svelters_assets_changed")?;
+            let Some(f) = f.as_function() else {
+                return Ok(());
+            };
+            f.call::<_, Value>((refs.to_vec(),)).map(|_| ())
+        })
+    }
+
     fn dispatch_changed(&mut self, batch: &[ChangedProp]) -> Result<(), JsError> {
         let core = self.core.clone();
         self.call_guarded(|ctx| {
@@ -1284,6 +1294,24 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
             Function::new(ctx.clone(), move |ctx: Ctx<'js>, op: String, a: String, b: String| -> Res<String> {
                 let c = core_of(&ctx, &w)?;
                 c.dx_op(&op, &a, &b).map_err(|(code, m)| Exception::throw_message(&ctx, &format!("{code}: {m}")))
+            })?,
+        )?;
+        // AS1: `svelters:assets` reads (`text`, `info`; `assetBytes` copies the content once).
+        let w = core.clone();
+        host.set(
+            "assets",
+            Function::new(ctx.clone(), move |ctx: Ctx<'js>, op: String, uri: String| -> Res<String> {
+                let c = core_of(&ctx, &w)?;
+                c.asset_op(&op, &uri).map_err(|m| Exception::throw_message(&ctx, &m))
+            })?,
+        )?;
+        let w = core.clone();
+        host.set(
+            "assetBytes",
+            Function::new(ctx.clone(), move |ctx: Ctx<'js>, uri: String| -> Res<rquickjs::ArrayBuffer<'js>> {
+                let c = core_of(&ctx, &w)?;
+                let b = c.asset_bytes(&uri).map_err(|m| Exception::throw_message(&ctx, &m))?;
+                rquickjs::ArrayBuffer::new(ctx.clone(), b)
             })?,
         )?;
         // E2: `alloc(Float32Array, n)` (`@svelters/types/core`): a typed array over a Rust allocation,

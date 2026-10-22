@@ -1930,6 +1930,40 @@
           "readable": true,
           "type": "f64",
           "writable": true
+        },
+        "source": {
+          "construct_only": false,
+          "default": null,
+          "doc": "An image instead of the glyph: an `asset://` ref (an imported SVG or PNG), a file path or any uri an egui loader serves. Measured `size` (else the body size) square and fitted inside; when it does not load the placeholder box is drawn.",
+          "js": "source",
+          "native": "source",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Icon:source",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "tint": {
+          "construct_only": false,
+          "default": true,
+          "doc": "With `source`: tints the image with the text colour (SVG `currentColor` icons render white, then tint like a glyph); false keeps its own colours.",
+          "js": "tint",
+          "native": "tint",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Icon:tint",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
         }
       },
       "provenance": {

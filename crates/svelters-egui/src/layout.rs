@@ -395,10 +395,15 @@ impl Metrics {
             // egui's `Separator::default()` spacing
             W::Separator { vertical: false } => vec2(0.0, 6.0),
             W::Separator { vertical: true } => vec2(6.0, 0.0),
-            W::Icon { name, glyph, family, size, weight, frame, .. } => {
-                let t = match crate::fonts::icon_look(&self.ctx, &self.style, family, name, glyph, *weight, *size) {
+            W::Icon { name, glyph, family, size, weight, frame, source, .. } => {
+                let t = if !source.is_empty() {
+                    // AS1: an image icon is a square of `size` (else the body size)
+                    Vec2::splat(size.map_or_else(|| egui::TextStyle::Body.resolve(&self.style).size, |s| s as f32))
+                } else {
+                    match crate::fonts::icon_look(&self.ctx, &self.style, family, name, glyph, *weight, *size) {
                     crate::fonts::IconLook::Glyph(font, text) => self.text_size_in(&text, font, None),
                     crate::fonts::IconLook::Placeholder(side) => Vec2::splat(side),
+                    }
                 };
                 if *frame { vec2(t.x + 2.0 * sp.button_padding.x, (t.y + 2.0 * sp.button_padding.y).max(interact.y)) } else { t }
             }
