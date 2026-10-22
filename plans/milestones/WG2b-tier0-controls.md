@@ -59,8 +59,11 @@ same `@svelters/canvas` `draw()` attachment works unchanged: egui posts `resize(
 
 ## Behaviour and layout notes
 
-- **Layout boundaries (SG1).** `panel.size`, `frame.label`/`frame-style` and the `stack.visible-*` props are layout
-  props: a write restyles the node and relays out from its parent. A user resize of a panel does the same from the
+- **Layout boundaries (SG1).** A write of `panel.side`/`size`, `frame.label`/`frame-style` or `stack.visible-*`/
+  `homogeneous` restyles the node and relays out from its parent (`Dirty::LAYOUT` from `elements::set_prop`). They
+  are not CSS setters (`layout: false`); only the `Box` props of `sides`/`stack`/`frame`/`panel` are, which
+  `tools/metadata/style/gen_props.py` put into `packages/style/src/props.generated.js` and
+  `crates/svelters-style/src/tables.generated.rs` (regenerated). A user resize of a panel does the same from the
   walk (`restyle` + `invalidate_style`, repaint). Leaf content changes (`text`, `url`, `source`, `decimals`, …)
   remeasure. An image measured before an async loader finished is remeasured when it loads.
 - **`stack`** is laid out by `elements::panes::stack_layout`: sized like a leaf whose content is the visible child
@@ -152,7 +155,10 @@ tests: kittest runs without a renderer here.
 ## Verification (this lane, local)
 
 - `tools/dev/cargo-slot cargo check -p svelters-egui --all-targets`: clean (one pre-existing svelters-host warning).
-- `tools/dev/cargo-slot cargo nextest run -p svelters-egui`: 77/77, with the egui fixtures built
-  (`pnpm --filter './fixtures/*-egui' build` after `cargo build -p svelters-compiler --bin svelters-compile`).
-- Not run locally: the workspace nextest, `egui-kinds-example`, conformance, the other backends' suites, the JS
-  test run. CI runs them.
+- Before merging WG1's latest (0a7c8c30..66fcd9df): `cargo nextest run -p svelters-egui` 77/77 with the egui
+  fixtures built.
+- After the last merge and code change: `cargo nextest run -p svelters-egui --test tier0 --test gallery --test
+  observe --test spec` 24/24 (gallery bundle rebuilt with a rebuilt `svelters-compile`, which embeds `egui.json`);
+  `pnpm --filter @svelters/style test` 25/25; `gen_props.py --check` clean.
+- Not run locally: the rest of the svelters-egui suite after the last merge, `svelters-style`, `egui-kinds-example`,
+  the workspace nextest, conformance, the other backends' suites, the JS test run. CI runs them.
