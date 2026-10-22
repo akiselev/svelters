@@ -61,6 +61,8 @@ export interface EguiWidgetProps {
   margin?: number;
   /** A name unique in its embedded root: the node's egui id derives from it (stable across runs, not only across reorders), it is the AccessKit author id, and `Embed::anchor_rect` finds it. Changing it drops the node's egui memory. */
   anchor?: string;
+  /** A native animation (TR2) finished; carries its id. The runtime listens to it itself. */
+  onanimationend?: (id: number) => void;
 }
 
 /** The built-in egui elements, by tag. */
