@@ -80,6 +80,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             ui.add(s)
         }
         W::Box | W::Window { .. } => unreachable!("containers are not leaves"),
+        W::Ext(_) => unreachable!("provider kinds are drawn by provider::paint"),
     };
     let mut resp = resp;
     if let Some(name) = crate::a11y::name(&arena.n(h)) {

@@ -16,12 +16,13 @@
 use super::dump::{DumpOpts, SceneStats};
 use super::id::{Handle, KindId, NodeId, PropId, ProviderId, RootIx, Tick};
 use super::keys::{PropKey, PropValue};
-use super::node::{Common, Dirty, NodeFlags, Owner, StateBits, W};
+use super::node::{Common, Dirty, NodeFlags, Owner, W};
+use crate::provider::{ExtBlock, ExtEntry, ExtKey, IntoStateBits, StateBits};
 use super::props;
 use super::tree::TreeRoot;
 use super::{Member, Phase, Scene, member_bit};
 use crate::backend::EguiBackend;
-use crate::kinds::{self, KINDS};
+use crate::kinds;
 use std::cell::{Cell, Ref, RefCell, RefMut};
 use std::rc::Rc;
 use svelters_abi::Value;
@@ -398,8 +399,23 @@ impl<'a> NodeRef<'a> {
         super::node::text_of(self.s.w(self.i))
     }
     /// The built-in widget fields (unstable: internal representation, §16).
-    pub fn widget(self) -> &'a W {
+    pub fn builtin(self) -> &'a W {
         self.s.w(self.i)
+    }
+    /// The provider widget (RA1 kinds), typed: full access to a kind's own state.
+    pub fn widget<Wd: 'static, R>(self, f: impl FnOnce(&Wd) -> R) -> Option<R> {
+        match self.s.w(self.i) {
+            W::Ext(x) => x.with(f),
+            _ => None,
+        }
+    }
+    /// This node's provider data for `key` (ARCH-EMBED §8.4; SG2 moves it into per-key columns).
+    pub fn ext<T: 'static>(self, key: &ExtKey<T>) -> Option<&'a T> {
+        self.s.ext[self.i].get(key)
+    }
+    /// Every provider data key present on this node.
+    pub fn ext_block(self) -> &'a ExtBlock {
+        &self.s.ext[self.i]
     }
     pub fn common(self) -> &'a Common {
         self.s.common(self.i)
@@ -621,14 +637,21 @@ impl NodeMut<'_> {
         self.s.set_value(self.id, id, v, self.origin)
     }
 
-    pub fn set_state(&mut self, bits: StateBits, on: bool) {
+    pub fn set_state(&mut self, bits: impl IntoStateBits, on: bool) {
         let before = self.s.core[self.i].state;
-        self.s.core[self.i].state.set(bits, on);
+        self.s.core[self.i].state.set(bits.state_bits(), on);
         if self.s.core[self.i].state != before {
             let t = self.s.stamp();
             self.s.core[self.i].changed = t;
             self.s.core[self.i].dirty.insert(Dirty::PAINT);
         }
+    }
+
+    /// This node's provider data entry for `key` (get, set, remove). Marks the node changed.
+    pub fn ext_mut<'k, T: 'static>(&'k mut self, key: &'k ExtKey<T>) -> ExtEntry<'k, T> {
+        let t = self.s.stamp();
+        self.s.core[self.i].changed = t;
+        ExtEntry::new(&mut self.s.ext[self.i], key)
     }
 
     /// Sets the public flags ([`NodeFlags::PUBLIC`]: `LAYOUT_BOUNDARY`, `HIT_TRANSPARENT`,
@@ -662,7 +685,7 @@ impl Scene {
     pub(crate) fn set_value(&mut self, id: NodeId, prop: u32, v: &Value, origin: Origin) -> Result<(), PropError> {
         let i = self.idx(id).ok_or(PropError::Stale(id.to_raw()))?;
         let kind = self.core[i].kind as usize;
-        let tag = KINDS[kind].tag.unwrap_or("?");
+        let tag = kinds::kind(kind).tag.unwrap_or("?");
         let def = kinds::prop_def(kind, prop).ok_or_else(|| PropError::Unknown(format!("unknown prop id {prop} on <{tag}>")))?;
         let announce = !matches!(origin, Origin::Js) && self.observes(i, prop);
         let before = if announce { props::get_prop(&self.get(id.to_raw()).expect("live"), def).ok() } else { None };

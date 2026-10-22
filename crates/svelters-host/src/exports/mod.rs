@@ -676,6 +676,14 @@ pub mod __private {
         TypeRef::new(SlotDesc::new(svelters_abi::SVL_MAP), ts)
     }
 
+    /// RA1: runs `f` with a call context outside any host call (provider kinds convert their typed
+    /// props and event payloads with it). It has an empty object table: a value holding an exported
+    /// object handle does not convert here.
+    pub fn with_cx<R>(module: &'static str, f: impl FnOnce(&CallCx<'_>) -> R) -> R {
+        let objects = objects::AppObjects::default();
+        f(&CallCx { objects: &objects, schema: schema(), this: None, module })
+    }
+
     /// The sync thunk of an offloaded member (never called: the host starts it with its `start`).
     pub fn offload_thunk(_: &CallCx<'_>, _: Vec<Value>) -> Result<Value, NativeError> {
         Err(host_error("internal", "an offloaded export was called synchronously"))
@@ -1278,6 +1286,19 @@ pub struct FnDef {
     pub member: MemberDef,
 }
 
+/// RA1: the JS types of a provider kind's props and event payloads (`#[svelters::widget]` in
+/// svelters-egui). They are described in module `module` (the kind's namespace), so records and enums
+/// a kind uses get export type ids the host converts with, and are declared in
+/// `svelters:app/<module>` for the typings. [`Schema::kind_types`] returns the descriptions by `kind`.
+pub struct KindTypesDef {
+    pub module: &'static str,
+    /// The kind's spec id (`cad.QuantityField`).
+    pub kind: &'static str,
+    /// Props first, then event payloads, in declaration order.
+    pub describe: fn(&mut TypeBuilder) -> Vec<TypeRef>,
+}
+
 inventory::collect!(ObjectDef);
 inventory::collect!(ImplDef);
 inventory::collect!(FnDef);
+inventory::collect!(KindTypesDef);

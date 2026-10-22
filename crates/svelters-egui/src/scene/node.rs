@@ -1,14 +1,16 @@
 //! Per-node data, split by temperature into columns (ARCH-SCENE §4.3): the hot [`NodeCore`] (walked
 //! every frame), [`LayoutBox`] (taffy data), [`Payload`] (the kind's behaviour: built-in [`W`] today,
 //! provider widgets from RA1) and the rare, lazily boxed [`NodeCold`] (common props, visual channels,
-//! observation counts). Plus the bit sets [`NodeFlags`], [`Dirty`], [`StateBits`] and [`Owner`].
+//! observation counts). Plus the bit sets [`NodeFlags`] and [`Dirty`], and [`Owner`]. State bits are
+//! RA1's [`StateBits`] (`provider/state.rs`), stored in `NodeCore`; RA1's per-node provider data
+//! ([`ExtBlock`]) is the scene's `ext` column until SG2's per-key columns.
 //!
 //! [`Node`] is a borrowed read view over the columns of one node, kept for the pre-SG1 read paths
 //! (`with_scene(|s| s.n(h).children)` in tests and the eframe runner).
 //! Writer lane: SCENE (RA1 adds payload variants, EM1 a few core fields).
 
 use super::id::{NodeId, ProviderId, RootIx, Tick};
-use crate::kinds::KINDS;
+use crate::provider::{ExtBlock, StateBits};
 
 /// Which egui widget a node shows, with the props the widget borrows mutably.
 #[derive(Clone, Debug, PartialEq)]
@@ -20,6 +22,8 @@ pub enum W {
     Checkbox { text: String, checked: bool },
     TextEdit { text: String, hint: String, multiline: bool, password: bool, char_limit: i64 },
     Slider { value: f64, min: f64, max: f64, step: f64, text: String, show_value: bool },
+    /// RA1: a provider kind's widget struct (`#[svelters::widget]`, `crate::provider`).
+    Ext(crate::provider::ExtWidget),
 }
 
 impl W {
@@ -199,19 +203,6 @@ bits! {
     }
 }
 
-bits! {
-    /// State bits: 0–31 built-in (hover, pressed, focus, …, set by the walk from SG4/EV on), 32–63
-    /// registered by providers (ARCH-EMBED §8.4; RA1's `state_bits!`).
-    pub struct StateBits(u64) {
-        const HOVERED = 1 << 0;
-        const PRESSED = 1 << 1;
-        const FOCUSED = 1 << 2;
-        const DISABLED = 1 << 3;
-        const CHECKED = 1 << 4;
-        const SELECTED = 1 << 5;
-    }
-}
-
 /// Who created a node, and so who may change its structure (ARCH-SCENE §5.1).
 #[derive(Copy, Clone, PartialEq, Eq, Hash, Debug)]
 pub enum Owner {
@@ -258,7 +249,7 @@ impl NodeCore {
             flags: NodeFlags::EMPTY,
             dirty: Dirty::EMPTY,
             owner,
-            state: StateBits::EMPTY,
+            state: StateBits::NONE,
             listen: 0,
             explicit: 0,
             egui_id,
@@ -337,6 +328,10 @@ pub struct Node<'a> {
     pub c: &'a Common,
     pub w: &'a W,
     pub vis: Visual,
+    /// State bits (RA1).
+    pub state: StateBits,
+    /// Provider data (RA1; read with `ext`, `ext_block`).
+    pub ext: &'a ExtBlock,
     pub rect: egui::Rect,
     pub drawn: egui::Rect,
     pub presented: bool,
@@ -345,7 +340,7 @@ pub struct Node<'a> {
 
 impl Node<'_> {
     pub fn tag(&self) -> &'static str {
-        KINDS[self.kind].tag.unwrap_or("?")
+        crate::kinds::kind(self.kind).tag.unwrap_or("?")
     }
     pub fn is_window(&self) -> bool {
         matches!(self.w, W::Window { .. })
@@ -360,7 +355,7 @@ pub fn text_of(w: &W) -> &str {
     match w {
         W::Label { text, .. } | W::Button { text, .. } | W::Checkbox { text, .. } | W::TextEdit { text, .. } | W::Slider { text, .. } => text,
         W::Window { title, .. } => title,
-        W::Box => "",
+        W::Box | W::Ext(_) => "",
     }
 }
 

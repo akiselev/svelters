@@ -14,7 +14,10 @@ const here = path.dirname(fileURLToPath(import.meta.url));
  * The toolkit comes from the app's package.json, `"svelters": { "toolkit": "qt" }` (default `gtk`;
  * also `appkit`, `winui`), or `options.toolkit`. `options.spec` (or `"svelters": { "spec": "..." }`,
  * relative to the app) compiles against another semantics file than the toolkit's builtin one.
- * `options.dev` keeps `$inspect` and labels signals (Svelte's `dev`).
+ * `options.dev` keeps `$inspect` and labels signals (Svelte's `dev`). `options.specFragments` (or
+ * `"svelters": { "specFragments": [...] }`, relative to the app) merges spec fragments into the
+ * toolkit's spec: an egui app lists the `kinds.json` its binary dumps (RA1 provider kinds), e.g.
+ * `svelteConfig(dir, { specFragments: ['.svelters/app/kinds.json'] })`.
  */
 export function svelteConfig(root, options = {}) {
   let meta = {};
@@ -25,10 +28,11 @@ export function svelteConfig(root, options = {}) {
   }
   const backend = options.toolkit ?? meta.toolkit ?? 'gtk';
   const spec = options.spec ?? (meta.spec ? path.resolve(root, meta.spec) : undefined);
+  const specFragments = (options.specFragments ?? meta.specFragments ?? []).map((f) => path.resolve(root, f));
   const config = nativeConfig(root, {
     entry: path.relative(root, path.join(here, 'entry.js')),
     outDir: 'dist',
-    plugins: [svelteNative({ backend, spec, dev: options.dev ?? false })],
+    plugins: [svelteNative({ backend, spec, specFragments, dev: options.dev ?? false })],
   });
   config.resolve.alias.unshift({ find: /^@app$/, replacement: path.join(root, 'src/App.svelte') });
   return config;

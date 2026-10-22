@@ -1,6 +1,6 @@
 [package]
 name = "svelters-macros"
-description = "Proc macros of the svelters facade: #[derive(Record, Enum, Error)], #[svelters::object], #[svelters::export]"
+description = "Proc macros of the svelters facade: #[derive(Record, Enum, Error)], #[svelters::object], #[svelters::export], #[svelters::widget]"
 edition.workspace = true
 version.workspace = true
 license.workspace = true

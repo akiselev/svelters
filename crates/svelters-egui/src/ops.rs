@@ -7,7 +7,7 @@
 //! takes the style ops. Writer: shared (changes small).
 
 use crate::backend::EguiBackend;
-use crate::kinds::{self, KINDS};
+use crate::kinds;
 use crate::layout;
 use crate::scene::{self, Handle, NodeFlags, Origin};
 use std::sync::Arc;
@@ -78,7 +78,7 @@ impl Backend for EguiBackend {
     }
 
     fn create(&self, kind: svl_id) -> StrResult<svl_handle> {
-        let k = kinds::kind_of_id(kind).filter(|&k| KINDS[k].tag.is_some()).ok_or_else(|| format!("unknown kind id {kind}"))?;
+        let k = kinds::kind_of_id(kind).filter(|&k| kinds::kind(k).tag.is_some()).ok_or_else(|| format!("unknown kind id {kind}"))?;
         let id = self.0.scene.borrow_mut().create(k, scene::Owner::Js).map_err(|e| e.to_string())?;
         Ok(id.to_raw())
     }
@@ -87,7 +87,7 @@ impl Backend for EguiBackend {
         let pk = self.kind_of(parent)?;
         self.kind_of(child)?;
         if slot > 1 && kinds::slot_of(pk).is_some() {
-            return Err(format!("unknown slot id {slot} on <{}>", KINDS[pk].tag.unwrap_or("?")));
+            return Err(format!("unknown slot id {slot} on <{}>", kinds::kind(pk).tag.unwrap_or("?")));
         }
         let changed = {
             let mut scene = self.0.scene.borrow_mut();
@@ -197,7 +197,7 @@ impl Backend for EguiBackend {
         let k = self.kind_of(h)?;
         Ok(svl_handle_info {
             kind: kinds::kind_id(k),
-            lifetime: if KINDS[k].toplevel { SVL_LIFE_TOPLEVEL } else { SVL_LIFE_OWNED },
+            lifetime: if kinds::kind(k).toplevel { SVL_LIFE_TOPLEVEL } else { SVL_LIFE_OWNED },
             flags: 0,
         })
     }
@@ -314,7 +314,12 @@ impl Backend for EguiBackend {
         if what != NameKind::Prop {
             return None;
         }
-        let def = kinds::prop_def(kinds::kind_of_id(kind)?, member)?;
+        let k = kinds::kind_of_id(kind)?;
+        let def = kinds::prop_def(k, member)?;
+        if let kinds::P::Ext(i) = def.key {
+            // RA1: a provider prop is described by its Rust type (`JsType`).
+            return kinds::KindRegistry::global().provider_member_desc(k, i as usize);
+        }
         let mut slot = SlotDesc::new(scene::tag_of(def.ty)).named(def.name);
         if def.nullable {
             slot = slot.flags(SVL_D_NULLABLE);

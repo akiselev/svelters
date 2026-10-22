@@ -1,0 +1,26 @@
+{
+  "name": "@svelters-examples/egui-kinds",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "RA1: Svelte using a Rust-defined egui widget kind (<quantity-field>); spec fragment and typings dumped by `cargo run -p egui-kinds-example -- --dump app/.svelters/app`",
+  "scripts": {
+    "build": "vite build",
+    "test": "vite build && svelte-check --workspace . --tsconfig ./tsconfig.json --threshold error --diagnostic-sources js"
+  },
+  "dependencies": {
+    "svelte": "5.57.2"
+  },
+  "devDependencies": {
+    "@svelters/build": "workspace:*",
+    "@svelters/native-runtime": "workspace:*",
+    "@svelters/types": "workspace:*",
+    "svelte-check": "^4.7.7",
+    "typescript": "~6.0.3",
+    "vite": "8.3.4"
+  },
+  "svelters": {
+    "toolkit": "egui",
+    "specFragments": [".svelters/app/kinds.json"]
+  }
+}

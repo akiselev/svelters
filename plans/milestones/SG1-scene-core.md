@@ -21,6 +21,7 @@ RA1 build on it; SG2 and SG3 come next.
 | `frame.rs` | Phases (R17), deferred writes at the start of logic (§7.2 step 2b), Rust announcements flushed to `prop_changed` before and after the checkpoint, per-root remeasure, `layout_now` per root. |
 | `ops.rs` | Every op through `Scene` with `Origin::Js`. |
 | `scene/props.rs` (WIDGETS file, small edit) | `set_prop(c, w, def, v)` returns `Dirty` bits; `is_common`. |
+| RA1 integration (merged master `12f34937`) | RA1's `StateBits` is `NodeCore::state` (8 B, hot); RA1's `ExtBlock` is the scene's `ext` column (`Vec<ExtBlock>`, one per slot, empty and allocation-free on most nodes) until SG2's per-key columns; `W::Ext(ExtWidget)` is a `Payload::Builtin` variant; `provider::paint` takes the walk's slot index and borrows the payload and the ext column disjointly; `provider::set_prop(w, i, v)` returns `Dirty::MEASURE` for `measure` props. Accessors moved to the scene API: `NodeRef::{ext, ext_block, widget(f)}`, `NodeMut::{ext_mut, set_state(impl IntoStateBits)}`; the pre-SG1 `Node` view keeps the readers (`ext`, `ext_block`, `widget`, `state`). `examples/egui-kinds/tests/kinds.rs` uses `SceneHandle` instead of the removed `scene::new_node`. |
 
 Tests: `scene/tests.rs` (unit: random op interleavings with a reference model, `validate` after each op and a
 layout oracle; the 11k-node counters; phases and defer; ticks and typed reads; key names), `scene/id.rs` (packing,
@@ -81,13 +82,17 @@ events, owner rules with a runtime's tree, defer across frames, boundary relayou
   `embed/settle.rs`; `SceneHandle::deferred_len() > 0` must count as busy (CHANGES or COMMANDS), and a pending
   announcement queue (`Scene::announce`, non-empty until flushed) as CHANGES. `RootEntry::size` replaces
   `layout_size`; `NodeFlags::PRESENTED`, `WANT_FOCUS`, `HAD_FOCUS` replace the old node booleans.
-- **RA1**: add `Payload::Widget(Box<dyn ErasedWidget>)` (the `Payload` match sites are `Scene::w`/`w_mut`,
-  `Scene::set_value`, `layout.rs` leaf measure); `KINDS[k]` indexing remains in `scene/tree.rs::builtin_payload`,
-  `scene/mod.rs::member_bit` (a `OnceLock` table built from `KINDS`: rebuild it from the registry), `tag_at`.
-  `PropKey` needs a provider-payload accessor.
+- **RA1** (landed first; merged here): provider widgets stay `W::Ext` inside `Payload::Builtin` (a separate
+  `Payload::Widget` variant is a later cleanup, not needed by any caller). The scene reads kinds only through the
+  registry (`kinds::kind(k)`, `KindRegistry::global().indexes()` for the `member_bit` table, `provider(k)` in
+  `builtin_payload`). `PropKey` has no provider-payload accessor yet: provider props are read with
+  `NodeRef::widget(|w: &MyWidget| …)` and written with `NodeMut::set_by_name`/`set_value` (the exact path).
 - **SG2**: every mutation already stamps `NodeCore::changed` and goes through `tree.rs`/`set_value`/`set_visual`/
-  `NodeMut::set_state`: the journal hooks go there, with `Origin` already passed. `Counters` has room for journal
-  records. Layout `Damage`: `run_root` returns the boundaries it laid out.
+  `NodeMut::{set_state, ext_mut}`: the journal hooks go there, with `Origin` already passed. `Counters` has room for
+  journal records. Layout `Damage`: `run_root` returns the boundaries it laid out. Ext storage: replace
+  `Scene::ext: Vec<ExtBlock>` with per-key columns behind the same `NodeRef::ext`/`NodeMut::ext_mut`/`WidgetCx::ext`
+  calls (`provider::paint` hands `&mut scene.ext[i]` to `WidgetCx`; that is the one place that needs a new shape),
+  and add ext change ticks. Widget-side state changes in `provider::paint` stamp the node's tick.
 - **SG3**: `of_tag` and `SceneRef::nodes` scan slots; the kind index belongs in `Scene::create`/`free_slot`.
   `Descendants::skip_subtree` exists; `Cursor`, `Query` and anchors do not.
 - **SG6**: `LayoutBox` is ~1 KB (inline taffy style and cache); `SceneStats::bytes` is the measure. Wrapping labels
@@ -99,7 +104,9 @@ events, owner rules with a runtime's tree, defer across frames, boundary relayou
 - `tools/dev/cargo-slot cargo check -p svelters-egui --all-targets` and `--no-default-features --lib`: clean.
 - `tools/dev/cargo-slot cargo nextest run -p svelters-egui` (fixture bundles built with `pnpm --filter
   "./fixtures/*-egui" build` after `cargo build -p svelters-compiler --bin svelters-compile`): 29/29, every existing
-  test and op-log replay unchanged.
+  test and op-log replay unchanged. After merging RA1: `cargo check --workspace --all-targets` clean, and
+  `nextest run -p svelters-egui -p egui-kinds-example` 34/34 (the egui-kinds app bundle built with `pnpm --filter
+  ./examples/egui-kinds/app build`).
 - `SG1_SEEDS=400` run of the property test: passes (1111 boundary relayouts, 27115 root layouts, each checked against a
   from-scratch layout).
 - Not run locally: `--workspace` builds and tests (nothing outside this crate uses its Rust API), conformance, the

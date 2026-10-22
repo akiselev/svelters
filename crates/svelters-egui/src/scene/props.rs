@@ -75,6 +75,9 @@ pub(crate) fn is_common(key: P) -> bool {
 /// Writes a prop into a node's common props `c` and widget fields `w`. `Null` resets it to its
 /// default. Returns what the node needs (the caller restyles on LAYOUT).
 pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> Result<Dirty, String> {
+    if let P::Ext(i) = def.key {
+        return crate::provider::set_prop(w, i as usize, v); // RA1: a provider kind's field
+    }
     let v = if matches!(v, Value::Null) && !def.nullable { default_value(def) } else { v.clone() };
     let v = &v;
     let mut d = Dirty::default();
@@ -148,6 +151,9 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
 }
 
 pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
+    if let P::Ext(i) = def.key {
+        return crate::provider::get_prop(n, i as usize); // RA1: a provider kind's field
+    }
     let c = &n.c;
     let s = |x: &str| Value::Str(x.to_string());
     Ok(match (def.key, &n.w) {
@@ -214,5 +220,7 @@ pub fn tag_of(ty: Ty) -> u16 {
         Ty::F64 => svelters_abi::SVL_F64,
         Ty::I64 => svelters_abi::SVL_I64,
         Ty::Str | Ty::Enum(_) => svelters_abi::SVL_STR,
+        // RA1: described per prop by its Rust type (`KindRegistry::provider_member_desc`)
+        Ty::Provider => svelters_abi::SVL_NULL,
     }
 }

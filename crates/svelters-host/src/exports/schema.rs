@@ -142,6 +142,8 @@ pub struct Schema {
     types: HashMap<svl_id, TypeDesc>,
     /// The members a module kind or class kind resolves, per name kind: (methods+statics+ctor, props)
     names: HashMap<(u32, svl_id), Vec<String>>,
+    /// RA1: the prop and event payload types of provider kinds, by kind spec id.
+    kind_types: HashMap<&'static str, Vec<TypeRef>>,
 }
 
 /// The schema of this process (built on first use from the `inventory` registrations).
@@ -242,9 +244,18 @@ fn build() -> Schema {
     let emitter_defs: Vec<&reactive::EmitterDef> = inventory::iter::<reactive::EmitterDef>.into_iter().collect();
     let mut value_defs: Vec<&reactive::ValueDef> = inventory::iter::<reactive::ValueDef>.into_iter().collect();
     value_defs.sort_by(|a, b| (a.module, a.name).cmp(&(b.module, b.name)));
+    let mut kind_defs: Vec<&KindTypesDef> = inventory::iter::<KindTypesDef>.into_iter().collect();
+    kind_defs.sort_by(|a, b| (a.module, a.kind).cmp(&(b.module, b.kind)));
+    let mut kind_types: HashMap<&'static str, Vec<TypeRef>> = HashMap::new();
 
-    // Module names: every object's, function's and value's.
-    let mut module_names: Vec<&str> = objects.iter().map(|o| o.module).chain(fns.iter().map(|f| f.module)).chain(value_defs.iter().map(|v| v.module)).collect();
+    // Module names: every object's, function's and value's, and the namespaces of provider kinds (RA1).
+    let mut module_names: Vec<&str> = objects
+        .iter()
+        .map(|o| o.module)
+        .chain(fns.iter().map(|f| f.module))
+        .chain(value_defs.iter().map(|v| v.module))
+        .chain(kind_defs.iter().map(|k| k.module))
+        .collect();
     module_names.sort_unstable();
     module_names.dedup();
 
@@ -340,6 +351,9 @@ fn build() -> Schema {
                 }
             })
             .collect();
+        for k in kind_defs.iter().filter(|k| k.module == *m) {
+            kind_types.insert(k.kind, (k.describe)(&mut b));
+        }
         modules.push(ModuleSchema { name: m.to_string(), kind: kinds[&format!("app:{m}")], classes, functions, values, types: Vec::new(), imports: Vec::new() });
     }
 
@@ -448,6 +462,7 @@ fn build() -> Schema {
         type_ids,
         types,
         names,
+        kind_types,
     }
 }
 
@@ -519,6 +534,12 @@ impl Schema {
                 c.methods.iter().chain(c.statics.iter()).find(|x| &x.name == name)
             }
         }
+    }
+
+    /// RA1: the prop and event payload types of a provider kind (props first, then events), as its
+    /// [`KindTypesDef`] described them inside this schema.
+    pub fn kind_types(&self, kind: &str) -> Option<&[TypeRef]> {
+        self.kind_types.get(kind).map(Vec::as_slice)
     }
 
     pub fn type_desc(&self, id: svl_id) -> Option<&TypeDesc> {

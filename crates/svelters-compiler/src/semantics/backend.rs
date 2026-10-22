@@ -9,7 +9,7 @@ const GTK_JSON: &str = include_str!("../../../../metadata/semantics/gtk.json");
 const QT_JSON: &str = include_str!("../../../../metadata/semantics/qt.json");
 const APPKIT_JSON: &str = include_str!("../../../../metadata/semantics/appkit.json");
 const WINUI_JSON: &str = include_str!("../../../../metadata/semantics/winui.json");
-/// G1: generated from the egui backend's kind table (crates/svelters-egui/src/kinds.rs).
+/// G1: generated from the egui backend's kind table (crates/svelters-egui/src/kinds/builtin.rs).
 const EGUI_JSON: &str = include_str!("../../../../metadata/semantics/egui.json");
 const GTK_TYPES_JSON: &str = include_str!("../../../../metadata/semantics/types/gtk.json");
 const QT_TYPES_JSON: &str = include_str!("../../../../metadata/semantics/types/qt.json");
@@ -47,6 +47,19 @@ impl SpecBackend {
             "egui" => SpecBackend::from_json(EGUI_JSON),
             other => Err(format!("no built-in semantic spec for backend {other:?} (known: gtk, qt, appkit, winui, egui)")),
         }
+    }
+
+    /// RA1: merges a spec fragment (`kinds.json` of an egui app binary) into this backend's spec.
+    pub fn merge_fragment(mut self, json: &str) -> Result<SpecBackend, String> {
+        self.spec.merge_fragment(json)?;
+        Ok(self)
+    }
+
+    /// [`SpecBackend::merge_fragment`] of a fragment file.
+    pub fn merge_fragment_path(self, path: impl AsRef<Path>) -> Result<SpecBackend, String> {
+        let p = path.as_ref();
+        let text = std::fs::read_to_string(p).map_err(|e| format!("{}: {e}", p.display()))?;
+        self.merge_fragment(&text).map_err(|e| format!("{}: {e}", p.display()))
     }
 
     pub fn spec(&self) -> &Spec {

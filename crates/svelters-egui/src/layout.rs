@@ -163,6 +163,7 @@ impl Metrics {
                 vec2(wdt, interact.y)
             }
             W::Box | W::Window { .. } => Vec2::ZERO,
+            W::Ext(x) => x.measure(self, crate::provider::AvailableSpace::MaxContent),
         }
     }
 
@@ -170,6 +171,9 @@ impl Metrics {
     fn wrapped(&self, w: &W, width: f32) -> Option<Vec2> {
         match w {
             W::Label { text, wrap: "wrap", .. } => Some(self.text_size(text, Some(width))),
+            W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::HEIGHT_FOR_WIDTH) => {
+                Some(x.measure(self, crate::provider::AvailableSpace::Definite(width)))
+            }
             _ => None,
         }
     }

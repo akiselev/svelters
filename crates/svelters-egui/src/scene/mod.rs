@@ -40,11 +40,12 @@ pub use access::{Children, Descendants, NodeMut, NodeRef, Origin, PropError, Sce
 pub use dump::{DumpOpts, SceneStats};
 pub use id::{Handle, KindId, NodeId, PropId, ProviderId, RootIx, Target, Tick, VNodeId};
 pub use keys::{PropKey, PropValue};
-pub use node::{Common, Dirty, Node, NodeFlags, Owner, StateBits, Visual, W};
+pub use crate::provider::{ExtBlock, ExtEntry, ExtId, ExtKey, IntoStateBits, StateBits};
+pub use node::{Common, Dirty, Node, NodeFlags, Owner, Visual, W};
 pub use props::{default_value, get_prop, set_prop, tag_of};
 pub use tree::TreeRoot;
 
-use crate::kinds::{self, KINDS};
+use crate::kinds;
 use dump::Counters;
 use id::SlotTable;
 use node::{DEFAULT_COLD, LayoutBox, NodeCold, NodeCore, Payload};
@@ -76,6 +77,8 @@ pub struct Scene {
     pub(crate) layout: Vec<LayoutBox>,
     pub(crate) payload: Vec<Payload>,
     pub(crate) cold: Vec<Option<Box<NodeCold>>>,
+    /// RA1's per-node provider data (`ExtKey`); SG2 turns it into one column per key.
+    pub(crate) ext: Vec<ExtBlock>,
     pub(crate) roots: RootTable,
     pub(crate) tick: u64,
     pub(crate) in_batch: bool,
@@ -94,6 +97,7 @@ impl Default for Scene {
             layout: Vec::new(),
             payload: Vec::new(),
             cold: Vec::new(),
+            ext: Vec::new(),
             roots: RootTable::default(),
             tick: 0,
             in_batch: false,
@@ -163,7 +167,7 @@ impl Scene {
     }
 
     pub(crate) fn tag_at(&self, i: usize) -> &'static str {
-        KINDS[self.core[i].kind as usize].tag.unwrap_or("?")
+        kinds::kind(self.core[i].kind as usize).tag.unwrap_or("?")
     }
 
     /// True if the node listens to `signal`.
@@ -217,6 +221,8 @@ impl Scene {
             c: self.common(i),
             w: self.w(i),
             vis: self.vis(i),
+            state: c.state,
+            ext: &self.ext[i],
             rect: c.rect,
             drawn: c.drawn,
             presented: c.flags.contains(NodeFlags::PRESENTED),
@@ -263,7 +269,7 @@ impl Scene {
         let mut live = 0;
         for i in 0..self.slots.capacity() {
             let Some(id) = self.slots.id_at(i) else {
-                if !matches!(self.payload[i], Payload::Vacant) || !self.children[i].is_empty() || self.cold[i].is_some() {
+                if !matches!(self.payload[i], Payload::Vacant) || !self.children[i].is_empty() || self.cold[i].is_some() || !self.ext[i].is_empty() {
                     errs.push(format!("free slot {i} keeps data"));
                 }
                 continue;
@@ -383,15 +389,15 @@ pub(crate) enum Member {
 pub(crate) fn member_bit(kind: usize, id: u32, m: Member) -> Option<u32> {
     static TABLE: OnceLock<Vec<(Vec<u32>, Vec<u32>)>> = OnceLock::new();
     let t = TABLE.get_or_init(|| {
-        (0..KINDS.len())
+        kinds::KindRegistry::global().indexes()
             .map(|k| {
                 let mut props = Vec::new();
                 let mut sigs = Vec::new();
                 for kk in kinds::chain(k) {
-                    for p in KINDS[kk].props {
+                    for p in kinds::kind(kk).props {
                         props.push(kinds::find_prop(k, p.name).map(|(id, _)| id).unwrap_or(0));
                     }
-                    for s in KINDS[kk].signals {
+                    for s in kinds::kind(kk).signals {
                         sigs.push(kinds::find_signal(k, s.name).map(|(id, _)| id).unwrap_or(0));
                     }
                 }

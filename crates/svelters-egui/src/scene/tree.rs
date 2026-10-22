@@ -15,7 +15,7 @@ use super::dirty::RootDirty;
 use super::id::{NodeId, RootIx};
 use super::node::{Dirty, LayoutBox, NodeCold, NodeCore, NodeFlags, Owner, Payload, W};
 use super::{Common, Scene};
-use crate::kinds::{self, KINDS};
+use crate::kinds;
 
 /// What a root is (ARCH-SCENE §4.5). EM1 adds `Slot`, SG4 `Overlay`.
 #[non_exhaustive]
@@ -84,7 +84,7 @@ pub(crate) struct Destroyed {
 }
 
 fn builtin_payload(kind: usize) -> Option<W> {
-    Some(match KINDS[kind].id {
+    Some(match kinds::kind(kind).id {
         "Window" => W::Window { title: String::new(), default_w: 480.0, default_h: 360.0 },
         "Box" => W::Box,
         "Label" => W::Label { text: String::new(), wrap: "wrap", selectable: false },
@@ -92,7 +92,8 @@ fn builtin_payload(kind: usize) -> Option<W> {
         "Checkbox" => W::Checkbox { text: String::new(), checked: false },
         "TextEdit" => W::TextEdit { text: String::new(), hint: String::new(), multiline: false, password: false, char_limit: 0 },
         "Slider" => W::Slider { value: 0.0, min: 0.0, max: 100.0, step: 0.0, text: String::new(), show_value: true },
-        _ => return None,
+        // RA1: a provider kind's widget struct with its defaults
+        _ => W::Ext(crate::provider::ExtWidget::new((kinds::KindRegistry::global().provider(kind)?.entry.new)())),
     })
 }
 
@@ -103,7 +104,7 @@ fn is_js(o: Origin) -> bool {
 impl Scene {
     /// Creates a detached node of kind index `kind` (a window: a new root of its own).
     pub(crate) fn create(&mut self, kind: usize, owner: Owner) -> Result<NodeId, SceneError> {
-        let tag = KINDS.get(kind).and_then(|k| k.tag).ok_or_else(|| SceneError::Invalid(format!("unknown kind index {kind}")))?;
+        let tag = (kind < kinds::KindRegistry::global().len()).then(|| kinds::kind(kind).tag).flatten().ok_or_else(|| SceneError::Invalid(format!("unknown kind index {kind}")))?;
         let w = builtin_payload(kind).ok_or_else(|| SceneError::Invalid(format!("<{tag}> is not creatable")))?;
         let (id, fresh) = self.slots.alloc();
         let tick = self.stamp();
@@ -122,14 +123,16 @@ impl Scene {
             self.layout.push(lb);
             self.payload.push(Payload::Builtin(w));
             self.cold.push(cold);
+            self.ext.push(Default::default());
         } else {
             self.core[i] = core;
             self.children[i] = Vec::new();
             self.layout[i] = lb;
             self.payload[i] = Payload::Builtin(w);
             self.cold[i] = cold;
+            self.ext[i] = Default::default();
         }
-        if KINDS[kind].toplevel {
+        if kinds::kind(kind).toplevel {
             self.add_root(TreeRoot::Window { node: id }, id);
         }
         self.counters.created += 1;
@@ -237,9 +240,9 @@ impl Scene {
         let ci = self.idx(child).ok_or(SceneError::Stale(child.to_raw()))?;
         let (pk, ck) = (self.core[pi].kind as usize, self.core[ci].kind as usize);
         if kinds::slot_of(pk).is_none() {
-            return Err(SceneError::Invalid(format!("<{}> takes no children", KINDS[pk].tag.unwrap_or("?"))));
+            return Err(SceneError::Invalid(format!("<{}> takes no children", kinds::kind(pk).tag.unwrap_or("?"))));
         }
-        if KINDS[ck].toplevel || self.core[ci].flags.contains(NodeFlags::ROOT) {
+        if kinds::kind(ck).toplevel || self.core[ci].flags.contains(NodeFlags::ROOT) {
             return Err(SceneError::Invalid("a window cannot be inserted under another element".into()));
         }
         if parent == child {
@@ -324,6 +327,7 @@ impl Scene {
         self.slots.free(i);
         self.payload[i] = Payload::Vacant;
         self.cold[i] = None;
+        self.ext[i] = Default::default();
         self.children[i] = Vec::new();
         self.core[i].flags = NodeFlags::EMPTY;
         self.counters.destroyed += 1;
