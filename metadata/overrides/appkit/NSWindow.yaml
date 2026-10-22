@@ -63,6 +63,46 @@ methods:
     selector: "performClose:"
     test: false
     provenance: "NSWindow.h: simulates the close button; asks windowShouldClose: first"
+  - name: order-front
+    selector: "orderFront:"
+    expect: {get: visible, value: true}
+    provenance: "NSWindow.h; shows the window in front of its level without making it key; `sender` is nil"
+  - name: order-back
+    selector: "orderBack:"
+    expect: {get: visible, value: true}
+    provenance: "NSWindow.h; shows the window behind the others of its level; `sender` is nil"
+  - name: make-key-window
+    selector: makeKeyWindow
+    test: false
+    provenance: "NSWindow.h: makes a visible window key (needs an active app on the runner)"
+  - name: display
+    selector: display
+    provenance: "NSWindow.h: redraws the whole window now"
+  - name: invalidate-shadow
+    selector: invalidateShadow
+    provenance: "NSWindow.h"
+  - name: miniaturize
+    selector: "miniaturize:"
+    test: false
+    provenance: "NSWindow.h: to the Dock (animated, asynchronous); `sender` is nil"
+  - name: deminiaturize
+    selector: "deminiaturize:"
+    test: false
+    provenance: "NSWindow.h; `sender` is nil"
+  - name: zoom
+    selector: "zoom:"
+    test: false
+    provenance: "NSWindow.h: toggles between the user and the standard frame; `sender` is nil"
+  - name: toggle-full-screen
+    selector: "toggleFullScreen:"
+    test: false
+    provenance: "NSWindow.h: enters or exits full screen (animated, a new Space); `sender` is nil"
+  - name: select-next-key-view
+    selector: "selectNextKeyView:"
+    provenance: "NSWindow.h: moves the focus to the next key view; `sender` is nil"
+  - name: select-previous-key-view
+    selector: "selectPreviousKeyView:"
+    provenance: "NSWindow.h; `sender` is nil"
 
 # Dangerous members (docs/notes/dangerous-members.md): reachable from JS (KVC), but the backend owns what they change.
 dangerous:

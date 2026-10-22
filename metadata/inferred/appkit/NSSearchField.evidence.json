@@ -1,0 +1,127 @@
+{
+ "props:double-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0.0,
+   "events": [],
+   "inherited": true,
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:float-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0.0,
+   "events": [],
+   "inherited": true,
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:int-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0,
+   "events": [],
+   "inherited": true,
+   "kvo": true,
+   "outcome": "exact",
+   "read": 3,
+   "sample": {
+    "t": "i64",
+    "v": 3
+   }
+  }
+ },
+ "props:integer-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0,
+   "events": [],
+   "inherited": true,
+   "kvo": true,
+   "outcome": "exact",
+   "read": 3,
+   "sample": {
+    "t": "i64",
+    "v": 3
+   }
+  }
+ },
+ "props:maximum-recents": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": -1,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 3,
+   "sample": {
+    "t": "i64",
+    "v": 3
+   }
+  }
+ },
+ "props:sends-search-string-immediately": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:sends-whole-search-string": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:string-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "",
+   "events": [],
+   "inherited": true,
+   "kvo": true,
+   "outcome": "exact",
+   "read": "svl probe",
+   "sample": {
+    "t": "str",
+    "v": "svl probe"
+   }
+  }
+ }
+}

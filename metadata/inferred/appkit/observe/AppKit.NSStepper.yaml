@@ -1,0 +1,88 @@
+schema: svelters-observe-layer/v1
+toolkit: appkit
+owner: AppKit:NSStepper
+observe:
+- prop: autorepeat
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `autorepeat` fired on a programmatic set'
+  confidence: 0.9
+- prop: double-value
+  class: exact
+  via:
+  - mechanism: notify
+  - mechanism: target_action
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `doubleValue` fired on a programmatic set'
+  - origin: rule
+    ref: 'O7: user edits reach the value through target_action'
+  confidence: 0.9
+- prop: float-value
+  class: exact
+  via:
+  - mechanism: notify
+  - mechanism: target_action
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `floatValue` fired on a programmatic set'
+  - origin: rule
+    ref: 'O7: user edits reach the value through target_action'
+  confidence: 0.9
+- prop: increment
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `increment` fired on a programmatic set'
+  confidence: 0.9
+- prop: int-value
+  class: exact
+  via:
+  - mechanism: notify
+  - mechanism: target_action
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `intValue` fired on a programmatic set'
+  - origin: rule
+    ref: 'O7: user edits reach the value through target_action'
+  confidence: 0.9
+- prop: integer-value
+  class: exact
+  via:
+  - mechanism: notify
+  - mechanism: target_action
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `integerValue` fired on a programmatic set'
+  - origin: rule
+    ref: 'O7: user edits reach the value through target_action'
+  confidence: 0.9
+- prop: max-value
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `maxValue` fired on a programmatic set'
+  confidence: 0.9
+- prop: min-value
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `minValue` fired on a programmatic set'
+  confidence: 0.9
+- prop: value-wraps
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `valueWraps` fired on a programmatic set'
+  confidence: 0.9

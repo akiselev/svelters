@@ -1,0 +1,1406 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSText",
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSTextView",
+  "kind": "object",
+  "methods": [
+    {
+      "availability": {
+        "deprecated": "10.6",
+        "since": "15.0"
+      },
+      "name": "highlight",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "highlight:"
+    }
+  ],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSTextView.h",
+    "name": "NSTextView"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "acceptableDragTypes"
+      },
+      "js_name": "acceptable-drag-types",
+      "memory": "copy",
+      "name": "acceptableDragTypes",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSPasteboardType> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "acceptsGlyphInfo",
+        "set": "setAcceptsGlyphInfo:"
+      },
+      "js_name": "accepts-glyph-info",
+      "memory": "assign",
+      "name": "acceptsGlyphInfo",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowedInputSourceLocales",
+        "set": "setAllowedInputSourceLocales:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "allowed-input-source-locales",
+      "memory": "copy",
+      "name": "allowedInputSourceLocales",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSString *> *",
+        "nullable": true,
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowedWritingToolsResultOptions",
+        "set": "setAllowedWritingToolsResultOptions:"
+      },
+      "availability": {
+        "since": "15.0"
+      },
+      "js_name": "allowed-writing-tools-result-options",
+      "memory": "assign",
+      "name": "allowedWritingToolsResultOptions",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWritingToolsResultOptions",
+        "ref": "flags<NSWritingToolsResultOptions>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsCharacterPickerTouchBarItem",
+        "set": "setAllowsCharacterPickerTouchBarItem:"
+      },
+      "availability": {
+        "since": "10.12.2"
+      },
+      "js_name": "allows-character-picker-touch-bar-item",
+      "memory": "assign",
+      "name": "allowsCharacterPickerTouchBarItem",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsDocumentBackgroundColorChange",
+        "set": "setAllowsDocumentBackgroundColorChange:"
+      },
+      "js_name": "allows-document-background-color-change",
+      "memory": "assign",
+      "name": "allowsDocumentBackgroundColorChange",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsImageEditing",
+        "set": "setAllowsImageEditing:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "allows-image-editing",
+      "memory": "assign",
+      "name": "allowsImageEditing",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsUndo",
+        "set": "setAllowsUndo:"
+      },
+      "js_name": "allows-undo",
+      "memory": "assign",
+      "name": "allowsUndo",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isAutomaticDashSubstitutionEnabled",
+        "set": "setAutomaticDashSubstitutionEnabled:"
+      },
+      "availability": {
+        "since": "10.6"
+      },
+      "js_name": "automatic-dash-substitution-enabled",
+      "memory": "assign",
+      "name": "automaticDashSubstitutionEnabled",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isAutomaticDataDetectionEnabled",
+        "set": "setAutomaticDataDetectionEnabled:"
+      },
+      "availability": {
+        "since": "10.6"
+      },
+      "js_name": "automatic-data-detection-enabled",
+      "memory": "assign",
+      "name": "automaticDataDetectionEnabled",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isAutomaticLinkDetectionEnabled",
+        "set": "setAutomaticLinkDetectionEnabled:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "automatic-link-detection-enabled",
+      "memory": "assign",
+      "name": "automaticLinkDetectionEnabled",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isAutomaticQuoteSubstitutionEnabled",
+        "set": "setAutomaticQuoteSubstitutionEnabled:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "automatic-quote-substitution-enabled",
+      "memory": "assign",
+      "name": "automaticQuoteSubstitutionEnabled",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isAutomaticSpellingCorrectionEnabled",
+        "set": "setAutomaticSpellingCorrectionEnabled:"
+      },
+      "availability": {
+        "since": "10.6"
+      },
+      "js_name": "automatic-spelling-correction-enabled",
+      "memory": "assign",
+      "name": "automaticSpellingCorrectionEnabled",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isAutomaticTextCompletionEnabled",
+        "set": "setAutomaticTextCompletionEnabled:"
+      },
+      "availability": {
+        "since": "10.12.2"
+      },
+      "js_name": "automatic-text-completion-enabled",
+      "memory": "assign",
+      "name": "automaticTextCompletionEnabled",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isAutomaticTextReplacementEnabled",
+        "set": "setAutomaticTextReplacementEnabled:"
+      },
+      "availability": {
+        "since": "10.6"
+      },
+      "js_name": "automatic-text-replacement-enabled",
+      "memory": "assign",
+      "name": "automaticTextReplacementEnabled",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "backgroundColor",
+        "set": "setBackgroundColor:"
+      },
+      "js_name": "background-color",
+      "memory": "copy",
+      "name": "backgroundColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "candidateListTouchBarItem"
+      },
+      "availability": {
+        "since": "10.12.2"
+      },
+      "js_name": "candidate-list-touch-bar-item",
+      "memory": "strong",
+      "name": "candidateListTouchBarItem",
+      "origin": "sdk",
+      "type": {
+        "native": "NSCandidateListTouchBarItem *",
+        "nullable": true,
+        "ref": "object<NSCandidateListTouchBarItem>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isCoalescingUndo"
+      },
+      "availability": {
+        "since": "10.6"
+      },
+      "js_name": "coalescing-undo",
+      "memory": "assign",
+      "name": "coalescingUndo",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isContinuousSpellCheckingEnabled",
+        "set": "setContinuousSpellCheckingEnabled:"
+      },
+      "js_name": "continuous-spell-checking-enabled",
+      "memory": "assign",
+      "name": "continuousSpellCheckingEnabled",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "defaultParagraphStyle",
+        "set": "setDefaultParagraphStyle:"
+      },
+      "js_name": "default-paragraph-style",
+      "memory": "copy",
+      "name": "defaultParagraphStyle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSParagraphStyle *",
+        "nullable": true,
+        "ref": "object<NSParagraphStyle>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "delegate",
+        "set": "setDelegate:"
+      },
+      "js_name": "delegate",
+      "memory": "weak",
+      "name": "delegate",
+      "origin": "sdk",
+      "type": {
+        "native": "id<NSTextViewDelegate>",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "displaysLinkToolTips",
+        "set": "setDisplaysLinkToolTips:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "displays-link-tool-tips",
+      "memory": "assign",
+      "name": "displaysLinkToolTips",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "drawsBackground",
+        "set": "setDrawsBackground:"
+      },
+      "js_name": "draws-background",
+      "memory": "assign",
+      "name": "drawsBackground",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isEditable",
+        "set": "setEditable:"
+      },
+      "js_name": "editable",
+      "memory": "assign",
+      "name": "editable",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "enabledTextCheckingTypes",
+        "set": "setEnabledTextCheckingTypes:"
+      },
+      "availability": {
+        "since": "10.6"
+      },
+      "js_name": "enabled-text-checking-types",
+      "memory": "assign",
+      "name": "enabledTextCheckingTypes",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTextCheckingTypes",
+        "ref": "u64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isFieldEditor",
+        "set": "setFieldEditor:"
+      },
+      "js_name": "field-editor",
+      "memory": "assign",
+      "name": "fieldEditor",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isGrammarCheckingEnabled",
+        "set": "setGrammarCheckingEnabled:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "grammar-checking-enabled",
+      "memory": "assign",
+      "name": "grammarCheckingEnabled",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "importsGraphics",
+        "set": "setImportsGraphics:"
+      },
+      "js_name": "imports-graphics",
+      "memory": "assign",
+      "name": "importsGraphics",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isIncrementalSearchingEnabled",
+        "set": "setIncrementalSearchingEnabled:"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "incremental-searching-enabled",
+      "memory": "assign",
+      "name": "incrementalSearchingEnabled",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "inlinePredictionType",
+        "set": "setInlinePredictionType:"
+      },
+      "availability": {
+        "since": "14.0"
+      },
+      "js_name": "inline-prediction-type",
+      "memory": "assign",
+      "name": "inlinePredictionType",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTextInputTraitType",
+        "ref": "enum<NSTextInputTraitType>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "insertionPointColor",
+        "set": "setInsertionPointColor:"
+      },
+      "js_name": "insertion-point-color",
+      "memory": "copy",
+      "name": "insertionPointColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "layoutManager"
+      },
+      "js_name": "layout-manager",
+      "memory": "assign",
+      "name": "layoutManager",
+      "origin": "sdk",
+      "type": {
+        "native": "NSLayoutManager *",
+        "nullable": true,
+        "ref": "object<NSLayoutManager>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "linkTextAttributes",
+        "set": "setLinkTextAttributes:"
+      },
+      "js_name": "link-text-attributes",
+      "memory": "copy",
+      "name": "linkTextAttributes",
+      "origin": "sdk",
+      "type": {
+        "native": "NSDictionary<NSAttributedStringKey,id> *",
+        "nullable": true,
+        "ref": "map"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "markedTextAttributes",
+        "set": "setMarkedTextAttributes:"
+      },
+      "js_name": "marked-text-attributes",
+      "memory": "copy",
+      "name": "markedTextAttributes",
+      "origin": "sdk",
+      "type": {
+        "native": "NSDictionary<NSAttributedStringKey,id> *",
+        "nullable": true,
+        "ref": "map"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "mathExpressionCompletionType",
+        "set": "setMathExpressionCompletionType:"
+      },
+      "availability": {
+        "since": "15.0"
+      },
+      "js_name": "math-expression-completion-type",
+      "memory": "assign",
+      "name": "mathExpressionCompletionType",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTextInputTraitType",
+        "ref": "enum<NSTextInputTraitType>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "rangeForUserCharacterAttributeChange"
+      },
+      "js_name": "range-for-user-character-attribute-change",
+      "memory": "assign",
+      "name": "rangeForUserCharacterAttributeChange",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRange",
+        "ref": "range"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "rangeForUserCompletion"
+      },
+      "js_name": "range-for-user-completion",
+      "memory": "assign",
+      "name": "rangeForUserCompletion",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRange",
+        "ref": "range"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "rangeForUserParagraphAttributeChange"
+      },
+      "js_name": "range-for-user-paragraph-attribute-change",
+      "memory": "assign",
+      "name": "rangeForUserParagraphAttributeChange",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRange",
+        "ref": "range"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "rangeForUserTextChange"
+      },
+      "js_name": "range-for-user-text-change",
+      "memory": "assign",
+      "name": "rangeForUserTextChange",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRange",
+        "ref": "range"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "rangesForUserCharacterAttributeChange"
+      },
+      "js_name": "ranges-for-user-character-attribute-change",
+      "memory": "copy",
+      "name": "rangesForUserCharacterAttributeChange",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSValue *> *",
+        "nullable": true,
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "rangesForUserParagraphAttributeChange"
+      },
+      "js_name": "ranges-for-user-paragraph-attribute-change",
+      "memory": "copy",
+      "name": "rangesForUserParagraphAttributeChange",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSValue *> *",
+        "nullable": true,
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "rangesForUserTextChange"
+      },
+      "js_name": "ranges-for-user-text-change",
+      "memory": "copy",
+      "name": "rangesForUserTextChange",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSValue *> *",
+        "nullable": true,
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "readablePasteboardTypes"
+      },
+      "js_name": "readable-pasteboard-types",
+      "memory": "copy",
+      "name": "readablePasteboardTypes",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSPasteboardType> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isRichText",
+        "set": "setRichText:"
+      },
+      "js_name": "rich-text",
+      "memory": "assign",
+      "name": "richText",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isRulerVisible",
+        "set": "setRulerVisible:"
+      },
+      "js_name": "ruler-visible",
+      "memory": "assign",
+      "name": "rulerVisible",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isSelectable",
+        "set": "setSelectable:"
+      },
+      "js_name": "selectable",
+      "memory": "assign",
+      "name": "selectable",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "selectedRanges",
+        "set": "setSelectedRanges:"
+      },
+      "js_name": "selected-ranges",
+      "memory": "copy",
+      "name": "selectedRanges",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSValue *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "selectedTextAttributes",
+        "set": "setSelectedTextAttributes:"
+      },
+      "js_name": "selected-text-attributes",
+      "memory": "copy",
+      "name": "selectedTextAttributes",
+      "origin": "sdk",
+      "type": {
+        "native": "NSDictionary<NSAttributedStringKey,id> *",
+        "ref": "map"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "selectionAffinity"
+      },
+      "js_name": "selection-affinity",
+      "memory": "assign",
+      "name": "selectionAffinity",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSelectionAffinity",
+        "ref": "enum<NSSelectionAffinity>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "selectionGranularity",
+        "set": "setSelectionGranularity:"
+      },
+      "js_name": "selection-granularity",
+      "memory": "assign",
+      "name": "selectionGranularity",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSelectionGranularity",
+        "ref": "enum<NSSelectionGranularity>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "shouldDrawInsertionPoint"
+      },
+      "js_name": "should-draw-insertion-point",
+      "memory": "assign",
+      "name": "shouldDrawInsertionPoint",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "smartInsertDeleteEnabled",
+        "set": "setSmartInsertDeleteEnabled:"
+      },
+      "js_name": "smart-insert-delete-enabled",
+      "memory": "assign",
+      "name": "smartInsertDeleteEnabled",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "spellCheckerDocumentTag"
+      },
+      "js_name": "spell-checker-document-tag",
+      "memory": "assign",
+      "name": "spellCheckerDocumentTag",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "textContainer",
+        "set": "setTextContainer:"
+      },
+      "js_name": "text-container",
+      "memory": "assign",
+      "name": "textContainer",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTextContainer *",
+        "nullable": true,
+        "ref": "object<NSTextContainer>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "textContainerInset",
+        "set": "setTextContainerInset:"
+      },
+      "js_name": "text-container-inset",
+      "memory": "assign",
+      "name": "textContainerInset",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSize",
+        "ref": "size"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "textContainerOrigin"
+      },
+      "js_name": "text-container-origin",
+      "memory": "assign",
+      "name": "textContainerOrigin",
+      "origin": "sdk",
+      "type": {
+        "native": "NSPoint",
+        "ref": "point"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "textContentStorage"
+      },
+      "availability": {
+        "since": "12.0"
+      },
+      "js_name": "text-content-storage",
+      "memory": "weak",
+      "name": "textContentStorage",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTextContentStorage *",
+        "nullable": true,
+        "ref": "object<NSTextContentStorage>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "textHighlightAttributes",
+        "set": "setTextHighlightAttributes:"
+      },
+      "availability": {
+        "since": "15.0"
+      },
+      "js_name": "text-highlight-attributes",
+      "memory": "copy",
+      "name": "textHighlightAttributes",
+      "origin": "sdk",
+      "type": {
+        "native": "NSDictionary<NSAttributedStringKey,id> *",
+        "ref": "map"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "textLayoutManager"
+      },
+      "availability": {
+        "since": "12.0"
+      },
+      "js_name": "text-layout-manager",
+      "memory": "weak",
+      "name": "textLayoutManager",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTextLayoutManager *",
+        "nullable": true,
+        "ref": "object<NSTextLayoutManager>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "textStorage"
+      },
+      "js_name": "text-storage",
+      "memory": "assign",
+      "name": "textStorage",
+      "origin": "sdk",
+      "type": {
+        "native": "NSTextStorage *",
+        "nullable": true,
+        "ref": "object<NSTextStorage>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "typingAttributes",
+        "set": "setTypingAttributes:"
+      },
+      "js_name": "typing-attributes",
+      "memory": "copy",
+      "name": "typingAttributes",
+      "origin": "sdk",
+      "type": {
+        "native": "NSDictionary<NSAttributedStringKey,id> *",
+        "ref": "map"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "usesAdaptiveColorMappingForDarkAppearance",
+        "set": "setUsesAdaptiveColorMappingForDarkAppearance:"
+      },
+      "availability": {
+        "since": "10.14"
+      },
+      "js_name": "uses-adaptive-color-mapping-for-dark-appearance",
+      "memory": "assign",
+      "name": "usesAdaptiveColorMappingForDarkAppearance",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "usesFindBar",
+        "set": "setUsesFindBar:"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "uses-find-bar",
+      "memory": "assign",
+      "name": "usesFindBar",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "usesFindPanel",
+        "set": "setUsesFindPanel:"
+      },
+      "js_name": "uses-find-panel",
+      "memory": "assign",
+      "name": "usesFindPanel",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "usesFontPanel",
+        "set": "setUsesFontPanel:"
+      },
+      "js_name": "uses-font-panel",
+      "memory": "assign",
+      "name": "usesFontPanel",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "usesInspectorBar",
+        "set": "setUsesInspectorBar:"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "uses-inspector-bar",
+      "memory": "assign",
+      "name": "usesInspectorBar",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "usesRolloverButtonForSelection",
+        "set": "setUsesRolloverButtonForSelection:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "uses-rollover-button-for-selection",
+      "memory": "assign",
+      "name": "usesRolloverButtonForSelection",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "usesRuler",
+        "set": "setUsesRuler:"
+      },
+      "js_name": "uses-ruler",
+      "memory": "assign",
+      "name": "usesRuler",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "writablePasteboardTypes"
+      },
+      "js_name": "writable-pasteboard-types",
+      "memory": "copy",
+      "name": "writablePasteboardTypes",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSPasteboardType> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "isWritingToolsActive"
+      },
+      "availability": {
+        "since": "15.0"
+      },
+      "js_name": "writing-tools-active",
+      "memory": "assign",
+      "name": "writingToolsActive",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "writingToolsBehavior",
+        "set": "setWritingToolsBehavior:"
+      },
+      "availability": {
+        "since": "15.0"
+      },
+      "js_name": "writing-tools-behavior",
+      "memory": "assign",
+      "name": "writingToolsBehavior",
+      "origin": "sdk",
+      "type": {
+        "native": "NSWritingToolsBehavior",
+        "ref": "enum<NSWritingToolsBehavior>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nstextview?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

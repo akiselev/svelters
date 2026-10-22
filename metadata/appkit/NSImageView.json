@@ -1,0 +1,238 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSControl",
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSImageView",
+  "kind": "object",
+  "methods": [],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSImageView.h",
+    "name": "NSImageView"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsCutCopyPaste",
+        "set": "setAllowsCutCopyPaste:"
+      },
+      "js_name": "allows-cut-copy-paste",
+      "memory": "assign",
+      "name": "allowsCutCopyPaste",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "animates",
+        "set": "setAnimates:"
+      },
+      "js_name": "animates",
+      "memory": "assign",
+      "name": "animates",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "contentTintColor",
+        "set": "setContentTintColor:"
+      },
+      "availability": {
+        "since": "10.14"
+      },
+      "js_name": "content-tint-color",
+      "memory": "copy",
+      "name": "contentTintColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "nullable": true,
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isEditable",
+        "set": "setEditable:"
+      },
+      "js_name": "editable",
+      "memory": "assign",
+      "name": "editable",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "image",
+        "set": "setImage:"
+      },
+      "js_name": "image",
+      "memory": "strong",
+      "name": "image",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImage *",
+        "nullable": true,
+        "ref": "object<NSImage>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "imageAlignment",
+        "set": "setImageAlignment:"
+      },
+      "js_name": "image-alignment",
+      "memory": "assign",
+      "name": "imageAlignment",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImageAlignment",
+        "ref": "enum<NSImageAlignment>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "imageDynamicRange"
+      },
+      "availability": {
+        "since": "14.0"
+      },
+      "js_name": "image-dynamic-range",
+      "memory": "assign",
+      "name": "imageDynamicRange",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImageDynamicRange",
+        "ref": "enum<NSImageDynamicRange>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "imageFrameStyle",
+        "set": "setImageFrameStyle:"
+      },
+      "js_name": "image-frame-style",
+      "memory": "assign",
+      "name": "imageFrameStyle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImageFrameStyle",
+        "ref": "enum<NSImageFrameStyle>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "imageScaling",
+        "set": "setImageScaling:"
+      },
+      "js_name": "image-scaling",
+      "memory": "assign",
+      "name": "imageScaling",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImageScaling",
+        "ref": "enum<NSImageScaling>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "preferredImageDynamicRange",
+        "set": "setPreferredImageDynamicRange:"
+      },
+      "availability": {
+        "since": "14.0"
+      },
+      "js_name": "preferred-image-dynamic-range",
+      "memory": "assign",
+      "name": "preferredImageDynamicRange",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImageDynamicRange",
+        "ref": "enum<NSImageDynamicRange>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "symbolConfiguration",
+        "set": "setSymbolConfiguration:"
+      },
+      "availability": {
+        "since": "11.0"
+      },
+      "js_name": "symbol-configuration",
+      "memory": "copy",
+      "name": "symbolConfiguration",
+      "origin": "sdk",
+      "type": {
+        "native": "NSImageSymbolConfiguration *",
+        "nullable": true,
+        "ref": "object<NSImageSymbolConfiguration>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nsimageview?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

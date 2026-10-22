@@ -1,0 +1,506 @@
+schema: svelters-observe-layer/v1
+toolkit: appkit
+owner: AppKit:NSTextView
+observe:
+- prop: acceptable-drag-types
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: accepts-glyph-info
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `acceptsGlyphInfo` fired on a programmatic set'
+  confidence: 0.9
+- prop: allowed-input-source-locales
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: allowed-writing-tools-result-options
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `allowedWritingToolsResultOptions` fired on a programmatic set'
+  confidence: 0.9
+- prop: allows-character-picker-touch-bar-item
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `allowsCharacterPickerTouchBarItem` fired on a programmatic set'
+  confidence: 0.9
+- prop: allows-document-background-color-change
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `allowsDocumentBackgroundColorChange` fired on a programmatic set'
+  confidence: 0.9
+- prop: allows-image-editing
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `allowsImageEditing` fired on a programmatic set'
+  confidence: 0.9
+- prop: allows-undo
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `allowsUndo` fired on a programmatic set'
+  confidence: 0.9
+- prop: automatic-dash-substitution-enabled
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `automaticDashSubstitutionEnabled` fired on a programmatic set'
+  confidence: 0.9
+- prop: automatic-data-detection-enabled
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `automaticDataDetectionEnabled` fired on a programmatic set'
+  confidence: 0.9
+- prop: automatic-link-detection-enabled
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `automaticLinkDetectionEnabled` fired on a programmatic set'
+  confidence: 0.9
+- prop: automatic-quote-substitution-enabled
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `automaticQuoteSubstitutionEnabled` fired on a programmatic set'
+  confidence: 0.9
+- prop: automatic-spelling-correction-enabled
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `automaticSpellingCorrectionEnabled` fired on a programmatic set'
+  confidence: 0.9
+- prop: automatic-text-completion-enabled
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `automaticTextCompletionEnabled` fired on a programmatic set'
+  confidence: 0.9
+- prop: automatic-text-replacement-enabled
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `automaticTextReplacementEnabled` fired on a programmatic set'
+  confidence: 0.9
+- prop: background-color
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: candidate-list-touch-bar-item
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: coalescing-undo
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: continuous-spell-checking-enabled
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `continuousSpellCheckingEnabled` fired on a programmatic set'
+  confidence: 0.9
+- prop: default-paragraph-style
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: delegate
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: displays-link-tool-tips
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `displaysLinkToolTips` fired on a programmatic set'
+  confidence: 0.9
+- prop: draws-background
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `drawsBackground` fired on a programmatic set'
+  confidence: 0.9
+- prop: editable
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `editable` fired on a programmatic set'
+  confidence: 0.9
+- prop: enabled-text-checking-types
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `enabledTextCheckingTypes` fired on a programmatic set'
+  confidence: 0.9
+- prop: field-editor
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `fieldEditor` fired on a programmatic set'
+  confidence: 0.9
+- prop: grammar-checking-enabled
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `grammarCheckingEnabled` fired on a programmatic set'
+  confidence: 0.9
+- prop: imports-graphics
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `importsGraphics` fired on a programmatic set'
+  confidence: 0.9
+- prop: incremental-searching-enabled
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `incrementalSearchingEnabled` fired on a programmatic set'
+  confidence: 0.9
+- prop: inline-prediction-type
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `inlinePredictionType` fired on a programmatic set'
+  confidence: 0.9
+- prop: insertion-point-color
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: layout-manager
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: link-text-attributes
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: marked-text-attributes
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: math-expression-completion-type
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `mathExpressionCompletionType` fired on a programmatic set'
+  confidence: 0.9
+- prop: range-for-user-character-attribute-change
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: range-for-user-completion
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: range-for-user-paragraph-attribute-change
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: range-for-user-text-change
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: ranges-for-user-character-attribute-change
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: ranges-for-user-paragraph-attribute-change
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: ranges-for-user-text-change
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: readable-pasteboard-types
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: rich-text
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `richText` fired on a programmatic set'
+  confidence: 0.9
+- prop: ruler-visible
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `rulerVisible` fired on a programmatic set'
+  confidence: 0.9
+- prop: selectable
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `selectable` fired on a programmatic set'
+  confidence: 0.9
+- prop: selected-ranges
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: selected-text-attributes
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: selection-affinity
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: selection-granularity
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `selectionGranularity` fired on a programmatic set'
+  confidence: 0.9
+- prop: should-draw-insertion-point
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: smart-insert-delete-enabled
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `smartInsertDeleteEnabled` fired on a programmatic set'
+  confidence: 0.9
+- prop: spell-checker-document-tag
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: text-container
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: text-container-inset
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `textContainerInset` fired on a programmatic set'
+  confidence: 0.9
+- prop: text-container-origin
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: text-content-storage
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: text-highlight-attributes
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: text-layout-manager
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: text-storage
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: typing-attributes
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: uses-adaptive-color-mapping-for-dark-appearance
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `usesAdaptiveColorMappingForDarkAppearance` fired on a programmatic set'
+  confidence: 0.9
+- prop: uses-find-bar
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `usesFindBar` fired on a programmatic set'
+  confidence: 0.9
+- prop: uses-find-panel
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `usesFindPanel` fired on a programmatic set'
+  confidence: 0.9
+- prop: uses-font-panel
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `usesFontPanel` fired on a programmatic set'
+  confidence: 0.9
+- prop: uses-inspector-bar
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `usesInspectorBar` fired on a programmatic set'
+  confidence: 0.9
+- prop: uses-rollover-button-for-selection
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `usesRolloverButtonForSelection` fired on a programmatic set'
+  confidence: 0.9
+- prop: uses-ruler
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `usesRuler` fired on a programmatic set'
+  confidence: 0.9
+- prop: writable-pasteboard-types
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: writing-tools-active
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: writing-tools-behavior
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `writingToolsBehavior` fired on a programmatic set'
+  confidence: 0.9

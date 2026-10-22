@@ -1,0 +1,128 @@
+{
+ "props:bezeled": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:bordered": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:date-picker-elements": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 238,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 12,
+   "sample": {
+    "expect": {
+     "t": "i64",
+     "v": 12
+    },
+    "t": "names",
+    "v": [
+     "hour-minute"
+    ]
+   }
+  }
+ },
+ "props:date-picker-mode": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "single",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "range",
+   "sample": {
+    "t": "str",
+    "v": "range"
+   }
+  }
+ },
+ "props:date-picker-style": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "text-field-and-stepper",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "clock-and-calendar",
+   "sample": {
+    "t": "str",
+    "v": "clock-and-calendar"
+   }
+  }
+ },
+ "props:draws-background": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:presents-calendar-overlay": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:time-interval": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ }
+}

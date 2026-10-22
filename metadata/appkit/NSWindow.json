@@ -19,6 +19,48 @@
       "selector": "center"
     },
     {
+      "name": "deminiaturize",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "deminiaturize:"
+    },
+    {
+      "name": "display",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "display"
+    },
+    {
+      "name": "invalidate-shadow",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "invalidateShadow"
+    },
+    {
       "name": "make-key-and-order-front",
       "origin": "sdk",
       "params": [
@@ -37,6 +79,77 @@
         }
       },
       "selector": "makeKeyAndOrderFront:"
+    },
+    {
+      "name": "make-key-window",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "makeKeyWindow"
+    },
+    {
+      "name": "miniaturize",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "miniaturize:"
+    },
+    {
+      "name": "order-back",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "orderBack:"
+    },
+    {
+      "name": "order-front",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "orderFront:"
     },
     {
       "name": "order-out",
@@ -79,6 +192,46 @@
       "selector": "performClose:"
     },
     {
+      "name": "select-next-key-view",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "selectNextKeyView:"
+    },
+    {
+      "name": "select-previous-key-view",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "selectPreviousKeyView:"
+    },
+    {
       "name": "set-content-size",
       "origin": "sdk",
       "params": [
@@ -116,6 +269,60 @@
         }
       },
       "selector": "setContentView:"
+    },
+    {
+      "availability": {
+        "since": "10.7"
+      },
+      "name": "toggle-full-screen",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "toggleFullScreen:"
+    },
+    {
+      "name": "update",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "update"
+    },
+    {
+      "name": "zoom",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "sender",
+          "type": {
+            "native": "id",
+            "nullable": true,
+            "ref": "object"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "zoom:"
     }
   ],
   "native": {

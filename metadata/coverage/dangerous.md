@@ -8,7 +8,7 @@ A dangerous member is reachable from app code at run time (unless marked not rea
 | --- | --- | --- | --- | --- | --- |
 | gtk | 91 | 40 | 0 | 131 | 0 |
 | qt | 49 | 1 | 0 | 5 | 45 |
-| appkit | 8 | 7 | 0 | 12 | 3 |
+| appkit | 10 | 13 | 0 | 20 | 3 |
 | winui | 0 | 2 | 0 | 1 | 1 |
 
 ## gtk
@@ -208,11 +208,19 @@ A dangerous member is reachable from app code at run time (unless marked not rea
 | --- | --- | --- | --- |
 | `NSBox.set-content-view` (method) | corrupts-tree | yes | `metadata/dangerous/appkit.yaml#content-view` |
 | `NSBox.contentView` (property) | corrupts-tree | no | `metadata/dangerous/appkit.yaml#content-view-prop` |
+| `NSComboBox.dataSource` (property) | other | yes | `metadata/overrides/appkit/NSComboBox.yaml` |
+| `NSComboBox.usesDataSource` (property) | other | yes | `metadata/overrides/appkit/NSComboBox.yaml` |
 | `NSControl.action` (property) | owned-by-backend | yes | `metadata/dangerous/appkit.yaml#target-action` |
 | `NSControl.target` (property) | owned-by-backend | yes | `metadata/dangerous/appkit.yaml#target-action` |
+| `NSMenu.remove-all-items` (method) | corrupts-tree | yes | `metadata/overrides/appkit/NSMenu.yaml` |
+| `NSMenuItem.menu` (property) | corrupts-tree | yes | `metadata/overrides/appkit/NSMenuItem.yaml` |
+| `NSMenuItem.target` (property) | owned-by-backend | yes | `metadata/overrides/appkit/NSMenuItem.yaml` |
+| `NSPopUpButton.remove-all-items` (method) | corrupts-tree | yes | `metadata/overrides/appkit/NSPopUpButton.yaml` |
 | `NSStackView.add-arranged-subview` (method) | corrupts-tree | yes | `metadata/dangerous/appkit.yaml#arranged-subviews` |
 | `NSStackView.insert-arranged-subview-at-index` (method) | corrupts-tree | yes | `metadata/dangerous/appkit.yaml#arranged-subviews` |
 | `NSStackView.remove-arranged-subview` (method) | corrupts-tree | yes | `metadata/dangerous/appkit.yaml#arranged-subviews` |
+| `NSTabView.delegate` (property) | owned-by-backend | yes | `metadata/overrides/appkit/NSTabView.yaml` |
+| `NSTextView.delegate` (property) | other | yes | `metadata/overrides/appkit/NSTextView.yaml` |
 | `NSView.add-subview` (method) | corrupts-tree | yes | `metadata/dangerous/appkit.yaml#subviews` |
 | `NSView.add-subview-positioned-relative-to` (method) | corrupts-tree | yes | `metadata/dangerous/appkit.yaml#subviews` |
 | `NSView.remove-from-superview` (method) | corrupts-tree | yes | `metadata/dangerous/appkit.yaml#subviews` |

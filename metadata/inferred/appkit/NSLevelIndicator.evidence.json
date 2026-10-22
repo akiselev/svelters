@@ -1,0 +1,307 @@
+{
+ "bindings:double-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "delivered": true,
+   "prop": {
+    "attempts": 1,
+    "default": 0.0,
+    "events": [],
+    "inherited": true,
+    "kvo": true,
+    "outcome": "exact",
+    "read": 0.5,
+    "sample": {
+     "t": "f64",
+     "v": 0.5
+    }
+   }
+  }
+ },
+ "bindings:float-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "delivered": true,
+   "prop": {
+    "attempts": 1,
+    "default": 0.0,
+    "events": [],
+    "inherited": true,
+    "kvo": true,
+    "outcome": "exact",
+    "read": 0.5,
+    "sample": {
+     "t": "f64",
+     "v": 0.5
+    }
+   }
+  }
+ },
+ "bindings:int-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "delivered": true,
+   "prop": {
+    "attempts": 1,
+    "default": 0,
+    "events": [],
+    "inherited": true,
+    "kvo": true,
+    "outcome": "exact",
+    "read": 3,
+    "sample": {
+     "t": "i64",
+     "v": 3
+    }
+   }
+  }
+ },
+ "bindings:integer-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "delivered": true,
+   "prop": {
+    "attempts": 1,
+    "default": 0,
+    "events": [],
+    "inherited": true,
+    "kvo": true,
+    "outcome": "exact",
+    "read": 3,
+    "sample": {
+     "t": "i64",
+     "v": 3
+    }
+   }
+  }
+ },
+ "props:critical-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:double-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0.0,
+   "events": [],
+   "inherited": true,
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:draws-tiered-capacity-levels": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:editable": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:float-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0.0,
+   "events": [],
+   "inherited": true,
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:int-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0,
+   "events": [],
+   "inherited": true,
+   "kvo": true,
+   "outcome": "exact",
+   "read": 3,
+   "sample": {
+    "t": "i64",
+    "v": 3
+   }
+  }
+ },
+ "props:integer-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0,
+   "events": [],
+   "inherited": true,
+   "kvo": true,
+   "outcome": "exact",
+   "read": 3,
+   "sample": {
+    "t": "i64",
+    "v": 3
+   }
+  }
+ },
+ "props:level-indicator-style": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "discrete-capacity",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "relevancy",
+   "sample": {
+    "t": "str",
+    "v": "relevancy"
+   }
+  }
+ },
+ "props:max-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 5.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:min-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ },
+ "props:number-of-major-tick-marks": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 3,
+   "sample": {
+    "t": "i64",
+    "v": 3
+   }
+  }
+ },
+ "props:number-of-tick-marks": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 3,
+   "sample": {
+    "t": "i64",
+    "v": 3
+   }
+  }
+ },
+ "props:placeholder-visibility": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "automatic",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "always",
+   "sample": {
+    "t": "str",
+    "v": "always"
+   }
+  }
+ },
+ "props:tick-mark-position": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "below",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "above",
+   "sample": {
+    "t": "str",
+    "v": "above"
+   }
+  }
+ },
+ "props:warning-value": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": 0.0,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": 0.5,
+   "sample": {
+    "t": "f64",
+    "v": 0.5
+   }
+  }
+ }
+}

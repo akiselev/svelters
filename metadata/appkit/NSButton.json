@@ -10,6 +10,25 @@
   "kind": "object",
   "methods": [
     {
+      "name": "highlight",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "flag",
+          "type": {
+            "native": "BOOL",
+            "ref": "bool"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "highlight:"
+    },
+    {
       "name": "set-button-type",
       "origin": "sdk",
       "params": [
@@ -27,6 +46,17 @@
         }
       },
       "selector": "setButtonType:"
+    },
+    {
+      "name": "set-next-state",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setNextState"
     }
   ],
   "native": {

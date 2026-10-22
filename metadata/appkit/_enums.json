@@ -45,6 +45,32 @@
       "flags": false,
       "members": [
         {
+          "js": "normal",
+          "native": "NSBackgroundStyleNormal",
+          "value": 0
+        },
+        {
+          "js": "emphasized",
+          "native": "NSBackgroundStyleEmphasized",
+          "value": 1
+        },
+        {
+          "js": "raised",
+          "native": "NSBackgroundStyleRaised",
+          "value": 2
+        },
+        {
+          "js": "lowered",
+          "native": "NSBackgroundStyleLowered",
+          "value": 3
+        }
+      ],
+      "name": "NSBackgroundStyle"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
           "js": "buffered",
           "native": "NSBackingStoreBuffered",
           "value": 2
@@ -122,6 +148,32 @@
         }
       ],
       "name": "NSBezelStyle"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "no-border",
+          "native": "NSNoBorder",
+          "value": 0
+        },
+        {
+          "js": "line-border",
+          "native": "NSLineBorder",
+          "value": 1
+        },
+        {
+          "js": "bezel-border",
+          "native": "NSBezelBorder",
+          "value": 2
+        },
+        {
+          "js": "groove-border",
+          "native": "NSGrooveBorder",
+          "value": 3
+        }
+      ],
+      "name": "NSBorderType"
     },
     {
       "flags": false,
@@ -255,6 +307,27 @@
       "flags": false,
       "members": [
         {
+          "js": "default",
+          "native": "NSColorWellStyleDefault",
+          "value": 0
+        },
+        {
+          "js": "minimal",
+          "native": "NSColorWellStyleMinimal",
+          "value": 1
+        },
+        {
+          "js": "expanded",
+          "native": "NSColorWellStyleExpanded",
+          "value": 2
+        }
+      ],
+      "name": "NSColorWellStyle"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
           "js": "automatic",
           "native": "NSControlBorderShapeAutomatic",
           "value": 0
@@ -307,6 +380,79 @@
         }
       ],
       "name": "NSControlSize"
+    },
+    {
+      "flags": true,
+      "members": [
+        {
+          "js": "hour-minute",
+          "native": "NSDatePickerElementFlagHourMinute",
+          "value": 12
+        },
+        {
+          "js": "hour-minute-second",
+          "native": "NSDatePickerElementFlagHourMinuteSecond",
+          "value": 14
+        },
+        {
+          "js": "time-zone",
+          "native": "NSDatePickerElementFlagTimeZone",
+          "value": 16
+        },
+        {
+          "js": "year-month",
+          "native": "NSDatePickerElementFlagYearMonth",
+          "value": 192
+        },
+        {
+          "js": "year-month-day",
+          "native": "NSDatePickerElementFlagYearMonthDay",
+          "value": 224
+        },
+        {
+          "js": "era",
+          "native": "NSDatePickerElementFlagEra",
+          "value": 256
+        }
+      ],
+      "name": "NSDatePickerElementFlags"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "single",
+          "native": "NSDatePickerModeSingle",
+          "value": 0
+        },
+        {
+          "js": "range",
+          "native": "NSDatePickerModeRange",
+          "value": 1
+        }
+      ],
+      "name": "NSDatePickerMode"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "text-field-and-stepper",
+          "native": "NSDatePickerStyleTextFieldAndStepper",
+          "value": 0
+        },
+        {
+          "js": "clock-and-calendar",
+          "native": "NSDatePickerStyleClockAndCalendar",
+          "value": 1
+        },
+        {
+          "js": "text-field",
+          "native": "NSDatePickerStyleTextField",
+          "value": 2
+        }
+      ],
+      "name": "NSDatePickerStyle"
     },
     {
       "flags": true,
@@ -379,6 +525,114 @@
         }
       ],
       "name": "NSFocusRingType"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "center",
+          "native": "NSImageAlignCenter",
+          "value": 0
+        },
+        {
+          "js": "top",
+          "native": "NSImageAlignTop",
+          "value": 1
+        },
+        {
+          "js": "top-left",
+          "native": "NSImageAlignTopLeft",
+          "value": 2
+        },
+        {
+          "js": "top-right",
+          "native": "NSImageAlignTopRight",
+          "value": 3
+        },
+        {
+          "js": "left",
+          "native": "NSImageAlignLeft",
+          "value": 4
+        },
+        {
+          "js": "bottom",
+          "native": "NSImageAlignBottom",
+          "value": 5
+        },
+        {
+          "js": "bottom-left",
+          "native": "NSImageAlignBottomLeft",
+          "value": 6
+        },
+        {
+          "js": "bottom-right",
+          "native": "NSImageAlignBottomRight",
+          "value": 7
+        },
+        {
+          "js": "right",
+          "native": "NSImageAlignRight",
+          "value": 8
+        }
+      ],
+      "name": "NSImageAlignment"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "unspecified",
+          "native": "NSImageDynamicRangeUnspecified",
+          "value": -1
+        },
+        {
+          "js": "standard",
+          "native": "NSImageDynamicRangeStandard",
+          "value": 0
+        },
+        {
+          "js": "constrained-high",
+          "native": "NSImageDynamicRangeConstrainedHigh",
+          "value": 1
+        },
+        {
+          "js": "high",
+          "native": "NSImageDynamicRangeHigh",
+          "value": 2
+        }
+      ],
+      "name": "NSImageDynamicRange"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "none",
+          "native": "NSImageFrameNone",
+          "value": 0
+        },
+        {
+          "js": "photo",
+          "native": "NSImageFramePhoto",
+          "value": 1
+        },
+        {
+          "js": "gray-bezel",
+          "native": "NSImageFrameGrayBezel",
+          "value": 2
+        },
+        {
+          "js": "groove",
+          "native": "NSImageFrameGroove",
+          "value": 3
+        },
+        {
+          "js": "button",
+          "native": "NSImageFrameButton",
+          "value": 4
+        }
+      ],
+      "name": "NSImageFrameStyle"
     },
     {
       "flags": false,
@@ -496,6 +750,53 @@
       "flags": false,
       "members": [
         {
+          "js": "automatic",
+          "native": "NSLevelIndicatorPlaceholderVisibilityAutomatic",
+          "value": 0
+        },
+        {
+          "js": "always",
+          "native": "NSLevelIndicatorPlaceholderVisibilityAlways",
+          "value": 1
+        },
+        {
+          "js": "while-editing",
+          "native": "NSLevelIndicatorPlaceholderVisibilityWhileEditing",
+          "value": 2
+        }
+      ],
+      "name": "NSLevelIndicatorPlaceholderVisibility"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "relevancy",
+          "native": "NSLevelIndicatorStyleRelevancy",
+          "value": 0
+        },
+        {
+          "js": "continuous-capacity",
+          "native": "NSLevelIndicatorStyleContinuousCapacity",
+          "value": 1
+        },
+        {
+          "js": "discrete-capacity",
+          "native": "NSLevelIndicatorStyleDiscreteCapacity",
+          "value": 2
+        },
+        {
+          "js": "rating",
+          "native": "NSLevelIndicatorStyleRating",
+          "value": 3
+        }
+      ],
+      "name": "NSLevelIndicatorStyle"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
           "js": "word-wrapping",
           "native": "NSLineBreakByWordWrapping",
           "value": 0
@@ -558,6 +859,95 @@
       "flags": false,
       "members": [
         {
+          "js": "regular",
+          "native": "NSMenuPresentationStyleRegular",
+          "value": 0
+        },
+        {
+          "js": "palette",
+          "native": "NSMenuPresentationStylePalette",
+          "value": 1
+        }
+      ],
+      "name": "NSMenuPresentationStyle"
+    },
+    {
+      "flags": true,
+      "members": [
+        {
+          "js": "title",
+          "native": "NSMenuPropertyItemTitle",
+          "value": 1
+        },
+        {
+          "js": "attributed-title",
+          "native": "NSMenuPropertyItemAttributedTitle",
+          "value": 2
+        },
+        {
+          "js": "key-equivalent",
+          "native": "NSMenuPropertyItemKeyEquivalent",
+          "value": 4
+        },
+        {
+          "js": "image",
+          "native": "NSMenuPropertyItemImage",
+          "value": 8
+        },
+        {
+          "js": "enabled",
+          "native": "NSMenuPropertyItemEnabled",
+          "value": 16
+        },
+        {
+          "js": "accessibility-description",
+          "native": "NSMenuPropertyItemAccessibilityDescription",
+          "value": 32
+        }
+      ],
+      "name": "NSMenuProperties"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "automatic",
+          "native": "NSMenuSelectionModeAutomatic",
+          "value": 0
+        },
+        {
+          "js": "select-one",
+          "native": "NSMenuSelectionModeSelectOne",
+          "value": 1
+        },
+        {
+          "js": "select-any",
+          "native": "NSMenuSelectionModeSelectAny",
+          "value": 2
+        }
+      ],
+      "name": "NSMenuSelectionMode"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "standard",
+          "native": "NSPathStyleStandard",
+          "value": 0
+        },
+        {
+          "js": "pop-up",
+          "native": "NSPathStylePopUp",
+          "value": 2
+        }
+      ],
+      "name": "NSPathStyle"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
           "js": "bar",
           "native": "NSProgressIndicatorStyleBar",
           "value": 0
@@ -569,6 +959,245 @@
         }
       ],
       "name": "NSProgressIndicatorStyle"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "rect-edge-min-x",
+          "native": "NSRectEdgeMinX",
+          "value": 0
+        },
+        {
+          "js": "rect-edge-min-y",
+          "native": "NSRectEdgeMinY",
+          "value": 1
+        },
+        {
+          "js": "rect-edge-max-x",
+          "native": "NSRectEdgeMaxX",
+          "value": 2
+        },
+        {
+          "js": "rect-edge-max-y",
+          "native": "NSRectEdgeMaxY",
+          "value": 3
+        },
+        {
+          "js": "min-x-edge",
+          "native": "NSMinXEdge",
+          "value": 0
+        },
+        {
+          "js": "min-y-edge",
+          "native": "NSMinYEdge",
+          "value": 1
+        },
+        {
+          "js": "max-x-edge",
+          "native": "NSMaxXEdge",
+          "value": 2
+        },
+        {
+          "js": "max-y-edge",
+          "native": "NSMaxYEdge",
+          "value": 3
+        }
+      ],
+      "name": "NSRectEdge"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "automatic",
+          "native": "NSScrollElasticityAutomatic",
+          "value": 0
+        },
+        {
+          "js": "none",
+          "native": "NSScrollElasticityNone",
+          "value": 1
+        },
+        {
+          "js": "allowed",
+          "native": "NSScrollElasticityAllowed",
+          "value": 2
+        }
+      ],
+      "name": "NSScrollElasticity"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "above-horizontal-ruler",
+          "native": "NSScrollViewFindBarPositionAboveHorizontalRuler",
+          "value": 0
+        },
+        {
+          "js": "above-content",
+          "native": "NSScrollViewFindBarPositionAboveContent",
+          "value": 1
+        },
+        {
+          "js": "below-content",
+          "native": "NSScrollViewFindBarPositionBelowContent",
+          "value": 2
+        }
+      ],
+      "name": "NSScrollViewFindBarPosition"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "default",
+          "native": "NSScrollerKnobStyleDefault",
+          "value": 0
+        },
+        {
+          "js": "dark",
+          "native": "NSScrollerKnobStyleDark",
+          "value": 1
+        },
+        {
+          "js": "light",
+          "native": "NSScrollerKnobStyleLight",
+          "value": 2
+        }
+      ],
+      "name": "NSScrollerKnobStyle"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "legacy",
+          "native": "NSScrollerStyleLegacy",
+          "value": 0
+        },
+        {
+          "js": "overlay",
+          "native": "NSScrollerStyleOverlay",
+          "value": 1
+        }
+      ],
+      "name": "NSScrollerStyle"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "fit",
+          "native": "NSSegmentDistributionFit",
+          "value": 0
+        },
+        {
+          "js": "fill",
+          "native": "NSSegmentDistributionFill",
+          "value": 1
+        },
+        {
+          "js": "fill-equally",
+          "native": "NSSegmentDistributionFillEqually",
+          "value": 2
+        },
+        {
+          "js": "fill-proportionally",
+          "native": "NSSegmentDistributionFillProportionally",
+          "value": 3
+        }
+      ],
+      "name": "NSSegmentDistribution"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "automatic",
+          "native": "NSSegmentStyleAutomatic",
+          "value": 0
+        },
+        {
+          "js": "rounded",
+          "native": "NSSegmentStyleRounded",
+          "value": 1
+        },
+        {
+          "js": "round-rect",
+          "native": "NSSegmentStyleRoundRect",
+          "value": 3
+        },
+        {
+          "js": "textured-square",
+          "native": "NSSegmentStyleTexturedSquare",
+          "value": 4
+        },
+        {
+          "js": "small-square",
+          "native": "NSSegmentStyleSmallSquare",
+          "value": 6
+        },
+        {
+          "js": "separated",
+          "native": "NSSegmentStyleSeparated",
+          "value": 8
+        },
+        {
+          "js": "textured-rounded",
+          "native": "NSSegmentStyleTexturedRounded",
+          "value": 2
+        },
+        {
+          "js": "capsule",
+          "native": "NSSegmentStyleCapsule",
+          "value": 5
+        }
+      ],
+      "name": "NSSegmentStyle"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "select-one",
+          "native": "NSSegmentSwitchTrackingSelectOne",
+          "value": 0
+        },
+        {
+          "js": "select-any",
+          "native": "NSSegmentSwitchTrackingSelectAny",
+          "value": 1
+        },
+        {
+          "js": "momentary",
+          "native": "NSSegmentSwitchTrackingMomentary",
+          "value": 2
+        },
+        {
+          "js": "momentary-accelerator",
+          "native": "NSSegmentSwitchTrackingMomentaryAccelerator",
+          "value": 3
+        }
+      ],
+      "name": "NSSegmentSwitchTracking"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "upstream",
+          "native": "NSSelectionAffinityUpstream",
+          "value": 0
+        },
+        {
+          "js": "downstream",
+          "native": "NSSelectionAffinityDownstream",
+          "value": 1
+        }
+      ],
+      "name": "NSSelectionAffinity"
     },
     {
       "flags": false,
@@ -595,6 +1224,27 @@
       "flags": false,
       "members": [
         {
+          "js": "character",
+          "native": "NSSelectByCharacter",
+          "value": 0
+        },
+        {
+          "js": "word",
+          "native": "NSSelectByWord",
+          "value": 1
+        },
+        {
+          "js": "paragraph",
+          "native": "NSSelectByParagraph",
+          "value": 2
+        }
+      ],
+      "name": "NSSelectionGranularity"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
           "js": "linear",
           "native": "NSSliderTypeLinear",
           "value": 0
@@ -606,6 +1256,27 @@
         }
       ],
       "name": "NSSliderType"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "thick",
+          "native": "NSSplitViewDividerStyleThick",
+          "value": 1
+        },
+        {
+          "js": "thin",
+          "native": "NSSplitViewDividerStyleThin",
+          "value": 2
+        },
+        {
+          "js": "pane-splitter",
+          "native": "NSSplitViewDividerStylePaneSplitter",
+          "value": 3
+        }
+      ],
+      "name": "NSSplitViewDividerStyle"
     },
     {
       "flags": false,
@@ -642,6 +1313,120 @@
         }
       ],
       "name": "NSStackViewDistribution"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "none",
+          "native": "NSTabPositionNone",
+          "value": 0
+        },
+        {
+          "js": "top",
+          "native": "NSTabPositionTop",
+          "value": 1
+        },
+        {
+          "js": "left",
+          "native": "NSTabPositionLeft",
+          "value": 2
+        },
+        {
+          "js": "bottom",
+          "native": "NSTabPositionBottom",
+          "value": 3
+        },
+        {
+          "js": "right",
+          "native": "NSTabPositionRight",
+          "value": 4
+        }
+      ],
+      "name": "NSTabPosition"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "selected-tab",
+          "native": "NSSelectedTab",
+          "value": 0
+        },
+        {
+          "js": "background-tab",
+          "native": "NSBackgroundTab",
+          "value": 1
+        },
+        {
+          "js": "pressed-tab",
+          "native": "NSPressedTab",
+          "value": 2
+        }
+      ],
+      "name": "NSTabState"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "none",
+          "native": "NSTabViewBorderTypeNone",
+          "value": 0
+        },
+        {
+          "js": "line",
+          "native": "NSTabViewBorderTypeLine",
+          "value": 1
+        },
+        {
+          "js": "bezel",
+          "native": "NSTabViewBorderTypeBezel",
+          "value": 2
+        }
+      ],
+      "name": "NSTabViewBorderType"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "top-tabs-bezel-border",
+          "native": "NSTopTabsBezelBorder",
+          "value": 0
+        },
+        {
+          "js": "left-tabs-bezel-border",
+          "native": "NSLeftTabsBezelBorder",
+          "value": 1
+        },
+        {
+          "js": "bottom-tabs-bezel-border",
+          "native": "NSBottomTabsBezelBorder",
+          "value": 2
+        },
+        {
+          "js": "right-tabs-bezel-border",
+          "native": "NSRightTabsBezelBorder",
+          "value": 3
+        },
+        {
+          "js": "no-tabs-bezel-border",
+          "native": "NSNoTabsBezelBorder",
+          "value": 4
+        },
+        {
+          "js": "no-tabs-line-border",
+          "native": "NSNoTabsLineBorder",
+          "value": 5
+        },
+        {
+          "js": "no-tabs-no-border",
+          "native": "NSNoTabsNoBorder",
+          "value": 6
+        }
+      ],
+      "name": "NSTabViewType"
     },
     {
       "flags": false,
@@ -689,6 +1474,27 @@
         }
       ],
       "name": "NSTextFieldBezelStyle"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "default",
+          "native": "NSTextInputTraitTypeDefault",
+          "value": 0
+        },
+        {
+          "js": "no",
+          "native": "NSTextInputTraitTypeNo",
+          "value": 1
+        },
+        {
+          "js": "yes",
+          "native": "NSTextInputTraitTypeYes",
+          "value": 2
+        }
+      ],
+      "name": "NSTextInputTraitType"
     },
     {
       "flags": false,
@@ -808,6 +1614,37 @@
         }
       ],
       "name": "NSTitlebarSeparatorStyle"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "default",
+          "native": "NSTokenStyleDefault",
+          "value": 0
+        },
+        {
+          "js": "none",
+          "native": "NSTokenStyleNone",
+          "value": 1
+        },
+        {
+          "js": "rounded",
+          "native": "NSTokenStyleRounded",
+          "value": 2
+        },
+        {
+          "js": "squared",
+          "native": "NSTokenStyleSquared",
+          "value": 3
+        },
+        {
+          "js": "plain-squared",
+          "native": "NSTokenStylePlainSquared",
+          "value": 4
+        }
+      ],
+      "name": "NSTokenStyle"
     },
     {
       "flags": true,
@@ -953,6 +1790,119 @@
         }
       ],
       "name": "NSViewLayerContentsRedrawPolicy"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "behind-window",
+          "native": "NSVisualEffectBlendingModeBehindWindow",
+          "value": 0
+        },
+        {
+          "js": "within-window",
+          "native": "NSVisualEffectBlendingModeWithinWindow",
+          "value": 1
+        }
+      ],
+      "name": "NSVisualEffectBlendingMode"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "titlebar",
+          "native": "NSVisualEffectMaterialTitlebar",
+          "value": 3
+        },
+        {
+          "js": "selection",
+          "native": "NSVisualEffectMaterialSelection",
+          "value": 4
+        },
+        {
+          "js": "menu",
+          "native": "NSVisualEffectMaterialMenu",
+          "value": 5
+        },
+        {
+          "js": "popover",
+          "native": "NSVisualEffectMaterialPopover",
+          "value": 6
+        },
+        {
+          "js": "sidebar",
+          "native": "NSVisualEffectMaterialSidebar",
+          "value": 7
+        },
+        {
+          "js": "header-view",
+          "native": "NSVisualEffectMaterialHeaderView",
+          "value": 10
+        },
+        {
+          "js": "sheet",
+          "native": "NSVisualEffectMaterialSheet",
+          "value": 11
+        },
+        {
+          "js": "window-background",
+          "native": "NSVisualEffectMaterialWindowBackground",
+          "value": 12
+        },
+        {
+          "js": "hud-window",
+          "native": "NSVisualEffectMaterialHUDWindow",
+          "value": 13
+        },
+        {
+          "js": "full-screen-ui",
+          "native": "NSVisualEffectMaterialFullScreenUI",
+          "value": 15
+        },
+        {
+          "js": "tool-tip",
+          "native": "NSVisualEffectMaterialToolTip",
+          "value": 17
+        },
+        {
+          "js": "content-background",
+          "native": "NSVisualEffectMaterialContentBackground",
+          "value": 18
+        },
+        {
+          "js": "under-window-background",
+          "native": "NSVisualEffectMaterialUnderWindowBackground",
+          "value": 21
+        },
+        {
+          "js": "under-page-background",
+          "native": "NSVisualEffectMaterialUnderPageBackground",
+          "value": 22
+        }
+      ],
+      "name": "NSVisualEffectMaterial"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "follows-window-active-state",
+          "native": "NSVisualEffectStateFollowsWindowActiveState",
+          "value": 0
+        },
+        {
+          "js": "active",
+          "native": "NSVisualEffectStateActive",
+          "value": 1
+        },
+        {
+          "js": "inactive",
+          "native": "NSVisualEffectStateInactive",
+          "value": 2
+        }
+      ],
+      "name": "NSVisualEffectState"
     },
     {
       "flags": false,
@@ -1294,6 +2244,68 @@
         }
       ],
       "name": "NSWritingDirection"
+    },
+    {
+      "flags": false,
+      "members": [
+        {
+          "js": "none",
+          "native": "NSWritingToolsBehaviorNone",
+          "value": -1
+        },
+        {
+          "js": "default",
+          "native": "NSWritingToolsBehaviorDefault",
+          "value": 0
+        },
+        {
+          "js": "complete",
+          "native": "NSWritingToolsBehaviorComplete",
+          "value": 1
+        },
+        {
+          "js": "limited",
+          "native": "NSWritingToolsBehaviorLimited",
+          "value": 2
+        }
+      ],
+      "name": "NSWritingToolsBehavior"
+    },
+    {
+      "flags": true,
+      "members": [
+        {
+          "js": "default",
+          "native": "NSWritingToolsResultDefault",
+          "value": 0
+        },
+        {
+          "js": "plain-text",
+          "native": "NSWritingToolsResultPlainText",
+          "value": 1
+        },
+        {
+          "js": "rich-text",
+          "native": "NSWritingToolsResultRichText",
+          "value": 2
+        },
+        {
+          "js": "list",
+          "native": "NSWritingToolsResultList",
+          "value": 4
+        },
+        {
+          "js": "table",
+          "native": "NSWritingToolsResultTable",
+          "value": 8
+        },
+        {
+          "js": "presentation-intent",
+          "native": "NSWritingToolsResultPresentationIntent",
+          "value": 16
+        }
+      ],
+      "name": "NSWritingToolsResultOptions"
     }
   ],
   "schema": "svelters-appkit-enums/v0",

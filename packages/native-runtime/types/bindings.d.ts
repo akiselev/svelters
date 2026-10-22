@@ -178,8 +178,20 @@ export interface BindableProps {
     "min-value": number; // winui
     orientation: string; // winui
   };
+  "color-well": {
+    "double-value": number; // appkit
+    "float-value": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
+    "string-value": string; // appkit
+  };
   "combo-box": {
     "current-index": number; // qt
+    "double-value": number; // appkit
+    "float-value": number; // appkit
+    "index-of-selected-item": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
     "is-drop-down-open": boolean; // winui
     "is-editable": boolean; // winui
     "is-text-search-enabled": boolean; // winui
@@ -187,6 +199,7 @@ export interface BindableProps {
     "max-drop-down-height": number; // winui
     "placeholder-text": string; // winui
     "selection-changed-trigger": string; // winui
+    "string-value": string; // appkit
     text: string; // winui
   };
   "command-bar": {
@@ -359,6 +372,12 @@ export interface BindableProps {
     mode: string; // gtk
     value: number; // gtk
   };
+  "level-indicator": {
+    "double-value": number; // appkit
+    "float-value": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
+  };
   "line-edit": {
     text: string; // qt
   };
@@ -475,6 +494,9 @@ export interface BindableProps {
     "show-peek-icon": boolean; // gtk
     text: string; // gtk
   };
+  "path-control": {
+    "string-value": string; // appkit
+  };
   "person-picture": {
     "badge-glyph": string; // winui
     "badge-number": number; // winui
@@ -491,6 +513,12 @@ export interface BindableProps {
   };
   "plain-text-edit": {
     "plain-text": string; // qt
+  };
+  "pop-up-button": {
+    "index-of-selected-item": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
+    state: string; // appkit
   };
   popover: {
     autohide: boolean; // gtk
@@ -641,12 +669,24 @@ export interface BindableProps {
     "search-delay": number; // gtk
     text: string; // gtk
   };
+  "search-field": {
+    "double-value": number; // appkit
+    "float-value": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
+    "string-value": string; // appkit
+  };
   "secure-text-field": {
     "double-value": number; // appkit
     "float-value": number; // appkit
     "int-value": number; // appkit
     "integer-value": number; // appkit
     "string-value": string; // appkit
+  };
+  "segmented-control": {
+    "double-value": number; // appkit
+    "float-value": number; // appkit
+    "selected-segment": number; // appkit
   };
   "selector-bar-item": {
     text: string; // winui
@@ -706,9 +746,20 @@ export interface BindableProps {
   "stacked-widget": {
     "current-index": number; // qt
   };
+  stepper: {
+    "double-value": number; // appkit
+    "float-value": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
+  };
   switch: {
     active: boolean; // gtk
-    state: boolean; // gtk
+    "double-value": number; // appkit
+    "float-value": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
+    state: boolean | string; // gtk/appkit
+    "string-value": string; // appkit
   };
   "symbol-icon": {
     symbol: string; // winui
@@ -814,6 +865,7 @@ export interface BindableProps {
     "pixels-below-lines": number; // gtk
     "pixels-inside-wrap": number; // gtk
     "right-margin": number; // gtk
+    string: string; // appkit
     text: string; // gtk
     "top-margin": number; // gtk
     "wrap-mode": string; // gtk
@@ -840,6 +892,13 @@ export interface BindableProps {
   };
   "toggle-switch": {
     "is-on": boolean; // winui
+  };
+  "token-field": {
+    "double-value": number; // appkit
+    "float-value": number; // appkit
+    "int-value": number; // appkit
+    "integer-value": number; // appkit
+    "string-value": string; // appkit
   };
   "tool-bar": {
     movable: boolean; // qt
@@ -893,4 +952,4 @@ export interface ToplevelAttrs {
   /** modal (dialogs: the default), modeless (windows: the default), or none (created hidden; open it through bind:this) */
   show?: ToplevelShow;
 }
-export type ToplevelTag = "about-dialog" | "application-window" | "color-dialog" | "dialog" | "error-message" | "file-dialog" | "font-dialog" | "input-dialog" | "main-window" | "message-box" | "progress-dialog" | "window" | "wizard";
+export type ToplevelTag = "about-dialog" | "application-window" | "color-dialog" | "dialog" | "error-message" | "file-dialog" | "font-dialog" | "input-dialog" | "main-window" | "message-box" | "panel" | "progress-dialog" | "window" | "wizard";

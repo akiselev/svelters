@@ -343,6 +343,10 @@ def main() -> int:
             print(f"ingest: {cls} (from overrides) is not in the SDK", file=sys.stderr)
             return 1
         sels = {m["selector"] for m in ov.get("methods", [])} | {s["selector"] for s in ov.get("setters", [])}
+        # props written through methods (`write: {selector, clear}`) and indexed setters (`count`)
+        sels |= {s["count"] for s in ov.get("setters", []) if s.get("count")}
+        for p in ov.get("props", []):
+            sels |= {v for k, v in (p.get("write") or {}).items() if k in ("selector", "clear")}
         for slot in ov.get("slots", []):
             ops = slot.get("ops", {})
             sels |= {v for k, v in ops.items() if k in ("set", "append", "insert_at", "insert_relative")}

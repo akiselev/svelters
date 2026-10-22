@@ -1,0 +1,817 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSScrollView",
+  "kind": "object",
+  "methods": [
+    {
+      "availability": {
+        "since": "10.7"
+      },
+      "name": "flash-scrollers",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "flashScrollers"
+    },
+    {
+      "name": "set-content-view",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "contentView",
+          "type": {
+            "native": "NSClipView *",
+            "ref": "object<NSClipView>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setContentView:"
+    },
+    {
+      "name": "set-document-view",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "documentView",
+          "type": {
+            "native": "NSView *",
+            "nullable": true,
+            "ref": "object<NSView>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setDocumentView:"
+    },
+    {
+      "name": "tile",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "tile"
+    }
+  ],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSScrollView.h",
+    "name": "NSScrollView"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "allowsMagnification",
+        "set": "setAllowsMagnification:"
+      },
+      "availability": {
+        "since": "10.8"
+      },
+      "js_name": "allows-magnification",
+      "memory": "assign",
+      "name": "allowsMagnification",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "autohidesScrollers",
+        "set": "setAutohidesScrollers:"
+      },
+      "js_name": "autohides-scrollers",
+      "memory": "assign",
+      "name": "autohidesScrollers",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "automaticallyAdjustsContentInsets",
+        "set": "setAutomaticallyAdjustsContentInsets:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "automatically-adjusts-content-insets",
+      "memory": "assign",
+      "name": "automaticallyAdjustsContentInsets",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "backgroundColor",
+        "set": "setBackgroundColor:"
+      },
+      "js_name": "background-color",
+      "memory": "copy",
+      "name": "backgroundColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "borderType",
+        "set": "setBorderType:"
+      },
+      "js_name": "border-type",
+      "memory": "assign",
+      "name": "borderType",
+      "origin": "sdk",
+      "type": {
+        "native": "NSBorderType",
+        "ref": "enum<NSBorderType>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "contentInsets",
+        "set": "setContentInsets:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "content-insets",
+      "memory": "assign",
+      "name": "contentInsets",
+      "origin": "sdk",
+      "type": {
+        "native": "NSEdgeInsets",
+        "ref": "insets"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "contentSize"
+      },
+      "js_name": "content-size",
+      "memory": "assign",
+      "name": "contentSize",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSize",
+        "ref": "size"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "contentView",
+        "set": "setContentView:"
+      },
+      "js_name": "content-view",
+      "memory": "strong",
+      "name": "contentView",
+      "origin": "sdk",
+      "type": {
+        "native": "NSClipView *",
+        "ref": "object<NSClipView>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "documentCursor",
+        "set": "setDocumentCursor:"
+      },
+      "js_name": "document-cursor",
+      "memory": "strong",
+      "name": "documentCursor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSCursor *",
+        "nullable": true,
+        "ref": "object<NSCursor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "documentView",
+        "set": "setDocumentView:"
+      },
+      "js_name": "document-view",
+      "memory": "strong",
+      "name": "documentView",
+      "origin": "sdk",
+      "type": {
+        "native": "NSView *",
+        "nullable": true,
+        "ref": "object<NSView>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "documentVisibleRect"
+      },
+      "js_name": "document-visible-rect",
+      "memory": "assign",
+      "name": "documentVisibleRect",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRect",
+        "ref": "rect"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "drawsBackground",
+        "set": "setDrawsBackground:"
+      },
+      "js_name": "draws-background",
+      "memory": "assign",
+      "name": "drawsBackground",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "findBarPosition",
+        "set": "setFindBarPosition:"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "find-bar-position",
+      "memory": "assign",
+      "name": "findBarPosition",
+      "origin": "sdk",
+      "type": {
+        "native": "NSScrollViewFindBarPosition",
+        "ref": "enum<NSScrollViewFindBarPosition>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "hasHorizontalRuler",
+        "set": "setHasHorizontalRuler:"
+      },
+      "js_name": "has-horizontal-ruler",
+      "memory": "assign",
+      "name": "hasHorizontalRuler",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "hasHorizontalScroller",
+        "set": "setHasHorizontalScroller:"
+      },
+      "js_name": "has-horizontal-scroller",
+      "memory": "assign",
+      "name": "hasHorizontalScroller",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "hasVerticalRuler",
+        "set": "setHasVerticalRuler:"
+      },
+      "js_name": "has-vertical-ruler",
+      "memory": "assign",
+      "name": "hasVerticalRuler",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "hasVerticalScroller",
+        "set": "setHasVerticalScroller:"
+      },
+      "js_name": "has-vertical-scroller",
+      "memory": "assign",
+      "name": "hasVerticalScroller",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "horizontalLineScroll",
+        "set": "setHorizontalLineScroll:"
+      },
+      "js_name": "horizontal-line-scroll",
+      "memory": "assign",
+      "name": "horizontalLineScroll",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "horizontalPageScroll",
+        "set": "setHorizontalPageScroll:"
+      },
+      "js_name": "horizontal-page-scroll",
+      "memory": "assign",
+      "name": "horizontalPageScroll",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "horizontalRulerView",
+        "set": "setHorizontalRulerView:"
+      },
+      "js_name": "horizontal-ruler-view",
+      "memory": "strong",
+      "name": "horizontalRulerView",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRulerView *",
+        "nullable": true,
+        "ref": "object<NSRulerView>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "horizontalScrollElasticity",
+        "set": "setHorizontalScrollElasticity:"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "horizontal-scroll-elasticity",
+      "memory": "assign",
+      "name": "horizontalScrollElasticity",
+      "origin": "sdk",
+      "type": {
+        "native": "NSScrollElasticity",
+        "ref": "enum<NSScrollElasticity>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "horizontalScroller",
+        "set": "setHorizontalScroller:"
+      },
+      "js_name": "horizontal-scroller",
+      "memory": "strong",
+      "name": "horizontalScroller",
+      "origin": "sdk",
+      "type": {
+        "native": "NSScroller *",
+        "nullable": true,
+        "ref": "object<NSScroller>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "lineScroll",
+        "set": "setLineScroll:"
+      },
+      "js_name": "line-scroll",
+      "memory": "assign",
+      "name": "lineScroll",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "magnification",
+        "set": "setMagnification:"
+      },
+      "availability": {
+        "since": "10.8"
+      },
+      "js_name": "magnification",
+      "memory": "assign",
+      "name": "magnification",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "maxMagnification",
+        "set": "setMaxMagnification:"
+      },
+      "availability": {
+        "since": "10.8"
+      },
+      "js_name": "max-magnification",
+      "memory": "assign",
+      "name": "maxMagnification",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "minMagnification",
+        "set": "setMinMagnification:"
+      },
+      "availability": {
+        "since": "10.8"
+      },
+      "js_name": "min-magnification",
+      "memory": "assign",
+      "name": "minMagnification",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "pageScroll",
+        "set": "setPageScroll:"
+      },
+      "js_name": "page-scroll",
+      "memory": "assign",
+      "name": "pageScroll",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "rulersVisible",
+        "set": "setRulersVisible:"
+      },
+      "js_name": "rulers-visible",
+      "memory": "assign",
+      "name": "rulersVisible",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "scrollerInsets",
+        "set": "setScrollerInsets:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "scroller-insets",
+      "memory": "assign",
+      "name": "scrollerInsets",
+      "origin": "sdk",
+      "type": {
+        "native": "NSEdgeInsets",
+        "ref": "insets"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "scrollerKnobStyle",
+        "set": "setScrollerKnobStyle:"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "scroller-knob-style",
+      "memory": "assign",
+      "name": "scrollerKnobStyle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSScrollerKnobStyle",
+        "ref": "enum<NSScrollerKnobStyle>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "scrollerStyle",
+        "set": "setScrollerStyle:"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "scroller-style",
+      "memory": "assign",
+      "name": "scrollerStyle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSScrollerStyle",
+        "ref": "enum<NSScrollerStyle>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "scrollsDynamically",
+        "set": "setScrollsDynamically:"
+      },
+      "js_name": "scrolls-dynamically",
+      "memory": "assign",
+      "name": "scrollsDynamically",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "usesPredominantAxisScrolling",
+        "set": "setUsesPredominantAxisScrolling:"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "uses-predominant-axis-scrolling",
+      "memory": "assign",
+      "name": "usesPredominantAxisScrolling",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "verticalLineScroll",
+        "set": "setVerticalLineScroll:"
+      },
+      "js_name": "vertical-line-scroll",
+      "memory": "assign",
+      "name": "verticalLineScroll",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "verticalPageScroll",
+        "set": "setVerticalPageScroll:"
+      },
+      "js_name": "vertical-page-scroll",
+      "memory": "assign",
+      "name": "verticalPageScroll",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "verticalRulerView",
+        "set": "setVerticalRulerView:"
+      },
+      "js_name": "vertical-ruler-view",
+      "memory": "strong",
+      "name": "verticalRulerView",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRulerView *",
+        "nullable": true,
+        "ref": "object<NSRulerView>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "verticalScrollElasticity",
+        "set": "setVerticalScrollElasticity:"
+      },
+      "availability": {
+        "since": "10.7"
+      },
+      "js_name": "vertical-scroll-elasticity",
+      "memory": "assign",
+      "name": "verticalScrollElasticity",
+      "origin": "sdk",
+      "type": {
+        "native": "NSScrollElasticity",
+        "ref": "enum<NSScrollElasticity>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "verticalScroller",
+        "set": "setVerticalScroller:"
+      },
+      "js_name": "vertical-scroller",
+      "memory": "strong",
+      "name": "verticalScroller",
+      "origin": "sdk",
+      "type": {
+        "native": "NSScroller *",
+        "nullable": true,
+        "ref": "object<NSScroller>"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nsscrollview?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

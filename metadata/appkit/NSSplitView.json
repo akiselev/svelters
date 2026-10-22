@@ -1,0 +1,366 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSSplitView",
+  "kind": "object",
+  "methods": [
+    {
+      "availability": {
+        "since": "10.11"
+      },
+      "name": "add-arranged-subview",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "view",
+          "type": {
+            "native": "NSView *",
+            "ref": "object<NSView>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "addArrangedSubview:"
+    },
+    {
+      "name": "adjust-subviews",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "adjustSubviews"
+    },
+    {
+      "availability": {
+        "since": "10.11"
+      },
+      "name": "insert-arranged-subview-at-index",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "view",
+          "type": {
+            "native": "NSView *",
+            "ref": "object<NSView>"
+          }
+        },
+        {
+          "name": "index",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "insertArrangedSubview:atIndex:"
+    },
+    {
+      "availability": {
+        "since": "10.5"
+      },
+      "name": "is-subview-collapsed",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "subview",
+          "type": {
+            "native": "NSView *",
+            "ref": "object<NSView>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "native": "BOOL",
+          "ref": "bool"
+        }
+      },
+      "selector": "isSubviewCollapsed:"
+    },
+    {
+      "availability": {
+        "since": "10.5"
+      },
+      "name": "max-possible-position-of-divider-at-index",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "dividerIndex",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "native": "CGFloat",
+          "ref": "f64"
+        }
+      },
+      "selector": "maxPossiblePositionOfDividerAtIndex:"
+    },
+    {
+      "availability": {
+        "since": "10.5"
+      },
+      "name": "min-possible-position-of-divider-at-index",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "dividerIndex",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "native": "CGFloat",
+          "ref": "f64"
+        }
+      },
+      "selector": "minPossiblePositionOfDividerAtIndex:"
+    },
+    {
+      "availability": {
+        "since": "10.11"
+      },
+      "name": "remove-arranged-subview",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "view",
+          "type": {
+            "native": "NSView *",
+            "ref": "object<NSView>"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "removeArrangedSubview:"
+    },
+    {
+      "availability": {
+        "since": "10.5"
+      },
+      "name": "set-position-of-divider-at-index",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "position",
+          "type": {
+            "native": "CGFloat",
+            "ref": "f64"
+          }
+        },
+        {
+          "name": "dividerIndex",
+          "type": {
+            "native": "NSInteger",
+            "ref": "i64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "setPosition:ofDividerAtIndex:"
+    }
+  ],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSSplitView.h",
+    "name": "NSSplitView"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "arrangedSubviews"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "arranged-subviews",
+      "memory": "copy",
+      "name": "arrangedSubviews",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray< NSView *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "arrangesAllSubviews",
+        "set": "setArrangesAllSubviews:"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "arranges-all-subviews",
+      "memory": "assign",
+      "name": "arrangesAllSubviews",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "autosaveName",
+        "set": "setAutosaveName:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "autosave-name",
+      "memory": "copy",
+      "name": "autosaveName",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSplitViewAutosaveName",
+        "nullable": true,
+        "ref": "unsupported"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "delegate",
+        "set": "setDelegate:"
+      },
+      "js_name": "delegate",
+      "memory": "weak",
+      "name": "delegate",
+      "origin": "sdk",
+      "type": {
+        "native": "id<NSSplitViewDelegate>",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "dividerColor"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "divider-color",
+      "memory": "copy",
+      "name": "dividerColor",
+      "origin": "sdk",
+      "type": {
+        "native": "NSColor *",
+        "ref": "object<NSColor>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "dividerStyle",
+        "set": "setDividerStyle:"
+      },
+      "availability": {
+        "since": "10.5"
+      },
+      "js_name": "divider-style",
+      "memory": "assign",
+      "name": "dividerStyle",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSplitViewDividerStyle",
+        "ref": "enum<NSSplitViewDividerStyle>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "dividerThickness"
+      },
+      "js_name": "divider-thickness",
+      "memory": "assign",
+      "name": "dividerThickness",
+      "origin": "sdk",
+      "type": {
+        "native": "CGFloat",
+        "ref": "f64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "isVertical",
+        "set": "setVertical:"
+      },
+      "js_name": "vertical",
+      "memory": "assign",
+      "name": "vertical",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nssplitview?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

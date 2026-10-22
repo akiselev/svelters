@@ -1,0 +1,48 @@
+schema: svelters-observe-layer/v1
+toolkit: appkit
+owner: AppKit:NSVisualEffectView
+observe:
+- prop: blending-mode
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `blendingMode` fired on a programmatic set'
+  confidence: 0.9
+- prop: emphasized
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `emphasized` fired on a programmatic set'
+  confidence: 0.9
+- prop: interior-background-style
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: mask-image
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: material
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `material` fired on a programmatic set'
+  confidence: 0.9
+- prop: state
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `state` fired on a programmatic set'
+  confidence: 0.9

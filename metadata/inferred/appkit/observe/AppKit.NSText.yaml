@@ -1,0 +1,156 @@
+schema: svelters-observe-layer/v1
+toolkit: appkit
+owner: AppKit:NSText
+observe:
+- prop: alignment
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `alignment` fired on a programmatic set'
+  confidence: 0.9
+- prop: background-color
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: base-writing-direction
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `baseWritingDirection` fired on a programmatic set'
+  confidence: 0.9
+- prop: delegate
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: draws-background
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `drawsBackground` fired on a programmatic set'
+  confidence: 0.9
+- prop: editable
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `editable` fired on a programmatic set'
+  confidence: 0.9
+- prop: field-editor
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `fieldEditor` fired on a programmatic set'
+  confidence: 0.9
+- prop: font
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: horizontally-resizable
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `horizontallyResizable` fired on a programmatic set'
+  confidence: 0.9
+- prop: imports-graphics
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `importsGraphics` fired on a programmatic set'
+  confidence: 0.9
+- prop: max-size
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `maxSize` fired on a programmatic set'
+  confidence: 0.9
+- prop: min-size
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: rich-text
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `richText` fired on a programmatic set'
+  confidence: 0.9
+- prop: ruler-visible
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `rulerVisible` fired on a programmatic set'
+  confidence: 0.9
+- prop: selectable
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `selectable` fired on a programmatic set'
+  confidence: 0.9
+- prop: selected-range
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: string
+  class: exact
+  via:
+  - mechanism: notify
+  - mechanism: notification
+    name: NSTextDidChangeNotification
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `string` fired on a programmatic set'
+  - origin: rule
+    ref: 'O7: user edits reach the value through NSTextDidChangeNotification'
+  confidence: 0.9
+- prop: text-color
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: uses-font-panel
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `usesFontPanel` fired on a programmatic set'
+  confidence: 0.9
+- prop: vertically-resizable
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `verticallyResizable` fired on a programmatic set'
+  confidence: 0.9

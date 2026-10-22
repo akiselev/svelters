@@ -1,0 +1,77 @@
+{
+ "props:alters-state-of-selected-item": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:autoenables-items": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ },
+ "props:preferred-edge": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": "rect-edge-min-y",
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": "rect-edge-min-x",
+   "sample": {
+    "t": "str",
+    "v": "rect-edge-min-x"
+   }
+  }
+ },
+ "props:pulls-down": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": false,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": true,
+   "sample": {
+    "t": "bool",
+    "v": true
+   }
+  }
+ },
+ "props:uses-item-from-menu": {
+  "confidence": 0.95,
+  "evidence": {
+   "attempts": 1,
+   "default": true,
+   "events": [],
+   "kvo": true,
+   "outcome": "exact",
+   "read": false,
+   "sample": {
+    "t": "bool",
+    "v": false
+   }
+  }
+ }
+}

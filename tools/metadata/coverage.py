@@ -207,6 +207,7 @@ def appkit_rows() -> list[dict]:
     verified = ledger.verified_facts("appkit")
     info = {f["fact"]: f for f in man["facts"]}
     carried = set(appkit_gen.SCALAR_TY) | {"object"}
+    pages = gallery_kinds("appkit")
     rows = []
     for cls in m.classes:
         ov = m.ov.get(cls, {})
@@ -226,7 +227,7 @@ def appkit_rows() -> list[dict]:
             "verified_inferred": [sum(1 for f in facts if f in verified and info[f].get("origin") == "inferred"),
                                   sum(1 for f in facts if info[f].get("origin") == "inferred")],
             "delivery": sum(1 for f in facts if f in verified and info[f].get("strength") == "delivery"),
-            "inherited": 0, "gallery": None, "lifetime": el.get("lifetime"),
+            "inherited": 0, "gallery": pages.get(cls), "lifetime": el.get("lifetime"),
         })
     return rows
 

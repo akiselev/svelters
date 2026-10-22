@@ -1,0 +1,102 @@
+schema: svelters-observe-layer/v1
+toolkit: appkit
+owner: AppKit:NSPopUpButton
+observe:
+- prop: alters-state-of-selected-item
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `altersStateOfSelectedItem` fired on a programmatic set'
+  confidence: 0.9
+- prop: autoenables-items
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `autoenablesItems` fired on a programmatic set'
+  confidence: 0.9
+- prop: index-of-selected-item
+  class: partial
+  via:
+  - mechanism: target_action
+  missed:
+  - programmatic
+  provenance:
+  - origin: rule
+    ref: 'O7: not probed for KVO; the fallback reports user changes only'
+  confidence: 0.9
+- prop: item-array
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: item-titles
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: last-item
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: menu
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: number-of-items
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: preferred-edge
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `preferredEdge` fired on a programmatic set'
+  confidence: 0.9
+- prop: pulls-down
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `pullsDown` fired on a programmatic set'
+  confidence: 0.9
+- prop: selected-item
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: selected-tag
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: title-of-selected-item
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: uses-item-from-menu
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `usesItemFromMenu` fired on a programmatic set'
+  confidence: 0.9

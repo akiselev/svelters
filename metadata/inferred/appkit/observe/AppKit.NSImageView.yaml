@@ -1,0 +1,84 @@
+schema: svelters-observe-layer/v1
+toolkit: appkit
+owner: AppKit:NSImageView
+observe:
+- prop: allows-cut-copy-paste
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `allowsCutCopyPaste` fired on a programmatic set'
+  confidence: 0.9
+- prop: animates
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `animates` fired on a programmatic set'
+  confidence: 0.9
+- prop: content-tint-color
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: editable
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `editable` fired on a programmatic set'
+  confidence: 0.9
+- prop: image
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9
+- prop: image-alignment
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `imageAlignment` fired on a programmatic set'
+  confidence: 0.9
+- prop: image-dynamic-range
+  class: none
+  provenance:
+  - origin: rule
+    ref: a read-only property, not probed; KVO-compliant only if documented
+  confidence: 0.9
+- prop: image-frame-style
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `imageFrameStyle` fired on a programmatic set'
+  confidence: 0.9
+- prop: image-scaling
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `imageScaling` fired on a programmatic set'
+  confidence: 0.9
+- prop: preferred-image-dynamic-range
+  class: exact
+  via:
+  - mechanism: notify
+  provenance:
+  - origin: probe
+    ref: 'AppKit probe (SDK 26.1): a KVO observer on `preferredImageDynamicRange` fired on a programmatic set'
+  confidence: 0.9
+- prop: symbol-configuration
+  class: set_only
+  provenance:
+  - origin: rule
+    ref: 'O8: not probed; AppKit properties are KVO-compliant only if documented: configuration'
+  confidence: 0.9

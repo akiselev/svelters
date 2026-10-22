@@ -179,8 +179,20 @@ export const BINDINGS = {
     "min-value": { prop: "min-value", signal: "notify::min-value", type: "number", direction: "two_way", compare: true, readBack: true, valueFrom: "prop", toolkits: ["winui"] },
     orientation: { prop: "orientation", signal: "notify::orientation", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
   },
+  "color-well": {
+    "double-value": { prop: "double-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "float-value": { prop: "float-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "int-value": { prop: "int-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "integer-value": { prop: "integer-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "string-value": { prop: "string-value", signal: "action", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+  },
   "combo-box": {
     "current-index": { prop: "current-index", signal: "current-index-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
+    "double-value": { prop: "double-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "float-value": { prop: "float-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "index-of-selected-item": { prop: "index-of-selected-item", signal: "combo-box-selection-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["appkit"] },
+    "int-value": { prop: "int-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "integer-value": { prop: "integer-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
     "is-drop-down-open": { prop: "is-drop-down-open", signal: "notify::is-drop-down-open", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "is-editable": { prop: "is-editable", signal: "notify::is-editable", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "is-text-search-enabled": { prop: "is-text-search-enabled", signal: "notify::is-text-search-enabled", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
@@ -188,6 +200,7 @@ export const BINDINGS = {
     "max-drop-down-height": { prop: "max-drop-down-height", signal: "notify::max-drop-down-height", type: "number", direction: "two_way", compare: true, readBack: true, valueFrom: "prop", toolkits: ["winui"] },
     "placeholder-text": { prop: "placeholder-text", signal: "notify::placeholder-text", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "selection-changed-trigger": { prop: "selection-changed-trigger", signal: "notify::selection-changed-trigger", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
+    "string-value": { prop: "string-value", signal: "control-text-did-change", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["appkit"] },
     text: { prop: "text", signal: "notify::text", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
   },
   "command-bar": {
@@ -360,6 +373,12 @@ export const BINDINGS = {
     mode: { prop: "mode", signal: "notify::mode", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
     value: { prop: "value", signal: "notify::value", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
   },
+  "level-indicator": {
+    "double-value": { prop: "double-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "float-value": { prop: "float-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "int-value": { prop: "int-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "integer-value": { prop: "integer-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+  },
   "line-edit": {
     text: { prop: "text", signal: "text-changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
@@ -476,6 +495,9 @@ export const BINDINGS = {
     "show-peek-icon": { prop: "show-peek-icon", signal: "notify::show-peek-icon", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
   },
+  "path-control": {
+    "string-value": { prop: "string-value", signal: "action", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+  },
   "person-picture": {
     "badge-glyph": { prop: "badge-glyph", signal: "notify::badge-glyph", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
     "badge-number": { prop: "badge-number", signal: "notify::badge-number", type: "number", direction: "two_way", compare: true, readBack: true, valueFrom: "prop", toolkits: ["winui"] },
@@ -492,6 +514,12 @@ export const BINDINGS = {
   },
   "plain-text-edit": {
     "plain-text": { prop: "plain-text", signal: "text-changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["qt"] },
+  },
+  "pop-up-button": {
+    "index-of-selected-item": { prop: "index-of-selected-item", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "int-value": { prop: "int-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "integer-value": { prop: "integer-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    state: { prop: "state", signal: "action", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
   },
   popover: {
     autohide: { prop: "autohide", signal: "notify::autohide", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
@@ -642,12 +670,24 @@ export const BINDINGS = {
     "search-delay": { prop: "search-delay", signal: "notify::search-delay", type: "number", direction: "two_way", compare: true, readBack: true, valueFrom: "prop", toolkits: ["gtk"] },
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
   },
+  "search-field": {
+    "double-value": { prop: "double-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "float-value": { prop: "float-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "int-value": { prop: "int-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "integer-value": { prop: "integer-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "string-value": { prop: "string-value", signal: "control-text-did-change", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["appkit"] },
+  },
   "secure-text-field": {
     "double-value": { prop: "double-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
     "float-value": { prop: "float-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
     "int-value": { prop: "int-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
     "integer-value": { prop: "integer-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
     "string-value": { prop: "string-value", signal: "control-text-did-change", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["appkit"] },
+  },
+  "segmented-control": {
+    "double-value": { prop: "double-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "float-value": { prop: "float-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "selected-segment": { prop: "selected-segment", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
   },
   "selector-bar-item": {
     text: { prop: "text", signal: "notify::text", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
@@ -707,9 +747,20 @@ export const BINDINGS = {
   "stacked-widget": {
     "current-index": { prop: "current-index", signal: "current-changed", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
   },
+  stepper: {
+    "double-value": { prop: "double-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "float-value": { prop: "float-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "int-value": { prop: "int-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "integer-value": { prop: "integer-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+  },
   switch: {
     active: { prop: "active", signal: "notify::active", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
-    state: { prop: "state", signal: "notify::state", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
+    "double-value": { prop: "double-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "float-value": { prop: "float-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "int-value": { prop: "int-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "integer-value": { prop: "integer-value", signal: "action", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    state: [{ prop: "state", signal: "notify::state", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] }, { prop: "state", signal: "action", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] }],
+    "string-value": { prop: "string-value", signal: "action", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
   },
   "symbol-icon": {
     symbol: { prop: "symbol", signal: "notify::symbol", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
@@ -815,6 +866,7 @@ export const BINDINGS = {
     "pixels-below-lines": { prop: "pixels-below-lines", signal: "notify::pixels-below-lines", type: "number", direction: "two_way", compare: true, readBack: true, valueFrom: "prop", toolkits: ["gtk"] },
     "pixels-inside-wrap": { prop: "pixels-inside-wrap", signal: "notify::pixels-inside-wrap", type: "number", direction: "two_way", compare: true, readBack: true, valueFrom: "prop", toolkits: ["gtk"] },
     "right-margin": { prop: "right-margin", signal: "notify::right-margin", type: "number", direction: "two_way", compare: true, readBack: true, valueFrom: "prop", toolkits: ["gtk"] },
+    string: { prop: "string", signal: "text-did-change", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["appkit"] },
     text: { prop: "text", signal: "changed", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["gtk"] },
     "top-margin": { prop: "top-margin", signal: "notify::top-margin", type: "number", direction: "two_way", compare: true, readBack: true, valueFrom: "prop", toolkits: ["gtk"] },
     "wrap-mode": { prop: "wrap-mode", signal: "notify::wrap-mode", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["gtk"] },
@@ -841,6 +893,13 @@ export const BINDINGS = {
   },
   "toggle-switch": {
     "is-on": { prop: "is-on", signal: "notify::is-on", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["winui"] },
+  },
+  "token-field": {
+    "double-value": { prop: "double-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "float-value": { prop: "float-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "int-value": { prop: "int-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "integer-value": { prop: "integer-value", signal: "control-text-did-change", type: "number", direction: "two_way", compare: true, readBack: false, valueFrom: "prop", toolkits: ["appkit"] },
+    "string-value": { prop: "string-value", signal: "control-text-did-change", type: "string", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["appkit"] },
   },
   "tool-bar": {
     movable: { prop: "movable", signal: "movable-changed", type: "bool", direction: "two_way", compare: true, readBack: false, valueFrom: "arg0", toolkits: ["qt"] },
@@ -907,14 +966,16 @@ export const TEXT_PROPS = {
   "menu-bar-item": ["title"],
   "menu-flyout-item": ["text"],
   "menu-flyout-sub-item": ["text"],
+  "menu-item": ["title"],
   "navigation-view-item": ["content"],
   "push-button": ["text"],
   "radio-button": ["content"],
   "repeat-button": ["content"],
   "selector-bar-item": ["text"],
   "split-button": ["content"],
-  "tab-view-item": ["header"],
+  "tab-view-item": ["label", "header"],
   "text-block": ["text"],
+  "text-view": ["string"],
   "toggle-button": ["label", "content"],
   "toggle-menu-flyout-item": ["text"],
 };
@@ -933,6 +994,7 @@ export const TOPLEVELS = {
   "input-dialog": { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
   "main-window": { open: ["present"], modeless: ["present"], modalProp: false, dialog: false, toolkits: ["qt"] },
   "message-box": { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
+  panel: { open: ["make-key-and-order-front"], modeless: ["make-key-and-order-front"], modalProp: false, dialog: false, toolkits: ["appkit"] },
   "progress-dialog": { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },
   window: { open: ["present", "make-key-and-order-front", "activate"], modeless: ["present", "make-key-and-order-front", "activate"], modalProp: false, dialog: false, toolkits: ["gtk", "appkit", "winui"] },
   wizard: { open: ["open", "present"], modeless: ["present"], modalProp: true, dialog: true, toolkits: ["qt"] },

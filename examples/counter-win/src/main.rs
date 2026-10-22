@@ -156,6 +156,26 @@ mod win {
         Ok(b.children(panel, 0).into_iter().filter(|h| tag(*h) == "button").collect())
     }
 
+    /// One line per page of `fixtures/gallery-winui` (fixtures/gallery-common/check-pages.mjs enforces the line; the
+    /// selftest fails when this list and the pages directory differ). The kinds a page must create come from its
+    /// `<!-- kinds: ... -->` header.
+    macro_rules! gallery_page {
+        ($name:ident, "winui", $page:literal) => {
+            $page
+        };
+    }
+    const GALLERY_CASES: &[&str] = &[
+        gallery_page!(layout, "winui", "00-layout"),
+        gallery_page!(buttons, "winui", "01-buttons"),
+        gallery_page!(input, "winui", "02-input"),
+        gallery_page!(pickers, "winui", "03-pickers"),
+        gallery_page!(display, "winui", "04-display"),
+        gallery_page!(lists, "winui", "05-lists"),
+        gallery_page!(navigation, "winui", "06-navigation"),
+        gallery_page!(menus, "winui", "07-menus"),
+        gallery_page!(dialogs, "winui", "08-dialogs"),
+    ];
+
     /// The gallery selftest's state, shared by its timer steps.
     struct Gallery {
         b: WinUiBackend,
@@ -209,6 +229,10 @@ mod win {
 
     fn gallery_finish(g: &Gallery) {
         let mut failures: Vec<String> = g.errors.borrow().clone();
+        let names: Vec<&str> = g.pages.iter().map(|(n, _)| n.as_str()).collect();
+        if names != GALLERY_CASES {
+            failures.push(format!("the pages {names:?} differ from GALLERY_CASES {GALLERY_CASES:?} (add a gallery_page! line)"));
+        }
         let seen = g.seen.borrow();
         let mut shown = serde_json::Map::new();
         for (i, (name, kinds)) in g.pages.iter().enumerate() {

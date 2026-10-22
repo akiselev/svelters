@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Checks a widget gallery fixture (fixtures/gallery-<toolkit>):
 //  1. every page in src/pages/ starts with a `<!-- kinds: A B -->` header (read by tools/metadata/coverage.py);
-//  2. every page has a screenshot test line in examples/counter/tests/gallery.rs;
+//  2. every page has a screenshot test line in the toolkit's gallery tests (TESTS below);
 //  3. the bundle opens every page in the TestHost without a JS error (clicking each sidebar button);
 //  4. the op log holds every line of `style-setters.expected` (the setter section of the styling
 //     page: rules and inline setter properties written with setProp / setChildAttr), with the
@@ -20,14 +20,18 @@ const fail = (m) => {
   process.exit(1);
 };
 if (!list.length) fail('no pages in src/pages');
-const tests = fs.readFileSync(path.join(dir, '../../examples/counter/tests/gallery.rs'), 'utf8');
+// Per toolkit: the gallery test file and the sidebar button's click signal.
+const TESTS = { appkit: 'examples/counter-mac/tests/gallery.rs', winui: 'examples/counter-win/src/main.rs' };
+const CLICK = { appkit: 'action', winui: 'click' };
+const testsFile = TESTS[tk] ?? 'examples/counter/tests/gallery.rs';
+const tests = fs.readFileSync(path.join(dir, '../..', testsFile), 'utf8');
 for (const p of list) {
   const src = fs.readFileSync(path.join(dir, 'src/pages', `${p}.svelte`), 'utf8');
   if (!/<!--\s*kinds:\s*[^>]+-->/.test(src)) fail(`${p}.svelte has no <!-- kinds: ... --> header`);
-  if (!new RegExp(`gallery_page!\\(\\s*\\w+\\s*,\\s*"${tk}"\\s*,\\s*"${p}"`).test(tests)) fail(`no gallery_page!(..., "${tk}", "${p}", ...) line in examples/counter/tests/gallery.rs`);
+  if (!new RegExp(`gallery_page!\\(\\s*\\w+\\s*,\\s*"${tk}"\\s*,\\s*"${p}"`).test(tests)) fail(`no gallery_page!(..., "${tk}", "${p}", ...) line in ${testsFile}`);
 }
 const script = [{ checkpoint: true }];
-list.forEach((_, i) => script.push({ event: [SIDEBAR_FIRST_HANDLE + i, 'clicked', []] }, { checkpoint: true }));
+list.forEach((_, i) => script.push({ event: [SIDEBAR_FIRST_HANDLE + i, CLICK[tk] ?? 'clicked', []] }, { checkpoint: true }));
 let log;
 try {
   log = await runBundle({ bundlePath: path.join(dir, 'dist/app.js'), script, toolkit: tk, styleDialect: tk === 'qt' ? 'qss' : 'css' });

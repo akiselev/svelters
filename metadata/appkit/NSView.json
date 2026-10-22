@@ -61,6 +61,45 @@
       "selector": "addSubview:positioned:relativeTo:"
     },
     {
+      "name": "display",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "display"
+    },
+    {
+      "availability": {
+        "since": "10.7"
+      },
+      "name": "invalidate-intrinsic-content-size",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "invalidateIntrinsicContentSize"
+    },
+    {
+      "availability": {
+        "since": "10.7"
+      },
+      "name": "layout-subtree-if-needed",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "layoutSubtreeIfNeeded"
+    },
+    {
       "name": "remove-from-superview",
       "origin": "sdk",
       "params": [],
@@ -70,6 +109,26 @@
         }
       },
       "selector": "removeFromSuperview"
+    },
+    {
+      "name": "scroll-rect-to-visible",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "rect",
+          "type": {
+            "native": "NSRect",
+            "ref": "rect"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "native": "BOOL",
+          "ref": "bool"
+        }
+      },
+      "selector": "scrollRectToVisible:"
     }
   ],
   "native": {

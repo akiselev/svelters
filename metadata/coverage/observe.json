@@ -13,44 +13,48 @@
     "manual": 0,
     "no_test": 0,
     "pending": 0,
-    "total": 150,
-    "verified": 149,
-    "verified_weak": 1
+    "total": 338,
+    "verified": 334,
+    "verified_weak": 4
    },
    "none": {
     "manual": 0,
     "no_test": 0,
     "pending": 0,
-    "total": 116,
+    "total": 178,
     "verified": 0,
-    "verified_weak": 116
+    "verified_weak": 178
    },
    "partial": {
     "manual": 0,
     "no_test": 0,
     "pending": 0,
-    "total": 8,
+    "total": 13,
     "verified": 5,
-    "verified_weak": 3
+    "verified_weak": 8
    },
    "set_only": {
     "manual": 0,
     "no_test": 0,
     "pending": 0,
-    "total": 70,
+    "total": 162,
     "verified": 0,
-    "verified_weak": 70
+    "verified_weak": 162
    }
   },
   "exact_by_verification": {
-   "delivery": 149,
+   "delivery": 334,
    "none": 0,
-   "weak": 1
+   "weak": 4
   },
   "exact_unverified_groups": {
    "read-only-on-class": {
     "count": 1,
     "reason": "NSView's tag is read-only on NSView itself (only NSControl and other subclasses set it), so the row on NSView can only connect"
+   },
+   "unclassified": {
+    "count": 3,
+    "reason": "no group in observe.connect_only"
    }
   },
   "parked": 0,

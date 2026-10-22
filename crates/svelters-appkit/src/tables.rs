@@ -59,6 +59,18 @@ pub struct PropInfo {
     pub setter: &'static str,
 }
 
+/// A prop written through methods instead of KVC (`PROP_WRITES`, by `PROPS` id):
+/// - a read-only property with a writing method (`item-titles`: `clear` = `removeAllItems`, then
+///   `selector` = `addItemsWithTitles:` with the list; `index-of-selected-item`: `selectItemAtIndex:`);
+/// - an indexed setter (`labels`: `count` = `setSegmentCount:` with the list's length, then
+///   `selector` = `setLabel:forSegment:` once per item with (item, index)).
+pub struct PropWrite {
+    pub prop: u32,
+    pub selector: &'static str,
+    pub clear: &'static str,
+    pub count: &'static str,
+}
+
 pub struct EnumInfo {
     pub name: &'static str,
     pub flags: bool,

@@ -27,3 +27,26 @@ slots:
       list: subviews
       detach: ["removeFromSuperview"]
     provenance: "NSView.h: addSubview:, addSubview:positioned:relativeTo: (NSWindowBelow puts the view below `relativeTo`), removeFromSuperview; the superview retains its subviews"
+  - name: menu
+    cardinality: one
+    child: menu
+    declared_on: NSResponder
+    ops:
+      set: "setMenu:"
+      get: menu
+      clear: nil
+    provenance: "NSResponder.menu (strong, nullable), above the ingested chain (ingest stops at NSResponder): a view's context menu, shown on a right click or control-click. On a pop-up-button the same property is the pop-up's item menu."
+methods:
+  - name: display
+    selector: display
+    provenance: "NSView.h: draws the view now if it needs display"
+  - name: layout-subtree-if-needed
+    selector: layoutSubtreeIfNeeded
+    provenance: "NSView.h (Auto Layout): lays out the view and its subviews now"
+  - name: invalidate-intrinsic-content-size
+    selector: invalidateIntrinsicContentSize
+    provenance: "NSView.h (Auto Layout)"
+  - name: scroll-rect-to-visible
+    selector: "scrollRectToVisible:"
+    test: false
+    provenance: "NSView.h: scrolls the enclosing scroll views so a rect ({x, y, width, height}) of the view is visible; returns whether it scrolled"

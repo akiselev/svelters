@@ -2,7 +2,8 @@
   // WinUI 3 widget gallery (WP-W): a sidebar of family pages (src/pages/*.svelte, sorted by file name) and the
   // selected page on the right. Each page starts with `<!-- kinds: ... -->` (tools/metadata/coverage.py reads it;
   // `counter-win --fixture gallery-winui --selftest` clicks every sidebar button and checks those kinds were created).
-  // Keep the sidebar the first stack-panel of the window: the selftest finds its buttons there.
+  // Keep the sidebar the first stack-panel of the window: the selftest finds its buttons there. Handle layout (shared with
+  // fixtures/gallery-common/check-pages.mjs): window #1, grid #2, sidebar stack-panel #3, sidebar button i = #(4 + i).
   const modules = import.meta.glob('./pages/*.svelte', { eager: true });
   const pages = Object.keys(modules)
     .sort()

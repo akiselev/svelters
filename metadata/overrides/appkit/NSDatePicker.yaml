@@ -1,0 +1,26 @@
+class: NSDatePicker
+element:
+  tag: date-picker
+  lifetime: owned
+  construct: new
+  provenance: "NSDatePicker.h: -init gives a text-field-and-stepper picker for year, month, day, hour, minute and second, set to now. date-value takes and gives a JS Date (NSDate); the picker sends its action after a user edit (no bind: yet: the renderer has no binding type for object-typed props)."
+props:
+  - name: date-picker-style
+    sample: clock-and-calendar
+    provenance: "NSDatePicker.datePickerStyle (NSDatePickerStyle)"
+  - name: date-picker-mode
+    sample: range
+    provenance: "NSDatePicker.datePickerMode (NSDatePickerMode)"
+  - name: date-picker-elements
+    sample: [year-month-day]
+    expect: 224
+    provenance: "NSDatePicker.datePickerElements (NSDatePickerElementFlags options; YearMonthDay = 0x00e0)"
+  - name: time-interval
+    sample: 3600.0
+    provenance: "NSDatePicker.timeInterval (NSTimeInterval, the range length in range mode)"
+  - name: bezeled
+    sample: false
+    provenance: "NSDatePicker.bezeled (BOOL, getter isBezeled)"
+  - name: draws-background
+    sample: true
+    provenance: "NSDatePicker.drawsBackground (BOOL)"

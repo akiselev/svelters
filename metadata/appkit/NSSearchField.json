@@ -1,0 +1,231 @@
+{
+  "abstract": false,
+  "bases": [
+    "NSTextField",
+    "NSControl",
+    "NSView",
+    "NSResponder",
+    "NSObject"
+  ],
+  "id": "svelters-api:v1:type:appkit:AppKit:NSSearchField",
+  "kind": "object",
+  "methods": [],
+  "native": {
+    "framework": "AppKit",
+    "header": "NSSearchField.h",
+    "name": "NSSearchField"
+  },
+  "properties": [
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "cancelButtonBounds"
+      },
+      "availability": {
+        "since": "11.0"
+      },
+      "js_name": "cancel-button-bounds",
+      "memory": "assign",
+      "name": "cancelButtonBounds",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRect",
+        "ref": "rect"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "delegate",
+        "set": "setDelegate:"
+      },
+      "availability": {
+        "since": "10.11"
+      },
+      "js_name": "delegate",
+      "memory": "weak",
+      "name": "delegate",
+      "origin": "sdk",
+      "type": {
+        "native": "id<NSSearchFieldDelegate>",
+        "nullable": true,
+        "ref": "object"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "maximumRecents",
+        "set": "setMaximumRecents:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "maximum-recents",
+      "memory": "assign",
+      "name": "maximumRecents",
+      "origin": "sdk",
+      "type": {
+        "native": "NSInteger",
+        "ref": "i64"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "recentSearches",
+        "set": "setRecentSearches:"
+      },
+      "js_name": "recent-searches",
+      "memory": "copy",
+      "name": "recentSearches",
+      "origin": "sdk",
+      "type": {
+        "native": "NSArray<NSString *> *",
+        "ref": "list"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "recentsAutosaveName",
+        "set": "setRecentsAutosaveName:"
+      },
+      "js_name": "recents-autosave-name",
+      "memory": "copy",
+      "name": "recentsAutosaveName",
+      "origin": "sdk",
+      "type": {
+        "native": "NSSearchFieldRecentsAutosaveName",
+        "nullable": true,
+        "ref": "unsupported"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "searchButtonBounds"
+      },
+      "availability": {
+        "since": "11.0"
+      },
+      "js_name": "search-button-bounds",
+      "memory": "assign",
+      "name": "searchButtonBounds",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRect",
+        "ref": "rect"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "searchMenuTemplate",
+        "set": "setSearchMenuTemplate:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "search-menu-template",
+      "memory": "strong",
+      "name": "searchMenuTemplate",
+      "origin": "sdk",
+      "type": {
+        "native": "NSMenu *",
+        "nullable": true,
+        "ref": "object<NSMenu>"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": false
+      },
+      "accessors": {
+        "get": "searchTextBounds"
+      },
+      "availability": {
+        "since": "11.0"
+      },
+      "js_name": "search-text-bounds",
+      "memory": "assign",
+      "name": "searchTextBounds",
+      "origin": "sdk",
+      "type": {
+        "native": "NSRect",
+        "ref": "rect"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "sendsSearchStringImmediately",
+        "set": "setSendsSearchStringImmediately:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "sends-search-string-immediately",
+      "memory": "assign",
+      "name": "sendsSearchStringImmediately",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    },
+    {
+      "access": {
+        "read": true,
+        "write": true
+      },
+      "accessors": {
+        "get": "sendsWholeSearchString",
+        "set": "setSendsWholeSearchString:"
+      },
+      "availability": {
+        "since": "10.10"
+      },
+      "js_name": "sends-whole-search-string",
+      "memory": "assign",
+      "name": "sendsWholeSearchString",
+      "origin": "sdk",
+      "type": {
+        "native": "BOOL",
+        "ref": "bool"
+      }
+    }
+  ],
+  "schema": "svelters-element-kind/v0",
+  "source": {
+    "docs": "https://developer.apple.com/documentation/appkit/nssearchfield?language=objc",
+    "sdk": "MacOSX26.1",
+    "target": "arm64-apple-macos14"
+  },
+  "toolkit": "appkit"
+}

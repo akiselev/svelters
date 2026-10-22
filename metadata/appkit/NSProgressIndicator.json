@@ -9,6 +9,36 @@
   "kind": "object",
   "methods": [
     {
+      "name": "increment-by",
+      "origin": "sdk",
+      "params": [
+        {
+          "name": "delta",
+          "type": {
+            "native": "double",
+            "ref": "f64"
+          }
+        }
+      ],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "incrementBy:"
+    },
+    {
+      "name": "size-to-fit",
+      "origin": "sdk",
+      "params": [],
+      "returns": {
+        "type": {
+          "ref": "void"
+        }
+      },
+      "selector": "sizeToFit"
+    },
+    {
       "name": "start-animation",
       "origin": "sdk",
       "params": [
