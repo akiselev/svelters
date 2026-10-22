@@ -11,13 +11,14 @@
 //! | `wake` | backend `wake` only | also notified on every host wake: a pending job, a completion, a store change, a queued event |
 //!
 //! A production embedder may set only `spawner` (cadatomic's job pool, quire's `Spawner`). A test sets
-//! all three from one [`svelters_sched::TestScheduler`] (`testing::sched_host` does it on the log backend;
+//! all three from one [`svelters_sched::TestScheduler`] (`testing::SchedHost` does it on the log backend;
 //! `svelters-testkit`'s `sched` module on egui), so a real host runs deterministically under a seed.
 //!
 //! Not covered yet (follow-ups in plans/milestones/SCHED1-deterministic-scheduler.md): `#[js(tokio)]`
 //! tasks, E3 service threads and the file watcher still use their own threads.
 
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::task::{Wake, Waker};
 use svelters_abi::WakeHandle;
 use svelters_sched::{Clock, Spawner};
@@ -68,10 +69,19 @@ impl std::fmt::Debug for HostSched {
 }
 
 /// The host's waker: the backend's thread-safe `wake`, then the `wake` hook if any. Every host wake
-/// goes through it (the core's own, the completion queue's and the store hub's).
-struct HostWake {
+/// goes through it (the core's own, the completion queue's and the store hub's). A scheduler may keep
+/// a clone past the host (a due `wake_at` not yet run), so the host detaches it when it goes away and
+/// later wakes reach nobody (the backend's vtable may be freed by then).
+pub(crate) struct HostWake {
     backend: WakeHandle,
     extra: Option<Waker>,
+    alive: AtomicBool,
+}
+
+impl HostWake {
+    pub(crate) fn detach(&self) {
+        self.alive.store(false, Ordering::SeqCst);
+    }
 }
 
 impl Wake for HostWake {
@@ -80,6 +90,9 @@ impl Wake for HostWake {
     }
 
     fn wake_by_ref(self: &Arc<Self>) {
+        if !self.alive.load(Ordering::SeqCst) {
+            return;
+        }
         self.backend.wake();
         if let Some(w) = &self.extra {
             w.wake_by_ref();
@@ -87,6 +100,7 @@ impl Wake for HostWake {
     }
 }
 
-pub(crate) fn host_waker(backend: WakeHandle, extra: Option<Waker>) -> Waker {
-    Waker::from(Arc::new(HostWake { backend, extra }))
+pub(crate) fn host_waker(backend: WakeHandle, extra: Option<Waker>) -> (Waker, Arc<HostWake>) {
+    let st = Arc::new(HostWake { backend, extra, alive: AtomicBool::new(true) });
+    (Waker::from(st.clone()), st)
 }

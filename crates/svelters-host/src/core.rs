@@ -369,6 +369,7 @@ pub(crate) struct Core {
     pub(crate) root_msgs: RefCell<Vec<RootMessage>>,
     /// SCHED1: the backend's wake plus `cfg.sched.wake` (see `sched.rs`); every host wake goes here.
     waker: std::task::Waker,
+    wake_state: Arc<crate::sched::HostWake>,
     /// SCHED1: this host's key for `Clock::wake_at`.
     wake_key: u64,
 }
@@ -398,7 +399,7 @@ impl Drop for JsGuard<'_> {
 impl Core {
     pub(crate) fn new(backend: BackendRef<'static>, cfg: HostConfig) -> Core {
         let turn_budget = cfg.turn_budget;
-        let waker = crate::sched::host_waker(backend.wake_handle(), cfg.sched.wake.clone());
+        let (waker, wake_state) = crate::sched::host_waker(backend.wake_handle(), cfg.sched.wake.clone());
         Core {
             backend,
             cfg,
@@ -426,8 +427,14 @@ impl Core {
             budget: Cell::new(turn_budget),
             root_msgs: RefCell::new(Vec::new()),
             waker,
+            wake_state,
             wake_key: svelters_sched::wake_key(),
         }
+    }
+
+    /// The host is going away: its waker (clones of which a scheduler may still hold) reaches nobody.
+    pub(crate) fn detach_waker(&self) {
+        self.wake_state.detach();
     }
 
     /// Asks for a checkpoint: the backend's `wake`, and the scheduler's when one drives this host.

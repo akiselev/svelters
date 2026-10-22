@@ -736,5 +736,7 @@ impl Drop for Host<'_> {
         self.stop();
         // A pending backend wakeup would call back into a vtable that is about to be freed.
         self.core.disarm();
+        // SCHED1: so would a wake a scheduler still holds.
+        self.core.detach_waker();
     }
 }

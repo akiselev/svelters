@@ -119,3 +119,24 @@ fn a_scheduler_clock_excludes_scripted_mode() {
     let err = svelters_host::Host::new_owned(log, cfg).err().expect("refused");
     assert!(err.to_string().contains("scripted"), "{err}");
 }
+
+/// A host dropped while its due timer wake still waits in the scheduler's ready set (the drop and the
+/// wake come due at the same instant; the seed orders them): the late wake reaches nobody instead of
+/// the freed backend.
+#[test]
+fn a_wake_still_queued_when_the_host_goes_reaches_nobody() {
+    run_seeds("a_wake_still_queued_when_the_host_goes_reaches_nobody", 12, |s| {
+        let dir = std::env::temp_dir().join(format!("svelters-sched-drop-{}-{}", std::process::id(), s.seed()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).unwrap();
+        std::fs::write(dir.join("main.js"), "setTimeout(() => console.log('fired'), 5);\n").unwrap();
+        let h = Rc::new(RefCell::new(Some(SchedHost::new(s, quiet()).unwrap())));
+        h.borrow().as_ref().unwrap().host.load_bundle(dir.join("main.js")).unwrap();
+        s.run_until_parked();
+        let h2 = h.clone();
+        s.spawn_local_after(Duration::from_millis(5), "drop the host", move || drop(h2.borrow_mut().take()));
+        s.run_until_idle();
+        assert!(h.borrow().is_none());
+        assert!(s.is_idle());
+    });
+}

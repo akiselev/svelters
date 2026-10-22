@@ -75,6 +75,10 @@ A closure `Fn(Job)` already implements it, so cadatomic can adapt its pool with
 
 A production embedder may set only `spawner`. With the hooks empty, behaviour is unchanged.
 
+A scheduler can still hold a clone of the host's waker when the host goes away (a due `wake_at`
+that is ready but has not run). `Host::drop` therefore detaches the waker, and later wakes reach
+nobody instead of the freed backend vtable (`a_wake_still_queued_when_the_host_goes_reaches_nobody`).
+
 Two drivers:
 
 - `svelters_host::testing::SchedHost::new(&s, cfg)` builds a host on the log backend (attached through
@@ -124,6 +128,7 @@ fn my_race() {
 | `the_same_seed_replays_a_host_run_exactly` | same | the same seed gives the same console, turns and end time; different seeds differ |
 | `hmr_reload_races_a_pending_import` | `crates/svelters-host/tests/sched.rs` | an app from source (plain JS, needs `pnpm install` only for the provider's runtime aliases). A dynamic `import()` is held pending 3 ms by top-level await, against an in-place swap of a self-accepting module and a full reload, at random times. Every reload succeeds. The app ends on the newest versions, with exactly one import result in the surviving runtime. Coverage: both a full reload and a swap land while the import is pending |
 | `a_scheduler_clock_excludes_scripted_mode` | same | config validation |
+| `a_wake_still_queued_when_the_host_goes_reaches_nobody` | same | dropping the host and its due timer wake, at the same instant in either order |
 | `egui_clicks_race_a_worker_and_a_timer` | `crates/svelters-testkit/tests/sched_egui.rs` | a raw-ops egui window: Start/Cancel clicks at random times against a worker and an interval. Runs are sequential and each settles once. The AccessKit tree shows the last state and `tick 5`. Across seeds, runs both finish and get cancelled |
 | `egui_same_seed_replays_exactly` | same | real kittest frames replay exactly |
 | `svelters-sched` unit tests (10) | `crates/svelters-sched/tests/scheduler.rs` | replay, seed spread, `wake_at` replace and cancel, job delays against deadlines, futures, parking, the livelock limit, env parsing, a cross-thread waker |
@@ -179,8 +184,9 @@ REACTIVITY ordering contract. An `EguiSched` test with clicks against progress w
 Local, all filtered to this lane's tests (`tools/dev/cargo-slot`, `CARGO_PROFILE_DEV_DEBUG=line-tables-only`):
 
 - `cargo nextest run -p svelters-sched`: 10 pass.
-- With `ITERATIONS=50`, after merging `origin/master`: all 17 SCHED1 tests pass (`-E 'binary(sched) |
-  binary(sched_egui) | package(svelters-sched)'`). They also pass at the default 12.
+- With `ITERATIONS=50`, after merging `origin/master` and after the last code edit: all 18 SCHED1
+  tests pass (`-E 'binary(sched) | binary(sched_egui) | package(svelters-sched)'`). They also pass at
+  the default 12.
 - `ITERATIONS=300` once each, before the merge: E1, timers, HMR and egui all pass.
 - `cargo check -p svelters-host -p svelters -p svelters-sched -p svelters-testkit --all-targets`;
   `cargo clippy -p svelters-sched --all-targets` is clean; `cargo clippy -p svelters-host --all-targets`
