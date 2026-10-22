@@ -15,10 +15,14 @@
 
 pub mod backend;
 pub mod embed;
+/// WG2b's Tier 0 kinds (payloads, paint, measure; the canvas replay and the PNG image loader).
+pub mod elements;
 /// SVP6: font weights and icon name tables the embedder registers (WG1).
 pub mod fonts;
 pub mod kinds;
 pub mod layout;
+/// W5: the Linux primary selection in the text kinds (select-to-copy, middle-click paste).
+pub mod primary;
 pub mod provider;
 pub mod runner;
 pub mod scene;

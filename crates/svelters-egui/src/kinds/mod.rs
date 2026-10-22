@@ -12,7 +12,8 @@
 //!
 //! Files (ARCH-EMBED §9): this one holds the table types, the id scheme and [`KindRegistry`];
 //! `builtin.rs` the built-in table [`KINDS`] with the `Widget` base and the leaves; `containers.rs`
-//! the `window` and `box` tables; WG1's families `controls.rs`, `decor.rs`, `layouts.rs`;
+//! the `window` and `box` tables; WG1's families `controls.rs`, `decor.rs`, `layouts.rs`; WG2b's
+//! `inputs.rs`, `panes.rs`, `media.rs`;
 //! `registry.rs` [`KindRegistry`] with the provider kinds of
 //! `#[svelters::widget]` (RA1). Writer lanes: WIDGETS (tables, one file per new family), RUSTAPI
 //! (`registry.rs`).
@@ -24,10 +25,16 @@ mod registry;
 mod controls;
 mod decor;
 mod layouts;
+// WG2b families (plans/milestones/WG2b-tier0-controls.md)
+mod inputs;
+mod media;
+mod panes;
 
 pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, WRAP, WRAP_MODE};
 pub use decor::ORIENTATION;
 pub use layouts::{JUSTIFY_ITEMS, SCROLL_DIRECTION};
+pub use media::FIT;
+pub use panes::{FRAME_STYLE, SIDE};
 pub use registry::{KindRegistry, PROVIDER_PACK, ProviderKind, kind};
 
 /// A property's value type (also its ABI tag).
@@ -134,6 +141,46 @@ pub enum P {
     Glyph,
     Family,
     Size,
+    // WG2b (plans/milestones/WG2b-tier0-controls.md); `panel` and `spinner` reuse `Size`
+    /// hyperlink
+    Url,
+    NewTab,
+    /// radio-button: its `value`, and the group's chosen value
+    Choice,
+    Group,
+    /// switch
+    Active,
+    /// range-slider
+    Low,
+    High,
+    /// drag-value
+    Speed,
+    Decimals,
+    Prefix,
+    Suffix,
+    /// panel
+    Side,
+    Resizable,
+    ShowSeparator,
+    /// frame
+    FrameStyle,
+    /// stack
+    VisibleChildName,
+    VisibleIndex,
+    Homogeneous,
+    /// image
+    Source,
+    Fit,
+    /// progress-bar
+    Fraction,
+    ShowPercentage,
+    Animate,
+    /// spinner
+    Spinning,
+    /// canvas
+    Ops,
+    ContentWidth,
+    ContentHeight,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }

@@ -126,6 +126,10 @@ fn builtin_payload(kind: usize) -> Option<W> {
         "Grid" => W::Grid { columns: "auto 1fr".into(), justify_items: "stretch" },
         "CollapsingHeader" => W::CollapsingHeader { text: String::new(), open: false },
         "ScrollArea" => W::ScrollArea { direction: "vertical", x: 0.0, y: 0.0, seen: None },
+        // WG2b: the defaults match the kind tables (`kinds/{inputs,panes,media}.rs`)
+        "Hyperlink" | "RadioButton" | "Switch" | "RangeSlider" | "DragValue" | "Panel" | "Sides" | "Frame" | "Stack" | "Image" | "ProgressBar" | "Spinner" | "Canvas" => {
+            crate::elements::payload(kinds::kind(kind).id)?
+        }
         // RA1: a provider kind's widget struct with its defaults
         _ => W::Ext(crate::provider::ExtWidget::new((kinds::KindRegistry::global().provider(kind)?.entry.new)())),
     })

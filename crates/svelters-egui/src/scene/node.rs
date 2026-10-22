@@ -36,6 +36,21 @@ pub enum W {
     CollapsingHeader { text: String, open: bool },
     /// `seen`: the offsets egui reported last frame (a differing `x`/`y` is a host write to apply).
     ScrollArea { direction: &'static str, x: f64, y: f64, seen: Option<(f64, f64)> },
+    // ---- WG2b (plans/milestones/WG2b-tier0-controls.md; `crate::elements`) ----
+    Hyperlink { text: String, url: String, new_tab: bool },
+    /// `value`: what the button stands for; with one, `checked` follows `group == value`.
+    RadioButton { text: String, checked: bool, value: String, group: String },
+    Switch { text: String, active: bool },
+    RangeSlider { low: f64, high: f64, min: f64, max: f64, step: f64, text: String, show_value: bool },
+    DragValue { value: f64, min: Option<f64>, max: Option<f64>, speed: f64, decimals: Option<i64>, prefix: String, suffix: String },
+    Panel { side: &'static str, size: Option<f64>, resizable: bool, separator: bool },
+    Sides,
+    Frame { label: String, style: &'static str },
+    Stack { name: String, index: i64, homogeneous: bool },
+    Image { source: String, fit: &'static str },
+    ProgressBar { fraction: f64, text: String, show_percentage: bool, animate: bool },
+    Spinner { spinning: bool, size: Option<f64> },
+    Canvas(Box<crate::elements::canvas::Canvas>),
 }
 
 impl W {
@@ -43,6 +58,7 @@ impl W {
     /// paint nothing themselves, the WG1 containers paint their chrome (`leaf::container`).
     pub fn is_container(&self) -> bool {
         matches!(self, W::Box | W::Window { .. } | W::Grid { .. } | W::CollapsingHeader { .. } | W::ScrollArea { .. })
+            || crate::elements::is_container(self)
     }
 }
 
@@ -385,6 +401,10 @@ pub fn text_of(w: &W) -> &str {
         W::ComboBox { options, selected, .. } => usize::try_from(*selected).ok().and_then(|i| options.get(i)).map_or("", |s| s.as_str()),
         W::Icon { name, .. } => name,
         W::Box | W::Ext(_) | W::Separator { .. } | W::Grid { .. } | W::ScrollArea { .. } => "",
+        // WG2b
+        W::Hyperlink { text, .. } | W::RadioButton { text, .. } | W::Switch { text, .. } | W::RangeSlider { text, .. } | W::ProgressBar { text, .. } => text,
+        W::Frame { label, .. } => label,
+        W::DragValue { .. } | W::Panel { .. } | W::Sides | W::Stack { .. } | W::Image { .. } | W::Spinner { .. } | W::Canvas(_) => "",
     }
 }
 
