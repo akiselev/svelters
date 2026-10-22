@@ -903,3 +903,21 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         v.stats.unbound_drawn += unbound;
     }
 }
+
+// ---- reads ----
+
+impl<'a> crate::scene::SceneRef<'a> {
+    /// The state of a `virtual-list` node.
+    pub fn virtual_list(self, id: NodeId) -> Option<&'a VList> {
+        match self.get(id)?.builtin() {
+            W::VirtualList(v) => Some(v),
+            _ => None,
+        }
+    }
+
+    /// The rows a `virtual-list` shows now, by position: (row node, position).
+    pub fn list_rows(self, id: NodeId) -> Vec<(NodeId, usize)> {
+        let s = self.s;
+        self.virtual_list(id).map(|v| v.placed(s)).unwrap_or_default()
+    }
+}
