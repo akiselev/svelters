@@ -43,6 +43,11 @@ impl TestApp {
         TestApp::loading(HostConfig { echo_console: false, echo_errors: false, ..HostConfig::default() }, Some(step_dt), |embed| embed.load_app(bundle))
     }
 
+    /// AU1b: [`TestApp::load_stepped`] with a host config of the caller's (a virtual clock's hooks).
+    pub fn load_with(bundle: impl AsRef<Path>, step_dt: f32, cfg: HostConfig) -> Result<TestApp, String> {
+        TestApp::loading(cfg, Some(step_dt), |embed| embed.load_app(bundle))
+    }
+
     pub fn with_config(bundle: impl AsRef<Path>, cfg: HostConfig) -> Result<TestApp, String> {
         TestApp::loading(cfg, None, |embed| embed.load_app(bundle))
     }
