@@ -13,6 +13,10 @@
 //! plans/milestones/EG0-module-split.md); each file's doc names its writer lane. The old paths
 //! (`render`, `harness`, `layout::invalidate`) are kept as re-exports.
 
+// ZU3: no blocking file, process or wait calls on the UI thread (list in clippy.toml). Unit tests
+// are exempt; the legitimate I/O sites carry `#[allow(clippy::disallowed_methods)]` with a reason.
+#![cfg_attr(not(test), deny(clippy::disallowed_methods))]
+
 pub mod backend;
 pub mod dialogs;
 pub mod embed;

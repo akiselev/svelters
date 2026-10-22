@@ -40,7 +40,9 @@ pub enum ValueType {
     /// One to four lengths, as CSS `margin`.
     Insets,
     FontWeight,
-    /// A value this engine keeps as text (`border`, `box-shadow` and untyped `via: css` values).
+    /// `box-shadow`: `none` or a comma-separated list of shadows ([`crate::Shadow`]).
+    Shadow,
+    /// A value this engine keeps as text (`border`, untyped `box-shadow` and `via: css` values).
     Raw,
 }
 

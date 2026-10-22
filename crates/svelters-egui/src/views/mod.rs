@@ -13,10 +13,13 @@
 //!
 //! Writer lane: WIDGETS (WG4a).
 
+pub mod selection;
 pub(crate) mod split;
 pub(crate) mod table;
 pub(crate) mod tabs;
 pub mod toast;
+// WG5a: egui input for the item views' keyboard selection (`selection` is WG5b's shared helper)
+pub mod item_keys;
 
 use crate::backend::EguiBackend;
 use crate::layout::{Metrics, Tree, ix, tid};
@@ -86,8 +89,19 @@ pub(crate) fn call(b: &EguiBackend, h: Handle, name: &str, args: &[Value]) -> Op
             Err(e) => return Some(Err(e)),
         };
         let i = scene.ix(id);
+        // WG5a: the column's editor protocol (it reaches the parent table)
+        if matches!(scene.w(i), W::TableColumn { .. }) && matches!(name, "set-editor" | "end-edit") {
+            let r = table::column_call(&mut scene, id, name, args);
+            let root = scene.core[i].root;
+            drop(scene);
+            b.touched(Some(root));
+            return Some(r);
+        }
         let r = match (name, scene.w_mut(i)) {
             ("set-rows", W::Table(t)) => t.set_rows(args),
+            ("set-ids", W::Table(t)) => t.set_ids(args),
+            ("edit", W::Table(t)) => t.edit_cell(args),
+            ("end-edit", W::Table(t)) => t.end_edit(args),
             ("clear-rows", W::Table(t)) => t.clear_rows(args),
             ("scroll-to-row", W::Table(t)) => t.scroll_to_row(args),
             ("show", W::ToastHost(t)) => t.show(args),
@@ -126,12 +140,12 @@ pub(crate) fn layout(tree: &mut Tree<'_>, id: NodeId, inputs: LayoutInput) -> La
     let style = tree.s.layout[i].style.clone();
     // what the view needs, without cloning its payload (a table's holds its data window)
     enum V {
-        Table(Vec2),
+        Table(Vec2, Option<(crate::scene::NodeId, Vec2)>),
         Tabs(i64),
         Split { vertical: bool, position: Option<f64>, min_size: f64 },
     }
     let v = match tree.s.w(i) {
-        W::Table(t) => V::Table(table::intrinsic(tree.m, t)),
+        W::Table(t) => V::Table(table::intrinsic(tree.m, t), table::editor_place(t)),
         &W::TabView { selected } => V::Tabs(selected),
         &W::SplitView { vertical, position, min_size, .. } => V::Split { vertical, position, min_size },
         _ => unreachable!("not a view container"),
@@ -145,7 +159,7 @@ pub(crate) fn layout(tree: &mut Tree<'_>, id: NodeId, inputs: LayoutInput) -> La
                 return Size { width: w, height: h };
             }
             let natural = match v {
-                V::Table(s) => Size { width: s.x, height: s.y },
+                V::Table(s, _) => Size { width: s.x, height: s.y },
                 V::Tabs(selected) => tabs::natural(tree, &kids, selected, avail),
                 V::Split { vertical, .. } => split::natural(tree, &kids, vertical, avail),
             };
@@ -155,7 +169,16 @@ pub(crate) fn layout(tree: &mut Tree<'_>, id: NodeId, inputs: LayoutInput) -> La
     if inputs.run_mode == RunMode::PerformLayout {
         let size = out.size;
         match v {
-            V::Table(_) => kids.iter().for_each(|&k| hide(tree, k)),
+            // columns are data; WG5a: the open edit's snippet editor at its cell's size
+            V::Table(_, editor) => {
+                let scene_kids: Vec<crate::scene::NodeId> = tree.s.children[i].clone();
+                for (k, &n) in kids.iter().zip(&scene_kids) {
+                    match editor {
+                        Some((o, sz)) if o == n => place_child(tree, *k, 0, (0.0, 0.0), Size { width: sz.x, height: sz.y }),
+                        _ => hide(tree, *k),
+                    }
+                }
+            }
             V::Tabs(selected) => tabs::place(tree, &kids, selected, size),
             V::Split { vertical, position, min_size } => split::place(tree, &kids, vertical, position, min_size, size),
         }
