@@ -36,7 +36,9 @@
 //!
 //! Writer lane: LISTS.
 
+use super::treeview::{DropAt, Tree, tree_drop_target, tree_keys, tree_row};
 use super::{Def, KindDef, MethodDef, P, PropDef, SignalDef, Ty, input, prop};
+use crate::views::selection::Mode;
 use crate::backend::EguiBackend;
 use crate::scene::virt::{RowHeights, RowPool, RowSource, VScroll, VirtualChildren};
 use crate::scene::{NodeId, Origin, ProviderId, RootIx, Scene, SceneError, SceneMut, W};
@@ -155,6 +157,8 @@ pub struct VList {
     /// The size of the last layout (0: not laid out).
     pub(crate) view: egui::Vec2,
     pub(crate) stats: ListStats,
+    /// WG5b: a `tree-view` (`treeview.rs`): rows are tree nodes.
+    pub(crate) tree: Option<Box<Tree>>,
 }
 
 impl Default for VList {
@@ -172,6 +176,7 @@ impl Default for VList {
             reveal: None,
             view: egui::Vec2::ZERO,
             stats: ListStats::default(),
+            tree: None,
         }
     }
 }
@@ -179,7 +184,9 @@ impl Default for VList {
 impl Clone for VList {
     /// A fresh list with the same props (rows and bindings are not cloneable).
     fn clone(&self) -> VList {
-        VList { selected: self.selected, selection: self.selection, layout: self.layout, row_height: self.row_height, ..VList::default() }
+        let mut v = VList { selected: self.selected, selection: self.selection, layout: self.layout, row_height: self.row_height, tree: self.tree.as_ref().map(|t| Box::new(t.fresh())), ..VList::default() };
+        v.heights.set_estimate(v.row_height as f32);
+        v
     }
 }
 
@@ -197,6 +204,29 @@ impl std::fmt::Debug for VList {
 }
 
 impl VList {
+    /// A `tree-view`'s state (WG5b): the list with a [`Tree`].
+    pub fn tree() -> VList {
+        VList { row_height: 24, heights: RowHeights::uniform(0, 24.0), tree: Some(Box::default()), ..VList::default() }
+    }
+
+    /// The tree of a `tree-view`.
+    pub fn tree_state(&self) -> Option<&Tree> {
+        self.tree.as_deref()
+    }
+
+    /// The item ids by position (JS mode).
+    pub fn ids(&self) -> &[u64] {
+        &self.ids
+    }
+
+    /// The points before row `pos`'s content (a tree's indent and disclosure gutter; 0 in a list).
+    pub(crate) fn row_inset(&self, pos: usize) -> f32 {
+        match &self.tree {
+            Some(t) if pos < self.len() => t.inset(self.key_at(pos)),
+            _ => 0.0,
+        }
+    }
+
     /// Items in the list.
     pub fn len(&self) -> usize {
         match &self.rust {
@@ -236,7 +266,7 @@ impl VList {
         self.row_height as f32
     }
 
-    fn key_at(&self, pos: usize) -> u64 {
+    pub(crate) fn key_at(&self, pos: usize) -> u64 {
         match &self.rust {
             Some(r) => r.source.key(pos),
             None => self.ids[pos],
@@ -373,6 +403,31 @@ impl VirtualChildren for VList {
 // ---- props ----
 
 pub(crate) fn set(v: &mut VList, key: P, val: &Value) -> Result<(), String> {
+    if let Some(t) = v.tree.as_deref_mut() {
+        match (key, val) {
+            (P::ListSelection, Value::Str(s)) => {
+                let name = super::treeview::SELECTION.iter().copied().find(|x| x == s).ok_or_else(|| format!("`{s}` is not one of none, single, multi"))?;
+                v.selection = name;
+                t.sel.mode = Mode::parse(name).unwrap_or_default();
+                let keep: Vec<u64> = t.sel.selected.iter().copied().collect();
+                t.sel.set(if t.sel.mode == Mode::None { Vec::new() } else { keep });
+                return Ok(());
+            }
+            (P::TreeIndent, Value::I64(x)) => t.indent = (*x).max(0) as f32,
+            (P::TreeIndent, Value::F64(x)) => t.indent = x.max(0.0) as f32,
+            (P::RowDragType, Value::Str(x)) => t.drag_type = x.clone(),
+            (P::RowDragType, Value::Null) => t.drag_type.clear(),
+            (P::RowDropTypes, Value::Str(x)) => t.drop_types = x.clone(),
+            (P::RowDropTypes, Value::Null) => t.drop_types.clear(),
+            (P::TreeIndent | P::RowDragType | P::RowDropTypes, other) => return Err(format!("{key:?}: unexpected value {other:?}")),
+            _ => return set_list(v, key, val),
+        }
+        return Ok(());
+    }
+    set_list(v, key, val)
+}
+
+fn set_list(v: &mut VList, key: P, val: &Value) -> Result<(), String> {
     match (key, val) {
         (P::ListSelected, Value::I64(x)) => v.selected = (*x).max(-1),
         (P::ListSelected, Value::F64(x)) => v.selected = (*x as i64).max(-1),
@@ -397,8 +452,19 @@ pub(crate) fn get(v: &VList, key: P) -> Option<Value> {
         P::ListSelection => Value::Str(v.selection.to_string()),
         P::ListLayout => Value::Str(v.layout.to_string()),
         P::RowHeight => Value::I64(v.row_height),
+        P::TreeIndent => Value::I64(v.tree.as_ref()?.indent as i64),
+        P::RowDragType => Value::Str(v.tree.as_ref()?.drag_type.clone()),
+        P::RowDropTypes => Value::Str(v.tree.as_ref()?.drop_types.clone()),
         _ => return None,
     })
+}
+
+fn list_arg<'a>(v: Option<&'a Value>, what: &str) -> Result<&'a [Value], String> {
+    match v {
+        Some(Value::List(x)) => Ok(x),
+        None | Some(Value::Null) => Ok(&[]),
+        Some(other) => Err(format!("{what}: expected a list, got {other:?}")),
+    }
 }
 
 fn int(v: Option<&Value>, what: &str) -> Result<i64, String> {
@@ -464,6 +530,28 @@ impl EguiBackend {
                 set_row(&mut scene, list, row, outlet)?;
                 Value::Null
             }
+            "setNodes" | "setSelection" | "selection" => {
+                let W::VirtualList(v) = scene.w_mut(i) else { unreachable!() };
+                let Some(t) = v.tree.as_deref_mut() else { return Err(format!("method {name} is not implemented")) };
+                match name {
+                    "setNodes" => {
+                        let ints = |k: usize, what: &str| -> Result<Vec<i64>, String> { list_arg(args.get(k), what)?.iter().map(|x| int(Some(x), what)).collect() };
+                        let strs = |k: usize| -> Vec<String> { list_arg(args.get(k), "").unwrap_or_default().iter().map(|x| if let Value::Str(s) = x { s.clone() } else { String::new() }).collect() };
+                        let ids: Vec<u64> = ints(0, "setNodes id")?.into_iter().map(|x| x as u64).collect();
+                        t.set_nodes(&ids, &ints(1, "setNodes level")?, &ints(2, "setNodes flags")?, &strs(3), &strs(4));
+                    }
+                    "setSelection" => {
+                        let ids: Vec<u64> = list_arg(args.first(), "setSelection ids")?.iter().map(|x| int(Some(x), "setSelection id").map(|x| x as u64)).collect::<Result<_, _>>()?;
+                        if t.sel.mode != Mode::None {
+                            t.sel.set(ids);
+                        }
+                    }
+                    _ => return Ok(Value::List(t.sel.selected.iter().map(|x| Value::I64(*x as i64)).collect())),
+                }
+                // the inset or the disclosure changed: lay the rows out again
+                scene.invalidate_content(list);
+                Value::Null
+            }
             other => return Err(format!("method {other} is not implemented")),
         };
         let r = scene.core[i].root;
@@ -476,14 +564,12 @@ impl EguiBackend {
     /// decides this frame's offset and binds the rows it will draw (`call_sync`), so the pass
     /// draws no unbound row (R22).
     pub(crate) fn realize_lists(&self, ctx: &egui::Context) {
-        let Some(k) = super::tag_index("virtual-list") else { return };
+        let kinds: Vec<usize> = ["virtual-list", "tree-view"].into_iter().filter_map(super::tag_index).collect();
         let lists: Vec<NodeId> = {
             let scene = self.0.scene.borrow();
-            scene
-                .index
-                .of_kind(k)
+            kinds
                 .iter()
-                .copied()
+                .flat_map(|&k| scene.index.of_kind(k).iter().copied())
                 .filter(|&l| {
                     let i = scene.ix(l);
                     let r = scene.core[i].root;
@@ -768,7 +854,13 @@ pub(crate) fn place_rows(v: &mut VList, size: egui::Vec2, measured: &[(NodeId, u
     if shift != 0.0 {
         v.scroll.offset = (v.scroll.offset + shift).clamp(0.0, v.max_offset());
     }
-    measured.iter().map(|&(n, pos, h)| (n, egui::pos2(0.0, (v.heights.offset(pos) - v.scroll.offset) as f32), egui::vec2(size.x, h))).collect()
+    measured
+        .iter()
+        .map(|&(n, pos, h)| {
+            let x = v.row_inset(pos).min(size.x);
+            (n, egui::pos2(x, (v.heights.offset(pos) - v.scroll.offset) as f32), egui::vec2(size.x - x, h))
+        })
+        .collect()
 }
 
 /// The fixed row height of a list (no measuring), if it has one.
@@ -795,18 +887,37 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         let W::VirtualList(v) = s.w(i) else { return None };
         v.placed(s)
     };
-    let resp = ui.interact(r, list_id, egui::Sense::hover());
+    // WG5b: a `tree-view` (its tree's selection mode, drag and drop types)
+    let tree = match s.w(i) {
+        W::VirtualList(v) => v.tree.as_deref().map(|t| (t.sel.mode, t.indent, t.drag_type.clone(), t.drop_types.clone())),
+        _ => return None,
+    };
+    let resp = ui.interact(r, list_id, if tree.is_some() { egui::Sense::focusable_noninteractive() } else { egui::Sense::hover() });
     let (len, selected, selectable, offset, total, view, est, taken, decided) = {
         let W::VirtualList(v) = s.w_mut(i) else { return None };
         v.scroll.last_rect = r;
         v.scroll.layer = Some(ui.layer_id());
         v.stats.frames += 1;
-        (v.len(), v.selected, v.selection == "single", v.scroll.offset, v.heights.total(), v.view, v.heights.estimate(), v.scroll.taken(), v.scroll.decided_in(&ctx))
+        let selectable = match &tree {
+            Some((mode, ..)) => *mode != Mode::None,
+            None => v.selection == "single",
+        };
+        (v.len(), v.selected, selectable, v.scroll.offset, v.heights.total(), v.view, v.heights.estimate(), v.scroll.taken(), v.scroll.decided_in(&ctx))
     };
     ctx.accesskit_node_builder(list_id, |n| {
-        n.set_role(if selectable { egui::accesskit::Role::ListBox } else { egui::accesskit::Role::List });
+        n.set_role(if tree.is_some() {
+            egui::accesskit::Role::Tree
+        } else if selectable {
+            egui::accesskit::Role::ListBox
+        } else {
+            egui::accesskit::Role::List
+        });
+        if tree.as_ref().is_some_and(|t| t.0 == Mode::Multi) {
+            n.set_multiselectable();
+        }
         n.set_size_of_set(len);
     });
+    let focused = tree.is_some() && ctx.memory(|m| m.has_focus(list_id));
     // wheel input: consumed when this frame's offset took it, else kept for the next frame
     if decided && taken != 0.0 {
         ui.input_mut(|inp| inp.smooth_scroll_delta.y -= taken);
@@ -829,6 +940,17 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
     let mut covered: Vec<(f32, f32)> = Vec::with_capacity(placed.len());
     let sig_select = super::signal_id(kind, "select");
     let sig_activate = super::signal_id(kind, "activate");
+    let emit = |s: &Scene, out: &mut Vec<Out>, name: &str, args: Vec<Value>| {
+        let sig = super::signal_id(kind, name);
+        if s.listens(i, sig) {
+            out.push(Out::Event(h, sig, args));
+        }
+    };
+    // WG5b: the row a drag would drop on, decided before the rows so targets inside them win
+    let drop_at = match &tree {
+        Some((.., drop_types)) if !drop_types.is_empty() => tree_drop_target(s, i, &placed, origin, r, clip, drop_types, ui, out, &emit),
+        _ => None,
+    };
     for (n, pos) in placed {
         let Some(ni) = s.idx(n) else { continue };
         let rr = s.core[ni].rect.translate(origin);
@@ -844,30 +966,34 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
             v.key_at(pos)
         };
         let row_id = list_id.with(("row", key));
-        let rresp = rows_ui.interact(rr, row_id, if selectable { egui::Sense::click() } else { egui::Sense::hover() });
-        let is_sel = selected == pos as i64;
-        crate::scene::virt::a11y_row(&ctx, row_id, pos, len, |node| {
-            node.set_role(if selectable { egui::accesskit::Role::ListBoxOption } else { egui::accesskit::Role::ListItem });
-            if selectable {
-                node.set_selected(is_sel);
+        if let Some((_, indent, drag_type, _)) = &tree {
+            tree_row(s, i, key, pos, len, egui::Rect::from_x_y_ranges(r.x_range(), rr.y_range()), *indent, drag_type, focused, row_id, list_id, &mut rows_ui, out, &emit);
+        } else {
+            let rresp = rows_ui.interact(rr, row_id, if selectable { egui::Sense::click() } else { egui::Sense::hover() });
+            let is_sel = selected == pos as i64;
+            crate::scene::virt::a11y_row(&ctx, row_id, pos, len, |node| {
+                node.set_role(if selectable { egui::accesskit::Role::ListBoxOption } else { egui::accesskit::Role::ListItem });
+                if selectable {
+                    node.set_selected(is_sel);
+                }
+            });
+            if is_sel {
+                rows_ui.painter().rect_filled(rr, 0.0, rows_ui.visuals().selection.bg_fill);
+            } else if rresp.hovered() {
+                rows_ui.painter().rect_filled(rr, 0.0, rows_ui.visuals().widgets.hovered.weak_bg_fill);
             }
-        });
-        if is_sel {
-            rows_ui.painter().rect_filled(rr, 0.0, rows_ui.visuals().selection.bg_fill);
-        } else if rresp.hovered() {
-            rows_ui.painter().rect_filled(rr, 0.0, rows_ui.visuals().widgets.hovered.weak_bg_fill);
-        }
-        if selectable && rresp.clicked() && !is_sel {
-            if let W::VirtualList(v) = s.w_mut(i) {
-                v.selected = pos as i64;
+            if selectable && rresp.clicked() && !is_sel {
+                if let W::VirtualList(v) = s.w_mut(i) {
+                    v.selected = pos as i64;
+                }
+                if s.listens(i, sig_select) {
+                    out.push(Out::Event(h, sig_select, vec![Value::I64(pos as i64)]));
+                }
+                ctx.request_repaint();
             }
-            if s.listens(i, sig_select) {
-                out.push(Out::Event(h, sig_select, vec![Value::I64(pos as i64)]));
+            if rresp.double_clicked() && s.listens(i, sig_activate) {
+                out.push(Out::Event(h, sig_activate, vec![Value::I64(pos as i64)]));
             }
-            ctx.request_repaint();
-        }
-        if rresp.double_clicked() && s.listens(i, sig_activate) {
-            out.push(Out::Event(h, sig_activate, vec![Value::I64(pos as i64)]));
         }
         let mut row_ui = rows_ui.new_child(egui::UiBuilder::new().max_rect(rr).id_salt(("row", key)).accessibility_parent(row_id));
         row_ui.set_clip_rect(clip);
@@ -877,6 +1003,27 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         s.core[ni].drawn = rr;
         crate::scene::hit::record(s, ni, &row_ui);
         drawn += 1;
+    }
+    if let Some((at, row)) = drop_at {
+        let stroke = rows_ui.visuals().selection.stroke;
+        let p = rows_ui.painter();
+        match (at, row) {
+            (_, None) => {
+                p.rect_stroke(r.intersect(clip), 2.0, stroke, egui::StrokeKind::Inside);
+            }
+            (DropAt::Into, Some(rr)) => {
+                p.rect_stroke(rr, 2.0, stroke, egui::StrokeKind::Inside);
+            }
+            (DropAt::Before, Some(rr)) => {
+                p.hline(rr.x_range(), rr.min.y, egui::Stroke::new(2.0, stroke.color));
+            }
+            (DropAt::After, Some(rr)) => {
+                p.hline(rr.x_range(), rr.max.y, egui::Stroke::new(2.0, stroke.color));
+            }
+        }
+    }
+    if focused {
+        tree_keys(s, i, list_id, &ctx, ui, out, &emit);
     }
     // positions in view that no bound row covers: placeholders (R22's gate counts them)
     let mut unbound = 0u64;

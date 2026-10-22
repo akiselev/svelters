@@ -26,6 +26,7 @@ pub mod dnd;
 pub mod pickers;
 mod registry;
 pub(crate) mod virtuallist;
+pub mod treeview;
 // WG1 families
 mod controls;
 mod decor;
@@ -255,6 +256,10 @@ pub enum P {
     ListSelection,
     ListLayout,
     // `row-height` reuses WG4a's `RowHeight`
+    // `tree-view` (WG5b, `treeview.rs`)
+    TreeIndent,
+    RowDragType,
+    RowDropTypes,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }

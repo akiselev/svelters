@@ -583,16 +583,18 @@ fn vlist_layout(tree: &mut Tree<'_>, id: NodeId, inputs: LayoutInput) -> LayoutO
     let (w, h) = (out.size.width, out.size.height);
     let (placed, fixed, min_h) = {
         let W::VirtualList(v) = tree.s.w(i) else { unreachable!("a virtual-list") };
-        (v.placed(tree.s), virtuallist::uniform_height(v), v.heights().estimate().min(v.row_height_points()))
+        let placed: Vec<_> = v.placed(tree.s).into_iter().map(|(n, p)| (n, p, v.row_inset(p).min(w))).collect();
+        (placed, virtuallist::uniform_height(v), v.heights().estimate().min(v.row_height_points()))
     };
     for k in 0..tree.s.children[i].len() {
         let c = tree.s.children[i][k];
-        if !placed.iter().any(|&(n, _)| n == c) {
+        if !placed.iter().any(|&(n, _, _)| n == c) {
             compute_hidden_layout(tree, tid(c));
         }
     }
     let mut measured = Vec::with_capacity(placed.len());
-    for (c, pos) in placed {
+    for (c, pos, inset) in placed {
+        let w = w - inset;
         let r = tree.compute_child_layout(
             tid(c),
             LayoutInput {

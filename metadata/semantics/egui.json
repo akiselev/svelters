@@ -5504,6 +5504,378 @@
       },
       "text_content": "text"
     },
+    "TreeView": {
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "TreeView",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A virtualized tree: JS keeps the tree and flattens its visible rows into the list; children load when a node expands.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "count": {
+          "dispatch": "generated",
+          "doc": "The number of visible rows.",
+          "native": "count",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "rowAt": {
+          "dispatch": "generated",
+          "doc": "`rowAt(pos)`: the slot bound to `pos`, or -1.",
+          "native": "rowAt",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "scrollTo": {
+          "dispatch": "generated",
+          "doc": "`scrollTo(pos)`: scrolls the row into view.",
+          "native": "scrollTo",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "selection": {
+          "dispatch": "generated",
+          "doc": "The selected ids, hidden ones included.",
+          "native": "selection",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "setNodes": {
+          "dispatch": "generated",
+          "doc": "`setNodes(ids, levels, flags, labels, data)`: the tree facts of rows by id (flags: 1 expandable, 2 expanded; a level < 0 forgets the id).",
+          "native": "setNodes",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "setRow": {
+          "dispatch": "generated",
+          "doc": "`setRow(row, widget)`: the content of row slot `row` (called from `setup`); null clears it.",
+          "native": "setRow",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "setSelection": {
+          "dispatch": "generated",
+          "doc": "`setSelection(ids)`: replaces the selection (single keeps the first); raises nothing.",
+          "native": "setSelection",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "splice": {
+          "dispatch": "generated",
+          "doc": "`splice(pos, removed, ids)`: replaces `removed` rows at `pos` with `ids` (the visible rows, flattened).",
+          "native": "splice",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "svelters_egui::kinds::treeview (a virtual-list with tree rows)",
+      "present": null,
+      "props": {
+        "indent": {
+          "construct_only": false,
+          "default": 16,
+          "doc": "Points per level; the disclosure triangle sits in the last one.",
+          "js": "indent",
+          "native": "indent",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TreeView:indent",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "row-drag-type": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Non-empty: rows drag, as a payload of this type (their `data`) plus `text/plain` (their labels).",
+          "js": "row-drag-type",
+          "native": "row-drag-type",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TreeView:row-drag-type",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "row-drop-types": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Non-empty: rows take drops of these types (WG4b patterns) and raise `drop-row`.",
+          "js": "row-drop-types",
+          "native": "row-drop-types",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TreeView:row-drop-types",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "row-height": {
+          "construct_only": false,
+          "default": 24,
+          "doc": "The height a row is assumed to have before it is measured, and its minimum, in points.",
+          "js": "row-height",
+          "native": "row-height",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TreeView:row-height",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "selection": {
+          "construct_only": false,
+          "default": "single",
+          "doc": "`single` or `multi` (Shift ranges, Ctrl toggles); `none`: rows are not selectable.",
+          "js": "selection",
+          "native": "selection",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TreeView:selection",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "single",
+            "multi"
+          ],
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "activate": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user activated the row at `pos` (double click, Enter).",
+          "handler_result": "none",
+          "js_event": "activate",
+          "name": "activate",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "bind": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            },
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "gen",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Slot `row` now shows item `id` at `pos`; `gen` counts the binds of the slot.",
+          "handler_result": "bool_stop",
+          "js_event": "bind",
+          "name": "bind",
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "collapse": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user collapsed node `id` (disclosure click, Left): splice its children out.",
+          "handler_result": "none",
+          "js_event": "collapse",
+          "name": "collapse",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "copy": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "Ctrl+C on the focused tree: copy the selected rows.",
+          "handler_result": "none",
+          "js_event": "copy",
+          "name": "copy",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "drop-row": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "where",
+              "type": "string"
+            },
+            {
+              "name": "type",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A drag was dropped `before`, `after` or `into` row `id` (-1: below the last row), as the entry of `type` it took.",
+          "handler_result": "none",
+          "js_event": "drop-row",
+          "name": "drop-row",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "expand": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user expanded node `id` (disclosure click, Right): splice its children in.",
+          "handler_result": "none",
+          "js_event": "expand",
+          "name": "expand",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "selection-changed": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "The user changed the selection: read it with `selection()`.",
+          "handler_result": "none",
+          "js_event": "selection-changed",
+          "name": "selection-changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "setup": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Row slot `row` was created: give it content with `setRow`.",
+          "handler_result": "bool_stop",
+          "js_event": "setup",
+          "name": "setup",
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "teardown": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Slot `row` is gone: release its widget.",
+          "handler_result": "bool_stop",
+          "js_event": "teardown",
+          "name": "teardown",
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "unbind": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            },
+            {
+              "name": "gen",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Slot `row` no longer shows binding `gen`.",
+          "handler_result": "bool_stop",
+          "js_event": "unbind",
+          "name": "unbind",
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
     "VirtualList": {
       "abstract": false,
       "bindings": {
@@ -6585,6 +6957,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tree-view",
           "virtual-list"
         ],
         "type": "enum",
@@ -6660,6 +7033,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tree-view",
           "virtual-list"
         ],
         "type": "length",
@@ -6746,6 +7120,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tree-view",
           "virtual-list"
         ],
         "type": "length",
@@ -6823,6 +7198,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tree-view",
           "virtual-list"
         ],
         "type": "number",
@@ -6874,6 +7250,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tree-view",
           "virtual-list"
         ],
         "type": "number",
@@ -6996,6 +7373,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tree-view",
           "virtual-list"
         ],
         "type": "length",
@@ -7093,6 +7471,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tree-view",
           "virtual-list"
         ],
         "type": "length",
@@ -7144,6 +7523,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tree-view",
           "virtual-list"
         ],
         "type": "length",
@@ -7211,6 +7591,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tree-view",
           "virtual-list"
         ],
         "type": "length",
@@ -7262,6 +7643,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tree-view",
           "virtual-list"
         ],
         "type": "length",
@@ -7313,6 +7695,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tree-view",
           "virtual-list"
         ],
         "type": "length",
@@ -7364,6 +7747,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tree-view",
           "virtual-list"
         ],
         "type": "length",
@@ -7463,6 +7847,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tree-view",
           "virtual-list"
         ],
         "type": "enum",
@@ -7519,6 +7904,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tree-view",
           "virtual-list"
         ],
         "type": "length",
@@ -7592,6 +7978,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tree-view",
           "virtual-list"
         ],
         "type": "length",
@@ -7643,6 +8030,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tree-view",
           "virtual-list"
         ],
         "type": "bool",
@@ -7694,6 +8082,7 @@
           "text-edit",
           "toast-host",
           "toggle-button",
+          "tree-view",
           "virtual-list"
         ],
         "type": "length",
@@ -7756,6 +8145,7 @@
     "text-edit": "TextEdit",
     "toast-host": "ToastHost",
     "toggle-button": "ToggleButton",
+    "tree-view": "TreeView",
     "virtual-list": "VirtualList",
     "window": "Window"
   }
