@@ -2190,7 +2190,7 @@
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
       "signals": {},
-      "text_content": "title"
+      "text_content": null
     },
     "TextEdit": {
       "abstract": false,

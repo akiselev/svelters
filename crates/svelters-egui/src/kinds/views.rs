@@ -163,7 +163,7 @@ pub(super) const TABLE_COLUMN: KindDef = KindDef {
     base: Some("Widget"),
     toplevel: false,
     slot: None,
-    text_content: Some("title"),
+    text_content: None,
     present: None,
     props: TABLE_COLUMN_PROPS,
     signals: &[],

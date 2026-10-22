@@ -11,7 +11,7 @@ fallbacks.
 | Element | Native | Props | Signals | Methods |
 |---|---|---|---|---|
 | `table` | `egui_table::Table` 0.11.0 (virtual rows and columns) | `row-count`, `row-height`, `sticky-columns`, `striped`, `overscan`, `selected` (bind) | `range(first, last)`, `changed(selected)`, `activated(row)`, `header-clicked(column)` | `set-rows(first, rows)`, `clear-rows()`, `scroll-to-row(row)` |
-| `table-column` | `egui_table::Column` (data only) | `title`, `width`, `resizable`, `align`, `sort` | | |
+| `table-column` | `egui_table::Column` (data only; base `Widget`) | `title`, `width` (Widget's; null = 100), `resizable`, `align`, `sort` | | |
 | `tab-view` | a bar of selectable tabs + the selected page | `selected` (bind) | `changed(selected)` | |
 | `tab` | a flex box (base `Box`) | `title`, `closable` | `close-requested` | |
 | `split-view` | two panes + a draggable divider | `orientation`, `position` (bind; null = half), `min-size`, `resizable` | `changed(position)`, `drag-started`, `drag-stopped` | |
@@ -92,10 +92,19 @@ and precomputed keys (a `$state` proxy per part, or a state read per comparison,
 
 - `origin/ci/wg1` 50e680f7 (coordinator's instruction): its diff touched only widget files, scene payload
   variants and taffy's `grid` feature.
-- `origin/master` twice. The first time (e07313e8) master did not compile svelters-egui after EV2b
-  (`BehaviorBox` lacked SG3's `ErasedWidget::hit_test`; `walk.rs` `paint_own` did not return its
-  response): reported to the coordinator, fixed on master at edefc916, and this branch took master's
-  version.
+- `origin/ci/wg1` again at 66fcd9df (its milestone, TaskPanel fixture, `widget_changed` made public).
+- `origin/master` three times. The first time (e07313e8), master did not compile svelters-egui after
+  EV2b: `BehaviorBox` lacked SG3's `ErasedWidget::hit_test`, and `walk.rs` `paint_own` did not return
+  its response. I reported it to the coordinator, who fixed it on master at edefc916, and this branch
+  took master's version. The last merge brought in CS5e, which collides with WG1 (so WG1's own merge
+  meets the same three spots):
+  - `walk.rs`: CS5e's container state, box and opacity now wrap WG1's `leaf::container` chrome.
+  - `layout.rs`: WG1's per-kind match is kept, plus CS5e's `display: grid` for generic containers.
+  - Both lanes added the same `LayoutGridContainer` impl, and one copy is kept.
+  - taffy features: `grid` and `calc`.
+- CI's first run (linux-gtk) failed `observe` and `widgets`, which walk every non-toplevel kind with
+  the Widget props. So `table-column` now takes the Widget base, and its width is Widget's `width`
+  (null means 100). It has no text content (that test sets `text` on kinds that declare one).
 
 ## Not done here
 
@@ -108,9 +117,10 @@ and precomputed keys (a `$state` proxy per part, or a state read per comparison,
 ## Verification (this lane, local)
 
 - `tools/dev/cargo-slot cargo check -p svelters-egui --all-targets`: clean.
-- `tools/dev/cargo-slot cargo nextest run -p svelters-egui --test views --test gallery_views`: 9/9
-  (the gallery bundle built with `pnpm --filter @svelters-fixtures/gallery-egui build` after
-  `cargo build -p svelters-compiler --bin svelters-compile`).
+- After the last merge and fix: `tools/dev/cargo-slot cargo nextest run -p svelters-egui --test views
+  --test gallery_views --test spec --test observe --test widgets --test style`: 28/28 (the gallery and
+  embed bundles built with `pnpm --filter … build` after `cargo build -p svelters-compiler --bin
+  svelters-compile`).
 - `SVELTERS_UPDATE=1 … --test spec` regenerated `metadata/semantics/egui.json` and
   `packages/native-runtime/types/egui.d.ts` (they also pick up WG1's kinds, which its WIP had not
   regenerated); `python3 tools/metadata/style/gen_props.py` regenerated `props.generated.js`
