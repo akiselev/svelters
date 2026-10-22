@@ -149,6 +149,9 @@ pub(crate) fn before(ui: &Ui, id: Id, text: &mut String, multiline: bool, passwo
     let mut actions = Vec::new();
     let mut request_paste = false;
     let mut hex = f.hex.take();
+    // keys the host keymap must see as the field's (EV3's claim, after the leaf): given back after
+    // `TextEdit` ran ([`super::give_back`])
+    let mut taken = Vec::new();
     ui.ctx().input_mut(|i| {
         pass.kind = kind_of(&i.events);
         if i.pointer.button_released(PointerButton::Middle) {
@@ -202,14 +205,17 @@ pub(crate) fn before(ui: &Ui, id: Id, text: &mut String, multiline: bool, passwo
                 Event::Key { key, pressed: true, modifiers: m, .. } if p.cua_clipboard_keys && !m.alt && !m.mac_cmd => match key {
                     Key::Insert if m.ctrl && !m.shift => {
                         i.events.push(Event::Copy);
+                        taken.push(e);
                         continue;
                     }
                     Key::Insert if m.shift_only() => {
                         request_paste = true;
+                        taken.push(e);
                         continue;
                     }
                     Key::Delete if m.shift_only() => {
                         i.events.push(Event::Cut);
+                        taken.push(e);
                         continue;
                     }
                     _ => {}
@@ -229,6 +235,7 @@ pub(crate) fn before(ui: &Ui, id: Id, text: &mut String, multiline: bool, passwo
                 if let Some(a) = a {
                     if *pressed {
                         actions.push(a);
+                        taken.push(e);
                     }
                     continue;
                 }
@@ -244,6 +251,7 @@ pub(crate) fn before(ui: &Ui, id: Id, text: &mut String, multiline: bool, passwo
             i.events.push(e);
         }
     });
+    super::note_taken(ui, id, taken);
     if request_paste {
         ui.ctx().send_viewport_cmd(egui::ViewportCommand::RequestPaste);
     }
@@ -296,6 +304,7 @@ pub(crate) fn before(ui: &Ui, id: Id, text: &mut String, multiline: bool, passwo
 pub(crate) fn after(ui: &Ui, pass: EditPass, out: &TextEditOutput, text: &str, password: bool) {
     let p = policy(ui);
     let id = pass.id;
+    super::give_back(ui, id);
     let f = field(ui, id);
     let mut f = lock(&f);
     let len = text.chars().count();

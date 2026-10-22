@@ -274,6 +274,26 @@ fn is_word_key(key: Key, m: Modifiers) -> bool {
     }
 }
 
+fn taken_id(id: Id) -> Id {
+    id.with("svelters-native/taken")
+}
+
+/// Notes key events taken out of the input before field `id`'s `TextEdit` ran (FX1's word keys,
+/// FX3's undo and clipboard chords), for [`give_back`].
+pub(crate) fn note_taken(ui: &Ui, id: Id, events: impl IntoIterator<Item = Event>) {
+    ui.data_mut(|d| d.get_temp_mut_or_default::<Vec<Event>>(taken_id(id)).extend(events));
+}
+
+/// After field `id`'s `TextEdit` ran: puts the keys taken before it back into the input, so that
+/// EV3's key claim (`focus::record`, right after the leaf) sees them as the field's
+/// (`focus::consumed_keys`) and removes them before anything else in the pass does.
+pub(crate) fn give_back(ui: &Ui, id: Id) {
+    let taken = ui.data_mut(|d| d.remove_temp::<Vec<Event>>(taken_id(id))).unwrap_or_default();
+    if !taken.is_empty() {
+        ui.ctx().input_mut(|i| i.events.extend(taken));
+    }
+}
+
 fn char_to_byte(text: &str, c: usize) -> usize {
     text.char_indices().nth(c).map_or(text.len(), |(b, _)| b)
 }
@@ -301,6 +321,7 @@ pub(crate) fn text_keys(ui: &Ui, id: Id, text: &mut String, password: bool) -> b
     if keys.is_empty() {
         return false;
     }
+    note_taken(ui, id, keys.iter().map(|&(key, modifiers)| Event::Key { key, physical_key: None, pressed: true, repeat: false, modifiers }));
     let ctx = ui.ctx();
     let mut st = TextEditState::load(ctx, id).unwrap_or_default();
     let len = text.chars().count();
@@ -412,7 +433,12 @@ impl TextFocus {
         }
         if now != before {
             st.store(ctx, id);
-            ctx.request_repaint();
+            // FX3: putting back the range the field had before this pass (egui collapses an
+            // unfocused field's selection on every pass) changes nothing on screen; a repaint for
+            // it would repaint forever while an unfocused GTK field holds a selection
+            if now != self.range {
+                ctx.request_repaint();
+            }
         }
     }
 }

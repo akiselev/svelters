@@ -228,3 +228,21 @@ fn fx3_primary_pastes_once_and_clears() {
     svelters_egui::primary::uninstall();
 }
 
+
+/// GTK keeps an unfocused field's selection; putting it back each pass (egui collapses it) must
+/// not keep the UI repainting (`Rig::run` panics when it does not settle).
+#[test]
+fn fx3_unfocused_gtk_selection_settles() {
+    let mut rig = Rig::new();
+    native::set(&rig.harness.ctx, Native::Gtk);
+    let (_w, col) = rig.window();
+    let a = rig.leaf(col, "text-edit", &[("text", s("hello")), ("accessible-name", s("a"))]);
+    let b = rig.leaf(col, "text-edit", &[("text", s("world")), ("accessible-name", s("b"))]);
+    rig.run();
+    rig.click(a);
+    key(&mut rig, CTRL, egui::Key::A);
+    rig.click(b);
+    rig.run();
+    assert!(focused(&rig, b));
+    assert_eq!(sel(&rig, a), Some([0, 5]));
+}
