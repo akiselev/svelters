@@ -172,7 +172,9 @@ impl Widget for CollapsingHeader {
 
     fn a11y(&self, _cx: &A11yCx<'_>, node: &mut egui::accesskit::Node) {
         node.set_role(egui::accesskit::Role::DisclosureTriangle);
-        node.set_label(self.text.as_str());
+        if !self.text.is_empty() {
+            node.set_label(self.text.as_str());
+        }
         self.units_a11y(node);
     }
 

@@ -215,12 +215,11 @@ fn ow0_own_button_is_sized_by_its_style() {
 use svelters_egui::paint::{self, PaintArgs, PaintCx, PartInfo, StyleView, TraceKind};
 use svelters_egui::provider::{AvailableSpace, MeasureCx, Widget, WidgetCx};
 
-/// A test-only own widget: replaces `separator` (only in this test binary) with an extra prop and
-/// an extra event the built-in row lacks (the superset rule).
-#[svelters::widget(namespace = "t", replaces = "separator", caps = PAINTS_BOX)]
-pub struct TestSeparator {
-    #[prop(enumeration = "horizontal|vertical", default = "horizontal")]
-    orientation: String,
+/// A test-only own widget: replaces `sides` (only in this test binary; no own widget replaces it,
+/// and its row props are all `Common`) with an extra prop and an extra event the built-in row lacks
+/// (the superset rule).
+#[svelters::widget(namespace = "t", replaces = "sides", caps = PAINTS_BOX)]
+pub struct TestSides {
     /// An extra prop: not in the row.
     #[prop(default = 2.0)]
     thickness: f64,
@@ -229,7 +228,7 @@ pub struct TestSeparator {
     poked: svelters_egui::provider::Event<bool>,
 }
 
-impl Widget for TestSeparator {
+impl Widget for TestSides {
     fn measure(&mut self, _cx: &mut MeasureCx<'_>, _avail: AvailableSpace) -> egui::Vec2 {
         egui::vec2(10.0, self.thickness as f32)
     }
@@ -245,8 +244,8 @@ fn node_raw(rig: &Rig, h: svl_handle) -> u64 {
 #[test]
 fn ow0b_extra_props_and_events_of_an_own_widget() {
     let reg = KindRegistry::global();
-    let k = reg.tag_index("separator").unwrap();
-    let r = reg.replacement(k).expect("the test separator");
+    let k = reg.tag_index("sides").unwrap();
+    let r = reg.replacement(k).expect("the test sides");
     assert_eq!(r.extra_props.len(), 1);
     assert_eq!(r.extra_props[0].name, "thickness");
     let (id, def) = reg.find_prop(k, "thickness").expect("an extra prop resolves by name");
@@ -255,16 +254,16 @@ fn ow0b_extra_props_and_events_of_an_own_widget() {
     assert!(reg.find_signal(k, "poked").is_some(), "an extra event is a signal of the kind");
     assert!(reg.spec_kind(k).props.iter().any(|p| p.name == "thickness"), "the spec lists it");
     assert!(reg.kind(k).props.iter().all(|p| p.name != "thickness"), "the row itself is untouched");
-    for (name, set) in [("egui", KindSet::None), ("own", KindSet::tags(["separator"]))] {
+    for (name, set) in [("egui", KindSet::None), ("own", KindSet::tags(["sides"]))] {
         let mut rig = rig(&set);
         let (_w, col) = rig.window();
-        let h = rig.leaf(col, "separator", &[]);
+        let h = rig.leaf(col, "sides", &[]);
         rig.set(h, "thickness", Value::F64(5.0));
         rig.run();
         let want = if name == "own" { Value::F64(5.0) } else { Value::F64(2.0) };
         assert_eq!(rig.get(h, "thickness"), want, "{name}: the wrapper ignores an extra prop");
-        rig.set(h, "orientation", s("vertical"));
-        assert_eq!(rig.get(h, "orientation"), s("vertical"), "{name}");
+        rig.set(h, "align-items", s("center"));
+        assert_eq!(rig.get(h, "align-items"), s("center"), "{name}: a row prop kept in Common");
     }
 }
 

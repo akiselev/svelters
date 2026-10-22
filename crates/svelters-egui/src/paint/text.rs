@@ -33,13 +33,9 @@ impl Align {
 fn font(ctx: &egui::Context, s: &StyleView, text: &str) -> FontId {
     let base = FontFamily::Proportional;
     let w = s.font_weight();
-    let family = if w == 400 {
-        base
-    } else {
-        let f = crate::fonts::family_for(ctx, &base, w);
-        let ok = f == base || ctx.fonts_mut(|fs| text.chars().filter(|c| !c.is_control()).all(|c| fs.has_glyph(&FontId::new(14.0, f.clone()), c)));
-        if ok { f } else { base }
-    };
+    // the weight's registered family, or the regular face when it lacks a character of `text`
+    // (reported once: `fonts::FontWarning::WeightGlyph`)
+    let family = if w == 400 { base } else { crate::fonts::weighted_family(ctx, &base, w, text) };
     FontId::new(s.font_size(), family)
 }
 

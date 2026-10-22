@@ -149,7 +149,14 @@ impl Widget for Icon {
         self.clickable = self.frame || cx.listens(&self.clicked) || cx.listens(&self.double_clicked) || cx.listens(&self.secondary_clicked);
         cx.set_state(StateBits::SELECTED, self.frame && self.selected);
         let sense = if self.clickable { self.units_sense() } else { egui::Sense::hover() };
-        let resp = cx.interact(ui, sense);
+        // an unframed icon's hit area and drawn rect are its glyph (start, centred vertically)
+        let resp = if self.frame {
+            cx.interact(ui, sense)
+        } else {
+            let size = self.content(ui.ctx(), &cx.style(ICON_UA)).0;
+            let r = cx.rect();
+            cx.interact_at(ui, Rect::from_min_size(pos2(r.left(), r.center().y - size.y / 2.0), size), sense)
+        };
         let fired = self.run_units(cx, ui, &resp);
         if self.clickable {
             let (c, d, s) = clicks(&fired.press.0);
@@ -175,7 +182,7 @@ impl Widget for Icon {
             ui.multiply_opacity(host.opacity());
         }
         if ui.is_rect_visible(cx.rect()) {
-            let content = if self.frame { cx.paint_box(ui, ua).content } else { cx.rect() };
+            let content = if self.frame { cx.paint_box(ui, ua).content } else { resp.rect };
             let host = cx.style(ua);
             let color = host.color("color").unwrap_or(egui::Color32::PLACEHOLDER);
             let (csize, glyph) = self.content(ui.ctx(), &host);

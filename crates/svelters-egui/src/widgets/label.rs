@@ -80,8 +80,22 @@ impl Widget for Label {
         });
         let target = target.flatten();
         let clickable = cx.listens(&self.clicked) || target.is_some();
+        // the galley first: the label's hit area and drawn rect are its text (as egui's label)
+        let (g, text_rect) = {
+            let st = cx.style(UA).with_font_weight(Some(self.font_weight));
+            let w = (self.wrap_mode != "extend" || self.elision(&st).is_some()).then(|| cx.rect().width());
+            let g = self.galley(ui.ctx(), &st, w);
+            let (r, size) = (cx.rect(), g.size());
+            let x = match Align::of(&st, Align::Start) {
+                Align::Start => r.left(),
+                Align::Center => r.center().x - size.x / 2.0,
+                Align::End => r.right() - size.x,
+            };
+            (g, egui::Rect::from_min_size(egui::pos2(x, r.center().y - size.y / 2.0), size))
+        };
+        let elided = g.job.text != self.text;
         let sense = if clickable { self.units_sense() } else { egui::Sense::hover() };
-        let resp = cx.interact(ui, sense);
+        let resp = cx.interact_at(ui, text_rect, sense);
         let fired = self.run_units(cx, ui, &resp);
         if clickable && fired.press.iter().any(|p| p.is_click()) {
             if cx.listens(&self.clicked) {
@@ -91,13 +105,9 @@ impl Widget for Label {
                 cx.focus_node(t);
             }
         }
-        let mut elided = false;
         if ui.is_rect_visible(cx.rect()) {
-            let s = cx.style(UA).with_font_weight(Some(self.font_weight));
-            let w = (self.wrap_mode != "extend" || self.elision(&s).is_some()).then(|| cx.rect().width());
-            let g = self.galley(ui.ctx(), &s, w);
-            elided = g.job.text != self.text;
-            paint::paint_text(&mut cx.paint_cx(ui), &s, &g, cx.rect(), Align::of(&s, Align::Start));
+            let st = cx.style(UA).with_font_weight(Some(self.font_weight));
+            paint::paint_text(&mut cx.paint_cx(ui), &st, &g, cx.rect(), Align::of(&st, Align::Start));
         }
         if let Some((_, eid)) = target {
             // AccessKit: the label names its buddy (`labelled_by` on the target's node)

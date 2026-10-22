@@ -225,11 +225,6 @@ impl Widget for Frame {
         } else {
             cx.children(ui);
         }
-        let (enabled, text) = (cx.enabled(), &self.label);
-        if self.checkable {
-            let on = self.checked;
-            resp.widget_info(|| egui::WidgetInfo::selected(egui::Role::CheckBox, enabled, on, text));
-        }
         resp
     }
 

@@ -495,6 +495,11 @@ impl WidgetCx<'_> {
     pub fn interact(&self, ui: &mut egui::Ui, sense: egui::Sense) -> egui::Response {
         ui.interact(self.rect, self.id, sense)
     }
+    /// OW1a2: [`Self::interact`] over `rect` only (a label's text, an unframed icon's glyph: the
+    /// node's hit area and drawn rect are its content, as the egui wrappers' were).
+    pub fn interact_at(&self, ui: &mut egui::Ui, rect: egui::Rect, sense: egui::Sense) -> egui::Response {
+        ui.interact(rect.intersect(self.rect), self.id, sense)
+    }
 
     /// Runs behaviour units on the node's response (`#[svelters::widget]`'s generated
     /// `run_units` calls it): `f` runs each unit's `input` with the node's state bits, focus
@@ -981,6 +986,11 @@ pub(crate) fn set_prop(w: &W, i: usize, v: &Value) -> Result<crate::scene::Dirty
 pub(crate) fn set_replaced_prop(w: &mut W, def: &crate::kinds::PropDef, v: &Value) -> Result<crate::scene::Dirty, String> {
     let W::Ext(x) = w else { return Err("not an own widget".into()) };
     let v = if matches!(v, Value::Null) && !def.nullable { crate::scene::props::default_value(def) } else { v.clone() };
+    // (OW1a2: the row's own range checks, so an own widget rejects what its wrapper rejected)
+    let v = match def.key {
+        crate::kinds::P::FontWeight => Value::I64(crate::scene::props::as_weight(&v)?),
+        _ => v,
+    };
     let mut d = {
         let mut b = x.0.borrow_mut();
         let entry = b.entry();

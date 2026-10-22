@@ -219,6 +219,10 @@ pub struct Spinner {
 
 impl Widget for Spinner {
     fn measure(&mut self, cx: &mut MeasureCx<'_>, _avail: AvailableSpace) -> egui::Vec2 {
+        // a size that is not a positive finite number is no size (null), as the wrapper's setter
+        if self.size.is_some_and(|v| !(v.is_finite() && v > 0.0)) {
+            self.size = None;
+        }
         let d = self.size.filter(|s| s.is_finite() && *s > 0.0).map(|s| s as f32).or_else(|| cx.style(SPINNER).px("width")).unwrap_or(16.0);
         egui::Vec2::splat(d)
     }
