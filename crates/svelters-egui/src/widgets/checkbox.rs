@@ -25,6 +25,7 @@ pub const UA: Ua = Ua(&[
     UaRule::when(StateBits::FOCUS_VISIBLE, &[("outline-style", Keyword("solid"))]),
 ]);
 
+// TODO(OW-CSS `::part`): a hard-coded part UA table; replace it with the part's computed style once the engine computes `::part()` styles (see `parts::part_view`).
 /// `::part(indicator)`: the box.
 pub const INDICATOR: Ua = Ua(&[
     UaRule::base(&[
@@ -41,6 +42,7 @@ pub const INDICATOR: Ua = Ua(&[
     UaRule::when(StateBits::PRESSED, &[("background-color", Token("button-bg-active"))]),
 ]);
 
+// TODO(OW-CSS `::part`): a hard-coded part UA table; replace it with the part's computed style once the engine computes `::part()` styles (see `parts::part_view`).
 /// `::part(mark)`: the glyph's colour.
 pub const MARK: Ua = Ua(&[UaRule::base(&[("color", Token("fg"))]), UaRule::when(StateBits::DISABLED, &[("color", Token("disabled-fg"))])]);
 
