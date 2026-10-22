@@ -24,6 +24,7 @@ import { capture, unset_context } from 'svelte/internal/client/reactivity/async'
 import * as batches from 'svelte/internal/client/reactivity/batch';
 import { enable_tracing_mode_flag } from 'svelte/internal/flags/index';
 import { init_array_prototype_warnings } from 'svelte/internal/client/dev/equality';
+import { STATE_SYMBOL } from 'svelte/internal/client/constants';
 
 // ---- the compiler-facing contract (docs/notes/native-compiler/runtime-contract.md "Core API") ----
 
@@ -88,6 +89,10 @@ export const HMR = $.HMR;
 export const FILENAME = $.FILENAME;
 
 // ---- internals of the block machinery (./internal.js) ----
+
+/** RT1: `v` is a `$state` proxy (deep state: an array or a plain object). */
+export const is_state_proxy = (v) => STATE_SYMBOL in v;
+export { STATE_SYMBOL };
 
 /** Svelte's effect flags (svelte/src/internal/client/constants.js; checked by tools/check-svelte-internals.mjs). */
 export const BOUNDARY_EFFECT = 1 << 7;

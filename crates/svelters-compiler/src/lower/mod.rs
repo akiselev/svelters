@@ -994,6 +994,21 @@ impl<'a> Lower<'a, '_, '_> {
                         ops.extend(op);
                     }
                 }
+                // EV1: `on:name|capture={h}` is the capture listener `onnamecapture={h}` (a listen
+                // phase the backend must have for the signal, as for the attribute)
+                AttributeLike::OnDirective(d) if forward::capture_only(d) => {
+                    let ns = d.name_span.map_or(sp(d.span()), sp);
+                    let key = format!("on{}capture", d.name);
+                    let op = self.listen_op(&er, &key, Handler::Expr(d.expression.as_ref().unwrap()), d.span(), ns);
+                    if runtime_attrs {
+                        if op.is_some() {
+                            spread_at.get_or_insert(ops.len());
+                            entries.push(SpreadEntry::Event { key, handler: d.expression.as_ref().unwrap() });
+                        }
+                    } else {
+                        ops.extend(op);
+                    }
+                }
                 AttributeLike::OnDirective(d) if !d.modifiers.is_empty() => self.on_modifiers(d, OnSite::Element(&el.name)),
                 // Legacy `on:name={handler}` (deprecated in Svelte 5, still compiled in runes mode): a
                 // listener like `onname={handler}`

@@ -13,6 +13,39 @@ export interface SvlEvent<A extends unknown[] = unknown[]> {
   stopPropagation(): void;
 }
 
+/** EV1: what a DOM-style event's handler gets (`pointerdown`, `click`, `wheel`, `keydown`, `focusin`, ...):
+ * dispatched along the scene in capture, target and bubble order. */
+export interface SvlUiEvent extends SvlEvent {
+  /** The node the event is for; `currentTarget` is the node whose listener runs. */
+  target: unknown;
+  currentTarget: unknown;
+  /** 1 capture, 2 at the target, 3 bubble. */
+  eventPhase: 1 | 2 | 3;
+  bubbles: true;
+  cancelable: boolean;
+  defaultPrevented: boolean;
+  stopImmediatePropagation(): void;
+  /** Pointer events and `wheel`: the point in the window's (or slot's viewport's) points. */
+  x?: number;
+  y?: number;
+  clientX?: number;
+  clientY?: number;
+  /** Pointer events: 0 primary, 1 middle, 2 secondary, 3 back, 4 forward. */
+  button?: number;
+  /** `wheel`: the scroll in points. */
+  deltaX?: number;
+  deltaY?: number;
+  /** Key events: egui's key name (`A`, `Enter`, `ArrowDown`), and whether it is an auto-repeat. */
+  key?: string;
+  repeat?: boolean;
+  /** Focus events: the node focus came from (`focusin`) or went to (`focusout`). */
+  relatedTarget?: unknown;
+  shiftKey: boolean;
+  ctrlKey: boolean;
+  altKey: boolean;
+  metaKey: boolean;
+}
+
 type ClassValue = string | null | undefined | false | ClassValue[] | { [name: string]: unknown };
 /** Styling attributes every native element takes. */
 export type StyleAttrs = {
@@ -93,6 +126,36 @@ export interface EguiWidgetProps {
   'ondrag-leave'?: () => void;
   /** Drop target: a drag it accepts was released over it; carries the type, the data and the point in the node's own points. */
   ondrop?: (type: string, data: string, x: number, y: number) => void;
+  /** A pointer button went down over this node or a descendant (EV1: capture, target, bubble). `preventDefault` keeps the press from egui (no click, drag or focus). */
+  onpointerdown?: (e: SvlUiEvent) => void;
+  onpointerdowncapture?: (e: SvlUiEvent) => void;
+  /** A pointer button went up over this node or a descendant (EV1). `preventDefault` cancels the click. */
+  onpointerup?: (e: SvlUiEvent) => void;
+  onpointerupcapture?: (e: SvlUiEvent) => void;
+  /** The primary button was pressed and released; targets the innermost node that holds both points (EV1). `preventDefault` keeps the click from the widget. */
+  onclick?: (e: SvlUiEvent) => void;
+  onclickcapture?: (e: SvlUiEvent) => void;
+  /** A second click on the same node in a short time, after its `click` (EV1). */
+  ondblclick?: (e: SvlUiEvent) => void;
+  ondblclickcapture?: (e: SvlUiEvent) => void;
+  /** The secondary button went down (EV1), after `pointerdown`. `preventDefault` keeps the press from egui (no context menu). */
+  oncontextmenu?: (e: SvlUiEvent) => void;
+  oncontextmenucapture?: (e: SvlUiEvent) => void;
+  /** The mouse wheel or a trackpad scrolled over this node (EV1); `dx`, `dy` in points. `preventDefault` keeps it from scrolling. */
+  onwheel?: (e: SvlUiEvent) => void;
+  onwheelcapture?: (e: SvlUiEvent) => void;
+  /** A key went down while this node or a descendant had focus (EV1); `key` is egui's key name. `preventDefault` keeps the key (and the text it types) from the focused widget. */
+  onkeydown?: (e: SvlUiEvent) => void;
+  onkeydowncapture?: (e: SvlUiEvent) => void;
+  /** A key went up while this node or a descendant had focus (EV1). */
+  onkeyup?: (e: SvlUiEvent) => void;
+  onkeyupcapture?: (e: SvlUiEvent) => void;
+  /** This node or a descendant took keyboard focus (EV1; after the frame that moved it). `related` is the node that lost it, 0 for none. */
+  onfocusin?: (e: SvlUiEvent) => void;
+  onfocusincapture?: (e: SvlUiEvent) => void;
+  /** This node or a descendant lost keyboard focus (EV1). `related` is the node that took it, 0 for none. */
+  onfocusout?: (e: SvlUiEvent) => void;
+  onfocusoutcapture?: (e: SvlUiEvent) => void;
 }
 
 /** The built-in egui elements, by tag. */
@@ -111,6 +174,36 @@ export interface EguiElements {
     gap?: number;
     /** The user asked to close the window; return true to keep it open. Runs before the frame's pass. */
     'onclose-request'?: (e: SvlEvent<[]>) => void;
+    /** A pointer button went down over this node or a descendant (EV1: capture, target, bubble). `preventDefault` keeps the press from egui (no click, drag or focus). */
+    onpointerdown?: (e: SvlUiEvent) => void;
+    onpointerdowncapture?: (e: SvlUiEvent) => void;
+    /** A pointer button went up over this node or a descendant (EV1). `preventDefault` cancels the click. */
+    onpointerup?: (e: SvlUiEvent) => void;
+    onpointerupcapture?: (e: SvlUiEvent) => void;
+    /** The primary button was pressed and released; targets the innermost node that holds both points (EV1). `preventDefault` keeps the click from the widget. */
+    onclick?: (e: SvlUiEvent) => void;
+    onclickcapture?: (e: SvlUiEvent) => void;
+    /** A second click on the same node in a short time, after its `click` (EV1). */
+    ondblclick?: (e: SvlUiEvent) => void;
+    ondblclickcapture?: (e: SvlUiEvent) => void;
+    /** The secondary button went down (EV1), after `pointerdown`. `preventDefault` keeps the press from egui (no context menu). */
+    oncontextmenu?: (e: SvlUiEvent) => void;
+    oncontextmenucapture?: (e: SvlUiEvent) => void;
+    /** The mouse wheel or a trackpad scrolled over this node (EV1); `dx`, `dy` in points. `preventDefault` keeps it from scrolling. */
+    onwheel?: (e: SvlUiEvent) => void;
+    onwheelcapture?: (e: SvlUiEvent) => void;
+    /** A key went down while this node or a descendant had focus (EV1); `key` is egui's key name. `preventDefault` keeps the key (and the text it types) from the focused widget. */
+    onkeydown?: (e: SvlUiEvent) => void;
+    onkeydowncapture?: (e: SvlUiEvent) => void;
+    /** A key went up while this node or a descendant had focus (EV1). */
+    onkeyup?: (e: SvlUiEvent) => void;
+    onkeyupcapture?: (e: SvlUiEvent) => void;
+    /** This node or a descendant took keyboard focus (EV1; after the frame that moved it). `related` is the node that lost it, 0 for none. */
+    onfocusin?: (e: SvlUiEvent) => void;
+    onfocusincapture?: (e: SvlUiEvent) => void;
+    /** This node or a descendant lost keyboard focus (EV1). `related` is the node that took it, 0 for none. */
+    onfocusout?: (e: SvlUiEvent) => void;
+    onfocusoutcapture?: (e: SvlUiEvent) => void;
   };
   /** A flexbox container laid out by taffy; draws nothing itself. */
   box: EguiWidgetProps & {
@@ -162,12 +255,20 @@ export interface EguiElements {
     default?: boolean;
     /** Escape activates it while focus is in its focus scope (or root). */
     cancel?: boolean;
+    /** An icon before the caption: an icon key (`name` in the `icons` family, or `family:name`). Its size, place and visibility are CSS on `::part(icon)` (P3). */
+    icon?: string;
+    /** Held down, it activates again and again (`clicked` after 300 ms, then every 100 ms; QAbstractButton `autoRepeat`). */
+    repeat?: boolean;
     /** Pressed and released (`Response::clicked`). */
     onclicked?: () => void;
     /** Double click (`Response::double_clicked`). */
     'ondouble-clicked'?: () => void;
     /** Right click (`Response::secondary_clicked`). */
     'onsecondary-clicked'?: () => void;
+    /** The primary button went down on it (QAbstractButton `pressed`). */
+    onpress?: () => void;
+    /** It came up again, over the button or not (`released`). */
+    onrelease?: () => void;
   };
   /** A check box with a caption. */
   checkbox: EguiWidgetProps & {

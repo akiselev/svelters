@@ -9,6 +9,7 @@
 //! | `spawner` | rayon / blocking pool | `#[js(worker)]` and `#[js(blocking)]` jobs and the `exports::worker()`/`blocking()` futures go to it (`JobMeta` carries the kind and `app:<module>.<member>`) |
 //! | `clock` | `Instant::now()` | timers, `performance.now()` and the timer wakeup (`Clock::wake_at` instead of the backend's `schedule_wake`) |
 //! | `wake` | backend `wake` only | also notified on every host wake: a pending job, a completion, a store change, a queued event |
+//! | `seed` | QuickJS's own `Math.random` | AU1b: `Math.random` is a seeded generator (sfc32, 53-bit doubles), reseeded with the same seed by every engine the host makes (a full reload included), so a run replays |
 //!
 //! A production embedder may set only `spawner` (cadatomic's job pool, quire's `Spawner`). A test sets
 //! all three from one [`svelters_sched::TestScheduler`] (`testing::SchedHost` does it on the log backend;
@@ -30,6 +31,9 @@ pub struct HostSched {
     pub spawner: Option<Arc<dyn Spawner>>,
     pub clock: Option<Arc<dyn Clock>>,
     pub wake: Option<Waker>,
+    /// AU1b: seeds `Math.random` (see the module docs). `None` leaves QuickJS's generator alone and
+    /// costs nothing.
+    pub seed: Option<u64>,
 }
 
 impl HostSched {
@@ -48,13 +52,18 @@ impl HostSched {
         self
     }
 
+    pub fn seed(mut self, seed: u64) -> HostSched {
+        self.seed = Some(seed);
+        self
+    }
+
     /// Every hook from one test scheduler: its spawner and clock, and `fg`'s waker.
     pub fn test(s: &svelters_sched::TestScheduler, fg: svelters_sched::Foreground) -> HostSched {
         HostSched::default().spawner(s.spawner()).clock(s.clock()).wake(s.waker(fg))
     }
 
     pub fn is_empty(&self) -> bool {
-        self.spawner.is_none() && self.clock.is_none() && self.wake.is_none()
+        self.spawner.is_none() && self.clock.is_none() && self.wake.is_none() && self.seed.is_none()
     }
 }
 
@@ -64,6 +73,7 @@ impl std::fmt::Debug for HostSched {
             .field("spawner", &self.spawner.is_some())
             .field("clock", &self.clock.is_some())
             .field("wake", &self.wake.is_some())
+            .field("seed", &self.seed)
             .finish()
     }
 }
