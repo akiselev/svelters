@@ -136,11 +136,12 @@ fn builtin_payload(kind: usize) -> Option<W> {
         "TextEdit" => W::TextEdit { text: String::new(), hint: String::new(), multiline: false, password: false, char_limit: 0 },
         "Slider" => W::Slider { value: 0.0, min: 0.0, max: 100.0, step: 0.0, text: String::new(), show_value: true },
         "VirtualList" => W::VirtualList(Box::default()),
+        "TreeView" => W::VirtualList(Box::new(crate::kinds::VList::tree())),
         // WG1: the defaults match the kind tables (`kinds/builtin.rs`, `kinds/containers.rs`)
         "ToggleButton" => W::ToggleButton { text: String::new(), checked: false, radio: false, frame: true, weight: 400 },
         "ComboBox" => W::ComboBox { options: Vec::new(), selected: 0, hint: String::new() },
         "Separator" => W::Separator { vertical: false },
-        "Icon" => W::Icon { name: String::new(), glyph: String::new(), family: "icons".into(), size: None, weight: 400, frame: false, selected: false },
+        "Icon" => W::Icon { name: String::new(), glyph: String::new(), family: "icons".into(), size: None, weight: 400, frame: false, selected: false, source: String::new(), tint: true },
         "Grid" => W::Grid { columns: "auto 1fr".into(), justify_items: "stretch" },
         "CollapsingHeader" => W::CollapsingHeader { text: String::new(), open: false },
         "ScrollArea" => W::ScrollArea { direction: "vertical", x: 0.0, y: 0.0, seen: None },
@@ -153,7 +154,7 @@ fn builtin_payload(kind: usize) -> Option<W> {
         }
         // WG4a: the defaults match `kinds/views.rs`
         "Table" => W::Table(Box::default()),
-        "TableColumn" => W::TableColumn { title: String::new(), resizable: true, align: "start", sort: "none" },
+        "TableColumn" => W::TableColumn { title: String::new(), resizable: true, align: "start", sort: "none", editable: false, editor: false },
         "TabView" => W::TabView { selected: 0 },
         "Tab" => W::Tab { title: String::new(), closable: false },
         "SplitView" => W::SplitView { vertical: false, position: None, min_size: 32.0, resizable: true },

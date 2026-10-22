@@ -13,6 +13,11 @@
 //! plans/milestones/EG0-module-split.md); each file's doc names its writer lane. The old paths
 //! (`render`, `harness`, `layout::invalidate`) are kept as re-exports.
 
+// ZU3: no blocking file, process or wait calls on the UI thread (list in clippy.toml). Unit tests
+// are exempt; the legitimate I/O sites carry `#[allow(clippy::disallowed_methods)]` with a reason.
+#![cfg_attr(not(test), deny(clippy::disallowed_methods))]
+
+pub mod assets;
 pub mod backend;
 pub mod dialogs;
 pub mod embed;
@@ -39,11 +44,14 @@ pub mod style;
 pub mod theme;
 
 mod a11y;
+/// AU1: the accessible name the automation selectors share with AccessKit.
+pub use a11y::accessible_name;
 pub mod anim;
 mod events;
 mod frame;
 mod ids;
 mod leaf;
+pub mod numeric;
 // WG2a: menus and overlays (plans/milestones/WG2a-menus-popups.md)
 mod menus;
 mod overlays;

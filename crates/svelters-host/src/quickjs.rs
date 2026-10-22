@@ -23,6 +23,8 @@ use svelters_abi::{NameKind, Value as AV};
 
 mod buffers;
 mod conv;
+#[cfg(feature = "intl")]
+mod intl;
 mod platform;
 use conv::QjsConv;
 
@@ -128,6 +130,9 @@ impl crate::core::CallbackEngine for QjsCallbacks {
 }
 
 pub(crate) struct QjsEngine {
+    /// IN1: the `Intl` shim's private locale-change notifier (first: released before `ctx`).
+    #[cfg(feature = "intl")]
+    intl_changed: intl::Changed,
     // `ctx` before `rt`: the context is released first.
     ctx: Context,
     rt: Runtime,
@@ -219,8 +224,17 @@ impl QjsEngine {
                 .catch(&ctx)
                 .map_err(|e| JsError::new(ErrorKind::Host, format!("install host bindings: {e}")))
         })?;
+        // IN1: `Intl` and the locale-sensitive built-ins over svelters-intl.
+        #[cfg(feature = "intl")]
+        let intl_changed = ctx.with(|ctx| {
+            intl::install(&ctx)
+                .catch(&ctx)
+                .map_err(|e| JsError::new(ErrorKind::Host, format!("install Intl: {e}")))
+        })?;
 
         Ok(QjsEngine {
+            #[cfg(feature = "intl")]
+            intl_changed,
             ctx,
             rt,
             base,
@@ -484,6 +498,11 @@ impl JsEngine for QjsEngine {
         })
     }
 
+    #[cfg(feature = "intl")]
+    fn locale_changed(&mut self, tag: &str) -> Result<(), JsError> {
+        self.call_guarded(|ctx| intl::changed(ctx, &self.intl_changed, tag))
+    }
+
     fn dispatch_gone(&mut self, handle: u64, reason: &str) -> Result<(), JsError> {
         self.call_guarded(|ctx| {
             let f: Value = ctx.globals().get("__svelters_gone")?;
@@ -491,6 +510,16 @@ impl JsEngine for QjsEngine {
                 return Ok(());
             };
             f.call::<_, Value>((handle as f64, reason)).map(|_| ())
+        })
+    }
+
+    fn assets_changed(&mut self, refs: &[String]) -> Result<(), JsError> {
+        self.call_guarded(|ctx| {
+            let f: Value = ctx.globals().get("__svelters_assets_changed")?;
+            let Some(f) = f.as_function() else {
+                return Ok(());
+            };
+            f.call::<_, Value>((refs.to_vec(),)).map(|_| ())
         })
     }
 
@@ -634,6 +663,8 @@ impl JsEngine for QjsEngine {
 }
 
 impl Drop for QjsEngine {
+    // ZU3: host teardown: waits up to TRANSFER_GRACE for workers to hand back buffers, after the last frame.
+    #[allow(clippy::disallowed_methods)]
     fn drop(&mut self) {
         // E2: a worker may still use a transferred buffer of this runtime (its call was cancelled, but
         // it has not looked yet). Wait a little; past that, leak the runtime rather than free memory
@@ -1265,6 +1296,24 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
                 c.dx_op(&op, &a, &b).map_err(|(code, m)| Exception::throw_message(&ctx, &format!("{code}: {m}")))
             })?,
         )?;
+        // AS1: `svelters:assets` reads (`text`, `info`; `assetBytes` copies the content once).
+        let w = core.clone();
+        host.set(
+            "assets",
+            Function::new(ctx.clone(), move |ctx: Ctx<'js>, op: String, uri: String| -> Res<String> {
+                let c = core_of(&ctx, &w)?;
+                c.asset_op(&op, &uri).map_err(|m| Exception::throw_message(&ctx, &m))
+            })?,
+        )?;
+        let w = core.clone();
+        host.set(
+            "assetBytes",
+            Function::new(ctx.clone(), move |ctx: Ctx<'js>, uri: String| -> Res<rquickjs::ArrayBuffer<'js>> {
+                let c = core_of(&ctx, &w)?;
+                let b = c.asset_bytes(&uri).map_err(|m| Exception::throw_message(&ctx, &m))?;
+                rquickjs::ArrayBuffer::new(ctx.clone(), b)
+            })?,
+        )?;
         // E2: `alloc(Float32Array, n)` (`@svelters/types/core`): a typed array over a Rust allocation,
         // which a `Buffer<T>` parameter takes back without a copy.
         let cb = cbs.clone();
@@ -1288,7 +1337,8 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
     globals.set("__svelters_host", host)?;
 
     let prelude: Function = ctx.eval(PRELUDE)?;
-    prelude.call::<_, ()>((native, globals))
+    prelude.call::<_, ()>((native, globals))?;
+    Ok(())
 }
 
 // ---- module loading ----

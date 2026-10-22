@@ -27,6 +27,9 @@ pub mod log;
 pub mod oplog;
 pub mod ratchet;
 pub mod run;
+/// SCHED1: an egui [`svelters_egui::harness::TestApp`] driven by the deterministic scheduler.
+#[cfg(feature = "egui")]
+pub mod sched;
 pub mod view;
 
 pub use case::{Case, Expect, Step};

@@ -205,7 +205,7 @@ impl Backend for EguiBackend {
             self.touched(self.root_of(h));
             return r;
         }
-        if kinds::kind(k).tag == Some("virtual-list") {
+        if matches!(kinds::kind(k).tag, Some("virtual-list" | "tree-view")) {
             return Ok(self.vlist_call(h, def.name, args)?);
         }
         // WG4a: the views' methods take arguments (`crate::views::call`)

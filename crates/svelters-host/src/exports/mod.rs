@@ -1012,6 +1012,28 @@ impl IntoJs for String {
         Ok(Value::Str(self))
     }
 }
+/// AS1: an asset ref crosses as its `asset://` string; JS passes an `Asset` handle (the converter
+/// takes its ref) or the string. A string that is not a valid ref is refused like a bad enum value.
+/// Typed as `Asset` in the typings.
+impl JsType for svelters_modules::AssetRef {
+    fn describe(_: &mut TypeBuilder) -> TypeRef {
+        // a result becomes the `Asset` handle once `svelters:assets` is loaded (it defines the global)
+        let mut t = TypeRef::new(SlotDesc::new(SVL_STR), "import('@svelters/native-runtime/assets').Asset");
+        t.wrap = Some("(r) => (typeof r === 'string' && globalThis.__svelters_asset ? globalThis.__svelters_asset(r) : r)".into());
+        t
+    }
+}
+impl FromJs for svelters_modules::AssetRef {
+    fn from_js(v: Value, cx: &CallCx<'_>) -> Result<Self, NativeError> {
+        let s = String::from_js(v, cx)?;
+        svelters_modules::AssetRef::parse(&s).map_err(|e| host_error("type", e.0))
+    }
+}
+impl IntoJs for svelters_modules::AssetRef {
+    fn into_js(self, _: &CallCx<'_>) -> Result<Value, NativeError> {
+        Ok(Value::Str(self.into()))
+    }
+}
 impl JsType for str {
     fn describe(b: &mut TypeBuilder) -> TypeRef {
         String::describe(b)

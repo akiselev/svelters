@@ -7,13 +7,15 @@ publish.workspace = true
 description = "The egui backend (G1): a retained scene arena laid out by taffy and painted through egui each frame"
 
 [features]
-default = ["eframe", "kittest", "source", "dialogs"]
+default = ["eframe", "kittest", "source", "dialogs", "intl"]
+# IN1: numeric widgets format and parse in the host's locale (svelters-intl); also the host's `Intl`.
+intl = ["dep:svelters-intl", "svelters-host/intl"]
 # The windowed runner (`Backend::run`): eframe with the glow renderer on X11/Wayland.
 eframe = ["dep:eframe"]
 # The headless test runner (`harness`): egui_kittest without a renderer, so no GPU and no display.
 kittest = ["dep:egui_kittest"]
 # Q1: apps loaded from source (`svelters-egui-run --entry`), compiled live by svelters-compiler.
-source = ["dep:svelters-modules", "svelters-modules/source"]
+source = ["svelters-modules/source"]
 # WG4b: native file and message dialogs (`svelters:app/egui`) through rfd; without it they reject with
 # `unsupported` unless a `DialogBackend` is installed.
 dialogs = ["dep:rfd"]
@@ -21,7 +23,9 @@ dialogs = ["dep:rfd"]
 [dependencies]
 svelters-abi.workspace = true
 svelters-host.workspace = true
-svelters-modules = { workspace = true, optional = true }
+svelters-intl = { workspace = true, optional = true }
+# AS1: the asset registry (`assets`) needs only the base crate; `source` adds the live compiler.
+svelters-modules.workspace = true
 # CS5e: the CSS engine (selectors, cascade, computed style) runs in process on the scene.
 svelters-style.workspace = true
 serde_json.workspace = true
@@ -47,6 +51,8 @@ svelters = { path = "../svelters" }
 # DX2: the system clipboard (`platform::SystemClipboard`) on every desktop; Linux adds W5's features below.
 arboard = { version = "3.7", default-features = false }
 taffy = { version = "=0.15.0", default-features = false, features = ["std", "flexbox", "grid", "calc", "block_layout", "content_size"] }
+# AS1: the own SVG loader (`assets::SvgLoader`). The version egui_extras 0.37 pins, so one resvg links.
+resvg = { version = "=0.45.1", default-features = false }
 # WG2b: `image` decodes PNG (the version arboard locks).
 image = { version = "0.25", default-features = false, features = ["png"] }
 
@@ -61,3 +67,9 @@ svelters-egui = { path = ".", features = ["eframe", "kittest", "source"] }
 egui_kittest = "=0.37.0"
 # WG2b: the image tests encode their PNGs
 image = { version = "0.25", default-features = false, features = ["png"] }
+# IC1: tests/icon_loader.rs renders icon SVGs through egui_extras' SvgLoader (resvg 0.45, no text, no rasters).
+egui_extras = { version = "=0.37.0", default-features = false, features = ["svg"] }
+
+[lints.clippy]
+# ZU3: allowed for tests, examples and bins; lib.rs denies it for the library (see clippy.toml).
+disallowed_methods = "allow"

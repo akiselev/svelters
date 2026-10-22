@@ -311,7 +311,7 @@ impl Core {
         self.ops.stat(|s| s.started += 1);
         match job {
             Job::Pool(exec, f) => {
-                offload::spawn_pool(exec, f, shared, label);
+                offload::spawn_pool(self.spawner().cloned(), exec, f, shared, label);
                 None
             }
             Job::Tokio(fut) => {

@@ -79,6 +79,8 @@ pub(crate) enum Role {
     Slider,
     /// LS1: a selectable `virtual-list` row (the list's tab stop is its selected row).
     List,
+    /// WG5b: a `tree-view` (one tab stop, the list; its claims are `kinds::treeview::claims`).
+    Tree,
     /// A provider kind (its claims are asked through `Widget::consume_key`).
     Ext { enter: bool, escape: bool },
     Other,
@@ -228,6 +230,7 @@ pub(crate) fn claims(role: Role, key: Key, m: Modifiers, mac: bool) -> bool {
         }
         Role::Slider => !command && !m.alt && nav,
         Role::List => !command && !m.alt && (nav || (!m.shift && matches!(key, Key::Space | Key::Enter))),
+        Role::Tree => crate::kinds::treeview::claims(key, m),
         Role::Button { .. } | Role::Toggle => !command && !m.alt && !m.shift && matches!(key, Key::Space | Key::Enter),
         Role::Ext { .. } | Role::Other => false,
     }
