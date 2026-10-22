@@ -199,6 +199,6 @@ pub(crate) fn token_name(t: &Token<'_>) -> String {
         Token::Ident(s) => format!("`{s}`"),
         Token::Delim(c) => format!("`{c}`"),
         Token::Function(f) => format!("`{f}(`"),
-        other => format!("{}", other.to_css_string()),
+        other => other.to_css_string(),
     }
 }

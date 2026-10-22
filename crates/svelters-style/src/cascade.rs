@@ -253,7 +253,9 @@ impl Stylist {
     /// declaration of a property wins.
     pub fn cascaded<'s, E: Element>(&'s self, el: E, inline: Option<&'s DeclBlock>, caches: &mut MatchCaches) -> Vec<&'s Declaration> {
         let matched = self.matched_rules(el, caches);
-        let mut keyed: Vec<((u8, u32, u32, u32), &Declaration)> = Vec::new();
+        // (origin and importance, layer, specificity, source order)
+        type Key = (u8, u32, u32, u32);
+        let mut keyed: Vec<(Key, &Declaration)> = Vec::new();
         for m in &matched {
             let e = &self.entries[m.rule.0 as usize];
             for d in &e.rule.block.decls {

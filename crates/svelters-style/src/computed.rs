@@ -117,7 +117,7 @@ pub(crate) fn compute(table: &'static Table, decls: &[&Declaration], parent: Opt
         Some(ComputedValue::FontWeight(w)) => *w,
         _ => 400,
     };
-    let mut vcx = ValueCx { table, em: parent_font, rem: cx.root_font_size, current_color: None, parent_weight, percent_base: Some(parent_font) };
+    let mut vcx = ValueCx { table, em: parent_font, rem: cx.root_font_size, current_color: None, parent_weight, percent_base: None };
 
     // font-size first (em of everything else), then color (currentcolor), then the rest
     let font = table.index_of("font-size");
@@ -138,7 +138,9 @@ pub(crate) fn compute(table: &'static Table, decls: &[&Declaration], parent: Opt
                     // revert and revert-layer roll back to the previous origin/layer; with no
                     // user-agent sheet that is `unset`
                     Some(k) if k == "unset" || k == "revert" || k == "revert-layer" => prop.is_inherited().then(|| parent_value(i)).flatten(),
-                    Some(_) => match parse_value(prop, text.as_deref().unwrap(), &vcx) {
+                    // `%` in font-size is of the parent's font size; everywhere else it stays a
+                    // percentage for the layout
+                    Some(_) => match parse_value(prop, text.as_deref().unwrap(), &if Some(i) == font { ValueCx { percent_base: Some(parent_font), ..vcx } } else { vcx }) {
                         Ok(v) => Some(v),
                         Err(_) => prop.is_inherited().then(|| parent_value(i)).flatten(),
                     },
@@ -152,7 +154,6 @@ pub(crate) fn compute(table: &'static Table, decls: &[&Declaration], parent: Opt
                 _ => parent_font,
             };
             vcx.em = px;
-            vcx.percent_base = None;
         }
         if Some(i) == color
             && let Some(ComputedValue::Color(c)) = &v

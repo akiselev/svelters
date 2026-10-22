@@ -269,3 +269,19 @@ fn none_dialect_computes_css_props() {
     let ok = stylist.compute(tree.by_id("ok"), None, None, &ComputeContext::default(), &mut MatchCaches::new());
     assert_eq!(ok.get("background"), Some(&ComputedValue::Raw("red".into())));
 }
+
+/// Regression (found by CS5e): without `font-size` in the table, `%` resolved against the
+/// parent's font size instead of staying a percentage.
+#[test]
+fn percent_stays_percent_without_font_size() {
+    static NO_FONT: Table = Table {
+        props: &[prop("gap", Via::Setter, ValueType::Length, &[]), prop("width", Via::Setter, ValueType::Length, &[])],
+        ..TABLE
+    };
+    let mut stylist = Stylist::new(&NO_FONT);
+    stylist.add_sheet(&Stylesheet::parse("button { width: calc(50% - 20px); gap: 10% }", &ParseOptions::default()), Origin::Author);
+    let tree = Tree::parse(TREE);
+    let ok = stylist.compute(tree.by_id("ok"), None, None, &ComputeContext::default(), &mut MatchCaches::new());
+    assert_eq!(ok.get("width"), Some(&ComputedValue::Length(Length { px: -20.0, percent: 50.0 })));
+    assert_eq!(ok.get("gap"), Some(&ComputedValue::Length(Length::percent(10.0))));
+}
