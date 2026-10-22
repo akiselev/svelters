@@ -290,9 +290,16 @@ Two cross-backend wins fall out and can be scheduled independently: the svpaint 
 
 **Decided 2026-10-22 (user):** the §5 element catalog is the built-in widget set ("that list of widgets looks
 fine. fast track it"): Tier 0 and Tier 1 ship in `svelters-egui`, Tier 2 as feature-gated packs. It is fast-tracked
-as parallel lanes (WG2a, WG2b, WG4a, WG4b; tree-view after LS1). Still open: where cadatomic-specific widgets live
-(quantity field, completer, search field, split button) and the widget survey's W1–W5 (cadatomic
-`docs/research/2026-10-22-widget-survey-and-native-acceptance.md` §6).
+as parallel lanes (WG2a, WG2b, WG4a, WG4b; tree-view after LS1). Answered the same day (user, via
+main-cadatomic; cadatomic register after 43cec61):
+- cadatomic-specific widgets (quantity field, completer, search field, split button) live in cadatomic, as RA1
+  provider kinds or Svelte components. svelters-egui stays generic.
+- W1: text fields, selection and keyboard conventions follow each platform's native behaviour. CAD interactions
+  are the same everywhere.
+- W2: both GTK4 and Qt are Linux references, so WG3's NA1 capture records GTK and Qt goldens.
+- W3: WG3 owns NA1 capture and publishes goldens as files. cadatomic takes no dev dependency on the native backends.
+- W4: measure first. Keep egui `TextEdit` until the pins measure the gap, then move to quire-core if it is large.
+- W5: Linux primary selection (select-to-copy, middle-click paste) is supported in svelters-egui's text kinds.
 
 **Decided 2026-10-21 (user):**
 - **D1: yes.** The host supports "embedder drives the frame" alongside `run()`-owns-the-loop, from G1 on (the non-blocking start is in G0).
