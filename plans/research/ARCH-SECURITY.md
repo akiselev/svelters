@@ -1,5 +1,10 @@
 # ARCH-SECURITY: a deny-by-default, auditable policy for extensions
 
+> **Deferred (user, 2026-10-22):** "this is too complicated this early on in our prototype" /
+> "leave room for security policies later but right now we're developing". Nothing here is built
+> now; only §5's cheap API-shape items (principal ids, `#[non_exhaustive]`) go into running lanes.
+> SEC-O and SEC-C stay open until cadatomic loads its first third-party extension.
+
 Status: architecture proposal (research, no code). 2026-10-22. svelters master `39ec3558`, branches `ci/ld1` (`b14023c6`),
 `ci/q1`, `ci/h1` as pushed on 2026-10-22; cadatomic master `4a5decc`. Scope: the **mechanism** svelters gives its
 embedders so that every capability an extension can reach is granted by an explicit policy, checked at one
