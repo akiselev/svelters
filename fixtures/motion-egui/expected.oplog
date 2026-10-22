@@ -5,7 +5,6 @@ set #1 default-height 260
 create box #2
 set #2 gap 8
 create button #3
-listen #3 clicked on
 set #3 text "Toggle"
 insert #2 #3 before=end slot=default
 create label #4
@@ -18,9 +17,10 @@ create label #6
 set #6 text "Slid"
 insert #2 #6 before=end slot=default
 create label #7
-set #7 text "Outros ended: 0"
 insert #2 #7 before=end slot=default
 insert #1 #2 before=end slot=default
+set #7 text "Outros ended: 0"
+listen #3 clicked on
 call #1 present []
 style sheet "*" null
 style scheme "light" 0

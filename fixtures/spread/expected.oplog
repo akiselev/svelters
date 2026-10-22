@@ -12,17 +12,17 @@ listen #3 clicked on
 set #3 halign "center"
 insert #2 #3 before=end slot=default
 create label #4
-set #4 label "clicks 0"
 insert #2 #4 before=end slot=default
 create label #5
 set #5 label "dynamic"
 set #5 tooltip-text "step 0"
 insert #2 #5 before=end slot=default
 create button #6
-listen #6 clicked on
 set #6 label "Next"
 insert #2 #6 before=end slot=default
 insert #1 #2 before=end slot=default
+set #4 label "clicks 0"
+listen #6 clicked on
 call #1 present []
 event #3 clicked []
 set #4 label "clicks 1"
