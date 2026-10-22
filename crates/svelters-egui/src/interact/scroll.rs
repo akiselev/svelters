@@ -374,8 +374,9 @@ impl Scrollable {
             self.flick = true;
         }
         if self.flick {
-            if cx.input.pointer.any_pressed() || dt == 0.0 {
-                self.flick = cx.input.pointer.any_pressed().then_some(false).unwrap_or(self.flick);
+            // a press stops the flick
+            if cx.input.pointer.any_pressed() {
+                self.flick = false;
             }
             if self.flick && dt > 0.0 {
                 let before = self.offset;

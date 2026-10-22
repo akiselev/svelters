@@ -338,8 +338,8 @@ impl Widget for ScrollArea {
         };
         let mut parts = crate::interact::PartResponses::default();
         let live = alpha > 0.0 || area.contains_pointer();
-        for d in 0..2 {
-            let Some(b) = bars[d] else { continue };
+        for (d, b) in bars.iter().enumerate() {
+            let Some(b) = *b else { continue };
             if !live || !enabled {
                 continue;
             }
@@ -479,8 +479,8 @@ impl ScrollArea {
         }
         let mut pc = cx.paint_cx(ui);
         let track_ua = if mode == BarMode::Classic { CLASSIC_TRACK_UA } else { TRACK_UA };
-        for d in 0..2 {
-            let Some(b) = bars[d] else { continue };
+        for (d, b) in bars.iter().enumerate() {
+            let Some(b) = *b else { continue };
             let (bn, tn) = if d == 0 { ("scrollbar-x", "thumb-x") } else { ("scrollbar-y", "thumb-y") };
             let track = StyleView::ua_only(track_ua, StateBits::NONE, dark);
             let fill = track.color("background-color").unwrap_or(Color32::TRANSPARENT).gamma_multiply(alpha);
@@ -506,8 +506,10 @@ impl ScrollArea {
             cp.record(paint::TraceKind::Box, corner, fill, egui::Stroke::NONE, 0.0);
         }
         // AccessKit: each bar is a `ScrollBar` with its value
-        for d in 0..2 {
-            let Some(_) = bars[d] else { continue };
+        for (d, b) in bars.iter().enumerate() {
+            if b.is_none() {
+                continue;
+            }
             let bn = if d == 0 { "scrollbar-x" } else { "scrollbar-y" };
             let id = cx.id().with(bn);
             let (v, max) = (self.scroll.offset()[d] as f64, self.scroll.max_offset()[d] as f64);
