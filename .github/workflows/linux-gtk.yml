@@ -76,6 +76,14 @@ jobs:
           -p counter --no-default-features --features counter/gtk
           -E 'not (package(counter) & test(/qt/))'
 
+      # AU2b: @svelters/test on the real host: svelters' own e2e runner (svelters-e2e) on the counter
+      # fixture and `mount`, and the client's own svelters-run test. "Build tests" built svelters-run
+      # (svelters-automation's integration tests need its binary); no display is needed (kittest).
+      - name: e2e runner (svelters-run, counter fixture)
+        env:
+          SVELTERS_RUN: ${{ github.workspace }}/target/debug/svelters-run
+        run: pnpm --filter @svelters/test test
+
       # Platform-neutral parts of the other backends (tables, parsers; empty suites off-platform) and
       # the CSS engine (svelters-style), which links no toolkit.
       - name: nextest (portable backend crates)
