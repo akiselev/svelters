@@ -215,10 +215,12 @@ fn ow0_own_button_is_sized_by_its_style() {
 use svelters_egui::paint::{self, PaintArgs, PaintCx, PartInfo, StyleView, TraceKind};
 use svelters_egui::provider::{AvailableSpace, MeasureCx, Widget, WidgetCx};
 
-/// A test-only own widget: replaces `separator` (only in this test binary) with an extra prop and
+/// A test-only own widget: replaces `menu-separator` (only in this test binary; OW1a owns
+/// `separator`) with an extra prop and
 /// an extra event the built-in row lacks (the superset rule).
-#[svelters::widget(namespace = "t", replaces = "separator", caps = PAINTS_BOX)]
+#[svelters::widget(namespace = "t", replaces = "menu-separator", caps = PAINTS_BOX)]
 pub struct TestSeparator {
+    /// An extra enumeration prop.
     #[prop(enumeration = "horizontal|vertical", default = "horizontal")]
     orientation: String,
     /// An extra prop: not in the row.
@@ -245,26 +247,27 @@ fn node_raw(rig: &Rig, h: svl_handle) -> u64 {
 #[test]
 fn ow0b_extra_props_and_events_of_an_own_widget() {
     let reg = KindRegistry::global();
-    let k = reg.tag_index("separator").unwrap();
+    let k = reg.tag_index("menu-separator").unwrap();
     let r = reg.replacement(k).expect("the test separator");
-    assert_eq!(r.extra_props.len(), 1);
-    assert_eq!(r.extra_props[0].name, "thickness");
+    // `menu-separator`'s row has no props: both are extras
+    assert_eq!(r.extra_props.iter().map(|p| p.name).collect::<Vec<_>>(), ["orientation", "thickness"]);
     let (id, def) = reg.find_prop(k, "thickness").expect("an extra prop resolves by name");
     assert_eq!(reg.prop_def(k, id).map(|d| d.name), Some("thickness"));
     assert!(matches!(def.default, svelters_egui::kinds::Def::F64(v) if v == 2.0));
     assert!(reg.find_signal(k, "poked").is_some(), "an extra event is a signal of the kind");
     assert!(reg.spec_kind(k).props.iter().any(|p| p.name == "thickness"), "the spec lists it");
     assert!(reg.kind(k).props.iter().all(|p| p.name != "thickness"), "the row itself is untouched");
-    for (name, set) in [("egui", KindSet::None), ("own", KindSet::tags(["separator"]))] {
+    for (name, set) in [("egui", KindSet::None), ("own", KindSet::tags(["menu-separator"]))] {
         let mut rig = rig(&set);
         let (_w, col) = rig.window();
-        let h = rig.leaf(col, "separator", &[]);
+        let h = rig.leaf(col, "menu-separator", &[]);
         rig.set(h, "thickness", Value::F64(5.0));
         rig.run();
         let want = if name == "own" { Value::F64(5.0) } else { Value::F64(2.0) };
         assert_eq!(rig.get(h, "thickness"), want, "{name}: the wrapper ignores an extra prop");
         rig.set(h, "orientation", s("vertical"));
-        assert_eq!(rig.get(h, "orientation"), s("vertical"), "{name}");
+        let want = if name == "own" { s("vertical") } else { s("horizontal") };
+        assert_eq!(rig.get(h, "orientation"), want, "{name}: an extra enumeration");
     }
 }
 

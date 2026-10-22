@@ -14,6 +14,14 @@
 //! Writer lanes: OW0–OW7.
 
 pub mod button;
+pub mod checkbox;
+pub mod hyperlink;
+pub mod label;
+mod parts;
+pub mod progress;
+pub mod separator;
+pub mod switch;
+pub mod toggle_button;
 
 use crate::scene::W;
 

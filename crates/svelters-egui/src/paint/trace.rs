@@ -19,6 +19,8 @@ pub enum TraceKind {
     Image,
     /// The outline (`paint_outline`): the focus ring when it is a `:focus-visible` rule.
     Outline,
+    /// OW1a: a path part (a check mark, a radio dot, a switch knob, a spinner arc, a bar's fill).
+    Path,
 }
 
 /// One traced shape.
