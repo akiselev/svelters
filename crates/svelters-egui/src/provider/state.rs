@@ -157,14 +157,11 @@ impl<T: IntoStateBits + ?Sized> IntoStateBits for &T {
     }
 }
 
-/// The node-side accessors (ARCH-SCENE §6.1 `NodeRef::state`, §6.4 `NodeMut::set_state`).
-impl Node {
+/// The pre-SG1 node view's reader (SG1: `NodeRef::state`, `NodeMut::set_state`; the bits live in
+/// `NodeCore`).
+impl Node<'_> {
     pub fn state(&self) -> StateBits {
         self.state
-    }
-
-    pub fn set_state(&mut self, bits: impl IntoStateBits, on: bool) {
-        self.state.set(bits.state_bits(), on);
     }
 }
 

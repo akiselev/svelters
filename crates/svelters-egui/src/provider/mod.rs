@@ -466,10 +466,10 @@ impl PartialEq for ExtWidget {
     }
 }
 
-impl Node {
+impl Node<'_> {
     /// The provider widget of this node, typed, if it is one of kind `W`.
     pub fn widget<Wd: 'static, R>(&self, f: impl FnOnce(&Wd) -> R) -> Option<R> {
-        match &self.w {
+        match self.w {
             W::Ext(x) => x.with(f),
             _ => None,
         }
@@ -478,9 +478,10 @@ impl Node {
 
 // ---- the scene's calls (props, paint) ----
 
-/// `set_prop` of prop `i` of a provider node (the host already validated `v` against the prop's slot).
-pub(crate) fn set_prop(n: &mut Node, i: usize, v: &Value) -> Result<crate::scene::Dirty, String> {
-    let W::Ext(x) = &n.w else { return Err("not a provider node".into()) };
+/// `set_prop` of prop `i` of a provider node's widget `w` (the host already validated `v` against
+/// the prop's slot).
+pub(crate) fn set_prop(w: &W, i: usize, v: &Value) -> Result<crate::scene::Dirty, String> {
+    let W::Ext(x) = w else { return Err("not a provider node".into()) };
     let mut w = x.0.borrow_mut();
     let entry = w.entry();
     let p = entry.props.get(i).ok_or_else(|| format!("no prop #{i}"))?;
@@ -489,7 +490,7 @@ pub(crate) fn set_prop(n: &mut Node, i: usize, v: &Value) -> Result<crate::scene
     } else {
         svelters_host::exports::__private::with_cx(entry.namespace, |cx| w.set_prop(i, v.clone(), cx)).map_err(|e| e.message)?;
     }
-    Ok(crate::scene::Dirty { style: false, measure: p.measure })
+    Ok(if p.measure { crate::scene::Dirty::MEASURE } else { crate::scene::Dirty::EMPTY })
 }
 
 fn nullable(entry: &KindEntry, i: usize) -> bool {
@@ -497,56 +498,72 @@ fn nullable(entry: &KindEntry, i: usize) -> bool {
 }
 
 pub(crate) fn get_prop(n: &Node, i: usize) -> Result<Value, String> {
-    let W::Ext(x) = &n.w else { return Err("not a provider node".into()) };
+    let W::Ext(x) = n.w else { return Err("not a provider node".into()) };
     let w = x.0.borrow();
     svelters_host::exports::__private::with_cx(w.entry().namespace, |cx| w.get_prop(i, cx)).map_err(|e| e.message)
 }
 
-/// Draws a provider node: its `ui` in `ui` (a child `Ui` at the node's rect), then the a11y hook,
-/// then its writes as outbox entries (`prop_changed` for observed props, events for listeners).
-pub(crate) fn paint(arena: &mut crate::scene::Arena, h: Handle, ui: &mut egui::Ui, out: &mut Vec<Out>) {
-    let n = arena.n_mut(h);
-    let kind = n.kind;
+/// Draws the provider node in slot `i` (the walk's index into the scene's columns): its `ui` in `ui`
+/// (a child `Ui` at the node's rect), then the a11y hook, then its writes as outbox entries
+/// (`prop_changed` for observed props, events for listeners).
+pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui, out: &mut Vec<Out>) {
+    use crate::scene::NodeFlags;
+    let node = arena.slots.id_at(i).expect("live provider node");
+    let h: Handle = node.to_raw();
+    let kind = arena.core[i].kind as usize;
     let rect = ui.max_rect();
-    let enabled = n.c.enabled;
-    let id = n.id;
-    let Node { w, state, ext, .. } = n;
-    let W::Ext(x) = w else { return };
+    let enabled = arena.common(i).enabled;
+    let id = arena.core[i].egui_id;
+    // The payload and the ext column are disjoint fields: the widget borrows its node's ext data.
+    let x = match &arena.payload[i] {
+        crate::scene::node::Payload::Builtin(W::Ext(x)) => x,
+        _ => return,
+    };
     let mut wb = x.0.borrow_mut();
     let entry = wb.entry();
-    let mut cx = WidgetCx { id, rect, enabled, state, ext, entry, base: wb.base(), changed: Vec::new(), emits: Vec::new(), remeasure: false, errors: Vec::new() };
+    let base = wb.base();
+    let mut state = arena.core[i].state;
+    let mut cx = WidgetCx { id, rect, enabled, state: &mut state, ext: &mut arena.ext[i], entry, base, changed: Vec::new(), emits: Vec::new(), remeasure: false, errors: Vec::new() };
     let mut resp = wb.ui(ui, &mut cx);
-    let n_state = *cx.state;
     let WidgetCx { changed, emits, remeasure, errors, .. } = cx;
     drop(wb);
-    let n = arena.n_mut(h);
-    if let Some(name) = crate::a11y::name(n) {
-        resp = resp.accessible_name(name);
+    // EM1: the accessible name and, for an anchored node, the anchor as AccessKit author id
+    resp = crate::a11y::decorate(resp, &arena.n(h));
+    let c = arena.common(i);
+    if !c.tooltip.is_empty() {
+        resp = resp.on_hover_text(c.tooltip.clone());
     }
-    if !n.c.tooltip.is_empty() {
-        resp = resp.on_hover_text(n.c.tooltip.clone());
+    {
+        let name = (!c.accessible_name.is_empty()).then_some(c.accessible_name.as_str());
+        let acx = A11yCx { id: resp.id, state, name };
+        let w = x.0.borrow();
+        ui.ctx().accesskit_node_builder(resp.id, |n| w.a11y(&acx, n));
     }
-    if n.want_focus {
-        n.want_focus = false;
+    if state != arena.core[i].state {
+        arena.core[i].state = state;
+        let t = arena.stamp();
+        arena.core[i].changed = t;
+    }
+    let core = &mut arena.core[i];
+    if core.flags.contains(NodeFlags::WANT_FOCUS) {
+        core.flags.remove(NodeFlags::WANT_FOCUS);
         resp.request_focus();
     }
-    if let W::Ext(x) = &n.w {
-        let name = (!n.c.accessible_name.is_empty()).then_some(n.c.accessible_name.as_str());
-        let acx = A11yCx { id: resp.id, state: n_state, name };
-        let w = x.0.borrow();
-        ui.ctx().accesskit_node_builder(resp.id, |node| w.a11y(&acx, node));
-    }
-    n.drawn = resp.rect;
+    core.drawn = resp.rect;
     let reg = crate::kinds::KindRegistry::global();
-    for i in changed {
-        let prop = reg.provider_prop_id(kind, i);
-        if n.observes(prop) {
+    if !changed.is_empty() {
+        let t = arena.stamp();
+        arena.core[i].changed = t;
+    }
+    for p in changed {
+        let prop = reg.provider_prop_id(kind, p);
+        if arena.observes(i, prop) {
             out.push(Out::Changed(h, prop));
         }
     }
-    for (i, v) in emits {
-        let sig = reg.provider_signal_id(kind, i);
-        if n.listens(sig) {
+    for (e, v) in emits {
+        let sig = reg.provider_signal_id(kind, e);
+        if arena.listens(i, sig) {
             out.push(Out::Event(h, sig, vec![v]));
         }
     }
@@ -554,8 +571,8 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, h: Handle, ui: &mut egui::U
         eprintln!("svelters-egui: {e}");
     }
     if remeasure {
-        n.intrinsic = None;
-        crate::layout::invalidate(arena, h);
+        arena.layout[i].intrinsic = None;
+        arena.invalidate_content(node);
         ui.ctx().request_repaint();
     }
 }

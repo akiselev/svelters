@@ -10,7 +10,7 @@
 
 use crate::backend::EguiBackend;
 use crate::layout;
-use crate::scene::{Arena, Handle, W};
+use crate::scene::{Arena, Handle};
 use egui::{Align, Layout, Ui, UiBuilder, Vec2};
 use svelters_abi::Value;
 
@@ -26,52 +26,50 @@ impl EguiBackend {
         assert!(!self.0.pass_active.get(), "svelters-egui: {what} during the egui pass (JS must not run while the scene is drawn)");
     }
 
-    /// Lays out (if needed) and paints window `w`'s content in `ui`'s available rect.
+    /// Lays out root `r` if it has queued work: the whole root when new, resized or its top
+    /// changed, else only its dirty boundaries (`layout::run_root`).
+    fn layout_root(&self, scene: &mut Arena, ctx: &egui::Context, r: crate::scene::RootIx, size: Vec2) {
+        let due = scene.roots.get(r).is_some_and(|e| e.size != Some(size) || !e.dirty.relayout.is_empty() || e.dirty.full);
+        if due {
+            let m = layout::Metrics::new(ctx);
+            if let Some(run) = layout::run_root(scene, &m, r, size) {
+                self.count_layout(run);
+            }
+        }
+    }
+
+    /// Lays out window `w`'s root if it has queued work and paints its content in `ui`'s
+    /// available rect.
     pub(crate) fn window_ui(&self, ui: &mut egui::Ui, w: Handle, out: &mut Vec<Out>) {
         let rect = ui.available_rect_before_wrap();
-        let size = rect.size();
         let mut scene = self.0.scene.borrow_mut();
-        let stale = self.0.dirty.layout_dirty.get() || self.0.dirty.layout_size.borrow().get(&w) != Some(&size);
-        if stale || scene.n(w).cache.is_empty() {
-            let m = layout::Metrics::new(ui.ctx());
-            let measured = layout::compute(&mut scene, &m, w, size);
-            self.0.dirty.layout_size.borrow_mut().insert(w, size);
-            self.bump(|s| {
-                s.layouts += 1;
-                s.measured += measured as u64;
-            });
-        }
+        let id = scene.live(w).expect("a live window");
+        let r = scene.core[scene.ix(id)].root;
+        self.layout_root(&mut scene, ui.ctx(), r, rect.size());
         paint(&mut scene, w, rect.min.to_vec2(), ui, out);
         ui.allocate_rect(rect, egui::Sense::hover());
-        drop(scene);
-        // Every window shown this frame is laid out; a later window resets the flag too.
-        self.0.dirty.layout_dirty.set(false);
     }
-}
 
-impl EguiBackend {
     /// EM1: lays out (if needed) and paints slot `slot`'s subtree in `ui`'s available rect
-    /// (ARCH-EMBED §5.1 b–c). A slot is its own layout root: it is laid out again when its
-    /// available size changed or a change below it cleared its cache (style, structure, remeasure),
-    /// whatever other slots and windows did. Returns the rect it took and taffy's content size.
+    /// (ARCH-EMBED §5.1 b-c). A slot is its own scene root (`TreeRoot::Slot`): it is laid out
+    /// again when its available size changed or its root queued work (style, structure, a changed
+    /// measured size), only the dirty boundaries when the size is the same, whatever other slots
+    /// and windows did. Returns the rect it took and the content size (its children's extent).
     pub(crate) fn slot_ui(&self, ui: &mut egui::Ui, slot: Handle, out: &mut Vec<Out>) -> (egui::Rect, Vec2) {
         let rect = ui.available_rect_before_wrap();
-        let size = rect.size();
         let mut scene = self.0.scene.borrow_mut();
-        let stale = self.0.dirty.layout_size.borrow().get(&slot) != Some(&size);
-        if stale || scene.n(slot).cache.is_empty() {
-            let m = layout::Metrics::new(ui.ctx());
-            let measured = layout::compute(&mut scene, &m, slot, size);
-            self.0.dirty.layout_size.borrow_mut().insert(slot, size);
-            self.bump(|s| {
-                s.layouts += 1;
-                s.measured += measured as u64;
-            });
+        let id = scene.live(slot).expect("a live slot");
+        let i = scene.ix(id);
+        let r = scene.core[i].root;
+        // leaves whose text changed after this frame's logic (a host op in a fault disposal)
+        if scene.roots.get(r).is_some_and(|e| !e.dirty.remeasure.is_empty()) {
+            layout::remeasure(&mut scene, &layout::Metrics::new(ui.ctx()), r);
         }
-        paint(&mut scene, slot, rect.min.to_vec2(), ui, out);
+        self.layout_root(&mut scene, ui.ctx(), r, rect.size());
+        paint_at(&mut scene, i, rect.min.to_vec2(), ui, out);
         // what the content needs: the extent of the slot's children (laid out from its origin)
-        let content = scene.n(slot).children.iter().filter_map(|&c| scene.get(c)).fold(Vec2::ZERO, |acc, n| {
-            if n.rect == egui::Rect::NOTHING { acc } else { acc.max(n.rect.max.to_vec2()) }
+        let content = scene.children[i].iter().map(|&c| scene.core[scene.ix(c)].rect).fold(Vec2::ZERO, |acc, r| {
+            if r == egui::Rect::NOTHING { acc } else { acc.max(r.max.to_vec2()) }
         });
         drop(scene);
         ui.allocate_rect(rect, egui::Sense::hover());
@@ -82,25 +80,28 @@ impl EguiBackend {
 /// Paints node `h` (and its subtree) with rects offset by `origin` (the window content's screen
 /// position).
 pub fn paint(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
-    let n = arena.n(h);
-    if !n.c.visible {
+    let i = arena.ix(arena.live(h).expect("live node"));
+    paint_at(arena, i, origin, ui, out);
+}
+
+fn paint_at(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+    if !arena.common(i).visible {
         return;
     }
-    if !n.vis.is_identity() {
-        return paint_visual(arena, h, origin, ui, out);
+    if arena.core[i].flags.contains(crate::scene::NodeFlags::HAS_VISUAL) {
+        return paint_visual(arena, i, origin, ui, out);
     }
-    paint_node(arena, h, origin, ui, out);
+    paint_node(arena, i, origin, ui, out);
 }
 
 /// TR1 visual channels: the node's subtree in a child `Ui` with its opacity multiplied, its paint
 /// cut at the node's (clipped) rect, its shapes moved by the transform, and its events dropped while
 /// inert. The transform is visual only (egui's `with_visual_transform`): input still hits the
 /// layout rect, and a non-uniform scale is drawn uniform (the geometric mean).
-fn paint_visual(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
-    let n = arena.n(h);
-    let v = n.vis;
-    let r = n.rect.translate(origin);
-    let mut child = ui.new_child(UiBuilder::new().max_rect(ui.max_rect()).scope_id(n.id.with("vis")));
+fn paint_visual(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+    let v = arena.vis(i);
+    let r = arena.core[i].rect.translate(origin);
+    let mut child = ui.new_child(UiBuilder::new().max_rect(ui.max_rect()).scope_id(arena.core[i].egui_id.with("vis")));
     if let Some(o) = v.opacity {
         child.multiply_opacity(o.clamp(0.0, 1.0));
     }
@@ -114,23 +115,23 @@ fn paint_visual(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &m
             let s = (sx * sy).abs().sqrt();
             let o = r.min + egui::vec2(r.width() * ox, r.height() * oy);
             let t = egui::emath::TSTransform::new(o.to_vec2() + egui::vec2(tx, ty) - o.to_vec2() * s, s);
-            child.with_visual_transform(t, |ui| paint_node(arena, h, origin, ui, sink));
+            child.with_visual_transform(t, |ui| paint_node(arena, i, origin, ui, sink));
         }
-        None => paint_node(arena, h, origin, &mut child, sink),
+        None => paint_node(arena, i, origin, &mut child, sink),
     }
 }
 
-fn paint_node(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
-    let n = arena.n(h);
-    let r = n.rect.translate(origin);
-    if matches!(n.w, W::Box | W::Window { .. }) {
+fn paint_node(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+    let r = arena.core[i].rect.translate(origin);
+    if arena.w(i).is_container() {
         // Containers draw nothing: cull whole subtrees outside the clip rect.
         if !ui.is_rect_visible(r) {
             return;
         }
-        let kids = n.children.clone();
-        for c in kids {
-            paint(arena, c, origin, ui, out);
+        // By index, no clone: the walk never changes the structure (ARCH-SCENE §5.2).
+        for k in 0..arena.children[i].len() {
+            let c = arena.children[i][k].index() as usize;
+            paint_at(arena, c, origin, ui, out);
         }
         return;
     }
@@ -140,15 +141,15 @@ fn paint_node(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut
     let mut b = UiBuilder::new()
         .max_rect(r)
         // Never the widget's own id: a scope sharing it eats the widget's clicks (EGUI.md §1.4).
-        .scope_id(n.id.with("scope"))
+        .scope_id(arena.core[i].egui_id.with("scope"))
         .layout(Layout::left_to_right(Align::Center));
-    if !n.c.enabled {
+    if !arena.common(i).enabled {
         b = b.disabled();
     }
     let mut child = ui.new_child(b);
-    if matches!(arena.n(h).w, W::Ext(_)) {
-        crate::provider::paint(arena, h, &mut child, out); // RA1: a provider kind
+    if matches!(arena.w(i), crate::scene::W::Ext(_)) {
+        crate::provider::paint(arena, i, &mut child, out); // RA1: a provider kind
     } else {
-        crate::leaf::leaf(arena, h, &mut child, out);
+        crate::leaf::leaf(arena, i, &mut child, out);
     }
 }

@@ -1,29 +1,32 @@
-//! Layout: taffy run directly on the scene arena (D2; plans/research/EGUI.md §1.3).
+//! Layout: taffy run directly on the scene's columns (D2; plans/research/EGUI.md §1.3).
 //!
-//! The arena implements taffy's low-level traits (no mirrored `TaffyTree`): a node's taffy id is its
-//! handle, its style, cache and layout live in the node. Leaves are measured with egui's own fonts
-//! plus the widget chrome of their kind, before the pass, so the first frame is placed right.
-//! Layout runs only when something is dirty: a style prop, a structural change, a leaf whose
-//! measured size changed, or a new window size.
+//! The scene implements taffy's low-level traits (no mirrored `TaffyTree`): a node's taffy id is its
+//! [`NodeId`](crate::scene::NodeId), its style, cache and layouts live in its `LayoutBox`. Leaves are
+//! measured with egui's own fonts plus the widget chrome of their kind, before the pass, so the first
+//! frame is placed right.
 //!
-//! Invalidation ([`invalidate`]) and the dirty flags live in `scene/dirty.rs` (ARCH-SCENE §13).
+//! Layout runs per root, only for queued work (ARCH-SCENE §7.1, `scene/dirty.rs`): a whole root when
+//! it is new, presented or resized; otherwise only the layout boundaries whose content changed, each
+//! at its last size ([`run_root`]). Placing rects walks children by index (no per-layout clones).
+//!
 //! Writer lanes: SCENE (the adapter), WIDGETS (per-kind measure), STYLE (computed style).
 
 pub use crate::scene::dirty::invalidate;
-use crate::scene::{Arena, Handle, Node, W};
+use crate::scene::id::IDX_MASK;
+use crate::scene::node::Payload;
+use crate::scene::{Common, Dirty, NodeFlags, NodeId as SceneId, RootIx, Scene, Visual, W};
 use egui::{Rect, Vec2, pos2, vec2};
-use taffy::prelude::*;
+use taffy::prelude::{AvailableSpace, Dimension, Display, FlexDirection, FlexWrap, Layout, LengthPercentage, LengthPercentageAuto, Size, Style};
 use taffy::{
-    AlignContent, AlignItems, CacheTree, LayoutInput, LayoutOutput, compute_cached_layout, compute_flexbox_layout,
+    AlignContent, AlignItems, CacheTree, LayoutInput, LayoutOutput, LayoutPartialTree, Line, NodeId, RequestedAxis, RunMode, SizingMode, compute_cached_layout, compute_flexbox_layout,
     compute_hidden_layout, compute_leaf_layout, compute_root_layout, round_layout,
 };
 
-/// Rebuilds a node's taffy style from its props.
-pub fn restyle(n: &mut Node) {
-    let c = &n.c;
+/// A node's taffy style from its props.
+pub fn style_of(c: &Common, w: &W, vis: &Visual) -> Style {
     let len = |v: Option<f64>| v.map(|x| Dimension::length(x as f32)).unwrap_or(Dimension::auto());
     let lpa = |v: Option<f64>| v.map(|x| LengthPercentageAuto::length(x as f32)).unwrap_or(LengthPercentageAuto::auto());
-    let container = matches!(n.w, W::Box | W::Window { .. });
+    let container = w.is_container();
     let mut s = Style {
         display: if !c.visible {
             Display::None
@@ -48,7 +51,7 @@ pub fn restyle(n: &mut Node) {
         ..Style::default()
     };
     // TR1 clip channel: the node occupies at most the clipped size (paint is cut at it, render.rs)
-    if let Some([cw, ch]) = n.vis.clip {
+    if let Some([cw, ch]) = vis.clip {
         if cw >= 0.0 {
             s.max_size.width = LengthPercentageAuto::length(cw);
             s.min_size.width = LengthPercentageAuto::length(0.0);
@@ -96,7 +99,7 @@ pub fn restyle(n: &mut Node) {
             _ => AlignContent::START,
         };
     }
-    n.style = s;
+    s
 }
 
 /// What the measure functions need from egui.
@@ -176,32 +179,34 @@ impl Metrics {
     }
 }
 
-/// The arena seen as a taffy tree for one layout run.
+// ---- the taffy adapter over the scene's columns ----
+
+#[inline]
+fn ix(id: NodeId) -> usize {
+    (u64::from(id) & IDX_MASK) as usize
+}
+
+#[inline]
+fn tid(id: SceneId) -> NodeId {
+    NodeId::from(id.to_raw())
+}
+
+/// The scene seen as a taffy tree for one layout run.
 struct Tree<'a> {
-    arena: &'a mut Arena,
+    s: &'a mut Scene,
     m: &'a Metrics,
-    measured: usize,
+    /// Leaf computations (cache misses).
+    leaf_layouts: u64,
+    /// Leaves measured with egui's fonts.
+    fonts: u64,
 }
 
-fn h(id: NodeId) -> Handle {
-    u64::from(id)
-}
-
-impl Tree<'_> {
-    fn node(&self, id: NodeId) -> &Node {
-        self.arena.n(h(id))
-    }
-    fn node_mut(&mut self, id: NodeId) -> &mut Node {
-        self.arena.n_mut(h(id))
-    }
-}
-
-pub struct ChildIter<'a>(std::slice::Iter<'a, Handle>);
+pub struct ChildIter<'a>(std::slice::Iter<'a, SceneId>);
 
 impl Iterator for ChildIter<'_> {
     type Item = NodeId;
     fn next(&mut self) -> Option<NodeId> {
-        self.0.next().map(|&c| NodeId::from(c))
+        self.0.next().map(|&c| tid(c))
     }
 }
 
@@ -212,19 +217,19 @@ impl taffy::TraversePartialTree for Tree<'_> {
         Self: 'b;
 
     fn child_ids(&self, id: NodeId) -> Self::ChildIter<'_> {
-        ChildIter(self.node(id).children.iter())
+        ChildIter(self.s.children[ix(id)].iter())
     }
     fn child_count(&self, id: NodeId) -> usize {
-        self.node(id).children.len()
+        self.s.children[ix(id)].len()
     }
     fn get_child_id(&self, id: NodeId, index: usize) -> NodeId {
-        NodeId::from(self.node(id).children[index])
+        tid(self.s.children[ix(id)][index])
     }
 }
 
 impl taffy::TraverseTree for Tree<'_> {}
 
-impl taffy::LayoutPartialTree for Tree<'_> {
+impl LayoutPartialTree for Tree<'_> {
     type CoreContainerStyle<'b>
         = &'b Style
     where
@@ -232,25 +237,35 @@ impl taffy::LayoutPartialTree for Tree<'_> {
     type CustomIdent = String;
 
     fn get_core_container_style(&self, id: NodeId) -> Self::CoreContainerStyle<'_> {
-        &self.node(id).style
+        &self.s.layout[ix(id)].style
     }
     fn set_unrounded_layout(&mut self, id: NodeId, layout: &Layout) {
-        self.node_mut(id).unrounded = *layout;
+        self.s.layout[ix(id)].unrounded = *layout;
     }
     fn compute_child_layout(&mut self, id: NodeId, inputs: LayoutInput) -> LayoutOutput {
-        if self.node(id).style.display == Display::None {
+        // Hidden: `display: none`, or inside a hidden ancestor (taffy passes HIDDEN to children).
+        if inputs.run_mode == RunMode::PerformHiddenLayout || self.s.layout[ix(id)].style.display == Display::None {
             return compute_hidden_layout(self, id);
         }
         compute_cached_layout(self, id, inputs, |tree, id, inputs| {
-            if matches!(tree.node(id).w, W::Box | W::Window { .. }) {
+            let i = ix(id);
+            if tree.s.w(i).is_container() {
                 return compute_flexbox_layout(tree, id, inputs);
             }
-            tree.measured += 1;
+            tree.leaf_layouts += 1;
             let m = tree.m;
-            let n = tree.arena.n_mut(h(id));
-            let intrinsic = *n.intrinsic.get_or_insert_with(|| m.intrinsic(&n.w));
-            let w = &n.w;
-            compute_leaf_layout(inputs, &n.style, |_, _| 0.0, |known, avail| {
+            let s = &mut *tree.s;
+            let w = match &s.payload[i] {
+                Payload::Builtin(w) => w,
+                Payload::Vacant => unreachable!("vacant payload in layout"),
+            };
+            let lb = &mut s.layout[i];
+            let mut fonts = 0;
+            let intrinsic = *lb.intrinsic.get_or_insert_with(|| {
+                fonts += 1;
+                m.intrinsic(w)
+            });
+            let out = compute_leaf_layout(inputs, &lb.style, |_, _| 0.0, |known, avail| {
                 if let Size { width: Some(w), height: Some(hh) } = known {
                     return Size { width: w, height: hh };
                 }
@@ -259,15 +274,17 @@ impl taffy::LayoutPartialTree for Tree<'_> {
                     AvailableSpace::MinContent => Some(0.0),
                     AvailableSpace::MaxContent => None,
                 });
-                let mut s = intrinsic;
+                let mut sz = intrinsic;
                 if let Some(lim) = limit
                     && lim < intrinsic.x
                     && let Some(wr) = m.wrapped(w, lim)
                 {
-                    s = wr;
+                    sz = wr;
                 }
-                Size { width: known.width.unwrap_or(s.x.ceil()), height: known.height.unwrap_or(s.y.ceil()) }
-            })
+                Size { width: known.width.unwrap_or(sz.x.ceil()), height: known.height.unwrap_or(sz.y.ceil()) }
+            });
+            tree.fonts += fonts;
+            out
         })
     }
 }
@@ -278,22 +295,22 @@ impl taffy::LayoutContainingBlock for Tree<'_> {
     where
         Self: 'b;
     fn get_oof_item_style(&self, id: NodeId) -> Self::OofItemStyle<'_> {
-        &self.node(id).style
+        &self.s.layout[ix(id)].style
     }
-    // No absolute positioning in G1: nothing is ever hoisted.
+    // No absolute positioning yet (SG4: hoisted children in the cold column).
     fn clear_hoisted_children(&mut self, _id: NodeId) {}
     fn add_hoisted_children(&mut self, _id: NodeId, _hoisted: &[NodeId]) {}
 }
 
 impl CacheTree for Tree<'_> {
     fn cache_get(&mut self, id: NodeId, inputs: &LayoutInput) -> Option<LayoutOutput> {
-        self.node_mut(id).cache.get(inputs)
+        self.s.layout[ix(id)].cache.get(inputs)
     }
     fn cache_store(&mut self, id: NodeId, inputs: &LayoutInput, out: LayoutOutput) {
-        self.node_mut(id).cache.store(inputs, out)
+        self.s.layout[ix(id)].cache.store(inputs, out)
     }
     fn cache_clear(&mut self, id: NodeId) {
-        self.node_mut(id).cache.clear();
+        self.s.layout[ix(id)].cache.clear();
     }
 }
 
@@ -307,19 +324,19 @@ impl taffy::LayoutFlexboxContainer for Tree<'_> {
     where
         Self: 'b;
     fn get_flexbox_container_style(&self, id: NodeId) -> Self::FlexboxContainerStyle<'_> {
-        &self.node(id).style
+        &self.s.layout[ix(id)].style
     }
     fn get_flexbox_child_style(&self, id: NodeId) -> Self::FlexboxItemStyle<'_> {
-        &self.node(id).style
+        &self.s.layout[ix(id)].style
     }
 }
 
 impl taffy::RoundTree for Tree<'_> {
     fn get_unrounded_layout(&self, id: NodeId) -> Layout {
-        self.node(id).unrounded
+        self.s.layout[ix(id)].unrounded
     }
     fn set_final_layout(&mut self, id: NodeId, layout: &Layout) {
-        self.node_mut(id).layout = *layout;
+        self.s.layout[ix(id)].layout = *layout;
     }
     fn is_out_of_flow(&self, _id: NodeId) -> bool {
         false
@@ -332,49 +349,224 @@ impl taffy::RoundTree for Tree<'_> {
     }
 }
 
-/// Lays out the window `root` for a content area of `size`. Returns the number of leaves measured
-/// (0 when every cached result was reused).
-pub fn compute(arena: &mut Arena, m: &Metrics, root: Handle, size: Vec2) -> usize {
-    {
-        let n = arena.n_mut(root);
-        // The window root is definite (EGUI.md §1.3: an `auto` root re-lays out every row).
-        n.style.size = Size { width: Dimension::length(size.x), height: Dimension::length(size.y) };
-    }
-    let mut t = Tree { arena, m, measured: 0 };
-    let id = NodeId::from(root);
-    compute_root_layout(&mut t, id, Size { width: AvailableSpace::Definite(size.x), height: AvailableSpace::Definite(size.y) });
-    round_layout(&mut t, id);
-    let measured = t.measured;
-    place(arena, root, pos2(0.0, 0.0));
-    measured
+/// What one layout run did.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct LayoutRun {
+    /// The whole root was laid out.
+    pub full: bool,
+    /// Boundaries laid out on their own.
+    pub boundaries: u64,
+    /// Taffy leaf computations (cache misses).
+    pub leaf_layouts: u64,
+    /// Leaves measured with egui's fonts.
+    pub fonts: u64,
 }
 
-/// Absolute rects (relative to the window's content origin) from taffy's parent-relative layouts.
-fn place(arena: &mut Arena, h: Handle, origin: egui::Pos2) {
-    let n = arena.n_mut(h);
-    let l = n.layout;
-    let min = origin + vec2(l.location.x, l.location.y);
-    n.rect = Rect::from_min_size(min, vec2(l.size.width, l.size.height));
-    let kids = n.children.clone();
-    for c in kids {
-        place(arena, c, min);
+impl Tree<'_> {
+    /// The whole tree under `top` for a content area of `size` (the top is definite: EGUI.md §1.3,
+    /// an `auto` root re-lays out every row).
+    fn whole(&mut self, top: SceneId, size: Vec2) {
+        self.s.layout[top.index() as usize].style.size = Size { width: Dimension::length(size.x), height: Dimension::length(size.y) };
+        let id = tid(top);
+        compute_root_layout(self, id, Size { width: AvailableSpace::Definite(size.x), height: AvailableSpace::Definite(size.y) });
+        round_layout(self, id);
+    }
+
+    /// Boundary `b`'s content at its current size (its own place and size do not change).
+    fn boundary(&mut self, b: SceneId) {
+        let i = b.index() as usize;
+        let ul = self.s.layout[i].unrounded;
+        let (w, h) = (ul.size.width, ul.size.height);
+        let parent_size = match self.s.core[i].parent {
+            Some(p) => {
+                let pl = self.s.layout[p.index() as usize].unrounded;
+                Size { width: Some(pl.size.width), height: Some(pl.size.height) }
+            }
+            None => Size::NONE,
+        };
+        self.compute_child_layout(
+            tid(b),
+            LayoutInput {
+                run_mode: RunMode::PerformLayout,
+                sizing_mode: SizingMode::InherentSize,
+                axis: RequestedAxis::Both,
+                known_dimensions: Size { width: Some(w), height: Some(h) },
+                known_dimensions_are_definite: Size { width: true, height: true },
+                parent_size,
+                available_space: Size { width: AvailableSpace::Definite(w), height: AvailableSpace::Definite(h) },
+                vertical_margins_are_collapsible: Line::FALSE,
+            },
+        );
+    }
+
+    /// Rounds `b`'s subtree exactly as a whole-tree `round_layout` would: taffy rounds cumulative
+    /// positions, so `b` is rounded from its absolute unrounded position (its own final layout,
+    /// relative to its parent, does not change and is restored).
+    fn round_from(&mut self, b: SceneId) {
+        let i = b.index() as usize;
+        let (mut x, mut y) = (0.0, 0.0);
+        let mut a = self.s.core[i].parent;
+        while let Some(p) = a {
+            let pi = p.index() as usize;
+            x += self.s.layout[pi].unrounded.location.x;
+            y += self.s.layout[pi].unrounded.location.y;
+            a = self.s.core[pi].parent;
+        }
+        let (saved_u, saved_f) = (self.s.layout[i].unrounded, self.s.layout[i].layout);
+        self.s.layout[i].unrounded.location.x += x;
+        self.s.layout[i].unrounded.location.y += y;
+        round_layout(self, tid(b));
+        self.s.layout[i].unrounded = saved_u;
+        self.s.layout[i].layout = saved_f;
     }
 }
 
-/// Re-measures the leaves whose content changed; invalidates layout only for the ones whose size
-/// did (a counter going from 1 to 2 usually keeps its width: EGUI.md §1.3). True if any did.
-pub fn remeasure(arena: &mut Arena, m: &Metrics, leaves: &[Handle]) -> bool {
+/// Lays out the whole tree under `top` for a content area of `size`, places it, and returns the
+/// number of leaf computations (0 when every cached result was reused).
+pub fn compute(scene: &mut Scene, m: &Metrics, top: SceneId, size: Vec2) -> usize {
+    let mut t = Tree { s: scene, m, leaf_layouts: 0, fonts: 0 };
+    t.whole(top, size);
+    let (leaf, fonts) = (t.leaf_layouts, t.fonts);
+    scene.counters.leaves_measured += fonts;
+    scene.counters.leaf_layouts += leaf;
+    scene.counters.nodes_placed += place(scene, top, pos2(0.0, 0.0));
+    leaf as usize
+}
+
+/// Absolute rects (relative to the root's content origin) from taffy's parent-relative layouts,
+/// for `top`'s subtree placed at `origin`; clears the layout dirty bits on the way. Iterative,
+/// children by index (no clones). Returns the nodes placed.
+fn place(s: &mut Scene, top: SceneId, origin: egui::Pos2) -> u64 {
+    let mut stack = vec![(top.index() as usize, origin)];
+    let mut n = 0;
+    while let Some((i, o)) = stack.pop() {
+        let l = s.layout[i].layout;
+        let min = o + vec2(l.location.x, l.location.y);
+        s.core[i].rect = Rect::from_min_size(min, vec2(l.size.width, l.size.height));
+        s.core[i].dirty.remove(Dirty::LAYOUT | Dirty::DESC_LAYOUT | Dirty::CHILDREN);
+        n += 1;
+        for k in 0..s.children[i].len() {
+            stack.push((s.children[i][k].index() as usize, min));
+        }
+    }
+    n
+}
+
+/// True if `b` or an ancestor is `display: none` (its layout is the hidden one).
+fn hidden(s: &Scene, b: SceneId) -> bool {
+    let mut a = Some(b);
+    while let Some(x) = a {
+        let i = x.index() as usize;
+        if s.layout[i].style.display == Display::None {
+            return true;
+        }
+        a = s.core[i].parent;
+    }
+    false
+}
+
+/// Serves root `r`'s layout queue for a content area of `size`: the whole root when it is new,
+/// resized or its top changed, plus every queued boundary at its current size. `None`: nothing was
+/// due.
+pub(crate) fn run_root(s: &mut Scene, m: &Metrics, r: RootIx, size: Vec2) -> Option<LayoutRun> {
+    let e = s.roots.get_mut(r)?;
+    let top = e.top;
+    let mut full = e.dirty.full || e.size != Some(size);
+    let queue = std::mem::take(&mut e.dirty.relayout);
+    e.dirty.full = false;
+    e.size = Some(size);
+    let ti = s.ix(top);
+    full |= s.layout[ti].cache.is_empty();
+    let mut bs: Vec<SceneId> = Vec::new();
+    for b in queue {
+        let Some(i) = s.idx(b) else { continue };
+        if !s.core[i].flags.contains(NodeFlags::IN_RELAYOUT) || s.core[i].root != r {
+            continue;
+        }
+        s.core[i].flags.remove(NodeFlags::IN_RELAYOUT);
+        if b == top || !s.is_boundary(i) {
+            // the top, or a node that stopped being a boundary since it was queued
+            full = true;
+            continue;
+        }
+        bs.push(b);
+    }
+    if !full && bs.is_empty() {
+        return None;
+    }
+    if full {
+        // A whole-root run reuses the caches above a queued boundary and would not reach it:
+        // clear them, so the one run lays out everything.
+        for &b in &bs {
+            let mut a = Some(b);
+            while let Some(x) = a {
+                let i = x.index() as usize;
+                s.layout[i].cache.clear();
+                a = s.core[i].parent;
+            }
+        }
+    }
+    let mut t = Tree { s, m, leaf_layouts: 0, fonts: 0 };
+    let mut run = LayoutRun { full, ..Default::default() };
+    if !full {
+        for &b in &bs {
+            if hidden(t.s, b) {
+                // inside a hidden subtree: the hidden (zero) layout, as a whole-root run gives it
+                compute_hidden_layout(&mut t, tid(b));
+            } else {
+                t.boundary(b);
+                run.boundaries += 1;
+            }
+        }
+    }
+    if full {
+        t.whole(top, size);
+    } else {
+        for &b in &bs {
+            t.round_from(b);
+        }
+    }
+    (run.leaf_layouts, run.fonts) = (t.leaf_layouts, t.fonts);
+    let mut placed = 0;
+    if full {
+        placed += place(s, top, pos2(0.0, 0.0));
+    } else {
+        for &b in &bs {
+            let o = s.core[b.index() as usize].parent.map(|p| s.core[p.index() as usize].rect.min).unwrap_or(pos2(0.0, 0.0));
+            placed += place(s, b, o);
+        }
+    }
+    let c = &mut s.counters;
+    c.layouts += full as u64;
+    c.boundaries_laid_out += run.boundaries;
+    c.leaf_layouts += run.leaf_layouts;
+    c.leaves_measured += run.fonts;
+    c.nodes_placed += placed;
+    Some(run)
+}
+
+/// Re-measures root `r`'s queued leaves; invalidates layout only for the ones whose size changed (a
+/// counter going from 1 to 2 usually keeps its width: EGUI.md §1.3). True if any did.
+pub(crate) fn remeasure(s: &mut Scene, m: &Metrics, r: RootIx) -> bool {
+    let Some(e) = s.roots.get_mut(r) else { return false };
+    let q = std::mem::take(&mut e.dirty.remeasure);
     let mut changed = false;
-    for &h in leaves {
-        let Some(n) = arena.get_mut(h) else { continue };
-        let old = n.intrinsic.take();
-        let new = m.intrinsic(&n.w);
-        n.intrinsic = Some(new);
+    for id in q {
+        let Some(i) = s.idx(id) else { continue };
+        if !s.core[i].flags.contains(NodeFlags::IN_REMEASURE) || s.core[i].root != r {
+            continue;
+        }
+        s.core[i].flags.remove(NodeFlags::IN_REMEASURE);
+        s.core[i].dirty.remove(Dirty::MEASURE);
+        let old = s.layout[i].intrinsic.take();
+        let new = m.intrinsic(s.w(i));
+        s.counters.leaves_measured += 1;
+        s.layout[i].intrinsic = Some(new);
         // A wrapping label that does not fit its last width may wrap differently with new text.
-        let wraps = matches!(n.w, W::Label { wrap: "wrap", .. }) && new.x > n.rect.width() + 0.5;
+        let wraps = matches!(s.w(i), W::Label { wrap: "wrap", .. }) && new.x > s.core[i].rect.width() + 0.5;
         if old != Some(new) || wraps {
             changed = true;
-            invalidate(arena, h);
+            s.invalidate_content(id);
         }
     }
     changed

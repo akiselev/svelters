@@ -157,20 +157,16 @@ impl<T: 'static> ExtEntry<'_, T> {
     }
 }
 
-/// The node-side accessors (ARCH-SCENE §6.1 `NodeRef::ext`, §6.4 `NodeMut::ext_mut`).
-impl Node {
+/// The read accessors of the pre-SG1 node view (SG1: `NodeRef::ext`, `NodeMut::ext_mut` are the
+/// scene API).
+impl<'n> Node<'n> {
     /// This node's value for `key`, if it has one.
-    pub fn ext<T: 'static>(&self, key: &ExtKey<T>) -> Option<&T> {
+    pub fn ext<T: 'static>(&self, key: &ExtKey<T>) -> Option<&'n T> {
         self.ext.get(key)
     }
 
-    /// This node's entry for `key`.
-    pub fn ext_mut<'a, T: 'static>(&'a mut self, key: &'a ExtKey<T>) -> ExtEntry<'a, T> {
-        ExtEntry { block: &mut self.ext, key }
-    }
-
     /// Every key present on this node.
-    pub fn ext_block(&self) -> &ExtBlock {
-        &self.ext
+    pub fn ext_block(&self) -> &'n ExtBlock {
+        self.ext
     }
 }

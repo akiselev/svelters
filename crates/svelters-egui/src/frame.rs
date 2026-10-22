@@ -15,13 +15,15 @@
 //! JS never runs during the walk: `checkpoint` and `call_sync` are only called before it, and the
 //! `pass_active` flag turns a violation into a panic.
 //!
-//! EM1 turns this into `Embed::logic` (closes, commands, checkpoint, rAF, remeasure, repaint routing
-//! per root; ARCH-EMBED §5). Writer lane: EMBED.
+//! EM1 splits it into `logic_pass` (JS; `Embed::logic` calls it after its queued commands) and
+//! `show_windows` (the walk); slots are drawn by `Embed::show_slot` (ARCH-EMBED §5). Phases
+//! (ARCH-SCENE R17): `Logic` from the start of `logic_pass`, `Ui` from the end of logic to the end of
+//! the egui pass (the legacy [`EguiBackend::ui`] ends it when it returns). Writer lane: EMBED.
 
 use crate::backend::EguiBackend;
 use crate::kinds;
 use crate::layout;
-use crate::scene::{Handle, tree};
+use crate::scene::{Handle, Phase};
 use crate::walk::Out;
 use std::sync::atomic::Ordering;
 use std::time::Instant;
@@ -45,31 +47,44 @@ impl EguiBackend {
         }
     }
 
-    /// Runs a pending layout of `h`'s window now (`bounds`), when the window has been laid out
-    /// before (its size is known) and egui's fonts are available.
+    /// Runs the pending layout of `h`'s root now (`bounds`), when the root has been laid out
+    /// before (its size is known) and egui's fonts are available. Other roots keep their queues.
     pub(crate) fn layout_now(&self, h: Handle) {
         let Some(ctx) = self.ctx() else { return };
         let mut scene = self.0.scene.borrow_mut();
-        let mut root = h;
-        while let Some(p) = scene.get(root).and_then(|n| n.parent) {
-            root = p;
-        }
-        let Some(size) = self.0.dirty.layout_size.borrow().get(&root).copied() else { return };
+        let Ok(id) = scene.live(h) else { return };
+        let r = scene.core[scene.ix(id)].root;
+        let Some(size) = scene.roots.get(r).and_then(|e| e.size) else { return };
         let m = layout::Metrics::new(&ctx);
-        let leaves: Vec<Handle> = std::mem::take(&mut *self.0.dirty.remeasure.borrow_mut());
-        if !leaves.is_empty() && layout::remeasure(&mut scene, &m, &leaves) {
-            self.0.dirty.layout_dirty.set(true);
+        layout::remeasure(&mut scene, &m, r);
+        if let Some(run) = layout::run_root(&mut scene, &m, r, size) {
+            drop(scene);
+            self.count_layout(run);
         }
-        if !self.0.dirty.layout_dirty.get() && !scene.n(root).cache.is_empty() {
-            return;
-        }
-        let measured = layout::compute(&mut scene, &m, root, size);
+    }
+
+    /// Adds a layout run to the backend's counters (one run per root served).
+    pub(crate) fn count_layout(&self, run: layout::LayoutRun) {
         self.bump(|s| {
             s.layouts += 1;
-            s.measured += measured as u64;
+            s.measured += run.leaf_layouts;
         });
-        // other windows may be dirty too: the flag stays for the next pass (cached results make
-        // the repeat cheap)
+    }
+
+    /// Delivers the prop changes Rust writes announced (R18) and asks for the checkpoint that
+    /// lets the runtime read them.
+    fn flush_announcements(&self) {
+        let a = self.0.scene.take_announcements();
+        if a.is_empty() {
+            return;
+        }
+        if let Some(host) = self.host() {
+            for (h, prop) in a {
+                self.bump(|s| s.changes += 1);
+                host.prop_changed(h, prop);
+            }
+            self.0.checkpoint_pending.set(true);
+        }
     }
 
     // ---- the frame ----
@@ -87,13 +102,20 @@ impl EguiBackend {
         if ctx.current_pass_index() == 0 {
             self.logic_pass(&ctx);
         }
+        // R17: from the end of logic to the end of the pass, Rust writes are deferred.
+        self.0.scene.set_phase(Phase::Ui);
         self.show_windows(ui);
+        // This call is the whole frame of the legacy backend: the pass ends here. (EM1's `Embed`
+        // keeps `Ui` until egui's end of pass, so the app's own ui between slots is covered.)
+        self.0.scene.set_phase(Phase::Idle);
     }
 
     /// The part of a frame that runs JS (EM1: `Embed::logic` calls it, after its queued commands):
-    /// counts the frame, then closes, checkpoint, rAF and remeasure. First pass only.
+    /// counts the frame, then (phase `Logic`) deferred scene writes, announcements, closes,
+    /// checkpoint, rAF and remeasure. First pass only. The caller sets `Ui` after it.
     pub(crate) fn logic_pass(&self, ctx: &egui::Context) {
         self.0.in_frame.set(true);
+        self.0.scene.set_phase(Phase::Logic);
         self.bump(|s| s.frames += 1);
         self.0.shared.frames.fetch_add(1, Ordering::Relaxed);
         self.before_pass(ctx);
@@ -117,6 +139,10 @@ impl EguiBackend {
     }
 
     fn before_pass(&self, ctx: &egui::Context) {
+        // ARCH-SCENE §7.2 step 2b: mutations deferred during the last frame (the runtime sees them
+        // in this logic's checkpoint), then the prop changes Rust writes announced.
+        self.0.scene.run_deferred();
+        self.flush_announcements();
         // Native closes: user requests (sync close-request decides) and `close` calls.
         let requests: Vec<Handle> = std::mem::take(&mut *self.0.close_requests.borrow_mut());
         for w in requests {
@@ -145,12 +171,15 @@ impl EguiBackend {
         {
             host.frame();
         }
-        // Remeasure leaves whose text changed; only a size change dirties the layout.
-        let leaves: Vec<Handle> = std::mem::take(&mut *self.0.dirty.remeasure.borrow_mut());
-        if !leaves.is_empty() {
+        // Writes the checkpoint's handlers made through `SceneHandle` are announced now.
+        self.flush_announcements();
+        // Remeasure leaves whose text changed, per root; only a size change queues a relayout.
+        let mut scene = self.0.scene.borrow_mut();
+        let roots: Vec<_> = scene.roots.iter().filter(|(_, e)| !e.dirty.remeasure.is_empty()).map(|(r, _)| r).collect();
+        if !roots.is_empty() {
             let m = layout::Metrics::new(ctx);
-            if layout::remeasure(&mut self.0.scene.borrow_mut(), &m, &leaves) {
-                self.0.dirty.layout_dirty.set(true);
+            for r in roots {
+                layout::remeasure(&mut scene, &m, r);
             }
         }
     }
@@ -159,9 +188,10 @@ impl EguiBackend {
     fn close_vetoed(&self, w: Handle) -> bool {
         let sig = {
             let scene = self.0.scene.borrow();
-            let n = scene.n(w);
-            let sig = kinds::signal_id(n.kind, "close-request");
-            if !n.listens(sig) {
+            let Ok(id) = scene.live(w) else { return false };
+            let i = scene.ix(id);
+            let sig = kinds::signal_id(scene.core[i].kind as usize, "close-request");
+            if !scene.listens(i, sig) {
                 return false;
             }
             sig
@@ -174,16 +204,21 @@ impl EguiBackend {
     /// The window closes as if the user closed it: `SVL_GONE_CLOSED` for it, `SVL_GONE_PARENT`
     /// for every descendant (pre-order), all freed first.
     fn native_close(&self, w: Handle) {
-        let dead = tree::free_subtree(&mut self.0.scene.borrow_mut(), w);
+        let dead = {
+            let mut scene = self.0.scene.borrow_mut();
+            match scene.live(w) {
+                Ok(id) => scene.free_subtree(id),
+                Err(_) => return,
+            }
+        };
         if dead.is_empty() {
             return;
         }
         self.0.windows.borrow_mut().retain(|&x| x != w);
-        self.0.dirty.layout_size.borrow_mut().remove(&w);
         self.0.titles.borrow_mut().remove(&w);
         if let Some(host) = self.host() {
             for (i, &h) in dead.iter().enumerate() {
-                host.on_destroyed(h, if i == 0 { SVL_GONE_CLOSED } else { SVL_GONE_PARENT });
+                host.on_destroyed(h.to_raw(), if i == 0 { SVL_GONE_CLOSED } else { SVL_GONE_PARENT });
             }
         }
     }
@@ -212,6 +247,10 @@ impl EguiBackend {
             ctx.request_repaint();
         }
         if !self.0.close_requests.borrow().is_empty() || !self.0.closes.borrow().is_empty() {
+            ctx.request_repaint();
+        }
+        // R16: deferred scene writes are pending work; the next logic runs them.
+        if self.0.scene.deferred_len() > 0 {
             ctx.request_repaint();
         }
         if let Some(d) = self.0.deadline.get() {

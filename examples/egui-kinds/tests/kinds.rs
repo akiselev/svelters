@@ -42,13 +42,25 @@ fn registry_gives_the_kind_a_pack_62_id() {
     assert!(kinds::find_signal(k, "accepted").is_some() && kinds::find_signal(k, "edited").is_some());
     // provider data on any node through a typed key (ARCH-EMBED §8.4)
     static NOTE: svelters_egui::provider::ExtKey<String> = svelters_egui::provider::ExtKey::new("cad.note");
-    let mut n = svelters_egui::scene::new_node(k, 1);
-    assert!(n.ext(&NOTE).is_none());
-    n.ext_mut(&NOTE).set("pending".to_string());
-    assert_eq!(n.ext(&NOTE).map(String::as_str), Some("pending"));
-    assert_eq!(n.ext_block().names().collect::<Vec<_>>(), ["cad.note"]);
-    // the node holds the widget struct with its defaults, typed
-    assert_eq!(n.widget(|w: &egui_kinds_demo::QuantityField| w.units_shown()), Some(true));
+    // (through the scene API, SG1: `SceneHandle::write`/`read`, `NodeMut::ext_mut`, `NodeRef::ext`)
+    use svelters_egui::scene::{KindId, ProviderId, SceneHandle};
+    let scene = SceneHandle::default();
+    let app = ProviderId::APP;
+    let n = scene.write(app, |s| s.create(KindId(id)).unwrap()).unwrap();
+    scene
+        .write(app, |s| {
+            let mut m = s.node(n).unwrap();
+            assert!(m.read().ext(&NOTE).is_none());
+            m.ext_mut(&NOTE).set("pending".to_string());
+        })
+        .unwrap();
+    scene.read(|s| {
+        let n = s.get(n).unwrap();
+        assert_eq!(n.ext(&NOTE).map(String::as_str), Some("pending"));
+        assert_eq!(n.ext_block().names().collect::<Vec<_>>(), ["cad.note"]);
+        // the node holds the widget struct with its defaults, typed
+        assert_eq!(n.widget(|w: &egui_kinds_demo::QuantityField| w.units_shown()), Some(true));
+    });
     // a provider prop id is not accepted on a built-in kind
     let (value, _) = kinds::find_prop(k, "value").unwrap();
     assert!(kinds::prop_def(kinds::tag_index("label").unwrap(), value).is_none());
