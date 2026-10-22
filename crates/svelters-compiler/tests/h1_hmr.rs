@@ -44,9 +44,9 @@ const COUNTER: &str = "<script>\n  let count = $state(0);\n  let todos = $state(
 #[test]
 fn state_declarations_are_keyed_and_the_wrapper_carries_the_signature() {
     let out = js_of(COUNTER, true);
-    assert!(out.contains("$n.hmr_keep(\"count\", () => 0, () => $.get(count))"), "{out}");
-    assert!(out.contains("$.proxy($n.hmr_keep(\"todos\", () => [1], () => todos))"), "{out}");
-    assert!(out.contains("$n.hmr_keep(\"f\", () => ({a: 1}), () => $.get(f))") || out.contains("$n.hmr_keep(\"f\", () => {a: 1}"), "{out}");
+    assert!(out.contains("$n.hmr_keep(\"count\", () => (0), () => $.get(count))"), "{out}");
+    assert!(out.contains("$.proxy($n.hmr_keep(\"todos\", () => ([1]), () => todos))"), "{out}");
+    assert!(out.contains("$n.hmr_keep(\"f\", () => ({a: 1}), () => $.get(f))"), "{out}");
     assert!(out.contains("$n.hmr(App, \"ui/App.svelte\", \""), "{out}");
 }
 
@@ -84,7 +84,7 @@ fn module_state_stores_and_contexts_are_keyed_through_hot_data() {
     let src = "import { writable } from 'svelte/store';\nimport { createContext } from 'svelte';\nexport const store = writable(0);\nexport const [get, set] = createContext();\nexport const ctx = createContext();\nlet count = $state(0);\nexport function inc() { count += 1; }\nexport const read = () => count;\n";
     let m = |hmr: bool, src: &str| compile_module(src, &ModuleOptions { filename: "state.svelte.js".into(), dev: hmr, hmr }).js.unwrap();
     let out = m(true, src);
-    assert!(out.contains("$$hmr().keep(\"count\", () => 0, () => $.get(count))"), "{out}");
+    assert!(out.contains("$$hmr().keep(\"count\", () => (0), () => $.get(count))"), "{out}");
     assert!(out.contains("$$hmr().keep_object(\"store\", () => writable(0))"), "{out}");
     assert!(out.contains("$$hmr().keep_object(\"ctx\", () => createContext())"), "{out}");
     assert!(out.contains("$n.hmr_module(import.meta.hot, \""), "{out}");

@@ -334,7 +334,7 @@ impl<'c, 'r, 'a> Rw<'c, 'r, 'a> {
     fn key_declaration(&mut self, name: &str, rune: &str, is_state: bool, s: Span, init: &str) {
         self.cx.keyed.borrow_mut().push(format!("{rune}:{name}:{}", super::normalize_initializer(init)));
         let read = if is_state { format!("$.get({name})") } else { name.to_string() };
-        self.edits.wrap(s.start, s.end, format!("{}({}, () => ", self.cx.keep_callee.get(), self.label(name)), format!(", () => {read})"));
+        self.edits.wrap(s.start, s.end, format!("{}({}, () => (", self.cx.keep_callee.get(), self.label(name)), format!("), () => {read})"));
     }
 
     fn create_state_declarator(&self, name: &str, value: String, rune: &str, is_state: bool) -> String {
