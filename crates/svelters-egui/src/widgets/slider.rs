@@ -401,9 +401,11 @@ impl Widget for Slider {
         if let Some(v) = input
             && v != self.value
         {
-            cx.set(&mut self.value, v);
-            cx.dispatch(&self.changed, v);
-            cx.dispatch(&self.input, v);
+            // EV1: a Rust filter may prevent the write (the default action of `changed`)
+            if !cx.dispatch(&self.changed, v).prevented() {
+                cx.set(&mut self.value, v);
+                cx.dispatch(&self.input, v);
+            }
         }
         if let Some(v) = commit {
             cx.dispatch(&self.commit, v);

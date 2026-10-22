@@ -2035,6 +2035,78 @@
       "paint": "box",
       "present": null,
       "props": {
+        "accelerated": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Holding a step button speeds it up (Qt `accelerated`).",
+          "js": "accelerated",
+          "native": "accelerated",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:accelerated",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "buttons": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Shows the `dec`/`inc` step buttons at the right end (Qt `buttonSymbols`).",
+          "js": "buttons",
+          "native": "buttons",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:buttons",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "commit": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Commit-only mode (Qt `keyboardTracking=false`): `value` moves only at a commit point.",
+          "js": "commit",
+          "native": "commit",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:commit",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "correction": {
+          "construct_only": false,
+          "default": "nearest",
+          "doc": "An out-of-range typed value commits to the `nearest` bound (default) or the `previous` value.",
+          "js": "correction",
+          "native": "correction",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:correction",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "nearest",
+            "previous"
+          ],
+          "writable": true
+        },
         "decimals": {
           "construct_only": false,
           "default": null,
@@ -2050,6 +2122,40 @@
           },
           "readable": true,
           "type": "i64",
+          "writable": true
+        },
+        "formatter": {
+          "construct_only": false,
+          "default": "",
+          "doc": "A registered formatter (`numfmt::register_formatter`; Qt `textFromValue`).",
+          "js": "formatter",
+          "native": "formatter",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:formatter",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "group-separator": {
+          "construct_only": false,
+          "default": true,
+          "doc": "The locale's group separators (Qt `showGroupSeparator`).",
+          "js": "group-separator",
+          "native": "group-separator",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:group-separator",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         },
         "max": {
@@ -2086,6 +2192,40 @@
           "type": "f64",
           "writable": true
         },
+        "page-step": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "PageUp/PageDown in value units; 0 for ten steps.",
+          "js": "page-step",
+          "native": "page-step",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:page-step",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "parser": {
+          "construct_only": false,
+          "default": "",
+          "doc": "A registered parser (`numfmt::register_parser`; Qt `valueFromText`).",
+          "js": "parser",
+          "native": "parser",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:parser",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "prefix": {
           "construct_only": false,
           "default": "",
@@ -2096,6 +2236,40 @@
           "observe": {
             "class": "set_only",
             "fact": "egui:DragValue:prefix",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "read-only": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Shown and focusable, not changed by the user (Qt `readOnly`).",
+          "js": "read-only",
+          "native": "read-only",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:read-only",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "special-value-text": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Shown instead of the number at `min` (Qt `specialValueText`, e.g. \"Auto\").",
+          "js": "special-value-text",
+          "native": "special-value-text",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:special-value-text",
             "mechanism": "scene",
             "verified": "weak"
           },
@@ -2118,6 +2292,44 @@
           },
           "readable": true,
           "type": "f64",
+          "writable": true
+        },
+        "step": {
+          "construct_only": false,
+          "default": 1.0,
+          "doc": "One step (Up/Down, a step button, a wheel notch; Qt `singleStep`).",
+          "js": "step",
+          "native": "step",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:step",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "step-type": {
+          "construct_only": false,
+          "default": "default",
+          "doc": "`default`, or `adaptive` (Qt AdaptiveDecimalStepType: one decade below the value).",
+          "js": "step-type",
+          "native": "step-type",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:step-type",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "default",
+            "adaptive"
+          ],
           "writable": true
         },
         "suffix": {
@@ -2152,6 +2364,45 @@
           },
           "readable": true,
           "type": "f64",
+          "writable": true
+        },
+        "wheel": {
+          "construct_only": false,
+          "default": "focused",
+          "doc": "When the wheel steps: `focused` (default: over the field while it has focus), `hover`, `off`.",
+          "js": "wheel",
+          "native": "wheel",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:wheel",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "focused",
+            "hover",
+            "off"
+          ],
+          "writable": true
+        },
+        "wrap": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Stepping past one end goes to the other (Qt `wrapping`).",
+          "js": "wrap",
+          "native": "wrap",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:wrap",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         }
       },
@@ -2209,6 +2460,38 @@
           "handler_result": "none",
           "js_event": "drag-stopped",
           "name": "drag-stopped",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "input": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "§2.4's live signal (as `changed`).",
+          "handler_result": "none",
+          "js_event": "input",
+          "name": "input",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "submit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Enter in the field; carries the value.",
+          "handler_result": "none",
+          "js_event": "submit",
+          "name": "submit",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -5271,6 +5554,23 @@
       "paint": "box",
       "present": null,
       "props": {
+        "commit": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Commit-only mode: `low`/`high` move at the release.",
+          "js": "commit",
+          "native": "commit",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:commit",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "high": {
           "construct_only": false,
           "default": 100.0,
@@ -5286,6 +5586,23 @@
           },
           "readable": true,
           "type": "f64",
+          "writable": true
+        },
+        "inverted": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Max at the start.",
+          "js": "inverted",
+          "native": "inverted",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:inverted",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         },
         "low": {
@@ -5339,6 +5656,65 @@
           "type": "f64",
           "writable": true
         },
+        "orientation": {
+          "construct_only": false,
+          "default": "horizontal",
+          "doc": "`horizontal` (default) or `vertical`.",
+          "js": "orientation",
+          "native": "orientation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:orientation",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ],
+          "writable": true
+        },
+        "page-step": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "PageUp/PageDown; 0 for ten steps.",
+          "js": "page-step",
+          "native": "page-step",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:page-step",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "scale": {
+          "construct_only": false,
+          "default": "linear",
+          "doc": "`linear` (default) or `log`.",
+          "js": "scale",
+          "native": "scale",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:scale",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "linear",
+            "log"
+          ],
+          "writable": true
+        },
         "show-value": {
           "construct_only": false,
           "default": true,
@@ -5389,6 +5765,68 @@
           "readable": true,
           "type": "string",
           "writable": true
+        },
+        "tick-interval": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Between ticks; 0 for `page-step`.",
+          "js": "tick-interval",
+          "native": "tick-interval",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:tick-interval",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "ticks": {
+          "construct_only": false,
+          "default": "none",
+          "doc": "Tick marks: `none`, `before`, `after`, `both`.",
+          "js": "ticks",
+          "native": "ticks",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:ticks",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "before",
+            "after",
+            "both"
+          ],
+          "writable": true
+        },
+        "wheel": {
+          "construct_only": false,
+          "default": "focused",
+          "doc": "When the wheel steps: `focused` (default), `hover`, `off`.",
+          "js": "wheel",
+          "native": "wheel",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:wheel",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "focused",
+            "hover",
+            "off"
+          ],
+          "writable": true
         }
       },
       "provenance": {
@@ -5415,6 +5853,17 @@
           "sync": false,
           "sync_required": false
         },
+        "commit": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "drag-started": {
           "args": [],
           "disconnect_on_drop": true,
@@ -5433,6 +5882,17 @@
           "handler_result": "none",
           "js_event": "drag-stopped",
           "name": "drag-stopped",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "input": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "",
+          "handler_result": "none",
+          "js_event": "input",
+          "name": "input",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -6000,6 +6460,10 @@
       "abstract": false,
       "bindings": {
         "value": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
           "compare_before_set": true,
           "direction": "two_way",
           "echo": "none",
@@ -6035,6 +6499,57 @@
       "paint": "stock",
       "present": null,
       "props": {
+        "commit": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Commit-only mode (Qt `tracking=false`): `value` moves at the release, not while dragging.",
+          "js": "commit",
+          "native": "commit",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:commit",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "inverted": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Max at the start (Qt `invertedAppearance`).",
+          "js": "inverted",
+          "native": "inverted",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:inverted",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "marks": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Marks on the rail, drawn as ticks (with labels) instead of the `tick-interval` ticks:\nvalues separated by commas, each optionally `value:label` (`\"0:Low, 50, 100:High\"`).",
+          "js": "marks",
+          "native": "marks",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:marks",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "max": {
           "construct_only": false,
           "default": 100.0,
@@ -6069,6 +6584,65 @@
           "type": "f64",
           "writable": true
         },
+        "orientation": {
+          "construct_only": false,
+          "default": "horizontal",
+          "doc": "`horizontal` (default) or `vertical` (max at the top).",
+          "js": "orientation",
+          "native": "orientation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:orientation",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ],
+          "writable": true
+        },
+        "page-step": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "PageUp/PageDown and `track-click=\"page\"` move this much (Qt `pageStep`); 0 for ten steps.",
+          "js": "page-step",
+          "native": "page-step",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:page-step",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "scale": {
+          "construct_only": false,
+          "default": "linear",
+          "doc": "`linear` (default) or `log` (both ends > 0).",
+          "js": "scale",
+          "native": "scale",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:scale",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "linear",
+            "log"
+          ],
+          "writable": true
+        },
         "show-value": {
           "construct_only": false,
           "default": true,
@@ -6079,6 +6653,23 @@
           "observe": {
             "class": "set_only",
             "fact": "egui:Slider:show-value",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "snap-to-marks": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Dragging snaps to the nearest mark.",
+          "js": "snap-to-marks",
+          "native": "snap-to-marks",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:snap-to-marks",
             "mechanism": "scene",
             "verified": "weak"
           },
@@ -6120,6 +6711,67 @@
           "type": "string",
           "writable": true
         },
+        "tick-interval": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Between ticks; 0 for `page-step` (Qt `tickInterval`).",
+          "js": "tick-interval",
+          "native": "tick-interval",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:tick-interval",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "ticks": {
+          "construct_only": false,
+          "default": "none",
+          "doc": "Tick marks: `none` (default), `before` (above or left), `after`, `both` (Qt `tickPosition`).",
+          "js": "ticks",
+          "native": "ticks",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:ticks",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "before",
+            "after",
+            "both"
+          ],
+          "writable": true
+        },
+        "track-click": {
+          "construct_only": false,
+          "default": "jump",
+          "doc": "A press on the track off the thumb: `jump` there (default) or `page` toward it.",
+          "js": "track-click",
+          "native": "track-click",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:track-click",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "jump",
+            "page"
+          ],
+          "writable": true
+        },
         "value": {
           "construct_only": false,
           "default": 0.0,
@@ -6135,6 +6787,28 @@
           },
           "readable": true,
           "type": "f64",
+          "writable": true
+        },
+        "wheel": {
+          "construct_only": false,
+          "default": "focused",
+          "doc": "When the wheel steps: `focused` (default), `hover`, `off`.",
+          "js": "wheel",
+          "native": "wheel",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:wheel",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "focused",
+            "hover",
+            "off"
+          ],
           "writable": true
         }
       },
@@ -6158,6 +6832,22 @@
           "sync": false,
           "sync_required": false
         },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "drag-started": {
           "args": [],
           "disconnect_on_drop": true,
@@ -6176,6 +6866,38 @@
           "handler_result": "none",
           "js_event": "drag-stopped",
           "name": "drag-stopped",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "input": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "",
+          "handler_result": "none",
+          "js_event": "input",
+          "name": "input",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "submit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "",
+          "handler_result": "none",
+          "js_event": "submit",
+          "name": "submit",
           "phases": [],
           "sync": false,
           "sync_required": false

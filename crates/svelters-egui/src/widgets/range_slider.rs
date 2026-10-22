@@ -369,14 +369,14 @@ impl Widget for RangeSlider {
         if started {
             cx.dispatch(&self.drag_started, ());
         }
-        if (l, h) != before {
+        if (l, h) != before && !cx.dispatch(&self.changed, vec![l, h]).prevented() {
+            // EV1: a Rust filter may prevent the write (the default action of `changed`)
             if l != self.low {
                 cx.set(&mut self.low, l);
             }
             if h != self.high {
                 cx.set(&mut self.high, h);
             }
-            cx.dispatch(&self.changed, vec![l, h]);
             cx.dispatch(&self.input, ());
         }
         if commit {

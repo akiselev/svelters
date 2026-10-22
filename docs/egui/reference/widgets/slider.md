@@ -30,12 +30,23 @@ A horizontal slider with an optional value box.
 <!-- BEGIN GENERATED: props of kinds.Slider (tools/docs/egui/gen_reference.py). Do not edit. -->
 | Prop | Type | Default | `bind:` | Description |
 |---|---|---|---|---|
+| `commit` | `boolean` | `false` | no | Commit-only mode (Qt `tracking=false`): `value` moves at the release, not while dragging. |
+| `inverted` | `boolean` | `false` | no | Max at the start (Qt `invertedAppearance`). |
+| `marks` | `string` | `""` | no | Marks on the rail, drawn as ticks (with labels) instead of the `tick-interval` ticks: values separated by commas, each optionally `value:label` (`"0:Low, 50, 100:High"`). |
 | `max` | `number` | `100` | no | Upper bound. |
 | `min` | `number` | `0` | no | Lower bound. |
+| `orientation` | `'horizontal' \| 'vertical'` | `"horizontal"` | no | `horizontal` (default) or `vertical` (max at the top). |
+| `page-step` | `number` | `0` | no | PageUp/PageDown and `track-click="page"` move this much (Qt `pageStep`); 0 for ten steps. |
+| `scale` | `'linear' \| 'log'` | `"linear"` | no | `linear` (default) or `log` (both ends > 0). |
 | `show-value` | `boolean` | `true` | no | Shows the value box next to the slider. |
+| `snap-to-marks` | `boolean` | `false` | no | Dragging snaps to the nearest mark. |
 | `step` | `number` | `0` | no | Value granularity; 0 for continuous. |
 | `text` | `string` | `""` | no | Caption after the slider. |
+| `tick-interval` | `number` | `0` | no | Between ticks; 0 for `page-step` (Qt `tickInterval`). |
+| `ticks` | `'none' \| 'before' \| 'after' \| 'both'` | `"none"` | no | Tick marks: `none` (default), `before` (above or left), `after`, `both` (Qt `tickPosition`). |
+| `track-click` | `'jump' \| 'page'` | `"jump"` | no | A press on the track off the thumb: `jump` there (default) or `page` toward it. |
 | `value` | `number` | `0` | **yes**, on `changed` | The value; dragging or the arrow keys change it. |
+| `wheel` | `'focused' \| 'hover' \| 'off'` | `"focused"` | no | When the wheel steps: `focused` (default), `hover`, `off`. |
 
 Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessible-name`, `align-self`, `anchor`, `autofocus`, `bottom`, `drag-data`, `drag-type`, `drop-types`, `enabled`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `invalid`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `tooltip`, `top`, `visible`, `width`.
 <!-- END GENERATED -->
@@ -46,12 +57,15 @@ Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessib
 | Attribute | Handler | When |
 |---|---|---|
 | `onchanged` | `(value: number) => void` | The user moved it; carries the new value. |
+| `oncommit` | `(value: number) => void` |  |
 | `ondrag-started` | `() => void` | A drag on the slider began. |
 | `ondrag-stopped` | `() => void` | A drag on the slider ended. |
+| `oninput` | `(value: number) => void` |  |
+| `onsubmit` | `(value: number) => void` |  |
 
 `on:changed` works too, and a bare `on:<event>` on a component forwards the component's `on<event>` prop.
 
-Plus the events of [`Widget`](widget.md#events): `onanimationend`, `ondrag-begin`, `ondrag-end`, `ondrag-enter`, `ondrag-leave`, `ondrop`.
+Plus the events of [`Widget`](widget.md#events): `onanimationend`, `onclick`, `oncontextmenu`, `ondblclick`, `ondrag-begin`, `ondrag-end`, `ondrag-enter`, `ondrag-leave`, `ondrop`, `onfocusin`, `onfocusout`, `onkeydown`, `onkeyup`, `onpointerdown`, `onpointerup`, `onwheel`.
 <!-- END GENERATED -->
 
 ## Methods
