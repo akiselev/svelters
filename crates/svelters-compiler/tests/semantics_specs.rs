@@ -186,6 +186,7 @@ fn bind_text_on_entry() {
                 read_back: false,
                 natively_normalizes: false,
                 sync_signals_on_set: sync,
+                commit: None,
             },
             "{}",
             b.backend()

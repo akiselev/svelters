@@ -16,7 +16,7 @@ pub mod types;
 
 pub use backend::SpecBackend;
 pub use kinds::kinds_module;
-pub use observe::{BindLowering, BindPlan, Observability, plan_bind};
+pub use observe::{BindLowering, BindPlan, Observability, plan_bind, plan_bind_commit};
 pub use overlay::Overlay;
 pub use types::{TypeProp, TypeRef, TypeTable};
 pub use spec::{
@@ -52,6 +52,10 @@ pub mod codes {
     pub const BIND_PARTIALLY_OBSERVED: &str = "bind_partially_observed";
     pub const NATIVE_READ_NOT_OBSERVABLE: &str = "native_read_not_observable";
     pub const BIND_MODIFIER_INVALID: &str = "bind_modifier_invalid";
+    // CX3: `bind:x|commit` where the kind declares no commit event for `x`
+    pub const BIND_COMMIT_UNSUPPORTED: &str = "bind_commit_unsupported";
+    // CX3: `bind:x={f(...)}` where `f` is not a declared draft bind source (or a bad call shape)
+    pub const BIND_SOURCE_INVALID: &str = "bind_source_invalid";
     pub const NONREACTIVE_REDUNDANT: &str = "nonreactive_redundant";
     pub const OBSERVABILITY_DIFFERS: &str = "observability_differs";
     // OV1: `bind:` on an `exact` prop whose fact no generated row has seen deliver a native change
@@ -193,6 +197,8 @@ pub struct BindingPlan {
     pub read_back: bool,
     pub natively_normalizes: bool,
     pub sync_signals_on_set: Vec<String>,
+    /// CX3: the commit event and its value argument (`bind:x|commit`), if the kind has one.
+    pub commit: Option<(String, usize)>,
 }
 
 impl BindingPlan {
@@ -375,10 +381,15 @@ pub trait PlatformSemantics {
     }
     /// Directive modifiers `bind:` accepts on native elements of this platform.
     fn bind_modifiers(&self) -> &[&'static str] {
-        &["nonreactive"]
+        &["nonreactive", "commit"]
     }
     /// A non-GUI class exported by a `svelters:<tk>/<ns>` module (`TextBuffer` of `svelters:gtk/gtk`).
     fn native_type(&self, _module: &str, _export: &str) -> Option<TypeRef> {
+        None
+    }
+    /// CX3: the bind source (lowering table row) for an import of `export` from `module` with this
+    /// lowering, if the spec declares one.
+    fn bind_source(&self, _module: &str, _export: &str, _lowering: spec::BindSourceLowering) -> Option<&spec::BindSourceSpec> {
         None
     }
     /// A property of a non-GUI class by its JS getter name (`cursorPosition`), with its observability.

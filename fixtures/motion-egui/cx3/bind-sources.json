@@ -1,0 +1,14 @@
+{
+  "schema": "svelters-semantics/v0",
+  "backend": "egui",
+  "bind_sources": [
+    {
+      "module": "#drafts",
+      "export": "slot",
+      "lowering": "draft",
+      "get": "draftValue",
+      "set": "setDraft",
+      "doc": "A command-draft slot by path (a JS stand-in for cadatomic's task drafts)."
+    }
+  ]
+}
