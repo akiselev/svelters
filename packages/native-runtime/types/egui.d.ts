@@ -71,6 +71,8 @@ export interface EguiWidgetProps {
   right?: number | null;
   /** Inset from the containing block's bottom edge in points; null for auto. */
   bottom?: number | null;
+  /** A native animation (TR2) finished; carries its id. The runtime listens to it itself. */
+  onanimationend?: (id: number) => void;
 }
 
 /** The built-in egui elements, by tag. */

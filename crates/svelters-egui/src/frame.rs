@@ -232,6 +232,7 @@ impl EguiBackend {
         self.flush_announcements();
         // ARCH-SCENE §7.2 step 7 (CS5e): restyle what this logic's changes reach.
         self.restyle_pending(ctx);
+        self.animate_step(ctx);
         // Remeasure leaves whose text changed, per root; only a size change queues a relayout.
         let mut scene = self.0.scene.borrow_mut();
         let roots: Vec<_> = scene.roots.iter().filter(|(_, e)| !e.dirty.remeasure.is_empty()).map(|(r, _)| r).collect();
@@ -239,6 +240,71 @@ impl EguiBackend {
             let m = layout::Metrics::new(ctx);
             for r in roots {
                 layout::remeasure(&mut scene, &m, r);
+            }
+        }
+    }
+
+    /// TR2: samples the native animations at egui's time (kittest's virtual clock in tests), applies
+    /// the composed visuals, and reports each finished animation with `animationend` (the
+    /// `outro_done` of an exiting node) when the runtime listens to it. Runs no JS: the event is
+    /// queued and the next checkpoint delivers it.
+    fn animate_step(&self, ctx: &egui::Context) {
+        if self.0.anim.borrow().is_empty() {
+            return;
+        }
+        let step = self.0.anim.borrow_mut().step(ctx.input(|i| i.time));
+        let mut events = Vec::new();
+        {
+            let mut scene = self.0.scene.borrow_mut();
+            for (h, v) in step.visuals {
+                match scene.live(h) {
+                    Ok(id) => {
+                        scene.set_visual(id, v);
+                    }
+                    Err(_) => self.0.anim.borrow_mut().forget(h),
+                }
+            }
+            for (h, aid) in step.done {
+                let Ok(id) = scene.live(h) else { continue };
+                let i = scene.ix(id);
+                let sig = kinds::signal_id(scene.core[i].kind as usize, "animationend");
+                if sig != 0 && scene.listens(i, sig) {
+                    events.push((h, sig, aid));
+                }
+            }
+        }
+        if let Some(host) = self.host() {
+            for (h, sig, aid) in events {
+                self.bump(|s| s.events += 1);
+                host.post_event(h, sig, &[Value::I64(aid as i64)]);
+                self.0.checkpoint_pending.set(true);
+            }
+        }
+    }
+
+    /// SV37: the viewports of the roots with a running animation are asked for the next frame, and
+    /// the logic viewport (which steps the animator); no other viewport is woken.
+    fn animate_demand(&self, ctx: &egui::Context) {
+        let roots: Vec<RootIx> = {
+            let scene = self.0.scene.borrow();
+            let anim = self.0.anim.borrow();
+            let mut v: Vec<RootIx> = Vec::new();
+            for r in anim.running().filter_map(|h| scene.live(h).ok().map(|id| scene.core[scene.ix(id)].root)) {
+                if !v.contains(&r) {
+                    v.push(r);
+                }
+            }
+            v
+        };
+        if roots.is_empty() {
+            return;
+        }
+        ctx.request_repaint_of(self.logic_vp());
+        for r in roots {
+            if !r.is_detached()
+                && let Some(vp) = self.viewport_of(r)
+            {
+                ctx.request_repaint_of(vp);
             }
         }
     }
@@ -312,6 +378,7 @@ impl EguiBackend {
         if !self.0.close_requests.borrow().is_empty() || !self.0.closes.borrow().is_empty() {
             ctx.request_repaint_of(egui::ViewportId::ROOT);
         }
+        self.animate_demand(ctx);
         // CS5e: a walk-time restyle that shows next frame (an ancestor, a layout change)
         if std::mem::take(&mut self.0.scene.borrow_mut().style.repaint) {
             ctx.request_repaint_of(vp);

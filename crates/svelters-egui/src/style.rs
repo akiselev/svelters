@@ -1135,6 +1135,11 @@ impl EguiBackend {
                 }
                 return Ok(0);
             }
+            // TR2: answers 1 = the runtime hands this backend the animation (any other answer: it plays it)
+            SVL_STYLE_ANIMATE => {
+                self.animate_op(h, text)?;
+                return Ok(1);
+            }
             SVL_STYLE_SHEET => {
                 let mut s = self.0.scene.borrow_mut();
                 match text {

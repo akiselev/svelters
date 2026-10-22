@@ -129,7 +129,7 @@ impl<'a> SceneRef<'a> {
         let mut out: Vec<Target> = Vec::new();
         for e in cands {
             let Some(i) = s.idx(e.node) else { continue };
-            if s.core[i].root != e.root || !self.live_in(e.root, viewport) || hit_transparent(s, i) {
+            if s.core[i].root != e.root || !self.live_in(e.root, viewport) || hit_transparent(s, i) || exiting(s, i) {
                 continue;
             }
             let t = match ask_provider(s, i, e, pos) {
@@ -168,6 +168,18 @@ fn hit_transparent(s: &Scene, i: usize) -> bool {
     let mut x = Some(i);
     while let Some(k) = x {
         if s.core[k].flags.contains(NodeFlags::HIT_TRANSPARENT) {
+            return true;
+        }
+        x = s.core[k].parent.and_then(|p| s.idx(p));
+    }
+    false
+}
+
+/// TR2: node `i` or an ancestor is inert, i.e. an exiting node (its outro runs): not pickable.
+fn exiting(s: &Scene, i: usize) -> bool {
+    let mut x = Some(i);
+    while let Some(k) = x {
+        if s.core[k].flags.contains(NodeFlags::HAS_VISUAL) && s.vis(k).inert {
             return true;
         }
         x = s.core[k].parent.and_then(|p| s.idx(p));

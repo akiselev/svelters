@@ -93,6 +93,8 @@ static SLIDER_PROPS: &[PropDef] = &[
 
 pub(super) const NONE: &[(&str, Ty)] = &[];
 
+static WIDGET_SIGNALS: &[SignalDef] = &[signal("animationend", &[("id", Ty::I64)], "A native animation (TR2) finished; carries its id. The runtime listens to it itself.")];
+
 static CLICK_SIGNALS: &[SignalDef] = &[signal("clicked", NONE, "Pressed and released (`Response::clicked`).")];
 
 static BUTTON_SIGNALS: &[SignalDef] = &[
@@ -131,7 +133,7 @@ pub static KINDS: &[KindDef] = &[
         text_content: None,
         present: None,
         props: WIDGET_PROPS,
-        signals: &[],
+        signals: WIDGET_SIGNALS,
         methods: &[],
         doc: "Common properties of everything placed in a window: state, tooltip, accessibility and its taffy item style.",
     },
