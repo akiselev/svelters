@@ -90,6 +90,8 @@ struct St {
     failures: Vec<String>,
     dump: Option<Json>,
     dump_all: Option<Json>,
+    /// The root tree (plus other toplevels) at each `checkpoint` step, once settled (TK1).
+    checkpoint_dumps: Vec<Json>,
     step_log: Vec<Json>,
     started: Instant,
     closed_at: Option<Instant>,
@@ -109,6 +111,9 @@ pub struct DriverReport {
     pub dump: Option<Json>,
     /// The root tree followed by every other live toplevel (transient dialogs, secondary windows).
     pub dump_all: Option<Json>,
+    /// The tree at each `checkpoint` step of the script, settled (`dump_all`'s shape); TK1 checks
+    /// its expectations on them.
+    pub checkpoint_dumps: Vec<Json>,
     pub steps: Vec<Json>,
 }
 
@@ -128,6 +133,7 @@ impl Driver {
                 failures: Vec::new(),
                 dump: None,
                 dump_all: None,
+                checkpoint_dumps: Vec::new(),
                 step_log: Vec::new(),
                 started: Instant::now(),
                 closed_at: None,
@@ -148,6 +154,7 @@ impl Driver {
             failures: std::mem::take(&mut st.failures),
             dump: st.dump.take(),
             dump_all: st.dump_all.take(),
+            checkpoint_dumps: std::mem::take(&mut st.checkpoint_dumps),
             steps: std::mem::take(&mut st.step_log),
         }
     }
@@ -207,23 +214,34 @@ impl Driver {
             None => {
                 self.st.borrow_mut().phase = Phase::Painting;
                 let dump = self.tk.dump(ROOT);
-                // Other live toplevels (dialogs, secondary windows) follow the root window's tree.
-                let mut all = dump.clone();
-                for t in self.host.toplevel_handles().into_iter().filter(|t| *t != ROOT) {
-                    if let (Json::Array(all), Json::Array(more)) = (&mut all, self.tk.dump(t)) {
-                        all.extend(more);
-                    }
-                }
+                let all = self.dump_all(dump.clone());
                 let mut st = self.st.borrow_mut();
                 st.dump = Some(dump);
                 st.dump_all = Some(all);
                 self.schedule(PAINT_MS);
             }
             Some(step) => {
+                // the host is settled here: the state a checkpoint step stands for
+                if step == Step::Checkpoint {
+                    let all = self.dump_all(self.tk.dump(ROOT));
+                    self.st.borrow_mut().checkpoint_dumps.push(all);
+                }
                 self.perform(step);
                 self.schedule(POLL_MS);
             }
         }
+    }
+
+    /// `dump` (the root window's tree) followed by the trees of the other live toplevels (dialogs,
+    /// secondary windows).
+    fn dump_all(&self, dump: Json) -> Json {
+        let mut all = dump;
+        for t in self.host.toplevel_handles().into_iter().filter(|t| *t != ROOT) {
+            if let (Json::Array(all), Json::Array(more)) = (&mut all, self.tk.dump(t)) {
+                all.extend(more);
+            }
+        }
+        all
     }
 
     fn perform(&self, step: Step) {

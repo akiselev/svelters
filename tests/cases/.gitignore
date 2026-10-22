@@ -1,0 +1,4 @@
+# kittest writes these next to a snapshot it compared (new rendering, diff, backup)
+snapshots/*.new.png
+snapshots/*.diff.png
+snapshots/*.old.png
