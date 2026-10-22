@@ -33,6 +33,13 @@ Decisions already made by the user (2026-10-21):
 - egui stays at 0.37 and is upgraded together with cadatomic. The Svelte UI sources live in
   cadatomic. SC1 (one real cadatomic panel rendered by Svelte inside the running app) comes first.
 
+Decided by the user (2026-10-22): **leave room for extension security policies, build none now.**
+cadatomic may later serve high-security fields (aerospace) where extensions get deny-by-default,
+audited grants, but "right now we're developing": no enforcement, policy, audit or signing work,
+and security must not slow development. APIs only leave room: `#[non_exhaustive]` types and a
+principal id where ARCH-SECURITY §5 shows it is cheap now and breaking later. ARCH-SECURITY.md
+(SEC1–SEC4, SEC-O, SEC-C) is deferred until cadatomic loads its first third-party extension.
+
 ## Machines and sessions
 
 Rust builds are the bottleneck, so work is spread over three machines. Every machine runs several
