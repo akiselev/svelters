@@ -132,6 +132,25 @@ pub(crate) struct SceneStyle {
     pub(crate) repaint: bool,
 }
 
+impl SceneStyle {
+    /// SG6: heap bytes of the per-node data (`SceneStats::bytes_by`): the entries, their class
+    /// lists and the computed styles they own alone (a shared `Arc` counts once per owner's share).
+    pub(crate) fn bytes(&self) -> usize {
+        use std::mem::size_of;
+        let mut b = self.nodes.capacity() * size_of::<NodeStyle>() + self.dirty.capacity() * size_of::<NodeId>();
+        for n in &self.nodes {
+            b += n.classes.capacity() * size_of::<Atom>();
+            if let Some(c) = &n.computed {
+                b += size_of::<ComputedStyle>() / Arc::strong_count(c);
+            }
+            if let Some(s) = &n.states {
+                b += (3 * size_of::<ComputedStyle>()) / Arc::strong_count(s);
+            }
+        }
+        b
+    }
+}
+
 impl Default for SceneStyle {
     fn default() -> Self {
         SceneStyle {
@@ -403,8 +422,8 @@ impl Scene {
         ns.states = states;
         self.core[i].dirty.insert(Dirty::PAINT);
         let t = layout_style(self, i);
-        if t != self.layout[i].style {
-            self.layout[i].style = t;
+        if t != *self.layout[i].style {
+            self.layout[i].style = self.intern_style(t);
             self.invalidate_style(id);
             self.style.repaint = true;
         }

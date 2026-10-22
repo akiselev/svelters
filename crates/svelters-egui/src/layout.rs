@@ -488,7 +488,7 @@ impl LayoutPartialTree for Tree<'_> {
         crate::style::resolve_calc(val, basis)
     }
     fn set_unrounded_layout(&mut self, id: NodeId, layout: &Layout) {
-        self.s.layout[ix(id)].unrounded = *layout;
+        self.s.layout[ix(id)].unrounded = crate::scene::compact::BoxRect::of(layout);
     }
     fn compute_child_layout(&mut self, id: NodeId, inputs: LayoutInput) -> LayoutOutput {
         // Hidden: `display: none`, or inside a hidden ancestor (taffy passes HIDDEN to children).
@@ -543,7 +543,7 @@ impl LayoutPartialTree for Tree<'_> {
                 fonts += 1;
                 m.intrinsic(w)
             });
-            let out = compute_leaf_layout(inputs, &lb.style, |_, _| 0.0, |known, avail| {
+            let out = compute_leaf_layout(inputs, &*lb.style, |_, _| 0.0, |known, avail| {
                 if let Size { width: Some(w), height: Some(hh) } = known {
                     return Size { width: w, height: hh };
                 }
@@ -576,7 +576,7 @@ impl LayoutPartialTree for Tree<'_> {
 fn vlist_layout(tree: &mut Tree<'_>, id: NodeId, inputs: LayoutInput) -> LayoutOutput {
     use crate::kinds::virtuallist;
     let i = ix(id);
-    let out = compute_leaf_layout(inputs, &tree.s.layout[i].style, |_, _| 0.0, |known, _| Size { width: known.width.unwrap_or(0.0), height: known.height.unwrap_or(0.0) });
+    let out = compute_leaf_layout(inputs, &*tree.s.layout[i].style, |_, _| 0.0, |known, _| Size { width: known.width.unwrap_or(0.0), height: known.height.unwrap_or(0.0) });
     if inputs.run_mode != RunMode::PerformLayout {
         return out;
     }
@@ -637,14 +637,19 @@ impl Tree<'_> {
         };
         let pad = self.s.common(i).padding as f32;
         let indent = m.style.spacing.indent;
+        let (top, left) = (LengthPercentage::length(head.y + pad), LengthPercentage::length(indent + pad));
         let st = &mut self.s.layout[i].style;
-        st.padding.top = LengthPercentage::length(head.y + pad);
-        st.padding.left = LengthPercentage::length(indent + pad);
+        if st.padding.top != top || st.padding.left != left {
+            // SG6: the header's own padding (unshares the interned style once)
+            let st = std::sync::Arc::make_mut(st);
+            st.padding.top = top;
+            st.padding.left = left;
+        }
         if open {
             return compute_flexbox_layout(self, id, inputs);
         }
         self.leaf_layouts += 1;
-        let out = compute_leaf_layout(inputs, &self.s.layout[i].style, |_, _| 0.0, |known, _| Size {
+        let out = compute_leaf_layout(inputs, &*self.s.layout[i].style, |_, _| 0.0, |known, _| Size {
             width: known.width.unwrap_or((head.x - indent).max(0.0).ceil()),
             height: known.height.unwrap_or(0.0),
         });
@@ -698,12 +703,21 @@ impl taffy::LayoutContainingBlock for Tree<'_> {
     }
 }
 
+/// SG6: true gives built-in leaves a layout cache too (the "before" of the milestone's layout
+/// benchmark).
+const CACHE_LEAVES: bool = false;
+
 impl CacheTree for Tree<'_> {
     fn cache_get(&mut self, id: NodeId, inputs: &LayoutInput) -> Option<LayoutOutput> {
         self.s.layout[ix(id)].cache.get(inputs)
     }
     fn cache_store(&mut self, id: NodeId, inputs: &LayoutInput, out: LayoutOutput) {
-        self.s.layout[ix(id)].cache.store(inputs, out)
+        // SG6: only nodes whose layout is not a built-in leaf's cheap rerun keep a cache
+        let i = ix(id);
+        let cached = !self.s.children[i].is_empty() || !matches!(&self.s.payload[i], Payload::Builtin(w) if !w.is_container() && !matches!(w, W::Ext(_)));
+        if cached || CACHE_LEAVES {
+            self.s.layout[i].cache.store(inputs, out)
+        }
     }
     fn cache_clear(&mut self, id: NodeId) {
         self.s.layout[ix(id)].cache.clear();
@@ -729,10 +743,10 @@ impl taffy::LayoutFlexboxContainer for Tree<'_> {
 
 impl taffy::RoundTree for Tree<'_> {
     fn get_unrounded_layout(&self, id: NodeId) -> Layout {
-        self.s.layout[ix(id)].unrounded
+        self.s.layout[ix(id)].unrounded.to_layout()
     }
     fn set_final_layout(&mut self, id: NodeId, layout: &Layout) {
-        self.s.layout[ix(id)].layout = *layout;
+        self.s.layout[ix(id)].layout = crate::scene::compact::BoxRect::of(layout);
     }
     fn is_out_of_flow(&self, id: NodeId) -> bool {
         out_of_flow(self.s, ix(id))
@@ -762,7 +776,11 @@ impl Tree<'_> {
     /// The whole tree under `top` for a content area of `size` (the top is definite: EGUI.md §1.3,
     /// an `auto` root re-lays out every row).
     fn whole(&mut self, top: SceneId, size: Vec2) {
-        self.s.layout[top.index() as usize].style.size = Size { width: Dimension::length(size.x), height: Dimension::length(size.y) };
+        let want = Size { width: Dimension::length(size.x), height: Dimension::length(size.y) };
+        let st = &mut self.s.layout[top.index() as usize].style;
+        if st.size != want {
+            std::sync::Arc::make_mut(st).size = want; // SG6: a root's own style (one per root)
+        }
         let id = tid(top);
         compute_root_layout(self, id, Size { width: AvailableSpace::Definite(size.x), height: AvailableSpace::Definite(size.y) });
         round_layout(self, id);
@@ -995,7 +1013,7 @@ impl LayoutCx<'_> {
         let mut l = Layout::with_order(order);
         l.size = out.size;
         l.location = taffy::Point { x: at.x, y: at.y };
-        self.s.layout[child.index() as usize].unrounded = l;
+        self.s.layout[child.index() as usize].unrounded = crate::scene::compact::BoxRect::of(&l);
     }
     /// What the node would get without the cap: flexbox over its children from its style.
     pub fn default_layout(&mut self, inputs: LayoutInput) -> LayoutOutput {
@@ -1149,8 +1167,8 @@ pub(crate) fn layout_overlay(s: &mut Scene, m: &Metrics, top: SceneId, size: [Op
             stack.extend(s.children[k].iter().map(|c| c.index() as usize));
         }
     }
-    let saved = (s.layout[i].style.display, s.layout[i].style.size);
-    let st = &mut s.layout[i].style;
+    let saved = s.layout[i].style.clone();
+    let st = std::sync::Arc::make_mut(&mut s.layout[i].style); // SG6: a copy for this run only
     st.display = Display::Flex;
     if let Some(w) = size[0] {
         st.size.width = Dimension::length(w);
@@ -1162,7 +1180,7 @@ pub(crate) fn layout_overlay(s: &mut Scene, m: &Metrics, top: SceneId, size: [Op
     let mut t = Tree { s, m, leaf_layouts: 0, fonts: 0 };
     compute_root_layout(&mut t, tid(top), Size { width: avail(size[0]), height: avail(size[1]) });
     round_layout(&mut t, tid(top));
-    (s.layout[i].style.display, s.layout[i].style.size) = saved;
+    s.layout[i].style = saved;
     let l = s.layout[i].layout;
     place(s, top, at - vec2(l.location.x, l.location.y));
     (vec2(l.size.width, l.size.height), generation)

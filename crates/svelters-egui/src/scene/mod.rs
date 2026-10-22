@@ -25,6 +25,7 @@
 //! Writer lane: SCENE.
 
 pub(crate) mod access;
+pub(crate) mod compact;
 pub(crate) mod dirty;
 pub(crate) mod dump;
 pub(crate) mod ext;
@@ -60,7 +61,7 @@ use dump::Counters;
 use ext::{ExtColumns, ExtCx};
 use id::SlotTable;
 use journal::Journal;
-use node::{DEFAULT_COLD, LayoutBox, NodeCold, NodeCore, Payload};
+use node::{DEFAULT_COLD, DEFAULT_COMMON, LayoutBox, NodeCold, NodeCore, Payload};
 use std::sync::OnceLock;
 use tree::RootTable;
 
@@ -89,6 +90,12 @@ pub struct Scene {
     pub(crate) layout: Vec<LayoutBox>,
     pub(crate) payload: Vec<Payload>,
     pub(crate) cold: Vec<Option<Box<NodeCold>>>,
+    /// SG6: common props, interned (`None`: all defaults). Written only through
+    /// `Scene::set_common`.
+    pub(crate) common: Vec<Option<std::sync::Arc<Common>>>,
+    /// SG6: the shared taffy styles and common-prop sets (`compact.rs`).
+    pub(crate) styles: compact::Interner<taffy::Style>,
+    pub(crate) commons: compact::Interner<Common>,
     /// Provider data: one column per `ExtKey` (SG2).
     pub(crate) ext: ExtColumns,
     /// Change records for observers (SG2).
@@ -119,6 +126,9 @@ impl Default for Scene {
             layout: Vec::new(),
             payload: Vec::new(),
             cold: Vec::new(),
+            common: Vec::new(),
+            styles: Default::default(),
+            commons: Default::default(),
             ext: ExtColumns::default(),
             journal: Journal::default(),
             roots: RootTable::default(),
@@ -240,7 +250,24 @@ impl Scene {
     }
 
     pub(crate) fn common(&self, i: usize) -> &Common {
-        &self.cold(i).common
+        self.common[i].as_deref().unwrap_or(&DEFAULT_COMMON)
+    }
+
+    /// SG6: changes node `i`'s common props with `f`, then shares the result with equal sets.
+    pub(crate) fn set_common<R>(&mut self, i: usize, f: impl FnOnce(&mut Common) -> R) -> R {
+        let mut a = self.common[i].take().unwrap_or_else(|| std::sync::Arc::new(Common::DEFAULT));
+        let r = f(std::sync::Arc::make_mut(&mut a));
+        self.common[i] = (*a != Common::DEFAULT).then(|| {
+            let k = compact::common_key(&a);
+            self.commons.intern_arc(a, k)
+        });
+        r
+    }
+
+    /// SG6: the shared `Arc` for taffy style `s`.
+    pub(crate) fn intern_style(&mut self, s: taffy::Style) -> std::sync::Arc<taffy::Style> {
+        let k = compact::style_key(&s);
+        self.styles.intern(s, k)
     }
 
     pub(crate) fn vis(&self, i: usize) -> Visual {

@@ -48,6 +48,13 @@ pub struct SceneStats {
     /// Estimated scene memory: columns' capacity times their element size, plus boxed cold data
     /// and children lists.
     pub bytes: usize,
+    /// SG6: `bytes` by column (`core`, `children`, `layout`, …), for the memory budget's report.
+    pub bytes_by: Vec<(&'static str, usize)>,
+    /// SG6: distinct taffy styles and common-prop sets the nodes share, and the nodes with a
+    /// (boxed) taffy layout cache (`scene/compact.rs`).
+    pub styles_interned: usize,
+    pub commons_interned: usize,
+    pub layout_caches: usize,
     pub created: u64,
     pub destroyed: u64,
     pub layouts: u64,
@@ -94,24 +101,17 @@ impl Scene {
             }
         }
         per_tag.sort();
-        use std::mem::size_of;
-        let mut bytes = self.core.capacity() * size_of::<NodeCore>()
-            + self.children.capacity() * size_of::<Vec<NodeId>>()
-            + self.layout.capacity() * size_of::<LayoutBox>()
-            + self.payload.capacity() * size_of::<Payload>()
-            + self.cold.capacity() * size_of::<Option<Box<NodeCold>>>()
-            + self.ext.bytes();
-        for (i, kids) in self.children.iter().enumerate() {
-            bytes += kids.capacity() * size_of::<NodeId>();
-            if let Some(cold) = &self.cold[i] {
-                bytes += size_of::<NodeCold>() + cold.common.tooltip.capacity() + cold.common.accessible_name.capacity();
-            }
-        }
+        let bytes_by = self.bytes_by();
+        let bytes = bytes_by.iter().map(|(_, b)| b).sum();
         SceneStats {
             live: self.len(),
             roots: self.roots.len(),
             per_tag,
             bytes,
+            bytes_by,
+            styles_interned: self.styles.len(),
+            commons_interned: self.commons.len(),
+            layout_caches: self.layout.iter().filter(|l| l.cache.is_boxed()).count(),
             created: c.created,
             destroyed: c.destroyed,
             layouts: c.layouts,
@@ -129,6 +129,35 @@ impl Scene {
             observers: self.journal.len(),
             hit_entries: self.hits.len(),
         }
+    }
+
+    /// SG6: the scene's memory estimate by column (ARCH-SCENE §8.5): columns' capacity times their
+    /// element size, plus the heap each element owns where it is cheap to count (children lists,
+    /// boxed cold data and its strings, the CSS per-node data).
+    pub(crate) fn bytes_by(&self) -> Vec<(&'static str, usize)> {
+        use std::mem::size_of;
+        let mut children = self.children.capacity() * size_of::<Vec<NodeId>>();
+        let mut cold = self.cold.capacity() * size_of::<Option<Box<NodeCold>>>();
+        for (i, kids) in self.children.iter().enumerate() {
+            children += kids.capacity() * size_of::<NodeId>();
+            if let Some(c) = &self.cold[i] {
+                cold += size_of::<NodeCold>() + c.observe.capacity() * 8 + (c.listen_overflow.capacity() + c.attached.capacity() * 2 + c.hoisted.capacity() * 2) * 4;
+            }
+        }
+        // SG6: the interned values count once (with their strings), the column per node
+        let strings: usize = self.commons.values().map(|c| c.tooltip.capacity() + c.accessible_name.capacity() + c.anchor.capacity()).sum();
+        vec![
+            ("core", self.core.capacity() * size_of::<NodeCore>()),
+            ("children", children),
+            ("layout", self.layout.capacity() * size_of::<LayoutBox>() + self.layout.iter().filter(|l| l.cache.is_boxed()).count() * size_of::<taffy::Cache>()),
+            ("payload", self.payload.capacity() * size_of::<Payload>()),
+            ("cold", cold),
+            ("common", self.common.capacity() * size_of::<Option<std::sync::Arc<super::Common>>>() + self.commons.bytes() + strings),
+            ("styles", self.styles.bytes()),
+            ("ext", self.ext.bytes()),
+            ("slots", self.slots.bytes()),
+            ("style", self.style.bytes()),
+        ]
     }
 
     /// `top`'s subtree, one node per line, indented by depth:
