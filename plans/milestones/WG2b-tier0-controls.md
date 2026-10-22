@@ -174,3 +174,7 @@ tests: kittest runs without a renderer here.
   `pnpm --filter @svelters/style test` 25/25; `gen_props.py --check` clean.
 - Not run locally: the rest of the svelters-egui suite after the last merge, `svelters-style`, `egui-kinds-example`,
   the workspace nextest, conformance, the other backends' suites, the JS test run. CI runs them.
+- WG2b-2 (bad-input fallbacks, then merges of `origin/ci/wg1` 27ced36c with WG1b and `origin/master` c656246a):
+  `tools/dev/cargo-slot cargo check -p svelters-egui -p egui-kinds-example --all-targets` clean; `cargo nextest
+  run -p svelters-egui --test tier0 --test gallery --test spec` 22/22 on the merged tree (gallery bundle built
+  before the WG1b merge, whose `egui.json` change is one line). Not run locally: everything else listed above.
