@@ -7,6 +7,7 @@ mod common;
 
 use common::Rig;
 use svelters_abi::*;
+use svelters_egui::widgets::KindSet;
 use svelters_style::{ComputedValue, Length};
 
 fn s(v: &str) -> Value {
@@ -47,6 +48,9 @@ fn column(rig: &Rig) -> svl_handle {
 fn fonts_remeasure_and_repaint() {
     use egui::{FontDefinitions, FontFamily};
     let mut rig = Rig::new();
+    // `button` here is egui's wrapper, which CS5f styles (`leaf_style`); OW0's own button reads its
+    // CSS itself (its typography is OW0's)
+    rig.backend.set_own_widgets(KindSet::None);
     // a "cs5f-bold" family drawn with egui's monospace font, registered for 700 of Proportional
     let mut defs = FontDefinitions::default();
     let mono = defs.families[&FontFamily::Monospace].clone();
@@ -119,6 +123,8 @@ fn fonts_remeasure_and_repaint() {
 #[test]
 fn leaf_padding_and_shorthands() {
     let mut rig = Rig::new();
+    // egui's button wrapper (CS5f's `leaf_style`), not OW0's own button
+    rig.backend.set_own_widgets(KindSet::None);
     let col = column(&rig);
     let text = "Padded";
     let plain = rig.leaf(col, "label", &[("text", s(text))]);

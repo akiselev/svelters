@@ -80,6 +80,12 @@ GitHub CI is the gate.
   `Style`, and changing it would mean more WIDGETS code. Measure and paint agree.
 - **`%` padding on leaves counts as 0 in `leaf_style`** (button padding). Leaves padded around the widget resolve
   `%` through taffy.
+- **OW0's own button (the default `button` since OW0 merged) is not styled by `leaf_style`.** It is an own widget
+  (`W::Ext`) that reads font, padding and border from its computed style itself, with its UA's `line-height: 16px`
+  (so `font-size` widens it but does not make it taller). CS5f's button styling is the egui wrapper's
+  (`set_own_widgets(KindSet::None)`); `tests/style_text.rs` pins its button checks to the wrapper. The own button's
+  typography is OW0's (not checked here). In `layout.rs::remeasure`, CS5f's styled metrics go through OW0's
+  `intrinsic_with`, the same way the tree measure does.
 - **Provider (`Ext`) leaves get no CSS font or padding.** Their measure and paint are the provider's own (RA1). A
   provider can read `EguiBackend::computed_style`.
 - **The collapsing header's caption** is not restyled (it is a container; its header font is the global one).
