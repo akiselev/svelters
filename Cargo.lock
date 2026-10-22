@@ -4570,6 +4570,7 @@ dependencies = [
  "egui",
  "egui_kittest",
  "serde_json",
+ "svelters-abi",
  "svelters-automation",
  "svelters-egui",
  "svelters-host",

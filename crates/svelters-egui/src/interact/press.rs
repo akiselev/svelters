@@ -165,10 +165,10 @@ mod ow1b_tests {
     fn ow1b_accelerated_repeat_shortens_the_interval() {
         let p = PressParams { repeat: Some((0.5, 0.1)), accelerate: true, ..PressParams::default() };
         assert_eq!(repeat_due(&p, 1), Some(0.5));
-        assert_eq!(repeat_interval(&p, 0), 0.1);
-        assert_eq!(repeat_interval(&p, ACCEL_EVERY), 0.05);
-        assert!((repeat_interval(&p, 10 * ACCEL_EVERY) - 0.02).abs() < 1e-12, "at most five times faster");
+        assert!((repeat_interval(&p, 0) - 0.1).abs() < 1e-6);
+        assert!((repeat_interval(&p, ACCEL_EVERY) - 0.05).abs() < 1e-6);
+        assert!((repeat_interval(&p, 10 * ACCEL_EVERY) - 0.02).abs() < 1e-6, "at most five times faster");
         let q = PressParams { accelerate: false, ..p };
-        assert_eq!(repeat_interval(&q, 100), 0.1);
+        assert!((repeat_interval(&q, 100) - 0.1).abs() < 1e-6);
     }
 }

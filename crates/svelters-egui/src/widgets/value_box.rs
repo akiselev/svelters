@@ -294,11 +294,12 @@ impl ValueBox {
                 stepped = true;
             }
         }
-        // step buttons (not tab stops; Pressable repeat, `accelerated`)
+        // step buttons (not tab stops; Pressable repeat, `accelerated`). They sense drag too: egui
+        // stops calling a click-only press "down on" after its click time, which would end the repeat
         if cfg.buttons {
             for (k, up) in [(0usize, false), (1usize, true)] {
                 let r = Self::button_rect(cfg, k);
-                let br = ui.interact(r, cfg.id.with(if up { "inc" } else { "dec" }), Sense::CLICK);
+                let br = ui.interact(r, cfg.id.with(if up { "inc" } else { "dec" }), Sense::CLICK | Sense::DRAG);
                 let can = editable && p.can_step(val, up);
                 let pp = PressParams { repeat: Some(REPEAT), accelerate: cfg.accelerated, ..PressParams::default() };
                 let mut pi = interact::Intents::default();
@@ -421,6 +422,8 @@ impl ValueBox {
             let caret = self.entry.caret_rect(ui.ctx(), &s, g.content);
             ui.ctx().output_mut(|o| o.ime = Some(egui::output::IMEOutput { purpose: egui::IMEPurpose::Normal, rect: field, cursor_rect: caret, should_interrupt_composition: false }));
         }
+        let mut resp = resp;
+        resp.rect = cfg.rect; // the step buttons are part of it (drawn rect, hit list)
         BoxOut { resp, input, commit, submit, drag_started, drag_stopped, state: bits, repaint_after: None }
     }
 

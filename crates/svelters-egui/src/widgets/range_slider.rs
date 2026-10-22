@@ -447,6 +447,7 @@ impl Widget for RangeSlider {
             // the rail itself is not a tab stop (each thumb is)
             resp.sense.remove(egui::Sense::FOCUSABLE);
         }
+        resp.rect = rect; // the whole widget (value boxes and caption included)
         resp
     }
 

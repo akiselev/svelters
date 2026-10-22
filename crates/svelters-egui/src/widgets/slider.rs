@@ -450,7 +450,7 @@ impl Widget for Slider {
             self.units_a11y(n);
         });
         self.st.field_focused = false;
-        match field_resp {
+        let mut out = match field_resp {
             Some(f) => {
                 let fid = f.id;
                 ui.ctx().accesskit_node_builder(fid, |n| self.st.field.a11y(n, None));
@@ -464,7 +464,9 @@ impl Widget for Slider {
                 if focused { f.union(resp) } else { resp.union(f) }
             }
             None => resp,
-        }
+        };
+        out.rect = rect; // the whole widget (value box and caption included)
+        out
     }
 
     fn a11y(&self, _cx: &A11yCx<'_>, _node: &mut egui::accesskit::Node) {}

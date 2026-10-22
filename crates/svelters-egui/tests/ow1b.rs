@@ -342,11 +342,9 @@ fn ow1b_range_slider_thumbs_keys_and_rail() {
     let log = rig.take();
     assert_eq!(events(&rig, &log, r, "changed").last(), Some(&vec![f(20.0), f(21.0)]));
     assert_eq!(events(&rig, &log, r, "commit").len(), 2);
-    // a press near the right end moves the high thumb there
+    // a press near the left end of the rail moves the nearer thumb (low) there
     let d = rig.drawn(r);
-    let rail_end = rig.harness.get_by_label("Band").rect();
-    let _ = rail_end;
-    click_at(&mut rig, pos2(d.min.x + 12.0, d.center().y), PointerButton::Primary);
+    click_at(&mut rig, pos2(d.min.x + 2.0, d.center().y), PointerButton::Primary);
     assert_eq!(rig.get(r, "low"), f(0.0), "the nearer thumb (low) moved");
 }
 
