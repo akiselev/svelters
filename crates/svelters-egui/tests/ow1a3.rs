@@ -224,3 +224,30 @@ fn ow1a3_a_provider_kind_registers_focus_stops_with_a_role() {
     rig.run();
     assert_eq!(focused(&rig), Some("three"));
 }
+
+/// Pressable `repeat` runs for as long as the button is held, past egui's 0.8 s click cutoff
+/// (kittest's virtual clock: 0.25 s a step; 0.3 s delay, then every 0.1 s, at most one a pass).
+#[test]
+fn ow1a3_a_held_repeat_button_repeats_past_the_click_cutoff() {
+    let mut rig = Rig::new();
+    let (_w, col) = rig.window();
+    let b = rig.leaf(col, "button", &[("text", s("+")), ("repeat", Value::Bool(true))]);
+    rig.listen(b, "clicked");
+    rig.run();
+    assert!(own(&rig, b));
+    let pos = rig.drawn(b).center();
+    rig.harness.hover_at(pos);
+    rig.harness.event(Event::PointerButton { pos, button: PointerButton::Primary, pressed: true, modifiers: Modifiers::NONE });
+    for _ in 0..12 {
+        rig.harness.step();
+    }
+    let clicked = rig.signal_id(b, "clicked");
+    let held = rig.log.borrow().events.iter().filter(|e| e.0 == b && e.1 == clicked).count();
+    assert!(held >= 9, "3 s held: {held} repeats");
+    assert!(state(&rig, b).contains(StateBits::PRESSED), ":active while held");
+    rig.harness.event(Event::PointerButton { pos, button: PointerButton::Primary, pressed: false, modifiers: Modifiers::NONE });
+    rig.run();
+    let after = rig.log.borrow().events.iter().filter(|e| e.0 == b && e.1 == clicked).count();
+    assert!(after <= held + 1, "the release adds at most its click: {held} -> {after}");
+    assert!(!state(&rig, b).contains(StateBits::PRESSED));
+}
