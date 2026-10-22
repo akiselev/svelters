@@ -399,11 +399,15 @@ impl ShellBackend for SystemShell {
     }
 }
 
+// ZU3: a detached launch, never waited on, once per user action (like open::that_detached above).
+#[allow(clippy::disallowed_methods)]
 #[cfg(target_os = "macos")]
 fn reveal_system(path: &Path) -> Result<(), ShellError> {
     std::process::Command::new("open").arg("-R").arg(path).spawn().map(drop).map_err(|e| ShellError::Failed(format!("open -R: {e}")))
 }
 
+// ZU3: a detached launch, never waited on, once per user action (like open::that_detached above).
+#[allow(clippy::disallowed_methods)]
 #[cfg(windows)]
 fn reveal_system(path: &Path) -> Result<(), ShellError> {
     use std::os::windows::process::CommandExt;
