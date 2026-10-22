@@ -81,20 +81,31 @@ them has no effect yet. Style the host (`checkbox:checked { … }`) or wait for 
 
 ### List rows *(pending OW5a)*
 
-> **Pending.** This is OW5a's design (in progress, not on master). Until it lands, list rows can't be
-> styled this way.
+> **Pending.** This is OW5a on `ci/ow5a` (d80f80e5, record `plans/milestones/OW5a-lists-tree-dnd.md`), not
+> on master yet.
 
-`virtual-list::part(row)` is styled per row: each drawn row's part style is computed with the list's
-state bits set to that row's state (`:hover`, `:selected`, `:focus-visible`), and `:focus-within` on the
-list tells active from inactive selection. The row's logical index drives the structural classes:
+Pooled rows of `virtual-list` and `tree-view` are styled as `::part(row)`. Each drawn row's part style is
+computed with the list's state bits replaced by the row's own state, at the row's logical position:
 
 ```css
-virtual-list::part(row):selected                        { background-color: var(--sv-list-active-selection-bg); }
-virtual-list:not(:focus-within)::part(row):selected     { background-color: var(--sv-list-inactive-selection-bg); }
-virtual-list::part(row):nth-child(even)                 { background-color: var(--sv-list-even-bg); }
+virtual-list::part(row):hover                         { background-color: var(--sv-list-hover); }
+virtual-list:focus-within::part(row):selected         { background-color: var(--sv-list-sel); }
+virtual-list:not(:focus-within)::part(row):selected   { background-color: var(--sv-list-sel-inactive); }
+virtual-list::part(row):focus-visible                 { outline: 1px solid var(--sv-focus); outline-offset: -1px; }
+virtual-list::part(row):nth-child(even)               { background-color: rgba(255, 255, 255, 0.03); }
+tree-view::part(row):has-children:expanded            { font-weight: 600; }
 ```
 
-The token names here are only examples. Check the tokens page at your pin.
+- A row's states: `:hover`, `:active`, `:selected`, `:current` (the cursor row), `:focus`/`:focus-visible`
+  (the cursor row; visible with keyboard focus only), `:drop-target`, `:has-children`, `:expanded`,
+  `:disabled`, and `:focus-within` from the list (active vs inactive selection).
+- Row *nodes* (your row snippet's contents) mirror `:selected`, `:current`, `:drop-target`,
+  `:has-children` and `:expanded`, so `virtual-list:focus-within > :selected { color: … }` styles the text.
+- Other parts: `twistie` (the tree's chevron). Tokens: `list-hover`, `list-sel`, `list-sel-fg`,
+  `list-sel-inactive`, `list-drop`, `focus`, `twistie-w`, `icon`, `scroll-shadow`.
+- With no `::part(row)` rule, rows paint from the list's UA table. In Rust the API is
+  `Scene::part_at(list, "row", state, (pos, len))`. Results are cached per (node, part, state, position)
+  and dropped at any restyle.
 
 ## State pseudo-classes
 

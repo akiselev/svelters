@@ -14,7 +14,7 @@ All are hand pages under `docs/egui/`, with DOCS-PLAN §4's front matter (`title
 | Page | Covers | Sources |
 |---|---|---|
 | `docs/egui/rust/own-widgets.md` | `#[svelters::widget]` for own widgets (`#[behavior]`, `#[part]`, `replaces`, `style_as`, superset extras), `KindSet`/`SVELTERS_OWN_WIDGETS`/`DEFAULT_OWN`/`OWN_ONLY`, the units (Hoverable, Pressable, Focusable, Toggleable, Resizable, Scrollable; Expandable and Roving marked pending), new units, scene-free `interact::run`, `StyleView`/`Ua`/primitives, part painters, `dispatch(..).prevented()`, `with_peer` (pending), `consume_key`/`record_part_focus`, `cached_shapes` and its invalidation, PaintTrace, worked examples | `provider/mod.rs`, `interact/*`, `paint/*`, `widgets/*`, `svelters-macros` docs; OW0, OW1a, OW1a2 (ci/ow1a2), EV1, EV3, SG6, OW-CSS records |
-| `docs/egui/css/own-widgets.md` | `::part()` (state on the host, multiple names, P1 logical positions, P3 part layout), which widgets read part rules today, list rows (`virtual-list::part(row)` per-row state, marked pending OW5a, from the coordinator's note of 2026-10-22; cite OW5a's record when it lands), the state pseudo-class ↔ bit table, `content: icon()/none/paint()/url()`, `paint(name)` painters, box features, transitions (R11 delay, `transition: none`, reduced motion), the R-rules in CSS | OW-CSS (both stages), `svelters-style/src/state.rs`, `provider/state.rs`, `paint/painters.rs`, gallery `23-own-buttons.svelte`, DESIGN §2.2 |
+| `docs/egui/css/own-widgets.md` | `::part()` (state on the host, multiple names, P1 logical positions, P3 part layout), which widgets read part rules today, list rows (`virtual-list::part(row)` per-row state, marked pending OW5a; from `ci/ow5a` d80f80e5's `OW5a-lists-tree-dnd.md`), the state pseudo-class ↔ bit table, `content: icon()/none/paint()/url()`, `paint(name)` painters, box features, transitions (R11 delay, `transition: none`, reduced motion), the R-rules in CSS | OW-CSS (both stages), `svelters-style/src/state.rs`, `provider/state.rs`, `paint/painters.rs`, gallery `23-own-buttons.svelte`, DESIGN §2.2 |
 | `docs/egui/icons.md` | **pending merge (ICR1 on ci/icr1 102b4ffb)**: keys, `ext.<id>.*`, `Owner`, `Icon::svg/master/hc_master/glyph`, `IconData`, `register_set`, per-context registries, optical-size choice (Z1/Z2), tint and `--icon-subject/-accent/-badge` slots, `icons::paint` from Rust UI | `icons.rs` and the ICR1 record on ci/icr1, `paint/icon.rs`, the regenerated `icon` reference page on ci/icr1 |
 | `docs/egui/rust/automation.md` | `#[svelters_automation::test]` and `E2e`, `@svelters/test` and `svelters-e2e` (workers, reset, seeds, retries, reporters), `mount`/`setProps`, locators, the virtual clock and seeds, `svelters-run`, `Session` over a `Driver`, `Server`/clients | `svelters-automation` sources, `tests/e2e.rs`, `packages/test/test/e2e/*.e2e.js`; AU1, AU1b, AU2, AU2b |
 | `docs/egui/rust/loading-code.md` | `SourceProvider`/`SvbProvider`/`BundleProvider`, `SourceConfig`, what the loader compiles (TS, JSON, assets, `import.meta.glob`, egui `<style>`), the overlay and `check`, `ModuleHooks` (schemes, visibility, natives, `isolate()`, `for_extension`), `.svb` and `svelters-bundle`, `--app`, the bytecode cache, the Q4b startup table | `svelters-modules`, `svelters-host` (`lib.rs`, `hooks.rs`, `bytecode.rs`), runner bins; Q1, Q2, Q4, Q4b, LD1, LD2, LD3 |
@@ -65,9 +65,8 @@ START-HERE should link them. Paths follow DOCS-PLAN §5.2 (`loading-code.md`, `h
 11. `rust/own-widgets.md` is 318 lines, over DOCS-PLAN §4's 300-line target, because of the full example.
     A later pass can move the example to `examples/egui-docs` once DOC4's snippet checker exists.
 
-12. **OW5a is not pushed yet** (no `ci/ow5a` on origin when this was written). The list-rows section of
-    `css/own-widgets.md` is from the coordinator's description and marked pending. Check it against OW5a's
-    record when that lands. Its token names are only examples.
+12. **OW5a is on `ci/ow5a`** (d80f80e5), not on master. The list-rows section of `css/own-widgets.md` follows
+    its record and is marked pending. When it merges, drop the banner.
 
 ## Not run
 
