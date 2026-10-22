@@ -139,11 +139,17 @@ The exported path constants (`HIDDEN_MODULES`, `effectsPath`, …) keep their na
 
 ## Not done here (by design or later rows)
 
-- Security (user decision 2026-10-22, deny-by-default extension policy; design in SEC0, `ARCH-SECURITY.md`):
-  `SourceProvider` loads any file a specifier resolves to: absolute paths, `..` out of the app root, and
-  assets as path strings. That is right for the primary app host, and it adds no JS-reachable API. An
-  extension or isolate host must not get a bare `SourceProvider`. It goes through LD1's policy-carrying
-  `ComposedProvider`, where SEC0 adds a file-system scope next to `Visibility`.
+- Security (user decision 2026-10-22, deny-by-default extension policy; `plans/research/ARCH-SECURITY.md` §5,
+  Q1 row). Done here: `SourceConfig::confine`, on through `SourceConfig::for_extension`. It refuses absolute
+  specifiers (except in the host-generated entry), and `./`/`../` must stay inside the importing module's
+  package root after symlinks are resolved. Test: `an_extension_cannot_import_files_outside_its_package`
+  (the primary host may read the file; the extension may not). The primary app host stays unconfined.
+  Deferred to SEC1/SEC2:
+  - per-principal package roots (which packages an extension may load) and the module lock;
+  - the overlay keyed by principal (none for locked principals);
+  - a stable content hash per loaded source (the transform cache's hash is `DefaultHasher`, not a lock hash);
+  - the watcher limited to package roots.
+  Extension hosts also reach the provider only through LD1's policy-carrying `ComposedProvider`.
 
 - `<style>` from source: Q3 (Svelte's CSS analyze/prune/scope in Rust). Until then the loader warns and the app
   runs unstyled; style-using apps keep the Vite path.

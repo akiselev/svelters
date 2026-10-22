@@ -242,3 +242,31 @@ fn an_embed_entry_from_source_keeps_its_namespace() {
     let (_log, host) = log_host(Duration::from_millis(100));
     assert_eq!(host.load_entry_from(provider).unwrap(), 0);
 }
+
+#[test]
+fn an_extension_cannot_import_files_outside_its_package() {
+    let app = App::new("confined", "<script>\n  import secret from 'SPEC';\n</script>\n<window><label>{secret.k}</label></window>\n");
+    let outside = app.dir.parent().unwrap().join("q1-outside.json");
+    std::fs::write(&outside, "{ \"k\": \"leaked\" }").unwrap();
+    for spec in ["../../q1-outside.json".to_string(), outside.to_string_lossy().into_owned()] {
+        app.write("src/App.svelte", &format!("<script>\n  import secret from '{spec}';\n</script>\n<window><label>{{secret.k}}</label></window>\n"));
+        // The primary app host may read it.
+        let (log, host) = log_host(Duration::from_millis(100));
+        host.load_from(app.provider()).unwrap();
+        host.run().unwrap();
+        assert!(log.log().contains("\"leaked\""), "{spec}: {}", log.log());
+        // An extension may not.
+        let ext: Rc<dyn ModuleProvider> = Rc::new(SourceProvider::new(SourceConfig::for_extension(&app.dir).unwrap()).unwrap());
+        let (_log, host) = log_host(Duration::from_millis(100));
+        let err = host.load_from(ext).expect_err("confined");
+        assert!(err.message.contains("cannot find module"), "{spec}: {err}");
+    }
+    // Inside its own package it loads as usual (the runtime and Svelte resolve as packages).
+    app.write("src/App.svelte", "<script>\n  import d from './d.json';\n</script>\n<window><label>{d.k}</label></window>\n");
+    app.write("src/d.json", "{ \"k\": \"own\" }");
+    let ext: Rc<dyn ModuleProvider> = Rc::new(SourceProvider::new(SourceConfig::for_extension(&app.dir).unwrap()).unwrap());
+    let (log, host) = log_host(Duration::from_millis(100));
+    host.load_from(ext).unwrap();
+    host.run().unwrap();
+    assert!(log.log().contains("\"own\""), "{}", log.log());
+}

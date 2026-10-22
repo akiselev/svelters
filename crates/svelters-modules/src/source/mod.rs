@@ -52,6 +52,12 @@ pub struct SourceConfig {
     pub dev: bool,
     /// `@svelters/native-runtime`'s directory; found from the app when `None`.
     pub runtime_dir: Option<PathBuf>,
+    /// Extension confinement (deny by default, `plans/research/ARCH-SECURITY.md` §5): absolute
+    /// specifiers are refused, and a path specifier (`./`, `../`) must stay inside the importing
+    /// module's package root (symlinks resolved, then re-checked). Off for the primary app host,
+    /// on with [`SourceConfig::for_extension`]. Package specifiers still resolve; pinning which
+    /// packages and files an extension may load is SEC1/SEC2 (principals, module lock).
+    pub confine: bool,
 }
 
 impl SourceConfig {
@@ -97,8 +103,14 @@ impl SourceConfig {
                 .unwrap_or_default(),
             dev: false,
             runtime_dir: None,
+            confine: false,
             root,
         })
+    }
+
+    /// [`SourceConfig::for_path`] for an extension or isolate host: confined to its packages.
+    pub fn for_extension(path: &Path) -> Result<SourceConfig, String> {
+        Ok(SourceConfig { confine: true, ..SourceConfig::for_path(path)? })
     }
 
     /// `@svelters/native-runtime`'s directory: from the app's `node_modules`, through
@@ -308,7 +320,17 @@ impl Inner {
                 b if b.is_absolute() => b.parent().unwrap_or(&self.cfg.root).to_path_buf(),
                 _ => self.cfg.root.clone(),
             };
+            // The generated entry (host code) names the app's files by absolute path.
+            if self.cfg.confine && base != ENTRY_ID && Path::new(specifier).is_absolute() {
+                return Err(format!("cannot find module {specifier:?}: absolute imports are refused for extensions"));
+            }
             let p = self.resolver.resolve(&dir, specifier)?;
+            if self.cfg.confine && (specifier.starts_with("./") || specifier.starts_with("../")) {
+                let scope = dir.ancestors().find(|d| d.join("package.json").is_file()).unwrap_or(&self.cfg.root);
+                if !p.starts_with(scope) {
+                    return Err(format!("cannot find module {specifier:?}: outside the importing package ({})", scope.display()));
+                }
+            }
             (p.to_string_lossy().into_owned(), Some(p))
         };
         self.record(&id, path);
