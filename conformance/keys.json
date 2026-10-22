@@ -1,6 +1,6 @@
 {
   "schema": "svelters-na-keys/v1",
-  "note": "Platform-neutral key intents of the pin scripts (widget survey §5.2), resolved per platform. Chords are X keysym names joined with +; Cmd is the macOS command key. A step with \"shift\": true adds Shift.",
+  "note": "Platform-neutral key intents of the pin scripts (widget survey §5.2), resolved per platform. Chords are X keysym names joined with +; Cmd is the macOS command key. A step with \"shift\": true adds Shift. Pins 4-6 (WG3b): redo is the platform chord, redo-alt the other common one (no second chord on macOS); copy-alt, cut-alt and paste-alt are the IBM CUA chords (Linux and Windows); dead keys are X keysyms (Windows: the US-International layout; macOS: Option chords); unicode-entry is GTK's and IBus's Ctrl+Shift+U (Linux only).",
   "platforms": {
     "linux": {
       "left": "Left",
@@ -16,7 +16,21 @@
       "select-all": "Ctrl+a",
       "tab": "Tab",
       "backtab": "Shift+Tab",
-      "escape": "Escape"
+      "escape": "Escape",
+      "undo": "Ctrl+z",
+      "redo": "Ctrl+Shift+z",
+      "redo-alt": "Ctrl+y",
+      "copy": "Ctrl+c",
+      "cut": "Ctrl+x",
+      "paste": "Ctrl+v",
+      "copy-alt": "Ctrl+Insert",
+      "cut-alt": "Shift+Delete",
+      "paste-alt": "Shift+Insert",
+      "dead-acute": "dead_acute",
+      "dead-diaeresis": "dead_diaeresis",
+      "unicode-entry": "Ctrl+Shift+u",
+      "space": "space",
+      "return": "Return"
     },
     "windows": {
       "left": "Left",
@@ -32,7 +46,20 @@
       "select-all": "Ctrl+a",
       "tab": "Tab",
       "backtab": "Shift+Tab",
-      "escape": "Escape"
+      "escape": "Escape",
+      "undo": "Ctrl+z",
+      "redo": "Ctrl+y",
+      "redo-alt": "Ctrl+Shift+z",
+      "copy": "Ctrl+c",
+      "cut": "Ctrl+x",
+      "paste": "Ctrl+v",
+      "copy-alt": "Ctrl+Insert",
+      "cut-alt": "Shift+Delete",
+      "paste-alt": "Shift+Insert",
+      "dead-acute": "dead_acute",
+      "dead-diaeresis": "dead_diaeresis",
+      "space": "space",
+      "return": "Return"
     },
     "macos": {
       "left": "Left",
@@ -48,7 +75,16 @@
       "select-all": "Cmd+a",
       "tab": "Tab",
       "backtab": "Shift+Tab",
-      "escape": "Escape"
+      "escape": "Escape",
+      "undo": "Cmd+z",
+      "redo": "Cmd+Shift+z",
+      "copy": "Cmd+c",
+      "cut": "Cmd+x",
+      "paste": "Cmd+v",
+      "dead-acute": "Alt+e",
+      "dead-diaeresis": "Alt+u",
+      "space": "space",
+      "return": "Return"
     }
   }
 }

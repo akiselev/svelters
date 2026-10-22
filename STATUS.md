@@ -68,10 +68,12 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | WG4b rfd dialogs, date/colour pickers, drag and drop | IN PROGRESS | | branch `ci/wg4b` |
 | WG1 SC1 egui widget subset | IN PROGRESS | | branch `ci/wg1`; grid, collapsing-header, toggle-button, combo-box, separator, scroll-area, icon, tooltip, invalid, a11y names; cadatomic FW1's acceptance depends on it |
 | WG3 native reference capture (pins 1-3, 7; GTK/Qt goldens) | DONE | 2026-10-22 | merged 59bc9f81; egui TextEdit matches 85/144 (GTK), 75/144 (Qt) |
-| WG3b GTK selection from inner GtkText, Qt 6.11 golden, pins 4-6 | IN PROGRESS | | branch `ci/wg3b` |
+| WG3b GTK selection from inner GtkText, Qt 6.11 golden, pins 4-6 | DONE | 2026-10-22 | merged (this commit); egui vs native on all 18 scripts 159/243 (either toolkit); W4 decided: keep TextEdit, fix around it (FX3) |
 | FX2 egui focus policy + word rules per native refs (`svelters_egui::native`) | DONE | 2026-10-22 | merged (this commit); egui vs GTK 85→141/144, vs Qt 75→139/144; pin 3 double-click word select left |
-| DS0 UI design system research (VS Code baseline tokens + affordances: elevation, shadows, signifiers) | IN PROGRESS | | branch `research/design` |
+| DS0 UI design system research (VS Code baseline tokens + affordances) | DONE | 2026-10-22 | plans/research/DESIGN.md (merged next); lanes DS1-DS5 + VIS1 |
 | VIS1 visual conformance: gallery snapshots (TK1 wgpu path) vs VS Code references, default look of every kind | QUEUED | | starts when INT1 merges; uses DS0's tokens; VS Code is installed on the Windows host for reference screenshots |
+| FX3 egui undo grouping, clipboard keys (Ctrl/Shift+Insert, Shift+Delete), multiline paste, select-all→PRIMARY, Ctrl+Shift+U per native refs (pins 4-6) | QUEUED | | after INT1 |
+| DS1-DS5 theme module (one token map → CSS :root, egui Style, typed getters), engine gaps (outline, cursor, per-side borders, transitions), affordance sheet, VS Code theme importer, codicons | QUEUED | | DESIGN.md §lanes; DS1 first |
 | WG3w Windows native references (Win32 EDIT, WinUI TextBox; pins 1-3, 7), egui on Windows, counter-win flake | IN PROGRESS | | branch `ci/wg3w`; builds via the WSL PC's Windows toolchain |
 | EV3+ keys and focus: focus scopes/restore, key routing (ShortcutOverride), edit commands to Svelte text fields, default/cancel buttons (QT-SURVEY §3) | QUEUED | | after FX1; key consumption via ARCH-EMBED R11 consume_key/composing(); edit commands through a host-callable API (cadatomic constraint) |
 | WG5a list/table interaction: keyboard nav, type-ahead, selection, cell editors | QUEUED | | after LISTS2 + SG4 |

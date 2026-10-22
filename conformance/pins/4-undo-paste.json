@@ -1,0 +1,17 @@
+{
+  "id": "undo-paste",
+  "pin": 4,
+  "title": "A paste between two typing runs is one undo step",
+  "setup": {
+    "fields": { "a": { "text": "one two", "sel": [-1, -1] }, "b": { "text": "other" } },
+    "focus": "a",
+    "clipboard": "PASTED"
+  },
+  "steps": [
+    { "type": " three " },
+    { "key": "paste" },
+    { "type": " four" },
+    { "key": "undo", "repeat": 4 },
+    { "key": "redo", "repeat": 2 }
+  ]
+}

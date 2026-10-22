@@ -932,7 +932,13 @@ impl Inner {
             };
             return Ok(());
         }
-        let (obj, pname) = if p.flags & F_VIA != 0 { (via_object(&obj, p.via, p.name)?, p.target) } else { (obj, p.name) };
+        let (obj, pname) = if let Some(d) = editable_delegate(&obj, p) {
+            (d, p.name)
+        } else if p.flags & F_VIA != 0 {
+            (via_object(&obj, p.via, p.name)?, p.target)
+        } else {
+            (obj, p.name)
+        };
         if obj.find_property(pname).is_none() {
             return Err(format!("{} has no property {}", obj.type_().name(), pname));
         }
@@ -2082,4 +2088,23 @@ fn via_object(obj: &glib::Object, via: &str, what: &str) -> Res<glib::Object> {
         .get::<Option<glib::Object>>()
         .map_err(|e| format!("{via}: {e}"))?
         .ok_or_else(|| format!("{} has no {via} to forward {what} to", obj.type_().name()))
+}
+
+/// GtkEditable `cursor-position` and `selection-bound` of an editable that delegates (GtkEntry,
+/// GtkSpinButton, GtkPasswordEntry, GtkSearchEntry, GtkEditableLabel) are read and observed on the
+/// delegate, the inner GtkText (WG3b, coordinator decision). The wrapper's own values come from
+/// `gtk_editable_delegate_get_property`, which reports a selection as (start, end): it loses the
+/// direction (the caret of a backward selection reads as its anchor), and the delegate's forwarded
+/// `notify` misses a wrapper value that changes when the caret crosses the anchor. GtkText holds the
+/// real moving end (`cursor-position`) and anchor (`selection-bound`) and notifies both. Writes are
+/// unaffected (both properties are read-only); an editable without a delegate (GtkText) reads its own.
+pub(crate) fn editable_delegate(obj: &glib::Object, p: &PropInfo) -> Option<glib::Object> {
+    if !matches!(p.name, "cursor-position" | "selection-bound") || KINDS[p.kind as usize - 1].gtype != "GtkEditable" {
+        return None;
+    }
+    let mut d = obj.downcast_ref::<gtk::Editable>()?.delegate()?;
+    while let Some(inner) = d.delegate() {
+        d = inner;
+    }
+    Some(d.upcast())
 }

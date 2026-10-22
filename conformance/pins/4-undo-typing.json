@@ -1,0 +1,16 @@
+{
+  "id": "undo-typing",
+  "pin": 4,
+  "title": "Undo and redo after one typing run with spaces: undo back to empty, redo with both chords, undo again",
+  "setup": {
+    "fields": { "a": { "text": "", "sel": [0, 0] }, "b": { "text": "other" } },
+    "focus": "a"
+  },
+  "steps": [
+    { "type": "foo bar baz" },
+    { "key": "undo", "repeat": 4 },
+    { "key": "redo", "repeat": 2 },
+    { "key": "redo-alt", "repeat": 2 },
+    { "key": "undo" }
+  ]
+}
