@@ -48,7 +48,11 @@ fn as_str(v: &Value) -> Result<String, String> {
 
 fn as_enum(v: &Value, values: &'static [&'static str]) -> Result<&'static str, String> {
     let s = as_str(v)?;
-    values.iter().copied().find(|x| *x == s).ok_or_else(|| format!("`{s}` is not one of {}", values.join(", ")))
+    values
+        .iter()
+        .copied()
+        .find(|x| *x == s)
+        .ok_or_else(|| format!("`{s}` is not one of {}", values.join(", ")))
 }
 
 fn as_len(v: &Value) -> Result<Option<f64>, String> {
@@ -68,17 +72,49 @@ pub(crate) fn is_common(key: P) -> bool {
     use P::*;
     matches!(
         key,
-        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent
+        Enabled
+            | Visible
+            | Tooltip
+            | AccessibleName
+            | Anchor
+            | Width
+            | Height
+            | MinWidth
+            | MinHeight
+            | MaxWidth
+            | MaxHeight
+            | FlexGrow
+            | FlexShrink
+            | FlexBasis
+            | AlignSelf
+            | Margin
+            | FlexDirection
+            | FlexWrap
+            | Gap
+            | RowGap
+            | ColumnGap
+            | Padding
+            | AlignItems
+            | JustifyContent
     )
 }
 
 /// Writes a prop into a node's common props `c` and widget fields `w`. `Null` resets it to its
 /// default. Returns what the node needs (the caller restyles on LAYOUT).
-pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> Result<Dirty, String> {
+pub fn set_prop(
+    c: &mut Common,
+    w: &mut W,
+    def: &kinds::PropDef,
+    v: &Value,
+) -> Result<Dirty, String> {
     if let P::Ext(i) = def.key {
         return crate::provider::set_prop(w, i as usize, v); // RA1: a provider kind's field
     }
-    let v = if matches!(v, Value::Null) && !def.nullable { default_value(def) } else { v.clone() };
+    let v = if matches!(v, Value::Null) && !def.nullable {
+        default_value(def)
+    } else {
+        v.clone()
+    };
     let v = &v;
     let mut d = Dirty::default();
     match (def.key, &mut *w) {
@@ -112,7 +148,14 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (P::Title, W::Window { title, .. }) => *title = as_str(v)?,
         (P::DefaultWidth, W::Window { default_w, .. }) => *default_w = as_f64(v)?,
         (P::DefaultHeight, W::Window { default_h, .. }) => *default_h = as_f64(v)?,
-        (P::Text, W::Label { text, .. } | W::Button { text, .. } | W::Checkbox { text, .. } | W::TextEdit { text, .. } | W::Slider { text, .. }) => {
+        (
+            P::Text,
+            W::Label { text, .. }
+            | W::Button { text, .. }
+            | W::Checkbox { text, .. }
+            | W::TextEdit { text, .. }
+            | W::Slider { text, .. },
+        ) => {
             *text = as_str(v)?;
             d.insert(Dirty::MEASURE);
         }

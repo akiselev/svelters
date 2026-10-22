@@ -31,7 +31,8 @@ use crate::embed::{Embed, EmbedConfig};
 /// or the runner's.
 pub fn run_app(bundle: &std::path::Path, cfg: svelters_host::HostConfig) -> Result<(), String> {
     // eframe creates the real context later: `logic` binds it at the first frame.
-    let embed = Embed::new(&egui::Context::default(), EmbedConfig::app(cfg)).map_err(|e| e.to_string())?;
+    let embed =
+        Embed::new(&egui::Context::default(), EmbedConfig::app(cfg)).map_err(|e| e.to_string())?;
     embed.load_app(bundle).map_err(|e| e.to_string())?;
     run_desktop(embed)
 }

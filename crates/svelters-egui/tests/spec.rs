@@ -58,7 +58,11 @@ fn kind_table_is_consistent() {
             assert!(std::ptr::eq(kinds::signal_def(i, id).unwrap(), def));
         }
         if let Some(t) = k.text_content {
-            assert!(kinds::find_prop(i, t).is_some(), "{}: text_content {t} is not a prop", k.id);
+            assert!(
+                kinds::find_prop(i, t).is_some(),
+                "{}: text_content {t} is not a prop",
+                k.id
+            );
         }
     }
     // ids of one kind are not accepted on an unrelated one

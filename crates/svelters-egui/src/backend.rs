@@ -154,7 +154,12 @@ impl EguiBackend {
 
     /// See `Shared::logic_vp`.
     pub(crate) fn logic_vp(&self) -> egui::ViewportId {
-        self.0.shared.logic_vp.lock().unwrap().unwrap_or(egui::ViewportId::ROOT)
+        self.0
+            .shared
+            .logic_vp
+            .lock()
+            .unwrap()
+            .unwrap_or(egui::ViewportId::ROOT)
     }
 
     pub(crate) fn set_logic_vp(&self, vp: egui::ViewportId) {

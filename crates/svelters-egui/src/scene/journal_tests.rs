@@ -23,7 +23,9 @@ fn kind(tag: &str) -> usize {
 }
 
 fn set(s: &mut Scene, id: NodeId, name: &str, v: Value, o: Origin) {
-    let p = kinds::find_prop(s.core[s.ix(id)].kind as usize, name).unwrap().0;
+    let p = kinds::find_prop(s.core[s.ix(id)].kind as usize, name)
+        .unwrap()
+        .0;
     s.set_value(id, p, &v, o).unwrap();
 }
 
@@ -65,19 +67,47 @@ impl Mirror {
         match *c {
             Change::Created { node, kind, owner } => {
                 let tag = kinds::kind(kinds::kind_of_id(kind.0).unwrap()).tag.unwrap();
-                let prev = self.n.insert(node, MNode { tag, owner, parent: None, children: vec![], text: String::new(), state: StateBits::NONE, ext: BTreeSet::new() });
+                let prev = self.n.insert(
+                    node,
+                    MNode {
+                        tag,
+                        owner,
+                        parent: None,
+                        children: vec![],
+                        text: String::new(),
+                        state: StateBits::NONE,
+                        ext: BTreeSet::new(),
+                    },
+                );
                 assert!(prev.is_none(), "{node} created twice");
             }
-            Change::Inserted { parent, node, before } => {
-                assert_eq!(self.n[&node].parent, None, "{node} inserted while in {parent:?}");
+            Change::Inserted {
+                parent,
+                node,
+                before,
+            } => {
+                assert_eq!(
+                    self.n[&node].parent, None,
+                    "{node} inserted while in {parent:?}"
+                );
                 let kids = &mut self.n.get_mut(&parent).unwrap().children;
-                let at = before.map(|b| kids.iter().position(|&x| x == b).expect("before is a child")).unwrap_or(kids.len());
+                let at = before
+                    .map(|b| {
+                        kids.iter()
+                            .position(|&x| x == b)
+                            .expect("before is a child")
+                    })
+                    .unwrap_or(kids.len());
                 kids.insert(at, node);
                 self.n.get_mut(&node).unwrap().parent = Some(parent);
             }
             Change::Removed { parent, node } => {
                 assert_eq!(self.n[&node].parent, Some(parent));
-                self.n.get_mut(&parent).unwrap().children.retain(|&x| x != node);
+                self.n
+                    .get_mut(&parent)
+                    .unwrap()
+                    .children
+                    .retain(|&x| x != node);
                 self.n.get_mut(&node).unwrap().parent = None;
             }
             Change::Destroyed { node, .. } => {
@@ -92,7 +122,11 @@ impl Mirror {
                         km.parent = None;
                     }
                 }
-                assert!(m.ext.is_empty(), "{node} destroyed with ext entries not journaled as removed: {:?}", m.ext);
+                assert!(
+                    m.ext.is_empty(),
+                    "{node} destroyed with ext entries not journaled as removed: {:?}",
+                    m.ext
+                );
             }
             Change::Prop { node, .. } => {
                 // the new value is read from the scene (records name what changed)
@@ -104,9 +138,19 @@ impl Mirror {
             Change::Ext { node, ext, what } => {
                 let e = &mut self.n.get_mut(&node).unwrap().ext;
                 match what {
-                    ExtChange::Added => assert!(e.insert(ext), "{node}: {} added twice", ext.name()),
-                    ExtChange::Changed => assert!(e.contains(&ext), "{node}: {} changed, not present", ext.name()),
-                    ExtChange::Removed => assert!(e.remove(&ext), "{node}: {} removed, not present", ext.name()),
+                    ExtChange::Added => {
+                        assert!(e.insert(ext), "{node}: {} added twice", ext.name())
+                    }
+                    ExtChange::Changed => assert!(
+                        e.contains(&ext),
+                        "{node}: {} changed, not present",
+                        ext.name()
+                    ),
+                    ExtChange::Removed => assert!(
+                        e.remove(&ext),
+                        "{node}: {} removed, not present",
+                        ext.name()
+                    ),
                 }
             }
             _ => {}
@@ -133,7 +177,10 @@ impl Mirror {
                 out.push_str(&format!(" state({})", m.state.names().join("|")));
             }
             if !m.ext.is_empty() {
-                out.push_str(&format!(" ext({})", m.ext.iter().map(|k| k.name()).collect::<Vec<_>>().join(",")));
+                out.push_str(&format!(
+                    " ext({})",
+                    m.ext.iter().map(|k| k.name()).collect::<Vec<_>>().join(",")
+                ));
             }
             out.push('\n');
             for &k in m.children.iter().rev() {
@@ -144,15 +191,27 @@ impl Mirror {
     }
 
     fn dump_all(&self) -> String {
-        let mut tops: Vec<NodeId> = self.n.iter().filter(|(_, m)| m.parent.is_none()).map(|(&id, _)| id).collect();
+        let mut tops: Vec<NodeId> = self
+            .n
+            .iter()
+            .filter(|(_, m)| m.parent.is_none())
+            .map(|(&id, _)| id)
+            .collect();
         tops.sort();
         tops.into_iter().map(|t| self.dump(t)).collect()
     }
 }
 
 fn scene_dump_all(s: &Scene) -> String {
-    let opts = DumpOpts { state: true, ext: true, ..Default::default() };
-    let mut tops: Vec<NodeId> = s.ids().filter(|&id| s.core[s.ix(id)].parent.is_none()).collect();
+    let opts = DumpOpts {
+        state: true,
+        ext: true,
+        ..Default::default()
+    };
+    let mut tops: Vec<NodeId> = s
+        .ids()
+        .filter(|&id| s.core[s.ix(id)].parent.is_none())
+        .collect();
     tops.sort();
     tops.into_iter().map(|t| s.dump(t, opts)).collect()
 }
@@ -162,7 +221,10 @@ fn scene_dump_all(s: &Scene) -> String {
 fn journal_replay_rebuilds_the_dump() {
     let rust_p = ProviderId::named("sg2-test");
     let rust = Origin::Rust(rust_p);
-    let seeds: u64 = std::env::var("SG2_SEEDS").ok().and_then(|v| v.parse().ok()).unwrap_or(16);
+    let seeds: u64 = std::env::var("SG2_SEEDS")
+        .ok()
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(16);
     let mut takes = 0;
     let mut records = 0;
     for seed in 1..=seeds {
@@ -172,7 +234,9 @@ fn journal_replay_rebuilds_the_dump() {
         // copy, so start empty instead
         let obs = s.journal.observe(ChangeFilter::all());
         // a narrower observer and a short-lived one alongside (they must not disturb the first)
-        let narrow = s.journal.observe(ChangeFilter::only(ChangeMask::EXT).ext(&NOTE));
+        let narrow = s
+            .journal
+            .observe(ChangeFilter::only(ChangeMask::EXT).ext(&NOTE));
         let mut short = Some(s.journal.observe(ChangeFilter::only(ChangeMask::PROPS)));
         let mut mirror = Mirror::default();
         let mut note_live: BTreeSet<NodeId> = BTreeSet::new();
@@ -184,7 +248,11 @@ fn journal_replay_rebuilds_the_dump() {
             let js = matches!(origin, Origin::Js);
             match rng.below(24) {
                 0..=4 => {
-                    let tags: &[&str] = if js { &["box", "box", "label", "button", "window"] } else { &["box", "label"] };
+                    let tags: &[&str] = if js {
+                        &["box", "box", "label", "button", "window"]
+                    } else {
+                        &["box", "label"]
+                    };
                     let tag = rng.pick(tags).unwrap();
                     if tag == "window" && s.roots.len() >= 2 {
                         continue;
@@ -196,8 +264,14 @@ fn journal_replay_rebuilds_the_dump() {
                     }
                 }
                 5..=10 => {
-                    let (Some(p), Some(c)) = (rng.pick(&live), rng.pick(&live)) else { continue };
-                    let before = if rng.below(2) == 0 { rng.pick(&s.children[s.ix(p)].clone()) } else { None };
+                    let (Some(p), Some(c)) = (rng.pick(&live), rng.pick(&live)) else {
+                        continue;
+                    };
+                    let before = if rng.below(2) == 0 {
+                        rng.pick(&s.children[s.ix(p)].clone())
+                    } else {
+                        None
+                    };
                     let _ = s.insert(p, c, before, origin);
                 }
                 11..=12 => {
@@ -222,14 +296,28 @@ fn journal_replay_rebuilds_the_dump() {
                     }
                 }
                 15..=16 => {
-                    let leaves: Vec<NodeId> = live.iter().copied().filter(|&x| matches!(s.w(s.ix(x)), W::Label { .. } | W::Button { .. })).collect();
+                    let leaves: Vec<NodeId> = live
+                        .iter()
+                        .copied()
+                        .filter(|&x| matches!(s.w(s.ix(x)), W::Label { .. } | W::Button { .. }))
+                        .collect();
                     let Some(x) = rng.pick(&leaves) else { continue };
-                    set(&mut s, x, "text", Value::Str("w".repeat(rng.below(12))), origin);
+                    set(
+                        &mut s,
+                        x,
+                        "text",
+                        Value::Str("w".repeat(rng.below(12))),
+                        origin,
+                    );
                 }
                 17..=18 => {
                     let Some(x) = rng.pick(&live) else { continue };
-                    let bit = [StateBits::HOVERED, StateBits::SELECTED, StateBits::INVALID][rng.below(3)];
-                    SceneMut { s: &mut s, origin }.node(x).unwrap().set_state(bit, rng.below(2) == 0);
+                    let bit =
+                        [StateBits::HOVERED, StateBits::SELECTED, StateBits::INVALID][rng.below(3)];
+                    SceneMut { s: &mut s, origin }
+                        .node(x)
+                        .unwrap()
+                        .set_state(bit, rng.below(2) == 0);
                 }
                 19..=21 => {
                     let Some(x) = rng.pick(&live) else { continue };
@@ -286,7 +374,11 @@ fn journal_replay_rebuilds_the_dump() {
                 for c in &set.records {
                     mirror.apply(&s, c);
                 }
-                assert_eq!(mirror.dump_all(), scene_dump_all(&s), "{ctx}: the replayed journal rebuilds the dump");
+                assert_eq!(
+                    mirror.dump_all(),
+                    scene_dump_all(&s),
+                    "{ctx}: the replayed journal rebuilds the dump"
+                );
                 // the narrow observer saw NOTE records only, enough to track NOTE's marked set (R19)
                 for c in narrow.take().records {
                     match c {
@@ -302,13 +394,22 @@ fn journal_replay_rebuilds_the_dump() {
                         other => panic!("{ctx}: the NOTE observer got {other:?}"),
                     }
                 }
-                let marked: BTreeSet<NodeId> = SceneRef::new(&s).with_ext(&NOTE).map(|(n, _)| n.id()).collect();
-                assert_eq!(note_live, marked, "{ctx}: NOTE's marked set from the journal");
+                let marked: BTreeSet<NodeId> = SceneRef::new(&s)
+                    .with_ext(&NOTE)
+                    .map(|(n, _)| n.id())
+                    .collect();
+                assert_eq!(
+                    note_live, marked,
+                    "{ctx}: NOTE's marked set from the journal"
+                );
             }
         }
         drop(short);
     }
-    assert!(records > 1000 && takes > 100, "{records} records in {takes} takes");
+    assert!(
+        records > 1000 && takes > 100,
+        "{records} records in {takes} takes"
+    );
 }
 
 /// Sparse and dense columns: access, swap-remove, ticks, iteration, freeing with the node.
@@ -316,7 +417,11 @@ fn journal_replay_rebuilds_the_dump() {
 fn ext_columns_sparse_and_dense() {
     let h = SceneHandle::default();
     let app = ProviderId::APP;
-    let ids: Vec<NodeId> = h.write(app, |s| (0..10).map(|_| s.create_tag("box").unwrap()).collect()).unwrap();
+    let ids: Vec<NodeId> = h
+        .write(app, |s| {
+            (0..10).map(|_| s.create_tag("box").unwrap()).collect()
+        })
+        .unwrap();
     let t0 = h.read(|s| s.tick());
     h.write(app, |s| {
         for (k, &id) in ids.iter().enumerate() {
@@ -361,12 +466,20 @@ fn ext_columns_sparse_and_dense() {
         assert!(tk(0).is_added_since(t0) && !tk(0).is_changed_since(t1));
         assert!(!tk(4).is_added_since(t1) && tk(4).is_changed_since(t1));
         assert!(tk(6).is_changed_since(t1));
-        let changed: Vec<NodeId> = s.with_ext_ticks(&NOTE).filter(|(_, _, t)| t.is_changed_since(t1)).map(|(n, _, _)| n.id()).collect();
+        let changed: Vec<NodeId> = s
+            .with_ext_ticks(&NOTE)
+            .filter(|(_, _, t)| t.is_changed_since(t1))
+            .map(|(n, _, _)| n.id())
+            .collect();
         assert_eq!(changed.len(), 2);
         // node ticks follow ext writes
         assert!(s.get(ids[2]).unwrap().changed_since(t1));
         assert!(!s.get(ids[3]).unwrap().changed_since(t1));
-        assert_eq!(s.changed_since(t1).count(), 3, "2 (removed), 4 (set), 6 (get_mut); 1's get_mut found nothing");
+        assert_eq!(
+            s.changed_since(t1).count(),
+            3,
+            "2 (removed), 4 (set), 6 (get_mut); 1's get_mut found nothing"
+        );
     });
 }
 
@@ -392,9 +505,20 @@ fn ext_removal_is_journaled_on_remove_and_on_destroy() {
             (a, b, c)
         })
         .unwrap();
-    let added: Vec<Change> = obs.take().records.into_iter().filter(|c| !matches!(c, Change::Batch { .. })).collect();
+    let added: Vec<Change> = obs
+        .take()
+        .records
+        .into_iter()
+        .filter(|c| !matches!(c, Change::Batch { .. }))
+        .collect();
     assert_eq!(added.len(), 3);
-    assert!(added.iter().all(|c| matches!(c, Change::Ext { what: ExtChange::Added, .. })));
+    assert!(added.iter().all(|c| matches!(
+        c,
+        Change::Ext {
+            what: ExtChange::Added,
+            ..
+        }
+    )));
     all.take();
     h.write(app, |s| {
         s.node(c).unwrap().ext_mut(&NOTE).remove();
@@ -406,16 +530,26 @@ fn ext_removal_is_journaled_on_remove_and_on_destroy() {
         .records
         .into_iter()
         .filter_map(|c| match c {
-            Change::Ext { node, what: ExtChange::Removed, .. } => Some(node),
+            Change::Ext {
+                node,
+                what: ExtChange::Removed,
+                ..
+            } => Some(node),
             Change::Batch { .. } => None,
             other => panic!("{other:?}"),
         })
         .collect();
-    assert_eq!(removed, vec![c, a, b], "the explicit remove, then the subtree's entries in pre-order");
+    assert_eq!(
+        removed,
+        vec![c, a, b],
+        "the explicit remove, then the subtree's entries in pre-order"
+    );
     // in the full journal, each node's ext removals come before its Destroyed
     let recs = all.take().records;
     let pos = |pred: &dyn Fn(&Change) -> bool| recs.iter().position(pred).unwrap();
-    let b_pick = pos(&|c| matches!(c, Change::Ext { node, ext, what: ExtChange::Removed } if *node == b && *ext == PICK.id()));
+    let b_pick = pos(
+        &|c| matches!(c, Change::Ext { node, ext, what: ExtChange::Removed } if *node == b && *ext == PICK.id()),
+    );
     let b_gone = pos(&|c| matches!(c, Change::Destroyed { node, .. } if *node == b));
     assert!(b_pick < b_gone);
     assert!(matches!(recs[0], Change::Batch { label: "write", .. }));
@@ -447,34 +581,91 @@ fn observer_filters() {
     let text = h.read(|s| s.get(l1).unwrap().prop_id("text").unwrap());
     let in_root = h.observe(ChangeFilter::only(ChangeMask::PROPS).scope(root));
     let in_col = h.observe(ChangeFilter::all().scope(col));
-    let labels = h.observe(ChangeFilter::only(ChangeMask::PROPS | ChangeMask::STATE).kind(KindId(kinds::kind_id(kind("label")))));
+    let labels = h.observe(
+        ChangeFilter::only(ChangeMask::PROPS | ChangeMask::STATE)
+            .kind(KindId(kinds::kind_id(kind("label")))),
+    );
     let texts = h.observe(ChangeFilter::only(ChangeMask::PROPS).prop(text));
     let selected = h.observe(ChangeFilter::only(ChangeMask::STATE).states(StateBits::SELECTED));
     let not_app = h.observe(ChangeFilter::all().ignore(app));
     let only_js = h.observe(ChangeFilter::all().origins(OriginMask::JS));
     h.write(app, |s| {
-        s.node(l1).unwrap().set(&keys::label::TEXT, "a".into()).unwrap();
-        s.node(loose).unwrap().set(&keys::label::TEXT, "b".into()).unwrap();
-        s.node(b1).unwrap().set(&keys::button::TEXT, "c".into()).unwrap();
-        s.node(l2).unwrap().set(&keys::widget::VISIBLE, false).unwrap();
+        s.node(l1)
+            .unwrap()
+            .set(&keys::label::TEXT, "a".into())
+            .unwrap();
+        s.node(loose)
+            .unwrap()
+            .set(&keys::label::TEXT, "b".into())
+            .unwrap();
+        s.node(b1)
+            .unwrap()
+            .set(&keys::button::TEXT, "c".into())
+            .unwrap();
+        s.node(l2)
+            .unwrap()
+            .set(&keys::widget::VISIBLE, false)
+            .unwrap();
         s.node(l2).unwrap().set_state(StateBits::HOVERED, true);
         s.node(b1).unwrap().set_state(StateBits::SELECTED, true);
     })
     .unwrap();
     h.write(other, |s| {
-        s.node(w).unwrap().set(&keys::window::TITLE, "t".into()).unwrap();
+        s.node(w)
+            .unwrap()
+            .set(&keys::window::TITLE, "t".into())
+            .unwrap();
     })
     .unwrap();
     let nodes = |o: &Observer| -> Vec<(NodeId, ChangeMask)> { o.take().by_node().collect() };
-    assert_eq!(nodes(&in_root), vec![(l1, ChangeMask::PROPS), (b1, ChangeMask::PROPS), (l2, ChangeMask::PROPS), (w, ChangeMask::PROPS)], "the loose label is not in the root");
-    assert_eq!(nodes(&in_col), vec![(l1, ChangeMask::PROPS), (b1, ChangeMask::PROPS | ChangeMask::STATE), (l2, ChangeMask::PROPS | ChangeMask::STATE)], "col's subtree, not the window itself");
-    assert_eq!(nodes(&labels), vec![(l1, ChangeMask::PROPS), (loose, ChangeMask::PROPS), (l2, ChangeMask::PROPS | ChangeMask::STATE)]);
-    assert_eq!(nodes(&texts), vec![(l1, ChangeMask::PROPS), (loose, ChangeMask::PROPS)], "label text only (a button's text is another prop id)");
-    assert_eq!(nodes(&selected), vec![(b1, ChangeMask::STATE)], "hovered is not watched");
-    assert_eq!(nodes(&not_app), vec![(w, ChangeMask::PROPS)], "the app's own writes are ignored");
+    assert_eq!(
+        nodes(&in_root),
+        vec![
+            (l1, ChangeMask::PROPS),
+            (b1, ChangeMask::PROPS),
+            (l2, ChangeMask::PROPS),
+            (w, ChangeMask::PROPS)
+        ],
+        "the loose label is not in the root"
+    );
+    assert_eq!(
+        nodes(&in_col),
+        vec![
+            (l1, ChangeMask::PROPS),
+            (b1, ChangeMask::PROPS | ChangeMask::STATE),
+            (l2, ChangeMask::PROPS | ChangeMask::STATE)
+        ],
+        "col's subtree, not the window itself"
+    );
+    assert_eq!(
+        nodes(&labels),
+        vec![
+            (l1, ChangeMask::PROPS),
+            (loose, ChangeMask::PROPS),
+            (l2, ChangeMask::PROPS | ChangeMask::STATE)
+        ]
+    );
+    assert_eq!(
+        nodes(&texts),
+        vec![(l1, ChangeMask::PROPS), (loose, ChangeMask::PROPS)],
+        "label text only (a button's text is another prop id)"
+    );
+    assert_eq!(
+        nodes(&selected),
+        vec![(b1, ChangeMask::STATE)],
+        "hovered is not watched"
+    );
+    assert_eq!(
+        nodes(&not_app),
+        vec![(w, ChangeMask::PROPS)],
+        "the app's own writes are ignored"
+    );
     assert!(only_js.take().records.is_empty());
     // a state change records before and after
-    h.write(app, |s| s.node(b1).unwrap().set_state(StateBits::SELECTED, false)).unwrap();
+    h.write(app, |s| {
+        s.node(b1).unwrap().set_state(StateBits::SELECTED, false)
+    })
+    .unwrap();
     let recs = selected.take().records;
     assert!(recs.iter().any(|c| matches!(c, Change::State { node, before, after } if *node == b1 && before.contains(StateBits::SELECTED) && !after.contains(StateBits::SELECTED))));
     // a provider state bit registered with RA1's registry filters the same way
@@ -498,37 +689,80 @@ fn batches_overflow_and_dropped_observers() {
     let l = h.write(app, |s| s.create_tag("label").unwrap()).unwrap();
     let obs = h.observe(ChangeFilter::only(ChangeMask::PROPS));
     h.write(app, |s| {
-        s.node(l).unwrap().set(&keys::label::TEXT, "a".into()).unwrap();
-        s.batch("inner", |s| s.node(l).unwrap().set(&keys::label::TEXT, "b".into()).unwrap());
+        s.node(l)
+            .unwrap()
+            .set(&keys::label::TEXT, "a".into())
+            .unwrap();
+        s.batch("inner", |s| {
+            s.node(l)
+                .unwrap()
+                .set(&keys::label::TEXT, "b".into())
+                .unwrap()
+        });
     })
     .unwrap();
-    h.defer(app, move |s| s.node(l).unwrap().set(&keys::label::TEXT, "c".into()).unwrap());
+    h.defer(app, move |s| {
+        s.node(l)
+            .unwrap()
+            .set(&keys::label::TEXT, "c".into())
+            .unwrap()
+    });
     h.set_phase(Phase::Logic);
     h.run_deferred();
     let recs = obs.take().records;
     let t = match recs[0] {
-        Change::Batch { label: "write", tick } => tick,
+        Change::Batch {
+            label: "write",
+            tick,
+        } => tick,
         ref other => panic!("{other:?}"),
     };
-    assert!(matches!(recs[1], Change::Prop { .. }) && matches!(recs[2], Change::Prop { .. }), "a nested batch joins the write: {recs:?}");
-    assert!(matches!(recs[3], Change::Batch { label: "defer", tick } if tick > t), "{recs:?}");
+    assert!(
+        matches!(recs[1], Change::Prop { .. }) && matches!(recs[2], Change::Prop { .. }),
+        "a nested batch joins the write: {recs:?}"
+    );
+    assert!(
+        matches!(recs[3], Change::Batch { label: "defer", tick } if tick > t),
+        "{recs:?}"
+    );
     assert_eq!(recs.len(), 5);
 
     // overflow
     let small = h.observe(ChangeFilter::only(ChangeMask::PROPS).capacity(4));
     for k in 0..10 {
-        h.write(app, |s| s.node(l).unwrap().set(&keys::label::TEXT, format!("{k}")).unwrap()).unwrap();
+        h.write(app, |s| {
+            s.node(l)
+                .unwrap()
+                .set(&keys::label::TEXT, format!("{k}"))
+                .unwrap()
+        })
+        .unwrap();
     }
     let set = small.take();
     assert!(set.overflowed && set.records.is_empty());
-    h.write(app, |s| s.node(l).unwrap().set(&keys::label::TEXT, "z".into()).unwrap()).unwrap();
+    h.write(app, |s| {
+        s.node(l)
+            .unwrap()
+            .set(&keys::label::TEXT, "z".into())
+            .unwrap()
+    })
+    .unwrap();
     let set = small.take();
-    assert!(!set.overflowed && set.records.len() == 2, "recording resumes after a take: {set:?}");
+    assert!(
+        !set.overflowed && set.records.len() == 2,
+        "recording resumes after a take: {set:?}"
+    );
 
     // dropped observers: the next record prunes them and clears the union interest
     drop(small);
     drop(obs);
-    h.write(app, |s| s.node(l).unwrap().set(&keys::label::TEXT, "y".into()).unwrap()).unwrap();
+    h.write(app, |s| {
+        s.node(l)
+            .unwrap()
+            .set(&keys::label::TEXT, "y".into())
+            .unwrap()
+    })
+    .unwrap();
     h.read(|s| assert_eq!(s.stats().observers, 0));
     assert!(!h.borrow().journal.wants(ChangeMask::ALL));
     // and observe works inside a write
@@ -562,22 +796,41 @@ fn layout_records_and_damage() {
     set(&mut s, l, "wrap-mode", Value::Str("extend".into()), js);
     s.insert(row, l, None, js).unwrap();
     let r = s.core[s.ix(w)].root;
-    let obs = s.journal.observe(ChangeFilter::only(ChangeMask::LAYOUT).scope(r));
+    let obs = s
+        .journal
+        .observe(ChangeFilter::only(ChangeMask::LAYOUT).scope(r));
     let size = egui::vec2(400.0, 300.0);
     layout::run_root(&mut s, &m, r, size).unwrap();
     let set1 = obs.take();
-    let laid: Vec<NodeId> = set1.records.iter().filter_map(|c| matches!(c, Change::Layout { .. }).then(|| c.node().unwrap())).collect();
+    let laid: Vec<NodeId> = set1
+        .records
+        .iter()
+        .filter_map(|c| matches!(c, Change::Layout { .. }).then(|| c.node().unwrap()))
+        .collect();
     assert_eq!(laid.len(), 3, "{:?}", set1.records);
     assert_eq!(set1.damage.relayout, vec![w], "a whole-root layout");
     // a longer text: the row (a boundary) is laid out alone; only the label's rect changes
     let li = s.ix(l);
     s.core[li].drawn = egui::Rect::from_min_size(egui::pos2(10.0, 10.0), egui::vec2(20.0, 14.0));
-    set(&mut s, l, "text", Value::Str("a much longer text".into()), js);
+    set(
+        &mut s,
+        l,
+        "text",
+        Value::Str("a much longer text".into()),
+        js,
+    );
     layout::remeasure(&mut s, &m, r);
     layout::run_root(&mut s, &m, r, size).unwrap();
     let set2 = obs.take();
     assert_eq!(set2.damage.relayout, vec![row]);
-    assert!(matches!(set2.records[..], [Change::Layout { node, before, after }] if node == l && after.width() > before.width()), "{:?}", set2.records);
-    assert_eq!(set2.damage.repaint, vec![(egui::ViewportId::ROOT, s.core[s.ix(l)].drawn)]);
+    assert!(
+        matches!(set2.records[..], [Change::Layout { node, before, after }] if node == l && after.width() > before.width()),
+        "{:?}",
+        set2.records
+    );
+    assert_eq!(
+        set2.damage.repaint,
+        vec![(egui::ViewportId::ROOT, s.core[s.ix(l)].drawn)]
+    );
     assert_eq!(set2.damage.a11y, vec![l]);
 }

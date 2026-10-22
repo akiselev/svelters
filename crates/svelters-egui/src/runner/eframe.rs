@@ -13,7 +13,14 @@ fn root_props(b: &EguiBackend) -> (String, egui::Vec2) {
     b.root_window()
         .and_then(|w| {
             b.with_scene(|s| match &s.n(w).w {
-                W::Window { title, default_w, default_h } => Some((title.clone(), egui::vec2(*default_w as f32, *default_h as f32))),
+                W::Window {
+                    title,
+                    default_w,
+                    default_h,
+                } => Some((
+                    title.clone(),
+                    egui::vec2(*default_w as f32, *default_h as f32),
+                )),
                 _ => None,
             })
         })
@@ -53,11 +60,14 @@ fn run_native_with(
     make: impl FnOnce(&egui::Context) -> Box<dyn ::eframe::App> + 'static,
 ) -> Result<(), String> {
     let opts = ::eframe::NativeOptions {
-        viewport: egui::ViewportBuilder::default().with_title(title.clone()).with_inner_size(size),
+        viewport: egui::ViewportBuilder::default()
+            .with_title(title.clone())
+            .with_inner_size(size),
         renderer: ::eframe::Renderer::Glow,
         ..Default::default()
     };
-    ::eframe::run_native(&title, opts, Box::new(move |cc| Ok(make(&cc.egui_ctx)))).map_err(|e| format!("eframe: {e}"))
+    ::eframe::run_native(&title, opts, Box::new(move |cc| Ok(make(&cc.egui_ctx))))
+        .map_err(|e| format!("eframe: {e}"))
 }
 
 /// The desktop app on an [`Embed`]: `logic` from `App::logic`, the presented windows from `App::ui`.
@@ -91,7 +101,10 @@ pub(crate) fn run_desktop(embed: Embed) -> Result<(), String> {
 #[cfg(not(feature = "eframe"))]
 pub(crate) fn run_eframe(_b: &EguiBackend) -> Result<(), String> {
     let _ = root_props;
-    Err("svelters-egui was built without the `eframe` feature: embed it (EguiBackend::ui) instead".into())
+    Err(
+        "svelters-egui was built without the `eframe` feature: embed it (EguiBackend::ui) instead"
+            .into(),
+    )
 }
 
 #[cfg(not(feature = "eframe"))]

@@ -5,7 +5,10 @@ mod common;
 
 use common::Rig;
 use svelters_abi::*;
-use svelters_egui::scene::{ChangeFilter, ChangeMask, DumpOpts, ExtKey, NodeId, Owner, ProviderId, SceneError, SceneHandle, StateBits, keys};
+use svelters_egui::scene::{
+    ChangeFilter, ChangeMask, DumpOpts, ExtKey, NodeId, Owner, ProviderId, SceneError, SceneHandle,
+    StateBits, keys,
+};
 
 fn id(h: svl_handle) -> NodeId {
     NodeId::from_raw(h).unwrap()
@@ -18,7 +21,11 @@ fn rust_write_of_a_bound_prop_announces_and_fires_no_event() {
     let mut rig = Rig::new();
     let (_w, col) = rig.window();
     let cb = rig.leaf(col, "checkbox", &[("text", Value::Str("Snap".into()))]);
-    let slider = rig.leaf(col, "slider", &[("accessible-name", Value::Str("Gain".into()))]);
+    let slider = rig.leaf(
+        col,
+        "slider",
+        &[("accessible-name", Value::Str("Gain".into()))],
+    );
     rig.observe(cb, "checked", true);
     rig.listen(cb, "changed");
     rig.listen(slider, "changed");
@@ -30,10 +37,19 @@ fn rust_write_of_a_bound_prop_announces_and_fires_no_event() {
     rig.backend
         .scene()
         .write(app, |s| {
-            s.node(id(cb)).unwrap().set(&keys::checkbox::CHECKED, true).unwrap();
-            s.node(id(slider)).unwrap().set(&keys::slider::VALUE, 42.0).unwrap();
+            s.node(id(cb))
+                .unwrap()
+                .set(&keys::checkbox::CHECKED, true)
+                .unwrap();
+            s.node(id(slider))
+                .unwrap()
+                .set(&keys::slider::VALUE, 42.0)
+                .unwrap();
             // the same value again: nothing to announce
-            s.node(id(cb)).unwrap().set(&keys::checkbox::CHECKED, true).unwrap();
+            s.node(id(cb))
+                .unwrap()
+                .set(&keys::checkbox::CHECKED, true)
+                .unwrap();
         })
         .unwrap();
     rig.run();
@@ -41,9 +57,20 @@ fn rust_write_of_a_bound_prop_announces_and_fires_no_event() {
     assert_eq!(rig.get(slider, "value"), Value::F64(42.0));
     let l = rig.log.borrow();
     let pid = rig.prop_id(cb, "checked");
-    assert_eq!(l.changed, vec![(cb, pid)], "announced once, the unobserved slider not at all");
-    assert!(l.events.is_empty(), "no `changed` event for a Rust write: {:?}", l.events);
-    assert!(l.checkpoints > checkpoints, "the announcement runs a checkpoint");
+    assert_eq!(
+        l.changed,
+        vec![(cb, pid)],
+        "announced once, the unobserved slider not at all"
+    );
+    assert!(
+        l.events.is_empty(),
+        "no `changed` event for a Rust write: {:?}",
+        l.events
+    );
+    assert!(
+        l.checkpoints > checkpoints,
+        "the announcement runs a checkpoint"
+    );
 }
 
 /// Owners (S3): Rust builds and edits its own subtrees, mounts them under a runtime's node only
@@ -60,9 +87,24 @@ fn rust_edits_its_own_structure_only() {
             let panel = s.create_tag("box").unwrap();
             let row = s.create_tag("label").unwrap();
             s.insert(panel, row, None).unwrap();
-            assert!(matches!(s.insert(id(col), panel, None), Err(SceneError::NotOwner { owner: Owner::Js, .. })), "no Rust edits of a runtime's children");
-            assert!(matches!(s.remove(id(js_label)), Err(SceneError::NotOwner { .. })));
-            assert!(matches!(s.destroy(id(js_label)), Err(SceneError::NotOwner { .. })));
+            assert!(
+                matches!(
+                    s.insert(id(col), panel, None),
+                    Err(SceneError::NotOwner {
+                        owner: Owner::Js,
+                        ..
+                    })
+                ),
+                "no Rust edits of a runtime's children"
+            );
+            assert!(matches!(
+                s.remove(id(js_label)),
+                Err(SceneError::NotOwner { .. })
+            ));
+            assert!(matches!(
+                s.destroy(id(js_label)),
+                Err(SceneError::NotOwner { .. })
+            ));
             (panel, row)
         })
         .unwrap();
@@ -70,7 +112,10 @@ fn rust_edits_its_own_structure_only() {
     rig.br().insert(col, panel.to_raw(), None, 0).unwrap();
     h.write(app, |s| {
         let extra = s.create_tag("button").unwrap();
-        s.node(extra).unwrap().set(&keys::button::TEXT, "Rust".to_string()).unwrap();
+        s.node(extra)
+            .unwrap()
+            .set(&keys::button::TEXT, "Rust".to_string())
+            .unwrap();
         s.insert(panel, extra, Some(row)).unwrap();
     })
     .unwrap();
@@ -80,14 +125,32 @@ fn rust_edits_its_own_structure_only() {
         let p = s.get(panel).unwrap();
         assert_eq!(p.owner(), Owner::Rust(app));
         assert_eq!(p.parent().map(|n| n.id()), Some(id(col)));
-        assert_eq!(p.children().map(|c| c.tag()).collect::<Vec<_>>(), ["button", "label"]);
+        assert_eq!(
+            p.children().map(|c| c.tag()).collect::<Vec<_>>(),
+            ["button", "label"]
+        );
         assert_eq!(p.root(), s.get(id(col)).unwrap().root());
-        assert!(p.children().next().unwrap().drawn().is_some(), "drawn in the window");
+        assert!(
+            p.children().next().unwrap().drawn().is_some(),
+            "drawn in the window"
+        );
         let dump = s.dump(id(col), DumpOpts::default());
-        assert!(dump.contains("<button>") && dump.contains("[rust:app]") && dump.contains("\"Rust\""), "{dump}");
+        assert!(
+            dump.contains("<button>") && dump.contains("[rust:app]") && dump.contains("\"Rust\""),
+            "{dump}"
+        );
     });
     // mounted under a runtime's node, it is the runtime's child: Rust cannot take it out
-    h.write(app, |s| assert!(matches!(s.destroy(panel), Err(SceneError::NotOwner { owner: Owner::Js, .. })))).unwrap();
+    h.write(app, |s| {
+        assert!(matches!(
+            s.destroy(panel),
+            Err(SceneError::NotOwner {
+                owner: Owner::Js,
+                ..
+            })
+        ))
+    })
+    .unwrap();
     // once the runtime removed it, Rust destroys its subtree; the runtime's nodes stay
     rig.br().remove(col, panel.to_raw()).unwrap();
     h.write(app, |s| s.destroy(panel).unwrap()).unwrap();
@@ -108,7 +171,12 @@ fn deferred_writes_run_at_the_next_logic() {
     let l = rig.leaf(col, "label", &[("text", Value::Str("before".into()))]);
     rig.run();
     let h = rig.backend.scene();
-    h.defer(ProviderId::APP, move |s| s.node(id(l)).unwrap().set(&keys::label::TEXT, "after".to_string()).unwrap());
+    h.defer(ProviderId::APP, move |s| {
+        s.node(id(l))
+            .unwrap()
+            .set(&keys::label::TEXT, "after".to_string())
+            .unwrap()
+    });
     assert_eq!(h.deferred_len(), 1, "R16: pending work");
     assert_eq!(rig.get(l, "text"), Value::Str("before".into()));
     rig.run();
@@ -125,7 +193,12 @@ fn a_label_change_relays_out_its_boundary_only() {
     let mut labels = Vec::new();
     for r in 0..20 {
         let row = rig.create("box");
-        for (k, v) in [("flex-direction", Value::Str("row".into())), ("width", Value::F64(400.0)), ("height", Value::F64(18.0)), ("flex-shrink", Value::F64(0.0))] {
+        for (k, v) in [
+            ("flex-direction", Value::Str("row".into())),
+            ("width", Value::F64(400.0)),
+            ("height", Value::F64(18.0)),
+            ("flex-shrink", Value::F64(0.0)),
+        ] {
             rig.set(row, k, v);
         }
         rig.insert(col, row);
@@ -136,7 +209,11 @@ fn a_label_change_relays_out_its_boundary_only() {
     rig.run();
     let h = rig.backend.scene();
     let before = h.read(|s| s.stats());
-    rig.set(labels[37], "text", Value::Str("a longer label than before".into()));
+    rig.set(
+        labels[37],
+        "text",
+        Value::Str("a longer label than before".into()),
+    );
     rig.run();
     let after = h.read(|s| s.stats());
     assert_eq!(after.layouts, before.layouts, "no whole-root layout");
@@ -146,13 +223,23 @@ fn a_label_change_relays_out_its_boundary_only() {
         s.validate().unwrap();
         let n = s.get(id(labels[37])).unwrap();
         assert!(n.parent().unwrap().is_layout_boundary());
-        assert!(n.rect().width() > 100.0, "laid out at its new width: {:?}", n.rect());
-        assert_eq!(n.get(&keys::label::TEXT).unwrap(), "a longer label than before");
+        assert!(
+            n.rect().width() > 100.0,
+            "laid out at its new width: {:?}",
+            n.rect()
+        );
+        assert_eq!(
+            n.get(&keys::label::TEXT).unwrap(),
+            "a longer label than before"
+        );
     });
     // bounds (a synchronous layout) agrees with the frame's
     let b = rig.br().bounds(labels[37]).unwrap().unwrap();
     let r = h.read(|s| s.get(id(labels[37])).unwrap().rect());
-    assert_eq!([b[0] as f32, b[1] as f32, b[2] as f32, b[3] as f32], [r.min.x, r.min.y, r.width(), r.height()]);
+    assert_eq!(
+        [b[0] as f32, b[1] as f32, b[2] as f32, b[3] as f32],
+        [r.min.x, r.min.y, r.width(), r.height()]
+    );
 }
 
 // ---- SG2: allocation and `with_ext` budgets ----
@@ -221,10 +308,21 @@ fn mutations_allocate_nothing_without_observers() {
         .unwrap();
     let round = |k: u32| {
         h.write(app, |s| {
-            s.node(kids[0]).unwrap().set(&keys::slider::VALUE, k as f64).unwrap();
-            s.node(kids[1]).unwrap().set(&keys::checkbox::CHECKED, k % 2 == 0).unwrap();
-            s.node(kids[2]).unwrap().set(&keys::widget::ENABLED, k % 2 == 0).unwrap();
-            s.node(kids[3]).unwrap().set_state(StateBits::SELECTED, k % 2 == 0);
+            s.node(kids[0])
+                .unwrap()
+                .set(&keys::slider::VALUE, k as f64)
+                .unwrap();
+            s.node(kids[1])
+                .unwrap()
+                .set(&keys::checkbox::CHECKED, k % 2 == 0)
+                .unwrap();
+            s.node(kids[2])
+                .unwrap()
+                .set(&keys::widget::ENABLED, k % 2 == 0)
+                .unwrap();
+            s.node(kids[3])
+                .unwrap()
+                .set_state(StateBits::SELECTED, k % 2 == 0);
             for &x in &kids {
                 let mut n = s.node(x).unwrap();
                 n.ext_mut(&MARK).set(k);
@@ -236,7 +334,11 @@ fn mutations_allocate_nothing_without_observers() {
             // move the last child to the front, and back
             s.insert(top, kids[3], Some(kids[0])).unwrap();
             s.insert(top, kids[3], None).unwrap();
-            s.batch("b", |s| s.node(kids[2]).unwrap().set_state(StateBits::HOVERED, k % 2 == 1));
+            s.batch("b", |s| {
+                s.node(kids[2])
+                    .unwrap()
+                    .set_state(StateBits::HOVERED, k % 2 == 1)
+            });
         })
         .unwrap();
     };
@@ -247,7 +349,11 @@ fn mutations_allocate_nothing_without_observers() {
     for k in 3..53 {
         round(k);
     }
-    assert_eq!(allocs() - a, 0, "50 rounds of mutations with no observer allocated");
+    assert_eq!(
+        allocs() - a,
+        0,
+        "50 rounds of mutations with no observer allocated"
+    );
 
     // an observer that wants none of these kinds of change costs nothing either
     let roots = h.observe(ChangeFilter::only(ChangeMask::ROOT));
@@ -292,7 +398,11 @@ fn with_ext_over_5k_of_100k_nodes() {
         let mut sum = 0u64;
         for _ in 0..20 {
             let t = std::time::Instant::now();
-            sum = std::hint::black_box(s.with_ext(&MARK).map(|(n, v)| n.id().to_raw() ^ *v as u64).fold(0u64, |a, x| a.wrapping_add(x)));
+            sum = std::hint::black_box(
+                s.with_ext(&MARK)
+                    .map(|(n, v)| n.id().to_raw() ^ *v as u64)
+                    .fold(0u64, |a, x| a.wrapping_add(x)),
+            );
             best = best.min(t.elapsed());
         }
         (best, sum)
@@ -307,7 +417,12 @@ fn with_ext_over_5k_of_100k_nodes() {
         t.elapsed()
     });
     let budget = std::time::Duration::from_micros(if cfg!(debug_assertions) { 4_000 } else { 50 });
-    eprintln!("with_ext: 5000 entries of 100000 nodes in {t:?} (budget {budget:?}); a scan of every node: {scan:?}");
-    assert!(t <= budget, "with_ext over 5k entries took {t:?} (budget {budget:?})");
+    eprintln!(
+        "with_ext: 5000 entries of 100000 nodes in {t:?} (budget {budget:?}); a scan of every node: {scan:?}"
+    );
+    assert!(
+        t <= budget,
+        "with_ext over 5k entries took {t:?} (budget {budget:?})"
+    );
     assert!(t * 5 < scan, "with_ext {t:?} vs a full scan {scan:?}");
 }

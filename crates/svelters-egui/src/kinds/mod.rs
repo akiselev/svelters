@@ -157,23 +157,68 @@ pub struct KindDef {
 }
 
 const fn prop(name: &'static str, key: P, ty: Ty, default: Def, doc: &'static str) -> PropDef {
-    PropDef { name, key, ty, default, nullable: false, native: Native::Never, layout: false, doc }
+    PropDef {
+        name,
+        key,
+        ty,
+        default,
+        nullable: false,
+        native: Native::Never,
+        layout: false,
+        doc,
+    }
 }
 
 const fn length(name: &'static str, key: P, doc: &'static str) -> PropDef {
-    PropDef { name, key, ty: Ty::F64, default: Def::Null, nullable: true, native: Native::Never, layout: true, doc }
+    PropDef {
+        name,
+        key,
+        ty: Ty::F64,
+        default: Def::Null,
+        nullable: true,
+        native: Native::Never,
+        layout: true,
+        doc,
+    }
 }
 
 const fn layout(name: &'static str, key: P, ty: Ty, default: Def, doc: &'static str) -> PropDef {
-    PropDef { name, key, ty, default, nullable: false, native: Native::Never, layout: true, doc }
+    PropDef {
+        name,
+        key,
+        ty,
+        default,
+        nullable: false,
+        native: Native::Never,
+        layout: true,
+        doc,
+    }
 }
 
 const fn input(name: &'static str, key: P, ty: Ty, default: Def, doc: &'static str) -> PropDef {
-    PropDef { name, key, ty, default, nullable: false, native: Native::Widget, layout: false, doc }
+    PropDef {
+        name,
+        key,
+        ty,
+        default,
+        nullable: false,
+        native: Native::Widget,
+        layout: false,
+        doc,
+    }
 }
 
-const fn signal(name: &'static str, args: &'static [(&'static str, Ty)], doc: &'static str) -> SignalDef {
-    SignalDef { name, args, sync: false, doc }
+const fn signal(
+    name: &'static str,
+    args: &'static [(&'static str, Ty)],
+    doc: &'static str,
+) -> SignalDef {
+    SignalDef {
+        name,
+        args,
+        sync: false,
+        doc,
+    }
 }
 
 // ---- the module's functions: the global registry's answers ----

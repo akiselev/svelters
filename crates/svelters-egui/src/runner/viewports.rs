@@ -10,7 +10,10 @@
 //!
 //! Writer lane: EMBED.
 
-use egui::{DeferredViewportUiCallback, Event, Pos2, RawInput, Rect, Vec2, ViewportClass, ViewportId, ViewportInfo};
+use egui::{
+    DeferredViewportUiCallback, Event, Pos2, RawInput, Rect, Vec2, ViewportClass, ViewportId,
+    ViewportInfo,
+};
 use std::collections::VecDeque;
 use std::sync::Arc;
 use std::time::Duration;
@@ -60,8 +63,23 @@ impl Viewports {
                 a.lock().unwrap().push(info.viewport_id);
             }
         });
-        let root = Vp { id: ViewportId::ROOT, cb: None, due: true, delay: Duration::ZERO, events: VecDeque::new(), passes: 0 };
-        Viewports { ctx, ui: Box::new(|_| {}), size, vps: vec![root], time: 0.0, total: 0, asked }
+        let root = Vp {
+            id: ViewportId::ROOT,
+            cb: None,
+            due: true,
+            delay: Duration::ZERO,
+            events: VecDeque::new(),
+            passes: 0,
+        };
+        Viewports {
+            ctx,
+            ui: Box::new(|_| {}),
+            size,
+            vps: vec![root],
+            time: 0.0,
+            total: 0,
+            asked,
+        }
     }
 
     /// The root viewport's ui, run in each of its passes.
@@ -112,12 +130,20 @@ impl Viewports {
     /// or have input).
     pub fn due(&mut self) -> Vec<ViewportId> {
         self.take_asked();
-        self.vps.iter().filter(|v| v.due || !v.events.is_empty()).map(|v| v.id).collect()
+        self.vps
+            .iter()
+            .filter(|v| v.due || !v.events.is_empty())
+            .map(|v| v.id)
+            .collect()
     }
 
     /// The viewports egui asked to repaint after a delay (timers): `(id, delay)`.
     pub fn delayed(&self) -> Vec<(ViewportId, Duration)> {
-        self.vps.iter().filter(|v| !v.due && v.delay < Duration::MAX).map(|v| (v.id, v.delay)).collect()
+        self.vps
+            .iter()
+            .filter(|v| !v.due && v.delay < Duration::MAX)
+            .map(|v| (v.id, v.delay))
+            .collect()
     }
 
     /// Queues `ev` for viewport `id` (one event per pass).
@@ -131,8 +157,24 @@ impl Viewports {
     pub fn click(&mut self, id: ViewportId, pos: Pos2) {
         let b = egui::PointerButton::Primary;
         self.event(id, Event::PointerMoved(pos));
-        self.event(id, Event::PointerButton { pos, button: b, pressed: true, modifiers: Default::default() });
-        self.event(id, Event::PointerButton { pos, button: b, pressed: false, modifiers: Default::default() });
+        self.event(
+            id,
+            Event::PointerButton {
+                pos,
+                button: b,
+                pressed: true,
+                modifiers: Default::default(),
+            },
+        );
+        self.event(
+            id,
+            Event::PointerButton {
+                pos,
+                button: b,
+                pressed: false,
+                modifiers: Default::default(),
+            },
+        );
     }
 
     /// Text typed into viewport `id` (one pass).
@@ -143,7 +185,14 @@ impl Viewports {
     /// Runs one pass of the first viewport that is due (root first). False: none is.
     pub fn step(&mut self) -> bool {
         self.take_asked();
-        let Some(id) = self.vps.iter().find(|v| v.due || !v.events.is_empty()).map(|v| v.id) else { return false };
+        let Some(id) = self
+            .vps
+            .iter()
+            .find(|v| v.due || !v.events.is_empty())
+            .map(|v| v.id)
+        else {
+            return false;
+        };
         self.run_pass(id);
         true
     }
@@ -154,7 +203,11 @@ impl Viewports {
         let mut n = 0;
         while self.step() {
             n += 1;
-            assert!(n <= max, "Viewports::run: still repainting after {max} passes (due: {:?})", self.due());
+            assert!(
+                n <= max,
+                "Viewports::run: still repainting after {max} passes (due: {:?})",
+                self.due()
+            );
         }
         n
     }
@@ -181,13 +234,23 @@ impl Viewports {
         };
         input.viewports.insert(
             id,
-            ViewportInfo { native_pixels_per_point: Some(1.0), inner_rect: Some(rect), focused: Some(true), ..ViewportInfo::default() },
+            ViewportInfo {
+                native_pixels_per_point: Some(1.0),
+                inner_rect: Some(rect),
+                focused: Some(true),
+                ..ViewportInfo::default()
+            },
         );
         // `SVELTERS_VIEWPORTS_LOG=1`: each pass and why it ran (egui's repaint causes)
         let log = std::env::var_os("SVELTERS_VIEWPORTS_LOG").is_some();
         let why = |u: &egui::Ui| {
             if log {
-                eprintln!("[viewports] pass {:?} (event: {}) causes {:?}", u.ctx().viewport_id(), !u.ctx().input(|i| i.events.is_empty()), u.ctx().repaint_causes());
+                eprintln!(
+                    "[viewports] pass {:?} (event: {}) causes {:?}",
+                    u.ctx().viewport_id(),
+                    !u.ctx().input(|i| i.events.is_empty()),
+                    u.ctx().repaint_causes()
+                );
             }
         };
         let mut out = match cb {

@@ -58,7 +58,12 @@ fn ext_names() -> &'static Mutex<Vec<&'static str>> {
 impl ExtId {
     /// The name of the key with this id (`"cad.pick"`), `"?"` if no key has it.
     pub fn name(self) -> &'static str {
-        ext_names().lock().unwrap().get(self.0 as usize).copied().unwrap_or("?")
+        ext_names()
+            .lock()
+            .unwrap()
+            .get(self.0 as usize)
+            .copied()
+            .unwrap_or("?")
     }
 }
 
@@ -74,12 +79,22 @@ impl<T: 'static> ExtKey<T> {
     /// A key whose data few nodes carry (`Storage::Sparse`). `name` is `<namespace>.<name>`, for dumps,
     /// MCP and messages.
     pub const fn new(name: &'static str) -> Self {
-        ExtKey { name, storage: Storage::Sparse, id: OnceLock::new(), _t: PhantomData }
+        ExtKey {
+            name,
+            storage: Storage::Sparse,
+            id: OnceLock::new(),
+            _t: PhantomData,
+        }
     }
 
     /// A key most nodes carry (`Storage::Dense`).
     pub const fn dense(name: &'static str) -> Self {
-        ExtKey { name, storage: Storage::Dense, id: OnceLock::new(), _t: PhantomData }
+        ExtKey {
+            name,
+            storage: Storage::Dense,
+            id: OnceLock::new(),
+            _t: PhantomData,
+        }
     }
 
     pub fn name(&self) -> &'static str {
@@ -158,8 +173,18 @@ pub(crate) enum Column<T> {
 impl<T: 'static> Column<T> {
     fn new(storage: Storage) -> Self {
         match storage {
-            Storage::Sparse => Column::Sparse { sparse: Vec::new(), ids: Vec::new(), data: Vec::new(), ticks: Vec::new() },
-            Storage::Dense => Column::Dense { ids: Vec::new(), data: Vec::new(), ticks: Vec::new(), len: 0 },
+            Storage::Sparse => Column::Sparse {
+                sparse: Vec::new(),
+                ids: Vec::new(),
+                data: Vec::new(),
+                ticks: Vec::new(),
+            },
+            Storage::Dense => Column::Dense {
+                ids: Vec::new(),
+                data: Vec::new(),
+                ticks: Vec::new(),
+                len: 0,
+            },
         }
     }
 
@@ -189,7 +214,10 @@ impl<T: 'static> Column<T> {
     pub fn ticks(&self, i: u32) -> Option<ExtTicks> {
         match self {
             Column::Sparse { sparse, ticks, .. } => Self::pos(sparse, i).map(|p| ticks[p]),
-            Column::Dense { data, ticks, .. } => data.get(i as usize).and_then(Option::as_ref).map(|_| ticks[i as usize]),
+            Column::Dense { data, ticks, .. } => data
+                .get(i as usize)
+                .and_then(Option::as_ref)
+                .map(|_| ticks[i as usize]),
         }
     }
 
@@ -213,7 +241,12 @@ impl<T: 'static> Column<T> {
     fn insert(&mut self, node: NodeId, v: T, t: Tick) -> Option<T> {
         let i = node.index();
         match self {
-            Column::Sparse { sparse, ids, data, ticks } => match Self::pos(sparse, i) {
+            Column::Sparse {
+                sparse,
+                ids,
+                data,
+                ticks,
+            } => match Self::pos(sparse, i) {
                 Some(p) => {
                     ticks[p].changed = t;
                     Some(std::mem::replace(&mut data[p], v))
@@ -225,11 +258,19 @@ impl<T: 'static> Column<T> {
                     sparse[i as usize] = ids.len() as u32;
                     ids.push(node);
                     data.push(v);
-                    ticks.push(ExtTicks { added: t, changed: t });
+                    ticks.push(ExtTicks {
+                        added: t,
+                        changed: t,
+                    });
                     None
                 }
             },
-            Column::Dense { ids, data, ticks, len } => {
+            Column::Dense {
+                ids,
+                data,
+                ticks,
+                len,
+            } => {
                 if data.len() <= i as usize {
                     data.resize_with(i as usize + 1, || None);
                     ids.resize(i as usize + 1, node);
@@ -249,7 +290,12 @@ impl<T: 'static> Column<T> {
 
     fn remove(&mut self, i: u32) -> Option<T> {
         match self {
-            Column::Sparse { sparse, ids, data, ticks } => {
+            Column::Sparse {
+                sparse,
+                ids,
+                data,
+                ticks,
+            } => {
                 let p = Self::pos(sparse, i)?;
                 sparse[i as usize] = ABSENT;
                 ids.swap_remove(p);
@@ -284,7 +330,11 @@ impl<T: 'static> Column<T> {
         };
         let mut pos = 0usize;
         self.values().map(move |(id, v)| {
-            let t = if sparse { ticks[pos] } else { ticks[id.index() as usize] };
+            let t = if sparse {
+                ticks[pos]
+            } else {
+                ticks[id.index() as usize]
+            };
             pos += 1;
             (id, v, t)
         })
@@ -293,8 +343,16 @@ impl<T: 'static> Column<T> {
 
 /// The entries of a column, `(node, value)`: a plain cursor over the packed (or by-slot) vectors.
 pub(crate) enum ColumnValues<'a, T> {
-    Sparse { ids: &'a [NodeId], data: &'a [T], at: usize },
-    Dense { ids: &'a [NodeId], data: &'a [Option<T>], at: usize },
+    Sparse {
+        ids: &'a [NodeId],
+        data: &'a [T],
+        at: usize,
+    },
+    Dense {
+        ids: &'a [NodeId],
+        data: &'a [Option<T>],
+        at: usize,
+    },
 }
 
 impl<'a, T> Iterator for ColumnValues<'a, T> {
@@ -346,10 +404,24 @@ impl<T: 'static> ErasedColumn for Column<T> {
     fn bytes(&self) -> usize {
         use std::mem::size_of;
         match self {
-            Column::Sparse { sparse, ids, data, ticks } => {
-                sparse.capacity() * 4 + ids.capacity() * 8 + data.capacity() * size_of::<T>() + ticks.capacity() * size_of::<ExtTicks>()
+            Column::Sparse {
+                sparse,
+                ids,
+                data,
+                ticks,
+            } => {
+                sparse.capacity() * 4
+                    + ids.capacity() * 8
+                    + data.capacity() * size_of::<T>()
+                    + ticks.capacity() * size_of::<ExtTicks>()
             }
-            Column::Dense { ids, data, ticks, .. } => ids.capacity() * 8 + data.capacity() * size_of::<Option<T>>() + ticks.capacity() * size_of::<ExtTicks>(),
+            Column::Dense {
+                ids, data, ticks, ..
+            } => {
+                ids.capacity() * 8
+                    + data.capacity() * size_of::<Option<T>>()
+                    + ticks.capacity() * size_of::<ExtTicks>()
+            }
         }
     }
     fn nodes(&self) -> Vec<NodeId> {
@@ -373,11 +445,19 @@ pub(crate) struct ExtColumns {
 impl ExtColumns {
     #[inline]
     pub fn col<T: 'static>(&self, key: &ExtKey<T>) -> Option<&Column<T>> {
-        self.cols.get(key.id().0 as usize)?.as_deref()?.as_any().downcast_ref::<Column<T>>()
+        self.cols
+            .get(key.id().0 as usize)?
+            .as_deref()?
+            .as_any()
+            .downcast_ref::<Column<T>>()
     }
 
     fn col_mut<T: 'static>(&mut self, key: &ExtKey<T>) -> Option<&mut Column<T>> {
-        self.cols.get_mut(key.id().0 as usize)?.as_deref_mut()?.as_any_mut().downcast_mut::<Column<T>>()
+        self.cols
+            .get_mut(key.id().0 as usize)?
+            .as_deref_mut()?
+            .as_any_mut()
+            .downcast_mut::<Column<T>>()
     }
 
     fn col_or_insert<T: 'static>(&mut self, key: &ExtKey<T>) -> &mut Column<T> {
@@ -399,7 +479,11 @@ impl ExtColumns {
 
     /// The keys with an entry in slot `i`, by id.
     pub fn ids_at(&self, i: u32) -> impl Iterator<Item = ExtId> + '_ {
-        self.cols.iter().enumerate().filter(move |(_, c)| c.as_ref().is_some_and(|c| c.contains(i))).map(|(k, _)| ExtId(k as u32))
+        self.cols
+            .iter()
+            .enumerate()
+            .filter(move |(_, c)| c.as_ref().is_some_and(|c| c.contains(i)))
+            .map(|(k, _)| ExtId(k as u32))
     }
 
     pub fn has_any(&self, i: u32) -> bool {
@@ -418,7 +502,8 @@ impl ExtColumns {
     }
 
     pub fn bytes(&self) -> usize {
-        self.cols.capacity() * std::mem::size_of::<Option<Box<dyn ErasedColumn>>>() + self.cols.iter().flatten().map(|c| c.bytes()).sum::<usize>()
+        self.cols.capacity() * std::mem::size_of::<Option<Box<dyn ErasedColumn>>>()
+            + self.cols.iter().flatten().map(|c| c.bytes()).sum::<usize>()
     }
 
     /// Every `(key, node)` entry (`validate`).
@@ -448,18 +533,38 @@ pub(crate) struct ExtCx<'a> {
 
 impl ExtCx<'_> {
     pub fn reborrow(&mut self) -> ExtCx<'_> {
-        ExtCx { cols: self.cols, journal: self.journal, core: self.core, roots: self.roots, tick: self.tick, in_batch: self.in_batch }
+        ExtCx {
+            cols: self.cols,
+            journal: self.journal,
+            core: self.core,
+            roots: self.roots,
+            tick: self.tick,
+            in_batch: self.in_batch,
+        }
     }
 
     /// A tick for this write (the batch's inside a batch), stamped on the node; journals `what`.
-    fn changed(&mut self, i: u32, node: NodeId, ext: ExtId, what: ExtChange, origin: Origin) -> Tick {
+    fn changed(
+        &mut self,
+        i: u32,
+        node: NodeId,
+        ext: ExtId,
+        what: ExtChange,
+        origin: Origin,
+    ) -> Tick {
         if !self.in_batch {
             *self.tick += 1;
         }
         let t = Tick(*self.tick);
         self.core[i as usize].changed = t;
         if self.journal.wants_ext(ext) {
-            self.journal.record(self.core, self.roots, Change::Ext { node, ext, what }, origin, *self.tick);
+            self.journal.record(
+                self.core,
+                self.roots,
+                Change::Ext { node, ext, what },
+                origin,
+                *self.tick,
+            );
         }
         t
     }
@@ -477,7 +582,13 @@ pub struct ExtEntry<'a, T: 'static> {
 
 impl<'a, T: 'static> ExtEntry<'a, T> {
     pub(crate) fn new(cx: ExtCx<'a>, key: &'a ExtKey<T>, node: NodeId, origin: Origin) -> Self {
-        ExtEntry { cx, key, i: node.index(), node, origin }
+        ExtEntry {
+            cx,
+            key,
+            i: node.index(),
+            node,
+            origin,
+        }
     }
 }
 
@@ -489,7 +600,13 @@ impl<T: 'static> ExtEntry<'_, T> {
     /// The value, for changing in place: marks the entry changed (journaled) if there is one.
     pub fn get_mut(&mut self) -> Option<&mut T> {
         self.get()?;
-        let t = self.cx.changed(self.i, self.node, self.key.id(), ExtChange::Changed, self.origin);
+        let t = self.cx.changed(
+            self.i,
+            self.node,
+            self.key.id(),
+            ExtChange::Changed,
+            self.origin,
+        );
         let col = self.cx.cols.col_mut(self.key)?;
         col.touch(self.i, t);
         col.get_mut(self.i)
@@ -497,15 +614,27 @@ impl<T: 'static> ExtEntry<'_, T> {
 
     /// Sets the value; returns the previous one.
     pub fn set(&mut self, v: T) -> Option<T> {
-        let what = if self.get().is_some() { ExtChange::Changed } else { ExtChange::Added };
-        let t = self.cx.changed(self.i, self.node, self.key.id(), what, self.origin);
+        let what = if self.get().is_some() {
+            ExtChange::Changed
+        } else {
+            ExtChange::Added
+        };
+        let t = self
+            .cx
+            .changed(self.i, self.node, self.key.id(), what, self.origin);
         self.cx.cols.col_or_insert(self.key).insert(self.node, v, t)
     }
 
     /// Removes the value (journaled as `Removed` if there was one).
     pub fn remove(&mut self) -> Option<T> {
         let v = self.cx.cols.col_mut(self.key)?.remove(self.i)?;
-        self.cx.changed(self.i, self.node, self.key.id(), ExtChange::Removed, self.origin);
+        self.cx.changed(
+            self.i,
+            self.node,
+            self.key.id(),
+            ExtChange::Removed,
+            self.origin,
+        );
         Some(v)
     }
 
@@ -513,7 +642,12 @@ impl<T: 'static> ExtEntry<'_, T> {
     pub fn or_insert_with(&mut self, f: impl FnOnce() -> T) -> &mut T {
         if self.get().is_none() {
             self.set(f());
-            return self.cx.cols.col_mut(self.key).and_then(|c| c.get_mut(self.i)).expect("just inserted");
+            return self
+                .cx
+                .cols
+                .col_mut(self.key)
+                .and_then(|c| c.get_mut(self.i))
+                .expect("just inserted");
         }
         self.get_mut().expect("present")
     }

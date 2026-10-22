@@ -24,10 +24,18 @@ fn kind(tag: &str) -> usize {
 }
 
 fn prop(s: &Scene, id: NodeId, name: &str) -> u32 {
-    kinds::find_prop(s.core[s.ix(id)].kind as usize, name).unwrap().0
+    kinds::find_prop(s.core[s.ix(id)].kind as usize, name)
+        .unwrap()
+        .0
 }
 
-fn set(s: &mut Scene, id: NodeId, name: &str, v: svelters_abi::Value, o: Origin) -> Result<(), PropError> {
+fn set(
+    s: &mut Scene,
+    id: NodeId,
+    name: &str,
+    v: svelters_abi::Value,
+    o: Origin,
+) -> Result<(), PropError> {
     let p = prop(s, id, name);
     s.set_value(id, p, &v, o)
 }
@@ -100,8 +108,12 @@ fn layout_oracle(s: &mut Scene, m: &Metrics, size: egui::Vec2, ctx: &str) {
         layout::remeasure(s, m, r);
         layout::run_root(s, m, r, size);
     }
-    s.validate().unwrap_or_else(|e| panic!("{ctx}: after layout: {e}"));
-    let attached: Vec<NodeId> = s.ids().filter(|&id| !s.core[s.ix(id)].root.is_detached()).collect();
+    s.validate()
+        .unwrap_or_else(|e| panic!("{ctx}: after layout: {e}"));
+    let attached: Vec<NodeId> = s
+        .ids()
+        .filter(|&id| !s.core[s.ix(id)].root.is_detached())
+        .collect();
     let incremental: Vec<egui::Rect> = attached.iter().map(|&id| s.core[s.ix(id)].rect).collect();
     for id in s.ids().collect::<Vec<_>>() {
         let i = s.ix(id);
@@ -116,7 +128,19 @@ fn layout_oracle(s: &mut Scene, m: &Metrics, size: egui::Vec2, ctx: &str) {
         let fresh = s.core[s.ix(id)].rect;
         if fresh != incremental[k] {
             let top = s.roots.get(s.core[s.ix(id)].root).unwrap().top;
-            panic!("{ctx}: {id} <{}> incremental {:?} != from scratch {fresh:?}\n{}", s.tag_at(s.ix(id)), incremental[k], s.dump(top, DumpOpts { rects: true, dirty: true, ..Default::default() }));
+            panic!(
+                "{ctx}: {id} <{}> incremental {:?} != from scratch {fresh:?}\n{}",
+                s.tag_at(s.ix(id)),
+                incremental[k],
+                s.dump(
+                    top,
+                    DumpOpts {
+                        rects: true,
+                        dirty: true,
+                        ..Default::default()
+                    }
+                )
+            );
         }
     }
 }
@@ -129,13 +153,25 @@ fn random_op_interleavings() {
     let size = egui::vec2(300.0, 200.0);
     let (mut boundaries, mut layouts) = (0, 0);
     // SG1_SEEDS=n runs more seeds (local stress runs)
-    let seeds: u64 = std::env::var("SG1_SEEDS").ok().and_then(|v| v.parse().ok()).unwrap_or(24);
+    let seeds: u64 = std::env::var("SG1_SEEDS")
+        .ok()
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(24);
     for seed in 1..=seeds {
         let mut rng = Rng(seed.wrapping_mul(0x9E37_79B9_7F4A_7C15) | 1);
         let mut s = Scene::default();
         let mut md = Model::default();
         let w = s.create(kind("window"), Owner::Js).unwrap();
-        md.n.insert(w, M { parent: None, children: vec![], js: true, container: true, window: true });
+        md.n.insert(
+            w,
+            M {
+                parent: None,
+                children: vec![],
+                js: true,
+                container: true,
+                window: true,
+            },
+        );
         for step in 0..400 {
             let ctx = format!("seed {seed} step {step}");
             let live: Vec<NodeId> = {
@@ -148,31 +184,82 @@ fn random_op_interleavings() {
             match rng.below(20) {
                 // create
                 0..=4 => {
-                    let tags: &[&str] = if js { &["box", "box", "label", "button", "window"] } else { &["box", "label"] };
+                    let tags: &[&str] = if js {
+                        &["box", "box", "label", "button", "window"]
+                    } else {
+                        &["box", "label"]
+                    };
                     let tag = rng.pick(tags).unwrap();
                     if tag == "window" && md.n.values().filter(|x| x.window).count() >= 2 {
                         continue;
                     }
-                    let owner = if js { Owner::Js } else { Owner::Rust(ProviderId::named("sg1-test")) };
+                    let owner = if js {
+                        Owner::Js
+                    } else {
+                        Owner::Rust(ProviderId::named("sg1-test"))
+                    };
                     let id = s.create(kind(tag), owner).unwrap();
                     if tag == "box" && rng.below(2) == 0 {
                         use svelters_abi::Value::F64;
-                        set(&mut s, id, "width", F64(60.0 + rng.below(200) as f64), origin).unwrap();
-                        set(&mut s, id, "height", F64(30.0 + rng.below(100) as f64), origin).unwrap();
+                        set(
+                            &mut s,
+                            id,
+                            "width",
+                            F64(60.0 + rng.below(200) as f64),
+                            origin,
+                        )
+                        .unwrap();
+                        set(
+                            &mut s,
+                            id,
+                            "height",
+                            F64(30.0 + rng.below(100) as f64),
+                            origin,
+                        )
+                        .unwrap();
                         set(&mut s, id, "flex-shrink", F64(0.0), origin).unwrap();
                     }
-                    md.n.insert(id, M { parent: None, children: vec![], js, container: tag == "box" || tag == "window", window: tag == "window" });
+                    md.n.insert(
+                        id,
+                        M {
+                            parent: None,
+                            children: vec![],
+                            js,
+                            container: tag == "box" || tag == "window",
+                            window: tag == "window",
+                        },
+                    );
                 }
                 // insert
                 5..=10 => {
                     // half the time under an attached container, so roots and boundaries see work
-                    let attached: Vec<NodeId> = live.iter().copied().filter(|&x| md.n[&x].container && !s.core[s.ix(x)].root.is_detached()).collect();
-                    let p = if rng.below(2) == 0 { rng.pick(&attached) } else { rng.pick(&live) };
-                    let (Some(p), Some(c)) = (p, rng.pick(&live)) else { continue };
-                    let before = if rng.below(2) == 0 { rng.pick(&md.n[&p].children.clone()) } else { None };
+                    let attached: Vec<NodeId> = live
+                        .iter()
+                        .copied()
+                        .filter(|&x| md.n[&x].container && !s.core[s.ix(x)].root.is_detached())
+                        .collect();
+                    let p = if rng.below(2) == 0 {
+                        rng.pick(&attached)
+                    } else {
+                        rng.pick(&live)
+                    };
+                    let (Some(p), Some(c)) = (p, rng.pick(&live)) else {
+                        continue;
+                    };
+                    let before = if rng.below(2) == 0 {
+                        rng.pick(&md.n[&p].children.clone())
+                    } else {
+                        None
+                    };
                     let (pm, cm) = (md.n[&p].clone(), md.n[&c].clone());
-                    let owner_ok = js || (!pm.js && !cm.js && cm.parent.is_none_or(|op| !md.n[&op].js));
-                    let want = if !pm.container || cm.window || p == c || !owner_ok || md.is_ancestor(c, p) {
+                    let owner_ok =
+                        js || (!pm.js && !cm.js && cm.parent.is_none_or(|op| !md.n[&op].js));
+                    let want = if !pm.container
+                        || cm.window
+                        || p == c
+                        || !owner_ok
+                        || md.is_ancestor(c, p)
+                    {
                         Err(())
                     } else if before == Some(c) {
                         Ok(false)
@@ -180,11 +267,17 @@ fn random_op_interleavings() {
                         Ok(true)
                     };
                     let got = s.insert(p, c, before, origin);
-                    assert_eq!(got.as_ref().map_err(|_| ()).copied(), want, "{ctx}: insert {c} into {p} before {before:?} by {origin:?}: {got:?}");
+                    assert_eq!(
+                        got.as_ref().map_err(|_| ()).copied(),
+                        want,
+                        "{ctx}: insert {c} into {p} before {before:?} by {origin:?}: {got:?}"
+                    );
                     if want == Ok(true) {
                         md.unlink(c);
                         let kids = &mut md.n.get_mut(&p).unwrap().children;
-                        let at = before.and_then(|b| kids.iter().position(|&x| x == b)).unwrap_or(kids.len());
+                        let at = before
+                            .and_then(|b| kids.iter().position(|&x| x == b))
+                            .unwrap_or(kids.len());
                         kids.insert(at, c);
                         md.n.get_mut(&c).unwrap().parent = Some(p);
                     }
@@ -195,7 +288,11 @@ fn random_op_interleavings() {
                     let Some(p) = md.n[&c].parent else { continue };
                     let want_ok = js || (!md.n[&p].js && !md.n[&c].js);
                     let got = s.remove(p, c, origin);
-                    assert_eq!(got.is_ok(), want_ok, "{ctx}: remove {c} from {p} by {origin:?}: {got:?}");
+                    assert_eq!(
+                        got.is_ok(),
+                        want_ok,
+                        "{ctx}: remove {c} from {p} by {origin:?}: {got:?}"
+                    );
                     if want_ok {
                         md.unlink(c);
                     }
@@ -212,7 +309,8 @@ fn random_op_interleavings() {
                         md.n.remove(&x);
                     } else {
                         let sub = md.subtree(x);
-                        let want_ok = sub.iter().all(|y| !md.n[y].js) && md.n[&x].parent.is_none_or(|p| !md.n[&p].js);
+                        let want_ok = sub.iter().all(|y| !md.n[y].js)
+                            && md.n[&x].parent.is_none_or(|p| !md.n[&p].js);
                         let got = SceneMut { s: &mut s, origin }.destroy(x);
                         assert_eq!(got.is_ok(), want_ok, "{ctx}: rust destroy {x}: {got:?}");
                         if want_ok {
@@ -225,21 +323,46 @@ fn random_op_interleavings() {
                 }
                 // text: a different length each time
                 15..=16 => {
-                    let leaves: Vec<NodeId> = live.iter().copied().filter(|x| !md.n[x].container).collect();
+                    let leaves: Vec<NodeId> = live
+                        .iter()
+                        .copied()
+                        .filter(|x| !md.n[x].container)
+                        .collect();
                     let Some(x) = rng.pick(&leaves) else { continue };
                     let t = "w".repeat(rng.below(30));
                     set(&mut s, x, "text", svelters_abi::Value::Str(t), origin).unwrap();
                 }
                 // layout props: definite sizes make boundaries
                 17..=18 => {
-                    let boxes: Vec<NodeId> = live.iter().copied().filter(|x| md.n[x].container && !md.n[x].window).collect();
+                    let boxes: Vec<NodeId> = live
+                        .iter()
+                        .copied()
+                        .filter(|x| md.n[x].container && !md.n[x].window)
+                        .collect();
                     let Some(x) = rng.pick(&boxes) else { continue };
                     use svelters_abi::Value::{F64, Null, Str};
                     let (name, v) = match rng.below(6) {
-                        0 => ("width", if rng.below(3) == 0 { Null } else { F64(40.0 + rng.below(100) as f64) }),
-                        1 => ("height", if rng.below(3) == 0 { Null } else { F64(20.0 + rng.below(60) as f64) }),
+                        0 => (
+                            "width",
+                            if rng.below(3) == 0 {
+                                Null
+                            } else {
+                                F64(40.0 + rng.below(100) as f64)
+                            },
+                        ),
+                        1 => (
+                            "height",
+                            if rng.below(3) == 0 {
+                                Null
+                            } else {
+                                F64(20.0 + rng.below(60) as f64)
+                            },
+                        ),
                         2 => ("flex-shrink", F64(rng.below(2) as f64)),
-                        3 => ("flex-direction", Str(["row", "column"][rng.below(2)].into())),
+                        3 => (
+                            "flex-direction",
+                            Str(["row", "column"][rng.below(2)].into()),
+                        ),
                         4 => ("gap", F64(rng.below(9) as f64)),
                         _ => ("padding", F64(rng.below(5) as f64)),
                     };
@@ -247,9 +370,17 @@ fn random_op_interleavings() {
                 }
                 // visibility
                 _ => {
-                    let nodes: Vec<NodeId> = live.iter().copied().filter(|x| !md.n[x].window).collect();
+                    let nodes: Vec<NodeId> =
+                        live.iter().copied().filter(|x| !md.n[x].window).collect();
                     let Some(x) = rng.pick(&nodes) else { continue };
-                    set(&mut s, x, "visible", svelters_abi::Value::Bool(rng.below(4) != 0), origin).unwrap();
+                    set(
+                        &mut s,
+                        x,
+                        "visible",
+                        svelters_abi::Value::Bool(rng.below(4) != 0),
+                        origin,
+                    )
+                    .unwrap();
                 }
             }
             s.validate().unwrap_or_else(|e| panic!("{ctx}: {e}"));
@@ -269,7 +400,10 @@ fn random_op_interleavings() {
         layouts += s.counters.layouts;
     }
     // the interleavings did exercise boundary relayouts, not only whole-root ones
-    assert!(boundaries > 20 && layouts > 20, "{boundaries} boundary relayouts, {layouts} root layouts");
+    assert!(
+        boundaries > 20 && layouts > 20,
+        "{boundaries} boundary relayouts, {layouts} root layouts"
+    );
     eprintln!("{seeds} seeds: {boundaries} boundary relayouts, {layouts} root layouts");
 }
 
@@ -307,19 +441,41 @@ fn label_change_in_11k_root_lays_out_one_boundary() {
     let size = egui::vec2(800.0, 600.0);
     let run = layout::run_root(&mut s, &m, r, size).unwrap();
     assert!(run.full);
-    assert_eq!(layout::run_root(&mut s, &m, r, size), None, "nothing queued: no layout");
+    assert_eq!(
+        layout::run_root(&mut s, &m, r, size),
+        None,
+        "nothing queued: no layout"
+    );
     let before = s.counters;
     let target = labels[5_432];
-    set(&mut s, target, "text", Str("a much longer label".into()), js).unwrap();
+    set(
+        &mut s,
+        target,
+        "text",
+        Str("a much longer label".into()),
+        js,
+    )
+    .unwrap();
     layout::remeasure(&mut s, &m, r);
     let run = layout::run_root(&mut s, &m, r, size).unwrap();
     let after = s.counters;
     assert!(!run.full, "{run:?}");
     assert_eq!(after.layouts - before.layouts, 0, "no whole-root layout");
-    assert!(after.boundaries_laid_out - before.boundaries_laid_out <= 1, "{run:?}");
+    assert!(
+        after.boundaries_laid_out - before.boundaries_laid_out <= 1,
+        "{run:?}"
+    );
     assert_eq!(after.boundaries_laid_out - before.boundaries_laid_out, 1);
-    assert_eq!(after.leaves_measured - before.leaves_measured, 1, "one leaf measured");
-    assert!(after.nodes_placed - before.nodes_placed <= 11, "only the row is placed: {}", after.nodes_placed - before.nodes_placed);
+    assert_eq!(
+        after.leaves_measured - before.leaves_measured,
+        1,
+        "one leaf measured"
+    );
+    assert!(
+        after.nodes_placed - before.nodes_placed <= 11,
+        "only the row is placed: {}",
+        after.nodes_placed - before.nodes_placed
+    );
     s.validate().unwrap();
 }
 
@@ -347,7 +503,8 @@ fn phases_refuse_writes_in_ui_and_defer_runs_next_logic() {
         s.validate().unwrap();
     });
     // a write inside a write is refused, not a panic
-    h.write(app, |_| assert_eq!(h.write(app, |_| ()), Err(SceneBusy))).unwrap();
+    h.write(app, |_| assert_eq!(h.write(app, |_| ()), Err(SceneBusy)))
+        .unwrap();
 }
 
 /// Ticks: one per batch, nodes remember theirs.
@@ -364,7 +521,13 @@ fn ticks_and_typed_reads() {
         })
         .unwrap();
     let t = h.read(|s| s.tick());
-    h.write(app, |s| s.node(l).unwrap().set(&keys::label::TEXT, "hi".to_string()).unwrap()).unwrap();
+    h.write(app, |s| {
+        s.node(l)
+            .unwrap()
+            .set(&keys::label::TEXT, "hi".to_string())
+            .unwrap()
+    })
+    .unwrap();
     h.read(|s| {
         let n = s.get(l).unwrap();
         assert!(n.changed_since(t));
@@ -385,11 +548,67 @@ fn every_builtin_key_names_a_prop_of_its_kind() {
         }
     };
     use keys::*;
-    check("label", &[label::TEXT.name, label::WRAP_MODE.name, label::SELECTABLE.name, widget::ACCESSIBLE_NAME.name, widget::MARGIN.name]);
-    check("button", &[button::TEXT.name, button::SELECTED.name, button::FRAME.name, button::SMALL.name]);
+    check(
+        "label",
+        &[
+            label::TEXT.name,
+            label::WRAP_MODE.name,
+            label::SELECTABLE.name,
+            widget::ACCESSIBLE_NAME.name,
+            widget::MARGIN.name,
+        ],
+    );
+    check(
+        "button",
+        &[
+            button::TEXT.name,
+            button::SELECTED.name,
+            button::FRAME.name,
+            button::SMALL.name,
+        ],
+    );
     check("checkbox", &[checkbox::TEXT.name, checkbox::CHECKED.name]);
-    check("text-edit", &[text_edit::TEXT.name, text_edit::HINT_TEXT.name, text_edit::MULTILINE.name, text_edit::PASSWORD.name, text_edit::CHAR_LIMIT.name]);
-    check("slider", &[slider::VALUE.name, slider::MIN.name, slider::MAX.name, slider::STEP.name, slider::TEXT.name, slider::SHOW_VALUE.name]);
-    check("window", &[window::TITLE.name, window::DEFAULT_WIDTH.name, window::DEFAULT_HEIGHT.name]);
-    check("box", &[container::FLEX_DIRECTION.name, container::FLEX_WRAP.name, container::GAP.name, container::ROW_GAP.name, container::COLUMN_GAP.name, container::PADDING.name, container::ALIGN_ITEMS.name, container::JUSTIFY_CONTENT.name, widget::WIDTH.name]);
+    check(
+        "text-edit",
+        &[
+            text_edit::TEXT.name,
+            text_edit::HINT_TEXT.name,
+            text_edit::MULTILINE.name,
+            text_edit::PASSWORD.name,
+            text_edit::CHAR_LIMIT.name,
+        ],
+    );
+    check(
+        "slider",
+        &[
+            slider::VALUE.name,
+            slider::MIN.name,
+            slider::MAX.name,
+            slider::STEP.name,
+            slider::TEXT.name,
+            slider::SHOW_VALUE.name,
+        ],
+    );
+    check(
+        "window",
+        &[
+            window::TITLE.name,
+            window::DEFAULT_WIDTH.name,
+            window::DEFAULT_HEIGHT.name,
+        ],
+    );
+    check(
+        "box",
+        &[
+            container::FLEX_DIRECTION.name,
+            container::FLEX_WRAP.name,
+            container::GAP.name,
+            container::ROW_GAP.name,
+            container::COLUMN_GAP.name,
+            container::PADDING.name,
+            container::ALIGN_ITEMS.name,
+            container::JUSTIFY_CONTENT.name,
+            widget::WIDTH.name,
+        ],
+    );
 }

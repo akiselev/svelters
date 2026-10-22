@@ -17,19 +17,31 @@ fn every_prop_is_observable_and_host_writes_never_echo() {
     let mut checked = 0;
     for (ki, k) in KINDS.iter().enumerate() {
         let Some(tag) = k.tag else { continue };
-        let h = if k.toplevel { rig.create(tag) } else { rig.leaf(col, tag, &[]) };
+        let h = if k.toplevel {
+            rig.create(tag)
+        } else {
+            rig.leaf(col, tag, &[])
+        };
         let br = rig.br();
         for kk in kinds::chain(ki) {
             for p in KINDS[kk].props {
                 let id = br.resolve(NameKind::Prop, kinds::kind_id(ki), p.name);
                 assert_ne!(id, 0, "{tag}.{}", p.name);
-                let d = br.describe(NameKind::Prop, kinds::kind_id(ki), id).expect("described");
-                assert!(d.flags & SVL_M_OBSERVABLE != 0, "{tag}.{} not observable", p.name);
+                let d = br
+                    .describe(NameKind::Prop, kinds::kind_id(ki), id)
+                    .expect("described");
+                assert!(
+                    d.flags & SVL_M_OBSERVABLE != 0,
+                    "{tag}.{} not observable",
+                    p.name
+                );
                 br.observe(h, id, true).unwrap();
                 br.observe(h, id, true).unwrap();
                 br.observe(h, id, false).unwrap();
                 let v = match p.ty {
-                    kinds::Ty::Bool => Value::Bool(!matches!(rig.get(h, p.name), Value::Bool(true))),
+                    kinds::Ty::Bool => {
+                        Value::Bool(!matches!(rig.get(h, p.name), Value::Bool(true)))
+                    }
                     kinds::Ty::F64 => Value::F64(3.0),
                     kinds::Ty::I64 => Value::I64(3),
                     kinds::Ty::Str => Value::Str("x".into()),
@@ -37,7 +49,12 @@ fn every_prop_is_observable_and_host_writes_never_echo() {
                     kinds::Ty::Provider => continue, // RA1: no provider kinds in this binary
                 };
                 br.set_prop(h, id, &v).unwrap();
-                assert_eq!(br.get_prop(h, id).unwrap(), v, "{tag}.{} reads back", p.name);
+                assert_eq!(
+                    br.get_prop(h, id).unwrap(),
+                    v,
+                    "{tag}.{} reads back",
+                    p.name
+                );
                 br.set_prop(h, id, &Value::Null).unwrap(); // back to the default
                 checked += 1;
             }
@@ -47,7 +64,10 @@ fn every_prop_is_observable_and_host_writes_never_echo() {
             rig.set(h, "accessible-name", Value::Str(tag.into()));
         }
         rig.run();
-        assert!(rig.take().changed.is_empty(), "<{tag}>: a host write was announced");
+        assert!(
+            rig.take().changed.is_empty(),
+            "<{tag}>: a host write was announced"
+        );
         let _ = Native::Never;
     }
     assert!(checked > 60, "{checked}");
@@ -59,9 +79,20 @@ fn every_prop_is_observable_and_host_writes_never_echo() {
 fn widget_changes_are_announced_exactly_when_observed() {
     let mut rig = Rig::new();
     let (_w, col) = rig.window();
-    let te = rig.leaf(col, "text-edit", &[("hint-text", Value::Str("Name".into()))]);
+    let te = rig.leaf(
+        col,
+        "text-edit",
+        &[("hint-text", Value::Str("Name".into()))],
+    );
     let cb = rig.leaf(col, "checkbox", &[("text", Value::Str("Agree".into()))]);
-    let sl = rig.leaf(col, "slider", &[("accessible-name", Value::Str("Level".into())), ("step", Value::F64(1.0))]);
+    let sl = rig.leaf(
+        col,
+        "slider",
+        &[
+            ("accessible-name", Value::Str("Level".into())),
+            ("step", Value::F64(1.0)),
+        ],
+    );
     rig.run();
 
     // unobserved: the value changes, nothing is announced
@@ -84,12 +115,23 @@ fn widget_changes_are_announced_exactly_when_observed() {
     let text = rig.prop_id(te, "text");
     let checked = rig.prop_id(cb, "checked");
     let value = rig.prop_id(sl, "value");
-    assert_eq!(l.changed, vec![(te, text), (cb, checked), (sl, value)], "one announcement each, in order");
+    assert_eq!(
+        l.changed,
+        vec![(te, text), (cb, checked), (sl, value)],
+        "one announcement each, in order"
+    );
     assert_eq!(rig.get(te, "text"), Value::Str("Ann".into()));
     assert_eq!(rig.get(cb, "checked"), Value::Bool(false));
     assert_eq!(rig.get(sl, "value"), Value::F64(42.0));
     let args: Vec<Vec<Value>> = l.events.iter().map(|e| e.2.clone()).collect();
-    assert_eq!(args, vec![vec![Value::Str("Ann".into())], vec![Value::Bool(false)], vec![Value::F64(42.0)]]);
+    assert_eq!(
+        args,
+        vec![
+            vec![Value::Str("Ann".into())],
+            vec![Value::Bool(false)],
+            vec![Value::F64(42.0)]
+        ]
+    );
     // a checkpoint follows the announcements (the host reads and delivers them there)
     assert!(l.checkpoints >= 1);
 
@@ -115,7 +157,11 @@ fn widget_changes_are_announced_exactly_when_observed() {
 fn slider_clamp_is_announced() {
     let mut rig = Rig::new();
     let (_w, col) = rig.window();
-    let sl = rig.leaf(col, "slider", &[("accessible-name", Value::Str("S".into()))]);
+    let sl = rig.leaf(
+        col,
+        "slider",
+        &[("accessible-name", Value::Str("S".into()))],
+    );
     rig.observe(sl, "value", true);
     rig.run();
     rig.take();

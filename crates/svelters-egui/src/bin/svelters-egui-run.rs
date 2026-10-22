@@ -33,10 +33,11 @@ fn main() {
     // The desktop order on an Embed (EM1): the bundle's App mounts its windows; eframe's context is
     // bound at the first frame.
     let cfg = svelters_egui::embed::EmbedConfig::app(svelters_host::HostConfig::default());
-    let embed = svelters_egui::Embed::new(&svelters_egui::egui::Context::default(), cfg).unwrap_or_else(|e| {
-        eprintln!("{e}");
-        std::process::exit(1)
-    });
+    let embed = svelters_egui::Embed::new(&svelters_egui::egui::Context::default(), cfg)
+        .unwrap_or_else(|e| {
+            eprintln!("{e}");
+            std::process::exit(1)
+        });
     if let Err(e) = embed.load_app(&bundle) {
         eprintln!("{e}");
         std::process::exit(1);

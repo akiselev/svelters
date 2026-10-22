@@ -34,7 +34,9 @@ impl EguiBackend {
     /// and `route_repaints` asks for its viewport after logic; outside one, its viewport is asked
     /// now. A hidden slot's root asks for nothing (it is not drawn); a detached node neither.
     pub(crate) fn touched(&self, r: Option<RootIx>) {
-        let Some(r) = r.filter(|r| !r.is_detached()) else { return };
+        let Some(r) = r.filter(|r| !r.is_detached()) else {
+            return;
+        };
         if self.0.in_frame.get() {
             let mut t = self.0.touched.borrow_mut();
             if !t.contains(&r) {
@@ -55,13 +57,22 @@ impl EguiBackend {
 
     /// The viewport root `r` is drawn in: its slot's (`None` while hidden), else the root viewport.
     pub(crate) fn viewport_of(&self, r: RootIx) -> Option<egui::ViewportId> {
-        self.0.root_vp.borrow().get(&r).copied().unwrap_or(Some(egui::ViewportId::ROOT))
+        self.0
+            .root_vp
+            .borrow()
+            .get(&r)
+            .copied()
+            .unwrap_or(Some(egui::ViewportId::ROOT))
     }
 
     /// Step 7 of `logic` (ARCH-EMBED §5.1): every viewport showing a root that host ops changed
     /// since the last call gets a repaint, except `drawing` (the viewport whose pass runs now: its
     /// ui draws the change in this pass). Returns the viewports asked.
-    pub(crate) fn route_repaints(&self, ctx: &egui::Context, drawing: Option<egui::ViewportId>) -> Vec<egui::ViewportId> {
+    pub(crate) fn route_repaints(
+        &self,
+        ctx: &egui::Context,
+        drawing: Option<egui::ViewportId>,
+    ) -> Vec<egui::ViewportId> {
         let touched = std::mem::take(&mut *self.0.touched.borrow_mut());
         let mut vps: Vec<egui::ViewportId> = Vec::new();
         for r in touched {
@@ -93,7 +104,9 @@ impl EguiBackend {
         let mut scene = self.0.scene.borrow_mut();
         let Ok(id) = scene.live(h) else { return };
         let r = scene.core[scene.ix(id)].root;
-        let Some(size) = scene.roots.get(r).and_then(|e| e.size) else { return };
+        let Some(size) = scene.roots.get(r).and_then(|e| e.size) else {
+            return;
+        };
         let m = layout::Metrics::new(&ctx);
         layout::remeasure(&mut scene, &m, r);
         if let Some(run) = layout::run_root(&mut scene, &m, r, size) {
@@ -219,7 +232,12 @@ impl EguiBackend {
         self.flush_announcements();
         // Remeasure leaves whose text changed, per root; only a size change queues a relayout.
         let mut scene = self.0.scene.borrow_mut();
-        let roots: Vec<_> = scene.roots.iter().filter(|(_, e)| !e.dirty.remeasure.is_empty()).map(|(r, _)| r).collect();
+        let roots: Vec<_> = scene
+            .roots
+            .iter()
+            .filter(|(_, e)| !e.dirty.remeasure.is_empty())
+            .map(|(r, _)| r)
+            .collect();
         if !roots.is_empty() {
             let m = layout::Metrics::new(ctx);
             for r in roots {
@@ -240,7 +258,9 @@ impl EguiBackend {
             }
             sig
         };
-        let Some(host) = self.host() else { return false };
+        let Some(host) = self.host() else {
+            return false;
+        };
         self.assert_no_pass("call_sync");
         matches!(host.call_sync(w, sig, &[]), Ok(Value::Bool(true)))
     }
@@ -262,7 +282,14 @@ impl EguiBackend {
         self.0.titles.borrow_mut().remove(&w);
         if let Some(host) = self.host() {
             for (i, &h) in dead.iter().enumerate() {
-                host.on_destroyed(h.to_raw(), if i == 0 { SVL_GONE_CLOSED } else { SVL_GONE_PARENT });
+                host.on_destroyed(
+                    h.to_raw(),
+                    if i == 0 {
+                        SVL_GONE_CLOSED
+                    } else {
+                        SVL_GONE_PARENT
+                    },
+                );
             }
         }
     }
@@ -291,7 +318,10 @@ impl EguiBackend {
         // the root viewport, or this deferred viewport with the begin-pass plugin), never the
         // viewport that merely drew it (ARCH-EMBED §5.2).
         let vp = self.logic_vp();
-        if self.0.checkpoint_pending.get() || self.0.frame_pending.get() || self.0.shared.wake.load(Ordering::Acquire) {
+        if self.0.checkpoint_pending.get()
+            || self.0.frame_pending.get()
+            || self.0.shared.wake.load(Ordering::Acquire)
+        {
             ctx.request_repaint_of(vp);
         }
         if !self.0.close_requests.borrow().is_empty() || !self.0.closes.borrow().is_empty() {
@@ -303,7 +333,10 @@ impl EguiBackend {
         }
         // timers: the root viewport, which always runs logic
         if let Some(d) = self.0.deadline.get() {
-            ctx.request_repaint_after_for(d.saturating_duration_since(Instant::now()), egui::ViewportId::ROOT);
+            ctx.request_repaint_after_for(
+                d.saturating_duration_since(Instant::now()),
+                egui::ViewportId::ROOT,
+            );
         }
     }
 }

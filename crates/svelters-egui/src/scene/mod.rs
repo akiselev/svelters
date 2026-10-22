@@ -28,10 +28,10 @@ pub(crate) mod dump;
 pub(crate) mod ext;
 pub(crate) mod hit;
 pub(crate) mod id;
-pub mod keys;
 pub(crate) mod journal;
 #[cfg(test)]
 mod journal_tests;
+pub mod keys;
 pub(crate) mod node;
 pub(crate) mod props;
 pub(crate) mod query;
@@ -40,12 +40,20 @@ mod tests;
 pub(crate) mod tree;
 pub(crate) mod virt;
 
-pub use access::{Children, Descendants, NodeMut, NodeRef, Origin, PropError, SceneBusy, SceneError, SceneHandle, SceneMut, SceneRef};
-pub use journal::{Change, ChangeFilter, ChangeMask, ChangeSet, Damage, ExtChange, Observer, OriginMask, RootChange, Scope};
+pub use crate::provider::{
+    ExtBlock, ExtEntry, ExtId, ExtKey, ExtTicks, IntoStateBits, StateBit, StateBits, Storage,
+};
+pub use access::{
+    Children, Descendants, NodeMut, NodeRef, Origin, PropError, SceneBusy, SceneError, SceneHandle,
+    SceneMut, SceneRef,
+};
 pub use dump::{DumpOpts, SceneStats};
 pub use id::{Handle, KindId, NodeId, PropId, ProviderId, RootIx, Target, Tick, VNodeId};
+pub use journal::{
+    Change, ChangeFilter, ChangeMask, ChangeSet, Damage, ExtChange, Observer, OriginMask,
+    RootChange, Scope,
+};
 pub use keys::{PropKey, PropValue};
-pub use crate::provider::{ExtBlock, ExtEntry, ExtId, ExtKey, ExtTicks, IntoStateBits, StateBit, StateBits, Storage};
 pub use node::{Common, Dirty, Node, NodeFlags, Owner, Visual, W};
 pub use props::{default_value, get_prop, set_prop, tag_of};
 pub use tree::TreeRoot;
@@ -128,12 +136,15 @@ impl Scene {
 
     /// The id of a live handle, or the host's "stale or foreign handle" error.
     pub(crate) fn live(&self, h: Handle) -> Result<NodeId, String> {
-        NodeId::from_raw(h).filter(|&id| self.idx(id).is_some()).ok_or_else(|| format!("stale or foreign handle {h}"))
+        NodeId::from_raw(h)
+            .filter(|&id| self.idx(id).is_some())
+            .ok_or_else(|| format!("stale or foreign handle {h}"))
     }
 
     #[inline]
     pub(crate) fn ix(&self, id: NodeId) -> usize {
-        self.idx(id).unwrap_or_else(|| panic!("svelters-egui: stale node {id}"))
+        self.idx(id)
+            .unwrap_or_else(|| panic!("svelters-egui: stale node {id}"))
     }
 
     /// A new tick for a mutation, or the batch's tick inside a batch.
@@ -151,7 +162,8 @@ impl Scene {
     #[inline]
     pub(crate) fn record(&mut self, c: journal::Change, origin: Origin) {
         if self.journal.wants(c.mask()) {
-            self.journal.record(&self.core, &self.roots, c, origin, self.tick);
+            self.journal
+                .record(&self.core, &self.roots, c, origin, self.tick);
         }
     }
 
@@ -161,13 +173,30 @@ impl Scene {
         if self.journal.wants_state(before, after)
             && let Some(node) = self.slots.id_at(i)
         {
-            self.journal.record(&self.core, &self.roots, journal::Change::State { node, before, after }, origin, self.tick);
+            self.journal.record(
+                &self.core,
+                &self.roots,
+                journal::Change::State {
+                    node,
+                    before,
+                    after,
+                },
+                origin,
+                self.tick,
+            );
         }
     }
 
     /// The disjoint parts an extension write needs.
     pub(crate) fn ext_cx(&mut self) -> ExtCx<'_> {
-        ExtCx { cols: &mut self.ext, journal: &mut self.journal, core: &mut self.core, roots: &self.roots, tick: &mut self.tick, in_batch: self.in_batch }
+        ExtCx {
+            cols: &mut self.ext,
+            journal: &mut self.journal,
+            core: &mut self.core,
+            roots: &self.roots,
+            tick: &mut self.tick,
+            in_batch: self.in_batch,
+        }
     }
 
     /// Enters an explicit batch (one tick, one `Change::Batch` marker): returns whether it is the
@@ -218,7 +247,11 @@ impl Scene {
     }
 
     pub(crate) fn vis(&self, i: usize) -> Visual {
-        if self.core[i].flags.contains(NodeFlags::HAS_VISUAL) { self.cold(i).vis } else { Visual::IDENTITY }
+        if self.core[i].flags.contains(NodeFlags::HAS_VISUAL) {
+            self.cold(i).vis
+        } else {
+            Visual::IDENTITY
+        }
     }
 
     pub(crate) fn tag_at(&self, i: usize) -> &'static str {
@@ -287,7 +320,8 @@ impl Scene {
 
     /// [`Scene::get`] of a handle that must be live.
     pub fn n(&self, h: Handle) -> Node<'_> {
-        self.get(h).unwrap_or_else(|| panic!("svelters-egui: stale handle {h}"))
+        self.get(h)
+            .unwrap_or_else(|| panic!("svelters-egui: stale handle {h}"))
     }
 
     pub fn contains(&self, h: Handle) -> bool {
@@ -324,7 +358,11 @@ impl Scene {
         let mut live = 0;
         for i in 0..self.slots.capacity() {
             let Some(id) = self.slots.id_at(i) else {
-                if !matches!(self.payload[i], Payload::Vacant) || !self.children[i].is_empty() || self.cold[i].is_some() || self.ext.has_any(i as u32) {
+                if !matches!(self.payload[i], Payload::Vacant)
+                    || !self.children[i].is_empty()
+                    || self.cold[i].is_some()
+                    || self.ext.has_any(i as u32)
+                {
                     errs.push(format!("free slot {i} keeps data"));
                 }
                 continue;
@@ -339,20 +377,32 @@ impl Scene {
                 match self.idx(p) {
                     None => errs.push(format!("{id}: stale parent {p}")),
                     Some(pi) => {
-                        let n = self.children[pi].iter().filter(|&&x| x == id).count();
+                        // EV2b: an attached node is listed by its host's attached list instead
+                        let list = if c.flags.contains(NodeFlags::ATTACHED) {
+                            &self.cold(pi).attached
+                        } else {
+                            &self.children[pi]
+                        };
+                        let n = list.iter().filter(|&&x| x == id).count();
                         if n != 1 {
                             errs.push(format!("{id}: listed {n} times by its parent {p}"));
                         }
                         if self.core[pi].root != c.root {
-                            errs.push(format!("{id}: root {:?} differs from its parent's {:?}", c.root, self.core[pi].root));
+                            errs.push(format!(
+                                "{id}: root {:?} differs from its parent's {:?}",
+                                c.root, self.core[pi].root
+                            ));
                         }
                     }
                 }
             }
-            for &k in &self.children[i] {
+            for &k in self.children[i].iter().chain(&self.cold(i).attached) {
                 match self.idx(k) {
                     None => errs.push(format!("{id}: stale child {k}")),
-                    Some(ki) if self.core[ki].parent != Some(id) => errs.push(format!("{id}: child {k} has parent {:?}", self.core[ki].parent)),
+                    Some(ki) if self.core[ki].parent != Some(id) => errs.push(format!(
+                        "{id}: child {k} has parent {:?}",
+                        self.core[ki].parent
+                    )),
                     _ => {}
                 }
             }
@@ -371,15 +421,25 @@ impl Scene {
             if c.parent.is_none() {
                 let is_top = !c.root.is_detached();
                 if is_top != c.flags.contains(NodeFlags::ROOT) {
-                    errs.push(format!("{id}: parentless with root {:?} but ROOT flag {}", c.root, c.flags.contains(NodeFlags::ROOT)));
+                    errs.push(format!(
+                        "{id}: parentless with root {:?} but ROOT flag {}",
+                        c.root,
+                        c.flags.contains(NodeFlags::ROOT)
+                    ));
                 }
                 if is_top && self.roots.get(c.root).map(|e| e.top) != Some(id) {
-                    errs.push(format!("{id}: root {:?} does not name it as its top", c.root));
+                    errs.push(format!(
+                        "{id}: root {:?} does not name it as its top",
+                        c.root
+                    ));
                 }
             } else if c.flags.contains(NodeFlags::ROOT) {
                 errs.push(format!("{id}: ROOT flag on a child"));
             }
-            if c.owner == Owner::Js && c.flags.contains(NodeFlags::ROOT) && !matches!(self.w(i), W::Window { .. }) {
+            if c.owner == Owner::Js
+                && c.flags.contains(NodeFlags::ROOT)
+                && !matches!(self.w(i), W::Window { .. })
+            {
                 errs.push(format!("{id}: a runtime-owned root that is not a window"));
             }
             // queues
@@ -387,13 +447,20 @@ impl Scene {
                 match self.roots.get(c.root) {
                     None => errs.push(format!("{id}: root {:?} is not in the root table", c.root)),
                     Some(e) => {
-                        if c.flags.contains(NodeFlags::IN_RELAYOUT) && !e.dirty.relayout.contains(&id) {
+                        if c.flags.contains(NodeFlags::IN_RELAYOUT)
+                            && !e.dirty.relayout.contains(&id)
+                        {
                             errs.push(format!("{id}: IN_RELAYOUT but not queued"));
                         }
-                        if c.flags.contains(NodeFlags::IN_REMEASURE) && !e.dirty.remeasure.contains(&id) {
+                        if c.flags.contains(NodeFlags::IN_REMEASURE)
+                            && !e.dirty.remeasure.contains(&id)
+                        {
                             errs.push(format!("{id}: IN_REMEASURE but not queued"));
                         }
-                        if c.dirty.intersects(Dirty::LAYOUT | Dirty::DESC_LAYOUT) && !e.dirty.full && e.laid_out() {
+                        if c.dirty.intersects(Dirty::LAYOUT | Dirty::DESC_LAYOUT)
+                            && !e.dirty.full
+                            && e.laid_out()
+                        {
                             let mut a = Some(id);
                             let mut ok = false;
                             while let Some(x) = a {
@@ -405,12 +472,18 @@ impl Scene {
                                 a = self.core[xi].parent;
                             }
                             if !ok {
-                                errs.push(format!("{id}: dirty layout {:?} reaches no queued boundary", c.dirty));
+                                errs.push(format!(
+                                    "{id}: dirty layout {:?} reaches no queued boundary",
+                                    c.dirty
+                                ));
                             }
                         }
                     }
                 }
-            } else if c.flags.intersects(NodeFlags::IN_RELAYOUT | NodeFlags::IN_REMEASURE) {
+            } else if c
+                .flags
+                .intersects(NodeFlags::IN_RELAYOUT | NodeFlags::IN_REMEASURE)
+            {
                 errs.push(format!("{id}: detached but queued {:?}", c.flags));
             }
         }
@@ -427,12 +500,19 @@ impl Scene {
                 None => errs.push(format!("root {rix:?}: stale top {}", e.top)),
                 Some(ti) => {
                     if self.core[ti].root != rix || self.core[ti].parent.is_some() {
-                        errs.push(format!("root {rix:?}: top {} has root {:?}, parent {:?}", e.top, self.core[ti].root, self.core[ti].parent));
+                        errs.push(format!(
+                            "root {rix:?}: top {} has root {:?}, parent {:?}",
+                            e.top, self.core[ti].root, self.core[ti].parent
+                        ));
                     }
                 }
             }
         }
-        if errs.is_empty() { Ok(()) } else { Err(errs.join("\n")) }
+        if errs.is_empty() {
+            Ok(())
+        } else {
+            Err(errs.join("\n"))
+        }
     }
 }
 
@@ -449,7 +529,8 @@ pub(crate) enum Member {
 pub(crate) fn member_bit(kind: usize, id: u32, m: Member) -> Option<u32> {
     static TABLE: OnceLock<Vec<(Vec<u32>, Vec<u32>)>> = OnceLock::new();
     let t = TABLE.get_or_init(|| {
-        kinds::KindRegistry::global().indexes()
+        kinds::KindRegistry::global()
+            .indexes()
             .map(|k| {
                 let mut props = Vec::new();
                 let mut sigs = Vec::new();

@@ -20,8 +20,13 @@ impl EguiBackend {
 
     pub(crate) fn visual_op(&self, op: u32, h: svl_handle, text: Option<&str>) -> StrResult<()> {
         fn nums<const N: usize>(text: &str, what: &str) -> StrResult<[f32; N]> {
-            let v: Vec<f32> = text.split_whitespace().map(str::parse::<f32>).collect::<Result<_, _>>().map_err(|_| format!("{what}: '{text}' is not {N} numbers"))?;
-            v.try_into().map_err(|_| format!("{what}: '{text}' is not {N} numbers").into())
+            let v: Vec<f32> = text
+                .split_whitespace()
+                .map(str::parse::<f32>)
+                .collect::<Result<_, _>>()
+                .map_err(|_| format!("{what}: '{text}' is not {N} numbers"))?;
+            v.try_into()
+                .map_err(|_| format!("{what}: '{text}' is not {N} numbers").into())
         }
         let mut scene = self.0.scene.borrow_mut();
         let id = scene.live(h)?;
@@ -41,7 +46,9 @@ impl EguiBackend {
                     }
                 }
             }
-            SVL_STYLE_TRANSFORM => vis.transform = text.map(|t| nums::<6>(t, "transform")).transpose()?,
+            SVL_STYLE_TRANSFORM => {
+                vis.transform = text.map(|t| nums::<6>(t, "transform")).transpose()?
+            }
             SVL_STYLE_CLIP => vis.clip = text.map(|t| nums::<2>(t, "clip")).transpose()?,
             _ => vis.inert = text.is_some(),
         }
@@ -68,7 +75,9 @@ impl Backend for EguiBackend {
         if what == NameKind::Kind {
             return kinds::tag_index(name).map(kinds::kind_id).unwrap_or(0);
         }
-        let Some(k) = kinds::kind_of_id(kind) else { return 0 };
+        let Some(k) = kinds::kind_of_id(kind) else {
+            return 0;
+        };
         match what {
             NameKind::Prop => kinds::find_prop(k, name).map(|(id, _)| id).unwrap_or(0),
             NameKind::Signal => kinds::find_signal(k, name).map(|(id, _)| id).unwrap_or(0),
@@ -79,22 +88,45 @@ impl Backend for EguiBackend {
     }
 
     fn create(&self, kind: svl_id) -> StrResult<svl_handle> {
-        let k = kinds::kind_of_id(kind).filter(|&k| kinds::kind(k).tag.is_some()).ok_or_else(|| format!("unknown kind id {kind}"))?;
-        let id = self.0.scene.borrow_mut().create(k, scene::Owner::Js).map_err(|e| e.to_string())?;
+        let k = kinds::kind_of_id(kind)
+            .filter(|&k| kinds::kind(k).tag.is_some())
+            .ok_or_else(|| format!("unknown kind id {kind}"))?;
+        let id = self
+            .0
+            .scene
+            .borrow_mut()
+            .create(k, scene::Owner::Js)
+            .map_err(|e| e.to_string())?;
         Ok(id.to_raw())
     }
 
-    fn insert(&self, parent: svl_handle, child: svl_handle, before: Option<svl_handle>, slot: svl_id) -> StrResult<()> {
+    fn insert(
+        &self,
+        parent: svl_handle,
+        child: svl_handle,
+        before: Option<svl_handle>,
+        slot: svl_id,
+    ) -> StrResult<()> {
         let pk = self.kind_of(parent)?;
         self.kind_of(child)?;
         if slot > 1 && kinds::slot_of(pk).is_some() {
-            return Err(format!("unknown slot id {slot} on <{}>", kinds::kind(pk).tag.unwrap_or("?")));
+            return Err(format!(
+                "unknown slot id {slot} on <{}>",
+                kinds::kind(pk).tag.unwrap_or("?")
+            ));
         }
         let changed = {
             let mut scene = self.0.scene.borrow_mut();
             let (p, c) = (scene.live(parent)?, scene.live(child)?);
-            let b = before.map(|b| scene::NodeId::from_raw(b).ok_or_else(|| format!("handle #{b} is not a child of #{parent}"))).transpose()?;
-            scene.insert(p, c, b, Origin::Js).map_err(|e| e.to_string())?
+            let b = before
+                .map(|b| {
+                    scene::NodeId::from_raw(b)
+                        .ok_or_else(|| format!("handle #{b} is not a child of #{parent}"))
+                })
+                .transpose()?;
+            scene
+                .insert(p, c, b, Origin::Js)
+                .map_err(|e| e.to_string())?
         };
         if !changed {
             return Ok(()); // already in place
@@ -106,7 +138,10 @@ impl Backend for EguiBackend {
     fn remove(&self, parent: svl_handle, child: svl_handle) -> StrResult<()> {
         {
             let mut scene = self.0.scene.borrow_mut();
-            let (Some(p), Some(c)) = (scene::NodeId::from_raw(parent), scene::NodeId::from_raw(child)) else {
+            let (Some(p), Some(c)) = (
+                scene::NodeId::from_raw(parent),
+                scene::NodeId::from_raw(child),
+            ) else {
                 return Err("stale or foreign handle".into());
             };
             scene.remove(p, c, Origin::Js).map_err(|e| e.to_string())?;
@@ -141,7 +176,9 @@ impl Backend for EguiBackend {
             let mut scene = self.0.scene.borrow_mut();
             let id = scene.live(h)?;
             // Host writes never announce a change: there is no echo to suppress (EGUI.md §1.4).
-            scene.set_value(id, prop, v, Origin::Js).map_err(|e| e.to_string())?;
+            scene
+                .set_value(id, prop, v, Origin::Js)
+                .map_err(|e| e.to_string())?;
         }
         self.touched(self.root_of(h));
         Ok(())
@@ -149,14 +186,18 @@ impl Backend for EguiBackend {
 
     fn get_prop(&self, h: svl_handle, prop: svl_id) -> StrResult<Value> {
         let scene = self.0.scene.borrow();
-        let n = scene.get(h).ok_or_else(|| format!("stale or foreign handle {h}"))?;
-        let def = kinds::prop_def(n.kind, prop).ok_or_else(|| format!("unknown prop id {prop} on <{}>", n.tag()))?;
+        let n = scene
+            .get(h)
+            .ok_or_else(|| format!("stale or foreign handle {h}"))?;
+        let def = kinds::prop_def(n.kind, prop)
+            .ok_or_else(|| format!("unknown prop id {prop} on <{}>", n.tag()))?;
         scene::get_prop(&n, def)
     }
 
     fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value> {
         let k = self.kind_of(h)?;
-        let def = kinds::method_def(k, method).ok_or_else(|| format!("unknown method id {method}"))?;
+        let def =
+            kinds::method_def(k, method).ok_or_else(|| format!("unknown method id {method}"))?;
         if !args.is_empty() {
             return Err(format!("{} takes no arguments", def.name));
         }
@@ -188,7 +229,8 @@ impl Backend for EguiBackend {
         let mut scene = self.0.scene.borrow_mut();
         let i = scene.ix(scene.live(h)?);
         let kind = scene.core[i].kind as usize;
-        kinds::signal_def(kind, signal).ok_or_else(|| format!("unknown signal id {signal} on <{}>", scene.tag_at(i)))?;
+        kinds::signal_def(kind, signal)
+            .ok_or_else(|| format!("unknown signal id {signal} on <{}>", scene.tag_at(i)))?;
         scene.set_listen(i, signal, on);
         let r = scene.core[i].root;
         drop(scene);
@@ -200,7 +242,9 @@ impl Backend for EguiBackend {
         let k = self.kind_of(h)?;
         let host_owned = {
             let scene = self.0.scene.borrow();
-            scene.live(h).is_ok_and(|id| scene.core[scene.ix(id)].owner == scene::Owner::Host)
+            scene
+                .live(h)
+                .is_ok_and(|id| scene.core[scene.ix(id)].owner == scene::Owner::Host)
         };
         Ok(svl_handle_info {
             kind: kinds::kind_id(k),
@@ -228,7 +272,11 @@ impl Backend for EguiBackend {
             shared.wake.store(true, Ordering::Release);
             // a wake does not know its viewport: the one that runs logic next (the root viewport,
             // whose logic routes repaints, §5.2; or the deferred viewport whose pass runs now)
-            let vp = shared.logic_vp.lock().unwrap().unwrap_or(egui::ViewportId::ROOT);
+            let vp = shared
+                .logic_vp
+                .lock()
+                .unwrap()
+                .unwrap_or(egui::ViewportId::ROOT);
             if let Some(ctx) = shared.ctx.lock().unwrap().as_ref() {
                 ctx.request_repaint_of(vp);
             }
@@ -248,7 +296,9 @@ impl Backend for EguiBackend {
             self.0.deadline.set(None);
             return;
         }
-        self.0.deadline.set(Some(Instant::now() + Duration::from_millis(ms as u64)));
+        self.0
+            .deadline
+            .set(Some(Instant::now() + Duration::from_millis(ms as u64)));
         if !self.0.in_frame.get()
             && let Some(ctx) = self.ctx()
         {
@@ -294,7 +344,12 @@ impl Backend for EguiBackend {
         let n = scene.n(h);
         if n.rect != egui::Rect::NOTHING {
             let r = n.rect;
-            return Ok([r.min.x as f64, r.min.y as f64, r.width() as f64, r.height() as f64]);
+            return Ok([
+                r.min.x as f64,
+                r.min.y as f64,
+                r.width() as f64,
+                r.height() as f64,
+            ]);
         }
         let s = match (n.intrinsic, self.ctx()) {
             (Some(s), _) => s,
@@ -310,8 +365,13 @@ impl Backend for EguiBackend {
 
     fn observe(&self, h: svl_handle, prop: svl_id, on: bool) -> Result<(), ObserveError> {
         let mut scene = self.0.scene.borrow_mut();
-        let i = scene.live(h).map(|id| scene.ix(id)).map_err(ObserveError::Failed)?;
-        kinds::prop_def(scene.core[i].kind as usize, prop).ok_or_else(|| ObserveError::Failed(format!("unknown prop id {prop} on <{}>", scene.tag_at(i))))?;
+        let i = scene
+            .live(h)
+            .map(|id| scene.ix(id))
+            .map_err(ObserveError::Failed)?;
+        kinds::prop_def(scene.core[i].kind as usize, prop).ok_or_else(|| {
+            ObserveError::Failed(format!("unknown prop id {prop} on <{}>", scene.tag_at(i)))
+        })?;
         // Every prop is exact: the scene is the only place a value changes.
         scene.observe(i, prop, on);
         Ok(())
@@ -323,7 +383,9 @@ impl Backend for EguiBackend {
 
     fn start(&self, host: Option<&HostRef<'_>>) -> StrResult<()> {
         // egui needs no global init: attaching is all; the caller's frames drive everything.
-        self.0.host.set(host.map(|h| h.as_raw()).unwrap_or(std::ptr::null()));
+        self.0
+            .host
+            .set(host.map(|h| h.as_raw()).unwrap_or(std::ptr::null()));
         Ok(())
     }
 
@@ -344,6 +406,11 @@ impl Backend for EguiBackend {
         if def.ty == kinds::Ty::I64 {
             slot = slot.flags(SVL_D_INTEGRAL);
         }
-        Some(MemberDesc { name: def.name.to_string(), params: vec![slot.clone()], ret: slot, flags: SVL_M_OBSERVABLE })
+        Some(MemberDesc {
+            name: def.name.to_string(),
+            params: vec![slot.clone()],
+            ret: slot,
+            flags: SVL_M_OBSERVABLE,
+        })
     }
 }

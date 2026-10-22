@@ -110,13 +110,41 @@ impl SentInfo {
                 p.push((k.to_string(), v));
             }
         };
-        put("key", old.is_none_or(|o| o.key != self.key), Value::Str(self.key.clone()));
-        put("visible", old.is_none_or(|o| o.visible != self.visible), Value::Bool(self.visible));
-        put("width", old.is_none_or(|o| o.width != self.width), Value::F64(self.width));
-        put("height", old.is_none_or(|o| o.height != self.height), Value::F64(self.height));
-        put("scale", old.is_none_or(|o| o.scale != self.scale), Value::F64(self.scale));
-        put("viewport", old.is_none_or(|o| o.viewport != self.viewport), Value::Str(self.viewport.clone()));
-        put("focused", old.is_none_or(|o| o.focused != self.focused), Value::Bool(self.focused));
+        put(
+            "key",
+            old.is_none_or(|o| o.key != self.key),
+            Value::Str(self.key.clone()),
+        );
+        put(
+            "visible",
+            old.is_none_or(|o| o.visible != self.visible),
+            Value::Bool(self.visible),
+        );
+        put(
+            "width",
+            old.is_none_or(|o| o.width != self.width),
+            Value::F64(self.width),
+        );
+        put(
+            "height",
+            old.is_none_or(|o| o.height != self.height),
+            Value::F64(self.height),
+        );
+        put(
+            "scale",
+            old.is_none_or(|o| o.scale != self.scale),
+            Value::F64(self.scale),
+        );
+        put(
+            "viewport",
+            old.is_none_or(|o| o.viewport != self.viewport),
+            Value::Str(self.viewport.clone()),
+        );
+        put(
+            "focused",
+            old.is_none_or(|o| o.focused != self.focused),
+            Value::Bool(self.focused),
+        );
         p
     }
 }
@@ -139,7 +167,14 @@ pub(crate) struct Root {
 }
 
 impl Root {
-    pub fn new(key: RootKey, entry: EntryId, export: String, slot: SlotId, owner: RootOwner, props: &Props) -> Root {
+    pub fn new(
+        key: RootKey,
+        entry: EntryId,
+        export: String,
+        slot: SlotId,
+        owner: RootOwner,
+        props: &Props,
+    ) -> Root {
         let mut r = Root {
             key,
             entry,

@@ -25,7 +25,13 @@ fn recorded(s: &str) -> bool {
 }
 
 fn records_with(prefix: &str) -> Vec<String> {
-    RECORD.lock().unwrap().iter().filter(|x| x.starts_with(prefix)).cloned().collect()
+    RECORD
+        .lock()
+        .unwrap()
+        .iter()
+        .filter(|x| x.starts_with(prefix))
+        .cloned()
+        .collect()
 }
 
 fn open(g: u32) {
@@ -35,13 +41,21 @@ fn open(g: u32) {
 fn await_record(s: &str) {
     let end = Instant::now() + Duration::from_secs(20);
     while !recorded(s) {
-        assert!(Instant::now() < end, "timed out waiting for the record {s:?}");
+        assert!(
+            Instant::now() < end,
+            "timed out waiting for the record {s:?}"
+        );
         std::thread::sleep(Duration::from_millis(1));
     }
 }
 
 fn pool() {
-    let _ = svelters::exports::set_worker_pool(svelters::rayon::ThreadPoolBuilder::new().num_threads(16).build().unwrap());
+    let _ = svelters::exports::set_worker_pool(
+        svelters::rayon::ThreadPoolBuilder::new()
+            .num_threads(16)
+            .build()
+            .unwrap(),
+    );
 }
 
 // ---- the exports: svelters:app/rx ----
@@ -69,12 +83,20 @@ impl StoreHooks for Stats {
         match field {
             StatsField::Speed => {
                 if !self.speed.is_finite() {
-                    return Err(NativeError { domain: "app:rx".into(), code: svelters::Value::Str("bad-speed".into()), message: "speed must be finite".into() });
+                    return Err(NativeError {
+                        domain: "app:rx".into(),
+                        code: svelters::Value::Str("bad-speed".into()),
+                        message: "speed must be finite".into(),
+                    });
                 }
                 self.speed = self.speed.clamp(0.1, 10.0);
             }
             StatsField::Label if self.label.len() > 10 => {
-                return Err(NativeError { domain: "app:rx".into(), code: svelters::Value::Str("too-long".into()), message: "at most 10 characters".into() });
+                return Err(NativeError {
+                    domain: "app:rx".into(),
+                    code: svelters::Value::Str("too-long".into()),
+                    message: "at most 10 characters".into(),
+                });
             }
             _ => {}
         }
@@ -85,7 +107,10 @@ impl StoreHooks for Stats {
 /// A store of its own (one per test).
 #[svelters::export(module = "rx")]
 pub fn fresh_stats() -> Store<Stats> {
-    Store::new(Stats { speed: 1.0, ..Default::default() })
+    Store::new(Stats {
+        speed: 1.0,
+        ..Default::default()
+    })
 }
 
 /// `n` single-field writes on a worker thread.
@@ -134,7 +159,10 @@ pub fn bump_app(n: u32) -> u64 {
 #[derive(svelters::Events, Clone)]
 pub enum SensorEvent {
     /// A reading.
-    Reading { value: f64, seq: u32 },
+    Reading {
+        value: f64,
+        seq: u32,
+    },
     /// The latest level.
     #[event(latest)]
     Level(f64),
@@ -152,7 +180,10 @@ pub struct Sensor {
 impl Sensor {
     #[js(constructor)]
     pub fn new(stats: Store<Stats>) -> Sensor {
-        Sensor { events: Emitter::new(), stats }
+        Sensor {
+            events: Emitter::new(),
+            stats,
+        }
     }
 
     /// Updates the store, then emits `n` readings and `n` levels, on a worker.
@@ -160,7 +191,10 @@ impl Sensor {
     pub fn burst(self: Arc<Self>, n: u32) -> u32 {
         self.stats.write(StatsField::Count, |s| s.count = n as u64);
         for i in 0..n {
-            self.events.emit(SensorEvent::Reading { value: i as f64 * 0.5, seq: i });
+            self.events.emit(SensorEvent::Reading {
+                value: i as f64 * 0.5,
+                seq: i,
+            });
             self.events.emit(SensorEvent::Level(i as f64));
         }
         n
@@ -170,7 +204,10 @@ impl Sensor {
     /// checkpoint, so that checkpoint sees all of them (a worker burst may be split across checkpoints).
     pub fn burst_now(&self, n: u32) -> u32 {
         for i in 0..n {
-            self.events.emit(SensorEvent::Reading { value: i as f64 * 0.5, seq: i });
+            self.events.emit(SensorEvent::Reading {
+                value: i as f64 * 0.5,
+                seq: i,
+            });
         }
         n
     }
@@ -202,7 +239,11 @@ pub fn fail_after(n: u32, out: Sink<u32>) -> Result<(), NativeError> {
     for i in 1..=n {
         out.send(i)?;
     }
-    Err(NativeError { domain: "app:rx".into(), code: svelters::Value::Str("boom".into()), message: "failed after the items".into() })
+    Err(NativeError {
+        domain: "app:rx".into(),
+        code: svelters::Value::Str("boom".into()),
+        message: "failed after the items".into(),
+    })
 }
 
 /// Waits for gate `g` on a worker.
@@ -287,7 +328,10 @@ pub struct Keeper {
 impl Keeper {
     #[js(constructor)]
     pub fn new() -> Keeper {
-        Keeper { held: None, copy: Vec::new() }
+        Keeper {
+            held: None,
+            copy: Vec::new(),
+        }
     }
 
     pub fn keep(&mut self, b: svelters::Buffer<u8>) -> u32 {
@@ -321,7 +365,8 @@ impl Run<'_, '_> {
     fn turn(&mut self) {
         self.host.checkpoint();
         self.host.drain_jobs();
-        self.lines.extend(self.host.take_console().into_iter().map(|l| l.text));
+        self.lines
+            .extend(self.host.take_console().into_iter().map(|l| l.text));
     }
 
     fn until(&mut self, what: &str, cond: impl Fn(&Host<'_>, &[String]) -> bool) {
@@ -331,7 +376,12 @@ impl Run<'_, '_> {
             if cond(self.host, &self.lines) {
                 return;
             }
-            assert!(Instant::now() < end, "timed out waiting for {what}\nlines: {:#?}\nerrors: {:#?}", self.lines, self.host.take_errors());
+            assert!(
+                Instant::now() < end,
+                "timed out waiting for {what}\nlines: {:#?}\nerrors: {:#?}",
+                self.lines,
+                self.host.take_errors()
+            );
             std::thread::sleep(Duration::from_millis(1));
         }
     }
@@ -367,8 +417,12 @@ fn with_config(name: &str, main: &str, cfg: HostConfig, f: impl FnOnce(&mut Run<
     if let Err(e) = host.load_bundle(dir.join("main.js")) {
         panic!("load: {e}");
     }
-    let mut run = Run { host: &host, lines: Vec::new() };
-    run.lines.extend(host.take_console().into_iter().map(|l| l.text));
+    let mut run = Run {
+        host: &host,
+        lines: Vec::new(),
+    };
+    run.lines
+        .extend(host.take_console().into_iter().map(|l| l.text));
     f(&mut run);
 }
 
@@ -407,10 +461,18 @@ bump(s, 10000, 1).then((v) => console.log('done', v));
             let s = r.host.reactive_stats();
             assert_eq!(r.count("batch "), 1, "{:?}", r.lines);
             assert!(r.has("changed count=10000"), "{:?}", r.lines);
-            assert_eq!(r.count("changed "), 1, "only `count` changed: {:?}", r.lines);
+            assert_eq!(
+                r.count("changed "),
+                1,
+                "only `count` changed: {:?}",
+                r.lines
+            );
             assert_eq!(s.store_batches - s0.store_batches, 1);
             assert_eq!(s.store_delivered - s0.store_delivered, 1);
-            println!("10k worker writes: 1 batch, 1 field delivered, checkpoint {:.3} ms", took.as_secs_f64() * 1e3);
+            println!(
+                "10k worker writes: 1 batch, 1 field delivered, checkpoint {:.3} ms",
+                took.as_secs_f64() * 1e3
+            );
             r.no_errors();
         },
     );
@@ -441,7 +503,12 @@ console.log('touched');
             let s0 = r.host.reactive_stats();
             r.turn();
             assert!(r.has("touched"));
-            assert_eq!(r.count("batch "), 1, "the first announcement after observe is delivered: {:?}", r.lines);
+            assert_eq!(
+                r.count("batch "),
+                1,
+                "the first announcement after observe is delivered: {:?}",
+                r.lines
+            );
             assert_eq!(r.count("changed "), 5, "{:?}", r.lines);
             assert!(r.has("touched again"), "{:?}", r.lines);
             let s1 = r.host.reactive_stats();
@@ -449,7 +516,12 @@ console.log('touched');
             r.turn();
             r.turn();
             let s = r.host.reactive_stats();
-            assert_eq!(r.count("batch "), 1, "nothing changed the second time: {:?}", r.lines);
+            assert_eq!(
+                r.count("batch "),
+                1,
+                "nothing changed the second time: {:?}",
+                r.lines
+            );
             assert_eq!(s.store_unchanged - s1.store_unchanged, 5, "{s:?}");
             r.no_errors();
         },
@@ -474,10 +546,19 @@ console.log('wrote 50, reads', s.speed);
             assert!(r.has("wrote 50, reads 10"), "{:?}", r.lines);
             r.turn();
             assert_eq!(r.count("changed speed="), 1, "{:?}", r.lines);
-            assert!(r.has("changed speed=10"), "the clamped value, once: {:?}", r.lines);
+            assert!(
+                r.has("changed speed=10"),
+                "the clamped value, once: {:?}",
+                r.lines
+            );
             r.turn();
             r.turn();
-            assert_eq!(r.count("changed speed="), 1, "the store's own dirty bit for the write is an echo: {:?}", r.lines);
+            assert_eq!(
+                r.count("changed speed="),
+                1,
+                "the store's own dirty bit for the write is an echo: {:?}",
+                r.lines
+            );
             r.no_errors();
         },
     );
@@ -510,8 +591,18 @@ console.log('end');
             r.turn();
             r.turn();
             // Only the Rust-side write is news; JS's own accepted writes are echoes.
-            let changed: Vec<_> = r.lines.iter().filter(|l| l.starts_with("changed ")).cloned().collect();
-            assert_eq!(changed, vec!["changed speed=7".to_string()], "{:?}", r.lines);
+            let changed: Vec<_> = r
+                .lines
+                .iter()
+                .filter(|l| l.starts_with("changed "))
+                .cloned()
+                .collect();
+            assert_eq!(
+                changed,
+                vec!["changed speed=7".to_string()],
+                "{:?}",
+                r.lines
+            );
             r.no_errors();
         },
     );
@@ -632,9 +723,21 @@ sensor.burstNow(1500);
             r.line("readings 3000");
             let s = r.host.reactive_stats();
             assert_eq!(s.events - s0.events, 3000, "{s:?}");
-            assert!(s.collects - s0.collects >= 2, "two floods, two checkpoints: {s:?}");
-            let warns: Vec<_> = r.lines.iter().filter(|l| l.contains("more than 1000 events")).collect();
-            assert_eq!(warns.len(), 1, "two floods of 1500, one warning: {:?}", r.lines);
+            assert!(
+                s.collects - s0.collects >= 2,
+                "two floods, two checkpoints: {s:?}"
+            );
+            let warns: Vec<_> = r
+                .lines
+                .iter()
+                .filter(|l| l.contains("more than 1000 events"))
+                .collect();
+            assert_eq!(
+                warns.len(),
+                1,
+                "two floods of 1500, one warning: {:?}",
+                r.lines
+            );
             r.no_errors();
         },
     );
@@ -661,7 +764,11 @@ waitGate(801).then(async () => {
                 r.turn();
                 std::thread::sleep(Duration::from_millis(2));
             }
-            assert!(!recorded("sent 1 5"), "the producer runs at most 4 items ahead: {:?}", records_with("sent 1"));
+            assert!(
+                !recorded("sent 1 5"),
+                "the producer runs at most 4 items ahead: {:?}",
+                records_with("sent 1")
+            );
             open(801);
             r.line("got 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20");
             r.until("op done", |h, _| h.ops_in_flight() == 0);
@@ -686,7 +793,9 @@ import { countTo } from 'svelters:app/rx';
 "#,
         |r| {
             r.line("left after 3");
-            r.until("producer closed", |_, _| !records_with("closed 2 at ").is_empty());
+            r.until("producer closed", |_, _| {
+                !records_with("closed 2 at ").is_empty()
+            });
             r.until("op done", |h, _| h.ops_in_flight() == 0);
             assert!(!recorded("sent 2 1000"));
             r.no_errors();
@@ -736,7 +845,9 @@ const ac = new AbortController();
 "#,
         |r| {
             r.line("aborted cancelled");
-            r.until("producer closed", |_, _| !records_with("closed 3 at ").is_empty());
+            r.until("producer closed", |_, _| {
+                !records_with("closed 3 at ").is_empty()
+            });
             r.until("op done", |h, _| h.ops_in_flight() == 0);
             r.no_errors();
         },
@@ -819,7 +930,10 @@ console.log('v1', c.value, appStats.count);
     let vt = log.vtable();
     let host = Host::new(vt.backend_ref(), cfg).unwrap();
     host.load_bundle(dir.join("main.js")).unwrap();
-    let mut r = Run { host: &host, lines: Vec::new() };
+    let mut r = Run {
+        host: &host,
+        lines: Vec::new(),
+    };
     r.turn();
     assert!(r.has("v1 6 7"), "{:?}", r.lines);
     assert_eq!(host.persisted(), vec!["counter".to_string()]);
@@ -848,7 +962,10 @@ throw new Error('broken v2');
     let _ = host.take_errors();
     assert_eq!(host.persisted(), vec!["counter".to_string()]);
     r.turn();
-    assert!(recorded("counter-drop 904"), "the failed runtime's object was released");
+    assert!(
+        recorded("counter-drop 904"),
+        "the failed runtime's object was released"
+    );
     APP_STATS.write(StatsField::Count, |s| s.count += 1);
     r.turn();
     assert!(r.has("changed count=8"), "{:?}", r.lines);
@@ -865,16 +982,36 @@ H.observe(appStats.svlHandle, 'count', true);
 console.log('v2', c.value, c instanceof Counter, appStats.count);
 "
     ));
-    assert_eq!(*reloads.borrow(), vec![false, true], "{:#?}", host.take_errors());
+    assert_eq!(
+        *reloads.borrow(),
+        vec![false, true],
+        "{:#?}",
+        host.take_errors()
+    );
     r.turn();
     assert!(r.has("v2 6 true 8"), "{:?}", r.lines);
-    assert!(recorded("counter-drop 902"), "the unpersisted counter died with its runtime");
-    assert!(!recorded("counter-drop 901"), "the persisted counter lives on");
-    assert_eq!(host.observed_props(), 1, "only the new runtime observes the store");
+    assert!(
+        recorded("counter-drop 902"),
+        "the unpersisted counter died with its runtime"
+    );
+    assert!(
+        !recorded("counter-drop 901"),
+        "the persisted counter lives on"
+    );
+    assert_eq!(
+        host.observed_props(),
+        1,
+        "only the new runtime observes the store"
+    );
     let before = r.count("changed count=");
     APP_STATS.write(StatsField::Count, |s| s.count += 1);
     r.turn();
-    assert_eq!(r.count("changed count=") - before, 1, "delivered once: {:?}", r.lines);
+    assert_eq!(
+        r.count("changed count=") - before,
+        1,
+        "delivered once: {:?}",
+        r.lines
+    );
     assert!(r.has("changed count=9"), "{:?}", r.lines);
     r.no_errors();
     drop(r);
@@ -895,7 +1032,10 @@ fn a_persisted_object_holding_js_memory_is_diagnosed_at_reload() {
         let vt = log.vtable();
         let host = Host::new(vt.backend_ref(), cfg).unwrap();
         host.load_bundle(dir.join("main.js")).unwrap();
-        let mut r = Run { host: &host, lines: Vec::new() };
+        let mut r = Run {
+            host: &host,
+            lines: Vec::new(),
+        };
         r.turn();
         assert!(r.has("kept 32"), "{:?}", r.lines);
         let leaked = host.buffer_stats().leaked_runtimes;
@@ -913,12 +1053,23 @@ fn a_persisted_object_holding_js_memory_is_diagnosed_at_reload() {
         let lines = r.lines.clone();
         (lines, host.buffer_stats().leaked_runtimes - leaked, took)
     };
-    let warns = |lines: &[String]| lines.iter().filter(|l| l.contains("from the old JS runtime are still held by Rust")).count();
+    let warns = |lines: &[String]| {
+        lines
+            .iter()
+            .filter(|l| l.contains("from the old JS runtime are still held by Rust"))
+            .count()
+    };
 
     let (lines, leaked, took) = reload("pin-held", "keep");
     assert_eq!(warns(&lines), 1, "{lines:?}");
-    assert!(lines.iter().any(|l| l.contains("Buffer::into_vec()")), "{lines:?}");
-    assert_eq!(leaked, 1, "the old runtime is leaked: Rust still holds its memory");
+    assert!(
+        lines.iter().any(|l| l.contains("Buffer::into_vec()")),
+        "{lines:?}"
+    );
+    assert_eq!(
+        leaked, 1,
+        "the old runtime is leaked: Rust still holds its memory"
+    );
     assert!(took >= Duration::from_millis(900), "{took:?}");
 
     let (lines, leaked, took) = reload("pin-copy", "keepCopy");
@@ -951,7 +1102,8 @@ fn typings_show_stores_values_events_and_streams() {
     ] {
         assert!(dts.contains(want), "typings lack {want:?}:\n{dts}");
     }
-    let js = svelters::exports::javascript("rx", "@svelters/types/core", &|m| format!("./{m}.js")).unwrap();
+    let js = svelters::exports::javascript("rx", "@svelters/types/core", &|m| format!("./{m}.js"))
+        .unwrap();
     for want in [
         "get speed() {\n    return observed(this, 'speed');",
         "set speed(v) {\n    setProp(this, 'speed', v);",
@@ -963,28 +1115,69 @@ fn typings_show_stores_values_events_and_streams() {
         assert!(js.contains(want), "stub lacks {want:?}:\n{js}");
     }
     let json: serde_json::Value = serde_json::from_str(&svelters::exports::json()).unwrap();
-    let m = json["modules"].as_array().unwrap().iter().find(|m| m["name"] == "rx").unwrap().clone();
-    let stats = m["classes"].as_array().unwrap().iter().find(|c| c["name"] == "Stats").unwrap().clone();
+    let m = json["modules"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|m| m["name"] == "rx")
+        .unwrap()
+        .clone();
+    let stats = m["classes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["name"] == "Stats")
+        .unwrap()
+        .clone();
     assert_eq!(stats["store"], true);
-    let prop = |n: &str| stats["props"].as_array().unwrap().iter().find(|p| p["name"] == n).unwrap().clone();
+    let prop = |n: &str| {
+        stats["props"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|p| p["name"] == n)
+            .unwrap()
+            .clone()
+    };
     assert_eq!(prop("speed")["observability"], "exact");
     assert_eq!(prop("speed")["verified"], "delivery");
     assert_eq!(prop("speed")["readonly"], false);
     assert_eq!(prop("count")["readonly"], true);
     assert_eq!(prop("log")["proportional"], true);
     let values = m["values"].as_array().unwrap();
-    assert!(values.iter().any(|v| v["name"] == "appStats" && v["kind"] == "static" && v["type"] == "Stats"), "{values:?}");
-    let sensor = m["classes"].as_array().unwrap().iter().find(|c| c["name"] == "Sensor").unwrap().clone();
+    assert!(
+        values
+            .iter()
+            .any(|v| v["name"] == "appStats" && v["kind"] == "static" && v["type"] == "Stats"),
+        "{values:?}"
+    );
+    let sensor = m["classes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|c| c["name"] == "Sensor")
+        .unwrap()
+        .clone();
     assert_eq!(sensor["events"][1]["name"], "level");
     assert_eq!(sensor["events"][1]["latest"], true);
-    let f = m["functions"].as_array().unwrap().iter().find(|f| f["name"] == "countTo").unwrap().clone();
+    let f = m["functions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|f| f["name"] == "countTo")
+        .unwrap()
+        .clone();
     assert_eq!(f["stream"], "number");
 }
 
 // Compile-only: the non-scripted config the GTK example uses also works for stores (no virtual clock).
 #[test]
 fn stores_work_in_a_live_host_too() {
-    let cfg = HostConfig { echo_console: false, echo_errors: false, ..HostConfig::default() };
+    let cfg = HostConfig {
+        echo_console: false,
+        echo_errors: false,
+        ..HostConfig::default()
+    };
     with_config(
         "live",
         &format!(
@@ -998,7 +1191,9 @@ bump(s, 3, 9).then((v) => console.log('done', v));
         cfg,
         |r| {
             r.line("done 3");
-            r.until("count delivered", |_, l| l.iter().any(|x| x == "changed count=3"));
+            r.until("count delivered", |_, l| {
+                l.iter().any(|x| x == "changed count=3")
+            });
             r.no_errors();
         },
     );

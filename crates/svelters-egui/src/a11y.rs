@@ -29,7 +29,8 @@ pub(crate) fn decorate(resp: egui::Response, n: &Node) -> egui::Response {
         None => resp,
     };
     if !n.c.anchor.is_empty() {
-        resp.ctx.accesskit_node_builder(resp.id, |b| b.set_author_id(n.c.anchor.clone()));
+        resp.ctx
+            .accesskit_node_builder(resp.id, |b| b.set_author_id(n.c.anchor.clone()));
     }
     resp
 }

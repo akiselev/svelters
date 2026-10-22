@@ -59,7 +59,10 @@ pub fn echo_refusal(r: Json<Refusal>) -> Json<Refusal> {
 
 #[svelters::export(module = "intent")]
 pub fn refuse(reason: String) -> Json<Refusal> {
-    Json(Refusal { reason, ..refusal() })
+    Json(Refusal {
+        reason,
+        ..refusal()
+    })
 }
 
 /// What Rust read, as Rust's `Debug`.
@@ -67,14 +70,23 @@ pub fn refuse(reason: String) -> Json<Refusal> {
 pub fn describe_status(s: Json<SlotStatus>) -> String {
     match s.0 {
         SlotStatus::Empty => "empty".into(),
-        SlotStatus::Filled { value, unit } => format!("filled {value} {}", unit.unwrap_or_default()),
+        SlotStatus::Filled { value, unit } => {
+            format!("filled {value} {}", unit.unwrap_or_default())
+        }
         SlotStatus::Refused(r) => format!("refused {} {:?} {}", r.reason, r.severity, r.attempts),
     }
 }
 
 #[svelters::export(module = "intent")]
 pub fn statuses() -> Vec<Json<SlotStatus>> {
-    vec![Json(SlotStatus::Empty), Json(SlotStatus::Filled { value: 1.5, unit: None }), Json(SlotStatus::Refused(refusal()))]
+    vec![
+        Json(SlotStatus::Empty),
+        Json(SlotStatus::Filled {
+            value: 1.5,
+            unit: None,
+        }),
+        Json(SlotStatus::Refused(refusal())),
+    ]
 }
 
 #[svelters::export(module = "intent")]
@@ -139,16 +151,31 @@ pub fn area(s: Shape) -> f64 {
 #[svelters::export(module = "shapes")]
 pub fn grow(s: Shape, k: f64) -> Shape {
     match s {
-        Shape::Circle { r, stroke_width } => Shape::Circle { r: r * k, stroke_width },
-        Shape::Rect { w, h, label } => Shape::Rect { w: w * k, h: h * k, label },
-        Shape::Point(p) => Shape::Point(Pt { x: p.x * k, y: p.y * k, mode: p.mode }),
+        Shape::Circle { r, stroke_width } => Shape::Circle {
+            r: r * k,
+            stroke_width,
+        },
+        Shape::Rect { w, h, label } => Shape::Rect {
+            w: w * k,
+            h: h * k,
+            label,
+        },
+        Shape::Point(p) => Shape::Point(Pt {
+            x: p.x * k,
+            y: p.y * k,
+            mode: p.mode,
+        }),
         Shape::Empty => Shape::Empty,
     }
 }
 
 #[svelters::export(module = "shapes")]
 pub fn layer(l: Layer) -> Layer {
-    Layer { name: format!("{}!", l.name), shapes: l.shapes.into_iter().rev().collect(), status: l.status }
+    Layer {
+        name: format!("{}!", l.name),
+        shapes: l.shapes.into_iter().rev().collect(),
+        status: l.status,
+    }
 }
 
 #[svelters::export(module = "shapes")]
@@ -178,12 +205,21 @@ fn run(name: &str, main: &str) -> Run {
     host.checkpoint();
     host.drain_jobs();
     let lines = host.take_console().into_iter().map(|l| l.text).collect();
-    let errors = host.take_errors().into_iter().map(|e| e.to_string()).collect();
+    let errors = host
+        .take_errors()
+        .into_iter()
+        .map(|e| e.to_string())
+        .collect();
     Run { lines, errors }
 }
 
 fn has(r: &Run, line: &str) {
-    assert!(r.lines.iter().any(|l| l == line), "missing console line {line:?}\nlines: {:#?}\nerrors: {:#?}", r.lines, r.errors);
+    assert!(
+        r.lines.iter().any(|l| l == line),
+        "missing console line {line:?}\nlines: {:#?}\nerrors: {:#?}",
+        r.lines,
+        r.errors
+    );
 }
 
 const ERR: &str = "const err = (f) => { try { f(); return 'no error'; } catch (e) { return `${e.name} ${e.domain} ${e.code} ${e.message}`; } };\n";
@@ -216,19 +252,49 @@ console.log('inner', err(() => describeStatus({ kind: 'filled', value: 'big' }))
         ),
     );
     assert!(r.errors.is_empty(), "{:#?}", r.errors);
-    has(&r, r#"echo args.missing pick a face error 2 {"depth":2.5,"missing":["face"]} false"#);
+    has(
+        &r,
+        r#"echo args.missing pick a face error 2 {"depth":2.5,"missing":["face"]} false"#,
+    );
     has(&r, "refuse x error face");
-    has(&r, "status filled 2.5 mm | empty | refused args.missing Error 2");
+    has(
+        &r,
+        "status filled 2.5 mm | empty | refused args.missing Error 2",
+    );
     has(&r, "statuses empty,filled,refused null args.missing");
     has(&r, "same refused edge 2 2.5");
-    has(&r, "wrong-tag NativeError svelters unknown-variant at s.kind: unknown variant `hexagon`, expected one of `empty`, `filled`, `refused`");
-    has(&r, "no-tag NativeError svelters missing-field at s: missing field `kind`");
-    has(&r, "missing NativeError svelters missing-field at r: missing field `message`");
-    has(&r, "range NativeError svelters range at r.attempts: invalid value: integer `300`, expected u8");
-    has(&r, "negative NativeError svelters range at r.attempts: invalid value: integer `-1`, expected u8");
-    has(&r, "type NativeError svelters type at r.message: invalid type: integer `7`, expected a string");
-    has(&r, "enum NativeError svelters unknown-variant at r.severity: unknown variant `fatal`, expected one of `info`, `error`");
-    has(&r, r#"inner NativeError svelters type at s: invalid type: string "big", expected f64"#);
+    has(
+        &r,
+        "wrong-tag NativeError svelters unknown-variant at s.kind: unknown variant `hexagon`, expected one of `empty`, `filled`, `refused`",
+    );
+    has(
+        &r,
+        "no-tag NativeError svelters missing-field at s: missing field `kind`",
+    );
+    has(
+        &r,
+        "missing NativeError svelters missing-field at r: missing field `message`",
+    );
+    has(
+        &r,
+        "range NativeError svelters range at r.attempts: invalid value: integer `300`, expected u8",
+    );
+    has(
+        &r,
+        "negative NativeError svelters range at r.attempts: invalid value: integer `-1`, expected u8",
+    );
+    has(
+        &r,
+        "type NativeError svelters type at r.message: invalid type: integer `7`, expected a string",
+    );
+    has(
+        &r,
+        "enum NativeError svelters unknown-variant at r.severity: unknown variant `fatal`, expected one of `info`, `error`",
+    );
+    has(
+        &r,
+        r#"inner NativeError svelters type at s: invalid type: string "big", expected f64"#,
+    );
 }
 
 #[test]
@@ -261,24 +327,76 @@ console.log('not-object', err(() => area('circle')));
     );
     assert!(r.errors.is_empty(), "{:#?}", r.errors);
     has(&r, "area 12 6 0 0");
-    has(&r, r#"grow {"kind":"circle","r":4,"strokeWidth":3} {"kind":"rect","w":2,"h":4,"label":null}"#);
-    has(&r, r#"grow-pt {"kind":"pt","x":10,"y":20,"mode":"very-slow"} {"kind":"empty"}"#);
-    has(&r, r#"layer l! empty,circle {"kind":"filled","unit":null,"value":3}"#);
+    has(
+        &r,
+        r#"grow {"kind":"circle","r":4,"strokeWidth":3} {"kind":"rect","w":2,"h":4,"label":null}"#,
+    );
+    has(
+        &r,
+        r#"grow-pt {"kind":"pt","x":10,"y":20,"mode":"very-slow"} {"kind":"empty"}"#,
+    );
+    has(
+        &r,
+        r#"layer l! empty,circle {"kind":"filled","unit":null,"value":3}"#,
+    );
     has(&r, r#"first {"kind":"rect","w":1,"h":1,"label":"a"} null"#);
-    has(&r, "wrong-tag NativeError svelters unknown-variant at s.kind: unknown variant `hexagon`, expected one of `circle`, `rect`, `pt`, `empty`");
-    has(&r, "no-tag NativeError svelters missing-field at s: missing field `kind` (the tag of Shape)");
-    has(&r, "tag-type NativeError svelters type at s.kind: expected a string tag, got I64(1)");
-    has(&r, "missing NativeError svelters missing-field at s: missing field `h`");
-    has(&r, "range NativeError svelters range at s.strokeWidth: 300 does not fit u8");
-    has(&r, "unit-enum NativeError svelters unknown-variant at s.mode: unknown variant `warp`, expected `fast`, `very-slow`");
-    has(&r, "inner-missing NativeError svelters missing-field at s: missing field `y`");
-    has(&r, "in-list NativeError svelters missing-field at l.shapes[1]: missing field `h`");
-    has(&r, "in-json NativeError svelters missing-field at l.status: missing field `value`");
-    let ty = r.lines.iter().find(|l| l.starts_with("type ")).cloned().unwrap_or_default();
-    assert!(ty.starts_with("type NativeError svelters type at s.r: "), "{ty}");
+    has(
+        &r,
+        "wrong-tag NativeError svelters unknown-variant at s.kind: unknown variant `hexagon`, expected one of `circle`, `rect`, `pt`, `empty`",
+    );
+    has(
+        &r,
+        "no-tag NativeError svelters missing-field at s: missing field `kind` (the tag of Shape)",
+    );
+    has(
+        &r,
+        "tag-type NativeError svelters type at s.kind: expected a string tag, got I64(1)",
+    );
+    has(
+        &r,
+        "missing NativeError svelters missing-field at s: missing field `h`",
+    );
+    has(
+        &r,
+        "range NativeError svelters range at s.strokeWidth: 300 does not fit u8",
+    );
+    has(
+        &r,
+        "unit-enum NativeError svelters unknown-variant at s.mode: unknown variant `warp`, expected `fast`, `very-slow`",
+    );
+    has(
+        &r,
+        "inner-missing NativeError svelters missing-field at s: missing field `y`",
+    );
+    has(
+        &r,
+        "in-list NativeError svelters missing-field at l.shapes[1]: missing field `h`",
+    );
+    has(
+        &r,
+        "in-json NativeError svelters missing-field at l.status: missing field `value`",
+    );
+    let ty = r
+        .lines
+        .iter()
+        .find(|l| l.starts_with("type "))
+        .cloned()
+        .unwrap_or_default();
+    assert!(
+        ty.starts_with("type NativeError svelters type at s.r: "),
+        "{ty}"
+    );
     // The host checks the argument is an object before Rust sees it.
-    let not_object = r.lines.iter().find(|l| l.starts_with("not-object ")).cloned().unwrap_or_default();
-    assert!(not_object.starts_with("not-object TypeError"), "{not_object}");
+    let not_object = r
+        .lines
+        .iter()
+        .find(|l| l.starts_with("not-object "))
+        .cloned()
+        .unwrap_or_default();
+    assert!(
+        not_object.starts_with("not-object TypeError"),
+        "{not_object}"
+    );
 }
 
 #[test]
@@ -305,32 +423,85 @@ fn typings_and_json_from_one_schema() {
     }
     // The serde types are declared from their JSON Schema, in every module that uses them.
     for module in ["intent", "shapes"] {
-        let body = dts.split(&format!("declare module 'svelters:app/{module}' {{")).nth(1).unwrap().split("\ndeclare module").next().unwrap();
-        for want in ["export type Refusal = {", "export type SlotStatus = ", "export type Severity = "] {
+        let body = dts
+            .split(&format!("declare module 'svelters:app/{module}' {{"))
+            .nth(1)
+            .unwrap()
+            .split("\ndeclare module")
+            .next()
+            .unwrap();
+        for want in [
+            "export type Refusal = {",
+            "export type SlotStatus = ",
+            "export type Severity = ",
+        ] {
             assert!(body.contains(want), "{module} lacks {want:?}:\n{body}");
         }
     }
-    let refusal = dts.lines().find(|l| l.contains("export type Refusal = ")).unwrap();
-    for want in ["/** The reason id (`args.missing`). */ reason: string;", "slot?: string | null;", "message: string;", "data?: unknown;", "severity: Severity;", "attempts: number;"] {
+    let refusal = dts
+        .lines()
+        .find(|l| l.contains("export type Refusal = "))
+        .unwrap();
+    for want in [
+        "/** The reason id (`args.missing`). */ reason: string;",
+        "slot?: string | null;",
+        "message: string;",
+        "data?: unknown;",
+        "severity: Severity;",
+        "attempts: number;",
+    ] {
         assert!(refusal.contains(want), "{refusal}");
     }
-    let status = dts.lines().find(|l| l.contains("export type SlotStatus = ")).unwrap();
-    for want in ["{ kind: 'empty'; }", "{ kind: 'filled'; unit?: string | null; value: number; }", "(Refusal & { kind: 'refused'; })"] {
+    let status = dts
+        .lines()
+        .find(|l| l.contains("export type SlotStatus = "))
+        .unwrap();
+    for want in [
+        "{ kind: 'empty'; }",
+        "{ kind: 'filled'; unit?: string | null; value: number; }",
+        "(Refusal & { kind: 'refused'; })",
+    ] {
         assert!(status.contains(want), "{status}");
     }
 
     let json: serde_json::Value = serde_json::from_str(&s.json()).unwrap();
-    let shapes = json["modules"].as_array().unwrap().iter().find(|m| m["name"] == "shapes").unwrap();
-    let shape = shapes["types"].as_array().unwrap().iter().find(|t| t["name"] == "Shape").unwrap();
+    let shapes = json["modules"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|m| m["name"] == "shapes")
+        .unwrap();
+    let shape = shapes["types"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|t| t["name"] == "Shape")
+        .unwrap();
     assert_eq!(shape["kind"], "union");
     assert_eq!(shape["tag"], "kind");
     assert_eq!(shape["variants"][0]["name"], "circle");
     assert_eq!(shape["variants"][0]["docs"], "A circle.");
-    assert_eq!(shape["variants"][0]["fields"][1], serde_json::json!({ "name": "strokeWidth", "type": "number", "optional": true }));
+    assert_eq!(
+        shape["variants"][0]["fields"][1],
+        serde_json::json!({ "name": "strokeWidth", "type": "number", "optional": true })
+    );
     assert_eq!(shape["variants"][2]["inner"], "Pt");
-    let intent = json["modules"].as_array().unwrap().iter().find(|m| m["name"] == "intent").unwrap();
-    let refusal = intent["types"].as_array().unwrap().iter().find(|t| t["name"] == "Refusal").unwrap();
+    let intent = json["modules"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|m| m["name"] == "intent")
+        .unwrap();
+    let refusal = intent["types"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|t| t["name"] == "Refusal")
+        .unwrap();
     assert_eq!(refusal["kind"], "json");
     assert_eq!(refusal["schema"]["properties"]["attempts"]["maximum"], 255);
-    assert_eq!(refusal["schema"]["properties"]["severity"]["$ref"], "#/$defs/Severity");
+    assert_eq!(
+        refusal["schema"]["properties"]["severity"]["$ref"],
+        "#/$defs/Severity"
+    );
 }

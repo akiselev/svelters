@@ -8,8 +8,15 @@ use std::time::{Duration, Instant};
 use svelters_egui::harness::TestApp;
 
 fn bundle(name: &str) -> PathBuf {
-    let p = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures").join(name).join("dist/app.js");
-    assert!(p.exists(), "{} is missing: run `pnpm build` (needs `cargo build -p svelters-compiler` first)", p.display());
+    let p = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("../../fixtures")
+        .join(name)
+        .join("dist/app.js");
+    assert!(
+        p.exists(),
+        "{} is missing: run `pnpm build` (needs `cargo build -p svelters-compiler` first)",
+        p.display()
+    );
     p
 }
 
@@ -26,7 +33,10 @@ fn counter_runs_under_kittest() {
 
     app.harness.get_by_label("Increment").click();
     app.run();
-    assert!(has(&app, "Count: 1"), "the click reached JS and JS changed the label");
+    assert!(
+        has(&app, "Count: 1"),
+        "the click reached JS and JS changed the label"
+    );
     app.harness.get_by_label("Increment").click();
     app.run();
     app.harness.get_by_label("Increment").click();
@@ -62,9 +72,15 @@ fn settled_app_requests_no_frames() {
     assert_eq!(app.run(), 1);
     assert_eq!(app.run(), 1);
     let after = app.backend.stats();
-    assert_eq!(after.checkpoints, before.checkpoints, "no checkpoint while idle");
+    assert_eq!(
+        after.checkpoints, before.checkpoints,
+        "no checkpoint while idle"
+    );
     assert_eq!(after.layouts, before.layouts, "no relayout while idle");
-    assert!(!app.harness.ctx.has_requested_repaint(), "nothing asks for another frame");
+    assert!(
+        !app.harness.ctx.has_requested_repaint(),
+        "nothing asks for another frame"
+    );
 
     // a click costs a bounded number of frames, then idle again
     app.harness.get_by_label("Increment").click();
@@ -73,10 +89,17 @@ fn settled_app_requests_no_frames() {
     assert!(steps <= 6, "{steps} frames for one click");
     let s = app.backend.stats();
     // one checkpoint delivers the click; the host may `wake` once more for jobs the handler queued
-    assert!(s.checkpoints - after.checkpoints <= 2, "{} checkpoints for one click", s.checkpoints - after.checkpoints);
+    assert!(
+        s.checkpoints - after.checkpoints <= 2,
+        "{} checkpoints for one click",
+        s.checkpoints - after.checkpoints
+    );
     assert_eq!(app.run(), 1, "idle again");
     // a counter label going 0 -> 1 keeps its size: remeasured, not relaid out
-    assert_eq!(s.layouts, after.layouts, "same-size text change must not relayout");
+    assert_eq!(
+        s.layouts, after.layouts,
+        "same-size text change must not relayout"
+    );
 }
 
 /// D1, embed runner: an existing egui app owns the loop and shows the Svelte app in part of its UI
@@ -86,18 +109,28 @@ fn embedded_in_a_caller_ui() {
     use svelters_egui::EguiBackend;
     let backend = EguiBackend::new();
     let vt: &'static svelters_abi::BackendVtable = Box::leak(Box::new(backend.vtable()));
-    let host = svelters_host::Host::new(vt.backend_ref(), svelters_host::HostConfig { echo_console: false, ..Default::default() }).unwrap();
+    let host = svelters_host::Host::new(
+        vt.backend_ref(),
+        svelters_host::HostConfig {
+            echo_console: false,
+            ..Default::default()
+        },
+    )
+    .unwrap();
     let path = bundle("counter-egui");
-    host.start_with(move |h| h.load_bundle(&path).unwrap()).unwrap();
+    host.start_with(move |h| h.load_bundle(&path).unwrap())
+        .unwrap();
     let b2 = backend.clone();
-    let mut harness = egui_kittest::Harness::builder().with_size(egui::vec2(800.0, 400.0)).build_ui(move |ui| {
-        ui.horizontal(|ui| {
-            ui.label("Host app sidebar");
-            let rect = egui::Rect::from_min_size(ui.cursor().min, egui::vec2(380.0, 300.0));
-            let mut child = ui.new_child(egui::UiBuilder::new().max_rect(rect));
-            b2.ui(&mut child);
+    let mut harness = egui_kittest::Harness::builder()
+        .with_size(egui::vec2(800.0, 400.0))
+        .build_ui(move |ui| {
+            ui.horizontal(|ui| {
+                ui.label("Host app sidebar");
+                let rect = egui::Rect::from_min_size(ui.cursor().min, egui::vec2(380.0, 300.0));
+                let mut child = ui.new_child(egui::UiBuilder::new().max_rect(rect));
+                b2.ui(&mut child);
+            });
         });
-    });
     harness.run();
     assert!(harness.query_by_label("Host app sidebar").is_some());
     harness.get_by_label("Increment").click();
@@ -106,7 +139,10 @@ fn embedded_in_a_caller_ui() {
     assert!(host.take_errors().is_empty());
     // the Svelte content stays inside the rect the embedder gave it
     let inc = harness.get_by_label("Increment").rect();
-    assert!(inc.min.x > 100.0 && inc.max.x <= inc.min.x + 400.0, "{inc:?}");
+    assert!(
+        inc.min.x > 100.0 && inc.max.x <= inc.min.x + 400.0,
+        "{inc:?}"
+    );
 }
 
 /// Timers: setTimeout chains run from `schedule_wake` deadlines (`request_repaint_after`).
