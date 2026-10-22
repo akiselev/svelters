@@ -75,6 +75,24 @@ pub trait ModuleProvider {
     /// so a reload is due. Drops what the change makes stale (resolver caches).
     fn invalidate(&self, changed: &[PathBuf]) -> bool;
 
+    /// The app is compiled for component HMR (`--hmr`): the host defines `import.meta.hot` and may
+    /// apply a change in place (H1).
+    fn hmr(&self) -> bool {
+        false
+    }
+
+    /// The loaded modules whose file is among `changed` (watcher events). Empty when none is.
+    fn modules_at(&self, changed: &[PathBuf]) -> Vec<ModuleId> {
+        let _ = changed;
+        Vec::new()
+    }
+
+    /// The modules that import `id` directly (the graph's reverse edges).
+    fn importers(&self, id: &str) -> Vec<ModuleId> {
+        let _ = id;
+        Vec::new()
+    }
+
     /// Warnings collected since the last call (compiler warnings, skipped styles), rendered.
     fn take_warnings(&self) -> Vec<String> {
         Vec::new()
