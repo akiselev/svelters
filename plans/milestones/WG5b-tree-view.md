@@ -76,6 +76,18 @@ unchanged from the auto-merge), `--test vlist` (all but `list_view_runs_on_egui`
 built `fixtures/lists-egui/dist`: CI), `--lib kinds::treeview views::selection vlist`;
 `gen_props.py --check`, `gen_kinds.py --check` (under `tools/dev/headless`) clean.
 
+Second re-merge onto master 424ebcf4 (WG5a, CS5g, Q2): `views/selection.rs` was identical on both
+sides (WG5b's copy came from the WG5a WIP), so master's `KeySelect` is the one copy and the tree
+uses it unchanged. `virtuallist.rs` takes WG5a's list body (keyed `sel`, `item_keys` keys, focus
+on the cursor row, `click_row`) for plain lists, and keeps the tree branch (`tree_row`, one tab
+stop on the list node, `Role::Tree`). The tree keeps its own `Tree::sel`; `selected-ids` is not a
+tree prop. The list node is `focusable_noninteractive` for both (WG5a's change). Shared:
+`VList::ids` and `splice` (now with type-ahead labels). Generated files regenerated
+(`SVELTERS_UPDATE=1 --test spec`, `gen_props.py`, `gen_kinds.py`; `--check` clean). Run:
+`cargo check -p svelters-egui --all-targets`; nextest `--test treeview --test focus_keys --test spec
+--test vlist --test wg5a` (all but `list_view_runs_on_egui`, which needs the built bundle),
+`--lib kinds::treeview views::selection vlist item_keys`.
+
 Original lane:
 
 - `cargo nextest run -p svelters-egui --test treeview` (2): lazy Promise children on Right,

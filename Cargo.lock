@@ -4079,6 +4079,7 @@ dependencies = [
  "sourcemap",
  "svelters-backend-log",
  "svelters-host",
+ "svelters-style",
 ]
 
 [[package]]

@@ -3,12 +3,21 @@
 //! exactly as GTK and Qt speak it, so `@svelters/lists`' `<ListView>` runs unchanged.
 //!
 //! ```text
-//! props  selected i64 (-1: none), selection "none"|"single", layout "list" ("grid" draws a list),
-//!        row-height i64 (the estimate and minimum height of a row; rows are measured)
-//! calls  splice(pos, removed, ids[]), count(), scrollTo(pos), setRow(row, widget|null), rowAt(pos)
+//! props  selected i64 (-1: none), selection "none"|"single"|"multi", layout "list" ("grid" draws
+//!        a list), row-height i64 (the estimate and minimum height of a row; rows are measured),
+//!        selected-ids i64[] (WG5a: the selected item ids, bindable)
+//! calls  splice(pos, removed, ids[], labels[]?), count(), scrollTo(pos), setRow(row, widget|null),
+//!        rowAt(pos)
 //! sync   setup(row), bind(row, pos, id, gen), unbind(row, gen), teardown(row)
-//! async  activate(pos), select(pos)
+//! async  activate(pos), select(pos), selectionchange(ids[])
 //! ```
+//!
+//! **Keyboard and selection (WG5a).** A click focuses the list; while focused it takes the arrows,
+//! PageUp/PageDown, Home/End, Space, Ctrl+A, Enter (activate) and typed text (type-ahead on the
+//! `labels` given to `splice`, or [`RowSource::label`]), through WG5b's shared
+//! [`KeySelect`](crate::views::selection::KeySelect). Selection is keyed by item id (`selected-ids`,
+//! `selectionchange`), so it survives splices, sorts and filters; M5's `selected` is the cursor's
+//! position when the cursor row is selected (`select(pos)` as before).
 //!
 //! **The frame.** JS rows are bound in `logic` (no JS runs in the pass), after the checkpoint
 //! ([`EguiBackend::realize_lists`]): the list decides this frame's scroll offset first (R22,
@@ -32,27 +41,34 @@
 //! its children. Rows are `VirtualChildren` too (queries, anchors `row[<id>]`, `target_rect`).
 //!
 //! Not on egui (yet): N3 model mode (`model` prop: there is no native list model on egui; LS2's
-//! Rust row-model trait replaces it), `layout="grid"`, keyboard navigation (the `tree-view` has it:
-//! WG5b, `treeview.rs`, through `views::selection`).
+//! Rust row-model trait replaces it), `layout="grid"`.
 //!
 //! Writer lane: LISTS.
 
 use super::treeview::{DropAt, Tree, tree_drop_target, tree_keys, tree_row};
 use super::{Def, KindDef, MethodDef, P, PropDef, SignalDef, Ty, input, prop};
-use crate::views::selection::Mode;
 use crate::backend::EguiBackend;
+use crate::views::item_keys;
+use crate::views::selection::{KeySelect, Mode};
 use crate::scene::virt::{RowHeights, RowPool, RowSource, VScroll, VirtualChildren};
 use crate::scene::{NodeId, Origin, ProviderId, RootIx, Scene, SceneError, SceneMut, W};
 use crate::walk::Out;
 use std::borrow::Cow;
 use svelters_abi::Value;
 
-pub const SELECTION: &[&str] = &["none", "single"];
+pub const SELECTION: &[&str] = &["none", "single", "multi"];
 pub const LAYOUT: &[&str] = &["list", "grid"];
 
 pub(super) static PROPS: &[PropDef] = &[
     input("selected", P::ListSelected, Ty::I64, Def::I64(-1), "The selected position, -1 for none. Setting it never raises `select`."),
-    prop("selection", P::ListSelection, Ty::Enum(SELECTION), Def::Str("single"), "`single`: a click selects a row (`select`); `none`: rows are not selectable."),
+    prop(
+        "selection",
+        P::ListSelection,
+        Ty::Enum(SELECTION),
+        Def::Str("single"),
+        "`single`: a click or the keyboard selects a row (`select`); `multi`: Ctrl/Shift clicks and keys select several (`selectionchange`); `none`: rows are not selectable.",
+    ),
+    input("selected-ids", P::SelectedIds, Ty::IdList, Def::Null, "The selected item ids (`bind:selected-ids`); kept by id across splices, sorts and filters."),
     prop("layout", P::ListLayout, Ty::Enum(LAYOUT), Def::Str("list"), "`list` (egui draws `grid` as a list for now)."),
     prop("row-height", P::RowHeight, Ty::I64, Def::I64(32), "The height a row is assumed to have before it is measured, and its minimum, in points."),
 ];
@@ -67,10 +83,14 @@ pub(super) static SIGNALS: &[SignalDef] = &[
     SignalDef { name: "teardown", args: &[ROW], sync: true, doc: "Slot `row` is gone: release its widget." },
     SignalDef { name: "activate", args: &[POS], sync: false, doc: "The user activated the item at `pos` (double click)." },
     SignalDef { name: "select", args: &[POS], sync: false, doc: "The user selected the item at `pos`." },
+    SignalDef { name: "selectionchange", args: &[("ids", Ty::IdList)], sync: false, doc: "The user changed the selection; carries the selected ids." },
 ];
 
 pub(super) static METHODS: &[MethodDef] = &[
-    MethodDef { name: "splice", doc: "`splice(pos, removed, ids)`: replaces `removed` ids at `pos` with `ids` (unique integers)." },
+    MethodDef {
+        name: "splice",
+        doc: "`splice(pos, removed, ids, labels?)`: replaces `removed` ids at `pos` with `ids` (unique integers); `labels` (strings, one per id) are what type-ahead matches.",
+    },
     MethodDef { name: "count", doc: "The number of items." },
     MethodDef { name: "scrollTo", doc: "`scrollTo(pos)`: scrolls the item into view." },
     MethodDef { name: "setRow", doc: "`setRow(row, widget)`: the content of row slot `row` (called from `setup`); null clears it." },
@@ -149,6 +169,10 @@ pub struct VList {
     pub(crate) row_height: i64,
     /// JS mode: the item ids, by position.
     pub(crate) ids: Vec<u64>,
+    /// JS mode: type-ahead labels (empty, or one per id).
+    pub(crate) labels: Vec<String>,
+    /// WG5a: the keyed selection and cursor.
+    pub(crate) sel: KeySelect,
     pub(crate) heights: RowHeights,
     pub(crate) scroll: VScroll,
     pub(crate) slots: Vec<Slot>,
@@ -170,6 +194,8 @@ impl Default for VList {
             layout: "list",
             row_height: 32,
             ids: Vec::new(),
+            labels: Vec::new(),
+            sel: KeySelect::new(Mode::Single),
             heights: RowHeights::uniform(0, 32.0),
             scroll: VScroll::default(),
             slots: Vec::new(),
@@ -185,7 +211,7 @@ impl Default for VList {
 impl Clone for VList {
     /// A fresh list with the same props (rows and bindings are not cloneable).
     fn clone(&self) -> VList {
-        let mut v = VList { selected: self.selected, selection: self.selection, layout: self.layout, row_height: self.row_height, tree: self.tree.as_ref().map(|t| Box::new(t.fresh())), ..VList::default() };
+        let mut v = VList { selected: self.selected, selection: self.selection, layout: self.layout, row_height: self.row_height, sel: KeySelect::new(self.sel.mode), tree: self.tree.as_ref().map(|t| Box::new(t.fresh())), ..VList::default() };
         v.heights.set_estimate(v.row_height as f32);
         v
     }
@@ -274,6 +300,32 @@ impl VList {
         }
     }
 
+    /// Every item id, in order (WG5a: what the keyboard selection walks).
+    fn all_ids(&self) -> Cow<'_, [u64]> {
+        match &self.rust {
+            Some(r) => Cow::Owned((0..r.source.len()).map(|p| r.source.key(p)).collect()),
+            None => Cow::Borrowed(&self.ids),
+        }
+    }
+
+    /// The type-ahead label of position `pos`.
+    fn label_at(&self, pos: usize) -> Option<String> {
+        match &self.rust {
+            Some(r) => r.source.label(pos),
+            None => self.labels.get(pos).filter(|l| !l.is_empty()).cloned(),
+        }
+    }
+
+    /// The selection (WG5a): ids, cursor, mode.
+    pub fn selection(&self) -> &KeySelect {
+        &self.sel
+    }
+
+    /// Rows a page move skips: the rows that fit the view.
+    fn page(&self) -> usize {
+        ((self.view.y / self.heights.estimate().max(1.0)).floor() as usize).max(1)
+    }
+
     fn max_offset(&self) -> f64 {
         (self.heights.total() - self.view.y as f64).max(0.0)
     }
@@ -330,14 +382,16 @@ impl VList {
 
     /// Replaces `removed` ids at `pos` with `ids`; bound rows follow, the first visible row keeps
     /// its place on screen (scroll anchoring by key) unless the list is at the top.
-    pub(crate) fn splice(&mut self, pos: usize, removed: usize, add: &[u64]) -> Result<(), String> {
+    pub(crate) fn splice(&mut self, pos: usize, removed: usize, add: &[u64], labels: Option<&[String]>) -> Result<(), String> {
         let len = self.ids.len();
         if pos > len || pos + removed > len {
             return Err(format!("splice {pos}+{removed} out of {len} items"));
         }
         let first = self.heights.row_at(self.scroll.offset);
         let anchor = (self.scroll.offset > 0.0 && first < len && pos <= first).then(|| (self.ids[first], self.scroll.offset - self.heights.offset(first)));
-        self.ids.splice(pos..pos + removed, add.iter().copied());
+        let mut keys = item_keys::RowKeys { ids: std::mem::take(&mut self.ids), labels: std::mem::take(&mut self.labels) };
+        keys.splice(pos, removed, add, labels);
+        (self.ids, self.labels) = (keys.ids, keys.labels);
         self.heights.splice(pos, removed, add.len());
         let shift = |p: usize| -> Option<usize> {
             if p < pos {
@@ -430,9 +484,32 @@ pub(crate) fn set(v: &mut VList, key: P, val: &Value) -> Result<(), String> {
 
 fn set_list(v: &mut VList, key: P, val: &Value) -> Result<(), String> {
     match (key, val) {
-        (P::ListSelected, Value::I64(x)) => v.selected = (*x).max(-1),
-        (P::ListSelected, Value::F64(x)) => v.selected = (*x as i64).max(-1),
-        (P::ListSelection, Value::Str(s)) => v.selection = SELECTION.iter().copied().find(|x| x == s).ok_or_else(|| format!("`{s}` is not one of none, single"))?,
+        (P::ListSelected, Value::I64(_) | Value::F64(_)) => {
+            let x = match val {
+                Value::I64(x) => *x,
+                Value::F64(x) => *x as i64,
+                _ => unreachable!(),
+            };
+            v.selected = x.max(-1);
+            // the host's position: the item there becomes the selection and the cursor
+            if x >= 0 && (x as usize) < v.len() {
+                let k = v.key_at(x as usize);
+                v.sel.set([k]);
+                v.sel.cursor = Some(k);
+                v.sel.anchor = Some(k);
+            } else if x < 0 {
+                v.sel.set([]);
+            }
+        }
+        (P::ListSelection, Value::Str(s)) => {
+            v.selection = SELECTION.iter().copied().find(|x| x == s).ok_or_else(|| format!("`{s}` is not one of none, single, multi"))?;
+            let keep: Vec<u64> = v.sel.selected.iter().copied().collect();
+            v.sel.mode = Mode::parse(v.selection).unwrap_or_default();
+            v.sel.set(keep);
+        }
+        (P::SelectedIds, ids) => {
+            v.sel.set(item_keys::ids_of(ids, "selected-ids")?);
+        }
         (P::ListLayout, Value::Str(s)) => v.layout = LAYOUT.iter().copied().find(|x| x == s).ok_or_else(|| format!("`{s}` is not one of list, grid"))?,
         (P::RowHeight, Value::I64(x)) => {
             v.row_height = (*x).max(1);
@@ -451,6 +528,7 @@ pub(crate) fn get(v: &VList, key: P) -> Option<Value> {
     Some(match key {
         P::ListSelected => Value::I64(v.selected),
         P::ListSelection => Value::Str(v.selection.to_string()),
+        P::SelectedIds => item_keys::ids_value(v.sel.selected.iter().copied()),
         P::ListLayout => Value::Str(v.layout.to_string()),
         P::RowHeight => Value::I64(v.row_height),
         P::TreeIndent => Value::I64(v.tree.as_ref()?.indent as i64),
@@ -494,11 +572,12 @@ impl EguiBackend {
                     None | Some(Value::Null) => Vec::new(),
                     Some(other) => return Err(format!("splice ids: expected a list, got {other:?}")),
                 };
+                let labels = item_keys::labels_of(args.get(3), "splice labels")?;
                 let W::VirtualList(v) = scene.w_mut(i) else { unreachable!() };
                 if v.rust.is_some() {
                     return Err("splice: this list shows a Rust row source".into());
                 }
-                v.splice(pos, removed, &ids)?;
+                v.splice(pos, removed, &ids, labels.as_deref())?;
                 scene.invalidate_content(list);
                 Value::Null
             }
@@ -893,17 +972,47 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         W::VirtualList(v) => v.tree.as_deref().map(|t| (t.sel.mode, t.indent, t.drag_type.clone(), t.drop_types.clone())),
         _ => return None,
     };
-    let resp = ui.interact(r, list_id, if tree.is_some() { egui::Sense::focusable_noninteractive() } else { egui::Sense::hover() });
-    let (len, selected, selectable, offset, total, view, est, taken, decided) = {
+    // WG5a: keyboard focus is on the cursor row (EV3: a row is the list's focus stop), or on the
+    // list itself while the cursor row is not drawn (scrolling to it); the rows are drawn over it.
+    // WG5b: a tree keeps focus on the list node itself (one tab stop, `focus::Role::Tree`)
+    let resp = ui.interact(r, list_id, egui::Sense::focusable_noninteractive());
+    let placed_keys: Vec<u64> = {
+        let W::VirtualList(v) = s.w(i) else { return None };
+        placed.iter().filter(|&&(_, p)| p < v.len()).map(|&(_, p)| v.key_at(p)).collect()
+    };
+    let mut tree_input = None;
+    let focused = if tree.is_some() {
+        let focused = resp.has_focus();
+        // EV3: focused, the tree takes its keys (read here; `record_with` takes them out)
+        tree_input = focused.then(|| super::treeview::tree_input(list_id, ui));
+        crate::focus::record_with(s, i, ui, &resp, crate::focus::Role::Tree, true);
+        focused
+    } else {
+        let now_focused = ctx.memory(|m| m.focused());
+        let focused = resp.has_focus() || now_focused.is_some_and(|f| placed_keys.iter().any(|&k| list_id.with(("row", k)) == f));
+        if focused {
+            if let Some(f) = now_focused {
+                item_keys::lock_arrows(ui, f);
+            }
+            let keys = item_keys::read_keys(ui, true);
+            if !keys.is_empty() {
+                keys_input(s, i, &keys, out);
+                ctx.request_repaint();
+            }
+        }
+        focused
+    };
+    let (len, selectable, multi, cursor, offset, total, view, est, taken, decided) = {
         let W::VirtualList(v) = s.w_mut(i) else { return None };
         v.scroll.last_rect = r;
         v.scroll.layer = Some(ui.layer_id());
         v.stats.frames += 1;
-        let selectable = match &tree {
-            Some((mode, ..)) => *mode != Mode::None,
-            None => v.selection == "single",
+        // a tree's selection and cursor are its own (`Tree::sel`, drawn by `tree_row`)
+        let (selectable, multi, cursor) = match &tree {
+            Some((mode, ..)) => (*mode != Mode::None, *mode == Mode::Multi, None),
+            None => (v.selection != "none", v.selection == "multi", v.sel.cursor),
         };
-        (v.len(), v.selected, selectable, v.scroll.offset, v.heights.total(), v.view, v.heights.estimate(), v.scroll.taken(), v.scroll.decided_in(&ctx))
+        (v.len(), selectable, multi, cursor, v.scroll.offset, v.heights.total(), v.view, v.heights.estimate(), v.scroll.taken(), v.scroll.decided_in(&ctx))
     };
     ctx.accesskit_node_builder(list_id, |n| {
         n.set_role(if tree.is_some() {
@@ -913,17 +1022,15 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         } else {
             egui::accesskit::Role::List
         });
-        if tree.as_ref().is_some_and(|t| t.0 == Mode::Multi) {
+        n.set_size_of_set(len);
+        if multi {
             n.set_multiselectable();
         }
-        n.set_size_of_set(len);
+        // the cursor row is the focused descendant while the list has focus
+        if focused && let Some(k) = cursor {
+            n.set_active_descendant(list_id.with(("row", k)).accesskit_id());
+        }
     });
-    let focused = tree.is_some() && ctx.memory(|m| m.has_focus(list_id));
-    // EV3: the tree is one tab stop; focused, it takes its keys (`focus::Role::Tree`)
-    let tree_input = focused.then(|| super::treeview::tree_input(list_id, ui));
-    if tree.is_some() {
-        crate::focus::record_with(s, i, ui, &resp, crate::focus::Role::Tree, true);
-    }
     // wheel input: consumed when this frame's offset took it, else kept for the next frame
     if decided && taken != 0.0 {
         ui.input_mut(|inp| inp.smooth_scroll_delta.y -= taken);
@@ -944,7 +1051,6 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
     rows_ui.set_clip_rect(clip);
     let mut drawn = 0u64;
     let mut covered: Vec<(f32, f32)> = Vec::with_capacity(placed.len());
-    let sig_select = super::signal_id(kind, "select");
     let sig_activate = super::signal_id(kind, "activate");
     let emit = |s: &Scene, out: &mut Vec<Out>, name: &str, args: Vec<Value>| {
         let sig = super::signal_id(kind, name);
@@ -958,6 +1064,7 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         _ => None,
     };
     let mut first_row = true; // EV3
+    let cursor_drawn = cursor.is_some_and(|c| placed_keys.contains(&c));
     for (n, pos) in placed {
         let Some(ni) = s.idx(n) else { continue };
         let rr = s.core[ni].rect.translate(origin);
@@ -976,8 +1083,8 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         if let Some((_, indent, drag_type, _)) = &tree {
             tree_row(s, i, key, pos, len, egui::Rect::from_x_y_ranges(r.x_range(), rr.y_range()), *indent, drag_type, focused, row_id, list_id, &mut rows_ui, out, &emit);
         } else {
-            let rresp = rows_ui.interact(rr, row_id, if selectable { egui::Sense::click() } else { egui::Sense::hover() });
-            let is_sel = selected == pos as i64;
+            let rresp = rows_ui.interact(rr, row_id, egui::Sense::click());
+            let is_sel = selectable && matches!(s.w(i), W::VirtualList(v) if v.sel.is_selected(key));
             crate::scene::virt::a11y_row(&ctx, row_id, pos, len, |node| {
                 node.set_role(if selectable { egui::accesskit::Role::ListBoxOption } else { egui::accesskit::Role::ListItem });
                 if selectable {
@@ -989,22 +1096,28 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
             } else if rresp.hovered() {
                 rows_ui.painter().rect_filled(rr, 0.0, rows_ui.visuals().widgets.hovered.weak_bg_fill);
             }
-            if selectable && rresp.clicked() && !is_sel {
-                if let W::VirtualList(v) = s.w_mut(i) {
-                    v.selected = pos as i64;
-                }
-                if s.listens(i, sig_select) {
-                    out.push(Out::Event(h, sig_select, vec![Value::I64(pos as i64)]));
-                }
+            if focused && cursor == Some(key) {
+                rows_ui.painter().rect_stroke(rr.shrink(1.0), 0.0, rows_ui.visuals().selection.stroke, egui::StrokeKind::Inside);
+            }
+            // WG5a: focus follows the cursor row (from the list itself: Tab in, or after a jump);
+            // with no cursor yet, the list's tab stop takes it
+            let stop = if cursor_drawn { cursor == Some(key) } else { first_row };
+            if focused && !rresp.has_focus() && (cursor == Some(key) || (cursor.is_none() && stop)) {
+                rresp.request_focus();
+            }
+            if rresp.clicked() {
+                // WG5a: a click focuses the row and goes through the keyed selection (Ctrl/Shift)
+                rresp.request_focus();
+                let m = item_keys::mods(rows_ui.input(|inp| inp.modifiers));
+                click_row(s, i, key, m, out);
                 ctx.request_repaint();
             }
             if rresp.double_clicked() && s.listens(i, sig_activate) {
                 out.push(Out::Event(h, sig_activate, vec![Value::I64(pos as i64)]));
             }
-            if selectable {
-                // EV3: a selectable row takes focus and the list's keys; the selected row (else the
-                // first drawn) is the list's tab stop
-                let stop = if selected >= 0 { is_sel } else { first_row };
+            {
+                // EV3: a row takes focus and the list's keys; WG5a: the cursor row (else the first
+                // drawn) is the list's tab stop
                 first_row = false;
                 crate::focus::record_with(s, i, &rows_ui, &rresp, crate::focus::Role::List, stop);
             }
@@ -1038,6 +1151,11 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
     }
     if let Some((keys, text)) = tree_input {
         tree_keys(s, i, keys, text, &ctx, ui, out, &emit);
+    }
+    // WG5a: the cursor row is not drawn this frame (a jump scrolls to it next frame): the list
+    // itself keeps focus meanwhile (egui drops focus from a widget that is not drawn)
+    if focused && cursor.is_some() && !cursor_drawn {
+        ctx.memory_mut(|m| m.request_focus(list_id));
     }
     // positions in view that no bound row covers: placeholders (R22's gate counts them)
     let mut unbound = 0u64;
@@ -1082,6 +1200,68 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
     let tip = &s.common(i).tooltip;
     let resp = if tip.is_empty() { resp } else { resp.on_hover_text(tip.clone()) };
     Some(resp)
+}
+
+// ---- WG5a: keyboard and keyed selection ----
+
+/// After the selection changed by user input: `selected-ids` (bind), `selectionchange(ids)`, and
+/// M5's `selected`/`select(pos)` for the cursor row when it is selected.
+fn selection_changed(s: &mut Scene, i: usize, out: &mut Vec<Out>) {
+    let h = s.slots.id_at(i).expect("live list").to_raw();
+    let kind = s.core[i].kind as usize;
+    let W::VirtualList(v) = s.w_mut(i) else { return };
+    let ids = item_keys::ids_value(v.sel.selected.iter().copied());
+    let cur = v.sel.cursor.filter(|&k| v.sel.is_selected(k)).and_then(|k| v.row_of(k));
+    let sel_pos = cur.map(|p| p as i64);
+    let pos_changed = sel_pos.is_some_and(|p| p != v.selected);
+    v.selected = sel_pos.unwrap_or(if v.sel.selected.is_empty() { -1 } else { v.selected });
+    let sig = super::signal_id(kind, "selectionchange");
+    if s.listens(i, sig) {
+        out.push(Out::Event(h, sig, vec![ids.clone()]));
+    }
+    let sig = super::signal_id(kind, "select");
+    if let Some(p) = sel_pos.filter(|_| pos_changed)
+        && s.listens(i, sig)
+    {
+        out.push(Out::Event(h, sig, vec![Value::I64(p)]));
+    }
+    crate::leaf::widget_changed(s, i, &[P::SelectedIds], vec![ids], out);
+}
+
+fn click_row(s: &mut Scene, i: usize, key: u64, m: crate::views::selection::Mods, out: &mut Vec<Out>) {
+    let W::VirtualList(v) = s.w_mut(i) else { return };
+    let ids = v.all_ids().into_owned();
+    let c = v.sel.click(&ids, key, m);
+    if c.selection {
+        selection_changed(s, i, out);
+    }
+}
+
+/// The focused list's keys: cursor moves (scrolled into view), selection, Enter (`activate`).
+fn keys_input(s: &mut Scene, i: usize, keys: &[item_keys::Input], out: &mut Vec<Out>) {
+    let h = s.slots.id_at(i).expect("live list").to_raw();
+    let kind = s.core[i].kind as usize;
+    let W::VirtualList(v) = s.w_mut(i) else { return };
+    let ids = v.all_ids().into_owned();
+    let page = v.page();
+    let mut sel = std::mem::take(&mut v.sel);
+    let o = item_keys::apply(&mut sel, &ids, keys, page, |p| v.label_at(p));
+    v.sel = sel;
+    if o.cursor
+        && let Some(p) = v.sel.cursor.and_then(|k| ids.iter().position(|&x| x == k))
+    {
+        v.reveal = Some(p);
+        s.invalidate_content(s.slots.id_at(i).expect("live list"));
+    }
+    if o.selection {
+        selection_changed(s, i, out);
+    }
+    let sig = super::signal_id(kind, "activate");
+    if let Some(p) = o.activate
+        && s.listens(i, sig)
+    {
+        out.push(Out::Event(h, sig, vec![Value::I64(p as i64)]));
+    }
 }
 
 // ---- reads ----

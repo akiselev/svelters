@@ -216,7 +216,7 @@ fn table_asks_for_its_window_draws_it_and_selects_rows() {
     // a click on a row selects it
     r.h.harness.get_by_label("r3c1").click();
     r.run();
-    assert_eq!(r.get(t, "selected"), Value::I64(3));
+    assert_eq!(r.get(t, "selected"), Value::List(vec![Value::I64(3)]), "WG5a: row ids (positions without set-ids)");
 
     // scroll-to-row: a new range, outside the window rows draw empty until set-rows
     r.call(t, "scroll-to-row", &[Value::I64(500)]);

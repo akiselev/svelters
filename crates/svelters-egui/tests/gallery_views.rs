@@ -114,3 +114,47 @@ fn toast_page_shows_toasts_from_js_and_reports_closes() {
     eh.run();
     assert!(has(&eh, "Closed: 2 method") && !has(&eh, "Hello 2"));
 }
+
+/// WG5a: `ItemViews.svelte`: keyed selection through `bind:selected`/`bind:current`, a column
+/// `editor` snippet realised by the runtime (`editor-bind`/`editor-value`), `oncommit` rejecting
+/// with a reason and accepting into the page's data, the built-in editor after Tab.
+#[test]
+fn item_views_page_edits_with_a_snippet_editor_and_validates_commits() {
+    let mut eh = page("ItemViews", 600.0, 400.0, Props::new().with("count", 200));
+    eh.run();
+    assert!(has(&eh, "R3"), "rows came from JS");
+    eh.harness.get_by_label("R3").click();
+    eh.run();
+    assert!(has(&eh, "Selected: 3") && has(&eh, "Current: 3"), "bind:selected and bind:current carry part ids");
+    eh.harness.key_press_modifiers(egui::Modifiers::SHIFT, egui::Key::ArrowDown);
+    eh.run();
+    assert!(has(&eh, "Selected: 3, 4"), "Shift+Down extends");
+    // Right to Qty, F2: the snippet editor, with the cell's value
+    eh.harness.key_press(egui::Key::ArrowRight);
+    eh.run();
+    eh.harness.key_press(egui::Key::F2);
+    eh.run();
+    let ed = eh.harness.get_by_role_and_label(Role::TextInput, "Quantity");
+    assert_eq!(ed.accesskit_node().value().as_deref(), Some("4"), "R4's qty");
+    // a rejected value: the reason is shown, the cell keeps its value
+    eh.harness.key_press_modifiers(egui::Modifiers::COMMAND, egui::Key::A);
+    eh.harness.event(egui::Event::Text("250".into()));
+    eh.run();
+    eh.harness.key_press(egui::Key::Enter);
+    eh.run();
+    assert!(has(&eh, "Qty must be a whole number from 0 to 99"), "the reason is shown");
+    assert!(eh.harness.query_by_role_and_label(Role::TextInput, "Quantity").is_none(), "reverted and closed");
+    // accepted: the page's data changes and the window is sent again
+    eh.harness.key_press(egui::Key::F2);
+    eh.run();
+    eh.harness.key_press_modifiers(egui::Modifiers::COMMAND, egui::Key::A);
+    eh.harness.event(egui::Event::Text("42".into()));
+    eh.run();
+    eh.harness.key_press(egui::Key::Tab);
+    eh.run();
+    assert!(has(&eh, "Committed: R4: 42") && has(&eh, "42"), "committed through oncommit");
+    // Tab went on to Note: the built-in text field
+    assert!(eh.harness.query_by_role_and_label(Role::TextInput, "Note").is_some(), "Tab: the next editable cell");
+    let ev = eh.embed.take_events();
+    assert!(!ev.iter().any(|x| matches!(x, EmbedEvent::Faulted { .. })), "{ev:?}");
+}
