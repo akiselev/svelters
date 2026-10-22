@@ -146,7 +146,6 @@ pub enum P {
     Striped,
     Overscan,
     /// table-column
-    ColumnWidth,
     CellAlign,
     Sort,
     /// table-column, split-view

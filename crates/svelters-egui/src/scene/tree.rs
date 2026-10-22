@@ -128,7 +128,7 @@ fn builtin_payload(kind: usize) -> Option<W> {
         "ScrollArea" => W::ScrollArea { direction: "vertical", x: 0.0, y: 0.0, seen: None },
         // WG4a: the defaults match `kinds/views.rs`
         "Table" => W::Table(Box::default()),
-        "TableColumn" => W::TableColumn { title: String::new(), width: 100.0, resizable: true, align: "start", sort: "none" },
+        "TableColumn" => W::TableColumn { title: String::new(), resizable: true, align: "start", sort: "none" },
         "TabView" => W::TabView { selected: 0 },
         "Tab" => W::Tab { title: String::new(), closable: false },
         "SplitView" => W::SplitView { vertical: false, position: None, min_size: 32.0, resizable: true },

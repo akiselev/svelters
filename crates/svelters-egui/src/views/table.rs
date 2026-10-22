@@ -293,9 +293,15 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
         .filter_map(|&c| {
             let ci = arena.ix(c);
             match arena.w(ci) {
-                W::TableColumn { title, width, resizable, align, sort } => {
-                    Some(Col { id: arena.core[ci].egui_id, title: title.clone(), width: *width, resizable: *resizable, align, sort })
-                }
+                // the column's width is its Widget `width` (null: 100)
+                W::TableColumn { title, resizable, align, sort } => Some(Col {
+                    id: arena.core[ci].egui_id,
+                    title: title.clone(),
+                    width: arena.common(ci).width.unwrap_or(100.0).max(1.0),
+                    resizable: *resizable,
+                    align,
+                    sort,
+                }),
                 _ => None,
             }
         })

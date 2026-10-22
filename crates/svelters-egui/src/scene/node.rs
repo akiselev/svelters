@@ -39,7 +39,7 @@ pub enum W {
     // ---- WG4a (plans/milestones/WG4a-tier1-views.md; state and paint in `crate::views`) ----
     /// `table`: props, the JS data window and what the last frame asked for.
     Table(std::boxed::Box<crate::views::table::TableState>),
-    TableColumn { title: String, width: f64, resizable: bool, align: &'static str, sort: &'static str },
+    TableColumn { title: String, resizable: bool, align: &'static str, sort: &'static str },
     TabView { selected: i64 },
     Tab { title: String, closable: bool },
     /// `vertical`: `orientation="vertical"` (panes stacked).

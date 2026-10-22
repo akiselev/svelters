@@ -67,7 +67,6 @@ static TABLE_METHODS: &[MethodDef] = &[
 
 static TABLE_COLUMN_PROPS: &[PropDef] = &[
     prop("title", P::Title, Ty::Str, Def::Str(""), "The header text."),
-    prop("width", P::ColumnWidth, Ty::F64, Def::F64(100.0), "Width in points. A user resize keeps its width until this prop changes."),
     prop("resizable", P::Resizable, Ty::Bool, Def::Bool(true), "Its right edge can be dragged (double-click: fit the content)."),
     prop("align", P::CellAlign, Ty::Enum(CELL_ALIGN), Def::Str("start"), "Horizontal alignment of its cells."),
     prop("sort", P::Sort, Ty::Enum(SORT), Def::Str("none"), "The sort arrow its header shows (the data is sorted by JS)."),
@@ -161,7 +160,7 @@ pub(super) const TABLE_COLUMN: KindDef = KindDef {
     id: "TableColumn",
     tag: Some("table-column"),
     native: "egui_table::Column",
-    base: None,
+    base: Some("Widget"),
     toplevel: false,
     slot: None,
     text_content: Some("title"),
@@ -169,7 +168,7 @@ pub(super) const TABLE_COLUMN: KindDef = KindDef {
     props: TABLE_COLUMN_PROPS,
     signals: &[],
     methods: &[],
-    doc: "A column of its parent `table` (data only: not laid out or drawn as a node).",
+    doc: "A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100) is the column's width; a user resize keeps its width until the prop changes.",
 };
 
 pub(super) const TAB_VIEW: KindDef = KindDef {
