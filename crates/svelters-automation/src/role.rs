@@ -63,6 +63,8 @@ fn role_of_tag(tag: &str) -> &'static str {
         "scroll-area" => "scrollarea",
         // OW2: own only
         "scrollbar" => "scrollbar",
+        // OW6: own only
+        "calendar" => "grid",
         "menu-bar" | "menu" | "menu-button" | "action" => "menu",
         "hyperlink" => "link",
         "switch" => "switch",

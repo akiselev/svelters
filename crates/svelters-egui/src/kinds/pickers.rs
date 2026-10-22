@@ -78,6 +78,59 @@ pub const COLOR_PICKER: KindDef = KindDef {
     doc: "A colour swatch; clicking it opens egui's colour picker popup.",
 };
 
+// ---- OW6: calendar (new kind; svelters' own widget only, `widgets::calendar`) ----
+
+/// `calendar`'s and `date-picker`'s calendar props (WIDGET-PARITY §2.19).
+macro_rules! calendar_props {
+    () => {
+        [
+            prop("min", P::Min, Ty::Str, Def::Str(""), "The first day that can be picked (ISO 8601); days before it are `:disabled`. `\"\"`: no limit."),
+            prop("max", P::Max, Ty::Str, Def::Str(""), "The last day that can be picked (ISO 8601); days after it are `:disabled`. `\"\"`: no limit."),
+            prop("first-day", P::FirstDay, Ty::Enum(crate::widgets::calendar::FIRST_DAY), Def::Str("auto"), "The weekday the grid starts on; `auto` is the locale's (Monday until IN1)."),
+            prop("weekday-format", P::WeekdayFormat, Ty::Enum(crate::widgets::calendar::WEEKDAY_FORMAT), Def::Str("short"), "The weekday header: `narrow` (M), `short` (Mo), `long` (Monday) or `none` (no header row)."),
+            prop("navigation", P::Navigation, Ty::Bool, Def::Bool(true), "Shows the header with the previous/next month buttons and the month and year."),
+            prop("read-only", P::ReadOnly, Ty::Bool, Def::Bool(false), "Shows and roves the calendar but never picks (Qt's `NoSelection`)."),
+            prop("day-parts", P::DayParts, Ty::StrList, Def::Null, "Extra part names per date, `\"YYYY-MM-DD name…\"` each: `[\"2026-10-22 milestone\"]` makes that day match `::part(day milestone)`."),
+        ]
+    };
+}
+
+static CALENDAR_PROPS: &[PropDef] = &{
+    let [a, b, c, d, e, f, g] = calendar_props!();
+    [
+        input("value", P::Value, Ty::Str, Def::Str(""), "The picked date, ISO 8601 (`2026-10-22`); `\"\"` for none."),
+        prop("calendar-week", P::CalendarWeek, Ty::Bool, Def::Bool(true), "Shows ISO week numbers in front of each week (`::part(week-number)`)."),
+        a,
+        b,
+        c,
+        d,
+        e,
+        f,
+        g,
+    ]
+};
+
+static CALENDAR_SIGNALS: &[SignalDef] = &[
+    signal("changed", &[("value", Ty::Str)], "The user picked a day; carries it (ISO 8601)."),
+    signal("commit", &[("value", Ty::Str)], "A pick is a commit (§2.4); carries the date."),
+    signal("page-changed", &[("year", Ty::I64), ("month", Ty::I64)], "The user moved to another month (prev/next, PageUp/PageDown, arrows across a month)."),
+];
+
+pub const CALENDAR: KindDef = KindDef {
+    id: "Calendar",
+    tag: Some("calendar"),
+    native: "svelters' own (OW6)",
+    base: Some("Widget"),
+    toplevel: false,
+    slot: None,
+    text_content: None,
+    present: None,
+    props: CALENDAR_PROPS,
+    signals: CALENDAR_SIGNALS,
+    methods: &[],
+    doc: "An inline month calendar (Qt's `QCalendarWidget`): a header with previous/next, a weekday row, ISO week numbers and a 6×7 day grid. `date-picker` shows the same calendar in its popup.",
+};
+
 /// The payload of a picker node.
 #[derive(Clone, Debug, PartialEq)]
 pub enum Picker {
