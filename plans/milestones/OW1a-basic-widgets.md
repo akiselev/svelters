@@ -2,7 +2,9 @@
 
 Lane OW1a (thinkpad, `ci/ow1a`), 2026-10-22. Branched from `ci/ow0` at 7eef7362 (OW0a, the API
 slice) and merged with `origin/master` 91fcf421. No newer ci/ow0 commits existed when this was
-pushed. Design: ARCH-WIDGETS §1–§3, §6.1, §7.2 (OW1a row), WIDGET-PARITY §2.1–§2.3, §2.9, §2.10,
+pushed. Re-based for the final push on **OW0b** (ci/ow0 6f013c72, which includes master 95f376ce)
+by merge, then on ci/ow0 bb4bfa77 (OW0b's linux-gtk fix + master 5e3bef68 with OW-CSS stage 1); slice 1
+needed no code change for either. Design: ARCH-WIDGETS §1–§3, §6.1, §7.2 (OW1a row), WIDGET-PARITY §2.1–§2.3, §2.9, §2.10,
 §2.16, §5, DESIGN §1–§2.
 
 **Status: slice 1 of 2.** The lead accepted the split (ow1a-lane → team-lead, 2026-10-22). Slice 1
@@ -110,9 +112,18 @@ Plus `interact::toggle::tests::ow1a_toggle_cycles`.
 
 ## 4. Deviations and notes
 
+- **OW0b's test widget moved.** `tests/own_widgets.rs::TestSeparator` (OW0b's superset-prop test)
+  replaced `separator`, which OW1a now owns, so the registry panicked with "replaced twice".
+  It now replaces `menu-separator`, where `orientation` is an extra too. The test asserts both
+  extras, and that the wrapper ignores them. Move it again when OW3 takes `menu-separator`.
+- **Lint allow lines stay.** The `// OW: wrapper until OW1a` lines (`leaf.rs:220`/`:511`,
+  `elements/inputs.rs:50`/`:209`, `elements/media.rs:63`, `menus.rs:354`, `views/toast.rs:185`,
+  `views/table.rs:415`/`:492`) stay while the wrappers live. OW1a2 deletes each one with its
+  wrapper (§5.4).
 - **Glyphs are paths, not icons.** ARCH says the check, dash and dot are registry icons. No icon
   font ships today and ICR1 is not on master, so `parts.rs` draws them as paths sized from the
-  part box. P2 (`content: icon(check)`) replaces them once OW-CSS and ICR1 land.
+  part box. OW0b's P2 (`paint::content_icon`; `paint_icon` honours `content: icon()`) replaces them: OW1a2
+  reads `content` on `mark`/`dot`/`twistie` first and falls back to the path.
 - **Part styles are hard-coded UA tables** (as ARCH §7.2 allows) until OW-CSS lands `::part()`.
   UA tokens resolve against the built-in theme, so a `--sv-*` token override does not reach
   UA-only parts yet. Host CSS does reach the checkbox indicator.
@@ -152,6 +163,8 @@ WIDGET-PARITY §2.1–§2.3, §2.9, §2.10, §2.16 and §5. Use the slice 1 file
      it to the own kind's `measure`/style: header row height = `header-h` token, indent =
      `indent` token, both through UA tables.
    - `layout.rs:417` measures the header row.
+   - OW0b's P3 `paint::{layout_parts, measure_parts}` lays out the header's icon, caption and
+     actions.
    - `layout.rs:515`/`:640` `Tree::collapsing` lays out the body only when `open`. The own kind
      needs `Caps::CONTAINER | CUSTOM_LAYOUT` (or a `display: none` style on the children when
      closed). Draw the children with `cx.children(ui)`.

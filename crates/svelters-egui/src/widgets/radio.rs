@@ -152,7 +152,7 @@ impl Widget for RadioButton {
         if check {
             let new_group = if self.value.is_empty() { self.group.clone() } else { self.value.clone() };
             if !self.checked || new_group != self.group {
-                if !cx.dispatch(&self.changed, Self::changed_args(true, &new_group)).prevented {
+                if !cx.dispatch(&self.changed, Self::changed_args(true, &new_group)).prevented() {
                     cx.set(&mut self.checked, true);
                     cx.set(&mut self.group, new_group.clone());
                 }

@@ -50,7 +50,7 @@ Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessib
 <!-- BEGIN GENERATED: events of kinds.ProgressBar (tools/docs/egui/gen_reference.py). Do not edit. -->
 No events of its own.
 
-Plus the events of [`Widget`](widget.md#events): `onanimationend`, `ondrag-begin`, `ondrag-end`, `ondrag-enter`, `ondrag-leave`, `ondrop`.
+Plus the events of [`Widget`](widget.md#events): `onanimationend`, `onclick`, `oncontextmenu`, `ondblclick`, `ondrag-begin`, `ondrag-end`, `ondrag-enter`, `ondrag-leave`, `ondrop`, `onfocusin`, `onfocusout`, `onkeydown`, `onkeyup`, `onpointerdown`, `onpointerup`, `onwheel`.
 <!-- END GENERATED -->
 
 ## Methods
@@ -99,7 +99,7 @@ Full matrix: [css/properties](../../css/properties.md). States: below.
 | `:disabled` (`:enabled` is the opposite) | `enabled` is false | prop |
 | `:exiting` | it plays an out transition before it is removed | scene |
 
-Never set on it (rules with them don't match): `:focus`, `:checked`, `:selected`, `:open`, `:expanded`, `:invalid`, `:read-only`, `:dragging`, `:busy`.
+Never set on it (rules with them don't match): `:focus`, `:checked`, `:selected`, `:open`, `:expanded`, `:invalid`, `:read-only`, `:dragging`, `:busy`, `:indeterminate`, `:placeholder-shown`, `:default`, `:drop-target`, `:current`, `:backdrop`, `:required`, `:user-invalid`, `:has-children`.
 
 States are tracked once the scene has a style input (a `<style>` block, `class`, `style=` or a theme).
 <!-- END GENERATED -->

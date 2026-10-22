@@ -63,7 +63,7 @@ impl Widget for Hyperlink {
         for p in fired.press.iter() {
             match p {
                 p if p.is_click() => {
-                    if !cx.dispatch(&self.clicked, ()).prevented && !self.url.is_empty() {
+                    if !cx.dispatch(&self.clicked, ()).prevented() && !self.url.is_empty() {
                         ui.ctx().open_url(egui::OpenUrl { url: self.url.clone(), new_tab: self.new_tab || p_mods_new_tab(p) });
                     }
                 }

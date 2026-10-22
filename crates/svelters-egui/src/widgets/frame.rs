@@ -181,7 +181,7 @@ impl Widget for Frame {
         let on_head = resp.interact_pointer_pos().is_none_or(|p| p.y <= head);
         if self.checkable && on_head {
             for Toggle::Toggled { checked, .. } in fired.toggle.iter().copied() {
-                if !cx.dispatch(&self.changed, checked).prevented {
+                if !cx.dispatch(&self.changed, checked).prevented() {
                     cx.set(&mut self.checked, checked);
                 }
             }

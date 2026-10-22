@@ -75,6 +75,9 @@ const constants = await import(pathToFileURL(path.join(client, 'constants.js')).
 for (const n of ['BOUNDARY_EFFECT', 'DESTROYED', 'DESTROYING', 'INERT', 'REACTION_RAN', 'EFFECT_TRANSPARENT']) {
   check(constants[n] === core[n], `constants.js ${n} is ${constants[n]}, the adapter uses ${core[n]}`);
 }
+// RT1: the `$state` proxy marker, the same symbol Svelte's proxies answer to
+check(typeof constants.STATE_SYMBOL === 'symbol' && constants.STATE_SYMBOL === core.STATE_SYMBOL, 'constants.js STATE_SYMBOL is not the symbol the adapter imports');
+check(core.is_state_proxy($.proxy({})) && core.is_state_proxy($.proxy([])) && !core.is_state_proxy({}), "the adapter's is_state_proxy does not recognise Svelte's proxies");
 
 // 4. the members Svelte's runtime uses on `effect.b`: the public members of its Boundary class
 const boundary = src('dom/blocks/boundary.js');

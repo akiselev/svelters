@@ -2171,3 +2171,73 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
         #units_impl
     })
 }
+
+/// AU1b: `#[svelters_automation::test(app = "...", seed = 3, iterations = 20, clock = "virtual",
+/// step_ms = 16)]` on `fn name(d: &mut E2e) -> TestResult`: a `#[test]` that runs the body once per
+/// seed on a fresh app, in process (kittest) or, with `SVELTERS_E2E=process`, out of process
+/// (`svelters-run`). See `svelters_automation::e2e`. `app` is relative to the test crate's
+/// `CARGO_MANIFEST_DIR`; the other arguments are optional (seed 0, 1 iteration, virtual clock,
+/// 16 ms frames). Generated code names `::svelters_automation::e2e::*`.
+#[proc_macro_attribute]
+pub fn test(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let item = syn::parse_macro_input!(item as ItemFn);
+    test_impl(attr.into(), item).unwrap_or_else(|e| e.to_compile_error()).into()
+}
+
+fn test_impl(attr: Ts, item: ItemFn) -> syn::Result<Ts> {
+    let (mut app, mut seed, mut iterations, mut clock, mut step_ms) = (None::<syn::LitStr>, None::<Expr>, None::<Expr>, None::<syn::LitStr>, None::<Expr>);
+    let parser = syn::meta::parser(|m| {
+        let key = m.path.get_ident().map(|i| i.to_string()).unwrap_or_default();
+        match key.as_str() {
+            "app" => app = Some(m.value()?.parse()?),
+            "seed" => seed = Some(m.value()?.parse()?),
+            "iterations" => iterations = Some(m.value()?.parse()?),
+            "clock" => {
+                let c: syn::LitStr = m.value()?.parse()?;
+                if c.value() != "virtual" && c.value() != "real" {
+                    return Err(syn::Error::new(c.span(), "clock: \"virtual\" or \"real\""));
+                }
+                clock = Some(c);
+            }
+            "step_ms" => step_ms = Some(m.value()?.parse()?),
+            _ => return Err(m.error("svelters::test: expected app, seed, iterations, clock or step_ms")),
+        }
+        Ok(())
+    });
+    parser.parse2(attr)?;
+    let app = app.ok_or_else(|| syn::Error::new(Span::call_site(), "svelters::test: `app = \"<dir or App.svelte>\"` is required"))?;
+    if item.sig.inputs.len() != 1 || item.sig.asyncness.is_some() {
+        return Err(syn::Error::new(item.sig.span(), "svelters::test: the body is `fn name(d: &mut E2e) -> TestResult`"));
+    }
+    let ItemFn { attrs, vis, sig, block } = item;
+    let name = &sig.ident;
+    let name_s = name.to_string();
+    let mut inner = sig.clone();
+    inner.ident = format_ident!("__svelters_test_body");
+    let mut sets = Vec::new();
+    if let Some(s) = seed {
+        sets.push(quote! { spec.seed = (#s) as u64; });
+    }
+    if let Some(n) = iterations {
+        sets.push(quote! { spec.iterations = (#n) as u64; });
+    }
+    if let Some(c) = clock {
+        sets.push(quote! { spec.clock = #c; });
+    }
+    if let Some(ms) = step_ms {
+        sets.push(quote! { spec.step_ms = (#ms) as f64; });
+    }
+    // The built-in `#[test]` by path: a `use svelters_automation::test;` would shadow the bare name.
+    Ok(quote! {
+        #[::core::prelude::v1::test]
+        #(#attrs)*
+        #vis fn #name() {
+            #inner #block
+            #[allow(unused_mut)]
+            let mut spec = ::svelters_automation::e2e::TestSpec::new(#name_s, #app, env!("CARGO_MANIFEST_DIR"));
+            #(#sets)*
+            spec.run_bin = option_env!("CARGO_BIN_EXE_svelters-run");
+            ::svelters_automation::e2e::run(spec, __svelters_test_body);
+        }
+    })
+}

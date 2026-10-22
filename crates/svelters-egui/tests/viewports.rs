@@ -208,7 +208,10 @@ fn dock_w2_without_the_prepass_plugin_input_costs_one_root_frame() {
     r.settle();
     assert_eq!(r.title("b"), "b: 1");
     let root = r.vps.passes(ViewportId::ROOT);
-    assert!((1..=2).contains(&root), "one root frame (egui repaints twice per request): {root}");
+    // one root frame for the handler, and (OW0) one for the slot's focus: the own button takes
+    // focus on the press (GTK's focus-on-click) under the node's id, so the embed sees the slot
+    // gain focus (`root().focused`); egui repaints twice per request
+    assert!((1..=4).contains(&root), "root frames for the handler and the focus change: {root}");
     assert_eq!(r.vps.passes(vp(3)), 0, "window 3 untouched");
     assert_idle(&mut r);
 }

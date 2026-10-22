@@ -37,4 +37,5 @@ export {
   clsx,
   HMR,
   FILENAME,
+  is_state_proxy,
 } from './svelte.js';

@@ -123,7 +123,7 @@ impl Widget for CollapsingHeader {
             set = Some(!self.open);
         }
         if let Some(v) = set.filter(|v| *v != self.open) {
-            if !cx.dispatch(&self.changed, v).prevented {
+            if !cx.dispatch(&self.changed, v).prevented() {
                 cx.set(&mut self.open, v);
                 cx.request_measure();
             }
