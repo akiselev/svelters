@@ -458,9 +458,7 @@ impl WidgetCx<'_> {
 
     /// A paint context on `ui`'s painter for this node (traced when the pass traces).
     pub fn paint_cx<'p>(&self, ui: &'p egui::Ui) -> crate::paint::PaintCx<'p> {
-        let mut p = crate::paint::PaintCx::new(ui.painter());
-        p.target = (self.node.to_raw(), None);
-        p
+        crate::paint::PaintCx::for_node(ui.painter(), self.node.to_raw())
     }
 
     /// Paints the node's box (shadows, background, border) at its rect; returns its geometry.
@@ -922,8 +920,10 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
     resp = crate::a11y::decorate(resp, &arena.n(h));
     let c = arena.common(i);
     if !c.tooltip.is_empty() {
-        resp = resp.on_hover_text(c.tooltip.clone());
+        // OW0 (DESIGN R9): an own widget shows its tooltip while disabled too (the reason)
+        resp = if !resp.enabled() && crate::style::is_own(arena.w(i)) { resp.on_disabled_hover_text(c.tooltip.clone()) } else { resp.on_hover_text(c.tooltip.clone()) };
     }
+    let c = arena.common(i);
     {
         let name = (!c.accessible_name.is_empty()).then_some(c.accessible_name.as_str());
         let acx = A11yCx { id: resp.id, state, name };

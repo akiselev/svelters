@@ -11,8 +11,17 @@ use crate::interact::{Focusable, Hoverable, Press, Pressable};
 use crate::paint::{self, Align, Ua, UaRule, UaValue::*};
 use crate::provider::{A11yCx, AvailableSpace, Event, MeasureCx, StateBits, Widget, WidgetCx};
 
-/// The button's UA sheet (ARCH-WIDGETS §1.1): VS Code's secondary button, through the theme's
-/// component tokens, with the focus ring as an outline (DESIGN R8: 1px `focus`, offset +1).
+/// The button's UA sheet (ARCH-WIDGETS §1.1), with DESIGN's affordance rules on by default:
+/// VS Code's text button metrics (§1.3: padding 4/8, 16px lines, 1px border, radius 4: 26px tall;
+/// 12px text as VIS1 measured), the theme's secondary-button roles, and
+/// - R1 raised: `button-bg` fill (`button2-bg` with the affordance overlay, never transparent),
+///   `button-border-color` boundary (`control-border`), radius 4, the 1px lip (`elev-1`);
+/// - R2 pressed sinks: the lip goes, the fill steps to `button-bg-active` (`toolbar-active`), an
+///   inset `0 1px 2px rgba(0,0,0,.25)`, at once;
+/// - R3 hover: `button-bg-hover` in the same frame, lip kept;
+/// - R8 focus ring: keyboard-only (`:focus-visible`), 2px `focus` at offset 1 (standalone control);
+/// - R9 disabled: opacity .4, still hoverable (tooltip with the reason), `not-allowed` cursor;
+/// - R10 cursor: `pointer`.
 pub const UA: Ua = Ua(&[
     UaRule::base(&[
         ("background-color", Token("button-bg")),
@@ -20,21 +29,25 @@ pub const UA: Ua = Ua(&[
         ("border-color", Token("button-border-color")),
         ("border-width", Token("stroke")),
         ("border-radius", Token("button-radius")),
+        ("box-shadow", Token("elev-1")),
         ("padding-left", Token("button-pad-x")),
         ("padding-right", Token("button-pad-x")),
         ("padding-top", Token("button-pad-y")),
         ("padding-bottom", Token("button-pad-y")),
+        ("font-size", Token("font-size-sm")),
+        ("line-height", Px(16.0)),
         ("text-align", Keyword("center")),
+        ("cursor", Keyword("pointer")),
         ("outline-style", Keyword("none")),
         ("outline-color", Token("focus")),
-        ("outline-width", Px(1.0)),
+        ("outline-width", Px(2.0)),
         ("outline-offset", Px(1.0)),
     ]),
     UaRule::when(StateBits::HOVERED, &[("background-color", Token("button-bg-hover"))]),
     UaRule::when(StateBits::SELECTED, &[("background-color", Token("button-bg-active"))]),
-    UaRule::when(StateBits::PRESSED, &[("background-color", Token("button-bg-active"))]),
+    UaRule::when(StateBits::PRESSED, &[("background-color", Token("button-bg-active")), ("box-shadow", Shadows(paint::PRESSED_INSET))]),
     UaRule::when(StateBits::FOCUS_VISIBLE, &[("outline-style", Keyword("solid"))]),
-    UaRule::when(StateBits::DISABLED, &[("color", Token("disabled-fg"))]),
+    UaRule::when(StateBits::DISABLED, &[("opacity", Number(0.4)), ("cursor", Keyword("not-allowed")), ("box-shadow", Shadows(&[]))]),
 ]);
 
 /// A push button.
@@ -109,8 +122,18 @@ impl Widget for Button {
         for _ in 0..clicks.2.min(1) {
             cx.dispatch(&self.secondary_clicked, ());
         }
+        let st = cx.style(UA);
+        // R10: the cursor tells the verb (R9: `not-allowed` on a disabled button)
+        if st.state().contains(StateBits::HOVERED)
+            && let Some(c) = st.cursor()
+        {
+            ui.ctx().set_cursor_icon(c);
+        }
+        // R9: disabled keeps its shape at `opacity` .4
+        if st.opacity() < 1.0 {
+            ui.multiply_opacity(st.opacity());
+        }
         if ui.is_rect_visible(cx.rect()) {
-            let st = cx.style(UA);
             let framed = self.frame || st.state().intersects(StateBits(StateBits::HOVERED.0 | StateBits::PRESSED.0 | StateBits::SELECTED.0));
             let geom = if framed { cx.paint_box(ui, UA) } else { paint::box_geom(&st, cx.rect()) };
             let mut content = geom.content;

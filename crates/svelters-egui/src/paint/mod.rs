@@ -22,7 +22,7 @@ mod boxes;
 mod icon;
 mod image;
 mod text;
-mod trace;
+pub mod trace;
 
 pub use boxes::{BoxGeom, box_extra, box_geom, paint_box, paint_outline};
 pub use icon::{IconKey, icon_size, paint_icon};
@@ -32,7 +32,24 @@ pub use trace::{PaintTrace, TraceEntry, TraceKind};
 
 use crate::provider::StateBits;
 use egui::Color32;
+use std::borrow::Cow;
 use svelters_style::{ComputedStyle, ComputedValue, Shadow};
+
+/// `inset 0 1px 2px rgba(0,0,0,.25)`: DESIGN R2's pressed shadow.
+pub const PRESSED_INSET: &[Shadow] = &[Shadow { x: 0.0, y: 1.0, blur: 2.0, spread: 0.0, color: Some(svelters_style::Color { r: 0.0, g: 0.0, b: 0.0, a: 0.25 }), inset: true }];
+
+/// An egui shadow (a theme's `elev-*` token) as a CSS one.
+fn css_shadow(s: egui::Shadow) -> Shadow {
+    let [r, g, b, a] = s.color.to_srgba_unmultiplied();
+    Shadow {
+        x: s.offset[0] as f32,
+        y: s.offset[1] as f32,
+        blur: s.blur as f32 / 2.0,
+        spread: s.spread as f32,
+        color: Some(svelters_style::Color { r: r as f32 / 255.0, g: g as f32 / 255.0, b: b as f32 / 255.0, a: a as f32 / 255.0 }),
+        inset: false,
+    }
+}
 
 /// Where primitives paint: the painter (its clip), the physical pixel scale for snapping, and the
 /// optional debug trace that names what each shape is ([`PaintTrace`], VIS1).
@@ -45,22 +62,38 @@ pub struct PaintCx<'a> {
     /// What the shapes belong to in the trace: the node (its `NodeId::to_raw()`, 0 for none) and
     /// the part (`None`: the node itself).
     pub target: (u64, Option<&'static str>),
+    /// The scene's per-pass trace ([`trace::enable`]), when `trace` is `None`: debug builds only.
+    sink: Option<egui::Context>,
 }
 
 impl<'a> PaintCx<'a> {
     /// Painting into `painter` at its context's scale, untraced.
     pub fn new(painter: &'a egui::Painter) -> PaintCx<'a> {
-        PaintCx { painter, ppp: painter.pixels_per_point(), trace: None, target: (0, None) }
+        PaintCx { painter, ppp: painter.pixels_per_point(), trace: None, target: (0, None), sink: None }
+    }
+
+    /// Painting for scene node `node` (`NodeId::to_raw()`): traced into the context's per-pass
+    /// trace when [`trace::enable`] turned it on (debug builds).
+    pub fn for_node(painter: &'a egui::Painter, node: u64) -> PaintCx<'a> {
+        let mut p = PaintCx::new(painter);
+        p.target = (node, None);
+        if trace::enabled(painter.ctx()) {
+            p.sink = Some(painter.ctx().clone());
+        }
+        p
     }
 
     /// The same painter and trace for part `part` of the current target.
     pub fn part(&mut self, part: &'static str) -> PaintCx<'_> {
-        PaintCx { painter: self.painter, ppp: self.ppp, trace: self.trace.as_deref_mut(), target: (self.target.0, Some(part)) }
+        PaintCx { painter: self.painter, ppp: self.ppp, trace: self.trace.as_deref_mut(), target: (self.target.0, Some(part)), sink: self.sink.clone() }
     }
 
     pub(crate) fn record(&mut self, kind: TraceKind, rect: egui::Rect, fill: Color32, stroke: egui::Stroke, font_size: f32) {
+        let e = TraceEntry { node: self.target.0, part: self.target.1, kind, rect, fill, stroke, font_size };
         if let Some(t) = self.trace.as_deref_mut() {
-            t.entries.push(TraceEntry { node: self.target.0, part: self.target.1, kind, rect, fill, stroke, font_size });
+            t.entries.push(e);
+        } else if let Some(ctx) = &self.sink {
+            trace::push(ctx, e);
         }
     }
 
@@ -86,12 +119,14 @@ impl<'a> PaintCx<'a> {
 /// or a literal.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum UaValue {
-    /// A theme token by name (`button-bg`, `--sv-focus`).
+    /// A theme token by name (`button-bg`, `--sv-focus`, `elev-1` for `box-shadow`).
     Token(&'static str),
     Px(f32),
     Color(Color32),
     Number(f32),
     Keyword(&'static str),
+    /// A `box-shadow` list (empty: `none`).
+    Shadows(&'static [Shadow]),
 }
 
 /// One UA rule: applies when the state has every bit of `when` and none of `unless`.
@@ -281,9 +316,45 @@ impl<'a> StyleView<'a> {
         self.px("font-size").unwrap_or(13.0)
     }
 
-    /// The `box-shadow` list (CSS only; the UA tables set none).
-    pub fn shadows(&self) -> Option<&'a [Shadow]> {
-        self.css.and_then(crate::style::shadow::shadows)
+    /// The `box-shadow` list: CSS's, else the UA table's (an `elev-*` token or a literal list).
+    pub fn shadows(&self) -> Option<Cow<'a, [Shadow]>> {
+        if let Some(ComputedValue::Shadows(l)) = self.css("box-shadow") {
+            return (!l.is_empty()).then(|| Cow::Borrowed(&**l));
+        }
+        match self.ua.find("box-shadow", self.state)? {
+            UaValue::Shadows(l) if !l.is_empty() => Some(Cow::Borrowed(l)),
+            UaValue::Token(t) => {
+                let s = ua_theme(self.dark).shadow(t)?;
+                (s != egui::Shadow::NONE).then(|| Cow::Owned(vec![css_shadow(s)]))
+            }
+            _ => None,
+        }
+    }
+
+    /// `cursor` as egui's icon (DESIGN R10), if set.
+    pub fn cursor(&self) -> Option<egui::CursorIcon> {
+        use egui::CursorIcon as C;
+        Some(match self.keyword("cursor")? {
+            "pointer" => C::PointingHand,
+            "text" => C::Text,
+            "not-allowed" => C::NotAllowed,
+            "grab" => C::Grab,
+            "grabbing" => C::Grabbing,
+            "col-resize" => C::ResizeColumn,
+            "row-resize" => C::ResizeRow,
+            "crosshair" => C::Crosshair,
+            "move" => C::Move,
+            "wait" => C::Wait,
+            "progress" => C::Progress,
+            "help" => C::Help,
+            "default" | "auto" => C::Default,
+            _ => return None,
+        })
+    }
+
+    /// `opacity` (1 when unset).
+    pub fn opacity(&self) -> f32 {
+        self.number("opacity").unwrap_or(1.0).clamp(0.0, 1.0)
     }
 
     /// One side group (`padding`, `border-width`) as [left, right, top, bottom]: the longhands

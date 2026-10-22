@@ -46,7 +46,7 @@ pub fn paint_box(cx: &mut PaintCx, s: &StyleView, border_box: Rect) -> BoxGeom {
         }
         None => s.color("color").unwrap_or(egui::Color32::BLACK),
     };
-    if let Some(list) = shadows {
+    if let Some(list) = shadows.as_deref() {
         for sh in crate::style::shadow::shapes(list, r, radius, false, &shadow_color) {
             cx.painter.add(sh);
         }
@@ -61,7 +61,7 @@ pub fn paint_box(cx: &mut PaintCx, s: &StyleView, border_box: Rect) -> BoxGeom {
         cx.painter.add(egui::epaint::RectShape::new(r, radius, fill, stroke, egui::StrokeKind::Inside));
     }
     cx.record(TraceKind::Box, r, fill, stroke, 0.0);
-    if let Some(list) = shadows {
+    if let Some(list) = shadows.as_deref() {
         let inset = crate::style::shadow::shapes(list, r, radius, true, &shadow_color);
         if !inset.is_empty() {
             let p = cx.painter.with_clip_rect(cx.painter.clip_rect().intersect(r));

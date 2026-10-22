@@ -522,7 +522,9 @@ impl LayoutPartialTree for Tree<'_> {
             }
             // SG4: a provider with children (shadow children) or its own layout is a container
             let custom = provider_caps(tree.s, i).is_some_and(|c| c.contains(crate::provider::Caps::CUSTOM_LAYOUT));
-            let provider_box = custom || (matches!(tree.s.w(i), W::Ext(_)) && !tree.s.children[i].is_empty());
+            // (OW0: an own widget replacing a built-in leaf stays a leaf: its children are attached
+            // overlays, as on the built-in)
+            let provider_box = custom || (matches!(tree.s.w(i), W::Ext(x) if x.entry().replaces.is_none()) && !tree.s.children[i].is_empty());
             if tree.s.w(i).is_container() || provider_box {
                 let mut out = if custom {
                     tree.custom_layout(id, inputs)
