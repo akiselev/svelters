@@ -37,8 +37,15 @@ pub trait ModuleProvider {                      // engine-agnostic; &self, inter
   - Resolution:
     - the runtime's alias table first (see below);
     - `@svelters/native-runtime/kinds` is generated with `semantics::kinds_module` from the same spec;
-    - otherwise `oxc_resolver` with Vite's client conditions: `browser, import, module,
-      development|production, default`; main fields `module, main`; extensions `.mjs, .js, .json`.
+    - `svelters:behaviors/<ns>` → `<root>/.svelters/app/behaviors/<ns>.js` (EV2b, the app binary's dump, as
+      `vite.js` maps it);
+    - otherwise Node ESM resolution (`source/resolve.rs`) with Vite's client conditions: `browser, import,
+      module, development|production, default`; main fields `module, main`; extensions `.mjs, .js, .json`;
+      `exports` (conditions in the package's key order, `*` patterns, longest prefix), `imports` (`#`),
+      directory indexes, symlinks resolved. Not `oxc_resolver`: it turns serde_json's `preserve_order` on for
+      the whole build, which reordered every JSON map the workspace generates (6 linux-gtk failures on
+      491dcc16). package.json is read with an order-keeping value type instead.
+      Decided (coordinator, 2026-10-22): own resolver, option (a); oxc_resolver dropped.
     - Ids are canonical absolute paths. Generated modules are `svelters:entry` and `svelters:kinds`.
   - Transforms by kind:
     - `.svelte` → `compile` (the toolkit's spec plus fragments, `dev` from the config);

@@ -91,7 +91,11 @@ other agent on the machine. **GitHub CI is the gate, not your machine.** The use
   build slots, `${XDG_RUNTIME_DIR:-/tmp}/build-slots/slot-<n>.lock`, shared with cadatomic's and
   cadabra3's wrappers. Slot count and cores per slot come from `~/.config/build-slots.env`; don't
   override them. There are **no other locks** (no test lock): never wrap a slot-taking command in
-  another lock. Nested calls are safe (`BUILD_SLOT_HELD`).
+  another lock. Nested calls are safe (`BUILD_SLOT_HELD`). Builds and tests take a slot;
+  `cargo check`/`clippy` take **none** (they run niced with 3 jobs), so never wait for a slot to
+  type-check. The coordinator runs no builds or checks at all; CI verifies its merges.
+- **Disk (WSL PC):** `df /` lies (the WSL disk is a growing file on C:); watch `df -h /mnt/c`.
+  When a lane is merged, delete its worktree's `target/`.
 - **While writing code:** `tools/dev/cargo-slot cargo check -p <crate you changed>` only, and only
   when you need the compiler's answer. Use `--workspace --all-targets` only after changing an API
   that other crates use.

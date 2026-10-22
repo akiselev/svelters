@@ -374,6 +374,16 @@ impl JsEngine for QjsEngine {
                 })?;
                 loaded.push((id.clone(), ns));
             }
+            for (id, ns) in &loaded {
+                let reason: Option<String> = self.call_guarded(|ctx| {
+                    let hot: Object = ctx.globals().get("__svelters_hot")?;
+                    let f: Function = hot.get("check")?;
+                    f.call((id.as_str(), ns.clone().restore(ctx)?))
+                })?;
+                if reason.is_some() {
+                    return Ok(reason);
+                }
+            }
             for (id, ns) in loaded {
                 let reason: Option<String> = self.call_guarded(|ctx| {
                     let hot: Object = ctx.globals().get("__svelters_hot")?;

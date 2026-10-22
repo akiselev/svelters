@@ -1,11 +1,12 @@
 //! [`SourceProvider`]: an app loaded from its sources, compiled live (Q1).
 
 mod aliases;
+mod resolve;
 mod transform;
 
 use crate::{ModuleCode, ModuleId, ModuleProvider, normalize};
 use aliases::{Aliases, package_dir};
-use oxc_resolver::{ResolveOptions, Resolver};
+use resolve::Resolver;
 use std::cell::RefCell;
 use std::collections::{BTreeMap, BTreeSet, HashMap};
 use std::hash::{Hash, Hasher};
@@ -190,7 +191,7 @@ struct Inner {
     warnings: Vec<String>,
 }
 
-/// An app loaded from source: resolves with `oxc_resolver` and the runtime's alias table, compiles
+/// An app loaded from source: resolves with Node's ESM rules (`resolve.rs`) and the runtime's alias table, compiles
 /// `.svelte`/`.svelte.js` with `svelters-compiler`, keeps source maps in memory (they come with
 /// each module's code) and transform output by content, so a reload recompiles only what changed.
 pub struct SourceProvider {
@@ -203,7 +204,7 @@ impl SourceProvider {
         let runtime_dir = cfg.find_runtime()?;
         let aliases = Aliases::load(&runtime_dir)?;
         let compiler = Compiler { sem: spec_backend(&cfg)?, dev: cfg.dev, hmr: cfg.hmr && cfg.dev };
-        let resolver = Resolver::new(resolve_options(cfg.dev));
+        let resolver = resolver(cfg.dev);
         Ok(SourceProvider {
             inner: RefCell::new(Inner { cfg, runtime_dir, compiler, resolver, aliases, cache: HashMap::new(), nodes: BTreeMap::new(), warnings: Vec::new() }),
             overlay: Overlay::default(),
@@ -260,13 +261,8 @@ fn spec_backend(cfg: &SourceConfig) -> Result<SpecBackend, String> {
 }
 
 /// Node ESM resolution with Vite's conditions for a client build (`browser`, then the defaults).
-fn resolve_options(dev: bool) -> ResolveOptions {
-    ResolveOptions {
-        condition_names: ["browser", "import", "module", if dev { "development" } else { "production" }, "default"].map(String::from).to_vec(),
-        extensions: [".mjs", ".js", ".json"].map(String::from).to_vec(),
-        main_fields: ["module", "main"].map(String::from).to_vec(),
-        ..ResolveOptions::default()
-    }
+fn resolver(dev: bool) -> Resolver {
+    Resolver::new(&["browser", "import", "module", if dev { "development" } else { "production" }, "default"], &[".mjs", ".js", ".json"], &["module", "main"])
 }
 
 fn hash_of(parts: &[&str]) -> u64 {
@@ -298,6 +294,15 @@ impl Inner {
     fn resolve(&mut self, base: &str, specifier: &str) -> Result<ModuleId, String> {
         let (id, path) = if specifier == KINDS_SPECIFIER {
             (KINDS_ID.to_string(), None)
+        } else if let Some(ns) = specifier.strip_prefix("svelters:behaviors/") {
+            // EV2b: the app's native behaviours, the module of Svelte actions the app binary dumps
+            // (`svelters_egui::dump`), as vite.js maps it.
+            if ns.is_empty() || !ns.chars().all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '_' || c == '-') {
+                return Err(format!("{specifier:?}: not a behaviour namespace"));
+            }
+            let p = self.cfg.root.join(".svelters/app/behaviors").join(format!("{ns}.js"));
+            let p = p.canonicalize().map_err(|e| format!("{specifier:?} -> {}: {e} (run the app binary's dump)", p.display()))?;
+            (p.to_string_lossy().into_owned(), Some(p))
         } else if let Some(p) = self.aliases.get(specifier) {
             let p = p.canonicalize().map_err(|e| format!("alias of {specifier:?} -> {}: {e}", p.display()))?;
             (p.to_string_lossy().into_owned(), Some(p))
@@ -306,8 +311,7 @@ impl Inner {
                 b if b.is_absolute() => b.parent().unwrap_or(&self.cfg.root).to_path_buf(),
                 _ => self.cfg.root.clone(),
             };
-            let r = self.resolver.resolve(&dir, specifier).map_err(|e| e.to_string())?;
-            let p = r.full_path();
+            let p = self.resolver.resolve(&dir, specifier)?;
             (p.to_string_lossy().into_owned(), Some(p))
         };
         self.record(&id, path);

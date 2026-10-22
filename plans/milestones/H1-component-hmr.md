@@ -18,7 +18,9 @@ Design: `plans/research/HMR.md` §2.1, §3.2–3.5, §4 H1, §6; `plans/research
     its natives are dropped, the old version stays, the error goes to the reporter (default `console.error`) and
     the id is marked failed until the next good swap. Upstream destroys first and cannot do this.
 - **Host** (`svelters-host`): `hot.js` is the JS side of `import.meta.hot` (`accept`, `acceptExports`, `dispose`,
-  `data`, `invalidate`; only self-accepting modules are boundaries).
+  `data`, `invalidate`; only self-accepting modules are boundaries). `accept(cb)` accepts every export; with
+  `acceptExports(names, cb)` every other export must be unchanged (`===`, first version's exports read by a deferred
+  `import()`), else the change falls back to a full reload (propagating to importers instead is a follow-up).
   - The QuickJS adapter defines `import.meta.hot` per module, strips and adds `?v=<n>` (`Versions`): a swapped module
     resolves to its newest version, so re-evaluated importers link to new code and untouched modules are shared.
   - `JsEngine::hot_update` walks `ModuleProvider::importers` from each changed module to the first accepting
@@ -52,7 +54,7 @@ Design: `plans/research/HMR.md` §2.1, §3.2–3.5, §4 H1, §6; `plans/research
 - Not run: the upstream hmr conformance samples (`hmr-removal`, `hmr-each-keyed-unshift`, `hmr-dynamic-component`; no
   upstream checkout on this machine; the runner also needs `import.meta.hot` for the wrapper to apply there), the
   op-log fixture `fixtures/hmr` and its GTK/Qt replay, the GTK/Qt `watch` integration tests, #18079's scenario.
-- Dev timer attribution (HMR.md D10) lives in the host prelude: not done. Edit-to-UI time and memory per swap are not
+- Dev timer attribution (HMR.md D10) lives in the host prelude: follow-up (coordinator: out of H1). Edit-to-UI time and memory per swap are not
   measured; the budget defaults are guesses (D-note: measure with a 50-component app).
 - The full-reload fallback is not supported for an embedder's entries (`load_entry`); embed apps must accept their
   changes (documented on `Host::apply_changes`).

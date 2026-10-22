@@ -6,8 +6,8 @@
 //!
 //! - [`BundleProvider`]: a directory with a built bundle (`dist/app.js`, from Vite), the M2 path.
 //!   Imports are relative and stay inside the directory; source maps are the `.map` files next to it.
-//! - [`SourceProvider`] (feature `source`): the app's sources compiled live. `oxc_resolver` resolves
-//!   (Node ESM rules, the runtime package's alias table), `svelters-compiler` compiles `.svelte` and
+//! - [`SourceProvider`] (feature `source`): the app's sources compiled live. Resolution follows
+//!   Node's ESM rules (with the runtime package's alias table), `svelters-compiler` compiles `.svelte` and
 //!   `.svelte.js`, JSON and assets become modules, source maps stay in memory. Its module graph
 //!   decides which file changes reload the app, and its [`Overlay`] serves unsaved editor buffers.
 //!
