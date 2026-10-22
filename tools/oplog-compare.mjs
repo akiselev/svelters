@@ -6,10 +6,13 @@
 // the child is removed), listened signals with their phase word, observed props (ABI v2.6 `observe`),
 // the methods called on them, and
 // the values JS returned for `sync` lines so far (`result` lines), and the widget name (`style #h
-// name`, kept as the prop `(name)`; other `style` lines are not compared).
+// name`, kept as the prop `(name)`; other `style` lines are not compared), and the observed native
+// state a trace writer recorded (WG3 `state #h {...}` lines: each one is a boundary of its own).
 //
-// Usage: node tools/oplog-compare.mjs <a.oplog> <b.oplog> [--default prop=<json>]...
+// Usage: node tools/oplog-compare.mjs <a.oplog> <b.oplog> [--default prop=<json>]... [--states]
 //   --default label=""   a prop set to this value counts as never set (e.g. a label written "")
+//   --states             compare only the `state` lines, in order, with handles matched by first
+//                        appearance: two toolkits' traces of one pin (GTK `entry` vs egui `text-edit`)
 // Exit status 0 when every boundary state is equal, 1 otherwise.
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -95,6 +98,11 @@ function parseLine(line) {
       const [, p, c, name, json] = sp(line, 5);
       return { op, p: h(p), c: h(c), name, value: JSON.parse(json) };
     }
+    case 'state': {
+      // WG3 trace writer: `state #h {"text":…,"sel":[a,f],"caret":f,"focus":b}` at a checkpoint
+      const [, n, json] = sp(line, 3);
+      return { op, h: h(n), value: JSON.parse(json) };
+    }
     case 'gone': {
       const [, n, reason] = sp(line, 3);
       return { op, h: h(n), reason };
@@ -151,6 +159,7 @@ export function replay(text, { defaults = {}, camelProps = false } = {}) {
       const node = { h, kind: n.kind, props, slots, listening: [...n.listening].sort(), calls: n.calls };
       if (n.observing?.size) node.observing = [...n.observing].sort();
       if (n.attrs.size) node.attrs = Object.fromEntries([...n.attrs].sort(([a], [b]) => (a < b ? -1 : 1)));
+      if (n.state !== undefined) node.state = n.state;
       return node;
     });
     if (results.length) out.push({ h: 'results', results });
@@ -243,6 +252,10 @@ export function replay(text, { defaults = {}, camelProps = false } = {}) {
         break;
       case 'ignore':
         break;
+      case 'state':
+        get(o.h, line).state = canonical(o.value);
+        boundaries.push({ line: `state #${o.h}`, state: snapshot() });
+        break;
       case 'name': {
         const n = get(o.h, line);
         if (o.value === null) n.props.delete('(name)');
@@ -259,7 +272,40 @@ export function replay(text, { defaults = {}, camelProps = false } = {}) {
         break;
     }
   }
-  return { boundaries, final: snapshot(), ops: lines.filter((l) => !/^(event|sync|deferred|result|gone|changed) /.test(l)).length };
+  return { boundaries, final: snapshot(), ops: lines.filter((l) => !/^(event|sync|deferred|result|gone|changed|state) /.test(l)).length };
+}
+
+/** A JSON value with object keys sorted (state payloads compare by content, not key order). */
+function canonical(v) {
+  if (Array.isArray(v)) return v.map(canonical);
+  if (v && typeof v === 'object') return Object.fromEntries(Object.keys(v).sort().map((k) => [k, canonical(v[k])]));
+  return v;
+}
+
+/** The `state` lines of a trace, in order, with handles renumbered by first appearance. */
+export function states(text) {
+  const ids = new Map();
+  const out = [];
+  for (const line of text.split('\n')) {
+    if (!line.startsWith('state ')) continue;
+    const o = parseLine(line);
+    if (!ids.has(o.h)) ids.set(o.h, ids.size + 1);
+    out.push({ n: ids.get(o.h), json: JSON.stringify(canonical(o.value)) });
+  }
+  return out;
+}
+
+/** `--states`: compares two traces by their `state` lines only. */
+export function compareStates(a, b) {
+  const x = states(a);
+  const y = states(b);
+  const problems = [];
+  if (x.length !== y.length) problems.push(`a has ${x.length} state lines, b has ${y.length}`);
+  for (let i = 0; i < Math.min(x.length, y.length); i++) {
+    if (x[i].n !== y[i].n) problems.push(`state line ${i}: node ${x[i].n} in a, ${y[i].n} in b`);
+    else if (x[i].json !== y[i].json) problems.push(`state line ${i} (node ${x[i].n}):\n    a: ${x[i].json}\n    b: ${y[i].json}`);
+  }
+  return { equal: problems.length === 0, problems, states: x.length };
 }
 
 function firstDiff(a, b) {
@@ -308,8 +354,17 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === fs.realpathSync(proces
   const args = process.argv.slice(2);
   const files = args.filter((x, i) => !x.startsWith('--') && args[i - 1] !== '--default');
   if (files.length !== 2) {
-    console.error('usage: oplog-compare.mjs <a.oplog> <b.oplog> [--default prop=<json>]...');
+    console.error('usage: oplog-compare.mjs <a.oplog> <b.oplog> [--default prop=<json>]... [--states]');
     process.exit(2);
+  }
+  if (args.includes('--states')) {
+    const r = compareStates(fs.readFileSync(files[0], 'utf8'), fs.readFileSync(files[1], 'utf8'));
+    if (r.equal) console.log(`EQUAL ${r.states} state lines`);
+    else {
+      console.log(`DIFFERENT (${r.problems.length} problems)\n  ${r.problems.join('\n  ')}`);
+      process.exit(1);
+    }
+    process.exit(0);
   }
   const r = compare(fs.readFileSync(files[0], 'utf8'), fs.readFileSync(files[1], 'utf8'), { defaults: parseDefaults(args) });
   if (r.equal) console.log(`EQUAL states at ${r.boundaries} boundaries + end (ops: ${r.opsA} vs ${r.opsB})`);

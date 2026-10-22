@@ -56,6 +56,10 @@ unsafe extern "C" {
     fn svl_qt_test_future(callback: u64, ms: i32, value: i32);
     fn svl_qt_text_edits(set_text: *const std::ffi::c_char) -> *const std::ffi::c_char;
     fn svl_qt_button_icon(label: *const std::ffi::c_char) -> i32;
+    fn svl_qt_na_state(h: u64) -> *const std::ffi::c_char;
+    fn svl_qt_na_point(h: u64, offset: i32, x: *mut f64, y: *mut f64) -> i32;
+    fn svl_qt_na_setup(h: u64, focus: i32, anchor: i32, caret: i32) -> i32;
+    fn svl_qt_na_settings() -> *const std::ffi::c_char;
 }
 
 /// The Qt backend vtable. `run` creates the `QApplication` (if none exists) and owns the loop.
@@ -343,6 +347,35 @@ pub mod hooks {
         let (mut ns, mut calls) = (0, 0);
         unsafe { svl_qt_take_timing(&mut ns, &mut calls) };
         (ns, calls)
+    }
+
+    /// WG3: the observed state of a widget as JSON (`{"text","anchor","caret","u16caret","focus"}` for a
+    /// line edit, `{"focus"}` otherwise; offsets in Unicode scalars).
+    pub fn na_state(h: u64) -> String {
+        // SAFETY: NUL-terminated buffer valid until the next call; copied here.
+        unsafe { std::ffi::CStr::from_ptr(svl_qt_na_state(h)) }.to_string_lossy().into_owned()
+    }
+
+    /// WG3: where to click (top-level window coordinates) for the character at scalar `offset` of a line
+    /// edit, or the widget's centre (`None`).
+    pub fn na_point(h: u64, offset: Option<usize>) -> Option<(f64, f64)> {
+        let (mut x, mut y) = (0.0, 0.0);
+        // SAFETY: plain out-pointers to locals.
+        let rc = unsafe { svl_qt_na_point(h, offset.map_or(-1, |o| o as i32), &mut x, &mut y) };
+        (rc == 0).then_some((x, y))
+    }
+
+    /// WG3 capture setup: a line edit's selection `[anchor, caret]` (scalars) and, with `focus`, the
+    /// keyboard focus (programmatic, `Qt::OtherFocusReason`).
+    pub fn na_setup(h: u64, focus: bool, sel: Option<[usize; 2]>) -> bool {
+        let [a, c] = sel.map_or([-1, -1], |[a, c]| [a as i32, c as i32]);
+        unsafe { svl_qt_na_setup(h, focus as i32, a, c) == 0 }
+    }
+
+    /// WG3: the style hints and version of the running Qt as JSON.
+    pub fn na_settings() -> String {
+        // SAFETY: NUL-terminated buffer valid until the next call; copied here.
+        unsafe { std::ffi::CStr::from_ptr(svl_qt_na_settings()) }.to_string_lossy().into_owned()
     }
 
     /// Runs the Qt loop for `ms` milliseconds (deferred deletes included).

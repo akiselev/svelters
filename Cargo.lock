@@ -738,6 +738,7 @@ version = "0.0.0"
 dependencies = [
  "serde_json",
  "svelters-abi",
+ "svelters-conformance",
  "svelters-host",
  "svelters-qt-build",
 ]
@@ -3870,6 +3871,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "svelters-conformance"
+version = "0.0.0"
+dependencies = [
+ "egui",
+ "egui_kittest",
+ "gtk4",
+ "serde_json",
+ "svelters-abi",
+ "svelters-egui",
+ "svelters-gtk",
+ "x11rb",
+]
+
+[[package]]
 name = "svelters-egui"
 version = "0.0.0"
 dependencies = [
@@ -3882,6 +3897,7 @@ dependencies = [
  "svelters-egui",
  "svelters-host",
  "svelters-modules",
+ "svelters-style",
  "taffy",
 ]
 
@@ -4030,6 +4046,7 @@ checksum = "3c8480887e8803986d96a7173729565520d4bbb721ad6b7ad6941a22897207aa"
 dependencies = [
  "serde",
  "slotmap",
+ "smallvec",
 ]
 
 [[package]]

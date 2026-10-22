@@ -255,6 +255,10 @@ impl LayoutPartialTree for Tree<'_> {
     fn get_core_container_style(&self, id: NodeId) -> Self::CoreContainerStyle<'_> {
         &self.s.layout[ix(id)].style
     }
+    /// CS5e: `calc()` lengths of the computed style (`style.rs` interns them).
+    fn resolve_calc_value(&self, val: *const (), basis: f32) -> f32 {
+        crate::style::resolve_calc(val, basis)
+    }
     fn set_unrounded_layout(&mut self, id: NodeId, layout: &Layout) {
         self.s.layout[ix(id)].unrounded = *layout;
     }
@@ -269,7 +273,14 @@ impl LayoutPartialTree for Tree<'_> {
             let custom = provider_caps(tree.s, i).is_some_and(|c| c.contains(crate::provider::Caps::CUSTOM_LAYOUT));
             let provider_box = custom || (matches!(tree.s.w(i), W::Ext(_)) && !tree.s.children[i].is_empty());
             if tree.s.w(i).is_container() || provider_box {
-                let mut out = if custom { tree.custom_layout(id, inputs) } else { compute_flexbox_layout(tree, id, inputs) };
+                let mut out = if custom {
+                    tree.custom_layout(id, inputs)
+                } else if tree.s.layout[i].style.display == Display::Grid {
+                    // CS5e: `display: grid` from the computed style
+                    taffy::compute_grid_layout(tree, id, inputs)
+                } else {
+                    compute_flexbox_layout(tree, id, inputs)
+                };
                 // the absolute boxes this node is the containing block of (measure runs must not)
                 if inputs.run_mode == RunMode::PerformLayout {
                     compute_oof_layout(tree, id, &mut out);
@@ -361,6 +372,23 @@ impl taffy::LayoutFlexboxContainer for Tree<'_> {
         &self.s.layout[ix(id)].style
     }
     fn get_flexbox_child_style(&self, id: NodeId) -> Self::FlexboxItemStyle<'_> {
+        &self.s.layout[ix(id)].style
+    }
+}
+
+impl taffy::LayoutGridContainer for Tree<'_> {
+    type GridContainerStyle<'b>
+        = &'b Style
+    where
+        Self: 'b;
+    type GridItemStyle<'b>
+        = &'b Style
+    where
+        Self: 'b;
+    fn get_grid_container_style(&self, id: NodeId) -> Self::GridContainerStyle<'_> {
+        &self.s.layout[ix(id)].style
+    }
+    fn get_grid_child_style(&self, id: NodeId) -> Self::GridItemStyle<'_> {
         &self.s.layout[ix(id)].style
     }
 }

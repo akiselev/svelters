@@ -183,7 +183,10 @@ construct #<h> <Kind> <json-props-object>    # ABI v2.5: a new instance with con
 static <Kind>.<method> <json-args-array> [#<h>]  # ABI v2.5: a static call; new/new_*/from_* answer a fresh handle #h
 observe #<h> <prop> on|off                   # ABI v2.6: the backend starts/stops watching a prop (transitions only)
 changed #<h> <prop> [<json>]                 # ABI v2.6: a scripted native change to <json>, announced to the host
+state #<h> <json-object>                     # WG3 trace writer: observed native state of #h at a checkpoint
 ```
+
+`state` lines (WG3, additive) are written by a trace writer, never by a host or backend: the native-reference capture (`crates/svelters-conformance`, `plans/milestones/WG3-native-references.md`) writes one per fixture node after every step of a pin script. For a text field the object is `{"text":<string>,"sel":[<anchor>,<caret>],"caret":<caret>,"focus":<bool>}` (offsets in Unicode scalar values, the caret is the moving end), for other nodes `{"focus":<bool>}`. `tools/oplog-compare.mjs` treats each `state` line as a boundary and the object as part of the node's state (compared by content, key order ignored); `--states` compares only the `state` lines of two traces, handles matched by first appearance, so traces of one pin on two toolkits (GTK `entry`, Qt `line-edit`, egui `text-edit`) compare directly.
 
 Kinds, props, signals and slots appear by their JS-facing names, never by IDs. A fixture's scripted interaction is a JSON array of `{"event": [<handle-number>, <signal>, <args>]}`, `{"sync": [<handle-number>, <signal>, <args>]}`, `{"gone": [<handle-number>, <reason>]}`, `{"changed": [<handle-number>, <prop>, <value>?]}` (ABI v2.6) and `{"checkpoint": true}` steps.
 

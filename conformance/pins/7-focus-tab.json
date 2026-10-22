@@ -1,0 +1,13 @@
+{
+  "id": "focus-tab",
+  "pin": 7,
+  "title": "Tab and Shift+Tab through two fields and a button, with wrap-around; what keyboard focus does to the field's selection",
+  "setup": {
+    "fields": { "a": { "text": "first", "sel": [2, 2] }, "b": { "text": "second", "sel": [1, 1] } },
+    "focus": "a"
+  },
+  "steps": [
+    { "key": "tab", "repeat": 4 },
+    { "key": "backtab", "repeat": 4 }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "id": "select-collapse",
+  "pin": 2,
+  "title": "Collapsing a selection with plain arrows, word keys and Home/End (left collapses to the start, right to the end)",
+  "setup": {
+    "fields": { "a": { "text": "hello brave new world", "sel": [6, 11] }, "b": { "text": "second" } },
+    "focus": "a"
+  },
+  "steps": [
+    { "key": "left" },
+    { "key": "right", "shift": true, "repeat": 3 },
+    { "key": "right" },
+    { "key": "left", "shift": true, "repeat": 2 },
+    { "key": "right" },
+    { "key": "word-prev", "shift": true },
+    { "key": "word-next" },
+    { "key": "word-prev", "shift": true, "repeat": 2 },
+    { "key": "word-prev" },
+    { "key": "right", "shift": true, "repeat": 2 },
+    { "key": "line-end" }
+  ]
+}
