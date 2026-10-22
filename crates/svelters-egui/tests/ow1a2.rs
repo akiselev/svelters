@@ -281,3 +281,30 @@ fn ow1a2_icon_and_image_name_and_click() {
     assert_eq!(events(&rig, &log, i, "clicked").len(), 1);
     assert!(rig.drawn(img).width() >= 16.0, "a source that does not load keeps the placeholder's size");
 }
+
+/// OW-RUST's findings: the indicator kinds paint no host box (the base sheet's `checkbox` rule
+/// styles the indicator, never a full-row box), a pointer press focuses without a ring (R8), and
+/// an unnamed separator passes kittest's accessibility check (it is no input).
+#[test]
+fn ow1a2_indicator_hosts_paint_no_box_and_a_click_shows_no_ring() {
+    use svelters_egui::paint::{self, TraceKind};
+    let mut rig = rig();
+    paint::trace::enable(&rig.harness.ctx, true);
+    let (_w, col) = rig.window();
+    let cb = rig.leaf(col, "checkbox", &[("text", s("Snap"))]);
+    let rb = rig.leaf(col, "radio-button", &[("text", s("One"))]);
+    let sw = rig.leaf(col, "switch", &[("text", s("On"))]);
+    let _sep = rig.leaf(col, "separator", &[]);
+    rig.run();
+    rig.run();
+    let t = paint::trace::last(&rig.harness.ctx);
+    for h in [cb, rb, sw] {
+        let n = rig.backend.with_scene(|s| s.n(h).handle.to_raw());
+        assert!(t.find(n, None, TraceKind::Box).is_none(), "no host box behind the indicator kind");
+    }
+    rig.click(cb);
+    rig.run();
+    rig.run();
+    let st = state(&rig, cb);
+    assert!(st.contains(StateBits::FOCUSED) && !st.contains(StateBits::FOCUS_VISIBLE), "{st:?}");
+}

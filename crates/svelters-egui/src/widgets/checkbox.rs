@@ -54,7 +54,7 @@ pub const ICON: Ua = Ua(&[UaRule::base(&[("font-size", Px(16.0))])]);
 /// A check box with a caption.
 // the `#[part]` fields name the kind's `::part()`s; nothing reads them (paint parts)
 #[allow(dead_code)]
-#[svelters::widget(namespace = "sv", replaces = "checkbox", caps = FOCUSABLE)]
+#[svelters::widget(namespace = "sv", replaces = "checkbox", caps = FOCUSABLE | PAINTS_BOX)]
 pub struct Checkbox {
     /// The caption.
     #[prop(measure)]

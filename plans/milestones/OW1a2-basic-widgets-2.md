@@ -201,6 +201,12 @@ it now asserts the own geometry (§4).
   the built-in leaves don't: its intrinsic size is cached in `LayoutBox`. Without this,
   `scene_memory` went from 517 to 684 B/node, over the 640 B budget.
 - **An empty icon** (no name, no glyph, no source) keeps a blank square of its font size.
+- **OW-RUST's three findings**, all fixed and tested in `ow1a2_indicator_hosts_paint_no_box_and_a_click_shows_no_ring`:
+  1. checkbox, switch and radio-button are `PAINTS_BOX`, so the base sheet's `checkbox` rule styles
+     the indicator only and the walk paints no full-row host box;
+  2. a pointer-focused own widget shows no `:focus-visible` (R8). Every own widget keeps its unit
+     bits (`is_own`), so the walk no longer derives them from last frame's response;
+  3. the separator has no AccessKit role, so kittest's unnamed-input check passes.
 - **Font weight.** The text primitive reports a weight family's missing glyph
   (`fonts::weighted_family`, `FontWarning::WeightGlyph`), as the wrappers did.
 - **Separator** has no AccessKit role: it is decoration, as egui's was.

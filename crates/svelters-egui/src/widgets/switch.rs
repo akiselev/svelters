@@ -54,7 +54,7 @@ pub const KNOB: Ua = Ua(&[
 /// An on/off switch with a caption.
 // the `#[part]` fields name the kind\'s `::part()`s; nothing reads them (paint parts)
 #[allow(dead_code)]
-#[svelters::widget(namespace = "sv", replaces = "switch", caps = FOCUSABLE)]
+#[svelters::widget(namespace = "sv", replaces = "switch", caps = FOCUSABLE | PAINTS_BOX)]
 pub struct Switch {
     /// The caption (right of the track).
     #[prop(measure)]

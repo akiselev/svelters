@@ -43,7 +43,7 @@ pub const DOT: Ua = Ua(&[UaRule::base(&[("color", Token("fg")), ("width", Px(8.0
 /// One choice of several.
 // the `#[part]` fields name the kind's `::part()`s; nothing reads them (paint parts)
 #[allow(dead_code)]
-#[svelters::widget(namespace = "sv", replaces = "radio-button", caps = FOCUSABLE)]
+#[svelters::widget(namespace = "sv", replaces = "radio-button", caps = FOCUSABLE | PAINTS_BOX)]
 pub struct RadioButton {
     #[prop(measure)]
     text: String,
