@@ -61,6 +61,8 @@ export interface EguiWidgetProps {
   margin?: number;
   /** A name unique in its embedded root: the node's egui id derives from it (stable across runs, not only across reorders), it is the AccessKit author id, and `Embed::anchor_rect` finds it. Changing it drops the node's egui memory. */
   anchor?: string;
+  /** Marks the value as invalid: an outline in the error colour (`Visuals::error_fg_color`) and AccessKit `invalid`. The app sets it; the widget never does. */
+  invalid?: boolean;
 }
 
 /** The built-in egui elements, by tag. */
@@ -107,6 +109,8 @@ export interface EguiElements {
     'wrap-mode'?: 'wrap' | 'truncate' | 'extend';
     /** The text can be selected and copied. */
     selectable?: boolean;
+    /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
+    'font-weight'?: number;
     /** Pressed and released (`Response::clicked`). */
     onclicked?: () => void;
   };
@@ -120,6 +124,8 @@ export interface EguiElements {
     frame?: boolean;
     /** No vertical padding (`Button::small`). */
     small?: boolean;
+    /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
+    'font-weight'?: number;
     /** Pressed and released (`Response::clicked`). */
     onclicked?: () => void;
     /** Double click (`Response::double_clicked`). */
@@ -180,6 +186,136 @@ export interface EguiElements {
     'ondrag-started'?: () => void;
     /** A drag on the slider ended. */
     'ondrag-stopped'?: () => void;
+  };
+  /** A button that stays pressed (`checked`). With `radio`, a row of them is a segmented control: a click checks one, the app unchecks the rest. */
+  'toggle-button': EguiWidgetProps & {
+    /** The caption. */
+    text?: string;
+    /** Pressed state; a click toggles it (with `radio`, a click only sets it). */
+    checked?: boolean;
+    'bind:checked'?: boolean;
+    /** One of a segmented group: a click checks it and never unchecks it (`Ui::selectable_value`); AccessKit role `RadioButton`. The app unchecks the others. */
+    radio?: boolean;
+    /** Draws the button background and border. */
+    frame?: boolean;
+    /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
+    'font-weight'?: number;
+    /** The user toggled it; carries the new state. */
+    onchanged?: (checked: boolean) => void;
+    /** Pressed and released (also when a `radio` click left it checked). */
+    onclicked?: () => void;
+  };
+  /** A drop-down list: shows the selected option, picks one from a popup. Name it with `accessible-name` (it has no caption). */
+  'combo-box': EguiWidgetProps & {
+    /** The choices, in order (the popup's rows). */
+    options?: string[];
+    /** Index of the chosen option; picking a row changes it. Out of range shows no text. */
+    selected?: number;
+    'bind:selected'?: number;
+    /** Shown while `selected` is out of range. */
+    'hint-text'?: string;
+    /** The user picked a row; carries its index. */
+    onchanged?: (selected: number) => void;
+  };
+  /** A thin line between items; fills its rect along its orientation. */
+  separator: EguiWidgetProps & {
+    /** A horizontal line (in a column) or a vertical one (in a row). */
+    orientation?: 'horizontal' | 'vertical';
+  };
+  /** A glyph from an icon font the embedder registered (SVP6), by name or as text. With `frame` it is an icon button. Its accessible name is `accessible-name`, else `tooltip`, else `name`. */
+  icon: EguiWidgetProps & {
+    /** The glyph's name in the family's name table (`svelters_egui::fonts::register_icons`); also the default accessible name. */
+    name?: string;
+    /** The glyph itself (text), when `name` is empty or not in the table. */
+    glyph?: string;
+    /** The registered font family (`egui::FontFamily::Name`) holding the glyphs; empty for the proportional family. A family with no fonts, a name not in its table or a glyph no font has draws an outlined placeholder box (`svelters_egui::fonts::FontWarning`). */
+    family?: string;
+    /** Font size in points; null for the body size. */
+    size?: number | null;
+    /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
+    'font-weight'?: number;
+    /** Draws it as a button (an icon button: role `Button`, takes focus). */
+    frame?: boolean;
+    /** With `frame`: drawn as selected (a toggle look). */
+    selected?: boolean;
+    /** Pressed and released (`Response::clicked`). */
+    onclicked?: () => void;
+    /** Double click (`Response::double_clicked`). */
+    'ondouble-clicked'?: () => void;
+    /** Right click (`Response::secondary_clicked`). */
+    'onsecondary-clicked'?: () => void;
+  };
+  /** A CSS grid container laid out by taffy: children fill the cells row by row (auto-placement); draws nothing itself. */
+  grid: EguiWidgetProps & {
+    /** The column tracks, CSS syntax: `auto`, `min-content`, `max-content`, `<n>fr`, `<n>px` (or a bare number: points), `<n>%`, `minmax(a, b)`, `fit-content(<len>)`, `repeat(<n>, tracks)`. Rows are implicit (`auto`). The default is a form: a label column and a field column. */
+    'grid-template-columns'?: string;
+    /** Space between rows and between columns, in points (row-gap and column-gap override it). */
+    gap?: number;
+    /** Space between rows in points; null to use `gap`. */
+    'row-gap'?: number | null;
+    /** Space between columns in points; null to use `gap`. */
+    'column-gap'?: number | null;
+    /** Inner spacing on all four sides, in points. */
+    padding?: number;
+    /** Vertical alignment of each child in its cell. */
+    'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
+    /** Horizontal alignment of each child in its cell. */
+    'justify-items'?: 'start' | 'end' | 'center' | 'stretch';
+  };
+  /** A clickable header with a caret; its children (a flex box, indented) are shown and laid out only while `open`. */
+  'collapsing-header': EguiWidgetProps & {
+    /** Main axis of the box. */
+    'flex-direction'?: 'column' | 'row' | 'column-reverse' | 'row-reverse';
+    /** Whether children wrap onto more lines. */
+    'flex-wrap'?: 'nowrap' | 'wrap' | 'wrap-reverse';
+    /** Space between children on both axes, in points (row-gap and column-gap override it). */
+    gap?: number;
+    /** Space between rows in points; null to use `gap`. */
+    'row-gap'?: number | null;
+    /** Space between columns in points; null to use `gap`. */
+    'column-gap'?: number | null;
+    /** Inner spacing on all four sides, in points. */
+    padding?: number;
+    /** Cross-axis alignment of the children. */
+    'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
+    /** Main-axis distribution of the children. */
+    'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** The header's caption (also its accessible name). */
+    text?: string;
+    /** Shows the children; a click on the header (or Enter/Space on it) toggles it. */
+    open?: boolean;
+    'bind:open'?: boolean;
+    /** The user opened or closed it; carries the new state. */
+    onchanged?: (open: boolean) => void;
+  };
+  /** A flex box whose content scrolls when it overflows the area's size (taffy `overflow: scroll`); give it a size or let flex-grow size it. */
+  'scroll-area': EguiWidgetProps & {
+    /** Main axis of the box. */
+    'flex-direction'?: 'column' | 'row' | 'column-reverse' | 'row-reverse';
+    /** Whether children wrap onto more lines. */
+    'flex-wrap'?: 'nowrap' | 'wrap' | 'wrap-reverse';
+    /** Space between children on both axes, in points (row-gap and column-gap override it). */
+    gap?: number;
+    /** Space between rows in points; null to use `gap`. */
+    'row-gap'?: number | null;
+    /** Space between columns in points; null to use `gap`. */
+    'column-gap'?: number | null;
+    /** Inner spacing on all four sides, in points. */
+    padding?: number;
+    /** Cross-axis alignment of the children. */
+    'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
+    /** Main-axis distribution of the children. */
+    'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** The axes that scroll (taffy `overflow: scroll` on them). */
+    direction?: 'vertical' | 'horizontal' | 'both';
+    /** Horizontal offset in points; scrolling changes it, and a write scrolls (clamped to the content). */
+    'scroll-x'?: number;
+    'bind:scroll-x'?: number;
+    /** Vertical offset in points; scrolling changes it, and a write scrolls (clamped to the content). */
+    'scroll-y'?: number;
+    'bind:scroll-y'?: number;
+    /** The user scrolled (or a write was clamped); carries the new offsets. */
+    onchanged?: (scroll_x: number, scroll_y: number) => void;
   };
 }
 

@@ -15,6 +15,8 @@
 
 pub mod backend;
 pub mod embed;
+/// SVP6: font weights and icon name tables the embedder registers (WG1).
+pub mod fonts;
 pub mod kinds;
 pub mod layout;
 pub mod provider;

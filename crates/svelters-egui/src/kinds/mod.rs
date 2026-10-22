@@ -12,15 +12,22 @@
 //!
 //! Files (ARCH-EMBED §9): this one holds the table types, the id scheme and [`KindRegistry`];
 //! `builtin.rs` the built-in table [`KINDS`] with the `Widget` base and the leaves; `containers.rs`
-//! the `window` and `box` tables; `registry.rs` [`KindRegistry`] with the provider kinds of
+//! the `window` and `box` tables; WG1's families `controls.rs`, `decor.rs`, `layouts.rs`;
+//! `registry.rs` [`KindRegistry`] with the provider kinds of
 //! `#[svelters::widget]` (RA1). Writer lanes: WIDGETS (tables, one file per new family), RUSTAPI
 //! (`registry.rs`).
 
 mod builtin;
 mod containers;
 mod registry;
+// WG1 families
+mod controls;
+mod decor;
+mod layouts;
 
 pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, WRAP, WRAP_MODE};
+pub use decor::ORIENTATION;
+pub use layouts::{JUSTIFY_ITEMS, SCROLL_DIRECTION};
 pub use registry::{KindRegistry, PROVIDER_PACK, ProviderKind, kind};
 
 /// A property's value type (also its ABI tag).
@@ -32,6 +39,8 @@ pub enum Ty {
     Str,
     /// A string from a fixed list.
     Enum(&'static [&'static str]),
+    /// WG1: a list of strings (`string[]`; the ABI's `SVL_LIST` of `SVL_STR`).
+    StrList,
     /// RA1: a provider kind's prop or event payload, typed by its Rust type's `JsType` description
     /// ([`KindRegistry::provider_type`]).
     Provider,
@@ -99,6 +108,32 @@ pub enum P {
     Max,
     Step,
     ShowValue,
+    // WG1 (plans/milestones/WG1-sc1-widgets.md)
+    /// Widget: drawn and announced as invalid (a red outline, AccessKit `invalid`).
+    Invalid,
+    /// Text kinds and `icon`: a CSS weight, mapped to a registered font family (`crate::fonts`).
+    FontWeight,
+    /// grid
+    GridTemplateColumns,
+    JustifyItems,
+    /// collapsing-header
+    Open,
+    /// scroll-area
+    ScrollDirection,
+    ScrollX,
+    ScrollY,
+    /// combo-box
+    Options,
+    SelectedIndex,
+    /// toggle-button
+    Radio,
+    /// separator
+    Orientation,
+    /// icon
+    Name,
+    Glyph,
+    Family,
+    Size,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }
@@ -170,6 +205,11 @@ const fn layout(name: &'static str, key: P, ty: Ty, default: Def, doc: &'static 
 
 const fn input(name: &'static str, key: P, ty: Ty, default: Def, doc: &'static str) -> PropDef {
     PropDef { name, key, ty, default, nullable: false, native: Native::Widget, layout: false, doc }
+}
+
+/// A nullable prop that is not a layout setter (null = the kind's own default, e.g. the body size).
+const fn optional(name: &'static str, key: P, ty: Ty, doc: &'static str) -> PropDef {
+    PropDef { name, key, ty, default: Def::Null, nullable: true, native: Native::Never, layout: false, doc }
 }
 
 const fn signal(name: &'static str, args: &'static [(&'static str, Ty)], doc: &'static str) -> SignalDef {

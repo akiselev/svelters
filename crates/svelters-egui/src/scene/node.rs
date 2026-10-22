@@ -19,19 +19,30 @@ use crate::provider::{ExtBlock, StateBits};
 pub enum W {
     Window { title: String, default_w: f64, default_h: f64 },
     Box,
-    Label { text: String, wrap: &'static str, selectable: bool },
-    Button { text: String, selected: bool, frame: bool, small: bool },
+    Label { text: String, wrap: &'static str, selectable: bool, weight: i64 },
+    Button { text: String, selected: bool, frame: bool, small: bool, weight: i64 },
     Checkbox { text: String, checked: bool },
     TextEdit { text: String, hint: String, multiline: bool, password: bool, char_limit: i64 },
     Slider { value: f64, min: f64, max: f64, step: f64, text: String, show_value: bool },
     /// RA1: a provider kind's widget struct (`#[svelters::widget]`, `crate::provider`).
     Ext(crate::provider::ExtWidget),
+    // ---- WG1 (plans/milestones/WG1-sc1-widgets.md) ----
+    ToggleButton { text: String, checked: bool, radio: bool, frame: bool, weight: i64 },
+    ComboBox { options: Vec<String>, selected: i64, hint: String },
+    Separator { vertical: bool },
+    Icon { name: String, glyph: String, family: String, size: Option<f64>, weight: i64, frame: bool, selected: bool },
+    /// A CSS grid container (`columns` is `grid-template-columns`, validated on write).
+    Grid { columns: String, justify_items: &'static str },
+    CollapsingHeader { text: String, open: bool },
+    /// `seen`: the offsets egui reported last frame (a differing `x`/`y` is a host write to apply).
+    ScrollArea { direction: &'static str, x: f64, y: f64, seen: Option<(f64, f64)> },
 }
 
 impl W {
-    /// Containers lay out children with flexbox and paint nothing themselves.
+    /// Containers lay out children with taffy (flexbox, or grid for `Grid`); `Box` and `Window`
+    /// paint nothing themselves, the WG1 containers paint their chrome (`leaf::container`).
     pub fn is_container(&self) -> bool {
-        matches!(self, W::Box | W::Window { .. })
+        matches!(self, W::Box | W::Window { .. } | W::Grid { .. } | W::CollapsingHeader { .. } | W::ScrollArea { .. })
     }
 }
 
@@ -63,6 +74,8 @@ pub struct Common {
     pub padding: f64,
     pub align_items: &'static str,
     pub justify_content: &'static str,
+    /// WG1: the `invalid` prop.
+    pub invalid: bool,
 }
 
 impl Common {
@@ -91,6 +104,7 @@ impl Common {
         padding: 0.0,
         align_items: "stretch",
         justify_content: "start",
+        invalid: false,
     };
 }
 
@@ -367,9 +381,17 @@ impl Node<'_> {
 /// The text a node shows (window: its title).
 pub fn text_of(w: &W) -> &str {
     match w {
-        W::Label { text, .. } | W::Button { text, .. } | W::Checkbox { text, .. } | W::TextEdit { text, .. } | W::Slider { text, .. } => text,
+        W::Label { text, .. }
+        | W::Button { text, .. }
+        | W::Checkbox { text, .. }
+        | W::TextEdit { text, .. }
+        | W::Slider { text, .. }
+        | W::ToggleButton { text, .. }
+        | W::CollapsingHeader { text, .. } => text,
         W::Window { title, .. } => title,
-        W::Box | W::Ext(_) => "",
+        W::ComboBox { options, selected, .. } => usize::try_from(*selected).ok().and_then(|i| options.get(i)).map_or("", |s| s.as_str()),
+        W::Icon { name, .. } => name,
+        W::Box | W::Ext(_) | W::Separator { .. } | W::Grid { .. } | W::ScrollArea { .. } => "",
     }
 }
 

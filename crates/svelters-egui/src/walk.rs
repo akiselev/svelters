@@ -165,7 +165,7 @@ fn paint_own(
 ) -> Option<egui::Response> {
     let r = arena.core[i].rect.translate(origin);
     if arena.w(i).is_container() {
-        // Containers draw nothing: cull whole subtrees outside the clip rect.
+        // Cull whole subtrees outside the clip rect.
         if !ui.is_rect_visible(r) {
             return None;
         }
@@ -180,11 +180,9 @@ fn paint_own(
             }
             None => ui,
         };
-        // By index, no clone: the walk never changes the structure (ARCH-SCENE §5.2).
-        for k in 0..arena.children[i].len() {
-            let c = arena.children[i][k].index() as usize;
-            paint_at(arena, c, origin, ui, out);
-        }
+        // WG1: a container's tooltip and chrome (collapsing header, scroll area), then
+        // `paint_children`
+        crate::leaf::container(arena, i, r, origin, ui, out);
         return None;
     }
     if !ui.is_rect_visible(r) {
@@ -202,10 +200,23 @@ fn paint_own(
     // CS5e: this pass's state, the restyle it reaches, then the computed visuals on `child`
     crate::style::before_leaf(arena, i, r, &mut child);
     let resp = if matches!(arena.w(i), crate::scene::W::Ext(_)) {
-        crate::provider::paint(arena, i, &mut child, out) // RA1: a provider kind
+        let resp = crate::provider::paint(arena, i, &mut child, out); // RA1: a provider kind
+        if arena.common(i).invalid {
+            crate::leaf::invalid_outline(&child, arena.core[i].drawn); // WG1
+        }
+        resp
     } else {
         Some(crate::leaf::leaf(arena, i, &mut child, out))
     };
     crate::scene::hit::record(arena, i, &child); // SG3: the viewport's hit list
     resp
+}
+
+/// Paints the children of container `i` (in order, by index: the walk never changes the
+/// structure, ARCH-SCENE §5.2). `leaf::container` calls it inside its chrome.
+pub(crate) fn paint_children(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+    for k in 0..arena.children[i].len() {
+        let c = arena.children[i][k].index() as usize;
+        paint_at(arena, c, origin, ui, out);
+    }
 }
