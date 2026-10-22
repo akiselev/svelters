@@ -363,6 +363,11 @@ impl<'a> Locator<'a> {
         self.act("input.set_value", json!({"value": value}))
     }
 
+    /// AU2b: one handle of a multi-handle widget (`"low"`/`"high"` of a `range-slider`, or an index).
+    pub fn set_value_handle(&self, handle: &str, value: Value) -> Result<Value, Error> {
+        self.act("input.set_value", json!({"value": value, "handle": handle}))
+    }
+
     /// Every node that matches now (no waiting).
     pub fn all(&self) -> Result<Vec<Value>, Error> {
         Ok(self.d.call("scene.query", json!({"selector": self.selector}))?.as_array().cloned().unwrap_or_default())
