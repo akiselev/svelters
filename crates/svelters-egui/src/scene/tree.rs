@@ -113,11 +113,19 @@ fn builtin_payload(kind: usize) -> Option<W> {
     Some(match kinds::kind(kind).id {
         "Window" => W::Window { title: String::new(), default_w: 480.0, default_h: 360.0 },
         "Box" => W::Box,
-        "Label" => W::Label { text: String::new(), wrap: "wrap", selectable: false },
-        "Button" => W::Button { text: String::new(), selected: false, frame: true, small: false },
+        "Label" => W::Label { text: String::new(), wrap: "wrap", selectable: false, weight: 400 },
+        "Button" => W::Button { text: String::new(), selected: false, frame: true, small: false, weight: 400 },
         "Checkbox" => W::Checkbox { text: String::new(), checked: false },
         "TextEdit" => W::TextEdit { text: String::new(), hint: String::new(), multiline: false, password: false, char_limit: 0 },
         "Slider" => W::Slider { value: 0.0, min: 0.0, max: 100.0, step: 0.0, text: String::new(), show_value: true },
+        // WG1: the defaults match the kind tables (`kinds/builtin.rs`, `kinds/containers.rs`)
+        "ToggleButton" => W::ToggleButton { text: String::new(), checked: false, radio: false, frame: true, weight: 400 },
+        "ComboBox" => W::ComboBox { options: Vec::new(), selected: 0, hint: String::new() },
+        "Separator" => W::Separator { vertical: false },
+        "Icon" => W::Icon { name: String::new(), glyph: String::new(), family: "icons".into(), size: None, weight: 400, frame: false, selected: false },
+        "Grid" => W::Grid { columns: "auto 1fr".into(), justify_items: "stretch" },
+        "CollapsingHeader" => W::CollapsingHeader { text: String::new(), open: false },
+        "ScrollArea" => W::ScrollArea { direction: "vertical", x: 0.0, y: 0.0, seen: None },
         // RA1: a provider kind's widget struct with its defaults
         _ => W::Ext(crate::provider::ExtWidget::new((kinds::KindRegistry::global().provider(kind)?.entry.new)())),
     })

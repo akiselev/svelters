@@ -58,6 +58,24 @@ fn as_len(v: &Value) -> Result<Option<f64>, String> {
     }
 }
 
+fn as_str_list(v: &Value) -> Result<Vec<String>, String> {
+    match v {
+        Value::Null => Ok(Vec::new()),
+        Value::List(items) => items.iter().map(as_str).collect(),
+        // a static attribute: whitespace-separated (the compiler's `strlist` form)
+        Value::Str(s) => Ok(s.split_ascii_whitespace().map(str::to_string).collect()),
+        other => Err(format!("expected a list of strings, got {other:?}")),
+    }
+}
+
+fn as_weight(v: &Value) -> Result<i64, String> {
+    let w = as_f64(v)?;
+    if !(1.0..=1000.0).contains(&w) {
+        return Err(format!("font-weight {w} is outside 1..=1000"));
+    }
+    Ok(w.round() as i64)
+}
+
 fn len_value(v: Option<f64>) -> Value {
     v.map(Value::F64).unwrap_or(Value::Null)
 }
@@ -68,7 +86,7 @@ pub(crate) fn is_common(key: P) -> bool {
     use P::*;
     matches!(
         key,
-        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent
+        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid
     )
 }
 
@@ -109,10 +127,20 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (P::Padding, _) => c.padding = as_f64(v)?,
         (P::AlignItems, _) => c.align_items = as_enum(v, kinds::ALIGN)?,
         (P::JustifyContent, _) => c.justify_content = as_enum(v, kinds::JUSTIFY)?,
+        (P::Invalid, _) => c.invalid = as_bool(v)?,
         (P::Title, W::Window { title, .. }) => *title = as_str(v)?,
         (P::DefaultWidth, W::Window { default_w, .. }) => *default_w = as_f64(v)?,
         (P::DefaultHeight, W::Window { default_h, .. }) => *default_h = as_f64(v)?,
-        (P::Text, W::Label { text, .. } | W::Button { text, .. } | W::Checkbox { text, .. } | W::TextEdit { text, .. } | W::Slider { text, .. }) => {
+        (
+            P::Text,
+            W::Label { text, .. }
+            | W::Button { text, .. }
+            | W::Checkbox { text, .. }
+            | W::TextEdit { text, .. }
+            | W::Slider { text, .. }
+            | W::ToggleButton { text, .. }
+            | W::CollapsingHeader { text, .. },
+        ) => {
             *text = as_str(v)?;
             d.insert(Dirty::MEASURE);
         }
@@ -121,14 +149,14 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
             d.insert(Dirty::MEASURE);
         }
         (P::Selectable, W::Label { selectable, .. }) => *selectable = as_bool(v)?,
-        (P::Selected, W::Button { selected, .. }) => *selected = as_bool(v)?,
-        (P::Frame, W::Button { frame, .. }) => *frame = as_bool(v)?,
+        (P::Selected, W::Button { selected, .. } | W::Icon { selected, .. }) => *selected = as_bool(v)?,
+        (P::Frame, W::Button { frame, .. } | W::ToggleButton { frame, .. }) => *frame = as_bool(v)?,
         (P::Small, W::Button { small, .. }) => {
             *small = as_bool(v)?;
             d.insert(Dirty::MEASURE);
         }
-        (P::Checked, W::Checkbox { checked, .. }) => *checked = as_bool(v)?,
-        (P::HintText, W::TextEdit { hint, .. }) => *hint = as_str(v)?,
+        (P::Checked, W::Checkbox { checked, .. } | W::ToggleButton { checked, .. }) => *checked = as_bool(v)?,
+        (P::HintText, W::TextEdit { hint, .. } | W::ComboBox { hint, .. }) => *hint = as_str(v)?,
         (P::Multiline, W::TextEdit { multiline, .. }) => {
             *multiline = as_bool(v)?;
             d.insert(Dirty::MEASURE);
@@ -143,6 +171,59 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
             *show_value = as_bool(v)?;
             d.insert(Dirty::MEASURE);
         }
+        // ---- WG1 ----
+        (P::FontWeight, W::Label { weight, .. } | W::Button { weight, .. } | W::ToggleButton { weight, .. } | W::Icon { weight, .. }) => {
+            *weight = as_weight(v)?;
+            d.insert(Dirty::MEASURE);
+        }
+        (P::Radio, W::ToggleButton { radio, .. }) => *radio = as_bool(v)?,
+        (P::Options, W::ComboBox { options, .. }) => {
+            *options = as_str_list(v)?;
+            d.insert(Dirty::MEASURE);
+        }
+        (P::SelectedIndex, W::ComboBox { selected, .. }) => *selected = as_i64(v)?,
+        (P::Orientation, W::Separator { vertical }) => {
+            *vertical = as_enum(v, kinds::ORIENTATION)? == "vertical";
+            d.insert(Dirty::MEASURE);
+        }
+        (P::Name, W::Icon { name, .. }) => {
+            *name = as_str(v)?;
+            d.insert(Dirty::MEASURE);
+        }
+        (P::Glyph, W::Icon { glyph, .. }) => {
+            *glyph = as_str(v)?;
+            d.insert(Dirty::MEASURE);
+        }
+        (P::Family, W::Icon { family, .. }) => {
+            *family = as_str(v)?;
+            d.insert(Dirty::MEASURE);
+        }
+        (P::Size, W::Icon { size, .. }) => {
+            *size = as_len(v)?.filter(|s| *s > 0.0);
+            d.insert(Dirty::MEASURE);
+        }
+        (P::Frame, W::Icon { frame, .. }) => {
+            *frame = as_bool(v)?;
+            d.insert(Dirty::MEASURE);
+        }
+        (P::GridTemplateColumns, W::Grid { columns, .. }) => {
+            let s = as_str(v)?;
+            crate::layout::parse_grid_template(&s)?;
+            *columns = s;
+        }
+        (P::JustifyItems, W::Grid { justify_items, .. }) => *justify_items = as_enum(v, kinds::JUSTIFY_ITEMS)?,
+        (P::Open, W::CollapsingHeader { open, .. }) => {
+            *open = as_bool(v)?;
+            // its own size changes: restyle and relayout from its parent (SG1's style change)
+            d.insert(Dirty::LAYOUT);
+        }
+        (P::ScrollDirection, W::ScrollArea { direction, .. }) => {
+            *direction = as_enum(v, kinds::SCROLL_DIRECTION)?;
+            d.insert(Dirty::LAYOUT);
+        }
+        // paint-only: the walk applies a write that differs from what egui reported (`seen`)
+        (P::ScrollX, W::ScrollArea { x, .. }) => *x = as_f64(v)?.max(0.0),
+        (P::ScrollY, W::ScrollArea { y, .. }) => *y = as_f64(v)?.max(0.0),
         (key, w) => return Err(format!("{key:?} is not a prop of {w:?}")),
     }
     if def.layout {
@@ -182,17 +263,18 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Padding, _) => Value::F64(c.padding),
         (P::AlignItems, _) => s(c.align_items),
         (P::JustifyContent, _) => s(c.justify_content),
+        (P::Invalid, _) => Value::Bool(c.invalid),
         (P::Title, W::Window { title, .. }) => s(title),
         (P::DefaultWidth, W::Window { default_w, .. }) => Value::F64(*default_w),
         (P::DefaultHeight, W::Window { default_h, .. }) => Value::F64(*default_h),
         (P::Text, _) => s(n.text()),
         (P::WrapMode, W::Label { wrap, .. }) => s(wrap),
         (P::Selectable, W::Label { selectable, .. }) => Value::Bool(*selectable),
-        (P::Selected, W::Button { selected, .. }) => Value::Bool(*selected),
-        (P::Frame, W::Button { frame, .. }) => Value::Bool(*frame),
+        (P::Selected, W::Button { selected, .. } | W::Icon { selected, .. }) => Value::Bool(*selected),
+        (P::Frame, W::Button { frame, .. } | W::ToggleButton { frame, .. } | W::Icon { frame, .. }) => Value::Bool(*frame),
         (P::Small, W::Button { small, .. }) => Value::Bool(*small),
-        (P::Checked, W::Checkbox { checked, .. }) => Value::Bool(*checked),
-        (P::HintText, W::TextEdit { hint, .. }) => s(hint),
+        (P::Checked, W::Checkbox { checked, .. } | W::ToggleButton { checked, .. }) => Value::Bool(*checked),
+        (P::HintText, W::TextEdit { hint, .. } | W::ComboBox { hint, .. }) => s(hint),
         (P::Multiline, W::TextEdit { multiline, .. }) => Value::Bool(*multiline),
         (P::Password, W::TextEdit { password, .. }) => Value::Bool(*password),
         (P::CharLimit, W::TextEdit { char_limit, .. }) => Value::I64(*char_limit),
@@ -201,6 +283,22 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Max, W::Slider { max, .. }) => Value::F64(*max),
         (P::Step, W::Slider { step, .. }) => Value::F64(*step),
         (P::ShowValue, W::Slider { show_value, .. }) => Value::Bool(*show_value),
+        // ---- WG1 ----
+        (P::FontWeight, W::Label { weight, .. } | W::Button { weight, .. } | W::ToggleButton { weight, .. } | W::Icon { weight, .. }) => Value::I64(*weight),
+        (P::Radio, W::ToggleButton { radio, .. }) => Value::Bool(*radio),
+        (P::Options, W::ComboBox { options, .. }) => Value::List(options.iter().map(|o| s(o)).collect()),
+        (P::SelectedIndex, W::ComboBox { selected, .. }) => Value::I64(*selected),
+        (P::Orientation, W::Separator { vertical }) => s(if *vertical { "vertical" } else { "horizontal" }),
+        (P::Name, W::Icon { name, .. }) => s(name),
+        (P::Glyph, W::Icon { glyph, .. }) => s(glyph),
+        (P::Family, W::Icon { family, .. }) => s(family),
+        (P::Size, W::Icon { size, .. }) => len_value(*size),
+        (P::GridTemplateColumns, W::Grid { columns, .. }) => s(columns),
+        (P::JustifyItems, W::Grid { justify_items, .. }) => s(justify_items),
+        (P::Open, W::CollapsingHeader { open, .. }) => Value::Bool(*open),
+        (P::ScrollDirection, W::ScrollArea { direction, .. }) => s(direction),
+        (P::ScrollX, W::ScrollArea { x, .. }) => Value::F64(*x),
+        (P::ScrollY, W::ScrollArea { y, .. }) => Value::F64(*y),
         (key, _) => return Err(format!("{key:?} is not a prop of <{}>", n.tag())),
     })
 }
@@ -222,6 +320,7 @@ pub fn tag_of(ty: Ty) -> u16 {
         Ty::F64 => svelters_abi::SVL_F64,
         Ty::I64 => svelters_abi::SVL_I64,
         Ty::Str | Ty::Enum(_) => svelters_abi::SVL_STR,
+        Ty::StrList => svelters_abi::SVL_LIST,
         // RA1: described per prop by its Rust type (`KindRegistry::provider_member_desc`)
         Ty::Provider => svelters_abi::SVL_NULL,
     }

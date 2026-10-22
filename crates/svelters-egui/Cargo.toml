@@ -34,7 +34,7 @@ jiff = { version = "0.2.35", default-features = false, features = ["std"] }
 rfd = { version = "0.17.2", optional = true }
 # WG4b: the dialog functions are Rust exports (`#[svelters::export(module = "egui")]`).
 svelters = { path = "../svelters" }
-taffy = { version = "=0.15.0", default-features = false, features = ["std", "flexbox", "block_layout", "content_size"] }
+taffy = { version = "=0.15.0", default-features = false, features = ["std", "flexbox", "grid", "block_layout", "content_size"] }
 
 [dev-dependencies]
 # The tests use the kittest harness and the eframe runner whatever features the build selects
