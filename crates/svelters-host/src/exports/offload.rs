@@ -28,7 +28,9 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Condvar, Mutex, OnceLock};
 use std::task::{Context, Poll, Wake, Waker};
 use std::time::Duration;
-use svelters_abi::{SVL_NULL, WakeHandle};
+use svelters_abi::SVL_NULL;
+use svelters_sched::{JobKind, JobMeta, Spawner};
+use std::cell::RefCell;
 
 /// Where an offloaded export runs.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -336,18 +338,18 @@ pub struct Completions {
     q: Mutex<Queue>,
     wake_pending: AtomicBool,
     /// Cleared when the host goes away: later pushes reach nobody (and wake nobody).
-    waker: Mutex<Option<WakeHandle>>,
+    waker: Mutex<Option<Waker>>,
 }
 
 impl Completions {
-    pub(crate) fn new(waker: WakeHandle) -> Arc<Completions> {
+    pub(crate) fn new(waker: Waker) -> Arc<Completions> {
         Arc::new(Completions { q: Mutex::new(Queue::default()), wake_pending: AtomicBool::new(false), waker: Mutex::new(Some(waker)) })
     }
 
     fn wake(&self) {
         if !self.wake_pending.swap(true, Ordering::AcqRel) {
             if let Some(w) = &*lock(&self.waker) {
-                w.wake();
+                w.wake_by_ref();
             }
         }
     }
@@ -477,6 +479,41 @@ pub fn set_worker_pool(pool: rayon::ThreadPool) -> bool {
     WORKER_POOL.set(pool).is_ok()
 }
 
+thread_local! {
+    /// SCHED1: the spawner of the host whose JS runs on this thread (set for each entry into JS).
+    static SPAWNER: RefCell<Option<Arc<dyn Spawner>>> = const { RefCell::new(None) };
+}
+
+/// Installs `s` as this thread's spawner; returns the previous one (the host restores it when its
+/// entry into JS ends).
+pub(crate) fn swap_thread_spawner(s: Option<Arc<dyn Spawner>>) -> Option<Arc<dyn Spawner>> {
+    SPAWNER.with(|c| std::mem::replace(&mut *c.borrow_mut(), s))
+}
+
+fn thread_spawner() -> Option<Arc<dyn Spawner>> {
+    SPAWNER.with(|c| c.borrow().clone())
+}
+
+fn job_kind(exec: Exec) -> JobKind {
+    match exec {
+        Exec::Blocking => JobKind::Blocking,
+        _ => JobKind::Worker,
+    }
+}
+
+/// Runs `f` on the pool `exec` names, or on `spawner` when one is set (SCHED1).
+fn spawn_on(spawner: Option<Arc<dyn Spawner>>, exec: Exec, label: Option<String>, f: Box<dyn FnOnce() + Send>) {
+    match spawner {
+        Some(s) => {
+            let mut meta = JobMeta::new(job_kind(exec));
+            meta.label = label;
+            s.spawn_with(meta, f);
+        }
+        None if exec == Exec::Blocking => spawn_blocking(f),
+        None => spawn_worker(f),
+    }
+}
+
 fn spawn_worker(f: impl FnOnce() + Send + 'static) {
     match WORKER_POOL.get() {
         Some(p) => p.spawn(f),
@@ -554,7 +591,9 @@ fn blocking_loop() {
 }
 
 /// Starts a pool job: skipped if cancelled while queued; a panic becomes `NativeError` (`panic`).
-pub(crate) fn spawn_pool(exec: Exec, f: Box<dyn FnOnce() -> SendSettle + Send>, op: Arc<OpShared>, what: Label) {
+/// `spawner`: the host's (SCHED1), else rayon or the blocking pool.
+pub(crate) fn spawn_pool(spawner: Option<Arc<dyn Spawner>>, exec: Exec, f: Box<dyn FnOnce() -> SendSettle + Send>, op: Arc<OpShared>, what: Label) {
+    let label = spawner.is_some().then(|| what.to_string());
     let run = move || {
         let outcome = if op.is_cancelled() {
             Err(Cancelled.into())
@@ -563,10 +602,7 @@ pub(crate) fn spawn_pool(exec: Exec, f: Box<dyn FnOnce() -> SendSettle + Send>, 
         };
         op.queue.push_done(op.id, op.generation, outcome);
     };
-    match exec {
-        Exec::Blocking => spawn_blocking(Box::new(run)),
-        _ => spawn_worker(run),
-    }
+    spawn_on(spawner, exec, label, Box::new(run));
 }
 
 /// Polls `fut` with panics caught.
@@ -731,10 +767,11 @@ fn spawned<T: Send + 'static>(f: impl FnOnce() -> T + Send + 'static, exec: Exec
             w.wake();
         }
     };
-    match exec {
-        Exec::Blocking => spawn_blocking(Box::new(run)),
-        _ => spawn_worker(run),
-    }
+    let label = match exec {
+        Exec::Blocking => "exports::blocking()",
+        _ => "exports::worker()",
+    };
+    spawn_on(thread_spawner(), exec, Some(label.to_string()), Box::new(run));
     Spawned { st }
 }
 

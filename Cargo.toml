@@ -20,6 +20,7 @@ members = [
     "crates/svelters",
     "crates/svelters-testkit",
     "crates/svelters-intl",
+    "crates/svelters-sched",
     "examples/counter",
     "examples/counter-qt",
     "examples/counter-mac",
@@ -48,6 +49,7 @@ svelters-egui = { path = "crates/svelters-egui" }
 svelters-automation = { path = "crates/svelters-automation" }
 svelters-testkit = { path = "crates/svelters-testkit" }
 svelters-intl = { path = "crates/svelters-intl" }
+svelters-sched = { path = "crates/svelters-sched" }
 svelters-compiler = { path = "crates/svelters-compiler" }
 svelters-modules = { path = "crates/svelters-modules", default-features = false }
 svelters-conformance = { path = "crates/svelters-conformance" }
