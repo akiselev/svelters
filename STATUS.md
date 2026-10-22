@@ -62,14 +62,18 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | SG2 extension columns, change journal | DONE | db7f62c5 | one column per `ExtKey` (`with_ext` 1.9 µs over 5k of 100k nodes, release), pull observers with `ChangeFilter`, replayable journal, `Damage`, ticks + `changed_since`, R19 Ext-Removed, 0 allocations per mutation without observers; `ExtBlock` is now a read view; `plans/milestones/SG2-ext-journal.md` |
 | EV2b native behaviours (`use:`) | DONE | 2026-10-22 | merged 747392a3; merge fix edefc916 |
 | SG3 scene queries, traversal, hit lists | DONE | (this merge) | queries by anchor/path/kind/tag/state/ext, `changed_since` (R14), `Cursor` + `visit`, hit lists + `hit_test` topmost-first with `HIT_TRANSPARENT`, provider `Hit::Part` (R13), R20; embed visibility/viewport journaled; `plans/milestones/SG3-queries-hit.md` |
-| WG2a menus, context menus, popup, modal/dialog roots, inner-window | IN PROGRESS | | branch `ci/wg2a`; widget set approved by the user 2026-10-22 (EGUI.md §5, §8) |
-| WG2b rest of Tier 0 (panel, sides, frame, stack, hyperlink, radio, switch, range-slider, drag-value, image, progress, spinner, canvas) | IN PROGRESS | | branch `ci/wg2b` |
-| WG4a table, tab-view, split-view, toast | IN PROGRESS | | branch `ci/wg4a`; tree-view after LS1 |
-| WG4b rfd dialogs, date/colour pickers, drag and drop | IN PROGRESS | | branch `ci/wg4b` |
-| WG1 SC1 egui widget subset | IN PROGRESS | | branch `ci/wg1`; grid, collapsing-header, toggle-button, combo-box, separator, scroll-area, icon, tooltip, invalid, a11y names; cadatomic FW1's acceptance depends on it |
+| WG2a menus, context menus, popup, modal/dialog roots, inner-window | DONE | 2026-10-22 | merged via INT1 (this commit, ci/int-widgets) |
+| WG2b rest of Tier 0 (panel, sides, frame, stack, hyperlink, radio, switch, range-slider, drag-value, image, progress, spinner, canvas) | DONE | 2026-10-22 | merged via INT1 (this commit, ci/int-widgets) |
+| WG4a table, tab-view, split-view, toast | DONE | 2026-10-22 | merged via INT1 (this commit, ci/int-widgets) |
+| WG4b rfd dialogs, date/colour pickers, drag and drop | DONE | 2026-10-22 | merged via INT1 (this commit, ci/int-widgets) |
+| WG1 SC1 egui widget subset (+ WG1b icon/font fallback) | DONE | 2026-10-22 | merged via INT1 (this commit, ci/int-widgets) |
 | WG3 native reference capture (pins 1-3, 7; GTK/Qt goldens) | DONE | 2026-10-22 | merged 59bc9f81; egui TextEdit matches 85/144 (GTK), 75/144 (Qt) |
-| WG3b GTK selection from inner GtkText, Qt 6.11 golden, pins 4-6 | IN PROGRESS | | branch `ci/wg3b` |
-| FX1 egui focus policy + word rules per native refs | IN PROGRESS | | branch `ci/fx1` |
+| WG3b GTK selection from inner GtkText, Qt 6.11 golden, pins 4-6 | DONE | 2026-10-22 | merged (this commit); egui vs native on all 18 scripts 159/243 (either toolkit); W4 decided: keep TextEdit, fix around it (FX3) |
+| FX2 egui focus policy + word rules per native refs (`svelters_egui::native`) | DONE | 2026-10-22 | merged (this commit); egui vs GTK 85→141/144, vs Qt 75→139/144; pin 3 double-click word select left |
+| DS0 UI design system research (VS Code baseline tokens + affordances) | DONE | 2026-10-22 | plans/research/DESIGN.md (merged next); lanes DS1-DS5 + VIS1 |
+| VIS1 visual conformance: gallery snapshots (TK1 wgpu path) vs VS Code references, default look of every kind | QUEUED | | starts when INT1 merges; uses DS0's tokens; VS Code is installed on the Windows host for reference screenshots |
+| FX3 egui undo grouping, clipboard keys (Ctrl/Shift+Insert, Shift+Delete), multiline paste, select-all→PRIMARY, Ctrl+Shift+U per native refs (pins 4-6) | QUEUED | | after INT1 |
+| DS1-DS5 theme module (one token map → CSS :root, egui Style, typed getters), engine gaps (outline, cursor, per-side borders, transitions), affordance sheet, VS Code theme importer, codicons | QUEUED | | DESIGN.md §lanes; DS1 first |
 | WG3w Windows native references (Win32 EDIT, WinUI TextBox; pins 1-3, 7), egui on Windows, counter-win flake | IN PROGRESS | | branch `ci/wg3w`; builds via the WSL PC's Windows toolchain |
 | EV3+ keys and focus: focus scopes/restore, key routing (ShortcutOverride), edit commands to Svelte text fields, default/cancel buttons (QT-SURVEY §3) | QUEUED | | after FX1; key consumption via ARCH-EMBED R11 consume_key/composing(); edit commands through a host-callable API (cadatomic constraint) |
 | WG5a list/table interaction: keyboard nav, type-ahead, selection, cell editors | QUEUED | | after LISTS2 + SG4 |
@@ -78,18 +82,18 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | DX1 settings binding, persisted UI state, standard paths, console to tracing, JS crash context | QUEUED | | ThinkPad, next free lane; binds to a host-supplied store only (cadatomic U5 layers, UI-layout file); no svelters-owned persistence |
 | DX2 multi-format clipboard, open/reveal from JS | QUEUED | | independent |
 | IN1 Intl via ICU4X, locale-aware numbers | QUEUED | | MacBook, next free lane; locale and catalog come from the host (catalog.t); svelters formats numbers/dates |
-| CX1 in-process diagnostics (SV27) | IN PROGRESS | | branch `ci/cx1`; check-only compile, per-file incremental state, stable codes, `--check --json` |
+| CX1 in-process diagnostics (SV27) | DONE | 2026-10-22 | merged (this commit); `check()` API, incremental FileState, 172 registered codes, fix-its, `--check/--explain/--list-codes` |
 | Q1 module loader (`svelters-modules`) | DONE | 2026-10-22 | merged 6dbee841 |
 | CS0 Rust CSS engine (`svelters-style`) | DONE | 2026-10-22 | merged 1b6a754f |
 | SG4 provider passes (R16 provider half, R21, R23) | DONE | 2026-10-22 | merged (this commit); provider layout/prepare, shadow children, StateProvider (R16/R23), ScenePass + R21 `show_viewport_passes`, overlay roots, `position: absolute` |
 | LS1 + SG5 virtual lists on egui (SV40, SV47) | IN PROGRESS | | branch `ci/lists`, stacked on `ci/sg3` (+ `ci/sg4`) |
 | TK1 one-file cases across backends (SV34) | DONE | 2026-10-22 | merged bf82674f |
 | SV48 `Json<T>` error paths through tagged enums | IN PROGRESS | | branch `ci/sv48` |
-| H1 component HMR on the Rust loader | IN PROGRESS | | thinkpad-svelters, branch `ci/h1`, stacked on `ci/q1` |
+| H1 component HMR on the Rust loader | DONE | 2026-10-22 | merged (this commit); follow-ups H1b (acceptExports propagation), D10 timers, swap budget |
 | H3 `$state` kept on HMR (SV36) | IN PROGRESS | | thinkpad-svelters, branch `ci/h3`, stacked on `ci/h1` |
 | TR2 native animator (SV13, SV37) | DONE | 2026-10-22 | merged (this commit); ABI v2.9: style op 11 `SVL_STYLE_ANIMATE`; follow-ups TR2b, TR3 |
 | TR2b exiting (inert) subtrees leave the focus chain | DONE | 2026-10-22 | merged (this commit); exiting widgets use egui's noninteractive style during the outro |
-| TR3 profile per-frame `tick` transitions vs descriptors (SV14 in-process) | IN PROGRESS | | thinkpad-svelters, branch `ci/tr3` |
+| TR3 profile per-frame `tick` transitions vs descriptors (SV14 in-process) | DONE | 2026-10-22 | merged (this commit); keyframes stay default, `tick(t)` stays JS; isolate half waits for ISOLATES |
 | LD1 loader hooks + native module providers (SV22, SV25) | DONE | 2026-10-22 | merged 7e8909bb |
 | CS5e egui cascade | DONE | 2026-10-22 | merged 9edf8e24 |
 | Q3w Q3's CSS port in compile() + CLI | DONE | 2026-10-22 | merged (this commit); `CompileOptions::scoped_css`, `--css`, Vite uses it for non-egui |

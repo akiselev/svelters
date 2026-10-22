@@ -23,7 +23,7 @@
 //! retries (the fix may be a file the graph does not reach yet).
 
 use crate::core::{self, Core, Timers};
-use crate::engine::{ErrorKind, JsEngine, JsError, ModuleProvider};
+use crate::engine::{ErrorKind, HotOutcome, JsEngine, JsError, ModuleProvider};
 use notify::{EventKind, RecommendedWatcher, RecursiveMode, Watcher};
 use std::cell::{Cell, RefCell};
 use std::collections::HashSet;
@@ -50,6 +50,11 @@ pub struct ReloadReport {
     pub elapsed: Duration,
     /// The load error, already mapped to original sources. `None` on success.
     pub error: Option<JsError>,
+    /// H1: the modules swapped in place (no runtime was replaced). `None` for a full reload.
+    pub hot: Option<Vec<String>>,
+    /// H1: why a full reload ran although the app supports in-place updates (no accepting module,
+    /// the swap budget, ...).
+    pub fallback: Option<String>,
 }
 
 pub(crate) type SharedEngine = Rc<RefCell<Box<dyn JsEngine>>>;
@@ -66,6 +71,9 @@ pub(crate) struct Reloader {
     watch: RefCell<Option<Watch>>,
     hook: RefCell<Option<Rc<dyn Fn(&ReloadReport)>>>,
     generation: Cell<u64>,
+    /// An embedder's entries are loaded (`load_entry`): a full reload would discard them, so it is
+    /// refused (the embedder decides what to do).
+    embedded: Cell<bool>,
 }
 
 impl Reloader {
@@ -79,11 +87,21 @@ impl Reloader {
             watch: RefCell::new(None),
             hook: RefCell::new(None),
             generation: Cell::new(0),
+            embedded: Cell::new(false),
         })
+    }
+
+    pub(crate) fn set_embedded(&self) {
+        self.embedded.set(true);
     }
 
     pub(crate) fn set_provider(&self, provider: Rc<dyn ModuleProvider>) {
         *self.provider.borrow_mut() = Some(provider);
+    }
+
+    /// Records changed files as the watcher thread does (without the debounce or the wake).
+    pub(crate) fn note_changed(&self, paths: Vec<PathBuf>) {
+        self.changed.lock().unwrap().extend(paths);
     }
 
     pub(crate) fn set_hook(&self, f: Rc<dyn Fn(&ReloadReport)>) {
@@ -194,6 +212,40 @@ impl Reloader {
         let generation = self.generation.get() + 1;
         self.generation.set(generation);
 
+        // H1: a change to source modules is first tried as an in-place swap.
+        let mut fallback = None;
+        if provider.hmr() && !changed.is_empty() {
+            let ids: Vec<String> = changed.iter().flat_map(|p| provider.modules_at(std::slice::from_ref(p))).collect();
+            let all_modules = changed.iter().all(|p| !provider.modules_at(std::slice::from_ref(p)).is_empty());
+            if all_modules {
+                match core::hot_update(core, engine, &provider, &ids) {
+                    Ok(HotOutcome::Applied { modules }) => {
+                        let report = ReloadReport { generation, ok: true, elapsed: t0.elapsed(), error: None, hot: Some(modules), fallback: None };
+                        return Some(self.finish(core, &provider, report));
+                    }
+                    Ok(HotOutcome::Reload(why)) => fallback = Some(why),
+                    Err(e) => {
+                        // the previous versions keep running; the next change retries
+                        let e = core.map_error(e);
+                        core.report(e.clone());
+                        let report = ReloadReport { generation, ok: false, elapsed: t0.elapsed(), error: Some(e), hot: Some(Vec::new()), fallback: None };
+                        return Some(self.finish(core, &provider, report));
+                    }
+                }
+            } else {
+                fallback = Some("a changed file is not a module of the app".into());
+            }
+        }
+
+        if self.embedded.get() {
+            // the runtime holds the embedder's entries and roots: replacing it is the embedder's call
+            let why = fallback.clone().unwrap_or_else(|| "a full reload was requested".into());
+            let e = JsError::new(ErrorKind::Host, format!("not applied in place ({why}); a full reload would discard the embedded roots"));
+            core.report(e.clone());
+            let report = ReloadReport { generation, ok: false, elapsed: t0.elapsed(), error: Some(e), hot: None, fallback };
+            return Some(self.finish(core, &provider, report));
+        }
+
         let old_roots: HashSet<u64> = core.roots().into_iter().collect();
         core.clear_events();
         let old_timers = core.swap_timers(Timers::default());
@@ -264,7 +316,13 @@ impl Reloader {
             }
         };
 
-        let report = ReloadReport { generation, ok: error.is_none(), elapsed: t0.elapsed(), error };
+        let report = ReloadReport { generation, ok: error.is_none(), elapsed: t0.elapsed(), error, hot: None, fallback };
+        Some(self.finish(core, &provider, report))
+    }
+
+    /// Bookkeeping after an attempt: the retry flag, the watched set, the log line and the hook.
+    fn finish(&self, core: &Rc<Core>, provider: &Rc<dyn ModuleProvider>, report: ReloadReport) -> ReloadReport {
+        let generation = report.generation;
         self.retry.store(!report.ok, Ordering::SeqCst);
         if let Err(e) = self.sync_watch() {
             core.console("warn", format!("svelters: {e}"));
@@ -272,9 +330,11 @@ impl Reloader {
         if core.cfg.echo_console {
             if report.ok {
                 eprintln!(
-                    "[svelters] reloaded {} in {:.1} ms (#{generation})",
+                    "[svelters] {} {} in {:.1} ms (#{generation}){}",
+                    if report.hot.is_some() { "updated in place" } else { "reloaded" },
                     provider.describe(),
-                    report.elapsed.as_secs_f64() * 1e3
+                    report.elapsed.as_secs_f64() * 1e3,
+                    report.fallback.as_deref().map(|w| format!(" (full reload: {w})")).unwrap_or_default()
                 );
             } else {
                 eprintln!("[svelters] reload #{generation} failed; the previous version keeps running until the next change");
@@ -284,7 +344,7 @@ impl Reloader {
         if let Some(h) = hook {
             h(&report);
         }
-        Some(report)
+        report
     }
 }
 

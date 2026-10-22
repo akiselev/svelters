@@ -52,6 +52,16 @@ fn ops_and_events_scripted() {
     );
 }
 
+/// `performance.now()` is the virtual clock in scripted mode, not QuickJS-NG's built-in wall clock
+/// (a transition timed on wall time against virtual frames made TK1's cases flaky).
+#[test]
+fn scripted_performance_now_is_the_virtual_clock() {
+    let (cfg, opts) = fixture_config();
+    let r = run_bundle(&js("perf_now.js"), script(r#"[{"checkpoint":true}]"#), cfg, opts).unwrap();
+    assert!(r.errors.is_empty(), "{:?}", r.errors);
+    assert!(r.oplog.contains("set #2 label \"elapsed 1000\"\n"), "{}", r.oplog);
+}
+
 #[test]
 fn scripted_timers_run_on_virtual_clock_in_due_order() {
     // The bundle's timers span 60 ms of virtual time. The best of five runs must beat that, so a

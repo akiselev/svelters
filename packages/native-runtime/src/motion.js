@@ -274,6 +274,8 @@ let listenSignal = null;
 function startNative(a) {
   const node = a.target;
   const hs = node.host;
+  // `globalThis.__svelters_no_native_animation = true` forces TR1's JS player (profiling, TR3)
+  if (globalThis.__svelters_no_native_animation === true) return false;
   if (typeof hs.style !== 'function' || !listenSignal || refused.get(hs)?.has(OP_ANIMATE)) return false;
   const payload = JSON.stringify({ id: a.id, duration: a.duration, delay: a.delay, frames: a.frames });
   let ok = false;

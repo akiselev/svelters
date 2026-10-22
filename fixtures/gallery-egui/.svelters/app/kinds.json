@@ -1,0 +1,12 @@
+{
+  "backend": "egui",
+  "behaviors": {},
+  "caps": {},
+  "fragment": true,
+  "kinds": {},
+  "schema": "svelters-semantics/v0",
+  "source": {
+    "generator": "crates/svelters-egui/src/spec.rs (svelters_egui::dump)"
+  },
+  "tags": {}
+}

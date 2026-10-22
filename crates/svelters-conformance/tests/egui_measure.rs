@@ -2,12 +2,26 @@
 //! 0.37 `TextEdit`) under kittest, as the egui-winit X11 path would deliver the input on Linux
 //! (`OperatingSystem::Nix`; Ctrl sets `ctrl` and `command`), and compares each checkpoint with the
 //! Linux goldens (`conformance/golden/linux/*.json`, GTK and Qt). Writes the egui capture, its
-//! traces and the gap table (`target/na/linux/egui-gap.md`). A measurement, not a gate: it fails
-//! only when the harness itself breaks.
+//! traces and the gap table (`target/na/linux/egui-gap.md`, and the CI job summary).
 //!
-//! Input is synthetic (egui `Event`s, not winit): no IME, no key repeat. Offsets are chars, as in
-//! the goldens.
+//! FX1: runs every pin three times, once per `svelters_egui::native::Native`: `Egui` (egui's own
+//! behaviour, against both goldens), `Gtk` (against GTK's) and `Qt` (against Qt's). The native runs
+//! are gated by a ratchet ([`FLOOR`]): a pin matching fewer checkpoints than its floor fails the
+//! test; raise the floor when a change matches more.
+//!
+//! Input is synthetic (egui `Event`s, not winit): no key repeat. Offsets are chars, as in the
+//! goldens.
+//!
+//! Pins 4-6 (WG3b) follow egui-winit 0.37 on Linux: Ctrl+X/C/V (and only those: `command_only`)
+//! become `Cut`/`Copy`/`Paste(clipboard)` instead of the key, the paste text with CRLF turned into
+//! LF; `CopyText` and `TextSelectionSettled` output commands set the clipboard and PRIMARY; a middle
+//! press pushes `MiddleClickPaste` with PRIMARY. Typed characters are `Text` events. Dead keys are
+//! a model of winit's X11 path without an input-method server (the setup the native captures use):
+//! a dead key composes with the next letter or gives the Compose table's accent on Space; a key
+//! that does not compose cancels it and goes through alone [model, not measured on winit].
+//! Ctrl+Shift+U reaches egui as a plain key (the hex entry is a GTK and IBus feature).
 
+use egui::OutputCommand;
 use egui::text::{CCursor, CCursorRange};
 use egui::text_edit::TextEditState;
 use egui_kittest::Harness;
@@ -15,10 +29,39 @@ use egui_kittest::kittest::Queryable;
 use std::fmt::Write as _;
 use svelters_abi::*;
 use svelters_conformance::golden::{Capture, PinGap, compare, finish, goldens};
-use svelters_conformance::pins::{BUTTON, BUTTON_LABEL, Chord, FIELDS, Keys, Pin, load_pins};
+use svelters_conformance::pins::{
+    BUTTON, BUTTON_LABEL, CLIPBOARD, Chord, FIELDS, Keys, Pin, load_pins,
+};
 use svelters_conformance::trace::{Checkpoint, State, Trace};
-use svelters_conformance::{Driver, run_pin};
+use svelters_conformance::{Driver, run_pin, selection_handle};
 use svelters_egui::EguiBackend;
+use svelters_egui::native::Native;
+
+/// FX1's ratchet: per pin, the fewest checkpoints the `Gtk` run must match in GTK's golden and the
+/// `Qt` run in Qt's (`(pin id, gtk, qt)`).
+const FLOOR: &[(&str, usize, usize)] = &[
+    ("word-move", 33, 33),
+    ("word-delete-back", 16, 16),
+    ("word-delete-fwd", 16, 16),
+    ("word-delete-mid", 7, 7),
+    ("select-extend", 14, 14),
+    ("select-collapse", 17, 17),
+    ("select-all", 11, 11),
+    // GTK: double-click on `-` and on a space, one click after the CJK run; Qt: double-click
+    // word rules and double-click-drag (FX1 follow-ups)
+    ("multi-click", 11, 9),
+    ("focus-tab", 9, 9),
+    ("focus-click", 7, 7),
+    // WG3b's pins 4-6 at their first measurement (egui's own undo, clipboard and IME; FX3 raises them)
+    ("undo-typing", 6, 11),
+    ("undo-edits", 12, 10),
+    ("undo-paste", 6, 6),
+    ("clipboard-keys", 12, 12),
+    ("paste-multiline", 1, 1),
+    ("primary", 5, 5),
+    ("dead-keys", 8, 12),
+    ("unicode-entry", 1, 1),
+];
 
 struct Rec;
 impl HostCallbacks for Rec {
@@ -42,10 +85,35 @@ struct Egui {
     win: u64,
     fields: Vec<(String, u64)>,
     button: u64,
+    /// What egui-winit's clipboard would hold: the system clipboard and PRIMARY.
+    clipboard: String,
+    primary: String,
+    /// The pin's selection pseudo-anchors.
+    selections: Vec<String>,
+    /// A dead key waiting for the next key (`acute`, `diaeresis`, `grave`).
+    dead: Option<String>,
+}
+
+/// The composition a dead key and the next character give (`None`: no composition, the character
+/// goes through alone). Space gives the ASCII accent of libX11's and xkbcommon's en_US.UTF-8 Compose
+/// table (`<dead_acute> <space> : "'"`), which winit's X11 path composes with too.
+fn compose(dead: &str, c: char) -> Option<char> {
+    let (from, to, spacing): (&str, &str, char) = match dead {
+        "acute" => ("aeiou", "áéíóú", '\''),
+        "diaeresis" => ("aeiou", "äëïöü", '"'),
+        "grave" => ("aeiou", "àèìòù", '`'),
+        _ => return None,
+    };
+    if c == ' ' {
+        return Some(spacing);
+    }
+    from.chars()
+        .position(|f| f == c)
+        .and_then(|i| to.chars().nth(i))
 }
 
 impl Egui {
-    fn new() -> Egui {
+    fn new(native: Native) -> Egui {
         let backend = EguiBackend::new();
         let vt: &'static BackendVtable = Box::leak(Box::new(backend.vtable()));
         let hv: &'static HostVtable = Box::leak(Box::new(HostVtable::new(Rec)));
@@ -60,6 +128,7 @@ impl Egui {
         harness
             .ctx
             .set_missing_glyph_policy(egui::MissingGlyphPolicy::Tofu);
+        svelters_egui::native::set(&harness.ctx, native);
         Egui {
             backend,
             vt,
@@ -68,7 +137,31 @@ impl Egui {
             win: 0,
             fields: vec![],
             button: 0,
+            clipboard: String::new(),
+            primary: String::new(),
+            selections: vec![],
+            dead: None,
         }
+    }
+
+    /// The clipboard and PRIMARY writes of the last frame (egui-winit's `handle_platform_output`).
+    fn collect(&mut self) {
+        for c in &self.harness.output().platform_output.commands {
+            match c {
+                OutputCommand::CopyText(t) => self.clipboard = t.clone(),
+                OutputCommand::TextSelectionSettled(t) => self.primary = t.clone(),
+                _ => {}
+            }
+        }
+    }
+
+    fn text_event(&mut self, c: char) {
+        let c = match self.dead.take() {
+            Some(d) => compose(&d, c).unwrap_or(c),
+            None => c,
+        };
+        self.harness.event(egui::Event::Text(c.to_string()));
+        self.frames(3);
     }
 
     fn br(&self) -> BackendRef<'static> {
@@ -132,6 +225,7 @@ impl Egui {
     fn frames(&mut self, n: usize) {
         for _ in 0..n {
             self.harness.step();
+            self.collect();
         }
     }
 
@@ -161,12 +255,23 @@ impl Egui {
     }
 
     fn button_event(&mut self, pos: egui::Pos2, pressed: bool) {
+        self.button_n(pos, egui::PointerButton::Primary, pressed);
+    }
+
+    fn button_n(&mut self, pos: egui::Pos2, button: egui::PointerButton, pressed: bool) {
         self.harness.event(egui::Event::PointerButton {
             pos,
-            button: egui::PointerButton::Primary,
+            button,
             pressed,
             modifiers: egui::Modifiers::NONE,
         });
+        // egui-winit: a middle press pastes PRIMARY (X11, Wayland)
+        if pressed && button == egui::PointerButton::Middle && !self.primary.is_empty() {
+            self.harness.event(egui::Event::MiddleClickPaste {
+                pos,
+                text: self.primary.clone(),
+            });
+        }
         self.frames(1);
     }
 
@@ -190,7 +295,15 @@ fn egui_key(name: &str) -> Result<egui::Key, String> {
         "Tab" => Tab,
         "Escape" => Escape,
         "Return" => Enter,
+        "Insert" => Insert,
+        "space" => Space,
         "a" => A,
+        "c" => C,
+        "u" => U,
+        "v" => V,
+        "x" => X,
+        "y" => Y,
+        "z" => Z,
         o => return Err(format!("no egui key for {o}")),
     })
 }
@@ -222,6 +335,10 @@ impl Driver for Egui {
         self.trace.call(win, "present", "[]");
         self.win = win;
         self.button = b;
+        self.clipboard = pin.setup.clipboard.clone().unwrap_or_default();
+        self.primary = String::new();
+        self.selections = pin.observe.clone();
+        self.dead = None;
         self.frames(3);
         let ctx = self.harness.ctx.clone();
         if let Some(f) = &pin.setup.focus {
@@ -253,19 +370,63 @@ impl Driver for Egui {
             mac_cmd: false,
             command: c.ctrl,
         };
-        self.harness.key_press_modifiers(mods, egui_key(&c.key)?);
+        if let Some(d) = c.key.strip_prefix("dead_") {
+            self.dead = Some(d.to_string());
+            self.frames(3);
+            return Ok(());
+        }
+        let k = egui_key(&c.key)?;
+        let plain = !(c.ctrl || c.alt || c.cmd);
+        if plain && !c.shift && k == egui::Key::Space {
+            // a key with text: the key and its `Text` (composed when a dead key waits)
+            self.harness.key_press_modifiers(mods, k);
+            self.text_event(' ');
+            return Ok(());
+        }
+        // any other key cancels a waiting dead key and goes through alone
+        self.dead = None;
+        let command_only = c.ctrl && !c.shift && !c.alt && !c.cmd;
+        match k {
+            egui::Key::X if command_only => self.harness.event(egui::Event::Cut),
+            egui::Key::C if command_only => self.harness.event(egui::Event::Copy),
+            egui::Key::V if command_only => {
+                let t = self.clipboard.replace("\r\n", "\n");
+                if !t.is_empty() {
+                    self.harness.event(egui::Event::Paste(t));
+                }
+            }
+            _ => self.harness.key_press_modifiers(mods, k),
+        }
         self.frames(3);
         Ok(())
     }
 
-    fn click(&mut self, target: &str, at: Option<usize>, count: u32) -> Result<(), String> {
+    fn type_text(&mut self, text: &str) -> Result<(), String> {
+        for c in text.chars() {
+            self.text_event(c);
+        }
+        Ok(())
+    }
+
+    fn click(
+        &mut self,
+        target: &str,
+        at: Option<usize>,
+        count: u32,
+        button: u32,
+    ) -> Result<(), String> {
         self.settle();
         let pos = self.point(target, at)?;
         self.harness.event(egui::Event::PointerMoved(pos));
         self.frames(1);
+        let b = if button == 2 {
+            egui::PointerButton::Middle
+        } else {
+            egui::PointerButton::Primary
+        };
         for _ in 0..count {
-            self.button_event(pos, true);
-            self.button_event(pos, false);
+            self.button_n(pos, b, true);
+            self.button_n(pos, b, false);
         }
         self.frames(3);
         Ok(())
@@ -322,6 +483,16 @@ impl Driver for Egui {
         };
         self.trace.state(self.button, &s);
         cp.push((BUTTON.to_string(), s));
+        for name in self.selections.clone() {
+            let t = if name == CLIPBOARD {
+                self.clipboard.clone()
+            } else {
+                self.primary.clone()
+            };
+            let s = State::selection(t);
+            self.trace.state(selection_handle(&name), &s);
+            cp.push((name, s));
+        }
         Ok(cp)
     }
 
@@ -333,22 +504,24 @@ impl Driver for Egui {
     }
 }
 
-#[test]
-fn egui_text_edit_against_native_goldens() {
-    let keys = Keys::load("linux").unwrap();
-    let pins = load_pins().unwrap();
+fn run(native: Native, pins: &[Pin], keys: &Keys) -> Vec<svelters_conformance::golden::PinResult> {
     let mut results = Vec::new();
     let mut traces = Vec::new();
-    for pin in &pins {
+    for pin in pins {
         // a fresh context per pin, as the native captures use a fresh window
-        let mut d = Egui::new();
-        let (r, t) = run_pin(&mut d, pin, &keys).unwrap_or_else(|e| panic!("{e}"));
+        let mut d = Egui::new(native);
+        let (r, t) = run_pin(&mut d, pin, keys).unwrap_or_else(|e| panic!("{e}"));
         results.push(r);
         traces.push((pin.id.clone(), t));
     }
+    let toolkit = match native {
+        Native::Egui => "egui",
+        Native::Gtk => "egui-gtk",
+        Native::Qt => "egui-qt",
+    };
     let cap = Capture {
         platform: "linux".into(),
-        toolkit: "egui".into(),
+        toolkit: toolkit.into(),
         version: "0.37.0".into(),
         injector: "kittest".into(),
         settings: vec![],
@@ -356,62 +529,71 @@ fn egui_text_edit_against_native_goldens() {
         pins: results.clone(),
     };
     finish(&cap, &traces).unwrap();
+    results
+}
+
+#[test]
+fn egui_text_edit_against_native_goldens() {
+    let keys = Keys::load("linux").unwrap();
+    let pins = load_pins().unwrap();
+    let stock = run(Native::Egui, &pins, &keys);
+    let gtk = run(Native::Gtk, &pins, &keys);
+    let qt = run(Native::Qt, &pins, &keys);
 
     let golds = goldens("linux").unwrap();
-    let mut md = String::from("| Pin | Behaviour | Checkpoints |");
-    for g in &golds {
-        let _ = write!(md, " = {} {} |", g.toolkit, g.version);
-    }
-    md.push_str(" = either |\n|---|---|---|");
-    md.push_str(&"---|".repeat(golds.len() + 1));
-    md.push('\n');
+    let toolkit = |t: &str| golds.iter().find(|g| g.toolkit == t).expect("a golden");
+    let (g_gtk, g_qt) = (toolkit("gtk"), toolkit("qt"));
+    let gap = |r: &svelters_conformance::golden::PinResult, g: &svelters_conformance::golden::Golden| {
+        g.pin(&r.id).map(|p| compare(&r.checkpoints, &p.checkpoints)).unwrap_or_default()
+    };
+    let cell = |g: &PinGap| match g.diffs.first() {
+        // the first differing step: later checkpoints of a pin build on earlier ones
+        Some((i, after, ..)) => format!("{} (first: #{i} `{after}`)", g.equal),
+        None => g.equal.to_string(),
+    };
+    let mut md = format!(
+        "| Pin | Behaviour | Checkpoints | egui = {gv} | egui = {qv} | native=gtk = {gv} | native=qt = {qv} |\n|---|---|---|---|---|---|---|\n",
+        gv = format!("{} {}", g_gtk.toolkit, g_gtk.version),
+        qv = format!("{} {}", g_qt.toolkit, g_qt.version),
+    );
+    let mut totals = [0usize; 5];
     let mut details = String::new();
-    for r in &results {
-        let gaps: Vec<(String, Option<PinGap>)> = golds
-            .iter()
-            .map(|g| {
-                (
-                    format!("{} {}", g.toolkit, g.version),
-                    g.pin(&r.id)
-                        .map(|p| compare(&r.checkpoints, &p.checkpoints)),
-                )
-            })
-            .collect();
-        let either = (0..r.checkpoints.len())
-            .filter(|&i| {
-                golds.iter().any(|g| {
-                    g.pin(&r.id)
-                        .and_then(|p| p.checkpoints.get(i))
-                        .is_some_and(|c| c.1 == r.checkpoints[i].1)
-                })
-            })
-            .count();
-        let _ = write!(md, "| {} | {} | {} |", r.pin, r.id, r.checkpoints.len());
-        for (_, g) in &gaps {
-            let _ = write!(
-                md,
-                " {} |",
-                g.as_ref()
-                    .map_or("-".to_string(), |g| match g.diffs.first() {
-                        // the first differing step: later checkpoints of a pin build on earlier ones
-                        Some((i, after, ..)) => format!("{} (first: #{i} `{after}`)", g.equal),
-                        None => g.equal.to_string(),
-                    })
-            );
+    let mut below = Vec::new();
+    for ((s, g), q) in stock.iter().zip(&gtk).zip(&qt) {
+        let row = [gap(s, g_gtk), gap(s, g_qt), gap(g, g_gtk), gap(q, g_qt)];
+        let _ = write!(md, "| {} | {} | {} |", s.pin, s.id, s.checkpoints.len());
+        for c in &row {
+            let _ = write!(md, " {} |", cell(c));
         }
-        let _ = writeln!(md, " {either} |");
-        for (name, g) in &gaps {
-            for (i, after, ours, theirs) in g.iter().flat_map(|g| g.diffs.iter()) {
-                let _ = writeln!(
-                    details,
-                    "- {} #{i} after `{after}` vs {name}:\n  - egui: `{ours}`\n  - native: `{theirs}`",
-                    r.id
-                );
+        md.push('\n');
+        totals[0] += s.checkpoints.len();
+        for (t, c) in totals[1..].iter_mut().zip(&row) {
+            *t += c.equal;
+        }
+        for (name, c) in [("native=gtk vs gtk", &row[2]), ("native=qt vs qt", &row[3])] {
+            for (i, after, ours, theirs) in &c.diffs {
+                let _ = writeln!(details, "- {} #{i} after `{after}`, {name}:\n  - egui: `{ours}`\n  - native: `{theirs}`", s.id);
             }
         }
+        if let Some(&(_, fg, fq)) = FLOOR.iter().find(|f| f.0 == s.id) {
+            if row[2].equal < fg || row[3].equal < fq {
+                below.push(format!("{}: gtk {} (floor {fg}), qt {} (floor {fq})", s.id, row[2].equal, row[3].equal));
+            }
+        } else {
+            below.push(format!("{}: no floor (gtk {}, qt {})", s.id, row[2].equal, row[3].equal));
+        }
     }
-    let report = format!("{md}\n## Differing checkpoints\n\n{details}");
+    let _ = writeln!(md, "| | **total** | **{}** | **{}** | **{}** | **{}** | **{}** |", totals[0], totals[1], totals[2], totals[3], totals[4]);
+    let report = format!("{md}\n## Differing checkpoints of the native runs\n\n{details}");
     let out = svelters_conformance::golden::out_dir("linux", "egui-gap.md");
     std::fs::write(&out, &report).unwrap();
-    eprintln!("{md}\nW4 gap report: {}", out.display());
+    eprintln!("{md}\nW4/FX1 gap report: {}", out.display());
+    // CI: the table in the job summary
+    if let Ok(summary) = std::env::var("GITHUB_STEP_SUMMARY") {
+        use std::io::Write as _;
+        if let Ok(mut f) = std::fs::OpenOptions::new().append(true).create(true).open(summary) {
+            let _ = writeln!(f, "### egui against the native references (svelters-conformance egui_measure)\n\n{md}");
+        }
+    }
+    assert!(below.is_empty(), "FX1 ratchet: {below:#?}");
 }

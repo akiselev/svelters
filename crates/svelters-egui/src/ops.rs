@@ -195,6 +195,10 @@ impl Backend for EguiBackend {
         if kinds::kind(k).tag == Some("virtual-list") {
             return Ok(self.vlist_call(h, def.name, args)?);
         }
+        // WG4a: the views' methods take arguments (`crate::views::call`)
+        if let Some(r) = crate::views::call(self, h, def.name, args) {
+            return r;
+        }
         if !args.is_empty() {
             return Err(format!("{} takes no arguments", def.name));
         }
@@ -215,6 +219,12 @@ impl Backend for EguiBackend {
                 let mut scene = self.0.scene.borrow_mut();
                 let i = scene.ix(scene.live(h)?);
                 scene.core[i].flags.insert(NodeFlags::WANT_FOCUS);
+            }
+            // WG2a: context-menu, menu-button, popup (applied and announced at the next pass)
+            "popup" | "popdown" => {
+                let mut scene = self.0.scene.borrow_mut();
+                let i = scene.ix(scene.live(h)?);
+                crate::menus::call(&mut scene, i, def.name == "popup");
             }
             other => return Err(format!("method {other} is not implemented")),
         }

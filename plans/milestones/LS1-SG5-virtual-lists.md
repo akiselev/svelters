@@ -75,6 +75,9 @@ widgets), the list itself under them.
   offset from its own `VScroll`.
 - `Scene::adopt` stands in for shadow children: a virtualiser's rows are ordinary children it adopted. Moving them
   into SG4's shadow subtrees is left to LS2.
+- INT1 (the widget library) merged too: `virtual-list`'s kind id comes after INT1's kinds (appended last in
+  `KINDS`), its `row-height` reuses WG4a's `P::RowHeight`, and it shows its `tooltip` on hover like every kind.
+  WG4a's `table` keeps its own range protocol (no `RowPool`).
 - `Widget::virtual_children` sits next to SG4's `layout`/`prepare`; `takes_input` (overlays) counts a
   `virtual-list` as taking input.
 
@@ -104,6 +107,7 @@ widgets), the list itself under them.
 
 Local, on the final code (LISTS2, 2026-10-22): `cargo check -p svelters-egui -p egui-kinds-example --all-targets`;
 `cargo nextest run -p svelters-egui -E '(binary(vlist) | test(/virt/)) & !test(list_view_runs_on_egui)'` (7 passed);
-`cargo nextest run -p egui-kinds-example -E 'binary(virt) | test(/virt/)'` (2 passed). Not run locally:
+`cargo nextest run -p egui-kinds-example -E 'binary(virt) | test(/virt/)'` (2 passed). After the INT1 merge also
+`--test spec --test widgets --test views` with the lane's filter (29 passed). Not run locally:
 `list_view_runs_on_egui` (needs `fixtures/lists-egui` built; CI's linux-gtk job builds it), release-mode timing,
 everything else (CI).

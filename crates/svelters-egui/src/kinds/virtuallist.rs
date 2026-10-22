@@ -917,6 +917,9 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         v.stats.rows_drawn += drawn;
         v.stats.unbound_drawn += unbound;
     }
+    // WG1: every kind shows its `tooltip` on hover
+    let tip = &s.common(i).tooltip;
+    let resp = if tip.is_empty() { resp } else { resp.on_hover_text(tip.clone()) };
     Some(resp)
 }
 

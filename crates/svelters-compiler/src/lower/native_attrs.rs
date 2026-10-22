@@ -595,7 +595,9 @@ impl<'a> Lower<'a, '_, '_> {
             seen.1 = Some(d);
         }
         if let Some(m) = d.modifiers.iter().find(|m| *m != "local" && *m != "global") {
-            self.diags.error("transition_modifier_invalid", sp(d.span()), format!("`{m}` is not a transition modifier (`local` or `global`)"));
+            self.diags
+                .error("transition_modifier_invalid", sp(d.span()), format!("`{m}` is not a transition modifier (`local` or `global`)"))
+                .hint(crate::diag::FixHint::Remove(format!("|{m}")));
             return None;
         }
         let mut flags = 0;

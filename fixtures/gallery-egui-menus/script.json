@@ -1,0 +1,13 @@
+[{"checkpoint":true},
+ {"event":[5,"activate",[false]]},{"checkpoint":true},
+ {"changed":[6,"checked",true]},{"checkpoint":true},
+ {"changed":[13,"checked",true]},{"changed":[12,"checked",false]},{"checkpoint":true},
+ {"changed":[15,"active",true]},{"checkpoint":true},
+ {"event":[17,"activate",[false]]},{"changed":[15,"active",false]},{"checkpoint":true},
+ {"event":[18,"clicked",[]]},{"checkpoint":true},
+ {"changed":[21,"text","ab"]},{"checkpoint":true},
+ {"changed":[19,"open",false]},{"checkpoint":true},
+ {"event":[22,"clicked",[]]},{"checkpoint":true},
+ {"event":[29,"clicked",[]]},{"checkpoint":true},
+ {"event":[23,"clicked",[]]},{"checkpoint":true},
+ {"event":[25,"activate",[false]]},{"checkpoint":true}]

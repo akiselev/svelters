@@ -11,7 +11,7 @@ use svelters_abi::Value;
 
 // ---- values ----
 
-fn as_bool(v: &Value) -> Result<bool, String> {
+pub(crate) fn as_bool(v: &Value) -> Result<bool, String> {
     match v {
         Value::Bool(b) => Ok(*b),
         Value::I64(i) => Ok(*i != 0),
@@ -19,7 +19,7 @@ fn as_bool(v: &Value) -> Result<bool, String> {
     }
 }
 
-fn as_f64(v: &Value) -> Result<f64, String> {
+pub(crate) fn as_f64(v: &Value) -> Result<f64, String> {
     match v {
         Value::F64(f) => Ok(*f),
         Value::I64(i) => Ok(*i as f64),
@@ -28,7 +28,7 @@ fn as_f64(v: &Value) -> Result<f64, String> {
     }
 }
 
-fn as_i64(v: &Value) -> Result<i64, String> {
+pub(crate) fn as_i64(v: &Value) -> Result<i64, String> {
     match v {
         Value::I64(i) => Ok(*i),
         Value::F64(f) if f.fract() == 0.0 => Ok(*f as i64),
@@ -36,7 +36,7 @@ fn as_i64(v: &Value) -> Result<i64, String> {
     }
 }
 
-fn as_str(v: &Value) -> Result<String, String> {
+pub(crate) fn as_str(v: &Value) -> Result<String, String> {
     match v {
         Value::Str(s) => Ok(s.clone()),
         Value::Null => Ok(String::new()),
@@ -46,19 +46,37 @@ fn as_str(v: &Value) -> Result<String, String> {
     }
 }
 
-fn as_enum(v: &Value, values: &'static [&'static str]) -> Result<&'static str, String> {
+pub(crate) fn as_enum(v: &Value, values: &'static [&'static str]) -> Result<&'static str, String> {
     let s = as_str(v)?;
     values.iter().copied().find(|x| *x == s).ok_or_else(|| format!("`{s}` is not one of {}", values.join(", ")))
 }
 
-fn as_len(v: &Value) -> Result<Option<f64>, String> {
+pub(crate) fn as_len(v: &Value) -> Result<Option<f64>, String> {
     match v {
         Value::Null => Ok(None),
         v => as_f64(v).map(Some),
     }
 }
 
-fn len_value(v: Option<f64>) -> Value {
+fn as_str_list(v: &Value) -> Result<Vec<String>, String> {
+    match v {
+        Value::Null => Ok(Vec::new()),
+        Value::List(items) => items.iter().map(as_str).collect(),
+        // a static attribute: whitespace-separated (the compiler's `strlist` form)
+        Value::Str(s) => Ok(s.split_ascii_whitespace().map(str::to_string).collect()),
+        other => Err(format!("expected a list of strings, got {other:?}")),
+    }
+}
+
+fn as_weight(v: &Value) -> Result<i64, String> {
+    let w = as_f64(v)?;
+    if !(1.0..=1000.0).contains(&w) {
+        return Err(format!("font-weight {w} is outside 1..=1000"));
+    }
+    Ok(w.round() as i64)
+}
+
+pub(crate) fn len_value(v: Option<f64>) -> Value {
     v.map(Value::F64).unwrap_or(Value::Null)
 }
 
@@ -68,7 +86,7 @@ pub(crate) fn is_common(key: P) -> bool {
     use P::*;
     matches!(
         key,
-        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | Position | Left | Top | Right | Bottom | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent
+        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | Position | Left | Top | Right | Bottom | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid | DragType | DragData | DropTypes
     )
 }
 
@@ -80,6 +98,15 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
     }
     let v = if matches!(v, Value::Null) && !def.nullable { default_value(def) } else { v.clone() };
     let v = &v;
+    // WG2b: its kinds' own props (`crate::elements`); the `Widget`/`Box` props fall through
+    if let Some(r) = crate::elements::set_prop(w, def, v) {
+        return r.map(|mut d| {
+            if def.layout {
+                d.insert(Dirty::LAYOUT);
+            }
+            d
+        });
+    }
     let mut d = Dirty::default();
     match (def.key, &mut *w) {
         (P::Enabled, _) => c.enabled = as_bool(v)?,
@@ -114,10 +141,25 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (P::Padding, _) => c.padding = as_f64(v)?,
         (P::AlignItems, _) => c.align_items = as_enum(v, kinds::ALIGN)?,
         (P::JustifyContent, _) => c.justify_content = as_enum(v, kinds::JUSTIFY)?,
+        (P::Invalid, _) => c.invalid = as_bool(v)?,
+        // WG4b: drag and drop on any node (`kinds/dnd.rs`), before the per-payload catch-alls
+        (P::DragType | P::DragData | P::DropTypes, _) => crate::kinds::dnd::set(c, def.key, as_str(v)?),
+        // WG2a: the menu family and the overlays (`crate::menus`, `crate::overlays`)
+        (key, W::Menu(m)) => d = crate::menus::set_prop(m, key, v)?,
+        (key, W::Overlay(o)) => crate::overlays::set_prop(o, key, v)?,
         (P::Title, W::Window { title, .. }) => *title = as_str(v)?,
         (P::DefaultWidth, W::Window { default_w, .. }) => *default_w = as_f64(v)?,
         (P::DefaultHeight, W::Window { default_h, .. }) => *default_h = as_f64(v)?,
-        (P::Text, W::Label { text, .. } | W::Button { text, .. } | W::Checkbox { text, .. } | W::TextEdit { text, .. } | W::Slider { text, .. }) => {
+        (
+            P::Text,
+            W::Label { text, .. }
+            | W::Button { text, .. }
+            | W::Checkbox { text, .. }
+            | W::TextEdit { text, .. }
+            | W::Slider { text, .. }
+            | W::ToggleButton { text, .. }
+            | W::CollapsingHeader { text, .. },
+        ) => {
             *text = as_str(v)?;
             d.insert(Dirty::MEASURE);
         }
@@ -126,14 +168,14 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
             d.insert(Dirty::MEASURE);
         }
         (P::Selectable, W::Label { selectable, .. }) => *selectable = as_bool(v)?,
-        (P::Selected, W::Button { selected, .. }) => *selected = as_bool(v)?,
-        (P::Frame, W::Button { frame, .. }) => *frame = as_bool(v)?,
+        (P::Selected, W::Button { selected, .. } | W::Icon { selected, .. }) => *selected = as_bool(v)?,
+        (P::Frame, W::Button { frame, .. } | W::ToggleButton { frame, .. }) => *frame = as_bool(v)?,
         (P::Small, W::Button { small, .. }) => {
             *small = as_bool(v)?;
             d.insert(Dirty::MEASURE);
         }
-        (P::Checked, W::Checkbox { checked, .. }) => *checked = as_bool(v)?,
-        (P::HintText, W::TextEdit { hint, .. }) => *hint = as_str(v)?,
+        (P::Checked, W::Checkbox { checked, .. } | W::ToggleButton { checked, .. }) => *checked = as_bool(v)?,
+        (P::HintText, W::TextEdit { hint, .. } | W::ComboBox { hint, .. }) => *hint = as_str(v)?,
         (P::Multiline, W::TextEdit { multiline, .. }) => {
             *multiline = as_bool(v)?;
             d.insert(Dirty::MEASURE);
@@ -153,6 +195,90 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
             crate::kinds::virtuallist::set(l, def.key, v)?;
             d.insert(Dirty::LAYOUT);
         }
+        // ---- WG1 ----
+        (P::FontWeight, W::Label { weight, .. } | W::Button { weight, .. } | W::ToggleButton { weight, .. } | W::Icon { weight, .. }) => {
+            *weight = as_weight(v)?;
+            d.insert(Dirty::MEASURE);
+        }
+        (P::Radio, W::ToggleButton { radio, .. }) => *radio = as_bool(v)?,
+        (P::Options, W::ComboBox { options, .. }) => {
+            *options = as_str_list(v)?;
+            d.insert(Dirty::MEASURE);
+        }
+        (P::SelectedIndex, W::ComboBox { selected, .. }) => *selected = as_i64(v)?,
+        (P::Orientation, W::Separator { vertical }) => {
+            *vertical = as_enum(v, kinds::ORIENTATION)? == "vertical";
+            d.insert(Dirty::MEASURE);
+        }
+        (P::Name, W::Icon { name, .. }) => {
+            *name = as_str(v)?;
+            d.insert(Dirty::MEASURE);
+        }
+        (P::Glyph, W::Icon { glyph, .. }) => {
+            *glyph = as_str(v)?;
+            d.insert(Dirty::MEASURE);
+        }
+        (P::Family, W::Icon { family, .. }) => {
+            *family = as_str(v)?;
+            d.insert(Dirty::MEASURE);
+        }
+        (P::Size, W::Icon { size, .. }) => {
+            *size = as_len(v)?.filter(|s| *s > 0.0);
+            d.insert(Dirty::MEASURE);
+        }
+        (P::Frame, W::Icon { frame, .. }) => {
+            *frame = as_bool(v)?;
+            d.insert(Dirty::MEASURE);
+        }
+        (P::GridTemplateColumns, W::Grid { columns, .. }) => {
+            let s = as_str(v)?;
+            crate::layout::parse_grid_template(&s)?;
+            *columns = s;
+        }
+        (P::JustifyItems, W::Grid { justify_items, .. }) => *justify_items = as_enum(v, kinds::JUSTIFY_ITEMS)?,
+        (P::Open, W::CollapsingHeader { open, .. }) => {
+            *open = as_bool(v)?;
+            // its own size changes: restyle and relayout from its parent (SG1's style change)
+            d.insert(Dirty::LAYOUT);
+        }
+        (P::ScrollDirection, W::ScrollArea { direction, .. }) => {
+            *direction = as_enum(v, kinds::SCROLL_DIRECTION)?;
+            d.insert(Dirty::LAYOUT);
+        }
+        // paint-only: the walk applies a write that differs from what egui reported (`seen`)
+        (P::ScrollX, W::ScrollArea { x, .. }) => *x = as_f64(v)?.max(0.0),
+        (P::ScrollY, W::ScrollArea { y, .. }) => *y = as_f64(v)?.max(0.0),
+        // ---- WG4a (`kinds/views.rs`, `crate::views`) ----
+        (key, W::Table(t)) => d.insert(t.set(key, v)?),
+        (key, W::ToastHost(t)) => t.set(key, v)?,
+        (P::Title, W::Tab { title, .. } | W::TableColumn { title, .. }) => *title = as_str(v)?,
+        (P::Resizable, W::TableColumn { resizable, .. } | W::SplitView { resizable, .. }) => *resizable = as_bool(v)?,
+        (P::CellAlign, W::TableColumn { align, .. }) => *align = as_enum(v, kinds::CELL_ALIGN)?,
+        (P::Sort, W::TableColumn { sort, .. }) => *sort = as_enum(v, kinds::SORT)?,
+        (P::SelectedIndex, W::TabView { selected }) => {
+            *selected = as_i64(v)?;
+            // another page is laid out
+            d.insert(Dirty::LAYOUT);
+        }
+        (P::Closable, W::Tab { closable, .. }) => *closable = as_bool(v)?,
+        (P::Orientation, W::SplitView { vertical, .. }) => {
+            *vertical = as_enum(v, kinds::ORIENTATION)? == "vertical";
+            d.insert(Dirty::LAYOUT);
+        }
+        (P::DividerPosition, W::SplitView { position, .. }) => {
+            *position = as_len(v)?;
+            d.insert(Dirty::LAYOUT);
+        }
+        (P::MinSize, W::SplitView { min_size, .. }) => {
+            *min_size = as_f64(v)?.max(0.0);
+            d.insert(Dirty::LAYOUT);
+        }
+        // WG4b: the pickers' fields (`kinds/pickers.rs`)
+        (key, W::Picker(p)) => {
+            if p.set(key, v)? {
+                d.insert(Dirty::MEASURE);
+            }
+        }
         (key, w) => return Err(format!("{key:?} is not a prop of {w:?}")),
     }
     if def.layout {
@@ -164,6 +290,9 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
 pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
     if let P::Ext(i) = def.key {
         return crate::provider::get_prop(n, i as usize); // RA1: a provider kind's field
+    }
+    if let Some(v) = crate::elements::get_prop(n.w, def) {
+        return Ok(v); // WG2b: its kinds' own props
     }
     let c = &n.c;
     let s = |x: &str| Value::Str(x.to_string());
@@ -197,17 +326,22 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Padding, _) => Value::F64(c.padding),
         (P::AlignItems, _) => s(c.align_items),
         (P::JustifyContent, _) => s(c.justify_content),
+        (P::Invalid, _) => Value::Bool(c.invalid),
+        (P::DragType | P::DragData | P::DropTypes, _) => s(crate::kinds::dnd::get(c, def.key)), // WG4b
+        // WG2a
+        (key, W::Menu(m)) => crate::menus::get_prop(m, key)?,
+        (key, W::Overlay(o)) => crate::overlays::get_prop(o, key)?,
         (P::Title, W::Window { title, .. }) => s(title),
         (P::DefaultWidth, W::Window { default_w, .. }) => Value::F64(*default_w),
         (P::DefaultHeight, W::Window { default_h, .. }) => Value::F64(*default_h),
         (P::Text, _) => s(n.text()),
         (P::WrapMode, W::Label { wrap, .. }) => s(wrap),
         (P::Selectable, W::Label { selectable, .. }) => Value::Bool(*selectable),
-        (P::Selected, W::Button { selected, .. }) => Value::Bool(*selected),
-        (P::Frame, W::Button { frame, .. }) => Value::Bool(*frame),
+        (P::Selected, W::Button { selected, .. } | W::Icon { selected, .. }) => Value::Bool(*selected),
+        (P::Frame, W::Button { frame, .. } | W::ToggleButton { frame, .. } | W::Icon { frame, .. }) => Value::Bool(*frame),
         (P::Small, W::Button { small, .. }) => Value::Bool(*small),
-        (P::Checked, W::Checkbox { checked, .. }) => Value::Bool(*checked),
-        (P::HintText, W::TextEdit { hint, .. }) => s(hint),
+        (P::Checked, W::Checkbox { checked, .. } | W::ToggleButton { checked, .. }) => Value::Bool(*checked),
+        (P::HintText, W::TextEdit { hint, .. } | W::ComboBox { hint, .. }) => s(hint),
         (P::Multiline, W::TextEdit { multiline, .. }) => Value::Bool(*multiline),
         (P::Password, W::TextEdit { password, .. }) => Value::Bool(*password),
         (P::CharLimit, W::TextEdit { char_limit, .. }) => Value::I64(*char_limit),
@@ -219,6 +353,35 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::ListSelected | P::ListSelection | P::ListLayout | P::RowHeight, W::VirtualList(l)) => {
             crate::kinds::virtuallist::get(l, def.key).ok_or_else(|| format!("{:?} is not a prop of <virtual-list>", def.key))?
         }
+        // ---- WG1 ----
+        (P::FontWeight, W::Label { weight, .. } | W::Button { weight, .. } | W::ToggleButton { weight, .. } | W::Icon { weight, .. }) => Value::I64(*weight),
+        (P::Radio, W::ToggleButton { radio, .. }) => Value::Bool(*radio),
+        (P::Options, W::ComboBox { options, .. }) => Value::List(options.iter().map(|o| s(o)).collect()),
+        (P::SelectedIndex, W::ComboBox { selected, .. }) => Value::I64(*selected),
+        (P::Orientation, W::Separator { vertical }) => s(if *vertical { "vertical" } else { "horizontal" }),
+        (P::Name, W::Icon { name, .. }) => s(name),
+        (P::Glyph, W::Icon { glyph, .. }) => s(glyph),
+        (P::Family, W::Icon { family, .. }) => s(family),
+        (P::Size, W::Icon { size, .. }) => len_value(*size),
+        (P::GridTemplateColumns, W::Grid { columns, .. }) => s(columns),
+        (P::JustifyItems, W::Grid { justify_items, .. }) => s(justify_items),
+        (P::Open, W::CollapsingHeader { open, .. }) => Value::Bool(*open),
+        (P::ScrollDirection, W::ScrollArea { direction, .. }) => s(direction),
+        (P::ScrollX, W::ScrollArea { x, .. }) => Value::F64(*x),
+        (P::ScrollY, W::ScrollArea { y, .. }) => Value::F64(*y),
+        // ---- WG4a ----
+        (key, W::Table(t)) => t.get(key).ok_or_else(|| format!("{key:?} is not a prop of <table>"))?,
+        (key, W::ToastHost(t)) => t.get(key).ok_or_else(|| format!("{key:?} is not a prop of <toast-host>"))?,
+        (P::Title, W::Tab { title, .. } | W::TableColumn { title, .. }) => s(title),
+        (P::Resizable, W::TableColumn { resizable, .. } | W::SplitView { resizable, .. }) => Value::Bool(*resizable),
+        (P::CellAlign, W::TableColumn { align, .. }) => s(align),
+        (P::Sort, W::TableColumn { sort, .. }) => s(sort),
+        (P::SelectedIndex, W::TabView { selected }) => Value::I64(*selected),
+        (P::Closable, W::Tab { closable, .. }) => Value::Bool(*closable),
+        (P::Orientation, W::SplitView { vertical, .. }) => s(if *vertical { "vertical" } else { "horizontal" }),
+        (P::DividerPosition, W::SplitView { position, .. }) => len_value(*position),
+        (P::MinSize, W::SplitView { min_size, .. }) => Value::F64(*min_size),
+        (key, W::Picker(p)) => p.get(key).ok_or_else(|| format!("{key:?} is not a prop of <{}>", n.tag()))?, // WG4b
         (key, _) => return Err(format!("{key:?} is not a prop of <{}>", n.tag())),
     })
 }
@@ -240,6 +403,7 @@ pub fn tag_of(ty: Ty) -> u16 {
         Ty::F64 => svelters_abi::SVL_F64,
         Ty::I64 => svelters_abi::SVL_I64,
         Ty::Str | Ty::Enum(_) => svelters_abi::SVL_STR,
+        Ty::StrList => svelters_abi::SVL_LIST,
         // RA1: described per prop by its Rust type (`KindRegistry::provider_member_desc`)
         Ty::Provider => svelters_abi::SVL_NULL,
     }
