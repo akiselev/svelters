@@ -38,9 +38,6 @@ pub(crate) struct Counters {
     /// SG4: `StateProvider::update` calls, and custom layouts run (`Caps::CUSTOM_LAYOUT`).
     pub provider_updates: u64,
     pub custom_layouts: u64,
-    /// RA3: `WidgetCx::cached_shapes` calls served from the cache, and repainted.
-    pub shape_cache_hits: u64,
-    pub shape_cache_misses: u64,
 }
 
 /// What the scene holds and what it did (unstable fields, §16).
@@ -89,9 +86,6 @@ pub struct SceneStats {
     pub provider_panics: u64,
     pub provider_updates: u64,
     pub custom_layouts: u64,
-    /// RA3: see `Counters`.
-    pub shape_cache_hits: u64,
-    pub shape_cache_misses: u64,
 }
 
 /// What [`Scene::dump`] prints besides tag, id and children.
@@ -138,8 +132,6 @@ impl Scene {
             provider_panics: c.provider_panics,
             provider_updates: c.provider_updates,
             custom_layouts: c.custom_layouts,
-            shape_cache_hits: c.shape_cache_hits,
-            shape_cache_misses: c.shape_cache_misses,
             leaf_layouts: c.leaf_layouts,
             nodes_placed: c.nodes_placed,
             nodes_walked: c.nodes_walked,

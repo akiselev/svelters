@@ -715,45 +715,7 @@ impl WidgetCx<'_> {
     pub fn request_measure(&mut self) {
         self.remeasure = true;
     }
-
-    /// RA3, the opt-in paint cache (ARCH-EMBED §8.2, §13 D3). `paint` pushes the node's shapes in
-    /// coordinates relative to the rect's top left, for a rect of the given size; it runs only when
-    /// `version`, the rect's size or the scale changed since the cached paint. Otherwise the cached
-    /// shapes are painted again, moved to where the rect is now. `version` covers everything the
-    /// shapes depend on (the props drawn, the theme): bump it when any of them changes. Interaction
-    /// stays in `ui` (egui fuses paint and input; this caches only the painting).
-    pub fn cached_shapes(&mut self, ui: &egui::Ui, version: u64, paint: impl FnOnce(&mut Vec<egui::Shape>, egui::Vec2)) {
-        let rect = self.rect;
-        let ppp = ui.ctx().pixels_per_point();
-        let key = (version, rect.size(), ppp);
-        let cache = self.s.ext.cache_mut(&SHAPE_CACHE, self.node, ShapeCache::default);
-        let hit = cache.key == Some(key);
-        if !hit {
-            cache.shapes.clear();
-            paint(&mut cache.shapes, rect.size());
-            cache.key = Some(key);
-        }
-        let offset = rect.min.to_vec2();
-        ui.painter().extend(cache.shapes.iter().cloned().map(|mut s| {
-            s.translate(offset);
-            s
-        }));
-        if hit {
-            self.s.counters.shape_cache_hits += 1;
-        } else {
-            self.s.counters.shape_cache_misses += 1;
-        }
-    }
 }
-
-/// RA3: a node's cached shapes (`WidgetCx::cached_shapes`), relative to its rect's top left.
-#[derive(Default)]
-struct ShapeCache {
-    key: Option<(u64, egui::Vec2, f32)>,
-    shapes: Vec<egui::Shape>,
-}
-
-static SHAPE_CACHE: ExtKey<ShapeCache> = ExtKey::new("svelters.shape-cache");
 
 /// The prop a `cx.set` wrote (by the field's offset in the struct at `base`), recorded once in
 /// `changed`; an error for a field that is not a `#[prop]`.

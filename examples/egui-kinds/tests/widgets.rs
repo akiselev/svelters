@@ -97,7 +97,7 @@ fn svelte_drives_fn_form_wrapped_and_container_kinds() {
     assert!(errors.is_empty(), "{errors:?}");
 }
 
-/// The paint cache (`cx.cached_shapes`): frames that repaint an unchanged `<spark-line>` reuse its
+/// SG6's paint cache (`cx.cached_shapes`) on a provider kind: frames that repaint an unchanged `<spark-line>` reuse its
 /// shapes; a new `values` (a new version) rebuilds them once.
 #[test]
 fn paint_cache_hit_rate() {
@@ -107,12 +107,12 @@ fn paint_cache_hit_rate() {
     app.run();
     let stats = |app: &TestApp| app.backend.scene().read(|s| s.stats());
     let s0 = stats(&app);
-    assert!(s0.shape_cache_misses >= 1, "the first paint builds the shapes");
+    assert!(s0.paint_misses >= 1, "the first paint builds the shapes");
     for _ in 0..20 {
         app.harness.step();
     }
     let s1 = stats(&app);
-    let (hits, misses) = (s1.shape_cache_hits - s0.shape_cache_hits, s1.shape_cache_misses - s0.shape_cache_misses);
+    let (hits, misses) = (s1.paint_hits - s0.paint_hits, s1.paint_misses - s0.paint_misses);
     assert_eq!(misses, 0, "nothing changed: no rebuild");
     assert!(hits >= 20, "every repaint reused the shapes: {hits}");
     press(&mut app, "Sample");
@@ -120,7 +120,7 @@ fn paint_cache_hit_rate() {
         app.harness.step();
     }
     let s2 = stats(&app);
-    assert_eq!(s2.shape_cache_misses - s1.shape_cache_misses, 1, "a new version rebuilds once");
-    let rate = (s2.shape_cache_hits) as f64 / (s2.shape_cache_hits + s2.shape_cache_misses) as f64;
+    assert_eq!(s2.paint_misses - s1.paint_misses, 1, "a new version rebuilds once");
+    let rate = (s2.paint_hits) as f64 / (s2.paint_hits + s2.paint_misses) as f64;
     assert!(rate > 0.9, "hit rate {rate}");
 }

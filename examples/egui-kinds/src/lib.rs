@@ -356,7 +356,7 @@ impl Widget for CollapsingSection {
     }
 }
 
-/// RA3, the paint cache: `<spark-line values={[…]} />` builds its shapes through
+/// RA3 (on SG6's paint cache): `<spark-line values={[…]} />` builds its shapes through
 /// `cx.cached_shapes`, so they are rebuilt only when `values` (its version) or its size change.
 #[svelters::widget(namespace = "cad", tag = "spark-line")]
 pub struct Sparkline {
@@ -382,7 +382,8 @@ impl Widget for Sparkline {
         }
         let stroke = egui::Stroke::new(1.5, ui.visuals().text_color());
         let values = &self.values;
-        cx.cached_shapes(ui, self.version, |shapes, size| {
+        cx.cached_shapes(ui.painter(), self.version, |_painter, rect, shapes| {
+            let size = rect.size();
             let (lo, hi) = values.iter().fold((f64::INFINITY, f64::NEG_INFINITY), |(a, b), &v| (a.min(v), b.max(v)));
             let span = if hi > lo { hi - lo } else { 1.0 };
             let n = values.len().max(2) - 1;
