@@ -325,4 +325,16 @@ two-roots), the full workspace suite and conformance. CI runs them.
     windows-winui 39839133044 (success), linux-gtk 39839133058 (failure).
   - The linux-gtk failure was `svelters-automation::counter::acts_reach_js_and_reply_after_settle`: the snapshot
     printed `[focus-visible]`. This is fixed in OW0b.
-- OW0b: see the coordinator report (sha and run ids).
+- OW0b first push, 6f013c72.
+  - CI runs: js 39845196088, macos-appkit 39845196221, linux-qt 39845196212 and windows-winui 39845196219
+    succeeded; linux-gtk 39845196138 failed on two tests.
+  - The TK1 egui snapshots `counter-three` and `transition-back` changed, because the button now has its own
+    look. They were regenerated with `UPDATE_SNAPSHOTS=1 … -p svelters-testkit --features snapshots` on lavapipe,
+    as §6.2 step 4 says.
+  - `viewports::dock_w2_without_the_prepass_plugin_input_costs_one_root_frame` saw 4 root frames, not 1–2. The
+    own button takes focus on the press under the node's id, so the embed now sees the slot gain focus and runs
+    one more logic frame for `root().focused`. The stock button focused an auto id that the embed never matched.
+    The test now allows the handler frame plus the focus frame.
+  - The own widgets' interaction bits are no longer journaled when no sheet runs the cascade, and they are
+    journaled with the walk's `Style` origin when one does.
+- OW0b second push: see the coordinator report (sha and run ids).

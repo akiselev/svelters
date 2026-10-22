@@ -56,7 +56,8 @@ impl EguiBackend {
 
     /// OW2: window `w`'s content in `ui`'s whole rect on its own background.
     fn window_chrome_ui(&self, ui: &mut egui::Ui, w: Handle, out: &mut Vec<Out>) {
-        let rect = ui.max_rect();
+        // the space left in `ui` (what egui's `CentralPanel` took): a host may draw above it
+        let rect = ui.available_rect_before_wrap();
         {
             let scene = self.0.scene.borrow();
             if let Ok(id) = scene.live(w) {
@@ -70,6 +71,8 @@ impl EguiBackend {
         }
         let mut child = ui.new_child(egui::UiBuilder::new().max_rect(rect).id_salt(("svl-window", w)).layout(egui::Layout::top_down(egui::Align::Min)));
         self.window_ui(&mut child, w, out);
+        // the window takes that space in `ui` (as the panel did), so a frame around `ui` fits it
+        ui.advance_cursor_after_rect(rect);
     }
 
     fn window_props(&self, w: Handle) -> (String, egui::Vec2) {

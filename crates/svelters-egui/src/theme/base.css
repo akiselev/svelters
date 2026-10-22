@@ -14,9 +14,9 @@
 @layer sv.tokens, sv.base, sv.affordance;
 
 @layer sv.base {
-  /* OW2: chrome surfaces, and R15's edge shadows on a scroll area scrolled away from its top or
+  /* OW2: the panel's chrome surface (the window's is its UA, `windows::WINDOW_UA`), and R15's edge shadows on a scroll area scrolled away from its top or
      left (`:state(sv.overflow-*)`, set by its Scrollable unit; VS Code's `scrollbar.shadow`) */
-  window, panel {
+  panel {
     background-color: var(--sv-bg);
   }
   scroll-area:state(sv.overflow-top) {
