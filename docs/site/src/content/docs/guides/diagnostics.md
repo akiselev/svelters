@@ -155,6 +155,21 @@ The parser, scope analysis and rune transform are ported from Svelte 5.57.2 and 
 | [`svelte::const_tag_invalid_expression`](https://svelte.dev/e/const_tag_invalid_expression) | error | {@const ...} must consist of a single variable declaration |  |
 | [`svelte::const_tag_invalid_placement`](https://svelte.dev/e/const_tag_invalid_placement) | error | `{@const}` must be the immediate child of `{#snippet}`, `{#if}`, `{:else if}`, `{:else}`, `{#each}`, `{:then}`, `{:catch}`, `<svelte:fragment>`, `<svelte:boundary>` or `<Component>` |  |
 | [`svelte::constant_assignment`](https://svelte.dev/e/constant_assignment) | error | Cannot assign to %thing% |  |
+| [`svelte::css_empty_declaration`](https://svelte.dev/e/css_empty_declaration) | error | Declaration cannot be empty |  |
+| [`svelte::css_expected_identifier`](https://svelte.dev/e/css_expected_identifier) | error | Expected a valid CSS identifier |  |
+| [`svelte::css_global_block_invalid_combinator`](https://svelte.dev/e/css_global_block_invalid_combinator) | error | A `:global` selector cannot follow a `%name%` combinator |  |
+| [`svelte::css_global_block_invalid_declaration`](https://svelte.dev/e/css_global_block_invalid_declaration) | error | A top-level `:global {...}` block can only contain rules, not declarations |  |
+| [`svelte::css_global_block_invalid_list`](https://svelte.dev/e/css_global_block_invalid_list) | error | A `:global` selector cannot be part of a selector list with entries that don't contain `:global` |  |
+| [`svelte::css_global_block_invalid_modifier`](https://svelte.dev/e/css_global_block_invalid_modifier) | error | A `:global` selector cannot modify an existing selector |  |
+| [`svelte::css_global_block_invalid_modifier_start`](https://svelte.dev/e/css_global_block_invalid_modifier_start) | error | A `:global` selector can only be modified if it is a descendant of other selectors |  |
+| [`svelte::css_global_block_invalid_placement`](https://svelte.dev/e/css_global_block_invalid_placement) | error | A `:global` selector cannot be inside a pseudoclass |  |
+| [`svelte::css_global_invalid_placement`](https://svelte.dev/e/css_global_invalid_placement) | error | `:global(...)` can be at the start or end of a selector sequence, but not in the middle |  |
+| [`svelte::css_global_invalid_selector`](https://svelte.dev/e/css_global_invalid_selector) | error | `:global(...)` must contain exactly one selector |  |
+| [`svelte::css_global_invalid_selector_list`](https://svelte.dev/e/css_global_invalid_selector_list) | error | `:global(...)` must not contain type or universal selectors when used in a compound selector |  |
+| [`svelte::css_nesting_selector_invalid_placement`](https://svelte.dev/e/css_nesting_selector_invalid_placement) | error | Nesting selectors can only be used inside a rule or as the first selector inside a lone `:global(...)` |  |
+| [`svelte::css_selector_invalid`](https://svelte.dev/e/css_selector_invalid) | error | Invalid selector |  |
+| [`svelte::css_type_selector_invalid_placement`](https://svelte.dev/e/css_type_selector_invalid_placement) | error | `:global(...)` must not be followed by a type selector |  |
+| [`svelte::css_unused_selector`](https://svelte.dev/e/css_unused_selector) | warning | Unused CSS selector "%name%" |  |
 | [`svelte::debug_tag_invalid_arguments`](https://svelte.dev/e/debug_tag_invalid_arguments) | error | {@debug ...} arguments must be identifiers, not arbitrary expressions |  |
 | [`svelte::declaration_duplicate`](https://svelte.dev/e/declaration_duplicate) | error | `%name%` has already been declared |  |
 | [`svelte::declaration_duplicate_module_import`](https://svelte.dev/e/declaration_duplicate_module_import) | error | Cannot declare a variable with the same name as an import from `<script module>` |  |

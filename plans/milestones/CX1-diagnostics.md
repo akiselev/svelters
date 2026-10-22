@@ -81,10 +81,14 @@ components in the repo fits the 20 ms per keystroke budget (cadatomic AP6) about
 ## 3. Codes
 
 `crates/svelters-compiler/src/codes.rs` registers every code: short `code`, namespaced `id`,
-origin, usual severity, a one-line summary and the fix-it offered. 156 codes: 59 of svelters'
+origin, usual severity, a one-line summary and the fix-it offered. 171 codes: 59 of svelters'
 own (`svelters::<area>::<name>`, areas element, property, method, event, bind, reactivity, slot,
-child_attr, style, list, transition, feature) and 97 ported from Svelte (`svelte::<code>`, Svelte's
-message template, link to `https://svelte.dev/e/<code>`).
+child_attr, style, list, transition, feature) and 112 ported from Svelte (`svelte::<code>`, Svelte's
+message template, link to `https://svelte.dev/e/<code>`). Fifteen of the Svelte ones are Q3's
+`css_*` codes (`svelte/css`, merged while CX1 ran), registered after the merge. They reach `compile`
+and `check` only as parse errors in HTML syntax (the DOM conformance spec); a native `<style>` is
+parsed by `crate::style` (`svelters::style::*`), and Q3's scoping pass reports them to callers of
+`compile_component_css`.
 
 - Stability: an id is never renamed or reused. A code that stops being reported keeps its row
   (`style_unknown_declaration` is registered but not reported yet).
@@ -184,10 +188,12 @@ code. Later "did you mean" alternatives may name an element that does not fit th
 
 ## 9. Not run locally
 
-- The full compiler test suite and the workspace nextest (CI). Locally, after the last code edit:
+- The full compiler test suite and the workspace nextest (CI). Locally, after the last code edit
+  (the `css_*` rows, on the merge with Q3): `cargo check -p svelters-compiler --all-targets` and
   `cargo nextest run -p svelters-compiler --test cx1_check --test cx1_codes --test fw1_forwarding`
-  (all pass), and before the last two small edits (the capture fix-it, a test threshold) also
-  `--lib --test r2_observe --test runes --test fx1_style` (all pass); `cx1_check`'s corpus test
+  (all pass). Earlier in the lane, before the capture fix-it change and the merges, also
+  `--lib --test r2_observe --test runes --test fx1_style` (all pass). Q3's `css_scope` test was not
+  run (no change to its code). `cx1_check`'s corpus test
   compiles every `.svelte` file under `tests/{fw1,r2,runes}`, `fixtures/` and `examples/` both ways.
 - Conformance (CI): diagnostics' codes and messages are unchanged, so no score change is expected.
 - The docs site build and link check (CI): the new page is Markdown with no internal
