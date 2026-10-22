@@ -108,9 +108,16 @@ That makes 65 kinds, against a brief of "~30+".
   WinUI.
 - **Selftest:** `counter-win --fixture gallery-winui --selftest` runs as a new CI step. It:
   - clicks every sidebar button through UI Automation;
-  - checks that each page created the kinds its header lists;
+  - polls every 200 ms, for at most 8 s, until the page has created the kinds its header lists, then moves on;
   - checks that there are no JS errors;
+  - checks that the pages match the `gallery_page!` lines in `examples/counter-win/src/main.rs`;
   - writes `gallery-report.json`.
+- **Why it polls:** a first version snapshotted each page on a fixed 900 ms schedule. It failed once on CI (run
+  39694643128) because a slow page had not rendered yet.
+- **`fixtures/gallery-common/check-pages.mjs`:** WinUI entries added, with test file
+  `examples/counter-win/src/main.rs` and click signal `click`. `pnpm test` now:
+  - checks each page's kinds header and its `gallery_page!` line;
+  - opens every page in the TestHost.
 - **Result:** 64 of the 65 kinds are on a page. The exception is `window`, which is the gallery's own toplevel.
 
 ## Counts
@@ -155,7 +162,7 @@ All were re-run after the last code edit.
   - The manual fail was `RangeBase.Value` on progress-bar; the sample was fixed.
   - Importing the run parked 40 inferred facts.
 - **Second run:** 1 fail, `observe_radio_buttons_selected_index`, which was parked.
-- **Third run:** green.
+- **Third run (39692006835):** green.
   - `generated`: 1,902/1,902.
   - `types_core` and `types_verify`: 45 + 8.
   - counter-win selftest and test, and the gallery selftest: passing.
@@ -170,12 +177,15 @@ All were re-run after the last code edit.
 ## Completion record
 
 - **Branch:** `ci/wp-winui`.
-- **CI:** all five workflows green on `e6f946d7`.
-  - linux-gtk 39692006790
-  - linux-qt 39692006772
-  - macos-appkit 39692006852
-  - js 39692006763
-  - windows-winui 39692006835
+- **Merged in:** origin/master through `d110cb3d` (WP-A).
+- **CI:** all five workflows green on the merged head `6805d193`.
+  - linux-gtk 39697482573
+  - linux-qt 39697482684
+  - macos-appkit 39697482457
+  - js 39697482446
+  - windows-winui 39697482501: `generated` 1,955/1,955 results passing; gallery selftest ok on all 9 pages.
+- **Ledger:** `ledger.py check` passes.
+  - winui: 155 manual + 2,085 inferred facts verified, 0 pending, 41 parked.
 
 ## Open items
 
