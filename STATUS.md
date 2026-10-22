@@ -78,7 +78,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | DX1 settings binding, persisted UI state, standard paths, console to tracing, JS crash context | QUEUED | | ThinkPad, next free lane; binds to a host-supplied store only (cadatomic U5 layers, UI-layout file); no svelters-owned persistence |
 | DX2 multi-format clipboard, open/reveal from JS | QUEUED | | independent |
 | IN1 Intl via ICU4X, locale-aware numbers | QUEUED | | MacBook, next free lane; locale and catalog come from the host (catalog.t); svelters formats numbers/dates |
-| CX1 in-process diagnostics (SV27) | IN PROGRESS | | branch `ci/cx1`; check-only compile, per-file incremental state, stable codes, `--check --json` |
+| CX1 in-process diagnostics (SV27) | DONE | 2026-10-22 | merged (this commit); `check()` API, incremental FileState, 172 registered codes, fix-its, `--check/--explain/--list-codes` |
 | Q1 module loader (`svelters-modules`) | DONE | 2026-10-22 | merged 6dbee841 |
 | CS0 Rust CSS engine (`svelters-style`) | DONE | 2026-10-22 | merged 1b6a754f |
 | SG4 provider passes (R16 provider half, R21, R23) | DONE | 2026-10-22 | merged (this commit); provider layout/prepare, shadow children, StateProvider (R16/R23), ScenePass + R21 `show_viewport_passes`, overlay roots, `position: absolute` |
