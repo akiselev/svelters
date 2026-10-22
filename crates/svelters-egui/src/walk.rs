@@ -189,7 +189,7 @@ fn paint_own(
         return None;
     }
     let mut b = UiBuilder::new()
-        .max_rect(r)
+        .max_rect(crate::style::content_rect(arena, i, r)) // CS5f: less a leaf's CSS padding
         // Never the widget's own id: a scope sharing it eats the widget's clicks (EGUI.md §1.4).
         .scope_id(arena.core[i].egui_id.with("scope"))
         .layout(Layout::left_to_right(Align::Center));

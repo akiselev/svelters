@@ -211,7 +211,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     let h = arena.slots.id_at(i).expect("live leaf").to_raw();
     let kind = arena.core[i].kind as usize;
     let sig = |name: &str| kinds::signal_id(kind, name);
-    let size = arena.core[i].rect.size();
+    let size = ui.max_rect().size(); // its rect less its CSS padding (CS5f, `style::content_rect`)
     let node_id = arena.core[i].egui_id;
     let click_sense = arena.listens(i, sig("clicked"));
     let mut text_changed = None;

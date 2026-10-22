@@ -382,6 +382,12 @@ impl Metrics {
     }
 }
 
+/// CS5f: the metrics leaf `i` measures with when its computed style changes its font or button
+/// padding (`style::leaf_style`, which painting uses too).
+fn styled_metrics(s: &Scene, m: &Metrics, i: usize) -> Option<Metrics> {
+    crate::style::leaf_style(s, i, &m.ctx, &m.style).map(|st| Metrics { ctx: m.ctx.clone(), style: std::sync::Arc::new(st) })
+}
+
 // ---- the taffy adapter over the scene's columns ----
 
 #[inline]
@@ -467,7 +473,9 @@ impl LayoutPartialTree for Tree<'_> {
                 _ => {}
             }
             tree.leaf_layouts += 1;
-            let m = tree.m;
+            // CS5f: the leaf's computed font and padding
+            let styled = styled_metrics(tree.s, tree.m, i);
+            let m = styled.as_ref().unwrap_or(tree.m);
             let s = &mut *tree.s;
             let w = match &s.payload[i] {
                 Payload::Builtin(w) => w,
@@ -844,7 +852,7 @@ pub(crate) fn remeasure(s: &mut Scene, m: &Metrics, r: RootIx) -> bool {
         s.core[i].flags.remove(NodeFlags::IN_REMEASURE);
         s.core[i].dirty.remove(Dirty::MEASURE);
         let old = s.layout[i].intrinsic.take();
-        let new = m.intrinsic(s.w(i));
+        let new = styled_metrics(s, m, i).as_ref().unwrap_or(m).intrinsic(s.w(i)); // CS5f
         s.counters.leaves_measured += 1;
         s.layout[i].intrinsic = Some(new);
         // A wrapping label that does not fit its last width may wrap differently with new text.
