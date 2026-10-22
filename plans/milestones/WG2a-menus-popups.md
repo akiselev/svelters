@@ -2,9 +2,10 @@
 
 Design: `plans/research/EGUI.md` §5 (the element catalog the user approved as the built-in widget set on
 2026-10-22, fast-tracked; §8), the X4 vocabulary (`plans/milestones/X4-menus.md`, `fixtures/menus`) and N1
-naming. Lane WG2a (WIDGETS), branch `ci/wg2a`, from master `950678d4`; merged WG1's WIP (`origin/ci/wg1`
-50e680f7: `Common::invalid`, `leaf::container`/`walk::paint_children`, `a11y::name` fallbacks, `Ty::StrList`)
-and master up to `edefc916` (EV2b, the cargo-slot and artifact rules).
+naming. Lane WG2a (WIDGETS), branch `ci/wg2a`, from master `950678d4`; merged WG1 (`origin/ci/wg1` up to
+`66fcd9df`: `Common::invalid`, `leaf::container`/`walk::paint_children`, `a11y::name` fallbacks, `Ty::StrList`)
+and master up to `0318f453` (EV2b, CS0, Q3, the cargo-slot and artifact rules). Its diff against master
+therefore also carries WG1 until WG1 merges.
 
 ## Elements
 
@@ -102,4 +103,16 @@ inside a closed overlay is 0×0).
 - `crates/svelters-compiler/tests/wg2a_egui_menus.rs`: the page compiles, attaching and nesting rules, unknown
   props.
 - `metadata/semantics/egui.json` and `packages/native-runtime/types/egui.d.ts` regenerated
-  (`SVELTERS_UPDATE=1 cargo nextest run -p svelters-egui --test spec`).
+  (`SVELTERS_UPDATE=1 cargo nextest run -p svelters-egui --test spec`); `packages/style/src/props.generated.js`
+  and `crates/svelters-style/src/tables.generated.rs` regenerated (`tools/metadata/style/gen_props.py`: the
+  overlays take the box layout setters, `menu-bar`/`menu-button` the widget ones).
+- WG1's `tests/widgets.rs` `every_kind_has_a_tooltip_and_inputs_are_named` skips the menu entries (not widgets)
+  and the overlays (out of flow) and sets a kind's own text-content prop; `tests/menus.rs` covers them.
+
+## Verification
+
+Local, after the last code change: `cargo check -p svelters-egui --all-targets` (clean);
+nextest `-p svelters-egui --test menus --test menus_app --test spec --test widgets` (22/22) and
+`-p svelters-compiler --test wg2a_egui_menus --test g1_egui_spec` (6/6, before the WG1 merge); the gallery's
+TestHost run (`expected.oplog` written with it). Not run locally: the full workspace, conformance, the other
+backends, the JS suites (CI).
