@@ -134,8 +134,10 @@ fn borders_outline_and_radii() {
     assert_eq!(v.outline(), Outline { width: 2.0, style: "solid", color: Some(rgb(0, 0, 255)), offset: -1.0 });
     // the uniform props the CS5g paint reads are set by the shorthand too
     assert_eq!(v.px("border-width"), Some(1.0));
-    // a later shorthand overrides an earlier longhand
+    // a later shorthand overrides an earlier longhand, and still sets the uniform property
     let cancel = style_of(&s, &tree, "cancel");
+    assert_eq!(StyleView::new(&cancel).px("border-width"), Some(1.0));
+    assert_eq!(StyleView::new(&cancel).color("border-color"), Some(rgb(0, 128, 0)));
     let v = StyleView::new(&cancel);
     assert_eq!(v.border_side(Side::Top).width, 1.0);
     assert!(v.border_is_uniform());

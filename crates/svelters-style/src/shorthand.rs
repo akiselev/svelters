@@ -25,10 +25,11 @@ const BORDER_RADIUS: [&str; 4] = ["border-top-left-radius", "border-top-right-ra
 pub(crate) fn longhands(name: &str) -> Option<Vec<&'static str>> {
     Some(match name {
         "outline" => vec!["outline-width", "outline-style", "outline-color"],
-        "border-width" => BORDER_WIDTH.to_vec(),
+        // the uniform property itself too (egui's table has it; `expand` sets it)
+        "border-width" => [&BORDER_WIDTH[..], &["border-width"]].concat(),
         "border-style" => BORDER_STYLE.to_vec(),
-        "border-color" => BORDER_COLOR.to_vec(),
-        "border-radius" => BORDER_RADIUS.to_vec(),
+        "border-color" => [&BORDER_COLOR[..], &["border-color"]].concat(),
+        "border-radius" => [&BORDER_RADIUS[..], &["border-radius"]].concat(),
         "border" => {
             let mut v = Vec::with_capacity(14);
             for i in 0..4 {
