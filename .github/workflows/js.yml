@@ -17,6 +17,53 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  # Svelte's own runtime tests (tests/runtime-runes/samples @ svelte@5.57.2) through our compiler and
+  # runtime on the jsdom host. --check fails when a sample in baseline.json no longer passes or an
+  # expected.json entry goes stale. `pnpm test` in the js job skips it (no samples there).
+  conformance:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rust toolchain (rust-toolchain.toml)
+        run: rustup toolchain install --profile minimal && rustc --version
+      - uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: js
+
+      - uses: ./.github/actions/setup-pnpm
+
+      - name: Build svelters-compile
+        run: cargo build -p svelters-compiler --bin svelters-compile
+
+      - name: Build packages (pnpm -r build, docs site excluded)
+        run: pnpm build
+
+      - name: Fetch Svelte samples (tag svelte@5.57.2)
+        run: |
+          up=$RUNNER_TEMP/up
+          mkdir -p "$up/svelte"
+          curl -sSfL https://codeload.github.com/sveltejs/svelte/tar.gz/refs/tags/svelte@5.57.2 -o "$up/svelte.tgz"
+          tar -xzf "$up/svelte.tgz" -C "$up/svelte" --strip-components=1
+          echo "UPSTREAM=$up" >> "$GITHUB_ENV"
+
+      - name: Conformance --check
+        working-directory: experiments/native-compiler/conformance
+        env:
+          TIMEOUT_MS: '60000'
+          JOBS: '4'
+        run: node run.mjs --check && tail -n 40 REPORT.md
+
+      - name: Upload results
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: conformance-results
+          path: |
+            experiments/native-compiler/conformance/results.json
+            experiments/native-compiler/conformance/REPORT.md
+
   js:
     runs-on: ubuntu-24.04
     timeout-minutes: 40
