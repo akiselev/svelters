@@ -1640,7 +1640,10 @@ fn events(input: DeriveInput) -> syn::Result<Ts> {
 /// - `#[part] mark: Part` (a paint part) and `#[part(node)] thumb: Part` (a node part): the
 ///   `::part(name)` names of the kind, in kebab-case.
 /// - `replaces = "<tag>"` (svelters-egui only): the struct implements that built-in kind; the tag
-///   is the built-in's, and props and events are routed to the kind's row by name.
+///   is the built-in's, and props and events are routed to the kind's row by name. Props and
+///   events the row lacks become extras of the kind (`#[prop(enumeration = "a|b")]` for an enum).
+/// - `style_as = "<tag>"`: the kind is also matched by the built-in's type selector (the theme
+///   styles `cad-slider` as a `slider`; parts of the same names get the built-in's part rules).
 ///
 /// The generated code names `::svelters_egui`, so the crate depends on `svelters-egui` too.
 #[proc_macro_attribute]
@@ -1684,8 +1687,28 @@ pub fn behavior(attr: TokenStream, item: TokenStream) -> TokenStream {
         .into()
 }
 
+/// OW0: the kind-table type of a prop or event payload of an own widget (what an extra prop of a
+/// replaced built-in kind is in the compiler's spec): from the Rust type, or `enumeration`.
+fn row_ty(ty: &Type, enumeration: &Option<Vec<String>>) -> (Ts, bool) {
+    if let Some(values) = enumeration {
+        return (quote! { ::svelters_egui::provider::RowTy::Enum(&[#(#values),*]) }, false);
+    }
+    let (inner, nullable) = match last_segment(ty) {
+        Some(s) if s.ident == "Option" => (first_generic(ty).unwrap_or(ty), true),
+        _ => (ty, false),
+    };
+    let t = match last_segment(inner).map(|s| s.ident.to_string()).as_deref() {
+        Some("bool") => quote! { Bool },
+        Some("i64" | "i32" | "u32" | "u16" | "u8" | "i16" | "i8" | "usize" | "isize" | "u64") => quote! { I64 },
+        Some("f64" | "f32") => quote! { F64 },
+        Some("String" | "str") => quote! { Str },
+        _ => quote! { Other },
+    };
+    (quote! { ::svelters_egui::provider::RowTy::#t }, nullable)
+}
+
 enum WidgetField {
-    Prop { name: String, bind: bool, measure: bool, default: Option<Expr> },
+    Prop { name: String, bind: bool, measure: bool, default: Option<Expr>, enumeration: Option<Vec<String>> },
     Event,
     State,
     /// OW0: a behaviour unit, with the method giving its params.
@@ -1737,6 +1760,7 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
     let mut bname: Option<String> = None;
     let mut caps: Vec<syn::Ident> = Vec::new();
     let mut replaces: Option<String> = None;
+    let mut style_as: Option<String> = None;
     syn::meta::parser(|m| {
         if m.path.is_ident("namespace") {
             namespace = Some(m.value()?.parse::<syn::LitStr>()?.value());
@@ -1753,6 +1777,8 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
             caps_expr(&e, &mut caps)?;
         } else if m.path.is_ident("replaces") {
             replaces = Some(m.value()?.parse::<syn::LitStr>()?.value());
+        } else if m.path.is_ident("style_as") {
+            style_as = Some(m.value()?.parse::<syn::LitStr>()?.value());
         } else {
             return Err(m.error("expected `namespace = \"...\"`, `tag = \"...\"`, `caps = A | B` or `replaces = \"<tag>\"`"));
         }
@@ -1838,9 +1864,13 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                 let mut measure = false;
                 let mut default = None;
                 let mut rename = None;
+                let mut enumeration = None;
                 if matches!(a.meta, Meta::List(_)) {
                     a.parse_nested_meta(|m| {
-                        if m.path.is_ident("bind") && !behavior {
+                        if m.path.is_ident("enumeration") {
+                            let v = m.value()?.parse::<syn::LitStr>()?.value();
+                            enumeration = Some(v.split('|').map(|x| x.trim().to_string()).filter(|x| !x.is_empty()).collect());
+                        } else if m.path.is_ident("bind") && !behavior {
                             bind = true;
                         } else if m.path.is_ident("measure") && !behavior {
                             measure = true;
@@ -1849,13 +1879,13 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                         } else if m.path.is_ident("rename") {
                             rename = Some(m.value()?.parse::<syn::LitStr>()?.value());
                         } else {
-                            return Err(m.error("#[prop] options: bind, measure, default = expr, rename = \"name\""));
+                            return Err(m.error("#[prop] options: bind, measure, default = expr, rename = \"name\", enumeration = \"a|b\""));
                         }
                         Ok(())
                     })?;
                 }
                 let js = rename.unwrap_or_else(|| ident.to_string().trim_start_matches("r#").replace('_', "-"));
-                kind = WidgetField::Prop { name: js, bind, measure, default };
+                kind = WidgetField::Prop { name: js, bind, measure, default, enumeration };
             } else if a.path().is_ident("event") {
                 if last_segment(&f.ty).is_none_or(|s| s.ident != "Event") {
                     return Err(syn::Error::new(f.ty.span(), "an #[event] field has type `Event<T>`"));
@@ -1878,6 +1908,7 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                 kind = WidgetField::Behavior { params };
             } else if a.path().is_ident("part") && !behavior {
                 let mut node = false;
+                let mut pname: Option<String> = None;
                 if matches!(a.meta, Meta::List(_)) {
                     a.parse_nested_meta(|m| {
                         if m.path.is_ident("node") {
@@ -1885,13 +1916,18 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                             Ok(())
                         } else if m.path.is_ident("paint") {
                             Ok(())
+                        } else if m.path.is_ident("name") {
+                            pname = Some(m.value()?.parse::<syn::LitStr>()?.value());
+                            Ok(())
                         } else {
-                            Err(m.error("#[part] options: node, paint"))
+                            Err(m.error("#[part] options: node, paint, name = \"part-name\""))
                         }
                     })?;
                 }
-                let js = ident.to_string().trim_start_matches("r#").replace('_', "-");
+                let js = pname.unwrap_or_else(|| ident.to_string().trim_start_matches("r#").replace('_', "-"));
                 kind = WidgetField::Part { name: js, node };
+                // a paint part is only a name: its field is never read
+                keep.push(syn::parse_quote!(#[allow(dead_code)]));
             } else {
                 keep.push(a);
             }
@@ -1920,8 +1956,9 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
     let mut unit_fields: Vec<(syn::Ident, Type, Ts)> = Vec::new();
     for (ident, ty, fdocs, kind) in &kinds {
         match kind {
-            WidgetField::Prop { name: js, bind, measure, default } => {
+            WidgetField::Prop { name: js, bind, measure, default, enumeration } => {
                 let optional = last_segment(ty).is_some_and(|s| s.ident == "Option");
+                let (rty, nullable) = row_ty(ty, enumeration);
                 let required = default.is_none() && !optional;
                 let init = match default {
                     Some(d) => quote! { ::core::convert::Into::into(#d) },
@@ -1930,7 +1967,7 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                 prop_entries.push(quote! {
                     ::svelters_egui::provider::PropEntry {
                         name: #js, docs: #fdocs, bind: #bind, required: #required, measure: #measure,
-                        offset: ::core::mem::offset_of!(#name, #ident),
+                        offset: ::core::mem::offset_of!(#name, #ident), row_ty: #rty, nullable: #nullable,
                     }
                 });
                 describe.push(quote! { b.ty::<#ty>() });
@@ -1946,7 +1983,14 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
             WidgetField::Event => {
                 let js = ident.to_string().trim_start_matches("r#").replace('_', "-");
                 let payload = first_generic(ty).ok_or_else(|| syn::Error::new(ty.span(), "an #[event] field has type `Event<T>`"))?;
-                event_entries.push(quote! { ::svelters_egui::provider::EventEntry { name: #js, docs: #fdocs } });
+                let arg = match payload {
+                    Type::Tuple(t) if t.elems.is_empty() => quote! { ::core::option::Option::None },
+                    other => {
+                        let (t, _) = row_ty(other, &None);
+                        quote! { ::core::option::Option::Some(#t) }
+                    }
+                };
+                event_entries.push(quote! { ::svelters_egui::provider::EventEntry { name: #js, docs: #fdocs, arg: #arg } });
                 event_describe.push(quote! { b.ty::<#payload>() });
                 let i = event_i;
                 inits.push(quote! { #ident: ::svelters_egui::provider::Event::__new(#i) });
@@ -2004,6 +2048,9 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                             #( ::svelters_egui::interact::Unit::input(#idents, &#pnames, __icx, &mut __f.#idents); )*
                         });
                     }
+                    if let ::core::option::Option::Some(__d) = self.units_next_frame() {
+                        ui.ctx().request_repaint_after(__d);
+                    }
                     __fired
                 }
 
@@ -2025,6 +2072,10 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
         }
     };
     let replaces_tokens = match &replaces {
+        Some(r) => quote! { ::core::option::Option::Some(#r) },
+        None => quote! { ::core::option::Option::None },
+    };
+    let style_as_tokens = match &style_as {
         Some(r) => quote! { ::core::option::Option::Some(#r) },
         None => quote! { ::core::option::Option::None },
     };
@@ -2078,6 +2129,7 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                 new: __svl_new,
                 attaches_to: #attaches_to,
                 replaces: #replaces_tokens,
+                style_as: #style_as_tokens,
                 parts: __SVL_PARTS,
             };
 

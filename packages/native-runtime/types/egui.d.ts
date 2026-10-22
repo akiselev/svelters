@@ -162,12 +162,20 @@ export interface EguiElements {
     default?: boolean;
     /** Escape activates it while focus is in its focus scope (or root). */
     cancel?: boolean;
+    /** An icon before the caption: an icon key (`name` in the `icons` family, or `family:name`). Its size, place and visibility are CSS on `::part(icon)` (P3). */
+    icon?: string;
+    /** Held down, it activates again and again (`clicked` after 300 ms, then every 100 ms; QAbstractButton `autoRepeat`). */
+    repeat?: boolean;
     /** Pressed and released (`Response::clicked`). */
     onclicked?: () => void;
     /** Double click (`Response::double_clicked`). */
     'ondouble-clicked'?: () => void;
     /** Right click (`Response::secondary_clicked`). */
     'onsecondary-clicked'?: () => void;
+    /** The primary button went down on it (QAbstractButton `pressed`). */
+    onpress?: () => void;
+    /** It came up again, over the button or not (`released`). */
+    onrelease?: () => void;
   };
   /** A check box with a caption. */
   checkbox: EguiWidgetProps & {

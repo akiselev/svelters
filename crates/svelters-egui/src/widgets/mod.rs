@@ -27,7 +27,7 @@ use crate::scene::W;
 
 /// The built-in tags whose own widget is the default (the egui wrapper otherwise). Grows by one
 /// tag per lane as each own widget passes its acceptance (ARCH-WIDGETS §6.2 step 2).
-pub const DEFAULT_OWN: &[&str] = &[];
+pub const DEFAULT_OWN: &[&str] = &["button"];
 
 /// Which built-in kinds get svelters' own widget (§6.2: the per-kind switch).
 #[derive(Clone, Debug, Default, PartialEq, Eq)]

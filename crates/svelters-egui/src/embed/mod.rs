@@ -106,6 +106,25 @@ pub struct EmbedConfig {
     /// that owns the per-frame order, cadatomic's seam 4): only the root viewport's `logic` runs JS,
     /// so input in a deferred window costs one root frame, whose logic routes the repaint back.
     pub prepass_plugin: bool,
+    /// OW0: an app's change to the native behaviour policy ([`EmbedConfig::with_policy`]).
+    pub policy: Option<fn(&mut crate::native::Policy)>,
+}
+
+impl EmbedConfig {
+    /// OW0 (WIDGET-PARITY §4.3): changes fields of the native behaviour policy of the embed's
+    /// context (tooltip delay, drag threshold, button order…): `cfg.with_policy(|p|
+    /// p.tooltip_delay_ms = 400)`. Applied by [`Embed::new`].
+    pub fn with_policy(mut self, f: fn(&mut crate::native::Policy)) -> EmbedConfig {
+        self.policy = Some(f);
+        self
+    }
+
+    /// OW0 (WIDGET-PARITY §4.3, Q1): registers part painter `name` (CSS selects it with
+    /// `background-image: paint(name)` or `content: paint(name)`). Painters are process-wide.
+    pub fn painter(self, name: &str, p: impl crate::paint::PartPainter) -> EmbedConfig {
+        crate::paint::register_painter(name, p);
+        self
+    }
 }
 
 impl Default for EmbedConfig {
@@ -117,6 +136,7 @@ impl Default for EmbedConfig {
             faults: FaultPolicy::default(),
             timer_horizon: Duration::from_millis(50),
             prepass_plugin: true,
+            policy: None,
         }
     }
 }
@@ -448,6 +468,9 @@ impl Embed {
             clash
         });
         debug_assert!(!clash, "svelters-egui: two embeds with the id salt '{}' in one egui Context", cfg.id_salt);
+        if let Some(f) = cfg.policy {
+            crate::native::override_policy(ctx, f);
+        }
         let backend = EguiBackend::new();
         backend.bind_ctx(ctx);
         let host = Host::new_owned(backend.clone(), cfg.host.clone()).map_err(EmbedError::Host)?;

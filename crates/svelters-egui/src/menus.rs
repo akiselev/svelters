@@ -16,7 +16,9 @@ use crate::kinds::{self, P};
 use crate::layout::Metrics;
 use crate::scene::{Arena, Dirty, W};
 use crate::walk::Out;
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW3
 use egui::containers::menu::{MenuButton, SubMenuButton, menu_style};
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW3
 use egui::{
     Align, Id, KeyboardShortcut, Layout, Modifiers, Popup, PopupAnchor, PopupKind, Rect, Role,
     SetOpenCommand, Ui, Vec2, WidgetInfo, vec2,
@@ -349,6 +351,7 @@ fn decorate(arena: &Arena, i: usize, resp: egui::Response) -> egui::Response {
     }
 }
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW1a, OW3
 /// Draws the menu entries under `parent` in `ui` (a menu bar, a menu popup). `flatten`: a `menu`
 /// child shows its items inline (a menu-button's menu).
 fn items(
@@ -446,6 +449,7 @@ fn items(
     }
 }
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW3
 /// Paints an in-flow menu kind at its rect (`leaf.rs` dispatches here): `menu-bar`, `menu-button`.
 pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> egui::Response {
     let size = arena.core[i].rect.size();
@@ -516,6 +520,7 @@ fn claim(ctx: &egui::Context, area: f32) -> bool {
     })
 }
 
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW3
 /// Paints `context-menu` node `i` attached to an owner drawn at `owner` (screen): a secondary click
 /// on the owner (in `ui`'s layer, not covered) opens it at the pointer; `popup()` below the owner.
 pub(crate) fn context(arena: &mut Arena, i: usize, owner: Rect, ui: &mut Ui, out: &mut Vec<Out>) {

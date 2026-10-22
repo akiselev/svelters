@@ -54,13 +54,21 @@ pub fn text_galley(ctx: &egui::Context, s: &StyleView, text: &str, wrap: Option<
     })
 }
 
-/// The size of `text` under `s`; `avail` wraps it when definite.
+/// The size of `text` under `s`; `avail` wraps it when definite. A `line-height` in px sets the
+/// height of each line (VS Code's text button: 16px lines in a 26px button).
 pub fn measure_text(ctx: &egui::Context, s: &StyleView, text: &str, avail: crate::provider::AvailableSpace) -> Vec2 {
     let wrap = match avail {
         crate::provider::AvailableSpace::Definite(w) => Some(w),
         _ => None,
     };
-    text_galley(ctx, s, text, wrap).size()
+    let g = text_galley(ctx, s, text, wrap);
+    let mut size = g.size();
+    if let Some(lh) = s.px("line-height")
+        && lh > 0.0
+    {
+        size.y = lh * g.rows.len().max(1) as f32;
+    }
+    size
 }
 
 /// Paints `galley` in `content`: placed by `align`, vertically centred (single-line labels and
