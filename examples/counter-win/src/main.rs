@@ -305,6 +305,8 @@ mod win {
         tree: RefCell<Json>,
         /// Why driving failed, if it did.
         driving: RefCell<Option<String>>,
+        /// How long the driving waited for the elements to load.
+        waited_ms: RefCell<u64>,
     }
 
     /// Drives the app through the toolkit, then polls the read-back (`selftest_poll`). The read-back is checked
@@ -312,7 +314,31 @@ mod win {
     /// in a checkpoint the host schedules with a wake, and when the UI thread starts late (a slow first frame on
     /// CI's software-rendered runners) every startup timer is already due when the loop begins, so a check timed
     /// from start ran right behind the driving, before that checkpoint (the CI flake "Count: 0", WG3w).
-    fn selftest_drive(st: Rc<SelfTest>) {
+    ///
+    /// It also waits (every 50 ms, at most 10 s) until the elements it drives are loaded: a `TextBox` whose
+    /// `Text` is set before it is loaded never raises `TextChanged`, so on a late start the name never arrived.
+    fn selftest_drive(st: Rc<SelfTest>, waited: u32) {
+        let unloaded = || -> Vec<&'static str> {
+            let Some(root) = st.host.toplevel_handles().first().copied() else { return vec!["window"] };
+            let mut all = Vec::new();
+            walk(&st.b, root, &mut all);
+            let tags: &[&'static str] = if st.types { &["button"] } else { &["button", "text-box", "slider", "check-box"] };
+            tags.iter()
+                .copied()
+                .filter(|tag| !all.iter().find(|(_, t)| t == tag).is_some_and(|(h, _)| matches!(prop(&st.b, *h, "is-loaded"), Ok(Value::Bool(true)))))
+                .collect()
+        };
+        let pending = unloaded();
+        if !pending.is_empty() {
+            if waited < 200 {
+                let s2 = st.clone();
+                if st.b.after(50, move || selftest_drive(s2, waited + 1)).is_ok() {
+                    return;
+                }
+            }
+            *st.driving.borrow_mut() = Some(format!("not loaded after {} ms: {pending:?}", waited * 50));
+        }
+        *st.waited_ms.borrow_mut() = waited as u64 * 50;
         let drive = || -> Result<(), String> {
             let (b, h) = (&st.b, &st.host);
             let root = *h.toplevel_handles().first().ok_or("no window")?;
@@ -333,7 +359,9 @@ mod win {
             set(b, find("check-box", 0)?, "is-checked", Value::Bool(true))?;
             Ok(())
         };
-        if let Err(e) = drive() {
+        if st.driving.borrow().is_none()
+            && let Err(e) = drive()
+        {
             *st.driving.borrow_mut() = Some(e);
         }
         let driven = Instant::now();
@@ -409,6 +437,7 @@ mod win {
             "ok": failures.is_empty(),
             "failures": failures,
             "read_back": got,
+            "loaded_wait_ms": *st.waited_ms.borrow(),
             "settled_ms": driven.elapsed().as_millis() as u64,
             "tree": st.tree.borrow().clone(),
             "console": st.host.take_console().iter().map(|l| format!("[{}] {}", l.level, l.text)).collect::<Vec<_>>(),
@@ -648,8 +677,9 @@ mod win {
                 load_ms,
                 tree: RefCell::new(Json::Null),
                 driving: RefCell::new(None),
+                waited_ms: RefCell::new(0),
             });
-            let ok = driver.after(800, move || selftest_drive(st));
+            let ok = driver.after(800, move || selftest_drive(st, 0));
             let b3 = driver.clone();
             let ok = ok.and_then(|_| driver.after((args.timeout * 1000.0) as u64, move || b3.quit()));
             if let Err(e) = ok {
