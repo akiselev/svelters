@@ -769,6 +769,26 @@ export function dispatch(h, signal, args = [], deferred = false, flags = 0) {
   const node = table().get(h);
   if (!node || !alive(node)) return;
   if (inertNode(node)) return;
+  if (dispatchHook) return dispatchHook(node, () => dispatchTo(node, signal, args, deferred, flags));
+  dispatchTo(node, signal, args, deferred, flags);
+}
+
+/**
+ * EM2 (`embed.js`): `hook(node, run)` wraps every dispatch (sync or not), so an embedder can run a
+ * root's handlers in that root's context (its `root()`, its animation-frame queue). One hook; null
+ * removes it.
+ */
+let dispatchHook = null;
+export function setDispatchHook(hook) {
+  dispatchHook = hook;
+}
+
+/** A mount target for `mount({ target })` (EM2, `embed.js`): its handle can change (`retarget`). */
+export function targetNode(h) {
+  return new Native('#target', h, null);
+}
+
+function dispatchTo(node, signal, args, deferred, flags) {
   if (deferred) {
     const ev = new NativeEvent(signal, signal, node, args, true);
     for (const fn of handlersOf(node, signal, flags)) {
@@ -792,6 +812,11 @@ export function dispatch_sync(h, signal, args = [], flags = 0) {
   if (!node || !alive(node)) throw new Error(`dispatchSync: unknown handle ${h}`);
   // TR1: an outroing subtree is inert: the toolkit gets its default
   if (inertNode(node)) return null;
+  if (dispatchHook) return dispatchHook(node, () => dispatchSyncTo(node, signal, args, flags));
+  return dispatchSyncTo(node, signal, args, flags);
+}
+
+function dispatchSyncTo(node, signal, args, flags) {
   const ev = new NativeEvent(signal, signal, node, args, false);
   for (const fn of handlersOf(node, signal, flags)) {
     const r = fn.call(node, ev, ...args);

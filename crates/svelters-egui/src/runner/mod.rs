@@ -6,13 +6,19 @@
 //! - **embed** ([`Embed`] from any egui app): the embedder owns the loop and the frame (D1), creates
 //!   slots and mounts roots into them (ARCH-EMBED §4).
 //! - **kittest** ([`kittest`], also at the old path `crate::harness`): `egui_kittest::Harness` drives
-//!   frames headless in `cargo test`: `TestApp` for app bundles, `EmbedHarness` for embed bundles.
+//!   frames headless in `cargo test`: `TestApp` for app bundles, `EmbedHarness` for embed bundles;
+//!   `Viewports` (`viewports.rs`) runs deferred viewports headless with per-viewport pass counts, and
+//!   `dock` is the dock-adapter shape of ARCH-EMBED §7.1 (EM2).
 //!
 //! Writer lane: EMBED.
 
+#[cfg(feature = "kittest")]
+pub mod dock;
 mod eframe;
 #[cfg(feature = "kittest")]
 pub mod kittest;
+#[cfg(feature = "kittest")]
+pub mod viewports;
 
 pub(crate) use self::eframe::run_eframe;
 

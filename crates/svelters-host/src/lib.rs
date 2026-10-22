@@ -562,6 +562,12 @@ impl<'a> Host<'a> {
         self.root_call_js("unmount", root, None).map(|_| ())
     }
 
+    /// Tells root `root` that its natives now live under `target` (EM2 `move_root`: the embedder
+    /// moved them there); the runtime inserts its new natives into `target` from then on.
+    pub fn retarget_root(&self, root: u32, target: svl_handle) -> Result<(), JsError> {
+        self.root_call_js("retarget", root, Some(&[("target".to_string(), Value::F64(target as f64))])).map(|_| ())
+    }
+
     /// Runs root `root`'s `onCloseRequest` handlers; true if the root may close.
     pub fn close_root(&self, root: u32) -> Result<bool, JsError> {
         self.root_call_js("close", root, None).map(|v| !matches!(v, Value::Bool(false)))
