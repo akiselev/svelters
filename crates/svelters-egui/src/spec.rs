@@ -253,8 +253,22 @@ fn style_json() -> J {
             *t = sorted.into_iter().map(J::from).collect();
         }
     }
+    // CS5e: what the egui cascade computes with no kind prop behind it (taffy fields the kind table
+    // has no prop for, and paint). `via: css` with a `decl_type`, as the decl dialect's entries: the
+    // compiler leaves them to the engine, which computes them because egui has no toolkit CSS.
+    for &(name, ty, values) in crate::style::ENGINE_PROPS {
+        let mut m = Map::new();
+        m.insert("decl_type".into(), json!(ty));
+        if !values.is_empty() {
+            m.insert("values".into(), json!(values));
+        }
+        m.insert("via".into(), json!("css"));
+        props.insert(name.to_string(), J::Object(m));
+    }
     json!({
         "dialect": "none",
+        // CS5e: the backend runs the CSS engine; `<style>` reaches it as CSS (D9 on egui)
+        "engine": "backend",
         "properties": props,
         "setter_selectors": ["type", "class", "id"],
         "units": {"px": {"provenance": "egui points: 1px in a style sheet is one point", "scale": 1.0}},

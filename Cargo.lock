@@ -3884,6 +3884,7 @@ dependencies = [
  "svelters-egui",
  "svelters-host",
  "svelters-modules",
+ "svelters-style",
  "taffy",
 ]
 

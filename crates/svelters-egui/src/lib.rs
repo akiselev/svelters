@@ -27,6 +27,8 @@ pub mod provider;
 pub mod runner;
 pub mod scene;
 pub mod spec;
+/// CS5e: the egui cascade (the Rust CSS engine on the scene).
+pub mod style;
 
 mod a11y;
 mod events;
@@ -34,7 +36,6 @@ mod frame;
 mod ids;
 mod leaf;
 mod ops;
-mod style;
 mod walk;
 mod windows;
 
@@ -60,6 +61,9 @@ pub mod prelude {
     pub use egui;
 }
 pub use runner::run_app;
+
+/// The CSS engine the scene is styled with (CS5e).
+pub use svelters_style;
 
 /// The egui this backend is built against (re-exported so apps and packs link the same copy).
 pub use egui;
