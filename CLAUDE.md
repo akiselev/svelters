@@ -57,45 +57,53 @@ agents (worktree lanes) that share that machine's build slots.
   the user's approval. Anything destructive, outside your own repo, or changing a decision needs
   the user.
 
-## Building: shared slots, batched builds
+## Building and testing: as little as possible locally
+
+Rust builds are the bottleneck. Every local build or test run takes a shared slot and slows every
+other agent on the machine. **GitHub CI is the gate, not your machine.** The user's rule
+(2026-10-22): no build or test run that doesn't answer a question you have right now.
 
 - **Every cargo command goes through `tools/dev/cargo-slot`.** It takes one of the machine's
-  build slots, `${XDG_RUNTIME_DIR:-/tmp}/build-slots/slot-<n>.lock`. cadatomic's and cadabra3's
-  wrappers use the same lock files, so all repos on a machine share one pool. The slot count and
-  cores per slot are set per machine in `~/.config/build-slots.env` (`BUILD_SLOTS`,
-  `BUILD_SLOT_JOBS`); don't override them in a lane.
-- **No other locks.** Test runs need only a slot (`tools/dev/cargo-slot cargo nextest run --workspace
-  --no-fail-fast`); there is no separate test lock. Nested calls are safe: while a command holds a
-  slot, `BUILD_SLOT_HELD` is set and an inner `cargo-slot` (or cadatomic `cargo.sh`) runs without
-  taking a second one. Never wrap a slot-taking command in another lock: that is the only way to
-  deadlock the pool.
-- **Batch your builds.** While writing code, use only `cargo check` (through `cargo-slot`). Start
-  full builds and test runs only once the whole feature and its tests are written, and fix bugs in
-  large batches rather than one rebuild per fix. One gate run per batch.
+  build slots, `${XDG_RUNTIME_DIR:-/tmp}/build-slots/slot-<n>.lock`, shared with cadatomic's and
+  cadabra3's wrappers. Slot count and cores per slot come from `~/.config/build-slots.env`; don't
+  override them. There are **no other locks** (no test lock): never wrap a slot-taking command in
+  another lock. Nested calls are safe (`BUILD_SLOT_HELD`).
+- **While writing code:** `tools/dev/cargo-slot cargo check -p <crate you changed>` only, and only
+  when you need the compiler's answer. Use `--workspace --all-targets` only after changing an API
+  that other crates use.
+- **When the feature and its tests are written:** run only the tests you added or touched,
+  filtered (`tools/dev/cargo-slot cargo nextest run -p <crate> <filter>`, `pnpm --filter <pkg>
+  test`; GTK/Qt under `tools/dev/headless`). Fix all failures in one batch, then rerun those
+  tests once.
+- **Never run locally:** the full workspace nextest, the full gate list, or a full conformance run
+  (see below). Push `ci/<lane>`; the five GitHub workflows run everything. Fix what CI reports, in
+  one batch, and push again.
+- **Never rerun anything on unchanged code.** Run nothing for docs-only changes, milestone records,
+  or a merge of `origin/master` that conflicts nowhere in code. A result from before your last code
+  edit is not a pass, so say "not run" instead.
+- **Conformance** (compiler or runtime changes only; it is not in CI): run only the affected
+  samples (`node run.mjs <name-filter>`, see `docs/notes/cf1-handoff.md`). The coordinator does the
+  full run and `--update-baseline` once per merge round.
+- **Research and docs lanes build nothing.**
+- **Stop when told.** When the coordinator or user says stop, kill your running builds and tests,
+  commit, push and report.
 - `tools/dev/headless` runs GTK/Qt tests under Xvfb. macOS needs `flock` (`brew install flock`).
+- Start Claude sessions inside a repo, never in `~/projects` itself: rust-analyzer there loads every
+  project (23 GB, ~50 parallel `cargo check`s).
 
-## Gates (before reporting a lane done)
+## Before reporting a lane done
 
-Run after your last edit, and report only results you observed:
-
-```
-pnpm install --frozen-lockfile
-tools/dev/cargo-slot cargo check --workspace --all-targets
-tools/dev/cargo-slot cargo build -p svelters-compiler
-pnpm -r build && pnpm test
-python3 tools/docs/build_ir.py && pnpm docs:test
-tools/dev/cargo-slot cargo nextest run --workspace --no-fail-fast
-```
-
-Conformance (when the compiler or runtime changed): see `docs/notes/cf1-handoff.md`. Before you
-finish, merge `origin/master` into your branch, re-run the gates, push `ci/<lane>`, and get all
-five CI workflows green.
+1. Merge `origin/master` into your branch; on generated-file conflicts rerun only that generator.
+2. `pnpm install --frozen-lockfile` if the lockfile changed, then `tools/dev/cargo-slot cargo check
+   -p <crates you changed> --all-targets`, plus the filtered tests above.
+3. Push `ci/<lane>` and get all five CI workflows green. Report the sha, the CI run ids, and what you
+   did not run.
 
 ## Git safety
 
 - Never use destructive git to undo your own edits (`git checkout <file>`, `git restore`,
   `git reset --hard`, `git clean`); make the inverse edit. Run `git status --porcelain` before
   editing and treat dirty files as someone else's work. Never force-push.
-- Generated files (`*.generated.js`, `types/*.d.ts`, metadata outputs): on conflicts, rerun the
-  generators; don't hand-merge.
+- Generated files (`*.generated.js`, `types/*.d.ts`, metadata outputs, op logs, snapshots): on
+  conflicts, rerun that generator; don't hand-merge.
 - Commit messages end with the attribution trailers your session is given.
