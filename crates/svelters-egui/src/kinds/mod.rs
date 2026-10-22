@@ -38,11 +38,11 @@ mod panes;
 // WG4a (plans/milestones/WG4a-tier1-views.md)
 mod views;
 
-pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, WRAP, WRAP_MODE};
+pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, POSITION, WRAP, WRAP_MODE};
 pub use decor::ORIENTATION;
 pub use layouts::{JUSTIFY_ITEMS, SCROLL_DIRECTION};
 pub use menus::attaches_to;
-pub use popups::POSITION;
+pub use popups::PLACEMENT;
 pub use media::FIT;
 pub use panes::{FRAME_STYLE, SIDE};
 pub use views::{CELL_ALIGN, SORT, TOAST_CORNER, TOAST_LEVEL};
@@ -102,6 +102,12 @@ pub enum P {
     FlexBasis,
     AlignSelf,
     Margin,
+    // SG4: out-of-flow positioning
+    Position,
+    Left,
+    Top,
+    Right,
+    Bottom,
     // Box (and the window's content area)
     FlexDirection,
     FlexWrap,
@@ -165,8 +171,8 @@ pub enum P {
     Group,
     /// menu-button
     Active,
-    /// popup
-    Position,
+    /// popup (`placement`: SG4's `position` is the CSS one)
+    Placement,
     Autohide,
     /// modal
     Dismissable,
@@ -215,7 +221,7 @@ pub enum P {
     ContentHeight,
     // WG4a (plans/milestones/WG4a-tier1-views.md; `kinds/views.rs`). Also reused there: `Title`
     // (tab, table-column), `SelectedIndex` (tab-view, table), `Orientation` (split-view), and
-    // WG2a's `Resizable` (table-column, split-view), `Closable` (tab), `Position` (split-view).
+    // WG2a's `Resizable` (table-column, split-view), `Closable` (tab).
     /// table
     RowCount,
     RowHeight,
@@ -225,7 +231,8 @@ pub enum P {
     /// table-column
     CellAlign,
     Sort,
-    /// split-view
+    /// split-view (`divider-position`: SG4's `position` is the CSS one)
+    DividerPosition,
     MinSize,
     /// toast-host
     Corner,

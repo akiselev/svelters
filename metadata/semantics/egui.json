@@ -3075,16 +3075,16 @@
           "type": "bool",
           "writable": true
         },
-        "position": {
+        "placement": {
           "construct_only": false,
           "default": "bottom",
           "doc": "The side of its owner it opens on (egui moves it to another side when it does not fit).",
-          "js": "position",
-          "native": "position",
+          "js": "placement",
+          "native": "placement",
           "nullable": false,
           "observe": {
             "class": "set_only",
-            "fact": "egui:Popup:position",
+            "fact": "egui:Popup:placement",
             "mechanism": "scene",
             "verified": "weak"
           },
@@ -4139,7 +4139,7 @@
     "SplitView": {
       "abstract": false,
       "bindings": {
-        "position": {
+        "divider-position": {
           "compare_before_set": true,
           "direction": "two_way",
           "echo": "none",
@@ -4150,8 +4150,8 @@
             "on_stale_update": "warn_noop"
           },
           "natively_normalizes": false,
-          "property": "position",
-          "provenance": "svelters-egui: the two panes + a draggable divider (egui drag sense) widget writes position into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "property": "divider-position",
+          "provenance": "svelters-egui: the two panes + a draggable divider (egui drag sense) widget writes divider-position into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
           "read_back": false,
           "sync_signals_on_set": [],
           "value": {
@@ -4178,13 +4178,30 @@
           }
         }
       },
-      "doc": "Two panes (its first two children; more are not shown) split by a divider the user drags. `position` is the first pane's size.",
+      "doc": "Two panes (its first two children; more are not shown) split by a divider the user drags. `divider-position` is the first pane's size.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
       "native": "two panes + a draggable divider (egui drag sense)",
       "present": null,
       "props": {
+        "divider-position": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Size of the first pane in points along the split; null for half. Dragging the divider changes it (`bind:divider-position`); it is clamped by `min-size` when laid out.",
+          "js": "divider-position",
+          "native": "divider-position",
+          "nullable": true,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:SplitView:divider-position",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
         "min-size": {
           "construct_only": false,
           "default": 32.0,
@@ -4223,23 +4240,6 @@
           ],
           "writable": true
         },
-        "position": {
-          "construct_only": false,
-          "default": null,
-          "doc": "Size of the first pane in points along the split; null for half. Dragging the divider changes it (`bind:position`); it is clamped by `min-size` when laid out.",
-          "js": "position",
-          "native": "position",
-          "nullable": true,
-          "observe": {
-            "class": "exact",
-            "fact": "egui:SplitView:position",
-            "mechanism": "widget",
-            "verified": "delivery"
-          },
-          "readable": true,
-          "type": "f64",
-          "writable": true
-        },
         "resizable": {
           "construct_only": false,
           "default": true,
@@ -4265,7 +4265,7 @@
         "changed": {
           "args": [
             {
-              "name": "position",
+              "name": "divider-position",
               "type": "f64"
             }
           ],
@@ -5577,6 +5577,23 @@
           "type": "string",
           "writable": true
         },
+        "bottom": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Inset from the containing block's bottom edge in points; null for auto.",
+          "js": "bottom",
+          "native": "bottom",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:bottom",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
         "drag-data": {
           "construct_only": false,
           "default": "",
@@ -5730,6 +5747,23 @@
           "type": "bool",
           "writable": true
         },
+        "left": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Inset from the containing block's left edge in points (`position: absolute` or `relative`); null for auto.",
+          "js": "left",
+          "native": "left",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:left",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
         "margin": {
           "construct_only": false,
           "default": 0.0,
@@ -5815,6 +5849,45 @@
           "type": "f64",
           "writable": true
         },
+        "position": {
+          "construct_only": false,
+          "default": "static",
+          "doc": "`absolute` takes the node out of the flow and places it by `left`/`top`/`right`/`bottom` inside its containing block: the nearest `relative` or `absolute` ancestor, else the root.",
+          "js": "position",
+          "native": "position",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:position",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "static",
+            "relative",
+            "absolute"
+          ],
+          "writable": true
+        },
+        "right": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Inset from the containing block's right edge in points; null for auto.",
+          "js": "right",
+          "native": "right",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:right",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
         "tooltip": {
           "construct_only": false,
           "default": "",
@@ -5830,6 +5903,23 @@
           },
           "readable": true,
           "type": "string",
+          "writable": true
+        },
+        "top": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Inset from the containing block's top edge in points; null for auto.",
+          "js": "top",
+          "native": "top",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:top",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
           "writable": true
         },
         "visible": {
@@ -6241,6 +6331,56 @@
         "decl_type": "length",
         "via": "css"
       },
+      "bottom": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "bottom",
+        "prop": "bottom",
+        "tags": [
+          "box",
+          "button",
+          "canvas",
+          "checkbox",
+          "collapsing-header",
+          "color-picker",
+          "combo-box",
+          "date-picker",
+          "drag-value",
+          "frame",
+          "grid",
+          "hyperlink",
+          "icon",
+          "image",
+          "inner-window",
+          "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
+          "panel",
+          "popup",
+          "progress-bar",
+          "radio-button",
+          "range-slider",
+          "scroll-area",
+          "separator",
+          "sides",
+          "slider",
+          "spinner",
+          "split-view",
+          "stack",
+          "switch",
+          "tab",
+          "tab-view",
+          "table",
+          "table-column",
+          "text-edit",
+          "toast-host",
+          "toggle-button"
+        ],
+        "type": "length",
+        "via": "setter"
+      },
       "color": {
         "decl_type": "color",
         "via": "css"
@@ -6619,6 +6759,56 @@
         ],
         "via": "setter"
       },
+      "left": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "left",
+        "prop": "left",
+        "tags": [
+          "box",
+          "button",
+          "canvas",
+          "checkbox",
+          "collapsing-header",
+          "color-picker",
+          "combo-box",
+          "date-picker",
+          "drag-value",
+          "frame",
+          "grid",
+          "hyperlink",
+          "icon",
+          "image",
+          "inner-window",
+          "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
+          "panel",
+          "popup",
+          "progress-bar",
+          "radio-button",
+          "range-slider",
+          "scroll-area",
+          "separator",
+          "sides",
+          "slider",
+          "spinner",
+          "split-view",
+          "stack",
+          "switch",
+          "tab",
+          "tab-view",
+          "table",
+          "table-column",
+          "text-edit",
+          "toast-host",
+          "toggle-button"
+        ],
+        "type": "length",
+        "via": "setter"
+      },
       "margin": {
         "kinds": [
           "Widget"
@@ -6933,6 +7123,111 @@
         "decl_type": "length",
         "via": "css"
       },
+      "position": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "position",
+        "prop": "position",
+        "tags": [
+          "box",
+          "button",
+          "canvas",
+          "checkbox",
+          "collapsing-header",
+          "color-picker",
+          "combo-box",
+          "date-picker",
+          "drag-value",
+          "frame",
+          "grid",
+          "hyperlink",
+          "icon",
+          "image",
+          "inner-window",
+          "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
+          "panel",
+          "popup",
+          "progress-bar",
+          "radio-button",
+          "range-slider",
+          "scroll-area",
+          "separator",
+          "sides",
+          "slider",
+          "spinner",
+          "split-view",
+          "stack",
+          "switch",
+          "tab",
+          "tab-view",
+          "table",
+          "table-column",
+          "text-edit",
+          "toast-host",
+          "toggle-button"
+        ],
+        "type": "enum",
+        "values": [
+          "static",
+          "relative",
+          "absolute"
+        ],
+        "via": "setter"
+      },
+      "right": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "right",
+        "prop": "right",
+        "tags": [
+          "box",
+          "button",
+          "canvas",
+          "checkbox",
+          "collapsing-header",
+          "color-picker",
+          "combo-box",
+          "date-picker",
+          "drag-value",
+          "frame",
+          "grid",
+          "hyperlink",
+          "icon",
+          "image",
+          "inner-window",
+          "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
+          "panel",
+          "popup",
+          "progress-bar",
+          "radio-button",
+          "range-slider",
+          "scroll-area",
+          "separator",
+          "sides",
+          "slider",
+          "spinner",
+          "split-view",
+          "stack",
+          "switch",
+          "tab",
+          "tab-view",
+          "table",
+          "table-column",
+          "text-edit",
+          "toast-host",
+          "toggle-button"
+        ],
+        "type": "length",
+        "via": "setter"
+      },
       "row-gap": {
         "kinds": [
           "Box",
@@ -6951,6 +7246,56 @@
           "popup",
           "scroll-area",
           "tab"
+        ],
+        "type": "length",
+        "via": "setter"
+      },
+      "top": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "top",
+        "prop": "top",
+        "tags": [
+          "box",
+          "button",
+          "canvas",
+          "checkbox",
+          "collapsing-header",
+          "color-picker",
+          "combo-box",
+          "date-picker",
+          "drag-value",
+          "frame",
+          "grid",
+          "hyperlink",
+          "icon",
+          "image",
+          "inner-window",
+          "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
+          "panel",
+          "popup",
+          "progress-bar",
+          "radio-button",
+          "range-slider",
+          "scroll-area",
+          "separator",
+          "sides",
+          "slider",
+          "spinner",
+          "split-view",
+          "stack",
+          "switch",
+          "tab",
+          "tab-view",
+          "table",
+          "table-column",
+          "text-edit",
+          "toast-host",
+          "toggle-button"
         ],
         "type": "length",
         "via": "setter"

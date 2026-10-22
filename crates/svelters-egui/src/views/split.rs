@@ -1,8 +1,8 @@
 //! `split-view` (WG4a): two panes and a divider.
 //!
-//! The first two children are the panes (more are hidden). `position` is the first pane's size
+//! The first two children are the panes (more are hidden). `divider-position` is the first pane's size
 //! along the split (null: half), clamped at layout so each pane keeps `min-size`. Dragging the
-//! divider (or the arrow keys while it has focus) writes `position` (`changed`, `bind:position`);
+//! divider (or the arrow keys while it has focus) writes `divider-position` (`changed`, `bind:divider-position`);
 //! the panes follow at the next layout, which the drag requests at once.
 
 use super::{hide, measure_child, place_child};
@@ -135,7 +135,7 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut
             }
             arena.invalidate_content(node);
             ui.ctx().request_repaint();
-            crate::leaf::widget_changed(arena, i, &[kinds::P::Position], vec![Value::F64(np as f64)], out);
+            crate::leaf::widget_changed(arena, i, &[kinds::P::DividerPosition], vec![Value::F64(np as f64)], out);
         }
     }
 }

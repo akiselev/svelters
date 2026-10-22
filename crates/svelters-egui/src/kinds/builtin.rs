@@ -10,6 +10,9 @@ use super::{Def, KindDef, MethodDef, P, PropDef, SignalDef, Ty, input, layout, l
 
 pub const ALIGN: &[&str] = &["start", "end", "center", "stretch", "baseline"];
 pub const ALIGN_SELF: &[&str] = &["auto", "start", "end", "center", "stretch", "baseline"];
+/// SG4: `position` (`absolute`: out of flow, placed by `left`/`top`/`right`/`bottom` in the nearest
+/// positioned ancestor, else the root).
+pub const POSITION: &[&str] = &["static", "relative", "absolute"];
 pub const JUSTIFY: &[&str] = &["start", "end", "center", "space-between", "space-around", "space-evenly"];
 pub const DIRECTION: &[&str] = &["column", "row", "column-reverse", "row-reverse"];
 pub const WRAP: &[&str] = &["nowrap", "wrap", "wrap-reverse"];
@@ -63,6 +66,17 @@ static WIDGET_PROPS: &[PropDef] = &[
         Def::Str(""),
         "Makes the node a drop target: the drag types it accepts, separated by spaces or commas (`*` any, `cad/*` a prefix); empty for none.",
     ),
+    layout(
+        "position",
+        P::Position,
+        Ty::Enum(POSITION),
+        Def::Str("static"),
+        "`absolute` takes the node out of the flow and places it by `left`/`top`/`right`/`bottom` inside its containing block: the nearest `relative` or `absolute` ancestor, else the root.",
+    ),
+    length("left", P::Left, "Inset from the containing block's left edge in points (`position: absolute` or `relative`); null for auto."),
+    length("top", P::Top, "Inset from the containing block's top edge in points; null for auto."),
+    length("right", P::Right, "Inset from the containing block's right edge in points; null for auto."),
+    length("bottom", P::Bottom, "Inset from the containing block's bottom edge in points; null for auto."),
 ];
 
 static LABEL_PROPS: &[PropDef] = &[

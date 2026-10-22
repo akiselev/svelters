@@ -69,6 +69,16 @@ export interface EguiWidgetProps {
   'drag-data'?: string;
   /** Makes the node a drop target: the drag types it accepts, separated by spaces or commas (`*` any, `cad/*` a prefix); empty for none. */
   'drop-types'?: string;
+  /** `absolute` takes the node out of the flow and places it by `left`/`top`/`right`/`bottom` inside its containing block: the nearest `relative` or `absolute` ancestor, else the root. */
+  position?: 'static' | 'relative' | 'absolute';
+  /** Inset from the containing block's left edge in points (`position: absolute` or `relative`); null for auto. */
+  left?: number | null;
+  /** Inset from the containing block's top edge in points; null for auto. */
+  top?: number | null;
+  /** Inset from the containing block's right edge in points; null for auto. */
+  right?: number | null;
+  /** Inset from the containing block's bottom edge in points; null for auto. */
+  bottom?: number | null;
   /** A native animation (TR2) finished; carries its id. The runtime listens to it itself. */
   onanimationend?: (id: number) => void;
   /** Drag source: the user started dragging this node (`drag-type` set). */
@@ -643,7 +653,7 @@ export interface EguiElements {
     open?: boolean;
     'bind:open'?: boolean;
     /** The side of its owner it opens on (egui moves it to another side when it does not fit). */
-    position?: 'bottom' | 'top' | 'left' | 'right';
+    placement?: 'bottom' | 'top' | 'left' | 'right';
     /** A click outside closes it; with false only Escape, `popdown` or the app does. */
     autohide?: boolean;
     /** The user (or `popup`/`popdown`) opened or closed it; carries `open`. */
@@ -791,19 +801,19 @@ export interface EguiElements {
     /** The tab's close button was clicked (or middle click on the tab); remove the tab to close it. */
     'onclose-requested'?: () => void;
   };
-  /** Two panes (its first two children; more are not shown) split by a divider the user drags. `position` is the first pane's size. */
+  /** Two panes (its first two children; more are not shown) split by a divider the user drags. `divider-position` is the first pane's size. */
   'split-view': EguiWidgetProps & {
     /** `horizontal`: the panes side by side (a vertical divider); `vertical`: one above the other. */
     orientation?: 'horizontal' | 'vertical';
-    /** Size of the first pane in points along the split; null for half. Dragging the divider changes it (`bind:position`); it is clamped by `min-size` when laid out. */
-    position?: number | null;
-    'bind:position'?: number | null;
+    /** Size of the first pane in points along the split; null for half. Dragging the divider changes it (`bind:divider-position`); it is clamped by `min-size` when laid out. */
+    'divider-position'?: number | null;
+    'bind:divider-position'?: number | null;
     /** Smallest size of either pane, in points. */
     'min-size'?: number;
     /** The divider can be dragged. */
     resizable?: boolean;
     /** The user dragged the divider; carries the first pane's new size. */
-    onchanged?: (position: number) => void;
+    onchanged?: (divider_position: number) => void;
     /** A divider drag began. */
     'ondrag-started'?: () => void;
     /** A divider drag ended. */

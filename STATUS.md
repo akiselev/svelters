@@ -27,13 +27,6 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | MAC1 AppKit backend slice | DONE (unverified on macOS) | 92dd775 | svelters-apple + svelters-appkit (window, view, stack-view, text-field, secure-text-field, button, slider, progress-indicator, box; KVC/NSInvocation dynamic fallback; CFRunLoop wake/timers, CADisplayLink frames, window-should-close call_sync), tools/metadata/appkit pipeline, examples/counter-mac with 76 generated + 16 backend tests; links Mach-O from Linux; user to test per docs/notes/macos-setup.md |
 | WIN1 WinUI 3 backend slice | DONE (unverified on Windows) | 72936f7 | svelters-winui (window, stack-panel, grid + row/column/row-span/column-span, text-block, button, check-box, slider, text-box; 48 props, 8 events, sync before-text-changing/key-down; DispatcherQueue wake/timers, CompositionTarget.Rendering frames), winmd pipeline with fetch script, examples/counter-win --selftest via UIA, 60 generated tests; links for gnu+msvc; WinUI does not run under Wine; user to test per docs/notes/windows-setup.md |
 | FX1 compiled style + text_prop + mac/win wiring | DONE | 3ad42e3c | compiled style precedence (attr > style=/style: > rules > default, undefined falls back, dynamic #id), text_prop per kind for all 4 toolkits, AppKit/WinUI bindings, style tables + docs, semantics specs for appkit/winui (svelters-compile --backend appkit/winui); 929/929 nextest; open: GTK verify method_textview_get_buffer / method_textbuffer_undo SEGV once under load (passed on retry), WinUI is-checked/TextChanged echo ordering unverified on Windows |
-| EV3+ keys and focus: focus scopes/restore, key routing (ShortcutOverride), edit commands to Svelte text fields, default/cancel buttons (QT-SURVEY §3) | QUEUED | | after FX1 |
-| WG5a list/table interaction: keyboard nav, type-ahead, selection, cell editors | QUEUED | | after LISTS2 + SG4 |
-| WG6 widget polish: disabled tooltips, snippet tooltips, truncation, scrollIntoView, SVG, shortcut capture, OS file drops | QUEUED | | after INT1 |
-| WG5b tree-view | QUEUED | | after LISTS2 |
-| DX1 settings binding, persisted UI state, standard paths, console to tracing, JS crash context | QUEUED | | ThinkPad, next free lane |
-| DX2 multi-format clipboard, open/reveal from JS | QUEUED | | independent |
-| IN1 Intl via ICU4X, locale-aware numbers | QUEUED | | MacBook, next free lane |
 | N1 native kebab-case rename | DONE | 78e137a8 | tags/props/events/child-attrs from native names via tools/metadata/common/naming.py (acronym run = one word); Qt box-layout+direction, grid-layout, menu (submenu/context by parent), action separator; onclicked etc.; Qt twins fixtures/<name>-qt; strict TestHost schemas; GUI tests killed after 6 min; 929/929 nextest, ledgers GTK 489 / Qt 595 facts; map docs/notes/n1-rename-map.md; open: methods not renamed, GTK stack bind:visible-child-name has no binding, schema.qt.json freshness unchecked |
 | CI1 GitHub Actions per platform | DONE | 12bde1e2 | js, linux-gtk (Arch GTK 4.24 required + Ubuntu GTK 4.14 allowed-failure), linux-qt (Qt 6.11.3), macos-appkit, windows-winui; all run on push/PR, contents:read; green: js/gtk/qt; red: macOS backend tests (2) and WinUI init → lanes FG1/FA1/FW1 |
 | FW1 WinUI startup fix | DONE | 9fea0b98 | islands init order (STA, bootstrap, DispatcherQueue, composed Application, WindowsXamlManager, then XamlControlsResources), single init per thread, WinUiBackend::shutdown(); windows-latest green: lib 12/12, generated 60/60, selftest, counter; open: generated tests skip shutdown(), keyboard routing untested |
@@ -77,10 +70,18 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | WG3 native reference capture (pins 1-3, 7; GTK/Qt goldens) | DONE | 2026-10-22 | merged 59bc9f81; egui TextEdit matches 85/144 (GTK), 75/144 (Qt) |
 | WG3b GTK selection from inner GtkText, Qt 6.11 golden, pins 4-6 | IN PROGRESS | | branch `ci/wg3b` |
 | FX1 egui focus policy + word rules per native refs | IN PROGRESS | | branch `ci/fx1` |
+| WG3w Windows native references (Win32 EDIT, WinUI TextBox; pins 1-3, 7), egui on Windows, counter-win flake | IN PROGRESS | | branch `ci/wg3w`; builds via the WSL PC's Windows toolchain |
+| EV3+ keys and focus: focus scopes/restore, key routing (ShortcutOverride), edit commands to Svelte text fields, default/cancel buttons (QT-SURVEY §3) | QUEUED | | after FX1; key consumption via ARCH-EMBED R11 consume_key/composing(); edit commands through a host-callable API (cadatomic constraint) |
+| WG5a list/table interaction: keyboard nav, type-ahead, selection, cell editors | QUEUED | | after LISTS2 + SG4 |
+| WG6 widget polish: disabled tooltips, snippet tooltips, truncation, scrollIntoView, SVG, shortcut capture, OS file drops | QUEUED | | after INT1 |
+| WG5b tree-view | QUEUED | | after LISTS2 |
+| DX1 settings binding, persisted UI state, standard paths, console to tracing, JS crash context | QUEUED | | ThinkPad, next free lane; binds to a host-supplied store only (cadatomic U5 layers, UI-layout file); no svelters-owned persistence |
+| DX2 multi-format clipboard, open/reveal from JS | QUEUED | | independent |
+| IN1 Intl via ICU4X, locale-aware numbers | QUEUED | | MacBook, next free lane; locale and catalog come from the host (catalog.t); svelters formats numbers/dates |
 | CX1 in-process diagnostics (SV27) | IN PROGRESS | | branch `ci/cx1`; check-only compile, per-file incremental state, stable codes, `--check --json` |
 | Q1 module loader (`svelters-modules`) | DONE | 2026-10-22 | merged 6dbee841 |
 | CS0 Rust CSS engine (`svelters-style`) | DONE | 2026-10-22 | merged 1b6a754f |
-| SG4 provider passes (R16 provider half, R21, R23) | IN PROGRESS | | branch `ci/sg4`, stacked on `ci/ev2b` + `ci/sg3` |
+| SG4 provider passes (R16 provider half, R21, R23) | DONE | 2026-10-22 | merged (this commit); provider layout/prepare, shadow children, StateProvider (R16/R23), ScenePass + R21 `show_viewport_passes`, overlay roots, `position: absolute` |
 | LS1 + SG5 virtual lists on egui (SV40, SV47) | IN PROGRESS | | branch `ci/lists`, stacked on `ci/sg3` (+ `ci/sg4`) |
 | TK1 one-file cases across backends (SV34) | DONE | 2026-10-22 | merged bf82674f |
 | SV48 `Json<T>` error paths through tagged enums | IN PROGRESS | | branch `ci/sv48` |

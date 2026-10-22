@@ -7,7 +7,7 @@
 use super::builtin::NONE;
 use super::{Def, KindDef, MethodDef, P, PropDef, SignalDef, Ty, input, optional, prop, signal};
 
-pub const POSITION: &[&str] = &["bottom", "top", "left", "right"];
+pub const PLACEMENT: &[&str] = &["bottom", "top", "left", "right"];
 
 static POPUP_PROPS: &[PropDef] = &[
     input(
@@ -18,9 +18,9 @@ static POPUP_PROPS: &[PropDef] = &[
         "Shown when true; the user closing it (Escape, a click outside with `autohide`) sets it false.",
     ),
     prop(
-        "position",
-        P::Position,
-        Ty::Enum(POSITION),
+        "placement",
+        P::Placement,
+        Ty::Enum(PLACEMENT),
         Def::Str("bottom"),
         "The side of its owner it opens on (egui moves it to another side when it does not fit).",
     ),

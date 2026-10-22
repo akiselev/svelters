@@ -80,7 +80,7 @@ fn split_page_binds_position_both_ways() {
     let tree = eh.harness.get_by_label("Tree pane").rect();
     let editor = eh.harness.get_by_label("Editor pane").rect();
     assert!(editor.min.x > tree.min.x + 120.0, "{tree:?} {editor:?}");
-    // keys on the divider: bind:position follows
+    // keys on the divider: bind:divider-position follows
     eh.harness.get_by_role_and_label(Role::Splitter, "Main split").focus();
     eh.harness.step();
     eh.harness.key_press(egui::Key::ArrowRight);

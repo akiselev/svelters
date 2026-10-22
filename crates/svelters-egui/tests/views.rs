@@ -136,7 +136,7 @@ fn split_view_places_two_panes_and_the_divider_moves_them() {
     assert!(r.h.harness.get_by_label("Left pane").rect().max.x <= r.h.harness.get_by_label("Right pane").rect().min.x);
 
     // a host write: the first pane is 100pt
-    r.set(sv, "position", Value::F64(100.0));
+    r.set(sv, "divider-position", Value::F64(100.0));
     r.run();
     assert_eq!(r.rect(a).width(), 100.0);
 
@@ -153,7 +153,7 @@ fn split_view_places_two_panes_and_the_divider_moves_them() {
     r.h.harness.step();
     r.h.harness.drop_at(c + egui::vec2(50.0, 0.0));
     r.run();
-    assert_eq!(r.get(sv, "position"), Value::F64(150.0), "the drag wrote position");
+    assert_eq!(r.get(sv, "divider-position"), Value::F64(150.0), "the drag wrote divider-position");
     assert_eq!(r.rect(a).width(), 150.0, "and the panes followed");
 
     // keys on the focused divider step it by 10pt; min-size clamps
@@ -161,14 +161,14 @@ fn split_view_places_two_panes_and_the_divider_moves_them() {
     r.h.harness.step();
     r.h.harness.key_press(egui::Key::ArrowLeft);
     r.run();
-    assert_eq!(r.get(sv, "position"), Value::F64(140.0));
-    r.set(sv, "position", Value::F64(5.0));
+    assert_eq!(r.get(sv, "divider-position"), Value::F64(140.0));
+    r.set(sv, "divider-position", Value::F64(5.0));
     r.run();
     assert_eq!(r.rect(a).width(), 32.0, "min-size keeps the pane at 32pt");
 
     // vertical: stacked
     r.set(sv, "orientation", s("vertical"));
-    r.set(sv, "position", Value::F64(60.0));
+    r.set(sv, "divider-position", Value::F64(60.0));
     r.run();
     let (ra, rb) = (r.rect(a), r.rect(b));
     assert_eq!(ra.height(), 60.0);

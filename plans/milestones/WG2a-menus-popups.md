@@ -9,6 +9,12 @@ WG1/CS5e overlaps in `walk.rs` and `layout.rs` resolved here: CS5e's container o
 grid and collapsing header before CS5e's computed `display: grid`, one `LayoutGridContainer`). Its diff against master
 therefore also carries WG1 until WG1 merges.
 
+**Decided (coordinator, 2026-10-22):** SG4 made `position` a common `Widget` prop (CSS
+`static`/`relative`/`absolute`, with `left`/`top`/`right`/`bottom`), so `popup`'s own `position` is
+renamed `placement` (same values bottom/top/left/right, default bottom; `P::Placement`,
+`kinds::PLACEMENT`). The name web developers know from Floating UI and Popper; it leaves `side` to
+`panel`. Done in the INT1 integration (`ci/int-widgets`).
+
 ## Elements
 
 Names are X4's (GTK and Qt already use them) where the kind exists there; `menu-button` and `popup` are
@@ -22,7 +28,7 @@ EGUI.md §5's (GTK's `menu-button` takes the same name; GTK's `popover` is `popu
 | `menu-separator` | `Ui::separator` | MenuEntry | — | — | — | — |
 | `context-menu` | `egui::Popup` (menu kind) | MenuEntry, attaches to Widget | as `menu` | — (methods `popup`, `popdown`) | — | — |
 | `menu-button` | `containers::menu::MenuButton` | Widget | as `menu` (a `menu` child's items inline) | `label` (text content), `active` (methods `popup`, `popdown`) | `changed(active)` | `active` |
-| `popup` | `egui::Popup` | Box, attaches to Widget | Widget | `open` (false), `position` (bottom/top/left/right), `autohide` (true) (methods `popup`, `popdown`) | `changed(open)`, `closed` | `open` |
+| `popup` | `egui::Popup` | Box, attaches to Widget | Widget | `open` (false), `placement` (bottom/top/left/right), `autohide` (true) (methods `popup`, `popdown`) | `changed(open)`, `closed` | `open` |
 | `modal` | `egui::Modal` | Box | Widget | `open` (true), `title`, `dismissable` (true) | `changed(open)`, `closed` | `open` |
 | `inner-window` | `egui::Window` | Box | Widget | `open` (true), `title`, `default-width` (320), `default-height` (240), `default-x`/`default-y` (null: egui places it), `closable`, `collapsible`, `resizable` (all true) | `changed(open)`, `closed` | `open` |
 
@@ -48,7 +54,7 @@ Behaviour:
   node), or the box it is placed in.
 - **menu-button** opens on click like egui's; `active` follows egui's popup memory both ways (a host write or
   `popup`/`popdown` opens or closes it at the next pass; a user open or close is announced).
-- **popup** is anchored to its owner (`RectAlign` from `position`, egui flips it when it does not fit), closes on
+- **popup** is anchored to its owner (`RectAlign` from `placement`, egui flips it when it does not fit), closes on
   Escape and, with `autohide`, on a click outside (`CloseOnClickOutside`). **modal** draws egui's backdrop and
   blocks the layers below; Escape or a backdrop click closes it when `dismissable`. **inner-window** is a movable
   `egui::Window` (title bar, close button when `closable`, collapse, resize). A user close (or `popdown`) writes

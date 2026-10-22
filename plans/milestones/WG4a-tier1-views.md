@@ -6,6 +6,11 @@ Design: `plans/research/EGUI.md` §5 (Tier 1; the catalog the user approved on 2
 container chrome through `leaf::container`, `walk::paint_children`, `Common::invalid`, the a11y name
 fallbacks.
 
+**Decided (coordinator, 2026-10-22):** SG4 made `position` a common `Widget` prop (CSS
+`static`/`relative`/`absolute`), so `split-view`'s `position` is renamed `divider-position`
+(`bind:divider-position`, `changed(divider-position)`, `P::DividerPosition`). Done in the INT1
+integration (`ci/int-widgets`).
+
 ## What landed
 
 | Element | Native | Props | Signals | Methods |
@@ -14,7 +19,7 @@ fallbacks.
 | `table-column` | `egui_table::Column` (data only; base `Widget`) | `title`, `width` (Widget's; null = 100), `resizable`, `align`, `sort` | | |
 | `tab-view` | a bar of selectable tabs + the selected page | `selected` (bind) | `changed(selected)` | |
 | `tab` | a flex box (base `Box`) | `title`, `closable` | `close-requested` | |
-| `split-view` | two panes + a draggable divider | `orientation`, `position` (bind; null = half), `min-size`, `resizable` | `changed(position)`, `drag-started`, `drag-stopped` | |
+| `split-view` | two panes + a draggable divider | `orientation`, `divider-position` (bind; null = half), `min-size`, `resizable` | `changed(divider-position)`, `drag-started`, `drag-stopped` | |
 | `toast-host` | a foreground `egui::Area` of popup frames | `corner`, `duration` | `closed(id, reason)`, `clicked(id)` | `show(text, level?, duration?)` → id, `dismiss(id)`, `clear()` |
 
 Rust API: `svelters_egui::toast::show(ctx, text, Level, duration)` queues on the egui context; the first
@@ -38,7 +43,7 @@ Rust API: `svelters_egui::toast::show(ctx, text, Level, duration)` queues on the
   the rest the zero layout. A table's columns are always hidden; a tab-view lays out only the selected
   page under the bar; a split-view its first two children. `tab` is an ordinary flex box.
 - **Widget writes** go through WG1's `leaf::widget_changed` (stamp, journal, `prop_changed` when
-  observed, then `changed`), so `bind:selected` and `bind:position` lower onto the generated
+  observed, then `changed`), so `bind:selected` and `bind:divider-position` lower onto the generated
   `bindings` like the WG1 inputs. A tab click restyles the tab-view (`invalidate_style`), a divider
   drag invalidates the split-view's content: the panes follow at the next frame's layout (one frame
   behind the pointer, the same as egui's own resize handles).

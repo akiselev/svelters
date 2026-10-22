@@ -8,8 +8,8 @@
 //!   of rows, each a list of cell strings). Sending every row once (`set-rows(0, all)`) also works.
 //! - `tab-view`: its children are pages (`<tab title>`, a flex box); the bar shows their titles,
 //!   only the `selected` page is laid out and drawn.
-//! - `split-view`: two panes (its first two children) with a draggable divider; `position` is the
-//!   first pane's size in points (`bind:position`).
+//! - `split-view`: two panes (its first two children) with a draggable divider; `divider-position` is the
+//!   first pane's size in points (`bind:divider-position`).
 //! - `toast-host`: draws the toasts of its viewport in a corner; `show(text, level?, duration?)`
 //!   from JS (`bind:this`) or `svelters_egui::toast::show` from Rust.
 
@@ -97,21 +97,21 @@ static SPLIT_VIEW_PROPS: &[PropDef] = &[
         "`horizontal`: the panes side by side (a vertical divider); `vertical`: one above the other.",
     ),
     PropDef {
-        name: "position",
-        key: P::Position,
+        name: "divider-position",
+        key: P::DividerPosition,
         ty: Ty::F64,
         default: Def::Null,
         nullable: true,
         native: Native::Widget,
         layout: false,
-        doc: "Size of the first pane in points along the split; null for half. Dragging the divider changes it (`bind:position`); it is clamped by `min-size` when laid out.",
+        doc: "Size of the first pane in points along the split; null for half. Dragging the divider changes it (`bind:divider-position`); it is clamped by `min-size` when laid out.",
     },
     prop("min-size", P::MinSize, Ty::F64, Def::F64(32.0), "Smallest size of either pane, in points."),
     prop("resizable", P::Resizable, Ty::Bool, Def::Bool(true), "The divider can be dragged."),
 ];
 
 static SPLIT_VIEW_SIGNALS: &[SignalDef] = &[
-    signal("changed", &[("position", Ty::F64)], "The user dragged the divider; carries the first pane's new size."),
+    signal("changed", &[("divider-position", Ty::F64)], "The user dragged the divider; carries the first pane's new size."),
     signal("drag-started", NONE, "A divider drag began."),
     signal("drag-stopped", NONE, "A divider drag ended."),
 ];
@@ -213,7 +213,7 @@ pub(super) const SPLIT_VIEW: KindDef = KindDef {
     props: SPLIT_VIEW_PROPS,
     signals: SPLIT_VIEW_SIGNALS,
     methods: &[],
-    doc: "Two panes (its first two children; more are not shown) split by a divider the user drags. `position` is the first pane's size.",
+    doc: "Two panes (its first two children; more are not shown) split by a divider the user drags. `divider-position` is the first pane's size.",
 };
 
 pub(super) const TOAST_HOST: KindDef = KindDef {

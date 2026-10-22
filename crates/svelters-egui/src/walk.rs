@@ -45,6 +45,7 @@ impl EguiBackend {
         let mut scene = self.0.scene.borrow_mut();
         let id = scene.live(w).expect("a live window");
         let r = scene.core[scene.ix(id)].root;
+        crate::provider::pass::prepare_root(&mut scene, r); // SG4: Caps::PREPARE (§7.2 b)
         self.layout_root(&mut scene, ui.ctx(), r, rect.size());
         paint(&mut scene, w, rect.min.to_vec2(), ui, out);
         ui.allocate_rect(rect, egui::Sense::hover());
@@ -65,6 +66,7 @@ impl EguiBackend {
         if scene.roots.get(r).is_some_and(|e| !e.dirty.remeasure.is_empty()) {
             layout::remeasure(&mut scene, &layout::Metrics::new(ui.ctx()), r);
         }
+        crate::provider::pass::prepare_root(&mut scene, r); // SG4: Caps::PREPARE (§7.2 b)
         self.layout_root(&mut scene, ui.ctx(), r, rect.size());
         paint_at(&mut scene, i, rect.min.to_vec2(), ui, out);
         // what the content needs: the extent of the slot's children (laid out from its origin)
@@ -84,7 +86,13 @@ pub fn paint(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut 
     paint_at(arena, i, origin, ui, out);
 }
 
-/// `pub(crate)` for the WG4a views, which draw one child at a time (`crate::views`).
+/// SG4: a provider's `WidgetCx::children`/`child` draws its children through the walk.
+pub(crate) fn paint_child(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
+    paint_at(arena, i, origin, ui, out);
+}
+
+/// `pub(crate)` for the WG4a views, which draw one child at a time (`crate::views`), and WG2b's
+/// `crate::elements`.
 pub(crate) fn paint_at(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
     if !arena.common(i).visible {
         return;
@@ -216,7 +224,7 @@ fn paint_own(
     crate::style::before_leaf(arena, i, r, &mut child);
     crate::kinds::dnd::node(arena, i, r, &mut child, out, crate::kinds::dnd::Part::Source); // WG4b: under the widget
     let resp = if matches!(arena.w(i), crate::scene::W::Ext(_)) {
-        let resp = crate::provider::paint(arena, i, &mut child, out); // RA1: a provider kind
+        let resp = crate::provider::paint(arena, i, &mut child, origin, out); // RA1: a provider kind
         if arena.common(i).invalid {
             crate::leaf::invalid_outline(&child, arena.core[i].drawn); // WG1
         }

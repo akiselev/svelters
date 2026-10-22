@@ -36,7 +36,7 @@ pub struct OverlayW {
     /// A `popup`/`popdown` call, applied (and announced) at the next pass.
     pub cmd: Option<bool>,
     pub title: String,
-    pub position: &'static str,
+    pub placement: &'static str,
     pub autohide: bool,
     pub dismissable: bool,
     pub default_w: f64,
@@ -62,7 +62,7 @@ pub(crate) fn payload(id: &str) -> OverlayW {
         open: kind != OverlayKind::Popup,
         cmd: None,
         title: String::new(),
-        position: "bottom",
+        placement: "bottom",
         autohide: true,
         dismissable: true,
         default_w: 320.0,
@@ -96,14 +96,14 @@ pub(crate) fn set_prop(o: &mut OverlayW, key: P, v: &Value) -> Result<(), String
     match key {
         P::Open => o.open = as_bool(v)?,
         P::Title => o.title = as_str(v)?,
-        P::Position if o.kind == OverlayKind::Popup => {
+        P::Placement if o.kind == OverlayKind::Popup => {
             let s = as_str(v)?;
-            o.position = crate::kinds::POSITION
+            o.placement = crate::kinds::PLACEMENT
                 .iter()
                 .copied()
                 .find(|x| *x == s)
                 .ok_or_else(|| {
-                    format!("`{s}` is not one of {}", crate::kinds::POSITION.join(", "))
+                    format!("`{s}` is not one of {}", crate::kinds::PLACEMENT.join(", "))
                 })?;
         }
         P::Autohide => o.autohide = as_bool(v)?,
@@ -136,7 +136,7 @@ pub(crate) fn get_prop(o: &OverlayW, key: P) -> Result<Value, String> {
     Ok(match key {
         P::Open => Value::Bool(o.open),
         P::Title => Value::Str(o.title.clone()),
-        P::Position => Value::Str(o.position.to_string()),
+        P::Placement => Value::Str(o.placement.to_string()),
         P::Autohide => Value::Bool(o.autohide),
         P::Dismissable => Value::Bool(o.dismissable),
         P::DefaultWidth => Value::F64(o.default_w),
@@ -255,7 +255,7 @@ fn overlay(
     if open {
         match o.kind {
             OverlayKind::Popup => {
-                let align = match o.position {
+                let align = match o.placement {
                     "top" => RectAlign::TOP_START,
                     "left" => RectAlign::LEFT_START,
                     "right" => RectAlign::RIGHT_START,

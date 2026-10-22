@@ -1,5 +1,5 @@
 <script>
-  // WG4a: <split-view> with bind:position, and a nested vertical split.
+  // WG4a: <split-view> with bind:divider-position, and a nested vertical split.
   let position = $state(120);
   let dragging = $state(false);
 </script>
@@ -9,7 +9,7 @@
   <label>Dragging: {dragging}</label>
   <split-view
     accessible-name="Main split"
-    bind:position
+    bind:divider-position={position}
     min-size={60}
     flex-grow={1}
     ondrag-started={() => (dragging = true)}
