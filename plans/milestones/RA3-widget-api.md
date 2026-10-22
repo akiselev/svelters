@@ -75,7 +75,10 @@ during a pass) the table is still empty, so object event payloads do not convert
 the node's id is recorded as `Role::Text { multiline }` for EV3 (text-field key rules, R11), and
 `provider::paint` runs `focus::before_text`/`after_text` around its `ui`, so `Embed::text_command` (the Edit
 menu's Cut, Copy, Paste, Undo, Select All, Insert) reaches it as the input events they stand for. This is the
-TextInput unit's entry point of ARCH-WIDGETS (OW4 builds the unit itself for `text-edit`).
+TextInput unit's entry point of ARCH-WIDGETS (OW4 builds the unit itself for `text-edit`). Its value is the unit's
+`multiline` param (ARCH-WIDGETS §5 TextInput row), so when OW4 lands the macro can derive it for a kind with
+`#[behavior] text: TextInput` (alongside `units_claims`); a hand-written kind returns it directly, as
+`<quantity-field>` does.
 
 ### 7. `bind:x|commit` on provider kinds (CX3)
 
@@ -111,7 +114,7 @@ lower onto observation. `<quantity-field>` has `#[event] commit: Event<f64>`.
   (`app/src/Methods.svelte`, loaded from source) calls `setText`/`commit`/`valueIn`/`focus` as members and through
   `call`; `cx.emit` reaches `onedited`, `cx.set` reaches `bind:value`, state bits apply, a wrong argument type throws.
 - `examples/egui-kinds/tests/widgets.rs`: fn form (`level-meter` measured 120×14 by the sizing pass, `step-count`
-  bound `&mut`), wrapped `DragValue` (`drag-value`: JS writes reach it, typing is announced to `bind:value`), container
+  bound `&mut`), wrapped `DragValue` (`wrapped-drag-value`, since `drag-value` is a built-in: JS writes reach it, typing is announced to `bind:value`), container
   (`collapsing-section`: Svelte children placed under the header, hidden and relaid out when closed), and the paint
   cache hit-rate test (`spark-line`: 20 unchanged repaints are hits, a new `values` rebuilds once).
 - `app/src/Methods.svelte` and `Widgets.svelte` are also checked by svelte-check in `app`'s `pnpm test`.

@@ -2394,7 +2394,8 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
             WidgetField::Prop { name: js, bind, measure, default, enumeration } => {
                 let optional = last_segment(ty).is_some_and(|s| s.ident == "Option");
                 let (rty, nullable) = row_ty(ty, enumeration);
-                let required = default.is_none() && !optional;
+                // RA3: a bound prop gets its value from `bind:`, so it is never required
+                let required = default.is_none() && !optional && !*bind;
                 let init = match default {
                     Some(d) => quote! { ::core::convert::Into::into(#d) },
                     None => quote! { ::core::default::Default::default() },

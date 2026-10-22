@@ -231,8 +231,7 @@ fn kind_json(k: &KindDef) -> J {
             .enumerate()
             .filter(|(_, p)| p.native == Native::Widget)
             .filter_map(|(i, p)| {
-                let commit = pk.entry.events.iter().position(|e| e.name == "commit").and_then(|e| pk.event_type(e)).map(provider_shape);
-                let c = commit_binding(commit, pk.types.get(i).map(provider_shape), 0)?;
+                let c = provider_commit(pk, i)?;
                 Some((
                     p.name.to_string(),
                     json!({
@@ -532,6 +531,12 @@ fn commit_binding<S: PartialEq>(commit: Option<S>, change: Option<S>, arg: usize
     (commit.is_some() && commit == change).then(|| json!({"event": "commit", "arg": arg}))
 }
 
+/// RA3: the `commit` entry of provider prop `i`'s binding, if its kind's `commit` event has the prop's shape.
+fn provider_commit(pk: &ProviderKind, i: usize) -> Option<J> {
+    let commit = pk.entry.events.iter().position(|e| e.name == "commit").and_then(|e| pk.event_type(e)).map(provider_shape);
+    commit_binding(commit, pk.types.get(i).map(provider_shape), 0)
+}
+
 /// RA3: a provider value's change shape: its JS type without nullability (`Option<f64>` commits an
 /// `f64`).
 fn provider_shape(t: &svelters_host::exports::TypeRef) -> String {
@@ -678,6 +683,10 @@ fn ts_members(out: &mut String, indent: &str, k: &KindDef, provider: Option<&Pro
         let _ = writeln!(out, "{indent}{}{}: {ty};", ts_key(p.name), if optional { "?" } else { "" });
         if p.native == Native::Widget {
             let _ = writeln!(out, "{indent}{}?: {ty};", ts_key(&format!("bind:{}", p.name)));
+            // RA3: `bind:<prop>|commit` where the fragment declares its commit (`provider_commit`)
+            if provider.is_some_and(|pk| provider_commit(pk, i).is_some()) {
+                let _ = writeln!(out, "{indent}{}?: {ty};", ts_key(&format!("bind:{}|commit", p.name)));
+            }
         }
     }
     for (i, s) in k.signals.iter().enumerate() {

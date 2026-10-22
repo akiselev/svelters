@@ -82,14 +82,23 @@
     }
   },
   "caps": {
+    "cad.CollapsingSection": [
+      "container",
+      "custom-layout"
+    ],
+    "cad.DocTitle": [],
+    "cad.DragValueKind": [],
+    "cad.LevelMeter": [],
     "cad.QuantityField": [
       "focusable",
       "editable"
-    ]
+    ],
+    "cad.Sparkline": [],
+    "cad.StepCount": []
   },
   "fragment": true,
   "kinds": {
-    "cad.QuantityField": {
+    "cad.CollapsingSection": {
       "a11y": {
         "actions": [],
         "author_id": "anchor",
@@ -107,6 +116,574 @@
       "bindings": {},
       "category": "custom",
       "chain": [
+        "cad.CollapsingSection",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "css_hidden": [],
+      "css_note": "Provider states match as `:state(<namespace>.<name>)`.",
+      "doc": "RA3, a container kind: `<collapsing-section title=\"Advanced\" bind:open>…children…</collapsing-section>`.\nIts children (any elements) are laid out under the header while open (`Widget::layout`) and\ndrawn with `cx.children(ui)`.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui_kinds_demo::CollapsingSection",
+      "paint": "provider",
+      "present": null,
+      "props": {
+        "open": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Whether the children show.",
+          "js": "open",
+          "native": "open",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:cad.CollapsingSection:open",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        },
+        "title": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The header text, also its accessible name.",
+          "js": "title",
+          "native": "title",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:cad.CollapsingSection:title",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "string",
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "egui_kinds_demo::CollapsingSection"
+      },
+      "signals": {},
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
+      "text_content": null
+    },
+    "cad.DocTitle": {
+      "a11y": {
+        "actions": [],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "tooltip"
+        ],
+        "note": "Its role, value and actions are what the kind's `Widget::a11y` sets.",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
+      "abstract": false,
+      "bindings": {},
+      "category": "custom",
+      "chain": [
+        "cad.DocTitle",
+        "Widget"
+      ],
+      "children": null,
+      "css_hidden": [],
+      "css_note": "Provider states match as `:state(<namespace>.<name>)`.",
+      "doc": "RA3, an object-handle prop: `<doc-title doc={handle} />` shows the document's name; a click\ncounts an edit on the shared Rust object (no JS involved).",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "docName": {
+          "dispatch": "provider",
+          "doc": "The document's name, read in Rust through the handle (null without one).",
+          "native": "doc_name",
+          "params": [],
+          "returns": {
+            "nullable": true,
+            "ts": "string | null",
+            "type": "string"
+          }
+        }
+      },
+      "native": "egui_kinds_demo::DocTitle",
+      "paint": "provider",
+      "present": null,
+      "props": {
+        "doc": {
+          "construct_only": false,
+          "default": null,
+          "doc": "The document (an exported object; null shows \"no document\").",
+          "js": "doc",
+          "native": "doc",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:cad.DocTitle:doc",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "DocHandle | null",
+          "type": "other",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "egui_kinds_demo::DocTitle"
+      },
+      "signals": {},
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
+      "text_content": null
+    },
+    "cad.DragValueKind": {
+      "a11y": {
+        "actions": [],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "tooltip"
+        ],
+        "note": "Its role, value and actions are what the kind's `Widget::a11y` sets.",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
+      "abstract": false,
+      "bindings": {},
+      "category": "custom",
+      "chain": [
+        "cad.DragValueKind",
+        "Widget"
+      ],
+      "children": null,
+      "css_hidden": [],
+      "css_note": "Provider states match as `:state(<namespace>.<name>)`.",
+      "doc": "RA3, `wrap_widget!`: egui's `DragValue`, `<wrapped-drag-value bind:value={x} speed={0.1} suffix=\" mm\" />`.\negui writes `value` in place; the macro announces the change (`bind:value` is exact).",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui_kinds_demo::DragValueKind",
+      "paint": "provider",
+      "present": null,
+      "props": {
+        "speed": {
+          "construct_only": false,
+          "default": 1.0,
+          "doc": "How much a pixel of drag changes it.",
+          "js": "speed",
+          "native": "speed",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:cad.DragValueKind:speed",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        },
+        "suffix": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Text after the number.",
+          "js": "suffix",
+          "native": "suffix",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:cad.DragValueKind:suffix",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "string",
+          "type": "string",
+          "writable": true
+        },
+        "value": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "The value.",
+          "js": "value",
+          "native": "value",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:cad.DragValueKind:value",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "egui_kinds_demo::DragValueKind"
+      },
+      "signals": {},
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
+      "text_content": null
+    },
+    "cad.LevelMeter": {
+      "a11y": {
+        "actions": [],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "tooltip"
+        ],
+        "note": "Its role, value and actions are what the kind's `Widget::a11y` sets.",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
+      "abstract": false,
+      "bindings": {},
+      "category": "custom",
+      "chain": [
+        "cad.LevelMeter",
+        "Widget"
+      ],
+      "children": null,
+      "css_hidden": [],
+      "css_note": "Provider states match as `:state(<namespace>.<name>)`.",
+      "doc": "RA3, the fn form: a level meter, `<level-meter level={0.4} label=\"Load\" />`. Stateless: the fn\ndraws it from its props every frame; its size is what it allocates (measured in a sizing pass).",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui_kinds_demo::LevelMeter",
+      "paint": "provider",
+      "present": null,
+      "props": {
+        "label": {
+          "construct_only": false,
+          "default": "",
+          "doc": "",
+          "js": "label",
+          "native": "label",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:cad.LevelMeter:label",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "string",
+          "type": "string",
+          "writable": true
+        },
+        "level": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "",
+          "js": "level",
+          "native": "level",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:cad.LevelMeter:level",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        },
+        "width": {
+          "construct_only": false,
+          "default": 120.0,
+          "doc": "",
+          "js": "width",
+          "native": "width",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:cad.LevelMeter:width",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "egui_kinds_demo::LevelMeter"
+      },
+      "signals": {},
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
+      "text_content": null
+    },
+    "cad.QuantityField": {
+      "a11y": {
+        "actions": [],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "tooltip"
+        ],
+        "note": "Its role, value and actions are what the kind's `Widget::a11y` sets.",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
+      "abstract": false,
+      "bindings": {
+        "value": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "commit",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "value",
+          "provenance": "svelters-egui: egui_kinds_demo::QuantityField writes value with cx.set (observed, exact); its `commit` event carries the committed value",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "category": "custom",
+      "chain": [
         "cad.QuantityField",
         "Widget"
       ],
@@ -116,7 +693,93 @@
       "doc": "A unit-aware numeric field: `<quantity-field dim=\"length\" bind:value={x} onaccepted={…} />`.",
       "interface": false,
       "lifetime": "owned",
-      "methods": {},
+      "methods": {
+        "commit": {
+          "dispatch": "provider",
+          "doc": "Commits the text being edited, as Enter does (`bind:value` and `onaccepted` hear it); the SI\nvalue, or null when the text does not parse.",
+          "native": "commit",
+          "params": [],
+          "returns": {
+            "nullable": true,
+            "ts": "number | null",
+            "type": "f64"
+          }
+        },
+        "focus": {
+          "dispatch": "provider",
+          "doc": "Gives the field keyboard focus.",
+          "native": "focus",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "moveCaret": {
+          "dispatch": "provider",
+          "doc": "Puts the caret at `at` (K1's shape: `{ line, column }`, 0-based; a field has line 0 only);\nthrows `FieldError` (`out-of-range`) outside the text. A `Json<T>` argument and a `Result`\nwith a `svelters::Error`, as cadatomic's `<code-editor>` methods take and return.",
+          "native": "move_caret",
+          "params": [
+            {
+              "name": "at",
+              "nullable": true,
+              "optional": false,
+              "ts": "Position",
+              "type": "other"
+            }
+          ],
+          "returns": {
+            "nullable": false,
+            "ts": "boolean",
+            "type": "bool"
+          }
+        },
+        "setText": {
+          "dispatch": "provider",
+          "doc": "Replaces the text being edited without committing it (as typing does: `onedited` fires);\nreturns whether it parses.",
+          "native": "set_text",
+          "params": [
+            {
+              "name": "text",
+              "nullable": false,
+              "optional": false,
+              "ts": "string",
+              "type": "string"
+            }
+          ],
+          "returns": {
+            "nullable": false,
+            "ts": "boolean",
+            "type": "bool"
+          }
+        },
+        "valueIn": {
+          "dispatch": "provider",
+          "doc": "The committed value in `unit` (one of the dimension's units, e.g. `cm`), or null.",
+          "native": "value_in",
+          "params": [
+            {
+              "name": "unit",
+              "nullable": false,
+              "optional": false,
+              "ts": "string",
+              "type": "string"
+            },
+            {
+              "name": "places",
+              "nullable": true,
+              "optional": true,
+              "ts": "number | null",
+              "type": "i64"
+            }
+          ],
+          "returns": {
+            "nullable": true,
+            "ts": "number | null",
+            "type": "f64"
+          }
+        }
+      },
       "native": "egui_kinds_demo::QuantityField",
       "paint": "provider",
       "present": null,
@@ -238,6 +901,22 @@
           "sync": false,
           "sync_required": false
         },
+        "commit": {
+          "args": [
+            {
+              "name": "commit",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "RA3 (CX3): the committed value, for `bind:value|commit` (same shape as `value`).",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "edited": {
           "args": [
             {
@@ -314,6 +993,223 @@
         }
       ],
       "text_content": null
+    },
+    "cad.Sparkline": {
+      "a11y": {
+        "actions": [],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "tooltip"
+        ],
+        "note": "Its role, value and actions are what the kind's `Widget::a11y` sets.",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
+      "abstract": false,
+      "bindings": {},
+      "category": "custom",
+      "chain": [
+        "cad.Sparkline",
+        "Widget"
+      ],
+      "children": null,
+      "css_hidden": [],
+      "css_note": "Provider states match as `:state(<namespace>.<name>)`.",
+      "doc": "RA3, the paint cache: `<spark-line values={[…]} />` builds its shapes through\n`cx.cached_shapes`, so they are rebuilt only when `values` (its version) or its size change.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui_kinds_demo::Sparkline",
+      "paint": "provider",
+      "present": null,
+      "props": {
+        "values": {
+          "construct_only": false,
+          "default": [],
+          "doc": "The samples, drawn left to right, scaled to their range.",
+          "js": "values",
+          "native": "values",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:cad.Sparkline:values",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "number[]",
+          "type": "other",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "egui_kinds_demo::Sparkline"
+      },
+      "signals": {},
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
+      "text_content": null
+    },
+    "cad.StepCount": {
+      "a11y": {
+        "actions": [],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "tooltip"
+        ],
+        "note": "Its role, value and actions are what the kind's `Widget::a11y` sets.",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
+      "abstract": false,
+      "bindings": {},
+      "category": "custom",
+      "chain": [
+        "cad.StepCount",
+        "Widget"
+      ],
+      "children": null,
+      "css_hidden": [],
+      "css_note": "Provider states match as `:state(<namespace>.<name>)`.",
+      "doc": "The fn form with a bound prop: `<step-count bind:count={n} />`; the `&mut` parameter is what\nthe fn writes, announced to `bind:count`.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui_kinds_demo::StepCount",
+      "paint": "provider",
+      "present": null,
+      "props": {
+        "count": {
+          "construct_only": false,
+          "default": 0,
+          "doc": "",
+          "js": "count",
+          "native": "count",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:cad.StepCount:count",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "range": {
+            "max": 9007199254740991.0,
+            "min": -9007199254740991.0
+          },
+          "readable": true,
+          "ts": "number",
+          "type": "i64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "egui_kinds_demo::StepCount"
+      },
+      "signals": {},
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
+      "text_content": null
     }
   },
   "schema": "svelters-semantics/v0",
@@ -321,6 +1217,12 @@
     "generator": "crates/svelters-egui/src/spec.rs (svelters_egui::dump)"
   },
   "tags": {
-    "quantity-field": "cad.QuantityField"
+    "collapsing-section": "cad.CollapsingSection",
+    "doc-title": "cad.DocTitle",
+    "level-meter": "cad.LevelMeter",
+    "quantity-field": "cad.QuantityField",
+    "spark-line": "cad.Sparkline",
+    "step-count": "cad.StepCount",
+    "wrapped-drag-value": "cad.DragValueKind"
   }
 }

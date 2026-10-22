@@ -335,7 +335,7 @@ impl Widget for CollapsingSection {
         let header = egui::Rect::from_min_size(cx.rect().min, egui::vec2(cx.rect().width(), SECTION_HEADER));
         let resp = ui.interact(header, cx.id(), egui::Sense::click());
         let p = ui.painter();
-        let mark = if self.open { "▼" } else { "▶" };
+        let mark = if self.open { "-" } else { "+" };
         let color = ui.visuals().text_color();
         p.text(header.left_center(), egui::Align2::LEFT_CENTER, format!("{mark} {}", self.title), egui::TextStyle::Button.resolve(ui.style()), color);
         if resp.clicked() {

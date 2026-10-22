@@ -12,7 +12,7 @@
   let depth: number | null = $state(0.002);
 </script>
 
-<window title="Methods" default-width={360} default-height={240}>
+<window title="Methods" default-width={360} default-height={520}>
   <box class="column">
     <quantity-field
       bind:this={field}

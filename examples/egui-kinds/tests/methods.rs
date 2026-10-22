@@ -79,7 +79,7 @@ fn svelte_calls_kind_methods_through_bind_this() {
     let invalid = egui_kinds_demo::cad::INVALID.bits();
     assert!(app.backend.with_scene(|s| s.n(h).state().contains(invalid)), "cad.invalid is set");
     press(&mut app, "Commit");
-    assert!(has(&app, "result committed undefined"), "an unparsable text commits nothing (null result)");
+    assert!(has(&app, "result committed null"), "an unparsable text commits nothing (null result)");
     assert!(has(&app, "width 0.04 accepted 0.04 edits 2"));
 
     // the host checks arguments against the method's descriptor before Rust runs

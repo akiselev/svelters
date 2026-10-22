@@ -9,7 +9,7 @@
   let samples = $state([1, 3, 2, 5, 4]);
 </script>
 
-<window title="Widgets" default-width={360} default-height={320}>
+<window title="Widgets" default-width={360} default-height={480}>
   <box class="column">
     <level-meter {level} label="Load" />
     <step-count bind:count />

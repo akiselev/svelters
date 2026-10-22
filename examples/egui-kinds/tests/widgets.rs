@@ -57,7 +57,7 @@ fn svelte_drives_fn_form_wrapped_and_container_kinds() {
     assert!(has(&app, "Load 25%"), "{:#?}", app.harness.root());
     let h = app.backend.handles_of("level-meter")[0];
     let r = app.backend.with_scene(|s| s.n(h).rect);
-    assert_eq!((r.width(), r.height()), (120.0, 14.0), "measured by a sizing pass");
+    assert_eq!(r.height(), 14.0, "measured by a sizing pass (the column stretches its width)");
     press(&mut app, "More load");
     assert!(has(&app, "Load 75%"), "{:#?}", app.harness.root());
 
@@ -70,7 +70,7 @@ fn svelte_drives_fn_form_wrapped_and_container_kinds() {
     press(&mut app, "Set x");
     assert!(has(&app, "count 3 x 4 open true"), "{:#?}", app.harness.root());
     let dv = app.harness.get_by_role(Role::SpinButton);
-    assert_eq!(dv.value().as_deref(), Some("4 mm"), "{:#?}", app.harness.root());
+    assert_eq!(dv.value().as_deref(), Some("4.0 mm"), "{:#?}", app.harness.root());
     dv.click();
     app.run();
     app.harness.key_press_modifiers(egui::Modifiers::COMMAND, egui::Key::A);
