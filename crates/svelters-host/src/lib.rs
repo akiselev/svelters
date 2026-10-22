@@ -19,6 +19,7 @@
 //! The host starts no threads. Timers run on the toolkit: after each checkpoint the host arms the
 //! backend's one-shot `schedule_wake` for the earliest deadline.
 
+pub mod bytecode;
 mod convert;
 mod core;
 pub mod crash;
@@ -268,8 +269,33 @@ impl<'a> Host<'a> {
 
     /// DX1: supplies the settings backend, UI-state backend and paths that `svelters:settings`,
     /// `svelters:paths` and `svelters:log` use. Without it those modules load but their calls fail.
+    ///
+    /// Q2: unless [`Host::set_bytecode_cache`] was called, it also opens the bytecode cache under
+    /// `dx.paths.cache()/bytecode` (a cache that cannot be opened is logged and skipped).
     pub fn set_dx(&self, dx: dx::Dx) {
+        if !self.core.bytecode_explicit.get() {
+            let dir = dx.paths.cache().join("bytecode");
+            match bytecode::BytecodeCache::open(&dir) {
+                Ok(c) => *self.core.bytecode.borrow_mut() = Some(Rc::new(c)),
+                Err(e) => tracing::warn!(target: "svelters::host", "bytecode cache {} not opened: {e}", dir.display()),
+            }
+        }
         *self.core.dx.borrow_mut() = Some(Rc::new(dx));
+    }
+
+    /// Q2: source modules (JavaScript from the provider) are compiled through the bytecode cache in
+    /// `dir`, or not cached (`None`). Overrides the cache [`Host::set_dx`] opens; applies to the next
+    /// module load. Modules re-imported for HMR (`?v=n`) are never cached.
+    pub fn set_bytecode_cache(&self, dir: Option<&Path>) -> std::io::Result<()> {
+        let cache = dir.map(bytecode::BytecodeCache::open).transpose()?;
+        *self.core.bytecode.borrow_mut() = cache.map(Rc::new);
+        self.core.bytecode_explicit.set(true);
+        Ok(())
+    }
+
+    /// Q2: the bytecode cache in use, if any.
+    pub fn bytecode_cache(&self) -> Option<Rc<bytecode::BytecodeCache>> {
+        self.core.bytecode.borrow().clone()
     }
 
     /// LD1: sets the extra schemes, native modules and `svelters:app/*` visibility that apply to the
