@@ -33,6 +33,14 @@ Decisions already made by the user (2026-10-21):
 - egui stays at 0.37 and is upgraded together with cadatomic. The Svelte UI sources live in
   cadatomic. SC1 (one real cadatomic panel rendered by Svelte inside the running app) comes first.
 
+Decided by the user (2026-10-22): **extensions run under a security policy, deny by default.**
+cadatomic will serve high-security fields (aerospace and the like) that must strictly control what
+each extension can see and do. Every capability svelters gives an extension host (module visibility
+such as the `svelters:app/*` allow-list, native ops and handles, scene and data access, files,
+network, IPC) is granted by an explicit, auditable policy; an unconfigured extension gets nothing.
+New host, loader and scene APIs that an extension can reach must have a policy hook. The policy's
+design is ARCH-SECURITY's (open questions go to the user).
+
 ## Machines and sessions
 
 Rust builds are the bottleneck, so work is spread over three machines. Every machine runs several
