@@ -115,6 +115,13 @@ pub struct Table {
 }
 
 impl Table {
+    /// Whether this engine computes `prop` on this backend: setters and child attributes always,
+    /// and `via: css` properties too when the toolkit has no CSS engine of its own (egui), since
+    /// nobody else decides them there.
+    pub fn computes(&self, prop: &Prop) -> bool {
+        prop.is_computed() || self.dialect == Dialect::None
+    }
+
     pub fn get(&self, name: &str) -> Option<&'static Prop> {
         self.index_of(name).map(|i| &self.props[i])
     }

@@ -348,7 +348,8 @@ fn check_decl(table: &'static Table, d: &Declaration, inline: bool) -> Option<Di
     }
     let loc = cssparser::SourceLocation { line: d.line.saturating_sub(1), column: d.column };
     let Some(prop) = table.get(&d.name) else {
-        let mut msg = format!("`{}` is not a {} style property", d.name, table.toolkit);
+        let article = if table.toolkit.starts_with(['a', 'e', 'i', 'o', 'u']) { "an" } else { "a" };
+        let mut msg = format!("`{}` is not {article} {} style property", d.name, table.toolkit);
         let elsewhere: Vec<&str> = crate::tables::ALL.iter().filter(|t| t.get(&d.name).is_some()).map(|t| t.toolkit).collect();
         if !elsewhere.is_empty() {
             msg.push_str(&format!(" (it is one on {})", elsewhere.join(", ")));
@@ -366,4 +367,36 @@ fn check_decl(table: &'static Table, d: &Declaration, inline: bool) -> Option<Di
         Ok(_) => None,
         Err(e) => Some(Diagnostic { severity: Severity::Error, ..Diagnostic::error(loc, e) }),
     }
+}
+
+/// Whether `el` matches any selector of `list` (queries, tests and MCP: CSS.md §2.9).
+pub fn matches<E: Element>(list: &crate::selector::SelectorList, el: E, caches: &mut MatchCaches) -> bool {
+    let mut cx = MatchingContext::new(
+        MatchingMode::Normal,
+        None,
+        &mut caches.0,
+        QuirksMode::NoQuirks,
+        NeedsSelectorFlags::No,
+        MatchingForInvalidation::No,
+    );
+    selectors::matching::matches_selector_list(list, &Node(el), &mut cx)
+}
+
+/// The nodes of `root`'s subtree (`root` included) that match `list`, in tree order.
+pub fn select<E: Element>(list: &crate::selector::SelectorList, root: E, caches: &mut MatchCaches) -> Vec<E> {
+    let mut out = Vec::new();
+    let mut stack = vec![root];
+    while let Some(n) = stack.pop() {
+        if matches(list, n, caches) {
+            out.push(n);
+        }
+        let mut kids = Vec::new();
+        let mut c = n.first_child();
+        while let Some(k) = c {
+            kids.push(k);
+            c = k.next_sibling();
+        }
+        stack.extend(kids.into_iter().rev());
+    }
+    out
 }

@@ -4,7 +4,8 @@
 //! guaranteed-invalid). A standard property that isn't declared inherits when CSS inherits it and
 //! is otherwise absent, meaning "the native default". A value that fails after `var()`
 //! substitution is invalid at computed-value time and behaves as `unset`. Only properties this
-//! engine applies (`via: setter` / `child-attr`) are computed; `via: css` ones are the toolkit's.
+//! engine applies are computed ([`Table::computes`]): `via: css` ones belong to the toolkit's own
+//! CSS engine where there is one.
 
 use crate::atom::Atom;
 use crate::sheet::Declaration;
@@ -124,7 +125,7 @@ pub(crate) fn compute(table: &'static Table, decls: &[&Declaration], parent: Opt
     let order = font.into_iter().chain(color).chain((0..table.props.len()).filter(|i| Some(*i) != font && Some(*i) != color));
     for i in order {
         let prop = &table.props[i];
-        if !prop.is_computed() {
+        if !table.computes(prop) {
             continue;
         }
         let v = match winners[i] {

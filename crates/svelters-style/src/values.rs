@@ -595,7 +595,8 @@ mod tests {
         assert_eq!(c("hwb(0 0% 0%)"), [255, 0, 0, 255]);
         assert_eq!(c("oklch(62.8% 0.2577 29.23)"), [255, 0, 0, 255]);
         assert_eq!(c("oklab(1 0 0)"), [255, 255, 255, 255]);
-        assert_eq!(c("lab(53.24 80.09 67.2)"), [255, 0, 0, 255]);
+        // CSS Lab is D50: sRGB red is lab(54.29 80.8 69.89), not the D65 (53.24 80.09 67.2)
+        assert_eq!(c("lab(54.29 80.8 69.89)"), [255, 0, 0, 255]);
         assert_eq!(c("color(srgb 0 1 0)"), [0, 255, 0, 255]);
         assert!(v(&COL, "currentcolor").is_err());
         let with = ValueCx { current_color: Some(Color { r: 1.0, g: 0.0, b: 0.0, a: 1.0 }), ..cx() };

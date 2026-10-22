@@ -14,18 +14,21 @@ const LIMIT: usize = 64 * 1024;
 /// Whether `text` contains a `var()` call anywhere.
 pub(crate) fn has_var(text: &str) -> bool {
     fn scan(input: &mut Parser<'_>) -> bool {
+        let mut found = false;
         while let Ok(t) = input.next() {
+            if found {
+                continue;
+            }
             match t {
-                Token::Function(name) if name.eq_ignore_ascii_case("var") => return true,
+                Token::Function(name) if name.eq_ignore_ascii_case("var") => found = true,
+                // `parse_nested_block` wants the block consumed, so `scan` runs to its end
                 Token::Function(_) | Token::ParenthesisBlock | Token::SquareBracketBlock | Token::CurlyBracketBlock => {
-                    if input.parse_nested_block(|i| Ok::<_, cssparser::ParseError<()>>(scan(i))).unwrap_or(false) {
-                        return true;
-                    }
+                    found = input.parse_nested_block(|i| Ok::<_, cssparser::ParseError<()>>(scan(i))).unwrap_or(false);
                 }
                 _ => {}
             }
         }
-        false
+        found
     }
     // fast path: the tokenizer only runs when the text could contain one
     text.as_bytes().windows(4).any(|w| w.eq_ignore_ascii_case(b"var(")) && scan(&mut Parser::new(text))
