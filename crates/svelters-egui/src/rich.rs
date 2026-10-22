@@ -21,7 +21,7 @@
 use crate::scene::{NodeId, Scene, StateBits, W};
 use egui::text::{LayoutJob, TextFormat};
 use egui::{Color32, FontFamily, FontId, Rect, Stroke};
-use svelters_style::ComputedValue;
+use svelters_style::{ComputedValue, StyleView};
 
 /// The look of one run, after inheritance.
 #[derive(Clone, Copy, Debug, Default, PartialEq)]
@@ -134,10 +134,12 @@ fn visit(s: &Scene, id: NodeId, parent: RunFmt, link: Option<NodeId>, label_size
     }
     let link = if tag == "a" { Some(id) } else { link };
     if let Some(c) = s.style.computed(id) {
-        // only what differs from the parent's computed value: an inherited value keeps the
-        // enclosing run's format (and this tag's default)
-        let pc = s.core[i].parent.and_then(|p| s.style.computed(p));
-        let own = |name: &str| c.get(name).filter(|v| pc.is_none_or(|pc| pc.get(name) != Some(*v)));
+        // read through the engine's typed view (OW-CSS); only what differs from the parent's
+        // computed value counts: an inherited value keeps the enclosing run's format (and this
+        // tag's default)
+        let v = StyleView::new(c);
+        let pv = s.core[i].parent.and_then(|p| s.style.computed(p)).map(|pc| StyleView::new(pc));
+        let own = |name: &str| v.get(name).filter(|x| pv.as_ref().is_none_or(|pv| pv.get(name) != Some(*x)));
         if let Some(k) = keyword(own("font-style")) {
             f.italic = k == "italic" || k == "oblique";
         }
@@ -155,7 +157,11 @@ fn visit(s: &Scene, id: NodeId, parent: RunFmt, link: Option<NodeId>, label_size
         if let Some(col) = color(own("color")) {
             f.color = Some(col);
         }
-        if let Some(bg) = color(c.get("background-color")).filter(|c| c.a() > 0) {
+        if let Some(bg) = v.background().map(|k| {
+            let [r, g, b, a] = k.rgba8();
+            Color32::from_rgba_unmultiplied(r, g, b, a)
+        }).filter(|c| c.a() > 0)
+        {
             f.background = Some(bg);
         }
         if let Some(ComputedValue::Length(l)) = own("font-size")

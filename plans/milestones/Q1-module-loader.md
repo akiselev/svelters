@@ -151,8 +151,9 @@ The exported path constants (`HIDDEN_MODULES`, `effectsPath`, …) keep their na
   - the watcher limited to package roots.
   Extension hosts also reach the provider only through LD1's policy-carrying `ComposedProvider`.
 
-- `<style>` from source: Q3 (Svelte's CSS analyze/prune/scope in Rust). Until then the loader warns and the app
-  runs unstyled; style-using apps keep the Vite path.
+- `<style>` from source: done on egui by LD2 (`plans/milestones/LD2-live-styles.md`): Q3w's scoped sheet is sent as
+  text from a per-component `svelters-style:` module, and a `<style>`-only edit restyles without a remount. The other
+  backends still warn (their sheets need the Vite build's JS translator).
 - TypeScript entry points and the on-disk bytecode cache: Q2. CJS interop: not planned (load error with a hint).
 - `import.meta.hot`, versioned re-import, per-component swap: H1 (`ci/h1`).
 - Scheme hooks, the `svelters:app/*` visibility filter, native module providers (moving the built-ins out of

@@ -93,7 +93,7 @@ Full matrix: [css/properties](../../css/properties.md). States: below.
 | `:hover` | the pointer is over one of its glyphs | kind |
 | `:focus` | it has keyboard focus | kind |
 
-Never set on it (rules with them don't match): `:active`, `:focus-within`, `:disabled`, `:checked`, `:selected`, `:open`, `:expanded`, `:invalid`, `:read-only`, `:dragging`, `:exiting`, `:busy`.
+Never set on it (rules with them don't match): `:active`, `:focus-within`, `:disabled`, `:checked`, `:selected`, `:open`, `:expanded`, `:invalid`, `:read-only`, `:dragging`, `:exiting`, `:busy`, `:indeterminate`, `:placeholder-shown`, `:default`, `:drop-target`, `:current`, `:backdrop`, `:required`, `:user-invalid`, `:has-children`.
 
 States are tracked once the scene has a style input (a `<style>` block, `class`, `style=` or a theme).
 <!-- END GENERATED -->

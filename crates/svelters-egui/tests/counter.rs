@@ -58,7 +58,7 @@ fn counter_runs_under_kittest() {
 
 /// Q1: the same fixture loaded from its sources (`svelters-egui-run --entry`): compiled live by the
 /// Rust compiler, resolved through node_modules and the runtime's alias table, no Vite and no
-/// bundle. Its `<style>` is not applied yet (Q3), which changes layout but not the widgets.
+/// bundle. Its `<style>` is applied too (LD2: Q3w's scoped sheet, sent as text to the style engine).
 #[test]
 fn counter_from_source_runs_under_kittest() {
     let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/counter-egui");
@@ -69,7 +69,14 @@ fn counter_from_source_runs_under_kittest() {
     app.run();
     assert!(has(&app, "Count: 1"));
     let warnings: Vec<String> = app.host().take_console().into_iter().filter(|l| l.level == "warn").map(|l| l.text).collect();
-    assert!(warnings.iter().any(|w| w.contains("<style> is not applied")), "{warnings:?}");
+    assert!(!warnings.iter().any(|w| w.contains("<style>")), "{warnings:?}");
+    // CS5e's `.row { flex-direction: row }`, as with the Vite bundle: the text edit and the label share a row
+    app.harness.get_by_label("Name").click();
+    app.run();
+    app.harness.get_by_label("Name").type_text("Ann");
+    app.run();
+    let (te, hello) = (app.harness.get_by_label("Name").rect(), app.harness.get_by_label("Hello Ann").rect());
+    assert!(hello.min.x >= te.max.x && (hello.center().y - te.center().y).abs() < 4.0, "{te:?} {hello:?}");
     let errors = app.errors();
     assert!(errors.is_empty(), "{errors:?}");
 }
