@@ -12,6 +12,9 @@ use svelters_style::{Element, StateMask};
 #[derive(Clone, Debug, Default, PartialEq, Eq, Hash)]
 pub struct El {
     pub tag: Cow<'static, str>,
+    /// A second tag type selectors match (`style_as`, WIDGET-PARITY §4.3): an app's own element
+    /// (`cad-tab`) styled by a built-in's rules (`tab`).
+    pub style_as: Option<Cow<'static, str>>,
     /// `#id`.
     pub id: Option<Cow<'static, str>>,
     pub classes: Vec<Cow<'static, str>>,
@@ -29,6 +32,11 @@ impl El {
             Cow::Borrowed(s) => self.classes.extend(s.split_whitespace().map(Cow::Borrowed)),
             Cow::Owned(s) => self.classes.extend(s.split_whitespace().map(|x| Cow::Owned(x.to_string()))),
         }
+        self
+    }
+    /// Also matched by `tag`'s type selectors and parts.
+    pub fn style_as(mut self, tag: impl Into<Cow<'static, str>>) -> El {
+        self.style_as = Some(tag.into());
         self
     }
     pub fn id(mut self, id: impl Into<Cow<'static, str>>) -> El {
@@ -84,6 +92,9 @@ impl Element for VNode<'_> {
     }
     fn tag(&self) -> &str {
         &self.el().tag
+    }
+    fn style_as(&self) -> Option<&str> {
+        self.el().style_as.as_deref()
     }
     fn id(&self) -> Option<&str> {
         self.el().id.as_deref()

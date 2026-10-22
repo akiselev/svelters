@@ -286,6 +286,15 @@ fn owrust_author_css_reaches_virtual_elements_and_restyles() {
     t.rig.run();
     t.rig.run();
     assert_eq!(fill(&t), Some(egui::Color32::from_rgb(1, 2, 3)), "a class on the virtual element");
+    // `style_as`: an app's own element styled by `button` rules (and the button's UA table)
+    t.rig.backend.add_sheet("app3", "button { background-color: rgb(9, 9, 9); }");
+    t.plan.borrow_mut().draw = Some(Box::new(|ui, r, sv| imm::Button::new("Apply").element(El::new("cad-button").style_as("button")).show_at(ui, r, sv)));
+    t.rig.run();
+    t.rig.run();
+    assert_eq!(fill(&t), Some(egui::Color32::from_rgb(9, 9, 9)), "style_as matches `button` rules");
+    t.plan.borrow_mut().draw = Some(Box::new(|ui, r, sv| imm::Button::new("Apply").element(El::new("cad-button")).show_at(ui, r, sv)));
+    t.rig.run();
+    assert_ne!(fill(&t), Some(egui::Color32::from_rgb(9, 9, 9)), "without style_as, `button` rules do not match");
 }
 
 #[test]
