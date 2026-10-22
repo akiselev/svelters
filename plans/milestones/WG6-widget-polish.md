@@ -49,3 +49,25 @@ hooks in `focus.rs`. Tests: `tests/wg6.rs`, unit tests in `tips.rs` and `kinds/d
 - Not run: `pnpm build` of `fixtures/gallery-egui` and `gallery_pages_drive_pickers_dnd_and_dialogs` (needs
   the compiler build; the new page 43 is compiled first in CI), the rest of the svelters-egui suite, full
   workspace nextest, conformance, other backends. CI runs them.
+
+## Handoff (stopped, 2026-10-22)
+
+Stopped by the user's decision that svelters draws all its own widgets on its composition framework and keeps
+egui as the engine only (painter, input, text shaping, layers, AccessKit). This branch is **not merged**. It is
+the spec for the own-widget lanes (plans/research/ARCH-WIDGETS.md §7), and they take code from it:
+- OW2 takes `scroll-into-view`, scroll-on-focus and "no culling on a Tab pass".
+- OW5 takes drop actions, OS file drops as `text/uri-list`, and auto-scroll.
+- The own-widget lanes redo the rest as behaviours: disabled-widget tooltips, `{#snippet tooltip()}` and
+  `<tooltip>`, `status-tip` / `status_tip(ctx)`, `elide`, `cursor` (prop side; CSS `cursor` is OW-CSS),
+  `key-sequence-edit`, and combo type-ahead on WG5a's `KeySelect`.
+
+API changes made here that the successors must keep or consciously change:
+- `drop` gained a 5th arg `action`, and `drag-end` a 2nd (the wg4b assertions are updated).
+- New props `status-tip` and `cursor`, a `scroll-into-view` method, `elide` on label, and the kinds `tooltip`
+  and `key-sequence-edit`.
+- Additive hooks: `focus.rs` Role::Capture and Role::Combo; walk.rs cull/hover/reveal calls; NodeFlags bits
+  17–19.
+
+Deferred: QW14 (SVG). AS1's loader covers it, and the cascade-driven disabled/selected tint goes to the
+own-widget icon. The last CI run on 36998821 was not waited for. Tests that carry over: `tests/wg6.rs`, the
+`tips::tests` unit, and `kinds::dnd::tests::wg6_drop_actions_and_uri_list`.
