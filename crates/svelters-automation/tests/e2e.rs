@@ -38,7 +38,7 @@ fn the_seed_replays_math_random(d: &mut E2e) -> TestResult {
     Ok(())
 }
 
-fn open<'a>(d: &'a E2e, page: &str) -> Result<(), Error> {
+fn open(d: &E2e, page: &str) -> Result<(), Error> {
     d.get_by_role("button", name(page)).click()?;
     expect(d.get_by_text_exact(&format!("Page: {page}"))).to_be_visible()
 }
