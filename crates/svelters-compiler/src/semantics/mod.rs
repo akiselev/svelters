@@ -352,6 +352,11 @@ pub trait PlatformSemantics {
     fn text_node(&self) -> Option<(ElementRef, String)> {
         None
     }
+    /// RT2: inline text (spec `inline_text`): the run kind and its text property that text mixed
+    /// with child elements lowers to, in a text-content element whose slot takes that kind.
+    fn inline_text(&self) -> Option<(ElementRef, String)> {
+        None
+    }
     /// A `parent:<name>` attribute of a child placed in `parent`'s slot `slot`.
     fn child_attr(&self, _parent: &ElementRef, slot: &str, name: &str) -> Result<ChildAttrPlan, Unresolved> {
         Err(Unresolved::new(codes::UNKNOWN_CHILD_ATTR, format!("slot `{slot}` has no child attribute `{name}`")))
@@ -405,7 +410,8 @@ pub fn closest<'a>(name: &str, candidates: impl IntoIterator<Item = &'a str>) ->
         .into_iter()
         .filter(|c| *c != name)
         .map(|c| (levenshtein(&name.to_lowercase(), &c.to_lowercase()), c))
-        .filter(|(d, c)| *d <= limit || (name.len() >= 3 && (c.contains(name) || name.contains(*c))))
+        // containment only between names of 3+ chars (RT2: `a`, `b`, `i` are in most tags)
+        .filter(|(d, c)| *d <= limit || (name.len() >= 3 && c.len() >= 3 && (c.contains(name) || name.contains(*c))))
         .collect();
     scored.sort();
     scored.dedup_by(|a, b| a.1 == b.1);
