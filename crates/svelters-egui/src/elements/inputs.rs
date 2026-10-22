@@ -97,7 +97,7 @@ pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
             let r = if text.is_empty() && *show_value {
                 uncaptioned_range(ui, &mut l, &mut h, rail_lo..=rail_hi, step)
             } else {
-                let mut s = egui::RangeSlider::new(&mut l, &mut h, rail_lo..=rail_hi).show_value(*show_value);
+                let mut s = crate::numeric::range_slider(egui::RangeSlider::new(&mut l, &mut h, rail_lo..=rail_hi).show_value(*show_value));
                 if let Some(step) = step {
                     s = s.step_by(step);
                 }
@@ -126,7 +126,8 @@ pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
             let (lo, hi) = (min.filter(|m| !m.is_nan()), max.filter(|m| !m.is_nan()));
             let mut v = if value.is_nan() { lo.filter(|m| m.is_finite()).unwrap_or(0.0) } else { *value };
             let before = v;
-            let mut d = egui::DragValue::new(&mut v).speed(finite_or(*speed, 1.0)).min_size(size);
+            // IN1: the text shows and reads numbers in the host's locale
+            let mut d = crate::numeric::drag_value(egui::DragValue::new(&mut v).speed(finite_or(*speed, 1.0)).min_size(size));
             if lo.is_some() || hi.is_some() {
                 d = d.range(lo.unwrap_or(f64::NEG_INFINITY)..=hi.unwrap_or(f64::INFINITY));
             }
@@ -177,14 +178,14 @@ fn uncaptioned_range(ui: &mut Ui, l: &mut f64, h: &mut f64, rail: std::ops::Rang
     let snap = |v: f64| step.map_or(v, |s| (lo + ((v - lo) / s).round() * s).clamp(lo, hi));
     ui.horizontal(|ui| {
         let mut lv = *l;
-        let low = ui.add(egui::DragValue::new(&mut lv).range(lo..=*h).speed(speed));
+        let low = ui.add(crate::numeric::drag_value(egui::DragValue::new(&mut lv).range(lo..=*h).speed(speed)));
         let mut s = egui::RangeSlider::new(l, h, rail.clone()).show_value(false);
         if let Some(step) = step {
             s = s.step_by(step);
         }
         let rail_resp = ui.add(s);
         let mut hv = *h;
-        let high = ui.add(egui::DragValue::new(&mut hv).range(*l..=hi).speed(speed));
+        let high = ui.add(crate::numeric::drag_value(egui::DragValue::new(&mut hv).range(*l..=hi).speed(speed)));
         if lv != *l && !rail_resp.changed() {
             *l = snap(lv).min(*h);
         }

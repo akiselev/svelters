@@ -407,6 +407,8 @@ struct EmbedInner {
     probe: BusyProbe,
     /// The context the salt was registered in (debug check), for `Drop`.
     salt_ctx: egui::Context,
+    /// AS1: the asset registry of the provider loaded last.
+    assets: RefCell<Option<std::sync::Arc<svelters_modules::Assets>>>,
 }
 
 /// The embedded svelters-egui: one backend, one host (one QuickJS runtime), its slots and roots.
@@ -460,6 +462,7 @@ impl Embed {
             st: RefCell::new(State { next_root: 1, ..State::default() }),
             probe: BusyProbe::default(),
             salt_ctx: ctx.clone(),
+            assets: RefCell::new(None),
         });
         current::register(id, &inner);
         let e = Embed { inner };
@@ -476,6 +479,23 @@ impl Embed {
         b.bind_ctx(ctx);
         b.0.scene.hook_passes(ctx);
         current::install(self, ctx);
+        if let Some(a) = self.assets() {
+            crate::assets::install(ctx, a);
+        }
+    }
+
+    /// AS1: the asset registry of the module provider [`Embed::load_from`] / [`Embed::load_app_from`]
+    /// loaded (`ModuleProvider::assets`), if it has one. Its loaders are installed on the embed's
+    /// contexts (the one it was created in, and every one passed to [`Embed::attach`]).
+    pub fn assets(&self) -> Option<std::sync::Arc<svelters_modules::Assets>> {
+        self.inner.assets.borrow().clone()
+    }
+
+    fn adopt_assets(&self, provider: &dyn svelters_host::ModuleProvider) {
+        if let Some(a) = provider.assets() {
+            crate::assets::install(&self.inner.salt_ctx, a.clone());
+            *self.inner.assets.borrow_mut() = Some(a);
+        }
     }
 
     /// This embed's id in its thread's registry ([`with_embed`]).
@@ -516,6 +536,7 @@ impl Embed {
     /// (`svelters_host::modules::SourceProvider`).
     pub fn load_from(&self, provider: std::rc::Rc<dyn svelters_host::ModuleProvider>) -> Result<EntryId, JsError> {
         let host = &self.inner.host;
+        self.adopt_assets(&*provider);
         host.set_turn_budget(self.inner.cfg.host.turn_budget);
         let r = host.load_entry_from(provider);
         self.loaded(r)
@@ -542,6 +563,7 @@ impl Embed {
     /// [`Embed::load_app`] from a module provider (Q1): an app compiled from source.
     pub fn load_app_from(&self, provider: std::rc::Rc<dyn svelters_host::ModuleProvider>) -> Result<(), JsError> {
         let host = &self.inner.host;
+        self.adopt_assets(&*provider);
         host.set_turn_budget(self.inner.cfg.host.turn_budget);
         let r = host.load_from(provider);
         host.set_turn_budget(Some(self.inner.cfg.budgets.interrupt));

@@ -17,6 +17,7 @@
 // are exempt; the legitimate I/O sites carry `#[allow(clippy::disallowed_methods)]` with a reason.
 #![cfg_attr(not(test), deny(clippy::disallowed_methods))]
 
+pub mod assets;
 pub mod backend;
 pub mod dialogs;
 pub mod embed;
@@ -50,6 +51,7 @@ mod events;
 mod frame;
 mod ids;
 mod leaf;
+pub mod numeric;
 // WG2a: menus and overlays (plans/milestones/WG2a-menus-popups.md)
 mod menus;
 mod overlays;

@@ -75,6 +75,12 @@ pub(crate) trait JsReader {
     fn bytes(&self, v: &Self::V, guards: &mut Vec<Guard>) -> Result<(*const u8, usize), String>;
     /// `(handle, type id)` when `v` is a boxed-value wrapper that has not been disposed.
     fn boxed(&self, v: &Self::V) -> Result<Option<(svl_handle, svl_id)>, String>;
+    /// AS1: the ref string of an `Asset` handle (`svelters:assets`), when `v` is one: a handle
+    /// crosses into native code as its `asset://` ref.
+    fn asset_ref(&self, v: &Self::V) -> Option<Self::V> {
+        let key = svelters_modules::assets::HANDLE_KEY;
+        if self.has_field(v, key).ok()? { self.field(v, key).ok() } else { None }
+    }
     /// `(signature, value)` when `v` was made by `variant(signature, value)`.
     fn typed_variant(&self, _v: &Self::V) -> Result<Option<(String, Self::V)>, String> {
         Ok(None)
@@ -371,6 +377,11 @@ fn encode_at<R: JsReader>(
         return Err(ConvError::type_("value nested too deeply (or cyclic)"));
     }
     let kind = r.kind(v);
+    if kind == JsKind::Object {
+        if let Some(s) = r.asset_ref(v) {
+            return encode_at(r, &s, slot, cx, ar, depth + 1);
+        }
+    }
     match kind {
         JsKind::Null => {
             return if slot.tag == SVL_NULL || slot.has(SVL_D_NULLABLE) {

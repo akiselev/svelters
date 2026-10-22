@@ -163,7 +163,17 @@ fn claims(ctx: &egui::Context) -> Claims {
     c
 }
 
-fn claim(ctx: &egui::Context, id: Id) {
+/// Whether target `id` held the pointer last pass (it decides this pass). WG5b's tree rows use it.
+pub(crate) fn claimed(ctx: &egui::Context, id: Id) -> bool {
+    claims(ctx).prev == Some(id)
+}
+
+/// Whether a drag from any source is over some accepting target (the source's cursor).
+pub(crate) fn over_target(ctx: &egui::Context) -> bool {
+    claims(ctx).prev.is_some()
+}
+
+pub(crate) fn claim(ctx: &egui::Context, id: Id) {
     let mut c = claims(ctx);
     c.cur = Some(id);
     let key = claims_id(ctx);
@@ -268,7 +278,7 @@ pub(crate) fn node(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut 
 }
 
 /// The label that follows the pointer during a drag.
-fn ghost(ui: &Ui, id: Id, text: &str) {
+pub(crate) fn ghost(ui: &Ui, id: Id, text: &str) {
     let Some(pos) = ui.ctx().pointer_interact_pos() else {
         return;
     };

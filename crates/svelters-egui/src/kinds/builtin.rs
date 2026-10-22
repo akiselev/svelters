@@ -336,4 +336,6 @@ pub static KINDS: &[KindDef] = &[
     super::pickers::COLOR_PICKER,
     // ---- LS1: appended after INT1's kinds (`virtuallist.rs`) ----
     super::virtuallist::DEF,
+    // ---- WG5b: appended (`treeview.rs`) ----
+    super::treeview::DEF,
 ];

@@ -10,7 +10,7 @@ svelters-abi.workspace = true
 svelters-backend-log.workspace = true
 rquickjs.workspace = true
 # Q1: the engine boundary (`ModuleProvider`) and the bundle provider; runners add `SourceProvider`.
-svelters-modules.workspace = true
+svelters-modules = { workspace = true, features = ["serde"] }
 serde_json.workspace = true
 # RA2: `Json<T>` crosses serde values, typed from `schemars::JsonSchema`.
 serde.workspace = true
@@ -28,6 +28,9 @@ open = "5.3"
 # E1: `#[js(tokio)] async fn` exports (feature `tokio`).
 tokio = { version = "1.47", optional = true, default-features = false, features = ["rt", "rt-multi-thread"] }
 
+# IN1: `Intl` over ICU4X (feature `intl`).
+svelters-intl = { workspace = true, optional = true }
+
 [target.'cfg(unix)'.dependencies]
 # ZU3: the hang watchdog samples the UI thread's stack (a signal plus `trace_unsynchronized`).
 libc = "0.2"
@@ -38,7 +41,13 @@ backtrace = "0.3"
 svelters-modules = { workspace = true, features = ["source"] }
 
 [features]
+default = ["intl"]
 tokio = ["dep:tokio"]
+# IN1: `Intl` (NumberFormat, PluralRules, Collator, DateTimeFormat), `toLocaleString`/`localeCompare`
+# and `Host::set_locale`, over ICU4X data for a locale subset (svelters-intl). On by default: stock
+# Svelte code and libraries call `toLocaleString`, and cadatomic needs it; the size cost is in
+# plans/milestones/IN1-intl.md.
+intl = ["dep:svelters-intl"]
 
 [lints.clippy]
 # ZU3: allowed for tests, examples and bins; lib.rs denies it for the library (see clippy.toml).
