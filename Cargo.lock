@@ -4079,6 +4079,7 @@ dependencies = [
  "sourcemap",
  "svelters-backend-log",
  "svelters-host",
+ "svelters-style",
 ]
 
 [[package]]
@@ -4138,6 +4139,7 @@ dependencies = [
  "directories",
  "inventory",
  "notify",
+ "open",
  "rayon",
  "rquickjs",
  "schemars",

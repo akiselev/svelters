@@ -85,6 +85,12 @@ pub(crate) struct Ctx<'r, 'a> {
     /// A `$inspect.trace` was emitted (dev): the module imports the core's tracing flag
     /// (Svelte's `analysis.tracing` -> `import 'svelte/internal/flags/tracing'`).
     pub tracing: Cell<bool>,
+    /// `--hmr`: top-level instance `$state` declarations are keyed (`$n.hmr_keep`, HMR.md 3.3).
+    pub hmr: Cell<bool>,
+    /// The JS callee of a keyed declaration: `$n.hmr_keep` in a component, `$$hmr().keep` in a module.
+    pub keep_callee: Cell<&'static str>,
+    /// The keyed declarations in source order: `kind:name:normalized initializer`.
+    pub keyed: RefCell<Vec<String>>,
 }
 
 impl<'r, 'a> Ctx<'r, 'a> {
@@ -111,6 +117,9 @@ impl<'r, 'a> Ctx<'r, 'a> {
             props_id: Cell::new(None),
             has_props_rune: Cell::new(false),
             tracing: Cell::new(false),
+            hmr: Cell::new(false),
+            keep_callee: Cell::new("$n.hmr_keep"),
+            keyed: RefCell::new(Vec::new()),
         }
     }
 
@@ -231,12 +240,13 @@ impl<'a> ScopeRewriter<'a> {
     }
 
     pub fn new(src: &'a str, root: &'a Root, an: &'a ComponentScopeAnalysis<'a>, diags: Diagnostics) -> ScopeRewriter<'a> {
-        ScopeRewriter::with_options(src, root, an, diags, false, "Component.svelte")
+        ScopeRewriter::with_options(src, root, an, diags, false, "Component.svelte", false)
     }
 
-    pub fn with_options(src: &'a str, root: &'a Root, an: &'a ComponentScopeAnalysis<'a>, diags: Diagnostics, dev: bool, filename: &str) -> ScopeRewriter<'a> {
+    pub fn with_options(src: &'a str, root: &'a Root, an: &'a ComponentScopeAnalysis<'a>, diags: Diagnostics, dev: bool, filename: &str, hmr: bool) -> ScopeRewriter<'a> {
         let maps = vec![&an.template.scopes, &an.module.scopes, &an.instance.scopes];
         let mut cx = Ctx::new(src, &an.arena, maps, an.module.scope, Some(an.instance.scope), dev, filename, diags);
+        cx.hmr.set(hmr);
 
         // exports (ExportNamedDeclaration / ExportSpecifier analysis, instance in runes mode)
         let mut exports = Vec::new();
@@ -594,6 +604,10 @@ impl Rewriter for ScopeRewriter<'_> {
         self.cx.tracing.get()
     }
 
+    fn hmr_signature(&self) -> Option<String> {
+        state_signature(self.cx.src, &self.cx.keyed.borrow())
+    }
+
     fn dev(&self) -> bool {
         self.cx.dev
     }
@@ -809,14 +823,22 @@ impl Rewriter for ScopeRewriter<'_> {
 }
 
 /// `client_module`: transforms a `.svelte.js` module (already analysed) into JS text + map.
-pub fn transform_module(src: &str, program: &Program, an: &crate::svelte::scope::analyze::ModuleScopeAnalysis<'_>, dev: bool, filename: &str, diags: Diagnostics) -> (String, String, Diagnostics) {
+/// `ts`: the TypeScript removed from a `.svelte.ts` module (empty for JavaScript).
+#[allow(clippy::too_many_arguments)]
+pub fn transform_module(src: &str, program: &Program, an: &crate::svelte::scope::analyze::ModuleScopeAnalysis<'_>, dev: bool, filename: &str, hmr: bool, ts: &crate::svelte::ts::TsStrip, diags: Diagnostics) -> (String, String, Diagnostics) {
     let cx = Ctx::new(src, &an.arena, vec![&an.module.scopes], an.module.scope, None, dev, filename, diags);
+    cx.hmr.set(hmr);
+    cx.keep_callee.set("$$hmr().keep");
     let mut edits = Edits::new();
+    ts.apply(&mut edits, None);
     {
         let mut v = Rw::new(&cx, &mut edits, Mode::Read, false);
         for stmt in &program.body {
             v.top_level_statement(stmt, an.module.scope, false);
         }
+    }
+    if hmr {
+        key_module_objects(&cx, program, &mut edits);
     }
     let mut w = Writer::new(src);
     w.write(&format!("import * as $ from '{}';\n", crate::target::RuntimeImports::default().core));
@@ -828,7 +850,140 @@ pub fn transform_module(src: &str, program: &Program, an: &crate::svelte::scope:
     if !src.ends_with('\n') {
         w.write("\n");
     }
+    if let Some(sig) = state_signature(src, &cx.keyed.borrow()).filter(|_| hmr) {
+        // function declarations hoist, so the keyed declarations above can call `$$hmr()`; `commit()` runs
+        // last, so a version that throws part-way leaves the previous registry in `import.meta.hot.data`
+        w.write(&format!("import * as $n from '{}';\nfunction $$hmr() {{\n\treturn ($$hmr.m ??= $n.hmr_module(import.meta.hot, {sig}));\n}}\n$$hmr().commit();\n", crate::target::RuntimeImports::default().native));
+    }
     let base = filename.rsplit('/').next().unwrap_or(filename);
     let (code, map) = w.finish(filename, src, base);
     (code, map, cx.diags.into_inner())
+}
+
+/// The state signature literal: `"<hash>"`, `null` under `// @hmr:reset`, `None` without keyed declarations.
+fn state_signature(src: &str, keyed: &[String]) -> Option<String> {
+    if has_reset_pragma(src) {
+        return Some("null".to_string());
+    }
+    if keyed.is_empty() {
+        return None;
+    }
+    Some(js_str(&format!("{:016x}", fnv1a(&keyed.join("\u{1}")))))
+}
+
+/// 64-bit FNV-1a: the component state signature (HMR.md 3.3 item 3), stable across runs.
+fn fnv1a(s: &str) -> u64 {
+    let mut h: u64 = 0xcbf29ce484222325;
+    for b in s.bytes() {
+        h ^= b as u64;
+        h = h.wrapping_mul(0x100000001b3);
+    }
+    h
+}
+
+/// `// @hmr:reset` or `/* @hmr:reset */` anywhere in the file: the component's state never carries over.
+fn has_reset_pragma(src: &str) -> bool {
+    src.match_indices("@hmr:reset").any(|(i, _)| {
+        let line = &src[src[..i].rfind('\n').map_or(0, |n| n + 1)..i];
+        let t = line.trim_end();
+        t.ends_with("//") || t.ends_with("/*")
+    })
+}
+
+/// An initializer's source without whitespace and comments (strings and templates kept verbatim),
+/// so reformatting or commenting an initializer does not change the signature.
+pub(crate) fn normalize_initializer(src: &str) -> String {
+    let b: Vec<char> = src.chars().collect();
+    let mut out = String::new();
+    let mut i = 0;
+    while i < b.len() {
+        let c = b[i];
+        match c {
+            '"' | '\'' | '`' => {
+                out.push(c);
+                i += 1;
+                while i < b.len() {
+                    out.push(b[i]);
+                    if b[i] == '\\' && i + 1 < b.len() {
+                        out.push(b[i + 1]);
+                        i += 2;
+                        continue;
+                    }
+                    if b[i] == c {
+                        break;
+                    }
+                    i += 1;
+                }
+                i += 1;
+            }
+            '/' if b.get(i + 1) == Some(&'/') => {
+                while i < b.len() && b[i] != '\n' {
+                    i += 1;
+                }
+            }
+            '/' if b.get(i + 1) == Some(&'*') => {
+                i += 2;
+                while i + 1 < b.len() && !(b[i] == '*' && b[i + 1] == '/') {
+                    i += 1;
+                }
+                i += 2;
+            }
+            c if c.is_whitespace() => i += 1,
+            c => {
+                out.push(c);
+                i += 1;
+            }
+        }
+    }
+    out
+}
+
+/// `const s = writable(..)` (svelte/store) and `const k = createContext()` (svelte) at the top of a module:
+/// the previous object is returned when the signature matches, so importers keep working with the same
+/// store or context key (HMR.md 3.3 item 5).
+fn key_module_objects(cx: &Ctx<'_, '_>, program: &Program, edits: &mut Edits) {
+    let mut callees: HashSet<String> = HashSet::new();
+    for stmt in &program.body {
+        let Statement::ImportDeclaration(i) = stmt else { continue };
+        let LiteralNode::Literal(lit) = &i.source;
+        let LiteralValue::String(from) = &lit.value else { continue };
+        let wanted = match from.as_str() {
+            "svelte/store" => "writable",
+            "svelte" => "createContext",
+            _ => continue,
+        };
+        for sp in &i.specifiers {
+            if let ImportSpecifierKind::ImportSpecifier(sp) = sp {
+                let imported = match &sp.imported {
+                    ModuleExportName::Identifier(id) => id.name.as_str(),
+                    ModuleExportName::Literal(_) => continue,
+                };
+                if imported == wanted {
+                    callees.insert(sp.local.name.clone());
+                }
+            }
+        }
+    }
+    if callees.is_empty() {
+        return;
+    }
+    for stmt in &program.body {
+        let decl = match stmt {
+            Statement::VariableDeclaration(d) => d,
+            Statement::ExportNamedDeclaration(e) => match e.declaration.as_deref() {
+                Some(Statement::VariableDeclaration(d)) => d,
+                _ => continue,
+            },
+            _ => continue,
+        };
+        for d in &decl.declarations {
+            let (Pattern::Identifier(id), Some(Expression::CallExpression(call))) = (&d.id, &d.init) else { continue };
+            let Expression::Identifier(callee) = call.callee.as_ref() else { continue };
+            if !callees.contains(&callee.name) {
+                continue;
+            }
+            cx.keyed.borrow_mut().push(format!("object:{}:{}", id.name, normalize_initializer(&cx.src[call.start as usize..call.end as usize])));
+            edits.wrap(call.start, call.end, format!("$$hmr().keep_object({}, () => ", js_str(&id.name)), ")");
+        }
+    }
 }

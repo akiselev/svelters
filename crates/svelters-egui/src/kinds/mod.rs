@@ -15,6 +15,7 @@
 //! the `window` and `box` tables; WG1's families `controls.rs`, `decor.rs`, `layouts.rs`; WG2b's
 //! `inputs.rs`, `panes.rs`, `media.rs`; WG2a's `menus.rs`, `popups.rs`; WG4a's `views.rs`; WG4b's
 //! `pickers.rs` (`date-picker`, `color-picker`) and `dnd.rs` (drag and drop on any node);
+//! LISTS' `virtuallist.rs` (`virtual-list`);
 //! `registry.rs` [`KindRegistry`] with the provider kinds of
 //! `#[svelters::widget]` (RA1). Writer lanes: WIDGETS (tables, one file per new family), RUSTAPI
 //! (`registry.rs`).
@@ -24,6 +25,7 @@ mod containers;
 pub mod dnd;
 pub mod pickers;
 mod registry;
+pub(crate) mod virtuallist;
 // WG1 families
 mod controls;
 mod decor;
@@ -38,15 +40,16 @@ mod panes;
 // WG4a (plans/milestones/WG4a-tier1-views.md)
 mod views;
 
-pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, POSITION, WRAP, WRAP_MODE};
+pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, FOCUS_SCOPE, JUSTIFY, KINDS, POSITION, WRAP, WRAP_MODE};
 pub use decor::ORIENTATION;
 pub use layouts::{JUSTIFY_ITEMS, SCROLL_DIRECTION};
 pub use menus::attaches_to;
 pub use popups::PLACEMENT;
 pub use media::FIT;
 pub use panes::{FRAME_STYLE, SIDE};
-pub use views::{CELL_ALIGN, SORT, TOAST_CORNER, TOAST_LEVEL};
+pub use views::{CELL_ALIGN, SORT, TABLE_SELECTION, TOAST_CORNER, TOAST_LEVEL};
 pub use registry::{KindRegistry, PROVIDER_PACK, ProviderKind, kind};
+pub use virtuallist::{ListStats, VList};
 
 /// The kinds a slot of kind `id` accepts (spec `children.slots.*.accepts`): WG4a's `table` takes
 /// `table-column`s, WG2a's menu containers menu items, every other container any `Widget`.
@@ -65,6 +68,11 @@ pub enum Ty {
     Enum(&'static [&'static str]),
     /// WG1: a list of strings (`string[]`; the ABI's `SVL_LIST` of `SVL_STR`).
     StrList,
+    /// WG5a: a list of row ids (`number[]`; the ABI's `SVL_LIST` of `SVL_I64`): item-view selections.
+    IdList,
+    /// WG5a: a Svelte snippet (a function), kept by the JS runtime; the backend sees `true` while
+    /// one is set (`table-column`'s `editor`).
+    Snippet,
     /// RA1: a provider kind's prop or event payload, typed by its Rust type's `JsType` description
     /// ([`KindRegistry::provider_type`]).
     Provider,
@@ -108,6 +116,8 @@ pub enum P {
     Top,
     Right,
     Bottom,
+    // EV3: focus
+    Autofocus,
     // Box (and the window's content area)
     FlexDirection,
     FlexWrap,
@@ -117,6 +127,8 @@ pub enum P {
     Padding,
     AlignItems,
     JustifyContent,
+    /// EV3: the box's focus scope.
+    FocusScope,
     // Window
     Title,
     DefaultWidth,
@@ -247,6 +259,25 @@ pub enum P {
     CalendarWeek,
     /// color-picker
     Alpha,
+    // `virtual-list` (LISTS LS1, `virtuallist.rs`)
+    ListSelected,
+    ListSelection,
+    ListLayout,
+    // WG5a (plans/milestones/WG5a-list-table-interaction.md): item-view selection and editing
+    /// virtual-list, table: the selected row ids (`bind:selected` on table, `selected-ids` on the list)
+    SelectedIds,
+    /// table: the cursor row's id (-1: none)
+    CurrentRow,
+    /// table: the cursor column
+    CurrentColumn,
+    /// table-column: its cells can be edited
+    Editable,
+    /// table-column: a Svelte `editor` snippet is set
+    Editor,
+    // `row-height` reuses WG4a's `RowHeight`
+    /// EV3: a button's Enter and Escape roles.
+    Default,
+    Cancel,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }

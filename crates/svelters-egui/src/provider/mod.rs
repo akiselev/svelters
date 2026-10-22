@@ -251,6 +251,12 @@ pub trait Widget: 'static {
     fn hit_test(&self, _cx: &HitCx, _local: egui::Pos2) -> Hit {
         Hit::Node
     }
+    /// `Caps::VIRTUAL` (ARCH-SCENE §8.2, SG5): painted rows exposed to a11y, anchors
+    /// (`SceneRef::target_by_path`), queries (`Query::include_virtual`) and `target_rect`. Not asked
+    /// while the widget draws itself.
+    fn virtual_children(&self) -> Option<&dyn crate::scene::VirtualChildren> {
+        None
+    }
     /// SG4, `Caps::CUSTOM_LAYOUT` (ARCH-SCENE §7.3): lays out this node's children (its shadow
     /// children) itself; taffy lays out the rest of the tree. Called with taffy's inputs: in a
     /// `RunMode::ComputeSize` run only the size is wanted, in `PerformLayout` place each child with
@@ -263,6 +269,17 @@ pub trait Widget: 'static {
     /// frame the root is drawn, with last frame's visible rect: build or rebind shadow children
     /// here (a virtualiser's rows) through [`PrepareCx::scene`].
     fn prepare(&mut self, _cx: &mut PrepareCx<'_>) {}
+    /// ARCH-EMBED R11 (EV3): while focused, whether it takes `key` with `modifiers` itself. A
+    /// claimed key is taken out of the pass's input after `ui` ran, a host keymap sees it as
+    /// consumed (`shortcut_override`), and Enter or Escape then do not reach the scope's default
+    /// or cancel button.
+    fn consume_key(&self, _key: egui::Key, _modifiers: egui::Modifiers) -> bool {
+        false
+    }
+    /// R11: an input method is composing in it (every key is its own, Enter included).
+    fn composing(&self) -> bool {
+        false
+    }
 }
 
 pub use crate::layout::LayoutCx;
@@ -511,6 +528,7 @@ pub trait ErasedWidget: Any {
     fn a11y(&self, cx: &A11yCx<'_>, node: &mut egui::accesskit::Node);
     fn busy(&self) -> bool;
     fn hit_test(&self, cx: &HitCx, local: egui::Pos2) -> Hit;
+    fn virtual_children(&self) -> Option<&dyn crate::scene::VirtualChildren>;
     fn layout(&mut self, cx: &mut LayoutCx<'_>, inputs: crate::taffy::LayoutInput) -> crate::taffy::LayoutOutput;
     fn prepare(&mut self, cx: &mut PrepareCx<'_>);
     fn as_any(&self) -> &dyn Any;
@@ -523,6 +541,14 @@ pub trait ErasedWidget: Any {
     }
     fn behavior_ref(&self) -> Option<&dyn Behavior> {
         None
+    }
+    /// EV3: [`Widget::consume_key`].
+    fn consume_key(&self, _key: egui::Key, _modifiers: egui::Modifiers) -> bool {
+        false
+    }
+    /// EV3: [`Widget::composing`].
+    fn composing(&self) -> bool {
+        false
     }
 }
 
@@ -554,6 +580,9 @@ impl<T: Widget + KindDecl> ErasedWidget for T {
     fn hit_test(&self, cx: &HitCx, local: egui::Pos2) -> Hit {
         Widget::hit_test(self, cx, local)
     }
+    fn virtual_children(&self) -> Option<&dyn crate::scene::VirtualChildren> {
+        Widget::virtual_children(self)
+    }
     fn layout(&mut self, cx: &mut LayoutCx<'_>, inputs: crate::taffy::LayoutInput) -> crate::taffy::LayoutOutput {
         Widget::layout(self, cx, inputs)
     }
@@ -568,6 +597,12 @@ impl<T: Widget + KindDecl> ErasedWidget for T {
     }
     fn base(&self) -> usize {
         self as *const T as usize
+    }
+    fn consume_key(&self, key: egui::Key, modifiers: egui::Modifiers) -> bool {
+        Widget::consume_key(self, key, modifiers)
+    }
+    fn composing(&self) -> bool {
+        Widget::composing(self)
     }
 }
 

@@ -35,6 +35,9 @@
 //!
 //! Writer lane: STYLE.
 
+mod shadow;
+pub(crate) use shadow::paint_bounds;
+
 use crate::backend::EguiBackend;
 use crate::kinds;
 use crate::scene::{Change, ChangeFilter, ChangeMask, Dirty, Handle, NodeId, NodeRef, Observer, Origin as SceneOrigin, Scene, StateBits, W};
@@ -43,7 +46,7 @@ use std::num::NonZeroU64;
 use std::sync::{Arc, Mutex, OnceLock};
 use svelters_abi::*;
 use svelters_style::{
-    Atom, ColorScheme, ComputeContext, ComputedStyle, ComputedValue, DeclBlock, Diagnostic, Element, Length, MatchCaches, MediaEnv, Origin, ParseOptions, Reach, SheetId,
+    Atom, ColorScheme, ComputeContext, Contrast, ComputedStyle, ComputedValue, DeclBlock, Diagnostic, Element, Length, MatchCaches, MediaEnv, Origin, ParseOptions, Reach, SheetId,
     StateMask, StateNames, Stylesheet, Stylist,
 };
 
@@ -51,6 +54,13 @@ use svelters_style::{
 /// CSS (sheets, inline text) and the user classes. Runtimes that do not know the code treat the
 /// backend as unstyled, as with `SVL_STYLE_TARGET_NONE`.
 pub const SVL_STYLE_TARGET_ENGINE: i32 = 4;
+
+/// Host-owned sheets (DS1's theme): theme origin, kept by the runtime's clear.
+pub(crate) const THEME_SHEETS: &str = "@theme";
+/// The theme's token sheet (`@layer sv.tokens`); the default theme's until `set_theme`.
+pub(crate) const THEME_TOKENS: &str = "@theme:tokens";
+/// The theme's base sheet (`@layer sv.base`, [`crate::theme::BASE_CSS`]).
+pub(crate) const THEME_BASE: &str = "@theme:base";
 
 /// Properties the egui cascade computes with no kind prop behind them: `(name, type, keywords)`.
 /// They go into the egui style table as `via: css` entries (`spec.rs`), so the compiler leaves
@@ -60,6 +70,8 @@ pub(crate) const ENGINE_PROPS: &[(&str, &str, &[&str])] = &[
     ("border-color", "color", &[]),
     ("border-radius", "length", &[]),
     ("border-width", "length", &[]),
+    // CS5g: painted around boxes and stock widgets (`style/shadow.rs`)
+    ("box-shadow", "shadow", &[]),
     ("color", "color", &[]),
     ("display", "enum", &["flex", "grid", "none"]),
     // CS5f: computed and inherited; leaves measure and paint with them (`leaf_style`)
@@ -119,8 +131,11 @@ pub(crate) struct SceneStyle {
     observer: Option<Observer>,
     caches: MatchCaches,
     cx: ComputeContext,
-    /// The scheme set with `SVL_STYLE_SCHEME` or `set_color_scheme` (else egui's dark mode).
-    scheme: Option<ColorScheme>,
+    /// The scheme set with `SVL_STYLE_SCHEME`, `set_color_scheme` or `set_theme` (else egui's
+    /// dark mode).
+    pub(crate) scheme: Option<ColorScheme>,
+    /// `prefers-contrast`, set with `set_theme` (DS1; else no preference).
+    pub(crate) contrast: Option<Contrast>,
     /// The focused node at the end of the last walk (for `:focus-within`).
     focus: Option<NodeId>,
     /// A walk-time restyle that needs another frame (an ancestor or a layout change).
@@ -140,6 +155,7 @@ impl Default for SceneStyle {
             caches: MatchCaches::new(),
             cx: ComputeContext { root_font_size: 14.0, default_font_size: 14.0 },
             scheme: None,
+            contrast: None,
             focus: None,
             repaint: false,
         }
@@ -338,11 +354,16 @@ impl Scene {
         }
     }
 
-    /// Turns the cascade on: every node gets a style, and the journal observer starts.
+    /// Turns the cascade on: every node gets a style, the default theme tokens are installed
+    /// unless a theme was (DS1: the backend owns the `--sv-*` defaults), and the journal observer
+    /// starts.
     fn activate_style(&mut self) {
         if !self.style.active {
             self.style.active = true;
             self.style.all = true;
+            if !self.style.sheets.iter().any(|(n, _)| n == THEME_TOKENS) {
+                self.install_sheet(THEME_TOKENS, crate::theme::default_tokens_css());
+            }
             self.observe_for_style();
         }
     }
@@ -664,6 +685,12 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
                 }
             }
         }
+        // CS5g: the shadows of this pass's state, behind the widget
+        let now = match &states {
+            Some(st) => &st[if pressed { 2 } else if hovered { 1 } else { 0 }],
+            None => &c,
+        };
+        stock_shadows(now, r, child);
     } else {
         paint_box(&c, r, child.painter());
         if let Some(col) = color(&c, "color") {
@@ -689,8 +716,16 @@ fn px(c: &ComputedStyle, name: &str) -> Option<f32> {
     }
 }
 
-/// A box's background and border, behind its content.
+/// A box's outer shadows, background, border and inset shadows, behind its content.
 fn paint_box(c: &ComputedStyle, r: egui::Rect, p: &egui::Painter) {
+    let radius = px(c, "border-radius").unwrap_or(0.0);
+    shadow::paint(c, r, radius, false, p);
+    paint_fill(c, r, radius, p);
+    shadow::paint(c, r, radius, true, p);
+}
+
+/// A box's background and border.
+fn paint_fill(c: &ComputedStyle, r: egui::Rect, radius: f32, p: &egui::Painter) {
     let fill = color(c, "background-color");
     let bw = px(c, "border-width").unwrap_or(0.0);
     let stroke = match color(c, "border-color") {
@@ -700,8 +735,17 @@ fn paint_box(c: &ComputedStyle, r: egui::Rect, p: &egui::Painter) {
     if fill.is_none() && stroke.is_none() {
         return;
     }
-    let radius = px(c, "border-radius").unwrap_or(0.0);
     p.add(egui::epaint::RectShape::new(r, radius, fill.unwrap_or(egui::Color32::TRANSPARENT), stroke.unwrap_or(egui::Stroke::NONE), egui::StrokeKind::Inside));
+}
+
+/// A stock widget's outer shadows (CS5g) around its rect `r`, with its corner radius as egui draws
+/// it. Inset shadows would paint under the widget's own background, so stock widgets skip them.
+fn stock_shadows(c: &ComputedStyle, r: egui::Rect, child: &egui::Ui) {
+    if shadow::shadows(c).is_none() {
+        return;
+    }
+    let radius = px(c, "border-radius").unwrap_or_else(|| child.visuals().widgets.inactive.corner_radius.average());
+    shadow::paint(c, r, radius, false, child.painter());
 }
 
 /// A stock widget's visuals in one interaction state from that state's computed style.
@@ -1193,29 +1237,47 @@ impl Scene {
         diags
     }
 
-    /// Installs (or with `None` removes) sheet `name`; `@tokens…` sheets are the theme origin.
-    fn apply_sheet(&mut self, name: &str, css: Option<&str>) -> Vec<Diagnostic> {
+    /// Installs (or with `None` removes) sheet `name`; `@tokens…` and `@theme…` sheets are the
+    /// theme origin.
+    pub(crate) fn apply_sheet(&mut self, name: &str, css: Option<&str>) -> Vec<Diagnostic> {
         self.activate_style();
-        if let Some(k) = self.style.sheets.iter().position(|(n, _)| n == name) {
-            let (_, id) = self.style.sheets.remove(k);
-            self.style.stylist.remove_sheet(id);
-        }
-        let mut diags = Vec::new();
-        if let Some(css) = css {
-            let sheet = Stylesheet::parse(css, &ParseOptions { states: Some(&ProviderStates) });
-            diags.extend(sheet.diagnostics.iter().cloned());
-            let origin = if name.starts_with("@tokens") { Origin::Theme } else { Origin::Author };
-            let (id, d) = self.style.stylist.add_sheet(&sheet, origin);
-            diags.extend(d);
-            self.style.sheets.push((name.to_string(), id));
-        }
+        let diags = match css {
+            Some(css) => self.install_sheet(name, css),
+            None => {
+                self.uninstall_sheet(name);
+                Vec::new()
+            }
+        };
         self.observe_for_style();
         self.style.all = true;
         diags
     }
 
+    fn uninstall_sheet(&mut self, name: &str) {
+        if let Some(k) = self.style.sheets.iter().position(|(n, _)| n == name) {
+            let (_, id) = self.style.sheets.remove(k);
+            self.style.stylist.remove_sheet(id);
+        }
+    }
+
+    /// Replaces sheet `name` (no observer or restyle bookkeeping: [`Scene::apply_sheet`]'s).
+    fn install_sheet(&mut self, name: &str, css: &str) -> Vec<Diagnostic> {
+        self.uninstall_sheet(name);
+        let sheet = Stylesheet::parse(css, &ParseOptions { states: Some(&ProviderStates) });
+        let mut diags = sheet.diagnostics.clone();
+        let origin = if name.starts_with("@tokens") || name.starts_with(THEME_SHEETS) { Origin::Theme } else { Origin::Author };
+        let (id, d) = self.style.stylist.add_sheet(&sheet, origin);
+        diags.extend(d);
+        self.style.sheets.push((name.to_string(), id));
+        diags
+    }
+
+    /// The runtime's clear (`SHEET` with no text, at start and hot reload): every sheet but the
+    /// host's theme sheets (`@theme…`, DS1).
     fn clear_sheets(&mut self) {
-        for (_, id) in std::mem::take(&mut self.style.sheets) {
+        let (keep, gone): (Vec<_>, Vec<_>) = std::mem::take(&mut self.style.sheets).into_iter().partition(|(n, _)| n.starts_with(THEME_SHEETS));
+        self.style.sheets = keep;
+        for (_, id) in gone {
             self.style.stylist.remove_sheet(id);
         }
         if self.style.active {
@@ -1228,7 +1290,10 @@ impl Scene {
     fn update_media(&mut self, ctx: &egui::Context) {
         let r = ctx.content_rect();
         let scheme = self.style.scheme.unwrap_or(if ctx.global_style().visuals.dark_mode { ColorScheme::Dark } else { ColorScheme::Light });
-        let env = MediaEnv { width: r.width(), height: r.height(), color_scheme: scheme, ..*self.style.stylist.media_env() };
+        let mut env = MediaEnv { width: r.width(), height: r.height(), color_scheme: scheme, ..*self.style.stylist.media_env() };
+        if let Some(c) = self.style.contrast {
+            env.contrast = c;
+        }
         if env != *self.style.stylist.media_env() && !self.style.stylist.set_media(env).is_empty() {
             self.style.all = true;
         }
@@ -1308,8 +1373,8 @@ impl EguiBackend {
             }
             SVL_STYLE_SCHEME => {
                 let scheme = text.and_then(|t| t.split(SVL_STYLE_SEP).next()).map(|s| if s == "dark" { ColorScheme::Dark } else { ColorScheme::Light });
-                self.0.scene.borrow_mut().style.scheme = scheme;
-                self.touch_all();
+                // the runtime's `setColorScheme` switches an installed theme's scheme (DS1)
+                self.set_color_scheme(scheme);
                 return Ok(0);
             }
             _ => {}
@@ -1340,7 +1405,7 @@ impl EguiBackend {
     }
 
     /// Asks every presented root for a frame (a sheet or scheme change can restyle anything).
-    fn touch_all(&self) {
+    pub(crate) fn touch_all(&self) {
         let roots: Vec<_> = self.0.scene.borrow().roots.iter().map(|(r, _)| r).collect();
         for r in roots {
             self.touched(Some(r));
@@ -1391,8 +1456,15 @@ impl EguiBackend {
         Ok(())
     }
 
-    /// `prefers-color-scheme` (`None`: follow egui's `Visuals::dark_mode`).
+    /// `prefers-color-scheme` (`None`: follow egui's `Visuals::dark_mode`). With a theme installed
+    /// ([`EguiBackend::set_theme`]), a scheme switches the theme to that scheme (its tokens and
+    /// the context's Style follow).
     pub fn set_color_scheme(&self, scheme: Option<ColorScheme>) {
+        let themed = self.0.theme.borrow().as_ref().zip(scheme).filter(|(t, s)| t.scheme() != *s).map(|(t, s)| t.with_scheme(s));
+        if let Some(t) = themed {
+            self.set_theme(&t);
+            return;
+        }
         self.0.scene.borrow_mut().style.scheme = scheme;
         self.touch_all();
     }

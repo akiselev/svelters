@@ -19,6 +19,7 @@
 //! The host starts no threads. Timers run on the toolkit: after each checkpoint the host arms the
 //! backend's one-shot `schedule_wake` for the earliest deadline.
 
+pub mod bytecode;
 mod convert;
 mod core;
 pub mod crash;
@@ -26,6 +27,7 @@ pub mod dx;
 mod engine;
 mod hooks;
 pub mod exports;
+pub mod platform;
 mod quickjs;
 mod reload;
 mod sourcemap;
@@ -40,6 +42,7 @@ pub use crate::reload::ReloadReport;
 /// Q1: the module loader (providers; `SourceProvider` with its `source` feature).
 pub use svelters_modules as modules;
 pub use hooks::ModuleHooks;
+pub use platform::{ClipboardBackend, ClipboardKind, MimeData, Platform, ShellBackend};
 pub use svelters_modules::{BundleProvider, ModuleCode, ModuleProvider};
 
 /// The provider of a built bundle; a missing entry is a load error.
@@ -266,13 +269,44 @@ impl<'a> Host<'a> {
 
     /// DX1: supplies the settings backend, UI-state backend and paths that `svelters:settings`,
     /// `svelters:paths` and `svelters:log` use. Without it those modules load but their calls fail.
+    ///
+    /// Q2: unless [`Host::set_bytecode_cache`] was called, it also opens the bytecode cache under
+    /// `dx.paths.cache()/bytecode` (a cache that cannot be opened is logged and skipped).
     pub fn set_dx(&self, dx: dx::Dx) {
+        if !self.core.bytecode_explicit.get() {
+            let dir = dx.paths.cache().join("bytecode");
+            match bytecode::BytecodeCache::open(&dir) {
+                Ok(c) => *self.core.bytecode.borrow_mut() = Some(Rc::new(c)),
+                Err(e) => tracing::warn!(target: "svelters::host", "bytecode cache {} not opened: {e}", dir.display()),
+            }
+        }
         *self.core.dx.borrow_mut() = Some(Rc::new(dx));
+    }
+
+    /// Q2: source modules (JavaScript from the provider) are compiled through the bytecode cache in
+    /// `dir`, or not cached (`None`). Overrides the cache [`Host::set_dx`] opens; applies to the next
+    /// module load. Modules re-imported for HMR (`?v=n`) are never cached.
+    pub fn set_bytecode_cache(&self, dir: Option<&Path>) -> std::io::Result<()> {
+        let cache = dir.map(bytecode::BytecodeCache::open).transpose()?;
+        *self.core.bytecode.borrow_mut() = cache.map(Rc::new);
+        self.core.bytecode_explicit.set(true);
+        Ok(())
+    }
+
+    /// Q2: the bytecode cache in use, if any.
+    pub fn bytecode_cache(&self) -> Option<Rc<bytecode::BytecodeCache>> {
+        self.core.bytecode.borrow().clone()
     }
 
     /// LD1: sets the extra schemes, native modules and `svelters:app/*` visibility that apply to the
     /// next load (`load_from`, `load_entry_from`, `load_bundle`, `load_entry`). The default serves
     /// this binary's exports and every `svelters:app/*` module.
+    /// DX2: the clipboard and shell this host's `svelters:clipboard` and `svelters:shell` use
+    /// (`HostConfig::platform`), for host-side callers: EV3's paste command, a Rust panel's copy.
+    pub fn platform(&self) -> &platform::Platform {
+        &self.core.cfg.platform
+    }
+
     pub fn set_module_hooks(&self, hooks: ModuleHooks) {
         *self.core.app_gate.borrow_mut() = Some(hooks.app_gate());
         *self.module_hooks.borrow_mut() = hooks;

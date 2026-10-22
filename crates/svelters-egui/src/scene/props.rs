@@ -86,7 +86,7 @@ pub(crate) fn is_common(key: P) -> bool {
     use P::*;
     matches!(
         key,
-        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | Position | Left | Top | Right | Bottom | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid | DragType | DragData | DropTypes
+        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | Position | Left | Top | Right | Bottom | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid | DragType | DragData | DropTypes | Autofocus | FocusScope | Default | Cancel
     )
 }
 
@@ -141,6 +141,10 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (P::Padding, _) => c.padding = as_f64(v)?,
         (P::AlignItems, _) => c.align_items = as_enum(v, kinds::ALIGN)?,
         (P::JustifyContent, _) => c.justify_content = as_enum(v, kinds::JUSTIFY)?,
+        (P::Autofocus, _) => c.autofocus = as_bool(v)?,
+        (P::FocusScope, _) => c.focus_scope = as_enum(v, kinds::FOCUS_SCOPE)?,
+        (P::Default, W::Button { .. }) => c.default_button = as_bool(v)?,
+        (P::Cancel, W::Button { .. }) => c.cancel_button = as_bool(v)?,
         (P::Invalid, _) => c.invalid = as_bool(v)?,
         // WG4b: drag and drop on any node (`kinds/dnd.rs`), before the per-payload catch-alls
         (P::DragType | P::DragData | P::DropTypes, _) => crate::kinds::dnd::set(c, def.key, as_str(v)?),
@@ -189,6 +193,11 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (P::ShowValue, W::Slider { show_value, .. }) => {
             *show_value = as_bool(v)?;
             d.insert(Dirty::MEASURE);
+        }
+        (P::ListSelected | P::ListSelection | P::ListLayout | P::SelectedIds, W::VirtualList(l)) => crate::kinds::virtuallist::set(l, def.key, v)?,
+        (P::RowHeight, W::VirtualList(l)) => {
+            crate::kinds::virtuallist::set(l, def.key, v)?;
+            d.insert(Dirty::LAYOUT);
         }
         // ---- WG1 ----
         (P::FontWeight, W::Label { weight, .. } | W::Button { weight, .. } | W::ToggleButton { weight, .. } | W::Icon { weight, .. }) => {
@@ -250,6 +259,9 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (P::Resizable, W::TableColumn { resizable, .. } | W::SplitView { resizable, .. }) => *resizable = as_bool(v)?,
         (P::CellAlign, W::TableColumn { align, .. }) => *align = as_enum(v, kinds::CELL_ALIGN)?,
         (P::Sort, W::TableColumn { sort, .. }) => *sort = as_enum(v, kinds::SORT)?,
+        (P::Editable, W::TableColumn { editable, .. }) => *editable = as_bool(v)?,
+        // WG5a: the runtime writes `true` while a snippet is set (a function never reaches the backend)
+        (P::Editor, W::TableColumn { editor, .. }) => *editor = !matches!(v, Value::Null | Value::Bool(false)),
         (P::SelectedIndex, W::TabView { selected }) => {
             *selected = as_i64(v)?;
             // another page is laid out
@@ -321,6 +333,10 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Padding, _) => Value::F64(c.padding),
         (P::AlignItems, _) => s(c.align_items),
         (P::JustifyContent, _) => s(c.justify_content),
+        (P::Autofocus, _) => Value::Bool(c.autofocus),
+        (P::FocusScope, _) => s(c.focus_scope),
+        (P::Default, W::Button { .. }) => Value::Bool(c.default_button),
+        (P::Cancel, W::Button { .. }) => Value::Bool(c.cancel_button),
         (P::Invalid, _) => Value::Bool(c.invalid),
         (P::DragType | P::DragData | P::DropTypes, _) => s(crate::kinds::dnd::get(c, def.key)), // WG4b
         // WG2a
@@ -345,6 +361,9 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Max, W::Slider { max, .. }) => Value::F64(*max),
         (P::Step, W::Slider { step, .. }) => Value::F64(*step),
         (P::ShowValue, W::Slider { show_value, .. }) => Value::Bool(*show_value),
+        (P::ListSelected | P::ListSelection | P::ListLayout | P::SelectedIds | P::RowHeight, W::VirtualList(l)) => {
+            crate::kinds::virtuallist::get(l, def.key).ok_or_else(|| format!("{:?} is not a prop of <virtual-list>", def.key))?
+        }
         // ---- WG1 ----
         (P::FontWeight, W::Label { weight, .. } | W::Button { weight, .. } | W::ToggleButton { weight, .. } | W::Icon { weight, .. }) => Value::I64(*weight),
         (P::Radio, W::ToggleButton { radio, .. }) => Value::Bool(*radio),
@@ -368,6 +387,8 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Resizable, W::TableColumn { resizable, .. } | W::SplitView { resizable, .. }) => Value::Bool(*resizable),
         (P::CellAlign, W::TableColumn { align, .. }) => s(align),
         (P::Sort, W::TableColumn { sort, .. }) => s(sort),
+        (P::Editable, W::TableColumn { editable, .. }) => Value::Bool(*editable),
+        (P::Editor, W::TableColumn { editor, .. }) => Value::Bool(*editor),
         (P::SelectedIndex, W::TabView { selected }) => Value::I64(*selected),
         (P::Closable, W::Tab { closable, .. }) => Value::Bool(*closable),
         (P::Orientation, W::SplitView { vertical, .. }) => s(if *vertical { "vertical" } else { "horizontal" }),
@@ -395,7 +416,8 @@ pub fn tag_of(ty: Ty) -> u16 {
         Ty::F64 => svelters_abi::SVL_F64,
         Ty::I64 => svelters_abi::SVL_I64,
         Ty::Str | Ty::Enum(_) => svelters_abi::SVL_STR,
-        Ty::StrList => svelters_abi::SVL_LIST,
+        Ty::StrList | Ty::IdList => svelters_abi::SVL_LIST,
+        Ty::Snippet => svelters_abi::SVL_BOOL,
         // RA1: described per prop by its Rust type (`KindRegistry::provider_member_desc`)
         Ty::Provider => svelters_abi::SVL_NULL,
     }

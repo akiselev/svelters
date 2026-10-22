@@ -75,6 +75,10 @@ pub struct HostConfig {
     pub hmr_max_swaps: u32,
     /// H1: ... or when its heap is above this fraction of `memory_limit`.
     pub hmr_memory_fraction: f32,
+    /// DX2: the clipboard and shell behind `svelters:clipboard` and `svelters:shell`. The default
+    /// ([`crate::platform::Platform::headless`]) touches nothing of the system; a desktop runner
+    /// installs the system ones (svelters-egui's `platform::system()`).
+    pub platform: crate::platform::Platform,
 }
 
 impl Default for HostConfig {
@@ -82,6 +86,7 @@ impl Default for HostConfig {
         HostConfig {
             hmr_max_swaps: 200,
             hmr_memory_fraction: 0.5,
+            platform: crate::platform::Platform::default(),
             memory_limit: 256 * 1024 * 1024,
             max_stack_size: 1024 * 1024,
             turn_budget: Some(Duration::from_secs(10)),
@@ -337,6 +342,10 @@ pub(crate) struct Core {
     pub(crate) maps: RefCell<SourceMaps>,
     /// DX1: the app's settings, UI state and paths (`Host::set_dx`).
     pub(crate) dx: RefCell<Option<Rc<crate::dx::Dx>>>,
+    /// Q2: the on-disk bytecode cache source modules are compiled through (`Host::set_bytecode_cache`;
+    /// `Host::set_dx` opens one under `Paths::cache()` unless it was set explicitly).
+    pub(crate) bytecode: RefCell<Option<Rc<crate::bytecode::BytecodeCache>>>,
+    pub(crate) bytecode_explicit: Cell<bool>,
     /// App exports (E0): this host's exported Rust objects.
     pub(crate) apps: crate::exports::objects::AppObjects,
     /// LD1: whether an `svelters:app/<module>` export is reachable by `construct` and `callStatic`,
@@ -395,6 +404,8 @@ impl Core {
             apps: Default::default(),
             app_gate: RefCell::new(None),
             dx: RefCell::new(None),
+            bytecode: RefCell::new(None),
+            bytecode_explicit: Cell::new(false),
             op_log: RefCell::new(None),
             ops: offload::OpTable::new(crate::exports::offload::Completions::new(backend.wake_handle())),
             reactive: reactive::Reactive::new(crate::exports::reactive::Hub::new(backend.wake_handle())),

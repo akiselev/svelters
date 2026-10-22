@@ -14,7 +14,7 @@ fn run_case(dir: &Path) -> Result<(), String> {
     let dev = dir.join("dev").exists();
     let (src, res): (String, CompileResult) = if dir.join("input.svelte.js").exists() {
         let src = fs::read_to_string(dir.join("input.svelte.js")).unwrap();
-        let res = compile_module(&src, &ModuleOptions { filename: "input.svelte.js".into(), dev });
+        let res = compile_module(&src, &ModuleOptions { filename: "input.svelte.js".into(), dev, hmr: false });
         (src, res)
     } else {
         let src = fs::read_to_string(dir.join("input.svelte")).unwrap();

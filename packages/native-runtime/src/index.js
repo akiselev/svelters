@@ -562,7 +562,91 @@ export function set(node, prop, value) {
   }
   if (node.last.has(prop) && Object.is(node.last.get(prop), value)) return;
   node.last.set(prop, value);
-  node.host.setProp(node.h, prop, value);
+  // WG5a: a snippet passed as a prop (`<table-column editor={cellEditor}>`) stays in JS
+  if (typeof value === 'function') {
+    snippetProp(node, prop, value);
+    return;
+  }
+  if (value == null) node.snippets?.delete(prop);
+  // WG5a: a `$state` array is a Proxy, which the host's list conversion does not read as an
+  // array: a list prop (`bind:selected` ids) is written as a plain copy
+  node.host.setProp(node.h, prop, Array.isArray(value) ? Array.from(value) : value);
+}
+
+// ---------------------------------------------------------------------------------------------
+// WG5a: snippet props. Svelte passes a snippet as a prop value (a function); the runtime keeps it
+// on the node, writes `true` natively (the backend's `Ty::Snippet` prop: "one is set"), and a
+// per-kind hook realises it when the backend asks.
+
+const SNIPPET_PROPS = { 'table-column:editor': cellEditor };
+
+function snippetProp(node, prop, fn) {
+  (node.snippets ??= new Map()).set(prop, fn);
+  const hook = SNIPPET_PROPS[`${node.kind}:${prop}`];
+  if (!hook) {
+    console.warn(`<${node.kind}> takes no snippet as \`${prop}\``);
+    return;
+  }
+  hook(node, prop);
+  node.host.setProp(node.h, prop, true);
+}
+
+/** A sync handler's arguments without the event (call_sync delivers `(event, ...args)`). */
+const syncArgs = (a) => (a.length && a[0] instanceof NativeEvent ? [a[0], a.slice(1)] : [null, a]);
+
+/**
+ * A `table-column`'s cell editor (plans/milestones/WG5a-list-table-interaction.md): the snippet is
+ * mounted once into a row outlet the table adopts (`set-editor`), then rebound per edit. It gets
+ * one argument, the edit: `{ row, column, value (bindable), typed, commit(), cancel() }`. The table
+ * asks for the value to commit (`editor-value`); `commit()`/`cancel()` end the edit from the editor.
+ */
+function cellEditor(col, prop) {
+  if (col.cellEditor) return;
+  const row = $.state(-1);
+  const value = $.state(null);
+  const typed = $.state('');
+  const ed = (col.cellEditor = { outlet: null, unmountOutlet: null, unmount: null });
+  const edit = {
+    get row() {
+      return $.get(row);
+    },
+    get value() {
+      return $.get(value);
+    },
+    set value(v) {
+      $.set(value, v);
+    },
+    get typed() {
+      return $.get(typed);
+    },
+    commit: () => col.call('end-edit', true),
+    cancel: () => col.call('end-edit', false),
+  };
+  on(col, 'editor-bind', (...a) => {
+    const [, [r, v, t]] = syncArgs(a);
+    $.set(row, r);
+    $.set(typed, t ?? '');
+    $.set(value, t ? t : v);
+    if (!ed.outlet) ed.unmountOutlet = mount(() => void (ed.outlet = element(rowOutlet())));
+    if (!ed.unmount) {
+      ed.unmount = mount(
+        ($$anchor) => {
+          $.push({}, true);
+          col.snippets?.get(prop)?.($$anchor, () => edit);
+          $.pop();
+        },
+        { target: ed.outlet },
+      );
+    }
+    col.call('set-editor', ed.outlet);
+    flush();
+  });
+  on(col, 'editor-value', (...a) => {
+    const [ev] = syncArgs(a);
+    if (ev) ev.result = $.get(value) ?? null;
+  });
+  // the editor stays mounted for the next edit of this column
+  on(col, 'editor-unbind', () => {});
 }
 
 /**
@@ -1339,7 +1423,7 @@ export function setHmrReporter(fn) {
 }
 
 /** Counters the host reads for its swap budget (HMR.md 3.2): swaps applied, rollbacks. */
-export const hmrStats = { swaps: 0, rollbacks: 0, failed: new Set() };
+export const hmrStats = { swaps: 0, rollbacks: 0, failed: new Set(), statesKept: 0, statesReset: 0 };
 
 function reportHmr(id, error) {
   hmrStats.rollbacks++;
@@ -1356,31 +1440,60 @@ function reportHmr(id, error) {
  * (rollback, which upstream cannot do), and the failure is reported. The anchor, the props object
  * and the `instance` object (refilled, so a parent's `bind:this` stays valid) are kept.
  */
-export function hmr(fn, id = fn?.[FILENAME] ?? 'component') {
+export function hmr(fn, id = fn?.[FILENAME] ?? 'component', sig) {
   const current = $.state(fn);
+  fn[HMR_SIG] = sig;
 
   function wrapper(anchor, props) {
     let component = null;
     let live = null;
     let ran = false;
+    // this instance's keyed `$state` declarations (H3): `{ sig, entries }` of the live version
+    let liveReg = null;
     const instance = {};
     const r = newRegion(anchor);
     const owner = scope;
+    // H3c: the position of this instance among its parent's instances of the same component, and the
+    // registry a swapped parent parked for it
+    const inst = { path: instancePath(owner, id), counters: new Map(), reg: () => liveReg, sig: () => liveReg?.sig };
+    let claimed = takeClaim(inst.path);
     block(() => {
       const next = $.get(current);
       if (component === next) return;
       const prevBranch = live;
       const nb = newRegion(r);
       nb.scope = new Scope(owner);
+      nb.scope.hmr = inst;
+      inst.counters = new Map();
       const prevScope = scope;
       scope = nb.scope;
       let result;
+      // H3: the values the live version changed carry over when the signatures match (all or nothing)
+      const sig = next[HMR_SIG];
+      let restore = ran && hmrPreserve && liveReg && sig != null && liveReg.sig === sig ? snapshot(liveReg.entries) : null;
+      // H3c: this instance is new, but its parent's swap parked the state of the instance that stood here
+      if (!ran && claimed) {
+        if (sig != null && claimed.sig === sig) restore = claimed.snap;
+        claimed = null;
+      }
+      // H3c: park the live registries of the instances below this one before they are destroyed
+      const parked = ran && live ? parkDescendants(live.scope) : null;
+      const ctx = { restore, entries: new Map() };
       try {
         // intros are suppressed while a version is replaced
         if (ran) set_intro(false);
         building(() => {
           nb.effect = branch(() => {
-            result = next(nb, props);
+            const outer = hmrCtx;
+            const outerClaims = hmrClaims;
+            hmrCtx = ctx;
+            hmrClaims = parked;
+            try {
+              result = next(nb, props);
+            } finally {
+              hmrCtx = outer;
+              hmrClaims = outerClaims;
+            }
           });
         });
       } catch (e) {
@@ -1399,11 +1512,17 @@ export function hmr(fn, id = fn?.[FILENAME] ?? 'component') {
       if (ran) set_intro(true);
       component = next;
       live = nb;
+      const hadState = !!liveReg && liveReg.entries.size > 0;
+      liveReg = { sig, entries: ctx.entries };
       if (prevBranch) {
         for (const k in instance) delete instance[k];
         hmrStats.swaps++;
+        hmrStats.statesKept += restore ? restore.size : 0;
+        if (hadState && !restore) hmrStats.statesReset++;
         hmrStats.failed.delete(id);
         close(prevBranch);
+      } else if (restore) {
+        hmrStats.statesKept += restore.size;
       }
       if (result) Object.defineProperties(instance, Object.getOwnPropertyDescriptors(result));
     }, EFFECT_TRANSPARENT);
@@ -1424,6 +1543,127 @@ export function hmr(fn, id = fn?.[FILENAME] ?? 'component') {
     },
   };
   return wrapper;
+}
+
+// ---- H3: `$state` kept across a component swap (HMR.md 2.4, 3.3, 3.4) ----
+//
+// The compiler (`--hmr`) wraps each top-level instance `$state` initializer as
+// `$n.hmr_keep("x", () => init, () => read)` and gives `$n.hmr` the component's signature: a hash of the
+// ordered (kind, name, normalized initializer) of those declarations, or `null` under `// @hmr:reset`.
+// Each instance keeps its own registry (the wrapper's closure), so two instances never share values.
+// The registry of the live version is read when a swap starts; if the new version's signature is equal
+// the changed values (SV36) are handed to `hmr_keep`, which returns them instead of running the
+// initializer. Otherwise the whole component starts fresh.
+
+const HMR_SIG = Symbol('svelters.hmr.sig');
+let hmrPreserve = true;
+/** The init in progress: `{ restore: Map<key, {value, init}> | null, entries: Map<key, {read, init}> }`. */
+let hmrCtx = null;
+
+/** Global switch (HMR.md D2): `false` makes every swap start fresh. */
+export function setHmrPreserveState(on) {
+  hmrPreserve = !!on;
+}
+
+/** H3c: registries parked by a swapping ancestor, by instance path; `null` outside a swap. */
+let hmrClaims = null;
+const rootCounters = new Map();
+
+/** `<parent path>/<component id>#<n>`: n counts the instances of that component created under the same
+ *  parent instance since its current version started (call order is the positional key). */
+function instancePath(owner, id) {
+  let s = owner;
+  while (s && !s.hmr) s = s.parent;
+  const counters = s ? s.hmr.counters : rootCounters;
+  const n = counters.get(id) ?? 0;
+  counters.set(id, n + 1);
+  return `${s ? s.hmr.path : ''}/${id}#${n}`;
+}
+
+function takeClaim(path) {
+  const c = hmrClaims?.get(path);
+  if (c) hmrClaims.delete(path);
+  return c ?? null;
+}
+
+/** The changed values of every live hmr instance below `scope`, keyed by path (H3c). */
+function parkDescendants(scope) {
+  if (!hmrPreserve || !scope) return null;
+  const out = new Map();
+  const walk = (sc) => {
+    for (const c of sc.children) {
+      const inst = c.hmr;
+      const reg = inst?.reg();
+      if (reg && reg.sig != null) out.set(inst.path, { sig: reg.sig, snap: snapshot(reg.entries) });
+      walk(c);
+    }
+  };
+  walk(scope);
+  return out;
+}
+
+const isPrimitive = (v) => v === null || (typeof v !== 'object' && typeof v !== 'function');
+
+/** SV36: only declarations whose value differs from their initializer's result are carried. Objects and
+ *  proxies are always carried (the initial value cannot be compared cheaply). */
+function snapshot(entries) {
+  const out = new Map();
+  $.untrack(() => {
+    for (const [key, e] of entries) {
+      if ('obj' in e) {
+        out.set(key, { obj: e.obj });
+        continue;
+      }
+      const value = e.read();
+      if (isPrimitive(e.init) && Object.is(value, e.init)) continue;
+      out.set(key, { value, init: e.init });
+    }
+  });
+  return out;
+}
+
+function keep(ctx, key, init, read) {
+  const old = ctx.restore?.get(key);
+  let value;
+  let initial;
+  if (old) {
+    value = old.value;
+    initial = old.init;
+  } else {
+    value = init();
+    initial = value;
+  }
+  ctx.entries.set(key, { read, init: initial });
+  return value;
+}
+
+/** A keyed `$state` initializer inside a component's instance script. */
+export function hmr_keep(key, init, read) {
+  return hmrCtx ? keep(hmrCtx, key, init, read) : init();
+}
+
+/**
+ * Module state (`.svelte.js`, H3b): `hot` is the module's `import.meta.hot`. The previous version is still
+ * running when the new one evaluates, so its values are read live. `keep` is as `hmr_keep`; `keep_object`
+ * returns the previous object itself (stores, context keys); `commit()` runs as the module's last
+ * statement, so a version that throws part-way leaves the previous registry in place.
+ */
+export function hmr_module(hot, sig) {
+  const prev = hot?.data?.$keep;
+  const restore = hot && hmrPreserve && sig != null && prev && prev.sig === sig ? snapshot(prev.entries) : null;
+  const ctx = { restore, entries: new Map() };
+  return {
+    keep: (key, init, read) => (hot ? keep(ctx, key, init, read) : init()),
+    keep_object(key, init) {
+      if (!hot) return init();
+      const obj = restore?.get(key)?.obj ?? init();
+      ctx.entries.set(key, { obj });
+      return obj;
+    },
+    commit() {
+      if (hot) hot.data.$keep = { sig, entries: ctx.entries };
+    },
+  };
 }
 
 function swapping(container, get, render) {

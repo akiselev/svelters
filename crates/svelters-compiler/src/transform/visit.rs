@@ -282,7 +282,15 @@ impl<'c, 'r, 'a> Rw<'c, 'r, 'a> {
                         if proxy {
                             self.edits.wrap(s.start, s.end, "$.proxy(", ")");
                         }
+                        if self.keyed_state(scope, is_state || proxy) {
+                            let src = self.cx.src;
+                            self.key_declaration(&id.name, rune, is_state, s, &src[s.start as usize..s.end as usize]);
+                        }
                         w.visit(self, call_node, expr_ref(a), &scope);
+                    }
+                    None if is_state && self.keyed_state(scope, true) => {
+                        self.cx.keyed.borrow_mut().push(format!("{rune}:{}:", id.name));
+                        self.edits.overwrite(call.start, call.end, format!("$.state({}({}, () => void 0, () => $.get({})))", self.cx.keep_callee.get(), self.label(&id.name), id.name));
                     }
                     None => self.edits.overwrite(call.start, call.end, if is_state { "$.state(void 0)" } else { "void 0" }),
                 }
@@ -309,6 +317,24 @@ impl<'c, 'r, 'a> Rw<'c, 'r, 'a> {
                 self.edits.overwrite(decl.start, decl.end, parts.join(", "));
             }
         }
+    }
+
+    /// Whether a `$state` declaration is keyed for HMR state preservation: `--hmr`, top level of the
+    /// instance script, and something that can change (a reassigned source or a proxy).
+    fn keyed_state(&self, scope: ScopeId, mutable: bool) -> bool {
+        let top = match self.cx.instance_scope {
+            Some(i) => scope == i,
+            None => scope == self.cx.module_scope,
+        };
+        self.cx.hmr.get() && mutable && top
+    }
+
+    /// Wraps the initializer `[s]` as `$n.hmr_keep("x", () => init, () => read)`: a restored value
+    /// replaces the initializer (HMR.md 2.4 item 3). The wrap is added last, so it is innermost.
+    fn key_declaration(&mut self, name: &str, rune: &str, is_state: bool, s: Span, init: &str) {
+        self.cx.keyed.borrow_mut().push(format!("{rune}:{name}:{}", super::normalize_initializer(init)));
+        let read = if is_state { format!("$.get({name})") } else { name.to_string() };
+        self.edits.wrap(s.start, s.end, format!("{}({}, () => (", self.cx.keep_callee.get(), self.label(name)), format!("), () => {read})"));
     }
 
     fn create_state_declarator(&self, name: &str, value: String, rune: &str, is_state: bool) -> String {
