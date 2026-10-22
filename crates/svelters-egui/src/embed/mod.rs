@@ -108,6 +108,10 @@ pub struct EmbedConfig {
     pub prepass_plugin: bool,
     /// OW0: an app's change to the native behaviour policy ([`EmbedConfig::with_policy`]).
     pub policy: Option<fn(&mut crate::native::Policy)>,
+    /// ZM1: who handles Ctrl+= / Ctrl+- / Ctrl+0 ([`ZoomKeys`]). Default `Host`: the embedder owns
+    /// the shortcuts and calls [`Embed::set_zoom`]; egui's own handler is turned off. `app` sets
+    /// `Embed` (steps of 1.2).
+    pub zoom_keys: crate::zoom::ZoomKeys,
 }
 
 impl EmbedConfig {
@@ -137,6 +141,7 @@ impl Default for EmbedConfig {
             timer_horizon: Duration::from_millis(50),
             prepass_plugin: true,
             policy: None,
+            zoom_keys: crate::zoom::ZoomKeys::Host,
         }
     }
 }
@@ -144,9 +149,10 @@ impl Default for EmbedConfig {
 impl EmbedConfig {
     /// For an app bundle (the desktop runners, `TestApp`): the host's config as given, every entry
     /// under its `turn_budget` (as before EM1), quitting when the last window goes if it says so.
+    /// ZM1: the embed handles the zoom keys (`ZoomKeys::Embed`, steps of 1.2).
     pub fn app(host: HostConfig) -> EmbedConfig {
         let b = host.turn_budget.unwrap_or(Duration::from_secs(24 * 3600));
-        EmbedConfig { host, budgets: Budgets { warn: b, interrupt: b, mount: b }, ..EmbedConfig::default() }
+        EmbedConfig { host, budgets: Budgets { warn: b, interrupt: b, mount: b }, zoom_keys: crate::zoom::ZoomKeys::Embed, ..EmbedConfig::default() }
     }
 }
 
@@ -500,6 +506,7 @@ impl Embed {
     pub fn attach(&self, ctx: &egui::Context) {
         let b = &self.inner.backend;
         b.bind_ctx(ctx);
+        crate::zoom::configure(ctx, self.inner.cfg.zoom_keys);
         b.0.scene.hook_passes(ctx);
         current::install(self, ctx);
         if let Some(a) = self.assets() {
@@ -828,6 +835,10 @@ impl Embed {
         self.apply_commands();
         self.sync_info(ctx);
         b.0.in_frame.set(false);
+        // ZM1: the runner's zoom keys (the host's own keymap otherwise); `logic_pass` applies it
+        if self.inner.cfg.zoom_keys == crate::zoom::ZoomKeys::Embed {
+            crate::zoom::handle_keys(ctx, b);
+        }
         // checkpoint (events, changes, timers), rAF, remeasure: every entry under the handler budget
         b.logic_pass(ctx);
         self.collect();
@@ -1348,6 +1359,17 @@ impl Embed {
     /// Exports, op log, stats, interrupt flag: the underlying host.
     pub fn host(&self) -> &Host<'static> {
         &self.inner.host
+    }
+
+    /// ZM1: sets the UI zoom factor, multiplied with the OS scale ([`EguiBackend::set_zoom`]).
+    /// cadatomic maps its zoom levels to factors (`crate::zoom::level_factor`: 1.2^n).
+    pub fn set_zoom(&self, zoom: f32) {
+        self.inner.backend.set_zoom(zoom);
+    }
+
+    /// ZM1: the UI zoom factor ([`EguiBackend::zoom`]).
+    pub fn zoom(&self) -> f32 {
+        self.inner.backend.zoom()
     }
 
     /// The backend (scene access for tests and devtools: `with_scene`, `handles_of`, `stats`).

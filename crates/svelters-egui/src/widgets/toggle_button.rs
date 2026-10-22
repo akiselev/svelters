@@ -5,7 +5,8 @@
 //! Look: the button's (DESIGN R1–R3, R8) plus R17's on state: `:checked` fills with `toggle-on-bg`
 //! and a 1 px `toggle-on-border` (VS Code's `inputOption.active*`, VIS1 `toggle-on-fg`).
 
-use crate::interact::{Focusable, Hoverable, Pressable, Toggle, ToggleParams, Toggleable};
+use crate::interact::{FocusParams, Focusable, Hoverable, Pressable, Roving, RovingParams, Toggle, ToggleParams, Toggleable};
+use crate::scene::NodeId;
 use crate::paint::{self, Align, Ua, UaRule, UaValue::*};
 use crate::provider::{A11yCx, AvailableSpace, Event, MeasureCx, StateBits, Widget, WidgetCx};
 
@@ -48,23 +49,65 @@ pub struct ToggleButton {
     frame: bool,
     #[prop(measure, default = 400)]
     font_weight: i64,
+    /// WIDGET-PARITY §2.1 (QButtonGroup): the sibling toggle buttons with the same `group` form an
+    /// exclusive set (checking one unchecks the others) and one Tab stop the arrow keys move in.
+    #[prop]
+    group: String,
     #[event]
     changed: Event<bool>,
     #[event]
     clicked: Event<()>,
     #[behavior]
     hover: Hoverable,
-    #[behavior]
+    #[behavior(params = focus_params)]
     focus: Focusable,
     #[behavior]
     press: Pressable,
     #[behavior(params = toggle_params)]
     toggle: Toggleable,
+    #[behavior(params = roving_params)]
+    roving: Roving,
+    /// This frame: in a group of several and not its Tab stop.
+    roving_member: bool,
 }
 
 impl ToggleButton {
     fn toggle_params(&self) -> ToggleParams {
-        ToggleParams { checked: self.checked, radio: self.radio, ..ToggleParams::default() }
+        ToggleParams { checked: self.checked, radio: self.radio || !self.group.is_empty(), ..ToggleParams::default() }
+    }
+    fn focus_params(&self) -> FocusParams {
+        FocusParams { tab_stop: !self.roving_member, ..FocusParams::default() }
+    }
+    fn roving_params(&self) -> RovingParams {
+        RovingParams { on: !self.group.is_empty() }
+    }
+
+    /// The siblings in this button's `group` (itself included), in order, with `checked`.
+    fn members(&self, cx: &mut WidgetCx<'_>, me: NodeId) -> Vec<(NodeId, bool)> {
+        if self.group.is_empty() {
+            return Vec::new();
+        }
+        let mut v = Vec::new();
+        for id in cx.sibling_ids() {
+            if id == me {
+                v.push((id, self.checked));
+            } else if let Some(Some(c)) = cx.with_peer::<ToggleButton, _>(id, |t, _| (t.group == self.group).then_some(t.checked)) {
+                v.push((id, c));
+            }
+        }
+        v
+    }
+
+    /// Unchecks the other members (each announces `changed(false)`).
+    fn uncheck_others(&self, cx: &mut WidgetCx<'_>, members: &[(NodeId, bool)], keep: NodeId) {
+        for &(id, on) in members {
+            if id != keep && on {
+                cx.with_peer::<ToggleButton, _>(id, |t, p| {
+                    p.set(&mut t.checked, false);
+                    p.emit(&t.changed, false);
+                });
+            }
+        }
     }
 }
 
@@ -75,7 +118,15 @@ impl Widget for ToggleButton {
     }
 
     fn ui(&mut self, ui: &mut egui::Ui, cx: &mut WidgetCx<'_>) -> egui::Response {
-        let resp = cx.interact(ui, self.units_sense());
+        let me = cx.node().id();
+        let members = self.members(cx, me);
+        let stop = members.iter().find(|m| m.1).or(members.first()).map(|m| m.0);
+        self.roving_member = members.len() > 1 && stop != Some(me);
+        let mut sense = self.units_sense();
+        if self.roving_member {
+            sense -= egui::Sense::FOCUSABLE;
+        }
+        let resp = cx.interact(ui, sense);
         let fired = self.run_units(cx, ui, &resp);
         if fired.press.iter().any(|p| p.is_click()) {
             cx.dispatch(&self.clicked, ());
@@ -83,6 +134,28 @@ impl Widget for ToggleButton {
         for Toggle::Toggled { checked, .. } in fired.toggle.iter().copied() {
             if !cx.dispatch(&self.changed, checked).prevented() {
                 cx.set(&mut self.checked, checked);
+                if checked {
+                    self.uncheck_others(cx, &members, me);
+                }
+            }
+        }
+        // Roving: focus the member the arrow lands on and check it (the others follow)
+        if let Some(r) = fired.roving.iter().last().copied().filter(|_| members.len() > 1) {
+            let at = members.iter().position(|m| m.0 == me).unwrap_or(0);
+            let to = members[r.target(at, members.len())].0;
+            if to != me {
+                cx.with_peer::<ToggleButton, _>(to, |t, p| {
+                    p.focus();
+                    if !t.checked {
+                        p.set(&mut t.checked, true);
+                        p.emit(&t.changed, true);
+                    }
+                });
+                if self.checked {
+                    cx.set(&mut self.checked, false);
+                    cx.dispatch(&self.changed, false);
+                }
+                self.uncheck_others(cx, &members, to);
             }
         }
         if ui.is_rect_visible(cx.rect()) {
@@ -92,14 +165,14 @@ impl Widget for ToggleButton {
             cx.paint_text(ui, UA, &self.text, geom.content, Some(self.font_weight), Align::Center);
             cx.paint_outline(ui, UA);
         }
-        let role = if self.radio { egui::Role::RadioButton } else { egui::Role::Button };
+        let role = if self.radio || !self.group.is_empty() { egui::Role::RadioButton } else { egui::Role::Button };
         let (enabled, on, text) = (cx.enabled(), self.checked, &self.text);
         resp.widget_info(|| egui::WidgetInfo::selected(role, enabled, on, text));
         resp
     }
 
     fn a11y(&self, _cx: &A11yCx<'_>, node: &mut egui::accesskit::Node) {
-        node.set_role(if self.radio { egui::accesskit::Role::RadioButton } else { egui::accesskit::Role::Button });
+        node.set_role(if self.radio || !self.group.is_empty() { egui::accesskit::Role::RadioButton } else { egui::accesskit::Role::Button });
         self.units_a11y(node);
     }
 

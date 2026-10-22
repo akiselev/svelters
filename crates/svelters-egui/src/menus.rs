@@ -351,7 +351,7 @@ fn decorate(arena: &Arena, i: usize, resp: egui::Response) -> egui::Response {
     }
 }
 
-#[allow(clippy::disallowed_types)] // OW: wrapper until OW1a, OW3
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW3
 /// Draws the menu entries under `parent` in `ui` (a menu bar, a menu popup). `flatten`: a `menu`
 /// child shows its items inline (a menu-button's menu).
 fn items(
