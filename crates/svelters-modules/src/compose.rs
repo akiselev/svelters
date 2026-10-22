@@ -180,6 +180,13 @@ impl ModuleProvider for ComposedProvider {
             }
             return Ok(specifier.to_string());
         }
+        // DX1: an added native module outside `svelters:app/*` (`svelters:settings`), gated like the others.
+        if self.extra.serves(specifier) {
+            if !self.policy.native_modules.permits(specifier) {
+                return Err(format!("no such module: `{specifier}`"));
+            }
+            return Ok(specifier.to_string());
+        }
         if let Some(h) = self.hook_for(specifier) {
             return h.resolve(base, specifier);
         }
@@ -203,6 +210,12 @@ impl ModuleProvider for ComposedProvider {
                 return self.extra.load(id);
             }
             return self.natives.load(id);
+        }
+        if self.extra.serves(id) {
+            if !self.policy.native_modules.permits(id) {
+                return Err(format!("no such module: `{id}`"));
+            }
+            return self.extra.load(id);
         }
         if let Some(h) = self.hook_for(id) {
             return h.load(id);
