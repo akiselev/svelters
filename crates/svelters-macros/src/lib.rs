@@ -1603,3 +1603,276 @@ fn events(input: DeriveInput) -> syn::Result<Ts> {
         }
     })
 }
+
+// ---- #[svelters::widget] (RA1, ARCH-EMBED §8.2) ----
+
+/// A provider kind for the egui backend: a struct whose `#[prop]` fields are set from Svelte, whose
+/// `#[event] x: Event<T>` fields are its `on<x>` events, and whose `#[state]` (or unmarked) fields are
+/// Rust-only node state. The struct implements `svelters_egui::provider::Widget` itself.
+///
+/// ```ignore
+/// #[svelters::widget(namespace = "cad", tag = "quantity-field", caps = FOCUSABLE | EDITABLE)]
+/// pub struct QuantityField {
+///     /// The committed value.
+///     #[prop(bind)] value: Option<f64>,
+///     #[prop(default = true)] units_shown: bool,
+///     #[event] accepted: Event<f64>,
+///     #[state] text: String,
+/// }
+/// ```
+///
+/// - `namespace` (required): the kind's spec id is `<namespace>.<StructName>`, and the props' named
+///   types are declared in `svelters:app/<namespace>`.
+/// - `tag`: the element (default: the struct name in kebab-case). `caps`: `svelters_egui::provider::Caps`
+///   names joined with `|`.
+/// - `#[prop(bind)]`: the widget writes it with `cx.set` (`bind:` observes it, `exact`);
+///   `#[prop(default = expr)]`; `#[prop(measure)]`: a change measures the node again;
+///   `#[prop(rename = "x")]`. JS names are the field names in kebab-case. A prop type is any
+///   `FromJs + IntoJs + Clone` (`IntoJs` for reads), so records, enums, `Option`, `Vec`, `Json<T>`.
+/// - Props without `default` and state fields start at `Default::default()`.
+///
+/// The generated code names `::svelters_egui`, so the crate depends on `svelters-egui` too.
+#[proc_macro_attribute]
+pub fn widget(attr: TokenStream, item: TokenStream) -> TokenStream {
+    let item = syn::parse_macro_input!(item as ItemStruct);
+    widget_impl(attr.into(), item).unwrap_or_else(|e| e.to_compile_error()).into()
+}
+
+enum WidgetField {
+    Prop { name: String, bind: bool, measure: bool, default: Option<Expr> },
+    Event,
+    State,
+}
+
+fn caps_expr(e: &Expr, out: &mut Vec<syn::Ident>) -> syn::Result<()> {
+    match e {
+        Expr::Binary(b) if matches!(b.op, syn::BinOp::BitOr(_)) => {
+            caps_expr(&b.left, out)?;
+            caps_expr(&b.right, out)
+        }
+        Expr::Path(p) if p.path.get_ident().is_some() => {
+            out.push(p.path.get_ident().unwrap().clone());
+            Ok(())
+        }
+        Expr::Paren(p) => caps_expr(&p.expr, out),
+        other => Err(syn::Error::new(other.span(), "caps: capability names joined with `|` (FOCUSABLE | EDITABLE)")),
+    }
+}
+
+fn last_segment(ty: &Type) -> Option<&syn::PathSegment> {
+    match ty {
+        Type::Path(p) => p.path.segments.last(),
+        _ => None,
+    }
+}
+
+fn first_generic(ty: &Type) -> Option<&Type> {
+    match &last_segment(ty)?.arguments {
+        syn::PathArguments::AngleBracketed(a) => a.args.iter().find_map(|g| match g {
+            syn::GenericArgument::Type(t) => Some(t),
+            _ => None,
+        }),
+        _ => None,
+    }
+}
+
+fn widget_impl(attr: Ts, mut item: ItemStruct) -> syn::Result<Ts> {
+    let mut namespace: Option<String> = None;
+    let mut tag: Option<String> = None;
+    let mut caps: Vec<syn::Ident> = Vec::new();
+    syn::meta::parser(|m| {
+        if m.path.is_ident("namespace") {
+            namespace = Some(m.value()?.parse::<syn::LitStr>()?.value());
+        } else if m.path.is_ident("tag") {
+            tag = Some(m.value()?.parse::<syn::LitStr>()?.value());
+        } else if m.path.is_ident("caps") {
+            let e: Expr = m.value()?.parse()?;
+            caps_expr(&e, &mut caps)?;
+        } else {
+            return Err(m.error("expected `namespace = \"...\"`, `tag = \"...\"` or `caps = A | B`"));
+        }
+        Ok(())
+    })
+    .parse2(attr)?;
+    let name = item.ident.clone();
+    let namespace = namespace.ok_or_else(|| syn::Error::new(name.span(), "#[svelters::widget] needs `namespace = \"...\"`"))?;
+    if namespace.is_empty() || !namespace.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '-') {
+        return Err(syn::Error::new(name.span(), "the namespace must be a plain name (`cad`)"));
+    }
+    if !item.generics.params.is_empty() {
+        return Err(syn::Error::new(item.generics.span(), "a widget struct cannot be generic"));
+    }
+    let tag = tag.unwrap_or_else(|| kebab(&name.to_string()));
+    if !tag.contains('-') || tag.chars().any(|c| c.is_ascii_uppercase()) {
+        return Err(syn::Error::new(name.span(), format!("tag `{tag}`: a provider tag is lower-case kebab-case with a dash (`quantity-field`); capitalised tags are Svelte components")));
+    }
+    let id = format!("{namespace}.{name}");
+    let kind_docs = docs(&item.attrs);
+    let Fields::Named(fields) = &mut item.fields else {
+        return Err(syn::Error::new(item.span(), "#[svelters::widget] needs a struct with named fields"));
+    };
+
+    let mut kinds: Vec<(syn::Ident, Type, String, WidgetField)> = Vec::new();
+    for f in fields.named.iter_mut() {
+        let ident = f.ident.clone().expect("named field");
+        let fdocs = docs(&f.attrs);
+        let mut kind = WidgetField::State;
+        let mut keep = Vec::new();
+        for a in f.attrs.drain(..) {
+            if a.path().is_ident("prop") {
+                let mut bind = false;
+                let mut measure = false;
+                let mut default = None;
+                let mut rename = None;
+                if matches!(a.meta, Meta::List(_)) {
+                    a.parse_nested_meta(|m| {
+                        if m.path.is_ident("bind") {
+                            bind = true;
+                        } else if m.path.is_ident("measure") {
+                            measure = true;
+                        } else if m.path.is_ident("default") {
+                            default = Some(m.value()?.parse::<Expr>()?);
+                        } else if m.path.is_ident("rename") {
+                            rename = Some(m.value()?.parse::<syn::LitStr>()?.value());
+                        } else {
+                            return Err(m.error("#[prop] options: bind, measure, default = expr, rename = \"name\""));
+                        }
+                        Ok(())
+                    })?;
+                }
+                let js = rename.unwrap_or_else(|| ident.to_string().trim_start_matches("r#").replace('_', "-"));
+                kind = WidgetField::Prop { name: js, bind, measure, default };
+            } else if a.path().is_ident("event") {
+                if last_segment(&f.ty).is_none_or(|s| s.ident != "Event") {
+                    return Err(syn::Error::new(f.ty.span(), "an #[event] field has type `Event<T>`"));
+                }
+                kind = WidgetField::Event;
+            } else if a.path().is_ident("state") {
+                kind = WidgetField::State;
+            } else {
+                keep.push(a);
+            }
+        }
+        f.attrs = keep;
+        kinds.push((ident, f.ty.clone(), fdocs, kind));
+    }
+
+    let caps_tokens = if caps.is_empty() {
+        quote! { ::svelters_egui::provider::Caps::NONE }
+    } else {
+        quote! { ::svelters_egui::provider::Caps(0 #(| ::svelters_egui::provider::Caps::#caps.0)*) }
+    };
+    let mut prop_entries = Vec::new();
+    let mut event_entries = Vec::new();
+    let mut describe = Vec::new();
+    let mut event_describe = Vec::new();
+    let mut inits = Vec::new();
+    let mut sets = Vec::new();
+    let mut resets = Vec::new();
+    let mut gets = Vec::new();
+    let mut prop_i = 0usize;
+    let mut event_i = 0u16;
+    for (ident, ty, fdocs, kind) in &kinds {
+        match kind {
+            WidgetField::Prop { name: js, bind, measure, default } => {
+                let optional = last_segment(ty).is_some_and(|s| s.ident == "Option");
+                let required = default.is_none() && !optional;
+                let init = match default {
+                    Some(d) => quote! { ::core::convert::Into::into(#d) },
+                    None => quote! { ::core::default::Default::default() },
+                };
+                prop_entries.push(quote! {
+                    ::svelters_egui::provider::PropEntry {
+                        name: #js, docs: #fdocs, bind: #bind, required: #required, measure: #measure,
+                        offset: ::core::mem::offset_of!(#name, #ident),
+                    }
+                });
+                describe.push(quote! { b.ty::<#ty>() });
+                inits.push(quote! { #ident: #init });
+                let i = prop_i;
+                sets.push(quote! {
+                    #i => { self.#ident = <#ty as __p::FromJs>::from_js(v, cx).map_err(|e| __p::at(e, #js))?; ::core::result::Result::Ok(()) }
+                });
+                resets.push(quote! { #i => self.#ident = #init, });
+                gets.push(quote! { #i => __p::IntoJs::into_js(::core::clone::Clone::clone(&self.#ident), cx), });
+                prop_i += 1;
+            }
+            WidgetField::Event => {
+                let js = ident.to_string().trim_start_matches("r#").replace('_', "-");
+                let payload = first_generic(ty).ok_or_else(|| syn::Error::new(ty.span(), "an #[event] field has type `Event<T>`"))?;
+                event_entries.push(quote! { ::svelters_egui::provider::EventEntry { name: #js, docs: #fdocs } });
+                event_describe.push(quote! { b.ty::<#payload>() });
+                let i = event_i;
+                inits.push(quote! { #ident: ::svelters_egui::provider::Event::__new(#i) });
+                event_i += 1;
+            }
+            WidgetField::State => inits.push(quote! { #ident: ::core::default::Default::default() }),
+        }
+    }
+    let name_str = name.to_string();
+    Ok(quote! {
+        #item
+
+        const _: () = {
+            use ::svelters_egui::provider::__private as __p;
+
+            static __SVL_PROPS: &[::svelters_egui::provider::PropEntry] = &[#(#prop_entries),*];
+            static __SVL_EVENTS: &[::svelters_egui::provider::EventEntry] = &[#(#event_entries),*];
+
+            fn __svl_new() -> ::std::boxed::Box<dyn ::svelters_egui::provider::ErasedWidget> {
+                ::std::boxed::Box::new(<#name as ::svelters_egui::provider::KindDecl>::__svelters_new())
+            }
+
+            fn __svl_types(b: &mut __p::TypeBuilder) -> ::std::vec::Vec<__p::TypeRef> {
+                ::std::vec![#(#describe,)* #(#event_describe),*]
+            }
+
+            static __SVL_KIND: ::svelters_egui::provider::KindEntry = ::svelters_egui::provider::KindEntry {
+                namespace: #namespace,
+                name: #name_str,
+                id: #id,
+                tag: #tag,
+                rust: ::core::concat!(::core::module_path!(), "::", #name_str),
+                docs: #kind_docs,
+                caps: #caps_tokens,
+                props: __SVL_PROPS,
+                events: __SVL_EVENTS,
+                new: __svl_new,
+            };
+
+            __p::inventory::submit! { ::svelters_egui::provider::KindRef(&__SVL_KIND) }
+            __p::inventory::submit! { __p::KindTypesDef { module: #namespace, kind: #id, describe: __svl_types } }
+
+            impl ::svelters_egui::provider::KindDecl for #name {
+                const KIND: &'static ::svelters_egui::provider::KindEntry = &__SVL_KIND;
+
+                fn __svelters_new() -> Self {
+                    #name { #(#inits),* }
+                }
+
+                #[allow(unreachable_code, unused_variables)]
+                fn __svelters_set(&mut self, prop: usize, v: __p::Value, cx: &__p::CallCx<'_>) -> ::core::result::Result<(), __p::NativeError> {
+                    match prop {
+                        #(#sets)*
+                        _ => ::core::result::Result::Err(__p::no_member("prop", prop)),
+                    }
+                }
+
+                fn __svelters_reset(&mut self, prop: usize) {
+                    match prop {
+                        #(#resets)*
+                        _ => {}
+                    }
+                }
+
+                #[allow(unreachable_code, unused_variables)]
+                fn __svelters_get(&self, prop: usize, cx: &__p::CallCx<'_>) -> ::core::result::Result<__p::Value, __p::NativeError> {
+                    match prop {
+                        #(#gets)*
+                        _ => ::core::result::Result::Err(__p::no_member("prop", prop)),
+                    }
+                }
+            }
+        };
+    })
+}

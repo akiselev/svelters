@@ -1,5 +1,6 @@
-//! `metadata/semantics/egui.json` is generated from the kind table (`src/kinds.rs`): this is its
-//! `--check`. `SVELTERS_UPDATE=1 cargo test -p svelters-egui --test spec` rewrites it.
+//! `metadata/semantics/egui.json` and `packages/native-runtime/types/egui.d.ts` are generated from
+//! the kind table (`src/kinds/`): this is their `--check`. `SVELTERS_UPDATE=1 cargo test -p
+//! svelters-egui --test spec` rewrites them.
 
 use svelters_egui::kinds::{self, KINDS};
 use svelters_egui::spec;
@@ -21,6 +22,22 @@ fn checked_in_spec_is_current() {
         have == want,
         "{} is stale: run SVELTERS_UPDATE=1 cargo test -p svelters-egui --test spec",
         spec::SPEC_PATH
+    );
+}
+
+#[test]
+fn checked_in_typings_are_current() {
+    let path = root().join(spec::TYPINGS_PATH);
+    let want = spec::builtin_typings();
+    if std::env::var("SVELTERS_UPDATE").as_deref() == Ok("1") {
+        std::fs::write(&path, &want).unwrap();
+        return;
+    }
+    let have = std::fs::read_to_string(&path).unwrap_or_default();
+    assert!(
+        have == want,
+        "{} is stale: run SVELTERS_UPDATE=1 cargo test -p svelters-egui --test spec",
+        spec::TYPINGS_PATH
     );
 }
 

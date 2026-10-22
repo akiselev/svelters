@@ -19,6 +19,7 @@ members = [
     "examples/counter-mac",
     "examples/counter-win",
     "examples/exports",
+    "examples/egui-kinds",
 ]
 
 [workspace.package]

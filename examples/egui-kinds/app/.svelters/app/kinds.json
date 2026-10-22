@@ -1,0 +1,170 @@
+{
+  "backend": "egui",
+  "caps": {
+    "cad.QuantityField": [
+      "focusable",
+      "editable"
+    ]
+  },
+  "fragment": true,
+  "kinds": {
+    "cad.QuantityField": {
+      "abstract": false,
+      "bindings": {},
+      "chain": [
+        "cad.QuantityField",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A unit-aware numeric field: `<quantity-field dim=\"length\" bind:value={x} onaccepted={…} />`.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "egui_kinds_demo::QuantityField",
+      "present": null,
+      "props": {
+        "dim": {
+          "construct_only": false,
+          "default": "length",
+          "doc": "What the value measures.",
+          "js": "dim",
+          "native": "dim",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:cad.QuantityField:dim",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "Dim",
+          "type": "enum",
+          "values": [
+            "length",
+            "angle"
+          ],
+          "writable": true
+        },
+        "label": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The field's label, also its accessible name.",
+          "js": "label",
+          "native": "label",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:cad.QuantityField:label",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "string",
+          "type": "string",
+          "writable": true
+        },
+        "problem": {
+          "construct_only": false,
+          "default": null,
+          "doc": "An inline problem shown under the field (the host's validation).",
+          "js": "problem",
+          "native": "problem",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:cad.QuantityField:problem",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "string | null",
+          "type": "string",
+          "writable": true
+        },
+        "units-shown": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shows the unit after the number.",
+          "js": "units-shown",
+          "native": "units-shown",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:cad.QuantityField:units-shown",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        },
+        "value": {
+          "construct_only": false,
+          "default": null,
+          "doc": "The committed value in SI units; the field shows it in the display unit.",
+          "js": "value",
+          "native": "value",
+          "nullable": true,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:cad.QuantityField:value",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "ts": "number | null",
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "egui_kinds_demo::QuantityField"
+      },
+      "signals": {
+        "accepted": {
+          "args": [
+            {
+              "name": "accepted",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Enter committed a parsable entry; carries the SI value.",
+          "handler_result": "none",
+          "js_event": "accepted",
+          "name": "accepted",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "edited": {
+          "args": [
+            {
+              "name": "edited",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The text changed (every keystroke); carries the raw text.",
+          "handler_result": "none",
+          "js_event": "edited",
+          "name": "edited",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    }
+  },
+  "schema": "svelters-semantics/v0",
+  "source": {
+    "generator": "crates/svelters-egui/src/spec.rs (svelters_egui::dump)"
+  },
+  "tags": {
+    "quantity-field": "cad.QuantityField"
+  }
+}

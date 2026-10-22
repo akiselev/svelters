@@ -1,4 +1,4 @@
-//! G1: the egui spec (generated from crates/svelters-egui/src/kinds.rs) as a compile target:
+//! G1: the egui spec (generated from crates/svelters-egui/src/kinds/) as a compile target:
 //! the counter twin compiles, `bind:` on widget-changed props lowers onto observation, layout
 //! props are setters in `<style>` (D3), and set-only props refuse a two-way binding.
 

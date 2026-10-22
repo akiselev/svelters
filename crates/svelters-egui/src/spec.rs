@@ -1,13 +1,26 @@
-//! The egui semantic spec (`svelters-semantics/v0`, `metadata/semantics/egui.json`), generated from
-//! the kind table. `tests/spec.rs` fails when the checked-in file is stale
-//! (`SVELTERS_UPDATE=1 cargo test -p svelters-egui --test spec` rewrites it).
+//! The egui semantic spec (`svelters-semantics/v0`) and typings, generated from the kind registry
+//! (EGUI.md §6: the binary is the source of truth):
 //!
-//! The provenance strings below still name `src/kinds.rs`, the table's file before EG0 split it into
-//! `src/kinds/`: EG0 keeps the spec byte-identical. Writer lane: RUSTAPI (RA1 adds fragments and
-//! `IntrinsicElements`).
+//! - [`semantics`]: the built-in kinds, `metadata/semantics/egui.json` (embedded by the compiler);
+//! - [`fragment`]: the provider kinds of this binary (`#[svelters::widget]`, RA1), a fragment the
+//!   compiler merges into the built-in spec (`svelters-compile --spec-fragment`, Vite `specFragments`);
+//! - [`builtin_typings`]: `packages/native-runtime/types/egui.d.ts`, the built-in elements for
+//!   svelte-check (`svelteHTML.IntrinsicElements`, with `on<event>`, `on:<event>` and `bind:` keys);
+//! - [`kinds_typings`]: `kinds.d.ts`, the `IntrinsicElements` entries of the provider kinds;
+//! - [`dump`]: writes the exports (`exports.json`, `app.d.ts`, stubs), `kinds.json` and `kinds.d.ts`.
+//!
+//! `tests/spec.rs` fails when `egui.json` or `egui.d.ts` is stale
+//! (`SVELTERS_UPDATE=1 cargo test -p svelters-egui --test spec` rewrites them). Writer lane: RUSTAPI.
 
-use crate::kinds::{self, Def, KINDS, KindDef, Native, PropDef, Ty};
+use crate::kinds::{self, Def, KINDS, KindDef, KindRegistry, Native, PropDef, ProviderKind, Ty};
 use serde_json::{Map, Value as J, json};
+use std::fmt::Write as _;
+use std::path::Path;
+use svelters_abi::*;
+
+
+/// Where the built-in element typings live, relative to the workspace root.
+pub const TYPINGS_PATH: &str = "packages/native-runtime/types/egui.d.ts";
 
 /// Where the checked-in spec lives, relative to the workspace root.
 pub const SPEC_PATH: &str = "metadata/semantics/egui.json";
@@ -19,6 +32,7 @@ fn ty_name(ty: Ty) -> &'static str {
         Ty::I64 => "i64",
         Ty::Str => "string",
         Ty::Enum(_) => "enum",
+        Ty::Provider => "other",
     }
 }
 
@@ -65,13 +79,39 @@ fn prop_json(k: &KindDef, p: &PropDef) -> J {
 }
 
 fn kind_json(k: &KindDef) -> J {
-    let chain: Vec<&str> = kinds::chain(kinds::kind_index(k.id).unwrap()).into_iter().map(|i| KINDS[i].id).collect();
-    let props: Map<String, J> = k.props.iter().map(|p| (p.name.to_string(), prop_json(k, p))).collect();
+    let index = kinds::kind_index(k.id).unwrap();
+    let chain: Vec<&str> = kinds::chain(index).into_iter().map(|i| kinds::kind(i).id).collect();
+    let provider = KindRegistry::global().provider(index);
+    let props: Map<String, J> = k
+        .props
+        .iter()
+        .enumerate()
+        .map(|(i, p)| {
+            let mut j = prop_json(k, p);
+            if let Some(pk) = provider {
+                provider_prop(&mut j, pk, i);
+            }
+            (p.name.to_string(), j)
+        })
+        .collect();
     let signals: Map<String, J> = k
         .signals
         .iter()
         .map(|s| {
-            let args: Vec<J> = s.args.iter().map(|(n, t)| json!({"name": n, "type": ty_name(*t)})).collect();
+            let args: Vec<J> = s
+                .args
+                .iter()
+                .map(|(n, t)| {
+                    let ty = match (provider, t) {
+                        (Some(pk), Ty::Provider) => {
+                            let i = pk.entry.events.iter().position(|e| e.name == s.name).unwrap_or(0);
+                            pk.event_type(i).map_or("other", |t| slot_spec(&t.slot).0)
+                        }
+                        _ => ty_name(*t),
+                    };
+                    json!({"name": n, "type": ty})
+                })
+                .collect();
             (
                 s.name.to_string(),
                 json!({
@@ -99,11 +139,12 @@ fn kind_json(k: &KindDef) -> J {
         })
         .collect();
     // Two-way bindings for what the widget changes: the `changed` signal carries the new value;
-    // the scene never echoes a host write.
+    // the scene never echoes a host write. Provider kinds declare none: their bound props are
+    // `exact`/`delivery` (written only through `WidgetCx::set`), so `bind:` lowers onto observation.
     let bindings: Map<String, J> = k
         .props
         .iter()
-        .filter(|p| p.native == Native::Widget)
+        .filter(|p| p.native == Native::Widget && provider.is_none())
         .map(|p| {
             (
                 p.name.to_string(),
@@ -142,7 +183,7 @@ fn kind_json(k: &KindDef) -> J {
         "native": k.native,
         "present": k.present,
         "props": props,
-        "provenance": {"kind": "crates/svelters-egui/src/kinds.rs"},
+        "provenance": {"kind": if provider.is_some() { k.native } else { "crates/svelters-egui/src/kinds/builtin.rs" }},
         "signals": signals,
         "text_content": k.text_content,
     })
@@ -213,7 +254,7 @@ pub fn semantics() -> J {
         "kinds": kinds,
         "method_lookup": "annotated",
         "schema": "svelters-semantics/v0",
-        "source": {"kinds": "crates/svelters-egui/src/kinds.rs", "generator": "crates/svelters-egui/src/spec.rs"},
+        "source": {"kinds": "crates/svelters-egui/src/kinds/builtin.rs", "generator": "crates/svelters-egui/src/spec.rs"},
         "style": style_json(),
         "tags": tags,
     })
@@ -224,4 +265,286 @@ pub fn semantics_text() -> String {
     let mut s = serde_json::to_string_pretty(&semantics()).expect("spec json");
     s.push('\n');
     s
+}
+
+// ---- RA1: provider kinds ----
+
+/// The spec type of a provider prop's slot, with its enum values.
+fn slot_spec(slot: &SlotDesc) -> (&'static str, Option<Vec<String>>) {
+    match slot.tag {
+        SVL_BOOL => ("bool", None),
+        SVL_F64 => ("f64", None),
+        SVL_I64 => ("i64", None),
+        SVL_STR => ("string", None),
+        SVL_ENUM => {
+            let values = svelters_host::exports::schema().type_desc(slot.ty).map(|d| d.members.iter().map(|m| m.name.clone()).collect());
+            ("enum", values)
+        }
+        _ => ("other", None),
+    }
+}
+
+/// A value as JSON (defaults in the spec): enums by name, records and handles as `null`.
+fn value_json(v: &Value) -> J {
+    match v {
+        Value::Null => J::Null,
+        Value::Bool(b) => json!(b),
+        Value::I64(i) => json!(i),
+        Value::U64(u) => json!(u),
+        Value::F64(f) => json!(f),
+        Value::Str(s) => json!(s),
+        Value::Enum { ty, value } => svelters_host::exports::schema()
+            .type_desc(*ty)
+            .and_then(|d| d.members.iter().find(|m| m.value == *value).map(|m| json!(m.name)))
+            .unwrap_or(json!(value)),
+        Value::List(items) => J::Array(items.iter().map(value_json).collect()),
+        Value::Map(entries) => J::Object(entries.iter().map(|(k, v)| (k.clone(), value_json(v))).collect()),
+        _ => J::Null,
+    }
+}
+
+/// Fills a provider prop's type, values, range, default and observability from its Rust type and its
+/// widget's default.
+fn provider_prop(j: &mut J, pk: &ProviderKind, i: usize) {
+    let m = j.as_object_mut().expect("prop object");
+    let Some(t) = pk.types.get(i) else { return };
+    let (ty, values) = slot_spec(&t.slot);
+    m.insert("type".into(), json!(ty));
+    if let Some(v) = values {
+        m.insert("values".into(), json!(v));
+    }
+    if ty == "i64" && t.slot.min.is_finite() && t.slot.max.is_finite() {
+        m.insert("range".into(), json!({"min": t.slot.min, "max": t.slot.max}));
+    }
+    let w = (pk.entry.new)();
+    let default = svelters_host::exports::__private::with_cx(pk.entry.namespace, |cx| w.get_prop(i, cx)).map(|v| value_json(&v)).unwrap_or(J::Null);
+    m.insert("default".into(), default);
+    m.insert("ts".into(), json!(t.ts));
+    let p = &pk.entry.props[i];
+    if p.required {
+        m.insert("required".into(), json!(true));
+    }
+    if p.bind {
+        // Written only through `WidgetCx::set`, which announces every change: exact by construction.
+        m.insert(
+            "observe".into(),
+            json!({"class": "exact", "fact": format!("egui:{}:{}", pk.entry.id, p.name), "mechanism": "widget", "verified": "delivery"}),
+        );
+    }
+}
+
+/// The provider kinds of this binary as a `svelters-semantics/v0` fragment: `kinds` and `tags` only.
+/// `svelters-compile --spec-fragment kinds.json` merges it into the built-in egui spec (a tag or kind
+/// that is already there is an error, never a shadow).
+pub fn fragment() -> J {
+    let reg = KindRegistry::global();
+    let kinds: Map<String, J> = reg.providers().iter().map(|p| (p.entry.id.to_string(), kind_json(p.def))).collect();
+    let tags: Map<String, J> = reg.providers().iter().map(|p| (p.entry.tag.to_string(), json!(p.entry.id))).collect();
+    let caps: Map<String, J> = reg.providers().iter().map(|p| (p.entry.id.to_string(), json!(p.entry.caps.names()))).collect();
+    json!({
+        "backend": "egui",
+        "caps": caps,
+        "fragment": true,
+        "kinds": kinds,
+        "schema": "svelters-semantics/v0",
+        "source": {"generator": "crates/svelters-egui/src/spec.rs (svelters_egui::dump)"},
+        "tags": tags,
+    })
+}
+
+/// [`fragment`] as written to `kinds.json`.
+pub fn fragment_text() -> String {
+    let mut s = serde_json::to_string_pretty(&fragment()).expect("fragment json");
+    s.push('\n');
+    s
+}
+
+fn ts_doc(out: &mut String, indent: &str, doc: &str) {
+    let doc = doc.trim();
+    if !doc.is_empty() {
+        let _ = writeln!(out, "{indent}/** {} */", doc.replace("*/", "*\\/").replace('\n', " "));
+    }
+}
+
+fn ts_key(name: &str) -> String {
+    if name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_') && !name.starts_with(|c: char| c.is_ascii_digit()) {
+        name.to_string()
+    } else {
+        format!("'{name}'")
+    }
+}
+
+fn ts_of(ty: Ty) -> String {
+    match ty {
+        Ty::Bool => "boolean".into(),
+        Ty::F64 | Ty::I64 => "number".into(),
+        Ty::Str => "string".into(),
+        Ty::Enum(values) => values.iter().map(|v| format!("'{v}'")).collect::<Vec<_>>().join(" | "),
+        Ty::Provider => "unknown".into(),
+    }
+}
+
+/// The members of one kind's own props, handlers and bindings (`indent`-prefixed lines).
+fn ts_members(out: &mut String, indent: &str, k: &KindDef, provider: Option<&ProviderKind>) {
+    for (i, p) in k.props.iter().enumerate() {
+        ts_doc(out, indent, p.doc);
+        let (ty, optional) = match provider {
+            Some(pk) => (pk.types.get(i).map_or("unknown".to_string(), |t| t.ts.clone()), !pk.entry.props[i].required),
+            None => {
+                let t = ts_of(p.ty);
+                (if p.nullable { format!("{t} | null") } else { t }, true)
+            }
+        };
+        let _ = writeln!(out, "{indent}{}{}: {ty};", ts_key(p.name), if optional { "?" } else { "" });
+        if p.native == Native::Widget {
+            let _ = writeln!(out, "{indent}{}?: {ty};", ts_key(&format!("bind:{}", p.name)));
+        }
+    }
+    for (i, s) in k.signals.iter().enumerate() {
+        ts_doc(out, indent, s.doc);
+        let args: Vec<String> = match provider {
+            Some(pk) => vec![pk.event_type(i).map_or("unknown".to_string(), |t| t.ts.clone())],
+            None => s.args.iter().map(|(_, t)| ts_of(*t)).collect(),
+        };
+        // A plain signal's handlers get its arguments; a sync one's get a `SvlEvent` first (runtime
+        // `dispatch` / `dispatch_sync`).
+        let names: Vec<String> = match provider {
+            Some(_) => vec!["value".to_string()],
+            None => s.args.iter().map(|(n, _)| n.replace('-', "_")).collect(),
+        };
+        let params: Vec<String> = names.iter().zip(&args).map(|(n, t)| format!("{n}: {t}")).collect();
+        let params = if s.sync { std::iter::once(format!("e: SvlEvent<[{}]>", args.join(", "))).chain(params).collect::<Vec<_>>().join(", ") } else { params.join(", ") };
+        let _ = writeln!(out, "{indent}{}?: ({params}) => void;", ts_key(&format!("on{}", s.name)));
+    }
+}
+
+const TYPINGS_HEADER: &str = "// @generated by crates/svelters-egui/src/spec.rs from the egui kind registry. Do not edit.\n";
+
+const TYPINGS_PRELUDE: &str = r#"// An egui app's tsconfig: "types": ["@svelters/native-runtime/types/egui"] (instead of
+// "@svelters/native-runtime/types", GTK's), plus the app's dumped .svelters/app/{app,kinds}.d.ts.
+import type { Component, ComponentProps, SvelteComponent } from 'svelte';
+
+/** What a sync signal's handler gets first; the signal's arguments follow it (and are its `args`). A plain
+ * signal's handler gets the arguments only. */
+export interface SvlEvent<A extends unknown[] = unknown[]> {
+  type: string;
+  target: unknown;
+  args: A;
+  preventDefault(): void;
+  stopPropagation(): void;
+}
+
+type ClassValue = string | null | undefined | false | ClassValue[] | { [name: string]: unknown };
+/** Styling attributes every native element takes. */
+export type StyleAttrs = {
+  class?: ClassValue;
+  style?: string | null;
+  id?: string | null;
+  [directive: `class:${string}`]: unknown;
+  [directive: `style:${string}`]: string | number | null | undefined;
+};
+/** `on:<event>` per `on<event>` handler: a listener, or (bare) FW1's forwarding of the component's `on<event>` prop. */
+export type OnDirectives<P> = { [K in keyof P as K extends `on${infer N}` ? `on:${N}` : never]?: P[K] };
+/** An egui element's attributes: its props, handlers and `bind:`s, plus styling and `on:` directives. */
+export type EguiAttrs<P> = StyleAttrs & OnDirectives<P> & P;
+
+"#;
+
+const TYPINGS_POSTLUDE: &str = r#"
+type ElementAttrs<Tag extends string> = Tag extends keyof svelteHTML.IntrinsicElements ? svelteHTML.IntrinsicElements[Tag] : {};
+/** FW1: the `on<Event>` callback prop a bare `on:<Event>` on `<Tag>` forwards, typed as the element's own handler. */
+export type Forward<Tag extends string, Event extends string> = {
+  [K in `on${Event}`]?: K extends keyof ElementAttrs<Tag> ? NonNullable<ElementAttrs<Tag>[K]> : (event: any) => void;
+};
+/** FW1: the `on<Event>` callback prop a bare `on:<Event>` on a child component forwards, typed as the child's prop. */
+export type ForwardFrom<C extends Component<any, any> | SvelteComponent, Event extends string> = {
+  [K in `on${Event}`]?: K extends keyof ComponentProps<C> ? NonNullable<ComponentProps<C>[K]> : (...args: any[]) => void;
+};
+
+type WithAttrs<E> = { [K in keyof E]: EguiAttrs<E[K]> };
+// Tags that are also HTML elements keep svelte-check's own HTML entry, which `extends` cannot
+// override; it merges `HTMLAttributes` into each of them, so their egui props go there.
+type EguiHtmlNamedProps = EguiAttrs<EguiElements['button']> & EguiAttrs<EguiElements['label']>;
+
+declare global {
+  namespace svelteHTML {
+    interface IntrinsicElements extends WithAttrs<EguiElements> {}
+    interface HTMLAttributes<T extends EventTarget = any> extends EguiHtmlNamedProps {}
+  }
+}
+"#;
+
+/// `packages/native-runtime/types/egui.d.ts`: the built-in egui elements for svelte-check, with
+/// `on<event>` handlers, `on:<event>` directives (FW1) and `bind:` keys. An egui app lists
+/// `@svelters/native-runtime/types/egui` in its tsconfig `types` (instead of
+/// `@svelters/native-runtime/types`, which declares GTK's elements); `kinds.d.ts` adds the provider
+/// kinds of the app's binary on top ([`kinds_typings`]).
+pub fn builtin_typings() -> String {
+    let mut s = String::from(TYPINGS_HEADER);
+    s.push_str(TYPINGS_PRELUDE);
+    let widget = kinds::kind_index("Widget").expect("Widget kind");
+    s.push_str("/** Props every element placed in a window has (the `Widget` base). */\nexport interface EguiWidgetProps {\n");
+    ts_members(&mut s, "  ", kinds::kind(widget), None);
+    s.push_str("}\n\n/** The built-in egui elements, by tag. */\nexport interface EguiElements {\n");
+    for (i, k) in KINDS.iter().enumerate() {
+        let Some(tag) = k.tag else { continue };
+        ts_doc(&mut s, "  ", k.doc);
+        let bases: Vec<&KindDef> = kinds::chain(i).into_iter().skip(1).map(kinds::kind).collect();
+        let base = if bases.iter().any(|b| b.id == "Widget") { "EguiWidgetProps & " } else { "" };
+        let _ = writeln!(s, "  {}: {base}{{", ts_key(tag));
+        for b in bases.iter().rev().filter(|b| b.id != "Widget") {
+            ts_members(&mut s, "    ", b, None);
+        }
+        ts_members(&mut s, "    ", k, None);
+        s.push_str("  };\n");
+    }
+    s.push_str("}\n");
+    s.push_str(TYPINGS_POSTLUDE);
+    s
+}
+
+/// `kinds.d.ts`: the `svelteHTML.IntrinsicElements` entries of this binary's provider kinds (on top of
+/// [`builtin_typings`]), their named prop types imported from `svelters:app/<namespace>` (`app.d.ts`).
+pub fn kinds_typings() -> String {
+    let reg = KindRegistry::global();
+    let mut s = String::from(TYPINGS_HEADER);
+    s.push_str("import type { EguiAttrs, EguiWidgetProps, SvlEvent } from '@svelters/native-runtime/types/egui';\n");
+    let mut namespaces: Vec<&str> = reg.providers().iter().map(|p| p.entry.namespace).collect();
+    namespaces.sort_unstable();
+    namespaces.dedup();
+    let schema = svelters_host::exports::schema();
+    for ns in namespaces {
+        if let Some(m) = schema.module(ns) {
+            let names: Vec<&str> = m.types.iter().map(|t| t.name.as_str()).collect();
+            if !names.is_empty() {
+                let _ = writeln!(s, "import type {{ {} }} from 'svelters:app/{ns}';", names.join(", "));
+            }
+        }
+    }
+    s.push_str("\ndeclare global {\n  namespace svelteHTML {\n    interface IntrinsicElements {\n");
+    for p in reg.providers() {
+        ts_doc(&mut s, "      ", p.entry.docs);
+        let _ = writeln!(s, "      {}: EguiAttrs<EguiWidgetProps & {{", ts_key(p.entry.tag));
+        ts_members(&mut s, "        ", p.def, Some(p));
+        s.push_str("      }>;\n");
+    }
+    s.push_str("    }\n  }\n}\n\nexport {};\n");
+    s
+}
+
+/// Writes this binary's typings and specs into `dir` (an app's `.svelters/app`): the exports
+/// (`exports.json`, `app.d.ts`, one stub per module; `svelters_host::exports::dump`), `kinds.json`
+/// ([`fragment`]) and `kinds.d.ts` ([`kinds_typings`]). Only changed files are rewritten.
+pub fn dump(dir: &Path) -> std::io::Result<svelters_host::exports::DumpReport> {
+    let mut report = svelters_host::exports::dump(dir)?;
+    for (name, text) in [("kinds.json", fragment_text()), ("kinds.d.ts", kinds_typings())] {
+        let path = dir.join(name);
+        if std::fs::read_to_string(&path).ok().as_deref() == Some(text.as_str()) {
+            report.unchanged += 1;
+        } else {
+            std::fs::write(&path, text)?;
+            report.written.push(path);
+        }
+    }
+    Ok(report)
 }

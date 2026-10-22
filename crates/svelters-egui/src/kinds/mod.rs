@@ -12,13 +12,16 @@
 //!
 //! Files (ARCH-EMBED §9): this one holds the table types, the id scheme and [`KindRegistry`];
 //! `builtin.rs` the built-in table [`KINDS`] with the `Widget` base and the leaves; `containers.rs`
-//! the `window` and `box` tables. Writer lane: WIDGETS (one file per new family); RA1 adds provider
-//! kinds to the registry.
+//! the `window` and `box` tables; `registry.rs` [`KindRegistry`] with the provider kinds of
+//! `#[svelters::widget]` (RA1). Writer lanes: WIDGETS (tables, one file per new family), RUSTAPI
+//! (`registry.rs`).
 
 mod builtin;
 mod containers;
+mod registry;
 
 pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, WRAP, WRAP_MODE};
+pub use registry::{KindRegistry, PROVIDER_PACK, ProviderKind, kind};
 
 /// A property's value type (also its ABI tag).
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -29,6 +32,9 @@ pub enum Ty {
     Str,
     /// A string from a fixed list.
     Enum(&'static [&'static str]),
+    /// RA1: a provider kind's prop or event payload, typed by its Rust type's `JsType` description
+    /// ([`KindRegistry::provider_type`]).
+    Provider,
 }
 
 /// A property's default (JSON in the spec).
@@ -90,6 +96,8 @@ pub enum P {
     Max,
     Step,
     ShowValue,
+    /// RA1: prop `i` of a provider kind (a field of its widget struct).
+    Ext(u16),
 }
 
 /// How a property can change without the host setting it.
@@ -165,147 +173,14 @@ const fn signal(name: &'static str, args: &'static [(&'static str, Ty)], doc: &'
     SignalDef { name, args, sync: false, doc }
 }
 
-/// The kinds the backend knows, with the id scheme over them (ARCH-EMBED §8.1).
-///
-/// EG0: a thin wrapper over the built-in table [`KINDS`] (kind ids `index + 1`, member ids
-/// `(defining kind + 1) << 16 | (index + 1)`); the free functions of this module answer through
-/// [`KindRegistry::global`]. RA1 builds it once per process from the built-ins plus the provider
-/// kinds collected from `inventory` (pack-62 ids).
-///
-/// It reads [`KINDS`] itself rather than holding a copy of the slice: a copy made in a static
-/// initializer is not guaranteed to point at the same definitions, and callers compare them by
-/// address (`tests/spec.rs`).
-pub struct KindRegistry {
-    _builtins_only: (),
-}
-
-static REGISTRY: KindRegistry = KindRegistry { _builtins_only: () };
-
-impl KindRegistry {
-    /// The process's registry.
-    pub fn global() -> &'static KindRegistry {
-        &REGISTRY
-    }
-
-    /// Every kind, by index.
-    pub fn kinds(&self) -> &'static [KindDef] {
-        KINDS
-    }
-
-    /// Index of a kind by id.
-    pub fn kind_index(&self, id: &str) -> Option<usize> {
-        self.kinds().iter().position(|k| k.id == id)
-    }
-
-    /// Index of a kind by tag.
-    pub fn tag_index(&self, tag: &str) -> Option<usize> {
-        self.kinds().iter().position(|k| k.tag == Some(tag))
-    }
-
-    /// The kind and its bases, most derived first.
-    pub fn chain(&self, kind: usize) -> Vec<usize> {
-        let mut out = vec![kind];
-        let mut k = &self.kinds()[kind];
-        while let Some(b) = k.base {
-            let i = self.kind_index(b).expect("base kind");
-            out.push(i);
-            k = &self.kinds()[i];
-        }
-        out
-    }
-
-    // ---- ids: (defining kind + 1) << 16 | (index + 1); kinds are index + 1 ----
-
-    pub fn kind_id(&self, kind: usize) -> u32 {
-        kind as u32 + 1
-    }
-
-    pub fn kind_of_id(&self, id: u32) -> Option<usize> {
-        let i = (id as usize).checked_sub(1)?;
-        (i < self.kinds().len()).then_some(i)
-    }
-
-    fn member_id(owner: usize, i: usize) -> u32 {
-        ((owner as u32 + 1) << 16) | (i as u32 + 1)
-    }
-
-    fn split(&self, id: u32) -> Option<(usize, usize)> {
-        let owner = ((id >> 16) as usize).checked_sub(1)?;
-        let i = ((id & 0xffff) as usize).checked_sub(1)?;
-        (owner < self.kinds().len()).then_some((owner, i))
-    }
-
-    /// A property of `kind` (or a base) by name: its id and definition.
-    pub fn find_prop(&self, kind: usize, name: &str) -> Option<(u32, &'static PropDef)> {
-        let kinds = self.kinds();
-        self.chain(kind)
-            .into_iter()
-            .find_map(|k| kinds[k].props.iter().position(|p| p.name == name).map(|i| (Self::member_id(k, i), &kinds[k].props[i])))
-    }
-
-    /// The property definition behind an id, if `kind` has it.
-    pub fn prop_def(&self, kind: usize, id: u32) -> Option<&'static PropDef> {
-        let (owner, i) = self.split(id)?;
-        let kinds = self.kinds();
-        self.chain(kind).contains(&owner).then(|| kinds[owner].props.get(i)).flatten()
-    }
-
-    pub fn find_signal(&self, kind: usize, name: &str) -> Option<(u32, &'static SignalDef)> {
-        let kinds = self.kinds();
-        self.chain(kind)
-            .into_iter()
-            .find_map(|k| kinds[k].signals.iter().position(|s| s.name == name).map(|i| (Self::member_id(k, i), &kinds[k].signals[i])))
-    }
-
-    pub fn signal_def(&self, kind: usize, id: u32) -> Option<&'static SignalDef> {
-        let (owner, i) = self.split(id)?;
-        let kinds = self.kinds();
-        self.chain(kind).contains(&owner).then(|| kinds[owner].signals.get(i)).flatten()
-    }
-
-    pub fn find_method(&self, kind: usize, name: &str) -> Option<(u32, &'static MethodDef)> {
-        let kinds = self.kinds();
-        self.chain(kind)
-            .into_iter()
-            .find_map(|k| kinds[k].methods.iter().position(|m| m.name == name).map(|i| (Self::member_id(k, i), &kinds[k].methods[i])))
-    }
-
-    pub fn method_def(&self, kind: usize, id: u32) -> Option<&'static MethodDef> {
-        let (owner, i) = self.split(id)?;
-        let kinds = self.kinds();
-        self.chain(kind).contains(&owner).then(|| kinds[owner].methods.get(i)).flatten()
-    }
-
-    /// The default slot of a container kind (slot id 1; 0 is "default" on the ABI).
-    pub fn slot_of(&self, kind: usize) -> Option<&'static str> {
-        let kinds = self.kinds();
-        self.chain(kind).into_iter().find_map(|k| kinds[k].slot)
-    }
-
-    /// The signal id of `name` on `kind`, or 0.
-    pub fn signal_id(&self, kind: usize, name: &str) -> u32 {
-        self.find_signal(kind, name).map(|(id, _)| id).unwrap_or(0)
-    }
-
-    /// The property id of `key` on `kind`, or 0.
-    pub fn prop_id(&self, kind: usize, key: P) -> u32 {
-        for k in self.chain(kind) {
-            if let Some(i) = self.kinds()[k].props.iter().position(|p| p.key == key) {
-                return Self::member_id(k, i);
-            }
-        }
-        0
-    }
-}
-
 // ---- the module's functions: the global registry's answers ----
 
-/// Index of a kind in [`KINDS`] by id.
+/// Index of a kind by id (built-in or provider).
 pub fn kind_index(id: &str) -> Option<usize> {
     KindRegistry::global().kind_index(id)
 }
 
-/// Index of a kind in [`KINDS`] by tag.
+/// Index of a kind by tag (built-in or provider).
 pub fn tag_index(tag: &str) -> Option<usize> {
     KindRegistry::global().tag_index(tag)
 }
