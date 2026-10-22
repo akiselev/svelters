@@ -44,6 +44,7 @@ GLOBAL = {
     "aria-label": "string", "aria-hidden": "string", "aria-current": "string",
     "data-id": "string", "data-foo": "string", "data-item": "string", "data-kind": "string",
     "data-resolved": "string", "data-testid": "string", "data-value": "string",
+    "data-attr": "string", "data-red": "string", "data-rest": "string", "data-count": "string",
 }
 
 FORM = {"name": "string", "disabled": "bool", "form": "string"}

@@ -121,8 +121,8 @@ struct Lower<'a, 's, 'd> {
     /// Snippets declared in this component by name: their root elements (None: the name is
     /// declared more than once, so render sites are not checked statically).
     snippet_roots: HashMap<String, Option<Vec<&'a AstElement>>>,
-    /// Imports and `const` objects of the scripts (renderer `listen`, static spreads).
-    script: ScriptFacts<'a>,
+    /// Imports of the scripts (renderer `listen`).
+    script: ScriptFacts,
     /// Local names of `ListView` imported from `@svelters/lists` (virtualized lists, `lists.rs`).
     list_views: HashSet<String>,
     /// Some element resolves attributes at run time (the module imports `$$kinds`).
@@ -748,7 +748,13 @@ impl<'a> Lower<'a, '_, '_> {
         // A spread whose keys are only known at run time: every attribute goes into one object in
         // source order, applied by `$n.spread` (runtime-contract.md "Spread attributes"); explicit
         // attributes are still resolved and typed here.
-        let runtime_attrs = el.attributes.iter().any(|a| matches!(a, AttributeLike::SpreadAttribute(s) if !self.is_static_spread(&s.expression)));
+        let runtime_attrs = el.attributes.iter().any(|a| match a {
+            AttributeLike::SpreadAttribute(s) => !self.is_static_spread(&s.expression),
+            // a backend whose `style` is a prop (the DOM conformance backend): `style:` directives
+            // merge into it at run time, as Svelte's `[STYLE]` attribute object
+            AttributeLike::StyleDirective(_) => !native_style,
+            _ => false,
+        });
         let mut entries: Vec<SpreadEntry<'a>> = Vec::new();
         let mut spread_at: Option<usize> = None;
         let mut spread_span: Option<Span> = None;
@@ -1459,6 +1465,7 @@ impl<'a> Lower<'a, '_, '_> {
                     binds.push(ComponentProp::Bind { name: d.name.clone(), target });
                 }
                 AttributeLike::SpreadAttribute(s) => props.push(ComponentProp::Spread(&s.expression)),
+                AttributeLike::AttachTag(t) => props.push(ComponentProp::Attach(&t.expression)),
                 other => {
                     self.diags.error("unsupported_feature", sp(other.span()), "this attribute kind is not supported on components by the native compiler yet");
                 }

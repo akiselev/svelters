@@ -631,6 +631,11 @@ export function bind(node, prop, signal, arg, get, setv) {
     node.last.set(prop, v);
     if (!Object.is(v, $.untrack(get))) setv(v);
   });
+  // the binding updates its state before the element's own handlers of the signal run, as with
+  // Svelte's DOM bindings (direct listeners) and event attributes (delegated, so later): a handler
+  // reads the new bound value
+  const list = node.handlers.get(hkey(signal, 0));
+  list.unshift(list.pop());
 }
 
 /**
@@ -1520,11 +1525,13 @@ function toStyle(value, directives) {
  * spec default, else to the native value captured before the first write. Unknown keys warn in
  * DEV (the compiler's code and message) and are skipped.
  */
-export function spread(node, K, fn, css = null) {
+export function spread(node, K, fn, deps = null, css = null) {
   const info = kindInfo(K, node.kind);
   if (!info) return;
-  const st = { node, K, info, css, cur: new Map(), conns: new Map(), attachments: new Map(), touched: new Set(), tracked: new Set(), styled: false };
-  block(() => applySpread(st, fn() ?? {}));
+  const st = { node, K, info, css, cur: new Map(), seen: new Set(), conns: new Map(), attachments: new Map(), touched: new Set(), tracked: new Set() };
+  // the memoized call expressions of the object (Svelte's Memoizer): deriveds of their own
+  const ds = deps ? deps.map((d) => $.derived(d)) : null;
+  block(() => applySpread(st, (ds ? fn(...ds.map($.get)) : fn()) ?? {}));
 }
 
 function applySpread(st, next) {
@@ -1555,7 +1562,9 @@ function applySpread(st, next) {
 
   for (const [key, value] of entries) {
     if (key === 'class' || key === 'style') continue;
-    if (st.cur.has(key) ? Object.is(st.cur.get(key), value) : value == null) continue;
+    // unchanged; a nullish key is written once, the first time it appears (as an explicit attribute)
+    if (st.cur.has(key) ? Object.is(st.cur.get(key), value) : value == null && st.seen.has(key)) continue;
+    st.seen.add(key);
     if (key.startsWith('$$') || key === 'slot') continue;
     if (key.length > 2 && key.startsWith('on') && (st.conns.has(key) || typeof value === 'function' || !info.props.has(key))) {
       spreadEvent(st, key, value);
@@ -1582,7 +1591,7 @@ function applySpread(st, next) {
       if (value != null) specWarn('read_only_property', `property \`${p.js}\` of <${info.tag}> is read-only on ${K.backend}`);
       continue;
     }
-    setProp(st, p, value);
+    setProp(st, p, value, !(key in next));
   }
 
   // attachments (`{@attach}` in the object, `createAttachmentKey()`): re-run when the function changes
@@ -1600,10 +1609,17 @@ function applySpread(st, next) {
 }
 
 /** Writes (or, for null/undefined, resets) a prop from a spread. */
-function setProp(st, p, value) {
+function setProp(st, p, value, gone = false) {
   const { node, info } = st;
+  if (value == null && !st.touched.has(p.js)) {
+    if (gone) return;
+    // never written by this spread: the value goes through as an explicit attribute's would
+    st.touched.add(p.js);
+    if (p.def == null && p.flags & PROP_READABLE) captureOnly(node, p.js);
+    set(node, p.js, null);
+    return;
+  }
   if (value == null) {
-    if (!st.touched.has(p.js)) return;
     if (p.def != null) set(node, p.js, p.def);
     else if (node.captured.has(p.js)) set(node, p.js, RESTORE);
     else set(node, p.js, null);
@@ -1617,11 +1633,14 @@ function setProp(st, p, value) {
       return;
     }
     v = r.value;
+  } else if (p.type === 'string' && (typeof v === 'number' || typeof v === 'boolean')) {
+    // an attribute value, as Svelte writes it (`data-x={true}` is "true")
+    v = String(v);
   }
   if (!st.touched.has(p.js)) {
     st.touched.add(p.js);
     // no spec default to go back to: remember the native value before the first write
-    if (p.def == null && p.flags & PROP_READABLE) capture(node, p.js);
+    if (p.def == null && p.flags & PROP_READABLE) captureOnly(node, p.js);
   }
   set(node, p.js, v);
   // a one-way prop the native side also edits: mirror native edits, as an explicit attribute does
@@ -1630,6 +1649,16 @@ function setProp(st, p, value) {
     st.tracked.add(p.js);
     track(node, p.js, b[0], b[1]);
   }
+}
+
+/**
+ * Reads the native value of `prop` once, for a later `set(node, prop, RESTORE)`. Unlike `capture`
+ * it does not count as the last written value: the spread's first write always goes out (the
+ * value read may be a property the host derives from something else, as a DOM input's `type`).
+ */
+function captureOnly(node, prop) {
+  if (node.captured.has(prop) || !alive(node)) return;
+  node.captured.set(prop, node.host.getProp(node.h, prop));
 }
 
 function spreadEvent(st, key, value) {

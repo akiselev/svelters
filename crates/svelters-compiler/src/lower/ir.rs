@@ -359,4 +359,7 @@ pub enum ComponentProp<'a> {
     Bind { name: String, target: &'a Expression },
     /// `{...expr}`: an argument of Svelte's `$.spread_props` (a thunk when `expr` is reactive).
     Spread(&'a Expression),
+    /// `{@attach expr}` on a component: Svelte's `[$.attachment()]: expr` prop (a symbol key the
+    /// child spreads onto its element).
+    Attach(&'a Expression),
 }

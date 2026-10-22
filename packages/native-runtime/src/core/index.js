@@ -36,6 +36,7 @@ export {
   props_id,
   bind_this,
   attach,
+  attachment,
   action,
   noop,
   // stores

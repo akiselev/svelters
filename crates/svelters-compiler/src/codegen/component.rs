@@ -313,9 +313,14 @@ impl Codegen<'_, '_> {
                 }
                 SpreadEntry::Spread(e) => {
                     sep(&mut self.w);
-                    self.w.write("...(");
-                    self.expr_text(e, Mode::Read);
-                    self.w.write(")");
+                    match self.memoized(e) {
+                        Some(id) => self.w.write(&format!("...{id}")),
+                        None => {
+                            self.w.write("...(");
+                            self.expr_text(e, Mode::Read);
+                            self.w.write(")");
+                        }
+                    }
                 }
                 SpreadEntry::Class { .. } | SpreadEntry::Style { .. } => {}
             }
@@ -334,7 +339,10 @@ impl Codegen<'_, '_> {
                 match e {
                     SpreadEntry::Class { name, expr } => {
                         self.w.write(&format!("{}: ", js_key(name)));
-                        self.paren_expr(expr, Mode::Read);
+                        match self.memoized(expr) {
+                            Some(id) => self.w.write(&id),
+                            None => self.paren_expr(expr, Mode::Read),
+                        }
                     }
                     SpreadEntry::Style { name, value } => {
                         self.w.write(&format!("{}: ", js_key(name)));
@@ -610,9 +618,41 @@ impl Codegen<'_, '_> {
                         hoisted.push((i, id));
                     }
                 }
+                // Svelte's Memoizer: call expressions are the effect's dependencies (deriveds), so
+                // `{...get_rest()}` is not called again when another attribute changes
+                let mut memo: Vec<&Expression> = Vec::new();
+                for e in entries {
+                    match e {
+                        SpreadEntry::Spread(x) | SpreadEntry::Attr { value: AttrValue::Dynamic(Dynamic::Expr(x)), .. } if self.rw.has_call(x) => memo.push(x),
+                        SpreadEntry::Attr { value: AttrValue::Dynamic(Dynamic::Template(parts)), .. } | SpreadEntry::Style { value: AttrValue::Dynamic(Dynamic::Template(parts)), .. } => {
+                            memo.extend(parts.iter().filter_map(|p| match p {
+                                TemplatePart::Expr(x) if self.rw.has_call(x) => Some(*x),
+                                _ => None,
+                            }))
+                        }
+                        SpreadEntry::Style { value: AttrValue::Dynamic(Dynamic::Expr(x)), .. } | SpreadEntry::Class { expr: x, .. } if self.rw.has_call(x) => memo.push(x),
+                        _ => {}
+                    }
+                }
+                let params: Vec<String> = (0..memo.len()).map(|i| format!("${i}")).collect();
                 self.w.map(span.start);
-                self.w.write(&format!("$n.spread({n}, $$kinds, () => "));
+                self.w.write(&format!("$n.spread({n}, $$kinds, ({}) => ", params.join(", ")));
+                self.memo = memo.iter().enumerate().map(|(i, e)| (*e as *const Expression as usize, format!("${i}"))).collect();
                 self.spread_object(entries, &hoisted);
+                self.memo.clear();
+                if !memo.is_empty() {
+                    self.w.write(", [");
+                    for (i, e) in memo.iter().enumerate() {
+                        if i > 0 {
+                            self.w.write(", ");
+                        }
+                        self.w.write("() => ");
+                        self.paren_expr(e, Mode::Read);
+                    }
+                    self.w.write("]");
+                } else if css.is_some() {
+                    self.w.write(", null");
+                }
                 if let Some(c) = css {
                     self.w.write(&format!(", {}", js_str(c)));
                 }
@@ -1343,6 +1383,22 @@ impl Codegen<'_, '_> {
                     self.expr_text(target, Mode::Read);
                     let set = self.rw.assign(target, "$$value");
                     self.w.write(&format!("; }}, set {}($$value) {{ {set}; }}", js_key(name)));
+                }
+                ComponentProp::Attach(e) => {
+                    // Svelte's build_component: a reactive attachment is re-read by the attach effect
+                    self.w.write("[$.attachment()]: ");
+                    if self.rw.is_reactive(e) {
+                        self.w.write("($$node) => (");
+                        if is_function(e) {
+                            self.paren_expr(e, Mode::Read);
+                        } else {
+                            self.paren_expr(e, Mode::Read);
+                            self.w.write(" || $.noop");
+                        }
+                        self.w.write(")($$node)");
+                    } else {
+                        self.paren_expr(e, Mode::Read);
+                    }
                 }
                 ComponentProp::Spread(_) => unreachable!(),
             }

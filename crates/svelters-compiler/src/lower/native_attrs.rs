@@ -4,7 +4,7 @@
 //! Semantics: docs/notes/native-compiler/runtime-contract.md ("Child attributes", "Events").
 
 use super::*;
-use crate::estree::{ArrowBody, LiteralValue, ObjectExpression, ObjectMember, PropertyKey, PropertyKind, Statement, VariableKind};
+use crate::estree::{ArrowBody, LiteralValue, ObjectExpression, ObjectMember, PropertyKey, PropertyKind, Statement};
 use crate::semantics::{codes, EventSpec, LISTEN_AFTER, LISTEN_CAPTURE};
 use crate::svelte::ast::{AttachTag, Script};
 
@@ -12,15 +12,14 @@ use crate::svelte::ast::{AttachTag, Script};
 pub const CHILD_ATTR_PREFIX: &str = "parent:";
 
 /// What the instance/module scripts tell lowering: local names of `listen` imported from
-/// `@svelters/native-runtime`, and top-level `const x = { ... }` object literals (spreadable).
+/// `@svelters/native-runtime`.
 #[derive(Default)]
-pub(super) struct ScriptFacts<'a> {
+pub(super) struct ScriptFacts {
     pub listen: HashSet<String>,
-    pub objects: HashMap<String, &'a ObjectExpression>,
 }
 
-impl<'a> ScriptFacts<'a> {
-    pub fn collect(scripts: [Option<&'a Script>; 2]) -> ScriptFacts<'a> {
+impl ScriptFacts {
+    pub fn collect(scripts: [Option<&Script>; 2]) -> ScriptFacts {
         let mut f = ScriptFacts::default();
         for s in scripts.into_iter().flatten() {
             for stmt in &s.content.body {
@@ -45,13 +44,6 @@ impl<'a> ScriptFacts<'a> {
                             }
                         }
                     }
-                    Statement::VariableDeclaration(v) if v.kind == VariableKind::Const => {
-                        for d in &v.declarations {
-                            if let (Pattern::Identifier(id), Some(Expression::ObjectExpression(o))) = (&d.id, &d.init) {
-                                f.objects.insert(id.name.clone(), o);
-                            }
-                        }
-                    }
                     _ => {}
                 }
             }
@@ -63,15 +55,7 @@ impl<'a> ScriptFacts<'a> {
 /// The module whose `listen` helper (and `NativeEvent`, `StaleHandleError`, `LISTEN_*`) components import.
 pub const HELPERS_MODULE: &str = "@svelters/native-runtime";
 
-/// A value taken from a spread object.
-pub(super) enum SpreadValue<'a> {
-    /// `{...{ key: value }}`: the property's own expression.
-    Expr(&'a Expression),
-    /// `{...obj}` where `obj` is a top-level `const` object literal: `obj[key]`, read when used.
-    Member { object: &'a Expression, key: String },
-}
-
-/// Static keys of a spread: an object literal, or a top-level `const` object literal by name.
+/// Static keys of a spread object literal (no computed keys, accessors or spreads).
 fn object_keys(o: &ObjectExpression) -> Option<Vec<(String, &Expression)>> {
     let mut out = Vec::new();
     for m in &o.properties {
@@ -263,7 +247,7 @@ impl<'a> Lower<'a, '_, '_> {
     }
 
     /// `{...spread}` on a native element, when its keys are known at compile time (an object
-    /// literal, or a top-level `const` object literal): each key is lowered as the attribute of
+    /// literal): each key is lowered as the attribute of
     /// that name (`on...` events, `parent:` child attributes, props). Returns false when the keys
     /// are not static (`is_static_spread`; such a spread goes through `$n.spread`).
     pub(super) fn static_spread(
@@ -275,13 +259,9 @@ impl<'a> Lower<'a, '_, '_> {
         ops: &mut Vec<Op<'a>>,
         explicit: &mut Vec<String>,
     ) -> bool {
-        let entries: Vec<(String, SpreadValue<'a>)> = match expr {
+        let entries = match expr {
             Expression::ObjectExpression(o) => match object_keys(o) {
-                Some(k) => k.into_iter().map(|(k, v)| (k, SpreadValue::Expr(v))).collect(),
-                None => return false,
-            },
-            Expression::Identifier(id) => match self.script.objects.get(&id.name).and_then(|o| object_keys(o)) {
-                Some(k) => k.into_iter().map(|(k, _)| (k.clone(), SpreadValue::Member { object: expr, key: k })).collect(),
+                Some(k) => k,
                 None => return false,
             },
             _ => return false,
@@ -289,19 +269,12 @@ impl<'a> Lower<'a, '_, '_> {
         let s = sp(span);
         for (key, v) in entries {
             if key.starts_with("on") && key.len() > 2 {
-                let handler = match v {
-                    SpreadValue::Expr(e) => Handler::Expr(e),
-                    SpreadValue::Member { object, key } => Handler::Member { object, key },
-                };
-                if let Some(op) = self.listen_op(er, &key, handler, span, s) {
+                if let Some(op) = self.listen_op(er, &key, Handler::Expr(v), span, s) {
                     ops.push(op);
                 }
                 continue;
             }
-            let value = match v {
-                SpreadValue::Expr(e) => Dynamic::Expr(e),
-                SpreadValue::Member { object, key } => Dynamic::Member { object, key },
-            };
+            let value = Dynamic::Expr(v);
             if let Some(name) = key.strip_prefix(CHILD_ATTR_PREFIX) {
                 if let Some((p, slot)) = target
                     && let Err(u) = self.sem.child_attr(p, slot, name)
@@ -398,11 +371,8 @@ impl<'a> Lower<'a, '_, '_> {
     pub(super) fn is_static_spread(&self, expr: &Expression) -> bool {
         // `class` / `style` (and `slot`) need the runtime path: they merge with the element's own
         let ok = |o: &ObjectExpression| object_keys(o).is_some_and(|k| !k.iter().any(|(k, _)| matches!(k.as_str(), "slot" | "data-slot" | "class" | "style")));
-        match expr {
-            Expression::ObjectExpression(o) => ok(o),
-            Expression::Identifier(id) => self.script.objects.get(&id.name).is_some_and(|o| ok(o)),
-            _ => false,
-        }
+        // an object by name may gain keys at run time (`Object.defineProperty`), so only a literal
+        matches!(expr, Expression::ObjectExpression(o) if ok(o))
     }
 
     /// The value of a `style:` directive (the shorthand `style:x` is rejected natively).
