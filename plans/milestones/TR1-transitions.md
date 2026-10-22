@@ -555,6 +555,37 @@ the runtime's `commit` already do for the inline opacity.
   - The frame clock asks for one frame per request, and Svelte's `loop` requests one only while a
     task runs, so an app that is not animating draws nothing.
 
+## 12. Before and after, gates, CI
+
+**Conformance:** 565 → **594 / 774** (`baseline.json` +29, −0).
+
+- The `transition` category of `expected.json` went from 33 samples to 4. The 4 that remain read
+  DOM expandos and attributes (F11).
+- Two `dom-node` entries, `effect-tracking-binding-set` and `state-each-bind-this`, now fail
+  later. The facade's `dispatchEvent` and `style` no longer throw. Each entry has a per-sample
+  `match` and a note.
+- Expected rejections: 132. Failing: 45, the same as CF1.
+
+**Local gates** (on `b24422cf`, with origin/master `7aee41e5` merged in):
+
+- `pnpm install --frozen-lockfile`: ok;
+- `cargo check --workspace --all-targets`: ok;
+- `cargo build -p svelters-compiler`: ok;
+- `pnpm -r build`: ok;
+- `pnpm test`: ok, 158/158 TAP tests and 294 fixture/compile checks;
+- `build_ir.py` + `pnpm docs:test`: ok, 17/17 and 11 Python tests;
+- full conformance `--check`: as above.
+- Full nextest: see the lane report. It runs under the shared lock and was still pending when this
+  record was written.
+
+**CI** (`ci/tr1`): the heads `3da0b695` and `161c0ba4` ran all five workflows.
+
+- At `161c0ba4`, linux-gtk failed on two TR1 test bugs, both fixed in the next commits:
+  - `visual_channels_and_bounds` assumed a vertical box;
+  - the egui replay list was missing `motion-egui`.
+- It also failed on the known `an_event_flood_warns_once` flake (FU3).
+- The other four workflows were green.
+
 ## 13. Follow-ups
 
 Ordered by value for the egui path (cadatomic) first.
