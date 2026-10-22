@@ -85,6 +85,45 @@ pub(crate) const ENGINE_PROPS: &[(&str, &str, &[&str])] = &[
     ("padding-left", "length", &[]),
     ("padding-right", "length", &[]),
     ("padding-top", "length", &[]),
+    // OW-CSS (ARCH-WIDGETS §1.1): read by the paint primitives through `StyleView`
+    ("background-image", "image", &[]),
+    ("border-top-color", "color", &[]),
+    ("border-top-style", "enum", &["none", "hidden", "solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"]),
+    ("border-top-width", "length", &[]),
+    ("border-right-color", "color", &[]),
+    ("border-right-style", "enum", &["none", "hidden", "solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"]),
+    ("border-right-width", "length", &[]),
+    ("border-bottom-color", "color", &[]),
+    ("border-bottom-style", "enum", &["none", "hidden", "solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"]),
+    ("border-bottom-width", "length", &[]),
+    ("border-left-color", "color", &[]),
+    ("border-left-style", "enum", &["none", "hidden", "solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"]),
+    ("border-left-width", "length", &[]),
+    ("border-top-left-radius", "length", &[]),
+    ("border-top-right-radius", "length", &[]),
+    ("border-bottom-right-radius", "length", &[]),
+    ("border-bottom-left-radius", "length", &[]),
+    // WIDGET-PARITY P2: what a glyph part draws
+    ("content", "content", &[]),
+    ("cursor", "enum", &["auto", "default", "none", "context-menu", "help", "pointer", "progress", "wait", "cell", "crosshair", "text", "vertical-text", "alias", "copy", "move", "no-drop", "not-allowed", "grab", "grabbing", "all-scroll", "col-resize", "row-resize", "n-resize", "e-resize", "s-resize", "w-resize", "ne-resize", "nw-resize", "se-resize", "sw-resize", "ew-resize", "ns-resize", "nesw-resize", "nwse-resize", "zoom-in", "zoom-out"]),
+    ("letter-spacing", "length", &[]),
+    ("outline-color", "color", &[]),
+    ("outline-offset", "length", &[]),
+    ("outline-style", "enum", &["none", "auto", "solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"]),
+    ("outline-width", "length", &[]),
+    // the text primitive's inputs (ARCH-WIDGETS §1.1); `font-family` and `line-height` stay text
+    // (a family list; a number or a length) for the primitive to read
+    ("font-family", "raw", &[]),
+    ("font-style", "enum", &["normal", "italic", "oblique"]),
+    ("font-weight", "font-weight", &[]),
+    ("line-height", "raw", &[]),
+    ("text-align", "enum", &["start", "end", "left", "right", "center", "justify"]),
+    // R18: links underline on hover
+    ("text-decoration-line", "enum", &["none", "underline", "overline", "line-through"]),
+    ("text-overflow", "enum", &["clip", "ellipsis"]),
+    ("text-transform", "enum", &["none", "uppercase", "lowercase", "capitalize"]),
+    ("transition", "transition", &[]),
+    ("white-space", "enum", &["normal", "nowrap", "pre", "pre-wrap", "pre-line", "break-spaces"]),
 ];
 
 /// The bits the walk owns: set from the pass's interaction and from props, never by providers.
@@ -1424,19 +1463,10 @@ mod tests {
     /// The engine's state bits are the scene's (CSS.md §2.3): same names, same bits.
     #[test]
     fn state_bit_tables_are_pinned_together() {
-        // OW0 adds bits 14-22 here and OW-CSS adds them to svelters-style (ARCH-WIDGETS §2.2), in
-        // two lanes: until both are merged, one table may run ahead of the other by those rows only.
-        // Every row both have is the same name on the same bit.
-        let n = StateMask::BUILTIN.len().min(StateBits::BUILTIN.len());
+        assert_eq!(StateMask::BUILTIN.len(), StateBits::BUILTIN.len());
         for ((a, ma), (b, mb)) in StateMask::BUILTIN.iter().zip(StateBits::BUILTIN) {
             assert_eq!((a, ma.0), (b, mb.0));
         }
-        let longer: Vec<u64> = if StateMask::BUILTIN.len() > n {
-            StateMask::BUILTIN[n..].iter().map(|(_, m)| m.0).collect()
-        } else {
-            StateBits::BUILTIN[n..].iter().map(|(_, m)| m.0).collect()
-        };
-        assert!(n >= 14 && longer.iter().all(|b| (1 << 14..=1 << 22).contains(b)), "the tables differ beyond OW0's bits 14-22");
     }
 
     #[test]
