@@ -168,10 +168,8 @@ impl Widget for DatePicker {
         }
 
         // ---- the popup ----
-        if self.open {
-            if self.drop.hold(&ctx, host_id) {
-                self.set_open(cx, &ctx, false, false);
-            }
+        if self.open && self.drop.hold(&ctx, host_id) {
+            self.set_open(cx, &ctx, false, false);
         }
         if self.open {
             let confirm = self.confirm();
