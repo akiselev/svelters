@@ -58,11 +58,7 @@ pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
     let resp = match arena.w_mut(i) {
         W::Hyperlink { text, url, new_tab } => {
             let shown = if text.is_empty() { url.clone() } else { text.clone() };
-            if url.is_empty() {
-                ui.add(egui::Link::new(shown))
-            } else {
-                ui.add(egui::Hyperlink::from_label_and_url(shown, url.as_str()).open_in_new_tab(*new_tab))
-            }
+            if url.is_empty() { ui.add(egui::Link::new(shown)) } else { ui.add(egui::Hyperlink::from_label_and_url(shown, url.as_str()).open_in_new_tab(*new_tab)) }
         }
         W::Switch { text, active } => {
             let before = *active;

@@ -158,7 +158,11 @@ fn kind_json(k: &KindDef) -> J {
         .map(|p| {
             let arg = changed_args.iter().position(|(n, _)| *n == p.name).unwrap_or(0);
             // the widget itself changes a written value (a slider's range, a scroll offset's extent)
-            let normalizes = matches!(p.key, kinds::P::Value | kinds::P::ScrollX | kinds::P::ScrollY);
+            let normalizes = matches!(p.key, kinds::P::Value | kinds::P::ScrollX | kinds::P::ScrollY)
+                // WG2b: a range slider keeps low <= high within its bounds; a radio button with a
+                // `value` derives `checked` from `group`
+                || matches!(p.key, kinds::P::Low | kinds::P::High)
+                || (k.id == "RadioButton" && p.key == kinds::P::Checked);
             (
                 p.name.to_string(),
                 json!({

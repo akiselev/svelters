@@ -17,6 +17,7 @@ pub mod canvas;
 pub mod images;
 mod inputs;
 mod media;
+pub use media::fit_rect;
 pub(crate) mod panes;
 
 use crate::kinds::{self, P, PropDef};
@@ -36,7 +37,15 @@ pub(crate) fn is_container(w: &W) -> bool {
 pub(crate) fn is_leaf(w: &W) -> bool {
     matches!(
         w,
-        W::Hyperlink { .. } | W::RadioButton { .. } | W::Switch { .. } | W::RangeSlider { .. } | W::DragValue { .. } | W::Image { .. } | W::ProgressBar { .. } | W::Spinner { .. } | W::Canvas(_)
+        W::Hyperlink { .. }
+            | W::RadioButton { .. }
+            | W::Switch { .. }
+            | W::RangeSlider { .. }
+            | W::DragValue { .. }
+            | W::Image { .. }
+            | W::ProgressBar { .. }
+            | W::Spinner { .. }
+            | W::Canvas(_)
     )
 }
 
@@ -358,12 +367,8 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         resp.request_focus();
     }
     core.drawn = resp.rect;
-    for (yes, name) in [
-        (resp.clicked(), "clicked"),
-        (resp.secondary_clicked(), "secondary-clicked"),
-        (resp.drag_started(), "drag-started"),
-        (resp.drag_stopped(), "drag-stopped"),
-    ] {
+    for (yes, name) in [(resp.clicked(), "clicked"), (resp.secondary_clicked(), "secondary-clicked"), (resp.drag_started(), "drag-started"), (resp.drag_stopped(), "drag-stopped")]
+    {
         let s = sig(name);
         if yes && s != 0 && arena.listens(i, s) {
             out.push(Out::Event(h, s, vec![]));

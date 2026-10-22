@@ -92,28 +92,33 @@ pub(crate) fn stack_layout<T: LayoutPartialTree + CacheTree>(tree: &mut T, id: N
     let StackPick { visible, homogeneous, padding: pad } = pick;
     let n = tree.child_count(id);
     let measured: Vec<usize> = if homogeneous { (0..n).collect() } else { visible.into_iter().collect() };
-    let out = taffy::compute_leaf_layout(inputs, style, |_, _| 0.0, |known, avail| {
-        let mut size = Size { width: 0.0f32, height: 0.0f32 };
-        for &k in &measured {
-            let c = tree.get_child_id(id, k);
-            let o = tree.compute_child_layout(
-                c,
-                LayoutInput {
-                    run_mode: RunMode::ComputeSize,
-                    sizing_mode: SizingMode::InherentSize,
-                    axis: RequestedAxis::Both,
-                    known_dimensions: known,
-                    known_dimensions_are_definite: Size { width: known.width.is_some(), height: known.height.is_some() },
-                    parent_size: known,
-                    available_space: avail,
-                    vertical_margins_are_collapsible: Line::FALSE,
-                },
-            );
-            size.width = size.width.max(o.size.width);
-            size.height = size.height.max(o.size.height);
-        }
-        Size { width: known.width.unwrap_or(size.width), height: known.height.unwrap_or(size.height) }
-    });
+    let out = taffy::compute_leaf_layout(
+        inputs,
+        style,
+        |_, _| 0.0,
+        |known, avail| {
+            let mut size = Size { width: 0.0f32, height: 0.0f32 };
+            for &k in &measured {
+                let c = tree.get_child_id(id, k);
+                let o = tree.compute_child_layout(
+                    c,
+                    LayoutInput {
+                        run_mode: RunMode::ComputeSize,
+                        sizing_mode: SizingMode::InherentSize,
+                        axis: RequestedAxis::Both,
+                        known_dimensions: known,
+                        known_dimensions_are_definite: Size { width: known.width.is_some(), height: known.height.is_some() },
+                        parent_size: known,
+                        available_space: avail,
+                        vertical_margins_are_collapsible: Line::FALSE,
+                    },
+                );
+                size.width = size.width.max(o.size.width);
+                size.height = size.height.max(o.size.height);
+            }
+            Size { width: known.width.unwrap_or(size.width), height: known.height.unwrap_or(size.height) }
+        },
+    );
     if inputs.run_mode == RunMode::PerformLayout {
         let inner = Size { width: (out.size.width - 2.0 * pad).max(0.0), height: (out.size.height - 2.0 * pad).max(0.0) };
         for k in 0..n {
@@ -163,7 +168,12 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut
             if !label.is_empty() {
                 let m = frame_of(style, default_style()).map(|f| f.total_margin()).unwrap_or_default();
                 let pad = arena.common(i).padding as f32;
-                let galley = egui::WidgetText::from(egui::RichText::new(label.as_str()).strong()).into_galley(ui, Some(egui::TextWrapMode::Truncate), (r.width() - m.sum().x - 2.0 * pad).max(0.0), egui::TextStyle::Body);
+                let galley = egui::WidgetText::from(egui::RichText::new(label.as_str()).strong()).into_galley(
+                    ui,
+                    Some(egui::TextWrapMode::Truncate),
+                    (r.width() - m.sum().x - 2.0 * pad).max(0.0),
+                    egui::TextStyle::Body,
+                );
                 let top = r.top() + m.top + pad;
                 let pos = pos2(r.left() + m.left + pad, top + (caption_row() - galley.size().y) / 2.0);
                 ui.painter().galley(pos, galley, ui.visuals().strong_text_color());

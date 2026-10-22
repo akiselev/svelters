@@ -15,10 +15,7 @@ static HYPERLINK_PROPS: &[PropDef] = &[
     prop("new-tab", P::NewTab, Ty::Bool, Def::Bool(false), "Asks for a new browser tab (`OpenUrl::new_tab`). A middle click always does."),
 ];
 
-static HYPERLINK_SIGNALS: &[SignalDef] = &[
-    signal("clicked", NONE, "Pressed and released (before the url opens)."),
-    signal("secondary-clicked", NONE, "Right click."),
-];
+static HYPERLINK_SIGNALS: &[SignalDef] = &[signal("clicked", NONE, "Pressed and released (before the url opens)."), signal("secondary-clicked", NONE, "Right click.")];
 
 static RADIO_BUTTON_PROPS: &[PropDef] = &[
     prop("text", P::Text, Ty::Str, Def::Str(""), "The caption."),
@@ -49,10 +46,8 @@ static SWITCH_PROPS: &[PropDef] = &[
     prop("text", P::Text, Ty::Str, Def::Str(""), "Caption after the switch (also its accessible name)."),
 ];
 
-static SWITCH_SIGNALS: &[SignalDef] = &[
-    signal("changed", &[("active", Ty::Bool)], "The user toggled it; carries the new state."),
-    signal("clicked", NONE, "Pressed and released."),
-];
+static SWITCH_SIGNALS: &[SignalDef] =
+    &[signal("changed", &[("active", Ty::Bool)], "The user toggled it; carries the new state."), signal("clicked", NONE, "Pressed and released.")];
 
 static RANGE_SLIDER_PROPS: &[PropDef] = &[
     input("low", P::Low, Ty::F64, Def::F64(0.0), "The lower end; dragging its handle (or the arrow keys on it) changes it. Kept within `min` and `high`."),

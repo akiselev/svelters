@@ -15,7 +15,13 @@ static IMAGE_PROPS: &[PropDef] = &[
         Def::Str(""),
         "What to show: a file path, a `file://` uri, or any uri an egui loader serves (`bytes://` from `Context::include_bytes`, `http(s)://` with egui_extras' loaders). PNG decodes built in.",
     ),
-    prop("fit", P::Fit, Ty::Enum(FIT), Def::Str("contain"), "How the image fills its rect (CSS `object-fit`): `contain` keeps the aspect ratio inside it, `cover` fills it and crops, `fill` stretches, `none` keeps the image's size, `scale-down` is the smaller of `none` and `contain`."),
+    prop(
+        "fit",
+        P::Fit,
+        Ty::Enum(FIT),
+        Def::Str("contain"),
+        "How the image fills its rect (CSS `object-fit`): `contain` keeps the aspect ratio inside it, `cover` fills it and crops, `fill` stretches, `none` keeps the image's size, `scale-down` is the smaller of `none` and `contain`.",
+    ),
 ];
 
 static PROGRESS_BAR_PROPS: &[PropDef] = &[

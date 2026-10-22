@@ -33,7 +33,7 @@ pub(super) fn intrinsic(m: &Metrics, w: &W) -> Vec2 {
 }
 
 /// Where an image of `img` size is drawn in `r` for `fit`, and the part of it shown (uv).
-pub(crate) fn fit_rect(fit: &str, r: Rect, img: Vec2) -> (Rect, Rect) {
+pub fn fit_rect(fit: &str, r: Rect, img: Vec2) -> (Rect, Rect) {
     let full = Rect::from_min_max(pos2(0.0, 0.0), pos2(1.0, 1.0));
     if img.x <= 0.0 || img.y <= 0.0 || r.width() <= 0.0 || r.height() <= 0.0 {
         return (r, full);

@@ -37,3 +37,5 @@ arboard = { version = "3.7", default-features = false, features = ["wayland-data
 # (CI builds this crate in one command with `--no-default-features` meant for another package).
 svelters-egui = { path = ".", features = ["eframe", "kittest"] }
 egui_kittest = "=0.37.0"
+# WG2b: the image tests encode their PNGs
+image = { version = "0.25", default-features = false, features = ["png"] }
