@@ -14,6 +14,7 @@ members = [
     "crates/svelters-cli",
     "crates/svelters-macros",
     "crates/svelters",
+    "crates/svelters-testkit",
     "examples/counter",
     "examples/counter-qt",
     "examples/counter-mac",
@@ -38,6 +39,7 @@ svelters-apple = { path = "crates/svelters-apple" }
 svelters-appkit = { path = "crates/svelters-appkit" }
 svelters-winui = { path = "crates/svelters-winui" }
 svelters-egui = { path = "crates/svelters-egui" }
+svelters-testkit = { path = "crates/svelters-testkit" }
 gtk = { package = "gtk4", version = "0.11" }
 rquickjs = { version = "0.14.0", default-features = false, features = ["std", "loader"] }
 serde_json = "1"

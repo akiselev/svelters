@@ -20,3 +20,7 @@ svelters-gtk = { workspace = true, optional = true }
 gtk = { workspace = true, optional = true }
 # The leaf crate: only this binary depends on it, so editing src/ here never reruns its build script.
 counter-qt = { path = "../counter-qt", optional = true }
+
+[dev-dependencies]
+# TK1: the cases resolved on the log backend, then performed here on the real toolkits (tests/testkit.rs).
+svelters-testkit = { path = "../../crates/svelters-testkit", default-features = false }
