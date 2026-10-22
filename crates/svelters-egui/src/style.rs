@@ -1128,9 +1128,7 @@ impl Scene {
     /// The runtime's clear (`SHEET` with no text, at start and hot reload): every sheet but the
     /// host's theme sheets (`@theme…`, DS1).
     fn clear_sheets(&mut self) {
-        // VIS1: the runners' default look (`vscode_look`, `@tokens:sv-look:*`) is the host's too
-        let (keep, gone): (Vec<_>, Vec<_>) =
-            std::mem::take(&mut self.style.sheets).into_iter().partition(|(n, _)| n.starts_with(THEME_SHEETS) || n.starts_with("@tokens:sv-look"));
+        let (keep, gone): (Vec<_>, Vec<_>) = std::mem::take(&mut self.style.sheets).into_iter().partition(|(n, _)| n.starts_with(THEME_SHEETS));
         self.style.sheets = keep;
         for (_, id) in gone {
             self.style.stylist.remove_sheet(id);

@@ -1,7 +1,7 @@
 //! [`Theme::egui_style`]: the theme as an egui `Style` (DESIGN.md §1.6), so stock egui widgets
 //! and egui-native Rust code paint the same tokens as the Svelte cascade.
 
-use super::{Theme, contrast_ratio};
+use super::{Colors, Metrics, Theme, contrast_ratio};
 use egui::style::{ScrollStyle, WidgetVisuals};
 use egui::{Color32, CornerRadius, CursorIcon, FontFamily, FontId, Margin, Stroke, TextStyle, Vec2};
 
@@ -58,10 +58,14 @@ impl Theme {
             // VS Code does not grow widgets on hover
             expansion: 0.0,
         };
+        // buttons fill with `weak_bg_fill`; check boxes, radios, switches and slider rails with
+        // `bg_fill`, which VS Code does not change under the pointer (VIS1). One stroke serves
+        // every stock widget, so it is the field and check box boundary; the base sheet gives a
+        // Svelte button its own (`button-border-color`).
         v.widgets.noninteractive = w(c.bg, c.bg, c.border, c.fg);
-        v.widgets.inactive = w(k.checkbox_bg, k.button_bg, k.button_border_color, k.button_fg);
-        v.widgets.hovered = w(k.button_bg_hover, k.button_bg_hover, k.button_border_color, k.button_fg);
-        v.widgets.active = w(k.button_bg_active, k.button_bg_active, k.button_border_color, k.button_fg);
+        v.widgets.inactive = w(k.checkbox_bg, k.button_bg, k.checkbox_border_color, k.button_fg);
+        v.widgets.hovered = w(k.checkbox_bg, k.button_bg_hover, k.checkbox_border_color, k.button_fg);
+        v.widgets.active = w(k.checkbox_bg, k.button_bg_active, k.checkbox_border_color, k.button_fg);
         v.widgets.open = v.widgets.hovered;
 
         v.interact_cursor = Some(CursorIcon::PointingHand);
@@ -83,7 +87,14 @@ impl Theme {
         s.icon_spacing = m.space_2;
         s.menu_margin = margin(m.space_1);
         s.window_margin = margin(m.space_2);
-        s.scroll = ScrollStyle { bar_width: m.scrollbar_w, ..ScrollStyle::floating() };
+        // VS Code's list scrollbars: floating, 10px, faded out at rest
+        s.scroll = ScrollStyle {
+            bar_width: m.scrollbar_w,
+            floating_width: m.scrollbar_w,
+            foreground_color: false,
+            dormant_background_opacity: 0.0,
+            ..ScrollStyle::floating()
+        };
         s.combo_height = 200.0;
         s.tooltip_width = 400.0;
         s.menu_width = 220.0;
@@ -92,7 +103,8 @@ impl Theme {
         style.text_styles = [
             (TextStyle::Small, prop(m.font_size_xs)),
             (TextStyle::Body, prop(m.font_size)),
-            (TextStyle::Button, prop(m.font_size)),
+            // `.monaco-text-button` is 12px (VIS1 measured)
+            (TextStyle::Button, prop(m.font_size_sm)),
             (TextStyle::Heading, prop(m.font_size_h3)),
             (TextStyle::Monospace, FontId::new(m.font_size, FontFamily::Monospace)),
         ]
@@ -113,5 +125,26 @@ impl Theme {
         }
         ctx.set_style_of(t, style);
         ctx.set_theme(t);
+        let applied = Applied { colors: *self.colors(), metrics: *self.metrics() };
+        ctx.data_mut(|d| d.insert_temp(applied_key(t), applied));
     }
+}
+
+/// What chrome egui paints outside the cascade reads from the theme applied to a context: the
+/// `tab-view` bar (VS Code's `tab.*` colours and `tab-h`), the `invalid` outline
+/// (`invalid-border`). One per egui theme (dark, light).
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct Applied {
+    pub colors: Colors,
+    pub metrics: Metrics,
+}
+
+fn applied_key(t: egui::Theme) -> egui::Id {
+    egui::Id::NULL.with("svelters-egui/theme/applied").with(t == egui::Theme::Dark)
+}
+
+/// The theme [`Theme::apply_to`] gave `ctx` for its current egui theme (`None`: stock egui
+/// visuals; the callers fall back to them).
+pub(crate) fn applied(ctx: &egui::Context) -> Option<Applied> {
+    ctx.data(|d| d.get_temp(applied_key(ctx.theme())))
 }

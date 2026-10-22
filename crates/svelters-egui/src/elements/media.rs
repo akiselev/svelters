@@ -72,6 +72,11 @@ pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
         W::ProgressBar { fraction, text, show_percentage, animate } => {
             // NaN draws empty and +inf full (egui's own clamp keeps a NaN)
             let mut bar = egui::ProgressBar::new(finite_or(*fraction, if *fraction > 0.0 { 1.0 } else { 0.0 }).clamp(0.0, 1.0) as f32).desired_width(r.width()).desired_height(r.height()).animate(*animate);
+            // VIS1: the applied theme's `progress` (progressBar.background); egui's own fill is
+            // `Visuals::selection` (a per-node CSS colour, `accent-color`, waits for DS2)
+            if let Some(t) = crate::theme::applied(ui.ctx()) {
+                bar = bar.fill(t.colors.progress);
+            }
             if !text.is_empty() {
                 bar = bar.text(text.as_str());
             } else if *show_percentage {

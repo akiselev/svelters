@@ -42,6 +42,7 @@
 
 mod backend;
 mod egui_style;
+pub(crate) use egui_style::{Applied, applied};
 
 use egui::{Color32, Shadow};
 use std::collections::BTreeMap;
@@ -243,12 +244,20 @@ color_set! {
         button2_bg = "button2-bg" <- "button.secondaryBackground",
         button2_hover = "button2-hover" <- "button.secondaryHoverBackground",
         button2_fg = "button2-fg" <- "button.secondaryForeground",
+        /// The secondary button's border (VIS1: not `button.border`).
+        button2_border = "button2-border" <- "button.secondaryBorder",
         /// Field fill.
         control_bg = "control-bg" <- "input.background",
         control_border = "control-border" <- "input.border",
         control_fg = "control-fg" <- "input.foreground",
+        /// Check box fill and glyph (VIS1: Light Modern's check box fill is not the input's).
+        check_bg = "check-bg" <- "checkbox.background",
+        check_fg = "check-fg" <- "checkbox.foreground",
         toggle_on_bg = "toggle-on-bg" <- "inputOption.activeBackground",
         toggle_on_border = "toggle-on-border" <- "inputOption.activeBorder",
+        toggle_on_fg = "toggle-on-fg" <- "inputOption.activeForeground",
+        /// An input option toggle under the pointer.
+        toggle_hover = "toggle-hover" <- "inputOption.hoverBackground",
         toolbar_hover = "toolbar-hover" <- "toolbar.hoverBackground",
         toolbar_active = "toolbar-active" <- "toolbar.activeBackground",
         invalid_border = "invalid-border" <- "inputValidation.errorBorder",
@@ -265,6 +274,7 @@ color_set! {
         caret = "caret" <- "editorCursor.foreground",
         tab_bg = "tab-bg" <- "tab.inactiveBackground",
         tab_active_bg = "tab-active-bg" <- "tab.activeBackground",
+        tab_hover_bg = "tab-hover-bg" <- "tab.hoverBackground",
         tab_fg = "tab-fg" <- "tab.inactiveForeground",
         tab_active_fg = "tab-active-fg" <- "tab.activeForeground",
         tab_active_marker = "tab-active-marker" <- "tab.activeBorderTop",
@@ -288,14 +298,16 @@ color_set! {
     /// The component colours (L3, `--sv-<kind>-<part>[-<state>]`), resolved. The base sheet and
     /// [`Theme::egui_style`] both read these, so overriding one restyles Svelte and egui alike.
     Components, COMPONENT_COLORS, "Every component colour (L3) and the role it defaults to.", {
-        /// Push button fill (egui `weak_bg_fill`), at rest, hovered, pressed.
+        /// Push button fill (egui `weak_bg_fill`), at rest, hovered, pressed. VS Code has no
+        /// pressed look: the pointer is over the button, so it shows the hover fill (VIS1).
         button_bg = "button-bg" <- "button2-bg",
         button_bg_hover = "button-bg-hover" <- "button2-hover",
-        button_bg_active = "button-bg-active" <- "toolbar-active",
+        button_bg_active = "button-bg-active" <- "button2-hover",
         button_fg = "button-fg" <- "button2-fg",
-        button_border_color = "button-border-color" <- "control-border",
+        button_border_color = "button-border-color" <- "button2-border",
         /// Check box, radio and slider handle fill (egui `bg_fill`).
-        checkbox_bg = "checkbox-bg" <- "control-bg",
+        checkbox_bg = "checkbox-bg" <- "check-bg",
+        checkbox_fg = "checkbox-fg" <- "check-fg",
         checkbox_border_color = "checkbox-border-color" <- "control-border",
         /// Text field fill (egui `text_edit_bg_color`, `extreme_bg_color`).
         input_bg = "input-bg" <- "control-bg",
@@ -382,8 +394,12 @@ metric_set! {
         button_pad_y = "button-pad-y",
         button_radius = "button-radius" <- "radius",
         input_radius = "input-radius" <- "radius",
-        menu_radius = "menu-radius" <- "radius-md",
-        window_radius = "window-radius" <- "radius-lg",
+        /// Check box, radio and input option toggle (`.monaco-checkbox`, 3px).
+        checkbox_radius = "checkbox-radius",
+        /// Menus and the select's drop-down (VIS1 measured `cornerRadius.large`).
+        menu_radius = "menu-radius" <- "radius-lg",
+        /// Dialogs (VIS1 measured `cornerRadius.xLarge`).
+        window_radius = "window-radius" <- "radius-xl",
     }
 }
 
@@ -911,6 +927,23 @@ mod tests {
         let light = t.with_scheme(ColorScheme::Light);
         assert_eq!(light.components().checkbox_border_color, Color32::BLUE, "overrides survive a scheme switch");
         assert!(t.css().contains("--sv-button-bg: "));
+    }
+
+    /// The base sheet parses with every built-in theme's tokens and reads only tokens they define.
+    #[test]
+    fn base_sheet_parses_and_reads_known_tokens() {
+        let b = crate::EguiBackend::new();
+        let mut d = b.add_sheet("@theme:test-base", BASE_CSS);
+        for t in [Theme::dark_modern(), Theme::light_modern(), Theme::hc_dark(), Theme::hc_light()] {
+            d.extend(b.add_sheet("@theme:test-tokens", &t.css()));
+            let mut rest = BASE_CSS;
+            while let Some(k) = rest.find("var(--") {
+                let name: String = rest[k + 4..].chars().take_while(|c| c.is_ascii_alphanumeric() || *c == '-').collect();
+                assert!(t.tokens().get(&name).is_some(), "base.css reads {name}, which {} does not define", t.name());
+                rest = &rest[k + 4..];
+            }
+        }
+        assert!(d.is_empty(), "{d:#?}");
     }
 
     #[test]

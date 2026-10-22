@@ -39,10 +39,20 @@ pub(crate) fn run_eframe(b: &EguiBackend) -> Result<(), String> {
     let app = EframeApp { b: b.clone() };
     let b = b.clone();
     run_native_with(title, size, move |ctx| {
-        // VIS1: the default look (VS Code Dark/Light Modern)
-        crate::vscode_look::apply(&b, ctx);
+        default_theme(&b, ctx);
         Box::new(app)
     })
+}
+
+/// The default look (VS Code Dark or Light Modern after the context's scheme, DS1/VIS1), unless
+/// the app installed a theme before running.
+#[cfg(feature = "eframe")]
+fn default_theme(b: &EguiBackend, ctx: &egui::Context) {
+    use crate::theme::{ColorScheme, Contrast, Theme};
+    if b.theme().is_none() {
+        let scheme = if ctx.theme() == egui::Theme::Light { ColorScheme::Light } else { ColorScheme::Dark };
+        b.set_theme(&Theme::vscode(scheme, Contrast::Normal));
+    }
 }
 
 /// `make` gets eframe's context before the first frame (an embed attaches to it there).
@@ -86,8 +96,7 @@ pub(crate) fn run_desktop(embed: Embed) -> Result<(), String> {
     // the pass callbacks (R17 phases, the begin-pass plugin) are on eframe's context from frame 1
     run_native_with(title, size, move |ctx| {
         embed.attach(ctx);
-        // VIS1: the default look (VS Code Dark/Light Modern)
-        crate::vscode_look::apply(embed.backend(), ctx);
+        default_theme(embed.backend(), ctx);
         Box::new(DesktopApp { embed })
     })
 }

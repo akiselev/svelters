@@ -1,4 +1,4 @@
-263 of 286 checks pass
+278 of 286 checks pass
 
 | check | ours | VS Code |
 |---|---|---|
@@ -6,24 +6,9 @@
 | FAIL dark-modern/input:disabled/rest/bc | rgba(60, 60, 60, 0.4) (ΔE 6.9) | rgb(60, 60, 60) |
 | FAIL dark-modern/pane-header:a/rest/h | Some(26.0) | Some(22.0) |
 | FAIL dark-modern/pane-header:a/rest/fs | Some(12.0) | Some(11.0) |
-| FAIL dark-modern/long.txt/rest/h | Some(26.0) | Some(35.0) |
-| FAIL dark-modern/long.txt/rest/bg | rgba(4, 57, 94, 1) (ΔE 18.2) | rgb(31, 31, 31) |
-| FAIL dark-modern/main.ts/rest/h | Some(26.0) | Some(35.0) |
-| FAIL dark-modern/main.ts/rest/fg | rgba(204, 204, 204, 1) (ΔE 12.9) | rgb(157, 157, 157) |
-| FAIL dark-modern/progress:a/rest/bg | rgba(4, 57, 94, 1) (ΔE 23.5) | #0078d4 |
-| FAIL dark-modern/main.ts/hover/bg | rgba(43, 43, 43, 1) (ΔE 3.8) | rgb(31, 31, 31) |
-| FAIL dark-modern/main.ts/hover/fg | rgba(204, 204, 204, 1) (ΔE 12.9) | rgb(157, 157, 157) |
 | FAIL light-modern/input:disabled/rest/bc | rgba(205, 205, 205, 0.4) (ΔE 5.7) | rgb(206, 206, 206) |
 | FAIL light-modern/pane-header:a/rest/h | Some(26.0) | Some(22.0) |
 | FAIL light-modern/pane-header:a/rest/fs | Some(12.0) | Some(11.0) |
-| FAIL light-modern/long.txt/rest/h | Some(26.0) | Some(35.0) |
-| FAIL light-modern/long.txt/rest/bg | rgba(232, 232, 232, 1) (ΔE 4.7) | rgb(255, 255, 255) |
-| FAIL light-modern/long.txt/rest/fg | rgba(0, 0, 0, 1) (ΔE 15.9) | rgb(59, 59, 59) |
-| FAIL light-modern/main.ts/rest/h | Some(26.0) | Some(35.0) |
-| FAIL light-modern/main.ts/rest/fg | rgba(59, 59, 59, 1) (ΔE 27.5) | rgb(134, 134, 134) |
-| FAIL light-modern/progress:a/rest/bg | rgba(232, 232, 232, 1) (ΔE 48.3) | #005fb8 |
-| FAIL light-modern/main.ts/hover/bg | rgba(204, 204, 204, 1) (ΔE 11.1) | rgb(255, 255, 255) |
-| FAIL light-modern/main.ts/hover/fg | rgba(59, 59, 59, 1) (ΔE 27.5) | rgb(134, 134, 134) |
 | FAIL light-modern/button-primary:a/focus/bg | rgba(2, 88, 168, 1) (ΔE 2.9) | rgb(0, 95, 184) |
 | pass dark-modern/button-primary:a/rest/h | Some(26.0) | Some(26.0) |
 | pass dark-modern/button-primary:a/rest/r | Some(4.0) | Some(4.0) |
@@ -100,10 +85,15 @@
 | pass dark-modern/list-row:selected/rest/bg | rgba(4, 57, 94, 1) (ΔE 0.0) | rgb(4, 57, 94) |
 | pass dark-modern/list-row:selected/rest/fg | rgba(255, 255, 255, 1) (ΔE 0.0) | rgb(255, 255, 255) |
 | pass dark-modern/list-row:selected/rest/fs | Some(13.0) | Some(13.0) |
+| pass dark-modern/long.txt/rest/h | Some(35.0) | Some(35.0) |
+| pass dark-modern/long.txt/rest/bg | rgba(31, 31, 31, 1) (ΔE 0.0) | rgb(31, 31, 31) |
 | pass dark-modern/long.txt/rest/fg | rgba(255, 255, 255, 1) (ΔE 0.0) | rgb(255, 255, 255) |
 | pass dark-modern/long.txt/rest/fs | Some(13.0) | Some(13.0) |
-| pass dark-modern/main.ts/rest/bg | rgba(0, 0, 0, 0) (ΔE 0.0) | rgb(24, 24, 24) |
+| pass dark-modern/main.ts/rest/h | Some(35.0) | Some(35.0) |
+| pass dark-modern/main.ts/rest/bg | rgba(24, 24, 24, 1) (ΔE 0.0) | rgb(24, 24, 24) |
+| pass dark-modern/main.ts/rest/fg | rgba(157, 157, 157, 1) (ΔE 0.0) | rgb(157, 157, 157) |
 | pass dark-modern/main.ts/rest/fs | Some(13.0) | Some(13.0) |
+| pass dark-modern/progress:a/rest/bg | rgba(0, 120, 212, 1) (ΔE 0.0) | #0078d4 |
 | pass dark-modern/button-primary:a/hover/h | Some(26.0) | Some(26.0) |
 | pass dark-modern/button-primary:a/hover/r | Some(4.0) | Some(4.0) |
 | pass dark-modern/button-primary:a/hover/b | Some(1.0) | Some(1.0) |
@@ -134,6 +124,8 @@
 | pass dark-modern/list-row:a/hover/bg | rgba(42, 45, 46, 1) (ΔE 0.0) | #2a2d2e |
 | pass dark-modern/list-row:a/hover/fg | rgba(204, 204, 204, 1) (ΔE 0.0) | rgb(204, 204, 204) |
 | pass dark-modern/list-row:a/hover/fs | Some(13.0) | Some(13.0) |
+| pass dark-modern/main.ts/hover/bg | rgba(31, 31, 31, 1) (ΔE 0.0) | rgb(31, 31, 31) |
+| pass dark-modern/main.ts/hover/fg | rgba(157, 157, 157, 1) (ΔE 0.0) | rgb(157, 157, 157) |
 | pass dark-modern/button-primary:a/pressed/bg | rgba(2, 110, 193, 1) (ΔE 0.0) | rgb(2, 110, 193) |
 | pass dark-modern/button-primary:a/pressed/bc | rgba(255, 255, 255, 0.102) (ΔE 0.1) | rgba(255, 255, 255, 0.1) |
 | pass dark-modern/button-primary:a/pressed/fg | rgba(255, 255, 255, 1) (ΔE 0.0) | rgb(255, 255, 255) |
@@ -233,9 +225,15 @@
 | pass light-modern/list-row:selected/rest/bg | rgba(232, 232, 232, 1) (ΔE 0.0) | rgb(232, 232, 232) |
 | pass light-modern/list-row:selected/rest/fg | rgba(0, 0, 0, 1) (ΔE 0.0) | rgb(0, 0, 0) |
 | pass light-modern/list-row:selected/rest/fs | Some(13.0) | Some(13.0) |
+| pass light-modern/long.txt/rest/h | Some(35.0) | Some(35.0) |
+| pass light-modern/long.txt/rest/bg | rgba(255, 255, 255, 1) (ΔE 0.0) | rgb(255, 255, 255) |
+| pass light-modern/long.txt/rest/fg | rgba(59, 59, 59, 1) (ΔE 0.0) | rgb(59, 59, 59) |
 | pass light-modern/long.txt/rest/fs | Some(13.0) | Some(13.0) |
-| pass light-modern/main.ts/rest/bg | rgba(0, 0, 0, 0) (ΔE 0.0) | rgb(248, 248, 248) |
+| pass light-modern/main.ts/rest/h | Some(35.0) | Some(35.0) |
+| pass light-modern/main.ts/rest/bg | rgba(248, 248, 248, 1) (ΔE 0.0) | rgb(248, 248, 248) |
+| pass light-modern/main.ts/rest/fg | rgba(134, 134, 134, 1) (ΔE 0.0) | rgb(134, 134, 134) |
 | pass light-modern/main.ts/rest/fs | Some(13.0) | Some(13.0) |
+| pass light-modern/progress:a/rest/bg | rgba(0, 95, 184, 1) (ΔE 0.0) | #005fb8 |
 | pass light-modern/button-primary:a/hover/h | Some(26.0) | Some(26.0) |
 | pass light-modern/button-primary:a/hover/r | Some(4.0) | Some(4.0) |
 | pass light-modern/button-primary:a/hover/b | Some(1.0) | Some(1.0) |
@@ -266,6 +264,8 @@
 | pass light-modern/list-row:a/hover/bg | rgba(242, 242, 242, 1) (ΔE 0.0) | #f2f2f2 |
 | pass light-modern/list-row:a/hover/fg | rgba(59, 59, 59, 1) (ΔE 0.0) | rgb(59, 59, 59) |
 | pass light-modern/list-row:a/hover/fs | Some(13.0) | Some(13.0) |
+| pass light-modern/main.ts/hover/bg | rgba(255, 255, 255, 1) (ΔE 0.0) | rgb(255, 255, 255) |
+| pass light-modern/main.ts/hover/fg | rgba(134, 134, 134, 1) (ΔE 0.0) | rgb(134, 134, 134) |
 | pass light-modern/button-primary:a/pressed/bg | rgba(2, 88, 168, 1) (ΔE 0.0) | rgb(2, 88, 168) |
 | pass light-modern/button-primary:a/pressed/bc | rgba(0, 0, 0, 0.102) (ΔE 0.1) | rgba(0, 0, 0, 0.1) |
 | pass light-modern/button-primary:a/pressed/fg | rgba(255, 255, 255, 1) (ΔE 0.0) | rgb(255, 255, 255) |

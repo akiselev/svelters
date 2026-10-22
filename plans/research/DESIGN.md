@@ -238,7 +238,9 @@ These are independent of the scheme, except for density (§2.6).
 | `motion-fast`, `motion`, `ease-out` | modernUI | 100ms, 150ms, `cubic-bezier(.22,1,.36,1)` |
 
 **VIS1 measured (2026-10-22, VS Code 1.133.0, `conformance/visual/vscode/*/metrics.json`).** The tables above
-hold, with these corrections (the values in use are `svelters_egui::vscode_look::{DARK, LIGHT}`):
+hold, with these corrections (in `svelters_egui::theme`'s data since VIS1b: the keys `button.secondaryBorder`,
+`checkbox.foreground`, `inputOption.hoverBackground`, `inputOption.activeForeground`, `tab.hoverBackground` and the roles
+`button2-border`, `check-bg`, `check-fg`, `toggle-hover`, `toggle-on-fg`, `tab-hover-bg`; `checkbox-radius` 3px):
 - text buttons are **12 px** (`.monaco-text-button{font-size:12px}`), 26 px tall; body text 13 px;
 - the secondary button border is `button.secondaryBorder`: `#CCCCCC26` dark, `#3B3B3B26` light (not `button.border`);
 - `checkbox.background` is `#F8F8F8` in Light Modern (the input fill is `#FFFFFF`); checkbox radius 3;
@@ -265,7 +267,7 @@ The tokens map onto egui's `Style`. Svelte nodes get the cascade on top, through
 | `panel_fill` | `bg` | side and bottom panels, status bar |
 | `window_fill` | `surface-raised` | windows, menus, popups |
 | `window_stroke` | 1px `border-widget` | — |
-| `window_corner_radius` / `menu_corner_radius` | `radius-lg` (8) / `radius-md` (6) | modernUI radii |
+| `window_corner_radius` / `menu_corner_radius` | `radius-xl` (12) / `radius-lg` (8) | VIS1 measured (dialogs 12, menus and drop-downs 8) |
 | `window_shadow` / `popup_shadow` | `elev-4` / `elev-3` | `Shadow{offset,blur,spread,color}` holds the CSS values (i8/u8 limits are enough) |
 | `extreme_bg_color`, `text_edit_bg_color` | `control-bg` | egui uses `extreme_bg` for text edits, the scroll track and progress bars |
 | `faint_bg_color` | `list-hover` | striped rows (`striped` stays false) |
@@ -275,9 +277,9 @@ The tokens map onto egui's `Style`. Svelte nodes get the cascade on top, through
 | `selection.bg_fill` / `.stroke` | `selection` / 1px `fg-strong` | text selection; list rows get CSS (`list-sel`) |
 | `text_cursor.stroke` | 2px `caret` | — |
 | `widgets.noninteractive` | bg `bg`, `bg_stroke` 1px `border` (egui draws separators with it), fg `fg` | — |
-| `widgets.inactive` | `bg_fill` = `weak_bg_fill` = `button2-bg`, stroke 1px `control-border`, fg `fg`, radius `radius`, expansion 0 | egui's default `expansion` grows widgets on hover. We set 0, as VS Code doesn't grow. |
-| `widgets.hovered` | bg `button2-hover`, stroke `control-border`, expansion 0 | — |
-| `widgets.active` | bg `toolbar-active`, stroke `control-border` | egui also draws focus with `active`. FX1 already separates focus-visible. |
+| `widgets.inactive` | `weak_bg_fill` `button2-bg` (buttons), `bg_fill` `checkbox-bg` (check boxes, radios, slider handles), stroke 1px `control-border`, fg `fg`, radius `radius`, expansion 0 | egui's default `expansion` grows widgets on hover. We set 0, as VS Code doesn't grow. |
+| `widgets.hovered` | `weak_bg_fill` `button2-hover`, `bg_fill` unchanged, stroke `control-border`, expansion 0 | VS Code changes only a button's fill under the pointer (VIS1) |
+| `widgets.active` | as hovered (`button-bg-active` defaults to `button2-hover`) | VS Code has no pressed look (VIS1). egui also draws focus with `active`. FX1 already separates focus-visible. |
 | `widgets.open` | as hovered | open combo or menu |
 | `interact_cursor` | `Some(CursorIcon::PointingHand)` | VS Code's `cursor:pointer` |
 | `disabled_alpha` | 0.4 | VS Code dims disabled buttons to 40% [unverified selector] |

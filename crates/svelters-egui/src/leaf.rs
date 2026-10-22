@@ -26,7 +26,8 @@ pub(crate) fn invalid_outline(ui: &Ui, rect: Rect) {
         return;
     }
     let v = ui.visuals();
-    ui.painter().rect_stroke(rect, v.widgets.inactive.corner_radius, egui::Stroke::new(1.0, v.error_fg_color), egui::StrokeKind::Outside);
+    let col = crate::theme::applied(ui.ctx()).map_or(v.error_fg_color, |t| t.colors.invalid_border);
+    ui.painter().rect_stroke(rect, v.widgets.inactive.corner_radius, egui::Stroke::new(1.0, col), egui::StrokeKind::Outside);
 }
 
 /// A widget-side change of props `keys` of node `i`: stamped and journaled, `prop_changed` when

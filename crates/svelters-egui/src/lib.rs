@@ -35,11 +35,8 @@ pub mod spec;
 /// CS5e: the egui cascade (the Rust CSS engine on the scene).
 pub mod style;
 /// DS1: the theme (VS Code's base look as one token map: the `:root` sheet, the egui Style,
-/// typed getters).
+/// typed getters). The eframe runners install `Theme::vscode` (VIS1's measured default look).
 pub mod theme;
-/// VIS1: the default look the runners apply (VS Code Dark/Light Modern, measured): egui Style,
-/// token tables, the base sheet. To fold into DS1's `theme` (plans/milestones/VIS1-visual-conformance.md §6).
-pub mod vscode_look;
 
 mod a11y;
 pub mod anim;

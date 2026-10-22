@@ -1,7 +1,7 @@
 //! VIS1 (plans/milestones/VIS1-visual-conformance.md): the default look against VS Code 1.133.
 //!
 //! The gallery page `VisControls` (fixtures/gallery-egui, `pnpm build`) is mounted in an embed slot
-//! with `svelters_egui::vscode_look` applied, once per theme (Dark Modern, Light Modern). Each widget
+//! with `svelters_egui::theme::Theme::vscode` installed (affordances off: VS Code's exact colours), once per theme (Dark Modern, Light Modern). Each widget
 //! is driven into its states (pointer over, pointer down, keyboard focus; disabled and checked are
 //! props) and measured from what egui paints (the frame's `RectShape`, the checkbox's box, the first
 //! `TextShape`): height, corner radius, border width, fill, border and text colour, font size. The
@@ -24,7 +24,7 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 use svelters_egui::embed::{EmbedConfig, EmbedEvent, MountSpec, Props, SlotOptions};
 use svelters_egui::harness::EmbedHarness;
-use svelters_egui::vscode_look;
+use svelters_egui::theme::{Contrast, Theme, parse_color};
 use svelters_host::HostConfig;
 use svelters_style::ColorScheme;
 
@@ -46,6 +46,11 @@ fn stock() -> bool {
     std::env::var_os("VIS1_STOCK").is_some()
 }
 
+/// The theme the gate checks: VS Code's set without the affordance overlay (DESIGN.md §4.3).
+fn base_theme(scheme: ColorScheme) -> Theme {
+    Theme::vscode(scheme, Contrast::Normal).with_affordances(false)
+}
+
 fn page(scheme: ColorScheme) -> EmbedHarness {
     let cfg = EmbedConfig { host: HostConfig { echo_console: false, echo_errors: true, quit_on_last_window: false, ..HostConfig::default() }, ..EmbedConfig::default() };
     let mut eh = EmbedHarness::new(SIZE, cfg).unwrap();
@@ -54,7 +59,7 @@ fn page(scheme: ColorScheme) -> EmbedHarness {
         ColorScheme::Light => egui::Theme::Light,
     });
     if !stock() {
-        vscode_look::apply(eh.embed.backend(), &eh.harness.ctx);
+        eh.embed.backend().set_theme(&base_theme(scheme));
     }
     let e = eh.embed.clone();
     let entry = e.load(bundle()).unwrap();
@@ -326,7 +331,7 @@ fn run_theme(scheme: ColorScheme, theme: &str, out: &Path) -> Vec<Value> {
 fn parse_css_color(s: &str) -> Option<[f32; 4]> {
     let s = s.trim();
     if let Some(h) = s.strip_prefix('#') {
-        let c = vscode_look::hex(&format!("#{}", h.to_ascii_uppercase()))?;
+        let c = parse_color(&format!("#{h}"))?;
         let [r, g, b, a] = c.to_srgba_unmultiplied();
         return Some([r as f32, g as f32, b as f32, a as f32 / 255.0]);
     }
@@ -483,7 +488,7 @@ fn default_look_matches_vscode() {
     for (scheme, theme) in [(ColorScheme::Dark, "dark-modern"), (ColorScheme::Light, "light-modern")] {
         let ours = run_theme(scheme, theme, &target.join(theme));
         let reference: Value = serde_json::from_str(&std::fs::read_to_string(root().join(format!("conformance/visual/vscode/{theme}/metrics.json"))).unwrap()).unwrap();
-        let bg = parse_css_color(&css(vscode_look::color(scheme, "--sv-bg"))).unwrap();
+        let bg = parse_css_color(&css(base_theme(scheme).colors().bg)).unwrap();
         checks.extend(compare(theme, &ours, &reference, bg));
     }
     // the report: every check, failures first

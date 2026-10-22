@@ -4,13 +4,16 @@
     "focus": "#2488DB",
     "button2-bg": "#313131",
     "button2-hover": "#3B3B3B",
-    "control-border": "#6B6B6B"
+    "control-border": "#6B6B6B",
+    "button2-border": "#6B6B6B"
   },
   "notes": {
-    "button2-hover": "Not in DESIGN.md's table: with the raised #313131 rest fill, Dark Modern's #2B2B2B hover would darken. #3B3B3B is VS Code's own derivation of the secondary hover (lighten(button.secondaryBackground, .2)) applied to #313131. VIS1 tunes it."
+    "button2-hover": "Not in DESIGN.md's table: with the raised #313131 rest fill, Dark Modern's #2B2B2B hover would darken. #3B3B3B is VS Code's own derivation of the secondary hover (lighten(button.secondaryBackground, .2)) applied to #313131. VIS1 tunes it.",
+    "button2-border": "VS Code's secondary button border (button.secondaryBorder, #CCCCCC26 / #3B3B3B26) is below 3:1; the overlay gives it the control boundary (R4)."
   },
   "light": {
-    "control-border": "#8A8A8A"
+    "control-border": "#8A8A8A",
+    "button2-border": "#8A8A8A"
   },
   "hc-dark": {},
   "hc-light": {}
