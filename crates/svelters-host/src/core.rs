@@ -34,6 +34,7 @@ use svelters_abi::{
 mod apps;
 mod asyncs;
 mod callbacks;
+mod links;
 mod offload;
 mod ops;
 mod reactive;
@@ -176,6 +177,9 @@ pub(crate) struct Observed {
     /// Deliver at the next checkpoint even if equal to `last`: our own write was normalized by the
     /// toolkit (the read-back differs from what JS wrote), so JS must see the value once.
     pub force: bool,
+    /// CX3: how many of `count` are native links (`host.link`), not JS. A pair only links observe is
+    /// propagated at the checkpoint but never delivered to JS.
+    pub links: u32,
 }
 
 /// Why a handle is no longer live.
@@ -322,6 +326,9 @@ struct CoreState {
     dirty: Vec<(svl_handle, svl_id)>,
     dirty_set: HashSet<(svl_handle, svl_id)>,
     events: VecDeque<Event>,
+    /// CX3: native links (`host.link`), and the last id handed out.
+    links: Vec<links::Link>,
+    next_link: u32,
     /// Handles carried in the arguments of queued events (a list item in a deferred `bind`, N3), with
     /// a count: `destroy` leaves a pinned handle alive, so a wrapper collected while its event waits
     /// cannot kill the handle the event is about to deliver. Unpinned when the event is delivered.
@@ -762,8 +769,12 @@ impl Core {
                     }
                     changed
                 };
-                self.note_store_change(changed);
                 if changed {
+                    self.link_propagate(key, &v);
+                }
+                let js = changed && self.js_observes(key);
+                self.note_store_change(js);
+                if js {
                     out.push(ChangedProp { handle: key.0, prop: name, value: Some(v) });
                 }
                 continue;
@@ -780,7 +791,11 @@ impl Core {
                 }
                 changed
             };
-            if changed {
+            // CX3: a linked prop goes to its store (no boxed values: those always compare changed)
+            if changed && !has_boxed(&v) {
+                self.link_propagate(key, &v);
+            }
+            if changed && self.js_observes(key) {
                 out.push(ChangedProp { handle: key.0, prop: name, value: Some(v) });
             } else {
                 // Dropped: a read that minted VALUE handles must not leak them.
@@ -1023,14 +1038,17 @@ impl Core {
     }
 }
 
-/// Runs one checkpoint (see "Checkpoint semantics" in `backend-abi.md`):
-/// 0. read, compare and deliver the dirty observed properties as one `__svelters_changed` batch
+/// Runs one checkpoint (see "Checkpoint semantics" in `backend-abi.md`). Each task (a settle batch,
+/// an event, a timer callback) is followed by a job drain (a microtask checkpoint, as in the HTML
+/// event loop), except the change batch, which shares one drain with the first event:
+/// 1. settle offloaded calls (`offload::drain`: progress, results) and, if any settled, drain jobs;
+/// 2. read, compare and deliver the dirty observed properties as one `__svelters_changed` batch
 ///    (ABI v2.6), with no drain before the first event;
-/// 1. deliver queued events to JS, draining jobs after each;
-/// 2. fire due timers, draining jobs before the first (a timer starts on an empty microtask queue)
+/// 3. deliver queued events to JS, draining jobs after each;
+/// 4. fire due timers, draining jobs before the first (a timer starts on an empty microtask queue)
 ///    and after each;
-/// 3. drain remaining jobs, up to `max_jobs_per_checkpoint` in total;
-/// 4. `wake` if jobs or events remain, and arm the backend's one-shot wakeup for the earliest
+/// 5. drain remaining jobs, up to `max_jobs_per_checkpoint` in total;
+/// 6. `wake` if jobs or events remain, and arm the backend's one-shot wakeup for the earliest
 ///    timer deadline (`schedule_wake`).
 ///
 /// Ops reach the backend directly while JS runs (no batching in P). Scripted mode has its own
@@ -1044,9 +1062,25 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
         core.timing.set(t);
     }
     let mut eng = engine.borrow_mut();
+    let mut budget = core.cfg.max_jobs_per_checkpoint;
+    let mut pending = false;
+
+    let drain = |eng: &mut Box<dyn JsEngine>, budget: &mut usize| {
+        let st = eng.run_jobs(*budget);
+        *budget = budget.saturating_sub(st.ran);
+        core.report_all(eng.take_errors());
+        st.pending
+    };
+
     // E1 (egui-rust-exports.md §6.2): offloaded export calls settle first, so the changes, events
-    // and the one job drain below see their results in the same checkpoint.
-    offload::drain(core, &mut eng);
+    // and timers below see their results in the same checkpoint. A non-empty settle batch is a task
+    // of its own (REACTIVITY §5.3): its microtasks (`onProgress` reactions, resolutions) run before
+    // the first event or timer. SCHED1b's randomized schedules found an event handler running between
+    // a worker's `onProgress` and the microtask it queued, whenever a completion and a queued event met
+    // in one checkpoint. Scripted mode keeps its own stepping (an event step drains nothing).
+    if offload::drain(core, &mut eng) && !core.cfg.scripted {
+        pending |= drain(&mut eng, &mut budget);
+    }
     // E3 (§6.4): dirty store fields join the dirty set, queued `Emitter` events the event queue, so the
     // change batch and the events below carry them.
     reactive::collect(core);
@@ -1062,15 +1096,6 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
         core.process_releases();
         return;
     }
-    let mut budget = core.cfg.max_jobs_per_checkpoint;
-    let mut pending = false;
-
-    let drain = |eng: &mut Box<dyn JsEngine>, budget: &mut usize| {
-        let st = eng.run_jobs(*budget);
-        *budget = budget.saturating_sub(st.ran);
-        core.report_all(eng.take_errors());
-        st.pending
-    };
 
     // REACTIVITY.md §5.3: the batch of changed properties first, then the queued signal events,
     // with no job drain in between (handlers see the new state; Svelte flushes once after them).
@@ -1083,9 +1108,8 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     }
 
     let now = core.now();
-    // A timer callback is a new task: the microtasks of what this checkpoint delivered before it
-    // (settled offloaded calls and their progress callbacks, a change batch) run first, as in scripted
-    // mode. SCHED1's randomized schedules found a timer running between a worker's `onProgress` and
+    // A timer callback is a new task: the microtasks of what this checkpoint delivered before it (a
+    // change batch with no event after it) run first, as in scripted mode. SCHED1's randomized schedules found a timer running between a worker's `onProgress` and
     // the microtasks it queued, whenever a completion and a due timer met in one checkpoint.
     if core.next_timer_deadline().is_some_and(|d| d <= now) {
         pending |= drain(&mut eng, &mut budget);

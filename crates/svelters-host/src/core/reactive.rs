@@ -42,6 +42,8 @@ pub struct ReactiveStats {
     pub events: u64,
     /// Events dropped: their object was released or no longer listened.
     pub events_dropped: u64,
+    /// CX3: values a native link wrote across (store to node or node to store), with no JS.
+    pub link_writes: u64,
 }
 
 #[derive(Clone)]
@@ -72,7 +74,7 @@ impl Reactive {
         }
     }
 
-    fn stat(&self, f: impl FnOnce(&mut ReactiveStats)) {
+    pub(super) fn stat(&self, f: impl FnOnce(&mut ReactiveStats)) {
         let mut s = self.stats.get();
         f(&mut s);
         self.stats.set(s);
@@ -124,7 +126,7 @@ impl Core {
             };
             // No baseline (FU3, as `op_observe`): JS may hold a value read before a writer thread changed
             // the field, so `last` starts unknown and the first marked change is always delivered.
-            let o = Observed { count: 1, name, proportional: field.proportional, last: None, force: false };
+            let o = Observed { count: 1, name, proportional: field.proportional, last: None, force: false, links: 0 };
             self.st.borrow_mut().observed.insert((h, p), o);
             Ok(true)
         } else {
@@ -233,6 +235,7 @@ impl Core {
 
     /// An app handle was released: its observations, dirty entries and subscriptions go with it.
     pub(crate) fn app_forget(&self, h: svl_handle) {
+        self.links_gone(h); // CX3
         {
             let mut st = self.st.borrow_mut();
             st.observed.retain(|k, _| k.0 != h);

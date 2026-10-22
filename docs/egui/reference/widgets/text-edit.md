@@ -45,8 +45,10 @@ Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessib
 | Attribute | Handler | When |
 |---|---|---|
 | `onchanged` | `(text: string) => void` | The user edited the text; carries the new text (once per frame). |
+| `oncommit` | `(text: string) => void` | The user committed the text: Enter in a one-line field (also when a default button takes it), or losing focus after an edit since the last commit; carries the text. |
 | `ongained-focus` | `() => void` | Took keyboard focus. |
 | `onlost-focus` | `() => void` | Lost keyboard focus. |
+| `onsubmit` | `(text: string) => void` | Enter in a one-line field (also when a default button takes it); carries the text. Fires after `commit`. |
 
 `on:changed` works too, and a bare `on:<event>` on a component forwards the component's `on<event>` prop.
 

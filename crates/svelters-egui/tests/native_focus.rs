@@ -101,3 +101,21 @@ fn fx1_egui_policy_is_egui() {
     rig.run();
     assert!(!button_focused(&rig, "Done"));
 }
+
+/// FX3s (from FX3): GTK keeps an unfocused field's selection; putting it back each pass (egui
+/// collapses it) must not keep the UI repainting (`Rig::run` panics when it does not settle).
+#[test]
+fn fx1_unfocused_gtk_selection_settles() {
+    let mut rig = common::Rig::new();
+    native::set(&rig.harness.ctx, Native::Gtk);
+    let (_w, col) = rig.window();
+    let a = rig.leaf(col, "text-edit", &[("text", Value::Str("hello".into())), ("accessible-name", Value::Str("a".into()))]);
+    let b = rig.leaf(col, "text-edit", &[("text", Value::Str("world".into())), ("accessible-name", Value::Str("b".into()))]);
+    rig.run();
+    rig.click(a);
+    key(&mut rig, CTRL, egui::Key::A);
+    rig.click(b);
+    rig.run();
+    assert!(focused(&rig, b));
+    assert_eq!(sel(&rig, a), Some([0, 5]));
+}
