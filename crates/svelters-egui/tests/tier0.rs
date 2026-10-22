@@ -162,6 +162,24 @@ fn range_slider_moves_one_end() {
 }
 
 #[test]
+fn uncaptioned_range_slider_names_its_value_boxes() {
+    let mut rig = Rig::new();
+    let (_w, col) = rig.window();
+    let r = rig.leaf(col, "range-slider", &[("accessible-name", s("Span")), ("low", Value::F64(2.0)), ("high", Value::F64(8.0)), ("max", Value::F64(10.0)), ("step", Value::F64(1.0))]);
+    rig.listen(r, "changed");
+    rig.run(); // kittest's accessibility check: every box has a name
+    let boxes: Vec<_> = rig.harness.get_all_by_role(Role::SpinButton).collect();
+    assert_eq!(boxes.len(), 2);
+    boxes[1].set_value_accesskit(6.6);
+    rig.run();
+    assert_eq!(events(&rig, &rig.take(), r, "changed"), vec![vec![Value::F64(2.0), Value::F64(7.0)]], "snapped to the step");
+    // a box cannot pass the other end
+    rig.harness.get_all_by_role(Role::SpinButton).next().unwrap().set_value_accesskit(9.0);
+    rig.run();
+    assert_eq!((rig.get(r, "low"), rig.get(r, "high")), (Value::F64(7.0), Value::F64(7.0)));
+}
+
+#[test]
 fn drag_value_edits_its_value_within_bounds() {
     let mut rig = Rig::new();
     let (_w, col) = rig.window();

@@ -99,6 +99,11 @@ same `@svelters/canvas` `draw()` attachment works unchanged: egui posts `resize(
   keeps every screen coordinate within ±1e6, font sizes within 512 and stroke widths within 1e4 (a transform can
   overflow finite arguments), ignores `NaNpx`/`infpx` fonts, and strokes a dash pattern with a period under a
   point solid. Test: `tier0.rs` `bad_input_falls_back_and_never_panics`.
+- **An uncaptioned `range-slider`** (WG2b-2, from CI: kittest's accessibility check in `widgets.rs`
+  `every_kind_has_a_tooltip_and_inputs_are_named`). egui's `RangeSlider` names its value boxes only by its caption,
+  so without `text` the rail is drawn without boxes and two `DragValue`s are added around it, labelled by the rail
+  (which `accessible-name` or `tooltip` names), snapped to `step`, each bounded by the other handle. That test also
+  stops the spinner it creates (a spinning one never lets `run` settle).
 
 ## W5: Linux primary selection
 
@@ -178,3 +183,5 @@ tests: kittest runs without a renderer here.
   `tools/dev/cargo-slot cargo check -p svelters-egui -p egui-kinds-example --all-targets` clean; `cargo nextest
   run -p svelters-egui --test tier0 --test gallery --test spec` 22/22 on the merged tree (gallery bundle built
   before the WG1b merge, whose `egui.json` change is one line). Not run locally: everything else listed above.
+  After the uncaptioned range-slider fix: `cargo check -p svelters-egui --all-targets` clean; `tier0`
+  `range_slider|bad_input` 3/3 and `widgets` `every_kind_has_a_tooltip_and_inputs_are_named` 1/1.

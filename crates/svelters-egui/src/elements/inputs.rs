@@ -91,14 +91,19 @@ pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
             }
             // slack for value boxes that come out wider than interact_size.x (as `slider`)
             ui.spacing_mut().slider_width = (size.x - extra - 8.0).max(sp.interact_size.x);
-            let mut s = egui::RangeSlider::new(&mut l, &mut h, rail_lo..=rail_hi).show_value(*show_value);
-            if step.is_finite() && *step > 0.0 {
-                s = s.step_by(*step);
-            }
-            if !text.is_empty() {
-                s = s.text(text.as_str());
-            }
-            let r = ui.add(s);
+            let step = (step.is_finite() && *step > 0.0).then_some(*step);
+            let r = if text.is_empty() && *show_value {
+                uncaptioned_range(ui, &mut l, &mut h, rail_lo..=rail_hi, step)
+            } else {
+                let mut s = egui::RangeSlider::new(&mut l, &mut h, rail_lo..=rail_hi).show_value(*show_value);
+                if let Some(step) = step {
+                    s = s.step_by(step);
+                }
+                if !text.is_empty() {
+                    s = s.text(text.as_str());
+                }
+                ui.add(s)
+            };
             if (l, h) != before {
                 // both are stored: a handle the host left at NaN takes the value it was shown at
                 let mut keys = Vec::new();
@@ -145,6 +150,43 @@ pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
         changed(arena, i, &keys, args, out);
     }
     Painted { resp }
+}
+
+/// A `range-slider` with value boxes and no caption. egui's `RangeSlider` names its value boxes
+/// only by its caption (its `Slider` names an uncaptioned box by the slider), so here the rail is
+/// drawn without boxes and the two boxes are added around it, each labelled by the rail, which the
+/// leaf wrapper names (`accessible-name`, else `tooltip`).
+fn uncaptioned_range(ui: &mut Ui, l: &mut f64, h: &mut f64, rail: std::ops::RangeInclusive<f64>, step: Option<f64>) -> egui::Response {
+    let (lo, hi) = (*rail.start(), *rail.end());
+    // a value per point of rail, as dragging the handles
+    let speed = (hi - lo) / ui.spacing().slider_width.max(1.0) as f64;
+    let snap = |v: f64| step.map_or(v, |s| (lo + ((v - lo) / s).round() * s).clamp(lo, hi));
+    ui.horizontal(|ui| {
+        let mut lv = *l;
+        let low = ui.add(egui::DragValue::new(&mut lv).range(lo..=*h).speed(speed));
+        let mut s = egui::RangeSlider::new(l, h, rail.clone()).show_value(false);
+        if let Some(step) = step {
+            s = s.step_by(step);
+        }
+        let rail_resp = ui.add(s);
+        let mut hv = *h;
+        let high = ui.add(egui::DragValue::new(&mut hv).range(*l..=hi).speed(speed));
+        if lv != *l && !rail_resp.changed() {
+            *l = snap(lv).min(*h);
+        }
+        if hv != *h && !rail_resp.changed() {
+            *h = snap(hv).max(*l);
+        }
+        let low = low.labelled_by(rail_resp.id);
+        let high = high.labelled_by(rail_resp.id);
+        // the focused box speaks for the widget (as egui's own)
+        let mut resp = rail_resp;
+        for b in [low, high] {
+            resp = if b.has_focus() || b.gained_focus() || b.lost_focus() { b.union(resp) } else { resp.union(b) };
+        }
+        resp
+    })
+    .inner
 }
 
 /// `radio-button`: a click checks it, writes its `value` into `group`, and unchecks the sibling
