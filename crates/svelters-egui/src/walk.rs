@@ -49,6 +49,36 @@ impl EguiBackend {
     }
 }
 
+impl EguiBackend {
+    /// EM1: lays out (if needed) and paints slot `slot`'s subtree in `ui`'s available rect
+    /// (ARCH-EMBED §5.1 b–c). A slot is its own layout root: it is laid out again when its
+    /// available size changed or a change below it cleared its cache (style, structure, remeasure),
+    /// whatever other slots and windows did. Returns the rect it took and taffy's content size.
+    pub(crate) fn slot_ui(&self, ui: &mut egui::Ui, slot: Handle, out: &mut Vec<Out>) -> (egui::Rect, Vec2) {
+        let rect = ui.available_rect_before_wrap();
+        let size = rect.size();
+        let mut scene = self.0.scene.borrow_mut();
+        let stale = self.0.dirty.layout_size.borrow().get(&slot) != Some(&size);
+        if stale || scene.n(slot).cache.is_empty() {
+            let m = layout::Metrics::new(ui.ctx());
+            let measured = layout::compute(&mut scene, &m, slot, size);
+            self.0.dirty.layout_size.borrow_mut().insert(slot, size);
+            self.bump(|s| {
+                s.layouts += 1;
+                s.measured += measured as u64;
+            });
+        }
+        paint(&mut scene, slot, rect.min.to_vec2(), ui, out);
+        // what the content needs: the extent of the slot's children (laid out from its origin)
+        let content = scene.n(slot).children.iter().filter_map(|&c| scene.get(c)).fold(Vec2::ZERO, |acc, n| {
+            if n.rect == egui::Rect::NOTHING { acc } else { acc.max(n.rect.max.to_vec2()) }
+        });
+        drop(scene);
+        ui.allocate_rect(rect, egui::Sense::hover());
+        (rect, content)
+    }
+}
+
 /// Paints node `h` (and its subtree) with rects offset by `origin` (the window content's screen
 /// position).
 pub fn paint(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {

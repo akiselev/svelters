@@ -32,6 +32,10 @@ pub struct JsError {
     pub kind: ErrorKind,
     pub message: String,
     pub stack: Option<String>,
+    /// The handle whose event was being dispatched when the error was thrown (an event handler's
+    /// exception or interrupt), if any. Embedders map it to the root that owns the handle
+    /// (ARCH-EMBED §6.2, "error origin").
+    pub handle: Option<u64>,
 }
 
 impl JsError {
@@ -40,7 +44,14 @@ impl JsError {
             kind,
             message: message.into(),
             stack: None,
+            handle: None,
         }
+    }
+
+    /// The same error, attributed to the handle whose event was dispatched.
+    pub fn at_handle(mut self, h: u64) -> JsError {
+        self.handle.get_or_insert(h);
+        self
     }
 }
 
@@ -113,6 +124,47 @@ pub struct BufferStats {
     /// JS runtimes leaked on this thread because Rust still held their memory (a transferred buffer)
     /// when they went away (shutdown or reload; freeing them would free memory under a worker).
     pub leaked_runtimes: u64,
+}
+
+/// What a mounted root's runtime side (`__svelters_embed`, `@svelters/native-runtime/embed`)
+/// reported since the last [`crate::Host::take_root_messages`] (ARCH-EMBED §4.3, §6.2).
+#[derive(Clone, Debug)]
+pub enum RootMessage {
+    /// A render or effect error reached the root's boundary: the root must be disposed.
+    Fault { root: u32, error: JsError },
+    /// JS wrote `root().title` or `root().dirty`.
+    Info { root: u32, title: Option<String>, dirty: Option<bool> },
+    /// `root().emit(name, value)`; `value` is JSON (`null` for none).
+    Emit { root: u32, name: String, value: String },
+}
+
+/// What the host is waiting for (ARCH-EMBED §5.4): every queue the core holds. Empty (with no
+/// timer) means a checkpoint now would run no JS.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct HostBusy {
+    /// Native events queued for JS.
+    pub events: bool,
+    /// Observed props announced changed, not delivered yet.
+    pub changes: bool,
+    /// Promise jobs (microtasks) queued in the engine.
+    pub jobs: bool,
+    /// Offloaded export calls (E1) not settled yet.
+    pub ops_in_flight: usize,
+    /// E3 store fields or emitter events waiting for the next checkpoint.
+    pub stores: bool,
+    /// `requestAnimationFrame` asked for a frame that has not run.
+    pub frame: bool,
+    /// JS is running right now.
+    pub running: bool,
+    /// The earliest live timer.
+    pub next_timer: Option<std::time::Instant>,
+}
+
+impl HostBusy {
+    /// Nothing queued (timers aside).
+    pub fn is_idle(&self) -> bool {
+        !(self.events || self.changes || self.jobs || self.stores || self.frame || self.running) && self.ops_in_flight == 0
+    }
 }
 
 /// One entry of an [`JsEngine::settle_ops`] batch.
@@ -192,5 +244,30 @@ pub trait JsEngine {
     /// E2: counters of the buffer paths.
     fn buffer_stats(&self) -> BufferStats {
         BufferStats::default()
+    }
+
+    /// Promise jobs are queued.
+    fn jobs_pending(&self) -> bool {
+        false
+    }
+
+    /// EM1: evaluates an ESM entry like [`JsEngine::load_module`] and keeps its module namespace;
+    /// returns its index (0, 1, ...) for [`JsEngine::mount_root`].
+    fn load_entry(&mut self, entry: &Path) -> Result<u32, JsError> {
+        let _ = entry;
+        Err(JsError::new(ErrorKind::Host, "this engine does not keep entries (embedding)"))
+    }
+
+    /// EM1: `globalThis.__svelters_embed.mount(ns[export], root, target, props)`.
+    fn mount_root(&mut self, entry: u32, export: &str, root: u32, target: u64, props: &[(String, Value)]) -> Result<(), JsError> {
+        let _ = (entry, export, root, target, props);
+        Err(JsError::new(ErrorKind::Host, "this engine does not mount roots (embedding)"))
+    }
+
+    /// EM1: `globalThis.__svelters_embed[method](root, patch)` for `props`, `info`, `unmount` and
+    /// `close`; returns the call's result as a sync result (`close`: a bool).
+    fn root_call(&mut self, method: &str, root: u32, patch: Option<&[(String, Value)]>) -> Result<Value, JsError> {
+        let _ = (method, root, patch);
+        Err(JsError::new(ErrorKind::Host, "this engine does not mount roots (embedding)"))
     }
 }

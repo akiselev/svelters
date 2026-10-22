@@ -59,6 +59,8 @@ export interface EguiWidgetProps {
   'align-self'?: 'auto' | 'start' | 'end' | 'center' | 'stretch' | 'baseline';
   /** Outer spacing on all four sides, in points. */
   margin?: number;
+  /** A name unique in its embedded root: the node's egui id derives from it (stable across runs, not only across reorders), it is the AccessKit author id, and `Embed::anchor_rect` finds it. Changing it drops the node's egui memory. */
+  anchor?: string;
 }
 
 /** The built-in egui elements, by tag. */

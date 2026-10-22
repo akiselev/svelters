@@ -99,8 +99,13 @@ impl Backend for EguiBackend {
         if parent == child {
             return Err("cannot insert an element into itself".into());
         }
-        if !tree::insert(&mut self.0.scene.borrow_mut(), parent, child, before)? {
-            return Ok(()); // already in place
+        {
+            let mut scene = self.0.scene.borrow_mut();
+            if !tree::insert(&mut scene, parent, child, before)? {
+                return Ok(()); // already in place
+            }
+            // EM1: a subtree joining an embedded root takes the root's ids (ARCH-EMBED §4.4)
+            crate::ids::adopt(&mut scene, &self.0.root_bases.borrow(), parent, child);
         }
         self.0.dirty.layout_dirty.set(true);
         self.touched();
@@ -137,6 +142,9 @@ impl Backend for EguiBackend {
         if d.style {
             layout::invalidate(&mut scene, h);
             self.0.dirty.layout_dirty.set(true);
+        }
+        if def.key == kinds::P::Anchor {
+            crate::ids::reanchor(&mut scene, &self.0.root_bases.borrow(), h);
         }
         drop(scene);
         if d.measure {
@@ -194,9 +202,17 @@ impl Backend for EguiBackend {
 
     fn handle_info(&self, h: svl_handle) -> StrResult<svl_handle_info> {
         let k = self.kind_of(h)?;
+        let host_owned = self.0.scene.borrow().get(h).is_some_and(|n| n.host_owned);
         Ok(svl_handle_info {
             kind: kinds::kind_id(k),
-            lifetime: if kinds::kind(k).toplevel { SVL_LIFE_TOPLEVEL } else { SVL_LIFE_OWNED },
+            // EM1: a slot belongs to the embedder; JS mounts into it but cannot destroy it
+            lifetime: if host_owned {
+                SVL_LIFE_BORROWED
+            } else if kinds::kind(k).toplevel {
+                SVL_LIFE_TOPLEVEL
+            } else {
+                SVL_LIFE_OWNED
+            },
             flags: 0,
         })
     }

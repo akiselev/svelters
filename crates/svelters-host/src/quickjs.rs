@@ -131,10 +131,29 @@ pub(crate) struct QjsEngine {
     rt: Runtime,
     base: Instant,
     deadline_ns: Arc<AtomicU64>,
-    budget: Option<Duration>,
     async_errors: Rc<RefCell<Vec<JsError>>>,
     core: Rc<Core>,
     callbacks: Rc<QjsCallbacks>,
+    /// EM1: module namespaces of the entries loaded with `load_entry`.
+    entries: Vec<rquickjs::Persistent<Object<'static>>>,
+}
+
+/// A plain object from `(key, value)` pairs (EM1 props and info patches).
+fn plain_object<'js>(ctx: &Ctx<'js>, core: &Rc<Core>, pairs: &[(String, AV)]) -> Res<Object<'js>> {
+    let conv = QjsConv::new(ctx.clone(), core.clone(), None);
+    let o = Object::new(ctx.clone())?;
+    for (k, v) in pairs {
+        let v = convert::decode(&conv, v, &**core).map_err(|m| Exception::throw_message(ctx, &m))?;
+        o.set(k.as_str(), v)?;
+    }
+    Ok(o)
+}
+
+fn embed_api<'js>(ctx: &Ctx<'js>) -> Res<Object<'js>> {
+    let api: Value = ctx.globals().get("__svelters_embed")?;
+    api.into_object().ok_or_else(|| {
+        Exception::throw_message(ctx, "globalThis.__svelters_embed is not installed: build the bundle with svelteConfig({ embed })")
+    })
 }
 
 impl QjsEngine {
@@ -196,16 +215,18 @@ impl QjsEngine {
             rt,
             base,
             deadline_ns,
-            budget: core.cfg.turn_budget,
             async_errors,
             core: core.clone(),
             callbacks,
+            entries: Vec::new(),
         })
     }
 
     fn arm(&self) {
         let d = self
+            .core
             .budget
+            .get()
             .map_or(0, |b| (self.base.elapsed() + b).as_nanos() as u64);
         self.deadline_ns.store(d, Ordering::Relaxed);
     }
@@ -434,6 +455,71 @@ impl JsEngine for QjsEngine {
     fn buffer_stats(&self) -> crate::engine::BufferStats {
         self.callbacks.home.snapshot()
     }
+
+    fn jobs_pending(&self) -> bool {
+        self.rt.is_job_pending()
+    }
+
+    fn load_entry(&mut self, entry: &Path) -> Result<u32, JsError> {
+        let load_err = |m: String| JsError::new(ErrorKind::Load, m);
+        let entry = entry.canonicalize().map_err(|e| load_err(format!("{}: {e}", entry.display())))?;
+        let root = entry.parent().ok_or_else(|| load_err("entry has no parent directory".into()))?.to_path_buf();
+        let name = entry.file_name().and_then(|n| n.to_str()).ok_or_else(|| load_err("entry file name is not UTF-8".into()))?.to_string();
+        let source = std::fs::read_to_string(&entry).map_err(|e| load_err(format!("{}: {e}", entry.display())))?;
+        self.rt.set_loader(BundleResolver, BundleLoader { root });
+        let res = self.call_guarded(|ctx| {
+            let (m, promise) = Module::declare(ctx.clone(), name.as_str(), source)?.eval()?;
+            if let Some(Err(e)) = promise.result::<Value>() {
+                return Err(e);
+            }
+            let ns = m.namespace()?;
+            Ok(rquickjs::Persistent::save(ctx, ns))
+        });
+        match res {
+            Ok(ns) => {
+                self.entries.push(ns);
+                Ok(self.entries.len() as u32 - 1)
+            }
+            Err(mut e) => {
+                self.async_errors.borrow_mut().clear();
+                if e.kind == ErrorKind::Exception {
+                    e.kind = ErrorKind::Load;
+                }
+                Err(e)
+            }
+        }
+    }
+
+    fn mount_root(&mut self, entry: u32, export: &str, root: u32, target: u64, props: &[(String, AV)]) -> Result<(), JsError> {
+        let ns = self
+            .entries
+            .get(entry as usize)
+            .cloned()
+            .ok_or_else(|| JsError::new(ErrorKind::Host, format!("no entry #{entry}")))?;
+        let core = self.core.clone();
+        self.call_guarded(|ctx| {
+            let ns = ns.restore(ctx)?;
+            let component: Value = ns.get(export)?;
+            if !component.is_function() {
+                return Err(Exception::throw_type(ctx, &format!("the bundle exports no component named '{export}'")));
+            }
+            let props = plain_object(ctx, &core, props)?;
+            let mount: Function = embed_api(ctx)?.get("mount")?;
+            mount.call::<_, Value>((component, root, target as f64, props)).map(|_| ())
+        })
+    }
+
+    fn root_call(&mut self, method: &str, root: u32, patch: Option<&[(String, AV)]>) -> Result<AV, JsError> {
+        let core = self.core.clone();
+        self.call_guarded(|ctx| {
+            let f: Function = embed_api(ctx)?.get(method)?;
+            let res: Value = match patch {
+                Some(p) => f.call((root, plain_object(ctx, &core, p)?))?,
+                None => f.call((root,))?,
+            };
+            sync_result_value(ctx, res, false)
+        })
+    }
 }
 
 impl Drop for QjsEngine {
@@ -495,6 +581,7 @@ fn describe<'js>(ctx: &Ctx<'js>, v: Value<'js>) -> JsError {
         kind: classify(&message),
         message,
         stack,
+        handle: None,
     }
 }
 
@@ -784,9 +871,41 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
                 },
             )?,
         )?;
+        // EM1: what `@svelters/native-runtime/embed` reports about a mounted root.
+        let w = core.clone();
+        host.set(
+            "rootFault",
+            Function::new(ctx.clone(), move |ctx: Ctx<'js>, root: u32, message: String, stack: Opt<Option<String>>| -> Res<()> {
+                let c = core_of(&ctx, &w)?;
+                let mut error = JsError::new(classify(&message), message);
+                error.stack = stack.0.flatten();
+                let error = c.map_error(error);
+                c.root_message(crate::engine::RootMessage::Fault { root, error });
+                Ok(())
+            })?,
+        )?;
+        let w = core.clone();
+        host.set(
+            "rootInfo",
+            Function::new(ctx.clone(), move |ctx: Ctx<'js>, root: u32, title: Opt<Option<String>>, dirty: Opt<Option<bool>>| -> Res<()> {
+                let c = core_of(&ctx, &w)?;
+                c.root_message(crate::engine::RootMessage::Info { root, title: title.0.flatten(), dirty: dirty.0.flatten() });
+                Ok(())
+            })?,
+        )?;
+        let w = core.clone();
+        host.set(
+            "rootEmit",
+            Function::new(ctx.clone(), move |ctx: Ctx<'js>, root: u32, name: String, value: String| -> Res<()> {
+                let c = core_of(&ctx, &w)?;
+                c.root_message(crate::engine::RootMessage::Emit { root, name, value });
+                Ok(())
+            })?,
+        )?;
         let w = core.clone();
         host.set(
             "destroy",
+
             Function::new(ctx.clone(), move |ctx: Ctx<'js>, h: f64| -> Res<()> {
                 let c = core_of(&ctx, &w)?;
                 op(&ctx, c.op_destroy(handle_of(&ctx, h)?))

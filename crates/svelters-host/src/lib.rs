@@ -29,7 +29,9 @@ mod sourcemap;
 pub mod testing;
 
 pub use crate::core::{ConsoleLine, HostConfig, OffloadStats, ReactiveStats, Timing};
-pub use crate::engine::{BufferStats, ChangedProp, ErrorKind, JobStatus, JsEngine, JsError, OpOutcome, OpSettle};
+pub use crate::engine::{
+    BufferStats, ChangedProp, ErrorKind, HostBusy, JobStatus, JsEngine, JsError, OpOutcome, OpSettle, RootMessage,
+};
 pub use crate::reload::ReloadReport;
 
 use crate::core::Core;
@@ -40,8 +42,9 @@ use std::path::Path;
 use std::rc::Rc;
 use std::sync::Arc;
 use std::sync::atomic::AtomicBool;
+use std::time::Duration;
 use svelters_abi::{
-    AbiError, BackendRef, HostCallbacks, HostVtable, SyncError, Value, svl_handle, svl_id,
+    AbiError, BackendRef, BackendVtable, HostCallbacks, HostVtable, SyncError, Value, svl_handle, svl_id,
 };
 
 type SharedEngine = Rc<RefCell<Box<dyn JsEngine>>>;
@@ -175,6 +178,9 @@ pub struct Host<'a> {
     /// The backend was attached through `start` and not detached since.
     attached: Cell<bool>,
     _backend: PhantomData<BackendRef<'a>>,
+    /// [`Host::new_owned`]: the backend's vtable, owned by the host. Last field: dropped after
+    /// everything else that could still call the backend (the core, the engine, the callbacks).
+    owned: Option<Box<BackendVtable>>,
 }
 
 /// Disarms an unfired started trampoline when `run`/`start` returns (or unwinds).
@@ -224,6 +230,7 @@ impl<'a> Host<'a> {
             on_started: RefCell::new(None),
             attached: Cell::new(false),
             _backend: PhantomData,
+            owned: None,
         })
     }
 
@@ -498,6 +505,77 @@ impl<'a> Host<'a> {
         self.core.checkpoint_count()
     }
 
+    /// Everything the host is waiting for (ARCH-EMBED §5.4): queued events and changes, jobs,
+    /// offloaded calls, store deliveries, a requested frame, the next timer. Replaces
+    /// [`Host::is_idle`]'s partial answer for embedders and idle barriers.
+    pub fn busy(&self) -> HostBusy {
+        let jobs = self.engine.try_borrow().map(|e| e.jobs_pending()).unwrap_or(true);
+        self.core.busy(jobs)
+    }
+
+    /// The wall-clock budget armed for each following entry into JS (the interrupt handler stops a
+    /// script that exceeds it with an `Interrupted` error). Starts as `HostConfig::turn_budget`;
+    /// an embedder switches it per entry (ARCH-EMBED §4.2 `Budgets`).
+    pub fn set_turn_budget(&self, budget: Option<Duration>) {
+        self.core.budget.set(budget);
+    }
+
+    pub fn turn_budget(&self) -> Option<Duration> {
+        self.core.budget.get()
+    }
+
+    // ---- EM1: roots (ARCH-EMBED §4.2/§4.3) ----
+
+    /// Evaluates an ESM bundle like [`Host::load_bundle`] but keeps its module namespace, so
+    /// [`Host::mount_root`] can name its exports. The bundle is an embed bundle
+    /// (`svelteConfig({ embed })`): it exports components and installs `__svelters_embed`. Not
+    /// watched for reload. Returns the entry's index.
+    pub fn load_entry(&self, path: impl AsRef<Path>) -> Result<u32, JsError> {
+        self.ensure_attached();
+        core::load_entry(&self.core, &self.engine, path.as_ref()).map_err(|e| self.core.map_error(e))
+    }
+
+    /// Mounts export `export` of entry `entry` into the native node `target` (an embedder's slot)
+    /// as root `root`, with `props` (a plain object, made reactive by the runtime). One entry into
+    /// JS under the current turn budget, then a job drain. A first-render error is returned and
+    /// the runtime has already torn the root down.
+    pub fn mount_root(&self, entry: u32, export: &str, root: u32, target: svl_handle, props: &[(String, Value)]) -> Result<(), JsError> {
+        core::root_call(&self.core, &self.engine, Some(target), |e| e.mount_root(entry, export, root, target, props))
+            .map_err(|e| self.core.map_error(e))
+    }
+
+    /// Shallow-merges `patch` into root `root`'s props (`Value::Null` sets null; a key absent
+    /// stays). A `"$$delete"` entry holding a list of key strings removes those keys (D10).
+    pub fn root_props(&self, root: u32, patch: &[(String, Value)]) -> Result<(), JsError> {
+        self.root_call_js("props", root, Some(patch)).map(|_| ())
+    }
+
+    /// Updates the root's `svelters:embed` info fields (visible, width, height, scale, viewport,
+    /// focused) seen by its components.
+    pub fn root_info(&self, root: u32, patch: &[(String, Value)]) -> Result<(), JsError> {
+        self.root_call_js("info", root, Some(patch)).map(|_| ())
+    }
+
+    /// Unmounts root `root`: its natives are removed from the target and destroyed, its handlers
+    /// and effects disposed. Unknown roots are a no-op.
+    pub fn unmount_root(&self, root: u32) -> Result<(), JsError> {
+        self.root_call_js("unmount", root, None).map(|_| ())
+    }
+
+    /// Runs root `root`'s `onCloseRequest` handlers; true if the root may close.
+    pub fn close_root(&self, root: u32) -> Result<bool, JsError> {
+        self.root_call_js("close", root, None).map(|v| !matches!(v, Value::Bool(false)))
+    }
+
+    fn root_call_js(&self, method: &str, root: u32, patch: Option<&[(String, Value)]>) -> Result<Value, JsError> {
+        core::root_call(&self.core, &self.engine, None, |e| e.root_call(method, root, patch)).map_err(|e| self.core.map_error(e))
+    }
+
+    /// Drains what mounted roots reported (faults from their boundaries, title/dirty, emits).
+    pub fn take_root_messages(&self) -> Vec<RootMessage> {
+        self.core.take_root_messages()
+    }
+
     /// Returns and resets the time split counters (all zero unless `HostConfig::timing`).
     pub fn take_timing(&self) -> Timing {
         self.core.take_timing()
@@ -509,7 +587,22 @@ impl<'a> Host<'a> {
     }
 }
 
+impl Host<'static> {
+    /// A host that owns its backend's vtable (boxed, so its address is stable) and drops it after
+    /// detaching: no `'static` borrow, leak or `unsafe` at the call site (ARCH-EMBED §4.2, K-7).
+    pub fn new_owned<B: svelters_abi::Backend + 'static>(backend: B, cfg: HostConfig) -> Result<Host<'static>, JsError> {
+        let vt = Box::new(BackendVtable::new(backend));
+        // SAFETY: the vtable is boxed and owned by the host (`owned`, its last field), so it lives
+        // at the same address until after everything that could call it is dropped.
+        let r: BackendRef<'static> = unsafe { vt.backend_ref().erase_lifetime() };
+        let mut host = Host::new(r, cfg)?;
+        host.owned = Some(vt);
+        Ok(host)
+    }
+}
+
 impl Drop for Host<'_> {
+
     fn drop(&mut self) {
         // E1: workers that finish later post to a queue nobody drains and wake nobody.
         self.core.ops_shutdown();

@@ -935,6 +935,23 @@
           ],
           "writable": true
         },
+        "anchor": {
+          "construct_only": false,
+          "default": "",
+          "doc": "A name unique in its embedded root: the node's egui id derives from it (stable across runs, not only across reorders), it is the AccessKit author id, and `Embed::anchor_rect` finds it. Changing it drops the node's egui memory.",
+          "js": "anchor",
+          "native": "anchor",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:anchor",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "enabled": {
           "construct_only": false,
           "default": true,

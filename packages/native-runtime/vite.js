@@ -25,6 +25,9 @@ export const corePath = fileURLToPath(new URL('./src/core/index.js', import.meta
 /** The implementation of `@svelters/lists` (`ListView`, virtualized native lists). */
 export const listsPath = fileURLToPath(new URL('./src/lists.js', import.meta.url));
 
+/** EM1: `@svelters/native-runtime/embed` (installs `__svelters_embed`), also `svelters:embed` (`root()`). */
+export const embedPath = fileURLToPath(new URL('./src/embed.js', import.meta.url));
+
 /** The X6 styling runtime (`registerStyles`, `setColorScheme`, `setTokens`): `@svelters/native-runtime/style`. */
 export const stylePath = fileURLToPath(new URL('./src/style.js', import.meta.url));
 
@@ -123,6 +126,8 @@ export function nativeConfig(root, { entry = 'main.js', outDir = 'dist', plugins
         { find: /^@svelters\/native-runtime\/core\/tracing$/, replacement: tracingPath },
         // the styling API (`setColorScheme`, `setTokens`), also for apps that do not depend on it
         { find: /^@svelters\/native-runtime\/style$/, replacement: registerPath },
+        // EM1: the embed entry and `import { root } from 'svelters:embed'` (one module instance)
+        { find: /^(@svelters\/native-runtime\/embed|svelters:embed)$/, replacement: embedPath },
         // virtualized lists: `import { ListView } from '@svelters/lists'` gets the native
         // implementation (same component API and host protocol, see src/lists.js)
         { find: /^@svelters\/(native-runtime\/)?lists$/, replacement: listsPath },

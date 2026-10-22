@@ -2023,8 +2023,9 @@ export { NativeAnimation, computed } from './motion.js';
  * root container, like Svelte's `mount(App, { target })`. The target is not owned: unmount
  * removes the component's natives from it but never destroys it. Used by the DOM conformance
  * host (experiments/native-compiler/conformance).
+ * `onerror(e)` (EM1, `embed.js`): receives the errors the root boundary would rethrow.
  */
-export function mount(Component, { props = {}, target, transformError, intro = true } = {}) {
+export function mount(Component, { props = {}, target, transformError, intro = true, onerror } = {}) {
   if (!host()) throw new Error('globalThis.__svelters_host is not defined');
   if (DEV) init_dev();
   globalThis.__svelters_dispatch = dispatch;
@@ -2051,14 +2052,18 @@ export function mount(Component, { props = {}, target, transformError, intro = t
         block(() => branch(() => {
           // the root of the boundary chain (Svelte's mount renders the app in a boundary): carries
           // `transformError` for every <svelte:boundary>, handles nothing itself
-          root_boundary(
-            boundary_handler({
-              transform_error: transformError ?? ((e) => e),
-              error(e) {
-                throw e;
-              },
-            }),
-          );
+          const handler = boundary_handler({
+            transform_error: transformError ?? ((e) => e),
+            error(e) {
+              if (onerror) onerror(e);
+              else throw e;
+            },
+          });
+          // EM1: an embedded root is a boundary of its own: render and effect errors that no
+          // <svelte:boundary> handled go to `onerror` (its host disposes that root) instead of being
+          // thrown into whichever flush or handler ran them. Errors of the first render still throw.
+          if (onerror) boundary_scope(handler);
+          else root_boundary(handler);
           // Svelte's `should_intro` while the root component initialises (mount's `intro` option)
           set_intro(intro);
           try {
