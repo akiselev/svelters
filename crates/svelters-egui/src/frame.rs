@@ -215,6 +215,8 @@ impl EguiBackend {
         {
             host.frame();
         }
+        // LS1: lists bind the rows this frame draws (call_sync), at this frame's offset (R22)
+        self.realize_lists(ctx);
         // Writes the checkpoint's handlers made through `SceneHandle` are announced now.
         self.flush_announcements();
         // Remeasure leaves whose text changed, per root; only a size change queues a relayout.

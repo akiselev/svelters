@@ -879,6 +879,288 @@
       },
       "text_content": null
     },
+    "VirtualList": {
+      "abstract": false,
+      "bindings": {
+        "selected": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "selected",
+          "provenance": "svelters-egui: the svelters_egui::kinds::virtuallist (recycled row slots over a VScroll) widget writes selected into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "chain": [
+        "VirtualList",
+        "Widget"
+      ],
+      "children": null,
+      "doc": "A virtualized list (the M5 model-view protocol): JS keeps the items, the list asks for the rows it shows.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {
+        "count": {
+          "dispatch": "generated",
+          "doc": "The number of items.",
+          "native": "count",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "rowAt": {
+          "dispatch": "generated",
+          "doc": "`rowAt(pos)`: the slot bound to `pos`, or -1.",
+          "native": "rowAt",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "scrollTo": {
+          "dispatch": "generated",
+          "doc": "`scrollTo(pos)`: scrolls the item into view.",
+          "native": "scrollTo",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "setRow": {
+          "dispatch": "generated",
+          "doc": "`setRow(row, widget)`: the content of row slot `row` (called from `setup`); null clears it.",
+          "native": "setRow",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "splice": {
+          "dispatch": "generated",
+          "doc": "`splice(pos, removed, ids)`: replaces `removed` ids at `pos` with `ids` (unique integers).",
+          "native": "splice",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
+      "native": "svelters_egui::kinds::virtuallist (recycled row slots over a VScroll)",
+      "present": null,
+      "props": {
+        "layout": {
+          "construct_only": false,
+          "default": "list",
+          "doc": "`list` (egui draws `grid` as a list for now).",
+          "js": "layout",
+          "native": "layout",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:VirtualList:layout",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "list",
+            "grid"
+          ],
+          "writable": true
+        },
+        "row-height": {
+          "construct_only": false,
+          "default": 32,
+          "doc": "The height a row is assumed to have before it is measured, and its minimum, in points.",
+          "js": "row-height",
+          "native": "row-height",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:VirtualList:row-height",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "selected": {
+          "construct_only": false,
+          "default": -1,
+          "doc": "The selected position, -1 for none. Setting it never raises `select`.",
+          "js": "selected",
+          "native": "selected",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:VirtualList:selected",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "selection": {
+          "construct_only": false,
+          "default": "single",
+          "doc": "`single`: a click selects a row (`select`); `none`: rows are not selectable.",
+          "js": "selection",
+          "native": "selection",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:VirtualList:selection",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "single"
+          ],
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "signals": {
+        "activate": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user activated the item at `pos` (double click).",
+          "handler_result": "none",
+          "js_event": "activate",
+          "name": "activate",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "bind": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            },
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "gen",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Slot `row` now shows item `id` at `pos`; `gen` counts the binds of the slot.",
+          "handler_result": "bool_stop",
+          "js_event": "bind",
+          "name": "bind",
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "select": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user selected the item at `pos`.",
+          "handler_result": "none",
+          "js_event": "select",
+          "name": "select",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "setup": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Row slot `row` was created: give it content with `setRow`.",
+          "handler_result": "bool_stop",
+          "js_event": "setup",
+          "name": "setup",
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "teardown": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Slot `row` is gone: release its widget.",
+          "handler_result": "bool_stop",
+          "js_event": "teardown",
+          "name": "teardown",
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        },
+        "unbind": {
+          "args": [
+            {
+              "name": "row",
+              "type": "i64"
+            },
+            {
+              "name": "gen",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Slot `row` no longer shows binding `gen`.",
+          "handler_result": "bool_stop",
+          "js_event": "unbind",
+          "name": "unbind",
+          "phases": [],
+          "sync": true,
+          "sync_required": false
+        }
+      },
+      "text_content": null
+    },
     "Widget": {
       "abstract": true,
       "bindings": {},
@@ -1374,7 +1656,8 @@
           "checkbox",
           "label",
           "slider",
-          "text-edit"
+          "text-edit",
+          "virtual-list"
         ],
         "type": "enum",
         "values": [
@@ -1411,7 +1694,8 @@
           "checkbox",
           "label",
           "slider",
-          "text-edit"
+          "text-edit",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -1446,7 +1730,8 @@
           "checkbox",
           "label",
           "slider",
-          "text-edit"
+          "text-edit",
+          "virtual-list"
         ],
         "type": "number",
         "via": "setter"
@@ -1463,7 +1748,8 @@
           "checkbox",
           "label",
           "slider",
-          "text-edit"
+          "text-edit",
+          "virtual-list"
         ],
         "type": "number",
         "via": "setter"
@@ -1511,7 +1797,8 @@
           "checkbox",
           "label",
           "slider",
-          "text-edit"
+          "text-edit",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -1548,7 +1835,8 @@
           "checkbox",
           "label",
           "slider",
-          "text-edit"
+          "text-edit",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -1565,7 +1853,8 @@
           "checkbox",
           "label",
           "slider",
-          "text-edit"
+          "text-edit",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -1582,7 +1871,8 @@
           "checkbox",
           "label",
           "slider",
-          "text-edit"
+          "text-edit",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -1599,7 +1889,8 @@
           "checkbox",
           "label",
           "slider",
-          "text-edit"
+          "text-edit",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -1616,7 +1907,8 @@
           "checkbox",
           "label",
           "slider",
-          "text-edit"
+          "text-edit",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -1659,7 +1951,8 @@
           "checkbox",
           "label",
           "slider",
-          "text-edit"
+          "text-edit",
+          "virtual-list"
         ],
         "type": "bool",
         "via": "setter"
@@ -1676,7 +1969,8 @@
           "checkbox",
           "label",
           "slider",
-          "text-edit"
+          "text-edit",
+          "virtual-list"
         ],
         "type": "length",
         "via": "setter"
@@ -1701,6 +1995,7 @@
     "label": "Label",
     "slider": "Slider",
     "text-edit": "TextEdit",
+    "virtual-list": "VirtualList",
     "window": "Window"
   }
 }

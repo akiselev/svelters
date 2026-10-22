@@ -222,6 +222,12 @@ pub trait Widget: 'static {
     fn hit_test(&self, _cx: &HitCx, _local: egui::Pos2) -> Hit {
         Hit::Node
     }
+    /// `Caps::VIRTUAL` (ARCH-SCENE §8.2, SG5): painted rows exposed to a11y, anchors
+    /// (`SceneRef::target_by_path`), queries (`Query::include_virtual`) and `target_rect`. Not asked
+    /// while the widget draws itself.
+    fn virtual_children(&self) -> Option<&dyn crate::scene::VirtualChildren> {
+        None
+    }
 }
 
 /// An `on<name>` event of a kind. The macro gives each `#[event]` field its index; [`WidgetCx::emit`]
@@ -391,6 +397,7 @@ pub trait ErasedWidget: Any {
     fn a11y(&self, cx: &A11yCx<'_>, node: &mut egui::accesskit::Node);
     fn busy(&self) -> bool;
     fn hit_test(&self, cx: &HitCx, local: egui::Pos2) -> Hit;
+    fn virtual_children(&self) -> Option<&dyn crate::scene::VirtualChildren>;
     fn as_any(&self) -> &dyn Any;
     fn as_any_mut(&mut self) -> &mut dyn Any;
     /// The struct's address (field offsets are relative to it).
@@ -424,6 +431,9 @@ impl<T: Widget + KindDecl> ErasedWidget for T {
     }
     fn hit_test(&self, cx: &HitCx, local: egui::Pos2) -> Hit {
         Widget::hit_test(self, cx, local)
+    }
+    fn virtual_children(&self) -> Option<&dyn crate::scene::VirtualChildren> {
+        Widget::virtual_children(self)
     }
     fn as_any(&self) -> &dyn Any {
         self

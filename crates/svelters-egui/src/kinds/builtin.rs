@@ -219,4 +219,5 @@ pub static KINDS: &[KindDef] = &[
         methods: &[],
         doc: "A horizontal slider with an optional value box.",
     },
+    super::virtuallist::DEF,
 ];

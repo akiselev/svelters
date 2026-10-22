@@ -20,7 +20,7 @@
 //! | `journal.rs` | [`Change`], [`Observer`], [`ChangeFilter`], [`ChangeSet`], [`Damage`] (SG2) |
 //! | `query.rs` | kind sets, anchor maps, [`Query`], [`Cursor`], [`Visit`] (SG3) |
 //! | `hit.rs` | per-viewport hit lists, [`SceneRef::hit_test`], [`Hit`], [`HitCx`] (SG3) |
-//! | `virt.rs` | seam for SG5 |
+//! | `virt.rs` | [`RowHeights`], [`VScroll`], [`RowPool`], [`RowSource`], [`VirtualChildren`], [`PrepareCx`] (SG5, LISTS) |
 //!
 //! Writer lane: SCENE.
 
@@ -40,7 +40,7 @@ pub(crate) mod query;
 #[cfg(test)]
 mod tests;
 pub(crate) mod tree;
-pub(crate) mod virt;
+pub mod virt;
 
 pub use access::{Children, Descendants, NodeMut, NodeRef, Origin, PropError, SceneBusy, SceneError, SceneHandle, SceneMut, SceneRef};
 pub use hit::{Hit, HitCx};
@@ -53,6 +53,7 @@ pub use crate::provider::{ExtBlock, ExtEntry, ExtId, ExtKey, ExtTicks, IntoState
 pub use node::{Common, Dirty, Node, NodeFlags, Owner, Visual, W};
 pub use props::{default_value, get_prop, set_prop, tag_of};
 pub use tree::TreeRoot;
+pub use virt::{PrepareCx, RowHeights, RowPool, RowSource, VScroll, VirtualChildren};
 
 use crate::kinds;
 use dump::Counters;

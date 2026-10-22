@@ -143,6 +143,11 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
             *show_value = as_bool(v)?;
             d.insert(Dirty::MEASURE);
         }
+        (P::ListSelected | P::ListSelection | P::ListLayout, W::VirtualList(l)) => crate::kinds::virtuallist::set(l, def.key, v)?,
+        (P::RowHeight, W::VirtualList(l)) => {
+            crate::kinds::virtuallist::set(l, def.key, v)?;
+            d.insert(Dirty::LAYOUT);
+        }
         (key, w) => return Err(format!("{key:?} is not a prop of {w:?}")),
     }
     if def.layout {
@@ -201,6 +206,9 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Max, W::Slider { max, .. }) => Value::F64(*max),
         (P::Step, W::Slider { step, .. }) => Value::F64(*step),
         (P::ShowValue, W::Slider { show_value, .. }) => Value::Bool(*show_value),
+        (P::ListSelected | P::ListSelection | P::ListLayout | P::RowHeight, W::VirtualList(l)) => {
+            crate::kinds::virtuallist::get(l, def.key).ok_or_else(|| format!("{:?} is not a prop of <virtual-list>", def.key))?
+        }
         (key, _) => return Err(format!("{key:?} is not a prop of <{}>", n.tag())),
     })
 }

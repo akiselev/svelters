@@ -26,6 +26,8 @@ pub enum W {
     Slider { value: f64, min: f64, max: f64, step: f64, text: String, show_value: bool },
     /// RA1: a provider kind's widget struct (`#[svelters::widget]`, `crate::provider`).
     Ext(crate::provider::ExtWidget),
+    /// LS1: a `virtual-list` (`kinds/virtuallist.rs`): its rows are its children.
+    VirtualList(Box<crate::kinds::VList>),
 }
 
 impl W {
@@ -362,7 +364,7 @@ pub fn text_of(w: &W) -> &str {
     match w {
         W::Label { text, .. } | W::Button { text, .. } | W::Checkbox { text, .. } | W::TextEdit { text, .. } | W::Slider { text, .. } => text,
         W::Window { title, .. } => title,
-        W::Box | W::Ext(_) => "",
+        W::Box | W::Ext(_) | W::VirtualList(_) => "",
     }
 }
 

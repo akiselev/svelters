@@ -157,6 +157,9 @@ impl Backend for EguiBackend {
     fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value> {
         let k = self.kind_of(h)?;
         let def = kinds::method_def(k, method).ok_or_else(|| format!("unknown method id {method}"))?;
+        if kinds::kind(k).tag == Some("virtual-list") {
+            return Ok(self.vlist_call(h, def.name, args)?);
+        }
         if !args.is_empty() {
             return Err(format!("{} takes no arguments", def.name));
         }

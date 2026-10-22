@@ -12,16 +12,18 @@
 //!
 //! Files (ARCH-EMBED §9): this one holds the table types, the id scheme and [`KindRegistry`];
 //! `builtin.rs` the built-in table [`KINDS`] with the `Widget` base and the leaves; `containers.rs`
-//! the `window` and `box` tables; `registry.rs` [`KindRegistry`] with the provider kinds of
+//! the `window` and `box` tables; `virtuallist.rs` the `virtual-list` kind (LISTS); `registry.rs` [`KindRegistry`] with the provider kinds of
 //! `#[svelters::widget]` (RA1). Writer lanes: WIDGETS (tables, one file per new family), RUSTAPI
 //! (`registry.rs`).
 
 mod builtin;
 mod containers;
 mod registry;
+pub(crate) mod virtuallist;
 
 pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, WRAP, WRAP_MODE};
 pub use registry::{KindRegistry, PROVIDER_PACK, ProviderKind, kind};
+pub use virtuallist::{ListStats, VList};
 
 /// A property's value type (also its ABI tag).
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -99,6 +101,11 @@ pub enum P {
     Max,
     Step,
     ShowValue,
+    // `virtual-list` (LISTS LS1, `virtuallist.rs`)
+    ListSelected,
+    ListSelection,
+    ListLayout,
+    RowHeight,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }
