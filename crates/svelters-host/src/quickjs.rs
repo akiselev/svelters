@@ -1244,6 +1244,15 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
                 },
             )?,
         )?;
+        // DX1: settings, UI state, paths and `logger()` records (`svelters:settings|paths|log`).
+        let w = core.clone();
+        host.set(
+            "dx",
+            Function::new(ctx.clone(), move |ctx: Ctx<'js>, op: String, a: String, b: String| -> Res<String> {
+                let c = core_of(&ctx, &w)?;
+                c.dx_op(&op, &a, &b).map_err(|(code, m)| Exception::throw_message(&ctx, &format!("{code}: {m}")))
+            })?,
+        )?;
         // E2: `alloc(Float32Array, n)` (`@svelters/types/core`): a typed array over a Rust allocation,
         // which a `Buffer<T>` parameter takes back without a copy.
         let cb = cbs.clone();

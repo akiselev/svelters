@@ -124,6 +124,10 @@ pub enum SlotWarning {
     NotDrawn { slot: SlotId, key: String, passes: u32 },
     /// Drawn in a viewport other than the one set (`set_viewport`): repaints go to the wrong window.
     WrongViewport { slot: SlotId, key: String, set: egui::ViewportId, drawn: egui::ViewportId },
+    /// WG1b: a font setup problem (an icon family, name or glyph the fonts cannot draw, a weight
+    /// family missing a character). Not tied to a slot; reported once per process; the node drew a
+    /// placeholder or the base family (`crate::fonts`).
+    Font(crate::fonts::FontWarning),
 }
 
 pub(crate) const WARN_HIDDEN: u8 = 1;

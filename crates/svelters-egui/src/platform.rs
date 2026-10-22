@@ -19,21 +19,12 @@ use std::sync::Arc;
 use svelters_host::platform::{Platform, SystemShell};
 
 /// The desktop platform: [`SystemClipboard`] and `SystemShell`.
-#[cfg(feature = "eframe")]
 pub fn system() -> Platform {
     Platform::new(Arc::new(SystemClipboard::new()), Arc::new(SystemShell))
 }
 
-/// Without the `eframe` feature there is no system clipboard: an in-process one and `SystemShell`.
-#[cfg(not(feature = "eframe"))]
-pub fn system() -> Platform {
-    Platform::headless().with_shell(Arc::new(SystemShell))
-}
-
-#[cfg(feature = "eframe")]
 pub use system_clipboard::SystemClipboard;
 
-#[cfg(feature = "eframe")]
 mod system_clipboard {
     use std::sync::{Mutex, MutexGuard};
     use svelters_host::platform::{is_text_type, ClipError, ClipboardBackend, ClipboardKind, MimeData, TEXT_HTML, TEXT_PLAIN};

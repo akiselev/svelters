@@ -17,7 +17,7 @@ lane row 6 of §3. STATUS row DX2. Branch `ci/dx2`.
 | `svelters:clipboard` | `packages/native-runtime/src/clipboard.js`, `types/clipboard.d.ts` | `write({type: data})` (strings, byte buffers, else JSON), `read(accept)` returns `{type, data, text(), json()}` or null, `readAll`, `formats`, `writeText`, `readText`; `{kind: 'primary'}`. Every call returns a Promise (a later async system clipboard keeps the API). Also `@svelters/native-runtime/clipboard`. |
 | `svelters:shell` | `src/shell.js`, `types/shell.d.ts` | `openUrl`, `openPath`, `revealInFolder` returning Promises. Also `@svelters/native-runtime/shell`. |
 | Aliases | `packages/native-runtime/package.json` | `svelters:clipboard`, `svelters:shell` in the runtime's alias table, so Vite and the Rust source loader resolve them the same way (as `svelters:embed`). Ambient typings: `"types": ["@svelters/native-runtime/platform"]`. |
-| `SystemClipboard`, `platform::system()` | `svelters-egui/src/platform.rs` (feature `eframe`, `arboard`) | arboard, the library egui-winit copies and pastes with, so a `text-edit` and `svelters:clipboard` see one clipboard. The system gets `text/plain` (and `text/html` on the clipboard); other types stay in process next to the text they were written with and come back while the system text is unchanged. Data without `text/plain` puts its first text entry on the system. `run_app` (when its config is still headless) and `svelters-egui-run` install `system()`; an embedder sets `HostConfig::platform` itself. |
+| `SystemClipboard`, `platform::system()` | `svelters-egui/src/platform.rs` (`arboard`) | arboard, the library egui-winit copies and pastes with, so a `text-edit` and `svelters:clipboard` see one clipboard. The system gets `text/plain` (and `text/html` on the clipboard); other types stay in process next to the text they were written with and come back while the system text is unchanged. Data without `text/plain` puts its first text entry on the system. `run_app` (when its config is still headless) and `svelters-egui-run` install `system()`; an embedder sets `HostConfig::platform` itself. |
 
 ## Tests
 
@@ -25,9 +25,11 @@ lane row 6 of §3. STATUS row DX2. Branch `ci/dx2`.
 - `svelters-egui` `tests/clipboard.rs` (3, kittest, fixture `fixtures/counter-egui/src/Clipboard.svelte`): a table copied as TSV, HTML and an app JSON type lands in the memory sink in order; its TSV pasted into a multiline `text-edit` gives 2 rows; a typed read prefers the app type; Rust-written data reads in JS by preference; reveal and open reach the `RecordingShell`, and a missing file rejects.
 - `packages/native-runtime/test/platform.test.mjs` (3): encoding, preference order, primary selection, rejections, shell ops.
 
-## DragPayload (WG4b, `ci/int-widgets`)
+## DragPayload (WG4b) unified
 
-Written against master; `DragPayload` (`svelters-egui/src/kinds/dnd.rs` on `ci/int-widgets`) is `{ ty, data: String, source, dropped }`. `MimeData` is shaped so it carries one: `MimeData::single(p.ty, p.data)`, and the clipboard's `accept` patterns are its `drop-types` rules (`type_matches` is `dnd::accepts` per pattern). Unification once INT1 is on master: `DragPayload` holds `data: MimeData` (keeping `new(ty, data)`, `ty()` and `data()` as the first entry), `dnd::accepts` calls `platform::type_matches`, and a drop's `drop(type, data, …)` signal reports the best entry for the target's `drop-types`.
+Merged with INT1 (master `becbeb89`). `DragPayload` (`svelters-egui/src/kinds/dnd.rs`) now holds `data: MimeData` (it held `ty`, `data: String`): `new(ty, data)` is one entry as before, `from_mime(MimeData)` carries several types, `ty()` is the first type, `best(drop_types)` is the entry a target takes (the first of its patterns the payload has). `dnd::accepts` uses `platform::type_matches`, so `drop-types` and clipboard `accept` patterns are one rule. A Svelte target's `drag-enter(type)` and `drop(type, data, x, y)` report that best entry, which for a one-entry Svelte drag is what they reported before. A Rust panel copies a drag with `clipboard.write(kind, payload.data.clone())` and drags a copy with `DragPayload::from_mime(clipboard.read(kind, &[])?)`.
+
+W5's `primary::PrimarySelection` (text kinds' select-to-copy, middle-click paste) came in with the same merge and stays separate: `ClipboardKind::Primary` reaches the same X11/Wayland selection through arboard, so the two agree on the system, but a headless test sees two stores. Folding W5 onto `ClipboardBackend` is a small follow-up.
 
 ## Not done
 
