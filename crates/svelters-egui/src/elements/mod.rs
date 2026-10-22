@@ -138,7 +138,7 @@ fn set(w: &mut W, def: &PropDef, v: &Value) -> Result<Dirty, String> {
             none
         }
         (P::Step, W::RangeSlider { step, .. }) => {
-            *step = as_f64(v)?.max(0.0);
+            *step = finite_or(as_f64(v)?, 0.0).max(0.0);
             none
         }
         (P::ShowValue, W::RangeSlider { show_value, .. }) => {
@@ -181,7 +181,7 @@ fn set(w: &mut W, def: &PropDef, v: &Value) -> Result<Dirty, String> {
             Dirty::LAYOUT
         }
         (P::Size, W::Panel { size, .. }) => {
-            *size = as_len(v)?.map(|s| s.max(0.0));
+            *size = as_len(v)?.filter(|s| s.is_finite()).map(finite_len);
             Dirty::LAYOUT
         }
         (P::Resizable, W::Panel { resizable, .. }) => {
@@ -238,7 +238,7 @@ fn set(w: &mut W, def: &PropDef, v: &Value) -> Result<Dirty, String> {
             none
         }
         (P::Size, W::Spinner { size, .. }) => {
-            *size = as_len(v)?.filter(|s| *s > 0.0);
+            *size = as_len(v)?.filter(|s| s.is_finite() && *s > 0.0).map(finite_len);
             measure
         }
         (P::Ops, W::Canvas(c)) => {
@@ -249,11 +249,11 @@ fn set(w: &mut W, def: &PropDef, v: &Value) -> Result<Dirty, String> {
             none
         }
         (P::ContentWidth, W::Canvas(c)) => {
-            c.content_w = as_f64(v)?.max(0.0);
+            c.content_w = finite_len(as_f64(v)?);
             measure
         }
         (P::ContentHeight, W::Canvas(c)) => {
-            c.content_h = as_f64(v)?.max(0.0);
+            c.content_h = finite_len(as_f64(v)?);
             measure
         }
         (key, w) => return Err(format!("{key:?} is not a prop of {w:?}")),
@@ -375,6 +375,22 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         }
     }
     resp
+}
+
+/// The largest length a WG2b prop lays out at (points): more overflows `f32` or taffy.
+const MAX_LEN: f64 = 1e7;
+
+/// A length written by the host, as layout takes it: NaN, infinities and negatives are 0, and it
+/// is at most [`MAX_LEN`].
+fn finite_len(x: f64) -> f64 {
+    if x.is_finite() { x.clamp(0.0, MAX_LEN) } else { 0.0 }
+}
+
+/// `x` when it is finite, else `fallback`. The numeric props keep what the host wrote (a read
+/// returns it); paint and measure use them through this, so NaN or an infinity never reaches egui
+/// (whose widgets clamp with `f64::clamp`, which panics on a NaN bound).
+pub(crate) fn finite_or(x: f64, fallback: f64) -> f64 {
+    if x.is_finite() { x } else { fallback }
 }
 
 /// A widget-side change of props `keys` of node `i` (stamped, journaled, `prop_changed` when

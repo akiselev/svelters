@@ -110,6 +110,28 @@ fn nums<const N: usize>(a: &[J]) -> Option<[f64; N]> {
     Some(out)
 }
 
+/// The farthest a replayed coordinate goes from the screen origin (points). Finite arguments can
+/// still overflow through a transform (`scale(1e300, 1e300)`); egui's tessellator and text layout
+/// get finite, bounded numbers only.
+const FAR: f64 = 1e6;
+
+/// A screen coordinate: NaN is 0, the rest kept within [`FAR`].
+fn screen(v: f64) -> f32 {
+    if v.is_nan() { 0.0 } else { v.clamp(-FAR, FAR) as f32 }
+}
+
+/// A screen length (a stroke width, a font size): NaN and negatives are 0, the rest at most `max`.
+fn screen_len(v: f64, max: f64) -> f32 {
+    if v.is_nan() { 0.0 } else { v.clamp(0.0, max) as f32 }
+}
+
+/// The largest font size text is laid out at (points): egui rasterizes every glyph size into its
+/// font atlas.
+const MAX_FONT: f64 = 512.0;
+
+/// The widest stroke drawn (points).
+const MAX_STROKE: f64 = 1e4;
+
 fn with_alpha(c: Color32, alpha: f32) -> Color32 {
     c.gamma_multiply(alpha.clamp(0.0, 1.0))
 }
@@ -139,7 +161,7 @@ pub fn shapes(ctx: &egui::Context, origin: Pos2, clip: Rect, ops: &[J], clear: C
     let mut out: Drawn = Vec::new();
     let pt = |st: &St, x: f64, y: f64| {
         let (sx, sy) = st.tf.apply(x, y);
-        pos2(sx as f32, sy as f32)
+        pos2(screen(sx), screen(sy))
     };
     for op in ops {
         let Some(arr) = op.as_array() else { continue };
@@ -200,7 +222,7 @@ pub fn shapes(ctx: &egui::Context, origin: Pos2, clip: Rect, ops: &[J], clear: C
                 }
             }
             "setLineDash" => {
-                st.dash = a.first().and_then(J::as_array).map(|v| v.iter().filter_map(J::as_f64).map(|x| x as f32).collect()).unwrap_or_default();
+                st.dash = a.first().and_then(J::as_array).map(|v| v.iter().filter_map(J::as_f64).map(|x| screen_len(x, FAR)).collect()).unwrap_or_default();
             }
             "font" => {
                 if let Some(s) = a.first().and_then(J::as_str) {
@@ -318,7 +340,7 @@ pub fn shapes(ctx: &egui::Context, origin: Pos2, clip: Rect, ops: &[J], clear: C
                 }
             }
             "stroke" => {
-                let stroke = Stroke::new((st.width * st.tf.scale()) as f32, with_alpha(st.stroke, st.alpha));
+                let stroke = Stroke::new(screen_len(st.width * st.tf.scale(), MAX_STROKE), with_alpha(st.stroke, st.alpha));
                 for s in &path {
                     stroke_line(&mut out, &st, &s.pts, s.closed, stroke);
                 }
@@ -334,7 +356,7 @@ pub fn shapes(ctx: &egui::Context, origin: Pos2, clip: Rect, ops: &[J], clear: C
                         "fillRect" => fill_polygon(&mut out, st.clip, &pts, with_alpha(st.fill, st.alpha)),
                         "clearRect" => fill_polygon(&mut out, st.clip, &pts, clear),
                         _ => {
-                            let stroke = Stroke::new((st.width * st.tf.scale()) as f32, with_alpha(st.stroke, st.alpha));
+                            let stroke = Stroke::new(screen_len(st.width * st.tf.scale(), MAX_STROKE), with_alpha(st.stroke, st.alpha));
                             stroke_line(&mut out, &st, &pts, true, stroke);
                         }
                     }
@@ -342,8 +364,8 @@ pub fn shapes(ctx: &egui::Context, origin: Pos2, clip: Rect, ops: &[J], clear: C
             }
             "fillText" | "strokeText" => {
                 if let (Some(t), Some(x), Some(y)) = (a.first().and_then(J::as_str), num(a, 1), num(a, 2)) {
-                    let size = (st.size * st.tf.scale()) as f32;
-                    if size <= 0.0 {
+                    let size = screen_len(st.size * st.tf.scale(), MAX_FONT);
+                    if size < 0.5 {
                         continue;
                     }
                     let font = if st.mono { egui::FontId::monospace(size) } else { egui::FontId::proportional(size) };
@@ -388,8 +410,16 @@ fn stroke_line(out: &mut Drawn, st: &St, pts: &[Pos2], closed: bool, stroke: Str
     if pts.len() < 2 || stroke.width <= 0.0 {
         return;
     }
-    let dash: Vec<f32> = st.dash.iter().map(|d| d * st.tf.scale() as f32).collect();
-    if dash.len() >= 2 && dash.iter().any(|d| *d > 0.0) {
+    let dash: Vec<f32> = st.dash.iter().map(|d| screen_len(*d as f64 * st.tf.scale(), FAR)).collect();
+    // a period under a point would split a long line into millions of shapes: drawn solid
+    let period: f32 = if dash.len() == 1 { 2.0 * dash[0] } else { dash.iter().take(2).sum() };
+    if period < 1.0 {
+        if closed {
+            out.push((st.clip, Shape::closed_line(pts.to_vec(), stroke)));
+        } else {
+            out.push((st.clip, Shape::line(pts.to_vec(), stroke)));
+        }
+    } else if dash.len() >= 2 && dash.iter().any(|d| *d > 0.0) {
         let mut line = pts.to_vec();
         if closed {
             line.push(pts[0]);
@@ -521,9 +551,11 @@ fn parse_font(spec: &str, st: &mut St) {
     let mut family = Vec::new();
     for tok in spec.split_whitespace() {
         if size.is_none() {
-            if let Some(px) = tok.strip_suffix("px").and_then(|n| n.parse::<f64>().ok()) {
+            // (`NaNpx` and `infpx` parse as floats: only a finite, positive size counts)
+            let num = |unit: &str| tok.strip_suffix(unit).and_then(|n| n.parse::<f64>().ok()).filter(|n| n.is_finite() && *n > 0.0);
+            if let Some(px) = num("px") {
                 size = Some(px);
-            } else if let Some(pt) = tok.strip_suffix("pt").and_then(|n| n.parse::<f64>().ok()) {
+            } else if let Some(pt) = num("pt") {
                 size = Some(pt * 4.0 / 3.0);
             }
         } else {

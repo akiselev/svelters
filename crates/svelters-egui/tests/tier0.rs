@@ -454,6 +454,65 @@ fn stack_shows_one_child() {
     assert!(sr.width() < tw.floor());
 }
 
+/// Bad input never panics: images that do not load get a placeholder, NaN and infinities in the
+/// numeric props fall back, a display list with odd ops and overflowing transforms replays.
+#[test]
+fn bad_input_falls_back_and_never_panics() {
+    let mut rig = Rig::new();
+    let nan = Value::F64(f64::NAN);
+    let inf = Value::F64(f64::INFINITY);
+    // wider than the max texture side: scaled down to fit
+    let side = rig.harness.ctx.input(|i| i.max_texture_side) as u32;
+    rig.harness.ctx.include_bytes("bytes://wide.png", png(side + 100, 2, [0, 255, 0, 255]));
+    let (_w, col) = rig.window();
+    let missing = rig.leaf(col, "image", &[("source", s("/no/such/dir/missing.png")), ("align-self", s("start"))]);
+    let bad_url = rig.leaf(col, "image", &[("source", s("nope://what?")), ("align-self", s("start"))]);
+    let not_png = rig.leaf(col, "image", &[("source", s("/no/such/file.jpg")), ("align-self", s("start"))]);
+    let wide = rig.leaf(col, "image", &[("source", s("bytes://wide.png")), ("align-self", s("start"))]);
+    let rs = rig.leaf(col, "range-slider", &[("text", s("R")), ("min", nan.clone()), ("max", inf.clone()), ("low", nan.clone()), ("high", Value::F64(f64::NEG_INFINITY)), ("step", nan.clone())]);
+    let rs2 = rig.leaf(col, "range-slider", &[("text", s("Q")), ("min", Value::F64(10.0)), ("max", Value::F64(-10.0)), ("low", Value::F64(5.0)), ("high", Value::F64(1.0))]);
+    let dv = rig.leaf(col, "drag-value", &[("value", nan.clone()), ("min", nan.clone()), ("max", inf.clone()), ("speed", nan.clone()), ("accessible-name", s("D"))]);
+    rig.listen(dv, "changed");
+    let pb = rig.leaf(col, "progress-bar", &[("fraction", nan.clone()), ("show-percentage", Value::Bool(true))]);
+    let pb2 = rig.leaf(col, "progress-bar", &[("fraction", inf.clone()), ("animate", Value::Bool(true))]);
+    let sp = rig.leaf(col, "spinner", &[("size", inf.clone()), ("align-self", s("start"))]);
+    let cv = rig.leaf(col, "canvas", &[("content-width", inf.clone()), ("content-height", nan.clone()), ("ops", s("[]"))]);
+    let panel = rig.leaf(col, "panel", &[("side", s("top")), ("size", inf.clone())]);
+    rig.harness.run_steps(4);
+    for h in [missing, bad_url, not_png] {
+        assert_eq!(rig.drawn(h).size(), vec2(16.0, 16.0), "a placeholder");
+    }
+    let w = rig.drawn(wide).size();
+    assert!(w.x <= side as f32 && w.x > 0.0, "{w:?}");
+    for h in [rs, rs2, dv, pb, pb2, sp, cv, panel] {
+        let r = rig.drawn(h);
+        assert!(r.min.is_finite() && r.max.is_finite(), "{r:?}");
+    }
+    assert_eq!((rig.get(sp, "size"), rig.get(panel, "size"), rig.get(cv, "content-width")), (Value::Null, Value::Null, Value::F64(0.0)));
+    // the widgets still work, and NaN never comes back from them
+    rig.harness.get_by_role_and_label(Role::SpinButton, "D").set_value_accesskit(4.0);
+    rig.harness.get_by_role_and_label(Role::Slider, "R low").set_value_accesskit(0.5);
+    rig.harness.get_by_role_and_label(Role::Slider, "Q high").set_value_accesskit(7.0);
+    rig.harness.run_steps(4);
+    assert_eq!(events(&rig, &rig.take(), dv, "changed"), vec![vec![Value::F64(4.0)]]);
+    for (h, p) in [(rs, "low"), (rs, "high"), (rs2, "low"), (rs2, "high")] {
+        assert!(matches!(rig.get(h, p), Value::F64(x) if x.is_finite()), "{p}: {:?}", rig.get(h, p));
+    }
+    // odd display lists replay
+    let ops = r#"[[], 1, "x", ["arc"], ["moveTo", "a", 1], ["scale", 1e300, 1e300], ["font", "NaNpx sans"], ["setLineDash", [1e-9, 1e-9]],
+        ["lineWidth", 1e300], ["beginPath"], ["moveTo", 0, 0], ["lineTo", 1e300, 1e300], ["lineTo", -1e300, 1e300], ["closePath"], ["fill"], ["stroke"],
+        ["fillText", "big", 1, 1], ["arc", 0, 0, 1e300, 0, 1e300], ["clip"], ["fillRect", 0, 0, 1, 1], ["restore"], ["restore"]]"#;
+    rig.set(cv, "content-width", Value::F64(50.0));
+    rig.set(cv, "content-height", Value::F64(50.0));
+    rig.set(cv, "ops", s(ops));
+    rig.harness.run_steps(2);
+    let list: serde_json::Value = serde_json::from_str(ops).unwrap();
+    let r = egui::Rect::from_min_size(pos2(0.0, 0.0), vec2(50.0, 50.0));
+    for (_, shape) in svelters_egui::elements::canvas::shapes(&rig.harness.ctx, r.min, r, list.as_array().unwrap(), egui::Color32::GRAY) {
+        assert!(shape.visual_bounding_rect().is_finite() || shape.visual_bounding_rect() == egui::Rect::NOTHING, "{shape:?}");
+    }
+}
+
 /// W5: select-to-copy and middle-click paste through an installed provider (Linux only).
 #[cfg(target_os = "linux")]
 #[test]

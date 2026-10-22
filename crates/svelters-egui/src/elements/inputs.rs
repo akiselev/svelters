@@ -1,6 +1,6 @@
 //! Paint and measure of `hyperlink`, `radio-button`, `switch`, `range-slider` and `drag-value`.
 
-use super::{Painted, changed, text_size};
+use super::{Painted, changed, finite_or, text_size};
 use crate::kinds::P;
 use crate::layout::Metrics;
 use crate::scene::{Arena, W};
@@ -69,7 +69,15 @@ pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
             r
         }
         W::RangeSlider { low, high, min, max, step, text, show_value } => {
-            let before = (*low, *high);
+            // NaN or an infinity from the host never reaches egui (its clamps panic on a NaN
+            // bound): a rail end falls back to 0 or 1 and is kept within ±1e300 (so the rail's
+            // length is finite), a handle falls back to its end of the rail. The props keep what
+            // the host wrote until the user moves a handle.
+            let lo_end = finite_or(*min, 0.0).clamp(-1e300, 1e300);
+            let hi_end = finite_or(*max, if lo_end < 1.0 { 1.0 } else { lo_end + 1.0 }).clamp(-1e300, 1e300);
+            let (rail_lo, rail_hi) = if lo_end <= hi_end { (lo_end, hi_end) } else { (hi_end, lo_end) };
+            let (mut l, mut h) = (finite_or(*low, rail_lo), finite_or(*high, rail_hi));
+            let before = (l, h);
             // The rail fills the rect: it takes what the value boxes and caption leave.
             let sp = ui.spacing().clone();
             let mut extra = 0.0;
@@ -83,21 +91,23 @@ pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
             }
             // slack for value boxes that come out wider than interact_size.x (as `slider`)
             ui.spacing_mut().slider_width = (size.x - extra - 8.0).max(sp.interact_size.x);
-            let mut s = egui::RangeSlider::new(low, high, *min..=*max).show_value(*show_value);
-            if *step > 0.0 {
+            let mut s = egui::RangeSlider::new(&mut l, &mut h, rail_lo..=rail_hi).show_value(*show_value);
+            if step.is_finite() && *step > 0.0 {
                 s = s.step_by(*step);
             }
             if !text.is_empty() {
                 s = s.text(text.as_str());
             }
             let r = ui.add(s);
-            let (l, h) = (*low, *high);
             if (l, h) != before {
+                // both are stored: a handle the host left at NaN takes the value it was shown at
                 let mut keys = Vec::new();
-                if l != before.0 {
+                if l != *low {
+                    *low = l;
                     keys.push(P::Low);
                 }
-                if h != before.1 {
+                if h != *high {
+                    *high = h;
                     keys.push(P::High);
                 }
                 pending = Some((keys, vec![Value::F64(l), Value::F64(h)]));
@@ -105,10 +115,13 @@ pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
             r
         }
         W::DragValue { value, min, max, speed, decimals, prefix, suffix } => {
-            let before = *value;
-            let mut d = egui::DragValue::new(value).speed(*speed).min_size(size);
-            if min.is_some() || max.is_some() {
-                d = d.range(min.unwrap_or(f64::NEG_INFINITY)..=max.unwrap_or(f64::INFINITY));
+            // a NaN bound is no bound; a NaN value shows (and drags from) 0 or the lower bound
+            let (lo, hi) = (min.filter(|m| !m.is_nan()), max.filter(|m| !m.is_nan()));
+            let mut v = if value.is_nan() { lo.filter(|m| m.is_finite()).unwrap_or(0.0) } else { *value };
+            let before = v;
+            let mut d = egui::DragValue::new(&mut v).speed(finite_or(*speed, 1.0)).min_size(size);
+            if lo.is_some() || hi.is_some() {
+                d = d.range(lo.unwrap_or(f64::NEG_INFINITY)..=hi.unwrap_or(f64::INFINITY));
             }
             if let Some(n) = decimals {
                 d = d.fixed_decimals(*n as usize);
@@ -120,8 +133,8 @@ pub(super) fn paint(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>
                 d = d.suffix(suffix.clone());
             }
             let r = ui.add(d);
-            let v = *value;
             if v != before {
+                *value = v;
                 pending = Some((vec![P::Value], vec![Value::F64(v)]));
             }
             r

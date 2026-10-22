@@ -87,6 +87,18 @@ same `@svelters/canvas` `draw()` attachment works unchanged: egui posts `resize(
   come from loaders the embedder installs (egui_extras); egui asks every loader in turn.
 - **Spinner and `progress-bar animate`** repaint every frame while shown (egui's own animation); a settled app has
   none.
+- **Bad input never panics** (WG2b-2). An `image` whose source does not load (missing file, unknown scheme, not a
+  PNG, decode error) is measured at 16×16 and drawn as a crossed-out frame; a loaded one replaces it and remeasures.
+  A PNG with no pixels is a load error; one with a side over the renderer's `max_texture_side` is scaled down to fit
+  (egui asserts the limit, a GPU backend refuses it). Numeric props keep what the host wrote, but NaN and
+  infinities never reach egui (whose `f64::clamp`s panic on a NaN bound): a `range-slider` rail end falls back to
+  0/1 and stays within ±1e300, a handle falls back to its rail end, a reversed rail is sorted; a `drag-value` NaN
+  bound is no bound, a NaN value is shown as the lower bound or 0, a non-finite speed is 1; a `progress-bar` NaN
+  fraction is empty, +inf full. Layout lengths (`panel.size`, `spinner.size`, `canvas` `content-width`/
+  `-height`) drop NaN and infinities on write (null, or 0 for the canvas) and are at most 1e7. The canvas replay
+  keeps every screen coordinate within ±1e6, font sizes within 512 and stroke widths within 1e4 (a transform can
+  overflow finite arguments), ignores `NaNpx`/`infpx` fonts, and strokes a dash pattern with a period under a
+  point solid. Test: `tier0.rs` `bad_input_falls_back_and_never_panics`.
 
 ## W5: Linux primary selection
 
