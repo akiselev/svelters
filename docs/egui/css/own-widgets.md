@@ -79,6 +79,23 @@ still paint their parts from built-in tables plus the host's computed style, so 
 them has no effect yet. Style the host (`checkbox:checked { … }`) or wait for their switch to
 `cx.part`. The `scrollbar` thumb and `split-view` sash have no `::part()` yet either.
 
+### List rows *(pending OW5a)*
+
+> **Pending.** This is OW5a's design (in progress, not on master). Until it lands, list rows can't be
+> styled this way.
+
+`virtual-list::part(row)` is styled per row: each drawn row's part style is computed with the list's
+state bits set to that row's state (`:hover`, `:selected`, `:focus-visible`), and `:focus-within` on the
+list tells active from inactive selection. The row's logical index drives the structural classes:
+
+```css
+virtual-list::part(row):selected                        { background-color: var(--sv-list-active-selection-bg); }
+virtual-list:not(:focus-within)::part(row):selected     { background-color: var(--sv-list-inactive-selection-bg); }
+virtual-list::part(row):nth-child(even)                 { background-color: var(--sv-list-even-bg); }
+```
+
+The token names here are only examples. Check the tokens page at your pin.
+
 ## State pseudo-classes
 
 Units and props set state bits; each bit is a pseudo-class. The widget's reference page says which
