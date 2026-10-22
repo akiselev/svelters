@@ -1162,6 +1162,8 @@ name = "egui-kinds-example"
 version = "0.0.0"
 dependencies = [
  "egui_kittest",
+ "schemars",
+ "serde",
  "serde_json",
  "svelters",
  "svelters-abi",

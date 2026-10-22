@@ -4,3 +4,23 @@ import { NativeObject, CONSTRUCT, call, callStatic, construct, getProp, setProp,
 // Without the renderer (no `__svelters_node`) a result is a bare handle number: release it when the wrapper is collected.
 const gc = typeof FinalizationRegistry === 'function' ? new FinalizationRegistry((h) => { try { globalThis.__svelters_host.destroy(h); } catch {} }) : null;
 const own = (w) => { const h = w.svlHandle; if (gc && typeof h === 'number' && typeof globalThis.__svelters_node !== 'function') gc.register(w, h); };
+
+export class DocHandle extends NativeObject {
+  static native = 'app:cad.DocHandle';
+  static [CONSTRUCT](...args) {
+    return construct('app:cad.DocHandle', args);
+  }
+  constructor(...args) {
+    super(...args);
+    own(this);
+  }
+  get edits() {
+    return getProp(this, 'edits');
+  }
+  get name() {
+    return getProp(this, 'name');
+  }
+}
+
+// For persist(): a persisted object comes back as its class.
+registerClass(DocHandle);
