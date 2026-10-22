@@ -1631,6 +1631,17 @@ fn events(input: DeriveInput) -> syn::Result<Ts> {
 ///   `FromJs + IntoJs + Clone` (`IntoJs` for reads), so records, enums, `Option`, `Vec`, `Json<T>`.
 /// - Props without `default` and state fields start at `Default::default()`.
 ///
+/// Own widgets (OW0, ARCH-WIDGETS §1.3):
+/// - `#[behavior] press: Pressable` (or `#[behavior(params = method)]`, a `fn(&self) -> Params`):
+///   a behaviour unit (`svelters_egui::interact::Unit`) run in declaration order by the generated
+///   `self.run_units(cx, ui, &resp)`, which returns a `<Name>Fired` struct with one field of
+///   intents per unit; also generated: `units_sense()`, `units_a11y(node)`,
+///   `units_claims(key, mods)` and `units_next_frame()`.
+/// - `#[part] mark: Part` (a paint part) and `#[part(node)] thumb: Part` (a node part): the
+///   `::part(name)` names of the kind, in kebab-case.
+/// - `replaces = "<tag>"` (svelters-egui only): the struct implements that built-in kind; the tag
+///   is the built-in's, and props and events are routed to the kind's row by name.
+///
 /// The generated code names `::svelters_egui`, so the crate depends on `svelters-egui` too.
 #[proc_macro_attribute]
 pub fn widget(attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -1677,6 +1688,10 @@ enum WidgetField {
     Prop { name: String, bind: bool, measure: bool, default: Option<Expr> },
     Event,
     State,
+    /// OW0: a behaviour unit, with the method giving its params.
+    Behavior { params: Option<syn::Ident> },
+    /// OW0: a part, `node` for a node part.
+    Part { name: String, node: bool },
 }
 
 fn caps_expr(e: &Expr, out: &mut Vec<syn::Ident>) -> syn::Result<()> {
@@ -1721,6 +1736,7 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
     let mut tag: Option<String> = None;
     let mut bname: Option<String> = None;
     let mut caps: Vec<syn::Ident> = Vec::new();
+    let mut replaces: Option<String> = None;
     syn::meta::parser(|m| {
         if m.path.is_ident("namespace") {
             namespace = Some(m.value()?.parse::<syn::LitStr>()?.value());
@@ -1735,8 +1751,10 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
         } else if m.path.is_ident("caps") {
             let e: Expr = m.value()?.parse()?;
             caps_expr(&e, &mut caps)?;
+        } else if m.path.is_ident("replaces") {
+            replaces = Some(m.value()?.parse::<syn::LitStr>()?.value());
         } else {
-            return Err(m.error("expected `namespace = \"...\"`, `tag = \"...\"` or `caps = A | B`"));
+            return Err(m.error("expected `namespace = \"...\"`, `tag = \"...\"`, `caps = A | B` or `replaces = \"<tag>\"`"));
         }
         Ok(())
     })
@@ -1784,9 +1802,14 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
         }
         format!("{namespace}.{n}")
     } else {
-        tag.unwrap_or_else(|| kebab(&name.to_string()))
+        tag.or_else(|| replaces.clone()).unwrap_or_else(|| kebab(&name.to_string()))
     };
-    if !behavior && (!tag.contains('-') || tag.chars().any(|c| c.is_ascii_uppercase())) {
+    if let Some(r) = &replaces
+        && *r != tag
+    {
+        return Err(syn::Error::new(name.span(), format!("`replaces = \"{r}\"`: the tag is the replaced built-in's (`{r}`), not `{tag}`")));
+    }
+    if !behavior && replaces.is_none() && (!tag.contains('-') || tag.chars().any(|c| c.is_ascii_uppercase())) {
         return Err(syn::Error::new(
             name.span(),
             format!(
@@ -1840,6 +1863,35 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                 kind = WidgetField::Event;
             } else if a.path().is_ident("state") {
                 kind = WidgetField::State;
+            } else if a.path().is_ident("behavior") && !behavior {
+                let mut params = None;
+                if matches!(a.meta, Meta::List(_)) {
+                    a.parse_nested_meta(|m| {
+                        if m.path.is_ident("params") {
+                            params = Some(m.value()?.parse::<syn::Ident>()?);
+                            Ok(())
+                        } else {
+                            Err(m.error("#[behavior] options: params = method"))
+                        }
+                    })?;
+                }
+                kind = WidgetField::Behavior { params };
+            } else if a.path().is_ident("part") && !behavior {
+                let mut node = false;
+                if matches!(a.meta, Meta::List(_)) {
+                    a.parse_nested_meta(|m| {
+                        if m.path.is_ident("node") {
+                            node = true;
+                            Ok(())
+                        } else if m.path.is_ident("paint") {
+                            Ok(())
+                        } else {
+                            Err(m.error("#[part] options: node, paint"))
+                        }
+                    })?;
+                }
+                let js = ident.to_string().trim_start_matches("r#").replace('_', "-");
+                kind = WidgetField::Part { name: js, node };
             } else {
                 keep.push(a);
             }
@@ -1863,6 +1915,9 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
     let mut gets = Vec::new();
     let mut prop_i = 0usize;
     let mut event_i = 0u16;
+    // OW0: behaviour units and parts
+    let mut part_entries = Vec::new();
+    let mut unit_fields: Vec<(syn::Ident, Type, Ts)> = Vec::new();
     for (ident, ty, fdocs, kind) in &kinds {
         match kind {
             WidgetField::Prop { name: js, bind, measure, default } => {
@@ -1898,8 +1953,87 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                 event_i += 1;
             }
             WidgetField::State => inits.push(quote! { #ident: ::core::default::Default::default() }),
+            WidgetField::Behavior { params } => {
+                inits.push(quote! { #ident: ::core::default::Default::default() });
+                let p = match params {
+                    Some(m) => quote! { self.#m() },
+                    None => quote! { <<#ty as ::svelters_egui::interact::Unit>::Params as ::core::default::Default>::default() },
+                };
+                unit_fields.push((ident.clone(), ty.clone(), p));
+            }
+            WidgetField::Part { name: js, node } => {
+                inits.push(quote! { #ident: ::core::default::Default::default() });
+                part_entries.push(quote! { ::svelters_egui::provider::PartEntry { name: #js, docs: #fdocs, node: #node } });
+            }
         }
     }
+    let vis = &item.vis;
+    let units_impl = if unit_fields.is_empty() {
+        quote! {}
+    } else {
+        let fired = syn::Ident::new(&format!("{name}Fired"), name.span());
+        let idents: Vec<&syn::Ident> = unit_fields.iter().map(|(i, _, _)| i).collect();
+        let tys: Vec<&Type> = unit_fields.iter().map(|(_, t, _)| t).collect();
+        let params: Vec<&Ts> = unit_fields.iter().map(|(_, _, p)| p).collect();
+        let pnames: Vec<syn::Ident> = idents.iter().map(|i| syn::Ident::new(&format!("__p_{i}"), i.span())).collect();
+        let fired_doc = format!("The intents of [`{name}`]'s behaviour units in one pass (`run_units`), one field per unit.");
+        quote! {
+            #[doc = #fired_doc]
+            #[allow(dead_code)]
+            #vis struct #fired {
+                #( pub #idents: ::svelters_egui::interact::Intents<<#tys as ::svelters_egui::interact::Unit>::Intent>, )*
+            }
+
+            #[allow(dead_code)]
+            impl #name {
+                /// What the units sense, merged (pass it to `cx.interact`).
+                #vis fn units_sense(&self) -> ::svelters_egui::egui::Sense {
+                    #( let #pnames = #params; )*
+                    ::svelters_egui::egui::Sense::hover() #( | ::svelters_egui::interact::Unit::sense(&self.#idents, &#pnames) )*
+                }
+
+                /// Runs the units in declaration order on `resp` (the node's `cx.interact`), sets
+                /// their state bits and restyles in the same frame; returns their intents.
+                #vis fn run_units(&mut self, cx: &mut ::svelters_egui::provider::WidgetCx<'_>, ui: &::svelters_egui::egui::Ui, resp: &::svelters_egui::egui::Response) -> #fired {
+                    #( let #pnames = #params; )*
+                    let mut __fired = #fired { #( #idents: ::core::default::Default::default(), )* };
+                    {
+                        let __f = &mut __fired;
+                        #( let #idents = &mut self.#idents; )*
+                        cx.run_units(ui, resp, |__icx| {
+                            #( ::svelters_egui::interact::Unit::input(#idents, &#pnames, __icx, &mut __f.#idents); )*
+                        });
+                    }
+                    __fired
+                }
+
+                /// The units' part of the node's AccessKit node.
+                #vis fn units_a11y(&self, node: &mut ::svelters_egui::egui::accesskit::Node) {
+                    #( ::svelters_egui::interact::Unit::a11y(&self.#idents, &#params, node); )*
+                }
+
+                /// EV3 R11: whether a unit claims `key` while the node is focused.
+                #vis fn units_claims(&self, key: ::svelters_egui::egui::Key, m: ::svelters_egui::egui::Modifiers) -> bool {
+                    false #( || ::svelters_egui::interact::Unit::claims(&self.#idents, &#params, key, m) )*
+                }
+
+                /// The soonest frame a unit needs without input.
+                #vis fn units_next_frame(&self) -> ::core::option::Option<::std::time::Duration> {
+                    [#( ::svelters_egui::interact::Unit::next_frame(&self.#idents) ),*].into_iter().flatten().min()
+                }
+            }
+        }
+    };
+    let replaces_tokens = match &replaces {
+        Some(r) => quote! { ::core::option::Option::Some(#r) },
+        None => quote! { ::core::option::Option::None },
+    };
+    // an own widget replacing a built-in takes the row's types: no export-schema module of its own
+    let types_submit = if replaces.is_some() {
+        quote! {}
+    } else {
+        quote! { __p::inventory::submit! { __p::KindTypesDef { module: #namespace, kind: #id, describe: __svl_types } } }
+    };
     let name_str = name.to_string();
     let (new_body, attaches_to) = if behavior {
         (
@@ -1920,11 +2054,13 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
 
             static __SVL_PROPS: &[::svelters_egui::provider::PropEntry] = &[#(#prop_entries),*];
             static __SVL_EVENTS: &[::svelters_egui::provider::EventEntry] = &[#(#event_entries),*];
+            static __SVL_PARTS: &[::svelters_egui::provider::PartEntry] = &[#(#part_entries),*];
 
             fn __svl_new() -> ::std::boxed::Box<dyn ::svelters_egui::provider::ErasedWidget> {
                 #new_body
             }
 
+            #[allow(dead_code)]
             fn __svl_types(b: &mut __p::TypeBuilder) -> ::std::vec::Vec<__p::TypeRef> {
                 ::std::vec![#(#describe,)* #(#event_describe),*]
             }
@@ -1941,10 +2077,12 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                 events: __SVL_EVENTS,
                 new: __svl_new,
                 attaches_to: #attaches_to,
+                replaces: #replaces_tokens,
+                parts: __SVL_PARTS,
             };
 
             __p::inventory::submit! { ::svelters_egui::provider::KindRef(&__SVL_KIND) }
-            __p::inventory::submit! { __p::KindTypesDef { module: #namespace, kind: #id, describe: __svl_types } }
+            #types_submit
 
             impl ::svelters_egui::provider::KindDecl for #name {
                 const KIND: &'static ::svelters_egui::provider::KindEntry = &__SVL_KIND;
@@ -1977,5 +2115,7 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                 }
             }
         };
+
+        #units_impl
     })
 }

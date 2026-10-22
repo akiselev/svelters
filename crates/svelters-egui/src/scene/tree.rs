@@ -181,7 +181,9 @@ impl Scene {
     /// Creates a detached node of kind index `kind` (a window: a new root of its own).
     pub(crate) fn create(&mut self, kind: usize, owner: Owner) -> Result<NodeId, SceneError> {
         let tag = (kind < kinds::KindRegistry::global().len()).then(|| kinds::kind(kind).tag).flatten().ok_or_else(|| SceneError::Invalid(format!("unknown kind index {kind}")))?;
-        let w = builtin_payload(kind).ok_or_else(|| SceneError::Invalid(format!("<{tag}> is not creatable")))?;
+        // OW0: a built-in kind whose own widget is switched on (`crate::widgets`) gets it
+        let own = crate::widgets::own_payload(&self.own, kind);
+        let w = own.or_else(|| builtin_payload(kind)).ok_or_else(|| SceneError::Invalid(format!("<{tag}> is not creatable")))?;
         let (id, fresh) = self.slots.alloc();
         let tick = self.stamp();
         let i = id.index() as usize;

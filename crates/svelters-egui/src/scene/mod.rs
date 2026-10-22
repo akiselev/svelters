@@ -108,6 +108,9 @@ pub struct Scene {
     pub(crate) style: crate::style::SceneStyle,
     /// What a taken-out payload reads as (SG4, `Scene::w`).
     taken_w: W,
+    /// OW0: which built-in kinds new nodes get as svelters' own widget (`crate::widgets`), from
+    /// `SVELTERS_OWN_WIDGETS` or `EguiBackend::set_own_widgets`.
+    pub(crate) own: crate::widgets::KindSet,
 }
 
 impl Default for Scene {
@@ -130,6 +133,7 @@ impl Default for Scene {
             announce: Vec::new(),
             style: Default::default(),
             taken_w: W::Box,
+            own: crate::widgets::KindSet::from_env().unwrap_or_default(),
         }
     }
 }

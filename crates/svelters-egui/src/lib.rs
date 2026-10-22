@@ -17,6 +17,10 @@
 // are exempt; the legitimate I/O sites carry `#[allow(clippy::disallowed_methods)]` with a reason.
 #![cfg_attr(not(test), deny(clippy::disallowed_methods))]
 
+// OW0: the own widgets (`widgets/`) are `#[svelters::widget]` kinds of this crate, whose generated
+// code names `::svelters_egui`.
+extern crate self as svelters_egui;
+
 pub mod backend;
 pub mod dialogs;
 pub mod embed;
@@ -25,12 +29,16 @@ pub mod elements;
 /// SVP6: font weights and icon name tables the embedder registers (WG1).
 pub mod fonts;
 pub mod focus;
+/// OW0: behaviour units of the own widgets (hover, press, focus; ARCH-WIDGETS §1.2).
+pub mod interact;
 pub mod kinds;
 pub mod layout;
 /// W5: the Linux primary selection in the text kinds (select-to-copy, middle-click paste).
 pub mod primary;
 /// FX1: native focus policy and word rules (GTK on Linux).
 pub mod native;
+/// OW0: paint primitives of the own widgets (box, text, icon, image; ARCH-WIDGETS §1.1).
+pub mod paint;
 pub mod platform;
 pub mod provider;
 pub mod runner;
@@ -41,6 +49,8 @@ pub mod style;
 /// DS1: the theme (VS Code's base look as one token map: the `:root` sheet, the egui Style,
 /// typed getters).
 pub mod theme;
+/// OW0: svelters' own widgets (ARCH-WIDGETS §1.3) and the own-widget switch (§6.2).
+pub mod widgets;
 
 mod a11y;
 /// AU1: the accessible name the automation selectors share with AccessKit.
@@ -76,8 +86,11 @@ pub use spec::dump;
 /// (`#[svelters::behavior]`) needs.
 pub mod prelude {
     pub use crate::provider::{
-        A11yCx, AvailableSpace, Behavior, BehaviorCx, Caps, Event, ExtKey, Hit, HitCx, IntoStateBits, KindDecl, LayoutCx, MeasureCx, PassCx, PassScope, PrepareCx, ProviderCx, ScenePass, StateBit, StateBits, StateProvider, Widget, WidgetCx,
+        A11yCx, AvailableSpace, Behavior, BehaviorCx, Caps, Dispatched, Event, ExtKey, Hit, HitCx, IntoStateBits, KindDecl, LayoutCx, MeasureCx, Part, PassCx, PassScope, PrepareCx, ProviderCx, ScenePass, StateBit, StateBits, StateProvider, Widget, WidgetCx,
     };
+    /// OW0: units and primitives for own widgets.
+    pub use crate::interact::{Focusable, Hoverable, Intents, Pressable, Unit};
+    pub use crate::paint::{StyleView, Ua, UaRule, UaValue};
     pub use crate::scene::{NodeId, NodeMut, NodeRef, SceneMut, SceneRef};
     pub use egui;
 }

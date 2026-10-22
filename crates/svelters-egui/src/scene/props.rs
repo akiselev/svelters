@@ -96,6 +96,9 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
     if let P::Ext(i) = def.key {
         return crate::provider::set_prop(w, i as usize, v); // RA1: a provider kind's field
     }
+    if matches!(w, W::Ext(_)) && !is_common(def.key) {
+        return crate::provider::set_replaced_prop(w, def, v); // OW0: an own widget's field
+    }
     let v = if matches!(v, Value::Null) && !def.nullable { default_value(def) } else { v.clone() };
     let v = &v;
     // WG2b: its kinds' own props (`crate::elements`); the `Widget`/`Box` props fall through
@@ -143,8 +146,8 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (P::JustifyContent, _) => c.justify_content = as_enum(v, kinds::JUSTIFY)?,
         (P::Autofocus, _) => c.autofocus = as_bool(v)?,
         (P::FocusScope, _) => c.focus_scope = as_enum(v, kinds::FOCUS_SCOPE)?,
-        (P::Default, W::Button { .. }) => c.default_button = as_bool(v)?,
-        (P::Cancel, W::Button { .. }) => c.cancel_button = as_bool(v)?,
+        (P::Default, W::Button { .. } | W::Ext(_)) => c.default_button = as_bool(v)?,
+        (P::Cancel, W::Button { .. } | W::Ext(_)) => c.cancel_button = as_bool(v)?,
         (P::Invalid, _) => c.invalid = as_bool(v)?,
         // WG4b: drag and drop on any node (`kinds/dnd.rs`), before the per-payload catch-alls
         (P::DragType | P::DragData | P::DropTypes, _) => crate::kinds::dnd::set(c, def.key, as_str(v)?),
@@ -298,6 +301,11 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
     if let P::Ext(i) = def.key {
         return crate::provider::get_prop(n, i as usize); // RA1: a provider kind's field
     }
+    if let W::Ext(x) = n.w
+        && !is_common(def.key)
+    {
+        return crate::provider::get_replaced_prop(x, def); // OW0: an own widget's field
+    }
     if let Some(v) = crate::elements::get_prop(n.w, def) {
         return Ok(v); // WG2b: its kinds' own props
     }
@@ -335,8 +343,8 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::JustifyContent, _) => s(c.justify_content),
         (P::Autofocus, _) => Value::Bool(c.autofocus),
         (P::FocusScope, _) => s(c.focus_scope),
-        (P::Default, W::Button { .. }) => Value::Bool(c.default_button),
-        (P::Cancel, W::Button { .. }) => Value::Bool(c.cancel_button),
+        (P::Default, W::Button { .. } | W::Ext(_)) => Value::Bool(c.default_button),
+        (P::Cancel, W::Button { .. } | W::Ext(_)) => Value::Bool(c.cancel_button),
         (P::Invalid, _) => Value::Bool(c.invalid),
         (P::DragType | P::DragData | P::DropTypes, _) => s(crate::kinds::dnd::get(c, def.key)), // WG4b
         // WG2a

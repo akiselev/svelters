@@ -329,6 +329,12 @@ impl Metrics {
 
     /// The size the widget of `w` asks for with no wrapping (content + chrome).
     pub fn intrinsic(&self, w: &W) -> Vec2 {
+        self.intrinsic_with(w, None)
+    }
+
+    /// [`Self::intrinsic`] with the node's computed style (OW0: own widgets measure content +
+    /// padding + border from it).
+    pub(crate) fn intrinsic_with(&self, w: &W, css: Option<&svelters_style::ComputedStyle>) -> Vec2 {
         let sp = &self.style.spacing;
         let interact = sp.interact_size;
         match w {
@@ -363,7 +369,7 @@ impl Metrics {
             // ---- WG2a ----
             W::Menu(x) => crate::menus::measure(self, x),
             W::Overlay(_) => Vec2::ZERO,
-            W::Ext(x) => x.measure(self, crate::provider::AvailableSpace::MaxContent),
+            W::Ext(x) => x.measure(self, crate::provider::AvailableSpace::MaxContent, css),
             // ---- WG2b (`crate::elements`) ----
             W::Hyperlink { .. }
             | W::RadioButton { .. }
@@ -415,7 +421,7 @@ impl Metrics {
         match w {
             W::Label { text, wrap: "wrap", weight, .. } => Some(self.text_size_in(text, self.weighted(text, *weight), Some(width))),
             W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::HEIGHT_FOR_WIDTH) => {
-                Some(x.measure(self, crate::provider::AvailableSpace::Definite(width)))
+                Some(x.measure(self, crate::provider::AvailableSpace::Definite(width), None))
             }
             _ => None,
         }
@@ -537,11 +543,12 @@ impl LayoutPartialTree for Tree<'_> {
                 Payload::Builtin(w) => w,
                 Payload::Vacant => unreachable!("vacant payload in layout"),
             };
+            let css = s.slots.id_at(i).and_then(|id| s.style.computed(id)).cloned();
             let lb = &mut s.layout[i];
             let mut fonts = 0;
             let intrinsic = *lb.intrinsic.get_or_insert_with(|| {
                 fonts += 1;
-                m.intrinsic(w)
+                m.intrinsic_with(w, css.as_deref())
             });
             let out = compute_leaf_layout(inputs, &lb.style, |_, _| 0.0, |known, avail| {
                 if let Size { width: Some(w), height: Some(hh) } = known {
@@ -1182,7 +1189,8 @@ pub(crate) fn remeasure(s: &mut Scene, m: &Metrics, r: RootIx) -> bool {
         s.core[i].flags.remove(NodeFlags::IN_REMEASURE);
         s.core[i].dirty.remove(Dirty::MEASURE);
         let old = s.layout[i].intrinsic.take();
-        let new = m.intrinsic(s.w(i));
+        let css = s.slots.id_at(i).and_then(|id| s.style.computed(id)).cloned();
+        let new = m.intrinsic_with(s.w(i), css.as_deref());
         s.counters.leaves_measured += 1;
         s.layout[i].intrinsic = Some(new);
         // A wrapping label that does not fit its last width may wrap differently with new text.

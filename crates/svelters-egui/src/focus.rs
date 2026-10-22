@@ -538,6 +538,8 @@ pub(crate) fn record(arena: &Arena, i: usize, ui: &Ui, resp: &egui::Response) {
     let role = match arena.w(i) {
         W::TextEdit { multiline, .. } => Role::Text { multiline: *multiline },
         W::Button { .. } => Role::Button { default: c.default_button, cancel: c.cancel_button },
+        // OW0: an own widget replacing `button` keeps its EV3 role (default and cancel keys)
+        W::Ext(x) if x.entry().replaces == Some("button") => Role::Button { default: c.default_button, cancel: c.cancel_button },
         W::Slider { .. } | W::RangeSlider { .. } | W::DragValue { .. } => Role::Slider,
         W::Ext(x) => {
             let w = x.0.try_borrow();

@@ -31,7 +31,7 @@
 //!
 //! Writer lane: STYLE.
 
-mod shadow;
+pub(crate) mod shadow;
 pub(crate) use shadow::paint_bounds;
 
 use crate::backend::EguiBackend;
@@ -89,8 +89,25 @@ pub(crate) const ENGINE_PROPS: &[(&str, &str, &[&str])] = &[
 
 /// The bits the walk owns: set from the pass's interaction and from props, never by providers.
 pub(crate) const WALK_BITS: StateBits = StateBits(
-    StateBits::HOVERED.0 | StateBits::PRESSED.0 | StateBits::FOCUSED.0 | StateBits::FOCUS_WITHIN.0 | StateBits::DISABLED.0 | StateBits::CHECKED.0 | StateBits::SELECTED.0 | StateBits::EXITING.0,
+    StateBits::HOVERED.0
+        | StateBits::PRESSED.0
+        | StateBits::FOCUSED.0
+        | StateBits::FOCUS_WITHIN.0
+        | StateBits::DISABLED.0
+        | StateBits::CHECKED.0
+        | StateBits::SELECTED.0
+        | StateBits::EXITING.0
+        | StateBits::FOCUS_VISIBLE.0,
 );
+
+/// OW0: the walk-owned bits an own widget (`Caps::PAINTS_BOX`) keeps itself: its units' and its
+/// prop mirror's. The walk sets only `disabled` and `exiting` on it.
+const OWN_KEEPS: StateBits = StateBits(WALK_BITS.0 & !(StateBits::DISABLED.0 | StateBits::EXITING.0));
+
+/// OW0: an own widget draws itself (`crate::paint`) and owns its interaction bits.
+pub(crate) fn is_own(w: &W) -> bool {
+    matches!(w, W::Ext(x) if x.entry().caps.contains(crate::provider::Caps::PAINTS_BOX))
+}
 
 /// One node's style inputs and outputs.
 #[derive(Debug, Default)]
@@ -255,6 +272,11 @@ impl Element for NodeRef<'_> {
     fn state(&self) -> StateMask {
         StateMask(NodeRef::state(*self).0)
     }
+    /// OW0: the `focus-visible` bit (own widgets: Focusable's rule; stock leaves: the walk sets it
+    /// with `focused`, as before).
+    fn is_focus_visible(&self) -> bool {
+        NodeRef::state(*self).contains(StateBits::FOCUS_VISIBLE)
+    }
 }
 
 /// A node with its state replaced (the per-state styles of a stock widget); other nodes as is.
@@ -304,6 +326,9 @@ impl Element for Forced<'_> {
     }
     fn state(&self) -> StateMask {
         if self.n.id() == self.subject { StateMask(self.state.0) } else { Element::state(&self.n) }
+    }
+    fn is_focus_visible(&self) -> bool {
+        self.state().contains(StateMask(StateBits::FOCUS_VISIBLE.0))
     }
 }
 
@@ -596,7 +621,7 @@ pub(crate) fn before_container(s: &mut Scene, i: usize, r: egui::Rect, ui: &egui
     }
     let hovered = ui.rect_contains_pointer(r);
     let pressed = hovered && ui.ctx().input(|inp| inp.pointer.primary_down());
-    let mut b = s.prop_bits(i) | StateBits(s.core[i].state.0 & (StateBits::FOCUSED.0 | StateBits::FOCUS_WITHIN.0));
+    let mut b = s.prop_bits(i) | StateBits(s.core[i].state.0 & (StateBits::FOCUSED.0 | StateBits::FOCUS_WITHIN.0 | StateBits::FOCUS_VISIBLE.0));
     b.set(StateBits::HOVERED, hovered);
     b.set(StateBits::PRESSED, pressed);
     s.set_walk_state(i, b);
@@ -609,6 +634,33 @@ pub(crate) fn before_container(s: &mut Scene, i: usize, r: egui::Rect, ui: &egui
     }
 }
 
+/// OW0: an own widget's bits after its units ran (`WidgetCx::commit_state`): stored now
+/// (journaled), the restyle they reach run now, and `:focus-within` moved with `focused`, so the
+/// widget paints this pass's state.
+pub(crate) fn set_own_state(s: &mut Scene, i: usize, bits: StateBits) {
+    let before = s.core[i].state;
+    if bits != before {
+        s.core[i].state = bits;
+        let t = s.stamp();
+        s.core[i].changed = t;
+        s.core[i].dirty.insert(Dirty::PAINT);
+        s.record_state(i, before, SceneOrigin::Widget);
+    }
+    if !s.style.active {
+        return;
+    }
+    let Some(id) = s.slots.id_at(i) else { return };
+    if bits != before {
+        let reach = s.style.stylist.invalidation().state_changed(StateMask(before.0), StateMask(bits.0));
+        s.restyle_reached_now(id, reach);
+    }
+    if bits.contains(StateBits::FOCUSED) {
+        s.set_focus(Some(id));
+    } else if s.style.focus == Some(id) {
+        s.set_focus(None);
+    }
+}
+
 /// Before a leaf or provider node paints into `child`: its state from this pass's response, the
 /// restyle that reaches, then its visuals on `child`.
 pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut egui::Ui) {
@@ -616,6 +668,19 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
         return;
     }
     let Some(id) = s.slots.id_at(i) else { return };
+    if is_own(s.w(i)) {
+        // OW0: its units set hover, press and focus during its `ui` (`WidgetCx::run_units`), and
+        // it paints its own box: only the prop bits here
+        let b = s.prop_bits(i) | StateBits(s.core[i].state.0 & OWN_KEEPS.0);
+        s.set_walk_state(i, b);
+        if let Some(c) = s.style.computed(id).cloned()
+            && let Some(ComputedValue::Number(o)) = c.get("opacity")
+            && *o < 1.0
+        {
+            child.multiply_opacity(o.max(0.0));
+        }
+        return;
+    }
     // the id the widget takes: TextEdit's is the node's (leaf.rs), the others the child's first
     // auto id; providers draw with the node's id
     let wid = match s.w(i) {
@@ -634,6 +699,7 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
     b.set(StateBits::HOVERED, hovered);
     b.set(StateBits::PRESSED, pressed);
     b.set(StateBits::FOCUSED, focused);
+    b.set(StateBits::FOCUS_VISIBLE, focused);
     s.set_walk_state(i, b);
     if focused {
         s.set_focus(Some(id));
@@ -1343,10 +1409,19 @@ mod tests {
     /// The engine's state bits are the scene's (CSS.md §2.3): same names, same bits.
     #[test]
     fn state_bit_tables_are_pinned_together() {
-        assert_eq!(StateMask::BUILTIN.len(), StateBits::BUILTIN.len());
+        // OW0 adds bits 14-22 here and OW-CSS adds them to svelters-style (ARCH-WIDGETS §2.2), in
+        // two lanes: until both are merged, one table may run ahead of the other by those rows only.
+        // Every row both have is the same name on the same bit.
+        let n = StateMask::BUILTIN.len().min(StateBits::BUILTIN.len());
         for ((a, ma), (b, mb)) in StateMask::BUILTIN.iter().zip(StateBits::BUILTIN) {
             assert_eq!((a, ma.0), (b, mb.0));
         }
+        let longer: Vec<u64> = if StateMask::BUILTIN.len() > n {
+            StateMask::BUILTIN[n..].iter().map(|(_, m)| m.0).collect()
+        } else {
+            StateBits::BUILTIN[n..].iter().map(|(_, m)| m.0).collect()
+        };
+        assert!(n >= 14 && longer.iter().all(|b| (1 << 14..=1 << 22).contains(b)), "the tables differ beyond OW0's bits 14-22");
     }
 
     #[test]
