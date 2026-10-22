@@ -356,6 +356,29 @@ impl<'a> ScopeRewriter<'a> {
     }
 }
 
+/// FW1: the snippet has a bare `on:x` (it reads the component's own `$$props`), so it stays inside
+/// the component function.
+fn forwards_events(sb: &crate::svelte::ast::SnippetBlock) -> bool {
+    struct F(bool);
+    impl<'n> Visitor<'n> for F {
+        type State = ();
+        fn visit(&mut self, node: NodeRef<'n>, state: &(), w: &mut Walker<'n>) {
+            if let NodeRef::OnDirective(d) = node
+                && d.expression.is_none()
+                && d.modifiers.is_empty()
+            {
+                self.0 = true;
+            }
+            if !self.0 {
+                w.next(self, node, state);
+            }
+        }
+    }
+    let mut f = F(false);
+    Walker::walk(NodeRef::SnippetBlock(sb), &(), &mut f);
+    f.0
+}
+
 fn export_name(n: &ModuleExportName) -> String {
     match n {
         ModuleExportName::Identifier(i) => i.name.clone(),
@@ -384,6 +407,7 @@ impl ScopeRewriter<'_> {
                     continue;
                 }
                 if let Some(s) = self.snippet_scope(sb)
+                    && !forwards_events(sb)
                     && self.can_hoist_snippet(s, visited)
                 {
                     continue;
@@ -423,7 +447,7 @@ impl Rewriter for ScopeRewriter<'_> {
         }) else {
             return false;
         };
-        self.snippet_scope(sb).is_some_and(|s| self.can_hoist_snippet(s, &mut HashSet::new()))
+        !forwards_events(sb) && self.snippet_scope(sb).is_some_and(|s| self.can_hoist_snippet(s, &mut HashSet::new()))
     }
 
     fn expr(&self, e: &Expression, mode: Mode, edits: &mut Edits) {

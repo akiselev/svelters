@@ -23,7 +23,35 @@ Native signals reach your component as ordinary `on*` attributes. The compiler c
 - **One connection per signal and phase.** The host listens on the first handler for a (signal, phase) pair and stops when the last one goes. Handlers registered inside a block are removed with it.
 - **Queued delivery.** Ordinary signals are queued by the backend and delivered to JS at the next checkpoint. State writes in a handler are flushed by Svelte's microtask batch, so the resulting ops appear at the next job drain, not inside the dispatch.
 - **Component callback props** (`onSave={...}`) are plain props and work.
-- **Legacy `on:clicked={handler}`** compiles to the same listener as `onclicked={handler}`. Modifiers (`on:clicked|once`), bare forwarding (`on:clicked`) and `on:` on components are compile errors.
+- **Legacy `on:clicked={handler}`** compiles to the same listener as `onclicked={handler}`, and on a component to the prop `onclicked={handler}`. Modifiers (`on:clicked|once`) are compile errors; the error's help shows the `onclicked={...}` rewrite.
+
+### Forwarding with a bare `on:`
+
+A bare `on:clicked` inside a component forwards the component's own `onclicked` callback prop: on an element it listens with that prop, on a child component it passes that prop down. The one handler the parent passes gets the event; there are no component events (`createEventDispatcher`, `$on`), so a bare `on:` does not fan out to several listeners as in Svelte 4. The compiler notes this once per component (`legacy_forwarding_lowered`).
+
+```svelte
+<!-- Toolbar.svelte -->
+<script lang="ts">
+  import type { Forward } from '@svelters/native-runtime/types';
+  let { label }: { label: string } & Forward<'button', 'clicked'> = $props();
+</script>
+<button {label} on:clicked />
+
+<!-- Panel.svelte -->
+<script lang="ts">
+  import type { ForwardFrom } from '@svelters/native-runtime/types';
+  import Toolbar from './Toolbar.svelte';
+  let { title }: { title: string } & ForwardFrom<typeof Toolbar, 'clicked'> = $props();
+</script>
+<Toolbar label={title} on:clicked />
+
+<!-- App.svelte: the handler reaches Toolbar's button -->
+<Panel title="Go" onclicked={() => count++} />
+```
+
+- **Typing.** svelte-check does not add the forwarded prop to the component's props by itself. `Forward<Tag, Event>` declares it with the element's own handler type, `ForwardFrom<typeof Child, Event>` with the child's prop type.
+- **One handler.** A bare `on:clicked` must be the only handler of `clicked` on its element (`duplicate_event`). To handle the event and forward it, destructure the prop and call it: `let { onclicked } = $props()`, then `onclicked={(e) => { handle(e); onclicked?.(e); }}`.
+- **Read when the event fires.** The forwarded prop is read at each event, so a parent that passes a new handler, or none, needs no reconnection.
 
 ### Entry text changes
 

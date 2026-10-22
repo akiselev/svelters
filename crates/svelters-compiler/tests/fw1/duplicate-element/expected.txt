@@ -1,0 +1,9 @@
+backend: gtk
+
+## diagnostics
+error[duplicate_event] @6:11: `on:clicked` forwards this component's `onclicked` callback prop, and <button> also handles `clicked`: a bare `on:clicked` must be its only handler
+  help: to handle `clicked` here and forward it, destructure the prop (`let { onclicked } = $props()`) and call it from one handler: `onclicked={(e) => { handle(e); onclicked?.(e); }}`
+note[legacy_forwarding_lowered] @6:11: `on:clicked` forwards this component's `onclicked` callback prop: the one handler its parent passes gets the event (legacy forwarding re-dispatched it to every listener; svelters has no component events)
+  help: for svelte-check, declare the prop in this component's `$props()` type, e.g. `Props & Forward<'button', 'clicked'>` (types from `@svelters/native-runtime/types`)
+error[duplicate_event] @7:26: `on:clicked` forwards this component's `onclicked` callback prop, and <button> also handles `clicked`: a bare `on:clicked` must be its only handler
+  help: to handle `clicked` here and forward it, destructure the prop (`let { onclicked } = $props()`) and call it from one handler: `onclicked={(e) => { handle(e); onclicked?.(e); }}`
