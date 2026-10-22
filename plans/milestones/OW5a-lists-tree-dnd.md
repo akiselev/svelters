@@ -6,7 +6,12 @@ rows) and §7.2 (OW5); look from DESIGN.md R6, R8, R10, R14, R15 and §4 tokens;
 WIDGET-PARITY §2.18 (OW5a). Coordinator decision (2026-10-22): pooled rows are `list::part(row)`, styled
 per row through `Stylist::compute_pseudo_at(…, Some((i, n)), …)`.
 
-**Split proposed to the coordinator** (the OW5a parity rows alone are about 7 d). This record covers
+**Decided (coordinator, 2026-10-22):** the split is accepted. OW5a1 is this lane. OW5a2 (grid layout,
+rubber band, sticky section headers, multi-column tree, rename in place, expand animation) runs **after
+OW5b**, because both use the column header. The per-row forced host bits for `::part(row)` (below) are
+approved; VIS1c and DOC2 cite them.
+
+**Split** (the OW5a parity rows alone are about 7 d). This record covers
 **OW5a1**. Two lists are left for later:
 - **OW5a2** gets the large rows: grid layout, rubber band, sticky sections, the multi-column tree (after
   OW5b's header), rename in place, the expand animation.
@@ -30,8 +35,33 @@ no `collapsing_header::paint_default_icon` are left in the list or tree paint.
   - `::part(row):nth-child(even)`
   - `tree-view::part(row):has-children:expanded`
 
-  Results are cached per (node, part, state, position) and dropped at any restyle; the cache is capped
-  at 4096 entries. With no `::part(row)` rule, rows paint from the UA table `ROW`.
+  Results are cached per (node, part, state, position). Only drawn rows are computed (paint calls
+  `part_at` per drawn row). The whole cache is dropped at any restyle and is capped at 4096 entries. It
+  is one map in `SceneStyle`, not per node, so SG6's per-node budget does not change (`scene_memory`
+  passes). With no `::part(row)` rule (no theme, or a theme without row rules), `part_at` returns `None`
+  without computing, and rows paint from the UA table `ROW`.
+
+  **What authors write.** Row states are the row's own, not the list's (a deliberate exception to P1's
+  "pseudo-classes after `::part()` read the host"). `:focus-within` stays the list's:
+
+  | State | Selector |
+  |---|---|
+  | rest | `virtual-list::part(row)` |
+  | hover | `virtual-list::part(row):hover` |
+  | pressed | `virtual-list::part(row):active` |
+  | active selection | `virtual-list:focus-within::part(row):selected` |
+  | inactive selection | `virtual-list:not(:focus-within)::part(row):selected` |
+  | cursor row (`currentIndex`) | `virtual-list::part(row):current` |
+  | keyboard focus ring (R8) | `virtual-list::part(row):focus-visible` |
+  | drop into the row | `virtual-list::part(row):drop-target` |
+  | stripes (P1, 1-based logical position) | `virtual-list::part(row):nth-child(even)` |
+  | tree: expandable / expanded | `tree-view::part(row):has-children`, `tree-view::part(row):expanded` |
+  | tree: the chevron | `tree-view::part(twistie)`, `tree-view::part(twistie):expanded` |
+  | row contents (row nodes mirror the bits) | `virtual-list:focus-within > :selected { color: … }` |
+  | bar | `virtual-list::part(thumb-y):hover`, `::part(scrollbar-y)` |
+  | other parts | `::part(placeholder)`, `::part(drop-line)` |
+
+  `tree-view` takes the same selectors as `virtual-list`.
 - **`RowState::bits`**:
   - `:hover`, `:active`
   - `:selected`, `:current` (the cursor)
@@ -192,6 +222,11 @@ Clippy on the lane's files is clean.
 
 **Not run locally:** the full workspace nextest, the other CI workflows, full conformance, the VIS1
 gate (not on master). CI is the gate.
+
+## Handoff
+
+- **OW5a1 follow-ups** (below): proposed for a fresh agent.
+- **OW5a2** comes after OW5b (see the decision above).
 
 ## Not done (OW5a1 follow-ups)
 
