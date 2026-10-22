@@ -88,7 +88,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | SG4 provider passes (R16 provider half, R21, R23) | DONE | 2026-10-22 | merged (this commit); provider layout/prepare, shadow children, StateProvider (R16/R23), ScenePass + R21 `show_viewport_passes`, overlay roots, `position: absolute` |
 | LS1 + SG5 virtual lists on egui (SV40, SV47) | IN PROGRESS | | branch `ci/lists`, stacked on `ci/sg3` (+ `ci/sg4`) |
 | TK1 one-file cases across backends (SV34) | DONE | 2026-10-22 | merged bf82674f |
-| SV48 `Json<T>` error paths through tagged enums | IN PROGRESS | | branch `ci/sv48` |
+| SV48 `Json<T>` error paths through tagged enums | DONE | 2026-10-22 | merged (this commit) |
 | H1 component HMR on the Rust loader | DONE | 2026-10-22 | merged (this commit); follow-ups H1b (acceptExports propagation), D10 timers, swap budget |
 | H3 `$state` kept on HMR (SV36) | DONE | 2026-10-22 | merged (this commit); follow-ups H3c (children of an edited parent), $bindable fallback, bind:this exclusion |
 | TR2 native animator (SV13, SV37) | DONE | 2026-10-22 | merged (this commit); ABI v2.9: style op 11 `SVL_STYLE_ANIMATE`; follow-ups TR2b, TR3 |

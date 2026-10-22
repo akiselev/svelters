@@ -1,6 +1,7 @@
 //! The export schema: everything the macros registered, collected once per process.
 
 use super::*;
+use std::collections::BTreeSet;
 use std::sync::OnceLock;
 
 /// One member as the host resolves it.
@@ -235,6 +236,14 @@ fn add_accessor(props: &mut Vec<MemberSchema>, def: &MemberDef, b: &mut TypeBuil
 }
 
 fn build() -> Schema {
+    // SV48: a JSON definition named like a svelters type or class would be declared twice. The names
+    // are known only once everything is described, so build again with them reserved.
+    let (s, names) = build_with(BTreeSet::new());
+    if names.is_empty() { s } else { build_with(names).0 }
+}
+
+/// The schema, and the svelters type and class names that JSON definitions took too (empty if none).
+fn build_with(json_reserved: BTreeSet<String>) -> (Schema, BTreeSet<String>) {
     let mut objects: Vec<&ObjectDef> = inventory::iter::<ObjectDef>.into_iter().collect();
     objects.sort_by(|a, b| (a.module, a.name).cmp(&(b.module, b.name)));
     let mut fns: Vec<&FnDef> = inventory::iter::<FnDef>.into_iter().collect();
@@ -270,6 +279,7 @@ fn build() -> Schema {
         .collect();
 
     let mut b = TypeBuilder::new(class_list.clone());
+    b.json_reserved = json_reserved;
     let mut modules: Vec<ModuleSchema> = Vec::new();
     for m in &module_names {
         b.module = m.to_string();
@@ -404,16 +414,17 @@ fn build() -> Schema {
             }
             json_done.push(name.clone());
             let Some(def) = defs.get(&name) else { continue };
-            let mut refs = Vec::new();
+            let mut refs = json::Refs::new(&b.json_reserved);
             let ts = json::schema_ts(def, &mut refs);
-            json_todo.extend(refs);
+            json_todo.extend(refs.names);
             let docs = def.get("description").and_then(serde_json::Value::as_str).unwrap_or_default().to_string();
+            let ident = json::json_ident(&name, &b.json_reserved);
             m.types.push(TypeSchema {
                 id: 0,
-                name: json::ts_ident(&name),
+                name: ident.clone(),
                 docs,
                 kind: "json",
-                decl: format!("type {} = {ts};", json::ts_ident(&name)),
+                decl: format!("type {ident} = {ts};"),
                 fields: Vec::new(),
                 values: Vec::new(),
                 tag: None,
@@ -454,7 +465,10 @@ fn build() -> Schema {
         type_ids.insert(*t, *id);
         types.insert(*id, d.clone());
     }
-    Schema {
+    // SV48: svelters type and class names that a JSON definition took as well.
+    let svelters_names: BTreeSet<String> = b.named.values().map(|n| n.name.clone()).chain(class_list.values().map(|(_, _, c)| c.to_string())).collect();
+    let clashes = defs.keys().any(|d| svelters_names.contains(&json::json_ident(d, &b.json_reserved)));
+    let schema = Schema {
         modules,
         kinds,
         by_kind,
@@ -463,7 +477,8 @@ fn build() -> Schema {
         types,
         names,
         kind_types,
-    }
+    };
+    (schema, if clashes { svelters_names } else { BTreeSet::new() })
 }
 
 impl Schema {

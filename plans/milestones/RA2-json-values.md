@@ -129,15 +129,11 @@ site guide `docs/site/src/content/docs/guides/rust-exports.md`. This file record
 
 ## Open items
 
-- **Path inside serde's internally tagged/untagged/flattened types.** serde buffers their content, so an error's path
-  stops at the enum (`at s: invalid type: string "big", expected f64`).
-  **Required by cadatomic before its first package passes command args through `Json<T>`** (main-cadatomic,
-  2026-10-22). Its command-path types are internally tagged serde enums: `invocation.rs` ("source"),
-  `command/def.rs` ("state"), the executor ("intent"), `command/body.rs` ("kind", `deny_unknown_fields`),
-  `action_bar` ("setting") and `lifecycle/acquire.rs` ("status"). Tell main-cadatomic if the fix changes
-  `exports.json` or the error codes.
-- **Name clashes between a JSON definition and a svelters type** of the same name in one module (a `Record` `Point`
-  and a `JsonSchema` `Point`) produce a duplicate TS declaration. schemars dedups names only among JSON definitions.
+- ~~**Path inside serde's internally tagged/untagged/flattened types.**~~ Done in SV48
+  (`SV48-json-error-paths.md`): errors carry the full path through internally tagged, adjacently tagged, untagged and
+  flattened types (`at args.body.extent.depth: …`). Error codes unchanged; `exports.json` unchanged.
+- ~~**Name clashes between a JSON definition and a svelters type.**~~ Done in SV48: the JSON definition is declared as
+  `<Name>Json`, in the typings and in `exports.json` (only when there is a clash).
 - **Property order.** JSON definitions list their properties alphabetically, because schemars' maps are sorted.
   Enabling `preserve_order` would turn on serde_json's for the whole workspace.
 - **Handles and buffers inside `Json<T>`** are not supported: serde reads plain data only. Objects (`Obj<T>`,
