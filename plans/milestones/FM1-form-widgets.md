@@ -8,6 +8,46 @@ claims, default/cancel buttons), WG2b (`drag-value`), WG4a (`table`), WG2a (`con
 FX3's native text code (`crate::native`): the text-edit work is at the prop/kind level plus a few lines
 around the existing `TextEdit` call in `leaf.rs`.
 
+
+## Handoff (stopped 2026-10-22, by the user's decision via the coordinator)
+
+**FM1 stops here.** svelters will draw all its own widgets, and egui stays the engine only (painter,
+input, text shaping, layers, AccessKit). This branch (`ci/fm1`) is the record and is not to be merged as
+a feature. Its last pushed sha had CI running when the lane stopped (runs 39834778432, 39834778488,
+39834778474, 39834778464, 39834778541), so it is not a green result.
+
+**Done on the egui widgets (code in this branch):** QW7 drag-value steps, buttons, wheel and commit mode;
+QW8 text-edit `submit`/`commit`/`pattern`/`read-only`; QW4 table sort, column menu and `header-state`; QW11
+box `button-order` + button `dialog-role`; QA8 Menu key / Shift+F10. **Not done:** column reorder, step
+auto-repeat, wrap and special-value text, input masks and `fixup`, focus moving into a keyboard-opened menu.
+QW4's `header-state` is a prop the app persists; nothing writes files (ZU3-clean, no `UiStateBackend`
+use).
+
+**What carries over to the own-widget lanes:**
+- **The commit seam (the spec CX3 lowers onto; keep it):**
+  - Signal `commit`: **arg 0 = the bound prop's committed value**, the same shape as `changed`.
+    `drag-value`: `commit(value: f64)`. `text-edit`: `commit(text: str)`.
+  - A number field fires `commit` at a commit point when the value differs from the value when the drag
+    or edit began. The commit points are: drag released, Enter or focus lost after typing, and every
+    step (Up/Down, PageUp/PageDown ×10, a step button, a wheel notch). It fires whether or not commit-only
+    mode is on. In commit-only mode (`commit` prop, Qt `keyboardTracking=false`), `value`/`changed` move
+    only at those points.
+  - A text field fires `commit(text)` on Enter in a one-line field (always), or on focus loss after an
+    edit (not on a blur without an edit). It fires `submit(text)` on Enter in a one-line field, also when
+    the Enter goes on to a `default` button (both fire). Neither fires while the text fails `pattern`.
+  - `metadata/semantics/egui.json`: every binding whose kind has a `commit` signal with an argument named
+    like the prop has `bindings.<prop>.commit = {"event": "commit", "arg": <index>}`, next to the existing
+    `event`/`value.arg`. `bind:X|commit` listens to `bindings.X.commit.event` and reads that argument. With
+    no `commit` entry, the kind has no commit event. Derived in `spec.rs` (`commit_of`). The spec's binding
+    rule also changed: a `changed` that does not carry the prop gives way to a signal that does.
+- **Tests that state behaviour (reuse as acceptance for own widgets):** `crates/svelters-egui/tests/forms.rs`
+  (7 tests, one per behaviour above), the unit tests in `forms.rs` (pattern anchoring, the per-platform
+  button order table).
+- **Pieces that are not egui-specific:** `forms.rs` (`Pattern`; the `arrange`/`resolve_role` button-order
+  tables after Qt's `QDialogButtonBox`); the `header-state` JSON format; `focus.rs` `take_enter` (Enter that
+  went to the default button still submits) and `focused_node`; the taffy child-order hook in `layout.rs`
+  (`arranged`).
+
 ## Status
 
 | ID | What | Status |
