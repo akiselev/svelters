@@ -17,6 +17,9 @@ pub struct Component<'a> {
     pub root: Fragment<'a>,
     /// Number of element ids allocated (`Element::id` < this).
     pub elements: usize,
+    /// Some element resolves attributes at run time (`Op::Spread`, `Item::Dynamic`): the module
+    /// imports the spec tables (`@svelters/native-runtime/kinds`) as `$$kinds`.
+    pub kinds: bool,
 }
 
 /// A run of template content. Generated code declares `consts` first (`{@const}`, source order),
@@ -40,6 +43,8 @@ pub enum Item<'a> {
     Await(AwaitBlock<'a>),
     Render(RenderCall<'a>),
     Component(ComponentCall<'a>),
+    /// `<svelte:element this={tag}>`.
+    Dynamic(DynamicElement<'a>),
 }
 
 impl Item<'_> {
@@ -53,6 +58,7 @@ impl Item<'_> {
             Item::Await(b) => &b.slot,
             Item::Render(r) => &r.slot,
             Item::Component(c) => &c.slot,
+            Item::Dynamic(d) => &d.slot,
         }
     }
 }
@@ -146,6 +152,28 @@ pub enum Op<'a> {
     /// nullish (or bad) value falls back to the static inline value or the matching rules
     /// (`fallback.0`, highest precedence first), then to `fallback.1`.
     StyleSetter { name: String, target: String, child_attr: bool, backend: String, value: Dynamic<'a>, fallback: (Vec<(Cond<'a>, Json)>, Fallback), span: Span },
+    /// The attributes of an element with a spread whose keys are only known at run time (or of a
+    /// `<svelte:element>`), as one object in source order: `$n.spread(node, $$kinds, () => ({...}),
+    /// css)` (Svelte's `attribute_effect`). `css`: the CSS scope class (native styling only).
+    Spread { entries: Vec<SpreadEntry<'a>>, css: Option<String>, span: Span },
+    /// Text children of a `<svelte:element>` on a backend without text nodes: the kind's
+    /// text-content prop at run time (`$n.text(node, $$kinds, value)`).
+    Text { value: AttrValue<'a>, span: Span },
+}
+
+/// One entry of an `Op::Spread` object.
+#[derive(Debug)]
+pub enum SpreadEntry<'a> {
+    /// `key: value` (an attribute; a static value is already typed when the kind is known).
+    Attr { key: String, value: AttrValue<'a> },
+    /// `on<event>: handler` (an inline function is hoisted, so it keeps its identity).
+    Event { key: String, handler: &'a Expression },
+    /// `...expr`.
+    Spread(&'a Expression),
+    /// `class:name={expr}`: `[$n.CLASS]: { name: expr }`.
+    Class { name: String, expr: &'a Expression },
+    /// `style:name={value}`: `[$n.STYLE]: { name: value }`.
+    Style { name: String, value: AttrValue<'a> },
 }
 
 /// An event handler: an expression, or a property of a spread object (`{...events}`), read when
@@ -290,6 +318,19 @@ pub struct AwaitBlock<'a> {
     pub catch: Option<Fragment<'a>>,
 }
 
+/// `<svelte:element this={tag}>`: `$n.dynamic_element(container, () => tag, (node) => {...}, $$kinds)`;
+/// `ops` run on each new element (an `Op::Spread` with every attribute, `bind:this`, `use:`,
+/// `{@attach}`, `parent:`), then `children` go into its slots.
+#[derive(Debug)]
+pub struct DynamicElement<'a> {
+    pub id: usize,
+    pub span: Span,
+    pub tag: &'a Expression,
+    pub slot: Slot,
+    pub ops: Vec<Op<'a>>,
+    pub children: Fragment<'a>,
+}
+
 #[derive(Debug)]
 pub struct ComponentCall<'a> {
     pub span: Span,
@@ -318,4 +359,7 @@ pub enum ComponentProp<'a> {
     Bind { name: String, target: &'a Expression },
     /// `{...expr}`: an argument of Svelte's `$.spread_props` (a thunk when `expr` is reactive).
     Spread(&'a Expression),
+    /// `{@attach expr}` on a component: Svelte's `[$.attachment()]: expr` prop (a symbol key the
+    /// child spreads onto its element).
+    Attach(&'a Expression),
 }

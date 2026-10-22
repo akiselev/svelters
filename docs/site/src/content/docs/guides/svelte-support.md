@@ -14,7 +14,7 @@ Svelters compiles components with its own compiler, `svelters-compile` (crate `c
 | **error** | A compile error. The code is given where it is not `unsupported_feature`. |
 | **n/a** | Meaningless for native UI. |
 
-Behaviour not listed as a departure here or in `docs/notes/native-compiler/deviations.md` is meant to match Svelte. Two checks keep it honest: the oracle compares the parser and scope ports with upstream, and the conformance ratchet (`experiments/native-compiler/conformance`) runs Svelte's own `runtime-runes` samples through the compiler and runtime on a DOM test backend. 498 of the 774 samples with a DOM variant pass; most of the rest use features rejected below (spreads on elements, transitions, `use:`, SVG).
+Behaviour not listed as a departure here or in `docs/notes/native-compiler/deviations.md` is meant to match Svelte. Two checks keep it honest: the oracle compares the parser and scope ports with upstream, and the conformance ratchet (`experiments/native-compiler/conformance`) runs Svelte's own `runtime-runes` samples through the compiler and runtime on a DOM test backend. 591 of the 774 samples with a DOM variant pass; most of the rest use features rejected below (transitions, legacy syntax, SVG) or call DOM APIs on what is a native handle.
 
 :::note[Native widgets, not DOM]
 Elements are native kinds (`window`, `box`, `label`, `button`, `entry`, ...), not HTML. The compiler checks every tag, prop, event, child and binding against the toolkit's semantic spec (`metadata/semantics/<toolkit>.json`), so a mistake is a compile error with a position. See [the element reference](/api/) for the tags each toolkit provides.
@@ -56,7 +56,7 @@ The compiler writes its output as edits over your source rather than reprinting 
 | `{#snippet}`, `{@render}`, `children` | partial | Snippet parameters must be plain identifiers (no destructuring or defaults). |
 | `{@attach}` | works | Runs in an effect after mount, with the runtime node. |
 | `use:` actions | error | Use `{@attach}`. |
-| Spread `{...obj}` on native elements | partial | Only static keys: an object literal or a top-level `const` object literal. Any other spread is `native_spread_unsupported`; set the props explicitly or spread onto a component. |
+| Spread `{...obj}` on native elements | works | An object literal is checked at compile time. Any other spread is checked at run time against the toolkit's spec: each key becomes a property (strings are converted to the property's type), an event handler, a class or style, or a child attribute (`parent:`). A key the element does not have prints a warning in dev builds and is skipped. A key that goes away goes back to the default. Later attributes win, as in Svelte. |
 | Spread on components | works | |
 | `parent:<name>={v}` | works | Svelters syntax: a child attribute (grid cell, stretch, tab title) checked against the actual parent's slot. |
 | `<sv-slot name="x">` | works | Svelters syntax: routes its content to the parent's named slot. |
@@ -70,7 +70,8 @@ The compiler writes its output as edits over your source rather than reprinting 
 | Dynamic components, `<svelte:component this>` | works | Recreated when the component changes. |
 | `<svelte:boundary>` | partial | `onerror` and `failed` work; `pending` is ignored (no async mode). |
 | Context (`setContext`, `getContext`, `getAllContexts`) | works | `ListView` rows get the list's context. |
-| `<svelte:element>`, `<svelte:self>`, `<svelte:fragment>` | error | |
+| `<svelte:element this={tag}>` | works | `tag` is a native tag (`label`, `button`). Its attributes are checked at run time, as for a spread. A new tag recreates the element; a nullish tag renders nothing. Only `bind:this` among bindings. |
+| `<svelte:self>`, `<svelte:fragment>` | error | |
 | `<svelte:window>`, `<svelte:document>`, `<svelte:body>`, `<svelte:head>` | error | DOM-only. See [Replacing svelte:window](/guides/events/#replacing-sveltewindow). |
 | `<slot>` (Svelte 4) | error | Use snippets. |
 | `<svelte:options>` | works | At the top level. |

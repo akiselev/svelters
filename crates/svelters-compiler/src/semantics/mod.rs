@@ -8,12 +8,14 @@
 //! (format: docs/notes/native-compiler/semantic-spec.md).
 
 mod backend;
+mod kinds;
 mod observe;
 mod overlay;
 pub mod spec;
 pub mod types;
 
 pub use backend::SpecBackend;
+pub use kinds::kinds_module;
 pub use observe::{BindLowering, BindPlan, Observability, plan_bind};
 pub use overlay::Overlay;
 pub use types::{TypeProp, TypeRef, TypeTable};

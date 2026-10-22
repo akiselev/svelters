@@ -1,5 +1,5 @@
 // Node module hooks for running Svelte's runtime samples on the native runtime:
-// - the hidden Svelte modules and `svelte` itself (same aliases as packages/native-runtime/vite.js:
+// - the hidden Svelte modules, `svelte` itself and `@svelters/native-runtime/kinds` (out/_kinds.js) (same aliases as packages/native-runtime/vite.js:
 //   `svelte` is src/svelte.js, Svelte's client API with a native `mount`/`unmount`);
 // - `.svelte` and `.svelte.js` files load the output the runner already compiled with svelters-compile
 //   (`<dir>/_compiled/<file>.js`, see run.mjs);
@@ -10,7 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { HIDDEN_MODULES, svelteFacadePath } from '@svelters/native-runtime/vite';
+import { HIDDEN_MODULES, KINDS_SPECIFIER, svelteFacadePath } from '@svelters/native-runtime/vite';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const svelteClient = path.join(path.dirname(createRequire(import.meta.url).resolve('svelte/internal/client')), '../../index-client.js');
@@ -20,6 +20,8 @@ export async function resolve(specifier, context, next) {
   if (Object.hasOwn(HIDDEN_MODULES, specifier)) return { url: pathToFileURL(HIDDEN_MODULES[specifier]).href, shortCircuit: true };
   // as the `svelte` alias of packages/native-runtime/vite.js: native mount/unmount
   if (specifier === 'svelte') return { url: pathToFileURL(svelteFacadePath).href, shortCircuit: true };
+  // the dom spec's runtime tables (spreads, <svelte:element>), written by run.mjs
+  if (specifier === KINDS_SPECIFIER) return { url: pathToFileURL(path.join(here, 'out', '_kinds.js')).href, shortCircuit: true };
   if (/^(\.\.\/)+test(\.js|\.ts)?$/.test(specifier)) return shim('test.mjs');
   if (/^(\.\.\/)+helpers(\.js)?$/.test(specifier)) return shim('helpers.mjs');
   if (/^(\.\.\/)+suite(\.js|\.ts)?$/.test(specifier)) return shim('suite.mjs');

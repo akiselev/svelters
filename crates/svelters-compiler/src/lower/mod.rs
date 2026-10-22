@@ -28,7 +28,7 @@ use crate::svelte::ast::{
     Root, SnippetBlock, TextOrExpressionTag,
 };
 use ir::*;
-use native_attrs::{ScriptFacts, CHILD_ATTR_PREFIX};
+use native_attrs::{attr_value, ScriptFacts, CHILD_ATTR_PREFIX};
 use serde_json::Value as Json;
 use std::collections::{HashMap, HashSet};
 
@@ -57,6 +57,7 @@ pub fn lower<'a>(root: &'a Root, sem: &dyn PlatformSemantics, styles: Option<&'a
         snippet_roots,
         script: ScriptFacts::collect([root.instance.as_ref(), root.module.as_ref()]),
         list_views: lists::list_view_names(root),
+        kinds: false,
     };
     l.check_style_sheet();
     let root_fragment = l.fragment(&root.fragment, &Parent::Root, &[]);
@@ -69,7 +70,7 @@ pub fn lower<'a>(root: &'a Root, sem: &dyn PlatformSemantics, styles: Option<&'a
             }
         }
     }
-    Component { root: root_fragment, elements: l.next_id }
+    Component { root: root_fragment, elements: l.next_id, kinds: l.kinds }
 }
 
 enum Parent {
@@ -121,10 +122,12 @@ struct Lower<'a, 's, 'd> {
     /// Snippets declared in this component by name: their root elements (None: the name is
     /// declared more than once, so render sites are not checked statically).
     snippet_roots: HashMap<String, Option<Vec<&'a AstElement>>>,
-    /// Imports and `const` objects of the scripts (renderer `listen`, static spreads).
-    script: ScriptFacts<'a>,
+    /// Imports of the scripts (renderer `listen`).
+    script: ScriptFacts,
     /// Local names of `ListView` imported from `@svelters/lists` (virtualized lists, `lists.rs`).
     list_views: HashSet<String>,
+    /// Some element resolves attributes at run time (the module imports `$$kinds`).
+    kinds: bool,
 }
 
 fn sp(s: Span) -> (u32, u32) {
@@ -303,6 +306,11 @@ impl<'a> Lower<'a, '_, '_> {
                 FragmentNode::SvelteComponent(n) => {
                     if let Some(c) = self.svelte_component(n, ancestors) {
                         out.items.push(Item::Component(c));
+                    }
+                }
+                FragmentNode::SvelteElement(n) => {
+                    if let Some(d) = self.dynamic_element(n, parent, ancestors) {
+                        out.items.push(Item::Dynamic(d));
                     }
                 }
                 FragmentNode::SvelteBoundary(el) => {
@@ -738,6 +746,20 @@ impl<'a> Lower<'a, '_, '_> {
             },
         };
 
+        // A spread whose keys are only known at run time: every attribute goes into one object in
+        // source order, applied by `$n.spread` (runtime-contract.md "Spread attributes"); explicit
+        // attributes are still resolved and typed here.
+        let runtime_attrs = el.attributes.iter().any(|a| match a {
+            AttributeLike::SpreadAttribute(s) => !self.is_static_spread(&s.expression),
+            // a backend whose `style` is a prop (the DOM conformance backend): `style:` directives
+            // merge into it at run time, as Svelte's `[STYLE]` attribute object
+            AttributeLike::StyleDirective(_) => !native_style,
+            _ => false,
+        });
+        let mut entries: Vec<SpreadEntry<'a>> = Vec::new();
+        let mut spread_at: Option<usize> = None;
+        let mut spread_span: Option<Span> = None;
+
         // pass 2: ops in source order
         let mut ops: Vec<Op<'a>> = Vec::new();
         let mut explicit_props: Vec<String> = Vec::new();
@@ -760,7 +782,13 @@ impl<'a> Lower<'a, '_, '_> {
                             .help("`none` leaves opening the toplevel to the app (`bind:this` + call('present'))");
                     }
                 },
-                AttributeLike::Attribute(at) if matches!(at.name.as_str(), "slot" | "data-slot") || (at.name == "class" && class_prop.is_none()) => {}
+                AttributeLike::Attribute(at) if matches!(at.name.as_str(), "slot" | "data-slot") => {}
+                // X6 styling attributes of an element whose attributes are applied at run time
+                AttributeLike::Attribute(at) if runtime_attrs && native_style && matches!(at.name.as_str(), "class" | "id" | "style") => {
+                    spread_at.get_or_insert(ops.len());
+                    entries.push(SpreadEntry::Attr { key: at.name.clone(), value: attr_value(at) });
+                }
+                AttributeLike::Attribute(at) if at.name == "class" && class_prop.is_none() => {}
                 AttributeLike::Attribute(at) if native_style && at.name == "id" => {
                     let value = match (static_text(at), dynamic_of(at)) {
                         (Some(t), _) => AttrValue::Static(Json::String(t)),
@@ -776,13 +804,27 @@ impl<'a> Lower<'a, '_, '_> {
                         None => inline_dynamic = dynamic_of(at),
                     }
                 }
+                AttributeLike::StyleDirective(d) if runtime_attrs => {
+                    if let Some(value) = self.directive_value(d) {
+                        spread_at.get_or_insert(ops.len());
+                        entries.push(SpreadEntry::Style { name: d.name.clone(), value });
+                    }
+                }
                 AttributeLike::StyleDirective(d) if native_style => {
                     style_span.get_or_insert(d.span());
                     self.style_directive(&er, parent_er.as_ref(), d, &mut ops, &mut inline_dirs, &mut inline_setters);
                 }
                 AttributeLike::Attribute(at) if at.name.starts_with("on") && matches!(at.value, AttributeValue::Expression(_)) => {
                     let AttributeValue::Expression(ExpressionTagNode::ExpressionTag(t)) = &at.value else { unreachable!() };
-                    ops.extend(self.listen_op(&er, &at.name, Handler::Expr(&t.expression), at.span(), name_span(at)));
+                    let op = self.listen_op(&er, &at.name, Handler::Expr(&t.expression), at.span(), name_span(at));
+                    if runtime_attrs {
+                        if op.is_some() {
+                            spread_at.get_or_insert(ops.len());
+                            entries.push(SpreadEntry::Event { key: at.name.clone(), handler: &t.expression });
+                        }
+                    } else {
+                        ops.extend(op);
+                    }
                 }
                 AttributeLike::Attribute(at) if at.name.starts_with(CHILD_ATTR_PREFIX) => {
                     let name = &at.name[CHILD_ATTR_PREFIX.len()..];
@@ -792,7 +834,16 @@ impl<'a> Lower<'a, '_, '_> {
                 // listener like `onname={handler}`; modifiers and bare forwarding are rejected below
                 AttributeLike::OnDirective(d) if d.modifiers.is_empty() && d.expression.is_some() => {
                     let ns = d.name_span.map_or(sp(d.span()), sp);
-                    ops.extend(self.listen_op(&er, &format!("on{}", d.name), Handler::Expr(d.expression.as_ref().unwrap()), d.span(), ns));
+                    let key = format!("on{}", d.name);
+                    let op = self.listen_op(&er, &key, Handler::Expr(d.expression.as_ref().unwrap()), d.span(), ns);
+                    if runtime_attrs {
+                        if op.is_some() {
+                            spread_at.get_or_insert(ops.len());
+                            entries.push(SpreadEntry::Event { key, handler: d.expression.as_ref().unwrap() });
+                        }
+                    } else {
+                        ops.extend(op);
+                    }
                 }
                 AttributeLike::AttachTag(t) => ops.extend(self.attach_op(&er, t)),
                 AttributeLike::UseDirective(d) => ops.push(Op::Action { name: d.name.clone(), arg: d.expression.as_ref(), span: d.span() }),
@@ -805,6 +856,24 @@ impl<'a> Lower<'a, '_, '_> {
                         }
                     };
                     explicit_props.push(prop.js.clone());
+                    if runtime_attrs {
+                        // typed here, applied (in source order with the spread) by `$n.spread`
+                        let value = match (static_text(at), &at.value) {
+                            (_, AttributeValue::True(_)) => self.sem.coerce_static(&prop, None).map(|v| AttrValue::Static(v.to_json())),
+                            (Some(text), _) => self.sem.coerce_static(&prop, Some(&text)).map(|v| AttrValue::Static(v.to_json())),
+                            (None, _) => Ok(AttrValue::Dynamic(dynamic_of(at).expect("not a bare attribute"))),
+                        };
+                        match value {
+                            Ok(value) => {
+                                spread_at.get_or_insert(ops.len());
+                                entries.push(SpreadEntry::Attr { key: prop.js.clone(), value });
+                            }
+                            Err(msg) => {
+                                self.diags.native_error("bad_attribute_value", sp(at.span()), msg);
+                            }
+                        }
+                        continue;
+                    }
                     match &at.value {
                         AttributeValue::True(_) => self.push_static(&mut ops, &prop, None, at),
                         AttributeValue::Sequence(parts) if parts.iter().all(|p| matches!(p, TextOrExpressionTag::Text(_))) => {
@@ -846,26 +915,25 @@ impl<'a> Lower<'a, '_, '_> {
                         Err(u) => u.report(self.diags, sp(d.span())),
                     }
                 }
+                AttributeLike::ClassDirective(d) if runtime_attrs => {
+                    if let Some(e) = &d.expression {
+                        spread_at.get_or_insert(ops.len());
+                        entries.push(SpreadEntry::Class { name: d.name.clone(), expr: e });
+                    }
+                }
                 AttributeLike::ClassDirective(d) => {
                     if let (Some(cp), Some(e)) = (&class_prop, &d.expression) {
                         ops.push(Op::Token { prop: cp.clone(), token: d.name.clone(), cond: vec![CondAtom::Expr(e)], span: d.span() });
                     }
                 }
-                AttributeLike::SpreadAttribute(s) if self.static_spread(&er, &s.expression, s.span(), attr_target.as_ref(), &mut ops, &mut explicit_props) => {}
+                AttributeLike::SpreadAttribute(s) if runtime_attrs => {
+                    spread_at.get_or_insert(ops.len());
+                    spread_span.get_or_insert(s.span());
+                    entries.push(SpreadEntry::Spread(&s.expression));
+                }
                 AttributeLike::SpreadAttribute(s) => {
-                    // Decision (runtime-contract.md "Spread attributes"): rejected on native
-                    // elements unless the keys are static (an object literal or a const one).
-                    self.diags
-                        .error(
-                            "native_spread_unsupported",
-                            sp(s.span()),
-                            format!(
-                                "spread attributes on native elements cannot be checked against the {} spec of <{}> at compile time, so the native compiler rejects them",
-                                self.sem.backend(),
-                                el.name
-                            ),
-                        )
-                        .help("set the properties and events explicitly (`label={p.label}`), or spread onto a component (`<Child {...p} />`)");
+                    // static keys (an object literal or a top-level const one): one op per key
+                    self.static_spread(&er, &s.expression, s.span(), attr_target.as_ref(), &mut ops, &mut explicit_props);
                 }
                 other => {
                     let what = match other {
@@ -885,6 +953,12 @@ impl<'a> Lower<'a, '_, '_> {
         for p in bound_props.iter().filter(|p| explicit_props.contains(p)) {
             self.diags.error("bind_and_prop", span, format!("`{p}` is both bound and set explicitly"));
         }
+        if runtime_attrs {
+            self.kinds = true;
+            let css = if native_style { self.css_scope.clone() } else { None };
+            let at = spread_at.unwrap_or(ops.len()).min(ops.len());
+            ops.insert(at, Op::Spread { entries, css, span: spread_span.unwrap_or(el.span()) });
+        }
 
         // Bindings write their value after the element's other attributes (as Svelte's own bindings,
         // and the retired renderer, did): a bound value must not be written before the props that
@@ -896,8 +970,9 @@ impl<'a> Lower<'a, '_, '_> {
         ops = rest;
         ops.extend(binds);
 
-        // the X6 styling: classes (with the CSS scope), inline style
-        if native_style {
+        // the X6 styling: classes (with the CSS scope), inline style (`$n.spread` applies them
+        // when the attributes are applied at run time)
+        if native_style && !runtime_attrs {
             if has_class || self.css_scope.is_some() {
                 let mut base = subject.static_classes.clone();
                 if let Some(sc) = &self.css_scope {
@@ -976,7 +1051,7 @@ impl<'a> Lower<'a, '_, '_> {
     /// each block branch's). `{#if}` blocks holding only text/expressions become conditional parts.
     fn text_content(&mut self, el: &'a AstElement, prop: &str, ops: &mut Vec<Op<'a>>) {
         self.text_prop = Some(prop.to_string());
-        let parts = trim_parts(self.text_parts(el, &el.fragment));
+        let parts = trim_parts(self.text_parts((&el.name, &el.fragment), &el.fragment));
         self.text_prop = None;
         let span = el.fragment.nodes.first().map(|n| n.span()).unwrap_or(el.span());
         match parts.as_slice() {
@@ -986,7 +1061,7 @@ impl<'a> Lower<'a, '_, '_> {
         }
     }
 
-    fn text_parts(&mut self, el: &AstElement, f: &'a AstFragment) -> Vec<TemplatePart<'a>> {
+    fn text_parts(&mut self, el: (&str, &AstFragment), f: &'a AstFragment) -> Vec<TemplatePart<'a>> {
         let mut parts = Vec::new();
         for n in &f.nodes {
             match n {
@@ -999,7 +1074,7 @@ impl<'a> Lower<'a, '_, '_> {
                     parts.push(TemplatePart::If { test: &b.test, consequent, alternate });
                 }
                 // lowered as the element's attached children (element(), text-content branch)
-                FragmentNode::RegularElement(c) if std::ptr::eq(f, &el.fragment) && self.attaches(&c.name) => {}
+                FragmentNode::RegularElement(c) if std::ptr::eq(f, el.1) && self.attaches(&c.name) => {}
                 other => {
                     let prop = self.text_prop.clone().unwrap_or_default();
                     let element = matches!(
@@ -1008,9 +1083,9 @@ impl<'a> Lower<'a, '_, '_> {
                     );
                     let backend = self.sem.backend();
                     let msg = if element {
-                        format!("<{}> mixes text and elements: on {backend} its text children set `{prop}`, so it cannot also hold child elements", el.name)
+                        format!("<{}> mixes text and elements: on {backend} its text children set `{prop}`, so it cannot also hold child elements", el.0)
                     } else {
-                        format!("<{}> holds text only on {backend} (its text children set `{prop}`); it cannot contain this", el.name)
+                        format!("<{}> holds text only on {backend} (its text children set `{prop}`); it cannot contain this", el.0)
                     };
                     self.diags
                         .native_error("text_content_children", sp(other.span()), msg)
@@ -1391,6 +1466,7 @@ impl<'a> Lower<'a, '_, '_> {
                     binds.push(ComponentProp::Bind { name: d.name.clone(), target });
                 }
                 AttributeLike::SpreadAttribute(s) => props.push(ComponentProp::Spread(&s.expression)),
+                AttributeLike::AttachTag(t) => props.push(ComponentProp::Attach(&t.expression)),
                 other => {
                     self.diags.error("unsupported_feature", sp(other.span()), "this attribute kind is not supported on components by the native compiler yet");
                 }

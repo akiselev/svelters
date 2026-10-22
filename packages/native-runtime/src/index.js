@@ -673,6 +673,11 @@ export function bind(node, prop, signal, arg, get, setv) {
     node.last.set(prop, v);
     if (!Object.is(v, $.untrack(get))) setv(v);
   });
+  // the binding updates its state before the element's own handlers of the signal run, as with
+  // Svelte's DOM bindings (direct listeners) and event attributes (delegated, so later): a handler
+  // reads the new bound value
+  const list = node.handlers.get(hkey(signal, 0));
+  list.unshift(list.pop());
 }
 
 /**
@@ -1338,6 +1343,448 @@ export function lis(a) {
   const out = new Set();
   for (let i = tails.length ? tails[tails.length - 1] : -1; i >= 0; i = prev[i]) out.add(i);
   return out;
+}
+
+// ---------------------------------------------------------------------------------------------
+// Spreads and <svelte:element> (SP1, runtime-contract.md "Spread attributes"): attributes resolved at
+// run time against the spec tables of `@svelters/native-runtime/kinds` (`svelters-compile --kinds`,
+// imported by a component only when it needs them), with the compiler's own resolution rules.
+
+/** The `class:` toggles (`{ name: on }`) and `style:` directives (`{ property: value }`) in a spread object. */
+export const CLASS = Symbol('class');
+export const STYLE = Symbol('style');
+/** Svelte's `createAttachmentKey()` symbols carry this description. */
+const ATTACHMENT_KEY = '@attach';
+
+const PROP_WRITABLE = 1;
+const PROP_READABLE = 2;
+const PROP_STRING_FORM = 8;
+
+const kindInfos = new WeakMap(); // kinds module -> Map(tag -> info | null)
+
+/** A tag's props (by JS and native name), events (by signal and `js_event` name) and bindings, merged over its chain once. */
+function kindInfo(K, tag) {
+  let m = kindInfos.get(K);
+  if (!m) kindInfos.set(K, (m = new Map()));
+  let info = m.get(tag);
+  if (info !== undefined) return info;
+  const id = Object.hasOwn(K.tags, tag) ? K.tags[tag] : null;
+  const k = id === null ? null : K.kinds[id];
+  if (!k) {
+    m.set(tag, null);
+    return null;
+  }
+  const props = new Map();
+  const names = [];
+  const events = new Map();
+  const signals = [];
+  const bindings = new Map();
+  for (const cid of k.c) {
+    const c = K.kinds[cid];
+    if (!c) continue;
+    for (const js of Object.keys(c.p)) {
+      const [native, flags, type, def, values, binding] = c.p[js];
+      const p = { js, native, flags, type, def, values: values || null };
+      if (!props.has(js)) props.set(js, p);
+      if (!props.has(native)) props.set(native, p);
+      names.push(js);
+      if (binding && !bindings.has(js)) bindings.set(js, binding);
+    }
+    if (c.b) for (const js of Object.keys(c.b)) if (!bindings.has(js)) bindings.set(js, c.b[js]);
+    for (const name of Object.keys(c.e)) {
+      const [js, sync, phases] = c.e[name];
+      const ev = { signal: name, sync: !!sync, phases };
+      if (!events.has(name)) events.set(name, ev);
+      if (js && !events.has(js)) events.set(js, ev);
+      signals.push(name);
+    }
+  }
+  const cls = props.get('class');
+  info = {
+    tag,
+    props,
+    names,
+    events,
+    signals,
+    bindings,
+    text: k.t ?? null,
+    top: k.top ?? null,
+    // a backend whose kinds have a `class` prop (the DOM conformance backend) gets `class` / `style`
+    // as props; elsewhere `class`, `id` and `style` drive the X6 styling (as the compiler decides)
+    classProp: cls && cls.flags & PROP_WRITABLE ? cls.js : null,
+  };
+  m.set(tag, info);
+  return info;
+}
+
+const warned = new Set();
+/** DEV: a key the compiler would have rejected on a static attribute, with its code and message. Once per message. */
+function specWarn(code, message) {
+  if (!DEV) return;
+  const k = `${code}\0${message}`;
+  if (warned.has(k)) return;
+  warned.add(k);
+  console.warn(`[svelters] ${code}: ${message}`);
+}
+
+/** Closest names (edit distance), as the compiler's suggestions. */
+function closest(name, candidates) {
+  const lev = (a, b) => {
+    const row = Array.from({ length: b.length + 1 }, (_, i) => i);
+    for (let i = 0; i < a.length; i++) {
+      let prev = row[0];
+      row[0] = i + 1;
+      for (let j = 0; j < b.length; j++) {
+        const cur = row[j + 1];
+        row[j + 1] = Math.min(prev + (a[i] === b[j] ? 0 : 1), row[j] + 1, cur + 1);
+        prev = cur;
+      }
+    }
+    return row[b.length];
+  };
+  const limit = Math.max(Math.ceil(name.length / 2), 2);
+  const scored = [...new Set(candidates)]
+    .filter((c) => c !== name)
+    .map((c) => [lev(name.toLowerCase(), c.toLowerCase()), c])
+    .filter(([d, c]) => d <= limit || (name.length >= 3 && (c.includes(name) || name.includes(c))))
+    .sort((a, b) => a[0] - b[0] || (a[1] < b[1] ? -1 : 1));
+  return scored.slice(0, 3).map(([, c]) => c);
+}
+
+const didYouMean = (sug) => (sug.length === 0 ? '' : sug.length === 1 ? ` (did you mean \`${sug[0]}\`?)` : ` (did you mean one of ${sug.map((s) => `\`${s}\``).join(', ')}?)`);
+
+function findEvent(K, info, name) {
+  const a = Object.hasOwn(K.aliases, name) ? K.aliases[name] : null;
+  if (a && info.events.has(a)) return info.events.get(a);
+  return info.events.get(name) ?? null;
+}
+
+/** `on<event>` / `on<event>capture` as the compiler resolves it (`listen_op`): `{ ev, flags }` or `{ code, message }`. */
+function resolveEvent(K, info, key) {
+  const stripped = key.length > 2 ? key.slice(2) : key;
+  const plain = findEvent(K, info, stripped) ?? findEvent(K, info, key);
+  if (plain) return { ev: plain, flags: 0 };
+  // Svelte's is_capture_event: `...capture`, except the pointer-capture events
+  const base = key.endsWith('capture') && key !== 'ongotpointercapture' && key !== 'onlostpointercapture' ? key.slice(0, -7) : null;
+  const target = base && base !== 'on' ? base : key;
+  const name = target.length > 2 ? target.slice(2) : target;
+  const ev = findEvent(K, info, name) ?? findEvent(K, info, target);
+  if (!ev) {
+    const names = [...info.signals, ...Object.keys(K.aliases).filter((a) => info.events.has(K.aliases[a]))];
+    return {
+      code: 'unknown_event',
+      message: `<${info.tag}> has no event \`${name}\` on ${K.backend}${didYouMean(closest(name, names).map((s) => `on${s}`))}`,
+    };
+  }
+  if (target === key) return { ev, flags: 0 };
+  if (!ev.phases.includes('capture')) {
+    const has = ev.phases.length ? `only ${ev.phases.join(', ')}` : 'no listen phases';
+    return { code: 'listen_phase_unsupported', message: `\`${ev.signal}\` of <${info.tag}> has ${has} on ${K.backend}, not \`capture\`` };
+  }
+  return { ev, flags: LISTEN_CAPTURE };
+}
+
+/** A string for a non-string prop, coerced as the compiler coerces a static attribute (`coerce_static`). */
+function coerce(p, s) {
+  const bad = (message) => ({ error: message });
+  const name = p.js;
+  switch (p.type) {
+    case 'bool':
+      if (s === 'true' || s === '') return { value: true };
+      if (s === 'false') return { value: false };
+      return bad(`\`${name}\` is a bool: expected true or false, got ${JSON.stringify(s)}`);
+    case 'i32':
+    case 'u32':
+    case 'i64': {
+      const t = s.trim();
+      const i = /^[-+]?0[xX][0-9a-fA-F]+$/.test(t) ? parseInt(t, 16) : /^[-+]?\d+$/.test(t) ? Number(t) : NaN;
+      if (!Number.isSafeInteger(i)) return bad(`\`${name}\` is an integer, got ${JSON.stringify(s)}`);
+      const [lo, hi] = p.type === 'i32' ? [-2147483648, 2147483647] : p.type === 'u32' ? [0, 4294967295] : [-Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER];
+      if (i < lo || i > hi) return bad(`\`${name}\`: ${i} is outside ${lo}..${hi}`);
+      return { value: i };
+    }
+    case 'f64': {
+      const f = s.trim() === '' ? NaN : Number(s);
+      if (!Number.isFinite(f)) return bad(`\`${name}\` is a number, got ${JSON.stringify(s)}`);
+      return { value: f };
+    }
+    case 'strlist':
+      return { value: s.split(/[ \t\n\r\f]+/).filter(Boolean) };
+    case 'enum':
+      if (p.values && !p.values.includes(s)) return bad(`\`${name}\`: ${JSON.stringify(s)} is not one of ${p.values.join(', ')}${didYouMean(closest(s, p.values))}`);
+      return { value: s };
+    case 'flags': {
+      if (!p.values) return bad(`\`${name}\`: flags cannot be named from a string here`);
+      const nicks = s.split(/[|\s]+/).filter(Boolean);
+      for (const n of nicks) if (!p.values.includes(n)) return bad(`\`${name}\`: ${JSON.stringify(n)} is not a flag${didYouMean(closest(n, p.values))}`);
+      return { value: nicks };
+    }
+    case 'object':
+    case 'record':
+    case 'boxed':
+      if (p.flags & PROP_STRING_FORM) return { value: s };
+      return bad(`\`${name}\` takes a native value and cannot be set from a string; pass an expression`);
+    case 'list':
+    case 'other':
+      return bad(`\`${name}\` takes a native value and cannot be set from a string; pass an expression`);
+    default:
+      return { value: s };
+  }
+}
+
+/** Svelte's `to_class`: the class string, the CSS scope class, then the `class:` toggles. */
+function toClass(value, hash, toggles) {
+  let out = value == null ? '' : clsx(value);
+  if (hash) out = out ? `${out} ${hash}` : hash;
+  if (toggles) out = class_name(out, null, Object.keys(toggles).map((k) => [k, !!toggles[k]]));
+  return out === '' ? null : out;
+}
+
+/** Svelte's `to_style` (without `!important` directives): `style` minus the properties the directives set, then the directives. */
+function toStyle(value, directives) {
+  if (!directives) return value == null || value === '' ? null : String(value);
+  const own = [];
+  const reserved = Object.keys(directives).map((n) => (n.startsWith('--') ? n : n.toLowerCase()));
+  if (value) {
+    for (const decl of String(value).replace(/\/\*.*?\*\//g, '').split(';')) {
+      const i = decl.indexOf(':');
+      if (i < 0) continue;
+      const name = decl.slice(0, i).trim();
+      if (!reserved.includes(name.startsWith('--') ? name : name.toLowerCase())) own.push(decl.trim());
+    }
+  }
+  let css = own.length ? `${own.join('; ')};` : '';
+  for (const k of Object.keys(directives)) {
+    const v = directives[k];
+    if (v != null && v !== '') css += `${css ? ' ' : ''}${k}: ${v};`;
+  }
+  return css === '' ? null : css;
+}
+
+/**
+ * The attributes of an element whose attributes are only known at run time (a spread, or any
+ * `<svelte:element>`): `fn()` returns them as one object in source order, as Svelte's
+ * `attribute_effect` (later keys win). A block effect applies each new object: props (strings
+ * coerced like static attributes), `on<event>` keys (one native connection per key, calling its
+ * current value), `class` / `style` (with the `CLASS` toggles, `STYLE` directives and the CSS scope
+ * class `css`), `parent:` child attributes and attachments. A key that goes away is reset to the
+ * spec default, else to the native value captured before the first write. Unknown keys warn in
+ * DEV (the compiler's code and message) and are skipped.
+ */
+export function spread(node, K, fn, deps = null, css = null) {
+  const info = kindInfo(K, node.kind);
+  if (!info) return;
+  const st = { node, K, info, css, cur: new Map(), seen: new Set(), conns: new Map(), attachments: new Map(), touched: new Set(), tracked: new Set() };
+  // the memoized call expressions of the object (Svelte's Memoizer): deriveds of their own
+  const ds = deps ? deps.map((d) => $.derived(d)) : null;
+  block(() => applySpread(st, (ds ? fn(...ds.map($.get)) : fn()) ?? {}));
+}
+
+function applySpread(st, next) {
+  const { node, info, K } = st;
+  const entries = new Map();
+  for (const k in next) entries.set(k, next[k]);
+  for (const k of st.cur.keys()) if (!entries.has(k)) entries.set(k, undefined);
+
+  // class and style (with their directives), as one value each
+  const native = info.classProp === null;
+  const toggles = next[CLASS];
+  if (entries.has('class') || toggles || st.css) {
+    const v = toClass(next.class, st.css, toggles);
+    if (native) attr(node, 'class', v);
+    else if (v !== null || st.cur.has('class')) set(node, info.classProp, v ?? '');
+    if (v !== null) st.cur.set('class', v);
+    else st.cur.delete('class');
+  }
+  const directives = next[STYLE];
+  if (entries.has('style') || directives) {
+    const v = toStyle(next.style, directives);
+    const p = native ? null : info.props.get('style');
+    if (native) attr(node, 'style', v);
+    else if (p && p.flags & PROP_WRITABLE && (v !== null || st.cur.has('style'))) set(node, p.js, v);
+    if (v !== null) st.cur.set('style', v);
+    else st.cur.delete('style');
+  }
+
+  for (const [key, value] of entries) {
+    if (key === 'class' || key === 'style') continue;
+    // unchanged; a nullish key is written once, the first time it appears (as an explicit attribute)
+    if (st.cur.has(key) ? Object.is(st.cur.get(key), value) : value == null && st.seen.has(key)) continue;
+    st.seen.add(key);
+    if (key.startsWith('$$') || key === 'slot') continue;
+    if (key.length > 2 && key.startsWith('on') && (st.conns.has(key) || typeof value === 'function' || !info.props.has(key))) {
+      spreadEvent(st, key, value);
+      continue;
+    }
+    if (value == null) st.cur.delete(key);
+    else st.cur.set(key, value);
+    if (key.startsWith('parent:')) {
+      child_attr(node, key.slice(7), value ?? null);
+      continue;
+    }
+    if (native && key === 'id') {
+      attr(node, 'id', value == null ? null : String(value));
+      continue;
+    }
+    // Svelte never writes a function as an attribute (a `children` snippet in `...rest`)
+    if (typeof value === 'function') continue;
+    const p = info.props.get(key);
+    if (!p) {
+      if (value != null) specWarn('unknown_property', `<${info.tag}> has no property \`${key}\` on ${K.backend}${didYouMean(closest(key, info.names))}`);
+      continue;
+    }
+    if (!(p.flags & PROP_WRITABLE)) {
+      if (value != null) specWarn('read_only_property', `property \`${p.js}\` of <${info.tag}> is read-only on ${K.backend}`);
+      continue;
+    }
+    setProp(st, p, value, !(key in next));
+  }
+
+  // attachments (`{@attach}` in the object, `createAttachmentKey()`): re-run when the function changes
+  const syms = new Set(Object.getOwnPropertySymbols(next).filter((s) => s.description === ATTACHMENT_KEY));
+  for (const [s, a] of st.attachments) {
+    if (!syms.has(s) || next[s] !== a.fn) {
+      destroy(a.effect);
+      st.attachments.delete(s);
+    }
+  }
+  for (const s of syms) {
+    const f = next[s];
+    if (!st.attachments.has(s) && f) st.attachments.set(s, { fn: f, effect: branch(() => $.attach(node, () => f)) });
+  }
+}
+
+/** Writes (or, for null/undefined, resets) a prop from a spread. */
+function setProp(st, p, value, gone = false) {
+  const { node, info } = st;
+  if (value == null && !st.touched.has(p.js)) {
+    if (gone) return;
+    // never written by this spread: the value goes through as an explicit attribute's would
+    st.touched.add(p.js);
+    if (p.def == null && p.flags & PROP_READABLE) captureOnly(node, p.js);
+    set(node, p.js, null);
+    return;
+  }
+  if (value == null) {
+    if (p.def != null) set(node, p.js, p.def);
+    else if (node.captured.has(p.js)) set(node, p.js, RESTORE);
+    else set(node, p.js, null);
+    return;
+  }
+  let v = value;
+  if (typeof v === 'string' && p.type !== 'string') {
+    const r = coerce(p, v);
+    if (r.error) {
+      specWarn('bad_attribute_value', `<${info.tag}> ${r.error}`);
+      return;
+    }
+    v = r.value;
+  } else if (p.type === 'string' && (typeof v === 'number' || typeof v === 'boolean')) {
+    // an attribute value, as Svelte writes it (`data-x={true}` is "true")
+    v = String(v);
+  }
+  if (!st.touched.has(p.js)) {
+    st.touched.add(p.js);
+    // no spec default to go back to: remember the native value before the first write
+    if (p.def == null && p.flags & PROP_READABLE) captureOnly(node, p.js);
+  }
+  set(node, p.js, v);
+  // a one-way prop the native side also edits: mirror native edits, as an explicit attribute does
+  const b = info.bindings.get(p.js);
+  if (b && !st.tracked.has(p.js)) {
+    st.tracked.add(p.js);
+    track(node, p.js, b[0], b[1]);
+  }
+}
+
+/**
+ * Reads the native value of `prop` once, for a later `set(node, prop, RESTORE)`. Unlike `capture`
+ * it does not count as the last written value: the spread's first write always goes out (the
+ * value read may be a property the host derives from something else, as a DOM input's `type`).
+ */
+function captureOnly(node, prop) {
+  if (node.captured.has(prop) || !alive(node)) return;
+  node.captured.set(prop, node.host.getProp(node.h, prop));
+}
+
+function spreadEvent(st, key, value) {
+  const { node } = st;
+  const c = st.conns.get(key);
+  if (value == null) {
+    st.cur.delete(key);
+    if (c) {
+      st.conns.delete(key);
+      off(node, c.signal, c.fn, c.flags);
+    }
+    return;
+  }
+  st.cur.set(key, value);
+  if (c) {
+    // a new handler for the same event: the connection calls the current one (Svelte does not
+    // re-listen either, sveltejs/svelte#11903)
+    c.value = value;
+    return;
+  }
+  const r = resolveEvent(st.K, st.info, key);
+  if (!r.ev) {
+    specWarn(r.code, r.message);
+    return;
+  }
+  const conn = { signal: r.ev.signal, flags: r.flags, value, fn: null };
+  conn.fn = function (...args) {
+    const f = conn.value;
+    if (typeof f === 'function') return f.apply(this, args);
+  };
+  st.conns.set(key, conn);
+  // owned by the spread, not the ownership scope: it outlives the effect run that registered it
+  const prev = scope;
+  scope = null;
+  try {
+    on(node, conn.signal, conn.fn, conn.flags);
+  } finally {
+    scope = prev;
+  }
+}
+
+/**
+ * Text children of a `<svelte:element>`: the kind's text-content prop (`label` of a label or
+ * button). A kind without one cannot hold text (DEV warning, as the compiler's `text_not_allowed`).
+ */
+export function text(node, K, value) {
+  const info = kindInfo(K, node.kind);
+  if (!info) return;
+  if (!info.text) {
+    specWarn('text_not_allowed', `<${info.tag}> cannot contain text on ${K.backend}`);
+    return;
+  }
+  set(node, info.text, value);
+}
+
+/**
+ * `<svelte:element this={tag}>` (Svelte's `element()`): a nullish or empty tag renders nothing; a
+ * different tag builds a new element (`render(node)` applies its attributes and builds its
+ * children, then it is appended) and disposes the old one; the same tag keeps it. A toplevel kind
+ * is created as a toplevel. A tag the backend does not have renders nothing (DEV warning).
+ */
+export function dynamic_element(container, getTag, render, K) {
+  swapping(
+    container,
+    () => {
+      const tag = getTag();
+      if (DEV && tag && typeof tag !== 'string') svelteError('svelte_element_invalid_this_value', 'The `this` prop on `<svelte:element>` must be a string, if defined');
+      return tag || null;
+    },
+    (tag, anchor) => {
+      const info = kindInfo(K, tag);
+      if (!info) {
+        specWarn('unknown_element', `<${tag}> is not an element of the ${K.backend} backend${didYouMean(closest(tag, Object.keys(K.tags)))}`);
+        return;
+      }
+      const node = info.top ? toplevel(tag, info.top[0] ?? null) : create(tag, null);
+      render(node);
+      append(anchor, node);
+    },
+  );
 }
 
 // ---------------------------------------------------------------------------------------------

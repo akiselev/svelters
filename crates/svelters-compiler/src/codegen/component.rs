@@ -134,6 +134,10 @@ pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, file
         g.w.write(&format!("import '{}/tracing';\n", imports.core));
     }
     g.w.write(&format!("import * as $ from '{}';\nimport * as $n from '{}';\n", imports.core, imports.native));
+    if comp.kinds {
+        // the spec tables of runtime-resolved attributes (spreads, <svelte:element>)
+        g.w.write(&format!("import * as $$kinds from '{}/kinds';\n", imports.native));
+    }
     rw.script(&mut g.w, true);
     let (hoisted, instance): (Vec<_>, Vec<_>) = comp.root.snippets.iter().partition(|s| rw.hoist_snippet(s.span.start));
     for s in hoisted {
@@ -287,7 +291,120 @@ impl Codegen<'_, '_> {
             Item::Await(b) => self.await_block(b, container),
             Item::Render(r) => self.render(r, container),
             Item::Component(c) => self.component(c, container),
+            Item::Dynamic(d) => self.dynamic_element(d, container),
         }
+    }
+
+    /// `<svelte:element this={tag}>`, as Svelte's SvelteElement visitor builds the element's
+    /// callback: its `init` (the spread's attribute effect, attachments, actions and `bind:this`,
+    /// in attribute order), then its own template effect (reactive text of a backend without
+    /// text nodes) and events and bindings, then its body, which is a fragment of its own.
+    fn dynamic_element<'f>(&mut self, d: &'f DynamicElement<'f>, container: &str) {
+        let n = format!("$$n{}", d.id + 1);
+        self.line();
+        self.w.map(d.span.start);
+        self.w.write(&format!("$n.dynamic_element({container}, () => "));
+        self.paren_expr(d.tag, Mode::Read);
+        self.w.write(&format!(", ({n}) => {{"));
+        self.w.indent();
+        let mut own = Frag::default();
+        for op in &d.ops {
+            match self.phase(op) {
+                Phase::Init | Phase::ElementInit => self.op(&n, op),
+                Phase::Update => {
+                    self.update_prefix(&n, op);
+                    own.update.push((n.clone(), op));
+                }
+                Phase::Event => {
+                    let memo = self.handler_memo(op);
+                    own.after.push(After { node: n.clone(), op, memo });
+                }
+                Phase::Binding => own.after.push(After { node: n.clone(), op, memo: None }),
+            }
+        }
+        self.close(own);
+        self.decls(&d.children);
+        let mut body = Frag::default();
+        self.children(&d.children, &n, &mut body);
+        self.close(body);
+        self.w.dedent();
+        self.line();
+        self.w.write("}, $$kinds);");
+    }
+
+    /// The object of an `Op::Spread`, in source order; inline handler functions are hoisted
+    /// before the call (`hoisted`), so a re-run passes the same function.
+    fn spread_object(&mut self, entries: &[SpreadEntry], hoisted: &[(usize, String)]) {
+        self.w.write("({");
+        let mut first = true;
+        let mut sep = |w: &mut Writer| {
+            w.write(if first { " " } else { ", " });
+            first = false;
+        };
+        for (i, e) in entries.iter().enumerate() {
+            match e {
+                SpreadEntry::Attr { key, value } => {
+                    sep(&mut self.w);
+                    self.w.write(&format!("{}: ", js_key(key)));
+                    match value {
+                        AttrValue::Static(j) => self.json(j),
+                        AttrValue::Dynamic(d) => self.dynamic(d),
+                    }
+                }
+                SpreadEntry::Event { key, handler } => {
+                    sep(&mut self.w);
+                    self.w.write(&format!("{}: ", js_key(key)));
+                    match hoisted.iter().find(|(j, _)| *j == i) {
+                        Some((_, id)) => self.w.write(id),
+                        None => self.paren_expr(handler, Mode::Read),
+                    }
+                }
+                SpreadEntry::Spread(e) => {
+                    sep(&mut self.w);
+                    match self.memoized(e) {
+                        Some(id) => self.w.write(&format!("...{id}")),
+                        None => {
+                            self.w.write("...(");
+                            self.expr_text(e, Mode::Read);
+                            self.w.write(")");
+                        }
+                    }
+                }
+                SpreadEntry::Class { .. } | SpreadEntry::Style { .. } => {}
+            }
+        }
+        for (sym, class) in [("$n.CLASS", true), ("$n.STYLE", false)] {
+            let list: Vec<&SpreadEntry> = entries.iter().filter(|e| if class { matches!(e, SpreadEntry::Class { .. }) } else { matches!(e, SpreadEntry::Style { .. }) }).collect();
+            if list.is_empty() {
+                continue;
+            }
+            sep(&mut self.w);
+            self.w.write(&format!("[{sym}]: {{ "));
+            for (k, e) in list.iter().enumerate() {
+                if k > 0 {
+                    self.w.write(", ");
+                }
+                match e {
+                    SpreadEntry::Class { name, expr } => {
+                        self.w.write(&format!("{}: ", js_key(name)));
+                        match self.memoized(expr) {
+                            Some(id) => self.w.write(&id),
+                            None => self.paren_expr(expr, Mode::Read),
+                        }
+                    }
+                    SpreadEntry::Style { name, value } => {
+                        self.w.write(&format!("{}: ", js_key(name)));
+                        match value {
+                            AttrValue::Static(j) => self.json(j),
+                            AttrValue::Dynamic(d) => self.dynamic(d),
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            self.w.write(" }");
+        }
+        self.w.write(if first { "})" } else { " })" });
     }
 
     /// An element, as Svelte's RegularElement visitor orders it: its static writes now, its
@@ -387,9 +504,12 @@ impl Codegen<'_, '_> {
     /// Where an op goes in its fragment (Svelte's `init` / `update` / `after_update`).
     fn phase(&self, op: &Op) -> Phase {
         match op {
-            Op::SetDynamic { value, .. } | Op::ChildAttr { value: AttrValue::Dynamic(value), .. } | Op::WidgetName { value: AttrValue::Dynamic(value), .. } => {
+            Op::SetDynamic { value, .. } | Op::ChildAttr { value: AttrValue::Dynamic(value), .. } | Op::WidgetName { value: AttrValue::Dynamic(value), .. } | Op::Text { value: AttrValue::Dynamic(value), .. } => {
                 if self.dynamic_reactive(value) { Phase::Update } else { Phase::Init }
             }
+            // Svelte's build_attribute_effect: a spread's `$.attribute_effect` is an effect of its
+            // own, written with the element (`init`), not part of the fragment's template effect
+            Op::Spread { .. } => Phase::Init,
             Op::Token { cond, .. } if !cond.is_empty() => Phase::Update,
             Op::Classes { dynamic, toggles, .. } if dynamic.is_some() || !toggles.is_empty() => Phase::Update,
             Op::InlineStyle { dynamic, directives, .. } if dynamic.is_some() || !directives.is_empty() => Phase::Update,
@@ -472,7 +592,9 @@ impl Codegen<'_, '_> {
             }
         };
         match op {
-            Op::SetDynamic { value, .. } | Op::ChildAttr { value: AttrValue::Dynamic(value), .. } | Op::WidgetName { value: AttrValue::Dynamic(value), .. } => dynamic(value, out, &mut add),
+            Op::SetDynamic { value, .. } | Op::ChildAttr { value: AttrValue::Dynamic(value), .. } | Op::WidgetName { value: AttrValue::Dynamic(value), .. } | Op::Text { value: AttrValue::Dynamic(value), .. } => {
+                dynamic(value, out, &mut add)
+            }
             Op::Classes { toggles, .. } => {
                 for (_, e) in toggles {
                     add(e, out);
@@ -585,6 +707,12 @@ impl Codegen<'_, '_> {
             Op::WidgetName { value: AttrValue::Dynamic(d), span } => {
                 self.w.map(span.start);
                 self.w.write(&format!("$n.attr({n}, \"id\", "));
+                self.dynamic(d);
+                self.w.write(")");
+            }
+            Op::Text { value: AttrValue::Dynamic(d), span } => {
+                self.w.map(span.start);
+                self.w.write(&format!("$n.text({n}, $$kinds, "));
                 self.dynamic(d);
                 self.w.write(")");
             }
@@ -749,6 +877,72 @@ impl Codegen<'_, '_> {
                 unreachable!("a dynamic inline style is an update");
             }
             Op::StyleSetter { .. } => unreachable!("a style setter is an update"),
+            Op::Spread { entries, css, span } => {
+                let mut hoisted = Vec::new();
+                for (i, e) in entries.iter().enumerate() {
+                    if let SpreadEntry::Event { handler, .. } = e
+                        && is_function(handler)
+                    {
+                        self.tmp += 1;
+                        let id = format!("$$handler{}", self.tmp);
+                        self.w.write(&format!("const {id} = "));
+                        self.expr_text(handler, Mode::Read);
+                        self.w.write(";");
+                        self.line();
+                        hoisted.push((i, id));
+                    }
+                }
+                // Svelte's Memoizer: call expressions are the effect's dependencies (deriveds), so
+                // `{...get_rest()}` is not called again when another attribute changes
+                let mut memo: Vec<&Expression> = Vec::new();
+                for e in entries {
+                    match e {
+                        SpreadEntry::Spread(x) | SpreadEntry::Attr { value: AttrValue::Dynamic(Dynamic::Expr(x)), .. } if self.rw.has_call(x) => memo.push(x),
+                        SpreadEntry::Attr { value: AttrValue::Dynamic(Dynamic::Template(parts)), .. } | SpreadEntry::Style { value: AttrValue::Dynamic(Dynamic::Template(parts)), .. } => {
+                            memo.extend(parts.iter().filter_map(|p| match p {
+                                TemplatePart::Expr(x) if self.rw.has_call(x) => Some(*x),
+                                _ => None,
+                            }))
+                        }
+                        SpreadEntry::Style { value: AttrValue::Dynamic(Dynamic::Expr(x)), .. } | SpreadEntry::Class { expr: x, .. } if self.rw.has_call(x) => memo.push(x),
+                        _ => {}
+                    }
+                }
+                let params: Vec<String> = (0..memo.len()).map(|i| format!("${i}")).collect();
+                self.w.map(span.start);
+                self.w.write(&format!("$n.spread({n}, $$kinds, ({}) => ", params.join(", ")));
+                self.memo = memo.iter().enumerate().map(|(i, e)| (*e as *const Expression as usize, format!("${i}"))).collect();
+                self.spread_object(entries, &hoisted);
+                self.memo.clear();
+                if !memo.is_empty() {
+                    self.w.write(", [");
+                    for (i, e) in memo.iter().enumerate() {
+                        if i > 0 {
+                            self.w.write(", ");
+                        }
+                        self.w.write("() => ");
+                        self.paren_expr(e, Mode::Read);
+                    }
+                    self.w.write("]");
+                } else if css.is_some() {
+                    self.w.write(", null");
+                }
+                if let Some(c) = css {
+                    self.w.write(&format!(", {}", js_str(c)));
+                }
+                self.w.write(");");
+            }
+            Op::Text { value, span } => {
+                self.w.map(span.start);
+                match value {
+                    AttrValue::Static(v) => {
+                        self.w.write(&format!("$n.text({n}, $$kinds, "));
+                        self.json(v);
+                        self.w.write(");");
+                    }
+                    AttrValue::Dynamic(d) => self.dynamic_call(&format!("$n.text({n}, $$kinds, "), d),
+                }
+            }
             Op::Explicit { props, attrs } => {
                 let list = |v: &[String]| v.iter().map(|x| js_str(x)).collect::<Vec<_>>().join(", ");
                 self.w.write(&format!("$n.explicit({n}, [{}], [{}]);", list(props), list(attrs)));
@@ -1397,6 +1591,22 @@ impl Codegen<'_, '_> {
                     self.expr_text(target, Mode::Read);
                     let set = self.rw.assign(target, "$$value");
                     self.w.write(&format!("; }}, set {}($$value) {{ {set}; }}", js_key(name)));
+                }
+                ComponentProp::Attach(e) => {
+                    // Svelte's build_component: a reactive attachment is re-read by the attach effect
+                    self.w.write("[$.attachment()]: ");
+                    if self.rw.is_reactive(e) {
+                        self.w.write("($$node) => (");
+                        if is_function(e) {
+                            self.paren_expr(e, Mode::Read);
+                        } else {
+                            self.paren_expr(e, Mode::Read);
+                            self.w.write(" || $.noop");
+                        }
+                        self.w.write(")($$node)");
+                    } else {
+                        self.paren_expr(e, Mode::Read);
+                    }
                 }
                 ComponentProp::Spread(_) => unreachable!(),
             }
