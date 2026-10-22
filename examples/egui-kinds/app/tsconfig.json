@@ -15,6 +15,7 @@
     "src/**/*.svelte",
     "src/**/*.ts",
     ".svelters/app/app.d.ts",
-    ".svelters/app/kinds.d.ts"
+    ".svelters/app/kinds.d.ts",
+    ".svelters/app/behaviors.d.ts"
   ]
 }
