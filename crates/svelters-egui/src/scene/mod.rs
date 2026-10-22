@@ -20,7 +20,7 @@
 //! | `journal.rs` | [`Change`], [`Observer`], [`ChangeFilter`], [`ChangeSet`], [`Damage`] (SG2) |
 //! | `query.rs` | kind sets, anchor maps, [`Query`], [`Cursor`], [`Visit`] (SG3) |
 //! | `hit.rs` | per-viewport hit lists, [`SceneRef::hit_test`], [`Hit`], [`HitCx`] (SG3) |
-//! | `virt.rs` | [`RowHeights`], [`VScroll`], [`RowPool`], [`RowSource`], [`VirtualChildren`], [`PrepareCx`] (SG5, LISTS) |
+//! | `virt.rs` | [`RowHeights`], [`VScroll`], [`RowPool`], [`RowSource`], [`VirtualChildren`] (SG5, LISTS) |
 //!
 //! Writer lane: SCENE.
 
@@ -53,7 +53,7 @@ pub use crate::provider::{ExtBlock, ExtEntry, ExtId, ExtKey, ExtTicks, IntoState
 pub use node::{Common, Dirty, Node, NodeFlags, Owner, Visual, W};
 pub use props::{default_value, get_prop, set_prop, tag_of};
 pub use tree::TreeRoot;
-pub use virt::{PrepareCx, RowHeights, RowPool, RowSource, VScroll, VirtualChildren};
+pub use virt::{RowHeights, RowPool, RowSource, VScroll, VirtualChildren};
 
 use crate::kinds;
 use dump::Counters;
@@ -104,6 +104,10 @@ pub struct Scene {
     /// Prop changes to announce to the host (`prop_changed`), from Rust writes (R18); flushed by the
     /// frame's logic.
     pub(crate) announce: Vec<(NodeId, u32)>,
+    /// CS5e: the cascade's sheets, per-node classes, inline blocks and computed styles (`style.rs`).
+    pub(crate) style: crate::style::SceneStyle,
+    /// What a taken-out payload reads as (SG4, `Scene::w`).
+    taken_w: W,
 }
 
 impl Default for Scene {
@@ -124,6 +128,8 @@ impl Default for Scene {
             in_batch: false,
             counters: Counters::default(),
             announce: Vec::new(),
+            style: Default::default(),
+            taken_w: W::Box,
         }
     }
 }
@@ -193,6 +199,12 @@ impl Scene {
         true
     }
 
+    /// Closes a batch a panic left open (SG4: provider code unwinding out of a batch).
+    pub(crate) fn abort_batch(&mut self) {
+        self.in_batch = false;
+        self.journal.batch = None;
+    }
+
     pub(crate) fn end_batch(&mut self, outer: bool) {
         if outer {
             self.in_batch = false;
@@ -202,12 +214,15 @@ impl Scene {
 
     // ---- columns ----
 
+    /// Node `i`'s payload. A provider's payload taken out while its own code runs (SG4: `ui`,
+    /// `layout`, `prepare`) reads as an empty box: `NodeRef::widget` is `None` then, text is empty.
     pub(crate) fn w(&self, i: usize) -> &W {
         match &self.payload[i] {
             Payload::Builtin(w) => w,
-            Payload::Vacant => panic!("svelters-egui: vacant payload in slot {i}"),
+            Payload::Vacant => &self.taken_w,
         }
     }
+
 
     pub(crate) fn w_mut(&mut self, i: usize) -> &mut W {
         match &mut self.payload[i] {

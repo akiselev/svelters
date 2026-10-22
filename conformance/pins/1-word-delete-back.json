@@ -1,0 +1,12 @@
+{
+  "id": "word-delete-back",
+  "pin": 1,
+  "title": "Delete the previous word, repeatedly, from the end",
+  "setup": {
+    "fields": { "a": { "text": "foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end", "sel": [-1, -1] }, "b": { "text": "second" } },
+    "focus": "a"
+  },
+  "steps": [
+    { "key": "delete-word-back", "repeat": 15 }
+  ]
+}

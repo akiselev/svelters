@@ -40,8 +40,8 @@ impl Busy {
     pub const RELOAD: Busy = Busy(1024);
     /// A timer is due within the horizon (`EmbedConfig::timer_horizon`).
     pub const TIMER_SOON: Busy = Busy(2048);
-    /// A provider reports work (`Widget::busy`, a wanting state provider; ARCH-EMBED R8, ARCH-SCENE
-    /// R16). Reserved: set once state providers land (SG4, R23); nothing sets it yet.
+    /// A provider reports work (`Widget::busy`, a wanting, kicked or busy state provider; ARCH-EMBED
+    /// R8, ARCH-SCENE R16; SG4).
     pub const PROVIDER: Busy = Busy(4096);
 
     const NAMES: [(Busy, &'static str); 13] = [

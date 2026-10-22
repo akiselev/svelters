@@ -45,6 +45,7 @@ impl EguiBackend {
         let mut scene = self.0.scene.borrow_mut();
         let id = scene.live(w).expect("a live window");
         let r = scene.core[scene.ix(id)].root;
+        crate::provider::pass::prepare_root(&mut scene, r); // SG4: Caps::PREPARE (§7.2 b)
         crate::kinds::virtuallist::prepare_root(&mut scene, ui.ctx(), r); // SG5: Rust rows bound before layout
         self.layout_root(&mut scene, ui.ctx(), r, rect.size());
         paint(&mut scene, w, rect.min.to_vec2(), ui, out);
@@ -66,6 +67,7 @@ impl EguiBackend {
         if scene.roots.get(r).is_some_and(|e| !e.dirty.remeasure.is_empty()) {
             layout::remeasure(&mut scene, &layout::Metrics::new(ui.ctx()), r);
         }
+        crate::provider::pass::prepare_root(&mut scene, r); // SG4: Caps::PREPARE (§7.2 b)
         crate::kinds::virtuallist::prepare_root(&mut scene, ui.ctx(), r); // SG5: Rust rows bound before layout
         self.layout_root(&mut scene, ui.ctx(), r, rect.size());
         paint_at(&mut scene, i, rect.min.to_vec2(), ui, out);
@@ -83,6 +85,11 @@ impl EguiBackend {
 /// position).
 pub fn paint(arena: &mut Arena, h: Handle, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
     let i = arena.ix(arena.live(h).expect("live node"));
+    paint_at(arena, i, origin, ui, out);
+}
+
+/// SG4: a provider's `WidgetCx::children`/`child` draws its children through the walk.
+pub(crate) fn paint_child(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mut Vec<Out>) {
     paint_at(arena, i, origin, ui, out);
 }
 
@@ -109,6 +116,15 @@ fn paint_visual(arena: &mut Arena, i: usize, origin: Vec2, ui: &mut Ui, out: &mu
     }
     if v.clip.is_some() {
         child.set_clip_rect(ui.clip_rect().intersect(r));
+    }
+    if v.inert {
+        // an exiting node leaves the accessibility tree
+        ui.ctx().accesskit_node_builder(child.unique_id(), |b| b.set_hidden());
+        // TR2b: and out of focus traversal: a disabled widget senses nothing, so Tab skips it and a
+        // focused one loses focus. Disabled widgets are dimmed by `disabled_alpha`; it is 1 here, so
+        // the outro's own opacity is the only fade.
+        child.visuals_mut().disabled_alpha = 1.0;
+        child.disable();
     }
     let mut dropped = Vec::new();
     let sink = if v.inert { &mut dropped } else { out };
@@ -175,6 +191,17 @@ fn paint_own(
         if !ui.is_rect_visible(r) {
             return None;
         }
+        // CS5e: its state and box (background, border), and the opacity of its subtree
+        let opacity = crate::style::before_container(arena, i, r, ui);
+        let mut faded;
+        let ui = match opacity {
+            Some(o) => {
+                faded = ui.new_child(UiBuilder::new().max_rect(ui.max_rect()).scope_id(arena.core[i].egui_id.with("css")));
+                faded.multiply_opacity(o);
+                &mut faded
+            }
+            None => ui,
+        };
         // By index, no clone: the walk never changes the structure (ARCH-SCENE §5.2).
         for k in 0..arena.children[i].len() {
             let c = arena.children[i][k].index() as usize;
@@ -194,8 +221,10 @@ fn paint_own(
         b = b.disabled();
     }
     let mut child = ui.new_child(b);
+    // CS5e: this pass's state, the restyle it reaches, then the computed visuals on `child`
+    crate::style::before_leaf(arena, i, r, &mut child);
     let resp = if matches!(arena.w(i), crate::scene::W::Ext(_)) {
-        crate::provider::paint(arena, i, &mut child, out) // RA1: a provider kind
+        crate::provider::paint(arena, i, &mut child, origin, out) // RA1: a provider kind
     } else {
         Some(crate::leaf::leaf(arena, i, &mut child, out))
     };

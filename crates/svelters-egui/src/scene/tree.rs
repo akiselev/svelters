@@ -22,7 +22,7 @@ use super::node::{Dirty, LayoutBox, NodeCold, NodeCore, NodeFlags, Owner, Payloa
 use super::{Common, Scene};
 use crate::kinds;
 
-/// What a root is (ARCH-SCENE §4.5). SG4 adds `Overlay`.
+/// What a root is (ARCH-SCENE §4.5).
 #[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
 pub enum TreeRoot {
@@ -31,6 +31,20 @@ pub enum TreeRoot {
     /// An embed slot (EM1, ARCH-EMBED §4.1): a host-owned box, drawn by `Embed::show_slot`; the
     /// root mounted into it is the runtime's subtree under `node`.
     Slot { node: NodeId },
+    /// An overlay root (SG4, ARCH-SCENE §7.5): an embed slot drawn by `Embed::show_overlay` in an
+    /// `egui::Area` of order `layer` over other content (a 3D viewport), click-through except where
+    /// one of its nodes takes input.
+    Overlay { node: NodeId, layer: egui::Order },
+}
+
+impl TreeRoot {
+    /// The top node of a slot or overlay root (the embed's `SlotId`), `None` for a window.
+    pub fn slot_node(self) -> Option<NodeId> {
+        match self {
+            TreeRoot::Slot { node } | TreeRoot::Overlay { node, .. } => Some(node),
+            TreeRoot::Window { .. } => None,
+        }
+    }
 }
 
 pub(crate) struct RootEntry {
@@ -50,6 +64,9 @@ pub(crate) struct RootEntry {
     pub key: Option<Box<str>>,
     /// Anchor → the nodes of this root carrying it (SG3, `query.rs`).
     pub anchors: std::collections::HashMap<Box<str>, Vec<NodeId>>,
+    /// SG4: what its last layouts laid out (boundaries, or the top), until `ScenePass::after_layout`
+    /// sees it at the root's draw.
+    pub laid: Vec<NodeId>,
 }
 
 impl RootDirty {
@@ -193,6 +210,7 @@ impl Scene {
             visible: true,
             key: None,
             anchors: Default::default(),
+            laid: Vec::new(),
         });
         self.core[ti].flags.insert(NodeFlags::ROOT);
         self.set_root_subtree(top, r);
@@ -351,6 +369,7 @@ impl Scene {
         let pi = self.ix(p);
         self.children[pi].retain(|&c| c != child);
         self.core[ci].parent = None;
+        self.core[ci].flags.remove(NodeFlags::SHADOW); // SG4: no longer a shadow top
         let t = self.stamp();
         self.record(Change::Removed { parent: p, node: child }, origin);
         self.core[pi].dirty.insert(Dirty::CHILDREN);
@@ -381,7 +400,9 @@ impl Scene {
             return Err(SceneError::Invalid("cannot insert an element into itself".into()));
         }
         self.may_edit(origin, &[parent, child])?;
-        if let Some(old) = self.core[ci].parent {
+        if let Some(old) = self.core[ci].parent
+            && !self.core[ci].flags.contains(NodeFlags::SHADOW)
+        {
             self.may_edit(origin, &[old])?;
         }
         // A parent inside the child's own subtree would make a cycle.
@@ -460,9 +481,71 @@ impl Scene {
         if self.core[ci].parent != Some(parent) {
             return Err(SceneError::Invalid(format!("handle {child} is not a child of {parent}")));
         }
-        self.may_edit(origin, &[parent, child])?;
+        // SG4: a shadow top leaves its host whoever owns the host (the host's light children are
+        // the runtime's; its shadow children are not)
+        let shadow = self.core[ci].flags.contains(NodeFlags::SHADOW);
+        let (only_child, both) = ([child], [parent, child]);
+        self.may_edit(origin, if shadow { &only_child[..] } else { &both[..] })?;
         self.unlink(child, true, origin);
         Ok(())
+    }
+
+    /// SG4 (ARCH-SCENE §4.4): makes `child` a shadow top of the provider node `host`, before
+    /// `before` among its shadow children (last when `None`). The host lays it out and draws it
+    /// (`WidgetCx::children`); its kind need not take light children, and a runtime-owned host is
+    /// fine (its light children are the runtime's, its shadow children are not). `child` must not
+    /// be runtime-owned, a window or a root; it moves from wherever it was.
+    pub(crate) fn insert_shadow(&mut self, host: NodeId, child: NodeId, before: Option<NodeId>, origin: Origin) -> Result<bool, SceneError> {
+        let hi = self.idx(host).ok_or(SceneError::Stale(host.to_raw()))?;
+        let ci = self.idx(child).ok_or(SceneError::Stale(child.to_raw()))?;
+        let hk = self.core[hi].kind as usize;
+        if kinds::KindRegistry::global().provider(hk).is_none() {
+            return Err(SceneError::Invalid(format!("<{}> is not a provider kind: only providers host shadow children", self.tag_at(hi))));
+        }
+        let ck = self.core[ci].kind as usize;
+        if kinds::kind(ck).toplevel || self.core[ci].flags.contains(NodeFlags::ROOT) {
+            return Err(SceneError::Invalid("a window or root cannot be a shadow child".into()));
+        }
+        if self.core[ci].owner == Owner::Js {
+            return Err(SceneError::NotOwner { node: child, owner: Owner::Js });
+        }
+        let mut a = Some(host);
+        while let Some(x) = a {
+            if x == child {
+                return Err(SceneError::Invalid("cannot host a node under its own descendant".into()));
+            }
+            a = self.core[self.ix(x)].parent;
+        }
+        if let Some(b) = before {
+            if b == child {
+                return Ok(false);
+            }
+            if self.idx(b).and_then(|bi| self.core[bi].parent) != Some(host) {
+                return Err(SceneError::Invalid(format!("handle {b} is not a shadow child of {host}")));
+            }
+        }
+        if let Some(old) = self.core[ci].parent
+            && !self.core[ci].flags.contains(NodeFlags::SHADOW)
+        {
+            self.may_edit(origin, &[old])?;
+        }
+        self.unlink(child, false, origin);
+        let kids = &mut self.children[hi];
+        let at = before.and_then(|b| kids.iter().position(|&c| c == b)).unwrap_or(kids.len());
+        kids.insert(at, child);
+        self.core[ci].parent = Some(host);
+        self.core[ci].flags.insert(NodeFlags::SHADOW);
+        let t = self.stamp();
+        self.core[hi].dirty.insert(Dirty::CHILDREN);
+        self.core[hi].changed = t;
+        self.core[ci].changed = t;
+        let r = self.core[hi].root;
+        if self.core[ci].root != r {
+            self.set_root_subtree(child, r);
+        }
+        self.record(Change::Inserted { parent: host, node: child, before }, origin);
+        self.invalidate_content(host);
+        Ok(true)
     }
 
     /// Detaches and frees `id`. Its children are orphaned (detached, alive): a runtime destroys them
@@ -470,13 +553,20 @@ impl Scene {
     pub(crate) fn destroy(&mut self, id: NodeId, origin: Origin) -> Result<Destroyed, SceneError> {
         let i = self.idx(id).ok_or(SceneError::Stale(id.to_raw()))?;
         self.may_edit(origin, &[id])?;
-        if let Some(p) = self.core[i].parent {
+        if let Some(p) = self.core[i].parent
+            && !self.core[i].flags.contains(NodeFlags::SHADOW)
+        {
             self.may_edit(origin, &[p])?;
         }
         self.unlink(id, true, origin);
         if self.core[i].flags.contains(NodeFlags::ROOT) {
             let r = self.core[i].root;
             self.remove_root(r);
+        }
+        // SG4: a provider's shadow subtrees die with it (no runtime knows them to destroy them)
+        let shadow: Vec<NodeId> = self.children[i].iter().copied().filter(|&c| self.core[self.ix(c)].flags.contains(NodeFlags::SHADOW)).collect();
+        for c in shadow {
+            self.free_subtree_from(c, origin);
         }
         let kids = std::mem::take(&mut self.children[i]);
         for &c in &kids {

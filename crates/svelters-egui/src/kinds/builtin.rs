@@ -6,6 +6,9 @@ use super::{Def, KindDef, MethodDef, P, PropDef, SignalDef, Ty, input, layout, l
 
 pub const ALIGN: &[&str] = &["start", "end", "center", "stretch", "baseline"];
 pub const ALIGN_SELF: &[&str] = &["auto", "start", "end", "center", "stretch", "baseline"];
+/// SG4: `position` (`absolute`: out of flow, placed by `left`/`top`/`right`/`bottom` in the nearest
+/// positioned ancestor, else the root).
+pub const POSITION: &[&str] = &["static", "relative", "absolute"];
 pub const JUSTIFY: &[&str] = &["start", "end", "center", "space-between", "space-around", "space-evenly"];
 pub const DIRECTION: &[&str] = &["column", "row", "column-reverse", "row-reverse"];
 pub const WRAP: &[&str] = &["nowrap", "wrap", "wrap-reverse"];
@@ -40,6 +43,17 @@ static WIDGET_PROPS: &[PropDef] = &[
         Def::Str(""),
         "A name unique in its embedded root: the node's egui id derives from it (stable across runs, not only across reorders), it is the AccessKit author id, and `Embed::anchor_rect` finds it. Changing it drops the node's egui memory.",
     ),
+    layout(
+        "position",
+        P::Position,
+        Ty::Enum(POSITION),
+        Def::Str("static"),
+        "`absolute` takes the node out of the flow and places it by `left`/`top`/`right`/`bottom` inside its containing block: the nearest `relative` or `absolute` ancestor, else the root.",
+    ),
+    length("left", P::Left, "Inset from the containing block's left edge in points (`position: absolute` or `relative`); null for auto."),
+    length("top", P::Top, "Inset from the containing block's top edge in points; null for auto."),
+    length("right", P::Right, "Inset from the containing block's right edge in points; null for auto."),
+    length("bottom", P::Bottom, "Inset from the containing block's bottom edge in points; null for auto."),
 ];
 
 static LABEL_PROPS: &[PropDef] = &[
@@ -79,6 +93,8 @@ static SLIDER_PROPS: &[PropDef] = &[
 
 pub(super) const NONE: &[(&str, Ty)] = &[];
 
+static WIDGET_SIGNALS: &[SignalDef] = &[signal("animationend", &[("id", Ty::I64)], "A native animation (TR2) finished; carries its id. The runtime listens to it itself.")];
+
 static CLICK_SIGNALS: &[SignalDef] = &[signal("clicked", NONE, "Pressed and released (`Response::clicked`).")];
 
 static BUTTON_SIGNALS: &[SignalDef] = &[
@@ -117,7 +133,7 @@ pub static KINDS: &[KindDef] = &[
         text_content: None,
         present: None,
         props: WIDGET_PROPS,
-        signals: &[],
+        signals: WIDGET_SIGNALS,
         methods: &[],
         doc: "Common properties of everything placed in a window: state, tooltip, accessibility and its taffy item style.",
     },

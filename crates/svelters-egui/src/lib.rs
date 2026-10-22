@@ -21,14 +21,16 @@ pub mod provider;
 pub mod runner;
 pub mod scene;
 pub mod spec;
+/// CS5e: the egui cascade (the Rust CSS engine on the scene).
+pub mod style;
 
 mod a11y;
+pub mod anim;
 mod events;
 mod frame;
 mod ids;
 mod leaf;
 mod ops;
-mod style;
 mod walk;
 mod windows;
 
@@ -48,12 +50,17 @@ pub use spec::dump;
 /// (`#[svelters::behavior]`) needs.
 pub mod prelude {
     pub use crate::provider::{
-        A11yCx, AvailableSpace, Behavior, BehaviorCx, Caps, Event, ExtKey, Hit, HitCx, IntoStateBits, KindDecl, MeasureCx, StateBit, StateBits, Widget, WidgetCx,
+        A11yCx, AvailableSpace, Behavior, BehaviorCx, Caps, Event, ExtKey, Hit, HitCx, IntoStateBits, KindDecl, LayoutCx, MeasureCx, PassCx, PassScope, PrepareCx, ProviderCx, ScenePass, StateBit, StateBits, StateProvider, Widget, WidgetCx,
     };
-    pub use crate::scene::{NodeMut, NodeRef};
+    pub use crate::scene::{NodeId, NodeMut, NodeRef, SceneMut, SceneRef};
     pub use egui;
 }
 pub use runner::run_app;
 
+/// The CSS engine the scene is styled with (CS5e).
+pub use svelters_style;
+
 /// The egui this backend is built against (re-exported so apps and packs link the same copy).
 pub use egui;
+/// The taffy the scene is laid out with (SG4: `Widget::layout`, `LayoutCx`; unstable, ARCH-SCENE §16).
+pub use taffy;

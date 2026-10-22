@@ -67,16 +67,34 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | WG4a table, tab-view, split-view, toast | IN PROGRESS | | branch `ci/wg4a`; tree-view after LS1 |
 | WG4b rfd dialogs, date/colour pickers, drag and drop | IN PROGRESS | | branch `ci/wg4b` |
 | WG1 SC1 egui widget subset | IN PROGRESS | | branch `ci/wg1`; grid, collapsing-header, toggle-button, combo-box, separator, scroll-area, icon, tooltip, invalid, a11y names; cadatomic FW1's acceptance depends on it |
+| WG3 native reference capture (pins 1-3, 7; GTK/Qt goldens) | DONE | 2026-10-22 | merged 59bc9f81; egui TextEdit matches 85/144 (GTK), 75/144 (Qt) |
+| WG3b GTK selection from inner GtkText, Qt 6.11 golden, pins 4-6 | IN PROGRESS | | branch `ci/wg3b` |
+| FX1 egui focus policy + word rules per native refs | IN PROGRESS | | branch `ci/fx1` |
+| WG3w Windows native references (Win32 EDIT, WinUI TextBox; pins 1-3, 7), egui on Windows, counter-win flake | IN PROGRESS | | branch `ci/wg3w`; builds via the WSL PC's Windows toolchain |
+| EV3+ keys and focus: focus scopes/restore, key routing (ShortcutOverride), edit commands to Svelte text fields, default/cancel buttons (QT-SURVEY §3) | QUEUED | | after FX1; key consumption via ARCH-EMBED R11 consume_key/composing(); edit commands through a host-callable API (cadatomic constraint) |
+| WG5a list/table interaction: keyboard nav, type-ahead, selection, cell editors | QUEUED | | after LISTS2 + SG4 |
+| WG6 widget polish: disabled tooltips, snippet tooltips, truncation, scrollIntoView, SVG, shortcut capture, OS file drops | QUEUED | | after INT1 |
+| WG5b tree-view | QUEUED | | after LISTS2 |
+| DX1 settings binding, persisted UI state, standard paths, console to tracing, JS crash context | QUEUED | | ThinkPad, next free lane; binds to a host-supplied store only (cadatomic U5 layers, UI-layout file); no svelters-owned persistence |
+| DX2 multi-format clipboard, open/reveal from JS | QUEUED | | independent |
+| IN1 Intl via ICU4X, locale-aware numbers | QUEUED | | MacBook, next free lane; locale and catalog come from the host (catalog.t); svelters formats numbers/dates |
 | CX1 in-process diagnostics (SV27) | IN PROGRESS | | branch `ci/cx1`; check-only compile, per-file incremental state, stable codes, `--check --json` |
 | Q1 module loader (`svelters-modules`) | DONE | 2026-10-22 | merged 6dbee841 |
 | CS0 Rust CSS engine (`svelters-style`) | DONE | 2026-10-22 | merged 1b6a754f |
-| SG4 provider passes (R16 provider half, R21, R23) | IN PROGRESS | | branch `ci/sg4`, stacked on `ci/ev2b` + `ci/sg3` |
+| SG4 provider passes (R16 provider half, R21, R23) | DONE | 2026-10-22 | merged (this commit); provider layout/prepare, shadow children, StateProvider (R16/R23), ScenePass + R21 `show_viewport_passes`, overlay roots, `position: absolute` |
 | LS1 + SG5 virtual lists on egui (SV40, SV47) | IN PROGRESS | | branch `ci/lists`, stacked on `ci/sg3` (+ `ci/sg4`) |
 | TK1 one-file cases across backends (SV34) | DONE | 2026-10-22 | merged bf82674f |
 | SV48 `Json<T>` error paths through tagged enums | IN PROGRESS | | branch `ci/sv48` |
 | H1 component HMR on the Rust loader | IN PROGRESS | | thinkpad-svelters, branch `ci/h1`, stacked on `ci/q1` |
+| H3 `$state` kept on HMR (SV36) | IN PROGRESS | | thinkpad-svelters, branch `ci/h3`, stacked on `ci/h1` |
+| TR2 native animator (SV13, SV37) | DONE | 2026-10-22 | merged (this commit); ABI v2.9: style op 11 `SVL_STYLE_ANIMATE`; follow-ups TR2b, TR3 |
+| TR2b exiting (inert) subtrees leave the focus chain | DONE | 2026-10-22 | merged (this commit); exiting widgets use egui's noninteractive style during the outro |
+| TR3 profile per-frame `tick` transitions vs descriptors (SV14 in-process) | IN PROGRESS | | thinkpad-svelters, branch `ci/tr3` |
 | LD1 loader hooks + native module providers (SV22, SV25) | DONE | 2026-10-22 | merged 7e8909bb |
-| CS5e egui cascade | IN PROGRESS | | macbook-svelters, branch `ci/cs5e`, stacked on `ci/cs0` (+ `ci/wg1`, `ci/sg3`) |
+| CS5e egui cascade | DONE | 2026-10-22 | merged 9edf8e24 |
+| Q3w Q3's CSS port in compile() + CLI | DONE | 2026-10-22 | merged (this commit); `CompileOptions::scoped_css`, `--css`, Vite uses it for non-egui |
+| CS5f egui fonts in measure/paint, leaf padding, multi-value margin/padding | IN PROGRESS | | macbook-svelters, branch `ci/cs5f` |
+| CS5g egui box-shadow, compile-time egui `<style>` checks, CSS-size relayout boundaries | IN PROGRESS | | macbook-svelters, branch `ci/cs5g` |
 | Q3 Svelte CSS analyze/prune/scope in Rust | DONE | 2026-10-22 | merged 2441d69f; not yet wired into compile()/CLI |
 | G1 egui backend skeleton | DONE | 6f386b2f | `svelters-egui` (egui 0.37.0 + taffy 0.15.0 pinned, version provisional: D9 open): generational retained arena, taffy on the arena, host ops only edit the scene, events/changes queued during the pass and delivered after, `close-request` the one sync handler; elements `window`, `box`, `label`, `button`, `checkbox`, `text-edit`, `slider`; eframe runner, embed runner (`EguiBackend::ui` + `Host::start_with`, D1), kittest harness without a renderer (no GPU/display); observe `exact` on text/checked/value, others `set_only`; kind table → `metadata/semantics/egui.json` (freshness test), `--backend egui`, layout props in `<style>` (D3); `counter/if-toggle/keyed-list/timers-egui` fixtures replay; idle 0 frames/0 CPU over 5 s (CI test allows a ≤10-frame startup burst); 2.57 ms/kittest frame (debug); release binary 21.0 MB (15.6 stripped); merged master 2411/2411 nextest; open: G2 (styling/tokens, key/pointer sync handlers, per-side padding, %, scroll-area, menus, virtual lists, image snapshots), egui not in ledger/coverage/docs site, hot reload untested, timer-tick frame cost, "no styling support" warning; `plans/milestones/G1-egui-skeleton.md` |
 | FU1 follow-ups: GTK panic, `start` on AppKit/WinUI | DONE | f2c8a07b | GTK `set_prop`/`get_prop`/`call`/`listen` return -1 naming the runtime GType instead of panicking on handles outside the generated tables (`tests/foreign_kinds.rs`: `Gio.Menu`, `Gtk.MediaFile.new()`; failed on the old code); Qt/AppKit/WinUI don't have the pattern; ABI v2.7 `start` on AppKit (checkpoint on the first run-loop turn) and WinUI (dispatcher wake, pre-attach type events posted), host attached before mount on all four desktop backends; 3 start cases per platform; branch 2392/2392 nextest, CI green; open: Qt wrong-kind error doesn't name the runtime class, `start` on iOS/Android; `plans/milestones/FU1-gtk-panic-start.md` |

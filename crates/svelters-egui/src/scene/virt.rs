@@ -18,9 +18,6 @@
 //! - [`RowSource`]: realised rows bound from a Rust model by the built-in `virtual-list`
 //!   (`kinds/virtuallist.rs`) in its prepare step, before layout (the property-grid shape of
 //!   ARCH-SCENE §10.2).
-//! - [`PrepareCx`]: **stub until SG4 lands** (`Caps::PREPARE`, `Widget::prepare`): what a
-//!   virtualiser's prepare step gets. SG4 owns the provider hook; this file owns the type's
-//!   virtualisation members (`scroll_offset`, R22).
 //!
 //! Writer lane: LISTS.
 
@@ -635,45 +632,6 @@ impl<'a> SceneRef<'a> {
                 })
             }
         }
-    }
-}
-
-// ---- the prepare step ----
-
-/// What a virtualiser's prepare step gets (ARCH-SCENE §7.3, §8.2). **SG4 stub**: SG4 adds
-/// `Widget::prepare` and the scene's restriction to the host's shadow subtree; LISTS adds the
-/// virtualisation members. Built by the walk before layout, in the `Ui` phase.
-pub struct PrepareCx<'a> {
-    pub(crate) s: &'a mut Scene,
-    pub(crate) host: NodeId,
-    pub(crate) visible: egui::Rect,
-    pub(crate) ctx: &'a egui::Context,
-    pub(crate) scroll: f64,
-}
-
-impl PrepareCx<'_> {
-    pub fn host(&self) -> NodeId {
-        self.host
-    }
-
-    /// The host's rect drawn last frame, clipped (screen points).
-    pub fn visible_rect(&self) -> egui::Rect {
-        self.visible
-    }
-
-    pub fn ctx(&self) -> &egui::Context {
-        self.ctx
-    }
-
-    /// R22: this frame's scroll offset of the host (its stored offset, last pass's scroll-bar
-    /// drags and this pass's pending wheel input), so rows bound now match what the frame draws.
-    pub fn scroll_offset(&self) -> f64 {
-        self.scroll
-    }
-
-    /// Mutation access for the host's rows (Rust-owned, `Origin::Rust`).
-    pub fn scene(&mut self) -> SceneMut<'_> {
-        SceneMut { s: self.s, origin: super::Origin::Rust(super::ProviderId::named("virtual-list")) }
     }
 }
 

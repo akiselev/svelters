@@ -10,6 +10,7 @@ members = [
     "crates/svelters-appkit",
     "crates/svelters-winui",
     "crates/svelters-egui",
+    "crates/svelters-conformance",
     "crates/svelters-style",
     "crates/svelters-compiler",
     "crates/svelters-modules",
@@ -34,6 +35,7 @@ publish = false
 [workspace.dependencies]
 svelters-abi = { path = "crates/svelters-abi" }
 svelters-host = { path = "crates/svelters-host" }
+svelters-style = { path = "crates/svelters-style" }
 svelters-backend-log = { path = "crates/svelters-backend-log" }
 svelters-gtk = { path = "crates/svelters-gtk" }
 svelters-qt-build = { path = "crates/svelters-qt-build" }
@@ -44,6 +46,7 @@ svelters-egui = { path = "crates/svelters-egui" }
 svelters-testkit = { path = "crates/svelters-testkit" }
 svelters-compiler = { path = "crates/svelters-compiler" }
 svelters-modules = { path = "crates/svelters-modules", default-features = false }
+svelters-conformance = { path = "crates/svelters-conformance" }
 gtk = { package = "gtk4", version = "0.11" }
 rquickjs = { version = "0.14.0", default-features = false, features = ["std", "loader"] }
 serde_json = "1"

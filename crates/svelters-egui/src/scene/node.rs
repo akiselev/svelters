@@ -65,6 +65,13 @@ pub struct Common {
     pub padding: f64,
     pub align_items: &'static str,
     pub justify_content: &'static str,
+    /// SG4: `position` (`static`, `relative`, `absolute`): taffy's out-of-flow boxes, hoisted to
+    /// their containing block (`layout.rs`).
+    pub position: &'static str,
+    pub left: Option<f64>,
+    pub top: Option<f64>,
+    pub right: Option<f64>,
+    pub bottom: Option<f64>,
 }
 
 impl Common {
@@ -93,6 +100,11 @@ impl Common {
         padding: 0.0,
         align_items: "stretch",
         justify_content: "start",
+        position: "static",
+        left: None,
+        top: None,
+        right: None,
+        bottom: None,
     };
 }
 
@@ -186,6 +198,9 @@ bits! {
         const ATTACHED = 1 << 15;
         /// Has attached nodes (`NodeCold::attached` is not empty): the walk runs their hooks.
         const HAS_ATTACHED = 1 << 16;
+        /// SG4: the top of a provider's shadow subtree (ARCH-SCENE §4.4): its parent is the host
+        /// provider node, which lays it out and draws it (`WidgetCx::children`); JS never sees it.
+        const SHADOW = 1 << 20;
     }
 }
 
@@ -300,7 +315,8 @@ impl LayoutBox {
 /// `Behavior`, EM1 `Slot`.
 #[derive(Clone, Debug)]
 pub(crate) enum Payload {
-    /// A freed slot, or a payload taken out while its own code runs (SG4).
+    /// A freed slot, or a payload taken out while its own code runs (SG4: a provider's `ui`,
+    /// `layout`, `prepare`); a taken-out payload reads as an empty box (`Scene::w`).
     Vacant,
     Builtin(W),
 }
@@ -318,10 +334,13 @@ pub(crate) struct NodeCold {
     pub listen_overflow: Vec<u32>,
     /// Attached nodes (behaviours, EV2b) in attach order; `NodeFlags::HAS_ATTACHED` when not empty.
     pub attached: Vec<NodeId>,
+    /// SG4: the out-of-flow (`position: absolute`) boxes this node is the containing block of, as
+    /// taffy's last layout recorded them (`layout.rs`, `LayoutContainingBlock`).
+    pub hoisted: Vec<NodeId>,
 }
 
 impl NodeCold {
-    pub const DEFAULT: NodeCold = NodeCold { common: Common::DEFAULT, vis: Visual::IDENTITY, observe: Vec::new(), listen_overflow: Vec::new(), attached: Vec::new() };
+    pub const DEFAULT: NodeCold = NodeCold { common: Common::DEFAULT, vis: Visual::IDENTITY, observe: Vec::new(), listen_overflow: Vec::new(), attached: Vec::new(), hoisted: Vec::new() };
 
     pub fn observes(&self, prop: u32) -> bool {
         prop != 0 && self.observe.iter().any(|&(p, c)| p == prop && c > 0)

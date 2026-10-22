@@ -61,6 +61,18 @@ export interface EguiWidgetProps {
   margin?: number;
   /** A name unique in its embedded root: the node's egui id derives from it (stable across runs, not only across reorders), it is the AccessKit author id, and `Embed::anchor_rect` finds it. Changing it drops the node's egui memory. */
   anchor?: string;
+  /** `absolute` takes the node out of the flow and places it by `left`/`top`/`right`/`bottom` inside its containing block: the nearest `relative` or `absolute` ancestor, else the root. */
+  position?: 'static' | 'relative' | 'absolute';
+  /** Inset from the containing block's left edge in points (`position: absolute` or `relative`); null for auto. */
+  left?: number | null;
+  /** Inset from the containing block's top edge in points; null for auto. */
+  top?: number | null;
+  /** Inset from the containing block's right edge in points; null for auto. */
+  right?: number | null;
+  /** Inset from the containing block's bottom edge in points; null for auto. */
+  bottom?: number | null;
+  /** A native animation (TR2) finished; carries its id. The runtime listens to it itself. */
+  onanimationend?: (id: number) => void;
 }
 
 /** The built-in egui elements, by tag. */

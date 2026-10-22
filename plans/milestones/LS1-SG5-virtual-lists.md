@@ -3,14 +3,13 @@
 Design: `plans/research/ARCH-SCENE.md` §8.2, §10.2, §10.3, §14 (SG5 row), with the cadatomic review items R19 and R22
 from its "Decided" section; `plans/research/TRACKS.md` LISTS (LS1: SV40, SV47); the M5 protocol
 (`plans/architecture/backend-abi.md` "Model-view protocol (M5)", `plans/milestones/M5-lists.md`). Lane LISTS, branch
-`ci/lists`, started from `ci/sg3` and merged with master after SG3 and EV2b landed. SG4 (`PrepareCx`, `Caps::PREPARE`,
-provider passes) was not on master yet: see "SG4 stubs" below.
+`ci/lists`, started from `ci/sg3` and merged with master after SG3, EV2b and SG4 landed (SG4's hooks kept: see "SG4" below).
 
 ## What landed
 
 | File | Content |
 |---|---|
-| `scene/virt.rs` (LISTS) | **`RowHeights`**: uniform rows with no storage (1M rows cost nothing), a Fenwick tree over all heights from the first height that differs; `offset`, `total`, `row_at`, `range`, `rect`, `splice`, `set_estimate`; offsets in `f64`. **`VScroll`**: a virtualiser's own offset; `advance(ctx, max)` decides a pass's offset once from the stored offset, pending scroll-bar drags and this pass's wheel input (R22); `reveal`. **`RowPool`** (`row`, `bound_in_order`, `release_except`, `release_unused`, `node_of`, `created`, `rebinds`) with R19's **`clears(&KEY)`**. **`RowSource`** (Rust model → realised rows: `len`, `key`, `template`, `uniform_height`, `build`, `bind`, `anchor`, `find_anchor`, `version`). **`VirtualChildren`** (§8.2's trait) `a11y_row` (set size and position) and `label_row_by_contents`. `SceneRef::{virtual_rows, with_virtual, target_by_anchor, target_by_path, target_rect, target_anchor}`. **`PrepareCx`** (stub, below). |
+| `scene/virt.rs` (LISTS) | **`RowHeights`**: uniform rows with no storage (1M rows cost nothing), a Fenwick tree over all heights from the first height that differs; `offset`, `total`, `row_at`, `range`, `rect`, `splice`, `set_estimate`; offsets in `f64`. **`VScroll`**: a virtualiser's own offset; `advance(ctx, max)` decides a pass's offset once from the stored offset, pending scroll-bar drags and this pass's wheel input (R22); `reveal`. **`RowPool`** (`row`, `bound_in_order`, `release_except`, `release_unused`, `node_of`, `created`, `rebinds`) with R19's **`clears(&KEY)`**. **`RowSource`** (Rust model → realised rows: `len`, `key`, `template`, `uniform_height`, `build`, `bind`, `anchor`, `find_anchor`, `version`). **`VirtualChildren`** (§8.2's trait) `a11y_row` (set size and position) and `label_row_by_contents`. `SceneRef::{virtual_rows, with_virtual, target_by_anchor, target_by_path, target_rect, target_anchor}`. |
 | `kinds/virtuallist.rs` (LISTS) | The **`virtual-list`** kind (built-in, kind id appended to `KINDS`): props `selected`, `selection`, `layout`, `row-height`; methods `splice`, `count`, `scrollTo`, `setRow`, `rowAt`; sync signals `setup`, `bind`, `unbind`, `teardown`; async `activate`, `select`. `VList` state, the logic step `EguiBackend::realize_lists` (JS rows), `prepare_root` (Rust rows), `place_rows` (heights and anchoring after layout), `paint` (the walk). `SceneMut::{set_row_source, with_row_source, scroll_list_to}`, `SceneRef::{virtual_list, list_rows}`, `ListStats`. |
 | `layout.rs` | `vlist_layout`: the list sizes as an empty leaf (rows never reach its intrinsic size), lays out its bound rows at its width (measured, or the source's uniform height), hidden layout for unbound pool rows. |
 | `walk.rs`, `frame.rs`, `ops.rs`, `leaf.rs` (one-line hooks) | `paint_own` hands `virtual-list` to `virtuallist::paint`; `window_ui`/`slot_ui` call `prepare_root` before `layout_root`; `before_pass` calls `realize_lists` after the checkpoint and rAF; `call` routes `virtual-list` methods (with arguments) to `vlist_call`. |
@@ -39,8 +38,8 @@ counted (`ListStats::unbound_drawn`), and asks for another frame.
 
 Why not egui's `ScrollArea` for this: it applies wheel input at the end of its pass
 (`egui-0.37.0/src/containers/scroll_area.rs:1326`) and its kinetic and animated steps at its begin, from private
-state, so its offset cannot be known before the pass; rows bound from it would lag a frame. `PrepareCx::scroll_offset`
-is therefore `VScroll`'s offset. Painted-row widgets bind nothing and may keep `ScrollArea::show_viewport` (the
+state, so its offset cannot be known before the pass; rows bound from it would lag a frame. A virtualiser's offset
+is therefore `VScroll`'s. Painted-row widgets bind nothing and may keep `ScrollArea::show_viewport` (the
 reference `virtual-tree` does).
 
 **Rust rows (SG5 realised tier, ARCH-SCENE §10.2).** `SceneMut::set_row_source(list, source, RowPool::new())` makes a
@@ -68,15 +67,16 @@ resolve rows whether or not they are on screen; `target_rect` gives their rect i
 `Target::Virtual` (SG3); realised rows are nodes and are recorded in the hit list as such (the row's outlet and its
 widgets), the list itself under them.
 
-## SG4 stubs (to reconcile when `ci/sg4` lands)
+## SG4 (merged into this branch)
 
-- `PrepareCx` is defined in `scene/virt.rs` with `host`, `visible_rect`, `ctx`, `scroll_offset` (R22) and `scene()`;
-  nothing outside the `virtual-list` builds one yet. SG4 adds `Widget::prepare(&mut self, &mut PrepareCx)` and the
-  restriction to the host's shadow subtree; it should take this type (or move it to its own file and keep
-  `scroll_offset`).
-- `Scene::adopt` stands in for shadow children: a virtualiser's rows are ordinary children it adopted. When SG4 has
-  shadow subtrees, rows move there.
-- `Widget::virtual_children` is added here (ARCH-SCENE §7.3 names it); SG4 adds the other §7.3 methods.
+- SG4's `provider::PrepareCx` and `Widget::prepare` are the provider hook; LISTS' stub `scene::PrepareCx` was dropped.
+  The walk runs SG4's `provider::pass::prepare_root` and then `virtuallist::prepare_root` (the built-in list needs
+  `egui::Context` to decide this frame's offset, R22) before each root's layout. A provider virtualiser reads its
+  offset from its own `VScroll`.
+- `Scene::adopt` stands in for shadow children: a virtualiser's rows are ordinary children it adopted. Moving them
+  into SG4's shadow subtrees is left to LS2.
+- `Widget::virtual_children` sits next to SG4's `layout`/`prepare`; `takes_input` (overlays) counts a
+  `virtual-list` as taking input.
 
 ## Acceptance
 

@@ -72,6 +72,8 @@ pub(crate) struct Inner {
     /// Title last sent per window viewport.
     pub titles: RefCell<std::collections::HashMap<Handle, String>>,
     pub stats: Cell<Stats>,
+    /// TR2: the native animator (keyframes sent once, sampled per frame).
+    pub anim: RefCell<crate::anim::Animator>,
     /// EM2 repaint routing (ARCH-EMBED §5.2, §5.5): scene roots changed by host ops during a frame,
     /// drained by `route_repaints` at the end of `Embed::logic`.
     pub touched: RefCell<Vec<RootIx>>,
@@ -119,6 +121,7 @@ impl EguiBackend {
             closes: RefCell::new(Vec::new()),
             titles: RefCell::new(Default::default()),
             stats: Cell::new(Stats::default()),
+            anim: RefCell::new(Default::default()),
             touched: RefCell::new(Vec::new()),
             root_vp: RefCell::new(Default::default()),
         }))
@@ -133,6 +136,23 @@ impl EguiBackend {
     pub fn frame_counter(&self) -> Arc<dyn Fn() -> u64 + Send + Sync> {
         let shared = self.0.shared.clone();
         Arc::new(move || shared.frames.load(Ordering::Relaxed))
+    }
+
+    /// TR2/SV37: the motion settings (slow-motion factor, reduced motion), effective from the next frame.
+    pub fn set_motion(&self, cfg: crate::anim::MotionConfig) {
+        self.0.anim.borrow_mut().config = crate::anim::MotionConfig { slow: if cfg.slow > 0.0 { cfg.slow } else { 1.0 }, ..cfg };
+        if let Some(ctx) = self.ctx() {
+            ctx.request_repaint();
+        }
+    }
+
+    /// TR2: animations the native animator is still playing (not yet finished).
+    pub fn animations_running(&self) -> usize {
+        self.0.anim.borrow().running_count()
+    }
+
+    pub fn motion(&self) -> crate::anim::MotionConfig {
+        self.0.anim.borrow().config
     }
 
     pub fn stats(&self) -> Stats {

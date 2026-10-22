@@ -1,0 +1,13 @@
+{
+  "id": "word-move",
+  "pin": 1,
+  "title": "Word movement forward then back over spaces, punctuation, CamelCase, snake_case, digits, CJK and a non-BMP character",
+  "setup": {
+    "fields": { "a": { "text": "foo  bar, baz.qux CamelCase snake_case 42abc 3.14 日本語テキスト x😀y end", "sel": [0, 0] }, "b": { "text": "second" } },
+    "focus": "a"
+  },
+  "steps": [
+    { "key": "word-next", "repeat": 16 },
+    { "key": "word-prev", "repeat": 16 }
+  ]
+}

@@ -21,7 +21,7 @@ mod containers;
 mod registry;
 pub(crate) mod virtuallist;
 
-pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, WRAP, WRAP_MODE};
+pub use builtin::{ALIGN, ALIGN_SELF, DIRECTION, JUSTIFY, KINDS, POSITION, WRAP, WRAP_MODE};
 pub use registry::{KindRegistry, PROVIDER_PACK, ProviderKind, kind};
 pub use virtuallist::{ListStats, VList};
 
@@ -71,6 +71,12 @@ pub enum P {
     FlexBasis,
     AlignSelf,
     Margin,
+    // SG4: out-of-flow positioning
+    Position,
+    Left,
+    Top,
+    Right,
+    Bottom,
     // Box (and the window's content area)
     FlexDirection,
     FlexWrap,
