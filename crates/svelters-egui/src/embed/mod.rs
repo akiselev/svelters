@@ -1120,6 +1120,16 @@ impl Embed {
         self.inner.backend.0.scene.register_pass(p)
     }
 
+    /// EV1 (SV6): a Rust event filter on this embed's scene ([`crate::events::EventFilter`]).
+    pub fn register_filter(&self, scope: crate::events::FilterScope, f: impl crate::events::EventFilter) -> crate::events::FilterHandle {
+        self.inner.backend.0.scene.register_filter(scope, f)
+    }
+
+    /// EV1 (SV7): an overlay painted after the walk ([`crate::events::Overlay`]).
+    pub fn register_overlay<O: crate::events::Overlay>(&self, o: O) -> crate::events::OverlayHandle<O> {
+        self.inner.backend.0.scene.register_overlay(o)
+    }
+
     /// SG4 (ARCH-SCENE §7.5): an overlay root, a slot drawn with [`Embed::show_overlay`] in an
     /// `egui::Area` of order `layer` over other content (a 3D viewport, a canvas). Mount into it
     /// like any slot (JS), or build its content from Rust (`SceneMut`, the slot's node is
