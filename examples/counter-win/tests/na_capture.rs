@@ -36,7 +36,18 @@ impl WinFixture for WinUi {
             .map_err(|e| format!("spawn counter-win: {e}"))?;
         let pid = child.id();
         self.child = Some(child);
-        let hwnd = find_window(title, 30_000).map_err(|e| format!("{e}{}", self.stderr_tail()))?;
+        let end = Instant::now() + Duration::from_secs(30);
+        let hwnd = loop {
+            match find_window(title, 200) {
+                Ok(h) => break h,
+                Err(e) => {
+                    let exited = self.child.as_mut().and_then(|c| c.try_wait().ok().flatten()).is_some();
+                    if exited || Instant::now() > end {
+                        return Err(format!("{e}{}", self.stderr_tail()));
+                    }
+                }
+            }
+        };
         if self.xaml.is_none() {
             let path = module_path(pid, "Microsoft.UI.Xaml.dll").unwrap_or_else(|| "not loaded".into());
             let v = file_version(&path).unwrap_or_else(|| "unknown".into());

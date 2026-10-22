@@ -27,7 +27,7 @@ use crate::pins::{BUTTON, BUTTON_LABEL, Chord, FIELDS, Pin};
 use crate::trace::{Checkpoint, State, Trace, scalar_to_utf16, utf16_to_scalar};
 use std::sync::{Arc, Mutex};
 use std::time::{Duration, Instant};
-use windows::Win32::Foundation::{HWND, LPARAM, POINT, RECT, WPARAM};
+use windows::Win32::Foundation::{HWND, LPARAM, RECT, WPARAM};
 use windows::Win32::System::Com::{CLSCTX_INPROC_SERVER, COINIT_MULTITHREADED, CoCreateInstance, CoInitializeEx, SAFEARRAY};
 use windows::Win32::System::Ole::SafeArrayDestroy;
 use windows::Win32::System::Threading::{AttachThreadInput, GetCurrentThreadId};
