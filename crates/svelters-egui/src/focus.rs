@@ -552,8 +552,14 @@ pub(crate) fn record(arena: &Arena, i: usize, ui: &Ui, resp: &egui::Response) {
         W::Slider { .. } | W::RangeSlider { .. } | W::DragValue { .. } => Role::Slider,
         W::Ext(x) => {
             let w = x.0.try_borrow();
-            let claim = |k| w.as_ref().is_ok_and(|w| w.consume_key(k, Modifiers::NONE));
-            Role::Ext { enter: claim(Key::Enter), escape: claim(Key::Escape) }
+            // RA3: a provider text input (`Widget::text_input`) is a text field for EV3
+            match w.as_ref().ok().and_then(|w| w.text_input()) {
+                Some(multiline) => Role::Text { multiline },
+                None => {
+                    let claim = |k| w.as_ref().is_ok_and(|w| w.consume_key(k, Modifiers::NONE));
+                    Role::Ext { enter: claim(Key::Enter), escape: claim(Key::Escape) }
+                }
+            }
         }
         // check boxes, toggles, switches, radio and menu buttons, combo boxes: Space and Enter
         _ if resp.sense.senses_click() => Role::Toggle,
@@ -718,6 +724,12 @@ pub(crate) fn take_entered(ui: &Ui, id: Id) -> bool {
 pub fn consumed_keys(ctx: &Context) -> Vec<KeyboardShortcut> {
     let pass = ctx.cumulative_pass_nr();
     read(ctx, |st| if st.consumed_pass == pass { st.consumed.clone() } else { Vec::new() })
+}
+
+/// OW3: the keyboard focus when this pass began (before a press took it from a text field): what
+/// an own menu or list gives focus back to when it closes.
+pub(crate) fn pass_start_focus(ctx: &Context) -> Option<Id> {
+    read(ctx, |st| st.last_focus)
 }
 
 /// Whether an input method is composing in a svelters text field of `ctx`'s viewport (R11

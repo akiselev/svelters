@@ -183,7 +183,8 @@ impl Scene {
         let tag = (kind < kinds::KindRegistry::global().len()).then(|| kinds::kind(kind).tag).flatten().ok_or_else(|| SceneError::Invalid(format!("unknown kind index {kind}")))?;
         // OW0: a built-in kind whose own widget is switched on (`crate::widgets`) gets it
         let own = crate::widgets::own_payload(&self.own, kind);
-        let w = own.or_else(|| builtin_payload(kind)).ok_or_else(|| SceneError::Invalid(format!("<{tag}> is not creatable")))?;
+        let mut w = own.or_else(|| builtin_payload(kind)).ok_or_else(|| SceneError::Invalid(format!("<{tag}> is not creatable")))?;
+        crate::widgets::mark_own(&self.own, tag, &mut w); // OW3: menu roots and `popup`
         let (id, fresh) = self.slots.alloc();
         let tick = self.stamp();
         let i = id.index() as usize;

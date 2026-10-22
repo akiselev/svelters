@@ -1646,12 +1646,446 @@ fn events(input: DeriveInput) -> syn::Result<Ts> {
 ///   styles `cad-slider` as a `slider`; parts of the same names get the built-in's part rules).
 ///
 /// The generated code names `::svelters_egui`, so the crate depends on `svelters-egui` too.
+///
+/// RA3: `#[svelters::widget]` on an `impl` block of a widget struct gives the kind methods JS calls
+/// on the element (`bind:this`): every fn with a `&self`/`&mut self` receiver (pub or not; fns
+/// without a receiver stay Rust-only), named in lowerCamelCase (`#[method(rename = "x")]` or
+/// `#[js(rename = "x")]`; `#[method(skip)]`/`#[js(skip)]`). Parameters and results are any
+/// `FromJs`/`IntoJs` type (`Json<T>` for serde values); a `Result<T, E>` with a `#[derive(svelters::Error)]`
+/// `E` throws the error in JS; a `&mut MethodCx` parameter is the call context.
+///
+/// ```ignore
+/// #[svelters::widget]
+/// impl CodeEditor {
+///     /// Scrolls line `n` into view.
+///     pub fn reveal_line(&mut self, n: u32) { … }
+///     pub fn focus(&mut self, cx: &mut MethodCx<'_>) { cx.request_focus() }
+/// }
+/// ```
 #[proc_macro_attribute]
 pub fn widget(attr: TokenStream, item: TokenStream) -> TokenStream {
-    let item = syn::parse_macro_input!(item as ItemStruct);
-    widget_impl(attr.into(), item, false)
-        .unwrap_or_else(|e| e.to_compile_error())
-        .into()
+    let attr: Ts = attr.into();
+    let item: Ts = item.into();
+    let res = if let Ok(s) = syn::parse2::<ItemStruct>(item.clone()) {
+        widget_impl(attr, s, false)
+    } else if let Ok(imp) = syn::parse2::<ItemImpl>(item.clone()) {
+        widget_methods(attr, imp)
+    } else if let Ok(f) = syn::parse2::<ItemFn>(item.clone()) {
+        widget_fn(attr, f)
+    } else {
+        Err(syn::Error::new(Span::call_site(), "#[svelters::widget] goes on a struct (a kind), an `impl` block of one (its methods) or a fn (the fn form)"))
+    };
+    res.unwrap_or_else(|e| e.to_compile_error()).into()
+}
+
+/// RA3 (egui-rust-exports §7.3): an ecosystem egui widget as a kind, with little glue. A struct
+/// form kind (`#[widget(..)]` takes `#[svelters::widget]`'s arguments) plus a closure
+/// `|p: &mut Self, ui: &mut egui::Ui| -> egui::Response` that shows the widget from the props.
+/// `#[prop(bind)]` fields the widget writes in place are diffed after the call and announced
+/// (`cx.set`), so `bind:` is exact; the size is measured by running the closure in a sizing pass.
+///
+/// ```ignore
+/// svelters::wrap_widget! {
+///     /// `<drag-value bind:value={x} speed={0.1} />`
+///     #[widget(namespace = "demo", tag = "drag-value")]
+///     pub struct DragValueKind {
+///         #[prop(bind)] value: f64,
+///         #[prop(default = 1.0)] speed: f64,
+///         #[prop] suffix: String,
+///     }
+///     |p, ui| ui.add(egui::DragValue::new(&mut p.value).speed(p.speed).suffix(p.suffix.clone()))
+/// }
+/// ```
+#[proc_macro]
+pub fn wrap_widget(input: TokenStream) -> TokenStream {
+    wrap_widget_impl(input.into()).unwrap_or_else(|e| e.to_compile_error()).into()
+}
+
+fn wrap_widget_impl(input: Ts) -> syn::Result<Ts> {
+    let parser = |s: syn::parse::ParseStream| -> syn::Result<(ItemStruct, Expr)> {
+        let item: ItemStruct = s.parse()?;
+        let body: Expr = s.parse()?;
+        let _: Option<Token![;]> = s.parse()?;
+        Ok((item, body))
+    };
+    let (mut item, body) = parser.parse2(input)?;
+    let pos = item
+        .attrs
+        .iter()
+        .position(|a| a.path().is_ident("widget"))
+        .ok_or_else(|| syn::Error::new(item.ident.span(), "wrap_widget! needs `#[widget(namespace = \"…\", tag = \"…\")]` on the struct"))?;
+    let attr = item.attrs.remove(pos);
+    let args = match attr.meta {
+        Meta::List(l) => l.tokens,
+        _ => return Err(syn::Error::new(attr.span(), "`#[widget(namespace = \"…\")]`")),
+    };
+    if !matches!(body, Expr::Closure(_)) {
+        return Err(syn::Error::new(body.span(), "wrap_widget!: after the struct, a closure `|p, ui| ui.add(…)` that returns the widget's `egui::Response`"));
+    }
+    let binds = bind_fields(&item)?;
+    let name = item.ident.clone();
+    let kind = widget_impl(args, item, false)?;
+    let shown = wrapped_widget(&name, &binds, quote! {
+        let __show: fn(&mut #name, &mut ::svelters_egui::egui::Ui) -> ::svelters_egui::egui::Response = #body;
+        __show(p, ui)
+    });
+    Ok(quote! { #kind #shown })
+}
+
+/// Whether a `#[prop(..)]` attribute has `bind`.
+fn prop_has_bind(a: &Attribute) -> syn::Result<bool> {
+    let mut bind = false;
+    if matches!(a.meta, Meta::List(_)) {
+        a.parse_nested_meta(|m| {
+            if m.path.is_ident("bind") {
+                bind = true;
+            } else if m.input.peek(Token![=]) {
+                let _: Expr = m.value()?.parse()?;
+            }
+            Ok(())
+        })?;
+    }
+    Ok(bind)
+}
+
+/// The `#[prop(..bind..)]` fields of a struct (what a wrapped widget may write in place).
+fn bind_fields(item: &ItemStruct) -> syn::Result<Vec<syn::Ident>> {
+    let mut out = Vec::new();
+    for f in item.fields.iter() {
+        for a in f.attrs.iter().filter(|a| a.path().is_ident("prop")) {
+            if prop_has_bind(a)? {
+                out.push(f.ident.clone().expect("named field"));
+            }
+        }
+    }
+    Ok(out)
+}
+
+/// `impl Widget` for a kind drawn by `show` (statements over `p: &mut Self` and `ui`, giving the
+/// response): `ui` runs it and announces the bound fields it changed through `cx.set`; `measure`
+/// runs it in a sizing pass with the bound fields restored afterwards.
+fn wrapped_widget(name: &syn::Ident, binds: &[syn::Ident], show: Ts) -> Ts {
+    let olds: Vec<syn::Ident> = (0..binds.len()).map(|i| format_ident!("__old{i}")).collect();
+    quote! {
+        const _: () = {
+            fn __svl_show(p: &mut #name, ui: &mut ::svelters_egui::egui::Ui) -> ::svelters_egui::egui::Response {
+                #show
+            }
+
+            impl ::svelters_egui::provider::Widget for #name {
+                fn measure(&mut self, cx: &mut ::svelters_egui::provider::MeasureCx<'_>, avail: ::svelters_egui::provider::AvailableSpace) -> ::svelters_egui::egui::Vec2 {
+                    #(let #olds = ::core::clone::Clone::clone(&self.#binds);)*
+                    let __size = cx.sizing_pass(avail, |ui| {
+                        let _ = __svl_show(self, ui);
+                    });
+                    #(self.#binds = #olds;)*
+                    __size
+                }
+
+                fn ui(&mut self, ui: &mut ::svelters_egui::egui::Ui, cx: &mut ::svelters_egui::provider::WidgetCx<'_>) -> ::svelters_egui::egui::Response {
+                    #(let #olds = ::core::clone::Clone::clone(&self.#binds);)*
+                    let __r = __svl_show(self, ui);
+                    #(
+                        let __new = ::core::mem::replace(&mut self.#binds, #olds);
+                        cx.set(&mut self.#binds, __new);
+                    )*
+                    __r
+                }
+            }
+        };
+    }
+}
+
+/// RA3: `#[svelters::widget(namespace = "…")] fn name(ui: &mut egui::Ui, props…) -> egui::Response`,
+/// the fn form for stateless widgets: a struct `Name` (the fn name in PascalCase) with one prop per
+/// parameter after the `Ui` (`#[prop(default = e, rename = "x", measure)]` as on fields). A `T`
+/// parameter gets a clone of the prop, `&T` (`&str` for a `String` prop) borrows it, and
+/// `&mut T` is `#[prop(bind)]`: what the fn writes is announced (`cx.set`). The fn stays callable
+/// from Rust.
+fn widget_fn(attr: Ts, mut f: ItemFn) -> syn::Result<Ts> {
+    if !f.sig.generics.params.is_empty() || f.sig.asyncness.is_some() {
+        return Err(syn::Error::new(f.sig.span(), "the fn form is a plain, non-generic fn"));
+    }
+    let fname = f.sig.ident.clone();
+    let name = format_ident!("{}", pascal(&fname.to_string()), span = fname.span());
+    let mut fields = Vec::new();
+    let mut pass = Vec::new();
+    let mut binds = Vec::new();
+    let mut saw_ui = false;
+    for (i, input) in f.sig.inputs.iter_mut().enumerate() {
+        let FnArg::Typed(pt) = input else {
+            return Err(syn::Error::new(input.span(), "the fn form is a free fn (no receiver)"));
+        };
+        let prop_attrs: Vec<Attribute> = pt.attrs.iter().filter(|a| a.path().is_ident("prop")).cloned().collect();
+        pt.attrs.retain(|a| !a.path().is_ident("prop"));
+        if i == 0 {
+            let is_ui = matches!(&*pt.ty, Type::Reference(r) if r.mutability.is_some() && last_ident(&r.elem).as_deref() == Some("Ui"));
+            if !is_ui || !prop_attrs.is_empty() {
+                return Err(syn::Error::new(pt.ty.span(), "the fn form's first parameter is `ui: &mut egui::Ui`"));
+            }
+            saw_ui = true;
+            pass.push(quote!(ui));
+            continue;
+        }
+        let ident = match &*pt.pat {
+            Pat::Ident(pi) => pi.ident.clone(),
+            _ => return Err(syn::Error::new(pt.pat.span(), "a prop parameter is a plain name (it becomes the prop's name)")),
+        };
+        let mut has_bind = false;
+        for a in &prop_attrs {
+            has_bind |= prop_has_bind(a)?;
+        }
+        let (fty, arg, bind): (Type, Ts, bool) = match &*pt.ty {
+            Type::Reference(r) if r.mutability.is_some() => ((*r.elem).clone(), quote!(&mut p.#ident), true),
+            Type::Reference(r) => {
+                let t: Type = match &*r.elem {
+                    Type::Path(tp) if tp.path.is_ident("str") => syn::parse_quote!(::std::string::String),
+                    Type::Slice(s) => {
+                        let e = &s.elem;
+                        syn::parse_quote!(::std::vec::Vec<#e>)
+                    }
+                    t => t.clone(),
+                };
+                (t, quote!(&p.#ident), false)
+            }
+            t => (t.clone(), quote!(::core::clone::Clone::clone(&p.#ident)), false),
+        };
+        if bind != has_bind {
+            return Err(syn::Error::new(
+                pt.ty.span(),
+                if bind { "a `&mut T` parameter is a bound prop: mark it #[prop(bind)]" } else { "#[prop(bind)] takes a `&mut T` parameter (the fn writes it)" },
+            ));
+        }
+        if bind {
+            binds.push(ident.clone());
+        }
+        let attrs = if prop_attrs.is_empty() { vec![syn::parse_quote!(#[prop])] } else { prop_attrs };
+        fields.push(quote! { #(#attrs)* #ident: #fty });
+        pass.push(arg);
+    }
+    if !saw_ui {
+        return Err(syn::Error::new(f.sig.span(), "the fn form's first parameter is `ui: &mut egui::Ui`"));
+    }
+    let vis = &f.vis;
+    let doc_attrs: Vec<&Attribute> = f.attrs.iter().filter(|a| a.path().is_ident("doc")).collect();
+    let item: ItemStruct = syn::parse_quote! {
+        #(#doc_attrs)*
+        #vis struct #name { #(#fields),* }
+    };
+    let kind = widget_impl(attr, item, false)?;
+    let shown = wrapped_widget(&name, &binds, quote! { #fname(#(#pass),*) });
+    Ok(quote! {
+        #f
+        #kind
+        #shown
+    })
+}
+
+
+/// Names a JS method of a provider kind cannot have: the runtime node's own members (`bind:this`
+/// gives the node; a method of the same name would only be reachable through `call`).
+const RESERVED_METHODS: &[&str] = &[
+    "alive", "animate", "attached", "attrs", "call", "captured", "cattrs", "constructor", "dead", "destroyed", "dispatchEvent",
+    "getAnimations", "getBoundingClientRect", "getProp", "h", "handle", "handlers", "host", "inert", "kind", "last", "listening",
+    "nested", "np", "owner", "passive", "sc", "scope", "setProp", "shown", "slotName", "slots", "style", "svlHandle", "tag", "then",
+    "tokens", "top", "toString", "valueOf",
+];
+
+/// RA3: `#[svelters::widget] impl T { pub fn … }`, the methods of provider kind `T`.
+fn widget_methods(attr: Ts, mut imp: ItemImpl) -> syn::Result<Ts> {
+    if !attr.is_empty() {
+        return Err(syn::Error::new(attr.span(), "#[svelters::widget] on an impl block takes no arguments (the kind comes from the struct)"));
+    }
+    if imp.trait_.is_some() {
+        return Err(syn::Error::new(imp.span(), "#[svelters::widget] goes on an inherent impl block (`impl MyKind { … }`), not a trait impl"));
+    }
+    if !imp.generics.params.is_empty() {
+        return Err(syn::Error::new(imp.generics.span(), "a kind's methods cannot be generic"));
+    }
+    let self_ty = (*imp.self_ty).clone();
+    let mut entries = Vec::new();
+    let mut arms = Vec::new();
+    let mut describe = Vec::new();
+    let mut names: Vec<String> = Vec::new();
+    let mut errors: Option<syn::Error> = None;
+    fn push_err(e: syn::Error, errors: &mut Option<syn::Error>) {
+        match errors {
+            Some(x) => x.combine(e),
+            None => *errors = Some(e),
+        }
+    }
+    for it in imp.items.iter_mut() {
+        let ImplItem::Fn(f) = it else { continue };
+        let mut js = match js_opts(&f.attrs) {
+            Ok(j) => j,
+            Err(e) => {
+                push_err(e, &mut errors);
+                continue;
+            }
+        };
+        strip_js(&mut f.attrs);
+        // `#[method]`, `#[method(rename = "x")]`, `#[method(skip)]` (cadatomic K1's spelling; `#[js(..)]` too)
+        for a in f.attrs.iter().filter(|a| a.path().is_ident("method")) {
+            if matches!(a.meta, Meta::List(_)) {
+                if let Err(e) = a.parse_nested_meta(|m| {
+                    if m.path.is_ident("rename") {
+                        js.rename = Some(m.value()?.parse::<syn::LitStr>()?.value());
+                    } else if m.path.is_ident("skip") {
+                        js.skip = true;
+                    } else {
+                        return Err(m.error("#[method] options: rename = \"name\", skip"));
+                    }
+                    Ok(())
+                }) {
+                    push_err(e, &mut errors);
+                }
+            }
+        }
+        f.attrs.retain(|a| !a.path().is_ident("method"));
+        // every fn with a receiver is a method; associated fns (no receiver) are Rust-only
+        let has_receiver = matches!(f.sig.inputs.first(), Some(FnArg::Receiver(_)));
+        if js.skip || !has_receiver {
+            continue;
+        }
+        if js.constructor || js.getter || js.setter || js.is_static || js.worker || js.blocking || js.local || js.tokio || js.bigint || js.code.is_some() {
+            push_err(syn::Error::new(f.sig.span(), "a kind method takes only #[js(rename = \"x\")] or #[js(skip)]"), &mut errors);
+            continue;
+        }
+        let sig = &f.sig;
+        if sig.asyncness.is_some() || !sig.generics.params.is_empty() {
+            push_err(syn::Error::new(sig.span(), "a kind method is a plain, non-generic fn (it runs between passes on the UI thread)"), &mut errors);
+            continue;
+        }
+        let rust = sig.ident.to_string();
+        let jsname = js.rename.clone().unwrap_or_else(|| camel(rust.trim_start_matches("r#")));
+        if RESERVED_METHODS.contains(&jsname.as_str()) {
+            push_err(
+                syn::Error::new(sig.ident.span(), format!("`{jsname}` is a member of every element node in JS; rename the method (#[js(rename = \"…\")])")),
+                &mut errors,
+            );
+            continue;
+        }
+        if names.contains(&jsname) {
+            push_err(syn::Error::new(sig.ident.span(), format!("two methods named `{jsname}`")), &mut errors);
+            continue;
+        }
+        let mut recv_mut = None;
+        let mut conv = Vec::new();
+        let mut pass = Vec::new();
+        let mut params = Vec::new();
+        let mut types = Vec::new();
+        let mut bad = false;
+        for (i, input) in sig.inputs.iter().enumerate() {
+            match input {
+                FnArg::Receiver(r) => {
+                    if r.reference.is_none() || r.colon_token.is_some() {
+                        push_err(syn::Error::new(r.span(), "a kind method takes `&self` or `&mut self` (the node's widget)"), &mut errors);
+                        bad = true;
+                    }
+                    recv_mut = Some(r.mutability.is_some());
+                }
+                FnArg::Typed(pt) => {
+                    let ty = &*pt.ty;
+                    if let Type::Reference(r) = ty {
+                        if r.mutability.is_some() && last_ident(&r.elem).as_deref() == Some("MethodCx") {
+                            pass.push(quote!(&mut *mcx));
+                            continue;
+                        }
+                        push_err(syn::Error::new(ty.span(), "a kind method's parameters are owned values (`String`, `Vec<T>`, records); only `&mut MethodCx` is borrowed"), &mut errors);
+                        bad = true;
+                        continue;
+                    }
+                    let name = match &*pt.pat {
+                        Pat::Ident(pi) => camel(pi.ident.to_string().trim_start_matches('_')),
+                        _ => format!("arg{i}"),
+                    };
+                    let v = format_ident!("__a{i}");
+                    conv.push(quote! {
+                        let #v = <#ty as __p::FromJs>::from_js(__it.next().unwrap_or(__p::Value::Null), cx).map_err(|e| __p::at(e, #name))?;
+                    });
+                    pass.push(quote!(#v));
+                    types.push(quote!(b.ty::<#ty>()));
+                    params.push(name);
+                }
+            }
+        }
+        if bad {
+            continue;
+        }
+        if recv_mut.is_none() {
+            push_err(syn::Error::new(sig.span(), "a kind method needs a receiver (`&self` or `&mut self`); associated fns are not methods (make it private or #[js(skip)])"), &mut errors);
+            continue;
+        }
+        let ret: Type = match &sig.output {
+            ReturnType::Default => syn::parse_quote!(()),
+            ReturnType::Type(_, t) => (**t).clone(),
+        };
+        let ident = &sig.ident;
+        let fdocs = docs(&f.attrs);
+        let idx = entries.len();
+        entries.push(quote! {
+            ::svelters_egui::provider::MethodEntry { name: #jsname, rust: #rust, docs: #fdocs, params: &[#(#params),*] }
+        });
+        arms.push(quote! {
+            #idx => {
+                let mut __it = args.into_iter();
+                #(#conv)*
+                let __this = ::svelters_egui::provider::__this::<#self_ty>(w, <#self_ty as ::svelters_egui::provider::KindDecl>::KIND)?;
+                let __r: #ret = <#self_ty>::#ident(__this, #(#pass),*);
+                __p::IntoJs::into_js(__r, cx)
+            }
+        });
+        describe.push(quote! { #(v.push(#types);)* v.push(b.ty::<#ret>()); });
+        names.push(jsname);
+    }
+    if let Some(e) = errors {
+        return Err(e);
+    }
+    Ok(quote! {
+        #imp
+
+        const _: () = {
+            use ::svelters_egui::provider::__private as __p;
+
+            static __SVL_METHODS: &[::svelters_egui::provider::MethodEntry] = &[#(#entries),*];
+
+            #[allow(unreachable_code, unused_variables, unused_mut, clippy::needless_borrow)]
+            fn __svl_call(
+                w: &mut dyn ::core::any::Any,
+                m: usize,
+                args: ::std::vec::Vec<__p::Value>,
+                mcx: &mut ::svelters_egui::provider::MethodCx<'_>,
+                cx: &__p::CallCx<'_>,
+            ) -> ::core::result::Result<__p::Value, __p::NativeError> {
+                match m {
+                    #(#arms)*
+                    _ => ::core::result::Result::Err(__p::no_member("method", m)),
+                }
+            }
+
+            #[allow(unused_mut)]
+            fn __svl_method_types(b: &mut __p::TypeBuilder) -> ::std::vec::Vec<__p::TypeRef> {
+                let mut v = ::std::vec::Vec::new();
+                #(#describe)*
+                v
+            }
+
+            __p::inventory::submit! {
+                ::svelters_egui::provider::KindMethods {
+                    kind: ::svelters_egui::provider::__kind_of::<#self_ty>,
+                    methods: __SVL_METHODS,
+                    call: __svl_call,
+                }
+            }
+            __p::inventory::submit! {
+                __p::KindTypesDef {
+                    module: <#self_ty as ::svelters_egui::provider::KindDecl>::__NAMESPACE,
+                    kind: <#self_ty as ::svelters_egui::provider::KindDecl>::__METHODS_KEY,
+                    describe: __svl_method_types,
+                }
+            }
+        };
+    })
 }
 
 // ---- #[svelters::behavior] (EV2b, ARCH-EMBED §8.5) ----
@@ -1844,6 +2278,7 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
         ));
     }
     let id = format!("{namespace}.{name}");
+    let methods_key = format!("{id}#methods");
     let kind_docs = docs(&item.attrs);
     let Fields::Named(fields) = &mut item.fields else {
         return Err(syn::Error::new(
@@ -1959,7 +2394,8 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
             WidgetField::Prop { name: js, bind, measure, default, enumeration } => {
                 let optional = last_segment(ty).is_some_and(|s| s.ident == "Option");
                 let (rty, nullable) = row_ty(ty, enumeration);
-                let required = default.is_none() && !optional;
+                // RA3: a bound prop gets its value from `bind:`, so it is never required
+                let required = default.is_none() && !optional && !*bind;
                 let init = match default {
                     Some(d) => quote! { ::core::convert::Into::into(#d) },
                     None => quote! { ::core::default::Default::default() },
@@ -2138,6 +2574,8 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
 
             impl ::svelters_egui::provider::KindDecl for #name {
                 const KIND: &'static ::svelters_egui::provider::KindEntry = &__SVL_KIND;
+                const __NAMESPACE: &'static str = #namespace;
+                const __METHODS_KEY: &'static str = #methods_key;
 
                 fn __svelters_new() -> Self {
                     #name { #(#inits),* }

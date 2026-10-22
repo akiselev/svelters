@@ -70,7 +70,8 @@ pub(crate) fn container(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: 
             if !c.tooltip.is_empty() {
                 // hover only: it takes no clicks from the children drawn over it
                 let tip = c.tooltip.clone();
-                ui.interact(r, arena.core[i].egui_id.with("tip"), Sense::hover()).on_hover_text(tip);
+                let tr = ui.interact(r, arena.core[i].egui_id.with("tip"), Sense::hover());
+                crate::widgets::tooltip::attach(ui, &tr, &tip, arena.own.contains("tooltip")); // OW3
             }
             if arena.common(i).invalid {
                 invalid_outline(ui, r);
@@ -117,7 +118,8 @@ fn collapsing(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, o
     let mut resp = crate::a11y::decorate(resp, &arena.n(node.to_raw()));
     let c = arena.common(i);
     if !c.tooltip.is_empty() {
-        resp = resp.on_hover_text(c.tooltip.clone());
+        let own = arena.own.contains("tooltip");
+        resp = crate::widgets::tooltip::attach(ui, &resp, &arena.common(i).tooltip, own); // OW3
     }
     if arena.common(i).invalid {
         invalid_outline(ui, hr);
@@ -143,7 +145,7 @@ fn collapsing(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, o
     }
 }
 
-#[allow(clippy::disallowed_types)] // OW: wrapper until OW0 (the `button` wrapper, behind the switch), OW1a (toggle-button, icon), OW1a, OW1b, OW3, OW4
+#[allow(clippy::disallowed_types)] // OW: wrapper until VIS1c (the button, label, checkbox, toggle-button, separator and icon wrappers, behind the switch), OW1b, OW3, OW4
 /// Paints the leaf in slot `i` (the walk's index into the scene's columns); returns its response
 /// (EV2b: the host response of its behaviours).
 pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> egui::Response {
@@ -345,7 +347,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     };
     let mut resp = crate::a11y::decorate(resp, &arena.n(h));
     if !arena.common(i).tooltip.is_empty() {
-        resp = resp.on_hover_text(arena.common(i).tooltip.clone());
+        resp = crate::widgets::tooltip::attach(ui, &resp, &arena.common(i).tooltip, arena.own.contains("tooltip")); // OW3
     }
     if arena.common(i).invalid {
         invalid_outline(ui, resp.rect);
@@ -453,7 +455,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     resp
 }
 
-#[allow(clippy::disallowed_types)] // OW: wrapper until OW0 (the `button` wrapper, behind the switch), OW1a (toggle-button, icon)
+#[allow(clippy::disallowed_types)] // OW: wrapper until VIS1c (the button and icon wrappers, behind the switch)
 /// AS1: an `icon` with a `source`: the image fitted inside the leaf's square (inside the padding of
 /// a framed one, whose button draws the state visuals), tinted with the text colour of its state;
 /// the placeholder box when the source does not load.

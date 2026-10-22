@@ -2,6 +2,8 @@
 // An egui app's tsconfig: "types": ["@svelters/native-runtime/types/egui"] (instead of
 // "@svelters/native-runtime/types", GTK's), plus the app's dumped .svelters/app/{app,kinds}.d.ts.
 import type { Component, ComponentProps, SvelteComponent } from 'svelte';
+/** The value of `bind:this` on an element (a provider kind with methods extends it: `kinds.d.ts`). */
+export type { NativeElement } from './native';
 
 /** What a sync signal's handler gets first; the signal's arguments follow it (and are its `args`). A plain
  * signal's handler gets the arguments only. */
@@ -236,6 +238,10 @@ export interface EguiElements {
     selectable?: boolean;
     /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
     'font-weight'?: number;
+    /** WG6 QW13: cut one line with `…` to the width: `none`, `start`, `middle`, `end`. */
+    elide?: 'none' | 'start' | 'middle' | 'end';
+    /** The `anchor` of the control this label names (Qt's buddy): a click focuses it. */
+    for?: string;
     /** Pressed and released (`Response::clicked`). */
     onclicked?: () => void;
   };
@@ -277,6 +283,13 @@ export interface EguiElements {
     /** Checked state; clicking toggles it. */
     checked?: boolean;
     'bind:checked'?: boolean;
+    /** WIDGET-PARITY §2.2: partially checked (`bind:indeterminate`), shown as a dash. The app writes it; a click clears it and checks the box (Qt, GTK). */
+    indeterminate?: boolean;
+    'bind:indeterminate'?: boolean;
+    /** The user cycles unchecked → checked → indeterminate (Qt's tristate). */
+    tristate?: boolean;
+    /** An icon before the caption (a key, or `family:name`). */
+    icon?: string;
     /** The user toggled it; carries the new state. */
     onchanged?: (checked: boolean) => void;
     /** Pressed and released. */
@@ -341,6 +354,8 @@ export interface EguiElements {
     frame?: boolean;
     /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
     'font-weight'?: number;
+    /** WIDGET-PARITY §2.1 (QButtonGroup): the sibling toggle buttons with the same `group` form an exclusive set (checking one unchecks the others) and one Tab stop the arrow keys move in. */
+    group?: string;
     /** The user toggled it; carries the new state. */
     onchanged?: (checked: boolean) => void;
     /** Pressed and released (also when a `radio` click left it checked). */
@@ -355,8 +370,21 @@ export interface EguiElements {
     'bind:selected'?: number;
     /** Shown while `selected` is out of range. */
     'hint-text'?: string;
+    /** The list is open; the user opening or closing it changes it, setting it opens or closes it (QComboBox `showPopup`/`hidePopup`). */
+    open?: boolean;
+    'bind:open'?: boolean;
+    /** Rows shown before the list scrolls (QComboBox `maxVisibleItems`). */
+    'max-visible'?: number;
+    /** The wheel over the closed select changes the pick: `off` (default), `hover`, `focused`. */
+    wheel?: 'off' | 'hover' | 'focused';
     /** The user picked a row; carries its index. */
     onchanged?: (selected: number) => void;
+    /** The user picked an option, the same one or not (QComboBox `activated`); carries its index. */
+    onactivate?: (value: number) => void;
+    /** The current row of the open list moved (keyboard or pointer; `highlighted`). */
+    onhighlight?: (value: number) => void;
+    /** A pick finished the edit (§2.4); carries the index. */
+    oncommit?: (value: number) => void;
   };
   /** A thin line between items; fills its rect along its orientation. */
   separator: EguiWidgetProps & {
@@ -491,6 +519,8 @@ export interface EguiElements {
     /** The group's chosen value (`bind:group={choice}` on every button of the group, each with its own `value`). A click sets it on this button and its siblings. */
     group?: string;
     'bind:group'?: string;
+    /** WIDGET-PARITY §2.3: an icon before the caption (a key, or `family:name`). */
+    icon?: string;
     /** The user's click changed it (or a sibling's click unchecked it); carries the new state and group value. */
     onchanged?: (checked: boolean, group: string) => void;
     /** Pressed and released. */
@@ -624,6 +654,13 @@ export interface EguiElements {
     label?: string;
     /** The egui frame drawn around the content: `egui::Frame::group`, `canvas`, `window`, `menu`, `popup`, `side_top_panel` (`panel`), or no chrome (`none`). Its inner margin adds to `padding`. */
     'frame-style'?: 'group' | 'canvas' | 'window' | 'menu' | 'popup' | 'panel' | 'none';
+    /** WIDGET-PARITY §2.16 (QGroupBox `checkable`): a check before the caption; unchecked disables the content. */
+    checkable?: boolean;
+    /** Checked (`bind:checked`), when `checkable`. */
+    checked?: boolean;
+    'bind:checked'?: boolean;
+    /** The user toggled the check; carries the new state. */
+    onchanged?: (value: boolean) => void;
   };
   /** Shows one of its children (GTK's `stack`, Qt's `stacked-widget`): the one anchored `visible-child-name`, else the one at `visible-index`. The others are neither drawn nor hit. */
   stack: EguiWidgetProps & {
@@ -655,6 +692,18 @@ export interface EguiElements {
     'show-percentage'?: boolean;
     /** Animates the bar and shows a spinner in it (busy look; repaints while shown). */
     animate?: boolean;
+    /** WIDGET-PARITY §2.9: the value in `min..max`, the alternative to `fraction` (Qt's form). */
+    value?: number | null;
+    min?: number;
+    max?: number;
+    /** Busy, as `animate` (and `:indeterminate`); also when `value` is set and `min == max`. */
+    indeterminate?: boolean;
+    /** The bar's axis (P7: `[orientation="vertical"]` styles it). */
+    orientation?: 'horizontal' | 'vertical';
+    /** Fills from the end (right, or top when vertical) instead. */
+    inverted?: boolean;
+    /** The label's text when `text` is empty: `%p` percent, `%v` value, `%m` maximum (`%%` a percent sign); shown when set or with `show-percentage` (`%p%`). */
+    format?: string;
   };
   /** A busy indicator. */
   spinner: EguiWidgetProps & {
@@ -721,6 +770,8 @@ export interface EguiElements {
     ontoggled?: (checked: boolean) => void;
     /** The user picked it (click, Enter, or its shortcut); carries `checked` after the pick. */
     onactivate?: (checked: boolean) => void;
+    /** It became the open menu's current row (the pointer or the arrow keys; QAction `hovered`). Svelters' own menus only (OW3). */
+    onhover?: () => void;
   };
   /** A line between menu items (a vertical one in a menu bar). */
   'menu-separator': {

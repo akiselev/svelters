@@ -192,6 +192,19 @@ impl Backend for EguiBackend {
     fn call(&self, h: svl_handle, method: svl_id, args: &[Value]) -> StrResult<Value> {
         let k = self.kind_of(h)?;
         let def = kinds::method_def(k, method).ok_or_else(|| format!("unknown method id {method}"))?;
+        // RA3: a provider kind's own method (`#[svelters::widget] impl`)
+        let reg = kinds::KindRegistry::global();
+        if let (Some(m), Some(km)) = (reg.provider_method_index(k, method), reg.provider(k).and_then(|p| p.methods)) {
+            let mut out = Vec::new();
+            let r = {
+                let mut scene = self.0.scene.borrow_mut();
+                let i = scene.ix(scene.live(h)?);
+                crate::provider::methods::call(&mut scene, i, km, m, args, &mut out)
+            };
+            self.0.pending_out.borrow_mut().extend(out);
+            self.touched(self.root_of(h));
+            return r;
+        }
         if matches!(kinds::kind(k).tag, Some("virtual-list" | "tree-view")) {
             return Ok(self.vlist_call(h, def.name, args)?);
         }
@@ -397,6 +410,12 @@ impl Backend for EguiBackend {
     }
 
     fn describe(&self, what: NameKind, kind: svl_id, member: svl_id) -> Option<MemberDesc> {
+        if what == NameKind::Method {
+            // RA3: a provider kind's method is described by its Rust signature (`JsType`).
+            let k = kinds::kind_of_id(kind)?;
+            let reg = kinds::KindRegistry::global();
+            return reg.provider_method_desc(k, reg.provider_method_index(k, member)?);
+        }
         if what != NameKind::Prop {
             return None;
         }

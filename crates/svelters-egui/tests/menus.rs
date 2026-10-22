@@ -8,9 +8,34 @@ use common::Rig;
 use egui::accesskit::Role;
 use egui_kittest::kittest::Queryable;
 use svelters_abi::*;
+use svelters_egui::widgets::KindSet;
 
 fn s(x: &str) -> Value {
     Value::Str(x.into())
+}
+
+/// OW3: the tags of svelters' own menus, popup, select and tooltips.
+const OW3: [&str; 6] = ["menu-bar", "menu-button", "context-menu", "popup", "combo-box", "tooltip"];
+
+/// OW3: each test runs on the egui wrappers and on svelters' own implementation: (own, switch).
+fn impls() -> [(bool, KindSet); 2] {
+    [(false, KindSet::None), (true, KindSet::tags(OW3))]
+}
+
+fn rig_for(set: &KindSet) -> Rig {
+    let rig = Rig::new();
+    rig.backend.set_own_widgets(set.clone());
+    rig
+}
+
+/// A menu entry's AccessKit role: egui's widget roles, or the own menus' menu-item roles.
+fn item(own: bool, egui_role: Role) -> Role {
+    match (own, egui_role) {
+        (false, r) => r,
+        (true, Role::CheckBox) => Role::MenuItemCheckBox,
+        (true, Role::RadioButton) => Role::MenuItemRadio,
+        (true, _) => Role::MenuItem,
+    }
 }
 
 fn events(rig: &Rig, h: svl_handle, name: &str) -> Vec<Vec<Value>> {
@@ -129,14 +154,21 @@ fn menus(rig: &mut Rig) -> Menus {
 
 #[test]
 fn menu_bar_menus_actions_and_check_items() {
-    let mut rig = Rig::new();
+    for (own, set) in impls() {
+        menu_bar_menus_actions_and_check_items_on(own, &set);
+    }
+}
+
+fn menu_bar_menus_actions_and_check_items_on(own: bool, set: &KindSet) {
+    let _ = own;
+    let mut rig = rig_for(set);
     let m = menus(&mut rig);
     // the bar is one row high, across the window, above the label
     let bar = rig.drawn(m.bar);
     assert!(bar.width() > 300.0 && bar.height() >= 18.0, "{bar:?}");
     assert!(
         rig.harness
-            .get_by_role_and_label(Role::Button, "File")
+            .get_by_role_and_label(item(own, Role::Button), "File")
             .rect()
             .max
             .y
@@ -146,9 +178,9 @@ fn menu_bar_menus_actions_and_check_items() {
 
     // a click opens File; its items are found by role and label
     click_label(&mut rig, "File");
-    rig.harness.get_by_role_and_label(Role::Button, "Open");
+    rig.harness.get_by_role_and_label(item(own, Role::Button), "Open");
     rig.harness
-        .get_by_role_and_label(Role::CheckBox, "Autosave");
+        .get_by_role_and_label(item(own, Role::CheckBox), "Autosave");
     click_label(&mut rig, "Open");
     assert_eq!(
         events(&rig, m.open, "activate"),
@@ -174,6 +206,8 @@ fn menu_bar_menus_actions_and_check_items() {
     click_label(&mut rig, "File");
     let r = rig.harness.get_by_label("Recent").rect();
     rig.harness.hover_at(r.center());
+    // OW3: the own submenu opens after the policy's delay (GTK 225 ms)
+    rig.harness.run_steps(30);
     rig.harness.run();
     click_label(&mut rig, "a.txt");
     assert_eq!(events(&rig, m.recent, "activate").len(), 1);
@@ -181,11 +215,18 @@ fn menu_bar_menus_actions_and_check_items() {
 
 #[test]
 fn radio_group_and_shortcuts() {
-    let mut rig = Rig::new();
+    for (own, set) in impls() {
+        radio_group_and_shortcuts_on(own, &set);
+    }
+}
+
+fn radio_group_and_shortcuts_on(own: bool, set: &KindSet) {
+    let _ = own;
+    let mut rig = rig_for(set);
     let m = menus(&mut rig);
     click_label(&mut rig, "Size");
     rig.harness
-        .get_by_role_and_label(Role::RadioButton, "Small");
+        .get_by_role_and_label(item(own, Role::RadioButton), "Small");
     click_label(&mut rig, "Large");
     assert_eq!(rig.get(m.large, "checked"), Value::Bool(true));
     assert_eq!(
@@ -235,7 +276,14 @@ fn radio_group_and_shortcuts() {
 
 #[test]
 fn menu_button_opens_its_menu_and_reports_active() {
-    let mut rig = Rig::new();
+    for (own, set) in impls() {
+        menu_button_opens_its_menu_and_reports_active_on(own, &set);
+    }
+}
+
+fn menu_button_opens_its_menu_and_reports_active_on(own: bool, set: &KindSet) {
+    let _ = own;
+    let mut rig = rig_for(set);
     let (_w, b) = rig.window();
     let mb = rig.leaf(
         b,
@@ -284,7 +332,14 @@ fn menu_button_opens_its_menu_and_reports_active() {
 
 #[test]
 fn context_menu_on_a_leaf_and_on_a_box() {
-    let mut rig = Rig::new();
+    for (own, set) in impls() {
+        context_menu_on_a_leaf_and_on_a_box_on(own, &set);
+    }
+}
+
+fn context_menu_on_a_leaf_and_on_a_box_on(own: bool, set: &KindSet) {
+    let _ = own;
+    let mut rig = rig_for(set);
     let (_w, b) = rig.window();
     let inner = rig.leaf(
         b,
@@ -313,7 +368,7 @@ fn context_menu_on_a_leaf_and_on_a_box() {
     // a secondary click on the button opens its menu (the innermost owner), at the pointer
     let pos = rig.drawn(btn).center();
     click_at(&mut rig, pos, egui::PointerButton::Secondary);
-    rig.harness.get_by_role_and_label(Role::Button, "Paste");
+    rig.harness.get_by_role_and_label(item(own, Role::Button), "Paste");
     assert!(!has(&rig, "Box item"));
     click_label(&mut rig, "Paste");
     assert_eq!(events(&rig, paste, "activate").len(), 1);
@@ -348,7 +403,14 @@ fn context_menu_on_a_leaf_and_on_a_box() {
 
 #[test]
 fn popup_attached_to_a_button() {
-    let mut rig = Rig::new();
+    for (own, set) in impls() {
+        popup_attached_to_a_button_on(own, &set);
+    }
+}
+
+fn popup_attached_to_a_button_on(own: bool, set: &KindSet) {
+    let _ = own;
+    let mut rig = rig_for(set);
     let (_w, b) = rig.window();
     let btn = rig.leaf(
         b,
