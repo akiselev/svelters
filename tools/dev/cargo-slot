@@ -27,6 +27,15 @@ if [ -n "${BUILD_SLOT_HELD:-}" ]; then
   exec "$@"
 fi
 
+# `cargo check`/`clippy` (and other non-building subcommands) take no slot: they are short and
+# metadata-only, and an agent waiting behind someone's 20-minute test build for a type check is an
+# agent not writing code. They run niced with few jobs so builds in the slots keep the CPU.
+if [ "${1:-}" = cargo ] && [[ "${2:-}" =~ ^(check|clippy|fmt|metadata|tree|locate-project)$ ]]; then
+  export CARGO_BUILD_JOBS=${CARGO_BUILD_JOBS:-${CHECK_JOBS:-3}}
+  export CARGO_BUILD_BUILD_DIR=${CARGO_BUILD_BUILD_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)/target/build}
+  exec nice -n 10 "$@"
+fi
+
 env_slots=${BUILD_SLOTS:-} env_jobs=${BUILD_SLOT_JOBS:-}
 conf=${XDG_CONFIG_HOME:-$HOME/.config}/build-slots.env
 if [ -f "$conf" ]; then
@@ -47,7 +56,9 @@ while :; do
       export BUILD_SLOT_HELD=$i
       export CARGO_BUILD_JOBS=${CARGO_BUILD_JOBS:-$jobs}
       export NEXTEST_TEST_THREADS=${NEXTEST_TEST_THREADS:-$jobs}
-      export CARGO_BUILD_BUILD_DIR=${CARGO_BUILD_BUILD_DIR:-target/build}
+      # Anchored to the checkout root: a relative path is resolved from the cwd, so running from a
+      # crate directory put a build dir (and untracked artifacts) inside the crate.
+      export CARGO_BUILD_BUILD_DIR=${CARGO_BUILD_BUILD_DIR:-$(git rev-parse --show-toplevel 2>/dev/null || pwd)/target/build}
       # A sccache server spawned by the build would inherit the lock fd and hold the slot for its
       # whole lifetime, long after the build ends. Start it here with the fd closed (no-op when
       # one is already running).

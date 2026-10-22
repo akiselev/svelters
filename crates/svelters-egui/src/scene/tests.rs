@@ -245,11 +245,17 @@ fn random_op_interleavings() {
                     };
                     set(&mut s, x, name, v, origin).unwrap();
                 }
-                // visibility
+                // visibility, or (SG3) an anchor from a small set, so duplicates and moves between
+                // roots exercise the anchor maps (`validate` checks them)
                 _ => {
                     let nodes: Vec<NodeId> = live.iter().copied().filter(|x| !md.n[x].window).collect();
                     let Some(x) = rng.pick(&nodes) else { continue };
-                    set(&mut s, x, "visible", svelters_abi::Value::Bool(rng.below(4) != 0), origin).unwrap();
+                    if rng.below(2) == 0 {
+                        set(&mut s, x, "visible", svelters_abi::Value::Bool(rng.below(4) != 0), origin).unwrap();
+                    } else {
+                        let a = rng.pick(&["a", "b", "c", ""]).unwrap();
+                        set(&mut s, x, "anchor", svelters_abi::Value::Str(a.into()), origin).unwrap();
+                    }
                 }
             }
             s.validate().unwrap_or_else(|e| panic!("{ctx}: {e}"));
@@ -392,4 +398,167 @@ fn every_builtin_key_names_a_prop_of_its_kind() {
     check("slider", &[slider::VALUE.name, slider::MIN.name, slider::MAX.name, slider::STEP.name, slider::TEXT.name, slider::SHOW_VALUE.name]);
     check("window", &[window::TITLE.name, window::DEFAULT_WIDTH.name, window::DEFAULT_HEIGHT.name]);
     check("box", &[container::FLEX_DIRECTION.name, container::FLEX_WRAP.name, container::GAP.name, container::ROW_GAP.name, container::COLUMN_GAP.name, container::PADDING.name, container::ALIGN_ITEMS.name, container::JUSTIFY_CONTENT.name, widget::WIDTH.name]);
+}
+
+/// SG3 (ARCH-SCENE §6.2, §6.3, R14): the kind sets and per-root anchor maps follow creates, frees,
+/// moves between roots and anchor writes; `Query` combines kind, scope, ext, state, visibility and
+/// change ticks; the cursor and `visit` walk the tree.
+#[test]
+fn queries_indexes_cursor_and_changed_since() {
+    use svelters_abi::Value::{Bool, Str};
+    static MARK: ExtKey<u32> = ExtKey::new("sg3.mark");
+    let js = Origin::Js;
+    let rust = Origin::Rust(ProviderId::named("sg3-test"));
+    let mut s = Scene::default();
+    let mk = |s: &mut Scene, tag: &str, parent: Option<NodeId>, anchor: &str| {
+        let id = s.create(kind(tag), Owner::Js).unwrap();
+        if let Some(p) = parent {
+            s.insert(p, id, None, js).unwrap();
+        }
+        if !anchor.is_empty() {
+            set(s, id, "anchor", Str(anchor.into()), js).unwrap();
+        }
+        id
+    };
+    // root 1: w1 > col > [l1 "a", b1, inner > [l2 "b", l3 "a"]]; root 2: w2 > col2 > [l4 "a"]
+    let w1 = mk(&mut s, "window", None, "");
+    let col = mk(&mut s, "box", Some(w1), "");
+    let l1 = mk(&mut s, "label", Some(col), "a");
+    let b1 = mk(&mut s, "button", Some(col), "");
+    let inner = mk(&mut s, "box", Some(col), "");
+    let l2 = mk(&mut s, "label", Some(inner), "b");
+    let l3 = mk(&mut s, "label", Some(inner), "a");
+    let w2 = mk(&mut s, "window", None, "");
+    let col2 = mk(&mut s, "box", Some(w2), "");
+    let l4 = mk(&mut s, "label", Some(col2), "a");
+    let (r1, r2) = (s.core[s.ix(w1)].root, s.core[s.ix(w2)].root);
+    s.validate().unwrap();
+    let ids = |q: Query<'_>| {
+        let mut v = q.ids();
+        v.sort();
+        v
+    };
+    let sorted = |mut v: Vec<NodeId>| {
+        v.sort();
+        v
+    };
+    {
+        let r = SceneRef::new(&s);
+        assert_eq!(r.by_anchor(r1, "a").map(|n| n.id()), Some(l1), "the first indexed wins");
+        assert_eq!(r.all_by_anchor(r1, "a").count(), 2);
+        assert_eq!(r.by_anchor(r2, "a").map(|n| n.id()), Some(l4), "anchors are per root");
+        assert_eq!(r.by_anchor(r1, "b").map(|n| n.id()), Some(l2));
+        assert!(r.by_anchor(r2, "b").is_none());
+        assert_eq!(r.of_tag("label").count(), 4);
+        assert_eq!(r.of_kind(r.get(b1).unwrap().kind()).map(|n| n.id()).collect::<Vec<_>>(), vec![b1]);
+        assert_eq!(ids(r.query().tag("label").within(r1)), sorted(vec![l1, l2, l3]));
+        assert_eq!(ids(r.query().tag("label").within(inner)), sorted(vec![l2, l3]), "a subtree scope");
+        assert_eq!(ids(r.query().within(inner)), sorted(vec![inner, l2, l3]), "the scope drives: the node itself included");
+        assert_eq!(r.query().tag("label").tag("button").count(), 0, "two kinds: nothing");
+        assert_eq!(r.query().tag("no-such-tag").count(), 0);
+        assert_eq!(r.query().has(&MARK).count(), 0, "no column yet: nothing");
+        assert_eq!(r.get(l1).unwrap().anchor(), Some("a"));
+        assert_eq!(r.get(b1).unwrap().anchor(), None);
+    }
+    // anchor writes: l1 leaves "a" (l3 is next), "c" is new
+    set(&mut s, l1, "anchor", Str("c".into()), js).unwrap();
+    {
+        let r = SceneRef::new(&s);
+        assert_eq!(r.by_anchor(r1, "a").map(|n| n.id()), Some(l3));
+        assert_eq!(r.by_anchor(r1, "c").map(|n| n.id()), Some(l1));
+    }
+    // a detached subtree is in no anchor map; it comes back when attached, and moves with its root
+    s.remove(col, inner, js).unwrap();
+    assert!(SceneRef::new(&s).by_anchor(r1, "b").is_none());
+    s.insert(col2, inner, None, js).unwrap();
+    {
+        let r = SceneRef::new(&s);
+        assert_eq!(r.by_anchor(r2, "b").map(|n| n.id()), Some(l2));
+        assert_eq!(r.all_by_anchor(r2, "a").count(), 2, "l4 and l3");
+        assert!(r.by_anchor(r1, "a").is_none());
+    }
+    s.validate().unwrap();
+    s.insert(col, inner, None, js).unwrap();
+
+    // ext, state and change ticks (R14)
+    let t0 = SceneRef::new(&s).tick();
+    {
+        let mut m = SceneMut { s: &mut s, origin: rust };
+        m.node(l1).unwrap().ext_mut(&MARK).set(1);
+        m.node(l2).unwrap().ext_mut(&MARK).set(2);
+        m.node(l4).unwrap().ext_mut(&MARK).set(4);
+        m.node(l2).unwrap().set_state(StateBits::HOVERED, true);
+        m.node(b1).unwrap().set_state(StateBits::HOVERED | StateBits::SELECTED, true);
+    }
+    let t1 = SceneRef::new(&s).tick();
+    set(&mut s, l3, "text", Str("changed".into()), js).unwrap();
+    {
+        let mut m = SceneMut { s: &mut s, origin: rust };
+        m.node(l4).unwrap().ext_mut(&MARK).set(40);
+    }
+    {
+        let r = SceneRef::new(&s);
+        assert_eq!(ids(r.query().has(&MARK)), sorted(vec![l1, l2, l4]));
+        assert_eq!(ids(r.query().has(&MARK).within(r1).tag("label")), sorted(vec![l1, l2]), "ext driver, root and kind filters");
+        assert_eq!(ids(r.query().ext(&MARK, |v| *v >= 2)), sorted(vec![l2, l4]));
+        assert_eq!(ids(r.query().state(StateBits::HOVERED)), sorted(vec![b1, l2]));
+        assert_eq!(ids(r.query().state(StateBits::HOVERED).not_state(StateBits::SELECTED)), vec![l2]);
+        assert_eq!(ids(r.query().state(StateBits::HOVERED).tag("label").has(&MARK).within(r1)), vec![l2], "ext, kind, state and root at once");
+        assert_eq!(r.with_state(StateBits::SELECTED).map(|n| n.id()).collect::<Vec<_>>(), vec![b1]);
+        // R14: what changed after t0 / t1 (node ticks: props, state, ext), and ext entry ticks
+        assert_eq!(ids(r.query().changed_since(t0)), sorted(vec![l1, l2, l4, b1, l3]));
+        assert_eq!(ids(r.query().changed_since(t1)), sorted(vec![l3, l4]));
+        assert_eq!(ids(r.query().changed_since(t1).tag("label").within(r1)), vec![l3]);
+        assert_eq!(ids(r.query().ext_changed_since(&MARK, t1)), vec![l4]);
+        assert_eq!(ids(r.query().ext_changed_since(&MARK, t0)), sorted(vec![l1, l2, l4]));
+        assert_eq!(r.query().changed_since(r.tick()).count(), 0);
+        assert_eq!(r.query().has(&MARK).filter(|n| n.anchor() == Some("a")).first().map(|n| n.id()), Some(l4));
+    }
+    // visibility: the prop and the ancestors'
+    set(&mut s, inner, "visible", Bool(false), js).unwrap();
+    assert_eq!(ids(SceneRef::new(&s).query().tag("label").visible().within(r1)), vec![l1]);
+    set(&mut s, inner, "visible", Bool(true), js).unwrap();
+
+    // cursor and visit
+    {
+        let r = SceneRef::new(&s);
+        let mut c = r.get(col).unwrap().cursor();
+        assert!(c.goto_first_child());
+        assert_eq!(c.node().id(), l1);
+        assert!(c.goto_next_sibling() && c.node().id() == b1);
+        assert!(c.goto_next_sibling() && c.node().id() == inner);
+        assert!(!c.goto_next_sibling());
+        assert!(c.goto_last_child() && c.node().id() == l3);
+        assert!(c.goto_prev_sibling() && c.node().id() == l2);
+        assert!(!c.goto_prev_sibling());
+        assert_eq!(c.depth(), 2);
+        assert!(c.goto_parent() && c.node().id() == inner);
+        assert!(c.goto_parent() && c.node().id() == col);
+        assert!(c.goto_parent() && c.node().id() == w1, "above the start node");
+        assert!(!c.goto_parent());
+        assert!(!c.goto_next_sibling(), "a root has no siblings");
+        let mut seen = Vec::new();
+        let v = r.get(w1).unwrap().visit(|n| {
+            seen.push(n.id());
+            if n.id() == inner { Visit::SkipChildren } else { Visit::Continue }
+        });
+        assert_eq!(v, Visit::Continue);
+        assert_eq!(seen, vec![w1, col, l1, b1, inner]);
+        let mut k = 0;
+        let v = r.get(w1).unwrap().visit(|_| {
+            k += 1;
+            if k == 3 { Visit::Stop } else { Visit::Continue }
+        });
+        assert_eq!((v, k), (Visit::Stop, 3));
+    }
+    // frees leave the indexes
+    s.destroy(l3, js).unwrap();
+    s.free_subtree(w2);
+    {
+        let r = SceneRef::new(&s);
+        assert_eq!(r.of_tag("label").count(), 2);
+        assert!(r.by_anchor(r1, "a").is_none());
+        assert_eq!(ids(r.query().has(&MARK)), sorted(vec![l1, l2]));
+    }
+    s.validate().unwrap();
 }

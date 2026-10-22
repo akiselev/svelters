@@ -61,11 +61,23 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | EM2 deferred viewports | DONE | 2b0d144f | `SlotPainter`, begin-pass plugin, `set_viewport`/`move_root`, per-root rAF pause, `show_viewport_passes` call site, `harness::dock::SvelteDock` (berth adapter); DOCK-W2/W4 tests; `plans/milestones/EM2-viewports.md` |
 | SG2 extension columns, change journal | DONE | db7f62c5 | one column per `ExtKey` (`with_ext` 1.9 µs over 5k of 100k nodes, release), pull observers with `ChangeFilter`, replayable journal, `Damage`, ticks + `changed_since`, R19 Ext-Removed, 0 allocations per mutation without observers; `ExtBlock` is now a read view; `plans/milestones/SG2-ext-journal.md` |
 | EV2b native behaviours (`use:`) | IN PROGRESS | | branch `ci/ev2b` |
-| SG3 scene queries, traversal, hit lists | IN PROGRESS | | branch `ci/sg3`; last scene milestone on SC1's path (R14, R20) |
+| SG3 scene queries, traversal, hit lists | DONE | (this merge) | queries by anchor/path/kind/tag/state/ext, `changed_since` (R14), `Cursor` + `visit`, hit lists + `hit_test` topmost-first with `HIT_TRANSPARENT`, provider `Hit::Part` (R13), R20; embed visibility/viewport journaled; `plans/milestones/SG3-queries-hit.md` |
+| WG2a menus, context menus, popup, modal/dialog roots, inner-window | IN PROGRESS | | branch `ci/wg2a`; widget set approved by the user 2026-10-22 (EGUI.md §5, §8) |
+| WG2b rest of Tier 0 (panel, sides, frame, stack, hyperlink, radio, switch, range-slider, drag-value, image, progress, spinner, canvas) | IN PROGRESS | | branch `ci/wg2b` |
+| WG4a table, tab-view, split-view, toast | IN PROGRESS | | branch `ci/wg4a`; tree-view after LS1 |
+| WG4b rfd dialogs, date/colour pickers, drag and drop | IN PROGRESS | | branch `ci/wg4b` |
 | WG1 SC1 egui widget subset | IN PROGRESS | | branch `ci/wg1`; grid, collapsing-header, toggle-button, combo-box, separator, scroll-area, icon, tooltip, invalid, a11y names; cadatomic FW1's acceptance depends on it |
 | CX1 in-process diagnostics (SV27) | IN PROGRESS | | branch `ci/cx1`; check-only compile, per-file incremental state, stable codes, `--check --json` |
 | Q1 module loader (`svelters-modules`) | IN PROGRESS | | thinkpad-svelters, branch `ci/q1` |
 | CS0 Rust CSS engine (`svelters-style`) | IN PROGRESS | | macbook-svelters, branch `ci/cs0` |
+| SG4 provider passes (R16 provider half, R21, R23) | IN PROGRESS | | branch `ci/sg4`, stacked on `ci/ev2b` + `ci/sg3` |
+| LS1 + SG5 virtual lists on egui (SV40, SV47) | IN PROGRESS | | branch `ci/lists`, stacked on `ci/sg3` (+ `ci/sg4`) |
+| TK1 one-file cases across backends (SV34) | IN PROGRESS | | branch `ci/tk1` |
+| SV48 `Json<T>` error paths through tagged enums | IN PROGRESS | | branch `ci/sv48` |
+| H1 component HMR on the Rust loader | IN PROGRESS | | thinkpad-svelters, branch `ci/h1`, stacked on `ci/q1` |
+| LD1 loader hooks + native module providers (SV22, SV25) | IN PROGRESS | | thinkpad-svelters, branch `ci/ld1`, stacked on `ci/q1` |
+| CS5e egui cascade | IN PROGRESS | | macbook-svelters, branch `ci/cs5e`, stacked on `ci/cs0` (+ `ci/wg1`, `ci/sg3`) |
+| Q3 Svelte CSS analyze/prune/scope in Rust | IN PROGRESS | | macbook-svelters, branch `ci/q3`, stacked on `ci/cs0` |
 | G1 egui backend skeleton | DONE | 6f386b2f | `svelters-egui` (egui 0.37.0 + taffy 0.15.0 pinned, version provisional: D9 open): generational retained arena, taffy on the arena, host ops only edit the scene, events/changes queued during the pass and delivered after, `close-request` the one sync handler; elements `window`, `box`, `label`, `button`, `checkbox`, `text-edit`, `slider`; eframe runner, embed runner (`EguiBackend::ui` + `Host::start_with`, D1), kittest harness without a renderer (no GPU/display); observe `exact` on text/checked/value, others `set_only`; kind table → `metadata/semantics/egui.json` (freshness test), `--backend egui`, layout props in `<style>` (D3); `counter/if-toggle/keyed-list/timers-egui` fixtures replay; idle 0 frames/0 CPU over 5 s (CI test allows a ≤10-frame startup burst); 2.57 ms/kittest frame (debug); release binary 21.0 MB (15.6 stripped); merged master 2411/2411 nextest; open: G2 (styling/tokens, key/pointer sync handlers, per-side padding, %, scroll-area, menus, virtual lists, image snapshots), egui not in ledger/coverage/docs site, hot reload untested, timer-tick frame cost, "no styling support" warning; `plans/milestones/G1-egui-skeleton.md` |
 | FU1 follow-ups: GTK panic, `start` on AppKit/WinUI | DONE | f2c8a07b | GTK `set_prop`/`get_prop`/`call`/`listen` return -1 naming the runtime GType instead of panicking on handles outside the generated tables (`tests/foreign_kinds.rs`: `Gio.Menu`, `Gtk.MediaFile.new()`; failed on the old code); Qt/AppKit/WinUI don't have the pattern; ABI v2.7 `start` on AppKit (checkpoint on the first run-loop turn) and WinUI (dispatcher wake, pre-attach type events posted), host attached before mount on all four desktop backends; 3 start cases per platform; branch 2392/2392 nextest, CI green; open: Qt wrong-kind error doesn't name the runtime class, `start` on iOS/Android; `plans/milestones/FU1-gtk-panic-start.md` |
 | N4-WinUI non-GUI types (winmd ingest) | DONE | 4ac26949 | `winmd-tool types` over 21 namespaces, 1,780 types classified (pure over the checked-in dump); 84 bound from 30 roots, members 979/1141 (85%); no per-member native code: generated `types_tables.rs` (IIDs, vtable slots, param types) + one invoker with 27 x64 call shapes; one SHARED handle per WinRT object, composable factories, statics, records, collections, events, reactive DP props, async → Promises (hop to UI thread), dispatcher-thread objects refused at minting; `svelters:winui/<namespace>` modules, `fixtures/winui-types`; WinUI ledger 585 facts (+45 type facts); branch CI green; open: 162 blocked members (arrays, iterators, callback params, static events), aarch64, async progress, brush element props from type objects, element events before `run`; `plans/milestones/N4-winui-types.md` |
@@ -118,9 +130,9 @@ cadatomic's side is `docs/plan/04-kernel-requests.md` (SV table) in the cadatomi
 | SV27 diagnostics-only compile | IN PROGRESS (CX1) | TRACKS COMPILER |
 | SV9 `on:` forwarding (C-2) | DONE (FW1c, 2b6c7472) | FW1-on-forwarding.md |
 | SV24 `&self` Schema codegen | DONE (RA2, 78d33256) | RA2-json-values.md |
-| SV48 error path inside serde internally tagged enums | QUEUED; required before a cadatomic package passes command args through `Json<T>` (main-cadatomic gives notice) | RA2-json-values.md "Open items" |
+| SV48 error path inside serde internally tagged enums | IN PROGRESS (`ci/sv48`); required before a cadatomic package passes command args through `Json<T>` (main-cadatomic gives notice) | RA2-json-values.md "Open items" |
 | DK3/DK4 secondary windows for berth panes | svelters side done (EM2, 2b0d144f) | EM2-viewports.md |
-| Scene graph with full Rust access | SG1, SG2 done; SG3 running | ARCH-SCENE.md §14 |
+| Scene graph with full Rust access | SG1, SG2, SG3 done (SC1 path complete); SG4, SG5 in progress | ARCH-SCENE.md §14 |
 
 ## Handoff (2026-10-19, superseded)
 

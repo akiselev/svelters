@@ -369,11 +369,6 @@ impl<'a> SceneRef<'a> {
         self.s.ids().map(move |id| NodeRef { s: self.s, id, i: id.index() as usize })
     }
 
-    /// The live nodes of element tag `tag`, in slot order (O(slots) until SG3's kind index).
-    pub fn of_tag(self, tag: &'a str) -> impl Iterator<Item = NodeRef<'a>> + 'a {
-        self.nodes().filter(move |n| n.tag() == tag)
-    }
-
     pub fn stats(self) -> SceneStats {
         self.s.stats()
     }
@@ -418,15 +413,15 @@ impl<'a> SceneRef<'a> {
 /// Read access to one live node.
 #[derive(Copy, Clone)]
 pub struct NodeRef<'a> {
-    s: &'a Scene,
+    pub(crate) s: &'a Scene,
     id: NodeId,
-    i: usize,
+    pub(crate) i: usize,
 }
 
 impl<'a> NodeRef<'a> {
     /// The live node `id`.
     #[inline]
-    fn at(s: &'a Scene, id: NodeId) -> NodeRef<'a> {
+    pub(crate) fn at(s: &'a Scene, id: NodeId) -> NodeRef<'a> {
         NodeRef { s, id, i: id.index() as usize }
     }
     pub fn id(self) -> NodeId {
@@ -489,9 +484,10 @@ impl<'a> NodeRef<'a> {
     pub fn is_layout_boundary(self) -> bool {
         self.s.is_boundary(self.i)
     }
-    /// The `visible` prop of this node and its ancestors.
+    /// Shown: the `visible` prop of this node and its ancestors, and its root's visibility (the
+    /// embed's `set_visible`; a detached node is not shown).
     pub fn is_visible(self) -> bool {
-        self.s.common(self.i).visible && self.ancestors().all(|a| a.s.common(a.i).visible)
+        self.s.common(self.i).visible && self.ancestors().all(|a| a.s.common(a.i).visible) && self.s.roots.get(self.root()).is_some_and(|e| e.visible)
     }
     /// The tick of this node's last change.
     pub fn changed(self) -> Tick {
@@ -839,6 +835,8 @@ impl Scene {
         let tag = kinds::kind(kind).tag.unwrap_or("?");
         let def = kinds::prop_def(kind, prop).ok_or_else(|| PropError::Unknown(format!("unknown prop id {prop} on <{tag}>")))?;
         let announce = !matches!(origin, Origin::Js) && self.observes(i, prop);
+        // SG3: the anchor maps follow the prop
+        let old_anchor = (def.key == kinds::P::Anchor).then(|| self.common(i).anchor.clone());
         let before = if announce { props::get_prop(&self.get(id.to_raw()).expect("live"), def).ok() } else { None };
         let d = {
             let w = match &mut self.payload[i] {
@@ -876,6 +874,9 @@ impl Scene {
             let r = self.core[i].root;
             if !r.is_detached() {
                 self.attached(id, r);
+                let new = &self.cold[i].as_deref().expect("an anchored node has a cold entry").common.anchor;
+                super::query::index_anchor(&mut self.roots, r, id, old_anchor.as_deref().unwrap_or(""), false);
+                super::query::index_anchor(&mut self.roots, r, id, new, true);
             }
             self.record(Change::Anchor { node: id, root: r }, origin);
         }

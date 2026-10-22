@@ -44,6 +44,12 @@ pub(crate) struct RootEntry {
     pub base: Option<egui::Id>,
     /// The viewport it is drawn in (SG2: damage routing; `Scene::root_changed` keeps it).
     pub viewport: egui::ViewportId,
+    /// Shown (the embed's `set_visible`, through `Scene::root_changed`; SG3: hit-testing).
+    pub visible: bool,
+    /// The key of the root mounted here (the embed's `RootKey`; SG3: `SceneRef::by_path`).
+    pub key: Option<Box<str>>,
+    /// Anchor → the nodes of this root carrying it (SG3, `query.rs`).
+    pub anchors: std::collections::HashMap<Box<str>, Vec<NodeId>>,
 }
 
 impl RootDirty {
@@ -159,6 +165,7 @@ impl Scene {
             self.payload[i] = Payload::Builtin(w);
             self.cold[i] = cold;
         }
+        self.index.add(kind as u32, id);
         self.record(Change::Created { node: id, kind: KindId(kinds::kind_id(kind)), owner }, origin_of(owner));
         if kinds::kind(kind).toplevel {
             self.add_root(TreeRoot::Window { node: id }, id);
@@ -171,7 +178,17 @@ impl Scene {
     pub(crate) fn add_root(&mut self, kind: TreeRoot, top: NodeId) -> RootIx {
         let ti = self.ix(top);
         debug_assert!(self.core[ti].parent.is_none() && self.core[ti].root.is_detached());
-        let r = self.roots.add(RootEntry { kind, top, dirty: RootDirty { full: true, ..Default::default() }, size: None, base: None, viewport: egui::ViewportId::ROOT });
+        let r = self.roots.add(RootEntry {
+            kind,
+            top,
+            dirty: RootDirty { full: true, ..Default::default() },
+            size: None,
+            base: None,
+            viewport: egui::ViewportId::ROOT,
+            visible: true,
+            key: None,
+            anchors: Default::default(),
+        });
         self.core[ti].flags.insert(NodeFlags::ROOT);
         self.set_root_subtree(top, r);
         self.record(Change::Root { root: r, what: RootChange::Added }, Origin::Host);
@@ -179,14 +196,23 @@ impl Scene {
     }
 
     /// Something about root `r` changed that the embed owns (visibility, viewport): journals it, and
-    /// keeps the root's viewport for damage routing. EM2 calls it from `set_visible`/`set_viewport`.
-    #[allow(dead_code)]
+    /// keeps the root's viewport (damage routing, R20) and visibility (hit-testing). The embed's
+    /// `set_visible`/`set_viewport` call it.
     pub(crate) fn root_changed(&mut self, r: RootIx, what: RootChange) {
         let Some(e) = self.roots.get_mut(r) else { return };
-        if let RootChange::Viewport(vp) = what {
-            e.viewport = vp;
+        match what {
+            RootChange::Viewport(vp) => e.viewport = vp,
+            RootChange::Visible(v) => e.visible = v,
+            _ => {}
         }
         self.record(Change::Root { root: r, what }, Origin::Host);
+    }
+
+    /// Sets the key of the root mounted in root `r` (`SceneRef::by_path`); `None` when unmounted.
+    pub(crate) fn set_root_key(&mut self, r: RootIx, key: Option<&str>) {
+        if let Some(e) = self.roots.get_mut(r) {
+            e.key = key.map(Box::from);
+        }
     }
 
     /// The entry of the root whose top is the live node `h` (a slot's or a window's own root).
@@ -250,7 +276,15 @@ impl Scene {
         let mut requeue: Vec<(NodeId, NodeFlags)> = Vec::new();
         while let Some(x) = stack.pop() {
             let xi = self.ix(x);
+            let old = self.core[xi].root;
             self.core[xi].root = r;
+            // SG3: the anchor maps follow the node
+            if old != r
+                && let Some(a) = self.cold[xi].as_deref().map(|c| c.common.anchor.as_str()).filter(|a| !a.is_empty())
+            {
+                super::query::index_anchor(&mut self.roots, old, x, a, false);
+                super::query::index_anchor(&mut self.roots, r, x, a, true);
+            }
             let q = self.core[xi].flags & (NodeFlags::IN_RELAYOUT | NodeFlags::IN_REMEASURE);
             if !q.is_empty() {
                 requeue.push((x, q));
@@ -258,7 +292,13 @@ impl Scene {
             if !r.is_detached() {
                 self.attached(x, r);
             }
-            stack.extend(self.children[xi].iter().rev().copied());
+            stack.extend(
+                self.children[xi]
+                    .iter()
+                    .chain(&self.cold(xi).attached)
+                    .rev()
+                    .copied(),
+            );
         }
         for (x, q) in requeue {
             let xi = self.ix(x);
@@ -282,7 +322,7 @@ impl Scene {
     }
 
     /// Checks that `origin` may change the structure under `parent` (and move `child`).
-    fn may_edit(&self, origin: Origin, nodes: &[NodeId]) -> Result<(), SceneError> {
+    pub(crate) fn may_edit(&self, origin: Origin, nodes: &[NodeId]) -> Result<(), SceneError> {
         if is_js(origin) {
             return Ok(());
         }
@@ -300,6 +340,9 @@ impl Scene {
     fn unlink(&mut self, child: NodeId, detach_root: bool, origin: Origin) {
         let ci = self.ix(child);
         let Some(p) = self.core[ci].parent else { return };
+        if self.core[ci].flags.contains(NodeFlags::ATTACHED) {
+            return self.unlink_attached(child, detach_root, origin); // EV2b (provider/behavior.rs)
+        }
         let pi = self.ix(p);
         self.children[pi].retain(|&c| c != child);
         self.core[ci].parent = None;
@@ -320,6 +363,9 @@ impl Scene {
         let pi = self.idx(parent).ok_or(SceneError::Stale(parent.to_raw()))?;
         let ci = self.idx(child).ok_or(SceneError::Stale(child.to_raw()))?;
         let (pk, ck) = (self.core[pi].kind as usize, self.core[ci].kind as usize);
+        if kinds::KindRegistry::global().attaches(ck) {
+            return self.insert_attached(parent, child, origin); // EV2b: a behaviour (provider/behavior.rs)
+        }
         if kinds::slot_of(pk).is_none() {
             return Err(SceneError::Invalid(format!("<{}> takes no children", kinds::kind(pk).tag.unwrap_or("?"))));
         }
@@ -404,6 +450,7 @@ impl Scene {
                 self.set_root_subtree(c, RootIx::DETACHED);
             }
         }
+        self.orphan_attached(i, origin); // EV2b: its behaviours stay alive, detached
         let d = Destroyed { egui_id: self.core[i].egui_id, was_window: matches!(self.w(i), W::Window { .. }) };
         self.free_slot(i, origin);
         Ok(d)
@@ -421,6 +468,12 @@ impl Scene {
             });
             let kind = KindId(kinds::kind_id(self.core[i].kind as usize));
             self.record(Change::Destroyed { node, kind }, origin);
+            // SG3: out of the indexes, after the records
+            self.index.remove(self.core[i].kind, node);
+            let r = self.core[i].root;
+            if let Some(a) = self.cold[i].as_deref().map(|c| c.common.anchor.as_str()).filter(|a| !a.is_empty()) {
+                super::query::index_anchor(&mut self.roots, r, node, a, false);
+            }
         }
         self.slots.free(i);
         self.payload[i] = Payload::Vacant;
@@ -448,7 +501,14 @@ impl Scene {
         let mut stack = vec![top];
         while let Some(x) = stack.pop() {
             dead.push(x);
-            stack.extend(self.children[self.ix(x)].iter().rev().copied());
+            let xi = self.ix(x);
+            stack.extend(
+                self.children[xi]
+                    .iter()
+                    .chain(&self.cold(xi).attached)
+                    .rev()
+                    .copied(),
+            );
         }
         for &x in &dead {
             let xi = self.ix(x);

@@ -18,7 +18,9 @@
 //! | `dump.rs` | [`SceneRef::dump`], [`SceneStats`] |
 //! | `ext.rs` | [`ExtKey`] and one typed column per key (sparse or dense), [`ExtEntry`], [`ExtTicks`] (SG2) |
 //! | `journal.rs` | [`Change`], [`Observer`], [`ChangeFilter`], [`ChangeSet`], [`Damage`] (SG2) |
-//! | `query.rs`, `hit.rs`, `virt.rs` | seams for SG3–SG5 |
+//! | `query.rs` | kind sets, anchor maps, [`Query`], [`Cursor`], [`Visit`] (SG3) |
+//! | `hit.rs` | per-viewport hit lists, [`SceneRef::hit_test`], [`Hit`], [`HitCx`] (SG3) |
+//! | `virt.rs` | seam for SG5 |
 //!
 //! Writer lane: SCENE.
 
@@ -41,6 +43,8 @@ pub(crate) mod tree;
 pub(crate) mod virt;
 
 pub use access::{Children, Descendants, NodeMut, NodeRef, Origin, PropError, SceneBusy, SceneError, SceneHandle, SceneMut, SceneRef};
+pub use hit::{Hit, HitCx};
+pub use query::{Cursor, Query, Visit};
 pub use journal::{Change, ChangeFilter, ChangeMask, ChangeSet, Damage, ExtChange, Observer, OriginMask, RootChange, Scope};
 pub use dump::{DumpOpts, SceneStats};
 pub use id::{Handle, KindId, NodeId, PropId, ProviderId, RootIx, Target, Tick, VNodeId};
@@ -89,6 +93,10 @@ pub struct Scene {
     /// Change records for observers (SG2).
     pub(crate) journal: Journal,
     pub(crate) roots: RootTable,
+    /// Kind sets (SG3; anchor maps are per root, in `RootEntry::anchors`).
+    pub(crate) index: query::Indexes,
+    /// Last pass's drawn nodes per viewport (SG3).
+    pub(crate) hits: hit::HitLists,
     pub(crate) tick: u64,
     pub(crate) in_batch: bool,
     pub(crate) counters: Counters,
@@ -109,6 +117,8 @@ impl Default for Scene {
             ext: ExtColumns::default(),
             journal: Journal::default(),
             roots: RootTable::default(),
+            index: query::Indexes::default(),
+            hits: hit::HitLists::default(),
             tick: 0,
             in_batch: false,
             counters: Counters::default(),
@@ -339,7 +349,13 @@ impl Scene {
                 match self.idx(p) {
                     None => errs.push(format!("{id}: stale parent {p}")),
                     Some(pi) => {
-                        let n = self.children[pi].iter().filter(|&&x| x == id).count();
+                        // EV2b: an attached node is listed by its host's attached list instead
+                        let list = if c.flags.contains(NodeFlags::ATTACHED) {
+                            &self.cold(pi).attached
+                        } else {
+                            &self.children[pi]
+                        };
+                        let n = list.iter().filter(|&&x| x == id).count();
                         if n != 1 {
                             errs.push(format!("{id}: listed {n} times by its parent {p}"));
                         }
@@ -349,7 +365,7 @@ impl Scene {
                     }
                 }
             }
-            for &k in &self.children[i] {
+            for &k in self.children[i].iter().chain(&self.cold(i).attached) {
                 match self.idx(k) {
                     None => errs.push(format!("{id}: stale child {k}")),
                     Some(ki) if self.core[ki].parent != Some(id) => errs.push(format!("{id}: child {k} has parent {:?}", self.core[ki].parent)),
@@ -422,6 +438,8 @@ impl Scene {
         if live != self.len() {
             errs.push(format!("live count {} but {live} live slots", self.len()));
         }
+        self.index.check(self, &mut errs);
+        self.check_anchors(&mut errs);
         for (rix, e) in self.roots.iter() {
             match self.idx(e.top) {
                 None => errs.push(format!("root {rix:?}: stale top {}", e.top)),
