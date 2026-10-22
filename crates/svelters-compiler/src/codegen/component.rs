@@ -78,6 +78,11 @@ pub trait Rewriter {
     fn tracing(&self) -> bool {
         false
     }
+    /// `--hmr`: the component's `$state` signature as a JS literal (`"<hash>"`, or `null` for
+    /// `// @hmr:reset`); `None` when the component has no keyed declarations.
+    fn hmr_signature(&self) -> Option<String> {
+        None
+    }
     /// Svelte's `dev` option: snippets get Svelte's dev wrapper (`$.wrap_snippet`, argument
     /// validation, no stringification).
     fn dev(&self) -> bool {
@@ -163,8 +168,9 @@ pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, file
     g.w.write("}\n");
     if hmr {
         let id = serde_json::to_string(filename).expect("string serializes");
+        let sig = rw.hmr_signature().map_or(String::new(), |s| format!(", {s}"));
         g.w.write(&format!(
-            "\nif (import.meta.hot) {{\n\t{name} = $n.hmr({name}, {id});\n\timport.meta.hot.acceptExports([\"default\"], (m) => m && {name}[$n.HMR].update(m.default));\n}}\n\nexport default {name};\n"
+            "\nif (import.meta.hot) {{\n\t{name} = $n.hmr({name}, {id}{sig});\n\timport.meta.hot.acceptExports([\"default\"], (m) => m && {name}[$n.HMR].update(m.default));\n}}\n\nexport default {name};\n"
         ));
     }
     let out = filename.rsplit('/').next().unwrap_or(filename).replace(".svelte", ".js");

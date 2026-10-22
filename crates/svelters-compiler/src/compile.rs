@@ -48,6 +48,9 @@ impl<'b> CompileOptions<'b> {
 pub struct ModuleOptions {
     pub filename: String,
     pub dev: bool,
+    /// `--hmr`: top-level `$state`, `writable(..)` and `createContext()` keep their values or objects across
+    /// a re-evaluation of the module (`import.meta.hot.data`).
+    pub hmr: bool,
 }
 
 #[derive(Debug, Default, Serialize)]
@@ -158,7 +161,7 @@ pub fn compile(src: &str, opts: &CompileOptions) -> CompileResult {
     timings.lower_us = t.elapsed().as_micros() as u64;
 
     let t = Instant::now();
-    let mut rw = ScopeRewriter::with_options(src, &root, &analysis, diags, opts.dev, &opts.filename);
+    let mut rw = ScopeRewriter::with_options(src, &root, &analysis, diags, opts.dev, &opts.filename, opts.hmr);
     rw.strip_typescript(ts_strip);
     let name = rw.component_name(&component_name(&opts.filename));
     let (code, map) = generate(src, &ir, &rw, &name, &opts.filename, &opts.target.runtime_imports(), opts.hmr);
@@ -199,7 +202,7 @@ pub fn compile_module(src: &str, opts: &ModuleOptions) -> CompileResult {
     timings.analyze_us = t.elapsed().as_micros() as u64;
 
     let t = Instant::now();
-    let (code, map, diags) = crate::transform::transform_module(src, &program, &analysis, opts.dev, &opts.filename, diags);
+    let (code, map, diags) = crate::transform::transform_module(src, &program, &analysis, opts.dev, &opts.filename, opts.hmr, diags);
     timings.generate_us = t.elapsed().as_micros() as u64;
     if diags.has_errors() {
         return done(None, None, diags, timings);
