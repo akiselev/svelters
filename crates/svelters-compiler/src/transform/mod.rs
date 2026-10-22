@@ -823,11 +823,14 @@ impl Rewriter for ScopeRewriter<'_> {
 }
 
 /// `client_module`: transforms a `.svelte.js` module (already analysed) into JS text + map.
-pub fn transform_module(src: &str, program: &Program, an: &crate::svelte::scope::analyze::ModuleScopeAnalysis<'_>, dev: bool, filename: &str, hmr: bool, diags: Diagnostics) -> (String, String, Diagnostics) {
+/// `ts`: the TypeScript removed from a `.svelte.ts` module (empty for JavaScript).
+#[allow(clippy::too_many_arguments)]
+pub fn transform_module(src: &str, program: &Program, an: &crate::svelte::scope::analyze::ModuleScopeAnalysis<'_>, dev: bool, filename: &str, hmr: bool, ts: &crate::svelte::ts::TsStrip, diags: Diagnostics) -> (String, String, Diagnostics) {
     let cx = Ctx::new(src, &an.arena, vec![&an.module.scopes], an.module.scope, None, dev, filename, diags);
     cx.hmr.set(hmr);
     cx.keep_callee.set("$$hmr().keep");
     let mut edits = Edits::new();
+    ts.apply(&mut edits, None);
     {
         let mut v = Rw::new(&cx, &mut edits, Mode::Read, false);
         for stmt in &program.body {

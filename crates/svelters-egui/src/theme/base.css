@@ -1,0 +1,53 @@
+/* svelters-egui theme: the base sheet (DS1, plans/research/DESIGN.md §4.3).
+
+   Theme origin, layer `sv.base`: every author rule (a component's <style>) beats it, and DS3's
+   `sv.affordance` layer comes after it. It reads only the theme's `--sv-*` tokens, so a token
+   override (`Theme::with`, `setTokens`, or a `--sv-*` declaration on any ancestor) restyles it.
+
+   It restates, for the stock-painted kinds (egui draws them from per-state WidgetVisuals), the
+   mapping `Theme::egui_style` gives egui itself: a Svelte <button> and an egui::Button in Rust
+   code paint the same token. Kinds egui paints from the context Style alone (toggle-button,
+   combo-box, icon, menus, ...) already match through that Style and need no rule here. More
+   kinds and states arrive with DS2's engine features (outline, cursor, per-side borders,
+   box-shadow) and DS3's affordance rules. */
+
+@layer sv.tokens, sv.base, sv.affordance;
+
+@layer sv.base {
+  button {
+    background-color: var(--sv-button-bg);
+    border-color: var(--sv-button-border-color);
+    border-width: var(--sv-stroke);
+    border-radius: var(--sv-button-radius);
+    color: var(--sv-button-fg);
+  }
+  button:hover {
+    background-color: var(--sv-button-bg-hover);
+  }
+  button:active {
+    background-color: var(--sv-button-bg-active);
+  }
+
+  checkbox {
+    background-color: var(--sv-checkbox-bg);
+    border-color: var(--sv-checkbox-border-color);
+    border-width: var(--sv-stroke);
+    border-radius: var(--sv-button-radius);
+    color: var(--sv-button-fg);
+  }
+  checkbox:hover {
+    background-color: var(--sv-button-bg-hover);
+  }
+  checkbox:active {
+    background-color: var(--sv-button-bg-active);
+  }
+
+  /* egui fills a text edit with Visuals::text_edit_bg_color (`--sv-input-bg`, from the Style);
+     its border and text come from the widget state. */
+  text-edit {
+    border-color: var(--sv-input-border-color);
+    border-width: var(--sv-stroke);
+    border-radius: var(--sv-input-radius);
+    color: var(--sv-input-fg);
+  }
+}

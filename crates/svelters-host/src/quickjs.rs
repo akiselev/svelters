@@ -1361,15 +1361,49 @@ fn declare<'js>(ctx: &Ctx<'js>, name: &str, code: ModuleCode, core: &Weak<Core>,
 fn declare_code<'js>(ctx: &Ctx<'js>, name: &str, code: ModuleCode, core: &Weak<Core>) -> Res<Module<'js, Declared>> {
     match code {
         ModuleCode::Source { js, map } => {
-            if let (Some(map), Some(core)) = (map, core.upgrade()) {
+            let core = core.upgrade();
+            if let (Some(map), Some(core)) = (map, &core) {
                 core.maps.borrow_mut().insert(name, &map);
             }
-            Module::declare(ctx.clone(), name, js)
+            // Q2: through the bytecode cache, except HMR re-imports (`?v=n`, one-off names)
+            match core.and_then(|c| c.bytecode.borrow().clone()).filter(|_| !name.contains('?')) {
+                Some(cache) => declare_cached(ctx, name, js, &cache),
+                None => Module::declare(ctx.clone(), name, js),
+            }
         }
         // Safety: only bytecode tagged for this engine is read; its writer is the same QuickJS build.
         ModuleCode::Cached { engine, bytes } if engine == BYTECODE_TAG => unsafe { Module::load(ctx.clone(), &bytes) },
         ModuleCode::Cached { engine, .. } => Err(rquickjs::Error::new_loading_message(name, format!("bytecode for engine {engine:?}, not {BYTECODE_TAG:?}"))),
     }
+}
+
+/// Declares a source module from its cached bytecode, or compiles it and caches the bytecode.
+fn declare_cached<'js>(ctx: &Ctx<'js>, name: &str, js: String, cache: &crate::bytecode::BytecodeCache) -> Res<Module<'js, Declared>> {
+    if let Some(bytes) = cache.get(name, &js) {
+        // Safety: the entry passed its header and checksum checks for this engine stamp, name and
+        // source; it was written by `Module::write` of this QuickJS build (bytecode.rs, "Trust").
+        match unsafe { Module::load(ctx.clone(), &bytes) } {
+            Ok(m) => return Ok(m),
+            Err(e) => {
+                tracing::debug!(target: "svelters::host", "bytecode cache entry for {name} rejected ({e}); recompiling");
+                let _ = ctx.catch();
+                cache.remove(name, &js);
+            }
+        }
+    }
+    let m = Module::declare(ctx.clone(), name, js.as_str())?;
+    match m.write(crate::bytecode::write_options()) {
+        Ok(bytes) => {
+            if let Err(e) = cache.put(name, &js, &bytes) {
+                tracing::debug!(target: "svelters::host", "bytecode cache entry for {name} not written: {e}");
+            }
+        }
+        Err(e) => {
+            tracing::debug!(target: "svelters::host", "bytecode of {name} not written: {e}");
+            let _ = ctx.catch();
+        }
+    }
+    Ok(m)
 }
 
 /// Reads a sync handler result. `nested` allows one level of object/array whose members must be primitives.

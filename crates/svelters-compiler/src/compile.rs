@@ -204,16 +204,28 @@ fn run_component(src: &str, opts: &CompileOptions, check: bool) -> CompileResult
     CompileResult { css, ..res }
 }
 
+/// Parses a module, with TypeScript on and stripped when `filename` is TypeScript
+/// ([`crate::svelte::ts::is_ts_module`]).
+fn parse_module(src: &str, filename: &str) -> Result<(crate::estree::Program, crate::svelte::ts::TsStrip), CompileError> {
+    let ts = crate::svelte::ts::is_ts_module(filename);
+    let mut comments = Vec::new();
+    let mut program = crate::svelte::parse::acorn::parse(src, &mut comments, ts, false)?;
+    let strip = if ts { crate::svelte::ts::strip_program(&mut program, src)? } else { Default::default() };
+    Ok((program, strip))
+}
+
 /// Compiles a `.svelte.js` module (Svelte's `compileModule`, client output): runes in module
 /// scope become runtime calls against the core (`@svelters/native-runtime/core`).
+///
+/// SVELTERS: a `.svelte.ts` filename parses with TypeScript and strips it first (upstream needs a
+/// preprocessor for that), with the same `typescript_invalid_feature` errors as `<script lang="ts">`.
 pub fn compile_module(src: &str, opts: &ModuleOptions) -> CompileResult {
     let mut timings = Timings::default();
     let mut diags = Diagnostics::default();
     let done = |js, map, diags: Diagnostics, timings| CompileResult { js, map, diagnostics: diags.finish(src), backend: String::new(), timings, css: None };
 
     let t = Instant::now();
-    let mut comments = Vec::new();
-    let program = match crate::svelte::parse::acorn::parse(src, &mut comments, false, false) {
+    let (program, ts) = match parse_module(src, &opts.filename) {
         Ok(p) => p,
         Err(e) => {
             from_compile_error(&mut diags, &e);
@@ -233,10 +245,38 @@ pub fn compile_module(src: &str, opts: &ModuleOptions) -> CompileResult {
     timings.analyze_us = t.elapsed().as_micros() as u64;
 
     let t = Instant::now();
-    let (code, map, diags) = crate::transform::transform_module(src, &program, &analysis, opts.dev, &opts.filename, opts.hmr, diags);
+    let (code, map, diags) = crate::transform::transform_module(src, &program, &analysis, opts.dev, &opts.filename, opts.hmr, &ts, diags);
     timings.generate_us = t.elapsed().as_micros() as u64;
     if diags.has_errors() {
         return done(None, None, diags, timings);
     }
     done(Some(code), Some(map), diags, timings)
+}
+
+/// Strips the types from a plain TypeScript module (`.ts`, `.mts`): no runes, no runtime imports,
+/// the JavaScript left as written (with a source map). Errors are `typescript_invalid_feature`
+/// (enums, namespaces with values, decorators, ...) and syntax errors, as in `<script lang="ts">`.
+pub fn strip_typescript_module(src: &str, filename: &str) -> CompileResult {
+    let mut diags = Diagnostics::default();
+    let t = Instant::now();
+    let mut comments = Vec::new();
+    let res = crate::svelte::parse::acorn::parse(src, &mut comments, true, false).and_then(|mut p| crate::svelte::ts::strip_program(&mut p, src));
+    let strip = match res {
+        Ok(s) => s,
+        Err(e) => {
+            from_compile_error(&mut diags, &e);
+            let timings = Timings { stopped: true, parse_us: t.elapsed().as_micros() as u64, ..Timings::default() };
+            return CompileResult { js: None, map: None, diagnostics: diags.finish(src), backend: String::new(), timings, css: None };
+        }
+    };
+    let parse_us = t.elapsed().as_micros() as u64;
+    let t = Instant::now();
+    let mut edits = crate::codegen::edit::Edits::new();
+    strip.apply(&mut edits, None);
+    let mut w = crate::codegen::writer::Writer::new(src);
+    edits.emit(&mut w, src, 0, src.len() as u32);
+    let base = filename.rsplit('/').next().unwrap_or(filename);
+    let (code, map) = w.finish(filename, src, base);
+    let timings = Timings { parse_us, generate_us: t.elapsed().as_micros() as u64, ..Timings::default() };
+    CompileResult { js: Some(code), map: Some(map), diagnostics: diags.finish(src), backend: String::new(), timings, css: None }
 }
