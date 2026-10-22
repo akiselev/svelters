@@ -1,6 +1,4 @@
-//! Kind m    // a `NativeError` (a `Result` method's `Err`, an argument that did not convert) reaches JS as a
-    // native error with its domain and code (`SVL_ERROR`), not as a plain string
-    Ok(r.unwrap_or_else(|e| Value::Error(Box::new(NativeError { message: format!("<{}>.{name}: {}", entry.tag, e.message), ..e }))))thods (RA3, ARCH-EMBED §8.2 "methods", ARCH-CRATES §4.2 "Methods"): Rust methods of a
+//! Kind methods (RA3, ARCH-EMBED §8.2 "methods", ARCH-CRATES §4.2 "Methods"): Rust methods of a
 //! provider kind that JS calls on an element, e.g. `<code-editor>`'s `focus()`, `revealLine(n)`,
 //! `setSelection(sel)`, `executeCommand(cmd)` and `setDiagnostics(source, version, diags)`.
 //!
