@@ -79,6 +79,10 @@ pub struct HostConfig {
     pub hmr_max_swaps: u32,
     /// H1: ... or when its heap is above this fraction of `memory_limit`.
     pub hmr_memory_fraction: f32,
+    /// DX2: the clipboard and shell behind `svelters:clipboard` and `svelters:shell`. The default
+    /// ([`crate::platform::Platform::headless`]) touches nothing of the system; a desktop runner
+    /// installs the system ones (svelters-egui's `platform::system()`).
+    pub platform: crate::platform::Platform,
 }
 
 impl Default for HostConfig {
@@ -86,6 +90,7 @@ impl Default for HostConfig {
         HostConfig {
             hmr_max_swaps: 200,
             hmr_memory_fraction: 0.5,
+            platform: crate::platform::Platform::default(),
             memory_limit: 256 * 1024 * 1024,
             max_stack_size: 1024 * 1024,
             turn_budget: Some(Duration::from_secs(10)),

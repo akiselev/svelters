@@ -158,7 +158,7 @@ fn main() {
         return;
     }
     let res = if is_module {
-        compile_module(&src, &ModuleOptions { filename: filename.clone(), dev })
+        compile_module(&src, &ModuleOptions { filename: filename.clone(), dev, hmr })
     } else {
         let fail = |e: String| -> ! {
             eprintln!("svelters-compile: {e}");

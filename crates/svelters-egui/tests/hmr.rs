@@ -78,8 +78,8 @@ fn swapping_one_roots_component_leaves_the_other_roots_alone() {
     assert!(eh.harness.query_by_label("Inc One").is_none(), "the old version's widgets are gone");
     assert!(eh.harness.query_by_label("Two count 1").is_some(), "the Pane root keeps its widgets and its state");
     assert_eq!(e.root_info(p2).unwrap().title, two_title);
-    // the swapped roots restart their local state (Svelte 5 semantics; H3 keeps it)
-    assert!(eh.harness.query_by_label("One clicks: 0").is_some());
+    // the swapped roots keep their local state (H3); tests/hmr_state.rs covers when it resets
+    assert!(eh.harness.query_by_label("One clicks: 1").is_some());
     // no root faulted, none was re-mounted
     let ev = e.take_events();
     assert!(!ev.iter().any(|x| matches!(x, EmbedEvent::Faulted { .. } | EmbedEvent::Mounted(_))), "{ev:?}");
