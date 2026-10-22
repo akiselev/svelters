@@ -86,7 +86,7 @@ pub(crate) fn is_common(key: P) -> bool {
     use P::*;
     matches!(
         key,
-        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | Position | Left | Top | Right | Bottom | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid | DragType | DragData | DropTypes
+        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | Position | Left | Top | Right | Bottom | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid | DragType | DragData | DropTypes | Autofocus | FocusScope | Default | Cancel
     )
 }
 
@@ -141,6 +141,10 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (P::Padding, _) => c.padding = as_f64(v)?,
         (P::AlignItems, _) => c.align_items = as_enum(v, kinds::ALIGN)?,
         (P::JustifyContent, _) => c.justify_content = as_enum(v, kinds::JUSTIFY)?,
+        (P::Autofocus, _) => c.autofocus = as_bool(v)?,
+        (P::FocusScope, _) => c.focus_scope = as_enum(v, kinds::FOCUS_SCOPE)?,
+        (P::Default, W::Button { .. }) => c.default_button = as_bool(v)?,
+        (P::Cancel, W::Button { .. }) => c.cancel_button = as_bool(v)?,
         (P::Invalid, _) => c.invalid = as_bool(v)?,
         // WG4b: drag and drop on any node (`kinds/dnd.rs`), before the per-payload catch-alls
         (P::DragType | P::DragData | P::DropTypes, _) => crate::kinds::dnd::set(c, def.key, as_str(v)?),
@@ -331,6 +335,10 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Padding, _) => Value::F64(c.padding),
         (P::AlignItems, _) => s(c.align_items),
         (P::JustifyContent, _) => s(c.justify_content),
+        (P::Autofocus, _) => Value::Bool(c.autofocus),
+        (P::FocusScope, _) => s(c.focus_scope),
+        (P::Default, W::Button { .. }) => Value::Bool(c.default_button),
+        (P::Cancel, W::Button { .. }) => Value::Bool(c.cancel_button),
         (P::Invalid, _) => Value::Bool(c.invalid),
         (P::DragType | P::DragData | P::DropTypes, _) => s(crate::kinds::dnd::get(c, def.key)), // WG4b
         // WG2a

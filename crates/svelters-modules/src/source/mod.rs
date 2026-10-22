@@ -290,7 +290,7 @@ fn spec_backend(cfg: &SourceConfig) -> Result<SpecBackend, String> {
 
 /// Node ESM resolution with Vite's conditions for a client build (`browser`, then the defaults).
 fn resolver(dev: bool) -> Resolver {
-    Resolver::new(&["browser", "import", "module", if dev { "development" } else { "production" }, "default"], &[".mjs", ".js", ".json"], &["module", "main"])
+    Resolver::new(&["browser", "import", "module", if dev { "development" } else { "production" }, "default"], &[".mjs", ".js", ".mts", ".ts", ".json"], &["module", "main"])
 }
 
 fn hash_of(parts: &[&str]) -> u64 {

@@ -1369,18 +1369,31 @@ export function hmr(fn, id = fn?.[FILENAME] ?? 'component', sig) {
     const instance = {};
     const r = newRegion(anchor);
     const owner = scope;
+    // H3c: the position of this instance among its parent's instances of the same component, and the
+    // registry a swapped parent parked for it
+    const inst = { path: instancePath(owner, id), counters: new Map(), reg: () => liveReg, sig: () => liveReg?.sig };
+    let claimed = takeClaim(inst.path);
     block(() => {
       const next = $.get(current);
       if (component === next) return;
       const prevBranch = live;
       const nb = newRegion(r);
       nb.scope = new Scope(owner);
+      nb.scope.hmr = inst;
+      inst.counters = new Map();
       const prevScope = scope;
       scope = nb.scope;
       let result;
       // H3: the values the live version changed carry over when the signatures match (all or nothing)
       const sig = next[HMR_SIG];
-      const restore = ran && hmrPreserve && liveReg && sig != null && liveReg.sig === sig ? snapshot(liveReg.entries) : null;
+      let restore = ran && hmrPreserve && liveReg && sig != null && liveReg.sig === sig ? snapshot(liveReg.entries) : null;
+      // H3c: this instance is new, but its parent's swap parked the state of the instance that stood here
+      if (!ran && claimed) {
+        if (sig != null && claimed.sig === sig) restore = claimed.snap;
+        claimed = null;
+      }
+      // H3c: park the live registries of the instances below this one before they are destroyed
+      const parked = ran && live ? parkDescendants(live.scope) : null;
       const ctx = { restore, entries: new Map() };
       try {
         // intros are suppressed while a version is replaced
@@ -1388,11 +1401,14 @@ export function hmr(fn, id = fn?.[FILENAME] ?? 'component', sig) {
         building(() => {
           nb.effect = branch(() => {
             const outer = hmrCtx;
+            const outerClaims = hmrClaims;
             hmrCtx = ctx;
+            hmrClaims = parked;
             try {
               result = next(nb, props);
             } finally {
               hmrCtx = outer;
+              hmrClaims = outerClaims;
             }
           });
         });
@@ -1421,6 +1437,8 @@ export function hmr(fn, id = fn?.[FILENAME] ?? 'component', sig) {
         if (hadState && !restore) hmrStats.statesReset++;
         hmrStats.failed.delete(id);
         close(prevBranch);
+      } else if (restore) {
+        hmrStats.statesKept += restore.size;
       }
       if (result) Object.defineProperties(instance, Object.getOwnPropertyDescriptors(result));
     }, EFFECT_TRANSPARENT);
@@ -1461,6 +1479,43 @@ let hmrCtx = null;
 /** Global switch (HMR.md D2): `false` makes every swap start fresh. */
 export function setHmrPreserveState(on) {
   hmrPreserve = !!on;
+}
+
+/** H3c: registries parked by a swapping ancestor, by instance path; `null` outside a swap. */
+let hmrClaims = null;
+const rootCounters = new Map();
+
+/** `<parent path>/<component id>#<n>`: n counts the instances of that component created under the same
+ *  parent instance since its current version started (call order is the positional key). */
+function instancePath(owner, id) {
+  let s = owner;
+  while (s && !s.hmr) s = s.parent;
+  const counters = s ? s.hmr.counters : rootCounters;
+  const n = counters.get(id) ?? 0;
+  counters.set(id, n + 1);
+  return `${s ? s.hmr.path : ''}/${id}#${n}`;
+}
+
+function takeClaim(path) {
+  const c = hmrClaims?.get(path);
+  if (c) hmrClaims.delete(path);
+  return c ?? null;
+}
+
+/** The changed values of every live hmr instance below `scope`, keyed by path (H3c). */
+function parkDescendants(scope) {
+  if (!hmrPreserve || !scope) return null;
+  const out = new Map();
+  const walk = (sc) => {
+    for (const c of sc.children) {
+      const inst = c.hmr;
+      const reg = inst?.reg();
+      if (reg && reg.sig != null) out.set(inst.path, { sig: reg.sig, snap: snapshot(reg.entries) });
+      walk(c);
+    }
+  };
+  walk(scope);
+  return out;
 }
 
 const isPrimitive = (v) => v === null || (typeof v !== 'object' && typeof v !== 'function');

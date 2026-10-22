@@ -209,19 +209,123 @@ fn the_overlay_is_read_before_the_disk() {
 }
 
 #[test]
-fn styles_and_typescript_are_reported_not_silently_dropped() {
+fn styles_are_reported_not_silently_dropped() {
     let app = App::new("unsupported", "<window><label>x</label></window>\n<style>\n  label { color: red; }\n</style>\n");
     let provider = app.provider();
     let (_log, host) = log_host(Duration::from_millis(100));
     host.load_from(provider.clone()).unwrap();
     let warnings: Vec<String> = host.take_console().into_iter().filter(|l| l.level == "warn").map(|l| l.text).collect();
     assert!(warnings.iter().any(|w| w.contains("<style> is not applied")), "{warnings:?}");
+}
 
-    let ts = App::new("typescript", "<script>\n  import { n } from './n.ts';\n</script>\n<window><label>{n}</label></window>\n");
-    ts.write("src/n.ts", "export const n: number = 1;\n");
+/// Q2: a `lang="ts"` component importing a `.ts` module (as `./util.js`, TypeScript's convention, and
+/// extensionless) and a `.svelte.ts` runes module.
+const TS_APP: &str = r#"<script lang="ts">
+  import { twice, type Pair } from './util.js';
+  import { start } from './start';
+  import { label } from './state.svelte.ts';
+  interface Props { step?: number }
+  let { step = 1 }: Props = $props();
+  let count = $state<number>(twice(start) as number);
+  const p: Pair = [1, 2];
+</script>
+
+<window title="ts">
+  <box orientation="vertical" spacing="8">
+    <label>{label.text}: {count + p.length - 2}</label>
+    <button onclicked={() => (count += step!)}>Increment</button>
+  </box>
+</window>
+"#;
+
+#[test]
+fn typescript_modules_components_and_runes_modules_load_from_source() {
+    let app = App::new("typescript", TS_APP);
+    app.write("src/util.ts", "export type Pair = [number, number];\nexport function twice<T extends number>(n: T): number {\n  return (n as number) * 2;\n}\n");
+    app.write("src/start.mts", "declare const unused: string;\nexport const start: number = 21;\n");
+    app.write("src/state.svelte.ts", "type Label = { text: string };\nexport const label: Label = $state<Label>({ text: 'Count' });\n");
+    let provider = app.provider();
+    let (log, host) = log_host(Duration::from_millis(200));
+    host.load_from(provider.clone()).unwrap();
+    host.run().unwrap();
+    let oplog = log.log();
+    assert!(oplog.contains("\"Count: 42\""), "{oplog}");
+    let files = provider.graph_files();
+    for f in ["src/util.ts", "src/start.mts", "src/state.svelte.ts"] {
+        assert!(files.iter().any(|p| p.to_string_lossy().ends_with(f)), "{f} not in the graph: {files:#?}");
+    }
+}
+
+#[test]
+fn typescript_errors_are_load_errors() {
+    let app = App::new("typescript-enum", "<script>\n  import { E } from './e.ts';\n</script>\n<window><label>{E.A}</label></window>\n");
+    app.write("src/e.ts", "export enum E { A, B }\n");
     let (_log, host) = log_host(Duration::from_millis(100));
-    let err = host.load_from(ts.provider()).expect_err("TypeScript is Q2");
-    assert!(err.message.contains("TypeScript"), "{err}");
+    let err = host.load_from(app.provider()).expect_err("enums are not stripped");
+    assert_eq!(err.kind, ErrorKind::Load);
+    assert!(err.message.contains("e.ts") && err.message.contains("enum"), "{err}");
+
+    let jsx = App::new("typescript-tsx", "<script>\n  import x from './x.tsx';\n</script>\n<window><label>{x}</label></window>\n");
+    jsx.write("src/x.tsx", "export default <div/>;\n");
+    let (_log, host) = log_host(Duration::from_millis(100));
+    let err = host.load_from(jsx.provider()).expect_err("no JSX");
+    assert!(err.message.contains("JSX"), "{err}");
+}
+
+/// Q2: the first launch writes the bytecode of every source module; the next one reads it all; a
+/// changed file is recompiled alone; damaged entries are recompiled and rewritten.
+#[test]
+fn the_bytecode_cache_is_written_at_first_launch_and_read_after() {
+    let app = counter_app("bytecode-cache");
+    let cache_dir = app.path(".cache/bytecode");
+    let launch = || {
+        let (log, host) = log_host(Duration::from_millis(200));
+        host.set_bytecode_cache(Some(&cache_dir)).unwrap();
+        host.load_from(app.provider()).unwrap();
+        host.run().unwrap();
+        let cache = host.bytecode_cache().unwrap();
+        (log.log(), cache.hits(), cache.writes(), cache.dir().to_path_buf())
+    };
+    let (oplog, hits, writes, dir) = launch();
+    assert!(oplog.contains("\"Count: 41\""), "{oplog}");
+    assert_eq!(hits, 0);
+    assert!(writes > 10, "every source module is written ({writes})");
+    let entries = || std::fs::read_dir(&dir).unwrap().flatten().filter(|e| e.path().extension().is_some_and(|x| x == "qbc")).map(|e| e.path()).collect::<Vec<_>>();
+    assert_eq!(entries().len() as u64, writes);
+    assert!(std::fs::read_to_string(dir.join("STAMP")).unwrap().starts_with("quickjs-ng "));
+
+    let (oplog, hits2, writes2, _) = launch();
+    assert!(oplog.contains("\"Count: 41\""), "{oplog}");
+    assert_eq!((hits2, writes2), (writes, 0), "a warm launch reads every module from the cache");
+
+    app.write("src/state.svelte.js", "export const label = $state({ text: 'Total' });\n");
+    let (oplog, hits3, writes3, _) = launch();
+    assert!(oplog.contains("\"Total: 41\""), "{oplog}");
+    assert_eq!((hits3, writes3), (writes - 1, 1), "only the changed module is recompiled");
+
+    for e in entries() {
+        std::fs::write(&e, b"damaged").unwrap();
+    }
+    let (oplog, hits4, writes4, _) = launch();
+    assert!(oplog.contains("\"Total: 41\""), "{oplog}");
+    assert_eq!(hits4, 0);
+    assert_eq!(writes4, writes, "damaged entries are misses, recompiled and rewritten");
+}
+
+#[test]
+fn set_dx_opens_the_bytecode_cache_under_the_apps_cache_dir() {
+    let app = App::new("bytecode-dx", "<window><label>dx</label></window>\n");
+    let (_log, host) = log_host(Duration::from_millis(100));
+    host.set_dx(svelters_host::dx::Dx::in_memory(svelters_host::dx::AppId::new("dev", "svelters", "q2"), app.path(".dx")));
+    let cache = host.bytecode_cache().expect("set_dx opens the cache");
+    assert!(cache.dir().starts_with(app.path(".dx/cache/bytecode")), "{}", cache.dir().display());
+    host.load_from(app.provider()).unwrap();
+    assert!(cache.writes() > 0);
+
+    let (_log, host) = log_host(Duration::from_millis(100));
+    host.set_bytecode_cache(None).unwrap();
+    host.set_dx(svelters_host::dx::Dx::in_memory(svelters_host::dx::AppId::new("dev", "svelters", "q2"), app.path(".dx2")));
+    assert!(host.bytecode_cache().is_none(), "an explicit `None` stays");
 }
 
 /// Runs the loop with `watch()` on; `edit` runs on a helper thread once the loop is up; quits after
