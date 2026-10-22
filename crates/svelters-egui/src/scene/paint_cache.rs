@@ -92,7 +92,7 @@ mod tests {
     /// The shapes `n` widgets put in a frame, painted with or without the cache, at `offset`.
     fn frame(ctx: &egui::Context, cache: Option<&mut PaintCache>, n: usize, offset: f32) -> Vec<egui::epaint::ClippedShape> {
         let mut cache = cache;
-        let out = ctx.run_ui(egui::RawInput::default(), |ui| {
+        let mut out = ctx.run_ui(egui::RawInput::default(), |ui| {
             let p = ui.painter();
             for i in 0..n {
                 let r = Rect::from_min_size(egui::pos2(offset, i as f32 * 24.0), vec2(170.0, 22.0));
@@ -111,6 +111,7 @@ mod tests {
                 }
             }
         });
+        out.textures_delta.clear(); // no renderer here (epaint asserts deltas are handled)
         out.shapes
     }
 

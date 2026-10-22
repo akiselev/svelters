@@ -909,7 +909,7 @@ impl Scene {
             let r = self.core[i].root;
             if !r.is_detached() {
                 self.attached(id, r);
-                let new = &self.common[i].as_deref().expect("an anchored node has common props").anchor;
+                let new = self.common[i].as_deref().map_or("", |c| c.anchor.as_str()); // SG6: `None` = no anchor
                 super::query::index_anchor(&mut self.roots, r, id, old_anchor.as_deref().unwrap_or(""), false);
                 super::query::index_anchor(&mut self.roots, r, id, new, true);
             }

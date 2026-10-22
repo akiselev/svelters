@@ -262,11 +262,13 @@ impl Scene {
 
     /// SG6: changes node `i`'s common props with `f`, then shares the result with equal sets.
     pub(crate) fn set_common<R>(&mut self, i: usize, f: impl FnOnce(&mut Common) -> R) -> R {
-        let mut a = self.common[i].take().unwrap_or_else(|| std::sync::Arc::new(Common::DEFAULT));
-        let r = f(std::sync::Arc::make_mut(&mut a));
-        self.common[i] = (*a != Common::DEFAULT).then(|| {
-            let k = compact::common_key(&a);
-            self.commons.intern_arc(a, k)
+        // a copy, not `Arc::make_mut` (the table shares every set): a set already interned costs
+        // no allocation (`tests/scene.rs` mutations_allocate_nothing_without_observers)
+        let mut c = self.common(i).clone();
+        let r = f(&mut c);
+        self.common[i] = (c != Common::DEFAULT).then(|| {
+            let k = compact::common_key(&c);
+            self.commons.intern(c, k)
         });
         r
     }

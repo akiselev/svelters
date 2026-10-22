@@ -47,11 +47,6 @@ impl<T: PartialEq + Clone> Interner<T> {
         self.find(&v, key).unwrap_or_else(|| self.insert(Arc::new(v), key))
     }
 
-    /// As [`Interner::intern`] for a value already in an `Arc` (after `Arc::make_mut`).
-    pub fn intern_arc(&mut self, a: Arc<T>, key: u64) -> Arc<T> {
-        self.find(&a, key).unwrap_or_else(|| self.insert(a, key))
-    }
-
     fn find(&mut self, v: &T, key: u64) -> Option<Arc<T>> {
         let b = self.buckets.get(&key)?;
         let found = b.iter().find(|a| ***a == *v)?.clone();
