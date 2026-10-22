@@ -61,6 +61,10 @@ contradicts a section further down, the item wins. The milestone that implements
   - **R21** (§7.5): `PassScope::Viewport`/`AllViewports` passes run from an explicit
     `embed.show_viewport_passes(ui)`. The host calls it at the end of each viewport's ui (root and deferred),
     because slots are drawn from berth's `pane_ui` (seam 4).
+    *Seam (coordinators, 2026-10-22, berth 5b984fe):* berth owns each window's ui, so it calls a defaulted
+    `DeferredHost::viewport_done(ui, window)` once per window per pass, after all that window's panes are
+    drawn, for the root, immediate and deferred windows. SvelteDock implements it with `show_viewport_passes`,
+    reaching the embed through EM2's thread-local registry in deferred closures (entry point added in SG4).
   - **R22** (§8.2/§10.2): `PrepareCx` exposes this frame's scroll offset for a ScrollArea id (egui's
     stored state plus this pass's pending scroll input), so realised rows don't lag a frame. Gate: a
     kittest flings through 2k rows, and no frame draws an unbound row.
@@ -1393,7 +1397,7 @@ deprecation; enums `#[non_exhaustive]`, traits extended only with defaulted meth
 
 - `NodeId` (`to_raw`/`from_raw`, generation semantics), `VNodeId`, `Target`, `KindId`, `PropId`, `Tick`.
 - `SceneHandle` (`read`, `write`, `defer`, `observe`, `take_changes`, registrations); `SceneRef`, `NodeRef`, traversal
-  iterators, `Cursor`, `Query` and its predicates; `by_anchor`/`by_path`; `hit_test`.
+  iterators, `Cursor`, `Query` and its predicates, including `Query::changed_since(tick)` (R14); `by_anchor`/`by_path`; `hit_test`, `Hit` {Node, Part(u64), Miss} (R13) and `Widget::hit_test`.
 - `SceneMut`, `NodeMut` operations of §6.4 and the ownership rules of §5 (an operation may become *more* permissive).
 - `ExtKey`, `ExtEntry`, `state_bits!`, `StateBits` built-in bit names (bit positions are not promised).
 - `Widget` (ARCH-EMBED §8.2 + §7.3 here), `Behavior`, `StateProvider`, `ScenePass`, `VirtualChildren`, `RowPool`, the
