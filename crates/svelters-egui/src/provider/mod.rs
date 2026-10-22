@@ -742,6 +742,16 @@ impl WidgetCx<'_> {
         self.s
     }
 
+    /// OW1a3: the node's scene index (for the crate's own widgets: the own label's runs).
+    pub(crate) fn index(&self) -> usize {
+        self.i
+    }
+
+    /// OW1a3: the scene and the pass's outbox (the own label fires its links' `clicked`).
+    pub(crate) fn scene_out(&mut self) -> (&mut crate::scene::Scene, &mut Vec<Out>) {
+        (self.s, self.out)
+    }
+
     /// SG4: draws one child of this node (a row of a pool); false if `id` is not one of them.
     pub fn child(&mut self, ui: &mut egui::Ui, id: crate::scene::NodeId) -> bool {
         match self.s.idx(id) {
@@ -1082,6 +1092,10 @@ impl ExtWidget {
     /// provider kinds.
     pub fn text(&self) -> &str {
         &self.1
+    }
+    /// OW1a3: sets the text mirror (the own label's runs).
+    pub(crate) fn set_text(&mut self, t: String) {
+        self.1 = t;
     }
     /// [`Self::text`], as the `String` typed keys read (`scene::keys`).
     pub(crate) fn text_string(&self) -> &String {

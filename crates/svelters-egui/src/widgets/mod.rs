@@ -45,8 +45,8 @@ pub const DEFAULT_OWN: &[&str] = &[
     "switch",
     "toggle-button",
     "radio-button",
-    // (`label` stays the egui wrapper by default until OW1a3 draws RT2's rich runs, `crate::rich`,
-    // in the own label; `SVELTERS_OWN_WIDGETS=all` or a tag list picks it)
+    // OW1a3: with RT2's rich runs (`crate::rich`) and selection
+    "label",
     "hyperlink",
     "separator",
     "progress-bar",

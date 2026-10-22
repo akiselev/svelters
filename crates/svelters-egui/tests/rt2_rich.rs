@@ -30,6 +30,8 @@ fn paragraph(rig: &Rig, col: svl_handle) -> (svl_handle, [svl_handle; 6]) {
 fn rich(rig: &Rig, h: svl_handle) -> Rich {
     rig.backend.with_scene(|s| match &s.n(h).w {
         W::Label { rich: Some(r), .. } => (**r).clone(),
+        // OW1a3: the own label (the default)
+        W::Ext(x) => x.with(|l: &svelters_egui::widgets::label::Label| l.rich().cloned()).flatten().expect("a rich own label"),
         other => panic!("not a rich label: {other:?}"),
     })
 }
