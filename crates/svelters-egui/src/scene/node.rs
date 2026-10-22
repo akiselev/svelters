@@ -269,6 +269,9 @@ bits! {
         /// SG4: the top of a provider's shadow subtree (ARCH-SCENE §4.4): its parent is the host
         /// provider node, which lays it out and draws it (`WidgetCx::children`); JS never sees it.
         const SHADOW = 1 << 20;
+        /// SG6: the subtree paints outside the node's own paint bounds; its ink rect (root-relative)
+        /// is in `Scene::ink` and the walk culls by it (`walk::culled`).
+        const INK_OVERFLOW = 1 << 21;
     }
 }
 
@@ -356,24 +359,27 @@ impl NodeCore {
     }
 }
 
-/// Taffy's data for one node (the adapter is `layout.rs`).
+/// Taffy's data for one node (the adapter is `layout.rs`). SG6: 64 B, not 1.2 KB (the style is
+/// interned, the cache boxed for containers only, the layouts only their rects: `compact.rs`).
 #[derive(Clone, Debug)]
 pub(crate) struct LayoutBox {
-    pub style: taffy::Style,
-    pub cache: taffy::Cache,
-    pub unrounded: taffy::Layout,
-    pub layout: taffy::Layout,
+    /// Shared with every node of the same style (`Scene::intern_style`); write a new one rather
+    /// than `Arc::make_mut` where the write is not one-off.
+    pub style: std::sync::Arc<taffy::Style>,
+    pub cache: super::compact::LayoutCache,
+    pub unrounded: super::compact::BoxRect,
+    pub layout: super::compact::BoxRect,
     /// No-wrap size of the leaf's content, measured with egui's fonts; `None` = measure again.
     pub intrinsic: Option<egui::Vec2>,
 }
 
 impl LayoutBox {
-    pub fn new() -> LayoutBox {
+    pub fn new(style: std::sync::Arc<taffy::Style>) -> LayoutBox {
         LayoutBox {
-            style: taffy::Style::default(),
-            cache: taffy::Cache::new(),
-            unrounded: taffy::Layout::with_order(0),
-            layout: taffy::Layout::with_order(0),
+            style,
+            cache: super::compact::LayoutCache::new(),
+            unrounded: Default::default(),
+            layout: Default::default(),
             intrinsic: None,
         }
     }
@@ -389,11 +395,10 @@ pub(crate) enum Payload {
     Builtin(W),
 }
 
-/// Rare data, boxed only when a node has some (most leaves have none).
+/// Rare data, boxed only when a node has some (most nodes have none). SG6: the common props moved
+/// to their own interned column (`Scene::common`).
 #[derive(Clone, Debug)]
 pub(crate) struct NodeCold {
-    /// Common props (layout fields move to the computed style with CS5e).
-    pub common: Common,
     /// TR1 visual channels.
     pub vis: Visual,
     /// R1 observation counts per prop id.
@@ -410,7 +415,7 @@ pub(crate) struct NodeCold {
 }
 
 impl NodeCold {
-    pub const DEFAULT: NodeCold = NodeCold { common: Common::DEFAULT, vis: Visual::IDENTITY, observe: Vec::new(), listen_overflow: Vec::new(), attached: Vec::new(), hoisted: Vec::new(), listen_capture: Vec::new() };
+    pub const DEFAULT: NodeCold = NodeCold { vis: Visual::IDENTITY, observe: Vec::new(), listen_overflow: Vec::new(), attached: Vec::new(), hoisted: Vec::new(), listen_capture: Vec::new() };
 
     pub fn observes(&self, prop: u32) -> bool {
         prop != 0 && self.observe.iter().any(|&(p, c)| p == prop && c > 0)
@@ -418,6 +423,8 @@ impl NodeCold {
 }
 
 pub(crate) static DEFAULT_COLD: NodeCold = NodeCold::DEFAULT;
+/// SG6: what a node without common props reads (`Scene::common`).
+pub(crate) static DEFAULT_COMMON: Common = Common::DEFAULT;
 
 /// A borrowed view of one node (the pre-SG1 `Node`), for read paths that predate [`NodeRef`].
 ///
@@ -495,5 +502,26 @@ mod tests {
         assert!(n <= 112, "size_of::<NodeCore>() = {n}");
         assert_eq!(std::mem::size_of::<Option<NodeId>>(), 8);
         assert_eq!(std::mem::size_of::<Owner>(), 4);
+    }
+
+    /// SG6: the per-node columns' element sizes (ARCH-SCENE §8.5), printed for the milestone.
+    #[test]
+    fn column_sizes() {
+        use std::mem::size_of;
+        println!(
+            "core {} children {} layout {} (taffy style {} cache {} rect {}) payload {} W {} cold {} (NodeCold {} Common {} Visual {})",
+            size_of::<NodeCore>(),
+            size_of::<Vec<NodeId>>(),
+            size_of::<LayoutBox>(),
+            size_of::<taffy::Style>(),
+            size_of::<super::super::compact::LayoutCache>(),
+            size_of::<super::super::compact::BoxRect>(),
+            size_of::<Payload>(),
+            size_of::<W>(),
+            size_of::<Option<Box<NodeCold>>>(),
+            size_of::<NodeCold>(),
+            size_of::<Common>(),
+            size_of::<Visual>(),
+        );
     }
 }

@@ -874,21 +874,24 @@ impl Scene {
         // SG3: the anchor maps follow the prop
         let old_anchor = (def.key == kinds::P::Anchor).then(|| self.common(i).anchor.clone());
         let before = if announce { props::get_prop(&self.get(id.to_raw()).expect("live"), def).ok() } else { None };
-        let d = {
-            let w = match &mut self.payload[i] {
-                super::node::Payload::Builtin(w) => w,
-                super::node::Payload::Vacant => return Err(PropError::Stale(id.to_raw())),
-            };
-            if props::is_common(def.key) {
-                let c = &mut self.cold[i].get_or_insert_with(|| Box::new(super::node::NodeCold::DEFAULT)).common;
-                props::set_prop(c, w, def, v)
-            } else {
-                props::set_prop(&mut Common::default(), w, def, v)
-            }
+        if matches!(self.payload[i], super::node::Payload::Vacant) {
+            return Err(PropError::Stale(id.to_raw()));
+        }
+        let d = if props::is_common(def.key) {
+            // SG6: the common props are interned (`Scene::set_common`); the payload is not vacant
+            let mut w = std::mem::replace(&mut self.payload[i], super::node::Payload::Vacant);
+            let super::node::Payload::Builtin(wb) = &mut w else { unreachable!() };
+            let d = self.set_common(i, |c| props::set_prop(c, wb, def, v));
+            self.payload[i] = w;
+            d
+        } else {
+            let super::node::Payload::Builtin(w) = &mut self.payload[i] else { unreachable!() };
+            props::set_prop(&mut Common::default(), w, def, v)
         }
         .map_err(|e| PropError::Invalid(format!("<{tag}> {}: {e}", def.name)))?;
         let t = self.stamp();
         self.record(Change::Prop { node: id, prop: PropId(prop), origin }, origin);
+        self.paint_cache.remove(i as u32); // SG6: PAINT dirt drops the cached shapes
         let core = &mut self.core[i];
         core.changed = t;
         core.dirty.insert(Dirty::PAINT);
@@ -913,7 +916,7 @@ impl Scene {
             let r = self.core[i].root;
             if !r.is_detached() {
                 self.attached(id, r);
-                let new = &self.cold[i].as_deref().expect("an anchored node has a cold entry").common.anchor;
+                let new = self.common[i].as_deref().map_or("", |c| c.anchor.as_str()); // SG6: `None` = no anchor
                 super::query::index_anchor(&mut self.roots, r, id, old_anchor.as_deref().unwrap_or(""), false);
                 super::query::index_anchor(&mut self.roots, r, id, new, true);
             }
@@ -931,7 +934,8 @@ impl Scene {
     /// Rebuilds node `i`'s taffy style from its props.
     pub(crate) fn restyle(&mut self, i: usize) {
         // CS5e: the props, overlaid by the computed style where the runtime set nothing
-        self.layout[i].style = crate::style::layout_style(self, i);
+        let t = crate::style::layout_style(self, i);
+        self.layout[i].style = self.intern_style(t);
     }
 
     /// Sets the TR1 visual channels; a changed clip restyles. False if nothing changed.

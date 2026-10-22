@@ -18,7 +18,7 @@ use super::access::{Origin, SceneError};
 use super::dirty::RootDirty;
 use super::id::{KindId, NodeId, RootIx};
 use super::journal::{Change, ExtChange, RootChange};
-use super::node::{Dirty, LayoutBox, NodeCold, NodeCore, NodeFlags, Owner, Payload, W};
+use super::node::{Dirty, LayoutBox, NodeCore, NodeFlags, Owner, Payload, W};
 use super::{Common, Scene};
 use crate::kinds;
 
@@ -190,30 +190,45 @@ impl Scene {
         let (id, fresh) = self.slots.alloc();
         let tick = self.stamp();
         let i = id.index() as usize;
-        let cold = matches!(w, W::Window { .. }).then(|| {
-            let mut c = NodeCold::DEFAULT;
-            c.common.padding = 8.0;
-            Box::new(c)
+        // SG6: a window's padding is its only non-default common prop at creation (interned)
+        let common = matches!(w, W::Window { .. }).then(|| {
+            let c = Common { padding: 8.0, ..Common::DEFAULT };
+            let k = super::compact::common_key(&c);
+            self.commons.intern(c, k)
         });
-        let mut lb = LayoutBox::new();
-        lb.style = crate::layout::style_of(cold.as_ref().map(|c| &c.common).unwrap_or(&Common::DEFAULT), &w, &super::Visual::IDENTITY);
+        let style = crate::layout::style_of(common.as_deref().unwrap_or(&Common::DEFAULT), &w, &super::Visual::IDENTITY);
+        let lb = LayoutBox::new(self.intern_style(style));
         let mut core = NodeCore::new(kind as u32, owner, crate::ids::node_id(id.to_raw()), tick);
         if matches!(w, W::VirtualList(_)) {
             // LS1: a list's size never depends on its rows; scrolling relays out the list alone
             core.flags.insert(NodeFlags::LAYOUT_BOUNDARY);
         }
         if fresh {
+            // SG6: the columns grow by a quarter, not double (ARCH-SCENE §8.5 counts capacity)
+            fn grow<T>(v: &mut Vec<T>) {
+                if v.len() == v.capacity() {
+                    v.reserve_exact((v.capacity() / 4).max(64));
+                }
+            }
+            grow(&mut self.core);
+            grow(&mut self.children);
+            grow(&mut self.layout);
+            grow(&mut self.payload);
+            grow(&mut self.cold);
+            grow(&mut self.common);
             self.core.push(core);
             self.children.push(Vec::new());
             self.layout.push(lb);
             self.payload.push(Payload::Builtin(w));
-            self.cold.push(cold);
+            self.cold.push(None);
+            self.common.push(common);
         } else {
             self.core[i] = core;
             self.children[i] = Vec::new();
             self.layout[i] = lb;
             self.payload[i] = Payload::Builtin(w);
-            self.cold[i] = cold;
+            self.cold[i] = None;
+            self.common[i] = common;
         }
         self.index.add(kind as u32, id);
         self.record(Change::Created { node: id, kind: KindId(kinds::kind_id(kind)), owner }, origin_of(owner));
@@ -331,7 +346,7 @@ impl Scene {
             self.core[xi].root = r;
             // SG3: the anchor maps follow the node
             if old != r
-                && let Some(a) = self.cold[xi].as_deref().map(|c| c.common.anchor.as_str()).filter(|a| !a.is_empty())
+                && let Some(a) = self.common[xi].as_deref().map(|c| c.anchor.as_str()).filter(|a| !a.is_empty())
             {
                 super::query::index_anchor(&mut self.roots, old, x, a, false);
                 super::query::index_anchor(&mut self.roots, r, x, a, true);
@@ -639,13 +654,16 @@ impl Scene {
             // SG3: out of the indexes, after the records
             self.index.remove(self.core[i].kind, node);
             let r = self.core[i].root;
-            if let Some(a) = self.cold[i].as_deref().map(|c| c.common.anchor.as_str()).filter(|a| !a.is_empty()) {
+            if let Some(a) = self.common[i].as_deref().map(|c| c.anchor.as_str()).filter(|a| !a.is_empty()) {
                 super::query::index_anchor(&mut self.roots, r, node, a, false);
             }
         }
         self.slots.free(i);
         self.payload[i] = Payload::Vacant;
         self.cold[i] = None;
+        self.common[i] = None;
+        self.ink.remove(&(i as u32));
+        self.paint_cache.remove(i as u32);
         self.children[i] = Vec::new();
         self.core[i].flags = NodeFlags::EMPTY;
         self.counters.destroyed += 1;
