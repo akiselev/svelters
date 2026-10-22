@@ -50,6 +50,7 @@ mod events;
 mod frame;
 mod ids;
 mod leaf;
+pub mod numeric;
 // WG2a: menus and overlays (plans/milestones/WG2a-menus-popups.md)
 mod menus;
 mod overlays;

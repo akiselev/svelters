@@ -1,0 +1,10 @@
+# The locales of data/icu4x.postcard (tools/intl/gen-data.sh)
+en
+de
+fr
+es
+it
+ja
+zh
+ru
+pl

@@ -70,6 +70,10 @@ pub struct HostConfig {
     /// Ask the backend to quit once the last toplevel handle is gone (after the first one was
     /// created). The host, not the toolkit, decides when the app ends. Ignored in scripted mode.
     pub quit_on_last_window: bool,
+    /// IN1: the locale `Intl` and the numeric widgets start with (BCP 47, POSIX names accepted),
+    /// set as the thread's current locale when the host is created; `None` keeps the thread's
+    /// (by default the environment's). Change it later with `Host::set_locale`.
+    pub locale: Option<String>,
     /// H1: a runtime that applied this many in-place module swaps is replaced by a full reload at
     /// the next change (replaced module versions are not freed while the runtime lives). 0: no limit.
     pub hmr_max_swaps: u32,
@@ -97,6 +101,7 @@ impl Default for HostConfig {
             max_virtual_timer_fires: 10_000,
             timing: false,
             quit_on_last_window: true,
+            locale: None,
         }
     }
 }
@@ -362,6 +367,8 @@ pub(crate) struct Core {
     pub(crate) budget: Cell<Option<Duration>>,
     /// EM1: what mounted roots reported (`__svelters_host.rootFault`/`rootInfo`/`rootEmit`).
     pub(crate) root_msgs: RefCell<Vec<RootMessage>>,
+    /// IN1: a locale change made while JS was running, delivered by the next checkpoint.
+    pub(crate) pending_locale: RefCell<Option<String>>,
 }
 
 /// Held while JS runs. See the module docs on re-entrancy.
@@ -411,6 +418,7 @@ impl Core {
             reactive: reactive::Reactive::new(crate::exports::reactive::Hub::new(backend.wake_handle())),
             budget: Cell::new(turn_budget),
             root_msgs: RefCell::new(Vec::new()),
+            pending_locale: RefCell::new(None),
         }
     }
 
@@ -957,6 +965,13 @@ pub(crate) fn checkpoint(core: &Core, engine: &RefCell<Box<dyn JsEngine>>) {
     // E3 (§6.4): dirty store fields join the dirty set, queued `Emitter` events the event queue, so the
     // change batch and the events below carry them.
     reactive::collect(core);
+    // IN1: a locale change `Host::set_locale` could not deliver while JS was running.
+    let locale = core.pending_locale.borrow_mut().take();
+    if let Some(tag) = locale
+        && let Err(e) = eng.locale_changed(&tag)
+    {
+        core.report(e);
+    }
     if core.cfg.scripted {
         checkpoint_scripted(core, &mut eng);
         core.process_releases();

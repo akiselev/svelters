@@ -102,7 +102,7 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | WG5b tree-view | IN PROGRESS | | unblocked (LISTS merged) |
 | DX1 settings binding, persisted UI state, standard paths, console→tracing, crash context | DONE | 2026-10-22 | merged (this commit); decided (coordinator): UI-state id (root from RootKey, explicit anchors), `js[{category=…}]` filtering, external-change push and panic-time JS stacks as follow-ups, no dx-op policy now |
 | DX2 multi-format clipboard (MimeData shared with DnD), svelters:clipboard / svelters:shell | DONE | 2026-10-22 | merged (this commit); DragPayload now holds MimeData; follow-up: fold W5 PrimarySelection onto ClipboardBackend |
-| IN1 Intl via ICU4X, locale-aware numbers | QUEUED | | MacBook, next free lane; locale and catalog come from the host (catalog.t); svelters formats numbers/dates |
+| IN1 Intl via ICU4X, locale-aware numbers | DONE | 2026-10-22 | ci/in1 d283ee52, 5/5 CI green; `Intl` (NumberFormat, PluralRules, Collator, DateTimeFormat), `toLocaleString`/`localeCompare`, `Host::set_locale` the only locale setter (JS setter removed, `__svelters_intl` frozen); feature `intl` on by default; merged over ZU3 by the coordinator (host Cargo.toml + linux-gtk.yml package list), clippy host/egui/intl clean; open: binary-size delta, svelte-check on `svelters:intl` types |
 | CX1 in-process diagnostics (SV27) | DONE | 2026-10-22 | merged (this commit); `check()` API, incremental FileState, 172 registered codes, fix-its, `--check/--explain/--list-codes` |
 | Q1 module loader (`svelters-modules`) | DONE | 2026-10-22 | merged 6dbee841 |
 | CS0 Rust CSS engine (`svelters-style`) | DONE | 2026-10-22 | merged 1b6a754f |

@@ -7,7 +7,9 @@ publish.workspace = true
 description = "The egui backend (G1): a retained scene arena laid out by taffy and painted through egui each frame"
 
 [features]
-default = ["eframe", "kittest", "source", "dialogs"]
+default = ["eframe", "kittest", "source", "dialogs", "intl"]
+# IN1: numeric widgets format and parse in the host's locale (svelters-intl); also the host's `Intl`.
+intl = ["dep:svelters-intl", "svelters-host/intl"]
 # The windowed runner (`Backend::run`): eframe with the glow renderer on X11/Wayland.
 eframe = ["dep:eframe"]
 # The headless test runner (`harness`): egui_kittest without a renderer, so no GPU and no display.
@@ -21,6 +23,7 @@ dialogs = ["dep:rfd"]
 [dependencies]
 svelters-abi.workspace = true
 svelters-host.workspace = true
+svelters-intl = { workspace = true, optional = true }
 svelters-modules = { workspace = true, optional = true }
 # CS5e: the CSS engine (selectors, cascade, computed style) runs in process on the scene.
 svelters-style.workspace = true

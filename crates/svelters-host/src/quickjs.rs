@@ -23,6 +23,8 @@ use svelters_abi::{NameKind, Value as AV};
 
 mod buffers;
 mod conv;
+#[cfg(feature = "intl")]
+mod intl;
 mod platform;
 use conv::QjsConv;
 
@@ -128,6 +130,9 @@ impl crate::core::CallbackEngine for QjsCallbacks {
 }
 
 pub(crate) struct QjsEngine {
+    /// IN1: the `Intl` shim's private locale-change notifier (first: released before `ctx`).
+    #[cfg(feature = "intl")]
+    intl_changed: intl::Changed,
     // `ctx` before `rt`: the context is released first.
     ctx: Context,
     rt: Runtime,
@@ -219,8 +224,17 @@ impl QjsEngine {
                 .catch(&ctx)
                 .map_err(|e| JsError::new(ErrorKind::Host, format!("install host bindings: {e}")))
         })?;
+        // IN1: `Intl` and the locale-sensitive built-ins over svelters-intl.
+        #[cfg(feature = "intl")]
+        let intl_changed = ctx.with(|ctx| {
+            intl::install(&ctx)
+                .catch(&ctx)
+                .map_err(|e| JsError::new(ErrorKind::Host, format!("install Intl: {e}")))
+        })?;
 
         Ok(QjsEngine {
+            #[cfg(feature = "intl")]
+            intl_changed,
             ctx,
             rt,
             base,
@@ -482,6 +496,11 @@ impl JsEngine for QjsEngine {
             let frame: Function = internal.get("frame")?;
             frame.call::<_, ()>(())
         })
+    }
+
+    #[cfg(feature = "intl")]
+    fn locale_changed(&mut self, tag: &str) -> Result<(), JsError> {
+        self.call_guarded(|ctx| intl::changed(ctx, &self.intl_changed, tag))
     }
 
     fn dispatch_gone(&mut self, handle: u64, reason: &str) -> Result<(), JsError> {
@@ -1290,7 +1309,8 @@ fn install<'js>(ctx: &Ctx<'js>, core: Weak<Core>, cbs: Rc<QjsCallbacks>, base: I
     globals.set("__svelters_host", host)?;
 
     let prelude: Function = ctx.eval(PRELUDE)?;
-    prelude.call::<_, ()>((native, globals))
+    prelude.call::<_, ()>((native, globals))?;
+    Ok(())
 }
 
 // ---- module loading ----
