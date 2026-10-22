@@ -331,71 +331,83 @@ impl JsEngine for QjsEngine {
                 f.call((id,))
             })
         };
-        let mut redo: Vec<String> = Vec::new();
-        let mut boundaries: Vec<String> = Vec::new();
-        let mut seen: HashSet<String> = HashSet::new();
-        let mut queue: Vec<String> = changed.to_vec();
-        while let Some(m) = queue.pop() {
-            if !seen.insert(m.clone()) {
-                continue;
-            }
-            redo.push(m.clone());
-            if accepts(&m)? {
-                boundaries.push(m);
-                continue;
-            }
-            let importers = provider.importers(&m);
-            if importers.is_empty() {
-                return Ok(HotOutcome::Reload(format!("{m} is not accepted by it or by any importer")));
-            }
-            queue.extend(importers);
-        }
-        // New versions: the resolver now hands out `<id>?v=<n>` for every re-evaluated module, so
-        // the boundaries' imports reach the new code. A failure restores the previous versions.
+        // H1b: a boundary that accepts only some exports (`acceptExports`) while another export changed is
+        // rejected; the change then propagates to that module's importers (as one that does not accept).
         let saved = self.versions.borrow().clone();
-        {
-            let mut v = self.versions.borrow_mut();
-            for id in &redo {
-                *v.entry(id.clone()).or_insert(0) += 1;
-            }
-        }
         let core = Rc::downgrade(&self.core);
         let versions = self.versions.clone();
+        let mut redo: Vec<String> = Vec::new();
         let res = (|| -> Result<Option<String>, JsError> {
-            let mut loaded = Vec::new();
-            for id in &boundaries {
-                let name = versioned(id, &versions);
-                let code = provider.load(id).map_err(|m| JsError::new(ErrorKind::Load, m))?;
-                let ns = self.call_guarded(|ctx| {
-                    let (m, promise) = declare(ctx, &name, code, &core, true)?.eval()?;
-                    if let Some(Err(e)) = promise.result::<Value>() {
-                        return Err(e);
+            let mut rejected: HashSet<String> = HashSet::new();
+            loop {
+                redo.clear();
+                let mut boundaries: Vec<String> = Vec::new();
+                let mut seen: HashSet<String> = HashSet::new();
+                let mut queue: Vec<String> = changed.to_vec();
+                while let Some(m) = queue.pop() {
+                    if !seen.insert(m.clone()) {
+                        continue;
                     }
-                    Ok(rquickjs::Persistent::save(ctx, m.namespace()?))
-                })?;
-                loaded.push((id.clone(), ns));
-            }
-            for (id, ns) in &loaded {
-                let reason: Option<String> = self.call_guarded(|ctx| {
-                    let hot: Object = ctx.globals().get("__svelters_hot")?;
-                    let f: Function = hot.get("check")?;
-                    f.call((id.as_str(), ns.clone().restore(ctx)?))
-                })?;
-                if reason.is_some() {
-                    return Ok(reason);
+                    redo.push(m.clone());
+                    if !rejected.contains(&m) && accepts(&m)? {
+                        boundaries.push(m);
+                        continue;
+                    }
+                    let importers = provider.importers(&m);
+                    if importers.is_empty() {
+                        let why = if rejected.contains(&m) { "changes an export that nothing accepts" } else { "is not accepted by it or by any importer" };
+                        return Ok(Some(format!("{m} {why}")));
+                    }
+                    queue.extend(importers);
                 }
-            }
-            for (id, ns) in loaded {
-                let reason: Option<String> = self.call_guarded(|ctx| {
-                    let hot: Object = ctx.globals().get("__svelters_hot")?;
-                    let f: Function = hot.get("update")?;
-                    f.call((id.as_str(), ns.restore(ctx)?))
-                })?;
-                if reason.is_some() {
-                    return Ok(reason);
+                // New versions: the resolver now hands out `<id>?v=<n>` for every re-evaluated module, so
+                // the boundaries' imports reach the new code. A failure restores the previous versions.
+                {
+                    let mut v = versions.borrow_mut();
+                    for id in &redo {
+                        *v.entry(id.clone()).or_insert(0) += 1;
+                    }
                 }
+                let mut loaded = Vec::new();
+                for id in &boundaries {
+                    let name = versioned(id, &versions);
+                    let code = provider.load(id).map_err(|m| JsError::new(ErrorKind::Load, m))?;
+                    let ns = self.call_guarded(|ctx| {
+                        let (m, promise) = declare(ctx, &name, code, &core, true)?.eval()?;
+                        if let Some(Err(e)) = promise.result::<Value>() {
+                            return Err(e);
+                        }
+                        Ok(rquickjs::Persistent::save(ctx, m.namespace()?))
+                    })?;
+                    loaded.push((id.clone(), ns));
+                }
+                let mut failing = Vec::new();
+                for (id, ns) in &loaded {
+                    let reason: Option<String> = self.call_guarded(|ctx| {
+                        let hot: Object = ctx.globals().get("__svelters_hot")?;
+                        let f: Function = hot.get("check")?;
+                        f.call((id.as_str(), ns.clone().restore(ctx)?))
+                    })?;
+                    if reason.is_some() {
+                        failing.push(id.clone());
+                    }
+                }
+                if !failing.is_empty() {
+                    rejected.extend(failing);
+                    continue;
+                }
+                for (id, ns) in loaded {
+                    let reason: Option<String> = self.call_guarded(|ctx| {
+                        let hot: Object = ctx.globals().get("__svelters_hot")?;
+                        let f: Function = hot.get("update")?;
+                        f.call((id.as_str(), ns.restore(ctx)?))
+                    })?;
+                    if reason.is_some() {
+                        return Ok(reason);
+                    }
+                }
+                return Ok(None);
             }
-            Ok(None)
         })();
         match res {
             Ok(None) => {

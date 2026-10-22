@@ -247,3 +247,59 @@ test('H3: module state — values and store objects survive a re-evaluation with
   assert.equal($.get(v3.c), 0);
   assert.notEqual(v3.store, v2.store);
 });
+
+// ---- H3c: children of an edited parent keep their state (positional keys) ----
+
+test('H3c: editing a parent keeps its children\'s changed state by position', () => {
+  const th = harness();
+  const seen = [];
+  const Child = $n.hmr(stateComp(0, 'k', seen), 'Child.svelte', 'csig');
+  const parent = (tag) => {
+    function P($$anchor, $$props) {
+      $.push($$props, true);
+      label($$anchor, tag);
+      Child($$anchor, {});
+      Child($$anchor, {});
+      $.pop();
+      return {};
+    }
+    return P;
+  };
+  const P = $n.hmr(parent('p1'), 'Parent.svelte');
+  mountAll(P);
+  assert.equal(seen.length, 2);
+  $.set(seen[1].n, 9); // the second child changed, the first did not
+  seen[1].items.push(7);
+  P[$n.HMR].update($n.hmr(parent('p2'), 'Parent.svelte'));
+  $.flush();
+  assert.equal(seen.length, 4, 'both children were re-created by the parent swap');
+  assert.equal($.get(seen[2].n), 0, 'the unchanged first child starts from its initializer');
+  assert.equal($.get(seen[3].n), 9, 'the second child kept its changed state');
+  assert.deepEqual([...seen[3].items], [1, 7]);
+  assert.ok(th.lines.some((l) => l.includes('k:9:2')), th.lines.join('\n'));
+});
+
+test('H3c: the global switch resets the children of an edited parent', () => {
+  harness();
+  for (const off of [false, true]) {
+    const seen = [];
+    const Child = $n.hmr(stateComp(0, 'k', seen), 'Child.svelte', 'csig');
+    const parent = () => function P($$anchor, $$props) {
+      $.push($$props, true);
+      Child($$anchor, {});
+      $.pop();
+      return {};
+    };
+    const P = $n.hmr(parent(), 'Parent.svelte');
+    mountAll(P);
+    $.set(seen[0].n, 4);
+    if (off) $n.setHmrPreserveState(false);
+    try {
+      P[$n.HMR].update($n.hmr(parent(), 'Parent.svelte'));
+      $.flush();
+    } finally {
+      $n.setHmrPreserveState(true);
+    }
+    assert.equal($.get(seen[1].n), off ? 0 : 4);
+  }
+});
