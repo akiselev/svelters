@@ -118,6 +118,9 @@ lower onto observation. `<quantity-field>` has `#[event] commit: Event<f64>`.
   (`collapsing-section`: Svelte children placed under the header, hidden and relaid out when closed), and the paint
   cache hit-rate test (`spark-line`: 20 unchanged repaints are hits, a new `values` rebuilds once).
 - `app/src/Methods.svelte` and `Widgets.svelte` are also checked by svelte-check in `app`'s `pnpm test`.
+- `svelters-compiler/tests/cx1_check.rs` `fixes_in_the_corpus_resolve` now checks a corpus file that has an app's
+  `.svelters/app/kinds.json` above it against the built-ins plus that fragment (`<collapsing-section>` alone got the
+  fix-it `collapsing-header`, which has no `title`).
 
 ## Deferred
 
