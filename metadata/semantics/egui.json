@@ -6340,6 +6340,25 @@
           "value": {
             "arg": 0
           }
+        },
+        "sizes": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "sizes",
+          "provenance": "svelters-egui: the two panes + a draggable divider (egui drag sense) widget writes sizes into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
         }
       },
       "category": "containers",
@@ -6364,7 +6383,7 @@
       },
       "css_hidden": [],
       "css_note": "The divider line follows the theme.",
-      "doc": "Two panes (its first two children; more are not shown) split by a divider the user drags. `divider-position` is the first pane's size.",
+      "doc": "Panes (its children) side by side or stacked, split by sashes the user drags or moves with the keys (R11: a 1 px line, a 4 px hit area, a focus-coloured bar and grip after 300 ms of hover). `divider-position` is the first pane's size; `sizes` every pane's.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
@@ -6372,6 +6391,44 @@
       "paint": "box",
       "present": null,
       "props": {
+        "collapsible": {
+          "construct_only": false,
+          "default": false,
+          "doc": "OW2: dragging a sash below half a pane's minimum collapses the pane to 0 (Qt's `childrenCollapsible`); Enter on a focused sash collapses or restores.",
+          "js": "collapsible",
+          "native": "collapsible",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:SplitView:collapsible",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "commit-mode": {
+          "construct_only": false,
+          "default": "live",
+          "doc": "OW2: `live` moves the panes while dragging; `release` draws a guide line and moves them once, on release (Qt's `opaqueResize = false`).",
+          "js": "commit-mode",
+          "native": "commit-mode",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:SplitView:commit-mode",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "live",
+            "release"
+          ],
+          "writable": true
+        },
         "divider-position": {
           "construct_only": false,
           "default": null,
@@ -6443,6 +6500,41 @@
           "readable": true,
           "type": "bool",
           "writable": true
+        },
+        "restore-on-double-click": {
+          "construct_only": false,
+          "default": true,
+          "doc": "OW2: a double click on a sash restores the pane before it to its size before a collapse, or collapses it (`collapsible`).",
+          "js": "restore-on-double-click",
+          "native": "restore-on-double-click",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:SplitView:restore-on-double-click",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "sizes": {
+          "construct_only": false,
+          "default": null,
+          "doc": "OW2: every pane's size in points along the split (`bind:sizes`, Qt's `sizes`); null: from `divider-position` (two panes) or equal shares. When the split view grows or shrinks, the difference goes to the panes by their `flex-grow` (Qt's stretch factors; the last pane when none has one). Each pane keeps `min-size` and its own `min-width`/`max-width` (or heights).",
+          "js": "sizes",
+          "native": "sizes",
+          "nullable": true,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:SplitView:sizes",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "of": "f64",
+          "readable": true,
+          "type": "list",
+          "writable": true
         }
       },
       "provenance": {
@@ -6461,6 +6553,22 @@
           "handler_result": "none",
           "js_event": "changed",
           "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "sizes",
+              "type": "list"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW2: the user finished a resize (drag released, a key step, a restore); carries every pane's size.",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -9413,7 +9521,18 @@
       "doc": "Common properties of everything placed in a window: state, tooltip, accessibility and its taffy item style.",
       "interface": false,
       "lifetime": "owned",
-      "methods": {},
+      "methods": {
+        "scroll-into-view": {
+          "dispatch": "generated",
+          "doc": "`scroll-into-view(align?)`: scrolls the scroll areas around the node so it is visible on the next frame, innermost first; `align` is `nearest` (the default: the least scrolling, keeping the area's `scroll-margin`) or `center`. Qt's `ensureWidgetVisible`, the DOM's `scrollIntoView`.",
+          "native": "scroll-into-view",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        }
+      },
       "native": "egui::Widget",
       "paint": "box",
       "present": null,

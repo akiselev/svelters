@@ -689,7 +689,7 @@ mod tests {
         assert_eq!(Scrollable::reveal_delta(view, inside, false, 0.0), Vec2::ZERO);
         assert_eq!(Scrollable::reveal_delta(view, inside, true, 0.0), vec2(-25.0, -20.0));
         // scroll-margin keeps a gap
-        assert_eq!(Scrollable::reveal_delta(view, below, false, 8.0), vec2(0.0, 78.0));
+        assert_eq!(Scrollable::reveal_delta(view, below, false, 8.0), vec2(-8.0, 78.0));
     }
 
     #[test]

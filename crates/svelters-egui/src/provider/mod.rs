@@ -445,6 +445,8 @@ pub struct WidgetCx<'a> {
     errors: Vec<String>,
     /// OW0: UA tokens resolve in the dark scheme.
     dark: bool,
+    /// OW2: restyle the node and relayout it from its parent once its payload is back.
+    relayout: bool,
 }
 
 /// OW0: what [`WidgetCx::dispatch`] reports. EV1 runs Rust filters (capture, target, bubble)
@@ -590,6 +592,25 @@ impl WidgetCx<'_> {
     pub fn record_hit(&mut self, ui: &egui::Ui) {
         self.s.core[self.i].drawn = self.rect;
         crate::scene::hit::record(self.s, self.i, ui);
+    }
+
+    /// OW2: this node's own size or position props changed (a panel's `size`): its taffy style is
+    /// rebuilt and it is laid out again from its parent next frame.
+    pub fn relayout_self(&mut self) {
+        // (applied after `ui`: the restyle reads the widget, which is out of the scene now)
+        self.relayout = true;
+    }
+
+    /// OW2: its children must be laid out again (a split view's pane sizes), its own size is
+    /// unchanged.
+    pub fn relayout_children(&mut self) {
+        self.s.invalidate_content(self.node);
+    }
+
+    /// OW2: puts a part's response (a sash) in EV3's tab order with the keys a slider claims
+    /// (arrows, Home/End, PageUp/PageDown), so Tab reaches it and the host keymap leaves them.
+    pub fn record_part_focus(&mut self, ui: &egui::Ui, resp: &egui::Response) {
+        crate::focus::record_with(self.s, self.i, ui, resp, crate::focus::Role::Slider, true);
     }
 
     /// OW2: the node's rect from layout, in its root's coordinates (unscrolled content
@@ -1017,12 +1038,17 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
             remeasure: false,
             errors: Vec::new(),
             dark,
+            relayout: false,
         };
         let resp = w.ui(ui, &mut cx);
-        let WidgetCx { state, changed, emits, remeasure, errors, .. } = cx;
-        (resp, state, changed, emits, remeasure, errors)
+        let WidgetCx { state, changed, emits, remeasure, errors, relayout, .. } = cx;
+        (resp, state, changed, emits, remeasure, errors, relayout)
     });
-    let Some((mut resp, state, changed, emits, remeasure, errors)) = ran else { return None };
+    let Some((mut resp, state, changed, emits, remeasure, errors, relayout)) = ran else { return None };
+    if relayout {
+        arena.restyle(i);
+        arena.invalidate_style(node);
+    }
     // EM1: the accessible name and, for an anchored node, the anchor as AccessKit author id
     resp = crate::a11y::decorate(resp, &arena.n(h));
     let c = arena.common(i);

@@ -940,6 +940,10 @@ fn positional_parent(s: &Scene, i: usize) -> Option<usize> {
 
 /// The capabilities of node `i`'s provider kind, `None` for a built-in.
 fn provider_caps(s: &Scene, i: usize) -> Option<crate::provider::Caps> {
+    // OW2: an own widget replacing a built-in has a provider entry too (`replaces`)
+    if let Payload::Builtin(W::Ext(x)) = &s.payload[i] {
+        return Some(x.entry().caps);
+    }
     crate::kinds::KindRegistry::global().provider(s.core[i].kind as usize).map(|p| p.entry.caps)
 }
 
@@ -965,6 +969,20 @@ impl LayoutCx<'_> {
     /// This node.
     pub fn node(&self) -> SceneId {
         self.node
+    }
+    /// OW2: this node's taffy style (its props, CSS and `Widget::taffy_style`).
+    pub fn style(&self) -> &crate::taffy::Style {
+        &self.s.layout[self.node.index() as usize].style
+    }
+    /// OW2: lays out `child` as hidden (`display: none`; not drawn).
+    pub fn hide(&mut self, child: SceneId) {
+        self.with_tree(|t| {
+            compute_hidden_layout(t, tid(child));
+        });
+    }
+    /// OW2: a child's `Common` props (its `flex-grow`, `min-width`, `visible`).
+    pub fn child_common(&self, child: SceneId) -> Option<&crate::scene::Common> {
+        self.s.idx(child).map(|i| self.s.common(i))
     }
     /// The children to lay out (the node's shadow children), in order.
     pub fn children(&self) -> &[SceneId] {

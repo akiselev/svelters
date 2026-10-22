@@ -857,7 +857,7 @@ export interface EguiElements {
     /** The tab's close button was clicked (or middle click on the tab); remove the tab to close it. */
     'onclose-requested'?: () => void;
   };
-  /** Two panes (its first two children; more are not shown) split by a divider the user drags. `divider-position` is the first pane's size. */
+  /** Panes (its children) side by side or stacked, split by sashes the user drags or moves with the keys (R11: a 1 px line, a 4 px hit area, a focus-coloured bar and grip after 300 ms of hover). `divider-position` is the first pane's size; `sizes` every pane's. */
   'split-view': EguiWidgetProps & {
     /** `horizontal`: the panes side by side (a vertical divider); `vertical`: one above the other. */
     orientation?: 'horizontal' | 'vertical';
@@ -868,12 +868,23 @@ export interface EguiElements {
     'min-size'?: number;
     /** The divider can be dragged. */
     resizable?: boolean;
+    /** OW2: every pane's size in points along the split (`bind:sizes`, Qt's `sizes`); null: from `divider-position` (two panes) or equal shares. When the split view grows or shrinks, the difference goes to the panes by their `flex-grow` (Qt's stretch factors; the last pane when none has one). Each pane keeps `min-size` and its own `min-width`/`max-width` (or heights). */
+    sizes?: number[] | null;
+    'bind:sizes'?: number[] | null;
+    /** OW2: dragging a sash below half a pane's minimum collapses the pane to 0 (Qt's `childrenCollapsible`); Enter on a focused sash collapses or restores. */
+    collapsible?: boolean;
+    /** OW2: a double click on a sash restores the pane before it to its size before a collapse, or collapses it (`collapsible`). */
+    'restore-on-double-click'?: boolean;
+    /** OW2: `live` moves the panes while dragging; `release` draws a guide line and moves them once, on release (Qt's `opaqueResize = false`). */
+    'commit-mode'?: 'live' | 'release';
     /** The user dragged the divider; carries the first pane's new size. */
     onchanged?: (divider_position: number) => void;
     /** A divider drag began. */
     'ondrag-started'?: () => void;
     /** A divider drag ended. */
     'ondrag-stopped'?: () => void;
+    /** OW2: the user finished a resize (drag released, a key step, a restore); carries every pane's size. */
+    oncommit?: (sizes: number[]) => void;
   };
   /** Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. `show` from JS (`bind:this`), `svelters_egui::toast::show` from Rust. */
   'toast-host': EguiWidgetProps & {

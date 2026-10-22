@@ -35,6 +35,13 @@ pub fn box_extra(s: &StyleView) -> egui::Vec2 {
 /// Paints the box of `border_box` under `s`: outer shadows, background, inset shadows, border.
 /// Returns its geometry for the content.
 pub fn paint_box(cx: &mut PaintCx, s: &StyleView, border_box: Rect) -> BoxGeom {
+    paint_box_layers(cx, s, border_box, true)
+}
+
+/// OW2: [`paint_box`] without its inset shadows (`inset: false`), for a host that draws content
+/// over its background and its inset shadows over the content ([`paint_inset_shadows`]): a scroll
+/// area's R15 edge shadows lie over the scrolled children.
+pub fn paint_box_layers(cx: &mut PaintCx, s: &StyleView, border_box: Rect, inset: bool) -> BoxGeom {
     let g = box_geom(s, border_box);
     let r = cx.snap_rect(border_box);
     let radius = s.px("border-radius").unwrap_or(0.0).max(0.0);
@@ -61,16 +68,33 @@ pub fn paint_box(cx: &mut PaintCx, s: &StyleView, border_box: Rect) -> BoxGeom {
         cx.painter.add(egui::epaint::RectShape::new(r, radius, fill, stroke, egui::StrokeKind::Inside));
     }
     cx.record(TraceKind::Box, r, fill, stroke, 0.0);
-    if let Some(list) = shadows {
-        let inset = crate::style::shadow::shapes(list, r, radius, true, &shadow_color);
-        if !inset.is_empty() {
-            let p = cx.painter.with_clip_rect(cx.painter.clip_rect().intersect(r));
-            for sh in inset {
-                p.add(sh);
-            }
-        }
+    if inset {
+        paint_inset_shadows(cx, s, border_box);
     }
     g
+}
+
+/// OW2: the inset `box-shadow`s of `border_box` alone, clipped to it; true if there were any.
+pub fn paint_inset_shadows(cx: &mut PaintCx, s: &StyleView, border_box: Rect) -> bool {
+    let Some(list) = s.shadows() else { return false };
+    let r = cx.snap_rect(border_box);
+    let radius = s.px("border-radius").unwrap_or(0.0).max(0.0);
+    let shadow_color = |sh: &svelters_style::Shadow| match sh.color {
+        Some(k) => {
+            let [r, g, b, a] = k.rgba8();
+            egui::Color32::from_rgba_unmultiplied(r, g, b, a)
+        }
+        None => s.color("color").unwrap_or(egui::Color32::BLACK),
+    };
+    let inset = crate::style::shadow::shapes(list, r, radius, true, &shadow_color);
+    if inset.is_empty() {
+        return false;
+    }
+    let p = cx.painter.with_clip_rect(cx.painter.clip_rect().intersect(r));
+    for sh in inset {
+        p.add(sh);
+    }
+    true
 }
 
 /// Paints the outline of `border_box` under `s` (`outline-width`, `outline-color`,

@@ -344,4 +344,6 @@ pub static KINDS: &[KindDef] = &[
     super::virtuallist::DEF,
     // ---- WG5b: appended (`treeview.rs`) ----
     super::treeview::DEF,
+    // ---- OW2: appended (`views.rs`; svelters' own widget only, `widgets::scrollbar`) ----
+    super::views::SCROLLBAR,
 ];

@@ -152,13 +152,78 @@ static SPLIT_VIEW_PROPS: &[PropDef] = &[
     },
     prop("min-size", P::MinSize, Ty::F64, Def::F64(32.0), "Smallest size of either pane, in points."),
     prop("resizable", P::Resizable, Ty::Bool, Def::Bool(true), "The divider can be dragged."),
+    // ---- OW2: appended (N panes, WIDGET-PARITY §2.17) ----
+    PropDef {
+        name: "sizes",
+        key: P::Sizes,
+        ty: Ty::NumList,
+        default: Def::Null,
+        nullable: true,
+        native: Native::Widget,
+        layout: false,
+        doc: "OW2: every pane's size in points along the split (`bind:sizes`, Qt's `sizes`); null: from `divider-position` (two panes) or equal shares. When the split view grows or shrinks, the difference goes to the panes by their `flex-grow` (Qt's stretch factors; the last pane when none has one). Each pane keeps `min-size` and its own `min-width`/`max-width` (or heights).",
+    },
+    prop(
+        "collapsible",
+        P::Collapsible,
+        Ty::Bool,
+        Def::Bool(false),
+        "OW2: dragging a sash below half a pane's minimum collapses the pane to 0 (Qt's `childrenCollapsible`); Enter on a focused sash collapses or restores.",
+    ),
+    prop(
+        "restore-on-double-click",
+        P::RestoreOnDoubleClick,
+        Ty::Bool,
+        Def::Bool(true),
+        "OW2: a double click on a sash restores the pane before it to its size before a collapse, or collapses it (`collapsible`).",
+    ),
+    prop(
+        "commit-mode",
+        P::CommitMode,
+        Ty::Enum(COMMIT_MODE),
+        Def::Str("live"),
+        "OW2: `live` moves the panes while dragging; `release` draws a guide line and moves them once, on release (Qt's `opaqueResize = false`).",
+    ),
 ];
+
+/// OW2: when a drag writes its value (`split-view`'s `commit-mode`).
+pub const COMMIT_MODE: &[&str] = &["live", "release"];
 
 static SPLIT_VIEW_SIGNALS: &[SignalDef] = &[
     signal("changed", &[("divider-position", Ty::F64)], "The user dragged the divider; carries the first pane's new size."),
     signal("drag-started", NONE, "A divider drag began."),
     signal("drag-stopped", NONE, "A divider drag ended."),
+    // ---- OW2: appended ----
+    signal("commit", &[("sizes", Ty::NumList)], "OW2: the user finished a resize (drag released, a key step, a restore); carries every pane's size."),
 ];
+
+// ---- scrollbar (OW2) ----
+
+static SCROLLBAR_PROPS: &[PropDef] = &[
+    input("value", P::Value, Ty::F64, Def::F64(0.0), "The position, from `min` to `max` (`bind:value`): the start of the visible part of what it scrolls."),
+    prop("min", P::Min, Ty::F64, Def::F64(0.0), "The smallest value."),
+    prop("max", P::Max, Ty::F64, Def::F64(100.0), "The largest value (the content's size less `page`)."),
+    prop("page", P::PageSize, Ty::F64, Def::F64(10.0), "The visible part's size: the thumb's length in proportion, and what a press on the track scrolls."),
+    prop("step", P::Step, Ty::F64, Def::F64(1.0), "What AccessKit's Increment and Decrement move."),
+    prop("orientation", P::Orientation, Ty::Enum(ORIENTATION), Def::Str("vertical"), "`vertical` or `horizontal`."),
+];
+
+static SCROLLBAR_SIGNALS: &[SignalDef] = &[signal("changed", &[("value", Ty::F64)], "The user moved it (thumb, track, wheel, AccessKit); carries the new value.")];
+
+pub(super) const SCROLLBAR: KindDef = KindDef {
+    id: "Scrollbar",
+    tag: Some("scrollbar"),
+    native: "svelters' own (Scrollable; OW2)",
+    base: Some("Widget"),
+    toplevel: false,
+    slot: None,
+    text_content: None,
+    present: None,
+    props: SCROLLBAR_PROPS,
+    signals: SCROLLBAR_SIGNALS,
+    methods: &[],
+    doc: "A standalone scroll bar (Qt's `QScrollBar`) for a view that scrolls itself (a canvas, a plot, cadatomic's viewport): `value` from `min` to `max`, the thumb sized by `page`. It looks like a scroll area's bar (overlay, VS Code's `scrollbarSlider.*`), always shown.",
+};
 
 // ---- toast-host ----
 
@@ -257,7 +322,7 @@ pub(super) const SPLIT_VIEW: KindDef = KindDef {
     props: SPLIT_VIEW_PROPS,
     signals: SPLIT_VIEW_SIGNALS,
     methods: &[],
-    doc: "Two panes (its first two children; more are not shown) split by a divider the user drags. `divider-position` is the first pane's size.",
+    doc: "Panes (its children) side by side or stacked, split by sashes the user drags or moves with the keys (R11: a 1 px line, a 4 px hit area, a focus-coloured bar and grip after 300 ms of hover). `divider-position` is the first pane's size; `sizes` every pane's.",
 };
 
 pub(super) const TOAST_HOST: KindDef = KindDef {

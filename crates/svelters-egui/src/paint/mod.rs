@@ -24,7 +24,7 @@ mod image;
 mod text;
 mod trace;
 
-pub use boxes::{BoxGeom, box_extra, box_geom, paint_box, paint_outline};
+pub use boxes::{BoxGeom, box_extra, box_geom, paint_box, paint_box_layers, paint_inset_shadows, paint_outline};
 pub use icon::{IconKey, icon_size, paint_icon};
 pub use image::paint_image;
 pub use text::{Align, measure_text, paint_text, text_galley};

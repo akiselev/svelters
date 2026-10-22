@@ -297,7 +297,7 @@ impl Widget for ScrollArea {
         self.scroll.set_geometry(content, view.size(), bars);
 
         let enabled = cx.enabled();
-        paint::paint_box(&mut cx.paint_cx(ui), &st, rect);
+        paint::paint_box_layers(&mut cx.paint_cx(ui), &st, rect, false);
         let area = cx.interact(ui, egui::Sense::hover());
         cx.record_hit(ui);
 
@@ -312,16 +312,17 @@ impl Widget for ScrollArea {
             cx.children_offset(&mut cui, -shown);
         }
 
-        // R15: edge shadows where the content goes on (`sv.overflow-*`)
-        {
+        // R15: edge shadows where the content goes on: the theme's inset `box-shadow` on
+        // `:state(sv.overflow-top)` (base.css), over the children; without a theme, the UA's
+        let css_shadows = paint::paint_inset_shadows(&mut cx.paint_cx(ui), &cx.style(UA), rect);
+        if !css_shadows {
             let painter = ui.painter().with_clip_rect(ui.clip_rect().intersect(view));
             let mut pc = cx.paint_cx(ui);
             pc.painter = &painter;
             for (edge, name, on) in [
+                // VS Code (`scrollbar.shadow`) shades the top and left edges only
                 (0, "shadow-top", axes[1] && self.scroll.away_from_start(1)),
-                (1, "shadow-bottom", axes[1] && self.scroll.away_from_end(1)),
                 (2, "shadow-left", axes[0] && self.scroll.away_from_start(0)),
-                (3, "shadow-right", axes[0] && self.scroll.away_from_end(0)),
             ] {
                 if on {
                     pc.target.1 = Some(name);

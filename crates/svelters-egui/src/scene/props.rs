@@ -431,7 +431,7 @@ pub fn tag_of(ty: Ty) -> u16 {
         Ty::F64 => svelters_abi::SVL_F64,
         Ty::I64 => svelters_abi::SVL_I64,
         Ty::Str | Ty::Enum(_) => svelters_abi::SVL_STR,
-        Ty::StrList | Ty::IdList => svelters_abi::SVL_LIST,
+        Ty::StrList | Ty::IdList | Ty::NumList => svelters_abi::SVL_LIST,
         Ty::Snippet => svelters_abi::SVL_BOOL,
         // RA1: described per prop by its Rust type (`KindRegistry::provider_member_desc`)
         Ty::Provider => svelters_abi::SVL_NULL,
