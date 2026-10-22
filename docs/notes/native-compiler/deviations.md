@@ -134,11 +134,11 @@ None change behaviour (90,940 / 90,940 verdicts agree with acorn 8.19.0, message
 
 Semantics are specified in `runtime-contract.md` "Template blocks"; departures from Svelte 5:
 
-- **`{#await}` pending in a microtask**: Svelte batches it through `queue_micro_task`; the runtime
-  uses one promise job per input. Same order relative to the promise's own reactions (registered
-  first), so an already-settled promise never shows `pending` in both.
-- **Snippet params, `{@const}`, `{:then}`/`{:catch}`**: plain identifiers only (Svelte supports
-  destructuring and parameter defaults via `$.derived`/`$.fallback`): `unsupported_feature`.
+- **Destructuring template bindings** (snippet parameters with patterns or defaults, `{#each}`
+  contexts, `{@const}`, `{:then}`/`{:catch}`): Svelte's `extract_paths` as in its visitors, but
+  every leaf of an each item / `{@const}` / await value is a `$.derived_safe_equal` (Svelte: a thunk
+  re-evaluated per read, or one derived object for `{@const}`); snippet leaves are thunks as in
+  Svelte. A keyed each destructures inside its key function instead of in its parameter list.
 - **Top-level snippets** follow Svelte: before the instance script, or at module level when
   they reference nothing of the instance (`can_hoist_snippet`).
 - **Template effect order**: Svelte creates one `$.template_effect` per fragment after its blocks
@@ -207,6 +207,14 @@ span edits over the user's source instead of an AST reprint.
    `$.tag_proxy` labels; the other dev-only instrumentation is not emitted (`$.push(.., App)`,
    `$.legacy_api()`, `$.check_target`, `App[$.FILENAME]`, `$.log_if_contains_state`,
    `$.track_reactivity_loss`, `$.assign` mutation warnings, ownership validation).
+   Snippets get Svelte's dev shape: `$.wrap_snippet(App, function ($$anchor, ...) {
+   $n.validate_snippet_args(...arguments); ... })`, the implicit `children` snippet wrapped too, so
+   `{snippet}` throws `snippet_without_render_tag` and a direct call `invalid_snippet_arguments`
+   (the anchor must be a runtime container, not a DOM `Node`). `$n.snippet` throws
+   `invalid_snippet` on a nullish snippet when esm-env's `DEV` is set, as Svelte's snippet block.
+   A non-inline event handler goes through `$n.apply(() => handler, this, $$args, event, loc, ...)`
+   (Svelte's `$.apply`, `event_handler_invalid`), with the event name and `file:line:column`
+   static instead of read from the DOM event and `Component[FILENAME]`.
    `$inspect.trace`'s location label is `file:line:column` (1-based line, 0-based column).
 5. **Not supported** (diagnostics): async `$derived` (`await` inside, `unsupported_feature`),
    `$host()` (`host_invalid_placement`: no custom elements), re-exports from the instance

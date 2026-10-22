@@ -26,6 +26,9 @@ pub struct Fragment<'a> {
     pub consts: Vec<ConstDecl<'a>>,
     pub snippets: Vec<Snippet<'a>>,
     pub items: Vec<Item<'a>>,
+    /// `{@debug a, b}`: `$.template_effect(() => { console.log({ a: $.snapshot(a), .. }); debugger; })`
+    /// after the items (no natives).
+    pub debugs: Vec<&'a crate::svelte::ast::DebugTag>,
 }
 
 #[derive(Debug)]
@@ -100,6 +103,9 @@ pub enum Op<'a> {
     ListenAttach { signal: String, handler: &'a Expression, flags: u32, span: Span },
     /// `{@attach expr}`: Svelte's `$.attach(node, () => expr)` with the runtime node.
     Attach { expr: &'a Expression, span: Span },
+    /// `use:name={arg}`: Svelte's `$.action(node, ($$node, $$action_arg) => name?.($$node,
+    /// $$action_arg), () => arg)` with the runtime node (`name` may be dotted: `use:a.b`).
+    Action { name: String, arg: Option<&'a Expression>, span: Span },
     /// `parent:<name>=...`: `$n.child_attr(node, name, value)`, sent to the native parent after insertion.
     ChildAttr { name: String, value: AttrValue<'a>, span: Span },
     /// `$n.bind(node, prop, signal, arg, get, set)`; `target` is the bound lvalue.
@@ -208,7 +214,8 @@ pub struct EachBlock<'a> {
     pub span: Span,
     pub slot: Slot,
     pub collection: &'a Expression,
-    /// The item binding (only identifiers are supported by lowering).
+    /// The item binding: an identifier, or a destructuring pattern (its leaves are declared from
+    /// the item at the start of the body, `Codegen::destructure`).
     pub context: Option<&'a Pattern>,
     pub index: Option<String>,
     pub key: Option<&'a Expression>,
@@ -217,12 +224,25 @@ pub struct EachBlock<'a> {
 }
 
 /// `{@const name = init}`: a template-scoped derived (`const name = $.derived(() => init)`),
-/// read as `$.get(name)`.
+/// read as `$.get(name)`. `{@const { a, b } = init}` (`pattern`): one derived of `init`, then a
+/// derived per leaf of the pattern (`name` is unused). A declaration tag (`{let x = $state(0)}`,
+/// `declaration`) is emitted as the script would emit that declaration (`init` unused); both kinds
+/// keep their source order (Svelte's `state.consts`).
 #[derive(Debug)]
 pub struct ConstDecl<'a> {
     pub span: Span,
     pub name: String,
-    pub init: &'a Expression,
+    pub init: Option<&'a Expression>,
+    pub pattern: Option<&'a Pattern>,
+    pub declaration: Option<&'a crate::estree::VariableDeclaration>,
+}
+
+/// A binding a template block introduces: a snippet parameter, `{:then v}`, `{:catch e}`.
+#[derive(Debug)]
+pub enum Param<'a> {
+    Id(String),
+    /// Destructuring and/or a default value (`{#snippet s({ a, b = 1 })}`, `{:then [x, y]}`).
+    Pattern(&'a Pattern),
 }
 
 /// `{#snippet name(a, b)}`: a native content factory `(anchor, a = $.noop, b = $.noop) => {...}`
@@ -231,7 +251,7 @@ pub struct ConstDecl<'a> {
 pub struct Snippet<'a> {
     pub span: Span,
     pub name: String,
-    pub params: Vec<String>,
+    pub params: Vec<Param<'a>>,
     pub body: Fragment<'a>,
 }
 
@@ -263,8 +283,8 @@ pub struct AwaitBlock<'a> {
     pub span: Span,
     pub slot: Slot,
     pub expression: &'a Expression,
-    pub value: Option<String>,
-    pub error: Option<String>,
+    pub value: Option<Param<'a>>,
+    pub error: Option<Param<'a>>,
     pub pending: Option<Fragment<'a>>,
     pub then: Option<Fragment<'a>>,
     pub catch: Option<Fragment<'a>>,

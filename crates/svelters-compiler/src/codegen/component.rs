@@ -25,8 +25,41 @@ pub trait Rewriter {
     fn expr(&self, e: &Expression, mode: Mode, edits: &mut Edits);
     /// Whether evaluating `e` can read reactive state (decides `$.template_effect`).
     fn is_reactive(&self, e: &Expression) -> bool;
+    /// Whether `e` reads a store subscription (`$store`): an `{#each}` over it gets mutable items.
+    fn uses_store(&self, _e: &Expression) -> bool {
+        false
+    }
+    /// Svelte's `ExpressionMetadata.has_call`: `e` calls something that is not a pure global (or
+    /// calls anything while it references bindings), outside nested functions. Such template
+    /// expressions are memoized in a derived (`Memoizer`), so they run once per change of what they
+    /// read, not whenever a sibling expression of the same effect changes.
+    fn has_call(&self, _e: &Expression) -> bool {
+        false
+    }
     /// JS that assigns the JS expression text `value` to the lvalue `target` (bind: setters).
     fn assign(&self, target: &Expression, value: &str) -> String;
+    /// The read of an identifier of the template (`{@debug name}`).
+    fn identifier(&self, id: &crate::estree::Identifier) -> String {
+        id.name.clone()
+    }
+    /// A declaration tag's `let`/`const` declaration, transformed as in a script (runes become
+    /// runtime calls), without a trailing semicolon.
+    fn declaration(&self, _d: &crate::estree::VariableDeclaration) -> String {
+        String::new()
+    }
+    /// The JS that reads a directive name (`use:name`, possibly dotted), which the parser keeps
+    /// as text rather than an expression.
+    fn directive_name(&self, name: &str) -> String {
+        name.to_string()
+    }
+    /// Svelte's `extract_paths(pattern, initial)` for a destructuring template binding (snippet
+    /// parameter, `{#each}` context, `{@const}`, `{:then}`/`{:catch}`), as JS over the JS text
+    /// `initial`: default values and computed keys are rewritten like any template expression.
+    /// `derived_arrays`: the `$$array` intermediates are read as deriveds (`$.get`), else as plain
+    /// variables.
+    fn destructure(&self, _pattern: &Pattern, _initial: &str, _derived_arrays: bool) -> Destructured {
+        Destructured::default()
+    }
     /// Emits the instance script: (hoisted import text, component-body text), both mapped.
     fn script(&self, w: &mut Writer, hoist: bool);
     /// Whether the top-level snippet starting at `start` references nothing of the component
@@ -40,10 +73,43 @@ pub trait Rewriter {
     fn dynamic_component(&self, _node: &crate::svelte::ast::Element) -> Option<String> {
         None
     }
+    /// Whether the component uses `$inspect.trace` in dev: the module first imports
+    /// `<core>/tracing`, which turns on the dependency recording `$.trace` reports.
+    fn tracing(&self) -> bool {
+        false
+    }
+    /// Svelte's `dev` option: snippets get Svelte's dev wrapper (`$.wrap_snippet`, argument
+    /// validation, no stringification).
+    fn dev(&self) -> bool {
+        false
+    }
+    /// Dev: `file:line:column` of a source offset (1-based line, 0-based column, Svelte's
+    /// `locator`), for runtime warnings; None outside dev.
+    fn dev_location(&self, _pos: u32) -> Option<String> {
+        None
+    }
     /// Ends the component body (`$.pop()`; store cleanup / `return $.pop($$exports)`).
     fn epilogue(&self, w: &mut Writer) {
         w.write("$.pop();");
     }
+}
+
+/// The result of [`Rewriter::destructure`].
+#[derive(Debug, Default)]
+pub struct Destructured {
+    /// `$$array` intermediates of array patterns: (name, value); declared as deriveds, read `$.get(name)`.
+    pub arrays: Vec<(String, String)>,
+    /// Every leaf: (name, expression, has a default value).
+    pub leaves: Vec<(String, String, bool)>,
+}
+
+/// How [`Codegen::destructure`] declares the leaves of a pattern, matching how the transform reads
+/// the binding kind: snippet parameters are thunks (`a()`), every other template binding a source
+/// (`$.get(a)`).
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Leaf {
+    Thunk,
+    Source,
 }
 
 pub struct Codegen<'a, 's> {
@@ -53,12 +119,20 @@ pub struct Codegen<'a, 's> {
     tmp: usize,
     /// The next `fragment` is the component root, whose snippets `generate` already emitted.
     root_fragment: bool,
+    /// Expressions memoized as `$.template_effect` dependencies while one effect is written
+    /// (address -> the effect parameter that holds its value).
+    memo: Vec<(usize, String)>,
+    /// The component function name (`$.wrap_snippet(Name, ...)` in dev).
+    name: &'s str,
     _p: std::marker::PhantomData<&'a ()>,
 }
 
 /// Generates the whole module. `name` is the component function name.
 pub fn generate(src: &str, comp: &Component, rw: &dyn Rewriter, name: &str, filename: &str, imports: &crate::target::RuntimeImports) -> (String, String) {
-    let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, root_fragment: false, _p: std::marker::PhantomData };
+    let mut g = Codegen { src, rw, w: Writer::new(src), tmp: 0, root_fragment: false, memo: Vec::new(), name, _p: std::marker::PhantomData };
+    if rw.tracing() {
+        g.w.write(&format!("import '{}/tracing';\n", imports.core));
+    }
     g.w.write(&format!("import * as $ from '{}';\nimport * as $n from '{}';\n", imports.core, imports.native));
     rw.script(&mut g.w, true);
     let (hoisted, instance): (Vec<_>, Vec<_>) = comp.root.snippets.iter().partition(|s| rw.hoist_snippet(s.span.start));
@@ -143,13 +217,7 @@ impl Codegen<'_, '_> {
 
     /// `{@const}` and snippet declarations of a fragment (before its items).
     fn decls(&mut self, f: &Fragment) {
-        for c in &f.consts {
-            self.line();
-            self.w.map(c.span.start);
-            self.w.write(&format!("const {} = $.derived(() => ", c.name));
-            self.paren_expr(c.init, Mode::Read);
-            self.w.write(");");
-        }
+        self.consts(&f.consts);
         for s in &f.snippets {
             self.snippet(s);
         }
@@ -157,21 +225,27 @@ impl Codegen<'_, '_> {
 
     fn fragment(&mut self, f: &Fragment, container: &str) {
         if std::mem::take(&mut self.root_fragment) {
-            for c in &f.consts {
-                self.line();
-                self.w.map(c.span.start);
-                self.w.write(&format!("const {} = $.derived(() => ", c.name));
-                self.paren_expr(c.init, Mode::Read);
-                self.w.write(");");
-            }
+            self.consts(&f.consts);
         } else {
             self.decls(f);
         }
         for item in &f.items {
             self.item(item, container);
         }
+        self.debugs(f);
         if DEFER_TEMPLATE_EFFECTS {
             self.deferred_ops(f);
+        }
+    }
+
+    /// `{@debug}` tags of a fragment (Svelte's DebugTag visitor).
+    fn debugs(&mut self, f: &Fragment) {
+        for d in &f.debugs {
+            self.line();
+            self.w.map(d.start);
+            let props: Vec<String> = d.identifiers.iter().map(|i| format!("{}: $.snapshot({})", i.name, self.rw.identifier(i))).collect();
+            let object = if props.is_empty() { "{}".to_string() } else { format!("{{ {} }}", props.join(", ")) };
+            self.w.write(&format!("$.template_effect(() => {{ console.log({object}); debugger; }});"));
         }
     }
 
@@ -274,6 +348,7 @@ impl Codegen<'_, '_> {
             let c = format!("$n.slot({parent}, {})", item.slot().as_deref().map_or("null".to_string(), js_str));
             self.item(item, &c);
         }
+        self.debugs(f);
         if scoped && DEFER_TEMPLATE_EFFECTS {
             self.deferred_ops(f);
         }
@@ -295,23 +370,31 @@ impl Codegen<'_, '_> {
             }
             Op::SetDynamic { prop, value, span } => {
                 self.w.map(span.start);
-                let reactive = self.dynamic_reactive(value);
-                if reactive {
-                    self.w.write("$.template_effect(() => ");
-                }
-                self.w.write(&format!("$n.set({n}, {}, ", js_str(prop)));
-                self.dynamic(value);
-                self.w.write(")");
-                if reactive {
-                    self.w.write(")");
-                }
-                self.w.write(";");
+                self.dynamic_call(&format!("$n.set({n}, {}, ", js_str(prop)), value);
             }
             Op::Listen { signal, handler, flags, span, .. } => {
+                // Svelte's build_event_handler: a handler expression that calls something is
+                // memoized (`onclick={make(x)}` runs `make` once per change, not once per event)
+                let memo = match handler {
+                    Handler::Expr(h) if !is_function(h) && self.rw.has_call(h) => {
+                        self.tmp += 1;
+                        let id = format!("$$handler{}", self.tmp);
+                        self.w.write(&format!("const {id} = $.derived(() => "));
+                        self.paren_expr(h, Mode::Read);
+                        self.w.write(");");
+                        self.line();
+                        Some(id)
+                    }
+                    _ => None,
+                };
                 self.w.map(span.start);
                 self.w.write(&format!("$n.on({n}, {}, ", js_str(signal)));
                 match handler {
-                    Handler::Expr(h) => self.handler(h),
+                    Handler::Expr(h) => {
+                        // the event as Svelte's `$.apply` names it: type, plus `capture`
+                        let event = if flags & 2 != 0 { format!("{signal}capture") } else { signal.clone() };
+                        self.handler(h, memo.as_deref(), &event)
+                    }
                     Handler::Member { object, key } => {
                         // a property of a spread object, read when the event fires
                         self.w.write("function (...$$args) { ");
@@ -335,6 +418,18 @@ impl Codegen<'_, '_> {
                 self.w.write(&format!("$.attach({n}, () => "));
                 self.paren_expr(expr, Mode::Read);
                 self.w.write(");");
+            }
+            Op::Action { name, arg, span } => {
+                self.w.map(span.start);
+                let f = self.rw.directive_name(name);
+                match arg {
+                    Some(a) => {
+                        self.w.write(&format!("$.action({n}, ($$node, $$action_arg) => {f}?.($$node, $$action_arg), () => "));
+                        self.paren_expr(a, Mode::Read);
+                        self.w.write(");");
+                    }
+                    None => self.w.write(&format!("$.action({n}, ($$node) => {f}?.($$node));")),
+                }
             }
             Op::Classes { base, dynamic, toggles, span } => {
                 self.w.map(span.start);
@@ -366,19 +461,7 @@ impl Codegen<'_, '_> {
                         self.json(v);
                         self.w.write(");");
                     }
-                    AttrValue::Dynamic(d) => {
-                        let reactive = self.dynamic_reactive(d);
-                        if reactive {
-                            self.w.write("$.template_effect(() => ");
-                        }
-                        self.w.write(&format!("$n.attr({n}, \"id\", "));
-                        self.dynamic(d);
-                        self.w.write(")");
-                        if reactive {
-                            self.w.write(")");
-                        }
-                        self.w.write(";");
-                    }
+                    AttrValue::Dynamic(d) => self.dynamic_call(&format!("$n.attr({n}, \"id\", "), d),
                 }
             }
             Op::InlineStyle { base, dynamic, directives, span } => {
@@ -434,19 +517,7 @@ impl Codegen<'_, '_> {
                         self.json(v);
                         self.w.write(");");
                     }
-                    AttrValue::Dynamic(d) => {
-                        let reactive = self.dynamic_reactive(d);
-                        if reactive {
-                            self.w.write("$.template_effect(() => ");
-                        }
-                        self.w.write(&format!("$n.child_attr({n}, {}, ", js_str(name)));
-                        self.dynamic(d);
-                        self.w.write(")");
-                        if reactive {
-                            self.w.write(")");
-                        }
-                        self.w.write(";");
-                    }
+                    AttrValue::Dynamic(d) => self.dynamic_call(&format!("$n.child_attr({n}, {}, ", js_str(name)), d),
                 }
             }
             Op::Bind { prop, signal, arg, target, span } => {
@@ -617,8 +688,56 @@ impl Codegen<'_, '_> {
         }
     }
 
+    /// `call_head` + the value + `)`: a one-off write, or a render effect when the value is
+    /// reactive. Call expressions of the value (`has_call`) are the effect's memoized dependencies
+    /// (Svelte's `Memoizer`): `$.template_effect(($0) => .., [() => f(x)])` runs `f(x)` in a
+    /// derived of its own, so it is not called again when only another part changes.
+    fn dynamic_call(&mut self, call_head: &str, d: &Dynamic) {
+        let reactive = self.dynamic_reactive(d);
+        let mut memo: Vec<&Expression> = Vec::new();
+        if reactive {
+            match d {
+                Dynamic::Expr(e) if self.rw.has_call(e) => memo.push(e),
+                Dynamic::Template(parts) => memo.extend(parts.iter().filter_map(|p| match p {
+                    TemplatePart::Expr(e) if self.rw.has_call(e) => Some(*e),
+                    _ => None,
+                })),
+                _ => {}
+            }
+            let params: Vec<String> = (0..memo.len()).map(|i| format!("${i}")).collect();
+            self.w.write(&format!("$.template_effect(({}) => ", params.join(", ")));
+        }
+        self.memo = memo.iter().enumerate().map(|(i, e)| (*e as *const Expression as usize, format!("${i}"))).collect();
+        self.w.write(call_head);
+        self.dynamic(d);
+        self.memo.clear();
+        self.w.write(")");
+        if reactive {
+            if !memo.is_empty() {
+                self.w.write(", [");
+                for (i, e) in memo.iter().enumerate() {
+                    if i > 0 {
+                        self.w.write(", ");
+                    }
+                    self.w.write("() => ");
+                    self.paren_expr(e, Mode::Read);
+                }
+                self.w.write("]");
+            }
+            self.w.write(")");
+        }
+        self.w.write(";");
+    }
+
+    /// The effect parameter holding `e`'s memoized value, while `dynamic_call` writes an effect.
+    fn memoized(&self, e: &Expression) -> Option<String> {
+        let addr = e as *const Expression as usize;
+        self.memo.iter().find(|(a, _)| *a == addr).map(|(_, id)| id.clone())
+    }
+
     fn dynamic(&mut self, d: &Dynamic) {
         match d {
+            Dynamic::Expr(e) if let Some(id) = self.memoized(e) => self.w.write(&id),
             Dynamic::Expr(e) => self.expr_text(e, Mode::Read),
             Dynamic::Template(parts) => self.template(parts),
             Dynamic::Member { object, key } => {
@@ -635,7 +754,10 @@ impl Codegen<'_, '_> {
                 TemplatePart::Text(t) => self.w.write(&escape_template(t)),
                 TemplatePart::Expr(e) => {
                     self.w.write("${");
-                    self.paren_expr(e, Mode::Read);
+                    match self.memoized(e) {
+                        Some(id) => self.w.write(&id),
+                        None => self.paren_expr(e, Mode::Read),
+                    }
                     self.w.write(" ?? ''}");
                 }
                 TemplatePart::If { test, consequent, alternate } => {
@@ -652,14 +774,42 @@ impl Codegen<'_, '_> {
         self.w.write("`");
     }
 
-    fn handler(&mut self, h: &Expression) {
-        if matches!(h, Expression::ArrowFunctionExpression(_) | Expression::FunctionExpression(_)) {
+    /// An event handler value; `memo` is the derived holding it (a handler with a call), `event`
+    /// the event name for dev warnings.
+    fn handler(&mut self, h: &Expression, memo: Option<&str>, event: &str) {
+        if is_function(h) {
             self.expr_text(h, Mode::Read);
-        } else {
-            // evaluated at event time, so a reactive handler value is read when the event fires
-            self.w.write("function (...$$args) { ");
-            self.paren_expr(h, Mode::Read);
-            self.w.write("?.apply(this, $$args); }");
+            return;
+        }
+        // evaluated at event time, so a reactive handler value is read when the event fires
+        self.w.write("function (...$$args) { ");
+        match self.rw.dev_location(h.span().start) {
+            // dev: Svelte's `$.apply` (warns `event_handler_invalid` for a value that is not a
+            // function), natively: the event name and location are static
+            Some(loc) => {
+                self.w.write("$n.apply(() => ");
+                match memo {
+                    Some(id) => self.w.write(&format!("$.get({id})")),
+                    None => self.paren_expr(h, Mode::Read),
+                }
+                self.w.write(&format!(", this, $$args, {}, {}", js_str(event), js_str(&loc)));
+                let side = has_side_effects(h);
+                let parens = matches!(unparen(h), Expression::CallExpression(c) if c.arguments.is_empty() && matches!(unparen(&c.callee), Expression::Identifier(_)));
+                if side || parens {
+                    self.w.write(&format!(", {side}"));
+                }
+                if parens {
+                    self.w.write(", true");
+                }
+                self.w.write("); }");
+            }
+            None => {
+                match memo {
+                    Some(id) => self.w.write(&format!("$.get({id})")),
+                    None => self.paren_expr(h, Mode::Read),
+                }
+                self.w.write("?.apply(this, $$args); }");
+            }
         }
     }
 
@@ -695,6 +845,7 @@ impl Codegen<'_, '_> {
                 format!("$$item{}", self.tmp)
             }
         };
+        let pattern = b.context.filter(|p| !matches!(p, Pattern::Identifier(_)));
         let index = b.index.clone().unwrap_or_else(|| "$$index".to_string());
         self.line();
         self.w.map(b.span.start);
@@ -703,17 +854,41 @@ impl Codegen<'_, '_> {
         self.w.write(", ");
         match b.key {
             Some(k) => {
-                self.w.write(&format!("({item}, {index}) => "));
-                self.paren_expr(k, Mode::EachKey);
+                // a destructured item is destructured inside the key function (Svelte:
+                // `b.arrow([node.context, index], key)`, the visited pattern as the parameter)
+                match pattern {
+                    Some(p) => {
+                        let d = self.rw.destructure(p, "$$key", false);
+                        self.w.write(&format!("($$key, {index}) => {{ "));
+                        for (id, value) in &d.arrays {
+                            self.w.write(&format!("const {id} = {value}; "));
+                        }
+                        for (name, expr, _) in &d.leaves {
+                            self.w.write(&format!("const {name} = {expr}; "));
+                        }
+                        self.w.write("return ");
+                        self.paren_expr(k, Mode::EachKey);
+                        self.w.write("; }");
+                    }
+                    None => {
+                        self.w.write(&format!("({item}, {index}) => "));
+                        self.paren_expr(k, Mode::EachKey);
+                    }
+                }
             }
             None => self.w.write("null"),
         }
         self.w.write(&format!(", ($$anchor, {item}, {index}) => {{"));
         self.w.indent();
+        if let Some(p) = pattern {
+            self.destructure(p, &format!("$.get({item})"), Leaf::Source);
+        }
         self.fragment(&b.body, "$$anchor");
         self.w.dedent();
         self.line();
         self.w.write("}, ");
+        // Svelte's EachBlock: items are immutable sources unless the collection reads a store
+        let flags = if self.rw.uses_store(b.collection) { ", $n.EACH_ITEM_MUTABLE" } else { "" };
         match &b.fallback {
             Some(f) => {
                 self.w.write("($$anchor) => {");
@@ -721,24 +896,35 @@ impl Codegen<'_, '_> {
                 self.fragment(f, "$$anchor");
                 self.w.dedent();
                 self.line();
-                self.w.write("});");
+                self.w.write(&format!("}}{flags});"));
             }
-            None => self.w.write("null);"),
+            None => self.w.write(&format!("null{flags});")),
         }
     }
 
 
-    /// `($$anchor, extra) => { body }`, or `null`.
-    fn branch_fn(&mut self, f: Option<&Fragment>, extra: Option<&str>) {
+    /// `($$anchor, extra) => { body }`, or `null`. `extra` is the `{:then}`/`{:catch}` binding
+    /// (`fallback`: the parameter name when there is none or it is destructured).
+    fn branch_fn(&mut self, f: Option<&Fragment>, extra: Option<(Option<&Param>, &str)>) {
         let Some(f) = f else {
             self.w.write("null");
             return;
         };
+        let mut pattern = None;
         match extra {
-            Some(x) => self.w.write(&format!("($$anchor, {x}) => {{")),
+            Some((Some(Param::Id(x)), _)) => self.w.write(&format!("($$anchor, {x}) => {{")),
+            Some((p, fallback)) => {
+                if let Some(Param::Pattern(p)) = p {
+                    pattern = Some(*p);
+                }
+                self.w.write(&format!("($$anchor, {fallback}) => {{"))
+            }
             None => self.w.write("($$anchor) => {"),
         }
         self.w.indent();
+        if let (Some(p), Some((_, fallback))) = (pattern, extra) {
+            self.destructure(p, &format!("$.get({fallback})"), Leaf::Source);
+        }
         self.fragment(f, "$$anchor");
         self.w.dedent();
         self.line();
@@ -763,9 +949,9 @@ impl Codegen<'_, '_> {
         self.w.write(", ");
         self.branch_fn(b.pending.as_ref(), None);
         self.w.write(", ");
-        self.branch_fn(b.then.as_ref(), Some(b.value.as_deref().unwrap_or("$$value")));
+        self.branch_fn(b.then.as_ref(), Some((b.value.as_ref(), "$$value")));
         self.w.write(", ");
-        self.branch_fn(b.catch.as_ref(), Some(b.error.as_deref().unwrap_or("$$error")));
+        self.branch_fn(b.catch.as_ref(), Some((b.error.as_ref(), "$$error")));
         self.w.write(");");
     }
 
@@ -778,9 +964,52 @@ impl Codegen<'_, '_> {
         for k in consts {
             self.line();
             self.w.map(k.span.start);
-            self.w.write(&format!("const {} = $.derived(() => ", k.name));
-            self.paren_expr(k.init, Mode::Read);
+            if let Some(d) = k.declaration {
+                let text = self.rw.declaration(d);
+                self.w.write(&format!("{text};"));
+                continue;
+            }
+            let Some(init) = k.init else { continue };
+            let name = match k.pattern {
+                Some(_) => {
+                    self.tmp += 1;
+                    format!("$$const{}", self.tmp)
+                }
+                None => k.name.clone(),
+            };
+            self.w.write(&format!("const {name} = $.derived(() => "));
+            self.paren_expr(init, Mode::Read);
             self.w.write(");");
+            if let Some(p) = k.pattern {
+                self.destructure(p, &format!("$.get({name})"), Leaf::Source);
+            }
+        }
+    }
+
+    /// Declares the leaves of a destructuring template binding read from the JS text `initial`
+    /// (Svelte's EachBlock / SnippetBlock / ConstTag / AwaitBlock visitors): `$$array`
+    /// intermediates as deriveds, then each leaf as a thunk (snippet parameters; a leaf with a
+    /// default value goes through `$.derived_safe_equal`, so the default is evaluated once per
+    /// change) or as a `$.derived_safe_equal` source (objects always propagate, like the item).
+    fn destructure(&mut self, pattern: &Pattern, initial: &str, leaf: Leaf) {
+        let d = self.rw.destructure(pattern, initial, true);
+        for (id, value) in &d.arrays {
+            self.line();
+            self.w.write(&format!("const {id} = $.derived(() => {value});"));
+        }
+        for (name, expr, has_default) in &d.leaves {
+            self.line();
+            match leaf {
+                Leaf::Thunk if *has_default => {
+                    self.tmp += 1;
+                    let d = format!("$$d{}", self.tmp);
+                    self.w.write(&format!("const {d} = $.derived_safe_equal(() => {expr});"));
+                    self.line();
+                    self.w.write(&format!("const {name} = () => $.get({d});"));
+                }
+                Leaf::Thunk => self.w.write(&format!("const {name} = () => {expr};")),
+                Leaf::Source => self.w.write(&format!("const {name} = $.derived_safe_equal(() => {expr});")),
+            }
         }
     }
 
@@ -788,17 +1017,59 @@ impl Codegen<'_, '_> {
     fn snippet_with(&mut self, s: &Snippet, consts: &[ConstDecl]) {
         self.line();
         self.w.map(s.span.start);
-        let params: String = s.params.iter().map(|p| format!(", {p} = $.noop")).collect();
-        self.w.write(&format!("const {} = ($$anchor{params}) => {{", s.name));
+        // a destructured or defaulted parameter is `$$argN`, its leaves declared from `$$argN?.()`
+        // (Svelte's SnippetBlock visitor)
+        let mut params = String::new();
+        let mut patterns = Vec::new();
+        for (i, p) in s.params.iter().enumerate() {
+            match p {
+                Param::Id(name) => params.push_str(&format!(", {name} = $.noop")),
+                Param::Pattern(pat) => {
+                    params.push_str(&format!(", $$arg{i} = $.noop"));
+                    patterns.push((*pat, format!("$$arg{i}?.()")));
+                }
+            }
+        }
+        // dev (Svelte's SnippetBlock visitor): a function expression, so `arguments` can be
+        // validated, wrapped so the snippet cannot be stringified (`{snippet}` without `{@render}`)
+        let dev = self.rw.dev();
+        if dev {
+            self.w.write(&format!("const {} = $.wrap_snippet({}, function ($$anchor{params}) {{", s.name, self.name));
+        } else {
+            self.w.write(&format!("const {} = ($$anchor{params}) => {{", s.name));
+        }
         self.w.indent();
+        if dev {
+            self.line();
+            self.w.write("$n.validate_snippet_args(...arguments);");
+        }
+        for (p, initial) in patterns {
+            self.destructure(p, &initial, Leaf::Thunk);
+        }
         self.consts(consts);
         self.fragment(&s.body, "$$anchor");
         self.w.dedent();
         self.line();
-        self.w.write("};");
+        self.w.write(if dev { "});" } else { "};" });
     }
 
     fn render(&mut self, r: &RenderCall, container: &str) {
+        // arguments that call something are memoized (Svelte's RenderTag `Memoizer`): the snippet
+        // reads them through a derived, so the call runs once per change, not once per read
+        let mut memo: Vec<Option<String>> = Vec::new();
+        for a in &r.args {
+            if self.rw.has_call(a) {
+                self.tmp += 1;
+                let id = format!("$$arg{}", self.tmp);
+                self.line();
+                self.w.write(&format!("const {id} = $.derived(() => "));
+                self.paren_expr(a, Mode::Read);
+                self.w.write(");");
+                memo.push(Some(id));
+            } else {
+                memo.push(None);
+            }
+        }
         self.line();
         self.w.map(r.span.start);
         if self.rw.is_reactive(r.callee) {
@@ -815,9 +1086,12 @@ impl Codegen<'_, '_> {
             self.w.write(if r.optional { "?.(" } else { "(" });
             self.w.write(&format!("$n.region({container})"));
         }
-        for a in &r.args {
+        for (a, m) in r.args.iter().zip(&memo) {
             self.w.write(", () => ");
-            self.paren_expr(a, Mode::Read);
+            match m {
+                Some(id) => self.w.write(&format!("$.get({id})")),
+                None => self.paren_expr(a, Mode::Read),
+            }
         }
         self.w.write(");");
     }
@@ -938,7 +1212,10 @@ impl Codegen<'_, '_> {
                     self.w.write(")($$value); }");
                 }
                 ComponentProp::Bind { name, target } => {
-                    self.w.write(&format!("get {}() {{ return ", js_key(name)));
+                    // `bind:x={$store}`: the child's `$.prop` learns it is bound to a store, so a
+                    // mutation through it is written back (`store_set`) (Svelte's build_component)
+                    let mark = if matches!(target, Expression::Identifier(_)) && self.rw.uses_store(target) { "$.mark_store_binding(); " } else { "" };
+                    self.w.write(&format!("get {}() {{ {mark}return ", js_key(name)));
                     self.expr_text(target, Mode::Read);
                     let set = self.rw.assign(target, "$$value");
                     self.w.write(&format!("; }}, set {}($$value) {{ {set}; }}", js_key(name)));
@@ -954,7 +1231,12 @@ impl Codegen<'_, '_> {
         }
         if let Some(ch) = &c.children {
             self.prop_entry(&mut st);
-            self.w.write("children: ($$anchor, $$slotProps) => {");
+            // dev: Svelte wraps the implicit `children` snippet too (shared/component.js)
+            if self.rw.dev() {
+                self.w.write(&format!("children: $.wrap_snippet({}, ($$anchor, $$slotProps) => {{", self.name));
+            } else {
+                self.w.write("children: ($$anchor, $$slotProps) => {");
+            }
             self.w.indent();
             if boundary {
                 self.consts(&c.consts);
@@ -962,7 +1244,7 @@ impl Codegen<'_, '_> {
             self.fragment(ch, "$$anchor");
             self.w.dedent();
             self.line();
-            self.w.write("}");
+            self.w.write(if self.rw.dev() { "})" } else { "}" });
             slots.push("default".to_string());
         }
         if !slots.is_empty() {
@@ -1073,4 +1355,24 @@ fn escape_template(s: &str) -> String {
 #[allow(dead_code)]
 fn span_of(s: Span) -> (u32, u32) {
     (s.start, s.end)
+}
+
+fn is_function(h: &Expression) -> bool {
+    matches!(h, Expression::ArrowFunctionExpression(_) | Expression::FunctionExpression(_))
+}
+
+fn unparen(e: &Expression) -> &Expression {
+    match e {
+        Expression::ParenthesizedExpression(p) => unparen(&p.expression),
+        e => e,
+    }
+}
+
+/// Svelte's `has_side_effects` (events.js): a call, `new`, assignment or update, also inside a sequence.
+fn has_side_effects(e: &Expression) -> bool {
+    match unparen(e) {
+        Expression::CallExpression(_) | Expression::NewExpression(_) | Expression::AssignmentExpression(_) | Expression::UpdateExpression(_) => true,
+        Expression::SequenceExpression(s) => s.expressions.iter().any(has_side_effects),
+        _ => false,
+    }
 }

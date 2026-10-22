@@ -82,6 +82,9 @@ pub(crate) struct Ctx<'r, 'a> {
     pub hoisted: RefCell<Vec<String>>,
     pub props_id: Cell<Option<BindingId>>,
     pub has_props_rune: Cell<bool>,
+    /// A `$inspect.trace` was emitted (dev): the module imports the core's tracing flag
+    /// (Svelte's `analysis.tracing` -> `import 'svelte/internal/flags/tracing'`).
+    pub tracing: Cell<bool>,
 }
 
 impl<'r, 'a> Ctx<'r, 'a> {
@@ -107,6 +110,7 @@ impl<'r, 'a> Ctx<'r, 'a> {
             hoisted: RefCell::new(Vec::new()),
             props_id: Cell::new(None),
             has_props_rune: Cell::new(false),
+            tracing: Cell::new(false),
         }
     }
 
@@ -304,6 +308,12 @@ impl<'a> ScopeRewriter<'a> {
         self.cx.diags.into_inner()
     }
 
+    /// The component function's name: `preferred`, renamed when the component declares or
+    /// references that name (Svelte's `module.scope.generate(component_name)`).
+    pub fn component_name(&self, preferred: &str) -> String {
+        self.cx.generate(preferred)
+    }
+
     fn store_subs(&self) -> impl Iterator<Item = (&str, BindingId)> + '_ {
         let scope = self.cx.instance_scope.expect("component");
         self.cx.arena.scope(scope).declarations.iter().filter(|(_, b)| self.cx.arena.binding(**b).kind == BindingKind::StoreSub).map(|(n, b)| (n, *b))
@@ -464,6 +474,162 @@ impl Rewriter for ScopeRewriter<'_> {
         let mut r = R { cx: &self.cx, found: false };
         Walker::walk(expr_ref(e), &(), &mut r);
         r.found
+    }
+
+    fn uses_store(&self, e: &Expression) -> bool {
+        struct S<'x, 'r, 'a> {
+            cx: &'x Ctx<'r, 'a>,
+            found: bool,
+        }
+        impl<'n> Visitor<'n> for S<'_, '_, '_> {
+            type State = ();
+            fn visit(&mut self, node: NodeRef<'n>, state: &(), w: &mut Walker<'n>) {
+                if let NodeRef::Identifier(id) = node
+                    && self.cx.arena.resolve(id).is_some_and(|b| self.cx.arena.binding(b).kind == BindingKind::StoreSub)
+                {
+                    self.found = true;
+                }
+                if !self.found {
+                    w.next(self, node, state);
+                }
+            }
+        }
+        let mut s = S { cx: &self.cx, found: false };
+        Walker::walk(expr_ref(e), &(), &mut s);
+        s.found
+    }
+
+    fn has_call(&self, e: &Expression) -> bool {
+        // upstream: a CallExpression whose callee is not pure (`is_pure`: literals, globals and
+        // members of globals, calls of those with pure arguments) or any call when the expression
+        // has dependencies; a tagged template with an impure tag; any spread element
+        struct H<'x, 'r, 'a> {
+            cx: &'x Ctx<'r, 'a>,
+            impure: bool,
+            calls: bool,
+            deps: bool,
+        }
+        impl H<'_, '_, '_> {
+            fn is_pure(&self, e: &Expression) -> bool {
+                match e {
+                    Expression::Literal(_) => true,
+                    Expression::CallExpression(c) => {
+                        self.is_pure(&c.callee) && c.arguments.iter().all(|a| matches!(a, ArrayElement::Expression(x) if self.is_pure(x)))
+                    }
+                    Expression::Identifier(_) | Expression::MemberExpression(_) => {
+                        let mut left = e;
+                        while let Expression::MemberExpression(m) = left {
+                            left = &m.object;
+                        }
+                        match left {
+                            // `$effect.tracking()` is never pure; other globals are assumed to be
+                            Expression::Identifier(id) => self.cx.arena.resolve(id).is_none() && !(id.name == "$effect"),
+                            other => self.is_pure(other),
+                        }
+                    }
+                    _ => false,
+                }
+            }
+        }
+        impl<'n> Visitor<'n> for H<'_, '_, '_> {
+            type State = ();
+            fn visit(&mut self, node: NodeRef<'n>, state: &(), w: &mut Walker<'n>) {
+                match node {
+                    n if n.is_function() => return,
+                    NodeRef::Identifier(id) => {
+                        if self.cx.arena.resolve(id).is_some() {
+                            self.deps = true;
+                        }
+                    }
+                    NodeRef::CallExpression(c) => {
+                        self.calls = true;
+                        if !self.is_pure(&c.callee) {
+                            self.impure = true;
+                        }
+                    }
+                    NodeRef::TaggedTemplateExpression(t) => {
+                        if !self.is_pure(&t.tag) {
+                            self.impure = true;
+                        }
+                    }
+                    NodeRef::SpreadElement(_) => self.impure = true,
+                    _ => {}
+                }
+                w.next(self, node, state);
+            }
+        }
+        let mut h = H { cx: &self.cx, impure: false, calls: false, deps: false };
+        Walker::walk(expr_ref(e), &(), &mut h);
+        h.impure || (h.calls && h.deps)
+    }
+
+    fn tracing(&self) -> bool {
+        self.cx.tracing.get()
+    }
+
+    fn dev(&self) -> bool {
+        self.cx.dev
+    }
+
+    fn dev_location(&self, pos: u32) -> Option<String> {
+        if !self.cx.dev {
+            return None;
+        }
+        let before = &self.cx.src[..pos as usize];
+        let line = before.matches('\n').count() + 1;
+        let col = before.rsplit('\n').next().map_or(0, |l| l.chars().count());
+        // the filename as given, as Svelte's `component[FILENAME]` and `$inspect.trace` labels
+        Some(format!("{}:{line}:{col}", self.cx.filename))
+    }
+
+    fn identifier(&self, id: &Identifier) -> String {
+        read_text(&self.cx.transform_of_id(id), &id.name)
+    }
+
+    fn declaration(&self, d: &VariableDeclaration) -> String {
+        let mut edits = Edits::new();
+        self.ts_strip.apply(&mut edits, Some(d.span()));
+        // the declaration's bindings live in the scope of its fragment: start there (the binding
+        // whose node is the first declared identifier)
+        let first = d.declarations.first().and_then(|x| crate::svelte::scope::ast_utils::extract_identifiers(&x.id).first().map(|i| i.span()));
+        let scope = first
+            .and_then(|span| self.cx.arena.bindings().find(|(_, b)| b.node.span() == Some(span)).map(|(_, b)| b.scope))
+            .unwrap_or(self.cx.instance_scope.expect("component"));
+        let mut v = visit::Rw::new(&self.cx, &mut edits, Mode::Read, false);
+        Walker::walk(NodeRef::VariableDeclaration(d), &scope, &mut v);
+        let s = d.span();
+        edits.apply(self.cx.src, s.start, s.end).trim_end().trim_end_matches(';').to_string()
+    }
+
+    fn directive_name(&self, name: &str) -> String {
+        // `parse_directive_name` + visit: the first segment is an identifier read as usual. The
+        // scope analysis records directive names as synthetic references, so it is resolved from
+        // the instance scope (a name bound only in a template scope reads as written).
+        let (first, rest) = name.split_once('.').map_or((name, None), |(a, b)| (a, Some(b)));
+        let read = match self.cx.instance_scope.and_then(|s| self.cx.arena.get(s, first)) {
+            Some(b) => read_text(&self.cx.transform_of(b), first),
+            None => first.to_string(),
+        };
+        match rest {
+            Some(r) => format!("{read}.{r}"),
+            None => read,
+        }
+    }
+
+    fn destructure(&self, pattern: &Pattern, initial: &str, derived_arrays: bool) -> crate::codegen::component::Destructured {
+        let mut edits = Edits::new();
+        let rw = visit::Rw::new(&self.cx, &mut edits, Mode::Read, true);
+        let (inserts, paths) = rw.extract_paths(pattern, initial.to_string(), self.cx.instance_scope.expect("component"), derived_arrays);
+        crate::codegen::component::Destructured {
+            arrays: inserts.into_iter().map(|i| (i.id, i.value)).collect(),
+            leaves: paths
+                .into_iter()
+                .filter_map(|p| match p.node {
+                    paths::Target::Id(id) => Some((id.name.clone(), p.expression, p.has_default_value)),
+                    paths::Target::Member(_) => None,
+                })
+                .collect(),
+        }
     }
 
     fn assign(&self, target: &Expression, value: &str) -> String {

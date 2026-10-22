@@ -11,6 +11,10 @@ import * as $ from 'svelte/internal/client';
 import { block as svelteBlock, branch as svelteBranch, component_root, destroy_effect } from 'svelte/internal/client/reactivity/effects';
 import { queue_micro_task } from 'svelte/internal/client/dom/task';
 import { getAllContexts, setContext } from 'svelte/internal/client/context';
+import { capture, unset_context } from 'svelte/internal/client/reactivity/async';
+import * as batches from 'svelte/internal/client/reactivity/batch';
+import { enable_tracing_mode_flag } from 'svelte/internal/flags/index';
+import { init_array_prototype_warnings } from 'svelte/internal/client/dev/equality';
 
 // ---- the compiler-facing contract (docs/notes/native-compiler/runtime-contract.md "Core API") ----
 
@@ -18,6 +22,7 @@ export {
   // graph
   state,
   derived,
+  derived_safe_equal,
   get,
   set,
   update,
@@ -46,6 +51,7 @@ export {
   props_id,
   bind_this,
   attach,
+  action,
   noop,
   // stores
   setup_stores,
@@ -58,11 +64,13 @@ export {
   update_pre_store,
   update_prop,
   update_pre_prop,
+  mark_store_binding,
   // dev
   tag,
   tag_proxy,
   inspect,
   trace,
+  wrap_snippet,
 } from 'svelte/internal/client';
 
 // ---- internals of the block machinery (./internal.js) ----
@@ -86,6 +94,17 @@ export const active = () => $.active_effect;
 export const destroyed = (effect) => effect !== null && (effect.f & (DESTROYED | DESTROYING)) !== 0;
 /** Runs `fn` in Svelte's microtask queue (drained by flushSync / `flush`). */
 export const queue_task = queue_micro_task;
+/**
+ * Svelte's `capture()`: the running effect, reaction, component context and batch. The returned
+ * `restore(false)` makes them current again (from a promise callback, so a branch created there
+ * belongs to the captured effect) without activating the batch; `release()` clears them after.
+ */
+export const capture_context = capture;
+export const release_context = () => unset_context(false);
+/** Svelte's `svelte/internal/flags/tracing`: sources record what `$.trace` reports (dev). */
+export const enable_tracing = enable_tracing_mode_flag;
+/** Whether a `flushSync` is running (Svelte's `is_flushing_sync`). */
+export const flushing_sync = () => batches.is_flushing_sync;
 /**
  * Svelte's `createSubscriber` (`svelte/reactivity`, 5.57.2), on the client internals: Node resolves
  * the public `svelte/reactivity` to its server build (a no-op) without the `browser` condition. When
@@ -115,6 +134,15 @@ export function subscriber(start) {
     });
   };
 }
+/**
+ * Links an each item's source to `collection()[index]` for `$inspect.trace` (Svelte's each block
+ * sets `v.trace` in DEV): a traced read of the item reports the collection's sources instead.
+ */
+export function trace_item(source, read) {
+  source.trace = read;
+}
+/** A source whose writes always notify for objects (Svelte's `mutable_source`: `safe_equals`). */
+export const mutable_state = (v) => $.mutable_source(v);
 export const get_all_contexts = getAllContexts;
 export const set_context = setContext;
 export const flush = $.flush;
@@ -193,4 +221,15 @@ export function reorder(parent, effects) {
   }
   prev.next = null;
   parent.last = prev;
+}
+
+let devInitialized = false;
+/**
+ * What Svelte's DOM `init_operations` installs in DEV besides DOM getters: the `Array.prototype`
+ * patches that warn `state_proxy_equality_mismatch` (`proxy.includes(raw)`). Once per realm.
+ */
+export function init_dev() {
+  if (devInitialized) return;
+  devInitialized = true;
+  init_array_prototype_warnings();
 }

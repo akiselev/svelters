@@ -1,6 +1,6 @@
 // Vite config and plugin for apps compiled by the svelters compiler (svelters-compile) onto
 // @svelters/native-runtime: one self-contained ES module (dist/app.js; @svelters/build wraps it for an
-// app directory), the aliases that resolve the runtime's modules from any component, and the three
+// app directory), the aliases that resolve the runtime's modules from any component, and the
 // Svelte modules the core adapter (src/core/svelte.js) imports that Svelte's exports map hides.
 import path from 'node:path';
 import { createRequire } from 'node:module';
@@ -42,8 +42,45 @@ export const taskPath = path.join(path.dirname(effectsPath), '../dom/task.js');
 export const CONTEXT_SPECIFIER = 'svelte/internal/client/context';
 export const contextPath = path.join(path.dirname(effectsPath), '../context.js');
 
-/** Every hidden Svelte module src/core/svelte.js imports: specifier -> absolute path. */
-export const HIDDEN_MODULES = { [EFFECTS_SPECIFIER]: effectsPath, [TASK_SPECIFIER]: taskPath, [CONTEXT_SPECIFIER]: contextPath };
+/** Svelte's `capture` / `unset_context` (an `{#await}` callback renders under its block, as Svelte's). */
+export const ASYNC_SPECIFIER = 'svelte/internal/client/reactivity/async';
+export const asyncPath = path.join(path.dirname(effectsPath), 'async.js');
+
+/** Svelte's batches: `is_flushing_sync` (a settled `{#await}` flushes unless a flushSync runs). */
+export const BATCH_SPECIFIER = 'svelte/internal/client/reactivity/batch';
+export const batchPath = path.join(path.dirname(effectsPath), 'batch.js');
+
+/** Svelte's runtime flags (`enable_tracing_mode_flag`, for `@svelters/native-runtime/core/tracing`). */
+export const FLAGS_SPECIFIER = 'svelte/internal/flags/index';
+export const flagsPath = path.join(path.dirname(effectsPath), '../../flags/index.js');
+
+/** Svelte's DEV array patches (`state_proxy_equality_mismatch`), installed by Svelte's DOM init. */
+export const EQUALITY_SPECIFIER = 'svelte/internal/client/dev/equality';
+export const equalityPath = path.join(path.dirname(effectsPath), '../dev/equality.js');
+
+/** Svelte's client entry (what `svelte` resolves to with the browser condition), for src/svelte.js. */
+export const SVELTE_CLIENT_SPECIFIER = 'svelte/index-client';
+export const svelteClientPath = path.join(path.dirname(effectsPath), '../../../index-client.js');
+
+/** `svelte` as app code sees it: Svelte's client API with a native `mount`/`unmount` (src/svelte.js). */
+export const svelteFacadePath = fileURLToPath(new URL('./src/svelte.js', import.meta.url));
+
+/** Every hidden Svelte module the runtime imports (src/core/svelte.js, src/svelte.js): specifier -> absolute path. */
+export const HIDDEN_MODULES = {
+  [EFFECTS_SPECIFIER]: effectsPath,
+  [TASK_SPECIFIER]: taskPath,
+  [CONTEXT_SPECIFIER]: contextPath,
+  [ASYNC_SPECIFIER]: asyncPath,
+  [BATCH_SPECIFIER]: batchPath,
+  [FLAGS_SPECIFIER]: flagsPath,
+  [SVELTE_CLIENT_SPECIFIER]: svelteClientPath,
+  [EQUALITY_SPECIFIER]: equalityPath,
+};
+
+/** What generated code imports when a component uses `$inspect.trace` in dev. */
+export const tracingPath = fileURLToPath(new URL('./src/core/tracing.js', import.meta.url));
+
+const escapeRegExp = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 /**
  * Vite config for one app: `entry` (relative to `root`) -> `<root>/<outDir>/app.js`, es2022, not
@@ -58,12 +95,14 @@ export function nativeConfig(root, { entry = 'main.js', outDir = 'dist', plugins
     resolve: {
       conditions: ['browser'],
       alias: [
-        { find: /^svelte\/internal\/client\/reactivity\/effects(\.js)?$/, replacement: effectsPath },
-        { find: /^svelte\/internal\/client\/dom\/task(\.js)?$/, replacement: taskPath },
-        { find: /^svelte\/internal\/client\/context(\.js)?$/, replacement: contextPath },
+        // the hidden Svelte modules of the core adapter
+        ...Object.entries(HIDDEN_MODULES).map(([find, replacement]) => ({ find: new RegExp(`^${escapeRegExp(find)}(\\.js)?$`), replacement })),
+        // `import { mount, flushSync } from 'svelte'`: Svelte's client API, mount/unmount native
+        { find: /^svelte$/, replacement: svelteFacadePath },
         // generated components import the runtime from wherever the .svelte file lives
         { find: /^@svelters\/native-runtime$/, replacement: runtimePath },
         { find: /^@svelters\/native-runtime\/core$/, replacement: corePath },
+        { find: /^@svelters\/native-runtime\/core\/tracing$/, replacement: tracingPath },
         // the styling API (`setColorScheme`, `setTokens`), also for apps that do not depend on it
         { find: /^@svelters\/native-runtime\/style$/, replacement: registerPath },
         // virtualized lists: `import { ListView } from '@svelters/lists'` gets the native

@@ -7,6 +7,7 @@ export {
   // graph
   state,
   derived,
+  derived_safe_equal,
   get,
   set,
   update,
@@ -35,6 +36,7 @@ export {
   props_id,
   bind_this,
   attach,
+  action,
   noop,
   // stores
   setup_stores,
@@ -47,9 +49,11 @@ export {
   update_pre_store,
   update_prop,
   update_pre_prop,
+  mark_store_binding,
   // dev
   tag,
   tag_proxy,
   inspect,
   trace,
+  wrap_snippet,
 } from './svelte.js';

@@ -6,6 +6,7 @@
 // and no anchors: containers and regions keep just the ordering native insertion needs.
 // Plain ES2022, no globals besides __svelters_host / __svelters_dispatch / __svelters_dispatch_sync /
 // __svelters_gone / __svelters_node.
+import { DEV } from 'esm-env';
 import * as $ from './core/index.js';
 import {
   active,
@@ -18,7 +19,13 @@ import {
   destroy,
   destroyed as effectDestroyed,
   flush,
+  flushing_sync,
+  init_dev,
   queue_task,
+  mutable_state,
+  trace_item,
+  capture_context,
+  release_context,
   reorder,
   root as componentRoot,
   root_boundary,
@@ -859,7 +866,12 @@ export function if_block(container, test, consequent, alternate = null) {
   });
 }
 
-export function each_block(container, collection, key, render, fallback = null) {
+/** `each_block` flag: the collection reads a store, so its items are mutable sources (a store
+ * mutation re-sets the same objects, which must still update the rows; Svelte's
+ * `EACH_ITEM_IMMUTABLE` is unset then). */
+export const EACH_ITEM_MUTABLE = 1;
+
+export function each_block(container, collection, key, render, fallback = null, flags = 0) {
   const r = newRegion(container);
   const owner = scope;
   let items = [];
@@ -873,7 +885,9 @@ export function each_block(container, collection, key, render, fallback = null) 
         close(fb);
         fb = null;
       }
-      items = key ? keyed(r, owner, items, arr, key, render) : indexed(r, owner, items, arr, render);
+      const mutable = (flags & EACH_ITEM_MUTABLE) !== 0;
+      const item = { render, mutable, collection };
+      items = key ? keyed(r, owner, items, arr, key, item) : indexed(r, owner, items, arr, item);
       if (key) reorder(self, items.map((b) => b.effect));
       if (!arr.length && fallback && !fb) fb = open(r, owner, fallback);
     });
@@ -910,7 +924,61 @@ export function key_block(container, getKey, render) {
  * function replaces the branch, a nullish one renders nothing. `args` are thunks.
  */
 export function snippet(container, getSnippet, ...args) {
-  swapping(container, getSnippet, (s, anchor) => s(anchor, ...args));
+  // Svelte's snippet block: a nullish snippet is an error in DEV (`{@render f?.()}` compiles to
+  // `?? $.noop` instead), nothing in production
+  const get = DEV
+    ? () => {
+        const s = getSnippet();
+        if (s == null) svelteError('invalid_snippet', 'Could not `{@render}` snippet due to the expression being `null` or `undefined`. Consider using optional chaining `{@render snippet?.()}`');
+        return s;
+      }
+    : getSnippet;
+  swapping(container, get, (s, anchor) => s(anchor, ...args));
+}
+
+/**
+ * Dev (`--dev`): the first statement of every snippet (Svelte's `validate_snippet_args`): a
+ * snippet is only called by `{@render}`, with a container (Svelte: a DOM `Node`) and thunks.
+ */
+export function validate_snippet_args(anchor, ...args) {
+  const container = anchor instanceof Slot || anchor instanceof Region || anchor instanceof Root;
+  if (!container || args.some((a) => typeof a !== 'function')) {
+    svelteError('invalid_snippet_arguments', 'A snippet function was passed invalid arguments. Snippets should only be instantiated via `{@render ...}`');
+  }
+}
+
+/**
+ * Dev (`--dev`): an event handler that is not an inline function (Svelte's `$.apply`): calls the
+ * value `thunk()` returns, warning `event_handler_invalid` when it is not a function. `event` and
+ * `loc` (`file:line:column`) are static (Svelte reads the DOM event's type and phase).
+ */
+export function apply(thunk, node, args, event, loc, has_side_effects = false, remove_parens = false) {
+  let handler;
+  let error;
+  try {
+    handler = thunk();
+  } catch (e) {
+    error = e;
+  }
+  if (typeof handler !== 'function' && (has_side_effects || handler != null || error)) {
+    svelteWarn('event_handler_invalid', `\`${event}\` handler at ${loc} should be a function. Did you mean to ${remove_parens ? 'remove the trailing `()`' : 'add a leading `() =>`'}?`);
+    if (error) throw error;
+  }
+  handler?.apply(node, args);
+}
+
+/** Warns as svelte/src/internal/client/warnings.js does. */
+function svelteWarn(code, message) {
+  if (DEV) console.warn(`%c[svelte] ${code}\n%c${message}\nhttps://svelte.dev/e/${code}`, 'font-weight: bold', 'font-weight: normal');
+  else console.warn(`https://svelte.dev/e/${code}`);
+}
+
+/** Throws a Svelte runtime error as svelte/src/internal/{client,shared}/errors.js does. */
+function svelteError(code, message) {
+  if (!DEV) throw new Error(`https://svelte.dev/e/${code}`);
+  const error = new Error(`${code}\n${message}\nhttps://svelte.dev/e/${code}`);
+  error.name = 'Svelte error';
+  throw error;
 }
 
 /**
@@ -1071,71 +1139,68 @@ const is_promise = (v) => v != null && typeof v.then === 'function';
 
 /**
  * `{#await}` with Svelte 5's resolution order (svelte/src/internal/client/dom/blocks/await.js):
- * a non-promise shows `then` immediately; a promise shows nothing synchronously, `pending` from a
- * microtask unless it has settled by then (an already-resolved promise never shows `pending`),
- * then `then`/`catch` when it settles, unless a newer input (or teardown) superseded it. Settling
- * into the branch already shown only updates its value source. A rejection without `catch` is
- * rethrown (an unhandled rejection, as in Svelte). The branch switch happens in a second block
- * effect that reads the status, so new branches are always built inside the effect tree.
+ * a non-promise shows `then` immediately; a promise shows nothing synchronously, `pending` from
+ * Svelte's microtask queue unless it has settled by then (an already-resolved promise never shows
+ * `pending`; a `flushSync` before the microtask runs the queue, so `pending` shows at once), then
+ * `then`/`catch` when it settles, unless a newer input (or teardown) superseded it. Settling into
+ * the branch already shown only updates its value source. A rejection without `catch` is rethrown
+ * (an unhandled rejection, as in Svelte). As in Svelte, the callbacks build their branch directly,
+ * under the block effect (`capture_context`), and then flush: a branch shown by the `pending` task
+ * renders even when the same flush tears the block down (`{#if p}{#await p}` with `p` cleared).
  */
 export function await_block(container, getInput, pending, then, catch_) {
   const r = newRegion(container);
   const owner = scope;
   const value = $.state(undefined);
   const error = $.state(undefined);
-  const status = $.state(-1);
-  let token = 0;
+  let shown = -1;
+  let current = null;
+  const show = (s) => {
+    if (s === shown) return;
+    shown = s;
+    const fn = s === PENDING ? pending : s === THEN ? then : catch_;
+    current = swap(r, owner, current, fn, s === THEN ? value : error);
+  };
   block(() => {
     const input = getInput();
-    const t = ++token;
+    let destroyed = false;
     if (is_promise(input)) {
-      let settled = false;
-      const settle = (fn) => {
-        if (t !== token) return;
-        settled = true;
+      const restore = capture_context();
+      let resolved = false;
+      const resolve = (fn) => {
+        if (destroyed) return;
+        resolved = true;
+        restore(false);
         try {
           fn();
         } finally {
-          flush();
+          release_context();
+          if (!flushing_sync()) flush();
         }
       };
       input.then(
         (v) =>
-          settle(() => {
-            $.set(value, v);
-            $.set(status, THEN);
+          resolve(() => {
+            $.untrack(() => $.set(value, v));
+            show(THEN);
           }),
         (e) =>
-          settle(() => {
-            $.set(error, e);
-            $.set(status, CATCH);
+          resolve(() => {
+            $.untrack(() => $.set(error, e));
+            show(CATCH);
             if (!catch_) throw e;
           }),
       );
-      Promise.resolve().then(() => {
-        if (!settled && t === token) {
-          $.set(status, PENDING);
-          flush();
-        }
+      queue_task(() => {
+        if (!resolved) resolve(() => show(PENDING));
       });
     } else {
-      $.untrack(() => {
-        $.set(value, input);
-        $.set(status, THEN);
-      });
+      $.untrack(() => $.set(value, input));
+      show(THEN);
     }
     return () => {
-      token++;
+      destroyed = true;
     };
-  });
-  let shown = -1;
-  let current = null;
-  block(() => {
-    const s = $.get(status);
-    if (s === shown) return;
-    shown = s;
-    const fn = s === PENDING ? pending : s === THEN ? then : s === CATCH ? catch_ : null;
-    current = swap(r, owner, current, fn, s === THEN ? value : error);
   });
 }
 
@@ -1144,23 +1209,33 @@ export function classes(value) {
   return new Set(clsx(value).split(/\s+/).filter(Boolean));
 }
 
-function openItem(r, owner, render, b, value, index) {
-  b.item = $.state(value);
+/** `item`: the each block's `render`, `mutable` (EACH_ITEM_MUTABLE) and `collection`. */
+function openItem(r, owner, item, b, value, index) {
+  b.item = item.mutable ? mutable_state(value) : $.state(value);
   b.index = $.state(index);
-  return open(r, owner, (anchor) => render(anchor, b.item, b.index), b);
+  trace_item(b.item, () => item.collection()[$.untrack(() => $.get(b.index))]);
+  return open(r, owner, (anchor) => item.render(anchor, b.item, b.index), b);
 }
 
-function indexed(r, owner, old, arr, render) {
+function indexed(r, owner, old, arr, item) {
   const n = Math.min(old.length, arr.length);
   for (let i = 0; i < n; i++) $.set(old[i].item, arr[i]);
   for (let i = old.length - 1; i >= arr.length; i--) close(old[i]);
   const out = old.slice(0, n);
-  for (let i = n; i < arr.length; i++) out.push(openItem(r, owner, render, newRegion(r), arr[i], i));
+  for (let i = n; i < arr.length; i++) out.push(openItem(r, owner, item, newRegion(r), arr[i], i));
   return out;
 }
 
-function keyed(r, owner, old, arr, key, render) {
-  const keys = arr.map((v, i) => key(v, i));
+function keyed(r, owner, old, arr, key, item) {
+  const keys = arr.map((v, i) => {
+    const k = key(v, i);
+    if (DEV) {
+      // Svelte's each block: the key function must be idempotent
+      const again = key(v, i);
+      if (k !== again) svelteError('each_key_volatile', `Keyed each block has key that is not idempotent — the key for item at index ${i} was \`${String(k)}\` but is now \`${String(again)}\`. Keys must be the same each time for a given item`);
+    }
+    return k;
+  });
   if (new Set(keys).size !== keys.length) throw new Error('each_block: duplicate keys');
   const byKey = new Map(old.map((b) => [b.key, b]));
   const oldIndex = new Map(old.map((b, i) => [b, i]));
@@ -1184,7 +1259,7 @@ function keyed(r, owner, old, arr, key, render) {
   // have no natives yet and are skipped by nextNative). Then new items front to back: creation
   // order decides handle numbers, which must follow source order.
   for (let i = next.length - 1; i >= 0; i--) if (next[i].effect && !stay.has(i)) move(next[i]);
-  for (let i = 0; i < next.length; i++) if (!next[i].effect) openItem(r, owner, render, next[i], arr[i], i);
+  for (let i = 0; i < next.length; i++) if (!next[i].effect) openItem(r, owner, item, next[i], arr[i], i);
   return next;
 }
 
@@ -1230,6 +1305,7 @@ export function lis(a) {
  */
 export function mount(Component, { props = {}, target, transformError } = {}) {
   if (!host()) throw new Error('globalThis.__svelters_host is not defined');
+  if (DEV) init_dev();
   globalThis.__svelters_dispatch = dispatch;
   globalThis.__svelters_dispatch_sync = dispatch_sync;
   globalThis.__svelters_gone = gone;

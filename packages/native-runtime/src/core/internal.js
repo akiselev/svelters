@@ -2,6 +2,7 @@
 // tree, scheduling, contexts and error boundaries. Not part of the compiler-facing contract
 // (./index.js). Phase 1 of plans/research/RUNTIME.md: backed by Svelte through the adapter.
 export {
+  init_dev,
   root,
   block,
   branch,
@@ -14,6 +15,11 @@ export {
   current_boundary,
   root_boundary,
   queue_task,
+  mutable_state,
+  trace_item,
+  capture_context,
+  release_context,
+  flushing_sync,
   subscriber,
   get_all_contexts,
   set_context,

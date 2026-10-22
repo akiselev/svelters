@@ -130,6 +130,14 @@ fn sp(s: Span) -> (u32, u32) {
     (s.start, s.end)
 }
 
+/// A snippet parameter / `{:then}` / `{:catch}` binding.
+fn param(p: &Pattern) -> Param<'_> {
+    match p {
+        Pattern::Identifier(id) => Param::Id(id.name.clone()),
+        other => Param::Pattern(other),
+    }
+}
+
 /// Pre-pass: every `{#snippet}` of the component with its root elements (looking through blocks),
 /// so render sites can be checked before or after the declaration (snippets are hoisted).
 fn collect_snippets<'a>(f: &'a AstFragment, out: &mut HashMap<String, Option<Vec<&'a AstElement>>>) {
@@ -310,15 +318,6 @@ impl<'a> Lower<'a, '_, '_> {
                 }
                 FragmentNode::EachBlock(b) => {
                     let context = b.context.as_ref();
-                    if let Some(p) = context
-                        && !matches!(p, Pattern::Identifier(_))
-                    {
-                        self.diags.error(
-                            "unsupported_feature",
-                            sp(p.span()),
-                            "destructuring in {#each} is not supported by the native compiler yet; use a plain identifier",
-                        );
-                    }
                     let body = self.branch(&b.body, parent, ancestors, true);
                     let fallback = b.fallback.as_ref().map(|f| self.branch(f, parent, ancestors, true));
                     let slot = self.block_slot((b.start, b.end), [Some(&body), fallback.as_ref()]);
@@ -339,8 +338,8 @@ impl<'a> Lower<'a, '_, '_> {
                     out.items.push(Item::Key(KeyBlock { span: b.span(), slot, key: &b.expression, body }));
                 }
                 FragmentNode::AwaitBlock(b) => {
-                    let value = b.value.as_ref().and_then(|p| self.simple_binding(p, "{:then}"));
-                    let error = b.error.as_ref().and_then(|p| self.simple_binding(p, "{:catch}"));
+                    let value = b.value.as_ref().map(param);
+                    let error = b.error.as_ref().map(param);
                     let pending = b.pending.as_ref().map(|f| self.branch(f, parent, ancestors, false));
                     let then = b.then.as_ref().map(|f| self.branch(f, parent, ancestors, true));
                     let catch = b.catch.as_ref().map(|f| self.branch(f, parent, ancestors, true));
@@ -367,15 +366,17 @@ impl<'a> Lower<'a, '_, '_> {
                     }
                     let d = &c.declaration.declarations[0];
                     match (&d.id, &d.init) {
-                        (Pattern::Identifier(id), Some(init)) => out.consts.push(ConstDecl { span: c.span(), name: id.name.clone(), init }),
-                        _ => {
-                            self.diags.error(
-                                "unsupported_feature",
-                                sp(d.id.span()),
-                                "destructuring in {@const} is not supported by the native compiler yet; declare one {@const} per value",
-                            );
-                        }
+                        (Pattern::Identifier(id), Some(init)) => out.consts.push(ConstDecl { span: c.span(), name: id.name.clone(), init: Some(init), pattern: None, declaration: None }),
+                        (pattern, Some(init)) => out.consts.push(ConstDecl { span: c.span(), name: String::new(), init: Some(init), pattern: Some(pattern), declaration: None }),
+                        // the parser requires an initializer
+                        (_, None) => {}
                     }
+                }
+                // `{let x = $state(0)}` / `{const y = ...}`: declared where the fragment's
+                // `{@const}`s are, transformed like a script declaration
+                FragmentNode::DebugTag(d) => out.debugs.push(d),
+                FragmentNode::DeclarationTag(d) => {
+                    out.consts.push(ConstDecl { span: d.span(), name: String::new(), init: None, pattern: None, declaration: Some(&d.declaration) })
                 }
                 other => {
                     let what = unsupported_node_name(other);
@@ -409,7 +410,6 @@ impl<'a> Lower<'a, '_, '_> {
         Some(Element { id, span, kind: er.tag.clone(), present: None, toplevel: false, show: None, attached: false, slot, class_expr: None, id_expr: None, ops: vec![op], children: Fragment::default() })
     }
 
-    /// `{:then value}` / `{:catch error}`: only plain identifiers.
     /// The modifiers of a native element's `bind:` (REACTIVITY.md section 8.2): `Some(nonreactive)`,
     /// or `None` after reporting `bind_modifier_invalid` for an unknown or repeated modifier (stock
     /// Svelte ignores them silently; the native compiler must not).
@@ -442,16 +442,6 @@ impl<'a> Lower<'a, '_, '_> {
             self.diags
                 .native_error(codes::BIND_MODIFIER_INVALID, sp(d.span()), format!("`bind:{}|{}`: `|{m}` {why} on {what}", d.name, d.modifiers.join("|")))
                 .help("`|nonreactive` applies to bindings of native element properties only");
-        }
-    }
-
-    fn simple_binding(&mut self, p: &Pattern, what: &str) -> Option<String> {
-        match p {
-            Pattern::Identifier(id) => Some(id.name.clone()),
-            _ => {
-                self.diags.error("unsupported_feature", sp(p.span()), format!("destructuring in {what} is not supported by the native compiler yet; use a plain identifier"));
-                None
-            }
         }
     }
 
@@ -525,19 +515,7 @@ impl<'a> Lower<'a, '_, '_> {
     }
 
     fn snippet(&mut self, b: &'a SnippetBlock, ancestors: &[StyleSubject<'a>]) -> Snippet<'a> {
-        let mut params = Vec::new();
-        for p in &b.parameters {
-            match p {
-                Pattern::Identifier(id) => params.push(id.name.clone()),
-                other => {
-                    self.diags.error(
-                        "unsupported_feature",
-                        sp(other.span()),
-                        "destructured or defaulted snippet parameters are not supported by the native compiler yet; use plain identifiers",
-                    );
-                }
-            }
-        }
+        let params = b.parameters.iter().map(param).collect();
         let forced = self.forced_slot.take();
         let body = self.branch(&b.body, &Parent::Detached, ancestors, true);
         self.forced_slot = forced;
@@ -816,6 +794,7 @@ impl<'a> Lower<'a, '_, '_> {
                     ops.extend(self.listen_op(&er, &format!("on{}", d.name), Handler::Expr(d.expression.as_ref().unwrap()), d.span(), ns));
                 }
                 AttributeLike::AttachTag(t) => ops.extend(self.attach_op(&er, t)),
+                AttributeLike::UseDirective(d) => ops.push(Op::Action { name: d.name.clone(), arg: d.expression.as_ref(), span: d.span() }),
                 AttributeLike::Attribute(at) => {
                     let prop = match self.sem.writable_property(&er, &at.name) {
                         Ok(p) => p.clone(),
@@ -909,8 +888,10 @@ impl<'a> Lower<'a, '_, '_> {
         // Bindings write their value after the element's other attributes (as Svelte's own bindings,
         // and the retired renderer, did): a bound value must not be written before the props that
         // constrain it (`<scale bind:value lower upper>`: GTK clamps to the adjustment's range).
+        // Actions go with them, in source order ("actions need to run after attribute updates in
+        // order with bindings/events", Svelte's UseDirective visitor).
         let (binds, rest): (Vec<_>, Vec<_>) =
-            ops.into_iter().partition(|o| matches!(o, Op::Bind { .. } | Op::BindProp { .. } | Op::BindReadonly { .. } | Op::BindOnce { .. }));
+            ops.into_iter().partition(|o| matches!(o, Op::Bind { .. } | Op::BindProp { .. } | Op::BindReadonly { .. } | Op::BindOnce { .. } | Op::Action { .. }));
         ops = rest;
         ops.extend(binds);
 
@@ -1643,9 +1624,26 @@ fn text_runs<'a>(nodes: &'a [FragmentNode], parent_tag: Option<&str>) -> Vec<Ent
         Expr(&'a Expression, Span),
         Node(&'a FragmentNode),
     }
+    // Svelte's clean_nodes hoists these out of the fragment before trimming whitespace, so the
+    // text around them is adjacent (`A\n{#snippet s()}..{/snippet}\nB` is `A B`)
+    let hoisted = |n: &FragmentNode| {
+        matches!(
+            n,
+            FragmentNode::ConstTag(_)
+                | FragmentNode::DeclarationTag(_)
+                | FragmentNode::DebugTag(_)
+                | FragmentNode::SvelteBody(_)
+                | FragmentNode::SvelteWindow(_)
+                | FragmentNode::SvelteDocument(_)
+                | FragmentNode::SvelteHead(_)
+                | FragmentNode::TitleElement(_)
+                | FragmentNode::SnippetBlock(_)
+        )
+    };
+    let mut out: Vec<Entry<'a>> = nodes.iter().filter(|n| hoisted(n)).map(Entry::Node).collect();
     let mut regular: Vec<Tx<'a>> = nodes
         .iter()
-        .filter(|n| !matches!(n, FragmentNode::Comment(_)))
+        .filter(|n| !matches!(n, FragmentNode::Comment(_)) && !hoisted(n))
         .map(|n| match n {
             FragmentNode::Text(t) => Tx::Text(t.data.clone(), Span::new(t.start, t.end)),
             FragmentNode::ExpressionTag(e) => Tx::Expr(&e.expression, Span::new(e.start, e.end)),
@@ -1688,7 +1686,6 @@ fn text_runs<'a>(nodes: &'a [FragmentNode], parent_tag: Option<&str>) -> Vec<Ent
             Tx::Node(n) => cleaned.push(Tx::Node(n)),
         }
     }
-    let mut out: Vec<Entry<'a>> = Vec::new();
     for tx in cleaned {
         let (part, s) = match tx {
             Tx::Node(n) => {

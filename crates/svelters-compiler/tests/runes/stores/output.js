@@ -2,7 +2,7 @@ import * as $ from '@svelters/native-runtime/core';
 import * as $n from '@svelters/native-runtime';
 import { writable } from 'svelte/store';
 
-export default function input($$anchor, $$props) {
+export default function Input($$anchor, $$props) {
 	$.push($$props, true);
 	const $count = () => $.store_get(count, "$count", $$stores);
 	const $user = () => $.store_get(user, "$user", $$stores);

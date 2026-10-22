@@ -8,6 +8,8 @@
   "exports": {
     ".": "./src/index.js",
     "./core": "./src/core/index.js",
+    "./core/tracing": "./src/core/tracing.js",
+    "./svelte": "./src/svelte.js",
     "./lists": "./src/lists.js",
     "./style": { "types": "./src/style.d.ts", "default": "./src/style.js" },
     "./bindings": "./src/bindings.generated.js",
@@ -17,6 +19,7 @@
   "dependencies": {
     "@svelters/style": "workspace:*",
     "@svelters/types": "workspace:*",
+    "esm-env": "^1.2.2",
     "svelte": "5.57.2"
   },
   "devDependencies": {

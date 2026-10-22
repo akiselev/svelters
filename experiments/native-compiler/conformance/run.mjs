@@ -12,6 +12,9 @@
 // Writes results.json (per sample) and REPORT.md. baseline.json is the ratchet: the samples that
 // passed when it was last updated; --check fails if any of them no longer passes;
 // --update-baseline rewrites it (refused if that would drop a passing sample, unless FORCE=1).
+// expected.json lists the expected rejections (features outside the native subset or design, each
+// category with its reason, its ref and the failure it must show); the score reports them apart
+// from passes and failures, and never as passes.
 // Env: UPSTREAM (default /tmp/claude-0/up; samples at <UPSTREAM>/svelte/packages/svelte/tests/
 // runtime-runes/samples), SVELTERS_COMPILE (compiler binary), JOBS, TIMEOUT_MS.
 import fs from 'node:fs';
@@ -227,8 +230,51 @@ const tally = (rows, key) => {
 };
 const passing = by((r) => r.outcome === 'pass').map(([n]) => n);
 
+// ---- expected rejections (expected.json)
+// Samples that need a feature outside the native language subset or design. Each category names
+// why and where that is decided (`ref`), and how the failure must look (`match`): `reasons` are
+// regexes over the compile-time rejection reasons (one must match), `runtime` regexes over the
+// runtime error / mismatch message. A listed sample counts as an expected rejection only while it
+// fails in that way; one that passes or fails differently is reported as "stale" and counts with
+// the failures, so a real bug cannot hide behind the list. Expected rejections are never passes.
+const expectedPath = path.join(here, 'expected.json');
+const expectedList = fs.existsSync(expectedPath) ? JSON.parse(fs.readFileSync(expectedPath, 'utf8')) : { categories: {}, samples: {} };
+// A sample entry is its category's name, or `{ category, match }` when the failure is specific to
+// the sample (a generic assertion message): `match` then pins that exact failure.
+const hasMatch = (m) => m?.reasons?.length || m?.runtime?.length;
+for (const [k, c] of Object.entries(expectedList.categories)) if (!c.why || !c.ref) throw new Error(`expected.json: category ${k} needs why and ref`);
+const expectedEntry = (n) => {
+  const e = expectedList.samples[n];
+  if (e === undefined) return null;
+  const k = typeof e === 'string' ? e : e.category;
+  const c = expectedList.categories[k];
+  if (!c) throw new Error(`expected.json: ${n}: unknown category ${k}`);
+  const match = (typeof e === 'object' && e.match) || c.match;
+  if (!hasMatch(match)) throw new Error(`expected.json: ${n}: no match (category ${k} has none, so the entry needs its own)`);
+  return { k, match };
+};
+for (const n of Object.keys(expectedList.samples)) expectedEntry(n);
+const staleExpected = [];
+for (const [n, r] of counted) {
+  const entry = expectedEntry(n);
+  if (!entry) continue;
+  const { k, match: m } = entry;
+  const hits =
+    (r.outcome === 'rejected' && (m.reasons ?? []).some((re) => r.reasons.some((x) => new RegExp(re).test(x)))) ||
+    ((r.outcome === 'runtime_error' || r.outcome === 'mismatch') && (m.runtime ?? []).some((re) => new RegExp(re).test(r.message ?? '')));
+  if (hits) r.expected = k;
+  else staleExpected.push([n, k, r]);
+}
+if (!filters.length) {
+  const countedNames = new Set(counted.map(([n]) => n));
+  for (const n of Object.keys(expectedList.samples)) if (!countedNames.has(n)) staleExpected.push([n, expectedEntry(n).k, { outcome: 'not a counted sample' }]);
+}
+const isExpected = (r) => r.expected !== undefined;
+const expectedRows = by(isExpected);
+
 if (filters.length) {
-  for (const [n, r] of Object.entries(sorted)) console.log(`${r.outcome.padEnd(13)} ${n}${r.reason ? `  [${r.reason}]` : ''}${r.message ? `  ${process.env.VERBOSE ? r.message : r.message.split('\n')[0].slice(0, 200)}` : ''}`);
+  for (const [n, r] of Object.entries(sorted)) console.log(`${r.outcome.padEnd(13)} ${n}${r.expected ? `  {expected: ${r.expected}}` : ''}${r.reason ? `  [${r.reason}]` : ''}${r.message ? `  ${process.env.VERBOSE ? r.message : r.message.split('\n')[0].slice(0, 200)}` : ''}`);
+  for (const [n, k, r] of staleExpected) console.log(`stale expected.json entry: ${n} (${k}) is ${r.outcome}`);
   process.exit(0);
 }
 
@@ -242,6 +288,9 @@ const summary = {
   mismatch: count('mismatch'),
   timeout: count('timeout'),
   skipped: count('skipped'),
+  // the score: pass + expected_rejection + failing + skipped = dom_samples
+  expected_rejection: expectedRows.length,
+  failing: by((r) => r.outcome !== 'pass' && r.outcome !== 'skipped' && !isExpected(r)).length,
 };
 {
   // one sample per line (diffable); messages shortened
@@ -251,10 +300,22 @@ const summary = {
 }
 
 // ---- REPORT.md
-const rejected = by((r) => r.outcome === 'rejected');
+const rejected = by((r) => r.outcome === 'rejected' && !isExpected(r));
 const pct = (n) => `${((100 * n) / counted.length).toFixed(1)}%`;
 const table = (rows, head) => [`| ${head} | samples |`, '| --- | ---: |', ...rows.map(([k, v]) => `| ${k.replace(/\|/g, '\\|')} | ${v} |`)].join('\n');
-const failing = by((r) => r.outcome === 'runtime_error' || r.outcome === 'mismatch' || r.outcome === 'timeout');
+const failing = by((r) => (r.outcome === 'runtime_error' || r.outcome === 'mismatch' || r.outcome === 'timeout') && !isExpected(r));
+function expectedSection() {
+  const cats = Object.entries(expectedList.categories).map(([k, c]) => {
+    const mine = expectedRows.filter(([, r]) => r.expected === k).map(([n]) => n);
+    return { k, c, mine };
+  });
+  const head = ['| category | samples | why | decided in |', '| --- | ---: | --- | --- |', ...cats.map(({ k, c, mine }) => `| ${k} | ${mine.length} | ${c.why.replace(/\|/g, '\\|')} | ${c.ref.replace(/\|/g, '\\|')} |`)].join('\n');
+  const lists = cats.filter(({ mine }) => mine.length).map(({ k, mine }) => `- ${k} (${mine.length}): ${mine.join(', ')}`).join('\n');
+  const stale = staleExpected.length
+    ? `\n\nListed in \`expected.json\` but not failing in the listed way (counted as passes or failures, not as expected rejections; fix or drop the entry):\n\n${staleExpected.map(([n, k, r]) => `- ${n} (${k}): ${r.outcome}${r.reason ? ` [${r.reason}]` : ''}`).join('\n')}`
+    : '';
+  return `${head}\n\n${lists}${stale}`;
+}
 function focusTable() {
   const groups = ['state', 'derived', 'effect', 'props', 'bindable', 'proxy', 'untrack', 'flush', 'each', 'if', 'binding', 'event', 'class'];
   const rows = groups.map((g) => {
@@ -269,6 +330,21 @@ const report = `# NC1 conformance: Svelte runtime-runes samples on the DOM test 
 
 Generated by \`node experiments/native-compiler/conformance/run.mjs\` (do not edit; harness design in run.mjs / run-one.mjs headers).
 Svelte 5.57.2 (tag svelte@5.57.2, stock), \`tests/runtime-runes/samples\`, \`dom\` variant, assertions unchanged.
+
+## Score
+
+| | samples | share |
+| --- | ---: | ---: |
+| **pass** | **${summary.pass}** | ${pct(summary.pass)} |
+| expected rejection (outside the native subset or design; \`expected.json\`) | ${summary.expected_rejection} | ${pct(summary.expected_rejection)} |
+| failing (in the subset: rejected, runtime error, mismatch, timeout) | ${summary.failing} | ${pct(summary.failing)} |
+| skipped upstream | ${summary.skipped} | ${pct(summary.skipped)} |
+| **samples with a dom variant** | **${summary.dom_samples}** | |
+
+Expected rejections are not passes. Of the ${summary.dom_samples - summary.expected_rejection - summary.skipped} samples that are neither
+expected rejections nor skipped, ${summary.pass} pass (${((100 * summary.pass) / Math.max(1, summary.dom_samples - summary.expected_rejection - summary.skipped)).toFixed(1)}%).
+
+## Outcomes
 
 | outcome | samples | share |
 | --- | ---: | ---: |
@@ -286,7 +362,13 @@ ${summary.no_dom_variant} of the ${summary.samples} sample directories have no \
 
 ${focusTable()}
 
+## Expected rejections
+
+${expectedSection()}
+
 ## Compile-time rejections: first diagnostic per sample
+
+Expected rejections are left out of this and the next three tables.
 
 ${table(tally(rejected, (r) => r.reason).slice(0, 40), 'reason')}
 
@@ -320,7 +402,8 @@ const baselinePath = path.join(here, 'baseline.json');
 const baseline = fs.existsSync(baselinePath) ? JSON.parse(fs.readFileSync(baselinePath, 'utf8')).pass : [];
 const lost = baseline.filter((n) => !passing.includes(n));
 const gained = passing.filter((n) => !baseline.includes(n));
-console.log(`pass ${summary.pass} / ${summary.dom_samples} (rejected ${summary.rejected}, runtime errors ${summary.runtime_error}, mismatches ${summary.mismatch}, timeouts ${summary.timeout}, skipped ${summary.skipped}); baseline ${baseline.length}: +${gained.length} -${lost.length}`);
+console.log(`pass ${summary.pass} / ${summary.dom_samples}, expected rejections ${summary.expected_rejection}, failing ${summary.failing} (rejected ${summary.rejected}, runtime errors ${summary.runtime_error}, mismatches ${summary.mismatch}, timeouts ${summary.timeout}, skipped ${summary.skipped}); baseline ${baseline.length}: +${gained.length} -${lost.length}`);
+if (staleExpected.length) console.log(`stale expected.json entries (not failing in the listed way): ${staleExpected.map(([n, , r]) => `${n} (${r.outcome})`).join(', ')}`);
 if (lost.length) console.log(`no longer passing: ${lost.join(', ')}`);
 if (gained.length) console.log(`newly passing: ${gained.join(', ')}`);
 if (updateBaseline) {

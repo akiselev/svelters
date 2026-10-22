@@ -1,7 +1,7 @@
 import * as $ from '@svelters/native-runtime/core';
 import * as $n from '@svelters/native-runtime';
 
-export default function input($$anchor, $$props) {
+export default function Input($$anchor, $$props) {
 	$.push($$props, true);
 	class Counter { #total; get total() { return $.get(this.#total); } set total(value) { $.set(this.#total, value, true); }
     #count = $.state(0); get count() { return $.get(this.#count); } set count(value) { $.set(this.#count, value, true); }

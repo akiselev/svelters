@@ -57,6 +57,11 @@ pub(crate) fn is_simple_expression(e: &Expression) -> bool {
 
 /// Whether `e` contains an `await` outside nested functions (`is_expression_async`).
 pub(crate) fn has_await(e: &Expression) -> bool {
+    node_has_await(expr_ref(e))
+}
+
+/// `has_await` for any node (a destructuring pattern's defaults and computed keys).
+pub(crate) fn node_has_await(n: NodeRef<'_>) -> bool {
     struct A(bool);
     impl<'n> Visitor<'n> for A {
         type State = ();
@@ -69,7 +74,7 @@ pub(crate) fn has_await(e: &Expression) -> bool {
         }
     }
     let mut a = A(false);
-    Walker::walk(expr_ref(e), &(), &mut a);
+    Walker::walk(n, &(), &mut a);
     a.0
 }
 
@@ -717,7 +722,9 @@ impl<'c, 'r, 'a> Rw<'c, 'r, 'a> {
             if !standalone {
                 body.push_str(&format!("return {rhs}; "));
             }
-            if has_await(&a.right) {
+            // upstream: `is_expression_async(value) || assignments.some(is_expression_async)`; an
+            // assignment awaits when a default value (or a computed key) of the pattern does
+            if has_await(&a.right) || node_has_await(crate::svelte::scope::walk::pattern_ref(&a.left)) {
                 format!("(await (async ({rhs}) => {{ {body}}})({value}))")
             } else {
                 format!("(({rhs}) => {{ {body}}})({value})")
@@ -947,6 +954,7 @@ impl<'c, 'r, 'a> Rw<'c, 'r, 'a> {
                 }
             };
             let (aw, asy) = if is_async { ("await ", "async ") } else { ("", "") };
+            self.cx.tracing.set(true);
             self.edits.overwrite(fs.start, fs.end, format!("return {aw}$.trace({label}, {asy}() => {{"));
             self.edits.close(b.end - 1, "});");
         }
@@ -1049,6 +1057,16 @@ impl<'c, 'r, 'a> Rw<'c, 'r, 'a> {
                 continue;
             };
             let Some(f) = fields.by_decl(addr(p)).cloned() else {
+                // `count;` declared before the constructor's `this.count = $state(..)`: upstream
+                // drops it (the inserted accessors replace it; an own field would shadow them)
+                if !p.computed
+                    && !p.is_static
+                    && let Some(name) = classes::get_name(&p.key)
+                    && fields.get(&name).is_some_and(|f| f.ctor && f.public)
+                {
+                    self.edits.overwrite(p.start, p.end, String::new());
+                    continue;
+                }
                 w.visit(self, node, el_ref, &scope);
                 continue;
             };
