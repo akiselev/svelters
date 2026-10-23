@@ -427,15 +427,24 @@ The `part-<name>:` variants and provider states each element has (its state vari
 | Element | Parts (node parts marked *) | Provider states |
 |---|---|---|
 | `button` | `icon`, `label` | – |
+| `calendar` | `header`, `prev`, `next`, `month`, `year`, `grid`, `day`, `weekday`, `week-number` | – |
 | `checkbox` | `indicator`, `mark`, `icon`, `label` | – |
 | `collapsing-header` | `header`, `twistie`, `label` | – |
+| `color-editor` | `square`, `hue`, `alpha`, `handle`, `fields`, `field`, `swatches`, `swatch-cell` | – |
+| `color-picker` | `swatch`, `chevron`, `popup`, `square`, `hue`, `alpha`, `handle`, `fields`, `field`, `swatches`, `swatch-cell`, `save`, `cancel` | – |
 | `combo-box` | `label`, `chevron`, `popup`, `option` | – |
+| `date-picker` | `chevron`, `popup`, `header`, `prev`, `next`, `month`, `year`, `grid`, `day`, `weekday`, `week-number`, `save`, `cancel` | – |
+| `drag-value` | `text`, `inc`, `dec` | – |
 | `frame` | `caption`, `indicator`, `mark` | – |
 | `progress-bar` | `track`, `fill` | – |
 | `radio-button` | `indicator`, `dot`, `icon`, `label` | – |
+| `range-slider` | `track`, `range`, `rest`, `low-thumb`, `high-thumb`, `tick`, `low-value`, `high-value` | – |
 | `scroll-area` | – | `sv.overflow-top`, `sv.overflow-bottom`, `sv.overflow-left`, `sv.overflow-right` |
 | `scrollbar` | – | `sv.overflow-top`, `sv.overflow-bottom`, `sv.overflow-left`, `sv.overflow-right` |
+| `slider` | `track`, `fill`, `rest`, `thumb`, `tick`, `mark-label`, `value-box` | – |
 | `switch` | `track`, `knob` | – |
+| `tree-view` | – | `sv.overflow-top`, `sv.overflow-bottom`, `sv.overflow-left`, `sv.overflow-right` |
+| `virtual-list` | – | `sv.overflow-top`, `sv.overflow-bottom`, `sv.overflow-left`, `sv.overflow-right` |
 
 ## Not supported
 

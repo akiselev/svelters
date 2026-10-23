@@ -47,7 +47,7 @@ Text, icons and indicators that show something.
 | [`<b>`](b.md) | Bold inline text (`font-weight: 700` from the theme's base sheet). |
 | [`<code>`](code.md) | Inline code: the monospace font on the field fill (theme's base sheet). |
 | [`<i>`](i.md) | Italic inline text (`font-style: italic` from the theme's base sheet). |
-| [`<icon>`](icon.md) | A glyph from an icon font the embedder registered (SVP6), by name or as text. |
+| [`<icon>`](icon.md) | An icon from the icon registry by key (ICR1), or a glyph from an icon font the embedder registered (SVP6), by name or as text. |
 | [`<label>`](label.md) | Static text; with inline run children (`<b>`, `<i>`, `<code>`, `<a>`, `<span>`) one paragraph of styled runs (RT2). |
 | [`<progress-bar>`](progress-bar.md) | A horizontal bar filled to `fraction`, as wide as its rect. |
 | [`Run`](run.md) | Common properties of the inline runs (`span`, `b`, `i`, `code`, `a`): text inside a `label`, laid out with the label's other runs as one paragraph, never by taffy. |
@@ -123,8 +123,10 @@ Buttons that open a picker for a date or colour.
 
 | Element | What it is |
 |---|---|
-| [`<color-picker>`](color-picker.md) | A colour swatch; clicking it opens egui's colour picker popup. |
-| [`<date-picker>`](date-picker.md) | A button showing a date; clicking it opens a calendar popup (Save/Cancel). |
+| [`<calendar>`](calendar.md) | An inline month calendar (Qt's `QCalendarWidget`): a header with previous/next, a weekday row, ISO week numbers and a 6×7 day grid. |
+| [`<color-editor>`](color-editor.md) | An inline colour editor (the body of Qt's `QColorDialog`, GTK's `ColorChooserWidget`): a saturation/value square, hue and alpha strips, hex and channel fields, a palette and custom colours. |
+| [`<color-picker>`](color-picker.md) | A colour swatch drop button; clicking it opens the colour editor (the `color-editor` kind's) in a popup. |
+| [`<date-picker>`](date-picker.md) | A drop button showing a date; clicking it opens the calendar (the `calendar` kind's) in a popup, with Save/Cancel unless `commit-mode="immediate"`. |
 
 ## Media
 

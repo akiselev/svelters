@@ -3207,6 +3207,59 @@ export const UTILITIES = {
    ],
    "provider_states": []
   },
+  "calendar": {
+   "kind": "Calendar",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover",
+    "read-only",
+    "read-write"
+   ],
+   "parts": [
+    {
+     "name": "header",
+     "node": false
+    },
+    {
+     "name": "prev",
+     "node": false
+    },
+    {
+     "name": "next",
+     "node": false
+    },
+    {
+     "name": "month",
+     "node": false
+    },
+    {
+     "name": "year",
+     "node": false
+    },
+    {
+     "name": "grid",
+     "node": false
+    },
+    {
+     "name": "day",
+     "node": false
+    },
+    {
+     "name": "weekday",
+     "node": false
+    },
+    {
+     "name": "week-number",
+     "node": false
+    }
+   ],
+   "provider_states": []
+  },
   "canvas": {
    "kind": "Canvas",
    "states": [
@@ -3285,8 +3338,8 @@ export const UTILITIES = {
    ],
    "provider_states": []
   },
-  "color-picker": {
-   "kind": "ColorPicker",
+  "color-editor": {
+   "kind": "ColorEditor",
    "states": [
     "active",
     "disabled",
@@ -3296,7 +3349,108 @@ export const UTILITIES = {
     "focus-within",
     "hover"
    ],
-   "parts": [],
+   "parts": [
+    {
+     "name": "square",
+     "node": false
+    },
+    {
+     "name": "hue",
+     "node": false
+    },
+    {
+     "name": "alpha",
+     "node": false
+    },
+    {
+     "name": "handle",
+     "node": false
+    },
+    {
+     "name": "fields",
+     "node": false
+    },
+    {
+     "name": "field",
+     "node": false
+    },
+    {
+     "name": "swatches",
+     "node": false
+    },
+    {
+     "name": "swatch-cell",
+     "node": false
+    }
+   ],
+   "provider_states": []
+  },
+  "color-picker": {
+   "kind": "ColorPicker",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover",
+    "open"
+   ],
+   "parts": [
+    {
+     "name": "swatch",
+     "node": false
+    },
+    {
+     "name": "chevron",
+     "node": false
+    },
+    {
+     "name": "popup",
+     "node": false
+    },
+    {
+     "name": "square",
+     "node": false
+    },
+    {
+     "name": "hue",
+     "node": false
+    },
+    {
+     "name": "alpha",
+     "node": false
+    },
+    {
+     "name": "handle",
+     "node": false
+    },
+    {
+     "name": "fields",
+     "node": false
+    },
+    {
+     "name": "field",
+     "node": false
+    },
+    {
+     "name": "swatches",
+     "node": false
+    },
+    {
+     "name": "swatch-cell",
+     "node": false
+    },
+    {
+     "name": "save",
+     "node": false
+    },
+    {
+     "name": "cancel",
+     "node": false
+    }
+   ],
    "provider_states": []
   },
   "combo-box": {
@@ -3344,9 +3498,65 @@ export const UTILITIES = {
     "exiting",
     "focus",
     "focus-within",
-    "hover"
+    "hover",
+    "open",
+    "read-only",
+    "read-write"
    ],
-   "parts": [],
+   "parts": [
+    {
+     "name": "chevron",
+     "node": false
+    },
+    {
+     "name": "popup",
+     "node": false
+    },
+    {
+     "name": "header",
+     "node": false
+    },
+    {
+     "name": "prev",
+     "node": false
+    },
+    {
+     "name": "next",
+     "node": false
+    },
+    {
+     "name": "month",
+     "node": false
+    },
+    {
+     "name": "year",
+     "node": false
+    },
+    {
+     "name": "grid",
+     "node": false
+    },
+    {
+     "name": "day",
+     "node": false
+    },
+    {
+     "name": "weekday",
+     "node": false
+    },
+    {
+     "name": "week-number",
+     "node": false
+    },
+    {
+     "name": "save",
+     "node": false
+    },
+    {
+     "name": "cancel",
+     "node": false
+    }
+   ],
    "provider_states": []
   },
   "drag-value": {
@@ -3360,7 +3570,20 @@ export const UTILITIES = {
     "focus-within",
     "hover"
    ],
-   "parts": [],
+   "parts": [
+    {
+     "name": "text",
+     "node": false
+    },
+    {
+     "name": "inc",
+     "node": false
+    },
+    {
+     "name": "dec",
+     "node": false
+    }
+   ],
    "provider_states": []
   },
   "frame": {
@@ -3598,7 +3821,40 @@ export const UTILITIES = {
     "focus-within",
     "hover"
    ],
-   "parts": [],
+   "parts": [
+    {
+     "name": "track",
+     "node": false
+    },
+    {
+     "name": "range",
+     "node": false
+    },
+    {
+     "name": "rest",
+     "node": false
+    },
+    {
+     "name": "low-thumb",
+     "node": false
+    },
+    {
+     "name": "high-thumb",
+     "node": false
+    },
+    {
+     "name": "tick",
+     "node": false
+    },
+    {
+     "name": "low-value",
+     "node": false
+    },
+    {
+     "name": "high-value",
+     "node": false
+    }
+   ],
    "provider_states": []
   },
   "scroll-area": {
@@ -3674,7 +3930,36 @@ export const UTILITIES = {
     "focus-within",
     "hover"
    ],
-   "parts": [],
+   "parts": [
+    {
+     "name": "track",
+     "node": false
+    },
+    {
+     "name": "fill",
+     "node": false
+    },
+    {
+     "name": "rest",
+     "node": false
+    },
+    {
+     "name": "thumb",
+     "node": false
+    },
+    {
+     "name": "tick",
+     "node": false
+    },
+    {
+     "name": "mark-label",
+     "node": false
+    },
+    {
+     "name": "value-box",
+     "node": false
+    }
+   ],
    "provider_states": []
   },
   "span": {
@@ -3835,13 +4120,23 @@ export const UTILITIES = {
    "kind": "TreeView",
    "states": [],
    "parts": [],
-   "provider_states": []
+   "provider_states": [
+    "sv.overflow-top",
+    "sv.overflow-bottom",
+    "sv.overflow-left",
+    "sv.overflow-right"
+   ]
   },
   "virtual-list": {
    "kind": "VirtualList",
    "states": [],
    "parts": [],
-   "provider_states": []
+   "provider_states": [
+    "sv.overflow-top",
+    "sv.overflow-bottom",
+    "sv.overflow-left",
+    "sv.overflow-right"
+   ]
   },
   "window": {
    "kind": "Window",

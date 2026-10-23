@@ -1002,6 +1002,410 @@
       ],
       "text_content": "text"
     },
+    "Calendar": {
+      "a11y": {
+        "actions": [
+          "Focus"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name"
+        ],
+        "note": "A `Grid` of six `Row`s of `GridCell`s, each named by its ISO date (`selected`, `disabled`, Click); previous/next are `Button`s. The grid is one tab stop and the arrow keys rove its days.",
+        "role": "Grid",
+        "value": "the picked date",
+        "variants": []
+      },
+      "abstract": false,
+      "bindings": {
+        "value": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": true,
+          "property": "value",
+          "provenance": "svelters-egui: the svelters' own (OW6) widget writes value into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": true,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "category": "pickers",
+      "chain": [
+        "Calendar",
+        "Widget"
+      ],
+      "children": null,
+      "css_hidden": [],
+      "css_note": "Parts: `header`, `prev`, `next`, `month`, `year`, `weekday`, `week-number`, `grid`, `day`. Day states `:hover`, `:selected`, `:current` (the keyboard cursor, ringed while `:focus-visible`), `:disabled`, and the part names `today`, `weekend`, `other-month` plus `day-parts`' names, painted from the UA tables until per-day part styles reach egui.",
+      "doc": "An inline month calendar (Qt's `QCalendarWidget`): a header with previous/next, a weekday row, ISO week numbers and a 6×7 day grid. `date-picker` shows the same calendar in its popup.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "svelters' own (OW6)",
+      "paint": "provider",
+      "parts": [
+        {
+          "doc": "",
+          "name": "header",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "prev",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "next",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "month",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "year",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "grid",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "day",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "weekday",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "week-number",
+          "node": false
+        }
+      ],
+      "present": null,
+      "props": {
+        "calendar-week": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shows ISO week numbers in front of each week (`::part(week-number)`).",
+          "js": "calendar-week",
+          "native": "calendar-week",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Calendar:calendar-week",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "day-parts": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Extra part names per date, `\"YYYY-MM-DD name…\"` each: `[\"2026-10-22 milestone\"]` makes that day match `::part(day milestone)`.",
+          "js": "day-parts",
+          "native": "day-parts",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Calendar:day-parts",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "first-day": {
+          "construct_only": false,
+          "default": "auto",
+          "doc": "The weekday the grid starts on; `auto` is the locale's (Monday until IN1).",
+          "js": "first-day",
+          "native": "first-day",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Calendar:first-day",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "auto",
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday"
+          ],
+          "writable": true
+        },
+        "max": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The last day that can be picked (ISO 8601); days after it are `:disabled`. `\"\"`: no limit.",
+          "js": "max",
+          "native": "max",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Calendar:max",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "min": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The first day that can be picked (ISO 8601); days before it are `:disabled`. `\"\"`: no limit.",
+          "js": "min",
+          "native": "min",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Calendar:min",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "navigation": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shows the header with the previous/next month buttons and the month and year.",
+          "js": "navigation",
+          "native": "navigation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Calendar:navigation",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "read-only": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Shows and roves the calendar but never picks (Qt's `NoSelection`).",
+          "js": "read-only",
+          "native": "read-only",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Calendar:read-only",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "value": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The picked date, ISO 8601 (`2026-10-22`); `\"\"` for none.",
+          "js": "value",
+          "native": "value",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Calendar:value",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "weekday-format": {
+          "construct_only": false,
+          "default": "short",
+          "doc": "The weekday header: `narrow` (M), `short` (Mo), `long` (Monday) or `none` (no header row).",
+          "js": "weekday-format",
+          "native": "weekday-format",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Calendar:weekday-format",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "narrow",
+            "short",
+            "long",
+            "none"
+          ],
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "provider_states": [],
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user picked a day; carries it (ISO 8601).",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A pick is a commit (§2.4); carries the date.",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "page-changed": {
+          "args": [
+            {
+              "name": "year",
+              "type": "i64"
+            },
+            {
+              "name": "month",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user moved to another month (prev/next, PageUp/PageDown, arrows across a month).",
+          "handler_result": "none",
+          "js_event": "page-changed",
+          "name": "page-changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        },
+        {
+          "name": "read-only",
+          "negated": [
+            ":read-write"
+          ],
+          "pseudo": [
+            ":read-only"
+          ],
+          "source": "kind",
+          "when": "`read-only` is set"
+        }
+      ],
+      "text_content": null
+    },
     "Canvas": {
       "a11y": {
         "actions": [
@@ -1723,27 +2127,51 @@
       ],
       "text_content": "text"
     },
-    "ColorPicker": {
+    "ColorEditor": {
       "a11y": {
         "actions": [
-          "Click",
           "Focus"
         ],
         "author_id": "anchor",
         "invalid": true,
         "name_from": [
-          "accessible-name",
-          "tooltip",
-          "\"Color\""
+          "accessible-name"
         ],
-        "note": "",
-        "role": "ColorWell",
-        "value": "the colour",
+        "note": "A `Group` holding a `Slider` each for saturation/value, hue and alpha, a `SpinButton` per channel box, a `TextInput` for hex (SetValue), and a `Button` per swatch and custom colour. Each slider and box is a tab stop; arrows step it (Shift ×10).",
+        "role": "Group",
+        "value": "the colour (hex)",
         "variants": []
       },
       "abstract": false,
       "bindings": {
+        "custom-colors": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "custom-colors",
+          "provenance": "svelters-egui: the svelters' own (OW6) widget writes custom-colors into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
         "value": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
           "compare_before_set": true,
           "direction": "two_way",
           "echo": "none",
@@ -1755,7 +2183,7 @@
           },
           "natively_normalizes": true,
           "property": "value",
-          "provenance": "svelters-egui: the egui::color_picker::color_edit_button_hsva widget writes value into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "provenance": "svelters-egui: the svelters' own (OW6) widget writes value into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
           "read_back": true,
           "sync_signals_on_set": [],
           "value": {
@@ -1765,31 +2193,72 @@
       },
       "category": "pickers",
       "chain": [
-        "ColorPicker",
+        "ColorEditor",
         "Widget"
       ],
       "children": null,
       "css_hidden": [],
-      "css_note": "The swatch shows the colour; the picker popup follows the theme.",
-      "doc": "A colour swatch; clicking it opens egui's colour picker popup.",
+      "css_note": "Parts: `square`, `hue`, `alpha`, `handle` (`:dragging`, `:focus-visible`), `fields`, `field`, `swatches`, `swatch-cell`. The checkerboard under alpha is painted until `background-image` repeating gradients reach egui.",
+      "doc": "An inline colour editor (the body of Qt's `QColorDialog`, GTK's `ColorChooserWidget`): a saturation/value square, hue and alpha strips, hex and channel fields, a palette and custom colours. `color-picker` shows the same editor in its popup.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
-      "native": "egui::color_picker::color_edit_button_hsva",
-      "paint": "box",
-      "parts": [],
+      "native": "svelters' own (OW6)",
+      "paint": "provider",
+      "parts": [
+        {
+          "doc": "",
+          "name": "square",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "hue",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "alpha",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "handle",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "fields",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "field",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "swatches",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "swatch-cell",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "alpha": {
           "construct_only": false,
           "default": "opaque",
-          "doc": "Whether the popup edits alpha (`egui::color_picker::Alpha`): `opaque` hides it, `blend` edits it, `blend-or-additive` also offers additive.",
+          "doc": "`opaque` hides the alpha strip; `blend` and `blend-or-additive` show it.",
           "js": "alpha",
           "native": "alpha",
           "nullable": false,
           "observe": {
             "class": "set_only",
-            "fact": "egui:ColorPicker:alpha",
+            "fact": "egui:ColorEditor:alpha",
             "mechanism": "scene",
             "verified": "weak"
           },
@@ -1802,16 +2271,69 @@
           ],
           "writable": true
         },
+        "custom-colors": {
+          "construct_only": false,
+          "default": null,
+          "doc": "The user's colours (`bind:custom-colors`, up to 16): the add cell appends the current colour. Persist it with `uiState()`.",
+          "js": "custom-colors",
+          "native": "custom-colors",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:ColorEditor:custom-colors",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "fields": {
+          "construct_only": false,
+          "default": "hex rgb",
+          "doc": "Which fields show under the strips, space-separated: `hex` (a hex field), `rgb` (R, G, B boxes, 0–255), `hsv` (H 0–360, S and V 0–100).",
+          "js": "fields",
+          "native": "fields",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ColorEditor:fields",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "swatches": {
+          "construct_only": false,
+          "default": null,
+          "doc": "A palette of hex colours shown as cells (`::part(swatch-cell)`); a click picks one.",
+          "js": "swatches",
+          "native": "swatches",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ColorEditor:swatches",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
         "value": {
           "construct_only": false,
           "default": "#000000",
-          "doc": "The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted). Editing it in the popup changes it.",
+          "doc": "The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted).",
           "js": "value",
           "native": "value",
           "nullable": false,
           "observe": {
             "class": "exact",
-            "fact": "egui:ColorPicker:value",
+            "fact": "egui:ColorEditor:value",
             "mechanism": "widget",
             "verified": "delivery"
           },
@@ -1833,10 +2355,26 @@
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "The user edited the colour; carries it (CSS hex, once per frame while dragging).",
+          "doc": "The user edited the colour (each drag frame, step, field or swatch); carries it (CSS hex).",
           "handler_result": "none",
           "js_event": "changed",
           "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A commit point: a drag released, a key step, a field set, a swatch picked (§2.4).",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -1898,6 +2436,377 @@
           ],
           "source": "scene",
           "when": "it plays an out transition before it is removed"
+        }
+      ],
+      "text_content": null
+    },
+    "ColorPicker": {
+      "a11y": {
+        "actions": [
+          "Click",
+          "Focus"
+        ],
+        "author_id": "anchor",
+        "invalid": true,
+        "name_from": [
+          "accessible-name",
+          "tooltip",
+          "\"Color\""
+        ],
+        "note": "A `ColorWell` named \"Color\" (or its accessible name) with the hex as its value, `expanded` while open. The popup holds the `color-editor` kind's sliders, boxes and swatches and, with `commit-mode=\"confirm\"`, Save and Cancel; Escape closes it and focus returns.",
+        "role": "ColorWell",
+        "value": "the colour",
+        "variants": []
+      },
+      "abstract": false,
+      "bindings": {
+        "custom-colors": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "custom-colors",
+          "provenance": "svelters-egui: the svelters' own (OW6; was egui::color_picker::color_edit_button_hsva) widget writes custom-colors into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "value": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": true,
+          "property": "value",
+          "provenance": "svelters-egui: the svelters' own (OW6; was egui::color_picker::color_edit_button_hsva) widget writes value into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": true,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
+      "category": "pickers",
+      "chain": [
+        "ColorPicker",
+        "Widget"
+      ],
+      "children": null,
+      "css_hidden": [],
+      "css_note": "The button shows `::part(swatch)` (a checkerboard under alpha) and R14's `::part(chevron)`; the popup is `::part(popup)` holding the `color-editor` kind's parts and `::part(save)`, `::part(cancel)`.",
+      "doc": "A colour swatch drop button; clicking it opens the colour editor (the `color-editor` kind's) in a popup.",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "svelters' own (OW6; was egui::color_picker::color_edit_button_hsva)",
+      "paint": "provider",
+      "parts": [
+        {
+          "doc": "",
+          "name": "swatch",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "chevron",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "popup",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "square",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "hue",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "alpha",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "handle",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "fields",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "field",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "swatches",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "swatch-cell",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "save",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "cancel",
+          "node": false
+        }
+      ],
+      "present": null,
+      "props": {
+        "alpha": {
+          "construct_only": false,
+          "default": "opaque",
+          "doc": "Whether the popup edits alpha: `opaque` hides the alpha strip, `blend` and `blend-or-additive` show it (additive colours are not offered by the own editor).",
+          "js": "alpha",
+          "native": "alpha",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ColorPicker:alpha",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "opaque",
+            "blend",
+            "blend-or-additive"
+          ],
+          "writable": true
+        },
+        "commit-mode": {
+          "construct_only": false,
+          "default": "live",
+          "doc": "`live`: each edit changes `value` (closing the popup commits); `confirm`: edits are pending until Save, Cancel or Escape drops them (Qt's dialog).",
+          "js": "commit-mode",
+          "native": "commit-mode",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ColorPicker:commit-mode",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "live",
+            "confirm"
+          ],
+          "writable": true
+        },
+        "custom-colors": {
+          "construct_only": false,
+          "default": null,
+          "doc": "The user's colours (`bind:custom-colors`, up to 16): the add cell appends the current colour. Persist it with `uiState()`.",
+          "js": "custom-colors",
+          "native": "custom-colors",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:ColorPicker:custom-colors",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "fields": {
+          "construct_only": false,
+          "default": "hex rgb",
+          "doc": "Which fields show under the strips, space-separated: `hex` (a hex field), `rgb` (R, G, B boxes, 0–255), `hsv` (H 0–360, S and V 0–100).",
+          "js": "fields",
+          "native": "fields",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ColorPicker:fields",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "swatches": {
+          "construct_only": false,
+          "default": null,
+          "doc": "A palette of hex colours shown as cells (`::part(swatch-cell)`); a click picks one.",
+          "js": "swatches",
+          "native": "swatches",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:ColorPicker:swatches",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "value": {
+          "construct_only": false,
+          "default": "#000000",
+          "doc": "The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted). Editing it in the popup changes it.",
+          "js": "value",
+          "native": "value",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:ColorPicker:value",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "provider_states": [],
+      "signals": {
+        "changed": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user edited the colour; carries it (CSS hex, once per frame while dragging).",
+          "handler_result": "none",
+          "js_event": "changed",
+          "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A commit point (§2.4): `live`, a drag released, a step, a field or a swatch, and the popup closing after edits; `confirm`, Save.",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over it"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down on it"
+        },
+        {
+          "name": "focused",
+          "negated": [],
+          "pseudo": [
+            ":focus"
+          ],
+          "source": "response",
+          "when": "it has keyboard focus"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "it, or an element inside it, has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        },
+        {
+          "name": "open",
+          "negated": [],
+          "pseudo": [
+            ":open"
+          ],
+          "source": "kind",
+          "when": "its editor popup is shown"
         }
       ],
       "text_content": null
@@ -2316,7 +3225,7 @@
           "accessible-name",
           "the shown date"
         ],
-        "note": "The calendar popup's controls are nodes of their own.",
+        "note": "A `Button` named by the shown date (or its accessible name), `expanded` while open, `has_popup` dialog. The popup holds the calendar's `Grid` (cells named by ISO date) and, with `commit-mode=\"confirm\"`, Save and Cancel buttons; Escape closes it and focus returns to the button.",
         "role": "Button",
         "value": null,
         "variants": []
@@ -2324,6 +3233,10 @@
       "abstract": false,
       "bindings": {
         "value": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
           "compare_before_set": true,
           "direction": "two_way",
           "echo": "none",
@@ -2335,7 +3248,7 @@
           },
           "natively_normalizes": true,
           "property": "value",
-          "provenance": "svelters-egui: the egui_extras::DatePickerButton widget writes value into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "provenance": "svelters-egui: the svelters' own (OW6; was egui_extras::DatePickerButton) widget writes value into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
           "read_back": true,
           "sync_signals_on_set": [],
           "value": {
@@ -2350,14 +3263,80 @@
       ],
       "children": null,
       "css_hidden": [],
-      "css_note": "The calendar popup follows the theme.",
-      "doc": "A button showing a date; clicking it opens a calendar popup (Save/Cancel).",
+      "css_note": "The button: R4's field look with R14's chevron (`::part(chevron)`); the popup is `::part(popup)` (OW3's surface) holding the `calendar` kind's parts (`header`, `prev`, `next`, `month`, `year`, `weekday`, `week-number`, `grid`, `day`) and `::part(save)`, `::part(cancel)`.",
+      "doc": "A drop button showing a date; clicking it opens the calendar (the `calendar` kind's) in a popup, with Save/Cancel unless `commit-mode=\"immediate\"`.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
-      "native": "egui_extras::DatePickerButton",
-      "paint": "box",
-      "parts": [],
+      "native": "svelters' own (OW6; was egui_extras::DatePickerButton)",
+      "paint": "provider",
+      "parts": [
+        {
+          "doc": "",
+          "name": "chevron",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "popup",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "header",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "prev",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "next",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "month",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "year",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "grid",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "day",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "weekday",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "week-number",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "save",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "cancel",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "calendar-week": {
@@ -2377,6 +3356,72 @@
           "type": "bool",
           "writable": true
         },
+        "commit-mode": {
+          "construct_only": false,
+          "default": "confirm",
+          "doc": "`confirm`: a picked day is pending until Save (Enter saves, Cancel or Escape drops it); `immediate`: a pick commits and closes the popup (Qt).",
+          "js": "commit-mode",
+          "native": "commit-mode",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DatePicker:commit-mode",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "confirm",
+            "immediate"
+          ],
+          "writable": true
+        },
+        "day-parts": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Extra part names per date, `\"YYYY-MM-DD name…\"` each: `[\"2026-10-22 milestone\"]` makes that day match `::part(day milestone)`.",
+          "js": "day-parts",
+          "native": "day-parts",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DatePicker:day-parts",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
+          "writable": true
+        },
+        "first-day": {
+          "construct_only": false,
+          "default": "auto",
+          "doc": "The weekday the grid starts on; `auto` is the locale's (Monday until IN1).",
+          "js": "first-day",
+          "native": "first-day",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DatePicker:first-day",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "auto",
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+            "sunday"
+          ],
+          "writable": true
+        },
         "format": {
           "construct_only": false,
           "default": "%Y-%m-%d",
@@ -2394,10 +3439,78 @@
           "type": "string",
           "writable": true
         },
+        "max": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The last day that can be picked (ISO 8601); days after it are `:disabled`. `\"\"`: no limit.",
+          "js": "max",
+          "native": "max",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DatePicker:max",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "min": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The first day that can be picked (ISO 8601); days before it are `:disabled`. `\"\"`: no limit.",
+          "js": "min",
+          "native": "min",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DatePicker:min",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "navigation": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shows the header with the previous/next month buttons and the month and year.",
+          "js": "navigation",
+          "native": "navigation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DatePicker:navigation",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "read-only": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Shows and roves the calendar but never picks (Qt's `NoSelection`).",
+          "js": "read-only",
+          "native": "read-only",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DatePicker:read-only",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "value": {
           "construct_only": false,
           "default": "",
-          "doc": "The date, ISO 8601 (`2026-10-22`); `\"\"` for none (the button shows today). Picking a day and pressing Save changes it.",
+          "doc": "The date, ISO 8601 (`2026-10-22`); `\"\"` for none (the button shows today). Picking a day (and, with `commit-mode=\"confirm\"`, pressing Save) changes it.",
           "js": "value",
           "native": "value",
           "nullable": false,
@@ -2409,6 +3522,29 @@
           },
           "readable": true,
           "type": "string",
+          "writable": true
+        },
+        "weekday-format": {
+          "construct_only": false,
+          "default": "short",
+          "doc": "The weekday header: `narrow` (M), `short` (Mo), `long` (Monday) or `none` (no header row).",
+          "js": "weekday-format",
+          "native": "weekday-format",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DatePicker:weekday-format",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "narrow",
+            "short",
+            "long",
+            "none"
+          ],
           "writable": true
         }
       },
@@ -2429,6 +3565,42 @@
           "handler_result": "none",
           "js_event": "changed",
           "name": "changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A pick was applied (§2.4): Save, or the pick itself with `commit-mode=\"immediate\"`.",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "page-changed": {
+          "args": [
+            {
+              "name": "year",
+              "type": "i64"
+            },
+            {
+              "name": "month",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user moved the calendar to another month.",
+          "handler_result": "none",
+          "js_event": "page-changed",
+          "name": "page-changed",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -2490,6 +3662,26 @@
           ],
           "source": "scene",
           "when": "it plays an out transition before it is removed"
+        },
+        {
+          "name": "open",
+          "negated": [],
+          "pseudo": [
+            ":open"
+          ],
+          "source": "kind",
+          "when": "its calendar popup is shown"
+        },
+        {
+          "name": "read-only",
+          "negated": [
+            ":read-write"
+          ],
+          "pseudo": [
+            ":read-only"
+          ],
+          "source": "kind",
+          "when": "`read-only` is set"
         }
       ],
       "text_content": null
@@ -2553,9 +3745,97 @@
       "methods": {},
       "native": "egui::DragValue",
       "paint": "box",
-      "parts": [],
+      "parts": [
+        {
+          "doc": "The number's text (paint part).",
+          "name": "text",
+          "node": false
+        },
+        {
+          "doc": "The step buttons (paint parts with their own `:hover`/`:active`/`:disabled`).",
+          "name": "inc",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "dec",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
+        "accelerated": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Holding a step button speeds it up (Qt `accelerated`).",
+          "js": "accelerated",
+          "native": "accelerated",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:accelerated",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "buttons": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Shows the `dec`/`inc` step buttons at the right end (Qt `buttonSymbols`).",
+          "js": "buttons",
+          "native": "buttons",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:buttons",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "commit": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Commit-only mode (Qt `keyboardTracking=false`): `value` moves only at a commit point.",
+          "js": "commit",
+          "native": "commit",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:commit",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "correction": {
+          "construct_only": false,
+          "default": "nearest",
+          "doc": "An out-of-range typed value commits to the `nearest` bound (default) or the `previous` value.",
+          "js": "correction",
+          "native": "correction",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:correction",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "nearest",
+            "previous"
+          ],
+          "writable": true
+        },
         "decimals": {
           "construct_only": false,
           "default": null,
@@ -2571,6 +3851,40 @@
           },
           "readable": true,
           "type": "i64",
+          "writable": true
+        },
+        "formatter": {
+          "construct_only": false,
+          "default": "",
+          "doc": "A registered formatter (`numfmt::register_formatter`; Qt `textFromValue`).",
+          "js": "formatter",
+          "native": "formatter",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:formatter",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "group-separator": {
+          "construct_only": false,
+          "default": true,
+          "doc": "The locale's group separators (Qt `showGroupSeparator`).",
+          "js": "group-separator",
+          "native": "group-separator",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:group-separator",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         },
         "max": {
@@ -2607,6 +3921,40 @@
           "type": "f64",
           "writable": true
         },
+        "page-step": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "PageUp/PageDown in value units; 0 for ten steps.",
+          "js": "page-step",
+          "native": "page-step",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:page-step",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "parser": {
+          "construct_only": false,
+          "default": "",
+          "doc": "A registered parser (`numfmt::register_parser`; Qt `valueFromText`).",
+          "js": "parser",
+          "native": "parser",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:parser",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "prefix": {
           "construct_only": false,
           "default": "",
@@ -2617,6 +3965,40 @@
           "observe": {
             "class": "set_only",
             "fact": "egui:DragValue:prefix",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "read-only": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Shown and focusable, not changed by the user (Qt `readOnly`).",
+          "js": "read-only",
+          "native": "read-only",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:read-only",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "special-value-text": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Shown instead of the number at `min` (Qt `specialValueText`, e.g. \"Auto\").",
+          "js": "special-value-text",
+          "native": "special-value-text",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:special-value-text",
             "mechanism": "scene",
             "verified": "weak"
           },
@@ -2639,6 +4021,44 @@
           },
           "readable": true,
           "type": "f64",
+          "writable": true
+        },
+        "step": {
+          "construct_only": false,
+          "default": 1.0,
+          "doc": "One step (Up/Down, a step button, a wheel notch; Qt `singleStep`).",
+          "js": "step",
+          "native": "step",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:step",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "step-type": {
+          "construct_only": false,
+          "default": "default",
+          "doc": "`default`, or `adaptive` (Qt AdaptiveDecimalStepType: one decade below the value).",
+          "js": "step-type",
+          "native": "step-type",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:step-type",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "default",
+            "adaptive"
+          ],
           "writable": true
         },
         "suffix": {
@@ -2673,6 +4093,45 @@
           },
           "readable": true,
           "type": "f64",
+          "writable": true
+        },
+        "wheel": {
+          "construct_only": false,
+          "default": "focused",
+          "doc": "When the wheel steps: `focused` (default: over the field while it has focus), `hover`, `off`.",
+          "js": "wheel",
+          "native": "wheel",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:wheel",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "focused",
+            "hover",
+            "off"
+          ],
+          "writable": true
+        },
+        "wrap": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Stepping past one end goes to the other (Qt `wrapping`).",
+          "js": "wrap",
+          "native": "wrap",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DragValue:wrap",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         }
       },
@@ -2731,6 +4190,38 @@
           "handler_result": "none",
           "js_event": "drag-stopped",
           "name": "drag-stopped",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "input": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "§2.4's live signal (as `changed`).",
+          "handler_result": "none",
+          "js_event": "input",
+          "name": "input",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "submit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Enter in the field; carries the value.",
+          "handler_result": "none",
+          "js_event": "submit",
+          "name": "submit",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -3470,7 +4961,7 @@
       "children": null,
       "css_hidden": [],
       "css_note": "The glyph takes `color`. With `frame`, it is drawn as a button and `:focus` matches.",
-      "doc": "A glyph from an icon font the embedder registered (SVP6), by name or as text. With `frame` it is an icon button. Its accessible name is `accessible-name`, else `tooltip`, else `name`.",
+      "doc": "An icon from the icon registry by key (ICR1), or a glyph from an icon font the embedder registered (SVP6), by name or as text. With `frame` it is an icon button. Its accessible name is `accessible-name`, else `tooltip`, else `name`.",
       "interface": false,
       "lifetime": "owned",
       "methods": {},
@@ -3550,7 +5041,7 @@
         "name": {
           "construct_only": false,
           "default": "",
-          "doc": "The glyph's name in the family's name table (`svelters_egui::fonts::register_icons`); also the default accessible name.",
+          "doc": "An icon registry key (`file.save`, `debug.step-over`; `svelters_egui::icons`) when `family` is `icons` and the key is registered: drawn from its SVG masters (optical size by physical pixels), tinted by CSS `color`, with the `--icon-subject`/`--icon-accent`/`--icon-badge` colour slots. Otherwise the glyph's name in the family's name table (`svelters_egui::fonts::register_icons`). Also the default accessible name.",
           "js": "name",
           "native": "name",
           "nullable": false,
@@ -3584,7 +5075,7 @@
         "size": {
           "construct_only": false,
           "default": null,
-          "doc": "Font size in points; null for the body size.",
+          "doc": "Font size in points; null for the body size (16 for a registry icon).",
           "js": "size",
           "native": "size",
           "nullable": true,
@@ -6200,9 +7691,67 @@
       "methods": {},
       "native": "egui::RangeSlider",
       "paint": "box",
-      "parts": [],
+      "parts": [
+        {
+          "doc": "",
+          "name": "track",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "range",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "rest",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "low-thumb",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "high-thumb",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "tick",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "low-value",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "high-value",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
+        "commit": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Commit-only mode: `low`/`high` move at the release.",
+          "js": "commit",
+          "native": "commit",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:commit",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "high": {
           "construct_only": false,
           "default": 100.0,
@@ -6218,6 +7767,23 @@
           },
           "readable": true,
           "type": "f64",
+          "writable": true
+        },
+        "inverted": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Max at the start.",
+          "js": "inverted",
+          "native": "inverted",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:inverted",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         },
         "low": {
@@ -6271,6 +7837,65 @@
           "type": "f64",
           "writable": true
         },
+        "orientation": {
+          "construct_only": false,
+          "default": "horizontal",
+          "doc": "`horizontal` (default) or `vertical`.",
+          "js": "orientation",
+          "native": "orientation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:orientation",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ],
+          "writable": true
+        },
+        "page-step": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "PageUp/PageDown; 0 for ten steps.",
+          "js": "page-step",
+          "native": "page-step",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:page-step",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "scale": {
+          "construct_only": false,
+          "default": "linear",
+          "doc": "`linear` (default) or `log`.",
+          "js": "scale",
+          "native": "scale",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:scale",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "linear",
+            "log"
+          ],
+          "writable": true
+        },
         "show-value": {
           "construct_only": false,
           "default": true,
@@ -6321,6 +7946,68 @@
           "readable": true,
           "type": "string",
           "writable": true
+        },
+        "tick-interval": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Between ticks; 0 for `page-step`.",
+          "js": "tick-interval",
+          "native": "tick-interval",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:tick-interval",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "ticks": {
+          "construct_only": false,
+          "default": "none",
+          "doc": "Tick marks: `none`, `before`, `after`, `both`.",
+          "js": "ticks",
+          "native": "ticks",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:ticks",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "before",
+            "after",
+            "both"
+          ],
+          "writable": true
+        },
+        "wheel": {
+          "construct_only": false,
+          "default": "focused",
+          "doc": "When the wheel steps: `focused` (default), `hover`, `off`.",
+          "js": "wheel",
+          "native": "wheel",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:RangeSlider:wheel",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "focused",
+            "hover",
+            "off"
+          ],
+          "writable": true
         }
       },
       "provenance": {
@@ -6348,6 +8035,17 @@
           "sync": false,
           "sync_required": false
         },
+        "commit": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "drag-started": {
           "args": [],
           "disconnect_on_drop": true,
@@ -6366,6 +8064,17 @@
           "handler_result": "none",
           "js_event": "drag-stopped",
           "name": "drag-stopped",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "input": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "",
+          "handler_result": "none",
+          "js_event": "input",
+          "name": "input",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -7301,6 +9010,10 @@
       "abstract": false,
       "bindings": {
         "value": {
+          "commit": {
+            "arg": 0,
+            "event": "commit"
+          },
           "compare_before_set": true,
           "direction": "two_way",
           "echo": "none",
@@ -7334,9 +9047,96 @@
       "methods": {},
       "native": "egui::Slider",
       "paint": "stock",
-      "parts": [],
+      "parts": [
+        {
+          "doc": "",
+          "name": "track",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "fill",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "rest",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "thumb",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "tick",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "mark-label",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "value-box",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
+        "commit": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Commit-only mode (Qt `tracking=false`): `value` moves at the release, not while dragging.",
+          "js": "commit",
+          "native": "commit",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:commit",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "inverted": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Max at the start (Qt `invertedAppearance`).",
+          "js": "inverted",
+          "native": "inverted",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:inverted",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "marks": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Marks on the rail, drawn as ticks (with labels) instead of the `tick-interval` ticks:\nvalues separated by commas, each optionally `value:label` (`\"0:Low, 50, 100:High\"`).",
+          "js": "marks",
+          "native": "marks",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:marks",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "max": {
           "construct_only": false,
           "default": 100.0,
@@ -7371,6 +9171,65 @@
           "type": "f64",
           "writable": true
         },
+        "orientation": {
+          "construct_only": false,
+          "default": "horizontal",
+          "doc": "`horizontal` (default) or `vertical` (max at the top).",
+          "js": "orientation",
+          "native": "orientation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:orientation",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "horizontal",
+            "vertical"
+          ],
+          "writable": true
+        },
+        "page-step": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "PageUp/PageDown and `track-click=\"page\"` move this much (Qt `pageStep`); 0 for ten steps.",
+          "js": "page-step",
+          "native": "page-step",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:page-step",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "scale": {
+          "construct_only": false,
+          "default": "linear",
+          "doc": "`linear` (default) or `log` (both ends > 0).",
+          "js": "scale",
+          "native": "scale",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:scale",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "linear",
+            "log"
+          ],
+          "writable": true
+        },
         "show-value": {
           "construct_only": false,
           "default": true,
@@ -7381,6 +9240,23 @@
           "observe": {
             "class": "set_only",
             "fact": "egui:Slider:show-value",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "snap-to-marks": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Dragging snaps to the nearest mark.",
+          "js": "snap-to-marks",
+          "native": "snap-to-marks",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:snap-to-marks",
             "mechanism": "scene",
             "verified": "weak"
           },
@@ -7422,6 +9298,67 @@
           "type": "string",
           "writable": true
         },
+        "tick-interval": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Between ticks; 0 for `page-step` (Qt `tickInterval`).",
+          "js": "tick-interval",
+          "native": "tick-interval",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:tick-interval",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "f64",
+          "writable": true
+        },
+        "ticks": {
+          "construct_only": false,
+          "default": "none",
+          "doc": "Tick marks: `none` (default), `before` (above or left), `after`, `both` (Qt `tickPosition`).",
+          "js": "ticks",
+          "native": "ticks",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:ticks",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "before",
+            "after",
+            "both"
+          ],
+          "writable": true
+        },
+        "track-click": {
+          "construct_only": false,
+          "default": "jump",
+          "doc": "A press on the track off the thumb: `jump` there (default) or `page` toward it.",
+          "js": "track-click",
+          "native": "track-click",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:track-click",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "jump",
+            "page"
+          ],
+          "writable": true
+        },
         "value": {
           "construct_only": false,
           "default": 0.0,
@@ -7437,6 +9374,28 @@
           },
           "readable": true,
           "type": "f64",
+          "writable": true
+        },
+        "wheel": {
+          "construct_only": false,
+          "default": "focused",
+          "doc": "When the wheel steps: `focused` (default), `hover`, `off`.",
+          "js": "wheel",
+          "native": "wheel",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Slider:wheel",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "focused",
+            "hover",
+            "off"
+          ],
           "writable": true
         }
       },
@@ -7461,6 +9420,22 @@
           "sync": false,
           "sync_required": false
         },
+        "commit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "drag-started": {
           "args": [],
           "disconnect_on_drop": true,
@@ -7479,6 +9454,38 @@
           "handler_result": "none",
           "js_event": "drag-stopped",
           "name": "drag-stopped",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "input": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "",
+          "handler_result": "none",
+          "js_event": "input",
+          "name": "input",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "submit": {
+          "args": [
+            {
+              "name": "value",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "",
+          "handler_result": "none",
+          "js_event": "submit",
+          "name": "submit",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -10325,6 +12332,28 @@
       "parts": [],
       "present": null,
       "props": {
+        "expand-on": {
+          "construct_only": false,
+          "default": "twistie",
+          "doc": "What toggles a row besides its twistie, Left/Right and AccessKit: `twistie` (nothing more; a double click activates), `click` (a click on the row), `double-click` (Qt's `expandsOnDoubleClick`).",
+          "js": "expand-on",
+          "native": "expand-on",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TreeView:expand-on",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "twistie",
+            "click",
+            "double-click"
+          ],
+          "writable": true
+        },
         "indent": {
           "construct_only": false,
           "default": 16,
@@ -10340,6 +12369,23 @@
           },
           "readable": true,
           "type": "i64",
+          "writable": true
+        },
+        "root-decorated": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Level-0 rows show their twistie (Qt's `rootIsDecorated`).",
+          "js": "root-decorated",
+          "native": "root-decorated",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TreeView:root-decorated",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         },
         "row-drag-type": {
@@ -10419,7 +12465,12 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
-      "provider_states": [],
+      "provider_states": [
+        "sv.overflow-top",
+        "sv.overflow-bottom",
+        "sv.overflow-left",
+        "sv.overflow-right"
+      ],
       "signals": {
         "activate": {
           "args": [
@@ -10532,6 +12583,46 @@
           "handler_result": "none",
           "js_event": "expand",
           "name": "expand",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-clicked": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a: a click on the row at `pos` (item `id`), after the selection moved.",
+          "handler_result": "none",
+          "js_event": "row-clicked",
+          "name": "row-clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-context": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a: a secondary click on the row at `pos` (item `id`): open its context menu.",
+          "handler_result": "none",
+          "js_event": "row-context",
+          "name": "row-context",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -10831,7 +12922,12 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
-      "provider_states": [],
+      "provider_states": [
+        "sv.overflow-top",
+        "sv.overflow-bottom",
+        "sv.overflow-left",
+        "sv.overflow-right"
+      ],
       "signals": {
         "activate": {
           "args": [
@@ -10875,6 +12971,46 @@
           "name": "bind",
           "phases": [],
           "sync": true,
+          "sync_required": false
+        },
+        "row-clicked": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a: a click on the row at `pos` (item `id`), after the selection moved.",
+          "handler_result": "none",
+          "js_event": "row-clicked",
+          "name": "row-clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-context": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a: a secondary click on the row at `pos` (item `id`): open its context menu.",
+          "handler_result": "none",
+          "js_event": "row-context",
+          "name": "row-context",
+          "phases": [],
+          "sync": false,
           "sync_required": false
         },
         "select": {
@@ -11614,10 +13750,14 @@
             {
               "name": "dropped",
               "type": "bool"
+            },
+            {
+              "name": "action",
+              "type": "string"
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "Drag source: the drag ended; `dropped` is true when a target took it.",
+          "doc": "Drag source: the drag ended; `dropped` is true when a target took it, `action` how (`move`, `copy`, `link`; `none` when not dropped).",
           "handler_result": "none",
           "js_event": "drag-end",
           "name": "drag-end",
@@ -11669,10 +13809,14 @@
             {
               "name": "y",
               "type": "f64"
+            },
+            {
+              "name": "action",
+              "type": "string"
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "Drop target: a drag it accepts was released over it; carries the type, the data and the point in the node's own points.",
+          "doc": "Drop target: a drag it accepts was released over it; carries the type, the data, the point in the node's own points and the drop action from the modifiers (`move`; `copy` with Ctrl, Option on macOS; `link` with Ctrl+Shift, Cmd+Option on macOS). Files dragged in from the OS arrive as `text/uri-list` (one `file://` URI per line) with `copy` on a target that accepts that type.",
           "handler_result": "none",
           "js_event": "drop",
           "name": "drop",
@@ -12640,9 +14784,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -12863,9 +15009,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13007,9 +15155,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13089,9 +15239,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13145,9 +15297,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13295,9 +15449,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13394,9 +15550,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13478,9 +15636,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13534,9 +15694,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13590,9 +15752,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13646,9 +15810,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13804,9 +15970,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13862,9 +16030,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -13995,9 +16165,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -14052,9 +16224,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -14120,9 +16294,11 @@
         "tags": [
           "box",
           "button",
+          "calendar",
           "canvas",
           "checkbox",
           "collapsing-header",
+          "color-editor",
           "color-picker",
           "combo-box",
           "date-picker",
@@ -14342,10 +16518,12 @@
     "b": "Bold",
     "box": "Box",
     "button": "Button",
+    "calendar": "Calendar",
     "canvas": "Canvas",
     "checkbox": "Checkbox",
     "code": "Code",
     "collapsing-header": "CollapsingHeader",
+    "color-editor": "ColorEditor",
     "color-picker": "ColorPicker",
     "combo-box": "ComboBox",
     "context-menu": "ContextMenu",

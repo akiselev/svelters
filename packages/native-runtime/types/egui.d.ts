@@ -120,14 +120,14 @@ export interface EguiWidgetProps {
   onanimationend?: (id: number) => void;
   /** Drag source: the user started dragging this node (`drag-type` set). */
   'ondrag-begin'?: () => void;
-  /** Drag source: the drag ended; `dropped` is true when a target took it. */
-  'ondrag-end'?: (dropped: boolean) => void;
+  /** Drag source: the drag ended; `dropped` is true when a target took it, `action` how (`move`, `copy`, `link`; `none` when not dropped). */
+  'ondrag-end'?: (dropped: boolean, action: string) => void;
   /** Drop target: a drag it accepts entered it (`drop-types` set); carries the drag's type. */
   'ondrag-enter'?: (type: string) => void;
   /** Drop target: the drag left, was cancelled, or was dropped here (before `drop`). */
   'ondrag-leave'?: () => void;
-  /** Drop target: a drag it accepts was released over it; carries the type, the data and the point in the node's own points. */
-  ondrop?: (type: string, data: string, x: number, y: number) => void;
+  /** Drop target: a drag it accepts was released over it; carries the type, the data, the point in the node's own points and the drop action from the modifiers (`move`; `copy` with Ctrl, Option on macOS; `link` with Ctrl+Shift, Cmd+Option on macOS). Files dragged in from the OS arrive as `text/uri-list` (one `file://` URI per line) with `copy` on a target that accepts that type. */
+  ondrop?: (type: string, data: string, x: number, y: number, action: string) => void;
   /** A pointer button went down over this node or a descendant (EV1: capture, target, bubble). `preventDefault` keeps the press from egui (no click, drag or focus). */
   onpointerdown?: (e: SvlUiEvent) => void;
   onpointerdowncapture?: (e: SvlUiEvent) => void;
@@ -334,12 +334,37 @@ export interface EguiElements {
     text?: string;
     /** Shows the value box next to the slider. */
     'show-value'?: boolean;
+    /** PageUp/PageDown and `track-click="page"` move this much (Qt `pageStep`); 0 for ten steps. */
+    'page-step'?: number;
+    /** `horizontal` (default) or `vertical` (max at the top). */
+    orientation?: 'horizontal' | 'vertical';
+    /** Tick marks: `none` (default), `before` (above or left), `after`, `both` (Qt `tickPosition`). */
+    ticks?: 'none' | 'before' | 'after' | 'both';
+    /** Between ticks; 0 for `page-step` (Qt `tickInterval`). */
+    'tick-interval'?: number;
+    /** Marks on the rail, drawn as ticks (with labels) instead of the `tick-interval` ticks: values separated by commas, each optionally `value:label` (`"0:Low, 50, 100:High"`). */
+    marks?: string;
+    /** Dragging snaps to the nearest mark. */
+    'snap-to-marks'?: boolean;
+    /** Max at the start (Qt `invertedAppearance`). */
+    inverted?: boolean;
+    /** A press on the track off the thumb: `jump` there (default) or `page` toward it. */
+    'track-click'?: 'jump' | 'page';
+    /** `linear` (default) or `log` (both ends > 0). */
+    scale?: 'linear' | 'log';
+    /** Commit-only mode (Qt `tracking=false`): `value` moves at the release, not while dragging. */
+    commit?: boolean;
+    /** When the wheel steps: `focused` (default), `hover`, `off`. */
+    wheel?: 'focused' | 'hover' | 'off';
     /** The user moved it; carries the new value. */
     onchanged?: (value: number) => void;
     /** A drag on the slider began. */
     'ondrag-started'?: () => void;
     /** A drag on the slider ended. */
     'ondrag-stopped'?: () => void;
+    oninput?: (value: number) => void;
+    oncommit?: (value: number) => void;
+    onsubmit?: (value: number) => void;
   };
   /** A button that stays pressed (`checked`). With `radio`, a row of them is a segmented control: a click checks one, the app unchecks the rest. */
   'toggle-button': EguiWidgetProps & {
@@ -391,15 +416,15 @@ export interface EguiElements {
     /** A horizontal line (in a column) or a vertical one (in a row). */
     orientation?: 'horizontal' | 'vertical';
   };
-  /** A glyph from an icon font the embedder registered (SVP6), by name or as text. With `frame` it is an icon button. Its accessible name is `accessible-name`, else `tooltip`, else `name`. */
+  /** An icon from the icon registry by key (ICR1), or a glyph from an icon font the embedder registered (SVP6), by name or as text. With `frame` it is an icon button. Its accessible name is `accessible-name`, else `tooltip`, else `name`. */
   icon: EguiWidgetProps & {
-    /** The glyph's name in the family's name table (`svelters_egui::fonts::register_icons`); also the default accessible name. */
+    /** An icon registry key (`file.save`, `debug.step-over`; `svelters_egui::icons`) when `family` is `icons` and the key is registered: drawn from its SVG masters (optical size by physical pixels), tinted by CSS `color`, with the `--icon-subject`/`--icon-accent`/`--icon-badge` colour slots. Otherwise the glyph's name in the family's name table (`svelters_egui::fonts::register_icons`). Also the default accessible name. */
     name?: string;
     /** The glyph itself (text), when `name` is empty or not in the table. */
     glyph?: string;
     /** The registered font family (`egui::FontFamily::Name`) holding the glyphs; empty for the proportional family. A family with no fonts, a name not in its table or a glyph no font has draws an outlined placeholder box (`svelters_egui::fonts::FontWarning`). */
     family?: string;
-    /** Font size in points; null for the body size. */
+    /** Font size in points; null for the body size (16 for a registry icon). */
     size?: number | null;
     /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
     'font-weight'?: number;
@@ -556,12 +581,30 @@ export interface EguiElements {
     text?: string;
     /** Shows an editable value box at each end. */
     'show-value'?: boolean;
+    /** PageUp/PageDown; 0 for ten steps. */
+    'page-step'?: number;
+    /** `horizontal` (default) or `vertical`. */
+    orientation?: 'horizontal' | 'vertical';
+    /** Tick marks: `none`, `before`, `after`, `both`. */
+    ticks?: 'none' | 'before' | 'after' | 'both';
+    /** Between ticks; 0 for `page-step`. */
+    'tick-interval'?: number;
+    /** Max at the start. */
+    inverted?: boolean;
+    /** `linear` (default) or `log`. */
+    scale?: 'linear' | 'log';
+    /** Commit-only mode: `low`/`high` move at the release. */
+    commit?: boolean;
+    /** When the wheel steps: `focused` (default), `hover`, `off`. */
+    wheel?: 'focused' | 'hover' | 'off';
     /** The user moved a handle (or the widget clamped a written value); carries both ends. */
     onchanged?: (low: number, high: number) => void;
     /** A drag on the rail began. */
     'ondrag-started'?: () => void;
     /** A drag on the rail ended. */
     'ondrag-stopped'?: () => void;
+    oninput?: () => void;
+    oncommit?: () => void;
   };
   /** A number edited by dragging horizontally, the arrow keys, or typing after a click. Name it with `accessible-name` or `tooltip`. */
   'drag-value': EguiWidgetProps & {
@@ -580,6 +623,34 @@ export interface EguiElements {
     prefix?: string;
     /** Text after the number (` mm`). */
     suffix?: string;
+    /** One step (Up/Down, a step button, a wheel notch; Qt `singleStep`). */
+    step?: number;
+    /** PageUp/PageDown in value units; 0 for ten steps. */
+    'page-step'?: number;
+    /** Shows the `dec`/`inc` step buttons at the right end (Qt `buttonSymbols`). */
+    buttons?: boolean;
+    /** Commit-only mode (Qt `keyboardTracking=false`): `value` moves only at a commit point. */
+    commit?: boolean;
+    /** When the wheel steps: `focused` (default: over the field while it has focus), `hover`, `off`. */
+    wheel?: 'focused' | 'hover' | 'off';
+    /** Stepping past one end goes to the other (Qt `wrapping`). */
+    wrap?: boolean;
+    /** Shown instead of the number at `min` (Qt `specialValueText`, e.g. "Auto"). */
+    'special-value-text'?: string;
+    /** Holding a step button speeds it up (Qt `accelerated`). */
+    accelerated?: boolean;
+    /** `default`, or `adaptive` (Qt AdaptiveDecimalStepType: one decade below the value). */
+    'step-type'?: 'default' | 'adaptive';
+    /** An out-of-range typed value commits to the `nearest` bound (default) or the `previous` value. */
+    correction?: 'nearest' | 'previous';
+    /** Shown and focusable, not changed by the user (Qt `readOnly`). */
+    'read-only'?: boolean;
+    /** The locale's group separators (Qt `showGroupSeparator`). */
+    'group-separator'?: boolean;
+    /** A registered formatter (`numfmt::register_formatter`; Qt `textFromValue`). */
+    formatter?: string;
+    /** A registered parser (`numfmt::register_parser`; Qt `valueFromText`). */
+    parser?: string;
     /** The user changed it; carries the new value. */
     onchanged?: (value: number) => void;
     /** A drag on it began. */
@@ -588,6 +659,10 @@ export interface EguiElements {
     'ondrag-stopped'?: () => void;
     /** The user committed a value: a drag ended, or a change made otherwise (arrow keys, a typed value applied on Enter or blur); carries the value. */
     oncommit?: (value: number) => void;
+    /** §2.4's live signal (as `changed`). */
+    oninput?: (value: number) => void;
+    /** Enter in the field; carries the value. */
+    onsubmit?: (value: number) => void;
   };
   /** A side or top/bottom panel: a flex box with the panel background and a separator on its inner edge, optionally resizable. Place it at the edge of a row (left/right) or column (top/bottom). */
   panel: EguiWidgetProps & {
@@ -1049,27 +1124,58 @@ export interface EguiElements {
     /** A toast's body was clicked. */
     onclicked?: (id: number) => void;
   };
-  /** A button showing a date; clicking it opens a calendar popup (Save/Cancel). */
+  /** A drop button showing a date; clicking it opens the calendar (the `calendar` kind's) in a popup, with Save/Cancel unless `commit-mode="immediate"`. */
   'date-picker': EguiWidgetProps & {
-    /** The date, ISO 8601 (`2026-10-22`); `""` for none (the button shows today). Picking a day and pressing Save changes it. */
+    /** The date, ISO 8601 (`2026-10-22`); `""` for none (the button shows today). Picking a day (and, with `commit-mode="confirm"`, pressing Save) changes it. */
     value?: string;
     'bind:value'?: string;
     /** How the button shows the date (`strftime`, jiff's `civil::Date::strftime`). */
     format?: string;
     /** Shows ISO week numbers in the calendar. */
     'calendar-week'?: boolean;
+    /** The first day that can be picked (ISO 8601); days before it are `:disabled`. `""`: no limit. */
+    min?: string;
+    /** The last day that can be picked (ISO 8601); days after it are `:disabled`. `""`: no limit. */
+    max?: string;
+    /** The weekday the grid starts on; `auto` is the locale's (Monday until IN1). */
+    'first-day'?: 'auto' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+    /** The weekday header: `narrow` (M), `short` (Mo), `long` (Monday) or `none` (no header row). */
+    'weekday-format'?: 'narrow' | 'short' | 'long' | 'none';
+    /** Shows the header with the previous/next month buttons and the month and year. */
+    navigation?: boolean;
+    /** Shows and roves the calendar but never picks (Qt's `NoSelection`). */
+    'read-only'?: boolean;
+    /** Extra part names per date, `"YYYY-MM-DD name…"` each: `["2026-10-22 milestone"]` makes that day match `::part(day milestone)`. */
+    'day-parts'?: string[];
+    /** `confirm`: a picked day is pending until Save (Enter saves, Cancel or Escape drops it); `immediate`: a pick commits and closes the popup (Qt). */
+    'commit-mode'?: 'confirm' | 'immediate';
     /** The user saved a date; carries it (ISO 8601). */
     onchanged?: (value: string) => void;
+    /** A pick was applied (§2.4): Save, or the pick itself with `commit-mode="immediate"`. */
+    oncommit?: (value: string) => void;
+    /** The user moved the calendar to another month. */
+    'onpage-changed'?: (year: number, month: number) => void;
   };
-  /** A colour swatch; clicking it opens egui's colour picker popup. */
+  /** A colour swatch drop button; clicking it opens the colour editor (the `color-editor` kind's) in a popup. */
   'color-picker': EguiWidgetProps & {
     /** The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted). Editing it in the popup changes it. */
     value?: string;
     'bind:value'?: string;
-    /** Whether the popup edits alpha (`egui::color_picker::Alpha`): `opaque` hides it, `blend` edits it, `blend-or-additive` also offers additive. */
+    /** Whether the popup edits alpha: `opaque` hides the alpha strip, `blend` and `blend-or-additive` show it (additive colours are not offered by the own editor). */
     alpha?: 'opaque' | 'blend' | 'blend-or-additive';
+    /** Which fields show under the strips, space-separated: `hex` (a hex field), `rgb` (R, G, B boxes, 0–255), `hsv` (H 0–360, S and V 0–100). */
+    fields?: string;
+    /** A palette of hex colours shown as cells (`::part(swatch-cell)`); a click picks one. */
+    swatches?: string[];
+    /** The user's colours (`bind:custom-colors`, up to 16): the add cell appends the current colour. Persist it with `uiState()`. */
+    'custom-colors'?: string[];
+    'bind:custom-colors'?: string[];
+    /** `live`: each edit changes `value` (closing the popup commits); `confirm`: edits are pending until Save, Cancel or Escape drops them (Qt's dialog). */
+    'commit-mode'?: 'live' | 'confirm';
     /** The user edited the colour; carries it (CSS hex, once per frame while dragging). */
     onchanged?: (value: string) => void;
+    /** A commit point (§2.4): `live`, a drag released, a step, a field or a swatch, and the popup closing after edits; `confirm`, Save. */
+    oncommit?: (value: string) => void;
   };
   /** A virtualized list (the M5 model-view protocol): JS keeps the items, the list asks for the rows it shows. */
   'virtual-list': EguiWidgetProps & {
@@ -1099,6 +1205,10 @@ export interface EguiElements {
     onselect?: (pos: number) => void;
     /** The user changed the selection; carries the selected ids. */
     onselectionchange?: (ids: number[]) => void;
+    /** OW5a: a click on the row at `pos` (item `id`), after the selection moved. */
+    'onrow-clicked'?: (pos: number, id: number) => void;
+    /** OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. */
+    'onrow-context'?: (pos: number, id: number) => void;
   };
   /** A virtualized tree: JS keeps the tree and flattens its visible rows into the list; children load when a node expands. */
   'tree-view': EguiWidgetProps & {
@@ -1112,6 +1222,10 @@ export interface EguiElements {
     'row-drag-type'?: string;
     /** Non-empty: rows take drops of these types (WG4b patterns) and raise `drop-row`. */
     'row-drop-types'?: string;
+    /** What toggles a row besides its twistie, Left/Right and AccessKit: `twistie` (nothing more; a double click activates), `click` (a click on the row), `double-click` (Qt's `expandsOnDoubleClick`). */
+    'expand-on'?: 'twistie' | 'click' | 'double-click';
+    /** Level-0 rows show their twistie (Qt's `rootIsDecorated`). */
+    'root-decorated'?: boolean;
     /** Row slot `row` was created: give it content with `setRow`. */
     onsetup?: (e: SvlEvent<[number]>, row: number) => void;
     /** Slot `row` now shows item `id` at `pos`; `gen` counts the binds of the slot. */
@@ -1130,6 +1244,10 @@ export interface EguiElements {
     'onselection-changed'?: () => void;
     /** Ctrl+C on the focused tree: copy the selected rows. */
     oncopy?: () => void;
+    /** OW5a: a click on the row at `pos` (item `id`), after the selection moved. */
+    'onrow-clicked'?: (pos: number, id: number) => void;
+    /** OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. */
+    'onrow-context'?: (pos: number, id: number) => void;
     /** A drag was dropped `before`, `after` or `into` row `id` (-1: below the last row), as the entry of `type` it took. */
     'ondrop-row'?: (id: number, where: string, type: string, data: string) => void;
   };
@@ -1199,6 +1317,53 @@ export interface EguiElements {
     orientation?: 'horizontal' | 'vertical';
     /** The user moved it (thumb, track, wheel, AccessKit); carries the new value. */
     onchanged?: (value: number) => void;
+  };
+  /** An inline month calendar (Qt's `QCalendarWidget`): a header with previous/next, a weekday row, ISO week numbers and a 6×7 day grid. `date-picker` shows the same calendar in its popup. */
+  calendar: EguiWidgetProps & {
+    /** The picked date, ISO 8601 (`2026-10-22`); `""` for none. */
+    value?: string;
+    'bind:value'?: string;
+    /** Shows ISO week numbers in front of each week (`::part(week-number)`). */
+    'calendar-week'?: boolean;
+    /** The first day that can be picked (ISO 8601); days before it are `:disabled`. `""`: no limit. */
+    min?: string;
+    /** The last day that can be picked (ISO 8601); days after it are `:disabled`. `""`: no limit. */
+    max?: string;
+    /** The weekday the grid starts on; `auto` is the locale's (Monday until IN1). */
+    'first-day'?: 'auto' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+    /** The weekday header: `narrow` (M), `short` (Mo), `long` (Monday) or `none` (no header row). */
+    'weekday-format'?: 'narrow' | 'short' | 'long' | 'none';
+    /** Shows the header with the previous/next month buttons and the month and year. */
+    navigation?: boolean;
+    /** Shows and roves the calendar but never picks (Qt's `NoSelection`). */
+    'read-only'?: boolean;
+    /** Extra part names per date, `"YYYY-MM-DD name…"` each: `["2026-10-22 milestone"]` makes that day match `::part(day milestone)`. */
+    'day-parts'?: string[];
+    /** The user picked a day; carries it (ISO 8601). */
+    onchanged?: (value: string) => void;
+    /** A pick is a commit (§2.4); carries the date. */
+    oncommit?: (value: string) => void;
+    /** The user moved to another month (prev/next, PageUp/PageDown, arrows across a month). */
+    'onpage-changed'?: (year: number, month: number) => void;
+  };
+  /** An inline colour editor (the body of Qt's `QColorDialog`, GTK's `ColorChooserWidget`): a saturation/value square, hue and alpha strips, hex and channel fields, a palette and custom colours. `color-picker` shows the same editor in its popup. */
+  'color-editor': EguiWidgetProps & {
+    /** The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted). */
+    value?: string;
+    'bind:value'?: string;
+    /** `opaque` hides the alpha strip; `blend` and `blend-or-additive` show it. */
+    alpha?: 'opaque' | 'blend' | 'blend-or-additive';
+    /** Which fields show under the strips, space-separated: `hex` (a hex field), `rgb` (R, G, B boxes, 0–255), `hsv` (H 0–360, S and V 0–100). */
+    fields?: string;
+    /** A palette of hex colours shown as cells (`::part(swatch-cell)`); a click picks one. */
+    swatches?: string[];
+    /** The user's colours (`bind:custom-colors`, up to 16): the add cell appends the current colour. Persist it with `uiState()`. */
+    'custom-colors'?: string[];
+    'bind:custom-colors'?: string[];
+    /** The user edited the colour (each drag frame, step, field or swatch); carries it (CSS hex). */
+    onchanged?: (value: string) => void;
+    /** A commit point: a drag released, a key step, a field set, a swatch picked (§2.4). */
+    oncommit?: (value: string) => void;
   };
 }
 
