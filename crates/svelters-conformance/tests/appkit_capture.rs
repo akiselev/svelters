@@ -558,6 +558,7 @@ mod mac {
                     text: Some(text),
                     sel: Some(sel),
                     focus: ax_focus,
+                    scroll: None,
                 };
                 self.trace.state(h_of(&a), &st);
                 cp.push((a, st));
@@ -574,6 +575,7 @@ mod mac {
                 text: None,
                 sel: None,
                 focus: button_focus,
+                scroll: None,
             };
             self.trace.state(h_of(BUTTON), &st);
             cp.push((BUTTON.to_string(), st));

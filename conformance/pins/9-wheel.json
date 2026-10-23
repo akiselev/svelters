@@ -1,0 +1,16 @@
+{
+  "id": "wheel",
+  "pin": 9,
+  "title": "Mouse wheel: one notch, single notches, a fast burst (acceleration), a slow burst, Shift for horizontal, back to the start and past it (clamped)",
+  "setup": {
+    "scroll": { "s": [0, 0] }
+  },
+  "steps": [
+    { "wheel": "s", "lines": [0, 1] },
+    { "wheel": "s", "lines": [0, 1], "repeat": 3 },
+    { "wheel": "s", "lines": [0, 1], "burst": 8, "interval_ms": 20 },
+    { "wheel": "s", "lines": [0, 1], "burst": 4, "interval_ms": 250 },
+    { "wheel": "s", "lines": [0, 1], "shift": true },
+    { "wheel": "s", "lines": [0, -1], "burst": 40, "interval_ms": 20 }
+  ]
+}

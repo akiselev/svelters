@@ -61,3 +61,8 @@ gtk = { workspace = true, features = ["v4_6"] }
 [[test]]
 name = "appkit_capture"
 harness = false
+
+# WG3s: the scroll pins on NSScrollView; AppKit on the main thread, opt-in (NA_MACOS=1), macOS only.
+[[test]]
+name = "appkit_scroll"
+harness = false

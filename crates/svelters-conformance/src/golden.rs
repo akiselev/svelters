@@ -119,10 +119,14 @@ impl Golden {
 }
 
 pub fn read_golden(path: &std::path::Path) -> Result<Golden, String> {
+    let text = std::fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))?;
+    parse_golden(path, &text)
+}
+
+/// A golden's text, as [`read_golden`] reads it (`path` names it in errors).
+pub fn parse_golden(path: &std::path::Path, text: &str) -> Result<Golden, String> {
     let ctx = |e: String| format!("{}: {e}", path.display());
-    let v: Value =
-        serde_json::from_str(&std::fs::read_to_string(path).map_err(|e| ctx(e.to_string()))?)
-            .map_err(|e| ctx(e.to_string()))?;
+    let v: Value = serde_json::from_str(text).map_err(|e| ctx(e.to_string()))?;
     if v["schema"] != SCHEMA {
         return Err(ctx(format!("schema is {}, expected {SCHEMA}", v["schema"])));
     }
@@ -207,6 +211,15 @@ pub fn finish(cap: &Capture, traces: &[(String, String)]) -> Result<(), String> 
             eprintln!("NA1: reproduces {}", golden.display());
             Ok(())
         }
+        // WG3s: scroll motion is timing, so a re-capture reproduces a golden when every checkpoint
+        // matches within tolerance (§3), not byte for byte
+        Ok(old) if tolerant_reproduction(&old, &text) => {
+            eprintln!(
+                "NA1: reproduces {} within the scroll tolerances",
+                golden.display()
+            );
+            Ok(())
+        }
         Ok(old) => {
             let first = old
                 .lines()
@@ -234,6 +247,37 @@ pub fn finish(cap: &Capture, traces: &[(String, String)]) -> Result<(), String> 
     }
 }
 
+fn tolerant_reproduction(old: &str, new: &str) -> bool {
+    let parse = |t: &str| {
+        parse_golden(std::path::Path::new("golden"), t)
+            .ok()
+            .map(|g| g.pins)
+    };
+    let (Some(a), Some(b)) = (parse(old), parse(new)) else {
+        return false;
+    };
+    // only goldens with scroll state are compared with tolerance
+    let scroll = |ps: &[PinResult]| {
+        ps.iter().any(|p| {
+            p.checkpoints
+                .iter()
+                .any(|c| c.1.iter().any(|s| s.1.scroll.is_some()))
+        })
+    };
+    if !scroll(&a) || a.len() != b.len() {
+        return false;
+    }
+    a.iter().zip(&b).all(|(x, y)| {
+        x.id == y.id
+            && x.fingerprint == y.fingerprint
+            && x.checkpoints.len() == y.checkpoints.len()
+            && x.checkpoints
+                .iter()
+                .zip(&y.checkpoints)
+                .all(|(p, q)| p.0 == q.0 && checkpoint_matches(&p.1, &q.1))
+    })
+}
+
 /// How a run compares with a golden pin: equal checkpoints and the differing ones.
 #[derive(Clone, Debug, Default)]
 pub struct PinGap {
@@ -241,6 +285,15 @@ pub struct PinGap {
     pub equal: usize,
     /// `(index, after, ours, golden)` per differing checkpoint.
     pub diffs: Vec<(usize, String, String, String)>,
+}
+
+/// Two checkpoints are equal when they hold the same anchors and each state matches
+/// ([`State::matches`]: exact, except WG3s scroll offsets and motion within tolerance).
+pub fn checkpoint_matches(a: &Checkpoint, b: &Checkpoint) -> bool {
+    a.len() == b.len()
+        && a.iter()
+            .zip(b)
+            .all(|(x, y)| x.0 == y.0 && x.1.matches(&y.1))
 }
 
 pub fn compare(ours: &[(String, Checkpoint)], golden: &[(String, Checkpoint)]) -> PinGap {
@@ -251,7 +304,7 @@ pub fn compare(ours: &[(String, Checkpoint)], golden: &[(String, Checkpoint)]) -
     for i in 0..g.total {
         let (a, b) = (ours.get(i), golden.get(i));
         match (a, b) {
-            (Some(a), Some(b)) if a.1 == b.1 => g.equal += 1,
+            (Some(a), Some(b)) if checkpoint_matches(&a.1, &b.1) => g.equal += 1,
             _ => {
                 let show = |c: Option<&(String, Checkpoint)>| {
                     c.map(|c| checkpoint_json(&c.0, &c.1))
