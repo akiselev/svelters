@@ -1191,7 +1191,7 @@ editor inline in panels, and AccessKit sliders on each channel. egui has `color_
 |---|---|---|
 | `showMessage(text, timeout)`, `clearMessage`, `currentMessage`, `messageChanged` | `show-message(text, timeout)`, `clear-message`, `message` (bindable; a write shows it until changed), `changed(message)` | **done (OW7c)** |
 | `addWidget(w, stretch)` (temporary area, hidden by messages) | children (`status-section="temporary"`, the default); stretch is `flex-grow` | **done (OW7c)** |
-| `addPermanentWidget(w, stretch)` (right side, never hidden) | children with `status-section="end"` (also `start`: permanent at the start). Not `slot="end"`: egui kinds have one slot | **done (OW7c)** |
+| `addPermanentWidget(w, stretch)` (right side, never hidden) | children with `status-section="end"` (also `start`: permanent at the start). `slot="end"` (OW1a4's named slots) not wired yet | **done (OW7c)** |
 | status tips from hovered actions and widgets (QA5) | `status-tip` (Widget prop) of the innermost hovered node, else the focused one: every `status-bar` of the viewport shows it, `svelters_egui::status_tip(ctx)` reads it | **done (OW7c)** for in-flow nodes; menu entries deferred (OW7b record) |
 | `sizeGripEnabled` | N/A (OS windows resize from their edges) | N/A |
 | QSS `QStatusBar::item` (border around permanent widgets) | `status-bar > *`, `[status-section=…]`, `::part(message)`, `:open` | **done (OW7c)** |
