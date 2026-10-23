@@ -65,6 +65,8 @@ part (E8/E9's territory, measured by U7).
   `Platform::Other`).
 
 Run locally: `cargo nextest run -p svelters-style` (63 passed), `-p svelters-egui --test ow_css
---test style --test spec` (16 passed), the bench, `cargo clippy -p svelters-style --all-targets`
-(clean). Not run locally: the full workspace, the JS packages' tests (no `node_modules` in the
-worktree; `gen_props.py --check` is clean), other backends. CI is the gate.
+--test style --test spec` (16 passed, again after merging master with OW5a1 and ICR1), OW5a's
+`--test vlist` after the merge (10 passed; `list_view_runs_on_egui` needs the `pnpm build` fixture
+bundle and was not run), the bench, `cargo clippy -p svelters-style --all-targets` (clean). Not run
+locally: the full workspace, the JS packages' tests (no `node_modules` in the worktree;
+`gen_props.py --check` is clean), other backends. CI is the gate.
