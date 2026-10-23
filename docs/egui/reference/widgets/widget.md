@@ -34,6 +34,7 @@ Common properties of everything placed in a window: state, tooltip, accessibilit
 | `anchor` | `string` | `""` | no | A name unique in its embedded root: the node's egui id derives from it (stable across runs, not only across reorders), it is the AccessKit author id, and `Embed::anchor_rect` finds it. Changing it drops the node's egui memory. |
 | `autofocus` | `boolean` | `false` | no | Takes keyboard focus when it first appears (in a `dialog` scope: when the dialog opens). |
 | `bottom` | `number \| null` | `null` | no | Inset from the containing block's bottom edge in points; null for auto. |
+| `dialog-role` | `'auto' \| 'accept' \| 'reject' \| 'destructive' \| 'apply' \| 'reset' \| 'help' \| 'action'` | `"auto"` | no | Its place in a `dialog-buttons` row (QDialogButtonBox roles): `accept`, `reject`, `destructive`, `apply`, `reset`, `help`, `action`; `auto` is `accept` for a `default` button, `reject` for a `cancel` one, else `action`. Also the `[dialog-role=…]` selector. |
 | `drag-data` | `string` | `""` | no | The drag payload's data (JSON for structured data); `drop` delivers it. |
 | `drag-type` | `string` | `""` | no | Makes the node a drag source: the payload's type, a MIME-like string (`cad/part`); empty for none. |
 | `drop-types` | `string` | `""` | no | Makes the node a drop target: the drag types it accepts, separated by spaces or commas (`*` any, `cad/*` a prefix); empty for none. |

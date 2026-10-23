@@ -174,6 +174,8 @@ struct State {
     /// The keys the focused node claimed in pass `consumed_pass`.
     consumed: Vec<KeyboardShortcut>,
     consumed_pass: u64,
+    /// OW7b: `Policy::auto_default` at the last [`begin`].
+    auto_default: bool,
 }
 
 impl State {
@@ -394,8 +396,10 @@ fn route(st: &mut State, focus: Option<Id>, keys: &[(Key, Modifiers)], ime: &[bo
             if popup_open || st.activate.is_some() {
                 continue;
             }
+            // OW7b: without `auto_default` (macOS) a focused button leaves Enter to the default one
             let takes = focused.is_some_and(|e| match e.role {
                 Role::Ext { enter: en, escape: es } => if enter { en } else { es },
+                Role::Button { .. } if enter && !st.auto_default => false,
                 r => claims(r, key, m, false),
             });
             if takes {
@@ -443,7 +447,9 @@ pub(crate) fn begin(ctx: &Context) {
         (keys, ime)
     });
     let focus = ctx.memory(|m| m.focused());
+    let auto_default = crate::native::policy_of(ctx).auto_default;
     let plan = with(ctx, |st| {
+        st.auto_default = auto_default;
         st.routed = pass;
         st.rotate(pass);
         route(st, focus, &keys, &ime)
@@ -753,6 +759,24 @@ pub(crate) fn after_text(ui: &Ui, id: Id) {
 }
 
 /// For a default or cancel button with node id `node_eid`: whether Enter or Escape activated it.
+/// OW7b (`Policy::auto_default`): whether button `node_eid` shows `:default`. With the policy on,
+/// a push button focused in a dialog scope is that scope's default (the others there are not);
+/// otherwise it is its `default` prop.
+pub(crate) fn shows_default(ctx: &Context, node_eid: Id, default_prop: bool) -> bool {
+    read(ctx, |st| {
+        if !st.auto_default {
+            return default_prop;
+        }
+        let p = &st.prev;
+        let focused = p.entry(p.focused).filter(|e| matches!(e.role, Role::Button { .. }) && p.scopes.iter().any(|s| s.id == e.scope && s.dialog));
+        let me = p.entries.iter().find(|e| e.node_eid == node_eid);
+        match (focused, me) {
+            (Some(f), Some(me)) if f.scope == me.scope => f.node_eid == node_eid,
+            _ => default_prop,
+        }
+    })
+}
+
 pub(crate) fn take_activation(ui: &Ui, node_eid: Id) -> bool {
     with(ui.ctx(), |st| {
         let hit = st.activate == Some(node_eid);

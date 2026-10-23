@@ -3556,6 +3556,19 @@ export const UTILITIES = {
    ],
    "provider_states": []
   },
+  "dialog-buttons": {
+   "kind": "DialogButtons",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
   "drag-value": {
    "kind": "DragValue",
    "states": [

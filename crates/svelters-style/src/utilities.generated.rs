@@ -273,6 +273,7 @@ pub static KINDS: &[KindStyle] = &[
     KindStyle { tag: "combo-box", states: &["active", "disabled", "enabled", "exiting", "focus-within", "hover"], parts: &[("label", false), ("chevron", false), ("popup", false), ("option", false)], provider_states: &[] },
     KindStyle { tag: "context-menu", states: &[], parts: &[], provider_states: &[] },
     KindStyle { tag: "date-picker", states: &["active", "disabled", "enabled", "exiting", "focus", "focus-within", "hover", "open", "read-only", "read-write"], parts: &[("chevron", false), ("popup", false), ("header", false), ("prev", false), ("next", false), ("month", false), ("year", false), ("grid", false), ("day", false), ("weekday", false), ("week-number", false), ("save", false), ("cancel", false)], provider_states: &[] },
+    KindStyle { tag: "dialog-buttons", states: &["active", "disabled", "enabled", "exiting", "focus-within", "hover"], parts: &[], provider_states: &[] },
     KindStyle { tag: "drag-value", states: &["active", "disabled", "enabled", "exiting", "focus", "focus-within", "hover"], parts: &[("text", false), ("inc", false), ("dec", false)], provider_states: &[] },
     KindStyle { tag: "frame", states: &["active", "disabled", "enabled", "exiting", "focus-within", "hover"], parts: &[("caption", false), ("indicator", false), ("mark", false)], provider_states: &[] },
     KindStyle { tag: "grid", states: &["active", "disabled", "enabled", "exiting", "focus-within", "hover"], parts: &[], provider_states: &[] },

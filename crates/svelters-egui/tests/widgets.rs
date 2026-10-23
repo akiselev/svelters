@@ -425,7 +425,8 @@ fn invalid_reaches_accesskit() {
 fn every_kind_has_a_tooltip_and_inputs_are_named() {
     for k in KINDS.iter() {
         let (Some(tag), false) = (k.tag, k.toplevel) else { continue };
-        // WG2a: menu entries (not widgets) and the overlays (out of flow) are covered by tests/menus.rs
+        // WG2a: menu entries (not widgets) and the overlays (out of flow) are covered by tests/menus.rs;
+        // OW7b: the toast host and its toasts are out of flow too (tests/ow7b.rs)
         let widget = kinds::chain(kinds::tag_index(tag).unwrap()).contains(&kinds::kind_index("Widget").unwrap());
         if !widget || matches!(tag, "popup" | "modal" | "inner-window" | "toast-host" | "toast") {
             continue;

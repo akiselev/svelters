@@ -217,7 +217,8 @@ impl Widget for Button {
     fn ui(&mut self, ui: &mut egui::Ui, cx: &mut WidgetCx<'_>) -> egui::Response {
         // the prop mirror (§2.3): set before the units run, so one restyle covers both
         cx.set_state(StateBits::SELECTED, self.selected);
-        let default = cx.node().common().default_button;
+        // OW7b: `Policy::auto_default` moves `:default` to the focused button of a dialog
+        let default = crate::focus::shows_default(ui.ctx(), cx.id(), cx.node().common().default_button);
         cx.set_state(StateBits::DEFAULT, default);
         let resp = cx.interact(ui, self.units_sense());
         let fired = self.run_units(cx, ui, &resp);

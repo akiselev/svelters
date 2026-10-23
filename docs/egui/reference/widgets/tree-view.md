@@ -40,7 +40,7 @@ A virtualized tree: JS keeps the tree and flattens its visible rows into the lis
 | `selection` | `'none' \| 'single' \| 'multi' \| 'toggle' \| 'range'` | `"single"` | no | `single`, `multi` (Shift ranges, Ctrl toggles), `toggle` (a click toggles, no modifier), `range` (one contiguous run, Shift extends); `none`: rows are not selectable. |
 | `uniform-rows` | `boolean` | `false` | no | OW5a1b: every row is `row-height` tall; rows are not measured (Qt `uniformRowHeights`). |
 
-Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessible-name`, `align-self`, `anchor`, `autofocus`, `bottom`, `drag-data`, `drag-type`, `drop-types`, `enabled`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `invalid`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `tooltip`, `top`, `visible`, `width`.
+Plus the 27 props every element has, from [`Widget`](widget.md#props): `accessible-name`, `align-self`, `anchor`, `autofocus`, `bottom`, `dialog-role`, `drag-data`, `drag-type`, `drop-types`, `enabled`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `invalid`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `tooltip`, `top`, `visible`, `width`.
 <!-- END GENERATED -->
 
 ## Events
@@ -105,7 +105,7 @@ Call them through `bind:this`: `el.call('count')`.
 | `box-shadow` | no | — |
 | `opacity` | no | — |
 
-**Layout properties** (as attributes or in CSS; an explicit attribute wins): `align-self`, `bottom`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `left`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `top`, `visible`, `width`.
+**Layout properties** (as attributes or in CSS; an explicit attribute wins): `align-self`, `bottom`, `dialog-role`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `left`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `top`, `visible`, `width`.
 Also in CSS only: `display`, `grid-column`, `grid-row`, `margin-bottom`, `margin-left`, `margin-right`, `margin-top`.
 
 As `virtual-list` (`::part(row)` per row, `placeholder`, `drop-line`, `ghost`, the bar), plus `:has-children` and `:expanded` on rows and the `::part(twistie)` chevron.

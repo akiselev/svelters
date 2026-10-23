@@ -599,6 +599,15 @@ pub static KIND_DOCS: &[KindDoc] = &[
         a11y: A11yDoc { role: Some("Alert"), name_from: &["level", "its labels' text"], note: "A live region: `assertive` for warning and error, `polite` otherwise; its close button is a `Dismiss` button.", ..NO_NODE },
         css_note: "`toast` and `toast[level=…]` style its box (R7 `elev-3` by default); `::part(accent)` the level bar, `::part(close)` the close button. Its labels' runs are nodes: `toast b`, `toast a` and the like reach them.",
     },
+    KindDoc {
+        id: "DialogButtons",
+        category: Category::Containers,
+        paint: Paint::Box,
+        walk: Walk::Container,
+        states: &[],
+        a11y: NO_NODE,
+        css_note: "A flex row: `justify-content`, `gap` and `flex-direction` restyle it; `dialog-buttons button[dialog-role=destructive]` picks a role.",
+    },
     // WG4b
     KindDoc {
         id: "DatePicker",

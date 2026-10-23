@@ -139,11 +139,30 @@ pub static HOST_PARTS: &[crate::provider::PartEntry] = &[
 /// OW7b: a `<toast>`'s paint parts (the box is the node itself).
 pub static NODE_PARTS: &[crate::provider::PartEntry] = &[part("accent", "The level bar (4px, the level's colour)."), part("close", "The close button (a 22px tool button).")];
 
-/// OW7b: the paint parts `::part()` rules reach on the toast kinds.
+/// OW7b: OW7's `modal` paint parts.
+pub static MODAL_PARTS: &[crate::provider::PartEntry] = &[
+    part("backdrop", "The dim over the viewport (`rgba(0,0,0,.3)`)."),
+    part("title", "The caption above the content."),
+    part("grip", "The size grip (`resizable`)."),
+];
+
+/// OW7b: OW7's `inner-window` paint parts.
+pub static WINDOW_PARTS: &[crate::provider::PartEntry] = &[
+    part("titlebar", "The 30px title bar (drag to move)."),
+    part("title", "The caption in the title bar."),
+    part("close", "The close button."),
+    part("collapse", "The collapse button (`collapsible`)."),
+];
+
+/// OW7b: the paint parts `::part()` rules reach on the built-in kinds that declare them (the
+/// toast kinds, `modal`, `inner-window`); other built-ins declare none yet (OW-DONE audits them).
 pub(crate) fn parts_of(w: &W) -> Option<&'static [crate::provider::PartEntry]> {
+    use crate::overlays::OverlayKind;
     match w {
         W::ToastHost(_) => Some(HOST_PARTS),
         W::Toast(_) => Some(NODE_PARTS),
+        W::Overlay(o) if o.kind == OverlayKind::Modal => Some(MODAL_PARTS),
+        W::Overlay(o) if o.kind == OverlayKind::InnerWindow => Some(WINDOW_PARTS),
         _ => None,
     }
 }

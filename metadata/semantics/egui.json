@@ -3686,6 +3686,161 @@
       ],
       "text_content": null
     },
+    "DialogButtons": {
+      "a11y": {
+        "actions": [],
+        "author_id": null,
+        "invalid": false,
+        "name_from": [],
+        "note": "",
+        "role": null,
+        "value": null,
+        "variants": []
+      },
+      "abstract": false,
+      "bindings": {},
+      "category": "containers",
+      "chain": [
+        "DialogButtons",
+        "Box",
+        "Widget"
+      ],
+      "children": {
+        "default_slot": "children",
+        "policy": "ordered",
+        "slots": {
+          "children": {
+            "accepts": [
+              "Widget"
+            ],
+            "attrs": {},
+            "many": true,
+            "order": "before_sibling",
+            "route_by_kind": false
+          }
+        }
+      },
+      "css_hidden": [],
+      "css_note": "A flex row: `justify-content`, `gap` and `flex-direction` restyle it; `dialog-buttons button[dialog-role=destructive]` picks a role.",
+      "doc": "A dialog's button row (QDialogButtonBox): its `button` children take their place by `dialog-role` in the platform's order, right-aligned 6 apart (a row with `justify-content: end` and `gap: 6` at creation). A click reports `clicked(role)` (`help` too for the help role). With EV3, `default` and `cancel` buttons answer Enter and Escape; in a `modal` or `inner-window`, accept and reject buttons close it with that result (`close(\"accept\")`).",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "native": "a taffy flex row in the platform's dialog button order (svelters' own)",
+      "paint": "box",
+      "parts": [],
+      "present": null,
+      "props": {
+        "order": {
+          "construct_only": false,
+          "default": "platform",
+          "doc": "The button order: `platform` (`Policy::button_order`: Windows and egui, KDE for Qt, GNOME for GTK, macOS), a platform by name, or `none` (tree order). Help and reset lead, then children without a role, then the platform's roles. Only layout sees it: paint and Tab order stay the tree's.",
+          "js": "order",
+          "native": "order",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:DialogButtons:order",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "platform",
+            "windows",
+            "kde",
+            "gnome",
+            "macos",
+            "none"
+          ],
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "crates/svelters-egui/src/kinds/builtin.rs"
+      },
+      "provider_states": [],
+      "signals": {
+        "clicked": {
+          "args": [
+            {
+              "name": "role",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "One of its buttons was clicked; carries the button's role (`auto` resolved).",
+          "handler_result": "none",
+          "js_event": "clicked",
+          "name": "clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "help": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "Its `help` button was clicked (Qt `helpRequested`).",
+          "handler_result": "none",
+          "js_event": "help",
+          "name": "help",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "states": [
+        {
+          "name": "hovered",
+          "negated": [],
+          "pseudo": [
+            ":hover"
+          ],
+          "source": "response",
+          "when": "the pointer is over its box"
+        },
+        {
+          "name": "pressed",
+          "negated": [],
+          "pseudo": [
+            ":active"
+          ],
+          "source": "response",
+          "when": "the primary button is down over its box"
+        },
+        {
+          "name": "focus-within",
+          "negated": [],
+          "pseudo": [
+            ":focus-within"
+          ],
+          "source": "scene",
+          "when": "an element inside it has keyboard focus"
+        },
+        {
+          "name": "disabled",
+          "negated": [
+            ":enabled"
+          ],
+          "pseudo": [
+            ":disabled"
+          ],
+          "source": "prop",
+          "when": "`enabled` is false"
+        },
+        {
+          "name": "exiting",
+          "negated": [],
+          "pseudo": [
+            ":exiting"
+          ],
+          "source": "scene",
+          "when": "it plays an out transition before it is removed"
+        }
+      ],
+      "text_content": null
+    },
     "DragValue": {
       "a11y": {
         "actions": [
@@ -14310,6 +14465,33 @@
           "type": "f64",
           "writable": true
         },
+        "dialog-role": {
+          "construct_only": false,
+          "default": "auto",
+          "doc": "Its place in a `dialog-buttons` row (QDialogButtonBox roles): `accept`, `reject`, `destructive`, `apply`, `reset`, `help`, `action`; `auto` is `accept` for a `default` button, `reject` for a `cancel` one, else `action`. Also the `[dialog-role=…]` selector.",
+          "js": "dialog-role",
+          "native": "dialog-role",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Widget:dialog-role",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "auto",
+            "accept",
+            "reject",
+            "destructive",
+            "apply",
+            "reset",
+            "help",
+            "action"
+          ],
+          "writable": true
+        },
         "drag-data": {
           "construct_only": false,
           "default": "",
@@ -15838,6 +16020,7 @@
         "tags": [
           "box",
           "collapsing-header",
+          "dialog-buttons",
           "frame",
           "grid",
           "inner-window",
@@ -15876,6 +16059,7 @@
           "color-picker",
           "combo-box",
           "date-picker",
+          "dialog-buttons",
           "drag-value",
           "frame",
           "grid",
@@ -16102,6 +16286,7 @@
           "color-picker",
           "combo-box",
           "date-picker",
+          "dialog-buttons",
           "drag-value",
           "frame",
           "grid",
@@ -16162,6 +16347,7 @@
         "tags": [
           "box",
           "collapsing-header",
+          "dialog-buttons",
           "frame",
           "grid",
           "inner-window",
@@ -16221,6 +16407,73 @@
         ],
         "via": "css"
       },
+      "dialog-role": {
+        "kinds": [
+          "Widget"
+        ],
+        "native": "dialog-role",
+        "prop": "dialog-role",
+        "tags": [
+          "box",
+          "button",
+          "calendar",
+          "canvas",
+          "checkbox",
+          "collapsing-header",
+          "color-editor",
+          "color-picker",
+          "combo-box",
+          "date-picker",
+          "dialog-buttons",
+          "drag-value",
+          "frame",
+          "grid",
+          "hyperlink",
+          "icon",
+          "image",
+          "inner-window",
+          "label",
+          "menu-bar",
+          "menu-button",
+          "modal",
+          "panel",
+          "popup",
+          "progress-bar",
+          "radio-button",
+          "range-slider",
+          "scroll-area",
+          "scrollbar",
+          "separator",
+          "sides",
+          "slider",
+          "spinner",
+          "split-view",
+          "stack",
+          "switch",
+          "tab",
+          "tab-view",
+          "table",
+          "table-column",
+          "text-edit",
+          "toast",
+          "toast-host",
+          "toggle-button",
+          "tree-view",
+          "virtual-list"
+        ],
+        "type": "enum",
+        "values": [
+          "auto",
+          "accept",
+          "reject",
+          "destructive",
+          "apply",
+          "reset",
+          "help",
+          "action"
+        ],
+        "via": "setter"
+      },
       "display": {
         "decl_type": "enum",
         "values": [
@@ -16250,6 +16503,7 @@
           "color-picker",
           "combo-box",
           "date-picker",
+          "dialog-buttons",
           "drag-value",
           "frame",
           "grid",
@@ -16298,6 +16552,7 @@
         "tags": [
           "box",
           "collapsing-header",
+          "dialog-buttons",
           "frame",
           "inner-window",
           "modal",
@@ -16336,6 +16591,7 @@
           "color-picker",
           "combo-box",
           "date-picker",
+          "dialog-buttons",
           "drag-value",
           "frame",
           "grid",
@@ -16395,6 +16651,7 @@
           "color-picker",
           "combo-box",
           "date-picker",
+          "dialog-buttons",
           "drag-value",
           "frame",
           "grid",
@@ -16443,6 +16700,7 @@
         "tags": [
           "box",
           "collapsing-header",
+          "dialog-buttons",
           "frame",
           "inner-window",
           "modal",
@@ -16499,6 +16757,7 @@
         "tags": [
           "box",
           "collapsing-header",
+          "dialog-buttons",
           "frame",
           "grid",
           "inner-window",
@@ -16550,6 +16809,7 @@
           "color-picker",
           "combo-box",
           "date-picker",
+          "dialog-buttons",
           "drag-value",
           "frame",
           "grid",
@@ -16598,6 +16858,7 @@
         "tags": [
           "box",
           "collapsing-header",
+          "dialog-buttons",
           "frame",
           "inner-window",
           "modal",
@@ -16653,6 +16914,7 @@
           "color-picker",
           "combo-box",
           "date-picker",
+          "dialog-buttons",
           "drag-value",
           "frame",
           "grid",
@@ -16740,6 +17002,7 @@
           "color-picker",
           "combo-box",
           "date-picker",
+          "dialog-buttons",
           "drag-value",
           "frame",
           "grid",
@@ -16799,6 +17062,7 @@
           "color-picker",
           "combo-box",
           "date-picker",
+          "dialog-buttons",
           "drag-value",
           "frame",
           "grid",
@@ -16858,6 +17122,7 @@
           "color-picker",
           "combo-box",
           "date-picker",
+          "dialog-buttons",
           "drag-value",
           "frame",
           "grid",
@@ -16917,6 +17182,7 @@
           "color-picker",
           "combo-box",
           "date-picker",
+          "dialog-buttons",
           "drag-value",
           "frame",
           "grid",
@@ -16963,6 +17229,26 @@
           "min": 0.0
         },
         "via": "css"
+      },
+      "order": {
+        "kinds": [
+          "DialogButtons"
+        ],
+        "native": "order",
+        "prop": "order",
+        "tags": [
+          "dialog-buttons"
+        ],
+        "type": "enum",
+        "values": [
+          "platform",
+          "windows",
+          "kde",
+          "gnome",
+          "macos",
+          "none"
+        ],
+        "via": "setter"
       },
       "outline-color": {
         "decl_type": "color",
@@ -17078,6 +17364,7 @@
           "color-picker",
           "combo-box",
           "date-picker",
+          "dialog-buttons",
           "drag-value",
           "frame",
           "grid",
@@ -17139,6 +17426,7 @@
           "color-picker",
           "combo-box",
           "date-picker",
+          "dialog-buttons",
           "drag-value",
           "frame",
           "grid",
@@ -17191,6 +17479,7 @@
         "tags": [
           "box",
           "collapsing-header",
+          "dialog-buttons",
           "frame",
           "grid",
           "inner-window",
@@ -17276,6 +17565,7 @@
           "color-picker",
           "combo-box",
           "date-picker",
+          "dialog-buttons",
           "drag-value",
           "frame",
           "grid",
@@ -17352,6 +17642,7 @@
           "color-picker",
           "combo-box",
           "date-picker",
+          "dialog-buttons",
           "drag-value",
           "frame",
           "grid",
@@ -17423,6 +17714,7 @@
           "color-picker",
           "combo-box",
           "date-picker",
+          "dialog-buttons",
           "drag-value",
           "frame",
           "grid",
@@ -17650,6 +17942,7 @@
     "combo-box": "ComboBox",
     "context-menu": "ContextMenu",
     "date-picker": "DatePicker",
+    "dialog-buttons": "DialogButtons",
     "drag-value": "DragValue",
     "frame": "Frame",
     "grid": "Grid",

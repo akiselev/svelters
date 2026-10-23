@@ -1,6 +1,7 @@
 //! OW7b (plans/milestones/OW7b-toasts-dialog-buttons-status.md): declarative `<toast>` nodes under
 //! `toast-host` (per-run CSS, child-button actions, `[level]`, `::part(accent)`, `:hover`,
-//! `:exiting`, timeouts on the virtual clock). Headless (kittest, no JS: `common::Rig`).
+//! `:exiting`, timeouts on the virtual clock), `dialog-buttons`, `status-bar` and
+//! `Policy::auto_default`. Headless (kittest, no JS: `common::Rig`).
 
 mod common;
 
@@ -136,3 +137,127 @@ fn ow7b_declarative_toasts_style_per_run_stack_and_close() {
     rig.harness.get_by_role_and_label(Role::Alert, "Warning: Disk full Details");
 }
 
+/// `<modal><dialog-buttons>` with Help, OK (default), Cancel (cancel), Delete (destructive), Apply.
+fn button_row(rig: &mut Rig, order: &str) -> (svl_handle, svl_handle, Vec<svl_handle>) {
+    let (_w, b) = rig.window();
+    let m = rig.create("modal");
+    rig.insert(b, m);
+    let row = rig.create("dialog-buttons");
+    rig.set(row, "order", s(order));
+    rig.insert(m, row);
+    let mut v = Vec::new();
+    for (text, extra) in [("Help", ("dialog-role", s("help"))), ("OK", ("default", Value::Bool(true))), ("Cancel", ("cancel", Value::Bool(true))), ("Delete", ("dialog-role", s("destructive"))), ("Apply", ("dialog-role", s("apply")))] {
+        v.push(rig.leaf(row, "button", &[("text", s(text)), extra]));
+    }
+    for e in ["clicked", "help"] {
+        rig.listen(row, e);
+    }
+    rig.listen(m, "closed");
+    rig.set(m, "open", Value::Bool(true));
+    rig.run();
+    rig.run();
+    (m, row, v)
+}
+
+/// The buttons' labels left to right.
+fn laid_order(rig: &Rig, v: &[svl_handle]) -> Vec<&'static str> {
+    let names = ["Help", "OK", "Cancel", "Delete", "Apply"];
+    let mut k: Vec<usize> = (0..v.len()).collect();
+    k.sort_by(|a, b| rig.drawn(v[*a]).min.x.total_cmp(&rig.drawn(v[*b]).min.x));
+    k.into_iter().map(|i| names[i]).collect()
+}
+
+#[test]
+fn ow7b_dialog_buttons_platform_order_roles_and_results() {
+    for (order, want) in [
+        ("windows", ["Help", "OK", "Cancel", "Delete", "Apply"]),
+        ("kde", ["Help", "OK", "Apply", "Delete", "Cancel"]),
+        ("gnome", ["Help", "Delete", "Apply", "Cancel", "OK"]),
+        ("macos", ["Help", "Delete", "Apply", "Cancel", "OK"]),
+    ] {
+        let mut rig = Rig::new();
+        let (_m, _row, v) = button_row(&mut rig, order);
+        assert_eq!(laid_order(&rig, &v), want, "{order}");
+    }
+    // `platform` follows Policy::button_order (GTK: GNOME's)
+    let mut rig = Rig::new();
+    svelters_egui::native::set(&rig.harness.ctx, svelters_egui::native::Native::Gtk);
+    let (m, row, v) = button_row(&mut rig, "platform");
+    assert_eq!(laid_order(&rig, &v), ["Help", "Delete", "Apply", "Cancel", "OK"]);
+    // right-aligned in the row, 6 apart
+    let (ok, cancel) = (rig.drawn(v[1]), rig.drawn(v[2]));
+    assert_eq!(ok.min.x - cancel.max.x, 6.0);
+    // Tab order stays the tree's: Help, OK, Cancel…
+    // clicks report the role; help also `help`; accept closes the modal with "accept"
+    rig.click(v[0]);
+    rig.run();
+    assert_eq!(events(&rig, row, "clicked"), vec![vec![s("help")]]);
+    assert_eq!(events(&rig, row, "help").len(), 1);
+    rig.click(v[1]);
+    rig.run();
+    rig.run();
+    assert_eq!(events(&rig, row, "clicked").last(), Some(&vec![s("accept")]));
+    assert_eq!(events(&rig, m, "closed"), vec![vec![s("accept")]]);
+}
+
+#[test]
+fn ow7b_auto_default_moves_default_to_the_focused_button() {
+    // Windows: the focused button in a dialog is the default (`:default`), and Enter presses it
+    let mut rig = Rig::new();
+    svelters_egui::native::set(&rig.harness.ctx, svelters_egui::native::Native::Windows);
+    let (_m, row, v) = button_row(&mut rig, "windows");
+    rig.listen(v[4], "clicked");
+    rig.listen(v[1], "clicked");
+    // the dialog's initial focus (its first button) is the default; one button shows it
+    assert_eq!(v.iter().filter(|h| state(&rig, **h).contains(StateBits::DEFAULT)).count(), 1);
+    let apply = rig.backend.with_scene(|sc| sc.n(v[4]).id);
+    rig.harness.ctx.memory_mut(|m| m.request_focus(apply));
+    rig.run();
+    rig.run();
+    assert!(state(&rig, v[4]).contains(StateBits::DEFAULT) && !state(&rig, v[1]).contains(StateBits::DEFAULT), "the focused Apply is the default");
+    rig.harness.key_press(egui::Key::Enter);
+    rig.run();
+    assert_eq!(events(&rig, v[4], "clicked").len(), 1);
+    assert!(events(&rig, v[1], "clicked").is_empty());
+    let _ = row;
+
+    // macOS: no auto-default; Enter goes to OK whatever button is focused
+    let mut rig = Rig::new();
+    svelters_egui::native::set(&rig.harness.ctx, svelters_egui::native::Native::Mac);
+    let (_m, _row, v) = button_row(&mut rig, "macos");
+    rig.listen(v[4], "clicked");
+    rig.listen(v[1], "clicked");
+    let apply = rig.backend.with_scene(|sc| sc.n(v[4]).id);
+    rig.harness.ctx.memory_mut(|m| m.request_focus(apply));
+    rig.run();
+    rig.run();
+    assert!(!state(&rig, v[4]).contains(StateBits::DEFAULT) && state(&rig, v[1]).contains(StateBits::DEFAULT));
+    rig.harness.key_press(egui::Key::Enter);
+    rig.run();
+    assert_eq!(events(&rig, v[1], "clicked").len(), 1, "Enter pressed OK");
+    assert!(events(&rig, v[4], "clicked").is_empty());
+}
+
+#[test]
+fn ow7b_modal_and_inner_window_parts_take_author_css() {
+    let mut rig = Rig::new();
+    rig.backend.add_sheet("app", "modal::part(backdrop) { background-color: #ff000080; } inner-window::part(titlebar) { background-color: #00ff00; }");
+    let (_w, b) = rig.window();
+    let m = rig.create("modal");
+    rig.insert(b, m);
+    rig.leaf(m, "label", &[("text", s("Body"))]);
+    let iw = rig.create("inner-window");
+    rig.set(iw, "title", s("Tools"));
+    rig.insert(b, iw);
+    rig.leaf(iw, "label", &[("text", s("Inside"))]);
+    trace::enable(&rig.harness.ctx, true);
+    rig.set(m, "open", Value::Bool(true));
+    rig.set(iw, "open", Value::Bool(true));
+    rig.run();
+    rig.run();
+    let t = trace::last(&rig.harness.ctx);
+    let bd = t.find(m, Some("backdrop"), TraceKind::Box).expect("the backdrop part");
+    assert_eq!(bd.fill, egui::Color32::from_rgba_unmultiplied(255, 0, 0, 128), "`modal::part(backdrop)` paints");
+    let bar = t.find(iw, Some("titlebar"), TraceKind::Box).expect("the titlebar part");
+    assert_eq!(bar.fill, egui::Color32::from_rgb(0, 255, 0));
+}

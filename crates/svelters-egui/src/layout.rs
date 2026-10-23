@@ -369,7 +369,7 @@ impl Metrics {
             | W::Spinner { .. }
             | W::Canvas(_) => crate::elements::intrinsic(self, w),
             // WG4a: the views' own size (`crate::views::intrinsic`)
-            W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) | W::Toast(_) => crate::views::intrinsic(self, w),
+            W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) | W::Toast(_) | W::DialogButtons(_) => crate::views::intrinsic(self, w),
             // ---- WG1 ----
             W::ToggleButton { text, weight, .. } => {
                 let t = self.text_size_in(text, self.weighted(text, *weight), None);
@@ -460,6 +460,17 @@ impl Iterator for ChildIter<'_> {
     }
 }
 
+impl Tree<'_> {
+    /// Node `i`'s children in layout order: a `dialog-buttons` row's in its button order (OW7b;
+    /// only taffy sees it), every other node's in tree order.
+    fn children_laid(&self, i: usize) -> &[SceneId] {
+        match self.s.w(i) {
+            W::DialogButtons(d) if d.laid.len() == self.s.children[i].len() => &d.laid,
+            _ => &self.s.children[i],
+        }
+    }
+}
+
 impl taffy::TraversePartialTree for Tree<'_> {
     type ChildIter<'b>
         = ChildIter<'b>
@@ -467,13 +478,13 @@ impl taffy::TraversePartialTree for Tree<'_> {
         Self: 'b;
 
     fn child_ids(&self, id: NodeId) -> Self::ChildIter<'_> {
-        ChildIter(self.s.children[ix(id)].iter())
+        ChildIter(self.children_laid(ix(id)).iter())
     }
     fn child_count(&self, id: NodeId) -> usize {
         self.s.children[ix(id)].len()
     }
     fn get_child_id(&self, id: NodeId, index: usize) -> NodeId {
-        tid(self.s.children[ix(id)][index])
+        tid(self.children_laid(ix(id))[index])
     }
 }
 
@@ -500,6 +511,9 @@ impl LayoutPartialTree for Tree<'_> {
         // Hidden: `display: none`, or inside a hidden ancestor (taffy passes HIDDEN to children).
         if inputs.run_mode == RunMode::PerformHiddenLayout || self.s.layout[ix(id)].style.display == Display::None {
             return compute_hidden_layout(self, id);
+        }
+        if matches!(self.s.w(ix(id)), W::DialogButtons(_)) {
+            crate::views::dialog_buttons::order_children(self.s, ix(id), &self.m.ctx); // OW7b
         }
         compute_cached_layout(self, id, inputs, |tree, id, inputs| {
             let i = ix(id);

@@ -116,6 +116,8 @@ export interface EguiWidgetProps {
   right?: number | null;
   /** Inset from the containing block's bottom edge in points; null for auto. */
   bottom?: number | null;
+  /** Its place in a `dialog-buttons` row (QDialogButtonBox roles): `accept`, `reject`, `destructive`, `apply`, `reset`, `help`, `action`; `auto` is `accept` for a `default` button, `reject` for a `cancel` one, else `action`. Also the `[dialog-role=…]` selector. */
+  'dialog-role'?: 'auto' | 'accept' | 'reject' | 'destructive' | 'apply' | 'reset' | 'help' | 'action';
   /** A native animation (TR2) finished; carries its id. The runtime listens to it itself. */
   onanimationend?: (id: number) => void;
   /** Drag source: the user started dragging this node (`drag-type` set). */
@@ -1482,6 +1484,33 @@ export interface EguiElements {
     onclosed?: (reason: string) => void;
     /** Its body was clicked (not a child button or link). */
     onclicked?: () => void;
+  };
+  /** A dialog's button row (QDialogButtonBox): its `button` children take their place by `dialog-role` in the platform's order, right-aligned 6 apart (a row with `justify-content: end` and `gap: 6` at creation). A click reports `clicked(role)` (`help` too for the help role). With EV3, `default` and `cancel` buttons answer Enter and Escape; in a `modal` or `inner-window`, accept and reject buttons close it with that result (`close("accept")`). */
+  'dialog-buttons': EguiWidgetProps & {
+    /** Main axis of the box. */
+    'flex-direction'?: 'column' | 'row' | 'column-reverse' | 'row-reverse';
+    /** Whether children wrap onto more lines. */
+    'flex-wrap'?: 'nowrap' | 'wrap' | 'wrap-reverse';
+    /** Space between children on both axes, in points (row-gap and column-gap override it). */
+    gap?: number;
+    /** Space between rows in points; null to use `gap`. */
+    'row-gap'?: number | null;
+    /** Space between columns in points; null to use `gap`. */
+    'column-gap'?: number | null;
+    /** Inner spacing on all four sides, in points. */
+    padding?: number;
+    /** Cross-axis alignment of the children. */
+    'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
+    /** Main-axis distribution of the children. */
+    'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
+    'focus-scope'?: 'none' | 'contain' | 'dialog';
+    /** The button order: `platform` (`Policy::button_order`: Windows and egui, KDE for Qt, GNOME for GTK, macOS), a platform by name, or `none` (tree order). Help and reset lead, then children without a role, then the platform's roles. Only layout sees it: paint and Tab order stay the tree's. */
+    order?: 'platform' | 'windows' | 'kde' | 'gnome' | 'macos' | 'none';
+    /** One of its buttons was clicked; carries the button's role (`auto` resolved). */
+    onclicked?: (role: string) => void;
+    /** Its `help` button was clicked (Qt `helpRequested`). */
+    onhelp?: () => void;
   };
 }
 

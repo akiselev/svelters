@@ -62,6 +62,7 @@ Elements that hold other elements and add behaviour or chrome.
 | Element | What it is |
 |---|---|
 | [`<collapsing-header>`](collapsing-header.md) | A clickable header with a caret; its children (a flex box, indented) are shown and laid out only while `open`. |
+| [`<dialog-buttons>`](dialog-buttons.md) | A dialog's button row (QDialogButtonBox): its `button` children take their place by `dialog-role` in the platform's order, right-aligned 6 apart (a row with `justify-content: end` and `gap: 6` at creation). |
 | [`<frame>`](frame.md) | A flex box drawn inside an egui frame (background, border, rounding, inner margin), with an optional caption. |
 | [`<panel>`](panel.md) | A side or top/bottom panel: a flex box with the panel background and a separator on its inner edge, optionally resizable. |
 | [`<scroll-area>`](scroll-area.md) | A flex box whose content scrolls when it overflows the area's size (taffy `overflow: scroll`); give it a size or let flex-grow size it. |
