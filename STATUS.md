@@ -159,7 +159,13 @@ The global progress ledger. States: `QUEUED`, `IN PROGRESS`, `BLOCKED`, `DONE`. 
 | M6 release binding linker | QUEUED | | |
 | M7 egui | QUEUED | | |
 
-## Handoff (2026-10-22)
+## Handoff (2026-10-23)
+
+**Paused at 90% of the weekly quota (user, 2026-10-23): active lanes finish (and fix bugs they find), no new lanes.**
+Read `plans/HANDOFF.md`: where svelters-egui stands, lanes in flight and their branches, the queue in priority
+order, decisions, operations and what the user wants to revisit.
+
+## Handoff (2026-10-22, superseded)
 
 **Focus:** svelters + egui for cadatomic (CLAUDE.md "Current focus"). Architecture: `plans/research/ARCH-EMBED.md`,
 `ARCH-SCENE.md`, `ARCH-CRATES.md`. The user took every recommendation on 2026-10-22 ("we will revisit later").
