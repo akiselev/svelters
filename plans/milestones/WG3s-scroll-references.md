@@ -149,3 +149,24 @@ the egui core.
 - WG3s-linux (GTK, Qt) and WG3s-win (Win32, WinUI): implement `Driver::scroll_wheel` / `scroll_gesture` (§4).
 - The momentum scaling AppKit applies to an injected stream vs a real one (a real flick through a live NSScrollView
   with the event tap recording both would settle it).
+
+## Handoff (2026-10-22, wind-down)
+
+**Captured fixtures (checked in):**
+- `conformance/pins/9-wheel.json`, `9-wheel-chaining.json`, `10-gesture.json`, `10-overscroll.json`: the scroll pins.
+- `conformance/scroll/macos-flick.json`: one real trackpad flick with its OS momentum (the user's swipe, take 3).
+- `conformance/golden/macos/nsscrollview-15.7.5.json`: NSScrollView, reproduced within tolerance by a second capture.
+
+**Compared:** egui `scroll-area` (macOS input model) against the NSScrollView golden (`egui_scroll.rs`, a report, not
+gated): 0 of 20 checkpoints equal (wheel 40 vs 10 pt and animated, momentum 1:1, no rubber band).
+
+**Next, in order:**
+1. Fix the egui fixture's inner area `t` (input aimed at it reaches `s`), then re-read the chaining/nested rows.
+2. A `Native::Mac` scroll row in `Policy::scroll` (OW2): 10 pt wheel step, immediate; momentum scaling; rubber band.
+3. WG3s-linux / WG3s-win drivers (§4).
+4. Re-capture the macOS golden on a quiet machine before relying on the timing metrics.
+
+**Running it:** `tools/dev/cargo-slot cargo test -p svelters-conformance --test appkit_scroll --no-run`, then
+`NA_MACOS=1 [NA_UPDATE=1] [NA_PINS=wheel,…] target/build/debug/deps/appkit_scroll-<hash> --nocapture` on a Mac
+nobody is using (it moves the pointer). Recording a new flick: `target/debug/examples/scroll_record <out.json> [wait_s]`
+(needs Input Monitoring), then one two-finger flick.
