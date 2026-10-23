@@ -39,11 +39,15 @@ pub struct CompileOptions<'b> {
     /// ([`crate::scoped_css`]) and return it as [`CompileResult::css`], hashed with `css_scope`
     /// (else Svelte's default hash of `filename`, which then also becomes the elements' scope class).
     pub scoped_css: bool,
+    /// U4: check utility classes (UTILITY-CSS; opt-in like the runtime's `EmbedConfig::utilities`)
+    /// on a backend that runs the style engine (egui). `@apply` in `<style>` is expanded there
+    /// either way (with this prefix when set).
+    pub utilities: Option<crate::utilities::UtilityCheck>,
 }
 
 impl<'b> CompileOptions<'b> {
     pub fn new(filename: impl Into<String>, backend: &'b dyn PlatformSemantics) -> Self {
-        CompileOptions { filename: filename.into(), backend, dev: false, css_scope: None, target: &QuickJsHost, strict_native: false, portability: Vec::new(), scoped_css: false, hmr: false }
+        CompileOptions { filename: filename.into(), backend, dev: false, css_scope: None, target: &QuickJsHost, strict_native: false, portability: Vec::new(), scoped_css: false, hmr: false, utilities: None }
     }
 }
 
@@ -166,11 +170,21 @@ fn run_component(src: &str, opts: &CompileOptions, check: bool) -> CompileResult
     timings.analyze_us = t.elapsed().as_micros() as u64;
 
     let t = Instant::now();
-    let css = if opts.scoped_css { crate::scoped_css::scoped_css(src, &root, &analysis, &opts.filename, opts.css_scope.as_deref(), opts.dev, &mut diags) } else { None };
+    // U4: `@apply` expanded before scoping and the engine's check
+    let no_utilities = crate::utilities::UtilityCheck::default();
+    let apply = crate::utilities::apply::expand(src, &root, opts.backend, opts.utilities.as_ref().unwrap_or(&no_utilities), &mut diags);
+    let css = if opts.scoped_css {
+        crate::scoped_css::scoped_css(src, &root, &analysis, &opts.filename, opts.css_scope.as_deref(), opts.dev, apply.as_ref(), &mut diags)
+    } else {
+        None
+    };
     let css_scope = opts.css_scope.as_deref().or(css.as_ref().map(|c| c.hash.as_str()));
     let is_setter = |name: &str| opts.backend.is_setter_property(name);
     let sheet = root.css.as_ref().map(|c| parse_style(&c.content.styles, c.content.start, &mut diags, &is_setter));
-    let ir = lower(&root, opts.backend, sheet.as_ref(), css_scope, &mut diags);
+    let ir = lower(&root, opts.backend, sheet.as_ref(), css_scope, apply.as_ref(), &mut diags);
+    if let Some(u) = &opts.utilities {
+        crate::utilities::check(&root, src, opts.backend, u, &mut diags);
+    }
     if analysis.template.has_await {
         crate::lower::template_await::check(&root, &mut diags);
     }

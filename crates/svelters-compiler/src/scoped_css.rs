@@ -37,9 +37,25 @@ pub struct ScopedCss {
 
 /// Runs the Q3 port over the component's `<style>`: `None` when there is none or when the CSS
 /// step failed (its error is in `diags`).
-pub(crate) fn scoped_css<'a>(src: &str, root: &'a Root, analysis: &ComponentScopeAnalysis<'a>, filename: &str, hash: Option<&str>, dev: bool, diags: &mut Diagnostics) -> Option<ScopedCss> {
+///
+/// With `apply` (U4), the source with `<style>`'s `@apply` expanded is scoped, and the spans of its
+/// diagnostics map back to the original.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn scoped_css<'a>(
+    src: &str,
+    root: &'a Root,
+    analysis: &ComponentScopeAnalysis<'a>,
+    filename: &str,
+    hash: Option<&str>,
+    dev: bool,
+    apply: Option<&crate::utilities::apply::Expansion>,
+    diags: &mut Diagnostics,
+) -> Option<ScopedCss> {
     let block = root.css.as_ref()?;
-    let blanked = blank_native_blocks(src, block.content.start as usize, block.content.end as usize);
+    let map = |s: (u32, u32)| apply.map_or(s, |x| x.to_orig(s));
+    let src = apply.map_or(src, |x| x.src.as_str());
+    let content_end = apply.map_or(block.content.end, |x| x.to_new(block.content.end));
+    let blanked = blank_native_blocks(src, block.content.start as usize, content_end as usize);
     let src = blanked.as_deref().unwrap_or(src);
     let hash = match hash {
         Some(h) => CssHash::Fixed(h.to_string()),
@@ -48,13 +64,13 @@ pub(crate) fn scoped_css<'a>(src: &str, root: &'a Root, analysis: &ComponentScop
     match compile_css(src, root, analysis, &CssOptions { hash, injected: false, dev }) {
         Ok(Some(out)) => {
             for w in &out.warnings {
-                diags.warning(w.code, (w.start, w.end), w.message.clone());
+                diags.warning(w.code, map((w.start, w.end)), w.message.clone());
             }
             Some(ScopedCss { code: out.code, hash: out.hash, has_global: out.has_global, injected: out.injected, scoped_elements: out.scoped_elements })
         }
         Ok(None) => None,
         Err(e) => {
-            diags.error(e.code, (e.start, e.end), e.message);
+            diags.error(e.code, map((e.start, e.end)), e.message);
             None
         }
     }

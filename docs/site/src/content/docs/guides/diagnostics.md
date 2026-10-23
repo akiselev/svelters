@@ -112,6 +112,22 @@ Severities: **error** fails the build; **warning** does not (the observability w
 | `svelters::style::overridden` | `style_overridden` | warning | A style sets a property that the element also sets explicitly; the explicit value wins. |  |
 | `svelters::style::unused_selector` | `style_unused_selector` | warning | The selector matches no element of the component, so its declarations are not checked. |  |
 
+### utility
+
+| Id | Code | Severity | Meaning | Fix-it |
+| --- | --- | --- | --- | --- |
+| `svelters::utility::unknown` | `utility_unknown` | warning | A utility namespace with an unknown value (`bg-acent`, `p-x`) or an unknown variant (`hovr:p-2`). | "did you mean": replace the name with the suggestion |
+| `svelters::utility::unsupported` | `utility_unsupported` | warning | A Tailwind v4 utility or variant egui does not render (`ring-2`, `forced-colors:`), or one waiting for an engine item (`group-hover:`). | the replacement, where one exists (`ring-2` becomes `outline-2`) |
+| `svelters::utility::bad_value` | `utility_bad_value` | error | An arbitrary value the property's type rejects (`w-[red]`); the host drops the rule. |  |
+| `svelters::utility::arbitrary_color` | `utility_arbitrary_color` | warning | A colour literal in `[...]` (`bg-[#f00]`): it ignores the theme and high contrast (error with `strict_tokens`). |  |
+| `svelters::utility::alias` | `utility_alias` | note | An accepted spelling with a canonical one (`aria-checked:` is `checked:`, `[&::part(x)]:` is `part-x:`). | the canonical spelling |
+| `svelters::utility::variant_never_matches` | `utility_variant_never_matches` | warning | A state, part or provider state the element's kind never has (`checked:` on `<box>`, `part-thumb:` on `<button>`). | a part of the kind with a similar name |
+| `svelters::utility::not_applicable` | `utility_not_applicable` | warning | The utility sets a property that does not apply to the element's kind (`gap-2` on a `<button>`). |  |
+| `svelters::utility::conflict` | `utility_conflict` | warning | Two utilities of one static class list set the same properties under the same variants; one never applies. | remove the one that loses |
+| `svelters::utility::dynamic_value` | `utility_dynamic_value` | warning | An interpolation inside a utility class (`p-{n}`, `w-[{px}px]`): every distinct value generates a rule at run time; bind a style instead (`style:<prop>={...}`). |  |
+| `svelters::utility::shadowed_class` | `utility_shadowed_class` | warning | A class selector in the component's `<style>` is also a utility class, so elements with that class get both. |  |
+| `svelters::utility::apply_unknown` | `utility_apply_unknown` | error | `@apply` of a name that is not a utility, or one the resolver rejects. | "did you mean": replace the name with the suggestion |
+
 ### list
 
 | Id | Code | Severity | Meaning | Fix-it |
@@ -193,7 +209,7 @@ The parser, scope analysis and rune transform are ported from Svelte 5.57.2 and 
 | [`svelte::expected_identifier`](https://svelte.dev/e/expected_identifier) | error | Expected an identifier |  |
 | [`svelte::expected_pattern`](https://svelte.dev/e/expected_pattern) | error | Expected identifier or destructure pattern |  |
 | [`svelte::expected_tag`](https://svelte.dev/e/expected_tag) | error | Expected 'html', 'render', 'attach', 'const', or 'debug' |  |
-| [`svelte::expected_token`](https://svelte.dev/e/expected_token) | error | Expected token %token% |  |
+| [`svelte::expected_token`](https://svelte.dev/e/expected_token) | error | Expected token %token% | `class:w-1/2={x}` (a class name with `/`, which Svelte's parser cannot read) becomes `class={{ 'w-1/2': x }}` |
 | [`svelte::expected_whitespace`](https://svelte.dev/e/expected_whitespace) | error | Expected whitespace |  |
 | [`svelte::global_reference_invalid`](https://svelte.dev/e/global_reference_invalid) | error | `%name%` is an illegal variable name. To reference a global variable called `%name%`, use `globalThis.%name%` |  |
 | [`svelte::host_invalid_placement`](https://svelte.dev/e/host_invalid_placement) | error | `$host()` can only be used inside custom element component instances |  |

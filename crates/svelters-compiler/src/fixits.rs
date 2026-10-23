@@ -39,6 +39,8 @@ pub(crate) fn derive(src: &str, d: &mut Diagnostic) {
                 d.fixes.push(FixIt::new("remove `|commit`", vec![edit(at, at + 7, "")]));
             }
         }
+        // U4: `class:w-1/2={x}` stops the parser at the `/`
+        "expected_token" => class_with_slash(src, d),
         "block_invalid_elseif" => {
             let window = &src[start..src.len().min(start + 16)];
             if let Some(i) = window.find("elseif") {
@@ -181,4 +183,69 @@ fn one_way(d: &mut Diagnostic, text: &str) {
         None => format!("{{{name}}}"),
     };
     d.fixes.push(FixIt::new(format!("set `{prop}` one way"), vec![edit(d.start, d.end, &format!("{prop}={value}"))]));
+}
+
+/// U4 (UTILITY-CSS §4.6): a `class:` directive whose name has a `/` (`class:w-1/2={x}`,
+/// `class:bg-accent/50={x}`) is not valid Svelte: the parser ends the name at the `/` and then
+/// expects `>`. The fix-it rewrites it as a clsx object, `class={{ 'w-1/2': x }}`, when the start
+/// tag has no other `class` attribute.
+fn class_with_slash(src: &str, d: &mut Diagnostic) {
+    let b = src.as_bytes();
+    let at = d.start as usize;
+    if at == 0 || at > b.len() || b[at - 1] != b'/' {
+        return;
+    }
+    // the attribute before the `/`: `class:<name>`
+    let start = src[..at - 1].rfind(|c: char| c.is_whitespace() || c == '<').map_or(0, |i| i + 1);
+    let Some(first) = src[start..at - 1].strip_prefix("class:") else { return };
+    if first.is_empty() {
+        return;
+    }
+    // the rest of the name: up to `=`, white space or the end of the tag
+    let mut k = at;
+    while k < b.len() && !matches!(b[k], b'=' | b'>' | b'{' | b'"' | b'\'') && !b[k].is_ascii_whitespace() {
+        k += 1;
+    }
+    let name = &src[start + "class:".len()..k];
+    if name.ends_with('/') || !src[k..].starts_with("={") {
+        return;
+    }
+    // its value: `={expr}`
+    let open = k + 1;
+    let (mut depth, mut quote, mut i, mut close) = (0i32, 0u8, open, None);
+    while i < b.len() {
+        let c = b[i];
+        if quote != 0 {
+            if c == b'\\' {
+                i += 1;
+            } else if c == quote {
+                quote = 0;
+            }
+        } else if matches!(c, b'"' | b'\'' | b'`') {
+            quote = c;
+        } else if c == b'{' {
+            depth += 1;
+        } else if c == b'}' {
+            depth -= 1;
+            if depth == 0 {
+                close = Some(i);
+                break;
+            }
+        }
+        i += 1;
+    }
+    let Some(close) = close else { return };
+    let expr = src[open + 1..close].trim();
+    if expr.is_empty() {
+        return;
+    }
+    // no other `class` attribute in the start tag
+    let tag_start = src[..start].rfind('<').unwrap_or(0);
+    let tag_end = src[close..].find('>').map_or(src.len(), |e| close + e);
+    let other = |s: &str| s.split(char::is_whitespace).any(|w| w == "class" || w.starts_with("class=") || w.starts_with("class:"));
+    if other(&src[tag_start..start]) || other(&src[close + 1..tag_end]) {
+        return;
+    }
+    let text = format!("class={{{{ '{name}': {expr} }}}}");
+    d.fixes.push(FixIt::new(format!("write it as `{text}`"), vec![edit(start as u32, close as u32 + 1, &text)]));
 }

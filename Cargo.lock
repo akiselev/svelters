@@ -4634,6 +4634,7 @@ dependencies = [
 name = "svelters-compiler"
 version = "0.0.0"
 dependencies = [
+ "cssparser",
  "serde",
  "serde_json",
  "sourcemap",
