@@ -107,11 +107,13 @@ fn na_state(h: svl_handle) -> Result<(State, Option<i64>, serde_json::Value), St
                 v["caret"].as_u64().unwrap() as usize,
             ]),
             focus,
+            scroll: None,
         },
         None => State {
             text: None,
             sel: None,
             focus,
+            scroll: None,
         },
     };
     Ok((s, v["u16caret"].as_i64(), v))

@@ -2,14 +2,20 @@
 //! `conformance/pins/`, each with the fingerprint the pin has today (harness version, pin file and
 //! the chords of the platform's key table); a changed pin or key table needs a re-capture
 //! (`NA_UPDATE=1`, see plans/milestones/WG3-native-references.md). Runs anywhere: no toolkit.
+//! WG3s: the scroll pins (9, 10) are their own family; a golden holds either every text pin or
+//! every scroll pin.
 
 use svelters_conformance::golden::{goldens, read_golden};
-use svelters_conformance::pins::{Chord, Keys, conformance_dir, fingerprint, load_pins, parse_pin};
+use svelters_conformance::pins::{
+    Chord, Keys, conformance_dir, fingerprint, load_pins, load_scroll_pins, parse_pin,
+};
 use svelters_conformance::trace::{State, scalar_to_utf16, utf16_to_scalar};
 
 #[test]
 fn goldens_are_current() {
-    let pins = load_pins().unwrap();
+    let text_pins = load_pins().unwrap();
+    // WG3s: a golden holds one family, the text pins or the scroll pins (its first pin decides)
+    let scroll_pins = load_scroll_pins().unwrap();
     let mut problems = Vec::new();
     let mut seen = 0;
     let dir = conformance_dir().join("golden");
@@ -23,12 +29,21 @@ fn goldens_are_current() {
         for g in goldens(&platform).unwrap() {
             seen += 1;
             let name = g.path.file_name().unwrap().to_string_lossy().into_owned();
+            let pins = if g
+                .pins
+                .first()
+                .is_some_and(|p| scroll_pins.iter().any(|q| q.id == p.id))
+            {
+                &scroll_pins
+            } else {
+                &text_pins
+            };
             assert_eq!(
                 name,
                 format!("{}-{}.json", g.toolkit, g.version),
                 "golden file name"
             );
-            for p in &pins {
+            for p in pins {
                 match g.pin(&p.id) {
                     None => problems.push(format!("{platform}/{name}: pin {} not captured", p.id)),
                     Some(r) if r.fingerprint != fingerprint(p, &keys) => {
@@ -116,6 +131,7 @@ fn offsets_and_state_json() {
         text: Some("a\"b".into()),
         sel: Some([2, 0]),
         focus: true,
+        scroll: None,
     };
     assert_eq!(
         s.json(),
@@ -129,7 +145,8 @@ fn offsets_and_state_json() {
         State {
             text: None,
             sel: None,
-            focus: false
+            focus: false,
+            scroll: None,
         }
         .json(),
         r#"{"focus":false}"#
