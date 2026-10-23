@@ -63,7 +63,9 @@ image = { version = "0.25", default-features = false, features = ["png"] }
 # dependency turns the feature on for every app that links svelters-egui (features unify), so
 # `text-edit`, `svelters:clipboard` (DX2) and other apps see one clipboard.
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-egui-winit = { version = "=0.37.0", default-features = false, features = ["clipboard"] }
+# `x11` and `wayland` as eframe has them: winit does not build on Linux without a backend (a build of
+# svelters-egui without eframe, as svelters-testkit's snapshots have, would get none).
+egui-winit = { version = "=0.37.0", default-features = false, features = ["clipboard", "x11", "wayland"] }
 
 [target.'cfg(target_os = "linux")'.dependencies]
 # W5: the system primary selection (`primary::use_system`), the arboard egui-winit already locks.
