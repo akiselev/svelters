@@ -106,8 +106,9 @@ OW7b builds on OW7's `widgets/dialog.rs` (the modal and window chrome, the `tool
   3. **Item 5:**
      - keyboard resizing of inner windows (edge handles are not focusable; Qt's Alt+F8);
      - `:exiting` transitions for `modal`, `inner-window` and the `show()` toasts (only `<toast>` has it).
-  4. **VIS1:** probe rows for `toast` and `dialog-buttons` once references exist.
-  5. **Item 2 vs QW11:** FM1 specified `button-order` on any `box`; this lane ships the `dialog-buttons` kind only. Decide whether the box prop is still wanted.
+  4. **VIS1:** probe rows for `toast`, `dialog-buttons` and `status-bar` once references exist.
+  6. **`status-bar` remainder:** menu entries' status tips (`menus.rs` `decorate` should call `status_bar::offer`), `…` and a full-text tooltip for a cut message (see Handoff).
+  5. **Item 2 vs QW11: decided (coordinator, 2026-10-22):** FM1's `button-order` on any `box` is NOT adopted; `dialog-buttons` is the one place that applies the platform button order.
 - **Done here and not to redo:** `<toast>` (stage 1, on master), `dialog-buttons` roles, order and results, `Policy::auto_default`, `::part()` for `toast-host`, `toast`, `modal` and `inner-window`, the OW-DONE audit line (WIDGET-PARITY coordinator block).
 - **Gotchas:**
   - kittest's `run()` advances the virtual clock past short timeouts, so give toasts in tests durations of 3 s or more and step to the timeout;
