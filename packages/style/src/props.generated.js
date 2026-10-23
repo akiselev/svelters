@@ -27,11 +27,12 @@ export const TAG_SETS = [
   ["app-bar-button", "app-bar-separator", "app-bar-toggle-button", "auto-suggest-box", "border", "button", "calendar-date-picker", "calendar-view", "canvas", "check-box", "color-picker", "combo-box", "combo-box-item", "command-bar", "content-dialog", "date-picker", "drop-down-button", "expander", "font-icon", "grid", "grid-view", "grid-view-item", "hyperlink-button", "image", "info-badge", "info-bar", "list-view", "list-view-item", "menu-bar", "menu-bar-item", "menu-flyout-item", "menu-flyout-separator", "menu-flyout-sub-item", "navigation-view", "navigation-view-item", "number-box", "password-box", "person-picture", "progress-bar", "progress-ring", "radio-button", "radio-buttons", "rating-control", "repeat-button", "rich-edit-box", "scroll-viewer", "selector-bar", "selector-bar-item", "slider", "split-button", "split-view", "stack-panel", "symbol-icon", "tab-view", "tab-view-item", "teaching-tip", "text-block", "text-box", "time-picker", "toggle-button", "toggle-menu-flyout-item", "toggle-switch", "viewbox"],
   ["app-bar-button", "app-bar-separator", "app-bar-toggle-button", "auto-suggest-box", "button", "calendar-date-picker", "calendar-view", "check-box", "color-picker", "combo-box", "combo-box-item", "command-bar", "content-dialog", "date-picker", "drop-down-button", "expander", "grid", "grid-view", "grid-view-item", "hyperlink-button", "info-badge", "info-bar", "list-view", "list-view-item", "menu-bar", "menu-bar-item", "menu-flyout-item", "menu-flyout-separator", "menu-flyout-sub-item", "navigation-view", "navigation-view-item", "number-box", "password-box", "person-picture", "progress-bar", "progress-ring", "radio-button", "radio-buttons", "rating-control", "repeat-button", "rich-edit-box", "scroll-viewer", "selector-bar", "selector-bar-item", "slider", "split-button", "split-view", "stack-panel", "tab-view", "tab-view-item", "teaching-tip", "text-box", "time-picker", "toggle-button", "toggle-menu-flyout-item", "toggle-switch"],
   ["stack-panel"],
-  ["box", "collapsing-header", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "sides", "tab", "toast"],
-  ["box", "button", "calendar", "canvas", "checkbox", "collapsing-header", "color-editor", "color-picker", "combo-box", "date-picker", "drag-value", "frame", "grid", "hyperlink", "icon", "image", "inner-window", "label", "menu-bar", "menu-button", "modal", "panel", "popup", "progress-bar", "radio-button", "range-slider", "scroll-area", "scrollbar", "separator", "sides", "slider", "spinner", "split-view", "stack", "switch", "tab", "tab-view", "table", "table-column", "text-edit", "toast", "toast-host", "toggle-button", "tree-view", "virtual-list"],
-  ["box", "collapsing-header", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "tab", "toast"],
-  ["box", "collapsing-header", "frame", "inner-window", "modal", "panel", "popup", "scroll-area", "tab", "toast"],
-  ["box", "collapsing-header", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "sides", "tab", "toast", "window"],
+  ["box", "collapsing-header", "dialog-buttons", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "sides", "tab", "toast"],
+  ["box", "button", "calendar", "canvas", "checkbox", "collapsing-header", "color-editor", "color-picker", "combo-box", "date-picker", "dialog-buttons", "drag-value", "frame", "grid", "hyperlink", "icon", "image", "inner-window", "label", "menu-bar", "menu-button", "modal", "panel", "popup", "progress-bar", "radio-button", "range-slider", "scroll-area", "scrollbar", "separator", "sides", "slider", "spinner", "split-view", "stack", "switch", "tab", "tab-view", "table", "table-column", "text-edit", "toast", "toast-host", "toggle-button", "tree-view", "virtual-list"],
+  ["box", "collapsing-header", "dialog-buttons", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "tab", "toast"],
+  ["box", "collapsing-header", "dialog-buttons", "frame", "inner-window", "modal", "panel", "popup", "scroll-area", "tab", "toast"],
+  ["box", "collapsing-header", "dialog-buttons", "frame", "grid", "inner-window", "modal", "panel", "popup", "scroll-area", "sides", "tab", "toast", "window"],
+  ["dialog-buttons"],
 ];
 
 export const STYLE_TABLES = {
@@ -291,6 +292,7 @@ export const STYLE_TABLES = {
       "column-gap": {"via": "setter", "prop": "column-gap", "native": "column-gap", "type": "length", "kinds": ["Box", "Grid"], "tags": 21, "range": {"min": 0.0}},
       "content": {"via": "css", "type": "content"},
       "cursor": {"via": "css", "type": "enum", "values": ["auto", "default", "none", "context-menu", "help", "pointer", "progress", "wait", "cell", "crosshair", "text", "vertical-text", "alias", "copy", "move", "no-drop", "not-allowed", "grab", "grabbing", "all-scroll", "col-resize", "row-resize", "n-resize", "e-resize", "s-resize", "w-resize", "ne-resize", "nw-resize", "se-resize", "sw-resize", "ew-resize", "ns-resize", "nesw-resize", "nwse-resize", "zoom-in", "zoom-out"]},
+      "dialog-role": {"via": "setter", "prop": "dialog-role", "native": "dialog-role", "type": "enum", "kinds": ["Widget"], "tags": 20, "values": ["auto", "accept", "reject", "destructive", "apply", "reset", "help", "action"]},
       "display": {"via": "css", "type": "enum", "values": ["flex", "grid", "none"]},
       "flex-basis": {"via": "setter", "prop": "flex-basis", "native": "flex-basis", "type": "length", "kinds": ["Widget"], "tags": 20, "range": {"min": 0.0}},
       "flex-direction": {"via": "setter", "prop": "flex-direction", "native": "flex-direction", "type": "enum", "kinds": ["Box"], "tags": 22, "values": ["column", "row", "column-reverse", "row-reverse"]},
@@ -322,6 +324,7 @@ export const STYLE_TABLES = {
       "min-height": {"via": "setter", "prop": "min-height", "native": "min-height", "type": "length", "kinds": ["Widget"], "tags": 20, "range": {"min": 0.0}},
       "min-width": {"via": "setter", "prop": "min-width", "native": "min-width", "type": "length", "kinds": ["Widget"], "tags": 20, "range": {"min": 0.0}},
       "opacity": {"via": "css", "type": "number", "range": {"max": 1.0, "min": 0.0}},
+      "order": {"via": "setter", "prop": "order", "native": "order", "type": "enum", "kinds": ["DialogButtons"], "tags": 24, "values": ["platform", "windows", "kde", "gnome", "macos", "none"]},
       "outline-color": {"via": "css", "type": "color"},
       "outline-offset": {"via": "css", "type": "length"},
       "outline-style": {"via": "css", "type": "enum", "values": ["none", "auto", "solid", "dashed", "dotted", "double", "groove", "ridge", "inset", "outset"]},

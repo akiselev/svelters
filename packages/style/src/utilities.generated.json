@@ -3553,6 +3553,19 @@
    ],
    "provider_states": []
   },
+  "dialog-buttons": {
+   "kind": "DialogButtons",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
   "drag-value": {
    "kind": "DragValue",
    "states": [
@@ -4078,6 +4091,15 @@
     "exiting",
     "focus",
     "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "toast": {
+   "kind": "Toast",
+   "states": [
+    "exiting",
     "hover"
    ],
    "parts": [],

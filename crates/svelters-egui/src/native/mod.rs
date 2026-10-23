@@ -72,13 +72,42 @@ pub enum ActivateOn {
     Release,
 }
 
-/// OW0 (FM1 QW11): the order of a dialog's affirmative and dismissive buttons.
+/// OW0 (FM1 QW11; OW7b): a platform's dialog button order (`dialog-buttons`). Help and reset come
+/// first on every platform, then the children that are not role buttons, then the roles in
+/// [`ButtonOrder::roles`] order.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum ButtonOrder {
-    /// OK then Cancel (Windows, KDE).
-    OkCancel,
-    /// Cancel then OK (GTK, macOS).
-    CancelOk,
+    /// `accept action reject destructive apply` (QDialogButtonBox WinLayout).
+    Windows,
+    /// `accept action apply destructive reject` (KdeLayout).
+    Kde,
+    /// `destructive action apply reject accept` (GnomeLayout).
+    Gnome,
+    /// `destructive apply action reject accept` (MacLayout).
+    MacOs,
+}
+
+impl ButtonOrder {
+    /// The trailing roles in order (help and reset lead on every platform).
+    pub fn roles(self) -> &'static [&'static str] {
+        match self {
+            ButtonOrder::Windows => &["accept", "action", "reject", "destructive", "apply"],
+            ButtonOrder::Kde => &["accept", "action", "apply", "destructive", "reject"],
+            ButtonOrder::Gnome => &["destructive", "action", "apply", "reject", "accept"],
+            ButtonOrder::MacOs => &["destructive", "apply", "action", "reject", "accept"],
+        }
+    }
+
+    /// `dialog-buttons` `order` names (`platform` resolves through the policy).
+    pub fn of(name: &str) -> Option<ButtonOrder> {
+        Some(match name {
+            "windows" => ButtonOrder::Windows,
+            "kde" => ButtonOrder::Kde,
+            "gnome" => ButtonOrder::Gnome,
+            "macos" => ButtonOrder::MacOs,
+            _ => return None,
+        })
+    }
 }
 
 /// What a [`Native`] does, one switch per behaviour WG3 measured. `#[non_exhaustive]`: an app
@@ -135,6 +164,10 @@ pub struct Policy {
     /// OW3: a lone Alt press and release highlights the menu bar's first menu (Windows, KDE);
     /// F10 does it everywhere.
     pub alt_focuses_menu_bar: bool,
+    /// OW7b (WIDGET-PARITY §2.1, Qt `autoDefault`): in a dialog scope the focused push button is the
+    /// default: Enter activates it and it shows `:default` (Windows, KDE, GTK). Off (macOS), Enter
+    /// goes to the scope's `default` button whatever is focused; Space still presses the focused one.
+    pub auto_default: bool,
     /// OW2: scroll gestures and sashes (`interact::Scrollable`, `interact::Resizable`).
     pub scroll: ScrollPolicy,
 }
@@ -186,9 +219,10 @@ const GTK: Policy = Policy {
     kinetic: Kinetic::Own,
     scrollbars: Scrollbars::Overlay,
     space_activates_on: ActivateOn::Release,
-    button_order: ButtonOrder::CancelOk,
+    button_order: ButtonOrder::Gnome,
     submenu_delay_ms: 225,
     tooltip_follow_on_ms: 1000,
+    auto_default: true,
     alt_focuses_menu_bar: false,
     scroll: ScrollPolicy {
         track_click: TrackClick::Jump,
@@ -218,9 +252,10 @@ const QT: Policy = Policy {
     kinetic: Kinetic::None,
     scrollbars: Scrollbars::Classic,
     space_activates_on: ActivateOn::Release,
-    button_order: ButtonOrder::OkCancel,
+    button_order: ButtonOrder::Kde,
     submenu_delay_ms: 225,
     tooltip_follow_on_ms: 2000,
+    auto_default: true,
     alt_focuses_menu_bar: true,
     scroll: ScrollPolicy {
         track_click: TrackClick::Page,
@@ -250,9 +285,10 @@ const WINDOWS: Policy = Policy {
     kinetic: Kinetic::Os,
     scrollbars: Scrollbars::Overlay,
     space_activates_on: ActivateOn::Release,
-    button_order: ButtonOrder::OkCancel,
+    button_order: ButtonOrder::Windows,
     submenu_delay_ms: 400,
     tooltip_follow_on_ms: 2000,
+    auto_default: true,
     alt_focuses_menu_bar: true,
     scroll: ScrollPolicy {
         track_click: TrackClick::Page,
@@ -282,9 +318,10 @@ const MAC: Policy = Policy {
     kinetic: Kinetic::Os,
     scrollbars: Scrollbars::Overlay,
     space_activates_on: ActivateOn::Release,
-    button_order: ButtonOrder::CancelOk,
+    button_order: ButtonOrder::MacOs,
     submenu_delay_ms: 0,
     tooltip_follow_on_ms: 1000,
+    auto_default: false,
     alt_focuses_menu_bar: false,
     scroll: ScrollPolicy {
         track_click: TrackClick::Page,
@@ -314,9 +351,10 @@ const EGUI: Policy = Policy {
     kinetic: Kinetic::None,
     scrollbars: Scrollbars::Overlay,
     space_activates_on: ActivateOn::Press,
-    button_order: ButtonOrder::OkCancel,
+    button_order: ButtonOrder::Windows,
     submenu_delay_ms: 200,
     tooltip_follow_on_ms: 1000,
+    auto_default: true,
     alt_focuses_menu_bar: false,
     scroll: ScrollPolicy {
         track_click: TrackClick::Jump,

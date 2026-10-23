@@ -42,7 +42,7 @@ A drop button showing a date; clicking it opens the calendar (the `calendar` kin
 | `value` | `string` | `""` | **yes**, on `changed` | The date, ISO 8601 (`2026-10-22`); `""` for none (the button shows today). Picking a day (and, with `commit-mode="confirm"`, pressing Save) changes it. |
 | `weekday-format` | `'narrow' \| 'short' \| 'long' \| 'none'` | `"short"` | no | The weekday header: `narrow` (M), `short` (Mo), `long` (Monday) or `none` (no header row). |
 
-Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessible-name`, `align-self`, `anchor`, `autofocus`, `bottom`, `drag-data`, `drag-type`, `drop-types`, `enabled`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `invalid`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `tooltip`, `top`, `visible`, `width`.
+Plus the 27 props every element has, from [`Widget`](widget.md#props): `accessible-name`, `align-self`, `anchor`, `autofocus`, `bottom`, `dialog-role`, `drag-data`, `drag-type`, `drop-types`, `enabled`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `invalid`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `tooltip`, `top`, `visible`, `width`.
 <!-- END GENERATED -->
 
 ## Events
@@ -86,7 +86,7 @@ None.
 | `box-shadow` | yes (outer and inset) | — |
 | `opacity` | yes | — |
 
-**Layout properties** (as attributes or in CSS; an explicit attribute wins): `align-self`, `bottom`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `left`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `top`, `visible`, `width`.
+**Layout properties** (as attributes or in CSS; an explicit attribute wins): `align-self`, `bottom`, `dialog-role`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `left`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `top`, `visible`, `width`.
 Also in CSS only: `display`, `grid-column`, `grid-row`, `margin-bottom`, `margin-left`, `margin-right`, `margin-top`.
 
 The button: R4's field look with R14's chevron (`::part(chevron)`); the popup is `::part(popup)` (OW3's surface) holding the `calendar` kind's parts (`header`, `prev`, `next`, `month`, `year`, `weekday`, `week-number`, `grid`, `day`) and `::part(save)`, `::part(cancel)`.

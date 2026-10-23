@@ -1796,7 +1796,8 @@ fn takes_input(w: &crate::scene::W) -> bool {
         | W::Table(_)
         | W::TabView { .. }
         | W::ToastHost(_)
-        | W::Toast(_) => true,
+        | W::Toast(_)
+        | W::DialogButtons(_) => true,
     }
 }
 

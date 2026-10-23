@@ -88,7 +88,7 @@ pub use menus::attaches_to;
 pub use popups::PLACEMENT;
 pub use media::FIT;
 pub use panes::{FRAME_STYLE, SIDE};
-pub use views::{CELL_ALIGN, COMMIT_MODE, SORT, TABLE_SELECTION, TOAST_CORNER, TOAST_LEVEL};
+pub use views::{BUTTON_ORDER, CELL_ALIGN, COMMIT_MODE, DIALOG_ROLE, SORT, TABLE_SELECTION, TOAST_CORNER, TOAST_LEVEL};
 pub use registry::{KindRegistry, PROVIDER_PACK, ProviderKind, kind};
 pub use virtuallist::{ListStats, VList};
 
@@ -354,6 +354,9 @@ pub enum P {
     Fields,
     /// OW7b: toast (its level; `duration` reuses toast-host's)
     Level,
+    /// OW7b: dialog-buttons (`order`) and Widget (`dialog-role`)
+    ButtonOrder,
+    DialogRole,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }

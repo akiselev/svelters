@@ -17,6 +17,7 @@ pub mod selection;
 pub(crate) mod table;
 pub(crate) mod tabs;
 pub mod toast;
+pub mod dialog_buttons;
 // WG5a: egui input for the item views' keyboard selection (`selection` is WG5b's shared helper)
 pub mod item_keys;
 
@@ -33,7 +34,7 @@ use taffy::{
 
 /// The views that have children (`W::is_container`).
 pub(crate) fn is_container(w: &W) -> bool {
-    matches!(w, W::Table(_) | W::TabView { .. } | W::Tab { .. } | W::Toast(_))
+    matches!(w, W::Table(_) | W::TabView { .. } | W::Tab { .. } | W::Toast(_) | W::DialogButtons(_))
 }
 
 /// The no-wrap size of a view that measures itself (only `table`; the others are sized by their
@@ -69,6 +70,7 @@ pub(crate) fn container(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: 
     match arena.w(i) {
         W::Table(_) => table::paint(arena, i, r, ui, out),
         W::TabView { .. } => tabs::paint(arena, i, r, origin, ui, out),
+        W::DialogButtons(_) => dialog_buttons::paint(arena, i, r, origin, ui, out),
         _ => unreachable!("not a view container"),
     }
     let c = arena.common(i);

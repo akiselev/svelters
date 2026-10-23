@@ -40,7 +40,7 @@ An inline month calendar (Qt's `QCalendarWidget`): a header with previous/next, 
 | `value` | `string` | `""` | **yes**, on `changed` | The picked date, ISO 8601 (`2026-10-22`); `""` for none. |
 | `weekday-format` | `'narrow' \| 'short' \| 'long' \| 'none'` | `"short"` | no | The weekday header: `narrow` (M), `short` (Mo), `long` (Monday) or `none` (no header row). |
 
-Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessible-name`, `align-self`, `anchor`, `autofocus`, `bottom`, `drag-data`, `drag-type`, `drop-types`, `enabled`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `invalid`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `tooltip`, `top`, `visible`, `width`.
+Plus the 27 props every element has, from [`Widget`](widget.md#props): `accessible-name`, `align-self`, `anchor`, `autofocus`, `bottom`, `dialog-role`, `drag-data`, `drag-type`, `drop-types`, `enabled`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `invalid`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `tooltip`, `top`, `visible`, `width`.
 <!-- END GENERATED -->
 
 ## Events
@@ -84,7 +84,7 @@ None.
 | `box-shadow` | yes (outer and inset) | — |
 | `opacity` | yes | — |
 
-**Layout properties** (as attributes or in CSS; an explicit attribute wins): `align-self`, `bottom`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `left`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `top`, `visible`, `width`.
+**Layout properties** (as attributes or in CSS; an explicit attribute wins): `align-self`, `bottom`, `dialog-role`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `left`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `top`, `visible`, `width`.
 Also in CSS only: `display`, `grid-column`, `grid-row`, `margin-bottom`, `margin-left`, `margin-right`, `margin-top`.
 
 Parts: `header`, `prev`, `next`, `month`, `year`, `weekday`, `week-number`, `grid`, `day`. Day states `:hover`, `:selected`, `:current` (the keyboard cursor, ringed while `:focus-visible`), `:disabled`, and the part names `today`, `weekend`, `other-month` plus `day-parts`' names, painted from the UA tables until per-day part styles reach egui.

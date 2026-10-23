@@ -159,6 +159,7 @@ fn builtin_payload(kind: usize) -> Option<W> {
         "Tab" => W::Tab { title: String::new(), closable: false },
         "ToastHost" => W::ToastHost(Box::default()),
         "Toast" => W::Toast(Box::default()),
+        "DialogButtons" => W::DialogButtons(Box::default()),
         // RA1: a provider kind's widget struct with its defaults
         _ => W::Ext(crate::provider::ExtWidget::new((kinds::KindRegistry::global().provider(kind)?.entry.new)())),
     })
@@ -189,8 +190,12 @@ impl Scene {
         let tick = self.stamp();
         let i = id.index() as usize;
         // SG6: a window's padding is its only non-default common prop at creation (interned)
-        let common = matches!(w, W::Window { .. }).then(|| {
-            let c = Common { padding: 8.0, ..Common::DEFAULT };
+        let common = matches!(w, W::Window { .. } | W::DialogButtons(_)).then(|| {
+            let c = match w {
+                // OW7b: a button row, right-aligned, 6 apart
+                W::DialogButtons(_) => Common { flex_direction: "row", justify_content: "end", align_items: "center", gap: 6.0, ..Common::DEFAULT },
+                _ => Common { padding: 8.0, ..Common::DEFAULT },
+            };
             let k = super::compact::common_key(&c);
             self.commons.intern(c, k)
         });

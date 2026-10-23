@@ -64,7 +64,7 @@ pub(crate) fn container(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: 
         w if crate::elements::is_container(w) => crate::elements::container(arena, i, r, origin, ui, out),
         W::CollapsingHeader { .. } => collapsing(arena, i, r, origin, ui, out),
         // WG4a: table, tab-view (`crate::views`)
-        W::Table(_) | W::TabView { .. } => crate::views::container(arena, i, r, origin, ui, out),
+        W::Table(_) | W::TabView { .. } | W::DialogButtons(_) => crate::views::container(arena, i, r, origin, ui, out),
         _ => {
             let c = arena.common(i);
             if !c.tooltip.is_empty() {
@@ -325,7 +325,7 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         | W::ProgressBar { .. }
         | W::Spinner { .. }
         | W::Canvas(_) => unreachable!("WG2b kinds are drawn by crate::elements"),
-        W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) | W::Toast(_) => unreachable!("WG4a views: crate::views"),
+        W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) | W::Toast(_) | W::DialogButtons(_) => unreachable!("WG4a views: crate::views"),
         W::Run { .. } => unreachable!("RT2: runs are drawn by their label (crate::rich)"),
         }
     };

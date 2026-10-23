@@ -13,7 +13,7 @@
 //! - `toast-host`: draws the toasts of its viewport in a corner; `show(text, level?, duration?)`
 //!   from JS (`bind:this`) or `svelters_egui::toast::show` from Rust.
 
-use super::{Def, KindDef, MethodDef, Native, ORIENTATION, P, PropDef, SignalDef, Ty, input, optional, prop, signal};
+use super::{Def, KindDef, MethodDef, Native, ORIENTATION, P, PropDef, SignalDef, Ty, input, layout, optional, prop, signal};
 
 pub const CELL_ALIGN: &[&str] = &["start", "center", "end"];
 pub const SORT: &[&str] = &["none", "ascending", "descending"];
@@ -361,6 +361,41 @@ pub(super) const TOAST: KindDef = KindDef {
     signals: TOAST_SIGNALS,
     methods: &[],
     doc: "A declarative toast, a child of `toast-host`: a flex box (column) laid out by taffy, stacked by its host with the `show()` toasts. Its labels are ordinary nodes, so their RT2 runs (`<b>`, `<a href>`, `<code>`) take per-run CSS; its child buttons are its actions (a click closes it with `action`). Styled by `toast` and `toast[level=…]`, `toast::part(accent)`, `toast::part(close)`, with `:hover` and `:exiting` (while its `transition` plays out after it closed).",
+};
+
+// ---- dialog-buttons (OW7b) ----
+
+/// `dialog-role` values (`auto` first: the default).
+pub const DIALOG_ROLE: &[&str] = &["auto", "accept", "reject", "destructive", "apply", "reset", "help", "action"];
+/// `dialog-buttons` `order` values.
+pub const BUTTON_ORDER: &[&str] = &["platform", "windows", "kde", "gnome", "macos", "none"];
+
+static DIALOG_BUTTONS_PROPS: &[PropDef] = &[layout(
+    "order",
+    P::ButtonOrder,
+    Ty::Enum(BUTTON_ORDER),
+    Def::Str("platform"),
+    "The button order: `platform` (`Policy::button_order`: Windows and egui, KDE for Qt, GNOME for GTK, macOS), a platform by name, or `none` (tree order). Help and reset lead, then children without a role, then the platform's roles. Only layout sees it: paint and Tab order stay the tree's.",
+)];
+
+static DIALOG_BUTTONS_SIGNALS: &[SignalDef] = &[
+    signal("clicked", &[("role", Ty::Str)], "One of its buttons was clicked; carries the button's role (`auto` resolved)."),
+    signal("help", &[], "Its `help` button was clicked (Qt `helpRequested`)."),
+];
+
+pub(super) const DIALOG_BUTTONS: KindDef = KindDef {
+    id: "DialogButtons",
+    tag: Some("dialog-buttons"),
+    native: "a taffy flex row in the platform's dialog button order (svelters' own)",
+    base: Some("Box"),
+    toplevel: false,
+    slot: Some("children"),
+    text_content: None,
+    present: None,
+    props: DIALOG_BUTTONS_PROPS,
+    signals: DIALOG_BUTTONS_SIGNALS,
+    methods: &[],
+    doc: "A dialog's button row (QDialogButtonBox): its `button` children take their place by `dialog-role` in the platform's order, right-aligned 6 apart (a row with `justify-content: end` and `gap: 6` at creation). A click reports `clicked(role)` (`help` too for the help role). With EV3, `default` and `cancel` buttons answer Enter and Escape; in a `modal` or `inner-window`, accept and reject buttons close it with that result (`close(\"accept\")`).",
 };
 
 pub(super) const TOAST_HOST: KindDef = KindDef {

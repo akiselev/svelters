@@ -81,6 +81,14 @@ static WIDGET_PROPS: &[PropDef] = &[
     length("top", P::Top, "Inset from the containing block's top edge in points; null for auto."),
     length("right", P::Right, "Inset from the containing block's right edge in points; null for auto."),
     length("bottom", P::Bottom, "Inset from the containing block's bottom edge in points; null for auto."),
+    // ---- OW7b: appended ----
+    layout(
+        "dialog-role",
+        P::DialogRole,
+        Ty::Enum(super::views::DIALOG_ROLE),
+        Def::Str("auto"),
+        "Its place in a `dialog-buttons` row (QDialogButtonBox roles): `accept`, `reject`, `destructive`, `apply`, `reset`, `help`, `action`; `auto` is `accept` for a `default` button, `reject` for a `cancel` one, else `action`. Also the `[dialog-role=…]` selector.",
+    ),
 ];
 
 static LABEL_PROPS: &[PropDef] = &[
@@ -363,4 +371,5 @@ pub static KINDS: &[KindDef] = &[
     super::pickers::COLOR_EDITOR,
     // ---- OW7b: appended (`views.rs`; svelters' own widget only) ----
     super::views::TOAST,
+    super::views::DIALOG_BUTTONS,
 ];

@@ -65,6 +65,8 @@ pub enum W {
     ToastHost(std::boxed::Box<crate::views::toast::Toasts>),
     /// OW7b: `toast`, a declarative toast of its parent `toast-host` (a Box laid out by taffy).
     Toast(std::boxed::Box<crate::views::toast::ToastNode>),
+    /// OW7b: `dialog-buttons`, a row of role buttons in the platform's order.
+    DialogButtons(std::boxed::Box<crate::views::dialog_buttons::DialogButtons>),
     /// RT2: an inline run (`span`, `b`, `i`, `code`, `a`: `kinds/rich.rs`), drawn by its label.
     /// `weight` 0 inherits; `anchor`: an `a` run (a link).
     Run { text: String, weight: i64, href: String, anchor: bool },
@@ -126,6 +128,8 @@ pub struct Common {
     /// EV3: a button activated by Enter (`default`) or Escape (`cancel`) in its scope.
     pub default_button: bool,
     pub cancel_button: bool,
+    /// OW7b: `dialog-role` (a `dialog-buttons` child's place).
+    pub dialog_role: &'static str,
 }
 
 impl Common {
@@ -165,6 +169,7 @@ impl Common {
         focus_scope: "none",
         default_button: false,
         cancel_button: false,
+        dialog_role: "auto",
     };
 }
 
@@ -486,7 +491,7 @@ pub fn text_of(w: &W) -> &str {
         W::Hyperlink { text, .. } | W::RadioButton { text, .. } | W::Switch { text, .. } | W::ProgressBar { text, .. } => text,
         W::Frame { label, .. } => label,
         W::Sides | W::Stack { .. } | W::Image { .. } | W::Spinner { .. } | W::Canvas(_) => "",
-        W::Table(_) | W::TabView { .. } | W::ToastHost(_) | W::Toast(_) => "",
+        W::Table(_) | W::TabView { .. } | W::ToastHost(_) | W::Toast(_) | W::DialogButtons(_) => "",
     }
 }
 

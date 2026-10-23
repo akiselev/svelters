@@ -86,7 +86,7 @@ pub(crate) fn is_common(key: P) -> bool {
     use P::*;
     matches!(
         key,
-        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | Position | Left | Top | Right | Bottom | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid | DragType | DragData | DropTypes | Autofocus | FocusScope | Default | Cancel
+        Enabled | Visible | Tooltip | AccessibleName | Anchor | Width | Height | MinWidth | MinHeight | MaxWidth | MaxHeight | FlexGrow | FlexShrink | FlexBasis | AlignSelf | Margin | Position | Left | Top | Right | Bottom | FlexDirection | FlexWrap | Gap | RowGap | ColumnGap | Padding | AlignItems | JustifyContent | Invalid | DragType | DragData | DropTypes | Autofocus | FocusScope | Default | Cancel | DialogRole
     )
 }
 
@@ -127,6 +127,7 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (P::Tooltip, _) => c.tooltip = as_str(v)?,
         (P::AccessibleName, _) => c.accessible_name = as_str(v)?,
         (P::Anchor, _) => c.anchor = as_str(v)?,
+        (P::DialogRole, _) => c.dialog_role = as_enum(v, crate::kinds::DIALOG_ROLE)?,
         (P::Width, _) => c.width = as_len(v)?,
         (P::Height, _) => c.height = as_len(v)?,
         (P::MinWidth, _) => c.min_width = as_len(v)?,
@@ -259,6 +260,7 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         (key, W::Table(t)) => d.insert(t.set(key, v)?),
         (key, W::ToastHost(t)) => t.set(key, v)?,
         (key, W::Toast(t)) => t.set(key, v)?,
+        (P::ButtonOrder, W::DialogButtons(d)) => d.order = as_enum(v, crate::kinds::BUTTON_ORDER)?,
         (P::Title, W::Tab { title, .. } | W::TableColumn { title, .. }) => *title = as_str(v)?,
         (P::Resizable, W::TableColumn { resizable, .. }) => *resizable = as_bool(v)?,
         (P::CellAlign, W::TableColumn { align, .. }) => *align = as_enum(v, kinds::CELL_ALIGN)?,
@@ -372,6 +374,7 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (key, W::Table(t)) => t.get(key).ok_or_else(|| format!("{key:?} is not a prop of <table>"))?,
         (key, W::ToastHost(t)) => t.get(key).ok_or_else(|| format!("{key:?} is not a prop of <toast-host>"))?,
         (key, W::Toast(t)) => t.get(key).ok_or_else(|| format!("{key:?} is not a prop of <toast>"))?,
+        (P::ButtonOrder, W::DialogButtons(d)) => Value::Str(d.order.to_string()),
         (P::Title, W::Tab { title, .. } | W::TableColumn { title, .. }) => s(title),
         (P::Resizable, W::TableColumn { resizable, .. }) => Value::Bool(*resizable),
         (P::CellAlign, W::TableColumn { align, .. }) => s(align),
