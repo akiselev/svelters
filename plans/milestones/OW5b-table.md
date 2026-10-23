@@ -189,3 +189,39 @@ and logical position. Rows (WIDGET-PARITY §2.18):
 
 Tests to extend: `tests/ow5b.rs` (header), `tests/wg5a.rs` (keys, editing). Shared code OW5a2 also uses
 (`columns`, `Geom`, `header`): change it in one place, and run `ow5b.rs` together with the tree tests.
+
+## Handoff: state, gotchas, what OW5a2 needs
+
+**State.** OW5b1 is done: every row in "What landed", with CI green on the final sha (see the report).
+No known bugs. The OW5b2 list above is the rest of WIDGET-PARITY's OW5b rows.
+
+**Gotchas we hit:**
+- egui fills AccessKit `bounds` only for focusable widgets. Hover-only nodes (rows, cells, the Table
+  node, scroll bars, the menu) must set them (`bounds()` in `table.rs`), or kittest's `click()` panics
+  with "Every egui node should have a rect". A ScrollBar node also needs a widget registered under its
+  id every pass, even while the bar is faded out.
+- `tooltip::show` requests a repaint, so calling it every frame never lets `Harness::run` settle. The
+  error tooltip is shown once per change (`EditError::shown_at`) and hidden once (`tip_shown`).
+- `header-state` is parsed on write: anything that writes every Str prop (`tests/observe.rs`) must give
+  it JSON.
+- `Common` is interned (SG6), so writing a column's `width` on every drag frame would grow the table.
+  Live widths stay in `TableRt::live` and are written once, on commit (`set_width`).
+- `TableRt` (Scrollable, Resizable units, the menu) is not a prop. Its `Clone` starts fresh and its
+  `PartialEq` is always true, as `VList`'s.
+- The fixture tests (`gallery_views`, `clipboard`, `embed`) need `pnpm build` and run only in CI.
+
+**What OW5a2 needs (multi-column tree):**
+- `views::table::{ColumnState, columns, Col, Geom, header, HeaderOut}` are `pub(crate)`.
+  - `columns(scene, i)` reads the `table-column` children of any node.
+  - `Geom::new(rect, header_h, widths, sticky, stretch_last, row_h)` gives the column x ranges, clips
+    and hit tests.
+  - `header()` paints and runs the header with its resize edges.
+- `header()` currently reads `W::Table` for the sort (`shown_sort`) and keeps the edge units and live
+  width in `TableState::rt`. For a tree, move `{sort_column, sort_order, hidden, col_map, rt.edges,
+  rt.live}` into a small `HeaderState` struct that both payloads hold, and pass it in. That is the one
+  refactor needed. The FM1 functions (`restore_header`, `header_after`, `header_state`) work on that
+  state unchanged.
+- The tree column holds the twistie: paint `list_rows::paint_twistie` in column 0's content box before
+  the cell text.
+- `slot_accepts` in `kinds/views.rs` lets only `Table` take `TableColumn` children. Add `TreeView`
+  there.
