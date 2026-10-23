@@ -643,7 +643,11 @@ fn push_entry(ui: &Ui, resp: &egui::Response, entry: Entry, ext: Option<&crate::
     let pass = ctx.cumulative_pass_nr();
     let composing = with(ctx, |st| {
         st.rotate(pass);
-        st.cur.entries.push(entry);
+        // OW1a3: one entry per id and pass (a widget's `WidgetCx::focus_stop` on its own
+        // response comes before the walk's record of it and wins)
+        if !st.cur.entries.iter().any(|e| e.id == entry.id) {
+            st.cur.entries.push(entry);
+        }
         if focused {
             st.cur.focused = Some(resp.id);
         }

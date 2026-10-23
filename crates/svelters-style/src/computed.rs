@@ -193,6 +193,15 @@ pub(crate) fn compute(table: &'static Table, decls: &[&Declaration], parent: Opt
         }
         out.values[i] = v;
     }
+    // U2 E5: `transition` is assembled from its longhands, which the shorthand and the longhand
+    // declarations cascaded into
+    if let Some(t) = table.index_of("transition")
+        && table.computes(&table.props[t])
+        && table.index_of(shorthand::TRANSITION[0]).is_some()
+    {
+        let [p, d, e, l] = shorthand::TRANSITION.map(|n| table.index_of(n).and_then(|i| out.values[i].as_ref()));
+        out.values[t] = crate::values::combine_transitions(p, d, e, l);
+    }
     out
 }
 

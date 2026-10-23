@@ -240,6 +240,12 @@ export interface EguiElements {
     selectable?: boolean;
     /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
     'font-weight'?: number;
+    /** The selection's start, in chars of the shown text (`bind:`). */
+    'selection-start'?: number;
+    'bind:selection-start'?: number;
+    /** The selection's end, in chars (`bind:`); a negative end is the end of the text. */
+    'selection-end'?: number;
+    'bind:selection-end'?: number;
     /** WG6 QW13: cut one line with `…` to the width: `none`, `start`, `middle`, `end`. */
     elide?: 'none' | 'start' | 'middle' | 'end';
     /** The `anchor` of the control this label names (Qt's buddy): a click focuses it. */

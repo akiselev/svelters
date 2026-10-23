@@ -90,6 +90,7 @@ RS_TYPE = {
     "length": "Length", "number": "Number", "int": "Int", "bool": "Bool", "string": "String",
     "enum": "Enum", "color": "Color", "insets": "Insets", "font-weight": "FontWeight",
     "border": "Raw", "shadow": "Shadow", "transition": "Transition", "image": "Image", "content": "Content",
+    "transition-property": "TransitionProperty", "time-list": "TimeList", "easing-list": "EasingList",
 }
 
 

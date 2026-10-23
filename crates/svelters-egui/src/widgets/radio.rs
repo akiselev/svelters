@@ -22,7 +22,7 @@ use crate::scene::NodeId;
 use svelters_host::exports::Value;
 
 /// `::part(indicator)`: the round box (VS Code has no radio; DESIGN §1.3 sizes it as the checkbox).
-// TODO(OW-CSS ::part): the part's computed style replaces this table where a sheet sets it
+// The part's UA layer: `::part()` rules in a sheet override it (OW1a3, `parts::part_of`).
 pub const INDICATOR: Ua = Ua(&[
     UaRule::base(&[
         ("width", Px(18.0)),
@@ -163,7 +163,7 @@ impl Widget for RadioButton {
         if ui.is_rect_visible(cx.rect()) {
             super::checkbox::paint_indicator_kind(ui, cx, super::checkbox::UA, "indicator", INDICATOR, false, &self.text, &self.icon, |pc, host, ir| {
                 if host.state().contains(StateBits::CHECKED) {
-                    let dot = parts::part_view(host, DOT, false);
+                    let dot = parts::part_of(cx, host, "dot", DOT, false);
                     let d = dot.px("width").unwrap_or(8.0);
                     let color = dot.color("color").unwrap_or(egui::Color32::PLACEHOLDER);
                     parts::paint_dot(&mut pc.part("dot"), ir.center(), d / 2.0, color, egui::Stroke::NONE);

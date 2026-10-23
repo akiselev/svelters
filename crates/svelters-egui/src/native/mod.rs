@@ -168,6 +168,9 @@ pub struct Policy {
     /// default: Enter activates it and it shows `:default` (Windows, KDE, GTK). Off (macOS), Enter
     /// goes to the scope's `default` button whatever is focused; Space still presses the focused one.
     pub auto_default: bool,
+    /// U2 E7: the platform `@media (-sv-platform: macos | windows | linux)` sees; `None`: the
+    /// context's OS (`egui::Context::os`). Overriding it emulates another platform's sheets.
+    pub platform: Option<svelters_style::Platform>,
     /// OW2: scroll gestures and sashes (`interact::Scrollable`, `interact::Resizable`).
     pub scroll: ScrollPolicy,
 }
@@ -224,6 +227,7 @@ const GTK: Policy = Policy {
     tooltip_follow_on_ms: 1000,
     auto_default: true,
     alt_focuses_menu_bar: false,
+    platform: Some(svelters_style::Platform::Linux),
     scroll: ScrollPolicy {
         track_click: TrackClick::Jump,
         shift_track_click_inverts: true,
@@ -257,6 +261,7 @@ const QT: Policy = Policy {
     tooltip_follow_on_ms: 2000,
     auto_default: true,
     alt_focuses_menu_bar: true,
+    platform: Some(svelters_style::Platform::Linux),
     scroll: ScrollPolicy {
         track_click: TrackClick::Page,
         shift_track_click_inverts: false,
@@ -290,6 +295,7 @@ const WINDOWS: Policy = Policy {
     tooltip_follow_on_ms: 2000,
     auto_default: true,
     alt_focuses_menu_bar: true,
+    platform: Some(svelters_style::Platform::Windows),
     scroll: ScrollPolicy {
         track_click: TrackClick::Page,
         shift_track_click_inverts: false,
@@ -323,6 +329,7 @@ const MAC: Policy = Policy {
     tooltip_follow_on_ms: 1000,
     auto_default: false,
     alt_focuses_menu_bar: false,
+    platform: Some(svelters_style::Platform::Macos),
     scroll: ScrollPolicy {
         track_click: TrackClick::Page,
         shift_track_click_inverts: false,
@@ -356,6 +363,7 @@ const EGUI: Policy = Policy {
     tooltip_follow_on_ms: 1000,
     auto_default: true,
     alt_focuses_menu_bar: false,
+    platform: None,
     scroll: ScrollPolicy {
         track_click: TrackClick::Jump,
         shift_track_click_inverts: false,

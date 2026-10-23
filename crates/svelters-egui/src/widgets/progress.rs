@@ -14,11 +14,11 @@ use crate::provider::{A11yCx, AvailableSpace, MeasureCx, StateBits, Widget, Widg
 
 pub const UA: Ua = Ua(&[UaRule::base(&[("text-align", Keyword("center")), ("width", Px(100.0))])]);
 
-// TODO(OW-CSS `::part`): a hard-coded part UA table; replace it with the part's computed style once the engine computes `::part()` styles (see `parts::part_view`).
+// The part's UA layer: `::part()` rules in a sheet override it (OW1a3, `parts::part_of`).
 /// `::part(track)`.
 pub const TRACK: Ua = Ua(&[UaRule::base(&[("background-color", Token("control-bg")), ("border-radius", Px(2.0)), ("height", Px(4.0))])]);
 
-// TODO(OW-CSS `::part`): a hard-coded part UA table; replace it with the part's computed style once the engine computes `::part()` styles (see `parts::part_view`).
+// The part's UA layer: `::part()` rules in a sheet override it (OW1a3, `parts::part_of`).
 /// `::part(fill)`.
 pub const FILL: Ua = Ua(&[UaRule::base(&[("background-color", Token("progress"))])]);
 
@@ -143,12 +143,12 @@ impl Widget for ProgressBar {
         if ui.is_rect_visible(cx.rect()) {
             let host = cx.style(UA);
             let r = cx.rect();
-            let track = parts::part_view(&host, TRACK, false);
+            let track = parts::part_of(cx, &host, "track", TRACK, false);
             let th = if label.is_some() { if vertical { r.width() } else { r.height() } } else { parts::part_size(&host, TRACK, 4.0).y.min(if vertical { r.width() } else { r.height() }) };
             let tr = if vertical { egui::Rect::from_center_size(r.center(), egui::vec2(th, r.height())) } else { egui::Rect::from_center_size(r.center(), egui::vec2(r.width(), th)) };
             let mut pc = cx.paint_cx(ui);
             paint::paint_box(&mut pc.part("track"), &track, tr);
-            let fill = parts::part_view(&host, FILL, false);
+            let fill = parts::part_of(cx, &host, "fill", FILL, false);
             let color = fill.color("background-color").unwrap_or(egui::Color32::PLACEHOLDER);
             let radius = track.px("border-radius").unwrap_or(0.0);
             // the fill's span along the bar, 0..1 from where it starts (left, or bottom when vertical)

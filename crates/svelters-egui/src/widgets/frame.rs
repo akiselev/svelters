@@ -128,11 +128,14 @@ impl Frame {
     }
 
     /// The caption row's size (indicator, gap, caption), zero without a label or check.
-    fn caption_size(&self, ctx: &egui::Context, host: &StyleView<'_>, cap: &StyleView<'_>) -> egui::Vec2 {
+    fn caption_size(&self, ctx: &egui::Context, host: &StyleView<'_>, cap: &StyleView<'_>, ind_css: Option<&svelters_style::ComputedStyle>) -> egui::Vec2 {
         if self.label.is_empty() && !self.checkable {
             return egui::Vec2::ZERO;
         }
-        let ind = parts::part_view(host, checkbox::INDICATOR, false);
+        let ind = match ind_css {
+            Some(c) => host.part(Some(c), checkbox::INDICATOR),
+            None => parts::part_view(host, checkbox::INDICATOR, false),
+        };
         let indicator = self.checkable.then(|| egui::vec2(ind.px("width").unwrap_or(16.0), ind.px("height").unwrap_or(16.0)));
         let text = (!self.label.is_empty()).then(|| paint::measure_text(ctx, cap, &self.label, AvailableSpace::MaxContent));
         let gap = if indicator.is_some() && text.is_some() { host.px("gap").unwrap_or(6.0) } else { 0.0 };
@@ -148,7 +151,7 @@ impl Frame {
         let [pl, pr, pt, pb] = ua.sides("padding");
         let host = cx.style(self.ua());
         let cap = host.part(cx.part_css("caption"), CAPTION);
-        let c = self.caption_size(cx.ctx, &host, &cap);
+        let c = self.caption_size(cx.ctx, &host, &cap, cx.part_css("indicator"));
         let top = if c.y > 0.0 { c.y + host.px("gap").unwrap_or(6.0) } else { 0.0 };
         [bl + pl, br + pr, bt + pt + top, bb + pb]
     }
@@ -159,7 +162,7 @@ impl Widget for Frame {
         let [l, r, t, b] = self.chrome(cx);
         let host = cx.style(self.ua());
         let cap = host.part(cx.part_css("caption"), CAPTION);
-        egui::vec2(self.caption_size(cx.ctx, &host, &cap).x + l + r, t + b)
+        egui::vec2(self.caption_size(cx.ctx, &host, &cap, cx.part_css("indicator")).x + l + r, t + b)
     }
 
     fn layout(&mut self, cx: &mut LayoutCx<'_>, inputs: LayoutInput) -> LayoutOutput {
@@ -176,7 +179,7 @@ impl Widget for Frame {
         let head = {
             let host = cx.style(ua);
             let cap = host.part(cx.part_css("caption"), CAPTION);
-            paint::box_geom(&host, cx.rect()).content.top() + self.caption_size(ui.ctx(), &host, &cap).y
+            paint::box_geom(&host, cx.rect()).content.top() + self.caption_size(ui.ctx(), &host, &cap, cx.part_css("indicator")).y
         };
         let on_head = resp.interact_pointer_pos().is_none_or(|p| p.y <= head);
         if self.checkable && on_head {
@@ -191,18 +194,18 @@ impl Widget for Frame {
             let geom = cx.paint_box(ui, ua);
             let host = cx.style(ua);
             let cap = host.part(cx.part_css("caption"), CAPTION);
-            let csz = self.caption_size(ui.ctx(), &host, &cap);
+            let csz = self.caption_size(ui.ctx(), &host, &cap, cx.part_css("indicator"));
             if csz.y > 0.0 {
                 let row = egui::Rect::from_min_size(geom.content.min, egui::vec2(geom.content.width(), csz.y));
                 let mut pc = cx.paint_cx(ui);
                 let mut text_left = row.left();
                 if self.checkable {
-                    let ind = parts::part_view(&host, checkbox::INDICATOR, false);
+                    let ind = parts::part_of(cx, &host, "indicator", checkbox::INDICATOR, false);
                     let isz = egui::vec2(ind.px("width").unwrap_or(16.0), ind.px("height").unwrap_or(16.0));
                     let ir = egui::Rect::from_min_size(egui::pos2(row.left(), row.center().y - isz.y / 2.0), isz);
                     paint::paint_box(&mut pc.part("indicator"), &ind, ir);
                     if self.checked {
-                        let mark = parts::part_view(&host, checkbox::MARK, false);
+                        let mark = parts::part_of(cx, &host, "mark", checkbox::MARK, false);
                         parts::paint_mark(&mut pc.part("mark"), ir, mark.color("color").unwrap_or(egui::Color32::PLACEHOLDER), false);
                     }
                     paint::paint_outline(&mut pc, &host, ir);

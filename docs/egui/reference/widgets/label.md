@@ -34,6 +34,8 @@ Static text; with inline run children (`<b>`, `<i>`, `<code>`, `<a>`, `<span>`) 
 | `font-weight` | `number` | `400` | no | CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. |
 | `for` | `string` | `""` | no | The `anchor` of the control this label names (Qt's buddy): a click focuses it. |
 | `selectable` | `boolean` | `false` | no | The text can be selected and copied. |
+| `selection-end` | `number` | `0` | **yes**, on `changed` | The selection's end, in chars (`bind:`); a negative end is the end of the text. |
+| `selection-start` | `number` | `0` | **yes**, on `changed` | The selection's start, in chars of the shown text (`bind:`). |
 | `text` | `string` | `""` | no | The text. |
 | `wrap-mode` | `'wrap' \| 'truncate' \| 'extend'` | `"wrap"` | no | What a line longer than the width does. |
 

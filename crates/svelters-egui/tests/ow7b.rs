@@ -11,7 +11,6 @@ use egui_kittest::kittest::{NodeT, Queryable};
 use svelters_abi::*;
 use svelters_egui::paint::{TraceKind, trace};
 use svelters_egui::provider::StateBits;
-use svelters_egui::scene::W;
 
 fn s(x: &str) -> Value {
     Value::Str(x.into())
@@ -32,14 +31,14 @@ fn call(rig: &Rig, h: svl_handle, method: &str, args: &[Value]) -> Value {
 }
 
 /// `<toast level duration><label>Disk <b>full</b> <a href>Details</a></label><button>Retry</button></toast>`
-fn toast(rig: &Rig, host: svl_handle, level: &str, duration: f64, word: &str) -> (svl_handle, svl_handle, svl_handle) {
+fn toast(rig: &Rig, host: svl_handle, level: &str, duration: f64, word: &str) -> (svl_handle, svl_handle, svl_handle, svl_handle) {
     let t = rig.create("toast");
     rig.set(t, "level", s(level));
     rig.set(t, "duration", Value::F64(duration));
     rig.insert(host, t);
     let label = rig.leaf(t, "label", &[]);
     rig.leaf(label, "span", &[("text", s("Disk "))]);
-    rig.leaf(label, "b", &[("text", s(word))]);
+    let bold = rig.leaf(label, "b", &[("text", s(word))]);
     let a = rig.leaf(label, "a", &[("text", s(" Details"))]);
     rig.set(a, "href", s("https://svelters.dev"));
     let retry = rig.leaf(t, "button", &[("text", s("Retry"))]);
@@ -47,7 +46,7 @@ fn toast(rig: &Rig, host: svl_handle, level: &str, duration: f64, word: &str) ->
         rig.listen(t, e);
     }
     rig.listen(retry, "clicked");
-    (t, label, retry)
+    (t, label, retry, bold)
 }
 
 #[test]
@@ -61,8 +60,8 @@ fn ow7b_declarative_toasts_style_per_run_stack_and_close() {
     let (_w, b) = rig.window();
     let host = rig.leaf(b, "toast-host", &[]);
     rig.listen(host, "closed");
-    let (warn, label, retry) = toast(&rig, host, "warning", 0.0, "full");
-    let (info, _, _) = toast(&rig, host, "info", 3.0, "fine");
+    let (warn, label, retry, bold) = toast(&rig, host, "warning", 0.0, "full");
+    let (info, _, _, _) = toast(&rig, host, "info", 3.0, "fine");
     trace::enable(&rig.harness.ctx, true);
     rig.harness.remove_cursor();
     rig.run();
@@ -72,11 +71,11 @@ fn ow7b_declarative_toasts_style_per_run_stack_and_close() {
     rig.run();
 
     // per-run CSS: the `b` run inside the toast's label is red
-    let red = rig.backend.with_scene(|sc| match &sc.n(label).w {
-        W::Label { rich: Some(r), .. } => r.runs.iter().find(|x| x.fmt.weight == 700).and_then(|x| x.fmt.color),
-        other => panic!("not a rich label: {other:?}"),
+    let red = rig.backend.computed_style(bold).and_then(|c| match c.get("color") {
+        Some(svelters_style::ComputedValue::Color(c)) => Some((c.r, c.g, c.b)),
+        _ => None,
     });
-    assert_eq!(red, Some(egui::Color32::from_rgb(255, 0, 0)), "`toast b` reaches its run");
+    assert!(matches!(red, Some((r, g, b)) if r > 0.99 && g < 0.01 && b < 0.01), "`toast b` reaches its run: {red:?}");
 
     // the look: own boxes, `[level=warning]` border, a 6px accent bar; stacked, children first
     let t = trace::last(&rig.harness.ctx);
