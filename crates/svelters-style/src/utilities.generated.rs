@@ -307,6 +307,7 @@ pub static KINDS: &[KindStyle] = &[
     KindStyle { tag: "table", states: &["active", "disabled", "enabled", "exiting", "focus-within", "hover"], parts: &[], provider_states: &[] },
     KindStyle { tag: "table-column", states: &[], parts: &[], provider_states: &[] },
     KindStyle { tag: "text-edit", states: &["active", "disabled", "enabled", "exiting", "focus", "focus-within", "hover"], parts: &[], provider_states: &[] },
+    KindStyle { tag: "toast", states: &["exiting", "hover"], parts: &[], provider_states: &[] },
     KindStyle { tag: "toast-host", states: &["active", "disabled", "enabled", "exiting", "focus-within", "hover"], parts: &[], provider_states: &[] },
     KindStyle { tag: "toggle-button", states: &["active", "disabled", "enabled", "exiting", "focus", "focus-within", "hover"], parts: &[], provider_states: &[] },
     KindStyle { tag: "tree-view", states: &[], parts: &[], provider_states: &["sv.overflow-top", "sv.overflow-bottom", "sv.overflow-left", "sv.overflow-right"] },

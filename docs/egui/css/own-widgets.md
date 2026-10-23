@@ -12,6 +12,7 @@ sources:
   - plans/research/DESIGN.md                   # R-rules
   - plans/research/WIDGET-PARITY.md            # P1-P10
   - plans/milestones/OW5a-lists-tree-dnd.md    # list rows
+  - plans/milestones/OW7b-toasts-dialog-buttons-status.md # toasts
 ---
 
 # Styling own widgets
@@ -86,9 +87,18 @@ reference page lists its parts.
 | menus | `popup` | — |
 | `progress-bar` | — | `track`, `fill` |
 | `collapsing-header` | — | `header`, `twistie` |
+| `toast` (OW7b) | `accent`, `close`; the box is the node (`toast`, `toast[level=warning]`, `toast:hover`, `toast:exiting`) | — |
+| `toast-host` (its `show` toasts) | `toast`, `accent`, `text`, `action`, `close` | — |
+| `modal`, `inner-window` | — | `backdrop`, `title`, `grip`, `titlebar`, `close`, `collapse`, `edge-*` |
 
 A rule on a part in the last column has no effect yet; style the host (`switch:checked { … }`) instead.
 The `scrollbar` thumb and the `split-view` sash have no `::part()` yet either.
+
+**Toasts: per-run CSS needs the declarative form.** A `<toast>` under `toast-host` is a node, and so are
+its labels' runs: `toast b { color: … }` and `toast a:hover { … }` reach them. The runs of
+`host.call('show', runs)` are not nodes and keep RT2's tag defaults; `toast-host::part(text)` styles the
+whole text. A closed `<toast>` stays drawn with `:exiting` while its `transition` plays out
+(`toast { transition: opacity .2s } toast:exiting { opacity: 0 }`), on the virtual clock.
 
 ### List rows
 

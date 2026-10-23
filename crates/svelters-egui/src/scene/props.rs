@@ -258,6 +258,7 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         // ---- WG4a (`kinds/views.rs`, `crate::views`) ----
         (key, W::Table(t)) => d.insert(t.set(key, v)?),
         (key, W::ToastHost(t)) => t.set(key, v)?,
+        (key, W::Toast(t)) => t.set(key, v)?,
         (P::Title, W::Tab { title, .. } | W::TableColumn { title, .. }) => *title = as_str(v)?,
         (P::Resizable, W::TableColumn { resizable, .. }) => *resizable = as_bool(v)?,
         (P::CellAlign, W::TableColumn { align, .. }) => *align = as_enum(v, kinds::CELL_ALIGN)?,
@@ -370,6 +371,7 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         // ---- WG4a ----
         (key, W::Table(t)) => t.get(key).ok_or_else(|| format!("{key:?} is not a prop of <table>"))?,
         (key, W::ToastHost(t)) => t.get(key).ok_or_else(|| format!("{key:?} is not a prop of <toast-host>"))?,
+        (key, W::Toast(t)) => t.get(key).ok_or_else(|| format!("{key:?} is not a prop of <toast>"))?,
         (P::Title, W::Tab { title, .. } | W::TableColumn { title, .. }) => s(title),
         (P::Resizable, W::TableColumn { resizable, .. }) => Value::Bool(*resizable),
         (P::CellAlign, W::TableColumn { align, .. }) => s(align),

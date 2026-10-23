@@ -115,6 +115,7 @@ Popups, dialogs, inner windows and notifications.
 | [`<inner-window>`](inner-window.md) | A floating window inside the viewport: movable, optionally resizable, collapsible and closable; its children are a flex box. |
 | [`<modal>`](modal.md) | An in-window modal dialog: a backdrop over the viewport that blocks the rest of the UI, its content centred, sized to fit (or `width`/`height`). |
 | [`<popup>`](popup.md) | A popover anchored to its owner: the element it is declared in (attached), or the box it is placed in. |
+| [`<toast>`](toast.md) | A declarative toast, a child of `toast-host`: a flex box (column) laid out by taffy, stacked by its host with the `show()` toasts. |
 | [`<toast-host>`](toast-host.md) | Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. |
 
 ## Pickers

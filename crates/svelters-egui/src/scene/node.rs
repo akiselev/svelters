@@ -63,6 +63,8 @@ pub enum W {
     /// `vertical`: `orientation="vertical"` (panes stacked).
     /// `toast-host`: props and the toasts shown.
     ToastHost(std::boxed::Box<crate::views::toast::Toasts>),
+    /// OW7b: `toast`, a declarative toast of its parent `toast-host` (a Box laid out by taffy).
+    Toast(std::boxed::Box<crate::views::toast::ToastNode>),
     /// RT2: an inline run (`span`, `b`, `i`, `code`, `a`: `kinds/rich.rs`), drawn by its label.
     /// `weight` 0 inherits; `anchor`: an `a` run (a link).
     Run { text: String, weight: i64, href: String, anchor: bool },
@@ -484,7 +486,7 @@ pub fn text_of(w: &W) -> &str {
         W::Hyperlink { text, .. } | W::RadioButton { text, .. } | W::Switch { text, .. } | W::ProgressBar { text, .. } => text,
         W::Frame { label, .. } => label,
         W::Sides | W::Stack { .. } | W::Image { .. } | W::Spinner { .. } | W::Canvas(_) => "",
-        W::Table(_) | W::TabView { .. } | W::ToastHost(_) => "",
+        W::Table(_) | W::TabView { .. } | W::ToastHost(_) | W::Toast(_) => "",
     }
 }
 

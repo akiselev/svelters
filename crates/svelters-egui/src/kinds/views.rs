@@ -13,7 +13,7 @@
 //! - `toast-host`: draws the toasts of its viewport in a corner; `show(text, level?, duration?)`
 //!   from JS (`bind:this`) or `svelters_egui::toast::show` from Rust.
 
-use super::{Def, KindDef, MethodDef, Native, ORIENTATION, P, PropDef, SignalDef, Ty, input, prop, signal};
+use super::{Def, KindDef, MethodDef, Native, ORIENTATION, P, PropDef, SignalDef, Ty, input, optional, prop, signal};
 
 pub const CELL_ALIGN: &[&str] = &["start", "center", "end"];
 pub const SORT: &[&str] = &["none", "ascending", "descending"];
@@ -27,7 +27,11 @@ const NONE: &[(&str, Ty)] = &[];
 /// What a WG4a container's slot accepts (the spec's `slots.<name>.accepts`): a `table` takes only
 /// `table-column`s; `None` for every other kind ([`super::slot_accepts`] asks the other families).
 pub fn slot_accepts(id: &str) -> Option<&'static [&'static str]> {
-    (id == "Table").then_some(&["TableColumn"])
+    match id {
+        "Table" => Some(&["TableColumn"]),
+        "ToastHost" => Some(&["Toast"]), // OW7b
+        _ => None,
+    }
 }
 
 // ---- table ----
@@ -245,7 +249,7 @@ static TOAST_HOST_SIGNALS: &[SignalDef] = &[
 static TOAST_HOST_METHODS: &[MethodDef] = &[
     MethodDef {
         name: "show",
-        doc: "`show(text, level = 'info', duration = the host's, actions = [])`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed; `actions`: button labels, see `action`) and returns its id. `text` may be a run list (RT2): strings and `{text, b, i, code, href}` objects, drawn as one paragraph with the theme's run defaults; a click on a run with an `href` opens it.",
+        doc: "`show(text, level = 'info', duration = the host's, actions = [])`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed; `actions`: button labels, see `action`) and returns its id. `text` may be a run list (RT2): strings and `{text, b, i, code, href}` objects, drawn as one paragraph with the theme's run defaults (per-run CSS needs a declarative `<toast>` child, whose runs are nodes); a click on a run with an `href` opens it.",
     },
     MethodDef { name: "dismiss", doc: "`dismiss(id)`: closes that toast (`closed(id, 'method')`)." },
     MethodDef { name: "clear", doc: "Closes every toast." },
@@ -326,17 +330,50 @@ pub(super) const SPLIT_VIEW: KindDef = KindDef {
     doc: "Panes (its children) side by side or stacked, split by sashes the user drags or moves with the keys (R11: a 1 px line, a 4 px hit area, a focus-coloured bar and grip after 300 ms of hover). `divider-position` is the first pane's size; `sizes` every pane's.",
 };
 
+// ---- toast (OW7b) ----
+
+static TOAST_PROPS: &[PropDef] = &[
+    prop("level", P::Level, Ty::Enum(TOAST_LEVEL), Def::Str("info"), "Its severity: the accent bar's colour (`::part(accent)`), the AccessKit politeness (`assertive` for warning and error) and the `[level=…]` selector."),
+    optional("duration", P::Duration, Ty::F64, "Seconds it stays open after it shows (null: the host's `duration`; 0: until closed). Hovering holds it open."),
+    input("open", P::Open, Ty::Bool, Def::Bool(true), "Shown while true. The host sets it false when the toast closes (`bind:open`); setting it true again shows it anew, with a fresh timeout."),
+];
+
+static TOAST_SIGNALS: &[SignalDef] = &[
+    signal("changed", &[("open", Ty::Bool)], "It closed (or showed again); carries `open`."),
+    signal(
+        "closed",
+        &[("reason", Ty::Str)],
+        "It closed (`open` is now false): `reason` is `timeout`, `dismissed` (its close button), `action` (a click on one of its child buttons) or `\"\"` (`open` set false).",
+    ),
+    signal("clicked", &[], "Its body was clicked (not a child button or link)."),
+];
+
+pub(super) const TOAST: KindDef = KindDef {
+    id: "Toast",
+    tag: Some("toast"),
+    native: "svelters' own toast surface (a taffy flex box) in its host's foreground Area",
+    base: Some("Box"),
+    toplevel: false,
+    slot: Some("children"),
+    text_content: None,
+    present: None,
+    props: TOAST_PROPS,
+    signals: TOAST_SIGNALS,
+    methods: &[],
+    doc: "A declarative toast, a child of `toast-host`: a flex box (column) laid out by taffy, stacked by its host with the `show()` toasts. Its labels are ordinary nodes, so their RT2 runs (`<b>`, `<a href>`, `<code>`) take per-run CSS; its child buttons are its actions (a click closes it with `action`). Styled by `toast` and `toast[level=…]`, `toast::part(accent)`, `toast::part(close)`, with `:hover` and `:exiting` (while its `transition` plays out after it closed).",
+};
+
 pub(super) const TOAST_HOST: KindDef = KindDef {
     id: "ToastHost",
     tag: Some("toast-host"),
     native: "svelters' own toasts in an egui::Area (foreground)",
     base: Some("Widget"),
     toplevel: false,
-    slot: None,
+    slot: Some("toasts"),
     text_content: None,
     present: None,
     props: TOAST_HOST_PROPS,
     signals: TOAST_HOST_SIGNALS,
     methods: TOAST_HOST_METHODS,
-    doc: "Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. `show` from JS (`bind:this`), `svelters_egui::toast::show` from Rust.",
+    doc: "Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. Declarative `<toast>` children (OW7b), `show` from JS (`bind:this`) and `svelters_egui::toast::show` from Rust stack together: children first, in order, then the `show` toasts.",
 };

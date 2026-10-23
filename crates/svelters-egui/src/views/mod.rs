@@ -33,7 +33,7 @@ use taffy::{
 
 /// The views that have children (`W::is_container`).
 pub(crate) fn is_container(w: &W) -> bool {
-    matches!(w, W::Table(_) | W::TabView { .. } | W::Tab { .. })
+    matches!(w, W::Table(_) | W::TabView { .. } | W::Tab { .. } | W::Toast(_))
 }
 
 /// The no-wrap size of a view that measures itself (only `table`; the others are sized by their
@@ -47,9 +47,8 @@ pub(crate) fn intrinsic(m: &Metrics, w: &W) -> Vec2 {
 
 /// Paints the view leaves (`toast-host`; a `table-column` draws nothing) and returns a response
 /// at the node's rect (EV2b's host response). `None`: not a view.
-pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> Option<egui::Response> {
+pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, _out: &mut Vec<Out>) -> Option<egui::Response> {
     match arena.w(i) {
-        W::ToastHost(_) => toast::paint(arena, i, ui, out),
         W::TableColumn { .. } => {}
         _ => return None,
     }

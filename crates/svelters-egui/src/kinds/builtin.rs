@@ -361,4 +361,6 @@ pub static KINDS: &[KindDef] = &[
     // ---- OW6: appended (`pickers.rs`; svelters' own widgets only) ----
     super::pickers::CALENDAR,
     super::pickers::COLOR_EDITOR,
+    // ---- OW7b: appended (`views.rs`; svelters' own widget only) ----
+    super::views::TOAST,
 ];

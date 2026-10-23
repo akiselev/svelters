@@ -1129,7 +1129,7 @@ export interface EguiElements {
     /** OW2: the user finished a resize (drag released, a key step, a restore); carries every pane's size. */
     oncommit?: (sizes: number[]) => void;
   };
-  /** Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. `show` from JS (`bind:this`), `svelters_egui::toast::show` from Rust. */
+  /** Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. Declarative `<toast>` children (OW7b), `show` from JS (`bind:this`) and `svelters_egui::toast::show` from Rust stack together: children first, in order, then the `show` toasts. */
   'toast-host': EguiWidgetProps & {
     /** The viewport corner the toasts stack in. */
     corner?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
@@ -1408,6 +1408,40 @@ export interface EguiElements {
     onchanged?: (value: string) => void;
     /** A commit point: a drag released, a key step, a field set, a swatch picked (§2.4). */
     oncommit?: (value: string) => void;
+  };
+  /** A declarative toast, a child of `toast-host`: a flex box (column) laid out by taffy, stacked by its host with the `show()` toasts. Its labels are ordinary nodes, so their RT2 runs (`<b>`, `<a href>`, `<code>`) take per-run CSS; its child buttons are its actions (a click closes it with `action`). Styled by `toast` and `toast[level=…]`, `toast::part(accent)`, `toast::part(close)`, with `:hover` and `:exiting` (while its `transition` plays out after it closed). */
+  toast: EguiWidgetProps & {
+    /** Main axis of the box. */
+    'flex-direction'?: 'column' | 'row' | 'column-reverse' | 'row-reverse';
+    /** Whether children wrap onto more lines. */
+    'flex-wrap'?: 'nowrap' | 'wrap' | 'wrap-reverse';
+    /** Space between children on both axes, in points (row-gap and column-gap override it). */
+    gap?: number;
+    /** Space between rows in points; null to use `gap`. */
+    'row-gap'?: number | null;
+    /** Space between columns in points; null to use `gap`. */
+    'column-gap'?: number | null;
+    /** Inner spacing on all four sides, in points. */
+    padding?: number;
+    /** Cross-axis alignment of the children. */
+    'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
+    /** Main-axis distribution of the children. */
+    'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
+    'focus-scope'?: 'none' | 'contain' | 'dialog';
+    /** Its severity: the accent bar's colour (`::part(accent)`), the AccessKit politeness (`assertive` for warning and error) and the `[level=…]` selector. */
+    level?: 'info' | 'success' | 'warning' | 'error';
+    /** Seconds it stays open after it shows (null: the host's `duration`; 0: until closed). Hovering holds it open. */
+    duration?: number | null;
+    /** Shown while true. The host sets it false when the toast closes (`bind:open`); setting it true again shows it anew, with a fresh timeout. */
+    open?: boolean;
+    'bind:open'?: boolean;
+    /** It closed (or showed again); carries `open`. */
+    onchanged?: (open: boolean) => void;
+    /** It closed (`open` is now false): `reason` is `timeout`, `dismissed` (its close button), `action` (a click on one of its child buttons) or `""` (`open` set false). */
+    onclosed?: (reason: string) => void;
+    /** Its body was clicked (not a child button or link). */
+    onclicked?: () => void;
   };
 }
 
