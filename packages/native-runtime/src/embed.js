@@ -2,7 +2,8 @@
 // mounted by a native embedder (svelters-egui's `Embed`) into slots it creates.
 //
 // Importing this module installs `globalThis.__svelters_embed`, the host's only entry into roots. The
-// host calls it from its logic phase, one entry into JS per call, under its turn budget:
+// host calls it from its logic phase, one entry into JS per call, under its turn budget, followed by
+// a job drain (svelters-host `root_call`):
 //
 //   mount(Component, rootId, targetHandle, props)   first render into the target; throws on failure
 //   props(rootId, patch)                            shallow merge into the root's $state props
@@ -12,6 +13,13 @@
 //   retarget(rootId, { target })                    EM2 `move_root`: the host moved the root's natives
 //                                                   under `target`; new ones go there too
 //   close(rootId) -> boolean                        the root's onCloseRequest handlers decide
+//
+// None of them flushes (FX6b, plans/milestones/FX6-embed-destroy-mutation.md): what a call changed
+// renders in Svelte's own microtask flush, which the host's job drain right after the call runs, as
+// for every other entry. A `flushSync` here would leave Svelte's `is_flushing_sync` set for good if
+// the turn budget stopped it (QuickJS's interrupt skips `finally`), and from then on writes outside
+// a flush (handlers, timers) would no longer schedule one. The host returns the drain's errors as
+// the call's own, so they still reach it attributed to the root and the call.
 //
 // Each root has
 // - its own error boundary: render and effect errors no <svelte:boundary> handled are reported with
@@ -26,7 +34,7 @@
 //   by components go back to the host (`__svelters_host.rootInfo`), as does `emit`.
 import * as $ from './core/index.js';
 import { active } from './core/svelte.js';
-import { flushSync, getContext, mount, onDestroy, unmount } from './svelte.js';
+import { getContext, mount, onDestroy, unmount } from './svelte.js';
 import { onRecover, setDispatchHook, targetNode } from './index.js';
 
 const host = () => globalThis.__svelters_host;
@@ -247,7 +255,6 @@ const api = {
           context: new Map([[ROOT_KEY, r.handle]]),
           onerror: (e) => fault(r, e),
         });
-        flushSync();
       });
     } catch (e) {
       roots.delete(id);
@@ -264,7 +271,6 @@ const api = {
         if (k !== '$$delete') r.props[k] = patch[k];
       }
       if (Array.isArray(del)) for (const k of del) delete r.props[k];
-      flushSync();
     });
   },
 
@@ -276,7 +282,6 @@ const api = {
       for (const k of Object.keys(patch)) {
         if ($.untrack(() => r.info[k]) !== patch[k]) r.info[k] = patch[k];
       }
-      flushSync();
     });
     armRoot(r);
   },
@@ -289,10 +294,8 @@ const api = {
     r.raf.clear();
     if (r.rafBase != null) baseCancel(r.rafBase);
     r.closers.clear();
-    within(r, () => {
-      if (r.exports) unmount(r.exports);
-      flushSync();
-    });
+    // the teardown's microtasks (a subscriber's last unsubscribe) run in the host's drain
+    if (r.exports) within(r, () => unmount(r.exports));
   },
 
   retarget(id, patch) {

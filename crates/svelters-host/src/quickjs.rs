@@ -647,6 +647,14 @@ impl JsEngine for QjsEngine {
                     st.ran += 1;
                     let e = job_ctx.0.with(|c| describe(&c, c.catch()));
                     self.async_errors.borrow_mut().push(e);
+                    // FX6b: an interrupted job left the runtime mid-update (no `finally` ran). The
+                    // drain stops here, so `disarm` recovers before any other job runs: a job queued
+                    // by the aborted one (a subscriber's cleanup) would run in its stale reaction,
+                    // and with the deadline passed every later job would be stopped too.
+                    if self.aborted.load(Ordering::Relaxed) {
+                        st.pending = self.rt.is_job_pending();
+                        break;
+                    }
                 }
             }
         }

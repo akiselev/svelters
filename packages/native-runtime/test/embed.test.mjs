@@ -29,7 +29,19 @@ globalThis.__svelters_host = Object.assign(th.host, {
   rootEmit: (id, name, json) => reports.push(['emit', id, name, JSON.parse(json)]),
 });
 const { root } = await import('../src/embed.js');
+const { flushing_sync } = await import('../src/core/svelte.js');
 const api = globalThis.__svelters_embed;
+
+const nextTask = () => new Promise((r) => setTimeout(r, 0));
+/**
+ * A host call as svelters-host's `root_call` makes it: the call, then a job drain. The embed's
+ * entries do not flush (FX6b): what they changed renders in Svelte's microtask flush, in the drain.
+ */
+const call = async (name, ...args) => {
+  const r = api[name](...args);
+  await nextTask();
+  return r;
+};
 
 let seen = 0;
 const take = () => {
@@ -46,7 +58,7 @@ const label = (anchor, text) => {
   return l;
 };
 
-test('roots: reactive props, root() info, close handlers, unmount', () => {
+test('roots: reactive props, root() info, close handlers, unmount', async () => {
   const target = th.host.create('box');
   let handle;
   const Comp = ($$anchor, $$props) => {
@@ -58,16 +70,18 @@ test('roots: reactive props, root() info, close handlers, unmount', () => {
     $.pop();
   };
   take();
-  api.mount(Comp, 7, target, { title: 'a' });
+  await call('mount', Comp, 7, target, { title: 'a' });
   assert.ok(take().some((l) => /label "a shown"/.test(l)));
   assert.equal(handle.id, 7);
   assert.deepEqual(reports.splice(0), [['info', 7, 'T', null]]);
 
   api.props(7, { title: 'b' });
+  assert.ok(!take().some((l) => /label "b shown"/.test(l)), 'the call itself does not flush');
+  await nextTask();
   assert.ok(take().some((l) => /label "b shown"/.test(l)), 'props are reactive');
-  api.props(7, { $$delete: ['title'] });
+  await call('props', 7, { $$delete: ['title'] });
   assert.ok(take().some((l) => /label "none shown"/.test(l)), '$$delete removes a key');
-  api.info(7, { visible: false, key: 'k' });
+  await call('info', 7, { visible: false, key: 'k' });
   assert.ok(take().some((l) => /label "none hidden"/.test(l)), 'info fields are reactive');
   assert.equal(handle.key, 'k');
 
@@ -77,12 +91,12 @@ test('roots: reactive props, root() info, close handlers, unmount', () => {
   handle.emit('saved', { n: 1 });
   assert.deepEqual(reports.splice(0), [['info', 7, null, true], ['emit', 7, 'saved', { n: 1 }]]);
 
-  api.unmount(7);
+  await call('unmount', 7);
   assert.ok(take().some((l) => /^destroy/.test(l)), 'its natives are destroyed');
   assert.deepEqual(api.roots(), []);
 });
 
-test('roots: an effect error after mount reaches the root boundary, not the caller', () => {
+test('roots: an effect error after mount reaches the root boundary, not the caller', async () => {
   const target = th.host.create('box');
   const Comp = ($$anchor, $$props) => {
     $.push($$props, true);
@@ -92,10 +106,10 @@ test('roots: an effect error after mount reaches the root boundary, not the call
     });
     $.pop();
   };
-  api.mount(Comp, 8, target, { n: 0 });
-  api.props(8, { n: 1 });
+  await call('mount', Comp, 8, target, { n: 0 });
+  await call('props', 8, { n: 1 });
   assert.deepEqual(reports.splice(0), [['fault', 8, 'later']]);
-  api.unmount(8);
+  await call('unmount', 8);
   // a first render that throws fails the mount itself
   const Bad = () => {
     throw new Error('first');
@@ -104,7 +118,7 @@ test('roots: an effect error after mount reaches the root boundary, not the call
   assert.deepEqual(api.roots(), []);
 });
 
-test('roots: animation frames are per root and wait while it is hidden', () => {
+test('roots: animation frames are per root and wait while it is hidden', async () => {
   const target = th.host.create('box');
   let ticks = 0;
   const Comp = ($$anchor, $$props) => {
@@ -116,20 +130,20 @@ test('roots: animation frames are per root and wait while it is hidden', () => {
     label($$anchor, () => 'x');
     $.pop();
   };
-  api.mount(Comp, 10, target, { go: 0 });
+  await call('mount', Comp, 10, target, { go: 0 });
   runFrame();
   assert.equal(ticks, 1);
-  api.info(10, { visible: false });
-  api.props(10, { go: 1 }); // requests a frame while hidden
+  await call('info', 10, { visible: false });
+  await call('props', 10, { go: 1 }); // requests a frame while hidden
   runFrame();
   assert.equal(ticks, 1, 'held while hidden');
-  api.info(10, { visible: true });
+  await call('info', 10, { visible: true });
   runFrame();
   assert.equal(ticks, 2, 'runs once shown');
-  api.unmount(10);
+  await call('unmount', 10);
 });
 
-test('roots: a handler runs in its root: root() and animation frames held while hidden (EM2)', () => {
+test('roots: a handler runs in its root: root() and animation frames held while hidden (EM2)', async () => {
   const target = th.host.create('box');
   let ticks = 0;
   let btn;
@@ -144,23 +158,23 @@ test('roots: a handler runs in its root: root() and animation frames held while 
     $n.append($$anchor, btn);
     $.pop();
   };
-  api.mount(Comp, 11, target, {});
+  await call('mount', Comp, 11, target, {});
   runFrame();
   globalThis.__svelters_dispatch(btn.h, 'clicked', []);
   assert.equal(seenRoot, 11, 'root() inside a handler is its root');
   runFrame();
   assert.equal(ticks, 1, 'a handler frame runs while shown');
-  api.info(11, { visible: false });
+  await call('info', 11, { visible: false });
   globalThis.__svelters_dispatch(btn.h, 'clicked', []);
   runFrame();
   assert.equal(ticks, 1, "a hidden root's handler frame waits");
-  api.info(11, { visible: true });
+  await call('info', 11, { visible: true });
   runFrame();
   assert.equal(ticks, 2, 'and runs once shown');
-  api.unmount(11);
+  await call('unmount', 11);
 });
 
-test('roots: retarget moves where new natives go (EM2 move_root)', () => {
+test('roots: retarget moves where new natives go (EM2 move_root)', async () => {
   const a = th.host.create('box');
   const b = th.host.create('box');
   const Comp = ($$anchor, $$props) => {
@@ -168,14 +182,14 @@ test('roots: retarget moves where new natives go (EM2 move_root)', () => {
     $n.if_block($$anchor, () => $$props.more, ($$anchor) => label($$anchor, () => 'more'));
     $.pop();
   };
-  api.mount(Comp, 12, a, { more: false });
+  await call('mount', Comp, 12, a, { more: false });
   take();
-  api.retarget(12, { target: b });
-  api.props(12, { more: true });
+  await call('retarget', 12, { target: b });
+  await call('props', 12, { more: true });
   const lines = take();
   assert.ok(lines.some((l) => l.startsWith(`insert #${b} `)), lines.join('\n'));
   assert.ok(!lines.some((l) => l.startsWith(`insert #${a} `)), lines.join('\n'));
-  api.unmount(12);
+  await call('unmount', 12);
 });
 
 // ---- FX6 (plans/milestones/FX6-embed-destroy-mutation.md): an entry the host aborted ----
@@ -199,7 +213,7 @@ const spin = $.state(false);
 const shared = $.state(0);
 let stops = 0;
 // a `createSubscriber` (as a store field or `svelte/reactivity` reads): its last unsubscribe bumps
-// its version one microtask after the teardown, inside the destroy's flushSync
+// its version one microtask after the teardown, in the drain after the host's unmount
 const sub = subscriber(() => () => stops++);
 /** A root whose derived never returns once `spin` (or the `spin` prop) is set. */
 const Slow = ($$anchor, $$props) => {
@@ -217,13 +231,11 @@ const Other = ($$anchor, $$props) => {
   label($$anchor, () => `other ${$.get(shared)} ${$$props.n ?? 0}`);
   $.pop();
 };
-const nextTask = () => new Promise((r) => setTimeout(r, 0));
-
 test('FX6: a flush aborted in a derived; the slow root unmounts, the other root keeps updating', async () => {
   const a = th.host.create('box');
   const b = th.host.create('box');
-  api.mount(Slow, 20, a, {});
-  api.mount(Other, 21, b, {});
+  await call('mount', Slow, 20, a, {});
+  await call('mount', Other, 21, b, {});
   take();
   // Svelte's microtask flush (a checkpoint's job) runs the derived, which never returns; the other
   // root's effect was scheduled in the same batch, after it
@@ -232,39 +244,50 @@ test('FX6: a flush aborted in a derived; the slow root unmounts, the other root 
     $.set(shared, 1);
     flush_tasks();
   });
-  // the host disposes the interrupted root: its subscriber's cleanup runs in unmount's flushSync
+  // the host disposes the interrupted root: its subscriber's cleanup runs in the drain after unmount
   stops = 0;
   api.unmount(20);
-  assert.equal(stops, 1, 'the subscription stopped');
-  assert.deepEqual(reports.splice(0), []);
   // the work the aborted flush had not done, in a later microtask
   await nextTask();
+  assert.equal(stops, 1, 'the subscription stopped');
+  assert.deepEqual(reports.splice(0), []);
   assert.ok(take().some((l) => /label "other 1 0"/.test(l)), "the other root got the aborted batch's change");
   // its later changes flush as before: Svelte's microtask flush, and the host's calls
   $.set(shared, 2);
   await nextTask();
   assert.ok(take().some((l) => /label "other 2 0"/.test(l)), 'a write outside any flush still schedules one');
-  api.props(21, { n: 5 });
+  await call('props', 21, { n: 5 });
   assert.ok(take().some((l) => /label "other 2 5"/.test(l)));
   $.set(spin, false);
-  api.unmount(21);
+  await call('unmount', 21);
 });
 
-// Last in this file: an abort inside flushSync leaves Svelte's `is_flushing_sync` set (no writer
-// outside flushSync), see the milestone.
-test('FX6: a host call aborted inside its flushSync; the root unmounts, the other root updates', () => {
+// FX6b: the host's call no longer flushes, so the turn budget stops the flush in the drain that
+// follows it (Svelte's microtask), never inside a `flushSync`: `is_flushing_sync` stays clear and
+// writes from timers and handlers keep scheduling their own flush.
+test('FX6b: a host call aborted in its flush; no flushSync is left open, a timer change renders by itself', async () => {
   const a = th.host.create('box');
   const b = th.host.create('box');
-  api.mount(Slow, 22, a, { spin: false });
-  api.mount(Other, 23, b, {});
+  await call('mount', Slow, 22, a, { spin: false });
+  await call('mount', Other, 23, b, {});
   take();
-  abort(() => api.props(22, { spin: true }));
+  // the call, then its drain: Svelte's microtask flush runs the slow derived
+  abort(() => {
+    api.props(22, { spin: true });
+    flush_tasks();
+  });
+  assert.equal(flushing_sync(), false, 'no flushSync was interrupted');
   stops = 0;
-  api.unmount(22);
+  await call('unmount', 22);
   assert.equal(stops, 1, 'the subscription stopped');
   assert.deepEqual(reports.splice(0), []);
-  api.props(23, { n: 7 });
-  assert.ok(take().some((l) => /label "other 2 7"/.test(l)));
-  api.unmount(23);
+  // a timer's write in the other root renders without another host call into it
+  setTimeout(() => $.set(shared, 3), 0);
+  await nextTask();
+  await nextTask();
+  assert.ok(take().some((l) => /label "other 3 0"/.test(l)), 'a timer change renders in its own flush');
+  await call('props', 23, { n: 7 });
+  assert.ok(take().some((l) => /label "other 3 7"/.test(l)));
+  await call('unmount', 23);
   assert.deepEqual(api.roots(), []);
 });

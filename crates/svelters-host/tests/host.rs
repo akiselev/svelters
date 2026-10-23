@@ -251,6 +251,47 @@ fn an_interrupted_entry_is_followed_by_one_recover_call() {
     assert!(r.oplog.ends_with("set #1 title \"inside=true recovered=1\"\n"), "{}", r.oplog);
 }
 
+/// FX6b: the embed's root calls do not flush; the job drain after the call does (Svelte's microtask
+/// flush). When the call returns, the drain has run, and its errors (an exception, the turn budget
+/// stopping it) are the call's own. Unhandled rejections are reported as before. A drain stops at an
+/// interrupted job, and the host recovers before the jobs after it run.
+#[test]
+fn a_root_calls_drain_runs_before_it_returns_and_its_errors_are_the_calls() {
+    let log = LogBackend::new(vec![]);
+    let vt = log.vtable();
+    let cfg = HostConfig { turn_budget: Some(Duration::from_millis(100)), ..quiet() };
+    let host = Host::new(vt.backend_ref(), cfg).unwrap();
+    let entry = host.load_entry(js("embed_drain.js")).unwrap();
+    // the target: the window the entry created (#1)
+    host.mount_root(entry, "Panel", 1, 1, &[]).unwrap();
+    let props = |mode: &str| host.root_props(1, &[("mode".to_string(), Value::Str(mode.into()))]);
+
+    props("set").unwrap();
+    assert!(log.log().ends_with("set #1 title \"n=1\"\n"), "{}", log.log());
+
+    let e = props("throw").unwrap_err();
+    assert_eq!(e.kind, ErrorKind::Exception);
+    assert!(e.message.contains("the flush threw"), "{e}");
+    assert!(host.take_errors().is_empty(), "returned, not reported");
+
+    let e = props("spin").unwrap_err();
+    assert_eq!(e.kind, ErrorKind::Interrupted);
+    assert!(host.take_errors().is_empty(), "returned, not reported");
+    // the drain stopped at the interrupted job; the job it queued ran after the recover
+    assert!(!log.log().contains("after recovered"), "{}", log.log());
+    host.drain_jobs();
+    assert!(log.log().ends_with("set #1 title \"after recovered=1\"\n"), "{}", log.log());
+    assert!(host.take_errors().is_empty());
+
+    props("reject").unwrap();
+    let errors = host.take_errors();
+    assert_eq!(errors.len(), 1, "{errors:?}");
+    assert_eq!(errors[0].kind, ErrorKind::UnhandledRejection);
+
+    props("set").unwrap();
+    assert!(log.log().ends_with("set #1 title \"n=2\"\n"), "{}", log.log());
+}
+
 #[test]
 fn external_interrupt_flag_stops_a_script() {
     let log = LogBackend::new(vec![]);
