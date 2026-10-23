@@ -399,9 +399,11 @@ export function translatedSheets(scopedCss, scope, native, toolkit, warn = () =>
  * generated code back to the source. `dev: true` keeps `$inspect` / `$inspect.trace` and labels
  * signals (Svelte's `dev` option); otherwise they are stripped. `specFragments` (RA1): spec fragments
  * merged into the backend's spec (`svelters-compile --spec-fragment`), such as the `kinds.json` an
- * egui app binary dumps for its Rust-provided kinds.
+ * egui app binary dumps for its Rust-provided kinds. `utilities` (U4, egui): check utility classes,
+ * `true` or `{ prefix, strictTokens, scanScript }` like the embed's `EmbedConfig::utilities`
+ * (`svelters-compile --utilities ...`).
  */
-export function svelteNative({ backend = 'gtk', spec, specFragments = [], dev = false } = {}) {
+export function svelteNative({ backend = 'gtk', spec, specFragments = [], dev = false, utilities = false } = {}) {
   const bin = compilerPath();
   return {
     name: 'svelters-native-compiler',
@@ -422,6 +424,12 @@ export function svelteNative({ backend = 'gtk', spec, specFragments = [], dev = 
       if (spec && !isModule) args.push('--spec', spec);
       if (!isModule) for (const f of specFragments) args.push('--spec-fragment', f);
       if (dev) args.push('--dev');
+      if (utilities && !isModule) {
+        args.push('--utilities');
+        if (utilities.prefix) args.push('--utilities-prefix', utilities.prefix);
+        if (utilities.strictTokens) args.push('--utilities-strict');
+        if (utilities.scanScript) args.push('--utilities-scan-script');
+      }
       const warn = (message) => this.warn({ message });
       const run = (extra) => {
         let out;
@@ -451,6 +459,11 @@ export function svelteNative({ backend = 'gtk', spec, specFragments = [], dev = 
             res = { ...res, js: plain.js, map: plain.map };
           }
         }
+      } else if (style && /@apply\s/.test(style[2])) {
+        // U4: egui with `@apply`: the svelters compiler expands it before scoping (stock Svelte can't)
+        const scope = scopeOf(file);
+        res = run(['--css', '--css-scope', scope]);
+        css = res.css && !res.css.injected && res.css.code.trim() ? { scope, sheets: { css: res.css.code } } : null;
       } else {
         css = style ? nativeSheets(code, file, backend, warn, specFragments) : null;
         res = run(css ? ['--css-scope', css.scope] : []);

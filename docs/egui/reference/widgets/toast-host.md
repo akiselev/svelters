@@ -14,9 +14,9 @@ sources:
 # `<toast-host>`
 
 <!-- BEGIN GENERATED: summary of kinds.ToastHost (tools/docs/egui/gen_reference.py). Do not edit. -->
-Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. `show` from JS (`bind:this`), `svelters_egui::toast::show` from Rust.
+Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. Declarative `<toast>` children (OW7b), `show` from JS (`bind:this`) and `svelters_egui::toast::show` from Rust stack together: children first, in order, then the `show` toasts.
 
-**Base:** [`Widget`](widget.md) · **Children:** none · **Text content:** no
+**Base:** [`Widget`](widget.md) · **Children:** [`toast`](toast.md) · **Text content:** no
 <!-- END GENERATED -->
 
 <!-- TODO(DOC7): when to use it, and what to use instead. -->
@@ -57,7 +57,7 @@ Plus the events of [`Widget`](widget.md#events): `onanimationend`, `onclick`, `o
 |---|---|---|
 | `clear` | `void` | Closes every toast. |
 | `dismiss` | `void` | `dismiss(id)`: closes that toast (`closed(id, 'method')`). |
-| `show` | `void` | `show(text, level = 'info', duration = the host's, actions = [])`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed; `actions`: button labels, see `action`) and returns its id. `text` may be a run list (RT2): strings and `{text, b, i, code, href}` objects, drawn as one paragraph with the theme's run defaults; a click on a run with an `href` opens it. |
+| `show` | `void` | `show(text, level = 'info', duration = the host's, actions = [])`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed; `actions`: button labels, see `action`) and returns its id. `text` may be a run list (RT2): strings and `{text, b, i, code, href}` objects, drawn as one paragraph with the theme's run defaults (per-run CSS needs a declarative `<toast>` child, whose runs are nodes); a click on a run with an `href` opens it. |
 
 Call them through `bind:this`: `el.call('clear')`.
 <!-- END GENERATED -->
@@ -86,7 +86,7 @@ Call them through `bind:this`: `el.call('clear')`.
 **Layout properties** (as attributes or in CSS; an explicit attribute wins): `align-self`, `bottom`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `left`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `top`, `visible`, `width`.
 Also in CSS only: `display`, `grid-column`, `grid-row`, `margin-bottom`, `margin-left`, `margin-right`, `margin-top`.
 
-The toasts are drawn over everything in the theme's look; CSS does not reach them.
+Its `show` toasts take `::part(toast)`, `::part(accent)`, `::part(text)`, `::part(action)` and `::part(close)`; their runs keep RT2's tag defaults. Per-run CSS needs a declarative `<toast>` child.
 
 Full matrix: [css/properties](../../css/properties.md). States: below.
 <!-- END GENERATED -->
@@ -115,7 +115,7 @@ States are tracked once the scene has a style input (a `<style>` block, `class`,
 | Role | none of its own; its content is announced in place |
 | `anchor`, `invalid` | not announced on this element (`anchor` still keys its ids) |
 
-Each toast is an `Alert` node named by its text, with a `Dismiss` button.
+Each toast is an `Alert` node named `Level: text`, a live region (`assertive` for warning and error, `polite` otherwise), with a `Dismiss` button.
 <!-- END GENERATED -->
 
 ## Testing

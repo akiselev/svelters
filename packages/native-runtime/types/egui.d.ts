@@ -1012,7 +1012,7 @@ export interface EguiElements {
     /** It closed with the result `"reject"`: dismissed by the user or `close("reject")`. */
     onrejected?: () => void;
   };
-  /** A virtual table (`egui_table`): only the visible rows and columns are drawn. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`. Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it. */
+  /** A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`. Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it. */
   table: EguiWidgetProps & {
     /** Number of rows (the scroll extent). Rows without data yet are drawn empty. */
     'row-count'?: number;
@@ -1035,6 +1035,24 @@ export interface EguiElements {
     /** The cursor column (Left/Right move it; F2 and typing edit that cell). */
     'current-column'?: number;
     'bind:current-column'?: number;
+    /** A header click sorts on that column: `sort-column` becomes it, `sort-order` ascending, or flips when it already was (the rows are still sorted by JS, on `sort-changed`). */
+    sortable?: boolean;
+    /** The column (child index) the header shows sorted, -1 for none: then each column's own `sort` shows. */
+    'sort-column'?: number;
+    'bind:sort-column'?: number;
+    /** The order shown on `sort-column`. */
+    'sort-order'?: 'none' | 'ascending' | 'descending';
+    'bind:sort-order'?: 'none' | 'ascending' | 'descending';
+    /** A right click on the header opens a menu that hides and shows the `hideable` columns (after `header-context`, unless prevented). */
+    'column-menu'?: boolean;
+    /** The hidden columns, by `name` (a column without one by its child index, `"2"`). The column menu changes it. */
+    'hidden-columns'?: string[];
+    'bind:hidden-columns'?: string[];
+    /** The header as JSON (Qt `saveState`): `{"widths":{name:points},"hidden":[name],"sort":{"column":name,"order":…}}`. The table writes it after the user resizes, hides or sorts; setting it restores them. Persist it with DX1's `uiState()` (`bind:header-state={ui.header}`): the table itself never writes files. */
+    'header-state'?: string;
+    'bind:header-state'?: string;
+    /** The last shown column fills the width the columns leave (Qt `stretchLastSection`). */
+    'stretch-last'?: boolean;
     /** The rows the table needs data for changed: `first..=last` (the visible rows plus `overscan`); answer with `set-rows`. */
     onrange?: (first: number, last: number) => void;
     /** The user changed the selection; carries the selected row ids (`bind:selected`). */
@@ -1047,8 +1065,22 @@ export interface EguiElements {
     oncommit?: (e: SvlEvent<[number, number, unknown]>, row: number, column: number, value: unknown) => void;
     /** A column header was clicked (sort on it in JS and set the column's `sort`). */
     'onheader-clicked'?: (column: number) => void;
+    /** A column header was double-clicked (not its resize edge); carries the column (child index). */
+    'onheader-double-clicked'?: (column: number) => void;
+    /** A right click on the header (Menu key on the focused table); carries the column under the pointer. Unless prevented, `column-menu` opens. */
+    'onheader-context'?: (column: number) => void;
+    /** The user resized a column (drag released, a double-click fit, `fit-columns`); carries the column and its width. The column's `width` is bindable. */
+    'oncolumn-resized'?: (column: number, width: number) => void;
+    /** A header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS). */
+    'onsort-changed'?: (sort_column: number, sort_order: 'none' | 'ascending' | 'descending') => void;
+    /** The column menu hid or showed a column; carries the hidden columns. */
+    'oncolumns-changed'?: (hidden_columns: string[]) => void;
+    /** The user resized, hid or sorted; carries the new `header-state` (save it). */
+    'onheader-state-changed'?: (header_state: string) => void;
+    /** Ctrl+C (Cmd+C) on the focused table; carries the selected row ids (the app copies the data it holds). */
+    oncopy?: (ids: number[]) => void;
   };
-  /** A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100) is the column's width; a user resize keeps its width until the prop changes. */
+  /** A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100; `min-width`/`max-width` clamp it) is the column's width; a user resize writes it (`bind:width`). `visible` false hides it; `tooltip` shows on its header; `table-column::part(header)` styles its header cell. */
   'table-column': EguiWidgetProps & {
     /** The header text. */
     title?: string;
@@ -1056,12 +1088,20 @@ export interface EguiElements {
     resizable?: boolean;
     /** Horizontal alignment of its cells. */
     align?: 'start' | 'center' | 'end';
-    /** The sort arrow its header shows (the data is sorted by JS). */
+    /** The sort arrow its header shows (the data is sorted by JS) while the table's `sort-column` is -1. */
     sort?: 'none' | 'ascending' | 'descending';
     /** Its cells can be edited (F2, typing, double click); the editor is `editor`, else a text field. */
     editable?: boolean;
     /** The cell editor, a snippet taking the edit (`{ row, column, value (bindable), typed, commit(), cancel() }`); realised once and rebound per edit. */
     editor?: ((...args: any[]) => any) | null;
+    /** Its name in `hidden-columns` and `header-state` (empty: its child index). */
+    name?: string;
+    /** The column menu lists it (it can be hidden). */
+    hideable?: boolean;
+    /** Alignment of its header text (`auto`: its `align`). */
+    'header-align'?: 'auto' | 'start' | 'center' | 'end';
+    /** Where text too wide for a cell or the header is cut with `…` (`none`: clipped). */
+    elide?: 'end' | 'middle' | 'start' | 'none';
     /** Runtime protocol: an edit of this column's cell starts (the editor snippet's outlet is `set-editor`). */
     'oneditor-bind'?: (e: SvlEvent<[number, string, string]>, row: number, value: string, typed: string) => void;
     /** Runtime protocol: the editor's value to commit (the handler sets `e.result`). */
@@ -1133,7 +1173,7 @@ export interface EguiElements {
     /** OW2: the user finished a resize (drag released, a key step, a restore); carries every pane's size. */
     oncommit?: (sizes: number[]) => void;
   };
-  /** Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. `show` from JS (`bind:this`), `svelters_egui::toast::show` from Rust. */
+  /** Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. Declarative `<toast>` children (OW7b), `show` from JS (`bind:this`) and `svelters_egui::toast::show` from Rust stack together: children first, in order, then the `show` toasts. */
   'toast-host': EguiWidgetProps & {
     /** The viewport corner the toasts stack in. */
     corner?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
@@ -1412,6 +1452,40 @@ export interface EguiElements {
     onchanged?: (value: string) => void;
     /** A commit point: a drag released, a key step, a field set, a swatch picked (§2.4). */
     oncommit?: (value: string) => void;
+  };
+  /** A declarative toast, a child of `toast-host`: a flex box (column) laid out by taffy, stacked by its host with the `show()` toasts. Its labels are ordinary nodes, so their RT2 runs (`<b>`, `<a href>`, `<code>`) take per-run CSS; its child buttons are its actions (a click closes it with `action`). Styled by `toast` and `toast[level=…]`, `toast::part(accent)`, `toast::part(close)`, with `:hover` and `:exiting` (while its `transition` plays out after it closed). */
+  toast: EguiWidgetProps & {
+    /** Main axis of the box. */
+    'flex-direction'?: 'column' | 'row' | 'column-reverse' | 'row-reverse';
+    /** Whether children wrap onto more lines. */
+    'flex-wrap'?: 'nowrap' | 'wrap' | 'wrap-reverse';
+    /** Space between children on both axes, in points (row-gap and column-gap override it). */
+    gap?: number;
+    /** Space between rows in points; null to use `gap`. */
+    'row-gap'?: number | null;
+    /** Space between columns in points; null to use `gap`. */
+    'column-gap'?: number | null;
+    /** Inner spacing on all four sides, in points. */
+    padding?: number;
+    /** Cross-axis alignment of the children. */
+    'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
+    /** Main-axis distribution of the children. */
+    'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
+    'focus-scope'?: 'none' | 'contain' | 'dialog';
+    /** Its severity: the accent bar's colour (`::part(accent)`), the AccessKit politeness (`assertive` for warning and error) and the `[level=…]` selector. */
+    level?: 'info' | 'success' | 'warning' | 'error';
+    /** Seconds it stays open after it shows (null: the host's `duration`; 0: until closed). Hovering holds it open. */
+    duration?: number | null;
+    /** Shown while true. The host sets it false when the toast closes (`bind:open`); setting it true again shows it anew, with a fresh timeout. */
+    open?: boolean;
+    'bind:open'?: boolean;
+    /** It closed (or showed again); carries `open`. */
+    onchanged?: (open: boolean) => void;
+    /** It closed (`open` is now false): `reason` is `timeout`, `dismissed` (its close button), `action` (a click on one of its child buttons) or `""` (`open` set false). */
+    onclosed?: (reason: string) => void;
+    /** Its body was clicked (not a child button or link). */
+    onclicked?: () => void;
   };
 }
 

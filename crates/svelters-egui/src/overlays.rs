@@ -91,6 +91,8 @@ pub(crate) fn payload(id: &str) -> OverlayW {
 pub(crate) fn out_of_flow(w: &W) -> bool {
     match w {
         W::Overlay(_) => true,
+        // OW7b: the toast host and its toasts paint in the host's foreground Area
+        W::ToastHost(_) | W::Toast(_) => true,
         W::Menu(m) => !m.in_flow(),
         _ => false,
     }
@@ -189,6 +191,7 @@ pub(crate) fn paint_node(
     let owner = owner_rect(arena, i, origin);
     match arena.w(i) {
         W::Overlay(_) => overlay(arena, i, origin, owner, ui, out),
+        W::ToastHost(_) => crate::views::toast::paint(arena, i, origin, ui, out),
         W::Menu(MenuW::Context { .. }) => crate::menus::context(arena, i, owner, ui, out),
         _ => {}
     }

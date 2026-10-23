@@ -71,7 +71,8 @@ impl std::error::Error for JsError {}
 #[derive(Clone, Copy, Debug, Default)]
 pub struct JobStatus {
     pub ran: usize,
-    /// Jobs remain because `max` was reached.
+    /// Jobs remain because `max` was reached, or because a job was interrupted (FX6b: the drain stops
+    /// there and the runtime recovers before the rest run).
     pub pending: bool,
 }
 

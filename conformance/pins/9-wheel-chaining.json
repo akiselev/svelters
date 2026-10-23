@@ -1,0 +1,13 @@
+{
+  "id": "wheel-chaining",
+  "pin": 9,
+  "title": "Wheel over a nested scroll area: the inner one scrolls, at its end the wheel goes on to the outer one (scroll chaining) or stays (no chaining)",
+  "setup": {
+    "scroll": { "s": [0, 0], "t": [0, 0] }
+  },
+  "steps": [
+    { "wheel": "t", "lines": [0, 1], "burst": 4, "interval_ms": 120 },
+    { "wheel": "t", "lines": [0, 1], "burst": 60, "interval_ms": 20 },
+    { "wheel": "t", "lines": [0, 1], "repeat": 2 }
+  ]
+}

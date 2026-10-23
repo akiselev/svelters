@@ -107,7 +107,7 @@ jobs:
       - name: svelters-conformance (macOS)
         if: ${{ !cancelled() }}
         timeout-minutes: 30
-        run: cargo test -p svelters-conformance --lib --test staleness --test appkit_capture
+        run: cargo test -p svelters-conformance --lib --test staleness --test appkit_capture --test appkit_scroll
       # VIS1c: svelters' own widgets (the egui backend under kittest) against the macOS VS Code
       # references (conformance/visual/vscode-macos), a ratchet over conformance/visual/baseline-macos.json.
       - name: VIS1c visual gate (macOS references)

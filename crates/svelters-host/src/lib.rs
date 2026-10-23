@@ -674,15 +674,24 @@ impl<'a> Host<'a> {
 
     /// Mounts export `export` of entry `entry` into the native node `target` (an embedder's slot)
     /// as root `root`, with `props` (a plain object, made reactive by the runtime). One entry into
-    /// JS under the current turn budget, then a job drain. A first-render error is returned and
-    /// the runtime has already torn the root down.
+    /// JS under the current turn budget, then a job drain (Svelte's flush: the first effects) under
+    /// a budget of its own. A first-render error is returned and the runtime has already torn the
+    /// root down. An error of the drain (an exception the flush threw, the budget stopping it) is
+    /// returned too, but the root is still mounted then: the caller unmounts it.
     pub fn mount_root(&self, entry: u32, export: &str, root: u32, target: svl_handle, props: &[(String, Value)]) -> Result<(), JsError> {
-        core::root_call(&self.core, &self.engine, Some(target), |e| e.mount_root(entry, export, root, target, props))
+        core::root_call(&self.core, &self.engine, Some(target), core::DrainErrors::Call, |e| e.mount_root(entry, export, root, target, props))
             .map_err(|e| self.core.map_error(e))
     }
 
     /// Shallow-merges `patch` into root `root`'s props (`Value::Null` sets null; a key absent
     /// stays). A `"$$delete"` entry holding a list of key strings removes those keys (D10).
+    ///
+    /// This and the other root calls below are one entry into JS under the current turn budget,
+    /// then a job drain under a budget of its own, in which Svelte's flush renders what the call
+    /// changed: when the call returns, the root is rendered. The drain's errors (an exception the
+    /// flush threw, the budget stopping it) are returned as the call's own; unhandled rejections
+    /// are reported ([`Host::take_errors`]). Errors of render and effects that the root's boundary
+    /// handled arrive as [`RootMessage::Fault`] (FX6b).
     pub fn root_props(&self, root: u32, patch: &[(String, Value)]) -> Result<(), JsError> {
         self.root_call_js("props", root, Some(patch)).map(|_| ())
     }
@@ -711,7 +720,7 @@ impl<'a> Host<'a> {
     }
 
     fn root_call_js(&self, method: &str, root: u32, patch: Option<&[(String, Value)]>) -> Result<Value, JsError> {
-        core::root_call(&self.core, &self.engine, None, |e| e.root_call(method, root, patch)).map_err(|e| self.core.map_error(e))
+        core::root_call(&self.core, &self.engine, None, core::DrainErrors::Call, |e| e.root_call(method, root, patch)).map_err(|e| self.core.map_error(e))
     }
 
     /// Drains what mounted roots reported (faults from their boundaries, title/dirty, emits).
@@ -744,7 +753,7 @@ impl<'a> Host<'a> {
             self.core.backend().wake();
             return Ok(tag);
         }
-        core::root_call(&self.core, &self.engine, None, |e| e.locale_changed(&tag)).map_err(|e| self.core.map_error(e))?;
+        core::root_call(&self.core, &self.engine, None, core::DrainErrors::Report, |e| e.locale_changed(&tag)).map_err(|e| self.core.map_error(e))?;
         Ok(tag)
     }
 

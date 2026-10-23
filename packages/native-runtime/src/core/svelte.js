@@ -193,6 +193,8 @@ export const flushing_sync = () => batches.is_flushing_sync;
  * them, every branch `CLEAN`, and schedules the effects still dirty, so the work the aborted flush
  * had not done runs in a later microtask (under a new budget). Inert (outroing) subtrees are left
  * as they are. Not reset: `is_flushing_sync` (no writer outside `flushSync`), see the milestone.
+ * Since FX6b the embed's host calls flush in the host's job drain, not with `flushSync`, so only a
+ * component's own `flushSync` can still leave it set.
  */
 export function recover() {
   unset_context(true);

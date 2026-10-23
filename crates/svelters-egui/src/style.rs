@@ -784,7 +784,8 @@ impl Scene {
         // OW-CSS: an own widget's paint parts, as pseudo-elements of the host (W3)
         let decl: &'static [crate::provider::PartEntry] = match self.w(i) {
             W::Ext(x) => x.entry().parts,
-            _ => st.node(id).map_or(&[], |n| n.part_decl),
+            // OW7b: the built-in toast kinds' paint parts
+            w => crate::views::toast::parts_of(w).unwrap_or_else(|| st.node(id).map_or(&[], |n| n.part_decl)),
         };
         let mut parts = Vec::new();
         for (k, p) in decl.iter().enumerate() {

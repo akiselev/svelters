@@ -88,7 +88,7 @@ Lists and tables over app data.
 
 | Element | What it is |
 |---|---|
-| [`<table>`](table.md) | A virtual table (`egui_table`): only the visible rows and columns are drawn. |
+| [`<table>`](table.md) | A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. |
 | [`<table-column>`](table-column.md) | A column of its parent `table` (data only: not laid out or drawn as a node). |
 | [`<tree-view>`](tree-view.md) | A virtualized tree: JS keeps the tree and flattens its visible rows into the list; children load when a node expands. |
 | [`<virtual-list>`](virtual-list.md) | A virtualized list (the M5 model-view protocol): JS keeps the items, the list asks for the rows it shows. |
@@ -115,6 +115,7 @@ Popups, dialogs, inner windows and notifications.
 | [`<inner-window>`](inner-window.md) | A floating window inside the viewport: movable, optionally resizable, collapsible and closable; its children are a flex box. |
 | [`<modal>`](modal.md) | An in-window modal dialog: a backdrop over the viewport that blocks the rest of the UI, its content centred, sized to fit (or `width`/`height`). |
 | [`<popup>`](popup.md) | A popover anchored to its owner: the element it is declared in (attached), or the box it is placed in. |
+| [`<toast>`](toast.md) | A declarative toast, a child of `toast-host`: a flex box (column) laid out by taffy, stacked by its host with the `show()` toasts. |
 | [`<toast-host>`](toast-host.md) | Shows transient notifications stacked in a corner of its viewport, over everything; takes no space itself. |
 
 ## Pickers

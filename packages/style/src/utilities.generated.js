@@ -4086,6 +4086,15 @@ export const UTILITIES = {
    "parts": [],
    "provider_states": []
   },
+  "toast": {
+   "kind": "Toast",
+   "states": [
+    "exiting",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
   "toast-host": {
    "kind": "ToastHost",
    "states": [
