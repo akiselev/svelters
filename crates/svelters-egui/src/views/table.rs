@@ -1,50 +1,126 @@
-//! `table` and `table-column` (WG4a), on `egui_table` 0.11 (virtual rows and columns), with WG5a's
-//! keyboard, keyed selection and cell editing.
+//! `table` and `table-column`, svelters' own (OW5b; ARCH-WIDGETS §6.1, WIDGET-PARITY §2.18.4-6,
+//! DESIGN R6, R8, R10, R11, R15). No `egui_table`, no egui widgets: rows, cells, the header and
+//! its parts are painted from CSS and UA tables; scrolling is OW2's [`Scrollable`] on both axes,
+//! column widths OW2's [`Resizable`] per header edge.
 //!
 //! Columns are the table's `table-column` children (data only: hidden by the table's layout).
 //! Rows are a JS data window, the data half of the virtual-list protocol (M5 / N3): each frame the
 //! table works out the rows it shows plus `overscan` on each side and, when that range changes,
 //! emits `range(first, last)`; JS answers with `set-rows(first, rows)`, which replaces the window.
-//! Rows outside the window draw empty until their data arrives (with the default overscan of 20
-//! rows, a scroll of up to a page shows data already sent). A small table can send everything
-//! once: `set-rows(0, all)`.
+//! Rows outside the window draw empty until their data arrives. Only the visible rows **and**
+//! columns are drawn (virtual on both axes); the header row is frozen at the top, the first
+//! `sticky-columns` columns at the left.
 //!
-//! **Rows have ids (WG5a).** `set-ids(ids, labels?)` gives every row (by position) an id and,
-//! optionally, a type-ahead label; without it a row's id is its position. Selection (`selected`,
-//! bindable), the cursor (`current`) and edits are keyed by id ([`KeySelect`], WG5b's shared
-//! helper), so a re-sort or a filter (a new `set-ids`) keeps them on the same rows.
+//! **Parts** (`table::part(name)`), styled per item through [`Scene::part_at`] exactly as OW5a's
+//! list rows (the host's state replaced by the item's, `:nth-child` by logical position, P1):
+//!
+//! | Part | Kind | States |
+//! |---|---|---|
+//! | `row` | P, per row (position = row) | R6: `:hover`, `:active`, `:selected` (`table:focus-within::part(row):selected` active, `:not(:focus-within)` inactive), `:current` (the cursor row) |
+//! | `cell` | P, per cell (position = shown column) | the row's, `:hover` (the cell), `:current` + `:focus-visible` (the cursor cell, R8 ring, keyboard only) |
+//! | `error` | P, the cell of a rejected commit | outline in `invalid-border`; its reason is an OW3 tooltip |
+//! | `header` | P, the frozen header row | |
+//! | `header-cell` | P, per shown column | `:hover`, `:active` |
+//! | `sort` | P, the sort arrow of a header cell (`content: icon(…)` replaces the codicon) | `:checked` when descending |
+//! | `resize` | N, a header cell's right edge (R11: 1 px line, `focus` hover bar after the delay) | `:hover`, `:dragging` |
+//! | `scrollbar-x`/`-y`, `thumb-x`/`-y` | P, OW2's overlay bars | `:hover`, `:active`, `:dragging` (thumb) |
+//! | `menu`, `menu-item` | P, the column menu (`column-menu`) | `:current`, `:checked`, `:disabled` |
+//!
+//! **Rows have ids (WG5a).** `set-ids(ids, labels?)` gives every row (by position) an id; selection
+//! (`selected`), the cursor (`current`) and edits are keyed by id ([`KeySelect`]), so a re-sort or a
+//! filter keeps them on the same rows.
 //!
 //! **Keyboard.** A click focuses the table. Focused: Up/Down/PageUp/PageDown/Home/End move the
-//! cursor row (Shift extends, Ctrl moves alone), Left/Right the cursor column, Space and Ctrl+A
-//! select, Enter activates, F2 or typing edits the cursor cell when its column is `editable`
-//! (typing elsewhere is type-ahead on the labels, else on the first column's window text).
+//! cursor row (Shift extends, Ctrl moves alone), Left/Right the cursor column ([`RovingList`]),
+//! Space and Ctrl+A select, Enter activates, Ctrl+C raises `copy(ids)`, F2 or typing edits the
+//! cursor cell when its column is `editable` (typing elsewhere is type-ahead).
 //!
-//! **Editing.** An edit starts on F2, a typed key, a double click on an editable cell or the
-//! `edit(row-id, column)` method. The editor is the column's `editor` snippet (realised once per
-//! column by the JS runtime into an outlet the table adopts, then rebound per edit:
-//! `editor-bind`/`editor-value`/`editor-unbind` on the column), or a built-in text field. Enter
-//! commits, Escape reverts, Tab/Shift+Tab commit and edit the next/previous editable cell, focus
-//! leaving the editor commits. A commit is the sync `commit(row-id, column, value)` the host can
-//! reject (`e.result = 'reason'` or `e.preventDefault()`): the edit then reverts and the reason
-//! shows under the cell. The JS calls run in `logic` ([`EguiBackend::realize_edits`]), never in
-//! the pass.
+//! **The header (FM1's QW4, Qt's QHeaderView).** `sortable` sorts on a header click
+//! (`sort-column`/`sort-order`, `sort-changed`); a right click raises `header-context` and opens the
+//! column menu (`hideable` columns, `hidden-columns`); `header-state` (JSON) saves and restores
+//! widths, hidden columns and the sort. The table never writes files (ZU3): the app persists
+//! `header-state` with DX1's `uiState()` (UiStateBackend). Hidden columns (and `visible={false}`
+//! ones) are left out of the shown columns; WG5a's `current-column` and edits count shown
+//! columns, and [`TableState::data_col`] maps them to data columns.
+//!
+//! **Editing** is WG5a's: the editor is the column's `editor` snippet or a built-in text field.
+//! **Seam (until OW4's own text field lands on master):** the built-in field is still egui's
+//! `TextEdit`, in [`paint_editor`] only; everything else is own.
+//!
+//! **OW5a2** (multi-column tree) reuses [`ColumnState`], [`columns`], [`header`] and the header
+//! parts: a tree with `table-column` children lays its rows on the same widths.
 
 use super::item_keys::{self, Input, RowKeys};
 use super::selection::{KeySelect, Mode, Mods};
 use super::{arg, arity};
 use crate::backend::EguiBackend;
+use crate::interact::{DismissParams, Intents, PartResponses, Resizable, Resize, ResizeParams, RovingList, ScrollParams, Scrollable, Unit};
 use crate::kinds::{self, P};
 use crate::layout::Metrics;
-use crate::scene::props::{as_bool, as_f64, as_i64};
+use crate::paint::{self, IconKey, PaintCx, StyleView, TraceKind, Ua, UaRule, UaValue::*};
+use crate::provider::StateBits;
+use crate::scene::props::{as_bool, as_enum, as_f64, as_i64, as_str, as_str_list};
 use crate::scene::{Arena, Dirty, NodeId, Origin, Scene, W};
 use crate::walk::Out;
-use egui::{Align, Id, Layout, Rect, Role, Sense, Ui, UiBuilder, Vec2, vec2};
-use egui_table::{CellInfo, Column, HeaderCellInfo, HeaderRow, PrefetchInfo, TableDelegate};
+use egui::{Align, Color32, Id, Layout, Pos2, Rect, Role, Sense, Stroke, Ui, UiBuilder, Vec2, pos2, vec2};
 use std::borrow::Cow;
 use svelters_abi::{StrResult, Value};
 
-/// How long a rejected commit's reason stays under its cell, in seconds.
+/// How long a rejected commit's reason stays on its cell, in seconds.
 const ERROR_SECONDS: f64 = 5.0;
+/// The narrowest a column gets without a `min-width` (Qt's `minimumSectionSize` is 16-ish).
+const MIN_COL: f32 = 16.0;
+
+const SEL_ACTIVE: StateBits = StateBits(StateBits::SELECTED.0 | StateBits::FOCUS_WITHIN.0);
+
+/// `::part(row)`: DESIGN R6's four states (the R8 ring is on the cursor cell), R10's pointer.
+pub const ROW_UA: Ua = Ua(&[
+    UaRule::base(&[("cursor", Keyword("pointer"))]),
+    UaRule::when(StateBits::HOVERED, &[("background-color", Token("list-hover"))]),
+    UaRule::when(StateBits::SELECTED, &[("background-color", Token("list-sel-inactive"))]),
+    UaRule::when(SEL_ACTIVE, &[("background-color", Token("list-sel")), ("color", Token("list-sel-fg"))]),
+    UaRule::when(StateBits::DISABLED, &[("cursor", Keyword("default"))]),
+]);
+
+/// `striped`: the fill of odd rows at rest (CSS: `table::part(row):nth-child(even)`).
+pub const STRIPE_UA: Ua = Ua(&[UaRule::base(&[("background-color", Token("list-hover"))])]);
+
+/// `::part(cell)`: 4 px sides; R8's 1 px ring inside the cursor cell, keyboard focus only.
+pub const CELL_UA: Ua = Ua(&[
+    UaRule::base(&[
+        ("padding-left", Px(4.0)),
+        ("padding-right", Px(4.0)),
+        ("outline-style", Keyword("none")),
+        ("outline-color", Token("focus")),
+        ("outline-width", Px(1.0)),
+        ("outline-offset", Px(-1.0)),
+    ]),
+    UaRule::when(StateBits::FOCUS_VISIBLE, &[("outline-style", Keyword("solid"))]),
+]);
+
+/// `::part(error)`: a cell whose commit was rejected (DESIGN §2.4: `invalid-border`).
+pub const ERROR_UA: Ua = Ua(&[UaRule::base(&[
+    ("outline-style", Keyword("solid")),
+    ("outline-color", Token("invalid-border")),
+    ("outline-width", Px(1.0)),
+    ("outline-offset", Px(-1.0)),
+])]);
+
+/// `::part(header)`: the frozen header row.
+pub const HEADER_UA: Ua = Ua(&[UaRule::base(&[("background-color", Token("bg"))])]);
+
+/// `::part(header-cell)`: a column's header (QSS `QHeaderView::section`).
+pub const HEADER_CELL_UA: Ua = Ua(&[
+    UaRule::base(&[("padding-left", Px(4.0)), ("padding-right", Px(4.0)), ("font-weight", Number(600.0)), ("color", Token("fg"))]),
+    UaRule::when(StateBits::HOVERED, &[("background-color", Token("list-hover"))]),
+    UaRule::when(StateBits::DISABLED, &[("color", Token("disabled-fg"))]),
+]);
+
+/// `::part(sort)`: the sort arrow (QSS `::up-arrow`/`::down-arrow`); a codicon unless `content:`.
+pub const SORT_UA: Ua = Ua(&[UaRule::base(&[("width", Px(16.0)), ("font-size", Px(14.0)), ("color", Token("icon"))])]);
+
+/// `::part(resize)`: R11, the split view's sash (1 px `border` line, `sash-w` hit area and hover bar).
+pub const RESIZE_UA: Ua = crate::widgets::split_view::SASH_UA;
 
 /// An edit in progress.
 #[derive(Clone, Debug, PartialEq)]
@@ -81,6 +157,118 @@ pub struct EditError {
     pub reason: String,
     /// egui time it goes away (set when first shown).
     pub until: Option<f64>,
+    /// OW5b: where its tooltip shows (OW3's `tooltip::show`), once per change.
+    pub shown_at: Option<Pos2>,
+}
+
+/// A `table-column`'s own props (`width`, `min-width`, `max-width`, `visible` and `tooltip` are
+/// Widget's, in `Common`). OW5a2's multi-column tree reads the same.
+#[derive(Clone, Debug, PartialEq)]
+pub struct ColumnState {
+    pub title: String,
+    pub resizable: bool,
+    pub align: &'static str,
+    pub sort: &'static str,
+    pub editable: bool,
+    pub editor: bool,
+    /// FM1: its name in `hidden-columns` and `header-state` (empty: its child index).
+    pub name: String,
+    pub hideable: bool,
+    /// `auto`: `align`.
+    pub header_align: &'static str,
+    pub elide: &'static str,
+}
+
+impl Default for ColumnState {
+    fn default() -> Self {
+        ColumnState {
+            title: String::new(),
+            resizable: true,
+            align: "start",
+            sort: "none",
+            editable: false,
+            editor: false,
+            name: String::new(),
+            hideable: true,
+            header_align: "auto",
+            elide: "end",
+        }
+    }
+}
+
+impl ColumnState {
+    pub(crate) fn set(&mut self, key: P, v: &Value) -> Result<(), String> {
+        match key {
+            P::Title => self.title = as_str(v)?,
+            P::Resizable => self.resizable = as_bool(v)?,
+            P::CellAlign => self.align = as_enum(v, kinds::CELL_ALIGN)?,
+            P::Sort => self.sort = as_enum(v, kinds::SORT)?,
+            P::Editable => self.editable = as_bool(v)?,
+            // WG5a: the runtime writes `true` while a snippet is set (a function never reaches the backend)
+            P::Editor => self.editor = !matches!(v, Value::Null | Value::Bool(false)),
+            P::Name => self.name = as_str(v)?,
+            P::Hideable => self.hideable = as_bool(v)?,
+            P::HeaderAlign => self.header_align = as_enum(v, kinds::HEADER_ALIGN)?,
+            P::Elide => self.elide = as_enum(v, kinds::ELIDE)?,
+            _ => return Err(format!("{key:?} is not a prop of <table-column>")),
+        }
+        Ok(())
+    }
+
+    pub(crate) fn get(&self, key: P) -> Option<Value> {
+        let s = |x: &str| Value::Str(x.to_string());
+        Some(match key {
+            P::Title => s(&self.title),
+            P::Resizable => Value::Bool(self.resizable),
+            P::CellAlign => s(self.align),
+            P::Sort => s(self.sort),
+            P::Editable => Value::Bool(self.editable),
+            P::Editor => Value::Bool(self.editor),
+            P::Name => s(&self.name),
+            P::Hideable => Value::Bool(self.hideable),
+            P::HeaderAlign => s(self.header_align),
+            P::Elide => s(self.elide),
+            _ => return None,
+        })
+    }
+}
+
+/// The column menu, open at a screen point.
+#[derive(Clone, Copy, Debug)]
+struct ColumnMenu {
+    at: Pos2,
+    /// The pass it opened in (the opening click is not an outside press).
+    pass: u64,
+}
+
+/// A table's interaction state that is not a prop (a clone starts fresh).
+#[derive(Default)]
+pub struct TableRt {
+    scroll: Scrollable,
+    /// Per column node: its header edge's unit and the edge's state bits.
+    edges: Vec<(NodeId, Resizable, StateBits)>,
+    thumbs: [StateBits; 2],
+    menu: Option<ColumnMenu>,
+    /// A live resize: (column node, width) until the drag commits.
+    live: Option<(NodeId, f32)>,
+}
+
+impl Clone for TableRt {
+    fn clone(&self) -> TableRt {
+        TableRt::default()
+    }
+}
+
+impl PartialEq for TableRt {
+    fn eq(&self, _: &TableRt) -> bool {
+        true
+    }
+}
+
+impl std::fmt::Debug for TableRt {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("TableRt").field("offset", &self.scroll.offset()).field("menu", &self.menu.is_some()).finish()
+    }
 }
 
 /// A table node's props and data.
@@ -99,9 +287,6 @@ pub struct TableState {
     /// `scroll-to-row`, applied next frame.
     pub scroll_to: Option<u64>,
     pub scroll_to_col: Option<usize>,
-    /// Per column (by its node's egui id): the `width` prop last written into egui_table's state
-    /// (a user resize stays until the prop changes).
-    pub applied: Vec<(Id, f64)>,
     // ---- WG5a ----
     /// `set-ids`: row ids (and labels) by position; `None`: a row's id is its position.
     pub keys: Option<RowKeys>,
@@ -118,6 +303,28 @@ pub struct TableState {
     pub error: Option<EditError>,
     /// Focus back on the table after an edit ended.
     pub refocus: bool,
+    // ---- OW5b: the header (FM1's QW4) ----
+    pub sortable: bool,
+    pub sort_column: i64,
+    pub sort_order: &'static str,
+    pub column_menu: bool,
+    /// `hidden-columns`: column names (or child indices).
+    pub hidden: Vec<String>,
+    pub header_state: String,
+    /// A `header-state` the host set, applied at the next paint (it needs the columns).
+    pub restore: Option<serde_json::Value>,
+    /// The data column of each shown column (hidden ones are left out; WG5a's `cur_col` and edits
+    /// count shown columns).
+    pub col_map: Vec<usize>,
+    pub stretch_last: bool,
+    /// `fit-columns(column?)`, applied at the next paint.
+    pub fit: Option<Option<usize>>,
+    /// R8: focus came from the keyboard (the cursor cell's ring); a click clears it.
+    pub kbd: bool,
+    pub was_focused: bool,
+    /// The error tooltip showed last pass (hidden once the error is gone).
+    pub tip_shown: bool,
+    pub rt: TableRt,
 }
 
 impl Default for TableState {
@@ -133,7 +340,6 @@ impl Default for TableState {
             asked: None,
             scroll_to: None,
             scroll_to_col: None,
-            applied: Vec::new(),
             keys: None,
             selection: "single",
             sel: KeySelect::new(Mode::Single),
@@ -144,6 +350,20 @@ impl Default for TableState {
             editors: Vec::new(),
             error: None,
             refocus: false,
+            sortable: false,
+            sort_column: -1,
+            sort_order: "none",
+            column_menu: true,
+            hidden: Vec::new(),
+            header_state: String::new(),
+            restore: None,
+            col_map: Vec::new(),
+            stretch_last: true,
+            fit: None,
+            kbd: false,
+            was_focused: false,
+            tip_shown: false,
+            rt: TableRt::default(),
         }
     }
 }
@@ -160,7 +380,7 @@ impl TableState {
                 self.sel.set(item_keys::ids_of(v, "selected")?);
             }
             P::ListSelection => {
-                self.selection = crate::scene::props::as_enum(v, kinds::TABLE_SELECTION)?;
+                self.selection = as_enum(v, kinds::TABLE_SELECTION)?;
                 let m = Mode::parse(self.selection).unwrap_or_default();
                 let keep: Vec<u64> = self.sel.selected.iter().copied().collect();
                 self.sel.mode = m;
@@ -172,6 +392,21 @@ impl TableState {
                 self.sel.anchor = self.sel.cursor;
             }
             P::CurrentColumn => self.cur_col = as_i64(v)?.max(0) as usize,
+            P::Sortable => self.sortable = as_bool(v)?,
+            P::SortColumn => self.sort_column = as_i64(v)?.max(-1),
+            P::SortOrder => self.sort_order = as_enum(v, kinds::SORT)?,
+            P::ColumnMenu => self.column_menu = as_bool(v)?,
+            P::HiddenColumns => self.hidden = if matches!(v, Value::Null) { Vec::new() } else { as_str_list(v)? },
+            P::HeaderState => {
+                let s = as_str(v)?;
+                self.restore = if s.is_empty() || s == self.header_state {
+                    None
+                } else {
+                    Some(serde_json::from_str::<serde_json::Value>(&s).map_err(|e| format!("header-state: {e}"))?)
+                };
+                self.header_state = s;
+            }
+            P::StretchLast => self.stretch_last = as_bool(v)?,
             _ => return Err(format!("{key:?} is not a prop of <table>")),
         }
         Ok(if key == P::RowHeight { Dirty::MEASURE } else { Dirty::EMPTY })
@@ -188,8 +423,30 @@ impl TableState {
             P::ListSelection => Value::Str(self.selection.to_string()),
             P::CurrentRow => Value::I64(self.sel.cursor.map_or(-1, |k| k as i64)),
             P::CurrentColumn => Value::I64(self.cur_col as i64),
+            P::Sortable => Value::Bool(self.sortable),
+            P::SortColumn => Value::I64(self.sort_column),
+            P::SortOrder => Value::Str(self.sort_order.to_string()),
+            P::ColumnMenu => Value::Bool(self.column_menu),
+            P::HiddenColumns => Value::List(self.hidden.iter().map(|h| Value::Str(h.clone())).collect()),
+            P::HeaderState => Value::Str(self.header_state.clone()),
+            P::StretchLast => Value::Bool(self.stretch_last),
             _ => return None,
         })
+    }
+
+    /// The data column of shown column `col` (the same while no column is hidden).
+    pub fn data_col(&self, col: usize) -> usize {
+        self.col_map.get(col).copied().unwrap_or(col)
+    }
+
+    /// `fit-columns(column?)`.
+    pub(crate) fn fit_columns(&mut self, args: &[Value]) -> StrResult<Value> {
+        arity("fit-columns", args, 0, 1)?;
+        self.fit = Some(match args.first() {
+            None | Some(Value::Null) => None,
+            Some(v) => Some(as_i64(v).map_err(|e| format!("fit-columns column: {e}"))?.max(0) as usize),
+        });
+        Ok(Value::Null)
     }
 
     /// Rows in the table: the ids given by `set-ids`, else `row-count`.
@@ -348,7 +605,6 @@ fn cell_text(v: &Value) -> String {
         other => format!("{other:?}"),
     }
 }
-
 /// Natural size: a few columns' worth, a header and eight rows.
 pub(crate) fn intrinsic(m: &Metrics, t: &TableState) -> Vec2 {
     let _ = m;
@@ -360,192 +616,6 @@ pub(crate) fn editor_place(t: &TableState) -> Option<(NodeId, Vec2)> {
     let e = t.edit.as_ref().filter(|e| e.snippet && e.bound && e.size.x > 0.0)?;
     let (_, outlet) = t.editors.iter().find(|(c, _)| *c == e.column)?;
     Some((*outlet, e.size))
-}
-
-/// One column, from its `table-column` node.
-struct Col {
-    node: NodeId,
-    id: Id,
-    title: String,
-    width: f64,
-    resizable: bool,
-    align: &'static str,
-    sort: &'static str,
-    editable: bool,
-    editor: bool,
-}
-
-/// A click on a row this pass.
-struct Click {
-    row: u64,
-    mods: Mods,
-    double: bool,
-    /// The column under the pointer.
-    col: Option<usize>,
-}
-
-struct Delegate<'a> {
-    cols: &'a [Col],
-    t: &'a TableState,
-    table_id: Id,
-    row_h: f32,
-    enabled: bool,
-    selectable: bool,
-    focused: bool,
-    visible: Option<std::ops::Range<u64>>,
-    clicks: Vec<Click>,
-    header: Option<usize>,
-    /// Drawn cells: (row, column, rect, clip).
-    cells: Vec<(u64, usize, Rect, Rect)>,
-    pointer: Option<egui::Pos2>,
-}
-
-const CELL_MARGIN: f32 = 4.0;
-
-/// A cell's a11y and hover id.
-fn cell_id(table: Id, row_key: u64, col: usize) -> Id {
-    table.with(("cell", row_key, col))
-}
-
-impl TableDelegate for Delegate<'_> {
-    fn prepare(&mut self, info: &PrefetchInfo) {
-        self.visible = Some(info.visible_rows.clone());
-    }
-
-    #[allow(clippy::disallowed_types)] // OW: wrapper until OW1a3
-    fn header_cell_ui(&mut self, ui: &mut Ui, cell: &HeaderCellInfo) {
-        let Some(c) = self.cols.get(cell.col_range.start) else {
-            return;
-        };
-        let rect = ui.max_rect();
-        let resp = ui.interact(rect, ui.scope_id().with("head"), if self.enabled { Sense::click() } else { Sense::hover() });
-        if resp.hovered() {
-            ui.painter().rect_filled(rect, 0.0, ui.visuals().widgets.hovered.weak_bg_fill);
-        }
-        ui.add_space(CELL_MARGIN);
-        let label = ui.add(egui::Label::new(egui::RichText::new(c.title.as_str()).strong()).selectable(false));
-        // the sort arrow, painted (the default fonts have no arrow glyphs)
-        let dir = match c.sort {
-            "ascending" => Some(egui::accesskit::SortDirection::Ascending),
-            "descending" => Some(egui::accesskit::SortDirection::Descending),
-            _ => None,
-        };
-        if let Some(d) = dir {
-            let s = 4.0;
-            let ctr = egui::pos2(label.rect.right() + 4.0 + s, rect.center().y);
-            let (tip, l, r) = if d == egui::accesskit::SortDirection::Ascending {
-                (ctr - vec2(0.0, s), ctr + vec2(-s, s * 0.6), ctr + vec2(s, s * 0.6))
-            } else {
-                (ctr + vec2(0.0, s), ctr - vec2(s, s * 0.6), ctr + vec2(s, -s * 0.6))
-            };
-            let color = ui.visuals().strong_text_color();
-            ui.painter().add(egui::Shape::convex_polygon(vec![tip, l, r], color, egui::Stroke::NONE));
-        }
-        let title = c.title.clone();
-        ui.ctx().accesskit_node_builder(resp.id, |b| {
-            b.set_role(Role::ColumnHeader);
-            b.set_label(title);
-            if let Some(d) = dir {
-                b.set_sort_direction(d);
-            }
-        });
-        if resp.clicked() {
-            self.header = Some(cell.col_range.start);
-        }
-    }
-
-    fn row_ui(&mut self, ui: &mut Ui, row: u64) {
-        let rect = ui.max_rect();
-        // egui_table calls this once per column region (sticky, scrolled): an empty region is skipped
-        if rect.width() <= 0.0 {
-            return;
-        }
-        let v = ui.visuals();
-        let key = self.t.key_of(row);
-        let selected = self.selectable && self.t.sel.is_selected(key);
-        if selected {
-            ui.painter().rect_filled(rect, 0.0, v.selection.bg_fill);
-        } else if self.t.striped && row % 2 == 1 {
-            ui.painter().rect_filled(rect, 0.0, v.faint_bg_color);
-        }
-        // per region (a fixed id would be registered twice with sticky columns)
-        let resp = ui.interact(rect, ui.scope_id().with("click"), if self.enabled { Sense::click() } else { Sense::hover() });
-        let selectable = self.selectable;
-        ui.ctx().accesskit_node_builder(resp.id, |b| {
-            b.set_role(Role::Row);
-            b.set_row_index(row as usize);
-            if selectable {
-                b.set_selected(selected);
-            }
-        });
-        if self.enabled {
-            if resp.hovered() && !selected {
-                ui.painter().rect_filled(rect, 0.0, v.widgets.hovered.weak_bg_fill.gamma_multiply(0.5));
-            }
-            if resp.clicked() || resp.double_clicked() {
-                let mods = item_keys::mods(ui.input(|i| i.modifiers));
-                self.clicks.push(Click { row, mods, double: resp.double_clicked(), col: None });
-            }
-        }
-    }
-
-    #[allow(clippy::disallowed_types)] // OW: wrapper until OW1a3
-    fn cell_ui(&mut self, ui: &mut Ui, cell: &CellInfo) {
-        let full = ui.max_rect();
-        self.cells.push((cell.row_nr, cell.col_nr, full, ui.clip_rect()));
-        if let Some(p) = self.pointer
-            && full.contains(p)
-            && let Some(c) = self.clicks.last_mut()
-            && c.row == cell.row_nr
-        {
-            c.col = Some(cell.col_nr);
-        }
-        let key = self.t.key_of(cell.row_nr);
-        let col = self.cols.get(cell.col_nr);
-        let selected = self.selectable && self.t.sel.is_selected(key);
-        let editing = self.t.edit.as_ref().is_some_and(|e| e.row == key && e.col == cell.col_nr);
-        let cid = cell_id(self.table_id, key, cell.col_nr);
-        let _ = ui.interact(full, cid, Sense::hover());
-        let editable = col.is_some_and(|c| c.editable);
-        ui.ctx().accesskit_node_builder(cid, |b| {
-            b.set_role(Role::Cell);
-            b.set_column_index(cell.col_nr);
-            if selected {
-                b.set_selected(true);
-            }
-            if !editable {
-                b.set_read_only();
-            }
-        });
-        // the cursor cell, while the table has focus
-        if self.focused && self.t.sel.cursor == Some(key) && self.t.cur_col == cell.col_nr {
-            ui.painter().rect_stroke(full.shrink(1.0), 0.0, ui.visuals().selection.stroke, egui::StrokeKind::Inside);
-        }
-        if editing {
-            return;
-        }
-        let Some(text) = self.t.cell(cell.row_nr, cell.col_nr) else {
-            return;
-        };
-        let align = col.map_or("start", |c| c.align);
-        let layout = match align {
-            "center" => Layout::centered_and_justified(egui::Direction::LeftToRight),
-            "end" => Layout::right_to_left(Align::Center),
-            _ => Layout::left_to_right(Align::Center),
-        };
-        let r = full.shrink2(vec2(CELL_MARGIN, 0.0));
-        ui.scope_builder(UiBuilder::new().max_rect(r).layout(layout).accessibility_parent(cid), |ui| {
-            let mut rt = egui::RichText::new(text);
-            if selected {
-                rt = rt.color(ui.visuals().selection.stroke.color);
-            }
-            ui.add(egui::Label::new(rt).selectable(false).truncate());
-        });
-    }
-
-    fn default_row_height(&self) -> f32 {
-        self.row_h
-    }
 }
 
 /// The keys of a focused table that are not selection keys: Left/Right (cursor column), F2 (edit)
@@ -583,7 +653,7 @@ fn start_edit(t: &mut TableState, cols: &[Col], pos: u64, col: usize, typed: Str
         return false;
     }
     let row = t.key_of(pos);
-    let value = t.cell(pos, col).unwrap_or("").to_string();
+    let value = t.cell(pos, t.data_col(col)).unwrap_or("").to_string();
     let draft = if typed.is_empty() { value.clone() } else { typed.clone() };
     t.edit = Some(Edit { row, col, column: c.node, value, draft, typed, snippet: c.editor, bound: false, focus: true, had_focus: false, size: Vec2::ZERO, widgets: Vec::new(), end: None });
     t.error = None;
@@ -595,8 +665,8 @@ fn start_edit(t: &mut TableState, cols: &[Col], pos: u64, col: usize, typed: Str
 }
 
 /// The editable cell `step` cells after (`pos`, `col`), row-major, if any.
-fn next_editable(cols: &[Col], len: u64, pos: u64, col: usize, step: i32) -> Option<(u64, usize)> {
-    let n = cols.len() as i64;
+fn next_editable(editable: &[bool], len: u64, pos: u64, col: usize, step: i32) -> Option<(u64, usize)> {
+    let n = editable.len() as i64;
     if n == 0 || step == 0 {
         return None;
     }
@@ -608,60 +678,315 @@ fn next_editable(cols: &[Col], len: u64, pos: u64, col: usize, step: i32) -> Opt
             return None;
         }
         let c = (at % n) as usize;
-        if cols[c].editable {
+        if editable[c] {
             return Some(((at / n) as u64, c));
         }
     }
 }
 
-#[allow(clippy::disallowed_types)] // OW: wrapper until OW5b
-/// Paints table `i` at `r`: egui_table with the columns of its children and its data window, the
-/// open editor, then its events (`range`, `selectionchange`, `activated`, `header-clicked`).
+/// One column, from its `table-column` node.
+#[derive(Clone)]
+pub(crate) struct Col {
+    pub node: NodeId,
+    /// Its scene index.
+    pub ci: usize,
+    pub title: String,
+    /// Its width (the `width` prop, a user resize, clamped to `min`..`max`).
+    pub width: f32,
+    pub min: f32,
+    pub max: f32,
+    pub resizable: bool,
+    pub align: &'static str,
+    pub header_align: &'static str,
+    pub sort: &'static str,
+    pub editable: bool,
+    pub editor: bool,
+    /// Its child index (the data column, `header-clicked`'s and `sort-column`'s number).
+    pub data: usize,
+    /// Its `name`, else its child index.
+    pub key: String,
+    pub hideable: bool,
+    /// `visible` (Widget's).
+    pub shown: bool,
+    pub tooltip: String,
+    pub elide: Option<paint::Elide>,
+}
+
+/// The `table-column` children of node `i` (every one; [`Col::shown`] and `hidden-columns` pick the
+/// shown ones). OW5a2's multi-column tree reads its columns with this.
+pub(crate) fn columns(s: &Scene, i: usize) -> Vec<Col> {
+    s.children[i]
+        .iter()
+        .filter_map(|&c| {
+            let ci = s.ix(c);
+            let W::TableColumn(st) = s.w(ci) else { return None };
+            let cm = s.common(ci);
+            let min = cm.min_width.map_or(MIN_COL, |m| m as f32).max(1.0);
+            let max = cm.max_width.map_or(f32::INFINITY, |m| m as f32).max(min);
+            Some(Col {
+                node: c,
+                ci,
+                title: st.title.clone(),
+                width: (cm.width.unwrap_or(100.0) as f32).clamp(min, max),
+                min,
+                max,
+                resizable: st.resizable,
+                align: st.align,
+                header_align: if st.header_align == "auto" { st.align } else { st.header_align },
+                sort: st.sort,
+                editable: st.editable,
+                editor: st.editor,
+                data: 0,
+                key: st.name.clone(),
+                hideable: st.hideable,
+                shown: cm.visible,
+                tooltip: cm.tooltip.clone(),
+                elide: paint::Elide::parse(st.elide),
+            })
+        })
+        .enumerate()
+        .map(|(k, c)| Col { data: k, key: if c.key.is_empty() { k.to_string() } else { c.key.clone() }, ..c })
+        .collect()
+}
+
+/// Where the shown columns are: content x and drawn width (the last one stretched), the sticky
+/// ones fixed at the left, the rest scrolled by `off.x`.
+pub(crate) struct Geom {
+    pub body: Rect,
+    pub head: Rect,
+    pub xs: Vec<f32>,
+    pub ws: Vec<f32>,
+    pub sticky: usize,
+    pub sticky_w: f32,
+    pub total: f32,
+    pub off: Vec2,
+    pub row_h: f32,
+}
+
+impl Geom {
+    pub(crate) fn new(r: Rect, header_h: f32, widths: &[f32], sticky: usize, stretch_last: bool, row_h: f32) -> Geom {
+        let head = Rect::from_min_size(r.min, vec2(r.width(), header_h.min(r.height())));
+        let body = Rect::from_min_max(pos2(r.left(), head.bottom()), r.max);
+        let mut ws = widths.to_vec();
+        let sum: f32 = ws.iter().sum();
+        if stretch_last && sum < body.width() && let Some(l) = ws.last_mut() {
+            *l += body.width() - sum;
+        }
+        let mut xs = Vec::with_capacity(ws.len());
+        let mut x = 0.0;
+        for w in &ws {
+            xs.push(x);
+            x += w;
+        }
+        let sticky = sticky.min(ws.len());
+        Geom { body, head, sticky_w: ws[..sticky].iter().sum(), xs, ws, sticky, total: x, off: Vec2::ZERO, row_h }
+    }
+
+    /// Column `k`'s screen x range.
+    pub(crate) fn col_x(&self, k: usize) -> (f32, f32) {
+        let x = self.body.left() + self.xs[k] - if k < self.sticky { 0.0 } else { self.off.x };
+        (x, x + self.ws[k])
+    }
+
+    /// The x range column `k` may paint in (scrolled columns stay right of the sticky ones).
+    pub(crate) fn clip_x(&self, k: usize) -> (f32, f32) {
+        if k < self.sticky { (self.body.left(), self.body.right()) } else { ((self.body.left() + self.sticky_w).min(self.body.right()), self.body.right()) }
+    }
+
+    /// The columns with something in view.
+    pub(crate) fn visible_cols(&self) -> impl Iterator<Item = usize> + '_ {
+        (0..self.ws.len()).filter(|&k| {
+            let ((a, b), (l, r)) = (self.col_x(k), self.clip_x(k));
+            b > l && a < r
+        })
+    }
+
+    pub(crate) fn col_at(&self, x: f32) -> Option<usize> {
+        self.visible_cols().find(|&k| {
+            let ((a, b), (l, r)) = (self.col_x(k), self.clip_x(k));
+            x >= a.max(l) && x < b.min(r)
+        })
+    }
+
+    pub(crate) fn row_at(&self, y: f32, len: u64) -> Option<u64> {
+        let p = ((y - self.body.top() + self.off.y) / self.row_h).floor();
+        (p >= 0.0 && (p as u64) < len && y >= self.body.top() && y < self.body.bottom()).then_some(p as u64)
+    }
+
+    /// Row `pos`'s screen rect (full width of the shown columns).
+    pub(crate) fn row_rect(&self, pos: u64) -> Rect {
+        let y = self.body.top() + pos as f32 * self.row_h - self.off.y;
+        let right = (self.body.left() + self.total - self.off.x).max(self.body.left() + self.sticky_w).min(self.body.right());
+        Rect::from_min_max(pos2(self.body.left(), y), pos2(right, y + self.row_h))
+    }
+
+    pub(crate) fn cell_rect(&self, pos: u64, k: usize) -> (Rect, Rect) {
+        let y = self.body.top() + pos as f32 * self.row_h - self.off.y;
+        let (a, b) = self.col_x(k);
+        let (l, r) = self.clip_x(k);
+        let cell = Rect::from_min_max(pos2(a, y), pos2(b, y + self.row_h));
+        (cell, Rect::from_x_y_ranges(l..=r, self.body.y_range()))
+    }
+}
+
+/// A click on a row this pass.
+struct Click {
+    row: u64,
+    mods: Mods,
+    double: bool,
+    /// The column under the pointer.
+    col: Option<usize>,
+}
+
+/// An AccessKit node's bounds (egui fills them only for focusable widgets; rows and cells are
+/// hover-only).
+fn bounds(b: &mut egui::accesskit::Node, r: Rect) {
+    b.set_bounds(egui::accesskit::Rect { x0: r.min.x.into(), y0: r.min.y.into(), x1: r.max.x.into(), y1: r.max.y.into() });
+}
+
+/// A cell's a11y and hover id.
+fn cell_id(table: Id, row_key: u64, col: usize) -> Id {
+    table.with(("cell", row_key, col))
+}
+
+fn dark(ui: &Ui) -> bool {
+    ui.ctx().theme() == egui::Theme::Dark
+}
+
+fn text_align(a: &str) -> paint::Align {
+    match a {
+        "center" => paint::Align::Center,
+        "end" => paint::Align::End,
+        _ => paint::Align::Start,
+    }
+}
+
+/// Paints `text` in `content` under `s`, cut by `elide` when too wide.
+fn paint_cell_text(pc: &mut PaintCx, s: &StyleView, text: &str, content: Rect, align: &str, elide: Option<paint::Elide>, ctx: &egui::Context) {
+    if text.is_empty() || content.width() <= 0.0 {
+        return;
+    }
+    let shown = match elide {
+        Some(m) => Cow::Owned(paint::elide(ctx, s, text, m, content.width())),
+        None => Cow::Borrowed(text),
+    };
+    let g = paint::text_galley(ctx, s, &shown, None);
+    paint::paint_text(pc, s, &g, content, text_align(align));
+}
+
+/// The sort the header shows on column `c`: the table's `sort-column`, else the column's `sort`.
+fn shown_sort(t: &TableState, c: &Col) -> &'static str {
+    if t.sort_column >= 0 {
+        if t.sort_column as usize == c.data { t.sort_order } else { "none" }
+    } else {
+        c.sort
+    }
+}
+
+/// Emits event `name` of node `i` when listened.
+fn emit(arena: &Arena, i: usize, name: &str, args: Vec<Value>, out: &mut Vec<Out>) {
+    let s = kinds::signal_id(arena.core[i].kind as usize, name);
+    if arena.listens(i, s) {
+        out.push(Out::Event(arena.slots.id_at(i).expect("live node").to_raw(), s, args));
+    }
+}
+
+/// A user change of props `keys` announced (`bind:`) and through event `name`.
+fn changed_via(arena: &mut Arena, i: usize, keys: &[P], name: &str, args: Vec<Value>, out: &mut Vec<Out>) {
+    crate::leaf::props_changed(arena, i, keys, out);
+    emit(arena, i, name, args, out);
+}
+
+/// Writes a user width into column `c`'s `width` and announces it (`bind:width`).
+fn set_width(arena: &mut Arena, c: &mut Col, w: f32, out: &mut Vec<Out>) {
+    let w = w.clamp(c.min, c.max);
+    c.width = w;
+    let wv = (w as f64 * 100.0).round() / 100.0;
+    if arena.common(c.ci).width != Some(wv) {
+        arena.set_common(c.ci, |cm| cm.width = Some(wv));
+        crate::leaf::props_changed(arena, c.ci, &[P::Width], out);
+    }
+}
+
+/// The width that fits column `c`'s header and the cells of the data window.
+fn fit_width(arena: &Arena, i: usize, t: &TableState, c: &Col, ctx: &egui::Context, d: bool) -> f32 {
+    let node = arena.slots.id_at(i).expect("live node");
+    let host_css = arena.style.computed(node).cloned();
+    let host = StyleView::new(host_css.as_deref(), Ua(&[]), StateBits::NONE, d);
+    let hc = arena.style.part_computed(node, "header-cell").cloned();
+    let hv = host.part(hc.as_deref(), HEADER_CELL_UA);
+    let mut w = paint::measure_text(ctx, &hv, &c.title, crate::provider::AvailableSpace::MaxContent).x + paint::box_extra(&hv).x;
+    if shown_sort(t, c) != "none" {
+        w += hv.part(None, SORT_UA).px("width").unwrap_or(16.0);
+    }
+    let cc = arena.style.part_computed(node, "cell").cloned();
+    let cv = host.part(cc.as_deref(), CELL_UA);
+    let pad = paint::box_extra(&cv).x;
+    for row in &t.rows {
+        if let Some(text) = row.get(c.data) {
+            w = w.max(paint::measure_text(ctx, &cv, text, crate::provider::AvailableSpace::MaxContent).x + pad);
+        }
+    }
+    w.ceil().clamp(c.min, c.max)
+}
+
+/// What the header did this pass.
+#[derive(Default)]
+pub(crate) struct HeaderOut {
+    pub clicked: Option<usize>,
+    pub double: Option<usize>,
+    pub context: Option<(usize, Pos2)>,
+    /// (column index in `all`, width): resizes that committed (drag released, a fit).
+    pub committed: Vec<(usize, f32)>,
+}
+
+/// Paints table `i` at `r`: its frozen header, the visible rows and columns of its data window,
+/// the open editor, the bars and the column menu, then its events (`range`, `selectionchange`,
+/// `activated`, `header-clicked`, …).
 pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut Vec<Out>) {
     let node = arena.slots.id_at(i).expect("live node");
     let h = node.to_raw();
-    let kind = arena.core[i].kind as usize;
     let id = arena.core[i].egui_id;
     let enabled = arena.common(i).enabled;
-    let cols: Vec<Col> = arena.children[i]
-        .iter()
-        .filter_map(|&c| {
-            let ci = arena.ix(c);
-            match arena.w(ci) {
-                // the column's width is its Widget `width` (null: 100)
-                W::TableColumn { title, resizable, align, sort, editable, editor } => Some(Col {
-                    node: c,
-                    id: arena.core[ci].egui_id,
-                    title: title.clone(),
-                    width: arena.common(ci).width.unwrap_or(100.0).max(1.0),
-                    resizable: *resizable,
-                    align,
-                    sort,
-                    editable: *editable,
-                    editor: *editor,
-                }),
-                _ => None,
-            }
-        })
-        .collect();
     let ctx = ui.ctx().clone();
-    let row_h = {
-        let W::Table(t) = arena.w(i) else { unreachable!() };
-        t.row_height as f32
+    let d = dark(ui);
+    let mut all = columns(arena, i);
+    // FM1 (QW4): a `header-state` the host set: hidden columns, sort, widths (into the columns)
+    let restored = {
+        let W::Table(t) = arena.w_mut(i) else { unreachable!() };
+        restore_header(t, &all)
     };
-    let mut b = UiBuilder::new().max_rect(r).scope_id(id.with("scope")).layout(Layout::top_down(Align::Min));
-    if !enabled {
-        b = b.disabled();
+    for &(k, w) in &restored.widths {
+        set_width(arena, &mut all[k], w, out);
     }
-    let mut tui = ui.new_child(b);
+    let W::Table(t) = arena.w_mut(i) else { unreachable!() };
+    // a live resize shows before it commits
+    if let Some((n, w)) = t.rt.live
+        && let Some(c) = all.iter_mut().find(|c| c.node == n)
+    {
+        c.width = w.clamp(c.min, c.max);
+    }
+    let cols: Vec<Col> = all.iter().filter(|c| c.shown && !t.hidden.contains(&c.key)).cloned().collect();
+    t.col_map = cols.iter().map(|c| c.data).collect();
+    if !cols.is_empty() && t.cur_col >= cols.len() {
+        t.cur_col = cols.len() - 1;
+    }
+    let row_h = t.row_height as f32;
+    let len = t.len();
+    let mut tui = ui.new_child({
+        let b = UiBuilder::new().max_rect(r).id_salt(("table", id)).layout(Layout::top_down(Align::Min));
+        if enabled { b } else { b.disabled() }
+    });
     tui.set_clip_rect(ui.clip_rect().intersect(r));
-    // WG5a: the table takes keyboard focus (rows and cells are drawn over it)
+    // the table's a11y node (Table, scroll actions) and its keyboard focus (Grid)
+    let tresp = tui.interact(r, id.with("table"), Sense::hover());
     let focus_id = id.with("focus");
     let fresp = tui.interact(r, focus_id, Sense::focusable_noninteractive());
     let mut focused = enabled && fresp.has_focus();
     let mut sel_changed = false;
     let mut cur_changed = false;
     let mut activate: Option<u64> = None;
+    let mut copy = false;
     let W::Table(t) = arena.w_mut(i) else { unreachable!() };
     let t: &mut TableState = t;
     let selectable = t.sel.mode != Mode::None;
@@ -669,19 +994,22 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
         ctx.memory_mut(|m| m.request_focus(focus_id));
         focused = true;
     }
+    let mut had_keys = false;
     if focused && t.edit.is_none() {
         item_keys::lock_arrows(&tui, focus_id);
+        copy = item_keys::take_copy(&tui);
         let mut inputs: Vec<Input> = Vec::new();
         for k in table_keys(&tui) {
+            had_keys = true;
             let cur = t.sel.cursor.and_then(|c| t.pos_of(c));
             match k {
-                TableKey::Column(d) if !cols.is_empty() => {
-                    let c = (t.cur_col as i64 + d as i64).clamp(0, cols.len() as i64 - 1) as usize;
-                    cur_changed |= c != t.cur_col;
-                    t.cur_col = c;
-                    t.scroll_to_col = Some(c);
+                TableKey::Column(dir) => {
+                    if let Some(c) = RovingList::next_by(cols.len(), Some(t.cur_col), dir, false, |_| true) {
+                        cur_changed |= c != t.cur_col;
+                        t.cur_col = c;
+                        t.scroll_to_col = Some(c);
+                    }
                 }
-                TableKey::Column(_) => {}
                 TableKey::F2 => {
                     if let Some(p) = cur {
                         start_edit(t, &cols, p, t.cur_col, String::new());
@@ -699,6 +1027,7 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
             inputs.extend(item_keys::read_keys(&tui, false));
         }
         if !inputs.is_empty() {
+            had_keys = true;
             let ids = t.all_ids().into_owned();
             let mut sel = std::mem::take(&mut t.sel);
             let o = item_keys::apply(&mut sel, &ids, &inputs, t.page, |p| t.label(p));
@@ -717,63 +1046,249 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
             ctx.request_repaint();
         }
     }
+    // R8: the ring is for keyboard focus (Tab in, keys); a click clears it (below)
+    if focused && (had_keys || !t.was_focused) {
+        t.kbd = true;
+    }
+    t.was_focused = focused;
     if let Some((key, col)) = t.pending_edit.take()
         && t.edit.is_none()
         && let Some(p) = t.pos_of(key)
     {
         start_edit(t, &cols, p, col, String::new());
     }
-    let len = t.len();
-    let mut table = egui_table::Table::new()
-        .id_salt(id.with("table"))
-        .num_rows(len)
-        .columns(cols.iter().map(|c| Column::new(c.width as f32).id(c.id).resizable(c.resizable).range(16.0..=f32::INFINITY)).collect::<Vec<_>>())
-        .num_sticky_cols((t.sticky as usize).min(cols.len()))
-        .headers([HeaderRow::new(row_h + 4.0)]);
+    // ---- geometry and scrolling (OW2's Scrollable on both axes) ----
+    let host_css = arena.style.computed(node).cloned();
+    let header_css = arena.style.part_computed(node, "header").cloned();
+    let host0 = StyleView::new(host_css.as_deref(), Ua(&[]), arena.core[i].state, d);
+    let header_v = host0.part(header_css.as_deref(), HEADER_UA);
+    let header_h = header_v.px("height").unwrap_or(row_h + 4.0);
+    let W::Table(t) = arena.w_mut(i) else { unreachable!() };
+    let widths: Vec<f32> = cols.iter().map(|c| c.width).collect();
+    let mut g = Geom::new(r, header_h, &widths, t.sticky.max(0) as usize, t.stretch_last, row_h);
+    let content = vec2(g.total, len as f32 * row_h);
+    let view = g.body.size();
+    let bar_w = StyleView::ua_only(crate::widgets::scroll_area::TRACK_UA, StateBits::NONE, d).px("width").unwrap_or(10.0);
+    let min_thumb = StyleView::ua_only(crate::widgets::scroll_area::THUMB_UA, StateBits::NONE, d).px("min-height").unwrap_or(20.0);
+    let sc = &mut t.rt.scroll;
+    sc.set_geometry(content, view, [None, None]);
+    let mut off = sc.offset();
     if let Some(row) = t.scroll_to.take() {
-        table = table.scroll_to_row(row.min(len.max(1) - 1), None);
-    }
-    if let Some(c) = t.scroll_to_col.take()
-        && c < cols.len()
-    {
-        table = table.scroll_to_column(c, None);
-    }
-    // the column widths: the props, unless the user resized since the prop last changed (and no
-    // first-frame sizing pass: egui_table only auto-sizes a table it has no state for)
-    let tid = table.get_id(&tui);
-    let mut state = egui_table::TableState::load(tui.ctx(), tid).unwrap_or_default();
-    for c in &cols {
-        let known = t.applied.iter().find(|(k, _)| *k == c.id).map(|(_, w)| *w);
-        if known != Some(c.width) || !state.col_widths.contains_key(&c.id) {
-            state.col_widths.insert(c.id, c.width as f32);
+        let y = row.min(len.max(1) - 1) as f32 * row_h;
+        if y < off.y {
+            off.y = y;
+        } else if y + row_h > off.y + view.y {
+            off.y = y + row_h - view.y;
         }
     }
-    t.applied = cols.iter().map(|c| (c.id, c.width)).collect();
-    state.store(tui.ctx(), tid);
-    let pointer = ctx.input(|i| i.pointer.interact_pos());
-    let mut d = Delegate {
-        cols: &cols,
-        t,
-        table_id: id,
-        row_h,
-        enabled,
-        selectable,
-        focused,
-        visible: None,
-        clicks: Vec::new(),
-        header: None,
-        cells: Vec::new(),
-        pointer,
+    if let Some(k) = t.scroll_to_col.take()
+        && k < cols.len()
+        && k >= g.sticky
+    {
+        let (x0, x1) = (g.xs[k] - g.sticky_w, g.xs[k] + g.ws[k] - g.sticky_w);
+        let room = view.x - g.sticky_w;
+        if x0 < off.x {
+            off.x = x0;
+        } else if x1 > off.x + room {
+            off.x = (x1 - room).min(x0);
+        }
+    }
+    sc.set_offset(off);
+    let bars = sc.bar_geometry(g.body, bar_w, min_thumb, [sc.overflows(0), sc.overflows(1)]);
+    sc.set_geometry(content, view, bars);
+    let policy = crate::native::policy_of(&ctx);
+    let now = ctx.input(|inp| inp.time);
+    let mode = crate::interact::scroll::bar_mode(None, policy.scrollbars);
+    let alpha = match mode {
+        crate::native::Scrollbars::Overlay => sc.bar_alpha(now, &policy.scroll),
+        crate::native::Scrollbars::Classic => 1.0,
     };
-    let resp = if cols.is_empty() { tui.allocate_rect(r, Sense::hover()) } else { table.show(&mut tui, &mut d) };
-    let Delegate { visible, clicks, header, cells, .. } = d;
+    let mut parts = PartResponses::default();
+    for (ax, b) in bars.iter().enumerate() {
+        let Some(b) = b else { continue };
+        let (bn, tn) = if ax == 0 { ("scrollbar-x", "thumb-x") } else { ("scrollbar-y", "thumb-y") };
+        if !(enabled && (alpha > 0.0 || tresp.contains_pointer())) {
+            // the bar's AccessKit node needs a widget rect (`paint_bars`)
+            let _ = tui.interact(b.track, id.with(bn), Sense::hover());
+        } else {
+            let tr = tui.interact(b.track, id.with(bn), Sense::click_and_drag());
+            let th = tui.interact(b.thumb, id.with(tn), Sense::drag());
+            parts.0.push((bn, crate::interact::Resp::of(&tr)));
+            parts.0.push((tn, crate::interact::Resp::of(&th)));
+        }
+    }
+    let params = ScrollParams { axes: [true, true], chain: true, page_keys: false, arrow_keys: false };
+    let mut fired = Intents::default();
+    let mut state = arena.core[i].state;
+    {
+        let W::Table(t) = arena.w_mut(i) else { unreachable!() };
+        let sc = &mut t.rt.scroll;
+        crate::interact::run(&tui, &tresp, &mut state, &parts, |icx| sc.input(&params, icx, &mut fired));
+    }
+    crate::style::set_own_state(arena, i, state);
+    let W::Table(t) = arena.w_mut(i) else { unreachable!() };
+    let sc = &mut t.rt.scroll;
+    let consumed = sc.consumed();
+    if consumed != Vec2::ZERO {
+        ctx.input_mut(|inp| inp.smooth_scroll_delta -= consumed);
+    }
+    for (ax, (tn, _)) in [("thumb-x", 0), ("thumb-y", 1)].iter().enumerate() {
+        let p = parts.get(tn);
+        t.rt.thumbs[ax].set(StateBits::HOVERED, p.is_some_and(|p| p.hovered));
+        t.rt.thumbs[ax].set(StateBits::PRESSED, p.is_some_and(|p| p.down_on));
+        t.rt.thumbs[ax].set(StateBits::DRAGGING, t.rt.scroll.dragging(ax));
+    }
+    let sc = &t.rt.scroll;
+    if !fired.is_empty() {
+        ctx.request_repaint();
+    }
+    if let Some(w) = sc.next_frame() {
+        ctx.request_repaint_after(w);
+    }
+    if mode == crate::native::Scrollbars::Overlay
+        && let Some(w) = sc.bar_repaint(now, &policy.scroll)
+    {
+        ctx.request_repaint_after(std::time::Duration::from_secs_f32(w.max(0.0)));
+    }
+    g.off = sc.offset();
+    let first = ((g.off.y / row_h).floor().max(0.0) as u64).min(len);
+    let end = (((g.off.y + view.y) / row_h).ceil().max(0.0) as u64).min(len);
+    t.page = ((end - first).saturating_sub(1) as usize).max(1);
+    // ---- the body: clicks and hover by position (rows and cells are painted, not widgets) ----
+    let bresp = tui.interact(g.body, id.with("body"), if enabled { Sense::click() } else { Sense::hover() });
+    let hover = bresp.hover_pos().filter(|_| enabled && bresp.hovered()).and_then(|p| Some((g.row_at(p.y, len)?, g.col_at(p.x))));
+    let pressed = bresp.is_pointer_button_down_on();
+    let mut clicks: Vec<Click> = Vec::new();
+    if enabled
+        && (bresp.clicked() || bresp.double_clicked())
+        && let Some(p) = bresp.interact_pointer_pos()
+        && let Some(row) = g.row_at(p.y, len)
+    {
+        let mods = item_keys::mods(tui.input(|inp| inp.modifiers));
+        clicks.push(Click { row, mods, double: bresp.double_clicked(), col: g.col_at(p.x) });
+    }
+    // ---- rows and cells ----
+    let mut cells: Vec<(u64, usize, Rect, Rect)> = Vec::new();
+    let visible: Vec<usize> = g.visible_cols().collect();
+    let ncols = cols.len();
+    let painter = tui.painter_at(g.body);
+    let scroll_painter = painter.with_clip_rect(painter.clip_rect().intersect(Rect::from_x_y_ranges((g.body.left() + g.sticky_w)..=g.body.right(), g.body.y_range())));
+    let stripe = StyleView::ua_only(STRIPE_UA, StateBits::NONE, d).color("background-color").unwrap_or(Color32::TRANSPARENT).gamma_multiply(0.5);
+    let error_at = {
+        let W::Table(t) = arena.w(i) else { unreachable!() };
+        t.error.as_ref().map(|e| (e.row, e.col))
+    };
+    let mut cursor_icon = None;
+    let mut error_rect: Option<Rect> = None;
+    for pos in first..end {
+        let W::Table(t) = arena.w(i) else { unreachable!() };
+        let key = t.key_of(pos);
+        let selected = selectable && t.sel.is_selected(key);
+        let current = t.sel.cursor == Some(key);
+        let (cur_col, kbd, striped) = (t.cur_col, t.kbd, t.striped);
+        let rr = g.row_rect(pos);
+        let row_hovered = hover.is_some_and(|(p, _)| p == pos);
+        let mut rbits = StateBits::NONE;
+        rbits.set(StateBits::HOVERED, row_hovered);
+        rbits.set(StateBits::PRESSED, row_hovered && pressed);
+        rbits.set(StateBits::SELECTED, selected);
+        rbits.set(StateBits::CURRENT, current);
+        rbits.set(StateBits::FOCUS_WITHIN, focused);
+        rbits.set(StateBits::DISABLED, !enabled);
+        let row_css = arena.part_at(node, "row", rbits, (pos as usize, len as usize));
+        let host = StyleView::new(host_css.as_deref(), Ua(&[]), rbits, d);
+        let row_v = host.part(row_css.as_deref(), ROW_UA);
+        {
+            let mut pc = PaintCx::for_node(&painter, h);
+            pc.tag = "table";
+            let mut pr = pc.part("row");
+            if striped && pos % 2 == 1 && row_v.color("background-color").is_none_or(|c| c.a() == 0) {
+                painter.rect_filled(rr, 0.0, stripe);
+                pr.record(TraceKind::Box, rr, stripe, Stroke::NONE, 0.0);
+            }
+            paint::paint_box(&mut pr, &row_v, rr);
+        }
+        if row_hovered {
+            cursor_icon = row_v.cursor();
+        }
+        let row_id = id.with(("row", key));
+        let rresp = tui.interact(rr.intersect(g.body), row_id, Sense::hover());
+        let rb = rresp.rect;
+        tui.ctx().accesskit_node_builder(rresp.id, |b| {
+            bounds(b, rb);
+            b.set_role(Role::Row);
+            b.set_row_index(pos as usize);
+            if selectable {
+                b.set_selected(selected);
+            }
+        });
+        let cui = tui.new_child(UiBuilder::new().max_rect(rr).accessibility_parent(rresp.id));
+        for &k in &visible {
+            let c = &cols[k];
+            let (cr, clip) = g.cell_rect(pos, k);
+            cells.push((pos, k, cr, clip));
+            let is_cur = focused && current && cur_col == k;
+            let mut cbits = rbits;
+            cbits.set(StateBits::HOVERED, hover == Some((pos, Some(k))));
+            cbits.set(StateBits::PRESSED, hover == Some((pos, Some(k))) && pressed);
+            cbits.set(StateBits::CURRENT, current && cur_col == k);
+            cbits.set(StateBits::FOCUSED, is_cur);
+            cbits.set(StateBits::FOCUS_VISIBLE, is_cur && kbd);
+            let cell_css = arena.part_at(node, "cell", cbits, (k, ncols));
+            let cv = row_v.part(cell_css.as_deref(), CELL_UA).in_state(cbits);
+            let W::Table(t) = arena.w(i) else { unreachable!() };
+            let editing = t.edit.as_ref().is_some_and(|e| e.row == key && e.col == k);
+            let text = t.cell(pos, t.data_col(k)).unwrap_or("");
+            let p = if k < g.sticky { &painter } else { &scroll_painter };
+            let mut pc = PaintCx::for_node(p, h);
+            pc.tag = "table";
+            let geom = paint::paint_box(&mut pc.part("cell"), &cv, cr);
+            if !editing {
+                paint_cell_text(&mut pc.part("cell"), &cv, text, geom.content, c.align, c.elide, &ctx);
+            }
+            paint::paint_outline(&mut pc.part("cell"), &cv, cr);
+            if error_at == Some((key, k)) {
+                let ev = cv.part(None, ERROR_UA);
+                paint::paint_outline(&mut pc.part("error"), &ev, cr);
+                error_rect = Some(cr.intersect(clip));
+            }
+            let cid = cell_id(id, key, k);
+            let cresp = cui.interact(cr.intersect(clip), cid, Sense::hover());
+            let (label, editable, cb) = (text.to_string(), c.editable, cresp.rect);
+            cui.ctx().accesskit_node_builder(cresp.id, |b| {
+                bounds(b, cb);
+                b.set_role(Role::Cell);
+                b.set_column_index(k);
+                b.set_row_index(pos as usize);
+                b.set_label(label);
+                if selected {
+                    b.set_selected(true);
+                }
+                if !editable {
+                    b.set_read_only();
+                }
+            });
+        }
+    }
+    if let Some(ci) = cursor_icon
+        && hover.is_some()
+    {
+        ctx.set_cursor_icon(ci);
+    }
+    // R15: edge shadows when scrolled away from the top or the left (base.css)
+    {
+        let host = StyleView::new(host_css.as_deref(), Ua(&[]), arena.core[i].state, d);
+        let mut pc = PaintCx::for_node(&painter, h);
+        pc.tag = "table";
+        paint::paint_inset_shadows(&mut pc, &host, g.body);
+    }
+    // ---- the header (frozen), its sort arrows and resize edges ----
+    let hout = header(arena, i, &all, &cols, &g, enabled, &mut tui, out);
     // ---- clicks: focus, keyed selection, edits on double clicks ----
     let W::Table(t) = arena.w_mut(i) else { unreachable!() };
-    if let Some(v) = &visible {
-        t.page = ((v.end - v.start).saturating_sub(1) as usize).max(1);
-    }
     for c in &clicks {
         ctx.memory_mut(|m| m.request_focus(focus_id));
+        t.kbd = false;
         if c.double {
             let col = c.col.unwrap_or(t.cur_col);
             if t.edit.is_none() && start_edit(t, &cols, c.row, col, String::new()) {
@@ -799,39 +1314,64 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
         }
         t.error = None;
     }
-    // ---- the editor ----
+    // ---- the editor (seam: egui's TextEdit until OW4) ----
     let editor = paint_editor(arena, i, &cols, &cells, &mut tui, out);
-    let W::Table(t) = arena.w_mut(i) else { unreachable!() };
     if editor {
         ctx.request_repaint();
     }
-    // a rejected commit's reason, under its cell
+    // ---- a rejected commit's reason: OW3's tooltip at its cell ----
+    let W::Table(t) = arena.w_mut(i) else { unreachable!() };
+    let mut hide_tip = false;
     if let Some(e) = &mut t.error {
-        let now = ctx.input(|i| i.time);
         let until = *e.until.get_or_insert(now + ERROR_SECONDS);
-        let at = t.keys.as_ref().map_or(Some(e.row), |k| k.ids.iter().position(|&x| x == e.row).map(|p| p as u64));
-        let cell = at.and_then(|p| cells.iter().find(|c| c.0 == p && c.1 == e.col));
+        let at = error_rect.filter(|_| now < until).map(|er| er.left_bottom());
+        if at != e.shown_at {
+            match at {
+                Some(p) => crate::widgets::tooltip::show(&ctx, &e.reason, p),
+                None => crate::widgets::tooltip::hide(&ctx),
+            }
+            e.shown_at = at;
+        }
         if now >= until {
+            hide_tip = e.shown_at.is_some();
             t.error = None;
-        } else if let Some(&(_, _, cr, clip)) = cell
-            && clip.intersects(cr)
-        {
-            let reason = e.reason.clone();
-            egui::Area::new(id.with("edit-error")).order(egui::Order::Tooltip).fixed_pos(cr.left_bottom()).interactable(false).show(&ctx, |ui| {
-                egui::Frame::popup(ui.style()).fill(ui.visuals().error_fg_color.gamma_multiply(0.15)).show(ui, |ui| {
-                    // a plain label: its text is its name (TK3+ makes it an announcement)
-                    ui.label(egui::RichText::new(reason).color(ui.visuals().error_fg_color));
-                });
-            });
+        } else {
             ctx.request_repaint_after(std::time::Duration::from_secs_f64((until - now).max(0.05)));
         }
+    } else if std::mem::take(&mut t.tip_shown) {
+        hide_tip = true;
+    }
+    t.tip_shown = t.error.as_ref().is_some_and(|e| e.shown_at.is_some());
+    if hide_tip {
+        crate::widgets::tooltip::hide(&ctx);
+    }
+    // ---- the bars (over the rows) ----
+    paint_bars(arena, i, &tui, &bars, alpha, d);
+    // ---- the column menu ----
+    let toggled = column_menu(arena, i, &all, &cols, &hout, &mut tui, out);
+    // ---- fit-columns (the method), double clicks on edges ----
+    let mut committed = hout.committed.clone();
+    let fit = {
+        let W::Table(t) = arena.w_mut(i) else { unreachable!() };
+        t.fit.take()
+    };
+    if let Some(f) = fit {
+        let W::Table(t) = arena.w(i) else { unreachable!() };
+        let fits: Vec<(usize, f32)> = all.iter().enumerate().filter(|(_, c)| c.shown && c.resizable && f.is_none_or(|k| k == c.data)).map(|(k, c)| (k, fit_width(arena, i, t, c, &ctx, d))).collect();
+        committed.extend(fits);
+    }
+    for &(k, w) in &committed {
+        set_width(arena, &mut all[k], w, out);
     }
     // ---- a11y ----
     let name = arena.common(i).accessible_name.clone();
     let W::Table(t) = arena.w(i) else { unreachable!() };
     let active = t.sel.cursor.map(|k| cell_id(id, k, t.cur_col));
     let multi = t.sel.mode == Mode::Multi;
-    tui.ctx().accesskit_node_builder(resp.id, |b| {
+    let sc = &t.rt.scroll;
+    let tb = tresp.rect;
+    tui.ctx().accesskit_node_builder(tresp.id, |b| {
+        bounds(b, tb);
         b.set_role(Role::Table);
         if !name.is_empty() {
             b.set_label(name.clone());
@@ -840,7 +1380,8 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
             b.set_multiselectable();
         }
         b.set_row_count(len as usize);
-        b.set_column_count(cols.len());
+        b.set_column_count(ncols);
+        sc.a11y(&params, b);
     });
     tui.ctx().accesskit_node_builder(focus_id, |b| {
         b.set_role(Role::Grid);
@@ -851,44 +1392,49 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
             b.set_active_descendant(a.accesskit_id());
         }
     });
-    let mut resp = crate::a11y::decorate(resp, &arena.n(h));
+    let resp = crate::a11y::decorate(tresp, &arena.n(h));
     let tip = arena.common(i).tooltip.clone();
     if !tip.is_empty() {
-        resp = resp.on_hover_text(tip);
+        let _ = crate::widgets::tooltip::attach(&tui, &resp, &tip, true);
     }
-    let _ = resp;
     arena.core[i].drawn = r;
     crate::scene::hit::record(arena, i, ui);
-    let sig = |name: &str| kinds::signal_id(kind, name);
+    // ---- events ----
     let W::Table(t) = arena.w_mut(i) else { unreachable!() };
-    let mut events: Vec<(u32, Vec<Value>)> = Vec::new();
+    let mut events: Vec<(&str, Vec<Value>)> = Vec::new();
     // the data the table needs: the visible rows and `overscan` on each side
-    if let Some(v) = visible
-        && len > 0
-    {
-        let last_row = len - 1;
+    if len > 0 && end > first {
         let o = t.overscan.max(0) as u64;
-        let first = v.start.saturating_sub(o);
-        let last = (v.end.max(v.start + 1) - 1 + o).min(last_row);
-        if t.asked != Some((first, last)) {
-            t.asked = Some((first, last));
-            events.push((sig("range"), vec![Value::I64(first as i64), Value::I64(last as i64)]));
+        let (a, b) = (first.saturating_sub(o), (end - 1 + o).min(len - 1));
+        if t.asked != Some((a, b)) {
+            t.asked = Some((a, b));
+            events.push(("range", vec![Value::I64(a as i64), Value::I64(b as i64)]));
         }
     }
     let ids = item_keys::ids_value(t.sel.selected.iter().copied());
     if sel_changed {
-        events.push((sig("selectionchange"), vec![ids.clone()]));
+        events.push(("selectionchange", vec![ids.clone()]));
     }
     if let Some(row) = activate {
-        events.push((sig("activated"), vec![Value::I64(row as i64)]));
+        events.push(("activated", vec![Value::I64(row as i64)]));
     }
-    if let Some(col) = header {
-        events.push((sig("header-clicked"), vec![Value::I64(col as i64)]));
+    if let Some(col) = hout.clicked {
+        events.push(("header-clicked", vec![Value::I64(col as i64)]));
     }
-    for (s, args) in events {
-        if arena.listens(i, s) {
-            out.push(Out::Event(h, s, args));
-        }
+    if let Some(col) = hout.double {
+        events.push(("header-double-clicked", vec![Value::I64(col as i64)]));
+    }
+    if copy && !t.sel.selected.is_empty() {
+        events.push(("copy", vec![ids.clone()]));
+    }
+    for &(k, w) in &committed {
+        events.push(("column-resized", vec![Value::I64(all[k].data as i64), Value::F64((w as f64 * 100.0).round() / 100.0)]));
+    }
+    // FM1 (QW4): sorting from the header, the column menu, the saved state
+    let W::Table(t) = arena.w_mut(i) else { unreachable!() };
+    let hev = header_after(t, &all, hout.clicked, toggled, !committed.is_empty(), &restored.props, &ctx);
+    for (name, args) in events {
+        emit(arena, i, name, args, out);
     }
     if cur_changed {
         crate::leaf::props_changed(arena, i, &[P::CurrentRow, P::CurrentColumn], out);
@@ -896,9 +1442,447 @@ pub(crate) fn paint(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut
     if sel_changed {
         crate::leaf::widget_changed(arena, i, &[P::SelectedIds], vec![ids], out);
     }
+    hev.announce(arena, i, out);
 }
 
-#[allow(clippy::disallowed_types)] // OW: wrapper until OW4
+/// The header row: `::part(header)`, a `::part(header-cell)` per visible column (clicks, the
+/// tooltip, a11y ColumnHeader with the sort), its `::part(sort)` arrow, and the `::part(resize)`
+/// edges (OW2's Resizable, R11). Widths that change live are kept in `TableRt::live` until the drag
+/// commits.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn header(arena: &mut Arena, i: usize, all: &[Col], cols: &[Col], g: &Geom, enabled: bool, ui: &mut Ui, out: &mut Vec<Out>) -> HeaderOut {
+    let _ = out;
+    let node = arena.slots.id_at(i).expect("live node");
+    let h = node.to_raw();
+    let id = arena.core[i].egui_id;
+    let ctx = ui.ctx().clone();
+    let d = dark(ui);
+    let mut o = HeaderOut::default();
+    if g.head.height() <= 0.0 {
+        return o;
+    }
+    let painter = ui.painter_at(g.head);
+    let host_css = arena.style.computed(node).cloned();
+    let host_state = arena.core[i].state;
+    let host = StyleView::new(host_css.as_deref(), Ua(&[]), host_state, d);
+    let hcss = arena.part_at(node, "header", host_state, (0, 1));
+    let hv = host.part(hcss.as_deref(), HEADER_UA);
+    let mut pc = PaintCx::for_node(&painter, h);
+    pc.tag = "table";
+    paint::paint_box(&mut pc.part("header"), &hv, g.head);
+    let n = cols.len();
+    let visible: Vec<usize> = g.visible_cols().collect();
+    for &k in &visible {
+        let c = &cols[k];
+        let (a, b) = g.col_x(k);
+        let (l, r) = g.clip_x(k);
+        let cr = Rect::from_x_y_ranges(a..=b, g.head.y_range());
+        let clip = Rect::from_x_y_ranges(l..=r, g.head.y_range());
+        let resp = ui.interact(cr.intersect(clip), id.with(("head", c.data)), if enabled { Sense::click() } else { Sense::hover() });
+        if !c.tooltip.is_empty() {
+            let _ = crate::widgets::tooltip::attach(ui, &resp, &c.tooltip, true);
+        }
+        let mut bits = StateBits::NONE;
+        bits.set(StateBits::HOVERED, enabled && resp.hovered());
+        bits.set(StateBits::PRESSED, enabled && resp.is_pointer_button_down_on());
+        bits.set(StateBits::DISABLED, !enabled);
+        let W::Table(t) = arena.w(i) else { unreachable!() };
+        let sort = shown_sort(t, c);
+        let css = arena.part_at(node, "header-cell", bits, (k, n));
+        let cv = hv.part(css.as_deref(), HEADER_CELL_UA).in_state(bits);
+        let cp = painter.with_clip_rect(painter.clip_rect().intersect(clip));
+        let mut pc = PaintCx::for_node(&cp, h);
+        pc.tag = "table";
+        let geom = paint::paint_box(&mut pc.part("header-cell"), &cv, cr);
+        let mut content = geom.content;
+        if sort != "none" {
+            let mut sbits = bits;
+            sbits.set(StateBits::CHECKED, sort == "descending");
+            let scss = arena.part_at(node, "sort", sbits, (k, n));
+            let sv = cv.part(scss.as_deref(), SORT_UA).in_state(sbits);
+            let sw = sv.px("width").unwrap_or(16.0);
+            let sr = Rect::from_min_max(pos2(content.right() - sw, content.top()), content.max);
+            let key = IconKey::new("codicon", if sort == "ascending" { "arrow-up" } else { "arrow-down" });
+            if let Some(key) = paint::content_icon(&sv, &key) {
+                paint::paint_icon(&mut pc.part("sort"), &sv, &key, sr);
+            }
+            content.max.x -= sw;
+        }
+        paint_cell_text(&mut pc.part("header-cell"), &cv, &c.title, content, c.header_align, c.elide, &ctx);
+        let title = c.title.clone();
+        ctx.accesskit_node_builder(resp.id, |b| {
+            b.set_role(Role::ColumnHeader);
+            b.set_label(title);
+            b.set_column_index(k);
+            match sort {
+                "ascending" => b.set_sort_direction(egui::accesskit::SortDirection::Ascending),
+                "descending" => b.set_sort_direction(egui::accesskit::SortDirection::Descending),
+                _ => {}
+            }
+        });
+        if enabled {
+            if resp.double_clicked() {
+                o.double = Some(c.data);
+            } else if resp.clicked() {
+                o.clicked = Some(c.data);
+            }
+            if resp.secondary_clicked() {
+                o.context = Some((c.data, resp.interact_pointer_pos().unwrap_or(cr.left_bottom())));
+            }
+        }
+    }
+    // the edges, over the cells: a line at rest, R11's hover bar, the resize
+    let sash = StyleView::ua_only(RESIZE_UA, StateBits::NONE, d);
+    let rcss = arena.style.part_computed(node, "resize").cloned();
+    let policy = crate::native::policy_of(&ctx);
+    for &k in &visible {
+        let c = &cols[k];
+        let (_, x) = g.col_x(k);
+        let (l, r) = g.clip_x(k);
+        if x < l || x > r + 0.5 {
+            continue;
+        }
+        let rv = hv.part(rcss.as_deref(), RESIZE_UA);
+        let line_w = rv.px("width").unwrap_or(1.0);
+        let hit = rv.px("--hit").or_else(|| sash.px("--hit")).unwrap_or(4.0).max(line_w);
+        let er = Rect::from_x_y_ranges((x - hit / 2.0)..=(x + hit / 2.0), g.head.y_range());
+        let live = enabled && c.resizable;
+        let resp = ui.interact(er, id.with(("resize", c.data)), if live { Sense::click_and_drag() } else { Sense::hover() });
+        let W::Table(t) = arena.w_mut(i) else { unreachable!() };
+        let slot = match t.rt.edges.iter().position(|e| e.0 == c.node) {
+            Some(p) => p,
+            None => {
+                t.rt.edges.push((c.node, Resizable::default(), StateBits::NONE));
+                t.rt.edges.len() - 1
+            }
+        };
+        let p = ResizeParams { axis: 0, sign: 1.0, min: c.min, max: c.max, step: 10.0, collapsible: false, double_click: false };
+        let mut fired = Intents::default();
+        let mut shown = false;
+        if live {
+            let (_, unit, bits) = &mut t.rt.edges[slot];
+            unit.set_size(c.width);
+            crate::interact::run(ui, &resp, bits, &PartResponses::default(), |icx| unit.input(&p, icx, &mut fired));
+            shown = unit.hover_shown();
+            if unit.hovered() {
+                ctx.set_cursor_icon(egui::CursorIcon::ResizeColumn);
+            }
+            if let Some(w) = unit.next_frame() {
+                ctx.request_repaint_after(w);
+            }
+            let title = c.title.clone();
+            ctx.accesskit_node_builder(resp.id, |nd| {
+                unit.a11y(&p, nd);
+                nd.set_label(format!("Resize column {title}"));
+            });
+        }
+        let ai = all.iter().position(|a| a.node == c.node).unwrap_or(0);
+        for f in fired.iter() {
+            match *f {
+                Resize::Start => {}
+                Resize::Resize { size } => {
+                    t.rt.live = Some((c.node, size));
+                    ctx.request_repaint();
+                }
+                Resize::Commit { size } => {
+                    t.rt.live = None;
+                    o.committed.push((ai, size));
+                }
+                Resize::Cancel { .. } => t.rt.live = None,
+            }
+        }
+        if live && resp.double_clicked() {
+            t.rt.live = None;
+            let W::Table(t) = arena.w(i) else { unreachable!() };
+            o.committed.push((ai, fit_width(arena, i, t, &all[ai], &ctx, d)));
+        }
+        // paint: the 1 px line, and the hover bar once shown (R11)
+        let W::Table(t) = arena.w(i) else { unreachable!() };
+        let ebits = t.rt.edges[slot].2;
+        let rv = hv.part(rcss.as_deref(), RESIZE_UA).in_state(ebits);
+        let mut pc = PaintCx::for_node(&painter, h);
+        pc.tag = "table";
+        let mut pr = pc.part("resize");
+        let lw = pr.snap_width(line_w);
+        let line = pr.snap_rect(Rect::from_x_y_ranges((x - lw)..=x, g.head.y_range()));
+        let col = rv.color("background-color").unwrap_or(Color32::GRAY);
+        pr.painter.rect_filled(line, 0.0, col);
+        pr.record(TraceKind::Box, line, col, Stroke::NONE, 0.0);
+        if shown {
+            let hw = rv.px("--hover-width").unwrap_or(4.0);
+            let hc = rv.color("--hover-color").unwrap_or(Color32::LIGHT_BLUE);
+            let bar = pr.snap_rect(Rect::from_x_y_ranges((x - hw / 2.0)..=(x + hw / 2.0), g.head.y_range()));
+            pr.painter.rect_filled(bar, 0.0, hc);
+            pr.record(TraceKind::Box, bar, hc, Stroke::NONE, 0.0);
+        }
+        let _ = policy.scroll;
+    }
+    o
+}
+
+/// The overlay bars (`::part(scrollbar-x|y)`, `::part(thumb-x|y)`), as a scroll area's, and their
+/// AccessKit `ScrollBar`s.
+fn paint_bars(arena: &mut Arena, i: usize, ui: &Ui, bars: &[Option<crate::interact::BarGeom>; 2], alpha: f32, d: bool) {
+    use crate::widgets::scroll_area::{THUMB_UA, TRACK_UA};
+    let node = arena.slots.id_at(i).expect("live node");
+    let id = arena.core[i].egui_id;
+    let host_css = arena.style.computed(node).cloned();
+    for (ax, b) in bars.iter().enumerate() {
+        let Some(b) = b else { continue };
+        let (bn, tn) = if ax == 0 { ("scrollbar-x", "thumb-x") } else { ("scrollbar-y", "thumb-y") };
+        let W::Table(t) = arena.w(i) else { unreachable!() };
+        let (v, max, tbits) = (t.rt.scroll.offset()[ax] as f64, t.rt.scroll.max_offset()[ax] as f64, t.rt.thumbs[ax]);
+        let track = b.track;
+        ui.ctx().accesskit_node_builder(id.with(bn), |n| {
+            bounds(n, track);
+            n.set_role(Role::ScrollBar);
+            n.set_orientation(if ax == 0 { egui::accesskit::Orientation::Horizontal } else { egui::accesskit::Orientation::Vertical });
+            n.set_numeric_value(v);
+            n.set_min_numeric_value(0.0);
+            n.set_max_numeric_value(max);
+        });
+        if alpha <= 0.0 {
+            continue;
+        }
+        let track_css = arena.part_at(node, bn, StateBits::NONE, (0, 1));
+        let thumb_css = arena.part_at(node, tn, tbits, (0, 1));
+        let host = StyleView::new(host_css.as_deref(), Ua(&[]), StateBits::NONE, d);
+        let mut pc = PaintCx::for_node(ui.painter(), node.to_raw());
+        pc.tag = "table";
+        let track = host.part(track_css.as_deref(), TRACK_UA);
+        let fill = track.color("background-color").unwrap_or(Color32::TRANSPARENT).gamma_multiply(alpha);
+        let mut tp = pc.part(bn);
+        if fill.a() > 0 {
+            tp.painter.rect_filled(b.track, 0.0, fill);
+        }
+        tp.record(TraceKind::Box, b.track, fill, Stroke::NONE, 0.0);
+        let thumb = host.part(thumb_css.as_deref(), THUMB_UA).in_state(tbits);
+        let fill = thumb.color("background-color").unwrap_or(Color32::TRANSPARENT).gamma_multiply(alpha);
+        let radius = thumb.px("border-radius").unwrap_or(0.0);
+        let mut tp = pc.part(tn);
+        tp.painter.rect_filled(b.thumb, radius, fill);
+        tp.record(TraceKind::Box, b.thumb, fill, Stroke::NONE, 0.0);
+    }
+}
+
+/// FM1 (QW4): the column menu (`column-menu`): a right click on the header raises
+/// `header-context` (EV1 filters first) and, unless prevented, opens a menu of the `hideable`
+/// columns as check items; the last shown column cannot be hidden. Own paint (the menu's UA
+/// tables: `::part(menu)`, `::part(menu-item)`). Returns the key of a column it toggled.
+fn column_menu(arena: &mut Arena, i: usize, all: &[Col], cols: &[Col], hout: &HeaderOut, ui: &mut Ui, out: &mut Vec<Out>) -> Option<String> {
+    use crate::widgets::menu::{CHECK_UA, ITEM_UA, MENU_UA};
+    let ctx = ui.ctx().clone();
+    let id = arena.core[i].egui_id;
+    let node = arena.slots.id_at(i).expect("live node");
+    let pass = ctx.cumulative_pass_nr();
+    if let Some((col, at)) = hout.context {
+        let allowed = crate::widgets::list_rows::allowed(arena, i, "header-context", &ctx, out);
+        emit(arena, i, "header-context", vec![Value::I64(col as i64)], out);
+        let W::Table(t) = arena.w_mut(i) else { unreachable!() };
+        if allowed && t.column_menu && all.iter().any(|c| c.hideable) {
+            t.rt.menu = Some(ColumnMenu { at, pass });
+        }
+    }
+    let W::Table(t) = arena.w(i) else { unreachable!() };
+    let menu = t.rt.menu?;
+    let hidden = t.hidden.clone();
+    let d = dark(ui);
+    let items: Vec<&Col> = all.iter().filter(|c| c.hideable).collect();
+    let mcss = arena.style.part_computed(node, "menu").cloned();
+    let host_css = arena.style.computed(node).cloned();
+    let host = StyleView::new(host_css.as_deref(), Ua(&[]), StateBits::NONE, d);
+    let mv = host.part(mcss.as_deref(), MENU_UA);
+    let iv0 = mv.part(None, ITEM_UA);
+    let check_w = mv.part(None, CHECK_UA).px("width").unwrap_or(16.0);
+    let gap = iv0.px("gap").unwrap_or(6.0);
+    let item_h = iv0.px("line-height").unwrap_or(22.0) + iv0.px("padding-top").unwrap_or(2.0) + iv0.px("padding-bottom").unwrap_or(2.0);
+    let label = |c: &Col| if c.title.is_empty() { c.key.clone() } else { c.title.clone() };
+    let text_w = items.iter().map(|c| paint::measure_text(&ctx, &iv0, &label(c), crate::provider::AvailableSpace::MaxContent).x).fold(0.0, f32::max);
+    let extra = paint::box_extra(&mv);
+    let w = (check_w + gap + text_w + paint::box_extra(&iv0).x + extra.x).max(mv.px("min-width").unwrap_or(160.0));
+    let size = vec2(w, item_h * items.len() as f32 + extra.y);
+    let screen = ctx.content_rect();
+    let min = pos2(menu.at.x.min(screen.right() - size.x).max(screen.left()), menu.at.y.min(screen.bottom() - size.y).max(screen.top()));
+    let rect = Rect::from_min_size(min, size);
+    let mut toggled = None;
+    let mut close = false;
+    let shown_n = cols.len();
+    crate::widgets::popup::area(&ctx, id.with("column-menu"), egui::Order::Foreground, rect, |mui| {
+        let mresp = mui.interact(rect, id.with("column-menu-surface"), Sense::hover());
+        let mpainter = mui.painter().clone();
+        let mut pc = PaintCx::for_node(&mpainter, node.to_raw());
+        pc.tag = "table";
+        let geom = paint::paint_box(&mut pc.part("menu"), &mv, rect);
+        mui.ctx().accesskit_node_builder(mresp.id, |b| {
+            bounds(b, rect);
+            b.set_role(Role::Menu);
+            b.set_label("Columns");
+        });
+        let mi = mui.new_child(UiBuilder::new().max_rect(rect).accessibility_parent(mresp.id));
+        for (j, c) in items.iter().enumerate() {
+            let ir = Rect::from_min_size(pos2(geom.content.left(), geom.content.top() + j as f32 * item_h), vec2(geom.content.width(), item_h));
+            let on = !hidden.contains(&c.key) && c.shown;
+            let last = on && shown_n <= 1;
+            let iresp = mi.interact(ir, id.with(("column-menu", j)), if last { Sense::hover() } else { Sense::click() });
+            let mut bits = StateBits::NONE;
+            bits.set(StateBits::CURRENT, iresp.hovered());
+            bits.set(StateBits::CHECKED, on);
+            bits.set(StateBits::DISABLED, last);
+            let icss = arena.part_at(node, "menu-item", bits, (j, items.len()));
+            let iv = mv.part(icss.as_deref(), ITEM_UA).in_state(bits);
+            let ig = paint::paint_box(&mut pc.part("menu-item"), &iv, ir);
+            let cv = iv.part(None, CHECK_UA);
+            if on {
+                let cr = Rect::from_min_size(ig.content.min, vec2(check_w, ig.content.height()));
+                paint::paint_icon(&mut pc.part("menu-item"), &cv, &IconKey::new("codicon", "check"), cr);
+            }
+            let tr = ig.content.with_min_x(ig.content.left() + check_w + gap);
+            paint_cell_text(&mut pc.part("menu-item"), &iv, &label(c), tr, "start", None, &ctx);
+            let name = label(c);
+            mi.ctx().accesskit_node_builder(iresp.id, |b| {
+                b.set_role(Role::MenuItemCheckBox);
+                b.set_label(name);
+                b.set_toggled(if on { egui::accesskit::Toggled::True } else { egui::accesskit::Toggled::False });
+                if last {
+                    b.set_disabled();
+                }
+            });
+            if iresp.clicked() {
+                toggled = Some(c.key.clone());
+                close = true;
+            }
+        }
+    });
+    if pass > menu.pass
+        && crate::widgets::popup::dismissed(&ctx, &DismissParams { inside: vec![rect], on_outside: crate::interact::dismiss::Outside::Close, escape: true }).is_some()
+    {
+        close = true;
+    }
+    if close {
+        let W::Table(t) = arena.w_mut(i) else { unreachable!() };
+        t.rt.menu = None;
+        ctx.request_repaint();
+    }
+    toggled
+}
+
+/// FM1 (QW4): a `header-state` the host set, applied to `t`.
+#[derive(Default)]
+struct Restored {
+    /// The props it changed.
+    props: Vec<P>,
+    /// (column index, width).
+    widths: Vec<(usize, f32)>,
+}
+
+/// FM1 (QW4): applies a `header-state` the host set to `t` (hidden columns and sort; the widths
+/// are returned for the columns).
+fn restore_header(t: &mut TableState, all: &[Col]) -> Restored {
+    let mut out = Restored::default();
+    let Some(st) = t.restore.take() else { return out };
+    if let Some(h) = st.get("hidden").and_then(|h| h.as_array()) {
+        let hidden: Vec<String> = h.iter().filter_map(|x| x.as_str().map(str::to_string)).collect();
+        if hidden != t.hidden {
+            t.hidden = hidden;
+            out.props.push(P::HiddenColumns);
+        }
+    }
+    let sort = st.get("sort").and_then(|x| {
+        let col = all.iter().find(|c| Some(c.key.as_str()) == x.get("column").and_then(|c| c.as_str()))?;
+        let order = kinds::SORT.iter().copied().find(|o| Some(*o) == x.get("order").and_then(|o| o.as_str()))?;
+        Some((col.data as i64, order))
+    });
+    let (sc, so) = sort.unwrap_or((-1, "none"));
+    if (sc, so) != (t.sort_column, t.sort_order) {
+        (t.sort_column, t.sort_order) = (sc, so);
+        out.props.extend([P::SortColumn, P::SortOrder]);
+    }
+    if let Some(w) = st.get("widths").and_then(|w| w.as_object()) {
+        for (k, c) in all.iter().enumerate() {
+            if let Some(px) = w.get(&c.key).and_then(|x| x.as_f64()) {
+                out.widths.push((k, px as f32));
+            }
+        }
+    }
+    out
+}
+
+/// FM1 (QW4): what the header changed this pass, announced after the table's other events.
+struct HeaderEvents {
+    sorted: Option<Vec<Value>>,
+    hidden: Option<Value>,
+    state: Option<String>,
+}
+
+/// FM1 (QW4): after the table ran: a header click on a `sortable` table sorts (or flips), a column
+/// menu toggle hides or shows, a committed resize; each user change writes `header-state` (a
+/// restored one is not echoed).
+fn header_after(t: &mut TableState, all: &[Col], header: Option<usize>, toggled: Option<String>, resized: bool, restored: &[P], ctx: &egui::Context) -> HeaderEvents {
+    let mut sorted = restored.contains(&P::SortColumn);
+    let sort_click = header.filter(|_| t.sortable);
+    if let Some(col) = sort_click {
+        let flip = t.sort_column == col as i64 && t.sort_order == "ascending";
+        t.sort_column = col as i64;
+        t.sort_order = if flip { "descending" } else { "ascending" };
+        sorted = true;
+    }
+    let mut hid = restored.contains(&P::HiddenColumns);
+    let menu = toggled.is_some();
+    if let Some(key) = toggled {
+        if let Some(k) = t.hidden.iter().position(|x| *x == key) {
+            t.hidden.remove(k);
+        } else {
+            t.hidden.push(key);
+        }
+        hid = true;
+    }
+    let mut state = None;
+    if sort_click.is_some() || menu || resized {
+        let s = header_state(all, t);
+        if s != t.header_state {
+            t.header_state = s.clone();
+            state = Some(s);
+        }
+    }
+    if sorted || hid {
+        ctx.request_repaint();
+    }
+    HeaderEvents {
+        sorted: sorted.then(|| vec![Value::I64(t.sort_column), Value::Str(t.sort_order.to_string())]),
+        hidden: hid.then(|| Value::List(t.hidden.iter().map(|x| Value::Str(x.clone())).collect())),
+        state,
+    }
+}
+
+impl HeaderEvents {
+    fn announce(self, arena: &mut Arena, i: usize, out: &mut Vec<Out>) {
+        if let Some(args) = self.sorted {
+            changed_via(arena, i, &[P::SortColumn, P::SortOrder], "sort-changed", args, out);
+        }
+        if let Some(h) = self.hidden {
+            changed_via(arena, i, &[P::HiddenColumns], "columns-changed", vec![h], out);
+        }
+        if let Some(s) = self.state {
+            changed_via(arena, i, &[P::HeaderState], "header-state-changed", vec![Value::Str(s)], out);
+        }
+    }
+}
+
+/// FM1 (QW4): the `header-state` JSON of the columns `all`, their hidden ones and the sort.
+fn header_state(all: &[Col], t: &TableState) -> String {
+    let w: serde_json::Map<String, serde_json::Value> = all.iter().map(|c| (c.key.clone(), serde_json::json!((c.width as f64 * 100.0).round() / 100.0))).collect();
+    let sort = all
+        .iter()
+        .find(|c| t.sort_column >= 0 && c.data == t.sort_column as usize)
+        .map_or(serde_json::Value::Null, |c| serde_json::json!({"column": c.key, "order": t.sort_order}));
+    serde_json::json!({"widths": w, "hidden": t.hidden, "sort": sort}).to_string()
+}
+
+
+/// The built-in editor's text inset (the seam's egui `TextEdit`).
+const CELL_MARGIN: f32 = 4.0;
+
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW4 (the built-in cell editor is the one egui widget left; OW5b seam)
 /// Draws the open edit's editor over its cell (the built-in text field, or the column's snippet
 /// outlet), moves focus into it once, and turns Enter/Escape/Tab and focus leaving it into an end
 /// request (handled in logic). Returns whether another frame is needed for it.
@@ -1114,10 +2098,11 @@ impl EguiBackend {
                 let mut verdict: Option<String> = None;
                 let mut value = Value::Str(draft);
                 if commit {
-                    if snippet && let Some(s) = listened(column, col_kind, "editor-value") {
-                        if let Ok(v) = host.call_sync(column.to_raw(), s, &[]) {
-                            value = v;
-                        }
+                    if snippet
+                        && let Some(s) = listened(column, col_kind, "editor-value")
+                        && let Ok(v) = host.call_sync(column.to_raw(), s, &[])
+                    {
+                        value = v;
                     }
                     if let Some(s) = listened(n, table_kind, "commit") {
                         // null (or nothing) accepts; a string rejects with that reason, true without one
@@ -1138,10 +2123,10 @@ impl EguiBackend {
                 t.refocus = true;
                 let pos = t.pos_of(row);
                 match verdict {
-                    Some(reason) => t.error = Some(EditError { row, col, reason, until: None }),
+                    Some(reason) => t.error = Some(EditError { row, col, reason, until: None, shown_at: None }),
                     None if commit => {
                         if let Some(p) = pos {
-                            t.set_cell(p, col, cell_text(&value));
+                            t.set_cell(p, t.data_col(col), cell_text(&value));
                         }
                     }
                     None => {}
@@ -1152,15 +2137,14 @@ impl EguiBackend {
                     let editable: Vec<bool> = scene.children[i]
                         .iter()
                         .filter_map(|&c| match scene.w(scene.ix(c)) {
-                            W::TableColumn { editable, .. } => Some(*editable),
+                            W::TableColumn(c) => Some(c.editable),
                             _ => None,
                         })
                         .collect();
-                    let cols: Vec<Col> = editable
-                        .into_iter()
-                        .map(|editable| Col { node: n, id: Id::NULL, title: String::new(), width: 0.0, resizable: false, align: "start", sort: "none", editable, editor: false })
-                        .collect();
-                    if let Some((np, nc)) = next_editable(&cols, len, p, col, step) {
+                    // the shown columns only (Tab skips hidden ones; `col` counts shown columns)
+                    let W::Table(t) = scene.w(i) else { return false };
+                    let shown: Vec<bool> = if t.col_map.is_empty() { editable } else { t.col_map.iter().map(|&k| editable.get(k).copied().unwrap_or(false)).collect() };
+                    if let Some((np, nc)) = next_editable(&shown, len, p, col, step) {
                         let W::Table(t) = scene.w_mut(i) else { return false };
                         t.pending_edit = Some((t.key_of(np), nc));
                     }
@@ -1173,17 +2157,14 @@ impl EguiBackend {
     }
 }
 
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    fn col(editable: bool) -> Col {
-        Col { node: NodeId::from_raw(1).unwrap(), id: Id::NULL, title: String::new(), width: 0.0, resizable: false, align: "start", sort: "none", editable, editor: false }
-    }
-
     #[test]
     fn tab_order_walks_editable_cells_row_major() {
-        let cols = [col(false), col(true), col(true)];
+        let cols = [false, true, true];
         assert_eq!(next_editable(&cols, 3, 0, 1, 1), Some((0, 2)));
         assert_eq!(next_editable(&cols, 3, 0, 2, 1), Some((1, 1)));
         assert_eq!(next_editable(&cols, 3, 1, 1, -1), Some((0, 2)));
@@ -1203,5 +2184,76 @@ mod tests {
         assert!(t.sel.is_selected(20));
         assert_eq!((t.pos_of(20), t.len()), (Some(1), 4));
         assert!(t.set_ids(&[item_keys::ids_value([1, 2]), Value::List(vec![Value::Str("x".into())])]).is_err());
+    }
+
+    #[test]
+    fn geometry_stretches_the_last_column_and_keeps_sticky_ones() {
+        let r = Rect::from_min_size(pos2(0.0, 0.0), vec2(300.0, 124.0));
+        let mut g = Geom::new(r, 24.0, &[100.0, 80.0], 1, true, 20.0);
+        assert_eq!((g.ws[1], g.total), (200.0, 300.0), "stretch-last fills the width");
+        let g2 = Geom::new(r, 24.0, &[100.0, 80.0], 1, false, 20.0);
+        assert_eq!(g2.total, 180.0);
+        // scrolled: the sticky column stays, the other moves under it
+        g.ws = vec![100.0, 400.0];
+        g.total = 500.0;
+        g.off = vec2(50.0, 30.0);
+        assert_eq!(g.col_x(0), (0.0, 100.0));
+        assert_eq!(g.col_x(1), (50.0, 450.0));
+        assert_eq!(g.clip_x(1).0, 100.0);
+        assert_eq!(g.col_at(80.0), Some(0), "the sticky column covers the scrolled one");
+        assert_eq!(g.col_at(120.0), Some(1));
+        // rows: 30 points scrolled, row 1 starts 10 below the header
+        assert_eq!(g.row_at(24.0 + 5.0, 100), Some(1));
+        assert_eq!(g.row_rect(1).top(), 24.0 - 10.0);
+        assert_eq!(g.row_at(10.0, 100), None, "the header is not a row");
+    }
+
+    #[test]
+    fn header_state_round_trips_widths_hidden_and_sort() {
+        let col = |k: usize, key: &str, w: f32| Col {
+            node: NodeId::from_raw(k as u64 + 1).unwrap(),
+            ci: k,
+            title: key.to_uppercase(),
+            width: w,
+            min: MIN_COL,
+            max: f32::INFINITY,
+            resizable: true,
+            align: "start",
+            header_align: "start",
+            sort: "none",
+            editable: false,
+            editor: false,
+            data: k,
+            key: key.to_string(),
+            hideable: true,
+            shown: true,
+            tooltip: String::new(),
+            elide: None,
+        };
+        let all = [col(0, "name", 120.0), col(1, "1", 80.5)];
+        let mut t = TableState { sort_column: 1, sort_order: "descending", hidden: vec!["name".into()], ..TableState::default() };
+        let s = header_state(&all, &t);
+        let v: serde_json::Value = serde_json::from_str(&s).unwrap();
+        assert_eq!(v["widths"]["name"], 120.0);
+        assert_eq!(v["sort"]["column"], "1");
+        // restoring it elsewhere: hidden, sort and widths come back (the props it changed listed)
+        let mut u = TableState::default();
+        u.set(P::HeaderState, &Value::Str(s)).unwrap();
+        let r = restore_header(&mut u, &all);
+        assert_eq!((u.hidden.clone(), u.sort_column, u.sort_order), (vec!["name".to_string()], 1, "descending"));
+        assert_eq!(r.widths, vec![(0, 120.0), (1, 80.5)]);
+        assert!(r.props.contains(&P::HiddenColumns) && r.props.contains(&P::SortColumn));
+        // a header click on a sortable table sorts, then flips
+        t.sortable = true;
+        t.sort_column = -1;
+        let ctx = egui::Context::default();
+        let ev = header_after(&mut t, &all, Some(0), None, false, &[], &ctx);
+        assert_eq!((t.sort_column, t.sort_order), (0, "ascending"));
+        assert!(ev.sorted.is_some() && ev.state.is_some());
+        header_after(&mut t, &all, Some(0), None, false, &[], &ctx);
+        assert_eq!(t.sort_order, "descending");
+        // the column menu shows a hidden column again
+        let ev = header_after(&mut t, &all, None, Some("name".into()), false, &[], &ctx);
+        assert!(t.hidden.is_empty() && ev.hidden.is_some());
     }
 }

@@ -10941,7 +10941,7 @@
           },
           "natively_normalizes": false,
           "property": "current",
-          "provenance": "svelters-egui: the egui_table::Table widget writes current into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "provenance": "svelters-egui: the own (OW5b) widget writes current into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
           "read_back": false,
           "sync_signals_on_set": [],
           "value": {
@@ -10960,7 +10960,45 @@
           },
           "natively_normalizes": false,
           "property": "current-column",
-          "provenance": "svelters-egui: the egui_table::Table widget writes current-column into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "provenance": "svelters-egui: the own (OW5b) widget writes current-column into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "header-state": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "header-state",
+          "provenance": "svelters-egui: the own (OW5b) widget writes header-state into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "hidden-columns": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "hidden-columns",
+          "provenance": "svelters-egui: the own (OW5b) widget writes hidden-columns into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
           "read_back": false,
           "sync_signals_on_set": [],
           "value": {
@@ -10979,7 +11017,45 @@
           },
           "natively_normalizes": false,
           "property": "selected",
-          "provenance": "svelters-egui: the egui_table::Table widget writes selected into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "provenance": "svelters-egui: the own (OW5b) widget writes selected into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "sort-column": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "sort-column",
+          "provenance": "svelters-egui: the own (OW5b) widget writes sort-column into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
+        "sort-order": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "sort-order",
+          "provenance": "svelters-egui: the own (OW5b) widget writes sort-order into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
           "read_back": false,
           "sync_signals_on_set": [],
           "value": {
@@ -11009,7 +11085,7 @@
       },
       "css_hidden": [],
       "css_note": "Rows, cells and headers follow the theme; the box paints under the whole table.",
-      "doc": "A virtual table (`egui_table`): only the visible rows and columns are drawn. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`. Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it.",
+      "doc": "A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`. Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it.",
       "interface": false,
       "lifetime": "owned",
       "methods": {
@@ -11037,6 +11113,16 @@
           "dispatch": "generated",
           "doc": "`end-edit(commit)`: ends the open edit; true commits (`commit`), false reverts.",
           "native": "end-edit",
+          "params": [],
+          "returns": {
+            "nullable": false,
+            "type": "void"
+          }
+        },
+        "fit-columns": {
+          "dispatch": "generated",
+          "doc": "`fit-columns(column?)`: sizes that column (child index), or every resizable shown column, to its header and the cells in the data window (Qt `resizeColumnsToContents`); `column-resized` for each.",
+          "native": "fit-columns",
           "params": [],
           "returns": {
             "nullable": false,
@@ -11074,11 +11160,28 @@
           }
         }
       },
-      "native": "egui_table::Table",
+      "native": "own (OW5b)",
       "paint": "box",
       "parts": [],
       "present": null,
       "props": {
+        "column-menu": {
+          "construct_only": false,
+          "default": true,
+          "doc": "A right click on the header opens a menu that hides and shows the `hideable` columns (after `header-context`, unless prevented).",
+          "js": "column-menu",
+          "native": "column-menu",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Table:column-menu",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "current": {
           "construct_only": false,
           "default": -1,
@@ -11111,6 +11214,41 @@
           },
           "readable": true,
           "type": "i64",
+          "writable": true
+        },
+        "header-state": {
+          "construct_only": false,
+          "default": "",
+          "doc": "The header as JSON (Qt `saveState`): `{\"widths\":{name:points},\"hidden\":[name],\"sort\":{\"column\":name,\"order\":…}}`. The table writes it after the user resizes, hides or sorts; setting it restores them. Persist it with DX1's `uiState()` (`bind:header-state={ui.header}`): the table itself never writes files.",
+          "js": "header-state",
+          "native": "header-state",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Table:header-state",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "hidden-columns": {
+          "construct_only": false,
+          "default": null,
+          "doc": "The hidden columns, by `name` (a column without one by its child index, `\"2\"`). The column menu changes it.",
+          "js": "hidden-columns",
+          "native": "hidden-columns",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Table:hidden-columns",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "of": "string",
+          "readable": true,
+          "type": "list",
           "writable": true
         },
         "overscan": {
@@ -11204,6 +11342,62 @@
           ],
           "writable": true
         },
+        "sort-column": {
+          "construct_only": false,
+          "default": -1,
+          "doc": "The column (child index) the header shows sorted, -1 for none: then each column's own `sort` shows.",
+          "js": "sort-column",
+          "native": "sort-column",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Table:sort-column",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "sort-order": {
+          "construct_only": false,
+          "default": "none",
+          "doc": "The order shown on `sort-column`.",
+          "js": "sort-order",
+          "native": "sort-order",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:Table:sort-order",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "none",
+            "ascending",
+            "descending"
+          ],
+          "writable": true
+        },
+        "sortable": {
+          "construct_only": false,
+          "default": false,
+          "doc": "A header click sorts on that column: `sort-column` becomes it, `sort-order` ascending, or flips when it already was (the rows are still sorted by JS, on `sort-changed`).",
+          "js": "sortable",
+          "native": "sortable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Table:sortable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "sticky-columns": {
           "construct_only": false,
           "default": 0,
@@ -11219,6 +11413,23 @@
           },
           "readable": true,
           "type": "i64",
+          "writable": true
+        },
+        "stretch-last": {
+          "construct_only": false,
+          "default": true,
+          "doc": "The last shown column fills the width the columns leave (Qt `stretchLastSection`).",
+          "js": "stretch-last",
+          "native": "stretch-last",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:Table:stretch-last",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         },
         "striped": {
@@ -11276,6 +11487,42 @@
           "sync": false,
           "sync_required": false
         },
+        "column-resized": {
+          "args": [
+            {
+              "name": "column",
+              "type": "i64"
+            },
+            {
+              "name": "width",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user resized a column (drag released, a double-click fit, `fit-columns`); carries the column and its width. The column's `width` is bindable.",
+          "handler_result": "none",
+          "js_event": "column-resized",
+          "name": "column-resized",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "columns-changed": {
+          "args": [
+            {
+              "name": "hidden-columns",
+              "type": "list"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The column menu hid or showed a column; carries the hidden columns.",
+          "handler_result": "none",
+          "js_event": "columns-changed",
+          "name": "columns-changed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "commit": {
           "args": [
             {
@@ -11300,6 +11547,22 @@
           "sync": true,
           "sync_required": false
         },
+        "copy": {
+          "args": [
+            {
+              "name": "ids",
+              "type": "list"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Ctrl+C (Cmd+C) on the focused table; carries the selected row ids (the app copies the data it holds).",
+          "handler_result": "none",
+          "js_event": "copy",
+          "name": "copy",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "header-clicked": {
           "args": [
             {
@@ -11312,6 +11575,54 @@
           "handler_result": "none",
           "js_event": "header-clicked",
           "name": "header-clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "header-context": {
+          "args": [
+            {
+              "name": "column",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A right click on the header (Menu key on the focused table); carries the column under the pointer. Unless prevented, `column-menu` opens.",
+          "handler_result": "none",
+          "js_event": "header-context",
+          "name": "header-context",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "header-double-clicked": {
+          "args": [
+            {
+              "name": "column",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A column header was double-clicked (not its resize edge); carries the column (child index).",
+          "handler_result": "none",
+          "js_event": "header-double-clicked",
+          "name": "header-double-clicked",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "header-state-changed": {
+          "args": [
+            {
+              "name": "header-state",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user resized, hid or sorted; carries the new `header-state` (save it).",
+          "handler_result": "none",
+          "js_event": "header-state-changed",
+          "name": "header-state-changed",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -11348,6 +11659,26 @@
           "handler_result": "none",
           "js_event": "selectionchange",
           "name": "selectionchange",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "sort-changed": {
+          "args": [
+            {
+              "name": "sort-column",
+              "type": "i64"
+            },
+            {
+              "name": "sort-order",
+              "type": "enum"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A header click on a `sortable` table changed the sort; carries the column and the order (sort the rows in JS).",
+          "handler_result": "none",
+          "js_event": "sort-changed",
+          "name": "sort-changed",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -11427,7 +11758,7 @@
       "children": null,
       "css_hidden": [],
       "css_note": "Data only: the table draws it.",
-      "doc": "A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100) is the column's width; a user resize keeps its width until the prop changes.",
+      "doc": "A column of its parent `table` (data only: not laid out or drawn as a node). Its `width` (Widget's, in points; null for 100; `min-width`/`max-width` clamp it) is the column's width; a user resize writes it (`bind:width`). `visible` false hides it; `tooltip` shows on its header; `table-column::part(header)` styles its header cell.",
       "interface": false,
       "lifetime": "owned",
       "methods": {
@@ -11452,7 +11783,7 @@
           }
         }
       },
-      "native": "egui_table::Column",
+      "native": "own (OW5b)",
       "paint": "none",
       "parts": [],
       "present": null,
@@ -11513,6 +11844,86 @@
           "type": "other",
           "writable": true
         },
+        "elide": {
+          "construct_only": false,
+          "default": "end",
+          "doc": "Where text too wide for a cell or the header is cut with `…` (`none`: clipped).",
+          "js": "elide",
+          "native": "elide",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TableColumn:elide",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "end",
+            "middle",
+            "start",
+            "none"
+          ],
+          "writable": true
+        },
+        "header-align": {
+          "construct_only": false,
+          "default": "auto",
+          "doc": "Alignment of its header text (`auto`: its `align`).",
+          "js": "header-align",
+          "native": "header-align",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TableColumn:header-align",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "auto",
+            "start",
+            "center",
+            "end"
+          ],
+          "writable": true
+        },
+        "hideable": {
+          "construct_only": false,
+          "default": true,
+          "doc": "The column menu lists it (it can be hidden).",
+          "js": "hideable",
+          "native": "hideable",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TableColumn:hideable",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "name": {
+          "construct_only": false,
+          "default": "",
+          "doc": "Its name in `hidden-columns` and `header-state` (empty: its child index).",
+          "js": "name",
+          "native": "name",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TableColumn:name",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
         "resizable": {
           "construct_only": false,
           "default": true,
@@ -11533,7 +11944,7 @@
         "sort": {
           "construct_only": false,
           "default": "none",
-          "doc": "The sort arrow its header shows (the data is sorted by JS).",
+          "doc": "The sort arrow its header shows (the data is sorted by JS) while the table's `sort-column` is -1.",
           "js": "sort",
           "native": "sort",
           "nullable": false,

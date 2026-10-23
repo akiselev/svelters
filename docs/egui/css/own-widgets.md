@@ -139,6 +139,27 @@ tree-view::part(row):has-children:expanded            { font-weight: 600; }
   API is `Scene::part_at(list, "row", state, (pos, len))`. Results are cached per (node, part, state,
   position) and dropped at any restyle.
 
+### Table rows, cells and header
+
+`table` (OW5b) styles its rows, cells and header the same way: each repeated part is computed per item,
+with the item's own state and its logical position.
+
+| What | Selector |
+|---|---|
+| row states (R6) | `table::part(row):hover`, `table:focus-within::part(row):selected`, `table:not(:focus-within)::part(row):selected`, `table::part(row):current` |
+| stripes | `table::part(row):nth-child(even)` (without a rule, `striped` fills odd rows with `list-hover` at half strength) |
+| cells | `table::part(cell)`, `table::part(cell):nth-child(2)` (by shown column), `table::part(cell):hover` |
+| cursor cell (R8 ring, keyboard only) | `table::part(cell):focus-visible` |
+| rejected commit | `table::part(error)` (outline in `invalid-border`; the reason is a tooltip) |
+| header | `table::part(header)`, `table::part(header-cell)`, `table::part(header-cell):hover`, `table::part(header-cell):first-child` |
+| sort arrow | `table::part(sort)` (`content: icon(…)`; `:checked` while descending) |
+| resize edge (R11) | `table::part(resize)` (the split view's sash look) |
+| column menu | `table::part(menu)`, `table::part(menu-item):current` |
+| bars, shadows | `table::part(thumb-x)`, `::part(thumb-y)`; `table:state(sv.overflow-top)` and `-left` (base.css) |
+
+Per-column header styling through the column element (`table-column.numeric::part(header)`, P6) is not
+wired yet (OW5b2).
+
 ## State pseudo-classes
 
 Units and props set state bits; each bit is a pseudo-class. The widget's reference page says which
