@@ -571,6 +571,13 @@ The coordinator's merge checklist gets one line: "docs touched or `Docs: none` t
 
 ## 10. Open questions (with recommendations)
 
+**Decided (user, 2026-10-23, from cadatomic's tours research):** docs sites should use **SvelteKit**, because the
+stack is Svelte-based. cadatomic's tutorial and docs site will be SvelteKit, prerendered with `adapter-static` and
+Markdown through mdsvex. svelters' `docs/site/` is Astro Starlight today (D1, DOC11), so it is to be revisited under
+the same direction. Whether to migrate it, and when, is the svelters coordinator's call. The source is
+cadatomic `docs/research/2026-10-23-tours-tests-tutorials-videos.md` §7.4 and §11 Q8.
+
+
 All of these are procedural, so svelters-agent decides them (CLAUDE.md "Who decides"). The exception is Q8.
 
 | # | Question | Recommendation | Why |

@@ -198,6 +198,7 @@ cadatomic's side is `docs/plan/04-kernel-requests.md` (SV table) in the cadatomi
 | SV48 error path inside serde internally tagged enums | DONE (`ci/sv48`); required before a cadatomic package passes command args through `Json<T>` (main-cadatomic gives notice) | RA2-json-values.md "Open items" |
 | DK3/DK4 secondary windows for berth panes | svelters side done (EM2, 2b0d144f) | EM2-viewports.md |
 | Scene graph with full Rust access | SG1, SG2, SG3 done (SC1 path complete); SG4, SG5 in progress | ARCH-SCENE.md §14 |
+| Tours (cadatomic TU1–TU10): the generic half, `svelters-tour` (`.tour.md` → JS define phase → IR), `@svelters/tour` overlay components, the gate and placement on SV6/SV7, `capture.frames` and `clock.advance_to`, `svelters-tts` (Kokoro and the narration manifest), `svelters-tour-video` | proposed; the user wants the svelters and cadatomic halves developed in tandem (2026-10-23); not yet placed on TRACKS.md | cadatomic `docs/research/2026-10-23-tours-tests-tutorials-videos.md` §8–§9 |
 
 ## Handoff (2026-10-19, superseded)
 
