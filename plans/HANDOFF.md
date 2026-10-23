@@ -135,6 +135,8 @@ drain, no Svelte patch; STATUS FX6 row); FM1's `button-order` on any `box` not a
 
 ## 6b. cadatomic at the pause (from main-cadatomic, 2026-10-23)
 
+- **Final (2026-10-23):** cadatomic master 0417a3c or later, svelters pinned at f7f67386; ECAD agents stopped too.
+  Next svelters pin: c976154d or later once green (U3, OW7b, OW1a4 since f7f67386).
 - cadatomic master 6275526 or later (CH1 merged). Its handoff: cadatomic `STATUS.md`; decisions `docs/plan/00-decisions.md`;
   deferred `docs/plan/REVISIT.md` (handoff commit e98384d).
 - Pins: svelters 943b4c67 (next: 5aefc137 once green: FX6, OW1a3, U1, U2; the advance drops cadatomic's
@@ -157,6 +159,8 @@ drain, no Svelte patch; STATUS FX6 row); FM1's `button-order` on any `box` not a
 
 ## 8. Housekeeping still owed
 
+- svelters' `target/` (183 GB) was deleted on 2026-10-23 at the user's request; the space returns to C: only after
+  the compaction. The first local build after the pause rebuilds from scratch.
 - **WSL VHDX compaction** (user: at the end, needs `wsl --shutdown`): after every session has pushed. C: had 35 GB free.
 - Delete merged lanes' worktree `target/` dirs (each lane deletes its own; check `du -sh .claude/worktrees/*/target`).
 - parasolid-rs: origin/master stays `b9f8b46` (no force-push); the ThinkPad's RE commits are on `wip/thinkpad-re-r37-r89`.
