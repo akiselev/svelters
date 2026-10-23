@@ -14,7 +14,7 @@ sources:
 # `<icon>`
 
 <!-- BEGIN GENERATED: summary of kinds.Icon (tools/docs/egui/gen_reference.py). Do not edit. -->
-A glyph from an icon font the embedder registered (SVP6), by name or as text. With `frame` it is an icon button. Its accessible name is `accessible-name`, else `tooltip`, else `name`.
+An icon from the icon registry by key (ICR1), or a glyph from an icon font the embedder registered (SVP6), by name or as text. With `frame` it is an icon button. Its accessible name is `accessible-name`, else `tooltip`, else `name`.
 
 **Base:** [`Widget`](widget.md) · **Children:** none · **Text content:** no
 <!-- END GENERATED -->
@@ -34,9 +34,9 @@ A glyph from an icon font the embedder registered (SVP6), by name or as text. Wi
 | `font-weight` | `number` | `400` | no | CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. |
 | `frame` | `boolean` | `false` | no | Draws it as a button (an icon button: role `Button`, takes focus). |
 | `glyph` | `string` | `""` | no | The glyph itself (text), when `name` is empty or not in the table. |
-| `name` | `string` | `""` | no | The glyph's name in the family's name table (`svelters_egui::fonts::register_icons`); also the default accessible name. |
+| `name` | `string` | `""` | no | An icon registry key (`file.save`, `debug.step-over`; `svelters_egui::icons`) when `family` is `icons` and the key is registered: drawn from its SVG masters (optical size by physical pixels), tinted by CSS `color`, with the `--icon-subject`/`--icon-accent`/`--icon-badge` colour slots. Otherwise the glyph's name in the family's name table (`svelters_egui::fonts::register_icons`). Also the default accessible name. |
 | `selected` | `boolean` | `false` | no | With `frame`: drawn as selected (a toggle look). |
-| `size` | `number \| null` | `null` | no | Font size in points; null for the body size. |
+| `size` | `number \| null` | `null` | no | Font size in points; null for the body size (16 for a registry icon). |
 | `source` | `string \| null` | `null` | no | An image instead of the glyph: an `asset://` ref (an imported SVG or PNG), a file path or any uri an egui loader serves. Measured `size` (else the body size) square and fitted inside; when it does not load the placeholder box is drawn. |
 | `tint` | `boolean` | `true` | no | With `source`: tints the image with the text colour (SVG `currentColor` icons render white, then tint like a glyph); false keeps its own colours. |
 

@@ -364,7 +364,7 @@ impl Metrics {
             }
             W::Box | W::Window { .. } | W::Grid { .. } | W::VirtualList(_) => Vec2::ZERO,
             // ---- WG2a ----
-            W::Menu(x) => crate::menus::measure(self, x),
+            W::Menu(x) => crate::menus::measure(self, x, css),
             W::Overlay(_) => Vec2::ZERO,
             W::Ext(x) => x.measure(self, crate::provider::AvailableSpace::MaxContent, css, parts),
             // ---- WG2b (`crate::elements`) ----
@@ -398,7 +398,11 @@ impl Metrics {
             W::Separator { vertical: false } => vec2(0.0, 6.0),
             W::Separator { vertical: true } => vec2(6.0, 0.0),
             W::Icon { name, glyph, family, size, weight, frame, source, .. } => {
-                let t = if !source.is_empty() {
+                let t = if source.is_empty() && crate::icons::is_registry_icon(&self.ctx, family, name) {
+                    // ICR1: a registry icon is a square of `size` (else 16) points
+                    let side = size.map_or(crate::icons::DEFAULT_SIZE, |s| s as f32);
+                    crate::icons::size(&self.ctx, &crate::icons::registry(&self.ctx), name, side).unwrap_or(Vec2::splat(side))
+                } else if !source.is_empty() {
                     // AS1: an image icon is a square of `size` (else the body size)
                     Vec2::splat(size.map_or_else(|| egui::TextStyle::Body.resolve(&self.style).size, |s| s as f32))
                 } else {

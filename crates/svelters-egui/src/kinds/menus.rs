@@ -100,6 +100,11 @@ static ACTION_SIGNALS: &[SignalDef] = &[
         &[("checked", Ty::Bool)],
         "The user picked it (click, Enter, or its shortcut); carries `checked` after the pick.",
     ),
+    signal(
+        "hover",
+        &[],
+        "It became the open menu's current row (the pointer or the arrow keys; QAction `hovered`). Svelters' own menus only (OW3).",
+    ),
 ];
 
 static MENU_BUTTON_PROPS: &[PropDef] = &[

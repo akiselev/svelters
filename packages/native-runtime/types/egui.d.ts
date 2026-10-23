@@ -376,23 +376,36 @@ export interface EguiElements {
     'bind:selected'?: number;
     /** Shown while `selected` is out of range. */
     'hint-text'?: string;
+    /** The list is open; the user opening or closing it changes it, setting it opens or closes it (QComboBox `showPopup`/`hidePopup`). */
+    open?: boolean;
+    'bind:open'?: boolean;
+    /** Rows shown before the list scrolls (QComboBox `maxVisibleItems`). */
+    'max-visible'?: number;
+    /** The wheel over the closed select changes the pick: `off` (default), `hover`, `focused`. */
+    wheel?: 'off' | 'hover' | 'focused';
     /** The user picked a row; carries its index. */
     onchanged?: (selected: number) => void;
+    /** The user picked an option, the same one or not (QComboBox `activated`); carries its index. */
+    onactivate?: (value: number) => void;
+    /** The current row of the open list moved (keyboard or pointer; `highlighted`). */
+    onhighlight?: (value: number) => void;
+    /** A pick finished the edit (§2.4); carries the index. */
+    oncommit?: (value: number) => void;
   };
   /** A thin line between items; fills its rect along its orientation. */
   separator: EguiWidgetProps & {
     /** A horizontal line (in a column) or a vertical one (in a row). */
     orientation?: 'horizontal' | 'vertical';
   };
-  /** A glyph from an icon font the embedder registered (SVP6), by name or as text. With `frame` it is an icon button. Its accessible name is `accessible-name`, else `tooltip`, else `name`. */
+  /** An icon from the icon registry by key (ICR1), or a glyph from an icon font the embedder registered (SVP6), by name or as text. With `frame` it is an icon button. Its accessible name is `accessible-name`, else `tooltip`, else `name`. */
   icon: EguiWidgetProps & {
-    /** The glyph's name in the family's name table (`svelters_egui::fonts::register_icons`); also the default accessible name. */
+    /** An icon registry key (`file.save`, `debug.step-over`; `svelters_egui::icons`) when `family` is `icons` and the key is registered: drawn from its SVG masters (optical size by physical pixels), tinted by CSS `color`, with the `--icon-subject`/`--icon-accent`/`--icon-badge` colour slots. Otherwise the glyph's name in the family's name table (`svelters_egui::fonts::register_icons`). Also the default accessible name. */
     name?: string;
     /** The glyph itself (text), when `name` is empty or not in the table. */
     glyph?: string;
     /** The registered font family (`egui::FontFamily::Name`) holding the glyphs; empty for the proportional family. A family with no fonts, a name not in its table or a glyph no font has draws an outlined placeholder box (`svelters_egui::fonts::FontWarning`). */
     family?: string;
-    /** Font size in points; null for the body size. */
+    /** Font size in points; null for the body size (16 for a registry icon). */
     size?: number | null;
     /** CSS font weight (100-900). Drawn with the font family the embedder registered for the nearest weight (`svelters_egui::fonts::register_weight`); 400, or no registered family, draws the regular face. */
     'font-weight'?: number;
@@ -763,6 +776,8 @@ export interface EguiElements {
     ontoggled?: (checked: boolean) => void;
     /** The user picked it (click, Enter, or its shortcut); carries `checked` after the pick. */
     onactivate?: (checked: boolean) => void;
+    /** It became the open menu's current row (the pointer or the arrow keys; QAction `hovered`). Svelters' own menus only (OW3). */
+    onhover?: () => void;
   };
   /** A line between menu items (a vertical one in a menu bar). */
   'menu-separator': {

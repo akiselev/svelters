@@ -45,6 +45,7 @@ Plus the 5 props every menu entry has, from [`MenuEntry`](menu-entry.md#props): 
 | Attribute | Handler | When |
 |---|---|---|
 | `onactivate` | `(checked: boolean) => void` | The user picked it (click, Enter, or its shortcut); carries `checked` after the pick. |
+| `onhover` | `() => void` | It became the open menu's current row (the pointer or the arrow keys; QAction `hovered`). Svelters' own menus only (OW3). |
 | `ontoggled` | `(checked: boolean) => void` | The user changed `checked` (a check item, or a radio item turned on or off by a pick); carries the new state. |
 
 `on:activate` works too, and a bare `on:<event>` on a component forwards the component's `on<event>` prop.

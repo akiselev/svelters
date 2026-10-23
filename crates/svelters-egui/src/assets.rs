@@ -11,7 +11,7 @@
 //! remeasures them, so a resized SVG relayouts) and repaints. No JS runs.
 
 use crate::elements::images::decode;
-use egui::load::{Bytes, BytesLoadResult, BytesLoader, BytesPoll, ImageLoadResult, ImageLoader, ImagePoll, LoadError, SizeHint};
+use egui::load::{Bytes, BytesLoadResult, BytesLoader, BytesPoll, ImageLoadResult, ImageLoader, ImagePoll, LoadError, SizeHint, SizedTexture, TextureLoadResult, TextureLoader, TexturePoll};
 use egui::{ColorImage, Context, Id, ImageSource, TextureHandle, TextureOptions, Vec2};
 use std::borrow::Cow;
 use std::collections::HashMap;
@@ -21,7 +21,7 @@ use svelters_modules::{AssetBytes, AssetRef, Assets, Subscription};
 const SVG_MIME: &str = "image/svg+xml";
 
 /// `currentColor` icons render white, then tint to the node's text colour like a glyph.
-const SVG_STYLE: &str = "svg { color: #fff }";
+pub(crate) const SVG_STYLE: &str = "svg { color: #fff }";
 
 fn lock<T>(m: &Mutex<T>) -> MutexGuard<'_, T> {
     m.lock().unwrap_or_else(|p| p.into_inner())
@@ -32,9 +32,13 @@ struct State {
     roots: Mutex<Vec<(Arc<Assets>, Subscription)>>,
     /// Uris whose image was forgotten since the frame last drained them.
     changed: Mutex<Vec<String>>,
-    /// `texture()`'s cache, by (uri, version, pixel size).
-    textures: Mutex<HashMap<(String, u64, [u32; 2]), TextureHandle>>,
+    /// `texture()`'s cache, by (uri, version, pixel size), with the `pixels_per_point` it was made
+    /// at (ZM1: a zoom drops the uri's textures of other scales).
+    textures: Mutex<HashMap<TextureKey, (TextureHandle, u32)>>,
 }
+
+/// (uri, asset version, pixel size)
+type TextureKey = (String, u64, [u32; 2]);
 
 fn state_id() -> Id {
     Id::unique("svelters-egui::assets")
@@ -55,6 +59,8 @@ pub fn install(ctx: &Context, assets: Arc<Assets>) {
             let st = Arc::new(State { roots: Mutex::default(), changed: Mutex::default(), textures: Mutex::default() });
             ctx.add_bytes_loader(Arc::new(AssetBytesLoader { state: st.clone(), cache: Mutex::default() }));
             ctx.add_image_loader(Arc::new(SvgLoader::default()));
+            // ZM1: `data:` SVGs re-render per size like `.svg` uris (egui keys only those on size)
+            ctx.add_texture_loader(Arc::new(SvgTextureLoader::default()));
             crate::elements::images::install(ctx);
             ctx.data_mut(|d| d.insert_temp(state_id(), st.clone()));
             st
@@ -114,14 +120,16 @@ pub fn texture(ctx: &Context, r: &AssetRef, size: Vec2) -> Result<TextureHandle,
     let px = [(size.x * ppp).round().max(1.0) as u32, (size.y * ppp).round().max(1.0) as u32];
     let assets = lock(&st.roots).iter().map(|(a, _)| a.clone()).find(|a| a.is_mounted(r.root())).ok_or_else(|| format!("{r}: no installed registry serves this root"))?;
     let key = (r.as_uri().to_string(), assets.version(r), px);
-    if let Some(t) = lock(&st.textures).get(&key) {
+    if let Some((t, _)) = lock(&st.textures).get(&key) {
         return Ok(t.clone());
     }
     let img = color_image(&assets, r, px)?;
     let t = ctx.load_texture(r.as_uri(), img, TextureOptions::default());
     let mut cache = lock(&st.textures);
-    cache.retain(|k, _| k.0 != key.0 || k.1 == key.1);
-    cache.insert(key, t.clone());
+    // an older version of the asset, or the same one at another scale (ZM1), is dead
+    let scale = ppp.to_bits();
+    cache.retain(|k, (_, p)| k.0 != key.0 || (k.1 == key.1 && *p == scale));
+    cache.insert(key, (t.clone(), scale));
     Ok(t)
 }
 
@@ -245,10 +253,11 @@ fn percent_decode(s: &str) -> Result<Vec<u8>, String> {
 
 // ---- svg ----
 
-/// usvg options: `currentColor` white, and no reads outside the document (only `data:` hrefs).
-fn svg_options() -> resvg::usvg::Options<'static> {
+/// usvg options: the injected `style_sheet` (`SVG_STYLE`: `currentColor` white; ICR1's colour
+/// slots), and no reads outside the document (only `data:` hrefs).
+pub(crate) fn svg_options(style_sheet: &str) -> resvg::usvg::Options<'static> {
     let mut o = resvg::usvg::Options::default();
-    o.style_sheet = Some(SVG_STYLE.to_string());
+    o.style_sheet = Some(style_sheet.to_string());
     o.image_href_resolver.resolve_string = Box::new(|_, _| None);
     o
 }
@@ -256,9 +265,14 @@ fn svg_options() -> resvg::usvg::Options<'static> {
 /// Rasterises an SVG at `hint` (the logic of egui_extras' loader: the hint is in pixels, the SVG's
 /// own size in points).
 fn rasterize(svg: &[u8], hint: SizeHint) -> Result<ColorImage, String> {
+    rasterize_styled(svg, hint, SVG_STYLE)
+}
+
+/// [`rasterize`] with another injected style sheet (ICR1's colour slots, `crate::icons`).
+pub(crate) fn rasterize_styled(svg: &[u8], hint: SizeHint, style_sheet: &str) -> Result<ColorImage, String> {
     use resvg::tiny_skia::Pixmap;
     use resvg::usvg::{Transform, Tree};
-    let tree = Tree::from_data(svg, &svg_options()).map_err(|e| e.to_string())?;
+    let tree = Tree::from_data(svg, &svg_options(style_sheet)).map_err(|e| e.to_string())?;
     let src = Vec2::new(tree.size().width(), tree.size().height());
     if src.x <= 0.0 || src.y <= 0.0 {
         return Err("empty svg".into());
@@ -288,10 +302,28 @@ fn rasterize(svg: &[u8], hint: SizeHint) -> Result<ColorImage, String> {
 
 type SvgEntry = Result<Arc<ColorImage>, String>;
 
-/// Rasterises SVG at the size egui asks for; cached per (uri, size hint), cleared by `forget`.
+/// Rasterises SVG at the size egui asks for; cached per (uri, size hint) with the pass it was last
+/// asked for in, cleared by `forget`. ZM1: of a uri asked for at several sizes (a zoom, a resize),
+/// the sizes not asked for in the last pass are dropped at the end of a pass.
 #[derive(Default)]
 struct SvgLoader {
-    cache: Mutex<HashMap<String, HashMap<SizeHint, SvgEntry>>>,
+    cache: Mutex<SvgCache>,
+}
+
+#[derive(Default)]
+struct SvgCache {
+    pass: u64,
+    entries: HashMap<String, HashMap<SizeHint, (u64, SvgEntry)>>,
+}
+
+/// Drops the sizes of a multi-size uri not used in the last pass (egui's texture loader's rule).
+fn evict_sizes<K, V>(entries: &mut HashMap<K, HashMap<SizeHint, (u64, V)>>, pass: u64) {
+    entries.retain(|_, sizes| {
+        if sizes.len() >= 2 {
+            sizes.retain(|_, (last, _)| pass <= *last + 1);
+        }
+        !sizes.is_empty()
+    });
 }
 
 impl SvgLoader {
@@ -304,8 +336,13 @@ impl ImageLoader for SvgLoader {
     }
 
     fn load(&self, ctx: &Context, uri: &str, hint: SizeHint) -> ImageLoadResult {
-        if let Some(e) = lock(&self.cache).get(uri).and_then(|b| b.get(&hint)) {
-            return e.clone().map(|image| ImagePoll::Ready { image }).map_err(LoadError::Loading);
+        {
+            let mut c = lock(&self.cache);
+            let pass = c.pass;
+            if let Some((last, e)) = c.entries.get_mut(uri).and_then(|b| b.get_mut(&hint)) {
+                *last = pass;
+                return e.clone().map(|image| ImagePoll::Ready { image }).map_err(LoadError::Loading);
+            }
         }
         // only what can be an SVG goes to the bytes loaders
         if !(uri.starts_with("asset://") || uri.starts_with("data:") || egui::load::has_extension(uri, "svg")) {
@@ -318,22 +355,103 @@ impl ImageLoader for SvgLoader {
                     return Err(LoadError::NotSupported);
                 }
                 let e = rasterize(&bytes, hint).map(Arc::new);
-                lock(&self.cache).entry(uri.to_string()).or_default().insert(hint, e.clone());
+                let mut c = lock(&self.cache);
+                let pass = c.pass;
+                c.entries.entry(uri.to_string()).or_default().insert(hint, (pass, e.clone()));
                 e.map(|image| ImagePoll::Ready { image }).map_err(LoadError::Loading)
             }
         }
     }
 
     fn forget(&self, uri: &str) {
-        lock(&self.cache).remove(uri);
+        lock(&self.cache).entries.remove(uri);
     }
 
     fn forget_all(&self) {
-        lock(&self.cache).clear();
+        lock(&self.cache).entries.clear();
+    }
+
+    fn end_pass(&self, pass_index: u64) {
+        let mut c = lock(&self.cache);
+        c.pass = pass_index;
+        evict_sizes(&mut c.entries, pass_index);
     }
 
     fn byte_size(&self) -> usize {
-        lock(&self.cache).values().flat_map(|b| b.values()).map(|e| e.as_ref().map_or(0, |i| i.pixels.len() * 4)).sum()
+        lock(&self.cache).entries.values().flat_map(|b| b.values()).map(|(_, e)| e.as_ref().map_or(0, |i| i.pixels.len() * 4)).sum()
+    }
+}
+
+/// `data:image/svg+xml` uris (no `.svg` extension).
+fn is_data_svg(uri: &str) -> bool {
+    uri.get(..18).is_some_and(|p| p.eq_ignore_ascii_case("data:image/svg+xml"))
+}
+
+/// ZM1: textures of `data:` SVGs, one per size hint (physical pixels), so they render at device
+/// resolution at any zoom. egui's default texture loader keys only `.svg` uris on the size: it would
+/// keep the first raster of a `data:` SVG and scale it. Same eviction rule as egui's.
+#[derive(Default)]
+struct SvgTextureLoader {
+    cache: Mutex<SvgTextures>,
+}
+
+type SizedEntry = (u64, (Vec2, TextureHandle));
+
+#[derive(Default)]
+struct SvgTextures {
+    pass: u64,
+    /// per (uri, options) and size hint: (pass last used, (source size, texture))
+    entries: HashMap<(String, TextureOptions), HashMap<SizeHint, SizedEntry>>,
+}
+
+impl SvgTextureLoader {
+    const ID: &'static str = concat!(module_path!(), "::SvgTextureLoader");
+}
+
+impl TextureLoader for SvgTextureLoader {
+    fn id(&self) -> &str {
+        Self::ID
+    }
+
+    fn load(&self, ctx: &Context, uri: &str, options: TextureOptions, hint: SizeHint) -> TextureLoadResult {
+        if !is_data_svg(uri) {
+            return Err(LoadError::NotSupported);
+        }
+        let mut c = lock(&self.cache);
+        let pass = c.pass;
+        let sizes = c.entries.entry((uri.to_string(), options)).or_default();
+        if let Some((last, (size, t))) = sizes.get_mut(&hint) {
+            *last = pass;
+            return Ok(TexturePoll::Ready { texture: SizedTexture::new(t.id(), *size) });
+        }
+        match ctx.try_load_image(uri, hint)? {
+            ImagePoll::Pending { size } => Ok(TexturePoll::Pending { size }),
+            ImagePoll::Ready { image } => {
+                let size = image.source_size;
+                let t = ctx.load_texture(uri, image, options);
+                let texture = SizedTexture::new(t.id(), size);
+                sizes.insert(hint, (pass, (size, t)));
+                Ok(TexturePoll::Ready { texture })
+            }
+        }
+    }
+
+    fn forget(&self, uri: &str) {
+        lock(&self.cache).entries.retain(|k, _| k.0 != uri);
+    }
+
+    fn forget_all(&self) {
+        lock(&self.cache).entries.clear();
+    }
+
+    fn end_pass(&self, pass_index: u64) {
+        let mut c = lock(&self.cache);
+        c.pass = pass_index;
+        evict_sizes(&mut c.entries, pass_index);
+    }
+
+    fn byte_size(&self) -> usize {
+        lock(&self.cache).entries.values().flat_map(|b| b.values()).map(|(_, (_, t))| t.byte_size()).sum()
     }
 }
 
