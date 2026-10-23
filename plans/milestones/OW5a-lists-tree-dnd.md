@@ -330,6 +330,16 @@ Shared changes:
 - `kinds/docs.rs`: the list and tree css notes.
 - Regenerated, in this order: `egui.json` and `egui.d.ts`, then `gen_props.py`, then the reference.
 
+### OW3 API additions (coordinator, 2026-10-22)
+
+- `interact/roving_list.rs`: `RovingList::next_by(len, from, step, wrap, enabled: impl Fn(usize) -> bool)` and
+  `edge_by(len, forward, enabled)`. They are additive. The `Vec<bool>` forms `next` and `edge` are now built on them,
+  and `ow5a1b_the_lazy_form_agrees_with_the_slice_form` checks that the two forms agree. With the lazy forms, a
+  100k-row list allocates nothing per key press.
+- `KeySelect::nav` is `nav_by(…, |_| true)`. Up, Down, Home and End are the `RovingList` step, with no wrap.
+  PageUp/PageDown, type-ahead and the id-keyed selection stay in KeySelect. The cursor stays in KeySelect alone;
+  lists and trees hold no `RovingList` field, so the cursor has one source of truth.
+
 ### R-rules, parity rows, pins
 
 - **R6/R8/R10/R14/R15**: as OW5a. Row states are unchanged. The new `:drop-target` on the list and node targets uses

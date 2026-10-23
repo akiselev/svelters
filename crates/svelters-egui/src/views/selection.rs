@@ -162,21 +162,32 @@ impl KeySelect {
 
     /// A navigation key over the visible `ids`; `page` is the rows a page moves.
     pub fn nav(&mut self, ids: &[u64], key: Nav, m: Mods, page: usize) -> Change {
+        self.nav_by(ids, key, m, page, |_| true)
+    }
+
+    /// [`nav`](Self::nav) with the rows that can take the cursor (`enabled(pos)`, lazily: rows
+    /// are not disabled today). OW5a1b (coordinator, 2026-10-22): Up/Down/Home/End are OW3's
+    /// [`RovingList`](crate::interact::RovingList) step (no wrap); PageUp/PageDown stay here.
+    pub fn nav_by(&mut self, ids: &[u64], key: Nav, m: Mods, page: usize, enabled: impl Fn(usize) -> bool) -> Change {
+        use crate::interact::RovingList;
         if ids.is_empty() {
             return Change::default();
         }
-        let last = ids.len() - 1;
+        let (len, last) = (ids.len(), ids.len() - 1);
         let to = match (pos_of(ids, self.cursor), key) {
-            (_, Nav::Home) => 0,
-            (_, Nav::End) => last,
+            (_, Nav::Home) => RovingList::edge_by(len, true, &enabled),
+            (_, Nav::End) => RovingList::edge_by(len, false, &enabled),
             // no cursor (or it was filtered away): any move starts at the top
-            (None, _) => 0,
-            (Some(p), Nav::Up) => p.saturating_sub(1),
-            (Some(p), Nav::Down) => (p + 1).min(last),
-            (Some(p), Nav::PageUp) => p.saturating_sub(page.max(1)),
-            (Some(p), Nav::PageDown) => (p + page.max(1)).min(last),
+            (None, _) => RovingList::edge_by(len, true, &enabled),
+            (Some(p), Nav::Up) => RovingList::next_by(len, Some(p), -1, false, &enabled),
+            (Some(p), Nav::Down) => RovingList::next_by(len, Some(p), 1, false, &enabled),
+            (Some(p), Nav::PageUp) => Some(p.saturating_sub(page.max(1))),
+            (Some(p), Nav::PageDown) => Some((p + page.max(1)).min(last)),
         };
-        self.land(ids, to, m)
+        match to {
+            Some(to) => self.land(ids, to, m),
+            None => Change::default(),
+        }
     }
 
     /// Moves the cursor to `id` (a tree's parent or first child) as a plain navigation would.

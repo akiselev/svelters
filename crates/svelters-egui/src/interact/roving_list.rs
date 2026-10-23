@@ -52,24 +52,35 @@ impl RovingList {
 
     /// The first (`forward`) or last item that can be current.
     pub fn edge(enabled: &[bool], forward: bool) -> Option<usize> {
-        if forward { enabled.iter().position(|e| *e) } else { enabled.iter().rposition(|e| *e) }
+        RovingList::edge_by(enabled.len(), forward, |i| enabled[i])
     }
 
     /// The item `step` (±1) from `from` that can be current, wrapping if asked; from nothing, the
     /// first or last one.
     pub fn next(enabled: &[bool], from: Option<usize>, step: i32, wrap: bool) -> Option<usize> {
-        let n = enabled.len() as i32;
-        let Some(from) = from.filter(|f| (*f as i32) < n) else { return RovingList::edge(enabled, step > 0) };
-        let mut i = from as i32;
+        RovingList::next_by(enabled.len(), from, step, wrap, |i| enabled[i])
+    }
+
+    /// OW5a1b: [`edge`](Self::edge) over `len` items, `enabled(i)` asked lazily (lists of 100k
+    /// rows: no per-key allocation).
+    pub fn edge_by(len: usize, forward: bool, enabled: impl Fn(usize) -> bool) -> Option<usize> {
+        if forward { (0..len).find(|&i| enabled(i)) } else { (0..len).rev().find(|&i| enabled(i)) }
+    }
+
+    /// OW5a1b: [`next`](Self::next) over `len` items, `enabled(i)` asked lazily.
+    pub fn next_by(len: usize, from: Option<usize>, step: i32, wrap: bool, enabled: impl Fn(usize) -> bool) -> Option<usize> {
+        let n = len as i64;
+        let Some(from) = from.filter(|f| (*f as i64) < n) else { return RovingList::edge_by(len, step > 0, enabled) };
+        let mut i = from as i64;
         for _ in 0..n {
-            i += step;
+            i += step as i64;
             if i < 0 || i >= n {
                 if !wrap {
                     return Some(from);
                 }
                 i = i.rem_euclid(n);
             }
-            if enabled[i as usize] {
+            if enabled(i as usize) {
                 return Some(i as usize);
             }
         }
@@ -141,5 +152,22 @@ mod tests {
         let q = RovingListParams { wrap: false, ..p };
         assert_eq!(r.key(&q, Key::ArrowDown), Some(4), "stays at the end without wrap");
         assert_eq!(RovingList::next(&[false, false], None, 1, true), None);
+    }
+
+    #[test]
+    fn ow5a1b_the_lazy_form_agrees_with_the_slice_form() {
+        let sets: [&[bool]; 4] = [&[false, true, false, true, true], &[true; 6], &[false, false], &[]];
+        for en in sets {
+            for wrap in [false, true] {
+                for &step in &[-1, 1] {
+                    for from in [None, Some(0), Some(2), Some(4), Some(9)] {
+                        assert_eq!(RovingList::next(en, from, step, wrap), RovingList::next_by(en.len(), from, step, wrap, |i| en[i]), "{en:?} {from:?} {step} {wrap}");
+                    }
+                }
+            }
+            for fwd in [false, true] {
+                assert_eq!(RovingList::edge(en, fwd), RovingList::edge_by(en.len(), fwd, |i| en[i]));
+            }
+        }
     }
 }
