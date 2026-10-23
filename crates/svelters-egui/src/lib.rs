@@ -92,6 +92,7 @@ pub use runner::kittest as harness;
 
 pub use backend::{EguiBackend, Stats};
 pub use embed::Embed;
+pub use style::Utilities;
 pub use spec::dump;
 
 /// `use svelters_egui::prelude::*;`: what a provider kind (`#[svelters::widget]`) or a behaviour

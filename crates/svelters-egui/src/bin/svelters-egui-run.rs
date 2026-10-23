@@ -4,8 +4,11 @@
 //! svelters-egui-run [--bundle] <dist/app.js>          # a bundle built by Vite
 //! svelters-egui-run --entry <app dir | file> [--dev]  # from source, compiled live (Q1)
 //! svelters-egui-run --app <app.svb>                   # a release bundle (Q4b)
-//!                   [--watch] [--idle-report <ms>]
+//!                   [--watch] [--idle-report <ms>] [--utilities[=<prefix>]]
 //! ```
+//!
+//! `--utilities` turns utility classes on (U3, `EmbedConfig::with_utilities`; off by default);
+//! `--utilities=tw` makes only `tw:`-prefixed classes utilities.
 //!
 //! `--entry` takes an app directory (its `src/App.svelte`, or its package.json `embed` entry), a
 //! `.svelte` file (mounted as the App) or a `.js`/`.svelte.js` module (evaluated as is); the app's
@@ -38,11 +41,11 @@ enum Load {
     App(std::path::PathBuf),
 }
 
-const USAGE: &str = "usage: svelters-egui-run [--idle-report <ms>] [--watch] ([--bundle] <dist/app.js> | --entry <app dir|file> [--dev] | --app <app.svb>)";
+const USAGE: &str = "usage: svelters-egui-run [--idle-report <ms>] [--watch] [--utilities[=<prefix>]] ([--bundle] <dist/app.js> | --entry <app dir|file> [--dev] | --app <app.svb>)";
 
 fn main() {
     let args: Vec<String> = std::env::args().skip(1).collect();
-    let (mut load, mut idle_ms, mut dev, mut watch) = (None, None, false, false);
+    let (mut load, mut idle_ms, mut dev, mut watch, mut utilities) = (None, None, false, false, None);
     let mut it = args.iter();
     while let Some(a) = it.next() {
         match a.as_str() {
@@ -52,6 +55,8 @@ fn main() {
             "--app" => load = it.next().map(|p| Load::App(p.into())),
             "--dev" => dev = true,
             "--watch" => watch = true,
+            "--utilities" => utilities = Some(svelters_egui::Utilities::on()),
+            s if s.starts_with("--utilities=") => utilities = Some(svelters_egui::Utilities::on().prefix(&s["--utilities=".len()..])),
             "-h" | "--help" => {
                 eprintln!("{USAGE}");
                 std::process::exit(0);
@@ -71,7 +76,10 @@ fn main() {
     // at the first frame.
     // DX2: the system clipboard and shell for `svelters:clipboard` and `svelters:shell`.
     let host = svelters_host::HostConfig { platform: svelters_egui::platform::system(), ..svelters_host::HostConfig::default() };
-    let cfg = svelters_egui::embed::EmbedConfig::app(host);
+    let mut cfg = svelters_egui::embed::EmbedConfig::app(host);
+    if let Some(u) = utilities {
+        cfg = cfg.with_utilities(u);
+    }
     let embed = svelters_egui::Embed::new(&svelters_egui::egui::Context::default(), cfg).unwrap_or_else(|e| fail(e.to_string()));
     let loaded = match load {
         Load::Bundle(bundle) => embed.load_app(&bundle),
