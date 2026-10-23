@@ -1010,6 +1010,8 @@ These are implementation choices inside the recommended design. The coordinator 
 - **UQ4 + UQ5:** **our tokens only** (the user chose this over the recommendation): colours are our theme roles (no Tailwind palette, follow VS Code themes and high contrast); spacing and type use our own DESIGN tokens under our own names (`space-7` = 32px), not Tailwind's 4px multiplier or Tailwind's type-scale names. Lanes U0/U1 derive the scale names from the token files rather than the Tailwind vocabulary rows.
 - **UQ6 + UQ7:** arbitrary lengths allowed and type-checked, colour literals linted (an error under the strict profile cadatomic uses); parts through a `part-<name>:` variant stacked left to right.
 - Coordinator (2026-10-22): the editor-completion shim (U8) may add a `tailwindcss` devDependency; U5 (HMR) does not wait for ID1/LI2.
+- This supersedes §1.5's "Utilities use the multiplier", §4.5's spacing and font-size rows, and §8's "Spacing is a
+  4px multiplier": no `--sv-spacing` token is added. U0 (`plans/milestones/U0-utility-metadata.md`) implements it.
 
 ## 10. Open questions for the user (answered above)
 

@@ -1218,7 +1218,7 @@ mod tests {
     static DIR: Prop = p("flex-direction", ValueType::Enum, &["row", "column"]);
     static FW: Prop = p("font-weight", ValueType::FontWeight, &[]);
     static SH: Prop = p("box-shadow", ValueType::Shadow, &[]);
-    static TABLE: Table = Table { toolkit: "t", dialect: Dialect::None, setter_selectors: &[], units: &[("px", 1.0), ("pt", 2.0)], props: &[] };
+    static TABLE: Table = Table { toolkit: "t", dialect: Dialect::None, setter_selectors: &[], units: &[("px", 1.0), ("pt", 2.0)], props: &[], ranges: &[] };
 
     fn cx() -> ValueCx<'static> {
         ValueCx { table: &TABLE, em: 10.0, rem: 16.0, current_color: None, parent_weight: 400, percent_base: None }

@@ -1,0 +1,5531 @@
+{
+ "schema": "svelters-utilities/v0",
+ "generator": "tools/metadata/style/gen_utilities.py",
+ "sources": [
+  "metadata/style/utilities.yaml",
+  "metadata/style/tailwind-v4.yaml",
+  "metadata/semantics/egui.json"
+ ],
+ "config": {
+  "layer": "utilities",
+  "opt_in": true,
+  "prefix": "optional",
+  "token_prefix": "--sv-",
+  "lint": {
+   "arbitrary_color": {
+    "default": "warning",
+    "strict": "error"
+   },
+   "arbitrary_value": "typed"
+  }
+ },
+ "scales": {
+  "space": {
+   "patterns": [
+    {
+     "glob": "space-*"
+    }
+   ],
+   "token_type": "length",
+   "values": {
+    "0": "space-0",
+    "0-5": "space-0-5",
+    "1": "space-1",
+    "1-5": "space-1-5",
+    "2": "space-2",
+    "3": "space-3",
+    "4": "space-4",
+    "5": "space-5",
+    "6": "space-6",
+    "7": "space-7",
+    "8": "space-8"
+   }
+  },
+  "font-size": {
+   "patterns": [
+    {
+     "glob": "font-size-*"
+    },
+    {
+     "token": "font-size",
+     "as": "body"
+    }
+   ],
+   "token_type": "length",
+   "values": {
+    "h1": "font-size-h1",
+    "h2": "font-size-h2",
+    "h3": "font-size-h3",
+    "label1": "font-size-label1",
+    "label2": "font-size-label2",
+    "label3": "font-size-label3",
+    "sm": "font-size-sm",
+    "xs": "font-size-xs",
+    "body": "font-size"
+   }
+  },
+  "family": {
+   "patterns": [
+    {
+     "glob": "font-*"
+    }
+   ],
+   "exclude": [
+    "font-size",
+    "font-size-*"
+   ],
+   "token_type": "font-family",
+   "values": {
+    "family": "font-family",
+    "mono": "font-mono"
+   }
+  },
+  "radius": {
+   "patterns": [
+    {
+     "glob": "radius-*"
+    },
+    {
+     "token": "radius",
+     "as": ""
+    }
+   ],
+   "token_type": "length",
+   "values": {
+    "lg": "radius-lg",
+    "md": "radius-md",
+    "xl": "radius-xl",
+    "xs": "radius-xs",
+    "": "radius"
+   }
+  },
+  "stroke": {
+   "patterns": [
+    {
+     "token": "stroke",
+     "as": ""
+    }
+   ],
+   "token_type": "length",
+   "values": {
+    "": "stroke"
+   }
+  },
+  "shadow": {
+   "patterns": [
+    {
+     "glob": "elev-*"
+    },
+    {
+     "glob": "*-shadow"
+    }
+   ],
+   "token_type": "shadow",
+   "values": {
+    "0": "elev-0",
+    "1": "elev-1",
+    "2": "elev-2",
+    "3": "elev-3",
+    "4": "elev-4",
+    "popup": "popup-shadow",
+    "window": "window-shadow"
+   }
+  },
+  "height": {
+   "patterns": [
+    {
+     "glob": "*-h"
+    }
+   ],
+   "token_type": "length",
+   "values": {
+    "control": "control-h",
+    "header": "header-h",
+    "row": "row-h",
+    "statusbar": "statusbar-h",
+    "tab": "tab-h",
+    "titlebar": "titlebar-h"
+   }
+  },
+  "width": {
+   "patterns": [
+    {
+     "glob": "*-w"
+    }
+   ],
+   "token_type": "length",
+   "values": {
+    "activitybar": "activitybar-w",
+    "sash": "sash-w",
+    "scrollbar": "scrollbar-w",
+    "twistie": "twistie-w"
+   }
+  },
+  "size": {
+   "patterns": [
+    {
+     "glob": "*-size"
+    }
+   ],
+   "exclude": [
+    "font-size"
+   ],
+   "token_type": "length",
+   "values": {
+    "icon": "icon-size"
+   }
+  },
+  "indent": {
+   "patterns": [
+    {
+     "token": "indent",
+     "as": "indent"
+    }
+   ],
+   "token_type": "length",
+   "values": {
+    "indent": "indent"
+   }
+  },
+  "motion": {
+   "patterns": [
+    {
+     "glob": "motion-*"
+    },
+    {
+     "token": "motion",
+     "as": "normal"
+    }
+   ],
+   "token_type": "duration",
+   "values": {
+    "fast": "motion-fast",
+    "normal": "motion"
+   }
+  },
+  "easing": {
+   "patterns": [
+    {
+     "glob": "ease-*"
+    }
+   ],
+   "token_type": "easing",
+   "values": {
+    "out": "ease-out"
+   }
+  },
+  "breakpoint": {
+   "patterns": [
+    {
+     "glob": "breakpoint-*"
+    }
+   ],
+   "token_type": "length",
+   "values": {
+    "lg": "breakpoint-lg",
+    "md": "breakpoint-md",
+    "sm": "breakpoint-sm",
+    "xl": "breakpoint-xl"
+   }
+  },
+  "container": {
+   "patterns": [
+    {
+     "glob": "container-*"
+    }
+   ],
+   "token_type": "length",
+   "values": {
+    "lg": "container-lg",
+    "md": "container-md",
+    "sm": "container-sm",
+    "xl": "container-xl",
+    "xs": "container-xs"
+   }
+  },
+  "colors": {
+   "patterns": [],
+   "token_type": "color",
+   "values": {
+    "accent": "accent",
+    "accent-fg": "accent-fg",
+    "accent-hover": "accent-hover",
+    "badge": "badge",
+    "badge-fg": "badge-fg",
+    "bg": "bg",
+    "border": "border",
+    "border-widget": "border-widget",
+    "button-bg": "button-bg",
+    "button-bg-active": "button-bg-active",
+    "button-bg-hover": "button-bg-hover",
+    "button-border": "button-border",
+    "button-border-color": "button-border-color",
+    "button-fg": "button-fg",
+    "button2-bg": "button2-bg",
+    "button2-fg": "button2-fg",
+    "button2-hover": "button2-hover",
+    "caret": "caret",
+    "checkbox-bg": "checkbox-bg",
+    "checkbox-border-color": "checkbox-border-color",
+    "control-bg": "control-bg",
+    "control-border": "control-border",
+    "control-fg": "control-fg",
+    "danger": "danger",
+    "disabled-fg": "disabled-fg",
+    "error": "error",
+    "fg": "fg",
+    "fg-strong": "fg-strong",
+    "focus": "focus",
+    "icon": "icon",
+    "indent-guide": "indent-guide",
+    "info": "info",
+    "input-bg": "input-bg",
+    "input-border-color": "input-border-color",
+    "input-border-color-focus": "input-border-color-focus",
+    "input-fg": "input-fg",
+    "invalid-bg": "invalid-bg",
+    "invalid-border": "invalid-border",
+    "link": "link",
+    "list-drop": "list-drop",
+    "list-focus-outline": "list-focus-outline",
+    "list-hover": "list-hover",
+    "list-sel": "list-sel",
+    "list-sel-fg": "list-sel-fg",
+    "list-sel-inactive": "list-sel-inactive",
+    "menu-bg": "menu-bg",
+    "menu-border-color": "menu-border-color",
+    "menu-sel": "menu-sel",
+    "menu-sel-fg": "menu-sel-fg",
+    "muted": "muted",
+    "panel-bg": "panel-bg",
+    "placeholder": "placeholder",
+    "progress": "progress",
+    "scroll-shadow": "scroll-shadow",
+    "scrollbar": "scrollbar",
+    "scrollbar-active": "scrollbar-active",
+    "scrollbar-hover": "scrollbar-hover",
+    "selection": "selection",
+    "shadow-color": "shadow-color",
+    "success": "success",
+    "surface": "surface",
+    "surface-raised": "surface-raised",
+    "tab-active-bg": "tab-active-bg",
+    "tab-active-fg": "tab-active-fg",
+    "tab-active-marker": "tab-active-marker",
+    "tab-bg": "tab-bg",
+    "tab-fg": "tab-fg",
+    "tab-marker": "tab-marker",
+    "toggle-on-bg": "toggle-on-bg",
+    "toggle-on-border": "toggle-on-border",
+    "toolbar-active": "toolbar-active",
+    "toolbar-hover": "toolbar-hover",
+    "tooltip-bg": "tooltip-bg",
+    "warning": "warning"
+   }
+  }
+ },
+ "utilities": [
+  {
+   "name": "p",
+   "family": "spacing",
+   "rank": 0,
+   "props": [
+    "padding"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "px",
+   "family": "spacing",
+   "rank": 1,
+   "props": [
+    "padding-left",
+    "padding-right"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "py",
+   "family": "spacing",
+   "rank": 2,
+   "props": [
+    "padding-top",
+    "padding-bottom"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "pt",
+   "family": "spacing",
+   "rank": 3,
+   "props": [
+    "padding-top"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "pr",
+   "family": "spacing",
+   "rank": 4,
+   "props": [
+    "padding-right"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "pb",
+   "family": "spacing",
+   "rank": 5,
+   "props": [
+    "padding-bottom"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "pl",
+   "family": "spacing",
+   "rank": 6,
+   "props": [
+    "padding-left"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "scale",
+     "scale": "indent"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "m",
+   "family": "spacing",
+   "rank": 7,
+   "props": [
+    "margin"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "negative": true
+  },
+  {
+   "name": "mx",
+   "family": "spacing",
+   "rank": 8,
+   "props": [
+    "margin-left",
+    "margin-right"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "negative": true
+  },
+  {
+   "name": "my",
+   "family": "spacing",
+   "rank": 9,
+   "props": [
+    "margin-top",
+    "margin-bottom"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "negative": true
+  },
+  {
+   "name": "mt",
+   "family": "spacing",
+   "rank": 10,
+   "props": [
+    "margin-top"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "negative": true
+  },
+  {
+   "name": "mr",
+   "family": "spacing",
+   "rank": 11,
+   "props": [
+    "margin-right"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "negative": true
+  },
+  {
+   "name": "mb",
+   "family": "spacing",
+   "rank": 12,
+   "props": [
+    "margin-bottom"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "negative": true
+  },
+  {
+   "name": "ml",
+   "family": "spacing",
+   "rank": 13,
+   "props": [
+    "margin-left"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "negative": true
+  },
+  {
+   "name": "gap",
+   "family": "spacing",
+   "rank": 14,
+   "props": [
+    "gap"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "gap-x",
+   "family": "spacing",
+   "rank": 15,
+   "props": [
+    "column-gap"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "gap-y",
+   "family": "spacing",
+   "rank": 16,
+   "props": [
+    "row-gap"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "scroll-m",
+   "family": "spacing",
+   "rank": 17,
+   "props": [
+    "scroll-margin"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "size",
+   "family": "sizing",
+   "rank": 18,
+   "props": [
+    "width",
+    "height"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "scale",
+     "scale": "size"
+    },
+    {
+     "kind": "fraction"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "auto": [
+     "auto",
+     "auto"
+    ],
+    "full": [
+     "100%",
+     "100%"
+    ]
+   }
+  },
+  {
+   "name": "w",
+   "family": "sizing",
+   "rank": 19,
+   "props": [
+    "width"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "scale",
+     "scale": "width"
+    },
+    {
+     "kind": "fraction"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "auto": [
+     "auto"
+    ],
+    "full": [
+     "100%"
+    ]
+   }
+  },
+  {
+   "name": "min-w",
+   "family": "sizing",
+   "rank": 20,
+   "props": [
+    "min-width"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "scale",
+     "scale": "width"
+    },
+    {
+     "kind": "fraction"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "auto": [
+     "auto"
+    ],
+    "full": [
+     "100%"
+    ]
+   }
+  },
+  {
+   "name": "max-w",
+   "family": "sizing",
+   "rank": 21,
+   "props": [
+    "max-width"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "scale",
+     "scale": "width"
+    },
+    {
+     "kind": "fraction"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "full": [
+     "100%"
+    ]
+   }
+  },
+  {
+   "name": "h",
+   "family": "sizing",
+   "rank": 22,
+   "props": [
+    "height"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "scale",
+     "scale": "height"
+    },
+    {
+     "kind": "fraction"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "auto": [
+     "auto"
+    ],
+    "full": [
+     "100%"
+    ]
+   }
+  },
+  {
+   "name": "min-h",
+   "family": "sizing",
+   "rank": 23,
+   "props": [
+    "min-height"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "scale",
+     "scale": "height"
+    },
+    {
+     "kind": "fraction"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "auto": [
+     "auto"
+    ],
+    "full": [
+     "100%"
+    ]
+   }
+  },
+  {
+   "name": "max-h",
+   "family": "sizing",
+   "rank": 24,
+   "props": [
+    "max-height"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "scale",
+     "scale": "height"
+    },
+    {
+     "kind": "fraction"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "full": [
+     "100%"
+    ]
+   }
+  },
+  {
+   "name": "flex",
+   "family": "layout",
+   "rank": 25,
+   "decls": {
+    "display": "flex"
+   }
+  },
+  {
+   "name": "grid",
+   "family": "layout",
+   "rank": 26,
+   "decls": {
+    "display": "grid"
+   }
+  },
+  {
+   "name": "hidden",
+   "family": "layout",
+   "rank": 27,
+   "decls": {
+    "display": "none"
+   }
+  },
+  {
+   "name": "flex",
+   "family": "layout",
+   "rank": 28,
+   "props": [
+    "flex-direction"
+   ],
+   "keywords": {
+    "row": [
+     "row"
+    ],
+    "col": [
+     "column"
+    ],
+    "row-reverse": [
+     "row-reverse"
+    ],
+    "col-reverse": [
+     "column-reverse"
+    ]
+   }
+  },
+  {
+   "name": "flex",
+   "family": "layout",
+   "rank": 29,
+   "props": [
+    "flex-wrap"
+   ],
+   "keywords": {
+    "wrap": [
+     "wrap"
+    ],
+    "nowrap": [
+     "nowrap"
+    ],
+    "wrap-reverse": [
+     "wrap-reverse"
+    ]
+   }
+  },
+  {
+   "name": "flex",
+   "family": "layout",
+   "rank": 30,
+   "props": [
+    "flex-grow",
+    "flex-shrink",
+    "flex-basis"
+   ],
+   "keywords": {
+    "1": [
+     "1",
+     "1",
+     "0%"
+    ],
+    "auto": [
+     "1",
+     "1",
+     "auto"
+    ],
+    "initial": [
+     "0",
+     "1",
+     "auto"
+    ],
+    "none": [
+     "0",
+     "0",
+     "auto"
+    ]
+   }
+  },
+  {
+   "name": "grow",
+   "family": "layout",
+   "rank": 31,
+   "decls": {
+    "flex-grow": "1"
+   }
+  },
+  {
+   "name": "grow",
+   "family": "layout",
+   "rank": 32,
+   "props": [
+    "flex-grow"
+   ],
+   "values": [
+    {
+     "kind": "number"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "shrink",
+   "family": "layout",
+   "rank": 33,
+   "decls": {
+    "flex-shrink": "1"
+   }
+  },
+  {
+   "name": "shrink",
+   "family": "layout",
+   "rank": 34,
+   "props": [
+    "flex-shrink"
+   ],
+   "values": [
+    {
+     "kind": "number"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "basis",
+   "family": "layout",
+   "rank": 35,
+   "props": [
+    "flex-basis"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "fraction"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "auto": [
+     "auto"
+    ],
+    "full": [
+     "100%"
+    ]
+   }
+  },
+  {
+   "name": "items",
+   "family": "layout",
+   "rank": 36,
+   "props": [
+    "align-items"
+   ],
+   "keywords": {
+    "start": [
+     "start"
+    ],
+    "end": [
+     "end"
+    ],
+    "center": [
+     "center"
+    ],
+    "stretch": [
+     "stretch"
+    ],
+    "baseline": [
+     "baseline"
+    ]
+   }
+  },
+  {
+   "name": "self",
+   "family": "layout",
+   "rank": 37,
+   "props": [
+    "align-self"
+   ],
+   "keywords": {
+    "auto": [
+     "auto"
+    ],
+    "start": [
+     "start"
+    ],
+    "end": [
+     "end"
+    ],
+    "center": [
+     "center"
+    ],
+    "stretch": [
+     "stretch"
+    ],
+    "baseline": [
+     "baseline"
+    ]
+   }
+  },
+  {
+   "name": "justify",
+   "family": "layout",
+   "rank": 38,
+   "props": [
+    "justify-content"
+   ],
+   "keywords": {
+    "start": [
+     "start"
+    ],
+    "end": [
+     "end"
+    ],
+    "center": [
+     "center"
+    ],
+    "between": [
+     "space-between"
+    ],
+    "around": [
+     "space-around"
+    ],
+    "evenly": [
+     "space-evenly"
+    ]
+   }
+  },
+  {
+   "name": "justify-items",
+   "family": "layout",
+   "rank": 39,
+   "props": [
+    "justify-items"
+   ],
+   "keywords": {
+    "start": [
+     "start"
+    ],
+    "end": [
+     "end"
+    ],
+    "center": [
+     "center"
+    ],
+    "stretch": [
+     "stretch"
+    ]
+   }
+  },
+  {
+   "name": "grid-cols",
+   "family": "layout",
+   "rank": 40,
+   "props": [
+    "grid-template-columns"
+   ],
+   "values": [
+    {
+     "kind": "integer",
+     "template": "repeat({n}, minmax(0, 1fr))"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "none": [
+     "none"
+    ]
+   }
+  },
+  {
+   "name": "grid-rows",
+   "family": "layout",
+   "rank": 41,
+   "props": [
+    "grid-template-rows"
+   ],
+   "values": [
+    {
+     "kind": "integer",
+     "template": "repeat({n}, minmax(0, 1fr))"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "none": [
+     "none"
+    ]
+   }
+  },
+  {
+   "name": "col",
+   "family": "layout",
+   "rank": 42,
+   "props": [
+    "grid-column"
+   ],
+   "values": [
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "auto": [
+     "auto"
+    ]
+   }
+  },
+  {
+   "name": "col-span",
+   "family": "layout",
+   "rank": 43,
+   "props": [
+    "grid-column"
+   ],
+   "values": [
+    {
+     "kind": "integer",
+     "template": "span {n} / span {n}"
+    }
+   ],
+   "keywords": {
+    "full": [
+     "1 / -1"
+    ]
+   }
+  },
+  {
+   "name": "row",
+   "family": "layout",
+   "rank": 44,
+   "props": [
+    "grid-row"
+   ],
+   "values": [
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "auto": [
+     "auto"
+    ]
+   }
+  },
+  {
+   "name": "row-span",
+   "family": "layout",
+   "rank": 45,
+   "props": [
+    "grid-row"
+   ],
+   "values": [
+    {
+     "kind": "integer",
+     "template": "span {n} / span {n}"
+    }
+   ],
+   "keywords": {
+    "full": [
+     "1 / -1"
+    ]
+   }
+  },
+  {
+   "name": "static",
+   "family": "layout",
+   "rank": 46,
+   "decls": {
+    "position": "static"
+   }
+  },
+  {
+   "name": "relative",
+   "family": "layout",
+   "rank": 47,
+   "decls": {
+    "position": "relative"
+   }
+  },
+  {
+   "name": "absolute",
+   "family": "layout",
+   "rank": 48,
+   "decls": {
+    "position": "absolute"
+   }
+  },
+  {
+   "name": "inset",
+   "family": "layout",
+   "rank": 49,
+   "props": [
+    "top",
+    "right",
+    "bottom",
+    "left"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "fraction"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "auto": [
+     "auto",
+     "auto",
+     "auto",
+     "auto"
+    ],
+    "full": [
+     "100%",
+     "100%",
+     "100%",
+     "100%"
+    ]
+   },
+   "negative": true
+  },
+  {
+   "name": "inset-x",
+   "family": "layout",
+   "rank": 50,
+   "props": [
+    "left",
+    "right"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "fraction"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "auto": [
+     "auto",
+     "auto"
+    ],
+    "full": [
+     "100%",
+     "100%"
+    ]
+   },
+   "negative": true
+  },
+  {
+   "name": "inset-y",
+   "family": "layout",
+   "rank": 51,
+   "props": [
+    "top",
+    "bottom"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "fraction"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "auto": [
+     "auto",
+     "auto"
+    ],
+    "full": [
+     "100%",
+     "100%"
+    ]
+   },
+   "negative": true
+  },
+  {
+   "name": "top",
+   "family": "layout",
+   "rank": 52,
+   "props": [
+    "top"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "fraction"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "auto": [
+     "auto"
+    ],
+    "full": [
+     "100%"
+    ]
+   },
+   "negative": true
+  },
+  {
+   "name": "right",
+   "family": "layout",
+   "rank": 53,
+   "props": [
+    "right"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "fraction"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "auto": [
+     "auto"
+    ],
+    "full": [
+     "100%"
+    ]
+   },
+   "negative": true
+  },
+  {
+   "name": "bottom",
+   "family": "layout",
+   "rank": 54,
+   "props": [
+    "bottom"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "fraction"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "auto": [
+     "auto"
+    ],
+    "full": [
+     "100%"
+    ]
+   },
+   "negative": true
+  },
+  {
+   "name": "left",
+   "family": "layout",
+   "rank": 55,
+   "props": [
+    "left"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "fraction"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "auto": [
+     "auto"
+    ],
+    "full": [
+     "100%"
+    ]
+   },
+   "negative": true
+  },
+  {
+   "name": "overflow",
+   "family": "layout",
+   "rank": 56,
+   "props": [
+    "overflow-x",
+    "overflow-y"
+   ],
+   "keywords": {
+    "visible": [
+     "visible",
+     "visible"
+    ],
+    "hidden": [
+     "hidden",
+     "hidden"
+    ],
+    "clip": [
+     "clip",
+     "clip"
+    ],
+    "scroll": [
+     "scroll",
+     "scroll"
+    ],
+    "auto": [
+     "auto",
+     "auto"
+    ]
+   }
+  },
+  {
+   "name": "overflow-x",
+   "family": "layout",
+   "rank": 57,
+   "props": [
+    "overflow-x"
+   ],
+   "keywords": {
+    "visible": [
+     "visible"
+    ],
+    "hidden": [
+     "hidden"
+    ],
+    "clip": [
+     "clip"
+    ],
+    "scroll": [
+     "scroll"
+    ],
+    "auto": [
+     "auto"
+    ]
+   }
+  },
+  {
+   "name": "overflow-y",
+   "family": "layout",
+   "rank": 58,
+   "props": [
+    "overflow-y"
+   ],
+   "keywords": {
+    "visible": [
+     "visible"
+    ],
+    "hidden": [
+     "hidden"
+    ],
+    "clip": [
+     "clip"
+    ],
+    "scroll": [
+     "scroll"
+    ],
+    "auto": [
+     "auto"
+    ]
+   }
+  },
+  {
+   "name": "overscroll",
+   "family": "layout",
+   "rank": 59,
+   "props": [
+    "overscroll-behavior"
+   ],
+   "keywords": {
+    "auto": [
+     "auto"
+    ],
+    "contain": [
+     "contain"
+    ],
+    "none": [
+     "none"
+    ]
+   }
+  },
+  {
+   "name": "scrollbar-gutter",
+   "family": "layout",
+   "rank": 60,
+   "props": [
+    "scrollbar-gutter"
+   ],
+   "keywords": {
+    "auto": [
+     "auto"
+    ],
+    "stable": [
+     "stable"
+    ]
+   },
+   "own": true
+  },
+  {
+   "name": "bg",
+   "family": "color",
+   "rank": 61,
+   "props": [
+    "background-color"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "colors"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "transparent": [
+     "transparent"
+    ]
+   }
+  },
+  {
+   "name": "text",
+   "family": "color",
+   "rank": 62,
+   "props": [
+    "color"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "colors"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "transparent": [
+     "transparent"
+    ]
+   }
+  },
+  {
+   "name": "border",
+   "family": "color",
+   "rank": 63,
+   "props": [
+    "border-color"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "colors"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "transparent": [
+     "transparent"
+    ]
+   }
+  },
+  {
+   "name": "border-x",
+   "family": "color",
+   "rank": 64,
+   "props": [
+    "border-left-color",
+    "border-right-color"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "colors"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "border-y",
+   "family": "color",
+   "rank": 65,
+   "props": [
+    "border-top-color",
+    "border-bottom-color"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "colors"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "border-t",
+   "family": "color",
+   "rank": 66,
+   "props": [
+    "border-top-color"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "colors"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "border-r",
+   "family": "color",
+   "rank": 67,
+   "props": [
+    "border-right-color"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "colors"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "border-b",
+   "family": "color",
+   "rank": 68,
+   "props": [
+    "border-bottom-color"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "colors"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "border-l",
+   "family": "color",
+   "rank": 69,
+   "props": [
+    "border-left-color"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "colors"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "outline",
+   "family": "color",
+   "rank": 70,
+   "props": [
+    "outline-color"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "colors"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "text",
+   "family": "typography",
+   "rank": 71,
+   "props": [
+    "font-size"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "font-size"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "text",
+   "family": "typography",
+   "rank": 72,
+   "props": [
+    "text-align"
+   ],
+   "keywords": {
+    "start": [
+     "start"
+    ],
+    "end": [
+     "end"
+    ],
+    "left": [
+     "left"
+    ],
+    "right": [
+     "right"
+    ],
+    "center": [
+     "center"
+    ],
+    "justify": [
+     "justify"
+    ]
+   }
+  },
+  {
+   "name": "text",
+   "family": "typography",
+   "rank": 73,
+   "props": [
+    "text-overflow"
+   ],
+   "keywords": {
+    "clip": [
+     "clip"
+    ],
+    "ellipsis": [
+     "ellipsis"
+    ]
+   }
+  },
+  {
+   "name": "truncate",
+   "family": "typography",
+   "rank": 74,
+   "decls": {
+    "overflow-x": "hidden",
+    "text-overflow": "ellipsis",
+    "white-space": "nowrap"
+   }
+  },
+  {
+   "name": "font",
+   "family": "typography",
+   "rank": 75,
+   "props": [
+    "font-family"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "family"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "font",
+   "family": "typography",
+   "rank": 76,
+   "props": [
+    "font-weight"
+   ],
+   "values": [
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "normal": [
+     "normal"
+    ],
+    "bold": [
+     "bold"
+    ]
+   }
+  },
+  {
+   "name": "italic",
+   "family": "typography",
+   "rank": 77,
+   "decls": {
+    "font-style": "italic"
+   }
+  },
+  {
+   "name": "not-italic",
+   "family": "typography",
+   "rank": 78,
+   "decls": {
+    "font-style": "normal"
+   }
+  },
+  {
+   "name": "uppercase",
+   "family": "typography",
+   "rank": 79,
+   "decls": {
+    "text-transform": "uppercase"
+   }
+  },
+  {
+   "name": "lowercase",
+   "family": "typography",
+   "rank": 80,
+   "decls": {
+    "text-transform": "lowercase"
+   }
+  },
+  {
+   "name": "capitalize",
+   "family": "typography",
+   "rank": 81,
+   "decls": {
+    "text-transform": "capitalize"
+   }
+  },
+  {
+   "name": "normal-case",
+   "family": "typography",
+   "rank": 82,
+   "decls": {
+    "text-transform": "none"
+   }
+  },
+  {
+   "name": "underline",
+   "family": "typography",
+   "rank": 83,
+   "decls": {
+    "text-decoration-line": "underline"
+   }
+  },
+  {
+   "name": "overline",
+   "family": "typography",
+   "rank": 84,
+   "decls": {
+    "text-decoration-line": "overline"
+   }
+  },
+  {
+   "name": "line-through",
+   "family": "typography",
+   "rank": 85,
+   "decls": {
+    "text-decoration-line": "line-through"
+   }
+  },
+  {
+   "name": "no-underline",
+   "family": "typography",
+   "rank": 86,
+   "decls": {
+    "text-decoration-line": "none"
+   }
+  },
+  {
+   "name": "leading",
+   "family": "typography",
+   "rank": 87,
+   "props": [
+    "line-height"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "space"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "none": [
+     "1"
+    ],
+    "normal": [
+     "normal"
+    ]
+   }
+  },
+  {
+   "name": "tracking",
+   "family": "typography",
+   "rank": 88,
+   "props": [
+    "letter-spacing"
+   ],
+   "values": [
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "normal": [
+     "normal"
+    ]
+   }
+  },
+  {
+   "name": "whitespace",
+   "family": "typography",
+   "rank": 89,
+   "props": [
+    "white-space"
+   ],
+   "keywords": {
+    "normal": [
+     "normal"
+    ],
+    "nowrap": [
+     "nowrap"
+    ],
+    "pre": [
+     "pre"
+    ],
+    "pre-wrap": [
+     "pre-wrap"
+    ],
+    "pre-line": [
+     "pre-line"
+    ],
+    "break-spaces": [
+     "break-spaces"
+    ]
+   }
+  },
+  {
+   "name": "rounded",
+   "family": "borders",
+   "rank": 90,
+   "props": [
+    "border-radius"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "radius"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "none": [
+     "0px"
+    ],
+    "full": [
+     "9999px"
+    ]
+   }
+  },
+  {
+   "name": "rounded-t",
+   "family": "borders",
+   "rank": 91,
+   "props": [
+    "border-top-left-radius",
+    "border-top-right-radius"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "radius"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "none": [
+     "0px",
+     "0px"
+    ],
+    "full": [
+     "9999px",
+     "9999px"
+    ]
+   }
+  },
+  {
+   "name": "rounded-r",
+   "family": "borders",
+   "rank": 92,
+   "props": [
+    "border-top-right-radius",
+    "border-bottom-right-radius"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "radius"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "none": [
+     "0px",
+     "0px"
+    ],
+    "full": [
+     "9999px",
+     "9999px"
+    ]
+   }
+  },
+  {
+   "name": "rounded-b",
+   "family": "borders",
+   "rank": 93,
+   "props": [
+    "border-bottom-right-radius",
+    "border-bottom-left-radius"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "radius"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "none": [
+     "0px",
+     "0px"
+    ],
+    "full": [
+     "9999px",
+     "9999px"
+    ]
+   }
+  },
+  {
+   "name": "rounded-l",
+   "family": "borders",
+   "rank": 94,
+   "props": [
+    "border-top-left-radius",
+    "border-bottom-left-radius"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "radius"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "none": [
+     "0px",
+     "0px"
+    ],
+    "full": [
+     "9999px",
+     "9999px"
+    ]
+   }
+  },
+  {
+   "name": "rounded-tl",
+   "family": "borders",
+   "rank": 95,
+   "props": [
+    "border-top-left-radius"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "radius"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "none": [
+     "0px"
+    ],
+    "full": [
+     "9999px"
+    ]
+   }
+  },
+  {
+   "name": "rounded-tr",
+   "family": "borders",
+   "rank": 96,
+   "props": [
+    "border-top-right-radius"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "radius"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "none": [
+     "0px"
+    ],
+    "full": [
+     "9999px"
+    ]
+   }
+  },
+  {
+   "name": "rounded-br",
+   "family": "borders",
+   "rank": 97,
+   "props": [
+    "border-bottom-right-radius"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "radius"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "none": [
+     "0px"
+    ],
+    "full": [
+     "9999px"
+    ]
+   }
+  },
+  {
+   "name": "rounded-bl",
+   "family": "borders",
+   "rank": 98,
+   "props": [
+    "border-bottom-left-radius"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "radius"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "none": [
+     "0px"
+    ],
+    "full": [
+     "9999px"
+    ]
+   }
+  },
+  {
+   "name": "border",
+   "family": "borders",
+   "rank": 99,
+   "props": [
+    "border-width"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "stroke"
+    },
+    {
+     "kind": "int-px"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "border-x",
+   "family": "borders",
+   "rank": 100,
+   "props": [
+    "border-left-width",
+    "border-right-width"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "stroke"
+    },
+    {
+     "kind": "int-px"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "border-y",
+   "family": "borders",
+   "rank": 101,
+   "props": [
+    "border-top-width",
+    "border-bottom-width"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "stroke"
+    },
+    {
+     "kind": "int-px"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "border-t",
+   "family": "borders",
+   "rank": 102,
+   "props": [
+    "border-top-width"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "stroke"
+    },
+    {
+     "kind": "int-px"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "border-r",
+   "family": "borders",
+   "rank": 103,
+   "props": [
+    "border-right-width"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "stroke"
+    },
+    {
+     "kind": "int-px"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "border-b",
+   "family": "borders",
+   "rank": 104,
+   "props": [
+    "border-bottom-width"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "stroke"
+    },
+    {
+     "kind": "int-px"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "border-l",
+   "family": "borders",
+   "rank": 105,
+   "props": [
+    "border-left-width"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "stroke"
+    },
+    {
+     "kind": "int-px"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "border",
+   "family": "borders",
+   "rank": 106,
+   "props": [
+    "border-top-style",
+    "border-right-style",
+    "border-bottom-style",
+    "border-left-style"
+   ],
+   "keywords": {
+    "solid": [
+     "solid",
+     "solid",
+     "solid",
+     "solid"
+    ],
+    "dashed": [
+     "dashed",
+     "dashed",
+     "dashed",
+     "dashed"
+    ],
+    "dotted": [
+     "dotted",
+     "dotted",
+     "dotted",
+     "dotted"
+    ],
+    "double": [
+     "double",
+     "double",
+     "double",
+     "double"
+    ],
+    "hidden": [
+     "hidden",
+     "hidden",
+     "hidden",
+     "hidden"
+    ],
+    "none": [
+     "none",
+     "none",
+     "none",
+     "none"
+    ]
+   }
+  },
+  {
+   "name": "outline",
+   "family": "borders",
+   "rank": 107,
+   "decls": {
+    "outline-style": "solid",
+    "outline-width": "var(--sv-stroke)"
+   }
+  },
+  {
+   "name": "outline",
+   "family": "borders",
+   "rank": 108,
+   "props": [
+    "outline-width"
+   ],
+   "values": [
+    {
+     "kind": "int-px"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "outline",
+   "family": "borders",
+   "rank": 109,
+   "props": [
+    "outline-style"
+   ],
+   "keywords": {
+    "solid": [
+     "solid"
+    ],
+    "dashed": [
+     "dashed"
+    ],
+    "dotted": [
+     "dotted"
+    ],
+    "double": [
+     "double"
+    ],
+    "none": [
+     "none"
+    ]
+   }
+  },
+  {
+   "name": "outline-offset",
+   "family": "borders",
+   "rank": 110,
+   "props": [
+    "outline-offset"
+   ],
+   "values": [
+    {
+     "kind": "int-px"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "negative": true
+  },
+  {
+   "name": "shadow",
+   "family": "effects",
+   "rank": 111,
+   "props": [
+    "box-shadow"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "shadow"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "none": [
+     "none"
+    ]
+   }
+  },
+  {
+   "name": "opacity",
+   "family": "effects",
+   "rank": 112,
+   "props": [
+    "opacity"
+   ],
+   "values": [
+    {
+     "kind": "percent"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ]
+  },
+  {
+   "name": "cursor",
+   "family": "interactivity",
+   "rank": 113,
+   "props": [
+    "cursor"
+   ],
+   "keywords": {
+    "auto": [
+     "auto"
+    ],
+    "default": [
+     "default"
+    ],
+    "none": [
+     "none"
+    ],
+    "context-menu": [
+     "context-menu"
+    ],
+    "help": [
+     "help"
+    ],
+    "pointer": [
+     "pointer"
+    ],
+    "progress": [
+     "progress"
+    ],
+    "wait": [
+     "wait"
+    ],
+    "cell": [
+     "cell"
+    ],
+    "crosshair": [
+     "crosshair"
+    ],
+    "text": [
+     "text"
+    ],
+    "vertical-text": [
+     "vertical-text"
+    ],
+    "alias": [
+     "alias"
+    ],
+    "copy": [
+     "copy"
+    ],
+    "move": [
+     "move"
+    ],
+    "no-drop": [
+     "no-drop"
+    ],
+    "not-allowed": [
+     "not-allowed"
+    ],
+    "grab": [
+     "grab"
+    ],
+    "grabbing": [
+     "grabbing"
+    ],
+    "all-scroll": [
+     "all-scroll"
+    ],
+    "col-resize": [
+     "col-resize"
+    ],
+    "row-resize": [
+     "row-resize"
+    ],
+    "n-resize": [
+     "n-resize"
+    ],
+    "e-resize": [
+     "e-resize"
+    ],
+    "s-resize": [
+     "s-resize"
+    ],
+    "w-resize": [
+     "w-resize"
+    ],
+    "ne-resize": [
+     "ne-resize"
+    ],
+    "nw-resize": [
+     "nw-resize"
+    ],
+    "se-resize": [
+     "se-resize"
+    ],
+    "sw-resize": [
+     "sw-resize"
+    ],
+    "ew-resize": [
+     "ew-resize"
+    ],
+    "ns-resize": [
+     "ns-resize"
+    ],
+    "nesw-resize": [
+     "nesw-resize"
+    ],
+    "nwse-resize": [
+     "nwse-resize"
+    ],
+    "zoom-in": [
+     "zoom-in"
+    ],
+    "zoom-out": [
+     "zoom-out"
+    ]
+   }
+  },
+  {
+   "name": "transition",
+   "family": "transitions",
+   "rank": 114,
+   "decls": {
+    "transition": "color var(--sv-motion) var(--sv-ease-out), background-color var(--sv-motion) var(--sv-ease-out), border-color var(--sv-motion) var(--sv-ease-out), outline-color var(--sv-motion) var(--sv-ease-out), opacity var(--sv-motion) var(--sv-ease-out), box-shadow var(--sv-motion) var(--sv-ease-out)"
+   }
+  },
+  {
+   "name": "transition-colors",
+   "family": "transitions",
+   "rank": 115,
+   "decls": {
+    "transition": "color var(--sv-motion) var(--sv-ease-out), background-color var(--sv-motion) var(--sv-ease-out), border-color var(--sv-motion) var(--sv-ease-out), outline-color var(--sv-motion) var(--sv-ease-out)"
+   }
+  },
+  {
+   "name": "transition-opacity",
+   "family": "transitions",
+   "rank": 116,
+   "decls": {
+    "transition": "opacity var(--sv-motion) var(--sv-ease-out)"
+   }
+  },
+  {
+   "name": "transition-shadow",
+   "family": "transitions",
+   "rank": 117,
+   "decls": {
+    "transition": "box-shadow var(--sv-motion) var(--sv-ease-out)"
+   }
+  },
+  {
+   "name": "transition-none",
+   "family": "transitions",
+   "rank": 118,
+   "decls": {
+    "transition": "none"
+   }
+  },
+  {
+   "name": "duration",
+   "family": "transitions",
+   "rank": 119,
+   "props": [
+    "transition-duration"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "motion"
+    },
+    {
+     "kind": "integer",
+     "template": "{n}ms"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "requires": "E5",
+   "pending": true
+  },
+  {
+   "name": "delay",
+   "family": "transitions",
+   "rank": 120,
+   "props": [
+    "transition-delay"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "motion"
+    },
+    {
+     "kind": "integer",
+     "template": "{n}ms"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "requires": "E5",
+   "pending": true
+  },
+  {
+   "name": "ease",
+   "family": "transitions",
+   "rank": 121,
+   "props": [
+    "transition-timing-function"
+   ],
+   "values": [
+    {
+     "kind": "scale",
+     "scale": "easing"
+    },
+    {
+     "kind": "arbitrary"
+    }
+   ],
+   "keywords": {
+    "linear": [
+     "linear"
+    ]
+   },
+   "requires": "E5",
+   "pending": true
+  }
+ ],
+ "variants": {
+  "states": [
+   {
+    "name": "hover",
+    "state": "hovered",
+    "negated": false
+   },
+   {
+    "name": "active",
+    "state": "pressed",
+    "negated": false
+   },
+   {
+    "name": "focus",
+    "state": "focused",
+    "negated": false
+   },
+   {
+    "name": "focus-within",
+    "state": "focus-within",
+    "negated": false
+   },
+   {
+    "name": "disabled",
+    "state": "disabled",
+    "negated": false
+   },
+   {
+    "name": "enabled",
+    "state": "disabled",
+    "negated": true
+   },
+   {
+    "name": "checked",
+    "state": "checked",
+    "negated": false
+   },
+   {
+    "name": "selected",
+    "state": "selected",
+    "negated": false
+   },
+   {
+    "name": "open",
+    "state": "open",
+    "negated": false
+   },
+   {
+    "name": "expanded",
+    "state": "expanded",
+    "negated": false
+   },
+   {
+    "name": "invalid",
+    "state": "invalid",
+    "negated": false
+   },
+   {
+    "name": "valid",
+    "state": "invalid",
+    "negated": true
+   },
+   {
+    "name": "read-only",
+    "state": "read-only",
+    "negated": false
+   },
+   {
+    "name": "read-write",
+    "state": "read-only",
+    "negated": true
+   },
+   {
+    "name": "dragging",
+    "state": "dragging",
+    "negated": false
+   },
+   {
+    "name": "exiting",
+    "state": "exiting",
+    "negated": false
+   },
+   {
+    "name": "busy",
+    "state": "busy",
+    "negated": false
+   },
+   {
+    "name": "indeterminate",
+    "state": "indeterminate",
+    "negated": false
+   },
+   {
+    "name": "placeholder-shown",
+    "state": "placeholder-shown",
+    "negated": false
+   },
+   {
+    "name": "default",
+    "state": "default",
+    "negated": false
+   },
+   {
+    "name": "drop-target",
+    "state": "drop-target",
+    "negated": false
+   },
+   {
+    "name": "current",
+    "state": "current",
+    "negated": false
+   },
+   {
+    "name": "backdrop",
+    "state": "backdrop",
+    "negated": false
+   },
+   {
+    "name": "required",
+    "state": "required",
+    "negated": false
+   },
+   {
+    "name": "optional",
+    "state": "required",
+    "negated": true
+   },
+   {
+    "name": "user-invalid",
+    "state": "user-invalid",
+    "negated": false
+   },
+   {
+    "name": "has-children",
+    "state": "has-children",
+    "negated": false
+   },
+   {
+    "name": "focus-visible",
+    "state": "focus-visible",
+    "negated": false
+   }
+  ],
+  "aliases": {
+   "aria-checked": "checked",
+   "aria-expanded": "expanded",
+   "aria-selected": "selected",
+   "aria-disabled": "disabled",
+   "aria-busy": "busy",
+   "aria-invalid": "invalid",
+   "aria-required": "required",
+   "aria-readonly": "read-only",
+   "aria-current": "current"
+  },
+  "pseudo_elements": {
+   "placeholder": "::placeholder",
+   "selection": "::selection"
+  },
+  "structural": {
+   "first": "&:first-child",
+   "last": "&:last-child",
+   "only": "&:only-child",
+   "odd": "&:nth-child(2n+1)",
+   "even": "&:nth-child(2n)"
+  },
+  "compound": {
+   "not": {
+    "selector": "&:not(:{state})",
+    "requires": null
+   },
+   "has": {
+    "selector": "&:has(*:{state})",
+    "requires": null
+   },
+   "in": {
+    "selector": ":where(*:{state}) &",
+    "requires": null
+   },
+   "group": {
+    "selector": "&:is(:where(.group):{state} *)",
+    "requires": "E6"
+   },
+   "peer": {
+    "selector": "&:is(:where(.peer):{state} ~ *)",
+    "requires": "E6"
+   }
+  },
+  "media": {
+   "dark": {
+    "query": "(prefers-color-scheme: dark)",
+    "requires": null,
+    "pending": false
+   },
+   "light": {
+    "query": "(prefers-color-scheme: light)",
+    "requires": null,
+    "pending": false
+   },
+   "contrast-more": {
+    "query": "(prefers-contrast: more)",
+    "requires": null,
+    "pending": false
+   },
+   "contrast-less": {
+    "query": "(prefers-contrast: less)",
+    "requires": null,
+    "pending": false
+   },
+   "motion-safe": {
+    "query": "(prefers-reduced-motion: no-preference)",
+    "requires": null,
+    "pending": false
+   },
+   "motion-reduce": {
+    "query": "(prefers-reduced-motion: reduce)",
+    "requires": null,
+    "pending": false
+   },
+   "portrait": {
+    "query": "(orientation: portrait)",
+    "requires": null,
+    "pending": false
+   },
+   "landscape": {
+    "query": "(orientation: landscape)",
+    "requires": null,
+    "pending": false
+   },
+   "mac": {
+    "query": "(-sv-platform: macos)",
+    "requires": "E7",
+    "pending": true
+   },
+   "win": {
+    "query": "(-sv-platform: windows)",
+    "requires": "E7",
+    "pending": true
+   },
+   "linux": {
+    "query": "(-sv-platform: linux)",
+    "requires": "E7",
+    "pending": true
+   }
+  },
+  "breakpoints": {
+   "scale": "breakpoint",
+   "min": "(width >= {px})",
+   "max": "(width < {px})",
+   "max_prefix": "max-",
+   "requires": null,
+   "sizes": [
+    {
+     "name": "sm",
+     "token": "breakpoint-sm",
+     "px": 640.0
+    },
+    {
+     "name": "md",
+     "token": "breakpoint-md",
+     "px": 960.0
+    },
+    {
+     "name": "lg",
+     "token": "breakpoint-lg",
+     "px": 1280.0
+    },
+    {
+     "name": "xl",
+     "token": "breakpoint-xl",
+     "px": 1600.0
+    }
+   ]
+  },
+  "containers": {
+   "scale": "container",
+   "min": "(width >= {px})",
+   "max": "(width < {px})",
+   "max_prefix": "@max-",
+   "requires": "CS-CQ",
+   "sizes": [
+    {
+     "name": "xs",
+     "token": "container-xs",
+     "px": 240.0
+    },
+    {
+     "name": "sm",
+     "token": "container-sm",
+     "px": 320.0
+    },
+    {
+     "name": "md",
+     "token": "container-md",
+     "px": 480.0
+    },
+    {
+     "name": "lg",
+     "token": "container-lg",
+     "px": 640.0
+    },
+    {
+     "name": "xl",
+     "token": "container-xl",
+     "px": 800.0
+    }
+   ]
+  },
+  "prefixes": {
+   "part_prefix": "part-",
+   "state_prefix": "state-",
+   "prop_prefix": "prop-"
+  }
+ },
+ "kinds": {
+  "action": {
+   "kind": "Action",
+   "states": [],
+   "parts": [],
+   "provider_states": []
+  },
+  "a": {
+   "kind": "Anchor",
+   "states": [
+    "focus",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "b": {
+   "kind": "Bold",
+   "states": [],
+   "parts": [],
+   "provider_states": []
+  },
+  "box": {
+   "kind": "Box",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "button": {
+   "kind": "Button",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover",
+    "selected"
+   ],
+   "parts": [
+    {
+     "name": "icon",
+     "node": false
+    },
+    {
+     "name": "label",
+     "node": false
+    }
+   ],
+   "provider_states": []
+  },
+  "calendar": {
+   "kind": "Calendar",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover",
+    "read-only",
+    "read-write"
+   ],
+   "parts": [
+    {
+     "name": "header",
+     "node": false
+    },
+    {
+     "name": "prev",
+     "node": false
+    },
+    {
+     "name": "next",
+     "node": false
+    },
+    {
+     "name": "month",
+     "node": false
+    },
+    {
+     "name": "year",
+     "node": false
+    },
+    {
+     "name": "grid",
+     "node": false
+    },
+    {
+     "name": "day",
+     "node": false
+    },
+    {
+     "name": "weekday",
+     "node": false
+    },
+    {
+     "name": "week-number",
+     "node": false
+    }
+   ],
+   "provider_states": []
+  },
+  "canvas": {
+   "kind": "Canvas",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "checkbox": {
+   "kind": "Checkbox",
+   "states": [
+    "active",
+    "checked",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [
+    {
+     "name": "indicator",
+     "node": false
+    },
+    {
+     "name": "mark",
+     "node": false
+    },
+    {
+     "name": "icon",
+     "node": false
+    },
+    {
+     "name": "label",
+     "node": false
+    }
+   ],
+   "provider_states": []
+  },
+  "code": {
+   "kind": "Code",
+   "states": [],
+   "parts": [],
+   "provider_states": []
+  },
+  "collapsing-header": {
+   "kind": "CollapsingHeader",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [
+    {
+     "name": "header",
+     "node": false
+    },
+    {
+     "name": "twistie",
+     "node": false
+    },
+    {
+     "name": "label",
+     "node": false
+    }
+   ],
+   "provider_states": []
+  },
+  "color-editor": {
+   "kind": "ColorEditor",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [
+    {
+     "name": "square",
+     "node": false
+    },
+    {
+     "name": "hue",
+     "node": false
+    },
+    {
+     "name": "alpha",
+     "node": false
+    },
+    {
+     "name": "handle",
+     "node": false
+    },
+    {
+     "name": "fields",
+     "node": false
+    },
+    {
+     "name": "field",
+     "node": false
+    },
+    {
+     "name": "swatches",
+     "node": false
+    },
+    {
+     "name": "swatch-cell",
+     "node": false
+    }
+   ],
+   "provider_states": []
+  },
+  "color-picker": {
+   "kind": "ColorPicker",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover",
+    "open"
+   ],
+   "parts": [
+    {
+     "name": "swatch",
+     "node": false
+    },
+    {
+     "name": "chevron",
+     "node": false
+    },
+    {
+     "name": "popup",
+     "node": false
+    },
+    {
+     "name": "square",
+     "node": false
+    },
+    {
+     "name": "hue",
+     "node": false
+    },
+    {
+     "name": "alpha",
+     "node": false
+    },
+    {
+     "name": "handle",
+     "node": false
+    },
+    {
+     "name": "fields",
+     "node": false
+    },
+    {
+     "name": "field",
+     "node": false
+    },
+    {
+     "name": "swatches",
+     "node": false
+    },
+    {
+     "name": "swatch-cell",
+     "node": false
+    },
+    {
+     "name": "save",
+     "node": false
+    },
+    {
+     "name": "cancel",
+     "node": false
+    }
+   ],
+   "provider_states": []
+  },
+  "combo-box": {
+   "kind": "ComboBox",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [
+    {
+     "name": "label",
+     "node": false
+    },
+    {
+     "name": "chevron",
+     "node": false
+    },
+    {
+     "name": "popup",
+     "node": false
+    },
+    {
+     "name": "option",
+     "node": false
+    }
+   ],
+   "provider_states": []
+  },
+  "context-menu": {
+   "kind": "ContextMenu",
+   "states": [],
+   "parts": [],
+   "provider_states": []
+  },
+  "date-picker": {
+   "kind": "DatePicker",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover",
+    "open",
+    "read-only",
+    "read-write"
+   ],
+   "parts": [
+    {
+     "name": "chevron",
+     "node": false
+    },
+    {
+     "name": "popup",
+     "node": false
+    },
+    {
+     "name": "header",
+     "node": false
+    },
+    {
+     "name": "prev",
+     "node": false
+    },
+    {
+     "name": "next",
+     "node": false
+    },
+    {
+     "name": "month",
+     "node": false
+    },
+    {
+     "name": "year",
+     "node": false
+    },
+    {
+     "name": "grid",
+     "node": false
+    },
+    {
+     "name": "day",
+     "node": false
+    },
+    {
+     "name": "weekday",
+     "node": false
+    },
+    {
+     "name": "week-number",
+     "node": false
+    },
+    {
+     "name": "save",
+     "node": false
+    },
+    {
+     "name": "cancel",
+     "node": false
+    }
+   ],
+   "provider_states": []
+  },
+  "drag-value": {
+   "kind": "DragValue",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [
+    {
+     "name": "text",
+     "node": false
+    },
+    {
+     "name": "inc",
+     "node": false
+    },
+    {
+     "name": "dec",
+     "node": false
+    }
+   ],
+   "provider_states": []
+  },
+  "frame": {
+   "kind": "Frame",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [
+    {
+     "name": "caption",
+     "node": false
+    },
+    {
+     "name": "indicator",
+     "node": false
+    },
+    {
+     "name": "mark",
+     "node": false
+    }
+   ],
+   "provider_states": []
+  },
+  "grid": {
+   "kind": "Grid",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "hyperlink": {
+   "kind": "Hyperlink",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "icon": {
+   "kind": "Icon",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "image": {
+   "kind": "Image",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "inner-window": {
+   "kind": "InnerWindow",
+   "states": [],
+   "parts": [],
+   "provider_states": []
+  },
+  "i": {
+   "kind": "Italic",
+   "states": [],
+   "parts": [],
+   "provider_states": []
+  },
+  "label": {
+   "kind": "Label",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "menu": {
+   "kind": "Menu",
+   "states": [],
+   "parts": [],
+   "provider_states": []
+  },
+  "menu-bar": {
+   "kind": "MenuBar",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "menu-button": {
+   "kind": "MenuButton",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "menu-separator": {
+   "kind": "MenuSeparator",
+   "states": [],
+   "parts": [],
+   "provider_states": []
+  },
+  "modal": {
+   "kind": "Modal",
+   "states": [],
+   "parts": [],
+   "provider_states": []
+  },
+  "panel": {
+   "kind": "Panel",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "popup": {
+   "kind": "Popup",
+   "states": [],
+   "parts": [],
+   "provider_states": []
+  },
+  "progress-bar": {
+   "kind": "ProgressBar",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [
+    {
+     "name": "track",
+     "node": false
+    },
+    {
+     "name": "fill",
+     "node": false
+    }
+   ],
+   "provider_states": []
+  },
+  "radio-button": {
+   "kind": "RadioButton",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [
+    {
+     "name": "indicator",
+     "node": false
+    },
+    {
+     "name": "dot",
+     "node": false
+    },
+    {
+     "name": "icon",
+     "node": false
+    },
+    {
+     "name": "label",
+     "node": false
+    }
+   ],
+   "provider_states": []
+  },
+  "range-slider": {
+   "kind": "RangeSlider",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [
+    {
+     "name": "track",
+     "node": false
+    },
+    {
+     "name": "range",
+     "node": false
+    },
+    {
+     "name": "rest",
+     "node": false
+    },
+    {
+     "name": "low-thumb",
+     "node": false
+    },
+    {
+     "name": "high-thumb",
+     "node": false
+    },
+    {
+     "name": "tick",
+     "node": false
+    },
+    {
+     "name": "low-value",
+     "node": false
+    },
+    {
+     "name": "high-value",
+     "node": false
+    }
+   ],
+   "provider_states": []
+  },
+  "scroll-area": {
+   "kind": "ScrollArea",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": [
+    "sv.overflow-top",
+    "sv.overflow-bottom",
+    "sv.overflow-left",
+    "sv.overflow-right"
+   ]
+  },
+  "scrollbar": {
+   "kind": "Scrollbar",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": [
+    "sv.overflow-top",
+    "sv.overflow-bottom",
+    "sv.overflow-left",
+    "sv.overflow-right"
+   ]
+  },
+  "separator": {
+   "kind": "Separator",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "sides": {
+   "kind": "Sides",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "slider": {
+   "kind": "Slider",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [
+    {
+     "name": "track",
+     "node": false
+    },
+    {
+     "name": "fill",
+     "node": false
+    },
+    {
+     "name": "rest",
+     "node": false
+    },
+    {
+     "name": "thumb",
+     "node": false
+    },
+    {
+     "name": "tick",
+     "node": false
+    },
+    {
+     "name": "mark-label",
+     "node": false
+    },
+    {
+     "name": "value-box",
+     "node": false
+    }
+   ],
+   "provider_states": []
+  },
+  "span": {
+   "kind": "Span",
+   "states": [],
+   "parts": [],
+   "provider_states": []
+  },
+  "spinner": {
+   "kind": "Spinner",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "split-view": {
+   "kind": "SplitView",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "stack": {
+   "kind": "Stack",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "switch": {
+   "kind": "Switch",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [
+    {
+     "name": "track",
+     "node": false
+    },
+    {
+     "name": "knob",
+     "node": false
+    }
+   ],
+   "provider_states": []
+  },
+  "tab": {
+   "kind": "Tab",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "tab-view": {
+   "kind": "TabView",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "table": {
+   "kind": "Table",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "table-column": {
+   "kind": "TableColumn",
+   "states": [],
+   "parts": [],
+   "provider_states": []
+  },
+  "text-edit": {
+   "kind": "TextEdit",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "toast-host": {
+   "kind": "ToastHost",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "toggle-button": {
+   "kind": "ToggleButton",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
+  "tree-view": {
+   "kind": "TreeView",
+   "states": [],
+   "parts": [],
+   "provider_states": [
+    "sv.overflow-top",
+    "sv.overflow-bottom",
+    "sv.overflow-left",
+    "sv.overflow-right"
+   ]
+  },
+  "virtual-list": {
+   "kind": "VirtualList",
+   "states": [],
+   "parts": [],
+   "provider_states": [
+    "sv.overflow-top",
+    "sv.overflow-bottom",
+    "sv.overflow-left",
+    "sv.overflow-right"
+   ]
+  },
+  "window": {
+   "kind": "Window",
+   "states": [
+    "active",
+    "exiting",
+    "focus-within",
+    "hover"
+   ],
+   "parts": [],
+   "provider_states": []
+  }
+ },
+ "provider_states": [
+  "sv.overflow-bottom",
+  "sv.overflow-left",
+  "sv.overflow-right",
+  "sv.overflow-top"
+ ],
+ "unsupported": {
+  "utilities": [
+   {
+    "name": "aspect",
+    "reason": "no aspect-ratio property on egui yet (UTILITY-CSS \u00a75)",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "columns",
+    "reason": "no multi-column layout",
+    "use": "grid-cols-*",
+    "allow": []
+   },
+   {
+    "name": "break-after",
+    "reason": "no fragmentation",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "break-before",
+    "reason": "no fragmentation",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "break-inside",
+    "reason": "no fragmentation",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "box-decoration",
+    "reason": "no fragmentation",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "box-border",
+    "reason": "every box is border-box",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "box-content",
+    "reason": "every box is border-box",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "block",
+    "reason": "every element is a flex or grid container",
+    "use": "flex",
+    "allow": []
+   },
+   {
+    "name": "inline",
+    "reason": "every element is a flex or grid container",
+    "use": "flex",
+    "allow": []
+   },
+   {
+    "name": "inline-block",
+    "reason": "every element is a flex or grid container",
+    "use": "flex",
+    "allow": []
+   },
+   {
+    "name": "inline-flex",
+    "reason": "every element is a flex or grid container",
+    "use": "flex",
+    "allow": []
+   },
+   {
+    "name": "inline-grid",
+    "reason": "every element is a flex or grid container",
+    "use": "grid",
+    "allow": []
+   },
+   {
+    "name": "contents",
+    "reason": "every element is a box",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "flow-root",
+    "reason": "every element is a flex or grid container",
+    "use": "flex",
+    "allow": []
+   },
+   {
+    "name": "list-item",
+    "reason": "every element is a flex or grid container",
+    "use": "flex",
+    "allow": []
+   },
+   {
+    "name": "table",
+    "reason": "no table display; use the table kind",
+    "use": "grid",
+    "allow": []
+   },
+   {
+    "name": "sr-only",
+    "reason": "accessibility comes from props (accessible-name), not CSS",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "not-sr-only",
+    "reason": "accessibility comes from props (accessible-name), not CSS",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "float",
+    "reason": "no floats",
+    "use": "flex",
+    "allow": []
+   },
+   {
+    "name": "clear",
+    "reason": "no floats",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "isolate",
+    "reason": "no stacking contexts",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "isolation",
+    "reason": "no stacking contexts",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "object",
+    "reason": "an image's fit is a prop of the image kind",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "overscroll-x",
+    "reason": "one overscroll-behavior for both axes",
+    "use": "overscroll-*",
+    "allow": []
+   },
+   {
+    "name": "overscroll-y",
+    "reason": "one overscroll-behavior for both axes",
+    "use": "overscroll-*",
+    "allow": []
+   },
+   {
+    "name": "fixed",
+    "reason": "no viewport-fixed positioning; overlays are their own kinds",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "sticky",
+    "reason": "no sticky positioning",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "start",
+    "reason": "no logical (RTL) properties",
+    "use": "left-*",
+    "allow": []
+   },
+   {
+    "name": "end",
+    "reason": "no logical (RTL) properties",
+    "use": "right-*",
+    "allow": []
+   },
+   {
+    "name": "visible",
+    "reason": "visibility is the `visible` prop, not CSS",
+    "use": "hidden",
+    "allow": []
+   },
+   {
+    "name": "invisible",
+    "reason": "visibility is the `visible` prop, not CSS",
+    "use": "hidden",
+    "allow": []
+   },
+   {
+    "name": "collapse",
+    "reason": "visibility is the `visible` prop, not CSS",
+    "use": "hidden",
+    "allow": []
+   },
+   {
+    "name": "z",
+    "reason": "layers are structural (overlays, popups), not z-index",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "order",
+    "reason": "no order property on egui yet (UTILITY-CSS \u00a75)",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "col-start",
+    "reason": "grid-column is one value",
+    "use": "col-[<start>/<end>]",
+    "allow": []
+   },
+   {
+    "name": "col-end",
+    "reason": "grid-column is one value",
+    "use": "col-[<start>/<end>]",
+    "allow": []
+   },
+   {
+    "name": "row-start",
+    "reason": "grid-row is one value",
+    "use": "row-[<start>/<end>]",
+    "allow": []
+   },
+   {
+    "name": "row-end",
+    "reason": "grid-row is one value",
+    "use": "row-[<start>/<end>]",
+    "allow": []
+   },
+   {
+    "name": "grid-flow",
+    "reason": "no grid-auto-flow",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "auto-cols",
+    "reason": "no grid-auto-columns",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "auto-rows",
+    "reason": "no grid-auto-rows",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "justify-self",
+    "reason": "no justify-self",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "content",
+    "reason": "no align-content; a glyph part's `content` is set in CSS",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "place-content",
+    "reason": "no place-* shorthands",
+    "use": "justify-*",
+    "allow": []
+   },
+   {
+    "name": "place-items",
+    "reason": "no place-* shorthands",
+    "use": "items-*",
+    "allow": []
+   },
+   {
+    "name": "place-self",
+    "reason": "no place-* shorthands",
+    "use": "self-*",
+    "allow": []
+   },
+   {
+    "name": "ps",
+    "reason": "no logical (RTL) properties",
+    "use": "pl-*",
+    "allow": []
+   },
+   {
+    "name": "pe",
+    "reason": "no logical (RTL) properties",
+    "use": "pr-*",
+    "allow": []
+   },
+   {
+    "name": "ms",
+    "reason": "no logical (RTL) properties",
+    "use": "ml-*",
+    "allow": []
+   },
+   {
+    "name": "me",
+    "reason": "no logical (RTL) properties",
+    "use": "mr-*",
+    "allow": []
+   },
+   {
+    "name": "space-x",
+    "reason": "gap does the same on flex and grid containers",
+    "use": "gap-x-*",
+    "allow": []
+   },
+   {
+    "name": "space-y",
+    "reason": "gap does the same on flex and grid containers",
+    "use": "gap-y-*",
+    "allow": []
+   },
+   {
+    "name": "font-stretch",
+    "reason": "no font-stretch",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "text-wrap",
+    "reason": "no text-wrap",
+    "use": "whitespace-*",
+    "allow": []
+   },
+   {
+    "name": "text-nowrap",
+    "reason": "no text-wrap",
+    "use": "whitespace-nowrap",
+    "allow": []
+   },
+   {
+    "name": "text-balance",
+    "reason": "no text-wrap",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "text-pretty",
+    "reason": "no text-wrap",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "text-shadow",
+    "reason": "no text shadows",
+    "use": null,
+    "allow": [
+     "text-shadow-color"
+    ]
+   },
+   {
+    "name": "antialiased",
+    "reason": "egui renders the text",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "subpixel-antialiased",
+    "reason": "egui renders the text",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "normal-nums",
+    "reason": "no font-variant-numeric",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "ordinal",
+    "reason": "no font-variant-numeric",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "slashed-zero",
+    "reason": "no font-variant-numeric",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "lining-nums",
+    "reason": "no font-variant-numeric",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "oldstyle-nums",
+    "reason": "no font-variant-numeric",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "proportional-nums",
+    "reason": "no font-variant-numeric",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "tabular-nums",
+    "reason": "no font-variant-numeric",
+    "use": "font-mono",
+    "allow": []
+   },
+   {
+    "name": "diagonal-fractions",
+    "reason": "no font-variant-numeric",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "stacked-fractions",
+    "reason": "no font-variant-numeric",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "line-clamp",
+    "reason": "no line clamping",
+    "use": "truncate",
+    "allow": []
+   },
+   {
+    "name": "list",
+    "reason": "no list styles",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "decoration",
+    "reason": "no text-decoration colour, style or thickness",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "underline-offset",
+    "reason": "no text-underline-offset",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "indent",
+    "reason": "no text-indent",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "align",
+    "reason": "no vertical-align; use items-* on the container",
+    "use": "items-*",
+    "allow": []
+   },
+   {
+    "name": "break",
+    "reason": "no word-break",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "wrap",
+    "reason": "no overflow-wrap",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "hyphens",
+    "reason": "no hyphenation",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "bg-fixed",
+    "reason": "background images are gradients or painters: no attachment",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "bg-local",
+    "reason": "background images are gradients or painters: no attachment",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "bg-scroll",
+    "reason": "background images are gradients or painters: no attachment",
+    "use": null,
+    "allow": [
+     "bg-scroll-shadow"
+    ]
+   },
+   {
+    "name": "bg-clip",
+    "reason": "no background-clip",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "bg-origin",
+    "reason": "no background-origin",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "bg-repeat",
+    "reason": "no background-repeat",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "bg-no-repeat",
+    "reason": "no background-repeat",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "bg-cover",
+    "reason": "no background-size",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "bg-contain",
+    "reason": "no background-size",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "bg-center",
+    "reason": "no background-position",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "bg-top",
+    "reason": "no background-position",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "bg-bottom",
+    "reason": "no background-position",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "bg-left",
+    "reason": "no background-position",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "bg-right",
+    "reason": "no background-position",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "bg-none",
+    "reason": "background-image utilities come later; set background-image in CSS",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "bg-linear",
+    "reason": "gradient utilities come later (gradient stop variables); set background-image in CSS",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "bg-radial",
+    "reason": "gradient utilities come later; set background-image in CSS",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "bg-conic",
+    "reason": "no conic gradients",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "from",
+    "reason": "gradient utilities come later",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "via",
+    "reason": "gradient utilities come later",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "to",
+    "reason": "gradient utilities come later",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "bg-blend",
+    "reason": "no blend modes",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "rounded-s",
+    "reason": "no logical (RTL) properties",
+    "use": "rounded-l-*",
+    "allow": []
+   },
+   {
+    "name": "rounded-e",
+    "reason": "no logical (RTL) properties",
+    "use": "rounded-r-*",
+    "allow": []
+   },
+   {
+    "name": "rounded-ss",
+    "reason": "no logical (RTL) properties",
+    "use": "rounded-tl-*",
+    "allow": []
+   },
+   {
+    "name": "rounded-se",
+    "reason": "no logical (RTL) properties",
+    "use": "rounded-tr-*",
+    "allow": []
+   },
+   {
+    "name": "rounded-es",
+    "reason": "no logical (RTL) properties",
+    "use": "rounded-bl-*",
+    "allow": []
+   },
+   {
+    "name": "rounded-ee",
+    "reason": "no logical (RTL) properties",
+    "use": "rounded-br-*",
+    "allow": []
+   },
+   {
+    "name": "border-s",
+    "reason": "no logical (RTL) properties",
+    "use": "border-l-*",
+    "allow": []
+   },
+   {
+    "name": "border-e",
+    "reason": "no logical (RTL) properties",
+    "use": "border-r-*",
+    "allow": []
+   },
+   {
+    "name": "border-collapse",
+    "reason": "no table borders",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "border-separate",
+    "reason": "no table borders",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "border-spacing",
+    "reason": "no table borders",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "divide",
+    "reason": "no sibling borders yet; put border-* on the children",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "divide-x",
+    "reason": "no sibling borders yet; put border-l-* on the children",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "divide-y",
+    "reason": "no sibling borders yet; put border-t-* on the children",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "outline-hidden",
+    "reason": "no forced-colors mode (high contrast is a token set)",
+    "use": "outline-none",
+    "allow": []
+   },
+   {
+    "name": "ring",
+    "reason": "no ring (a box-shadow outline)",
+    "use": "outline-*",
+    "allow": []
+   },
+   {
+    "name": "ring-offset",
+    "reason": "no ring",
+    "use": "outline-offset-*",
+    "allow": []
+   },
+   {
+    "name": "inset-ring",
+    "reason": "no ring",
+    "use": "outline-*",
+    "allow": []
+   },
+   {
+    "name": "inset-shadow",
+    "reason": "no inset shadow utilities; set box-shadow in CSS",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "mix-blend",
+    "reason": "no blend modes",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "mask",
+    "reason": "no masks",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "blur",
+    "reason": "no filters",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "brightness",
+    "reason": "no filters",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "contrast",
+    "reason": "no filters",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "drop-shadow",
+    "reason": "no filters",
+    "use": "shadow-*",
+    "allow": []
+   },
+   {
+    "name": "grayscale",
+    "reason": "no filters",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "hue-rotate",
+    "reason": "no filters",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "invert",
+    "reason": "no filters",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "saturate",
+    "reason": "no filters",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "sepia",
+    "reason": "no filters",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "backdrop",
+    "reason": "no backdrop filters",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "table-auto",
+    "reason": "no table display; use the table kind",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "table-fixed",
+    "reason": "no table display; use the table kind",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "caption",
+    "reason": "no table display; use the table kind",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "transition-all",
+    "reason": "transition covers the properties egui animates",
+    "use": "transition",
+    "allow": []
+   },
+   {
+    "name": "transition-transform",
+    "reason": "no transforms on egui",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "transition-discrete",
+    "reason": "no transition-behavior",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "transition-normal",
+    "reason": "no transition-behavior",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "animate",
+    "reason": "animations are Svelte transitions (TR1)",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "backface",
+    "reason": "no transforms on egui",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "perspective",
+    "reason": "no transforms on egui",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "perspective-origin",
+    "reason": "no transforms on egui",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "rotate",
+    "reason": "no transforms on egui",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "scale",
+    "reason": "no transforms on egui",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "skew",
+    "reason": "no transforms on egui",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "transform",
+    "reason": "no transforms on egui",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "origin",
+    "reason": "no transforms on egui",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "translate",
+    "reason": "no transforms on egui",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "accent",
+    "reason": "no accent-color; the theme's accent role styles the controls",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "appearance",
+    "reason": "own widgets draw from CSS; no native appearance",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "caret",
+    "reason": "the caret colour is the theme's caret role (later: a caret part)",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "scheme",
+    "reason": "the colour scheme is the theme's (set_theme)",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "field-sizing",
+    "reason": "no field-sizing",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "pointer-events",
+    "reason": "hit-testing is a prop, not CSS",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "resize",
+    "reason": "resizing is the sash and window kinds' job",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "scroll-auto",
+    "reason": "no scroll-behavior; scrolling is the scroll-area's",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "scroll-smooth",
+    "reason": "no scroll-behavior; scrolling is the scroll-area's",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "scroll-mx",
+    "reason": "one scroll-margin for every side",
+    "use": "scroll-m-*",
+    "allow": []
+   },
+   {
+    "name": "scroll-my",
+    "reason": "one scroll-margin for every side",
+    "use": "scroll-m-*",
+    "allow": []
+   },
+   {
+    "name": "scroll-mt",
+    "reason": "one scroll-margin for every side",
+    "use": "scroll-m-*",
+    "allow": []
+   },
+   {
+    "name": "scroll-mr",
+    "reason": "one scroll-margin for every side",
+    "use": "scroll-m-*",
+    "allow": []
+   },
+   {
+    "name": "scroll-mb",
+    "reason": "one scroll-margin for every side",
+    "use": "scroll-m-*",
+    "allow": []
+   },
+   {
+    "name": "scroll-ml",
+    "reason": "one scroll-margin for every side",
+    "use": "scroll-m-*",
+    "allow": []
+   },
+   {
+    "name": "scroll-ms",
+    "reason": "one scroll-margin for every side",
+    "use": "scroll-m-*",
+    "allow": []
+   },
+   {
+    "name": "scroll-me",
+    "reason": "one scroll-margin for every side",
+    "use": "scroll-m-*",
+    "allow": []
+   },
+   {
+    "name": "scroll-p",
+    "reason": "no scroll-padding",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "snap",
+    "reason": "no scroll snapping",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "touch",
+    "reason": "no touch-action",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "select",
+    "reason": "text selection is the `selectable` prop",
+    "use": "the selectable prop",
+    "allow": []
+   },
+   {
+    "name": "will-change",
+    "reason": "no will-change",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "fill",
+    "reason": "no SVG styling; icons take a colour from `color`",
+    "use": "text-*",
+    "allow": []
+   },
+   {
+    "name": "stroke",
+    "reason": "no SVG styling",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "forced-color-adjust",
+    "reason": "high contrast is a token set, not forced colours",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "@container",
+    "reason": "container queries come with CS-CQ",
+    "use": null,
+    "allow": []
+   }
+  ],
+  "variants": [
+   {
+    "name": "visited",
+    "reason": "no links history",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "target",
+    "reason": "no URL fragments",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "user-valid",
+    "reason": "no :user-valid state",
+    "use": "valid:",
+    "allow": []
+   },
+   {
+    "name": "in-range",
+    "reason": "no range states",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "out-of-range",
+    "reason": "no range states",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "autofill",
+    "reason": "no autofill",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "details-content",
+    "reason": "no details element; use collapsing-header",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "inert",
+    "reason": "no inert state",
+    "use": "disabled:",
+    "allow": []
+   },
+   {
+    "name": "first-of-type",
+    "reason": "every child is an element of its kind; position is by child",
+    "use": "first:",
+    "allow": []
+   },
+   {
+    "name": "last-of-type",
+    "reason": "position is by child",
+    "use": "last:",
+    "allow": []
+   },
+   {
+    "name": "only-of-type",
+    "reason": "position is by child",
+    "use": "only:",
+    "allow": []
+   },
+   {
+    "name": "nth",
+    "reason": "nth-N: comes later",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "nth-last",
+    "reason": "nth-last-N: comes later",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "nth-of-type",
+    "reason": "position is by child",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "nth-last-of-type",
+    "reason": "position is by child",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "empty",
+    "reason": "no :empty yet",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "*",
+    "reason": "child variants come later",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "**",
+    "reason": "descendant variants come later",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "before",
+    "reason": "no generated content boxes; parts are declared by the kind",
+    "use": "part-<name>:",
+    "allow": []
+   },
+   {
+    "name": "after",
+    "reason": "no generated content boxes; parts are declared by the kind",
+    "use": "part-<name>:",
+    "allow": []
+   },
+   {
+    "name": "first-letter",
+    "reason": "no ::first-letter",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "first-line",
+    "reason": "no ::first-line",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "marker",
+    "reason": "no list markers",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "file",
+    "reason": "no file inputs",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "data",
+    "reason": "nodes have props, not data attributes",
+    "use": "prop-[<name>=<value>]:",
+    "allow": []
+   },
+   {
+    "name": "aria",
+    "reason": "only the aria-* names with a state (aria-checked:, ...) are accepted, as aliases",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "aria-hidden",
+    "reason": "no hidden state",
+    "use": "hidden",
+    "allow": []
+   },
+   {
+    "name": "aria-pressed",
+    "reason": "a toggle's pressed state is :checked",
+    "use": "checked:",
+    "allow": []
+   },
+   {
+    "name": "2xl",
+    "reason": "breakpoints are the theme's breakpoint-* tokens (sm, md, lg, xl)",
+    "use": "xl:",
+    "allow": []
+   },
+   {
+    "name": "min",
+    "reason": "breakpoints are the theme's breakpoint-* tokens",
+    "use": "sm:",
+    "allow": []
+   },
+   {
+    "name": "forced-colors",
+    "reason": "high contrast is a token set",
+    "use": "contrast-more:",
+    "allow": []
+   },
+   {
+    "name": "inverted-colors",
+    "reason": "no inverted-colors",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "pointer-fine",
+    "reason": "no pointer media features",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "pointer-coarse",
+    "reason": "no pointer media features",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "pointer-none",
+    "reason": "no pointer media features",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "any-pointer-fine",
+    "reason": "no pointer media features",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "any-pointer-coarse",
+    "reason": "no pointer media features",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "any-pointer-none",
+    "reason": "no pointer media features",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "print",
+    "reason": "no printing",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "noscript",
+    "reason": "always scripted",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "supports",
+    "reason": "the engine's support is static; see the property table",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "not-supports",
+    "reason": "the engine's support is static",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "starting",
+    "reason": "no @starting-style; enter transitions are Svelte's",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "rtl",
+    "reason": "no right-to-left layout",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "ltr",
+    "reason": "no right-to-left layout",
+    "use": null,
+    "allow": []
+   },
+   {
+    "name": "@3xs",
+    "reason": "container sizes are the theme's container-* tokens (xs to xl)",
+    "use": "@xs:",
+    "allow": []
+   },
+   {
+    "name": "@2xs",
+    "reason": "container sizes are the theme's container-* tokens (xs to xl)",
+    "use": "@xs:",
+    "allow": []
+   },
+   {
+    "name": "@2xl",
+    "reason": "container sizes are the theme's container-* tokens (xs to xl)",
+    "use": "@xl:",
+    "allow": []
+   },
+   {
+    "name": "@3xl",
+    "reason": "container sizes are the theme's container-* tokens (xs to xl)",
+    "use": "@xl:",
+    "allow": []
+   },
+   {
+    "name": "@4xl",
+    "reason": "container sizes are the theme's container-* tokens (xs to xl)",
+    "use": "@xl:",
+    "allow": []
+   },
+   {
+    "name": "@5xl",
+    "reason": "container sizes are the theme's container-* tokens (xs to xl)",
+    "use": "@xl:",
+    "allow": []
+   },
+   {
+    "name": "@6xl",
+    "reason": "container sizes are the theme's container-* tokens (xs to xl)",
+    "use": "@xl:",
+    "allow": []
+   },
+   {
+    "name": "@7xl",
+    "reason": "container sizes are the theme's container-* tokens (xs to xl)",
+    "use": "@xl:",
+    "allow": []
+   }
+  ]
+ }
+}

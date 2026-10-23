@@ -121,6 +121,10 @@ pub struct Table {
     pub units: &'static [(&'static str, f32)],
     /// Sorted by name.
     pub props: &'static [Prop],
+    /// U0 (UTILITY-CSS §3.4): the numeric range of a length or number property, `(name, min,
+    /// max)` with infinite bounds for open ends, sorted by name; unlisted properties are unbounded.
+    /// The guard for utility and arbitrary values (`opacity-150`, a negative width).
+    pub ranges: &'static [(&'static str, f64, f64)],
 }
 
 impl Table {
@@ -140,6 +144,11 @@ impl Table {
         self.props.binary_search_by(|p| p.name.cmp(name)).ok()
     }
 
+    /// The numeric range of `prop` (`min`, `max`; infinite for an open end), if the table bounds it.
+    pub fn range(&self, prop: &str) -> Option<(f64, f64)> {
+        self.ranges.binary_search_by(|r| r.0.cmp(prop)).ok().map(|i| (self.ranges[i].1, self.ranges[i].2))
+    }
+
     pub fn unit_scale(&self, unit: &str) -> Option<f32> {
         self.units.iter().find(|(u, _)| u.eq_ignore_ascii_case(unit)).map(|(_, s)| *s)
     }
@@ -157,6 +166,22 @@ mod tests {
     #[test]
     fn inherited_is_sorted() {
         assert!(INHERITED.windows(2).all(|w| w[0] < w[1]));
+    }
+
+    /// U0: every generated range names a numeric property of its table, in name order.
+    #[test]
+    fn generated_ranges_are_sorted_numeric_props() {
+        for t in crate::tables::ALL {
+            assert!(t.ranges.windows(2).all(|w| w[0].0 < w[1].0), "{}: ranges not sorted", t.toolkit);
+            for &(name, min, max) in t.ranges {
+                let p = t.get(name).unwrap_or_else(|| panic!("{}: range for unknown property {name}", t.toolkit));
+                assert!(matches!(p.ty, ValueType::Length | ValueType::Number | ValueType::Int | ValueType::Insets), "{}: {name} is not numeric", t.toolkit);
+                assert!(min <= max, "{}: {name}: empty range", t.toolkit);
+            }
+        }
+        let egui = Table::for_toolkit("egui").unwrap();
+        assert_eq!(egui.range("opacity"), Some((0.0, 1.0)));
+        assert_eq!(egui.range("margin-top"), None);
     }
 
     #[test]

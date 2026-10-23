@@ -50,6 +50,24 @@ def _keys(where: str, rec: dict, allowed: set[str]) -> None:
         _fail(f"{where}: unknown field(s) {extra}")
 
 
+# U0 (UTILITY-CSS §3.4): value types an optional `range: { min, max }` may bound
+RANGED = {"length", "number", "int", "insets"}
+
+
+def _range(w: str, r, ty: str | None) -> dict:
+    """An optional `range:` of a numeric row: `{min?, max?}`, at least one bound, min <= max."""
+    if ty not in RANGED:
+        _fail(f"{w}: range is only for {sorted(RANGED)} values, not {ty}")
+    if not isinstance(r, dict) or not r or set(r) - {"min", "max"}:
+        _fail(f"{w}: range needs min and/or max")
+    for k, v in r.items():
+        if isinstance(v, bool) or not isinstance(v, (int, float)):
+            _fail(f"{w}: range.{k} must be a number")
+    if "min" in r and "max" in r and r["min"] > r["max"]:
+        _fail(f"{w}: range.min > range.max")
+    return {k: r[k] for k in ("min", "max") if k in r}
+
+
 def load(toolkit: str) -> dict:
     return yaml.safe_load((STYLE / f"{toolkit}.yaml").read_text())
 
@@ -109,7 +127,7 @@ def build(toolkit: str, doc: dict, tags: dict[str, str], kinds: dict[str, dict])
             _fail(f"{w}: via must be one of {sorted(VIAS)}")
         if via == "css":
             decl = doc["dialect"] == "decl"
-            _keys(w, rec, {"via", "note", "inline_only"} | ({"type", "values"} if decl else set()))
+            _keys(w, rec, {"via", "note", "inline_only"} | ({"type", "values", "range"} if decl else set()))
             if doc["dialect"] == "none":
                 _fail(f"{w}: {toolkit} has no native styling dialect; only setters and child attributes")
             out = {"via": "css"}
@@ -124,7 +142,7 @@ def build(toolkit: str, doc: dict, tags: dict[str, str], kinds: dict[str, dict])
             if rec.get("inline_only"):
                 out["inline_only"] = True
         elif via == "setter":
-            _keys(w, rec, {"via", "prop", "type", "kinds", "note"})
+            _keys(w, rec, {"via", "prop", "type", "kinds", "note", "range"})
             ty = rec.get("type")
             if ty not in TYPES:
                 _fail(f"{w}: type must be one of {sorted(TYPES)}")
@@ -152,7 +170,7 @@ def build(toolkit: str, doc: dict, tags: dict[str, str], kinds: dict[str, dict])
                     _fail(f"{w}: enum {first.get('enum')} of {rec['prop']} has no known values in the metadata")
                 out["values"] = first["values"]
         else:
-            _keys(w, rec, {"via", "attr", "type", "parents", "note"})
+            _keys(w, rec, {"via", "attr", "type", "parents", "note", "range"})
             ty = rec.get("type")
             if ty not in TYPES:
                 _fail(f"{w}: type must be one of {sorted(TYPES)}")
@@ -170,6 +188,8 @@ def build(toolkit: str, doc: dict, tags: dict[str, str], kinds: dict[str, dict])
             out = {"via": "child-attr", "attr": rec["attr"], "type": ty, "parents": rec["parents"], "tags": tl}
             if ty == "enum":
                 out["values"] = first["values"]
+        if "range" in rec:
+            out["range"] = _range(w, rec["range"], out.get("type") or out.get("decl_type"))
         if rec.get("note"):
             out["note"] = rec["note"]
         props[name] = out

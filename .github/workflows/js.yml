@@ -111,6 +111,14 @@ jobs:
         if: ${{ !cancelled() }}
         run: python3 -I tools/docs/egui/gen_reference.py --check
 
+      # U0 (plans/milestones/U0-utility-metadata.md): the utility-class vocabulary
+      # (metadata/style/utilities.yaml, tailwind-v4.yaml) checks against egui.json, and its outputs
+      # (svelters-style utilities.generated.rs, packages/style utilities.*.json/js, the docs page)
+      # are current. Fix: python3 tools/metadata/style/gen_utilities.py
+      - name: utility classes --check
+        if: ${{ !cancelled() }}
+        run: python3 -I tools/metadata/style/gen_utilities.py --check
+
       - name: pnpm docs:test
         if: ${{ !cancelled() }}
         run: pnpm docs:test

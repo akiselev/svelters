@@ -144,6 +144,44 @@ pub(crate) const ENGINE_PROPS: &[(&str, &str, &[&str])] = &[
     ("white-space", "enum", &["normal", "nowrap", "pre", "pre-wrap", "pre-line", "break-spaces"]),
 ];
 
+/// U0 (UTILITY-CSS §3.4): the numeric ranges of egui's style properties, kind-table setters and
+/// [`ENGINE_PROPS`] alike, as `(name, min, max)` (infinite for an open end): the spec's `range`, which
+/// guards utility and arbitrary values (`opacity-150`, a negative width). Unlisted: unbounded
+/// (margins and insets may be negative).
+pub(crate) const PROP_RANGES: &[(&str, f64, f64)] = &[
+    ("border-bottom-left-radius", 0.0, f64::INFINITY),
+    ("border-bottom-right-radius", 0.0, f64::INFINITY),
+    ("border-bottom-width", 0.0, f64::INFINITY),
+    ("border-left-width", 0.0, f64::INFINITY),
+    ("border-radius", 0.0, f64::INFINITY),
+    ("border-right-width", 0.0, f64::INFINITY),
+    ("border-top-left-radius", 0.0, f64::INFINITY),
+    ("border-top-right-radius", 0.0, f64::INFINITY),
+    ("border-top-width", 0.0, f64::INFINITY),
+    ("border-width", 0.0, f64::INFINITY),
+    ("column-gap", 0.0, f64::INFINITY),
+    ("flex-basis", 0.0, f64::INFINITY),
+    ("flex-grow", 0.0, f64::INFINITY),
+    ("flex-shrink", 0.0, f64::INFINITY),
+    ("font-size", 0.0, f64::INFINITY),
+    ("gap", 0.0, f64::INFINITY),
+    ("height", 0.0, f64::INFINITY),
+    ("max-height", 0.0, f64::INFINITY),
+    ("max-width", 0.0, f64::INFINITY),
+    ("min-height", 0.0, f64::INFINITY),
+    ("min-width", 0.0, f64::INFINITY),
+    ("opacity", 0.0, 1.0),
+    ("outline-width", 0.0, f64::INFINITY),
+    ("padding", 0.0, f64::INFINITY),
+    ("padding-bottom", 0.0, f64::INFINITY),
+    ("padding-left", 0.0, f64::INFINITY),
+    ("padding-right", 0.0, f64::INFINITY),
+    ("padding-top", 0.0, f64::INFINITY),
+    ("row-gap", 0.0, f64::INFINITY),
+    ("scroll-margin", 0.0, f64::INFINITY),
+    ("width", 0.0, f64::INFINITY),
+];
+
 /// The bits the walk owns: set from the pass's interaction and from props, never by providers.
 pub(crate) const WALK_BITS: StateBits = StateBits(
     StateBits::HOVERED.0

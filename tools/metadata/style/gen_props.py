@@ -44,6 +44,8 @@ def render() -> str:
                 e["values"] = p["values"]
             if p.get("inline_only"):
                 e["inlineOnly"] = True
+            if "range" in p:
+                e["range"] = p["range"]
             if p.get("note"):
                 e["note"] = p["note"]
             props[name] = e
@@ -95,6 +97,11 @@ def rs_str(s: str) -> str:
     return json.dumps(s)  # a JSON string of ASCII text is a valid Rust string literal
 
 
+def rs_f64(v, sign: str) -> str:
+    """A range bound: a finite number, or an infinite open end (`sign` `-` for the minimum)."""
+    return f"{sign}f64::INFINITY" if v is None else f"{float(v)!r}_f64"
+
+
 def rs_list(xs: list[str]) -> str:
     return "&[" + ", ".join(rs_str(x) for x in xs) + "]"
 
@@ -126,7 +133,10 @@ def render_rs() -> str:
                 f"ty: ValueType::{RS_TYPE.get(ty, 'Raw')}, values: {rs_list(p.get('values', []))}, "
                 f"tags: {rs_list(tags or [])}, inline_only: {'true' if p.get('inline_only') else 'false'} }},"
             )
-        lines += ["    ],", "};", ""]
+        lines.append("    ],")
+        ranges = [(n, st["properties"][n]["range"]) for n in sorted(st["properties"]) if "range" in st["properties"][n]]
+        lines.append("    ranges: &[" + "".join(f"\n        ({rs_str(n)}, {rs_f64(r.get('min'), '-')}, {rs_f64(r.get('max'), '')})," for n, r in ranges) + ("\n    ]," if ranges else "],"))
+        lines += ["};", ""]
     lines.append("/// Every generated table.")
     lines.append("pub static ALL: &[&Table] = &[" + ", ".join(f"&{tk.upper()}" for tk in TOOLKITS) + "];")
     lines.append("")
