@@ -308,6 +308,16 @@ The fallback is to inject `fill` or `stroke` per class, and the lint (L4) guaran
 is fill-only or stroke-only with the outline as a separate unclassed element. The samples would need that
 split for `subject` parts, a mechanical change in `src.py`.]*
 
+**Resolved (ICR1, 2026-10-22; `plans/milestones/ICR1-icon-registry.md`).** usvg 0.45 applies the injected
+`color`, but it resolves `currentColor` at the element that *declares* the paint, not at the element being
+painted (`parser/style.rs` `convert_paint`). A classed element whose `stroke` (or `fill`) is inherited from the
+root would therefore keep the root's colour: the warning triangle's stroke and a subject's outline. ICR1's loader
+fixes this without touching the SVGs. Before a slot raster, `svelters_egui::icons::slot_svg` gives every
+`subject`/`accent`/`badge` element that inherits `fill` or `stroke` as `currentColor` its own
+`fill`/`stroke="currentColor"`, so its slot `color` applies. Rasters confirm it: with `--icon-accent: #CCA700`,
+every opaque pixel of `chrome.warning` is exactly #CCA700, and the subject's outline takes `--icon-subject`. The
+fallback above (the per-class split and L4's fill-only/stroke-only rule) is **not needed**.
+
 **Tinting with slots.** Multiplying white by `color` is correct only while every part derives from
 `currentColor`. When any slot is set, the loader must rasterise with the root `color` set to the resolved CSS
 `color` and the slot colours injected, and must **not** multiply. Otherwise #CCA700 × #CCCCCC darkens the
