@@ -34,8 +34,9 @@ pub mod slider;
 pub mod value_box;
 pub mod checkbox;
 pub mod collapsing;
+pub(crate) mod dialog;
 pub mod frame;
-mod glyph;
+pub(crate) mod glyph;
 pub mod hyperlink;
 pub mod image;
 pub mod label;
@@ -91,12 +92,15 @@ pub const DEFAULT_OWN: &[&str] = &[
     "popup",
     "combo-box",
     "tooltip",
+    // OW7
+    "modal",
+    "inner-window",
 ];
 
 /// The built-in tags whose egui wrapper is gone (deleted in the lane whose own widget passed its
 /// acceptance, §6.2 step 3) or never existed (`scrollbar`): always svelters' own, whatever the
 /// switch says.
-pub const OWN_ONLY: &[&str] = &["calendar", "color-editor", "color-picker", "date-picker", "drag-value", "panel", "range-slider", "scroll-area", "scrollbar", "slider", "split-view"];
+pub const OWN_ONLY: &[&str] = &["calendar", "color-editor", "color-picker", "date-picker", "drag-value", "panel", "range-slider", "scroll-area", "scrollbar", "slider", "split-view", "toast-host"];
 
 /// Which built-in kinds get svelters' own widget (§6.2: the per-kind switch).
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -157,7 +161,8 @@ pub(crate) fn mark_own(set: &KindSet, tag: &str, w: &mut W) {
     }
     match w {
         W::Menu(m) => m.set_own(true),
-        W::Overlay(o) if o.kind == crate::overlays::OverlayKind::Popup => o.own = true,
+        // OW7: `modal` and `inner-window` too (their tag is in `set`)
+        W::Overlay(o) => o.own = true,
         _ => {}
     }
 }
