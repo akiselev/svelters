@@ -103,7 +103,7 @@ fn ow6_calendar_first_day_weekdays_and_day_parts() {
     // the grid starts on Sunday 2026-09-27; no weekday row, no week numbers: 7 cells wide
     let first = rig.harness.get_by_role_and_label(Role::GridCell, "2026-09-27");
     let grid = rig.drawn(c);
-    assert!((first.rect().left() as f32 - grid.left()).abs() < 1.0, "{:?} in {grid:?}", first.rect());
+    assert!((first.rect().left() - grid.left()).abs() < 1.0, "{:?} in {grid:?}", first.rect());
     let d = rig.harness.get_by_role_and_label(Role::GridCell, "2026-10-22");
     let desc = d.accesskit_node().description().unwrap_or_default().to_string();
     assert!(desc.contains("Thursday 22 October 2026") && desc.contains("milestone"), "{desc}");
@@ -146,7 +146,7 @@ fn ow6_color_editor_edits_through_square_strips_fields_and_swatches() {
 
     // the square: drag past the bottom-right corner = black (saturation 1, value 0); one commit on release
     let sq = rig.harness.get_by_role_and_label(Role::Slider, "Saturation and value").rect();
-    let (from, to) = (egui::pos2(sq.center().x as f32, sq.center().y as f32), egui::pos2(sq.max.x as f32 + 20.0, sq.max.y as f32 + 20.0));
+    let (from, to) = (egui::pos2(sq.center().x, sq.center().y), egui::pos2(sq.max.x + 20.0, sq.max.y + 20.0));
     drag(&mut rig, from, to);
     assert_eq!(rig.get(c, "value"), s("#000000"));
     let log = rig.take();
@@ -169,6 +169,21 @@ fn ow6_color_editor_edits_through_square_strips_fields_and_swatches() {
     rig.harness.get_by_role_and_label(Role::TextInput, "Hex").set_text_value_accesskit("#123456");
     rig.run();
     assert_eq!(rig.get(c, "value"), s("#123456"));
+    // typing in it (the text-input seam): select all, type, Enter applies; a bad hex is :invalid
+    let typed = |rig: &mut Rig, t: &str| {
+        rig.harness.get_by_role_and_label(Role::TextInput, "Hex").click();
+        rig.run();
+        rig.harness.key_press_modifiers(egui::Modifiers::COMMAND, egui::Key::A);
+        rig.harness.event(egui::Event::Text(t.into()));
+        rig.run();
+        rig.harness.key_press(egui::Key::Enter);
+        rig.run();
+    };
+    typed(&mut rig, "#abcdef");
+    assert_eq!(rig.get(c, "value"), s("#abcdef"));
+    typed(&mut rig, "zz");
+    assert_eq!(rig.get(c, "value"), s("#abcdef"));
+    assert!(rig.harness.get_by_role_and_label(Role::TextInput, "Hex").accesskit_node().data().invalid().is_some(), "a bad hex is :invalid");
     // swatches pick; the add cell appends to custom-colors (bound)
     rig.harness.get_by_role_and_label(Role::Button, "#3366cc").click();
     rig.run();

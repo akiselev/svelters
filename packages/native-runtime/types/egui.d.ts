@@ -1049,27 +1049,58 @@ export interface EguiElements {
     /** A toast's body was clicked. */
     onclicked?: (id: number) => void;
   };
-  /** A button showing a date; clicking it opens a calendar popup (Save/Cancel). */
+  /** A drop button showing a date; clicking it opens the calendar (the `calendar` kind's) in a popup, with Save/Cancel unless `commit-mode="immediate"`. */
   'date-picker': EguiWidgetProps & {
-    /** The date, ISO 8601 (`2026-10-22`); `""` for none (the button shows today). Picking a day and pressing Save changes it. */
+    /** The date, ISO 8601 (`2026-10-22`); `""` for none (the button shows today). Picking a day (and, with `commit-mode="confirm"`, pressing Save) changes it. */
     value?: string;
     'bind:value'?: string;
     /** How the button shows the date (`strftime`, jiff's `civil::Date::strftime`). */
     format?: string;
     /** Shows ISO week numbers in the calendar. */
     'calendar-week'?: boolean;
+    /** The first day that can be picked (ISO 8601); days before it are `:disabled`. `""`: no limit. */
+    min?: string;
+    /** The last day that can be picked (ISO 8601); days after it are `:disabled`. `""`: no limit. */
+    max?: string;
+    /** The weekday the grid starts on; `auto` is the locale's (Monday until IN1). */
+    'first-day'?: 'auto' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+    /** The weekday header: `narrow` (M), `short` (Mo), `long` (Monday) or `none` (no header row). */
+    'weekday-format'?: 'narrow' | 'short' | 'long' | 'none';
+    /** Shows the header with the previous/next month buttons and the month and year. */
+    navigation?: boolean;
+    /** Shows and roves the calendar but never picks (Qt's `NoSelection`). */
+    'read-only'?: boolean;
+    /** Extra part names per date, `"YYYY-MM-DD name…"` each: `["2026-10-22 milestone"]` makes that day match `::part(day milestone)`. */
+    'day-parts'?: string[];
+    /** `confirm`: a picked day is pending until Save (Enter saves, Cancel or Escape drops it); `immediate`: a pick commits and closes the popup (Qt). */
+    'commit-mode'?: 'confirm' | 'immediate';
     /** The user saved a date; carries it (ISO 8601). */
     onchanged?: (value: string) => void;
+    /** A pick was applied (§2.4): Save, or the pick itself with `commit-mode="immediate"`. */
+    oncommit?: (value: string) => void;
+    /** The user moved the calendar to another month. */
+    'onpage-changed'?: (year: number, month: number) => void;
   };
-  /** A colour swatch; clicking it opens egui's colour picker popup. */
+  /** A colour swatch drop button; clicking it opens the colour editor (the `color-editor` kind's) in a popup. */
   'color-picker': EguiWidgetProps & {
     /** The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted). Editing it in the popup changes it. */
     value?: string;
     'bind:value'?: string;
-    /** Whether the popup edits alpha (`egui::color_picker::Alpha`): `opaque` hides it, `blend` edits it, `blend-or-additive` also offers additive. */
+    /** Whether the popup edits alpha: `opaque` hides the alpha strip, `blend` and `blend-or-additive` show it (additive colours are not offered by the own editor). */
     alpha?: 'opaque' | 'blend' | 'blend-or-additive';
+    /** Which fields show under the strips, space-separated: `hex` (a hex field), `rgb` (R, G, B boxes, 0–255), `hsv` (H 0–360, S and V 0–100). */
+    fields?: string;
+    /** A palette of hex colours shown as cells (`::part(swatch-cell)`); a click picks one. */
+    swatches?: string[];
+    /** The user's colours (`bind:custom-colors`, up to 16): the add cell appends the current colour. Persist it with `uiState()`. */
+    'custom-colors'?: string[];
+    'bind:custom-colors'?: string[];
+    /** `live`: each edit changes `value` (closing the popup commits); `confirm`: edits are pending until Save, Cancel or Escape drops them (Qt's dialog). */
+    'commit-mode'?: 'live' | 'confirm';
     /** The user edited the colour; carries it (CSS hex, once per frame while dragging). */
     onchanged?: (value: string) => void;
+    /** A commit point (§2.4): `live`, a drag released, a step, a field or a swatch, and the popup closing after edits; `confirm`, Save. */
+    oncommit?: (value: string) => void;
   };
   /** A virtualized list (the M5 model-view protocol): JS keeps the items, the list asks for the rows it shows. */
   'virtual-list': EguiWidgetProps & {
@@ -1199,6 +1230,53 @@ export interface EguiElements {
     orientation?: 'horizontal' | 'vertical';
     /** The user moved it (thumb, track, wheel, AccessKit); carries the new value. */
     onchanged?: (value: number) => void;
+  };
+  /** An inline month calendar (Qt's `QCalendarWidget`): a header with previous/next, a weekday row, ISO week numbers and a 6×7 day grid. `date-picker` shows the same calendar in its popup. */
+  calendar: EguiWidgetProps & {
+    /** The picked date, ISO 8601 (`2026-10-22`); `""` for none. */
+    value?: string;
+    'bind:value'?: string;
+    /** Shows ISO week numbers in front of each week (`::part(week-number)`). */
+    'calendar-week'?: boolean;
+    /** The first day that can be picked (ISO 8601); days before it are `:disabled`. `""`: no limit. */
+    min?: string;
+    /** The last day that can be picked (ISO 8601); days after it are `:disabled`. `""`: no limit. */
+    max?: string;
+    /** The weekday the grid starts on; `auto` is the locale's (Monday until IN1). */
+    'first-day'?: 'auto' | 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+    /** The weekday header: `narrow` (M), `short` (Mo), `long` (Monday) or `none` (no header row). */
+    'weekday-format'?: 'narrow' | 'short' | 'long' | 'none';
+    /** Shows the header with the previous/next month buttons and the month and year. */
+    navigation?: boolean;
+    /** Shows and roves the calendar but never picks (Qt's `NoSelection`). */
+    'read-only'?: boolean;
+    /** Extra part names per date, `"YYYY-MM-DD name…"` each: `["2026-10-22 milestone"]` makes that day match `::part(day milestone)`. */
+    'day-parts'?: string[];
+    /** The user picked a day; carries it (ISO 8601). */
+    onchanged?: (value: string) => void;
+    /** A pick is a commit (§2.4); carries the date. */
+    oncommit?: (value: string) => void;
+    /** The user moved to another month (prev/next, PageUp/PageDown, arrows across a month). */
+    'onpage-changed'?: (year: number, month: number) => void;
+  };
+  /** An inline colour editor (the body of Qt's `QColorDialog`, GTK's `ColorChooserWidget`): a saturation/value square, hue and alpha strips, hex and channel fields, a palette and custom colours. `color-picker` shows the same editor in its popup. */
+  'color-editor': EguiWidgetProps & {
+    /** The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted). */
+    value?: string;
+    'bind:value'?: string;
+    /** `opaque` hides the alpha strip; `blend` and `blend-or-additive` show it. */
+    alpha?: 'opaque' | 'blend' | 'blend-or-additive';
+    /** Which fields show under the strips, space-separated: `hex` (a hex field), `rgb` (R, G, B boxes, 0–255), `hsv` (H 0–360, S and V 0–100). */
+    fields?: string;
+    /** A palette of hex colours shown as cells (`::part(swatch-cell)`); a click picks one. */
+    swatches?: string[];
+    /** The user's colours (`bind:custom-colors`, up to 16): the add cell appends the current colour. Persist it with `uiState()`. */
+    'custom-colors'?: string[];
+    'bind:custom-colors'?: string[];
+    /** The user edited the colour (each drag frame, step, field or swatch); carries it (CSS hex). */
+    onchanged?: (value: string) => void;
+    /** A commit point: a drag released, a key step, a field set, a swatch picked (§2.4). */
+    oncommit?: (value: string) => void;
   };
 }
 

@@ -38,3 +38,8 @@ pub(crate) fn chevron(cx: &mut PaintCx<'_>, s: &StyleView<'_>, d: Dir, r: Rect) 
     cx.painter.add(egui::Shape::line(pts, stroke));
     cx.record(TraceKind::Path, b, color, stroke, side);
 }
+
+/// A part's `gap` (between the pickers' rows and items), else `default`.
+pub(crate) fn gap(s: &StyleView<'_>, default: f32) -> f32 {
+    s.px("gap").or_else(|| s.px("column-gap")).unwrap_or(default)
+}

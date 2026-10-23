@@ -11,8 +11,10 @@
 //! HSV is in sRGB (what hex and the fields show); the editor keeps its HSV while the user edits,
 //! so the hue of a grey survives. Each of square, hue, alpha and the channel boxes is a tab stop
 //! (EV3, a `Slider`/`SpinButton` AccessKit node with SetValue, Increment, Decrement); arrows step
-//! them (Shift ×10). The hex field is an AccessKit text field (SetValue) until OW1b's entry, then
-//! OW4's text input, takes typing (milestone handoff). Writer lane: OW6.
+//! them (Shift ×10). The hex field types through one seam ([`text_entry`]: egui's `TextEdit`
+//! until OW1b's entry, then OW4's text input, replace it) and takes AccessKit SetValue; Enter or
+//! leaving it applies a valid hex, Escape drops the edit, an invalid one shows `:invalid`
+//! (`invalid-border`). Writer lane: OW6.
 
 use crate::paint::{self, Align, StyleView, TraceKind, Ua, UaRule, UaValue::*};
 use crate::provider::{A11yCx, AvailableSpace, Event, MeasureCx, StateBits, Widget, WidgetCx};
@@ -244,6 +246,15 @@ pub struct ColorBody {
     dragging: Option<Ctl>,
     /// A channel drag's start: (pointer x, channel value).
     scrub_from: Option<(f32, f32)>,
+    /// This pass's sub-control responses, merged: the owner unions it into its own, so hover
+    /// (the tooltip, R9) and clicks over a part count as the host's.
+    pub parts: Option<egui::Response>,
+    /// The hex field's text while the user types in it.
+    hex_edit: Option<String>,
+    /// The last applied hex text was not a colour (`:invalid` until the next edit).
+    hex_invalid: bool,
+    /// The entry takes focus when it first shows.
+    hex_focus: bool,
 }
 
 /// One row of the layout.
@@ -301,7 +312,7 @@ impl ColorBody {
 
     fn geom(host: &StyleView<'_>, cfg: &ColorCfg<'_>, r: Rect) -> Geom {
         let (square, strip, field, cgap, cell) = ColorBody::sizes(host);
-        let gap = super::parts::gap(host, 6.0);
+        let gap = super::picker_glyphs::gap(host, 6.0);
         let w = r.width().max(square.x);
         let mut y = r.top();
         let mut take = |h: f32| {
@@ -389,6 +400,8 @@ impl ColorBody {
         let mut out = Vec::new();
         // the tab stops are recorded after painting (`host` borrows `cx` until then)
         let mut stops: Vec<egui::Response> = Vec::new();
+        let mut text_stops: Vec<egui::Response> = Vec::new();
+        self.parts = None;
         let host_v = cx.style(ua);
         let host = &host_v;
         let enabled = cx.enabled() && ui.is_enabled();
@@ -629,7 +642,23 @@ impl ColorBody {
             let cid = id.with("hex");
             let resp = ui.interact(rect, cid, if enabled { egui::Sense::click() | egui::Sense::focusable_noninteractive() } else { egui::Sense::hover() });
             stops.push(resp.clone());
-            let mut invalid = false;
+            let mut invalid = self.hex_invalid;
+            let shown_hex = color_hex(if cfg.alpha { h.to_srgba() } else { Hsv { a: 1.0, ..h }.to_srgba() });
+            let apply = |s: &str, h: &mut Hsv, commit: &mut bool, invalid: &mut bool| match parse_color(s) {
+                Ok(mut c) => {
+                    if !cfg.alpha {
+                        c[3] = 255;
+                    }
+                    *h = Hsv::from_srgba(c);
+                    *commit = true;
+                    *invalid = false;
+                }
+                Err(_) => *invalid = true,
+            };
+            if enabled && resp.clicked() && self.hex_edit.is_none() {
+                self.hex_edit = Some(shown_hex.clone());
+                self.hex_focus = true;
+            }
             {
                 for (action, data) in ak_requests(ui, cid) {
                     if let (accesskit::Action::SetValue, Some(accesskit::ActionData::Value(s))) = (action, &data) {
@@ -647,8 +676,10 @@ impl ColorBody {
                 }
             }
             let hex = color_hex(if cfg.alpha { h.to_srgba() } else { Hsv { a: 1.0, ..h }.to_srgba() });
+            let editing = self.hex_edit.is_some();
             ui.ctx().accesskit_node_builder(cid, |n| {
-                n.set_role(accesskit::Role::TextInput);
+                // while typing, the entry is the text field (named below); this is its frame
+                n.set_role(if editing { accesskit::Role::GenericContainer } else { accesskit::Role::TextInput });
                 n.set_label("Hex");
                 n.set_value(hex.clone());
                 if enabled {
@@ -661,16 +692,43 @@ impl ColorBody {
                 }
             });
             let mut fb = StateBits::NONE;
-            fb.set(StateBits::FOCUS_VISIBLE, resp.has_focus());
+            fb.set(StateBits::FOCUS_VISIBLE, resp.has_focus() || self.hex_edit.is_some());
             fb.set(StateBits::INVALID, invalid);
             fb.set(StateBits::DISABLED, !enabled);
             let fv = cx.part(host, "field", FIELD_UA).in_state(fb);
-            let mut pc = cx.paint_cx(ui);
-            let mut fp = pc.part("field");
-            let geom = paint::paint_box(&mut fp, &fv, rect);
-            let gl = paint::text_galley(ui.ctx(), &fv, &hex, None);
-            paint::paint_text(&mut fp, &fv, &gl, geom.content, Align::Start);
-            paint::paint_outline(&mut fp, &fv, rect);
+            let geom = {
+                let mut pc = cx.paint_cx(ui);
+                let mut fp = pc.part("field");
+                let geom = paint::paint_box(&mut fp, &fv, rect);
+                if self.hex_edit.is_none() {
+                    let gl = paint::text_galley(ui.ctx(), &fv, &hex, None);
+                    paint::paint_text(&mut fp, &fv, &gl, geom.content, Align::Start);
+                }
+                paint::paint_outline(&mut fp, &fv, rect);
+                geom
+            };
+            if let Some(mut text) = self.hex_edit.take() {
+                let color = fv.color("color").unwrap_or(Color32::PLACEHOLDER);
+                let font = egui::FontId::proportional(fv.font_size());
+                let te = text_entry(ui, geom.content, cid.with("entry"), &mut text, color, font);
+                ui.ctx().accesskit_node_builder(te.id, |n| n.set_label("Hex"));
+                if std::mem::take(&mut self.hex_focus) {
+                    te.request_focus();
+                }
+                text_stops.push(te.clone());
+                let (enter, escape) = ui.input(|i| (i.key_pressed(Key::Enter), i.key_pressed(Key::Escape)));
+                if escape {
+                    ui.input_mut(|i| i.consume_key(Modifiers::NONE, Key::Escape));
+                } else if enter || te.lost_focus() {
+                    apply(&text, &mut h, &mut commit, &mut invalid);
+                } else {
+                    if te.changed() {
+                        invalid = false;
+                    }
+                    self.hex_edit = Some(text);
+                }
+            }
+            self.hex_invalid = invalid;
         }
 
         // ---- swatches, custom colours, add ----
@@ -717,8 +775,15 @@ impl ColorBody {
             resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, enabled, "Add to custom colours"));
         }
 
+        for r in &text_stops {
+            cx.record_part_text_focus(ui, r);
+        }
         for r in &stops {
             cx.record_part_focus(ui, r);
+            self.parts = Some(match self.parts.take() {
+                Some(p) => p.union(r.clone()),
+                None => r.clone(),
+            });
         }
         if h != before {
             self.hsv = Some(h);
@@ -835,6 +900,15 @@ impl ColorBody {
         }
         paint::paint_box(&mut cp, &v, rect);
     }
+}
+
+/// OW6's one seam over text input: the hex field types through egui's `TextEdit` (the text
+/// input on master) until OW1b's entry, then OW4's `TextInput`, replace it; the caller paints the
+/// field's box, this paints the text and caret in `content`.
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW4 (OW1b's entry)
+fn text_entry(ui: &mut egui::Ui, content: Rect, id: egui::Id, text: &mut String, color: Color32, font: egui::FontId) -> egui::Response {
+    let mut child = ui.new_child(egui::UiBuilder::new().max_rect(content).layout(egui::Layout::left_to_right(egui::Align::Center)));
+    child.add(egui::TextEdit::singleline(text).id(id).frame(egui::Frame::NONE).margin(egui::Margin::ZERO).text_color(color).font(font).desired_width(content.width()).char_limit(9))
 }
 
 /// This pass's AccessKit requests for node `id` (Increment, Decrement, SetValue, Click).
@@ -995,6 +1069,10 @@ impl Widget for ColorEditor {
         let cfg = ColorCfg { alpha: self.alpha.shown(), hex, rgb, hsv, swatches: &swatches, custom: &custom };
         run_body(&mut self.body, ui, cx, UA, &cfg, &mut self.value, &mut self.custom_colors, geom.content, resp.id, true, &self.changed, &self.commit);
         self.swatches = swatches;
+        let resp = match self.body.parts.take() {
+            Some(p) => resp.union(p),
+            None => resp,
+        };
         let enabled = cx.enabled();
         let text = self.value.0.clone();
         resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Group, enabled, &text));

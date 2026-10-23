@@ -708,6 +708,12 @@ impl WidgetCx<'_> {
         crate::focus::record_with(self.s, self.i, ui, resp, crate::focus::Role::Slider, true);
     }
 
+    /// OW6: puts a part's text entry (the colour editor's hex field) in EV3's tab order with a
+    /// one-line text field's keys, so focus stays on it while the user types.
+    pub fn record_part_text_focus(&mut self, ui: &egui::Ui, resp: &egui::Response) {
+        crate::focus::record_with(self.s, self.i, ui, resp, crate::focus::Role::Text { multiline: false }, true);
+    }
+
     /// OW2: the node's rect from layout, in its root's coordinates (unscrolled content
     /// coordinates; `rect()` is where it is on screen).
     pub fn layout_rect(&self) -> egui::Rect {

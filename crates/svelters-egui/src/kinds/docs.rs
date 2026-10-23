@@ -709,6 +709,15 @@ pub static KIND_DOCS: &[KindDoc] = &[
         a11y: A11yDoc { note: "A `Grid` of six `Row`s of `GridCell`s, each named by its ISO date (`selected`, `disabled`, Click); previous/next are `Button`s. The grid is one tab stop and the arrow keys rove its days.", ..a11y(Some("Grid"), &["accessible-name"], Some("the picked date"), &["Focus"]) },
         css_note: "Parts: `header`, `prev`, `next`, `month`, `year`, `weekday`, `week-number`, `grid`, `day`. Day states `:hover`, `:selected`, `:current` (the keyboard cursor, ringed while `:focus-visible`), `:disabled`, and the part names `today`, `weekend`, `other-month` plus `day-parts`' names, painted from the UA tables until per-day part styles reach egui.",
     },
+    KindDoc {
+        id: "ColorEditor",
+        category: Category::Pickers,
+        paint: Paint::Provider,
+        walk: Walk::Leaf(Focus::Yes),
+        states: &[],
+        a11y: A11yDoc { note: "A `Group` holding a `Slider` each for saturation/value, hue and alpha, a `SpinButton` per channel box, a `TextInput` for hex (SetValue), and a `Button` per swatch and custom colour. Each slider and box is a tab stop; arrows step it (Shift ×10).", ..a11y(Some("Group"), &["accessible-name"], Some("the colour (hex)"), &["Focus"]) },
+        css_note: "Parts: `square`, `hue`, `alpha`, `handle` (`:dragging`, `:focus-visible`), `fields`, `field`, `swatches`, `swatch-cell`. The checkerboard under alpha is painted until `background-image` repeating gradients reach egui.",
+    },
 ];
 
 /// Paint properties a kind's own drawing covers, so a rule with them has no visible effect (the

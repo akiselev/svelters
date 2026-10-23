@@ -117,7 +117,7 @@ impl Widget for ColorPicker {
         let c = s.part(cx.part_css("chevron"), CHEVRON_UA);
         let sz = vec2(sw.px("width").unwrap_or(28.0), sw.px("height").unwrap_or(16.0));
         let lh = s.px("line-height").unwrap_or(sz.y);
-        vec2(sz.x + super::parts::gap(&s, 4.0) + c.px("width").unwrap_or(16.0), sz.y.max(lh)) + paint::box_extra(&s)
+        vec2(sz.x + super::picker_glyphs::gap(&s, 4.0) + c.px("width").unwrap_or(16.0), sz.y.max(lh)) + paint::box_extra(&s)
     }
 
     fn ui(&mut self, ui: &mut egui::Ui, cx: &mut WidgetCx<'_>) -> egui::Response {

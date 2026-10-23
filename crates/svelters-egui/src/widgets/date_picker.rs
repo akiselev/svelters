@@ -140,7 +140,7 @@ impl Widget for DatePicker {
         let t = paint::measure_text(cx.ctx, &s, &self.text(), AvailableSpace::MaxContent);
         let c = s.part(cx.part_css("chevron"), CHEVRON_UA);
         let lh = s.px("line-height").unwrap_or(t.y);
-        vec2(t.x + super::parts::gap(&s, 4.0) + c.px("width").unwrap_or(16.0), t.y.max(lh)) + paint::box_extra(&s)
+        vec2(t.x + super::picker_glyphs::gap(&s, 4.0) + c.px("width").unwrap_or(16.0), t.y.max(lh)) + paint::box_extra(&s)
     }
 
     fn ui(&mut self, ui: &mut egui::Ui, cx: &mut WidgetCx<'_>) -> egui::Response {

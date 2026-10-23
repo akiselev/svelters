@@ -225,6 +225,18 @@ pub struct CalBody {
     cursor: Option<Date>,
     prev_bits: StateBits,
     next_bits: StateBits,
+    /// This pass's day and prev/next responses, merged: the owner unions it into its own, so
+    /// hover over a day shows the host's tooltip (R9).
+    pub parts: Option<egui::Response>,
+}
+
+impl CalBody {
+    fn merge(&mut self, r: &egui::Response) {
+        self.parts = Some(match self.parts.take() {
+            Some(p) => p.union(r.clone()),
+            None => r.clone(),
+        });
+    }
 }
 
 /// The rects of one layout of the body.
@@ -268,7 +280,7 @@ impl CalBody {
         let wd_h = if cfg.weekday_format == "none" { 0.0 } else { wk.px("height").unwrap_or(20.0) };
         let hd = StyleView::ua_only(HEADER_UA, st, dark);
         let header_h = if cfg.navigation { hd.px("height").unwrap_or(22.0) } else { 0.0 };
-        (cell, vec2(week_col, wd_h), header_h, super::parts::gap(host, 2.0))
+        (cell, vec2(week_col, wd_h), header_h, super::picker_glyphs::gap(host, 2.0))
     }
 
     /// The size the body asks for (content box).
@@ -316,6 +328,7 @@ impl CalBody {
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn ui(&mut self, ui: &mut egui::Ui, cx: &WidgetCx<'_>, host: &StyleView<'_>, cfg: &CalCfg<'_>, value: Option<Date>, r: Rect, keys: bool, ring: bool, a11y_parent: egui::Id) -> Vec<CalOut> {
         let mut out = Vec::new();
+        self.parts = None;
         let enabled = cx.enabled() && ui.is_enabled();
         let g = CalBody::geom(host, cfg, r);
         let id = a11y_parent.with("calendar");
@@ -403,6 +416,7 @@ impl CalBody {
                     self.set_page(target, &mut out, value);
                 }
                 resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Button, on, label));
+                self.merge(&resp);
             }
         }
 
@@ -452,6 +466,7 @@ impl CalBody {
                 let rect = CalBody::cell_rect(&g, k);
                 let cid = id.with(("day", k));
                 let resp = row_ui.interact(rect, cid, egui::Sense::click());
+                self.merge(&resp);
                 let in_range = cfg.in_range(d);
                 let mut bits = StateBits::NONE;
                 bits.set(StateBits::HOVERED, hover.is_some_and(|p| rect.contains(p)));
@@ -661,6 +676,10 @@ impl Widget for Calendar {
             }
         }
         cx.paint_outline(ui, UA);
+        let resp = match self.body.parts.take() {
+            Some(p) => resp.union(p),
+            None => resp,
+        };
         let (enabled, text) = (cx.enabled(), self.value.0.clone());
         resp.widget_info(|| egui::WidgetInfo::labeled(egui::Role::Grid, enabled, &text));
         resp

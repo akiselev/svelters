@@ -231,13 +231,13 @@ pub(crate) fn footer(ui: &egui::Ui, cx: &WidgetCx<'_>, host: &StyleView<'_>, id:
 pub(crate) fn split_chevron(host: &StyleView<'_>, chevron: &StyleView<'_>, content: Rect) -> (Rect, Rect) {
     let cw = chevron.px("width").unwrap_or(16.0);
     let cr = Rect::from_min_max(pos2(content.max.x - cw, content.min.y), content.max);
-    let lr = Rect::from_min_max(content.min, pos2(cr.min.x - super::parts::gap(host, 4.0), content.max.y));
+    let lr = Rect::from_min_max(content.min, pos2(cr.min.x - super::picker_glyphs::gap(host, 4.0), content.max.y));
     (cr, lr)
 }
 
 /// The popup surface's border box for a body of `body` size (plus a footer row when `footer`).
 pub(crate) fn popup_size(surf: &StyleView<'_>, body: Vec2, footer: bool) -> Vec2 {
-    let gap = super::parts::gap(surf, 8.0);
+    let gap = super::picker_glyphs::gap(surf, 8.0);
     let f = if footer { gap + footer_height(surf.is_dark()) } else { 0.0 };
     vec2(body.x, body.y + f) + paint::box_extra(surf)
 }
