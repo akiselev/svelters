@@ -684,10 +684,14 @@ pub mod __private {
     /// props, method arguments and event payloads with it). RA3: during a host op (a `set_prop`, a
     /// method call, a read of an observed prop) it has that host's object table, so exported objects
     /// (`Obj<T>`, `Arc<T>`) convert; outside any op (event payloads after a pass) the table is empty
-    /// and a value holding an object handle does not convert.
+    /// and a value holding an object handle does not convert. FIX-ALLOC: the empty table lives on
+    /// the stack (an empty `HashMap` does not allocate), so a call outside any op, such as a Rust
+    /// scene write of an own widget's prop, allocates nothing (SG2).
     pub fn with_cx<R>(module: &'static str, f: impl FnOnce(&CallCx<'_>) -> R) -> R {
-        let objects = objects::current().unwrap_or_default();
-        f(&CallCx { objects: &objects, schema: schema(), this: None, module })
+        match objects::current() {
+            Some(objects) => f(&CallCx { objects: &objects, schema: schema(), this: None, module }),
+            None => f(&CallCx { objects: &objects::AppObjects::default(), schema: schema(), this: None, module }),
+        }
     }
 
     /// The sync thunk of an offloaded member (never called: the host starts it with its `start`).
