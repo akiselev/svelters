@@ -12,6 +12,7 @@ use svelters_abi::*;
 use svelters_egui::EguiBackend;
 use svelters_egui::focus::{self, TextCommand};
 use svelters_egui::native::{self, Native};
+use svelters_egui::widgets::KindSet;
 
 const CTRL: egui::Modifiers = egui::Modifiers { alt: false, ctrl: true, shift: false, mac_cmd: false, command: true };
 
@@ -548,10 +549,19 @@ fn host_rig() -> (Rig, Rc<Cell<bool>>) {
     (rig, focus_host)
 }
 
+/// Under OW3's own menus (the default, which hold the keyboard while open) and the egui wrappers
+/// (`SVELTERS_OWN_WIDGETS=none`, egui popups).
 #[test]
 fn ev3b_last_text_field_survives_menus_and_ends_with_the_field() {
+    for set in [KindSet::Default, KindSet::None] {
+        last_text_field_on(set);
+    }
+}
+
+fn last_text_field_on(set: KindSet) {
     let (mut rig, focus_host) = host_rig();
     native::set(&rig.harness.ctx, Native::Egui); // a click does not focus the menu button
+    rig.backend.set_own_widgets(set.clone());
     let (_w, col) = rig.window();
     let field = rig.leaf(col, "text-edit", &[("accessible-name", s("field"))]);
     let _btn = rig.leaf(col, "button", &[("text", s("Plain"))]);
@@ -581,18 +591,25 @@ fn ev3b_last_text_field_survives_menus_and_ends_with_the_field() {
         rig.harness.event(egui::Event::PointerButton { pos, button: egui::PointerButton::Primary, pressed, modifiers: egui::Modifiers::NONE });
     }
     rig.run();
-    assert!(rig.harness.query_by_label("Copy").is_some(), "the menu is open");
+    assert!(rig.harness.query_by_label("Copy").is_some(), "{set:?}: the menu is open");
+    assert_eq!(rig.backend.last_text_field(&ctx).and_then(|i| i.widget), Some(widget_id(&rig, field)), "{set:?}: the menu is open");
     focus_host.set(true);
     rig.run();
     assert!(focused(&rig, "Host item"));
-    assert_eq!(rig.backend.last_text_field(&ctx).and_then(|i| i.widget), Some(widget_id(&rig, field)), "a menu item has focus");
+    assert_eq!(rig.backend.last_text_field(&ctx).and_then(|i| i.widget), Some(widget_id(&rig, field)), "{set:?}: a menu item has focus");
     assert!(rig.backend.text_command(&ctx, TextCommand::SelectAll));
     rig.run();
     assert!(focused(&rig, "field"), "the command focused the field again");
-    rig.harness.key_press(egui::Key::Escape); // closes the menu
+    // a press outside closes the menu (an own menu takes Escape only while it holds the keyboard,
+    // and the command gave the keyboard to the field)
+    let out = egui::pos2(470.0, 350.0);
+    rig.harness.hover_at(out);
+    for pressed in [true, false] {
+        rig.harness.event(egui::Event::PointerButton { pos: out, button: egui::PointerButton::Primary, pressed, modifiers: egui::Modifiers::NONE });
+    }
     rig.run();
     rig.run();
-    assert!(rig.harness.query_by_label("Copy").is_none(), "the menu closed");
+    assert!(rig.harness.query_by_label("Copy").is_none(), "{set:?}: the menu closed");
 
     // another widget takes focus (a host widget with no menu open, a svelters button): no target
     focus_host.set(true);

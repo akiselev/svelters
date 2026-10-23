@@ -117,6 +117,8 @@ struct Pass {
     entries: Vec<Entry>,
     scopes: Vec<Scope>,
     focused: Option<Id>,
+    /// EV3b: an own menu or select list (OW3's `Grab`) held the keyboard in this pass.
+    grab: bool,
 }
 
 impl Pass {
@@ -280,13 +282,14 @@ fn route(st: &mut State, focus: Option<Id>, keys: &[(Key, Modifiers)], ime: &[bo
     // egui drops focus on a plain Escape before anything runs (FX1 gives it back later)
     let f = if focus.is_none() && escape { st.prev.focused } else { focus };
     // EV3b: the last text field (`last_text_field`, `text_command`'s fallback). Another widget
-    // taking focus ends it, unless a menu (an egui popup) is open: a menu item has keyboard focus
-    // while the Edit menu is used. A field not recorded in the last pass is removed, hidden,
-    // disabled or inert: it ends too.
+    // taking focus ends it, unless a menu is open (an egui popup, or an own menu or list holding
+    // the keyboard): a menu item, or the menu itself, has keyboard focus while the Edit menu is
+    // used. A field not recorded in the last pass is removed, hidden, disabled or inert: it ends
+    // too.
     match st.prev.entry(f) {
         Some(e) if matches!(e.role, Role::Text { .. }) => st.last_text = Some(e.id),
         Some(_) => st.last_text = None,
-        None if f.is_some() && f != st.last_text && st.popup.is_none() => st.last_text = None,
+        None if f.is_some() && f != st.last_text && st.popup.is_none() && !st.prev.grab => st.last_text = None,
         None => {}
     }
     if st.last_text.is_some() && st.prev.entry(st.last_text).is_none() {
@@ -760,6 +763,16 @@ pub fn composing(ctx: &Context) -> bool {
     read(ctx, |st| st.composing.is_some())
 }
 
+/// EV3b: an own menu, menu bar (F10) or select list holds the keyboard in this pass (OW3's
+/// `Grab`): a menu is open for [`EguiBackend::last_text_field`], as an egui popup is.
+pub(crate) fn note_grab(ctx: &Context) {
+    let pass = ctx.cumulative_pass_nr();
+    with(ctx, |st| {
+        st.rotate(pass);
+        st.cur.grab = true;
+    });
+}
+
 /// OW2: the scene node holding keyboard focus in `ctx`'s viewport (from the latest record).
 pub(crate) fn focused_node(ctx: &Context) -> Option<crate::scene::NodeId> {
     let focus = ctx.memory(|m| m.focused())?;
@@ -797,8 +810,9 @@ impl EguiBackend {
     }
 
     /// The text field an edit command goes to: the focused one, else (nothing focused, or a menu
-    /// item while a menu is open: a click or the keys on host chrome) the last one that had focus.
-    /// The flag says it is the last one (not focused).
+    /// item while a menu is open: a click or the keys on host chrome; an egui popup, or an own
+    /// menu or list holding the keyboard) the last one that had focus. The flag says it is the
+    /// last one (not focused).
     fn text_target(&self, ctx: &Context) -> Option<(Entry, bool)> {
         let focus = ctx.memory(|m| m.focused());
         if let Some(e) = self.focused_entry(ctx) {
@@ -807,7 +821,7 @@ impl EguiBackend {
         let (recorded, last, popup) = read(ctx, |st| {
             let recorded = st.cur.entry(focus).or_else(|| st.prev.entry(focus)).is_some();
             let last = st.last_text.and_then(|t| st.prev.entry(Some(t)).or_else(|| st.cur.entry(Some(t))).cloned());
-            (recorded, last, st.popup.is_some())
+            (recorded, last, st.popup.is_some() || st.cur.grab || st.prev.grab)
         });
         let menu = !recorded && (popup || ctx.any_popup_open());
         if focus.is_some() && !menu {

@@ -110,6 +110,7 @@ impl Grab {
             self.restore = now.or(if pointer { self.pressed } else { None }).filter(|f| *f != id);
             self.active = true;
         }
+        crate::focus::note_grab(ctx);
         ctx.memory_mut(|m| m.request_focus(id));
     }
 
@@ -119,6 +120,7 @@ impl Grab {
         if !self.active {
             return;
         }
+        crate::focus::note_grab(ui.ctx());
         ui.interact(rect, id, egui::Sense::focusable_noninteractive());
         ui.memory_mut(|m| {
             if m.focused().is_none() {
