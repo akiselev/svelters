@@ -251,3 +251,37 @@ fn ow1a3_a_held_repeat_button_repeats_past_the_click_cutoff() {
     assert!(after <= held + 1, "the release adds at most its click: {held} -> {after}");
     assert!(!state(&rig, b).contains(StateBits::PRESSED));
 }
+
+/// DESIGN R3 in the theme's base sheet: a standalone control eases its colours over 100 ms when
+/// motion is allowed (`@media (prefers-reduced-motion: no-preference)`), R2: not on `:active`.
+#[test]
+fn ow1a3_the_base_sheet_eases_hover_over_100ms_unless_motion_is_reduced() {
+    for reduced in [false, true] {
+        let mut rig = Rig::new();
+        rig.backend.set_theme(&svelters_egui::theme::Theme::dark_modern());
+        rig.backend.set_motion(svelters_egui::anim::MotionConfig { slow: 1.0, reduced });
+        let (_w, col) = rig.window();
+        let b = rig.leaf(col, "button", &[("text", s("Hover me"))]);
+        rig.run();
+        let dur = |rig: &Rig| rig.backend.computed_style(b).and_then(|c| c.get("transition").map(|v| format!("{v:?}")));
+        let d = dur(&rig);
+        if reduced {
+            assert!(d.as_deref().is_none_or(|d| !d.contains("0.1")), "reduced motion: no ease: {d:?}");
+        } else {
+            assert!(d.as_deref().is_some_and(|d| d.contains("0.1")), "100 ms: {d:?}");
+        }
+        // painted: the ease's start in the hover frame, its end a step (0.25 s) later
+        svelters_egui::paint::trace::enable(&rig.harness.ctx, true);
+        rig.run();
+        let n = rig.backend.with_scene(|s| s.n(b).handle.to_raw());
+        let fill = |rig: &Rig| svelters_egui::paint::trace::last(&rig.harness.ctx).find(n, None, svelters_egui::paint::TraceKind::Box).map(|e| e.fill);
+        let rest = fill(&rig);
+        rig.harness.hover_at(rig.drawn(b).center());
+        rig.harness.step();
+        let first = fill(&rig);
+        rig.run();
+        let end = fill(&rig);
+        assert_ne!(rest, end, "hover changes the fill");
+        assert_eq!(first == end, reduced, "reduced {reduced}: rest {rest:?}, hover frame {first:?}, end {end:?}");
+    }
+}
