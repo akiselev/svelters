@@ -291,15 +291,16 @@ static TOAST_HOST_SIGNALS: &[SignalDef] = &[
     signal(
         "closed",
         &[("id", Ty::I64), ("reason", Ty::Str)],
-        "A toast went away: `reason` is `timeout`, `dismissed` (its close button), `method` (`dismiss`/`clear`).",
+        "A toast went away: `reason` is `timeout`, `dismissed` (its close button), `action` (one of its actions), `method` (`dismiss`/`clear`).",
     ),
     signal("clicked", &[("id", Ty::I64)], "A toast's body was clicked."),
+    signal("action", &[("id", Ty::I64), ("index", Ty::I64)], "One of a toast's action buttons was pressed (`index` into `show`'s `actions`); the toast then closes (`closed(id, 'action')`)."),
 ];
 
 static TOAST_HOST_METHODS: &[MethodDef] = &[
     MethodDef {
         name: "show",
-        doc: "`show(text, level = 'info', duration = the host's)`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed) and returns its id. `text` may be a run list (RT2): strings and `{text, b, i, code, href}` objects, drawn as one paragraph with the theme's run defaults; a click on a run with an `href` opens it.",
+        doc: "`show(text, level = 'info', duration = the host's, actions = [])`: shows a toast (level: info, success, warning, error; duration in seconds, 0 = until closed; `actions`: button labels, see `action`) and returns its id. `text` may be a run list (RT2): strings and `{text, b, i, code, href}` objects, drawn as one paragraph with the theme's run defaults; a click on a run with an `href` opens it.",
     },
     MethodDef { name: "dismiss", doc: "`dismiss(id)`: closes that toast (`closed(id, 'method')`)." },
     MethodDef { name: "clear", doc: "Closes every toast." },
@@ -383,7 +384,7 @@ pub(super) const SPLIT_VIEW: KindDef = KindDef {
 pub(super) const TOAST_HOST: KindDef = KindDef {
     id: "ToastHost",
     tag: Some("toast-host"),
-    native: "egui::Area (foreground) of egui::Frame toasts",
+    native: "svelters' own toasts in an egui::Area (foreground)",
     base: Some("Widget"),
     toplevel: false,
     slot: None,

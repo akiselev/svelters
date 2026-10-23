@@ -943,10 +943,16 @@ export interface EguiElements {
     title?: string;
     /** Escape or a click on the backdrop closes it; with false only the app does. */
     dismissable?: boolean;
-    /** The user (or `popup`/`popdown`) opened or closed it; carries `open`. */
+    /** The user can resize it from its right and bottom edges and its size grip (`::part(grip)`, Qt's `sizeGripEnabled`); the content is laid out at that size. */
+    resizable?: boolean;
+    /** The user (or `close`) opened or closed it; carries `open`. */
     onchanged?: (open: boolean) => void;
-    /** The user (or `popdown`) closed it. */
-    onclosed?: () => void;
+    /** It closed; carries the result: `"reject"` when the user dismissed it (Escape, the backdrop, the close button), the `close(result)` argument, or `""` when `open` was set false. */
+    onclosed?: (result: string) => void;
+    /** It closed with the result `"accept"` (`close("accept")`). */
+    onaccepted?: () => void;
+    /** It closed with the result `"reject"`: dismissed by the user or `close("reject")`. */
+    onrejected?: () => void;
   };
   /** A floating window inside the viewport (`egui::Window`): movable, optionally resizable, collapsible and closable; its children are a flex box. */
   'inner-window': EguiWidgetProps & {
@@ -987,10 +993,14 @@ export interface EguiElements {
     collapsible?: boolean;
     /** The user can resize it; the content is laid out at its size. Without it the window is as big as its content. */
     resizable?: boolean;
-    /** The user (or `popup`/`popdown`) opened or closed it; carries `open`. */
+    /** The user (or `close`) opened or closed it; carries `open`. */
     onchanged?: (open: boolean) => void;
-    /** The user (or `popdown`) closed it. */
-    onclosed?: () => void;
+    /** It closed; carries the result: `"reject"` when the user dismissed it (Escape, the backdrop, the close button), the `close(result)` argument, or `""` when `open` was set false. */
+    onclosed?: (result: string) => void;
+    /** It closed with the result `"accept"` (`close("accept")`). */
+    onaccepted?: () => void;
+    /** It closed with the result `"reject"`: dismissed by the user or `close("reject")`. */
+    onrejected?: () => void;
   };
   /** A virtual table, svelters' own (OW5b): only the visible rows and columns are drawn, under a frozen header; rows, cells, header cells, sort arrows and resize edges are CSS parts. Its children are `table-column`s; its rows are a JS data window (`range` asks, `set-rows` answers), keyed by `set-ids`. Keyboard navigation, type-ahead, keyed selection and cell editing (WG5a). Give it a size or let flex-grow size it. */
   table: EguiWidgetProps & {
@@ -1159,10 +1169,12 @@ export interface EguiElements {
     corner?: 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left';
     /** Seconds a toast stays when `show` gives none; 0 keeps it until closed. */
     duration?: number;
-    /** A toast went away: `reason` is `timeout`, `dismissed` (its close button), `method` (`dismiss`/`clear`). */
+    /** A toast went away: `reason` is `timeout`, `dismissed` (its close button), `action` (one of its actions), `method` (`dismiss`/`clear`). */
     onclosed?: (id: number, reason: string) => void;
     /** A toast's body was clicked. */
     onclicked?: (id: number) => void;
+    /** One of a toast's action buttons was pressed (`index` into `show`'s `actions`); the toast then closes (`closed(id, 'action')`). */
+    onaction?: (id: number, index: number) => void;
   };
   /** A drop button showing a date; clicking it opens the calendar (the `calendar` kind's) in a popup, with Save/Cancel unless `commit-mode="immediate"`. */
   'date-picker': EguiWidgetProps & {
