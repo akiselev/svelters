@@ -60,14 +60,29 @@ The generators ran in this order: spec (`SVELTERS_UPDATE=1 --test spec`), `gen_p
 - **5.**
   - Keyboard resizing of inner windows: not done (OW7's note stands: the edge handles are not focusable).
   - `:exiting` transitions: done for `<toast>` only. The modal and inner-window still close at once.
-- **`modal` and `inner-window` parts don't take CSS.** Their `::part(backdrop|title|grip|titlebar|close|collapse|edge-*)` have no part declarations either (see item 1). Adding them to `toast::parts_of`'s pattern is a small follow-up. Recorded in `docs/egui/css/own-widgets.md`.
+- **`modal` and `inner-window` parts: done.** `toast::parts_of` declares `modal`'s backdrop, title and grip and `inner-window`'s titlebar, title, close and collapse; test `ow7b_modal_and_inner_window_parts_take_author_css`. The `edge-*` handles are not painted, so they are not declared. `popup` still declares none (OW3 styles its popup surface through the host).
+
+### From OW7's handoff (its uncommitted diff, folded in here)
+
+OW7b builds on OW7's `widgets/dialog.rs` (the modal and window chrome, the `tool`/`tool_with` parts, `DIALOG_SIGNALS`) and `views/toast.rs`. Its acceptance is WIDGET-PARITY §2.1, §2.21 and §2.22. Against that plan:
+- **`dialog-buttons`.**
+  - Done: roles, order in all five policy tables, `clicked(role)`, `help`, accept and reject closing the dialog.
+  - Not done: the `buttons="ok cancel apply …"` shorthand (host-localised labels), the `yes` and `no` roles, `orientation` (CSS `flex-direction` works), and "a destructive button is never the default".
+  - Styling: `dialog-buttons button::part(icon)` works through the own button's icon part.
+- **`status-bar`** (not done), as OW7 specified it:
+  - children are the temporary area, hidden while a message shows; children with `slot="end"` are permanent;
+  - `show-message(text, timeout)`, `clear-message`, the read-only `message`, `message-changed`, with timeouts on egui's clock;
+  - `::part(message)`, with `status-bar > *` styling the sections;
+  - `Role::Status`; messages are announced politely (QA11);
+  - status tips: the `status-tip` prop on nodes and on menu actions (menu `hover` too) routes to the nearest `status-bar` of the viewport and clears on leave.
+- **`Policy::auto_default`.** Done (on for Windows, KDE, GTK and egui; off on Mac).
+- **Declarative `<toast>`.** Done (stage 1).
 
 ### Handoff details (coordinator, 2026-10-22: OW7b finishes its full scope)
 
 - **Stage 1** (`<toast>`) merges alone from `ci/ow7b-s1` (6d059c4b). This branch (`ci/ow7b`) also has items 2 and 4. Merge master into it once stage 1 is on master.
 - **Left for this lane:**
   - item 3, `status-bar` (design above);
-  - the `::part()` declarations for `modal` and `inner-window`: backdrop, title, grip, titlebar, close, collapse, edge-*. Follow `views::toast::parts_of` (`style.rs`, the `decl` match), and add a test that a `modal::part(backdrop)` author rule paints;
   - from OW7's handoff (its uncommitted diff, `ow7-uncommitted-handoff.diff`): the `dialog-buttons` `buttons="ok cancel apply …"` shorthand (host-localised labels), the `yes` and `no` roles, and `orientation`.
 - **Gotchas:**
   - kittest's `run()` advances the virtual clock past short timeouts, so give toasts in tests durations of 3 s or more and step to the timeout;

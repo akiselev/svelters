@@ -237,3 +237,27 @@ fn ow7b_auto_default_moves_default_to_the_focused_button() {
     assert_eq!(events(&rig, v[1], "clicked").len(), 1, "Enter pressed OK");
     assert!(events(&rig, v[4], "clicked").is_empty());
 }
+
+#[test]
+fn ow7b_modal_and_inner_window_parts_take_author_css() {
+    let mut rig = Rig::new();
+    rig.backend.add_sheet("app", "modal::part(backdrop) { background-color: #ff000080; } inner-window::part(titlebar) { background-color: #00ff00; }");
+    let (_w, b) = rig.window();
+    let m = rig.create("modal");
+    rig.insert(b, m);
+    rig.leaf(m, "label", &[("text", s("Body"))]);
+    let iw = rig.create("inner-window");
+    rig.set(iw, "title", s("Tools"));
+    rig.insert(b, iw);
+    rig.leaf(iw, "label", &[("text", s("Inside"))]);
+    trace::enable(&rig.harness.ctx, true);
+    rig.set(m, "open", Value::Bool(true));
+    rig.set(iw, "open", Value::Bool(true));
+    rig.run();
+    rig.run();
+    let t = trace::last(&rig.harness.ctx);
+    let bd = t.find(m, Some("backdrop"), TraceKind::Box).expect("the backdrop part");
+    assert_eq!(bd.fill, egui::Color32::from_rgba_unmultiplied(255, 0, 0, 128), "`modal::part(backdrop)` paints");
+    let bar = t.find(iw, Some("titlebar"), TraceKind::Box).expect("the titlebar part");
+    assert_eq!(bar.fill, egui::Color32::from_rgb(0, 255, 0));
+}

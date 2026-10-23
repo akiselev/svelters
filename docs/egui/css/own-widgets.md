@@ -89,7 +89,8 @@ reference page lists its parts.
 | `collapsing-header` | — | `header`, `twistie` |
 | `toast` (OW7b) | `accent`, `close`; the box is the node (`toast`, `toast[level=warning]`, `toast:hover`, `toast:exiting`) | — |
 | `toast-host` (its `show` toasts) | `toast`, `accent`, `text`, `action`, `close` | — |
-| `modal`, `inner-window` | — | `backdrop`, `title`, `grip`, `titlebar`, `close`, `collapse`, `edge-*` |
+| `modal` (OW7b) | `backdrop`, `title`, `grip` | — |
+| `inner-window` (OW7b) | `titlebar`, `title`, `close`, `collapse` | `edge-*` (not painted) |
 
 A rule on a part in the last column has no effect yet; style the host (`switch:checked { … }`) instead.
 The `scrollbar` thumb and the `split-view` sash have no `::part()` yet either.
