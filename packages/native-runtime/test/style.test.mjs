@@ -105,3 +105,25 @@ test('tokens and scheme batch into one refresh; GTK rewrites only the token prov
   await flush();
   assert.match(take(), /--sv-accent: #3584e4;/);
 });
+
+test('U3: utility classes on a non-egui backend warn once, semantic classes never', async () => {
+  const warned = [];
+  const warn = console.warn;
+  console.warn = (m) => warned.push(String(m));
+  try {
+    mount((c) => button(c, { class: 'row text-input top-bar border flex sv-k-button p-x' }));
+    await flush();
+    assert.deepEqual(warned.filter((w) => w.includes('egui only')), [], 'semantic classes are not utilities');
+    mount((c) => {
+      button(c, { class: 'row hover:bg-list-hover' });
+      button(c, { class: 'p-4 w-[120px] part-thumb:bg-accent' });
+    });
+    await flush();
+    const u = warned.filter((w) => w.includes('egui only'));
+    assert.equal(u.length, 1, 'one warning per process');
+    assert.match(u[0], /'hover:bg-list-hover' is a plain class on gtk/);
+  } finally {
+    console.warn = warn;
+  }
+  take();
+});

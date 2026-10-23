@@ -228,3 +228,102 @@ fn imm_elements_take_utility_classes() {
     let plain = sv.computed(&El::new("button").class("hover:bg-list-hover"), StateBits::NONE).unwrap();
     assert_ne!(hover.get("background-color"), plain.get("background-color"), "a state variant follows the virtual state");
 }
+
+const APP: &str = r#"<script>
+  let n = $state(1);
+</script>
+
+<window title="u3">
+  <box class="p-{n} bg-surface rounded-md">
+    <label class="text-fg">pad {n}</label>
+    <button class="hover:bg-list-hover px-2" onclicked={() => n++}>More</button>
+  </box>
+  <box class="card bg-accent"><label>card</label></box>
+</window>
+
+<style>
+  .card { background-color: #ff0000; }
+</style>
+"#;
+
+/// The app as a scratch dir linked to `fixtures/embed-egui`'s node_modules (as LD2's tests do;
+/// needs `pnpm install`).
+#[cfg(feature = "source")]
+fn scratch(name: &str) -> std::path::PathBuf {
+    use std::path::Path;
+    let fixture = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../fixtures/embed-egui").canonicalize().unwrap();
+    assert!(fixture.join("node_modules").exists(), "run `pnpm install` first");
+    let dir = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../target/u3").join(name);
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(dir.join("src")).unwrap();
+    std::fs::write(dir.join("package.json"), r#"{ "name": "u3", "private": true, "type": "module", "svelters": { "toolkit": "egui" } }"#).unwrap();
+    std::fs::write(dir.join("src/App.svelte"), APP).unwrap();
+    #[cfg(unix)]
+    std::os::unix::fs::symlink(fixture.join("node_modules"), dir.join("node_modules")).unwrap();
+    #[cfg(windows)]
+    std::os::windows::fs::symlink_dir(fixture.join("node_modules"), dir.join("node_modules")).unwrap();
+    dir.canonicalize().unwrap()
+}
+
+/// A release `.svb` bundle carries nothing for utilities (the host generates them on first use):
+/// the app styles the same from it as from source, before and after a dynamic `p-{n}` changes,
+/// with the component's own `<style>` still beating `bg-accent`.
+#[cfg(feature = "source")]
+#[test]
+fn a_svb_bundle_styles_like_source() {
+    use egui_kittest::kittest::Queryable;
+    use std::rc::Rc;
+    use std::sync::Arc;
+    use svelters_egui::harness::TestApp;
+    use svelters_host::modules::svb::{self, BuildOptions, Svb, SvbProvider};
+    use svelters_host::modules::{SourceConfig, SourceProvider};
+
+    let dir = scratch("svb");
+    let source_cfg = || {
+        let mut c = SourceConfig::for_path(&dir).unwrap();
+        c.backend = "egui".into();
+        c
+    };
+    let bytes = svb::build(source_cfg(), &BuildOptions::default()).unwrap();
+    let quiet = svelters_host::HostConfig { echo_console: false, echo_errors: true, ..svelters_host::HostConfig::default() };
+    let launch = |provider: Rc<dyn svelters_host::ModuleProvider>| {
+        let mut app = TestApp::with_loader(quiet.clone(), |embed| {
+            embed.backend().set_theme(&Theme::dark_modern());
+            embed.backend().set_utilities(&Utilities::on());
+            embed.load_app_from(provider)
+        })
+        .unwrap();
+        app.run();
+        assert!(app.errors().is_empty(), "{:?}", app.errors());
+        app
+    };
+    let mut from_source = launch(Rc::new(SourceProvider::new(source_cfg()).unwrap()));
+    let mut from_svb = launch(Rc::new(SvbProvider::new(Arc::new(Svb::from_bytes(bytes).unwrap())).unwrap()));
+
+    let props = ["background-color", "padding", "padding-left", "padding-right", "border-radius", "color"];
+    let snapshot = |app: &TestApp| -> Vec<Vec<Option<ComputedValue>>> {
+        ["box", "label", "button"]
+            .iter()
+            .flat_map(|tag| app.backend.handles_of(tag))
+            .map(|h| {
+                let c = app.backend.computed_style(h);
+                props.iter().map(|p| c.as_ref().and_then(|c| c.get(p).cloned())).collect()
+            })
+            .collect()
+    };
+    let before = snapshot(&from_source);
+    assert_eq!(before, snapshot(&from_svb), "the same computed styles");
+    let red = from_source.backend.handles_of("box").into_iter().any(|h| from_source.backend.computed_style(h).and_then(|c| c.get("background-color").cloned()) == rgb(255, 0, 0));
+    assert!(red, "the component's <style> beats bg-accent");
+    let generated = from_svb.backend.utility_stats().generated;
+    assert!(generated >= 6, "{generated}");
+
+    for app in [&mut from_source, &mut from_svb] {
+        app.harness.get_by_role_and_label(egui::accesskit::Role::Button, "More").click();
+        app.run();
+        assert!(app.harness.query_by_label("pad 2").is_some());
+    }
+    assert_eq!(snapshot(&from_source), snapshot(&from_svb), "the same after p-1 became p-2");
+    assert_ne!(snapshot(&from_svb), before, "p-2 restyled the box");
+    assert_eq!(from_svb.backend.utility_stats().generated, generated + 1, "p-2 generated on first use");
+}
