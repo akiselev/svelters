@@ -686,8 +686,12 @@ pub mod __private {
     /// (`Obj<T>`, `Arc<T>`) convert; outside any op (event payloads after a pass) the table is empty
     /// and a value holding an object handle does not convert.
     pub fn with_cx<R>(module: &'static str, f: impl FnOnce(&CallCx<'_>) -> R) -> R {
-        let objects = objects::current().unwrap_or_default();
-        f(&CallCx { objects: &objects, schema: schema(), this: None, module })
+        // outside an op, an empty table on the stack: no `Rc` allocation per call (SG2's
+        // allocation-free mutations: an own widget's prop write converts through here)
+        match objects::current() {
+            Some(objects) => f(&CallCx { objects: &objects, schema: schema(), this: None, module }),
+            None => f(&CallCx { objects: &objects::AppObjects::default(), schema: schema(), this: None, module }),
+        }
     }
 
     /// The sync thunk of an offloaded member (never called: the host starts it with its `start`).

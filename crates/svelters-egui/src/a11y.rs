@@ -29,7 +29,6 @@ fn name_of(c: &Common, w: &W, text: &str) -> Option<String> {
     }
     let own = match w {
         W::TextEdit { hint, .. } => some(hint),
-        W::Slider { text, .. } => some(text),
         W::Icon { name, .. } => some(&c.tooltip).or_else(|| some(name)),
         _ => None,
     };

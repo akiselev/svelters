@@ -145,7 +145,7 @@ fn collapsing(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, o
     }
 }
 
-#[allow(clippy::disallowed_types)] // OW: wrapper until VIS1c (the button, label, checkbox, toggle-button, separator and icon wrappers, behind the switch), OW1b, OW3, OW4
+#[allow(clippy::disallowed_types)] // OW: wrapper until VIS1c (the button, label, checkbox, toggle-button, separator and icon wrappers, behind the switch), OW3
 /// Paints the leaf in slot `i` (the walk's index into the scene's columns); returns its response
 /// (EV2b: the host response of its behaviours).
 pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> egui::Response {
@@ -169,7 +169,6 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     let mut text_enter = false; // CX3: Enter in a focused one-line field (commit and submit)
     let before = match arena.w(i) {
         W::Checkbox { checked, .. } | W::ToggleButton { checked, .. } => Some(Value::Bool(*checked)),
-        W::Slider { value, .. } => Some(Value::F64(*value)),
         W::ComboBox { selected, .. } => Some(Value::I64(*selected)),
         W::Picker(p) => Some(p.value()), // WG4b
         _ => None,
@@ -247,30 +246,6 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
             }
             r
         }
-        W::Slider { value, min, max, step, text, show_value } => {
-            // The slider fills its rect: the rail takes what the value box and caption leave.
-            let sp = ui.spacing().clone();
-            let mut extra = 0.0;
-            if *show_value {
-                extra += sp.item_spacing.x + sp.interact_size.x;
-            }
-            if !text.is_empty() {
-                let font = egui::TextStyle::Body.resolve(ui.style());
-                let tw = ui.ctx().fonts_mut(|f| f.layout_no_wrap(text.clone(), font, egui::Color32::WHITE).size().x);
-                extra += sp.item_spacing.x + tw;
-            }
-            // 4 points of slack: the value box can come out slightly wider than interact_size.x.
-            ui.spacing_mut().slider_width = (size.x - extra - 4.0).max(sp.interact_size.x);
-            // IN1: the value box shows and reads numbers in the host's locale
-            let mut s = crate::numeric::slider(egui::Slider::new(value, *min..=*max).show_value(*show_value));
-            if *step > 0.0 {
-                s = s.step_by(*step);
-            }
-            if !text.is_empty() {
-                s = s.text(text.as_str());
-            }
-            ui.add(s)
-        }
         // ---- WG1 ----
         W::ToggleButton { text, checked, radio, frame, weight } => {
             let r = ui.add(egui::Button::new(weighted(ui, text, egui::TextStyle::Button, *weight)).selected(*checked).frame(*frame).min_size(size));
@@ -344,8 +319,6 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         W::Hyperlink { .. }
         | W::RadioButton { .. }
         | W::Switch { .. }
-        | W::RangeSlider { .. }
-        | W::DragValue { .. }
         | W::Sides
         | W::Frame { .. }
         | W::Stack { .. }
@@ -425,7 +398,6 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     let changed = match arena.w(i) {
         W::Checkbox { checked, .. } | W::ToggleButton { checked, .. } if Some(Value::Bool(*checked)) != before => Some((kinds::P::Checked, Value::Bool(*checked))),
         W::ComboBox { selected, .. } if Some(Value::I64(*selected)) != before => Some((kinds::P::SelectedIndex, Value::I64(*selected))),
-        W::Slider { value, .. } if Some(Value::F64(*value)) != before => Some((kinds::P::Value, Value::F64(*value))),
         W::TextEdit { .. } => text_changed.clone().map(|t| (kinds::P::Text, Value::Str(t))),
         W::Picker(p) if Some(p.value()) != before => Some((kinds::P::Value, p.value())), // WG4b
         _ => None,

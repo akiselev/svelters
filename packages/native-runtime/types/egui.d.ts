@@ -334,12 +334,37 @@ export interface EguiElements {
     text?: string;
     /** Shows the value box next to the slider. */
     'show-value'?: boolean;
+    /** PageUp/PageDown and `track-click="page"` move this much (Qt `pageStep`); 0 for ten steps. */
+    'page-step'?: number;
+    /** `horizontal` (default) or `vertical` (max at the top). */
+    orientation?: 'horizontal' | 'vertical';
+    /** Tick marks: `none` (default), `before` (above or left), `after`, `both` (Qt `tickPosition`). */
+    ticks?: 'none' | 'before' | 'after' | 'both';
+    /** Between ticks; 0 for `page-step` (Qt `tickInterval`). */
+    'tick-interval'?: number;
+    /** Marks on the rail, drawn as ticks (with labels) instead of the `tick-interval` ticks: values separated by commas, each optionally `value:label` (`"0:Low, 50, 100:High"`). */
+    marks?: string;
+    /** Dragging snaps to the nearest mark. */
+    'snap-to-marks'?: boolean;
+    /** Max at the start (Qt `invertedAppearance`). */
+    inverted?: boolean;
+    /** A press on the track off the thumb: `jump` there (default) or `page` toward it. */
+    'track-click'?: 'jump' | 'page';
+    /** `linear` (default) or `log` (both ends > 0). */
+    scale?: 'linear' | 'log';
+    /** Commit-only mode (Qt `tracking=false`): `value` moves at the release, not while dragging. */
+    commit?: boolean;
+    /** When the wheel steps: `focused` (default), `hover`, `off`. */
+    wheel?: 'focused' | 'hover' | 'off';
     /** The user moved it; carries the new value. */
     onchanged?: (value: number) => void;
     /** A drag on the slider began. */
     'ondrag-started'?: () => void;
     /** A drag on the slider ended. */
     'ondrag-stopped'?: () => void;
+    oninput?: (value: number) => void;
+    oncommit?: (value: number) => void;
+    onsubmit?: (value: number) => void;
   };
   /** A button that stays pressed (`checked`). With `radio`, a row of them is a segmented control: a click checks one, the app unchecks the rest. */
   'toggle-button': EguiWidgetProps & {
@@ -556,12 +581,30 @@ export interface EguiElements {
     text?: string;
     /** Shows an editable value box at each end. */
     'show-value'?: boolean;
+    /** PageUp/PageDown; 0 for ten steps. */
+    'page-step'?: number;
+    /** `horizontal` (default) or `vertical`. */
+    orientation?: 'horizontal' | 'vertical';
+    /** Tick marks: `none`, `before`, `after`, `both`. */
+    ticks?: 'none' | 'before' | 'after' | 'both';
+    /** Between ticks; 0 for `page-step`. */
+    'tick-interval'?: number;
+    /** Max at the start. */
+    inverted?: boolean;
+    /** `linear` (default) or `log`. */
+    scale?: 'linear' | 'log';
+    /** Commit-only mode: `low`/`high` move at the release. */
+    commit?: boolean;
+    /** When the wheel steps: `focused` (default), `hover`, `off`. */
+    wheel?: 'focused' | 'hover' | 'off';
     /** The user moved a handle (or the widget clamped a written value); carries both ends. */
     onchanged?: (low: number, high: number) => void;
     /** A drag on the rail began. */
     'ondrag-started'?: () => void;
     /** A drag on the rail ended. */
     'ondrag-stopped'?: () => void;
+    oninput?: () => void;
+    oncommit?: () => void;
   };
   /** A number edited by dragging horizontally, the arrow keys, or typing after a click. Name it with `accessible-name` or `tooltip`. */
   'drag-value': EguiWidgetProps & {
@@ -580,6 +623,34 @@ export interface EguiElements {
     prefix?: string;
     /** Text after the number (` mm`). */
     suffix?: string;
+    /** One step (Up/Down, a step button, a wheel notch; Qt `singleStep`). */
+    step?: number;
+    /** PageUp/PageDown in value units; 0 for ten steps. */
+    'page-step'?: number;
+    /** Shows the `dec`/`inc` step buttons at the right end (Qt `buttonSymbols`). */
+    buttons?: boolean;
+    /** Commit-only mode (Qt `keyboardTracking=false`): `value` moves only at a commit point. */
+    commit?: boolean;
+    /** When the wheel steps: `focused` (default: over the field while it has focus), `hover`, `off`. */
+    wheel?: 'focused' | 'hover' | 'off';
+    /** Stepping past one end goes to the other (Qt `wrapping`). */
+    wrap?: boolean;
+    /** Shown instead of the number at `min` (Qt `specialValueText`, e.g. "Auto"). */
+    'special-value-text'?: string;
+    /** Holding a step button speeds it up (Qt `accelerated`). */
+    accelerated?: boolean;
+    /** `default`, or `adaptive` (Qt AdaptiveDecimalStepType: one decade below the value). */
+    'step-type'?: 'default' | 'adaptive';
+    /** An out-of-range typed value commits to the `nearest` bound (default) or the `previous` value. */
+    correction?: 'nearest' | 'previous';
+    /** Shown and focusable, not changed by the user (Qt `readOnly`). */
+    'read-only'?: boolean;
+    /** The locale's group separators (Qt `showGroupSeparator`). */
+    'group-separator'?: boolean;
+    /** A registered formatter (`numfmt::register_formatter`; Qt `textFromValue`). */
+    formatter?: string;
+    /** A registered parser (`numfmt::register_parser`; Qt `valueFromText`). */
+    parser?: string;
     /** The user changed it; carries the new value. */
     onchanged?: (value: number) => void;
     /** A drag on it began. */
@@ -588,6 +659,10 @@ export interface EguiElements {
     'ondrag-stopped'?: () => void;
     /** The user committed a value: a drag ended, or a change made otherwise (arrow keys, a typed value applied on Enter or blur); carries the value. */
     oncommit?: (value: number) => void;
+    /** §2.4's live signal (as `changed`). */
+    oninput?: (value: number) => void;
+    /** Enter in the field; carries the value. */
+    onsubmit?: (value: number) => void;
   };
   /** A side or top/bottom panel: a flex box with the panel background and a separator on its inner edge, optionally resizable. Place it at the edge of a row (left/right) or column (top/bottom). */
   panel: EguiWidgetProps & {
