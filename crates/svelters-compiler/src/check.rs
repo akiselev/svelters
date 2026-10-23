@@ -57,6 +57,8 @@ pub struct CheckOptions<'b> {
     /// Run Q3w's CSS port over `<style>` (`CompileOptions::scoped_css`): its `css_*` errors and
     /// `css_unused_selector` warnings are reported too.
     pub scoped_css: bool,
+    /// U4: check utility classes (`CompileOptions::utilities`).
+    pub utilities: Option<crate::utilities::UtilityCheck>,
 }
 
 /// What the file is, by its path.
@@ -202,6 +204,7 @@ struct Key {
     strict_native: bool,
     dev: bool,
     scoped_css: bool,
+    utilities: Option<crate::utilities::UtilityCheck>,
 }
 
 impl Key {
@@ -266,6 +269,7 @@ pub fn check_with(path: &str, source: &str, backend: &dyn PlatformSemantics, opt
         strict_native: opts.strict_native,
         dev: opts.dev,
         scoped_css: opts.scoped_css,
+        utilities: opts.utilities.clone(),
     };
     if let Some(last) = &state.last
         && key.reusable()
@@ -287,6 +291,7 @@ pub fn check_with(path: &str, source: &str, backend: &dyn PlatformSemantics, opt
             co.strict_native = opts.strict_native;
             co.portability = opts.portability.clone();
             co.scoped_css = opts.scoped_css;
+            co.utilities = opts.utilities.clone();
             Some(check_component(source, &co))
         }
         FileKind::Module => Some(compile_module(source, &ModuleOptions { filename: path.to_string(), dev: opts.dev, hmr: false })),
