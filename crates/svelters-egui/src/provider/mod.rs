@@ -301,6 +301,19 @@ pub trait KindDecl: Sized + 'static {
     fn __svelters_reset(&mut self, prop: usize);
     #[doc(hidden)]
     fn __svelters_get(&self, prop: usize, cx: &CallCx<'_>) -> Result<Value, NativeError>;
+    /// OW4: `Some(multiline)` when one of the kind's behaviour units is a text input
+    /// ([`Unit::text_input`](crate::interact::Unit::text_input)); generated for `#[behavior]`
+    /// fields, so a widget composing `TextInput` is a text input without overriding
+    /// [`Widget::text_input`].
+    #[doc(hidden)]
+    fn __units_text_input(&self) -> Option<bool> {
+        None
+    }
+    /// OW4: a unit is composing (an input method, GTK's hex entry); see [`Widget::composing`].
+    #[doc(hidden)]
+    fn __units_composing(&self) -> bool {
+        false
+    }
 }
 
 // ---- the widget trait ----
@@ -960,10 +973,10 @@ impl<T: Widget + KindDecl> ErasedWidget for T {
         Widget::consume_key(self, key, modifiers)
     }
     fn composing(&self) -> bool {
-        Widget::composing(self)
+        Widget::composing(self) || KindDecl::__units_composing(self)
     }
     fn text_input(&self) -> Option<bool> {
-        Widget::text_input(self)
+        Widget::text_input(self).or_else(|| KindDecl::__units_text_input(self))
     }
 }
 
@@ -1214,6 +1227,20 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
         resp.request_focus();
     }
     core.drawn = resp.rect;
+    // OW4: a widget's own write of the replaced row's `text` (a text field's edit) keeps the
+    // `Node::text` mirror current (names, queries, a11y)
+    if let crate::scene::node::Payload::Builtin(W::Ext(x)) = &mut arena.payload[i]
+        && x.entry().replaces.is_some()
+        && let Some(t) = changed.iter().copied().find(|&p| x.entry().props.get(p).is_some_and(|d| d.name == "text"))
+    {
+        let v = {
+            let w = x.0.borrow();
+            svelters_host::exports::__private::with_cx(w.entry().namespace, |cx| w.get_prop(t, cx)).ok()
+        };
+        if let Some(Value::Str(v)) = v {
+            x.1 = v;
+        }
+    }
     flush_writes(arena, i, changed, emits, errors, out);
     if remeasure {
         arena.layout[i].intrinsic = None;

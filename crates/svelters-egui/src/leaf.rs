@@ -143,7 +143,7 @@ fn collapsing(arena: &mut Arena, i: usize, r: Rect, origin: Vec2, ui: &mut Ui, o
     }
 }
 
-#[allow(clippy::disallowed_types)] // OW: wrapper until OW0 (the `button` wrapper, behind the switch), OW1a (toggle-button, icon), OW1a, OW1b, OW3, OW4
+#[allow(clippy::disallowed_types)] // OW: wrapper until OW0 (the `button` wrapper, behind the switch), OW1a (toggle-button, icon), OW1a, OW1b, OW3
 /// Paints the leaf in slot `i` (the walk's index into the scene's columns); returns its response
 /// (EV2b: the host response of its behaviours).
 pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>) -> egui::Response {
@@ -162,9 +162,6 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
     let size = ui.max_rect().size(); // its rect less its CSS padding (CS5f, `style::content_rect`)
     let node_id = arena.core[i].egui_id;
     let click_sense = arena.listens(i, sig("clicked"));
-    let mut text_changed = None;
-    let mut text_focus = None; // FX1: the field's focus and selection before it ran
-    let mut text_enter = false; // CX3: Enter in a focused one-line field (commit and submit)
     let before = match arena.w(i) {
         W::Checkbox { checked, .. } | W::ToggleButton { checked, .. } => Some(Value::Bool(*checked)),
         W::Slider { value, .. } => Some(Value::F64(*value)),
@@ -208,34 +205,6 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         W::Checkbox { text, checked } => {
             crate::native::focus_visible(ui); // FX1
             ui.add(egui::Checkbox::new(checked, text.as_str()))
-        }
-        W::TextEdit { text, hint, multiline, password, char_limit } => {
-            // FX1: native Escape and word keys before egui's TextEdit runs (crate::native)
-            crate::native::keep_focus_on_escape(ui, node_id);
-            // CX3: Enter in the focused one-line field, read before egui's TextEdit ends its input on
-            // it; or taken by the default button (`crate::focus`), where the field still commits
-            text_enter = crate::focus::take_entered(ui, node_id)
-                || (!*multiline && ui.memory(|m| m.has_focus(node_id)) && ui.input(|i| i.key_pressed(egui::Key::Enter)));
-            crate::focus::before_text(ui, node_id); // EV3: a pending edit command
-            text_focus = Some(crate::native::TextFocus::before(ui, node_id));
-            if crate::native::text_keys(ui, node_id, text, *password) {
-                text_changed = Some(text.clone());
-            }
-            let mut te = if *multiline { egui::TextEdit::multiline(text).desired_rows(4) } else { egui::TextEdit::singleline(text) };
-            te = te.id(node_id).desired_width(size.x).hint_text(hint.clone()).password(*password);
-            if *char_limit > 0 {
-                te = te.char_limit(*char_limit as usize);
-            }
-            crate::primary::note_egui_paste(ui.ctx()); // W5: egui pastes MiddleClickPaste itself
-            let o = te.show(ui);
-            crate::focus::after_text(ui, node_id); // EV3: a Cut or Copy command to the host's clipboard
-            // W5: the Linux primary selection (select-to-copy, middle-click paste)
-            let pasted = crate::primary::text_edit(ui, &o, node_id, text, *password, (*char_limit).max(0) as usize);
-            let r = o.response.response;
-            if r.changed() || pasted {
-                text_changed = Some(text.clone());
-            }
-            r
         }
         W::Slider { value, min, max, step, text, show_value } => {
             // The slider fills its rect: the rail takes what the value box and caption leave.
@@ -359,14 +328,10 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         resp.request_focus();
     }
     // FX1: native focus policy after the widget ran (crate::native)
-    match (arena.w(i), text_focus) {
-        (W::TextEdit { text, multiline, .. }, Some(f)) => f.after(ui, &resp, text.chars().count(), *multiline, requested),
-        (W::Button { .. } | W::Checkbox { .. }, _) => crate::native::after_toggle(ui, &resp),
-        _ => {}
+    if matches!(arena.w(i), W::Button { .. } | W::Checkbox { .. }) {
+        crate::native::after_toggle(ui, &resp);
     }
-    if !matches!(arena.w(i), W::TextEdit { .. }) {
-        crate::native::keep_focus_on_escape(ui, resp.id);
-    }
+    crate::native::keep_focus_on_escape(ui, resp.id);
     let core = &mut arena.core[i];
     core.drawn = resp.rect;
     let mut fired: Vec<&str> = Vec::new();
@@ -384,10 +349,6 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         }
     }
     let focused = resp.has_focus();
-    let had_focus = arena.core[i].flags.contains(NodeFlags::HAD_FOCUS);
-    if matches!(arena.w(i), W::TextEdit { .. }) && focused != had_focus {
-        fired.push(if focused { "gained-focus" } else { "lost-focus" });
-    }
     arena.core[i].flags.set(NodeFlags::HAD_FOCUS, focused);
     for name in fired {
         let s = sig(name);
@@ -413,7 +374,6 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         W::Checkbox { checked, .. } | W::ToggleButton { checked, .. } if Some(Value::Bool(*checked)) != before => Some((kinds::P::Checked, Value::Bool(*checked))),
         W::ComboBox { selected, .. } if Some(Value::I64(*selected)) != before => Some((kinds::P::SelectedIndex, Value::I64(*selected))),
         W::Slider { value, .. } if Some(Value::F64(*value)) != before => Some((kinds::P::Value, Value::F64(*value))),
-        W::TextEdit { .. } => text_changed.clone().map(|t| (kinds::P::Text, Value::Str(t))),
         W::Picker(p) if Some(p.value()) != before => Some((kinds::P::Value, p.value())), // WG4b
         _ => None,
     };
@@ -431,26 +391,6 @@ pub(crate) fn leaf(arena: &mut Arena, i: usize, ui: &mut Ui, out: &mut Vec<Out>)
         }
         if arena.listens(i, s) {
             out.push(Out::Event(h, s, vec![v]));
-        }
-    }
-    // CX3: a text field commits on Enter (one-line), or on losing focus after an edit since its
-    // last commit (as Qt's `editingFinished`); `submit` follows on Enter. `bind:text|commit` listens
-    // to `commit` only, so typing runs no JS.
-    if let W::TextEdit { text, .. } = arena.w(i) {
-        let text = text.clone();
-        let flags = &mut arena.core[i].flags;
-        if text_changed.is_some() {
-            flags.insert(NodeFlags::EDITED);
-        }
-        let commit = text_enter || (had_focus && !focused && flags.contains(NodeFlags::EDITED));
-        if commit {
-            flags.remove(NodeFlags::EDITED);
-        }
-        for (yes, name) in [(commit, "commit"), (text_enter, "submit")] {
-            let s = sig(name);
-            if yes && arena.listens(i, s) {
-                out.push(Out::Event(h, s, vec![Value::Str(text.clone())]));
-            }
         }
     }
     resp

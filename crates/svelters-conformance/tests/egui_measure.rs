@@ -1,5 +1,5 @@
-//! W4 "measure first": runs every pin of `conformance/pins/` on svelters-egui's `text-edit` (egui
-//! 0.37 `TextEdit`) under kittest, as the egui-winit X11 path would deliver the input on Linux
+//! W4 "measure first": runs every pin of `conformance/pins/` on svelters-egui's `text-edit` (OW4:
+//! svelters' own field on TC0 `quire-text`; before OW4, egui 0.37's `TextEdit`) under kittest, as the egui-winit X11 path would deliver the input on Linux
 //! (`OperatingSystem::Nix`; Ctrl sets `ctrl` and `command`), and compares each checkpoint with the
 //! Linux goldens (`conformance/golden/linux/*.json`, GTK and Qt). Writes the egui capture, its
 //! traces and the gap table (`target/na/linux/egui-gap.md`, and the CI job summary).
@@ -45,8 +45,6 @@
 //! measured].
 
 use egui::OutputCommand;
-use egui::text::{CCursor, CCursorRange};
-use egui::text_edit::TextEditState;
 use egui_kittest::Harness;
 use egui_kittest::kittest::Queryable;
 use std::fmt::Write as _;
@@ -71,22 +69,29 @@ const FLOOR: &[(&str, usize, usize)] = &[
     ("select-extend", 14, 14),
     ("select-collapse", 17, 17),
     ("select-all", 11, 11),
-    // GTK: double-click on `-` and on a space, one click after the CJK run; Qt: double-click
-    // word rules and double-click-drag (FX1 follow-ups)
-    ("multi-click", 11, 9),
+    // OW4: the measured double-click words (GTK `gtk_text_select_word`, Qt `selectWordAtPos`)
+    ("multi-click", 14, 14),
     ("focus-tab", 9, 9),
     ("focus-click", 7, 7),
-    // WG3b's pins 4-6 at their first measurement (egui's own undo, clipboard and IME); `primary`
-    // as FX3s's per-pass counter measures it (was 5/5 when a step kept only its last pass's output)
-    ("undo-typing", 6, 11),
-    ("undo-edits", 12, 10),
-    ("undo-paste", 6, 6),
-    ("clipboard-keys", 12, 12),
+    // OW4 (svelters' own field on TC0): GTK's redo of a merged insertion selects its last char
+    // (undo-edits #19, one checkpoint); CRLF is LF in TC0's text and in egui-winit's paste
+    // (paste-multiline); GTK's simple input context composes a non-composing letter with U+0301
+    // (dead-keys)
+    ("undo-typing", 11, 11),
+    ("undo-edits", 20, 21),
+    ("undo-paste", 10, 10),
+    ("clipboard-keys", 20, 20),
     ("paste-multiline", 1, 1),
-    ("primary", 6, 8),
+    ("primary", 8, 8),
     ("dead-keys", 8, 12),
-    ("unicode-entry", 1, 1),
+    ("unicode-entry", 13, 13),
 ];
+
+/// OW4: the macOS run (`Native::Mac`) against NSTextField, all 18 scripts (a ratchet on the total).
+const MAC_FLOOR: usize = 210;
+
+/// OW4: the Windows run (`Native::Windows`, pins 1-3 and 7) against Win32 `EDIT` and WinUI `TextBox`.
+const WINDOWS_FLOOR: (usize, usize) = (61, 82);
 
 /// The system PRIMARY as the eframe runner's W5 provider sees it (`primary::use_system`).
 #[derive(Clone, Default)]
@@ -333,22 +338,10 @@ impl Egui {
         let Some(at) = at else {
             return Ok(rect.center());
         };
-        let text = self.get_text(h);
-        let ctx = self.harness.ctx.clone();
-        let font = egui::TextStyle::Body.resolve(&ctx.global_style());
-        let galley = ctx.fonts_mut(|f| f.layout_no_wrap(text.clone(), font, egui::Color32::WHITE));
-        let len = text.chars().count();
-        let x0 = galley.pos_from_cursor(CCursor::new(at.min(len))).min.x;
-        let x1 = if at < len {
-            galley.pos_from_cursor(CCursor::new(at + 1)).min.x
-        } else {
-            x0 + 6.0
-        };
-        // TextEdit's default margin is (4, 2); its text is not scrolled in these short fields
-        Ok(egui::pos2(
-            rect.left() + 4.0 + x0 + (x1 - x0) * 0.3,
-            rect.center().y,
-        ))
+        // OW4: where the own field drew the char (its padding, font and scroll)
+        self.backend
+            .text_char_point(h, at, 0.3)
+            .ok_or_else(|| format!("no layout for {target}"))
     }
 
     fn button_event(&mut self, pos: egui::Pos2, pressed: bool) {
@@ -447,13 +440,7 @@ impl Driver for Egui {
         }
         for (a, e) in self.fields.clone() {
             let [anchor, caret] = pin.setup.field(&a).sel();
-            let id = self.id(e);
-            let mut st = TextEditState::load(&ctx, id).unwrap_or_default();
-            st.cursor.set_char_range(Some(CCursorRange::two(
-                CCursor::new(anchor),
-                CCursor::new(caret),
-            )));
-            st.store(&ctx, id);
+            self.backend.set_text_selection(e, anchor, caret);
         }
         self.frames(2);
         Ok(())
@@ -579,9 +566,7 @@ impl Driver for Egui {
         let mut cp = Vec::new();
         for (a, e) in self.fields.clone() {
             let id = self.id(e);
-            let sel = TextEditState::load(&ctx, id)
-                .and_then(|s| s.cursor.char_range())
-                .map(|r| [r.secondary.index.0, r.primary.index.0]);
+            let sel = self.backend.text_selection(e);
             let s = State {
                 text: Some(self.get_text(e)),
                 sel,
@@ -733,7 +718,7 @@ fn egui_text_edit_against_windows_goldens() {
     let mut results = Vec::new();
     let mut traces = Vec::new();
     for pin in &pins {
-        let mut d = Egui::new(Native::Egui, egui::os::OperatingSystem::Windows);
+        let mut d = Egui::new(Native::Windows, egui::os::OperatingSystem::Windows);
         let (r, t) = run_pin(&mut d, pin, &keys).unwrap_or_else(|e| panic!("{e}"));
         results.push(r);
         traces.push((pin.id.clone(), t));
@@ -792,6 +777,9 @@ fn egui_text_edit_against_windows_goldens() {
     let out = svelters_conformance::golden::out_dir("windows", "egui-gap.md");
     std::fs::write(&out, &report).unwrap();
     eprintln!("{md}\nWG3w egui gap report: {}", out.display());
+    if golds.len() == 2 {
+        assert!(totals[1] >= WINDOWS_FLOOR.0 && totals[2] >= WINDOWS_FLOOR.1, "OW4 ratchet (Windows): {} / {} below {WINDOWS_FLOOR:?}", totals[1], totals[2]);
+    }
 }
 
 /// WG3m: egui's own behaviour on macOS input against the AppKit goldens (NSTextField, NSTextView),
@@ -810,7 +798,7 @@ fn egui_text_edit_against_macos_goldens() {
     let mut results = Vec::new();
     let mut traces = Vec::new();
     for pin in &pins {
-        let mut d = Egui::new(Native::Egui, egui::os::OperatingSystem::Mac);
+        let mut d = Egui::new(Native::Mac, egui::os::OperatingSystem::Mac);
         let (r, t) = run_pin(&mut d, pin, &keys).unwrap_or_else(|e| panic!("{e}"));
         results.push(r);
         traces.push((pin.id.clone(), t));
@@ -866,6 +854,8 @@ fn egui_text_edit_against_macos_goldens() {
     let out = svelters_conformance::golden::out_dir("macos", "egui-gap.md");
     std::fs::write(&out, format!("{md}\n## Differing checkpoints\n\n{details}")).unwrap();
     eprintln!("{md}\nWG3m egui gap report: {}", out.display());
+    let field = golds.iter().position(|g| g.toolkit == "nstextfield").map(|k| totals[k + 1]);
+    assert!(field.is_none_or(|t| t >= MAC_FLOOR), "OW4 ratchet (macOS): NSTextField {field:?} below {MAC_FLOOR}");
     if let Ok(summary) = std::env::var("GITHUB_STEP_SUMMARY") {
         use std::io::Write as _;
         if let Ok(mut f) = std::fs::OpenOptions::new().append(true).create(true).open(summary) {

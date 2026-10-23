@@ -347,11 +347,6 @@ impl Metrics {
                 let icon = sp.icon_width + if text.is_empty() { 0.0 } else { sp.icon_spacing };
                 vec2(t.x + icon, t.y.max(interact.y))
             }
-            W::TextEdit { multiline, .. } => {
-                // TextEdit's default margin is (4, 2)
-                let rows = if *multiline { 4.0 } else { 1.0 };
-                vec2(sp.text_edit_width, (rows * self.row_height() + 4.0).max(interact.y))
-            }
             W::Slider { text, show_value, .. } => {
                 let mut wdt = sp.slider_width;
                 if *show_value {

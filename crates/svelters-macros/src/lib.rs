@@ -2504,6 +2504,29 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                 #vis fn units_next_frame(&self) -> ::core::option::Option<::std::time::Duration> {
                     [#( ::svelters_egui::interact::Unit::next_frame(&self.#idents) ),*].into_iter().flatten().min()
                 }
+
+                /// OW4: `Some(multiline)` when a unit makes the node a text input.
+                #vis fn units_text_input(&self) -> ::core::option::Option<bool> {
+                    [#( ::svelters_egui::interact::Unit::text_input(&self.#idents, &#params) ),*].into_iter().flatten().next()
+                }
+
+                /// OW4: a unit is composing (R11).
+                #vis fn units_composing(&self) -> bool {
+                    false #( || ::svelters_egui::interact::Unit::composing(&self.#idents) )*
+                }
+            }
+        }
+    };
+    // OW4: a kind with behaviour units is a text input (and composes) when a unit says so
+    let units_decl = if unit_fields.is_empty() {
+        quote! {}
+    } else {
+        quote! {
+            fn __units_text_input(&self) -> ::core::option::Option<bool> {
+                self.units_text_input()
+            }
+            fn __units_composing(&self) -> bool {
+                self.units_composing()
             }
         }
     };
@@ -2603,6 +2626,8 @@ fn widget_impl(attr: Ts, mut item: ItemStruct, behavior: bool) -> syn::Result<Ts
                         _ => ::core::result::Result::Err(__p::no_member("prop", prop)),
                     }
                 }
+
+                #units_decl
             }
         };
 

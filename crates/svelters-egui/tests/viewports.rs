@@ -236,8 +236,14 @@ fn dock_w4_a_root_moved_between_viewports_keeps_caret_focus_and_instances() {
     r.settle();
     assert_eq!(r.title("e"), "abc");
     assert_eq!(r.layout.lock().unwrap().focused[&ViewportId::ROOT], Some(edit));
-    let caret = egui::TextEdit::load_state(&r.vps.ctx, edit).and_then(|s| s.cursor.char_range()).unwrap();
-    assert_eq!(caret.primary.index, egui::text::CharIndex(3));
+    // OW4: the own field's selection (`[anchor, caret]` in chars), found by its egui id
+    let caret_of = |id: egui::Id| {
+        let b = e.backend();
+        let h = b.with_scene(|s| s.handles().iter().copied().find(|&h| s.n(h).id == id)).unwrap();
+        b.text_selection(h).unwrap()
+    };
+    let caret = caret_of(edit);
+    assert_eq!(caret[1], 3);
 
     // berth moves the pane to window 2 (a deferred viewport)
     r.move_pane("e", ViewportId::ROOT, vp(2));
@@ -245,7 +251,7 @@ fn dock_w4_a_root_moved_between_viewports_keeps_caret_focus_and_instances() {
     assert_eq!(e.root_info(root).unwrap().viewport, vp(2));
     assert_eq!(e.anchor_id(root, "edit"), Some(edit), "same egui id");
     assert_eq!(r.layout.lock().unwrap().focused[&vp(2)], Some(edit), "focus restored in window 2");
-    let caret2 = egui::TextEdit::load_state(&r.vps.ctx, edit).and_then(|s| s.cursor.char_range()).unwrap();
+    let caret2 = caret_of(edit);
     assert_eq!(caret2, caret, "caret kept");
     assert_eq!(e.stats().mounts, mounts, "no remount");
     assert_eq!(inits(&e.take_events()), 0, "no new component instance");

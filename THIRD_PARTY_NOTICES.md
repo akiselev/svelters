@@ -22,6 +22,8 @@ None. (Until RT1 a patched Svelte 5.57.2 tarball was vendored under `vendor/svel
 
 npm and Cargo dependencies are not bundled in this repository. Each one is installed by its package manager under its own license.
 
+`crates/svelters-egui` (OW4) depends on [quire-text](https://github.com/akiselev/quire) (`crates/quire-text`, MIT OR Apache-2.0) as a Cargo git dependency pinned by revision; its source is not copied into this repository. svelters' FX1 word rules (`native/words.rs`) and FX3 undo models (`native/undo.rs`) were moved into quire-text (with provenance lines there) and deleted here.
+
 `crates/svelters-style` (CS0) depends on [cssparser](https://github.com/servo/rust-cssparser), [cssparser-color](https://github.com/servo/rust-cssparser) and [selectors](https://github.com/servo/stylo), which are MPL-2.0. MPL-2.0 is file-level copyleft: depending on these crates leaves svelters MIT, and none of their source (or lightningcss's or Stylo's) is copied into this repository.
 
 ## Toolkit metadata and documentation text

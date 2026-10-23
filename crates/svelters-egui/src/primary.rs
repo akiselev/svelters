@@ -14,8 +14,9 @@
 //! `Event::MiddleClickPaste`): when the integration sent `MiddleClickPaste`, `TextEdit` has pasted
 //! already and [`text_edit`] does not paste a second time.
 //!
-//! Text kinds call [`text_edit`] with their `TextEditOutput`: built-in `text-edit` does, and a
-//! provider kind built on `egui::TextEdit` (`#[svelters::widget]`) can too.
+//! OW4: svelters' own `text-edit` (`widgets::text_edit`, on TC0) reads and writes the provider
+//! itself, per the platform's `TextPolicy::primary`. A provider kind built on `egui::TextEdit`
+//! (`#[svelters::widget]`) calls [`note_egui_paste`] before it and [`text_edit`] after it.
 //!
 //! W1: no other text behaviour is changed here; selection and keyboard conventions stay egui's
 //! until WG3's goldens measure the gap (W4).
@@ -155,7 +156,7 @@ fn egui_pasted_id() -> egui::Id {
 /// middle press (egui's `TextEdit` pastes it on the press; [`text_edit`] would paste again on the
 /// release). A press resets it; the event sets it (with the press, or in a pass after it).
 /// Idempotent within a pass.
-pub(crate) fn note_egui_paste(ctx: &egui::Context) {
+pub fn note_egui_paste(ctx: &egui::Context) {
     let (press, egui) = ctx.input(|i| {
         let press = i.events.iter().any(|e| matches!(e, egui::Event::PointerButton { button: egui::PointerButton::Middle, pressed: true, .. }));
         (press, i.events.iter().any(|e| matches!(e, egui::Event::MiddleClickPaste { .. })))

@@ -25,11 +25,12 @@ pub(crate) fn value_of(n: NodeRef<'_>) -> Option<String> {
         }
     };
     match n.builtin() {
-        W::TextEdit {
-            text,
-            password: false,
-            ..
-        } => Some(text.clone()),
+        // OW4: the own text field (its text, unless it is a password field)
+        W::Ext(_) if n.tag() == "text-edit" => {
+            let hidden = matches!(n.value_of("password"), Ok(svelters_host::exports::Value::Bool(true)))
+                || matches!(n.value_of("echo"), Ok(svelters_host::exports::Value::Str(e)) if e != "normal");
+            (!hidden).then(|| n.text().to_string())
+        }
         W::Slider { value, .. } => Some(num(*value)),
         W::DragValue { value, .. } => Some(num(*value)),
         W::RangeSlider { low, high, .. } => Some(format!("{}..{}", num(*low), num(*high))),

@@ -26,6 +26,7 @@ mod hover;
 mod press;
 mod resize;
 pub mod scroll;
+pub mod text_input;
 mod toggle;
 
 pub use focus::{Focus, FocusParams, Focusable};
@@ -33,6 +34,7 @@ pub use hover::{Hover, Hoverable};
 pub use press::{Press, PressParams, Pressable};
 pub use resize::{Resizable, Resize, ResizeParams};
 pub use scroll::{BarGeom, Scroll, ScrollBy, ScrollParams, Scrollable};
+pub use text_input::{TextInput, TextIntent, TextParams};
 pub use toggle::{Toggle, ToggleParams, Toggleable};
 
 use crate::native::Policy;
@@ -62,6 +64,15 @@ pub trait Unit: Default + 'static {
     /// When it needs another frame without input (key repeat, momentum, caret blink).
     fn next_frame(&self) -> Option<std::time::Duration> {
         None
+    }
+    /// OW4 (RA3's `Widget::text_input`): `Some(multiline)` when this unit makes its host a text
+    /// input (EV3's edit commands and text-field key rules then reach it).
+    fn text_input(&self, _p: &Self::Params) -> Option<bool> {
+        None
+    }
+    /// OW4 (R11 `composing()`): an input method (or a hex entry) is composing in the host.
+    fn composing(&self) -> bool {
+        false
     }
 }
 

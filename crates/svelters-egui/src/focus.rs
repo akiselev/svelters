@@ -545,7 +545,6 @@ pub(crate) fn record(arena: &Arena, i: usize, ui: &Ui, resp: &egui::Response) {
     }
     let c = arena.common(i);
     let role = match arena.w(i) {
-        W::TextEdit { multiline, .. } => Role::Text { multiline: *multiline },
         W::Button { .. } => Role::Button { default: c.default_button, cancel: c.cancel_button },
         // OW0: an own widget replacing `button` keeps its EV3 role (default and cancel keys)
         W::Ext(x) if x.entry().replaces == Some("button") => Role::Button { default: c.default_button, cancel: c.cancel_button },
@@ -707,8 +706,8 @@ pub(crate) fn take_activation(ui: &Ui, node_eid: Id) -> bool {
     })
 }
 
-/// CX3: for a one-line text field with widget id `id`: whether its Enter went to the default
-/// button this pass (the field still commits).
+/// CX3/OW4: for a one-line text field with widget id `id`: whether its Enter went to the default
+/// button this pass (the field still commits and submits: `widgets::text_edit`).
 pub(crate) fn take_entered(ui: &Ui, id: Id) -> bool {
     with(ui.ctx(), |st| {
         let hit = st.entered == Some(id);

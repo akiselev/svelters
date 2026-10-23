@@ -550,7 +550,7 @@ impl Element for Forced<'_> {
 
 /// Stock widgets: egui draws them with per-state `WidgetVisuals`.
 fn is_stock(w: &W) -> bool {
-    matches!(w, W::Button { .. } | W::Checkbox { .. } | W::Slider { .. } | W::TextEdit { .. })
+    matches!(w, W::Button { .. } | W::Checkbox { .. } | W::Slider { .. })
 }
 
 /// Whether two part lists hold the same parts with equal styles.
@@ -672,7 +672,13 @@ impl Scene {
         };
         let mut parts = Vec::new();
         for (k, p) in decl.iter().enumerate() {
-            let pe = PseudoElement::part(p.name);
+            // OW4: a text field's `placeholder` and `selection` paint parts are `::placeholder` and
+            // `::selection` (the CSS pseudo-elements; ARCH-WIDGETS Q3)
+            let pe = match p.name {
+                "placeholder" => PseudoElement::Placeholder,
+                "selection" => PseudoElement::Selection,
+                n => PseudoElement::part(n),
+            };
             if !p.node && st.stylist.has_pseudo_rules(&pe) {
                 parts.push((k as u16, p.name, Arc::new(st.stylist.compute_pseudo(n, &pe, &c, &st.cx, &mut caches))));
             }
@@ -977,7 +983,7 @@ pub(crate) fn before_leaf(s: &mut Scene, i: usize, r: egui::Rect, child: &mut eg
     // the id the widget takes: TextEdit's is the node's (leaf.rs), the others the child's first
     // auto id; providers draw with the node's id
     let wid = match s.w(i) {
-        W::TextEdit { .. } | W::Ext(_) => s.core[i].egui_id,
+        W::Ext(_) => s.core[i].egui_id,
         _ => child.next_auto_id(),
     };
     let resp = child.ctx().read_response(wid);
@@ -1149,7 +1155,7 @@ fn resolve_family(ctx: &egui::Context, list: &str) -> Option<egui::FontFamily> {
 /// The text a leaf draws, for the weight family's glyph check.
 fn leaf_text(w: &W) -> &str {
     match w {
-        W::Label { text, .. } | W::Button { text, .. } | W::ToggleButton { text, .. } | W::Checkbox { text, .. } | W::TextEdit { text, .. } | W::Slider { text, .. } => text,
+        W::Label { text, .. } | W::Button { text, .. } | W::ToggleButton { text, .. } | W::Checkbox { text, .. } | W::Slider { text, .. } => text,
         _ => "",
     }
 }

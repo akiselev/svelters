@@ -1713,7 +1713,7 @@ impl Embed {
 fn takes_input(w: &crate::scene::W) -> bool {
     use crate::scene::W;
     match w {
-        W::Button { .. } | W::Checkbox { .. } | W::TextEdit { .. } | W::Slider { .. } => true,
+        W::Button { .. } | W::Checkbox { .. } | W::Slider { .. } => true,
         // scrolls and selects (LS1)
         W::VirtualList(_) => true,
         W::Run { anchor, .. } => *anchor,

@@ -23,7 +23,6 @@ pub enum W {
     Label { text: String, wrap: &'static str, selectable: bool, weight: i64, rich: Option<Box<crate::rich::Rich>> },
     Button { text: String, selected: bool, frame: bool, small: bool, weight: i64 },
     Checkbox { text: String, checked: bool },
-    TextEdit { text: String, hint: String, multiline: bool, password: bool, char_limit: i64 },
     Slider { value: f64, min: f64, max: f64, step: f64, text: String, show_value: bool },
     /// RA1: a provider kind's widget struct (`#[svelters::widget]`, `crate::provider`).
     Ext(crate::provider::ExtWidget),
@@ -261,8 +260,6 @@ bits! {
         const ATTACHED = 1 << 15;
         /// Has attached nodes (`NodeCold::attached` is not empty): the walk runs their hooks.
         const HAS_ATTACHED = 1 << 16;
-        /// CX3: a text field the user edited since its last `commit` (blur then commits).
-        const EDITED = 1 << 17;
         /// WG6/OW2 (QA13): `scroll-into-view` was called; the walk asks the scrollables around it
         /// to reveal it when it reaches it (`widgets::scroll_area::reveal_flagged`).
         const WANT_SCROLL = 1 << 18;
@@ -474,7 +471,6 @@ pub fn text_of(w: &W) -> &str {
         W::Label { text, .. }
         | W::Button { text, .. }
         | W::Checkbox { text, .. }
-        | W::TextEdit { text, .. }
         | W::Slider { text, .. }
         | W::ToggleButton { text, .. }
         | W::CollapsingHeader { text, .. } => text,

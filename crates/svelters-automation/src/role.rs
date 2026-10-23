@@ -14,7 +14,6 @@ pub fn role_of(n: NodeRef<'_>) -> &'static str {
         W::Label { .. } => "label",
         W::Button { .. } => "button",
         W::Checkbox { .. } => "checkbox",
-        W::TextEdit { .. } => "textbox",
         W::Slider { .. } | W::RangeSlider { .. } => "slider",
         W::DragValue { .. } => "spinbutton",
         W::ToggleButton { radio: true, .. } | W::RadioButton { .. } => "radio",

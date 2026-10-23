@@ -230,12 +230,17 @@ pub static KIND_DOCS: &[KindDoc] = &[
         category: Category::Inputs,
         paint: Paint::Stock,
         walk: Walk::Leaf(Focus::Yes),
-        states: &[],
+        states: &[
+            StateDoc { name: "read-only", source: Source::Prop, when: "`read-only` is true" },
+            StateDoc { name: "invalid", source: Source::Prop, when: "`invalid` is true" },
+            StateDoc { name: "user-invalid", source: Source::Kind, when: "`invalid` after the first commit" },
+            StateDoc { name: "placeholder-shown", source: Source::Kind, when: "the text is empty and there is a hint" },
+        ],
         a11y: A11yDoc {
-            variants: &[("MultilineTextInput", "`multiline`"), ("PasswordInput", "`password`")],
-            ..a11y(Some("TextInput"), &["accessible-name", "hint-text", "tooltip"], Some("the text"), &["Focus", "SetValue", "ReplaceSelectedText", "SetTextSelection"])
+            variants: &[("MultilineTextInput", "`multiline`"), ("PasswordInput", "`password` or `echo`")],
+            ..a11y(Some("TextInput"), &["accessible-name", "hint-text", "placeholder", "tooltip"], Some("the text (masked in a password field), its text runs, caret and selection"), &["Focus", "SetValue", "ReplaceSelectedText"])
         },
-        css_note: "The field's fill follows the `--sv-input-bg` token; prefer the input tokens to rules.",
+        css_note: "svelters' own field (OW4): the sunken look of DESIGN R4 from the input tokens; `::placeholder`, `::selection`, `::part(caret)` and `::part(preedit)` style its text.",
     },
     KindDoc {
         id: "Slider",

@@ -297,6 +297,36 @@ export interface EguiElements {
     password?: boolean;
     /** Maximum number of characters; 0 for none. */
     'char-limit'?: number;
+    /** `hint-text` by its HTML name (QLineEdit `placeholderText`); wins when set. */
+    placeholder?: string;
+    /** `normal`, `password` or `none` (QLineEdit `echoMode`; `none` shows nothing). */
+    echo?: 'normal' | 'password' | 'none';
+    /** `char-limit` by its HTML name; wins when above 0. */
+    maxlength?: number;
+    /** Motions, selection and copy only (QLineEdit `readOnly`, `:read-only`). */
+    'read-only'?: boolean;
+    /** Undo and redo (`undo={false}` turns the history off). */
+    undo?: boolean;
+    /** A multi-line field's Tab moves focus (otherwise it inserts a tab; Ctrl+Tab always moves). */
+    'tab-focus'?: boolean;
+    /** A multi-line field's wrapping: `word`, `char` or `none`. */
+    wrap?: 'word' | 'char' | 'none';
+    /** A multi-line field's height in lines. */
+    rows?: number;
+    /** The selection's start, in characters (a write selects). */
+    'selection-start'?: number;
+    /** The selection's end, in characters (equal to `selection-start` without a selection). */
+    'selection-end'?: number;
+    /** The user edited since the last `commit` (QLineEdit `isModified`); the app may clear it. */
+    modified?: boolean;
+    /** Undo would do something now (read-only, observable). */
+    'can-undo'?: boolean;
+    /** Redo would do something now (read-only, observable). */
+    'can-redo'?: boolean;
+    /** Copy would copy something now: a selection outside a password field (read-only, observable). */
+    'can-copy'?: boolean;
+    /** The input method's purpose: `text`, `decimal`, `numeric`, … (`password` fields always ask for a password IME). */
+    inputmode?: string;
     /** The user edited the text; carries the new text (once per frame). */
     onchanged?: (text: string) => void;
     /** Took keyboard focus. */
@@ -307,6 +337,10 @@ export interface EguiElements {
     oncommit?: (text: string) => void;
     /** Enter in a one-line field (also when a default button takes it); carries the text. Fires after `commit`. */
     onsubmit?: (text: string) => void;
+    /** An edit was refused or cut short: `max-chars`, `read-only`, `filtered`, `line-break`, `secret` (QLineEdit `inputRejected`). */
+    onrejected?: (value: string) => void;
+    /** The selection or caret moved (read `selection-start` and `selection-end`). */
+    'onselection-changed'?: () => void;
   };
   /** A horizontal slider with an optional value box. */
   slider: EguiWidgetProps & {

@@ -25,6 +25,7 @@ pub mod scrollbar;
 pub mod separator;
 pub mod split_view;
 pub mod switch;
+pub mod text_edit;
 pub mod toggle_button;
 
 /// OW2: the window's inner chrome (`windows.rs`).
@@ -34,12 +35,12 @@ use crate::scene::W;
 
 /// The built-in tags whose own widget is the default (the egui wrapper otherwise). Grows by one
 /// tag per lane as each own widget passes its acceptance (ARCH-WIDGETS §6.2 step 2).
-pub const DEFAULT_OWN: &[&str] = &["button"];
+pub const DEFAULT_OWN: &[&str] = &["button", "text-edit"];
 
 /// The built-in tags whose egui wrapper is gone (deleted in the lane whose own widget passed its
 /// acceptance, §6.2 step 3) or never existed (`scrollbar`): always svelters' own, whatever the
 /// switch says.
-pub const OWN_ONLY: &[&str] = &["panel", "scroll-area", "scrollbar", "split-view"];
+pub const OWN_ONLY: &[&str] = &["panel", "scroll-area", "scrollbar", "split-view", "text-edit"];
 
 /// Which built-in kinds get svelters' own widget (§6.2: the per-kind switch).
 #[derive(Clone, Debug, Default, PartialEq, Eq)]

@@ -77,8 +77,8 @@
     background-color: var(--sv-button-bg-active);
   }
 
-  /* egui fills a text edit with Visuals::text_edit_bg_color (`--sv-input-bg`, from the Style);
-     its border and text come from the widget state. */
+  /* OW4: svelters' own field (`widgets/text_edit.rs`); its UA table gives the rest of DESIGN R4
+     (the `--sv-input-bg` fill, the inset, the focus border). */
   text-edit {
     border-color: var(--sv-input-border-color);
     border-width: var(--sv-stroke);

@@ -95,6 +95,18 @@ macro_rules! field {
     )*};
 }
 
+/// OW4: keys of an own widget's props (written by name; no zero-copy read).
+macro_rules! own {
+    ($($N:ident: $T:ty = $name:literal;)*) => {$(
+        pub static $N: PropKey<$T> = {
+            fn g<'a>(_: &'a Common, _: &'a W) -> Option<&'a $T> {
+                None
+            }
+            PropKey::new($name, g)
+        };
+    )*};
+}
+
 /// Every element inside a window (the `Widget` base).
 pub mod widget {
     use super::*;
@@ -174,14 +186,16 @@ pub mod checkbox {
     }
 }
 
+/// OW4: `text-edit` is svelters' own widget: its props are written by name (`NodeMut::set`); a
+/// zero-copy `get` reads `None` (read them with `NodeRef::value_of`).
 pub mod text_edit {
     use super::*;
-    field! {
-        TEXT: String = "text", TextEdit.text;
-        HINT_TEXT: String = "hint-text", TextEdit.hint;
-        MULTILINE: bool = "multiline", TextEdit.multiline;
-        PASSWORD: bool = "password", TextEdit.password;
-        CHAR_LIMIT: i64 = "char-limit", TextEdit.char_limit;
+    own! {
+        TEXT: String = "text";
+        HINT_TEXT: String = "hint-text";
+        MULTILINE: bool = "multiline";
+        PASSWORD: bool = "password";
+        CHAR_LIMIT: i64 = "char-limit";
     }
 }
 

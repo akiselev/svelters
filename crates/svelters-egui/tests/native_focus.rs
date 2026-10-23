@@ -1,11 +1,11 @@
-//! FX1: the native focus policy and word rules (`svelters_egui::native`) on the built-in leaves,
+//! FX1/OW4: the native focus policy and word rules (`svelters_egui::native`) on the built-in leaves
+//! (svelters' own `text-edit` since OW4),
 //! through real input. The full comparison with the GTK and Qt references is
 //! `svelters-conformance`'s `egui_measure`.
 
 mod common;
 
 use common::Rig;
-use egui::text_edit::TextEditState;
 use egui_kittest::kittest::Queryable;
 use svelters_abi::*;
 use svelters_egui::native::{self, Native};
@@ -13,8 +13,8 @@ use svelters_egui::native::{self, Native};
 const CTRL: egui::Modifiers = egui::Modifiers { alt: false, ctrl: true, shift: false, mac_cmd: false, command: true };
 
 fn sel(rig: &Rig, h: svl_handle) -> Option<[usize; 2]> {
-    let id = rig.backend.with_scene(|s| s.n(h).id);
-    TextEditState::load(&rig.harness.ctx, id).and_then(|s| s.cursor.char_range()).map(|r| [r.secondary.index.0, r.primary.index.0])
+    // OW4: the own field's selection, `[anchor, caret]` in chars
+    rig.backend.text_selection(h)
 }
 
 fn focused(rig: &Rig, h: svl_handle) -> bool {

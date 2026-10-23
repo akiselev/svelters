@@ -8768,19 +8768,19 @@
         "actions": [
           "Focus",
           "SetValue",
-          "ReplaceSelectedText",
-          "SetTextSelection"
+          "ReplaceSelectedText"
         ],
         "author_id": "anchor",
         "invalid": true,
         "name_from": [
           "accessible-name",
           "hint-text",
+          "placeholder",
           "tooltip"
         ],
         "note": "",
         "role": "TextInput",
-        "value": "the text",
+        "value": "the text (masked in a password field), its text runs, caret and selection",
         "variants": [
           {
             "role": "MultilineTextInput",
@@ -8788,7 +8788,7 @@
           },
           {
             "role": "PasswordInput",
-            "when": "`password`"
+            "when": "`password` or `echo`"
           }
         ]
       },
@@ -8825,7 +8825,7 @@
       ],
       "children": null,
       "css_hidden": [],
-      "css_note": "The field's fill follows the `--sv-input-bg` token; prefer the input tokens to rules.",
+      "css_note": "svelters' own field (OW4): the sunken look of DESIGN R4 from the input tokens; `::placeholder`, `::selection`, `::part(caret)` and `::part(preedit)` style its text.",
       "doc": "A single- or multi-line text field.",
       "interface": false,
       "lifetime": "owned",
@@ -8845,6 +8845,57 @@
       "paint": "stock",
       "present": null,
       "props": {
+        "can-copy": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Copy would copy something now: a selection outside a password field (read-only, observable).",
+          "js": "can-copy",
+          "native": "can-copy",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:can-copy",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "can-redo": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Redo would do something now (read-only, observable).",
+          "js": "can-redo",
+          "native": "can-redo",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:can-redo",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "can-undo": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Undo would do something now (read-only, observable).",
+          "js": "can-undo",
+          "native": "can-undo",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:can-undo",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "char-limit": {
           "construct_only": false,
           "default": 0,
@@ -8862,6 +8913,28 @@
           "type": "i64",
           "writable": true
         },
+        "echo": {
+          "construct_only": false,
+          "default": "normal",
+          "doc": "`normal`, `password` or `none` (QLineEdit `echoMode`; `none` shows nothing).",
+          "js": "echo",
+          "native": "echo",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:echo",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "normal",
+            "password",
+            "none"
+          ],
+          "writable": true
+        },
         "hint-text": {
           "construct_only": false,
           "default": "",
@@ -8877,6 +8950,57 @@
           },
           "readable": true,
           "type": "string",
+          "writable": true
+        },
+        "inputmode": {
+          "construct_only": false,
+          "default": "text",
+          "doc": "The input method's purpose: `text`, `decimal`, `numeric`, … (`password` fields always ask\nfor a password IME).",
+          "js": "inputmode",
+          "native": "inputmode",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:inputmode",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "maxlength": {
+          "construct_only": false,
+          "default": 0,
+          "doc": "`char-limit` by its HTML name; wins when above 0.",
+          "js": "maxlength",
+          "native": "maxlength",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:maxlength",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "modified": {
+          "construct_only": false,
+          "default": false,
+          "doc": "The user edited since the last `commit` (QLineEdit `isModified`); the app may clear it.",
+          "js": "modified",
+          "native": "modified",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:modified",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         },
         "multiline": {
@@ -8913,6 +9037,108 @@
           "type": "bool",
           "writable": true
         },
+        "placeholder": {
+          "construct_only": false,
+          "default": "",
+          "doc": "`hint-text` by its HTML name (QLineEdit `placeholderText`); wins when set.",
+          "js": "placeholder",
+          "native": "placeholder",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:placeholder",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "read-only": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Motions, selection and copy only (QLineEdit `readOnly`, `:read-only`).",
+          "js": "read-only",
+          "native": "read-only",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:read-only",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "rows": {
+          "construct_only": false,
+          "default": 4,
+          "doc": "A multi-line field's height in lines.",
+          "js": "rows",
+          "native": "rows",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:rows",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "selection-end": {
+          "construct_only": false,
+          "default": 0,
+          "doc": "The selection's end, in characters (equal to `selection-start` without a selection).",
+          "js": "selection-end",
+          "native": "selection-end",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:selection-end",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "selection-start": {
+          "construct_only": false,
+          "default": 0,
+          "doc": "The selection's start, in characters (a write selects).",
+          "js": "selection-start",
+          "native": "selection-start",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:selection-start",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "tab-focus": {
+          "construct_only": false,
+          "default": true,
+          "doc": "A multi-line field's Tab moves focus (otherwise it inserts a tab; Ctrl+Tab always moves).",
+          "js": "tab-focus",
+          "native": "tab-focus",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:tab-focus",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "text": {
           "construct_only": false,
           "default": "",
@@ -8928,6 +9154,45 @@
           },
           "readable": true,
           "type": "string",
+          "writable": true
+        },
+        "undo": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Undo and redo (`undo={false}` turns the history off).",
+          "js": "undo",
+          "native": "undo",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:undo",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
+        "wrap": {
+          "construct_only": false,
+          "default": "word",
+          "doc": "A multi-line field's wrapping: `word`, `char` or `none`.",
+          "js": "wrap",
+          "native": "wrap",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TextEdit:wrap",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "enum",
+          "values": [
+            "word",
+            "char",
+            "none"
+          ],
           "writable": true
         }
       },
@@ -8985,6 +9250,33 @@
           "handler_result": "none",
           "js_event": "lost-focus",
           "name": "lost-focus",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "rejected": {
+          "args": [
+            {
+              "name": "value",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "An edit was refused or cut short: `max-chars`, `read-only`, `filtered`, `line-break`,\n`secret` (QLineEdit `inputRejected`).",
+          "handler_result": "none",
+          "js_event": "rejected",
+          "name": "rejected",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "selection-changed": {
+          "args": [],
+          "disconnect_on_drop": true,
+          "doc": "The selection or caret moved (read `selection-start` and `selection-end`).",
+          "handler_result": "none",
+          "js_event": "selection-changed",
+          "name": "selection-changed",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -9062,6 +9354,46 @@
           ],
           "source": "scene",
           "when": "it plays an out transition before it is removed"
+        },
+        {
+          "name": "read-only",
+          "negated": [
+            ":read-write"
+          ],
+          "pseudo": [
+            ":read-only"
+          ],
+          "source": "prop",
+          "when": "`read-only` is true"
+        },
+        {
+          "name": "invalid",
+          "negated": [
+            ":valid"
+          ],
+          "pseudo": [
+            ":invalid"
+          ],
+          "source": "prop",
+          "when": "`invalid` is true"
+        },
+        {
+          "name": "user-invalid",
+          "negated": [],
+          "pseudo": [
+            ":user-invalid"
+          ],
+          "source": "kind",
+          "when": "`invalid` after the first commit"
+        },
+        {
+          "name": "placeholder-shown",
+          "negated": [],
+          "pseudo": [
+            ":placeholder-shown"
+          ],
+          "source": "kind",
+          "when": "the text is empty and there is a hint"
         }
       ],
       "text_content": null
