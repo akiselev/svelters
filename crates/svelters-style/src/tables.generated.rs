@@ -94,6 +94,7 @@ pub static GTK: Table = Table {
         Prop { name: "xalign", via: Via::Setter, target: "xalign", ty: ValueType::Number, values: &[], tags: &["label"], inline_only: false },
         Prop { name: "yalign", via: Via::Setter, target: "yalign", ty: ValueType::Number, values: &[], tags: &["label"], inline_only: false },
     ],
+    ranges: &[],
 };
 
 pub static QT: Table = Table {
@@ -158,6 +159,7 @@ pub static QT: Table = Table {
         Prop { name: "spacing", via: Via::Setter, target: "spacing", ty: ValueType::Length, values: &[], tags: &["box-layout"], inline_only: false },
         Prop { name: "stretch", via: Via::ChildAttr, target: "stretch", ty: ValueType::Int, values: &[], tags: &["box-layout"], inline_only: false },
     ],
+    ranges: &[],
 };
 
 pub static APPKIT: Table = Table {
@@ -198,6 +200,7 @@ pub static APPKIT: Table = Table {
         Prop { name: "visibility-hidden", via: Via::Setter, target: "hidden", ty: ValueType::Bool, values: &[], tags: &["box", "button", "color-well", "combo-box", "date-picker", "image-view", "level-indicator", "path-control", "pop-up-button", "progress-indicator", "scroll-view", "search-field", "secure-text-field", "segmented-control", "slider", "split-view", "stack-view", "stepper", "switch", "tab-view", "text-field", "text-view", "token-field", "view", "visual-effect-view"], inline_only: false },
         Prop { name: "width", via: Via::Css, target: "", ty: ValueType::Length, values: &[], tags: &[], inline_only: false },
     ],
+    ranges: &[],
 };
 
 pub static WINUI: Table = Table {
@@ -231,6 +234,7 @@ pub static WINUI: Table = Table {
         Prop { name: "visibility", via: Via::Setter, target: "visibility", ty: ValueType::Enum, values: &["visible", "collapsed"], tags: &["app-bar-button", "app-bar-separator", "app-bar-toggle-button", "auto-suggest-box", "border", "button", "calendar-date-picker", "calendar-view", "canvas", "check-box", "color-picker", "combo-box", "combo-box-item", "command-bar", "content-dialog", "date-picker", "drop-down-button", "expander", "font-icon", "grid", "grid-view", "grid-view-item", "hyperlink-button", "image", "info-badge", "info-bar", "list-view", "list-view-item", "menu-bar", "menu-bar-item", "menu-flyout-item", "menu-flyout-separator", "menu-flyout-sub-item", "navigation-view", "navigation-view-item", "number-box", "password-box", "person-picture", "progress-bar", "progress-ring", "radio-button", "radio-buttons", "rating-control", "repeat-button", "rich-edit-box", "scroll-viewer", "selector-bar", "selector-bar-item", "slider", "split-button", "split-view", "stack-panel", "symbol-icon", "tab-view", "tab-view-item", "teaching-tip", "text-block", "text-box", "time-picker", "toggle-button", "toggle-menu-flyout-item", "toggle-switch", "viewbox"], inline_only: false },
         Prop { name: "width", via: Via::Setter, target: "width", ty: ValueType::Length, values: &[], tags: &["app-bar-button", "app-bar-separator", "app-bar-toggle-button", "auto-suggest-box", "border", "button", "calendar-date-picker", "calendar-view", "canvas", "check-box", "color-picker", "combo-box", "combo-box-item", "command-bar", "content-dialog", "date-picker", "drop-down-button", "expander", "font-icon", "grid", "grid-view", "grid-view-item", "hyperlink-button", "image", "info-badge", "info-bar", "list-view", "list-view-item", "menu-bar", "menu-bar-item", "menu-flyout-item", "menu-flyout-separator", "menu-flyout-sub-item", "navigation-view", "navigation-view-item", "number-box", "password-box", "person-picture", "progress-bar", "progress-ring", "radio-button", "radio-buttons", "rating-control", "repeat-button", "rich-edit-box", "scroll-viewer", "selector-bar", "selector-bar-item", "slider", "split-button", "split-view", "stack-panel", "symbol-icon", "tab-view", "tab-view-item", "teaching-tip", "text-block", "text-box", "time-picker", "toggle-button", "toggle-menu-flyout-item", "toggle-switch", "viewbox"], inline_only: false },
     ],
+    ranges: &[],
 };
 
 pub static EGUI: Table = Table {
@@ -325,6 +329,39 @@ pub static EGUI: Table = Table {
         Prop { name: "visible", via: Via::Setter, target: "visible", ty: ValueType::Bool, values: &[], tags: &["box", "button", "canvas", "checkbox", "collapsing-header", "color-picker", "combo-box", "date-picker", "drag-value", "frame", "grid", "hyperlink", "icon", "image", "inner-window", "label", "menu-bar", "menu-button", "modal", "panel", "popup", "progress-bar", "radio-button", "range-slider", "scroll-area", "scrollbar", "separator", "sides", "slider", "spinner", "split-view", "stack", "switch", "tab", "tab-view", "table", "table-column", "text-edit", "toast-host", "toggle-button", "tree-view", "virtual-list"], inline_only: false },
         Prop { name: "white-space", via: Via::Css, target: "", ty: ValueType::Enum, values: &["normal", "nowrap", "pre", "pre-wrap", "pre-line", "break-spaces"], tags: &[], inline_only: false },
         Prop { name: "width", via: Via::Setter, target: "width", ty: ValueType::Length, values: &[], tags: &["box", "button", "canvas", "checkbox", "collapsing-header", "color-picker", "combo-box", "date-picker", "drag-value", "frame", "grid", "hyperlink", "icon", "image", "inner-window", "label", "menu-bar", "menu-button", "modal", "panel", "popup", "progress-bar", "radio-button", "range-slider", "scroll-area", "scrollbar", "separator", "sides", "slider", "spinner", "split-view", "stack", "switch", "tab", "tab-view", "table", "table-column", "text-edit", "toast-host", "toggle-button", "tree-view", "virtual-list"], inline_only: false },
+    ],
+    ranges: &[
+        ("border-bottom-left-radius", 0.0_f64, f64::INFINITY),
+        ("border-bottom-right-radius", 0.0_f64, f64::INFINITY),
+        ("border-bottom-width", 0.0_f64, f64::INFINITY),
+        ("border-left-width", 0.0_f64, f64::INFINITY),
+        ("border-radius", 0.0_f64, f64::INFINITY),
+        ("border-right-width", 0.0_f64, f64::INFINITY),
+        ("border-top-left-radius", 0.0_f64, f64::INFINITY),
+        ("border-top-right-radius", 0.0_f64, f64::INFINITY),
+        ("border-top-width", 0.0_f64, f64::INFINITY),
+        ("border-width", 0.0_f64, f64::INFINITY),
+        ("column-gap", 0.0_f64, f64::INFINITY),
+        ("flex-basis", 0.0_f64, f64::INFINITY),
+        ("flex-grow", 0.0_f64, f64::INFINITY),
+        ("flex-shrink", 0.0_f64, f64::INFINITY),
+        ("font-size", 0.0_f64, f64::INFINITY),
+        ("gap", 0.0_f64, f64::INFINITY),
+        ("height", 0.0_f64, f64::INFINITY),
+        ("max-height", 0.0_f64, f64::INFINITY),
+        ("max-width", 0.0_f64, f64::INFINITY),
+        ("min-height", 0.0_f64, f64::INFINITY),
+        ("min-width", 0.0_f64, f64::INFINITY),
+        ("opacity", 0.0_f64, 1.0_f64),
+        ("outline-width", 0.0_f64, f64::INFINITY),
+        ("padding", 0.0_f64, f64::INFINITY),
+        ("padding-bottom", 0.0_f64, f64::INFINITY),
+        ("padding-left", 0.0_f64, f64::INFINITY),
+        ("padding-right", 0.0_f64, f64::INFINITY),
+        ("padding-top", 0.0_f64, f64::INFINITY),
+        ("row-gap", 0.0_f64, f64::INFINITY),
+        ("scroll-margin", 0.0_f64, f64::INFINITY),
+        ("width", 0.0_f64, f64::INFINITY),
     ],
 };
 

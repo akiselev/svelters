@@ -404,6 +404,9 @@ fn style_json() -> J {
                 J::Object(m)
             });
             let m = entry.as_object_mut().unwrap();
+            if let Some(r) = range_json(p.name) {
+                m.insert("range".into(), r);
+            }
             let kinds_list = m.get_mut("kinds").unwrap().as_array_mut().unwrap();
             kinds_list.push(json!(k.id));
             let t = m.get_mut("tags").unwrap().as_array_mut().unwrap();
@@ -426,6 +429,9 @@ fn style_json() -> J {
         if !values.is_empty() {
             m.insert("values".into(), json!(values));
         }
+        if let Some(r) = range_json(name) {
+            m.insert("range".into(), r);
+        }
         m.insert("via".into(), json!("css"));
         props.insert(name.to_string(), J::Object(m));
     }
@@ -433,6 +439,11 @@ fn style_json() -> J {
         "dialect": "none",
         // CS5e: the backend runs the CSS engine; `<style>` reaches it as CSS (D9 on egui)
         "engine": "backend",
+        // U0: the media features the engine evaluates (`svelters_style::MEDIA_FEATURES`)
+        "media_features": svelters_style::MEDIA_FEATURES
+            .iter()
+            .map(|(n, kind, values)| json!({"name": n, "type": kind, "values": values}))
+            .collect::<Vec<_>>(),
         "properties": props,
         // DOC1: the state pseudo-classes and the built-in state each reads (`:enabled` is
         // `:disabled` negated)
@@ -443,8 +454,79 @@ fn style_json() -> J {
                 json!({"name": n, "negated": neg, "state": state})
             })
             .collect::<Vec<_>>(),
+        // U0: svelters' own provider states (`:state(sv.<name>)`); the kinds that set each list
+        // them under `kinds[].provider_states`. An app's come with its fragment.
+        "provider_states": crate::provider::state_registry()
+            .iter()
+            .filter(|d| d.namespace == "sv")
+            .map(|d| json!({"name": d.full, "namespace": d.namespace, "state": d.name}))
+            .collect::<Vec<_>>(),
         "setter_selectors": ["type", "class", "id"],
         "units": {"px": {"provenance": "egui points: 1px in a style sheet is one point", "scale": 1.0}},
+    })
+}
+
+/// U0: a property's numeric range (`crate::style::PROP_RANGES`) as `{min, max}`, open ends left out.
+fn range_json(name: &str) -> Option<J> {
+    let &(_, min, max) = crate::style::PROP_RANGES.iter().find(|r| r.0 == name)?;
+    let mut m = Map::new();
+    if min.is_finite() {
+        m.insert("min".into(), json!(min));
+    }
+    if max.is_finite() {
+        m.insert("max".into(), json!(max));
+    }
+    Some(J::Object(m))
+}
+
+/// U0 (UTILITY-CSS §3.4): a kind's `#[part]`s (`::part(name)`; `node`: a shadow child with its own
+/// states, else a paint part) and the provider states it sets. Built-in kinds always list both;
+/// a fragment's kinds only list parts they have, so fragments of kinds without parts don't change.
+fn add_style_meta(kj: &mut J, parts: &[crate::provider::PartEntry], states: &[&crate::provider::StateBit], always: bool) {
+    let m = kj.as_object_mut().expect("kind object");
+    if always || !parts.is_empty() {
+        m.insert("parts".into(), parts.iter().map(|p| json!({"doc": p.docs.trim(), "name": p.name, "node": p.node})).collect());
+    }
+    if always || !states.is_empty() {
+        m.insert("provider_states".into(), states.iter().map(|s| json!(s.full)).collect());
+    }
+}
+
+/// U0 (UTILITY-CSS §3.4): the token manifest of the built-in themes (`theme::token_manifest`):
+/// each L2/L3 token's layer, type, VS Code key or default source, and its value in each built-in
+/// set (default density, affordances on) and, for density tokens, in each density.
+fn theme_json() -> J {
+    use crate::theme::{self, Density};
+    let tokens: Map<String, J> = theme::token_manifest()
+        .into_iter()
+        .map(|t| {
+            let mut m = Map::new();
+            if !t.density.is_empty() {
+                m.insert("density".into(), J::Object(t.density.iter().map(|(d, v)| (d.to_string(), json!(v))).collect()));
+            }
+            if let Some(f) = t.from {
+                m.insert("from".into(), json!(f));
+            }
+            m.insert("layer".into(), json!(t.layer));
+            m.insert("type".into(), json!(t.ty));
+            // one value when every set agrees, else one per set
+            if t.values.iter().all(|(_, v)| *v == t.values[0].1) {
+                m.insert("value".into(), json!(t.values[0].1));
+            } else {
+                m.insert("values".into(), J::Object(t.values.iter().map(|(s, v)| (s.to_string(), json!(v))).collect()));
+            }
+            if let Some(k) = t.vscode {
+                m.insert("vscode".into(), json!(k));
+            }
+            (t.name, J::Object(m))
+        })
+        .collect();
+    json!({
+        "densities": Density::ALL.iter().map(|d| d.name()).collect::<Vec<_>>(),
+        "prefix": "--sv-",
+        "sets": theme::SET_NAMES,
+        "source": "crates/svelters-egui/src/theme (ROLES, COMPONENT_*, theme/data/*.json)",
+        "tokens": tokens,
     })
 }
 
@@ -458,6 +540,7 @@ pub fn semantics() -> J {
         .map(|(i, k)| {
             let mut j = kind_json(reg.spec_kind(i));
             add_docs(&mut j, k, None);
+            add_style_meta(&mut j, reg.replacement(i).map_or(&[], |r| r.entry.parts), kinds::docs::provider_states(k.id), true);
             (k.id.to_string(), j)
         })
         .collect();
@@ -482,6 +565,7 @@ pub fn semantics() -> J {
         "source": {"kinds": "crates/svelters-egui/src/kinds/builtin.rs", "generator": "crates/svelters-egui/src/spec.rs"},
         "style": style_json(),
         "tags": tags,
+        "theme": theme_json(),
     })
 }
 
@@ -590,6 +674,7 @@ pub fn fragment() -> J {
         .map(|p| {
             let mut j = kind_json(p.def);
             add_docs(&mut j, p.def, Some(p));
+            add_style_meta(&mut j, p.entry.parts, &[], false);
             (p.entry.id.to_string(), j)
         })
         .collect();

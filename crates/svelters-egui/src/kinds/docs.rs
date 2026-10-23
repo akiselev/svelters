@@ -710,6 +710,19 @@ pub fn css_hidden(id: &str) -> &'static [&'static str] {
     CSS_HIDDEN.iter().find(|(k, _)| *k == id).map_or(&[], |(_, v)| v)
 }
 
+/// U0 (UTILITY-CSS §3.4): the provider states (`:state(sv.<name>)`) a built-in kind sets on itself,
+/// by kind id: the spec's `kinds[].provider_states`, for `state-[sv.<name>]:` utility variants and
+/// the docs. `tests/spec.rs` checks that every `sv` provider state is claimed by a kind.
+pub fn provider_states(id: &str) -> &'static [&'static crate::provider::StateBit] {
+    use crate::interact::scroll::sv;
+    static OVERFLOW: [&crate::provider::StateBit; 4] = [&sv::OVERFLOW_TOP, &sv::OVERFLOW_BOTTOM, &sv::OVERFLOW_LEFT, &sv::OVERFLOW_RIGHT];
+    match id {
+        // both run a `Scrollable` unit, which sets the overflow states on its host
+        "ScrollArea" | "Scrollbar" => &OVERFLOW,
+        _ => &[],
+    }
+}
+
 /// The row of built-in kind `id`.
 pub fn kind_doc(id: &str) -> Option<&'static KindDoc> {
     KIND_DOCS.iter().find(|d| d.id == id)

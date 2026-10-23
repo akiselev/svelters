@@ -1,0 +1,266 @@
+# Utility classes on egui (plans/research/UTILITY-CSS.md, lane U0): the hand-written vocabulary.
+#
+# Only the naming lives here. tools/metadata/style/gen_utilities.py joins it with
+# metadata/semantics/egui.json (the style table, pseudo-classes, media features, each kind's states,
+# parts and provider states, and the theme's token manifest) and with tailwind-v4.yaml (the Tailwind
+# names we don't render), checks it (`--check`) and writes the engine's table, the JS/JSON manifest,
+# the docs page and the editor completions. Values, keywords, kinds, states, parts and token names
+# all come from metadata: a new token, part or state appears as a utility without an edit here.
+#
+# Decided (user, 2026-10-22):
+#   - UQ1/UQ2 (G): this file plus generated tables; rules are generated at run time by the host's
+#     Rust engine (U1/U3); the compiler only checks (U4).
+#   - UQ4/UQ5: our tokens only. Tailwind's *property* names (p, px, m, gap, w, h, flex, items-*,
+#     justify-*, rounded, border, bg, text, opacity, shadow, transition, cursor), but the *values* are
+#     our theme's: colours are theme roles (no palette), spacing and type are DESIGN tokens under our
+#     own names (`p-7` = `--sv-space-7` = 32px, `text-label1`), never Tailwind's 4px multiplier or
+#     type scale.
+#   - UQ3/UQ8: below component CSS (an author layer under unlayered `<style>` rules); opt-in per embed
+#     with an optional prefix.
+#   - UQ6/UQ7: typed arbitrary values; colour literals linted (an error under a strict profile);
+#     parts via `part-<name>:`.
+#
+# The file:
+#   config      what the engine and the checker need besides names (carried into every output).
+#   scales      token families from the theme manifest (`theme.tokens` of egui.json). A pattern with
+#               one `*` names each matching token by what the `*` matched (`space-*`: `space-7` is
+#               `7`); a `{token, as}` entry names one token (`as: ""` is the bare utility, `rounded`).
+#               `colors` is special: every token of type color (L2 roles and L3 component colours).
+#   utilities   one row per namespace and property group, in canonical cascade order (shorthands
+#               first: `p` < `px` < `pt`). A row is
+#                 { ns, props, values?, keywords?, negative?, requires? }   `<ns>-<value>`, or
+#                 { utility, decls, requires? }                            a fixed utility.
+#               values: scale names, `colors`, `fraction` (`1/2` = 50%), `int-px` (`2` = 2px),
+#               `number` (non-negative), `percent` (`40` = 0.4), `integer` (with `template`, `{n}`
+#               replaced), `arbitrary` (`[13px]`, type-checked against the property).
+#               keywords: a map `name: css value` (one value for every prop, or a list, one per
+#               prop), or `table` (the property's own enum keywords, by the same names).
+#               `requires`: an engine item that hasn't landed (UTILITY-CSS §5): the row is checked and
+#               listed as pending while its properties are missing from the table.
+#   variants    the names of variant prefixes; state variants are the style table's pseudo-classes and
+#               need no row here.
+
+config:
+  layer: utilities              # @layer utilities, author origin, below unlayered component CSS (UQ3)
+  opt_in: true                  # off unless the embed turns it on: EmbedConfig::utilities (UQ8)
+  prefix: optional              # with a prefix (`tw`), only `tw:`-prefixed classes are utilities (UQ8)
+  token_prefix: "--sv-"         # every token value is `var(--sv-<token>)`
+  lint:
+    arbitrary_color: { default: warning, strict: error }   # `bg-[#f00]` (UQ6): strict_tokens profile
+    arbitrary_value: typed                                  # checked against the property's type and range
+
+scales:
+  space:     { tokens: ["space-*"] }                                     # p-7 = --sv-space-7 (32px)
+  font-size: { tokens: ["font-size-*", { token: font-size, as: body }] } # text-sm, text-body (VS Code bodyFontSize)
+  family:    { tokens: ["font-*"], exclude: ["font-size", "font-size-*"] }  # font-family, font-mono
+  radius:    { tokens: ["radius-*", { token: radius, as: "" }] }         # rounded = --sv-radius, rounded-md
+  stroke:    { tokens: [{ token: stroke, as: "" }] }                     # border = --sv-stroke (1px)
+  shadow:    { tokens: ["elev-*", "*-shadow"], type: shadow }            # shadow-2 = elev-2, shadow-popup
+  height:    { tokens: ["*-h"], type: length }                           # h-row, h-control (density-aware)
+  width:     { tokens: ["*-w"], type: length }                           # w-sash, w-scrollbar
+  size:      { tokens: ["*-size"], exclude: ["font-size"], type: length } # size-icon
+  indent:    { tokens: [{ token: indent, as: indent }] }                 # pl-indent
+  motion:    { tokens: ["motion-*", { token: motion, as: normal }] }     # duration-fast, duration-normal
+  easing:    { tokens: ["ease-*"] }                                      # ease-out = --sv-ease-out
+  breakpoint: { tokens: ["breakpoint-*"] }                               # sm: = (width >= --sv-breakpoint-sm)
+  container: { tokens: ["container-*"] }                                 # @sm: (CS-CQ)
+  colors:    { type: color }                                             # bg-surface, text-fg, border-list-hover
+
+utilities:
+  # ---- spacing ----
+  - { ns: p,  family: spacing, props: [padding],                     values: [space, arbitrary] }
+  - { ns: px, family: spacing, props: [padding-left, padding-right], values: [space, arbitrary] }
+  - { ns: py, family: spacing, props: [padding-top, padding-bottom], values: [space, arbitrary] }
+  - { ns: pt, family: spacing, props: [padding-top],                 values: [space, arbitrary] }
+  - { ns: pr, family: spacing, props: [padding-right],               values: [space, arbitrary] }
+  - { ns: pb, family: spacing, props: [padding-bottom],              values: [space, arbitrary] }
+  - { ns: pl, family: spacing, props: [padding-left],                values: [space, indent, arbitrary] }
+  - { ns: m,  family: spacing, props: [margin],                      values: [space, arbitrary], negative: true }
+  - { ns: mx, family: spacing, props: [margin-left, margin-right],   values: [space, arbitrary], negative: true }
+  - { ns: my, family: spacing, props: [margin-top, margin-bottom],   values: [space, arbitrary], negative: true }
+  - { ns: mt, family: spacing, props: [margin-top],                  values: [space, arbitrary], negative: true }
+  - { ns: mr, family: spacing, props: [margin-right],                values: [space, arbitrary], negative: true }
+  - { ns: mb, family: spacing, props: [margin-bottom],               values: [space, arbitrary], negative: true }
+  - { ns: ml, family: spacing, props: [margin-left],                 values: [space, arbitrary], negative: true }
+  - { ns: gap,   family: spacing, props: [gap],        values: [space, arbitrary] }
+  - { ns: gap-x, family: spacing, props: [column-gap], values: [space, arbitrary] }
+  - { ns: gap-y, family: spacing, props: [row-gap],    values: [space, arbitrary] }
+  - { ns: scroll-m, family: spacing, props: [scroll-margin], values: [space, arbitrary] }
+
+  # ---- sizing ----
+  - { ns: size,  family: sizing, props: [width, height], values: [space, size, fraction, arbitrary], keywords: { auto: auto, full: 100% } }
+  - { ns: w,     family: sizing, props: [width],      values: [space, width, fraction, arbitrary], keywords: { auto: auto, full: 100% } }
+  - { ns: min-w, family: sizing, props: [min-width],  values: [space, width, fraction, arbitrary], keywords: { auto: auto, full: 100% } }
+  - { ns: max-w, family: sizing, props: [max-width],  values: [space, width, fraction, arbitrary], keywords: { full: 100% } }
+  - { ns: h,     family: sizing, props: [height],     values: [space, height, fraction, arbitrary], keywords: { auto: auto, full: 100% } }
+  - { ns: min-h, family: sizing, props: [min-height], values: [space, height, fraction, arbitrary], keywords: { auto: auto, full: 100% } }
+  - { ns: max-h, family: sizing, props: [max-height], values: [space, height, fraction, arbitrary], keywords: { full: 100% } }
+
+  # ---- layout: display, flex, grid, position, overflow ----
+  - { utility: flex,   family: layout, decls: { display: flex } }
+  - { utility: grid,   family: layout, decls: { display: grid } }
+  - { utility: hidden, family: layout, decls: { display: none } }
+  - { ns: flex, family: layout, props: [flex-direction], keywords: { row: row, col: column, row-reverse: row-reverse, col-reverse: column-reverse } }
+  - { ns: flex, family: layout, props: [flex-wrap], keywords: { wrap: wrap, nowrap: nowrap, wrap-reverse: wrap-reverse } }
+  - { ns: flex, family: layout, props: [flex-grow, flex-shrink, flex-basis], keywords: { "1": ["1", "1", "0%"], auto: ["1", "1", auto], initial: ["0", "1", auto], none: ["0", "0", auto] } }
+  - { utility: grow,   family: layout, decls: { flex-grow: "1" } }
+  - { ns: grow,   family: layout, props: [flex-grow],   values: [number, arbitrary] }
+  - { utility: shrink, family: layout, decls: { flex-shrink: "1" } }
+  - { ns: shrink, family: layout, props: [flex-shrink], values: [number, arbitrary] }
+  - { ns: basis,  family: layout, props: [flex-basis],  values: [space, fraction, arbitrary], keywords: { auto: auto, full: 100% } }
+  - { ns: items,   family: layout, props: [align-items],     keywords: table }
+  - { ns: self,    family: layout, props: [align-self],      keywords: table }
+  - { ns: justify, family: layout, props: [justify-content], keywords: { start: start, end: end, center: center, between: space-between, around: space-around, evenly: space-evenly } }
+  - { ns: justify-items, family: layout, props: [justify-items], keywords: table }
+  - { ns: grid-cols, family: layout, props: [grid-template-columns], values: [{ integer: "repeat({n}, minmax(0, 1fr))" }, arbitrary], keywords: { none: none } }
+  - { ns: grid-rows, family: layout, props: [grid-template-rows],    values: [{ integer: "repeat({n}, minmax(0, 1fr))" }, arbitrary], keywords: { none: none } }
+  - { ns: col,      family: layout, props: [grid-column], values: [arbitrary], keywords: { auto: auto } }
+  - { ns: col-span, family: layout, props: [grid-column], values: [{ integer: "span {n} / span {n}" }], keywords: { full: "1 / -1" } }
+  - { ns: row,      family: layout, props: [grid-row],    values: [arbitrary], keywords: { auto: auto } }
+  - { ns: row-span, family: layout, props: [grid-row],    values: [{ integer: "span {n} / span {n}" }], keywords: { full: "1 / -1" } }
+  - { utility: static,   family: layout, decls: { position: static } }
+  - { utility: relative, family: layout, decls: { position: relative } }
+  - { utility: absolute, family: layout, decls: { position: absolute } }
+  - { ns: inset,   family: layout, props: [top, right, bottom, left], values: [space, fraction, arbitrary], keywords: { auto: auto, full: 100% }, negative: true }
+  - { ns: inset-x, family: layout, props: [left, right],              values: [space, fraction, arbitrary], keywords: { auto: auto, full: 100% }, negative: true }
+  - { ns: inset-y, family: layout, props: [top, bottom],              values: [space, fraction, arbitrary], keywords: { auto: auto, full: 100% }, negative: true }
+  - { ns: top,     family: layout, props: [top],    values: [space, fraction, arbitrary], keywords: { auto: auto, full: 100% }, negative: true }
+  - { ns: right,   family: layout, props: [right],  values: [space, fraction, arbitrary], keywords: { auto: auto, full: 100% }, negative: true }
+  - { ns: bottom,  family: layout, props: [bottom], values: [space, fraction, arbitrary], keywords: { auto: auto, full: 100% }, negative: true }
+  - { ns: left,    family: layout, props: [left],   values: [space, fraction, arbitrary], keywords: { auto: auto, full: 100% }, negative: true }
+  - { ns: overflow,   family: layout, props: [overflow-x, overflow-y], keywords: table }
+  - { ns: overflow-x, family: layout, props: [overflow-x], keywords: table }
+  - { ns: overflow-y, family: layout, props: [overflow-y], keywords: table }
+  - { ns: overscroll, family: layout, props: [overscroll-behavior], keywords: table }
+  - { ns: scrollbar-gutter, family: layout, props: [scrollbar-gutter], keywords: table, own: true }   # ours, no Tailwind name
+
+  # ---- colour ----
+  - { ns: bg,       family: color, props: [background-color], values: [colors, arbitrary], keywords: { transparent: transparent } }
+  - { ns: text,     family: color, props: [color],            values: [colors, arbitrary], keywords: { transparent: transparent } }
+  - { ns: border,   family: color, props: [border-color],     values: [colors, arbitrary], keywords: { transparent: transparent } }
+  - { ns: border-x, family: color, props: [border-left-color, border-right-color], values: [colors, arbitrary] }
+  - { ns: border-y, family: color, props: [border-top-color, border-bottom-color], values: [colors, arbitrary] }
+  - { ns: border-t, family: color, props: [border-top-color],    values: [colors, arbitrary] }
+  - { ns: border-r, family: color, props: [border-right-color],  values: [colors, arbitrary] }
+  - { ns: border-b, family: color, props: [border-bottom-color], values: [colors, arbitrary] }
+  - { ns: border-l, family: color, props: [border-left-color],   values: [colors, arbitrary] }
+  - { ns: outline,  family: color, props: [outline-color],    values: [colors, arbitrary] }
+
+  # ---- typography ----
+  - { ns: text, family: typography, props: [font-size],     values: [font-size, arbitrary] }
+  - { ns: text, family: typography, props: [text-align],    keywords: table }
+  - { ns: text, family: typography, props: [text-overflow], keywords: table }
+  - { utility: truncate, family: typography, decls: { overflow-x: hidden, text-overflow: ellipsis, white-space: nowrap } }
+  - { ns: font, family: typography, props: [font-family], values: [family, arbitrary] }
+  - { ns: font, family: typography, props: [font-weight], values: [arbitrary], keywords: { normal: normal, bold: bold } }
+  - { utility: italic,     family: typography, decls: { font-style: italic } }
+  - { utility: not-italic, family: typography, decls: { font-style: normal } }
+  - { utility: uppercase,   family: typography, decls: { text-transform: uppercase } }
+  - { utility: lowercase,   family: typography, decls: { text-transform: lowercase } }
+  - { utility: capitalize,  family: typography, decls: { text-transform: capitalize } }
+  - { utility: normal-case, family: typography, decls: { text-transform: none } }
+  - { utility: underline,    family: typography, decls: { text-decoration-line: underline } }
+  - { utility: overline,     family: typography, decls: { text-decoration-line: overline } }
+  - { utility: line-through, family: typography, decls: { text-decoration-line: line-through } }
+  - { utility: no-underline, family: typography, decls: { text-decoration-line: none } }
+  - { ns: leading,    family: typography, props: [line-height],    values: [space, arbitrary], keywords: { none: "1", normal: normal } }
+  - { ns: tracking,   family: typography, props: [letter-spacing], values: [arbitrary], keywords: { normal: normal } }
+  - { ns: whitespace, family: typography, props: [white-space],    keywords: table }
+
+  # ---- borders ----
+  - { ns: rounded,    family: borders, props: [border-radius], values: [radius, arbitrary], keywords: { none: 0px, full: 9999px } }
+  - { ns: rounded-t,  family: borders, props: [border-top-left-radius, border-top-right-radius],       values: [radius, arbitrary], keywords: { none: 0px, full: 9999px } }
+  - { ns: rounded-r,  family: borders, props: [border-top-right-radius, border-bottom-right-radius],   values: [radius, arbitrary], keywords: { none: 0px, full: 9999px } }
+  - { ns: rounded-b,  family: borders, props: [border-bottom-right-radius, border-bottom-left-radius], values: [radius, arbitrary], keywords: { none: 0px, full: 9999px } }
+  - { ns: rounded-l,  family: borders, props: [border-top-left-radius, border-bottom-left-radius],     values: [radius, arbitrary], keywords: { none: 0px, full: 9999px } }
+  - { ns: rounded-tl, family: borders, props: [border-top-left-radius],     values: [radius, arbitrary], keywords: { none: 0px, full: 9999px } }
+  - { ns: rounded-tr, family: borders, props: [border-top-right-radius],    values: [radius, arbitrary], keywords: { none: 0px, full: 9999px } }
+  - { ns: rounded-br, family: borders, props: [border-bottom-right-radius], values: [radius, arbitrary], keywords: { none: 0px, full: 9999px } }
+  - { ns: rounded-bl, family: borders, props: [border-bottom-left-radius],  values: [radius, arbitrary], keywords: { none: 0px, full: 9999px } }
+  - { ns: border,   family: borders, props: [border-width], values: [stroke, int-px, arbitrary] }
+  - { ns: border-x, family: borders, props: [border-left-width, border-right-width], values: [stroke, int-px, arbitrary] }
+  - { ns: border-y, family: borders, props: [border-top-width, border-bottom-width], values: [stroke, int-px, arbitrary] }
+  - { ns: border-t, family: borders, props: [border-top-width],    values: [stroke, int-px, arbitrary] }
+  - { ns: border-r, family: borders, props: [border-right-width],  values: [stroke, int-px, arbitrary] }
+  - { ns: border-b, family: borders, props: [border-bottom-width], values: [stroke, int-px, arbitrary] }
+  - { ns: border-l, family: borders, props: [border-left-width],   values: [stroke, int-px, arbitrary] }
+  - { ns: border, family: borders, props: [border-top-style, border-right-style, border-bottom-style, border-left-style], keywords: { solid: solid, dashed: dashed, dotted: dotted, double: double, hidden: hidden, none: none } }
+  - { utility: outline, family: borders, decls: { outline-style: solid, outline-width: "var(--sv-stroke)" } }
+  - { ns: outline, family: borders, props: [outline-width],  values: [int-px, arbitrary] }
+  - { ns: outline, family: borders, props: [outline-style],  keywords: { solid: solid, dashed: dashed, dotted: dotted, double: double, none: none } }
+  - { ns: outline-offset, family: borders, props: [outline-offset], values: [int-px, arbitrary], negative: true }
+
+  # ---- effects ----
+  - { ns: shadow,  family: effects, props: [box-shadow], values: [shadow, arbitrary], keywords: { none: none } }
+  - { ns: opacity, family: effects, props: [opacity],    values: [percent, arbitrary] }
+
+  # ---- interactivity ----
+  - { ns: cursor, family: interactivity, props: [cursor], keywords: table }
+
+  # ---- transitions (the shorthand today; the longhand rows wait for E5) ----
+  - { utility: transition,         family: transitions, decls: { transition: "color var(--sv-motion) var(--sv-ease-out), background-color var(--sv-motion) var(--sv-ease-out), border-color var(--sv-motion) var(--sv-ease-out), outline-color var(--sv-motion) var(--sv-ease-out), opacity var(--sv-motion) var(--sv-ease-out), box-shadow var(--sv-motion) var(--sv-ease-out)" } }
+  - { utility: transition-colors,  family: transitions, decls: { transition: "color var(--sv-motion) var(--sv-ease-out), background-color var(--sv-motion) var(--sv-ease-out), border-color var(--sv-motion) var(--sv-ease-out), outline-color var(--sv-motion) var(--sv-ease-out)" } }
+  - { utility: transition-opacity, family: transitions, decls: { transition: "opacity var(--sv-motion) var(--sv-ease-out)" } }
+  - { utility: transition-shadow,  family: transitions, decls: { transition: "box-shadow var(--sv-motion) var(--sv-ease-out)" } }
+  - { utility: transition-none,    family: transitions, decls: { transition: none } }
+  - { ns: duration, family: transitions, props: [transition-duration],        values: [motion, { integer: "{n}ms" }, arbitrary], requires: E5 }
+  - { ns: delay,    family: transitions, props: [transition-delay],           values: [motion, { integer: "{n}ms" }, arbitrary], requires: E5 }
+  - { ns: ease,     family: transitions, props: [transition-timing-function], values: [easing, arbitrary], keywords: { linear: linear }, requires: E5 }
+
+variants:
+  # state variants the engine parses outside the pseudo-class table (svelters-style selector.rs
+  # `PseudoClass::FocusVisible`: focused while the last input was a key), with the state bit it reads
+  extra_states:
+    focus-visible: focus-visible
+  # pseudo-elements, before part variants (`placeholder:` and `selection:` are Tailwind's names)
+  pseudo_elements:
+    placeholder: "::placeholder"
+    selection: "::selection"
+  # `part-<name>:` from every kind's parts (UQ7); `[&::part(x)]:` is accepted with a fix-it (U4)
+  part_prefix: part-
+  # `state-[ns.name]:` from the provider states (built-in `sv.*` and an app's fragment)
+  state_prefix: state-
+  # accepted spellings of state variants, rewritten by an info fix-it (`utility_alias`)
+  aliases:
+    aria-checked: checked
+    aria-expanded: expanded
+    aria-selected: selected
+    aria-disabled: disabled
+    aria-busy: busy
+    aria-invalid: invalid
+    aria-required: required
+    aria-readonly: read-only
+    aria-current: current
+  # structural variants: `&` is the utility's selector
+  structural:
+    first: "&:first-child"
+    last: "&:last-child"
+    only: "&:only-child"
+    odd: "&:nth-child(2n+1)"
+    even: "&:nth-child(2n)"
+  # compound prefixes over the state variants; `{state}` is a state pseudo-class
+  compound:
+    not:   { selector: "&:not(:{state})" }
+    has:   { selector: "&:has(*:{state})" }
+    in:    { selector: ":where(*:{state}) &" }
+    group: { selector: "&:is(:where(.group):{state} *)", requires: E6 }
+    peer:  { selector: "&:is(:where(.peer):{state} ~ *)", requires: E6 }
+  # prop attribute selectors: `prop-[orientation=vertical]:`, booleans as `prop-<name>:`
+  prop_prefix: prop-
+  # media variants (hoisted outside the rule); each query's features must be in style.media_features
+  media:
+    dark: "(prefers-color-scheme: dark)"
+    light: "(prefers-color-scheme: light)"
+    contrast-more: "(prefers-contrast: more)"
+    contrast-less: "(prefers-contrast: less)"
+    motion-safe: "(prefers-reduced-motion: no-preference)"
+    motion-reduce: "(prefers-reduced-motion: reduce)"
+    portrait: "(orientation: portrait)"
+    landscape: "(orientation: landscape)"
+    mac: { query: "(-sv-platform: macos)", requires: E7 }
+    win: { query: "(-sv-platform: windows)", requires: E7 }
+    linux: { query: "(-sv-platform: linux)", requires: E7 }
+  # `sm:` ... from the breakpoint scale: (width >= <token px>); `max-sm:`: (width < <token px>)
+  breakpoints: { scale: breakpoint, min: "(width >= {px})", max_prefix: max-, max: "(width < {px})" }
+  # `@sm:` ... from the container scale, once CS-CQ lands
+  containers: { scale: container, min: "(width >= {px})", max_prefix: "@max-", requires: CS-CQ }

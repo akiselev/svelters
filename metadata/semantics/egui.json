@@ -77,6 +77,7 @@
       "methods": {},
       "native": "egui::Button (menu item)",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "checkable": {
@@ -168,6 +169,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "activate": {
           "args": [
@@ -267,6 +269,7 @@
       "methods": {},
       "native": "svelters text run (a link: focusable, clickable, AccessKit `Link`)",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "href": {
@@ -290,6 +293,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "clicked": {
           "args": [],
@@ -370,11 +374,13 @@
       "methods": {},
       "native": "svelters text run (one section of its label's galley)",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {},
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [],
       "text_content": "text"
@@ -420,6 +426,7 @@
       "methods": {},
       "native": "taffy::Style (flexbox)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "align-items": {
@@ -610,6 +617,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [
         {
@@ -696,6 +704,18 @@
       "methods": {},
       "native": "egui::Button",
       "paint": "stock",
+      "parts": [
+        {
+          "doc": "The icon (paint part): `width`/`height`, `margin`, `order`, `display`, `color`,\n`content: icon(<key>)`.",
+          "name": "icon",
+          "node": false
+        },
+        {
+          "doc": "The caption (paint part): `color`, `font-*`, `margin`, `order`, `display`.",
+          "name": "label",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "cancel": {
@@ -855,6 +875,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "clicked": {
           "args": [],
@@ -1014,6 +1035,7 @@
       "methods": {},
       "native": "egui::Painter (X8 display list replay)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "content-height": {
@@ -1071,6 +1093,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "clicked": {
           "args": [],
@@ -1237,6 +1260,28 @@
       "methods": {},
       "native": "egui::Checkbox",
       "paint": "stock",
+      "parts": [
+        {
+          "doc": "",
+          "name": "indicator",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "mark",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "icon",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "label",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "checked": {
@@ -1328,6 +1373,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -1471,11 +1517,13 @@
       "methods": {},
       "native": "svelters text run (one section of its label's galley)",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {},
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [],
       "text_content": "text"
@@ -1548,6 +1596,23 @@
       "methods": {},
       "native": "egui::CollapsingHeader (header) + taffy flexbox (body)",
       "paint": "box",
+      "parts": [
+        {
+          "doc": "",
+          "name": "header",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "twistie",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "label",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "open": {
@@ -1588,6 +1653,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -1711,6 +1777,7 @@
       "methods": {},
       "native": "egui::color_picker::color_edit_button_hsva",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "alpha": {
@@ -1756,6 +1823,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -1906,6 +1974,28 @@
       "methods": {},
       "native": "egui::ComboBox",
       "paint": "box",
+      "parts": [
+        {
+          "doc": "The shown text (paint part).",
+          "name": "label",
+          "node": false
+        },
+        {
+          "doc": "The `chevron-down` glyph (paint part).",
+          "name": "chevron",
+          "node": false
+        },
+        {
+          "doc": "The list's surface (paint part, in its own layer).",
+          "name": "popup",
+          "node": false
+        },
+        {
+          "doc": "A row of the list (paint part, repeated: `:current`, `:hover`, `:selected`).",
+          "name": "option",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "hint-text": {
@@ -2020,6 +2110,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "activate": {
           "args": [
@@ -2202,11 +2293,13 @@
       },
       "native": "egui::Popup (menu)",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {},
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [],
       "text_content": null
@@ -2264,6 +2357,7 @@
       "methods": {},
       "native": "egui_extras::DatePickerButton",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "calendar-week": {
@@ -2321,6 +2415,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -2458,6 +2553,7 @@
       "methods": {},
       "native": "egui::DragValue",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "decimals": {
@@ -2583,6 +2679,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -2761,6 +2858,23 @@
       "methods": {},
       "native": "egui::Frame + taffy flexbox",
       "paint": "box",
+      "parts": [
+        {
+          "doc": "",
+          "name": "caption",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "indicator",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "mark",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "checkable": {
@@ -2844,6 +2958,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -2954,6 +3069,7 @@
       "methods": {},
       "native": "taffy::Style (CSS grid)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "align-items": {
@@ -3092,6 +3208,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [
         {
@@ -3177,6 +3294,7 @@
       "methods": {},
       "native": "egui::Hyperlink",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "new-tab": {
@@ -3234,6 +3352,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "clicked": {
           "args": [],
@@ -3357,6 +3476,7 @@
       "methods": {},
       "native": "egui::Label / egui::Button (icon font glyph)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "family": {
@@ -3516,6 +3636,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "clicked": {
           "args": [],
@@ -3644,6 +3765,7 @@
       "methods": {},
       "native": "egui::Image",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "fit": {
@@ -3691,6 +3813,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "clicked": {
           "args": [],
@@ -3828,6 +3951,7 @@
       "methods": {},
       "native": "egui::Window",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "closable": {
@@ -3987,6 +4111,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -4064,11 +4189,13 @@
       "methods": {},
       "native": "svelters text run (one section of its label's galley)",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {},
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [],
       "text_content": "text"
@@ -4124,6 +4251,7 @@
       "methods": {},
       "native": "egui::Label",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "elide": {
@@ -4243,6 +4371,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "clicked": {
           "args": [],
@@ -4365,6 +4494,7 @@
       "methods": {},
       "native": "egui::containers::menu::{MenuButton, SubMenuButton}",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "label": {
@@ -4388,6 +4518,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [],
       "text_content": "label"
@@ -4435,11 +4566,13 @@
       "methods": {},
       "native": "egui::MenuBar",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {},
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [
         {
@@ -4582,6 +4715,7 @@
       },
       "native": "egui::containers::menu::MenuButton",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "active": {
@@ -4622,6 +4756,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -4728,6 +4863,7 @@
       "methods": {},
       "native": "egui menu entry",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "accessible-name": {
@@ -4819,6 +4955,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [],
       "text_content": null
@@ -4850,11 +4987,13 @@
       "methods": {},
       "native": "egui::Separator",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {},
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [],
       "text_content": null
@@ -4921,6 +5060,7 @@
       "methods": {},
       "native": "egui::Modal",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "dismissable": {
@@ -4978,6 +5118,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -5079,6 +5220,7 @@
       "methods": {},
       "native": "egui panel look (`Visuals::panel_fill`, separator, resize grip) + taffy flexbox",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "resizable": {
@@ -5159,6 +5301,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -5312,6 +5455,7 @@
       },
       "native": "egui::Popup",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "autohide": {
@@ -5375,6 +5519,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -5438,6 +5583,18 @@
       "methods": {},
       "native": "egui::ProgressBar",
       "paint": "box",
+      "parts": [
+        {
+          "doc": "",
+          "name": "track",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "fill",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "animate": {
@@ -5635,6 +5792,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [
         {
@@ -5760,6 +5918,28 @@
       "methods": {},
       "native": "egui::RadioButton",
       "paint": "box",
+      "parts": [
+        {
+          "doc": "",
+          "name": "indicator",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "dot",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "icon",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "label",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "checked": {
@@ -5851,6 +6031,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -6019,6 +6200,7 @@
       "methods": {},
       "native": "egui::RangeSlider",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "high": {
@@ -6144,6 +6326,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -6292,6 +6475,7 @@
       "methods": {},
       "native": "svelters text run",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "accessible-name": {
@@ -6349,6 +6533,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [],
       "text_content": "text"
@@ -6442,6 +6627,7 @@
       "methods": {},
       "native": "egui::ScrollArea + taffy flexbox (content)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "direction": {
@@ -6504,6 +6690,12 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [
+        "sv.overflow-top",
+        "sv.overflow-bottom",
+        "sv.overflow-left",
+        "sv.overflow-right"
+      ],
       "signals": {
         "changed": {
           "args": [
@@ -6631,6 +6823,7 @@
       "methods": {},
       "native": "svelters' own (Scrollable; OW2)",
       "paint": "provider",
+      "parts": [],
       "present": null,
       "props": {
         "max": {
@@ -6743,6 +6936,12 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [
+        "sv.overflow-top",
+        "sv.overflow-bottom",
+        "sv.overflow-left",
+        "sv.overflow-right"
+      ],
       "signals": {
         "changed": {
           "args": [
@@ -6839,6 +7038,7 @@
       "methods": {},
       "native": "egui::Separator",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "orientation": {
@@ -6866,6 +7066,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [
         {
@@ -6959,6 +7160,7 @@
       "methods": {},
       "native": "egui::Sides (taffy flex row, space-between)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "align-items": {
@@ -7023,6 +7225,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [
         {
@@ -7131,6 +7334,7 @@
       "methods": {},
       "native": "egui::Slider",
       "paint": "stock",
+      "parts": [],
       "present": null,
       "props": {
         "max": {
@@ -7239,6 +7443,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -7384,11 +7589,13 @@
       "methods": {},
       "native": "svelters text run (one section of its label's galley)",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {},
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [],
       "text_content": "text"
@@ -7423,6 +7630,7 @@
       "methods": {},
       "native": "egui::Spinner",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "size": {
@@ -7463,6 +7671,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [
         {
@@ -7597,6 +7806,7 @@
       "methods": {},
       "native": "two panes + a draggable divider (egui drag sense)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "collapsible": {
@@ -7748,6 +7958,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -7896,6 +8107,7 @@
       "methods": {},
       "native": "synthetic (one child shown at a time)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "homogeneous": {
@@ -7970,6 +8182,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {},
       "states": [
         {
@@ -8076,6 +8289,18 @@
       "methods": {},
       "native": "synthetic (egui toggle switch, AccessKit role `Switch`)",
       "paint": "box",
+      "parts": [
+        {
+          "doc": "",
+          "name": "track",
+          "node": false
+        },
+        {
+          "doc": "",
+          "name": "knob",
+          "node": false
+        }
+      ],
       "present": null,
       "props": {
         "active": {
@@ -8116,6 +8341,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -8252,6 +8478,7 @@
       "methods": {},
       "native": "taffy flexbox (a tab-view page)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "closable": {
@@ -8292,6 +8519,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "close-requested": {
           "args": [],
@@ -8417,6 +8645,7 @@
       "methods": {},
       "native": "tab bar (egui selectable labels) + the selected page",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "selected": {
@@ -8440,6 +8669,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -8673,6 +8903,7 @@
       },
       "native": "egui_table::Table",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "current": {
@@ -8838,6 +9069,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "activated": {
           "args": [
@@ -9049,6 +9281,7 @@
       },
       "native": "egui_table::Column",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "align": {
@@ -9167,6 +9400,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "editor-bind": {
           "args": [
@@ -9298,6 +9532,7 @@
       },
       "native": "egui::TextEdit",
       "paint": "stock",
+      "parts": [],
       "present": null,
       "props": {
         "char-limit": {
@@ -9389,6 +9624,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -9579,6 +9815,7 @@
       },
       "native": "egui::Area (foreground) of egui::Frame toasts",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "corner": {
@@ -9625,6 +9862,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "clicked": {
           "args": [
@@ -9773,6 +10011,7 @@
       "methods": {},
       "native": "egui::Button (selected)",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "checked": {
@@ -9881,6 +10120,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "changed": {
           "args": [
@@ -10082,6 +10322,7 @@
       },
       "native": "svelters_egui::kinds::treeview (a virtual-list with tree rows)",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "indent": {
@@ -10178,6 +10419,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "activate": {
           "args": [
@@ -10487,6 +10729,7 @@
       },
       "native": "svelters_egui::kinds::virtuallist (recycled row slots over a VScroll)",
       "paint": "none",
+      "parts": [],
       "present": null,
       "props": {
         "layout": {
@@ -10588,6 +10831,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "activate": {
           "args": [
@@ -10760,6 +11004,7 @@
       },
       "native": "egui::Widget",
       "paint": "box",
+      "parts": [],
       "present": null,
       "props": {
         "accessible-name": {
@@ -11221,6 +11466,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "animationend": {
           "args": [
@@ -11794,6 +12040,7 @@
       },
       "native": "egui::ViewportBuilder",
       "paint": "box",
+      "parts": [],
       "present": "present",
       "props": {
         "default-height": {
@@ -11885,6 +12132,7 @@
       "provenance": {
         "kind": "crates/svelters-egui/src/kinds/builtin.rs"
       },
+      "provider_states": [],
       "signals": {
         "click": {
           "args": [
@@ -12300,6 +12548,57 @@
   "style": {
     "dialect": "none",
     "engine": "backend",
+    "media_features": [
+      {
+        "name": "width",
+        "type": "range",
+        "values": []
+      },
+      {
+        "name": "height",
+        "type": "range",
+        "values": []
+      },
+      {
+        "name": "aspect-ratio",
+        "type": "range",
+        "values": []
+      },
+      {
+        "name": "orientation",
+        "type": "discrete",
+        "values": [
+          "portrait",
+          "landscape"
+        ]
+      },
+      {
+        "name": "prefers-color-scheme",
+        "type": "discrete",
+        "values": [
+          "light",
+          "dark"
+        ]
+      },
+      {
+        "name": "prefers-contrast",
+        "type": "discrete",
+        "values": [
+          "no-preference",
+          "more",
+          "less",
+          "custom"
+        ]
+      },
+      {
+        "name": "prefers-reduced-motion",
+        "type": "discrete",
+        "values": [
+          "no-preference",
+          "reduce"
+        ]
+      }
+    ],
     "properties": {
       "align-items": {
         "kinds": [
@@ -12407,10 +12706,16 @@
       },
       "border-bottom-left-radius": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "border-bottom-right-radius": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "border-bottom-style": {
@@ -12431,6 +12736,9 @@
       },
       "border-bottom-width": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "border-color": {
@@ -12459,10 +12767,16 @@
       },
       "border-left-width": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "border-radius": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "border-right-color": {
@@ -12487,6 +12801,9 @@
       },
       "border-right-width": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "border-top-color": {
@@ -12495,10 +12812,16 @@
       },
       "border-top-left-radius": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "border-top-right-radius": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "border-top-style": {
@@ -12519,10 +12842,16 @@
       },
       "border-top-width": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "border-width": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "bottom": {
@@ -12593,6 +12922,9 @@
         ],
         "native": "column-gap",
         "prop": "column-gap",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "collapsing-header",
@@ -12669,6 +13001,9 @@
         ],
         "native": "flex-basis",
         "prop": "flex-basis",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "button",
@@ -12748,6 +13083,9 @@
         ],
         "native": "flex-grow",
         "prop": "flex-grow",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "button",
@@ -12801,6 +13139,9 @@
         ],
         "native": "flex-shrink",
         "prop": "flex-shrink",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "button",
@@ -12879,6 +13220,9 @@
       },
       "font-size": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "font-style": {
@@ -12903,6 +13247,9 @@
         ],
         "native": "gap",
         "prop": "gap",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "collapsing-header",
@@ -12942,6 +13289,9 @@
         ],
         "native": "height",
         "prop": "height",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "button",
@@ -13122,6 +13472,9 @@
         ],
         "native": "max-height",
         "prop": "max-height",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "button",
@@ -13175,6 +13528,9 @@
         ],
         "native": "max-width",
         "prop": "max-width",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "button",
@@ -13228,6 +13584,9 @@
         ],
         "native": "min-height",
         "prop": "min-height",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "button",
@@ -13281,6 +13640,9 @@
         ],
         "native": "min-width",
         "prop": "min-width",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "button",
@@ -13330,6 +13692,10 @@
       },
       "opacity": {
         "decl_type": "number",
+        "range": {
+          "max": 1.0,
+          "min": 0.0
+        },
         "via": "css"
       },
       "outline-color": {
@@ -13358,6 +13724,9 @@
       },
       "outline-width": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "overflow-x": {
@@ -13393,22 +13762,37 @@
       },
       "padding": {
         "decl_type": "insets",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "padding-bottom": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "padding-left": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "padding-right": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "padding-top": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "position": {
@@ -13529,6 +13913,9 @@
         ],
         "native": "row-gap",
         "prop": "row-gap",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "collapsing-header",
@@ -13546,6 +13933,9 @@
       },
       "scroll-margin": {
         "decl_type": "length",
+        "range": {
+          "min": 0.0
+        },
         "via": "css"
       },
       "scrollbar-gutter": {
@@ -13724,6 +14114,9 @@
         ],
         "native": "width",
         "prop": "width",
+        "range": {
+          "min": 0.0
+        },
         "tags": [
           "box",
           "button",
@@ -13772,6 +14165,28 @@
         "via": "setter"
       }
     },
+    "provider_states": [
+      {
+        "name": "sv.overflow-bottom",
+        "namespace": "sv",
+        "state": "overflow-bottom"
+      },
+      {
+        "name": "sv.overflow-left",
+        "namespace": "sv",
+        "state": "overflow-left"
+      },
+      {
+        "name": "sv.overflow-right",
+        "namespace": "sv",
+        "state": "overflow-right"
+      },
+      {
+        "name": "sv.overflow-top",
+        "namespace": "sv",
+        "state": "overflow-top"
+      }
+    ],
     "pseudo_classes": [
       {
         "name": "hover",
@@ -13974,5 +14389,1227 @@
     "tree-view": "TreeView",
     "virtual-list": "VirtualList",
     "window": "Window"
+  },
+  "theme": {
+    "densities": [
+      "compact",
+      "default",
+      "comfortable"
+    ],
+    "prefix": "--sv-",
+    "sets": [
+      "dark",
+      "light",
+      "hc-dark",
+      "hc-light"
+    ],
+    "source": "crates/svelters-egui/src/theme (ROLES, COMPONENT_*, theme/data/*.json)",
+    "tokens": {
+      "accent": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#0078D4",
+          "hc-dark": "#000000",
+          "hc-light": "#0F4A85",
+          "light": "#005FB8"
+        },
+        "vscode": "button.background"
+      },
+      "accent-fg": {
+        "layer": "role",
+        "type": "color",
+        "value": "#FFFFFF",
+        "vscode": "button.foreground"
+      },
+      "accent-hover": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#026EC1",
+          "hc-dark": "#000000",
+          "hc-light": "#0F4A85",
+          "light": "#0258A8"
+        },
+        "vscode": "button.hoverBackground"
+      },
+      "activitybar-w": {
+        "layer": "shape",
+        "type": "length",
+        "value": "48px"
+      },
+      "badge": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#616161",
+          "hc-dark": "#000000",
+          "hc-light": "#0F4A85",
+          "light": "#CCCCCC"
+        },
+        "vscode": "badge.background"
+      },
+      "badge-fg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#F8F8F8",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#FFFFFF",
+          "light": "#3B3B3B"
+        },
+        "vscode": "badge.foreground"
+      },
+      "bg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#181818",
+          "hc-dark": "#000000",
+          "hc-light": "#FFFFFF",
+          "light": "#F8F8F8"
+        },
+        "vscode": "sideBar.background"
+      },
+      "border": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#2B2B2B",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#E5E5E5"
+        },
+        "vscode": "sideBar.border"
+      },
+      "border-widget": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#313131",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#E5E5E5"
+        },
+        "vscode": "widget.border"
+      },
+      "breakpoint-lg": {
+        "layer": "shape",
+        "type": "length",
+        "value": "1280px"
+      },
+      "breakpoint-md": {
+        "layer": "shape",
+        "type": "length",
+        "value": "960px"
+      },
+      "breakpoint-sm": {
+        "layer": "shape",
+        "type": "length",
+        "value": "640px"
+      },
+      "breakpoint-xl": {
+        "layer": "shape",
+        "type": "length",
+        "value": "1600px"
+      },
+      "button-bg": {
+        "from": "button2-bg",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#313131",
+          "hc-dark": "#00000000",
+          "hc-light": "#FFFFFF",
+          "light": "#E5E5E5"
+        }
+      },
+      "button-bg-active": {
+        "from": "toolbar-active",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#63666750",
+          "hc-dark": "#FFFFFF33",
+          "hc-light": "#0F4A8533",
+          "light": "#A6A6A650"
+        }
+      },
+      "button-bg-hover": {
+        "from": "button2-hover",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#3B3B3B",
+          "hc-dark": "#FFFFFF1A",
+          "hc-light": "#0F4A851A",
+          "light": "#CCCCCC"
+        }
+      },
+      "button-border": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#FFFFFF1A",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#0000001A"
+        },
+        "vscode": "button.border"
+      },
+      "button-border-color": {
+        "from": "control-border",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#6B6B6B",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#8A8A8A"
+        }
+      },
+      "button-fg": {
+        "from": "button2-fg",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#CCCCCC",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#3B3B3B"
+        }
+      },
+      "button-pad-x": {
+        "density": {
+          "comfortable": "12px",
+          "compact": "6px",
+          "default": "8px"
+        },
+        "layer": "density",
+        "type": "length",
+        "value": "8px"
+      },
+      "button-pad-y": {
+        "density": {
+          "comfortable": "6px",
+          "compact": "2px",
+          "default": "4px"
+        },
+        "layer": "density",
+        "type": "length",
+        "value": "4px"
+      },
+      "button-radius": {
+        "from": "radius",
+        "layer": "component",
+        "type": "length",
+        "value": "4px"
+      },
+      "button2-bg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#313131",
+          "hc-dark": "#00000000",
+          "hc-light": "#FFFFFF",
+          "light": "#E5E5E5"
+        },
+        "vscode": "button.secondaryBackground"
+      },
+      "button2-fg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#CCCCCC",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#3B3B3B"
+        },
+        "vscode": "button.secondaryForeground"
+      },
+      "button2-hover": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#3B3B3B",
+          "hc-dark": "#FFFFFF1A",
+          "hc-light": "#0F4A851A",
+          "light": "#CCCCCC"
+        },
+        "vscode": "button.secondaryHoverBackground"
+      },
+      "caret": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#AEAFAD",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#0F4A85",
+          "light": "#000000"
+        },
+        "vscode": "editorCursor.foreground"
+      },
+      "checkbox-bg": {
+        "from": "control-bg",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#313131",
+          "hc-dark": "#000000",
+          "hc-light": "#FFFFFF",
+          "light": "#FFFFFF"
+        }
+      },
+      "checkbox-border-color": {
+        "from": "control-border",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#6B6B6B",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#8A8A8A"
+        }
+      },
+      "container-lg": {
+        "layer": "shape",
+        "type": "length",
+        "value": "640px"
+      },
+      "container-md": {
+        "layer": "shape",
+        "type": "length",
+        "value": "480px"
+      },
+      "container-sm": {
+        "layer": "shape",
+        "type": "length",
+        "value": "320px"
+      },
+      "container-xl": {
+        "layer": "shape",
+        "type": "length",
+        "value": "800px"
+      },
+      "container-xs": {
+        "layer": "shape",
+        "type": "length",
+        "value": "240px"
+      },
+      "control-bg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#313131",
+          "hc-dark": "#000000",
+          "hc-light": "#FFFFFF",
+          "light": "#FFFFFF"
+        },
+        "vscode": "input.background"
+      },
+      "control-border": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#6B6B6B",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#8A8A8A"
+        },
+        "vscode": "input.border"
+      },
+      "control-fg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#CCCCCC",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#3B3B3B"
+        },
+        "vscode": "input.foreground"
+      },
+      "control-h": {
+        "density": {
+          "comfortable": "32px",
+          "compact": "22px",
+          "default": "26px"
+        },
+        "layer": "density",
+        "type": "length",
+        "value": "26px"
+      },
+      "danger": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#F85149",
+          "hc-dark": "#F48771",
+          "hc-light": "#B5200D",
+          "light": "#F85149"
+        },
+        "vscode": "errorForeground"
+      },
+      "disabled-fg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#CCCCCC80",
+          "hc-dark": "#A5A5A5",
+          "hc-light": "#7F7F7F",
+          "light": "#61616180"
+        },
+        "vscode": "disabledForeground"
+      },
+      "ease-out": {
+        "layer": "shape",
+        "type": "easing",
+        "value": "cubic-bezier(.22,1,.36,1)"
+      },
+      "elev-0": {
+        "layer": "set",
+        "type": "shadow",
+        "value": "none"
+      },
+      "elev-1": {
+        "layer": "set",
+        "type": "shadow",
+        "values": {
+          "dark": "0 1px 0 #00000059",
+          "hc-dark": "none",
+          "hc-light": "none",
+          "light": "0 1px 1px #0000001A"
+        }
+      },
+      "elev-2": {
+        "layer": "set",
+        "type": "shadow",
+        "values": {
+          "dark": "0 0 4px #0000004D",
+          "hc-dark": "none",
+          "hc-light": "none",
+          "light": "0 0 4px #00000014"
+        }
+      },
+      "elev-3": {
+        "layer": "set",
+        "type": "shadow",
+        "values": {
+          "dark": "0 2px 8px #0000005C",
+          "hc-dark": "none",
+          "hc-light": "none",
+          "light": "0 0 12px #00000024"
+        }
+      },
+      "elev-4": {
+        "layer": "set",
+        "type": "shadow",
+        "values": {
+          "dark": "0 8px 28px #00000080",
+          "hc-dark": "none",
+          "hc-light": "none",
+          "light": "0 0 20px #00000026"
+        }
+      },
+      "error": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#F14C4C",
+          "hc-dark": "#F48771",
+          "hc-light": "#B5200D",
+          "light": "#E51400"
+        },
+        "vscode": "editorError.foreground"
+      },
+      "fg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#CCCCCC",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#3B3B3B"
+        },
+        "vscode": "foreground"
+      },
+      "fg-strong": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#FFFFFF",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#1F1F1F"
+        },
+        "vscode": "settings.headerForeground"
+      },
+      "focus": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#2488DB",
+          "hc-dark": "#F38518",
+          "hc-light": "#006BBD",
+          "light": "#005FB8"
+        },
+        "vscode": "focusBorder"
+      },
+      "font-family": {
+        "layer": "shape",
+        "type": "font-family",
+        "value": "Inter, system-ui, sans-serif"
+      },
+      "font-mono": {
+        "layer": "shape",
+        "type": "font-family",
+        "value": "\"JetBrains Mono\", monospace"
+      },
+      "font-size": {
+        "layer": "shape",
+        "type": "length",
+        "value": "13px"
+      },
+      "font-size-h1": {
+        "layer": "shape",
+        "type": "length",
+        "value": "26px"
+      },
+      "font-size-h2": {
+        "layer": "shape",
+        "type": "length",
+        "value": "18px"
+      },
+      "font-size-h3": {
+        "layer": "shape",
+        "type": "length",
+        "value": "13px"
+      },
+      "font-size-label1": {
+        "layer": "shape",
+        "type": "length",
+        "value": "12px"
+      },
+      "font-size-label2": {
+        "layer": "shape",
+        "type": "length",
+        "value": "11px"
+      },
+      "font-size-label3": {
+        "layer": "shape",
+        "type": "length",
+        "value": "10px"
+      },
+      "font-size-sm": {
+        "layer": "shape",
+        "type": "length",
+        "value": "12px"
+      },
+      "font-size-xs": {
+        "layer": "shape",
+        "type": "length",
+        "value": "11px"
+      },
+      "header-h": {
+        "density": {
+          "comfortable": "28px",
+          "compact": "22px",
+          "default": "22px"
+        },
+        "layer": "density",
+        "type": "length",
+        "value": "22px"
+      },
+      "icon": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#CCCCCC",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#3B3B3B"
+        },
+        "vscode": "icon.foreground"
+      },
+      "icon-size": {
+        "density": {
+          "comfortable": "20px",
+          "compact": "16px",
+          "default": "16px"
+        },
+        "layer": "density",
+        "type": "length",
+        "value": "16px"
+      },
+      "indent": {
+        "layer": "shape",
+        "type": "length",
+        "value": "8px"
+      },
+      "indent-guide": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#585858",
+          "hc-dark": "#A9A9A9",
+          "hc-light": "#A5A5A5",
+          "light": "#A9A9A9"
+        },
+        "vscode": "tree.indentGuidesStroke"
+      },
+      "info": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#59A4F9",
+          "hc-dark": "#59A4F9",
+          "hc-light": "#0063D3",
+          "light": "#0063D3"
+        },
+        "vscode": "editorInfo.foreground"
+      },
+      "input-bg": {
+        "from": "control-bg",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#313131",
+          "hc-dark": "#000000",
+          "hc-light": "#FFFFFF",
+          "light": "#FFFFFF"
+        }
+      },
+      "input-border-color": {
+        "from": "control-border",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#6B6B6B",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#8A8A8A"
+        }
+      },
+      "input-border-color-focus": {
+        "from": "focus",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#2488DB",
+          "hc-dark": "#F38518",
+          "hc-light": "#006BBD",
+          "light": "#005FB8"
+        }
+      },
+      "input-fg": {
+        "from": "control-fg",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#CCCCCC",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#3B3B3B"
+        }
+      },
+      "input-radius": {
+        "from": "radius",
+        "layer": "component",
+        "type": "length",
+        "value": "4px"
+      },
+      "invalid-bg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#5A1D1D",
+          "hc-dark": "#000000",
+          "hc-light": "#FFFFFF",
+          "light": "#F2DEDE"
+        },
+        "vscode": "inputValidation.errorBackground"
+      },
+      "invalid-border": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#BE1100",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#BE1100"
+        },
+        "vscode": "inputValidation.errorBorder"
+      },
+      "link": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#4DAAFC",
+          "hc-dark": "#21A6FF",
+          "hc-light": "#0F4A85",
+          "light": "#005FB8"
+        },
+        "vscode": "textLink.foreground"
+      },
+      "list-drop": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#383B3D",
+          "hc-dark": "#FFFFFF1A",
+          "hc-light": "#0F4A851A",
+          "light": "#D6EBFF"
+        },
+        "vscode": "list.dropBackground"
+      },
+      "list-focus-outline": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#0078D4",
+          "hc-dark": "#F38518",
+          "hc-light": "#006BBD",
+          "light": "#005FB8"
+        },
+        "vscode": "list.focusOutline"
+      },
+      "list-hover": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#2A2D2E",
+          "hc-dark": "#FFFFFF1A",
+          "hc-light": "#0F4A851A",
+          "light": "#F2F2F2"
+        },
+        "vscode": "list.hoverBackground"
+      },
+      "list-sel": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#04395E",
+          "hc-dark": "#00000000",
+          "hc-light": "#0F4A851A",
+          "light": "#E8E8E8"
+        },
+        "vscode": "list.activeSelectionBackground"
+      },
+      "list-sel-fg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#FFFFFF",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#000000"
+        },
+        "vscode": "list.activeSelectionForeground"
+      },
+      "list-sel-inactive": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#37373D",
+          "hc-dark": "#00000000",
+          "hc-light": "#0F4A851A",
+          "light": "#E4E6F1"
+        },
+        "vscode": "list.inactiveSelectionBackground"
+      },
+      "menu-bg": {
+        "from": "surface-raised",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#202020",
+          "hc-dark": "#0C141F",
+          "hc-light": "#FFFFFF",
+          "light": "#F8F8F8"
+        }
+      },
+      "menu-border-color": {
+        "from": "border-widget",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#313131",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#E5E5E5"
+        }
+      },
+      "menu-radius": {
+        "from": "radius-md",
+        "layer": "component",
+        "type": "length",
+        "value": "6px"
+      },
+      "menu-sel": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#0078D4",
+          "hc-dark": "#FFFFFF1A",
+          "hc-light": "#0F4A851A",
+          "light": "#005FB8"
+        },
+        "vscode": "menu.selectionBackground"
+      },
+      "menu-sel-fg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#FFFFFF",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#FFFFFF"
+        },
+        "vscode": "menu.selectionForeground"
+      },
+      "motion": {
+        "layer": "shape",
+        "type": "duration",
+        "value": "150ms"
+      },
+      "motion-fast": {
+        "layer": "shape",
+        "type": "duration",
+        "value": "100ms"
+      },
+      "muted": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#9D9D9D",
+          "hc-dark": "#FFFFFFB3",
+          "hc-light": "#292929B3",
+          "light": "#616161"
+        },
+        "vscode": "descriptionForeground"
+      },
+      "panel-bg": {
+        "from": "bg",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#181818",
+          "hc-dark": "#000000",
+          "hc-light": "#FFFFFF",
+          "light": "#F8F8F8"
+        }
+      },
+      "placeholder": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#989898",
+          "hc-dark": "#FFFFFFB3",
+          "hc-light": "#292929B3",
+          "light": "#767676"
+        },
+        "vscode": "input.placeholderForeground"
+      },
+      "popup-shadow": {
+        "from": "elev-3",
+        "layer": "component",
+        "type": "shadow",
+        "values": {
+          "dark": "0 2px 8px #0000005C",
+          "hc-dark": "none",
+          "hc-light": "none",
+          "light": "0 0 12px #00000024"
+        }
+      },
+      "progress": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#0078D4",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#005FB8"
+        },
+        "vscode": "progressBar.background"
+      },
+      "radius": {
+        "layer": "shape",
+        "type": "length",
+        "value": "4px"
+      },
+      "radius-lg": {
+        "layer": "shape",
+        "type": "length",
+        "value": "8px"
+      },
+      "radius-md": {
+        "layer": "shape",
+        "type": "length",
+        "value": "6px"
+      },
+      "radius-xl": {
+        "layer": "shape",
+        "type": "length",
+        "value": "12px"
+      },
+      "radius-xs": {
+        "layer": "shape",
+        "type": "length",
+        "value": "2px"
+      },
+      "row-h": {
+        "density": {
+          "comfortable": "28px",
+          "compact": "20px",
+          "default": "22px"
+        },
+        "layer": "density",
+        "type": "length",
+        "value": "22px"
+      },
+      "sash-w": {
+        "layer": "shape",
+        "type": "length",
+        "value": "4px"
+      },
+      "scroll-shadow": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#000000",
+          "hc-dark": "#00000000",
+          "hc-light": "#00000000",
+          "light": "#DDDDDD"
+        },
+        "vscode": "scrollbar.shadow"
+      },
+      "scrollbar": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#79797966",
+          "hc-dark": "#6FC3DF99",
+          "hc-light": "#0F4A8566",
+          "light": "#64646466"
+        },
+        "vscode": "scrollbarSlider.background"
+      },
+      "scrollbar-active": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#BFBFBF66",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#00000099"
+        },
+        "vscode": "scrollbarSlider.activeBackground"
+      },
+      "scrollbar-hover": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#646464B3",
+          "hc-dark": "#6FC3DFCC",
+          "hc-light": "#0F4A85CC",
+          "light": "#646464B3"
+        },
+        "vscode": "scrollbarSlider.hoverBackground"
+      },
+      "scrollbar-w": {
+        "layer": "shape",
+        "type": "length",
+        "value": "10px"
+      },
+      "selection": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#264F78",
+          "hc-dark": "#F3F518",
+          "hc-light": "#0F4A85",
+          "light": "#ADD6FF"
+        },
+        "vscode": "editor.selectionBackground"
+      },
+      "shadow-color": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#0000005C",
+          "hc-dark": "#00000000",
+          "hc-light": "#00000000",
+          "light": "#00000029"
+        },
+        "vscode": "widget.shadow"
+      },
+      "space-0": {
+        "layer": "shape",
+        "type": "length",
+        "value": "0px"
+      },
+      "space-0-5": {
+        "layer": "shape",
+        "type": "length",
+        "value": "2px"
+      },
+      "space-1": {
+        "layer": "shape",
+        "type": "length",
+        "value": "4px"
+      },
+      "space-1-5": {
+        "layer": "shape",
+        "type": "length",
+        "value": "6px"
+      },
+      "space-2": {
+        "layer": "shape",
+        "type": "length",
+        "value": "8px"
+      },
+      "space-3": {
+        "layer": "shape",
+        "type": "length",
+        "value": "12px"
+      },
+      "space-4": {
+        "layer": "shape",
+        "type": "length",
+        "value": "16px"
+      },
+      "space-5": {
+        "layer": "shape",
+        "type": "length",
+        "value": "20px"
+      },
+      "space-6": {
+        "layer": "shape",
+        "type": "length",
+        "value": "24px"
+      },
+      "space-7": {
+        "layer": "shape",
+        "type": "length",
+        "value": "32px"
+      },
+      "space-8": {
+        "layer": "shape",
+        "type": "length",
+        "value": "40px"
+      },
+      "statusbar-h": {
+        "layer": "shape",
+        "type": "length",
+        "value": "22px"
+      },
+      "stroke": {
+        "layer": "shape",
+        "type": "length",
+        "value": "1px"
+      },
+      "success": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#73C991",
+          "hc-dark": "#73C991",
+          "hc-light": "#007100",
+          "light": "#73C991"
+        },
+        "vscode": "testing.iconPassed"
+      },
+      "surface": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#1F1F1F",
+          "hc-dark": "#000000",
+          "hc-light": "#FFFFFF",
+          "light": "#FFFFFF"
+        },
+        "vscode": "editor.background"
+      },
+      "surface-raised": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#202020",
+          "hc-dark": "#0C141F",
+          "hc-light": "#FFFFFF",
+          "light": "#F8F8F8"
+        },
+        "vscode": "editorWidget.background"
+      },
+      "tab-active-bg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#1F1F1F",
+          "hc-dark": "#000000",
+          "hc-light": "#FFFFFF",
+          "light": "#FFFFFF"
+        },
+        "vscode": "tab.activeBackground"
+      },
+      "tab-active-fg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#FFFFFF",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#3B3B3B"
+        },
+        "vscode": "tab.activeForeground"
+      },
+      "tab-active-marker": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#0078D4",
+          "hc-dark": "#F38518",
+          "hc-light": "#B5200D",
+          "light": "#005FB8"
+        },
+        "vscode": "tab.activeBorderTop"
+      },
+      "tab-bg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#181818",
+          "hc-dark": "#000000",
+          "hc-light": "#FFFFFF",
+          "light": "#F8F8F8"
+        },
+        "vscode": "tab.inactiveBackground"
+      },
+      "tab-fg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#9D9D9D",
+          "hc-dark": "#FFFFFF",
+          "hc-light": "#292929",
+          "light": "#868686"
+        },
+        "vscode": "tab.inactiveForeground"
+      },
+      "tab-h": {
+        "density": {
+          "comfortable": "40px",
+          "compact": "28px",
+          "default": "35px"
+        },
+        "layer": "density",
+        "type": "length",
+        "value": "35px"
+      },
+      "tab-marker": {
+        "from": "tab-active-marker",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#0078D4",
+          "hc-dark": "#F38518",
+          "hc-light": "#B5200D",
+          "light": "#005FB8"
+        }
+      },
+      "titlebar-h": {
+        "layer": "shape",
+        "type": "length",
+        "value": "35px"
+      },
+      "toggle-on-bg": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#2489DB82",
+          "hc-dark": "#00000000",
+          "hc-light": "#00000000",
+          "light": "#BED6ED"
+        },
+        "vscode": "inputOption.activeBackground"
+      },
+      "toggle-on-border": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#2488DB",
+          "hc-dark": "#6FC3DF",
+          "hc-light": "#0F4A85",
+          "light": "#005FB8"
+        },
+        "vscode": "inputOption.activeBorder"
+      },
+      "toolbar-active": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#63666750",
+          "hc-dark": "#FFFFFF33",
+          "hc-light": "#0F4A8533",
+          "light": "#A6A6A650"
+        },
+        "vscode": "toolbar.activeBackground"
+      },
+      "toolbar-hover": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#5A5D5E50",
+          "hc-dark": "#FFFFFF1A",
+          "hc-light": "#0F4A851A",
+          "light": "#B8B8B850"
+        },
+        "vscode": "toolbar.hoverBackground"
+      },
+      "tooltip-bg": {
+        "from": "surface-raised",
+        "layer": "component",
+        "type": "color",
+        "values": {
+          "dark": "#202020",
+          "hc-dark": "#0C141F",
+          "hc-light": "#FFFFFF",
+          "light": "#F8F8F8"
+        }
+      },
+      "twistie-w": {
+        "layer": "shape",
+        "type": "length",
+        "value": "16px"
+      },
+      "warning": {
+        "layer": "role",
+        "type": "color",
+        "values": {
+          "dark": "#CCA700",
+          "hc-dark": "#FFD370",
+          "hc-light": "#895503",
+          "light": "#BF8803"
+        },
+        "vscode": "editorWarning.foreground"
+      },
+      "window-radius": {
+        "from": "radius-lg",
+        "layer": "component",
+        "type": "length",
+        "value": "8px"
+      },
+      "window-shadow": {
+        "from": "elev-4",
+        "layer": "component",
+        "type": "shadow",
+        "values": {
+          "dark": "0 8px 28px #00000080",
+          "hc-dark": "none",
+          "hc-light": "none",
+          "light": "0 0 20px #00000026"
+        }
+      }
+    }
   }
 }
