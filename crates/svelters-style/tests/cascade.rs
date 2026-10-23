@@ -221,6 +221,27 @@ fn media_switches_rules() {
 }
 
 #[test]
+fn platform_media_follows_the_env() {
+    // U2 E7: `-sv-platform` reads `MediaEnv::platform`, which the backend sets (and tests override)
+    let mut s = setup(&[(
+        Origin::Author,
+        "button { gap: 1px } @media (-sv-platform: macos) { button { gap: 2px } } @media (-sv-platform: windows) { button { gap: 3px } }
+         @media not (-sv-platform: linux) { .card { gap: 4px } }",
+    )]);
+    let flipped = s.stylist.set_media(MediaEnv { platform: Platform::Linux, ..Default::default() });
+    assert_eq!(s.style("ok").get("gap"), Some(&len(1.0)));
+    assert!(flipped.iter().all(|r| r.0 != 0));
+    let flipped = s.stylist.set_media(MediaEnv { platform: Platform::Macos, ..Default::default() });
+    assert_eq!(flipped, [RuleId(1), RuleId(3)]);
+    assert_eq!(s.style("ok").get("gap"), Some(&len(2.0)));
+    assert_eq!(s.style("card").get("gap"), Some(&len(4.0)));
+    let flipped = s.stylist.set_media(MediaEnv { platform: Platform::Windows, ..Default::default() });
+    assert_eq!(flipped, [RuleId(1), RuleId(2)]);
+    assert_eq!(s.style("ok").get("gap"), Some(&len(3.0)));
+    assert_eq!(MediaEnv::default().platform, Platform::current());
+}
+
+#[test]
 fn matched_rules_in_cascade_order_and_removal() {
     let mut stylist = Stylist::new(&TABLE);
     let (a, _) = stylist.add_sheet(&Stylesheet::parse("#ok { gap: 1px } button, .primary.x, .primary { gap: 2px }", &ParseOptions::default()), Origin::Author);

@@ -13653,6 +13653,22 @@
         "decl_type": "transition",
         "via": "css"
       },
+      "transition-delay": {
+        "decl_type": "time-list",
+        "via": "css"
+      },
+      "transition-duration": {
+        "decl_type": "time-list",
+        "via": "css"
+      },
+      "transition-property": {
+        "decl_type": "transition-property",
+        "via": "css"
+      },
+      "transition-timing-function": {
+        "decl_type": "easing-list",
+        "via": "css"
+      },
       "visible": {
         "kinds": [
           "Widget"

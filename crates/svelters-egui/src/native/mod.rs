@@ -129,6 +129,9 @@ pub struct Policy {
     /// OW3: a lone Alt press and release highlights the menu bar's first menu (Windows, KDE);
     /// F10 does it everywhere.
     pub alt_focuses_menu_bar: bool,
+    /// U2 E7: the platform `@media (-sv-platform: macos | windows | linux)` sees; `None`: the
+    /// context's OS (`egui::Context::os`). Overriding it emulates another platform's sheets.
+    pub platform: Option<svelters_style::Platform>,
     /// OW2: scroll gestures and sashes (`interact::Scrollable`, `interact::Resizable`).
     pub scroll: ScrollPolicy,
 }
@@ -182,6 +185,7 @@ const GTK: Policy = Policy {
     submenu_delay_ms: 225,
     tooltip_follow_on_ms: 1000,
     alt_focuses_menu_bar: false,
+    platform: Some(svelters_style::Platform::Linux),
     scroll: ScrollPolicy {
         track_click: TrackClick::Jump,
         shift_track_click_inverts: true,
@@ -212,6 +216,7 @@ const QT: Policy = Policy {
     submenu_delay_ms: 225,
     tooltip_follow_on_ms: 2000,
     alt_focuses_menu_bar: true,
+    platform: Some(svelters_style::Platform::Linux),
     scroll: ScrollPolicy {
         track_click: TrackClick::Page,
         shift_track_click_inverts: false,
@@ -242,6 +247,7 @@ const WINDOWS: Policy = Policy {
     submenu_delay_ms: 400,
     tooltip_follow_on_ms: 2000,
     alt_focuses_menu_bar: true,
+    platform: Some(svelters_style::Platform::Windows),
     scroll: ScrollPolicy {
         track_click: TrackClick::Page,
         shift_track_click_inverts: false,
@@ -272,6 +278,7 @@ const MAC: Policy = Policy {
     submenu_delay_ms: 0,
     tooltip_follow_on_ms: 1000,
     alt_focuses_menu_bar: false,
+    platform: Some(svelters_style::Platform::Macos),
     scroll: ScrollPolicy {
         track_click: TrackClick::Page,
         shift_track_click_inverts: false,
@@ -302,6 +309,7 @@ const EGUI: Policy = Policy {
     submenu_delay_ms: 200,
     tooltip_follow_on_ms: 1000,
     alt_focuses_menu_bar: false,
+    platform: None,
     scroll: ScrollPolicy {
         track_click: TrackClick::Jump,
         shift_track_click_inverts: false,

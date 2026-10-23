@@ -141,6 +141,12 @@ pub(crate) const ENGINE_PROPS: &[(&str, &str, &[&str])] = &[
     ("text-overflow", "enum", &["clip", "ellipsis"]),
     ("text-transform", "enum", &["none", "uppercase", "lowercase", "capitalize"]),
     ("transition", "transition", &[]),
+    // U2 E5: the longhands; `transition` is their shorthand, and its computed list is assembled
+    // from them (svelters-style `computed.rs`)
+    ("transition-delay", "time-list", &[]),
+    ("transition-duration", "time-list", &[]),
+    ("transition-property", "transition-property", &[]),
+    ("transition-timing-function", "easing-list", &[]),
     ("white-space", "enum", &["normal", "nowrap", "pre", "pre-wrap", "pre-line", "break-spaces"]),
 ];
 
@@ -1664,6 +1670,13 @@ impl Scene {
             env.contrast = c;
         }
         env.reduced_motion = self.style.reduced_motion;
+        // U2 E7: `-sv-platform` follows the native policy (tests emulate a platform through it)
+        env.platform = crate::native::policy_of(ctx).platform.unwrap_or(match ctx.os() {
+            egui::os::OperatingSystem::Mac => svelters_style::Platform::Macos,
+            egui::os::OperatingSystem::Windows => svelters_style::Platform::Windows,
+            egui::os::OperatingSystem::Nix => svelters_style::Platform::Linux,
+            _ => svelters_style::Platform::Other,
+        });
         if env.reduced_motion && !self.style.stylist.media_env().reduced_motion {
             self.style.end_transitions();
         }

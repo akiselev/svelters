@@ -42,8 +42,15 @@ pub enum ValueType {
     FontWeight,
     /// `box-shadow`: `none` or a comma-separated list of shadows ([`crate::Shadow`]).
     Shadow,
-    /// `transition`: `none` or a comma-separated list ([`crate::Transition`]).
+    /// `transition`: `none` or a comma-separated list ([`crate::Transition`]). On a table with the
+    /// four longhands it is a shorthand, and its computed value is assembled from them (U2 E5).
     Transition,
+    /// `transition-property`: `none` or a comma-separated list of `all` and property names.
+    TransitionProperty,
+    /// `transition-duration`, `transition-delay`: a comma-separated list of times.
+    TimeList,
+    /// `transition-timing-function`: a comma-separated list of easing functions.
+    EasingList,
     /// `background-image`: `none`, one `linear-gradient()` ([`crate::LinearGradient`]) or a Rust
     /// part painter, `paint(name)` (WIDGET-PARITY Q1).
     Image,

@@ -82,6 +82,12 @@ pub enum ComputedValue {
     Shadows(Box<[Shadow]>),
     /// `transition`; empty = `none`.
     Transitions(Box<[Transition]>),
+    /// `transition-property` (U2 E5): `all` or property names; empty = `none`.
+    Names(Box<[Box<str>]>),
+    /// `transition-duration`, `transition-delay` (U2 E5): times in seconds.
+    Times(Box<[f32]>),
+    /// `transition-timing-function` (U2 E5).
+    Easings(Box<[TimingFunction]>),
     /// `background-image`; `None` = `none`.
     Image(Option<Box<Gradient>>),
     /// `background-image: paint(name)`: the registered Rust part painter `name` (`cad.knurl`)
@@ -150,6 +156,26 @@ impl fmt::Display for ComputedValue {
                         f.write_str(", ")?;
                     }
                     write!(f, "{} {}s {} {}s", t.property, t.duration, t.timing, t.delay)?;
+                }
+                Ok(())
+            }
+            ComputedValue::Names(list) if list.is_empty() => f.write_str("none"),
+            ComputedValue::Names(list) => f.write_str(&list.join(", ")),
+            ComputedValue::Times(list) => {
+                for (i, t) in list.iter().enumerate() {
+                    if i > 0 {
+                        f.write_str(", ")?;
+                    }
+                    write!(f, "{t}s")?;
+                }
+                Ok(())
+            }
+            ComputedValue::Easings(list) => {
+                for (i, t) in list.iter().enumerate() {
+                    if i > 0 {
+                        f.write_str(", ")?;
+                    }
+                    write!(f, "{t}")?;
                 }
                 Ok(())
             }
@@ -531,6 +557,32 @@ fn parse_typed<'i>(prop: &'static Prop, input: &mut Parser<'i>, cx: &ValueCx<'_>
             let list = input.parse_comma_separated(|i| transition(i).map_err(|e| ParseError::<String>::custom(format!("{name}: {e}")))).map_err(err_text)?;
             Ok(ComputedValue::Transitions(list.into()))
         }
+        ValueType::TransitionProperty => {
+            if input.try_parse(|i| i.expect_ident_matching("none")).is_ok() {
+                return Ok(ComputedValue::Names(Box::new([])));
+            }
+            let list = input
+                .parse_comma_separated(|i| {
+                    let p = i.expect_ident_cloned()?.to_ascii_lowercase();
+                    if p == "none" {
+                        return Err(ParseError::<String>::custom(format!("{name}: `none` is only valid alone")));
+                    }
+                    Ok(p.into_boxed_str())
+                })
+                .map_err(|e| format!("{name}: {}", err_text(e)))?;
+            Ok(ComputedValue::Names(list.into()))
+        }
+        ValueType::TimeList => {
+            let list = input.parse_comma_separated(time).map_err(|_| format!("{name}: expected a comma-separated list of times (200ms, .5s)"))?;
+            if name == "transition-duration" && list.iter().any(|t| *t < 0.0) {
+                return Err(format!("{name}: a duration cannot be negative"));
+            }
+            Ok(ComputedValue::Times(list.into()))
+        }
+        ValueType::EasingList => {
+            let list = input.parse_comma_separated(timing_function).map_err(|_| format!("{name}: expected a comma-separated list of easing functions"))?;
+            Ok(ComputedValue::Easings(list.into()))
+        }
         ValueType::Image => {
             if input.try_parse(|i| i.expect_ident_matching("none")).is_ok() {
                 return Ok(ComputedValue::Image(None));
@@ -652,6 +704,51 @@ fn transition(input: &mut Parser<'_>) -> VResult<Transition> {
         return Err("a duration cannot be negative".into());
     }
     Ok(Transition { property: property.unwrap_or_else(|| "all".into()), duration, delay: times.get(1).copied().unwrap_or(0.0), timing: timing.unwrap_or(TimingFunction::EASE) })
+}
+
+/// The longhands of a `transition` shorthand value (after `var()` substitution; U2 E5), as the
+/// value texts of `transition-property`, `-duration`, `-timing-function` and `-delay`, one comma
+/// list entry per transition. Omitted parts take their initial values (`all 0s ease 0s`).
+pub(crate) fn expand_transition(text: &str) -> VResult<[String; 4]> {
+    let mut input = Parser::new(text);
+    if input.try_parse(|i| i.expect_ident_matching("none").and_then(|_| i.expect_exhausted())).is_ok() {
+        return Ok(["none".into(), "0s".into(), "ease".into(), "0s".into()]);
+    }
+    let list = input.parse_comma_separated(|i| transition(i).map_err(ParseError::<String>::custom)).map_err(|e| format!("transition: {}", err_text(e)))?;
+    let join = |f: &dyn Fn(&Transition) -> String| list.iter().map(f).collect::<Vec<_>>().join(", ");
+    Ok([join(&|t| t.property.to_string()), join(&|t| format!("{}s", t.duration)), join(&|t| t.timing.to_string()), join(&|t| format!("{}s", t.delay))])
+}
+
+/// The `transition` list from its longhands' computed values (CSS Transitions 1 §2):
+/// `transition-property` sets the count and the other lists repeat or are cut to it. `None` when
+/// no longhand is set.
+pub(crate) fn combine_transitions(property: Option<&ComputedValue>, duration: Option<&ComputedValue>, timing: Option<&ComputedValue>, delay: Option<&ComputedValue>) -> Option<ComputedValue> {
+    if property.is_none() && duration.is_none() && timing.is_none() && delay.is_none() {
+        return None;
+    }
+    let all: [Box<str>; 1] = ["all".into()];
+    let props: &[Box<str>] = match property {
+        Some(ComputedValue::Names(n)) => n,
+        _ => &all,
+    };
+    let times = |v: Option<&ComputedValue>| -> Box<[f32]> {
+        match v {
+            Some(ComputedValue::Times(t)) if !t.is_empty() => t.clone(),
+            _ => Box::new([0.0]),
+        }
+    };
+    let (durations, delays) = (times(duration), times(delay));
+    let easings: Box<[TimingFunction]> = match timing {
+        Some(ComputedValue::Easings(e)) if !e.is_empty() => e.clone(),
+        _ => Box::new([TimingFunction::EASE]),
+    };
+    Some(ComputedValue::Transitions(
+        props
+            .iter()
+            .enumerate()
+            .map(|(i, p)| Transition { property: p.clone(), duration: durations[i % durations.len()], delay: delays[i % delays.len()], timing: easings[i % easings.len()] })
+            .collect(),
+    ))
 }
 
 /// A `<time>` in seconds (`200ms`, `.2s`; a bare `0` too).

@@ -2,8 +2,9 @@
 //!
 //! Media types `all`, `screen` (true) and `print` (false); the features `width`, `height` (with
 //! `min-`/`max-` and the range syntax), `orientation`, `aspect-ratio`, `prefers-color-scheme`,
-//! `prefers-reduced-motion` and `prefers-contrast`; `not`, `and`, `or` and `only`. An unknown
-//! feature or type evaluates false, as in browsers.
+//! `prefers-reduced-motion` and `prefers-contrast`; svelters' `-sv-platform` (`macos`, `windows`,
+//! `linux`; U2 E7); `not`, `and`, `or` and `only`. An unknown feature or type evaluates false, as
+//! in browsers.
 
 use cssparser::{ParseError, Parser, Token};
 
@@ -23,6 +24,43 @@ pub enum Contrast {
     Custom,
 }
 
+/// The platform `@media (-sv-platform: …)` sees (U2 E7). The backend sets it from its native
+/// policy (egui: `native::Policy::platform`), so a test can emulate another platform.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Platform {
+    Macos,
+    Windows,
+    /// Linux and the BSDs.
+    Linux,
+    /// Anything else (the web, mobile): matches no `-sv-platform` value.
+    Other,
+}
+
+impl Platform {
+    /// The platform this binary was built for (the default until a backend sets one).
+    pub const fn current() -> Platform {
+        if cfg!(target_os = "macos") {
+            Platform::Macos
+        } else if cfg!(target_os = "windows") {
+            Platform::Windows
+        } else if cfg!(any(target_os = "linux", target_os = "freebsd", target_os = "openbsd", target_os = "netbsd", target_os = "dragonfly")) {
+            Platform::Linux
+        } else {
+            Platform::Other
+        }
+    }
+
+    /// The `-sv-platform` keyword (`None` for [`Platform::Other`]).
+    pub fn keyword(self) -> Option<&'static str> {
+        match self {
+            Platform::Macos => Some("macos"),
+            Platform::Windows => Some("windows"),
+            Platform::Linux => Some("linux"),
+            Platform::Other => None,
+        }
+    }
+}
+
 /// What media queries see: the toplevel's size and the platform's preferences.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct MediaEnv {
@@ -34,11 +72,13 @@ pub struct MediaEnv {
     pub contrast: Contrast,
     /// `1em` in a media query (CSS: the initial font size).
     pub em: f32,
+    /// `-sv-platform` (U2 E7). Default: [`Platform::current`].
+    pub platform: Platform,
 }
 
 impl Default for MediaEnv {
     fn default() -> Self {
-        MediaEnv { width: 1024.0, height: 768.0, color_scheme: ColorScheme::Light, reduced_motion: false, contrast: Contrast::NoPreference, em: 16.0 }
+        MediaEnv { width: 1024.0, height: 768.0, color_scheme: ColorScheme::Light, reduced_motion: false, contrast: Contrast::NoPreference, em: 16.0, platform: Platform::current() }
     }
 }
 
@@ -187,6 +227,7 @@ impl Feature {
                 "prefers-reduced-motion" => env.reduced_motion,
                 "prefers-contrast" => env.contrast != Contrast::NoPreference,
                 "prefers-color-scheme" | "orientation" | "aspect-ratio" => true,
+                "-sv-platform" => env.platform != Platform::Other,
                 _ => false,
             },
             Feature::Discrete(n, v) => match (n.as_str(), v.as_str()) {
@@ -200,6 +241,7 @@ impl Feature {
                 ("prefers-contrast", "custom") => env.contrast == Contrast::Custom,
                 ("orientation", "portrait") => env.height >= env.width,
                 ("orientation", "landscape") => env.width > env.height,
+                ("-sv-platform", v) => env.platform.keyword() == Some(v),
                 _ => false,
             },
             Feature::Range(n, op, v) => {
@@ -301,7 +343,7 @@ fn parse_in_parens<'i>(input: &mut Parser<'i>) -> PResult<'i, Cond> {
 }
 
 const RANGE: &[&str] = &["width", "height", "aspect-ratio"];
-const DISCRETE: &[&str] = &["prefers-color-scheme", "prefers-reduced-motion", "prefers-contrast", "orientation"];
+const DISCRETE: &[&str] = &["prefers-color-scheme", "prefers-reduced-motion", "prefers-contrast", "orientation", "-sv-platform"];
 
 fn parse_feature<'i>(input: &mut Parser<'i>) -> PResult<'i, Cond> {
     // `value op name [op value]`
@@ -427,5 +469,23 @@ mod tests {
         assert!(!m("garbage !!", &env));
         assert!(MediaList::parse("(min-width: 1px)").unwrap().depends_on_size());
         assert!(!MediaList::parse("(prefers-color-scheme: dark)").unwrap().depends_on_size());
+    }
+
+    #[test]
+    fn platform_feature() {
+        for (p, kw) in [(Platform::Macos, "macos"), (Platform::Windows, "windows"), (Platform::Linux, "linux")] {
+            let env = MediaEnv { platform: p, ..Default::default() };
+            assert!(m(&format!("(-sv-platform: {kw})"), &env), "{kw}");
+            assert!(m("(-sv-platform)", &env));
+            for other in ["macos", "windows", "linux"].into_iter().filter(|o| *o != kw) {
+                assert!(!m(&format!("(-sv-platform: {other})"), &env), "{kw} vs {other}");
+                assert!(m(&format!("not (-sv-platform: {other})"), &env));
+            }
+            assert!(!m("(-sv-platform: beos)", &env));
+        }
+        let other = MediaEnv { platform: Platform::Other, ..Default::default() };
+        assert!(!m("(-sv-platform)", &other) && !m("(-sv-platform: linux)", &other));
+        assert!(m("(-sv-platform: MacOS) or (-sv-platform: windows)", &MediaEnv { platform: Platform::Macos, ..Default::default() }), "case-insensitive");
+        assert!(!MediaList::parse("(-sv-platform: macos)").unwrap().depends_on_size());
     }
 }
