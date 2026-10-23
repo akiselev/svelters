@@ -591,7 +591,9 @@ impl Widget for TextEdit {
         }
         // the caret, blinking at the platform's rate (none after 10 s idle, as GTK)
         let mut caret_rect = None;
-        if focused && let Some((c, _)) = &caret {
+        // as egui's own field: no caret (and no blink repaints) while the viewport lacks focus
+        let viewport_focused = ctx.input(|i| i.focused);
+        if focused && viewport_focused && let Some((c, _)) = &caret {
             let cp = cx.part(&host, "caret", CARET_UA);
             let r = g.pos_from_cursor(cursor(*c)).translate(o.to_vec2());
             let lh = Self::line_height(&host, &g);
@@ -599,7 +601,7 @@ impl Widget for TextEdit {
             let x = (r.min.x * pc.ppp).round() / pc.ppp;
             let rect = Rect::from_min_size(pos2(x, r.center().y - lh / 2.0), vec2(w, lh));
             caret_rect = Some(rect);
-            let period = policy.caret_blink_ms as f64 / 1000.0;
+            let period = if ui.visuals().text_cursor.blink { policy.caret_blink_ms as f64 / 1000.0 } else { 0.0 };
             let idle = now - self.input.last_activity;
             let on = period <= 0.0 || idle > 10.0 || (idle % period) < period / 2.0;
             if on && !self.read_only {

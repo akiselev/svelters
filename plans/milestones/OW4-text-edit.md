@@ -227,4 +227,42 @@ workspace suite, VIS1c's gate, conformance. CI runs them.
 
 ## Push and CI
 
-CI
+- `ci/ow4` 1ad6c51c (merged with master ec8809fe): js 39891645956, linux-qt 39891645931, macos-appkit
+  39891645953, windows-winui 39891645936 succeeded; linux-gtk 39891645932 failed on one test of 2910:
+  `viewports::dock_w4_a_root_moved_between_viewports_keeps_caret_focus_and_instances` saw the caret blink's
+  delayed repaint where the test wants the viewports idle. egui's own field blinks only while the viewport has
+  input focus (and `visuals.text_cursor.blink`); the own field now does the same. Its `egui-snapshots` job passed
+  (no TK1 or VIS1c snapshot changed).
+- The next push: see the coordinator report.
+
+## Handoff
+
+**State.** Everything above compiles, is tested locally as listed and is pushed as `ci/ow4`. The own field is the
+only `text-edit` (no egui wrapper, no switch entry to turn it off).
+
+**Next steps, in order.**
+1. TK1 snapshot cases with a text field (`counter-*` and others) change with the own look: take the new PNGs from
+   CI's `egui-snapshots` artifact (lavapipe) and commit them; the same for VIS1c ratchet baselines if the input
+   crops moved.
+2. The quire-text requests (word_at rules, AppKit undo rules, verbatim CRLF, GTK redo selection) through the
+   coordinator to main-cadatomic; then advance the rev and drop `GTK_WORDS`/`QT_WORDS` if quire takes the rules.
+3. RA3 method routing for `replaces` kinds, then the edit methods; per-prop bind events for
+   `selection-start`/`selection-end`/`modified`.
+4. The table cell editor (OW5) and drag-value's entry (OW1b) on `TextInput`; multi-line bars on `Scrollable`.
+5. macOS focus with buttons and middle clicks (EV3/OW0), then raise the macOS floor.
+
+**Gotchas.**
+- quire-text: positions are byte offsets, the harness and the props use chars (`Session::chars`,
+  `set_selection_chars`). `TextView::set_selection` is view state (no undo step); caret moves that must split undo
+  groups go through `execute(SetSelection)`. `replace_all` normalises CRLF, so the prop echo check compares with
+  the normalised value. `NoWrap` is the layout for one-line fields; multi-line uses `GalleyRows` (goal = x in
+  1/16 pt) only while the galley shows the document char for char.
+- egui-winit (and kittest) delivers `MiddleClickPaste` in its own pass, after the press: the unit keeps the press's
+  byte until it comes, or pastes from the provider on the release. `primary::provider()` is `None` off Linux; the
+  measurement then reads PRIMARY from `TextSelectionSettled` output commands.
+- `#[prop(bind)]` on an extra generates a `changed` binding whose payload is the text: do not use it for other
+  props of this kind.
+- CX3's stand-in is gone; `focus::take_entered` stays (EV3's seam for Enter taken by a default button).
+- WG3m/EditRules decisions: macOS words = Pango plus `.`/`_`/`'` joins and forward-only emoji splits (both
+  measured); undo = Qt's until an AppKit rule set exists; NSTextField (not NSTextView) is the single-line target.
+- Double-click words: measured, not derived (table above); the GTK rule needs the whole boundary set of the line.
