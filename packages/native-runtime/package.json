@@ -34,6 +34,7 @@
       "svelte/internal/client/reactivity/effects": "svelte/src/internal/client/reactivity/effects.js",
       "svelte/internal/client/reactivity/async": "svelte/src/internal/client/reactivity/async.js",
       "svelte/internal/client/reactivity/batch": "svelte/src/internal/client/reactivity/batch.js",
+      "svelte/internal/client/runtime": "svelte/src/internal/client/runtime.js",
       "svelte/internal/client/dom/task": "svelte/src/internal/client/dom/task.js",
       "svelte/internal/client/context": "svelte/src/internal/client/context.js",
       "svelte/internal/client/dev/equality": "svelte/src/internal/client/dev/equality.js",

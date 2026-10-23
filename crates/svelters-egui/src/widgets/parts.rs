@@ -1,13 +1,13 @@
 //! OW1a: helpers shared by the toggles and indicators (checkbox, switch, toggle-button,
 //! progress-bar, spinner): paint parts with their own UA table, and the path glyphs.
 //!
-//! **Paint parts until OW-CSS lands `::part()`.** A paint part (`checkbox::part(indicator)`,
-//! `::part(mark)`, `switch::part(track)`, `progress-bar::part(fill)`, …) is painted with a
-//! [`StyleView`] over its own UA table in the host's state. Until the engine computes part styles,
-//! a part reads the **host's** computed style for the properties the theme's base sheet already
-//! sets on the host for that part (the `checkbox` rule of `theme/base.css` styles the box), and
-//! its UA table for everything else ([`part_view`]). When OW-CSS lands, `part_view` takes the
-//! part's computed style instead and no widget changes.
+//! **Paint parts.** A paint part (`checkbox::part(indicator)`, `::part(mark)`,
+//! `switch::part(track)`, `progress-bar::part(fill)`, …) is painted with a [`StyleView`] over its
+//! own UA table in the host's state. OW1a3: when a sheet has a `::part()` rule for it, the part's
+//! computed style (OW-CSS stage 2) comes first ([`part_of`]); otherwise the part reads the
+//! **host's** computed style for the properties the theme's base sheet sets on the host for that
+//! part (the `checkbox` rule of `theme/base.css` styles the box), and its UA table for everything
+//! else ([`part_view`]).
 //!
 //! **Glyphs.** ARCH-WIDGETS decides glyphs are icons from the registry (`content: icon(check)`,
 //! WIDGET-PARITY P2). svelters-egui bundles no icon font today (ICR1 adds the registry), so the
@@ -15,13 +15,37 @@
 //! from P2 on will read `content` first. Writer lane: OW1a.
 
 use crate::paint::{PaintCx, StyleView, TraceKind, Ua};
+use crate::provider::{MeasureCx, WidgetCx};
 use egui::{Color32, Rect, Stroke, pos2};
 
-/// A part's view: the host's computed style (`host_css`: true for parts the base sheet styles
-/// through the host rule) over the part's UA table, in the host's state.
-// TODO(OW-CSS `::part`): take the part's computed style here; no widget changes.
+/// A part's view with no `::part()` style: the host's computed style (`host_css`: true for parts
+/// the base sheet styles through the host rule) over the part's UA table, in the host's state.
 pub(crate) fn part_view<'a>(host: &StyleView<'a>, ua: Ua, host_css: bool) -> StyleView<'a> {
     StyleView::new(if host_css { host.computed() } else { None }, ua, host.state(), host.is_dark())
+}
+
+/// OW1a3: part `name`'s view while drawing: its `::part(name)` computed style (an author or theme
+/// rule; with its running transitions) over the UA table `ua` when a sheet has a rule for it,
+/// else [`part_view`] (the UA table is the UA layer).
+pub(crate) fn part_of<'a>(cx: &'a WidgetCx<'_>, host: &'a StyleView<'a>, name: &str, ua: Ua, host_css: bool) -> StyleView<'a> {
+    if cx.part_css(name).is_some() { cx.part(host, name, ua) } else { part_view(host, ua, host_css) }
+}
+
+/// OW1a3: part `name`'s view from its computed style `css` (the scene-free cores' form of
+/// [`part_of`]: no transitions), else [`part_view`].
+pub(crate) fn part_with<'a>(host: &'a StyleView<'a>, css: Option<&'a svelters_style::ComputedStyle>, ua: Ua, host_css: bool) -> StyleView<'a> {
+    match css {
+        Some(c) => host.part(Some(c), ua),
+        None => part_view(host, ua, host_css),
+    }
+}
+
+/// OW1a3: [`part_of`] while measuring.
+pub(crate) fn measured_part<'a>(cx: &'a MeasureCx<'_>, host: &'a StyleView<'a>, name: &str, ua: Ua, host_css: bool) -> StyleView<'a> {
+    match cx.part_css(name) {
+        Some(c) => host.part(Some(c), ua),
+        None => part_view(host, ua, host_css),
+    }
 }
 
 /// A part's size from its UA table (`width`, `height`), never the host's CSS size.

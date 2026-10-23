@@ -4784,6 +4784,7 @@ dependencies = [
  "cssparser-color",
  "precomputed-hash",
  "selectors",
+ "serde_json",
  "smallvec",
 ]
 

@@ -4,9 +4,12 @@
 // `pnpm test`; crates/svelters-egui/tests/embed.rs runs the same module on QuickJS and egui.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import vm from 'node:vm';
 import * as $ from 'svelte/internal/client';
+import { flush_tasks } from 'svelte/internal/client/dom/task';
 import { createTestHost } from '@svelters/testhost';
 import * as $n from '../src/index.js';
+import { subscriber } from '../src/core/internal.js';
 
 // A frame clock of our own: embed.js wraps the global requestAnimationFrame when it loads.
 let frameQueue = [];
@@ -173,4 +176,95 @@ test('roots: retarget moves where new natives go (EM2 move_root)', () => {
   assert.ok(lines.some((l) => l.startsWith(`insert #${b} `)), lines.join('\n'));
   assert.ok(!lines.some((l) => l.startsWith(`insert #${a} `)), lines.join('\n'));
   api.unmount(12);
+});
+
+// ---- FX6 (plans/milestones/FX6-embed-destroy-mutation.md): an entry the host aborted ----
+
+/**
+ * Runs `fn` and aborts it after `ms`, as QuickJS's turn budget does: V8's termination (vm's
+ * `timeout`) skips every `finally` too, so Svelte's state stays as it was mid-update. Then what the
+ * host does after an aborted entry: `__svelters_recover()`.
+ */
+function abort(fn, ms = 50) {
+  globalThis.__fx6_run = fn;
+  try {
+    assert.throws(() => vm.runInThisContext('__fx6_run()', { timeout: ms }), { code: 'ERR_SCRIPT_EXECUTION_TIMEOUT' });
+  } finally {
+    delete globalThis.__fx6_run;
+  }
+  if (!process.env.FX6_NO_RECOVER) globalThis.__svelters_recover();
+}
+
+const spin = $.state(false);
+const shared = $.state(0);
+let stops = 0;
+// a `createSubscriber` (as a store field or `svelte/reactivity` reads): its last unsubscribe bumps
+// its version one microtask after the teardown, inside the destroy's flushSync
+const sub = subscriber(() => () => stops++);
+/** A root whose derived never returns once `spin` (or the `spin` prop) is set. */
+const Slow = ($$anchor, $$props) => {
+  $.push($$props, true);
+  const d = $.derived(() => {
+    if ($.get(spin) || $$props.spin) for (;;);
+    return 'idle';
+  });
+  label($$anchor, () => (sub(), `slow ${$.get(d)}`));
+  $.pop();
+};
+/** A healthy root reading what the aborted flush changed too. */
+const Other = ($$anchor, $$props) => {
+  $.push($$props, true);
+  label($$anchor, () => `other ${$.get(shared)} ${$$props.n ?? 0}`);
+  $.pop();
+};
+const nextTask = () => new Promise((r) => setTimeout(r, 0));
+
+test('FX6: a flush aborted in a derived; the slow root unmounts, the other root keeps updating', async () => {
+  const a = th.host.create('box');
+  const b = th.host.create('box');
+  api.mount(Slow, 20, a, {});
+  api.mount(Other, 21, b, {});
+  take();
+  // Svelte's microtask flush (a checkpoint's job) runs the derived, which never returns; the other
+  // root's effect was scheduled in the same batch, after it
+  abort(() => {
+    $.set(spin, true);
+    $.set(shared, 1);
+    flush_tasks();
+  });
+  // the host disposes the interrupted root: its subscriber's cleanup runs in unmount's flushSync
+  stops = 0;
+  api.unmount(20);
+  assert.equal(stops, 1, 'the subscription stopped');
+  assert.deepEqual(reports.splice(0), []);
+  // the work the aborted flush had not done, in a later microtask
+  await nextTask();
+  assert.ok(take().some((l) => /label "other 1 0"/.test(l)), "the other root got the aborted batch's change");
+  // its later changes flush as before: Svelte's microtask flush, and the host's calls
+  $.set(shared, 2);
+  await nextTask();
+  assert.ok(take().some((l) => /label "other 2 0"/.test(l)), 'a write outside any flush still schedules one');
+  api.props(21, { n: 5 });
+  assert.ok(take().some((l) => /label "other 2 5"/.test(l)));
+  $.set(spin, false);
+  api.unmount(21);
+});
+
+// Last in this file: an abort inside flushSync leaves Svelte's `is_flushing_sync` set (no writer
+// outside flushSync), see the milestone.
+test('FX6: a host call aborted inside its flushSync; the root unmounts, the other root updates', () => {
+  const a = th.host.create('box');
+  const b = th.host.create('box');
+  api.mount(Slow, 22, a, { spin: false });
+  api.mount(Other, 23, b, {});
+  take();
+  abort(() => api.props(22, { spin: true }));
+  stops = 0;
+  api.unmount(22);
+  assert.equal(stops, 1, 'the subscription stopped');
+  assert.deepEqual(reports.splice(0), []);
+  api.props(23, { n: 7 });
+  assert.ok(take().some((l) => /label "other 2 7"/.test(l)));
+  api.unmount(23);
+  assert.deepEqual(api.roots(), []);
 });

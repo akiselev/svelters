@@ -36,6 +36,9 @@ pub enum Origin {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct SheetId(u32);
 
+/// The sheet id of generated utility rules (U1 E2): never registered or removed as a sheet.
+pub(crate) const UTILITY_SHEET: SheetId = SheetId(u32::MAX);
+
 /// A rule of the stylist, by index (stable until a sheet is removed).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct RuleId(pub u32);
@@ -48,14 +51,26 @@ pub struct MatchedRule {
     pub specificity: u32,
 }
 
-struct Entry {
-    sheet: SheetId,
-    origin: Origin,
-    rule: Rule,
-    /// Global source order.
-    order: u32,
-    layer_rank: u32,
-    media_ok: bool,
+pub(crate) struct Entry {
+    pub(crate) sheet: SheetId,
+    pub(crate) origin: Origin,
+    pub(crate) rule: Rule,
+    /// Global source order: the registration sequence for sheet rules; for generated utilities
+    /// (U1 E2) a canonical key above every sheet rule ([`crate::utility::canonical_order`]).
+    pub(crate) order: u64,
+    /// A generated utility's class: the last tie-break of the canonical order (U1 E2).
+    pub(crate) utility: Option<Atom>,
+    /// A dropped utility rule (U1 E2 GC): never matched, compacted by the next rebuild.
+    pub(crate) dead: bool,
+    pub(crate) layer_rank: u32,
+    pub(crate) media_ok: bool,
+}
+
+impl Entry {
+    /// The cascade's source-order key after specificity (U1 E2: utilities in canonical order).
+    fn order_key(&self) -> (u64, &str) {
+        (self.order, self.utility.as_deref().unwrap_or(""))
+    }
 }
 
 /// Caches reused across the elements of one restyle pass (`:nth-child` and `:has`). Clear them, or
@@ -74,26 +89,54 @@ impl MatchCaches {
 
 /// The sheets and cascade of one backend's table.
 pub struct Stylist {
-    table: &'static Table,
-    entries: Vec<Entry>,
+    pub(crate) table: &'static Table,
+    pub(crate) entries: Vec<Entry>,
     next_sheet: u32,
     next_order: u32,
     /// Layer names in order of first appearance across the sheets.
-    layers: Vec<Atom>,
+    pub(crate) layers: Vec<Atom>,
+    /// Each layer's rank, as of the last rebuild.
+    pub(crate) layer_rank: HashMap<Atom, u32>,
     index: RuleIndex,
-    media: MediaEnv,
+    pub(crate) media: MediaEnv,
     invalidation: Invalidation,
+    /// Full rebuilds of the index so far (U1: utilities are appended without one).
+    pub(crate) rebuilds: u64,
+    /// U1 E2: the generated utility rules' bookkeeping.
+    pub(crate) utilities: crate::utility::Layer,
 }
 
+/// Rule selectors bucketed by one compound's id, else a class, else its tag (Stylo's
+/// `SelectorMap`), so an element only tries the rules that could match it. Entries are (rule,
+/// selector index).
 #[derive(Default)]
-struct RuleIndex {
+struct Buckets {
     ids: HashMap<Atom, Vec<(u32, u16)>>,
     classes: HashMap<Atom, Vec<(u32, u16)>>,
     tags: HashMap<Atom, Vec<(u32, u16)>>,
     universal: Vec<(u32, u16)>,
-    /// Selectors ending in a pseudo-element (`x::part(thumb)`), matched only by
-    /// [`Stylist::compute_pseudo`]; never candidates for the element itself.
-    pseudo: Vec<(u32, u16)>,
+}
+
+/// U2 E3: the rules of one part name: bucketed by their host compound, and the part-name sets
+/// they require (a selector's names must all be among the element's part's: P10).
+#[derive(Default)]
+struct PartBucket {
+    hosts: Buckets,
+    /// The distinct name sets of the bucket's selectors (usually just `[name]`).
+    name_sets: Vec<Box<[Atom]>>,
+}
+
+#[derive(Default)]
+struct RuleIndex {
+    /// Selectors matched against the element itself, by their subject compound.
+    main: Buckets,
+    /// U2 E3: selectors ending in `::part(…)`, matched only by [`Stylist::compute_pseudo`] and never
+    /// candidates for the element itself; by the selector's first part name, then by the host
+    /// compound.
+    parts: HashMap<Atom, PartBucket>,
+    /// Selectors ending in `::placeholder` / `::selection`, by the host compound.
+    placeholder: Buckets,
+    selection: Buckets,
 }
 
 impl Stylist {
@@ -104,9 +147,12 @@ impl Stylist {
             next_sheet: 0,
             next_order: 0,
             layers: Vec::new(),
+            layer_rank: HashMap::new(),
             index: RuleIndex::default(),
             media: MediaEnv::default(),
             invalidation: Invalidation::default(),
+            rebuilds: 0,
+            utilities: crate::utility::Layer::default(),
         }
     }
 
@@ -149,9 +195,9 @@ impl Stylist {
                     diags.push(diag);
                 }
             }
-            let order = self.next_order;
+            let order = self.next_order as u64;
             self.next_order += 1;
-            self.entries.push(Entry { sheet: id, origin, rule: rule.clone(), order, layer_rank: 0, media_ok: true });
+            self.entries.push(Entry { sheet: id, origin, rule: rule.clone(), order, utility: None, dead: false, layer_rank: 0, media_ok: true });
         }
         self.rebuild();
         (id, diags)
@@ -183,14 +229,19 @@ impl Stylist {
         flipped
     }
 
-    fn rebuild(&mut self) {
-        let ranks = layer_ranks(&self.layers);
+    /// Re-ranks the layers and rebuilds the rule index and the invalidation maps from every entry
+    /// (dropped utility rules are compacted away first).
+    pub(crate) fn rebuild(&mut self) {
+        self.rebuilds += 1;
+        self.entries.retain(|e| !e.dead);
+        self.utilities.dead = 0;
+        self.layer_rank = layer_ranks(&self.layers);
         self.index = RuleIndex::default();
         self.invalidation = Invalidation::default();
         let env = self.media;
         for (i, e) in self.entries.iter_mut().enumerate() {
             e.layer_rank = match &e.rule.layer {
-                Some(l) => ranks.get(l).copied().unwrap_or(u32::MAX),
+                Some(l) => self.layer_rank.get(l).copied().unwrap_or(u32::MAX),
                 None => u32::MAX,
             };
             e.media_ok = e.rule.media.iter().all(|m| m.matches(&env));
@@ -201,27 +252,33 @@ impl Stylist {
         }
     }
 
+    /// U1 E2: appends one rule without a rebuild: its layer must already be ranked (else the
+    /// caller rebuilds), and it goes into the index and the invalidation maps as `rebuild` puts it.
+    pub(crate) fn append_entry(&mut self, mut e: Entry) {
+        e.layer_rank = match &e.rule.layer {
+            Some(l) => self.layer_rank.get(l).copied().unwrap_or(u32::MAX),
+            None => u32::MAX,
+        };
+        e.media_ok = e.rule.media.iter().all(|m| m.matches(&self.media));
+        let i = self.entries.len() as u32;
+        for (s, sel) in e.rule.selectors.slice().iter().enumerate() {
+            self.index.insert(i, s as u16, sel);
+            self.invalidation.add_selector(sel);
+        }
+        self.entries.push(e);
+    }
+
+    /// Full rebuilds of the rule index so far (each `add_sheet`/`remove_sheet` makes one; the
+    /// utility layer appends without one). For tests and stats.
+    pub fn rebuild_count(&self) -> u64 {
+        self.rebuilds
+    }
+
     /// The rules that match `el`, in cascade order of their normal declarations (origin, layer,
     /// specificity, source order).
     pub fn matched_rules<E: Element>(&self, el: E, caches: &mut MatchCaches) -> Vec<MatchedRule> {
         let mut candidates: Vec<(u32, u16)> = Vec::new();
-        if let Some(id) = el.id()
-            && let Some(v) = self.index.ids.get(id)
-        {
-            candidates.extend_from_slice(v);
-        }
-        el.for_each_class(&mut |c| {
-            if let Some(v) = self.index.classes.get(c) {
-                candidates.extend_from_slice(v);
-            }
-        });
-        if let Some(v) = self.index.tags.get(el.tag()) {
-            candidates.extend_from_slice(v);
-        }
-        if let Some(v) = el.style_as().and_then(|t| self.index.tags.get(t)) {
-            candidates.extend_from_slice(v);
-        }
-        candidates.extend_from_slice(&self.index.universal);
+        self.index.main.collect(el, &mut candidates);
         candidates.sort_unstable();
         candidates.dedup();
         self.match_candidates(el, candidates, None, caches)
@@ -230,7 +287,39 @@ impl Stylist {
     /// Whether any registered rule has a selector ending in a pseudo-element that `pseudo` matches
     /// (a widget skips computing a part's style when none does).
     pub fn has_pseudo_rules(&self, pseudo: &PseudoElement) -> bool {
-        self.index.pseudo.iter().any(|&(r, s)| self.entries[r as usize].rule.selectors.slice()[s as usize].pseudo_element().is_some_and(|p| pseudo.matched_by(p)))
+        match pseudo {
+            PseudoElement::Part(mine) => mine.iter().any(|n| self.index.parts.get(n).is_some_and(|b| b.name_sets.iter().any(|want| want.iter().all(|w| mine.contains(w))))),
+            PseudoElement::Placeholder => !self.index.placeholder.is_empty(),
+            PseudoElement::Selection => !self.index.selection.is_empty(),
+        }
+    }
+
+    /// The candidate selectors (rule, selector index) for `el`'s pseudo-element `pseudo`, sorted:
+    /// the part index's buckets for each of its names and `el`'s id, classes and tag (U2 E3).
+    fn pseudo_candidates_of<E: Element>(&self, el: E, pseudo: &PseudoElement) -> Vec<(u32, u16)> {
+        let mut out = Vec::new();
+        match pseudo {
+            PseudoElement::Part(names) => {
+                for n in names.iter() {
+                    if let Some(b) = self.index.parts.get(n) {
+                        b.hosts.collect(el, &mut out);
+                    }
+                }
+            }
+            PseudoElement::Placeholder => self.index.placeholder.collect(el, &mut out),
+            PseudoElement::Selection => self.index.selection.collect(el, &mut out),
+        }
+        out.sort_unstable();
+        out.dedup();
+        out
+    }
+
+    /// The rules a computation of `el`'s pseudo-element `pseudo` tries before matching (U2 E3:
+    /// only the buckets of its part names and of `el`'s id, classes and tag). For tests and stats.
+    pub fn pseudo_candidates<E: Element>(&self, el: E, pseudo: &PseudoElement) -> Vec<RuleId> {
+        let mut v: Vec<RuleId> = self.pseudo_candidates_of(el, pseudo).into_iter().map(|(r, _)| RuleId(r)).collect();
+        v.dedup();
+        v
     }
 
     /// `pseudo`: the pseudo-element being computed and its logical position (P1).
@@ -240,7 +329,7 @@ impl Stylist {
         let mut out: Vec<MatchedRule> = Vec::new();
         for (r, s) in candidates {
             let e = &self.entries[r as usize];
-            if !e.media_ok {
+            if !e.media_ok || e.dead {
                 continue;
             }
             let sel = &e.rule.selectors.slice()[s as usize];
@@ -263,7 +352,7 @@ impl Stylist {
         }
         out.sort_by_key(|m| {
             let e = &self.entries[m.rule.0 as usize];
-            (e.origin, e.layer_rank, m.specificity, e.order)
+            (e.origin, e.layer_rank, m.specificity, e.order_key())
         });
         out
     }
@@ -284,7 +373,7 @@ impl Stylist {
     /// [`Stylist::matched_pseudo_rules`] for a repeated part at logical position `at` (index,
     /// count; WIDGET-PARITY P1).
     pub fn matched_pseudo_rules_at<E: Element>(&self, el: E, pseudo: &PseudoElement, at: Option<(usize, usize)>, caches: &mut MatchCaches) -> Vec<MatchedRule> {
-        let candidates = self.index.pseudo.clone();
+        let candidates = self.pseudo_candidates_of(el, pseudo);
         self.match_candidates(el, candidates, Some((pseudo, at)), caches)
     }
 
@@ -308,8 +397,8 @@ impl Stylist {
 
     fn order_decls<'s>(&'s self, matched: &[MatchedRule], inline: Option<&'s DeclBlock>) -> Vec<&'s Declaration> {
         // (origin and importance, layer, specificity, source order)
-        type Key = (u8, u32, u32, u32);
-        let mut keyed: Vec<(Key, &Declaration)> = Vec::new();
+        type Key<'k> = (u8, u32, u32, (u64, &'k str));
+        let mut keyed: Vec<(Key<'s>, &Declaration)> = Vec::new();
         for m in matched {
             let e = &self.entries[m.rule.0 as usize];
             for d in &e.rule.block.decls {
@@ -323,12 +412,12 @@ impl Stylist {
                     (true, Origin::Theme) => 5,
                 };
                 let layer = if d.important { u32::MAX - e.layer_rank } else { e.layer_rank };
-                keyed.push(((rank, layer, m.specificity, e.order), d));
+                keyed.push(((rank, layer, m.specificity, e.order_key()), d));
             }
         }
         if let Some(block) = inline {
             for (i, d) in block.decls.iter().enumerate() {
-                keyed.push(((if d.important { 4 } else { 2 }, 0, 0, i as u32), d));
+                keyed.push(((if d.important { 4 } else { 2 }, 0, 0, (i as u64, "")), d));
             }
         }
         keyed.sort_by_key(|(k, _)| *k);
@@ -350,28 +439,93 @@ impl Stylist {
 }
 
 impl RuleIndex {
-    /// Buckets a selector by its subject compound's id, else a class, else its tag (Stylo's
-    /// `SelectorMap`), so an element only tries rules that could match it.
-    fn insert(&mut self, rule: u32, sel: u16, selector: &crate::selector::Selector) {
-        if selector.has_pseudo_element() {
-            self.pseudo.push((rule, sel));
-            return;
-        }
-        let (mut id, mut class, mut tag) = (None, None, None);
-        for c in selector.iter() {
-            match c {
-                Component::ID(a) => id = Some(a.clone()),
-                Component::Class(a) => class = class.or(Some(a.clone())),
-                Component::LocalName(l) => tag = Some(l.name.clone()),
-                _ => {}
-            }
-        }
+    /// Buckets a selector by its subject compound (or, for one ending in a pseudo-element, by the
+    /// pseudo-element and then its host compound), so an element only tries rules that could match it.
+    fn insert(&mut self, rule: u32, sel: u16, selector: &Selector) {
         let entry = (rule, sel);
+        let mut it = selector.iter();
+        let Some(pseudo) = selector.pseudo_element() else {
+            self.main.insert(entry, it);
+            return;
+        };
+        // the pseudo-element's compound (`::part(x):hover`), then the host compound
+        for _ in it.by_ref() {}
+        let host: &mut Buckets = match pseudo {
+            PseudoElement::Part(names) => {
+                let Some(first) = names.first() else { return };
+                let b = self.parts.entry(first.clone()).or_default();
+                if !b.name_sets.iter().any(|s| s == names) {
+                    b.name_sets.push(names.clone());
+                }
+                &mut b.hosts
+            }
+            PseudoElement::Placeholder => &mut self.placeholder,
+            PseudoElement::Selection => &mut self.selection,
+        };
+        if it.next_sequence().is_some() {
+            host.insert(entry, it);
+        } else {
+            host.universal.push(entry);
+        }
+    }
+}
+
+impl Buckets {
+    /// Files `entry` under `compound`'s id, else its first class, else its tag, else universal.
+    fn insert<'a>(&mut self, entry: (u32, u16), compound: impl Iterator<Item = &'a Component<crate::selector::Impl>>) {
+        let (mut id, mut class, mut tag) = (None, None, None);
+        compound_keys(compound, &mut id, &mut class, &mut tag);
         match (id, class, tag) {
             (Some(a), _, _) => self.ids.entry(a).or_default().push(entry),
             (_, Some(a), _) => self.classes.entry(a).or_default().push(entry),
             (_, _, Some(a)) => self.tags.entry(a).or_default().push(entry),
             _ => self.universal.push(entry),
+        }
+    }
+
+    /// Appends the entries `el` could match (its id's, classes', tag's and the universal ones),
+    /// unsorted and possibly repeated.
+    fn collect<E: Element>(&self, el: E, out: &mut Vec<(u32, u16)>) {
+        if !self.ids.is_empty()
+            && let Some(id) = el.id()
+            && let Some(v) = self.ids.get(id)
+        {
+            out.extend_from_slice(v);
+        }
+        if !self.classes.is_empty() {
+            el.for_each_class(&mut |c| {
+                if let Some(v) = self.classes.get(c) {
+                    out.extend_from_slice(v);
+                }
+            });
+        }
+        if !self.tags.is_empty() {
+            if let Some(v) = self.tags.get(el.tag()) {
+                out.extend_from_slice(v);
+            }
+            if let Some(v) = el.style_as().and_then(|t| self.tags.get(t)) {
+                out.extend_from_slice(v);
+            }
+        }
+        out.extend_from_slice(&self.universal);
+    }
+
+    fn is_empty(&self) -> bool {
+        self.ids.is_empty() && self.classes.is_empty() && self.tags.is_empty() && self.universal.is_empty()
+    }
+}
+
+/// The id, first class and tag a compound requires. `:is()`/`:where()` of a single selector (what
+/// nesting's `&` becomes: `slider { &::part(x) }` is `:is(slider)::part(x)`) requires its subject
+/// compound's, so they count too.
+fn compound_keys<'a>(compound: impl Iterator<Item = &'a Component<crate::selector::Impl>>, id: &mut Option<Atom>, class: &mut Option<Atom>, tag: &mut Option<Atom>) {
+    for c in compound {
+        match c {
+            Component::ID(a) => *id = Some(a.clone()),
+            Component::Class(a) => *class = class.take().or(Some(a.clone())),
+            Component::LocalName(l) => *tag = Some(l.name.clone()),
+            Component::Is(list) | Component::Where(list) if list.len() == 1 => compound_keys(list.slice()[0].iter(), id, class, tag),
+            _ => {}
         }
     }
 }
@@ -402,7 +556,7 @@ const CSS_WIDE: &[&str] = &["inherit", "initial", "unset", "revert", "revert-lay
 
 /// The table's verdict on one declaration: unknown property (warning: another backend may have
 /// it), a bad value (error), or a rule setting an inline-only property.
-fn check_decl(table: &'static Table, d: &Declaration, inline: bool) -> Option<Diagnostic> {
+pub(crate) fn check_decl(table: &'static Table, d: &Declaration, inline: bool) -> Option<Diagnostic> {
     if d.is_custom() {
         return None;
     }

@@ -80,6 +80,10 @@ export const asyncPath = ALIASES[ASYNC_SPECIFIER];
 export const BATCH_SPECIFIER = 'svelte/internal/client/reactivity/batch';
 export const batchPath = ALIASES[BATCH_SPECIFIER];
 
+/** Svelte's reaction state setters (FX6: `recover` after an aborted entry). */
+export const RUNTIME_SPECIFIER = 'svelte/internal/client/runtime';
+export const runtimeStatePath = ALIASES[RUNTIME_SPECIFIER];
+
 /** Svelte's runtime flags (`enable_tracing_mode_flag`, for `@svelters/native-runtime/core/tracing`). */
 export const FLAGS_SPECIFIER = 'svelte/internal/flags/index';
 export const flagsPath = ALIASES[FLAGS_SPECIFIER];
@@ -114,6 +118,7 @@ export const HIDDEN_MODULES = {
   [CONTEXT_SPECIFIER]: contextPath,
   [ASYNC_SPECIFIER]: asyncPath,
   [BATCH_SPECIFIER]: batchPath,
+  [RUNTIME_SPECIFIER]: runtimeStatePath,
   [FLAGS_SPECIFIER]: flagsPath,
   [SVELTE_CLIENT_SPECIFIER]: svelteClientPath,
   [EQUALITY_SPECIFIER]: equalityPath,

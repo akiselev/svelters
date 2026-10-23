@@ -1,7 +1,7 @@
 //! Shorthand properties (OW-CSS): `outline`, `border`, `border-{top,right,bottom,left}`,
-//! `border-{width,style,color}` and `border-radius` expand to longhands at computed-value time,
-//! after `var()` substitution, so a later shorthand overrides an earlier longhand and the other
-//! way round (CSS Cascade 5 §1.2).
+//! `border-{width,style,color}`, `border-radius` and (U2 E5) `transition` expand to longhands at
+//! computed-value time, after `var()` substitution, so a later shorthand overrides an earlier
+//! longhand and the other way round (CSS Cascade 5 §1.2).
 //!
 //! `border-width`, `border-color` and `border-radius` are also uniform properties of their own in
 //! the egui table (CS5g paints them); one value sets both the uniform property and every side or
@@ -19,7 +19,9 @@ pub const LINE_STYLES: &[&str] = &["none", "hidden", "solid", "dashed", "dotted"
 const BORDER_WIDTH: [&str; 4] = ["border-top-width", "border-right-width", "border-bottom-width", "border-left-width"];
 const BORDER_STYLE: [&str; 4] = ["border-top-style", "border-right-style", "border-bottom-style", "border-left-style"];
 const BORDER_COLOR: [&str; 4] = ["border-top-color", "border-right-color", "border-bottom-color", "border-left-color"];
-const BORDER_RADIUS: [&str; 4] = ["border-top-left-radius", "border-top-right-radius", "border-bottom-right-radius", "border-bottom-left-radius"];
+/// The `transition` longhands (U2 E5), in the order [`expand`] returns them.
+pub(crate) const TRANSITION: [&str; 4] = ["transition-property", "transition-duration", "transition-timing-function", "transition-delay"];
+const BORDER_RADIUS: [&str; 4] =["border-top-left-radius", "border-top-right-radius", "border-bottom-right-radius", "border-bottom-left-radius"];
 
 /// The longhands `name` sets, when it is a shorthand.
 pub(crate) fn longhands(name: &str) -> Option<Vec<&'static str>> {
@@ -30,6 +32,8 @@ pub(crate) fn longhands(name: &str) -> Option<Vec<&'static str>> {
         "border-style" => BORDER_STYLE.to_vec(),
         "border-color" => [&BORDER_COLOR[..], &["border-color"]].concat(),
         "border-radius" => [&BORDER_RADIUS[..], &["border-radius"]].concat(),
+        // U2 E5: `transition` itself is assembled from these after the cascade (`computed.rs`)
+        "transition" => TRANSITION.to_vec(),
         "border" => {
             let mut v = Vec::with_capacity(14);
             for i in 0..4 {
@@ -66,6 +70,10 @@ pub(crate) fn expand(name: &str, value: &str) -> Result<Vec<(&'static str, Strin
     let lower = v.to_ascii_lowercase();
     if matches!(lower.as_str(), "inherit" | "initial" | "unset" | "revert" | "revert-layer") {
         return Ok(longs.into_iter().map(|l| (l, lower.clone())).collect());
+    }
+    if name == "transition" {
+        let texts = crate::values::expand_transition(v)?;
+        return Ok(longs.into_iter().zip(texts).collect());
     }
     let parts = split_top(v);
     match name {
