@@ -21,6 +21,7 @@
 //! Disabled hosts: units other than [`Hoverable`] produce no intents (R9: disabled controls stay
 //! hoverable). Writer lane: OW.
 
+pub mod dnd;
 mod expand;
 mod focus;
 mod hover;
@@ -30,6 +31,7 @@ mod resize;
 pub mod scroll;
 mod toggle;
 
+pub use dnd::{Drag, DragSource, DragSourceParams, DropIntent, DropParams, DropTarget, Offer};
 pub use expand::{Expand, ExpandParams, Expandable};
 pub use focus::{Focus, FocusParams, Focusable};
 pub use hover::{Hover, Hoverable};

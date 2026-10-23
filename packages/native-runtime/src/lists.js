@@ -524,6 +524,52 @@ export function flattenTree(roots, { key, childrenOf, hasChildren, expanded, fil
 }
 
 /**
+ * OW5a1b (Qt `expandAll`, `collapseAll`, `expandToDepth`, `expandRecursively`): helpers for
+ * `<TreeView bind:expanded>`. JS owns the tree, so they return the expanded keys to assign:
+ * `expanded = expandAll(roots)`. They walk the children an array holds now (`children(node)`, or
+ * `node.children`); lazily loaded children that are not loaded yet are not walked. Options:
+ * `key` (default `node.id ?? node.key ?? node`) and `children`, as on `<TreeView>`.
+ */
+function expandWalk(nodes, depth, { key = treeKey, children = treeChildren } = {}) {
+  const out = [];
+  const seen = new Set();
+  const walk = (list, level) => {
+    for (const node of Array.isArray(list) ? list : Array.from(list ?? [])) {
+      const k = key(node);
+      if (seen.has(k)) continue; // a cycle, or a key twice
+      seen.add(k);
+      const kids = children(node);
+      if (!Array.isArray(kids) || kids.length === 0 || level >= depth) continue;
+      out.push(k);
+      walk(kids, level + 1);
+    }
+  };
+  walk(nodes, 0);
+  return out;
+}
+
+/** The keys of every node with children: everything open. */
+export function expandAll(roots, opts) {
+  return expandWalk(roots, Infinity, opts);
+}
+
+/** Nothing open (`[]`). */
+export function collapseAll() {
+  return [];
+}
+
+/** The nodes above `depth` open: `expandToDepth(roots, 0)` opens the roots (Qt's meaning). */
+export function expandToDepth(roots, depth, opts) {
+  return expandWalk(roots, Math.max(0, depth) + 1, opts);
+}
+
+/** `expanded` with `node` and all of its descendants open added. */
+export function expandRecursively(expanded, node, opts) {
+  const add = expandWalk([node], Infinity, opts);
+  return [...new Set([...(expanded ?? []), ...add])];
+}
+
+/**
  * `<TreeView roots children hasChildren key label row filter selection bind:selected
  * bind:expanded row-height indent rowDragType rowDropTypes onactivate onselect onexpand oncollapse
  * ondroprow oncopy ...rest>`: a virtualized tree on the native `tree-view` (egui, WG5b). It keeps

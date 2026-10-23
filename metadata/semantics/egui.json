@@ -9852,7 +9852,27 @@
         "variants": []
       },
       "abstract": false,
-      "bindings": {},
+      "bindings": {
+        "current": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "current",
+          "provenance": "svelters-egui: the svelters_egui::kinds::treeview (a virtual-list with tree rows) widget writes current into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        }
+      },
       "category": "views",
       "chain": [
         "TreeView",
@@ -9860,7 +9880,7 @@
       ],
       "children": null,
       "css_hidden": [],
-      "css_note": "Style the rows: each row is the element its row template renders.",
+      "css_note": "As `virtual-list` (`::part(row)` per row, `placeholder`, `drop-line`, `ghost`, the bar), plus `:has-children` and `:expanded` on rows and the `::part(twistie)` chevron.",
       "doc": "A virtualized tree: JS keeps the tree and flattens its visible rows into the list; children load when a node expands.",
       "interface": false,
       "lifetime": "owned",
@@ -9887,7 +9907,7 @@
         },
         "scrollTo": {
           "dispatch": "generated",
-          "doc": "`scrollTo(pos)`: scrolls the row into view.",
+          "doc": "`scrollTo(pos, hint?)`: scrolls the row into view; `hint`: `nearest` (default), `top`, `bottom`, `center`.",
           "native": "scrollTo",
           "params": [],
           "returns": {
@@ -9950,6 +9970,23 @@
       "paint": "none",
       "present": null,
       "props": {
+        "current": {
+          "construct_only": false,
+          "default": -1,
+          "doc": "OW5a1b: the cursor's row id (`bind:current`), -1 for none. Setting it moves the cursor without selecting.",
+          "js": "current",
+          "native": "current",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:TreeView:current",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
         "expand-on": {
           "construct_only": false,
           "default": "twistie",
@@ -10060,7 +10097,7 @@
         "selection": {
           "construct_only": false,
           "default": "single",
-          "doc": "`single` or `multi` (Shift ranges, Ctrl toggles); `none`: rows are not selectable.",
+          "doc": "`single`, `multi` (Shift ranges, Ctrl toggles), `toggle` (a click toggles, no modifier), `range` (one contiguous run, Shift extends); `none`: rows are not selectable.",
           "js": "selection",
           "native": "selection",
           "nullable": false,
@@ -10075,8 +10112,27 @@
           "values": [
             "none",
             "single",
-            "multi"
+            "multi",
+            "toggle",
+            "range"
           ],
+          "writable": true
+        },
+        "uniform-rows": {
+          "construct_only": false,
+          "default": false,
+          "doc": "OW5a1b: every row is `row-height` tall; rows are not measured (Qt `uniformRowHeights`).",
+          "js": "uniform-rows",
+          "native": "uniform-rows",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:TreeView:uniform-rows",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         }
       },
@@ -10231,10 +10287,30 @@
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "OW5a: a secondary click on the row at `pos` (item `id`): open its context menu.",
+          "doc": "OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. The selection follows first (an unselected row is selected, per platform Policy).",
           "handler_result": "none",
           "js_event": "row-context",
           "name": "row-context",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-hovered": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a1b: the pointer entered the row at `pos` (item `id`; Qt `entered`).",
+          "handler_result": "none",
+          "js_event": "row-hovered",
+          "name": "row-hovered",
           "phases": [],
           "sync": false,
           "sync_required": false
@@ -10328,6 +10404,25 @@
       },
       "abstract": false,
       "bindings": {
+        "current": {
+          "compare_before_set": true,
+          "direction": "two_way",
+          "echo": "none",
+          "event": "changed",
+          "lifetime": {
+            "on_destroy": "idempotent_disconnect",
+            "on_native_death": "end_binding",
+            "on_stale_update": "warn_noop"
+          },
+          "natively_normalizes": false,
+          "property": "current",
+          "provenance": "svelters-egui: the svelters_egui::kinds::virtuallist (recycled row slots over a VScroll) widget writes current into the node during the pass; `changed` carries it (arg 0), set_prop never announces",
+          "read_back": false,
+          "sync_signals_on_set": [],
+          "value": {
+            "arg": 0
+          }
+        },
         "selected": {
           "compare_before_set": true,
           "direction": "two_way",
@@ -10374,7 +10469,7 @@
       ],
       "children": null,
       "css_hidden": [],
-      "css_note": "Style the rows: each row is the element its row template renders.",
+      "css_note": "Each row is `::part(row)` in its own state (`:hover`, `:active`, `:selected`, `:current`, `:focus-visible`, `:drop-target`, `:nth-child()`; `:focus-within` stays the list's) and the element its row template renders. Other parts: `placeholder`, `drop-line`, `ghost` (the drag label), `scrollbar-y`, `thumb-y`. The list is `:drop-target` while a row drag it takes is over it.",
       "doc": "A virtualized list (the M5 model-view protocol): JS keeps the items, the list asks for the rows it shows.",
       "interface": false,
       "lifetime": "owned",
@@ -10401,7 +10496,7 @@
         },
         "scrollTo": {
           "dispatch": "generated",
-          "doc": "`scrollTo(pos)`: scrolls the item into view.",
+          "doc": "`scrollTo(pos, hint?)`: scrolls the item into view; `hint` (Qt `ScrollHint`): `nearest` (the default, the least scroll), `top`, `bottom` or `center`.",
           "native": "scrollTo",
           "params": [],
           "returns": {
@@ -10434,6 +10529,40 @@
       "paint": "none",
       "present": null,
       "props": {
+        "current": {
+          "construct_only": false,
+          "default": -1,
+          "doc": "OW5a1b: the cursor's item id (`bind:current`), -1 for none. Setting it moves the cursor without selecting.",
+          "js": "current",
+          "native": "current",
+          "nullable": false,
+          "observe": {
+            "class": "exact",
+            "fact": "egui:VirtualList:current",
+            "mechanism": "widget",
+            "verified": "delivery"
+          },
+          "readable": true,
+          "type": "i64",
+          "writable": true
+        },
+        "internal-move": {
+          "construct_only": false,
+          "default": false,
+          "doc": "OW5a1b: rows reorder by drag within the list (Qt `InternalMove`): a drop raises `move(from, to)`.",
+          "js": "internal-move",
+          "native": "internal-move",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:VirtualList:internal-move",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
+          "writable": true
+        },
         "layout": {
           "construct_only": false,
           "default": "list",
@@ -10453,6 +10582,40 @@
             "list",
             "grid"
           ],
+          "writable": true
+        },
+        "row-drag-type": {
+          "construct_only": false,
+          "default": "",
+          "doc": "OW5a1b: non-empty: rows drag, as a payload of this type (the dragged item ids, a line each) plus `text/plain` (their labels).",
+          "js": "row-drag-type",
+          "native": "row-drag-type",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:VirtualList:row-drag-type",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
+          "writable": true
+        },
+        "row-drop-types": {
+          "construct_only": false,
+          "default": "",
+          "doc": "OW5a1b: non-empty: rows take drops of these types (WG4b patterns) and raise `drop-row`.",
+          "js": "row-drop-types",
+          "native": "row-drop-types",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:VirtualList:row-drop-types",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "string",
           "writable": true
         },
         "row-height": {
@@ -10510,7 +10673,7 @@
         "selection": {
           "construct_only": false,
           "default": "single",
-          "doc": "`single`: a click or the keyboard selects a row (`select`); `multi`: Ctrl/Shift clicks and keys select several (`selectionchange`); `none`: rows are not selectable.",
+          "doc": "`single`: a click or the keyboard selects a row (`select`); `multi`: Ctrl/Shift clicks and keys select several (`selectionchange`); `toggle`: a click toggles its row, no modifier (checklists); `range`: one contiguous run, Shift extends; `none`: rows are not selectable.",
           "js": "selection",
           "native": "selection",
           "nullable": false,
@@ -10525,8 +10688,27 @@
           "values": [
             "none",
             "single",
-            "multi"
+            "multi",
+            "toggle",
+            "range"
           ],
+          "writable": true
+        },
+        "uniform-rows": {
+          "construct_only": false,
+          "default": false,
+          "doc": "OW5a1b: every row is `row-height` tall; rows are not measured (Qt `uniformRowHeights`).",
+          "js": "uniform-rows",
+          "native": "uniform-rows",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:VirtualList:uniform-rows",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "type": "bool",
           "writable": true
         }
       },
@@ -10578,6 +10760,70 @@
           "sync": true,
           "sync_required": false
         },
+        "copy": {
+          "args": [
+            {
+              "name": "ids",
+              "type": "list"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a1b: Ctrl+C on the focused list: copy the selected items (their ids).",
+          "handler_result": "none",
+          "js_event": "copy",
+          "name": "copy",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "drop-row": {
+          "args": [
+            {
+              "name": "id",
+              "type": "i64"
+            },
+            {
+              "name": "where",
+              "type": "string"
+            },
+            {
+              "name": "type",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a1b: a drag was dropped `before`, `after` or `into` item `id` (-1: below the last row), as the entry of `type` it took.",
+          "handler_result": "none",
+          "js_event": "drop-row",
+          "name": "drop-row",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "move": {
+          "args": [
+            {
+              "name": "from",
+              "type": "i64"
+            },
+            {
+              "name": "to",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a1b (`internal-move`): the row at `from` was dragged to the gap before position `to` (`count()`: the end); move it.",
+          "handler_result": "none",
+          "js_event": "move",
+          "name": "move",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
         "row-clicked": {
           "args": [
             {
@@ -10610,10 +10856,30 @@
             }
           ],
           "disconnect_on_drop": true,
-          "doc": "OW5a: a secondary click on the row at `pos` (item `id`): open its context menu.",
+          "doc": "OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. The selection follows first (an unselected row is selected, per platform Policy).",
           "handler_result": "none",
           "js_event": "row-context",
           "name": "row-context",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "row-hovered": {
+          "args": [
+            {
+              "name": "pos",
+              "type": "i64"
+            },
+            {
+              "name": "id",
+              "type": "i64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "OW5a1b: the pointer entered the row at `pos` (item `id`; Qt `entered`).",
+          "handler_result": "none",
+          "js_event": "row-hovered",
+          "name": "row-hovered",
           "phases": [],
           "sync": false,
           "sync_required": false

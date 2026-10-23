@@ -327,6 +327,10 @@ pub enum P {
     /// OW5a: tree-view
     ExpandOn,
     RootDecorated,
+    /// OW5a1b: virtual-list and tree-view
+    CurrentItem,
+    InternalMove,
+    UniformRows,
     /// EV3: a button's Enter and Escape roles.
     Default,
     Cancel,

@@ -115,6 +115,12 @@ pub struct Policy {
     pub tooltip_delay_ms: u32,
     /// A full caret blink cycle; 0 for no blink.
     pub caret_blink_ms: u32,
+    /// OW5a1b: a secondary click on an unselected list or tree row selects it before its context
+    /// menu opens (Windows, GTK, Qt, VS Code). AppKit outlines the row and keeps the selection.
+    pub context_click_selects: bool,
+    /// OW5a1b: how long a drag hovers over a collapsed tree row (dropping `into` it) before the
+    /// row expands (Qt `autoExpandDelay`, GTK's and AppKit's spring-loading; 0: never).
+    pub drag_expand_ms: u32,
     pub kinetic: Kinetic,
     pub scrollbars: Scrollbars,
     /// When Space activates a focused button.
@@ -166,6 +172,8 @@ const GTK: Policy = Policy {
     double_click_ms: 400,
     tooltip_delay_ms: 500,
     caret_blink_ms: 1200,
+    context_click_selects: true,
+    drag_expand_ms: 500,
     kinetic: Kinetic::Own,
     scrollbars: Scrollbars::Overlay,
     space_activates_on: ActivateOn::Release,
@@ -193,6 +201,8 @@ const QT: Policy = Policy {
     double_click_ms: 400,
     tooltip_delay_ms: 700,
     caret_blink_ms: 1000,
+    context_click_selects: true,
+    drag_expand_ms: 500,
     kinetic: Kinetic::None,
     scrollbars: Scrollbars::Classic,
     space_activates_on: ActivateOn::Release,
@@ -220,6 +230,8 @@ const WINDOWS: Policy = Policy {
     double_click_ms: 500,
     tooltip_delay_ms: 400,
     caret_blink_ms: 1060,
+    context_click_selects: true,
+    drag_expand_ms: 500,
     kinetic: Kinetic::Os,
     scrollbars: Scrollbars::Overlay,
     space_activates_on: ActivateOn::Release,
@@ -247,6 +259,8 @@ const MAC: Policy = Policy {
     double_click_ms: 500,
     tooltip_delay_ms: 1000,
     caret_blink_ms: 1060,
+    context_click_selects: false,
+    drag_expand_ms: 500,
     kinetic: Kinetic::Os,
     scrollbars: Scrollbars::Overlay,
     space_activates_on: ActivateOn::Release,
@@ -274,6 +288,8 @@ const EGUI: Policy = Policy {
     double_click_ms: 300,
     tooltip_delay_ms: 500,
     caret_blink_ms: 1000,
+    context_click_selects: true,
+    drag_expand_ms: 500,
     kinetic: Kinetic::None,
     scrollbars: Scrollbars::Overlay,
     space_activates_on: ActivateOn::Press,

@@ -262,11 +262,110 @@ built**; DOC2 and VIS1c cite it. Items, in a sensible order:
 OW5a2 (grid layout, rubber band, sticky section headers, multi-column tree, rename in place, expand animation) is a
 separate later lane, after OW5b.
 
+## OW5a1b (lane `ci/ow5a1b`, thinkpad, from `ci/ow5a` 560dac4b)
+
+Done in the handoff's order. The `Scene::part_at` row design is unchanged.
+
+### What landed
+
+1. **DragSource / DropTarget units** (`interact/dnd.rs`, new; ARCH-WIDGETS §1.2):
+   - `DragSource` owns `:dragging`. Its intents are `Drag::Begin` and `Drag::End { dropped, action }`, the second reported
+     the pass after the release. `DragSource::payload` links the payload to the unit. The unit also picks the cursor
+     (grab, grabbing, copy or alias by the action, no-drop).
+   - `DropTarget` owns `:drop-target`. Its intents are `Enter(type)`, `Leave`, and `Drop { ty, data, at, action }`,
+     which comes after `Leave`. It is fed an `Offer` while it holds the claim.
+   - `run_bare` runs a unit on a zone that has no `egui::Response` of its own.
+   - `kinds/dnd.rs::node` is now only the context side: the claims, the payload, OS files and the signals. The unit
+     state lives in egui temp data by node id, because `Common` is interned (SG6). The WG4b/WG6 signal shapes are
+     unchanged: `drop`'s 5th arg `action`, `drag-end`'s 2nd, `text/uri-list` file drops. Auto-scroll stays on
+     Scrollable.
+   - Any node with `drop-types` now gets `:drop-target` while a drag it accepts is over it, and its source gets
+     `:dragging`.
+2. **Drag visuals from CSS**:
+   - The ghost is the source's `::part(ghost)`: UA `GHOST` is `menu-bg`, `menu-border-color`, `menu-radius`, `elev-3`,
+     `fg`, opacity 0.9 and padding, painted on a tooltip layer and traced.
+   - A node target's highlight is its `::part(drop-line)` outline (UA `DROP_LINE`, 2 pt `focus`).
+   - Both read their CSS through `Scene::part_at`, so `virtual-list::part(ghost) { … }` works.
+   - No egui `Visuals` are left in DnD.
+3. **Row DnD on plain lists** (`virtuallist.rs` `row_drag`, `row_drop`; trees use the same code):
+   - `row-drag-type` and `row-drop-types` moved from `Tree` to the list's `RowDnd`. The list's payload is the dragged
+     ids (the selection when the dragged row is selected), a line each, plus `text/plain` labels.
+   - `drop-row(id, where, type, data)` on `virtual-list`.
+   - `internal-move` (list) drags one row with `application/x-svelters-row-move` and accepts only its own drag. A drop
+     between rows raises `move(from, to)`, where `to` is the gap. A drop into the row's own gap raises nothing.
+   - **DnD auto-expand** on trees: a drag held `into` a collapsed row for `Policy::drag_expand_ms` raises `expand`
+     once (EV1-gated).
+   - The list is `:drop-target` while a drag it takes is over it.
+4. **Selection**:
+   - `views/selection.rs` `Mode::Toggle` (Qt MultiSelection): a click toggles with no modifier, moves only move, and
+     Space toggles.
+   - `Mode::Range` (Qt ContiguousSelection): one run; Shift extends it and Ctrl acts as a plain input.
+   - `Mode::is_multi` sets AccessKit multiselectable and enables Ctrl+A.
+   - `selection="toggle"|"range"` works on list and tree. The table keeps its own enum (OW5b), and its tests are
+     untouched.
+   - The tree's click selection now goes through EV1 (`list_rows::allowed(…, "selection-changed")`): when prevented,
+     the cursor still moves.
+5. **`bind:current`** (`current`, `P::CurrentItem`) on list and tree:
+   - It holds the cursor's id. User moves are announced through `leaf::widget_changed`.
+   - The host's value moves the cursor without selecting, and is not echoed back.
+6. **Smaller items**:
+   - `scrollTo(pos, hint)` takes `nearest`, `top`, `bottom` or `center` (`VScroll::reveal_at`).
+   - Ctrl+C on a focused list raises `copy(ids)` (`item_keys::take_copy`). The table is unchanged.
+   - `uniform-rows` skips measuring, with rows at `row-height`.
+   - `row-hovered(pos, id)` on list and tree.
+   - The context click selects first (`Policy::context_click_selects`: true everywhere except AppKit, which outlines
+     the row and keeps the selection).
+   - Tree expand helpers in JS: `expandAll`, `collapseAll`, `expandToDepth`, `expandRecursively`. They are in
+     `@svelters/native-runtime/lists`, re-exported by `@svelters/lists`, and mapped as `svelters:views/tree`. Each
+     returns the keys for `bind:expanded`.
+   - **Deferred: `slot="empty"`.** It needs named container slots, which RA3 deferred.
+
+Shared changes:
+- `native/mod.rs`: `Policy::context_click_selects` and `drag_expand_ms` (500 ms on every row; the exact platform
+  values are **verify**).
+- `kinds/mod.rs`: `P::CurrentItem`, `InternalMove`, `UniformRows`.
+- `scene/props.rs`: the matching arms.
+- `kinds/docs.rs`: the list and tree css notes.
+- Regenerated, in this order: `egui.json` and `egui.d.ts`, then `gen_props.py`, then the reference.
+
+### R-rules, parity rows, pins
+
+- **R6/R8/R10/R14/R15**: as OW5a. Row states are unchanged. The new `:drop-target` on the list and node targets uses
+  the `list-drop`/`focus` tokens.
+- **R12** (lift while dragging): the ghost is `elev-3` at 0.9 opacity, from CSS.
+- **WIDGET-PARITY §2.18**:
+  - done: `toggle`, `range`, list/tree `bind:current`, list `row-drag-type`/`row-drop-types` and `internal-move`, the
+    `scrollTo` hint, `row-hovered`, the selection following the context click, `copy` on the list, `uniform-rows`, DnD
+    auto-expand, the tree helpers, the ghost, the drop indicator;
+  - deferred: `slot="empty"`.
+- **Pins**: none apply, as in OW5a. VIS1 is not on master, so it was not run.
+
+### Tests (all run locally, pass)
+
+- New in `tests/vlist.rs`:
+  - `ow5a1b_toggle_and_range_selection`
+  - `ow5a1b_bind_current_is_the_cursor`
+  - `ow5a1b_scroll_to_takes_a_hint`
+  - `ow5a1b_copy_uniform_rows_hover_and_context_selection`
+  - `ow5a1b_list_rows_drag_and_drop` (the ghost's fill comes from `::part(ghost)` CSS; the list is `:drop-target`)
+  - `ow5a1b_internal_move_reorders`
+  - `ow5a1b_tree_auto_expands_on_drag_hover_and_gates_selection`
+- New lib units:
+  - `interact::dnd` (`ow5a1b_drop_target_enters_leaves_and_drops_once`,
+    `ow5a1b_drag_source_reports_the_targets_action_the_pass_after`)
+  - `views::selection::ow5a1b_toggle_and_range_modes`
+- New JS test: `packages/native-runtime/test/lists.test.mjs` (the expand helpers).
+- The acceptance set, green:
+  - `vlist` (all, including `list_view_runs_on_egui`), `wg5a` (including the 100k test), `treeview`
+  - `wg4b` (including the DnD gallery page), `scene_memory` (SG6), `spec`
+  - the `observe` and `widgets` every-kind sweeps
+  - the lib units `kinds::dnd`, `kinds::treeview`, `views::selection`, `item_keys` and `scene::virt`
+- The fixtures were built with `ci/ow5a`'s compiler binary. The compiler is unchanged on this lane.
+- Clippy: no new warnings.
+
+**Not run locally:** the full workspace nextest, the other CI workflows, full conformance, and VIS1.
+
 ## Not done (OW5a1 follow-ups)
 
-- **Units.** DragSource/DropTarget are not separate `Unit`s yet: `kinds/dnd.rs` is still WG4b's per-node
-  helper, with WG6's actions, files and auto-scroll.
-- **Drag visuals.** The drag ghost and the file-drop highlight still read egui `Visuals` (`dnd::ghost`,
-  `file_drop`).
-- **Tree selection gate.** The tree's click selection (`selection-changed`) has no EV1 gate yet.
-- **Parity rows.** Every row marked "not done" in the table above.
+OW5a1b did all of these (see its section above) except `slot="empty"`, which waits for named container slots
+(RA3 deferred them).

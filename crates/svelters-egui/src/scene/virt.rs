@@ -304,6 +304,11 @@ impl VScroll {
             self.pending += (y1 - view).min(y0) - self.offset;
         }
     }
+
+    /// OW5a1b (`scrollTo`'s hint): scrolls so the offset becomes `y` (clamped when it is decided).
+    pub fn reveal_at(&mut self, y: f64) {
+        self.pending += y.max(0.0) - self.offset;
+    }
 }
 
 // ---- realised rows ----

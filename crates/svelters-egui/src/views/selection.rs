@@ -12,6 +12,11 @@
 //! - Plain moves select the cursor (single and multi); Shift extends a range from the anchor
 //!   (multi); Ctrl (Cmd) moves the cursor without selecting (multi), and Space toggles it.
 //! - Clicks: plain selects only that row, Ctrl toggles, Shift selects the range from the anchor.
+//! - OW5a1b, `toggle` (Qt `MultiSelection`, checklists): a click toggles its row with no modifier
+//!   and leaves the others; moves only move the cursor; Space toggles; Ctrl+A selects all.
+//! - OW5a1b, `range` (Qt `ContiguousSelection`): one contiguous run. Plain clicks and moves select
+//!   one row; Shift (click or move) selects the run from the anchor; Ctrl does what a plain input
+//!   does.
 //! - Type-ahead: typed characters within [`TYPEAHEAD_RESET`] seconds build a prefix; the cursor
 //!   goes to the next row (from the cursor, wrapping) whose label starts with it, ignoring case.
 //!   Repeating one character cycles through the rows starting with it.
@@ -30,6 +35,10 @@ pub enum Mode {
     #[default]
     Single,
     Multi,
+    /// OW5a1b: a click toggles, no modifier (Qt `MultiSelection`).
+    Toggle,
+    /// OW5a1b: one contiguous run, Shift extends (Qt `ContiguousSelection`).
+    Range,
 }
 
 impl Mode {
@@ -38,8 +47,15 @@ impl Mode {
             "none" => Mode::None,
             "single" => Mode::Single,
             "multi" => Mode::Multi,
+            "toggle" => Mode::Toggle,
+            "range" => Mode::Range,
             _ => return None,
         })
+    }
+
+    /// More than one row can be selected (AccessKit `multiselectable`, Ctrl+A).
+    pub fn is_multi(self) -> bool {
+        matches!(self, Mode::Multi | Mode::Toggle | Mode::Range)
     }
 }
 
@@ -102,7 +118,7 @@ impl KeySelect {
         match self.mode {
             Mode::None => new.clear(),
             Mode::Single => new = new.into_iter().take(1).collect(),
-            Mode::Multi => {}
+            Mode::Multi | Mode::Toggle | Mode::Range => {}
         }
         let changed = new != self.selected;
         self.selected = new;
@@ -133,8 +149,8 @@ impl KeySelect {
         let moved = self.cursor != Some(id);
         self.cursor = Some(id);
         let selection = match self.mode {
-            Mode::None => false,
-            Mode::Multi if m.shift => self.range(ids, to),
+            Mode::None | Mode::Toggle => false,
+            Mode::Multi | Mode::Range if m.shift => self.range(ids, to),
             Mode::Multi if m.ctrl => false,
             _ => {
                 self.anchor = Some(id);
@@ -177,12 +193,16 @@ impl KeySelect {
         match self.mode {
             Mode::None => Change::default(),
             Mode::Single => Change { cursor: false, selection: self.only(id) },
-            Mode::Multi => {
+            Mode::Multi | Mode::Toggle => {
                 if !self.selected.remove(&id) {
                     self.selected.insert(id);
                 }
                 self.anchor = Some(id);
                 Change { cursor: false, selection: true }
+            }
+            Mode::Range => {
+                self.anchor = Some(id);
+                Change { cursor: false, selection: self.only(id) }
             }
         }
     }
@@ -193,14 +213,14 @@ impl KeySelect {
         self.cursor = Some(id);
         let selection = match self.mode {
             Mode::None => false,
-            Mode::Multi if m.ctrl => {
+            Mode::Toggle | Mode::Multi if self.mode == Mode::Toggle || m.ctrl => {
                 if !self.selected.remove(&id) {
                     self.selected.insert(id);
                 }
                 self.anchor = Some(id);
                 true
             }
-            Mode::Multi if m.shift => match pos_of(ids, Some(id)) {
+            Mode::Multi | Mode::Range if m.shift => match pos_of(ids, Some(id)) {
                 Some(p) => self.range(ids, p),
                 None => false,
             },
@@ -278,6 +298,30 @@ mod tests {
         assert_eq!(sel(&k), vec![20, 40, 50]);
         k.click(&IDS, 30, SHIFT);
         assert_eq!(sel(&k), vec![30, 40, 50], "a shift click ranges from the last anchor (50)");
+    }
+
+    #[test]
+    fn ow5a1b_toggle_and_range_modes() {
+        let mut t = KeySelect::new(Mode::Toggle);
+        t.click(&IDS, 20, Mods::default());
+        t.click(&IDS, 40, Mods::default());
+        assert_eq!(sel(&t), vec![20, 40], "a plain click toggles and keeps the others");
+        t.click(&IDS, 20, Mods::default());
+        assert_eq!(sel(&t), vec![40]);
+        assert_eq!(t.nav(&IDS, Nav::Down, Mods::default(), 3), Change { cursor: true, selection: false }, "moves only move");
+        t.toggle_cursor();
+        assert_eq!(sel(&t), vec![30, 40], "space toggles the cursor (30)");
+        let mut r = KeySelect::new(Mode::Range);
+        r.click(&IDS, 20, Mods::default());
+        r.click(&IDS, 40, SHIFT);
+        assert_eq!(sel(&r), vec![20, 30, 40], "shift: the run from the anchor");
+        r.click(&IDS, 50, CTRL);
+        assert_eq!(sel(&r), vec![50], "ctrl does not add a second run");
+        r.nav(&IDS, Nav::Up, SHIFT, 3);
+        assert_eq!(sel(&r), vec![40, 50]);
+        r.toggle_cursor();
+        assert_eq!(sel(&r), vec![40], "space selects the cursor only");
+        assert!(Mode::Range.is_multi() && Mode::Toggle.is_multi() && !Mode::Single.is_multi());
     }
 
     #[test]

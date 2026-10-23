@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import * as $ from 'svelte/internal/client';
 import { createTestHost } from '@svelters/testhost';
 import * as $n from '../src/index.js';
-import { ListView, flattenTree } from '../src/lists.js';
+import { ListView, flattenTree, expandAll, collapseAll, expandToDepth, expandRecursively } from '../src/lists.js';
 
 function harness() {
   const th = createTestHost();
@@ -226,4 +226,18 @@ test('flattenTree: expanded nodes splice their loaded children in; a filter keep
   assert.deepEqual(rows(['a', 'a1'], (n) => n.id === 'a1x'), ['a:0-', 'a1:1-', 'a1x:2']);
   // collapsed: the ancestor of the match stays, closed
   assert.deepEqual(rows([], (n) => n.id === 'a1x'), ['a:0+']);
+});
+
+test('OW5a1b: expandAll, collapseAll, expandToDepth, expandRecursively return the keys for bind:expanded', () => {
+  const tree = [
+    { id: 'a', children: [{ id: 'b', children: [{ id: 'c' }] }, { id: 'd', children: [] }] },
+    { id: 'e', children: [{ id: 'f', children: [{ id: 'g' }] }] },
+  ];
+  assert.deepEqual(expandAll(tree), ['a', 'b', 'e', 'f'], 'nodes with children only');
+  assert.deepEqual(collapseAll(), []);
+  assert.deepEqual(expandToDepth(tree, 0), ['a', 'e'], 'depth 0: the roots open');
+  assert.deepEqual(expandToDepth(tree, 1), ['a', 'b', 'e', 'f']);
+  assert.deepEqual(expandRecursively(['a'], tree[1]), ['a', 'e', 'f']);
+  const lazy = { children: (n) => n.kids, key: (n) => n.k };
+  assert.deepEqual(expandAll([{ k: 1, kids: [{ k: 2, kids: [{ k: 3 }] }] }], lazy), [1, 2]);
 });

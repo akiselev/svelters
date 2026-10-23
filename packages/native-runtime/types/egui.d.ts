@@ -1061,8 +1061,8 @@ export interface EguiElements {
     /** The selected position, -1 for none. Setting it never raises `select`. */
     selected?: number;
     'bind:selected'?: number;
-    /** `single`: a click or the keyboard selects a row (`select`); `multi`: Ctrl/Shift clicks and keys select several (`selectionchange`); `none`: rows are not selectable. */
-    selection?: 'none' | 'single' | 'multi';
+    /** `single`: a click or the keyboard selects a row (`select`); `multi`: Ctrl/Shift clicks and keys select several (`selectionchange`); `toggle`: a click toggles its row, no modifier (checklists); `range`: one contiguous run, Shift extends; `none`: rows are not selectable. */
+    selection?: 'none' | 'single' | 'multi' | 'toggle' | 'range';
     /** The selected item ids (`bind:selected-ids`); kept by id across splices, sorts and filters. */
     'selected-ids'?: number[];
     'bind:selected-ids'?: number[];
@@ -1070,6 +1070,17 @@ export interface EguiElements {
     layout?: 'list' | 'grid';
     /** The height a row is assumed to have before it is measured, and its minimum, in points. */
     'row-height'?: number;
+    /** OW5a1b: the cursor's item id (`bind:current`), -1 for none. Setting it moves the cursor without selecting. */
+    current?: number;
+    'bind:current'?: number;
+    /** OW5a1b: every row is `row-height` tall; rows are not measured (Qt `uniformRowHeights`). */
+    'uniform-rows'?: boolean;
+    /** OW5a1b: non-empty: rows drag, as a payload of this type (the dragged item ids, a line each) plus `text/plain` (their labels). */
+    'row-drag-type'?: string;
+    /** OW5a1b: non-empty: rows take drops of these types (WG4b patterns) and raise `drop-row`. */
+    'row-drop-types'?: string;
+    /** OW5a1b: rows reorder by drag within the list (Qt `InternalMove`): a drop raises `move(from, to)`. */
+    'internal-move'?: boolean;
     /** Row slot `row` was created: give it content with `setRow`. */
     onsetup?: (e: SvlEvent<[number]>, row: number) => void;
     /** Slot `row` now shows item `id` at `pos`; `gen` counts the binds of the slot. */
@@ -1086,13 +1097,21 @@ export interface EguiElements {
     onselectionchange?: (ids: number[]) => void;
     /** OW5a: a click on the row at `pos` (item `id`), after the selection moved. */
     'onrow-clicked'?: (pos: number, id: number) => void;
-    /** OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. */
+    /** OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. The selection follows first (an unselected row is selected, per platform Policy). */
     'onrow-context'?: (pos: number, id: number) => void;
+    /** OW5a1b: the pointer entered the row at `pos` (item `id`; Qt `entered`). */
+    'onrow-hovered'?: (pos: number, id: number) => void;
+    /** OW5a1b: Ctrl+C on the focused list: copy the selected items (their ids). */
+    oncopy?: (ids: number[]) => void;
+    /** OW5a1b: a drag was dropped `before`, `after` or `into` item `id` (-1: below the last row), as the entry of `type` it took. */
+    'ondrop-row'?: (id: number, where: string, type: string, data: string) => void;
+    /** OW5a1b (`internal-move`): the row at `from` was dragged to the gap before position `to` (`count()`: the end); move it. */
+    onmove?: (from: number, to: number) => void;
   };
   /** A virtualized tree: JS keeps the tree and flattens its visible rows into the list; children load when a node expands. */
   'tree-view': EguiWidgetProps & {
-    /** `single` or `multi` (Shift ranges, Ctrl toggles); `none`: rows are not selectable. */
-    selection?: 'none' | 'single' | 'multi';
+    /** `single`, `multi` (Shift ranges, Ctrl toggles), `toggle` (a click toggles, no modifier), `range` (one contiguous run, Shift extends); `none`: rows are not selectable. */
+    selection?: 'none' | 'single' | 'multi' | 'toggle' | 'range';
     /** The height a row is assumed to have before it is measured, and its minimum, in points. */
     'row-height'?: number;
     /** Points per level; the disclosure triangle sits in the last one. */
@@ -1105,6 +1124,11 @@ export interface EguiElements {
     'expand-on'?: 'twistie' | 'click' | 'double-click';
     /** Level-0 rows show their twistie (Qt's `rootIsDecorated`). */
     'root-decorated'?: boolean;
+    /** OW5a1b: the cursor's row id (`bind:current`), -1 for none. Setting it moves the cursor without selecting. */
+    current?: number;
+    'bind:current'?: number;
+    /** OW5a1b: every row is `row-height` tall; rows are not measured (Qt `uniformRowHeights`). */
+    'uniform-rows'?: boolean;
     /** Row slot `row` was created: give it content with `setRow`. */
     onsetup?: (e: SvlEvent<[number]>, row: number) => void;
     /** Slot `row` now shows item `id` at `pos`; `gen` counts the binds of the slot. */
@@ -1125,8 +1149,10 @@ export interface EguiElements {
     oncopy?: () => void;
     /** OW5a: a click on the row at `pos` (item `id`), after the selection moved. */
     'onrow-clicked'?: (pos: number, id: number) => void;
-    /** OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. */
+    /** OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. The selection follows first (an unselected row is selected, per platform Policy). */
     'onrow-context'?: (pos: number, id: number) => void;
+    /** OW5a1b: the pointer entered the row at `pos` (item `id`; Qt `entered`). */
+    'onrow-hovered'?: (pos: number, id: number) => void;
     /** A drag was dropped `before`, `after` or `into` row `id` (-1: below the last row), as the entry of `type` it took. */
     'ondrop-row'?: (id: number, where: string, type: string, data: string) => void;
   };

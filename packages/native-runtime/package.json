@@ -55,6 +55,7 @@
       "svelters:shell": "./src/shell.js",
       "@svelters/lists": "./src/lists.js",
       "@svelters/native-runtime/lists": "./src/lists.js",
+      "svelters:views/tree": "./src/lists.js",
       "svelters:gtk/*": "@svelters/types/gtk/*/index.js",
       "svelters:qt/*": "@svelters/types/qt/*/index.js",
       "svelters:appkit/*": "@svelters/types/appkit/*/index.js",
