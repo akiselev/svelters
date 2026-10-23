@@ -294,6 +294,7 @@ impl Driver for Gtk<'_> {
                 text: Some(text),
                 sel: Some([anchor, caret]),
                 focus: focused(&self.h.widget(e)),
+                scroll: None,
             };
             self.trace.state(e, &s);
             cp.push((a, s));
@@ -302,6 +303,7 @@ impl Driver for Gtk<'_> {
             text: None,
             sel: None,
             focus: focused(&self.h.widget(self.button)),
+            scroll: None,
         };
         self.trace.state(self.button, &s);
         cp.push((BUTTON.to_string(), s));
