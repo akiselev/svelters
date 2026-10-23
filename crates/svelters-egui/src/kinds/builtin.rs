@@ -89,6 +89,21 @@ static WIDGET_PROPS: &[PropDef] = &[
         Def::Str("auto"),
         "Its place in a `dialog-buttons` row (QDialogButtonBox roles): `accept`, `reject`, `destructive`, `apply`, `reset`, `help`, `action`; `auto` is `accept` for a `default` button, `reject` for a `cancel` one, else `action`. Also the `[dialog-role=…]` selector.",
     ),
+    // ---- OW7c: appended ----
+    prop(
+        "status-tip",
+        P::StatusTip,
+        Ty::Str,
+        Def::Str(""),
+        "Text for the status bar while the pointer is over the node (enabled or not; the innermost node with one wins) or, with nothing hovered, while it has keyboard focus: every `status-bar` of the viewport shows it in `::part(message)`, and `svelters_egui::status_tip` reads it. Empty for none.",
+    ),
+    layout(
+        "status-section",
+        P::StatusSection,
+        Ty::Enum(super::views::STATUS_SECTION),
+        Def::Str("temporary"),
+        "Its place in a `status-bar` (QStatusBar): `temporary` (after the start sections; hidden while a message or status tip shows), `start` (permanent, at the start), `end` (permanent, pushed to the end). Also the `[status-section=…]` selector.",
+    ),
 ];
 
 static LABEL_PROPS: &[PropDef] = &[
@@ -372,4 +387,6 @@ pub static KINDS: &[KindDef] = &[
     // ---- OW7b: appended (`views.rs`; svelters' own widget only) ----
     super::views::TOAST,
     super::views::DIALOG_BUTTONS,
+    // ---- OW7c: appended ----
+    super::views::STATUS_BAR,
 ];

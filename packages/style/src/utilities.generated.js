@@ -4017,6 +4017,20 @@ export const UTILITIES = {
    "parts": [],
    "provider_states": []
   },
+  "status-bar": {
+   "kind": "StatusBar",
+   "states": [
+    "active",
+    "disabled",
+    "enabled",
+    "exiting",
+    "focus-within",
+    "hover",
+    "open"
+   ],
+   "parts": [],
+   "provider_states": []
+  },
   "switch": {
    "kind": "Switch",
    "states": [

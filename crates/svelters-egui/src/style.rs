@@ -1038,7 +1038,8 @@ pub(crate) fn before_container(s: &mut Scene, i: usize, r: egui::Rect, ui: &egui
     let id = s.slots.id_at(i)?;
     let c = s.style.computed(id)?.clone();
     let dark = ui.ctx().theme() == egui::Theme::Dark;
-    let v = crate::paint::StyleView::new(Some(&c), crate::paint::Ua::NONE, s.core[i].state, dark).with_overlay(s.style.overlay(id));
+    let ua = if matches!(s.w(i), W::StatusBar(_)) { crate::views::status_bar::STATUS_UA } else { crate::paint::Ua::NONE }; // OW7c
+    let v = crate::paint::StyleView::new(Some(&c), ua, s.core[i].state, dark).with_overlay(s.style.overlay(id));
     crate::paint::paint_box(&mut crate::paint::PaintCx::for_node(ui.painter(), id.to_raw()), &v, r);
     let o = v.opacity();
     (o < 1.0).then_some(o)

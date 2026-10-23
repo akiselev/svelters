@@ -302,6 +302,7 @@ pub static KINDS: &[KindStyle] = &[
     KindStyle { tag: "spinner", states: &["active", "disabled", "enabled", "exiting", "focus-within", "hover"], parts: &[], provider_states: &[] },
     KindStyle { tag: "split-view", states: &["active", "disabled", "enabled", "exiting", "focus-within", "hover"], parts: &[], provider_states: &[] },
     KindStyle { tag: "stack", states: &["active", "disabled", "enabled", "exiting", "focus-within", "hover"], parts: &[], provider_states: &[] },
+    KindStyle { tag: "status-bar", states: &["active", "disabled", "enabled", "exiting", "focus-within", "hover", "open"], parts: &[], provider_states: &[] },
     KindStyle { tag: "switch", states: &["active", "disabled", "enabled", "exiting", "focus", "focus-within", "hover"], parts: &[("track", false), ("knob", false)], provider_states: &[] },
     KindStyle { tag: "tab", states: &["active", "disabled", "enabled", "exiting", "focus-within", "hover"], parts: &[], provider_states: &[] },
     KindStyle { tag: "tab-view", states: &["active", "disabled", "enabled", "exiting", "focus-within", "hover"], parts: &[], provider_states: &[] },

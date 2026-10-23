@@ -68,6 +68,7 @@ Elements that hold other elements and add behaviour or chrome.
 | [`<scroll-area>`](scroll-area.md) | A flex box whose content scrolls when it overflows the area's size (taffy `overflow: scroll`); give it a size or let flex-grow size it. |
 | [`<scrollbar>`](scrollbar.md) | A standalone scroll bar (Qt's `QScrollBar`) for a view that scrolls itself (a canvas, a plot, cadatomic's viewport): `value` from `min` to `max`, the thumb sized by `page`. |
 | [`<split-view>`](split-view.md) | Panes (its children) side by side or stacked, split by sashes the user drags or moves with the keys (R11: a 1 px line, a 4 px hit area, a focus-coloured bar and grip after 300 ms of hover). |
+| [`<status-bar>`](status-bar.md) | A generic status bar (QStatusBar): a flex row whose children are its sections, placed by their `status-section`: `start` sections first, then the `temporary` ones, then the `end` sections pushed to the far end; `flex-grow` stretches a section. |
 | [`<tab>`](tab.md) | A page of a `tab-view`: a flex box whose `title` is its tab's caption. |
 | [`<tab-view>`](tab-view.md) | Pages under a tab bar: each child (a `tab`) is a page titled by its `title`; only the `selected` one is laid out and drawn. |
 | [`<window>`](window.md) | A native window (the root viewport, or an immediate viewport); its children are laid out as a flex column. |

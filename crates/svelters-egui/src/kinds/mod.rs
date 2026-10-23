@@ -88,7 +88,7 @@ pub use menus::attaches_to;
 pub use popups::PLACEMENT;
 pub use media::FIT;
 pub use panes::{FRAME_STYLE, SIDE};
-pub use views::{BUTTON_ORDER, CELL_ALIGN, COMMIT_MODE, DIALOG_ROLE, ELIDE, HEADER_ALIGN, SORT, TABLE_SELECTION, TOAST_CORNER, TOAST_LEVEL};
+pub use views::{BUTTON_ORDER, CELL_ALIGN, COMMIT_MODE, DIALOG_ROLE, STATUS_SECTION, ELIDE, HEADER_ALIGN, SORT, TABLE_SELECTION, TOAST_CORNER, TOAST_LEVEL};
 pub use registry::{KindRegistry, PROVIDER_PACK, ProviderKind, kind};
 pub use virtuallist::{ListStats, VList};
 
@@ -357,6 +357,10 @@ pub enum P {
     /// OW7b: dialog-buttons (`order`) and Widget (`dialog-role`)
     ButtonOrder,
     DialogRole,
+    /// OW7c: Widget (`status-tip`, `status-section`) and status-bar (`message`)
+    StatusTip,
+    StatusSection,
+    Message,
     /// OW5b: `table` header (FM1's QW4: sort, hidden columns, saved state; `stretch-last`) and
     /// `table-column` (`hideable`, `header-align`, `elide`; `name` reuses the icon's key)
     Sortable,

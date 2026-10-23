@@ -118,6 +118,10 @@ export interface EguiWidgetProps {
   bottom?: number | null;
   /** Its place in a `dialog-buttons` row (QDialogButtonBox roles): `accept`, `reject`, `destructive`, `apply`, `reset`, `help`, `action`; `auto` is `accept` for a `default` button, `reject` for a `cancel` one, else `action`. Also the `[dialog-role=…]` selector. */
   'dialog-role'?: 'auto' | 'accept' | 'reject' | 'destructive' | 'apply' | 'reset' | 'help' | 'action';
+  /** Text for the status bar while the pointer is over the node (enabled or not; the innermost node with one wins) or, with nothing hovered, while it has keyboard focus: every `status-bar` of the viewport shows it in `::part(message)`, and `svelters_egui::status_tip` reads it. Empty for none. */
+  'status-tip'?: string;
+  /** Its place in a `status-bar` (QStatusBar): `temporary` (after the start sections; hidden while a message or status tip shows), `start` (permanent, at the start), `end` (permanent, pushed to the end). Also the `[status-section=…]` selector. */
+  'status-section'?: 'temporary' | 'start' | 'end';
   /** A native animation (TR2) finished; carries its id. The runtime listens to it itself. */
   onanimationend?: (id: number) => void;
   /** Drag source: the user started dragging this node (`drag-type` set). */
@@ -1511,6 +1515,32 @@ export interface EguiElements {
     onclicked?: (role: string) => void;
     /** Its `help` button was clicked (Qt `helpRequested`). */
     onhelp?: () => void;
+  };
+  /** A generic status bar (QStatusBar): a flex row whose children are its sections, placed by their `status-section`: `start` sections first, then the `temporary` ones, then the `end` sections pushed to the far end; `flex-grow` stretches a section. A message (`message`, `show-message`) or a status tip (a hovered or focused node's `status-tip`) is drawn in `::part(message)`, the free space after the start sections, and hides the temporary sections meanwhile. It holds no app-specific sections: compose your own from labels, buttons and the like. */
+  'status-bar': EguiWidgetProps & {
+    /** Main axis of the box. */
+    'flex-direction'?: 'column' | 'row' | 'column-reverse' | 'row-reverse';
+    /** Whether children wrap onto more lines. */
+    'flex-wrap'?: 'nowrap' | 'wrap' | 'wrap-reverse';
+    /** Space between children on both axes, in points (row-gap and column-gap override it). */
+    gap?: number;
+    /** Space between rows in points; null to use `gap`. */
+    'row-gap'?: number | null;
+    /** Space between columns in points; null to use `gap`. */
+    'column-gap'?: number | null;
+    /** Inner spacing on all four sides, in points. */
+    padding?: number;
+    /** Cross-axis alignment of the children. */
+    'align-items'?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
+    /** Main-axis distribution of the children. */
+    'justify-content'?: 'start' | 'end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
+    /** `contain`: Tab and Shift+Tab cycle inside while focus is in it; `dialog`: also takes focus when it appears (`autofocus` node, else the first) and gives it back to the opener when it goes away. */
+    'focus-scope'?: 'none' | 'contain' | 'dialog';
+    /** The temporary message (Qt `currentMessage`), drawn in `::part(message)` over the temporary sections; empty for none. Setting it shows it until it is changed or cleared; `show-message` sets it with a timeout, after which it is empty again (`bind:message`). */
+    message?: string;
+    'bind:message'?: string;
+    /** Its message changed (Qt `messageChanged`): `show-message`, `clear-message` or a timeout; carries the new message. */
+    onchanged?: (message: string) => void;
   };
 }
 

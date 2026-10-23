@@ -52,6 +52,8 @@ Common properties of everything placed in a window: state, tooltip, accessibilit
 | `min-width` | `number \| null` | `null` | no | Minimum width in points; null for auto. |
 | `position` | `'static' \| 'relative' \| 'absolute'` | `"static"` | no | `absolute` takes the node out of the flow and places it by `left`/`top`/`right`/`bottom` inside its containing block: the nearest `relative` or `absolute` ancestor, else the root. |
 | `right` | `number \| null` | `null` | no | Inset from the containing block's right edge in points; null for auto. |
+| `status-section` | `'temporary' \| 'start' \| 'end'` | `"temporary"` | no | Its place in a `status-bar` (QStatusBar): `temporary` (after the start sections; hidden while a message or status tip shows), `start` (permanent, at the start), `end` (permanent, pushed to the end). Also the `[status-section=…]` selector. |
+| `status-tip` | `string` | `""` | no | Text for the status bar while the pointer is over the node (enabled or not; the innermost node with one wins) or, with nothing hovered, while it has keyboard focus: every `status-bar` of the viewport shows it in `::part(message)`, and `svelters_egui::status_tip` reads it. Empty for none. |
 | `tooltip` | `string` | `""` | no | Hover text; empty for none. |
 | `top` | `number \| null` | `null` | no | Inset from the containing block's top edge in points; null for auto. |
 | `visible` | `boolean` | `true` | no | Shown and laid out when true (`display: none` otherwise). |

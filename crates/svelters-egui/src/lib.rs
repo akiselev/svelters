@@ -80,6 +80,7 @@ mod walk;
 // WG4a: state, layout and paint of the Tier 1 views (`kinds/views.rs`); `toast` is public
 mod views;
 pub use views::toast;
+pub use views::status_bar::status_tip;
 mod windows;
 
 /// The walk's outbox and paint entry point, at their pre-EG0 path (now `walk.rs`).

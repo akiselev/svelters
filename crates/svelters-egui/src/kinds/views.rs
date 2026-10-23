@@ -453,6 +453,44 @@ pub(super) const DIALOG_BUTTONS: KindDef = KindDef {
     doc: "A dialog's button row (QDialogButtonBox): its `button` children take their place by `dialog-role` in the platform's order, right-aligned 6 apart (a row with `justify-content: end` and `gap: 6` at creation). A click reports `clicked(role)` (`help` too for the help role). With EV3, `default` and `cancel` buttons answer Enter and Escape; in a `modal` or `inner-window`, accept and reject buttons close it with that result (`close(\"accept\")`).",
 };
 
+// ---- status-bar (OW7c) ----
+
+/// `status-section` values (`temporary` first: the default).
+pub const STATUS_SECTION: &[&str] = &["temporary", "start", "end"];
+
+static STATUS_BAR_PROPS: &[PropDef] = &[input(
+    "message",
+    P::Message,
+    Ty::Str,
+    Def::Str(""),
+    "The temporary message (Qt `currentMessage`), drawn in `::part(message)` over the temporary sections; empty for none. Setting it shows it until it is changed or cleared; `show-message` sets it with a timeout, after which it is empty again (`bind:message`).",
+)];
+
+static STATUS_BAR_SIGNALS: &[SignalDef] = &[signal("changed", &[("message", Ty::Str)], "Its message changed (Qt `messageChanged`): `show-message`, `clear-message` or a timeout; carries the new message.")];
+
+static STATUS_BAR_METHODS: &[MethodDef] = &[
+    MethodDef {
+        name: "show-message",
+        doc: "`show-message(text, timeout = 0)`: shows `text` in `::part(message)` for `timeout` seconds (0: until changed or cleared), hiding the temporary sections (Qt `showMessage`).",
+    },
+    MethodDef { name: "clear-message", doc: "Clears the message (Qt `clearMessage`)." },
+];
+
+pub(super) const STATUS_BAR: KindDef = KindDef {
+    id: "StatusBar",
+    tag: Some("status-bar"),
+    native: "a taffy flex row with a message area (svelters' own)",
+    base: Some("Box"),
+    toplevel: false,
+    slot: Some("children"),
+    text_content: None,
+    present: None,
+    props: STATUS_BAR_PROPS,
+    signals: STATUS_BAR_SIGNALS,
+    methods: STATUS_BAR_METHODS,
+    doc: "A generic status bar (QStatusBar): a flex row whose children are its sections, placed by their `status-section`: `start` sections first, then the `temporary` ones, then the `end` sections pushed to the far end; `flex-grow` stretches a section. A message (`message`, `show-message`) or a status tip (a hovered or focused node's `status-tip`) is drawn in `::part(message)`, the free space after the start sections, and hides the temporary sections meanwhile. It holds no app-specific sections: compose your own from labels, buttons and the like.",
+};
+
 pub(super) const TOAST_HOST: KindDef = KindDef {
     id: "ToastHost",
     tag: Some("toast-host"),
