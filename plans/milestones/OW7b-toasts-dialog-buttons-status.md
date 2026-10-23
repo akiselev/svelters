@@ -81,9 +81,19 @@ OW7b builds on OW7's `widgets/dialog.rs` (the modal and window chrome, the `tool
 ### Handoff details (coordinator, 2026-10-22: OW7b finishes its full scope)
 
 - **Stage 1** (`<toast>`) merges alone from `ci/ow7b-s1` (6d059c4b). This branch (`ci/ow7b`) also has items 2 and 4. Merge master into it once stage 1 is on master.
-- **Left for this lane:**
-  - item 3, `status-bar` (design above);
-  - from OW7's handoff (its uncommitted diff, `ow7-uncommitted-handoff.diff`): the `dialog-buttons` `buttons="ok cancel apply …"` shorthand (host-localised labels), the `yes` and `no` roles, and `orientation`.
+- **Left for the continuation agent**, in this order:
+  1. **Item 3, `status-bar`**: the whole kind and the `status-tip` feed, as specified in "From OW7's handoff" and in the Handoff section above. Nothing of it is built.
+  2. **`dialog-buttons` gaps:**
+     - the `buttons="ok cancel apply …"` shorthand (host-localised labels);
+     - the `yes` and `no` roles (add them to `DIALOG_ROLE` and to every `ButtonOrder::roles` row; Qt puts yes with accept and no with reject);
+     - a `destructive` button is never the default: `role_of` and `focus::shows_default` should skip it;
+     - `orientation`.
+  3. **Item 5:**
+     - keyboard resizing of inner windows (edge handles are not focusable; Qt's Alt+F8);
+     - `:exiting` transitions for `modal`, `inner-window` and the `show()` toasts (only `<toast>` has it).
+  4. **VIS1:** probe rows for `toast` and `dialog-buttons` once references exist.
+  5. **Item 2 vs QW11:** FM1 specified `button-order` on any `box`; this lane ships the `dialog-buttons` kind only. Decide whether the box prop is still wanted.
+- **Done here and not to redo:** `<toast>` (stage 1, on master), `dialog-buttons` roles, order and results, `Policy::auto_default`, `::part()` for `toast-host`, `toast`, `modal` and `inner-window`, the OW-DONE audit line (WIDGET-PARITY coordinator block).
 - **Gotchas:**
   - kittest's `run()` advances the virtual clock past short timeouts, so give toasts in tests durations of 3 s or more and step to the timeout;
   - an egui Area's layer is only as big as what is allocated in it, so `aui.expand_to_include_rect` is needed for `:hover`;
