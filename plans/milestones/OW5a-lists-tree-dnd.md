@@ -269,7 +269,7 @@ Done in the handoff's order. The `Scene::part_at` row design is unchanged.
 ### What landed
 
 1. **DragSource / DropTarget units** (`interact/dnd.rs`, new; ARCH-WIDGETS §1.2):
-   - `DragSource` owns `:dragging`. Its intents are `Drag::Begin` and `Drag::End { dropped, action }`, the second reported
+   - `DragSource` owns `:dragging`. Its intents are `DragIntent::Begin` and `DragIntent::End { dropped, action }` (not `Drag`: that is OW1b's `Draggable` intent), the second reported
      the pass after the release. `DragSource::payload` links the payload to the unit. The unit also picks the cursor
      (grab, grabbing, copy or alias by the action, no-drop).
    - `DropTarget` owns `:drop-target`. Its intents are `Enter(type)`, `Leave`, and `Drop { ty, data, at, action }`,

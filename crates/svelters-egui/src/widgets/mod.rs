@@ -14,6 +14,20 @@
 //! Writer lanes: OW0–OW7.
 
 pub mod button;
+/// OW1b: `drag-value`.
+pub mod drag_value;
+/// OW1b: the interim one-line entry of the value boxes (OW4's TextInput replaces it).
+pub mod entry;
+/// OW1b: number formats (locale, decimals, affixes, special text) and the formatter registry.
+pub mod numfmt;
+/// OW1b: the rail of `slider` and `range-slider`.
+pub mod rail;
+/// OW1b: `range-slider`.
+pub mod range_slider;
+/// OW1b: `slider`.
+pub mod slider;
+/// OW1b: the number field of `drag-value` and the sliders' value boxes.
+pub mod value_box;
 pub mod checkbox;
 pub mod collapsing;
 pub mod frame;
@@ -76,7 +90,7 @@ pub const DEFAULT_OWN: &[&str] = &[
 /// The built-in tags whose egui wrapper is gone (deleted in the lane whose own widget passed its
 /// acceptance, §6.2 step 3) or never existed (`scrollbar`): always svelters' own, whatever the
 /// switch says.
-pub const OWN_ONLY: &[&str] = &["panel", "scroll-area", "scrollbar", "split-view"];
+pub const OWN_ONLY: &[&str] = &["drag-value", "panel", "range-slider", "scroll-area", "scrollbar", "slider", "split-view"];
 
 /// Which built-in kinds get svelters' own widget (§6.2: the per-kind switch).
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -98,8 +112,11 @@ impl KindSet {
         KindSet::Tags(tags.into_iter().map(|t| t.as_ref().to_string()).collect())
     }
 
-    /// Whether new `<tag>` nodes get the own widget (when one exists).
+    /// Whether new `<tag>` nodes get the own widget (when one exists). Always for [`OWN_ONLY`].
     pub fn contains(&self, tag: &str) -> bool {
+        if OWN_ONLY.contains(&tag) {
+            return true;
+        }
         match self {
             KindSet::Default => DEFAULT_OWN.contains(&tag),
             KindSet::All => true,

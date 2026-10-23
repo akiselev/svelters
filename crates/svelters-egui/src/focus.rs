@@ -76,6 +76,8 @@ pub(crate) enum Role {
     Text { multiline: bool },
     Button { default: bool, cancel: bool },
     Toggle,
+    /// The keys a slider claims (arrows, Home/End, PageUp/PageDown): OW2's sashes
+    /// (`WidgetCx::record_part_focus`). OW1b's own sliders claim theirs through `consume_key`.
     Slider,
     /// LS1: a selectable `virtual-list` row (the list's tab stop is its selected row).
     List,
@@ -549,7 +551,6 @@ pub(crate) fn record(arena: &Arena, i: usize, ui: &Ui, resp: &egui::Response) {
         W::Button { .. } => Role::Button { default: c.default_button, cancel: c.cancel_button },
         // OW0: an own widget replacing `button` keeps its EV3 role (default and cancel keys)
         W::Ext(x) if x.entry().replaces == Some("button") => Role::Button { default: c.default_button, cancel: c.cancel_button },
-        W::Slider { .. } | W::RangeSlider { .. } | W::DragValue { .. } => Role::Slider,
         W::Ext(x) => {
             let w = x.0.try_borrow();
             // RA3: a provider text input (`Widget::text_input`) is a text field for EV3

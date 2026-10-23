@@ -24,6 +24,7 @@
 pub mod anchor;
 pub mod dismiss;
 pub mod dnd;
+mod drag;
 mod expand;
 mod focus;
 mod hover;
@@ -32,18 +33,23 @@ mod resize;
 pub mod roving;
 pub mod roving_list;
 pub mod scroll;
+mod scrub;
+mod step;
 mod toggle;
 pub mod tooltip;
 pub mod typeahead;
 
-pub use dnd::{Drag, DragSource, DragSourceParams, DropIntent, DropParams, DropTarget, Offer};
+pub use dnd::{DragIntent, DragSource, DragSourceParams, DropIntent, DropParams, DropTarget, Offer};
+pub use drag::{Axis, Drag, DragParams, Draggable};
 pub use expand::{Expand, ExpandParams, Expandable};
 pub use focus::{Focus, FocusParams, Focusable};
 pub use hover::{Hover, Hoverable};
-pub use press::{Press, PressParams, Pressable};
+pub use press::{ACCEL_EVERY, ActivateOn, Press, PressParams, Pressable};
 pub use roving::{Rove, Roving, RovingParams};
 pub use resize::{Resizable, Resize, ResizeParams};
 pub use scroll::{BarGeom, Scroll, ScrollBy, ScrollParams, Scrollable};
+pub use scrub::{DragToValue, Scale, Scrub, ScrubMode, ScrubParams};
+pub use step::{Arrows, POINTS_PER_STEP, Step, StepParams, Steppable, Wheel};
 pub use toggle::{Toggle, ToggleParams, Toggleable};
 // OW3: floating surfaces, groups and tooltips
 pub use anchor::{AnchorParams, Anchored, Placed, Placement};

@@ -6,9 +6,9 @@
 //! `drop(type, data, x, y, action)`. List and tree rows run the same units (`virtuallist.rs`).
 //!
 //! - [`DragSource`] owns `:dragging`. A drag past egui's threshold on the host is a
-//!   [`Drag::Begin`]; the host then makes its [`DragPayload`] with [`DragSource::payload`], which
+//!   [`DragIntent::Begin`]; the host then makes its [`DragPayload`] with [`DragSource::payload`], which
 //!   links the payload to the unit, so the pass after the release reports what the target did
-//!   ([`Drag::End`]: dropped or not, and the action). It picks the cursor (`grab` over the host,
+//!   ([`DragIntent::End`]: dropped or not, and the action). It picks the cursor (`grab` over the host,
 //!   `grabbing`/`copy`/`alias` over an accepting target by the action, `no-drop` elsewhere).
 //! - [`DropTarget`] owns `:drop-target`. It sees an [`Offer`] (the entry of the payload, or the OS
 //!   files, it would take) while the pointer is over it and it holds the claim; every
@@ -40,7 +40,7 @@ pub struct DragSourceParams {
 
 /// What [`DragSource`] reports.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Drag {
+pub enum DragIntent {
     /// A drag started on the host: set a payload ([`DragSource::payload`]).
     Begin,
     /// The pass after the release: whether a target took it, and with which action (`none`
@@ -66,7 +66,7 @@ pub struct DragSource {
 
 impl DragSource {
     /// The payload of the drag that just began, linked to this unit (its `dropped` flag and
-    /// action come back as [`Drag::End`]).
+    /// action come back as [`DragIntent::End`]).
     pub fn payload(&self, data: MimeData, source: Option<egui::Id>) -> DragPayload {
         let f = self.flight.clone().unwrap_or(Flight { dropped: Arc::default(), action: Arc::default(), ended: false });
         DragPayload::linked(data, source, f.dropped, f.action)
@@ -85,14 +85,14 @@ impl DragSource {
 
 impl Unit for DragSource {
     type Params = DragSourceParams;
-    type Intent = Drag;
+    type Intent = DragIntent;
     const OWNS: StateBits = StateBits::DRAGGING;
 
     fn sense(&self, _p: &DragSourceParams) -> egui::Sense {
         egui::Sense::drag()
     }
 
-    fn input(&mut self, p: &DragSourceParams, cx: &mut InputCx<'_>, out: &mut Intents<Drag>) {
+    fn input(&mut self, p: &DragSourceParams, cx: &mut InputCx<'_>, out: &mut Intents<DragIntent>) {
         // the pass after the release: every target has run, so `dropped` is final
         if let Some(f) = self.flight.as_ref().filter(|f| f.ended) {
             let dropped = f.dropped.load(Ordering::Relaxed);
@@ -100,7 +100,7 @@ impl Unit for DragSource {
                 0 if dropped => "move",
                 k => crate::kinds::dnd::ACTIONS.get(k as usize).copied().unwrap_or("none"),
             };
-            out.push(Drag::End { dropped, action });
+            out.push(DragIntent::End { dropped, action });
             self.flight = None;
         }
         self.cursor = None;
@@ -111,7 +111,7 @@ impl Unit for DragSource {
         }
         if cx.resp.drag_started {
             self.flight = Some(Flight { dropped: Arc::default(), action: Arc::default(), ended: false });
-            out.push(Drag::Begin);
+            out.push(DragIntent::Begin);
         }
         if cx.resp.dragged {
             self.dragging = true;
@@ -275,7 +275,7 @@ mod tests {
         s.flight = Some(Flight { dropped: Arc::default(), action: Arc::default(), ended: true });
         let payload = s.payload(MimeData::single("cad/part", "1"), None);
         payload.accept_as("copy");
-        assert_eq!(bare(&mut s, &p, &mut st), vec![Drag::End { dropped: true, action: "copy" }]);
+        assert_eq!(bare(&mut s, &p, &mut st), vec![DragIntent::End { dropped: true, action: "copy" }]);
         assert!(bare(&mut s, &p, &mut st).is_empty(), "reported once");
     }
 }

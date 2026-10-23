@@ -1570,7 +1570,7 @@ fn row_payload(v: &VList, key: u64) -> svelters_host::platform::MimeData {
 /// `rresp` (item `key`, ghost text `label`). Sets the payload on `Begin`, the cursor, and paints
 /// the list's `::part(ghost)`.
 pub(crate) fn row_drag(s: &mut Scene, i: usize, key: u64, rresp: &egui::Response, ui: &egui::Ui, label: &str) {
-    use crate::interact::{Drag, DragSourceParams, Intents, PartResponses, Unit};
+    use crate::interact::{DragIntent, DragSourceParams, Intents, PartResponses, Unit};
     let ctx = ui.ctx().clone();
     let list_id = s.core[i].egui_id;
     let W::VirtualList(v) = s.w_mut(i) else { return };
@@ -1582,7 +1582,7 @@ pub(crate) fn row_drag(s: &mut Scene, i: usize, key: u64, rresp: &egui::Response
     let mut state = crate::provider::StateBits::NONE;
     let mut fired = Intents::default();
     crate::interact::run(ui, rresp, &mut state, &PartResponses::default(), |cx| src.input(&params, cx, &mut fired));
-    if fired.iter().any(|f| *f == Drag::Begin) {
+    if fired.iter().any(|f| *f == DragIntent::Begin) {
         let p = src.payload(row_payload(v, key), Some(list_id));
         egui::DragAndDrop::set_payload(&ctx, p);
     }

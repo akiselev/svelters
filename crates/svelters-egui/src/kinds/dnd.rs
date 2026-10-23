@@ -47,7 +47,7 @@
 //! Writer lane: WIDGETS (WG4b).
 
 use super::P;
-use crate::interact::{Drag, DragSource, DragSourceParams, DropIntent, DropParams, DropTarget, Intents, Offer, PartResponses, Unit};
+use crate::interact::{DragIntent, DragSource, DragSourceParams, DropIntent, DropParams, DropTarget, Intents, Offer, PartResponses, Unit};
 use crate::paint::{self, PaintCx, StyleView, TraceKind, Ua, UaRule, UaValue::*};
 use crate::provider::StateBits;
 use crate::scene::{Arena, Common, Scene};
@@ -283,11 +283,11 @@ pub(crate) fn node(arena: &mut Arena, i: usize, r: Rect, ui: &mut Ui, out: &mut 
         crate::interact::run(ui, &resp, &mut state, &PartResponses::default(), |cx| src.input(&params, cx, &mut fired));
         for f in fired {
             match f {
-                Drag::Begin => {
+                DragIntent::Begin => {
                     DragAndDrop::set_payload(&ctx, src.payload(MimeData::single(drag_type.clone(), drag_data.clone()), Some(id)));
                     emit(arena, out, "drag-begin", vec![]);
                 }
-                Drag::End { dropped, action } => emit(arena, out, "drag-end", vec![Value::Bool(dropped), Value::Str(action.into())]),
+                DragIntent::End { dropped, action } => emit(arena, out, "drag-end", vec![Value::Bool(dropped), Value::Str(action.into())]),
             }
         }
         if let Some(c) = src.cursor() {

@@ -30,9 +30,18 @@ pub(crate) fn value_of(n: NodeRef<'_>) -> Option<String> {
             password: false,
             ..
         } => Some(text.clone()),
-        W::Slider { value, .. } => Some(num(*value)),
-        W::DragValue { value, .. } => Some(num(*value)),
-        W::RangeSlider { low, high, .. } => Some(format!("{}..{}", num(*low), num(*high))),
+        // OW1b: own widgets; their props read by name
+        W::Ext(_) => {
+            let f = |p: &str| match n.value_of(p) {
+                Ok(svelters_abi::Value::F64(v)) => Some(v),
+                _ => None,
+            };
+            match n.tag() {
+                "slider" | "drag-value" => f("value").map(num),
+                "range-slider" => Some(format!("{}..{}", num(f("low")?), num(f("high")?))),
+                _ => None,
+            }
+        }
         W::ComboBox {
             options, selected, ..
         } => usize::try_from(*selected)
