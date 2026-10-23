@@ -588,6 +588,11 @@ impl WidgetCx<'_> {
         host.part(self.part_css(name), ua).with_overlay(self.s.style.part_overlay(self.node, name))
     }
 
+    /// OW1b: the node's computed style (the cascade's), if a sheet reaches it.
+    pub fn computed(&self) -> Option<&svelters_style::ComputedStyle> {
+        self.s.style.computed(self.node).map(|c| &**c)
+    }
+
     /// A paint context on `ui`'s painter for this node (traced when the pass traces).
     pub fn paint_cx<'p>(&self, ui: &'p egui::Ui) -> crate::paint::PaintCx<'p> {
         let mut p = crate::paint::PaintCx::for_node(ui.painter(), self.node.to_raw());
@@ -706,6 +711,12 @@ impl WidgetCx<'_> {
     /// (arrows, Home/End, PageUp/PageDown), so Tab reaches it and the host keymap leaves them.
     pub fn record_part_focus(&mut self, ui: &egui::Ui, resp: &egui::Response) {
         crate::focus::record_with(self.s, self.i, ui, resp, crate::focus::Role::Slider, true);
+    }
+
+    /// OW6: puts a part's text entry (the colour editor's hex field) in EV3's tab order with a
+    /// one-line text field's keys, so focus stays on it while the user types.
+    pub fn record_part_text_focus(&mut self, ui: &egui::Ui, resp: &egui::Response) {
+        crate::focus::record_with(self.s, self.i, ui, resp, crate::focus::Role::Text { multiline: false }, true);
     }
 
     /// OW2: the node's rect from layout, in its root's coordinates (unscrolled content
@@ -1371,7 +1382,7 @@ fn flush_writes(
         let sig = reg.ext_signal_id(kind, e);
         if arena.listens(i, sig) {
             // OW0: an own widget's event keeps the built-in signal's arity (no args: no payload)
-            // (OW2: a list payload spreads over a built-in signal of several args: `changed(x, y)`)
+            // (OW1b, OW2: a list payload spreads over a built-in signal of several args: `changed(low, high)`)
             let n = if reg.provider(kind).is_none() { reg.signal_def(kind, sig).map(|d| d.args.len()) } else { None };
             let args = match (n, v) {
                 (Some(0), _) => vec![],

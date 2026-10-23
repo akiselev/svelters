@@ -136,7 +136,6 @@ fn builtin_payload(kind: usize) -> Option<W> {
         "Button" => W::Button { text: String::new(), selected: false, frame: true, small: false, weight: 400 },
         "Checkbox" => W::Checkbox { text: String::new(), checked: false },
         "TextEdit" => W::TextEdit { text: String::new(), hint: String::new(), multiline: false, password: false, char_limit: 0 },
-        "Slider" => W::Slider { value: 0.0, min: 0.0, max: 100.0, step: 0.0, text: String::new(), show_value: true },
         "VirtualList" => W::VirtualList(Box::default()),
         "TreeView" => W::VirtualList(Box::new(crate::kinds::VList::tree())),
         // WG1: the defaults match the kind tables (`kinds/builtin.rs`, `kinds/containers.rs`)
@@ -159,7 +158,6 @@ fn builtin_payload(kind: usize) -> Option<W> {
         "TabView" => W::TabView { selected: 0 },
         "Tab" => W::Tab { title: String::new(), closable: false },
         "ToastHost" => W::ToastHost(Box::default()),
-        id if kinds::pickers::is_picker(id) => W::Picker(kinds::pickers::Picker::new(id)), // WG4b
         // RA1: a provider kind's widget struct with its defaults
         _ => W::Ext(crate::provider::ExtWidget::new((kinds::KindRegistry::global().provider(kind)?.entry.new)())),
     })

@@ -14,7 +14,7 @@ sources:
 # `<color-picker>`
 
 <!-- BEGIN GENERATED: summary of kinds.ColorPicker (tools/docs/egui/gen_reference.py). Do not edit. -->
-A colour swatch; clicking it opens egui's colour picker popup.
+A colour swatch drop button; clicking it opens the colour editor (the `color-editor` kind's) in a popup.
 
 **Base:** [`Widget`](widget.md) · **Children:** none · **Text content:** no
 <!-- END GENERATED -->
@@ -30,7 +30,11 @@ A colour swatch; clicking it opens egui's colour picker popup.
 <!-- BEGIN GENERATED: props of kinds.ColorPicker (tools/docs/egui/gen_reference.py). Do not edit. -->
 | Prop | Type | Default | `bind:` | Description |
 |---|---|---|---|---|
-| `alpha` | `'opaque' \| 'blend' \| 'blend-or-additive'` | `"opaque"` | no | Whether the popup edits alpha: `opaque` hides it, `blend` edits it, `blend-or-additive` also offers additive. |
+| `alpha` | `'opaque' \| 'blend' \| 'blend-or-additive'` | `"opaque"` | no | Whether the popup edits alpha: `opaque` hides the alpha strip, `blend` and `blend-or-additive` show it (additive colours are not offered by the own editor). |
+| `commit-mode` | `'live' \| 'confirm'` | `"live"` | no | `live`: each edit changes `value` (closing the popup commits); `confirm`: edits are pending until Save, Cancel or Escape drops them (Qt's dialog). |
+| `custom-colors` | `string[]` | `null` | **yes**, on `changed` | The user's colours (`bind:custom-colors`, up to 16): the add cell appends the current colour. Persist it with `uiState()`. |
+| `fields` | `string` | `"hex rgb"` | no | Which fields show under the strips, space-separated: `hex` (a hex field), `rgb` (R, G, B boxes, 0–255), `hsv` (H 0–360, S and V 0–100). |
+| `swatches` | `string[]` | `null` | no | A palette of hex colours shown as cells (`::part(swatch-cell)`); a click picks one. |
 | `value` | `string` | `"#000000"` | **yes**, on `changed` | The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted). Editing it in the popup changes it. |
 
 Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessible-name`, `align-self`, `anchor`, `autofocus`, `bottom`, `drag-data`, `drag-type`, `drop-types`, `enabled`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `invalid`, `left`, `margin`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `tooltip`, `top`, `visible`, `width`.
@@ -42,6 +46,7 @@ Plus the 26 props every element has, from [`Widget`](widget.md#props): `accessib
 | Attribute | Handler | When |
 |---|---|---|
 | `onchanged` | `(value: string) => void` | The user edited the colour; carries it (CSS hex, once per frame while dragging). |
+| `oncommit` | `(value: string) => void` | A commit point (§2.4): `live`, a drag released, a step, a field or a swatch, and the popup closing after edits; `confirm`, Save. |
 
 `on:changed` works too, and a bare `on:<event>` on a component forwards the component's `on<event>` prop.
 
@@ -63,7 +68,7 @@ None.
 <!-- BEGIN GENERATED: css of kinds.ColorPicker (tools/docs/egui/gen_reference.py). Do not edit. -->
 **Selector:** `color-picker`, plus `.class`, `#id` and attribute selectors on its props.
 
-**Painted as:** a box. The CSS engine paints its shadows, background and border at its rect, under its content; `opacity` fades it and its content.
+**Painted as:** a box under the kind's own drawing. The CSS engine paints shadows, background and border at its rect; the kind's `ui` draws the rest.
 
 | Property | Applies | Theme default |
 |---|---|---|
@@ -78,7 +83,7 @@ None.
 **Layout properties** (as attributes or in CSS; an explicit attribute wins): `align-self`, `bottom`, `flex-basis`, `flex-grow`, `flex-shrink`, `height`, `left`, `max-height`, `max-width`, `min-height`, `min-width`, `position`, `right`, `top`, `visible`, `width`.
 Also in CSS only: `display`, `grid-column`, `grid-row`, `margin-bottom`, `margin-left`, `margin-right`, `margin-top`.
 
-The swatch shows the colour; the picker popup follows the theme.
+The button shows `::part(swatch)` (a checkerboard under alpha) and R14's `::part(chevron)`; the popup is `::part(popup)` holding the `color-editor` kind's parts and `::part(save)`, `::part(cancel)`.
 
 Full matrix: [css/properties](../../css/properties.md). States: below.
 <!-- END GENERATED -->
@@ -94,8 +99,11 @@ Full matrix: [css/properties](../../css/properties.md). States: below.
 | `:focus-within` | it, or an element inside it, has keyboard focus | scene |
 | `:disabled` (`:enabled` is the opposite) | `enabled` is false | prop |
 | `:exiting` | it plays an out transition before it is removed | scene |
+| `:open` | its editor popup is shown | kind |
 
-Never set on it (rules with them don't match): `:checked`, `:selected`, `:open`, `:expanded`, `:invalid`, `:read-only`, `:dragging`, `:busy`, `:indeterminate`, `:placeholder-shown`, `:default`, `:drop-target`, `:current`, `:backdrop`, `:required`, `:user-invalid`, `:has-children`.
+Never set on it (rules with them don't match): `:checked`, `:selected`, `:expanded`, `:invalid`, `:read-only`, `:dragging`, `:busy`, `:indeterminate`, `:placeholder-shown`, `:default`, `:drop-target`, `:current`, `:backdrop`, `:required`, `:user-invalid`, `:has-children`.
+
+The kind's own states (`state_bits!`, `WidgetCx::set_state`) match as `:state(<namespace>.<name>)`.
 
 States are tracked once the scene has a style input (a `<style>` block, `class`, `style=` or a theme).
 <!-- END GENERATED -->
@@ -111,6 +119,8 @@ States are tracked once the scene has a style input (a `<style>` block, `class`,
 | Actions | `Click`, `Focus` |
 | `invalid` | the `invalid` prop sets AccessKit `invalid` |
 | Author id | `anchor` (unique in its root) |
+
+A `ColorWell` named "Color" (or its accessible name) with the hex as its value, `expanded` while open. The popup holds the `color-editor` kind's sliders, boxes and swatches and, with `commit-mode="confirm"`, Save and Cancel; Escape closes it and focus returns.
 <!-- END GENERATED -->
 
 ## Testing

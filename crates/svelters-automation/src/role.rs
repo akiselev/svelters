@@ -15,8 +15,6 @@ pub fn role_of(n: NodeRef<'_>) -> &'static str {
         W::Button { .. } => "button",
         W::Checkbox { .. } => "checkbox",
         W::TextEdit { .. } => "textbox",
-        W::Slider { .. } | W::RangeSlider { .. } => "slider",
-        W::DragValue { .. } => "spinbutton",
         W::ToggleButton { radio: true, .. } | W::RadioButton { .. } => "radio",
         W::ToggleButton { .. } => "button",
         W::ComboBox { .. } => "combobox",
@@ -63,6 +61,9 @@ fn role_of_tag(tag: &str) -> &'static str {
         "scroll-area" => "scrollarea",
         // OW2: own only
         "scrollbar" => "scrollbar",
+        // OW6: own only
+        "calendar" => "grid",
+        "color-editor" => "group",
         "menu-bar" | "menu" | "menu-button" | "action" => "menu",
         "hyperlink" => "link",
         "switch" => "switch",

@@ -561,7 +561,7 @@ impl Element for Forced<'_> {
 
 /// Stock widgets: egui draws them with per-state `WidgetVisuals`.
 fn is_stock(w: &W) -> bool {
-    matches!(w, W::Button { .. } | W::Checkbox { .. } | W::Slider { .. } | W::TextEdit { .. })
+    matches!(w, W::Button { .. } | W::Checkbox { .. } | W::TextEdit { .. })
 }
 
 /// Whether two part lists hold the same parts with equal styles.
@@ -1210,7 +1210,7 @@ fn resolve_family(ctx: &egui::Context, list: &str) -> Option<egui::FontFamily> {
 /// The text a leaf draws, for the weight family's glyph check.
 fn leaf_text(w: &W) -> &str {
     match w {
-        W::Label { text, .. } | W::Button { text, .. } | W::ToggleButton { text, .. } | W::Checkbox { text, .. } | W::TextEdit { text, .. } | W::Slider { text, .. } => text,
+        W::Label { text, .. } | W::Button { text, .. } | W::ToggleButton { text, .. } | W::Checkbox { text, .. } | W::TextEdit { text, .. } => text,
         _ => "",
     }
 }
