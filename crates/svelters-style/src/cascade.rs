@@ -36,6 +36,9 @@ pub enum Origin {
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct SheetId(u32);
 
+/// The sheet id of generated utility rules (U1 E2): never registered or removed as a sheet.
+pub(crate) const UTILITY_SHEET: SheetId = SheetId(u32::MAX);
+
 /// A rule of the stylist, by index (stable until a sheet is removed).
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct RuleId(pub u32);
@@ -48,14 +51,26 @@ pub struct MatchedRule {
     pub specificity: u32,
 }
 
-struct Entry {
-    sheet: SheetId,
-    origin: Origin,
-    rule: Rule,
-    /// Global source order.
-    order: u32,
-    layer_rank: u32,
-    media_ok: bool,
+pub(crate) struct Entry {
+    pub(crate) sheet: SheetId,
+    pub(crate) origin: Origin,
+    pub(crate) rule: Rule,
+    /// Global source order: the registration sequence for sheet rules; for generated utilities
+    /// (U1 E2) a canonical key above every sheet rule ([`crate::utility::canonical_order`]).
+    pub(crate) order: u64,
+    /// A generated utility's class: the last tie-break of the canonical order (U1 E2).
+    pub(crate) utility: Option<Atom>,
+    /// A dropped utility rule (U1 E2 GC): never matched, compacted by the next rebuild.
+    pub(crate) dead: bool,
+    pub(crate) layer_rank: u32,
+    pub(crate) media_ok: bool,
+}
+
+impl Entry {
+    /// The cascade's source-order key after specificity (U1 E2: utilities in canonical order).
+    fn order_key(&self) -> (u64, &str) {
+        (self.order, self.utility.as_deref().unwrap_or(""))
+    }
 }
 
 /// Caches reused across the elements of one restyle pass (`:nth-child` and `:has`). Clear them, or
@@ -74,15 +89,21 @@ impl MatchCaches {
 
 /// The sheets and cascade of one backend's table.
 pub struct Stylist {
-    table: &'static Table,
-    entries: Vec<Entry>,
+    pub(crate) table: &'static Table,
+    pub(crate) entries: Vec<Entry>,
     next_sheet: u32,
     next_order: u32,
     /// Layer names in order of first appearance across the sheets.
-    layers: Vec<Atom>,
+    pub(crate) layers: Vec<Atom>,
+    /// Each layer's rank, as of the last rebuild.
+    pub(crate) layer_rank: HashMap<Atom, u32>,
     index: RuleIndex,
-    media: MediaEnv,
+    pub(crate) media: MediaEnv,
     invalidation: Invalidation,
+    /// Full rebuilds of the index so far (U1: utilities are appended without one).
+    pub(crate) rebuilds: u64,
+    /// U1 E2: the generated utility rules' bookkeeping.
+    pub(crate) utilities: crate::utility::Layer,
 }
 
 /// Rule selectors bucketed by one compound's id, else a class, else its tag (Stylo's
@@ -126,9 +147,12 @@ impl Stylist {
             next_sheet: 0,
             next_order: 0,
             layers: Vec::new(),
+            layer_rank: HashMap::new(),
             index: RuleIndex::default(),
             media: MediaEnv::default(),
             invalidation: Invalidation::default(),
+            rebuilds: 0,
+            utilities: crate::utility::Layer::default(),
         }
     }
 
@@ -171,9 +195,9 @@ impl Stylist {
                     diags.push(diag);
                 }
             }
-            let order = self.next_order;
+            let order = self.next_order as u64;
             self.next_order += 1;
-            self.entries.push(Entry { sheet: id, origin, rule: rule.clone(), order, layer_rank: 0, media_ok: true });
+            self.entries.push(Entry { sheet: id, origin, rule: rule.clone(), order, utility: None, dead: false, layer_rank: 0, media_ok: true });
         }
         self.rebuild();
         (id, diags)
@@ -205,14 +229,19 @@ impl Stylist {
         flipped
     }
 
-    fn rebuild(&mut self) {
-        let ranks = layer_ranks(&self.layers);
+    /// Re-ranks the layers and rebuilds the rule index and the invalidation maps from every entry
+    /// (dropped utility rules are compacted away first).
+    pub(crate) fn rebuild(&mut self) {
+        self.rebuilds += 1;
+        self.entries.retain(|e| !e.dead);
+        self.utilities.dead = 0;
+        self.layer_rank = layer_ranks(&self.layers);
         self.index = RuleIndex::default();
         self.invalidation = Invalidation::default();
         let env = self.media;
         for (i, e) in self.entries.iter_mut().enumerate() {
             e.layer_rank = match &e.rule.layer {
-                Some(l) => ranks.get(l).copied().unwrap_or(u32::MAX),
+                Some(l) => self.layer_rank.get(l).copied().unwrap_or(u32::MAX),
                 None => u32::MAX,
             };
             e.media_ok = e.rule.media.iter().all(|m| m.matches(&env));
@@ -221,6 +250,28 @@ impl Stylist {
                 self.invalidation.add_selector(sel);
             }
         }
+    }
+
+    /// U1 E2: appends one rule without a rebuild: its layer must already be ranked (else the
+    /// caller rebuilds), and it goes into the index and the invalidation maps as `rebuild` puts it.
+    pub(crate) fn append_entry(&mut self, mut e: Entry) {
+        e.layer_rank = match &e.rule.layer {
+            Some(l) => self.layer_rank.get(l).copied().unwrap_or(u32::MAX),
+            None => u32::MAX,
+        };
+        e.media_ok = e.rule.media.iter().all(|m| m.matches(&self.media));
+        let i = self.entries.len() as u32;
+        for (s, sel) in e.rule.selectors.slice().iter().enumerate() {
+            self.index.insert(i, s as u16, sel);
+            self.invalidation.add_selector(sel);
+        }
+        self.entries.push(e);
+    }
+
+    /// Full rebuilds of the rule index so far (each `add_sheet`/`remove_sheet` makes one; the
+    /// utility layer appends without one). For tests and stats.
+    pub fn rebuild_count(&self) -> u64 {
+        self.rebuilds
     }
 
     /// The rules that match `el`, in cascade order of their normal declarations (origin, layer,
@@ -278,7 +329,7 @@ impl Stylist {
         let mut out: Vec<MatchedRule> = Vec::new();
         for (r, s) in candidates {
             let e = &self.entries[r as usize];
-            if !e.media_ok {
+            if !e.media_ok || e.dead {
                 continue;
             }
             let sel = &e.rule.selectors.slice()[s as usize];
@@ -301,7 +352,7 @@ impl Stylist {
         }
         out.sort_by_key(|m| {
             let e = &self.entries[m.rule.0 as usize];
-            (e.origin, e.layer_rank, m.specificity, e.order)
+            (e.origin, e.layer_rank, m.specificity, e.order_key())
         });
         out
     }
@@ -346,8 +397,8 @@ impl Stylist {
 
     fn order_decls<'s>(&'s self, matched: &[MatchedRule], inline: Option<&'s DeclBlock>) -> Vec<&'s Declaration> {
         // (origin and importance, layer, specificity, source order)
-        type Key = (u8, u32, u32, u32);
-        let mut keyed: Vec<(Key, &Declaration)> = Vec::new();
+        type Key<'k> = (u8, u32, u32, (u64, &'k str));
+        let mut keyed: Vec<(Key<'s>, &Declaration)> = Vec::new();
         for m in matched {
             let e = &self.entries[m.rule.0 as usize];
             for d in &e.rule.block.decls {
@@ -361,12 +412,12 @@ impl Stylist {
                     (true, Origin::Theme) => 5,
                 };
                 let layer = if d.important { u32::MAX - e.layer_rank } else { e.layer_rank };
-                keyed.push(((rank, layer, m.specificity, e.order), d));
+                keyed.push(((rank, layer, m.specificity, e.order_key()), d));
             }
         }
         if let Some(block) = inline {
             for (i, d) in block.decls.iter().enumerate() {
-                keyed.push(((if d.important { 4 } else { 2 }, 0, 0, i as u32), d));
+                keyed.push(((if d.important { 4 } else { 2 }, 0, 0, (i as u64, "")), d));
             }
         }
         keyed.sort_by_key(|(k, _)| *k);
@@ -505,7 +556,7 @@ const CSS_WIDE: &[&str] = &["inherit", "initial", "unset", "revert", "revert-lay
 
 /// The table's verdict on one declaration: unknown property (warning: another backend may have
 /// it), a bad value (error), or a rule setting an inline-only property.
-fn check_decl(table: &'static Table, d: &Declaration, inline: bool) -> Option<Diagnostic> {
+pub(crate) fn check_decl(table: &'static Table, d: &Declaration, inline: bool) -> Option<Diagnostic> {
     if d.is_custom() {
         return None;
     }

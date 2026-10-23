@@ -1219,6 +1219,15 @@ fn leaf(input: &mut Parser<'_>, cx: &ValueCx<'_>) -> VResult<Lin> {
 
 fn color(input: &mut Parser<'_>, cx: &ValueCx<'_>) -> VResult<Color> {
     use cssparser_color::Color as C;
+    // U1 E4: `color-mix()` (CSS Color 5 §2), what the `/50` opacity modifier of a colour utility
+    // emits; cssparser-color has no `color-mix()`
+    let start = input.state();
+    if let Ok(Token::Function(f)) = input.next()
+        && f.eq_ignore_ascii_case("color-mix")
+    {
+        return input.parse_nested_block(|i| color_mix(i, cx).map_err(ParseError::<String>::custom)).map_err(err_text);
+    }
+    input.reset(&start);
     let parsed = C::parse(input).map_err(|_| "not a colour".to_string())?;
     let opt = |v: Option<f32>| v.unwrap_or(0.0);
     let alpha = |a: Option<f32>| a.unwrap_or(1.0).clamp(0.0, 1.0);
@@ -1249,6 +1258,92 @@ fn color(input: &mut Parser<'_>, cx: &ValueCx<'_>) -> VResult<Color> {
             srgb(rgb, alpha(f.alpha))
         }
     })
+}
+
+/// The colour spaces `color-mix()` interpolates in.
+#[derive(Clone, Copy)]
+enum MixSpace {
+    Srgb,
+    SrgbLinear,
+    Oklab,
+}
+
+/// The inside of `color-mix(in <space>, <color> [<p>%]?, <color> [<p>%]?)` (CSS Color 5 §2):
+/// percentages normalised to sum to 100% (a sum below 100% scales the alpha), premultiplied
+/// interpolation in sRGB, linear sRGB or OKLab.
+fn color_mix(input: &mut Parser<'_>, cx: &ValueCx<'_>) -> VResult<Color> {
+    input.expect_ident_matching("in").map_err(|_| "color-mix(): expected `in <colour space>`".to_string())?;
+    let space = match input.expect_ident_cloned().map_err(|_| "color-mix(): expected a colour space".to_string())?.to_ascii_lowercase().as_str() {
+        "srgb" => MixSpace::Srgb,
+        "srgb-linear" => MixSpace::SrgbLinear,
+        "oklab" => MixSpace::Oklab,
+        other => return Err(format!("color-mix(): the {other} colour space is not supported (srgb, srgb-linear, oklab)")),
+    };
+    let mut stops = Vec::with_capacity(2);
+    for _ in 0..2 {
+        input.expect_comma().map_err(|_| "color-mix(): expected two colours separated by commas".to_string())?;
+        let before = input.try_parse(|i| i.expect_percentage()).ok();
+        let c = color(input, cx)?;
+        let p = before.or_else(|| input.try_parse(|i| i.expect_percentage()).ok());
+        if let Some(p) = p
+            && !(0.0..=1.0).contains(&p)
+        {
+            return Err(format!("color-mix(): {}% is not between 0% and 100%", p * 100.0));
+        }
+        stops.push((c, p));
+    }
+    if !input.is_exhausted() {
+        return Err("color-mix(): unexpected input after the second colour".into());
+    }
+    let (p1, p2) = match (stops[0].1, stops[1].1) {
+        (None, None) => (0.5, 0.5),
+        (Some(a), None) => (a, 1.0 - a),
+        (None, Some(b)) => (1.0 - b, b),
+        (Some(a), Some(b)) => (a, b),
+    };
+    let sum = p1 + p2;
+    if sum <= 0.0 {
+        return Err("color-mix(): the percentages add up to 0%".into());
+    }
+    let (w1, w2) = (p1 / sum, p2 / sum);
+    let to = |c: Color| -> [f32; 4] {
+        let [x, y, z] = match space {
+            MixSpace::Srgb => [c.r, c.g, c.b],
+            MixSpace::SrgbLinear => [linear(c.r), linear(c.g), linear(c.b)],
+            MixSpace::Oklab => srgb_to_oklab(c.r, c.g, c.b),
+        };
+        [x * c.a, y * c.a, z * c.a, c.a]
+    };
+    let (a, b) = (to(stops[0].0), to(stops[1].0));
+    let m: [f32; 4] = std::array::from_fn(|k| a[k] * w1 + b[k] * w2);
+    let alpha = m[3];
+    let un = |v: f32| if alpha > 0.0 { v / alpha } else { 0.0 };
+    let (r, g, bb) = match space {
+        MixSpace::Srgb => (un(m[0]), un(m[1]), un(m[2])),
+        MixSpace::SrgbLinear => (gamma(un(m[0])), gamma(un(m[1])), gamma(un(m[2]))),
+        MixSpace::Oklab => oklab_to_srgb(un(m[0]), un(m[1]), un(m[2])),
+    };
+    let alpha = alpha * sum.min(1.0);
+    Ok(Color { r: r.clamp(0.0, 1.0), g: g.clamp(0.0, 1.0), b: bb.clamp(0.0, 1.0), a: alpha.clamp(0.0, 1.0) })
+}
+
+/// Gamma-encoded sRGB → linear-light sRGB.
+fn linear(c: f32) -> f32 {
+    if c.abs() <= 0.04045 { c / 12.92 } else { c.signum() * ((c.abs() + 0.055) / 1.055).powf(2.4) }
+}
+
+/// Gamma-encoded sRGB → OKLab (CSS Color 4 §17, the inverse of [`oklab_to_srgb`]).
+fn srgb_to_oklab(r: f32, g: f32, b: f32) -> [f32; 3] {
+    let (r, g, b) = (linear(r), linear(g), linear(b));
+    let l = 0.412_221_46 * r + 0.536_332_55 * g + 0.051_445_995 * b;
+    let m = 0.211_903_5 * r + 0.680_699_5 * g + 0.107_396_96 * b;
+    let s = 0.088_302_46 * r + 0.281_718_85 * g + 0.629_978_7 * b;
+    let (l, m, s) = (l.cbrt(), m.cbrt(), s.cbrt());
+    [
+        0.210_454_26 * l + 0.793_617_8 * m - 0.004_072_047 * s,
+        1.977_998_5 * l - 2.428_592_2 * m + 0.450_593_7 * s,
+        0.025_904_037 * l + 0.782_771_77 * m - 0.808_675_77 * s,
+    ]
 }
 
 fn hue01(h: Option<f32>) -> f32 {
@@ -1385,6 +1480,32 @@ mod tests {
         assert!(v(&COL, "currentcolor").is_err());
         let with = ValueCx { current_color: Some(Color { r: 1.0, g: 0.0, b: 0.0, a: 1.0 }), ..cx() };
         assert_eq!(parse_value(&COL, "currentColor", &with), Ok(ComputedValue::Color(Color { r: 1.0, g: 0.0, b: 0.0, a: 1.0 })));
+    }
+
+    /// U1 E4: `color-mix()`, as the `/50` opacity modifier emits it.
+    #[test]
+    fn color_mix() {
+        let c = |t: &str| match v(&COL, t) {
+            Ok(ComputedValue::Color(c)) => c.rgba8(),
+            other => panic!("{t}: {other:?}"),
+        };
+        // mixing with transparent keeps the colour and scales its alpha (premultiplied)
+        assert_eq!(c("color-mix(in oklab, #0078d4 50%, transparent)"), [0, 120, 212, 128]);
+        assert_eq!(c("color-mix(in srgb, #ff0000 25%, transparent)"), [255, 0, 0, 64]);
+        assert_eq!(c("color-mix(in oklab, transparent, #00ff00 100%)"), [0, 255, 0, 255]);
+        // even mixes; the omitted percentage is the rest
+        assert_eq!(c("color-mix(in srgb, #ff0000, #0000ff)"), [128, 0, 128, 255]);
+        assert_eq!(c("color-mix(in srgb, #ff0000 75%, #0000ff)"), [191, 0, 64, 255]);
+        assert_eq!(c("color-mix(in srgb, 25% #ff0000, #0000ff 75%)"), [64, 0, 191, 255]);
+        assert_eq!(c("color-mix(in srgb-linear, black, white)"), [188, 188, 188, 255]);
+        assert_eq!(c("color-mix(in oklab, white, white)"), [255, 255, 255, 255]);
+        // percentages below 100% in total scale the alpha
+        assert_eq!(c("color-mix(in srgb, #ff0000 20%, #ff0000 30%)"), [255, 0, 0, 128]);
+        // nested, and inside a colour list
+        assert_eq!(c("color-mix(in srgb, color-mix(in srgb, red, blue), blue 50%)"), [64, 0, 191, 255]);
+        for bad in ["color-mix(in hsl, red, blue)", "color-mix(red, blue)", "color-mix(in srgb, red)", "color-mix(in srgb, red 0%, blue 0%)", "color-mix(in srgb, red 120%, blue)", "color-mix(in srgb, red, blue, green)"] {
+            assert!(v(&COL, bad).is_err(), "{bad}");
+        }
     }
 
     #[test]
