@@ -11,7 +11,7 @@
    kinds and states arrive with DS2's engine features (outline, cursor, per-side borders,
    box-shadow) and DS3's affordance rules. */
 
-@layer sv.tokens, sv.base, sv.affordance;
+@layer sv.tokens, sv.base, sv.affordance, components, utilities;
 
 @layer sv.base {
   /* OW2: the panel's chrome surface (the window's is its UA, `windows::WINDOW_UA`), and R15's edge shadows on a scroll area scrolled away from its top or
