@@ -1,21 +1,17 @@
 ---
 title: Icons
 description: "The icon registry: keys, extension namespaces, registering icons and sets, optical sizes, tint and colour slots."
-status: pending   # ICR1 is on ci/icr1 (102b4ffb), not yet merged into master
-verified_at: ci/icr1@102b4ffb
+status: available
+verified_at: 4f474ae8
 sources:
-  - crates/svelters-egui/src/icons.rs        # on ci/icr1
+  - crates/svelters-egui/src/icons.rs
+  - crates/svelters-egui/src/widgets/image.rs # the own `icon` widget
   - crates/svelters-egui/src/paint/icon.rs
-  - plans/milestones/ICR1-icon-registry.md   # on ci/icr1
+  - plans/milestones/ICR1-icon-registry.md
   - plans/research/ICON-STYLE.md
 ---
 
 # Icons
-
-> **Pending merge.** This page describes the icon registry as built on `ci/icr1` (102b4ffb). Until it
-> merges, master has only the font-glyph path: `<icon name family>` over a font family the embedder
-> registers with `fonts::register_icons`. Check `docs/egui/status.md` or `STATUS.md` (ICR1 row) at
-> your pin.
 
 Icons are drawn from a Rust **`IconRegistry`**: a key maps to SVG drawings at several optical sizes (or to
 a font glyph). The registry picks the drawing for the box's size in physical pixels, rasterises it once
@@ -49,6 +45,7 @@ From Svelte, by key (the `icon` kind's `family` defaults to `icons`):
 - `size` is the box in points (16 when unset). The icon is tinted with CSS `color`.
 - `frame` draws it as an icon button (role `Button`, takes focus); `selected` gives the toggle look.
 - An unregistered key falls back to the font-glyph path (its placeholder box if no font has it).
+  `paint::is_registered(ctx, &IconKey::key(name))` tells which.
 
 On own widgets' glyph parts, from CSS:
 
@@ -119,7 +116,9 @@ is rasterised at the drawn pixel size and painted 1:1.
   stroke overrides, and no other variables. With any slot set, the icon is painted untinted, so a warning
   yellow stays yellow. Elements that inherit `currentColor` paints are made local first, so a classed
   group's inherited stroke takes its slot.
-- Each distinct slot set is one cached raster per key and size.
+- Rasters are always made at the drawn physical size, so zoom stays crisp. Each key keeps at most
+  `icons::RASTERS_PER_KEY` (6) rasters, the least recently drawn evicted first, so earlier zoom levels
+  and colour sets go. `icons::cached_rasters(ctx, key)` reports the count.
 - **State belongs to the control, not the glyph.** Pressed, selected and hover visuals come from the
   framed icon or the host widget.
 
@@ -139,4 +138,3 @@ pass `IconStyle::high_contrast` yourself.
 
 - `svelters:icons` (JS registration), built-in sets, HC detection from the theme.
 - `content: icon(a.b+badge)` and `icon(family:name)` in CSS.
-- The texture cache has no bound across distinct colour sets.

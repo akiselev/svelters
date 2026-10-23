@@ -352,16 +352,6 @@ impl Metrics {
                 let rows = if *multiline { 4.0 } else { 1.0 };
                 vec2(sp.text_edit_width, (rows * self.row_height() + 4.0).max(interact.y))
             }
-            W::Slider { text, show_value, .. } => {
-                let mut wdt = sp.slider_width;
-                if *show_value {
-                    wdt += sp.item_spacing.x + interact.x;
-                }
-                if !text.is_empty() {
-                    wdt += sp.item_spacing.x + self.text_size(text, None).x;
-                }
-                vec2(wdt, interact.y)
-            }
             W::Box | W::Window { .. } | W::Grid { .. } | W::VirtualList(_) => Vec2::ZERO,
             // ---- WG2a ----
             W::Menu(x) => crate::menus::measure(self, x, css),
@@ -371,8 +361,6 @@ impl Metrics {
             W::Hyperlink { .. }
             | W::RadioButton { .. }
             | W::Switch { .. }
-            | W::RangeSlider { .. }
-            | W::DragValue { .. }
             | W::Sides
             | W::Frame { .. }
             | W::Stack { .. }
@@ -382,7 +370,6 @@ impl Metrics {
             | W::Canvas(_) => crate::elements::intrinsic(self, w),
             // WG4a: the views' own size (`crate::views::intrinsic`)
             W::Table(_) | W::TableColumn { .. } | W::TabView { .. } | W::Tab { .. } | W::ToastHost(_) => crate::views::intrinsic(self, w),
-            W::Picker(p) => p.measure(self), // WG4b
             // ---- WG1 ----
             W::ToggleButton { text, weight, .. } => {
                 let t = self.text_size_in(text, self.weighted(text, *weight), None);

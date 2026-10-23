@@ -28,6 +28,7 @@
 use crate::interact::{Hoverable, Pressable};
 use crate::paint::{self, Align, Elide, Ua, UaRule, UaValue::*};
 use crate::provider::{A11yCx, AvailableSpace, Event, MeasureCx, Widget, WidgetCx};
+use crate::scene::NodeId;
 use crate::rich::Rich;
 use egui::text::CCursor;
 use egui::text_selection::{CCursorRange, TextCursorState};
@@ -77,29 +78,8 @@ pub struct Label {
 }
 
 impl Label {
-    /// The cut, if any: `elide`, `wrap-mode="truncate"` (an end cut) or `text-overflow: ellipsis`.
-    fn elision(&self, s: &paint::StyleView<'_>) -> Option<Elide> {
-        Elide::parse(&self.elide).or_else(|| (self.wrap_mode == "truncate").then_some(Elide::End)).or_else(|| Elide::of_style(s))
-    }
-
-    /// The plain galley at `width`.
-    fn galley(&self, ctx: &egui::Context, s: &paint::StyleView<'_>, width: Option<f32>) -> std::sync::Arc<egui::Galley> {
-        match (self.elision(s), self.wrap_mode.as_str(), width) {
-            (Some(mode), _, Some(w)) => paint::text_galley(ctx, s, &paint::elide(ctx, s, &self.text, mode, w), None),
-            (None, "wrap", Some(w)) => paint::text_galley(ctx, s, &self.text, Some(w)),
-            _ => paint::text_galley(ctx, s, &self.text, None),
-        }
-    }
-
-    #[allow(clippy::too_many_arguments)]
-    /// RT2: the rich galley at `width` (`wrap` wraps, `truncate` cuts the paragraph at the end).
-    fn rich_galley(&self, ctx: &egui::Context, style: &egui::Style, s: &paint::StyleView<'_>, rich: &Rich, colors: crate::rich::Colors, width: Option<f32>, lit: Option<crate::scene::NodeId>) -> std::sync::Arc<egui::Galley> {
-        let wrap = (self.wrap_mode == "wrap").then_some(width).flatten();
-        let mut job = crate::rich::layout_job_at(ctx, style, s.font_size(), rich, colors, wrap, lit);
-        if let (Some(w), true) = (width, self.wrap_mode == "truncate" || self.elision(s).is_some()) {
-            job.wrap = egui::text::TextWrapping::truncate_at_width(w);
-        }
-        ctx.fonts_mut(|f| f.layout_job(job))
+    fn look<'a>(&'a self, rich: Option<RichText<'a>>) -> Look<'a> {
+        Look { text: &self.text, wrap_mode: &self.wrap_mode, elide: &self.elide, rich }
     }
 
     /// The own label's text and weight (`crate::rich::collect`).
@@ -177,22 +157,100 @@ impl Label {
     }
 }
 
+/// What a label shows, from its props: the kind's and `imm::Label`'s (OW-RUST).
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct Look<'a> {
+    pub text: &'a str,
+    /// `wrap`, `truncate` or `extend`.
+    pub wrap_mode: &'a str,
+    /// `none`, `start`, `middle`, `end`.
+    pub elide: &'a str,
+    /// OW1a3: RT2's runs, when the label has run children (one paragraph instead of `text`).
+    pub rich: Option<RichText<'a>>,
+}
+
+/// OW1a3: a rich label's paragraph and what it is laid out with.
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct RichText<'a> {
+    pub rich: &'a Rich,
+    /// egui's style (the body font family; `fonts::text_font` per run weight).
+    pub style: &'a egui::Style,
+    pub colors: crate::rich::Colors,
+    /// The link drawn underlined (hover or focus, R18).
+    pub lit: Option<NodeId>,
+}
+
+impl Look<'_> {
+    /// The cut, if any: `elide`, `wrap-mode="truncate"` (an end cut) or `text-overflow: ellipsis`.
+    fn elision(&self, s: &paint::StyleView<'_>) -> Option<Elide> {
+        Elide::parse(self.elide).or_else(|| (self.wrap_mode == "truncate").then_some(Elide::End)).or_else(|| Elide::of_style(s))
+    }
+
+    /// The text shown (a rich label's: all runs).
+    pub fn shown(&self) -> &str {
+        self.rich.map_or(self.text, |r| r.rich.plain.as_str())
+    }
+
+    /// The galley at `width`: RT2's paragraph at the label's CSS font size (`wrap` wraps, a cut
+    /// truncates it at the end), else the plain text.
+    fn galley(&self, ctx: &egui::Context, s: &paint::StyleView<'_>, width: Option<f32>) -> std::sync::Arc<egui::Galley> {
+        if let Some(r) = self.rich {
+            let wrap = (self.wrap_mode == "wrap").then_some(width).flatten();
+            let mut job = crate::rich::layout_job_at(ctx, r.style, s.font_size(), r.rich, r.colors, wrap, r.lit);
+            if let (Some(w), true) = (width, self.wrap_mode == "truncate" || self.elision(s).is_some()) {
+                job.wrap = egui::text::TextWrapping::truncate_at_width(w);
+            }
+            return ctx.fonts_mut(|f| f.layout_job(job));
+        }
+        match (self.elision(s), self.wrap_mode, width) {
+            (Some(mode), _, Some(w)) => paint::text_galley(ctx, s, &paint::elide(ctx, s, self.text, mode, w), None),
+            (None, "wrap", Some(w)) => paint::text_galley(ctx, s, self.text, Some(w)),
+            _ => paint::text_galley(ctx, s, self.text, None),
+        }
+    }
+}
+
+/// Its size under `s` (with the `font-weight` prop) in `avail`.
+pub(crate) fn measure(ctx: &egui::Context, s: &paint::StyleView<'_>, look: &Look, avail: AvailableSpace) -> egui::Vec2 {
+    if look.rich.is_some() {
+        let w = match avail {
+            AvailableSpace::Definite(w) if look.wrap_mode == "wrap" => Some(w),
+            _ => None,
+        };
+        return look.galley(ctx, s, w).size();
+    }
+    match (look.wrap_mode, avail) {
+        ("wrap", AvailableSpace::Definite(w)) if look.elision(s).is_none() => paint::measure_text(ctx, s, look.text, AvailableSpace::Definite(w)),
+        _ => paint::measure_text(ctx, s, look.text, AvailableSpace::MaxContent),
+    }
+}
+
+/// The galley in `r` under `s`, and the rect its text takes (the label's hit area and drawn
+/// rect, as egui's label; on whole pixels, where [`paint`] draws it).
+pub(crate) fn layout(ctx: &egui::Context, s: &paint::StyleView<'_>, look: &Look, r: egui::Rect) -> (std::sync::Arc<egui::Galley>, egui::Rect) {
+    let w = (look.wrap_mode != "extend" || look.elision(s).is_some()).then(|| r.width());
+    let g = look.galley(ctx, s, w);
+    let size = g.size();
+    let x = match Align::of(s, Align::Start) {
+        Align::Start => r.left(),
+        Align::Center => r.center().x - size.x / 2.0,
+        Align::End => r.right() - size.x,
+    };
+    let ppp = ctx.pixels_per_point();
+    let min = egui::pos2(((x * ppp).round()) / ppp, ((r.center().y - size.y / 2.0) * ppp).round() / ppp);
+    (g, egui::Rect::from_min_size(min, size))
+}
+
+/// Paints `g` (from [`layout`]) in `r` under `s`. The kind and `imm::Label` (OW-RUST) call it.
+pub(crate) fn paint(pc: &mut paint::PaintCx<'_>, s: &paint::StyleView<'_>, g: &std::sync::Arc<egui::Galley>, r: egui::Rect) {
+    paint::paint_text(pc, s, g, r, Align::of(s, Align::Start));
+}
+
 impl Widget for Label {
     fn measure(&mut self, cx: &mut MeasureCx<'_>, avail: AvailableSpace) -> egui::Vec2 {
-        let s = cx.style(UA).with_font_weight(Some(self.font_weight));
-        if let Some(rich) = &self.rich {
-            let colors = crate::rich::Colors { text: egui::Color32::WHITE, link: egui::Color32::WHITE };
-            let w = match avail {
-                AvailableSpace::Definite(w) if self.wrap_mode == "wrap" => Some(w),
-                _ => None,
-            };
-            let job = crate::rich::layout_job_at(cx.ctx, cx.style, s.font_size(), rich, colors, w, None);
-            return cx.ctx.fonts_mut(|f| f.layout_job(job)).size();
-        }
-        match (self.wrap_mode.as_str(), avail) {
-            ("wrap", AvailableSpace::Definite(w)) if self.elision(&s).is_none() => paint::measure_text(cx.ctx, &s, &self.text, AvailableSpace::Definite(w)),
-            _ => paint::measure_text(cx.ctx, &s, &self.text, AvailableSpace::MaxContent),
-        }
+        let colors = crate::rich::Colors { text: egui::Color32::WHITE, link: egui::Color32::WHITE };
+        let rich = self.rich.as_deref().map(|rich| RichText { rich, style: cx.style, colors, lit: None });
+        measure(cx.ctx, &cx.style(UA).with_font_weight(Some(self.font_weight)), &self.look(rich), avail)
     }
 
     fn ui(&mut self, ui: &mut egui::Ui, cx: &mut WidgetCx<'_>) -> egui::Response {
@@ -213,25 +271,10 @@ impl Widget for Label {
             let st = cx.style(UA);
             crate::rich::Colors { text: st.color("color").unwrap_or(ui.visuals().text_color()), link: ui.visuals().hyperlink_color }
         };
+        let rich_at = |lit| rich.as_ref().map(|rich| RichText { rich, style: ui.style(), colors, lit });
         // the galley first: the label's hit area and drawn rect are its text (as egui's label)
-        let (mut g, text_rect) = {
-            let st = cx.style(UA).with_font_weight(Some(self.font_weight));
-            let w = (self.wrap_mode != "extend" || self.elision(&st).is_some()).then(|| cx.rect().width());
-            let g = match &rich {
-                Some(r) => self.rich_galley(ui.ctx(), ui.style(), &st, r, colors, w, lit),
-                None => self.galley(ui.ctx(), &st, w),
-            };
-            let (r, size) = (cx.rect(), g.size());
-            let x = match Align::of(&st, Align::Start) {
-                Align::Start => r.left(),
-                Align::Center => r.center().x - size.x / 2.0,
-                Align::End => r.right() - size.x,
-            };
-            let ppp = ui.ctx().pixels_per_point();
-            let min = egui::pos2(x, r.center().y - size.y / 2.0);
-            (g, egui::Rect::from_min_size(egui::pos2((min.x * ppp).round() / ppp, (min.y * ppp).round() / ppp), size))
-        };
-        let shown = rich.as_ref().map_or_else(|| self.text.clone(), |r| r.plain.clone());
+        let (mut g, text_rect) = layout(ui.ctx(), &cx.style(UA).with_font_weight(Some(self.font_weight)), &self.look(rich_at(lit)), cx.rect());
+        let shown = self.look(rich_at(lit)).shown().to_string();
         let elided = g.job.text != shown;
         let mut sense = if clickable { self.units_sense() } else { egui::Sense::hover() };
         if self.selectable {
@@ -255,11 +298,10 @@ impl Widget for Label {
             let (activated, lit_now) = crate::rich::link_pass(cx.scene_mut(), ui, r, &links, &g, text_rect.min, ring);
             if lit_now != lit {
                 // a hover or focus that began this frame restyles the link before it is drawn
-                let rich = crate::rich::collect_runs(cx.scene_mut(), me, &self.text, self.font_weight);
-                if let Some(r) = &rich {
-                    let st = cx.style(UA).with_font_weight(Some(self.font_weight));
-                    let w = (self.wrap_mode != "extend" || self.elision(&st).is_some()).then(|| cx.rect().width());
-                    g = self.rich_galley(ui.ctx(), ui.style(), &st, r, colors, w, lit_now);
+                let again = crate::rich::collect_runs(cx.scene_mut(), me, &self.text, self.font_weight);
+                if let Some(rich) = &again {
+                    let look = self.look(Some(RichText { rich, style: ui.style(), colors, lit: lit_now }));
+                    g = layout(ui.ctx(), &cx.style(UA).with_font_weight(Some(self.font_weight)), &look, cx.rect()).0;
                 }
             }
             let (s, out) = cx.scene_out();
@@ -270,8 +312,7 @@ impl Widget for Label {
             egui::text_selection::visuals::paint_text_selection(&mut g, ui.visuals(), range, None);
         }
         if ui.is_rect_visible(cx.rect()) {
-            let st = cx.style(UA).with_font_weight(Some(self.font_weight));
-            paint::paint_text(&mut cx.paint_cx(ui), &st, &g, cx.rect(), Align::of(&st, Align::Start));
+            paint(&mut cx.paint_cx(ui), &cx.style(UA).with_font_weight(Some(self.font_weight)), &g, cx.rect());
         }
         if let Some((_, eid)) = target {
             // AccessKit: the label names its buddy (`labelled_by` on the target's node)

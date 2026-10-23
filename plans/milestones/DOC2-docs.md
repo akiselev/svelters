@@ -65,8 +65,23 @@ START-HERE should link them. Paths follow DOCS-PLAN §5.2 (`loading-code.md`, `h
 11. `rust/own-widgets.md` is 318 lines, over DOCS-PLAN §4's 300-line target, because of the full example.
     A later pass can move the example to `examples/egui-docs` once DOC4's snippet checker exists.
 
-12. **OW5a is on `ci/ow5a`** (d80f80e5), not on master. The list-rows section of `css/own-widgets.md` follows
-    its record and is marked pending. When it merges, drop the banner.
+12. OW5a: resolved in the follow-up below.
+
+## Follow-up (after OW1a2 and OW3 merged)
+
+- OW1a2 (ba5f7239): the pending markers on `Expandable`, `Roving` and `with_peer` are gone, and the
+  worked examples point to master.
+- OW3 (e832e001): `rust/own-widgets.md` documents `RovingList` (an index inside one widget) next to
+  OW1a2's `Roving` (focus across sibling nodes), when to use each, and a "Floating surfaces and tooltips"
+  section (`Anchored`, `Dismissable`, `Typeahead`, `Tooltipable`; the common `tooltip` prop needs no
+  widget code; `widgets::tooltip::{show, hide, is_shown}`).
+- Gap 1, updated: `css/own-widgets.md` now has a per-widget table of which parts read `::part()` on
+  master. Still on built-in tables: checkbox `mark`, radio `dot`, switch `knob`, frame `indicator`/`mark`,
+  progress `track`/`fill`, collapsing `header`/`twistie`.
+- `docs/egui/START-HERE.md`: the index of every docs/egui page, with one line on when to read each (coordinator, 2026-10-22). CLAUDE.md is the coordinator's and was not touched.
+- ICR1 merged (4f474ae8). `icons.md` is now `available`, without its banner, and covers what changed at merge: rasters at physical size, `RASTERS_PER_KEY` (6) with LRU eviction, `cached_rasters`, `paint::is_registered(ctx, &IconKey)`. That closes gap 8.
+- OW5a merged (62f06ce8). The list-rows section of `css/own-widgets.md` is now `available`, checked against the merged record (it adds `tree-view::part(twistie):expanded` and `virtual-list::part(thumb-y):hover`). START-HERE gained a line each for OW3's own menus, popup, select and tooltips, and for OW6's calendar, colour editor and pickers (links to their reference pages).
+- Gap 4 is resolved: `DEFAULT_OWN` now includes the OW1a/OW1a2 kinds (not `label`) and OW3's kinds.
 
 ## Not run
 

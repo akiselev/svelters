@@ -123,8 +123,10 @@ Buttons that open a picker for a date or colour.
 
 | Element | What it is |
 |---|---|
-| [`<color-picker>`](color-picker.md) | A colour swatch; clicking it opens egui's colour picker popup. |
-| [`<date-picker>`](date-picker.md) | A button showing a date; clicking it opens a calendar popup (Save/Cancel). |
+| [`<calendar>`](calendar.md) | An inline month calendar (Qt's `QCalendarWidget`): a header with previous/next, a weekday row, ISO week numbers and a 6×7 day grid. |
+| [`<color-editor>`](color-editor.md) | An inline colour editor (the body of Qt's `QColorDialog`, GTK's `ColorChooserWidget`): a saturation/value square, hue and alpha strips, hex and channel fields, a palette and custom colours. |
+| [`<color-picker>`](color-picker.md) | A colour swatch drop button; clicking it opens the colour editor (the `color-editor` kind's) in a popup. |
+| [`<date-picker>`](date-picker.md) | A drop button showing a date; clicking it opens the calendar (the `calendar` kind's) in a popup, with Save/Cancel unless `commit-mode="immediate"`. |
 
 ## Media
 

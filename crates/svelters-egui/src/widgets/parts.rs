@@ -31,6 +31,15 @@ pub(crate) fn part_of<'a>(cx: &'a WidgetCx<'_>, host: &'a StyleView<'a>, name: &
     if cx.part_css(name).is_some() { cx.part(host, name, ua) } else { part_view(host, ua, host_css) }
 }
 
+/// OW1a3: part `name`'s view from its computed style `css` (the scene-free cores' form of
+/// [`part_of`]: no transitions), else [`part_view`].
+pub(crate) fn part_with<'a>(host: &'a StyleView<'a>, css: Option<&'a svelters_style::ComputedStyle>, ua: Ua, host_css: bool) -> StyleView<'a> {
+    match css {
+        Some(c) => host.part(Some(c), ua),
+        None => part_view(host, ua, host_css),
+    }
+}
+
 /// OW1a3: [`part_of`] while measuring.
 pub(crate) fn measured_part<'a>(cx: &'a MeasureCx<'_>, host: &'a StyleView<'a>, name: &str, ua: Ua, host_css: bool) -> StyleView<'a> {
     match cx.part_css(name) {

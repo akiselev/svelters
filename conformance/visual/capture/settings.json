@@ -1,0 +1,23 @@
+{
+  "workbench.colorTheme": "Default Dark Modern",
+  "window.zoomLevel": -1.2239010857415449,
+  "window.titleBarStyle": "custom",
+  "window.dialogStyle": "custom",
+  "window.menuStyle": "custom",
+  "workbench.tree.indent": 8,
+  "editor.fontSize": 14,
+  "editor.minimap.enabled": false,
+  "workbench.startupEditor": "none",
+  "workbench.tips.enabled": false,
+  "workbench.enableExperiments": false,
+  "workbench.secondarySideBar.defaultVisibility": "hidden",
+  "workbench.editor.enablePreview": false,
+  "workbench.hover.delay": 300,
+  "security.workspace.trust.enabled": false,
+  "update.mode": "none",
+  "telemetry.telemetryLevel": "off",
+  "extensions.autoCheckUpdates": false,
+  "chat.disableAIFeatures": true,
+  "window.restoreWindows": "none",
+  "git.enabled": false
+}

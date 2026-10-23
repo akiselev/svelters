@@ -388,6 +388,16 @@ pub trait Widget: 'static {
     fn text_input(&self) -> Option<bool> {
         None
     }
+    /// EV3b: an edit command for this text input (`text_input` is `Some`) from the host's Edit
+    /// menu (`Embed::text_command`: Undo, Redo, Cut, Copy, Paste, Select All, Delete), at its next
+    /// paint, just before `ui`, with the node's cx. Return true when the kind applied it itself
+    /// (its own undo stack, a host-owned document's undo); false (the default) feeds it to its egui
+    /// text field as the input it stands for (`Ctrl+Z`, `Event::Copy`, …). Through
+    /// `Embed::text_command` a Paste comes as the `Insert` of the host clipboard's text, and what a
+    /// Cut or Copy puts in egui's clipboard (`ui.ctx().copy_text`) also reaches the host's.
+    fn text_command(&mut self, _cmd: &crate::focus::TextCommand, _cx: &mut WidgetCx<'_>) -> bool {
+        false
+    }
 }
 
 pub use crate::layout::LayoutCx;
@@ -635,6 +645,11 @@ impl WidgetCx<'_> {
         host.part(self.part_css(name), ua).with_overlay(self.s.style.part_overlay(self.node, name))
     }
 
+    /// OW1b: the node's computed style (the cascade's), if a sheet reaches it.
+    pub fn computed(&self) -> Option<&svelters_style::ComputedStyle> {
+        self.s.style.computed(self.node).map(|c| &**c)
+    }
+
     /// A paint context on `ui`'s painter for this node (traced when the pass traces).
     pub fn paint_cx<'p>(&self, ui: &'p egui::Ui) -> crate::paint::PaintCx<'p> {
         let mut p = crate::paint::PaintCx::for_node(ui.painter(), self.node.to_raw());
@@ -671,6 +686,11 @@ impl WidgetCx<'_> {
     /// The node's egui id (use it for the widget's own id: focus and memory follow the node).
     pub fn id(&self) -> egui::Id {
         self.id
+    }
+    /// EV3b: the pass's egui context (from [`Widget::text_command`], where no `Ui` is at hand:
+    /// `cx.ctx().copy_text(..)` for a Cut or Copy).
+    pub fn ctx(&self) -> &egui::Context {
+        &self.ctx
     }
     /// The rect layout gave the node, in screen coordinates.
     pub fn rect(&self) -> egui::Rect {
@@ -762,6 +782,12 @@ impl WidgetCx<'_> {
     /// (arrows, Home/End, PageUp/PageDown), so Tab reaches it and the host keymap leaves them.
     pub fn record_part_focus(&mut self, ui: &egui::Ui, resp: &egui::Response) {
         crate::focus::record_with(self.s, self.i, ui, resp, crate::focus::Role::Slider, true);
+    }
+
+    /// OW6: puts a part's text entry (the colour editor's hex field) in EV3's tab order with a
+    /// one-line text field's keys, so focus stays on it while the user types.
+    pub fn record_part_text_focus(&mut self, ui: &egui::Ui, resp: &egui::Response) {
+        crate::focus::record_with(self.s, self.i, ui, resp, crate::focus::Role::Text { multiline: false }, true);
     }
 
     /// OW2: the node's rect from layout, in its root's coordinates (unscrolled content
@@ -1074,6 +1100,10 @@ pub trait ErasedWidget: Any {
     fn text_input(&self) -> Option<bool> {
         None
     }
+    /// EV3b: [`Widget::text_command`].
+    fn text_command(&mut self, _cmd: &crate::focus::TextCommand, _cx: &mut WidgetCx<'_>) -> bool {
+        false
+    }
 }
 
 impl<T: Widget + KindDecl> ErasedWidget for T {
@@ -1133,6 +1163,9 @@ impl<T: Widget + KindDecl> ErasedWidget for T {
     }
     fn text_input(&self) -> Option<bool> {
         Widget::text_input(self)
+    }
+    fn text_command(&mut self, cmd: &crate::focus::TextCommand, cx: &mut WidgetCx<'_>) -> bool {
+        Widget::text_command(self, cmd, cx)
     }
 }
 
@@ -1329,11 +1362,10 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
     let id = arena.core[i].egui_id;
     let state0 = arena.core[i].state;
     let dark = ui.ctx().theme() == egui::Theme::Dark;
-    // RA3: a provider text input gets EV3's pending edit command before its `ui`
+    // RA3: a provider text input gets EV3's pending edit command before its `ui`: EV3b, through
+    // its `text_command` first, else as the input it stands for
     let text_input = matches!(&arena.payload[i], crate::scene::node::Payload::Builtin(W::Ext(x)) if x.0.try_borrow().is_ok_and(|w| w.text_input().is_some()));
-    if text_input {
-        crate::focus::before_text(ui, id);
-    }
+    let pending = if text_input { crate::focus::take_command(ui.ctx(), id) } else { None };
     let ran = with_taken(arena, i, |w, s| {
         let mut cx = WidgetCx {
             s,
@@ -1356,6 +1388,11 @@ pub(crate) fn paint(arena: &mut crate::scene::Arena, i: usize, ui: &mut egui::Ui
             relayout: false,
             ctx: ui.ctx().clone(),
         };
+        if let Some(cmd) = pending
+            && !w.text_command(&cmd, &mut cx)
+        {
+            crate::focus::feed(ui.ctx(), cmd);
+        }
         let resp = w.ui(ui, &mut cx);
         if cx.repaint {
             ui.ctx().request_repaint();
@@ -1441,7 +1478,7 @@ fn flush_writes(
         let sig = reg.ext_signal_id(kind, e);
         if arena.listens(i, sig) {
             // OW0: an own widget's event keeps the built-in signal's arity (no args: no payload)
-            // (OW2: a list payload spreads over a built-in signal of several args: `changed(x, y)`)
+            // (OW1b, OW2: a list payload spreads over a built-in signal of several args: `changed(low, high)`)
             let n = if reg.provider(kind).is_none() { reg.signal_def(kind, sig).map(|d| d.args.len()) } else { None };
             let args = match (n, v) {
                 (Some(0), _) => vec![],

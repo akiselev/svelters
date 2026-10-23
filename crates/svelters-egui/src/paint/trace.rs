@@ -38,6 +38,13 @@ pub struct TraceEntry {
     pub stroke: Stroke,
     /// Text and icons: the font size.
     pub font_size: f32,
+    /// Boxes (`paint_box`) and outlines: the top-left corner radius.
+    pub radius: f32,
+    /// Boxes (`paint_box`): the padding, `[top, right, bottom, left]` (CSS order; VIS1c).
+    pub padding: [f32; 4],
+    /// The painter's opacity (`opacity` multiplied into the ui), which the colours above do not
+    /// include.
+    pub opacity: f32,
 }
 
 /// The traced shapes of one pass, in paint order.
