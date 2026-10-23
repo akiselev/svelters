@@ -48,6 +48,9 @@ const hidden = {
   'dom/task.js': ['queue_micro_task'],
   'context.js': ['getAllContexts', 'setContext'],
   'reactivity/async.js': ['capture', 'unset_context'],
+  // FX6: `recover` after an aborted entry
+  'runtime.js': ['set_is_destroying_effect', 'set_untracked_writes'],
+  'reactivity/batch.js': ['clear', 'schedule_effect', 'flushSync'],
   '../flags/index.js': ['enable_tracing_mode_flag'],
   'dev/equality.js': ['init_array_prototype_warnings'],
   // src/svelte.js re-exports Svelte's client entry and replaces these three
@@ -57,6 +60,9 @@ const hidden = {
 {
   const batch = await import(pathToFileURL(path.join(client, 'reactivity/batch.js')).href);
   check(typeof batch.is_flushing_sync === 'boolean', 'reactivity/batch.js no longer exports the boolean `is_flushing_sync`');
+  // FX6: `recover` flushes an empty batch, whose `finally` resets the scheduler's flags
+  check(typeof batch.Batch?.ensure === 'function' && typeof batch.Batch.prototype.flush === 'function', 'reactivity/batch.js no longer exports `Batch` with `ensure()` / `flush()`');
+  check(/flush\(\) \{\s*try \{[\s\S]*?\} finally \{[\s\S]*?is_processing = false;/.test(src('reactivity/batch.js')), "Batch.flush() no longer resets `is_processing` in its finally (FX6's `recover` relies on it)");
 }
 for (const [file, names] of Object.entries(hidden)) {
   let m = null;
@@ -72,7 +78,7 @@ for (const [file, names] of Object.entries(hidden)) {
 // 3. effect flag bits the adapter sets and reads
 const core = await import(pathToFileURL(path.join(runtimeDir, 'src/core/svelte.js')).href);
 const constants = await import(pathToFileURL(path.join(client, 'constants.js')).href);
-for (const n of ['BOUNDARY_EFFECT', 'DESTROYED', 'DESTROYING', 'INERT', 'REACTION_RAN', 'EFFECT_TRANSPARENT']) {
+for (const n of ['BOUNDARY_EFFECT', 'DESTROYED', 'DESTROYING', 'INERT', 'REACTION_RAN', 'EFFECT_TRANSPARENT', 'BRANCH_EFFECT', 'ROOT_EFFECT', 'CLEAN', 'DIRTY', 'MAYBE_DIRTY']) {
   check(constants[n] === core[n], `constants.js ${n} is ${constants[n]}, the adapter uses ${core[n]}`);
 }
 // RT1: the `$state` proxy marker, the same symbol Svelte's proxies answer to
@@ -115,4 +121,4 @@ if (failures.length) {
   console.error(`check-svelte-internals: ${failures.length} problem(s) with svelte ${version}:\n  ${failures.join('\n  ')}`);
   process.exit(1);
 }
-console.log(`check-svelte-internals: svelte ${version} provides everything the core adapter uses (${emittedNames().length} contract names, ${Object.values(hidden).flat().length} hidden-module functions, 6 flags, ${core.BOUNDARY_MEMBERS.length} Boundary members)`);
+console.log(`check-svelte-internals: svelte ${version} provides everything the core adapter uses (${emittedNames().length} contract names, ${Object.values(hidden).flat().length} hidden-module functions, 11 flags, ${core.BOUNDARY_MEMBERS.length} Boundary members)`);
