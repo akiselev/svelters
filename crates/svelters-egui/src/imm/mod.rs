@@ -411,9 +411,10 @@ pub(crate) fn icon_key(key: &str) -> crate::paint::IconKey {
     }
 }
 
-/// The one place `imm` paints an icon by key (`imm::Icon`, `imm::chrome::icon`): today's icon
-/// path (`paint::paint_icon`, the font glyph). ICR1 re-points this function at its registry
-/// (`icons::paint`, falling back to the glyph on an unknown key).
+/// The one place `imm` paints an icon by key (`imm::Icon`, `imm::chrome::icon`): the icon
+/// primitive, which draws a registered key through ICR1's `icons::paint` (registry of the
+/// context, whole-pixel box, the optical-size master rasterised at the box × `pixels_per_point`,
+/// ZM1) and falls back to the font glyph for any other key.
 pub(crate) fn paint_icon_key(pc: &mut PaintCx<'_>, v: &StyleView, key: &str, rect: egui::Rect) {
     crate::paint::paint_icon(pc, v, &icon_key(key), rect);
 }

@@ -115,11 +115,15 @@ pub fn font(ctx: &egui::Context, st: &Styled) -> egui::FontId {
     paint::text_font(ctx, &st.view(), "")
 }
 
-/// Paints the icon `key` (`name`, or `family:name`) centred in `rect`, tinted by `st`'s `color`
-/// and sized by its `font-size`, traced as part `icon`. ICR1 re-points it at the icon registry.
+/// Paints the icon `key` (a registry key such as `file.save`, or `family:name` for a font glyph)
+/// centred in `rect`, as a button's `::part(icon)`: sized by the icon part's UA table (16 pt,
+/// ICON-STYLE's chrome size) and tinted by `st`'s `color`, through ICR1's `icons::paint` (the
+/// box on whole physical pixels, rasterised at size × `pixels_per_point`, ZM1), the font glyph when
+/// the key is not registered. Traced as part `icon`.
 pub fn icon(painter: &egui::Painter, id: egui::Id, st: &Styled, key: &str, rect: egui::Rect) {
-    let v = st.view();
-    let p = faded(painter, &v);
+    let host = st.view();
+    let v = host.part(None, crate::widgets::button::ICON_UA);
+    let p = faded(painter, &host);
     super::paint_icon_key(&mut cx(&p, id, Some("icon")), &v, key, rect);
 }
 

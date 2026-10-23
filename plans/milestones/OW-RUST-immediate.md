@@ -103,12 +103,13 @@ two PaintTraces relative to their rects:
 - `owrust_focus_tab_order_focus_visible_and_key_claims`: Tab goes from the scene button to the
   `imm` one, the ring paint is equal, Space activates and is claimed (`shortcut_override`), a click
   focuses without a ring
+- `owrust_tooltip_comes_up_through_ow3s_attach`, `owrust_chrome_icon_from_the_registry_at_physical_size`
 - `owrust_chrome_hover_press_and_focus_from_the_callers_response`,
   `owrust_chrome_disabled_on_an_enabled_ui`, `owrust_chrome_galley_in_the_style_colour_and_font`:
   berth's BD7 cases (§4), on a berth-like painter that makes its own responses
 
-Run locally (filtered): `--test imm --test ow1a --test own_widgets --test focus_keys`, 49 tests,
-all passing on the final code.
+Run locally (filtered, on the final code): `--test imm --test ow1a --test ow1a2 --test own_widgets
+--test ow_css --test ow3 --test focus_keys --test icons` (78 tests) and `--lib focus`, all passing.
 
 ## 4. The cadatomic seam (berth BD7, approved by main-cadatomic)
 
@@ -148,7 +149,7 @@ There are no pinned tabs.
 |---|---|---|
 | 1. hover, pressed and focused with the R8 ring, read from berth's `Response` | `sv.chrome(ui, resp, &El::new("chrome-button").class("tab-close"), chrome::BUTTON_UA, props)`. The units only *observe* (`interact::observe`: no focus request, no Escape rule, nothing changed in egui). Then `chrome::surface` and `chrome::ring` | `owrust_chrome_hover_press_and_focus_from_the_callers_response`: `:selected` from props and `:hover` from the response on a draggable tab; hover and pressed fills on the close button; a click changes no focus and shows no ring; Tab (berth's ids) gives `:focus-visible` and the ring |
 | 2. disabled (the non-closable close: hover-only sense, disabled, on an enabled `Ui`) | `props` holds `StateBits::DISABLED`: no press and no focus, still hoverable (R9), `opacity` from the UA table (the painter is faded) | `owrust_chrome_disabled_on_an_enabled_ui` |
-| 3. a paint-only icon by key in a rect | `chrome::icon(painter, id, &st, key, rect)`: tinted by `color`, sized by `font-size`, traced as part `icon`. It goes through `imm::paint_icon_key`, the one function that ICR1's merge re-points at `icons::paint(painter, &icons::registry(ctx), key, rect, &IconStyle{…})`, with the glyph fallback on `None` | checked in `owrust_chrome_galley_in_the_style_colour_and_font` (on today's icon path). The registry test lands with the ICR1 re-point |
+| 3. a paint-only icon by key in a rect | `chrome::icon(painter, id, &st, key, rect)`: a button's `::part(icon)` (16 pt from the icon part's table, tinted by `color`), through ICR1's `icons::paint` (context registry, whole-pixel box, optical-size master **rasterised at the box × `pixels_per_point`**, ZM1), the font glyph for an unregistered key. One function (`imm::paint_icon_key`) serves `imm::Icon` too | `owrust_chrome_icon_from_the_registry_at_physical_size`: a registered `chrome.warning` at ppp 2 is rasterised as `icon:chrome.warning@32` (32×32 physical px), drawn as a 16 pt box centred in the 22 pt button on the pixel grid; an unknown key takes the glyph path |
 | 4. text in a rect with a part's text style; berth lays out with its `tab_font` | `chrome::galley(painter, id, &st, &galley, pos)` paints berth's galley in the style's `color`. `chrome::text_color(&st)` and `chrome::font(ctx, &st)` (CSS `font-*` as an egui `FontId`, for `ChromeMetrics::tab_font`). `chrome::label` lays out and paints a string | `owrust_chrome_galley_in_the_style_colour_and_font` |
 
 cadatomic's painter maps berth's infos to virtual elements and bits. Each of `tab`, `strip`,
@@ -177,8 +178,8 @@ become bits or classes: `active` → `SELECTED`, `group_focused` → `.focused` 
 - **Resolved by OW1a2** (findings of the first push): the checkbox's full-row host box and the
   lagging host bits of the indicator kinds (they paint their own box now); the separator has no
   AccessKit role any more (decoration), so neither has `imm::Separator`.
-- **Icons.** `imm::Icon` and the button's `icon` resolve through today's icon path
-  (`paint::paint_icon`, `IconKey`). ICR1's registry re-points it with no change here.
+- **Icons.** `imm::Icon`, `imm::chrome::icon` and the button's `icon` all go through the icon
+  primitive, which on ICR1 draws registry keys with `icons::paint` and other keys as font glyphs.
 - **State storage.** Unit state lives in egui temp data under `id.with("svelters-imm")`. It stays
   until the context drops (egui temp data is not collected), a few bytes per widget id ever drawn.
   This is fine for chrome. A long list of `imm` rows with changing ids should use scene widgets.

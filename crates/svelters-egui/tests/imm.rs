@@ -554,3 +554,40 @@ fn owrust_tooltip_comes_up_through_ow3s_attach() {
     t.rig.harness.run();
     assert_eq!(tip(&t), 1, "the imm button's tooltip shows through tooltip::attach");
 }
+
+/// ICR1 + ZM1: `imm::chrome::icon` (and `imm::Icon`) draw a registry key through `icons::paint`,
+/// rasterised at the drawn size × `pixels_per_point`; an unknown key falls back to the glyph path.
+#[test]
+fn owrust_chrome_icon_from_the_registry_at_physical_size() {
+    use svelters_egui::icons::{self, Icon as RegIcon, IconRegistry, Owner};
+    const WARNING_16: &[u8] = include_bytes!("icons/build/16/chrome.warning.svg");
+    let ctx = egui::Context::default();
+    let reg = IconRegistry::new();
+    reg.register(Owner::Host, "chrome.warning", RegIcon::svg(16, WARNING_16)).unwrap();
+    icons::set_registry(&ctx, reg);
+    ctx.set_pixels_per_point(2.0);
+    trace::enable(&ctx, true);
+    let sv = Sv::ua_only();
+    let id = egui::Id::unique("chrome-warning");
+    let rect = Rect::from_min_size(Pos2::new(10.0, 10.0), vec2(22.0, 22.0));
+    for _ in 0..2 {
+        let mut out = ctx.run_ui(Default::default(), |ui| {
+            let resp = ui.interact(rect, id, egui::Sense::hover());
+            let st = sv.chrome(ui, &resp, &El::new("chrome-button"), imm::chrome::BUTTON_UA, StateBits::NONE);
+            imm::chrome::icon(ui.painter(), id, &st, "chrome.warning", rect);
+            imm::Icon::new("chrome.warning").show(ui, &sv);
+            imm::chrome::icon(ui.painter(), egui::Id::unique("unknown"), &st, "no.such-icon", rect);
+        });
+        out.textures_delta.clear(); // no renderer here
+    }
+    // the raster: 16 pt × ppp 2 = 32 physical pixels (ZM1), from the registry (ICR1)
+    let names: Vec<(String, [usize; 2])> = ctx.tex_manager().read().allocated().map(|(_, m)| (m.name.clone(), m.size)).collect();
+    let raster = names.iter().find(|(n, _)| n.starts_with("icon:chrome.warning@")).unwrap_or_else(|| panic!("no registry raster in {names:?}"));
+    assert_eq!(raster.0, "icon:chrome.warning@32", "rasterised at 16 pt × 2");
+    assert_eq!(raster.1, [32, 32]);
+    let e = trace::last(&ctx).entries.iter().find(|e| e.node == id.value() && e.part == Some("icon")).copied().expect("the chrome icon is traced");
+    assert_eq!(e.rect.size(), vec2(16.0, 16.0), "a 16 pt box, centred in the 22 pt button");
+    assert_eq!(e.rect.center(), rect.center());
+    let m = e.rect.min.to_vec2() * 2.0;
+    assert_eq!(m, m.round(), "Z1: on the physical pixel grid");
+}
