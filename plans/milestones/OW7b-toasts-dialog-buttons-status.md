@@ -134,7 +134,7 @@ New, `crates/svelters-egui/tests/ow7b.rs`:
 
 ### Run locally after the last code change
 
-All with `cargo-slot` and `headless`: nextest `--test ow7b --test widgets` (17 of 17). Before the last change (adding the tooltip to dialog-buttons), `ow7b`, `ow7`, `views`, `menus`, `focus_keys`, `rt2_rich`, `scene`, `scene_memory`, `spec`, `ow_css` and `widgets` ran: 73 of 74 passed, and the one failure is what the change fixed. Also `cargo clippy -p svelters-egui --all-targets` (no new warnings in this lane's files) and `gen_utilities.py --check`.
+After the last merge (master 55cf5c9d), all with `cargo-slot` and `headless`: `cargo check -p svelters-egui --all-targets`, and nextest `ow7b`, `ow7`, `observe`, `scene`, `ow5b` and `widgets` (35 of 35). Earlier in the lane: `menus`, `focus_keys`, `views` and `ow_css` (35 of 35, after the modal parts change). Before the last change (adding the tooltip to dialog-buttons), `ow7b`, `ow7`, `views`, `menus`, `focus_keys`, `rt2_rich`, `scene`, `scene_memory`, `spec`, `ow_css` and `widgets` ran: 73 of 74 passed, and the one failure is what the change fixed. Also `cargo clippy -p svelters-egui --all-targets` (no new warnings in this lane's files) and `gen_utilities.py --check`.
 
 ### Not run locally (CI)
 

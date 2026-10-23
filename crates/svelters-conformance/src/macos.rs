@@ -725,3 +725,270 @@ mod tests {
         assert_eq!(keycode("BackSpace"), Ok(0x33));
     }
 }
+
+/// WG3s: recording real scroll input (a listen-only event tap) and posting scroll events.
+pub mod scroll_events {
+    use super::{CFTypeRef, Cf};
+    use std::ffi::c_void;
+
+    type TapCallback = extern "C" fn(
+        proxy: *const c_void,
+        ty: u32,
+        event: CFTypeRef,
+        user: *mut c_void,
+    ) -> CFTypeRef;
+
+    #[link(name = "CoreGraphics", kind = "framework")]
+    unsafe extern "C" {
+        fn CGEventTapCreate(
+            tap: u32,
+            place: u32,
+            options: u32,
+            mask: u64,
+            cb: TapCallback,
+            user: *mut c_void,
+        ) -> CFTypeRef;
+        fn CGEventGetIntegerValueField(e: CFTypeRef, field: u32) -> i64;
+        fn CGEventGetDoubleValueField(e: CFTypeRef, field: u32) -> f64;
+        fn CGEventGetTimestamp(e: CFTypeRef) -> u64;
+    }
+
+    #[link(name = "CoreFoundation", kind = "framework")]
+    unsafe extern "C" {
+        fn CFMachPortCreateRunLoopSource(
+            alloc: CFTypeRef,
+            port: CFTypeRef,
+            order: isize,
+        ) -> CFTypeRef;
+        fn CFRunLoopGetCurrent() -> CFTypeRef;
+        fn CFRunLoopAddSource(rl: CFTypeRef, src: CFTypeRef, mode: CFTypeRef);
+        fn CFRunLoopRunInMode(mode: CFTypeRef, seconds: f64, return_after_source: bool) -> i32;
+        static kCFRunLoopDefaultMode: CFTypeRef;
+    }
+
+    // CGEventField
+    pub const DELTA_AXIS_1: u32 = 11;
+    pub const DELTA_AXIS_2: u32 = 12;
+    pub const POINT_DELTA_AXIS_1: u32 = 96;
+    pub const POINT_DELTA_AXIS_2: u32 = 97;
+    pub const IS_CONTINUOUS: u32 = 88;
+    pub const SCROLL_PHASE: u32 = 99;
+    pub const MOMENTUM_PHASE: u32 = 123;
+    const SCROLL_WHEEL: u32 = 22;
+
+    /// One scroll event as the OS delivered it (device sign: positive axis 1 scrolls the content
+    /// down, i.e. towards its start, with natural scrolling's inversion already applied).
+    #[derive(Clone, Debug, PartialEq)]
+    pub struct Recorded {
+        /// Milliseconds from the first recorded event.
+        pub t_ms: f64,
+        /// `kCGScrollWheelEventScrollPhase`: 1 began, 2 changed, 4 ended, 8 cancelled, 128 may begin; 0 none.
+        pub phase: i64,
+        /// `kCGScrollWheelEventMomentumPhase`: 1 begin, 2 continue, 3 end; 0 none.
+        pub momentum: i64,
+        pub continuous: bool,
+        /// Point deltas (axis 1 vertical, axis 2 horizontal).
+        pub dy: f64,
+        pub dx: f64,
+        /// Line deltas.
+        pub lines_y: i64,
+        pub lines_x: i64,
+    }
+
+    struct Tap {
+        events: Vec<Recorded>,
+        t0: Option<u64>,
+    }
+
+    extern "C" fn on_event(
+        _p: *const c_void,
+        ty: u32,
+        e: CFTypeRef,
+        user: *mut c_void,
+    ) -> CFTypeRef {
+        if ty == SCROLL_WHEEL {
+            let tap = unsafe { &mut *(user as *mut Tap) };
+            let ts = unsafe { CGEventGetTimestamp(e) };
+            let t0 = *tap.t0.get_or_insert(ts);
+            unsafe {
+                tap.events.push(Recorded {
+                    t_ms: (ts.saturating_sub(t0)) as f64 / 1e6,
+                    phase: CGEventGetIntegerValueField(e, SCROLL_PHASE),
+                    momentum: CGEventGetIntegerValueField(e, MOMENTUM_PHASE),
+                    continuous: CGEventGetIntegerValueField(e, IS_CONTINUOUS) != 0,
+                    dy: CGEventGetDoubleValueField(e, POINT_DELTA_AXIS_1),
+                    dx: CGEventGetDoubleValueField(e, POINT_DELTA_AXIS_2),
+                    lines_y: CGEventGetIntegerValueField(e, DELTA_AXIS_1),
+                    lines_x: CGEventGetIntegerValueField(e, DELTA_AXIS_2),
+                });
+            }
+        }
+        e
+    }
+
+    /// Records scroll events (a listen-only session tap: needs Input Monitoring for the terminal)
+    /// until a momentum stream ends, or 1.5 s pass without an event after the first one, or
+    /// `timeout_s` without any. Call on a thread with no other run-loop work.
+    pub fn record(timeout_s: f64) -> Result<Vec<Recorded>, String> {
+        let mut tap = Box::new(Tap {
+            events: Vec::new(),
+            t0: None,
+        });
+        let user = &mut *tap as *mut Tap as *mut c_void;
+        // kCGSessionEventTap, kCGHeadInsertEventTap, kCGEventTapOptionListenOnly
+        let port = unsafe { CGEventTapCreate(1, 0, 1, 1u64 << SCROLL_WHEEL, on_event, user) };
+        if port.is_null() {
+            return Err("CGEventTapCreate failed: Input Monitoring is missing for the terminal (System Settings > Privacy & Security > Input Monitoring)".into());
+        }
+        let port = Cf(port);
+        let src = Cf(unsafe { CFMachPortCreateRunLoopSource(std::ptr::null(), port.0, 0) });
+        unsafe { CFRunLoopAddSource(CFRunLoopGetCurrent(), src.0, kCFRunLoopDefaultMode) };
+        let start = std::time::Instant::now();
+        let mut last_count = 0;
+        let mut last_change = std::time::Instant::now();
+        loop {
+            unsafe { CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0.05, false) };
+            let n = tap.events.len();
+            if n != last_count {
+                last_count = n;
+                last_change = std::time::Instant::now();
+            }
+            let momentum_ended = tap.events.last().is_some_and(|e| e.momentum == 3);
+            if momentum_ended || (n > 0 && last_change.elapsed().as_secs_f64() > 1.5) {
+                break;
+            }
+            if n == 0 && start.elapsed().as_secs_f64() > timeout_s {
+                return Err(format!("no scroll event in {timeout_s} s"));
+            }
+        }
+        Ok(std::mem::take(&mut tap.events))
+    }
+
+    /// The recording as the fixture JSON (`conformance/scroll/<name>.json`).
+    pub fn to_json(events: &[Recorded], note: &str) -> String {
+        let rows: Vec<String> = events
+            .iter()
+            .map(|e| {
+                format!(
+                    "  {{\"t_ms\":{:.3},\"phase\":{},\"momentum\":{},\"continuous\":{},\"dy\":{},\"dx\":{},\"lines_y\":{},\"lines_x\":{}}}",
+                    e.t_ms, e.phase, e.momentum, e.continuous, e.dy, e.dx, e.lines_y, e.lines_x
+                )
+            })
+            .collect();
+        format!(
+            "{{\n \"schema\": \"svelters-scroll-recording/v1\",\n \"note\": {},\n \"events\": [\n{}\n ]\n}}\n",
+            serde_json::to_string(note).unwrap(),
+            rows.join(",\n")
+        )
+    }
+}
+
+/// WG3s: posting scroll events through the session tap (the window server routes them to the
+/// window under the pointer, as for a real wheel or trackpad).
+pub mod scroll_post {
+    use super::{CFTypeRef, CGPoint, Cf};
+
+    #[link(name = "CoreGraphics", kind = "framework")]
+    unsafe extern "C" {
+        fn CGEventCreateScrollWheelEvent2(
+            src: CFTypeRef,
+            units: u32,
+            count: u32,
+            w1: i32,
+            w2: i32,
+            w3: i32,
+        ) -> CFTypeRef;
+        fn CGEventCreateMouseEvent(src: CFTypeRef, ty: u32, at: CGPoint, button: u32) -> CFTypeRef;
+        fn CGEventSetIntegerValueField(e: CFTypeRef, field: u32, v: i64);
+        fn CGEventSetFlags(e: CFTypeRef, flags: u64);
+        fn CGEventPost(tap: u32, e: CFTypeRef);
+        fn CGEventSetTimestamp(e: CFTypeRef, ns: u64);
+    }
+
+    unsafe extern "C" {
+        fn clock_gettime_nsec_np(clock: u32) -> u64;
+    }
+
+    /// Now on the clock CGEvent timestamps use (nanoseconds since boot, CLOCK_UPTIME_RAW).
+    pub fn now_ns() -> u64 {
+        unsafe { clock_gettime_nsec_np(8) }
+    }
+
+    const SESSION_TAP: u32 = 1;
+    const UNIT_PIXEL: u32 = 0;
+    const UNIT_LINE: u32 = 1;
+    const SHIFT: u64 = 0x0002_0000;
+
+    /// Moves the pointer (no button) so the scroll goes to the view under it.
+    pub fn move_to(at: CGPoint) {
+        let e = Cf(unsafe { CGEventCreateMouseEvent(std::ptr::null(), 5, at, 0) });
+        unsafe {
+            CGEventSetFlags(e.0, 0);
+            CGEventPost(SESSION_TAP, e.0);
+        }
+    }
+
+    /// One mouse-wheel event of `lines` notches (`[x, y]` in the OS's sign), a discrete wheel.
+    pub fn wheel(lines: [i32; 2], shift: bool) {
+        let e = Cf(unsafe {
+            CGEventCreateScrollWheelEvent2(std::ptr::null(), UNIT_LINE, 2, lines[1], lines[0], 0)
+        });
+        unsafe {
+            CGEventSetIntegerValueField(e.0, super::scroll_events::IS_CONTINUOUS, 0);
+            CGEventSetFlags(e.0, if shift { SHIFT } else { 0 });
+            CGEventPost(SESSION_TAP, e.0);
+        }
+    }
+
+    /// One continuous (trackpad) event: point deltas `[x, y]` in the OS's sign, with its gesture
+    /// phase (`kCGScrollWheelEventScrollPhase`) and momentum phase.
+    pub fn continuous(delta: [f64; 2], phase: i64, momentum: i64) {
+        continuous_at(delta, phase, momentum, None)
+    }
+
+    /// [`continuous`] stamped with `at_ns` (the scripted time on [`now_ns`]'s clock), so AppKit's
+    /// velocity (computed from event timestamps) does not depend on when the event was delivered.
+    pub fn continuous_at(delta: [f64; 2], phase: i64, momentum: i64, at_ns: Option<u64>) {
+        let (dx, dy) = (delta[0].round() as i32, delta[1].round() as i32);
+        let e = Cf(unsafe {
+            CGEventCreateScrollWheelEvent2(std::ptr::null(), UNIT_PIXEL, 2, dy, dx, 0)
+        });
+        unsafe {
+            CGEventSetIntegerValueField(e.0, super::scroll_events::IS_CONTINUOUS, 1);
+            CGEventSetIntegerValueField(e.0, super::scroll_events::SCROLL_PHASE, phase);
+            CGEventSetIntegerValueField(e.0, super::scroll_events::MOMENTUM_PHASE, momentum);
+            CGEventSetFlags(e.0, 0);
+            if let Some(t) = at_ns {
+                CGEventSetTimestamp(e.0, t);
+            }
+            CGEventPost(SESSION_TAP, e.0);
+        }
+    }
+
+    /// A recorded momentum stream (`conformance/scroll/<name>.json`): `(t_ms from its first
+    /// momentum event, [dx, dy], momentum phase)`, in the OS's sign.
+    pub fn recorded_momentum(path: &std::path::Path) -> Result<Vec<(f64, [f64; 2], i64)>, String> {
+        let v: serde_json::Value = serde_json::from_str(
+            &std::fs::read_to_string(path).map_err(|e| format!("{}: {e}", path.display()))?,
+        )
+        .map_err(|e| e.to_string())?;
+        let ev = v["events"].as_array().ok_or("no events")?;
+        let m: Vec<&serde_json::Value> = ev
+            .iter()
+            .filter(|e| e["momentum"].as_i64().unwrap_or(0) != 0)
+            .collect();
+        let t0 = m.first().and_then(|e| e["t_ms"].as_f64()).unwrap_or(0.0);
+        Ok(m.iter()
+            .map(|e| {
+                (
+                    e["t_ms"].as_f64().unwrap_or(0.0) - t0,
+                    [
+                        e["dx"].as_f64().unwrap_or(0.0),
+                        e["dy"].as_f64().unwrap_or(0.0),
+                    ],
+                    e["momentum"].as_i64().unwrap_or(0),
+                )
+            })
+            .collect())
+    }
+}

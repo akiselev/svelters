@@ -1,0 +1,60 @@
+{
+  "schema": "svelters-na-golden/v1",
+  "platform": "macos",
+  "toolkit": "nsscrollview",
+  "version": "15.7.5",
+  "injector": "cgevent",
+  "offsets": "unicode-scalar",
+  "settings": {"macos":"15.7.5","appkit":2575.7,"natural-scrolling":"1","scroll-wheel-scaling":"0.3125","trackpad-scaling":"unset","momentum":"conformance/scroll/macos-flick.json, replayed"},
+  "observe": {},
+  "pins": {
+    "gesture": {
+      "pin": 10,
+      "fingerprint": "315d516a2556b50b",
+      "checkpoints": [
+        {"after":"setup","s":{"offset":[0,0]},"t":{"offset":[0,0]}},
+        {"after":"gesture s drag-slow, no momentum","s":{"offset":[0,45]},"t":{"offset":[0,0]},"motion":{"distance":45,"peak_v":160,"tau_ms":null,"settle_ms":111,"overshoot":0}},
+        {"after":"gesture s flick-down, native momentum","s":{"offset":[0,765]},"t":{"offset":[0,0]},"motion":{"distance":720,"peak_v":3260,"tau_ms":null,"settle_ms":704,"overshoot":0}},
+        {"after":"gesture s flick-down, replay macos-flick","s":{"offset":[0,1488]},"t":{"offset":[0,0]},"motion":{"distance":723,"peak_v":3300,"tau_ms":147,"settle_ms":700,"overshoot":0}},
+        {"after":"gesture s flick-up, native momentum","s":{"offset":[0,765]},"t":{"offset":[0,0]},"motion":{"distance":-723,"peak_v":4436,"tau_ms":162,"settle_ms":710,"overshoot":0}}
+      ]
+    },
+    "overscroll": {
+      "pin": 10,
+      "fingerprint": "78d28ffe93f07397",
+      "checkpoints": [
+        {"after":"setup","s":{"offset":[0,0]},"t":{"offset":[0,0]}},
+        {"after":"gesture t to-end, no momentum","s":{"offset":[0,0]},"t":{"offset":[0,495]},"motion":{"distance":495,"peak_v":2973,"tau_ms":168,"settle_ms":286,"overshoot":157,"chained":0}},
+        {"after":"gesture s flick-up, no momentum","s":{"offset":[0,0]},"t":{"offset":[0,495]},"motion":{"distance":0,"peak_v":596,"tau_ms":247,"settle_ms":515,"overshoot":26}},
+        {"after":"gesture s to-end, no momentum","s":{"offset":[0,2175]},"t":{"offset":[0,495]},"motion":{"distance":2175,"peak_v":4587,"tau_ms":169,"settle_ms":417,"overshoot":71}},
+        {"after":"gesture s flick-down, no momentum","s":{"offset":[0,2175]},"t":{"offset":[0,495]},"motion":{"distance":0,"peak_v":713,"tau_ms":253,"settle_ms":539,"overshoot":38}}
+      ]
+    },
+    "wheel-chaining": {
+      "pin": 9,
+      "fingerprint": "f004df837e259f71",
+      "checkpoints": [
+        {"after":"setup","s":{"offset":[0,0]},"t":{"offset":[0,0]}},
+        {"after":"wheel t 0,1 x4/120ms","s":{"offset":[0,0]},"t":{"offset":[0,30]},"motion":{"distance":30,"per_notch":7.5,"peak_v":562,"tau_ms":null,"settle_ms":9,"overshoot":0,"chained":0}},
+        {"after":"wheel t 0,1 x60/20ms","s":{"offset":[0,0]},"t":{"offset":[0,495]},"motion":{"distance":465,"per_notch":7.8,"peak_v":1111,"tau_ms":null,"settle_ms":0,"overshoot":0,"chained":0}},
+        {"after":"wheel t 0,1","s":{"offset":[0,0]},"t":{"offset":[0,495]},"motion":{"distance":0,"per_notch":0.0,"peak_v":0,"tau_ms":null,"settle_ms":0,"overshoot":0,"chained":0}},
+        {"after":"wheel t 0,1","s":{"offset":[0,0]},"t":{"offset":[0,495]},"motion":{"distance":0,"per_notch":0.0,"peak_v":0,"tau_ms":null,"settle_ms":0,"overshoot":0,"chained":0}}
+      ]
+    },
+    "wheel": {
+      "pin": 9,
+      "fingerprint": "574911006a530e6e",
+      "checkpoints": [
+        {"after":"setup","s":{"offset":[0,0]},"t":{"offset":[0,0]}},
+        {"after":"wheel s 0,1","s":{"offset":[0,10]},"t":{"offset":[0,0]},"motion":{"distance":10,"per_notch":10.0,"peak_v":364,"tau_ms":null,"settle_ms":18,"overshoot":0}},
+        {"after":"wheel s 0,1","s":{"offset":[0,20]},"t":{"offset":[0,0]},"motion":{"distance":10,"per_notch":10.0,"peak_v":301,"tau_ms":null,"settle_ms":24,"overshoot":0}},
+        {"after":"wheel s 0,1","s":{"offset":[0,30]},"t":{"offset":[0,0]},"motion":{"distance":10,"per_notch":10.0,"peak_v":348,"tau_ms":null,"settle_ms":19,"overshoot":0}},
+        {"after":"wheel s 0,1","s":{"offset":[0,40]},"t":{"offset":[0,0]},"motion":{"distance":10,"per_notch":10.0,"peak_v":562,"tau_ms":null,"settle_ms":9,"overshoot":0}},
+        {"after":"wheel s 0,1 x8/20ms","s":{"offset":[0,120]},"t":{"offset":[0,0]},"motion":{"distance":80,"per_notch":10.0,"peak_v":565,"tau_ms":null,"settle_ms":9,"overshoot":0}},
+        {"after":"wheel s 0,1 x4/250ms","s":{"offset":[0,160]},"t":{"offset":[0,0]},"motion":{"distance":40,"per_notch":10.0,"peak_v":435,"tau_ms":null,"settle_ms":25,"overshoot":0}},
+        {"after":"shift+wheel s 0,1","s":{"offset":[10,160]},"t":{"offset":[0,0]},"motion":{"distance":10,"per_notch":10.0,"peak_v":310,"tau_ms":null,"settle_ms":22,"overshoot":0}},
+        {"after":"wheel s 0,-1 x40/20ms","s":{"offset":[10,130]},"t":{"offset":[0,0]},"motion":{"distance":-30,"per_notch":0.8,"peak_v":616,"tau_ms":null,"settle_ms":0,"overshoot":0}}
+      ]
+    }
+  }
+}
