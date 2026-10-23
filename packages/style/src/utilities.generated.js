@@ -2784,8 +2784,7 @@ export const UTILITIES = {
      "kind": "arbitrary"
     }
    ],
-   "requires": "E5",
-   "pending": true
+   "requires": "E5"
   },
   {
    "name": "delay",
@@ -2807,8 +2806,7 @@ export const UTILITIES = {
      "kind": "arbitrary"
     }
    ],
-   "requires": "E5",
-   "pending": true
+   "requires": "E5"
   },
   {
    "name": "ease",
@@ -2831,8 +2829,7 @@ export const UTILITIES = {
      "linear"
     ]
    },
-   "requires": "E5",
-   "pending": true
+   "requires": "E5"
   }
  ],
  "variants": {
@@ -3066,17 +3063,17 @@ export const UTILITIES = {
    "mac": {
     "query": "(-sv-platform: macos)",
     "requires": "E7",
-    "pending": true
+    "pending": false
    },
    "win": {
     "query": "(-sv-platform: windows)",
     "requires": "E7",
-    "pending": true
+    "pending": false
    },
    "linux": {
     "query": "(-sv-platform: linux)",
     "requires": "E7",
-    "pending": true
+    "pending": false
    }
   },
   "breakpoints": {
