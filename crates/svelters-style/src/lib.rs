@@ -32,6 +32,8 @@ pub mod tables;
 #[path = "utilities.generated.rs"]
 pub mod utilities;
 pub mod utility_table;
+/// U1: the utility-class resolver and the stylist's utility layer.
+pub mod utility;
 mod values;
 mod var;
 mod view;
@@ -42,12 +44,13 @@ pub use computed::{ComputeContext, ComputedStyle};
 pub use diag::{Diagnostic, Severity};
 pub use element::Element;
 pub use invalidation::{Invalidation, Reach, for_each_reached};
-pub use media::{ColorScheme, Contrast, MEDIA_FEATURES, MediaEnv, MediaList};
+pub use media::{ColorScheme, Contrast, MEDIA_FEATURES, MediaEnv, MediaList, Platform};
 pub use selector::{Impl, Logical, PseudoClass, PseudoElement, Selector, SelectorList, SelectorParser, parse_selector_list};
 pub use sheet::{DeclBlock, Declaration, ParseOptions, Rule, Stylesheet};
 pub use state::{STATE_PSEUDO_CLASSES, StateMask, StateNames};
 pub use shorthand::LINE_STYLES;
 pub use table::{Dialect, Prop, Table, ValueType, Via};
 pub use transition::Transitions;
+pub use utility::{IssueKind, Resolved, Resolver, Utility, UtilityConfig, UtilityIssue, UtilityStats, UtilityTokens};
 pub use view::{BorderSide, Outline, Overlay, Side, StyleView, TextSettings, overlay_get, overlay_get_index};
 pub use values::{Color, ComputedValue, Content, Gradient, GradientStop, Length, LinearGradient, RadialExtent, RadialGradient, Shadow, TimingFunction, Transition};
