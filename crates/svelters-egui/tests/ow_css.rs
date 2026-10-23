@@ -172,6 +172,71 @@ fn transition_samples_over_virtual_time_and_active_is_instant() {
 }
 
 #[test]
+fn transition_longhands_compose_across_classes() {
+    // U2 E5: `transition-colors duration-500`-style classes: the property and easing from one rule,
+    // the duration from a later one, cascaded with the shorthand
+    let (mut rig, b) = rig_with(
+        "button { background-color: rgb(0, 0, 0); border-width: 0; transition: opacity 5s }
+         .colors { transition-property: color, background-color; transition-timing-function: linear }
+         .slow { transition-duration: 2s }
+         button:hover { background-color: rgb(200, 0, 0) }",
+        &[("text", s("Compose"))],
+    );
+    rig.br().style(SVL_STYLE_CLASSES, b, Some("colors slow")).unwrap();
+    rig.run();
+    let list = rig.backend.computed_style(b).and_then(|c| c.get("transition").cloned());
+    assert_eq!(list.map(|v| v.to_string()).as_deref(), Some("color 2s cubic-bezier(0, 0, 1, 1) 0s, background-color 2s cubic-bezier(0, 0, 1, 1) 0s"));
+    let red = |rig: &Rig| fill(rig, b, None, TraceKind::Box).map(|c| c.r()).unwrap_or(0) as i32;
+    rig.harness.hover_at(rig.drawn(b).center());
+    rig.harness.step();
+    let mut seen = vec![red(&rig)];
+    for _ in 0..3 {
+        rig.harness.step();
+        seen.push(red(&rig));
+    }
+    // 0.25 s per step, linear over 2 s: +25 a step
+    for (k, w) in seen.windows(2).enumerate() {
+        assert!((w[1] - w[0] - 25).abs() <= 3, "step {k}: {seen:?}");
+    }
+    for _ in 0..6 {
+        rig.harness.step();
+    }
+    assert_eq!(red(&rig), 200, "{seen:?}");
+}
+
+#[test]
+fn platform_media_follows_the_native_policy() {
+    // U2 E7: `-sv-platform` comes from the native policy, so a test emulates a platform
+    let (mut rig, b) = rig_with(
+        "button { background-color: rgb(0, 0, 0); border-width: 0 }
+         @media (-sv-platform: macos) { button { background-color: rgb(0, 0, 200) } }
+         @media (-sv-platform: windows) { button { background-color: rgb(0, 200, 0) } }
+         @media (-sv-platform: linux) { button { background-color: rgb(200, 0, 0) } }",
+        &[("text", s("Platform"))],
+    );
+    use svelters_egui::native::{self, Native};
+    let ctx = rig.harness.ctx.clone();
+    native::override_policy(&ctx, |p| p.platform = Some(svelters_style::Platform::Macos));
+    rig.run();
+    assert_eq!(fill(&rig, b, None, TraceKind::Box), Some(egui::Color32::from_rgb(0, 0, 200)));
+    native::override_policy(&ctx, |p| p.platform = Some(svelters_style::Platform::Windows));
+    rig.run();
+    assert_eq!(fill(&rig, b, None, TraceKind::Box), Some(egui::Color32::from_rgb(0, 200, 0)));
+    // the toolkit row's platform: GTK is Linux
+    native::clear_policy_override(&ctx);
+    native::set(&ctx, Native::Gtk);
+    rig.run();
+    assert_eq!(fill(&rig, b, None, TraceKind::Box), Some(egui::Color32::from_rgb(200, 0, 0)));
+    native::set(&ctx, Native::Mac);
+    rig.run();
+    assert_eq!(fill(&rig, b, None, TraceKind::Box), Some(egui::Color32::from_rgb(0, 0, 200)));
+    // an unnamed platform matches none
+    native::override_policy(&ctx, |p| p.platform = Some(svelters_style::Platform::Other));
+    rig.run();
+    assert_eq!(fill(&rig, b, None, TraceKind::Box), Some(egui::Color32::from_rgb(0, 0, 0)));
+}
+
+#[test]
 fn reduced_motion_ends_and_skips_transitions() {
     let (mut rig, b) = rig_with(
         "button { background-color: rgb(0, 0, 0); border-width: 0; transition: background-color 1s linear }

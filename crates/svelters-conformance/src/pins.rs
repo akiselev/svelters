@@ -56,6 +56,9 @@ pub struct Setup {
     pub focus: Option<String>,
     /// Text on the system clipboard when the user path starts (owned by another client).
     pub clipboard: Option<String>,
+    /// WG3s: the scroll fixture (scroll areas `s` and `t` instead of fields and the button), with
+    /// each area's initial offset in points from the content's start.
+    pub scroll: BTreeMap<String, [f64; 2]>,
 }
 
 impl Setup {
@@ -90,6 +93,51 @@ pub enum Action {
         to: usize,
         count: u32,
     },
+    /// WG3s: mouse-wheel notches, `lines` per event (positive towards the content's end),
+    /// `burst` events `interval_ms` apart.
+    Wheel {
+        target: String,
+        lines: [i32; 2],
+        shift: bool,
+        burst: u32,
+        interval_ms: u32,
+    },
+    /// WG3s: a trackpad two-finger scroll: `deltas` (points per event, positive towards the end)
+    /// with phases began/changed/ended, then `momentum`.
+    Gesture {
+        target: String,
+        /// The profile name, or `inline` (the label).
+        profile: String,
+        deltas: Vec<[f64; 2]>,
+        interval_ms: u32,
+        momentum: Momentum,
+    },
+}
+
+/// WG3s: what follows a gesture's *ended* phase.
+#[derive(Clone, Debug, PartialEq)]
+pub enum Momentum {
+    /// The fingers stop before lifting.
+    None,
+    /// The platform's own momentum.
+    Native,
+    /// A recorded momentum stream (`conformance/scroll/<name>.json`).
+    Replay(String),
+}
+
+/// The scroll fixture's anchors: the outer area and the one inside it.
+pub const SCROLL_ANCHORS: [&str; 2] = ["s", "t"];
+
+/// WG3s delta profiles (`plans/milestones/WG3s-scroll-references.md` §2.1): dy per 16 ms event.
+pub fn profile(name: &str) -> Option<Vec<[f64; 2]>> {
+    let ys: Vec<f64> = match name {
+        "drag-slow" => vec![2.0; 20],
+        "flick-down" => vec![3.0, 8.0, 16.0, 28.0, 40.0, 44.0, 40.0],
+        "flick-up" => vec![-3.0, -8.0, -16.0, -28.0, -40.0, -44.0, -40.0],
+        "to-end" => vec![40.0; 60],
+        _ => return None,
+    };
+    Some(ys.into_iter().map(|y| [0.0, y]).collect())
 }
 
 impl Action {
@@ -122,6 +170,37 @@ impl Action {
                 to,
                 count,
             } => format!("drag {target} {from}->{to} x{count}"),
+            Action::Wheel {
+                target,
+                lines,
+                shift,
+                burst,
+                interval_ms,
+            } => {
+                let mut l = format!(
+                    "{}wheel {target} {},{}",
+                    if *shift { "shift+" } else { "" },
+                    lines[0],
+                    lines[1]
+                );
+                if *burst > 1 {
+                    l += &format!(" x{burst}/{interval_ms}ms");
+                }
+                l
+            }
+            Action::Gesture {
+                target,
+                profile,
+                momentum,
+                ..
+            } => {
+                let m = match momentum {
+                    Momentum::None => "no momentum".to_string(),
+                    Momentum::Native => "native momentum".to_string(),
+                    Momentum::Replay(n) => format!("replay {n}"),
+                };
+                format!("gesture {target} {profile}, {m}")
+            }
         }
     }
 }
@@ -189,6 +268,20 @@ pub fn parse_pin(source: &str) -> Result<Pin, String> {
         Some(Value::String(t)) => Some(t.clone()),
         Some(o) => return Err(ctx(format!("bad clipboard {o}"))),
     };
+    let mut scroll = BTreeMap::new();
+    if let Some(m) = v["setup"]["scroll"].as_object() {
+        for (anchor, o) in m {
+            if !SCROLL_ANCHORS.contains(&anchor.as_str()) {
+                return Err(ctx(format!("unknown scroll area {anchor}")));
+            }
+            let xy = o
+                .as_array()
+                .filter(|a| a.len() == 2)
+                .and_then(|a| Some([a[0].as_f64()?, a[1].as_f64()?]))
+                .ok_or_else(|| ctx(format!("bad scroll offset {o}")))?;
+            scroll.insert(anchor.clone(), xy);
+        }
+    }
     let mut observe = Vec::new();
     for o in v["observe"].as_array().into_iter().flatten() {
         match o.as_str() {
@@ -250,6 +343,67 @@ pub fn parse_pin(source: &str) -> Result<Pin, String> {
                 to: as_u(&s["to"], "to").map_err(ctx)?,
                 count,
             }
+        } else if let Some(t) = s["wheel"].as_str() {
+            let lines = s["lines"]
+                .as_array()
+                .filter(|a| a.len() == 2)
+                .and_then(|a| Some([a[0].as_i64()? as i32, a[1].as_i64()? as i32]))
+                .ok_or_else(|| ctx(format!("wheel: bad lines {}", s["lines"])))?;
+            Action::Wheel {
+                target: t.to_string(),
+                lines,
+                shift: s["shift"].as_bool().unwrap_or(false),
+                burst: s
+                    .get("burst")
+                    .map(|x| as_u(x, "burst"))
+                    .transpose()
+                    .map_err(ctx)?
+                    .unwrap_or(1) as u32,
+                interval_ms: s
+                    .get("interval_ms")
+                    .map(|x| as_u(x, "interval_ms"))
+                    .transpose()
+                    .map_err(ctx)?
+                    .unwrap_or(0) as u32,
+            }
+        } else if let Some(t) = s["gesture"].as_str() {
+            let (profile_name, deltas) = match &s["deltas"] {
+                Value::String(n) => (
+                    n.clone(),
+                    profile(n).ok_or_else(|| ctx(format!("unknown profile {n}")))?,
+                ),
+                Value::Array(a) => {
+                    let mut d = Vec::new();
+                    for p in a {
+                        let xy = p
+                            .as_array()
+                            .filter(|q| q.len() == 2)
+                            .and_then(|q| Some([q[0].as_f64()?, q[1].as_f64()?]))
+                            .ok_or_else(|| ctx(format!("gesture: bad delta {p}")))?;
+                        d.push(xy);
+                    }
+                    ("inline".to_string(), d)
+                }
+                o => return Err(ctx(format!("gesture: bad deltas {o}"))),
+            };
+            let momentum = match s["momentum"].as_str().unwrap_or("none") {
+                "none" => Momentum::None,
+                "native" => Momentum::Native,
+                m if m.starts_with("replay:") => Momentum::Replay(m["replay:".len()..].to_string()),
+                m => return Err(ctx(format!("gesture: bad momentum {m}"))),
+            };
+            Action::Gesture {
+                target: t.to_string(),
+                profile: profile_name,
+                deltas,
+                interval_ms: s
+                    .get("interval_ms")
+                    .map(|x| as_u(x, "interval_ms"))
+                    .transpose()
+                    .map_err(ctx)?
+                    .unwrap_or(16) as u32,
+                momentum,
+            }
         } else {
             return Err(ctx(format!("unknown step {s}")));
         };
@@ -265,6 +419,7 @@ pub fn parse_pin(source: &str) -> Result<Pin, String> {
             fields,
             focus,
             clipboard,
+            scroll,
         },
         actions,
         observe,
@@ -274,6 +429,31 @@ pub fn parse_pin(source: &str) -> Result<Pin, String> {
 
 /// Every pin, in file-name order.
 pub fn load_pins() -> Result<Vec<Pin>, String> {
+    Ok(load_all_pins()?
+        .into_iter()
+        .filter(|p| !p.is_scroll())
+        .collect())
+}
+
+/// WG3s: the scroll pins (9, 10), the ones with a scroll fixture (`setup.scroll`). They form their
+/// own family: a toolkit's scroll references are their own golden (`nsscrollview-…`), next to its
+/// text references, and [`load_pins`] leaves them out.
+pub fn load_scroll_pins() -> Result<Vec<Pin>, String> {
+    Ok(load_all_pins()?
+        .into_iter()
+        .filter(Pin::is_scroll)
+        .collect())
+}
+
+impl Pin {
+    /// A scroll pin (WG3s): its fixture is the scroll areas, not the text fields.
+    pub fn is_scroll(&self) -> bool {
+        !self.setup.scroll.is_empty()
+    }
+}
+
+/// Every pin of either family, in file-name order.
+pub fn load_all_pins() -> Result<Vec<Pin>, String> {
     let dir = conformance_dir().join("pins");
     let mut files: Vec<PathBuf> = std::fs::read_dir(&dir)
         .map_err(|e| format!("{}: {e}", dir.display()))?
@@ -410,5 +590,15 @@ pub fn fingerprint(pin: &Pin, keys: &Keys) -> String {
     intents.sort();
     intents.dedup();
     s.push_str(&intents.join("\n"));
+    // WG3s: a named gesture profile is code, not pin text: its deltas are part of the fingerprint
+    for a in &pin.actions {
+        if let Action::Gesture {
+            profile, deltas, ..
+        } = a
+            && profile != "inline"
+        {
+            s.push_str(&format!("\n{profile}={deltas:?}"));
+        }
+    }
     format!("{:016x}", fnv64(s.as_bytes()))
 }

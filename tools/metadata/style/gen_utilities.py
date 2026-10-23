@@ -58,7 +58,7 @@ FITS = {
     "int-px": {"length", "insets"},
     "number": {"number"},
     "percent": {"number"},
-    "integer": {"raw", "length", "number", "transition"},
+    "integer": {"raw", "length", "number", "transition", "time-list"},
     "arbitrary": None,  # any: checked against the property's type when used
 }
 # token types a scale may feed into a property type
@@ -66,8 +66,8 @@ SCALE_FITS = {
     "length": {"length", "insets", "raw"},
     "color": {"color"},
     "shadow": {"shadow"},
-    "duration": {"raw", "transition"},
-    "easing": {"raw", "transition"},
+    "duration": {"raw", "transition", "time-list"},
+    "easing": {"raw", "transition", "easing-list"},
     "font-family": {"raw"},
 }
 # sample values of the open sources, for completions and docs only (the resolver takes any)
