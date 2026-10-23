@@ -193,6 +193,12 @@ fn ua_theme(dark: bool) -> &'static crate::theme::Theme {
     if dark { DARK.get_or_init(crate::theme::Theme::dark_modern) } else { LIGHT.get_or_init(crate::theme::Theme::light_modern) }
 }
 
+/// OW1b: a colour token of the built-in theme of the scheme (what UA tables resolve), for
+/// paint-only pieces that have no part style yet (the selection and caret of a value box).
+pub fn ua_token(dark: bool, name: &str) -> Option<Color32> {
+    ua_theme(dark).color(name)
+}
+
 /// The properties a part (or child) inherits from its host when nothing sets them on it.
 const INHERITED: &[&str] = &["color", "font-size", "font-weight", "font-family", "font-style", "line-height", "letter-spacing", "text-align", "text-transform", "white-space", "cursor", "visibility"];
 

@@ -1,33 +1,69 @@
-//! WG4b: `date-picker` (`egui_extras::DatePickerButton`) and `color-picker` (egui's
-//! `color_edit_button_hsva`), both with `bind:value` (plans/milestones/WG4b-dialogs-pickers-dnd.md).
-//!
-//! The tables are `const`s spliced into [`super::KINDS`]; the node payload is [`W::Picker`] holding a
-//! [`Picker`], whose props, painting and measuring live here. `leaf.rs`, `layout.rs`,
-//! `scene/props.rs` and `scene/tree.rs` have one dispatch arm each.
+//! The pickers' kind rows: WG4b's `date-picker` and `color-picker` (both with `bind:value`,
+//! plans/milestones/WG4b-dialogs-pickers-dnd.md), and OW6's new `calendar` and `color-editor`
+//! (plans/milestones/OW6-pickers.md). All four are svelters' own widgets only
+//! (`crate::widgets::{date_picker, color_picker, calendar, color_editor}`; `widgets::OWN_ONLY`):
+//! OW6 deleted the egui wrappers (`egui_extras::DatePickerButton`, `color_edit_button_hsva`).
 //!
 //! Values are strings, the same on every backend:
 //! - a date is ISO 8601 (`2026-10-22`), `""` for none (the button then shows today);
 //! - a colour is CSS hex, `#rrggbb` when opaque and `#rrggbbaa` otherwise (`#rgb`/`#rgba` are
 //!   accepted on write and stored normalized).
 //!
-//! Writer lane: WIDGETS (WG4b).
-//!
-//! [`W::Picker`]: crate::scene::W::Picker
+//! Writer lanes: WIDGETS (WG4b), OW6.
 
 use super::{Def, KindDef, P, PropDef, SignalDef, Ty, input, prop, signal};
-use egui::ecolor::Hsva;
-use svelters_abi::Value;
 
 /// `color-picker`'s `alpha` values (`egui::color_picker::Alpha`).
 pub const ALPHA: &[&str] = &["opaque", "blend", "blend-or-additive"];
 
-static DATE_PROPS: &[PropDef] = &[
-    input("value", P::Value, Ty::Str, Def::Str(""), "The date, ISO 8601 (`2026-10-22`); `\"\"` for none (the button shows today). Picking a day and pressing Save changes it."),
-    prop("format", P::Format, Ty::Str, Def::Str("%Y-%m-%d"), "How the button shows the date (`strftime`, jiff's `civil::Date::strftime`)."),
-    prop("calendar-week", P::CalendarWeek, Ty::Bool, Def::Bool(true), "Shows ISO week numbers in the calendar."),
-];
+/// `calendar`'s and `date-picker`'s calendar props (WIDGET-PARITY §2.19).
+macro_rules! calendar_props {
+    () => {
+        [
+            prop("min", P::Min, Ty::Str, Def::Str(""), "The first day that can be picked (ISO 8601); days before it are `:disabled`. `\"\"`: no limit."),
+            prop("max", P::Max, Ty::Str, Def::Str(""), "The last day that can be picked (ISO 8601); days after it are `:disabled`. `\"\"`: no limit."),
+            prop("first-day", P::FirstDay, Ty::Enum(crate::widgets::calendar::FIRST_DAY), Def::Str("auto"), "The weekday the grid starts on; `auto` is the locale's (Monday until IN1)."),
+            prop("weekday-format", P::WeekdayFormat, Ty::Enum(crate::widgets::calendar::WEEKDAY_FORMAT), Def::Str("short"), "The weekday header: `narrow` (M), `short` (Mo), `long` (Monday) or `none` (no header row)."),
+            prop("navigation", P::Navigation, Ty::Bool, Def::Bool(true), "Shows the header with the previous/next month buttons and the month and year."),
+            prop("read-only", P::ReadOnly, Ty::Bool, Def::Bool(false), "Shows and roves the calendar but never picks (Qt's `NoSelection`)."),
+            prop("day-parts", P::DayParts, Ty::StrList, Def::Null, "Extra part names per date, `\"YYYY-MM-DD name…\"` each: `[\"2026-10-22 milestone\"]` makes that day match `::part(day milestone)`."),
+        ]
+    };
+}
 
-static COLOR_PROPS: &[PropDef] = &[
+/// `color-editor`'s and `color-picker`'s editor props (WIDGET-PARITY §2.20).
+macro_rules! color_editor_props {
+    () => {
+        [
+    prop("fields", P::Fields, Ty::Str, Def::Str("hex rgb"), "Which fields show under the strips, space-separated: `hex` (a hex field), `rgb` (R, G, B boxes, 0–255), `hsv` (H 0–360, S and V 0–100)."),
+    prop("swatches", P::Swatches, Ty::StrList, Def::Null, "A palette of hex colours shown as cells (`::part(swatch-cell)`); a click picks one."),
+    input("custom-colors", P::CustomColors, Ty::StrList, Def::Null, "The user's colours (`bind:custom-colors`, up to 16): the add cell appends the current colour. Persist it with `uiState()`."),
+        ]
+    };
+}
+
+
+static DATE_PROPS: &[PropDef] = &{
+    let [a, b, c, d, e, f, g] = calendar_props!();
+    [
+        input("value", P::Value, Ty::Str, Def::Str(""), "The date, ISO 8601 (`2026-10-22`); `\"\"` for none (the button shows today). Picking a day (and, with `commit-mode=\"confirm\"`, pressing Save) changes it."),
+        prop("format", P::Format, Ty::Str, Def::Str("%Y-%m-%d"), "How the button shows the date (`strftime`, jiff's `civil::Date::strftime`)."),
+        prop("calendar-week", P::CalendarWeek, Ty::Bool, Def::Bool(true), "Shows ISO week numbers in the calendar."),
+        // ---- OW6: appended ----
+        a,
+        b,
+        c,
+        d,
+        e,
+        f,
+        g,
+        prop("commit-mode", P::CommitMode, Ty::Enum(crate::widgets::date_picker::DATE_COMMIT_MODE), Def::Str("confirm"), "`confirm`: a picked day is pending until Save (Enter saves, Cancel or Escape drops it); `immediate`: a pick commits and closes the popup (Qt)."),
+    ]
+};
+
+static COLOR_PROPS: &[PropDef] = &{
+    let [x, y, z] = color_editor_props!();
+    [
     input(
         "value",
         P::Value,
@@ -40,18 +76,33 @@ static COLOR_PROPS: &[PropDef] = &[
         P::Alpha,
         Ty::Enum(ALPHA),
         Def::Str("opaque"),
-        "Whether the popup edits alpha (`egui::color_picker::Alpha`): `opaque` hides it, `blend` edits it, `blend-or-additive` also offers additive.",
+        "Whether the popup edits alpha: `opaque` hides the alpha strip, `blend` and `blend-or-additive` show it (additive colours are not offered by the own editor).",
     ),
+    // ---- OW6: appended ----
+    x,
+    y,
+    z,
+    prop("commit-mode", P::CommitMode, Ty::Enum(crate::widgets::color_editor::COLOR_COMMIT_MODE), Def::Str("live"), "`live`: each edit changes `value` (closing the popup commits); `confirm`: edits are pending until Save, Cancel or Escape drops them (Qt's dialog)."),
+    ]
+};
+
+static DATE_SIGNALS: &[SignalDef] = &[
+    signal("changed", &[("value", Ty::Str)], "The user saved a date; carries it (ISO 8601)."),
+    // ---- OW6: appended ----
+    signal("commit", &[("value", Ty::Str)], "A pick was applied (§2.4): Save, or the pick itself with `commit-mode=\"immediate\"`."),
+    signal("page-changed", &[("year", Ty::I64), ("month", Ty::I64)], "The user moved the calendar to another month."),
 ];
 
-static DATE_SIGNALS: &[SignalDef] = &[signal("changed", &[("value", Ty::Str)], "The user saved a date; carries it (ISO 8601).")];
-
-static COLOR_SIGNALS: &[SignalDef] = &[signal("changed", &[("value", Ty::Str)], "The user edited the colour; carries it (CSS hex, once per frame while dragging).")];
+static COLOR_SIGNALS: &[SignalDef] = &[
+    signal("changed", &[("value", Ty::Str)], "The user edited the colour; carries it (CSS hex, once per frame while dragging)."),
+    // ---- OW6: appended ----
+    signal("commit", &[("value", Ty::Str)], "A commit point (§2.4): `live`, a drag released, a step, a field or a swatch, and the popup closing after edits; `confirm`, Save."),
+];
 
 pub const DATE_PICKER: KindDef = KindDef {
     id: "DatePicker",
     tag: Some("date-picker"),
-    native: "egui_extras::DatePickerButton",
+    native: "svelters' own (OW6; was egui_extras::DatePickerButton)",
     base: Some("Widget"),
     toplevel: false,
     slot: None,
@@ -60,13 +111,13 @@ pub const DATE_PICKER: KindDef = KindDef {
     props: DATE_PROPS,
     signals: DATE_SIGNALS,
     methods: &[],
-    doc: "A button showing a date; clicking it opens a calendar popup (Save/Cancel).",
+    doc: "A drop button showing a date; clicking it opens the calendar (the `calendar` kind's) in a popup, with Save/Cancel unless `commit-mode=\"immediate\"`.",
 };
 
 pub const COLOR_PICKER: KindDef = KindDef {
     id: "ColorPicker",
     tag: Some("color-picker"),
-    native: "egui::color_picker::color_edit_button_hsva",
+    native: "svelters' own (OW6; was egui::color_picker::color_edit_button_hsva)",
     base: Some("Widget"),
     toplevel: false,
     slot: None,
@@ -75,184 +126,76 @@ pub const COLOR_PICKER: KindDef = KindDef {
     props: COLOR_PROPS,
     signals: COLOR_SIGNALS,
     methods: &[],
-    doc: "A colour swatch; clicking it opens egui's colour picker popup.",
+    doc: "A colour swatch drop button; clicking it opens the colour editor (the `color-editor` kind's) in a popup.",
 };
 
-/// The payload of a picker node.
-#[derive(Clone, Debug, PartialEq)]
-pub enum Picker {
-    Date {
-        /// ISO 8601 or empty.
-        value: String,
-        format: String,
-        calendar_week: bool,
-    },
-    Color {
-        /// Unmultiplied sRGBA.
-        rgba: [u8; 4],
-        alpha: &'static str,
-        /// The popup's HSVA while the user edits (keeps the hue of greys); dropped on a host write.
-        hsva: Option<Hsva>,
-    },
-}
+// ---- OW6: calendar (new kind; svelters' own widget only, `widgets::calendar`) ----
 
-/// Parses an ISO 8601 date (`""` is none).
-pub fn parse_date(s: &str) -> Result<Option<jiff::civil::Date>, String> {
-    if s.is_empty() {
-        return Ok(None);
-    }
-    s.parse::<jiff::civil::Date>().map(Some).map_err(|e| format!("`{s}` is not an ISO 8601 date (YYYY-MM-DD): {e}"))
-}
+static CALENDAR_PROPS: &[PropDef] = &{
+    let [a, b, c, d, e, f, g] = calendar_props!();
+    [
+        input("value", P::Value, Ty::Str, Def::Str(""), "The picked date, ISO 8601 (`2026-10-22`); `\"\"` for none."),
+        prop("calendar-week", P::CalendarWeek, Ty::Bool, Def::Bool(true), "Shows ISO week numbers in front of each week (`::part(week-number)`)."),
+        a,
+        b,
+        c,
+        d,
+        e,
+        f,
+        g,
+    ]
+};
 
-/// Parses a CSS hex colour into unmultiplied sRGBA.
-pub fn parse_color(s: &str) -> Result<[u8; 4], String> {
-    egui::Color32::from_hex(s.trim()).map(|c| c.to_srgba_unmultiplied()).map_err(|e| format!("`{s}` is not a hex colour (#rrggbb, #rrggbbaa, #rgb, #rgba): {e:?}"))
-}
+static CALENDAR_SIGNALS: &[SignalDef] = &[
+    signal("changed", &[("value", Ty::Str)], "The user picked a day; carries it (ISO 8601)."),
+    signal("commit", &[("value", Ty::Str)], "A pick is a commit (§2.4); carries the date."),
+    signal("page-changed", &[("year", Ty::I64), ("month", Ty::I64)], "The user moved to another month (prev/next, PageUp/PageDown, arrows across a month)."),
+];
 
-/// Unmultiplied sRGBA as CSS hex: `#rrggbb` when opaque, else `#rrggbbaa`.
-pub fn color_hex([r, g, b, a]: [u8; 4]) -> String {
-    if a == 255 { format!("#{r:02x}{g:02x}{b:02x}") } else { format!("#{r:02x}{g:02x}{b:02x}{a:02x}") }
-}
+pub const CALENDAR: KindDef = KindDef {
+    id: "Calendar",
+    tag: Some("calendar"),
+    native: "svelters' own (OW6)",
+    base: Some("Widget"),
+    toplevel: false,
+    slot: None,
+    text_content: None,
+    present: None,
+    props: CALENDAR_PROPS,
+    signals: CALENDAR_SIGNALS,
+    methods: &[],
+    doc: "An inline month calendar (Qt's `QCalendarWidget`): a header with previous/next, a weekday row, ISO week numbers and a 6×7 day grid. `date-picker` shows the same calendar in its popup.",
+};
 
-impl Picker {
-    /// The default payload of kind `id` (`DatePicker`, `ColorPicker`).
-    pub fn new(id: &str) -> Picker {
-        match id {
-            "DatePicker" => Picker::Date { value: String::new(), format: "%Y-%m-%d".into(), calendar_week: true },
-            _ => Picker::Color { rgba: [0, 0, 0, 255], alpha: "opaque", hsva: None },
-        }
-    }
+// ---- OW6: color-editor (new kind; svelters' own widget only, `widgets::color_editor`) ----
 
-    /// The `value` prop.
-    pub fn value(&self) -> Value {
-        match self {
-            Picker::Date { value, .. } => Value::Str(value.clone()),
-            Picker::Color { rgba, .. } => Value::Str(color_hex(*rgba)),
-        }
-    }
+static COLOR_EDITOR_PROPS: &[PropDef] = &{
+    let [a, b, c] = color_editor_props!();
+    [
+        input("value", P::Value, Ty::Str, Def::Str("#000000"), "The colour, CSS hex: `#rrggbb` when opaque, `#rrggbbaa` otherwise (`#rgb`, `#rgba` accepted)."),
+        prop("alpha", P::Alpha, Ty::Enum(ALPHA), Def::Str("opaque"), "`opaque` hides the alpha strip; `blend` and `blend-or-additive` show it."),
+        a,
+        b,
+        c,
+    ]
+};
 
-    /// What the node shows as text (queries, dumps): the value.
-    pub fn text(&self) -> &str {
-        match self {
-            Picker::Date { value, .. } => value,
-            Picker::Color { .. } => "",
-        }
-    }
+static COLOR_EDITOR_SIGNALS: &[SignalDef] = &[
+    signal("changed", &[("value", Ty::Str)], "The user edited the colour (each drag frame, step, field or swatch); carries it (CSS hex)."),
+    signal("commit", &[("value", Ty::Str)], "A commit point: a drag released, a key step, a field set, a swatch picked (§2.4)."),
+];
 
-    /// Writes prop `key` (already defaulted for `null`). A picker's props only need a repaint,
-    /// except `format`, which changes the button's text.
-    pub fn set(&mut self, key: P, v: &Value) -> Result<bool, String> {
-        let s = || match v {
-            Value::Str(s) => Ok(s.clone()),
-            Value::Null => Ok(String::new()),
-            other => Err(format!("expected a string, got {other:?}")),
-        };
-        match (key, self) {
-            (P::Value, Picker::Date { value, .. }) => {
-                let new = s()?;
-                *value = parse_date(&new)?.map(|d| d.to_string()).unwrap_or_default();
-                Ok(true)
-            }
-            (P::Format, Picker::Date { format, .. }) => {
-                *format = s()?;
-                Ok(true)
-            }
-            (P::CalendarWeek, Picker::Date { calendar_week, .. }) => {
-                *calendar_week = match v {
-                    Value::Bool(b) => *b,
-                    other => return Err(format!("expected a boolean, got {other:?}")),
-                };
-                Ok(false)
-            }
-            (P::Value, Picker::Color { rgba, hsva, .. }) => {
-                *rgba = parse_color(&s()?)?;
-                *hsva = None;
-                Ok(false)
-            }
-            (P::Alpha, Picker::Color { alpha, .. }) => {
-                let new = s()?;
-                *alpha = ALPHA.iter().copied().find(|a| *a == new).ok_or_else(|| format!("`{new}` is not one of {}", ALPHA.join(", ")))?;
-                Ok(false)
-            }
-            (key, p) => Err(format!("{key:?} is not a prop of {p:?}")),
-        }
-    }
-
-    /// Reads prop `key`.
-    pub fn get(&self, key: P) -> Option<Value> {
-        Some(match (key, self) {
-            (P::Value, p) => p.value(),
-            (P::Format, Picker::Date { format, .. }) => Value::Str(format.clone()),
-            (P::CalendarWeek, Picker::Date { calendar_week, .. }) => Value::Bool(*calendar_week),
-            (P::Alpha, Picker::Color { alpha, .. }) => Value::Str(alpha.to_string()),
-            _ => return None,
-        })
-    }
-
-    /// The date the button shows: the value, else today.
-    fn shown_date(value: &str) -> jiff::civil::Date {
-        parse_date(value).ok().flatten().unwrap_or_else(|| jiff::Zoned::now().date())
-    }
-
-    /// The button's text (as `DatePickerButton` draws it; no calendar icon: egui's default fonts have no emoji).
-    fn date_text(value: &str, format: &str) -> String {
-        Picker::shown_date(value).strftime(format).to_string()
-    }
-
-    #[allow(clippy::disallowed_types)] // OW: wrapper until OW6
-    /// Paints the widget in `ui` (the node's rect); a user edit updates the payload, which
-    /// `leaf.rs` compares with the value before the widget ran.
-    pub fn ui(&mut self, ui: &mut egui::Ui, size: egui::Vec2) -> egui::Response {
-        match self {
-            Picker::Date { value, format, calendar_week } => {
-                let mut date = Picker::shown_date(value);
-                let resp = ui.add(
-                    egui_extras::DatePickerButton::new(&mut date).id_salt("date-picker").show_icon(false).combo_boxes(false).format(format.clone()).calendar_week(*calendar_week),
-                );
-                if resp.changed() {
-                    *value = date.to_string();
-                }
-                resp
-            }
-            Picker::Color { rgba, alpha, hsva } => {
-                let mode = match *alpha {
-                    "blend" => egui::color_picker::Alpha::OnlyBlend,
-                    "blend-or-additive" => egui::color_picker::Alpha::BlendOrAdditive,
-                    _ => egui::color_picker::Alpha::Opaque,
-                };
-                let [r, g, b, a] = *rgba;
-                let mut h = hsva.unwrap_or_else(|| Hsva::from_srgba_unmultiplied([r, g, b, a]));
-                // the swatch fills the node's rect (egui sizes it by `interact_size`)
-                ui.spacing_mut().interact_size = size.max(egui::vec2(8.0, 8.0));
-                let resp = egui::color_picker::color_edit_button_hsva(ui, &mut h, mode);
-                if resp.changed() {
-                    *hsva = Some(h);
-                    let mut new = h.to_srgba_unmultiplied();
-                    if mode == egui::color_picker::Alpha::Opaque {
-                        new[3] = 255;
-                    }
-                    *rgba = new;
-                }
-                resp
-            }
-        }
-    }
-
-    /// The size the widget asks for.
-    pub fn measure(&self, m: &crate::layout::Metrics) -> egui::Vec2 {
-        let sp = &m.style.spacing;
-        match self {
-            Picker::Date { value, format, .. } => {
-                let font = egui::TextStyle::Button.resolve(&m.style);
-                let t = m.ctx.fonts_mut(|f| f.layout_no_wrap(Picker::date_text(value, format), font, egui::Color32::WHITE).size());
-                egui::vec2(t.x + 2.0 * sp.button_padding.x, (t.y + 2.0 * sp.button_padding.y).max(sp.interact_size.y))
-            }
-            Picker::Color { .. } => sp.interact_size,
-        }
-    }
-}
-
-/// The kind ids of the pickers (for `scene/tree.rs`).
-pub fn is_picker(id: &str) -> bool {
-    matches!(id, "DatePicker" | "ColorPicker")
-}
+pub const COLOR_EDITOR: KindDef = KindDef {
+    id: "ColorEditor",
+    tag: Some("color-editor"),
+    native: "svelters' own (OW6)",
+    base: Some("Widget"),
+    toplevel: false,
+    slot: None,
+    text_content: None,
+    present: None,
+    props: COLOR_EDITOR_PROPS,
+    signals: COLOR_EDITOR_SIGNALS,
+    methods: &[],
+    doc: "An inline colour editor (the body of Qt's `QColorDialog`, GTK's `ColorChooserWidget`): a saturation/value square, hue and alpha strips, hex and channel fields, a palette and custom colours. `color-picker` shows the same editor in its popup.",
+};

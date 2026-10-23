@@ -89,6 +89,11 @@ struct ListRig {
 
 impl ListRig {
     fn new() -> ListRig {
+        ListRig::with_kind("virtual-list")
+    }
+
+    /// OW5a: a `virtual-list` or a `tree-view` (the same row protocol).
+    fn with_kind(kind: &str) -> ListRig {
         let backend = EguiBackend::new();
         let vt: &'static BackendVtable = Box::leak(Box::new(backend.vtable()));
         let st: Rc<RefCell<St>> = Rc::default();
@@ -98,9 +103,14 @@ impl ListRig {
         st.borrow_mut().br = Some(br);
         let harness = Harness::builder().with_size(egui::vec2(480.0, 360.0)).build_ui_state(|ui, b: &mut EguiBackend| b.ui(ui), backend.clone());
         let w = br.create(br.resolve(NameKind::Kind, 0, "window")).unwrap();
-        let list = br.create(br.resolve(NameKind::Kind, 0, "virtual-list")).unwrap();
+        let list = br.create(br.resolve(NameKind::Kind, 0, kind)).unwrap();
         let lk = br.handle_info(list).unwrap().kind;
-        for s in ["setup", "bind", "unbind", "teardown", "select", "activate"] {
+        let sigs: &[&'static str] = if kind == "tree-view" {
+            &["setup", "bind", "unbind", "teardown", "activate", "expand", "collapse", "row-clicked", "row-context"]
+        } else {
+            &["setup", "bind", "unbind", "teardown", "select", "activate", "selectionchange", "row-clicked", "row-context"]
+        };
+        for &s in sigs {
             let id = br.resolve(NameKind::Signal, lk, s);
             assert_ne!(id, 0, "signal {s}");
             st.borrow_mut().sig.insert(id, s);
@@ -460,4 +470,208 @@ fn a_focused_row_claims_the_navigation_keys() {
     assert!(r.backend.shortcut_override(&ctx, &k(egui::Modifiers::NONE, egui::Key::ArrowDown)));
     assert!(r.backend.shortcut_override(&ctx, &k(egui::Modifiers::NONE, egui::Key::PageUp)));
     assert!(!r.backend.shortcut_override(&ctx, &k(egui::Modifiers::COMMAND, egui::Key::Z)));
+}
+
+// ---- OW5a: own rows (DESIGN R6, R8, R14), the Scrollable bar, EV1 gates, tree rows ----
+
+impl ListRig {
+    /// Row `pos`'s drawn rect and node.
+    fn row(&self, pos: usize) -> (NodeId, egui::Rect) {
+        self.backend.scene().read(|s| {
+            let (n, _) = s.list_rows(self.id()).into_iter().find(|&(_, p)| p == pos).expect("row drawn");
+            (n, s.get(n).unwrap().drawn().unwrap())
+        })
+    }
+
+    fn press(&mut self, p: egui::Pos2, button: egui::PointerButton) {
+        self.harness.event(egui::Event::PointerMoved(p));
+        self.harness.event(egui::Event::PointerButton { pos: p, button, pressed: true, modifiers: egui::Modifiers::NONE });
+        self.harness.event(egui::Event::PointerButton { pos: p, button, pressed: false, modifiers: egui::Modifiers::NONE });
+        self.harness.run();
+    }
+
+    fn key(&mut self, k: egui::Key) {
+        self.harness.key_press(k);
+        self.harness.run();
+    }
+
+    fn events(&self, name: &str) -> Vec<Vec<Value>> {
+        self.st.borrow().events.iter().filter(|(n, _)| *n == name).map(|(_, a)| a.clone()).collect()
+    }
+
+    /// The fill of the `::part(row)` box traced across row `rect` (transparent: none).
+    fn row_fill(&self, rect: egui::Rect) -> egui::Color32 {
+        let t = svelters_egui::paint::trace::last(&self.harness.ctx);
+        t.of(self.id().to_raw(), Some("row"))
+            .filter(|e| e.kind == svelters_egui::paint::TraceKind::Box && (e.rect.center().y - rect.center().y).abs() < 1.0)
+            .map(|e| e.fill)
+            .last()
+            .unwrap_or(egui::Color32::TRANSPARENT)
+    }
+
+    fn row_ring(&self, rect: egui::Rect) -> bool {
+        let t = svelters_egui::paint::trace::last(&self.harness.ctx);
+        t.of(self.id().to_raw(), Some("row")).any(|e| e.kind == svelters_egui::paint::TraceKind::Outline && (e.rect.center().y - rect.center().y).abs() < 1.0)
+    }
+}
+
+/// R6: rest, hover, active selection and inactive selection are four distinct fills of
+/// `::part(row)`, and R8's ring is on the cursor row for keyboard focus only; the row node
+/// mirrors `:selected` and `:current`.
+#[test]
+fn ow5a_rows_show_r6_states_and_a_keyboard_only_ring() {
+    use svelters_egui::provider::StateBits;
+    let mut r = ListRig::new();
+    svelters_egui::paint::trace::enable(&r.harness.ctx, true);
+    r.splice(0, 0, 1..=50);
+    r.harness.run();
+    let (_, r3) = r.row(3);
+    let rest = r.row_fill(r3);
+    assert_eq!(rest.a(), 0, "a row at rest is flat and unfilled");
+    r.harness.event(egui::Event::PointerMoved(r3.center()));
+    r.harness.run();
+    let hover = r.row_fill(r3);
+    assert!(hover.a() > 0 && hover != rest, "hover fill");
+    r.press(r3.center(), egui::PointerButton::Primary);
+    r.harness.event(egui::Event::PointerMoved(egui::pos2(-10.0, -10.0)));
+    r.harness.run();
+    let active = r.row_fill(r3);
+    assert!(active.a() > 0 && active != hover, "active selection fill: {active:?} vs {hover:?}");
+    assert!(!r.row_ring(r3), "R8: a click shows no ring");
+    assert_eq!(r.events("row-clicked"), vec![vec![Value::I64(3), Value::I64(4)]]);
+    // Down: the cursor row moves and shows the ring (keyboard)
+    r.key(egui::Key::ArrowDown);
+    r.harness.run();
+    let (n4, r4) = r.row(4);
+    assert!(r.row_ring(r4), "R8: the keyboard cursor row shows its ring");
+    let st = r.backend.scene().read(|s| s.get(n4).unwrap().state());
+    assert!(st.contains(StateBits::SELECTED) && st.contains(StateBits::CURRENT), "the row node mirrors its row: {st:?}");
+    // focus elsewhere: the selection stays, in the inactive colour, without a ring
+    r.harness.ctx.memory_mut(|m| m.request_focus(egui::Id::unique("elsewhere")));
+    r.harness.run();
+    r.harness.run();
+    let inactive = r.row_fill(r4);
+    assert!(inactive.a() > 0 && inactive != active && inactive != hover, "inactive selection fill: {inactive:?}");
+    assert!(!r.row_ring(r4));
+    // a secondary click asks for the row's context menu
+    r.press(r3.center(), egui::PointerButton::Secondary);
+    assert_eq!(r.events("row-context"), vec![vec![Value::I64(3), Value::I64(4)]]);
+}
+
+/// P1 and the per-row state: `::part(row):nth-child(even)` stripes by logical position and
+/// `::part(row):selected` beats it on the selected row only (the rules see the row's state, not
+/// the list's).
+#[test]
+fn ow5a_part_row_rules_match_each_rows_position_and_state() {
+    let mut r = ListRig::new();
+    svelters_egui::paint::trace::enable(&r.harness.ctx, true);
+    let d = r.backend.add_sheet(
+        "ow5a",
+        "virtual-list::part(row):nth-child(even) { background-color: #102030 } virtual-list::part(row):selected { background-color: #00ff00 }",
+    );
+    assert!(d.is_empty(), "{d:?}");
+    r.splice(0, 0, 1..=50);
+    r.harness.run();
+    let stripe = egui::Color32::from_rgb(0x10, 0x20, 0x30);
+    // :nth-child(even) is 1-based: positions 1, 3, 5 …
+    assert_eq!(r.row_fill(r.row(1).1), stripe);
+    assert_eq!(r.row_fill(r.row(3).1), stripe);
+    assert_ne!(r.row_fill(r.row(2).1), stripe);
+    r.press(r.row(2).1.center(), egui::PointerButton::Primary);
+    r.harness.event(egui::Event::PointerMoved(egui::pos2(-10.0, -10.0)));
+    r.harness.run();
+    assert_eq!(r.row_fill(r.row(2).1), egui::Color32::from_rgb(0, 255, 0), "the selected row");
+    assert_eq!(r.row_fill(r.row(3).1), stripe, "its neighbour keeps its stripe");
+}
+
+/// OW2's Scrollable is the list's bar: dragging its thumb scrolls the list (the virtualiser binds
+/// the new window), and AccessKit sees a `ScrollBar`.
+#[test]
+fn ow5a_the_bar_is_a_scrollable_thumb() {
+    let mut r = ListRig::new();
+    svelters_egui::paint::trace::enable(&r.harness.ctx, true);
+    r.splice(0, 0, 1..=2000);
+    r.harness.run();
+    let lr = r.list_rect();
+    r.harness.event(egui::Event::PointerMoved(lr.center()));
+    r.harness.run();
+    let t = svelters_egui::paint::trace::last(&r.harness.ctx);
+    let thumb = t.of(r.id().to_raw(), Some("thumb-y")).last().expect("the thumb is drawn while hovered").rect;
+    assert!(thumb.max.x <= lr.max.x + 0.5 && thumb.width() <= 12.0, "{thumb:?} in {lr:?}");
+    let from = thumb.center();
+    let to = from + egui::vec2(0.0, 100.0);
+    r.harness.event(egui::Event::PointerMoved(from));
+    r.harness.event(egui::Event::PointerButton { pos: from, button: egui::PointerButton::Primary, pressed: true, modifiers: egui::Modifiers::NONE });
+    r.harness.step();
+    for k in 1..=10 {
+        r.harness.event(egui::Event::PointerMoved(from + (to - from) * (k as f32 / 10.0)));
+        r.harness.step();
+    }
+    r.harness.event(egui::Event::PointerButton { pos: to, button: egui::PointerButton::Primary, pressed: false, modifiers: egui::Modifiers::NONE });
+    r.harness.run();
+    assert!(r.offset() > 2000.0, "the thumb drag scrolled: {}", r.offset());
+    assert_eq!(r.stats().unbound_drawn, 0, "rows were bound for the new offset");
+    assert!(r.harness.query_all_by_role(egui::accesskit::Role::ScrollBar).next().is_some());
+}
+
+/// EV1: a Rust filter that prevents `selectionchange` keeps the selection; one that prevents
+/// `activate` stops the activation.
+#[test]
+fn ow5a_filters_prevent_the_lists_default_actions() {
+    use svelters_egui::events::{FilterScope, Flow, SceneEvent};
+    use svelters_egui::scene::SceneRef;
+    let mut r = ListRig::new();
+    r.splice(0, 0, 1..=20);
+    r.harness.run();
+    let _f = r.backend.scene().register_filter(FilterScope::All, |ev: &SceneEvent, _s: SceneRef<'_>| {
+        if matches!(ev.name(), "selectionchange" | "activate") { Flow::Prevent } else { Flow::Pass }
+    });
+    r.press(r.row(2).1.center(), egui::PointerButton::Primary);
+    let k = r.br.handle_info(r.list).unwrap().kind;
+    assert_eq!(r.br.get_prop(r.list, r.br.resolve(NameKind::Prop, k, "selected-ids")).unwrap(), Value::List(vec![]), "prevented: no selection");
+    assert!(r.events("selectionchange").is_empty());
+    r.key(egui::Key::Enter);
+    assert!(r.events("activate").is_empty(), "prevented: no activation");
+}
+
+/// Tree rows (WG5b's `tree-view`, own): TreeItem roles with level and expanded, the twistie
+/// (R14) toggles through Expandable, `expand-on="click"` toggles on a row click, and
+/// `root-decorated={false}` hides level-0 twisties.
+#[test]
+fn ow5a_tree_rows_expand_through_their_twistie_and_expand_on() {
+    let mut r = ListRig::with_kind("tree-view");
+    svelters_egui::paint::trace::enable(&r.harness.ctx, true);
+    r.splice(0, 0, [1, 2, 3]);
+    let strs = |v: &[&str]| Value::List(v.iter().map(|x| Value::Str((*x).into())).collect());
+    let ints = |v: &[i64]| Value::List(v.iter().map(|x| Value::I64(*x)).collect());
+    // 1 (expandable, collapsed) and 2 (expandable, expanded) at level 0, 3 a leaf at level 1
+    r.call("setNodes", &[ints(&[1, 2, 3]), ints(&[0, 0, 1]), ints(&[1, 3, 0]), strs(&["one", "two", "three"]), strs(&["a", "b", "c"])]);
+    r.harness.run();
+    let items: Vec<_> = r.harness.query_all_by_role(egui::accesskit::Role::TreeItem).collect();
+    assert_eq!(items.len(), 3);
+    assert_eq!(items[0].accesskit_node().data().is_expanded(), Some(false));
+    assert_eq!(items[1].accesskit_node().data().is_expanded(), Some(true));
+    assert_eq!(items[2].accesskit_node().data().level(), Some(2));
+    assert_eq!(items[2].accesskit_node().data().is_expanded(), None, "a leaf has no expanded state");
+    let t = svelters_egui::paint::trace::last(&r.harness.ctx);
+    let twisties: Vec<_> = t.of(r.id().to_raw(), Some("twistie")).collect();
+    assert_eq!(twisties.len(), 2, "R14: a twistie on each expandable row");
+    // a click on the first row's twistie raises expand(1)
+    let tw = twisties.iter().find(|e| (e.rect.center().y - r.row(0).1.center().y).abs() < 1.0).unwrap().rect;
+    r.press(tw.center(), egui::PointerButton::Primary);
+    assert_eq!(r.events("expand"), vec![vec![Value::I64(1)]]);
+    // a click elsewhere on the row only selects …
+    r.press(r.row(1).1.center() + egui::vec2(60.0, 0.0), egui::PointerButton::Primary);
+    assert!(r.events("collapse").is_empty());
+    // … until `expand-on="click"`
+    r.set(r.list, "expand-on", Value::Str("click".into()));
+    r.harness.run();
+    r.press(r.row(1).1.center() + egui::vec2(60.0, 0.0), egui::PointerButton::Primary);
+    assert_eq!(r.events("collapse"), vec![vec![Value::I64(2)]]);
+    // root-decorated={false}: no twistie on level 0
+    r.set(r.list, "root-decorated", Value::Bool(false));
+    r.harness.run();
+    r.harness.run();
+    let t = svelters_egui::paint::trace::last(&r.harness.ctx);
+    assert_eq!(t.of(r.id().to_raw(), Some("twistie")).count(), 0);
 }
