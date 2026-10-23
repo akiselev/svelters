@@ -1526,13 +1526,31 @@ pub(crate) fn load_entry(
     res
 }
 
+/// Whose errors the job drain after a [`root_call`] is.
+#[derive(Clone, Copy, PartialEq, Eq)]
+pub(crate) enum DrainErrors {
+    /// The call's own (EM1's root calls, FX6b): the call queued what the drain runs, so the drain's
+    /// first error other than an unhandled rejection is returned as the call's error when the call
+    /// itself succeeded. The others are reported.
+    Call,
+    /// Reported, like a checkpoint's.
+    Report,
+}
+
 /// EM1: one call into a mounted root (`__svelters_embed.*`) as its own entry into JS, under the
 /// turn budget, followed by a job drain (the microtasks it queued, Svelte's flush among them).
-/// An error thrown by the call itself is returned (not reported); errors of the jobs are reported.
+/// An error thrown by the call itself is returned (not reported); the drain's errors follow `drain`.
+///
+/// FX6b (plans/milestones/FX6-embed-destroy-mutation.md): the embed's calls do not flush, Svelte's
+/// microtask flush runs in the drain, so an error that flush throws or the turn budget stopping it
+/// is the call's (`DrainErrors::Call`), as it was when the call flushed with `flushSync`: that flush
+/// also ran the batch of the changes delivered first. Jobs left pending by an earlier drain run
+/// after the call, so an unmount destroys the root's effects before they could run again.
 pub(crate) fn root_call<R>(
     core: &Core,
     engine: &RefCell<Box<dyn JsEngine>>,
     target: Option<svl_handle>,
+    drain: DrainErrors,
     f: impl FnOnce(&mut Box<dyn JsEngine>) -> Result<R, JsError>,
 ) -> Result<R, JsError> {
     let Some(_guard) = core.enter() else {
@@ -1548,7 +1566,15 @@ pub(crate) fn root_call<R>(
     deliver_changes(core, &mut eng);
     let res = f(&mut eng);
     let st = eng.run_jobs(core.cfg.max_jobs_per_checkpoint);
-    core.report_all(eng.take_errors());
+    let mut errors = eng.take_errors();
+    let res = match res {
+        Ok(v) if drain == DrainErrors::Call => match errors.iter().position(|e| e.kind != ErrorKind::UnhandledRejection) {
+            Some(i) => Err(errors.remove(i)),
+            None => Ok(v),
+        },
+        res => res,
+    };
+    core.report_all(errors);
     drop(eng);
     core.process_releases();
     core.sync_sched();
