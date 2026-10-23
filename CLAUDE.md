@@ -16,6 +16,8 @@ Read, in order:
 1. `plans/research/TRACKS.md`: the parallel tracks (svelters and cadatomic), waves, critical path.
 2. `plans/research/CADATOMIC.md`: svelters' answer to cadatomic's requests SV1–SV47 (plus SVP1–SVP9).
 3. `plans/research/EGUI.md`, `plans/research/CSS.md`, `plans/research/HMR.md` for the track you own.
+4. `docs/egui/START-HERE.md`: the egui backend's docs (own widgets in Rust and CSS, icons, automation,
+   loading code, hot reload), with when to read each page. Read it before writing egui widget or embed code.
 
 Decisions already made by the user (2026-10-21):
 - Stock QuickJS-NG; no rquickjs fork, no determinism work.
