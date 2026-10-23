@@ -3,14 +3,27 @@
 //! exactly as GTK and Qt speak it, so `@svelters/lists`' `<ListView>` runs unchanged.
 //!
 //! ```text
-//! props  selected i64 (-1: none), selection "none"|"single"|"multi", layout "list" ("grid" draws
-//!        a list), row-height i64 (the estimate and minimum height of a row; rows are measured),
-//!        selected-ids i64[] (WG5a: the selected item ids, bindable)
-//! calls  splice(pos, removed, ids[], labels[]?), count(), scrollTo(pos), setRow(row, widget|null),
-//!        rowAt(pos)
+//! props  selected i64 (-1: none), selection "none"|"single"|"multi"|"toggle"|"range", layout
+//!        "list" ("grid" draws a list), row-height i64 (the estimate and minimum height of a row;
+//!        rows are measured), selected-ids i64[] (WG5a: the selected item ids, bindable);
+//!        OW5a1b: current i64 (the cursor's id, bindable), uniform-rows bool, row-drag-type str,
+//!        row-drop-types str, internal-move bool
+//! calls  splice(pos, removed, ids[], labels[]?), count(), scrollTo(pos, hint?), setRow(row,
+//!        widget|null), rowAt(pos)
 //! sync   setup(row), bind(row, pos, id, gen), unbind(row, gen), teardown(row)
-//! async  activate(pos), select(pos), selectionchange(ids[])
+//! async  activate(pos), select(pos), selectionchange(ids[]), row-clicked(pos, id),
+//!        row-context(pos, id), row-hovered(pos, id), copy(ids[]), drop-row(id, where, type,
+//!        data), move(from, to)
 //! ```
+//!
+//! **Row drag and drop (OW5a1b)**, shared with `tree-view`: rows run one
+//! [`DragSource`](crate::interact::DragSource) (`row-drag-type`, or `internal-move`) and the list
+//! one [`DropTarget`](crate::interact::DropTarget) (`row-drop-types`, `internal-move`;
+//! `:drop-target` on the list while a drag it takes is over it). The ghost is the list's
+//! `::part(ghost)`. A list's payload is the dragged ids (the selection when the dragged row is
+//! selected), a line each, plus `text/plain` labels; `internal-move` drags one row and reorders
+//! (`move(from, to)`). A tree also auto-expands a collapsed row a drag holds `into`
+//! (`Policy::drag_expand_ms`).
 //!
 //! **Keyboard and selection (WG5a).** A click focuses the list; while focused it takes the arrows,
 //! PageUp/PageDown, Home/End, Space, Ctrl+A, Enter (activate) and typed text (type-ahead on the
@@ -45,7 +58,7 @@
 //!
 //! Writer lane: LISTS.
 
-use super::treeview::{DropAt, Tree, tree_drop_target, tree_keys, tree_row};
+use super::treeview::{DropAt, Tree, tree_keys, tree_row};
 use super::{Def, KindDef, MethodDef, P, PropDef, SignalDef, Ty, input, prop};
 use crate::backend::EguiBackend;
 use crate::views::item_keys;
@@ -57,7 +70,7 @@ use crate::widgets::list_rows::{self, ListBar, RowState};
 use std::borrow::Cow;
 use svelters_abi::Value;
 
-pub const SELECTION: &[&str] = &["none", "single", "multi"];
+pub const SELECTION: &[&str] = &["none", "single", "multi", "toggle", "range"];
 pub const LAYOUT: &[&str] = &["list", "grid"];
 
 pub(super) static PROPS: &[PropDef] = &[
@@ -67,11 +80,16 @@ pub(super) static PROPS: &[PropDef] = &[
         P::ListSelection,
         Ty::Enum(SELECTION),
         Def::Str("single"),
-        "`single`: a click or the keyboard selects a row (`select`); `multi`: Ctrl/Shift clicks and keys select several (`selectionchange`); `none`: rows are not selectable.",
+        "`single`: a click or the keyboard selects a row (`select`); `multi`: Ctrl/Shift clicks and keys select several (`selectionchange`); `toggle`: a click toggles its row, no modifier (checklists); `range`: one contiguous run, Shift extends; `none`: rows are not selectable.",
     ),
     input("selected-ids", P::SelectedIds, Ty::IdList, Def::Null, "The selected item ids (`bind:selected-ids`); kept by id across splices, sorts and filters."),
     prop("layout", P::ListLayout, Ty::Enum(LAYOUT), Def::Str("list"), "`list` (egui draws `grid` as a list for now)."),
     prop("row-height", P::RowHeight, Ty::I64, Def::I64(32), "The height a row is assumed to have before it is measured, and its minimum, in points."),
+    input("current", P::CurrentItem, Ty::I64, Def::I64(-1), "OW5a1b: the cursor's item id (`bind:current`), -1 for none. Setting it moves the cursor without selecting."),
+    prop("uniform-rows", P::UniformRows, Ty::Bool, Def::Bool(false), "OW5a1b: every row is `row-height` tall; rows are not measured (Qt `uniformRowHeights`)."),
+    prop("row-drag-type", P::RowDragType, Ty::Str, Def::Str(""), "OW5a1b: non-empty: rows drag, as a payload of this type (the dragged item ids, a line each) plus `text/plain` (their labels)."),
+    prop("row-drop-types", P::RowDropTypes, Ty::Str, Def::Str(""), "OW5a1b: non-empty: rows take drops of these types (WG4b patterns) and raise `drop-row`."),
+    prop("internal-move", P::InternalMove, Ty::Bool, Def::Bool(false), "OW5a1b: rows reorder by drag within the list (Qt `InternalMove`): a drop raises `move(from, to)`."),
 ];
 
 const ROW: (&str, Ty) = ("row", Ty::I64);
@@ -86,7 +104,16 @@ pub(super) static SIGNALS: &[SignalDef] = &[
     SignalDef { name: "select", args: &[POS], sync: false, doc: "The user selected the item at `pos`." },
     SignalDef { name: "selectionchange", args: &[("ids", Ty::IdList)], sync: false, doc: "The user changed the selection; carries the selected ids." },
     SignalDef { name: "row-clicked", args: &[POS, ("id", Ty::I64)], sync: false, doc: "OW5a: a click on the row at `pos` (item `id`), after the selection moved." },
-    SignalDef { name: "row-context", args: &[POS, ("id", Ty::I64)], sync: false, doc: "OW5a: a secondary click on the row at `pos` (item `id`): open its context menu." },
+    SignalDef { name: "row-context", args: &[POS, ("id", Ty::I64)], sync: false, doc: "OW5a: a secondary click on the row at `pos` (item `id`): open its context menu. The selection follows first (an unselected row is selected, per platform Policy)." },
+    SignalDef { name: "row-hovered", args: &[POS, ("id", Ty::I64)], sync: false, doc: "OW5a1b: the pointer entered the row at `pos` (item `id`; Qt `entered`)." },
+    SignalDef { name: "copy", args: &[("ids", Ty::IdList)], sync: false, doc: "OW5a1b: Ctrl+C on the focused list: copy the selected items (their ids)." },
+    SignalDef {
+        name: "drop-row",
+        args: &[("id", Ty::I64), ("where", Ty::Str), ("type", Ty::Str), ("data", Ty::Str)],
+        sync: false,
+        doc: "OW5a1b: a drag was dropped `before`, `after` or `into` item `id` (-1: below the last row), as the entry of `type` it took.",
+    },
+    SignalDef { name: "move", args: &[("from", Ty::I64), ("to", Ty::I64)], sync: false, doc: "OW5a1b (`internal-move`): the row at `from` was dragged to the gap before position `to` (`count()`: the end); move it." },
 ];
 
 pub(super) static METHODS: &[MethodDef] = &[
@@ -95,7 +122,7 @@ pub(super) static METHODS: &[MethodDef] = &[
         doc: "`splice(pos, removed, ids, labels?)`: replaces `removed` ids at `pos` with `ids` (unique integers); `labels` (strings, one per id) are what type-ahead matches.",
     },
     MethodDef { name: "count", doc: "The number of items." },
-    MethodDef { name: "scrollTo", doc: "`scrollTo(pos)`: scrolls the item into view." },
+    MethodDef { name: "scrollTo", doc: "`scrollTo(pos, hint?)`: scrolls the item into view; `hint` (Qt `ScrollHint`): `nearest` (the default, the least scroll), `top`, `bottom` or `center`." },
     MethodDef { name: "setRow", doc: "`setRow(row, widget)`: the content of row slot `row` (called from `setup`); null clears it." },
     MethodDef { name: "rowAt", doc: "`rowAt(pos)`: the slot bound to `pos`, or -1." },
 ];
@@ -178,8 +205,8 @@ pub struct VList {
     pub(crate) scroll: VScroll,
     pub(crate) slots: Vec<Slot>,
     pub(crate) rust: Option<RustRows>,
-    /// `scrollTo`, applied by the next offset decision.
-    pub(crate) reveal: Option<usize>,
+    /// `scrollTo`, applied by the next offset decision (OW5a1b: with its hint).
+    pub(crate) reveal: Option<(usize, Reveal)>,
     /// The size of the last layout (0: not laid out).
     pub(crate) view: egui::Vec2,
     pub(crate) stats: ListStats,
@@ -190,7 +217,67 @@ pub struct VList {
     /// OW5a (R8): the list's focus came from the keyboard; it had focus last frame.
     pub(crate) kbd: bool,
     pub(crate) was_focused: bool,
+    /// OW5a1b: the row props (lists and trees).
+    pub(crate) dnd: RowDnd,
+    /// OW5a1b `uniform-rows`: rows are `row-height` tall, not measured.
+    pub(crate) uniform: bool,
+    /// OW5a1b `bind:current`: the cursor last announced (or set by the host).
+    pub(crate) current_seen: Option<u64>,
+    /// OW5a1b `row-hovered`: the row under the pointer last frame.
+    pub(crate) hovered: Option<u64>,
 }
+
+/// OW5a1b: `scrollTo`'s hint (Qt `QAbstractItemView::ScrollHint`).
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub enum Reveal {
+    /// The least scroll that shows the row (`EnsureVisible`).
+    #[default]
+    Nearest,
+    Top,
+    Bottom,
+    Center,
+}
+
+impl Reveal {
+    pub fn parse(s: &str) -> Option<Reveal> {
+        Some(match s {
+            "nearest" => Reveal::Nearest,
+            "top" => Reveal::Top,
+            "bottom" => Reveal::Bottom,
+            "center" => Reveal::Center,
+            _ => return None,
+        })
+    }
+}
+
+/// OW5a1b: row drag and drop on a list or tree: the props, the units and the drop's hover.
+#[derive(Clone, Debug, Default)]
+pub(crate) struct RowDnd {
+    pub drag_type: String,
+    pub drop_types: String,
+    /// `internal-move` (lists).
+    pub internal_move: bool,
+    /// The rows' [`DragSource`](crate::interact::DragSource) (one drag at a time).
+    pub source: crate::interact::DragSource,
+    /// The rows' drop zone (`:drop-target` on the list).
+    pub target: crate::interact::DropTarget,
+    /// DnD auto-expand: the collapsed tree row a drag hovers `into`, since when (seconds).
+    pub expand_hover: Option<(u64, f64)>,
+}
+
+impl RowDnd {
+    /// Rows drag (a type, or reordering).
+    pub fn drags(&self) -> bool {
+        !self.drag_type.is_empty() || self.internal_move
+    }
+    /// Rows take drops.
+    pub fn drops(&self) -> bool {
+        !self.drop_types.is_empty() || self.internal_move
+    }
+}
+
+/// OW5a1b: the payload type of an `internal-move` drag (the list accepts only its own).
+pub const ROW_MOVE: &str = "application/x-svelters-row-move";
 
 impl Default for VList {
     fn default() -> Self {
@@ -213,6 +300,10 @@ impl Default for VList {
             bar: ListBar::default(),
             kbd: false,
             was_focused: false,
+            dnd: RowDnd::default(),
+            uniform: false,
+            current_seen: None,
+            hovered: None,
         }
     }
 }
@@ -220,7 +311,8 @@ impl Default for VList {
 impl Clone for VList {
     /// A fresh list with the same props (rows and bindings are not cloneable).
     fn clone(&self) -> VList {
-        let mut v = VList { selected: self.selected, selection: self.selection, layout: self.layout, row_height: self.row_height, sel: KeySelect::new(self.sel.mode), tree: self.tree.as_ref().map(|t| Box::new(t.fresh())), ..VList::default() };
+        let mut v = VList { selected: self.selected, selection: self.selection, layout: self.layout, row_height: self.row_height, sel: KeySelect::new(self.sel.mode), tree: self.tree.as_ref().map(|t| Box::new(t.fresh())), uniform: self.uniform, ..VList::default() };
+        v.dnd = RowDnd { drag_type: self.dnd.drag_type.clone(), drop_types: self.dnd.drop_types.clone(), internal_move: self.dnd.internal_move, ..RowDnd::default() };
         v.heights.set_estimate(v.row_height as f32);
         v
     }
@@ -325,6 +417,14 @@ impl VList {
         }
     }
 
+    /// OW5a1b: the cursor's item id (a tree's own, or the list's).
+    pub fn cursor(&self) -> Option<u64> {
+        match &self.tree {
+            Some(t) => t.sel.cursor,
+            None => self.sel.cursor,
+        }
+    }
+
     /// The selection (WG5a): ids, cursor, mode.
     pub fn selection(&self) -> &KeySelect {
         &self.sel
@@ -362,11 +462,17 @@ impl VList {
 
     /// Decides this pass's offset (R22) with a pending `scrollTo`. True if it changed.
     fn advance(&mut self, ctx: &egui::Context) -> bool {
-        if let Some(pos) = self.reveal.take()
+        if let Some((pos, hint)) = self.reveal.take()
             && pos < self.len()
         {
             let (y0, y1) = (self.heights.offset(pos), self.heights.offset(pos + 1));
-            self.scroll.reveal(y0, y1, self.view.y as f64);
+            let view = self.view.y as f64;
+            match hint {
+                Reveal::Nearest => self.scroll.reveal(y0, y1, view),
+                Reveal::Top => self.scroll.reveal_at(y0),
+                Reveal::Bottom => self.scroll.reveal_at(y1 - view),
+                Reveal::Center => self.scroll.reveal_at((y0 + y1 - view) / 2.0),
+            }
         }
         let max = self.max_offset();
         self.scroll.advance(ctx, max)
@@ -470,7 +576,7 @@ pub(crate) fn set(v: &mut VList, key: P, val: &Value) -> Result<(), String> {
     if let Some(t) = v.tree.as_deref_mut() {
         match (key, val) {
             (P::ListSelection, Value::Str(s)) => {
-                let name = super::treeview::SELECTION.iter().copied().find(|x| x == s).ok_or_else(|| format!("`{s}` is not one of none, single, multi"))?;
+                let name = super::treeview::SELECTION.iter().copied().find(|x| x == s).ok_or_else(|| format!("`{s}` is not one of none, single, multi, toggle, range"))?;
                 v.selection = name;
                 t.sel.mode = Mode::parse(name).unwrap_or_default();
                 let keep: Vec<u64> = t.sel.selected.iter().copied().collect();
@@ -479,13 +585,9 @@ pub(crate) fn set(v: &mut VList, key: P, val: &Value) -> Result<(), String> {
             }
             (P::TreeIndent, Value::I64(x)) => t.indent = (*x).max(0) as f32,
             (P::TreeIndent, Value::F64(x)) => t.indent = x.max(0.0) as f32,
-            (P::RowDragType, Value::Str(x)) => t.drag_type = x.clone(),
-            (P::RowDragType, Value::Null) => t.drag_type.clear(),
-            (P::RowDropTypes, Value::Str(x)) => t.drop_types = x.clone(),
-            (P::RowDropTypes, Value::Null) => t.drop_types.clear(),
             (P::ExpandOn, Value::Str(x)) => t.expand_on = super::treeview::ExpandOn::parse(x).ok_or_else(|| format!("`{x}` is not one of twistie, click, double-click"))?,
             (P::RootDecorated, Value::Bool(b)) => t.root_decorated = *b,
-            (P::TreeIndent | P::RowDragType | P::RowDropTypes | P::ExpandOn | P::RootDecorated, other) => return Err(format!("{key:?}: unexpected value {other:?}")),
+            (P::TreeIndent | P::ExpandOn | P::RootDecorated, other) => return Err(format!("{key:?}: unexpected value {other:?}")),
             _ => return set_list(v, key, val),
         }
         return Ok(());
@@ -513,7 +615,7 @@ fn set_list(v: &mut VList, key: P, val: &Value) -> Result<(), String> {
             }
         }
         (P::ListSelection, Value::Str(s)) => {
-            v.selection = SELECTION.iter().copied().find(|x| x == s).ok_or_else(|| format!("`{s}` is not one of none, single, multi"))?;
+            v.selection = SELECTION.iter().copied().find(|x| x == s).ok_or_else(|| format!("`{s}` is not one of none, single, multi, toggle, range"))?;
             let keep: Vec<u64> = v.sel.selected.iter().copied().collect();
             v.sel.mode = Mode::parse(v.selection).unwrap_or_default();
             v.sel.set(keep);
@@ -530,6 +632,26 @@ fn set_list(v: &mut VList, key: P, val: &Value) -> Result<(), String> {
             v.row_height = (*x as i64).max(1);
             v.heights.set_estimate(v.row_height as f32);
         }
+        (P::RowDragType, Value::Str(x)) => v.dnd.drag_type = x.clone(),
+        (P::RowDragType, Value::Null) => v.dnd.drag_type.clear(),
+        (P::RowDropTypes, Value::Str(x)) => v.dnd.drop_types = x.clone(),
+        (P::RowDropTypes, Value::Null) => v.dnd.drop_types.clear(),
+        (P::InternalMove, Value::Bool(b)) => v.dnd.internal_move = *b,
+        (P::UniformRows, Value::Bool(b)) => v.uniform = *b,
+        (P::CurrentItem, Value::I64(_) | Value::F64(_)) => {
+            let x = match val {
+                Value::I64(x) => *x,
+                Value::F64(x) => *x as i64,
+                _ => unreachable!(),
+            };
+            // the host's cursor: moved, not selected, and not announced back
+            let c = (x >= 0).then_some(x as u64);
+            match v.tree.as_deref_mut() {
+                Some(t) => t.sel.cursor = c,
+                None => v.sel.cursor = c,
+            }
+            v.current_seen = c;
+        }
         (k, other) => return Err(format!("{k:?}: unexpected value {other:?}")),
     }
     Ok(())
@@ -543,8 +665,11 @@ pub(crate) fn get(v: &VList, key: P) -> Option<Value> {
         P::ListLayout => Value::Str(v.layout.to_string()),
         P::RowHeight => Value::I64(v.row_height),
         P::TreeIndent => Value::I64(v.tree.as_ref()?.indent as i64),
-        P::RowDragType => Value::Str(v.tree.as_ref()?.drag_type.clone()),
-        P::RowDropTypes => Value::Str(v.tree.as_ref()?.drop_types.clone()),
+        P::RowDragType => Value::Str(v.dnd.drag_type.clone()),
+        P::RowDropTypes => Value::Str(v.dnd.drop_types.clone()),
+        P::InternalMove => Value::Bool(v.dnd.internal_move),
+        P::UniformRows => Value::Bool(v.uniform),
+        P::CurrentItem => Value::I64(v.cursor().map_or(-1, |k| k as i64)),
         P::ExpandOn => Value::Str(v.tree.as_ref()?.expand_on.name().into()),
         P::RootDecorated => Value::Bool(v.tree.as_ref()?.root_decorated),
         _ => return None,
@@ -600,9 +725,14 @@ impl EguiBackend {
             }
             "scrollTo" => {
                 let pos = int(args.first(), "scrollTo pos")?;
+                let hint = match args.get(1) {
+                    None | Some(Value::Null) => Reveal::Nearest,
+                    Some(Value::Str(h)) => Reveal::parse(h).ok_or_else(|| format!("scrollTo: `{h}` is not one of nearest, top, bottom, center"))?,
+                    Some(other) => return Err(format!("scrollTo hint: expected a string, got {other:?}")),
+                };
                 let W::VirtualList(v) = scene.w_mut(i) else { unreachable!() };
                 if pos >= 0 {
-                    v.reveal = Some(pos as usize);
+                    v.reveal = Some((pos as usize, hint));
                 }
                 Value::Null
             }
@@ -869,7 +999,7 @@ impl SceneMut<'_> {
     pub fn scroll_list_to(&mut self, list: NodeId, pos: usize) -> Result<(), SceneError> {
         let i = self.s.idx(list).ok_or(SceneError::Stale(list.to_raw()))?;
         let W::VirtualList(v) = self.s.w_mut(i) else { return Err(SceneError::Invalid("not a <virtual-list>".into())) };
-        v.reveal = Some(pos);
+        v.reveal = Some((pos, Reveal::Nearest));
         self.s.invalidate_content(list);
         Ok(())
     }
@@ -958,7 +1088,7 @@ pub(crate) fn place_rows(v: &mut VList, size: egui::Vec2, measured: &[(NodeId, u
 
 /// The fixed row height of a list (no measuring), if it has one.
 pub(crate) fn uniform_height(v: &VList) -> Option<f32> {
-    v.rust.as_ref().and_then(|r| r.source.uniform_height())
+    v.rust.as_ref().and_then(|r| r.source.uniform_height()).or(v.uniform.then_some(v.row_height as f32))
 }
 
 // ---- the walk ----
@@ -984,7 +1114,7 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
     };
     // WG5b: a `tree-view` (its tree's selection mode, drag and drop types)
     let tree = match s.w(i) {
-        W::VirtualList(v) => v.tree.as_deref().map(|t| (t.sel.mode, t.indent, t.drag_type.clone(), t.drop_types.clone())),
+        W::VirtualList(v) => v.tree.as_deref().map(|t| (t.sel.mode, t.indent)),
         _ => return None,
     };
     // WG5a: keyboard focus is on the cursor row (EV3: a row is the list's focus stop), or on the
@@ -1011,6 +1141,19 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
             if let Some(f) = now_focused {
                 item_keys::lock_arrows(ui, f);
             }
+            // OW5a1b: Ctrl+C raises `copy(ids)` with the selection
+            if item_keys::take_copy(ui) {
+                let ids = match s.w(i) {
+                    W::VirtualList(v) if !v.sel.selected.is_empty() => Some(item_keys::ids_value(v.sel.selected.iter().copied())),
+                    _ => None,
+                };
+                let sig = super::signal_id(kind, "copy");
+                if let Some(ids) = ids
+                    && s.listens(i, sig)
+                {
+                    out.push(Out::Event(h, sig, vec![ids]));
+                }
+            }
             let keys = item_keys::read_keys(ui, true);
             if !keys.is_empty() {
                 had_keys = true;
@@ -1031,8 +1174,8 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         }
         // a tree's selection and cursor are its own (`Tree::sel`, drawn by `tree_row`)
         let (selectable, multi, cursor) = match &tree {
-            Some((mode, ..)) => (*mode != Mode::None, *mode == Mode::Multi, None),
-            None => (v.selection != "none", v.selection == "multi", v.sel.cursor),
+            Some((mode, ..)) => (*mode != Mode::None, mode.is_multi(), None),
+            None => (v.sel.mode != Mode::None, v.sel.mode.is_multi(), v.sel.cursor),
         };
         (v.len(), selectable, multi, cursor, v.scroll.offset, v.heights.total(), v.view, v.scroll.taken(), v.scroll.decided_in(&ctx), v.kbd)
     };
@@ -1071,11 +1214,14 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
             out.push(Out::Event(h, sig, args));
         }
     };
-    // WG5b: the row a drag would drop on, decided before the rows so targets inside them win
-    let drop_at = match &tree {
-        Some((.., drop_types)) if !drop_types.is_empty() => tree_drop_target(s, i, &placed, origin, r, clip, drop_types, ui, out, &emit),
-        _ => None,
+    // WG5b (OW5a1b: lists too): the row a drag would drop on, decided before the rows so
+    // targets inside them win
+    let drop_at = row_drop(s, i, &placed, origin, r, clip, ui, out, &emit);
+    let (drags, context_selects) = match s.w(i) {
+        W::VirtualList(v) => (v.dnd.drags(), crate::native::policy_of(&ctx).context_click_selects),
+        _ => return None,
     };
+    let mut hovered: Option<(usize, u64)> = None;
     let mut first_row = true; // EV3
     let mut clicked = false;
     let cursor_drawn = cursor.is_some_and(|c| placed_keys.contains(&c));
@@ -1096,13 +1242,13 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         let row_id = list_id.with(("row", key));
         let at = (pos, len);
         let full = egui::Rect::from_x_y_ranges(r.x_range(), rr.y_range());
-        let row = if let Some((_, indent, drag_type, _)) = &tree {
-            let drop_into = matches!(drop_at, Some((DropAt::Into, Some(d))) if (d.min.y - rr.min.y).abs() < 0.5);
-            let rs = tree_row(s, i, key, at, full, *indent, drag_type, focused, kbd, drop_into, row_id, list_id, &mut rows_ui, out, &emit);
+        let drop_into = matches!(drop_at, Some((DropAt::Into, Some(d))) if (d.min.y - rr.min.y).abs() < 0.5);
+        let row = if let Some((_, indent)) = &tree {
+            let rs = tree_row(s, i, key, at, full, *indent, focused, kbd, drop_into, row_id, list_id, &mut rows_ui, out, &emit);
             clicked |= rs.1;
             rs.0
         } else {
-            let rresp = rows_ui.interact(rr, row_id, egui::Sense::click());
+            let rresp = rows_ui.interact(rr, row_id, if drags { egui::Sense::click_and_drag() } else { egui::Sense::click() });
             let is_sel = selectable && matches!(s.w(i), W::VirtualList(v) if v.sel.is_selected(key));
             crate::scene::virt::a11y_row(&ctx, row_id, pos, len, |node| {
                 node.set_role(if selectable { egui::accesskit::Role::ListBoxOption } else { egui::accesskit::Role::ListItem });
@@ -1117,6 +1263,7 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
                 current: cursor == Some(key),
                 list_focused: focused,
                 keyboard: kbd,
+                drop_into,
                 disabled: !rows_ui.is_enabled(),
                 ..RowState::default()
             };
@@ -1142,10 +1289,22 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
                 ctx.request_repaint();
             }
             if rresp.secondary_clicked() {
+                // OW5a1b (Policy): the selection follows the context click to an unselected row
+                if context_selects && selectable && !is_sel {
+                    rresp.request_focus();
+                    click_row(s, i, key, crate::views::selection::Mods::default(), &ctx, out);
+                }
                 emit(s, out, "row-context", vec![Value::I64(pos as i64), Value::I64(key as i64)]);
             }
             if rresp.double_clicked() && s.listens(i, sig_activate) && list_rows::allowed(s, i, "activate", &ctx, out) {
                 out.push(Out::Event(h, sig_activate, vec![Value::I64(pos as i64)]));
+            }
+            if drags {
+                let label = match s.w(i) {
+                    W::VirtualList(v) => v.label_at(pos).unwrap_or_default(),
+                    _ => String::new(),
+                };
+                row_drag(s, i, key, &rresp, &rows_ui, &label);
             }
             {
                 // EV3: a row takes focus and the list's keys; WG5a: the cursor row (else the first
@@ -1155,6 +1314,9 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
             }
             row
         };
+        if row.hovered {
+            hovered = Some((pos, key));
+        }
         // the row node mirrors its row's state (`virtual-list:focus-within > :selected`)
         list_rows::mirror(s, ni, &row);
         let mut row_ui = rows_ui.new_child(egui::UiBuilder::new().max_rect(rr).id_salt(("row", key)).accessibility_parent(row_id));
@@ -1229,6 +1391,27 @@ pub(crate) fn paint(s: &mut Scene, i: usize, origin: egui::Vec2, ui: &mut egui::
         }
         d
     };
+    // OW5a1b: `row-hovered` when the pointer enters a row; `bind:current` when the cursor moved
+    let (entered, current) = match s.w_mut(i) {
+        W::VirtualList(v) => {
+            let entered = hovered.filter(|&(_, k)| v.hovered != Some(k));
+            v.hovered = hovered.map(|(_, k)| k);
+            let c = v.cursor();
+            let current = (c != v.current_seen).then(|| {
+                v.current_seen = c;
+                c
+            });
+            (entered, current)
+        }
+        _ => (None, None),
+    };
+    if let Some((pos, key)) = entered {
+        emit(s, out, "row-hovered", vec![Value::I64(pos as i64), Value::I64(key as i64)]);
+    }
+    if let Some(c) = current {
+        let v = Value::I64(c.map_or(-1, |k| k as i64));
+        crate::leaf::widget_changed(s, i, &[P::CurrentItem], vec![v], out);
+    }
     if let W::VirtualList(v) = s.w_mut(i) {
         if moved.abs() > 1e-3 {
             v.scroll.add_pending(moved);
@@ -1323,7 +1506,7 @@ fn keys_rest(s: &mut Scene, i: usize, h: u64, kind: usize, ids: &[u64], cursor: 
     if cursor
         && let Some(p) = v.sel.cursor.and_then(|k| ids.iter().position(|&x| x == k))
     {
-        v.reveal = Some(p);
+        v.reveal = Some((p, Reveal::Nearest));
         s.invalidate_content(s.slots.id_at(i).expect("live list"));
     }
     let Some(o) = o else { return };
@@ -1354,5 +1537,200 @@ impl<'a> crate::scene::SceneRef<'a> {
     pub fn list_rows(self, id: NodeId) -> Vec<(NodeId, usize)> {
         let s = self.s;
         self.virtual_list(id).map(|v| v.placed(s)).unwrap_or_default()
+    }
+}
+
+// ---- OW5a1b: row drag and drop (lists and trees) ----
+
+fn mac(ctx: &egui::Context) -> bool {
+    ctx.os() == egui::os::OperatingSystem::Mac
+}
+
+/// The payload of a row drag starting on item `key` of list `v`: a tree's rows (`Tree::mime`),
+/// or a list's: `row-drag-type` with the dragged ids (a line each) and `text/plain` with their
+/// labels; with `internal-move`, also [`ROW_MOVE`] with `key` (the list takes only its own).
+fn row_payload(v: &VList, key: u64) -> svelters_host::platform::MimeData {
+    if let Some(t) = v.tree.as_deref() {
+        return t.mime(&v.dnd.drag_type, &t.drag_rows(&v.ids, key));
+    }
+    let ids = v.all_ids();
+    let rows: Vec<u64> = if !v.dnd.internal_move && v.sel.is_selected(key) { ids.iter().copied().filter(|x| v.sel.is_selected(*x)).collect() } else { vec![key] };
+    let label = |k: u64| v.row_of(k).and_then(|p| v.label_at(p)).unwrap_or_default();
+    let mut m = svelters_host::platform::MimeData::new();
+    if v.dnd.internal_move {
+        m = m.with(ROW_MOVE, key.to_string());
+    }
+    if !v.dnd.drag_type.is_empty() {
+        m = m.with(v.dnd.drag_type.clone(), rows.iter().map(|k| k.to_string()).collect::<Vec<_>>().join("\n"));
+    }
+    m.with("text/plain", rows.iter().map(|&k| label(k)).collect::<Vec<_>>().join("\n"))
+}
+
+/// A row's drag: the rows' [`DragSource`](crate::interact::DragSource) on the row's response
+/// `rresp` (item `key`, ghost text `label`). Sets the payload on `Begin`, the cursor, and paints
+/// the list's `::part(ghost)`.
+pub(crate) fn row_drag(s: &mut Scene, i: usize, key: u64, rresp: &egui::Response, ui: &egui::Ui, label: &str) {
+    use crate::interact::{DragIntent, DragSourceParams, Intents, PartResponses, Unit};
+    let ctx = ui.ctx().clone();
+    let list_id = s.core[i].egui_id;
+    let W::VirtualList(v) = s.w_mut(i) else { return };
+    if !v.dnd.drags() {
+        return;
+    }
+    let mut src = std::mem::take(&mut v.dnd.source);
+    let params = DragSourceParams { on: true, mac: mac(&ctx), over_target: super::dnd::over_target(&ctx) };
+    let mut state = crate::provider::StateBits::NONE;
+    let mut fired = Intents::default();
+    crate::interact::run(ui, rresp, &mut state, &PartResponses::default(), |cx| src.input(&params, cx, &mut fired));
+    if fired.iter().any(|f| *f == DragIntent::Begin) {
+        let p = src.payload(row_payload(v, key), Some(list_id));
+        egui::DragAndDrop::set_payload(&ctx, p);
+    }
+    if let Some(c) = src.cursor() {
+        ctx.set_cursor_icon(c);
+    }
+    let dragging = src.dragging();
+    if src.next_frame().is_some() {
+        ctx.request_repaint();
+    }
+    v.dnd.source = src;
+    if dragging {
+        let fallback = if v.dnd.drag_type.is_empty() { "row" } else { v.dnd.drag_type.as_str() };
+        let text = if label.is_empty() { fallback.to_string() } else { label.to_string() };
+        super::dnd::ghost(s, i, ui, list_id.with(("row", key)), &text);
+    }
+}
+
+/// Where a row drop lands: the row (`id`, position, `where`, its rect from the inset); `None`
+/// below the last row.
+type RowHit = Option<(u64, usize, DropAt, egui::Rect)>;
+
+/// The rows' drop zone (`row-drop-types`, `internal-move`): while an accepted drag is over the
+/// rows, where it would land; on release `drop-row(id, where, type, data)` (or, for the list's
+/// own `internal-move` drag, `move(from, to)`). Runs the list's
+/// [`DropTarget`](crate::interact::DropTarget) (`:drop-target` on the list) and, on trees, DnD
+/// auto-expand: a drag held `into` a collapsed row for `Policy::drag_expand_ms` raises `expand`.
+/// Runs before the rows are painted, so drop targets inside rows (painted later) win the pointer.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn row_drop(s: &mut Scene, i: usize, placed: &[(NodeId, usize)], origin: egui::Vec2, r: egui::Rect, clip: egui::Rect, ui: &egui::Ui, out: &mut Vec<Out>, emit: &super::treeview::Emit<'_>) -> Option<(DropAt, Option<egui::Rect>)> {
+    use crate::interact::{DropIntent, DropParams, Offer};
+    use egui::DragAndDrop;
+    let ctx = ui.ctx().clone();
+    let list_id = s.core[i].egui_id;
+    let zone = list_id.with("row-drop");
+    let (drop_types, internal) = {
+        let W::VirtualList(v) = s.w(i) else { return None };
+        if !v.dnd.drops() {
+            return None;
+        }
+        (v.dnd.drop_types.clone(), v.dnd.internal_move)
+    };
+    let payload = DragAndDrop::payload::<super::dnd::DragPayload>(&ctx);
+    // the list's own reorder drag, else the entry `row-drop-types` takes
+    let own = internal && payload.as_ref().is_some_and(|p| p.source == Some(list_id) && p.best(ROW_MOVE).is_some());
+    let offer: Option<(String, String)> = payload.as_ref().and_then(|p| if own { p.best(ROW_MOVE) } else if drop_types.is_empty() { None } else { p.best(&drop_types) }).map(|(t, d)| (t.to_string(), d));
+    let inside = offer.is_some() && ctx.rect_contains_pointer(ui.layer_id(), clip);
+    if inside {
+        super::dnd::claim(&ctx, zone);
+        ctx.request_repaint(); // the claim decides next pass
+    }
+    let claimed = inside && super::dnd::claimed(&ctx, zone);
+    let ptr = ctx.pointer_latest_pos();
+    let hit: RowHit = {
+        let W::VirtualList(v) = s.w(i) else { return None };
+        let mut hit = None;
+        if claimed && let Some(ptr) = ptr {
+            for &(n, pos) in placed {
+                let Some(ni) = s.idx(n) else { continue };
+                let rr = s.core[ni].rect.translate(origin);
+                if pos < v.len() && rr.y_range().contains(ptr.y) {
+                    let t = (ptr.y - rr.min.y) / rr.height().max(1.0);
+                    // a reorder lands between rows
+                    let at = if own { if t < 0.5 { DropAt::Before } else { DropAt::After } } else { DropAt::of(t) };
+                    let indent = v.tree.as_ref().map_or(0.0, |t| t.indent);
+                    let x = (r.min.x + v.row_inset(pos) - indent).max(r.min.x);
+                    hit = Some((v.key_at(pos), pos, at, egui::Rect::from_x_y_ranges(x..=r.max.x, rr.y_range())));
+                }
+            }
+        }
+        hit
+    };
+    let released = ctx.input(|inp| inp.pointer.any_released());
+    let action = super::dnd::drop_action(ctx.input(|inp| inp.modifiers), mac(&ctx));
+    let params = DropParams {
+        offer: offer.map(|(ty, d)| Offer { ty, data: released.then_some(d) }),
+        inside: claimed,
+        released,
+        at: ptr.map_or(egui::Vec2::ZERO, |p| p - r.min),
+        action,
+    };
+    let mut tgt = match s.w(i) {
+        W::VirtualList(v) => v.dnd.target,
+        _ => return None,
+    };
+    let mut state = s.core[i].state;
+    let fired = crate::interact::dnd::run_bare(&ctx, zone, clip, ui.is_enabled(), &mut state, &mut tgt, &params);
+    if let W::VirtualList(v) = s.w_mut(i) {
+        v.dnd.target = tgt;
+    }
+    crate::style::set_own_state(s, i, state);
+    for f in fired {
+        let DropIntent::Drop { ty, data, action, .. } = f else { continue };
+        if let Some(p) = DragAndDrop::take_payload::<super::dnd::DragPayload>(&ctx) {
+            p.accept_as(action);
+        }
+        if own {
+            let W::VirtualList(v) = s.w(i) else { return None };
+            let from = data.trim().parse::<u64>().ok().and_then(|k| v.row_of(k));
+            let to = match hit {
+                Some((_, pos, DropAt::Before, _)) => pos,
+                Some((_, pos, _, _)) => pos + 1,
+                None => v.len(),
+            };
+            // dropping a row into its own gap moves nothing
+            if let Some(from) = from.filter(|&f| to != f && to != f + 1) {
+                emit(s, out, "move", vec![Value::I64(from as i64), Value::I64(to as i64)]);
+            }
+        } else {
+            let (id, at) = hit.map_or((-1, DropAt::Into), |h| (h.0 as i64, h.2));
+            emit(s, out, "drop-row", vec![Value::I64(id), Value::Str(at.name().into()), Value::Str(ty), Value::Str(data)]);
+        }
+    }
+    auto_expand(s, i, if claimed && !released { hit } else { None }, &ctx, out, emit);
+    claimed.then(|| hit.map_or((DropAt::Into, None), |h| (h.2, Some(h.3))))
+}
+
+/// DnD auto-expand (Qt `autoExpandDelay`): a drag held `into` a collapsed tree row for
+/// `Policy::drag_expand_ms` raises `expand` for it, once (EV1-gated).
+fn auto_expand(s: &mut Scene, i: usize, hit: RowHit, ctx: &egui::Context, out: &mut Vec<Out>, emit: &super::treeview::Emit<'_>) {
+    let delay = crate::native::policy_of(ctx).drag_expand_ms;
+    let now = ctx.input(|inp| inp.time);
+    let W::VirtualList(v) = s.w_mut(i) else { return };
+    let Some(t) = v.tree.as_deref() else { return };
+    let target = match hit {
+        Some((key, _, DropAt::Into, _)) if delay > 0 && t.nodes.get(&key).is_some_and(|n| n.expandable && !n.expanded) => Some(key),
+        _ => None,
+    };
+    let Some(key) = target else {
+        v.dnd.expand_hover = None;
+        return;
+    };
+    let since = match v.dnd.expand_hover {
+        Some((k, at)) if k == key && at.is_infinite() => return,
+        Some((k, at)) if k == key => at,
+        _ => {
+            v.dnd.expand_hover = Some((key, now));
+            now
+        }
+    };
+    let wait = delay as f64 / 1000.0 - (now - since);
+    if wait > 0.0 {
+        ctx.request_repaint_after(std::time::Duration::from_secs_f64(wait));
+        return;
+    }
+    // once: until the drag leaves the row (JS splices the children in meanwhile)
+    v.dnd.expand_hover = Some((key, f64::INFINITY));
+    if list_rows::allowed(s, i, "expand", ctx, out) {
+        emit(s, out, "expand", vec![Value::I64(key as i64)]);
     }
 }

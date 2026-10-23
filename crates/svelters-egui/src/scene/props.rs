@@ -199,8 +199,8 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
         }
         (P::Password, W::TextEdit { password, .. }) => *password = as_bool(v)?,
         (P::CharLimit, W::TextEdit { char_limit, .. }) => *char_limit = as_i64(v)?.max(0),
-        (P::ListSelected | P::ListSelection | P::ListLayout | P::SelectedIds | P::RowDragType | P::RowDropTypes | P::ExpandOn | P::RootDecorated, W::VirtualList(l)) => crate::kinds::virtuallist::set(l, def.key, v)?,
-        (P::RowHeight | P::TreeIndent, W::VirtualList(l)) => {
+        (P::ListSelected | P::ListSelection | P::ListLayout | P::SelectedIds | P::RowDragType | P::RowDropTypes | P::ExpandOn | P::RootDecorated | P::CurrentItem | P::InternalMove, W::VirtualList(l)) => crate::kinds::virtuallist::set(l, def.key, v)?,
+        (P::RowHeight | P::TreeIndent | P::UniformRows, W::VirtualList(l)) => {
             crate::kinds::virtuallist::set(l, def.key, v)?;
             d.insert(Dirty::LAYOUT);
         }
@@ -349,7 +349,7 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Multiline, W::TextEdit { multiline, .. }) => Value::Bool(*multiline),
         (P::Password, W::TextEdit { password, .. }) => Value::Bool(*password),
         (P::CharLimit, W::TextEdit { char_limit, .. }) => Value::I64(*char_limit),
-        (P::ListSelected | P::ListSelection | P::ListLayout | P::SelectedIds | P::RowHeight | P::TreeIndent | P::RowDragType | P::RowDropTypes | P::ExpandOn | P::RootDecorated, W::VirtualList(l)) => {
+        (P::ListSelected | P::ListSelection | P::ListLayout | P::SelectedIds | P::RowHeight | P::TreeIndent | P::RowDragType | P::RowDropTypes | P::ExpandOn | P::RootDecorated | P::CurrentItem | P::InternalMove | P::UniformRows, W::VirtualList(l)) => {
             crate::kinds::virtuallist::get(l, def.key).ok_or_else(|| format!("{:?} is not a prop of <virtual-list>", def.key))?
         }
         // ---- WG1 ----

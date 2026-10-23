@@ -675,3 +675,254 @@ fn ow5a_tree_rows_expand_through_their_twistie_and_expand_on() {
     let t = svelters_egui::paint::trace::last(&r.harness.ctx);
     assert_eq!(t.of(r.id().to_raw(), Some("twistie")).count(), 0);
 }
+
+// ---- OW5a1b ----
+
+impl ListRig {
+    /// Listens to more of the list's signals.
+    fn listen(&self, names: &[&'static str]) {
+        let lk = self.br.handle_info(self.list).unwrap().kind;
+        for &s in names {
+            let id = self.br.resolve(NameKind::Signal, lk, s);
+            assert_ne!(id, 0, "signal {s}");
+            self.st.borrow_mut().sig.insert(id, s);
+            self.br.listen(self.list, id, true).unwrap();
+        }
+    }
+
+    fn get(&self, name: &str) -> Value {
+        let k = self.br.handle_info(self.list).unwrap().kind;
+        self.br.get_prop(self.list, self.br.resolve(NameKind::Prop, k, name)).unwrap()
+    }
+
+    /// A primary-button drag from `from` to `to` in `steps` moves, held `hold` more frames at
+    /// `to` before the release.
+    fn drag(&mut self, from: egui::Pos2, to: egui::Pos2, steps: usize, hold: usize) {
+        self.harness.event(egui::Event::PointerMoved(from));
+        self.harness.event(egui::Event::PointerButton { pos: from, button: egui::PointerButton::Primary, pressed: true, modifiers: egui::Modifiers::NONE });
+        self.harness.step();
+        for k in 1..=steps {
+            self.harness.event(egui::Event::PointerMoved(from + (to - from) * (k as f32 / steps as f32)));
+            self.harness.step();
+        }
+        for _ in 0..hold {
+            self.harness.event(egui::Event::PointerMoved(to));
+            self.harness.step();
+        }
+        self.harness.event(egui::Event::PointerButton { pos: to, button: egui::PointerButton::Primary, pressed: false, modifiers: egui::Modifiers::NONE });
+        self.harness.run();
+    }
+}
+
+fn ids(v: &[i64]) -> Value {
+    Value::List(v.iter().map(|x| Value::I64(*x)).collect())
+}
+
+/// `selection="toggle"`: a plain click toggles its row and keeps the others; `"range"`: Shift
+/// extends one run, a Ctrl click starts a new one (WIDGET-PARITY §2.18.1, Qt Multi/Contiguous).
+#[test]
+fn ow5a1b_toggle_and_range_selection() {
+    let mut r = ListRig::new();
+    r.set(r.list, "selection", Value::Str("toggle".into()));
+    r.splice(0, 0, 1..=20);
+    r.harness.run();
+    r.press(r.row(1).1.center(), egui::PointerButton::Primary);
+    r.press(r.row(3).1.center(), egui::PointerButton::Primary);
+    assert_eq!(r.get("selected-ids"), ids(&[2, 4]), "a plain click toggles, the others stay");
+    r.press(r.row(1).1.center(), egui::PointerButton::Primary);
+    assert_eq!(r.get("selected-ids"), ids(&[4]));
+    let multi = r.harness.query_all_by_role(egui::accesskit::Role::ListBox).next().unwrap().accesskit_node().data().is_multiselectable();
+    assert!(multi, "toggle is multiselectable");
+    r.set(r.list, "selection", Value::Str("range".into()));
+    r.harness.run();
+    r.press(r.row(5).1.center(), egui::PointerButton::Primary);
+    assert_eq!(r.get("selected-ids"), ids(&[6]));
+    r.harness.key_press_modifiers(egui::Modifiers::SHIFT, egui::Key::ArrowDown);
+    r.harness.key_press_modifiers(egui::Modifiers::SHIFT, egui::Key::ArrowDown);
+    r.harness.run();
+    assert_eq!(r.get("selected-ids"), ids(&[6, 7, 8]), "shift extends the run");
+    r.harness.key_press_modifiers(egui::Modifiers::COMMAND, egui::Key::ArrowDown);
+    r.harness.run();
+    assert_eq!(r.get("selected-ids"), ids(&[9]), "no second run: ctrl moves as a plain move does");
+}
+
+/// `bind:current`: the cursor's item id; the host's value moves the cursor without selecting.
+#[test]
+fn ow5a1b_bind_current_is_the_cursor() {
+    let mut r = ListRig::new();
+    r.splice(0, 0, 1..=20);
+    r.harness.run();
+    assert_eq!(r.get("current"), Value::I64(-1));
+    r.press(r.row(2).1.center(), egui::PointerButton::Primary);
+    assert_eq!(r.get("current"), Value::I64(3));
+    r.set(r.list, "current", Value::I64(7));
+    r.harness.run();
+    assert_eq!(r.get("current"), Value::I64(7));
+    assert_eq!(r.get("selected-ids"), ids(&[3]), "setting current does not select");
+    r.key(egui::Key::ArrowDown);
+    assert_eq!(r.get("current"), Value::I64(8), "Down moves from the host's cursor");
+    // the tree's cursor too
+    let mut t = ListRig::with_kind("tree-view");
+    t.splice(0, 0, [1, 2, 3]);
+    t.harness.run();
+    t.press(t.row(1).1.center(), egui::PointerButton::Primary);
+    assert_eq!(t.get("current"), Value::I64(2));
+}
+
+/// `scrollTo(pos, hint)`: `top`, `center`, `bottom` place the row; `nearest` scrolls the least.
+#[test]
+fn ow5a1b_scroll_to_takes_a_hint() {
+    let mut r = ListRig::new();
+    r.splice(0, 0, 1..=2000);
+    r.harness.run();
+    let lr = r.list_rect();
+    let place = |r: &mut ListRig, hint: &str| {
+        r.call("scrollTo", &[Value::I64(500), Value::Str(hint.into())]);
+        r.harness.run();
+        r.row(500).1
+    };
+    assert!((place(&mut r, "top").min.y - lr.min.y).abs() < 1.0);
+    assert!((place(&mut r, "center").center().y - lr.center().y).abs() < 1.0);
+    assert!((place(&mut r, "bottom").max.y - lr.max.y).abs() < 1.0);
+    let before = r.offset();
+    assert!((place(&mut r, "nearest").max.y - lr.max.y).abs() < 1.0, "already in view: no scroll");
+    assert_eq!(r.offset(), before);
+    let k = r.br.handle_info(r.list).unwrap().kind;
+    assert!(r.br.call(r.list, r.br.resolve(NameKind::Method, k, "scrollTo"), &[Value::I64(1), Value::Str("middle".into())]).is_err());
+}
+
+/// Ctrl+C on the focused list raises `copy(ids)`; `uniform-rows` lays rows out at `row-height`
+/// without measuring them; `row-hovered` when the pointer enters a row; a context click on an
+/// unselected row selects it first (Policy).
+#[test]
+fn ow5a1b_copy_uniform_rows_hover_and_context_selection() {
+    let mut r = ListRig::new();
+    r.listen(&["copy", "row-hovered"]);
+    r.set(r.list, "selection", Value::Str("multi".into()));
+    r.splice(0, 0, 1..=50);
+    r.harness.run();
+    r.press(r.row(1).1.center(), egui::PointerButton::Primary);
+    r.harness.event(egui::Event::Copy);
+    r.harness.run();
+    assert_eq!(r.events("copy"), vec![vec![ids(&[2])]]);
+    let hovered = r.events("row-hovered");
+    assert_eq!(hovered.last(), Some(&vec![Value::I64(1), Value::I64(2)]), "{hovered:?}");
+    r.harness.event(egui::Event::PointerMoved(r.row(4).1.center()));
+    r.harness.run();
+    assert_eq!(r.events("row-hovered").last(), Some(&vec![Value::I64(4), Value::I64(5)]));
+    r.press(r.row(4).1.center(), egui::PointerButton::Secondary);
+    assert_eq!(r.get("selected-ids"), ids(&[5]), "the selection follows the context click");
+    assert_eq!(r.events("row-context").last(), Some(&vec![Value::I64(4), Value::I64(5)]));
+    // a context click on a selected row keeps a multi selection
+    r.harness.key_press_modifiers(egui::Modifiers::SHIFT, egui::Key::ArrowDown);
+    r.harness.run();
+    r.press(r.row(4).1.center(), egui::PointerButton::Secondary);
+    assert_eq!(r.get("selected-ids"), ids(&[5, 6]));
+    r.set(r.list, "uniform-rows", Value::Bool(true));
+    r.set(r.list, "row-height", Value::I64(30));
+    r.harness.run();
+    r.harness.run();
+    assert!((r.row(3).1.height() - 30.0).abs() < 0.5, "{:?}", r.row(3).1);
+    assert_eq!(r.get("uniform-rows"), Value::Bool(true));
+}
+
+/// Row drag and drop on a plain list: `row-drag-type` drags the row's id (a line per row),
+/// `row-drop-types` takes it as `drop-row(id, where, type, data)`; the ghost is the list's
+/// `::part(ghost)` (CSS, not egui Visuals); the list is `:drop-target` meanwhile.
+#[test]
+fn ow5a1b_list_rows_drag_and_drop() {
+    use svelters_egui::provider::StateBits;
+    let mut r = ListRig::new();
+    svelters_egui::paint::trace::enable(&r.harness.ctx, true);
+    let d = r.backend.add_sheet("ow5a1b", "virtual-list::part(ghost) { background-color: #ff0000 }");
+    assert!(d.is_empty(), "{d:?}");
+    r.listen(&["drop-row", "move"]);
+    r.set(r.list, "row-drag-type", Value::Str("cad/part".into()));
+    r.set(r.list, "row-drop-types", Value::Str("cad/*".into()));
+    r.splice(0, 0, 1..=20);
+    r.harness.run();
+    let (from, to) = (r.row(1).1.center(), r.row(4).1.center());
+    // hold the drag over row 4: the ghost follows, the list is a drop target
+    r.harness.event(egui::Event::PointerMoved(from));
+    r.harness.event(egui::Event::PointerButton { pos: from, button: egui::PointerButton::Primary, pressed: true, modifiers: egui::Modifiers::NONE });
+    r.harness.step();
+    for k in 1..=8 {
+        r.harness.event(egui::Event::PointerMoved(from + (to - from) * (k as f32 / 8.0)));
+        r.harness.step();
+    }
+    let t = svelters_egui::paint::trace::last(&r.harness.ctx);
+    let ghost = t.of(r.id().to_raw(), Some("ghost")).find(|e| e.kind == svelters_egui::paint::TraceKind::Box).expect("the ghost is traced");
+    assert_eq!(ghost.fill.to_opaque(), egui::Color32::from_rgb(255, 0, 0), "::part(ghost) from CSS");
+    let st = r.backend.scene().read(|s| s.get(r.id()).unwrap().state());
+    assert!(st.contains(StateBits::DROP_TARGET), "{st:?}");
+    r.harness.event(egui::Event::PointerButton { pos: to, button: egui::PointerButton::Primary, pressed: false, modifiers: egui::Modifiers::NONE });
+    r.harness.run();
+    assert_eq!(r.events("drop-row"), vec![vec![Value::I64(5), Value::Str("into".into()), Value::Str("cad/part".into()), Value::Str("2".into())]]);
+    assert!(r.events("move").is_empty(), "no internal-move");
+    let st = r.backend.scene().read(|s| s.get(r.id()).unwrap().state());
+    assert!(!st.contains(StateBits::DROP_TARGET));
+}
+
+/// `internal-move`: a row dragged within the list raises `move(from, to)` (`to`: the gap it was
+/// dropped in), not `drop-row`; another list's drags are not taken.
+#[test]
+fn ow5a1b_internal_move_reorders() {
+    let mut r = ListRig::new();
+    r.listen(&["drop-row", "move"]);
+    r.set(r.list, "internal-move", Value::Bool(true));
+    r.splice(0, 0, 1..=20);
+    r.harness.run();
+    let below4 = r.row(4).1.center() + egui::vec2(0.0, 6.0);
+    r.drag(r.row(1).1.center(), below4, 8, 2);
+    assert_eq!(r.events("move"), vec![vec![Value::I64(1), Value::I64(5)]], "after row 4: the gap before 5");
+    let above1 = r.row(1).1.center() - egui::vec2(0.0, 6.0);
+    r.drag(r.row(6).1.center(), above1, 8, 2);
+    assert_eq!(r.events("move").last(), Some(&vec![Value::I64(6), Value::I64(1)]));
+    assert!(r.events("drop-row").is_empty());
+}
+
+/// Tree DnD auto-expand (Qt `autoExpandDelay`): a drag held `into` a collapsed row for the
+/// Policy's delay raises `expand` for it, once. EV1: a filter that prevents `selection-changed`
+/// keeps the tree's selection on a click.
+#[test]
+fn ow5a1b_tree_auto_expands_on_drag_hover_and_gates_selection() {
+    use svelters_egui::events::{FilterScope, Flow, SceneEvent};
+    use svelters_egui::scene::SceneRef;
+    let mut r = ListRig::with_kind("tree-view");
+    r.listen(&["selection-changed"]);
+    r.set(r.list, "row-drag-type", Value::Str("t/node".into()));
+    r.set(r.list, "row-drop-types", Value::Str("t/node".into()));
+    r.splice(0, 0, [1, 2, 3]);
+    let strs = |v: &[&str]| Value::List(v.iter().map(|x| Value::Str((*x).into())).collect());
+    r.call("setNodes", &[ids(&[1, 2, 3]), ids(&[0, 0, 0]), ids(&[1, 0, 0]), strs(&["one", "two", "three"]), strs(&["a", "b", "c"])]);
+    r.harness.run();
+    // held over row 0's middle, well past the Policy's delay (500 ms)
+    r.drag(r.row(2).1.center(), r.row(0).1.center(), 6, 60);
+    assert_eq!(r.events("expand"), vec![vec![Value::I64(1)]], "expanded once");
+    // dragging over the row without stopping (into it, then away) does not expand it
+    let (a, b) = (r.row(2).1.center(), r.row(0).1.center());
+    r.harness.event(egui::Event::PointerMoved(a));
+    r.harness.event(egui::Event::PointerButton { pos: a, button: egui::PointerButton::Primary, pressed: true, modifiers: egui::Modifiers::NONE });
+    r.harness.step();
+    let t0 = r.harness.ctx.input(|i| i.time);
+    for k in 1..=6 {
+        r.harness.event(egui::Event::PointerMoved(a + (b - a) * (k as f32 / 6.0)));
+        r.harness.step();
+    }
+    let dt = r.harness.ctx.input(|i| i.time) - t0;
+    r.harness.event(egui::Event::PointerMoved(a));
+    r.harness.event(egui::Event::PointerButton { pos: a, button: egui::PointerButton::Primary, pressed: false, modifiers: egui::Modifiers::NONE });
+    r.harness.run();
+    if dt < 0.4 {
+        assert_eq!(r.events("expand").len(), 1, "a pass over the row ({dt} s) does not expand it");
+    }
+    let _f = r.backend.scene().register_filter(FilterScope::All, |ev: &SceneEvent, _s: SceneRef<'_>| {
+        if ev.name() == "selection-changed" { Flow::Prevent } else { Flow::Pass }
+    });
+    let before = r.events("selection-changed").len();
+    let sel = r.call("selection", &[]);
+    r.press(r.row(1).1.center() + egui::vec2(60.0, 0.0), egui::PointerButton::Primary);
+    assert_eq!(r.events("selection-changed").len(), before, "prevented");
+    assert_eq!(r.call("selection", &[]), sel, "the selection stays");
+    assert_eq!(r.get("current"), Value::I64(2), "the cursor moves");
+}

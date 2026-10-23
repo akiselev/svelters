@@ -618,7 +618,7 @@ pub static KIND_DOCS: &[KindDoc] = &[
             decorated: false,
             ..a11y(Some("List"), &["accessible-name"], Some("its row count (size of set)"), &["Focus"])
         },
-        css_note: "Style the rows: each row is the element its row template renders.",
+        css_note: "Each row is `::part(row)` in its own state (`:hover`, `:active`, `:selected`, `:current`, `:focus-visible`, `:drop-target`, `:nth-child()`; `:focus-within` stays the list's) and the element its row template renders. Other parts: `placeholder`, `drop-line`, `ghost` (the drag label), `scrollbar-y`, `thumb-y`. The list is `:drop-target` while a row drag it takes is over it.",
     },
     // WG5b: a `virtual-list` with a tree attached
     KindDoc {
@@ -632,7 +632,7 @@ pub static KIND_DOCS: &[KindDoc] = &[
             decorated: false,
             ..a11y(Some("Tree"), &["accessible-name"], None, &["Focus"])
         },
-        css_note: "Style the rows: each row is the element its row template renders.",
+        css_note: "As `virtual-list` (`::part(row)` per row, `placeholder`, `drop-line`, `ghost`, the bar), plus `:has-children` and `:expanded` on rows and the `::part(twistie)` chevron.",
     },
     // RT2: the inline runs (`rich.rs`)
     KindDoc {

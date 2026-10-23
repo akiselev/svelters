@@ -12,7 +12,7 @@
 //! Writer lane: WG5a. WG5b's `tree-view` can use the same `read_keys`/`apply` and handle
 //! Left/Right itself before them.
 
-use super::selection::{Change, KeySelect, Mode, Mods, Nav};
+use super::selection::{Change, KeySelect, Mods, Nav};
 use std::collections::HashMap;
 
 /// One input a view's selection takes.
@@ -91,6 +91,16 @@ pub fn read_keys(ui: &egui::Ui, text: bool) -> Vec<Input> {
     })
 }
 
+/// OW5a1b: takes this pass's copy request (Ctrl+C, egui's `Event::Copy`) out of the input; true
+/// if there was one. Lists call it while focused; the table keeps its own handling.
+pub fn take_copy(ui: &egui::Ui) -> bool {
+    ui.ctx().input_mut(|i| {
+        let before = i.events.len();
+        i.events.retain(|e| !matches!(e, egui::Event::Copy));
+        i.events.len() != before
+    })
+}
+
 /// While a view has focus, egui's focus navigation leaves its arrow keys to it (Tab and Escape
 /// still move or drop focus).
 pub fn lock_arrows(ui: &egui::Ui, id: egui::Id) {
@@ -111,7 +121,7 @@ pub fn apply(sel: &mut KeySelect, ids: &[u64], inputs: &[Input], page: usize, la
                     out.add(sel.toggle_cursor());
                 }
             }
-            Input::SelectAll if sel.mode == Mode::Multi => {
+            Input::SelectAll if sel.mode.is_multi() => {
                 // hidden (filtered out) selected rows stay selected
                 let all: Vec<u64> = ids.iter().copied().chain(sel.selected.iter().copied()).collect();
                 out.selection |= sel.set(all);
@@ -199,6 +209,7 @@ pub fn labels_of(v: Option<&svelters_abi::Value>, what: &str) -> Result<Option<V
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::views::selection::Mode;
 
     #[test]
     fn apply_moves_selects_all_activates_and_types_ahead() {

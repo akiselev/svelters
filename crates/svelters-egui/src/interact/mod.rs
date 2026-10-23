@@ -23,6 +23,7 @@
 
 pub mod anchor;
 pub mod dismiss;
+pub mod dnd;
 mod drag;
 mod expand;
 mod focus;
@@ -38,6 +39,7 @@ mod toggle;
 pub mod tooltip;
 pub mod typeahead;
 
+pub use dnd::{DragIntent, DragSource, DragSourceParams, DropIntent, DropParams, DropTarget, Offer};
 pub use drag::{Axis, Drag, DragParams, Draggable};
 pub use expand::{Expand, ExpandParams, Expandable};
 pub use focus::{Focus, FocusParams, Focusable};
