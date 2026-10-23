@@ -80,6 +80,7 @@ START-HERE should link them. Paths follow DOCS-PLAN §5.2 (`loading-code.md`, `h
   master. Still on built-in tables: checkbox `mark`, radio `dot`, switch `knob`, frame `indicator`/`mark`,
   progress `track`/`fill`, collapsing `header`/`twistie`.
 - `docs/egui/START-HERE.md`: the index of every docs/egui page, with one line on when to read each (coordinator, 2026-10-22). CLAUDE.md is the coordinator's and was not touched.
+- ICR1 merged (4f474ae8). `icons.md` is now `available`, without its banner, and covers what changed at merge: rasters at physical size, `RASTERS_PER_KEY` (6) with LRU eviction, `cached_rasters`, `paint::is_registered(ctx, &IconKey)`. That closes gap 8.
 - Gap 4 is resolved: `DEFAULT_OWN` now includes the OW1a/OW1a2 kinds (not `label`) and OW3's kinds.
 
 ## Not run

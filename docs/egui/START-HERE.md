@@ -2,7 +2,7 @@
 title: Start here
 description: "The index of svelters' egui docs: which page to read for which task."
 status: available
-verified_at: e832e001
+verified_at: 4f474ae8
 sources:
   - plans/research/DOCS-PLAN.md   # §3.2 item 1, §5
 ---
@@ -27,7 +27,7 @@ a lane branch, not merged; the page says which), `stub` (a page skeleton, still 
 | look up a tag's props, events, parts and states | [Widget reference](reference/widgets/index.md) |
 | build a control the built-in tags don't have, drawn by svelters | [Writing an own widget](rust/own-widgets.md) |
 | restyle a widget: parts, states, icons in CSS, painters, transitions, list rows | [Styling own widgets](css/own-widgets.md) |
-| show icons by key, register app or extension icons | [Icons](icons.md) *(pending ICR1)* |
+| show icons by key, register app or extension icons | [Icons](icons.md) |
 | test an app or a component end to end, with seeds and virtual time | [Automation and end-to-end tests](rust/automation.md) |
 | load an app or extension from source, ship a `.svb` bundle, control what extensions can import | [Loading code and release bundles](rust/loading-code.md) |
 | understand what an edit does to the running app and which state survives | [Hot reload](rust/hot-reload.md) |
@@ -55,8 +55,7 @@ a lane branch, not merged; the page says which), `stub` (a page skeleton, still 
 
 ### Icons
 
-- [Icons](icons.md): keys, `ext.<id>.*`, registration, optical sizes, tint and colour slots. *(Pending
-  ICR1.)*
+- [Icons](icons.md): keys, `ext.<id>.*`, registration, optical sizes, tint and colour slots.
 
 ### Reference (generated)
 
