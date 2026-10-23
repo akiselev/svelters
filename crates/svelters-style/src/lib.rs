@@ -42,7 +42,7 @@ pub use computed::{ComputeContext, ComputedStyle};
 pub use diag::{Diagnostic, Severity};
 pub use element::Element;
 pub use invalidation::{Invalidation, Reach, for_each_reached};
-pub use media::{ColorScheme, Contrast, MEDIA_FEATURES, MediaEnv, MediaList};
+pub use media::{ColorScheme, Contrast, MEDIA_FEATURES, MediaEnv, MediaList, Platform};
 pub use selector::{Impl, Logical, PseudoClass, PseudoElement, Selector, SelectorList, SelectorParser, parse_selector_list};
 pub use sheet::{DeclBlock, Declaration, ParseOptions, Rule, Stylesheet};
 pub use state::{STATE_PSEUDO_CLASSES, StateMask, StateNames};
