@@ -881,9 +881,9 @@ has no stylesheet way to do. The `overflow` menu re-uses the OW3 menu, with no s
 | `flat` (only the top border) | CSS (a class) | CSS |
 | `checkable`, `checked`, `toggled`, `clicked` (the check enables or disables the children) | `checkable`, `bind:checked`, `changed`; unchecked disables the subtree (`:disabled` inherited) | **MISSING → OW1a (0.5)** |
 | AccessKit `Role::Group` named by the title | yes | ARCH (OW1a) |
-| QToolBox (`addItem`, `currentIndex`, one page open at a time) | `collapsing-header`s, plus an `accordion` group (one open at a time) | `collapsing-header`: have; accordion: **MISSING → OW1a (0.25)** |
-| QToolBox `setItemIcon`, `setItemToolTip`, `setItemEnabled` | `collapsing-header icon`, `tooltip`, `enabled` | `icon`: **MISSING → OW1a (0.05)**; the rest: have |
-| collapsing-header header actions (VS Code view titles; not in Qt) | `slot="end"` children in the header (icon buttons shown on hover) | **MISSING → OW1a (0.25)** |
+| QToolBox (`addItem`, `currentIndex`, one page open at a time) | `collapsing-header`s, plus an `accordion` group (one open at a time) | have (OW1a4: `accordion="<group>"` on sibling headers; a user opening one closes the others) |
+| QToolBox `setItemIcon`, `setItemToolTip`, `setItemEnabled` | `collapsing-header icon`, `tooltip`, `enabled` | have (OW1a4: `icon` key or `family:name`, `::part(icon)`, ICR1's registry) |
+| collapsing-header header actions (VS Code view titles; not in Qt) | `slot="end"` children in the header (icon buttons shown on hover) | have (OW1a4: `end` is the kind's second named slot; real child nodes, right-aligned in the header row, shown on hover or focus within) |
 
 **Styling**
 
@@ -892,7 +892,7 @@ has no stylesheet way to do. The `overflow` menu re-uses the OW3 menu, with no s
 | `QGroupBox` box (`margin-top` for the title) | `frame { … }` | ARCH (OW1a) |
 | `QGroupBox::title` (`subcontrol-origin: margin; subcontrol-position: top center`) | `frame::part(caption)` (P3 positions it) | ARCH (OW1a) + P3 |
 | `QGroupBox::indicator` (+ `:checked`) | `frame::part(indicator)`, `::part(mark)` (as checkbox) | MISSING with `checkable` |
-| `QToolBox::tab` (+ `:selected`, `:first`, `:last`, `:only-one`) | `collapsing-header::part(header)` (N), `:expanded`; positions on real nodes | ARCH (OW1a) |
+| `QToolBox::tab` (+ `:selected`, `:first`, `:last`, `:only-one`) | `collapsing-header::part(header)` (N), `:expanded`; positions on real nodes | `:expanded` and `::part(header)`: have; `header` stays a paint part (OW1a4: the actions are real nodes without it); `:first`/`:last`/`:only-one`: deferred to OW-CSS's structural pseudo-classes |
 | the twistie | `::part(twistie)` (`content: icon(chevron-right)`, rotated by `transform` on `:expanded`) | ARCH (OW1a) + P2 |
 
 **Beyond Qt.** The expand and collapse animation comes from TR transitions and the `transform` on the twistie.

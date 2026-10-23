@@ -287,13 +287,16 @@ pub fn run(ui: &egui::Ui, resp: &egui::Response, state: &mut StateBits, parts: &
 /// (no focus request or surrender, no Escape rule); `enabled` is the host's own (a disabled
 /// button on an enabled `Ui`).
 pub fn observe(ui: &egui::Ui, resp: &egui::Response, enabled: bool, state: &mut StateBits, parts: &PartResponses, f: impl FnOnce(&mut InputCx<'_>)) -> FocusCx {
-    let ctx = ui.ctx();
+    // egui senses nothing on a disabled widget; R9 keeps it hoverable (tooltip, reason)
+    let over = !enabled && ui.rect_contains_pointer(resp.rect);
+    observe_ctx(ui.ctx(), resp, enabled, over, state, parts, f)
+}
+
+/// [`observe`] without a `Ui`: `over` adds "the pointer is over the rect" for a disabled host.
+fn observe_ctx(ctx: &egui::Context, resp: &egui::Response, enabled: bool, over: bool, state: &mut StateBits, parts: &PartResponses, f: impl FnOnce(&mut InputCx<'_>)) -> FocusCx {
     let policy = &crate::native::policy_of(ctx);
     let mut snap = Resp::of(resp);
-    if !enabled {
-        // egui senses nothing on a disabled widget; R9 keeps it hoverable (tooltip, reason)
-        snap.contains_pointer |= ui.rect_contains_pointer(resp.rect);
-    }
+    snap.contains_pointer |= over;
     let mut focus = FocusCx { has: snap.has_focus, ..FocusCx::default() };
     ctx.input(|inp| {
         focus.pointer_pressed = inp.pointer.any_pressed();
@@ -314,8 +317,9 @@ pub fn observe(ui: &egui::Ui, resp: &egui::Response, enabled: bool, state: &mut 
 }
 
 /// The `use:` adapter (ARCH-WIDGETS §1.2): one unit on any element, its intents delivered as the
-/// action's `on<intent>` callbacks. OW0a has the shape; OW0b registers `use:hoverable`,
-/// `use:pressable` and `use:focusable` in `svelters:behaviors/sv` through EV2b's attached kinds.
+/// action's `on<intent>` callbacks. OW1a4 registers one behaviour per unit in
+/// `svelters:behaviors/sv` (`crate::use_units`, EV2b's attached kinds), each running
+/// [`UseUnit::run_on`] in its `after_ui`.
 #[derive(Default)]
 pub struct UseUnit<U: Unit> {
     pub unit: U,
@@ -330,5 +334,42 @@ impl<U: Unit> UseUnit<U> {
         let (unit, params) = (&mut self.unit, &self.params);
         run(ui, resp, &mut self.state, &PartResponses::default(), |cx| unit.input(params, cx, &mut out));
         out
+    }
+
+    /// OW1a4: runs the unit on a host's response after the host was drawn (a `use:` behaviour's
+    /// `after_ui`, which has no `Ui`): `state` starts from the host's bits, the unit's
+    /// [`Unit::OWNS`] bits are what the caller writes back. Applies the focus requests, and adds
+    /// the unit's AccessKit properties to the host's node.
+    pub fn run_on(&mut self, resp: &egui::Response, host: StateBits) -> Intents<U::Intent> {
+        let mut out = Intents::default();
+        let (unit, params) = (&mut self.unit, &self.params);
+        self.state = host;
+        let enabled = resp.enabled() && !host.contains(StateBits::DISABLED);
+        let over = !enabled && resp.contains_pointer();
+        let focus = observe_ctx(&resp.ctx, resp, enabled, over, &mut self.state, &PartResponses::default(), |cx| unit.input(params, cx, &mut out));
+        if focus.request && !focus.has {
+            resp.request_focus();
+        } else if focus.surrender && focus.has {
+            resp.surrender_focus();
+        }
+        resp.ctx.accesskit_node_builder(resp.id, |nd| unit.a11y(params, nd));
+        // EV3 R11: the keys the unit claims stay with the focused host (egui's arrow-key focus
+        // navigation would move focus otherwise), as the own widgets' focus-lock filters
+        if resp.has_focus() {
+            let none = egui::Modifiers::NONE;
+            let any = |keys: &[egui::Key]| keys.iter().any(|&k| unit.claims(params, k, none));
+            let horizontal_arrows = any(&[egui::Key::ArrowLeft, egui::Key::ArrowRight]);
+            let vertical_arrows = any(&[egui::Key::ArrowUp, egui::Key::ArrowDown]);
+            let escape = any(&[egui::Key::Escape]);
+            if horizontal_arrows || vertical_arrows || escape {
+                resp.ctx.memory_mut(|m| m.set_focus_lock_filter(resp.id, egui::EventFilter { tab: false, horizontal_arrows, vertical_arrows, escape }));
+            }
+        }
+        out
+    }
+
+    /// The unit's sense with the current params.
+    pub fn sense(&self) -> egui::Sense {
+        self.unit.sense(&self.params)
     }
 }

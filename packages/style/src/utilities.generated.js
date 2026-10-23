@@ -3331,6 +3331,10 @@ export const UTILITIES = {
     {
      "name": "label",
      "node": false
+    },
+    {
+     "name": "icon",
+     "node": false
     }
    ],
    "provider_states": []

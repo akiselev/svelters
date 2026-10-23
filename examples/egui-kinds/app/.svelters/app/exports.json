@@ -352,6 +352,148 @@
         }
       ],
       "values": []
+    },
+    {
+      "classes": [],
+      "functions": [],
+      "name": "sv",
+      "specifier": "svelters:app/sv",
+      "types": [
+        {
+          "docs": "`use:anchored`'s `placed` payload: the side and the surface's rect, in points.",
+          "fields": [
+            {
+              "name": "side",
+              "optional": false,
+              "type": "string"
+            },
+            {
+              "name": "x",
+              "optional": false,
+              "type": "number"
+            },
+            {
+              "name": "y",
+              "optional": false,
+              "type": "number"
+            },
+            {
+              "name": "width",
+              "optional": false,
+              "type": "number"
+            },
+            {
+              "name": "height",
+              "optional": false,
+              "type": "number"
+            }
+          ],
+          "kind": "record",
+          "name": "UsePlaced",
+          "values": []
+        },
+        {
+          "docs": "`use:dismissable`'s `dismiss` payload.",
+          "fields": [
+            {
+              "name": "reason",
+              "optional": false,
+              "type": "string"
+            },
+            {
+              "name": "x",
+              "optional": true,
+              "type": "number | null"
+            },
+            {
+              "name": "y",
+              "optional": true,
+              "type": "number | null"
+            }
+          ],
+          "kind": "record",
+          "name": "UseDismiss",
+          "values": []
+        },
+        {
+          "docs": "`use:draggable`'s `drag` payload.",
+          "fields": [
+            {
+              "name": "phase",
+              "optional": false,
+              "type": "string"
+            },
+            {
+              "name": "dx",
+              "optional": false,
+              "type": "number"
+            },
+            {
+              "name": "dy",
+              "optional": false,
+              "type": "number"
+            }
+          ],
+          "kind": "record",
+          "name": "UseDrag",
+          "values": []
+        },
+        {
+          "docs": "`use:pressable`'s `press` payload.",
+          "fields": [
+            {
+              "name": "count",
+              "optional": false,
+              "type": "number"
+            },
+            {
+              "name": "button",
+              "optional": false,
+              "type": "string"
+            }
+          ],
+          "kind": "record",
+          "name": "UsePress",
+          "values": []
+        },
+        {
+          "docs": "`use:scrollable`'s `scroll` payload: the new offset, in points.",
+          "fields": [
+            {
+              "name": "x",
+              "optional": false,
+              "type": "number"
+            },
+            {
+              "name": "y",
+              "optional": false,
+              "type": "number"
+            }
+          ],
+          "kind": "record",
+          "name": "UseScroll",
+          "values": []
+        },
+        {
+          "docs": "`use:toggleable`'s `toggle` payload.",
+          "fields": [
+            {
+              "name": "checked",
+              "optional": false,
+              "type": "boolean"
+            },
+            {
+              "name": "indeterminate",
+              "optional": false,
+              "type": "boolean"
+            }
+          ],
+          "kind": "record",
+          "name": "UseToggle",
+          "values": []
+        }
+      ],
+      "values": []
     }
   ],
   "schema": "svelters-exports/1"

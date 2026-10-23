@@ -1,6 +1,1743 @@
 {
   "backend": "egui",
-  "behaviors": {},
+  "behaviors": {
+    "sv.UseAnchored": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "sv.UseAnchored"
+      ],
+      "children": null,
+      "doc": "`use:anchored`: where a surface of the host's size goes beside `anchor` (`[x, y, width,\nheight]` in points) inside the window, flipping and shifting to stay visible. Reports\n`placed({ side, x, y, width, height })` when the placement changes; the app positions the host.",
+      "export": "anchored",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "module": "svelters:behaviors/sv",
+      "native": "svelters_egui::use_units::UseAnchored",
+      "present": null,
+      "props": {
+        "anchor": {
+          "construct_only": false,
+          "default": [],
+          "doc": "The anchor rect: `[x, y, width, height]`.",
+          "js": "anchor",
+          "native": "anchor",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseAnchored:anchor",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "number[]",
+          "type": "other",
+          "writable": true
+        },
+        "flip": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Flips to the other side when it does not fit.",
+          "js": "flip",
+          "native": "flip",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseAnchored:flip",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        },
+        "gap": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Points between the anchor and the surface.",
+          "js": "gap",
+          "native": "gap",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseAnchored:gap",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        },
+        "matchWidth": {
+          "construct_only": false,
+          "default": false,
+          "doc": "The surface is at least as wide as the anchor.",
+          "js": "matchWidth",
+          "native": "matchWidth",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseAnchored:matchWidth",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        },
+        "placement": {
+          "construct_only": false,
+          "default": "bottom-start",
+          "doc": "`bottom-start`, `top`, `right-end` and so on.",
+          "js": "placement",
+          "native": "placement",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseAnchored:placement",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "string",
+          "type": "string",
+          "writable": true
+        },
+        "shift": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Shifts along the side to stay inside the window.",
+          "js": "shift",
+          "native": "shift",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseAnchored:shift",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "svelters_egui::use_units::UseAnchored"
+      },
+      "signals": {
+        "placed": {
+          "args": [
+            {
+              "name": "placed",
+              "type": "other"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Where it goes: `{ side, x, y, width, height }`.",
+          "handler_result": "none",
+          "js_event": "placed",
+          "name": "placed",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "tag": "sv.anchored",
+      "text_content": null
+    },
+    "sv.UseDismissable": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "sv.UseDismissable"
+      ],
+      "children": null,
+      "doc": "`use:dismissable`: asks to close the host (a popup the app owns) on Escape (with `escape`) or\non a press outside it (with `outside: 'close'`): `dismiss({ reason, x, y })`, `reason` one of\n`escape`, `outside-press`.",
+      "export": "dismissable",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "module": "svelters:behaviors/sv",
+      "native": "svelters_egui::use_units::UseDismissable",
+      "present": null,
+      "props": {
+        "escape": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Escape dismisses.",
+          "js": "escape",
+          "native": "escape",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseDismissable:escape",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        },
+        "outside": {
+          "construct_only": false,
+          "default": "",
+          "doc": "A press outside the host: `close` asks to dismiss, `ignore` does not.",
+          "js": "outside",
+          "native": "outside",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseDismissable:outside",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "string",
+          "type": "string",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "svelters_egui::use_units::UseDismissable"
+      },
+      "signals": {
+        "dismiss": {
+          "args": [
+            {
+              "name": "dismiss",
+              "type": "other"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "`{ reason, x, y }`.",
+          "handler_result": "none",
+          "js_event": "dismiss",
+          "name": "dismiss",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "tag": "sv.dismissable",
+      "text_content": null
+    },
+    "sv.UseDragToValue": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "sv.UseDragToValue"
+      ],
+      "children": null,
+      "doc": "`use:dragToValue`: dragging on the host scrubs `value` (relative: `speed` per point, Shift\nslower, Ctrl/Cmd faster), with `:active` and `:dragging`: `scrub(value)` live, `commit(value)`\nat the release, Escape restores.",
+      "export": "dragToValue",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "module": "svelters:behaviors/sv",
+      "native": "svelters_egui::use_units::UseDragToValue",
+      "present": null,
+      "props": {
+        "max": {
+          "construct_only": false,
+          "default": null,
+          "doc": "",
+          "js": "max",
+          "native": "max",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseDragToValue:max",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        },
+        "min": {
+          "construct_only": false,
+          "default": null,
+          "doc": "",
+          "js": "min",
+          "native": "min",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseDragToValue:min",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        },
+        "speed": {
+          "construct_only": false,
+          "default": 1.0,
+          "doc": "Value per point dragged.",
+          "js": "speed",
+          "native": "speed",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseDragToValue:speed",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        },
+        "step": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Snaps to multiples (`0`: none).",
+          "js": "step",
+          "native": "step",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseDragToValue:step",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        },
+        "value": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "",
+          "js": "value",
+          "native": "value",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseDragToValue:value",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "svelters_egui::use_units::UseDragToValue"
+      },
+      "signals": {
+        "commit": {
+          "args": [
+            {
+              "name": "commit",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The value at the release (or the restored one after Escape).",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "scrub": {
+          "args": [
+            {
+              "name": "scrub",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The value while dragging.",
+          "handler_result": "none",
+          "js_event": "scrub",
+          "name": "scrub",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "tag": "sv.dragToValue",
+      "text_content": null
+    },
+    "sv.UseDraggable": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "sv.UseDraggable"
+      ],
+      "children": null,
+      "doc": "`use:draggable`: a drag past the platform threshold on the host, with `:dragging`:\n`drag({ phase, dx, dy })`, `phase` one of `start`, `move`, `end`, `cancel` (Escape); `dx`, `dy` are\nthe total movement since the start (along `axis`).",
+      "export": "draggable",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "module": "svelters:behaviors/sv",
+      "native": "svelters_egui::use_units::UseDraggable",
+      "present": null,
+      "props": {
+        "axis": {
+          "construct_only": false,
+          "default": "",
+          "doc": "",
+          "js": "axis",
+          "native": "axis",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseDraggable:axis",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "string",
+          "type": "string",
+          "writable": true
+        },
+        "threshold": {
+          "construct_only": false,
+          "default": null,
+          "doc": "Points before a drag starts (`null`: the platform's).",
+          "js": "threshold",
+          "native": "threshold",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseDraggable:threshold",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "number | null",
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "svelters_egui::use_units::UseDraggable"
+      },
+      "signals": {
+        "drag": {
+          "args": [
+            {
+              "name": "drag",
+              "type": "other"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "`{ phase, dx, dy }`.",
+          "handler_result": "none",
+          "js_event": "drag",
+          "name": "drag",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "tag": "sv.draggable",
+      "text_content": null
+    },
+    "sv.UseExpandable": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "sv.UseExpandable"
+      ],
+      "children": null,
+      "doc": "`use:expandable`: Right/Left on the focused host, AccessKit `Expand`/`Collapse` and (with\n`byClick`) a click open and close it; the host gets `:expanded` and AccessKit `expanded`.",
+      "export": "expandable",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "module": "svelters:behaviors/sv",
+      "native": "svelters_egui::use_units::UseExpandable",
+      "present": null,
+      "props": {
+        "byClick": {
+          "construct_only": false,
+          "default": true,
+          "doc": "A click toggles it.",
+          "js": "byClick",
+          "native": "byClick",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseExpandable:byClick",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        },
+        "expanded": {
+          "construct_only": false,
+          "default": false,
+          "doc": "",
+          "js": "expanded",
+          "native": "expanded",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseExpandable:expanded",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "svelters_egui::use_units::UseExpandable"
+      },
+      "signals": {
+        "expand": {
+          "args": [
+            {
+              "name": "expand",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user opened (`true`) or closed it.",
+          "handler_result": "none",
+          "js_event": "expand",
+          "name": "expand",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "tag": "sv.expandable",
+      "text_content": null
+    },
+    "sv.UseFocusable": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "sv.UseFocusable"
+      ],
+      "children": null,
+      "doc": "`use:focusable`: makes the host a focus stop (Tab, click-to-focus per platform) with `:focus`\nand `:focus-visible` (keyboard or program focus only, never a pointer press).",
+      "export": "focusable",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "module": "svelters:behaviors/sv",
+      "native": "svelters_egui::use_units::UseFocusable",
+      "present": null,
+      "props": {
+        "focusOnClick": {
+          "construct_only": false,
+          "default": null,
+          "doc": "A press focuses it (`null`: the platform's rule).",
+          "js": "focusOnClick",
+          "native": "focusOnClick",
+          "nullable": true,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseFocusable:focusOnClick",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "boolean | null",
+          "type": "bool",
+          "writable": true
+        },
+        "tabStop": {
+          "construct_only": false,
+          "default": true,
+          "doc": "In the Tab order.",
+          "js": "tabStop",
+          "native": "tabStop",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseFocusable:tabStop",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "svelters_egui::use_units::UseFocusable"
+      },
+      "signals": {
+        "blur": {
+          "args": [
+            {
+              "name": "blur",
+              "type": "other"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Focus left.",
+          "handler_result": "none",
+          "js_event": "blur",
+          "name": "blur",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "focus": {
+          "args": [
+            {
+              "name": "focus",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Focus came: `keyboard`, `pointer` or `program`.",
+          "handler_result": "none",
+          "js_event": "focus",
+          "name": "focus",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "tag": "sv.focusable",
+      "text_content": null
+    },
+    "sv.UseHoverable": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "sv.UseHoverable"
+      ],
+      "children": null,
+      "doc": "`use:hoverable`: the host gets `:hover` (also while disabled, DESIGN R9) and reports entering\nand leaving.",
+      "export": "hoverable",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "module": "svelters:behaviors/sv",
+      "native": "svelters_egui::use_units::UseHoverable",
+      "present": null,
+      "props": {},
+      "provenance": {
+        "kind": "svelters_egui::use_units::UseHoverable"
+      },
+      "signals": {
+        "hover": {
+          "args": [
+            {
+              "name": "hover",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The pointer entered (`true`) or left (`false`) the host.",
+          "handler_result": "none",
+          "js_event": "hover",
+          "name": "hover",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "tag": "sv.hoverable",
+      "text_content": null
+    },
+    "sv.UsePressable": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "sv.UsePressable"
+      ],
+      "children": null,
+      "doc": "`use:pressable`: the host gets `:active` while pressed and reports presses: `press({ count,\nbutton })` for a click (pointer, Space/Enter on focus, AccessKit `Click`), `down`, `up(inside)`,\n`cancel`, and `repeat` while held when `autoRepeat` is set.",
+      "export": "pressable",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "module": "svelters:behaviors/sv",
+      "native": "svelters_egui::use_units::UsePressable",
+      "present": null,
+      "props": {
+        "activateOn": {
+          "construct_only": false,
+          "default": "",
+          "doc": "`press` fires on the press instead of the release.",
+          "js": "activateOn",
+          "native": "activateOn",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UsePressable:activateOn",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "string",
+          "type": "string",
+          "writable": true
+        },
+        "autoRepeat": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Fires `repeat` while held (0.5 s, then every 0.1 s, accelerating).",
+          "js": "autoRepeat",
+          "native": "autoRepeat",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UsePressable:autoRepeat",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "svelters_egui::use_units::UsePressable"
+      },
+      "signals": {
+        "cancel": {
+          "args": [
+            {
+              "name": "cancel",
+              "type": "other"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The press was cancelled (Escape, focus loss).",
+          "handler_result": "none",
+          "js_event": "cancel",
+          "name": "cancel",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "down": {
+          "args": [
+            {
+              "name": "down",
+              "type": "other"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A button went down on the host.",
+          "handler_result": "none",
+          "js_event": "down",
+          "name": "down",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "press": {
+          "args": [
+            {
+              "name": "press",
+              "type": "other"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "A click: `{ count, button }`.",
+          "handler_result": "none",
+          "js_event": "press",
+          "name": "press",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "repeat": {
+          "args": [
+            {
+              "name": "repeat",
+              "type": "other"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Auto-repeat while held (`autoRepeat`).",
+          "handler_result": "none",
+          "js_event": "repeat",
+          "name": "repeat",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "up": {
+          "args": [
+            {
+              "name": "up",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The button went up: `inside` the host or not.",
+          "handler_result": "none",
+          "js_event": "up",
+          "name": "up",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "tag": "sv.pressable",
+      "text_content": null
+    },
+    "sv.UseResizable": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "sv.UseResizable"
+      ],
+      "children": null,
+      "doc": "`use:resizable`: the host is a sash: dragging it (or the arrows when focused) resizes `size`\nalong `axis` within `min`..`max`, with `:hover` after the platform's delay, `:active`,\n`:dragging` and `:focus-visible`; a double click resets (`collapsible` collapses). Reports\n`resize(size)` live and `commit(size)` at the end; Escape restores.",
+      "export": "resizable",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "module": "svelters:behaviors/sv",
+      "native": "svelters_egui::use_units::UseResizable",
+      "present": null,
+      "props": {
+        "axis": {
+          "construct_only": false,
+          "default": "",
+          "doc": "",
+          "js": "axis",
+          "native": "axis",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseResizable:axis",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "string",
+          "type": "string",
+          "writable": true
+        },
+        "collapsible": {
+          "construct_only": false,
+          "default": false,
+          "doc": "",
+          "js": "collapsible",
+          "native": "collapsible",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseResizable:collapsible",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        },
+        "invert": {
+          "construct_only": false,
+          "default": false,
+          "doc": "A drag towards the start grows it (a sash on the panel's left or top edge).",
+          "js": "invert",
+          "native": "invert",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseResizable:invert",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        },
+        "max": {
+          "construct_only": false,
+          "default": null,
+          "doc": "",
+          "js": "max",
+          "native": "max",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseResizable:max",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        },
+        "min": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "",
+          "js": "min",
+          "native": "min",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseResizable:min",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        },
+        "size": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "The size the sash controls, in points.",
+          "js": "size",
+          "native": "size",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseResizable:size",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        },
+        "step": {
+          "construct_only": false,
+          "default": 10.0,
+          "doc": "Arrow-key step.",
+          "js": "step",
+          "native": "step",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseResizable:step",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "svelters_egui::use_units::UseResizable"
+      },
+      "signals": {
+        "commit": {
+          "args": [
+            {
+              "name": "commit",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "",
+          "handler_result": "none",
+          "js_event": "commit",
+          "name": "commit",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        },
+        "resize": {
+          "args": [
+            {
+              "name": "resize",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "",
+          "handler_result": "none",
+          "js_event": "resize",
+          "name": "resize",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "tag": "sv.resizable",
+      "text_content": null
+    },
+    "sv.UseRoving": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "sv.UseRoving"
+      ],
+      "children": null,
+      "doc": "`use:roving`: the host's siblings that carry `use:roving` too form one Tab stop; the arrows,\nHome and End move focus among the enabled ones (wrapping). Reports the move as `rove(to)`, the\nmember index it went to.",
+      "export": "roving",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "module": "svelters:behaviors/sv",
+      "native": "svelters_egui::use_units::UseRoving",
+      "present": null,
+      "props": {
+        "on": {
+          "construct_only": false,
+          "default": true,
+          "doc": "Takes part in the group.",
+          "js": "on",
+          "native": "on",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseRoving:on",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "svelters_egui::use_units::UseRoving"
+      },
+      "signals": {
+        "rove": {
+          "args": [
+            {
+              "name": "rove",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Focus moved to member `to` (an index among the group's members).",
+          "handler_result": "none",
+          "js_event": "rove",
+          "name": "rove",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "tag": "sv.roving",
+      "text_content": null
+    },
+    "sv.UseRovingList": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "sv.UseRovingList"
+      ],
+      "children": null,
+      "doc": "`use:rovingList`: a highlighted index inside the host (its own rows): the arrows (by\n`orientation`), Home and End move it over the enabled items, wrapping with `wrap`.",
+      "export": "rovingList",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "module": "svelters:behaviors/sv",
+      "native": "svelters_egui::use_units::UseRovingList",
+      "present": null,
+      "props": {
+        "current": {
+          "construct_only": false,
+          "default": -1,
+          "doc": "The highlighted item (`-1`: none); the host writes it on hover.",
+          "js": "current",
+          "native": "current",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseRovingList:current",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "range": {
+            "max": 9007199254740991.0,
+            "min": -9007199254740991.0
+          },
+          "readable": true,
+          "ts": "number",
+          "type": "i64",
+          "writable": true
+        },
+        "enabled": {
+          "construct_only": false,
+          "default": [],
+          "doc": "One entry per item: whether it can be highlighted.",
+          "js": "enabled",
+          "native": "enabled",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseRovingList:enabled",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "boolean[]",
+          "type": "other",
+          "writable": true
+        },
+        "orientation": {
+          "construct_only": false,
+          "default": "",
+          "doc": "",
+          "js": "orientation",
+          "native": "orientation",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseRovingList:orientation",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "string",
+          "type": "string",
+          "writable": true
+        },
+        "wrap": {
+          "construct_only": false,
+          "default": false,
+          "doc": "",
+          "js": "wrap",
+          "native": "wrap",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseRovingList:wrap",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "svelters_egui::use_units::UseRovingList"
+      },
+      "signals": {
+        "move": {
+          "args": [
+            {
+              "name": "move",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The highlight moved to item `to`.",
+          "handler_result": "none",
+          "js_event": "move",
+          "name": "move",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "tag": "sv.rovingList",
+      "text_content": null
+    },
+    "sv.UseScrollable": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "sv.UseScrollable"
+      ],
+      "children": null,
+      "doc": "`use:scrollable`: the wheel, trackpad momentum, and (with `keys`) the arrows and\nPageUp/PageDown/Home/End on the focused host scroll a virtual `content` of\n`[width, height]` points through the host's rect: `scroll({ x, y })`, the new offset. The app\ndraws the content at minus the offset.",
+      "export": "scrollable",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "module": "svelters:behaviors/sv",
+      "native": "svelters_egui::use_units::UseScrollable",
+      "present": null,
+      "props": {
+        "axes": {
+          "construct_only": false,
+          "default": "y",
+          "doc": "Which axes scroll.",
+          "js": "axes",
+          "native": "axes",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseScrollable:axes",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "string",
+          "type": "string",
+          "writable": true
+        },
+        "content": {
+          "construct_only": false,
+          "default": [],
+          "doc": "The content's size: `[width, height]`.",
+          "js": "content",
+          "native": "content",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseScrollable:content",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "number[]",
+          "type": "other",
+          "writable": true
+        },
+        "keys": {
+          "construct_only": false,
+          "default": false,
+          "doc": "The keys scroll when the host is focused.",
+          "js": "keys",
+          "native": "keys",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseScrollable:keys",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        },
+        "offset": {
+          "construct_only": false,
+          "default": [],
+          "doc": "The offset: `[x, y]`.",
+          "js": "offset",
+          "native": "offset",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseScrollable:offset",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "number[]",
+          "type": "other",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "svelters_egui::use_units::UseScrollable"
+      },
+      "signals": {
+        "scroll": {
+          "args": [
+            {
+              "name": "scroll",
+              "type": "other"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The new offset: `{ x, y }`.",
+          "handler_result": "none",
+          "js_event": "scroll",
+          "name": "scroll",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "tag": "sv.scrollable",
+      "text_content": null
+    },
+    "sv.UseSteppable": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "sv.UseSteppable"
+      ],
+      "children": null,
+      "doc": "`use:steppable`: on the focused host, the arrows step `value` by `step` (PageUp/PageDown by\n`page`, Home/End to `min`/`max`) and the wheel steps it per `wheel`: `step(value)`.",
+      "export": "steppable",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "module": "svelters:behaviors/sv",
+      "native": "svelters_egui::use_units::UseSteppable",
+      "present": null,
+      "props": {
+        "max": {
+          "construct_only": false,
+          "default": null,
+          "doc": "",
+          "js": "max",
+          "native": "max",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseSteppable:max",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        },
+        "min": {
+          "construct_only": false,
+          "default": null,
+          "doc": "",
+          "js": "min",
+          "native": "min",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseSteppable:min",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        },
+        "page": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "PageUp/PageDown step (`0`: ten steps).",
+          "js": "page",
+          "native": "page",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseSteppable:page",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        },
+        "step": {
+          "construct_only": false,
+          "default": 1.0,
+          "doc": "",
+          "js": "step",
+          "native": "step",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseSteppable:step",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        },
+        "value": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "",
+          "js": "value",
+          "native": "value",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseSteppable:value",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        },
+        "wheel": {
+          "construct_only": false,
+          "default": "",
+          "doc": "When the wheel steps: `focused` (default), `hover`, `off`.",
+          "js": "wheel",
+          "native": "wheel",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseSteppable:wheel",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "string",
+          "type": "string",
+          "writable": true
+        },
+        "wrap": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Past `max` goes to `min` and back.",
+          "js": "wrap",
+          "native": "wrap",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseSteppable:wrap",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "svelters_egui::use_units::UseSteppable"
+      },
+      "signals": {
+        "change": {
+          "args": [
+            {
+              "name": "change",
+              "type": "f64"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The new value.",
+          "handler_result": "none",
+          "js_event": "change",
+          "name": "change",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "tag": "sv.steppable",
+      "text_content": null
+    },
+    "sv.UseToggleable": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "sv.UseToggleable"
+      ],
+      "children": null,
+      "doc": "`use:toggleable`: a click (or Space/Enter, AccessKit `Click`) toggles; the host gets `:checked`\nand `:indeterminate`, and AccessKit `toggled`.",
+      "export": "toggleable",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "module": "svelters:behaviors/sv",
+      "native": "svelters_egui::use_units::UseToggleable",
+      "present": null,
+      "props": {
+        "checked": {
+          "construct_only": false,
+          "default": false,
+          "doc": "",
+          "js": "checked",
+          "native": "checked",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseToggleable:checked",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        },
+        "indeterminate": {
+          "construct_only": false,
+          "default": false,
+          "doc": "",
+          "js": "indeterminate",
+          "native": "indeterminate",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseToggleable:indeterminate",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        },
+        "radio": {
+          "construct_only": false,
+          "default": false,
+          "doc": "A checked host stays checked on a click (a radio item).",
+          "js": "radio",
+          "native": "radio",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseToggleable:radio",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        },
+        "tristate": {
+          "construct_only": false,
+          "default": false,
+          "doc": "Cycles unchecked, checked, indeterminate.",
+          "js": "tristate",
+          "native": "tristate",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseToggleable:tristate",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "boolean",
+          "type": "bool",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "svelters_egui::use_units::UseToggleable"
+      },
+      "signals": {
+        "toggle": {
+          "args": [
+            {
+              "name": "toggle",
+              "type": "other"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The user toggled it: `{ checked, indeterminate }`.",
+          "handler_result": "none",
+          "js_event": "toggle",
+          "name": "toggle",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "tag": "sv.toggleable",
+      "text_content": null
+    },
+    "sv.UseTooltipable": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "sv.UseTooltipable"
+      ],
+      "children": null,
+      "doc": "`use:tooltipable`: the platform's tooltip timing on the host (the delay, the follow-on window,\na press hiding it until the pointer leaves, disabled hosts included, R9), for a tooltip the app\ndraws itself: `tip(true)` to show, `tip(false)` to hide. The common `tooltip` prop needs none of\nthis.",
+      "export": "tooltipable",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "module": "svelters:behaviors/sv",
+      "native": "svelters_egui::use_units::UseTooltipable",
+      "present": null,
+      "props": {
+        "delay": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Seconds before it shows (`0`: the platform's).",
+          "js": "delay",
+          "native": "delay",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseTooltipable:delay",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        },
+        "duration": {
+          "construct_only": false,
+          "default": 0.0,
+          "doc": "Seconds it stays (`0`: until the pointer leaves).",
+          "js": "duration",
+          "native": "duration",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseTooltipable:duration",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "required": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "svelters_egui::use_units::UseTooltipable"
+      },
+      "signals": {
+        "tip": {
+          "args": [
+            {
+              "name": "tip",
+              "type": "bool"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "Show (`true`) or hide.",
+          "handler_result": "none",
+          "js_event": "tip",
+          "name": "tip",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "tag": "sv.tooltipable",
+      "text_content": null
+    },
+    "sv.UseTypeahead": {
+      "abstract": false,
+      "attaches_to": "Widget",
+      "bindings": {},
+      "chain": [
+        "sv.UseTypeahead"
+      ],
+      "children": null,
+      "doc": "`use:typeahead`: printable keys typed on the focused host within `timeout` build a prefix,\nreported as `search(text)` (typing one letter again cycles: the app picks the next match).",
+      "export": "typeahead",
+      "interface": false,
+      "lifetime": "owned",
+      "methods": {},
+      "module": "svelters:behaviors/sv",
+      "native": "svelters_egui::use_units::UseTypeahead",
+      "present": null,
+      "props": {
+        "timeout": {
+          "construct_only": false,
+          "default": 1.0,
+          "doc": "Seconds between keys before the prefix restarts.",
+          "js": "timeout",
+          "native": "timeout",
+          "nullable": false,
+          "observe": {
+            "class": "set_only",
+            "fact": "egui:sv.UseTypeahead:timeout",
+            "mechanism": "scene",
+            "verified": "weak"
+          },
+          "readable": true,
+          "ts": "number",
+          "type": "f64",
+          "writable": true
+        }
+      },
+      "provenance": {
+        "kind": "svelters_egui::use_units::UseTypeahead"
+      },
+      "signals": {
+        "search": {
+          "args": [
+            {
+              "name": "search",
+              "type": "string"
+            }
+          ],
+          "disconnect_on_drop": true,
+          "doc": "The prefix typed so far.",
+          "handler_result": "none",
+          "js_event": "search",
+          "name": "search",
+          "phases": [],
+          "sync": false,
+          "sync_required": false
+        }
+      },
+      "tag": "sv.typeahead",
+      "text_content": null
+    }
+  },
   "caps": {},
   "fragment": true,
   "kinds": {},

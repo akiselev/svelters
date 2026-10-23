@@ -429,7 +429,7 @@ The `part-<name>:` variants and provider states each element has (its state vari
 | `button` | `icon`, `label` | – |
 | `calendar` | `header`, `prev`, `next`, `month`, `year`, `grid`, `day`, `weekday`, `week-number` | – |
 | `checkbox` | `indicator`, `mark`, `icon`, `label` | – |
-| `collapsing-header` | `header`, `twistie`, `label` | – |
+| `collapsing-header` | `header`, `twistie`, `label`, `icon` | – |
 | `color-editor` | `square`, `hue`, `alpha`, `handle`, `fields`, `field`, `swatches`, `swatch-cell` | – |
 | `color-picker` | `swatch`, `chevron`, `popup`, `square`, `hue`, `alpha`, `handle`, `fields`, `field`, `swatches`, `swatch-cell`, `save`, `cancel` | – |
 | `combo-box` | `label`, `chevron`, `popup`, `option` | – |

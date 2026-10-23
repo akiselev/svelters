@@ -107,7 +107,8 @@ impl Backend for EguiBackend {
             NameKind::Prop => kinds::find_prop(k, name).map(|(id, _)| id).unwrap_or(0),
             NameKind::Signal => kinds::find_signal(k, name).map(|(id, _)| id).unwrap_or(0),
             NameKind::Method => kinds::find_method(k, name).map(|(id, _)| id).unwrap_or(0),
-            NameKind::Slot => (kinds::slot_of(k) == Some(name)) as u32,
+            NameKind::Slot if kinds::slot_of(k) == Some(name) => 1,
+            NameKind::Slot => kinds::extra_slots(k).iter().position(|s| *s == name).map_or(0, |i| i as u32 + 2),
             _ => 0,
         }
     }
@@ -121,14 +122,42 @@ impl Backend for EguiBackend {
     fn insert(&self, parent: svl_handle, child: svl_handle, before: Option<svl_handle>, slot: svl_id) -> StrResult<()> {
         let pk = self.kind_of(parent)?;
         self.kind_of(child)?;
-        if slot > 1 && kinds::slot_of(pk).is_some() {
+        let named = (slot > 1).then(|| kinds::extra_slots(pk).get(slot as usize - 2).copied());
+        if let Some(None) = named
+            && kinds::slot_of(pk).is_some()
+        {
             return Err(format!("unknown slot id {slot} on <{}>", kinds::kind(pk).tag.unwrap_or("?")));
         }
+        let named = named.flatten();
         let changed = {
             let mut scene = self.0.scene.borrow_mut();
             let (p, c) = (scene.live(parent)?, scene.live(child)?);
             let b = before.map(|b| scene::NodeId::from_raw(b).ok_or_else(|| format!("handle #{b} is not a child of #{parent}"))).transpose()?;
-            scene.insert(p, c, b, Origin::Js).map_err(|e| e.to_string())?
+            let moved = scene.insert(p, c, b, Origin::Js).map_err(|e| e.to_string())?;
+            // OW1a4: which named slot the child is in (header actions)
+            let mut sm = scene::SceneMut { s: &mut scene, origin: Origin::Js };
+            if let Some(mut n) = sm.node(c) {
+                let mut e = n.ext_mut(&kinds::SLOT);
+                let was = e.get().copied();
+                if was != named {
+                    match named {
+                        Some(s) => {
+                            e.set(s);
+                        }
+                        None => {
+                            e.remove();
+                        }
+                    }
+                    if let Some(mut pn) = sm.node(p) {
+                        pn.invalidate(scene::Dirty::LAYOUT);
+                    }
+                    true
+                } else {
+                    moved
+                }
+            } else {
+                moved
+            }
         };
         if !changed {
             return Ok(()); // already in place

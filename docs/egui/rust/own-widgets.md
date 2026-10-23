@@ -186,6 +186,15 @@ gone (`panel`, `scroll-area`, `scrollbar`, `split-view`). Check both in `widgets
 | `Roving` | — | `Rove::{By(i32), First, Last}`; `Rove::target(at, len)` wraps | `RovingParams { on }` |
 | `RovingList` | — | `Move { to }` | `RovingListParams { enabled: Vec<bool>, orientation, wrap }` |
 
+**On any element** (OW1a4): every unit above except the drag-and-drop pair is also a `use:` action
+from `svelters:behaviors/sv` (`hoverable`, `pressable`, `focusable`, `toggleable`, `expandable`,
+`roving`, `rovingList`, `typeahead`, `anchored`, `dismissable`, `tooltipable`, `draggable`,
+`dragToValue`, `steppable`, `resizable`, `scrollable`; `src/use_units.rs`). Params are the unit's
+params in camelCase, intents are `on<event>` callbacks, and the host gets the unit's state bits, so
+`<box use:toggleable={{ checked, ontoggle: (e) => checked = e.checked }}>` styles with `:checked`.
+Drag and drop on any element is the `drag-type`/`drop-types` props. Don't put a unit on an own
+widget that already composes it.
+
 `Press::Click` covers pointer clicks, Space/Enter and AccessKit `Click`. A click is `Click { count: 1, .. }`
 first; a double click then sends `count: 2`. Roving only reports the move: the widget finds the members,
 skips disabled ones, and moves focus and checks through `with_peer` (below).
