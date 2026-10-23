@@ -22,6 +22,7 @@ import { queue_micro_task } from 'svelte/internal/client/dom/task';
 import { getAllContexts, setContext } from 'svelte/internal/client/context';
 import { capture, unset_context } from 'svelte/internal/client/reactivity/async';
 import * as batches from 'svelte/internal/client/reactivity/batch';
+import { set_is_destroying_effect, set_untracked_writes } from 'svelte/internal/client/runtime';
 import { enable_tracing_mode_flag } from 'svelte/internal/flags/index';
 import { init_array_prototype_warnings } from 'svelte/internal/client/dev/equality';
 import { STATE_SYMBOL } from 'svelte/internal/client/constants';
@@ -104,9 +105,36 @@ export const INERT = 1 << 13;
 export const REACTION_RAN = 1 << 15;
 /** TR1: a block that is looked through for local transitions (else-if, snippet, dynamic component, boundary). */
 export const EFFECT_TRANSPARENT = 1 << 16;
+/** FX6: the effect kinds and statuses `recover` reads and repairs. */
+export const BRANCH_EFFECT = 1 << 5;
+export const ROOT_EFFECT = 1 << 6;
+export const CLEAN = 1 << 10;
+export const DIRTY = 1 << 11;
+export const MAYBE_DIRTY = 1 << 12;
+
+/** FX6: the root effects of the live `root`s (what `recover` repairs). */
+const liveRoots = new Set();
 
 /** `fn` in a root effect (Svelte's `component_root`); returns the dispose function. */
-export const root = component_root;
+export function root(fn) {
+  let effect = null;
+  let dispose;
+  try {
+    dispose = component_root(() => {
+      effect = $.active_effect;
+      liveRoots.add(effect);
+      return fn();
+    });
+  } catch (e) {
+    // a first run that threw: Svelte destroyed the effect already
+    liveRoots.delete(effect);
+    throw e;
+  }
+  return (options) => {
+    liveRoots.delete(effect);
+    return dispose(options);
+  };
+}
 /** A block effect: re-runs `fn` when what it reads changes; its branches are its children. */
 export const block = svelteBlock;
 /** A branch effect: the content of a block (or of the root). */
@@ -149,6 +177,65 @@ export const release_context = () => unset_context(false);
 export const enable_tracing = enable_tracing_mode_flag;
 /** Whether a `flushSync` is running (Svelte's `is_flushing_sync`). */
 export const flushing_sync = () => batches.is_flushing_sync;
+
+/**
+ * FX6 (plans/milestones/FX6-embed-destroy-mutation.md): puts Svelte's runtime back at rest after
+ * the host aborted an entry into JS. QuickJS stops a script over its turn budget (or on the
+ * interrupt flag) with an uncatchable error that skips every `finally`, so Svelte's module state
+ * stays as it was mid-update: the running reaction, effect and component context, the batch being
+ * flushed, `is_processing`, and the branches its traversal had not reached yet without `CLEAN`.
+ * Left so, the next write outside any effect fails with `state_unsafe_mutation` (the reaction is
+ * still "active") and no later batch reaches the effects below those branches.
+ *
+ * Runs no component code: it clears the context (Svelte's own `unset_context`), drops the aborted
+ * batch (`clear`, Svelte's test reset) and flushes an empty one, whose `finally` resets the
+ * scheduler's flags. Then it repairs the live roots' effect trees as a finished traversal leaves
+ * them, every branch `CLEAN`, and schedules the effects still dirty, so the work the aborted flush
+ * had not done runs in a later microtask (under a new budget). Inert (outroing) subtrees are left
+ * as they are. Not reset: `is_flushing_sync` (no writer outside `flushSync`), see the milestone.
+ */
+export function recover() {
+  unset_context(true);
+  set_is_destroying_effect(false);
+  set_untracked_writes(null);
+  batches.clear();
+  batches.Batch.ensure().flush();
+  const dirty = [];
+  for (const r of liveRoots) {
+    if ((r.f & (DESTROYED | DESTROYING)) !== 0) {
+      liveRoots.delete(r);
+      continue;
+    }
+    r.f = (r.f & ~(DIRTY | MAYBE_DIRTY)) | CLEAN;
+    // depth first, as Svelte's #traverse walks
+    let e = r.first;
+    while (e !== null) {
+      const f = e.f;
+      const skip = (f & (INERT | DESTROYED | DESTROYING)) !== 0;
+      if (!skip) {
+        if ((f & (BRANCH_EFFECT | ROOT_EFFECT)) !== 0) e.f = (f & ~(DIRTY | MAYBE_DIRTY)) | CLEAN;
+        else if ((f & (DIRTY | MAYBE_DIRTY)) !== 0) dirty.push(e);
+        if (e.first !== null) {
+          e = e.first;
+          continue;
+        }
+      }
+      while (e !== null && e !== r) {
+        if (e.next !== null) {
+          e = e.next;
+          break;
+        }
+        e = e.parent;
+      }
+      if (e === r) break;
+    }
+  }
+  if (dirty.length === 0) return;
+  batches.Batch.ensure();
+  for (const e of dirty) batches.schedule_effect(e);
+  // Batch.ensure queued the flush, unless the abort left `is_flushing_sync` set
+  if (batches.is_flushing_sync) queueMicrotask(() => batches.flushSync());
+}
 /**
  * Svelte's `createSubscriber` (`svelte/reactivity`, 5.57.2), on the client internals: Node resolves
  * the public `svelte/reactivity` to its server build (a no-op) without the `browser` condition. When
