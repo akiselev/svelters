@@ -339,6 +339,15 @@ pub enum P {
     CommitMode,
     /// OW2: scrollbar
     PageSize,
+    /// OW6: calendar, date-picker, color-editor, color-picker
+    FirstDay,
+    WeekdayFormat,
+    Navigation,
+    DayParts,
+    ReadOnly,
+    Swatches,
+    CustomColors,
+    Fields,
     /// RA1: prop `i` of a provider kind (a field of its widget struct).
     Ext(u16),
 }

@@ -271,12 +271,6 @@ pub fn set_prop(c: &mut Common, w: &mut W, def: &kinds::PropDef, v: &Value) -> R
             d.insert(Dirty::LAYOUT);
         }
         (P::Closable, W::Tab { closable, .. }) => *closable = as_bool(v)?,
-        // WG4b: the pickers' fields (`kinds/pickers.rs`)
-        (key, W::Picker(p)) => {
-            if p.set(key, v)? {
-                d.insert(Dirty::MEASURE);
-            }
-        }
         (key, w) => return Err(format!("{key:?} is not a prop of {w:?}")),
     }
     if def.layout {
@@ -384,7 +378,6 @@ pub fn get_prop(n: &Node, def: &kinds::PropDef) -> Result<Value, String> {
         (P::Editor, W::TableColumn { editor, .. }) => Value::Bool(*editor),
         (P::SelectedIndex, W::TabView { selected }) => Value::I64(*selected),
         (P::Closable, W::Tab { closable, .. }) => Value::Bool(*closable),
-        (key, W::Picker(p)) => p.get(key).ok_or_else(|| format!("{key:?} is not a prop of <{}>", n.tag()))?, // WG4b
         (key, _) => return Err(format!("{key:?} is not a prop of <{}>", n.tag())),
     })
 }

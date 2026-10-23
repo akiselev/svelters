@@ -14,6 +14,10 @@
 //! Writer lanes: OW0–OW7.
 
 pub mod button;
+pub mod calendar;
+pub mod color_editor;
+pub mod color_picker;
+pub mod date_picker;
 /// OW1b: `drag-value`.
 pub mod drag_value;
 /// OW1b: the interim one-line entry of the value boxes (OW4's TextInput replaces it).
@@ -39,6 +43,8 @@ pub(crate) mod list_rows;
 pub(crate) mod menu;
 pub mod panel;
 mod parts;
+mod picker_glyphs;
+mod picker_popup;
 pub(crate) mod popup;
 pub mod progress;
 pub mod radio;
@@ -90,7 +96,7 @@ pub const DEFAULT_OWN: &[&str] = &[
 /// The built-in tags whose egui wrapper is gone (deleted in the lane whose own widget passed its
 /// acceptance, §6.2 step 3) or never existed (`scrollbar`): always svelters' own, whatever the
 /// switch says.
-pub const OWN_ONLY: &[&str] = &["drag-value", "panel", "range-slider", "scroll-area", "scrollbar", "slider", "split-view"];
+pub const OWN_ONLY: &[&str] = &["calendar", "color-editor", "color-picker", "date-picker", "drag-value", "panel", "range-slider", "scroll-area", "scrollbar", "slider", "split-view"];
 
 /// Which built-in kinds get svelters' own widget (§6.2: the per-kind switch).
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -188,6 +194,11 @@ impl svelters_host::exports::IntoJs for Len {
     fn into_js(self, cx: &svelters_host::exports::CallCx<'_>) -> Result<svelters_host::exports::Value, svelters_host::exports::NativeError> {
         self.0.into_js(cx)
     }
+}
+
+/// OW6: the error a typed prop (`IsoDate`, `HexColor`) refuses a write with.
+pub(crate) fn invalid(message: String) -> svelters_host::exports::NativeError {
+    svelters_host::exports::NativeError { domain: "svelters:egui".into(), code: svelters_abi::Value::Str("invalid-value".into()), message }
 }
 
 /// OW2: an enum prop read leniently (an unknown value is the default).
